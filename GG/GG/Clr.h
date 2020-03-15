@@ -70,6 +70,13 @@ struct Clr
 
 GG_API std::ostream& operator<<(std::ostream& os, const Clr& pt);
 
+inline Clr InvertClr(const Clr& clr)
+{
+    return Clr(255 - clr.r,
+               255 - clr.g,
+               255 - clr.b,
+               clr.a);
+}
 
 /** Named ctor that constructs a Clr from four floats that represent the color
     channels (each must be >= 0.0 and <= 1.0). */

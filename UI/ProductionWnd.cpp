@@ -490,7 +490,7 @@ namespace {
         const Empire* this_client_empire = GetEmpire(client_empire_id);
         if (this_client_empire && (system_selected || rally_dest_selected)) {
             auto empire_color = this_client_empire->Color();
-            auto rally_color = GG::DarkColor(GG::Clr(255 - empire_color.r, 255 - empire_color.g, 255 - empire_color.b, empire_color.a));
+            auto rally_color = GG::DarkColor(GG::InvertClr(empire_color));
             auto location_color = system_selected ? empire_color : rally_color;
             m_location_text = GG::Wnd::Create<GG::TextControl>(GG::X0, GG::Y0, GG::X1, GG::Y1, "<s>" + location_text + "</s>",
                                                   ClientUI::GetBoldFont(), location_color, GG::FORMAT_TOP | GG::FORMAT_RIGHT);
