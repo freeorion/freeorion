@@ -5465,10 +5465,12 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move, bool append) {
     if (!FleetUIManager::GetFleetUIManager().ActiveFleetWnd())
         return;
 
-    DebugLogger() << "PlotFleetMovement " << (execute_move?" execute":"") << (append?" append":"");
+    if (execute_move || append)
+        DebugLogger() << "PlotFleetMovement " << (execute_move?" execute":"") << (append?" append":"");
+    else
+        TraceLogger() << "PlotfleetMovement";
 
     int empire_id = HumanClientApp::GetApp()->EmpireID();
-
     auto fleet_ids = FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectedFleetIDs();
 
     // apply to all selected this-player-owned fleets in currently-active FleetWnd
