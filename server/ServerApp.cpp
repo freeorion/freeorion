@@ -2504,24 +2504,30 @@ namespace {
     /** Records info in Empires about what they destroyed or had destroyed during combat. */
     void UpdateEmpireCombatDestructionInfo(const std::vector<CombatInfo>& combats) {
         for (const CombatInfo& combat_info : combats) {
-            std::vector<WeaponFireEvent::ConstWeaponFireEventPtr> events_that_killed;
-            for (CombatEventPtr event : combat_info.combat_events) {
-                auto maybe_attacker = std::dynamic_pointer_cast<WeaponsPlatformEvent>(event);
-                if (maybe_attacker) {
-                    auto sub_events = maybe_attacker->SubEvents(maybe_attacker->attacker_owner_id);
-                    for (auto weapon_event : sub_events) {
-                        auto maybe_fire_event = std::dynamic_pointer_cast<const WeaponFireEvent>(weapon_event);
-                        if (maybe_fire_event
-                                && combat_info.destroyed_object_ids.count(maybe_fire_event->target_id))
-                            events_that_killed.push_back(maybe_fire_event);
+            std::vector<ConstCombatEventPtr> flat_events;
+            for (auto event : combat_info.combat_events) {
+                flat_events.push_back(event);
+                for (auto event2 : event->SubEvents(ALL_EMPIRES)) {
+                    flat_events.push_back(event2);
+                    for (auto event3 : event2->SubEvents(ALL_EMPIRES)) {
+                        flat_events.push_back(event3);
+                        for (auto event4 : event3->SubEvents(ALL_EMPIRES))
+                            flat_events.push_back(event4);
                     }
                 }
-
-                auto maybe_fire_event = std::dynamic_pointer_cast<const WeaponFireEvent>(event);
-                if (maybe_fire_event
-                        && combat_info.destroyed_object_ids.count(maybe_fire_event->target_id))
-                    events_that_killed.push_back(maybe_fire_event);
             }
+
+
+            std::vector<WeaponFireEvent::ConstWeaponFireEventPtr> events_that_killed;
+            for (auto event : flat_events) {
+                auto fire_event = std::dynamic_pointer_cast<const WeaponFireEvent>(event);
+                if (fire_event && combat_info.destroyed_object_ids.count(fire_event->target_id)) {
+                    events_that_killed.push_back(fire_event);
+                    TraceLogger() << "Kill event: " << event->DebugString();
+                }
+            }
+            DebugLogger() << "Combat combat_info system: " << combat_info.system_id  << "  Total Kill Events: " << events_that_killed.size();
+
 
             // If a ship was attacked multiple times during a combat in which it dies, it will get
             // processed multiple times here.  The below set will keep it from being logged as
@@ -2542,6 +2548,10 @@ namespace {
                 int target_design_id = target_ship->DesignID();
                 const std::string& target_species_name = target_ship->SpeciesName();
                 Empire* target_empire = GetEmpire(target_empire_id);
+
+                DebugLogger() << "Attacker " << attacker->Name() << " (id: " << attacker->ID() << "  empire: " << attacker_empire_id << ")  attacks "
+                              << target_ship->Name() << " (id: " << target_ship->ID() << "  empire: "
+                              << (target_empire ? std::to_string(target_empire->EmpireID()) : "(unowned)") << "  species: " << target_species_name << ")";
 
                 std::map<int, int>::iterator map_it;
                 std::map<std::string, int>::iterator species_it;
