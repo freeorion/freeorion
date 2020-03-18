@@ -1731,10 +1731,7 @@ private:
             return;
 
         std::string current_column_type = GetColumnName(column_id);
-
         const auto& available_column_types = AvailableColumnTypes();
-
-        int index = 1;
 
         auto popup = GG::Wnd::Create<CUIPopupMenu>(clicked_button->Left(), clicked_button->Bottom());
 
@@ -1775,7 +1772,6 @@ private:
             else if (entry.first.second == "FLEETS_SUBMENU")
                 fleets_submenu.next_level.push_back(
                     GG::MenuItem(menu_label,  false, check, col_action));
-            ++index;
         }
         popup->AddMenuItem(std::move(meters_submenu));
         popup->AddMenuItem(std::move(planets_submenu));
