@@ -1,13 +1,15 @@
 #include "GraphControl.h"
 
 #include "ClientUI.h"
+#include "CUIControls.h"
+#include "../util/i18n.h"
 
 #include <GG/DrawUtil.h>
 #include <GG/ClrConstants.h>
 
 
 GraphControl::GraphControl() :
-    GG::Control(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::NO_WND_FLAGS)
+    GG::Control(GG::X0, GG::Y0, GG::X1, GG::Y1)
 {
     std::vector<std::pair<double, double>> test_data = {{0.0, 1.0}, {1.0, 3.2}, {4.2, -1}, {0, 0}, {-1, 1}};
     m_data.push_back({test_data, GG::CLR_CYAN});
@@ -130,6 +132,21 @@ void GraphControl::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     GG::Control::SizeMove(ul, lr);
     if (Size() != old_sz)
         DoLayout();
+}
+
+void GraphControl::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+    auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
+
+    auto set_log_scale = [this]()
+    { UseLogScale(true); };
+
+    auto set_linear_scale = [this]()
+    { UseLogScale(false); };
+
+    popup->AddMenuItem(GG::MenuItem(UserString("USE_LINEAR_SCALE"), false, !m_log_scale, set_linear_scale));
+    popup->AddMenuItem(GG::MenuItem(UserString("USE_LOG_SCALE"), false, m_log_scale, set_log_scale));
+
+    popup->Run();
 }
 
 void GraphControl::Render() {

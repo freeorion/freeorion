@@ -4795,6 +4795,13 @@ Suitability is determined by distance from the preferred type of [[encyclopedia 
 ENC_GRAPH
 [Game - Graphs]
 
+USE_LINEAR_SCALE
+Linear Scale
+
+USE_LOG_SCALE
+Logarithmic Scale
+
+
 ENC_GALAXY_SETUP
 [Game - Galaxy]
 

@@ -14,6 +14,7 @@ public:
 
     //! \name Mutators //@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+    void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
 
     void Render() override;
 
