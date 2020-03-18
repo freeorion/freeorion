@@ -15,6 +15,8 @@ GraphControl::GraphControl() :
     test_data = {{1.0, 1.0}, {2.0, 3.2}, {3.2, -1}, {4, 0}, {5, 1}};
     m_data.push_back({test_data, GG::CLR_YELLOW});
 
+    m_log_scale = false;
+
     AutoSetRange();
 }
 
@@ -116,6 +118,13 @@ void GraphControl::ShowScale(bool show/* = true*/) {
         DoLayout();
 }
 
+void GraphControl::UseLogScale(bool log/* = true*/) {
+    bool old_log_scale = m_log_scale;
+    m_log_scale = log;
+    if (log != old_log_scale)
+        DoLayout();
+}
+
 void GraphControl::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     GG::Pt old_sz = Size();
     GG::Control::SizeMove(ul, lr);
@@ -176,44 +185,59 @@ void GraphControl::DoLayout() {
     const int PAD = 1;
     const int WIDTH = Value(Width()) - 2*PAD;
     const int HEIGHT = Value(Height()) - 2*PAD;
-
-    double x_range = m_x_max - m_x_min;
-    double y_range = m_y_max - m_y_min;
-
     m_vert_buf.clear();
     m_colour_buf.clear();
 
+    double shown_x_max = m_x_max;
+    double shown_x_min = m_x_min;
+    double x_range = m_x_max - m_x_min;
 
-    for (const std::pair<std::vector<std::pair<double, double>>, GG::Clr>& curve : m_data) {
-        const std::vector<std::pair<double, double>>& curve_pts = curve.first;
+    double shown_y_max = m_y_max;
+    double shown_y_min = m_y_min;
+    if (m_log_scale) {
+        // force log scale to start at 0
+        shown_y_min = 0.0;
+        // take larger of abs of signed min and max y values as max of range, or at least miminum 0 = log10(1.0)
+        shown_y_max = log10(std::max(1.0, std::max(std::abs(m_y_max), std::abs(m_y_min))));
+    }
+    double y_range = shown_y_max - shown_y_min;
+
+
+    for (auto& curve : m_data) {
+        auto curve_pts = curve.first;
         if (curve_pts.empty())
             continue;
+        if (m_log_scale) {
+            for (auto& pt : curve_pts)
+                pt.second = std::log10(std::max(1.0, std::abs(pt.second)));   // ignore sign of points, trunscate log scale at minimum 0 = log10(1.0)
+        }
 
-        GG::Clr curve_colour = curve.second;
-        double curve_x, curve_y;
-        float screen_x, screen_y;
+        const auto& curve_colour = curve.second;
 
         // pairs of n and n+1 point, starting with first-second, to the second-last-last
-        auto curve_it = curve_pts.begin();
-        for (; curve_it != curve_pts.end(); ++curve_it) {
+        for (auto curve_it = curve_pts.begin(); curve_it != curve_pts.end(); ++curve_it) {
             auto next_it = curve_it;
             ++next_it;
             if (next_it == curve_pts.end())
                 break;
 
-            curve_x = curve_it->first;
-            screen_x = static_cast<float>((curve_x - m_x_min) * WIDTH / x_range);
-            curve_y = curve_it->second;
-            screen_y = static_cast<float>((curve_y - m_y_min) * HEIGHT / y_range);
-            m_vert_buf.store(screen_x, -screen_y);  // OpenGL is positive down / negative up
-            m_colour_buf.store(curve_colour);
+            {
+                const auto& curve_x = curve_it->first;
+                const auto& screen_x = static_cast<float>((curve_x - shown_x_min) * WIDTH / x_range);
+                const auto& curve_y = curve_it->second;
+                const auto& screen_y = static_cast<float>((curve_y - shown_y_min) * HEIGHT / y_range);
+                m_vert_buf.store(screen_x, -screen_y);  // OpenGL is positive down / negative up
+                m_colour_buf.store(curve_colour);
+            }
 
-            curve_x = next_it->first;
-            screen_x = static_cast<float>((curve_x - m_x_min) * WIDTH / x_range);
-            curve_y = next_it->second;
-            screen_y = static_cast<float>((curve_y - m_y_min) * HEIGHT / y_range);
-            m_vert_buf.store(screen_x, -screen_y);  // OpenGL is positive down / negative up
-            m_colour_buf.store(curve_colour);
+            {
+                const auto& curve_x = next_it->first;
+                const auto& screen_x = static_cast<float>((curve_x - shown_x_min) * WIDTH / x_range);
+                const auto& curve_y = next_it->second;
+                const auto& screen_y = static_cast<float>((curve_y - shown_y_min) * HEIGHT / y_range);
+                m_vert_buf.store(screen_x, -screen_y);  // OpenGL is positive down / negative up
+                m_colour_buf.store(curve_colour);
+            }
         }
     }
 

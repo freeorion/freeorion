@@ -30,6 +30,7 @@ public:
     void ShowPoints(bool show = true);
     void ShowLines(bool show = true);
     void ShowScale(bool show = true);
+    void UseLogScale(bool log = true);
     //@}
 
 private:
@@ -38,6 +39,7 @@ private:
     bool    m_show_points = true;
     bool    m_show_lines = true;
     bool    m_show_scale = true;
+    bool    m_log_scale = true;
     double  m_x_min = 0.0f;
     double  m_x_max = 1.0f;
     double  m_y_min = 0.0f;
