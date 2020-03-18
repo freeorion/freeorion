@@ -7,19 +7,7 @@
 
 
 GraphControl::GraphControl() :
-    GG::Control(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::NO_WND_FLAGS),
-    m_show_points(true),
-    m_show_lines(true),
-    m_show_scale(true),
-    m_x_min(0.0),
-    m_x_max(0.0),
-    m_y_min(1.0),
-    m_y_max(1.0),
-    m_data(),
-    m_vert_buf(),
-    m_colour_buf(),
-    m_x_scale_ticks(),
-    m_y_scale_ticks()
+    GG::Control(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::NO_WND_FLAGS)
 {
     std::vector<std::pair<double, double>> test_data = {{0.0, 1.0}, {1.0, 3.2}, {4.2, -1}, {0, 0}, {-1, 1}};
     m_data.push_back({test_data, GG::CLR_CYAN});
@@ -118,6 +106,13 @@ void GraphControl::ShowLines(bool show/* = true*/) {
     bool old_show_lines = m_show_lines;
     m_show_lines = show;
     if (show != old_show_lines)
+        DoLayout();
+}
+
+void GraphControl::ShowScale(bool show/* = true*/) {
+    bool old_show_scale = m_show_scale;
+    m_show_scale = show;
+    if (show != old_show_scale)
         DoLayout();
 }
 

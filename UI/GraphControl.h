@@ -17,26 +17,31 @@ public:
 
     void Render() override;
 
-    void            AddSeries(const std::vector<std::pair<double, double>>& data, const GG::Clr& clr);
-    void            Clear();
+    void AddSeries(const std::vector<std::pair<double, double>>& data, const GG::Clr& clr);
+    void Clear();
 
-    void            SetXMin(double x_min);
-    void            SetYMin(double y_min);
-    void            SetXMax(double x_max);
-    void            SetYMax(double y_max);
-    void            SetRange(double x1, double x2, double y1, double y2);
-    void            AutoSetRange();
+    void SetXMin(double x_min);
+    void SetYMin(double y_min);
+    void SetXMax(double x_max);
+    void SetYMax(double y_max);
+    void SetRange(double x1, double x2, double y1, double y2);
+    void AutoSetRange();
 
-    void            ShowPoints(bool show = true);
-    void            ShowLines(bool show = true);
-    void            ShowScale(bool show = true);
+    void ShowPoints(bool show = true);
+    void ShowLines(bool show = true);
+    void ShowScale(bool show = true);
     //@}
 
 private:
-    void            DoLayout();
+    void DoLayout();
 
-    bool    m_show_points, m_show_lines, m_show_scale;
-    double  m_x_min, m_x_max, m_y_min, m_y_max;
+    bool    m_show_points = true;
+    bool    m_show_lines = true;
+    bool    m_show_scale = true;
+    double  m_x_min = 0.0f;
+    double  m_x_max = 1.0f;
+    double  m_y_min = 0.0f;
+    double  m_y_max = 1.0f;
     std::vector<std::pair<std::vector<std::pair<double, double>>, GG::Clr>> m_data;
     GG::GL2DVertexBuffer    m_vert_buf;
     GG::GLRGBAColorBuffer   m_colour_buf;
