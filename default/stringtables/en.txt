@@ -4801,6 +4801,18 @@ Linear Scale
 USE_LOG_SCALE
 Logarithmic Scale
 
+SHOW_SCALE
+Show Scale
+
+HIDE_SCALE
+Hide Scale
+
+SHOW_LINES
+Plot Lines
+
+SHOW_POINTS
+Plot Points
+
 
 ENC_GALAXY_SETUP
 [Game - Galaxy]

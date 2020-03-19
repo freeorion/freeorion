@@ -142,8 +142,24 @@ void GraphControl::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     popup->AddMenuItem(GG::MenuItem(UserString("USE_LINEAR_SCALE"), false, !m_log_scale, set_linear_scale));
     popup->AddMenuItem(GG::MenuItem(UserString("USE_LOG_SCALE"), false, m_log_scale, set_log_scale));
 
-    // todo: commands to show lines or points
-    // todo: commands to show scale lines
+    auto show_scale = [this]()
+    { ShowScale(true); };
+    auto hide_scale = [this]()
+    { ShowScale(false); };
+    popup->AddMenuItem(GG::MenuItem(UserString("SHOW_SCALE"), false, m_show_scale, show_scale));
+    popup->AddMenuItem(GG::MenuItem(UserString("HIDE_SCALE"), false, !m_show_scale, hide_scale));
+
+    auto show_lines = [this]() {
+        ShowLines(true);
+        ShowPoints(false);
+    };
+    auto show_points = [this]() {
+        ShowLines(false);
+        ShowPoints(true);
+    };
+    popup->AddMenuItem(GG::MenuItem(UserString("SHOW_LINES"), false, m_show_lines, show_lines));
+    popup->AddMenuItem(GG::MenuItem(UserString("SHOW_POINTS"), false, m_show_points, show_points));
+
 
     popup->Run();
 }
