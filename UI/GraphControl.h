@@ -32,6 +32,7 @@ public:
     void ShowLines(bool show = true);
     void ShowScale(bool show = true);
     void UseLogScale(bool log = true);
+    void ScaleToZero(bool zero = true);
     //@}
 
 private:
@@ -41,11 +42,14 @@ private:
     bool    m_show_lines = true;
     bool    m_show_scale = true;
     bool    m_log_scale = false;
+    bool    m_zero_in_range = false;
+
     double  m_x_min = 0.0f;
     double  m_x_max = 1.0f;
     double  m_y_min = 0.0f;
     double  m_y_max = 1.0f;
     std::vector<std::pair<std::vector<std::pair<double, double>>, GG::Clr>> m_data;
+
     GG::GL2DVertexBuffer    m_vert_buf;
     GG::GLRGBAColorBuffer   m_colour_buf;
     std::map<GG::Y, double> m_y_scale_ticks;

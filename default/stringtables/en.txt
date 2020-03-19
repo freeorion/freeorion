@@ -4813,6 +4813,12 @@ Plot Lines
 SHOW_POINTS
 Plot Points
 
+SCALE_TO_ZERO
+Scale to Zero
+
+SCALE_FREE
+Scale Free
+
 
 ENC_GALAXY_SETUP
 [Game - Galaxy]

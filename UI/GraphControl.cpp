@@ -125,6 +125,13 @@ void GraphControl::UseLogScale(bool log/* = true*/) {
         DoLayout();
 }
 
+void GraphControl::ScaleToZero(bool zero/* = true*/) {
+    bool old_zero = m_zero_in_range;
+    m_zero_in_range = zero;
+    if (zero != old_zero)
+        DoLayout();
+}
+
 void GraphControl::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     GG::Pt old_sz = Size();
     GG::Control::SizeMove(ul, lr);
@@ -141,6 +148,13 @@ void GraphControl::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     { UseLogScale(false); };
     popup->AddMenuItem(GG::MenuItem(UserString("USE_LINEAR_SCALE"), false, !m_log_scale, set_linear_scale));
     popup->AddMenuItem(GG::MenuItem(UserString("USE_LOG_SCALE"), false, m_log_scale, set_log_scale));
+
+    auto set_zero_limit = [this]()
+    { ScaleToZero(true); };
+    auto free_limit = [this]()
+    { ScaleToZero(false); };
+    popup->AddMenuItem(GG::MenuItem(UserString("SCALE_TO_ZERO"), false, m_zero_in_range, set_zero_limit));
+    popup->AddMenuItem(GG::MenuItem(UserString("SCALE_FREE"), false, !m_zero_in_range, free_limit));
 
     auto show_scale = [this]()
     { ShowScale(true); };
@@ -159,7 +173,6 @@ void GraphControl::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     };
     popup->AddMenuItem(GG::MenuItem(UserString("SHOW_LINES"), false, m_show_lines, show_lines));
     popup->AddMenuItem(GG::MenuItem(UserString("SHOW_POINTS"), false, m_show_points, show_points));
-
 
     popup->Run();
 }
@@ -251,6 +264,11 @@ void GraphControl::DoLayout() {
         // plot from or to 0 ?
         double effective_max_val = m_y_max;// > 0.0 ? m_y_max : 0.0;
         double effective_min_val = m_y_min;// > 0.0 ? 0.0 : m_y_min;
+        if (m_zero_in_range) {
+            effective_max_val = m_y_max > 0.0 ? m_y_max : 0.0;
+            effective_min_val = m_y_min > 0.0 ? 0.0 : m_y_min;
+        }
+
         // pick step between scale lines based on magnitude of range and next bigger round number
         double effective_range = std::abs(effective_max_val - effective_min_val);
         double pow10_below = std::round(std::pow(10.0, std::floor(std::log10(effective_range))));
@@ -270,7 +288,7 @@ void GraphControl::DoLayout() {
 
     // plot horizontal scale marker lines
     if (m_show_scale) {
-        for (double line_y = shown_y_min + step; line_y < shown_y_max; line_y = line_y + step) {
+        for (double line_y = shown_y_min + step; line_y <= shown_y_max; line_y = line_y + step) {
             const auto& screen_y = static_cast<float>((line_y - shown_y_min) * HEIGHT / y_range);
             m_vert_buf.store(GG::X1, -screen_y);    // OpenGL is positive down / negative up
             m_colour_buf.store(GG::LightColor(ClientUI::WndColor()));
