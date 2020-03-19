@@ -40,7 +40,7 @@ private:
     bool    m_show_points = true;
     bool    m_show_lines = true;
     bool    m_show_scale = true;
-    bool    m_log_scale = true;
+    bool    m_log_scale = false;
     double  m_x_min = 0.0f;
     double  m_x_max = 1.0f;
     double  m_y_min = 0.0f;
@@ -48,8 +48,7 @@ private:
     std::vector<std::pair<std::vector<std::pair<double, double>>, GG::Clr>> m_data;
     GG::GL2DVertexBuffer    m_vert_buf;
     GG::GLRGBAColorBuffer   m_colour_buf;
-    std::map<int, double>   m_x_scale_ticks;
-    std::map<int, double>   m_y_scale_ticks;
+    std::map<GG::Y, double> m_y_scale_ticks;
 };
 
 #endif

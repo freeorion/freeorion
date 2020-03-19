@@ -11,13 +11,11 @@
 GraphControl::GraphControl() :
     GG::Control(GG::X0, GG::Y0, GG::X1, GG::Y1)
 {
-    std::vector<std::pair<double, double>> test_data = {{0.0, 1.0}, {1.0, 3.2}, {4.2, -1}, {0, 0}, {-1, 1}};
-    m_data.push_back({test_data, GG::CLR_CYAN});
+    //std::vector<std::pair<double, double>> test_data = {{0.0, 1.0}, {1.0, 3.2}, {4.2, -1}, {0, 0}, {-1, 1}};
+    //m_data.push_back({test_data, GG::CLR_CYAN});
 
-    test_data = {{1.0, 1.0}, {2.0, 3.2}, {3.2, -1}, {4, 0}, {5, 1}};
-    m_data.push_back({test_data, GG::CLR_YELLOW});
-
-    m_log_scale = false;
+    //test_data = {{1.0, 1.0}, {2.0, 3.2}, {3.2, -1}, {4, 0}, {5, 1}};
+    //m_data.push_back({test_data, GG::CLR_YELLOW});
 
     AutoSetRange();
 }
@@ -139,12 +137,13 @@ void GraphControl::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
 
     auto set_log_scale = [this]()
     { UseLogScale(true); };
-
     auto set_linear_scale = [this]()
     { UseLogScale(false); };
-
     popup->AddMenuItem(GG::MenuItem(UserString("USE_LINEAR_SCALE"), false, !m_log_scale, set_linear_scale));
     popup->AddMenuItem(GG::MenuItem(UserString("USE_LOG_SCALE"), false, m_log_scale, set_log_scale));
+
+    // todo: commands to show lines or points
+    // todo: commands to show scale lines
 
     popup->Run();
 }
@@ -165,6 +164,14 @@ void GraphControl::Render() {
 
     GG::BeginScissorClipping(ul, lr);
 
+    if (m_show_scale && !m_y_scale_ticks.empty()) {
+        glEnable(GL_TEXTURE_2D);
+        auto font = ClientUI::GetFont();
+        glColor(ClientUI::TextColor());
+        for (auto label : m_y_scale_ticks)
+            font->RenderText({ul.x + GG::X1, lr.y + label.first}, boost::lexical_cast<std::string>(label.second));
+    }
+
     glPushMatrix();
     glTranslatef(Value(ul.x), Value(lr.y), 0.0f);
 
@@ -183,6 +190,7 @@ void GraphControl::Render() {
 
     if (m_show_lines)
         glDrawArrays(GL_LINES, 0, m_vert_buf.size());
+
     if (m_show_points)
         glDrawArrays(GL_POINTS, 0, m_vert_buf.size());
 
@@ -204,6 +212,7 @@ void GraphControl::DoLayout() {
     const int HEIGHT = Value(Height()) - 2*PAD;
     m_vert_buf.clear();
     m_colour_buf.clear();
+    m_y_scale_ticks.clear();
 
     double shown_x_max = m_x_max;
     double shown_x_min = m_x_min;
@@ -212,14 +221,30 @@ void GraphControl::DoLayout() {
     double shown_y_max = m_y_max;
     double shown_y_min = m_y_min;
     if (m_log_scale) {
-        // force log scale to start at 0
-        shown_y_min = 0.0;
+        double effective_max_val = std::max(1.0, std::max(std::abs(m_y_max), std::abs(m_y_min)));
+        double effective_min_val = std::max(1.0, std::min(std::abs(m_y_max), std::abs(m_y_min)));
+        // force log scale to start at 0.0 or larger
+        shown_y_min = std::max(0.0, std::floor(std::log10(effective_min_val)));
         // take larger of abs of signed min and max y values as max of range, or at least miminum 0 = log10(1.0)
-        shown_y_max = log10(std::max(1.0, std::max(std::abs(m_y_max), std::abs(m_y_min))));
+        shown_y_max = std::ceil(std::log10(effective_max_val));
     }
     double y_range = shown_y_max - shown_y_min;
 
 
+    // plot horizontal scale marker lines
+    if (m_log_scale && m_show_scale) {
+        for (double line_y = shown_y_min + 1.0; line_y < shown_y_max; line_y = line_y + 1.0) {
+            const auto& screen_y = static_cast<float>((line_y - shown_y_min) * HEIGHT / y_range);
+            m_vert_buf.store(GG::X1, -screen_y);    // OpenGL is positive down / negative up
+            m_colour_buf.store(GG::LightColor(ClientUI::WndColor()));
+            m_vert_buf.store(GG::X(WIDTH - 1), -screen_y);
+            m_colour_buf.store(GG::LightColor(ClientUI::WndColor()));
+
+            m_y_scale_ticks[GG::Y(-screen_y)] = std::pow(10.0, std::round(line_y));
+        }
+    }
+
+    // plot lines connecting successive data points
     for (auto& curve : m_data) {
         auto curve_pts = curve.first;
         if (curve_pts.empty())
