@@ -594,11 +594,7 @@ namespace {
 class MapWnd::MapScaleLine : public GG::Control {
 public:
     MapScaleLine(GG::X x, GG::Y y, GG::X w, GG::Y h) :
-        GG::Control(x, y, w, h, GG::ONTOP),
-        m_scale_factor(1.0),
-        m_line_length(GG::X1),
-        m_label(nullptr),
-        m_enabled(false)
+        GG::Control(x, y, w, h, GG::ONTOP)
     {
         m_label = GG::Wnd::Create<GG::TextControl>(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(), ClientUI::TextColor());
     }
@@ -773,10 +769,10 @@ private:
             DetachChild(m_label);
     }
 
-    double              m_scale_factor;
-    GG::X               m_line_length;
+    double                              m_scale_factor = 1.0;
+    GG::X                               m_line_length = GG::X1;
     std::shared_ptr<GG::TextControl>    m_label;
-    bool                m_enabled;
+    bool                                m_enabled = false;
 };
 
 ////////////////////////////////////////////////////////////
