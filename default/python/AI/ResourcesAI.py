@@ -558,7 +558,7 @@ def set_planet_industry_and_research_foci(focus_manager, priority_ratio):
         cumulative_rp += future_rp
 
     # tally max Industry
-    for pid, pinfo in focus_manager.raw_planet_info.items():
+    for pid, pinfo in list(focus_manager.raw_planet_info.items()):
         i_pp, i_rp = pinfo.possible_output[INDUSTRY]
         cumulative_pp += i_pp
         cumulative_rp += i_rp
