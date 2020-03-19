@@ -214,12 +214,15 @@ void GraphControl::DoLayout() {
     m_colour_buf.clear();
     m_y_scale_ticks.clear();
 
-    double shown_x_max = m_x_max;
-    double shown_x_min = m_x_min;
-    double x_range = m_x_max - m_x_min;
+    // X range to plot
+    double shown_x_max = m_x_max + 1;
+    double shown_x_min = m_x_min - 1;
+    double x_range = shown_x_max - shown_x_min;
 
+    // Y range to plot
     double shown_y_max = m_y_max;
     double shown_y_min = m_y_min;
+    double step = (shown_y_max - shown_y_min) / 10.0;
     if (m_log_scale) {
         double effective_max_val = std::max(1.0, std::max(std::abs(m_y_max), std::abs(m_y_min)));
         double effective_min_val = std::max(1.0, std::min(std::abs(m_y_max), std::abs(m_y_min)));
@@ -227,20 +230,41 @@ void GraphControl::DoLayout() {
         shown_y_min = std::max(0.0, std::floor(std::log10(effective_min_val)));
         // take larger of abs of signed min and max y values as max of range, or at least miminum 0 = log10(1.0)
         shown_y_max = std::ceil(std::log10(effective_max_val));
+        step = 1.0;
+    } else {
+        // plot from or to 0 ?
+        double effective_max_val = m_y_max;// > 0.0 ? m_y_max : 0.0;
+        double effective_min_val = m_y_min;// > 0.0 ? 0.0 : m_y_min;
+        // pick step between scale lines based on magnitude of range and next bigger round number
+        double effective_range = std::abs(effective_max_val - effective_min_val);
+        double pow10_below = std::round(std::pow(10.0, std::floor(std::log10(effective_range))));
+        double ratio_above_pow10 = effective_range / pow10_below;
+        if (ratio_above_pow10 <= 2)
+            step = 0.2 * pow10_below;   // eg. effective_range is 18, pow10_below = 10, ratio_above_pow10 = 1.8, step = 2
+        else if (ratio_above_pow10 <= 5)
+            step = 0.5 * pow10_below;   // eg. effective_range is 32, pow10_below = 10, ratio_above_pow10 = 3.2, step = 5
+        else
+            step = pow10_below;         // eg. effective_range is 87, pow10_below = 10, ratio_above_pow10 = 8.7, step = 10
+        // round min down and max up to nearest multiple of step
+        shown_y_min = std::round(step * std::floor(effective_min_val / step));
+        shown_y_max = std::round(step * std::ceil(effective_max_val / step));
     }
     double y_range = shown_y_max - shown_y_min;
 
 
     // plot horizontal scale marker lines
-    if (m_log_scale && m_show_scale) {
-        for (double line_y = shown_y_min + 1.0; line_y < shown_y_max; line_y = line_y + 1.0) {
+    if (m_show_scale) {
+        for (double line_y = shown_y_min + step; line_y < shown_y_max; line_y = line_y + step) {
             const auto& screen_y = static_cast<float>((line_y - shown_y_min) * HEIGHT / y_range);
             m_vert_buf.store(GG::X1, -screen_y);    // OpenGL is positive down / negative up
             m_colour_buf.store(GG::LightColor(ClientUI::WndColor()));
             m_vert_buf.store(GG::X(WIDTH - 1), -screen_y);
             m_colour_buf.store(GG::LightColor(ClientUI::WndColor()));
 
-            m_y_scale_ticks[GG::Y(-screen_y)] = std::pow(10.0, std::round(line_y));
+            if (m_log_scale)
+                m_y_scale_ticks[GG::Y(-screen_y)] = std::pow(10.0, std::round(line_y));
+            else
+                m_y_scale_ticks[GG::Y(-screen_y)] = line_y;
         }
     }
 
