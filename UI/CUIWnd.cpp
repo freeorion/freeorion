@@ -143,10 +143,10 @@ const GG::X CUIWnd::BORDER_LEFT(5);
 const GG::X CUIWnd::BORDER_RIGHT(5);
 const GG::Y CUIWnd::BORDER_BOTTOM(5);
 const int CUIWnd::OUTER_EDGE_ANGLE_OFFSET = 8;
-const int CUIWnd::INNER_BORDER_ANGLE_OFFSET = 11;
+const int CUIWnd::INNER_BORDER_ANGLE_OFFSET = 15;
 const int CUIWnd::TITLE_OFFSET = 3;
-const int CUIWnd::RESIZE_HASHMARK1_OFFSET = 7;
-const int CUIWnd::RESIZE_HASHMARK2_OFFSET = 3;
+const int CUIWnd::RESIZE_HASHMARK1_OFFSET = 9;
+const int CUIWnd::RESIZE_HASHMARK2_OFFSET = 4;
 
 CUIWnd::CUIWnd(const std::string& wnd_name,
                GG::X x, GG::Y y,
