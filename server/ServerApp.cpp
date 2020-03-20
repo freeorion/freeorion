@@ -2830,18 +2830,19 @@ namespace {
       * ground combat resolution */
     void HandleInvasion() {
         std::map<int, std::map<int, double>> planet_empire_troops;  // map from planet ID to map from empire ID to pair consisting of set of ship IDs and amount of troops empires have at planet
+        std::vector<std::shared_ptr<Ship>> invade_ships;
 
-        // assemble invasion forces from each invasion ship
+        // collect ships that are invading and the troops they carry
         for (auto& ship : Objects().all<Ship>()) {
             if (!ship->HasTroops())     // can't invade without troops
                 continue;
             if (ship->SystemID() == INVALID_OBJECT_ID)
                 continue;
-
-            int invade_planet_id = ship->OrderedInvadePlanet();
-            if (invade_planet_id == INVALID_OBJECT_ID)
+            if (ship->OrderedInvadePlanet() == INVALID_OBJECT_ID)
                 continue;
-            auto planet = Objects().get<Planet>(invade_planet_id);
+            invade_ships.push_back(ship);
+
+            auto planet = Objects().get<Planet>(ship->OrderedInvadePlanet());
             if (!planet)
                 continue;
             planet->ResetIsAboutToBeInvaded();
@@ -2852,13 +2853,20 @@ namespace {
                 continue;
 
             // how many troops are invading?
-            planet_empire_troops[invade_planet_id][ship->Owner()] += ship->TroopCapacity();
+            planet_empire_troops[ship->OrderedInvadePlanet()][ship->Owner()] += ship->TroopCapacity();
 
+            DebugLogger() << "HandleInvasion has accounted for "<< ship->TroopCapacity()
+                          << " troops to invade " << planet->Name()
+                          << " and is destroying ship " << ship->ID()
+                          << " named " << ship->Name();
+        }
+
+        // delete ships that invaded something
+        for (auto& ship : invade_ships) {
             auto system = Objects().get<System>(ship->SystemID());
 
             // destroy invading ships and their fleets if now empty
-            auto fleet = Objects().get<Fleet>(ship->FleetID());
-            if (fleet) {
+            if (auto fleet = Objects().get<Fleet>(ship->FleetID())) {
                 fleet->RemoveShips({ship->ID()});
                 if (fleet->Empty()) {
                     if (system)
@@ -2868,11 +2876,6 @@ namespace {
             }
             if (system)
                 system->Remove(ship->ID());
-
-            DebugLogger() << "HandleInvasion has accounted for "<< ship->TroopCapacity()
-                          << " troops to invade " << planet->Name()
-                          << " and is destroying ship " << ship->ID()
-                          << " named " << ship->Name();
 
             GetUniverse().RecursiveDestroy(ship->ID()); // does not count as ship loss for empire/species
         }
