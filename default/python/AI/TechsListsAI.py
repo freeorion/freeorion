@@ -114,7 +114,7 @@ class TechGroup1(TechGroup):
             "PRO_ROBOTIC_PROD",
         ])
         self.weapon.extend([
-            "SHP_WEAPON_GAMMA_BURST_1",
+            "SHP_WEAPON_ARC_DISRUPTOR_1",
             "SHP_WEAPON_1_2",
             "SHP_WEAPON_1_3",
             "SHP_FIGHTERS_1",

@@ -1,6 +1,6 @@
 Part
-    name = "SR_GAMMA_BURST"
-    description = "SR_GAMMA_BURST_DESC"
+    name = "SR_ARC_DISRUPTOR"
+    description = "SR_ARC_DISRUPTOR_DESC"
     class = ShortRange
     damage = 2
     shots = 3
@@ -11,7 +11,7 @@ Part
     tags = [ "PEDIA_PC_DIRECT_WEAPON" ]
     location = OwnedBy empire = Source.Owner
     effectsgroups =
-        [[WEAPON_BASE_DEFAULT_EFFECTS(SR_GAMMA_BURST)]]
+        [[WEAPON_BASE_DEFAULT_EFFECTS(SR_ARC_DISRUPTOR)]]
     icon = "icons/ship_parts/pulse-laser.png"
 
 #include "shortrange.macros"
