@@ -3090,18 +3090,14 @@ namespace {
 
     /** Destroys suitable objects that have been ordered scrapped.*/
     void HandleScrapping() {
-        //// debug
-        //for (auto& ship : Objects().find<Ship>()) {
-        //    if (!ship->OrderedScrapped())
-        //        continue;
-        //    DebugLogger() << "... ship: " << ship->ID() << " ordered scrapped";
-        //}
-        //// end debug
+        std::vector<std::shared_ptr<Ship>> scrapped_ships;
 
         for (auto& ship : Objects().all<Ship>()) {
-            if (!ship->OrderedScrapped())
-                continue;
+            if (ship->OrderedScrapped())
+                scrapped_ships.push_back(ship);
+        }
 
+        for (auto& ship : scrapped_ships) {
             DebugLogger() << "... ship: " << ship->ID() << " ordered scrapped";
 
             auto system = Objects().get<System>(ship->SystemID());
@@ -3138,10 +3134,14 @@ namespace {
             GetUniverse().Destroy(ship->ID());
         }
 
-        for (auto& building : Objects().all<Building>()) {
-            if (!building->OrderedScrapped())
-                continue;
+        std::vector<std::shared_ptr<Building>> scrapped_buildings;
 
+        for (auto& building : Objects().all<Building>()) {
+            if (building->OrderedScrapped())
+                scrapped_buildings.push_back(building);
+        }
+
+        for (auto& building : scrapped_buildings) {
             if (auto planet = Objects().get<Planet>(building->PlanetID()))
                 planet->RemoveBuilding(building->ID());
 
@@ -3178,17 +3178,20 @@ namespace {
 
     /** Causes ResourceCenters (Planets) to update their focus records */
     void UpdateResourceCenterFocusHistoryInfo() {
-        for (auto& planet : GetUniverse().Objects().all<Planet>()) {
+        for (auto& planet : GetUniverse().Objects().all<Planet>())
             planet->UpdateFocusHistory();
-        }
     }
 
     /** Deletes empty fleets. */
     void CleanEmptyFleets() {
-        for (auto& fleet : Objects().all<Fleet>()) {
-            if (!fleet->Empty())
-                continue;
+        std::vector<std::shared_ptr<Fleet>> empty_fleets;
 
+        for (auto& fleet : Objects().all<Fleet>()) {
+            if (fleet->Empty())
+                empty_fleets.push_back(fleet);
+        }
+
+        for (auto& fleet : empty_fleets) {
             auto sys = Objects().get<System>(fleet->SystemID());
             if (sys)
                 sys->Remove(fleet->ID());

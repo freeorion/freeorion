@@ -2817,12 +2817,15 @@ std::set<int> Universe::RecursiveDestroy(int object_id) {
         }
 
         // remove fleets / ships moving along destroyed starlane
+        std::vector<std::shared_ptr<Fleet>> fleets_to_destroy;
         for (auto& fleet : m_objects.all<Fleet>()) {
             if (fleet->SystemID() == INVALID_OBJECT_ID && (
                 fleet->NextSystemID() == this_sys_id ||
                 fleet->PreviousSystemID() == this_sys_id))
-            { RecursiveDestroy(fleet->ID()); }
+            { fleets_to_destroy.push_back(fleet); }
         }
+        for (auto& fleet : fleets_to_destroy)
+            RecursiveDestroy(fleet->ID());
 
         // then destroy system itself
         Destroy(object_id);
