@@ -228,7 +228,7 @@ std::shared_ptr<GG::Texture> ClientUI::MeterIcon(MeterType meter_type) {
     case METER_SPEED:
         icon_filename = "speed.png";        break;
     default:
-        break;
+        return ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "missing.png", true); break;
     }
     return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / icon_filename, true);
 }
