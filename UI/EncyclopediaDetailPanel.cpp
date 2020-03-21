@@ -146,29 +146,13 @@ namespace {
         return dir_names;
     }
 
-    /** Find Encyclopedia article with given name
-     * @param[in] name name entry of the article
-     */
-    const EncyclopediaArticle& GetPediaArticle(const std::string& name) {
-        const auto& articles = GetEncyclopedia().Articles();
-        for (const auto& entry : articles) {
-            for (const EncyclopediaArticle& article : entry.second) {
-                if (article.name == name) {
-                    return article;
-                }
-            }
-        }
-        return GetEncyclopedia().empty_article;
-    }
-
-    /** Returns map from (Human-readable and thus sorted article category) to
+    /** Returns map from (Human-readable and thus sorted article name) to
         pair of (article link tag text, stringtable key for article category or
         subcategorization of it). Category is something like "ENC_TECH" and
-        subcategorization is something like a tech category. */
-    void GetSortedPediaDirEntires(const std::string& dir_name,
-                                  std::multimap<std::string,
-                                                std::pair<std::string,
-                                                          std::string>>& sorted_entries_list)
+        subcategorization is something like a tech category (eg. growth). */
+    void GetSortedPediaDirEntires(
+        const std::string& dir_name,
+        std::multimap<std::string, std::pair<std::string, std::string>>& sorted_entries_list)
     {
         ScopedTimer subdir_timer("GetSortedPediaDirEntires(" + dir_name + ")",
                                  true, std::chrono::milliseconds(20));
@@ -195,7 +179,7 @@ namespace {
 
             for (const auto& entry : encyclopedia.Articles()) {
                 // Do not add sub-categories
-                const EncyclopediaArticle& article = GetPediaArticle(entry.first);
+                const EncyclopediaArticle& article = encyclopedia.GetArticleByKey(entry.first);
                 // No article found or specifically a top-level category
                 if (!article.category.empty() && article.category != "ENC_INDEX")
                     continue;
@@ -530,7 +514,7 @@ namespace {
                     dir_entries[UserString(entry.first)] =
                         std::make_pair(VarText::FIELD_TYPE_TAG, entry.first);
 
-            // Add sorted entries
+            // Add sorted entries, keyed by human-readable article name, containing (tag, article stringtable key)
             for (const auto& entry : dir_entries) {
                 sorted_entries_list.insert({entry.first,
                                             {LinkTaggedText(entry.second.first, entry.second.second) + "\n",
@@ -559,7 +543,7 @@ namespace {
         std::multimap<std::string, std::pair<std::string, std::string>> sorted_entries_list;
         GetSortedPediaDirEntires(dir_name, sorted_entries_list);
 
-        // add sorted entries to page text
+        // add sorted entries linktext representation to page text
         for (const auto& entry : sorted_entries_list)
         { retval += entry.second.first; }
 
@@ -998,160 +982,47 @@ void EncyclopediaDetailPanel::HandleLinkDoubleClick(const std::string& link_type
 }
 
 namespace {
-    std::unordered_map<std::string, std::pair<std::string, std::string>>
+    /** Recursively searches pedia directory \a dir_name for articles and
+      * sub-directories. Returns a map from
+      * (category_str_key, dir_name) to (readable_article_name, link_text) */
+    std::map<std::pair<std::string, std::string>, std::pair<std::string, std::string>>
         GetSubDirs(const std::string& dir_name, int depth = 0)
     {
         ScopedTimer subdir_timer("GetSubDirs(" + dir_name + ", " + std::to_string(depth) + ")",
                                  true, std::chrono::milliseconds(500));
 
         depth++;
-        std::unordered_map<std::string, std::pair<std::string, std::string>> retval;
+        std::map<std::pair<std::string, std::string>, std::pair<std::string, std::string>> retval;
         // safety check to pre-empt potential infinite loop
         if (depth > 50) {
-            WarnLogger() << "Exceeded recursive limit with lookup for pedia"
-                         << " category " << dir_name;
+            WarnLogger() << "Exceeded recursive limit with lookup for pedia category " << dir_name;
             return retval;
         }
 
 
-        std::unordered_map<std::string, std::pair<std::string, std::string>> sub_dirs;
+        // map from (human readable article name) to (article-link-tag-text, article name stringtable key)
         std::multimap<std::string, std::pair<std::string, std::string>> sorted_entries;
         GetSortedPediaDirEntires(dir_name, sorted_entries);
-        for (auto& entry : sorted_entries) {
-            // explicitly exclude textures
-            if (entry.second.second == "ENC_TEXTURES")
-                continue;
-            sub_dirs.emplace(entry.second.second,
-                             std::make_pair(entry.first, entry.second.first));
-        }
 
-        // Add each article for this directory
-        for (auto& article : sub_dirs) {
-            if (article.first == dir_name)
+
+        for (auto& entry : sorted_entries) {
+            const std::string& readable_article_name = entry.first;
+            const std::string& link_text = entry.second.first;
+            const std::string& category_str_key = entry.second.second;
+
+            // explicitly exclude textures and input directory itself
+            if (category_str_key == "ENC_TEXTURES" || category_str_key == dir_name)
                 continue;
-            // If a sub-category, add this article and any nested categories
-            for (const auto& sub_article : GetSubDirs(article.first, depth))
-                retval.emplace(sub_article);
-            retval.emplace(article);
+            retval.emplace(std::make_pair(category_str_key, dir_name), std::make_pair(readable_article_name, link_text));
+            DebugLogger() << "GetSubDirs(" << dir_name << ") storing " << category_str_key << ": " << readable_article_name;
+
+            // recurse into any sub-sub-directories
+            for (auto sub_sub_dir : GetSubDirs(category_str_key, depth))
+                retval.emplace(sub_sub_dir);
         }
 
         return retval;
     }
-}
-
-void EncyclopediaDetailPanel::HandleSearchTextEntered() {
-    // search lists of articles for typed text
-    const std::string& search_text = m_search_edit->Text();
-    if (search_text.empty())
-        return;
-
-    // assemble link text to all pedia entries, indexed by name
-    std::unordered_map<std::string, std::pair<std::string, std::string>>
-        all_pedia_entries_list;
-
-    for (auto&& subdir_name : GetSubDirs("ENC_INDEX"))
-        all_pedia_entries_list.emplace(subdir_name);
-
-    // find distinct words in search text
-    std::set<std::string> words_in_search_text;
-    for (const auto& word_range : GG::GUI::GetGUI()->FindWordsStringIndices(search_text)) {
-        if (word_range.first == word_range.second)
-            continue;
-        std::string word(search_text.begin() + Value(word_range.first), search_text.begin() + Value(word_range.second));
-        if (word.empty())
-            continue;
-        words_in_search_text.insert(word);
-    }
-
-
-    ////
-    // search through all articles for full or partial matches to search query
-    ///
-
-
-    std::multimap<std::string, std::string> exact_match_report;
-    std::multimap<std::string, std::string> word_match_report;
-    std::multimap<std::string, std::string> partial_match_report;
-    std::multimap<std::string, std::string> article_match_report;
-
-    bool search_desc = GetOptionsDB().Get<bool>("ui.pedia.search.articles.enabled");
-
-    for (const auto& entry : all_pedia_entries_list) {
-        // search for exact title matches
-        if (boost::iequals(entry.second.first, search_text)) {
-            exact_match_report.emplace(entry.second);
-            continue;
-        }
-
-        bool listed = false;
-        // search for full word matches in titles
-        for (const std::string& word : words_in_search_text) {
-            if (GG::GUI::GetGUI()->ContainsWord(entry.second.first, word)) {
-                word_match_report.emplace(entry.second);
-                listed = true;
-                break;
-            }
-        }
-        if (listed)
-            continue;
-
-        // search for partial word matches: searched-for words that appear
-        // in the title text, not necessarily as a complete word
-        for (const std::string& word : words_in_search_text) {
-            // reject searches in text for words less than 3 characters
-            if (word.size() < 3)
-                continue;
-            if (boost::icontains(entry.second.first, word)) {
-                partial_match_report.emplace(entry.second);
-                listed = true;
-                break;
-            }
-        }
-        if (listed || !search_desc)
-            continue;
-
-        // search for matches within article text
-        EncyclopediaArticle article_entry = GetPediaArticle(entry.first);
-        if (article_entry.description.empty()) {
-            // NOTE Articles generated through GetRefreshDetailPanelInfo
-            // will not be found, as no article currently exists.
-            TraceLogger() << "No description found: " << entry.first;
-            continue;
-        }
-        if (boost::icontains(UserString(article_entry.description), search_text))
-            article_match_report.emplace(entry.second);
-    }
-
-    // compile list of articles into some dynamically generated search report text
-    std::string match_report = "";
-    if (!exact_match_report.empty()) {
-        match_report += "\n" + UserString("ENC_SEARCH_EXACT_MATCHES") + "\n\n";
-        for (auto&& match : exact_match_report)
-            match_report += match.second;
-    }
-
-    if (!word_match_report.empty()) {
-        match_report += "\n" + UserString("ENC_SEARCH_WORD_MATCHES") + "\n\n";
-        for (auto&& match : word_match_report)
-            match_report += match.second;
-    }
-
-    if (!partial_match_report.empty()) {
-        match_report += "\n" + UserString("ENC_SEARCH_PARTIAL_MATCHES") + "\n\n";
-        for (auto&& match : partial_match_report)
-            match_report += match.second;
-    }
-
-    if (!article_match_report.empty()) {
-        match_report += "\n" + UserString("ENC_SEARCH_ARTICLE_MATCHES") + "\n\n";
-        for (auto&& match : article_match_report)
-            match_report += match.second;
-    }
-
-    if (match_report.empty())
-        match_report = UserString("ENC_SEARCH_NOTHING_FOUND");
-
-    AddItem(TEXT_SEARCH_RESULTS, match_report);
 }
 
 namespace {
@@ -2902,6 +2773,140 @@ namespace {
             // should be handled externally...
         }
     }
+}
+
+void EncyclopediaDetailPanel::HandleSearchTextEntered() {
+    // search lists of articles for typed text
+    const std::string& search_text = m_search_edit->Text();
+    if (search_text.empty())
+        return;
+
+    // find distinct words in search text
+    std::set<std::string> words_in_search_text;
+    for (const auto& word_range : GG::GUI::GetGUI()->FindWordsStringIndices(search_text)) {
+        if (word_range.first == word_range.second)
+            continue;
+        std::string word(search_text.begin() + Value(word_range.first), search_text.begin() + Value(word_range.second));
+        if (word.empty())
+            continue;
+        words_in_search_text.insert(word);
+    }
+
+    if (words_in_search_text.empty())
+        return;
+
+
+    ////
+    // search through all articles for full or partial matches to search query
+    ///
+
+    std::multimap<std::string, std::string> exact_match_report;
+    std::multimap<std::string, std::string> word_match_report;
+    std::multimap<std::string, std::string> partial_match_report;
+    std::multimap<std::string, std::string> article_match_report;
+
+    bool search_desc = GetOptionsDB().Get<bool>("ui.pedia.search.articles.enabled");
+
+    // assemble link text to all pedia entries, indexed by name
+    auto articles_from_index_subdirs = GetSubDirs("ENC_INDEX");
+    for (const auto& entry : articles_from_index_subdirs) {
+        const auto& article_key = entry.first.first;
+        const auto& article_category = entry.first.second;
+        const auto& article_name_link = entry.second;
+        const auto& article_name = entry.second.first;
+
+        // search for exact title matches
+        if (boost::iequals(article_name, search_text)) {
+            exact_match_report.emplace(article_name_link);
+            continue;
+        }
+
+        bool listed = false;
+        // search for full word matches in titles
+        for (const std::string& word : words_in_search_text) {
+            if (GG::GUI::GetGUI()->ContainsWord(article_name, word)) {
+                word_match_report.emplace(article_name_link);
+                listed = true;
+                break;
+            }
+        }
+        if (listed)
+            continue;
+
+        // search for partial word matches: searched-for words that appear
+        // in the title text, not necessarily as a complete word
+        for (const std::string& word : words_in_search_text) {
+            // reject searches in text for words less than 3 characters
+            if (word.size() < 3)
+                continue;
+            if (boost::icontains(article_name, word)) {
+                partial_match_report.emplace(article_name_link);
+                listed = true;
+                break;
+            }
+        }
+        if (listed || !search_desc)
+            continue;
+
+        // search for matches within article text
+        const auto& article_entry = GetEncyclopedia().GetArticleByCategoryAndKey(article_category, article_key);
+        if (!article_entry.description.empty()) {
+            // article present in pedia directly
+            if (boost::icontains(UserString(article_entry.description), search_text))
+                article_match_report.emplace(article_name_link);
+
+        } else {
+            // article not in pedia. may be generated by GetRefreshDetailPanelInfo
+
+            // most of this disregarded in this case, but needs to be passed in...
+            std::shared_ptr<GG::Texture> dummy1, dummy2;
+            int dummyA;
+            float dummyB;
+            std::string dummy3, dummy4, dummy5, dummy6;
+            std::string detailed_description;
+            GG::Clr dummyC;
+            std::weak_ptr<const ShipDesign> dummyD;
+
+            GetRefreshDetailPanelInfo(article_category, article_key,
+                                      dummy3, dummy1, dummy2, dummyA, dummyB, dummy4,
+                                      dummy5, dummy6, detailed_description, dummyC,
+                                      dummyD);
+
+            if (boost::icontains(detailed_description, search_text))
+                article_match_report.emplace(article_name_link);
+        }
+    }
+
+    // compile list of articles into some dynamically generated search report text
+    std::string match_report = "";
+    if (!exact_match_report.empty()) {
+        match_report += "\n" + UserString("ENC_SEARCH_EXACT_MATCHES") + "\n\n";
+        for (auto&& match : exact_match_report)
+            match_report += match.second;
+    }
+
+    if (!word_match_report.empty()) {
+        match_report += "\n" + UserString("ENC_SEARCH_WORD_MATCHES") + "\n\n";
+        for (auto&& match : word_match_report)
+            match_report += match.second;
+    }
+
+    if (!partial_match_report.empty()) {
+        match_report += "\n" + UserString("ENC_SEARCH_PARTIAL_MATCHES") + "\n\n";
+        for (auto&& match : partial_match_report)
+            match_report += match.second;
+    }
+
+    if (!article_match_report.empty()) {
+        match_report += "\n" + UserString("ENC_SEARCH_ARTICLE_MATCHES") + "\n\n";
+        for (auto&& match : article_match_report)
+            match_report += match.second;
+    }
+
+    if (match_report.empty())
+        match_report = UserString("ENC_SEARCH_NOTHING_FOUND");
+
+    AddItem(TEXT_SEARCH_RESULTS, match_report);
 }
 
 void EncyclopediaDetailPanel::Refresh() {
