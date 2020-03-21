@@ -1730,7 +1730,7 @@ OPTIONS_DB_UI_TOOLTIP_LONG_DELAY
 Sets UI tooltip pop-up delay for alternate pop-ups, in ms.
 
 OPTIONS_DB_UI_ENC_SEARCH_ARTICLE
-When searching the pedia, check for matches in article contents.
+When searching the pedia, check for matches in article contents. Search will be slower, but may find more matches.
 
 # Section title for options window logging
 OPTIONS_DB_UI_LOGGER_THRESHOLDS
@@ -2696,6 +2696,9 @@ Really overwrite %1%?
 
 OPTIONS_TITLE
 Options
+
+OPTIONS_PEDIA_SEARCH_ARTICLE_TEXT
+Search Pedia Article Text
 
 OPTIONS_MULTIPLE_FLEET_WNDS
 Multiple fleet windows
@@ -5780,7 +5783,11 @@ Troops
 METER_TROOPS_VALUE_DESC
 '''The term Troops combines all kinds of military forces capable of operating on a planet's surface.
 
-The Troop meter on a planet represents the power of the defending ground forces. The invading force must send a more powerful force (i.e. a higher cumulative number) to conquer a planet. Ships must be built with special parts for carrying troops, and such troops cannot invade if the defending planet has active [[metertype METER_SHIELD]].'''
+The Troop meter on a planet represents the power of the defending ground forces. The invading force must send a more powerful force (i.e. a higher cumulative number) to conquer a planet.
+
+Ships must be built with [[encyclopedia PC_TROOPS]] parts for carrying troops to use for invasion.
+
+Ships cannot invade a planets if it has active [[metertype METER_SHIELD]].'''
 
 METER_REBEL_TROOPS_VALUE_LABEL
 Rebel Troops
@@ -9354,7 +9361,8 @@ PC_TROOPS_DESC
 '''Troop parts increase the [[metertype METER_TROOPS]] on-board, which can be used to invade enemy planets.
 
 To successfully invade a planet, the total number of [[metertype METER_TROOPS]] from all invading ships must exceed the total defending (ties are awarded to the defender).
-An invading ship is destroyed as part of the landing operation (any additional parts on the ship are lost as well).'''
+
+An invading ship is destroyed as part of the landing operation. All parts on the ship are lost with the ship.'''
 
 # Ship part classes
 PC_DETECTION

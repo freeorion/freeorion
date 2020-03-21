@@ -519,6 +519,8 @@ void OptionsWnd::CompleteConstruction() {
     // UI settings tab
     current_page = CreatePage(UserString("OPTIONS_PAGE_UI"));
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_MISC_UI"));
+
+    BoolOption(current_page, 0, "ui.pedia.search.articles.enabled", UserString("OPTIONS_PEDIA_SEARCH_ARTICLE_TEXT"));
     BoolOption(current_page, 0, "ui.input.mouse.button.swap.enabled", UserString("OPTIONS_SWAP_MOUSE_LR"));
     BoolOption(current_page, 0, "ui.fleet.multiple.enabled", UserString("OPTIONS_MULTIPLE_FLEET_WNDS"));
     BoolOption(current_page, 0, "ui.quickclose.enabled", UserString("OPTIONS_QUICK_CLOSE_WNDS"));
