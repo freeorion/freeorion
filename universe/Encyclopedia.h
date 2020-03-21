@@ -34,7 +34,7 @@ public:
     // map from category name to list of articles in that category
     using ArticleMap = std::map<std::string, std::vector<EncyclopediaArticle>>;
 
-    Encyclopedia() = default;
+    Encyclopedia() {};
     unsigned int GetCheckSum() const;
 
     /** Sets articles to the value of \p future. */
