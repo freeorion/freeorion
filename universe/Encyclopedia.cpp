@@ -11,11 +11,6 @@ Encyclopedia& GetEncyclopedia() {
     return encyclopedia;
 }
 
-Encyclopedia::Encyclopedia() :
-    empty_article(),
-    m_articles()
-{}
-
 unsigned int Encyclopedia::GetCheckSum() const {
     unsigned int retval{0};
 
@@ -51,4 +46,41 @@ const Encyclopedia::ArticleMap& Encyclopedia::Articles() const {
     }
 
     return m_articles;
+}
+
+const EncyclopediaArticle& Encyclopedia::GetArticleByKey(const std::string& key) const {
+    const auto& articles = Articles();
+    for (auto& category_articles : articles) {
+        for (auto& article : category_articles.second) {
+            if (article.name == key)
+                return article;
+        }
+    }
+    return empty_article;
+}
+
+const EncyclopediaArticle& Encyclopedia::GetArticleByCategoryAndKey(
+    const std::string& category, const std::string& key) const
+{
+    const auto& articles = Articles();
+    auto it = articles.find(category);
+    if (it == articles.end())
+        return empty_article;
+    const auto& category_articles = it->second;
+    for (auto& article : category_articles) {
+        if (article.name == key)
+            return article;
+    }
+    return empty_article;
+}
+
+const EncyclopediaArticle& Encyclopedia::GetArticleByName(const std::string& name) const {
+    const auto& articles = Articles();
+    for (auto& category_articles : articles) {
+        for (auto& article : category_articles.second) {
+            if (UserString(article.name) == name)
+                return article;
+        }
+    }
+    return empty_article;
 }

@@ -12,13 +12,7 @@
 #include "../util/Export.h"
 
 struct FO_COMMON_API EncyclopediaArticle {
-    EncyclopediaArticle() :
-        name(""),
-        category(""),
-        short_description(""),
-        description(""),
-        icon("")
-    {}
+    EncyclopediaArticle() = default;
     EncyclopediaArticle(const std::string& name_, const std::string& category_,
                         const std::string& short_description_, const std::string& description_,
                         const std::string& icon_) :
@@ -37,9 +31,10 @@ struct FO_COMMON_API EncyclopediaArticle {
 
 class FO_COMMON_API Encyclopedia {
 public:
+    // map from category name to list of articles in that category
     using ArticleMap = std::map<std::string, std::vector<EncyclopediaArticle>>;
 
-    Encyclopedia();
+    Encyclopedia() = default;
     unsigned int GetCheckSum() const;
 
     /** Sets articles to the value of \p future. */
@@ -47,7 +42,11 @@ public:
 
     FO_COMMON_API const ArticleMap& Articles() const;
 
-    const EncyclopediaArticle                               empty_article;
+    FO_COMMON_API const EncyclopediaArticle& GetArticleByKey(const std::string& key) const;
+    FO_COMMON_API const EncyclopediaArticle& GetArticleByCategoryAndKey(const std::string& category, const std::string& key) const;
+    FO_COMMON_API const EncyclopediaArticle& GetArticleByName(const std::string& name) const;
+
+    const EncyclopediaArticle empty_article;
 private:
     mutable ArticleMap m_articles;
 
