@@ -1268,7 +1268,7 @@ COMMAND_LINE_NOT_FOUND
 Совпадений не найдено
 
 COMMAND_LINE_USAGE
-'''Используется: '''
+'''Использование: -h | --help [имя группы | имя параметра]'''
 
 COMMAND_LINE_DEFAULT
 '''По умолчанию: '''
@@ -2695,6 +2695,7 @@ SAVE_REALLY_DELETE
 SAVE_REALLY_OVERRIDE
 Вы действительно хотите перезаписать %1%?
 
+
 ##
 ## Game options
 ##
@@ -3329,7 +3330,7 @@ MAP_BTN_RESEARCH_DESC
 ''''''
 
 MAP_BTN_PRODUCTION
-Промышленность
+Производство
 
 MAP_BTN_PRODUCTION_DESC
 ''''''
@@ -3365,7 +3366,7 @@ MAP_BTN_MESSAGES_DESC
 ''''''
 
 MAP_PRODUCTION_TITLE
-Промышленность
+Производство
 
 MAP_PRODUCTION_WASTED_TITLE
 Потраченное впустую производство
@@ -3628,7 +3629,6 @@ ADDED_ON_INITIAL_TURN
 
 ORDER_BUIDLING_SCRAP
 Уничтожить здание
-
 ORDER_CANCEL_BUIDLING_SCRAP
 Отменить уничтожение
 
