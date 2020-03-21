@@ -2725,7 +2725,7 @@ namespace {
                                           std::shared_ptr<GG::Texture>& other_texture, int& turns,
                                           float& cost, std::string& cost_units, std::string& general_type,
                                           std::string& specific_type, std::string& detailed_description,
-                                          GG::Clr& color, GG::X width)
+                                          GG::Clr& color)
     {
         general_type = UserString("SP_PLANET_SUITABILITY");
 
@@ -2815,8 +2815,7 @@ namespace {
                                             std::shared_ptr<GG::Texture>& other_texture, int& turns,
                                             float& cost, std::string& cost_units, std::string& general_type,
                                             std::string& specific_type, std::string& detailed_description,
-                                            GG::Clr& color, std::weak_ptr<const ShipDesign>& incomplete_design,
-                                            GG::X width)
+                                            GG::Clr& color, std::weak_ptr<const ShipDesign>& incomplete_design)
     {
         if (item_type == TextLinker::ENCYCLOPEDIA_TAG) {
             RefreshDetailPanelPediaTag(         item_type, item_name,
@@ -2881,9 +2880,9 @@ namespace {
                                                 incomplete_design);
         }
         else if (item_type == UNIVERSE_OBJECT         || item_type == "ENC_BUILDING"  ||
-                   item_type == "ENC_FIELD"             || item_type == "ENC_FLEET"     ||
-                   item_type == "ENC_PLANET"            || item_type == "ENC_SHIP"      ||
-                   item_type == "ENC_SYSTEM")
+                 item_type == "ENC_FIELD"             || item_type == "ENC_FLEET"     ||
+                 item_type == "ENC_PLANET"            || item_type == "ENC_SHIP"      ||
+                 item_type == "ENC_SYSTEM")
         {
             RefreshDetailPanelObjectTag(        item_type, item_name,
                                                 name, texture, other_texture, turns, cost, cost_units,
@@ -2892,7 +2891,7 @@ namespace {
         else if (item_type == PLANET_SUITABILITY_REPORT) {
             RefreshDetailPanelSuitabilityTag(   item_type, item_name,
                                                 name, texture, other_texture, turns, cost, cost_units,
-                                                general_type, specific_type, detailed_description, color, width);
+                                                general_type, specific_type, detailed_description, color);
         }
         else if (item_type == TEXT_SEARCH_RESULTS) {
             RefreshDetailPanelSearchResultsTag( item_type, item_name,
@@ -2952,7 +2951,7 @@ void EncyclopediaDetailPanel::RefreshImpl() {
     GetRefreshDetailPanelInfo(m_items_it->first, m_items_it->second,
                               name, texture, other_texture, turns, cost, cost_units,
                               general_type, specific_type, detailed_description, color,
-                              m_incomplete_design, ClientWidth());
+                              m_incomplete_design);
 
     if (m_items_it->first == TextLinker::GRAPH_TAG) {
         const std::string& graph_id = m_items_it->second;
