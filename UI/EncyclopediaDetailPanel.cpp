@@ -53,8 +53,6 @@ FO_COMMON_API extern const int INVALID_DESIGN_ID;
 using boost::io::str;
 
 namespace {
-    const GG::X TEXT_MARGIN_X(3);
-    const GG::Y TEXT_MARGIN_Y(0);
     const int DESCRIPTION_PADDING(3);
 
     void AddOptions(OptionsDB& db) {
@@ -681,40 +679,69 @@ void EncyclopediaDetailPanel::CompleteConstruction() {
 EncyclopediaDetailPanel::~EncyclopediaDetailPanel()
 {}
 
+namespace {
+    const int BTN_WIDTH = 36;
+    const int PAD = 2;
+
+    int IconSize() {
+        const int NAME_PTS = ClientUI::TitlePts();
+        const int COST_PTS = ClientUI::Pts();
+        const int SUMMARY_PTS = ClientUI::Pts()*4/3;
+        return 12 + NAME_PTS + COST_PTS + SUMMARY_PTS;
+    }
+}
+
 void EncyclopediaDetailPanel::DoLayout() {
-    const int PTS = ClientUI::Pts();
-    const int NAME_PTS = PTS*3/2;
-    const int COST_PTS = PTS;
-    const int SUMMARY_PTS = PTS*4/3;
+    const int NAME_PTS = ClientUI::TitlePts();
+    const int COST_PTS = ClientUI::Pts();
+    const int SUMMARY_PTS = ClientUI::Pts()*4/3;
 
-    const int ICON_SIZE = 12 + NAME_PTS + COST_PTS + SUMMARY_PTS;
-
-    const int BTN_WIDTH = 24;
-    const int Y_OFFSET = 22;
+    const int ICON_SIZE = IconSize();
 
     SectionedScopedTimer timer("EncyclopediaDetailPanel::DoLayout");
 
     // name
-    GG::Pt ul = GG::Pt(GG::X(6), GG::Y(Y_OFFSET));
-    GG::Pt lr = ul + GG::Pt(Width() - 1, GG::Y(NAME_PTS + 4));
+    GG::Pt ul = GG::Pt(BORDER_LEFT, CUIWnd::TopBorder() + PAD);
+    GG::Pt lr = ul + GG::Pt(Width(), GG::Y(NAME_PTS + 2*PAD));
     m_name_text->SetTextFormat(GG::FORMAT_LEFT);
     m_name_text->SizeMove(ul, lr);
 
     // cost / turns
-    ul += GG::Pt(GG::X0, m_name_text->Height());
-    lr = ul + GG::Pt(Width(), GG::Y(COST_PTS + 4));
+    ul += GG::Pt(GG::X0, m_name_text->Height() + PAD);
+    lr = ul + GG::Pt(Width(), GG::Y(COST_PTS + 2*PAD));
     m_cost_text->SetTextFormat(GG::FORMAT_LEFT);
     m_cost_text->SizeMove(ul, lr);
 
     // one line summary
     ul += GG::Pt(GG::X0, m_cost_text->Height());
-    lr = ul + GG::Pt(Width(), GG::Y(SUMMARY_PTS + 4));
+    lr = ul + GG::Pt(Width(), GG::Y(SUMMARY_PTS + 2*PAD));
     m_summary_text->SetTextFormat(GG::FORMAT_LEFT);
     m_summary_text->SizeMove(ul, lr);
 
+
+    // "back" button
+    ul = GG::Pt{BORDER_LEFT, ICON_SIZE + CUIWnd::TopBorder() + PAD*2};
+    lr = ul + GG::Pt{GG::X{BTN_WIDTH}, GG::Y{BTN_WIDTH}};
+    m_back_button->SizeMove(ul, lr);
+    ul += GG::Pt{GG::X{BTN_WIDTH}, GG::Y0};
+
+    // "up" button
+    lr = ul + GG::Pt{GG::X{BTN_WIDTH}, GG::Y{BTN_WIDTH}};
+    m_index_button->SizeMove(ul, lr);
+    ul += GG::Pt{GG::X{BTN_WIDTH}, GG::Y0};
+
+    // "next" button
+    lr = ul + GG::Pt{GG::X{BTN_WIDTH}, GG::Y{BTN_WIDTH}};
+    m_next_button->SizeMove(ul, lr);
+    ul += GG::Pt{GG::X{BTN_WIDTH}, GG::Y0};
+
+    // search edit box
+    lr = GG::Pt{ClientWidth(), ul.y + GG::Y{BTN_WIDTH}};
+    m_search_edit->SizeMove(ul, lr);
+
     // main verbose description (fluff, effects, unlocks, ...)
-    ul = GG::Pt(BORDER_LEFT, ICON_SIZE + BORDER_BOTTOM + TEXT_MARGIN_Y + Y_OFFSET + 1);
-    lr = GG::Pt(Width() - BORDER_RIGHT, Height() - BORDER_BOTTOM*3 - PTS - 4);
+    ul = GG::Pt{BORDER_LEFT, lr.y + PAD*3};
+    lr = ClientSize() - GG::Pt{GG::X0, GG::Y{CUIWnd::INNER_BORDER_ANGLE_OFFSET}};
     timer.EnterSection("m_scroll_panel->SizeMove");
     m_scroll_panel->SizeMove(ul, lr);
     timer.EnterSection("");
@@ -722,30 +749,9 @@ void EncyclopediaDetailPanel::DoLayout() {
     // graph
     m_graph->SizeMove(ul + GG::Pt(GG::X1, GG::Y1), lr - GG::Pt(GG::X1, GG::Y1));
 
-    // "back" button
-    ul = GG::Pt(Width() - BORDER_RIGHT*3 - BTN_WIDTH * 3 - 8,   Height() - BORDER_BOTTOM*2 - PTS);
-    lr = GG::Pt(Width() - BORDER_RIGHT*3 - BTN_WIDTH * 2 - 8,   Height() - BORDER_BOTTOM*2);
-    m_back_button->SizeMove(ul, lr);
-
-    // "up" button
-    ul = GG::Pt(Width() - BORDER_RIGHT*3 - BTN_WIDTH * 2 - 4,   Height() - BORDER_BOTTOM*3 - PTS);
-    lr = GG::Pt(Width() - BORDER_RIGHT*3 - BTN_WIDTH - 4,       Height() - BORDER_BOTTOM*3);
-    m_index_button->SizeMove(ul, lr);
-
-    // "next" button
-    ul = GG::Pt(Width() - BORDER_RIGHT*3 - BTN_WIDTH,           Height() - BORDER_BOTTOM*2 - PTS);
-    lr = GG::Pt(Width() - BORDER_RIGHT*3,                       Height() - BORDER_BOTTOM*2);
-    m_next_button->SizeMove(ul, lr);
-
-    // search edit box
-    ul = GG::Pt(BORDER_LEFT + 2,                                Height() - BORDER_BOTTOM*3 - PTS - 3);
-    lr = GG::Pt(Width() - BORDER_RIGHT*3 - BTN_WIDTH * 3 - 12,  Height() - BORDER_BOTTOM - 3);
-    m_search_edit->SizeMove(ul, lr);
-
-
     // icon
     if (m_icon) {
-        lr = GG::Pt(Width() - BORDER_RIGHT, GG::Y(ICON_SIZE + 1 + Y_OFFSET));
+        lr = GG::Pt(Width() - BORDER_RIGHT, GG::Y(ICON_SIZE + CUIWnd::TopBorder()));
         ul = lr - GG::Pt(GG::X(ICON_SIZE), GG::Y(ICON_SIZE));
         m_icon->SizeMove(ul, lr);
     }
@@ -805,12 +811,10 @@ void EncyclopediaDetailPanel::InitBuffers() {
     m_buffer_indices.resize(5);
     std::size_t previous_buffer_size = m_vertex_buffer.size();
 
-    const int Y_OFFSET = 22;
-
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
     const GG::Y ICON_SIZE = m_summary_text->Bottom() - m_name_text->Top();
-    GG::Pt cl_ul = ul + GG::Pt(BORDER_LEFT, ICON_SIZE + BORDER_BOTTOM + Y_OFFSET); // BORDER_BOTTOM is the size of the border at the bottom of a standard CUIWnd
+    GG::Pt cl_ul = ul + GG::Pt(BORDER_LEFT, ICON_SIZE + CUIWnd::TopBorder() + BTN_WIDTH + PAD*3);
     GG::Pt cl_lr = lr - GG::Pt(BORDER_RIGHT, BORDER_BOTTOM);
 
 
@@ -867,8 +871,10 @@ void EncyclopediaDetailPanel::InitBuffers() {
     previous_buffer_size = m_vertex_buffer.size();
 
     // title underline
-    m_vertex_buffer.store(Value(cl_lr.x) + 2.0f,    Value(cl_ul.y - ICON_SIZE) - 7.0f);
-    m_vertex_buffer.store(Value(cl_ul.x) - 2.0f,    Value(cl_ul.y - ICON_SIZE) - 7.0f);
+    GG::Pt underline_ul{UpperLeft() + GG::Pt{BORDER_LEFT, CUIWnd::TopBorder() - 2}};
+    GG::Pt underline_lr{underline_ul + GG::Pt{Width() - BORDER_RIGHT*3, GG::Y0}};
+    m_vertex_buffer.store(Value(underline_ul.x),    Value(underline_ul.y));
+    m_vertex_buffer.store(Value(underline_lr.x),    Value(underline_lr.y));
     m_buffer_indices[4].first = previous_buffer_size;
     m_buffer_indices[4].second = m_vertex_buffer.size() - previous_buffer_size;
     //previous_buffer_size = m_vertex_buffer.size();
