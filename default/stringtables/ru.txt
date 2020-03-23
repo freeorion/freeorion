@@ -3629,6 +3629,7 @@ ADDED_ON_INITIAL_TURN
 
 ORDER_BUIDLING_SCRAP
 Уничтожить здание
+
 ORDER_CANCEL_BUIDLING_SCRAP
 Отменить уничтожение
 
@@ -6745,7 +6746,7 @@ SITREP_OBJECT_DESTROYED_AT_SYSTEM_LABEL
 Объект уничтожен
 
 SITREP_OWN_SHIP_DESTROYED_AT_SYSTEM
-В %system%: %shipdesign% (%empire% корабль '%ship%') был уничтожен.
+В системе %system%: %shipdesign% (%empire%) был уничтожен кораблем '%ship%'.
 
 SITREP_OWN_SHIP_DESTROYED_AT_SYSTEM_LABEL
 Ваш корабль уничтожен
