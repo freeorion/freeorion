@@ -1730,7 +1730,7 @@ OPTIONS_DB_UI_TOOLTIP_LONG_DELAY
 Fixe le délai d'apparition dans l'interface utilisateur des bulles d'information alternatives, en millisecondes.
 
 OPTIONS_DB_UI_ENC_SEARCH_ARTICLE
-Lors d'une recherche dans l'Encyclopédie, vérifier les correspondances dans le contenu des articles.
+Lors d'une recherche dans l'Encyclopédie, vérifier les correspondances dans le contenu des articles. La recherche sera plus lente, mais peut retourner davantage de résultats.
 
 # Section title for options window logging
 OPTIONS_DB_UI_LOGGER_THRESHOLDS
@@ -2696,6 +2696,9 @@ SAVE_REALLY_OVERRIDE
 
 OPTIONS_TITLE  # translated
 Options
+
+OPTIONS_PEDIA_SEARCH_ARTICLE_TEXT
+Rechercher dans contenu article Encyclopédie
 
 OPTIONS_MULTIPLE_FLEET_WNDS
 Fenêtres Flottes multiples
@@ -4795,6 +4798,31 @@ L'Habitabilité est définie par la distance au type d'[[encyclopedia ENVIRONMEN
 ENC_GRAPH
 [Partie - Graphiques]
 
+USE_LINEAR_SCALE
+Échelle Linéaire
+
+USE_LOG_SCALE
+Échelle Logarithmique
+
+SHOW_SCALE
+Afficher Échelle
+
+HIDE_SCALE
+Cacher Échelle
+
+SHOW_LINES
+Tracer Lignes
+
+SHOW_POINTS
+Tracer Points
+
+SCALE_TO_ZERO
+Échelle sur Zéro
+
+SCALE_FREE
+Sans Échelle
+
+
 ENC_GALAXY_SETUP
 [Partie - Galaxie]
 
@@ -5755,7 +5783,11 @@ Infanterie
 METER_TROOPS_VALUE_DESC
 '''Le terme 'Infanterie' désigne toutes sortes de forces militaires capables d'opérer à la surface d'une planète.
 
-L'indicateur 'Infanterie' d'une planète représente la puissance des troupes terrestres de défense. L'empire envahisseur doit envoyer une infanterie supérieure en force (c-à-d un plus grand nombre) pour parvenir à conquérir la planète. Les astronefs doivent être dotés d'équipements spécifiques permettant le transport de l'Infanterie, et les troupes en question ne peuvent envahir une planète tant que cette dernière dispose de [[metertype METER_SHIELD]] actifs.'''
+L'indicateur 'Infanterie' d'une planète représente la puissance des troupes terrestres de défense. L'empire envahisseur doit envoyer une infanterie supérieure en force (c-à-d un plus grand nombre) pour parvenir à conquérir la planète.
+
+Les astronefs doivent être dotés d'équipements d'[[encyclopedia PC_TROOPS]] permettant le transport de troupes en vue d'une invasion.
+
+Les astronefs ne peuvent pas envahir une planète tant que cette dernière dispose de [[metertype METER_SHIELD]] actifs.'''
 
 METER_REBEL_TROOPS_VALUE_LABEL
 Infanterie Rebelle
@@ -9329,7 +9361,8 @@ PC_TROOPS_DESC
 '''Les équipements d'Infanterie permettent d'augmenter les effectifs d'[[metertype METER_TROOPS]] à bord d'un astronef, ces derniers pouvant être utilisés pour envahir les planètes ennemies.
 
 Pour envahir une planète avec succès, l'effectif total d'[[metertype METER_TROOPS]] de tous les astronefs prenant part à l'invasion doit être supérieur à l'effectif total de défense (les égalités sont en faveur du défenseur).
-Un astronef d'invasion devient définitivement inutilisable suite à l'opération d'atterrissage (tout équipement additionnel sur l'astronef est également perdu).'''
+
+Un astronef d'invasion devient définitivement inutilisable suite à l'opération d'atterrissage. Tous les équipements de l'astronef sont également perdus.'''
 
 # Ship part classes
 PC_DETECTION
