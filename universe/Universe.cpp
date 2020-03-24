@@ -543,14 +543,14 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(bool do_accounting) {
     for (const auto& object : m_objects.all()) {
         TraceLogger(effects) << "object " << object->Name() << " (" << object->ID() << ") before resetting meters: ";
         for (auto const& meter_pair : object->Meters()) {
-            TraceLogger(effects) << "    meter: " << boost::lexical_cast<std::string>(meter_pair.first)
+            TraceLogger(effects) << "    meter: " << meter_pair.first
                                  << "  value: " << meter_pair.second.Current();
         }
         object->ResetTargetMaxUnpairedMeters();
         object->ResetPairedActiveMeters();
         TraceLogger(effects) << "object " << object->Name() << " (" << object->ID() << ") after resetting meters: ";
         for (auto const& meter_pair : object->Meters()) {
-            TraceLogger(effects) << "    meter: " << boost::lexical_cast<std::string>(meter_pair.first)
+            TraceLogger(effects) << "    meter: " << meter_pair.first
                                  << "  value: " << meter_pair.second.Current();
         }
     }
@@ -687,7 +687,7 @@ void Universe::InitMeterEstimatesAndDiscrepancies() {
             // add discrepancy adjustment to meter accounting
             account_map[type].emplace_back(INVALID_OBJECT_ID, ECT_UNKNOWN_CAUSE, discrepancy, meter.Current());
 
-            TraceLogger(effects) << "... ... " << boost::lexical_cast<std::string>(type) << ": " << discrepancy;
+            TraceLogger(effects) << "... ... " << type << ": " << discrepancy;
         }
     }
 }

@@ -294,7 +294,7 @@ void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
         // don't add summary entries for objects that consume no resource.  (otherwise there would be a loooong pointless list of 0's
         if (allocation <= 0.0) {
             if (allocation < 0.0)
-                ErrorLogger() << "object " << obj->Name() << " is reported having negative " << boost::lexical_cast<std::string>(m_resource_type) << " consumption";
+                ErrorLogger() << "object " << obj->Name() << " is reported having negative " << m_resource_type << " consumption";
             continue;
         }
 

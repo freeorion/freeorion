@@ -382,7 +382,7 @@ void ServerApp::SetAIsProcessPriorityToLow(bool set_to_low) {
 
 void ServerApp::HandleMessage(const Message& msg, PlayerConnectionPtr player_connection) {
 
-    //DebugLogger() << "ServerApp::HandleMessage type " << boost::lexical_cast<std::string>(msg.Type());
+    //DebugLogger() << "ServerApp::HandleMessage type " << msg.Type();
     m_networking.UpdateCookie(player_connection->Cookie()); // update cookie expire date
 
     switch (msg.Type()) {

@@ -446,7 +446,7 @@ void System::Remove(int id) {
 void System::SetStarType(StarType type) {
     m_star = type;
     if (m_star <= INVALID_STAR_TYPE || NUM_STAR_TYPES <= m_star)
-        ErrorLogger() << "System::SetStarType set star type to " << boost::lexical_cast<std::string>(type);
+        ErrorLogger() << "System::SetStarType set star type to " << type;
     StateChangedSignal();
 }
 

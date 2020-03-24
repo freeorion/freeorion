@@ -886,7 +886,7 @@ namespace {
             else if (ship->UniverseObject::GetMeter(stat_name))
                 return ship->InitialMeterValue(stat_name);
 
-            ErrorLogger() << "ShipDataPanel::StatValue couldn't get stat of name: " << boost::lexical_cast<std::string>(stat_name);
+            ErrorLogger() << "ShipDataPanel::StatValue couldn't get stat of name: " << stat_name;
         }
         return 0.0;
     }

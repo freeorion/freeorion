@@ -789,7 +789,7 @@ void SetActiveMetersToTargetMaxCurrentValues(ObjectMap& object_map) {
         for (auto& entry : AssociatedMeterTypes()) {
             if (Meter* meter = object->GetMeter(entry.first)) {
                 if (Meter* targetmax_meter = object->GetMeter(entry.second)) {
-                    TraceLogger(effects) << "    meter: " << boost::lexical_cast<std::string>(entry.first)
+                    TraceLogger(effects) << "    meter: " << entry.first
                                          << "  before: " << meter->Current()
                                          << "  set to: " << targetmax_meter->Current();
                     meter->SetCurrent(targetmax_meter->Current());
