@@ -12092,6 +12092,24 @@ Death Ray 4
 SHP_WEAPON_4_4_DESC
 Upgrades [[shippart SR_WEAPON_4_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 30.
 
+SHP_WEAPON_ARC_DISRUPTOR_1
+Arc Disruptors
+
+SHP_WEAPON_ARC_DISRUPTOR_1_DESC
+Unlocks the [[shippart SR_ARC_DISRUPTOR]], an automated weapon system doing low damage to multiple targets. The base weapon part has shot damage 2.
+
+SHP_WEAPON_ARC_DISRUPTOR_2
+Arc Disruptor 2
+
+SHP_WEAPON_ARC_DISRUPTOR_2_DESC
+Upgrades [[shippart SR_ARC_DISRUPTOR]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 4.
+
+SHP_WEAPON_ARC_DISRUPTOR_3
+Arc Disruptor 3
+
+SHP_WEAPON_ARC_DISRUPTOR_3_DESC
+Upgrades [[shippart SR_ARC_DISRUPTOR]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 7.
+
 SHP_ION_CANNON
 Ion Cannon
 
@@ -13417,6 +13435,18 @@ SR_WEAPON_4_1_DESC
 Upgrading the weapon technology will increase the shot damage.
 
 The weapon's [[encyclopedia DAMAGE_TITLE]] is a combination of the shot damage and any active modifiers. Each death ray on a ship built by a species with the piloting trait will do an additional 5 damage per piloting level (-5 for Bad Pilots).'''
+
+SR_ARC_DISRUPTOR
+Arc Disruptor
+
+SR_ARC_DISRUPTOR_DESC
+'''The Arc Disruptor, a multi-shot ship weapon which has good long-term upgrade research options.
+
+Charged polaron capacitors generate a molecular disruption flux wave that arcs through space hitting several ships before dispersing. The disruption flux can be substantially deflected around ship shields.
+
+Upgrading the weapon technology will increase the shot damage.
+
+The weapon's [[encyclopedia DAMAGE_TITLE]] is a combination of the shot damage and any active modifiers. Piloting trait does not affect damage.'''
 
 SR_SPINAL_ANTIMATTER
 Spinal Antimatter Cannon
