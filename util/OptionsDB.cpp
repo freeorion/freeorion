@@ -636,12 +636,17 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
 
     for (unsigned int i = 1; i < args.size(); ++i) {
         std::string current_token(args[i]);
+
         if (current_token.find("--") == 0) {
             std::string option_name = current_token.substr(2);
 
+            if (option_name.empty())
+                throw std::runtime_error("A \'--\' was given with no option name.");
+
             auto it = m_options.find(option_name);
 
-            if (it == m_options.end() || !it->second.recognized) { // unrecognized option: may be registered later on so we'll store it for now
+            if (it == m_options.end() || !it->second.recognized) {
+                // unrecognized option: may be registered later on so we'll store it for now
                 // Check for more parameters (if this is the last one, assume that it is a flag).
                 std::string value_str("-");
                 if (i + 1 < static_cast<unsigned int>(args.size())) {
@@ -661,7 +666,9 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
                 }
 
                 WarnLogger() << "Option \"" << option_name << "\", was specified on the command line but was not recognized.  It may not be registered yet or could be a typo.";
+
             } else {
+                // recognized option
                 Option& option = it->second;
                 if (option.value.empty())
                     throw std::runtime_error("The value member of option \"--" + option.name + "\" is undefined.");
@@ -696,39 +703,39 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
 #ifdef FREEORION_MACOSX
                 && current_token.find("-psn") != 0 // Mac OS X passes a process serial number to all applications using Carbon or Cocoa, it should be ignored here
 #endif
-            ) {
+            )
+        {
             std::string single_char_options = current_token.substr(1);
 
-            if (single_char_options.size() == 0) {
+            if (single_char_options.empty())
                 throw std::runtime_error("A \'-\' was given with no options.");
-            } else {
-                for (unsigned int j = 0; j < single_char_options.size(); ++j) {
-                    auto short_name_it = Option::short_names.find(single_char_options[j]);
 
-                    if (short_name_it == Option::short_names.end())
-                        throw std::runtime_error(std::string("Unknown option \"-") + single_char_options[j] + "\" was given.");
+            for (unsigned int j = 0; j < single_char_options.size(); ++j) {
+                auto short_name_it = Option::short_names.find(single_char_options[j]);
 
-                    auto name_it = m_options.find(short_name_it->second);
+                if (short_name_it == Option::short_names.end())
+                    throw std::runtime_error(std::string("Unknown option \"-") + single_char_options[j] + "\" was given.");
 
-                    if (name_it == m_options.end())
-                        throw std::runtime_error("Option \"--" + short_name_it->second + "\", abbreviated as \"-" + short_name_it->first + "\", could not be found.");
+                auto name_it = m_options.find(short_name_it->second);
 
-                    Option& option = name_it->second;
-                    if (option.value.empty())
-                        throw std::runtime_error("The value member of option \"--" + option.name + "\" is undefined.");
+                if (name_it == m_options.end())
+                    throw std::runtime_error("Option \"--" + short_name_it->second + "\", abbreviated as \"-" + short_name_it->first + "\", could not be found.");
 
-                    if (!option.flag) {
-                        if (j < single_char_options.size() - 1) {
-                            throw std::runtime_error(std::string("Option \"-") + single_char_options[j] + "\" was given with no parameter.");
-                        } else {
-                            if (i + 1 >= static_cast<unsigned int>(args.size()))
-                                m_dirty |= option.SetFromString("");
-                            else
-                                m_dirty |= option.SetFromString(args[++i]);
-                        }
+                Option& option = name_it->second;
+                if (option.value.empty())
+                    throw std::runtime_error("The value member of option \"--" + option.name + "\" is undefined.");
+
+                if (!option.flag) {
+                    if (j < single_char_options.size() - 1) {
+                        throw std::runtime_error(std::string("Option \"-") + single_char_options[j] + "\" was given with no parameter.");
                     } else {
-                        option.value = true;
+                        if (i + 1 >= static_cast<unsigned int>(args.size()))
+                            m_dirty |= option.SetFromString("");
+                        else
+                            m_dirty |= option.SetFromString(args[++i]);
                     }
+                } else {
+                    option.value = true;
                 }
             }
         }
