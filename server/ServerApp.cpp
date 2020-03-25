@@ -163,42 +163,32 @@ namespace {
 
 void ServerApp::StartBackgroundParsing() {
     IApp::StartBackgroundParsing();
-
     const auto& rdir = GetResourceDir();
-    if (!fs::exists(rdir) || !fs::is_directory(rdir)) {
-        ErrorLogger() << "Background parse given non-existant resources directory!";
-        return;
-    }
 
-    auto parse_path = rdir / "scripting/starting_unlocks/items.inf";
-    if (fs::exists(parse_path))
-        m_universe.SetInitiallyUnlockedItems(Pending::StartParsing(parse::items, parse_path));
+    if (fs::exists(rdir / "scripting/starting_unlocks/items.inf"))
+        m_universe.SetInitiallyUnlockedItems(Pending::StartParsing(parse::items, rdir / "scripting/starting_unlocks/items.inf"));
     else
-        ErrorLogger() << "Background parse path doesn't exist: " << parse_path.string();
+        ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/starting_unlocks/items.inf").string();
 
-    parse_path = rdir / "scripting/starting_unlocks/buildings.inf";
-    if (fs::exists(parse_path))
-        m_universe.SetInitiallyUnlockedBuildings(Pending::StartParsing(parse::starting_buildings, parse_path));
+    if (fs::exists(rdir / "scripting/starting_unlocks/buildings.inf"))
+        m_universe.SetInitiallyUnlockedBuildings(Pending::StartParsing(parse::starting_buildings, rdir / "scripting/starting_unlocks/buildings.inf"));
     else
-        ErrorLogger() << "Background parse path doesn't exist: " << parse_path.string();
+        ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/starting_unlocks/buildings.inf").string();
 
-    parse_path = rdir / "scripting/starting_unlocks/fleets.inf";
-    if (fs::exists(parse_path))
-        m_universe.SetInitiallyUnlockedFleetPlans(Pending::StartParsing(parse::fleet_plans, parse_path));
+    if (fs::exists(rdir / "scripting/starting_unlocks/fleets.inf"))
+        m_universe.SetInitiallyUnlockedFleetPlans(Pending::StartParsing(parse::fleet_plans, rdir / "scripting/starting_unlocks/fleets.inf"));
     else
-        ErrorLogger() << "Background parse path doesn't exist: " << parse_path.string();
+        ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/starting_unlocks/fleets.inf").string();
 
-    parse_path = rdir / "scripting/monster_fleets.inf";
-    if (fs::exists(parse_path))
-        m_universe.SetMonsterFleetPlans(Pending::StartParsing(parse::monster_fleet_plans, parse_path));
+    if (fs::exists(rdir / "scripting/monster_fleets.inf"))
+        m_universe.SetMonsterFleetPlans(Pending::StartParsing(parse::monster_fleet_plans, rdir / "scripting/monster_fleets.inf"));
     else
-        ErrorLogger() << "Background parse path doesn't exist: " << parse_path.string();
+        ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/monster_fleets.inf").string();
 
-    parse_path = rdir / "scripting/empire_statistics";
-    if (fs::exists(parse_path))
-        m_universe.SetEmpireStats(Pending::StartParsing(parse::statistics, parse_path));
+    if (fs::exists(rdir / "scripting/empire_statistics"))
+        m_universe.SetEmpireStats(Pending::StartParsing(parse::statistics, rdir / "scripting/empire_statistics"));
     else
-        ErrorLogger() << "Background parse path doesn't exist: " << parse_path.string();
+        ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/empire_statistics").string();
 }
 
 void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup_data, int max_aggression) {
