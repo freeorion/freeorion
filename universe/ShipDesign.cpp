@@ -1213,8 +1213,7 @@ ShipDesign::MaybeInvalidDesign(const std::string& hull_in,
         if (!part_type->CanMountInSlotType(slot_type)) {
             if (produce_log)
                 DebugLogger() << "Invalid ShipDesign part \"" << part_name << "\" can't be mounted in "
-                              << boost::lexical_cast<std::string>(slot_type) << " slot"
-                              << ". Removing \"" << part_name <<"\"";
+                              << slot_type << " slot. Removing \"" << part_name <<"\"";
             is_valid = false;
             continue;
         }

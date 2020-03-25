@@ -1203,7 +1203,7 @@ void BuildDesignatorWnd::ShowType(BuildType type, bool refresh_list) {
     } else if (type == BT_STOCKPILE) {
         m_build_selector->ShowType(type, refresh_list);
     } else {
-        ErrorLogger() << "BuildDesignatorWnd::ShowType(" << boost::lexical_cast<std::string>(type) << ")";
+        ErrorLogger() << "BuildDesignatorWnd::ShowType(" << type << ")";
         throw std::invalid_argument("BuildDesignatorWnd::ShowType was passed an invalid BuildType");
     }
 }
@@ -1215,7 +1215,7 @@ void BuildDesignatorWnd::ShowAllTypes(bool refresh_list) {
 }
 
 void BuildDesignatorWnd::HideType(BuildType type, bool refresh_list) {
-    DebugLogger() << "BuildDesignatorWnd::HideType(" << boost::lexical_cast<std::string>(type) << ")";
+    DebugLogger() << "BuildDesignatorWnd::HideType(" << type << ")";
     if (type == BT_BUILDING || type == BT_SHIP) {
         m_build_selector->HideType(type, refresh_list);
         m_build_selector->m_build_type_buttons[type]->SetCheck(false);

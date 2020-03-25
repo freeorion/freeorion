@@ -103,7 +103,7 @@ void ResourcePool::SetStockpile(float d)
 { m_stockpile = d; }
 
 void ResourcePool::Update() {
-    //DebugLogger() << "ResourcePool::Update for type " << boost::lexical_cast<std::string>(m_type);
+    //DebugLogger() << "ResourcePool::Update for type " << m_type;
     // sum production from all ResourceCenters in each group, for resource point type appropriate for this pool
     MeterType meter_type = ResourceToMeter(m_type);
     MeterType target_meter_type = ResourceToTargetMeter(m_type);
