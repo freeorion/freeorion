@@ -3,24 +3,14 @@ Part
     description = "FT_HANGAR_1_DESC"
     exclusions = [ "FT_HANGAR_0" "FT_HANGAR_2" "FT_HANGAR_3" "FT_HANGAR_4" ]
     class = FighterHangar
-    capacity = 4
+    capacity = 3
     damage = 1
-    combatTargets = OrderedAlternativesOf [
-        // Target Bombers and Heavy Bombers first
-        And [
-            [[COMBAT_TARGETS_VISIBLE_ENEMY]]
-            Fighter
-            Or [
-               DesignHasPart name = "FT_HANGAR_3"
-               DesignHasPart name = "FT_HANGAR_4"
-            ]
-        ]
-        And [ [[COMBAT_TARGETS_VISIBLE_ENEMY]]  Fighter ]
-        // if no fighters: target enemy ships
-        And [ [[COMBAT_TARGETS_VISIBLE_ENEMY]]  [[COMBAT_TARGETS_NOT_DESTROYED_SHIP]] ]
+    combatTargets = And [
+        [[COMBAT_TARGETS_VISIBLE_ENEMY]]
+        Fighter
     ]
     mountableSlotTypes = Internal
-    buildcost = 15 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildcost = 10 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 1
     tags = [ "PEDIA_PC_FIGHTER_HANGAR" ]
     location = OwnedBy empire = Source.Owner
@@ -33,7 +23,12 @@ Part
             activation = Source
             stackinggroup = "INTERCEPTOR_FAST_LAUNCH_EFFECT"
             effects = [
-                SetMaxCapacity partname = "FT_BAY_1" value = Value + 2
+                SetMaxCapacity partname = "FT_BAY_1" value = (
+                    3 +
+                    Statistic If Condition = OwnerHasTech Name = "SHP_FIGHTERS_2" +
+                    Statistic If Condition = OwnerHasTech Name = "SHP_FIGHTERS_3" +
+                    Statistic If Condition = OwnerHasTech Name = "SHP_FIGHTERS_4"
+                )
             ]
     ]
     icon = "icons/ship_parts/fighter06.png"

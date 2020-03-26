@@ -11982,25 +11982,28 @@ SHP_FIGHTERS_1_DESC
 
 A [[encyclopedia PC_FIGHTER_BAY]] can launch a number of fighters in each combat round. These fighters will then be both valid targets and able to attack ships and other fighters in subsequent combat rounds, but a single hit from any source will destroy a fighter. Unlike [[encyclopedia DAMAGE_TITLE]] inflicted by regular weapons, fighter damage ignores [[metertype METER_SHIELD]] on warships (they fire from within the shields).
 
+Piloting traits affect [[FT_HANGAR_2]], [[FT_HANGAR_3]], and [[FT_HANGAR_4]] fighters in the same way: bad piloting reduces damage by 1 per fighter; good piloting increases damage by 1, great piloting by 2, and ultimate piloting by 3 per fighter shot.
+Piloting traits do not affect [[FT_HANGAR_1]] fighters.
+
 At the end of combat, carriers will collect any fighters that have survived. If a carrier is in [[metertype METER_SUPPLY]] immediately after movement is resolved, it will refill hangars to maximum.'''
 
 SHP_FIGHTERS_2
 Laser Fighters
 
 SHP_FIGHTERS_2_DESC
-Upgrades the fighters of all carriers within [[metertype METER_SUPPLY]] to have laser weaponry. [[encyclopedia DAMAGE_TITLE]] from fighters in a [[shippart FT_HANGAR_1]] is increased by 1, [[shippart FT_HANGAR_2]] is increased by 2 and [[shippart FT_HANGAR_3]] by 3.
+Upgrades the fighters of all carriers within [[metertype METER_SUPPLY]] to have laser weaponry. [[encyclopedia DAMAGE_TITLE]] from fighters in a [[shippart FT_HANGAR_2]] is increased by 2, [[shippart FT_HANGAR_3]] by 3, and [[shippart FT_HANGAR_4]] by 6. For [[shippart FT_HANGAR_1]] fighters the capacity as well as the launch rate of the [[shippart FT_BAY_1]] is increased by 1.
 
 SHP_FIGHTERS_3
 Plasma Fighters
 
 SHP_FIGHTERS_3_DESC
-Upgrades the fighters of all carriers within [[metertype METER_SUPPLY]] to have plasma weaponry. [[encyclopedia DAMAGE_TITLE]] from fighters in a [[shippart FT_HANGAR_1]] is increased by 1, [[shippart FT_HANGAR_2]] is increased by 3 and [[shippart FT_HANGAR_3]] by 4.
+Upgrades the fighters of all carriers within [[metertype METER_SUPPLY]] to have plasma weaponry. [[encyclopedia DAMAGE_TITLE]] from fighters in a [[shippart FT_HANGAR_2]] is increased by 2, [[shippart FT_HANGAR_3]] by 3, and [[shippart FT_HANGAR_4]] by 6. For [[shippart FT_HANGAR_1]] fighters the capacity as well as the launch rate of the [[shippart FT_BAY_1]] is increased by 1.
 
 SHP_FIGHTERS_4
 Death Ray Fighters
 
 SHP_FIGHTERS_4_DESC
-Upgrades the fighters of all carriers within [[metertype METER_SUPPLY]] to have death ray weaponry. [[encyclopedia DAMAGE_TITLE]] from fighters in a [[shippart FT_HANGAR_1]] is increased by 1, [[shippart FT_HANGAR_2]] is increased by 5 and [[shippart FT_HANGAR_3]] by 7.
+Upgrades the fighters of all carriers within [[metertype METER_SUPPLY]] to have death ray weaponry. [[encyclopedia DAMAGE_TITLE]] from fighters in a [[shippart FT_HANGAR_2]] is increased by 2, [[shippart FT_HANGAR_3]] by 3, and [[shippart FT_HANGAR_4]] by 6. For [[shippart FT_HANGAR_1]] fighters the capacity as well as the launch rate of the [[shippart FT_BAY_1]] is increased by 1.
 
 SHP_WEAPON_1_2
 Mass Driver 2
@@ -13329,7 +13332,7 @@ FT_BAY_1
 Launch Bay
 
 FT_BAY_1_DESC
-Launch system for fighters.
+Launch system for fighters. Launches [[FT_HANGAR_1_FIGHTER]] faster: Can launch all fighters in a single [[shippart FT_HANGAR_1]].
 
 FT_HANGAR_0
 Decoy Hangar
@@ -13347,7 +13350,7 @@ FT_HANGAR_1_FIGHTER
 Interceptor
 
 FT_HANGAR_1_DESC
-Storage system for minimally armed fighters.
+Storage system for minimally armed fighters. Can attack enemy fighters only. Launches faster: A [[shippart FT_BAY_1]] can launch all fighters in a single [[shippart FT_HANGAR_1]].
 
 FT_HANGAR_2
 Fighter Hangar
@@ -13356,7 +13359,7 @@ FT_HANGAR_2_FIGHTER
 Fighter
 
 FT_HANGAR_2_DESC
-Storage system for lightly armed fighters.
+Storage system for lightly armed fighters. Can attack enemy ships and fighters.
 
 FT_HANGAR_3
 Bomber Hangar
@@ -13365,7 +13368,7 @@ FT_HANGAR_3_FIGHTER
 Bomber
 
 FT_HANGAR_3_DESC
-Storage system for moderately armed fighters.
+Storage system for moderately armed fighters. Can attack enemy ships only.
 
 FT_HANGAR_4
 Heavy-Bomber Hangar
@@ -13374,7 +13377,7 @@ FT_HANGAR_4_FIGHTER
 Heavy-Bomber
 
 FT_HANGAR_4_DESC
-Storage system for heavily armed fighters.
+Storage system for heavily armed fighters. Can attack enemy ships and planets.
 
 FT_HANGAR_KRILL
 Krill Swarm
@@ -13400,7 +13403,7 @@ SR_WEAPON_1_1
 Mass Driver
 
 SR_WEAPON_1_1_DESC
-'''The Mass Driver, a basic weapon.
+'''The Mass Driver, a basic weapon. Attacks ships and planets.
 
 Upgrading the weapon technology will increase the shot damage.
 
@@ -13410,7 +13413,7 @@ SR_WEAPON_2_1
 Laser Weapon
 
 SR_WEAPON_2_1_DESC
-'''The Laser, a more powerful ship's weapon than the Mass Driver.
+'''The Laser, a more powerful ship's weapon than the Mass Driver. Attacks ships and planets.
 
 Upgrading the weapon technology will increase the shot damage.
 
@@ -13420,7 +13423,7 @@ SR_WEAPON_3_1
 Plasma Cannons
 
 SR_WEAPON_3_1_DESC
-'''The Plasma Cannon, a more powerful ship's weapon than the Laser.
+'''The Plasma Cannon, a more powerful ship's weapon than the Laser. Attacks ships and planets.
 
 Upgrading the weapon technology will increase the shot damage.
 
@@ -13430,7 +13433,7 @@ SR_WEAPON_4_1
 Death Ray
 
 SR_WEAPON_4_1_DESC
-'''The Death Ray, a more powerful ship's weapon than the Plasma Cannon.
+'''The Death Ray, a more powerful ship's weapon than the Plasma Cannon. Attacks ships and planets.
 
 Upgrading the weapon technology will increase the shot damage.
 
@@ -13452,7 +13455,7 @@ SR_SPINAL_ANTIMATTER
 Spinal Antimatter Cannon
 
 SR_SPINAL_ANTIMATTER_DESC
-A huge spinal mount mass driver firing heavy projectiles made of antimatter.
+A huge spinal mount mass driver firing heavy projectiles made of antimatter. Attacks ships and planets.
 
 SR_JAWS
 Jaws

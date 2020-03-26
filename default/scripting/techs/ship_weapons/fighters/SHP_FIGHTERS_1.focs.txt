@@ -12,6 +12,7 @@ Tech
         Item type = ShipPart name = "FT_HANGAR_1"
         Item type = ShipPart name = "FT_HANGAR_2"
         Item type = ShipPart name = "FT_HANGAR_3"
+        Item type = ShipPart name = "FT_HANGAR_4"
     ]
     graphic = "icons/ship_parts/fighter05.png"
 
