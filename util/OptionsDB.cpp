@@ -685,7 +685,7 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
                         StripQuotation(value_str);
                         // ensure parameter is actually a parameter, and not the next option name (which would indicate
                         // that the option was specified without a parameter value, as if it was a flag)
-                        if (value_str.at(0) == '-')
+                        if (!value_str.empty() && value_str.at(0) == '-')
                             throw std::runtime_error("the option \"" + option.name +
                                                      "\" was followed by the parameter \"" + value_str +
                                                      "\", which appears to be an option flag, not a parameter value, because it begins with a \"-\" character.");
