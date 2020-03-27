@@ -242,11 +242,6 @@ find_package(ZLIB REQUIRED)
 if(NOT BUILD_HEADLESS)
     find_package(Freetype REQUIRED)
     find_package(OpenGL REQUIRED)
-
-    if(NOT OPENGL_GLU_FOUND)
-        message(FATAL_ERROR "OpenGL GLU library not found.")
-    endif()
-
     find_package(OpenAL REQUIRED)
     find_package(Ogg REQUIRED)
     find_package(Vorbis REQUIRED)
@@ -625,7 +620,6 @@ if(NOT BUILD_HEADLESS)
         freeorionparse
         GiGi::GiGiSDL
         ${OPENGL_gl_LIBRARY}
-        ${OPENGL_glu_LIBRARY}
         ${OPENAL_LIBRARY}
         ${OGG_LIBRARIES}
         ${VORBIS_LIBRARIES}
