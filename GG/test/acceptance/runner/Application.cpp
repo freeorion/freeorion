@@ -181,8 +181,6 @@ void MinimalGGApp::Render() {
 // application-dependent.  Note that this method is called before Render() is
 // ever called.
 void MinimalGGApp::GLInit() {
-    double ratio = Value(AppWidth() * 1.0) / Value(AppHeight());
-
     glEnable(GL_BLEND);
     glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
@@ -190,7 +188,24 @@ void MinimalGGApp::GLInit() {
     glViewport(0, 0, Value(AppWidth()), Value(AppHeight()));
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(50.0, ratio, 1.0, 10.0);
+
+    // set up perspective with vertical FOV of 50°. 1:1 application
+    // window ratio, near plane of 1.0 and far plane of 10.0
+    float ratio = Value(AppWidth() * 1.0f) / Value(AppHeight());
+    float radians = 50.0f * M_PI / 180.f;
+    float near = 1.0f;
+    float far = 10.0f;
+    float cotangent = std::cos(radians) / std::sin(radians);
+
+    float projection[4][4] = { 0.0f };
+    projection[0][0] = cotangent / ratio;
+    projection[1][1] = cotangent;
+    projection[2][2] = -((far + near) / (far - near));
+    projection[2][3] = -1.0f;
+    projection[3][2] = -((2.0f * far * near) / (far - near));
+    projection[3][3] = 0.0f;
+
+    glMultMatrixf(&projection[0][0]);
     gluLookAt(0.0, 0.0, 5.0,
               0.0, 0.0, 0.0,
               0.0, 1.0, 0.0);
