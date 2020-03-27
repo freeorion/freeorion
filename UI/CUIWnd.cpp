@@ -728,10 +728,10 @@ void CUIWnd::SaveOptions() const {
     std::string window_mode = db.Get<bool>("video.fullscreen.enabled") ?
                               ".fullscreen" : ".windowed";
 
-    db.Set<int>(option_prefix + window_mode + ".left",     Value(RelativeUpperLeft().x));
-    db.Set<int>(option_prefix + window_mode + ".top",      Value(RelativeUpperLeft().y));
-    db.Set<int>(option_prefix + window_mode + ".width",         Value(size.x));
-    db.Set<int>(option_prefix + window_mode + ".height",        Value(size.y));
+    db.Set<int>(option_prefix + window_mode + ".left",      Value(RelativeUpperLeft().x));
+    db.Set<int>(option_prefix + window_mode + ".top",       Value(RelativeUpperLeft().y));
+    db.Set<int>(option_prefix + window_mode + ".width",     Value(size.x));
+    db.Set<int>(option_prefix + window_mode + ".height",    Value(size.y));
 
     if (!Modal()) {
         db.Set<bool>(option_prefix + ".visible", Visible());
