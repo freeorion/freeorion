@@ -9362,6 +9362,8 @@ PC_TROOPS_DESC
 
 To successfully invade a planet, the total number of [[metertype METER_TROOPS]] from all invading ships must exceed the total defending (ties are awarded to the defender).
 
+When invading a planet, the troop ships selected in the fleet window will be used for the invasion. If no troop ships were selected, enough troop ships will be automatically selected.
+
 An invading ship is destroyed as part of the landing operation. All parts on the ship are lost with the ship.'''
 
 # Ship part classes
