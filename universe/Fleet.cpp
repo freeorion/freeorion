@@ -811,7 +811,7 @@ void Fleet::MovementPhase() {
                 if (sys)
                     ss << "  " << sys->Name() << " (" << sys_id << ")";
                 else
-                    ss << "  (???) (" << sys_id << ")";
+                    ss << "  (??\?) (" << sys_id << ")";
             }
             return ss.str();
         }()
