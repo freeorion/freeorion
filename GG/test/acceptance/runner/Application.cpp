@@ -206,9 +206,16 @@ void MinimalGGApp::GLInit() {
     projection[3][3] = 0.0f;
 
     glMultMatrixf(&projection[0][0]);
-    gluLookAt(0.0, 0.0, 5.0,
-              0.0, 0.0, 0.0,
-              0.0, 1.0, 0.0);
+
+    // set up camera in -5.0 z offset from origin looking at origin
+    GLfloat view[4][4] = { 0.0 };
+    view[0][0] = -1.0;
+    view[1][1] = -1.0;
+    view[2][2] = 1.0;
+    view[3][3] = 1.0;
+
+    glMultMatrixf(&view[0][0]);
+    glTranslated(-0.0, -0.0, -5.0);
     glMatrixMode(GL_MODELVIEW);
 }
 
