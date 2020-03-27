@@ -45,6 +45,8 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/format.hpp>
 #include <boost/filesystem/fstream.hpp>
+#include <boost/range/irange.hpp>
+#include <cmath>
 
 class RotatingPlanetControl;
 
@@ -218,13 +220,43 @@ namespace {
         return retval;
     }
 
-    void        RenderSphere(double r, const GG::Clr& ambient, const GG::Clr& diffuse,
-                             const GG::Clr& spec, double shine,
-                             std::shared_ptr<GG::Texture> texture)
+    void RenderSphere(
+        double radius, const GG::Clr& ambient, const GG::Clr& diffuse,
+        const GG::Clr& spec, double shine,
+        std::shared_ptr<GG::Texture> texture)
     {
-        static GLUquadric* quad = gluNewQuadric();
-        if (!quad)
-            return;
+        struct PolarCoordinate {
+            GLfloat sin;
+            GLfloat cos;
+        };
+
+        static bool usphere_initialized = false;
+        static std::array<PolarCoordinate, 30 + 1> azimuth;
+        static std::array<PolarCoordinate, 30 + 1> elevation;
+
+        if (!usphere_initialized)
+        {
+            // calculate azimuth on unit sphere along equator
+            for (auto longitude : boost::irange<size_t>(0, azimuth.size())) {
+                float phi = 2 * M_PI * longitude / (azimuth.size() - 1);
+                azimuth[longitude] = {std::sin(phi), std::cos(phi)};
+            }
+
+            // Make sure equator is a closed circle
+            azimuth.back() = azimuth[0];
+
+            // calculate elevation on unit sphere along meridian
+            for (auto latitude : boost::irange<size_t>(0, elevation.size())) {
+                float theta = M_PI * latitude / (elevation.size() - 1);
+                elevation[latitude] = {std::sin(theta), std::cos(theta)};
+            }
+
+            // Make sure sphere poles collapse at true zero
+            elevation.front() = {0.0f, 1.0f};
+            elevation.back() = {0.0f, -1.0f};
+
+            usphere_initialized = true;
+        }
 
         if (texture) {
             glBindTexture(GL_TEXTURE_2D, texture->OpenGLId());
@@ -244,14 +276,20 @@ namespace {
         GLfloat diffuse_v[] = {diffuse.r / 255.0f, diffuse.g / 255.0f, diffuse.b / 255.0f, diffuse.a / 255.0f};
         glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse_v);
 
-        gluQuadricTexture(quad,     texture ? GL_TRUE : GL_FALSE);
-        gluQuadricNormals(quad,     GLU_SMOOTH);
-        gluQuadricOrientation(quad, GLU_OUTSIDE);
-        gluQuadricDrawStyle(quad,   GLU_FILL);
-
         glColor(GG::CLR_WHITE);
+        for (auto latitude : boost::irange<size_t>(0, elevation.size() - 1)) {
+            glBegin(GL_QUAD_STRIP);
+            for (auto longitude : boost::irange<size_t>(0, azimuth.size())) {
+                glNormal3f(azimuth[longitude].sin * elevation[latitude+1].sin         , azimuth[longitude].cos * elevation[latitude+1].sin         , elevation[latitude+1].cos);
+                glTexCoord2f(1 - (float) longitude / (azimuth.size() - 1), 1 - (float) (latitude+1) / (elevation.size() - 1));
+                glVertex3f(azimuth[longitude].sin * elevation[latitude+1].sin * radius, azimuth[longitude].cos * elevation[latitude+1].sin * radius, elevation[latitude+1].cos * radius);
 
-        gluSphere(quad, r, 30, 30);
+                glNormal3f(azimuth[longitude].sin * elevation[latitude].sin         , azimuth[longitude].cos * elevation[latitude].sin         , elevation[latitude].cos);
+                glTexCoord2f(1 - (float) longitude / (azimuth.size() - 1), 1 - (float) latitude / (elevation.size() - 1));
+                glVertex3f(azimuth[longitude].sin * elevation[latitude].sin * radius, azimuth[longitude].cos * elevation[latitude].sin * radius, elevation[latitude].cos * radius);
+            }
+            glEnd();
+        }
     }
 
     GLfloat*    GetLightPosition() {
