@@ -115,9 +115,8 @@ public:
     bool OptionExists(const std::string& name) const
     { return m_options.count(name) && m_options.at(name).recognized; }
 
-    /** write back the optionDB's state to the XML config file
-        if it has changed since it was last saved. */
-    void Commit();
+    /** write the optionDB's non-default state to the XML config file. */
+    bool Commit(bool only_if_dirty = true, bool only_non_default = true);
 
     /** Write any options that are not at default value to persistent config, replacing any existing file
      *
@@ -201,7 +200,7 @@ public:
      * @param[in] non_default_only Do not include options which are set to their
      *      default value, is unrecognized, or is "version.string"
      */
-    void GetXML(XMLDoc& doc, bool non_default_only = false) const;
+    void GetXML(XMLDoc& doc, bool non_default_only = false, bool include_version = true) const;
 
     /** find all registered Options that begin with \a prefix and store them in
       * \a ret. If \p allow_unrecognized then include unrecognized options. */
