@@ -310,27 +310,6 @@ void Texture::Load(const boost::filesystem::path& path, bool mipmap/* = false*/)
     Init(m_default_width, m_default_height, image_data, m_format, m_type, m_bytes_pp, mipmap);
 }
 
-void Texture::Init(X x, Y y, X width, Y height, X image_width, const unsigned char* image,
-                   GLenum format, GLenum type, unsigned int bytes_per_pixel, bool mipmap/* = false*/)
-{
-    glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT);
-    glPixelStorei(GL_UNPACK_SWAP_BYTES, false);
-    glPixelStorei(GL_UNPACK_LSB_FIRST, false);
-    glPixelStorei(GL_UNPACK_ROW_LENGTH, Value(image_width));
-    glPixelStorei(GL_UNPACK_SKIP_ROWS, Value(y));
-    glPixelStorei(GL_UNPACK_SKIP_PIXELS, Value(x));
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-    try {
-        InitFromRawData(width, height, image, format, type, bytes_per_pixel, mipmap);
-    } catch (...) {
-        glPopClientAttrib();
-        throw;
-    }
-
-    glPopClientAttrib();
-}
-
 void Texture::Init(X width, Y height, const unsigned char* image, GLenum format, GLenum type,
                    unsigned int bytes_per_pixel, bool mipmap/* = false*/)
 {
@@ -350,17 +329,6 @@ void Texture::Init(X width, Y height, const unsigned char* image, GLenum format,
     }
 
     glPopClientAttrib();
-}
-
-void Texture::SetWrap(GLenum s, GLenum t)
-{
-    m_wrap_s = s;
-    m_wrap_t = t;
-    if (m_opengl_id) {
-        glBindTexture(GL_TEXTURE_2D, m_opengl_id);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, m_wrap_s);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, m_wrap_t);
-    }
 }
 
 void Texture::SetFilters(GLenum min, GLenum mag)

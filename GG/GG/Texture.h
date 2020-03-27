@@ -108,15 +108,6 @@ public:
     void Init(X width, Y height, const unsigned char* image, GLenum format, GLenum type,
               unsigned bytes_per_pixel, bool mipmap = false);
 
-    /** Frees any currently-held memory and creates a texture from subarea of
-        supplied array \a image.  \throw GG::Texture::Exception Throws
-        applicable subclass if the texture creation fails in one of the
-        specified ways. */
-    void Init(X x, Y y, X width, Y height, X image_width,
-              const unsigned char* image, GLenum format, GLenum type,
-              unsigned int bytes_per_pixel, bool mipmap = false);
-
-    void SetWrap(GLenum s, GLenum t);         ///< sets the opengl texture wrap modes associated with opengl texture m_opengl_id
     void SetFilters(GLenum min, GLenum mag);  ///< sets the opengl min/mag filter modes associated with opengl texture m_opengl_id
     void Clear();  ///< frees the opengl texture object associated with this object
     //@}
