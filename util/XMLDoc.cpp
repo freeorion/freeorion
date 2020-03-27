@@ -93,14 +93,12 @@ const std::string& XMLElement::Tag() const
 const std::string& XMLElement::Text() const
 { return m_text; }
 
-bool XMLElement::ContainsChild(const std::string& tag) const
-{
+bool XMLElement::ContainsChild(const std::string& tag) const {
     return children.end() != std::find_if(children.begin(), children.end(),
         [&tag] (const XMLElement& e) { return e.m_tag == tag; });
 }
 
-const XMLElement& XMLElement::Child(const std::string& tag) const
-{
+const XMLElement& XMLElement::Child(const std::string& tag) const {
     auto match = std::find_if(children.begin(), children.end(),
         [&tag] (const XMLElement& e) { return e.m_tag == tag; });
 
@@ -110,15 +108,13 @@ const XMLElement& XMLElement::Child(const std::string& tag) const
     return *match;
 }
 
-std::string XMLElement::WriteElement(int indent/* = 0*/, bool whitespace/* = true*/) const
-{
+std::string XMLElement::WriteElement(int indent/* = 0*/, bool whitespace/* = true*/) const {
     std::stringstream ss;
     WriteElement(ss, indent, whitespace);
     return ss.str();
 }
 
-std::ostream& XMLElement::WriteElement(std::ostream& os, int indent/* = 0*/, bool whitespace/* = true*/) const
-{
+std::ostream& XMLElement::WriteElement(std::ostream& os, int indent/* = 0*/, bool whitespace/* = true*/) const {
     if (whitespace)
         os << std::string(indent * 2, ' ');
     os << '<' << m_tag;
@@ -148,8 +144,7 @@ std::ostream& XMLElement::WriteElement(std::ostream& os, int indent/* = 0*/, boo
     return os;
 }
 
-XMLElement& XMLElement::Child(const std::string& tag)
-{
+XMLElement& XMLElement::Child(const std::string& tag) {
     auto match = std::find_if(children.begin(), children.end(),
         [&tag] (const XMLElement& e) { return e.m_tag == tag; });
 
@@ -180,21 +175,18 @@ XMLDoc::XMLDoc(const std::istream& is) :
     root_node(XMLElement())
 {}
 
-std::ostream& XMLDoc::WriteDoc(std::ostream& os, bool whitespace/* = true*/) const
-{
+std::ostream& XMLDoc::WriteDoc(std::ostream& os, bool whitespace/* = true*/) const {
     os << "<?xml version=\"1.0\"?>";
     if (whitespace) os << "\n";
     return root_node.WriteElement(os, 0, whitespace);
 }
 
-void XMLDoc::ReadDoc(const std::string& s)
-{
+void XMLDoc::ReadDoc(const std::string& s) {
     std::stringstream ss(s);
     ReadDoc(ss);
 }
 
-std::istream& XMLDoc::ReadDoc(std::istream& is)
-{
+std::istream& XMLDoc::ReadDoc(std::istream& is) {
     root_node = XMLElement(); // clear doc contents
     s_element_stack.clear();  // clear this to start a fresh read
     s_curr_parsing_doc = this;  // indicate where to add elements
@@ -218,8 +210,7 @@ void XMLDoc::SetAttributeName(const char* first, const char* last)
 void XMLDoc::AddAttribute(const char* first, const char* last)
 { s_temp_elem.attributes[s_temp_attr_name] = std::string(first, last); }
 
-void XMLDoc::PushElem1(const char* first, const char* last)
-{
+void XMLDoc::PushElem1(const char* first, const char* last) {
     if (XMLDoc* this_ = XMLDoc::s_curr_parsing_doc) {
         if (s_element_stack.empty()) {
             this_->root_node = s_temp_elem;
@@ -231,8 +222,7 @@ void XMLDoc::PushElem1(const char* first, const char* last)
     }
 }
 
-void XMLDoc::PushElem2(const char* first, const char* last)
-{
+void XMLDoc::PushElem2(const char* first, const char* last) {
     if (XMLDoc* this_ = XMLDoc::s_curr_parsing_doc) {
         if (s_element_stack.empty()) {
             this_->root_node = s_temp_elem;
@@ -242,14 +232,12 @@ void XMLDoc::PushElem2(const char* first, const char* last)
     }
 }
 
-void XMLDoc::PopElem(const char*, const char*)
-{
+void XMLDoc::PopElem(const char*, const char*) {
     if (!s_element_stack.empty())
         s_element_stack.pop_back();
 }
 
-void XMLDoc::AppendToText(const char* first, const char* last)
-{
+void XMLDoc::AppendToText(const char* first, const char* last) {
     if (!s_element_stack.empty()) {
         std::string text(first, last);
         std::string::size_type first_good_posn = (text[0] != '\"') ? 0 : 1;
@@ -260,8 +248,7 @@ void XMLDoc::AppendToText(const char* first, const char* last)
     }
 }
 
-XMLDoc::RuleDefiner::RuleDefiner()
-{
+XMLDoc::RuleDefiner::RuleDefiner() {
     // This is the start rule for XML parsing
     document =
         prolog >> element >> *Misc
