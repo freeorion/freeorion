@@ -6,10 +6,9 @@
 #include "LoggerWithOptionsDB.h"
 #include "OptionsDB.h"
 #include "Random.h"
-#include "../universe/Fleet.h"
-#include "../universe/Planet.h"
-#include "../universe/System.h"
+#include "AppInterface.h"
 #include "../universe/Enums.h"
+
 
 #if defined(_MSC_VER) && defined(int64_t)
 #undef int64_t

@@ -2,6 +2,7 @@
 
 #include "Logger.h"
 #include "OrderSet.h"
+#include "AppInterface.h"
 #include "../universe/Fleet.h"
 #include "../universe/Predicates.h"
 #include "../universe/Species.h"

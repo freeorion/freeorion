@@ -14,7 +14,7 @@
 #include "../universe/Field.h"
 #include "../universe/Universe.h"
 #include "ScopedTimer.h"
-
+#include "AppInterface.h"
 #include "OptionsDB.h"
 
 #include <boost/lexical_cast.hpp>

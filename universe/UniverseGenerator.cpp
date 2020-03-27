@@ -6,6 +6,7 @@
 #include "../util/Logger.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/GameRules.h"
+#include "../util/AppInterface.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 

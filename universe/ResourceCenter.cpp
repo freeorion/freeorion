@@ -3,6 +3,7 @@
 #include "../util/Directories.h"
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
+#include "../util/AppInterface.h"
 #include "../Empire/Empire.h"
 #include "Fleet.h"
 #include "Planet.h"

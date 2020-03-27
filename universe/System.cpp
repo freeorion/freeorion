@@ -14,9 +14,7 @@
 #include "../util/i18n.h"
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
-
-#include <boost/lexical_cast.hpp>
-#include <stdexcept>
+#include "../util/AppInterface.h"
 
 System::System() :
     m_star(INVALID_STAR_TYPE)
@@ -26,10 +24,8 @@ System::System(StarType star, const std::string& name, double x, double y) :
     UniverseObject(name, x, y),
     m_star(star)
 {
-    //DebugLogger() << "System::System(" << star << ", " << orbits << ", " << name << ", " << x << ", " << y << ")";
     if (m_star < INVALID_STAR_TYPE || NUM_STAR_TYPES < m_star)
-        throw std::invalid_argument("System::System : Attempted to create a system \"" +
-                                    Name() + "\" with an invalid star type.");
+        m_star = INVALID_STAR_TYPE;
 
     m_orbits.assign(SYSTEM_ORBITS, INVALID_OBJECT_ID);
 
@@ -42,10 +38,8 @@ System::System(StarType star, const std::map<int, bool>& lanes_and_holes,
     m_star(star),
     m_starlanes_wormholes(lanes_and_holes)
 {
-    //DebugLogger() << "System::System(" << star << ", " << orbits << ", (StarlaneMap), " << name << ", " << x << ", " << y << ")";
     if (m_star < INVALID_STAR_TYPE || NUM_STAR_TYPES < m_star)
-        throw std::invalid_argument("System::System : Attempted to create a system \"" +
-                                    Name() + "\" with an invalid star type.");
+        m_star = INVALID_STAR_TYPE;
 
     m_orbits.assign(SYSTEM_ORBITS, INVALID_OBJECT_ID);
 
@@ -93,7 +87,7 @@ void System::Copy(std::shared_ptr<const UniverseObject> copied_object, int empir
         size_t orbits_size = m_orbits.size();
         m_orbits.clear();
         m_orbits.assign(orbits_size, INVALID_OBJECT_ID);
-        for (int o = 0; o < static_cast<int>(copied_system->m_orbits.size()); ++o) {
+        for (std::size_t o = 0; o < copied_system->m_orbits.size(); ++o) {
             int planet_id = copied_system->m_orbits[o];
             if (m_objects.count(planet_id))
                 m_orbits[o] = planet_id;
@@ -101,8 +95,7 @@ void System::Copy(std::shared_ptr<const UniverseObject> copied_object, int empir
 
         // copy visible contained object per-type info
         m_planets.clear();
-        for (int planet_id : copied_system->m_planets)
-        {
+        for (int planet_id : copied_system->m_planets) {
             if (m_objects.count(planet_id))
                 m_planets.insert(planet_id);
         }
@@ -240,20 +233,18 @@ StarType System::NextOlderStarType() const {
     if (m_star <= INVALID_STAR_TYPE || m_star >= NUM_STAR_TYPES)
         return INVALID_STAR_TYPE;
     if (m_star >= STAR_RED)
-        return m_star;  // STAR_RED, STAR_NEUTRON, STAR_BLACK, STAR_NONE
-    if (m_star <= STAR_BLUE)
-        return STAR_BLUE;
-    return StarType(m_star + 1);
+        return m_star;              // STAR_RED, STAR_NEUTRON, STAR_BLACK, STAR_NONE
+    return StarType(m_star + 1);    // STAR_BLUE -> STAR_WHITE -> STAR_YELLOW -> STAR_ORANGE -> STAR_RED
 }
 
 StarType System::NextYoungerStarType() const {
     if (m_star <= INVALID_STAR_TYPE || m_star >= NUM_STAR_TYPES)
         return INVALID_STAR_TYPE;
-    if (m_star >= STAR_RED)
-        return m_star;  // STAR_RED, STAR_NEUTRON, STAR_BLACK, STAR_NONE
+    if (m_star > STAR_RED)
+        return m_star;              // STAR_NEUTRON, STAR_BLACK, STAR_NONE
     if (m_star <= STAR_BLUE)
-        return STAR_BLUE;
-    return StarType(m_star - 1);
+        return STAR_BLUE;           // STAR_BLUE
+    return StarType(m_star - 1);    // STAR_BLUE <- STAR_WHITE <- STAR_YELLOW <- STAR_ORANGE <- STAR_RED
 }
 
 int System::NumStarlanes() const {

@@ -2,6 +2,7 @@
 
 #include "../util/Logger.h"
 #include "../util/ScopedTimer.h"
+#include "../util/AppInterface.h"
 #include "../Empire/EmpireManager.h"
 #include "Field.h"
 #include "Fleet.h"

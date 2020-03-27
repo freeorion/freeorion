@@ -2,6 +2,7 @@
 
 #include "../util/i18n.h"
 #include "../util/Logger.h"
+#include "../util/AppInterface.h"
 #include "../Empire/EmpireManager.h"
 #include "Meter.h"
 #include "System.h"

@@ -2,12 +2,11 @@
 #define _System_h_
 
 #include "UniverseObject.h"
-
-#include "../util/AppInterface.h"
 #include "../util/Export.h"
 
 #include <map>
 
+class Fleet;
 
 FO_COMMON_API extern const int INVALID_OBJECT_ID;
 namespace {
@@ -131,20 +130,12 @@ protected:
     friend class ObjectMap;
 
     /** \name Structors */ //@{
-    System();
+    explicit System();
 
 public:
-    /** general ctor.  \throw std::invalid_arugment May throw
-      * std::invalid_arugment if \a star is out of the range of StarType,
-      * \a orbits is negative, or either x or y coordinate is outside the map
-      * area.*/
     System(StarType star, const std::string& name, double x, double y);
 
 protected:
-    /** general ctor.  \throw std::invalid_arugment May throw
-      * std::invalid_arugment if \a star is out of the range of StarType,
-      * \a orbits is negative, or either x or y coordinate is outside the map
-      * area.*/
     System(StarType star, const std::map<int, bool>& lanes_and_holes,
            const std::string& name, double x, double y);
 

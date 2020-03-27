@@ -7,6 +7,7 @@
 #include "../Empire/Empire.h"
 #include "i18n.h"
 #include "Logger.h"
+#include "AppInterface.h"
 
 #include <boost/xpressive/xpressive.hpp>
 

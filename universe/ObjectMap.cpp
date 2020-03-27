@@ -10,6 +10,7 @@
 #include "Field.h"
 #include "Enums.h"
 #include "../util/Logger.h"
+#include "../util/AppInterface.h"
 
 
 #define FOR_EACH_SPECIALIZED_MAP(f, ...)  { f(m_resource_centers, ##__VA_ARGS__);   \

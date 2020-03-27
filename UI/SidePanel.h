@@ -12,6 +12,7 @@
 #include <GG/Texture.h>
 
 #include <vector>
+class Ship;
 
 class CUIDropDownList;
 class MultiIconValueIndicator;

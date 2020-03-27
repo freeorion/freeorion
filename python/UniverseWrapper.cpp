@@ -18,6 +18,7 @@
 #include "../util/Logger.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/GameRules.h"
+#include "../util/AppInterface.h"
 
 #include <boost/mpl/vector.hpp>
 #include <boost/python.hpp>
