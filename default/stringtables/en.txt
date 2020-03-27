@@ -3197,8 +3197,11 @@ Create Persistent Config (Advanced Feature)
 
 OPTIONS_CREATE_PERSISTENT_CONFIG_TOOLTIP_DESC
 '''Saves the current config settings as persistent default settings.
+
 Such settings take priority over any settings in config.xml, but not the command line.
+
 Only stores settings that have been modified from default values.
+
 Any existing persistent config file is overwritten.
 
 Settings may not always be valid across versions.
@@ -3211,6 +3214,25 @@ Successfully (re)created persistent_config.xml
 
 OPTIONS_CREATE_PERSISTENT_CONFIG_FAILURE
 Unable to create persistent_config.xml, check log file for details.
+
+OPTIONS_CREATE_ALL_CONFIG_SUCCESS
+Successfully wrote config.xml
+
+OPTIONS_CREATE_ALL_CONFIG_FAILURE
+Unable to write config.xml, check log file for details.
+
+
+OPTIONS_WRITE_ALL_CONFIG
+Write Complete Config File
+
+OPTIONS_CREATE_ALL_CONFIG_TOOLTIP_TITLE
+Create Full Config (Intermediate Feature)
+
+OPTIONS_CREATE_ALL_CONFIG_TOOLTIP_DESC
+'''Saves the current config settings in config.xml including all settings, even if not modified from their defaults.
+
+The existing options.xml is overwitten, but may be regenerated (with just non-default options) if another option is changed, including by repositioning some game windows or within the options window.'''
+
 
 
 ##

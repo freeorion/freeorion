@@ -755,6 +755,22 @@ void OptionsWnd::CompleteConstruction() {
     BoolOption(current_page, 0, "ui.map.sitrep.invalid.shown", UserString("OPTIONS_VERBOSE_SITREP_DESC"));
     BoolOption(current_page, 0, "effects.accounting.enabled", UserString("OPTIONS_EFFECT_ACCOUNTING"));
 
+    // Create full state config button
+    auto all_config_button = GG::Wnd::Create<CUIButton>(UserString("OPTIONS_WRITE_ALL_CONFIG"));
+    all_config_button->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
+    all_config_button->SetBrowseInfoWnd(
+        GG::Wnd::Create<TextBrowseWnd>(UserString("OPTIONS_CREATE_ALL_CONFIG_TOOLTIP_TITLE"),
+                                       UserString("OPTIONS_CREATE_ALL_CONFIG_TOOLTIP_DESC"), ROW_WIDTH));
+    all_config_button->LeftClickedSignal.connect([]() {
+        if (GetOptionsDB().Commit(false, false))
+            ClientUI::MessageBox(UserString("OPTIONS_CREATE_ALL_CONFIG_SUCCESS"));
+        else
+            ClientUI::MessageBox(UserString("OPTIONS_CREATE_ALL_CONFIG_FAILURE"));
+    });
+    current_page->Insert(GG::Wnd::Create<OptionsListRow>(ROW_WIDTH,
+                                                         all_config_button->MinUsableSize().y + LAYOUT_MARGIN + 6,
+                                                         all_config_button, 0));
+
     // Create persistent config button
     auto persistent_config_button = GG::Wnd::Create<CUIButton>(UserString("OPTIONS_CREATE_PERSISTENT_CONFIG"));
     persistent_config_button->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
