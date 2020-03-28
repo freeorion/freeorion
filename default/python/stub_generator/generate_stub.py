@@ -1,4 +1,4 @@
-from logging import warn, error
+from logging import warning, error
 from operator import itemgetter
 
 from common import six
@@ -23,7 +23,7 @@ def handle_class(info):
         elif attr['type'] == "<type 'instancemethod'>":
             instance_methods.append(attr['routine'])
         else:
-            warn("Skipping '%s': %s" % (name, attr))
+            warning("Skipping '%s': %s" % (name, attr))
 
     for property_name, rtype in properties:
         if not rtype:
@@ -122,7 +122,7 @@ def make_stub(data, result_path, classes_to_ignore):
     enums_names = [x['name'] for x in enums]
 
     missed_instances = instance_names.symmetric_difference(clases_map).difference(classes_to_ignore)
-    warn(
+    warning(
         "Classes without instances (%s): %s",
         len(missed_instances),
         ', '.join(sorted(missed_instances, key=str.lower))
@@ -131,7 +131,7 @@ def make_stub(data, result_path, classes_to_ignore):
     for instance in groups.get('instance', []):
         class_name = instance['class_name']
         if class_name in enums_names:
-            warn("skipping enum instance: %s" % class_name)
+            warning("skipping enum instance: %s" % class_name)
             continue
 
         class_attrs = clases_map[class_name]['attrs']

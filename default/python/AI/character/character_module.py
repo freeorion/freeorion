@@ -87,7 +87,7 @@ import abc
 from collections import Counter
 import math
 import random
-from logging import warn, debug
+from logging import warning, debug
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 from common import six
@@ -625,7 +625,7 @@ def geometric_mean_not_none(llin):
     ll_not_none = [x for x in llin if x is not None]
     ll = [x for x in ll_not_none if x > 0]
     if len(ll_not_none) != len(ll):
-        warn("Calculating the geometric mean of %s contains negative numbers which will be ignored." % ll_not_none)
+        warning("Calculating the geometric mean of %s contains negative numbers which will be ignored." % ll_not_none)
     if not ll:
         return 1
     return math.exp(sum(map(math.log, ll)) / float(len(ll)))

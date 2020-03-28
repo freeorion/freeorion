@@ -1,6 +1,6 @@
 from heapq import heappush, heappop
 from collections import namedtuple
-from logging import warn, error
+from logging import warning, error
 
 from aistate_interface import get_aistate
 import freeOrionAIInterface as fo
@@ -188,7 +188,7 @@ def find_path_with_resupply_generic(start, target, start_fuel, max_fuel, system_
     empire_id = fo.empireID()
 
     if start == INVALID_ID or target == INVALID_ID:
-        warn("Requested path between invalid systems.")
+        warning("Requested path between invalid systems.")
         return None
 
     # make sure the minimum fuel at target is realistic
@@ -203,7 +203,7 @@ def find_path_with_resupply_generic(start, target, start_fuel, max_fuel, system_
     # make sure the target is connected to the start system
     shortest_possible_path_distance = universe.shortestPathDistance(start, target)
     if shortest_possible_path_distance == -1:
-        warn("Requested path between disconnected systems, doing nothing.")
+        warning("Requested path between disconnected systems, doing nothing.")
         return None
 
     if may_travel_system_func is None:

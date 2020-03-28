@@ -18,7 +18,7 @@ def test_message_argument():
 
 def test_logger_argument():
     import logging
-    loggers = [logging.debug, logging.info, logging.warn, logging.error]
+    loggers = [logging.debug, logging.info, logging.warning, logging.error]
     for logger in loggers:
         assert assertion_fails(False, logger=logger)
         assert assertion_fails(False, "Some message", logger=logger)

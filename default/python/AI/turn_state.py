@@ -1,5 +1,5 @@
 from collections import namedtuple
-from logging import warn, error
+from logging import warning, error
 from freeorion_tools import ReadOnlyDict
 
 import freeOrionAIInterface as fo
@@ -126,7 +126,7 @@ class State(object):
             # This is only expected to happen if a system has no path to any supplied system.
             # As the current code should not allow such queries, this is logged as warning.
             # If future code breaks this assumption, feel free to adjust logging.
-            warn("Queried supply value of a system not mapped in empire.supplyProjections(): %d" % sys_id)
+            warning("Queried supply value of a system not mapped in empire.supplyProjections(): %d" % sys_id)
             return -99  # pretend it is very far away from supply
         return retval
 
@@ -141,8 +141,8 @@ class State(object):
         :rtype: tuple[int]
         """
         if supply_tier > 0:
-            warn("The current implementation does not distinguish between positive supply levels. "
-                 "Interpreting the query as supply_tier=0 (indicating system in supply).")
+            warning("The current implementation does not distinguish between positive supply levels. "
+                    "Interpreting the query as supply_tier=0 (indicating system in supply).")
             supply_tier = 0
         return self.__systems_by_jumps_to_supply.get(supply_tier, tuple())
 

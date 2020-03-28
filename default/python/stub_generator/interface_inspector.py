@@ -1,6 +1,6 @@
 import os
 from inspect import getdoc, isroutine
-from logging import warn, error, debug
+from logging import warning, error, debug
 
 from common import six
 from generate_stub import make_stub
@@ -29,7 +29,7 @@ def get_member_info(name, member):
             info['value'] = member
     else:
         # instance properties will be already resolved
-        warn('[%s] Unexpected member "%s"(%s)', name, type(member), member)
+        warning('[%s] Unexpected member "%s"(%s)', name, type(member), member)
     return info
 
 
@@ -119,10 +119,10 @@ def _inspect(obj, instances):
         elif name in ('__doc__', '__package__', '__name__', 'INVALID_GAME_TURN', 'to_str'):
             pass
         else:
-            warn("Unknown: '%s' of type '%s': %s" % (name, type(member), member))
+            warning("Unknown: '%s' of type '%s': %s" % (name, type(member), member))
     for i, instance in enumerate(instances, start=2):
         if isinstance(instance, (six.string_types, float)) or isinstance(instance, six.integer_types):
-            warn("Argument number %s(1-based) is builtin python instance: (%s) %s", i, type(instance), instance)
+            warning("Argument number %s(1-based) is builtin python instance: (%s) %s", i, type(instance), instance)
             continue
         try:
             data.append(inspect_instance(instance))

@@ -1,7 +1,7 @@
 from __future__ import division
 import math
 import random
-from logging import debug, error, info, warn
+from logging import debug, error, info, warning
 from operator import itemgetter
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
@@ -335,7 +335,7 @@ def generate_production_orders():
                     res = fo.issueEnqueueBuildingProductionOrder("BLD_SHIPYARD_BASE", homeworld.id)
                     debug("Enqueueing BLD_SHIPYARD_BASE, with result %d" % res)
                 except:
-                    warn("Can't build shipyard at new capital, probably no population; we're hosed")
+                    warning("Can't build shipyard at new capital, probably no population; we're hosed")
 
             for building_name in ["BLD_SHIPYARD_ORG_ORB_INC"]:
                 if (building_name in possible_building_types) and (building_name not in (capital_buildings + queued_building_names)) and (building_expense < building_ratio * total_pp):
@@ -816,7 +816,7 @@ def generate_production_orders():
                         res = fo.issueRequeueProductionOrder(production_queue.size - 1, 0)  # move to front
                         debug("Requeueing %s to front of build queue, with result %d" % (building_name, res))
                 except:
-                    warn("problem queueing BLD_BLACK_HOLE_POW_GEN at planet %s of system %s", use_loc, use_sys)
+                    warning("problem queueing BLD_BLACK_HOLE_POW_GEN at planet %s of system %s", use_loc, use_sys)
                     pass
 
     building_name = "BLD_ENCLAVE_VOID"
@@ -883,7 +883,7 @@ def generate_production_orders():
                     try:
                         distance_map[sys_id] = universe.jumpDistance(homeworld.systemID, sys_id)
                     except Exception:
-                        warn("Could not get jump distance from %d to %d" % (homeworld.systemID, sys_id), exc_info=True)
+                        warning("Could not get jump distance from %d to %d", homeworld.systemID, sys_id, exc_info=True)
                 debug([INVALID_ID] + sorted([(dist, sys_id) for sys_id, dist in distance_map.items()]))
                 use_sys = ([(-1, INVALID_ID)] + sorted([(dist, sys_id) for sys_id, dist in distance_map.items()]))[:2][-1][-1]  # kinda messy, but ensures a value
             if use_sys != INVALID_ID:
@@ -895,7 +895,7 @@ def generate_production_orders():
                         res = fo.issueRequeueProductionOrder(production_queue.size - 1, 0)  # move to front
                         debug("Requeueing %s to front of build queue, with result %d", building_name, res)
                 except:
-                    warn("problem queueing BLD_NEUTRONIUM_EXTRACTOR at planet %s of system %s" % (use_loc, use_sys))
+                    warning("problem queueing BLD_NEUTRONIUM_EXTRACTOR at planet %s of system %s" % (use_loc, use_sys))
                     pass
 
     bld_name = "BLD_SHIPYARD_CON_GEOINT"
@@ -984,7 +984,7 @@ def generate_production_orders():
                         fo.issueRequeueProductionOrder(production_queue.size - 1, 0)  # move to front
                     else:
                         # TODO: enable location condition reporting a la mapwnd BuildDesignatorWnd
-                        warn("Enqueing Conc Camp at %s despite building_type.canBeProduced(empire.empireID, pid) reporting %s" % (planet, can_build_camp))
+                        warning("Enqueing Conc Camp at %s despite building_type.canBeProduced(empire.empireID, pid) reporting %s" % (planet, can_build_camp))
         if verbose_camp:
             debug("conc camp status at %s : checkedCamp: %s, built_camp: %s", planet.name, can_build_camp, built_camp)
 
@@ -1076,7 +1076,7 @@ def generate_production_orders():
                         debug("Requeueing %s to front of build queue, with result %d", building_name, res)
                     break
                 else:
-                    warn("Failed enqueueing %s at %s, with result %d" % (building_name, planet, res))
+                    warning("Failed enqueueing %s at %s, with result %d" % (building_name, planet, res))
 
     building_name = "BLD_XENORESURRECTION_LAB"
     queued_xeno_lab_locs = [element.locationID for element in production_queue if element.name == building_name]
@@ -1090,7 +1090,7 @@ def generate_production_orders():
             debug("Requeueing %s to front of build queue, with result %d", building_name, res)
             break
         else:
-            warn("Failed enqueueing %s at planet %s, got result %d", building_name, planet, res)
+            warning("Failed enqueueing %s at planet %s, got result %d", building_name, planet, res)
 
     # ignore acquired-under-construction colony buildings for which our empire lacks the species
     queued_clny_bld_locs = [element.locationID for element in production_queue
@@ -1116,7 +1116,7 @@ def generate_production_orders():
             debug("Requeueing %s to front of build queue, with result %d", building_name, res)
             break
         else:
-            warn("Failed enqueueing %s at planet %s, got result %d" % (building_name, planet, res))
+            warning("Failed enqueueing %s at planet %s, got result %d" % (building_name, planet, res))
 
     buildings_to_scrap = ("BLD_EVACUATION", "BLD_GATEWAY_VOID")
     for pid in state.get_inhabited_planets():
@@ -1368,7 +1368,10 @@ def generate_production_orders():
                         break
                 loc, best_design_id, best_design = choice[1:4]
                 if best_design is None:
-                    warn("problem with mil_build_choices; with selector (%s) chose loc (%s), best_design_id (%s), best_design (None) from mil_build_choices: %s" % (selector, loc, best_design_id, mil_build_choices))
+                    warning("problem with mil_build_choices;"
+                            " with selector (%s) chose loc (%s), "
+                            "best_design_id (%s), best_design (None) "
+                            "from mil_build_choices: %s" % (selector, loc, best_design_id, mil_build_choices))
                     continue
             else:
                 loc = random.choice(build_choices)
