@@ -758,6 +758,40 @@ SYSTEM_SHIP_FACILITIES = frozenset((
 # <editor-fold desc="Shipdesign/-parts">
 PART_KRILL_SPAWNER = "SP_KRILL_SPAWNER"
 
+
+# <editor-fold desc="Allowed Combat Targets">
+# TODO: Inherit from enum.Flag after switch to Python 3.6+
+class CombatTarget:
+    NONE = 0
+    SHIP = 1 << 0
+    PLANET = 1 << 1
+    FIGHTER = 1 << 2
+    ANY = SHIP | PLANET | FIGHTER
+
+    # map from weapon to allowed targets
+    PART_ALLOWED_TARGETS = {
+        "SR_WEAPON_0_1": FIGHTER,
+        "SR_WEAPON_1_1": SHIP | PLANET,
+        "SR_WEAPON_2_1": SHIP | PLANET,
+        "SR_WEAPON_3_1": SHIP | PLANET,
+        "SR_WEAPON_4_1": SHIP | PLANET,
+        "SR_SPINAL_ANTIMATTER": SHIP | PLANET,
+        "FT_HANGAR_0": NONE,
+        "FT_HANGAR_1": FIGHTER,
+        "FT_HANGAR_2": SHIP | FIGHTER,
+        "FT_HANGAR_3": SHIP,
+        "FT_HANGAR_4": SHIP | PLANET,
+        # monster weapons
+        "SR_ARC_DISRUPTOR": ANY,
+        "SR_ICE_BEAM": ANY,
+        "SR_JAWS": ANY,
+        "SR_PLASMA_DISCHARGE": ANY,
+        "SR_SPINES": ANY,
+        "SR_TENTACLE": ANY,
+        "FT_HANGAR_KRILL": SHIP | FIGHTER,
+    }
+# </editor-fold>
+
 # <editor-fold desc="Effect Scripting for Shipdesigns">
 # <editor-fold desc="Tokens">
 # known tokens the AI can handle

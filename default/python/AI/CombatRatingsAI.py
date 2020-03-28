@@ -1,6 +1,6 @@
 from __future__ import division
 from collections import Counter
-from logging import warning
+from logging import warning, error
 
 from common import six
 import freeOrionAIInterface as fo
@@ -9,7 +9,22 @@ from aistate_interface import get_aistate
 from EnumsAI import MissionType
 from freeorion_tools import get_ai_tag_grade, dict_to_tuple, tuple_to_dict, cache_by_session
 from ShipDesignAI import get_part_type
-from AIDependencies import INVALID_ID
+from AIDependencies import INVALID_ID, CombatTarget
+
+
+_issued_errors = []
+
+
+def get_allowed_targets(partname: str) -> int:
+    """Return the allowed targets for a given hangar or shortrange weapon"""
+    try:
+        return CombatTarget.PART_ALLOWED_TARGETS[partname]
+    except KeyError:
+        if partname not in _issued_errors:
+            error("AI has no targeting information for weapon part %s. Will assume any target allowed."
+                  "Please update CombatTarget.PART_ALLOWED_TARGETS in AIDependencies.py ")
+            _issued_errors.append(partname)
+        return CombatTarget.ANY
 
 
 def get_empire_standard_fighter():
@@ -42,7 +57,11 @@ def default_ship_stats():
     fighters = 0
     launch_rate = 0
     fighter_damage = 0
-    return ShipCombatStats(stats=(attacks, structure, shields, fighters, launch_rate, fighter_damage))
+    flak_shots = 0
+    has_interceptors = False
+    return ShipCombatStats(stats=(attacks, structure, shields,
+                                  fighters, launch_rate, fighter_damage,
+                                  flak_shots, has_interceptors))
 
 
 class ShipCombatStats(object):
@@ -94,15 +113,35 @@ class ShipCombatStats(object):
             """
             return self.capacity, self.launch_rate, self.damage
 
+    class AntiFighterStats(object):
+        def __init__(self, flak_shots: int, has_interceptors: bool):
+            """
+            :param flak_shots: number of shots per bout with flak weapon part
+            :param has_interceptors: true if mounted hangar parts have interceptor ability (interceptors/fighters)
+            """
+            self.flak_shots = flak_shots
+            self.has_interceptors = has_interceptors
+
+        def __str__(self):
+            return str(self.get_stats())
+
+        def get_stats(self):
+            """
+            :return: flak_shots, has_interceptors
+            """
+            return self.flak_shots, self.has_interceptors
+
     def __init__(self, ship_id=INVALID_ID, consider_refuel=False, stats=None):
         self.__ship_id = ship_id
         self._consider_refuel = consider_refuel
         if stats:
             self._basic_stats = self.BasicStats(*stats[0:3])  # TODO: Should probably determine size dynamically
-            self._fighter_stats = self.FighterStats(*stats[3:])
+            self._fighter_stats = self.FighterStats(*stats[3:6])
+            self._anti_fighter_stats = self.AntiFighterStats(*stats[6:])
         else:
             self._basic_stats = self.BasicStats(None, None, None)
             self._fighter_stats = self.FighterStats(None, None, None)
+            self._anti_fighter_stats = self.AntiFighterStats(0, False)
             self.__get_stats_from_ship()
 
     def __hash__(self):
@@ -128,6 +167,8 @@ class ShipCombatStats(object):
         fighter_launch_rate = 0
         fighter_capacity = 0
         fighter_damage = 0
+        flak_shots = 0
+        has_interceptors = False
         design = ship.design
         if design and (ship.isArmed or ship.hasFighters):
             meter_choice = fo.meterType.maxCapacity if self._consider_refuel else fo.meterType.capacity
@@ -136,21 +177,32 @@ class ShipCombatStats(object):
                     continue
                 pc = get_part_type(partname).partClass
                 if pc == fo.shipPartClass.shortRange:
-                    damage = ship.currentPartMeterValue(meter_choice, partname)
-                    attacks[damage] = attacks.get(damage, 0) + 1
+                    allowed_targets = get_allowed_targets(partname)
+                    # TODO: Determine shot count from weapon shots
+                    if allowed_targets & CombatTarget.SHIP:
+                        damage = ship.currentPartMeterValue(meter_choice, partname)
+                        attacks[damage] = attacks.get(damage, 0) + 1
+                    if allowed_targets & CombatTarget.FIGHTER:
+                        flak_shots += 1
                 elif pc == fo.shipPartClass.fighterBay:
                     fighter_launch_rate += ship.currentPartMeterValue(fo.meterType.capacity, partname)
                 elif pc == fo.shipPartClass.fighterHangar:
+                    allowed_targets = get_allowed_targets(partname)
                     # for hangars, capacity meter is already counting contributions from ALL hangars.
                     fighter_capacity = ship.currentPartMeterValue(meter_choice, partname)
-                    part_damage = ship.currentPartMeterValue(fo.meterType.secondaryStat, partname)
-                    if part_damage != fighter_damage and fighter_damage > 0:
-                        # the C++ code fails also in this regard, so FOCS content *should* not allow this.
-                        # TODO: Depending on future implementation, might actually need to handle this case.
-                        warning("Multiple hangar types present on one ship, estimates expected to be wrong.")
-                    fighter_damage = max(fighter_damage, part_damage)
+                    if allowed_targets & CombatTarget.SHIP:
+                        part_damage = ship.currentPartMeterValue(fo.meterType.secondaryStat, partname)
+                        if part_damage != fighter_damage and fighter_damage > 0:
+                            # the C++ code fails also in this regard, so FOCS content *should* not allow this.
+                            # TODO: Depending on future implementation, might actually need to handle this case.
+                            warning("Multiple hangar types present on one ship, estimates expected to be wrong.")
+                        fighter_damage = max(fighter_damage, part_damage)
+                    if allowed_targets & CombatTarget.FIGHTER:
+                        has_interceptors = True
+
         self._basic_stats = self.BasicStats(attacks, structure, shields)
         self._fighter_stats = self.FighterStats(fighter_capacity, fighter_launch_rate, fighter_damage)
+        self._anti_fighter_stats = self.AntiFighterStats(flak_shots, has_interceptors)
 
     def get_basic_stats(self, hashable=False):
         """Get non-fighter-related combat stats of the ship.
@@ -166,6 +218,12 @@ class ShipCombatStats(object):
         :return: capacity, launch_rate, damage
         """
         return self._fighter_stats.get_stats()
+
+    def get_anti_fighter_stats(self):
+        """Get anti-fighter related stats
+        :return: flak_shots, has_interceptors
+        """
+        return self._anti_fighter_stats.get_stats()
 
     def get_rating(self, enemy_stats=None, ignore_fighters=False):
         """Calculate a rating against specified enemy.
@@ -231,7 +289,7 @@ class ShipCombatStats(object):
         :param hashable: if true, return tuple instead of dict for attacks
         :return: attacks, structure, shields, fighter-capacity, fighter-launch_rate, fighter-damage
         """
-        return self.get_basic_stats(hashable=hashable) + self.get_fighter_stats()
+        return self.get_basic_stats(hashable=hashable) + self.get_fighter_stats() + self.get_anti_fighter_stats()
 
 
 class FleetCombatStats(object):

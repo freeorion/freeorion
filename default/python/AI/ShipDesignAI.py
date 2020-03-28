@@ -697,11 +697,14 @@ class DesignStats(object):
         self.fighter_capacity = 0
         self.fighter_launch_rate = 0
         self.fighter_damage = 0
+        self.flak_shots = 0
+        self.has_interceptors = False
 
     def convert_to_combat_stats(self):
         """Return a tuple as expected by CombatRatingsAI"""
         return (self.attacks, self.structure, self.shields,
-                self.fighter_capacity, self.fighter_launch_rate, self.fighter_damage)
+                self.fighter_capacity, self.fighter_launch_rate, self.fighter_damage,
+                self.flak_shots, self.has_interceptors)
 
 
 class ShipDesigner(object):
@@ -897,7 +900,11 @@ class ShipDesigner(object):
                 self.design_stats.structure += capacity
             elif partclass in WEAPONS:
                 shots = self._calculate_weapon_shots(part)
-                self.design_stats.attacks[capacity] = self.design_stats.attacks.get(capacity, 0) + shots
+                allowed_targets = CombatRatingsAI.get_allowed_targets(part.name)
+                if allowed_targets & AIDependencies.CombatTarget.SHIP:
+                    self.design_stats.attacks[capacity] = self.design_stats.attacks.get(capacity, 0) + shots
+                if allowed_targets & AIDependencies.CombatTarget.FIGHTER:
+                    self.design_stats.flak_shots += shots
             elif partclass in SHIELDS:
                 shield_counter += 1
                 if shield_counter == 1:
@@ -922,8 +929,12 @@ class ShipDesigner(object):
                     self.design_stats.fighter_damage = 0
                     self.design_stats.fighter_launch_rate = 0
                 else:
+                    allowed_targets = CombatRatingsAI.get_allowed_targets(part.name)
                     self.design_stats.fighter_capacity += self._calculate_hangar_capacity(part)
-                    self.design_stats.fighter_damage = self._calculate_hangar_damage(part)
+                    if allowed_targets & AIDependencies.CombatTarget.SHIP:
+                        self.design_stats.fighter_damage = self._calculate_hangar_damage(part)
+                    if allowed_targets & AIDependencies.CombatTarget.FIGHTER:
+                        self.design_stats.has_interceptors = True
 
         if len(bay_parts) > 0:
             hangar_part_name = None
