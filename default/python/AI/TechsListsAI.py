@@ -3,7 +3,7 @@ The TechsListAI module provides functions that describes dependencies between
 various technologies to help the AI decide which technologies should be
 researched next.
 """
-from logging import warn, debug
+from logging import warning, debug
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 
@@ -82,12 +82,12 @@ class TechGroup(object):
                     # Do not display error message as those should be shown only once per game session
                     # by the initial test_tech_integrity() call.
                     msg = "Try to enqueue tech from empty list"
-                    warn(msg)
+                    warning(msg)
                     self._errors.append(msg)
                     continue
             if tech_name in self._tech_queue:
                 msg = "Tech is already in queue: %s" % tech_name
-                warn(msg)
+                warning(msg)
                 self._errors.append(msg)
             else:
                 self._tech_queue.append(tech_name)
@@ -677,10 +677,10 @@ def test_tech_integrity():
         techs = this_group.get_techs()
         for tech in techs:
             if not fo.getTech(tech):
-                warn("In %s: Tech %s seems not to exist!" % (group.__name__, tech))
+                warning("In %s: Tech %s seems not to exist!" % (group.__name__, tech))
                 error_occured = True
         for err in this_group.get_errors():
-            warn(err, exc_info=True)
+            warning(err, exc_info=True)
             error_occured = True
         if not error_occured:
             debug("Seems to be OK!")

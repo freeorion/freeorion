@@ -1,6 +1,6 @@
 from __future__ import print_function
 from __future__ import division
-from logging import debug, warn, error, info
+from logging import debug, warning, error, info
 from operator import itemgetter
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
@@ -1206,7 +1206,7 @@ def send_colony_ships(colony_fleet_ids, evaluated_planets, mission_type):
     for fid in fleet_pool:
         fleet = universe.getFleet(fid)
         if not fleet or fleet.empty:
-            warn("Bad fleet ( ID %d ) given to colonization routine; will be skipped" % fid)
+            warning("Bad fleet ( ID %d ) given to colonization routine; will be skipped" % fid)
             fleet_pool.remove(fid)
             continue
         report_str = "Fleet ID (%d): %d ships; species: " % (fid, fleet.numShips)
@@ -1302,7 +1302,7 @@ def __print_candidate_table(candidates, mission, show_detail=False):
         first_column = Float('Score')
         get_first_column_value = itemgetter(0)
     else:
-        warn("__print_candidate_table(%s, %s): Invalid mission type" % (candidates, mission))
+        warning("__print_candidate_table(%s, %s): Invalid mission type" % (candidates, mission))
         return
     columns = [first_column, Text('Planet'), Text('System'), Sequence('Specials')]
     if show_detail:
@@ -1349,7 +1349,7 @@ class OrbitalColonizationPlan(object):
         :rtype: bool
         """
         if self.base_assigned:
-            warn("Assigned a base to a plan that was already assigned a base to.")
+            warning("Assigned a base to a plan that was already assigned a base to.")
             return False
         # give orders to perform the mission
         target = TargetPlanet(self.target)
@@ -1366,14 +1366,14 @@ class OrbitalColonizationPlan(object):
         :rtype: bool
         """
         if self.base_enqueued:
-            warn("Tried to enqueue a base eventhough already done that.")
+            warning("Tried to enqueue a base eventhough already done that.")
             return False
 
         # find the best possible base design for the source planet
         universe = fo.getUniverse()
         best_ship, _, _ = ProductionAI.get_best_ship_info(PriorityType.PRODUCTION_ORBITAL_OUTPOST, self.source)
         if best_ship is None:
-            warn("Can't find optimized outpost base design at %s" % (universe.getPlanet(self.source)))
+            warning("Can't find optimized outpost base design at %s" % (universe.getPlanet(self.source)))
             try:
                 best_ship = next(design for design in fo.getEmpire().availableShipDesigns
                                  if "SD_OUTPOST_BASE" == fo.getShipDesign(design).name)
@@ -1388,7 +1388,7 @@ class OrbitalColonizationPlan(object):
             universe.getPlanet(self.source), universe.getPlanet(self.target), retval))
 
         if not retval:
-            warn("Failed to enqueue outpost base at %s" % universe.getPlanet(self.source))
+            warning("Failed to enqueue outpost base at %s" % universe.getPlanet(self.source))
             return False
 
         self.base_enqueued = True
@@ -1475,7 +1475,7 @@ class OrbitalColonizationManager(object):
         :type source_id: int
         """
         if target_id in self._colonization_plans:
-            warn("Already have a colonization plan for this planet. Doing nothing.")
+            warning("Already have a colonization plan for this planet. Doing nothing.")
             return
         self._colonization_plans[target_id] = OrbitalColonizationPlan(target_id, source_id)
 

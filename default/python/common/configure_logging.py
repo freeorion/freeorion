@@ -22,7 +22,7 @@ with the log.  Handlers convert the logging stream to file, console, email etc.
 * Using the root logger directly is the simplest way to log:
 logging.debug(msg)
 logging.info(msg)
-logging.warn(msg)
+logging.warning(msg)
 logging.error(msg)
 logging.fatal(msg)
 

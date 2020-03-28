@@ -1,7 +1,7 @@
 from __future__ import division
 import copy
 from collections import Counter, OrderedDict as odict
-from logging import error, info, warn, debug
+from logging import error, info, warning, debug
 from operator import itemgetter
 from time import time
 
@@ -736,7 +736,7 @@ class AIstate(object):
     def __add_fleet_mission(self, fleet_id):
         """Add a new dummy AIFleetMission for the passed fleet_id if it has no mission yet."""
         if self.get_fleet_mission(fleet_id) is not None:
-            warn("Tried to add a new fleet mission for fleet that already had a mission.")
+            warning("Tried to add a new fleet mission for fleet that already had a mission.")
             return
         self.__aiMissionsByFleetID[fleet_id] = AIFleetMission.AIFleetMission(fleet_id)
 
@@ -970,7 +970,7 @@ class AIstate(object):
         for fleet_id in fleets_to_split:
             fleet = universe.getFleet(fleet_id)
             if not fleet:
-                warn("Trying to split fleet %d but seemingly does not exist" % fleet_id)
+                warning("Trying to split fleet %d but seemingly does not exist" % fleet_id)
                 continue
             fleet_len = len(fleet.shipIDs)
             if fleet_len == 1:

@@ -46,7 +46,7 @@ from __future__ import division
 import copy
 import math
 from collections import Counter, defaultdict
-from logging import debug, error, info, warn
+from logging import debug, error, info, warning
 
 import freeOrionAIInterface as fo
 
@@ -333,7 +333,7 @@ class ShipDesignCache(object):
         - design_id_by_name
         """
         if self.map_reference_design_name or self.design_id_by_name:
-            warn("ShipDesignAI.Cache._build_cache_after_load() called but cache is not empty.")
+            warning("ShipDesignAI.Cache._build_cache_after_load() called but cache is not empty.")
         for design_id in fo.getEmpire().allShipDesigns:
             design = fo.getShipDesign(design_id)
             if TESTDESIGN_NAME_BASE in design.name:
@@ -369,7 +369,7 @@ class ShipDesignCache(object):
             try:
                 cached_name = fo.getShipDesign(self.design_id_by_name[designname]).name
                 if cached_name != designname:
-                    warn("ShipID cache corrupted. Expected: %s, got: %s." % (designname, cached_name))
+                    warning("ShipID cache corrupted. Expected: %s, got: %s." % (designname, cached_name))
                     design_id = next(iter([shipDesignID for shipDesignID in fo.getEmpire().allShipDesigns
                                           if designname == fo.getShipDesign(shipDesignID).name]), None)
                     if design_id is not None:
@@ -377,7 +377,7 @@ class ShipDesignCache(object):
                     else:
                         corrupted.append(designname)
             except AttributeError:
-                warn("ShipID cache corrupted. Could not get cached shipdesign. Repairing Cache.", exc_info=True)
+                warning("ShipID cache corrupted. Could not get cached shipdesign. Repairing Cache.", exc_info=True)
                 design_id = next(iter([shipDesignID for shipDesignID in fo.getEmpire().allShipDesigns
                                       if designname == fo.getShipDesign(shipDesignID).name]), None)
                 if design_id is not None:
@@ -428,8 +428,8 @@ class ShipDesignCache(object):
             idx = available_hulls.index(TESTDESIGN_PREFERRED_HULL)
             available_hulls[0], available_hulls[idx] = available_hulls[idx], available_hulls[0]
         except ValueError:
-            warn("Tried to use '%s' as testhull but not in available_hulls." % TESTDESIGN_PREFERRED_HULL)
-            warn("Please update ShipDesignAI.py according to the new content.")
+            warning("Tried to use '%s' as testhull but not in available_hulls." % TESTDESIGN_PREFERRED_HULL)
+            warning("Please update ShipDesignAI.py according to the new content.")
         testdesign_names = [get_shipdesign(design_id).name for design_id in empire.allShipDesigns
                             if get_shipdesign(design_id).name.startswith(TESTDESIGN_NAME_BASE)]
         testdesign_names_hull = [name for name in testdesign_names if name.startswith(TESTDESIGN_NAME_HULL)]
@@ -504,7 +504,7 @@ class ShipDesignCache(object):
                     if _can_build(testdesign, empire_id, pid):
                         self.hulls_for_planets[pid].append(hullname)
             else:
-                warn("Missing testdesign for hull %s!" % hullname)
+                warning("Missing testdesign for hull %s!" % hullname)
 
         # 3. Update ship part test designs
         #     Because there are different slottypes, we need to find a hull that can host said slot.
@@ -849,7 +849,7 @@ class ShipDesigner(object):
         self._set_stats_to_default()
 
         if not self.hull:
-            warn("Tried to update stats of design without hull. Reset values to default.")
+            warning("Tried to update stats of design without hull. Reset values to default.")
             return
 
         local_cost_cache = Cache.production_cost[self.pid]
@@ -964,7 +964,7 @@ class ShipDesigner(object):
             elif dependency == AIDependencies.FUEL:
                 dep_val = self.design_stats.fuel
             else:
-                warn("Can't parse dependent token:" + str(tup))
+                warning("Can't parse dependent token:" + str(tup))
             return dep_val * value
 
         def parse_tokens(tokendict, is_hull=False):
@@ -1007,7 +1007,7 @@ class ShipDesigner(object):
                 elif token == AIDependencies.STRUCTURE:
                     self.design_stats.structure += value
                 else:
-                    warn("Failed to parse token: %s" % token)
+                    warning("Failed to parse token: %s" % token)
             # if the hull has no special detection specified, then it has base detection.
             if is_hull and AIDependencies.DETECTION not in tokendict:
                 self.design_stats.detection += AIDependencies.BASE_DETECTION
@@ -1085,7 +1085,7 @@ class ShipDesigner(object):
             Cache.map_reference_design_name[reference_name] = design_name
             return new_design.id
         else:
-            warn("Tried to get just created design %s but got None" % design_name)
+            warning("Tried to get just created design %s but got None" % design_name)
             return None
 
     def _class_specific_filter(self, partname_dict):
@@ -1571,7 +1571,7 @@ class ShipDesigner(object):
         weapon_name = weapon_part.name
         base = weapon_part.secondaryStat
         if not base:
-            warn("Queried weapon %s for number of shots but didn't return any." % weapon_name)
+            warning("Queried weapon %s for number of shots but didn't return any." % weapon_name)
             base = 1
         tech_bonus = _get_tech_bonus(AIDependencies.WEAPON_ROF_UPGRADE_DICT, weapon_name)
         # species modifier
@@ -1851,7 +1851,7 @@ class TroopShipDesignerBaseClass(ShipDesigner):
                 idx = available_parts.index(biggest_troop_pod)
             except ValueError:
                 idx = len(available_parts)
-                warn("Found no valid troop pod.", exc_info=True)
+                warning("Found no valid troop pod.", exc_info=True)
         else:
             idx = len(available_parts)
         ret_val[idx] = num_slots
@@ -2217,9 +2217,9 @@ def _create_ship_design(design_name, hull_name, part_names, model="fighter",
             if verbose:
                 debug("Success: Design %s stored in design_by_name_cache" % design_name)
         else:
-            warn("Tried to get just created design %s but got None" % design_name)
+            warning("Tried to get just created design %s but got None" % design_name)
     else:
-        warn("Tried to add design %s but returned %s, expected 1" % (design_name, res))
+        warning("Tried to add design %s but returned %s, expected 1" % (design_name, res))
 
     return res
 
@@ -2295,7 +2295,7 @@ def get_part_type(partname):
             Cache.part_by_partname[partname] = parttype
             return Cache.part_by_partname[partname]
         else:
-            warn("Could not find part %s" % partname)
+            warning("Could not find part %s" % partname)
             return None
 
 

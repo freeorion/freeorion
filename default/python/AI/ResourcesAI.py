@@ -10,7 +10,7 @@ have their future focus decided.
 # Note: The algorithm is not stable with respect to pid order.  i.e. Two empire with
 #       exactly the same colonies, but different pids may make different choices.
 from __future__ import division
-from logging import info, warn, debug
+from logging import info, warning, debug
 from operator import itemgetter
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
@@ -299,7 +299,7 @@ class Reporter(object):
         debug("Empire Totals:\nPopulation: %5d \nProduction: %5d\nResearch: %5d\n",
               empire.population(), empire.productionPoints, empire.resourceProduction(fo.resourceType.research))
         for name, (cp, mp) in warnings.items():
-            warn("Population Warning! -- %s has unsustainable current pop %d -- target %d", name, cp, mp)
+            warning("Population Warning! -- %s has unsustainable current pop %d -- target %d", name, cp, mp)
 
 
 def weighted_sum_output(outputs):
@@ -410,7 +410,7 @@ def set_planet_growth_specials(focus_manager):
         # Find which metabolism is boosted by this special
         metabolism = AIDependencies.metabolismBoosts.get(special)
         if not metabolism:
-            warn("Entry in available growth special not mapped to a metabolism")
+            warning("Entry in available growth special not mapped to a metabolism")
             continue
 
         # Find the total population bonus we could get by using growth focus
@@ -468,7 +468,7 @@ def set_planet_growth_specials(focus_manager):
                 debug("  --> Using growth focus at %s" % planet)
                 break
         else:
-            warn("  --> Failed to set growth focus at all candidate locations.")
+            warning("  --> Failed to set growth focus at all candidate locations.")
 
 
 def set_planet_production_and_research_specials(focus_manager):
@@ -505,9 +505,9 @@ def set_planet_production_and_research_specials(focus_manager):
                 continue
             else:
                 new_planet = universe.getPlanet(pid)
-                warn("Failed setting %s for Concentration Camp planet %s (%d)"
-                     " with species %s and current focus %s, but new planet copy shows %s" % (
-                        pinfo.future_focus, planet.name, pid, planet.speciesName, planet.focus, new_planet.focus))
+                warning("Failed setting %s for Concentration Camp planet %s (%d) "
+                        "with species %s and current focus %s, but new planet copy shows %s",
+                        pinfo.future_focus, planet.name, pid, planet.speciesName, planet.focus, new_planet.focus)
 
 
 def set_planet_protection_foci(focus_manager):
@@ -526,10 +526,10 @@ def set_planet_protection_foci(focus_manager):
                       ["set", "left"][current_focus == PROTECTION], planet.name, pid)
                 continue
             else:
-                newplanet = universe.getPlanet(pid)
-                warn("Failed setting %s for planet %s (%d) with species %s and current focus %s,"
-                     " but new planet copy shows %s" % (focus_manager.new_foci[pid], planet.name, pid,
-                                                        planet.speciesName, planet.focus, newplanet.focus))
+                new_planet = universe.getPlanet(pid)
+                warning("Failed setting %s for planet %s (%d) with species %s and current focus %s, "
+                        "but new planet copy shows %s",  focus_manager.new_foci[pid], planet.name, pid,
+                        planet.speciesName, planet.focus, new_planet.focus)
 
 
 def set_planet_industry_and_research_foci(focus_manager, priority_ratio):

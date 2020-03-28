@@ -1,4 +1,4 @@
-from logging import error, warn
+from logging import error, warning
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import AIDependencies
@@ -30,7 +30,7 @@ def get_empire_detection(empire_id):
     if empire:
         return empire.getMeter(EmpireMeters.DETECTION_STRENGTH).initial
     else:
-        warn("AI failed to retrieve empire ID %d, in game with %d empires." % (empire_id, len(fo.allEmpireIDs())))
+        warning("AI failed to retrieve empire ID %d, in game with %d empires." % (empire_id, len(fo.allEmpireIDs())))
         return default_empire_detection_strength()
 
 

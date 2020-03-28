@@ -1,6 +1,6 @@
 from __future__ import division
 import math
-from logging import debug, info, warn
+from logging import debug, info, warning
 
 import freeOrionAIInterface as fo
 
@@ -169,21 +169,21 @@ def get_invasion_fleets():
             best_base_trooper_here = ProductionAI.get_best_ship_info(PriorityType.PRODUCTION_ORBITAL_INVASION, loc)[1]
             loc_planet = universe.getPlanet(loc)
             if best_base_trooper_here is None:  # shouldn't be possible at this point, but just to be safe
-                warn("Could not find a suitable orbital invasion design at %s" % loc_planet)
+                warning("Could not find a suitable orbital invasion design at %s" % loc_planet)
                 continue
             # TODO: have TroopShipDesigner give the expected number of troops including species effects directly
             troops_per_ship = best_base_trooper_here.troopCapacity
             species_troop_grade = CombatRatingsAI.get_species_troops_grade(loc_planet.speciesName)
             troops_per_ship = CombatRatingsAI.weight_attack_troops(troops_per_ship, species_troop_grade)
             if not troops_per_ship:
-                warn("The best orbital invasion design at %s seems not to have any troop capacity." % loc_planet)
+                warning("The best orbital invasion design at %s seems not to have any troop capacity." % loc_planet)
                 continue
             _, col_design, build_choices = ProductionAI.get_best_ship_info(PriorityType.PRODUCTION_ORBITAL_INVASION,
                                                                            loc)
             if not col_design:
                 continue
             if loc not in build_choices:
-                warn('Best troop design %s can not be produced at planet with id: %s\d' % (col_design, build_choices))
+                warning('Best troop design %s can not be produced at planet with id: %s' % (col_design, build_choices))
                 continue
             n_bases = math.ceil((planet_troops + 1) / troops_per_ship)  # TODO: reconsider this +1 safety factor
             # TODO: evaluate cost and time-to-build of best base trooper here versus cost and time-to-build-and-travel
