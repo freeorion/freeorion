@@ -74,8 +74,8 @@ def convert_to_version(state, version):
         state['last_turn_played'] = 0
 
     if version == 6:
-        # Anti-Fighter stats were added to CombatRatingAI
-        state['_AIstate__empire_standard_enemy'] = state['_AIstate__empire_standard_enemy'] + (0, False)
+        # Anti-fighter and anti-planet stats were added to CombatRatingAI
+        state['_AIstate__empire_standard_enemy'] = state['_AIstate__empire_standard_enemy'] + (0, False) + (0, False)
 
     #   state["some_new_member"] = some_default_value
     #   del state["some_removed_member"]

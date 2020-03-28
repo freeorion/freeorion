@@ -59,9 +59,12 @@ def default_ship_stats():
     fighter_damage = 0
     flak_shots = 0
     has_interceptors = False
+    damage_vs_planets = 0
+    has_bomber = False
     return ShipCombatStats(stats=(attacks, structure, shields,
                                   fighters, launch_rate, fighter_damage,
-                                  flak_shots, has_interceptors))
+                                  flak_shots, has_interceptors,
+                                  damage_vs_planets, has_bomber))
 
 
 class ShipCombatStats(object):
@@ -131,17 +134,30 @@ class ShipCombatStats(object):
             """
             return self.flak_shots, self.has_interceptors
 
+    class AntiPlanetStats(object):
+        def __init__(self, damage_vs_planets, has_bomber):
+            self.damage_vs_planets = damage_vs_planets
+            self.has_bomber = has_bomber
+
+        def get_stats(self):
+            return self.damage_vs_planets, self.has_bomber
+
+        def __str__(self):
+            return str(self.get_stats())
+
     def __init__(self, ship_id=INVALID_ID, consider_refuel=False, stats=None):
         self.__ship_id = ship_id
         self._consider_refuel = consider_refuel
         if stats:
             self._basic_stats = self.BasicStats(*stats[0:3])  # TODO: Should probably determine size dynamically
             self._fighter_stats = self.FighterStats(*stats[3:6])
-            self._anti_fighter_stats = self.AntiFighterStats(*stats[6:])
+            self._anti_fighter_stats = self.AntiFighterStats(*stats[6:8])
+            self._anti_planet_stats = self.AntiPlanetStats(*stats[8:])
         else:
             self._basic_stats = self.BasicStats(None, None, None)
             self._fighter_stats = self.FighterStats(None, None, None)
             self._anti_fighter_stats = self.AntiFighterStats(0, False)
+            self._anti_planet_stats = self.AntiPlanetStats(0, False)
             self.__get_stats_from_ship()
 
     def __hash__(self):
@@ -168,7 +184,9 @@ class ShipCombatStats(object):
         fighter_capacity = 0
         fighter_damage = 0
         flak_shots = 0
+        has_bomber = False
         has_interceptors = False
+        damage_vs_planets = 0
         design = ship.design
         if design and (ship.isArmed or ship.hasFighters):
             meter_choice = fo.meterType.maxCapacity if self._consider_refuel else fo.meterType.capacity
@@ -184,25 +202,30 @@ class ShipCombatStats(object):
                         attacks[damage] = attacks.get(damage, 0) + shots
                     if allowed_targets & CombatTarget.FIGHTER:
                         flak_shots += 1
+                    if allowed_targets & CombatTarget.PLANET:
+                        damage_vs_planets += damage * shots
                 elif pc == fo.shipPartClass.fighterBay:
                     fighter_launch_rate += ship.currentPartMeterValue(fo.meterType.capacity, partname)
                 elif pc == fo.shipPartClass.fighterHangar:
                     allowed_targets = get_allowed_targets(partname)
                     # for hangars, capacity meter is already counting contributions from ALL hangars.
                     fighter_capacity = ship.currentPartMeterValue(meter_choice, partname)
+                    part_damage = ship.currentPartMeterValue(fo.meterType.secondaryStat, partname)
+                    if part_damage != fighter_damage and fighter_damage > 0:
+                        # the C++ code fails also in this regard, so FOCS content *should* not allow this.
+                        # TODO: Depending on future implementation, might actually need to handle this case.
+                        warning("Multiple hangar types present on one ship, estimates expected to be wrong.")
                     if allowed_targets & CombatTarget.SHIP:
-                        part_damage = ship.currentPartMeterValue(fo.meterType.secondaryStat, partname)
-                        if part_damage != fighter_damage and fighter_damage > 0:
-                            # the C++ code fails also in this regard, so FOCS content *should* not allow this.
-                            # TODO: Depending on future implementation, might actually need to handle this case.
-                            warning("Multiple hangar types present on one ship, estimates expected to be wrong.")
                         fighter_damage = max(fighter_damage, part_damage)
+                    if allowed_targets & CombatTarget.PLANET:
+                        has_bomber = True
                     if allowed_targets & CombatTarget.FIGHTER:
                         has_interceptors = True
 
         self._basic_stats = self.BasicStats(attacks, structure, shields)
         self._fighter_stats = self.FighterStats(fighter_capacity, fighter_launch_rate, fighter_damage)
         self._anti_fighter_stats = self.AntiFighterStats(flak_shots, has_interceptors)
+        self._anti_planet_stats = self.AntiPlanetStats(damage_vs_planets, has_bomber)
 
     def get_basic_stats(self, hashable=False):
         """Get non-fighter-related combat stats of the ship.
@@ -224,6 +247,9 @@ class ShipCombatStats(object):
         :return: flak_shots, has_interceptors
         """
         return self._anti_fighter_stats.get_stats()
+
+    def get_anti_planet_stats(self):
+        return self._anti_planet_stats.get_stats()
 
     def get_rating(self, enemy_stats=None, ignore_fighters=False):
         """Calculate a rating against specified enemy.
@@ -265,21 +291,26 @@ class ShipCombatStats(object):
         if ignore_fighters:
             return _rating()
 
-        # consider fighter attacks
-        capacity, launch_rate, fighter_damage = self.get_fighter_stats()
-        launched_1st_bout = min(capacity, launch_rate)
-        launched_2nd_bout = min(max(capacity - launch_rate, 0), launch_rate)
-        survival_rate = .2  # chance of a fighter launched in bout 1 to live in turn 3 TODO Actual estimation
-        total_fighter_damage = fighter_damage * (launched_1st_bout * (1+survival_rate) + launched_2nd_bout)
-        fighter_damage_per_bout = total_fighter_damage / 3
-        my_total_attack += fighter_damage_per_bout
+        my_total_attack += self.estimate_fighter_damage()
 
         # TODO: Consider enemy fighters
 
         return _rating()
 
+    def estimate_fighter_damage(self):
+        capacity, launch_rate, fighter_damage = self.get_fighter_stats()
+        launched_1st_bout = min(capacity, launch_rate)
+        launched_2nd_bout = min(max(capacity - launch_rate, 0), launch_rate)
+        survival_rate = .2  # chance of a fighter launched in bout 1 to live in turn 3 TODO Actual estimation
+        total_fighter_damage = fighter_damage * (launched_1st_bout * (1 + survival_rate) + launched_2nd_bout)
+        return total_fighter_damage / 3
+
     def get_rating_vs_planets(self):
-        return self.get_rating(ignore_fighters=True)
+        """Heuristic to estimate combat strength against planets"""
+        damage = self._anti_planet_stats.damage_vs_planets
+        if self._anti_planet_stats.has_bomber:
+            damage += self.estimate_fighter_damage()
+        return damage * (self._basic_stats.structure + self._basic_stats.shields)
 
     def get_stats(self, hashable=False):
         """ Get all combat related stats of the ship.
@@ -287,7 +318,8 @@ class ShipCombatStats(object):
         :param hashable: if true, return tuple instead of dict for attacks
         :return: attacks, structure, shields, fighter-capacity, fighter-launch_rate, fighter-damage
         """
-        return self.get_basic_stats(hashable=hashable) + self.get_fighter_stats() + self.get_anti_fighter_stats()
+        return (self.get_basic_stats(hashable=hashable) + self.get_fighter_stats()
+                + self.get_anti_fighter_stats() + self.get_anti_planet_stats())
 
 
 class FleetCombatStats(object):
@@ -325,7 +357,7 @@ class FleetCombatStats(object):
         return combine_ratings_list([x.get_rating(enemy_stats, ignore_fighters) for x in self.__ship_stats])
 
     def get_rating_vs_planets(self):
-        return self.get_rating(ignore_fighters=True)
+        return combine_ratings_list([x.get_rating_vs_planets() for x in self.__ship_stats])
 
     def __get_stats_from_fleet(self):
         """Calculate fleet combat stats (i.e. the stats of all its ships)."""
