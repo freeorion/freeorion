@@ -426,38 +426,9 @@ void IntroScreen::PreRender() {
     m_logo->Resize(GG::Pt(this->Width(), this->Height() / 10));
     m_version->MoveTo(GG::Pt(this->Width() - m_version->Width(), this->Height() - m_version->Height()));
 
-    // reduce size and stretch of hidden buttons
-
-
-    //if (HumanClientApp::GetApp()->IsLoadGameAvailable())
-    //    place_button(m_menu.get(), m_continue);
-    //else
-    //    unplace_button(m_menu.get(), m_continue);
-
-    //place_button(m_menu.get(), m_single_player);
-    //place_button(m_menu.get(), m_quick_start);
-    //place_button(m_menu.get(), m_multi_player);
-
-    //if (HumanClientApp::GetApp()->IsLoadGameAvailable())
-    //    place_button(m_menu.get(), m_load_game);
-    //else
-    //    unplace_button(m_menu.get(), m_load_game);
-
-    //place_button(m_menu.get(), m_options);
-    //place_button(m_menu.get(), m_pedia);
-    //place_button(m_menu.get(), m_about);
-    //place_button(m_menu.get(), m_website);
-    //place_button(m_menu.get(), m_credits);
-
-    //m_menu->AttachChild(m_exit_game);
-    //m_exit_game->SizeMove(button_ul, button_lr);
-
     auto layout = m_menu->GetLayout();
     if (!layout)
         return;
-
-
-
 
     // position menu window
     GG::Pt ul(Width()  * GetOptionsDB().Get<double>("ui.intro.menu.center.x") - layout->MinUsableSize().x / 2,
