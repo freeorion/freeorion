@@ -246,13 +246,13 @@ class ShipCombatStats(object):
         enemy_stats = enemy_stats or get_aistate().get_standard_enemy()
 
         my_attacks, my_structure, my_shields = self.get_basic_stats()
-        e_avg_attack = 1
+        # e_avg_attack = 1
         if enemy_stats:
             e_attacks, e_structure, e_shields = enemy_stats.get_basic_stats()
             if e_attacks:
-                e_num_attacks = sum(n for n in e_attacks.values())
+                # e_num_attacks = sum(n for n in e_attacks.values())
                 e_total_attack = sum(n*dmg for dmg, n in e_attacks.items())
-                e_avg_attack = e_total_attack / e_num_attacks
+                # e_avg_attack = e_total_attack / e_num_attacks
                 e_net_attack = sum(n*max(dmg - my_shields, .001) for dmg, n in e_attacks.items())
                 e_net_attack = max(e_net_attack, .1*e_total_attack)
                 shield_factor = e_total_attack / e_net_attack
@@ -274,10 +274,8 @@ class ShipCombatStats(object):
         fighter_damage_per_bout = total_fighter_damage / 3
         my_total_attack += fighter_damage_per_bout
 
-        # consider fighter protection factor
-        fighters_shot_down = (1-survival_rate**2) * launched_1st_bout + (1-survival_rate) * launched_2nd_bout
-        damage_prevented = fighters_shot_down * e_avg_attack
-        my_structure += damage_prevented
+        # TODO: Consider enemy fighters
+
         return _rating()
 
     def get_rating_vs_planets(self):
