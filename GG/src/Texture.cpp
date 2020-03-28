@@ -46,7 +46,6 @@
 
 #include <iostream>
 #include <iomanip>
-#include <boost/scoped_array.hpp>
 
 #if BOOST_VERSION >= 107000
 #include <boost/variant/get.hpp>
@@ -310,27 +309,6 @@ void Texture::Load(const boost::filesystem::path& path, bool mipmap/* = false*/)
     Init(m_default_width, m_default_height, image_data, m_format, m_type, m_bytes_pp, mipmap);
 }
 
-void Texture::Init(X x, Y y, X width, Y height, X image_width, const unsigned char* image,
-                   GLenum format, GLenum type, unsigned int bytes_per_pixel, bool mipmap/* = false*/)
-{
-    glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT);
-    glPixelStorei(GL_UNPACK_SWAP_BYTES, false);
-    glPixelStorei(GL_UNPACK_LSB_FIRST, false);
-    glPixelStorei(GL_UNPACK_ROW_LENGTH, Value(image_width));
-    glPixelStorei(GL_UNPACK_SKIP_ROWS, Value(y));
-    glPixelStorei(GL_UNPACK_SKIP_PIXELS, Value(x));
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-    try {
-        InitFromRawData(width, height, image, format, type, bytes_per_pixel, mipmap);
-    } catch (...) {
-        glPopClientAttrib();
-        throw;
-    }
-
-    glPopClientAttrib();
-}
-
 void Texture::Init(X width, Y height, const unsigned char* image, GLenum format, GLenum type,
                    unsigned int bytes_per_pixel, bool mipmap/* = false*/)
 {
@@ -350,17 +328,6 @@ void Texture::Init(X width, Y height, const unsigned char* image, GLenum format,
     }
 
     glPopClientAttrib();
-}
-
-void Texture::SetWrap(GLenum s, GLenum t)
-{
-    m_wrap_s = s;
-    m_wrap_t = t;
-    if (m_opengl_id) {
-        glBindTexture(GL_TEXTURE_2D, m_opengl_id);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, m_wrap_s);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, m_wrap_t);
-    }
 }
 
 void Texture::SetFilters(GLenum min, GLenum mag)
@@ -418,6 +385,13 @@ void Texture::InitFromRawData(X width, Y height, const unsigned char* image, GLe
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, m_wrap_s);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, m_wrap_t);
 
+    if (mipmap) {
+        glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
+    } else {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
+    }
+
     glTexImage2D(GL_PROXY_TEXTURE_2D, 0, format, Value(GL_texture_width), Value(GL_texture_height), 0, format, type, nullptr);
     GLint checked_format;
     glGetTexLevelParameteriv(GL_PROXY_TEXTURE_2D, 0, GL_TEXTURE_INTERNAL_FORMAT, &checked_format);
@@ -445,22 +419,6 @@ void Texture::InitFromRawData(X width, Y height, const unsigned char* image, GLe
     }
     m_tex_coords[2] = Value(1.0 * m_default_width / m_width);
     m_tex_coords[3] = Value(1.0 * m_default_height / m_height);
-
-    if (mipmap) {
-        boost::scoped_array<unsigned char> image_copy;
-        if (!image_is_power_of_two)
-            image_copy.reset(GetRawBytes());
-        unsigned char* image_to_use = image_copy ? image_copy.get() : const_cast<unsigned char*>(image);
-        gluBuild2DMipmaps(GL_PROXY_TEXTURE_2D, format, Value(GL_texture_width), Value(GL_texture_height), format, type, image_to_use);
-        GLint mipmap_checked_format;
-        glGetTexLevelParameteriv(GL_PROXY_TEXTURE_2D, 0, GL_TEXTURE_INTERNAL_FORMAT, &mipmap_checked_format);
-        if (!mipmap_checked_format)
-            throw InsufficientResources("Insufficient resources to create requested mipmapped OpenGL texture");
-        gluBuild2DMipmaps(GL_TEXTURE_2D, format, Value(GL_texture_width), Value(GL_texture_height), format, type, image_to_use);
-    } else {
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
-    }
 }
 
 unsigned char* Texture::GetRawBytes()

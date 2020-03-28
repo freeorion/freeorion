@@ -363,8 +363,6 @@ void SDLGUI::SDLInit()
 
 void SDLGUI::GLInit()
 {
-    double ratio = Value(m_app_width) * 1.0 / Value(m_app_height);
-
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
     glEnable(GL_DEPTH_TEST);
@@ -375,7 +373,24 @@ void SDLGUI::GLInit()
     glViewport(0, 0, Value(m_app_width), Value(m_app_height));
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(50.0, ratio, 1.0, 10.0);
+
+    // set up perspective with vertical FOV of 50°. 1:1 application
+    // window ratio, near plane of 1.0 and far plane of 10.0
+    float ratio = Value(m_app_width) * 1.0f / Value(m_app_height);
+    float radians = 50.0f * M_PI / 180.0f;
+    float near = 1.0f;
+    float far = 10.0f;
+    float cotangent = std::cos(radians) / std::sin(radians);
+
+    float projection[4][4] = { 0.0f };
+    projection[0][0] = cotangent / ratio;
+    projection[1][1] = cotangent;
+    projection[2][2] = -((far + near) / (far - near));
+    projection[2][3] = -1.0f;
+    projection[3][2] = -((2.0f * far * near) / (far - near));
+    projection[3][3] = 0.0f;
+
+    glMultMatrixf(&projection[0][0]);
 }
 
 void SDLGUI::HandleSystemEvents()

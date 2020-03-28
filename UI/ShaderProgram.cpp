@@ -15,9 +15,17 @@ namespace {
     void CHECK_ERROR(const char* fn, const char* e) {
         GLenum error = glGetError();
         if (error != GL_NO_ERROR) {
+            const char* error_msg = "";
+
+            switch(error) {
+                case GL_INVALID_ENUM:      error_msg = "invalid enumerant"; break;
+                case GL_INVALID_VALUE:     error_msg = "invalid value";     break;
+                case GL_INVALID_OPERATION: error_msg = "invalid operation"; break;
+            }
+
             ErrorLogger() << fn << " () :"
                                    << " GL error on " << e << ": "
-                                   << "'" << gluErrorString(error) << "'";
+                                   << "'" << error_msg << "'";
         }
     }
 
@@ -82,7 +90,6 @@ ShaderProgram::ShaderProgram(const std::string& vertex_shader, const std::string
     glGetError();
 
     m_program_id = glCreateProgram();
-    CHECK_ERROR("ShaderProgram::ShaderProgram", "glCreateProgram()");
 
     const char* strings[1] = { nullptr };
 

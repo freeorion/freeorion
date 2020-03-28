@@ -9,6 +9,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 #### Technical / Internal
 
 - C++14 is now supported and required to compile.
+- Removed OpenGL Utility (GLU) library dependency.
 
 
 ## [v0.4.9] - 2020-02-02
