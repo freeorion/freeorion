@@ -178,10 +178,10 @@ class ShipCombatStats(object):
                 pc = get_part_type(partname).partClass
                 if pc == fo.shipPartClass.shortRange:
                     allowed_targets = get_allowed_targets(partname)
-                    # TODO: Determine shot count from weapon shots
+                    damage = ship.currentPartMeterValue(meter_choice, partname)
+                    shots = ship.currentPartMeterValue(fo.meterType.secondaryStat, partname)
                     if allowed_targets & CombatTarget.SHIP:
-                        damage = ship.currentPartMeterValue(meter_choice, partname)
-                        attacks[damage] = attacks.get(damage, 0) + 1
+                        attacks[damage] = attacks.get(damage, 0) + shots
                     if allowed_targets & CombatTarget.FIGHTER:
                         flak_shots += 1
                 elif pc == fo.shipPartClass.fighterBay:
