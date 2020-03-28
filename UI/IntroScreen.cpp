@@ -290,26 +290,25 @@ void IntroScreen::CompleteConstruction() {
     layout->SetMinimumColumnWidth(0, needed_width + PAD*2);
     std::size_t row_idx = 0;
     for (auto& b : button_list) {
-        if (!b) {
+        if (!b) {   // empty row to separate exit from other buttons
             layout->SetMinimumRowHeight(row_idx, needed_height);
-            row_idx++;
-            continue;
+
         } else if (b == m_continue || b == m_load_game) {
-            if (have_load) {
+            if (have_load) {            // standard spacing when buttons shown
                 b->Resize(GG::Pt(needed_width + PAD, needed_height));
                 layout->SetMinimumRowHeight(row_idx, needed_height + PAD);
                 layout->Add(b, row_idx, 0, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
-            } else if (row_idx > 0) {
+            } else if (row_idx > 0) {   // smaller gap for hidden buttons, except don't need extra gap if at top
                 layout->SetMinimumRowHeight(row_idx, GG::Y(PAD));
             }
-            row_idx++;
-            continue;
-        } else {
+
+        } else {    // standard spacing for most buttons
             b->Resize(GG::Pt(needed_width + PAD, needed_height));
             layout->SetMinimumRowHeight(row_idx, needed_height + PAD);
             layout->Add(b, row_idx, 0, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
-            row_idx++;
         }
+
+        row_idx++;
     }
     m_menu->SetLayout(layout);
 
