@@ -202,27 +202,14 @@ namespace {
 ////////////////////////////////////////////////
 ListBox::Row::Row() :
     Control(X0, Y0, ListBox::DEFAULT_ROW_WIDTH, ListBox::DEFAULT_ROW_HEIGHT),
-    m_cells(),
-    m_row_alignment(ALIGN_VCENTER),
-    m_col_alignments(),
-    m_col_widths(),
-    m_col_stretches(),
-    m_margin(ListBox::DEFAULT_MARGIN),
-    m_ignore_adjust_layout(false),
-    m_is_normalized(false)
+    m_row_alignment(ALIGN_VCENTER)
 {}
 
 ListBox::Row::Row(X w, Y h, const std::string& drag_drop_data_type,
                   Alignment align/* = ALIGN_VCENTER*/, unsigned int margin/* = 2*/) : 
     Control(X0, Y0, w, h),
-    m_cells(),
     m_row_alignment(align),
-    m_col_alignments(),
-    m_col_widths(),
-    m_col_stretches(),
-    m_margin(margin),
-    m_ignore_adjust_layout(false),
-    m_is_normalized(false)
+    m_margin(margin)
 { SetDragDropDataType(drag_drop_data_type); }
 
 void ListBox::Row::CompleteConstruction()

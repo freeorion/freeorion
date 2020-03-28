@@ -187,15 +187,14 @@ public:
         void GrowWidthsStretchesAlignmentsTo(std::size_t nn);
         void RClick(const Pt& pt, GG::Flags<GG::ModKey> mod) override;
 
-        std::vector<std::shared_ptr<Control>>  m_cells;          ///< the Controls in this Row (each may be null)
-        Alignment              m_row_alignment;  ///< row alignment; one of ALIGN_TOP, ALIGN_VCENTER, or ALIGN_BOTTOM
-        std::vector<Alignment> m_col_alignments; ///< column alignments; each is one of ALIGN_TOP, ALIGN_VCENTER, or ALIGN_BOTTOM
-        std::vector<X>         m_col_widths;     ///< column widths
-        std::vector<double>    m_col_stretches;  ///< the stretch factor of each column
-        unsigned int           m_margin;         ///< the amount of space left between the contents of adjacent cells, in pixels
-
-        bool                   m_ignore_adjust_layout;
-        bool                   m_is_normalized;
+        std::vector<std::shared_ptr<Control>>   m_cells;                    ///< the Controls in this Row (each may be null)
+        Alignment                               m_row_alignment;            ///< row alignment; one of ALIGN_TOP, ALIGN_VCENTER, or ALIGN_BOTTOM
+        std::vector<Alignment>                  m_col_alignments;           ///< column alignments; each is one of ALIGN_TOP, ALIGN_VCENTER, or ALIGN_BOTTOM
+        std::vector<X>                          m_col_widths;               ///< column widths
+        std::vector<double>                     m_col_stretches;            ///< the stretch factor of each column
+        unsigned int                            m_margin = DEFAULT_MARGIN;  ///< the amount of space left between the contents of adjacent cells, in pixels
+        bool                                    m_ignore_adjust_layout = false;
+        bool                                    m_is_normalized = false;
     };
 
     typedef std::list<std::shared_ptr<Row>>::iterator iterator;
