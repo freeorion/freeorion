@@ -284,9 +284,9 @@ BuildingIndicator::BuildingIndicator(GG::X w, const std::string& building_type,
     m_progress_bar = GG::Wnd::Create<MultiTurnProgressBar>(total_turns,
                                                            turns_completed,
                                                            next_progress,
-                                                           GG::LightColor(ClientUI::TechWndProgressBarBackgroundColor()),
+                                                           GG::LightenClr(ClientUI::TechWndProgressBarBackgroundColor()),
                                                            ClientUI::TechWndProgressBarColor(),
-                                                           GG::LightColor(ClientUI::ResearchableTechFillColor()));
+                                                           GG::LightenClr(ClientUI::ResearchableTechFillColor()));
 
 }
 

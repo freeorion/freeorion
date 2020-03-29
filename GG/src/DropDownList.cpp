@@ -680,8 +680,8 @@ void DropDownList::Render()
     Pt ul = UpperLeft();
 
     Clr border_color = Disabled() ? DisabledColor(LB()->Color()) : LB()->Color();
-    Clr border_color1 = DarkColor(border_color);
-    Clr border_color2 = LightColor(border_color);
+    Clr border_color1 = DarkenClr(border_color);
+    Clr border_color2 = LightenClr(border_color);
     Clr interior_color = Disabled() ? DisabledColor(LB()->m_int_color) : LB()->m_int_color;
 
 

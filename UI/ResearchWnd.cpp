@@ -153,7 +153,7 @@ namespace {
             m_total_turns = tech->ResearchTime(m_empire_id);
 
         GG::Clr clr = m_in_progress
-                        ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor())
+                        ? GG::LightenClr(ClientUI::ResearchableTechTextAndBorderColor())
                         : ClientUI::ResearchableTechTextAndBorderColor();
 
         GG::Y top(MARGIN);
@@ -184,12 +184,12 @@ namespace {
         }
         GG::Clr outline_color = ClientUI::ResearchableTechFillColor();
         if (m_in_progress)
-            outline_color = GG::LightColor(outline_color);
+            outline_color = GG::LightenClr(outline_color);
 
         m_progress_bar = GG::Wnd::Create<MultiTurnProgressBar>(total_time,
                                                                perc_complete,
                                                                next_progress,
-                                                               GG::LightColor(ClientUI::TechWndProgressBarBackgroundColor()),
+                                                               GG::LightenClr(ClientUI::TechWndProgressBarBackgroundColor()),
                                                                ClientUI::TechWndProgressBarColor(),
                                                                outline_color);
 
@@ -232,8 +232,8 @@ namespace {
     }
 
     void QueueTechPanel::Render() {
-        GG::Clr fill = m_in_progress ? GG::LightColor(ClientUI::ResearchableTechFillColor()) : ClientUI::ResearchableTechFillColor();
-        GG::Clr text_and_border = m_in_progress ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor()) : ClientUI::ResearchableTechTextAndBorderColor();
+        GG::Clr fill = m_in_progress ? GG::LightenClr(ClientUI::ResearchableTechFillColor()) : ClientUI::ResearchableTechFillColor();
+        GG::Clr text_and_border = m_in_progress ? GG::LightenClr(ClientUI::ResearchableTechTextAndBorderColor()) : ClientUI::ResearchableTechTextAndBorderColor();
 
         glDisable(GL_TEXTURE_2D);
         Draw(fill, true);

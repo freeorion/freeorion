@@ -125,7 +125,7 @@ std::shared_ptr<GG::StateButton> CUIStyle::NewTabBarTab(
 {
     auto retval = GG::Wnd::Create<CUIStateButton>(str, format, std::make_shared<CUITabRepresenter>());
     retval->SetColor(ClientUI::WndColor());
-    retval->GetLabel()->SetTextColor(DarkColor(ClientUI::TextColor()));
+    retval->GetLabel()->SetTextColor(DarkenClr(ClientUI::TextColor()));
     retval->Resize(retval->MinUsableSize() + GG::Pt(GG::X(12), GG::Y0));
     return retval;
 }

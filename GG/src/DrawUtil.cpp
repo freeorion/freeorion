@@ -556,26 +556,6 @@ namespace GG {
     void glColor(Clr clr)
     { glColor4ub(clr.r, clr.g, clr.b, clr.a); }
 
-    Clr LightColor(Clr clr)
-    {
-        const double scale_factor = 2.0;   // factor by which the color is lightened
-        Clr retval = clr;
-        retval.r = std::min(static_cast<int>(retval.r * scale_factor), 255);
-        retval.g = std::min(static_cast<int>(retval.g * scale_factor), 255);
-        retval.b = std::min(static_cast<int>(retval.b * scale_factor), 255);
-        return retval;
-    }
-
-    Clr DarkColor(Clr clr)
-    {
-        const double scale_factor = 2.0;   // factor by which the color is darkened
-        Clr retval = clr;
-        retval.r = static_cast<int>(retval.r / scale_factor);
-        retval.g = static_cast<int>(retval.g / scale_factor);
-        retval.b = static_cast<int>(retval.b / scale_factor);
-        return retval;
-    }
-
     Clr DisabledColor(Clr clr)
     {
         Clr retval = clr;
@@ -787,8 +767,8 @@ namespace GG {
                           bool bevel_bottom/* = true*/)
     {
         Rectangle(ul, lr, color,
-                  (up ? LightColor(border_color) : DarkColor(border_color)),
-                  (up ? DarkColor(border_color) : LightColor(border_color)),
+                  (up ? LightenClr(border_color) : DarkenClr(border_color)),
+                  (up ? DarkenClr(border_color) : LightenClr(border_color)),
                   bevel_thick, bevel_left, bevel_top, bevel_right, bevel_bottom);
     }
 
@@ -805,8 +785,8 @@ namespace GG {
                                  unsigned int bevel_thick/* = 2*/)
     {
         RoundedRectangle(ul, lr, color,
-                         (up ? LightColor(border_color) : DarkColor(border_color)),
-                         (up ? DarkColor(border_color) : LightColor(border_color)),
+                         (up ? LightenClr(border_color) : DarkenClr(border_color)),
+                         (up ? DarkenClr(border_color) : LightenClr(border_color)),
                          corner_radius, bevel_thick);
     }
 
@@ -814,7 +794,7 @@ namespace GG {
     { Check(ul, lr, color, color, color); }
 
     void BeveledCheck(Pt ul, Pt lr, Clr color)
-    { Check(ul, lr, color, LightColor(color), DarkColor(color)); }
+    { Check(ul, lr, color, LightenClr(color), DarkenClr(color)); }
 
     void FlatX(Pt ul, Pt lr, Clr color)
     { XMark(ul, lr, color, color, color); }
@@ -822,8 +802,8 @@ namespace GG {
     void Bubble(Pt ul, Pt lr, Clr color, bool up/* = true*/)
     {
         BubbleArc(ul, lr, color,
-                  (up ? DarkColor(color) : LightColor(color)),
-                  (up ? LightColor(color) : DarkColor(color)),
+                  (up ? DarkenClr(color) : LightenClr(color)),
+                  (up ? LightenClr(color) : DarkenClr(color)),
                   0, 0);
     }
 
@@ -833,16 +813,16 @@ namespace GG {
     void BeveledCircle(Pt ul, Pt lr, Clr color, Clr border_color, bool up/* = true*/, unsigned int bevel_thick/* = 2*/)
     {
         CircleArc(ul, lr, color,
-                  (up ? DarkColor(border_color) : LightColor(border_color)),
-                  (up ? LightColor(border_color) : DarkColor(border_color)),
+                  (up ? DarkenClr(border_color) : LightenClr(border_color)),
+                  (up ? LightenClr(border_color) : DarkenClr(border_color)),
                   bevel_thick, 0, 0);
     }
 
     void BubbleRectangle(Pt ul, Pt lr, Clr color, bool up, unsigned int corner_radius/* = 5*/)
     {
         ::BubbleRectangle(ul, lr, color,
-                          (up ? LightColor(color) : DarkColor(color)),
-                          (up ? DarkColor(color) : LightColor(color)),
+                          (up ? LightenClr(color) : DarkenClr(color)),
+                          (up ? DarkenClr(color) : LightenClr(color)),
                           corner_radius);
     }
 } // namespace GG

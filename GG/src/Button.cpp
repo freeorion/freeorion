@@ -542,7 +542,7 @@ void BeveledTabRepresenter::Render(const StateButton& button) const
     Pt cl_lr = button.ClientLowerRight();
     Pt tx_ul = Pt();
 
-    Clr color_to_use = button.Checked() ? button.Color() : DarkColor(button.Color());
+    Clr color_to_use = button.Checked() ? button.Color() : DarkenClr(button.Color());
     color_to_use = button.Disabled() ? DisabledColor(color_to_use) : color_to_use;
     if (!button.Checked()) {
         cl_ul.y += BEVEL;
