@@ -16,7 +16,6 @@
 
 #include <GG/utf8/checked.h>
 #include <GG/dialogs/ColorDlg.h>
-#include <GG/DrawUtil.h>
 #include <GG/GUI.h>
 #include <GG/Layout.h>
 

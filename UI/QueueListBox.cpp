@@ -3,7 +3,6 @@
 #include "../util/i18n.h"
 #include "../util/Logger.h"
 
-#include <GG/DrawUtil.h>
 #include <GG/WndEvent.h>
 
 #include <boost/cast.hpp>

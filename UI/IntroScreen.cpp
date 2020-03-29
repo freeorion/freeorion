@@ -17,7 +17,6 @@
 #include "../util/XMLDoc.h"
 
 #include <GG/GUI.h>
-#include <GG/DrawUtil.h>
 #include <GG/StaticGraphic.h>
 #include <GG/Texture.h>
 #include <GG/Layout.h>

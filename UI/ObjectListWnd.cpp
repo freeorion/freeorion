@@ -25,7 +25,6 @@
 #include "../universe/ValueRefs.h"
 #include "../universe/Enums.h"
 
-#include <GG/DrawUtil.h>
 #include <GG/Layout.h>
 
 #include <boost/lexical_cast.hpp>

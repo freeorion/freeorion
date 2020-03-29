@@ -7,7 +7,6 @@
 #include "../util/AppInterface.h"
 #include "../util/i18n.h"
 
-#include <GG/DrawUtil.h>
 #include <GG/StaticGraphic.h>
 #include <GG/DynamicGraphic.h>
 #include <GG/WndEvent.h>

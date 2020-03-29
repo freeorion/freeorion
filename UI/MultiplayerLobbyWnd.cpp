@@ -1,7 +1,6 @@
 #include "MultiplayerLobbyWnd.h"
 
 #include <GG/Button.h>
-#include <GG/DrawUtil.h>
 #include <GG/Layout.h>
 #include <GG/StaticGraphic.h>
 

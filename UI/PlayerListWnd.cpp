@@ -14,8 +14,6 @@
 #include "../universe/System.h"
 #include "../universe/Enums.h"
 
-#include <GG/DrawUtil.h>
-
 #include <algorithm>
 
 namespace {

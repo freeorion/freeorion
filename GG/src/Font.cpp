@@ -26,7 +26,6 @@
 
 #include <GG/GUI.h>
 #include <GG/Base.h>
-#include <GG/DrawUtil.h>
 #include <GG/StyleFactory.h>
 #include <GG/utf8/checked.h>
 #include <GG/GLClientAndServerBuffer.h>

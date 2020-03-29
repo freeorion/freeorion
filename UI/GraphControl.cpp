@@ -4,7 +4,6 @@
 #include "CUIControls.h"
 #include "../util/i18n.h"
 
-#include <GG/DrawUtil.h>
 #include <GG/ClrConstants.h>
 
 

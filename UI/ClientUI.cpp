@@ -34,7 +34,6 @@
 
 #include <GG/Clr.h>
 #include <GG/dialogs/ThreeButtonDlg.h>
-#include <GG/DrawUtil.h>
 #include <GG/GUI.h>
 #include <GG/RichText/ImageBlock.h>
 #include <GG/UnicodeCharsets.h>

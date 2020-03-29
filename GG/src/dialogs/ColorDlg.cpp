@@ -24,7 +24,6 @@
 
 #include <GG/dialogs/ColorDlg.h>
 
-#include <GG/DrawUtil.h>
 #include <GG/Font.h>
 #include <GG/GLClientAndServerBuffer.h>
 #include <GG/GUI.h>

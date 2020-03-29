@@ -22,7 +22,6 @@
 #include "TechTreeArcs.h"
 #include "Hotkeys.h"
 
-#include <GG/DrawUtil.h>
 #include <GG/GLClientAndServerBuffer.h>
 #include <GG/GUI.h>
 #include <GG/Layout.h>

@@ -17,7 +17,6 @@
 #include "../universe/ShipDesign.h"
 #include "../universe/Enums.h"
 
-#include <GG/DrawUtil.h>
 #include <GG/Layout.h>
 #include <GG/StaticGraphic.h>
 

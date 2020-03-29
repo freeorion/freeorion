@@ -12,7 +12,6 @@
 #include "../util/Directories.h"
 #include "../util/Logger.h"
 
-#include <GG/DrawUtil.h>
 #include <GG/GUI.h>
 
 #include <limits>

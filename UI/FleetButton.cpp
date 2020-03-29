@@ -15,7 +15,6 @@
 #include "../universe/Enums.h"
 #include "../Empire/Empire.h"
 
-#include <GG/DrawUtil.h>
 #include <GG/GLClientAndServerBuffer.h>
 
 #include <algorithm>

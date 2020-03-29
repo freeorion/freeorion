@@ -15,7 +15,6 @@
 
 #include <boost/filesystem/fstream.hpp>
 
-#include <GG/DrawUtil.h>
 #include <GG/StaticGraphic.h>
 #include <GG/Layout.h>
 #include <GG/TabWnd.h>
