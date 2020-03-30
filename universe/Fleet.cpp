@@ -15,6 +15,7 @@
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Supply.h"
 
+#include <boost/algorithm/cxx11/all_of.hpp>
 #include <boost/bind.hpp>
 
 namespace {
@@ -1362,6 +1363,11 @@ float Fleet::Shields() const {
     return retval;
 }
 
+namespace {
+    bool IsCombatShip(const Ship& ship)
+    { return ship.IsArmed() || ship.HasFighters() || ship.CanHaveTroops() || ship.CanBombard(); }
+}
+
 std::string Fleet::GenerateFleetName() {
     // TODO: Change returned name based on passed ship designs.  eg. return "colony fleet" if
     // ships are colony ships, or "battle fleet" if ships are armed.
@@ -1375,88 +1381,22 @@ std::string Fleet::GenerateFleetName() {
         ships.push_back(ship);
     }
 
-    auto it = ships.begin();
+    std::string fleet_name_key = UserStringNop("NEW_FLEET_NAME");
 
-    // TODO C++11 replace all of these loops with std::all_of
-    bool all_monster(true);
-    while (it != ships.end()) {
-        if (!(*it)->IsMonster()) {
-            all_monster = false;
-            break;
-        }
-        ++it;
-    }
+    if (boost::algorithm::all_of(ships, [](const auto& ship){ return ship->IsMonster(); }))
+        fleet_name_key = UserStringNop("NEW_MONSTER_FLEET_NAME");
+    else if (boost::algorithm::all_of(ships, [](const auto& ship){ return ship->CanColonize(); }))
+        fleet_name_key = UserStringNop("NEW_COLONY_FLEET_NAME");
+    else if (boost::algorithm::all_of(ships, [](const auto& ship){ return !IsCombatShip(*ship); }))
+        fleet_name_key = UserStringNop("NEW_RECON_FLEET_NAME");
+    else if (boost::algorithm::all_of(ships, [](const auto& ship){ return ship->CanHaveTroops(); }))
+        fleet_name_key = UserStringNop("NEW_TROOP_FLEET_NAME");
+    else if (boost::algorithm::all_of(ships, [](const auto& ship){ return ship->CanBombard(); }))
+        fleet_name_key = UserStringNop("NEW_BOMBARD_FLEET_NAME");
+    else if (boost::algorithm::all_of(ships, [](const auto& ship){ return IsCombatShip(*ship); }))
+        fleet_name_key = UserStringNop("NEW_BATTLE_FLEET_NAME");
 
-    if (all_monster)
-        return boost::io::str(FlexibleFormat(UserString("NEW_MONSTER_FLEET_NAME")) % ID());
-
-    bool all_colony(true);
-    it = ships.begin();
-    while (it != ships.end()) {
-        if (!(*it)->CanColonize()) {
-            all_colony = false;
-            break;
-        }
-        ++it;
-    }
-
-    if (all_colony)
-        return boost::io::str(FlexibleFormat(UserString("NEW_COLONY_FLEET_NAME")) % ID());
-
-    bool all_non_coms(true);
-    it = ships.begin();
-    while (it != ships.end()) {
-        if ((*it)->IsArmed() || (*it)->HasFighters() || (*it)->CanHaveTroops() || (*it)->CanBombard()) {
-            all_non_coms = false;
-            break;
-        }
-        ++it;
-    }
-
-    if (all_non_coms)
-        return boost::io::str(FlexibleFormat(UserString("NEW_RECON_FLEET_NAME")) % ID());
-
-    bool all_troop(true);
-    it = ships.begin();
-    while (it != ships.end()) {
-        if (!(*it)->CanHaveTroops()) {
-            all_troop = false;
-            break;
-        }
-        ++it;
-    }
-
-    if (all_troop)
-        return boost::io::str(FlexibleFormat(UserString("NEW_TROOP_FLEET_NAME")) % ID());
-
-    bool all_bombard(true);
-    it = ships.begin();
-    while (it != ships.end()) {
-        if (!(*it)->CanBombard()) {
-            all_bombard = false;
-            break;
-        }
-        ++it;
-    }
-
-    if (all_bombard)
-        return boost::io::str(FlexibleFormat(UserString("NEW_BOMBARD_FLEET_NAME")) % ID());
-
-    bool mixed_combat(true);
-    it = ships.begin();
-    while (it != ships.end()) {
-        if (!((*it)->IsArmed() || (*it)->HasFighters() || (*it)->CanHaveTroops() || (*it)->CanBombard())) {
-            mixed_combat = false;
-            break;
-        }
-        ++it;
-    }
-
-    if (mixed_combat)
-        return boost::io::str(FlexibleFormat(UserString("NEW_BATTLE_FLEET_NAME")) % ID());
-
-
-    return boost::io::str(FlexibleFormat(UserString("NEW_FLEET_NAME")) % ID());
+    return boost::io::str(FlexibleFormat(UserString(fleet_name_key)) % ID());
 }
 
 void Fleet::SetGiveToEmpire(int empire_id) {
