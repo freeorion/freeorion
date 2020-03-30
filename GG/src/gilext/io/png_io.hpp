@@ -33,7 +33,6 @@
 extern "C" {
 #include <png.h>
 }
-#include <boost/static_assert.hpp>
 #include <boost/gil/gil_config.hpp>
 #include <boost/gil/utilities.hpp>
 #include <boost/gil/extension/io/io_error.hpp>
@@ -45,16 +44,16 @@ namespace boost { namespace gil {
 /// \brief Determines whether the given view type is supported for reading
 template <typename View>
 struct png_read_support {
-    BOOST_STATIC_CONSTANT(bool,is_supported=
-                          (detail::png_read_support_private<typename channel_type<View>::type,
-                                                            typename color_space_type<View>::type>::is_supported));
-    BOOST_STATIC_CONSTANT(int,bit_depth=
-                          (detail::png_read_support_private<typename channel_type<View>::type,
-                                                            typename color_space_type<View>::type>::bit_depth));
-    BOOST_STATIC_CONSTANT(int,color_type=
-                          (detail::png_read_support_private<typename channel_type<View>::type,
-                                                            typename color_space_type<View>::type>::color_type));
-    BOOST_STATIC_CONSTANT(bool, value=is_supported);
+    static bool constexpr is_supported =
+        (detail::png_read_support_private<typename channel_type<View>::type,
+                                          typename color_space_type<View>::type>::is_supported);
+    static int constexpr bit_depth =
+        (detail::png_read_support_private<typename channel_type<View>::type,
+                                          typename color_space_type<View>::type>::bit_depth);
+    static int constexpr color_type =
+        (detail::png_read_support_private<typename channel_type<View>::type,
+                                          typename color_space_type<View>::type>::color_type);
+    static bool constexpr value = is_supported;
 };
 
 /// \ingroup PNG_IO
@@ -64,7 +63,7 @@ struct png_read_support {
 /// compatible with the ones specified by View, or if its dimensions don't match the ones of the view.
 template <typename View>
 inline void png_read_view(const char* filename,const View& view) {
-    BOOST_STATIC_ASSERT(png_read_support<View>::is_supported);
+    static_assert(png_read_support<View>::is_supported, "No PNG file read support for given View");
     detail::png_reader m(filename);
     m.apply(view);
 }
@@ -83,7 +82,7 @@ inline void png_read_view(const std::string& filename,const View& view) {
 /// compatible with the ones specified by Image
 template <typename Image>
 inline void png_read_image(const char* filename,Image& im) {
-    BOOST_STATIC_ASSERT(png_read_support<typename Image::view_t>::is_supported);
+    static_assert(png_read_support<typename Image::view_t>::is_supported, "No PNG file read support for given Image");
     detail::png_reader m(filename);
     m.read_image(im);
 }
@@ -186,16 +185,16 @@ inline void png_read_and_convert_image(const boost::filesystem::path& path,Image
 /// \brief Determines whether the given view type is supported for writing
 template <typename View>
 struct png_write_support {
-    BOOST_STATIC_CONSTANT(bool,is_supported=
-                          (detail::png_write_support_private<typename channel_type<View>::type,
-                                                             typename color_space_type<View>::type>::is_supported));
-    BOOST_STATIC_CONSTANT(int,bit_depth=
-                          (detail::png_write_support_private<typename channel_type<View>::type,
-                                                             typename color_space_type<View>::type>::bit_depth));
-    BOOST_STATIC_CONSTANT(int,color_type=
-                          (detail::png_write_support_private<typename channel_type<View>::type,
-                                                             typename color_space_type<View>::type>::color_type));
-    BOOST_STATIC_CONSTANT(bool, value=is_supported);
+    static bool constexpr is_supported =
+        (detail::png_write_support_private<typename channel_type<View>::type,
+                                           typename color_space_type<View>::type>::is_supported);
+    static int constexpr bit_depth =
+        (detail::png_write_support_private<typename channel_type<View>::type,
+                                           typename color_space_type<View>::type>::bit_depth);
+    static int constexpr color_type =
+        (detail::png_write_support_private<typename channel_type<View>::type,
+                                           typename color_space_type<View>::type>::color_type);
+    static bool constexpr value = is_supported;
 };
 
 /// \ingroup PNG_IO
@@ -204,7 +203,7 @@ struct png_write_support {
 /// Throws std::ios_base::failure if it fails to create the file.
 template <typename View>
 inline void png_write_view(const char* filename,const View& view) {
-    BOOST_STATIC_ASSERT(png_write_support<View>::is_supported);
+    static_assert(png_write_support<View>::is_supported, "No PNG file write support for given Image");
     detail::png_writer m(filename);
     m.apply(view);
 }
