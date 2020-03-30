@@ -3197,8 +3197,11 @@ Créer Configuration Persistante (Option Avancée)
 
 OPTIONS_CREATE_PERSISTENT_CONFIG_TOOLTIP_DESC
 '''Sauvegarde les réglages actuels de configuration comme réglages persistants par défaut.
+
 Ces réglages sont prioritaires sur tout réglage du fichier config.xml, mais pas sur la ligne de commande.
+
 N'enregistre que les réglages dont la valeur par défaut a été modifiée.
+
 Tout fichier de configuration persistante déjà existant est remplacé.
 
 Les réglages peuvent ne plus être valides d'une version à l'autre de Freeorion.
@@ -3211,6 +3214,25 @@ Fichier persistent_config.xml (re)créé avec succès.
 
 OPTIONS_CREATE_PERSISTENT_CONFIG_FAILURE
 Impossible de créer le fichier persistent_config.xml, consultez le fichier log pour plus de détails.
+
+OPTIONS_CREATE_ALL_CONFIG_SUCCESS
+Fichier config.xml créé avec succès.
+
+OPTIONS_CREATE_ALL_CONFIG_FAILURE
+Impossible de créer le fichier config.xml, consultez le fichier log pour plus de détails.
+
+
+OPTIONS_WRITE_ALL_CONFIG
+Écrire Fichier de Configuration Complète
+
+OPTIONS_CREATE_ALL_CONFIG_TOOLTIP_TITLE
+Créer Configuration Complète (Option Intermédiaire)
+
+OPTIONS_CREATE_ALL_CONFIG_TOOLTIP_DESC
+'''Sauvegarde les réglages actuels dans le fichier config.xml en incluant tous les réglages, même ceux dont les valeurs par défaut n'ont pas été modifiées.
+
+Le fichier options.xml existant est remplacé, mais peut être recréé (avec seulement les réglages modifiés) si une nouvelle option est modifiée, y compris le repositionnement de certaines fenêtres de jeu ou via le Menu Options.'''
+
 
 
 ##
@@ -9362,6 +9384,8 @@ PC_TROOPS_DESC
 
 Pour envahir une planète avec succès, l'effectif total d'[[metertype METER_TROOPS]] de tous les astronefs prenant part à l'invasion doit être supérieur à l'effectif total de défense (les égalités sont en faveur du défenseur).
 
+Lors de l'invasion d'une planète, les astronefs d'Infanterie sélectionnés dans la Fenêtre Flottes seront utilisés pour l'opération d'invasion. Si aucun astronef d'Infanterie n'est sélectionné, les astronefs d'Infanterie seront automatiquement sélectionnés parmi les astronefs disponibles et en fonction du nombre de troupes défensives.
+
 Un astronef d'invasion devient définitivement inutilisable suite à l'opération d'atterrissage. Tous les équipements de l'astronef sont également perdus.'''
 
 # Ship part classes
@@ -11982,25 +12006,28 @@ SHP_FIGHTERS_1_DESC
 
 Une <encyclopedia PC_FIGHTER_BAY>Rampe de Lancement</encyclopedia> peut faire décoller un nombre défini de chasseurs lors de chaque passe de combat. Ces chasseurs deviennent des cibles valides et peuvent attaquer les astronefs et chasseurs ennemis lors de chaque passe suivante de combat. Toutefois, un unique tir de n'importe quelle nature subi par un chasseur détruira ce dernier. Contrairement aux [[encyclopedia DAMAGE_TITLE]] qu'infligent les armements traditionnels, les dommages résultant d'un tir de chasseur ne sont pas minorés par les [[metertype METER_SHIELD]] d'astronef (les chasseurs faisant feu une fois à l'intérieur de la zone de protection d'un bouclier).
 
+L'attribut "Pilotes" affecte les chasseurs issus d'un [[shippart FT_HANGAR_2]], d'un [[shippart FT_HANGAR_3]], ou d'un [[shippart FT_HANGAR_4]]: "Mauvais Pilotes" réduit les dommages de 1 par chasseur; "Bons Pilotes" augmente les dommages de 1, "Excellents Pilotes" de 2, et "Parfaits Pilotes" de 3 par tir de chasseur.
+L'attribut "Pilotes" n'affecte pas les chasseurs provenant d'un [[shippart FT_HANGAR_1]].
+
 Au terme d'un combat, les astronefs transporteurs récupèreront automatiquement les chasseurs non-détruits. Si un transporteur est stationnaire dans une zone d'[[metertype METER_SUPPLY]], ses hangars seront rééquipés à leur capacité maximale.'''
 
 SHP_FIGHTERS_2
 Chasseurs Laser
 
 SHP_FIGHTERS_2_DESC
-Améliore les chasseurs de tous les transporteurs à portée d'[[metertype METER_SUPPLY]] en les dotant d'un armement Laser. Les [[encyclopedia DAMAGE_TITLE]] infligés par les chasseurs d'un [[shippart FT_HANGAR_1]] augmentent de 1, augmentent de 2 pour un [[shippart FT_HANGAR_2]] et de 3 pour un [[shippart FT_HANGAR_3]].
+Améliore les chasseurs de tous les transporteurs à portée d'[[metertype METER_SUPPLY]] en les dotant d'un armement Laser. Les [[encyclopedia DAMAGE_TITLE]] infligés par les chasseurs d'un [[shippart FT_HANGAR_2]] augmentent de 2, augmentent de 3 pour un [[shippart FT_HANGAR_3]] et de 6 pour un [[shippart FT_HANGAR_4]]. Pour les chasseurs d'un [[shippart FT_HANGAR_1]], la capacité ainsi que la cadence de lancement de la [[shippart FT_BAY_1]] augmentent de 1.
 
 SHP_FIGHTERS_3
 Chasseurs Plasma
 
 SHP_FIGHTERS_3_DESC
-Améliore les chasseurs de tous les transporteurs à portée d'[[metertype METER_SUPPLY]] en les dotant d'un armement Plasma. Les [[encyclopedia DAMAGE_TITLE]] infligés par les chasseurs d'un [[shippart FT_HANGAR_1]] augmentent de 1, augmentent de 3 pour un [[shippart FT_HANGAR_2]] et de 4 pour un [[shippart FT_HANGAR_3]].
+Améliore les chasseurs de tous les transporteurs à portée d'[[metertype METER_SUPPLY]] en les dotant d'un armement Plasma. Les [[encyclopedia DAMAGE_TITLE]] infligés par les chasseurs d'un [[shippart FT_HANGAR_2]] augmentent de 2, augmentent de 3 pour un [[shippart FT_HANGAR_3]] et de 6 pour un [[shippart FT_HANGAR_4]]. Pour les chasseurs d'un [[shippart FT_HANGAR_1]], la capacité ainsi que la cadence de lancement de la [[shippart FT_BAY_1]] augmentent de 1.
 
 SHP_FIGHTERS_4
 Chasseurs Gamma
 
 SHP_FIGHTERS_4_DESC
-Améliore les chasseurs de tous les transporteurs à portée d'[[metertype METER_SUPPLY]] en les dotant d'un armement Gamma. Les [[encyclopedia DAMAGE_TITLE]] infligés par les chasseurs d'un [[shippart FT_HANGAR_1]] augmentent de 1, augmentent de 5 pour un [[shippart FT_HANGAR_2]] et de 7 pour un [[shippart FT_HANGAR_3]].
+Améliore les chasseurs de tous les transporteurs à portée d'[[metertype METER_SUPPLY]] en les dotant d'un armement Gamma. Les [[encyclopedia DAMAGE_TITLE]] infligés par les chasseurs d'un [[shippart FT_HANGAR_2]] augmentent de 2, augmentent de 3 pour un [[shippart FT_HANGAR_3]] et de 6 pour un [[shippart FT_HANGAR_4]]. Pour les chasseurs d'un [[shippart FT_HANGAR_1]], la capacité ainsi que la cadence de lancement de la [[shippart FT_BAY_1]] augmentent de 1.
 
 SHP_WEAPON_1_2
 Canon Mitrailleur 2
@@ -12091,6 +12118,24 @@ Rayon Gamma 4
 
 SHP_WEAPON_4_4_DESC
 Améliore l'équipement [[shippart SR_WEAPON_4_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 30 une fois l'équipement amélioré.
+
+SHP_WEAPON_ARC_DISRUPTOR_1
+Perturbateurs Électro-Conducteurs
+
+SHP_WEAPON_ARC_DISRUPTOR_1_DESC
+Débloque l'équipement [[shippart SR_ARC_DISRUPTOR]], un système automatique d'armement infligeant de faibles dommages à de multiples cibles simultanément. Les [[encyclopedia DAMAGE_TITLE]] de l'équipement de base sont de 2 par tir.
+
+SHP_WEAPON_ARC_DISRUPTOR_2
+Perturbateurs Électro-Conducteurs 2
+
+SHP_WEAPON_ARC_DISRUPTOR_2_DESC
+Améliore l'équipement [[shippart SR_ARC_DISRUPTOR]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 4 une fois l'équipement amélioré.
+
+SHP_WEAPON_ARC_DISRUPTOR_3
+Perturbateurs Électro-Conducteurs 3
+
+SHP_WEAPON_ARC_DISRUPTOR_3_DESC
+Améliore l'équipement [[shippart SR_ARC_DISRUPTOR]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 7 une fois l'équipement amélioré.
 
 SHP_ION_CANNON
 Canon Ionique
@@ -13311,7 +13356,7 @@ FT_BAY_1
 Rampe de Lancement
 
 FT_BAY_1_DESC
-Système de lancement pour chasseurs.
+Système de lancement pour chasseurs. Lancement plus rapide des [[FT_HANGAR_1_FIGHTER]]s: peut lancer simultanément tous les chasseurs d'un [[shippart FT_HANGAR_1]].
 
 FT_HANGAR_0
 Hangar Leurre
@@ -13329,7 +13374,7 @@ FT_HANGAR_1_FIGHTER
 Intercepteur
 
 FT_HANGAR_1_DESC
-Système de stockage pour chasseurs faiblement armés.
+Système de stockage pour chasseurs faiblement armés. Peut seulement attaquer les chasseurs ennemis. Lancement plus rapide: une [[shippart FT_BAY_1]] peut lancer simultanément tous les chasseurs d'un [[shippart FT_HANGAR_1]].
 
 FT_HANGAR_2
 Hangar Chasseur
@@ -13338,7 +13383,7 @@ FT_HANGAR_2_FIGHTER
 Chasseur
 
 FT_HANGAR_2_DESC
-Système de stockage pour chasseurs moyennement armés.
+Système de stockage pour chasseurs moyennement armés. Peut attaquer les astronefs et chasseurs ennemis.
 
 FT_HANGAR_3
 Hangar Bombardier
@@ -13347,7 +13392,7 @@ FT_HANGAR_3_FIGHTER
 Bombardier
 
 FT_HANGAR_3_DESC
-Système de stockage pour chasseurs correctement armés.
+Système de stockage pour chasseurs correctement armés. Peut seulement attaquer les astronefs ennemis.
 
 FT_HANGAR_4
 Hangar Bombardier Lourd
@@ -13356,7 +13401,7 @@ FT_HANGAR_4_FIGHTER
 Bombardier Lourd
 
 FT_HANGAR_4_DESC
-Système de stockage pour chasseurs lourdement armés.
+Système de stockage pour chasseurs lourdement armés. Peut attaquer les astonefs ennemis ainsi que les planètes.
 
 FT_HANGAR_KRILL
 Essaim Krill
@@ -13382,47 +13427,59 @@ SR_WEAPON_1_1
 Canon Mitrailleur
 
 SR_WEAPON_1_1_DESC
-'''Le Canon Mitrailleur, une arme de base.
+'''Le Canon Mitrailleur, une arme de base. Attaque astronefs et planètes.
 
 Améliorer la technologie de cet armement augmentera la valeur des dommages par tir.
 
-Les [[encyclopedia DAMAGE_TITLE]] d'un armement combinent la valeur des dommages par tir et celle de tout modificateur actif. Chaque Canon Mitrailleur monté sur un astronef construit par une espèce présentant l'attribut "Pilotes", infligera des dommages additionnels de 1 par rang de Pilotes (-1 pour "Mauvais Pilotes").'''
+Les [[encyclopedia DAMAGE_TITLE]] de cet armement combinent la valeur des dommages par tir et celle de tout modificateur actif. Chaque Canon Mitrailleur monté sur un astronef construit par une espèce présentant l'attribut "Pilotes", infligera des dommages additionnels de 1 par rang de Pilotes (-1 pour "Mauvais Pilotes").'''
 
 SR_WEAPON_2_1
 Canon Laser
 
 SR_WEAPON_2_1_DESC
-'''Le Canon Laser, un armement d'astronef plus puissant que le Canon Mitrailleur.
+'''Le Canon Laser, un armement d'astronef plus puissant que le Canon Mitrailleur. Attaque astronefs et planètes.
 
 Améliorer la technologie de cet armement augmentera la valeur des dommages par tir.
 
-Les [[encyclopedia DAMAGE_TITLE]] d'un armement combinent la valeur des dommages par tir et celle de tout modificateur actif. Chaque Canon Laser monté sur un astronef construit par une espèce présentant l'attribut "Pilotes", infligera des dommages additionnels de 2 par rang de Pilotes (-2 pour "Mauvais Pilotes"). Les dommages du Canon Laser peuvent également être améliorés sur les astronefs dotés d'une [[shiphull SH_ORGANIC]] couplée à un [[shippart SP_SOLAR_CONCENTRATOR]].'''
+Les [[encyclopedia DAMAGE_TITLE]] de cet armement combinent la valeur des dommages par tir et celle de tout modificateur actif. Chaque Canon Laser monté sur un astronef construit par une espèce présentant l'attribut "Pilotes", infligera des dommages additionnels de 2 par rang de Pilotes (-2 pour "Mauvais Pilotes"). Les dommages du Canon Laser peuvent également être améliorés sur les astronefs dotés d'une [[shiphull SH_ORGANIC]] couplée à un [[shippart SP_SOLAR_CONCENTRATOR]].'''
 
 SR_WEAPON_3_1
 Canon Plasma
 
 SR_WEAPON_3_1_DESC
-'''Le Canon Plasma, un armement d'astronef plus puissant que le Canon Laser.
+'''Le Canon Plasma, un armement d'astronef plus puissant que le Canon Laser. Attaque astronefs et planètes.
 
 Améliorer la technologie de cet armement augmentera la valeur des dommages par tir.
 
-Les [[encyclopedia DAMAGE_TITLE]] d'un armement combinent la valeur des dommages par tir et celle de tout modificateur actif. Chaque Canon Plasma monté sur un astronef construit par une espèce présentant l'attribut "Pilotes", infligera des dommages additionnels de 3 par rang de Pilotes (-3 pour "Mauvais Pilotes").'''
+Les [[encyclopedia DAMAGE_TITLE]] de cet armement combinent la valeur des dommages par tir et celle de tout modificateur actif. Chaque Canon Plasma monté sur un astronef construit par une espèce présentant l'attribut "Pilotes", infligera des dommages additionnels de 3 par rang de Pilotes (-3 pour "Mauvais Pilotes").'''
 
 SR_WEAPON_4_1
 Rayon Gamma
 
 SR_WEAPON_4_1_DESC
-'''Le Rayon Gamma, un armement d'astronef plus puissant que le Canon Plasma.
+'''Le Rayon Gamma, un armement d'astronef plus puissant que le Canon Plasma. Attaque astronefs et planètes.
 
 Améliorer la technologie de cet armement augmentera la valeur des dommages par tir.
 
-Les [[encyclopedia DAMAGE_TITLE]] d'un armement combinent la valeur des dommages par tir et celle de tout modificateur actif. Chaque Rayon Gamma monté sur un astronef construit par une espèce présentant l'attribut "Pilotes", infligera des dommages additionnels de 5 par rang de Pilotes (-5 pour "Mauvais Pilotes").'''
+Les [[encyclopedia DAMAGE_TITLE]] de cet armement combinent la valeur des dommages par tir et celle de tout modificateur actif. Chaque Rayon Gamma monté sur un astronef construit par une espèce présentant l'attribut "Pilotes", infligera des dommages additionnels de 5 par rang de Pilotes (-5 pour "Mauvais Pilotes").'''
+
+SR_ARC_DISRUPTOR
+Perturbateur Électro-Conducteur
+
+SR_ARC_DISRUPTOR_DESC
+'''Le Perturbateur Électro-Conducteur, un armement d'astronef multi-tir proposant des options avantageuses de recherche à long terme.
+
+Des condensateurs de polaron chargés génèrent une perturbation moléculaire sous forme d'ondes se propageant à travers l'espace et frappant plusieurs astronefs avant de se disperser. Le flux perturbateur peut être fortement dévié par les boucliers d'astronef.
+
+Améliorer la technologie de cet armement augmentera la valeur des dommages par tir.
+
+Les [[encyclopedia DAMAGE_TITLE]] de cet armement combinent la valeur des dommages par tir et celle de tout modificateur actif. Les attributs "Pilotes" n'affectent pas les dommages de cet armement.'''
 
 SR_SPINAL_ANTIMATTER
 Canon Anti-Matière
 
 SR_SPINAL_ANTIMATTER_DESC
-Un gigantesque canon automatique propulsant de lourdes charges explosives faites d'anti-matière.
+Un gigantesque canon automatique propulsant de lourdes charges explosives faites d'anti-matière. Attaque astronefs et planètes.
 
 SR_JAWS
 Mâchoires
