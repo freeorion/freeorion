@@ -561,7 +561,7 @@ void BuildDesignatorWnd::BuildSelector::CompleteConstruction() {
     m_buildable_items->LeftClickedRowSignal.connect(
         boost::bind(&BuildDesignatorWnd::BuildSelector::BuildItemLeftClicked, this, _1, _2, _3));
     m_buildable_items->DoubleClickedRowSignal.connect(
-        [this](GG::ListBox::iterator it, const GG::Pt&, const GG::Flags<GG::ModKey>& modkeys)
+        [this](auto it, const auto&, const auto& modkeys)
         { this->AddBuildItemToQueue(it, modkeys & GG::MOD_KEY_CTRL); });
     m_buildable_items->RightClickedRowSignal.connect(
         boost::bind(&BuildDesignatorWnd::BuildSelector::BuildItemRightClicked, this, _1, _2, _3));

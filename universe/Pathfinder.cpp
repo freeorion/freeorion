@@ -1382,7 +1382,7 @@ void Pathfinder::PathfinderImpl::InitializeSystemGraph(
     // NOTE: this initialization of graph_changed prevents testing for edges between nonexistant vertices
     bool graph_changed = system_ids.size() != boost::num_vertices(m_graph_impl->system_graph);
 
-    auto ints_to_string = [](const std::vector<int>& ints_vec) {
+    auto ints_to_string = [](const auto& ints_vec) {
         std::stringstream o;
         for (auto id : ints_vec)
             o << id << " ";

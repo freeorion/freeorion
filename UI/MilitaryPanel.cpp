@@ -64,7 +64,7 @@ void MilitaryPanel::CompleteConstruction() {
         AttachChild(stat);
         m_meter_stats.push_back({meter, stat});
         meters.push_back({meter, AssociatedMeterType(meter)});
-        stat->RightClickedSignal.connect([meter](const GG::Pt& pt) {
+        stat->RightClickedSignal.connect([meter](const auto& pt) {
             std::string meter_string = boost::lexical_cast<std::string>(meter);
 
             auto zoom_action = [meter_string]() { ClientUI::GetClientUI()->ZoomToMeterTypeArticle(meter_string); };

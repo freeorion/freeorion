@@ -903,7 +903,7 @@ namespace {
         auto server_dir_str = PathToString(fs::canonical(GetServerSaveDir()));
 
         // Adds \p subdir to the list
-        auto add_to_list = [&list, &server_dir_str](const fs::path& subdir) {
+        auto add_to_list = [&list, &server_dir_str](const auto& subdir) {
             auto subdir_str = PathToString(fs::canonical(subdir));
             auto rel_path = subdir_str.substr(server_dir_str.length());
             list.push_back(rel_path);
@@ -1480,7 +1480,7 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
     // Reset the object id manager for the new empires.
     std::vector<int> empire_ids(player_setup_data.size());
     std::transform(player_setup_data.begin(), player_setup_data.end(), empire_ids.begin(),
-                   [](const std::pair<int,PlayerSetupData> ii) { return ii.first; });
+                   [](const auto ii){ return ii.first; });
     universe.ResetAllIDAllocation(empire_ids);
 
     // Add predefined ship designs to universe

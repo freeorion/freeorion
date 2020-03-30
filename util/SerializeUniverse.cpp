@@ -158,7 +158,7 @@ void Universe::serialize(Archive& ar, const unsigned int version)
             std::vector<int> allocating_empire_ids(m_empire_latest_known_objects.size());
             std::transform(m_empire_latest_known_objects.begin(), m_empire_latest_known_objects.end(),
                            allocating_empire_ids.begin(),
-                           [](const std::pair<int, ObjectMap> ii) { return ii.first; });
+                           [](const auto ii){ return ii.first; });
 
             ResetAllIDAllocation(allocating_empire_ids);
         }

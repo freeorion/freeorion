@@ -2581,7 +2581,7 @@ namespace {
         boost::algorithm::to_lower(planet_type_str);
 
         if (!filenames_by_type.count(planet_type)) {
-            auto pe_type_func = [planet_type_str](const boost::filesystem::path& path) {
+            auto pe_type_func = [planet_type_str](const auto& path) {
                 return IsExistingFile(path) && boost::algorithm::starts_with(path.filename().string(), planet_type_str);
             };
 

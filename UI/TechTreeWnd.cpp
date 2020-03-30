@@ -1821,7 +1821,7 @@ void TechTreeWnd::TechListBox::CompleteConstruction() {
     // Initialize sorting
     SetSortCol(2);
     m_previous_sort_col = 3;
-    SetSortCmp([&](const GG::ListBox::Row& lhs, const GG::ListBox::Row& rhs, std::size_t col) { return TechRowCmp(lhs, rhs, col); });
+    SetSortCmp([&](const auto& lhs, const auto& rhs, std::size_t col){ return TechRowCmp(lhs, rhs, col); });
 }
 
 TechTreeWnd::TechListBox::~TechListBox()
@@ -2028,7 +2028,7 @@ void TechTreeWnd::CompleteConstruction() {
     m_layout_panel->TechSelectedSignal.connect(
         boost::bind(&TechTreeWnd::TechLeftClickedSlot, this, _1, _2));
     m_layout_panel->TechDoubleClickedSignal.connect(
-        [this](const std::string& tech_name, GG::Flags<GG::ModKey> modkeys){ this->AddTechToResearchQueue(tech_name, modkeys & GG::MOD_KEY_CTRL); });
+        [this](const auto& tech_name, auto modkeys){ this->AddTechToResearchQueue(tech_name, modkeys & GG::MOD_KEY_CTRL); });
     m_layout_panel->TechPediaDisplaySignal.connect(
         boost::bind(&TechTreeWnd::TechPediaDisplaySlot, this, _1));
     AttachChild(m_layout_panel);
@@ -2037,7 +2037,7 @@ void TechTreeWnd::CompleteConstruction() {
     m_tech_list->TechLeftClickedSignal.connect(
         boost::bind(&TechTreeWnd::TechLeftClickedSlot, this, _1, _2));
     m_tech_list->TechDoubleClickedSignal.connect(
-        [this](const std::string& tech_name, GG::Flags<GG::ModKey> modkeys){ this->AddTechToResearchQueue(tech_name, modkeys & GG::MOD_KEY_CTRL); });
+        [this](const auto& tech_name, auto modkeys){ this->AddTechToResearchQueue(tech_name, modkeys & GG::MOD_KEY_CTRL); });
     m_tech_list->TechPediaDisplaySignal.connect(
         boost::bind(&TechTreeWnd::TechPediaDisplaySlot, this, _1));
 

@@ -2435,7 +2435,7 @@ void BasesListBox::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const 
 
     Row* original_row = boost::polymorphic_downcast<Row*>(*wnds.begin());
     iterator insertion_point = std::find_if(
-        begin(), end(), [&original_row](const std::shared_ptr<Row>& xx){return xx.get() == original_row;});
+        begin(), end(), [&original_row](const auto& xx){ return xx.get() == original_row; });
     if (insertion_point != end())
         ++insertion_point;
 

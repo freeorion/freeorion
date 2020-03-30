@@ -600,7 +600,7 @@ void Wnd::MoveChildUp(Wnd* wnd)
     if (!wnd)
         return;
     const auto it = std::find_if(m_children.begin(), m_children.end(),
-                                 [&wnd](const std::shared_ptr<Wnd>& x){ return x.get() == wnd; });
+                                 [&wnd](const auto& x){ return x.get() == wnd; });
     if (it == m_children.end())
         return;
     m_children.push_back(*it);
@@ -615,7 +615,7 @@ void Wnd::MoveChildDown(Wnd* wnd)
     if (!wnd)
         return;
     auto found = std::find_if(m_children.begin(), m_children.end(),
-                              [&wnd](const std::shared_ptr<Wnd>& x){ return x.get() == wnd; });
+                              [&wnd](const auto& x){ return x.get() == wnd; });
     if (found == m_children.end())
         return;
 
@@ -629,7 +629,7 @@ void Wnd::DetachChild(const std::shared_ptr<Wnd>& wnd)
 void Wnd::DetachChild(Wnd* wnd)
 {
     const auto it = std::find_if(m_children.begin(), m_children.end(),
-                                 [&wnd](const std::shared_ptr<Wnd>& x){ return x.get() == wnd; });
+                                 [&wnd](const auto& x){ return x.get() == wnd; });
     if (it == m_children.end())
         return;
 
@@ -679,7 +679,7 @@ void Wnd::RemoveEventFilter(const std::shared_ptr<Wnd>& wnd)
     if (!wnd)
         return;
     const auto& it = std::find_if(m_filters.begin(), m_filters.end(),
-                                  [&wnd](const std::weak_ptr<Wnd>& x){ return x.lock() == wnd; });
+                                  [&wnd](const auto& x){ return x.lock() == wnd; });
     if (it != m_filters.end())
         m_filters.erase(it);
     wnd->m_filtering.erase(shared_from_this());
@@ -1113,7 +1113,7 @@ void Wnd::HandleEvent(const WndEvent& event)
     bool filtered = false;
     ProcessThenRemoveExpiredPtrs(
         m_filters,
-        [&filtered, this, &event](std::shared_ptr<Wnd>& wnd)
+        [&filtered, this, &event](auto& wnd)
         {
             if (!filtered)
                 filtered = wnd->EventFilter(this, event);

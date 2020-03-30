@@ -734,7 +734,7 @@ void ListBox::StartingChildDragDrop(const Wnd* wnd, const Pt& offset)
         return;
 
     iterator wnd_it = std::find_if(m_rows.begin(), m_rows.end(),
-                                   [&wnd](const std::shared_ptr<Row>& x){ return x.get() == wnd; });
+                                   [&wnd](const auto& x){ return x.get() == wnd; });
     if (wnd_it == m_rows.end())
         return;
 
@@ -798,7 +798,7 @@ void ListBox::ChildrenDraggedAway(const std::vector<Wnd*>& wnds, const Wnd* dest
     for (auto& wnd : wnds) {
         auto row = boost::polymorphic_downcast<Row*>(wnd);
         iterator row_it = std::find_if(m_rows.begin(), m_rows.end(),
-                                       [&row](const std::shared_ptr<Row>& x){ return x.get() == row; });
+                                       [&row](const auto& x){ return x.get() == row; });
 
 
         if (row_it == m_rows.end())

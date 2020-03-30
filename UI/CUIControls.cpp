@@ -1559,7 +1559,7 @@ SpeciesSelector::SpeciesSelector(const std::string& preselect_species, GG::X w, 
     Resize(GG::Pt(w, h - 8));
 
     SelChangedSignal.connect(
-        [this](GG::DropDownList::iterator it) {
+        [this](auto it) {
             SpeciesChangedSignal((it == this->end() || !(*it)) ? EMPTY_STRING : (*it)->Name()); });
 
     const SpeciesManager& sm = GetSpeciesManager();
@@ -1649,7 +1649,7 @@ EmpireColorSelector::EmpireColorSelector(GG::Y h) :
     }
 
     SelChangedSignal.connect(
-        [this](GG::DropDownList::iterator it) {
+        [this](auto it) {
             ColorChangedSignal(!(it == end() || !*it || (*it)->empty()) ? (*it)->at(0)->Color() : GG::CLR_RED); });
 }
 

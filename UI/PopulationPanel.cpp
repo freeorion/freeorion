@@ -67,7 +67,7 @@ void PopulationPanel::CompleteConstruction() {
     for (auto& meter_stat : m_meter_stats) {
         MeterType meter_type = meter_stat.first;
 
-        meter_stat.second->RightClickedSignal.connect([this, meter_type](const GG::Pt& pt) {
+        meter_stat.second->RightClickedSignal.connect([this, meter_type](const auto& pt) {
             std::string meter_string = boost::lexical_cast<std::string>(meter_type);
 
             auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);

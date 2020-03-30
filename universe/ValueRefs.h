@@ -1848,7 +1848,7 @@ const std::vector<ValueRef<T>*> Operation<T>::Operands() const
 {
     std::vector<ValueRef<T>*> retval(m_operands.size());
     std::transform(m_operands.begin(), m_operands.end(), retval.begin(),
-                   [](const std::unique_ptr<ValueRef<T>>& p) { return *p; });
+                   [](const auto& p){ return *p; });
     return retval;
 }
 

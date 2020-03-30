@@ -557,9 +557,7 @@ namespace {
                 );
             }
             std::sort(m_ship_design_labels.begin(), m_ship_design_labels.end(),
-                [](LabelValueType a, LabelValueType b) {
-                    return a.first->Text() < b.first->Text();
-                }
+                [](auto a, auto b){ return a.first->Text() < b.first->Text(); }
             );
             for (auto& labels : m_ship_design_labels) {
                 AttachChild(labels.first);
@@ -2746,7 +2744,7 @@ void MapWnd::InitTurn() {
     // connect system fleet add and remove signals
     for (auto& system : objects.all<System>()) {
         m_system_fleet_insert_remove_signals[system->ID()].push_back(system->FleetsInsertedSignal.connect(
-            [this](const std::vector<std::shared_ptr<Fleet>>& fleets) {
+            [this](const auto& fleets) {
                 RefreshFleetButtons();
                 for (auto& fleet : fleets) {
                     if (!m_fleet_state_change_signals.count(fleet->ID()))
@@ -2755,7 +2753,7 @@ void MapWnd::InitTurn() {
                 }
             }));
         m_system_fleet_insert_remove_signals[system->ID()].push_back(system->FleetsRemovedSignal.connect(
-            [this](const std::vector<std::shared_ptr<Fleet>>& fleets) {
+            [this](const auto& fleets) {
                 RefreshFleetButtons();
                 for (auto& fleet : fleets) {
                     auto found_signal = m_fleet_state_change_signals.find(fleet->ID());
@@ -4790,7 +4788,7 @@ void MapWnd::DoFieldIconsLayout() {
 void MapWnd::DoFleetButtonsLayout() {
     const ObjectMap& objects = GetUniverse().Objects();
 
-    auto place_system_fleet_btn = [this](const std::unordered_map<int, std::unordered_set<std::shared_ptr<FleetButton>>>::value_type& system_and_btns, bool is_departing) {
+    auto place_system_fleet_btn = [this](const auto& system_and_btns, bool is_departing) {
         // calculate system icon position
         auto system = Objects().get<System>(system_and_btns.first);
         if (!system) {
@@ -5566,7 +5564,7 @@ std::vector<int> MapWnd::FleetIDsOfFleetButtonsOverlapping(int fleet_id) const {
     const auto& fleet_btn = it->second;
 
     // A check if a button overlaps the fleet button
-    auto overlaps_fleet_btn = [&fleet_btn](const FleetButton& test_fb) {
+    auto overlaps_fleet_btn = [&fleet_btn](const auto& test_fb) {
         GG::Pt center = GG::Pt((fleet_btn->Left() + fleet_btn->Right()) / 2,
                                (fleet_btn->Top() + fleet_btn->Bottom()) /2);
 
@@ -5914,7 +5912,7 @@ void MapWnd::RemovePopup(MapWndPopup* popup) {
         return;
 
     const auto& it = std::find_if(m_popups.begin(), m_popups.end(),
-                                  [&popup](const std::weak_ptr<Wnd>& xx){ return xx.lock().get() == popup;});
+                                  [&popup](const auto& xx){ return xx.lock().get() == popup; });
     if (it != m_popups.end())
         m_popups.erase(it);
 }
@@ -7013,7 +7011,7 @@ bool MapWnd::ZoomToNextSystem() {
 bool MapWnd::ZoomToPrevIdleFleet() {
     auto vec = GetUniverse().Objects().find<Fleet>(StationaryFleetVisitor(HumanClientApp::GetApp()->EmpireID()));
     auto it = std::find_if(vec.begin(), vec.end(),
-        [this](const std::shared_ptr<UniverseObject>& o){ return o->ID() == this->m_current_fleet_id; });
+        [this](const auto& o){ return o->ID() == this->m_current_fleet_id; });
     const auto& destroyed_object_ids = GetUniverse().DestroyedObjectIds();
     if (it != vec.begin())
         --it;
@@ -7034,7 +7032,7 @@ bool MapWnd::ZoomToPrevIdleFleet() {
 bool MapWnd::ZoomToNextIdleFleet() {
     auto vec = GetUniverse().Objects().find<Fleet>(StationaryFleetVisitor(HumanClientApp::GetApp()->EmpireID()));
     auto it = std::find_if(vec.begin(), vec.end(),
-        [this](const std::shared_ptr<UniverseObject>& o){ return o->ID() == this->m_current_fleet_id; });
+        [this](const auto& o){ return o->ID() == this->m_current_fleet_id; });
     const auto& destroyed_object_ids = GetUniverse().DestroyedObjectIds();
     if (it != vec.end())
         ++it;
@@ -7053,7 +7051,7 @@ bool MapWnd::ZoomToNextIdleFleet() {
 bool MapWnd::ZoomToPrevFleet() {
     auto vec = GetUniverse().Objects().find<Fleet>(OwnedVisitor(HumanClientApp::GetApp()->EmpireID()));
     auto it = std::find_if(vec.begin(), vec.end(),
-        [this](const std::shared_ptr<UniverseObject>& o){ return o->ID() == this->m_current_fleet_id; });
+        [this](const auto& o){ return o->ID() == this->m_current_fleet_id; });
     const auto& destroyed_object_ids = GetUniverse().DestroyedObjectIds();
     if (it != vec.begin())
         --it;
@@ -7074,7 +7072,7 @@ bool MapWnd::ZoomToPrevFleet() {
 bool MapWnd::ZoomToNextFleet() {
     auto vec = GetUniverse().Objects().find<Fleet>(OwnedVisitor(HumanClientApp::GetApp()->EmpireID()));
     auto it = std::find_if(vec.begin(), vec.end(),
-        [this](const std::shared_ptr<UniverseObject>& o){ return o->ID() == this->m_current_fleet_id; });
+        [this](const auto& o){ return o->ID() == this->m_current_fleet_id; });
     auto& destroyed_object_ids = GetUniverse().DestroyedObjectIds();
     if (it != vec.end())
         ++it;
@@ -7226,17 +7224,11 @@ void MapWnd::ConnectKeyboardAcceleratorSignals() {
     hkm->RebuildShortcuts();
 }
 
-void MapWnd::CloseAllPopups() {
-    GG::ProcessThenRemoveExpiredPtrs(m_popups,
-                                     [](std::shared_ptr<MapWndPopup>& wnd)
-                                     { wnd->Close(); });
-}
+void MapWnd::CloseAllPopups()
+{ GG::ProcessThenRemoveExpiredPtrs(m_popups, [](auto& wnd){ wnd->Close(); }); }
 
-void MapWnd::HideAllPopups() {
-    GG::ProcessThenRemoveExpiredPtrs(m_popups,
-                                     [](std::shared_ptr<MapWndPopup>& wnd)
-                                     { wnd->Hide(); });
-}
+void MapWnd::HideAllPopups()
+{ GG::ProcessThenRemoveExpiredPtrs(m_popups, [](auto& wnd){ wnd->Hide(); }); }
 
 void MapWnd::SetFleetExploring(const int fleet_id) {
     if (!std::count(m_fleets_exploring.begin(), m_fleets_exploring.end(), fleet_id)) {
@@ -7741,8 +7733,5 @@ void MapWnd::DispatchFleetsExploring() {
     }
 }
 
-void MapWnd::ShowAllPopups() {
-    GG::ProcessThenRemoveExpiredPtrs(m_popups,
-                                     [](std::shared_ptr<MapWndPopup>& wnd)
-                                     { wnd->Show(); });
-}
+void MapWnd::ShowAllPopups()
+{ GG::ProcessThenRemoveExpiredPtrs(m_popups, [](auto& wnd){ wnd->Show(); }); }

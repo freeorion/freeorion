@@ -390,7 +390,7 @@ std::shared_ptr<FleetWnd> FleetUIManager::WndForFleetID(int fleet_id) const {
     std::shared_ptr<FleetWnd> retval = nullptr;
     GG::ProcessThenRemoveExpiredPtrs(
         m_fleet_wnds,
-        [&retval, fleet_id](std::shared_ptr<FleetWnd>& wnd)
+        [&retval, fleet_id](auto& wnd)
         {
             if (!retval && wnd->ContainsFleet(fleet_id))
                 retval = wnd;
@@ -405,7 +405,7 @@ std::shared_ptr<FleetWnd> FleetUIManager::WndForFleetIDs(const std::vector<int>&
     std::shared_ptr<FleetWnd> retval = nullptr;
     GG::ProcessThenRemoveExpiredPtrs(
         m_fleet_wnds,
-        [&retval, fleet_ids](std::shared_ptr<FleetWnd>& wnd)
+        [&retval, fleet_ids](auto& wnd)
         {
             if (!retval && wnd->ContainsFleets(fleet_ids))
                 retval = wnd;
@@ -466,7 +466,7 @@ std::shared_ptr<FleetWnd> FleetUIManager::NewFleetWnd(
 void FleetUIManager::CullEmptyWnds() {
     // scan through FleetWnds, deleting those that have no fleets
     GG::ProcessThenRemoveExpiredPtrs(m_fleet_wnds,
-                                 [](std::shared_ptr<FleetWnd>& wnd)
+                                 [](auto& wnd)
                                  {
                                      if (wnd->FleetIDs().empty())
                                          wnd->CloseClicked();
@@ -502,7 +502,7 @@ bool FleetUIManager::CloseAll() {
 
     // closing a fleet window removes it from m_fleet_wnds
     GG::ProcessThenRemoveExpiredPtrs(m_fleet_wnds,
-                                 [&retval](std::shared_ptr<FleetWnd>& wnd) {
+                                 [&retval](auto& wnd) {
                                      retval = true;
                                      wnd->CloseClicked();
                                  });
@@ -517,9 +517,7 @@ bool FleetUIManager::CloseAll() {
 }
 
 void FleetUIManager::RefreshAll() {
-    GG::ProcessThenRemoveExpiredPtrs(m_fleet_wnds,
-                                 [](std::shared_ptr<FleetWnd>& wnd)
-                                 { wnd->Refresh(); });
+    GG::ProcessThenRemoveExpiredPtrs(m_fleet_wnds, [](auto& wnd){ wnd->Refresh(); });
 }
 
 FleetUIManager& FleetUIManager::GetFleetUIManager() {
@@ -548,7 +546,7 @@ void FleetUIManager::FleetWndClicked(std::shared_ptr<FleetWnd> fleet_wnd) {
 void FleetUIManager::EnableOrderIssuing(bool enable/* = true*/) {
     m_order_issuing_enabled = enable;
     GG::ProcessThenRemoveExpiredPtrs(m_fleet_wnds,
-                                 [&enable](std::shared_ptr<FleetWnd>& wnd)
+                                 [&enable](auto& wnd)
                                  { wnd->EnableOrderIssuing(enable); });
 }
 
@@ -980,7 +978,7 @@ namespace {
             AttachChild(icon);
             std::string meter_string = boost::lexical_cast<std::string>(entry.first);
 
-            icon->RightClickedSignal.connect([meter_string](const GG::Pt& pt) {
+            icon->RightClickedSignal.connect([meter_string](const auto& pt) {
                 auto zoom_article_action = [meter_string]() { ClientUI::GetClientUI()->ZoomToMeterTypeArticle(meter_string); };
                 std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) %
                                                                         UserString(meter_string));
@@ -1409,7 +1407,7 @@ void FleetDataPanel::Refresh() {
         else if (fleet->Unowned() && fleet->HasMonsters())
             m_fleet_icon->SetColor(GG::CLR_RED);
 
-        auto all_ships = [fleet](const std::function<bool(const std::shared_ptr<const Ship>&)>& pred) {
+        auto all_ships = [fleet](const auto& pred) {
             // Searching for each Ship one at a time is faster than
             // FindObjects(ship_ids), because an early exit avoids searching the
             // remaining ids.
@@ -1426,7 +1424,7 @@ void FleetDataPanel::Refresh() {
         };
 
         // Add the overlay
-        auto add_overlay = [this](const std::string& file) {
+        auto add_overlay = [this](const auto& file) {
             if (auto overlay_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / file, true)) {
                 auto overlay = GG::Wnd::Create<GG::StaticGraphic>(overlay_texture, DataPanelIconStyle());
                 overlay->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
@@ -1437,24 +1435,24 @@ void FleetDataPanel::Refresh() {
 
         // Add overlays for all ships colonizing, invading etc.
         std::shared_ptr<GG::Texture> overlay_texture;
-        if (all_ships([](const std::shared_ptr<const Ship>& ship) { return ship->OrderedScrapped(); }))
+        if (all_ships([](const auto& ship){ return ship->OrderedScrapped(); }))
             add_overlay("scrapped.png");
         if (all_ships(
-                [](const std::shared_ptr<const Ship>& ship)
+                [](const auto& ship)
                 {return ship->OrderedColonizePlanet() != INVALID_OBJECT_ID; })
            )
         {
             add_overlay("colonizing.png");
         }
         if (all_ships(
-                [](const std::shared_ptr<const Ship>& ship)
+                [](const auto& ship)
                 { return ship->OrderedInvadePlanet() != INVALID_OBJECT_ID; })
            )
         {
             add_overlay("invading.png");
         }
         if (all_ships(
-                [](const std::shared_ptr<const Ship>& ship)
+                [](const auto& ship)
                 { return ship->OrderedBombardPlanet() != INVALID_OBJECT_ID; })
            )
         {
@@ -1743,7 +1741,7 @@ void FleetDataPanel::Init() {
             m_stat_icons.push_back({meter_type, icon});
             icon->SetBrowseModeTime(tooltip_delay);
             icon->SetBrowseText(UserString(std::get<2>(entry)));
-            icon->RightClickedSignal.connect([meter_type](const GG::Pt& pt){
+            icon->RightClickedSignal.connect([meter_type](const auto& pt) {
                 std::string meter_string = boost::lexical_cast<std::string>(meter_type);
 
                 auto zoom_article_action = [meter_string]() { ClientUI::GetClientUI()->ZoomToMeterTypeArticle(meter_string); };

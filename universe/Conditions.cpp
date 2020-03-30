@@ -9644,7 +9644,7 @@ void And::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
         }
     }
 
-    auto ObjList = [](const ObjectSet& objs) -> std::string {
+    auto ObjList = [](const auto& objs) -> std::string {
         std::stringstream ss;
         for (const auto& obj : objs)
             ss << obj->Name() << " (" << std::to_string(obj->ID()) << ")  ";
@@ -9805,7 +9805,7 @@ unsigned int And::GetCheckSum() const {
 const std::vector<Condition*> And::Operands() const {
     std::vector<Condition*> retval(m_operands.size());
     std::transform(m_operands.begin(), m_operands.end(), retval.begin(),
-                   [](const std::unique_ptr<Condition>& xx) {return xx.get();});
+                   [](const auto& xx){ return xx.get(); });
     return retval;
 }
 
@@ -10316,7 +10316,7 @@ unsigned int OrderedAlternativesOf::GetCheckSum() const {
 const std::vector<Condition*> OrderedAlternativesOf::Operands() const {
     std::vector<Condition*> retval(m_operands.size());
     std::transform(m_operands.begin(), m_operands.end(), retval.begin(),
-                   [](const std::unique_ptr<Condition>& xx) {return xx.get();});
+                   [](const auto& xx){ return xx.get(); });
     return retval;
 }
 

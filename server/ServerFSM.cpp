@@ -1682,7 +1682,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
         // remove all AIs from current lobby data,
         // so that when the save is loaded no AI state as appropriate,
         // without having potential extra AIs lingering from the previous
-        m_lobby_data->m_players.remove_if([](const std::pair<int, PlayerSetupData>& plr) {
+        m_lobby_data->m_players.remove_if([](const auto& plr) {
             return plr.second.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER;
         });
         m_ai_next_index = 1;

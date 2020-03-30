@@ -664,7 +664,7 @@ void GenerateStarlanes(int max_jumps_between_systems, int max_starlane_length) {
     std::map<int, std::shared_ptr<System>> sys_map;
     std::copy(sys_rng.begin(), sys_rng.end(), std::back_inserter(sys_vec));
     std::transform(sys_rng.begin(), sys_rng.end(), std::inserter(sys_map, sys_map.end()),
-                   [](const std::shared_ptr<System>& p) { return std::make_pair(p->ID(), p); });
+                   [](const auto& p){ return std::make_pair(p->ID(), p); });
 
     // generate lanes
     if (GetGameRules().Get<bool>("RULE_STARLANES_EVERYWHERE")) {

@@ -105,7 +105,7 @@ void SpecialsPanel::Update() {
 
         auto special_name = entry.first;
 
-        graphic->RightClickedSignal.connect([special_name](const GG::Pt& pt) {
+        graphic->RightClickedSignal.connect([special_name](const auto& pt) {
             auto zoom_action = [special_name]() {
                 ClientUI::GetClientUI()->ZoomToSpecial(special_name);
             };

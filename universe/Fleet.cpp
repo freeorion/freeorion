@@ -654,23 +654,17 @@ namespace {
     }
 }
 
-bool Fleet::HasMonsters() const {
-    auto isX = [](const std::shared_ptr<const Ship>& ship){ return ship->IsMonster(); };
-    return HasXShips(isX, m_ships);
-}
+bool Fleet::HasMonsters() const
+{ return HasXShips([](const auto& ship){ return ship->IsMonster(); }, m_ships); }
 
-bool Fleet::HasArmedShips() const {
-    auto isX = [](const std::shared_ptr<const Ship>& ship){ return ship->IsArmed(); };
-    return HasXShips(isX, m_ships);
-}
+bool Fleet::HasArmedShips() const
+{ return HasXShips([](const auto& ship){ return ship->IsArmed(); }, m_ships); }
 
-bool Fleet::HasFighterShips() const {
-    auto isX = [](const std::shared_ptr<const Ship>& ship){ return ship->HasFighters(); };
-    return HasXShips(isX, m_ships);
-}
+bool Fleet::HasFighterShips() const
+{ return HasXShips([](const auto& ship){ return ship->HasFighters(); }, m_ships); }
 
 bool Fleet::HasColonyShips() const {
-    auto isX = [](const std::shared_ptr<const Ship>& ship) {
+    auto isX = [](const auto& ship) {
         if (ship->CanColonize())
             if (const auto design = ship->Design())
                 if (design->ColonyCapacity() > 0.0f)
@@ -681,7 +675,7 @@ bool Fleet::HasColonyShips() const {
 }
 
 bool Fleet::HasOutpostShips() const {
-    auto isX = [](const std::shared_ptr<const Ship>& ship) {
+    auto isX = [](const auto& ship) {
         if (ship->CanColonize())
             if (const auto design = ship->Design())
                 if (design->ColonyCapacity() == 0.0f)
@@ -691,20 +685,14 @@ bool Fleet::HasOutpostShips() const {
     return HasXShips(isX, m_ships);
 }
 
-bool Fleet::HasTroopShips() const {
-    auto isX = [](const std::shared_ptr<const Ship>& ship){ return ship->HasTroops(); };
-    return HasXShips(isX, m_ships);
-}
+bool Fleet::HasTroopShips() const
+{ return HasXShips([](const auto& ship){ return ship->HasTroops(); }, m_ships); }
 
-bool Fleet::HasShipsOrderedScrapped() const {
-    auto isX = [](const std::shared_ptr<const Ship>& ship){ return ship->OrderedScrapped(); };
-    return HasXShips(isX, m_ships);
-}
+bool Fleet::HasShipsOrderedScrapped() const
+{ return HasXShips([](const auto& ship){ return ship->OrderedScrapped(); }, m_ships); }
 
-bool Fleet::HasShipsWithoutScrapOrders() const {
-    auto isX = [](const std::shared_ptr<const Ship>& ship){ return !ship->OrderedScrapped(); };
-    return HasXShips(isX, m_ships);
-}
+bool Fleet::HasShipsWithoutScrapOrders() const
+{ return HasXShips([](const auto& ship){ return !ship->OrderedScrapped(); }, m_ships); }
 
 float Fleet::ResourceOutput(ResourceType type) const {
     float output = 0.0f;
