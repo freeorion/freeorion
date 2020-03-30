@@ -8,8 +8,6 @@
 #include "../util/Directories.h"
 
 #include <boost/spirit/include/phoenix.hpp>
-//TODO: replace with std::make_unique when transitioning to C++14
-#include <boost/smart_ptr/make_unique.hpp>
 
 #define DEBUG_PARSERS 0
 
@@ -27,7 +25,7 @@ namespace {
         bool lookup_names)
     {
         plans.push_back(
-            boost::make_unique<FleetPlan>(
+            std::make_unique<FleetPlan>(
                 fleet_name, ship_design_names, lookup_names));
     }
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_fleet_plan_, insert_fleet_plan, 4)

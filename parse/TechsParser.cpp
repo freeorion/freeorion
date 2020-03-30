@@ -14,8 +14,6 @@
 
 #include <boost/spirit/include/phoenix.hpp>
 #include <boost/spirit/include/qi_as.hpp>
-//TODO: replace with std::make_unique when transitioning to C++14
-#include <boost/smart_ptr/make_unique.hpp>
 
 
 #define DEBUG_PARSERS 0
@@ -58,7 +56,7 @@ namespace {
                      const boost::optional<std::string>& graphic,
                      bool& pass)
     {
-        auto tech_ptr = boost::make_unique<Tech>(
+        auto tech_ptr = std::make_unique<Tech>(
             *tech_info.OpenEnvelope(pass),
             (effects ? parse::detail::OpenEnvelopes(*effects, pass) : std::vector<std::unique_ptr<Effect::EffectsGroup>>()),
             (prerequisites ? *prerequisites : std::set<std::string>()),
@@ -76,7 +74,7 @@ namespace {
     void insert_category(std::map<std::string, std::unique_ptr<TechCategory>>& categories,
                          const std::string& name, const std::string& graphic, const GG::Clr& color)
     {
-        auto category_ptr = boost::make_unique<TechCategory>(name, graphic, color);
+        auto category_ptr = std::make_unique<TechCategory>(name, graphic, color);
         categories.insert(std::make_pair(category_ptr->name, std::move(category_ptr)));
     }
 

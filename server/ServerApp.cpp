@@ -44,8 +44,6 @@
 #include <boost/date_time/posix_time/time_formatters.hpp>
 #include <boost/uuid/random_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
-//TODO: replace with std::make_unique when transitioning to C++14
-#include <boost/smart_ptr/make_unique.hpp>
 
 #include <ctime>
 #include <thread>
@@ -1982,7 +1980,7 @@ int ServerApp::EffectsProcessingThreads() const
 { return GetOptionsDB().Get<int>("effects.server.threads"); }
 
 void ServerApp::AddEmpireTurn(int empire_id, const PlayerSaveGameData& psgd)
-{ m_turn_sequence[empire_id] = boost::make_unique<PlayerSaveGameData>(psgd); }
+{ m_turn_sequence[empire_id] = std::make_unique<PlayerSaveGameData>(psgd); }
 
 void ServerApp::RemoveEmpireTurn(int empire_id)
 { m_turn_sequence.erase(empire_id); }

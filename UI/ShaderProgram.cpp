@@ -7,8 +7,6 @@
 #include "../util/Logger.h"
 
 #include <boost/filesystem/fstream.hpp>
-//TODO: replace with std::make_unique when transitioning to C++14
-#include <boost/smart_ptr/make_unique.hpp>
 
 
 namespace {
@@ -141,7 +139,7 @@ std::unique_ptr<ShaderProgram> ShaderProgram::shaderProgramFactory(const std::st
                                                                    const std::string& fragment_shader)
 {
     if (HumanClientApp::GetApp()->GLVersion() >= 2.0f)
-        return boost::make_unique<ShaderProgram>(vertex_shader,fragment_shader);
+        return std::make_unique<ShaderProgram>(vertex_shader,fragment_shader);
     return nullptr;
 }
 

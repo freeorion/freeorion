@@ -24,8 +24,6 @@
 
 #include "../network/Message.h"
 
-//TODO: replace with std::make_unique when transitioning to C++14
-#include <boost/smart_ptr/make_unique.hpp>
 #include <boost/format.hpp>
 
 #include <iterator>
@@ -260,113 +258,113 @@ namespace {
     Condition::Condition* VisibleEnemyOfOwnerCondition() {
         return new Condition::Or(
             // unowned candidate object case
-            boost::make_unique<Condition::And>(
-                boost::make_unique<Condition::EmpireAffiliation>(AFFIL_NONE),   // unowned candidate object
+            std::make_unique<Condition::And>(
+                std::make_unique<Condition::EmpireAffiliation>(AFFIL_NONE),   // unowned candidate object
 
-                boost::make_unique<Condition::ValueTest>(           // when source object is owned (ie. not the same owner as the candidate object)
-                    boost::make_unique<ValueRef::Variable<int>>(
+                std::make_unique<Condition::ValueTest>(           // when source object is owned (ie. not the same owner as the candidate object)
+                    std::make_unique<ValueRef::Variable<int>>(
                         ValueRef::SOURCE_REFERENCE, "Owner"),
                     Condition::NOT_EQUAL,
-                    boost::make_unique<ValueRef::Variable<int>>(
+                    std::make_unique<ValueRef::Variable<int>>(
                         ValueRef::CONDITION_LOCAL_CANDIDATE_REFERENCE, "Owner")),
 
-                boost::make_unique<Condition::VisibleToEmpire>(     // when source object's owner empire can detect the candidate object
-                    boost::make_unique<ValueRef::Variable<int>>(    // source's owner empire id
+                std::make_unique<Condition::VisibleToEmpire>(     // when source object's owner empire can detect the candidate object
+                    std::make_unique<ValueRef::Variable<int>>(    // source's owner empire id
                         ValueRef::SOURCE_REFERENCE, "Owner"))),
 
             // owned candidate object case
-            boost::make_unique<Condition::And>(
-                boost::make_unique<Condition::EmpireAffiliation>(AFFIL_ANY),    // candidate is owned by an empire
+            std::make_unique<Condition::And>(
+                std::make_unique<Condition::EmpireAffiliation>(AFFIL_ANY),    // candidate is owned by an empire
 
-                boost::make_unique<Condition::EmpireAffiliation>(               // candidate is owned by enemy of source's owner
-                    boost::make_unique<ValueRef::Variable<int>>(
+                std::make_unique<Condition::EmpireAffiliation>(               // candidate is owned by enemy of source's owner
+                    std::make_unique<ValueRef::Variable<int>>(
                         ValueRef::SOURCE_REFERENCE, "Owner"), AFFIL_ENEMY),
 
-                boost::make_unique<Condition::VisibleToEmpire>(     // when source empire can detect the candidate object
-                    boost::make_unique<ValueRef::Variable<int>>(    // source's owner empire id
+                std::make_unique<Condition::VisibleToEmpire>(     // when source empire can detect the candidate object
+                    std::make_unique<ValueRef::Variable<int>>(    // source's owner empire id
                         ValueRef::SOURCE_REFERENCE, "Owner"))
             ))
         ;
     }
 
     const std::unique_ptr<Condition::Condition> is_enemy_ship_or_fighter =
-        boost::make_unique<Condition::And>(
-            boost::make_unique<Condition::Or>(
-                boost::make_unique<Condition::And>(
-                    boost::make_unique<Condition::Type>(OBJ_SHIP),
-                    boost::make_unique<Condition::Not>(
-                        boost::make_unique<Condition::MeterValue>(
+        std::make_unique<Condition::And>(
+            std::make_unique<Condition::Or>(
+                std::make_unique<Condition::And>(
+                    std::make_unique<Condition::Type>(OBJ_SHIP),
+                    std::make_unique<Condition::Not>(
+                        std::make_unique<Condition::MeterValue>(
                             METER_STRUCTURE,
                             nullptr,
-                            boost::make_unique<ValueRef::Constant<double>>(0.0)))),
-                boost::make_unique<Condition::Type>(OBJ_FIGHTER)),
+                            std::make_unique<ValueRef::Constant<double>>(0.0)))),
+                std::make_unique<Condition::Type>(OBJ_FIGHTER)),
             std::unique_ptr<Condition::Condition>{VisibleEnemyOfOwnerCondition()});
 
     const std::unique_ptr<Condition::Condition> is_enemy_ship =
-        boost::make_unique<Condition::And>(
-            boost::make_unique<Condition::Type>(OBJ_SHIP),
+        std::make_unique<Condition::And>(
+            std::make_unique<Condition::Type>(OBJ_SHIP),
 
-            boost::make_unique<Condition::Not>(
-                boost::make_unique<Condition::MeterValue>(
+            std::make_unique<Condition::Not>(
+                std::make_unique<Condition::MeterValue>(
                     METER_STRUCTURE,
                     nullptr,
-                    boost::make_unique<ValueRef::Constant<double>>(0.0))),
+                    std::make_unique<ValueRef::Constant<double>>(0.0))),
 
             std::unique_ptr<Condition::Condition>{VisibleEnemyOfOwnerCondition()});
 
     const std::unique_ptr<Condition::Condition> is_enemy_ship_fighter_or_armed_planet =
-        boost::make_unique<Condition::And>(
+        std::make_unique<Condition::And>(
             std::unique_ptr<Condition::Condition>{VisibleEnemyOfOwnerCondition()},  // enemies
-            boost::make_unique<Condition::Or>(
-                boost::make_unique<Condition::Or>(
-                    boost::make_unique<Condition::And>(
-                        boost::make_unique<Condition::Type>(OBJ_SHIP),
-                        boost::make_unique<Condition::Not>(
-                            boost::make_unique<Condition::MeterValue>(
+            std::make_unique<Condition::Or>(
+                std::make_unique<Condition::Or>(
+                    std::make_unique<Condition::And>(
+                        std::make_unique<Condition::Type>(OBJ_SHIP),
+                        std::make_unique<Condition::Not>(
+                            std::make_unique<Condition::MeterValue>(
                                 METER_STRUCTURE,
                                 nullptr,
-                                boost::make_unique<ValueRef::Constant<double>>(0.0)))),
-                    boost::make_unique<Condition::Type>(OBJ_FIGHTER)),
+                                std::make_unique<ValueRef::Constant<double>>(0.0)))),
+                    std::make_unique<Condition::Type>(OBJ_FIGHTER)),
 
-                boost::make_unique<Condition::And>(
-                    boost::make_unique<Condition::Type>(OBJ_PLANET),
-                    boost::make_unique<Condition::Or>(
-                        boost::make_unique<Condition::Not>(
-                            boost::make_unique<Condition::MeterValue>(
+                std::make_unique<Condition::And>(
+                    std::make_unique<Condition::Type>(OBJ_PLANET),
+                    std::make_unique<Condition::Or>(
+                        std::make_unique<Condition::Not>(
+                            std::make_unique<Condition::MeterValue>(
                                 METER_DEFENSE,
                                 nullptr,
-                                boost::make_unique<ValueRef::Constant<double>>(0.0))),
-                        boost::make_unique<Condition::Not>(
-                            boost::make_unique<Condition::MeterValue>(
+                                std::make_unique<ValueRef::Constant<double>>(0.0))),
+                        std::make_unique<Condition::Not>(
+                            std::make_unique<Condition::MeterValue>(
                                 METER_SHIELD,
                                 nullptr,
-                                boost::make_unique<ValueRef::Constant<double>>(0.0))),
-                        boost::make_unique<Condition::Not>(
-                            boost::make_unique<Condition::MeterValue>(
+                                std::make_unique<ValueRef::Constant<double>>(0.0))),
+                        std::make_unique<Condition::Not>(
+                            std::make_unique<Condition::MeterValue>(
                                 METER_CONSTRUCTION,
                                 nullptr,
-                                boost::make_unique<ValueRef::Constant<double>>(0.0)))))));
+                                std::make_unique<ValueRef::Constant<double>>(0.0)))))));
 
     const std::unique_ptr<Condition::Condition> if_source_is_planet_then_ships_else_all =
-        boost::make_unique<Condition::Or>(
-            boost::make_unique<Condition::And>(     // if source is a planet, match ships
-                boost::make_unique<Condition::Number>(
-                    boost::make_unique<ValueRef::Constant<int>>(1), // minimum objects matching subcondition
+        std::make_unique<Condition::Or>(
+            std::make_unique<Condition::And>(     // if source is a planet, match ships
+                std::make_unique<Condition::Number>(
+                    std::make_unique<ValueRef::Constant<int>>(1), // minimum objects matching subcondition
                     nullptr,
-                    boost::make_unique<Condition::And>(             // subcondition: source is a planet
-                        boost::make_unique<Condition::Source>(),
-                        boost::make_unique<Condition::Type>(OBJ_PLANET)
+                    std::make_unique<Condition::And>(             // subcondition: source is a planet
+                        std::make_unique<Condition::Source>(),
+                        std::make_unique<Condition::Type>(OBJ_PLANET)
                     )
                 ),
-                boost::make_unique<Condition::Type>(OBJ_SHIP)
+                std::make_unique<Condition::Type>(OBJ_SHIP)
             ),
 
-            boost::make_unique<Condition::Number>(  // if source is not a planet, match anything
+            std::make_unique<Condition::Number>(  // if source is not a planet, match anything
                 nullptr,
-                boost::make_unique<ValueRef::Constant<int>>(0),     // maximum objects matching subcondition
-                boost::make_unique<Condition::And>(                 // subcondition: source is a planet
-                    boost::make_unique<Condition::Source>(),
-                    boost::make_unique<Condition::Type>(OBJ_PLANET)
+                std::make_unique<ValueRef::Constant<int>>(0),     // maximum objects matching subcondition
+                std::make_unique<Condition::And>(                 // subcondition: source is a planet
+                    std::make_unique<Condition::Source>(),
+                    std::make_unique<Condition::Type>(OBJ_PLANET)
                 )
             )
         );

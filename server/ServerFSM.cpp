@@ -25,8 +25,6 @@
 #include <boost/functional/hash.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/uuid/nil_generator.hpp>
-//TODO: replace with std::make_unique when transitioning to C++14
-#include <boost/smart_ptr/make_unique.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 #include <GG/ClrConstants.h>
@@ -3075,7 +3073,7 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
         DebugLogger(FSM) << "WaitingForTurnEnd.TurnOrders : Received orders from player " << player_id
                          << " for empire " << empire_id << " count of " << order_set->size();
 
-        server.SetEmpireSaveGameData(empire_id, boost::make_unique<PlayerSaveGameData>(sender->PlayerName(), empire_id,
+        server.SetEmpireSaveGameData(empire_id, std::make_unique<PlayerSaveGameData>(sender->PlayerName(), empire_id,
                                      order_set, ui_data, save_state_string,
                                      client_type));
         empire->SetReady(true);

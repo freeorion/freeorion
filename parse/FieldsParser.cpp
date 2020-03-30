@@ -7,8 +7,6 @@
 #include "../universe/Field.h"
 
 #include <boost/spirit/include/phoenix.hpp>
-//TODO: replace with std::make_unique when transitioning to C++14
-#include <boost/smart_ptr/make_unique.hpp>
 
 
 #define DEBUG_PARSERS 0
@@ -31,7 +29,7 @@ namespace {
                           const std::string& graphic,
                           bool& pass)
     {
-        auto fieldtype_ptr = boost::make_unique<FieldType>(
+        auto fieldtype_ptr = std::make_unique<FieldType>(
             name, description, stealth, tags,
             (effects ? OpenEnvelopes(*effects, pass) : std::vector<std::unique_ptr<Effect::EffectsGroup>>()),
             graphic);

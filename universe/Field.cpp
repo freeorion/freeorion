@@ -15,24 +15,23 @@
 
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/filesystem/fstream.hpp>
-//TODO: replace with std::make_unique when transitioning to C++14
-#include <boost/smart_ptr/make_unique.hpp>
+
 
 namespace {
     std::shared_ptr<Effect::EffectsGroup>
     IncreaseMeter(MeterType meter_type, double increase) {
         typedef std::vector<std::unique_ptr<Effect::Effect>> Effects;
-        auto scope = boost::make_unique<Condition::Source>();
+        auto scope = std::make_unique<Condition::Source>();
         std::unique_ptr<Condition::Source> activation = nullptr;
         auto vr =
-            boost::make_unique<ValueRef::Operation<double>>(
+            std::make_unique<ValueRef::Operation<double>>(
                 ValueRef::PLUS,
-                boost::make_unique<ValueRef::Variable<double>>(
+                std::make_unique<ValueRef::Variable<double>>(
                     ValueRef::EFFECT_TARGET_VALUE_REFERENCE, std::vector<std::string>()),
-                boost::make_unique<ValueRef::Constant<double>>(increase)
+                std::make_unique<ValueRef::Constant<double>>(increase)
             );
         auto effects = Effects();
-        effects.push_back(boost::make_unique<Effect::SetMeter>(meter_type, std::move(vr)));
+        effects.push_back(std::make_unique<Effect::SetMeter>(meter_type, std::move(vr)));
         return std::make_shared<Effect::EffectsGroup>(std::move(scope), std::move(activation), std::move(effects));
     }
 }

@@ -8,8 +8,7 @@
 #include "../universe/ValueRef.h"
 
 #include <boost/spirit/include/phoenix.hpp>
-//TODO: replace with std::make_unique when transitioning to C++14
-#include <boost/smart_ptr/make_unique.hpp>
+
 
 #define DEBUG_PARSERS 0
 
@@ -57,7 +56,7 @@ namespace {
     };
 
     void insert_special(std::map<std::string, std::unique_ptr<Special>>& specials, special_pod special_, bool& pass) {
-        auto special_ptr = boost::make_unique<Special>(
+        auto special_ptr = std::make_unique<Special>(
             special_.name, special_.description,
             (special_.stealth ? special_.stealth->OpenEnvelope(pass) : nullptr),
             (special_.effects ? OpenEnvelopes(*special_.effects, pass) : std::vector<std::unique_ptr<Effect::EffectsGroup>>()),

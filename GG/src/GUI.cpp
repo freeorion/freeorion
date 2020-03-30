@@ -847,8 +847,7 @@ GUI*                       GUI::s_gui = nullptr;
 
 // member functions
 GUI::GUI(const std::string& app_name) :
-    // TODO:: use std::make_unique when switching to C++14
-    m_impl(new GUIImpl())
+    m_impl(std::make_unique<GUIImpl>())
 {
     assert(!s_gui);
     s_gui = this;

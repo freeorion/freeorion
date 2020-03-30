@@ -14,8 +14,7 @@
 #include "../universe/ValueRef.h"
 
 #include <boost/spirit/include/phoenix.hpp>
-//TODO: replace with std::make_unique when transitioning to C++14
-#include <boost/smart_ptr/make_unique.hpp>
+
 
 #define DEBUG_PARSERS 0
 
@@ -40,7 +39,7 @@ namespace {
                          const boost::optional<std::vector<HullType::Slot>>& slots,
                          const std::string& icon, const std::string& graphic)
     {
-        auto hulltype = boost::make_unique<HullType>(
+        auto hulltype = std::make_unique<HullType>(
             stats, std::move(*common_params), more_common_params,
             (slots ? *slots : std::vector<HullType::Slot>()),
             icon, graphic);

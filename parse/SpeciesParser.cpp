@@ -13,8 +13,6 @@
 #include "../universe/Species.h"
 
 #include <boost/spirit/include/phoenix.hpp>
-//TODO: replace with std::make_unique when transitioning to C++14
-#include <boost/smart_ptr/make_unique.hpp>
 
 
 #define DEBUG_PARSERS 0
@@ -63,7 +61,7 @@ namespace {
         const SpeciesStuff& foci_preferred_tags_graphic,
         bool& pass)
     {
-        auto species_ptr = boost::make_unique<Species>(
+        auto species_ptr = std::make_unique<Species>(
             strings,
             (foci_preferred_tags_graphic.foci ? *foci_preferred_tags_graphic.foci : std::vector<FocusType>()),
             (foci_preferred_tags_graphic.preferred_focus ? *foci_preferred_tags_graphic.preferred_focus : std::string()),
