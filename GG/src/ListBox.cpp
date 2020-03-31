@@ -1905,7 +1905,8 @@ ListBox::iterator ListBox::Insert(std::shared_ptr<Row> row, iterator it, bool dr
 
     row->Resize(Pt(std::max(ClientWidth(), X(1)), row->Height()));
 
-    row->RightClickedSignal.connect(boost::bind(&ListBox::HandleRowRightClicked, this, _1, _2));
+    row->RightClickedSignal.connect(
+        [this](const Pt& pt, auto mod){ this->HandleRowRightClicked(pt, mod); });
 
     AfterInsertRowSignal(it);
     if (dropped)
@@ -2054,9 +2055,13 @@ ListBox::Row& ListBox::ColHeaders()
 void ListBox::ConnectSignals()
 {
     if (m_vscroll)
-        m_vscroll->ScrolledSignal.connect(boost::bind(&ListBox::VScrolled, this, _1, _2, _3, _4));
+        m_vscroll->ScrolledSignal.connect(
+            [this](int tab_low, int tab_high, int low, int high)
+            { this->VScrolled(tab_low, tab_high, low, high); });
     if (m_hscroll)
-        m_hscroll->ScrolledSignal.connect(boost::bind(&ListBox::HScrolled, this, _1, _2, _3, _4));
+        m_hscroll->ScrolledSignal.connect(
+            [this](int tab_low, int tab_high, int low, int high)
+            { this->HScrolled(tab_low, tab_high, low, high); });
 }
 
 void ListBox::ValidateStyle()
@@ -2177,7 +2182,9 @@ std::pair<bool, bool> ListBox::AddOrRemoveScrolls(
         m_vscroll->Resize(Pt(X(SCROLL_WIDTH), cl_sz.y - (horizontal_needed ? SCROLL_WIDTH : 0)));
 
         AttachChild(m_vscroll);
-        m_vscroll->ScrolledSignal.connect(boost::bind(&ListBox::VScrolled, this, _1, _2, _3, _4));
+        m_vscroll->ScrolledSignal.connect(
+            [this](int tab_low, int tab_high, int low, int high)
+            { this->VScrolled(tab_low, tab_high, low, high); });
     }
 
     if (vertical_needed) {
@@ -2225,7 +2232,9 @@ std::pair<bool, bool> ListBox::AddOrRemoveScrolls(
         m_hscroll->Resize(Pt(cl_sz.x - (vertical_needed ? SCROLL_WIDTH : 0), Y(SCROLL_WIDTH)));
 
         AttachChild(m_hscroll);
-        m_hscroll->ScrolledSignal.connect(boost::bind(&ListBox::HScrolled, this, _1, _2, _3, _4));
+        m_hscroll->ScrolledSignal.connect(
+            [this](int tab_low, int tab_high, int low, int high)
+            { this->HScrolled(tab_low, tab_high, low, high); });
     }
 
     if (horizontal_needed) {

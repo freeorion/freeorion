@@ -1620,7 +1620,7 @@ void GUI::RenderWindow(Wnd* wnd)
         std::vector<std::shared_ptr<Wnd>> children_copy{wnd->m_children.begin(), wnd->m_children.end()};
         const auto& client_child_begin =
             std::partition(children_copy.begin(), children_copy.end(),
-                           boost::bind(&Wnd::NonClientChild, _1));
+                           [](const auto& wnd){ return wnd->NonClientChild(); });
 
         if (children_copy.begin() != client_child_begin) {
             wnd->BeginNonclientClipping();

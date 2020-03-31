@@ -93,13 +93,13 @@ void ThreeButtonDlg::CompleteConstruction()
     SetLayout(m_button_layout);
 
     m_button_0->LeftClickedSignal.connect(
-        boost::bind(&ThreeButtonDlg::Button0Clicked, this));
+        [this](){ this->Button0Clicked(); });
     if (m_button_1)
         m_button_1->LeftClickedSignal.connect(
-            boost::bind(&ThreeButtonDlg::Button1Clicked, this));
+            [this](){ this->Button1Clicked(); });
     if (m_button_2)
         m_button_2->LeftClickedSignal.connect(
-            boost::bind(&ThreeButtonDlg::Button2Clicked, this));
+            [this](){ this->Button2Clicked(); });
 }
 
 Clr ThreeButtonDlg::ButtonColor() const

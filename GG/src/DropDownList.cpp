@@ -112,8 +112,6 @@ protected:
 private:
     void LBSelChangedSlot(const ListBox::SelectionSet& rows);
 
-    void LBLeftClickSlot(ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
-
     /** Close the drop down if the app resizes, to prevent the modal drop down
         list location not tracking the anchor.*/
     void WindowResizedSlot(X x, Y y);
@@ -175,11 +173,11 @@ ModalListPicker::ModalListPicker(Clr color, const DropDownList* relative_to_wnd,
 void ModalListPicker::CompleteConstruction()
 {
     m_lb_wnd->SelRowsChangedSignal.connect(
-        boost::bind(&ModalListPicker::LBSelChangedSlot, this, _1));
+        [this](const auto& rows){ this->LBSelChangedSlot(rows); });
     m_lb_wnd->LeftClickedRowSignal.connect(
-        boost::bind(&ModalListPicker::LBLeftClickSlot, this, _1, _2, _3));
+        [this](auto, auto, auto){ this->EndRun(); });
     GUI::GetGUI()->WindowResizedSignal.connect(
-        boost::bind(&ModalListPicker::WindowResizedSlot, this, _1, _2));
+        [this](X x, Y y){ this->WindowResizedSlot(x, y); });
     AttachChild(m_lb_wnd);
     m_lb_wnd->InstallEventFilter(shared_from_this());
 
@@ -518,9 +516,6 @@ void ModalListPicker::LBSelChangedSlot(const ListBox::SelectionSet& rows)
         SignalChanged(sel_it);
     }
 }
-
-void ModalListPicker::LBLeftClickSlot(ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
-{ EndRun(); }
 
 void ModalListPicker::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys)
 {
