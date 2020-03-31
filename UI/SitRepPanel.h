@@ -40,10 +40,8 @@ private:
     void NextClicked();
     void LastClicked();
     void FilterClicked();
-    void IgnoreSitRep(GG::ListBox::iterator it, const GG::Pt& pt,
-                      const GG::Flags<GG::ModKey>& mod);
-    void DismissalMenu(GG::ListBox::iterator it, const GG::Pt& pt,
-                       const GG::Flags<GG::ModKey>& mod);
+    void IgnoreSitRep(GG::ListBox::iterator it);
+    void DismissalMenu(GG::ListBox::iterator it, const GG::Pt& pt);
     void DoLayout();
 
     bool IsSitRepInvalid(SitRepEntry& sitrep) const;

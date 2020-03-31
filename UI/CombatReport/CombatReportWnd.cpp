@@ -37,23 +37,21 @@ public:
         m_wnd.AttachChild(m_tabs);
 
         m_log->LinkClickedSignal.connect(
-            boost::bind(&Impl::HandleLinkClick, this, _1, _2));
+            [this](const auto& link_type, const auto& data){ HandleLinkClick(link_type, data); });
         m_log->LinkDoubleClickedSignal.connect(
-            boost::bind(&Impl::HandleLinkDoubleClick, this, _1, _2));
+            [this](const auto& link_type, const auto& data){ HandleLinkClick(link_type, data); });
         m_log->LinkRightClickedSignal.connect(
-            boost::bind(&Impl::HandleLinkDoubleClick, this, _1, _2));
-        m_log->WndChangedSignal.connect(
-            boost::bind(&Impl::HandleWindowChanged, this));
+            [this](const auto& link_type, const auto& data){ HandleLinkClick(link_type, data); });
+        m_log->WndChangedSignal.connect([this](){ HandleWindowChanged(); });
 
         // Catch the window-changed signal from the tab bar so that layout
         // updates can be performed for the newly-selected window.
         m_tabs->TabChangedSignal.connect(
-            boost::bind(&Impl::HandleTabChanged, this, _1));
+            [this](size_t tabnum){ HandleTabChanged(tabnum); });
 
         // This can be called whether m_graphical is the selected window or
         // not, but it will still only use the min size of the selected window.
-        m_graphical->MinSizeChangedSignal.connect(
-            boost::bind(&Impl::UpdateMinSize, this));
+        m_graphical->MinSizeChangedSignal.connect([this](){ UpdateMinSize(); });
     }
 
     void SetLog(int log_id) {
@@ -137,9 +135,6 @@ public:
             ErrorLogger() << "CombatReport::HandleLinkClick caught exception: " << e.what();
         }
     }
-
-    void HandleLinkDoubleClick(const std::string& link_type, const std::string& data)
-    { HandleLinkClick(link_type, data); }
 
     GG::Pt GetMinSize() const
     { return m_min_size; }

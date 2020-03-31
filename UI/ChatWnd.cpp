@@ -313,11 +313,11 @@ void MessageWnd::CompleteConstruction() {
     AttachChild(m_edit);
 
     m_edit->TextEnteredSignal.connect(
-        boost::bind(&MessageWnd::MessageEntered, this));
+        [this](){ MessageEntered(); });
     m_edit->UpPressedSignal.connect(
-        boost::bind(&MessageWnd::MessageHistoryUpRequested, this));
+        [this](){ MessageHistoryUpRequested(); });
     m_edit->DownPressedSignal.connect(
-        boost::bind(&MessageWnd::MessageHistoryDownRequested, this));
+        [this](){ MessageHistoryDownRequested(); });
     m_edit->GainingFocusSignal.connect(
         TypingSignal);
     m_edit->LosingFocusSignal.connect(
@@ -326,7 +326,8 @@ void MessageWnd::CompleteConstruction() {
     m_history.push_front("");
 
     Empires().DiplomaticStatusChangedSignal.connect(
-        boost::bind(&MessageWnd::HandleDiplomaticStatusChange, this, _1, _2));
+        [this](int empire1_id, int empire2_id)
+        { HandleDiplomaticStatusChange(empire1_id, empire2_id); });
 
     DoLayout();
     SaveDefaultedOptions();

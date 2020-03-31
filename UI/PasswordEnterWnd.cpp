@@ -57,9 +57,9 @@ void PasswordEnterWnd::CompleteConstruction() {
     ResetDefaultPosition();
 
     m_ok_bn->LeftClickedSignal.connect(
-        boost::bind(&PasswordEnterWnd::OkClicked, this));
+        [this](){ OkClicked(); });
     m_cancel_bn->LeftClickedSignal.connect(
-        boost::bind(&PasswordEnterWnd::CancelClicked, this));
+        [this](){ CancelClicked(); });
 }
 
 GG::Rect PasswordEnterWnd::CalculatePosition() const {

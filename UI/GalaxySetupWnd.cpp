@@ -286,8 +286,8 @@ GG::StateButton* GameRulesPanel::BoolRuleWidget(GG::ListBox* page, int indentati
     button->SetCheck(GetGameRules().Get<bool>(rule_name));
     button->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     button->SetBrowseText(UserString(GetGameRules().GetDescription(rule_name)));
-    button->CheckedSignal.connect(boost::bind(&GameRulesPanel::BoolRuleChanged, this, button.get(),
-                                              rule_name));
+    button->CheckedSignal.connect(
+        [this, &rule_name](bool checked){ BoolRuleChanged(checked, rule_name); });
 
     page->Insert(row);
     return button.get();
@@ -336,8 +336,8 @@ GG::Spin<int>* GameRulesPanel::IntRuleWidget(GG::ListBox* page, int indentation_
     text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     text_control->SetBrowseText(UserString(GetGameRules().GetDescription(rule_name)));
 
-    spin->ValueChangedSignal.connect(boost::bind(&GameRulesPanel::IntRuleChanged,
-                                                 this, spin.get(), rule_name));
+    spin->ValueChangedSignal.connect(
+        [this, &rule_name](auto value){ IntRuleChanged(value, rule_name); });
     return spin.get();
 }
 
@@ -384,8 +384,8 @@ GG::Spin<double>* GameRulesPanel::DoubleRuleWidget(GG::ListBox* page, int indent
     text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     text_control->SetBrowseText(UserString(GetGameRules().GetDescription(rule_name)));
 
-    spin->ValueChangedSignal.connect(boost::bind(&GameRulesPanel::DoubleRuleChanged,
-                                                 this, spin.get(), rule_name));
+    spin->ValueChangedSignal.connect(
+        [this, rule_name](auto value){ DoubleRuleChanged(value, rule_name); });
 
     return spin.get();
 }
@@ -452,19 +452,18 @@ GG::DropDownList* GameRulesPanel::StringRuleWidget(GG::ListBox* page, int indent
     text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     text_control->SetBrowseText(UserString(GetGameRules().GetDescription(rule_name)));
 
-    drop->SelChangedSignal.connect(boost::bind(&GameRulesPanel::StringRuleChanged,
-                                               this, drop.get(), rule_name));
+    drop->SelChangedSignal.connect(
+        [this, &drop, rule_name](auto it){ StringRuleChanged(drop.get(), rule_name); });
 
     return drop.get();
 }
 
-void GameRulesPanel::BoolRuleChanged(const GG::StateButton* button,
-                                     const std::string& rule_name)
+void GameRulesPanel::BoolRuleChanged(bool value, const std::string& rule_name)
 {
     std::shared_ptr<const ValidatorBase> val = GetGameRules().GetValidator(rule_name);
-    if (!val || !button)
+    if (!val)
         return;
-    m_rules[rule_name] = val->String(button->Checked());
+    m_rules[rule_name] = val->String(value);
 
     DebugLogger() << "Set Rules:";
     for (const auto& entry : m_rules)
@@ -473,13 +472,12 @@ void GameRulesPanel::BoolRuleChanged(const GG::StateButton* button,
     SettingChanged();
 }
 
-void GameRulesPanel::IntRuleChanged(const GG::Spin<int>* spin,
-                                     const std::string& rule_name)
+void GameRulesPanel::IntRuleChanged(int value, const std::string& rule_name)
 {
     std::shared_ptr<const ValidatorBase> val = GetGameRules().GetValidator(rule_name);
-    if (!val || !spin)
+    if (!val)
         return;
-    m_rules[rule_name] = val->String(spin->Value());
+    m_rules[rule_name] = val->String(value);
 
     DebugLogger() << "Set Rules:";
     for (const auto& entry : m_rules)
@@ -488,13 +486,12 @@ void GameRulesPanel::IntRuleChanged(const GG::Spin<int>* spin,
     SettingChanged();
 }
 
-void GameRulesPanel::DoubleRuleChanged(const GG::Spin<double>* spin,
-                                       const std::string& rule_name)
+void GameRulesPanel::DoubleRuleChanged(double value, const std::string& rule_name)
 {
     std::shared_ptr<const ValidatorBase> val = GetGameRules().GetValidator(rule_name);
-    if (!val || !spin)
+    if (!val)
         return;
-    m_rules[rule_name] = val->String(spin->Value());
+    m_rules[rule_name] = val->String(value);
 
     DebugLogger() << "Set Rules:";
     for (const auto& entry : m_rules)
@@ -655,29 +652,29 @@ void GalaxySetupPanel::CompleteConstruction() {
 
     TraceLogger() << "GalaxySetupPanel::CompleteConstruction connecting signals and loading textures";
     m_random->LeftClickedSignal.connect(
-        boost::bind(&GalaxySetupPanel::RandomClicked, this));
+        [this](){ RandomClicked(); });
     m_seed_edit->FocusUpdateSignal.connect(
-        boost::bind(&GalaxySetupPanel::SetSeed, this, _1, false));
+        [this](const auto& text){ SetSeed(text, false); });
     m_stars_spin->ValueChangedSignal.connect(
-        boost::bind(&GalaxySetupPanel::SettingChanged, this));
+        [this](auto value){ SettingChanged(); });
     m_galaxy_shapes_list->SelChangedSignal.connect(
-        boost::bind(&GalaxySetupPanel::SettingChanged, this));
+        [this](auto it){ SettingChanged(); });
     m_galaxy_ages_list->SelChangedSignal.connect(
-        boost::bind(&GalaxySetupPanel::SettingChanged, this));
+        [this](auto it){ SettingChanged(); });
     m_starlane_freq_list->SelChangedSignal.connect(
-        boost::bind(&GalaxySetupPanel::SettingChanged, this));
+        [this](auto it){ SettingChanged(); });
     m_planet_density_list->SelChangedSignal.connect(
-        boost::bind(&GalaxySetupPanel::SettingChanged, this));
+        [this](auto it){ SettingChanged(); });
     m_specials_freq_list->SelChangedSignal.connect(
-        boost::bind(&GalaxySetupPanel::SettingChanged, this));
+        [this](auto it){ SettingChanged(); });
     m_monster_freq_list->SelChangedSignal.connect(
-        boost::bind(&GalaxySetupPanel::SettingChanged, this));
+        [this](auto it){ SettingChanged(); });
     m_native_freq_list->SelChangedSignal.connect(
-        boost::bind(&GalaxySetupPanel::SettingChanged, this));
+        [this](auto it){ SettingChanged(); });
     m_ai_aggression_list->SelChangedSignal.connect(
-        boost::bind(&GalaxySetupPanel::SettingChanged, this));
+        [this](auto it){ SettingChanged(); });
     m_galaxy_shapes_list->SelChangedSignal.connect(
-        boost::bind(&GalaxySetupPanel::ShapeChanged, this, _1));
+        [this](auto it){ ShapeChanged(it); });
 
     // create and load textures
     m_textures.clear();
@@ -1054,11 +1051,16 @@ void GalaxySetupWnd::CompleteConstruction() {
     DoLayout();
     SaveDefaultedOptions();
 
-    m_galaxy_setup_panel->ImageChangedSignal.connect(boost::bind(&GalaxySetupWnd::PreviewImageChanged,  this, _1));
-    m_player_name_edit->EditedSignal.connect(        boost::bind(&GalaxySetupWnd::PlayerNameChanged,    this, _1));
-    m_empire_name_edit->EditedSignal.connect(        boost::bind(&GalaxySetupWnd::EmpireNameChanged,    this, _1));
-    m_ok->LeftClickedSignal.connect(                 boost::bind(&GalaxySetupWnd::OkClicked,            this));
-    m_cancel->LeftClickedSignal.connect(             boost::bind(&GalaxySetupWnd::CancelClicked,        this));
+    m_galaxy_setup_panel->ImageChangedSignal.connect(
+        [this](auto new_image){ PreviewImageChanged(new_image); });
+    m_player_name_edit->EditedSignal.connect(
+        [this](const auto& name){ m_ok->Disable(name.empty()); });
+    m_empire_name_edit->EditedSignal.connect(
+        [this](const auto& name){ m_ok->Disable(name.empty()); });
+    m_ok->LeftClickedSignal.connect(
+        [this](){ OkClicked(); });
+    m_cancel->LeftClickedSignal.connect(
+        [this](){ CancelClicked(); });
 
     PreviewImageChanged(m_galaxy_setup_panel->PreviewImage());
 
@@ -1179,12 +1181,6 @@ void GalaxySetupWnd::PreviewImageChanged(std::shared_ptr<GG::Texture> new_image)
         m_preview_image->SetTexture(new_image);
     DoLayout();
 }
-
-void GalaxySetupWnd::EmpireNameChanged(const std::string& name)
-{ m_ok->Disable(name.empty()); }
-
-void GalaxySetupWnd::PlayerNameChanged(const std::string& name)
-{ m_ok->Disable(name.empty()); }
 
 void GalaxySetupWnd::OkClicked() {
     TraceLogger() << "GalaxySetupWnd::OkClicked start";

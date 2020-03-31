@@ -207,8 +207,7 @@ namespace {
                 }
             }
 
-            SelChangedSignal.connect(
-                boost::bind(&TypeSelector::SelectionChanged, this, _1));
+            SelChangedSignal.connect([this](auto it){ SelectionChanged(it); });
         }
 
         void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
@@ -255,7 +254,7 @@ namespace {
                 type_drop->Disable();
             else
                 type_drop->TypeChangedSignal.connect(
-                    boost::bind(&NewGamePlayerRow::PlayerTypeChanged, this, _1));
+                    [this](auto type){ PlayerTypeChanged(type); });
 
             // player name text
             push_back(GG::Wnd::Create<CUILabel>(m_player_data.m_player_name));
@@ -294,7 +293,7 @@ namespace {
                 edit->Disable();
             else
                 edit->FocusUpdateSignal.connect(
-                    boost::bind(&NewGamePlayerRow::EmpireNameChanged, this, _1));
+                    [this](const auto& str){ EmpireNameChanged(str); });
 
             // empire colour selector
             auto color_selector = GG::Wnd::Create<EmpireColorSelector>(PlayerFontHeight() + PlayerRowMargin());
@@ -304,7 +303,7 @@ namespace {
                 color_selector->Disable();
             else
                 color_selector->ColorChangedSignal.connect(
-                    boost::bind(&NewGamePlayerRow::ColorChanged, this, _1));
+                    [this](const auto& clr){ ColorChanged(clr); });
 
             // species selector
             auto species_selector = GG::Wnd::Create<SpeciesSelector>(m_player_data.m_starting_species_name, EMPIRE_NAME_WIDTH, PlayerRowHeight());
@@ -313,7 +312,7 @@ namespace {
                 species_selector->Disable();
             else
                 species_selector->SpeciesChangedSignal.connect(
-                    boost::bind(&NewGamePlayerRow::SpeciesChanged, this, _1));
+                    [this](const auto& str){ SpeciesChanged(str); });
 
             // ready state
             if (m_player_data.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
@@ -381,7 +380,7 @@ namespace {
                 type_drop->Disable();
             else
                 type_drop->TypeChangedSignal.connect(
-                    boost::bind(&LoadGamePlayerRow::PlayerTypeChanged, this, _1));
+                    [this](auto type){ PlayerTypeChanged(type); });
 
             // player name text
             push_back(GG::Wnd::Create<CUILabel>(m_player_data.m_player_name));
@@ -434,7 +433,7 @@ namespace {
                 m_empire_list->Disable();
             else
                 m_empire_list->SelChangedSignal.connect(
-                    boost::bind(&LoadGamePlayerRow::EmpireChanged, this, _1));
+                    [this](auto it){ EmpireChanged(it); });
 
             // ready state
             if (m_player_data.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
@@ -505,7 +504,7 @@ namespace {
             auto type_drop = GG::Wnd::Create<TypeSelector>(GG::X(90), PlayerRowHeight(), Networking::INVALID_CLIENT_TYPE, m_initial_disabled);
             push_back(type_drop);
             type_drop->TypeChangedSignal.connect(
-                boost::bind(&LoadGameEmpireRow::PlayerTypeChanged, this, _1));
+                [this](auto type){ PlayerTypeChanged(type); });
             // player name text
             push_back(GG::Wnd::Create<CUILabel>(""));
             // empire name
@@ -549,7 +548,7 @@ namespace {
             auto type_drop = GG::Wnd::Create<TypeSelector>(GG::X(90), PlayerRowHeight(), Networking::INVALID_CLIENT_TYPE, false);
             push_back(type_drop);
             type_drop->TypeChangedSignal.connect(
-                boost::bind(&EmptyPlayerRow::PlayerTypeChanged, this, _1));
+                [this](auto type){ PlayerTypeChanged(type); });
             // extra entries to make layout consistent
             push_back(GG::Wnd::Create<CUILabel>(""));
             push_back(GG::Wnd::Create<CUILabel>(""));
@@ -683,19 +682,19 @@ void MultiPlayerLobbyWnd::CompleteConstruction() {
     m_browse_saves_btn->Disable();
 
     m_any_can_edit->CheckedSignal.connect(
-        boost::bind(&MultiPlayerLobbyWnd::AnyCanEdit, this, _1));
+        [this](bool checked){ AnyCanEdit(checked); });
     m_new_load_game_buttons->ButtonChangedSignal.connect(
-        boost::bind(&MultiPlayerLobbyWnd::NewLoadClicked, this, _1));
+        [this](std::size_t idx){ NewLoadClicked(idx); });
     m_galaxy_setup_panel->SettingsChangedSignal.connect(
-        boost::bind(&MultiPlayerLobbyWnd::GalaxySetupPanelChanged, this));
+        [this](){ GalaxySetupPanelChanged(); });
     m_browse_saves_btn->LeftClickedSignal.connect(
-        boost::bind(&MultiPlayerLobbyWnd::SaveGameBrowse, this));
+        [this](){ SaveGameBrowse(); });
     m_ready_bn->LeftClickedSignal.connect(
-        boost::bind(&MultiPlayerLobbyWnd::ReadyClicked, this));
+        [this](){ ReadyClicked(); });
     m_galaxy_setup_panel->ImageChangedSignal.connect(
-        boost::bind(&MultiPlayerLobbyWnd::PreviewImageChanged, this, _1));
+        [this](auto new_image){ PreviewImageChanged(new_image); });
     m_cancel_bn->LeftClickedSignal.connect(
-        boost::bind(&MultiPlayerLobbyWnd::CancelClicked, this));
+        [this](){ HumanClientApp::GetApp()->CancelMultiplayerGameFromLobby(); });
 
     TraceLogger() << "MultiPlayerLobbyWnd::CompleteConstruction finishing...";
     CUIWnd::CompleteConstruction();
@@ -1026,14 +1025,14 @@ bool MultiPlayerLobbyWnd::PopulatePlayerList() {
             auto row = GG::Wnd::Create<NewGamePlayerRow>(psd, data_player_id, immutable_row);
             m_players_lb->Insert(row);
             row->DataChangedSignal.connect(
-                boost::bind(&MultiPlayerLobbyWnd::PlayerDataChangedLocally, this));
+                [this](){ PlayerDataChangedLocally(); });
 
         } else {
             bool immutable_row = (!HasAuthRole(Networking::ROLE_HOST) && (data_player_id != HumanClientApp::GetApp()->PlayerID()) && !(psd.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER && HasAuthRole(Networking::ROLE_GALAXY_SETUP))) || m_lobby_data.m_save_game_empire_data.empty();
             auto row = GG::Wnd::Create<LoadGamePlayerRow>(psd, data_player_id, m_lobby_data.m_save_game_empire_data, immutable_row, m_lobby_data.m_in_game);
             m_players_lb->Insert(row);
             row->DataChangedSignal.connect(
-                boost::bind(&MultiPlayerLobbyWnd::PlayerDataChangedLocally, this));
+                [this](){ PlayerDataChangedLocally(); });
 
             // if the player setup data in the row is different from the player
             // setup data in this lobby wnd's lobby data (which may have
@@ -1069,7 +1068,7 @@ bool MultiPlayerLobbyWnd::PopulatePlayerList() {
                 auto row = GG::Wnd::Create<LoadGameEmpireRow>(save_game_empire_data.second, !HasAuthRole(Networking::ROLE_GALAXY_SETUP));
                 m_players_lb->Insert(row);
                 row->DataChangedSignal.connect(
-                    boost::bind(&MultiPlayerLobbyWnd::PlayerDataChangedLocally, this));
+                    [this](){ PlayerDataChangedLocally(); });
             }
         }
     }
@@ -1081,7 +1080,7 @@ bool MultiPlayerLobbyWnd::PopulatePlayerList() {
         auto row = GG::Wnd::Create<EmptyPlayerRow>();
         m_players_lb->Insert(row);
         row->DataChangedSignal.connect(
-            boost::bind(&MultiPlayerLobbyWnd::PlayerDataChangedLocally, this));
+            [this](){ PlayerDataChangedLocally(); });
     }
 
     if (m_lobby_data.m_new_game) {
@@ -1194,12 +1193,9 @@ void MultiPlayerLobbyWnd::ReadyClicked() {
     SendUpdate();
 }
 
-void MultiPlayerLobbyWnd::CancelClicked()
-{ HumanClientApp::GetApp()->CancelMultiplayerGameFromLobby(); }
-
-void MultiPlayerLobbyWnd::AnyCanEdit(bool checked) {
+void MultiPlayerLobbyWnd::AnyCanEdit(bool any_can_edit) {
     if (HasAuthRole(Networking::ROLE_HOST)) {
-        m_lobby_data.m_any_can_edit = m_any_can_edit->Checked();
+        m_lobby_data.m_any_can_edit = any_can_edit;
         SendUpdate();
     }
 }

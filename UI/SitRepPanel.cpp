@@ -255,7 +255,7 @@ namespace {
             m_link_text->LinkRightClickedSignal.connect(
                 &HandleLinkClick);
             m_link_text->RightClickedSignal.connect(
-                boost::bind(&SitRepDataPanel::RClick, this, _1, _2));
+                [this](const auto& pt, auto mod){ RClick(pt, mod); });
 
             DoLayout(UpperLeft(), Width());
         }
@@ -359,7 +359,7 @@ namespace {
                                                        ClientHeight() - GG::Y(2 * GetLayout()->BorderMargin()), m_sitrep);
             push_back(m_panel);
             m_panel->RightClickedSignal.connect(
-                boost::bind(&SitRepRow::RClick, this, _1, _2));
+                [this](const auto& pt, auto mod){ RClick(pt, mod); });
         }
 
         const SitRepEntry& GetSitRepEntry() const { return m_panel->GetSitRepEntry(); }
@@ -399,17 +399,17 @@ void SitRepPanel::CompleteConstruction() {
     AttachChild(m_filter_button);
 
     m_prev_turn_button->LeftClickedSignal.connect(
-        boost::bind(&SitRepPanel::PrevClicked, this));
+        [this](){ PrevClicked(); });
     m_next_turn_button->LeftClickedSignal.connect(
-        boost::bind(&SitRepPanel::NextClicked, this));
+        [this](){ NextClicked(); });
     m_last_turn_button->LeftClickedSignal.connect(
-        boost::bind(&SitRepPanel::LastClicked, this));
+        [this](){ LastClicked(); });
     m_filter_button->LeftClickedSignal.connect(
-        boost::bind(&SitRepPanel::FilterClicked, this));
+        [this](){ FilterClicked(); });
     m_sitreps_lb->DoubleClickedRowSignal.connect(
-        boost::bind(&SitRepPanel::IgnoreSitRep, this, _1, _2, _3));
+        [this](auto it, auto, auto){ IgnoreSitRep(it); });
     m_sitreps_lb->RightClickedRowSignal.connect(
-        boost::bind(&SitRepPanel::DismissalMenu, this, _1, _2, _3));
+        [this](auto it, const auto& pt, auto){ DismissalMenu(it, pt); });
 
     CUIWnd::CompleteConstruction();
 
@@ -653,8 +653,7 @@ void SitRepPanel::FilterClicked() {
     Update();
 }
 
-void SitRepPanel::IgnoreSitRep(GG::ListBox::iterator it, const GG::Pt& pt,
-                               const GG::Flags<GG::ModKey>& mod)
+void SitRepPanel::IgnoreSitRep(GG::ListBox::iterator it)
 {
     SitRepRow* sitrep_row = dynamic_cast<SitRepRow*>(it->get());
     if (!sitrep_row)
@@ -668,8 +667,7 @@ void SitRepPanel::IgnoreSitRep(GG::ListBox::iterator it, const GG::Pt& pt,
     Update();
 }
 
-void SitRepPanel::DismissalMenu(GG::ListBox::iterator it, const GG::Pt& pt,
-                                const GG::Flags<GG::ModKey>& mod)
+void SitRepPanel::DismissalMenu(GG::ListBox::iterator it, const GG::Pt& pt)
 {
     GG::MenuItem menu_contents, submenu_ignore, submenu_block, separator_item;
     std::string sitrep_text, sitrep_template;

@@ -650,7 +650,7 @@ void SystemIcon::Refresh() {
     if (system) {
         name = system->Name();
         m_system_connection = system->StateChangedSignal.connect(
-            boost::bind(&SystemIcon::Refresh, this), boost::signals2::at_front);
+            [this](){ Refresh(); }, boost::signals2::at_front);
     }
 
     SetName(name);   // sets GG::Control name.  doesn't affect displayed system name
