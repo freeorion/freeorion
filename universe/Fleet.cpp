@@ -16,7 +16,7 @@
 #include "../Empire/Supply.h"
 
 #include <boost/algorithm/cxx11/all_of.hpp>
-#include <boost/bind.hpp>
+
 
 namespace {
     const bool ALLOW_ALLIED_SUPPLY = true;
@@ -24,9 +24,6 @@ namespace {
     const std::set<int> EMPTY_SET;
     const double MAX_SHIP_SPEED = 500.0;        // max allowed speed of ship movement
     const double FLEET_MOVEMENT_EPSILON = 0.1;  // how close a fleet needs to be to a system to have arrived in the system
-
-    bool SystemHasNoVisibleStarlanes(int system_id, int empire_id)
-    { return !GetPathfinder()->SystemHasVisibleStarlanes(system_id, empire_id); }
 
     void MoveFleetWithShips(Fleet& fleet, double x, double y){
         fleet.MoveTo(x, y);
@@ -69,7 +66,8 @@ namespace {
         // system containing a fleet, b) the starlane on which a fleet is travelling
         // and c) both systems terminating a starlane on which a fleet is travelling.
         auto end_it = std::find_if(full_route.begin(), visible_end_it,
-                                   boost::bind(&SystemHasNoVisibleStarlanes, _1, empire_id));
+            [empire_id](int system_id)
+            { return !GetPathfinder()->SystemHasVisibleStarlanes(system_id, empire_id); });
 
         std::list<int> truncated_route;
         std::copy(full_route.begin(), end_it, std::back_inserter(truncated_route));
