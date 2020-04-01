@@ -19,6 +19,7 @@
 
 #include <boost/format.hpp>
 #include <boost/uuid/uuid_io.hpp>
+#include <boost/uuid/nil_generator.hpp>
 #include <thread>
 
 /** \page statechart_notes Notes on Boost Statechart transitions
@@ -350,8 +351,10 @@ boost::statechart::result WaitingForMPJoinAck::react(const JoinGame& msg) {
         if (!cookie.is_nil()) {
             try {
                 std::string cookie_option = HumanClientApp::EncodeServerAddressOption(Client().Networking().Destination());
-                GetOptionsDB().Remove(cookie_option + ".cookie");
-                GetOptionsDB().Add(cookie_option + ".cookie", "OPTIONS_DB_SERVER_COOKIE", boost::uuids::to_string(cookie));
+                if (!GetOptionsDB().OptionExists(cookie_option + ".cookie")) {
+                    GetOptionsDB().Add(cookie_option + ".cookie", "OPTIONS_DB_SERVER_COOKIE", boost::uuids::to_string(boost::uuids::nil_uuid()));
+                }
+                GetOptionsDB().Set(cookie_option + ".cookie", boost::uuids::to_string(cookie));
                 GetOptionsDB().Commit();
             } catch(const std::exception& err) {
                 WarnLogger() << "Cann't save cookie for server " << Client().Networking().Destination() << ": "
