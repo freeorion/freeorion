@@ -1530,7 +1530,7 @@ unsigned int PredefinedShipDesignManager::GetCheckSum() const {
         for (auto const& uuid : ordering) {
             auto it = m_designs.find(uuid);
             if (it != m_designs.end())
-                CheckSums::CheckSumCombine(retval, std::make_pair(it->second->Name(), *it->second));
+                CheckSums::CheckSumCombine(retval, std::make_pair(it->second->Name(false), *it->second));
         }
         CheckSums::CheckSumCombine(retval, ordering.size());
     };
