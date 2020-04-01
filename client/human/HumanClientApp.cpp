@@ -687,7 +687,8 @@ void HumanClientApp::MultiPlayerGame() {
             if (!GetOptionsDB().OptionExists(cookie_option + ".cookie"))
                 GetOptionsDB().Add<std::string>(cookie_option + ".cookie", "OPTIONS_DB_SERVER_COOKIE", "");
             if (!GetOptionsDB().OptionExists(cookie_option + ".address"))
-                GetOptionsDB().Add<std::string>(cookie_option + ".address", "OPTIONS_DB_SERVER_COOKIE", server_dest);
+                GetOptionsDB().Add<std::string>(cookie_option + ".address", "OPTIONS_DB_SERVER_COOKIE", "");
+            GetOptionsDB().Set(cookie_option + ".address", server_dest);
             std::string cookie_str = GetOptionsDB().Get<std::string>(cookie_option + ".cookie");
             boost::uuids::string_generator gen;
             cookie = gen(cookie_str);
