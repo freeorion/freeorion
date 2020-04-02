@@ -11,6 +11,7 @@
 
 #include <boost/xpressive/xpressive.hpp>
 
+#include <functional>
 #include <map>
 
 namespace xpr = boost::xpressive;
@@ -51,7 +52,7 @@ namespace {
     //! @param data
     //!     Data values The signature of functions that generate substitution
     //!     strings for tags.
-    typedef boost::optional<std::string> (*TagString)(const std::string& data);
+    typedef std::function<boost::optional<std::string> (const std::string& data)> TagString;
 
     //! Get string substitute for a tag that is a universe object
     boost::optional<std::string> UniverseObjectString(const std::string& data, const std::string& tag) {

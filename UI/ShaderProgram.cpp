@@ -1,6 +1,7 @@
 #include "ShaderProgram.h"
 
 #include <cassert>
+#include <functional>
 #include <iostream>
 
 #include "../client/human/HumanClientApp.h"
@@ -221,12 +222,11 @@ void ShaderProgram::Bind(const std::string& name, std::size_t element_size, cons
     assert(1 <= element_size && element_size <= 4);
     assert((floats.size() % element_size) == 0);
 
-    typedef void (* UniformFloatArrayFn)(GLint, GLsizei, const GLfloat*);
-    UniformFloatArrayFn functions[] =
-        { UniformFloatArrayFn(glUniform1fv),
-          UniformFloatArrayFn(glUniform2fv),
-          UniformFloatArrayFn(glUniform3fv),
-          UniformFloatArrayFn(glUniform4fv)
+    std::function<void (GLint, GLsizei, const GLfloat*)> functions[] =
+        { glUniform1fv,
+          glUniform2fv,
+          glUniform3fv,
+          glUniform4fv
         };
 
     glGetError();
@@ -294,12 +294,11 @@ void ShaderProgram::BindInts(const std::string& name, std::size_t element_size, 
     assert(1 <= element_size && element_size <= 4);
     assert((ints.size() % element_size) == 0);
 
-    typedef void (* UniformIntegerArrayFn)(GLint, GLsizei, const GLint*);
-    UniformIntegerArrayFn functions[] =
-        { UniformIntegerArrayFn(glUniform1iv),
-          UniformIntegerArrayFn(glUniform2iv),
-          UniformIntegerArrayFn(glUniform3iv),
-          UniformIntegerArrayFn(glUniform4iv)
+    std::function<void (GLint, GLsizei, const GLint*)> functions[] =
+        { glUniform1iv,
+          glUniform2iv,
+          glUniform3iv,
+          glUniform4iv
         };
 
     glGetError();

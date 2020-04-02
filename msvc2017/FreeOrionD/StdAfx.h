@@ -90,7 +90,6 @@
 #include <boost/asio.hpp>
 #include <boost/asio/high_resolution_timer.hpp>
 #include <boost/circular_buffer.hpp>
-#include <boost/function.hpp>
 #include <boost/mpl/list.hpp>
 #include <boost/preprocessor/seq/for_each.hpp>
 #include <boost/python.hpp>

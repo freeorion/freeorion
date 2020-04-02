@@ -9,6 +9,7 @@
 #include <boost/filesystem/fstream.hpp>
 #include <boost/signals2/signal.hpp>
 
+#include <functional>
 #include <map>
 #include <unordered_set>
 
@@ -20,7 +21,9 @@ class XMLElement;
 /////////////////////////////////////////////
 // Free Functions
 /////////////////////////////////////////////
-typedef void (*OptionsDBFn)(OptionsDB&); ///< the function signature for functions that add Options to the OptionsDB (void (OptionsDB&))
+
+//! The function signature for functions that add Options to the OptionsDB (void (OptionsDB&))
+typedef std::function<void (OptionsDB&)> OptionsDBFn;
 
 /** adds \a function to a vector of pointers to functions that add Options to
   * the OptionsDB.  This function returns a boolean so that it can be used to

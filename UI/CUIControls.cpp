@@ -203,7 +203,7 @@ void CUIButton::RenderUnpressed() {
 SettableInWindowCUIButton::SettableInWindowCUIButton(const GG::SubTexture& unpressed,
                                                      const GG::SubTexture& pressed,
                                                      const GG::SubTexture& rollover,
-                                                     boost::function<bool(const SettableInWindowCUIButton*, const GG::Pt&)> in_window_function) :
+                                                     std::function<bool (const SettableInWindowCUIButton*, const GG::Pt&)> in_window_function) :
     CUIButton(unpressed, pressed, rollover)
 { m_in_window_func = in_window_function; }
 

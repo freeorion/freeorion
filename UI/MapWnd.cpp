@@ -1044,7 +1044,7 @@ void MapWnd::CompleteConstruction() {
 
     // create custom InWindow function for Menu button that extends its
     // clickable area to the adjacent edges of the toolbar containing it
-    boost::function<bool(const SettableInWindowCUIButton*, const GG::Pt&)> in_window_func =
+    std::function<bool (const SettableInWindowCUIButton*, const GG::Pt&)> in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, _1), boost::bind(&WndTop, m_toolbar.get()),
                              boost::bind(&WndRight, _1), boost::bind(&WndBottom, _1),
                     _2);

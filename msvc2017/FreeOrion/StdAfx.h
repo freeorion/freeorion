@@ -98,7 +98,6 @@
 #include <GL/glew.h>
 
 #include <boost/algorithm/string/trim.hpp>
-#include <boost/function.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/mpl/assert.hpp>
 #include <boost/signals2/trackable.hpp>

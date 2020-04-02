@@ -93,7 +93,7 @@ void parse::detail::default_send_error_string(const std::string& str) {
     std::cout << str +"\n" << std::flush;
 }
 
-boost::function<void (const std::string&)> parse::report_error_::send_error_string =
+std::function<void (const std::string&)> parse::report_error_::send_error_string =
     &detail::default_send_error_string;
 
 namespace {

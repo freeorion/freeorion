@@ -17,8 +17,6 @@
 #include <GG/dialogs/FileDlg.h>
 #include <GG/GLClientAndServerBuffer.h>
 
-#include <boost/function.hpp>
-
 #include "LinkText.h"
 
 /** \file
@@ -82,14 +80,14 @@ protected:
 class SettableInWindowCUIButton : public CUIButton {
 public:
     /** \name Structors */ //@{
-    SettableInWindowCUIButton(const GG::SubTexture& unpressed, const GG::SubTexture& pressed, const GG::SubTexture& rollover, boost::function<bool(const SettableInWindowCUIButton*, const GG::Pt&)> in_window_function);
+    SettableInWindowCUIButton(const GG::SubTexture& unpressed, const GG::SubTexture& pressed, const GG::SubTexture& rollover, std::function<bool (const SettableInWindowCUIButton*, const GG::Pt&)> in_window_function);
     //@}
     /** \name Accessors */ //@{
     bool InWindow(const GG::Pt& pt) const override;
     //@}
 
 private:
-    boost::function<bool(const SettableInWindowCUIButton*, const GG::Pt&)>    m_in_window_func;
+    std::function<bool (const SettableInWindowCUIButton*, const GG::Pt&)>    m_in_window_func;
 };
 
 /** a FreeOrion triangular arrow button */

@@ -414,7 +414,7 @@ public:
         row sorting.  Note that \a sort_cmp is assumed to produce an ascending
         order when used to sort; setting the LIST_SORTDESCENDING style can be
         used to produce a reverse sort. */
-    void SetSortCmp(const boost::function<bool (const Row&, const Row&, std::size_t)>& sort_cmp);
+    void SetSortCmp(const std::function<bool (const Row&, const Row&, std::size_t)>& sort_cmp);
 
     /** Fixes the column widths; by default, an empty ListBox will take on the
         number of columns of its first added row. \note The number of columns
@@ -633,7 +633,7 @@ private:
     bool                    m_clip_cells = false;       ///< if true, the contents of each cell will be clipped to the visible area of that cell (TODO: currently unused)
     std::size_t             m_sort_col = 0;             ///< the index of the column data used to sort the list
 
-    boost::function<bool (const Row&, const Row&, std::size_t)>
+    std::function<bool (const Row&, const Row&, std::size_t)>
                             m_sort_cmp;                 ///< the predicate used to sort the values in the m_sort_col column of two rows
 
     bool                    m_allow_drops = false;      ///< are we accepting drops
