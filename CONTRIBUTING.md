@@ -28,10 +28,10 @@ that you're working on the bug.  If you want to implement a new feature, get in
 touch with the developers via the [FreeOrion Forum] to check if the feature complies
 with our idea of the game.
 
-To start contributing, first clone [FreeOrion Git] repository.  After that, create
-a branch with a concise name; if the branch implements an issue call it
-`fix-<Issue Number>`.  To publish your contribution, create a [Pull Request] and
-wait for feedback from the developers.
+To start contributing, first clone [FreeOrion Git] repository by following the
+[Build Instructions](BUILD.md).  After that, create a branch with a concise name;
+if the branch implements an issue call it `fix-<Issue Number>`.  To publish your
+contribution, create a [Pull Request] and wait for feedback from the developers.
 
 By submitting a pull request, you agree to license its contents under the applicable
 [FreeOrion license(s)].
