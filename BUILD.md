@@ -44,10 +44,10 @@ FreeOrion depends on the following libraries or APIs to run:
 
 ## Obtaining FreeOrion Source Code and Software Dependencies
 
-For Windows and Mac OS X a [FreeOrion Software Development Kit] is provided as
-download to compile FreeOrion from source. It contains the preconfigured and
--compiled build and runtime dependencies for the Visual Studio v140 toolchain on
-Windows and Mac OS X 10.9 SDK with Xcode 6.4 or later on Mac OS X.
+For Windows and Mac OS X a [Software Development Kit] is provided as download to
+compile FreeOrion from source. It contains the preconfigured and -compiled build
+and runtime dependencies for the Visual Studio v140 toolchain on Windows and
+Mac OS X 10.9 SDK with Xcode 6.4 or later on Mac OS X.
 
 For Linux or other Operating Systems the build and runtime dependencies should
 be installed by the preferred way for the respective OS (e.g. via Package
@@ -188,7 +188,7 @@ This will leave you with a build of FreeOrion executables.
 [OpenAL Soft]: http://kcat.strangesoft.net/openal.html
 [libvorbis]: https://xiph.org/downloads/
 [SDL2]: https://www.libsdl.org/download-2.0.php
-[FreeOrionSDK]: https://github.com/freeorion/freeorion-sdk
+[Software Development Kit]: https://github.com/freeorion/freeorion-sdk
 [FreeOrionSDK v11]: https://github.com/freeorion/freeorion-sdk/releases/tag/v11
 [FreeOrion Releases]: https://github.com/freeorion/freeorion/releases
 [make jobs]: https://www.gnu.org/software/make/manual/html_node/Parallel.html
