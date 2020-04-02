@@ -149,11 +149,8 @@ private:
     void HandleMessage(Message& msg);
     void HandleWindowMove(GG::X w, GG::Y h);
     void HandleWindowResize(GG::X w, GG::Y h);
-    void HandleAppQuitting();
     void HandleFocusChange(bool gained_focus);
     void ConnectKeyboardAcceleratorSignals();   ///< installs the following 3 global hotkeys: quit, exit, togglefullscreen
-    bool HandleHotkeyResetGame();               ///< quit current game to IntroScreen
-    bool HandleHotkeyExitApp();                 ///< quit current game & freeorion to Desktop
     bool ToggleFullscreen();                    ///< toggle to/from fullscreen display
     void UpdateFPSLimit();                      ///< polls options database to find if FPS should be limited, and if so, to what rate
 
