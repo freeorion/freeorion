@@ -108,7 +108,7 @@ Step by step procedure:
 
  * Enter the _source directory_.
  * On Windows:
-   * Open `msvc2015\FreeOrion.sln` with Visual Studio.
+   * Open `msvc2017\FreeOrion.sln` with Visual Studio.
    * Compile the whole project by selecting the `Build` -> `Build Solution`
      menu entry.
 
