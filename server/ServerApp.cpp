@@ -75,10 +75,14 @@ void Seed(unsigned int seed);
 ServerApp::ServerApp() :
     IApp(),
     m_signals(m_io_context, SIGINT, SIGTERM),
-    m_networking(m_io_context,
-                 boost::bind(&ServerApp::HandleNonPlayerMessage, this, _1, _2),
-                 boost::bind(&ServerApp::HandleMessage, this, _1, _2),
-                 boost::bind(&ServerApp::PlayerDisconnected, this, _1)),
+    m_networking(
+        m_io_context,
+        [this](Message message, PlayerConnectionPtr connection)
+        { HandleNonPlayerMessage(message, connection); },
+        [this](Message message, PlayerConnectionPtr connection)
+        { HandleMessage(message, connection); },
+        [this](PlayerConnectionPtr connection)
+        { PlayerDisconnected(connection); }),
     m_fsm(new ServerFSM(*this)),
     m_chat_history(1000)
 {
@@ -117,11 +121,18 @@ ServerApp::ServerApp() :
     m_fsm->initiate();
 
     Empires().DiplomaticStatusChangedSignal.connect(
-        boost::bind(&ServerApp::HandleDiplomaticStatusChange, this, _1, _2));
+        [this](int empire1_id, int empire2_id)
+        { HandleDiplomaticStatusChange(empire1_id, empire2_id); });
     Empires().DiplomaticMessageChangedSignal.connect(
-        boost::bind(&ServerApp::HandleDiplomaticMessageChange,this, _1, _2));
+        [this](int empire1_id, int empire2_id)
+        { HandleDiplomaticMessageChange(empire1_id, empire2_id); });
 
-    m_signals.async_wait(boost::bind(&ServerApp::SignalHandler, this, _1, _2));
+    m_signals.async_wait(
+        [this](const auto& error, int signal_number) {
+            if (error)
+                ErrorLogger() << "Exiting due to OS error (" << error.value() << ") " << error.message();
+            m_fsm->process_event(ShutdownServer());
+        });
 }
 
 ServerApp::~ServerApp() {
@@ -137,12 +148,6 @@ ServerApp::~ServerApp() {
 
 void ServerApp::operator()()
 { Run(); }
-
-void ServerApp::SignalHandler(const boost::system::error_code& error, int signal_number) {
-    if (error)
-        ErrorLogger() << "Exiting due to OS error (" << error.value() << ") " << error.message();
-    m_fsm->process_event(ShutdownServer());
-}
 
 namespace {
     std::string AIClientExe()
