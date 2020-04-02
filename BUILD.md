@@ -56,9 +56,9 @@ manager or compiling from source).
 Step by step procedure:
 
  * On Windows:
-   * Download the [FreeOrionSDK v10] from the FreeOrionSDK respository releases.
+   * Download the [FreeOrionSDK v11] from the FreeOrionSDK respository releases.
  * On Mac OS X:
-   * The [FreeOrionSDK v10] is downloaded automatically when CMake creates the
+   * The [FreeOrionSDK v11] is downloaded automatically when CMake creates the
      build environment.
  * Linux and other Operating Systems:
    * Install build and runtime dependencies by the preferred way for the
@@ -189,6 +189,6 @@ This will leave you with a build of FreeOrion executables.
 [libvorbis]: https://xiph.org/downloads/
 [SDL2]: https://www.libsdl.org/download-2.0.php
 [FreeOrionSDK]: https://github.com/freeorion/freeorion-sdk
-[FreeOrionSDK v10]: https://github.com/freeorion/freeorion-sdk/releases/tag/v10
+[FreeOrionSDK v11]: https://github.com/freeorion/freeorion-sdk/releases/tag/v11
 [FreeOrion Releases]: https://github.com/freeorion/freeorion/releases
 [make jobs]: https://www.gnu.org/software/make/manual/html_node/Parallel.html
