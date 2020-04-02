@@ -10,7 +10,6 @@
 #include "../universe/Fleet.h"
 #include "FleetButton.h"
 
-#include <boost/unordered_map.hpp>
 #include <boost/functional/hash.hpp>
 
 #include <chrono>
@@ -446,7 +445,7 @@ private:
 
     double                                      m_zoom_steps_in = 1.0;          //!< number of zoom steps in.  each 1.0 step increases display scaling by the same zoom step factor
     std::shared_ptr<SidePanel>                  m_side_panel = nullptr;         //!< planet view panel on the side of the main map
-    boost::unordered_map<int, std::shared_ptr<SystemIcon>> m_system_icons;      //!< system icons in the main map, indexed by system id
+    std::unordered_map<int, std::shared_ptr<SystemIcon>> m_system_icons;      //!< system icons in the main map, indexed by system id
     std::map<int, std::shared_ptr<FieldIcon>>   m_field_icons;                  //!< field icons in the main map, indexed by field id
     std::shared_ptr<SitRepPanel>                m_sitrep_panel = nullptr;       //!< sitrep panel
     std::shared_ptr<ResearchWnd>                m_research_wnd = nullptr;       //!< research screen
@@ -492,12 +491,12 @@ private:
                        boost::hash<std::pair<double, double>>>
         m_offroad_fleet_buttons;
 
-    boost::unordered_map<int, std::shared_ptr<FleetButton>>
+    std::unordered_map<int, std::shared_ptr<FleetButton>>
         m_fleet_buttons;                        //!< fleet icons, index by fleet
 
-    boost::unordered_map<int, boost::signals2::connection>
+    std::unordered_map<int, boost::signals2::connection>
         m_fleet_state_change_signals;
-    boost::unordered_map<int, std::vector<boost::signals2::connection>>
+    std::unordered_map<int, std::vector<boost::signals2::connection>>
         m_system_fleet_insert_remove_signals;
 
     std::map<int, MovementLineData> m_fleet_lines;                  //!< lines used for moving fleets in the main map

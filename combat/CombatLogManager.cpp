@@ -7,7 +7,6 @@
 #include "../util/Logger.h"
 #include "CombatEvents.h"
 
-#include <boost/unordered_map.hpp>
 
 namespace {
     static float MaxHealth(const UniverseObject& object) {
@@ -177,7 +176,7 @@ class CombatLogManager::Impl {
     void serialize(Archive& ar, const unsigned int version);
 
     private:
-    boost::unordered_map<int, CombatLog> m_logs;
+    std::unordered_map<int, CombatLog> m_logs;
     /** Set of logs ids that do not have bodies and need to be fetched from the server. */
     std::set<int>                        m_incomplete_logs;
     int                                  m_latest_log_id;

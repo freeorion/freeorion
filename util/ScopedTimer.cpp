@@ -2,7 +2,6 @@
 
 #include "Logger.h"
 
-#include <boost/unordered_map.hpp>
 #include <boost/chrono.hpp>
 
 #include <iomanip>
@@ -164,7 +163,7 @@ class SectionedScopedTimer::Impl : public ScopedTimer::Impl {
         }
 
         //Table of section durations
-        typedef boost::unordered_map<std::string, std::chrono::nanoseconds> SectionTable;
+        typedef std::unordered_map<std::string, std::chrono::nanoseconds> SectionTable;
         SectionTable m_table;
 
         // Currently running section start time and iterator

@@ -30,9 +30,8 @@
 #include <GG/StaticGraphic.h>
 
 #include <boost/cast.hpp>
-#include <boost/unordered_map.hpp>
-#include <tuple>
 
+#include <tuple>
 #include <unordered_set>
 
 

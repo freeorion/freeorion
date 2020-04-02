@@ -52,7 +52,6 @@
 #include "../client/human/HumanClientApp.h"
 
 #include <boost/graph/graph_concepts.hpp>
-#include <boost/unordered_map.hpp>
 #include <boost/optional/optional.hpp>
 #include <boost/range/numeric.hpp>
 #include <boost/range/adaptor/map.hpp>
@@ -3202,7 +3201,7 @@ void MapWnd::ClearSystemRenderingBuffers() {
 namespace GetPathsThroughSupplyLanes {
     // SupplyLaneMap map keyed by system containing all systems
     // corresponding to valid supply lane destinations
-    typedef boost::unordered_multimap<int,int> SupplyLaneMMap;
+    typedef std::unordered_multimap<int,int> SupplyLaneMMap;
 
 
     /**
@@ -3314,7 +3313,7 @@ namespace GetPathsThroughSupplyLanes {
         std::deque<PrevCurrInfo> try_next;
 
         // visited holds systems already reached by the breadth first search.
-        boost::unordered_map<int, PathInfo> visited;
+        std::unordered_map<int, PathInfo> visited;
 
         // reachable_midpoints holds all systems reachable from at least
         // two different terminal points.
@@ -3406,7 +3405,7 @@ namespace GetPathsThroughSupplyLanes {
         std::unordered_set<int> unprocessed;
 
         for (int reachable_midpoint : reachable_midpoints) {
-            boost::unordered_map<int, PathInfo>::const_iterator previous_ii_sys;
+            std::unordered_map<int, PathInfo>::const_iterator previous_ii_sys;
             int ii_sys;
 
             // Add the mid point to unprocessed, and while there
@@ -3433,6 +3432,21 @@ namespace GetPathsThroughSupplyLanes {
 }
 
 namespace {
+    // Reimplementation of the boost::hash_range function, embedding
+    // boost::hash_combine and using std::hash instead of boost::hash
+    struct hash_set {
+        std::size_t operator()(const std::set<int>& set) const
+        {
+            std::size_t seed(0);
+            std::hash<int> hasher;
+
+            for(auto element : set)
+                seed ^= hasher(element) + 0x9e3779b9 + (seed<<6) + (seed>>2);
+
+            return seed;
+        }
+    };
+
     /** Look a \p kkey in \p mmap and if not found allocate a new
         shared_ptr with the default constructor.*/
     template <typename Map>
@@ -3475,10 +3489,10 @@ namespace {
 
 
     void GetResPoolLaneInfo(int empire_id,
-                            boost::unordered_map<std::set<int>, std::shared_ptr<std::set<int>>>& res_pool_systems,
-                            boost::unordered_map<std::set<int>, std::shared_ptr<std::set<int>>>& res_group_cores,
+                            std::unordered_map<std::set<int>, std::shared_ptr<std::set<int>>, hash_set>& res_pool_systems,
+                            std::unordered_map<std::set<int>, std::shared_ptr<std::set<int>>, hash_set>& res_group_cores,
                             std::unordered_set<int>& res_group_core_members,
-                            boost::unordered_map<int, std::shared_ptr<std::set<int>>>& member_to_core,
+                            std::unordered_map<int, std::shared_ptr<std::set<int>>>& member_to_core,
                             std::shared_ptr<std::unordered_set<int>>& under_alloc_res_grp_core_members)
     {
         res_pool_systems.clear();
@@ -3589,7 +3603,7 @@ namespace {
     }
 
 
-    void PrepFullLanesToRender(const boost::unordered_map<int, std::shared_ptr<SystemIcon>>& sys_icons,
+    void PrepFullLanesToRender(const std::unordered_map<int, std::shared_ptr<SystemIcon>>& sys_icons,
                                GG::GL2DVertexBuffer& starlane_vertices,
                                GG::GLRGBAColorBuffer& starlane_colors)
     {
@@ -3665,7 +3679,7 @@ namespace {
         }
     }
 
-    void PrepResourceConnectionLanesToRender(const boost::unordered_map<int, std::shared_ptr<SystemIcon>>& sys_icons,
+    void PrepResourceConnectionLanesToRender(const std::unordered_map<int, std::shared_ptr<SystemIcon>>& sys_icons,
                                              int empire_id,
                                              std::set<std::pair<int, int>>& rendered_half_starlanes,
                                              GG::GL2DVertexBuffer& rc_starlane_vertices,
@@ -3679,11 +3693,11 @@ namespace {
         GG::Clr lane_colour = empire->Color();
 
         // map keyed by ResourcePool (set of objects) to the corresponding set of system ids
-        boost::unordered_map<std::set<int>, std::shared_ptr<std::set<int>>> res_pool_systems;
+        std::unordered_map<std::set<int>, std::shared_ptr<std::set<int>>, hash_set> res_pool_systems;
         // map keyed by ResourcePool to the set of systems considered the core of the corresponding ResGroup
-        boost::unordered_map<std::set<int>, std::shared_ptr<std::set<int>>> res_group_cores;
+        std::unordered_map<std::set<int>, std::shared_ptr<std::set<int>>, hash_set> res_group_cores;
         std::unordered_set<int> res_group_core_members;
-        boost::unordered_map<int, std::shared_ptr<std::set<int>>> member_to_core;
+        std::unordered_map<int, std::shared_ptr<std::set<int>>> member_to_core;
         std::shared_ptr<std::unordered_set<int>> under_alloc_res_grp_core_members;
         GetResPoolLaneInfo(empire_id, res_pool_systems,
                            res_group_cores, res_group_core_members,
@@ -3764,7 +3778,7 @@ namespace {
         }
     }
 
-    void PrepObstructedLaneTraversalsToRender(const boost::unordered_map<int, std::shared_ptr<SystemIcon>>& sys_icons,
+    void PrepObstructedLaneTraversalsToRender(const std::unordered_map<int, std::shared_ptr<SystemIcon>>& sys_icons,
                                               int empire_id,
                                               std::set<std::pair<int, int>>& rendered_half_starlanes,
                                               GG::GL2DVertexBuffer& starlane_vertices,
@@ -3848,7 +3862,7 @@ namespace {
     }
 
     std::map<std::pair<int, int>, LaneEndpoints> CalculateStarlaneEndpoints(
-        const boost::unordered_map<int, std::shared_ptr<SystemIcon>>& sys_icons)
+        const std::unordered_map<int, std::shared_ptr<SystemIcon>>& sys_icons)
     {
 
         std::map<std::pair<int, int>, LaneEndpoints> retval;
