@@ -1,6 +1,7 @@
 """The FreeOrionAI module contains the methods which can be made by the C game client;
 these methods in turn activate other portions of the python AI code."""
 from logging import debug, info, error, fatal
+from functools import wraps
 
 from common.configure_logging import redirect_logging_to_freeorion_logger
 
@@ -60,6 +61,21 @@ debug('Python paths %s' % sys.path)
 diplomatic_corp = None
 
 
+def error_handler(func):
+    """Decorator that logs any exception in decorated function, then re-raises"""
+
+    @wraps(func)
+    def _error_handler(*args, **kwargs):
+        try:
+            res = func(*args, **kwargs)
+            return res
+        except Exception as e:
+            error("Exception %s occurred during %s", e, func.__name__, exc_info=True)
+            raise
+    return _error_handler
+
+
+@error_handler
 def startNewGame(aggression_input=fo.aggression.aggressive):  # pylint: disable=invalid-name
     """Called by client when a new game is started (but not when a game is loaded).
     Should clear any pre-existing state and set up whatever is needed for AI to generate orders."""
@@ -100,6 +116,7 @@ def startNewGame(aggression_input=fo.aggression.aggressive):  # pylint: disable=
     TechsListsAI.test_tech_integrity()
 
 
+@error_handler
 def resumeLoadedGame(saved_state_string):  # pylint: disable=invalid-name
     """Called by client to when resume a loaded game."""
     if fo.getEmpire() is None:
@@ -141,6 +158,7 @@ def resumeLoadedGame(saved_state_string):  # pylint: disable=invalid-name
     debug('Size of already issued orders: ' + str(fo.getOrders().size))
 
 
+@error_handler
 def prepareForSave():  # pylint: disable=invalid-name
     """Called by client when the game is about to be saved, to let the Python AI know it should save any AI state
     information, such as plans or knowledge about the game from previous turns,
@@ -168,6 +186,7 @@ def prepareForSave():  # pylint: disable=invalid-name
               % e, exc_info=True)
 
 
+@error_handler
 def handleChatMessage(sender_id, message_text):  # pylint: disable=invalid-name
     """Called when this player receives a chat message. sender_id is the player who sent the message, and
     message_text is the text of the sent message."""
@@ -190,6 +209,7 @@ def handleChatMessage(sender_id, message_text):  # pylint: disable=invalid-name
         diplomatic_corp.handle_midgame_chat(sender_id, message_text)
 
 
+@error_handler
 def handleDiplomaticMessage(message):  # pylint: disable=invalid-name
     """Called when this player receives a diplomatic message update from the server,
     such as if another player declares war, accepts peace, or cancels a proposed peace treaty."""
@@ -205,6 +225,7 @@ def handleDiplomaticMessage(message):  # pylint: disable=invalid-name
     diplomatic_corp.handle_diplomatic_message(message)
 
 
+@error_handler
 def handleDiplomaticStatusUpdate(status_update):  # pylint: disable=invalid-name
     """Called when this player receives an update about the diplomatic status between players, which may
     or may not include this player."""
@@ -220,6 +241,7 @@ def handleDiplomaticStatusUpdate(status_update):  # pylint: disable=invalid-name
     diplomatic_corp.handle_diplomatic_status_update(status_update)
 
 
+@error_handler
 @listener
 def generateOrders():  # pylint: disable=invalid-name
     """
