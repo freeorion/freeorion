@@ -212,6 +212,8 @@ if(UNIX AND NOT APPLE)
     add_definitions(-DENABLE_BINRELOC -DBINPATH=\"${CMAKE_INSTALL_FULL_BINDIR}\" -DSHAREPATH=\"${CMAKE_INSTALL_FULL_DATADIR}\")
 endif()
 
+include(TestForBug2795)
+
 
 ##
 ## Collect project dependencies.
