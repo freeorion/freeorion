@@ -15,8 +15,7 @@
 #include "../universe/ValueRef.h"
 
 #include <boost/spirit/include/phoenix.hpp>
-//TODO: replace with std::make_unique when transitioning to C++14
-#include <boost/smart_ptr/make_unique.hpp>
+
 
 #define DEBUG_PARSERS 0
 
@@ -57,7 +56,7 @@ namespace {
         std::tie(capacity, stat2, combat_targets) = capacity_and_stat2_and_targets;
 
 
-        auto part_type = boost::make_unique<PartType>(
+        auto part_type = std::make_unique<PartType>(
             part_class,
             (capacity ? *capacity : 0.0),
             (stat2 ? *stat2 : 1.0),

@@ -79,7 +79,6 @@
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/shared_mutex.hpp>
 #include <boost/type_traits/remove_const.hpp>
-#include <boost/unordered_map.hpp>
 #include <boost/uuid/nil_generator.hpp>
 #include <boost/uuid/uuid.hpp>
 #include <boost/variant.hpp>
@@ -90,7 +89,6 @@
 #include <boost/asio.hpp>
 #include <boost/asio/high_resolution_timer.hpp>
 #include <boost/circular_buffer.hpp>
-#include <boost/function.hpp>
 #include <boost/mpl/list.hpp>
 #include <boost/preprocessor/seq/for_each.hpp>
 #include <boost/python.hpp>

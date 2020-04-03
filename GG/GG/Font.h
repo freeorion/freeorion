@@ -37,12 +37,12 @@
 #include <GG/Texture.h>
 #include <GG/UnicodeCharsets.h>
 
-#include <boost/unordered_map.hpp>
 #include <boost/graph/graph_concepts.hpp>
 
 #include <memory>
 #include <set>
 #include <stack>
+#include <unordered_map>
 
 
 struct FT_FaceRec_;
@@ -691,7 +691,7 @@ private:
         X           width;         ///< The width of the glyph only
     };
 
-    typedef boost::unordered_map<std::uint32_t, Glyph> GlyphMap;
+    typedef std::unordered_map<std::uint32_t, Glyph> GlyphMap;
 
     FT_Error          GetFace(FT_Face& face);
     FT_Error          GetFace(const std::vector<unsigned char>& file_contents, FT_Face& face);

@@ -11,8 +11,6 @@
 #include "../universe/Condition.h"
 #include "../universe/ValueRef.h"
 
-//TODO: replace with std::make_unique when transitioning to C++14
-#include <boost/smart_ptr/make_unique.hpp>
 
 #define DEBUG_PARSERS 0
 
@@ -35,7 +33,7 @@ namespace {
                          const std::string& icon,
                          bool& pass)
     {
-        auto building_type = boost::make_unique<BuildingType>(
+        auto building_type = std::make_unique<BuildingType>(
             name, description, *common_params.OpenEnvelope(pass), capture_result, icon);
 
         building_types.insert(std::make_pair(building_type->Name(), std::move(building_type)));

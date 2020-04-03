@@ -84,7 +84,7 @@ namespace {
     class RowSorter // used to sort rows by a certain column (which may contain some empty cells)
     {
     public:
-        RowSorter(const boost::function<bool (const ListBox::Row&, const ListBox::Row&, std::size_t)>& cmp,
+        RowSorter(const std::function<bool (const ListBox::Row&, const ListBox::Row&, std::size_t)>& cmp,
                   std::size_t col, bool invert) :
             m_cmp(cmp),
             m_sort_col(col),
@@ -97,7 +97,7 @@ namespace {
         { return m_invert ? m_cmp(*r, *l, m_sort_col) : m_cmp(*l, *r, m_sort_col); }
 
     private:
-        boost::function<bool (const ListBox::Row&, const ListBox::Row&, std::size_t)> m_cmp;
+        std::function<bool (const ListBox::Row&, const ListBox::Row&, std::size_t)> m_cmp;
         std::size_t m_sort_col;
         bool m_invert;
     };
@@ -1361,7 +1361,7 @@ void ListBox::SetSortCol(std::size_t n)
         Resort();
 }
 
-void ListBox::SetSortCmp(const boost::function<bool (const Row&, const Row&, std::size_t)>& sort_cmp)
+void ListBox::SetSortCmp(const std::function<bool (const Row&, const Row&, std::size_t)>& sort_cmp)
 {
     m_sort_cmp = sort_cmp;
     if (!(m_style & LIST_NOSORT))

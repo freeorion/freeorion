@@ -608,9 +608,6 @@ private:
     std::vector<std::shared_ptr<ToggleData>>    m_toggles;
 
     struct ToggleData : public boost::signals2::trackable {
-        typedef bool (BarSizer::*ToggleGetter)() const;
-        typedef void (BarSizer::*ToggleSetter)(bool value);
-
         std::string label_true;
         std::string label_false;
         std::string tip_true;

@@ -24,8 +24,6 @@
 #include "Enums.h"
 
 #include <boost/filesystem/fstream.hpp>
-//TODO: replace with std::make_unique when transitioning to C++14
-#include <boost/smart_ptr/make_unique.hpp>
 
 #include <cctype>
 #include <iterator>
@@ -775,7 +773,7 @@ unsigned int SetShipPartMeter::GetCheckSum() const {
 // SetEmpireMeter                                        //
 ///////////////////////////////////////////////////////////
 SetEmpireMeter::SetEmpireMeter(const std::string& meter, std::unique_ptr<ValueRef::ValueRef<double>>&& value) :
-    m_empire_id(boost::make_unique<ValueRef::Variable<int>>(ValueRef::EFFECT_TARGET_REFERENCE, std::vector<std::string>(1, "Owner"))),
+    m_empire_id(std::make_unique<ValueRef::Variable<int>>(ValueRef::EFFECT_TARGET_REFERENCE, std::vector<std::string>(1, "Owner"))),
     m_meter(meter),
     m_value(std::move(value))
 {}
@@ -881,7 +879,7 @@ unsigned int SetEmpireMeter::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 SetEmpireStockpile::SetEmpireStockpile(ResourceType stockpile,
                                        std::unique_ptr<ValueRef::ValueRef<double>>&& value) :
-    m_empire_id(boost::make_unique<ValueRef::Variable<int>>(ValueRef::EFFECT_TARGET_REFERENCE, std::vector<std::string>(1, "Owner"))),
+    m_empire_id(std::make_unique<ValueRef::Variable<int>>(ValueRef::EFFECT_TARGET_REFERENCE, std::vector<std::string>(1, "Owner"))),
     m_stockpile(stockpile),
     m_value(std::move(value))
 {}
@@ -942,7 +940,7 @@ unsigned int SetEmpireStockpile::GetCheckSum() const {
 // SetEmpireCapital                                      //
 ///////////////////////////////////////////////////////////
 SetEmpireCapital::SetEmpireCapital() :
-    m_empire_id(boost::make_unique<ValueRef::Variable<int>>(ValueRef::EFFECT_TARGET_REFERENCE, std::vector<std::string>(1, "Owner")))
+    m_empire_id(std::make_unique<ValueRef::Variable<int>>(ValueRef::EFFECT_TARGET_REFERENCE, std::vector<std::string>(1, "Owner")))
 {}
 
 SetEmpireCapital::SetEmpireCapital(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id) :
@@ -2014,8 +2012,8 @@ unsigned int Destroy::GetCheckSum() const {
 // AddSpecial                                            //
 ///////////////////////////////////////////////////////////
 AddSpecial::AddSpecial(const std::string& name, float capacity) :
-    m_name(boost::make_unique<ValueRef::Constant<std::string>>(name)),
-    m_capacity(boost::make_unique<ValueRef::Constant<double>>(capacity))
+    m_name(std::make_unique<ValueRef::Constant<std::string>>(name)),
+    m_capacity(std::make_unique<ValueRef::Constant<double>>(capacity))
 {}
 
 AddSpecial::AddSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
@@ -2066,7 +2064,7 @@ unsigned int AddSpecial::GetCheckSum() const {
 // RemoveSpecial                                         //
 ///////////////////////////////////////////////////////////
 RemoveSpecial::RemoveSpecial(const std::string& name) :
-    m_name(boost::make_unique<ValueRef::Constant<std::string>>(name))
+    m_name(std::make_unique<ValueRef::Constant<std::string>>(name))
 {}
 
 RemoveSpecial::RemoveSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
@@ -3035,7 +3033,7 @@ SetEmpireTechProgress::SetEmpireTechProgress(std::unique_ptr<ValueRef::ValueRef<
     m_empire_id(
         empire_id
         ? std::move(empire_id)
-        : boost::make_unique<ValueRef::Variable<int>>(ValueRef::EFFECT_TARGET_REFERENCE, std::vector<std::string>(1, "Owner")))
+        : std::make_unique<ValueRef::Variable<int>>(ValueRef::EFFECT_TARGET_REFERENCE, std::vector<std::string>(1, "Owner")))
 {}
 
 void SetEmpireTechProgress::Execute(const ScriptingContext& context) const {

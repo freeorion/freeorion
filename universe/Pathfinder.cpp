@@ -108,10 +108,10 @@ namespace {
         // the function so that the function still has the required signature.
 
         /// Cache miss handler
-        typedef boost::function<void (size_t &/*ii*/, Row /*row*/)> cache_miss_handler;
+        typedef std::function<void (size_t &/*ii*/, Row /*row*/)> cache_miss_handler;
 
         /// A function to examine an entire row cache hit
-        typedef boost::function<void (size_t &/*ii*/, const Row /*row*/)> cache_hit_handler;
+        typedef std::function<void (size_t &/*ii*/, const Row /*row*/)> cache_hit_handler;
 
         /** Retrieve a single element at (\p ii, \p jj).
           * On cache miss call the \p fill_row which must fill the row

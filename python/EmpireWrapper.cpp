@@ -14,7 +14,6 @@
 
 #include <GG/Clr.h>
 
-#include <boost/function.hpp>
 #include <boost/mpl/vector.hpp>
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/map_indexing_suite.hpp>

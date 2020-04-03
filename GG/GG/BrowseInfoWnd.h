@@ -34,8 +34,6 @@
 #include <GG/Font.h>
 #include <GG/GLClientAndServerBuffer.h>
 
-#include <boost/function.hpp>
-
 
 namespace GG {
 
@@ -79,7 +77,7 @@ public:
         currently-set cursor, this BrowseInfoWnd, and the Wnd that is
         displaying this BrowseInfoWnd as parameters, and returns the desired
         upper-left corner of this BrowseInfoWnd. */
-    mutable boost::function<
+    mutable std::function<
         Pt (const Pt&, const std::shared_ptr<Cursor>&, const BrowseInfoWnd&, const Wnd&)
     > PositionWnd;
 

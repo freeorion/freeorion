@@ -209,10 +209,10 @@ void Texture::Load(const boost::filesystem::path& path, bool mipmap/* = false*/)
     std::string filename = path.generic_string();
 #endif
 
-    BOOST_STATIC_ASSERT((sizeof(gil::gray8_pixel_t) == 1));
-    BOOST_STATIC_ASSERT((sizeof(gil::gray_alpha8_pixel_t) == 2));
-    BOOST_STATIC_ASSERT((sizeof(gil::rgb8_pixel_t) == 3));
-    BOOST_STATIC_ASSERT((sizeof(gil::rgba8_pixel_t) == 4));
+    static_assert(sizeof(gil::gray8_pixel_t) == 1, "gray8 pixel type does not match expected type size");
+    static_assert(sizeof(gil::gray_alpha8_pixel_t) == 2, "gray_alpha8 pixel type does not match expected type size");
+    static_assert(sizeof(gil::rgb8_pixel_t) == 3, "rgb8 pixel type does not match expected type size");
+    static_assert(sizeof(gil::rgba8_pixel_t) == 4, "rgba8 pixel type does not match expected type size");
 
 #ifdef BOOST_GIL_USES_MP11
     typedef boost::mp11::mp_list<

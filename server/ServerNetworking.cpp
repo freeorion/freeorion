@@ -6,9 +6,6 @@
 #include "../universe/ValueRefs.h"
 #include "../parse/Parse.h"
 
-//TODO: replace with std::make_unique when transitioning to C++14
-#include <boost/smart_ptr/make_unique.hpp>
-
 #include <boost/iterator/filter_iterator.hpp>
 #include <boost/asio/high_resolution_timer.hpp>
 #include <boost/uuid/nil_generator.hpp>
@@ -98,22 +95,22 @@ private:
         std::string reply;
         try {
             if (parse::int_free_variable(message)) {
-                auto value_ref = boost::make_unique<ValueRef::Variable<int>>(ValueRef::NON_OBJECT_REFERENCE, message);
+                auto value_ref = std::make_unique<ValueRef::Variable<int>>(ValueRef::NON_OBJECT_REFERENCE, message);
                 reply = std::to_string(value_ref->Eval(ScriptingContext()));
                 DebugLogger(network) << "DiscoveryServer evaluated expression as integer with result: " << reply;
 
             } else if (parse::double_free_variable(message)) {
-                auto value_ref = boost::make_unique<ValueRef::Variable<double>>(ValueRef::NON_OBJECT_REFERENCE, message);
+                auto value_ref = std::make_unique<ValueRef::Variable<double>>(ValueRef::NON_OBJECT_REFERENCE, message);
                 reply = std::to_string(value_ref->Eval(ScriptingContext()));
                 DebugLogger(network) << "DiscoveryServer evaluated expression as double with result: " << reply;
 
             } else if (parse::string_free_variable(message)) {
-                auto value_ref = boost::make_unique<ValueRef::Variable<std::string>>(ValueRef::NON_OBJECT_REFERENCE, message);
+                auto value_ref = std::make_unique<ValueRef::Variable<std::string>>(ValueRef::NON_OBJECT_REFERENCE, message);
                 reply = value_ref->Eval(ScriptingContext());
                 DebugLogger(network) << "DiscoveryServer evaluated expression as string with result: " << reply;
 
             //} else {
-            //    auto value_ref = boost::make_unique<ValueRef::Variable<std::vector<std::string>>>(ValueRef::NON_OBJECT_REFERENCE, message);
+            //    auto value_ref = std::make_unique<ValueRef::Variable<std::vector<std::string>>>(ValueRef::NON_OBJECT_REFERENCE, message);
             //    auto result = value_ref->Eval(ScriptingContext());
             //    for (auto entry : result)
             //        reply += entry + "\n";
@@ -715,7 +712,7 @@ ServerNetworking::established_iterator ServerNetworking::established_end() {
 
 void ServerNetworking::HandleNextEvent() {
     if (!m_event_queue.empty()) {
-        boost::function<void ()> f = m_event_queue.front();
+        std::function<void ()> f = m_event_queue.front();
         m_event_queue.pop();
         f();
     }

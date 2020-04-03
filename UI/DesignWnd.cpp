@@ -27,15 +27,12 @@
 #include <GG/TabWnd.h>
 
 #include <boost/cast.hpp>
-#include <boost/function.hpp>
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/uuid/random_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/uuid/random_generator.hpp>
-//TODO: replace with std::make_unique when transitioning to C++14
-#include <boost/smart_ptr/make_unique.hpp>
 
 #include <algorithm>
 #include <iterator>
@@ -582,7 +579,7 @@ namespace {
 
         } else {
             // Add the new saved design.
-            std::unique_ptr<ShipDesign> design_copy{boost::make_unique<ShipDesign>(design)};
+            std::unique_ptr<ShipDesign> design_copy{std::make_unique<ShipDesign>(design)};
 
             const auto save_path = CreateSaveFileNameForDesign(design);
 
@@ -1103,8 +1100,8 @@ namespace {
 //////////////////////////////////////////////////
 
 ShipDesignManager::ShipDesignManager() :
-    m_displayed_designs(boost::make_unique<DisplayedShipDesignManager>()),
-    m_saved_designs(boost::make_unique<SavedDesignsManager>())
+    m_displayed_designs(std::make_unique<DisplayedShipDesignManager>()),
+    m_saved_designs(std::make_unique<SavedDesignsManager>())
 {}
 
 ShipDesignManager::~ShipDesignManager()
@@ -1119,10 +1116,10 @@ void ShipDesignManager::StartGame(int empire_id, bool is_new_game) {
 
     DebugLogger() << "ShipDesignManager initializing. New game " << is_new_game;
 
-    m_displayed_designs = boost::make_unique<DisplayedShipDesignManager>();
+    m_displayed_designs = std::make_unique<DisplayedShipDesignManager>();
     auto displayed_designs = dynamic_cast<DisplayedShipDesignManager*>(m_displayed_designs.get());
 
-    m_saved_designs = boost::make_unique<SavedDesignsManager>();
+    m_saved_designs = std::make_unique<SavedDesignsManager>();
     auto saved_designs = dynamic_cast<SavedDesignsManager*>(m_saved_designs.get());
     saved_designs->StartParsingDesignsFromFileSystem(is_new_game);
 
@@ -1184,7 +1181,7 @@ ShipDesignManager::Designs* ShipDesignManager::DisplayedDesigns() {
     if (retval == nullptr) {
         ErrorLogger() << "ShipDesignManager m_displayed_designs was not correctly initialized "
                       << "with ShipDesignManager::GameStart().";
-        m_displayed_designs = boost::make_unique<DisplayedShipDesignManager>();
+        m_displayed_designs = std::make_unique<DisplayedShipDesignManager>();
         return m_displayed_designs.get();
     }
     return retval;
@@ -1195,7 +1192,7 @@ ShipDesignManager::Designs* ShipDesignManager::SavedDesigns() {
     if (retval == nullptr) {
         ErrorLogger() << "ShipDesignManager m_saved_designs was not correctly initialized "
                       << "with ShipDesignManager::GameStart().";
-        m_saved_designs = boost::make_unique<SavedDesignsManager>();
+        m_saved_designs = std::make_unique<SavedDesignsManager>();
         return m_saved_designs.get();
     }
     return retval;

@@ -9,8 +9,7 @@
 #include <boost/uuid/nil_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/optional/optional.hpp>
-//TODO: replace with std::make_unique when transitioning to C++14
-#include <boost/smart_ptr/make_unique.hpp>
+
 
 FO_COMMON_API extern const int ALL_EMPIRES;
 
@@ -31,7 +30,7 @@ namespace {
                             const std::string& icon, const std::string& model,
                             bool name_desc_in_stringtable, const boost::uuids::uuid& uuid)
     {
-        auto design = boost::make_unique<ParsedShipDesign>(
+        auto design = std::make_unique<ParsedShipDesign>(
             name, description, 0, ALL_EMPIRES, hull, parts, icon, model,
             name_desc_in_stringtable, false, uuid);
 

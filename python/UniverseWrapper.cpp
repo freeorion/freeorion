@@ -103,12 +103,12 @@ namespace {
         double retval = universe.GetPathfinder()->LinearDistance(system1_id, system2_id);
         return retval;
     }
-    boost::function<double(const Universe&, int, int)> LinearDistanceFunc =                     &LinearDistance;
+    std::function<double (const Universe&, int, int)> LinearDistanceFunc = &LinearDistance;
 
     int JumpDistanceBetweenObjects(const Universe& universe, int object1_id, int object2_id) {
         return universe.GetPathfinder()->JumpDistanceBetweenObjects(object1_id, object2_id);
     }
-    boost::function<int(const Universe&, int, int)> JumpDistanceFunc =                          &JumpDistanceBetweenObjects;
+    std::function<int (const Universe&, int, int)> JumpDistanceFunc = &JumpDistanceBetweenObjects;
 
     std::vector<int> ShortestPath(const Universe& universe, int start_sys, int end_sys, int empire_id) {
         std::vector<int> retval;
@@ -116,7 +116,7 @@ namespace {
         std::copy(path.first.begin(), path.first.end(), std::back_inserter(retval));
         return retval;
     }
-    boost::function<std::vector<int>(const Universe&, int, int, int)> ShortestPathFunc =        &ShortestPath;
+    std::function<std::vector<int> (const Universe&, int, int, int)> ShortestPathFunc = &ShortestPath;
 
     std::vector<int> ShortestNonHostilePath(const Universe& universe, int start_sys, int end_sys, int empire_id) {
         std::vector<int> retval;
@@ -125,12 +125,12 @@ namespace {
         std::copy(path.first.begin(), path.first.end(), std::back_inserter(retval));
         return retval;
     }
-    boost::function<std::vector<int>(const Universe&, int, int, int)> ShortestNonHostilePathFunc = &ShortestNonHostilePath;
+    std::function<std::vector<int> (const Universe&, int, int, int)> ShortestNonHostilePathFunc = &ShortestNonHostilePath;
 
     double ShortestPathDistance(const Universe& universe, int object1_id, int object2_id) {
         return universe.GetPathfinder()->ShortestPathDistance(object1_id, object2_id);
     }
-    boost::function<double(const Universe&, int, int)> ShortestPathDistanceFunc =               &ShortestPathDistance;
+    std::function<double (const Universe&, int, int)> ShortestPathDistanceFunc = &ShortestPathDistance;
 
     std::vector<int> LeastJumpsPath(const Universe& universe, int start_sys, int end_sys, int empire_id) {
         std::vector<int> retval;
@@ -138,7 +138,7 @@ namespace {
         std::copy(path.first.begin(), path.first.end(), std::back_inserter(retval));
         return retval;
     }
-    boost::function<std::vector<int>(const Universe&, int, int, int)> LeastJumpsFunc =          &LeastJumpsPath;
+    std::function<std::vector<int> (const Universe&, int, int, int)> LeastJumpsFunc = &LeastJumpsPath;
 
     bool SystemsConnectedP(const Universe& universe, int system1_id, int system2_id, int empire_id=ALL_EMPIRES) {
         //DebugLogger() << "SystemsConnected!(" << system1_id << ", " << system2_id << ")";
@@ -146,12 +146,12 @@ namespace {
         //DebugLogger() << "SystemsConnected! retval: " << retval;
         return retval;
     }
-    boost::function<bool(const Universe&, int, int, int)> SystemsConnectedFunc =                &SystemsConnectedP;
+    std::function<bool (const Universe&, int, int, int)> SystemsConnectedFunc = &SystemsConnectedP;
 
     bool SystemHasVisibleStarlanesP(const Universe& universe, int system_id, int empire_id = ALL_EMPIRES) {
         return universe.GetPathfinder()->SystemHasVisibleStarlanes(system_id, empire_id);
     }
-    boost::function<bool(const Universe&, int, int)> SystemHasVisibleStarlanesFunc =            &SystemHasVisibleStarlanesP;
+    std::function<bool (const Universe&, int, int)> SystemHasVisibleStarlanesFunc = &SystemHasVisibleStarlanesP;
 
     std::vector<int> ImmediateNeighborsP(const Universe& universe, int system1_id, int empire_id = ALL_EMPIRES) {
         std::vector<int> retval;
@@ -159,7 +159,7 @@ namespace {
         { retval.push_back(entry.second); }
         return retval;
     }
-    boost::function<std::vector<int> (const Universe&, int, int)> ImmediateNeighborsFunc =      &ImmediateNeighborsP;
+    std::function<std::vector<int> (const Universe&, int, int)> ImmediateNeighborsFunc = &ImmediateNeighborsP;
 
     std::map<int, double> SystemNeighborsMapP(const Universe& universe, int system1_id, int empire_id = ALL_EMPIRES) {
         std::map<int, double> retval;
@@ -167,7 +167,7 @@ namespace {
         { retval[entry.second] = entry.first; }
         return retval;
     }
-    boost::function<std::map<int, double> (const Universe&, int, int)> SystemNeighborsMapFunc = &SystemNeighborsMapP;
+    std::function<std::map<int, double> (const Universe&, int, int)> SystemNeighborsMapFunc = &SystemNeighborsMapP;
 
     const Meter*            (UniverseObject::*ObjectGetMeter)(MeterType) const =                &UniverseObject::GetMeter;
     const std::map<MeterType, Meter>&
@@ -187,11 +187,11 @@ namespace {
 
     const std::string& ShipDesignName(const ShipDesign& ship_design)
     { return ship_design.Name(false); }
-    boost::function<const std::string& (const ShipDesign&)> ShipDesignNameFunc =                &ShipDesignName;
+    std::function<const std::string& (const ShipDesign&)> ShipDesignNameFunc = &ShipDesignName;
 
     const std::string& ShipDesignDescription(const ShipDesign& ship_design)
     { return ship_design.Description(false); }
-    boost::function<const std::string& (const ShipDesign&)> ShipDesignDescriptionFunc =         &ShipDesignDescription;
+    std::function<const std::string& (const ShipDesign&)> ShipDesignDescriptionFunc = &ShipDesignDescription;
 
     bool                    (*ValidDesignHullAndParts)(const std::string& hull,
                                                        const std::vector<std::string>& parts) = &ShipDesign::ValidDesign;
@@ -210,7 +210,7 @@ namespace {
         }
         return results;
     }
-    boost::function<std::vector<int> (const ShipDesign&)> AttackStatsFunc =                 &AttackStatsP;
+    std::function<std::vector<int> (const ShipDesign&)> AttackStatsFunc = &AttackStatsP;
 
     std::vector<ShipSlotType> HullSlots(const HullType& hull) {
         std::vector<ShipSlotType> retval;
@@ -218,7 +218,7 @@ namespace {
             retval.push_back(slot.type);
         return retval;
     }
-    boost::function<std::vector<ShipSlotType> (const HullType&)> HullSlotsFunc =                &HullSlots;
+    std::function<std::vector<ShipSlotType> (const HullType&)> HullSlotsFunc = &HullSlots;
 
     unsigned int            (HullType::*NumSlotsTotal)(void) const =                            &HullType::NumSlots;
     unsigned int            (HullType::*NumSlotsOfSlotType)(ShipSlotType) const =               &HullType::NumSlots;

@@ -36,7 +36,6 @@
 
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/filesystem/path.hpp>
-#include <boost/function.hpp>
 #include <boost/functional/hash.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/lexical_cast.hpp>
@@ -44,9 +43,7 @@
 #include <boost/optional/optional.hpp>
 #include <boost/signals2/signal.hpp>
 #include <boost/signals2/trackable.hpp>
-#include <boost/static_assert.hpp>
 #include <boost/type_traits/is_integral.hpp>
-#include <boost/unordered_map.hpp>
 #include <boost/utility/enable_if.hpp>
 
 #ifdef _MSC_VER

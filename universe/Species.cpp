@@ -15,8 +15,6 @@
 #include "../util/ScopedTimer.h"
 
 #include <boost/filesystem/fstream.hpp>
-//TODO: replace with std::make_unique when transitioning to C++14
-#include <boost/smart_ptr/make_unique.hpp>
 
 #include <iterator>
 
@@ -133,23 +131,23 @@ void Species::Init() {
         // (not uninhabitable) environment for this species
         std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetEnvironment>>> environments_vec;
         environments_vec.push_back(
-            boost::make_unique<ValueRef::Constant<PlanetEnvironment>>( ::PE_UNINHABITABLE));
+            std::make_unique<ValueRef::Constant<PlanetEnvironment>>( ::PE_UNINHABITABLE));
         auto this_species_name_ref =
-            boost::make_unique<ValueRef::Constant<std::string>>(m_name);  // m_name specifies this species
+            std::make_unique<ValueRef::Constant<std::string>>(m_name);  // m_name specifies this species
         auto enviro_cond = std::unique_ptr<Condition::Condition>(
-            boost::make_unique<Condition::Not>(
+            std::make_unique<Condition::Not>(
                 std::unique_ptr<Condition::Condition>(
-                    boost::make_unique<Condition::PlanetEnvironment>(
+                    std::make_unique<Condition::PlanetEnvironment>(
                         std::move(environments_vec), std::move(this_species_name_ref)))));
 
-        auto type_cond = std::unique_ptr<Condition::Condition>(boost::make_unique<Condition::Type>(
-            boost::make_unique<ValueRef::Constant<UniverseObjectType>>( ::OBJ_POP_CENTER)));
+        auto type_cond = std::unique_ptr<Condition::Condition>(std::make_unique<Condition::Type>(
+            std::make_unique<ValueRef::Constant<UniverseObjectType>>( ::OBJ_POP_CENTER)));
 
         std::vector<std::unique_ptr<Condition::Condition>> operands;
         operands.push_back(std::move(enviro_cond));
         operands.push_back(std::move(type_cond));
 
-        m_location = std::unique_ptr<Condition::Condition>(boost::make_unique<Condition::And>(std::move(operands)));
+        m_location = std::unique_ptr<Condition::Condition>(std::make_unique<Condition::And>(std::move(operands)));
     }
     m_location->SetTopLevelContent(m_name);
 

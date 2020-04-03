@@ -14,8 +14,7 @@
 #include "../universe/ValueRefs.h"
 
 #include <boost/spirit/include/phoenix.hpp>
-//TODO: replace with std::make_unique when transitioning to C++14
-#include <boost/smart_ptr/make_unique.hpp>
+
 
 namespace phoenix = boost::phoenix;
 

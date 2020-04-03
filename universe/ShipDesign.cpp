@@ -25,8 +25,7 @@
 #include <boost/uuid/random_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/lexical_cast.hpp>
-//TODO: replace with std::make_unique when transitioning to C++14
-#include <boost/smart_ptr/make_unique.hpp>
+
 
 extern FO_COMMON_API const int INVALID_DESIGN_ID = -1;
 
@@ -54,18 +53,18 @@ namespace {
                   std::unique_ptr<ValueRef::ValueRef<double>>&& increase_vr)
     {
         typedef std::vector<std::unique_ptr<Effect::Effect>> Effects;
-        auto scope = boost::make_unique<Condition::Source>();
-        auto activation = boost::make_unique<Condition::Source>();
+        auto scope = std::make_unique<Condition::Source>();
+        auto activation = std::make_unique<Condition::Source>();
 
         auto vr =
-            boost::make_unique<ValueRef::Operation<double>>(
+            std::make_unique<ValueRef::Operation<double>>(
                 ValueRef::PLUS,
-                boost::make_unique<ValueRef::Variable<double>>(
+                std::make_unique<ValueRef::Variable<double>>(
                     ValueRef::EFFECT_TARGET_VALUE_REFERENCE, std::vector<std::string>()),
                 std::move(increase_vr)
             );
         auto effects = Effects();
-        effects.push_back(boost::make_unique<Effect::SetMeter>(meter_type, std::move(vr)));
+        effects.push_back(std::make_unique<Effect::SetMeter>(meter_type, std::move(vr)));
         return std::make_shared<Effect::EffectsGroup>(std::move(scope), std::move(activation), std::move(effects));
     }
 
@@ -73,7 +72,7 @@ namespace {
     // by the specified amount \a fixed_increase
     std::shared_ptr<Effect::EffectsGroup>
     IncreaseMeter(MeterType meter_type, float fixed_increase) {
-        auto increase_vr = boost::make_unique<ValueRef::Constant<double>>(fixed_increase);
+        auto increase_vr = std::make_unique<ValueRef::Constant<double>>(fixed_increase);
         return IncreaseMeter(meter_type, std::move(increase_vr));
     }
 
@@ -88,12 +87,12 @@ namespace {
         if (scaling_factor_rule_name.empty())
             return IncreaseMeter(meter_type, base_increase);
 
-        auto increase_vr = boost::make_unique<ValueRef::Operation<double>>(
+        auto increase_vr = std::make_unique<ValueRef::Operation<double>>(
             ValueRef::TIMES,
-            boost::make_unique<ValueRef::Constant<double>>(base_increase),
-            boost::make_unique<ValueRef::ComplexVariable<double>>(
+            std::make_unique<ValueRef::Constant<double>>(base_increase),
+            std::make_unique<ValueRef::ComplexVariable<double>>(
                 "GameRule", nullptr, nullptr, nullptr,
-                boost::make_unique<ValueRef::Constant<std::string>>(scaling_factor_rule_name)
+                std::make_unique<ValueRef::Constant<std::string>>(scaling_factor_rule_name)
             )
         );
 
@@ -108,24 +107,24 @@ namespace {
                   float increase, bool allow_stacking = true)
     {
         typedef std::vector<std::unique_ptr<Effect::Effect>> Effects;
-        auto scope = boost::make_unique<Condition::Source>();
-        auto activation = boost::make_unique<Condition::Source>();
+        auto scope = std::make_unique<Condition::Source>();
+        auto activation = std::make_unique<Condition::Source>();
 
-        auto value_vr = boost::make_unique<ValueRef::Operation<double>>(
+        auto value_vr = std::make_unique<ValueRef::Operation<double>>(
             ValueRef::PLUS,
-            boost::make_unique<ValueRef::Variable<double>>(
+            std::make_unique<ValueRef::Variable<double>>(
                 ValueRef::EFFECT_TARGET_VALUE_REFERENCE, std::vector<std::string>()),
-            boost::make_unique<ValueRef::Constant<double>>(increase)
+            std::make_unique<ValueRef::Constant<double>>(increase)
         );
 
         auto part_name_vr =
-            boost::make_unique<ValueRef::Constant<std::string>>(part_name);
+            std::make_unique<ValueRef::Constant<std::string>>(part_name);
 
         std::string stacking_group = (allow_stacking ? "" :
             (part_name + "_" + boost::lexical_cast<std::string>(meter_type) + "_PartMeter"));
 
         auto effects = Effects();
-        effects.push_back(boost::make_unique<Effect::SetShipPartMeter>(
+        effects.push_back(std::make_unique<Effect::SetShipPartMeter>(
                               meter_type, std::move(part_name_vr), std::move(value_vr)));
 
         return std::make_shared<Effect::EffectsGroup>(
@@ -1658,7 +1657,7 @@ LoadShipDesignsAndManifestOrderFromParseResults(
     auto& disk_ordering = designs_paths_and_ordering.second;
 
     for (auto&& design_and_path : designs_and_paths) {
-        auto design = boost::make_unique<ShipDesign>(*design_and_path.first);
+        auto design = std::make_unique<ShipDesign>(*design_and_path.first);
 
         // If the UUID is nil this is a legacy design that needs a new UUID
         if(design->UUID() == boost::uuids::uuid{{0}}) {

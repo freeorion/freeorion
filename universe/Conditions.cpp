@@ -27,8 +27,6 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/st_connected.hpp>
 
-//TODO: replace with std::make_unique when transitioning to C++14
-#include <boost/smart_ptr/make_unique.hpp>
 
 using boost::io::str;
 
@@ -1829,7 +1827,7 @@ Type::Type(std::unique_ptr<ValueRef::ValueRef<UniverseObjectType>>&& type) :
 
 Type::Type(UniverseObjectType type) :
     Condition(),
-    m_type(boost::make_unique<ValueRef::Constant<UniverseObjectType>>(type))
+    m_type(std::make_unique<ValueRef::Constant<UniverseObjectType>>(type))
 {}
 
 bool Type::operator==(const Condition& rhs) const {
@@ -2240,8 +2238,7 @@ HasSpecial::HasSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
 
 HasSpecial::HasSpecial(const std::string& name) :
     Condition(),
-    // TODO: Use std::make_unique when adopting C++14
-    m_name(new ValueRef::Constant<std::string>(name)),
+    m_name(std::make_unique<ValueRef::Constant<std::string>>(name)),
     m_capacity_low(nullptr),
     m_capacity_high(nullptr),
     m_since_turn_low(nullptr),
@@ -2467,8 +2464,7 @@ HasTag::HasTag() :
 
 HasTag::HasTag(const std::string& name) :
     Condition(),
-    // TODO: Use std::make_unique when adopting C++14
-    m_name(new ValueRef::Constant<std::string>(name))
+    m_name(std::make_unique<ValueRef::Constant<std::string>>(name))
 {}
 
 HasTag::HasTag(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
@@ -6793,8 +6789,7 @@ OwnerHasBuildingTypeAvailable::OwnerHasBuildingTypeAvailable(
 
 OwnerHasBuildingTypeAvailable::OwnerHasBuildingTypeAvailable(const std::string& name) :
     Condition(),
-    // TODO: Use std::make_unique when adopting C++14
-    m_name(new ValueRef::Constant<std::string>(name)),
+    m_name(std::make_unique<ValueRef::Constant<std::string>>(name)),
     m_empire_id(nullptr)
 {}
 
@@ -6948,8 +6943,7 @@ OwnerHasShipDesignAvailable::OwnerHasShipDesignAvailable(
 
 OwnerHasShipDesignAvailable::OwnerHasShipDesignAvailable(int design_id) :
     Condition(),
-    // TODO: Use std::make_unique when adopting C++14
-    m_id(new ValueRef::Constant<int>(design_id)),
+    m_id(std::make_unique<ValueRef::Constant<int>>(design_id)),
     m_empire_id(nullptr)
 {}
 
@@ -7103,8 +7097,7 @@ OwnerHasShipPartAvailable::OwnerHasShipPartAvailable(
 
 OwnerHasShipPartAvailable::OwnerHasShipPartAvailable(const std::string& name) :
     Condition(),
-    // TODO: Use std::make_unique when adopting C++14
-    m_name(new ValueRef::Constant<std::string>(name))
+    m_name(std::make_unique<ValueRef::Constant<std::string>>(name))
 {}
 
 OwnerHasShipPartAvailable::OwnerHasShipPartAvailable(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
