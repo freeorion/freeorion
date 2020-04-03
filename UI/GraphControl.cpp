@@ -4,7 +4,6 @@
 #include "CUIControls.h"
 #include "../util/i18n.h"
 
-#include <GG/DrawUtil.h>
 #include <GG/ClrConstants.h>
 
 
@@ -291,9 +290,9 @@ void GraphControl::DoLayout() {
         for (double line_y = shown_y_min + step; line_y <= shown_y_max; line_y = line_y + step) {
             const auto& screen_y = static_cast<float>((line_y - shown_y_min) * HEIGHT / y_range);
             m_vert_buf.store(GG::X1, -screen_y);    // OpenGL is positive down / negative up
-            m_colour_buf.store(GG::LightColor(ClientUI::WndColor()));
+            m_colour_buf.store(GG::LightenClr(ClientUI::WndColor()));
             m_vert_buf.store(GG::X(WIDTH - 1), -screen_y);
-            m_colour_buf.store(GG::LightColor(ClientUI::WndColor()));
+            m_colour_buf.store(GG::LightenClr(ClientUI::WndColor()));
 
             if (m_log_scale)
                 m_y_scale_ticks[GG::Y(-screen_y)] = std::pow(10.0, std::round(line_y));

@@ -1,6 +1,5 @@
 #include "IconTextBrowseWnd.h"
 
-#include <GG/DrawUtil.h>
 #include <GG/StaticGraphic.h>
 
 #include "ClientUI.h"

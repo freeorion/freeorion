@@ -11,7 +11,6 @@
 #include "../../combat/CombatLogManager.h"
 
 #include <GG/ClrConstants.h>
-#include <GG/DrawUtil.h>
 #include <GG/Layout.h>
 
 #include <boost/format.hpp>

@@ -56,7 +56,6 @@
 #include <boost/range/numeric.hpp>
 #include <boost/range/adaptor/map.hpp>
 
-#include <GG/DrawUtil.h>
 #include <GG/Layout.h>
 #include <GG/MultiEdit.h>
 #include <GG/PtRect.h>
@@ -3757,7 +3756,7 @@ namespace {
                 if (under_alloc_res_grp_core_members
                     && under_alloc_res_grp_core_members->count(start_system->ID()))
                 {
-                    lane_colour_to_use = GG::DarkColor(GG::Clr(255-lane_colour.r, 255-lane_colour.g, 255-lane_colour.b, lane_colour.a));
+                    lane_colour_to_use = GG::DarkenClr(GG::InvertClr(lane_colour));
                 }
 
                 auto start_core = member_to_core.find(start_system->ID());

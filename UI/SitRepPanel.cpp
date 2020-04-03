@@ -12,7 +12,6 @@
 #include "../util/SitRepEntry.h"
 #include "../universe/ShipDesign.h"
 
-#include <GG/DrawUtil.h>
 #include <GG/Layout.h>
 
 #include <boost/lexical_cast.hpp>

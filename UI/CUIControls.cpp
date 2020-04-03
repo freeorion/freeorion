@@ -16,7 +16,6 @@
 
 #include <GG/utf8/checked.h>
 #include <GG/dialogs/ColorDlg.h>
-#include <GG/DrawUtil.h>
 #include <GG/GUI.h>
 #include <GG/Layout.h>
 
@@ -609,7 +608,7 @@ void CUITabBar::DistinguishCurrentTab(const std::vector<GG::StateButton*>& tab_b
         if (index == i)
             tab->SetTextColor(text_color);
         else
-            tab->SetTextColor(DarkColor(text_color));
+            tab->SetTextColor(DarkenClr(text_color));
     }
 }
 
@@ -796,7 +795,7 @@ void CUIDropDownList::Render() {
     GG::Clr lb_color = LB()->Color();
     GG::Clr border_color = Disabled() ? DisabledColor(lb_color) : lb_color;
     if (GG::GUI::GetGUI()->FocusWnd().get() == this)
-        border_color = GG::LightColor(border_color);
+        border_color = GG::LightenClr(border_color);
     GG::Clr interior_color = Disabled() ? DisabledColor(InteriorColor()) : InteriorColor();
 
     glPushMatrix();
@@ -956,7 +955,7 @@ void CUIEdit::Render() {
     GG::Clr color = Color();
     GG::Clr border_color = Disabled() ? DisabledColor(color) : color;
     if (GG::GUI::GetGUI()->FocusWnd().get() == this)
-        border_color = GG::LightColor(border_color);
+        border_color = GG::LightenClr(border_color);
     GG::Clr int_color_to_use = Disabled() ? DisabledColor(InteriorColor()) : InteriorColor();
 
 
@@ -1101,7 +1100,7 @@ void CUIMultiEdit::Render() {
     GG::Clr color = Color();
     GG::Clr border_color =      Disabled()  ?   DisabledColor(color)            :   color;
     if (GG::GUI::GetGUI()->FocusWnd().get() == this)
-        border_color = GG::LightColor(border_color);
+        border_color = GG::LightenClr(border_color);
     GG::Clr int_color_to_use =  Disabled()  ?   DisabledColor(InteriorColor())  :   InteriorColor();
 
     GG::Pt ul = UpperLeft(), lr = LowerRight();
@@ -2145,12 +2144,12 @@ void MultiTurnProgressBar::Render() {
         segment_verts.reserve(2 * m_num_segments);
         segment_colors.reserve(2 * m_num_segments);
 
-        GG::Clr current_colour(GG::DarkColor(m_clr_bar));
+        GG::Clr current_colour(GG::DarkenClr(m_clr_bar));
 
         for (int n = 1; n < m_num_segments; ++n) {
             GG::X separator_x(ul.x + Width() * n / m_num_segments);
             if (separator_x > comp_rect.lr.x)
-                current_colour = GG::LightColor(m_clr_bg);
+                current_colour = GG::LightenClr(m_clr_bg);
             segment_verts.store(separator_x, ul.y);
             segment_verts.store(separator_x, lr.y);
             segment_colors.store(current_colour);
@@ -2178,7 +2177,7 @@ void MultiTurnProgressBar::Render() {
         pred_verts.activate();
         glColor(m_clr_outline);
         glDrawArrays(GL_QUAD_STRIP, 0, 10);
-        glColor(GG::LightColor(m_clr_bar));
+        glColor(GG::LightenClr(m_clr_bar));
         glDrawArrays(GL_QUADS, 10, 4);
     }
 

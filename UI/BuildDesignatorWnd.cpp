@@ -23,7 +23,6 @@
 #include "../universe/ValueRef.h"
 #include "../client/human/HumanClientApp.h"
 
-#include <GG/DrawUtil.h>
 #include <GG/Layout.h>
 #include <GG/StaticGraphic.h>
 

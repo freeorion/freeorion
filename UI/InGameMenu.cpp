@@ -15,7 +15,6 @@
 
 #include <GG/Button.h>
 #include <GG/Clr.h>
-#include <GG/DrawUtil.h>
 #include <GG/dialogs/ThreeButtonDlg.h>
 
 #include <boost/filesystem/operations.hpp>

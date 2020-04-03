@@ -36,7 +36,6 @@
 #include "../client/human/HumanClientApp.h"
 #include "../combat/CombatLogManager.h"
 
-#include <GG/DrawUtil.h>
 #include <GG/GUI.h>
 #include <GG/RichText/RichText.h>
 #include <GG/ScrollPanel.h>

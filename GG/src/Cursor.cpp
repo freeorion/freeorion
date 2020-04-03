@@ -24,7 +24,6 @@
    
 #include <GG/Cursor.h>
 
-#include <GG/DrawUtil.h>
 #include <GG/Texture.h>
 
 

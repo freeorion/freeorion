@@ -20,7 +20,6 @@
 #include "../util/OptionsDB.h"
 #include "../Empire/Empire.h"
 
-#include <GG/DrawUtil.h>
 #include <GG/StaticGraphic.h>
 #include <GG/utf8/checked.h>
 #include <GG/utf8/core.h>

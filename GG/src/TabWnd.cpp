@@ -24,7 +24,6 @@
 
 #include <GG/TabWnd.h>
 
-#include <GG/DrawUtil.h>
 #include <GG/Layout.h>
 #include <GG/StyleFactory.h>
 #include <GG/WndEvent.h>

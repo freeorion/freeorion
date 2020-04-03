@@ -17,7 +17,6 @@
 #include "../universe/ShipDesign.h"
 #include "../universe/Enums.h"
 
-#include <GG/DrawUtil.h>
 #include <GG/Layout.h>
 #include <GG/StaticGraphic.h>
 
@@ -49,7 +48,7 @@ namespace {
                    GG::Y h, bool inProgress, bool amBlockType) :
             Control(GG::X0, GG::Y0, nwidth, h, GG::NO_WND_FLAGS)
         {
-            GG::Clr txtClr = inProgress ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor()) : ClientUI::ResearchableTechTextAndBorderColor();
+            GG::Clr txtClr = inProgress ? GG::LightenClr(ClientUI::ResearchableTechTextAndBorderColor()) : ClientUI::ResearchableTechTextAndBorderColor();
             std::string nameText;
             if (amBlockType)
                 nameText = boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_MULTIPLES")) % quantity);
@@ -122,9 +121,9 @@ namespace {
 
             DisableDropArrow();
             SetStyle(GG::LIST_LEFT | GG::LIST_NOSORT);
-            SetColor(inProgress ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor())
+            SetColor(inProgress ? GG::LightenClr(ClientUI::ResearchableTechTextAndBorderColor())
                                 : ClientUI::ResearchableTechTextAndBorderColor());
-            SetInteriorColor(inProgress ? GG::LightColor(ClientUI::ResearchableTechFillColor())
+            SetInteriorColor(inProgress ? GG::LightenClr(ClientUI::ResearchableTechFillColor())
                                         : ClientUI::ResearchableTechFillColor());
             SetNumCols(1);
 
@@ -426,7 +425,7 @@ namespace {
         SetChildClippingMode(ClipToClient);
 
         GG::Clr clr = m_in_progress
-            ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor())
+            ? GG::LightenClr(ClientUI::ResearchableTechTextAndBorderColor())
             : ClientUI::ResearchableTechTextAndBorderColor();
 
         // get graphic and player-visible name text for item
@@ -490,7 +489,7 @@ namespace {
         const Empire* this_client_empire = GetEmpire(client_empire_id);
         if (this_client_empire && (system_selected || rally_dest_selected)) {
             auto empire_color = this_client_empire->Color();
-            auto rally_color = GG::DarkColor(GG::Clr(255 - empire_color.r, 255 - empire_color.g, 255 - empire_color.b, empire_color.a));
+            auto rally_color = GG::DarkenClr(GG::InvertClr(empire_color));
             auto location_color = system_selected ? empire_color : rally_color;
             m_location_text = GG::Wnd::Create<GG::TextControl>(GG::X0, GG::Y0, GG::X1, GG::Y1, "<s>" + location_text + "</s>",
                                                   ClientUI::GetBoldFont(), location_color, GG::FORMAT_TOP | GG::FORMAT_RIGHT);
@@ -508,12 +507,12 @@ namespace {
 
         GG::Clr outline_color = ClientUI::ResearchableTechFillColor();
         if (m_in_progress)
-            outline_color = GG::LightColor(outline_color);
+            outline_color = GG::LightenClr(outline_color);
 
         m_progress_bar = GG::Wnd::Create<MultiTurnProgressBar>(m_total_turns,
                                                                perc_complete,
                                                                next_progress,
-                                                               GG::LightColor(ClientUI::TechWndProgressBarBackgroundColor()),
+                                                               GG::LightenClr(ClientUI::TechWndProgressBarBackgroundColor()),
                                                                ClientUI::TechWndProgressBarColor(),
                                                                outline_color);
 
@@ -627,10 +626,10 @@ namespace {
 
     void QueueProductionItemPanel::Render() {
         GG::Clr fill = m_in_progress
-            ? GG::LightColor(ClientUI::ResearchableTechFillColor())
+            ? GG::LightenClr(ClientUI::ResearchableTechFillColor())
             : ClientUI::ResearchableTechFillColor();
         GG::Clr text_and_border = m_in_progress
-            ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor())
+            ? GG::LightenClr(ClientUI::ResearchableTechTextAndBorderColor())
             : ClientUI::ResearchableTechTextAndBorderColor();
 
         glDisable(GL_TEXTURE_2D);

@@ -3,7 +3,6 @@
 #include "../util/i18n.h"
 #include "../util/Logger.h"
 
-#include <GG/DrawUtil.h>
 #include <GG/WndEvent.h>
 
 #include <boost/cast.hpp>
@@ -24,7 +23,7 @@ void PromptRow::CompleteConstruction() {
 
     m_prompt->MoveTo(GG::Pt(GG::X(2), GG::Y(2)));
     m_prompt->Resize(GG::Pt(Width() - 10, Height()));
-    m_prompt->SetTextColor(GG::LightColor(ClientUI::TextColor()));
+    m_prompt->SetTextColor(GG::LightenClr(ClientUI::TextColor()));
     m_prompt->ClipText(true);
     Resize(GG::Pt(Width(), m_prompt->Height()));
     push_back(m_prompt);

@@ -249,10 +249,7 @@ namespace { // file-scope constants and functions
         for (int j = first_slice_idx; j <= last_slice_idx; ++j) { // calculate the color value for each needed point
             int X = (j > SLICES ? (j - SLICES) : j) * 2, Y = X + 1;
             double color_scale_factor = (SQRT2OVER2 * (unit_vertices[X] + unit_vertices[Y]) + 1) / 2; // this is essentially the dot product of (x,y) with (sqrt2over2,sqrt2over2), the direction of the light source, scaled to the range [0,1]
-            colors[j] = Clr(GLubyte(color3.r * (1 - color_scale_factor) + color2.r * color_scale_factor),
-                            GLubyte(color3.g * (1 - color_scale_factor) + color2.g * color_scale_factor),
-                            GLubyte(color3.b * (1 - color_scale_factor) + color2.b * color_scale_factor),
-                            GLubyte(color3.a * (1 - color_scale_factor) + color2.a * color_scale_factor));
+            colors[j] = BlendClr(color2, color3, color_scale_factor);
         }
 
         glPushMatrix();
@@ -266,10 +263,8 @@ namespace { // file-scope constants and functions
         double x = cos(-theta1),
             y = sin(-theta1);
         double color_scale_factor = (SQRT2OVER2 * (x + y) + 1) / 2;
-        glColor4ub(GLubyte(color3.r * (1 - color_scale_factor) + color2.r * color_scale_factor),
-                   GLubyte(color3.g * (1 - color_scale_factor) + color2.g * color_scale_factor),
-                   GLubyte(color3.b * (1 - color_scale_factor) + color2.b * color_scale_factor),
-                   GLubyte(color3.a * (1 - color_scale_factor) + color2.a * color_scale_factor));
+        Clr clr = BlendClr(color2, color3, color_scale_factor);
+        glColor4ub(clr.r, clr.g, clr.b, clr.a);
         glVertex2f(x, y);
         // angles in between theta1 and theta2, if any
         for (int i = first_slice_idx; i <= last_slice_idx; ++i) {
@@ -281,10 +276,8 @@ namespace { // file-scope constants and functions
         x = cos(-theta2);
         y = sin(-theta2);
         color_scale_factor = (SQRT2OVER2 * (x + y) + 1) / 2;
-        glColor4ub(GLubyte(color3.r * (1 - color_scale_factor) + color2.r * color_scale_factor),
-                   GLubyte(color3.g * (1 - color_scale_factor) + color2.g * color_scale_factor),
-                   GLubyte(color3.b * (1 - color_scale_factor) + color2.b * color_scale_factor),
-                   GLubyte(color3.a * (1 - color_scale_factor) + color2.a * color_scale_factor));
+        clr = BlendClr(color2, color3, color_scale_factor);
+        glColor4ub(clr.r, clr.g, clr.b, clr.a);
         glVertex2f(x, y);
         glEnd();
         glPopMatrix();
@@ -331,10 +324,7 @@ namespace { // file-scope constants and functions
         for (int j = first_slice_idx; j <= last_slice_idx; ++j) { // calculate the color value for each needed point
             int X = (j > SLICES ? (j - SLICES) : j) * 2, Y = X + 1;
             double color_scale_factor = (SQRT2OVER2 * (unit_vertices[X] + unit_vertices[Y]) + 1) / 2; // this is essentially the dot product of (x,y) with (sqrt2over2,sqrt2over2), the direction of the light source, scaled to the range [0,1]
-            colors[j] = Clr(GLubyte(border_color2.r * (1 - color_scale_factor) + border_color1.r * color_scale_factor),
-                            GLubyte(border_color2.g * (1 - color_scale_factor) + border_color1.g * color_scale_factor),
-                            GLubyte(border_color2.b * (1 - color_scale_factor) + border_color1.b * color_scale_factor),
-                            GLubyte(border_color2.a * (1 - color_scale_factor) + border_color1.a * color_scale_factor));
+            colors[j] = BlendClr(border_color1, border_color2, color_scale_factor);
         }
 
         glPushMatrix();
@@ -359,10 +349,8 @@ namespace { // file-scope constants and functions
         glBegin(GL_QUAD_STRIP);
         // point on circle at angle theta1
         double color_scale_factor = (SQRT2OVER2 * (theta1_x + theta1_y) + 1) / 2;
-        glColor4ub(GLubyte(border_color2.r * (1 - color_scale_factor) + border_color1.r * color_scale_factor),
-                   GLubyte(border_color2.g * (1 - color_scale_factor) + border_color1.g * color_scale_factor),
-                   GLubyte(border_color2.b * (1 - color_scale_factor) + border_color1.b * color_scale_factor),
-                   GLubyte(border_color2.a * (1 - color_scale_factor) + border_color1.a * color_scale_factor));
+        Clr clr = BlendClr(border_color1, border_color2, color_scale_factor);
+        glColor4ub(clr.r, clr.g, clr.b, clr.a);
         glVertex2f(theta1_x, theta1_y);
         glVertex2f(theta1_x * inner_radius, theta1_y * inner_radius);
         // angles in between theta1 and theta2, if any
@@ -374,10 +362,8 @@ namespace { // file-scope constants and functions
         }
         // theta2
         color_scale_factor = (SQRT2OVER2 * (theta2_x + theta2_y) + 1) / 2;
-        glColor4ub(GLubyte(border_color2.r * (1 - color_scale_factor) + border_color1.r * color_scale_factor),
-                   GLubyte(border_color2.g * (1 - color_scale_factor) + border_color1.g * color_scale_factor),
-                   GLubyte(border_color2.b * (1 - color_scale_factor) + border_color1.b * color_scale_factor),
-                   GLubyte(border_color2.a * (1 - color_scale_factor) + border_color1.a * color_scale_factor));
+        clr = BlendClr(border_color1, border_color2, color_scale_factor);
+        glColor4ub(clr.r, clr.g, clr.b, clr.a);
         glVertex2f(theta2_x, theta2_y);
         glVertex2f(theta2_x * inner_radius, theta2_y * inner_radius);
         glEnd();
@@ -408,7 +394,7 @@ namespace { // file-scope constants and functions
         int rad = static_cast<int>(corner_radius);
 
         double color_scale_factor = (SQRT2OVER2 * (0 + 1) + 1) / 2;
-        GG::Clr clr = border_color2 * (1 - color_scale_factor) + border_color1 * color_scale_factor;
+        Clr clr = BlendClr(border_color1, border_color2, color_scale_factor);
         // top
         vert_buf.store(lr.x - rad,      ul.y);
         vert_buf.store(ul.x + rad,      ul.y);
@@ -424,7 +410,7 @@ namespace { // file-scope constants and functions
 
 
         color_scale_factor = (SQRT2OVER2 * (-1 + 0) + 1) / 2;
-        clr = border_color2 * (1 - color_scale_factor) + border_color1 * color_scale_factor;
+        clr = BlendClr(border_color1, border_color2, color_scale_factor);
         // right
         vert_buf.store(lr.x,            ul.y + rad);
         vert_buf.store(lr.x - thick,    ul.y + rad);
@@ -485,10 +471,7 @@ namespace { // file-scope constants and functions
 
         // top
         double color_scale_factor = (SQRT2OVER2 * (0 + 1) + 1) / 2;
-        Clr scaled_color(GLubyte(color3.r * (1 - color_scale_factor) + color2.r * color_scale_factor),
-                         GLubyte(color3.g * (1 - color_scale_factor) + color2.g * color_scale_factor),
-                         GLubyte(color3.b * (1 - color_scale_factor) + color2.b * color_scale_factor),
-                         GLubyte(color3.a * (1 - color_scale_factor) + color2.a * color_scale_factor));
+        Clr scaled_color = BlendClr(color2, color3, color_scale_factor);
 
         GL2DVertexBuffer verts;
         verts.reserve(20);
@@ -516,10 +499,7 @@ namespace { // file-scope constants and functions
 
         // right
         color_scale_factor = (SQRT2OVER2 * (-1 + 0) + 1) / 2;
-        scaled_color = Clr(GLubyte(color3.r * (1 - color_scale_factor) + color2.r * color_scale_factor),
-                           GLubyte(color3.g * (1 - color_scale_factor) + color2.g * color_scale_factor),
-                           GLubyte(color3.b * (1 - color_scale_factor) + color2.b * color_scale_factor),
-                           GLubyte(color3.a * (1 - color_scale_factor) + color2.a * color_scale_factor));
+        scaled_color = BlendClr(color2, color3, color_scale_factor);
         colours.store(color1);
         colours.store(color1);
         verts.store(lr.x - rad, ul.y + rad);
@@ -575,26 +555,6 @@ namespace GG {
 
     void glColor(Clr clr)
     { glColor4ub(clr.r, clr.g, clr.b, clr.a); }
-
-    Clr LightColor(Clr clr)
-    {
-        const double scale_factor = 2.0;   // factor by which the color is lightened
-        Clr retval = clr;
-        retval.r = std::min(static_cast<int>(retval.r * scale_factor), 255);
-        retval.g = std::min(static_cast<int>(retval.g * scale_factor), 255);
-        retval.b = std::min(static_cast<int>(retval.b * scale_factor), 255);
-        return retval;
-    }
-
-    Clr DarkColor(Clr clr)
-    {
-        const double scale_factor = 2.0;   // factor by which the color is darkened
-        Clr retval = clr;
-        retval.r = static_cast<int>(retval.r / scale_factor);
-        retval.g = static_cast<int>(retval.g / scale_factor);
-        retval.b = static_cast<int>(retval.b / scale_factor);
-        return retval;
-    }
 
     Clr DisabledColor(Clr clr)
     {
@@ -807,8 +767,8 @@ namespace GG {
                           bool bevel_bottom/* = true*/)
     {
         Rectangle(ul, lr, color,
-                  (up ? LightColor(border_color) : DarkColor(border_color)),
-                  (up ? DarkColor(border_color) : LightColor(border_color)),
+                  (up ? LightenClr(border_color) : DarkenClr(border_color)),
+                  (up ? DarkenClr(border_color) : LightenClr(border_color)),
                   bevel_thick, bevel_left, bevel_top, bevel_right, bevel_bottom);
     }
 
@@ -825,8 +785,8 @@ namespace GG {
                                  unsigned int bevel_thick/* = 2*/)
     {
         RoundedRectangle(ul, lr, color,
-                         (up ? LightColor(border_color) : DarkColor(border_color)),
-                         (up ? DarkColor(border_color) : LightColor(border_color)),
+                         (up ? LightenClr(border_color) : DarkenClr(border_color)),
+                         (up ? DarkenClr(border_color) : LightenClr(border_color)),
                          corner_radius, bevel_thick);
     }
 
@@ -834,7 +794,7 @@ namespace GG {
     { Check(ul, lr, color, color, color); }
 
     void BeveledCheck(Pt ul, Pt lr, Clr color)
-    { Check(ul, lr, color, LightColor(color), DarkColor(color)); }
+    { Check(ul, lr, color, LightenClr(color), DarkenClr(color)); }
 
     void FlatX(Pt ul, Pt lr, Clr color)
     { XMark(ul, lr, color, color, color); }
@@ -842,8 +802,8 @@ namespace GG {
     void Bubble(Pt ul, Pt lr, Clr color, bool up/* = true*/)
     {
         BubbleArc(ul, lr, color,
-                  (up ? DarkColor(color) : LightColor(color)),
-                  (up ? LightColor(color) : DarkColor(color)),
+                  (up ? DarkenClr(color) : LightenClr(color)),
+                  (up ? LightenClr(color) : DarkenClr(color)),
                   0, 0);
     }
 
@@ -853,16 +813,16 @@ namespace GG {
     void BeveledCircle(Pt ul, Pt lr, Clr color, Clr border_color, bool up/* = true*/, unsigned int bevel_thick/* = 2*/)
     {
         CircleArc(ul, lr, color,
-                  (up ? DarkColor(border_color) : LightColor(border_color)),
-                  (up ? LightColor(border_color) : DarkColor(border_color)),
+                  (up ? DarkenClr(border_color) : LightenClr(border_color)),
+                  (up ? LightenClr(border_color) : DarkenClr(border_color)),
                   bevel_thick, 0, 0);
     }
 
     void BubbleRectangle(Pt ul, Pt lr, Clr color, bool up, unsigned int corner_radius/* = 5*/)
     {
         ::BubbleRectangle(ul, lr, color,
-                          (up ? LightColor(color) : DarkColor(color)),
-                          (up ? DarkColor(color) : LightColor(color)),
+                          (up ? LightenClr(color) : DarkenClr(color)),
+                          (up ? DarkenClr(color) : LightenClr(color)),
                           corner_radius);
     }
 } // namespace GG

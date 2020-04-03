@@ -70,6 +70,43 @@ struct Clr
 
 GG_API std::ostream& operator<<(std::ostream& os, const Clr& pt);
 
+//! Returns the lightened version of color clr.  LightenClr leaves the alpha
+//! channel unchanged, and multiplies the other channels by some factor.
+inline Clr LightenClr(const Clr& clr, float factor = 2.0)
+{
+    return Clr(
+        std::min(static_cast<int>(clr.r * factor), 255),
+        std::min(static_cast<int>(clr.g * factor), 255),
+        std::min(static_cast<int>(clr.b * factor), 255),
+        clr.a);
+}
+
+//! Returns the darkened version of color clr.  DarkenClr leaves the alpha
+//! channel unchanged, and divides the other channels by some factor.
+inline Clr DarkenClr(const Clr& clr, float factor = 2.0)
+{
+    return Clr(
+        static_cast<int>(clr.r / factor),
+        static_cast<int>(clr.g / factor),
+        static_cast<int>(clr.b / factor),
+        clr.a);
+}
+
+inline Clr InvertClr(const Clr& clr)
+{
+    return Clr(255 - clr.r,
+               255 - clr.g,
+               255 - clr.b,
+               clr.a);
+}
+
+inline Clr BlendClr(const Clr& src, const Clr& dst, float factor)
+{
+    return Clr(static_cast<unsigned char>(src.r * factor + dst.r * (1 - factor)),
+               static_cast<unsigned char>(src.g * factor + dst.g * (1 - factor)),
+               static_cast<unsigned char>(src.b * factor + dst.b * (1 - factor)),
+               static_cast<unsigned char>(src.a * factor + dst.a * (1 - factor)));
+}
 
 /** Named ctor that constructs a Clr from four floats that represent the color
     channels (each must be >= 0.0 and <= 1.0). */

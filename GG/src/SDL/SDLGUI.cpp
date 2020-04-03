@@ -30,8 +30,6 @@
 #include <cctype>
 #include <iostream>
 
-#include <GG/DrawUtil.h>
-
 #include <boost/format.hpp>
 
 using namespace GG;
