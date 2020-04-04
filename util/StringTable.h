@@ -173,10 +173,10 @@ private:
     void Load(std::shared_ptr<const StringTable> fallback = nullptr);
 
     //! The filename this StringTable was loaded from.
-    std::string m_filename = "";
+    std::string m_filename;
 
     //! The native language name of the StringTable translations.
-    std::string m_language = "";
+    std::string m_language;
 
     //! Mapping of translation entry keys to translated strings.
     std::map<std::string, std::string> m_strings;

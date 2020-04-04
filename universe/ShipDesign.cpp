@@ -1622,7 +1622,6 @@ namespace {
 }
 
 void PredefinedShipDesignManager::CheckPendingDesignsTypes() const {
-
     CheckPendingAndFillDesignsOrderingAndNameTables(
         m_pending_designs, m_designs, m_ship_ordering, m_name_to_ship_design, false);
 
