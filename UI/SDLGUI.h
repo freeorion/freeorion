@@ -84,8 +84,6 @@ public:
 
     bool AppHasMouseFocus() const override;
 
-    void            operator()();      ///< external interface to Run()
-
     void            SetWindowTitle(const std::string& title);
     void            SetVideoMode(GG::X width, GG::Y height, bool fullscreen, bool fake_mode_change);
     //@}

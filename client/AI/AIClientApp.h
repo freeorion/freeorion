@@ -27,7 +27,8 @@ public:
     AIClientApp& operator=(const AIClientApp&&) = delete;
 
     /** \name Mutators */ //@{
-    void                operator()();   ///< external interface to Run()
+    //! Executes main event handler
+    void                Run();
     void                ExitApp(int code = 0); ///< does basic clean-up, then calls exit(); callable from anywhere in user code via GetApp()
     void                SetPlayerName(const std::string& player_name) { m_player_name = player_name; }
     //@}
@@ -48,7 +49,6 @@ public:
     const PythonAI*     GetAI();        ///< returns pointer to AIBase implementation of AI for this client
 
 private:
-    void                Run();          ///< initializes app state, then executes main event handler/render loop (PollAndRender())
     void                ConnectToServer();
     void                StartPythonAI();
     void                HandlePythonAICrash();

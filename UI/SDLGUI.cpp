@@ -236,9 +236,6 @@ std::string SDLGUI::ClipboardText() const {
     return std::string();
 }
 
-void SDLGUI::operator()()
-{ GUI::operator()(); }
-
 void SDLGUI::ExitApp(int code)
 { throw QuitSignal(code); }
 

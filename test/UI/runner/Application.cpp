@@ -263,7 +263,7 @@ void Application::Impl::Run(std::shared_ptr<GG::Wnd> window) {
     try {
 
         m_app->Register(std::forward<std::shared_ptr<GG::Wnd>>(window));
-        (*m_app)();
+        m_app->Run();
 
     } catch (const std::invalid_argument& e) {
         std::cerr << "main() caught exception(std::invalid_arg): " << e.what() << std::endl;

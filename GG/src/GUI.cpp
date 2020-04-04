@@ -1153,9 +1153,6 @@ void GUI::SaveWndAsPNG(const Wnd* wnd, const std::string& filename) const
     m_impl->m_save_as_png_filename = filename;
 }
 
-void GUI::operator()()
-{ Run(); }
-
 void GUI::HandleGGEvent(EventType event, Key key, std::uint32_t key_code_point,
                         Flags<ModKey> mod_keys, const Pt& pos, const Pt& rel, const std::string* text)
 {

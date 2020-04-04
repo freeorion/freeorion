@@ -80,12 +80,11 @@ std::shared_ptr<T> LockAndResetIfExpired(std::weak_ptr<T>& ptr) {
 
     <p>The user is required to provide several functions.  The most vital
     functions the user is required to provide are: Enter2DMode(),
-    Exit2DMode(), DeltaT(), PollAndRender() [virtual private], and Run()
-    [virtual private].  Without these, GUI is pretty useless.  In addition,
-    HandleEvent() must be driven from PollAndRender().  The code driving
-    HandleEvent() must interact with the hardware and/or operating system, and
-    supply the appropriate EventType's, key presses, and mouse position info
-    to HandleEvent().
+    Exit2DMode(), DeltaT(), and Run()[virtual private].  Without these, GUI is
+    pretty useless.  In addition, HandleEvent() must be driven from Run().  The
+    code driving HandleEvent() must interact with the hardware and/or operating
+    system, and supply the appropriate EventType's, key presses, and mouse
+    position info to HandleEvent().
 
     <p>Keyboard accelerators may be defined, as mentioned above.  Each defined
     accelerator has its own signal which is emitted each time the accelerator
@@ -243,7 +242,9 @@ public:
     //@}
 
     /** \name Mutators */ ///@{
-    void            operator()();                 ///< external interface to Run()
+    //! Executes main event handler/render loop
+    virtual void    Run() = 0;
+
     virtual void    ExitApp(int code = 0) = 0;           ///< does basic clean-up, then calls exit(); callable from anywhere in user code via GetGUI()
 
     /** Handles all waiting system events (from SDL, DirectInput, etc.).  This
@@ -469,8 +470,6 @@ protected:
     void SetDeltaT(unsigned int delta_t);  ///< sets the time between the most recent frame and the one before it, in ms
 
     //@}
-
-    virtual void   Run() = 0;              ///< initializes GUI state, then executes main event handler/render loop (PollAndRender())
 
     /** Determine if the app has the mouse focus. */
     virtual bool AppHasMouseFocus() const { return true; };

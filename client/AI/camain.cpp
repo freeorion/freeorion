@@ -65,7 +65,7 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
 #endif
         AIClientApp g_app(args);
 
-        g_app();
+        g_app.Run();
 
 #ifndef FREEORION_CAMAIN_KEEP_STACKTRACE
     } catch (const std::invalid_argument& e) {
