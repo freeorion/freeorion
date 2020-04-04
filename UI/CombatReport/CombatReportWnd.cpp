@@ -133,13 +133,13 @@ public:
 
         } catch (const boost::bad_lexical_cast&) {
             ErrorLogger() << "CombatReport::HandleLinkClick caught lexical cast exception for link type: " << link_type << " and data: " << data;
+        } catch (const std::exception& e) {
+            ErrorLogger() << "CombatReport::HandleLinkClick caught exception: " << e.what();
         }
-
     }
 
-    void HandleLinkDoubleClick(const std::string& link_type, const std::string& data) {
-        HandleLinkClick(link_type, data);
-    }
+    void HandleLinkDoubleClick(const std::string& link_type, const std::string& data)
+    { HandleLinkClick(link_type, data); }
 
     GG::Pt GetMinSize() const
     { return m_min_size; }
