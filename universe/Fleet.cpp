@@ -827,6 +827,12 @@ void Fleet::MovementPhase() {
             }
             return ss.str();
         }();
+    } else {
+        // enforce m_next_system and m_prev_system being INVALID_OBJECT_ID when
+        // move path is empty. bug was reported where m_next_system was somehow
+        // left with a system ID in it, which was never reset, and lead to
+        // supply propagation issues
+        m_next_system = m_prev_system = INVALID_OBJECT_ID;
     }
 
     // If the move path cannot lead to the destination,
@@ -900,8 +906,10 @@ void Fleet::MovementPhase() {
 
 
     // if fleet not moving, nothing more to do.
-    if (move_path.empty())
+    if (move_path.empty()) {
+        m_next_system = m_prev_system = INVALID_OBJECT_ID;
         return;
+    }
 
 
     // move fleet in sequence to MovePathNodes it can reach this turn
