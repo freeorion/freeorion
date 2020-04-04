@@ -19,11 +19,7 @@ public:
     /** \name Structors */ //@{
     /** Creates a new meter with both initial and current value set to
         DEFAULT_VALUE. */
-    Meter();
-
-    /** Creates a new meter with the current value set to @p current_value and
-        the initial value set to DEFAULT_VALUE. */
-    explicit Meter(float current_value);
+    Meter() = default;
 
     /** Creates a new meter with the current value set to @p current_value and
         the initial value set to @p initial_value. */
