@@ -10,6 +10,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 
 - C++14 is now supported and required to compile.
 - Removed OpenGL Utility (GLU) library dependency.
+- Provide FreeDesktop.org AppStream metainfo file.
 
 
 ## [v0.4.9] - 2020-02-02
