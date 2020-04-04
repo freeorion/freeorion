@@ -29,7 +29,7 @@ namespace {
                             OrValidator<std::string>(LogLevelValidator(), DiscreteValidator<std::string>("")),  false);
         db.Add<std::string>("log-file",                     UserStringNop("OPTIONS_DB_LOG_FILE"),               "",
                             Validator<std::string>(),                                                           false);
-        // Default stringtable filename is deferred to i18n.cpp::InitStringtableFileName to determine if user specified
+        // Default stringtable filename is deferred to i18n.cpp::InitStringtableFileName
         db.Add<std::string>("resource.stringtable.path",    UserStringNop("OPTIONS_DB_STRINGTABLE_FILENAME"),   "");
         db.Add("save.format.binary.enabled",                UserStringNop("OPTIONS_DB_BINARY_SERIALIZATION"),   false);
         db.Add("save.format.xml.zlib.enabled",              UserStringNop("OPTIONS_DB_XML_ZLIB_SERIALIZATION"), true);

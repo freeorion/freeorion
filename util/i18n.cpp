@@ -11,84 +11,134 @@
 #include <mutex>
 
 namespace {
-    std::string GetDefaultStringTableFileName()
-    { return PathToString(GetResourceDir() / "stringtables" / "en.txt"); }
-
     std::map<std::string, std::shared_ptr<const StringTable>>  stringtables;
     std::recursive_mutex                                       stringtable_access_mutex;
     bool                                                       stringtable_filename_init = false;
 
-    /** Determines stringtable to use from users locale when stringtable filename is at default setting */
-    void InitStringtableFileName() {
-        // Only check on the first call
-        if (stringtable_filename_init)
-            return;
-        stringtable_filename_init = true;
+    // fallback stringtable to look up key in if entry is not found in currently configured stringtable
+    boost::filesystem::path DevDefaultEnglishStringtablePath()
+    { return GetResourceDir() / "stringtables/en.txt"; }
 
-        bool was_specified = false;
-        if (!GetOptionsDB().IsDefaultValue("resource.stringtable.path"))
-            was_specified = true;
+    // filename to use as default value for stringtable filename option.
+    // based on the system's locale. not necessarily the same as the
+    // "dev default" (english) stringtable filename for fallback lookup
+    // includes "<resource-dir>/stringtables/" directory part of path
+    boost::filesystem::path GetDefaultStringTableFileName() {
+        std::string lang;
 
-        // Set the english stingtable as the default option
-        GetOptionsDB().SetDefault("resource.stringtable.path", PathToString(GetResourceDir() / "stringtables/en.txt"));
-        if (was_specified) {
-            DebugLogger() << "Detected language: Previously specified " << GetOptionsDB().Get<std::string>("resource.stringtable.path");
-            return;
-        }
-
-        std::string lang {};
+        // early return when unable to get locale language string
         try {
             lang = std::use_facet<boost::locale::info>(GetLocale()).language();
         } catch(const std::bad_cast&) {
-            WarnLogger() << "Detected language: Bad cast, falling back to default";
-            return;
+            ErrorLogger() << "Bad locale cast when setting default language";
         }
 
         boost::algorithm::to_lower(lang);
 
-        // early return when determined language is empty or C locale
+        // handle failed locale lookup or C locale
         if (lang.empty() || lang == "c" || lang == "posix") {
-            WarnLogger() << "Detected lanuage: Not detected, falling back to default";
+            WarnLogger() << "Lanuage not detected from locale: \"" << lang << "\"; falling back to default en";
+            lang = "en";
+        } else {
+            DebugLogger() << "Detected locale language: " << lang;
+        }
+
+        boost::filesystem::path lang_filename{ lang + ".txt" };
+        boost::filesystem::path default_stringtable_path{ GetResourceDir() / "stringtables" / lang_filename };
+
+        // default to english if locale-derived filename not present
+        if (!IsExistingFile(default_stringtable_path)) {
+            WarnLogger() << "Detected language file not present: " << PathToString(default_stringtable_path) << "  Reverting to en.txt";
+            default_stringtable_path = DevDefaultEnglishStringtablePath();
+        }
+
+        if (!IsExistingFile(default_stringtable_path))
+            ErrorLogger() << "Default english stringtable file also not presennt!!: " << PathToString(default_stringtable_path);
+
+        DebugLogger() << "GetDefaultStringTableFileName returning: " << PathToString(default_stringtable_path);
+        return default_stringtable_path;
+    }
+
+    // sets the stringtable filename option default value and
+    void InitStringtableFileName() {
+        stringtable_filename_init = true;
+
+        // set option default value based on system locale
+        auto default_stringtable_path = GetDefaultStringTableFileName();
+        GetOptionsDB().SetDefault("resource.stringtable.path", PathToString(default_stringtable_path));
+
+        // get option-configured stringtable path. may be the default empty
+        // string (set by call to:   db.Add<std::string>("resource.stringtable.path" ...
+        // or this may have been overridden from one of the config XML files or from
+        // a command line argument.
+        std::string option_path = GetOptionsDB().Get<std::string>("resource.stringtable.path");
+        boost::filesystem::path stringtable_path{option_path};
+
+        // verify that option-derived stringtable file exists, with fallbacks
+        DebugLogger() << "Stringtable option path: " << option_path;
+
+        if (option_path.empty()) {
+            DebugLogger() << "Stringtable option path not specified yet, using default: " << PathToString(default_stringtable_path);
+            stringtable_path = PathToString(default_stringtable_path);
+            GetOptionsDB().Set("resource.stringtable.path", PathToString(stringtable_path));
             return;
         }
 
-        DebugLogger() << "Detected language: " << lang;
+        bool set_option = false;
 
-        boost::filesystem::path lang_filename{ lang + ".txt" };
-        boost::filesystem::path stringtable_file{ GetResourceDir() / "stringtables" / lang_filename };
+        if (!IsExistingFile(stringtable_path)) {
+            set_option = true;
+            // try interpreting path as a filename located in the stringtables directory
+            stringtable_path = GetResourceDir() / "stringtables" / option_path;
+        }
+        if (!IsExistingFile(stringtable_path)) {
+            set_option = true;
+            // try interpreting path as directory and filename in resources directory
+            stringtable_path = GetResourceDir() / option_path;
+        }
+        if (!IsExistingFile(stringtable_path)) {
+            set_option = true;
+            // fall back to default option value
+            ErrorLogger() << "Stringtable option path file is missing: " << PathToString(stringtable_path);
+            DebugLogger() << "Resetting to default: " << PathToString(default_stringtable_path);
+            stringtable_path = default_stringtable_path;
+        }
 
-        if (IsExistingFile(stringtable_file))
-            GetOptionsDB().Set("resource.stringtable.path", PathToString(stringtable_file));
-        else
-            WarnLogger() << "Stringtable file " << PathToString(stringtable_file)
-                         << " not found, falling back to default";
+        if (set_option)
+            GetOptionsDB().Set("resource.stringtable.path", PathToString(stringtable_path));
     }
 
+    // get currently set stringtable filename option value, or the default value
+    // if the currenty value is empty
     std::string GetStringTableFileName() {
         std::lock_guard<std::recursive_mutex> stringtable_lock(stringtable_access_mutex);
-        InitStringtableFileName();
+        // initialize option value and default on first call
+        if (!stringtable_filename_init)
+            InitStringtableFileName();
 
-        std::string option_filename = GetOptionsDB().Get<std::string>("resource.stringtable.path");
-        if (option_filename.empty())
-            return GetDefaultStringTableFileName();
+        std::string option_path = GetOptionsDB().Get<std::string>("resource.stringtable.path");
+        if (option_path.empty())
+            return GetOptionsDB().GetDefault<std::string>("resource.stringtable.path");
         else
-            return option_filename;
+            return option_path;
     }
 
-    const StringTable& GetStringTable(std::string stringtable_filename = "") {
+    const StringTable& GetStringTable(boost::filesystem::path stringtable_path) {
         std::lock_guard<std::recursive_mutex> stringtable_lock(stringtable_access_mutex);
 
-        // get option-configured stringtable if no filename specified
-        if (stringtable_filename.empty())
-            stringtable_filename = GetStringTableFileName();
+        if (!stringtable_filename_init)
+            InitStringtableFileName();
 
         // ensure the default stringtable is loaded first
-        auto default_stringtable_it = stringtables.find(GetDefaultStringTableFileName());
+        auto default_stringtable_filename{GetOptionsDB().GetDefault<std::string>("resource.stringtable.path")};
+        auto default_stringtable_it = stringtables.find(default_stringtable_filename);
         if (default_stringtable_it == stringtables.end()) {
-            auto table = std::make_shared<StringTable>(GetDefaultStringTableFileName());
-            stringtables[GetDefaultStringTableFileName()] = table;
-            default_stringtable_it = stringtables.find(GetDefaultStringTableFileName());
+            auto table = std::make_shared<StringTable>(default_stringtable_filename);
+            stringtables[default_stringtable_filename] = table;
+            default_stringtable_it = stringtables.find(default_stringtable_filename);
         }
+
+        auto stringtable_filename = PathToString(stringtable_path);
 
         // attempt to find requested stringtable...
         auto it = stringtables.find(stringtable_filename);
@@ -103,8 +153,11 @@ namespace {
         return *table;
     }
 
-    const StringTable& GetDefaultStringTable()
-    { return GetStringTable(GetDefaultStringTableFileName()); }
+    const StringTable& GetStringTable()
+    { return GetStringTable(GetStringTableFileName()); }
+
+    const StringTable& GetDevDefaultStringTable()
+    { return GetStringTable(DevDefaultEnglishStringtablePath()); }
 }
 
 std::locale GetLocale(const std::string& name) {
@@ -147,7 +200,7 @@ const std::string& UserString(const std::string& str) {
     std::lock_guard<std::recursive_mutex> stringtable_lock(stringtable_access_mutex);
     if (GetStringTable().StringExists(str))
         return GetStringTable()[str];
-    return GetDefaultStringTable()[str];
+    return GetDevDefaultStringTable()[str];
 }
 
 std::vector<std::string> UserStringList(const std::string& key) {
@@ -162,9 +215,7 @@ std::vector<std::string> UserStringList(const std::string& key) {
 
 bool UserStringExists(const std::string& str) {
     std::lock_guard<std::recursive_mutex> stringtable_lock(stringtable_access_mutex);
-    if (GetStringTable().StringExists(str))
-        return true;
-    return GetDefaultStringTable().StringExists(str);
+    return GetStringTable().StringExists(str) || GetDevDefaultStringTable().StringExists(str);
 }
 
 boost::format FlexibleFormat(const std::string &string_to_format) {
@@ -227,7 +278,6 @@ namespace {
         // = 4 (10000's) for 45324
         int pow10 = static_cast<int>(floor(log10(mag)));
         //std::cout << "magnitude power of 10: " << pow10 << std::endl;
-
 
         // round number to fit in requested number of digits
         // shift number by power of 10 so that ones digit is the lowest-value digit
