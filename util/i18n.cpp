@@ -59,7 +59,11 @@ namespace {
         return default_stringtable_path;
     }
 
-    // sets the stringtable filename option default value and
+    // sets the stringtable filename option default value.
+    // also checks the option-set stringtable path, and if it is blank or the
+    // specified file doesn't exist, tries to reinterpret the option value as
+    // a path in the standard location, or reverts to the default stringtable
+    // location if other attempts fail.
     void InitStringtableFileName() {
         stringtable_filename_init = true;
 
