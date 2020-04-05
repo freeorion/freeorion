@@ -37,7 +37,7 @@ EventPumpState::EventPumpState() :
 {}
 
 
-void EventPumpBase::LoopBody(GUI* gui, EventPumpState& state)
+void ModalEventPump::LoopBody(GUI* gui, EventPumpState& state)
 {
     std::chrono::high_resolution_clock::time_point time = std::chrono::high_resolution_clock::now();
 
@@ -79,21 +79,10 @@ void EventPumpBase::LoopBody(GUI* gui, EventPumpState& state)
     gui->RenderEnd();
 }
 
-EventPumpState& EventPumpBase::State()
+EventPumpState& ModalEventPump::State()
 {
     static EventPumpState state;
     return state;
-}
-
-
-void EventPump::operator()()
-{
-    GUI* gui = GUI::GetGUI();
-    EventPumpState& state = State();
-    while (1) {
-        gui->HandleSystemEvents();
-        LoopBody(gui, state);
-    }
 }
 
 

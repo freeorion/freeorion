@@ -46,7 +46,6 @@ namespace GG {
 
 class Cursor;
 class Wnd;
-class EventPumpBase;
 class ModalEventPump;
 class StyleFactory;
 class Texture;
@@ -465,7 +464,7 @@ protected:
     virtual void   Render();               ///< renders the windows in the z-list
     virtual void   RenderEnd() = 0;        ///< swaps buffers, etc.
 
-    // EventPumpBase interface
+    // ModalEventPump interface
     void SetFPS(double FPS);               ///< sets the FPS value based on the most recent calculation
     void SetDeltaT(unsigned int delta_t);  ///< sets the time between the most recent frame and the one before it, in ms
 
@@ -485,7 +484,7 @@ private:
     static GUI*                       s_gui;
     std::unique_ptr<GUIImpl>          m_impl;
 
-    friend class EventPumpBase; ///< allows EventPumpBase types to drive GUI
+    friend class ModalEventPump; ///< allows ModalEventPump types to drive GUI
     friend struct GUIImpl;
 };
 
