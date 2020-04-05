@@ -4,7 +4,6 @@
 #include "../util/Logger.h"
 #include "../util/AppInterface.h"
 #include "../Empire/EmpireManager.h"
-#include "Meter.h"
 #include "System.h"
 #include "Special.h"
 #include "Pathfinder.h"
@@ -366,8 +365,8 @@ void UniverseObject::SetSpecialCapacity(const std::string& name, float capacity)
 void UniverseObject::RemoveSpecial(const std::string& name)
 { m_specials.erase(name); }
 
-std::map<MeterType, Meter> UniverseObject::CensoredMeters(Visibility vis) const {
-    std::map<MeterType, Meter> retval;
+UniverseObject::MeterMap UniverseObject::CensoredMeters(Visibility vis) const {
+    MeterMap retval;
     if (vis >= VIS_PARTIAL_VISIBILITY) {
         retval = m_meters;
     } else if (vis == VIS_BASIC_VISIBILITY && m_meters.count(METER_STEALTH))
