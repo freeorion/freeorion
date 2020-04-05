@@ -31,6 +31,12 @@ public:
     float Initial() const;                  ///< returns the value of the meter as it was at the beginning of the turn
 
     std::string Dump(unsigned short ntabs = 0) const;   ///< returns text of meter values
+
+    bool operator==(const Meter& rhs) const
+    { return m_current_value == rhs.m_current_value && m_initial_value == rhs.m_initial_value; }
+
+    bool operator<(const Meter& rhs) const
+    { return m_current_value < rhs.m_current_value || (m_current_value == rhs.m_current_value && m_initial_value < rhs.m_initial_value); }
     //@}
 
     /** \name Mutators */ //@{
