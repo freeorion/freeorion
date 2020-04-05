@@ -37,50 +37,46 @@ EventPumpState::EventPumpState() :
 {}
 
 
-void EventPumpBase::LoopBody(GUI* gui, EventPumpState& state, bool do_non_rendering, bool do_rendering)
+void EventPumpBase::LoopBody(GUI* gui, EventPumpState& state)
 {
-    if (do_non_rendering) {
-        std::chrono::high_resolution_clock::time_point time = std::chrono::high_resolution_clock::now();
+    std::chrono::high_resolution_clock::time_point time = std::chrono::high_resolution_clock::now();
 
-        // send an idle message, so that the gui has timely updates for triggering browse info windows, etc.
-        gui->HandleGGEvent(GUI::IDLE, GGK_NONE, 0, gui->ModKeys(), gui->MousePosition(), Pt());
+    // send an idle message, so that the gui has timely updates for triggering browse info windows, etc.
+    gui->HandleGGEvent(GUI::IDLE, GGK_NONE, 0, gui->ModKeys(), gui->MousePosition(), Pt());
 
-        // govern FPS speed if needed
-        if (double max_FPS = gui->MaxFPS()) {
-            std::chrono::microseconds min_us_per_frame = std::chrono::duration_cast<std::chrono::microseconds>(
-            std::chrono::duration<double>(1.0 / (max_FPS + 1)));
-            std::chrono::microseconds us_elapsed = std::chrono::duration_cast<std::chrono::microseconds>(
-                time - state.last_frame_time);
-            std::chrono::microseconds us_to_wait = (min_us_per_frame - us_elapsed);
-            if (std::chrono::microseconds(0) < us_to_wait) {
-                gui->Wait(us_to_wait);
-                time = std::chrono::high_resolution_clock::now();
-            }
+    // govern FPS speed if needed
+    if (double max_FPS = gui->MaxFPS()) {
+        std::chrono::microseconds min_us_per_frame = std::chrono::duration_cast<std::chrono::microseconds>(
+        std::chrono::duration<double>(1.0 / (max_FPS + 1)));
+        std::chrono::microseconds us_elapsed = std::chrono::duration_cast<std::chrono::microseconds>(
+            time - state.last_frame_time);
+        std::chrono::microseconds us_to_wait = (min_us_per_frame - us_elapsed);
+        if (std::chrono::microseconds(0) < us_to_wait) {
+            gui->Wait(us_to_wait);
+            time = std::chrono::high_resolution_clock::now();
         }
-        state.last_frame_time = time;
+    }
+    state.last_frame_time = time;
 
-        // track FPS if needed
-        gui->SetDeltaT(std::chrono::duration_cast<std::chrono::microseconds>(time - state.most_recent_time).count());
-        if (gui->FPSEnabled()) {
-            ++state.frames;
-            if (std::chrono::seconds(1) < time - state.last_FPS_time) { // calculate FPS at most once a second
-                double time_since_last_FPS = std::chrono::duration_cast<std::chrono::microseconds>(
-                    time - state.last_FPS_time).count() / 1000000.0;
-                gui->SetFPS(state.frames / time_since_last_FPS);
-                state.last_FPS_time = time;
-                state.frames = 0;
-            }
+    // track FPS if needed
+    gui->SetDeltaT(std::chrono::duration_cast<std::chrono::microseconds>(time - state.most_recent_time).count());
+    if (gui->FPSEnabled()) {
+        ++state.frames;
+        if (std::chrono::seconds(1) < time - state.last_FPS_time) { // calculate FPS at most once a second
+            double time_since_last_FPS = std::chrono::duration_cast<std::chrono::microseconds>(
+                time - state.last_FPS_time).count() / 1000000.0;
+            gui->SetFPS(state.frames / time_since_last_FPS);
+            state.last_FPS_time = time;
+            state.frames = 0;
         }
-        state.most_recent_time = time;
     }
+    state.most_recent_time = time;
 
-    if (do_rendering) {
-        // do one iteration of the render loop
-        gui->PreRender();
-        gui->RenderBegin();
-        gui->Render();
-        gui->RenderEnd();
-    }
+    // do one iteration of the render loop
+    gui->PreRender();
+    gui->RenderBegin();
+    gui->Render();
+    gui->RenderEnd();
 }
 
 EventPumpState& EventPumpBase::State()
@@ -96,7 +92,7 @@ void EventPump::operator()()
     EventPumpState& state = State();
     while (1) {
         gui->HandleSystemEvents();
-        LoopBody(gui, state, true, true);
+        LoopBody(gui, state);
     }
 }
 
@@ -111,7 +107,7 @@ void ModalEventPump::operator()()
     EventPumpState& state = State();
     while (!Done()) {
         gui->HandleSystemEvents();
-        LoopBody(gui, state, true, true);
+        LoopBody(gui, state);
     }
 }
 

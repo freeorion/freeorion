@@ -70,7 +70,7 @@ protected:
         them to take place in their custom event pump.  Also, this provides a
         convenient way to turn rendering off completely in a custom event
         pump, if that is desired. */
-    void LoopBody(GUI* gui, EventPumpState& state, bool do_non_rendering, bool do_rendering);
+    void LoopBody(GUI* gui, EventPumpState& state);
 
     /** Returns the EventPumpState object shared by all event pump types. */
     static EventPumpState& State();
