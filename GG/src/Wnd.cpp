@@ -932,8 +932,7 @@ bool Wnd::Run()
         gui->RegisterModal(shared_from_this());
         ModalInit();
         m_done = false;
-        std::shared_ptr<ModalEventPump> pump = gui->CreateModalEventPump(m_done);
-        (*pump)();
+        gui->RunModal(shared_from_this(), m_done);
         gui->Remove(shared_from_this());
         retval = true;
     }

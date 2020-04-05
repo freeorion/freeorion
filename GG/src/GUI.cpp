@@ -1275,6 +1275,12 @@ void GUI::RegisterModal(std::shared_ptr<Wnd> wnd)
     }
 }
 
+void GUI::RunModal(std::shared_ptr<Wnd> wnd, bool& done)
+{
+    auto pump = std::make_unique<ModalEventPump>(done);
+    (*pump)();
+}
+
 void GUI::Remove(const std::shared_ptr<Wnd>& wnd)
 {
     if (!wnd)
@@ -1305,9 +1311,6 @@ void GUI::MoveUp(const std::shared_ptr<Wnd>& wnd)
 
 void GUI::MoveDown(const std::shared_ptr<Wnd>& wnd)
 { if (wnd) m_impl->m_zlist.MoveDown(wnd); }
-
-std::shared_ptr<ModalEventPump> GUI::CreateModalEventPump(bool& done)
-{ return std::make_shared<ModalEventPump>(done); }
 
 void GUI::RegisterDragDropWnd(std::shared_ptr<Wnd> wnd, const Pt& offset, std::shared_ptr<Wnd> originating_wnd)
 {

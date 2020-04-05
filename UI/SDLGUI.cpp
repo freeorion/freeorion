@@ -1,6 +1,5 @@
 #include "SDLGUI.h"
 
-#include <GG/EventPump.h>
 #include <GG/WndEvent.h>
 #include <GG/utf8/checked.h>
 
@@ -551,8 +550,7 @@ void SDLGUI::Run()
 {
     try {
         Initialize();
-        ModalEventPump pump(m_done);
-        pump();
+        RunModal(nullptr, m_done);
     } catch (const QuitSignal& e) {
         if (e.exit_code != 0)
             throw;
