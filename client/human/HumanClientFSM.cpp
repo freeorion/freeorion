@@ -59,7 +59,7 @@
 
     Two constructions that may cause problems are:
 
-        - MessageBox blocks execution locally and starts an EventPump that handles events that may
+        - MessageBox blocks execution locally and starts an modal loop that handles events that may
           transit<> to a new state which makes a local transition lexically after the MessageBox
           potentially fatal.
 

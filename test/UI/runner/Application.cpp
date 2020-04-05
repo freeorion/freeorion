@@ -135,8 +135,6 @@ void MinimalGGApp::Render() {
 
     glPushMatrix();
 
-    // DeltaT() returns the time in whole milliseconds since the last frame
-    // was rendered (in other words, since this method was last invoked).
     glRotated ( (Ticks() % 60000) * DEGREES_PER_MS, 0.0, 1.0, 0.0);
 
     glBegin (GL_LINES);

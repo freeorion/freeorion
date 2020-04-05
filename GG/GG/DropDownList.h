@@ -57,7 +57,7 @@ namespace GG {
 
     On selection DropDownList emits one of two signals, SelChangedSignal or
     SelChangedWhileDroppedSignal.  SelChangedWhileDroppedSignal is emitted
-    when the selection changes while running a ModalEventPump to display the
+    when the selection changes while running a modal event loop to display the
     drop down list and handle its events.
 
     SelChangedSignal will also be emitted when the drop down list closes if

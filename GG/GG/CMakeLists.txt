@@ -43,7 +43,6 @@ target_sources(GiGi
         ${CMAKE_CURRENT_LIST_DIR}/DynamicGraphic.h
         ${CMAKE_CURRENT_LIST_DIR}/Edit.h
         ${CMAKE_CURRENT_LIST_DIR}/Enum.h
-        ${CMAKE_CURRENT_LIST_DIR}/EventPump.h
         ${CMAKE_CURRENT_LIST_DIR}/Exception.h
         ${CMAKE_CURRENT_LIST_DIR}/Export.h
         ${CMAKE_CURRENT_LIST_DIR}/Flags.h

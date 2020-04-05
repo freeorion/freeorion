@@ -27,7 +27,6 @@
 #include <GG/GUI.h>
 #include <GG/BrowseInfoWnd.h>
 #include <GG/DrawUtil.h>
-#include <GG/EventPump.h>
 #include <GG/Layout.h>
 #include <GG/WndEvent.h>
 

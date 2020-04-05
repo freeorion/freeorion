@@ -28,7 +28,6 @@
 #include <GG/Config.h>
 #include <GG/Cursor.h>
 #include <GG/Edit.h>
-#include <GG/EventPump.h>
 #include <GG/Layout.h>
 #include <GG/ListBox.h>
 #include <GG/StyleFactory.h>
@@ -175,6 +174,8 @@ struct GG::GUIImpl
     std::shared_ptr<Wnd> FocusWnd() const;
     void SetFocusWnd(const std::shared_ptr<Wnd>& wnd);
 
+    void GouvernFPS();
+
     std::string  m_app_name;              // the user-defined name of the apllication
 
     ZList        m_zlist;                 // object that keeps the GUI windows in the correct depth ordering
@@ -242,11 +243,20 @@ struct GG::GUIImpl
     std::map<Key, Key>
                  m_key_map;               // substitute Key press events with different Key press events
 
-    int          m_delta_t;               // the number of ms since the last frame
     bool         m_rendering_drag_drop_wnds = false;
-    double       m_FPS;                   // the most recent calculation of the frames per second rendering speed (-1.0 if calcs are disabled)
-    bool         m_calc_FPS = false;      // true iff FPS calcs are to be done
-    double       m_max_FPS;               // the maximum allowed frames per second rendering speed
+
+    //! The most recent calculation of the frames per second rendering speed (-1.0 if calcs are disabled)
+    double       m_FPS;
+    //! true iff FPS calcs are to be done
+    bool         m_calc_FPS = false;
+    //! The maximum allowed frames per second rendering speed
+    double       m_max_FPS;
+    //! The last time an FPS calculation was done.
+    std::chrono::high_resolution_clock::time_point m_last_FPS_time;
+    //! The time of the last frame rendered.
+    std::chrono::high_resolution_clock::time_point m_last_frame_time;
+    //! The number of frames rendered since \a m_last_frame_time.
+    std::size_t  m_frames;
 
     Wnd*         m_double_click_wnd;      // GUI window most recently clicked
     unsigned int m_double_click_button;   // the index of the mouse button used in the last click
@@ -263,6 +273,7 @@ struct GG::GUIImpl
     std::string m_save_as_png_filename;
 
     std::string m_clipboard_text;
+
 };
 
 GUIImpl::GUIImpl() :
@@ -286,9 +297,10 @@ GUIImpl::GUIImpl() :
     m_prev_wnd_under_cursor_time(-1),
     m_wnd_region(WR_NONE),
     m_browse_info_mode(0),
-    m_delta_t(0),
     m_FPS(-1.0),
     m_max_FPS(0.0),
+    m_last_FPS_time(std::chrono::high_resolution_clock::now()),
+    m_last_frame_time(std::chrono::high_resolution_clock::now()),
     m_double_click_button(0),
     m_double_click_start_time(-1),
     m_double_click_time(-1),
@@ -835,12 +847,43 @@ void GUIImpl::ClearState()
     m_browse_target = nullptr;
     m_drag_drop_originating_wnd.reset();
 
-    m_delta_t = 0;
-
     m_double_click_wnd = nullptr;
     m_double_click_start_time = -1;
     m_double_click_time = -1;
 }
+
+void GUIImpl::GouvernFPS()
+{
+    using namespace std::chrono;
+
+    high_resolution_clock::time_point time = high_resolution_clock::now();
+
+    // govern FPS speed if needed
+    if (m_max_FPS) {
+        microseconds min_us_per_frame = duration_cast<microseconds>(duration<double>(1.0 / (m_max_FPS + 1)));
+        microseconds us_elapsed = duration_cast<microseconds>(time - m_last_frame_time);
+        microseconds us_to_wait = (min_us_per_frame - us_elapsed);
+        if (microseconds(0) < us_to_wait) {
+            std::this_thread::sleep_for(us_to_wait);
+            time = high_resolution_clock::now();
+        }
+    }
+
+    m_last_frame_time = time;
+
+    // track FPS if needed
+    if (m_calc_FPS) {
+        ++m_frames;
+        if (seconds(1) < time - m_last_FPS_time) { // calculate FPS at most once a second
+            double time_since_last_FPS = duration_cast<microseconds>(
+                time - m_last_FPS_time).count() / 1000000.0;
+            m_FPS = m_frames / time_since_last_FPS;
+            m_last_FPS_time = time;
+            m_frames = 0;
+        }
+    }
+}
+
 
 // static member(s)
 GUI*                       GUI::s_gui = nullptr;
@@ -967,9 +1010,6 @@ std::shared_ptr<Wnd> GUI::GetWindowUnder(const Pt& pt) const
 
     return wnd;
 }
-
-unsigned int GUI::DeltaT() const
-{ return m_impl->m_delta_t; }
 
 bool GUI::RenderingDragDropWnds() const
 { return m_impl->m_rendering_drag_drop_wnds; }
@@ -1277,8 +1317,16 @@ void GUI::RegisterModal(std::shared_ptr<Wnd> wnd)
 
 void GUI::RunModal(std::shared_ptr<Wnd> wnd, bool& done)
 {
-    auto pump = std::make_unique<ModalEventPump>(done);
-    (*pump)();
+    while (!done) {
+        HandleSystemEvents();
+        // send an idle message, so that the gui has timely updates for triggering browse info windows, etc.
+        HandleGGEvent(GUI::IDLE, GGK_NONE, 0, m_impl->m_mod_keys, m_impl->m_mouse_pos, Pt());
+        PreRender();
+        RenderBegin();
+        Render();
+        RenderEnd();
+        m_impl->GouvernFPS();
+    }
 }
 
 void GUI::Remove(const std::shared_ptr<Wnd>& wnd)
@@ -1870,12 +1918,6 @@ std::shared_ptr<Wnd> GUI::CheckedGetWindowUnder(const Pt& pt, Flags<ModKey> mod_
     //std::cout << "CheckedGetWindowUnder returning " << w << std::endl << std::flush;
     return wnd_under_pt;
 }
-
-void GUI::SetFPS(double FPS)
-{ m_impl->m_FPS = FPS; }
-
-void GUI::SetDeltaT(unsigned int delta_t)
-{ m_impl->m_delta_t = delta_t; }
 
 bool GG::MatchesOrContains(const Wnd* lwnd, const Wnd* rwnd)
 {
