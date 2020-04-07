@@ -823,7 +823,7 @@ SM_DAMPENING_CLOUD
 ダンピングクラウド
 
 SM_DAMPENING_CLOUD_DESC
-何らかの形の感覚を獲得した、高エネルギー粒子の宇宙雲。 それは人口の多いコロニーのエネルギーの特徴に反発されます。 それにも関わらず、ポテンシャルエネルギーの蓄えに強く惹かれ、システム内の船舶から[[metertype METER_FUEL]]を盗みます
+何らかの形の感覚を獲得した、高エネルギー粒子の宇宙雲。 それは人口の多い植民地のエネルギーの特徴に反発されます。 それにも関わらず、ポテンシャルエネルギーの蓄えに強く惹かれ、システム内の船舶から[[metertype METER_FUEL]]を盗みます
 
 SM_ACIREMA_GUARD
 アシリマ警備船
@@ -1719,7 +1719,7 @@ OPTIONS_DB_UI_TOOLTIP_LONG_DELAY
 代替ポップアップの UI ツールヒントポップアップ遅延時間をミリ秒単位で設定します。
 
 OPTIONS_DB_UI_ENC_SEARCH_ARTICLE
-辞典を検索する場合は、記事の内容に一致するものがないか確認してください。
+辞典を検索する場合は、記事の内容に一致するものがないか確認してください。検索は遅くなりますが、より多くを見つけられる可能性があります。
 
 # Section title for options window logging
 OPTIONS_DB_UI_LOGGER_THRESHOLDS
@@ -2685,6 +2685,9 @@ SAVE_REALLY_OVERRIDE
 OPTIONS_TITLE
 設定
 
+OPTIONS_PEDIA_SEARCH_ARTICLE_TEXT
+Pedia Article Textを検索
+
 OPTIONS_MULTIPLE_FLEET_WNDS
 複数の艦隊ウィンドウ
 
@@ -3194,6 +3197,22 @@ persistent_config.xmlが正常に作成されました (再作成されました
 OPTIONS_CREATE_PERSISTENT_CONFIG_FAILURE
 persistent_config.xmlを作成できません。
 
+OPTIONS_CREATE_ALL_CONFIG_SUCCESS
+config.xmlを正常に作成しました
+
+OPTIONS_CREATE_ALL_CONFIG_FAILURE
+config.xmlを書き込めません。詳細についてはログファイルを確認してください。
+
+OPTIONS_WRITE_ALL_CONFIG
+完全な構成ファイルを書き込む
+
+OPTIONS_CREATE_ALL_CONFIG_TOOLTIP_TITLE
+完全構成の作成（中間機能）
+
+OPTIONS_CREATE_ALL_CONFIG_TOOLTIP_DESC
+'''デフォルトから変更されていなくても、すべての設定を含む現在の設定をconfig.xmlに保存します。
+
+既存のoptions.xmlは上書きされていますが、ゲームウィンドウの再配置やオプションウィンドウ内など、別のオプションが変更された場合、（デフォルト以外のオプションのみで）再生成される可能性があります'''
 
 ##
 ## Main map window
@@ -5629,7 +5648,7 @@ METER_POPULATION_VALUE_LABEL
 人口
 
 METER_POPULATION_VALUE_DESC
-'''人口は、惑星上のコロニーのサイズを表します。その最大値は、[[encyclopedia ENC_SPECIES]]と、惑星の[[encyclopedia ENVIRONMENT_TITLE]]がその種にどの程度適しているかによって異なります。多くの[[metertype METER_INDUSTRY]]および[[metertype METER_RESEARCH]]出力ボーナスは人口サイズに影響を受けます。人口が大きいほど、ボーナスが多くなります。
+'''人口は、惑星上の植民地のサイズを表します。その最大値は、[[encyclopedia ENC_SPECIES]]と、惑星の[[encyclopedia ENVIRONMENT_TITLE]]がその種にどの程度適しているかによって異なります。多くの[[metertype METER_INDUSTRY]]および[[metertype METER_RESEARCH]]出力ボーナスは人口サイズに影響を受けます。人口が大きいほど、ボーナスが多くなります。
 
 植民地が他の惑星に植民するための入植者の募集地として機能するには、少なくとも3の人口と[[metertype METER_HAPPINESS]]が最低5であることが必要です。植民地の船には植民者の人口があり、それは船の設計の[[encyclopedia PC_COLONY]]の能力によって決まります。惑星を植民地化するとき、船に乗っている植民者の数が新しく定住した惑星の最初の人口になります。
 
@@ -5676,7 +5695,7 @@ METER_HAPPINESS_VALUE_LABEL
 幸福
 
 METER_HAPPINESS_VALUE_DESC
-'''植民地の幸福度は、最初の植民地化後または侵入後に低く始まり、他の要因によっても影響を受ける可能性があります。 コロニーが他の惑星を植民地化するための入植者の募集地として機能するには、最小幸福度5が必要です。
+'''植民地の幸福度は、最初の植民地化後または侵入後に低く始まり、他の要因によっても影響を受ける可能性があります。 植民地が他の惑星を植民地化するための入植者の募集地として機能するには、最小幸福度5が必要です。
 
 幸福は、惑星上に構築された[[encyclopedia ENC_BUILDING_TYPE]]、帝国によって研究された[[encyclopedia ENC_TECH]]、惑星にリンクされた[[encyclopedia ENC_SPECIAL]]、およびその他のさまざまなゲーム効果に関連付けられています。 これらの要因が変化すると、目標幸福度の値が変化する可能性があります。'''
 
@@ -5753,9 +5772,13 @@ METER_TROOPS_VALUE_LABEL
 軍隊
 
 METER_TROOPS_VALUE_DESC
-'''軍隊という用語は、惑星表面上で動作することができるあらゆる種類の軍隊を組み合わせたもの。
+'''軍隊という用語は、惑星の表面で活動することができるあらゆる種類の軍事力を組み合わせたものです。
 
-惑星上の部隊メーターは、防御する地上軍の力を表しています。 侵略軍は惑星を征服するために、より強力な力（つまり、より高い累積数）を送る必要があります。 船は部隊を運ぶための特別な部品で造られなければなりません、そしてそのような部隊は防御している惑星の[[metertype METER_SHIELD]]がアクティブであるなら侵入できません。'''
+惑星上の部隊メーターは、防御する地上軍の力を表しています。 侵略軍は惑星を征服するために、より強力な力（つまり、より高い累積数）を送る必要があります。
+
+船は、侵略に使用する部隊を運ぶための[[encyclopedia PC_TROOPS]]パーツで構築する必要があります。
+
+船がアクティブな[[metertype METER_SHIELD]]を持っている場合、惑星に侵入することはできません。'''
 
 METER_REBEL_TROOPS_VALUE_LABEL
 反乱軍
@@ -5833,7 +5856,7 @@ HOMEWORLDS_TITLE
 故郷
 
 HOMEWORLDS_TEXT
-ホームワールドは、ゲームの開始時に種が存在する惑星です（単一の種には複数のホームワールドがある場合があることに注意してください）。 [[tech SPY_CUSTOM_ADVISORIES]]は、その存在と数を明らかにしますが、場所は明らかにしません。 故郷であることには、[[metertype METER_TARGET_POPULATION]]、[[metertype METER_MAX_TROOPS]]、および[[metertype METER_TARGET_HAPPINESS]]がすべて増加し、[ [encyclopedia GROWTH_FOCUS_TITLE]]が有効になり（種が[[encyclopedia SELF_SUSTAINING_SPECIES_CLASS]]でない限り）、同じ種の他のコロニーの[[metertype METER_TARGET_POPULATION]]が増加します。
+ホームワールドは、ゲームの開始時に種が存在する惑星です（単一の種には複数のホームワールドがある場合があることに注意してください）。 [[tech SPY_CUSTOM_ADVISORIES]]は、その存在と数を明らかにしますが、場所は明らかにしません。 故郷であることには、[[metertype METER_TARGET_POPULATION]]、[[metertype METER_MAX_TROOPS]]、および[[metertype METER_TARGET_HAPPINESS]]がすべて増加し、[ [encyclopedia GROWTH_FOCUS_TITLE]]が有効になり（種が[[encyclopedia SELF_SUSTAINING_SPECIES_CLASS]]でない限り）、同じ種の他の植民地の[[metertype METER_TARGET_POPULATION]]が増加します。
 
 FOCUS_TITLE
 方針
@@ -6867,7 +6890,7 @@ SITREP_PLANET_OUTPOSTED_LABEL
 惑星の前哨基地
 
 SITREP_NEW_COLONY_ESTABLISHED
-%planet%上:新しい%species%コロニーが確立されました。
+%planet%上:新しい%species%植民地が確立されました。
 
 SITREP_NEW_COLONY_ESTABLISHED_LABEL
 新植民地設立
@@ -7393,7 +7416,7 @@ BEGINNER_HINT_18
 18：[[encyclopedia FOCUS_TITLE]]-惑星の解決または征服から、帝国に追加された新しい惑星の焦点設定に注意してください。 この設定は、惑星が工業生産に焦点を合わせるか、研究に焦点を合わせるか、防衛に焦点を合わせるかを制御します。 ゲームの後半では、新しい[[encyclopedia ENC_TECH]]が研究され、種によって異なるフォーカスオプションが利用可能になるため、より多くのフォーカスオプションがアンロックされる可能性があります。
 
 BEGINNER_HINT_19
-19：コロニーは、[[encyclopedia OUTPOSTS_TITLE]]にコロニービルディングを構築するか、[[predefinedshipdesign SD_COLONY_SHIP]]を使用して確立できます。 ほとんどのコロニーの建物には、少なくとも5つの[[metertype METER_HAPPINESS]]と3つの[[metertype METER_POPULATION]]を持つ惑星への[[metertype METER_SUPPLY]]接続が必要です。 [[tech PRO_EXOBOTS]]を研究しているときなど、種がロックされていない場合、コロニーの建物に関するこの要件は適用されません。
+19：植民地は、[[encyclopedia OUTPOSTS_TITLE]]に植民化ビルディングを構築するか、[[predefinedshipdesign SD_COLONY_SHIP]]を使用して確立できます。 ほとんどの植民地の建物には、少なくとも5つの[[metertype METER_HAPPINESS]]と3つの[[metertype METER_POPULATION]]を持つ惑星への[[metertype METER_SUPPLY]]接続が必要です。 [[tech PRO_EXOBOTS]]を研究しているときなど、種がロックされていない場合、植民地の建物に関するこの要件は適用されません。
 
 BEGINNER_HINT_20
 20：特定の状況レポート（このレポートなど）は、アイコンを右クリックしてオプションの1つを選択することにより、一時的に無視できます。 特定のタイプのレポートは、このウィンドウの下部にある[フィルター]メニューを使用して、より永続的にフィルターで除外できます。 これらの初心者向けゲームヒントは、フィルターリストで[[encyclopedia BEGINNER_HINTS]]としてグループ化されています。
@@ -7567,7 +7590,7 @@ SP_CHATO_DESC
 チャトマトゥ＝ゴルモシュクは実際には2つの種を一緒にしていますが、種間の関係が共生または寄生と呼ばれるべきかどうかは完全には明らかではありません。主種はチャトマトゥーで、結晶性の生命体は高さ約30センチ、幅10センチメートルです。彼らの色は水色から深い深紅色までさまざまです。彼らは太陽から、または彼らが取り付けられているゴルモシュクから例外的なケースで生きるために必要なエネルギーを得る。ゴルモシュクは、かつて地下の洞窟に住んでいた捕食動物です。彼らの体は平らで丸く、5つの昆虫のような足の上に置きます。チャトマトゥーは、脳の真上にあるゴルモシュクの体の上の平らな部分に自分自身を取り付けます。結晶の成長を通じて、彼らはゴルモシュクを完全に制御することができます。
 
 社会構造:
-チャトマトゥー社会では、年齢は不滅に近いため、最も重要な要素です。長老の問題は一度に従い、長老に逆らうことは、チャトマトウ社会で最大の犯罪です。彼らはコロニー全体に信号を遅滞なく送信するシステムを開発し、光の速度に近い速度で会話することを可能にしました。これは、すべての新しいアイデアや理論がコロニー全体で即座に処理することができるので、種の精神的能力を大幅に向上させました。ゴルモシュクはマウントとして評価され、通常の状況下でよく世話されていますが、主に動物としても見られます。
+チャトマトゥー社会では、年齢は不滅に近いため、最も重要な要素です。長老の問題は一度に従い、長老に逆らうことは、チャトマトウ社会で最大の犯罪です。彼らは植民地全体に信号を遅滞なく送信するシステムを開発し、光の速度に近い速度で会話することを可能にしました。これは、すべての新しいアイデアや理論が植民地全体で即座に処理することができるので、種の精神的能力を大幅に向上させました。ゴルモシュクはマウントとして評価され、通常の状況下でよく世話されていますが、主に動物としても見られます。
 <img src="species/chato.png"></img>'''
 
 SP_TRITH
@@ -8069,7 +8092,7 @@ SP_UGMORS_DESC
 '''Ugmorsは、岩石や鉱物を使用して、特定のタスクを実行するように設計された一時的な体を作る感傷的な酵母のレースです。
 
 社会構造:
-ララのドリフトは、種の真の中心です。これらの酵母の塊は、溶岩の海の最も熱い部分の上に座って、エネルギーを吸収します。十分なエネルギーが利用可能な場合は、過給酵母の大きなコロニーは、溶岩プールの端に大きな岩を集め、ウグモールを形成するためにそれらを一緒に結合します。ウグモールはもともと溶岩プールから別の溶岩プールに到達するように設計されましたが、それ以来非常に複雑な社会に発展しました。Lararのドリフトは、Lararドリフトに戻るのに十分な特権を持つ最新のUgmorの指令を実行する中央記憶の多くとして機能し、単独ではあまり知的ではありません。
+ララのドリフトは、種の真の中心です。これらの酵母の塊は、溶岩の海の最も熱い部分の上に座って、エネルギーを吸収します。十分なエネルギーが利用可能な場合は、過給酵母の大きな植民地は、溶岩プールの端に大きな岩を集め、ウグモールを形成するためにそれらを一緒に結合します。ウグモールはもともと溶岩プールから別の溶岩プールに到達するように設計されましたが、それ以来非常に複雑な社会に発展しました。Lararのドリフトは、Lararドリフトに戻るのに十分な特権を持つ最新のUgmorの指令を実行する中央記憶の多くとして機能し、単独ではあまり知的ではありません。
 
 ウグモールは非常に統一された形の政府を持っています。それはハイブに似ていますが、中央の女王は持ち込みではありません。これは、すべてのUgmorsが同じ人種的記憶と議題から始まるからです。何か新しいことが発見されると、それを発見したUgmorは通常、彼の発見を他の種と共有するために最も近いラールドリフトに戻ります。
 
@@ -8503,7 +8526,7 @@ TEMPORAL_ANOMALY_SPECIAL_DESC
 • [[SZ_LARGE]] (-20)
 • [[SZ_HUGE]] (-25)
 
-この惑星の時間の流れは深刻に乱れています。一見ランダムな局所的な発生は、時間のペースの増加と減少の、任意の生き物に重大な不一定を誘発する。社会的または生産的な生活はほとんど不可能です。この惑星にコロニーを確立するには、極端な適応性と予防措置が必要です。
+この惑星の時間の流れは深刻に乱れています。一見ランダムな局所的な発生は、時間のペースの増加と減少の、任意の生き物に重大な不一定を誘発する。社会的または生産的な生活はほとんど不可能です。この惑星に植民地を確立するには、極端な適応性と予防措置が必要です。
 一方、時間的異常は、通常の惑星で可能なものを超えた科学実験の大きな可能性を秘めています。'''
 
 RESONANT_MOON_SPECIAL
@@ -8539,10 +8562,10 @@ PHILOSOPHER_SPECIAL_DESC
 惑星サイズの宇宙放浪種の孤独な残骸は、彼の最後の休息が通常の惑星のようにこのシステムを周回していることを発見しました。何千年もの間生きてきた彼は、彼が見て学んだ宇宙の謎について深く考えるために旅行やリゾートする意志と能力を失いました。エキセントリックで少し認知症の彼は、彼の親族の大きさや形ではないものとのコミュニケーションを拒否し、科学者は彼らが住んでいる惑星を介して質問するしかありません。当然のことながら、哲学者の惑星を植民地化することは彼を深刻に邪魔し、彼は沈黙します。彼の表面上の建設は、生きている人から期待されるように困難です。'''
 
 ABANDONED_COLONY_SPECIAL
-放棄されたコロニー
+放棄された植民地
 
 ABANDONED_COLONY_SPECIAL_DESC
-古い放棄されたコロニー。 [[metertype METER_CONSTRUCTION]]の一部は引き続き有用です。
+古い放棄された植民地。 [[metertype METER_CONSTRUCTION]]の一部は引き続き有用です。
 
 KRAKEN_NEST_SPECIAL
 クラーケンネストの巣
@@ -8989,7 +9012,7 @@ FOCUS_PROTECTION_DESC
 シールド、防御、軍隊を増やします。
 
 FOCUS_DOMINATION
-サイキック支配
+超能力支配
 
 FOCUS_DOMINATION_DESC
 精神的に敵の船を制御します。
@@ -9004,23 +9027,23 @@ METER_TARGET_POPULATION
 
 # Meter types
 METER_TARGET_INDUSTRY
-ターゲット産業
+産業
 
 # Meter types
 METER_TARGET_RESEARCH
-ターゲットリサーチ
+研究
 
 # Meter types
 METER_TARGET_TRADE
-ターゲットトレード
+貿易
 
 # Meter types
 METER_TARGET_CONSTRUCTION
-ターゲット・インフラストラクチャ
+インフラ
 
 # Meter types
 METER_TARGET_HAPPINESS
-ターゲットの幸福
+幸福
 
 # Meter types
 METER_MAX_CAPACITY
@@ -9040,7 +9063,7 @@ METER_MAX_SHIELD
 
 # Meter types
 METER_MAX_STRUCTURE
-最大構造
+最大体力
 
 # Meter types
 METER_MAX_DEFENSE
@@ -9294,7 +9317,8 @@ PC_FIGHTER_BAY
 ローンチベイ
 
 PC_FIGHTER_BAY_DESC
-'''Launch bays are the access point for [[encyclopedia FIGHTER_TECHS]] to enter or exit a ship.
+'''ローンチベイは、[[encyclopedia FIGHTER_TECHS]]が船に出入りするためのアクセスポイントです。
+
 打ち上げられた戦闘機は、そのターンのために戦闘が終了すると戻って、打ち上げられた後、ラウンドに参加します。'''
 
 # Ship part classes
@@ -9321,7 +9345,10 @@ PC_TROOPS_DESC
 '''部隊のパーツは[[metertype METER_TROOPS]]を搭載し、敵の惑星に侵入するために使用できます。
 
 惑星への侵入を成功させるには、侵入しているすべての船からの[[metertype METER_TROOPS]]の総数が、防御側の総数を超えている必要があります（防御側に同点が与えられます）。
-侵略船は着陸作戦の一環として破壊されます(船の追加部品も同様に失われます)。'''
+
+惑星に侵入するとき、艦隊ウィンドウで選択された軍艦が侵略に使用されます。 部隊船が選択されていない場合、部隊船は利用可能な船から自動的に選択され、防御軍の数に基づきます。
+
+上陸作戦の一部として侵入している船は破壊されます。 船のすべての部品は船とともに失われます。'''
 
 # Ship part classes
 PC_DETECTION
@@ -9357,13 +9384,13 @@ PC_COLONY
 植民地化
 
 PC_COLONY_DESC
-'''コロニー部品は、新しい惑星の所有権を確立するために必要な機器を提供するために船と統合します。
+'''植民化部品は、新しい惑星の所有権を確立するために必要な機器を提供するために船と統合します。
 
 これらのパーツは、船の[[metertype METER_POPULATION]]を増やすこともあります。
-植民されたコロニー船で惑星を植民地化すると、[[encyclopedia ENC_SPECIES]]のコロニーが確立され、船に乗っていたのと同じ人口から始まります。
+植民された植民化船で惑星を植民地化すると、[[encyclopedia ENC_SPECIES]]の植民地が確立され、船に乗っていたのと同じ人口から始まります。
 
 人口のない船には、[[encyclopedia OUTPOSTS_TITLE]]を確立するのに十分な人員がいます。
-ソースが他の基準を満たしている場合、前哨基地は[[metertype METER_SUPPLY]]の範囲内の帝国の種のコロニーを構築できます。星間前哨船と植民地の現地建設の組み合わせは、人口の多い植民船を生産するよりも安価です。
+ソースが他の基準を満たしている場合、前哨基地は[[metertype METER_SUPPLY]]の範囲内の帝国の種の植民地を構築できます。星間前哨船と植民地の現地建設の組み合わせは、人口の多い植民船を生産するよりも安価です。
 
 船が惑星を植民地化すると、その過程で消費され、再び使用することはできません。船内の武器やその他の部品も同様に廃止されます。'''
 
@@ -9395,7 +9422,7 @@ PC_INDUSTRY
 工業
 
 PC_INDUSTRY_DESC
-産業部品は、船から生成される[[metertype METER_INDUSTRY]]を増やします。 出力を利用するには、船を[[OBJ_PROD_CENTER]]（コロニーなど）に[[metertype METER_SUPPLY]]に接続する必要があります。
+産業部品は、船から生成される[[metertype METER_INDUSTRY]]を増やします。 出力を利用するには、船を[[OBJ_PROD_CENTER]]（植民地など）に[[metertype METER_SUPPLY]]に接続する必要があります。
 
 # Ship part classes
 PC_RESEARCH
@@ -9485,7 +9512,7 @@ HULL_LINE_ENERGY
 船体ライン: エネルギー
 
 HULL_LINE_ENERGY_DESC
-から設計された外皮のライン、または利用する、高いエネルギー密度。
+エネルギーから作られる機体、または、高いエネルギー密度を利用する
 
 HULL_LINE_ORGANIC
 機体ライン: オーガニック
@@ -9500,43 +9527,43 @@ HULL_LINE_ROBOTIC_DESC
 人工知能と自動化に重点を置いた船体のライン。
 
 HULL_MONSTER
-モンスターボディ
+船体：モンスターボディ
 
 HULL_MONSTER_DESC
 モンスターのデザインに使用されるボディ
 
 HULL_MONSTER_GUARD
-ガーディアン・ボディズ
+船体：ガーディアン
 
 HULL_MONSTER_GUARD_DESC
 ガーディアンクラスのモンスターデザインに使用されるボディ
 
 HULL_MONSTER_JUGGERNAUT
-ジャガーノート・ボディ
+船体：ジャガーノート
 
 HULL_MONSTER_JUGGERNAUT_DESC
 ジャガーノートモンスターのデザインに使用されるボディ
 
 HULL_MONSTER_KRAKEN
-クラーケンボディ
+船体：クラーケンボディ
 
 HULL_MONSTER_KRAKEN_DESC
 クラーケンモンスターのデザインに使用されるボディ
 
 HULL_MONSTER_KRILL
-オキアミボディー
+船体：オキアミ
 
 HULL_MONSTER_KRILL_DESC
 オキアミのモンスターのデザインで使用されるボディ
 
 HULL_MONSTER_SNOWFLAKE
-スノーフレークボディ
+船体：スノーフレーク
 
 HULL_MONSTER_SNOWFLAKE_DESC
 スノーフレークモンスターのデザインに使用されるボディ
 
 HULL_MONSTER_TREE
-ツリーボディ
+船体：ツリー
 
 HULL_MONSTER_TREE_DESC
 木のモンスターのデザインに使用されるボディ
@@ -9616,19 +9643,19 @@ DESC_VAR_GALAXYAGE
 銀河時代の設定
 
 DESC_VAR_GALAXYMONSTERFREQUENCY
-銀河モンスター周波数設定
+銀河モンスター数設定
 
 DESC_VAR_GALAXYNATIVEFREQUENCY
-銀河の原住民周波数設定
+銀河の原住民数設定
 
 DESC_VAR_GALAXYSHAPE
 銀河の形状設定
 
 DESC_VAR_GALAXYSPECIALFREQUENCY
-銀河の特殊な周波数設定
+銀河の特殊惑星数設定
 
 DESC_VAR_GALAXYSTARLANEFREQUENCY
-銀河の星間航路周波数設定
+銀河の星間航路数設定
 
 DESC_VAR_NON_OBJECT_REFERENCE
 自由変数
@@ -9814,21 +9841,21 @@ DESC_COMPLEX
 複素変数
 
 DESC_VAR_JUMPSBETWEEN
-starlane jumps between systems containing objects with ids %1% and %2%
+星間航路は、ID％1％と％2％のオブジェクトを含むシステム間でジャンプします
 
 DESC_STATISTIC
-Statistic
+統計学
 
 DESC_VAR_COUNT
-the number of objects%2%
+オブジェクトの数％2％
 
 DESC_VAR_IF
-0, or 1 if there is any object%2%
+0、またはオブジェクトがある場合は1％2％
 
 # FOCS variable reference description text.
 # %1% reference type of the FOCS variable.
-DESC_VALUE_REF_MULTIPART_VARIABLE0
-%1%
+#DESC_VALUE_REF_MULTIPART_VARIABLE0
+#%1%
 
 # FOCS variable reference description text.
 # %1% reference type of the FOCS variable.
@@ -10062,23 +10089,23 @@ DESC_PLANET_SIZE_NOT
 # %1% textual description of the environments for the species.
 # %2% name of the species.
 DESC_PLANET_ENVIRONMENT
-'''それは種 %2% の %1% の惑星です'''
+'''それは種%2%の%1%の惑星です'''
 
 # %1% textual description of the environments for the species.
 # %2% name of the species.
 DESC_PLANET_ENVIRONMENT_NOT
-'''それは種 %2% の %1% の惑星ではありません'''
+'''それは種%2%の%1%の惑星ではありません'''
 
 DESC_PLANET_ENVIRONMENT_CUR_SPECIES
 現在、その
 
 # %1% textual decription of the species.
 DESC_SPECIES
-'''それは種 %1% を持っています'''
+'''それは種%1%を持っています'''
 
 # %1% textual decription of the species.
 DESC_SPECIES_NOT
-'''種 %1% を含まない'''
+'''種%1%を含まない'''
 
 # %1% name of the empire that enqueued items.
 # %2% textual description of the lower limit for the number of enqueued items.
@@ -10740,7 +10767,7 @@ SHIP_PARTS_CATEGORY_DESC
 船舶工学に関連する技術。
 
 SHIELD_PART_TECHS
-盾
+シールド
 
 SHIELD_PART_TECHS_DESC
 船舶シールド部品に関する技術。
@@ -10758,7 +10785,7 @@ FUEL_PART_TECHS_DESC
 燃料部品の出荷に関連する技術。
 
 ARMOR_PART_TECHS
-鎧
+アーマー
 
 ARMOR_PART_TECHS_DESC
 船舶装甲部品に関連する技術。
@@ -10800,10 +10827,10 @@ FIGHTER_TECHS_DESC
 艦上戦闘機に関連する技術。
 
 BOMBARD_WEAPON_TECHS
-衝突
+爆撃
 
 BOMBARD_WEAPON_TECHS_DESC
-砲撃のための船舶兵器に関連する技術。
+爆撃のための船舶兵器に関連する技術。
 
 DEFENSE_CATEGORY
 防衛
@@ -10812,10 +10839,10 @@ DEFENSE_CATEGORY_DESC
 惑星と星系の防衛に関連する技術。
 
 SPY_CATEGORY
-インテリジェンス
+情報
 
 SPY_CATEGORY_DESC
-インテリジェンスに関連する技術。
+情報に関係する技術
 
 EXTINCT_SPECIES_TECHS
 絶滅種
@@ -10838,7 +10865,7 @@ LRN_PHYS_BRAIN_DESC
 脳内の構造とその機能が決定されます。思考と記憶の電気化学的および量子的性質が暴露される。理解を得て、脳機能の変化と増強が可能になり、思考のフロンティア、その表現、そしてその代替に新しいアイデアが生まれます。
 
 LRN_ALGO_ELEGANCE
-アルゴリズムのエレガンス
+優雅なアルゴリズム
 
 LRN_ALGO_ELEGANCE_DESC
 '''研究重視のすべての惑星[[metertype METER_RESEARCH]]を人口あたり0.1ずつ増やします。
@@ -10854,7 +10881,7 @@ LRN_TRANSLING_THT_DESC
 より少ない心は、彼らが学んだ言語の限界に苦労したり、受け入れたりします。十分な心は、彼らが表現する方法を与えられている概念に制約を感じます。本当に偉大な心は言語の限界から解放され、超越的な思考を形成し、分析します。しかし、単に偉大な心は孤立し、無駄なままにされ、思考を表現する言語がなければ、どのように彼らは彼らの洞察を共有することができますか?'''
 
 LRN_PSIONICS
-サイオニクス
+超能力
 
 LRN_PSIONICS_DESC
 '''[[metertype METER_RESEARCH]]このテクノロジーのコストは、[[encyclopedia TELEPATHIC_TITLE]]種を含む帝国で大幅に削減されます。
@@ -10885,10 +10912,10 @@ LRN_XENOARCH_DESC
 古代文明が残した手がかりを高度な技術の形で解読することは、しばしば非常に困難で危険です。技術の誤った扱いや偶発的な活性化は、技術自体や考古学者が技術を抽出する原因となる可能性があります。この技術を力場内に安全に封じ込め、非局所的なフィールド操作を通じてその深さを調査することで、古代技術の謎を安全に回復し、解き放つ。'''
 
 LRN_GRAVITONICS
-グラビトニクス
+超重力学
 
 LRN_GRAVITONICS_DESC
-量子色力学の「色電荷」に類似して、重力のいくつかのタイプがあります。一般的な魅力的な力の重力と、口語「抗重力」、右重力と「左重力」を組み合わせて、時空間の表面を任意に曲げて曲げてもよい。この操作は重力の制御として認識され、構造、工芸品、調査は理論的にも不可能でした。
+量子色力学の「色電荷」に類似して、重力はいくつかのタイプがあります。一般的な魅力的な力の重力と、口語「抗重力」、右重力と「左重力」を組み合わせて、時空間の表面を任意に曲げて曲げてもよい。この操作は重力の制御として認識され、構造、工芸品、調査は理論的にも不可能でした。
 
 LRN_EVERYTHING
 万物の理論
@@ -10905,7 +10932,7 @@ LRN_FORCE_FIELD_DESC
 音のフーリエ分析と同様に、電磁気学、強力、弱力は、力母粒子の高調波量子立波重ね合わせとして表現され得る。これらの高調波を選択的に増幅することにより、力をシールド、攻撃、封入または支持するために任意に制御されてもよい。'''
 
 LRN_MIND_VOID
-マインド・オブ・ザ・ボイド
+超空洞の真髄
 
 LRN_MIND_VOID_DESC
 私たちは宇宙の中で一人ではありません。しかし、なぜ検索はそんなに制限する必要がありますか?多くの文化は、より高い意識に神話、伝説や熱烈な信念を持っています。愛情深い神であろうと悪意のある神であろうと、離れた観察者であろうと、おそらくあるレベルの宇宙そのものが生きていて、気づいて、見ていることは明らかです。
@@ -10956,7 +10983,7 @@ GRO_PLANET_ECOL
 惑星生態学
 
 GRO_PLANET_ECOL_DESC
-'''[[PE_GOOD]]と[[PE_ADEQUATE]]の惑星の最大数を+1します。 このボーナスは[[tech GRO_SYMBIOTIC_BIO]]と累積されません。
+'''[[PE_GOOD]]と[[PE_ADEQUATE]]の惑星の最大人口数を+1します。 このボーナスは[[tech GRO_SYMBIOTIC_BIO]]と累積されません。
 
 農業と医学は生存率を大幅に高め、人口と食料生産の大幅な増加を可能にする。最終的には、成長への新たな限界は、惑星の運搬能力とそれを支える生命の相互接続されたウェブに生じます。自然生態学とそのストレスとの相互作用を理解することで、星系を修正し、強化することができ、その利点は何世代にもわたって享受されます。'''
 
@@ -10964,13 +10991,13 @@ GRO_GENETIC_ENG
 遺伝子工学
 
 GRO_GENETIC_ENG_DESC
-遺伝学のパレットは、それが借りる生命の形と同じくらい多様です。遺伝子は、ゲノムに除去、コピー、再挿入して、本質的に存在しない、または可能ではない形質の組み合わせを持つトランスジェニック生物を作り出す可能性がある。同様に、遺伝子は、ベースコードを直接変更することによって、再挿入前に改変され、全く新しい遺伝子を作成することができます。しかし、研究に利用できる既存の遺伝子の小さな改変に限られる技術。
+遺伝学のパレットは、それが借りる生命の形と同じくらい多様です。遺伝子を除去、コピー、再挿入して、本質的に存在しない、または可能ではない形質の組み合わせを持つ遺伝子導入生物を作り出す可能性がある。同様に、遺伝子は、ベースコードを直接変更することによって、再挿入前に改変され、全く新しい遺伝子を作成することができます。しかし、研究に利用できる既存の遺伝子の小さな改変に限られる技術。
 
 CON_REMOTE_COL
-リモート・コロナイゼーション
+遠隔植民化
 
 CON_REMOTE_COL_DESC
-すでに確立された世界の供給範囲を超えて新しい植民地を設立することは複雑な努力です。これは、自立コロニーだけでなく、入植者の最初の偶発を構築するために必要なすべての機器を運ぶことができるコロニー船を必要とします。
+すでに確立された世界の供給範囲を超えて新しい植民地を設立することは複雑な努力です。これは、自立植民地だけでなく、入植者の最初の偶発を構築するために必要なすべての機器を運ぶことができる植民化船を必要とします。
 
 GRO_SYMBIOTIC_BIO
 共生生物学
@@ -10988,14 +11015,14 @@ GRO_LIFECYCLE_MAN
 ライフサイクル操作
 
 GRO_LIFECYCLE_MAN_DESC
-'''船の部品に加えて、この技術はまた3に植民地の建物と生産される新しい植民地の人口を増加させます。
+'''この技術は新しい植民地の初期人口を3にを増加させます。
 
-化学操作とクライオニクスを通じて、生命プロセスは永久に終了することなく停止することができます。この状態の存在は無期限に保存され、リソースを消費せず、生きていないスペースをほとんど必要としません。この技術により、入植者をより効率的に輸送することができ、新しく建てられた植民地の入植者の量と植民地船の能力が大幅に増加します。
+化学操作と冷凍を用いることで、生命は永遠に保存されます。この状態の存在は無期限に保存され、リソースを消費せず、スペースをほとんど必要としません。この技術により、入植者をより効率的に輸送することができ、新しく建てられた植民地の入植者の量と植民地船の能力が大幅に増加します。
 
 ほとんどの複雑な生物は、メタモルフォーゼによって明確に分離されるか、連続的な遅い老化によってぼやけているかにかかわらず、生涯に様々な生理学的段階を経て進行する。多くの場合、これらの段階の1つ��上が、少なくと��所定の時間において、他の段階よりも有用かつ望ましいものである。ホルモンや精神的なメカニズムを微妙に制御することにより、各段階を大幅に高速化または遅くすることが可能になり、完全に発達した機能的な個人を自然な時間枠のほんの一部で生産することができ、それらの個人が残ることを可能にする機能は無期限に、事実上不滅になります。'''
 
 GRO_ADV_ECOMAN
-高度なエコマニピュレーション
+高度な環境操作
 
 GRO_ADV_ECOMAN_DESC
 人工環境でも、気象パターンや自然の生態学的サイクルが制御不能になり、大量の被害を引き起こす可能性があります。安定化要因を導入することで、人工環境における破壊的な生態力の発生を減らし、大規模な環境改変を可能にします。
@@ -11022,7 +11049,7 @@ GRO_NANOTECH_MED_DESC
 遺伝的変化は、有害または望ましくない突然変異の影響を修復または元に戻したり、生化学的不均衡を修正したりすることができますが、主要な身体的外傷および非遺伝的先天性欠損を治療するには、実際の物理的矯正措置が必要です。ナノテクノロジーは、侵襲的な手術と関連する二次的損傷およびリスクなしに矯正を行い、治療反応時間が常に減少するため、これらのタスクを達成するために使用される可能性があります。場所と機能する準備ができています。'''
 
 GRO_XENO_HYBRIDS
-異種ハイブリダイゼーション
+ハイブリダイゼーション
 
 GRO_XENO_HYBRIDS_DESC
 '''惑星の適合性と惑星のサイズに応じて、惑星の最大人口を増加させます:
@@ -11035,7 +11062,7 @@ GRO_XENO_HYBRIDS_DESC
 生物学的星系は、どの程度よく理解されているか、またはどのように巧みに改善されたかに関係なく、その本質的な性質によって制限されます。構造と基本的な生理学は、これまでのところ、単一の惑星生物学の範囲内でのみ変更することができます。しかし、他の生物学を理解すると、異なる星系が融合し、その部分のどれよりも大きな可能性のある能力と形質を持つ全く新しいハイブリッド生物学を形成する可能性があります。'''
 
 GRO_NANO_CYBERNET
-ナノテクサイバネティクス
+ナノテク人工知能
 
 GRO_NANO_CYBERNET_DESC
 ナノテクノロジーを内部的に正しい欠陥や損傷に適用した後、次のステップは、優れた人工置換を用いて自然の生化学的星系を増強または置き換えることだ。単に失われた手足を育て直したり、損傷した臓器を修復したりするのではなく、オーグメントはいつでもニーズに合わせて新しいものを素早く成長させることができます。筋肉組織や腱からオルガネラや酵素まで、時代遅れの生物学的星系も置き換えられ、強度、耐久性、柔軟性が大幅に向上します。
@@ -11065,7 +11092,7 @@ PRO_TRANS_DESIGN_DESC
 帝国備蓄サービスは、任意の市民が使用できる商品を準備するために結果を使用しています。'''
 
 IMPERIAL_STOCKPILE_SHORT_DESC
-帝国・プロダクション・ストックを可能にする
+生産備蓄を可能にする
 
 PRO_PREDICTIVE_STOCKPILING
 予測備蓄
@@ -11095,7 +11122,7 @@ PRO_GENERIC_SUPPLIES_DESC
 これらの改善は、[[tech PRO_PREDICTIVE_STOCKPILING]]によって提供される改善と累積的です。'''
 
 PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY
-星間エンタングルメントファクトリー
+星間エンタグルメント工場
 
 PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY_DESC
 '''工場の制御室の量子もつれは、他の星系から遠隔で機械の操作を可能にします。
@@ -11107,20 +11134,20 @@ PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY_DESC
 これにより、[[building BLD_STOCKPILING_CENTER]]のロックも解除され、[[metertype METER_STOCKPILE]]が業界ごとに0.1増加します。'''
 
 PRO_VOID_PREDICTION
-ボイド予測
+超空洞予測
 
 PRO_VOID_PREDICTION_DESC
 '''古典的な予測は常に過去の統計的知識に依存していますが、空隙の混沌とした知恵を研究することは、初めての奇妙な発生の堅牢な予測につながります。
-帝国の備蓄サービスでは、ボイド予測は、必要が生じる前でも適切な商品を提供するための典型的なツールです。
+帝国の備蓄サービスでは、超空洞予測は、必要が生じる前でも適切な商品を提供するための典型的なツールです。
 
-これは帝国備蓄のアップグレード技術です。 [[metertype METER_STOCKPILE]]は、人口あたり0.2ずつ増加します。
+これは帝国備蓄向上技術です。 [[metertype METER_STOCKPILE]]は、人口あたり0.2ずつ増加します。
 これらの改善は、[[tech PRO_PREDICTIVE_STOCKPILING]]、[[tech PRO_GENERIC_SUPPLIES]]、および[[tech PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY]]によって提供される改善と累積的です。'''
 
 PRO_MICROGRAV_MAN
 微小重力産業
 
 PRO_MICROGRAV_MAN_DESC
-'''小惑星帯の前哨地またはコロニーのあるシステムで、業界に焦点を当てたすべてのコロニーで、[[metertype METER_INDUSTRY]]を+5増やします。 追加の主張された小惑星帯は追加の利益を提供しません。
+'''小惑星帯の前哨地または植民地のある星系で、産業方針のすべての植民地で、[[metertype METER_INDUSTRY]]を+5増やします。 追加の主張された小惑星帯は追加の利益を提供しません。
 
 亜惑星サイズの体からの鉱物資源抽出は課題を伴い、本格的な惑星のものとは全く異なる機会を提供します。自己液化と差別化に十分な質量を欠いている小惑星は、より重い元素へのアクセスをはるかに容易にし、重力の欠如は宇宙での使用のための抽出をはるかに効率的にすることができます。逆に、各ソース小惑星の限られたサイズは、完全に携帯自給自足の抽出施設を必要とします。また、微小重力環境の課題を克服する必要があり、多くの伝統的な方法の再設計が必要です。
 
@@ -11132,7 +11159,7 @@ PRO_ROBOTIC_PROD
 PRO_ROBOTIC_PROD_DESC
 '''すべての惑星のターゲット[[metertype METER_INDUSTRY]]を人口あたり0.1ずつ増加させます。
 
-エキソボットは、一般的に知られるようになり、形の出会いの驚異である機能です。エレクトロニクスから大規模な建設まで幅広い分野で、ほぼすべての製造作業を果たすように設計されたロボットです。容易に大量生産され、それらは産業に高い優先順位を置く植民地で最も役立つ。主に産業に焦点を当てたすべての世界は、Exobotsのチームを受け取り、工業生産を大幅に増加させます。
+エキソボットは、一般的に知られるようになり、形の出会いの驚異である機能です。電子工学から大規模な建設まで幅広い分野で、ほぼすべての製造作業を果たすように設計されたロボットです。容易に大量生産され、それらは産業に高い優先順位を置く植民地で最も役立つ。主に産業重視のすべての世界は、エキソボットのチームを受け取り、工業生産を大幅に増加させます。
 
 高レベルの初期設計および初期設備の設定には依然として積極的な監督が必要ですが、実際の生産プロセスからオペレータを排除することで多くのボトルネックが解消されます。ロボットは、より大きな経済的補償を求める永続的な要求なしに、継続的に動作します。ロボットは工場内の有害な環境条件に対する耐性がはるかに高く、オフサイトで追加の居住可能なスペースを必要としません。ロボットは割り当てられたタスクを完璧に、または少なくとも指示に従って実行します。'''
 
@@ -11140,7 +11167,7 @@ PRO_EXOBOTS
 エキソボット
 
 PRO_EXOBOTS_DESC
-[[PE_HOSTILE]]惑星の産業用に最適化された[[species SP_EXOBOT]]コロニーの構築を許可します。
+[[PE_HOSTILE]]惑星の産業用に最適化された[[species SP_EXOBOT]]植民地の構築を許可します。
 
 PRO_FUSION_GEN
 核融合発電
@@ -11248,7 +11275,7 @@ CON_CONTGRAV_ARCH
 重力建築
 
 CON_CONTGRAV_ARCH_DESC
-'''すべてのコロニーと前哨基地の[[metertype METER_SUPPLY]]行の範囲を1増やします。
+'''すべての植民地と前哨基地の[[metertype METER_SUPPLY]]行の範囲を1増やします。
 
 惑星の核に巨大な重力発生器を設置することで、惑星の重力をライトスイッチのようにオンまたはオフにすることが可能になりますが、狭い井戸に入ります。その後、地球の産業は低GとゼロGのすべての利点を得るが、欠点は見えない。逆重力井戸も作成することができ、宇宙打ち上げは実質的に何の費用もかからません。
 
@@ -11258,7 +11285,7 @@ CON_GAL_INFRA
 銀河インフラ
 
 CON_GAL_INFRA_DESC
-'''すべてのコロニーと前哨基地の[[metertype METER_SUPPLY]]行の範囲を1増やします。
+'''すべての植民地と前哨基地の[[metertype METER_SUPPLY]]行の範囲を1増やします。
 
 大きな星間距離にわたる資源の一貫した効果的な輸送には、手間のかかる計画が必要であり、宇宙モンスターの存在、敵帝国、危険な星間現象などの多くの要因によって複雑化しています。統合された銀河インフラを利用することで、高度な植民地と発展途上の植民地の間の資源の流体的な展開を達成することができ、特に物流上の問題を解決することができます。
 
@@ -11318,7 +11345,7 @@ SHP_MIL_ROBO_CONT
 軍事ロボット制御
 
 SHP_MIL_ROBO_CONT_DESC
-'''より速い船体がすでに研究されていない限り、この技術は帝国の対応する種から遠く離れたコロニー建物を建設する時間を短縮します。
+'''より速い船体がすでに研究されていない限り、この技術は帝国の対応する種から遠く離れた植民化建物を建設する時間を短縮します。
 
 ロボット制御は、鉱業や産業などのタスクに効果的に使用できます。この概念の自然な拡張は、独立して宇宙船を操作することができる軍事ロボット機器を開発することです。これにより、かさばる生命維持星系の必要性が取り除かれるため、設計の汎用性が高くなります。このような技術で生産された船体はまた、生きているエンジニアの安全と生物学的限界を考えずに危険な修理を行うことができました。'''
 
@@ -11327,6 +11354,7 @@ SHP_SPACE_FLUX_DRIVE
 
 SHP_SPACE_FLUX_DRIVE_DESC
 通常、宇宙での推進力は、推進剤またはフィールド推進力のいずれかに限定されます。 ただし、比較的小規模では、水中にいるのと同じように、オブジェクトを空間に推進することができます。つまり、オブジェクトが浸されている媒体を後方に押します。 これには、スペース自体の操作が必要です。これにより、スペースの最小単位が折りたたまれ、それらが隣接するスペースの単位に含まれていた問題が強制されます。 この推進方法は非常に効率的ですが、大規模では危険であり、寸法効果により簡単に検出できます。 ステルス技術のさらなる研究は、次元の混乱を減らすことができます。 高度な調査により、[[tech SHP_SPACE_FLUX_BUBBLE]]とは異なる船体レイアウトが可能です。
+
 SHP_SPACE_FLUX_BUBBLE
 空間フラックスバブル
 
@@ -11471,8 +11499,9 @@ SHP_KRILL_SPAWN
 
 SPY_ROOT_DECEPTION
 偽装
+
 SPY_ROOT_DECEPTION_DESC
-欺瞞の芸術は、すべての種に自然ではありませんが、真実を隠す能力は最も有用であり得ます。
+欺瞞の芸術は、すべての種に有効ではありませんが、真実を隠す能力は最も有用であり得ます。
 
 
 ##
@@ -11561,7 +11590,7 @@ CON_ORBITAL_CON
 軌道構造
 
 CON_ORBITAL_CON_DESC
-'''すべてのコロニーと前哨基地の[[metertype METER_SUPPLY]]行の範囲を1増やします。
+'''すべての植民地と前哨基地の[[metertype METER_SUPPLY]]行の範囲を1増やします。
 
 惑星には、常に固定参照方向があります: "up"。微小重力は事実上等方性である。この単一の違いは、構築できる構造の種類に多くの影響を及ぼすものであり、それらの形態のどれが各環境における空間、材料、エネルギーの最適な使用である。また、軌道上の空間の内部構成も再考する必要があります。しかし、惑星表面で使用されるスタイルとは完全に独立したパラダイムでインテリアデザインに完全に革命を起こそうとするのは魅力的ですが、これらの空間の実用化は、主に慣れ、適応された人々によって最初に行われます。それらの惑星の表面。古いスタイルから完全に中断するのではなく、段階的な移行がより効果的になる可能性があります。'''
 
@@ -11939,36 +11968,40 @@ SHP_FIGHTERS_1_DESC
 
 [[encyclopedia PC_FIGHTER_BAY]]は、各戦闘ラウンドで多数の戦闘機を起動できます。これらの戦闘機は有効なターゲットとなり、その後の戦闘ラウンドで船や他の戦闘機を攻撃できるようになりますが、どのソースからの1回の攻撃でも戦闘機は破壊されます。通常の武器によって与えられる[[encyclopedia DAMAGE_TITLE]]とは異なり、戦闘機のダメージは、軍艦（シールド内から発砲）の[[metertype METER_SHIELD]]を無視します。
 
-戦闘の終わりに、キャリアは生き残った戦闘機を集めます。移動が解決された直後に空母が[[metertype METER_SUPPLY]]にいる場合、格納庫は最大まで補充されます。'''
+戦闘の終わりに、キャリアは生き残った戦闘機を集めます。移動が解決された直後に空母が[[metertype METER_SUPPLY]]にいる場合、格納庫は最大まで補充されます。
+
+操縦特性は、[[FT_HANGAR_2]]、[[FT_HANGAR_3]]、および[[FT_HANGAR_4]]戦闘機にも同じように影響します。操縦が悪いと、戦闘機ごとに1つずつダメージが減少します。 良好な操縦は、ダメージを1増加させ、偉大な操縦を2増加させ、最終的な操縦を戦闘機1ショットあたり3増加させます。
+操縦特性は[[FT_HANGAR_1]]戦闘機には影響しません。'''
 
 SHP_FIGHTERS_2
 レーザー戦闘機
 
 SHP_FIGHTERS_2_DESC
-[[metertype METER_SUPPLY]]内のすべての空母の戦闘機をアップグレードして、レーザー兵器を入手します。 [[shippart FT_HANGAR_1]]の戦闘機からの[[encyclopedia DAMAGE_TITLE]]が1増加し、[[shipship FT_HANGAR_2]]が2増加し、[[shippart FT_HANGAR_3]]が3増加します。
+[[metertype METER_SUPPLY]]内のすべての空母の戦闘機をアップグレードして、レーザー兵器を入手します。 [[shippart FT_HANGAR_2]]の戦闘機からの[[encyclopedia DAMAGE_TITLE]]は2増加し、[[shippart FT_HANGAR_3]]は3増加し、[[shippart FT_HANGAR_4]]は6増加します。[[shippart FT_HANGAR_1]]戦闘機の容量 [[shippart FT_BAY_1]]の発売率も1増加します。
 
 SHP_FIGHTERS_3
 プラズマ戦闘機
 
 SHP_FIGHTERS_3_DESC
-[[metertype METER_SUPPLY]]内のすべての空母の戦闘機をアップグレードして、プラズマ兵器を入手します。 [[shippart FT_HANGAR_1]]の戦闘機からの[[encyclopedia DAMAGE_TITLE]]が1増加し、[[shipship FT_HANGAR_2]]が3増加し、[[shippart FT_HANGAR_3]]が4増加します。
+[[metertype METER_SUPPLY]]内のすべての空母の戦闘機をアップグレードして、プラズマ兵器を入手します。 [[shippart FT_HANGAR_2]]の戦闘機からの[[encyclopedia DAMAGE_TITLE]]は2増加し、[[shippart FT_HANGAR_3]]は3増加し、[[shippart FT_HANGAR_4]]は6増加します。[[shippart FT_HANGAR_1]]戦闘機の容量 [[shippart FT_BAY_1]]の発売率も1増加します。
 
 SHP_FIGHTERS_4
 デスレイ戦闘機
 
 SHP_FIGHTERS_4_DESC
-[[metertype METER_SUPPLY]]内のすべての空母の戦闘機をアップグレードして、死光線兵器を入手します。 [[shippart FT_HANGAR_1]]の戦闘機からの[[encyclopedia DAMAGE_TITLE]]は1増加し、[[shipship FT_HANGAR_2]]は5増加し、[[shippart FT_HANGAR_3]]は7増加します。
+[[metertype METER_SUPPLY]]内のすべての空母の戦闘機をアップグレードして、死光線兵器を入手します。 [[shippart FT_HANGAR_2]]の戦闘機からの[[encyclopedia DAMAGE_TITLE]]は2増加し、[[shippart FT_HANGAR_3]]は3増加し、[[shippart FT_HANGAR_4]]は6増加します。[[shippart FT_HANGAR_1]]戦闘機の容量 [[shippart FT_BAY_1]]の発売率も1増加します。
 
 SHP_WEAPON_1_2
 マスドライバー2
 
 SHP_WEAPON_1_2_DESC
 [[metertype METER_SUPPLY]]内（または後で入力した後）のすべての船の[[shippart SR_WEAPON_1_1]]パーツをアップグレードします。 改良された武器部分の射撃ダメージは4です。
+
 SHP_WEAPON_1_3
 マスドライバー3
 
 SHP_WEAPON_1_3_DESC
-Upgrades [[shippart SR_WEAPON_1_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 5.
+[[metertype METER_SUPPLY]]内（または後で入力した後）のすべての船の[[shippart SR_WEAPON_1_1]]パーツをアップグレードします。 改良された武器パーツのダメージは5です。
 
 SHP_WEAPON_1_4
 マスドライバー4
@@ -11986,13 +12019,13 @@ SHP_WEAPON_2_2
 レーザー2
 
 SHP_WEAPON_2_2_DESC
-[[metertype METER_SUPPLY]]内（または後で入力した後）のすべての船の[[shippart SR_WEAPON_2_1]]パーツをアップグレードします。 改良された武器パーツのショットダメージは7です。
+[[metertype METER_SUPPLY]]内（または後で入力した後）のすべての船の[[shippart SR_WEAPON_2_1]]パーツをアップグレードします。 改良された武器パーツの攻撃力は7です。
 
 SHP_WEAPON_2_3
 レーザー3
 
 SHP_WEAPON_2_3_DESC
-[[metertype METER_SUPPLY]]内（または後で入力した後）のすべての船の[[shippart SR_WEAPON_2_1]]パーツをアップグレードします。 改良された武器部分は9のショットダメージを持っています。
+[[metertype METER_SUPPLY]]内（または後で入力した後）のすべての船の[[shippart SR_WEAPON_2_1]]パーツをアップグレードします。 改良された武器部分は9の攻撃力を持っています。
 
 SHP_WEAPON_2_4
 レーザー 4
@@ -12022,7 +12055,7 @@ SHP_WEAPON_3_4
 プラズマキャノン4
 
 SHP_WEAPON_3_4_DESC
-[[metertype METER_SUPPLY]]内（または後で入力した後）のすべての船の[[shippart SR_WEAPON_3_1]]パーツをアップグレードします。 改良された武器部分は18のショットダメージを持っています。
+[[metertype METER_SUPPLY]]内（または後で入力した後）のすべての船の[[shippart SR_WEAPON_3_1]]パーツをアップグレードします。 改良された武器部分は18の攻撃力を持っています。
 
 SHP_WEAPON_4_1
 デスレイズ
@@ -12034,19 +12067,37 @@ SHP_WEAPON_4_2
 デスレイ2
 
 SHP_WEAPON_4_2_DESC
-[[metertype METER_SUPPLY]]内（または後で入力した後）のすべての船の[[shippart SR_WEAPON_4_1]]パーツをアップグレードします。 改良された武器パーツのショットダメージは20です。
+[[metertype METER_SUPPLY]]内（または後で入力した後）のすべての船の[[shippart SR_WEAPON_4_1]]パーツをアップグレードします。 改良された武器パーツの攻撃力は20です。
 
 SHP_WEAPON_4_3
 デスレイ3
 
 SHP_WEAPON_4_3_DESC
-[[metertype METER_SUPPLY]]内（または後で入力した後）のすべての船の[[shippart SR_WEAPON_4_1]]パーツをアップグレードします。 改良された武器部分は25のショットダメージを持っています。
+[[metertype METER_SUPPLY]]内（または後で入力した後）のすべての船の[[shippart SR_WEAPON_4_1]]パーツをアップグレードします。 改良された武器部分は25の攻撃力を持っています。
 
 SHP_WEAPON_4_4
 デスレイ4
 
 SHP_WEAPON_4_4_DESC
 [[metertype METER_SUPPLY]]内（または後で入力した後）のすべての船の[[shippart SR_WEAPON_4_1]]パーツをアップグレードします。 改良された武器パーツの射撃ダメージは30です。
+
+SHP_WEAPON_ARC_DISRUPTOR_1
+アークディスラプター
+
+SHP_WEAPON_ARC_DISRUPTOR_1_DESC
+[[shippart SR_ARC_DISRUPTOR]]のロックを解除します。これは、複数のターゲットへのダメージが少ない自動化された武器システムです。 基本武器のパーツにショットダメージが2あります。
+
+SHP_WEAPON_ARC_DISRUPTOR_2
+アークディスラプター2
+
+SHP_WEAPON_ARC_DISRUPTOR_2_DESC
+[[metertype METER_SUPPLY]]内（または後で入力した後）のすべての船の[[shippart SR_ARC_DISRUPTOR]]パーツをアップグレードします。 改良された武器部分の射撃ダメージは4です。
+
+SHP_WEAPON_ARC_DISRUPTOR_3
+アークディスラプター3
+
+SHP_WEAPON_ARC_DISRUPTOR_3_DESC
+[[metertype METER_SUPPLY]]内（または後で入力した後）のすべての船の[[shippart SR_ARC_DISRUPTOR]]パーツをアップグレードします。 改良された武器パーツのショットダメージは7です。
 
 SHP_ION_CANNON
 イオンキャノン
@@ -12130,7 +12181,7 @@ SPY_DETECT_1
 光学スキャナー
 
 SPY_DETECT_1_DESC
-すべてのコロニーは50の[[metertype METER_DETECTION]]でゲームを開始し、インペリアル[[encyclopedia DETECTION_TITLE]]を10にして、船のパーツ[[shippart DT_DETECTOR_1]]は船が同じレベルの検出に到達することを許可します。
+すべての植民地は50の[[metertype METER_DETECTION]]でゲームを開始し、インペリアル[[encyclopedia DETECTION_TITLE]]を10にして、船のパーツ[[shippart DT_DETECTOR_1]]は船が同じレベルの検出に到達することを許可します。
 
 SPY_DETECT_2
 アクティブレーダー
@@ -12597,7 +12648,7 @@ BLD_SHIPYARD_AST_REF
 小惑星再形成プロセッサ
 
 BLD_SHIPYARD_AST_REF_DESC
-'''This is an upgrade to the [[buildingtype BLD_SHIPYARD_AST]] and allows production of [[shiphull SH_MINIASTEROID_SWARM]]s, [[shiphull SH_SCATTERED_ASTEROID]]s, and [[shiphull SH_CRYSTALLIZED_ASTEROID]]s. In addition, this processor upgrade allows any shipyard in the empire or an ally's empire to produce ships with the [[shippart AR_ROCK_PLATE]] and [[shippart AR_CRYSTAL_PLATE]] ship parts.
+'''これは[[buildingtype BLD_SHIPYARD_AST]]へのアップグレードであり、[[shiphull SH_MINIASTEROID_SWARM]]、[[shiphull SH_SCATTERED_ASTEROID]]、および[[shiphull SH_CRYSTALLIZED_ASTEROID]]の生産を可能にします。 さらに、このプロセッサのアップグレードにより、帝国または同盟国の造船所は、[[shippart AR_ROCK_PLATE]]および[[shippart AR_CRYSTAL_PLATE]]の船の部品を使用して船を製造できます。
 
 既存の小惑星を融合、粉砕、解体、再構築して船舶部品を形成し、船体として使用する準備を行う大規模な施設。'''
 
@@ -12631,7 +12682,7 @@ BLD_SHIPYARD_ENRG_COMP
 BLD_SHIPYARD_ENRG_COMP_DESC
 '''これは[[buildingtype BLD_SHIPYARD_BASE]]へのアップグレードであり、すべてのエナジーハルの形成およびすべてのエナジーハル造船所のアップグレードに必要です。
 
-エネルギーを吸い上げるために高エネルギースターが必要な場合は、[[STAR_BLUE]]、[[STAR_WHITE]]、または[[STAR_BLACK]]スタータイプのシステムでのみ構築できます。
+エネルギーを吸い上げるために高いエネルギーをもった恒星が必要で、[[STAR_BLUE]]、[[STAR_WHITE]]、または[[STAR_BLACK]]スタータイプのシステムでのみ構築できます。
 
 高密度に圧縮されたエネルギーの大きな束に部品を作成してマウントするように設計された高度に専門化された造船所。 これは壊れやすいプロセスであり、この造船所は、[[encyclopedia DAMAGE_TITLE]]の量が少なすぎると爆発する可能性があります。'''
 
@@ -12641,7 +12692,7 @@ BLD_SHIPYARD_ENRG_SOLAR
 BLD_SHIPYARD_ENRG_SOLAR_DESC
 '''これは[[buildingtype BLD_SHIPYARD_ENRG_COMP]]へのアップグレードであり、[[shiphull SH_SOLAR]]の形成を可能にします。
 
-エネルギーを吸い上げるために非常に高いエネルギーのスターが必要な場合、[[STAR_BLACK]]スタータイプのシステムでのみ構築できます。
+エネルギーを吸い上げるために非常に高いエネルギーのスターが必要で、[[STAR_BLACK]]スタータイプのシステムでのみ構築できます。
 
 ミニチュア太陽を作成するタスクは、それ自体で巨大なタスクです。●船舶部品を安全に搭載できる車体の製作はなおさらです。'''
 
@@ -12748,7 +12799,7 @@ BLD_GATEWAY_VOID
 ボイドへのゲートウェイ
 
 BLD_GATEWAY_VOID_DESC
-'''システムをほぼ完全に閉鎖する機能は、防衛上の帝国にとって有用です。 同じターンで通過せずにこのシステムに入る船はすべて破壊され、その中のすべてのコロニーはすぐに[[encyclopedia OUTPOSTS_TITLE]]ステータスに減少します。 システム内のすべてのオブジェクトの[[metertype METER_STEALTH]]が1000増加し、検出がほぼ不可能になります。
+'''システムをほぼ完全に閉鎖する機能は、防衛上の帝国にとって有用です。 同じターンで通過せずにこのシステムに入る船はすべて破壊され、その中のすべての植民地はすぐに[[encyclopedia OUTPOSTS_TITLE]]ステータスに減少します。 システム内のすべてのオブジェクトの[[metertype METER_STEALTH]]が1000増加し、検出がほぼ不可能になります。
 
 局所領域におけるボイドマインドの破壊力を拡大することができる次元の涙。'''
 
@@ -13027,79 +13078,79 @@ BLD_COL_BANFORO_DESC
 [[BLD_COL_PART_1]] [[species SP_BANFORO]] colony. [[BLD_COL_PART_2]] Banforo colony [[BLD_COL_PART_3]].
 
 BLD_COL_CHATO
-チャトコロニー
+チャト植民地
 
 BLD_COL_CHATO_DESC
 [[BLD_COL_PART_1]] [[species SP_CHATO]] colony. [[BLD_COL_PART_2]] Chato colony [[BLD_COL_PART_3]].
 
 BLD_COL_CRAY
-クレイコロニー
+クレイ植民地
 
 BLD_COL_CRAY_DESC
 [[BLD_COL_PART_1]] [[species SP_CRAY]] colony. [[BLD_COL_PART_2]] Cray colony [[BLD_COL_PART_3]].
 
 BLD_COL_DERTHREAN
-ダースレアンコロニー
+ダースレアン植民地
 
 BLD_COL_DERTHREAN_DESC
 [[BLD_COL_PART_1]] [[species SP_DERTHREAN]] colony. [[BLD_COL_PART_2]] Derthrean colony [[BLD_COL_PART_3]].
 
 BLD_COL_EAXAW
-イークコーコロニー
+イークコー植民地
 
 BLD_COL_EAXAW_DESC
 [[BLD_COL_PART_1]] [[species SP_EAXAW]] colony. [[BLD_COL_PART_2]] Eaxaw colony [[BLD_COL_PART_3]].
 
 BLD_COL_EGASSEM
-エガセムコロニー
+エガセム植民地
 
 BLD_COL_EGASSEM_DESC
 [[BLD_COL_PART_1]] [[species SP_EGASSEM]] colony. [[BLD_COL_PART_2]] Egassem colony [[BLD_COL_PART_3]].
 
 BLD_COL_ETTY
-エッティコロニー
+エッティ植民地
 
 BLD_COL_ETTY_DESC
 [[BLD_COL_PART_1]] [[species SP_ETTY]] colony. [[BLD_COL_PART_2]] Etty colony [[BLD_COL_PART_3]].
 
 BLD_COL_FURTHEST
-ファーステストコロニー
+ファーステスト植民地
 
 BLD_COL_FURTHEST_DESC
 [[BLD_COL_PART_1]] [[species SP_FURTHEST]] colony. [[BLD_COL_PART_2]] Furthest colony [[BLD_COL_PART_3]].
 
 BLD_COL_FULVER
-Fulver Colony
+フルバー植民地
 
 BLD_COL_FULVER_DESC
-[[BLD_COL_PART_1]] [[species SP_FULVER]]コロニー。 [[BLD_COL_PART_2]]フルバーコロニー[[BLD_COL_PART_3]]
+[[BLD_COL_PART_1]] [[species SP_FULVER]]植民地。 [[BLD_COL_PART_2]]フルバー植民地[[BLD_COL_PART_3]]
 
 BLD_COL_GEORGE
-ジョージコロニー
+ジョージ植民地
 
 BLD_COL_GEORGE_DESC
 [[BLD_COL_PART_1]] [[species SP_GEORGE]] colony. [[BLD_COL_PART_2]] George colony [[BLD_COL_PART_3]].
 
 BLD_COL_GYSACHE
-ギサチェコロニー
+ギサチェ植民地
 
 BLD_COL_GYSACHE_DESC
 [[BLD_COL_PART_1]] [[species SP_GYSACHE]] colony. [[BLD_COL_PART_2]] Gysache colony [[BLD_COL_PART_3]].
 
 BLD_COL_HAPPY
-孤独なロボットコロニー
+孤独なロボット植民地
 
 BLD_COL_HAPPY_DESC
 [[BLD_COL_PART_1]] [[species SP_HAPPY]] colony. [[BLD_COL_PART_2]] Happybirthday colony [[BLD_COL_PART_3]].
 
 BLD_COL_HHHOH
-ホーコロニー
+ホー植民地
 
 BLD_COL_HHHOH_DESC
 [[BLD_COL_PART_1]] [[species SP_HHHOH]] colony. [[BLD_COL_PART_2]] Hhhoh colony [[BLD_COL_PART_3]].
 
 BLD_COL_HUMAN
-人間のコロニー
+人間の植民地
 
 BLD_COL_HUMAN_DESC
 [[BLD_COL_PART_1]] [[species SP_HUMAN]] colony. [[BLD_COL_PART_2]] Human colony [[BLD_COL_PART_3]].
@@ -13111,13 +13162,13 @@ BLD_COL_KILANDOW_DESC
 [[BLD_COL_PART_1]] [[species SP_KILANDOW]] colony. [[BLD_COL_PART_2]] Kilandow colony [[BLD_COL_PART_3]].
 
 BLD_COL_KOBUNTURA
-Kobuntura Colony
+コブントゥラ植民地
 
 BLD_COL_KOBUNTURA_DESC
 [[BLD_COL_PART_1]] [[species SP_KOBUNTURA]] colony. [[BLD_COL_PART_2]] Kobuntura colony [[BLD_COL_PART_3]].
 
 BLD_COL_LAENFA
-ラエンファコロニー
+ラエンファ植民地
 
 BLD_COL_LAENFA_DESC
 [[BLD_COL_PART_1]] [[species SP_LAENFA]] colony. [[BLD_COL_PART_2]] Laenfa colony [[BLD_COL_PART_3]].
@@ -13147,7 +13198,7 @@ BLD_COL_REPLICON_DESC
 [[BLD_COL_PART_1]] [[species SP_REPLICON]] colony. [[BLD_COL_PART_2]] Replicon colony [[BLD_COL_PART_3]].
 
 BLD_COL_SCYLIOR
-スシリオールコロニー
+スシリオール植民地
 
 BLD_COL_SCYLIOR_DESC
 [[BLD_COL_PART_1]] [[species SP_SCYLIOR]] colony. [[BLD_COL_PART_2]] Scylior colony [[BLD_COL_PART_3]].
@@ -13159,13 +13210,13 @@ BLD_COL_SETINON_DESC
 [[BLD_COL_PART_1]] [[species SP_SETINON]] colony. [[BLD_COL_PART_2]] Setinon colony [[BLD_COL_PART_3]].
 
 BLD_COL_SILEXIAN
-シレークシャンコロニー
+シレークシャン植民地
 
 BLD_COL_SILEXIAN_DESC
 [[BLD_COL_PART_1]] [[species SP_SILEXIAN]] colony. [[BLD_COL_PART_2]] Silexian colony [[BLD_COL_PART_3]].
 
 BLD_COL_SLY
-スライコロニー
+スライ植民地
 
 BLD_COL_SLY_DESC
 [[BLD_COL_PART_1]] [[species SP_SLY]] colony. [[BLD_COL_PART_2]] Sly colony [[BLD_COL_PART_3]].
@@ -13177,37 +13228,37 @@ BLD_COL_SSLITH_DESC
 [[BLD_COL_PART_1]] [[species SP_SSLITH]] colony. [[BLD_COL_PART_2]] Sslith colony [[BLD_COL_PART_3]].
 
 BLD_COL_TAEGHIRUS
-テギラスコロニー
+テギラス植民地
 
 BLD_COL_TAEGHIRUS_DESC
 [[BLD_COL_PART_1]] [[species SP_TAEGHIRUS]] colony. [[BLD_COL_PART_2]] Tae Ghirus colony [[BLD_COL_PART_3]].
 
 BLD_COL_TRITH
-トリスコロニー
+トリス植民地
 
 BLD_COL_TRITH_DESC
 [[BLD_COL_PART_1]] [[species SP_TRITH]] colony. [[BLD_COL_PART_2]] Trith colony [[BLD_COL_PART_3]].
 
 BLD_COL_UGMORS
-ウグモールコロニー
+ウグモール植民地
 
 BLD_COL_UGMORS_DESC
 [[BLD_COL_PART_1]] [[species SP_UGMORS]] colony. [[BLD_COL_PART_2]] Ugmors colony [[BLD_COL_PART_3]].
 
 BLD_COL_EXOBOT
-エキソボットコロニー
+エキソボット植民地
 
 BLD_COL_EXOBOT_DESC
-This building will construct an [[species SP_EXOBOT]] colony at an [[encyclopedia OUTPOSTS_TITLE]]. Contrary to the colony buildings of other species, an Exobot colony does not need an already existing Exobot colony within supply range, as the Exobots are constructed as part of the colony directly planetside. However, because of that they are more expensive to build, and they still need an empire owned planet within supply range.
+この建物は、[[encyclopedia OUTPOSTS_TITLE]]に[[species SP_EXOBOT]]コロニーを構築します。 他の種のコロニーの建物とは異なり、Exobotコロニーは直接惑星側にあるコロニーの一部として構築されているため、供給範囲内に既存のExobotコロニーは必要ありません。 ただし、そのため、建造コストが高く、供給範囲内の帝国所有の惑星が依然として必要です。
 
 BLD_COL_SUPER_TEST
-スーパーテスターコロニー
+スーパーテスター植民地
 
 BLD_COL_SUPER_TEST_DESC
 [[BLD_COL_PART_1]] Super Tester colony. [[BLD_COL_PART_2]] Super Tester colony [[BLD_COL_PART_3]].
 
 ##
-## Hull and ship part description templates
+## 船体and ship part description templates
 ##
 
 # %1% hull base starlane speed.
@@ -13266,7 +13317,7 @@ FT_BAY_1
 ローンチベイ
 
 FT_BAY_1_DESC
-戦闘機のための起動システム。
+戦闘機のための起動システム。[[FT_HANGAR_1_FIGHTER]]の起動が速くなりました：すべての戦闘機を1つの[[shippart FT_HANGAR_1]]で起動できます。
 
 FT_HANGAR_0
 格納庫 0
@@ -13281,37 +13332,37 @@ FT_HANGAR_1
 迎撃機格納庫
 
 FT_HANGAR_1_FIGHTER
-Interceptor
+迎撃機
 
 FT_HANGAR_1_DESC
-最小限の武装戦闘機のためのストレージシステム。
+最小限の武装戦闘機のためのストレージシステム。敵の戦闘機のみを攻撃できます。 迅速な発射：[[shippart FT_BAY_1]]はすべての戦闘機を1つの[[shippart FT_HANGAR_1]]で発射できます。
 
 FT_HANGAR_2
-ファイター格納庫
+戦闘機格納庫
 
 FT_HANGAR_2_FIGHTER
-Fighter
+戦闘機
 
 FT_HANGAR_2_DESC
-軽武装戦闘機のためのストレージシステム。
+軽武装戦闘機のためのストレージシステム。敵の船や戦闘機を攻撃できます。
 
 FT_HANGAR_3
 爆撃機格納庫
 
 FT_HANGAR_3_FIGHTER
-Bomber
+爆撃機
 
 FT_HANGAR_3_DESC
-適度に武装した戦闘機のためのストレージシステム。
+適度に武装した戦闘機のためのストレージシステム。敵船のみを攻撃できます。
 
 FT_HANGAR_4
-Heavy-Bomber Hangar
+重爆撃機格納庫
 
 FT_HANGAR_4_FIGHTER
-Heavy-Bomber
+重爆撃機
 
 FT_HANGAR_4_DESC
-重武装戦闘機のためのストレージシステム。
+重戦闘機のためのストレージシステム。敵船のみを攻撃できます。
 
 FT_HANGAR_KRILL
 オキアミの群れ
@@ -13329,7 +13380,7 @@ SR_WEAPON_0_1
 フラックキャノン
 
 SR_WEAPON_0_1_DESC
-'''フレークキャノンは、ほとんどの船に無視できるダメージを与えますが、安価で戦闘機を破壊するのに効果的です。
+'''フレークキャノンは、ほとんどの船に無視できるダメージしか与えませんが、安価で戦闘機を破壊するのに効果的です。
 
 操縦形質を持つ種によって建造された船上の各フレーク大砲は、パイロットレベル(悪いパイロットのための-1ショット)あたり1に等しいショットの追加数を持つことになります。'''
 
@@ -13337,47 +13388,58 @@ SR_WEAPON_1_1
 マスドライバー
 
 SR_WEAPON_1_1_DESC
-'''マスドライバー、基本的な武器。
+'''マスドライバー、基本的な武器。惑星と船を攻撃します。
 
-武器技術をアップグレードすると、ショットダメージが増加します。
+武器技術をアップグレードすると、攻撃力が増加します。
 
-The weapon's [[encyclopedia DAMAGE_TITLE]] is a combination of the shot damage and any active modifiers. Each mass driver on a ship built by a species with the piloting trait will do an additional 1 damage per piloting level (-1 for Bad Pilots).'''
+武器の[[encyclopedia DAMAGE_TITLE]]は、ショットダメージとアクティブな修飾子の組み合わせです。 操縦特性を持つ種によって造られた船の各マスドライバーは、操縦レベルごとに追加で1ダメージを与えます（悪いパイロットの場合は-1）'''
 
 SR_WEAPON_2_1
 レーザーウェポン
 
 SR_WEAPON_2_1_DESC
-'''レーザーは、マスドライバーよりも強力な船の武器です。
+'''レーザーは、マスドライバーよりも強力な船の武器です。船と惑星を攻撃します。
 
-武器技術をアップグレードすると、ショットダメージが増加します。
+武器技術をアップグレードすると、攻撃力が増加します。
 
-The weapon's [[encyclopedia DAMAGE_TITLE]] is a combination of the shot damage and any active modifiers. Each laser weapon on a ship built by a species with the piloting trait will do an additional 2 damage per piloting level (-2 for Bad Pilots). Laser weapon damage can also be enhanced on [[shiphull SH_ORGANIC]] ships with a [[shippart SP_SOLAR_CONCENTRATOR]].'''
+武器の[[encyclopedia DAMAGE_TITLE]]は、ショットダメージとアクティブな修飾子の組み合わせです。 操縦特性を持つ種によって造られた船の各レーザー兵器は、操縦レベルごとに2の追加ダメージを与えます（Bad Pilotsの場合は-2）。 [[shippart SP_SOLAR_CONCENTRATOR]]を装備した[[shiphull SH_ORGANIC]]船でも、レーザー兵器のダメージを強化できます。'''
 
 SR_WEAPON_3_1
 プラズマキャノン
 
 SR_WEAPON_3_1_DESC
-'''プラズマキャノン、レーザーよりも強力な船の武器。
+'''プラズマキャノン、レーザーよりも強力な船の武器。船と惑星を攻撃します。
 
-武器技術をアップグレードすると、ショットダメージが増加します。
+武器技術をアップグレードすると、攻撃力が増加します。
 
-The weapon's [[encyclopedia DAMAGE_TITLE]] is a combination of the shot damage and any active modifiers. Each plasma cannon on a ship built by a species with the piloting trait will do an additional 3 damage per piloting level (-3 for Bad Pilots).'''
-
+武器の[[encyclopedia DAMAGE_TITLE]]は、ショットダメージとアクティブな修飾子の組み合わせです。 操縦特性を持つ種によって造られた船の各プラズマキャノンは、操縦レベルごとに3の追加ダメージを与えます（バッドパイロットの場合は-3）。'''
 SR_WEAPON_4_1
 デスレイ
 
 SR_WEAPON_4_1_DESC
-'''デスレイは、プラズマキャノンよりも強力な船の武器です。
+'''デスレイは、プラズマキャノンよりも強力な船の武器です。船と惑星を攻撃します。
+
+武器技術をアップグレードすると、攻撃力が増加します。
+
+武器の[[encyclopedia DAMAGE_TITLE]]は、ショットダメージとアクティブな修飾子の組み合わせです。 操縦特性を持つ種によって造られた船の各死光線は、操縦レベルごとに追加で5ダメージを与えます（悪いパイロットの場合は-5）'''
+
+SR_ARC_DISRUPTOR
+アークディスラプター
+
+SR_ARC_DISRUPTOR_DESC
+'''アークディスラプター、長期アップグレードの優れた研究オプションを持つマルチショットの船の武器。
+
+充電されたポーラロンコンデンサーは、分子破壊フラックス波を生成します。このフラックス波は、分散する前に複数の船に衝突する空間をアークします。 破壊フラックスは、船のシールドの周りで大幅に偏向できます。
 
 武器技術をアップグレードすると、ショットダメージが増加します。
 
-The weapon's [[encyclopedia DAMAGE_TITLE]] is a combination of the shot damage and any active modifiers. Each death ray on a ship built by a species with the piloting trait will do an additional 5 damage per piloting level (-5 for Bad Pilots).'''
+武器の[[encyclopedia DAMAGE_TITLE]]は、ショットダメージとアクティブな修飾子の組み合わせです。 操縦特性はダメージに影響しません」
 
 SR_SPINAL_ANTIMATTER
 脊髄反物質キャノン
 
 SR_SPINAL_ANTIMATTER_DESC
-反物質で作られた重い発射物を発射する巨大な脊柱の大量の運転手。
+反物質で作られた重い発射物を発射する巨大な脊柱の大量の運転手。船と惑星を攻撃します。
 
 SR_JAWS
 顎
@@ -13389,7 +13451,7 @@ SR_SPINES
 棘
 
 SR_SPINES_DESC
-宇宙モンスターの棘、宇宙モンスターの強力なストライキは、船に大きなダメージを与えることができます。
+宇宙モンスターの棘、宇宙モンスターの強力なトゲは、船に大きなダメージを与えることができます。
 
 SR_TENTACLE
 触手
@@ -13455,13 +13517,13 @@ FI_BIOINTERCEPTOR
 有機迎撃機
 
 FI_BIOINTERCEPTOR_DESC
-Thirty-six living interceptors designed to destroy missiles and enemy fighters. Far more effective than regular interceptors. [[BLD_SHIPYARD_ORG_XENO_FAC_ORG_CELL_GRO_CHAMB_REQUIRED_ANY_SYSTEM]]
+ミサイルと敵の戦闘機を破壊するために設計された36個の生きている迎撃装置。 通常のインターセプターよりもはるかに効果的です。 [[BLD_SHIPYARD_ORG_XENO_FAC_ORG_CELL_GRO_CHAMB_REQUIRED_ANY_SYSTEM]]
 
 FI_BIOBOMBER
 有機爆撃機
 
 FI_BIOBOMBER_DESC
-Eighteen living bombers designed to target ships and planets. Far more effective than regular bombers. [[BLD_BIONEURAL_REQUIRED_ANY_SYSTEM]]
+船や惑星をターゲットに設計された18機の爆撃機。 通常の爆撃機よりもはるかに効果的です。 [[BLD_BIONEURAL_REQUIRED_ANY_SYSTEM]]
 
 LR_NUCLEAR_MISSILE
 核ミサイル
@@ -13491,40 +13553,40 @@ LR_ANTIMATTER_TORPEDO
 反物質魚雷
 
 LR_ANTIMATTER_TORPEDO_DESC
-A fast, long-range missile powered by the [[tech SHP_SPACE_FLUX_DRIVE]] and armed with a powerful anti-matter warhead. [[BLD_SHIPYARD_CON_ADV_ENGINE_REQUIRED_ANY_SYSTEM]]
+[[tech SHP_SPACE_FLUX_DRIVE]]を搭載し、強力な対物質弾頭を装備した高速で長距離のミサイル。 [[BLD_SHIPYARD_CON_ADV_ENGINE_REQUIRED_ANY_SYSTEM]]
 
 LR_PLASMA_TORPEDO
 プラズマ魚雷
 
 LR_PLASMA_TORPEDO_DESC
-A fast, long-range missile with excellent [[metertype METER_STEALTH]], powered by the [[tech SHP_TRANSSPACE_DRIVE]] and armed with a devastatingly powerful plasma warhead. [[BLD_SHIPYARD_CON_ADV_ENGINE_REQUIRED_ANY_SYSTEM]]
+[[tech SHP_TRANSSPACE_DRIVE]]を搭載し、破壊的に強力なプラズマ弾頭を装備した、優れた[[metertype METER_STEALTH]]を備えた高速長距離ミサイル。 [[BLD_SHIPYARD_CON_ADV_ENGINE_REQUIRED_ANY_SYSTEM]]
 
 DT_DETECTOR_1
 光学スキャナー
 
 DT_DETECTOR_1_DESC
-短距離検出。
+短距離の検出。
 
 DT_DETECTOR_2
 アクティブレーダー
 
 DT_DETECTOR_2_DESC
-中距離検出。
+中距離の検出。
 
 DT_DETECTOR_3
 中性子スキャナ
 
 DT_DETECTOR_3_DESC
-長距離検出。
+長距離の検出。
 
 DT_DETECTOR_4
 センサー
 
 DT_DETECTOR_4_DESC
-非常に長距離検出。
+非常に長距離の検出。
 
 FU_ENGINE_PART_LIMIT
-1隻のエンジン部分は1台のみ搭載可能。
+1隻にエンジン部分は1台のみ搭載可能。
 
 FU_IMPROVED_ENGINE_COUPLINGS
 改良されたエンジンカップリング
@@ -13532,7 +13594,7 @@ FU_IMPROVED_ENGINE_COUPLINGS
 FU_IMPROVED_ENGINE_COUPLINGS_DESC
 '''より良いエンジン部品は、より良いエンジンに相当します。
 
-- Increases [[metertype METER_SPEED]] by 20.
+- [[metertype METER_SPEED]]を20増やす。
 - [[FU_ENGINE_PART_LIMIT]]'''
 
 FU_N_DIMENSIONAL_ENGINE_MATRIX
@@ -13541,16 +13603,16 @@ N次元エンジンマトリックス
 FU_N_DIMENSIONAL_ENGINE_MATRIX_DESC
 '''N次元部分空間研究は、より効率的なエンジンマトリックスをもたらした。
 
-- Increases [[metertype METER_SPEED]] by 40.
+- [[metertype METER_SPEED]]を40増やす。
 - [[FU_ENGINE_PART_LIMIT]]'''
 
 FU_SINGULARITY_ENGINE_CORE
 シンギュラリティエンジンコア
 
 FU_SINGULARITY_ENGINE_CORE_DESC
-'''A smaller cousin of the [[buildingtype BLD_HYPER_DAM]] outfitted for ships, the Singularity Engine Core drastically boosts power generation.
+'''船に装備された[[buildingtype BLD_HYPER_DAM]]の小さないとこであるシンギュラリティエンジンコアは、発電を大幅に向上させます。
 
-- Increases [[metertype METER_SPEED]] by 80.
+- [[metertype METER_SPEED]]を80増やす。
 - [[FU_ENGINE_PART_LIMIT]]'''
 
 FU_TRANSPATIAL_DRIVE
@@ -13559,114 +13621,114 @@ FU_TRANSPATIAL_DRIVE
 FU_TRANSPATIAL_DRIVE_DESC
 '''時空そのものを曲げる信じられないほど強力なドライブ。
 
-- Increases [[metertype METER_SPEED]] by 60
-- Increases [[metertype METER_STEALTH]] by 40
+- [[metertype METER_SPEED]]を80増やす。
+- [[metertype METER_STEALTH]]を40増やす
 - ステルスブーストは、他の部分のボーナスと積み重ねません。
 - [[FU_ENGINE_PART_LIMIT]]'''
 
 FU_BASIC_TANK
-Extra Fuel Tank
+追加の燃料タンク
 
 FU_BASIC_TANK_DESC
-Increases [[metertype METER_FUEL]] capacity, allowing additional jumps depending on [[encyclopedia FUEL_EFFICIENCY_TITLE]]. Later technologies further increase the number of additional jumps per tank.
+[[metertype METER_FUEL]]の容量を増やし、[[encyclopedia FUEL_EFFICIENCY_TITLE]]に応じてジャンプを追加できるようにします。 後の技術は、タンクごとの追加のジャンプの数をさらに増やします。
 
 FU_ZERO_FUEL
 ゼロ点燃料発生器
 
 FU_ZERO_FUEL_DESC
-Generates energy using Zero-Point generation and converts it into [[metertype METER_FUEL]] using matter-energy conversion techniques.
+ゼロポイント生成を使用してエネルギーを生成し、物質エネルギー変換技術を使用してそれを[[metertype METER_FUEL]]に変換します。
 
 FU_RAMSCOOP
 ラムスクープ
 
 FU_RAMSCOOP_DESC
-Slowly generates [[metertype METER_FUEL]] while in systems by collecting hydrogen from the diffuse gas in space.
+空間内の拡散ガスから水素を収集することにより、システム内でゆっくりと[[metertype METER_FUEL]]を生成します。
 
 ST_CLOAK_1
-電磁ダンパー
+電磁潜伏
 
 ST_CLOAK_1_DESC
-'''弱いクローキング (+20)
+'''弱い不可視性 (+20)
 
-Improves [[metertype METER_STEALTH]] of ship on which it is mounted by damping electromagnetic emissions from ship systems. Can only compensate for small amount of emissions, and will be overpowered by large-emission producing parts, if present. [[NO_STACK_STEALTH_SHIP_PARTS]]'''
+船舶システムからの電磁放射を減衰させることにより、搭載されている船舶の[[metertype METER_STEALTH]]を改善します。 少量の排出量のみを補償でき、存在する場合、大量の排出物を生成する部品によって圧倒されます。 [[NO_STACK_STEALTH_SHIP_PARTS]]'''
 
 ST_CLOAK_2
-吸収分野
+吸収潜伏
 
 ST_CLOAK_2_DESC
-'''モデレートクローキング (+40)
+'''まあまあな不可視性 (+40)
 
-Improves [[metertype METER_STEALTH]] of ship on which it is mounted by creating an absorption field around the ship, effectively transforming it into a perfect blackbody. [[NO_STACK_STEALTH_SHIP_PARTS]]'''
+船の周りに吸収フィールドを作成し、それを完全な黒体に効果的に変換することにより、それが取り付けられている船の[[metertype METER_STEALTH]]を改善します。 [[NO_STACK_STEALTH_SHIP_PARTS]]'''
 
 ST_CLOAK_3
-次元のクローク
+次元潜伏
 
 ST_CLOAK_3_DESC
-'''強いクローキング (+60)
+'''強い不可視性 (+60)
 
-Hides this ship within a dimensional rift, greatly increasing [[metertype METER_STEALTH]]. [[NO_STACK_STEALTH_SHIP_PARTS]]'''
+次元の裂け目にこの船を隠し、[[metertype METER_STEALTH]]を大幅に増やします。 [[NO_STACK_STEALTH_SHIP_PARTS]]'''
 
 ST_CLOAK_4
-フェッシング・クローク
+変調潜伏
 
 ST_CLOAK_4_DESC
-'''非常に強いクローキング (+80)
+'''非常に強い不可視性 (+80)
 
-Improves [[metertype METER_STEALTH]] of ship on which it is mounted by modulating the frequency of any matter waves emitted from the ship to match that of the background radiation. [[NO_STACK_STEALTH_SHIP_PARTS]]'''
+船から放出される物質波の周波数を変調して背景放射の周波数と一致させることにより、船が搭載されている[[metertype METER_STEALTH]]を改善します。 [[NO_STACK_STEALTH_SHIP_PARTS]]'''
 
 AR_STD_PLATE
 標準装甲めっき
 
 AR_STD_PLATE_DESC
-Increases ship's hull [[metertype METER_STRUCTURE]]. Basic armor plating providing only moderate enhancement to a ship's hull durability.
+船体[[metertype METER_STRUCTURE]]を増やします。 船体の耐久性を適度に向上させる基本的な装甲板。
 
 AR_ZORTRIUM_PLATE
 ゾートリウムアーマーめっき
 
 AR_ZORTRIUM_PLATE_DESC
-Increases ship's hull [[metertype METER_STRUCTURE]]. Stronger defense than [[shippart AR_STD_PLATE]].
+船体[[metertype METER_STRUCTURE]]を増やします。 船体の耐久性を適度に向上させる基本的な装甲板。
 
 AR_DIAMOND_PLATE
 ダイヤモンドアーマーめっき
 
 AR_DIAMOND_PLATE_DESC
-Increases ship's hull [[metertype METER_STRUCTURE]]. Stronger defense than [[shippart AR_ZORTRIUM_PLATE]].
+船体[[metertype METER_STRUCTURE]]を増やします。 [[shippart AR_ZORTRIUM_PLATE]]よりも強力な防御力。
 
 AR_XENTRONIUM_PLATE
 セクトロニウムアーマーめっき
 
 AR_XENTRONIUM_PLATE_DESC
-Increases ship's hull [[metertype METER_STRUCTURE]]. Extremely strong and durable armor plating.
+船体[[metertype METER_STRUCTURE]]を増やします。 非常に強く、耐久性のある装甲板。
 
 AR_ROCK_PLATE
 ロックアーマーめっき
 
 AR_ROCK_PLATE_DESC
-Increases ship's hull [[metertype METER_STRUCTURE]]. A strong, cheap alternative to alloys. [[BLD_SHIPYARD_AST_REF_REQUIRED_ANY_SYSTEM_SHIP_PARTS_TEXT]]
+船体[[metertype METER_STRUCTURE]]を増やします。 合金の強力で安価な代替品。 [[BLD_SHIPYARD_AST_REF_REQUIRED_ANY_SYSTEM_SHIP_PARTS_TEXT]]
 
 AR_CRYSTAL_PLATE
 クリスタルアーマーめっき
 
 AR_CRYSTAL_PLATE_DESC
-Increases ship's hull [[metertype METER_STRUCTURE]]. An incredibly strong armor produced with advanced crystallization techniques. [[BLD_SHIPYARD_AST_REF_REQUIRED_ANY_SYSTEM_SHIP_PARTS_TEXT]]
+船体[[metertype METER_STRUCTURE]]を増やします。 高度な結晶化技術で製造された信じられないほど強力な鎧。 [[BLD_SHIPYARD_AST_REF_REQUIRED_ANY_SYSTEM_SHIP_PARTS_TEXT]]
 
 AR_NEUTRONIUM_PLATE
 中性子装甲めっき
 
 AR_NEUTRONIUM_PLATE_DESC
-Increases ship's hull [[metertype METER_STRUCTURE]]. Strongest, most durable armor plating. Admirable defense. [[MACRO_NEUTRONIUM_BUILDINGS]]
+船体[[metertype METER_STRUCTURE]]を増やします。 最強で最も耐久性の高い装甲板。 立派な防御。 [[MACRO_NEUTRONIUM_BUILDINGS]]
 
 AR_PRECURSOR_PLATE
 前駆体アーマーめっき
 
 AR_PRECURSOR_PLATE_DESC
-Increases ship's hull [[metertype METER_STRUCTURE]]. Marvelously effective armor of unknown composition.
+船体[[metertype METER_STRUCTURE]]を増やします。 未知の組成の驚くほど効果的な装甲板。
 
 SH_DEFENSE_GRID
 防衛グリッド
 
 SH_DEFENSE_GRID_DESC
-'''Provides basic shield defense. Capable of completely negating or at least substantially reducing [[encyclopedia DAMAGE_TITLE]] from hits by low powered weapons.
+'''基本的なシールド防御を提供します。 低出力の武器による攻撃から[[encyclopedia DAMAGE_TITLE]]を完全に無効にするか、少なくとも大幅に削減できます。
 
 [[NO_STACK_SHIELDS_SHIP_PARTS]]'''
 
@@ -13674,7 +13736,7 @@ SH_DEFLECTOR
 ディフレクターシールド
 
 SH_DEFLECTOR_DESC
-'''Provides advanced shield defense. Can absorb or at least substantially reduce [[encyclopedia DAMAGE_TITLE]] dealt by moderately powered weapons.
+'''高度なシールド防御を提供します。 中程度の力の武器が扱う[[encyclopedia DAMAGE_TITLE]]を吸収するか、少なくとも大幅に削減できます。
 
 [[NO_STACK_SHIELDS_SHIP_PARTS]]'''
 
@@ -13682,7 +13744,7 @@ SH_PLASMA
 プラズマシールド
 
 SH_PLASMA_DESC
-'''Powerful shield that significantly reduces [[encyclopedia DAMAGE_TITLE]] suffered from hits even by advanced weapons, and completely absorbs anything less.
+'''強力なシールドで、[[encyclopedia DAMAGE_TITLE]]は高度な武器による攻撃から受けるダメージを大幅に軽減し、吸収度が低いものは完全に吸収します。
 
 [[NO_STACK_SHIELDS_SHIP_PARTS]]'''
 
@@ -13698,7 +13760,7 @@ SH_MULTISPEC
 マルチスペクトルシールド
 
 SH_MULTISPEC_DESC
-'''Powerful [[metertype METER_SHIELD]] capable of protecting a ship within a star. Provides a high [[metertype METER_STEALTH]] bonus on the galaxy map when the ship is in a star other than a [[STAR_BLACK]] or a [[STAR_NEUTRON]] star and allows the ship to enter a star in combat.
+'''星空の中で船を保護できる強力な[[metertype METER_SHIELD]]。 船が[[STAR_BLACK]]や[[STAR_NEUTRON]]以外の星にいるときに銀河マップに[[metertype METER_STEALTH]]ボーナスを提供し、戦闘中に星に入ることができます。
 
 [[NO_STACK_SHIELDS_SHIP_PARTS]]'''
 
@@ -13706,13 +13768,13 @@ SH_ROBOTIC_INTERFACE_SHIELDS
 ロボットインタフェース: シールド
 
 SH_ROBOTIC_INTERFACE_SHIELDS_DESC
-'''Robotic Interface: Shields have a shield strength of roughly 1 shield strength per other Robotic Interface: Shielded ships at the same location, though with diminishing returns at higher numbers. The effect is capped at 20 shield strength, only applies to ships crewed by [[encyclopedia ROBOTIC_SPECIES_TITLE]] species and can only be placed in a [[encyclopedia HULL_LINE_ROBOTIC]] ship.
+'''ロボットインターフェース：シールドのシールド強度は、約1です。ロボットインターフェース：シールドされた船は同じ場所にありますが、数値が高くなると戻り値が減少します。 効果の上限は20シールドで、[[encyclopedia ROBOTIC_SPECIES_TITLE]]種が搭乗する船にのみ適用され、[[encyclopedia HULL_LINE_ROBOTIC]]船にのみ配置できます。
 
 ロボット種は、一緒にネットワーク化し、それによってその膨大な計算能力を大幅に増加させる固有の能力を有する。ロボットインタフェース:シールドは、そのネットワークを使用して、着信火災の軌道を計算し、衝撃点でシールド強度を適用します。
 '''
 
 CO_COLONY_POD
-コロニーポッド
+植民化ポッド
 
 CO_COLONY_POD_DESC
 '''新しい惑星への旅を生き残るための入植者のための基本的な施設。船が新しい世界を植民地化することを可能にする。
@@ -13720,10 +13782,10 @@ CO_COLONY_POD_DESC
 [[COLONY_SHIP_PARTS_MIN_POP]] [[COLONY_SHIP_PARTS_UPKEEP_COST]]'''
 
 CO_SUSPEND_ANIM_POD
-クライオニックコロニーポッド
+クライオニック植民化ポッド
 
 CO_SUSPEND_ANIM_POD_DESC
-'''入植者は、植民地化の旅中に中断されたアニメーションに保たれ、停滞を提供する必要がなくなり、1隻の船に運ぶコロニーの数が大幅に増加します。
+'''入植者は冷凍され、休憩する必要がなくなり、1隻の船に運ぶ入植者の数が大幅に増加します。
 
 [[COLONY_SHIP_PARTS_MIN_POP]] [[COLONY_SHIP_PARTS_UPKEEP_COST]]'''
 
@@ -13731,7 +13793,7 @@ CO_OUTPOST_POD
 アウトポストモジュール
 
 CO_OUTPOST_POD_DESC
-'''[[encyclopedia OUTPOSTS_TITLE]] modules allow unmanned stations to be established. These may be placed on uninhabitable planets. They have no population, and normally produce no resources, but they do provide vision and create [[metertype METER_SUPPLY]] lines when the right tech is researched. Outposts can be upgraded to colonies.
+'''[[encyclopedia OUTPOSTS_TITLE]]モジュールを使用すると、前哨基地を確立できます。 これらは居住不可能な惑星に置かれるかもしれません。 それらには人口がなく、通常はリソースを生成しませんが、適切な技術が研究されたときに視界を提供し、[[metertype METER_SUPPLY]]行を作成します。 前哨地を植民地にアップグレードできます。
 
 [[COLONY_SHIP_PARTS_UPKEEP_COST]]'''
 
@@ -13739,15 +13801,15 @@ GT_TROOP_POD
 地上部隊ポッド
 
 GT_TROOP_POD_DESC
-'''Carries 2 units of ground [[metertype METER_TROOPS]] and equipment that can be deployed onto a planet. Can only be built on a production location with at least 2 defensive Troops.
+'''地上に2ユニット[[metertype METER_TROOPS]]と惑星に配備可能な機器を搭載します。 少なくとも2つの防御部隊がいる生産場所にのみ構築できます。
 
 [[TROOP_POD_OPERATION_TEXT]]'''
 
 GT_TROOP_POD_2
-アドバンスト・グラウンド・トループ・ポッド
+強化地上部隊ポッド
 
 GT_TROOP_POD_2_DESC
-'''Carries 4 units of cybernetically advanced ground [[metertype METER_TROOPS]] and equipment that can be deployed onto a planet. Can only be built on a production location with at least 4 defensive Troops.
+'''4ユニットの高度な地上[[metertype METER_TROOPS]]と、惑星に配備可能な機器を搭載しています。 少なくとも4つの防御部隊がいる生産場所でのみ構築できます。
 
 [[TROOP_POD_OPERATION_TEXT]]'''
 
@@ -13755,13 +13817,13 @@ SP_PLANET_BEACON
 モバイル惑星ビーコン
 
 SP_PLANET_BEACON_DESC
-Designates the target for the [[buildingtype BLD_PLANET_DRIVE]]. The ship must remain in place for a turn for the drive to work, and the planet must be moving from a directly linked system.
+[[buildingtype BLD_PLANET_DRIVE]]のターゲットを指定します。 船は、ドライブが機能するためのターンの間、その場所に留まっている必要があり、惑星は、直接リンクされたシステムから移動している必要があります。
 
 SP_DISTORTION_MODULATOR
 ディストーション変調器
 
 SP_DISTORTION_MODULATOR_DESC
-Distinguishes natural geometric irregularities from enemy ships by manipulating space-time distortions caused by all objects in the vicinity. All objects at the same location have max [[metertype METER_STEALTH]] reduced by 20. The effect is non-stacking.
+周囲のすべてのオブジェクトによって引き起こされる時空の歪みを操作することによって、敵の船から自然な幾何学的な不規則性を区別します。 同じ場所にあるすべてのオブジェクトの最大値[[metertype METER_STEALTH]]が20減少します。効果はスタックしません。
 
 SP_CLOUD
 クラウドジェネレータ
@@ -13773,97 +13835,97 @@ SP_DIM
 次元のクリーバー
 
 SP_VOID
-ボイド・エ噴火
+ボイド・噴火
 
 SP_DEATH_SPORE
 デス・スポール
 
 SP_DEATH_SPORE_DESC
-A biological weapon [[SHIP_WEAPON_GRADUALLY_REDUCE]] [[ENEMY_PLANET_ORGANIC_POP]].
+生物兵器　[[SHIP_WEAPON_GRADUALLY_REDUCE]] [[ENEMY_PLANET_ORGANIC_POP]]。
 
 SP_BIOTERM
 有機ターミネーター
 
 SP_BIOTERM_DESC
-A powerful biological weapon [[SHIP_WEAPON_QUICKLY_REDUCE]] [[ENEMY_PLANET_ORGANIC_POP]].
+強力な生物兵器　[[SHIP_WEAPON_QUICKLY_REDUCE]] [[ENEMY_PLANET_ORGANIC_POP]]。
 
 SP_EMP
 電磁パルス発生器
 
 SP_EMP_DESC
-An electronic weapon [[SHIP_WEAPON_GRADUALLY_REDUCE]] [[ENEMY_PLANET_ROBOTIC_POP]].
+電子兵器[[SHIP_WEAPON_GRADUALLY_REDUCE]] [[ENEMY_PLANET_ROBOTIC_POP]]。
 
 SP_EMO
 電磁過充電発生器
 
 SP_EMO_DESC
-A powerful electronic weapon [[SHIP_WEAPON_QUICKLY_REDUCE]] [[ENEMY_PLANET_ROBOTIC_POP]].
+強力な電子兵器[[SHIP_WEAPON_QUICKLY_REDUCE]] [[ENEMY_PLANET_ROBOTIC_POP]]。
 
 SP_SONIC
 ソニックショックウェーブ
 
 SP_SONIC_DESC
-A vibration weapon [[SHIP_WEAPON_GRADUALLY_REDUCE]] [[ENEMY_PLANET_LITHIC_POP]].
+振動武器[[SHIP_WEAPON_GRADUALLY_REDUCE]] [[ENEMY_PLANET_LITHIC_POP]]。
 
 SP_GRV
 重力パルス発生器
 
 SP_GRV_DESC
-A powerful vibration weapon [[SHIP_WEAPON_QUICKLY_REDUCE]] [[ENEMY_PLANET_LITHIC_POP]].
+強力な振動兵器[[SHIP_WEAPON_QUICKLY_REDUCE]] [[ENEMY_PLANET_LITHIC_POP]]。
 
 SP_DARK_RAY
 ダークレイ
 
 SP_DARK_RAY_DESC
-A negative energy weapon [[SHIP_WEAPON_GRADUALLY_REDUCE]] [[ENEMY_PLANET_PHOTOTROPHIC_POP]].
+負のエネルギー兵器[[SHIP_WEAPON_GRADUALLY_REDUCE]] [[ENEMY_PLANET_PHOTOTROPHIC_POP]]。
 
 SP_VOID_SHADOW
 ボイドシャドウ
 
 SP_VOID_SHADOW_DESC
-A powerful negative energy weapon [[SHIP_WEAPON_QUICKLY_REDUCE]] [[ENEMY_PLANET_PHOTOTROPHIC_POP]].
+強力な負のエネルギー兵器[[SHIP_WEAPON_QUICKLY_REDUCE]] [[ENEMY_PLANET_PHOTOTROPHIC_POP]]。
 
 SP_CHAOS_WAVE
 カオスウェーブ
 
 SP_CHAOS_WAVE_DESC
-A powerful weapon [[SHIP_WEAPON_QUICKLY_REDUCE]] [[ENEMY_PLANET_ANY_POP]]. WARNING: Also kills [[special GAIA_SPECIAL]] specials.
+強力な武器[[SHIP_WEAPON_QUICKLY_REDUCE]] [[ENEMY_PLANET_ANY_POP]]。 警告：[[special GAIA_SPECIAL]]も殺します。
 
 SP_NOVA_BOMB
 超新星爆弾
 
 SP_NOVA_BOMB_DESC
-A weapon of tremendous power capable of destroying an entire system. The weapon will activate when it receives the signal from a [[buildingtype BLD_NOVA_BOMB_ACTIVATOR]] not more than one starlane jump away.
+システム全体を破壊できる強力な武器。 武器は、[[buildingtype BLD_NOVA_BOMB_ACTIVATOR]]から1つ以下の星間ワープ信号を受信するとアクティブになります。
 
 SP_KRILL_SPAWNER
 オキアミ・スポナー
 
 SP_KRILL_SPAWNER_DESC
-Spawns [[predefinedshipdesign SM_KRILL_1]] in systems with unowned [[PT_ASTEROIDS]] which do not already contain a krill monster. When carried on an unarmed ship, the [[SP_KRILL_SPAWNER]] also provides substantial [[metertype METER_STEALTH]] (but will not stack with any other [[metertype METER_STEALTH]] - causing  parts).
+まだオキアミのモンスターが含まれていない、所有されていない[[PT_ASTEROIDS]]を持つシステムで[[predefinedshipdesign SM_KRILL_1]]をスポーンします。 [[SP_KRILL_SPAWNER]]は、非武装の船で運ばれた場合も、実質的な[[metertype METER_STEALTH]]を提供します（ただし、他の[[metertype METER_STEALTH]]-パーツの原因となるスタックはありません）。
 
 SP_SOLAR_CONCENTRATOR
 ソーラーコンセントレータ
 
 SP_SOLAR_CONCENTRATOR_DESC
-The Solar Concentrator uses the phototropic effect of [[encyclopedia HULL_LINE_ORGANIC]] ships to increase the strength of [[tech SHP_WEAPON_2_1]]. The effectiveness depends on the brightness of the star at the current location. It is expected to increase the weapons strength between 1.5 and 4.5. The research of [[tech SHP_SOLAR_CONNECTION]] suggest to increase the collecting surface to maximize the effect.
+ソーラーコンセントレーターは、[[encyclopedia HULL_LINE_ORGANIC]]船の屈光効果を使用して、[[tech SHP_WEAPON_2_1]]の強度を高めます。 効果は、現在の場所の星の明るさに依存します。 武器の強度を1.5から4.5に上げることが期待されています。 [[tech SHP_SOLAR_CONNECTION]]の調査では、効果を最大化するために収集面を増やすことが推奨されています。
 
 SHP_SOLAR_CONNECTION
 ソーラーウェブ
 
 SHP_SOLAR_CONNECTION_DESC
-This upgrade for the [[shippart SP_SOLAR_CONCENTRATOR]] is applied by the ships crew. It enables the ship to establish one energy web between ships of the same empire at the same star system. This [[SHP_SOLAR_CONNECTION]] provides an additional surface to collect photons which are evenly distributed among [[encyclopedia HULL_LINE_ORGANIC]] ships. Theoretical gigantic webs can increase the intensity of [[tech SHP_WEAPON_2_1]] by 130% under ideal conditions. A more realistic approach suggests 100 concentrators to achieve an increase by 80% while 20 concentrators provide an amplification of 50%. The finely woven [[SHP_SOLAR_CONNECTION]] collapse when the ship enters a starlane whereas the effects disappears shortly after.
+[[shippart SP_SOLAR_CONCENTRATOR]]のこのアップグレードは、船の乗組員によって適用されます。 これにより、船は同じ星系の同じ帝国の船の間に1つのエネルギー網を確立できます。 この[[SHP_SOLAR_CONNECTION]]は、[[encyclopedia HULL_LINE_ORGANIC]]船に均等に分配されるフォトンを収集する追加のサーフェスを提供します。 理論的な巨大ウェブは、理想的な条件下で[[tech SHP_WEAPON_2_1]]の強度を130％増加させることができます。 より現実的なアプローチでは、100台のコンセントレータで80％の増加を達成し、20台のコンセントレータで50％の増幅を実現することが推奨されます。 船がスターレーンに入ると、細かく織られた[[SHP_SOLAR_CONNECTION]]は崩壊しますが、効果はすぐに消えます。
 
 SHP_SOLAR_CONNECTION_SHORT_DESC
-Establishes an energy web between [[SP_SOLAR_CONCENTRATOR]]
+[[SP_SOLAR_CONCENTRATOR]]の間にエネルギーウェブを確立します
 
 SHP_ORGANIC_WAR_ADAPTION
 有機戦争適応
 
 SHP_ORGANIC_WAR_ADAPTION_DESC
-It seems [[encyclopedia HULL_LINE_ORGANIC]] ships are able collect photonic energy which can be redirected to empower certain ship systems.
+[[encyclopedia HULL_LINE_ORGANIC]]船は、特定の船システムを強化するためにリダイレクトできるフォトニックエネルギーを収集できるようです。
 
 SHP_ORGANIC_WAR_ADAPTION_SHORT_DESC
-Increases strength of [[SR_WEAPON_2_1]] depending on the star.
+星に応じて[[SR_WEAPON_2_1]]の強さを増加させます。
 
 PR_MOBILE_ASSEMBLER
 モバイル造船所
@@ -13898,9 +13960,9 @@ SH_ROBOTIC
 ロボット機体
 
 SH_ROBOTIC_DESC
-'''This hull is completely automated and functions under the principals of [[tech SHP_MIL_ROBO_CONT]]. It has four external slots and one internal slot, and repairs 2 points of [[metertype METER_STRUCTURE]] each turn as long as the ship has not been in combat.
+'''この船体は完全に自動化されており、[[tech SHP_MIL_ROBO_CONT]]の原則に従って機能します。 4つの外部スロットと1つの内部スロットがあり、船が戦闘中でない限り、[[metertype METER_STRUCTURE]]を各ターン2ポイント修理します。
 
-[[metertype METER_STEALTH]] is medium, [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is average.
+[[metertype METER_STEALTH]]は中程度、[[metertype METER_DETECTION]]は中程度、[[metertype METER_SPEED]]は平均です。
 
 [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]'''
 
@@ -13908,11 +13970,11 @@ SH_SPATIAL_FLUX
 空間フラックス機体
 
 SH_SPATIAL_FLUX_DESC
-'''This tiny hull is capable of decent speed over long distances due to the power of the [[tech SHP_SPACE_FLUX_DRIVE]]. It has only two external slots however, and its max [[metertype METER_STRUCTURE]] is low.
+'''この小さな船体は、[[tech SHP_SPACE_FLUX_DRIVE]]の威力により、長距離にわたってまともな速度を実現できます。 ただし、外部スロットは2つしかなく、その最大値[[metertype METER_STRUCTURE]]は低くなっています。
 
-[[metertype METER_STEALTH]] starts at 15, is increased by 10 when passive, but reduced by 30 on any turn it remains in transit. Technology advances such as [[tech SPY_STEALTH_PART_1]] allow crews to increase the stealth of the craft by 10 each.
+[[metertype METER_STEALTH]]は15から始まり、パッシブの場合は10増加しますが、移動中のままであれば、どのターンでも30減少します。 [[tech SPY_STEALTH_PART_1]]などのテクノロジーの進歩により、乗組員はクラフトのステルスをそれぞれ10ずつ増やすことができます。
 
-[[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is average.
+[[metertype METER_DETECTION]]は中程度、[[metertype METER_SPEED]]は平均です。
 
 [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]'''
 
@@ -13920,11 +13982,11 @@ SH_SPACE_FLUX_BUBBLE
 空間フラックスバブル機体
 
 SH_SPACE_FLUX_BUBBLE_DESC
-'''This tiny hull is capable of decent speed over long distances due to the power of the [[tech SHP_SPACE_FLUX_BUBBLE]]. It has only one internal slots however, and its max [[metertype METER_STRUCTURE]] is low.
+'''この小さな船体は、[[tech SHP_SPACE_FLUX_BUBBLE]]の威力により、長距離にわたってまともな速度を実現できます。 ただし、内部スロットは1つしかなく、その最大値[[metertype METER_STRUCTURE]]は低くなっています。
 
-[[metertype METER_STEALTH]] starts at 15, is increased by 10 when passive, but reduced by 30 on any turn it remains in transit. Technology advances such as [[tech SPY_STEALTH_PART_1]] allow crews to increase the stealth of the craft by 10 each.
+[[metertype METER_STEALTH]]は15から始まり、パッシブの場合は10増加しますが、移動中のままであれば、どのターンでも30減少します。 [[tech SPY_STEALTH_PART_1]]などのテクノロジーの進歩により、乗組員はクラフトのステルスをそれぞれ10ずつ増やすことができます。
 
-[[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is average.
+[[metertype METER_DETECTION]]は中程度、[[metertype METER_SPEED]]は平均です。
 
 [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]'''
 
@@ -13932,9 +13994,9 @@ SH_SELF_GRAVITATING
 自己重力機体
 
 SH_SELF_GRAVITATING_DESC
-'''This hull is immense in both size and power, with six external slots, two internal slots and one core slot—one of the few hulls able to mount such advanced features. It is also fairly sturdy, having a high max [[metertype METER_STRUCTURE]].
+'''この船体は、サイズとパワーの両方で非常に大きく、6つの外部スロット、2つの内部スロット、および1つのコアスロットを備えています。 また、かなり頑丈で、最大値は[[metertype METER_STRUCTURE]]です。
 
-[[metertype METER_STEALTH]] is low, [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is average.
+[[metertype METER_STEALTH]]は低く、[[metertype METER_DETECTION]]は中程度、[[metertype METER_SPEED]]は平均です。
 
 [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_CON_GEOINT_REQUIRED]]'''
 
@@ -13942,41 +14004,41 @@ SH_NANOROBOTIC
 ナノロボット機体
 
 SH_NANOROBOTIC_DESC
-'''This automated hull is large and repairs damage to itself using millions of nano-robots. It has six external slots and one internal slot. When not engaged in combat, the nanorobots are able to effect fast repairs, doubling current [[metertype METER_STRUCTURE]] (up to maximum) on every turn the ship is not in combat.
+'''この自動化された船体は大きく、何百万ものナノロボットを使用してそれ自体の損傷を修復します。 6つの外部スロットと1つの内部スロットがあります。 戦闘に従事していない場合、ナノロボットは迅速な修理を行うことができ、船が戦闘中でないすべてのターンで現在の[[metertype METER_STRUCTURE]]を2倍（最大）にします。
 
-[[metertype METER_STEALTH]] and is medium, [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is average.
+[[metertype METER_STEALTH]]は中程度、[[metertype METER_DETECTION]]は中程度、[[metertype METER_SPEED]]は平均です。
 
-Can only be built at a location with a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], and a [[buildingtype BLD_SHIPYARD_CON_NANOROBO]].'''
+[[buildingtype BLD_SHIPYARD_BASE]]、[[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]]、および[[buildingtype BLD_SHIPYARD_CON_NANOROBO]]がある場所でのみビルドできます。'''
 
 SH_TITANIC
 タイタニック機体
 
 SH_TITANIC_DESC
-'''This extraordinarily large hull requires quite a feat of engineering even to move. It has sixteen external slots, three internal slots and a core slot, and its max [[metertype METER_STRUCTURE]] is very high. Its immense size makes it almost impossible to hide, even with advanced stealth technology.
+'''この非常に大きな船体は、移動するのにもかなりの技量を必要とします。 これには、16の外部スロット、3つの内部スロット、およびコアスロットがあり、その最大[[metertype METER_STRUCTURE]]は非常に高くなっています。 その巨大なサイズは、高度なステルス技術を使用しても、ほとんど隠すことができません。
 
-[[metertype METER_STEALTH]] is very low, [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is average.
+[[metertype METER_STEALTH]]は非常に低く、[[metertype METER_DETECTION]]は中程度、[[metertype METER_SPEED]]は平均です。
 
 [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_CON_GEOINT_REQUIRED]]'''
 
 SH_TRANSSPATIAL
-トランス・ス空間機体
+トランス・空間機体
 
 SH_TRANSSPATIAL_DESC
-'''This experimental hull is primarily for testing new technologies; it has one external slot and one core slot, and its max [[metertype METER_STRUCTURE]] is extremely low. It was designed alongside the [[shippart FU_TRANSPATIAL_DRIVE]] and if equipped with that can make a very effective infiltrating scout.
+'''この実験的な船体は主に新しい技術をテストするためのものです。 1つの外部スロットと1つのコアスロットがあり、その最大値[[metertype METER_STRUCTURE]]は非常に低くなっています。 それは[[shippart FU_TRANSPATIAL_DRIVE]]と一緒に設計され、それが装備されている場合、非常に効果的な浸透スカウトを作成できます。
 
-[[metertype METER_STEALTH]] is high, [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is average.
+[[metertype METER_STEALTH]]は高く、[[metertype METER_DETECTION]]は中程度、[[metertype METER_SPEED]]は平均です。
 
-Can only be built at a location with a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], and an [[buildingtype BLD_SHIPYARD_CON_ADV_ENGINE]].'''
+[[buildingtype BLD_SHIPYARD_BASE]]、[[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]]、および[[buildingtype BLD_SHIPYARD_CON_ADV_ENGINE]]がある場所でのみビルドできます。'''
 
 SH_LOGISTICS_FACILITATOR
 物流ファシリテーター
 
 SH_LOGISTICS_FACILITATOR_DESC
-'''This organizational flagship is designed to organize and manage mid-battle transfers of crewmen and other objects. It has seven external slots, two internal slots and a core slot. Its built-in fleet of stealthy freighters allows transfer of personnel and material during battle, enabling all friendly ships to effect partial repairs even on turns when combat has occured, and to restore [[metertype METER_STRUCTURE]] to double the current when out of combat, meaning ships with at least half strength will fully repair.
+'''この組織の旗艦は、搭乗員やその他のオブジェクトの戦闘中の移動を整理および管理するように設計されています。 7つの外部スロット、2つの内部スロット、およびコアスロットがあります。 内蔵のステルス貨物船により、戦闘中の人員や物資の移動が可能になり、友好的なすべての艦艇は、戦闘が発生したターンでも部分的に修理を行うことができ、非戦闘時には[[metertype METER_STRUCTURE]]を現在の2倍に戻すことができます 、つまり、強度が半分以上の船は完全に修理されます。
 
-[[metertype METER_STEALTH]] is medium, [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is average.
+[[metertype METER_STEALTH]]は中程度、[[metertype METER_DETECTION]]は中程度、[[metertype METER_SPEED]]は平均です。
 
-Can only be built at a location with a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], a [[buildingtype BLD_SHIPYARD_CON_NANOROBO]], a [[buildingtype BLD_SHIPYARD_CON_GEOINT]], and an [[buildingtype BLD_SHIPYARD_CON_ADV_ENGINE]].'''
+ビルドできるのは、[[buildingtype BLD_SHIPYARD_BASE]]、[[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]]、[[buildingtype BLD_SHIPYARD_CON_NANOROBO]]、[[buildingtype BLD_SHIPYARD_CON_GE_IND_BUI_D_SHIPYARD_CON_GE_INTING]、[BING_SHIPYARD_CON_GE_INTING]の各ビルドである'''
 
 SH_ASTEROID
 小惑星船体
@@ -14160,43 +14222,41 @@ SH_RAVENOUS
 レイブナス・機体
 
 SH_RAVENOUS_DESC
-'''この非生きている有機船体-またはゾンビの外皮-は血および兄弟の部分から造られた。それに5つの外付けスロットおよび2つの内部スロットがある。
+'''この死んだ有機船体-またはゾンビの外皮-は血および兄弟の部分から造られた。それに5つの外付けスロットおよび2つの内部スロットがある。
 
-Organic Growth: starts with 5 [[metertype METER_STRUCTURE]], grows an additional 20 structure over 40 turns.
+有機的成長：5 [[metertype METER_STRUCTURE]]から始まり、40ターンにわたってさらに20の構造物を成長させます。
 
-[[metertype METER_STEALTH]] is medium, [[metertype METER_DETECTION]] is very high and [[metertype METER_SPEED]] is high.
+[[metertype METER_STEALTH]]は中程度、[[metertype METER_DETECTION]]は非常に高く、[[metertype METER_SPEED]]は高いです。
 
 潜在的に強力かつ高速な軍艦。
 
-This hull has no bonuses to [[metertype METER_STRUCTURE]] or [[metertype METER_FUEL]] regeneration.
+この船体には、[[metertype METER_STRUCTURE]]または[[metertype METER_FUEL]]の再生に対するボーナスはありません。
 
-[[BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_XENO_FAC_REQUIRED]]
-'''
+[[BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_XENO_FAC_REQUIRED]]'''
 
 SH_BIOADAPTIVE
 有機アダプティブ機体
 
 SH_BIOADAPTIVE_DESC
-'''一体で心と体を持つ生きている船体, 癒しと持久力のマスター.外部スロットは3つ、内部スロットは3つ。
-Organic Growth: starts with 15 [[metertype METER_STRUCTURE]], grows an additional 25 structure over 50 turns.
+'''一体で心と体を持つ生きている船体、癒しと持久力のマスター。外部スロットは3つ、内部スロットは3つ。
+有機的成長：15 [[metertype METER_STRUCTURE]]から始まり、50ターンにわたってさらに25の構造物を成長させます。
 
-[[metertype METER_STEALTH]] is very high, [[metertype METER_DETECTION]] is very high and [[metertype METER_SPEED]] is high.
+[[metertype METER_STEALTH]]は非常に高く、[[metertype METER_DETECTION]]は非常に高く、[[metertype METER_SPEED]]は高いです。
 
 潜在的に強力かつ高速な商雷、ステルス攻撃者や斥候船。
 
-This living hull regenerates [[metertype METER_STRUCTURE]] quickly when out of combat, gaining its current structure every turn it isn't involved in a fight or blockade, meaning if it is at half strength or greater it will be fully repaired in one turn. In addition, it regains 0.2 [[metertype METER_FUEL]] per turn.
+この生きている船体は非戦闘時に[[metertype METER_STRUCTURE]]をすばやく再生し、戦闘や封鎖に関与していないすべてのターンで現在の構造を取得します。つまり、強度が半分以上の場合、1ターンで完全に修理されます 。 さらに、1ターンあたり0.2 [[metertype METER_FUEL]]を回復します。
 
-[[BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_CELL_GRO_CHAMB_REQUIRED]]
-'''
+[[BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_CELL_GRO_CHAMB_REQUIRED]]'''
 
 SH_SENTIENT
 センチエント機体
 
 SH_SENTIENT_DESC
-'''This self-aware organic flagship with powerful analytical abilities and a tremendous memory capacity, which allow it to direct friendly vessels and provide them with useful information and subtle tactical cues in combat, giving a [[metertype METER_STEALTH]] and [[metertype METER_DETECTION]] bonus to all accompanying friendly ships. It has six external slots, three internal slots, and a core slot.
-Organic Growth: Starts with 12 [[metertype METER_STRUCTURE]], grows an additional 45 over 45 turns.
+'''この自己認識型の有機フラッグシップは、強力な分析能力と驚異的なメモリ容量を備えています。これにより、友好的な船舶を指揮し、有用な情報と戦闘時の微妙な戦術的な合図を提供して、[[metertype METER_STEALTH]]と[[metertype METER_DETECTION]を提供します。 ]付随するすべての友好的な船に対するボーナス。 6つの外部スロット、3つの内部スロット、およびコアスロットがあります。
+有機的成長：12 [[metertype METER_STRUCTURE]]から始まり、45ターンかけてさらに45成長します。
 
-[[metertype METER_STEALTH]] is very high, [[metertype METER_DETECTION]] is very high and [[metertype METER_SPEED]] is high.
+[[metertype METER_STEALTH]]は非常に高く、[[metertype METER_DETECTION]]は非常に高く、[[metertype METER_SPEED]]は高いです。
 
 [[LIVING_HULL_AUTO_REGEN]]
 
@@ -14208,7 +14268,7 @@ SH_COMPRESSED_ENERGY
 SH_COMPRESSED_ENERGY_DESC
 '''この速い外皮は圧縮されたエネルギーの完全に構成され、単一の外的なスロットがある。
 
-[[metertype METER_STRUCTURE]] is low, [[metertype METER_STEALTH]] is very high, [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is very high.
+[[metertype METER_STRUCTURE]]は低く、[[metertype METER_STEALTH]]は非常に高く、[[metertype METER_DETECTION]]は中程度、[[metertype METER_SPEED]]は非常に高くなっています。
 
 [[BLD_SHIPYARD_BASE_ENRG_COMP_THREE_STARS_REQUIRED]]'''
 
@@ -14218,7 +14278,7 @@ SH_ENERGY_FRIGATE
 SH_ENERGY_FRIGATE_DESC
 '''この高速船体は、圧縮されたエネルギーと軍艦技術を組み合わせて、高速だが壊れやすい攻撃船を作り出します。
 
-[[metertype METER_STRUCTURE]] and [[metertype METER_STEALTH]] are medium, [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is very high.
+[[metertype METER_STRUCTURE]]と[[metertype METER_STEALTH]]は中程度、[[metertype METER_DETECTION]]は中程度、[[metertype METER_SPEED]]は非常に高いです。
 
 [[BLD_SHIPYARD_BASE_ENRG_COMP_THREE_STARS_REQUIRED]]'''
 
@@ -14228,7 +14288,7 @@ SH_FRACTAL_ENERGY
 SH_FRACTAL_ENERGY_DESC
 '''この船体は、小さいながらも、より滑らかな船体に可能であるよりも多くの部品を取り付けることができるフラクタル表面を有する。外部スロットは14個ありますが、内部スロットはありません。
 
-[[metertype METER_STRUCTURE]] is moderate, [[metertype METER_STEALTH]] is low, [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is very high.
+[[metertype METER_STRUCTURE]]は中程度、[[metertype METER_STEALTH]]は低い、[[metertype METER_DETECTION]]は中程度、[[metertype METER_SPEED]]は非常に高いです。
 
 [[BLD_SHIPYARD_BASE_ENRG_COMP_TWO_STARS_REQUIRED]]'''
 
@@ -14238,27 +14298,27 @@ SH_QUANTUM_ENERGY
 SH_QUANTUM_ENERGY_DESC
 '''この船体は、量子エネルギーの変動を拡大して、独自の力を高める。7つの外部スロットと3つの内部スロットがあります。
 
-[[metertype METER_STRUCTURE]] is moderate, [[metertype METER_STEALTH]] is low, [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is very high.
+[[metertype METER_STRUCTURE]]は中程度、[[metertype METER_STEALTH]]は低い、[[metertype METER_DETECTION]]は中程度、[[metertype METER_SPEED]]は非常に高いです。
 
 [[BLD_SHIPYARD_BASE_ENRG_COMP_TWO_STARS_REQUIRED]]'''
 
 SH_SOLAR
-ソーラー機体
+太陽機体
 
 SH_SOLAR_DESC
-'''This mighty flagship is essentially a miniature sun, and as such is a great source of both [[metertype METER_FUEL]] and visibility. All accompanying friendly ships completely recover fuel between combat, and all enemy ships in the vicinity receive a penalty to [[metertype METER_STEALTH]]. This hull has 16 external slots, 4 internal slots and a core slot—a greater internal capacity than any other hull.
+'''この強大な旗艦は本質的に小型の太陽であり、[[metertype METER_FUEL]]と可視性の両方の優れた情報源です。付随する友軍艦はすべて戦闘間で燃料を完全に回収し、近くにいるすべての敵艦は[[metertype METER_STEALTH]]にペナルティを受けます。この船体には、16個の外部スロット、4個の内部スロット、およびコアスロットがあり、他の船体よりも大きな内部容量があります。
 
-[[metertype METER_STRUCTURE]] is high, [[metertype METER_STEALTH]] is very low, [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is very high. However, this ship has the ability to enter a star and hide, giving it perfect [[metertype METER_STEALTH]] on the galaxy map when it is in a system with a star of type other than [[STAR_BLACK]] or [[STAR_NEUTRON]], and in combat, when it is hiding inside such a star.
+[[metertype METER_STRUCTURE]]は高く、[[metertype METER_STEALTH]]は非常に低く、[[metertype METER_DETECTION]]は中程度、[[metertype METER_SPEED]]は非常に高いです。ただし、この船には星を入力して非表示にする機能があり、[[STAR_BLACK]]または[[STAR_NEUTRON]以外のタイプの星を含むシステム内にある場合、銀河マップ上で完全な[[metertype METER_STEALTH]]を提供します。 ]、そして戦闘で、そのような星の中に隠れているとき。
 
-This ship requires a tremendous amount of energy to construct and must harness energy from particle-antiparticle collisions on the event horizon of a [[STAR_BLACK]] in its formation. It can only be built at a location with a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ENRG_COMP]] and a [[buildingtype BLD_SHIPYARD_ENRG_SOLAR]].'''
+この船は、構築するのに莫大なエネルギーを必要とし、編隊の[[STAR_BLACK]]のイベントホライズンでの粒子と粒子の衝突からのエネルギーを利用する必要があります。 [[buildingtype BLD_SHIPYARD_BASE]]、[[buildingtype BLD_SHIPYARD_ENRG_COMP]]、および[[buildingtype BLD_SHIPYARD_ENRG_SOLAR]]がある場所でのみビルドできます。'''
 
 SH_BASIC_SMALL
-ベーシック スモール 機体
+ベーシックスモール機体
 
 SH_BASIC_SMALL_DESC
 '''小さく、基本的な星間外皮。それは1つの外付けスロットしか持ってはなさないが、他の基本的な外皮と比較して余分なジャンプを作ることができる。
 
-[[metertype METER_STEALTH]] is medium, [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is average.
+[[metertype METER_STEALTH]]は中程度、[[metertype METER_DETECTION]]は中程度、[[metertype METER_SPEED]]は平均です。
 
 [[BLD_SHIPYARD_BASE_REQUIRED]]'''
 
@@ -14268,7 +14328,7 @@ SH_BASIC_MEDIUM
 SH_BASIC_MEDIUM_DESC
 '''2つの外部スロットと1つの内部スロットを備えた中型の基本的な星間外皮。
 
-[[metertype METER_STEALTH]] is medium, [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is low.
+[[metertype METER_STEALTH]]は中程度、[[metertype METER_DETECTION]]は中程度、[[metertype METER_SPEED]]は遅いです。
 
 [[BLD_SHIPYARD_BASE_REQUIRED]]'''
 
@@ -14278,7 +14338,7 @@ SH_BASIC_LARGE
 SH_BASIC_LARGE_DESC
 '''3つの外付けスロットと1つの内部スロットを備えた、大きく、基本的な星間外皮。
 
-[[metertype METER_STEALTH]] is medium, [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is low.
+[[metertype METER_STEALTH]]は中程度、[[metertype METER_DETECTION]]は中程度、[[metertype METER_SPEED]]は中程度です。
 
 [[BLD_SHIPYARD_BASE_REQUIRED]]'''
 
@@ -14289,12 +14349,12 @@ SH_XENTRONIUM
 キセトロニウム機体
 
 SH_XENTRONIUM_DESC
-'''A hull constructed primarily with xentronium. Though small, it has extremely high max [[metertype METER_STRUCTURE]]. It has four external slots and one core slot.
+'''主にキセトロニウムで構築された船体。 小さいですが、最大値が非常に高い[[metertype METER_STRUCTURE]]です。 4つの外部スロットと1つのコアスロットがあります。
 
 [[metertype METER_STEALTH]]は中程度で、[[metertype METER_DETECTION]]は中程度です。'''
 
 SH_COLONY_BASE
-コロニーベース
+植民ベース
 
 SH_COLONY_BASE_DESC
 '''星系内の別の惑星に植民地を作成するように設計された船体。星系間を移動したり、星系内ですばやく移動したりできないため、内部スロットは 1 つだけです。
@@ -14628,7 +14688,7 @@ BLD_SHIPYARD_AST_REF_REQUIRED_ANY_SYSTEM_SHIP_PARTS_TEXT
 NO_STACK_SHIELDS_SHIP_PARTS
 [[metertype METER_SHIELD]]は、各ヒットから持続する[[encyclopedia DAMAGE_TITLE]]をシールド強度で減らします。 船にはアクティブシールドジェネレーターが1つしか存在できないため、シールドパーツはスタックしません。
 COLONY_SHIP_PARTS_MIN_POP
-すべてのコロニークラスの船の部品は、彼らが少なくとも3の人口を持つために構築されている惑星を必要とします。
+すべての植民化クラスの船の部品は、彼らが少なくとも3の人口を持つために構築されている惑星を必要とします。
 
 COLONY_SHIP_PARTS_UPKEEP_COST
 この部分のコストは、帝国が大規模な帝国の維持費を反映するように拡大するにつれて増加します。
@@ -14656,7 +14716,7 @@ ENEMY_PLANET_PHOTOTROPHIC_POP
 敵の惑星の光栄養集団
 
 ENEMY_PLANET_ANY_POP
-敵の惑星の任意の人口
+敵の惑星のすべての人口
 
 
 ##
@@ -14664,7 +14724,7 @@ ENEMY_PLANET_ANY_POP
 ##
 
 COLONY_BUILDING_TIME_DECREASE
-とりわけ、この技術は、帝国の対応する種から遠く離れたコロニーを構築するための時間を短縮します。
+とりわけ、この技術は、帝国の対応する種から遠く離れた植民地を構築するための時間を短縮します。
 
 
 ##
@@ -14721,7 +14781,7 @@ BAD_INDUSTRY_DESC
 −	悪い[[metertype METER_INDUSTRY]]: 75%
 
 AVERAGE_INDUSTRY_DESC
-'''	平均的な[[metertype METER_INDUSTRY]]: 100%'''
+　	平均的な[[metertype METER_INDUSTRY]]: 100%
 
 GOOD_INDUSTRY_DESC
 +	よい[[metertype METER_INDUSTRY]]: 150%
@@ -14739,7 +14799,7 @@ BAD_RESEARCH_DESC
 −	悪い[[metertype METER_RESEARCH]]: 75%
 
 AVERAGE_RESEARCH_DESC
-'''	平均的な[[metertype METER_RESEARCH]]: 100%'''
+　	平均的な[[metertype METER_RESEARCH]]: 100%
 
 GOOD_RESEARCH_DESC
 +	よい[[metertype METER_RESEARCH]]: 150%
@@ -14757,7 +14817,7 @@ BAD_DEFENSE_TROOPS_DESC
 −	弱い地上防御[[metertype METER_TROOPS]]: 50%
 
 AVERAGE_DEFENSE_TROOPS_DESC
-'''	平均的な地上防御[[metertype METER_TROOPS]]: 100%'''
+　	平均的な地上防御[[metertype METER_TROOPS]]: 100%
 
 GOOD_DEFENSE_TROOPS_DESC
 +	よい地上防御[[metertype METER_TROOPS]]: 150%
@@ -14778,7 +14838,7 @@ BAD_OFFENSE_TROOPS_DESC
 −	悪い地上攻撃[[metertype METER_TROOPS]]: 50%
 
 AVERAGE_OFFENSE_TROOPS_DESC
-'''	平均的な地上攻撃[[metertype METER_TROOPS]]: 100%'''
+　	平均的な地上攻撃[[metertype METER_TROOPS]]: 100%
 
 GOOD_OFFENSE_TROOPS_DESC
 +	よい地上攻撃[[metertype METER_TROOPS]]: 150%
@@ -14805,7 +14865,7 @@ BAD_STEALTH_DESC
 −	悪い惑星[[metertype METER_STEALTH]]: −20 malus
 
 AVERAGE_STEALTH_DESC
-'''	平均的な惑星[[metertype METER_STEALTH]]'''
+　	平均的な惑星[[metertype METER_STEALTH]]
 
 GOOD_STEALTH_DESC
 +	良い惑星[[metertype METER_STEALTH]]: +20 bonus
@@ -14823,19 +14883,19 @@ GOOD_WEAPONS_DESC
 +	良いパイロット：船の武器ごとの基本ダメージが1レベル増加します。
 
 GREAT_WEAPONS_DESC
-++	グレートパイロット：船の武器ごとの基本ダメージが2レベル増加します。
+++	すごいパイロット：船の武器ごとの基本ダメージが2レベル増加します。
 
 ULTIMATE_WEAPONS_DESC
 +++	究極のパイロット：船の武器ごとの基本ダメージが3つのレベルが増加します。
+
 GASEOUS_DESC
-'''+	ガス惑星と友達
-+	ガス惑星の燃料補給 0.1'''
++	ガス惑星と友達：ガス惑星での燃料補給 +0.1
 
 BAD_POPULATION_DESC
 −	悪い[[metertype METER_POPULATION]]: 75%
 
 AVERAGE_POPULATION_DESC
-'''	平均的な[[metertype METER_POPULATION]]: 100%'''
+	 平均的な[[metertype METER_POPULATION]]: 100%
 
 GOOD_POPULATION_DESC
 +	よい[[metertype METER_POPULATION]]: 125%
@@ -14845,11 +14905,12 @@ FIXED_LOW_POPULATION_DESC
 
 VERY_BAD_SUPPLY_DESC
 −−	非常に悪い[[metertype METER_SUPPLY]]：-1
+
 BAD_SUPPLY_DESC
 −	悪い[[metertype METER_SUPPLY]]: no bonus
 
 AVERAGE_SUPPLY_DESC
-'''	平均的な[[metertype METER_SUPPLY]]: +1'''
+　	平均的な[[metertype METER_SUPPLY]]: +1
 
 GREAT_SUPPLY_DESC
 +	よい[[metertype METER_SUPPLY]]: +2
@@ -14864,7 +14925,7 @@ BAD_STOCKPILE_DESC
 −	悪い[[metertype METER_STOCKPILE]]：[[metertype METER_POPULATION]]あたり+0.01
 
 AVERAGE_STOCKPILE_DESC
-'''	平均的な[[metertype METER_STOCKPILE]]：[[metertype METER_POPULATION]]あたり+0.02'''
+　	平均的な[[metertype METER_STOCKPILE]]：[[metertype METER_POPULATION]]あたり+0.02
 
 GOOD_STOCKPILE_DESC
 +	良好な[[metertype METER_STOCKPILE]]：[[metertype METER_POPULATION]]あたり+0.06
@@ -14876,7 +14937,7 @@ ULTIMATE_STOCKPILE_DESC
 +++	究極の[[metertype METER_STOCKPILE]]：[[metertype METER_POPULATION]]あたり+0.3
 
 GOOD_SHIP_SHIELD_DESC
-+	Good ship [[metertype METER_SHIELD]]: +1
++	良い船体[[metertype METER_SHIELD]]: +1
 
 GOOD_PLANETARY_SHIELD_DESC
 +	良い惑星[[metertype METER_SHIELD]]：+5
@@ -14885,7 +14946,7 @@ ANCIENT_PLANETARY_SHIELD_DESC
 +++	古代の惑星[[metertype METER_SHIELD]]：+500
 
 GOOD_PLANETARY_DEFENSE_DESC
-+　良い惑星[[metertype METER_DEFENSE]]：+5
++　 良い惑星[[metertype METER_DEFENSE]]：+5
 
 BROAD_EP_DESC
 ++  大きな環境耐性：より多くのタイプを許容できます。
@@ -14897,7 +14958,7 @@ FAST_COLONIZATION_DESC
 +	迅速な植民地化：植民地を構築する時間の-25%
 
 SLOW_COLONIZATION_DESC
-−	植民地化の遅さ：植民地を構築する時間+ 20%
+−	遅い植民地化：植民地を構築する時間+ 20%
 
 NO_FUEL_DESC
 −−−	船に[[metertype METER_FUEL]]を持てない
@@ -14906,24 +14967,28 @@ BAD_FUEL_DESC
 −	悪い最大[[metertype METER_FUEL]]：-0.5
 
 AVERAGE_FUEL_DESC
-'''平均最大[[metertype METER_FUEL]]：+0'''
+　	平均最大[[metertype METER_FUEL]]：+0
 
 GOOD_FUEL_DESC
 +	適切な最大[[metertype METER_FUEL]]：+0.5
+
 GREAT_FUEL_DESC
 ++	最大値[[metertype METER_FUEL]]：+1
+
 ULTIMATE_FUEL_DESC
 +++	究極の最大値[[metertype METER_FUEL]]：+1.5
 
 GREAT_ASTEROID_INDUSTRY_DESC
-+	Good Asteroid Miners：所有している小惑星帯を持つシステムに産業が集中している場合、[[metertype METER_POPULATION]]あたり+ 0.2 [[metertype METER_INDUSTRY]]。
++	良いアステロイド鉱夫：所有している小惑星帯を持つシステムに産業が集中している場合、[[metertype METER_POPULATION]]あたり+ 0.2 [[metertype METER_INDUSTRY]]。
 
 LIGHT_SENSITIVE_DESC
 −	光に敏感：[[metertype METER_POPULATION]]は、[[STAR_BLUE]]を含むシステムでは減少し、[[STAR_WHITE]]星はそれよりも短くなります。
+
 TELEPATHIC_DETECTION_DESC
 +	テレパシー検出：近くの人口惑星を感知できます。
+
 COMMUNAL_VISION_DESC
-共同ビジョン:同じ種内の可視性を共有します。
+　	共同ビジョン:同じ種内の可視性を共有します。
 
 
 ##
@@ -14931,10 +14996,10 @@ COMMUNAL_VISION_DESC
 ##
 
 AVERAGE_BASE_FUEL_REGEN_DESC
-'''	平均定常[[metertype METER_FUEL]]回復：+ 0.1'''
+　	平均定常[[metertype METER_FUEL]]回復：+ 0.1
 
 LIVING_HULL_BASE_FUEL_REGEN_DESC
-'''リビングオーガニックハルステーショナリー[[metertype METER_FUEL]]回復：+ 0.3'''
+　	リビングオーガニックハルステーショナリー[[metertype METER_FUEL]]回復：+ 0.3
 
 
 ##
@@ -14963,7 +15028,7 @@ HOSTILE_ENVIRONMENT_LABEL
 
 # %1% FIXME
 UNINHABTIABLE_ENVIRONMENT_LABEL
-%1%生息不可能な環境
+%1%生息不可能
 
 # %1% FIXME
 ENV_ENCAPSUL_LABEL
@@ -14993,7 +15058,7 @@ HOMEWORLD_LABEL
 # %1% FIXME
 # %2% FIXME
 BAD_POPULATION_LABEL
-%2%残念な人口
+%2%悪い人口
 
 # %1% FIXME
 # %2% FIXME
@@ -15248,16 +15313,16 @@ NDIM_STRC_LABEL
 N次元構造
 
 WEAK_VISION_LABEL
-弱いビジョン
+弱い視野
 
 POOR_VISION_LABEL
-貧弱なビジョン
+貧弱な視野
 
 MODERATE_VISION_LABEL
-適度なビジョン
+適度な視野
 
 GOOD_VISION_LABEL
-グッドビジョン
+良い視野
 
 EXCELLENT_VISION_LABEL
 優秀な視野
@@ -15308,10 +15373,10 @@ TRANSPATIAL_CLOAK_INTERACTION
 トランス空間ドライブ - クロークインタラクション
 
 FUEL_TITLE
-Fuel
+燃料
 
 FUEL_EFFICIENCY_TITLE
-Fuel Efficiency
+燃料効率
 
 FUEL_REFUEL_EFFICIENCY_TEXT
 '''[[metertype METER_FUEL]]は、船が帝国の[[metertype METER_SUPPLY]]の外側の星間航路を移動できるようにします。燃料は、供給外で通過する各星間航路ごとに消費されます。 [[metertype METER_SUPPLY]]行内で停止すると、船に完全に燃料が補給されます。船が友好的な[[metertype METER_SUPPLY]]ラインを超えて静止している場合、燃料はゆっくり再生します。
@@ -15324,41 +15389,42 @@ FUEL_REFUEL_EFFICIENCY_TEXT
 <encyclopedia ENC_SHIP_DESIGN> Ship Design </ encyclopedia>の基本燃料容量は、使用する[[encyclopedia ENC_SHIP_HULL]]に依存しますが、一部の[[encyclopedia ENC_SHIP_PART]]を使用して増やすこともできます。
 
 船体の効率は、優れている（400%）、優れている（200%）、通常（100%）、または悪い（60%）であり、追加の燃料部品またはその他の燃料変更効果を決定します。通常、燃料効率は船体の質量とともに低下するため、非常に小さな船のみが燃料効率が高く、巨大な船は[[metertype METER_SUPPLY]]の外で苦労します。船体の効率を高めるためにスケーリングした後、ゲームは常に有効な燃料レベルを表示します。'''
+
 BASE_FUEL_REGEN_LABEL
-定常燃料リジェン
+定常燃料再生
 
 FUEL_EFFICIENCY_DESC
 [[FUEL_EFFICIENCY_TITLE]]
 
 BAD_FUEL_EFFICIENCY_LABEL
-Hull <i>%2%</i> -40%% [[encyclopedia FUEL_EFFICIENCY_TITLE]]
+船体<i>%2%</i> -40%% [[encyclopedia FUEL_EFFICIENCY_TITLE]]
 
 AVERAGE_FUEL_EFFICIENCY_LABEL
-Hull <i>%2%</i> +0%% [[encyclopedia FUEL_EFFICIENCY_TITLE]]
+船体<i>%2%</i> +0%% [[encyclopedia FUEL_EFFICIENCY_TITLE]]
 
 GOOD_FUEL_EFFICIENCY_LABEL
-Hull <i>%2%</i> +100%% [[encyclopedia FUEL_EFFICIENCY_TITLE]]
+船体<i>%2%</i> +100%% [[encyclopedia FUEL_EFFICIENCY_TITLE]]
 
 GREAT_FUEL_EFFICIENCY_LABEL
-Hull <i>%2%</i> +300%% [[encyclopedia FUEL_EFFICIENCY_TITLE]]
+船体<i>%2%</i> +300%% [[encyclopedia FUEL_EFFICIENCY_TITLE]]
 
-HULL_DESC_BAD_FUEL_EFFICIENCY
-[[encyclopedia FUEL_EFFICIENCY_TITLE]]: 60%
+#HULL_DESC_BAD_FUEL_EFFICIENCY
+#[[encyclopedia FUEL_EFFICIENCY_TITLE]]: 60%
 
-HULL_DESC_AVERAGE_FUEL_EFFICIENCY
-[[encyclopedia FUEL_EFFICIENCY_TITLE]]: 100%
+#HULL_DESC_AVERAGE_FUEL_EFFICIENCY
+#[[encyclopedia FUEL_EFFICIENCY_TITLE]]: 100%
 
-HULL_DESC_GOOD_FUEL_EFFICIENCY
-[[encyclopedia FUEL_EFFICIENCY_TITLE]]: 200%
+#HULL_DESC_GOOD_FUEL_EFFICIENCY
+#[[encyclopedia FUEL_EFFICIENCY_TITLE]]: 200%
 
-HULL_DESC_GREAT_FUEL_EFFICIENCY
-[[encyclopedia FUEL_EFFICIENCY_TITLE]]: 400%
+#HULL_DESC_GREAT_FUEL_EFFICIENCY
+#[[encyclopedia FUEL_EFFICIENCY_TITLE]]: 400%
 
 MAX_FUEL_LESS_THAN_ONE_DESC
-Refueling Impossible
+給油不可能
 
 MAX_FUEL_LESS_THAN_ONE_LABEL
-Fuel Tank Too Small for Refuel (Max Fuel < 1.0)
+燃料タンクは小さすぎます（最大燃料<1.0）
 
 SPATIAL_FLUX_MALUS
 フラックス干渉
@@ -15398,7 +15464,7 @@ TELEPATHIC
 テレパシー
 
 GASEOUS
-Gaseous
+気体
 
 ORBITAL
 軌道
@@ -15410,14 +15476,14 @@ ORBITAL
 
 # Newline separated list of capitol names for beginner AIs
 AI_CAPITOL_NAMES_BEGINNER
-'''アイボリータワー
-修道院
+'''象牙の塔
+幼稚園
 修道院
 孤児院'''
 
 # Newline separated list of capitol names for turtle AIs
 AI_CAPITOL_NAMES_TURTLE
-'''シタデル
+'''城塞
 刑務所'''
 
 # Newline separated list of capitol names for cautious AIs
@@ -15433,12 +15499,13 @@ AI_CAPITOL_NAMES_TYPICAL
 
 # Newline separated list of capitol names for aggressive AIs
 AI_CAPITOL_NAMES_AGGRESSIVE
-'''ロイヤル
+'''王国
 帝国'''
 
 # Newline separated list of capitol names for maniacal AIs
 AI_CAPITOL_NAMES_MANIACAL
-'''栄光
+'''究極
+栄光
 最高
 永遠
 無敵'''
@@ -15650,7 +15717,7 @@ AI_FIRST_TURN_GREETING_MSG402
 アベニュー、人間、モリトゥリテ敬礼!
 
 AI_FIRST_TURN_GREETING_MSG403
-見知らぬ人に挨拶!私たちは、あなたが戦いを行う価値があることを願っています。
+見知らぬ人に挨拶を！ 私たちはあなたが戦いをする価値があることを願っています。
 
 AI_FIRST_TURN_GREETING_MSG501
 ようこそ、親愛なる敵、私たちの恐れのない戦士があなたを待っています.
@@ -15874,7 +15941,7 @@ HOTKEY_DESELECT
 オフ
 
 HOTKEY_AUTOCOMPLETE
-Autocomplete Typed Word
+入力した単語をオートコンプリート
 
 HOTKEY_FOCUS_PREV_WND
 前のコントロール
