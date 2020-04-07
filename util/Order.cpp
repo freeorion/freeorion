@@ -1414,7 +1414,7 @@ bool GiveObjectToEmpireOrder::Check(int empire_id, int object_id, int recipient_
 
     auto system_objects = Objects().find<const UniverseObject>(system->ObjectIDs());
     if (!std::any_of(system_objects.begin(), system_objects.end(),
-                     [recipient_empire_id](const std::shared_ptr<const UniverseObject> o){ return o->Owner() == recipient_empire_id; }))
+                     [recipient_empire_id](const auto o){ return o->Owner() == recipient_empire_id; }))
     {
         ErrorLogger() << "IssueGiveObjectToEmpireOrder : recipient empire has nothing in system";
         return false;

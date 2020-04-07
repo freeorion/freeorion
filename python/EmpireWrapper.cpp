@@ -26,35 +26,9 @@
 
 
 namespace {
-    // Research queue tests whether it contains a Tech by name, but Python needs
-    // a __contains__ function that takes a *Queue::Element.  This helper
-    // functions take an Element and returns the associated Tech name string.
-    const std::string&  TechFromResearchQueueElement(const ResearchQueue::Element& element)
-    { return element.name; }
-
-    std::vector<std::string> (TechManager::*TechNamesVoid)(void) const = &TechManager::TechNames;
-    auto TechNamesMemberFunc = TechNamesVoid;
-
-    std::vector<std::string> (TechManager::*TechNamesCategory)(const std::string&) const = &TechManager::TechNames;
-    auto TechNamesCategoryMemberFunc = TechNamesCategory;
-
     std::vector<std::string>    TechRecursivePrereqs(const Tech& tech, int empire_id)
     { return GetTechManager().RecursivePrereqs(tech.Name(), empire_id); }
     auto TechRecursivePrereqsFunc = TechRecursivePrereqs;
-
-    // Concatenate functions to create one that takes two parameters.  The first parameter is a ResearchQueue*, which
-    // is passed directly to ResearchQueue::InQueue as the this pointer.  The second parameter is a
-    // ResearchQueue::Element which is passed into TechFromResearchQueueElement, which returns a Tech*, which is
-    // passed into ResearchQueue::InQueue as the second parameter.
-    auto InQueueFromResearchQueueElementFunc =
-        boost::bind(&ResearchQueue::InQueue, _1, boost::bind(TechFromResearchQueueElement, _2));
-
-    // ProductionQueue::Element contains a ProductionItem which contains details of the item on the queue.  Need helper
-    // functions to get the details about the item in the Element without adding extra pointless exposed classes to
-    // the Python interface
-    BuildType           BuildTypeFromProductionQueueElement(const ProductionQueue::Element& element)    { return element.item.build_type; }
-    const std::string&  NameFromProductionQueueElement(const ProductionQueue::Element& element)         { return element.item.name; }
-    int                 DesignIDFromProductionQueueElement(const ProductionQueue::Element& element)     { return element.item.design_id; }
 
     bool                (Empire::*BuildableItemBuilding)(BuildType, const std::string&, int) const =    &Empire::ProducibleItem;
     bool                (Empire::*BuildableItemShip)(BuildType, int, int) const =                       &Empire::ProducibleItem;
@@ -393,7 +367,8 @@ namespace FreeOrionPython {
             .add_property("empty",                  &ResearchQueue::empty)
             .def("inQueue",                         &ResearchQueue::InQueue)
             .def("__contains__",                    make_function(
-                                                        boost::bind(InQueueFromResearchQueueElementFunc, _1, _2),
+                                                        [](const auto& queue, const auto& element)
+                                                        { return queue->InQueue(element.name); },
                                                         return_value_policy<return_by_value>(),
                                                         boost::mpl::vector<bool, const ResearchQueue*, const ResearchQueue::Element&>()
                                                     ))
@@ -406,17 +381,17 @@ namespace FreeOrionPython {
         //////////////////////
         class_<ProductionQueue::Element>("productionQueueElement", no_init)
             .add_property("name",                   make_function(
-                                                        boost::bind(NameFromProductionQueueElement, _1),
+                                                        [](const auto& element){ return element.item.name; },
                                                         return_value_policy<copy_const_reference>(),
                                                         boost::mpl::vector<const std::string&, const ProductionQueue::Element&>()
                                                     ))
             .add_property("designID",               make_function(
-                                                        boost::bind(DesignIDFromProductionQueueElement, _1),
+                                                        [](const auto& element){ return element.item.design_id; },
                                                         return_value_policy<return_by_value>(),
                                                         boost::mpl::vector<int, const ProductionQueue::Element&>()
                                                     ))
             .add_property("buildType",              make_function(
-                                                        boost::bind(BuildTypeFromProductionQueueElement, _1),
+                                                        [](const auto& element){ return element.item.build_type; },
                                                         return_value_policy<return_by_value>(),
                                                         boost::mpl::vector<BuildType, const ProductionQueue::Element&>()
                                                     ))
@@ -466,13 +441,13 @@ namespace FreeOrionPython {
         def("getTech",                              &GetTech,                               return_value_policy<reference_existing_object>(), "Returns the tech (Tech) with the indicated name (string).");
         def("getTechCategories",                    &TechManager::CategoryNames,            return_value_policy<return_by_value>(), "Returns the names of all tech categories (StringVec).");
 
-        boost::python::object techsFunc = make_function(boost::bind(TechNamesMemberFunc, &(GetTechManager())),
+        boost::python::object techsFunc = make_function([](){ return GetTechManager().TechNames(); },
                                                         return_value_policy<boost::python::return_by_value>(),
                                                         boost::mpl::vector<std::vector<std::string>>());
         boost::python::setattr(techsFunc, "__doc__", boost::python::str("Returns the names of all techs (StringVec)."));
         def("techs", techsFunc);
 
-        boost::python::object techsInCategoryFunc = make_function(boost::bind(TechNamesCategoryMemberFunc, &(GetTechManager()), _1),
+        boost::python::object techsInCategoryFunc = make_function([](const std::string& category_name){ return GetTechManager().TechNames(category_name); },
                                                                   return_value_policy<return_by_value>(),
                                                                   boost::mpl::vector<std::vector<std::string>, const std::string&>());
         boost::python::setattr(techsInCategoryFunc, "__doc__", boost::python::str("Returns the names of all techs (StringVec) in the indicated tech category name (string)."));

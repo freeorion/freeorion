@@ -215,17 +215,18 @@ void FileDlg::CompleteConstruction()
     UpdateList();
 
     m_ok_button->LeftClickedSignal.connect(
-        boost::bind(&FileDlg::OkClicked, this));
+        [this](){ this->OkClicked(); });
     m_cancel_button->LeftClickedSignal.connect(
-        boost::bind(&FileDlg::CancelClicked, this));
+        [this](){ this->CancelClicked(); });
     m_files_list->SelRowsChangedSignal.connect(
-        boost::bind(&FileDlg::FileSetChanged, this, _1));
+        [this](const auto& rows){ this->FileSetChanged(rows); });
     m_files_list->DoubleClickedRowSignal.connect(
-        boost::bind(&FileDlg::FileDoubleClicked, this, _1, _2, _3));
+        [this](auto it, const auto& pt, const auto& modkeys)
+        { this->FileDoubleClicked(it, pt, modkeys); });
     m_files_edit->EditedSignal.connect(
-        boost::bind(&FileDlg::FilesEditChanged, this, _1));
+        [this](const auto& str){ this->FilesEditChanged(str); });
     m_filter_list->SelChangedSignal.connect(
-        boost::bind(&FileDlg::FilterChanged, this, _1));
+        [this](auto it){ UpdateList(); });
 
     if (!m_init_filename.empty()) {
         fs::path filename_path = fs::system_complete(fs::path(m_init_filename));
@@ -484,9 +485,6 @@ void FileDlg::FilesEditChanged(const std::string& str)
     if (m_save && m_ok_button->Text() != m_save_str)
         m_ok_button->SetText(m_save_str);
 }
-
-void FileDlg::FilterChanged(DropDownList::iterator it)
-{ UpdateList(); }
 
 void FileDlg::SetWorkingDirectory(const fs::path& p)
 {

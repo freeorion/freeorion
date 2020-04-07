@@ -1356,7 +1356,7 @@ namespace {
         condition_non_targets.reserve(condition_non_targets.size() + obj_map.ExistingObjects().size());
         std::transform(obj_map.ExistingObjects().begin(), obj_map.ExistingObjects().end(),  // ExistingObjects() here does not consider whether objects have been destroyed during this combat
                        std::back_inserter(condition_non_targets),
-                       boost::bind(&std::map<int, std::shared_ptr<UniverseObject>>::value_type::second, _1));
+                       [](const auto& e){ return e.second; });
     }
 
     void ShootAllWeapons(std::shared_ptr<UniverseObject> attacker,

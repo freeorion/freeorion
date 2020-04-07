@@ -48,7 +48,7 @@ void ResourcePanel::CompleteConstruction() {
         throw std::invalid_argument("Attempted to construct a ResourcePanel with an UniverseObject that is not a ResourceCenter");
 
     m_expand_button->LeftPressedSignal.connect(
-        boost::bind(&ResourcePanel::ExpandCollapseButtonPressed, this));
+        [this](){ ExpandCollapseButtonPressed(); });
 
     const auto obj = Objects().get(m_rescenter_id);
     if (!obj) {
@@ -69,7 +69,7 @@ void ResourcePanel::CompleteConstruction() {
         AttachChild(stat);
         m_meter_stats.push_back({meter, stat});
         meters.push_back({meter, AssociatedMeterType(meter)});
-        stat->RightClickedSignal.connect([meter](const GG::Pt& pt) {
+        stat->RightClickedSignal.connect([meter](const auto& pt) {
             std::string meter_string = boost::lexical_cast<std::string>(meter);
 
             auto pedia_zoom_to_article_action = [meter_string]() {

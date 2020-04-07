@@ -516,11 +516,11 @@ namespace {
 
             //+_w one or more greed word chars,  () group no capture,  [] semantic operation
             const xpr::sregex OPEN_TAG_NAME =
-                (+xpr::_w)[xpr::check(boost::bind(&CompiledRegex::MatchesKnownTag, this, _1))];
+                (+xpr::_w)[xpr::check([this](const auto& name){ return this->MatchesKnownTag(name); })];
 
             // (+_w) one or more greedy word check matches stack
             const xpr::sregex CLOSE_TAG_NAME =
-                (+xpr::_w)[xpr::check(boost::bind(&CompiledRegex::MatchesTopOfStack, this, _1))];
+                (+xpr::_w)[xpr::check([this](const auto& name){ return this->MatchesTopOfStack(name); })];
 
             // *blank  'zero or more greedy whitespace',   >> 'followed by',    _ln 'newline',
             // (set = 'a', 'b') is '[ab]',    +blank 'one or more greedy blank'

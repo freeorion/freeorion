@@ -390,7 +390,7 @@ std::shared_ptr<FleetWnd> FleetUIManager::WndForFleetID(int fleet_id) const {
     std::shared_ptr<FleetWnd> retval = nullptr;
     GG::ProcessThenRemoveExpiredPtrs(
         m_fleet_wnds,
-        [&retval, fleet_id](std::shared_ptr<FleetWnd>& wnd)
+        [&retval, fleet_id](auto& wnd)
         {
             if (!retval && wnd->ContainsFleet(fleet_id))
                 retval = wnd;
@@ -405,7 +405,7 @@ std::shared_ptr<FleetWnd> FleetUIManager::WndForFleetIDs(const std::vector<int>&
     std::shared_ptr<FleetWnd> retval = nullptr;
     GG::ProcessThenRemoveExpiredPtrs(
         m_fleet_wnds,
-        [&retval, fleet_ids](std::shared_ptr<FleetWnd>& wnd)
+        [&retval, fleet_ids](auto& wnd)
         {
             if (!retval && wnd->ContainsFleets(fleet_ids))
                 retval = wnd;
@@ -450,9 +450,9 @@ std::shared_ptr<FleetWnd> FleetUIManager::NewFleetWnd(
 
     m_fleet_wnds.insert(std::weak_ptr<FleetWnd>(retval));
     retval->ClosingSignal.connect(
-        boost::bind(&FleetUIManager::FleetWndClosing, this, _1));
+        [this](auto wnd){ FleetWndClosing(wnd); });
     retval->ClickedSignal.connect(
-        boost::bind(&FleetUIManager::FleetWndClicked, this, _1));
+        [this](auto wnd){ FleetWndClicked(wnd); });
     retval->FleetRightClickedSignal.connect(
         FleetRightClickedSignal);
     retval->ShipRightClickedSignal.connect(
@@ -466,7 +466,7 @@ std::shared_ptr<FleetWnd> FleetUIManager::NewFleetWnd(
 void FleetUIManager::CullEmptyWnds() {
     // scan through FleetWnds, deleting those that have no fleets
     GG::ProcessThenRemoveExpiredPtrs(m_fleet_wnds,
-                                 [](std::shared_ptr<FleetWnd>& wnd)
+                                 [](auto& wnd)
                                  {
                                      if (wnd->FleetIDs().empty())
                                          wnd->CloseClicked();
@@ -502,7 +502,7 @@ bool FleetUIManager::CloseAll() {
 
     // closing a fleet window removes it from m_fleet_wnds
     GG::ProcessThenRemoveExpiredPtrs(m_fleet_wnds,
-                                 [&retval](std::shared_ptr<FleetWnd>& wnd) {
+                                 [&retval](auto& wnd) {
                                      retval = true;
                                      wnd->CloseClicked();
                                  });
@@ -517,9 +517,7 @@ bool FleetUIManager::CloseAll() {
 }
 
 void FleetUIManager::RefreshAll() {
-    GG::ProcessThenRemoveExpiredPtrs(m_fleet_wnds,
-                                 [](std::shared_ptr<FleetWnd>& wnd)
-                                 { wnd->Refresh(); });
+    GG::ProcessThenRemoveExpiredPtrs(m_fleet_wnds, [](auto& wnd){ wnd->Refresh(); });
 }
 
 FleetUIManager& FleetUIManager::GetFleetUIManager() {
@@ -548,7 +546,7 @@ void FleetUIManager::FleetWndClicked(std::shared_ptr<FleetWnd> fleet_wnd) {
 void FleetUIManager::EnableOrderIssuing(bool enable/* = true*/) {
     m_order_issuing_enabled = enable;
     GG::ProcessThenRemoveExpiredPtrs(m_fleet_wnds,
-                                 [&enable](std::shared_ptr<FleetWnd>& wnd)
+                                 [&enable](auto& wnd)
                                  { wnd->EnableOrderIssuing(enable); });
 }
 
@@ -980,7 +978,7 @@ namespace {
             AttachChild(icon);
             std::string meter_string = boost::lexical_cast<std::string>(entry.first);
 
-            icon->RightClickedSignal.connect([meter_string](const GG::Pt& pt) {
+            icon->RightClickedSignal.connect([meter_string](const auto& pt) {
                 auto zoom_article_action = [meter_string]() { ClientUI::GetClientUI()->ZoomToMeterTypeArticle(meter_string); };
                 std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) %
                                                                         UserString(meter_string));
@@ -994,11 +992,11 @@ namespace {
 
         // bookkeeping
         m_ship_connection = ship->StateChangedSignal.connect(
-            boost::bind(&ShipDataPanel::RequireRefresh, this));
+            [this](){ RequireRefresh(); });
 
         if (auto fleet = Objects().get<Fleet>(ship->FleetID()))
             m_fleet_connection = fleet->StateChangedSignal.connect(
-                boost::bind(&ShipDataPanel::RequireRefresh, this));
+                [this](){ RequireRefresh(); });
     }
 
     ////////////////////////////////////////////////
@@ -1409,7 +1407,7 @@ void FleetDataPanel::Refresh() {
         else if (fleet->Unowned() && fleet->HasMonsters())
             m_fleet_icon->SetColor(GG::CLR_RED);
 
-        auto all_ships = [fleet](const std::function<bool(const std::shared_ptr<const Ship>&)>& pred) {
+        auto all_ships = [fleet](const auto& pred) {
             // Searching for each Ship one at a time is faster than
             // FindObjects(ship_ids), because an early exit avoids searching the
             // remaining ids.
@@ -1426,7 +1424,7 @@ void FleetDataPanel::Refresh() {
         };
 
         // Add the overlay
-        auto add_overlay = [this](const std::string& file) {
+        auto add_overlay = [this](const auto& file) {
             if (auto overlay_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / file, true)) {
                 auto overlay = GG::Wnd::Create<GG::StaticGraphic>(overlay_texture, DataPanelIconStyle());
                 overlay->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
@@ -1437,24 +1435,24 @@ void FleetDataPanel::Refresh() {
 
         // Add overlays for all ships colonizing, invading etc.
         std::shared_ptr<GG::Texture> overlay_texture;
-        if (all_ships([](const std::shared_ptr<const Ship>& ship) { return ship->OrderedScrapped(); }))
+        if (all_ships([](const auto& ship){ return ship->OrderedScrapped(); }))
             add_overlay("scrapped.png");
         if (all_ships(
-                [](const std::shared_ptr<const Ship>& ship)
+                [](const auto& ship)
                 {return ship->OrderedColonizePlanet() != INVALID_OBJECT_ID; })
            )
         {
             add_overlay("colonizing.png");
         }
         if (all_ships(
-                [](const std::shared_ptr<const Ship>& ship)
+                [](const auto& ship)
                 { return ship->OrderedInvadePlanet() != INVALID_OBJECT_ID; })
            )
         {
             add_overlay("invading.png");
         }
         if (all_ships(
-                [](const std::shared_ptr<const Ship>& ship)
+                [](const auto& ship)
                 { return ship->OrderedBombardPlanet() != INVALID_OBJECT_ID; })
            )
         {
@@ -1494,13 +1492,13 @@ void FleetDataPanel::RefreshStateChangedSignals() {
         return;
 
     m_fleet_connection = fleet->StateChangedSignal.connect(
-        boost::bind(&FleetDataPanel::RequireRefresh, this));
+        [this](){ RequireRefresh(); });
 
     m_ship_connections.reserve(fleet->NumShips());
     for (auto& ship : Objects().find<const Ship>(fleet->ShipIDs()))
         m_ship_connections.push_back(
             ship->StateChangedSignal.connect(
-                boost::bind(&FleetDataPanel::RequireRefresh, this)));
+                [this](){ RequireRefresh(); }));
 }
 
 void FleetDataPanel::SetStatIconValues() {
@@ -1716,7 +1714,7 @@ void FleetDataPanel::Init() {
             GG::SubTexture(FleetAggressiveMouseoverIcon()));
         AttachChild(m_aggression_toggle);
         m_aggression_toggle->LeftClickedSignal.connect(
-            boost::bind(&FleetDataPanel::ToggleAggression, this));
+            [this](){ ToggleAggression(); });
 
     } else if (auto fleet = Objects().get<Fleet>(m_fleet_id)) {
         int tooltip_delay = GetOptionsDB().Get<int>("ui.tooltip.delay");
@@ -1743,7 +1741,7 @@ void FleetDataPanel::Init() {
             m_stat_icons.push_back({meter_type, icon});
             icon->SetBrowseModeTime(tooltip_delay);
             icon->SetBrowseText(UserString(std::get<2>(entry)));
-            icon->RightClickedSignal.connect([meter_type](const GG::Pt& pt){
+            icon->RightClickedSignal.connect([meter_type](const auto& pt) {
                 std::string meter_string = boost::lexical_cast<std::string>(meter_type);
 
                 auto zoom_article_action = [meter_string]() { ClientUI::GetClientUI()->ZoomToMeterTypeArticle(meter_string); };
@@ -1767,7 +1765,7 @@ void FleetDataPanel::Init() {
                 GG::SubTexture(FleetAggressiveMouseoverIcon()));
             AttachChild(m_aggression_toggle);
             m_aggression_toggle->LeftClickedSignal.connect(
-                boost::bind(&FleetDataPanel::ToggleAggression, this));
+                [this](){ ToggleAggression(); });
         }
 
         ColorTextForSelect();
@@ -2414,11 +2412,12 @@ FleetDetailPanel::FleetDetailPanel(GG::X w, GG::Y h, int fleet_id, bool order_is
     }
 
     m_ships_lb->SelRowsChangedSignal.connect(
-        boost::bind(&FleetDetailPanel::ShipSelectionChanged, this, _1));
+        [this](const auto& rows){ ShipSelectionChanged(rows); });
     m_ships_lb->RightClickedRowSignal.connect(
-        boost::bind(&FleetDetailPanel::ShipRightClicked, this, _1, _2, _3));
+        [this](auto it, const auto& pt, const auto& modkeys)
+        { ShipRightClicked(it, pt, modkeys); });
     GetUniverse().UniverseObjectDeleteSignal.connect(
-        boost::bind(&FleetDetailPanel::UniverseObjectDeleted, this, _1));
+        [this](auto obj){ UniverseObjectDeleted(obj); });
 }
 
 void FleetDetailPanel::CompleteConstruction() {
@@ -2452,7 +2451,7 @@ void FleetDetailPanel::SetFleet(int fleet_id) {
         auto fleet = Objects().get<Fleet>(m_fleet_id);
         if (fleet && !fleet->Empty()) {
             m_fleet_connection = fleet->StateChangedSignal.connect(
-                boost::bind(&FleetDetailPanel::Refresh, this), boost::signals2::at_front);
+                [this](){ Refresh(); }, boost::signals2::at_front);
         } else {
             ErrorLogger() << "FleetDetailPanel::SetFleet ignoring set to missing or empty fleet id (" << fleet_id << ")";
         }
@@ -2789,13 +2788,16 @@ void FleetWnd::CompleteConstruction() {
     m_fleets_lb = GG::Wnd::Create<FleetsListBox>(m_order_issuing_enabled);
     m_fleets_lb->SetHiliteColor(GG::CLR_ZERO);
     m_fleets_lb->SelRowsChangedSignal.connect(
-        boost::bind(&FleetWnd::FleetSelectionChanged, this, _1));
+        [this](const auto& rows){ FleetSelectionChanged(rows); });
     m_fleets_lb->LeftClickedRowSignal.connect(
-        boost::bind(&FleetWnd::FleetLeftClicked, this, _1, _2, _3));
+        [this](auto, auto, auto)
+        { ClickedSignal(std::static_pointer_cast<FleetWnd>(shared_from_this())); });
     m_fleets_lb->RightClickedRowSignal.connect(
-        boost::bind(&FleetWnd::FleetRightClicked, this, _1, _2, _3));
+        [this](auto it, const auto& pt, const auto modkeys)
+        { FleetRightClicked(it, pt, modkeys); });
     m_fleets_lb->DoubleClickedRowSignal.connect(
-        boost::bind(&FleetWnd::FleetDoubleClicked, this, _1, _2, _3));
+        [this](auto, auto, auto)
+        { ClickedSignal(std::static_pointer_cast<FleetWnd>(shared_from_this())); });
     AttachChild(m_fleets_lb);
     m_fleets_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_BROWSEUPDATES);
     m_fleets_lb->AllowDropType(SHIP_DROP_TYPE_STRING);
@@ -2803,7 +2805,7 @@ void FleetWnd::CompleteConstruction() {
 
     // create fleet detail panel
     m_fleet_detail_panel->SelectedShipsChangedSignal.connect(
-        boost::bind(&FleetWnd::ShipSelectionChanged, this, _1));
+        [this](const auto& rows){ ShipSelectionChanged(rows); });
     m_fleet_detail_panel->ShipRightClickedSignal.connect(
         ShipRightClickedSignal);
     AttachChild(m_fleet_detail_panel);
@@ -2815,10 +2817,10 @@ void FleetWnd::CompleteConstruction() {
     m_new_fleet_drop_target = GG::Wnd::Create<FleetDataPanel>(GG::X1, ListRowHeight(), m_system_id, true);
     AttachChild(m_new_fleet_drop_target);
     m_new_fleet_drop_target->NewFleetFromShipsSignal.connect(
-        boost::bind(&FleetWnd::CreateNewFleetFromDrops, this, _1));
+        [this](const auto& ship_ids){ CreateNewFleetFromDrops(ship_ids); });
 
     GetUniverse().UniverseObjectDeleteSignal.connect(
-        boost::bind(&FleetWnd::UniverseObjectDeleted, this, _1));
+        [this](auto obj){ UniverseObjectDeleted(obj); });
 
     RefreshStateChangedSignals();
 
@@ -2914,7 +2916,7 @@ void FleetWnd::RefreshStateChangedSignals() {
     m_system_connection.disconnect();
     if (auto system = Objects().get<System>(m_system_id))
         m_system_connection = system->StateChangedSignal.connect(
-            boost::bind(&FleetWnd::RequireRefresh, this), boost::signals2::at_front);
+            [this](){ RequireRefresh(); }, boost::signals2::at_front);
 
     for (auto& fleet_connection : m_fleet_connections)
         fleet_connection.disconnect();
@@ -2925,7 +2927,7 @@ void FleetWnd::RefreshStateChangedSignals() {
             continue;
         m_fleet_connections.push_back(
             fleet->StateChangedSignal.connect(
-                boost::bind(&FleetWnd::RequireRefresh, this)));
+                [this](){ RequireRefresh(); }));
     }
 }
 
@@ -3663,12 +3665,6 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
 
     popup->Run();
 }
-
-void FleetWnd::FleetLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
-{ ClickedSignal(std::static_pointer_cast<FleetWnd>(shared_from_this())); }
-
-void FleetWnd::FleetDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
-{ ClickedSignal(std::static_pointer_cast<FleetWnd>(shared_from_this())); }
 
 int FleetWnd::FleetInRow(GG::ListBox::iterator it) const {
     if (it == m_fleets_lb->end())

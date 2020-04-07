@@ -423,19 +423,20 @@ ResearchWnd::ResearchWnd(GG::X w, GG::Y h, bool initially_hidden /*= true*/) :
     m_tech_tree_wnd = GG::Wnd::Create<TechTreeWnd>(tech_tree_wnd_size.x, tech_tree_wnd_size.y, initially_hidden);
 
     m_queue_wnd->GetQueueListBox()->MovedRowSignal.connect(
-        boost::bind(&ResearchWnd::QueueItemMoved, this, _1, _2));
+        [this](const auto& row_it, const auto& original_position_it)
+        { QueueItemMoved(row_it, original_position_it); });
     m_queue_wnd->GetQueueListBox()->QueueItemDeletedSignal.connect(
-        boost::bind(&ResearchWnd::DeleteQueueItem, this, _1));
+        [this](auto it){ DeleteQueueItem(it); });
     m_queue_wnd->GetQueueListBox()->LeftClickedRowSignal.connect(
-        boost::bind(&ResearchWnd::QueueItemClickedSlot, this, _1, _2, _3));
+        [this](auto it, auto, const auto& modkeys){ QueueItemClickedSlot(it, modkeys); });
     m_queue_wnd->GetQueueListBox()->DoubleClickedRowSignal.connect(
-        boost::bind(&ResearchWnd::QueueItemDoubleClickedSlot, this, _1, _2, _3));
+        [this](auto it, auto, auto){ QueueItemDoubleClickedSlot(it); });
     m_queue_wnd->GetQueueListBox()->ShowPediaSignal.connect(
-        boost::bind(&ResearchWnd::ShowPedia, this));
+        [this](){ ShowPedia(); });
     m_queue_wnd->GetQueueListBox()->QueueItemPausedSignal.connect(
-        boost::bind(&ResearchWnd::QueueItemPaused, this, _1, _2));
+        [this](auto it, bool pause){ QueueItemPaused(it, pause); });
     m_tech_tree_wnd->AddTechsToQueueSignal.connect(
-        boost::bind(&ResearchWnd::AddTechsToQueueSlot, this, _1, _2));
+        [this](const auto& tech_vec, int pos){ AddTechsToQueueSlot(tech_vec, pos); });
 }
 
 void ResearchWnd::CompleteConstruction() {
@@ -493,7 +494,7 @@ void ResearchWnd::Refresh() {
 
     if (Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID()))
         m_empire_connection = empire->GetResearchQueue().ResearchQueueChangedSignal.connect(
-                                boost::bind(&ResearchWnd::ResearchQueueChangedSlot, this));
+            [this](){ ResearchQueueChangedSlot(); });
     Update();
 }
 
@@ -666,7 +667,7 @@ void ResearchWnd::DeleteQueueItem(GG::ListBox::iterator it) {
         empire->UpdateResearchQueue();
 }
 
-void ResearchWnd::QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
+void ResearchWnd::QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Flags<GG::ModKey>& modkeys) {
     if (m_queue_wnd->GetQueueListBox()->DisplayingValidQueueItems()) {
         if (modkeys & GG::MOD_KEY_CTRL) {
             DeleteQueueItem(it);
@@ -679,7 +680,7 @@ void ResearchWnd::QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& p
     }
 }
 
-void ResearchWnd::QueueItemDoubleClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
+void ResearchWnd::QueueItemDoubleClickedSlot(GG::ListBox::iterator it) {
     if (m_queue_wnd->GetQueueListBox()->DisplayingValidQueueItems()) {
         QueueRow* queue_row = boost::polymorphic_downcast<QueueRow*>(it->get());
         if (!queue_row)

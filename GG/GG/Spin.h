@@ -444,11 +444,11 @@ template<class T>
 void Spin<T>::ConnectSignals()
 {
     m_edit->FocusUpdateSignal.connect(
-        boost::bind(&Spin::ValueUpdated, this, _1));
+        [this](const std::string& text){ this->ValueUpdated(text); });
     m_up_button->LeftClickedSignal.connect(
-        boost::bind(&Spin::IncrImpl, this, true));
+        [this](){ this->IncrImpl(true); });
     m_down_button->LeftClickedSignal.connect(
-        boost::bind(&Spin::DecrImpl, this, true));
+        [this](){ this->DecrImpl(true); });
 }
 
 template<class T>

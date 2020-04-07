@@ -62,13 +62,23 @@ void QueueListBox::CompleteConstruction() {
     ShowPromptSlot();
 
     BeforeInsertRowSignal.connect(
-        boost::bind(&QueueListBox::EnsurePromptHiddenSlot, this, _1));
+        [this](iterator) {
+            if (this->m_showing_prompt) {
+                // if the prompt is shown, it must be the only row in the ListBox
+                Erase(begin(), false, false);
+                m_showing_prompt = false;
+            }
+        });
     AfterEraseRowSignal.connect(
-        boost::bind(&QueueListBox::ShowPromptConditionallySlot, this, _1));
+        [this](iterator) {
+            if (begin() == end())
+                ShowPromptSlot();
+        });
     ClearedRowsSignal.connect(
-        boost::bind(&QueueListBox::ShowPromptSlot, this));
+        [this](){ ShowPromptSlot(); });
     GG::ListBox::RightClickedRowSignal.connect(
-        boost::bind(&QueueListBox::ItemRightClicked, this, _1, _2, _3));
+        [this](auto it, const auto& pt, const auto& modkeys)
+        { ItemRightClickedImpl(it, pt, modkeys); });
 }
 
 GG::X QueueListBox::RowWidth() const
@@ -195,9 +205,6 @@ std::function<void()> QueueListBox::MoveToBottomAction(GG::ListBox::iterator it)
 std::function<void()> QueueListBox::DeleteAction(GG::ListBox::iterator it) const
 { return [it, this]() { QueueItemDeletedSignal(it); }; }
 
-void QueueListBox::ItemRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
-{ this->ItemRightClickedImpl(it, pt, modkeys); }
-
 void QueueListBox::ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
     popup->AddMenuItem(GG::MenuItem(UserString("MOVE_UP_QUEUE_ITEM"),   false, false, MoveToTopAction(it)));
@@ -206,20 +213,7 @@ void QueueListBox::ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& 
     popup->Run();
 }
 
-void QueueListBox::EnsurePromptHiddenSlot(iterator it) {
-    if (m_showing_prompt) {
-        Erase(begin(), false, false); // if the prompt is shown, it must be the only row in the ListBox
-        m_showing_prompt = false;
-    }
-}
-
 void QueueListBox::ShowPromptSlot() {
     Insert(GG::Wnd::Create<PromptRow>(Width() - 4, m_prompt_str), begin(), false);
     m_showing_prompt = true;
-}
-
-void QueueListBox::ShowPromptConditionallySlot(iterator it) {
-    if (begin() == end()) {
-        ShowPromptSlot();
-    }
 }

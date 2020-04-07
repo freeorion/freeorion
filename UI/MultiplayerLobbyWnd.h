@@ -75,7 +75,6 @@ private:
     bool            CanStart() const;
     bool            HasAuthRole(Networking::RoleType role) const;
     void            ReadyClicked();
-    void            CancelClicked();
     void            AnyCanEdit(bool checked);
 
     MultiplayerLobbyData    m_lobby_data;   ///< a copy of the most recently received lobby update

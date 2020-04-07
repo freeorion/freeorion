@@ -657,7 +657,7 @@ void SaveFileDialog::Init() {
         auto delete_btn = Wnd::Create<CUIButton>(UserString("DELETE"));
         m_layout->Add(delete_btn, 2, 3);
         delete_btn->LeftClickedSignal.connect(
-            boost::bind(&SaveFileDialog::AskDelete, this));
+            [this](){ AskDelete(); });
 
         m_layout->SetMinimumRowHeight(2, delete_btn->MinUsableSize().y + GG::Y(Value(SAVE_FILE_BUTTON_MARGIN)));
         m_layout->SetMinimumColumnWidth(2, m_confirm_btn->MinUsableSize().x + 2*SAVE_FILE_BUTTON_MARGIN);
@@ -710,17 +710,21 @@ void SaveFileDialog::Init() {
     SetLayout(m_layout);
 
     m_confirm_btn->LeftClickedSignal.connect(
-        boost::bind(&SaveFileDialog::Confirm, this));
+        [this](){ Confirm(); });
     cancel_btn->LeftClickedSignal.connect(
-        boost::bind(&SaveFileDialog::Cancel, this));
+        [this](){ Cancel(); });
     m_file_list->SelRowsChangedSignal.connect(
-        boost::bind(&SaveFileDialog::SelectionChanged, this, _1));
+        [this](const auto& selections){ SelectionChanged(selections); });
     m_file_list->DoubleClickedRowSignal.connect(
-        boost::bind(&SaveFileDialog::DoubleClickRow, this, _1, _2, _3));
+        [this](auto row, auto, auto) {
+            m_file_list->SelectRow(row);
+            Confirm();
+        });
     m_name_edit->EditedSignal.connect(
-        boost::bind(&SaveFileDialog::FileNameEdited, this, _1));
+        [this](auto){ CheckChoiceValidity(); });
     m_current_dir_edit->EditedSignal.connect(
-        boost::bind(&SaveFileDialog::DirectoryEdited, this, _1));
+        [this](auto){ CheckChoiceValidity(); });
+
 
     if (!m_load_only) {
         m_name_edit->SetText(std::string("save-") + FilenameTimestamp() + m_extension);
@@ -876,11 +880,6 @@ void SaveFileDialog::AskDelete() {
     }
 }
 
-void SaveFileDialog::DoubleClickRow(GG::ListBox::iterator row, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
-    m_file_list->SelectRow(row);
-    Confirm();
-}
-
 void SaveFileDialog::Cancel() {
     DebugLogger() << "SaveFileDialog::Cancel: Dialog Canceled";
     m_name_edit->SetText("");
@@ -981,12 +980,6 @@ bool SaveFileDialog::CheckChoiceValidity() {
 
     return true;
 }
-
-void SaveFileDialog::FileNameEdited(const std::string& filename)
-{ CheckChoiceValidity(); }
-
-void SaveFileDialog::DirectoryEdited(const string& filename)
-{ CheckChoiceValidity(); }
 
 std::string SaveFileDialog::GetDirPath() const {
     const std::string& path_edit_text = m_current_dir_edit->Text();

@@ -186,8 +186,6 @@ private:
     void AcceptNextMessagingConnection();
     void AcceptPlayerMessagingConnection(PlayerConnectionPtr player_connection,
                                          const boost::system::error_code& error);
-    void DisconnectImpl(PlayerConnectionPtr player_connection);
-    void EnqueueEvent(const NullaryFn& fn);
 
     int                             m_host_player_id;
 
@@ -312,14 +310,11 @@ private:
     void HandleMessageHeaderRead(boost::system::error_code error, std::size_t bytes_transferred);
     void AsyncReadMessage();
     void AsyncWriteMessage();
-    static void HandleMessageWrite(PlayerConnectionPtr self,
-                                   boost::system::error_code error,
-                                   std::size_t bytes_transferred);
+    void HandleMessageWrite(boost::system::error_code error, std::size_t bytes_transferred);
 
     /** Places message to the end of sending queue and start asynchronous write if \a message was
         first in the queue. */
-    static void SendMessageImpl(PlayerConnectionPtr self, Message message);
-    static void AsyncErrorHandler(PlayerConnectionPtr self, boost::system::error_code handled_error, boost::system::error_code error);
+    void SendMessageImpl(Message message);
 
     boost::asio::io_context&        m_service;
     boost::asio::ip::tcp::socket    m_socket;

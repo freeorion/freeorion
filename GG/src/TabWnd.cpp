@@ -115,7 +115,7 @@ Wnd* OverlayWnd::RemoveWnd(Wnd* wnd)
 {
     Wnd* retval = nullptr;
     auto it = std::find_if(m_wnds.begin(), m_wnds.end(),
-                           [&wnd](const std::shared_ptr<Wnd>& x){ return (x.get() == wnd); });
+                           [&wnd](const auto& x){ return (x.get() == wnd); });
     if (it != m_wnds.end()) {
         if (it - m_wnds.begin() == static_cast<std::ptrdiff_t>(m_current_wnd_index))
             m_current_wnd_index = NO_WND;
@@ -173,7 +173,7 @@ void TabWnd::CompleteConstruction()
     layout->Add(m_overlay, 1, 0);
     SetLayout(layout);
     m_tab_bar->TabChangedSignal.connect(
-        boost::bind(&TabWnd::TabChanged, this, _1, true));
+        [this](size_t idx){ this->TabChanged(idx, true); });
 
     if (INSTRUMENT_ALL_SIGNALS)
         TabChangedSignal.connect(TabChangedEcho("TabWnd::TabChangedSignal"));
@@ -299,11 +299,11 @@ void TabBar::CompleteConstruction()
     AttachChild(m_left_right_button_layout);
 
     m_tabs->ButtonChangedSignal.connect(
-        boost::bind(&TabBar::TabChanged, this, _1, true));
+        [this](size_t idx){ this->TabChanged(idx, true); });
     m_left_button->LeftPressedSignal.connect(
-        boost::bind(&TabBar::LeftClicked, this));
+        [this](){ this->LeftClicked(); });
     m_right_button->LeftPressedSignal.connect(
-        boost::bind(&TabBar::RightClicked, this));
+        [this](){ this->RightClicked(); });
 
     if (INSTRUMENT_ALL_SIGNALS)
         TabChangedSignal.connect(TabChangedEcho("TabBar::TabChangedSignal"));
@@ -439,7 +439,7 @@ void TabBar::TabChanged(std::size_t index, bool signal)
         BringTabIntoView(index);
         std::vector<StateButton*> tab_buttons(m_tab_buttons.size());
         std::transform(m_tab_buttons.begin(), m_tab_buttons.end(), tab_buttons.begin(),
-                       [](const std::shared_ptr<StateButton>& x){ return x.get(); });
+                       [](const auto& x){ return x.get(); });
         DistinguishCurrentTab(tab_buttons);
         if (signal)
             TabChangedSignal(index);

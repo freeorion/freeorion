@@ -75,7 +75,7 @@ CUILabel::CUILabel(const std::string& str,
 {}
 
 void CUILabel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
-    auto copy_wnd_action = [this]() { GG::GUI::GetGUI()->CopyWndText(this); };
+    auto copy_wnd_action = [this](){ GG::GUI::GetGUI()->CopyWndText(this); };
     // create popup menu
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
     popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_COPY"), false, false, copy_wnd_action));
@@ -890,17 +890,16 @@ void CUIEdit::CompleteConstruction() {
     SetHiliteColor(ClientUI::EditHiliteColor());
 
     HotkeyManager* hkm = HotkeyManager::GetManager();
-    auto fx = boost::bind(&CUIEdit::AutoComplete, this);
-    hkm->Connect(fx, "ui.autocomplete", FocusWindowCondition(this));
+    hkm->Connect([this](){ return AutoComplete(); }, "ui.autocomplete", FocusWindowCondition(this));
     hkm->RebuildShortcuts();
 }
 
 void CUIEdit::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
-    auto hotkey_cut_action        = [this]() { GG::GUI::GetGUI()->CutWndText(this); };
-    auto hotkey_copy_action       = [this]() { GG::GUI::GetGUI()->CopyWndText(this); };
-    auto hotkey_paste_action      = [this]() { GG::GUI::GetGUI()->PasteWndText(this, GG::GUI::GetGUI()->ClipboardText()); };
-    auto hotkey_select_all_action = [this]() { GG::GUI::GetGUI()->WndSelectAll(this); };
-    auto hotkey_deselect_action   = [this]() { GG::GUI::GetGUI()->WndDeselect(this); };
+    auto hotkey_cut_action        = [this](){ GG::GUI::GetGUI()->CutWndText(this); };
+    auto hotkey_copy_action       = [this](){ GG::GUI::GetGUI()->CopyWndText(this); };
+    auto hotkey_paste_action      = [this](){ GG::GUI::GetGUI()->PasteWndText(this, GG::GUI::GetGUI()->ClipboardText()); };
+    auto hotkey_select_all_action = [this](){ GG::GUI::GetGUI()->WndSelectAll(this); };
+    auto hotkey_deselect_action   = [this](){ GG::GUI::GetGUI()->WndDeselect(this); };
 
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
 
@@ -987,9 +986,9 @@ const std::string& CensoredCUIEdit::RawText() const
 { return m_raw_text; }
 
 void CensoredCUIEdit::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
-    auto hotkey_paste_action      = [this]() { GG::GUI::GetGUI()->PasteWndText(this, GG::GUI::GetGUI()->ClipboardText()); };
-    auto hotkey_select_all_action = [this]() { GG::GUI::GetGUI()->WndSelectAll(this); };
-    auto hotkey_deselect_action   = [this]() { GG::GUI::GetGUI()->WndDeselect(this); };
+    auto hotkey_paste_action      = [this](){ GG::GUI::GetGUI()->PasteWndText(this, GG::GUI::GetGUI()->ClipboardText()); };
+    auto hotkey_select_all_action = [this](){ GG::GUI::GetGUI()->WndSelectAll(this); };
+    auto hotkey_deselect_action   = [this](){ GG::GUI::GetGUI()->WndDeselect(this); };
 
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
 
@@ -1113,11 +1112,11 @@ void CUIMultiEdit::Render() {
 }
 
 void CUIMultiEdit::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
-    auto hotkey_cut_action        = [this]() { GG::GUI::GetGUI()->CutWndText(this); };
-    auto hotkey_copy_action       = [this]() { GG::GUI::GetGUI()->CopyWndText(this); };
-    auto hotkey_paste_action      = [this]() { GG::GUI::GetGUI()->PasteWndText(this, GG::GUI::GetGUI()->ClipboardText()); };
-    auto hotkey_select_all_action = [this]() { GG::GUI::GetGUI()->WndSelectAll(this); };
-    auto hotkey_deselect_action   = [this]() { GG::GUI::GetGUI()->WndDeselect(this); };
+    auto hotkey_cut_action        = [this](){ GG::GUI::GetGUI()->CutWndText(this); };
+    auto hotkey_copy_action       = [this](){ GG::GUI::GetGUI()->CopyWndText(this); };
+    auto hotkey_paste_action      = [this](){ GG::GUI::GetGUI()->PasteWndText(this, GG::GUI::GetGUI()->ClipboardText()); };
+    auto hotkey_select_all_action = [this](){ GG::GUI::GetGUI()->WndSelectAll(this); };
+    auto hotkey_deselect_action   = [this](){ GG::GUI::GetGUI()->WndDeselect(this); };
 
     // create popup menu
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
@@ -1184,11 +1183,11 @@ void CUILinkTextMultiEdit::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_ke
 
 void CUILinkTextMultiEdit::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     auto rclick_action = [this, pt, mod_keys]() { TextLinker::RClick_(pt, mod_keys); };
-    auto hotkey_cut_action        = [this]() { GG::GUI::GetGUI()->CutWndText(this); };
-    auto hotkey_copy_action       = [this]() { GG::GUI::GetGUI()->CopyWndText(this); };
-    auto hotkey_paste_action      = [this]() { GG::GUI::GetGUI()->PasteWndText(this, GG::GUI::GetGUI()->ClipboardText()); };
-    auto hotkey_select_all_action = [this]() { GG::GUI::GetGUI()->WndSelectAll(this); };
-    auto hotkey_deselect_action   = [this]() { GG::GUI::GetGUI()->WndDeselect(this); };
+    auto hotkey_cut_action        = [this](){ GG::GUI::GetGUI()->CutWndText(this); };
+    auto hotkey_copy_action       = [this](){ GG::GUI::GetGUI()->CopyWndText(this); };
+    auto hotkey_paste_action      = [this](){ GG::GUI::GetGUI()->PasteWndText(this, GG::GUI::GetGUI()->ClipboardText()); };
+    auto hotkey_select_all_action = [this](){ GG::GUI::GetGUI()->WndSelectAll(this); };
+    auto hotkey_deselect_action   = [this](){ GG::GUI::GetGUI()->WndDeselect(this); };
 
     // create popup menu
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
@@ -1559,7 +1558,7 @@ SpeciesSelector::SpeciesSelector(const std::string& preselect_species, GG::X w, 
     Resize(GG::Pt(w, h - 8));
 
     SelChangedSignal.connect(
-        [this](GG::DropDownList::iterator it) {
+        [this](auto it) {
             SpeciesChangedSignal((it == this->end() || !(*it)) ? EMPTY_STRING : (*it)->Name()); });
 
     const SpeciesManager& sm = GetSpeciesManager();
@@ -1649,7 +1648,7 @@ EmpireColorSelector::EmpireColorSelector(GG::Y h) :
     }
 
     SelChangedSignal.connect(
-        [this](GG::DropDownList::iterator it) {
+        [this](auto it) {
             ColorChangedSignal(!(it == end() || !*it || (*it)->empty()) ? (*it)->at(0)->Color() : GG::CLR_RED); });
 }
 
@@ -2213,7 +2212,7 @@ FPSIndicator::FPSIndicator(void) :
     m_displayed_FPS(0)
 {
     GetOptionsDB().OptionChangedSignal("video.fps.shown").connect(
-        boost::bind(&FPSIndicator::UpdateEnabled, this));
+        [this](){ UpdateEnabled(); });
     UpdateEnabled();
     RequirePreRender();
 }

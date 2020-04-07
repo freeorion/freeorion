@@ -63,10 +63,7 @@ protected:
     virtual std::function<void()> DeleteAction(GG::ListBox::iterator it) const;
 
 private:
-    void            ItemRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
-    void            EnsurePromptHiddenSlot(iterator it);
-    void            ShowPromptSlot();
-    void            ShowPromptConditionallySlot(iterator it);
+    void ShowPromptSlot();
 
     iterator    m_drop_point;
     bool        m_show_drop_point;
