@@ -11171,7 +11171,7 @@ Decoupling workforce and the means of production helps to produce just in time a
 This is an upgrade technology for the imperial stockpile. The [[metertype METER_STOCKPILE]] is increased by 6 plus an additional 0.02 per [[metertype METER_POPULATION]].
 These improvements are cumulative with those provided by [[tech PRO_PREDICTIVE_STOCKPILING]], [[tech PRO_GENERIC_SUPPLIES]] and [[tech PRO_VOID_PREDICTION]].
 
-This also unlocks the [[building BLD_STOCKPILING_CENTER]] which additionally increases the [[metertype METER_STOCKPILE]] by 0.1 per [[metertype METER_INDUSTRY]].'''
+This also unlocks the [[buildingtype BLD_STOCKPILING_CENTER]] which additionally increases the [[metertype METER_STOCKPILE]] by 0.1 per [[metertype METER_INDUSTRY]].'''
 
 PRO_VOID_PREDICTION
 Void Prediction
