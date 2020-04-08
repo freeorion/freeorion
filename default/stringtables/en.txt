@@ -2574,7 +2574,7 @@ GAME_MENU_LOAD
 Load Game
 
 GAME_MENU_RESIGN
-Resign
+Exit to Menu
 
 GAME_MENU_CONCEDE
 Concede
