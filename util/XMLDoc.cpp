@@ -103,7 +103,7 @@ const XMLElement& XMLElement::Child(const std::string& tag) const {
         [&tag] (const XMLElement& e) { return e.m_tag == tag; });
 
     if (match == children.end())
-        throw NoSuchChild("XMLElement::Child(): The XMLElement \"" + Tag() + "\" contains no child \"" + tag + "\".");
+        throw std::out_of_range("XMLElement::Child(): The XMLElement \"" + Tag() + "\" contains no child \"" + tag + "\".");
 
     return *match;
 }
@@ -149,7 +149,7 @@ XMLElement& XMLElement::Child(const std::string& tag) {
         [&tag] (const XMLElement& e) { return e.m_tag == tag; });
 
     if (match == children.end())
-        throw NoSuchChild("XMLElement::Child(): The XMLElement \"" + Tag() + "\" contains no child \"" + tag + "\".");
+        throw std::out_of_range("XMLElement::Child(): The XMLElement \"" + Tag() + "\" contains no child \"" + tag + "\".");
 
     return *match;
 }

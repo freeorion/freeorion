@@ -30,10 +30,9 @@
 //!     XML files.
 
 #include <map>
+#include <stdexcept>
 #include <string>
 #include <vector>
-
-#include <GG/Exception.h>
 
 #include "Export.h"
 
@@ -127,30 +126,6 @@
 class FO_COMMON_API XMLElement
 {
 public:
-    //! The base class for XMLElement based exceptions.
-    class Exception : public GG::ExceptionBase
-    {
-    public:
-        //! Create a new exception with the given @p message.
-        Exception (const std::string& message) :
-            ExceptionBase(message)
-        {}
-    };
-
-    //! Thrown when a request for a tag-name named child element cannot be
-    //! fulfilled.
-    class NoSuchChild : public Exception
-    {
-    public:
-        //! @copydoc  Exception::Exception(const std::string&)
-        NoSuchChild (const std::string& message) :
-            Exception (message)
-        {}
-
-        const char* type() const noexcept override
-        { return "XMLElement::NoSuchChild"; }
-    };
-
     //! Creates a new XMLElement with an empty tag-name assigned.
     //!
     //! Create a new XMLElement with no tag-name, text, attribute or child nodes
@@ -202,7 +177,7 @@ public:
     //! @return
     //!     A reference to the first XMLElement child which has the tag-name
     //!     @p tag.
-    //! @throw XMLElement::NoSuchChild
+    //! @throw std::out_of_range
     //!     When no child with a tag-name @p tag exists.
     const XMLElement& Child(const std::string& tag) const;
 
