@@ -83,8 +83,7 @@ CombatLog::CombatLog(const CombatInfo& combat_info) :
 {
     // compile all remaining and destroyed objects' ids
     object_ids = combat_info.destroyed_object_ids;
-    for (const auto& obj : combat_info.objects.all())
-    {
+    for (const auto& obj : combat_info.objects.all()) {
         object_ids.insert(obj->ID());
         participant_states[obj->ID()] = CombatParticipantState(*obj);
     }
@@ -150,7 +149,7 @@ class CombatLogManager::Impl {
 
       /** \name Accessors */ //@{
     /** Return the requested combat log or boost::none.*/
-    boost::optional<const CombatLog&>  GetLog(int log_id) const;
+    boost::optional<const CombatLog&> GetLog(int log_id) const;
 
     /** Return the ids of all incomplete logs or none.*/
     boost::optional<std::vector<int>> IncompleteLogIDs() const;
@@ -176,14 +175,12 @@ class CombatLogManager::Impl {
     void serialize(Archive& ar, const unsigned int version);
 
     private:
-    std::unordered_map<int, CombatLog> m_logs;
-    /** Set of logs ids that do not have bodies and need to be fetched from the server. */
-    std::set<int>                        m_incomplete_logs;
-    int                                  m_latest_log_id;
+    std::unordered_map<int, CombatLog>  m_logs;
+    std::set<int>                       m_incomplete_logs;  // Set of logs ids that do not have bodies and need to be fetched from the server
+    int                                 m_latest_log_id;
 };
 
 CombatLogManager::Impl::Impl() :
-    m_logs(),
     m_latest_log_id(-1)
 {}
 
