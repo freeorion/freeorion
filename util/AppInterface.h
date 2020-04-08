@@ -49,6 +49,9 @@ public:
     /** Start parsing universe object types on a separate thread. */
     virtual void StartBackgroundParsing();
 
+    /** Make a processing of winner empire. May be called multiple times. */
+    virtual void SetWinnerEmpire(const Empire& empire);
+
     /** Returns the set of known Empires for this application. */
     virtual EmpireManager& Empires() = 0;
 

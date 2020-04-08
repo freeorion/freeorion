@@ -39,6 +39,7 @@ public:
 
     /** Returns a ClientApp pointer to the singleton instance of the app. */
     static ServerApp* GetApp();
+    void SetWinnerEmpire(const Empire& empire) override;
     Universe& GetUniverse() override;
     EmpireManager& Empires() override;
     Empire* GetEmpire(int id) override;

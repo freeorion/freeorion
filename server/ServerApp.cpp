@@ -292,6 +292,11 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
 ServerApp* ServerApp::GetApp()
 { return static_cast<ServerApp*>(s_app); }
 
+void ServerApp::SetWinnerEmpire(const Empire& empire) {
+    // disable turn timeout after the game ends
+    GetOptionsDB().Set("network.server.turn-timeout.max-interval", 0);
+}
+
 Universe& ServerApp::GetUniverse()
 { return m_universe; }
 

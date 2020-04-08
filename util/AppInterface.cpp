@@ -116,3 +116,6 @@ void IApp::StartBackgroundParsing() {
     else
         ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "empire_colors.xml").string();
 }
+
+void IApp::SetWinnerEmpire(const Empire& empire)
+{ }

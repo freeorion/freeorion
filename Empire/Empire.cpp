@@ -631,6 +631,10 @@ bool Empire::Won() const {
 
 void Empire::Win(const std::string& reason) {
     if (m_victories.insert(reason).second) {
+        auto app = IApp::GetApp();
+        if (app != nullptr) {
+            app->SetWinnerEmpire(*this);
+        }
         for (auto& entry : Empires()) {
             entry.second->AddSitRepEntry(CreateVictorySitRep(reason, EmpireID()));
         }
