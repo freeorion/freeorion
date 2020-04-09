@@ -487,10 +487,7 @@ namespace parse {
 #endif
     }
 
-    item_spec_grammar::item_spec_grammar(
-        const parse::lexer& tok,
-        Labeller& label
-    ) :
+    item_spec_grammar::item_spec_grammar(const parse::lexer& tok, Labeller& label) :
         item_spec_grammar::base_type(start, "item_spec_grammar"),
         unlockable_item_type_enum(tok)
     {
@@ -519,67 +516,64 @@ namespace parse {
     }
 
 
-        /** \brief Load and parse script file(s) from given path
-         * 
-         * @param[in] path absolute path to a regular file
-         * @param[in] l lexer instance to use
-         * @param[out] filename filename of the given path
-         * @param[out] file_contents parsed contents of file(s)
-         * @param[out] first content iterator
-         * @param[out] it lexer iterator
-         */
-        void parse_file_common(const boost::filesystem::path& path, const parse::lexer& lexer,
-                               std::string& filename, std::string& file_contents,
-                               parse::text_iterator& first, parse::text_iterator& last, parse::token_iterator& it)
-        {
-            filename = path.string();
+    /** \brief Load and parse script file(s) from given path
+        * 
+        * @param[in] path absolute path to a regular file
+        * @param[in] l lexer instance to use
+        * @param[out] filename filename of the given path
+        * @param[out] file_contents parsed contents of file(s)
+        * @param[out] first content iterator
+        * @param[out] it lexer iterator
+        */
+    void parse_file_common(const boost::filesystem::path& path, const parse::lexer& lexer,
+                            std::string& filename, std::string& file_contents,
+                            parse::text_iterator& first, parse::text_iterator& last, parse::token_iterator& it)
+    {
+        filename = path.string();
 
-            bool read_success = read_file(path, file_contents);
-            if (!read_success) {
-                ErrorLogger() << "Unable to open data file " << filename;
-                return;
-            }
-
-            // add newline at end to avoid errors when one is left out, but is expected by parsers
-            file_contents += "\n";
-
-            file_substitution(file_contents, path.parent_path());
-            macro_substitution(file_contents);
-
-            first = file_contents.begin();
-            last = file_contents.end();
-
-            it = lexer.begin(first, last);
+        bool read_success = read_file(path, file_contents);
+        if (!read_success) {
+            ErrorLogger() << "Unable to open data file " << filename;
+            return;
         }
 
+        // add newline at end to avoid errors when one is left out, but is expected by parsers
+        file_contents += "\n";
 
-        bool parse_file_end_of_file_warnings(const boost::filesystem::path& path,
-                                             bool parser_success,
-                                             std::string& file_contents,
-                                             text_iterator& first,
-                                             text_iterator& last)
-        {
-            if (!parser_success)
-                WarnLogger() << "A parser failed while parsing " << path;
+        file_substitution(file_contents, path.parent_path());
+        macro_substitution(file_contents);
 
-            auto length_of_unparsed_file = std::distance(first, last);
-            bool parse_length_good = ((length_of_unparsed_file == 0)
-                                      || (length_of_unparsed_file == 1 && *first == '\n'));
+        first = file_contents.begin();
+        last = file_contents.end();
 
-            if (!parse_length_good
-                && length_of_unparsed_file > 0
-                && static_cast<std::string::size_type>(length_of_unparsed_file) <= file_contents.size())
-            {
-                auto unparsed_section = file_contents.substr(file_contents.size() - std::abs(length_of_unparsed_file));
-                std::copy(first, last, std::back_inserter(unparsed_section));
-                WarnLogger() << "File \"" << path << "\" was incompletely parsed. " << std::endl
-                             << "Unparsed section of file, " << length_of_unparsed_file <<" characters:" << std::endl
-                             << unparsed_section;
-            }
-
-            return parser_success && parse_length_good;
-
-        }
-
+        it = lexer.begin(first, last);
     }
-}
+
+
+    bool parse_file_end_of_file_warnings(const boost::filesystem::path& path,
+                                            bool parser_success,
+                                            std::string& file_contents,
+                                            text_iterator& first,
+                                            text_iterator& last)
+    {
+        if (!parser_success)
+            WarnLogger() << "A parser failed while parsing " << path;
+
+        auto length_of_unparsed_file = std::distance(first, last);
+        bool parse_length_good = ((length_of_unparsed_file == 0)
+                                    || (length_of_unparsed_file == 1 && *first == '\n'));
+
+        if (!parse_length_good
+            && length_of_unparsed_file > 0
+            && static_cast<std::string::size_type>(length_of_unparsed_file) <= file_contents.size())
+        {
+            auto unparsed_section = file_contents.substr(file_contents.size() - std::abs(length_of_unparsed_file));
+            std::copy(first, last, std::back_inserter(unparsed_section));
+            WarnLogger() << "File \"" << path << "\" was incompletely parsed. " << std::endl
+                            << "Unparsed section of file, " << length_of_unparsed_file <<" characters:" << std::endl
+                            << unparsed_section;
+        }
+
+        return parser_success && parse_length_good;
+    }
+}}
