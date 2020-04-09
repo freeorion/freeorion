@@ -445,10 +445,10 @@ private:
     void    CacheConstValue();
     T       EvalImpl(const ScriptingContext& context) const;
 
-    OpType                                          m_op_type = TIMES;
+    OpType                                      m_op_type = TIMES;
     std::vector<std::unique_ptr<ValueRef<T>>>   m_operands;
-    bool                                            m_constant_expr = false;
-    T                                               m_cached_const_value = T();
+    bool                                        m_constant_expr = false;
+    T                                           m_cached_const_value = T();
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1736,8 +1736,7 @@ template <class T>
 Operation<T>::Operation(OpType op_type,
                         std::unique_ptr<ValueRef<T>>&& operand1,
                         std::unique_ptr<ValueRef<T>>&& operand2) :
-    m_op_type(op_type),
-    m_operands()
+    m_op_type(op_type)
 {
     if (operand1)
         m_operands.push_back(std::move(operand1));
@@ -1749,8 +1748,7 @@ Operation<T>::Operation(OpType op_type,
 
 template <class T>
 Operation<T>::Operation(OpType op_type, std::unique_ptr<ValueRef<T>>&& operand) :
-    m_op_type(op_type),
-    m_operands()
+    m_op_type(op_type)
 {
     if (operand)
         m_operands.push_back(std::move(operand));
@@ -1848,7 +1846,7 @@ const std::vector<ValueRef<T>*> Operation<T>::Operands() const
 {
     std::vector<ValueRef<T>*> retval(m_operands.size());
     std::transform(m_operands.begin(), m_operands.end(), retval.begin(),
-                   [](const auto& p){ return *p; });
+                   [](const auto& xx){ return xx.get(); });
     return retval;
 }
 
