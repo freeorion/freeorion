@@ -247,9 +247,12 @@ private:
 
     void            Zoom(int delta);                            //!< changes the zoom level of the main map by zoom step size to the power of \a delta (adds delta to the current zoom exponent)
     void            Zoom(int delta, const GG::Pt& position);    //!< changes the zoom level of the main map by zoom step size to the power of \a delta (adds delta to the current zoom exponent) Keeps the screen position \a position in the same place after zooming
+    void            SetZoom(double steps_in, bool update_slide);//!< sets zoom level of the main map to zoom step size to the power of \a steps_in and updates zoom slider position if \a update_slide is true
     void            SetZoom(double steps_in, bool update_slide, const GG::Pt& position);//!< sets zoom level of the main map to zoom step size to the power of \a steps_in and updates zoom slider position if \a update_slide is true. Keeps the screen position \a position in the same place after zooming
 
     void            Pan(const GG::Pt& delta);                   //!< pans map
+    bool            PanX(GG::X x = GG::X(50));
+    bool            PanY(GG::Y y = GG::Y(50));
 
     /** Mark all fleet buttons for a refresh. */
     void            RefreshFleetButtons();
@@ -343,6 +346,7 @@ private:
     void SystemLeftClicked(int system_id);
     void SystemRightClicked(int system_id, GG::Flags< GG::ModKey > mod_keys);
     void MouseEnteringSystem(int system_id, GG::Flags< GG::ModKey > mod_keys);
+    void MouseLeavingSystem(int system_id);
 
     void PlanetDoubleClicked(int planet_id);
     void PlanetRightClicked(int planet_id);

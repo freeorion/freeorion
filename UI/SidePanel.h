@@ -117,12 +117,17 @@ private:
 
     /**  Insert all known systems into the SystemName drop down list.*/
     void                RefreshSystemNames();
+    /**  Refresh the system name list when it closes, in case the known systems changed while it
+         was open. */
+    void                SystemNameDropListOpenedSlot(bool is_open);
     /**  Handle the user selecting a system in the droplist while the list is closed, using keys.
          It may emit SystemSelectedSignal. */
     void                SystemSelectionChangedSlot(GG::DropDownList::iterator it);
 
     void                PrevButtonClicked();            ///< responds to user clicking next system button
     void                NextButtonClicked();            ///< responts to user clicking previous system button
+    /** Respond to the user clicking a planet by selecting it if selection is enabled.*/
+    void                PlanetClickedSlot(int planet_id);
 
     /** Responds to insertion fleets into system during a turn.  may update
         colonize buttons. */

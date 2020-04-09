@@ -266,10 +266,7 @@ namespace {
             AttachChild(m_hscroll);
 
             m_hscroll->ScrolledSignal.connect(
-                [this](int tab_low, int, int, int) {
-                    m_font_graphic->MoveTo(      GG::Pt(GG::X(-tab_low), GG::Y1));
-                    m_title_font_graphic->MoveTo(GG::Pt(GG::X(-tab_low), m_font_graphic->Height() + 2));
-                });
+                boost::bind(&FontTextureWnd::ScrolledSlot, this, _1, _2, _3, _4));
             DoLayout();
         }
 
@@ -294,6 +291,11 @@ namespace {
                 texture_width = std::max(texture_width, Value(m_title_font_graphic->Width()));
 
              m_hscroll->SizeScroll(0, texture_width - Value(ClientWidth()) / 2, 1, 50);
+        }
+
+        void ScrolledSlot(int tab_low, int tab_high, int low, int high) {
+            m_font_graphic->MoveTo(      GG::Pt(GG::X(-tab_low), GG::Y1));
+            m_title_font_graphic->MoveTo(GG::Pt(GG::X(-tab_low), m_font_graphic->Height() + 2));
         }
 
     private:
@@ -429,7 +431,7 @@ namespace {
 
         // Connect to Options DB
         drop_list->SelChangedSignal.connect(
-            [option_name, drop_list](const auto& it) {
+            [option_name, drop_list](const GG::ListBox::const_iterator& it) {
                 if (it == drop_list->end())
                     return;
                 const auto dropdown_row = dynamic_cast<CUISimpleDropDownListRow* const>(it->get());
@@ -792,7 +794,7 @@ void OptionsWnd::CompleteConstruction() {
 
     // Connect the done and cancel button
     m_done_button->LeftClickedSignal.connect(
-        [this](){ DoneClicked(); });
+        boost::bind(&OptionsWnd::DoneClicked, this));
 }
 
 void OptionsWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -914,11 +916,9 @@ void OptionsWnd::HotkeyOption(GG::ListBox* page, int indentation_level, const st
                                                layout, indentation_level);
 
     button->LeftClickedSignal.connect(
-        [&button, &hotkey_name]()
-        { HandleSetHotkeyOption(hotkey_name, button.get()); });
+        boost::bind(HandleSetHotkeyOption, hotkey_name, button.get()));
     button->RightClickedSignal.connect(
-        [&button, &hotkey_name]()
-        { HandleResetHotkeyOption(hotkey_name, button.get()); });
+        boost::bind(HandleResetHotkeyOption, hotkey_name, button.get()));
 
     page->Insert(row);
 }
@@ -1017,9 +1017,9 @@ void OptionsWnd::MusicVolumeOption(GG::ListBox* page, int indentation_level, Sou
     slider->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     slider->SetBrowseText(UserString(GetOptionsDB().GetDescription("audio.music.volume")));
     button->CheckedSignal.connect(
-        [&fb](bool checked){ fb.MusicClicked(checked); });
+        boost::bind(&OptionsWnd::SoundOptionsFeedback::MusicClicked, &fb, _1));
     slider->SlidSignal.connect(
-        [&fb](int value, auto, auto){ fb.MusicVolumeSlid(value); });
+        boost::bind(&OptionsWnd::SoundOptionsFeedback::MusicVolumeSlid, &fb, _1, _2, _3));
     fb.SetMusicButton(std::move(button));
 }
 
@@ -1046,9 +1046,9 @@ void OptionsWnd::VolumeOption(GG::ListBox* page, int indentation_level, const st
     slider->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     slider->SetBrowseText(UserString(GetOptionsDB().GetDescription(volume_option_name)));
     button->CheckedSignal.connect(
-        [&fb](bool checked){ fb.SoundEffectsEnableClicked(checked); });
+        boost::bind(&OptionsWnd::SoundOptionsFeedback::SoundEffectsEnableClicked, &fb, _1));
     slider->SlidAndStoppedSignal.connect(
-        [&fb](int value, auto, auto){ fb.UISoundsVolumeSlid(value); });
+        boost::bind(&OptionsWnd::SoundOptionsFeedback::UISoundsVolumeSlid, &fb, _1, _2, _3));
     fb.SetEffectsButton(std::move(button));
 }
 
@@ -1279,10 +1279,10 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
                                           apply_button, indentation_level);
     page->Insert(row);
     apply_button->LeftClickedSignal.connect(
-        [](){ HumanClientApp::GetApp()->Reinitialize(); });
+        boost::bind(&HumanClientApp::Reinitialize, HumanClientApp::GetApp()));
 
     drop_list->SelChangedSignal.connect(
-        [drop_list](auto it) {
+        [drop_list](GG::ListBox::iterator it) {
             if (it == drop_list->end())
                 return;
             const auto& drop_list_row = *it;
@@ -1395,12 +1395,12 @@ void OptionsWnd::SoundOptionsFeedback::MusicClicked(bool checked) {
     }
 }
 
-void OptionsWnd::SoundOptionsFeedback::MusicVolumeSlid(int pos) const {
+void OptionsWnd::SoundOptionsFeedback::MusicVolumeSlid(int pos, int low, int high) const {
     GetOptionsDB().Set("audio.music.volume", pos);
     Sound::GetSound().SetMusicVolume(pos);
 }
 
-void OptionsWnd::SoundOptionsFeedback::UISoundsVolumeSlid(int pos) const {
+void OptionsWnd::SoundOptionsFeedback::UISoundsVolumeSlid(int pos, int low, int high) const {
     GetOptionsDB().Set("audio.effects.volume", pos);
     Sound::GetSound().SetUISoundsVolume(pos);
     Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.button.press.sound.path"), true);

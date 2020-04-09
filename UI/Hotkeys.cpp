@@ -370,7 +370,7 @@ void HotkeyManager::RebuildShortcuts() {
         gui->SetAccelerator(hk.m_key, hk.m_mod_keys);
 
         m_internal_connections.insert(gui->AcceleratorSignal(hk.m_key, hk.m_mod_keys).connect(
-            [this, &hk](){ return ProcessNamedShortcut(hk.m_name, hk.m_key, hk.m_mod_keys); }));
+            boost::bind(&HotkeyManager::ProcessNamedShortcut, this, hk.m_name, hk.m_key, hk.m_mod_keys)));
     }
 }
 

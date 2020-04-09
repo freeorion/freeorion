@@ -815,7 +815,7 @@ private:
         }
 
         m_class_drop->SelChangedSignal.connect(
-            [this](auto){ UpdateParameterControls(); });
+            boost::bind(&ConditionWidget::ConditionClassSelected, this, _1));
 
         if (select_row_it != m_class_drop->end())
             m_class_drop->Select(select_row_it);
@@ -823,6 +823,9 @@ private:
             m_class_drop->Select(0);
 
     }
+
+    void ConditionClassSelected(GG::ListBox::iterator iterator)
+    { UpdateParameterControls(); }
 
     void UpdateParameterControls() {
         if (!m_class_drop)
@@ -1154,7 +1157,7 @@ void FilterDialog::CompleteConstruction() {
         label->Resize(GG::Pt(button_width, label->MinUsableSize().y));
         m_filters_layout->Add(label, vis_row, 0, GG::ALIGN_CENTER);
         label->LeftClickedSignal.connect(
-            [this, visibility](){ UpdateVisFilterFromVisibilityButton(visibility); });
+            boost::bind(&FilterDialog::UpdateVisFilterFromVisibilityButton, this, visibility));
 
         ++vis_row;
     }
@@ -1175,7 +1178,7 @@ void FilterDialog::CompleteConstruction() {
         label = Wnd::Create<CUIButton>(" " + UserString(boost::lexical_cast<std::string>(uot)) + " ");
         m_filters_layout->Add(label, 0, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
         label->LeftClickedSignal.connect(
-            [this, uot](){ UpdateVisFiltersFromObjectTypeButton(uot); });
+            boost::bind(&FilterDialog::UpdateVisFiltersFromObjectTypeButton, this, uot));
 
         int row = 1;
 
@@ -1185,7 +1188,7 @@ void FilterDialog::CompleteConstruction() {
             button->SetCheck(vis_display.count(visibility));
             m_filters_layout->Add(button, row, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
             button->CheckedSignal.connect(
-                [this](bool check){ UpdateVisFiltersFromStateButtons(check); });
+                boost::bind(&FilterDialog::UpdateVisFiltersFromStateButtons, this, _1));
             m_filter_buttons[uot][visibility] = button;
 
             ++row;
@@ -1205,9 +1208,9 @@ void FilterDialog::CompleteConstruction() {
     AttachChild(m_apply_button);
 
     m_cancel_button->LeftClickedSignal.connect(
-        [this](){ CancelClicked(); });
+        boost::bind(&FilterDialog::CancelClicked, this));
     m_apply_button->LeftClickedSignal.connect(
-        [this](){ AcceptClicked(); });
+        boost::bind(&FilterDialog::AcceptClicked, this));
 
     ResetDefaultPosition();
 
@@ -1384,10 +1387,13 @@ public:
         auto rcobj = std::dynamic_pointer_cast<const ResourceCenter>(obj);
         if (rcobj)
             rcobj->ResourceCenterChangedSignal.connect(
-                [this](){
-                    m_column_val_cache.clear();
-                    RequirePreRender();
-                });
+                boost::bind(&ObjectPanel::ResourceCenterChanged, this));
+
+        RequirePreRender();
+    }
+
+    void ResourceCenterChanged() {
+        m_column_val_cache.clear();
         RequirePreRender();
     }
 
@@ -1513,7 +1519,7 @@ private:
 
             AttachChild(m_expand_button);
             m_expand_button->LeftPressedSignal.connect(
-                [this](){ ExpandCollapseButtonPressed(); });
+                boost::bind(&ObjectPanel::ExpandCollapseButtonPressed, this));
         } else {
             m_dot = GG::Wnd::Create<GG::StaticGraphic>(ClientUI::GetTexture(
                 ClientUI::ArtDir() / "icons" / "dot.png", true), style);
@@ -1596,7 +1602,7 @@ public:
             !m_contained_object_panels.empty(), m_indent_init);
         push_back(m_panel);
         m_panel->ExpandCollapseSignal.connect(
-            [this](){ ExpandCollapseSignal(m_panel ? m_panel->ObjectID() : INVALID_OBJECT_ID); });
+            boost::bind(&ObjectRow::ExpandCollapseClicked, this));
 
         GG::Pt border(GG::X(2 * GetLayout()->BorderMargin()),
                       GG::Y(2 * GetLayout()->BorderMargin()));
@@ -1636,6 +1642,9 @@ public:
             m_panel->Resize(lr - ul - border);
         }
     }
+
+    void ExpandCollapseClicked()
+    { ExpandCollapseSignal(m_panel ? m_panel->ObjectID() : INVALID_OBJECT_ID); }
 
     mutable boost::signals2::signal<void (int)> ExpandCollapseSignal;
 private:
@@ -1682,7 +1691,7 @@ public:
                 [this, i](){ this->ColumnButtonLeftClickSignal(i - 1); });
             if (i > 0)
                 controls[i]->RightClickedSignal.connect(
-                    [this, i](){ ButtonRightClicked(i-1); });
+                    boost::bind(&ObjectHeaderPanel::ButtonRightClicked, this, i-1));
         }
 
         DoLayout();
@@ -1890,14 +1899,11 @@ public:
         SetColHeaders(m_header_row); // Gives ownership
 
         m_header_row->ColumnsChangedSignal.connect(
-            [this](){ Refresh(); });
+            boost::bind(&ObjectListBox::Refresh, this));
         m_header_row->ColumnHeaderLeftClickSignal.connect(
-            [this](int column_idx){ SortingClicked(column_idx); });
+            boost::bind(&ObjectListBox::SortingClicked, this, _1));
         m_obj_deleted_connection = GetUniverse().UniverseObjectDeleteSignal.connect(
-            [this](auto obj){
-                if (obj)
-                    this->RemoveObjectRow(obj->ID());
-            });
+            boost::bind(&ObjectListBox::UniverseObjectDeleted, this, _1));
     }
 
     virtual ~ObjectListBox()
@@ -2261,10 +2267,10 @@ private:
         this->Insert(object_row);
         object_row->Resize(row_size);
         object_row->ExpandCollapseSignal.connect(
-            [this](int obj_id){ ObjectExpandCollapseClicked(obj_id); }, boost::signals2::at_front);
+            boost::bind(&ObjectListBox::ObjectExpandCollapseClicked, this, _1), boost::signals2::at_front);
         m_object_change_connections[obj->ID()].disconnect();
         m_object_change_connections[obj->ID()] = obj->StateChangedSignal.connect(
-            [this, &obj](){ ObjectStateChanged(obj->ID()); }, boost::signals2::at_front);
+            boost::bind(&ObjectListBox::ObjectStateChanged, this, obj->ID()), boost::signals2::at_front);
     }
 
     // Removes row of indicated object, and all contained rows, recursively.
@@ -2356,6 +2362,9 @@ private:
             Refresh();
     }
 
+    void UniverseObjectDeleted(std::shared_ptr<const UniverseObject> obj)
+    { if (obj) RemoveObjectRow(obj->ID()); }
+
     std::map<int, boost::signals2::connection>          m_object_change_connections;
     std::set<int>                                       m_collapsed_objects;
     std::unique_ptr<Condition::Condition>           m_filter_condition = nullptr;
@@ -2379,25 +2388,23 @@ void ObjectListWnd::CompleteConstruction() {
     m_list_box->SetStyle(GG::LIST_NOSORT);
 
     m_list_box->SelRowsChangedSignal.connect(
-        [this](const auto& rows) { ObjectSelectionChanged(rows); });
+        boost::bind(&ObjectListWnd::ObjectSelectionChanged, this, _1));
     m_list_box->DoubleClickedRowSignal.connect(
-        [this](auto it, const auto& pt, const auto& modkeys)
-        { ObjectDoubleClicked(it, pt, modkeys); });
+        boost::bind(&ObjectListWnd::ObjectDoubleClicked, this, _1, _2, _3));
     m_list_box->RightClickedRowSignal.connect(
-        [this](auto it, const auto& pt, const auto& modkeys)
-        { ObjectRightClicked(it, pt, modkeys); });
+        boost::bind(&ObjectListWnd::ObjectRightClicked, this, _1, _2, _3));
     m_list_box->ExpandCollapseSignal.connect(
-        [this](){ DoLayout(); });
+        boost::bind(&ObjectListWnd::DoLayout, this));
     AttachChild(m_list_box);
 
     m_filter_button = Wnd::Create<CUIButton>(UserString("FILTERS"));
     m_filter_button->LeftClickedSignal.connect(
-        [this](){ this->FilterClicked(); });
+        boost::bind(&ObjectListWnd::FilterClicked, this));
     AttachChild(m_filter_button);
 
     m_collapse_button = Wnd::Create<CUIButton>(UserString("COLLAPSE_ALL"));
     m_collapse_button->LeftClickedSignal.connect(
-        [this](){ this->CollapseExpandClicked(); });
+        boost::bind(&ObjectListWnd::CollapseExpandClicked, this));
     AttachChild(m_collapse_button);
 
     CUIWnd::CompleteConstruction();

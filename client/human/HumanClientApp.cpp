@@ -301,9 +301,9 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
     EnableFPS();
     UpdateFPSLimit();
     GetOptionsDB().OptionChangedSignal("video.fps.shown").connect(
-        [this](){ UpdateFPSLimit(); });
+        boost::bind(&HumanClientApp::UpdateFPSLimit, this));
     GetOptionsDB().OptionChangedSignal("video.fps.max").connect(
-        [this](){ UpdateFPSLimit(); });
+        boost::bind(&HumanClientApp::UpdateFPSLimit, this));
 
     std::shared_ptr<GG::BrowseInfoWnd> default_browse_info_wnd(
         GG::Wnd::Create<GG::TextBoxBrowseInfoWnd>(
@@ -322,11 +322,11 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
                                 GetOptionsDB().Get<int>("ui.input.mouse.button.repeat.interval"));
     EnableModalAcceleratorSignals(true);
 
-    WindowResizedSignal.connect([this](GG::X w, GG::Y h){ HandleWindowResize(w, h); });
-    FocusChangedSignal.connect([this](bool focus){ HandleFocusChange(focus); });
-    WindowMovedSignal.connect([this](GG::X x, GG::Y y){ HandleWindowMove(x, y); });
-    WindowClosingSignal.connect([this](){ ExitApp(0); });
-    AppQuittingSignal.connect([this](){ ExitApp(0); });
+    WindowResizedSignal.connect(boost::bind(&HumanClientApp::HandleWindowResize,this, _1, _2));
+    FocusChangedSignal.connect( boost::bind(&HumanClientApp::HandleFocusChange, this, _1));
+    WindowMovedSignal.connect(  boost::bind(&HumanClientApp::HandleWindowMove,  this, _1, _2));
+    WindowClosingSignal.connect(boost::bind(&HumanClientApp::HandleAppQuitting, this));
+    AppQuittingSignal.connect(  boost::bind(&HumanClientApp::HandleAppQuitting, this));
 
     SetStringtableDependentOptionDefaults();
     SetGLVersionDependentOptionDefaults();
@@ -369,18 +369,18 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
     // Start parsing content
     StartBackgroundParsing();
     GetOptionsDB().OptionChangedSignal("resource.path").connect(
-        [this](){ HandleResoureDirChange(); });
+        boost::bind(&HumanClientApp::HandleResoureDirChange, this));
 }
 
 void HumanClientApp::ConnectKeyboardAcceleratorSignals() {
     // Add global hotkeys
     HotkeyManager *hkm = HotkeyManager::GetManager();
 
-    hkm->Connect([this](){ ExitApp(0); return true; },          "exit",
+    hkm->Connect(boost::bind(&HumanClientApp::HandleHotkeyExitApp, this),          "exit",
                  NoModalWndsOpenCondition);
-    hkm->Connect([this](){ ResetToIntro(false); return true; }, "quit",
+    hkm->Connect(boost::bind(&HumanClientApp::HandleHotkeyResetGame, this),        "quit",
                  NoModalWndsOpenCondition);
-    hkm->Connect([this](){ ToggleFullscreen(); return true; },  "video.fullscreen",
+    hkm->Connect(boost::bind(&HumanClientApp::ToggleFullscreen, this), "video.fullscreen",
                  NoModalWndsOpenCondition);
 
     hkm->RebuildShortcuts();
@@ -1133,6 +1133,24 @@ void HumanClientApp::HandleFocusChange(bool gained_focus) {
 
     CancelDragDrop();
     ClearEventState();
+}
+
+void HumanClientApp::HandleAppQuitting() {
+    DebugLogger() << "HumanClientApp::HandleAppQuitting()";
+    ExitApp(0);
+}
+
+bool HumanClientApp::HandleHotkeyResetGame() {
+    DebugLogger() << "HumanClientApp::HandleHotkeyResetGame()";
+    ResetToIntro(false);
+    return true;
+}
+
+bool HumanClientApp::HandleHotkeyExitApp() {
+    DebugLogger() << "HumanClientApp::HandleHotkeyExitApp()";
+    HandleAppQuitting();
+    // Not reached, but required for HotkeyManager::Connect()
+    return true;
 }
 
 bool HumanClientApp::ToggleFullscreen() {

@@ -53,9 +53,9 @@ private:
            box is clicked.*/
         void MusicClicked(bool checked);
         /** Adjusts the music volume.*/
-        void MusicVolumeSlid(int value) const;
+        void MusicVolumeSlid(int pos, int low, int high) const;
         /** Adjusts the effects volume.*/
-        void UISoundsVolumeSlid(int value) const;
+        void UISoundsVolumeSlid(int pos, int low, int high) const;
         /** Handles a sound initialization failure by setting sound
             effects and music enable check boxes to disabled and
             informing the player with a popup message box.*/

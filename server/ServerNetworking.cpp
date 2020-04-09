@@ -62,7 +62,8 @@ private:
         m_socket.async_receive_from(
             boost::asio::buffer(m_recv_buffer),
             m_remote_endpoint,
-            [this](const auto& error, std::size_t){ HandleReceive(error); });
+            boost::bind(&DiscoveryServer::HandleReceive, this,
+                        boost::asio::placeholders::error));
     }
 
 
@@ -213,7 +214,7 @@ void PlayerConnection::SendMessage(const Message& message) {
         ErrorLogger(network) << "PlayerConnection::SendMessage can't send message when not transmit connected";
         return;
     }
-    m_service.post([this, message](){ SendMessageImpl(message); });
+    m_service.post(boost::bind(&PlayerConnection::SendMessageImpl, shared_from_this(), message));
 }
 
 bool PlayerConnection::IsEstablished() const {
@@ -386,7 +387,7 @@ void PlayerConnection::HandleMessageBodyRead(boost::system::error_code error,
             error == boost::asio::error::connection_reset) {
             ErrorLogger(network) << "PlayerConnection::HandleMessageBodyRead(): "
                                  << "error #" << error.value() << " \"" << error.message() << "\"";
-            EventSignal([this](){ m_disconnected_callback(shared_from_this()); });
+            EventSignal(boost::bind(m_disconnected_callback, shared_from_this()));
         } else {
             ErrorLogger(network) << "PlayerConnection::HandleMessageBodyRead(): "
                                  << "error #" << error.value() << " \"" << error.message() << "\"";
@@ -401,9 +402,13 @@ void PlayerConnection::HandleMessageBodyRead(boost::system::error_code error,
                 //TraceLogger(network) << "     Full message: " << m_incoming_message;
             }
             if (EstablishedPlayer()) {
-                EventSignal([this, incoming_message = m_incoming_message](){ m_player_message_callback(incoming_message, shared_from_this()); });
+                EventSignal(boost::bind(m_player_message_callback,
+                                        m_incoming_message,
+                                        shared_from_this()));
             } else {
-                EventSignal([this, incoming_message = m_incoming_message](){ m_nonplayer_message_callback(incoming_message, shared_from_this()); });
+                EventSignal(boost::bind(m_nonplayer_message_callback,
+                                        m_incoming_message,
+                                        shared_from_this()));
             }
             m_incoming_message = Message();
             AsyncReadMessage();
@@ -443,7 +448,7 @@ void PlayerConnection::HandleMessageHeaderRead(boost::system::error_code error,
                 error == boost::asio::error::connection_reset ||
                 error == boost::asio::error::timed_out)
             {
-                EventSignal([this](){ m_disconnected_callback(shared_from_this()); });
+                EventSignal(boost::bind(m_disconnected_callback, shared_from_this()));
             } else {
                 ErrorLogger(network) << "PlayerConnection::HandleMessageHeaderRead(): "
                                      << "error #" << error.value() << " \"" << error.message() << "\"";
@@ -469,26 +474,27 @@ void PlayerConnection::HandleMessageHeaderRead(boost::system::error_code error,
             boost::asio::async_read(
                 m_socket,
                 boost::asio::buffer(m_incoming_message.Data(), m_incoming_message.Size()),
-                [this](const auto& error, std::size_t bytes_transferred)
-                { HandleMessageBodyRead(error, bytes_transferred); });
+                boost::bind(&PlayerConnection::HandleMessageBodyRead, shared_from_this(),
+                            boost::asio::placeholders::error,
+                            boost::asio::placeholders::bytes_transferred));
         }
     }
 }
 
 void PlayerConnection::AsyncReadMessage() {
-    boost::asio::async_read(
-        m_socket,
-        boost::asio::buffer(m_incoming_header_buffer),
-        [this](const auto& error, std::size_t bytes_transferred)
-        { HandleMessageHeaderRead(error, bytes_transferred); });
+    boost::asio::async_read(m_socket, boost::asio::buffer(m_incoming_header_buffer),
+                            boost::bind(&PlayerConnection::HandleMessageHeaderRead,
+                                        shared_from_this(),
+                                        boost::asio::placeholders::error,
+                                        boost::asio::placeholders::bytes_transferred));
 }
 
-void PlayerConnection::SendMessageImpl(Message message) {
-    bool start_write = m_outgoing_messages.empty();
-    m_outgoing_messages.push_back(Message());
-    swap(m_outgoing_messages.back(), message);
+void PlayerConnection::SendMessageImpl(PlayerConnectionPtr self, Message message) {
+    bool start_write = self->m_outgoing_messages.empty();
+    self->m_outgoing_messages.push_back(Message());
+    swap(self->m_outgoing_messages.back(), message);
     if (start_write)
-        AsyncWriteMessage();
+        self->AsyncWriteMessage();
 }
 
 void PlayerConnection::AsyncWriteMessage() {
@@ -503,34 +509,36 @@ void PlayerConnection::AsyncWriteMessage() {
     buffers.push_back(boost::asio::buffer(m_outgoing_header));
     buffers.push_back(boost::asio::buffer(m_outgoing_messages.front().Data(),
                                           m_outgoing_messages.front().Size()));
-    boost::asio::async_write(
-        m_socket,
-        buffers,
-        [this](const auto& error, std::size_t bytes_transferred)
-        { HandleMessageWrite(error, bytes_transferred); });
+    boost::asio::async_write(m_socket, buffers,
+                             boost::bind(&PlayerConnection::HandleMessageWrite, shared_from_this(),
+                                         boost::asio::placeholders::error,
+                                         boost::asio::placeholders::bytes_transferred));
 }
 
-void PlayerConnection::HandleMessageWrite(boost::system::error_code error,
+void PlayerConnection::HandleMessageWrite(PlayerConnectionPtr self,
+                                          boost::system::error_code error,
                                           std::size_t bytes_transferred)
 {
     if (error) {
-        m_valid = false;
-        ErrorLogger(network) << "PlayerConnection::AsyncWriteMessage(): player id = " << m_ID
+        self->m_valid = false;
+        ErrorLogger(network) << "PlayerConnection::AsyncWriteMessage(): player id = " << self->m_ID
                              << " error #" << error.value() << " \"" << error.message() << "\"";
-        boost::asio::high_resolution_timer t(m_service);
-        t.async_wait(
-            [this](const auto&){ EventSignal([this](){ m_disconnected_callback(shared_from_this()); }); });
-
+        boost::asio::high_resolution_timer t(self->m_service);
+        t.async_wait(boost::bind(&PlayerConnection::AsyncErrorHandler, self, error, boost::asio::placeholders::error));
         return;
     }
 
-    if (static_cast<int>(bytes_transferred) != static_cast<int>(Message::HeaderBufferSize) + m_outgoing_header[Message::Parts::SIZE])
+    if (static_cast<int>(bytes_transferred) != static_cast<int>(Message::HeaderBufferSize) + self->m_outgoing_header[Message::Parts::SIZE])
         return;
 
-    m_outgoing_messages.pop_front();
-    if (!m_outgoing_messages.empty())
-        AsyncWriteMessage();
+    self->m_outgoing_messages.pop_front();
+    if (!self->m_outgoing_messages.empty())
+        self->AsyncWriteMessage();
 }
+
+void PlayerConnection::AsyncErrorHandler(PlayerConnectionPtr self, boost::system::error_code handled_error,
+                                         boost::system::error_code error)
+{ self->EventSignal(boost::bind(self->m_disconnected_callback, self)); }
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -666,12 +674,18 @@ void ServerNetworking::Disconnect(int id) {
     Disconnect(player);
 }
 
+void ServerNetworking::Disconnect(PlayerConnectionPtr player_connection)
+{
+    TraceLogger(network) << "ServerNetworking::Disconnect";
+    DisconnectImpl(player_connection);
+}
+
 void ServerNetworking::DisconnectAll() {
     TraceLogger(network) << "ServerNetworking::DisconnectAll";
     for (const_iterator it = m_player_connections.begin();
          it != m_player_connections.end(); ) {
         PlayerConnectionPtr player_connection = *it++;
-        Disconnect(player_connection);
+        DisconnectImpl(player_connection);
     }
 }
 
@@ -796,13 +810,15 @@ void ServerNetworking::AcceptNextMessagingConnection() {
 #endif
         m_nonplayer_message_callback,
         m_player_message_callback,
-        [this](auto connection){ Disconnect(connection); });
+        boost::bind(&ServerNetworking::DisconnectImpl, this, _1));
     next_connection->EventSignal.connect(
-        [this](const auto& func){ m_event_queue.push(func); });
+        boost::bind(&ServerNetworking::EnqueueEvent, this, _1));
     m_player_connection_acceptor.async_accept(
         next_connection->m_socket,
-        [this, next_connection](const auto& error)
-        { AcceptPlayerMessagingConnection(next_connection, error); });
+        boost::bind(&ServerNetworking::AcceptPlayerMessagingConnection,
+                    this,
+                    next_connection,
+                    boost::asio::placeholders::error));
 }
 
 void ServerNetworking::AcceptPlayerMessagingConnection(PlayerConnectionPtr player_connection,
@@ -818,9 +834,12 @@ void ServerNetworking::AcceptPlayerMessagingConnection(PlayerConnectionPtr playe
     }
 }
 
-void ServerNetworking::Disconnect(PlayerConnectionPtr player_connection) {
-    TraceLogger(network) << "ServerNetworking::Disconnect : disconnecting player "
+void ServerNetworking::DisconnectImpl(PlayerConnectionPtr player_connection) {
+    TraceLogger(network) << "ServerNetworking::DisconnectImpl : disconnecting player "
                          << player_connection->PlayerID();
     m_player_connections.erase(player_connection);
     m_disconnected_callback(player_connection);
 }
+
+void ServerNetworking::EnqueueEvent(const NullaryFn& fn)
+{ m_event_queue.push(fn); }

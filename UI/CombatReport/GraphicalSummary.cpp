@@ -616,6 +616,9 @@ private:
         std::weak_ptr<OptionsBar> parent;
         std::shared_ptr<GG::Button> button;
 
+        void Toggle()
+        { SetValue(!GetValue()); }
+
         void SetValue(bool value) {
             (**sizer).Set(option_key, value);
             button->SetText(value?label_true:label_false);
@@ -644,7 +647,8 @@ private:
         {
             button = Wnd::Create<CUIButton>("-");
             parent_->AttachChild(button);
-            button->LeftClickedSignal.connect([this](){ SetValue(!GetValue()); });
+            button->LeftClickedSignal.connect(
+                boost::bind(&ToggleData::Toggle, this));
             SetValue(GetValue());
         }
     };
@@ -781,7 +785,8 @@ void GraphicalSummaryWnd::GenerateGraph() {
     }
     m_options_bar = GG::Wnd::Create<OptionsBar>(m_sizer);
     AttachChild(m_options_bar);
-    m_options_bar->ChangedSignal.connect([this](){ HandleButtonChanged(); });
+    m_options_bar->ChangedSignal.connect(
+        boost::bind(&GraphicalSummaryWnd::HandleButtonChanged, this));
 
     MinSizeChangedSignal();
     DoLayout();

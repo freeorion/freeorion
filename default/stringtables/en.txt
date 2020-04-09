@@ -13469,11 +13469,11 @@ Arc Disruptor
 SR_ARC_DISRUPTOR_DESC
 '''The Arc Disruptor, a multi-shot ship weapon which has good long-term upgrade research options.
 
-Charged polaron capacitors generate a molecular disruption flux wave that arcs through space hitting several ships before dispersing. Ship shields substantially deflect the disruption flux.
+Charged polaron capacitors generate a molecular disruption flux wave that arcs through space hitting several ships before dispersing. The disruption flux can be substantially deflected around ship shields.
 
 Upgrading the weapon technology will increase the shot damage.
 
-The weapon's [[encyclopedia DAMAGE_TITLE]] is a combination of the shot damage and any active modifiers. Due to chaotic expansion of the disruption flux, piloting trait does not affect damage.'''
+The weapon's [[encyclopedia DAMAGE_TITLE]] is a combination of the shot damage and any active modifiers. Piloting trait does not affect damage.'''
 
 SR_SPINAL_ANTIMATTER
 Spinal Antimatter Cannon

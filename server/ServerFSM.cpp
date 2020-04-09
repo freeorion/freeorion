@@ -1682,7 +1682,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
         // remove all AIs from current lobby data,
         // so that when the save is loaded no AI state as appropriate,
         // without having potential extra AIs lingering from the previous
-        m_lobby_data->m_players.remove_if([](const auto& plr) {
+        m_lobby_data->m_players.remove_if([](const std::pair<int, PlayerSetupData>& plr) {
             return plr.second.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER;
         });
         m_ai_next_index = 1;
@@ -2507,8 +2507,9 @@ PlayingGame::PlayingGame(my_context c) :
         // Set first turn advance to absolute time point
         try {
             m_turn_timeout.expires_at(boost::posix_time::time_from_string(GetOptionsDB().Get<std::string>("network.server.turn-timeout.first-turn-time")));
-            m_turn_timeout.async_wait(
-                [this](const auto& error){ TurnTimedoutHandler(error); });
+            m_turn_timeout.async_wait(boost::bind(&PlayingGame::TurnTimedoutHandler,
+                                                  this,
+                                                  boost::asio::placeholders::error));
             return;
         } catch (...) {
             WarnLogger(FSM) << "(ServerFSM) PlayingGame: Cann't parse first turn time: "
@@ -2519,8 +2520,9 @@ PlayingGame::PlayingGame(my_context c) :
     if (GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval") > 0) {
         // Set turn advance after time interval
         m_turn_timeout.expires_from_now(boost::posix_time::seconds(GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval")));
-        m_turn_timeout.async_wait(
-            [this](const auto& error){ TurnTimedoutHandler(error); });
+        m_turn_timeout.async_wait(boost::bind(&PlayingGame::TurnTimedoutHandler,
+                                              this,
+                                              boost::asio::placeholders::error));
     }
 }
 
@@ -2923,8 +2925,9 @@ void PlayingGame::TurnTimedoutHandler(const boost::system::error_code& error) {
         auto turn_expired_time = m_turn_timeout.expires_at();
         turn_expired_time += boost::posix_time::seconds(GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval"));
         m_turn_timeout.expires_at(turn_expired_time);
-        m_turn_timeout.async_wait(
-            [this](const auto& error){ TurnTimedoutHandler(error); });
+        m_turn_timeout.async_wait(boost::bind(&PlayingGame::TurnTimedoutHandler,
+                                              this,
+                                              boost::asio::placeholders::error));
     }
     Server().ExpireTurn();
     // check if AI players made their orders and advance turn
@@ -2946,8 +2949,9 @@ WaitingForTurnEnd::WaitingForTurnEnd(my_context c) :
 #else
         m_timeout.expires_from_now(std::chrono::seconds(GetOptionsDB().Get<int>("save.auto.interval")));
 #endif
-        m_timeout.async_wait(
-            [this](const auto& error){ SaveTimedoutHandler(error); });
+        m_timeout.async_wait(boost::bind(&WaitingForTurnEnd::SaveTimedoutHandler,
+                                         this,
+                                         boost::asio::placeholders::error));
     }
 
     auto& playing_game = context<PlayingGame>();
@@ -2957,8 +2961,9 @@ WaitingForTurnEnd::WaitingForTurnEnd(my_context c) :
         playing_game.m_turn_timeout.cancel();
         if (GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval") > 0) {
             playing_game.m_turn_timeout.expires_from_now(boost::posix_time::seconds(GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval")));
-            playing_game.m_turn_timeout.async_wait(
-                [&playing_game](const auto& error){ playing_game.TurnTimedoutHandler(error); });
+            playing_game.m_turn_timeout.async_wait(boost::bind(&PlayingGame::TurnTimedoutHandler,
+                                                               &playing_game,
+                                                               boost::asio::placeholders::error));
         }
     }
 
@@ -3309,8 +3314,9 @@ void WaitingForTurnEnd::SaveTimedoutHandler(const boost::system::error_code& err
 #else
         m_timeout.expires_from_now(std::chrono::seconds(GetOptionsDB().Get<int>("save.auto.interval")));
 #endif
-        m_timeout.async_wait(
-            [this](const auto& error){ SaveTimedoutHandler(error); });
+        m_timeout.async_wait(boost::bind(&WaitingForTurnEnd::SaveTimedoutHandler,
+                                         this,
+                                         boost::asio::placeholders::error));
     }
 }
 
@@ -3401,8 +3407,9 @@ ShuttingDownServer::ShuttingDownServer(my_context c) :
     DebugLogger(FSM) << "ShuttingDownServer expecting " << m_player_id_ack_expected.size() << " AIs to ACK shutdown.";
 
     // Set the timeout.  If all clients have not responded then kill the remainder and exit
-    m_timeout.async_wait(
-            [&server](const auto& error){ server.ShutdownTimedoutHandler(error); });
+    m_timeout.async_wait(boost::bind(&ServerApp::ShutdownTimedoutHandler,
+                                     &server,
+                                     boost::asio::placeholders::error));
 
     post_event(CheckEndConditions());
 }

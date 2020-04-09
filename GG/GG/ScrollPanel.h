@@ -81,6 +81,9 @@ private:
      * @return void
      */
     void DoLayout();
+
+    //! Called when the scroll position changes.
+    void OnScrolled(int tab_min, int tab_max, int min, int max);
 };
 
 }

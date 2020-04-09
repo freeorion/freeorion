@@ -57,11 +57,11 @@ void About::CompleteConstruction() {
     m_license_str = ReadFile(GetRootDataDir() / "default" / "COPYING").value_or("");
 
     m_done->LeftClickedSignal.connect(
-        [this](){ EndRun(); });
+        boost::bind(&GG::Wnd::EndRun, this));
     m_license->LeftClickedSignal.connect(
-        [this](){ ShowLicense(); });
+        boost::bind(&About::ShowLicense, this));
     m_vision->LeftClickedSignal.connect(
-        [this](){ ShowVision(); });
+        boost::bind(&About::ShowVision, this));
 }
 
 void About::KeyPress(GG::Key key, std::uint32_t key_code_point,

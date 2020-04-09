@@ -64,7 +64,7 @@ void MultiIconValueIndicator::CompleteConstruction() {
         m_icons.back()->SizeMove(icon_ul, icon_lr);
         auto meter = meter_type.first;
         auto meter_string = boost::lexical_cast<std::string>(meter_type.first);
-        m_icons.back()->RightClickedSignal.connect([this, meter, meter_string](const auto& pt) {
+        m_icons.back()->RightClickedSignal.connect([this, meter, meter_string](const GG::Pt& pt) {
             auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
 
             auto pc = Objects().get<PopCenter>(*(this->m_object_ids.begin()));

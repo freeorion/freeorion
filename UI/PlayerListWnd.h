@@ -30,6 +30,7 @@ public:
     //@}
 
     mutable boost::signals2::signal<void ()>    SelectedPlayersChangedSignal;
+    mutable boost::signals2::signal<void (int)> PlayerDoubleClickedSignal;
     mutable boost::signals2::signal<void ()>    ClosingSignal;
 
 private:
@@ -40,7 +41,8 @@ private:
     void            DoLayout();
 
     void            PlayerSelectionChanged(const GG::ListBox::SelectionSet& rows);
-    void            PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& pt);
+    void            PlayerDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
+    void            PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
     int             PlayerInRow(GG::ListBox::iterator it) const;
     int             EmpireInRow(GG::ListBox::iterator it) const;
 
