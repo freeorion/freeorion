@@ -20,7 +20,7 @@ from target import TargetPlanet
 from turn_state import state
 from EnumsAI import MissionType, FocusType, EmpireProductionTypes, ShipRoleType, PriorityType
 from freeorion_tools import (tech_is_complete, get_ai_tag_grade, get_species_tag_grade, cache_by_turn_persistent,
-                             AITimer, get_partial_visibility_turn, cache_for_current_turn)
+                             AITimer, get_partial_visibility_turn, cache_for_current_turn, cache_for_session)
 from AIDependencies import (INVALID_ID, OUTPOSTING_TECH, POP_CONST_MOD_MAP,
                             POP_SIZE_MOD_MAP_MODIFIED_BY_SPECIES, POP_SIZE_MOD_MAP_NOT_MODIFIED_BY_SPECIES)
 
@@ -502,6 +502,7 @@ def next_turn_pop_change(cur_pop, target_pop):
         return max(pop_change, target_pop - cur_pop)
 
 
+@cache_for_session
 def project_ind_val(init_pop, max_pop_size, init_industry, max_ind_factor, flat_industry, discount_multiplier):
     """returns a discouted value for a projected industry stream over time with changing population"""
     discount_factor = 0.95
