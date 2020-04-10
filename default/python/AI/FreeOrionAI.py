@@ -243,7 +243,6 @@ def handleDiplomaticStatusUpdate(status_update):  # pylint: disable=invalid-name
 
 @error_handler
 @listener
-@profile
 def generateOrders():  # pylint: disable=invalid-name
     """
     Called once per turn to tell the Python AI to generate

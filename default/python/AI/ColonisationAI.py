@@ -344,7 +344,6 @@ def survey_universe():
     colonization_timer.stop()
 
 
-@profile
 def get_colony_fleets():
     """examines known planets, collects various colonization data, to be later used to send colony fleets"""
     universe = fo.getUniverse()
