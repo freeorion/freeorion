@@ -240,6 +240,7 @@ def profile(func):
     return wrapper
 
 
+@cache_for_current_turn
 def get_partial_visibility_turn(obj_id):
     """Return the last turn an object had at least partial visibility.
 
