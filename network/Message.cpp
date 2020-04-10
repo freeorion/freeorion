@@ -179,7 +179,7 @@ Message GameStartMessage(bool single_player_game, int empire_id,
                          const Universe& universe, const SpeciesManager& species,
                          CombatLogManager& combat_logs, const SupplyManager& supply,
                          const std::map<int, PlayerInfo>& players,
-                         const GalaxySetupData& galaxy_setup_data,
+                         GalaxySetupData& galaxy_setup_data,
                          bool use_binary_serialization)
 {
     std::ostringstream os;
@@ -198,6 +198,7 @@ Message GameStartMessage(bool single_player_game, int empire_id,
             bool loaded_game_data = false;
             oa << BOOST_SERIALIZATION_NVP(players)
                << BOOST_SERIALIZATION_NVP(loaded_game_data);
+            galaxy_setup_data.EncodingEmpire() = empire_id;
             oa << BOOST_SERIALIZATION_NVP(galaxy_setup_data);
         } else {
             freeorion_xml_oarchive oa(os);
@@ -213,6 +214,7 @@ Message GameStartMessage(bool single_player_game, int empire_id,
             bool loaded_game_data = false;
             oa << BOOST_SERIALIZATION_NVP(players)
                << BOOST_SERIALIZATION_NVP(loaded_game_data);
+            galaxy_setup_data.EncodingEmpire() = empire_id;
             oa << BOOST_SERIALIZATION_NVP(galaxy_setup_data);
         }
     }
@@ -225,7 +227,7 @@ Message GameStartMessage(bool single_player_game, int empire_id,
                          CombatLogManager& combat_logs, const SupplyManager& supply,
                          const std::map<int, PlayerInfo>& players,
                          const OrderSet& orders, const SaveGameUIData* ui_data,
-                         const GalaxySetupData& galaxy_setup_data,
+                         GalaxySetupData& galaxy_setup_data,
                          bool use_binary_serialization)
 {
     std::ostringstream os;
@@ -251,6 +253,7 @@ Message GameStartMessage(bool single_player_game, int empire_id,
                 oa << boost::serialization::make_nvp("ui_data", *ui_data);
             bool save_state_string_available = false;
             oa << BOOST_SERIALIZATION_NVP(save_state_string_available);
+            galaxy_setup_data.EncodingEmpire() = empire_id;
             oa << BOOST_SERIALIZATION_NVP(galaxy_setup_data);
         } else {
             freeorion_xml_oarchive oa(os);
@@ -273,6 +276,7 @@ Message GameStartMessage(bool single_player_game, int empire_id,
                 oa << boost::serialization::make_nvp("ui_data", *ui_data);
             bool save_state_string_available = false;
             oa << BOOST_SERIALIZATION_NVP(save_state_string_available);
+            galaxy_setup_data.EncodingEmpire() = empire_id;
             oa << BOOST_SERIALIZATION_NVP(galaxy_setup_data);
         }
     }
@@ -285,7 +289,7 @@ Message GameStartMessage(bool single_player_game, int empire_id,
                          CombatLogManager& combat_logs, const SupplyManager& supply,
                          const std::map<int, PlayerInfo>& players,
                          const OrderSet& orders, const std::string* save_state_string,
-                         const GalaxySetupData& galaxy_setup_data,
+                         GalaxySetupData& galaxy_setup_data,
                          bool use_binary_serialization)
 {
     std::ostringstream os;
@@ -311,6 +315,7 @@ Message GameStartMessage(bool single_player_game, int empire_id,
             oa << BOOST_SERIALIZATION_NVP(save_state_string_available);
             if (save_state_string_available)
                 oa << boost::serialization::make_nvp("save_state_string", *save_state_string);
+            galaxy_setup_data.EncodingEmpire() = empire_id;
             oa << BOOST_SERIALIZATION_NVP(galaxy_setup_data);
         } else {
             freeorion_xml_oarchive oa(os);
@@ -333,6 +338,7 @@ Message GameStartMessage(bool single_player_game, int empire_id,
             oa << BOOST_SERIALIZATION_NVP(save_state_string_available);
             if (save_state_string_available)
                 oa << boost::serialization::make_nvp("save_state_string", *save_state_string);
+            galaxy_setup_data.EncodingEmpire() = empire_id;
             oa << BOOST_SERIALIZATION_NVP(galaxy_setup_data);
         }
     }
