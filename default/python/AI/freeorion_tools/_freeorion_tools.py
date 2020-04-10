@@ -7,6 +7,7 @@ import re
 import traceback
 from functools import wraps
 from logging import debug, error
+from aistate_interface import get_aistate
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 
@@ -195,9 +196,6 @@ def cache_by_turn_persistent(func):
 
     As the result is stored in AIstate, its type must be trusted by the savegame_codec module.
     """
-    # avoid circular import
-    from aistate_interface import get_aistate
-
     @wraps(func)
     def wrapper():
         if get_aistate() is None:
