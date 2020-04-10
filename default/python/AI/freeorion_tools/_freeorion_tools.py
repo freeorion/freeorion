@@ -377,3 +377,14 @@ def assertion_fails(cond, msg="", logger=logging.error):
     logger("%s Traceback (most recent call last): %s", header,
            ''.join(traceback.format_list(stack)))
     return True
+
+
+@cache_for_session
+def get_species_tag_grade(species_name, tag_type):
+    if not species_name:
+        return ""
+    species = fo.getSpecies(species_name)
+    if assertion_fails(species is not None):
+        return ""
+
+    return get_ai_tag_grade(species.tags, tag_type)

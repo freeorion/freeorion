@@ -55,7 +55,7 @@ import CombatRatingsAI
 import FleetUtilsAI
 from AIDependencies import INVALID_ID
 from aistate_interface import get_aistate
-from freeorion_tools import UserString, get_ai_tag_grade, tech_is_complete
+from freeorion_tools import UserString, get_species_tag_grade, tech_is_complete
 from turn_state import state
 
 # Define meta classes for the ship parts  TODO storing as set may not be needed anymore
@@ -954,10 +954,10 @@ class ShipDesigner(object):
         self._apply_hardcoded_effects(ignore_species)
 
         if self.species and not ignore_species:
-            shields_grade = CombatRatingsAI.get_species_shield_grade(self.species)
+            shields_grade = get_species_tag_grade(self.species, 'SHIELDS')
             self.design_stats.shields = CombatRatingsAI.weight_shields(self.design_stats.shields, shields_grade)
             if self.design_stats.troops:
-                troops_grade = CombatRatingsAI.get_species_troops_grade(self.species)
+                troops_grade = get_species_tag_grade(self.species, 'ATTACKTROOPS')
                 self.design_stats.troops = CombatRatingsAI.weight_attack_troops(self.design_stats.troops, troops_grade)
 
     def _apply_hardcoded_effects(self, ignore_species=False):
@@ -1179,13 +1179,13 @@ class ShipDesigner(object):
             # The same is true for the canProduceShips trait which simply means no hull can be built.
             relevant_grades = []
             if WEAPONS & self.useful_part_classes:
-                weapons_grade = CombatRatingsAI.get_pilot_weapons_grade(self.species)
+                weapons_grade = get_species_tag_grade(self.species, 'WEAPONS')
                 relevant_grades.append("WEAPON: %s" % weapons_grade)
             if SHIELDS & self.useful_part_classes:
-                shields_grade = CombatRatingsAI.get_species_shield_grade(self.species)
+                shields_grade = get_species_tag_grade(self.species, 'SHIELDS')
                 relevant_grades.append("SHIELDS: %s" % shields_grade)
             if TROOPS & self.useful_part_classes:
-                troops_grade = CombatRatingsAI.get_species_troops_grade(self.species)
+                troops_grade = get_species_tag_grade(self.species, 'ATTACKTROOPS')
                 relevant_grades.append("TROOPS: %s" % troops_grade)
             species_tuple = tuple(relevant_grades)
             design_cache_species = design_cache_tech.setdefault(species_tuple, {})
@@ -1581,7 +1581,7 @@ class ShipDesigner(object):
         tech_bonus = _get_tech_bonus(AIDependencies.WEAPON_UPGRADE_DICT, weapon_name)
         # species modifiers
         if not ignore_species:
-            weapons_grade = CombatRatingsAI.get_pilot_weapons_grade(self.species)
+            weapons_grade = get_species_tag_grade(self.species, 'WEAPONS')
             species_modifier = AIDependencies.PILOT_DAMAGE_MODIFIER_DICT.get(weapons_grade, {}).get(weapon_name, 0)
         else:
             species_modifier = 0
@@ -1596,7 +1596,7 @@ class ShipDesigner(object):
         tech_bonus = _get_tech_bonus(AIDependencies.WEAPON_ROF_UPGRADE_DICT, weapon_name)
         # species modifier
         if not ignore_species:
-            weapons_grade = CombatRatingsAI.get_pilot_weapons_grade(self.species)
+            weapons_grade = get_species_tag_grade(self.species, 'WEAPONS')
             species_modifier = AIDependencies.PILOT_ROF_MODIFIER_DICT.get(weapons_grade, {}).get(weapon_name, 0)
         else:
             species_modifier = 0
@@ -1619,9 +1619,9 @@ class ShipDesigner(object):
         tech_bonus = _get_tech_bonus(AIDependencies.FIGHTER_DAMAGE_UPGRADE_DICT, hangar_name)
         # species modifier
         if not ignore_species:
-            weapons_grade = CombatRatingsAI.get_pilot_weapons_grade(self.species)
-            species_modifier = AIDependencies.PILOT_FIGHTERDAMAGE_MODIFIER_DICT.get(weapons_grade,
-                                                                                    {}).get(hangar_name, 0)
+            weapons_grade = get_species_tag_grade(self.species, 'WEAPONS')
+            species_modifier = AIDependencies.PILOT_FIGHTERDAMAGE_MODIFIER_DICT.get(
+                weapons_grade, {}).get(hangar_name, 0)
         else:
             species_modifier = 0
         return base + species_modifier + tech_bonus
@@ -1632,9 +1632,9 @@ class ShipDesigner(object):
         tech_bonus = _get_tech_bonus(AIDependencies.FIGHTER_CAPACITY_UPGRADE_DICT, hangar_name)
         # species modifier
         if not ignore_species:
-            weapons_grade = CombatRatingsAI.get_pilot_weapons_grade(self.species)
-            species_modifier = AIDependencies.PILOT_FIGHTER_CAPACITY_MODIFIER_DICT.get(weapons_grade,
-                                                                                       {}).get(hangar_name, 0)
+            weapons_grade = get_species_tag_grade(self.species, 'WEAPONS')
+            species_modifier = AIDependencies.PILOT_FIGHTER_CAPACITY_MODIFIER_DICT.get(
+                weapons_grade, {}).get(hangar_name, 0)
         else:
             species_modifier = 0
         return base + species_modifier + tech_bonus
@@ -2401,7 +2401,5 @@ def _get_tech_bonus(upgrade_dict, part_name):
 
 
 def _get_species_fuel_bonus(species_name):
-    if not species_name:
-        return 0
-    species_tags = fo.getSpecies(species_name).tags
-    return AIDependencies.SPECIES_FUEL_MODIFIER.get(get_ai_tag_grade(species_tags, "FUEL"), 0)
+    return AIDependencies.SPECIES_FUEL_MODIFIER.get(
+        get_species_tag_grade(species_name, "FUEL"), 0)
