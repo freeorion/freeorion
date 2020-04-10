@@ -162,7 +162,7 @@ def cache_by_session(func):
     return wrapper
 
 
-def cache_by_session_with_turnwise_update(func):
+def cache_for_current_turn(func):
     """
     Cache a function value during session, updated each turn.
     Wraps only functions with hashable arguments.

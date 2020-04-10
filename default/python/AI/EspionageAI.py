@@ -4,7 +4,7 @@ import freeOrionAIInterface as fo  # pylint: disable=import-error
 import AIDependencies
 from AIDependencies import ALL_EMPIRES
 from EnumsAI import EmpireMeters
-from freeorion_tools import cache_by_session_with_turnwise_update
+from freeorion_tools import cache_for_current_turn
 
 
 def default_empire_detection_strength():
@@ -13,7 +13,7 @@ def default_empire_detection_strength():
             else AIDependencies.DETECTION_TECH_STRENGTHS["SPY_DETECT_2"])
 
 
-@cache_by_session_with_turnwise_update
+@cache_for_current_turn
 def get_empire_detection(empire_id):
     """
     Returns the detection strength for the provided empire ID.
