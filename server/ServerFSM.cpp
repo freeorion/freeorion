@@ -2710,17 +2710,7 @@ void PlayingGame::EstablishPlayer(const PlayerConnectionPtr& player_connection,
                 // previous connection was dropped
                 // set empire link to new connection by name
                 // send playing game
-                int empire_id = server.AddPlayerIntoGame(player_connection, ALL_EMPIRES);
-                if (empire_id != ALL_EMPIRES) {
-                    // notify other player that this empire revoked orders
-                    for (auto player_it = server.m_networking.established_begin();
-                         player_it != server.m_networking.established_end(); ++player_it)
-                    {
-                        PlayerConnectionPtr player_ctn = *player_it;
-                        player_ctn->SendMessage(PlayerStatusMessage(Message::PLAYING_TURN,
-                                                                    empire_id));
-                    }
-                }
+                server.AddPlayerIntoGame(player_connection, ALL_EMPIRES);
             }
             // In both cases update ingame lobby
             fsm.UpdateIngameLobby();
@@ -2890,14 +2880,6 @@ sc::result PlayingGame::react(const LobbyUpdate& msg) {
         if (player.first == sender->PlayerID() && player.second.m_save_game_empire_id != ALL_EMPIRES) {
             int empire_id = server.AddPlayerIntoGame(sender, player.second.m_save_game_empire_id);
             if (empire_id != ALL_EMPIRES) {
-                // notify other player that this empire revoked orders
-                for (auto player_it = server.m_networking.established_begin();
-                    player_it != server.m_networking.established_end(); ++player_it)
-                {
-                    PlayerConnectionPtr player_ctn = *player_it;
-                    player_ctn->SendMessage(PlayerStatusMessage(Message::PLAYING_TURN,
-                                                                empire_id));
-                }
                 context<ServerFSM>().UpdateIngameLobby();
                 return discard_event();
             }

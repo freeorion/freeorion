@@ -1444,6 +1444,9 @@ Turns advance after fixed intervals, regardless of when and whether players have
 OPTIONS_DB_CLIENT_MESSAGE_SIZE_MAX
 Limit of client message size in bytes.
 
+OPTIONS_DB_DROP_EMPIRE_READY
+Drop empire's readiness on joining to the playing game.
+
 OPTIONS_DB_UI_MAIN_MENU_X
 Position of the center of the intro screen main menu, as a portion of the application's total width.
 
