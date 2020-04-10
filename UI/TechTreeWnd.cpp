@@ -561,10 +561,14 @@ private:
 
     void DoLayout();    // arranges child controls (scrolls, buttons) to account for window size
 
+    void ScrolledSlot(int, int, int, int);
+
     void TreeDraggedSlot(const GG::Pt& move);
     void TreeDragBegin(const GG::Pt& move);
     void TreeDragEnd(const GG::Pt& move);
     void TreeZoomedSlot(int move);
+    bool TreeZoomInKeyboard();
+    bool TreeZoomOutKeyboard();
     void ConnectKeyboardAcceleratorSignals();
 
     double                  m_scale;
@@ -1092,21 +1096,21 @@ void TechTreeWnd::LayoutPanel::CompleteConstruction() {
     AttachChild(m_zoom_out_button);
 
     m_layout_surface->DraggedSignal.connect(
-        [this](const auto& pt){ TreeDraggedSlot(pt); });
+        boost::bind(&TechTreeWnd::LayoutPanel::TreeDraggedSlot, this, _1));
     m_layout_surface->ButtonUpSignal.connect(
-        [this](const auto& pt){ TreeDragEnd(pt); });
+        boost::bind(&TechTreeWnd::LayoutPanel::TreeDragEnd, this, _1));
     m_layout_surface->ButtonDownSignal.connect(
-        [this](const auto& pt){ TreeDragBegin(pt); });
+        boost::bind(&TechTreeWnd::LayoutPanel::TreeDragBegin, this, _1));
     m_layout_surface->ZoomedSignal.connect(
-        [this](int level){ TreeZoomedSlot(level); });
+        boost::bind(&TechTreeWnd::LayoutPanel::TreeZoomedSlot, this, _1));
     m_vscroll->ScrolledSignal.connect(
-        [this](int pos, int, int, int){ m_scroll_position_y = pos; });
+        boost::bind(&TechTreeWnd::LayoutPanel::ScrolledSlot, this, _1, _2, _3, _4));
     m_hscroll->ScrolledSignal.connect(
-        [this](int pos, int, int, int){ m_scroll_position_x = pos; });
+        boost::bind(&TechTreeWnd::LayoutPanel::ScrolledSlot, this, _1, _2, _3, _4));
     m_zoom_in_button->LeftClickedSignal.connect(
-        [this](){ TreeZoomedSlot(1); });
+        boost::bind(&TechTreeWnd::LayoutPanel::TreeZoomedSlot, this, 1));
     m_zoom_out_button->LeftClickedSignal.connect(
-        [this](){ TreeZoomedSlot(-1); });
+        boost::bind(&TechTreeWnd::LayoutPanel::TreeZoomedSlot, this, -1));
 
     ConnectKeyboardAcceleratorSignals();
 
@@ -1125,13 +1129,13 @@ void TechTreeWnd::LayoutPanel::CompleteConstruction() {
 void TechTreeWnd::LayoutPanel::ConnectKeyboardAcceleratorSignals() {
     HotkeyManager* hkm = HotkeyManager::GetManager();
 
-    hkm->Connect([this](){ TreeZoomedSlot(1); return true; }, "ui.zoom.in",
+    hkm->Connect(boost::bind(&TechTreeWnd::LayoutPanel::TreeZoomInKeyboard, this), "ui.zoom.in",
                  AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
-    hkm->Connect([this](){ TreeZoomedSlot(1); return true; }, "ui.zoom.in.alt",
+    hkm->Connect(boost::bind(&TechTreeWnd::LayoutPanel::TreeZoomInKeyboard, this), "ui.zoom.in.alt",
                  AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
-    hkm->Connect([this](){ TreeZoomedSlot(-1); return true; }, "ui.zoom.out",
+    hkm->Connect(boost::bind(&TechTreeWnd::LayoutPanel::TreeZoomOutKeyboard, this), "ui.zoom.out",
                  AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
-    hkm->Connect([this](){ TreeZoomedSlot(-1); return true; }, "ui.zoom.out.alt",
+    hkm->Connect(boost::bind(&TechTreeWnd::LayoutPanel::TreeZoomOutKeyboard, this), "ui.zoom.out.alt",
                  AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
 
     hkm->RebuildShortcuts();
@@ -1399,7 +1403,7 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position) {
         tech_panel->MoveTo(GG::Pt(node->GetX(), node->GetY()));
         m_layout_surface->AttachChild(tech_panel);
         tech_panel->TechLeftClickedSignal.connect(
-            [this](const auto& tech_name, auto){ SelectTech(tech_name); });
+            boost::bind(&TechTreeWnd::LayoutPanel::SelectTech, this, _1));
         tech_panel->TechDoubleClickedSignal.connect(
             TechDoubleClickedSignal);
         tech_panel->TechPediaDisplaySignal.connect(
@@ -1449,6 +1453,11 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position) {
     MoveChildUp(m_hscroll);
 }
 
+void TechTreeWnd::LayoutPanel::ScrolledSlot(int, int, int, int) {
+    m_scroll_position_x = m_hscroll->PosnRange().first;
+    m_scroll_position_y = m_vscroll->PosnRange().first;
+}
+
 void TechTreeWnd::LayoutPanel::SelectTech(const std::string& tech_name)
 {
     // deselect previously-selected tech panel
@@ -1486,6 +1495,16 @@ void TechTreeWnd::LayoutPanel::TreeZoomedSlot(int move) {
     //std::cout << m_scale << std::endl;
 }
 
+// The bool return value is to re-use the MapWnd::KeyboardZoomIn hotkey
+bool TechTreeWnd::LayoutPanel::TreeZoomInKeyboard() {
+    TreeZoomedSlot(1);
+    return true;
+}
+
+bool TechTreeWnd::LayoutPanel::TreeZoomOutKeyboard() {
+    TreeZoomedSlot(-1);
+    return true;
+}
 
 //////////////////////////////////////////////////
 // TechTreeWnd::TechListBox                     //
@@ -1540,9 +1559,9 @@ private:
     };
 
     void    Populate(bool update = true);
-    void    TechDoubleClicked(GG::ListBox::iterator it, const GG::Flags<GG::ModKey>& modkeys);
-    void    TechLeftClicked(GG::ListBox::iterator it);
-    void    TechRightClicked(GG::ListBox::iterator it, const GG::Pt& pt);
+    void    TechDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
+    void    TechLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
+    void    TechRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
     void    ToggleSortCol(unsigned int col);
 
     std::set<std::string>                   m_categories_shown;
@@ -1725,11 +1744,11 @@ void TechTreeWnd::TechListBox::CompleteConstruction() {
     CUIListBox::CompleteConstruction();
 
     DoubleClickedRowSignal.connect(
-        [this](auto it, auto, const auto& modkeys){ TechDoubleClicked(it, modkeys); });
+        boost::bind(&TechListBox::TechDoubleClicked, this, _1, _2, _3));
     LeftClickedRowSignal.connect(
-        [this](auto it, auto, auto){ TechLeftClicked(it); });
+        boost::bind(&TechListBox::TechLeftClicked, this, _1, _2, _3));
     RightClickedRowSignal.connect(
-        [this](auto it, const auto& pt, auto){ TechRightClicked(it, pt); });
+        boost::bind(&TechListBox::TechRightClicked, this, _1, _2, _3));
 
     SetStyle(GG::LIST_NOSEL);
 
@@ -1802,7 +1821,7 @@ void TechTreeWnd::TechListBox::CompleteConstruction() {
     // Initialize sorting
     SetSortCol(2);
     m_previous_sort_col = 3;
-    SetSortCmp([&](const auto& lhs, const auto& rhs, std::size_t col){ return TechRowCmp(lhs, rhs, col); });
+    SetSortCmp([&](const GG::ListBox::Row& lhs, const GG::ListBox::Row& rhs, std::size_t col) { return TechRowCmp(lhs, rhs, col); });
 }
 
 TechTreeWnd::TechListBox::~TechListBox()
@@ -1940,13 +1959,13 @@ void TechTreeWnd::TechListBox::HideStatus(TechStatus status) {
     }
 }
 
-void TechTreeWnd::TechListBox::TechLeftClicked(GG::ListBox::iterator it) {
+void TechTreeWnd::TechListBox::TechLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
     // determine type of row that was clicked, and emit appropriate signal
     if (TechRow* tech_row = dynamic_cast<TechRow*>(it->get()))
         TechLeftClickedSignal(tech_row->GetTech(), GG::Flags<GG::ModKey>());
 }
 
-void TechTreeWnd::TechListBox::TechRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
+void TechTreeWnd::TechListBox::TechRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
     if ((*it)->Disabled())
         return;
     const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
@@ -1961,8 +1980,8 @@ void TechTreeWnd::TechListBox::TechRightClicked(GG::ListBox::iterator it, const 
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
     const ResearchQueue& rq = empire->GetResearchQueue();
     if (!rq.InQueue(tech_name)) {
-        auto tech_dclick_action = [this, it](){ TechDoubleClicked(it, GG::Flags<GG::ModKey>()); };
-        auto tech_ctrl_dclick_action = [this, it](){ TechDoubleClicked(it, GG::MOD_KEY_CTRL); };
+        auto tech_dclick_action = [this, it, pt]() { TechDoubleClicked(it, pt, GG::Flags<GG::ModKey>()); };
+        auto tech_ctrl_dclick_action = [this, it, pt]() { TechDoubleClicked(it, pt, GG::MOD_KEY_CTRL); };
 
         if (!empire->TechResearched(tech_name)) {
             popup->AddMenuItem(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_QUEUE"), false, false,
@@ -1979,7 +1998,7 @@ void TechTreeWnd::TechListBox::TechRightClicked(GG::ListBox::iterator it, const 
     popup->Run();
 }
 
-void TechTreeWnd::TechListBox::TechDoubleClicked(GG::ListBox::iterator it, const GG::Flags<GG::ModKey>& modkeys) {
+void TechTreeWnd::TechListBox::TechDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
     // determine type of row that was clicked, and emit appropriate signal
     TechRow* tech_row = dynamic_cast<TechRow*>(it->get());
     if (tech_row)
@@ -2007,26 +2026,26 @@ void TechTreeWnd::CompleteConstruction() {
 
     m_layout_panel = GG::Wnd::Create<LayoutPanel>(Width(), Height());
     m_layout_panel->TechSelectedSignal.connect(
-        [this](const auto& name, const auto& modkeys){ TechLeftClickedSlot(name, modkeys); });
+        boost::bind(&TechTreeWnd::TechLeftClickedSlot, this, _1, _2));
     m_layout_panel->TechDoubleClickedSignal.connect(
-        [this](const auto& tech_name, auto modkeys){ this->AddTechToResearchQueue(tech_name, modkeys & GG::MOD_KEY_CTRL); });
+        [this](const std::string& tech_name, GG::Flags<GG::ModKey> modkeys){ this->AddTechToResearchQueue(tech_name, modkeys & GG::MOD_KEY_CTRL); });
     m_layout_panel->TechPediaDisplaySignal.connect(
-        [this](const auto& tech_name){ TechPediaDisplaySlot(tech_name); });
+        boost::bind(&TechTreeWnd::TechPediaDisplaySlot, this, _1));
     AttachChild(m_layout_panel);
 
     m_tech_list = GG::Wnd::Create<TechListBox>(Width(), Height());
     m_tech_list->TechLeftClickedSignal.connect(
-        [this](const auto& name, const auto& modkeys){ TechLeftClickedSlot(name, modkeys); });
+        boost::bind(&TechTreeWnd::TechLeftClickedSlot, this, _1, _2));
     m_tech_list->TechDoubleClickedSignal.connect(
-        [this](const auto& tech_name, auto modkeys){ this->AddTechToResearchQueue(tech_name, modkeys & GG::MOD_KEY_CTRL); });
+        [this](const std::string& tech_name, GG::Flags<GG::ModKey> modkeys){ this->AddTechToResearchQueue(tech_name, modkeys & GG::MOD_KEY_CTRL); });
     m_tech_list->TechPediaDisplaySignal.connect(
-        [this](const auto& tech_name){ TechPediaDisplaySlot(tech_name); });
+        boost::bind(&TechTreeWnd::TechPediaDisplaySlot, this, _1));
 
     m_enc_detail_panel = GG::Wnd::Create<EncyclopediaDetailPanel>(GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE | PINABLE, RES_PEDIA_WND_NAME);
     m_tech_tree_controls =  GG::Wnd::Create<TechTreeControls>(RES_CONTROLS_WND_NAME);
 
     m_enc_detail_panel->ClosingSignal.connect(
-        [this](){ HidePedia(); });
+        boost::bind(&TechTreeWnd::HidePedia, this));
 
     InitializeWindows();
     // Make sure the controls don't overlap the bottom scrollbar
@@ -2037,7 +2056,7 @@ void TechTreeWnd::CompleteConstruction() {
     }
 
     HumanClientApp::GetApp()->RepositionWindowsSignal.connect(
-        [this](){ InitializeWindows(); });
+        boost::bind(&TechTreeWnd::InitializeWindows, this));
 
     AttachChild(m_enc_detail_panel);
     AttachChild(m_tech_tree_controls);
@@ -2076,8 +2095,7 @@ void TechTreeWnd::CompleteConstruction() {
 
     // connect view type selector
     m_tech_tree_controls->m_view_type_button->CheckedSignal.connect(
-        [this](bool check){ check ? ShowListView() : ShowTreeView(); });
-
+        boost::bind(&TechTreeWnd::ToggleViewType, this, _1));
 
     //TechTreeWnd in typically constructed before the UI client has
     //accesss to the technologies so showing these categories takes a
@@ -2227,6 +2245,9 @@ void TechTreeWnd::SetTechStatus(const TechStatus status, const bool state) {
 
     m_tech_tree_controls->SetTechStatus(status, state);
 }
+
+void TechTreeWnd::ToggleViewType(bool show_list_view)
+{ show_list_view ? ShowListView() : ShowTreeView(); }
 
 void TechTreeWnd::ShowTreeView() {
     AttachChild(m_layout_panel);

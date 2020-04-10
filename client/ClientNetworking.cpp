@@ -23,6 +23,7 @@
 
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/erase.hpp>
+#include <boost/bind.hpp>
 #include <boost/thread/condition.hpp>
 #include <boost/thread/thread.hpp>
 #include <boost/optional/optional.hpp>
@@ -84,15 +85,16 @@ namespace {
                 m_socket.async_receive_from(
                     boost::asio::buffer(m_recv_buf),
                     m_sender_endpoint,
-                    [this](const auto& error, std::size_t bytes_transferred)
-                    { HandleReceive(error, bytes_transferred); });
+                    boost::bind(&ServerDiscoverer::HandleReceive,
+                                this,
+                                boost::asio::placeholders::error,
+                                boost::asio::placeholders::bytes_transferred));
 #if BOOST_VERSION >= 106600
                 m_timer.expires_after(std::chrono::seconds(2));
 #else
                 m_timer.expires_from_now(std::chrono::seconds(2));
 #endif
-                m_timer.async_wait([this](const auto&){ m_socket.close(); });
-
+                m_timer.async_wait(boost::bind(&ServerDiscoverer::CloseSocket, this));
                 m_io_context->run();
                 m_io_context->reset();
                 if (m_receive_successful) {
@@ -112,8 +114,10 @@ namespace {
                 m_socket.async_receive_from(
                     boost::asio::buffer(m_recv_buf),
                     m_sender_endpoint,
-                    [this](const auto& error, std::size_t bytes_transferred)
-                    { HandleReceive(error, bytes_transferred); });
+                    boost::bind(&ServerDiscoverer::HandleReceive,
+                                this,
+                                boost::asio::placeholders::error,
+                                boost::asio::placeholders::bytes_transferred));
             } else if (!error) {
                 std::string buffer_string(m_recv_buf.begin(), m_recv_buf.begin() + length);
                 if (boost::algorithm::starts_with(buffer_string, DISCOVERY_ANSWER)) {
@@ -127,6 +131,9 @@ namespace {
                 }
             }
         }
+
+        void CloseSocket()
+        { m_socket.close(); }
 
         boost::asio::io_context*            m_io_context;
         boost::asio::high_resolution_timer  m_timer;
@@ -222,7 +229,8 @@ public:
 
 private:
     void HandleException(const boost::system::system_error& error);
-    void HandleConnection(const boost::system::error_code& error);
+    void HandleConnection(boost::asio::ip::tcp::resolver::iterator* it,
+                          const boost::system::error_code& error);
 
     void NetworkingThread(const std::shared_ptr<const ClientNetworking> self);
     void HandleMessageBodyRead(const std::shared_ptr<const ClientNetworking>& keep_alive,
@@ -355,10 +363,9 @@ bool ClientNetworking::Impl::ConnectToServer(
                     m_socket = boost::asio::ip::tcp::socket(m_io_context);
                 }
 
-                m_socket.async_connect(
-                    *it,
-                    [this](const auto& error)
-                    { HandleConnection(error); });
+                m_socket.async_connect(*it, boost::bind(&ClientNetworking::Impl::HandleConnection, this,
+                                                        &it,
+                                                        boost::asio::placeholders::error));
                 m_io_context.run();
                 m_io_context.reset();
 
@@ -393,7 +400,7 @@ bool ClientNetworking::Impl::ConnectToServer(
                                          << std::chrono::duration_cast<std::chrono::milliseconds>(connection_time).count() << " ms.";
 
                     DebugLogger(network) << "ConnectToServer() : starting networking thread";
-                    boost::thread([this, self = self->shared_from_this()](){ NetworkingThread(self); });
+                    boost::thread(boost::bind(&ClientNetworking::Impl::NetworkingThread, this, self->shared_from_this()));
                     break;
                 } else {
                     TraceLogger(network) << "Failed to connect to host_name: " << it->host_name()
@@ -447,7 +454,7 @@ void ClientNetworking::Impl::DisconnectFromServer() {
     }
 
     if (is_open)
-        m_io_context.post([this](){ DisconnectFromServerImpl(); });
+        m_io_context.post(boost::bind(&ClientNetworking::Impl::DisconnectFromServerImpl, this));
 }
 
 void ClientNetworking::Impl::SetPlayerID(int player_id) {
@@ -467,7 +474,7 @@ void ClientNetworking::Impl::SendMessage(const Message& message) {
         return;
     }
     TraceLogger(network) << "ClientNetworking::SendMessage() : sending message " << message;
-    m_io_context.post([this, message](){ SendMessageImpl(message); });
+    m_io_context.post(boost::bind(&ClientNetworking::Impl::SendMessageImpl, this, message));
 }
 
 boost::optional<Message> ClientNetworking::Impl::GetMessage() {
@@ -478,7 +485,8 @@ boost::optional<Message> ClientNetworking::Impl::GetMessage() {
     return message;
 }
 
-void ClientNetworking::Impl::HandleConnection(const boost::system::error_code& error)
+void ClientNetworking::Impl::HandleConnection(tcp::resolver::iterator* it,
+                                              const boost::system::error_code& error)
 {
     if (error) {
         TraceLogger(network) << "ClientNetworking::HandleConnection : connection "
@@ -557,8 +565,10 @@ void ClientNetworking::Impl::HandleMessageHeaderRead(const std::shared_ptr<const
     boost::asio::async_read(
         m_socket,
         boost::asio::buffer(m_incoming_message.Data(), m_incoming_message.Size()),
-        [this, keep_alive](const auto& error, std::size_t bytes_transferred)
-        { HandleMessageBodyRead(keep_alive, error, bytes_transferred); });
+        boost::bind(&ClientNetworking::Impl::HandleMessageBodyRead,
+                    this, keep_alive,
+                    boost::asio::placeholders::error,
+                    boost::asio::placeholders::bytes_transferred));
 }
 
 void ClientNetworking::Impl::AsyncReadMessage(const std::shared_ptr<const ClientNetworking>& keep_alive) {
@@ -568,10 +578,10 @@ void ClientNetworking::Impl::AsyncReadMessage(const std::shared_ptr<const Client
 
     if (m_socket.is_open())
         boost::asio::async_read(
-            m_socket,
-            boost::asio::buffer(m_incoming_header),
-            [this, keep_alive](const auto& error, std::size_t bytes_transferred)
-            { HandleMessageHeaderRead(keep_alive, error, bytes_transferred); });
+            m_socket, boost::asio::buffer(m_incoming_header),
+            boost::bind(&ClientNetworking::Impl::HandleMessageHeaderRead, this, keep_alive,
+                        boost::asio::placeholders::error,
+                        boost::asio::placeholders::bytes_transferred));
 }
 
 void ClientNetworking::Impl::HandleMessageWrite(boost::system::error_code error, std::size_t bytes_transferred) {
@@ -612,11 +622,10 @@ void ClientNetworking::Impl::AsyncWriteMessage() {
     buffers.push_back(boost::asio::buffer(m_outgoing_header));
     buffers.push_back(boost::asio::buffer(m_outgoing_messages.front().Data(),
                                           m_outgoing_messages.front().Size()));
-    boost::asio::async_write(
-        m_socket,
-        buffers,
-        [this](const auto& error, std::size_t bytes_transferred)
-        { HandleMessageWrite(error, bytes_transferred); });
+    boost::asio::async_write(m_socket, buffers,
+                             boost::bind(&ClientNetworking::Impl::HandleMessageWrite, this,
+                                         boost::asio::placeholders::error,
+                                         boost::asio::placeholders::bytes_transferred));
 }
 
 void ClientNetworking::Impl::SendMessageImpl(Message message) {

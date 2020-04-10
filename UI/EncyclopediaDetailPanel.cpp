@@ -615,9 +615,12 @@ void EncyclopediaDetailPanel::CompleteConstruction() {
     m_back_button->Disable();
     m_next_button->Disable();
 
-    m_index_button->LeftClickedSignal.connect([this](){ OnIndex(); });
-    m_back_button->LeftClickedSignal.connect([this](){ OnBack(); });
-    m_next_button->LeftClickedSignal.connect([this](){ OnNext(); });
+    m_index_button->LeftClickedSignal.connect(
+        boost::bind(&EncyclopediaDetailPanel::OnIndex, this));
+    m_back_button->LeftClickedSignal.connect(
+        boost::bind(&EncyclopediaDetailPanel::OnBack, this));
+    m_next_button->LeftClickedSignal.connect(
+        boost::bind(&EncyclopediaDetailPanel::OnNext, this));
 
     m_description_rich_text = GG::Wnd::Create<GG::RichText>(
         GG::X(0), GG::Y(0), ClientWidth(), ClientHeight(), "",
@@ -633,14 +636,11 @@ void EncyclopediaDetailPanel::CompleteConstruction() {
     auto factory = new CUILinkTextBlock::Factory();
     // Wire this factory to produce links that talk to us.
     factory->LinkClickedSignal.connect(
-        [this](const auto& link_type, const auto& data)
-        { HandleLinkClick(link_type, data); });
+        boost::bind(&EncyclopediaDetailPanel::HandleLinkClick, this, _1, _2));
     factory->LinkDoubleClickedSignal.connect(
-        [this](const auto& link_type, const auto& data)
-        { HandleLinkDoubleClick(link_type, data); });
+        boost::bind(&EncyclopediaDetailPanel::HandleLinkDoubleClick, this, _1, _2));
     factory->LinkRightClickedSignal.connect(
-        [this](const auto& link_type, const auto& data)
-        { HandleLinkDoubleClick(link_type, data); });
+        boost::bind(&EncyclopediaDetailPanel::HandleLinkDoubleClick, this, _1, _2));
     (*factory_map)[GG::RichText::PLAINTEXT_TAG] =
         std::shared_ptr<GG::RichText::IBlockControlFactory>(factory);
     m_description_rich_text->SetBlockFactoryMap(factory_map);
@@ -655,7 +655,7 @@ void EncyclopediaDetailPanel::CompleteConstruction() {
     auto search_edit = GG::Wnd::Create<SearchEdit>();
     m_search_edit = search_edit;
     search_edit->TextEnteredSignal.connect(
-        [this](){ HandleSearchTextEntered(); });
+        boost::bind(&EncyclopediaDetailPanel::HandleSearchTextEntered, this));
 
     AttachChild(m_search_edit);
     AttachChild(m_graph);
@@ -2581,7 +2581,7 @@ namespace {
         boost::algorithm::to_lower(planet_type_str);
 
         if (!filenames_by_type.count(planet_type)) {
-            auto pe_type_func = [planet_type_str](const auto& path) {
+            auto pe_type_func = [planet_type_str](const boost::filesystem::path& path) {
                 return IsExistingFile(path) && boost::algorithm::starts_with(path.filename().string(), planet_type_str);
             };
 

@@ -619,40 +619,29 @@ void ColorDlg::CompleteConstruction()
             [this, i](){ this->ColorButtonClicked(i); });
     }
     m_sliders[R]->SlidSignal.connect(
-        [this](int value, int, int){ this->RedSliderChanged(value); });
+        boost::bind(&ColorDlg::RedSliderChanged, this, _1, _2, _3));
     m_sliders[G]->SlidSignal.connect(
-        [this](int value, int, int){ this->GreenSliderChanged(value); });
+        boost::bind(&ColorDlg::GreenSliderChanged, this, _1, _2, _3));
     m_sliders[B]->SlidSignal.connect(
-        [this](int value, int, int){ this->BlueSliderChanged(value); });
+        boost::bind(&ColorDlg::BlueSliderChanged, this, _1, _2, _3));
     m_sliders[A]->SlidSignal.connect(
-        [this](int value, int, int){ this->AlphaSliderChanged(value); });
+        boost::bind(&ColorDlg::AlphaSliderChanged, this, _1, _2, _3));
     m_sliders[H]->SlidSignal.connect(
-        [this](int value, int low, int high)
-        { this->HueSliderChanged(value, low, high); });
+        boost::bind(&ColorDlg::HueSliderChanged, this, _1, _2, _3));
     m_sliders[S]->SlidSignal.connect(
-        [this](int value, int low, int high)
-        { this->SaturationSliderChanged(value, low, high); });
+        boost::bind(&ColorDlg::SaturationSliderChanged, this, _1, _2, _3));
     m_sliders[V]->SlidSignal.connect(
-        [this](int value, int low, int high)
-        { this->ValueSliderChanged(value, low, high); });
+        boost::bind(&ColorDlg::ValueSliderChanged, this, _1, _2, _3));
     m_ok->LeftClickedSignal.connect(
-        [this](){ this->OkClicked(); });
+        boost::bind(&ColorDlg::OkClicked, this));
     m_cancel->LeftClickedSignal.connect(
-        [this](){ this->CancelClicked(); });
+        boost::bind(&ColorDlg::CancelClicked, this));
     m_hue_saturation_picker->ChangedSignal.connect(
-        [this](double hue, double saturation)
-        { this->m_value_picker->SetHueSaturation(hue, saturation); });
+        boost::bind(&ValuePicker::SetHueSaturation, m_value_picker, _1, _2));
     m_hue_saturation_picker->ChangedSignal.connect(
-        [this](double hue, double saturation) {
-            this->m_current_color.h = hue;
-            this->m_current_color.s = saturation;
-            this->ColorChanged(this->m_current_color);
-        });
+        boost::bind(&ColorDlg::HueSaturationPickerChanged, this, _1, _2));
     m_value_picker->ChangedSignal.connect(
-        [this](double value) {
-            this->m_current_color.v = value;
-            this->ColorChanged(this->m_current_color);
-        });
+        boost::bind(&ColorDlg::ValuePickerChanged, this, _1));
 }
 
 bool ColorDlg::ColorWasSelected() const
@@ -694,6 +683,19 @@ void ColorDlg::ColorChanged(HSVClr color)
     }
     UpdateRGBSliders();
     UpdateHSVSliders();
+}
+
+void ColorDlg::HueSaturationPickerChanged(double hue, double saturation)
+{
+    m_current_color.h = hue;
+    m_current_color.s = saturation;
+    ColorChanged(m_current_color);
+}
+
+void ColorDlg::ValuePickerChanged(double value)
+{
+    m_current_color.v = value;
+    ColorChanged(m_current_color);
 }
 
 void ColorDlg::UpdateRGBSliders()
@@ -740,7 +742,7 @@ void ColorDlg::ColorButtonClicked(std::size_t i)
     ColorChanged(m_current_color);
 }
 
-void ColorDlg::RedSliderChanged(int value)
+void ColorDlg::RedSliderChanged(int value, int low, int high)
 {
     Clr color = Convert(m_current_color);
     color.r = value;
@@ -749,7 +751,7 @@ void ColorDlg::RedSliderChanged(int value)
     *m_slider_values[R] << value;
 }
 
-void ColorDlg::GreenSliderChanged(int value)
+void ColorDlg::GreenSliderChanged(int value, int low, int high)
 {
     Clr color = Convert(m_current_color);
     color.g = value;
@@ -758,7 +760,7 @@ void ColorDlg::GreenSliderChanged(int value)
     *m_slider_values[G] << value;
 }
 
-void ColorDlg::BlueSliderChanged(int value)
+void ColorDlg::BlueSliderChanged(int value, int low, int high)
 {
     Clr color = Convert(m_current_color);
     color.b = value;
@@ -767,7 +769,7 @@ void ColorDlg::BlueSliderChanged(int value)
     *m_slider_values[B] << value;
 }
 
-void ColorDlg::AlphaSliderChanged(int value)
+void ColorDlg::AlphaSliderChanged(int value, int low, int high)
 {
     Clr color = Convert(m_current_color);
     color.a = value;

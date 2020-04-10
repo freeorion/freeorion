@@ -71,7 +71,7 @@ std::shared_ptr<Wnd> ZList::Pick(const Pt& pt, const std::shared_ptr<Wnd>& modal
     } else {
         // otherwise, look in the z-list for the first visible Wnd containg pt.
         std::function<boost::optional<std::shared_ptr<Wnd>> (const std::shared_ptr<Wnd>&)> contains_pt =
-            [&pt, &ignore, this](const auto& locked) {
+            [&pt, &ignore, this](const std::shared_ptr<Wnd>& locked) {
             if (!locked->Visible() || !locked->InWindow(pt))
                 return boost::optional<std::shared_ptr<Wnd>>(boost::none);
 
@@ -92,7 +92,7 @@ void ZList::Add(std::shared_ptr<Wnd> wnd)
         return;
 
     std::function<boost::optional<bool> (const std::shared_ptr<Wnd>&)> equals_wnd =
-        [&wnd](const auto& locked) {
+        [&wnd](const std::shared_ptr<Wnd>& locked) {
         return wnd == locked ? boost::optional<bool>(true) : boost::optional<bool>(boost::none); };
     auto found = Find(equals_wnd);
 
@@ -114,7 +114,7 @@ bool ZList::Remove(const Wnd* const wnd)
         return false;
 
     std::function<boost::optional<bool> (const std::shared_ptr<Wnd>&)> equals_wnd =
-        [&wnd](const auto& locked) {
+        [&wnd](const std::shared_ptr<Wnd>& locked) {
         return wnd == locked.get() ? boost::optional<bool>(true) : boost::optional<bool>(boost::none); };
     auto found = Find(equals_wnd);
 
@@ -132,7 +132,7 @@ bool ZList::MoveUp(Wnd const * const wnd)
         return false;
 
     std::function<boost::optional<bool> (const std::shared_ptr<Wnd>&)> equals_wnd =
-        [&wnd](const auto& locked) {
+        [&wnd](const std::shared_ptr<Wnd>& locked) {
         return wnd == locked.get() ? boost::optional<bool>(true) : boost::optional<bool>(boost::none); };
     auto found = Find(equals_wnd);
 
@@ -161,7 +161,7 @@ bool ZList::MoveDown(const Wnd* const wnd)
         return false;
 
     std::function<boost::optional<bool> (const std::shared_ptr<Wnd>&)> equals_wnd =
-        [&wnd](const auto& locked) {
+        [&wnd](const std::shared_ptr<Wnd>& locked) {
         return wnd == locked.get() ? boost::optional<bool>(true) : boost::optional<bool>(boost::none); };
     auto found = Find(equals_wnd);
 
@@ -182,7 +182,7 @@ bool ZList::MoveDown(const Wnd* const wnd)
 
 namespace {
     const std::function<boost::optional<bool> (const std::shared_ptr<Wnd>&)> IsNotOnTop =
-        [](const auto& wnd)
+        [](const std::shared_ptr<Wnd>& wnd)
     {
         return !wnd->OnTop() ? boost::optional<bool>(true) : boost::optional<bool>(boost::none);
     };

@@ -1289,7 +1289,7 @@ void MultiEdit::AdjustScrolls()
                               line_size, std::max(line_size, page_size));
         AttachChild(m_vscroll);
         m_vscroll->ScrolledSignal.connect(
-            [this](int upper, int, int, int){ this->m_first_row_shown = Y(upper); });
+            boost::bind(&MultiEdit::VScrolled, this, _1, _2, _3, _4));
     }
 
     if (m_hscroll) { // if scroll already exists...
@@ -1326,7 +1326,7 @@ void MultiEdit::AdjustScrolls()
                               line_size, std::max(line_size, page_size));
         AttachChild(m_hscroll);
         m_hscroll->ScrolledSignal.connect(
-            [this](int upper, int, int, int){ this->m_first_col_shown = X(upper); });
+            boost::bind(&MultiEdit::HScrolled, this, _1, _2, _3, _4));
     }
 
     // if the new client dimensions changed after adjusting the scrolls,
@@ -1340,6 +1340,12 @@ void MultiEdit::AdjustScrolls()
         SetText(Text());
     }
 }
+
+void MultiEdit::VScrolled(int upper, int lower, int range_upper, int range_lower)
+{ m_first_row_shown = Y(upper); }
+
+void MultiEdit::HScrolled(int upper, int lower, int range_upper, int range_lower)
+{ m_first_col_shown = X(upper); }
 
 void MultiEdit::AcceptPastedText(const std::string& text)
 {

@@ -572,6 +572,27 @@ namespace {
 
     const std::string MESSAGE_WND_NAME = "map.messages";
     const std::string PLAYER_LIST_WND_NAME = "map.empires";
+
+    template <class OptionType, class PredicateType>
+    void ConditionalForward(const std::string& option_name,
+                            const OptionsDB::OptionChangedSignalType::slot_type& slot,
+                            OptionType ref_val,
+                            PredicateType pred)
+    {
+        if (pred(GetOptionsDB().Get<OptionType>(option_name), ref_val))
+            slot();
+    }
+
+    template <class OptionType, class PredicateType>
+    void ConditionalConnectOption(const std::string& option_name,
+                                  const OptionsDB::OptionChangedSignalType::slot_type& slot,
+                                  OptionType ref_val,
+                                  PredicateType pred)
+    {
+        GetOptionsDB().OptionChangedSignal(option_name).connect(
+            boost::bind(&ConditionalForward<OptionType, PredicateType>,
+                        option_name, slot, ref_val, pred));
+    }
 }
 
 
@@ -591,15 +612,15 @@ ClientUI::ClientUI() :
     InitializeWindows();
 
     GetOptionsDB().OptionChangedSignal("video.fullscreen.width").connect(
-        [this](){ HandleSizeChange(true); });
+        boost::bind(&ClientUI::HandleSizeChange, this, true));
     GetOptionsDB().OptionChangedSignal("video.fullscreen.height").connect(
-        [this](){ HandleSizeChange(true); });
+        boost::bind(&ClientUI::HandleSizeChange, this, true));
     GetOptionsDB().OptionChangedSignal("video.windowed.width").connect(
-        [this](){ HandleSizeChange(false); });
+        boost::bind(&ClientUI::HandleSizeChange, this, false));
     GetOptionsDB().OptionChangedSignal("video.windowed.height").connect(
-        [this](){ HandleSizeChange(false); });
+        boost::bind(&ClientUI::HandleSizeChange, this, false));
     HumanClientApp::GetApp()->RepositionWindowsSignal.connect(
-        [this](){ InitializeWindows(); });
+        boost::bind(&ClientUI::InitializeWindows, this));
     HumanClientApp::GetApp()->RepositionWindowsSignal.connect(
         &CUIWnd::InvalidateUnusedOptions,
         boost::signals2::at_front);
@@ -607,14 +628,12 @@ ClientUI::ClientUI() :
     // Connected at front to make sure CUIWnd::LoadOptions() doesn't overwrite
     // the values we're checking here...
     HumanClientApp::GetApp()->FullscreenSwitchSignal.connect(
-        [this](bool){ HandleFullscreenSwitch(); },
+        boost::bind(&ClientUI::HandleFullscreenSwitch, this),
         boost::signals2::at_front);
 
-    GetOptionsDB().OptionChangedSignal("ui.reposition.auto.enabled").connect(
-        []() {
-            if (GetOptionsDB().Get<bool>("ui.reposition.auto.enabled"))
-                HumanClientApp::GetApp()->RepositionWindowsSignal();
-        });
+    ConditionalConnectOption("ui.reposition.auto.enabled",
+                             HumanClientApp::GetApp()->RepositionWindowsSignal,
+                             true, std::equal_to<bool>());
 
     // Set the root path for image tags in rich text.
     GG::ImageBlock::SetDefaultImagePath(ArtDir().string());

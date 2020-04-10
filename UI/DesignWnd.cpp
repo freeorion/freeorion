@@ -1782,6 +1782,7 @@ public:
 
     void ShowSuperfluous(bool refresh_list = true);
     void HideSuperfluous(bool refresh_list = true);
+    void ToggleSuperfluous(bool refresh_list = true);
 
     void Populate();
     //@}
@@ -1825,11 +1826,11 @@ void DesignWnd::PartPalette::CompleteConstruction() {
     m_parts_list = GG::Wnd::Create<PartsListBox>(m_availabilities_state);
     AttachChild(m_parts_list);
     m_parts_list->PartTypeClickedSignal.connect(
-        [this](const auto* part, auto modkeys){ HandlePartTypeClicked(part, modkeys); });
+        boost::bind(&DesignWnd::PartPalette::HandlePartTypeClicked, this, _1, _2));
     m_parts_list->PartTypeDoubleClickedSignal.connect(
         PartTypeDoubleClickedSignal);
     m_parts_list->PartTypeRightClickedSignal.connect(
-        [this](const auto* part, const auto& pt){ HandlePartTypeRightClicked(part, pt); });
+        boost::bind(&DesignWnd::PartPalette::HandlePartTypeRightClicked, this, _1, _2));
     m_parts_list->ClearPartSignal.connect(ClearPartSignal);
 
     const PartTypeManager& part_manager = GetPartTypeManager();
@@ -1852,7 +1853,7 @@ void DesignWnd::PartPalette::CompleteConstruction() {
         m_class_buttons[part_class] = GG::Wnd::Create<CUIStateButton>(UserString(boost::lexical_cast<std::string>(part_class)), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
         AttachChild(m_class_buttons[part_class]);
         m_class_buttons[part_class]->CheckedSignal.connect(
-            [this, part_class](bool){ ToggleClass(part_class, true); });
+            boost::bind(&DesignWnd::PartPalette::ToggleClass, this, part_class, true));
     }
 
     // availability buttons
@@ -1861,33 +1862,28 @@ void DesignWnd::PartPalette::CompleteConstruction() {
     m_obsolete_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_OBSOLETE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_obsolete_button);
     m_obsolete_button->CheckedSignal.connect(
-        [this](bool){ ToggleAvailability(Availability::Obsolete); });
+        boost::bind(&DesignWnd::PartPalette::ToggleAvailability, this, Availability::Obsolete));
     m_obsolete_button->SetCheck(m_availabilities_state.GetAvailability(Availability::Obsolete));
 
     auto& m_available_button = std::get<Availability::Available>(m_availabilities_buttons);
     m_available_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_available_button);
     m_available_button->CheckedSignal.connect(
-        [this](bool){ ToggleAvailability(Availability::Available); });
+        boost::bind(&DesignWnd::PartPalette::ToggleAvailability, this, Availability::Available));
     m_available_button->SetCheck(m_availabilities_state.GetAvailability(Availability::Available));
 
     auto& m_unavailable_button = std::get<Availability::Future>(m_availabilities_buttons);
     m_unavailable_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_unavailable_button);
     m_unavailable_button->CheckedSignal.connect(
-        [this](bool){ ToggleAvailability(Availability::Future); });
+        boost::bind(&DesignWnd::PartPalette::ToggleAvailability, this, Availability::Future));
     m_unavailable_button->SetCheck(m_availabilities_state.GetAvailability(Availability::Future));
 
     // superfluous parts button
     m_superfluous_parts_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_REDUNDANT"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_superfluous_parts_button);
     m_superfluous_parts_button->CheckedSignal.connect(
-        [this](bool check) {
-            if (m_parts_list->GetShowingSuperfluous())
-                HideSuperfluous(true);
-            else
-                ShowSuperfluous(true);
-        });
+        boost::bind(&DesignWnd::PartPalette::ToggleSuperfluous, this, true));
 
     // default to showing nothing
     ShowAllClasses(false);
@@ -2130,6 +2126,14 @@ void DesignWnd::PartPalette::HideSuperfluous(bool refresh_list) {
     m_superfluous_parts_button->SetCheck(false);
 }
 
+void DesignWnd::PartPalette::ToggleSuperfluous(bool refresh_list) {
+    bool showing_superfluous = m_parts_list->GetShowingSuperfluous();
+    if (showing_superfluous)
+        HideSuperfluous(refresh_list);
+    else
+        ShowSuperfluous(refresh_list);
+}
+
 void DesignWnd::PartPalette::Populate()
 { m_parts_list->Populate(); }
 
@@ -2164,7 +2168,7 @@ public:
     //@}
 
     mutable boost::signals2::signal<void (int)>                 DesignSelectedSignal;
-    mutable boost::signals2::signal<void ()>                    DesignUpdatedSignal;
+    mutable boost::signals2::signal<void (int)>                 DesignUpdatedSignal;
     mutable boost::signals2::signal<void (const std::string&, const std::vector<std::string>&)>
                                                                 DesignComponentsSelectedSignal;
     mutable boost::signals2::signal<void (const boost::uuids::uuid&)>  SavedDesignSelectedSignal;
@@ -2250,9 +2254,9 @@ protected:
     GG::Pt  ListRowSize();
     //@}
 
-    virtual void BaseDoubleClicked(GG::ListBox::iterator it)
+    virtual void BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
     {}
-    virtual void BaseLeftClicked(GG::ListBox::iterator it, const GG::Flags<GG::ModKey>& modkeys)
+    virtual void BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
     {}
     virtual void BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
     {}
@@ -2398,12 +2402,11 @@ void BasesListBox::CompleteConstruction() {
     SetStyle(GG::LIST_NOSEL | GG::LIST_NOSORT);
 
     DoubleClickedRowSignal.connect(
-        [this](auto it, auto, auto){ BaseDoubleClicked(it); });
+        boost::bind(&BasesListBox::BaseDoubleClicked, this, _1, _2, _3));
     LeftClickedRowSignal.connect(
-        [this](auto it, auto, const auto& modkeys){ BaseLeftClicked(it, modkeys); });
+        boost::bind(&BasesListBox::BaseLeftClicked, this, _1, _2, _3));
     MovedRowSignal.connect(
-        [this](const auto& row_it, const auto& original_position_it)
-        { QueueItemMoved(row_it, original_position_it); });
+        boost::bind(&BasesListBox::QueueItemMoved, this, _1, _2));
 
     EnableOrderIssuing(false);
 }
@@ -2432,7 +2435,7 @@ void BasesListBox::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const 
 
     Row* original_row = boost::polymorphic_downcast<Row*>(*wnds.begin());
     iterator insertion_point = std::find_if(
-        begin(), end(), [&original_row](const auto& xx){ return xx.get() == original_row; });
+        begin(), end(), [&original_row](const std::shared_ptr<Row>& xx){return xx.get() == original_row;});
     if (insertion_point != end())
         ++insertion_point;
 
@@ -2457,7 +2460,7 @@ void BasesListBox::SetEmpireShown(int empire_id, bool refresh_list) {
     // connect signal to update this list if the empire's designs change
     if (const Empire* empire = GetEmpire(m_empire_id_shown))
         m_empire_designs_changed_signal = empire->ShipDesignsChangedSignal.connect(
-                                            [this](){ Populate(); });
+                                            boost::bind(&BasesListBox::Populate, this));
 
     if (refresh_list)
         Populate();
@@ -2518,8 +2521,8 @@ protected:
     std::shared_ptr<Row> ChildrenDraggedAwayCore(const GG::Wnd* const wnd) override;
     void QueueItemMoved(const GG::ListBox::iterator& row_it, const GG::ListBox::iterator& original_position_it) override;
 
-    void BaseDoubleClicked(GG::ListBox::iterator it) override;
-    void BaseLeftClicked(GG::ListBox::iterator it, const GG::Flags<GG::ModKey>& modkeys) override;
+    void BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
+    void BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
     void BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
 };
 
@@ -2535,8 +2538,8 @@ protected:
     void ResetEmptyListPrompt() override;
     std::shared_ptr<Row> ChildrenDraggedAwayCore(const GG::Wnd* const wnd) override;
     void QueueItemMoved(const GG::ListBox::iterator& row_it, const GG::ListBox::iterator& original_position_it) override;
-    void BaseDoubleClicked(GG::ListBox::iterator it) override;
-    void BaseLeftClicked(GG::ListBox::iterator it, const GG::Flags<GG::ModKey>& modkeys) override;
+    void BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
+    void BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
     void BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
 };
 
@@ -2566,8 +2569,8 @@ protected:
     std::shared_ptr<Row> ChildrenDraggedAwayCore(const GG::Wnd* const wnd) override;
     void QueueItemMoved(const GG::ListBox::iterator& row_it, const GG::ListBox::iterator& original_position_it) override;
 
-    void BaseDoubleClicked(GG::ListBox::iterator it) override;
-    void BaseLeftClicked(GG::ListBox::iterator it, const GG::Flags<GG::ModKey>& modkeys) override;
+    void BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
+    void BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
     void BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
 };
 
@@ -2584,8 +2587,8 @@ protected:
     void PopulateCore() override;
     std::shared_ptr<Row> ChildrenDraggedAwayCore(const GG::Wnd* const wnd) override;
 
-    void BaseDoubleClicked(GG::ListBox::iterator it) override;
-    void BaseLeftClicked(GG::ListBox::iterator it, const GG::Flags<GG::ModKey>& modkeys) override;
+    void BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
+    void BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
 };
 
 class AllDesignsListBox : public BasesListBox {
@@ -2599,8 +2602,8 @@ protected:
     void PopulateCore() override;
     std::shared_ptr<Row> ChildrenDraggedAwayCore(const GG::Wnd* const wnd) override;
 
-    void BaseDoubleClicked(GG::ListBox::iterator it) override;
-    void BaseLeftClicked(GG::ListBox::iterator it, const GG::Flags<GG::ModKey>& modkeys) override;
+    void BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
+    void BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
 };
 
 void EmptyHullsListBox::PopulateCore() {
@@ -2859,7 +2862,8 @@ void MonstersListBox::EnableOrderIssuing(bool)
 { QueueListBox::EnableOrderIssuing(false); }
 
 
-void EmptyHullsListBox::BaseDoubleClicked(GG::ListBox::iterator it)
+void EmptyHullsListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt,
+                                          const GG::Flags<GG::ModKey>& modkeys)
 {
     const auto hp_row = dynamic_cast<HullAndPartsListBoxRow*>(it->get());
     if (!hp_row)
@@ -2869,7 +2873,8 @@ void EmptyHullsListBox::BaseDoubleClicked(GG::ListBox::iterator it)
         DesignComponentsSelectedSignal(hp_row->Hull(), hp_row->Parts());
 }
 
-void CompletedDesignsListBox::BaseDoubleClicked(GG::ListBox::iterator it)
+void CompletedDesignsListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt,
+                                                const GG::Flags<GG::ModKey>& modkeys)
 {
     const auto cd_row = dynamic_cast<CompletedDesignListBoxRow*>(it->get());
     if (!cd_row || cd_row->DesignID() == INVALID_DESIGN_ID)
@@ -2878,7 +2883,8 @@ void CompletedDesignsListBox::BaseDoubleClicked(GG::ListBox::iterator it)
     DesignSelectedSignal(cd_row->DesignID());
 }
 
-void SavedDesignsListBox::BaseDoubleClicked(GG::ListBox::iterator it)
+void SavedDesignsListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt,
+                                            const GG::Flags<GG::ModKey>& modkeys)
 {
     const auto sd_row = dynamic_cast<SavedDesignListBoxRow*>(it->get());
 
@@ -2887,7 +2893,8 @@ void SavedDesignsListBox::BaseDoubleClicked(GG::ListBox::iterator it)
     SavedDesignSelectedSignal(sd_row->DesignUUID());
 }
 
-void MonstersListBox::BaseDoubleClicked(GG::ListBox::iterator it)
+void MonstersListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt,
+                                        const GG::Flags<GG::ModKey>& modkeys)
 {
     const auto cd_row = dynamic_cast<CompletedDesignListBoxRow*>(it->get());
     if (!cd_row || cd_row->DesignID() == INVALID_DESIGN_ID)
@@ -2896,7 +2903,8 @@ void MonstersListBox::BaseDoubleClicked(GG::ListBox::iterator it)
     DesignSelectedSignal(cd_row->DesignID());
 }
 
-void AllDesignsListBox::BaseDoubleClicked(GG::ListBox::iterator it)
+void AllDesignsListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt,
+                                        const GG::Flags<GG::ModKey>& modkeys)
 {
     const auto cd_row = dynamic_cast<CompletedDesignListBoxRow*>(it->get());
     if (!cd_row || cd_row->DesignID() == INVALID_DESIGN_ID)
@@ -2906,7 +2914,8 @@ void AllDesignsListBox::BaseDoubleClicked(GG::ListBox::iterator it)
 }
 
 
-void EmptyHullsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Flags<GG::ModKey>& modkeys)
+void EmptyHullsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt,
+                                        const GG::Flags<GG::ModKey>& modkeys)
 {
     const auto hull_parts_row = dynamic_cast<HullAndPartsListBoxRow*>(it->get());
     if (!hull_parts_row)
@@ -2926,7 +2935,8 @@ void EmptyHullsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Flag
         HullClickedSignal(hull_type);
 }
 
-void CompletedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Flags<GG::ModKey>& modkeys)
+void CompletedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt,
+                                              const GG::Flags<GG::ModKey>& modkeys)
 {
     const auto design_row = dynamic_cast<CompletedDesignListBoxRow*>(it->get());
     if (!design_row)
@@ -2949,7 +2959,8 @@ void CompletedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG
     }
 }
 
-void SavedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Flags<GG::ModKey>& modkeys)
+void SavedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt,
+                                          const GG::Flags<GG::ModKey>& modkeys)
 {
     const auto saved_design_row = dynamic_cast<SavedDesignListBoxRow*>(it->get());
     if (!saved_design_row)
@@ -2965,7 +2976,8 @@ void SavedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Fl
         DesignClickedSignal(design);
 }
 
-void MonstersListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Flags<GG::ModKey>& modkeys)
+void MonstersListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt,
+                                      const GG::Flags<GG::ModKey>& modkeys)
 {
     const auto design_row = dynamic_cast<CompletedDesignListBoxRow*>(it->get());
     if (!design_row)
@@ -2978,7 +2990,8 @@ void MonstersListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Flags<
     DesignClickedSignal(design);
 }
 
-void AllDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Flags<GG::ModKey>& modkeys)
+void AllDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt,
+                                        const GG::Flags<GG::ModKey>& modkeys)
 {
     const auto design_row = dynamic_cast<CompletedDesignListBoxRow*>(it->get());
     if (!design_row)
@@ -3055,7 +3068,7 @@ void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const G
     auto delete_design_action = [&design_id, this]() {
         DeleteFromDisplayedDesigns(design_id);
         Populate();
-        DesignUpdatedSignal();
+        DesignUpdatedSignal(design_id);
     };
 
     auto rename_design_action = [&empire_id, &design_id, design, &design_row]() {
@@ -3333,7 +3346,7 @@ public:
     //@}
 
     mutable boost::signals2::signal<void (int)>                         DesignSelectedSignal;
-    mutable boost::signals2::signal<void ()>                            DesignUpdatedSignal;
+    mutable boost::signals2::signal<void (int)>                         DesignUpdatedSignal;
     mutable boost::signals2::signal<void (const std::string&, const std::vector<std::string>&)>
                                                                         DesignComponentsSelectedSignal;
     mutable boost::signals2::signal<void (const boost::uuids::uuid&)>   SavedDesignSelectedSignal;
@@ -3373,7 +3386,7 @@ void DesignWnd::BaseSelector::CompleteConstruction() {
                                                         GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_obsolete_button);
     m_obsolete_button->CheckedSignal.connect(
-        [this](bool){ ToggleAvailability(Availability::Obsolete); });
+        boost::bind(&DesignWnd::BaseSelector::ToggleAvailability, this, Availability::Obsolete));
     m_obsolete_button->SetCheck(m_availabilities_state.GetAvailability(Availability::Obsolete));
 
     auto& m_available_button = std::get<Availability::Available>(m_availabilities_buttons);
@@ -3381,7 +3394,7 @@ void DesignWnd::BaseSelector::CompleteConstruction() {
                                                          GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_available_button);
     m_available_button->CheckedSignal.connect(
-        [this](bool){ ToggleAvailability(Availability::Available); });
+        boost::bind(&DesignWnd::BaseSelector::ToggleAvailability, this, Availability::Available));
     m_available_button->SetCheck(m_availabilities_state.GetAvailability(Availability::Available));
 
     auto& m_unavailable_button = std::get<Availability::Future>(m_availabilities_buttons);
@@ -3389,12 +3402,12 @@ void DesignWnd::BaseSelector::CompleteConstruction() {
                                                            GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_unavailable_button);
     m_unavailable_button->CheckedSignal.connect(
-        [this](bool){ ToggleAvailability(Availability::Future); });
+        boost::bind(&DesignWnd::BaseSelector::ToggleAvailability, this, Availability::Future));
     m_unavailable_button->SetCheck(m_availabilities_state.GetAvailability(Availability::Future));
 
     m_tabs = GG::Wnd::Create<GG::TabWnd>(GG::X(5), GG::Y(2), GG::X(10), GG::Y(10), ClientUI::GetFont(),
                                          ClientUI::WndColor(), ClientUI::TextColor());
-    m_tabs->TabChangedSignal.connect([this](size_t){ Reset(); });
+    m_tabs->TabChangedSignal.connect(boost::bind(&DesignWnd::BaseSelector::Reset, this));
     AttachChild(m_tabs);
 
     m_hulls_list = GG::Wnd::Create<EmptyHullsListBox>(m_availabilities_state, HULL_PARTS_ROW_DROP_TYPE_STRING);
@@ -3792,7 +3805,7 @@ void SlotControl::SetPart(const PartType* part_type) {
 
     // double click clears slot
     m_part_control->DoubleClickedSignal.connect(
-        [this](auto){ SlotContentsAlteredSignal(nullptr, false); });
+        [this](const PartType*){ this->SlotContentsAlteredSignal(nullptr, false); });
     SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
 
     // set part occupying slot's tool tip to say slot type
@@ -3949,6 +3962,8 @@ public:
     /** Replace an existing design.*/
     void ReplaceDesign();
 
+    void ToggleDescriptionEditor();
+  
     void HighlightSlotType(std::vector<ShipSlotType>& slot_types);   //!< renders slots of the indicated types differently, perhaps to indicate that that those slots can be drop targets for a particular part?
 
     /** Track changes in base type. */
@@ -3994,6 +4009,8 @@ private:
     bool            AddPartEmptySlot(const PartType* part, int slot_number);                            //!< Adds part to slot number
     bool            AddPartWithSwapping(const PartType* part, std::pair<int, int> swap_and_empty_slot); //!< Swaps part in slot # pair.first to slot # pair.second, adds given part to slot # pair.first
     int             FindEmptySlotForPart(const PartType* part);                                         //!< Determines if a part can be added to any empty slot, returns the slot index if possible, otherwise -1
+
+    void            DesignNameEditedSlot(const std::string& new_name);  //!< triggered when m_design_name's AfterTextChangedSignal fires. Used for basic name validation.
 
     std::pair<int, int> FindSlotForPartWithSwapping(const PartType* part);                              //!< Determines if a part can be added to a slot with swapping, returns a pair containing the slot to swap and an empty slot, otherwise a pair with -1
                                                                                                         //!< This function only tries to find a way to add the given part by swapping a part already in a slot to an empty slot
@@ -4054,20 +4071,16 @@ void DesignWnd::MainPanel::CompleteConstruction() {
     AttachChild(m_confirm_button);
     AttachChild(m_clear_button);
 
-    m_clear_button->LeftClickedSignal.connect([this](){ ClearParts(); });
-    m_design_name->EditedSignal.connect([this](auto){ DesignNameChanged(); });
+    m_clear_button->LeftClickedSignal.connect(
+        boost::bind(&DesignWnd::MainPanel::ClearParts, this));
+    m_design_name->EditedSignal.connect(
+        boost::bind(&DesignWnd::MainPanel::DesignNameEditedSlot, this, _1));
     m_replace_button->LeftClickedSignal.connect(DesignReplacedSignal);
     m_confirm_button->LeftClickedSignal.connect(DesignConfirmedSignal);
-    m_design_description_toggle->CheckedSignal.connect(
-        [this](bool checked) {
-            if (checked)
-                m_design_description_edit->Show();
-            else
-                m_design_description_edit->Hide();
-        });
-    DesignChangedSignal.connect([this](){ DesignChanged(); });
-    DesignReplacedSignal.connect([this](){ ReplaceDesign(); });
-    DesignConfirmedSignal.connect([this](){ AddDesign(); });
+    m_design_description_toggle->CheckedSignal.connect(boost::bind(&DesignWnd::MainPanel::ToggleDescriptionEditor,this));
+    DesignChangedSignal.connect(boost::bind(&DesignWnd::MainPanel::DesignChanged, this));
+    DesignReplacedSignal.connect(boost::bind(&DesignWnd::MainPanel::ReplaceDesign, this));
+    DesignConfirmedSignal.connect(boost::bind(&DesignWnd::MainPanel::AddDesign, this));
 
     DesignChanged(); // Initialize components that rely on the current state of the design.
 
@@ -4316,6 +4329,10 @@ int DesignWnd::MainPanel::FindEmptySlotForPart(const PartType* part) {
     return result;
 }
 
+void DesignWnd::MainPanel::DesignNameEditedSlot(const std::string& new_name) {
+    DesignNameChanged();  // Check whether the confirmation button should be enabled or disabled each time the name changes.
+}
+
 std::pair<int, int> DesignWnd::MainPanel::FindSlotForPartWithSwapping(const PartType* part) {
     // result.first = swap_slot, result.second = empty_slot
     // if any of the pair == -1, no swap!
@@ -4500,8 +4517,9 @@ void DesignWnd::MainPanel::Populate() {
         AttachChild(slot_control);
 
         slot_control->SlotContentsAlteredSignal.connect(
-            [this, i](const PartType* part, bool change_similar)
-            { this->SetPart(part, i, true, change_similar); });
+            boost::bind(static_cast<void (DesignWnd::MainPanel::*)(
+                const PartType*, unsigned int, bool, bool)>(&DesignWnd::MainPanel::SetPart),
+                    this, _1, i, true, _2));
         slot_control->PartTypeClickedSignal.connect(
             PartTypeClickedSignal);
     }
@@ -4966,6 +4984,11 @@ void DesignWnd::MainPanel::ReplaceDesign() {
     DesignChangedSignal();
 }
 
+void DesignWnd::MainPanel::ToggleDescriptionEditor() {
+  if (m_design_description_toggle->Checked()) { m_design_description_edit->Show() ; }
+  else { m_design_description_edit->Hide(); }
+}
+
 //////////////////////////////////////////////////
 // DesignWnd                                    //
 //////////////////////////////////////////////////
@@ -4985,51 +5008,51 @@ void DesignWnd::CompleteConstruction() {
     m_base_selector = GG::Wnd::Create<BaseSelector>(DES_BASE_SELECTOR_WND_NAME);
     InitializeWindows();
     HumanClientApp::GetApp()->RepositionWindowsSignal.connect(
-        [this](){ InitializeWindows(); });
+        boost::bind(&DesignWnd::InitializeWindows, this));
 
     AttachChild(m_detail_panel);
 
     AttachChild(m_main_panel);
     m_main_panel->PartTypeClickedSignal.connect(
-        [this](const auto* part, auto){ m_detail_panel->SetItem(part); });
+        boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const PartType*)>(&EncyclopediaDetailPanel::SetItem), m_detail_panel, _1));
     m_main_panel->HullTypeClickedSignal.connect(
-        [this](const auto* type){ m_detail_panel->SetItem(type); });
-    m_main_panel->DesignChangedSignal.connect([this](){ DesignChanged(); });
-    m_main_panel->DesignNameChangedSignal.connect([this](){ DesignNameChanged(); });
+        boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const HullType*)>(&EncyclopediaDetailPanel::SetItem), m_detail_panel, _1));
+    m_main_panel->DesignChangedSignal.connect(
+        boost::bind(&DesignWnd::DesignChanged, this));
+    m_main_panel->DesignNameChangedSignal.connect(
+        boost::bind(&DesignWnd::DesignNameChanged, this));
     m_main_panel->CompleteDesignClickedSignal.connect(
-        [this](int design_id){ m_detail_panel->SetDesign(design_id); });
+        boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(int)>(&EncyclopediaDetailPanel::SetDesign), m_detail_panel, _1));
     //m_main_panel->Sanitize();
 
     AttachChild(m_part_palette);
     m_part_palette->PartTypeClickedSignal.connect(
-        [this](const auto* part, auto){ m_detail_panel->SetItem(part); });
+        boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const PartType*)>(&EncyclopediaDetailPanel::SetItem), m_detail_panel, _1));
     m_part_palette->PartTypeDoubleClickedSignal.connect(
-        [this](const auto* part){ m_main_panel->AddPart(part); });
+        boost::bind(&DesignWnd::MainPanel::AddPart, m_main_panel, _1));
     m_part_palette->ClearPartSignal.connect(
-        [this](const auto& part_name){ m_main_panel->ClearPart(part_name); });
+        boost::bind(&DesignWnd::MainPanel::ClearPart, m_main_panel, _1));
 
     AttachChild(m_base_selector);
 
     m_base_selector->DesignSelectedSignal.connect(
-        [this](int design_id){ m_main_panel->SetDesign(design_id); });
+        boost::bind(static_cast<void (MainPanel::*)(int)>(&MainPanel::SetDesign), m_main_panel, _1));
     m_base_selector->DesignUpdatedSignal.connect(
-        [this](){ m_main_panel->DesignChanged(); });
+        boost::bind(static_cast<void (MainPanel::*)()>(&MainPanel::DesignChanged), m_main_panel));
     m_base_selector->DesignComponentsSelectedSignal.connect(
-        [this](const auto& hull, const auto& parts)
-        { m_main_panel->SetDesignComponents(hull, parts); });
+        boost::bind(&MainPanel::SetDesignComponents, m_main_panel, _1, _2));
     m_base_selector->SavedDesignSelectedSignal.connect(
-        [this](const auto& design_uuid){ m_main_panel->SetDesign(design_uuid); });
+        boost::bind(static_cast<void (MainPanel::*)(const boost::uuids::uuid&)>(&MainPanel::SetDesign), m_main_panel, _1));
 
     m_base_selector->DesignClickedSignal.connect(
-        [this](const auto* design){ m_detail_panel->SetItem(design); });
+        boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const ShipDesign*)>(&EncyclopediaDetailPanel::SetItem), m_detail_panel, _1));
     m_base_selector->HullClickedSignal.connect(
-        [this](const auto* hull){ m_detail_panel->SetItem(hull); });
-    m_base_selector->TabChangedSignal.connect(
-        [this](const auto tab){ m_main_panel->HandleBaseTypeChange(tab); });
+        boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const HullType*)>(&EncyclopediaDetailPanel::SetItem), m_detail_panel, _1));
+    m_base_selector->TabChangedSignal.connect(boost::bind(&MainPanel::HandleBaseTypeChange, m_main_panel, _1));
 
     // Connect signals to re-populate when part obsolescence changes
     m_part_palette->PartObsolescenceChangedSignal.connect(
-        [this](){ m_base_selector->Reset(); });
+        boost::bind(&BaseSelector::Reset, m_base_selector));
 }
 
 void DesignWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {

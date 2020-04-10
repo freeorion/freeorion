@@ -734,7 +734,7 @@ void ListBox::StartingChildDragDrop(const Wnd* wnd, const Pt& offset)
         return;
 
     iterator wnd_it = std::find_if(m_rows.begin(), m_rows.end(),
-                                   [&wnd](const auto& x){ return x.get() == wnd; });
+                                   [&wnd](const std::shared_ptr<Row>& x){ return x.get() == wnd; });
     if (wnd_it == m_rows.end())
         return;
 
@@ -798,7 +798,7 @@ void ListBox::ChildrenDraggedAway(const std::vector<Wnd*>& wnds, const Wnd* dest
     for (auto& wnd : wnds) {
         auto row = boost::polymorphic_downcast<Row*>(wnd);
         iterator row_it = std::find_if(m_rows.begin(), m_rows.end(),
-                                       [&row](const auto& x){ return x.get() == row; });
+                                       [&row](const std::shared_ptr<Row>& x){ return x.get() == row; });
 
 
         if (row_it == m_rows.end())
@@ -1905,8 +1905,7 @@ ListBox::iterator ListBox::Insert(std::shared_ptr<Row> row, iterator it, bool dr
 
     row->Resize(Pt(std::max(ClientWidth(), X(1)), row->Height()));
 
-    row->RightClickedSignal.connect(
-        [this](const Pt& pt, auto mod){ this->HandleRowRightClicked(pt, mod); });
+    row->RightClickedSignal.connect(boost::bind(&ListBox::HandleRowRightClicked, this, _1, _2));
 
     AfterInsertRowSignal(it);
     if (dropped)
@@ -2055,13 +2054,9 @@ ListBox::Row& ListBox::ColHeaders()
 void ListBox::ConnectSignals()
 {
     if (m_vscroll)
-        m_vscroll->ScrolledSignal.connect(
-            [this](int tab_low, int tab_high, int low, int high)
-            { this->VScrolled(tab_low, tab_high, low, high); });
+        m_vscroll->ScrolledSignal.connect(boost::bind(&ListBox::VScrolled, this, _1, _2, _3, _4));
     if (m_hscroll)
-        m_hscroll->ScrolledSignal.connect(
-            [this](int tab_low, int tab_high, int low, int high)
-            { this->HScrolled(tab_low, tab_high, low, high); });
+        m_hscroll->ScrolledSignal.connect(boost::bind(&ListBox::HScrolled, this, _1, _2, _3, _4));
 }
 
 void ListBox::ValidateStyle()
@@ -2182,9 +2177,7 @@ std::pair<bool, bool> ListBox::AddOrRemoveScrolls(
         m_vscroll->Resize(Pt(X(SCROLL_WIDTH), cl_sz.y - (horizontal_needed ? SCROLL_WIDTH : 0)));
 
         AttachChild(m_vscroll);
-        m_vscroll->ScrolledSignal.connect(
-            [this](int tab_low, int tab_high, int low, int high)
-            { this->VScrolled(tab_low, tab_high, low, high); });
+        m_vscroll->ScrolledSignal.connect(boost::bind(&ListBox::VScrolled, this, _1, _2, _3, _4));
     }
 
     if (vertical_needed) {
@@ -2232,9 +2225,7 @@ std::pair<bool, bool> ListBox::AddOrRemoveScrolls(
         m_hscroll->Resize(Pt(cl_sz.x - (vertical_needed ? SCROLL_WIDTH : 0), Y(SCROLL_WIDTH)));
 
         AttachChild(m_hscroll);
-        m_hscroll->ScrolledSignal.connect(
-            [this](int tab_low, int tab_high, int low, int high)
-            { this->HScrolled(tab_low, tab_high, low, high); });
+        m_hscroll->ScrolledSignal.connect(boost::bind(&ListBox::HScrolled, this, _1, _2, _3, _4));
     }
 
     if (horizontal_needed) {

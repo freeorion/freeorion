@@ -258,9 +258,9 @@ namespace {
         AccordionPanel::SetInteriorColor(ClientUI::CtrlColor());
 
         m_expand_button->LeftPressedSignal.connect(
-            [this](){ ToggleExpansion(); });
+            boost::bind(&CombatLogAccordionPanel::ToggleExpansion, this));
         this->ExpandCollapseSignal.connect(
-            [this](){ log.HandleWndChanged(); });
+            boost::bind(&CombatLogWnd::Impl::HandleWndChanged, &log));
 
         SetBorderMargin(BORDER_MARGIN);
 
@@ -337,9 +337,9 @@ namespace {
         AccordionPanel::SetInteriorColor(ClientUI::CtrlColor());
 
         m_expand_button->LeftPressedSignal.connect(
-            [this](){ ToggleExpansion(); });
+            boost::bind(&EmpireForcesAccordionPanel::ToggleExpansion, this));
         this->ExpandCollapseSignal.connect(
-            [this](){ log.HandleWndChanged(); });
+            boost::bind(&CombatLogWnd::Impl::HandleWndChanged, &log));
 
         SetBorderMargin(BORDER_MARGIN);
 
@@ -434,13 +434,14 @@ namespace {
             // Register for signals that might bring the text into view
             if (const auto* log = FindParentOfType<CombatLogWnd>(&parent)) {
                 m_signals.push_back(log->WndChangedSignal.connect(
-                    [this](){ HandleMaybeVisible(); }));
+                    boost::bind(&LazyScrollerLinkText::HandleMaybeVisible, this)));
             }
 
             if (const auto* scroll_panel = FindParentOfType<GG::ScrollPanel>(&parent)) {
                 const auto* scroll = scroll_panel->GetScroll();
                 m_signals.push_back(scroll->ScrolledAndStoppedSignal.connect(
-                    [this](int, int, int, int){ HandleMaybeVisible(); }));
+                    boost::bind(&LazyScrollerLinkText::HandleScrolledAndStopped,
+                                this, _1, _2, _3, _4)));
             }
 
             // Parent doesn't contain any of the expected parents so just
@@ -478,6 +479,9 @@ namespace {
             }
         }
 
+        void HandleScrolledAndStopped(int start_pos, int end_post, int min_pos, int max_pos)
+        { HandleMaybeVisible(); }
+
         void SizeMove(const GG::Pt& ul, const GG::Pt& lr)  override {
             LinkText::SizeMove(ul, lr);
             if (! m_signals.empty())
@@ -504,7 +508,7 @@ std::shared_ptr<LinkText> CombatLogWnd::Impl::DecorateLinkText(const std::string
     links->LinkClickedSignal.connect(m_wnd.LinkClickedSignal);
     links->LinkDoubleClickedSignal.connect(m_wnd.LinkDoubleClickedSignal);
     links->LinkRightClickedSignal.connect(m_wnd.LinkRightClickedSignal);
-    links->ChangedSignal.connect([this](){ Impl::HandleWndChanged(); });
+    links->ChangedSignal.connect(boost::bind(&CombatLogWnd::Impl::HandleWndChanged, this));
 
     return links;
 }

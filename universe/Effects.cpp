@@ -208,7 +208,7 @@ void EffectsGroup::Execute(const ScriptingContext& context,
 const std::vector<Effect*>  EffectsGroup::EffectsList() const {
     std::vector<Effect*> retval(m_effects.size());
     std::transform(m_effects.begin(), m_effects.end(), retval.begin(),
-                   [](const auto& xx){ return xx.get(); });
+                   [](const std::unique_ptr<Effect>& xx) {return xx.get();});
     return retval;
 }
 
@@ -3404,7 +3404,9 @@ std::vector<std::pair<std::string, ValueRef::ValueRef<std::string>*>>
 GenerateSitRepMessage::MessageParameters() const {
     std::vector<std::pair<std::string, ValueRef::ValueRef<std::string>*>> retval(m_message_parameters.size());
     std::transform(m_message_parameters.begin(), m_message_parameters.end(), retval.begin(),
-                   [](const auto& xx){ return std::make_pair(xx.first, xx.second.get()); });
+                   [](const std::pair<std::string, std::unique_ptr<ValueRef::ValueRef<std::string>>>& xx) {
+                       return std::make_pair(xx.first, xx.second.get());
+                   });
     return retval;
 }
 

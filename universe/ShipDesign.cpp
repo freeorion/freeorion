@@ -1525,7 +1525,7 @@ unsigned int PredefinedShipDesignManager::GetCheckSum() const {
     CheckPendingDesignsTypes();
     unsigned int retval{0};
 
-    auto build_checksum = [&retval, this](const auto& ordering) {
+    auto build_checksum = [&retval, this](const std::vector<boost::uuids::uuid>& ordering){
         for (auto const& uuid : ordering) {
             auto it = m_designs.find(uuid);
             if (it != m_designs.end())

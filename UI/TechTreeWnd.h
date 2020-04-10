@@ -57,6 +57,7 @@ public:
 
     void            SetTechStatus(const TechStatus status, const bool state);
 
+    void            ToggleViewType(bool show_list_view);
     void            ShowTreeView();
     void            ShowListView();
 

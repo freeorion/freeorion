@@ -219,7 +219,7 @@ BOOST_AUTO_TEST_CASE( click )
     BOOST_CHECK(catcher.count == 0);
 
     button.LeftClickedSignal.connect(
-        [&catcher](){ catcher.CountClick(); });
+        boost::bind(&MouseClickCatcher::CountClick, &catcher));
     BOOST_CHECK(button.LeftClickedSignal.num_slots() == 1);
 
     button.HandleEventE(mouseenter_ev);

@@ -718,16 +718,17 @@ void PlayerListWnd::CompleteConstruction() {
     m_player_list->SetHiliteColor(GG::CLR_ZERO);
     m_player_list->SetStyle(GG::LIST_NOSORT);
     m_player_list->SelRowsChangedSignal.connect(
-        [this](const auto& rows){ PlayerSelectionChanged(rows); });
+        boost::bind(&PlayerListWnd::PlayerSelectionChanged, this, _1));
+    m_player_list->DoubleClickedRowSignal.connect(
+        boost::bind(&PlayerListWnd::PlayerDoubleClicked, this, _1, _2, _3));
     m_player_list->RightClickedRowSignal.connect(
-        [this](auto it, const auto& pt, auto){ PlayerRightClicked(it, pt); });
+        boost::bind(&PlayerListWnd::PlayerRightClicked, this, _1, _2, _3));
     AttachChild(m_player_list);
 
     Empires().DiplomaticStatusChangedSignal.connect(
-        [this](int, int){ Update(); });
+        boost::bind(&PlayerListWnd::Update, this));
     Empires().DiplomaticMessageChangedSignal.connect(
-        [this](int empire1_id, int empire2_id)
-        { HandleDiplomaticMessageChange(empire1_id, empire2_id); });
+        boost::bind(&PlayerListWnd::PlayerListWnd::HandleDiplomaticMessageChange, this, _1, _2));
     DoLayout();
 
     Refresh();
@@ -913,6 +914,12 @@ void PlayerListWnd::PlayerSelectionChanged(const GG::ListBox::SelectionSet& rows
     SelectedPlayersChangedSignal();
 }
 
+void PlayerListWnd::PlayerDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
+    int player_id = PlayerInRow(it);
+    if (player_id != Networking::INVALID_PLAYER_ID)
+        PlayerDoubleClickedSignal(player_id);
+}
+
 namespace {
     std::function<void()> MakeSendDiplomaticAction(
         const int client_empire_id, const int clicked_empire_id,
@@ -925,7 +932,7 @@ namespace {
 
 }
 
-void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
+void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
     // check that a valid player was clicked and that it wasn't this client's own player
     int clicked_empire_id = EmpireInRow(it);
     if (clicked_empire_id == ALL_EMPIRES)

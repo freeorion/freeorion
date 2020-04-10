@@ -47,17 +47,21 @@ void InGameMenu::CompleteConstruction() {
     AttachChild(m_resign_btn);
     AttachChild(m_done_btn);
 
-    m_save_btn->LeftClickedSignal.connect([this](){ Save(); });
+    m_save_btn->LeftClickedSignal.connect(
+        boost::bind(&InGameMenu::Save, this));
     if (HumanClientApp::GetApp()->SinglePlayerGame()) {
         m_load_or_concede_btn->LeftClickedSignal.connect(
-            [this](){ Load(); });
+            boost::bind(&InGameMenu::Load, this));
     } else {
         m_load_or_concede_btn->LeftClickedSignal.connect(
-            [this](){ Concede(); });
+            boost::bind(&InGameMenu::Concede, this));
     }
-    m_options_btn->LeftClickedSignal.connect([this](){ Options(); });
-    m_resign_btn->LeftClickedSignal.connect([this](){ Resign(); });
-    m_done_btn->LeftClickedSignal.connect([this](){ Done(); });
+    m_options_btn->LeftClickedSignal.connect(
+        boost::bind(&InGameMenu::Options, this));
+    m_resign_btn->LeftClickedSignal.connect(
+        boost::bind(&InGameMenu::Resign, this));
+    m_done_btn->LeftClickedSignal.connect(
+        boost::bind(&InGameMenu::Done, this));
 
     if (!HumanClientApp::GetApp()->CanSaveNow()) {
         m_save_btn->Disable();

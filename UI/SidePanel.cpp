@@ -995,9 +995,9 @@ void SidePanel::PlanetPanel::CompleteConstruction() {
     m_focus_drop = GG::Wnd::Create<CUIDropDownList>(6);
     AttachChild(m_focus_drop);
     m_focus_drop->SelChangedSignal.connect(
-        [this](auto selected){ FocusDropListSelectionChangedSlot(selected); });
+        boost::bind(&SidePanel::PlanetPanel::FocusDropListSelectionChangedSlot, this, _1));
     this->FocusChangedSignal.connect(
-        [this](const auto& focus){ SetFocus(focus); });
+        boost::bind(&SidePanel::PlanetPanel::SetFocus, this, _1));
     m_focus_drop->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_focus_drop->SetStyle(GG::LIST_NOSORT | GG::LIST_SINGLESEL);
     m_focus_drop->ManuallyManageColProps();
@@ -1012,22 +1012,22 @@ void SidePanel::PlanetPanel::CompleteConstruction() {
     m_population_panel = GG::Wnd::Create<PopulationPanel>(panel_width, m_planet_id);
     AttachChild(m_population_panel);
     m_population_panel->ExpandCollapseSignal.connect(
-        [this](){ RequirePreRender(); });
+        boost::bind(&SidePanel::PlanetPanel::RequirePreRender, this));
 
     m_resource_panel = GG::Wnd::Create<ResourcePanel>(panel_width, m_planet_id);
     AttachChild(m_resource_panel);
     m_resource_panel->ExpandCollapseSignal.connect(
-        [this](){ RequirePreRender(); });
+        boost::bind(&SidePanel::PlanetPanel::RequirePreRender, this));
 
     m_military_panel = GG::Wnd::Create<MilitaryPanel>(panel_width, m_planet_id);
     AttachChild(m_military_panel);
     m_military_panel->ExpandCollapseSignal.connect(
-        [this](){ RequirePreRender(); });
+        boost::bind(&SidePanel::PlanetPanel::RequirePreRender, this));
 
     m_buildings_panel = GG::Wnd::Create<BuildingsPanel>(panel_width, 4, m_planet_id);
     AttachChild(m_buildings_panel);
     m_buildings_panel->ExpandCollapseSignal.connect(
-        [this](){ RequirePreRender(); });
+        boost::bind(&SidePanel::PlanetPanel::RequirePreRender, this));
     m_buildings_panel->BuildingRightClickedSignal.connect(
         BuildingRightClickedSignal);
 
@@ -1041,15 +1041,15 @@ void SidePanel::PlanetPanel::CompleteConstruction() {
 
     m_colonize_button = Wnd::Create<CUIButton>(UserString("PL_COLONIZE"));
     m_colonize_button->LeftClickedSignal.connect(
-        [this](){ ClickColonize(); });
+        boost::bind(&SidePanel::PlanetPanel::ClickColonize, this));
 
     m_invade_button   = Wnd::Create<CUIButton>(UserString("PL_INVADE"));
     m_invade_button->LeftClickedSignal.connect(
-        [this](){ ClickInvade(); });
+        boost::bind(&SidePanel::PlanetPanel::ClickInvade, this));
 
     m_bombard_button  = Wnd::Create<CUIButton>(UserString("PL_BOMBARD"));
     m_bombard_button->LeftClickedSignal.connect(
-        [this](){ ClickBombard(); });
+        boost::bind(&SidePanel::PlanetPanel::ClickBombard, this));
 
     SetChildClippingMode(ClipToWindow);
 
@@ -2007,7 +2007,7 @@ void SidePanel::PlanetPanel::Refresh() {
     // which should be connected to SidePanel::PlanetPanel::DoLayout
 
     m_planet_connection = planet->StateChangedSignal.connect(
-        [this](){ Refresh(); }, boost::signals2::at_front);
+        boost::bind(&SidePanel::PlanetPanel::Refresh, this), boost::signals2::at_front);
 }
 
 void SidePanel::PlanetPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -2518,8 +2518,7 @@ SidePanel::PlanetPanelContainer::PlanetPanelContainer() :
     SetName("PlanetPanelContainer");
     SetChildClippingMode(ClipToClient);
     m_vscroll->ScrolledSignal.connect(
-        [this](int pos_top, int pos_bottom, int range_min, int range_max)
-        { VScroll(pos_top, pos_bottom, range_min, range_max); });
+        boost::bind(&SidePanel::PlanetPanelContainer::VScroll, this, _1, _2, _3, _4));
     RequirePreRender();
 }
 
@@ -2617,7 +2616,7 @@ void SidePanel::PlanetPanelContainer::SetPlanets(const std::vector<int>& planet_
         m_planet_panels.back()->BuildingRightClickedSignal.connect(
             BuildingRightClickedSignal);
         m_planet_panels.back()->ResizedSignal.connect(
-            [this](){ RequirePreRender(); });
+            boost::bind(&SidePanel::PlanetPanelContainer::RequirePreRender, this));
         m_planet_panels.back()->OrderButtonChangedSignal.connect(
             [this](int excluded_planet_id) {
                 RefreshAllPlanetPanels(excluded_planet_id, true);
@@ -2994,17 +2993,17 @@ void SidePanel::CompleteConstruction() {
     AttachChild(m_system_resource_summary);
 
     m_system_name->DropDownOpenedSignal.connect(
-        [this](bool is_open){ if (!is_open) RefreshSystemNames(); });
+        boost::bind(&SidePanel::SystemNameDropListOpenedSlot, this, _1));
     m_system_name->SelChangedSignal.connect(
-        [this](auto it){ SystemSelectionChangedSlot(it); });
+        boost::bind(&SidePanel::SystemSelectionChangedSlot, this, _1));
     m_system_name->SelChangedWhileDroppedSignal.connect(
-        [this](auto it){ SystemSelectionChangedSlot(it); });
+        boost::bind(&SidePanel::SystemSelectionChangedSlot, this, _1));
     m_button_prev->LeftClickedSignal.connect(
-        [this](){ PrevButtonClicked(); });
+        boost::bind(&SidePanel::PrevButtonClicked, this));
     m_button_next->LeftClickedSignal.connect(
-        [this](){ NextButtonClicked(); });
+        boost::bind(&SidePanel::NextButtonClicked, this));
     m_planet_panel_container->PlanetClickedSignal.connect(
-        [this](int planet_id){ if (m_selection_enabled) SelectPlanet(planet_id); });
+        boost::bind(&SidePanel::PlanetClickedSlot, this, _1));
     m_planet_panel_container->PlanetLeftDoubleClickedSignal.connect(
         PlanetDoubleClickedSignal);
     m_planet_panel_container->PlanetRightClickedSignal.connect(
@@ -3474,6 +3473,13 @@ void SidePanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
         RequirePreRender();
 }
 
+void SidePanel::SystemNameDropListOpenedSlot(bool is_open) {
+    // Refresh the system names when the drop list closes.
+    if (is_open)
+        return;
+    RefreshSystemNames();
+}
+
 void SidePanel::SystemSelectionChangedSlot(GG::DropDownList::iterator it) {
     /** This handles cases when the list is dropped and not dropped in the
         same way. Refresh should not update the list of systems if the list
@@ -3501,6 +3507,11 @@ void SidePanel::NextButtonClicked() {
         selected = m_system_name->begin();
     m_system_name->Select(selected);
     SystemSelectionChangedSlot(m_system_name->CurrentItem());
+}
+
+void SidePanel::PlanetClickedSlot(int planet_id) {
+    if (m_selection_enabled)
+        SelectPlanet(planet_id);
 }
 
 void SidePanel::FleetsInserted(const std::vector<std::shared_ptr<Fleet>>& fleets) {
