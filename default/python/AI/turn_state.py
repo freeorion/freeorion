@@ -1,6 +1,6 @@
 from collections import namedtuple
 from logging import warning, error
-from freeorion_tools import ReadOnlyDict
+from freeorion_tools import ReadOnlyDict, cache_for_current_turn
 
 import freeOrionAIInterface as fo
 
@@ -170,6 +170,7 @@ class State(object):
             return self.__empire_planets_by_system[include_outposts].get(sys_id, tuple())
         return self.__empire_planets_by_system[include_outposts]
 
+    @cache_for_current_turn
     def get_inhabited_planets(self):
         """
         Return frozenset of empire planet ids with species.
