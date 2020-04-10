@@ -237,8 +237,15 @@ namespace {
     std::shared_ptr<GG::BrowseInfoWnd> ProductionItemRowBrowseWnd(const ProductionQueue::ProductionItem& item,
                                                                   int candidate_object_id, int empire_id)
     {
-        // get available PP and estimated production time for empire at candidate location
-
+        // get available PP for empire at candidate location
+        float local_available_pp = 0.0f;
+        if (const auto* empire = GetEmpire(empire_id))
+            local_available_pp = empire->GetResourcePool(RE_INDUSTRY)->GroupAvailable(candidate_object_id);
+        std::string candidate_name;
+        if (auto obj = Objects().get(candidate_object_id))
+            candidate_name = obj->Name();
+        if (GetOptionsDB().Get<bool>("ui.name.id.shown"))
+            candidate_name += " (" + std::to_string(candidate_object_id) + ")";
 
         // production item is a building
         if (item.build_type == BT_BUILDING) {
@@ -248,14 +255,24 @@ namespace {
 
             // create title, description, production time and cost
             const std::string& title = UserString(item.name);
-            std::string main_text = UserString(building_type->Description());
+            std::string main_text;
             float total_cost = building_type->ProductionCost(empire_id, candidate_object_id);
-            int production_time = building_type->ProductionTime(empire_id, candidate_object_id);
+            int minimum_production_time = building_type->ProductionTime(empire_id, candidate_object_id);
 
-            main_text += "\n\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_COST")) %
+            if (local_available_pp > 0.0f) {
+                float prod_time_here = total_cost / local_available_pp;
+                int production_time_here_rounded_up = std::max(minimum_production_time, static_cast<int>(std::ceil(prod_time_here)));
+                main_text += boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME")) %
+                    std::to_string(production_time_here_rounded_up) % candidate_name);
+            } else if (!candidate_name.empty()) {
+                main_text += boost::io::str(FlexibleFormat(UserString("NO_PRODUCTION_HERE_CANT_PRODUCE")) % candidate_name);
+            }
+            main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME_MINIMUM")) %
+                                               std::to_string(minimum_production_time));
+            main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_COST")) %
                                                  DoubleToString(total_cost, 3, false));
-            main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME")) %
-                                               std::to_string(production_time));
+
+            main_text += "\n\n" + UserString(building_type->Description());
 
             // show build conditions
             const std::string& enqueue_and_location_condition_failed_text =
@@ -280,14 +297,25 @@ namespace {
 
             // create title, description, production time and cost, hull type
             const std::string& title = design->Name(true);
-            std::string main_text = design->Description(true);
+            std::string main_text;
             float total_cost = design->ProductionCost(empire_id, candidate_object_id);
-            int production_time = design->ProductionTime(empire_id, candidate_object_id);
+            int minimum_production_time = design->ProductionTime(empire_id, candidate_object_id);
 
-            main_text += "\n\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_COST")) %
-                                                 DoubleToString(total_cost, 3, false));
-            main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME")) %
-                                               std::to_string(production_time));
+            if (local_available_pp > 0.0f) {
+                float prod_time_here = total_cost / local_available_pp;
+                int production_time_here_rounded_up = std::max(minimum_production_time, static_cast<int>(std::ceil(prod_time_here)));
+                main_text += boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME")) %
+                    std::to_string(production_time_here_rounded_up) % candidate_name);
+            } else if (!candidate_name.empty()) {
+                main_text += boost::io::str(FlexibleFormat(UserString("NO_PRODUCTION_HERE_CANT_PRODUCE")) % candidate_name);
+            }
+            main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME_MINIMUM")) %
+                                               std::to_string(minimum_production_time));
+            main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_COST")) %
+                                               DoubleToString(total_cost, 3, false));
+
+            main_text += "\n\n" + design->Description(true);
+
             main_text += "\n\n" + UserString("ENC_SHIP_HULL") + ": " + UserString(design->Hull());
 
             // load ship parts, stack ship parts that are used multiple times
@@ -336,10 +364,10 @@ namespace {
             float total_cost = 1.0;
             int production_time = 1;
 
-            main_text += "\n\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_COST")) %
-                                                 DoubleToString(total_cost, 3, false));
-            main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME")) %
-                                               std::to_string(production_time));
+            //main_text += "\n\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_COST")) %
+            //                                     DoubleToString(total_cost, 3, false));
+            //main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME")) %
+            //                                   std::to_string(production_time));
 
             // do not show build conditions - always buildable
 
@@ -661,8 +689,8 @@ void BuildDesignatorWnd::BuildSelector::Refresh() {
     m_empire_ship_designs_changed_signal.disconnect();
     if (const Empire* empire = GetEmpire(m_empire_id))
         m_empire_ship_designs_changed_signal = empire->ShipDesignsChangedSignal.connect(
-                                                boost::bind(&BuildDesignatorWnd::BuildSelector::Refresh, this),
-                                                boost::signals2::at_front);
+            boost::bind(&BuildDesignatorWnd::BuildSelector::Refresh, this),
+            boost::signals2::at_front);
     PopulateList();
 }
 

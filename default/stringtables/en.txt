@@ -4509,8 +4509,14 @@ Duplicate
 PRODUCTION_WND_TOOLTIP_PROD_COST
 Production cost: %1%
 
+PRODUCTION_WND_TOOLTIP_PROD_TIME_MINIMUM
+Minimum production turns: %1%
+
 PRODUCTION_WND_TOOLTIP_PROD_TIME
-Production time: %1%
+Fully-funded production turns at %2%: %1% 
+
+NO_PRODUCTION_HERE_CANT_PRODUCE
+Cannot be produced here: no production available at %1%
 
 PRODUCTION_WND_TOOLTIP_PARTS
 Ship Parts
