@@ -32,10 +32,7 @@ namespace {
 
 ResourcePanel::ResourcePanel(GG::X w, int object_id) :
     AccordionPanel(w, GG::Y(ClientUI::Pts()*2)),
-    m_rescenter_id(object_id),
-    m_meter_stats(),
-    m_multi_icon_value_indicator(nullptr),
-    m_multi_meter_status_bar(nullptr)
+    m_rescenter_id(object_id)
 {}
 
 void ResourcePanel::CompleteConstruction() {

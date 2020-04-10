@@ -332,7 +332,6 @@ namespace {
         QueueRow(GG::X w, const ProductionQueue::Element& elem_, int queue_index_) :
             GG::ListBox::Row(w, QueueProductionItemPanel::DefaultHeight(),
                              BuildDesignatorWnd::PRODUCTION_ITEM_DROP_TYPE),
-            panel(nullptr),
             queue_index(queue_index_),
             elem(elem_)
         {
@@ -405,14 +404,6 @@ namespace {
                                                        double completed_progress) :
         GG::Control(x, y, w, DefaultHeight(), GG::NO_WND_FLAGS),
         elem(build),
-        m_name_text(nullptr),
-        m_location_text(nullptr),
-        m_PPs_and_turns_text(nullptr),
-        m_turns_remaining_until_next_complete_text(nullptr),
-        m_icon(nullptr),
-        m_progress_bar(nullptr),
-        m_quantity_selector(nullptr),
-        m_block_size_selector(nullptr),
         m_in_progress(build.allocated_pp || build.turns_left_to_next_item == 1),
         m_total_turns(turns),
         m_turn_spending(turn_spending),
@@ -780,8 +771,7 @@ public:
     /** \name Structors */ //@{
     ProductionQueueWnd(GG::X x, GG::Y y, GG::X w, GG::Y h) :
         CUIWnd("", x, y, w, h, GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP | PINABLE,
-               "production.queue"),
-        m_queue_lb(nullptr)
+               "production.queue")
     {}
 
     void CompleteConstruction() override {
@@ -832,9 +822,6 @@ private:
 //////////////////////////////////////////////////
 ProductionWnd::ProductionWnd(GG::X w, GG::Y h) :
     GG::Wnd(GG::X0, GG::Y0, w, h, GG::INTERACTIVE | GG::ONTOP),
-    m_production_info_panel(nullptr),
-    m_queue_wnd(nullptr),
-    m_build_designator_wnd(nullptr),
     m_order_issuing_enabled(false),
     m_empire_shown_id(ALL_EMPIRES)
 {}

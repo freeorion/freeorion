@@ -237,6 +237,9 @@ namespace {
     std::shared_ptr<GG::BrowseInfoWnd> ProductionItemRowBrowseWnd(const ProductionQueue::ProductionItem& item,
                                                                   int candidate_object_id, int empire_id)
     {
+        // get available PP and estimated production time for empire at candidate location
+
+
         // production item is a building
         if (item.build_type == BT_BUILDING) {
             const BuildingType* building_type = GetBuildingType(item.name);
@@ -359,8 +362,7 @@ namespace {
         ProductionItemRow(GG::X w, GG::Y h, const ProductionQueue::ProductionItem& item,
                           int empire_id, int location_id) :
             GG::ListBox::Row(w, h, "", GG::ALIGN_NONE, 0),
-            m_item(item),
-            m_panel(nullptr)
+            m_item(item)
         {
             SetName("ProductionItemRow");
             SetChildClippingMode(ClipToClient);
@@ -984,10 +986,7 @@ void BuildDesignatorWnd::BuildSelector::BuildItemRightClicked(GG::ListBox::itera
 const std::string BuildDesignatorWnd::PRODUCTION_ITEM_DROP_TYPE = "Production Item";
 
 BuildDesignatorWnd::BuildDesignatorWnd(GG::X w, GG::Y h) :
-    Wnd(GG::X0, GG::Y0, w, h, GG::INTERACTIVE | GG::ONTOP),
-    m_enc_detail_panel(nullptr),
-    m_build_selector(nullptr),
-    m_side_panel(nullptr)
+    Wnd(GG::X0, GG::Y0, w, h, GG::INTERACTIVE | GG::ONTOP)
 {}
 
 void BuildDesignatorWnd::CompleteConstruction() {

@@ -922,23 +922,9 @@ namespace {
 SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) :
     GG::Control(GG::X0, GG::Y0, w, GG::Y1, GG::INTERACTIVE),
     m_planet_id(planet_id),
-    m_planet_name(nullptr),
-    m_env_size(nullptr),
-    m_colonize_button(nullptr),
-    m_invade_button(nullptr),
-    m_bombard_button(nullptr),
-    m_planet_graphic(nullptr),
-    m_planet_status_graphic(nullptr),
-    m_rotating_planet_graphic(nullptr),
     m_selected(false),
     m_order_issuing_enabled(true),
     m_empire_colour(GG::CLR_ZERO),
-    m_focus_drop(nullptr),
-    m_population_panel(nullptr),
-    m_resource_panel(nullptr),
-    m_military_panel(nullptr),
-    m_buildings_panel(nullptr),
-    m_specials_panel(nullptr),
     m_star_type(star_type)
 {}
 

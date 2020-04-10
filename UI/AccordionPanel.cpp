@@ -9,7 +9,6 @@ namespace {
 
 AccordionPanel::AccordionPanel(GG::X w, GG::Y h, bool is_button_on_left) :
     GG::Control(GG::X0, GG::Y0, w, h, GG::INTERACTIVE),
-    m_expand_button(nullptr),
     m_is_left(is_button_on_left),
     m_interior_color(ClientUI::WndColor())
 {}

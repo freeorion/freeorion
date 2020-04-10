@@ -82,8 +82,7 @@ namespace {
         {}
 
         RuleListRow(GG::X w, GG::Y h, std::shared_ptr<Wnd> contents, int indentation = 0) :
-            GG::ListBox::Row(w, h, ""),
-            m_contents(nullptr)
+            GG::ListBox::Row(w, h, "")
         {
             if (contents)
                 m_contents = GG::Wnd::Create<RowContentsWnd>(w, h, std::forward<std::shared_ptr<GG::Wnd>>(contents), indentation);

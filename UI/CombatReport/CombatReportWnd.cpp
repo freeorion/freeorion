@@ -207,8 +207,7 @@ private:
 CombatReportWnd::CombatReportWnd(const std::string& config_name) :
     CUIWnd(UserString("COMBAT_REPORT_TITLE"),
            GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP | CLOSABLE,
-           config_name, false),
-    m_impl(nullptr)
+           config_name, false)
 {}
 
 void CombatReportWnd::CompleteConstruction() {

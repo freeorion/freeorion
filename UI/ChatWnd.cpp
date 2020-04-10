@@ -294,11 +294,7 @@ bool MessageWndEdit::CompleteWord(const std::set<std::string>& names, const std:
 ////////////////////
 MessageWnd::MessageWnd(GG::Flags<GG::WndFlag> flags, const std::string& config_name) :
     CUIWnd(UserString("MESSAGES_PANEL_TITLE"), flags, config_name),
-    m_display(nullptr),
-    m_edit(nullptr),
-    m_display_show_time(0),
-    m_history(),
-    m_history_position()
+    m_display_show_time(0)
 {}
 
 void MessageWnd::CompleteConstruction() {

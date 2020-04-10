@@ -365,7 +365,6 @@ namespace {
     struct LoadGamePlayerRow : PlayerRow {
         LoadGamePlayerRow(const PlayerSetupData& player_data, int player_id, const std::map<int, SaveGameEmpireData>& save_game_empire_data, bool disabled, bool in_game) :
             PlayerRow(player_data, player_id),
-            m_empire_list(nullptr),
             m_save_game_empire_data(save_game_empire_data),
             m_initial_disabled(disabled),
             m_in_game(in_game)
@@ -595,18 +594,7 @@ namespace {
 
 MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
     CUIWnd(UserString("MPLOBBY_WINDOW_TITLE"),
-           GG::ONTOP | GG::INTERACTIVE | GG::RESIZABLE),
-    m_chat_wnd(nullptr),
-    m_any_can_edit(nullptr),
-    m_new_load_game_buttons(nullptr),
-    m_galaxy_setup_panel(nullptr),
-    m_browse_saves_btn(nullptr),
-    m_preview_image(nullptr),
-    m_players_lb(nullptr),
-    m_players_lb_headers(nullptr),
-    m_ready_bn(nullptr),
-    m_cancel_bn(nullptr),
-    m_start_conditions_text(nullptr)
+           GG::ONTOP | GG::INTERACTIVE | GG::RESIZABLE)
 {}
 
 void MultiPlayerLobbyWnd::CompleteConstruction() {
