@@ -487,8 +487,8 @@ private:
 
     /// The value, precision and sign of the statistic value
     std::vector<std::tuple<double, int, bool>> m_values;
-    std::shared_ptr<GG::StaticGraphic>         m_icon = nullptr;
-    std::shared_ptr<GG::Label>                 m_text = nullptr;
+    std::shared_ptr<GG::StaticGraphic>         m_icon;
+    std::shared_ptr<GG::Label>                 m_text;
 };
 
 class CUIToolBar : public GG::Control {

@@ -54,9 +54,9 @@ private:
     std::vector<std::pair<MeterType, std::shared_ptr<StatisticIcon>>> m_meter_stats;
 
     /** textually / numerically indicates population */
-    std::shared_ptr<MultiIconValueIndicator> m_multi_icon_value_indicator = nullptr;
+    std::shared_ptr<MultiIconValueIndicator> m_multi_icon_value_indicator;
     /** graphically indicates meter values */
-    std::shared_ptr<MultiMeterStatusBar> m_multi_meter_status_bar = nullptr;
+    std::shared_ptr<MultiMeterStatusBar> m_multi_meter_status_bar;
 
     /** map indexed by popcenter ID indicating whether the PopulationPanel for each object is expanded (true) or collapsed (false) */
     static std::map<int, bool> s_expanded_map;

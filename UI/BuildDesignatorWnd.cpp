@@ -159,11 +159,11 @@ namespace {
         const ProductionQueue::ProductionItem   m_item;
         int                                     m_empire_id = ALL_EMPIRES;
         int                                     m_location_id = INVALID_OBJECT_ID;
-        std::shared_ptr<GG::StaticGraphic>      m_icon = nullptr;
-        std::shared_ptr<GG::Label>              m_name = nullptr;
-        std::shared_ptr<GG::Label>              m_cost = nullptr;
-        std::shared_ptr<GG::Label>              m_time = nullptr;
-        std::shared_ptr<GG::Label>              m_desc = nullptr;
+        std::shared_ptr<GG::StaticGraphic>      m_icon;
+        std::shared_ptr<GG::Label>              m_name;
+        std::shared_ptr<GG::Label>              m_cost;
+        std::shared_ptr<GG::Label>              m_time;
+        std::shared_ptr<GG::Label>              m_desc;
     };
 
     std::shared_ptr<const UniverseObject> GetSourceObjectForEmpire(int empire_id) {
