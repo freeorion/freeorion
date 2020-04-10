@@ -107,9 +107,8 @@ namespace {
 
             // name of final destination
             std::string dest_name = dest_sys->ApparentName(client_empire_id);
-            if (GetOptionsDB().Get<bool>("ui.name.id.shown")) {
-                dest_name = dest_name + " (" + std::to_string(dest_sys->ID()) + ")";
-            }
+            if (GetOptionsDB().Get<bool>("ui.name.id.shown"))
+                dest_name += " (" + std::to_string(dest_sys->ID()) + ")";
 
             // next system on path
             std::string next_eta_text;

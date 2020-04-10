@@ -200,8 +200,8 @@ namespace {
             // get resource sharing group and amount of resource available to build this item
             const auto& group = queue_element_resource_sharing_object_groups[i];
             auto available_pp_it = available_pp.find(group);
-            float& group_pp_available = (available_pp_it != available_pp.end()) ? 
-                        available_pp_it->second : dummy_pp_source;
+            float& group_pp_available = (available_pp_it != available_pp.end()) ?
+                                        available_pp_it->second : dummy_pp_source;
 
             if ((group_pp_available <= 0) &&
                 (available_stockpile <= 0 || !queue_element.allowed_imperial_stockpile_use))
