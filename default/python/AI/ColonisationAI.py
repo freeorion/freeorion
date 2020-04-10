@@ -952,7 +952,9 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None, empire_rese
         gg_factor = 0.0
         ast_shipyard_name = ""
         if system and FocusType.FOCUS_INDUSTRY in species.foci:
-            for pid in [temp_id for temp_id in system.planetIDs if temp_id != planet_id]:
+            for pid in system.planetIDs:
+                if pid == planet_id:
+                    continue
                 p2 = universe.getPlanet(pid)
                 if p2:
                     if p2.size == fo.planetSize.asteroids:
