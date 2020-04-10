@@ -454,6 +454,7 @@ def get_colony_fleets():
 # TODO: clean up suppliable versus annexable
 def assign_colonisation_values(planet_ids, mission_type, species, detail=None, return_all=False):
     """Creates a dictionary that takes planetIDs as key and their colonisation score as value."""
+    empire_research_list = [element.tech for element in fo.getEmpire().researchQueue]
     if detail is None:
         detail = []
     orig_detail = detail
@@ -477,7 +478,7 @@ def assign_colonisation_values(planet_ids, mission_type, species, detail=None, r
         for spec_name in try_species:
             detail = orig_detail[:]
             # appends (score, species_name, detail)
-            pv.append((evaluate_planet(planet_id, mission_type, spec_name, detail), spec_name, detail))
+            pv.append((evaluate_planet(planet_id, mission_type, spec_name, detail, empire_research_list), spec_name, detail))
         all_sorted = sorted(pv, reverse=True)
         best = all_sorted[:1]
         if best:
@@ -581,7 +582,7 @@ def _base_asteroid_mining_val():
     return 5 if tech_is_complete("PRO_MICROGRAV_MAN") else 3
 
 
-def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
+def evaluate_planet(planet_id, mission_type, spec_name, detail=None, empire_research_list=None):
     """returns the colonisation value of a planet"""
     empire = fo.getEmpire()
     if detail is None:
@@ -590,6 +591,8 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
     if spec_name is None:
         spec_name = ""
 
+    if empire_research_list is None:
+        empire_research_list = [element.tech for element in empire.researchQueue]
     retval = 0
     character = get_aistate().character
     discount_multiplier = character.preferred_discount_multiplier([30.0, 40.0])
@@ -635,7 +638,6 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
 
     claimed_stars = get_claimed_stars()
 
-    empire_research_list = [element.tech for element in empire.researchQueue]
     if planet is None:
         vis_map = universe.getVisibilityTurnsMap(planet_id, empire.empireID)
         debug("Planet %d object not available; visMap: %s" % (planet_id, vis_map))

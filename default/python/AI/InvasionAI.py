@@ -342,13 +342,16 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
     # get a baseline evaluation of the planet as determined by ColonisationAI
     species_name = planet.speciesName
     species = fo.getSpecies(species_name)
+    empire_research_list = [element.tech for element in fo.getEmpire().researchQueue]
     if not species or AIDependencies.TAG_DESTROYED_ON_CONQUEST in species.tags:
         # this call iterates over this Empire's available species with which it could colonize after an invasion
         planet_eval = ColonisationAI.assign_colonisation_values([planet_id], MissionType.INVASION, None, detail)
         colony_base_value = max(0.75 * planet_eval.get(planet_id, [0])[0],
-                                ColonisationAI.evaluate_planet(planet_id, MissionType.OUTPOST, None, detail))
+                                ColonisationAI.evaluate_planet(
+                                    planet_id, MissionType.OUTPOST, None, detail, empire_research_list))
     else:
-        colony_base_value = ColonisationAI.evaluate_planet(planet_id, MissionType.INVASION, species_name, detail)
+        colony_base_value = ColonisationAI.evaluate_planet(
+            planet_id, MissionType.INVASION, species_name, detail, empire_research_list)
 
     # Add extra score for all buildings on the planet
     building_values = {"BLD_IMPERIAL_PALACE": 1000,
