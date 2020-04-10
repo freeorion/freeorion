@@ -14,7 +14,7 @@ from AIDependencies import INVALID_ID
 from aistate_interface import get_aistate
 from CombatRatingsAI import combine_ratings, combine_ratings_list, rating_difference
 from EnumsAI import MissionType
-from freeorion_tools import cache_by_turn
+from freeorion_tools import cache_by_turn_persistent
 from target import TargetSystem
 from turn_state import state
 
@@ -972,7 +972,7 @@ def assign_military_fleets_to_systems(use_fleet_id_list=None, allocations=None, 
                 fleet_mission.generate_fleet_orders()
 
 
-@cache_by_turn
+@cache_by_turn_persistent
 def get_tot_mil_rating():
     """
     Give an assessment of total military rating considering all fleets as if distributed to separate systems.
@@ -984,7 +984,7 @@ def get_tot_mil_rating():
                for fleet_id in FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.MILITARY))
 
 
-@cache_by_turn
+@cache_by_turn_persistent
 def get_concentrated_tot_mil_rating():
     """
     Give an assessment of total military rating as if all fleets were merged into a single mega-fleet.
@@ -996,7 +996,7 @@ def get_concentrated_tot_mil_rating():
                                                  FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.MILITARY)])
 
 
-@cache_by_turn
+@cache_by_turn_persistent
 def get_num_military_ships():
     fleet_status = get_aistate().fleetStatus
     return sum(fleet_status.get(fid, {}).get('nships', 0)

@@ -19,7 +19,7 @@ from aistate_interface import get_aistate
 from target import TargetPlanet
 from turn_state import state
 from EnumsAI import MissionType, FocusType, EmpireProductionTypes, ShipRoleType, PriorityType
-from freeorion_tools import tech_is_complete, get_ai_tag_grade, cache_by_turn, AITimer, get_partial_visibility_turn
+from freeorion_tools import tech_is_complete, get_ai_tag_grade, cache_by_turn_persistent, AITimer, get_partial_visibility_turn
 from AIDependencies import (INVALID_ID, OUTPOSTING_TECH, POP_CONST_MOD_MAP,
                             POP_SIZE_MOD_MAP_MODIFIED_BY_SPECIES, POP_SIZE_MOD_MAP_NOT_MODIFIED_BY_SPECIES)
 
@@ -207,7 +207,7 @@ def rate_planetary_piloting(pid):
     return rate_piloting_tag(this_spec.tags)
 
 
-@cache_by_turn
+@cache_by_turn_persistent
 def get_supply_tech_range():
     return sum(_range for _tech, _range in AIDependencies.supply_range_techs.items() if tech_is_complete(_tech))
 
@@ -518,7 +518,7 @@ def project_ind_val(init_pop, max_pop_size, init_industry, max_ind_factor, flat_
     return ind_val
 
 
-@cache_by_turn
+@cache_by_turn_persistent
 def get_base_outpost_defense_value():
     """
     :return:planet defenses contribution towards planet evaluations
@@ -541,7 +541,7 @@ def get_base_outpost_defense_value():
     return result
 
 
-@cache_by_turn
+@cache_by_turn_persistent
 def get_base_colony_defense_value():
     """
     :return:planet defenses contribution towards planet evaluations
@@ -1134,7 +1134,7 @@ def determine_colony_threat_factor(planet_id, spec_name, existing_presence):
     return threat_factor
 
 
-@cache_by_turn
+@cache_by_turn_persistent
 def get_claimed_stars():
     """
     Return dictionary of star type: list of colonised and planned to be colonized systems.

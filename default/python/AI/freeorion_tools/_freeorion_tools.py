@@ -182,7 +182,7 @@ def cache_by_session_with_turnwise_update(func):
     return wrapper
 
 
-def cache_by_turn(func):
+def cache_by_turn_persistent(func):
     """
     Cache a function value by turn, stored in foAIstate so also provides a history that may be analysed. The cache
     is keyed by the original function name.  Wraps only functions without arguments.
