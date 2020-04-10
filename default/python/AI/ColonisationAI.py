@@ -170,19 +170,21 @@ def calc_max_pop(planet, species, detail):
                     + species_effect + gaseous_effect)
         return planet_size * base_pop + pop_const_mod
 
-    if "PHOTOTROPHIC" in tag_list and max_pop_size() > 0:
+    target_pop = max_pop_size()
+    if "PHOTOTROPHIC" in tag_list and target_pop > 0:
         star_type = fo.getUniverse().getSystem(planet.systemID).starType
         star_pop_mod = AIDependencies.POP_MOD_PHOTOTROPHIC_STAR_MAP.get(star_type, 0)
         base_pop_not_modified_by_species += star_pop_mod
         detail.append("Phototropic Star Bonus_PSM_late(%0.1f)" % star_pop_mod)
+        target_pop = max_pop_size()
 
     detail.append("max_pop = base + size*[psm_early + species_mod*abs(psm_early) + psm_late]")
     detail.append("        = %.2f + %d * [%.2f + %.2f*abs(%.2f) + %.2f]" % (
                     pop_const_mod, planet_size, base_pop_modified_by_species,
                     (pop_tag_mod+gaseous_adjustment-2), base_pop_modified_by_species,
                     base_pop_not_modified_by_species))
-    detail.append("        = %.2f" % max_pop_size())
-    return max_pop_size()
+    detail.append("        = %.2f" % target_pop)
+    return target_pop
 
 
 def galaxy_is_sparse():
