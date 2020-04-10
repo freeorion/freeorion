@@ -34,7 +34,7 @@ namespace {
     const std::string PROD_SELECTOR_WND_NAME = "production.selector";
     const std::string PROD_SIDEPANEL_WND_NAME = "production.sidepanel";
 
-    void    AddOptions(OptionsDB& db)
+    void AddOptions(OptionsDB& db)
     { db.Add("ui." + PROD_PEDIA_WND_NAME + ".hidden.enabled", UserStringNop("OPTIONS_DB_PRODUCTION_PEDIA_HIDDEN"), false); }
     bool temp_bool = RegisterOptions(&AddOptions);
 
@@ -234,16 +234,67 @@ namespace {
             return ConditionDescription(location_conditions, Objects().get(candidate_object_id), source);
     }
 
+    const int MAX_PRODUCTION_TURNS = 200;
+
+    int ProductionTurns(float total_cost, int minimum_production_time, float local_pp_output,
+                        float stockpile, float stockpile_limit_per_turn)
+    {
+        float max_allocation_per_turn = total_cost / minimum_production_time;
+        //std::cout << "\nProductionTurnsprod max per turn: " << max_allocation_per_turn << "  total cost: " << total_cost
+        //          << "  min time: " << minimum_production_time << "  local pp: " << local_pp_output << "  stockpile: " << stockpile << std::endl;
+
+        // allocate production each turn, limited by total stockpile, stockpile per turn limit, and connected industry output
+        int prod_time_here = 0;
+        float total_allocated = 0.0f;
+        for (; prod_time_here < MAX_PRODUCTION_TURNS && total_allocated < total_cost;) {
+            float avail_stockpile = std::min(stockpile, stockpile_limit_per_turn);
+            float industry_output_used = local_pp_output;
+            float stockpile_used = 0.0f;
+
+            if (local_pp_output >= max_allocation_per_turn) {
+                industry_output_used = max_allocation_per_turn;
+
+            } else if (local_pp_output + avail_stockpile >= max_allocation_per_turn) {
+                industry_output_used = local_pp_output;
+                stockpile_used = max_allocation_per_turn - local_pp_output;
+
+            } else if (local_pp_output + avail_stockpile > 0.0f) {
+                industry_output_used = local_pp_output;
+                stockpile_used = avail_stockpile;
+
+            } else {
+                // no progress possible
+                break;
+            }
+
+            stockpile -= stockpile_used;
+            total_allocated += stockpile_used + industry_output_used;
+            prod_time_here++;
+            //std::cout << "prod time here: " << prod_time_here << ": stockpile used: " << stockpile_used
+            //          << "   industry used: " << industry_output_used << "  total cost: " << total_cost << std::endl;
+        }
+
+        return std::max(minimum_production_time, prod_time_here);
+    }
+
     std::shared_ptr<GG::BrowseInfoWnd> ProductionItemRowBrowseWnd(const ProductionQueue::ProductionItem& item,
                                                                   int candidate_object_id, int empire_id)
     {
         // get available PP for empire at candidate location
-        float local_available_pp = 0.0f;
-        if (const auto* empire = GetEmpire(empire_id))
-            local_available_pp = empire->GetResourcePool(RE_INDUSTRY)->GroupAvailable(candidate_object_id);
-        std::string candidate_name;
-        if (auto obj = Objects().get(candidate_object_id))
-            candidate_name = obj->Name();
+        float local_pp_output = 0.0f;
+        float stockpile = 0.0f;
+        float stockpile_limit_per_turn = 0.0f;
+        if (const auto* empire = GetEmpire(empire_id)) {
+            // from industry output
+            local_pp_output = empire->GetResourcePool(RE_INDUSTRY)->GroupAvailable(candidate_object_id);
+
+            // from stockpile
+            stockpile = empire->GetResourcePool(RE_INDUSTRY)->Stockpile();
+            stockpile_limit_per_turn = empire->GetProductionQueue().StockpileCapacity();
+        }
+
+        auto obj = Objects().get(candidate_object_id);
+        std::string candidate_name = obj ? obj->Name() : "";
         if (GetOptionsDB().Get<bool>("ui.name.id.shown"))
             candidate_name += " (" + std::to_string(candidate_object_id) + ")";
 
@@ -253,19 +304,23 @@ namespace {
             if (!building_type)
                 return nullptr;
 
-            // create title, description, production time and cost
             const std::string& title = UserString(item.name);
             std::string main_text;
             float total_cost = building_type->ProductionCost(empire_id, candidate_object_id);
-            int minimum_production_time = building_type->ProductionTime(empire_id, candidate_object_id);
+            int minimum_production_time = std::max(1, building_type->ProductionTime(empire_id, candidate_object_id));
 
-            if (local_available_pp > 0.0f) {
-                float prod_time_here = total_cost / local_available_pp;
-                int production_time_here_rounded_up = std::max(minimum_production_time, static_cast<int>(std::ceil(prod_time_here)));
-                main_text += boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME")) %
-                    std::to_string(production_time_here_rounded_up) % candidate_name);
-            } else if (!candidate_name.empty()) {
-                main_text += boost::io::str(FlexibleFormat(UserString("NO_PRODUCTION_HERE_CANT_PRODUCE")) % candidate_name);
+            if (obj) {
+                int prod_time_here = ProductionTurns(total_cost, minimum_production_time, local_pp_output,
+                                                     stockpile, stockpile_limit_per_turn);
+
+                // create title, description, production time and cost
+                if (prod_time_here <= MAX_PRODUCTION_TURNS) {
+                    main_text += boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME")) %
+                                                std::to_string(prod_time_here) % candidate_name);
+                } else {
+                    main_text += boost::io::str(FlexibleFormat(UserString("NO_PRODUCTION_HERE_CANT_PRODUCE")) %
+                                                candidate_name);
+                }
             }
             main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME_MINIMUM")) %
                                                std::to_string(minimum_production_time));
@@ -301,13 +356,16 @@ namespace {
             float total_cost = design->ProductionCost(empire_id, candidate_object_id);
             int minimum_production_time = design->ProductionTime(empire_id, candidate_object_id);
 
-            if (local_available_pp > 0.0f) {
-                float prod_time_here = total_cost / local_available_pp;
-                int production_time_here_rounded_up = std::max(minimum_production_time, static_cast<int>(std::ceil(prod_time_here)));
-                main_text += boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME")) %
-                    std::to_string(production_time_here_rounded_up) % candidate_name);
-            } else if (!candidate_name.empty()) {
-                main_text += boost::io::str(FlexibleFormat(UserString("NO_PRODUCTION_HERE_CANT_PRODUCE")) % candidate_name);
+            if (obj) {
+                int prod_time_here = ProductionTurns(total_cost, minimum_production_time, local_pp_output,
+                                                     stockpile, stockpile_limit_per_turn);
+
+                if (prod_time_here <= MAX_PRODUCTION_TURNS) {
+                    main_text += boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME")) %
+                        std::to_string(prod_time_here) % candidate_name);
+                } else {
+                    main_text += boost::io::str(FlexibleFormat(UserString("NO_PRODUCTION_HERE_CANT_PRODUCE")) % candidate_name);
+                }
             }
             main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME_MINIMUM")) %
                                                std::to_string(minimum_production_time));
