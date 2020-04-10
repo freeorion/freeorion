@@ -1,6 +1,7 @@
 #include "Serialize.h"
 
 #include "MultiplayerCommon.h"
+#include "OptionsDB.h"
 #include "OrderSet.h"
 #include "Order.h"
 #include "../universe/System.h"
@@ -15,8 +16,14 @@
 template <class Archive>
 void GalaxySetupData::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_NVP(m_seed)
-        & BOOST_SERIALIZATION_NVP(m_size)
+    if (Archive::is_saving::value && m_encoding_empire != ALL_EMPIRES && (!GetOptionsDB().Get<bool>("network.server.publish-seed"))) {
+        std::string dummy = "hidden";
+        ar  & boost::serialization::make_nvp("m_seed", dummy);
+    } else {
+        ar  & BOOST_SERIALIZATION_NVP(m_seed);
+    }
+
+    ar  & BOOST_SERIALIZATION_NVP(m_size)
         & BOOST_SERIALIZATION_NVP(m_shape)
         & BOOST_SERIALIZATION_NVP(m_age)
         & BOOST_SERIALIZATION_NVP(m_starlane_freq)
