@@ -20,7 +20,7 @@ from target import TargetPlanet
 from turn_state import state
 from EnumsAI import MissionType, FocusType, EmpireProductionTypes, ShipRoleType, PriorityType
 from freeorion_tools import (tech_is_complete, get_ai_tag_grade, get_species_tag_grade, cache_by_turn_persistent,
-                             AITimer, get_partial_visibility_turn, cache_for_current_turn, cache_for_session)
+                             AITimer, get_partial_visibility_turn, cache_for_current_turn, cache_for_session, profile)
 from AIDependencies import (INVALID_ID, OUTPOSTING_TECH, POP_CONST_MOD_MAP,
                             POP_SIZE_MOD_MAP_MODIFIED_BY_SPECIES, POP_SIZE_MOD_MAP_NOT_MODIFIED_BY_SPECIES)
 
@@ -343,6 +343,7 @@ def survey_universe():
     colonization_timer.stop()
 
 
+@profile
 def get_colony_fleets():
     """examines known planets, collects various colonization data, to be later used to send colony fleets"""
     universe = fo.getUniverse()
