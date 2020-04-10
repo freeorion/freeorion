@@ -657,8 +657,9 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None, empire_rese
     planet_supply += sum(AIDependencies.building_supply[bld_type].get(int(psize), 0)
                          for psize in [-1, planet.size] for bld_type in bld_types)
     planet_supply += sum(AIDependencies.SUPPLY_MOD_SPECIALS[_special].get(int(psize), 0)
-                         for psize in [-1, planet.size] for _special in
-                         set(planet.specials).union(system.specials).intersection(AIDependencies.SUPPLY_MOD_SPECIALS))
+                         for _special in set(planet.specials).union(system.specials).intersection(AIDependencies.SUPPLY_MOD_SPECIALS)
+                         for psize in [-1, planet.size]
+                         )
 
     ind_tag_mod = AIDependencies.SPECIES_INDUSTRY_MODIFIER.get(get_species_tag_grade(spec_name, "INDUSTRY"), 1.0)
     res_tag_mod = AIDependencies.SPECIES_RESEARCH_MODIFIER.get(get_species_tag_grade(spec_name, "RESEARCH"), 1.0)
