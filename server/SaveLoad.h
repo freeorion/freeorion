@@ -26,7 +26,7 @@ int SaveGame(const std::string& filename,
              const EmpireManager& empire_manager,
              const SpeciesManager& species_manager,
              const CombatLogManager& combat_log_manager,
-             GalaxySetupData& galaxy_setup_data,
+             GalaxySetupData galaxy_setup_data,
              bool multiplayer);
 
 /** Loads the indicated data from savefile \a filename. */
