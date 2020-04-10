@@ -145,8 +145,10 @@ def chat_human(message):
 
 def cache_by_session(func):
     """
-    Cache a function value by session.
+    Cache a function value for current session.
+
     Wraps only functions with hashable arguments.
+    Use this only if the called function return value is constant throughout the game.
     """
     _cache = {}
 
@@ -164,7 +166,9 @@ def cache_by_session(func):
 
 def cache_for_current_turn(func):
     """
-    Cache a function value during session, updated each turn.
+    Cache a function value updated each turn.
+
+    The cache is non-persistent through loading a game.
     Wraps only functions with hashable arguments.
     """
     _cache = {}
@@ -184,9 +188,12 @@ def cache_for_current_turn(func):
 
 def cache_by_turn_persistent(func):
     """
-    Cache a function value by turn, stored in foAIstate so also provides a history that may be analysed. The cache
-    is keyed by the original function name.  Wraps only functions without arguments.
-    Cache result is stored in savegame, will crash with picle error if result contains any boost object.
+    Cache a function value by turn, persistent through loading a game.
+
+    It will also provides a history that may be analysed.
+    The cache is keyed by the original function name. It only wraps functions without arguments.
+
+    As the result is stored in AIstate, its type must be trusted by the savegame_codec module.
     """
     # avoid circular import
     from aistate_interface import get_aistate
