@@ -191,21 +191,18 @@ def galaxy_is_sparse():
              ((avg_empire_systems >= 35) and (setup_data.shape != fo.galaxyShape.elliptical))))
 
 
-def rate_piloting_tag(tag_list):
+def rate_piloting_tag(species_name):
     grades = {'NO': 1e-8, 'BAD': 0.75, 'GOOD': GOOD_PILOT_RATING, 'GREAT': GREAT_PILOT_RATING,
               'ULTIMATE': ULT_PILOT_RATING}
-    return grades.get(get_ai_tag_grade(tag_list, "WEAPONS"), 1.0)
+    return grades.get(get_species_tag_grade(species_name, "WEAPONS"), 1.0)
 
 
 def rate_planetary_piloting(pid):
     universe = fo.getUniverse()
     planet = universe.getPlanet(pid)
-    if not planet or not planet.speciesName:
+    if not planet:
         return 0.0
-    this_spec = fo.getSpecies(planet.speciesName)
-    if not this_spec:
-        return 0.0
-    return rate_piloting_tag(this_spec.tags)
+    return rate_piloting_tag(planet.speciesName)
 
 
 @cache_by_turn_persistent  # helpful to cache history to debug AI supply progress
@@ -274,7 +271,7 @@ def survey_universe():
                     for metab in [tag for tag in this_spec.tags if tag in AIDependencies.metabolismBoostMap]:
                         empire_metabolisms[metab] = (empire_metabolisms.get(metab, 0.0) + planet.habitableSize)
                     if this_spec.canProduceShips:
-                        pilot_val = rate_piloting_tag(list(this_spec.tags))
+                        pilot_val = rate_piloting_tag(spec_name)
                         if spec_name == "SP_ACIREMA":
                             pilot_val += 1
                         weapons_grade = "WEAPONS_%.1f" % pilot_val
@@ -602,7 +599,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None, empire_rese
     tag_list = list(species.tags) if species else []
     pilot_val = pilot_rating = 0
     if species and species.canProduceShips:
-        pilot_val = pilot_rating = rate_piloting_tag(species.tags)
+        pilot_val = pilot_rating = rate_piloting_tag(spec_name)
         if pilot_val > state.best_pilot_rating:
             pilot_val *= 2
         if pilot_val > 2:
