@@ -7,7 +7,7 @@ import freeOrionAIInterface as fo
 import FleetUtilsAI
 from aistate_interface import get_aistate
 from EnumsAI import MissionType
-from freeorion_tools import get_species_tag_grade, dict_to_tuple, tuple_to_dict, cache_for_session
+from freeorion_tools import get_species_tag_grade, dict_to_tuple, tuple_to_dict, cache_for_current_turn
 from ShipDesignAI import get_part_type
 from AIDependencies import INVALID_ID, CombatTarget
 
@@ -27,6 +27,7 @@ def get_allowed_targets(partname: str) -> int:
         return CombatTarget.ANY
 
 
+@cache_for_current_turn
 def get_empire_standard_fighter():
     """Get the current empire standard fighter stats, i.e. the most common shiptype within the empire.
 
