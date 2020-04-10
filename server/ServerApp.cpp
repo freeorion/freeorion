@@ -1897,8 +1897,12 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, i
     const OrderSet& orders = orders_it->second && orders_it->second->m_orders ? *(orders_it->second->m_orders) : dummy;
     const SaveGameUIData* ui_data = orders_it->second ? orders_it->second->m_ui_data.get() : nullptr;
 
-    // drop ready status
-    empire->SetReady(false);
+    if (GetOptionsDB().Get<bool>("network.server.drop-empire-ready")) {
+        // drop ready status
+        empire->SetReady(false);
+        m_networking.SendMessageAll(PlayerStatusMessage(Message::PLAYING_TURN,
+                                                        empire_id));
+    }
 
     auto player_info_map = GetPlayerInfoMap();
     bool use_binary_serialization = player_connection->IsBinarySerializationUsed();
