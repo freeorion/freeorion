@@ -33,7 +33,7 @@ float ResourcePool::TotalOutput() const {
 }
 
 std::map<std::set<int>, float> ResourcePool::Output() const { return m_connected_object_groups_resource_output; }
-    
+
 float ResourcePool::GroupOutput(int object_id) const {
     // find group containing specified object
     for (const auto& entry : m_connected_object_groups_resource_output) {
@@ -42,7 +42,7 @@ float ResourcePool::GroupOutput(int object_id) const {
     }
 
     // default return case:
-    DebugLogger() << "ResourcePool::GroupOutput passed unknown object id: " << object_id;
+    //DebugLogger() << "ResourcePool::GroupOutput passed unknown object id: " << object_id;
     return 0.0f;
 }
 
@@ -79,7 +79,7 @@ std::map<std::set<int>, float> ResourcePool::Available() const {
 }
 
 float ResourcePool::GroupAvailable(int object_id) const {
-    DebugLogger() << "ResourcePool::GroupAvailable(" << object_id << ")";
+    TraceLogger() << "ResourcePool::GroupAvailable(" << object_id << ")";
     // available is production in this group
     return GroupOutput(object_id);
 }
