@@ -585,6 +585,10 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
     empire = fo.getEmpire()
     if detail is None:
         detail = []
+
+    if spec_name is None:
+        spec_name = ""
+
     retval = 0
     character = get_aistate().character
     discount_multiplier = character.preferred_discount_multiplier([30.0, 40.0])
@@ -670,7 +674,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
 
     planet_supply += supply_tag_mod
     planet_supply = max(planet_supply, 0)  # planets can't have negative supply
-    if planet.speciesName == (spec_name or ""):  # adding or "" in case None was passed as spec_name
+    if planet.speciesName == spec_name:
         planet_supply_cache[planet_id] = planet_supply + sys_supply
 
     threat_factor = determine_colony_threat_factor(planet_id, spec_name, existing_presence)
