@@ -91,6 +91,8 @@ public:
     std::vector<PlayerSaveGameData> GetPlayerSaveGameData() const;
 
     bool IsTurnExpired() const;
+
+    bool IsHaveWinner() const;
     //@}
 
 
