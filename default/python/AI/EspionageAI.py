@@ -91,15 +91,6 @@ def colony_detectable_by_empire(planet_id, species_name=None, empire=ALL_EMPIRES
     if empire == fo.empireID() and planet.ownedBy(empire):
         return True
 
-    species = fo.getSpecies(species_name)
-    if species:
-        species_tags = species.tags
-    elif species_name == "":
-        species_tags = []
-    else:
-        error("Couldn't retrieve species named '%s'." % species_name)
-        return default_result
-
     # could just check stealth meter, but this approach might allow us to plan ahead a bit even if the planet
     # is temporarily stealth boosted by temporary effects like ion storm
     planet_stealth = AIDependencies.BASE_PLANET_STEALTH

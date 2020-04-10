@@ -35,7 +35,7 @@ import TechsListsAI
 import turn_state
 from aistate_interface import create_new_aistate, load_aistate, get_aistate
 from AIDependencies import INVALID_ID
-from freeorion_tools import handle_debug_chat, AITimer, profile
+from freeorion_tools import handle_debug_chat, AITimer
 from common.handlers import init_handlers
 from common.listeners import listener
 from character.character_module import Aggression

@@ -7,7 +7,7 @@ import freeOrionAIInterface as fo
 import FleetUtilsAI
 from aistate_interface import get_aistate
 from EnumsAI import MissionType
-from freeorion_tools import get_species_tag_grade, dict_to_tuple, tuple_to_dict, cache_for_current_turn
+from freeorion_tools import dict_to_tuple, tuple_to_dict, cache_for_current_turn
 from ShipDesignAI import get_part_type
 from AIDependencies import INVALID_ID, CombatTarget
 
