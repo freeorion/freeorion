@@ -7,7 +7,7 @@ import freeOrionAIInterface as fo
 import FleetUtilsAI
 from aistate_interface import get_aistate
 from EnumsAI import MissionType
-from freeorion_tools import get_ai_tag_grade, dict_to_tuple, tuple_to_dict, cache_by_session
+from freeorion_tools import get_ai_tag_grade, dict_to_tuple, tuple_to_dict, cache_for_session
 from ShipDesignAI import get_part_type
 from AIDependencies import INVALID_ID, CombatTarget
 
@@ -390,7 +390,7 @@ def get_ship_rating(ship_id, enemy_stats=None):
     return ShipCombatStats(ship_id, consider_refuel=False).get_rating(enemy_stats)
 
 
-@cache_by_session
+@cache_for_session
 def _get_species_grades(species_name, grade_type):
     spec_tags = []
     if species_name:

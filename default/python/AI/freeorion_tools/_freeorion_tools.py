@@ -143,7 +143,7 @@ def chat_human(message):
     debug("Chat Message to human: %s", remove_tags(message))
 
 
-def cache_by_session(func):
+def cache_for_session(func):
     """
     Cache a function value for current session.
 
