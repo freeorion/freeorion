@@ -555,6 +555,7 @@ void GalaxySetupPanel::CompleteConstruction() {
     } else {
         m_seed_edit = GG::Wnd::Create<CUIEdit>(m_seed);
     }
+    m_seed_edit->DisallowChars("<>/\\[]'`?{}, ");
 
     boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
 

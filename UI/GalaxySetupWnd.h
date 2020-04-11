@@ -11,7 +11,7 @@
 class EmpireColorSelector;
 class SpeciesSelector;
 struct GalaxySetupData;
-
+class CUIEdit;
 
 /** Displays game rules options */
 class GameRulesPanel : public GG::Control {
@@ -108,7 +108,7 @@ private:
     void ShapeChanged(GG::ListBox::iterator it);
 
     std::shared_ptr<GG::Label>          m_seed_label;
-    std::shared_ptr<GG::Edit>           m_seed_edit;            //!< The seed used in the generation of the galaxy;
+    std::shared_ptr<CUIEdit>            m_seed_edit;            //!< The seed used in the generation of the galaxy;
     std::string                         m_seed;
     std::shared_ptr<GG::Button>         m_random;               //!< Random seed button;
     std::shared_ptr<GG::Label>          m_stars_label;
