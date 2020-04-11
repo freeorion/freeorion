@@ -38,6 +38,50 @@ namespace {
     { db.Add("ui." + PROD_PEDIA_WND_NAME + ".hidden.enabled", UserStringNop("OPTIONS_DB_PRODUCTION_PEDIA_HIDDEN"), false); }
     bool temp_bool = RegisterOptions(&AddOptions);
 
+    const int MAX_PRODUCTION_TURNS = 200;
+
+    int ProductionTurns(float total_cost, int minimum_production_time, float local_pp_output,
+                        float stockpile, float stockpile_limit_per_turn)
+    {
+        float max_allocation_per_turn = total_cost / minimum_production_time;
+        //std::cout << "\nProductionTurnsprod max per turn: " << max_allocation_per_turn << "  total cost: " << total_cost
+        //          << "  min time: " << minimum_production_time << "  local pp: " << local_pp_output << "  stockpile: " << stockpile << std::endl;
+
+        // allocate production each turn, limited by total stockpile, stockpile per turn limit, and connected industry output
+        int prod_time_here = 0;
+        float total_allocated = 0.0f;
+        for (; prod_time_here < MAX_PRODUCTION_TURNS && total_allocated < total_cost;) {
+            float avail_stockpile = std::min(stockpile, stockpile_limit_per_turn);
+            float industry_output_used = local_pp_output;
+            float stockpile_used = 0.0f;
+
+            if (local_pp_output >= max_allocation_per_turn) {
+                industry_output_used = max_allocation_per_turn;
+
+            } else if (local_pp_output + avail_stockpile >= max_allocation_per_turn) {
+                industry_output_used = local_pp_output;
+                stockpile_used = max_allocation_per_turn - local_pp_output;
+
+            } else if (local_pp_output + avail_stockpile > 0.0f) {
+                industry_output_used = local_pp_output;
+                stockpile_used = avail_stockpile;
+
+            } else {
+                // no progress possible
+                break;
+            }
+
+            stockpile -= stockpile_used;
+            total_allocated += stockpile_used + industry_output_used;
+            prod_time_here++;
+            //std::cout << "prod time here: " << prod_time_here << ": stockpile used: " << stockpile_used
+            //          << "   industry used: " << industry_output_used << "  total cost: " << total_cost << std::endl;
+        }
+
+        return std::max(minimum_production_time, prod_time_here);
+    }
+
+
     //////////////////////////////////
     // ProductionItemPanel
     //////////////////////////////////
@@ -75,7 +119,7 @@ namespace {
 
             const GG::X ICON_WIDTH(Value(ClientHeight()));
             const GG::X ITEM_NAME_WIDTH(ClientUI::Pts() * 16);
-            const GG::X COST_WIDTH(ClientUI::Pts() * 4);
+            //const GG::X COST_WIDTH(ClientUI::Pts() * 4);
             const GG::X TIME_WIDTH(ClientUI::Pts() * 3);
             const GG::X DESC_WIDTH(ClientUI::Pts() * 18);
 
@@ -86,8 +130,8 @@ namespace {
             left += ICON_WIDTH + GG::X(3);
             m_name->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(left + ITEM_NAME_WIDTH, bottom));
             left += ITEM_NAME_WIDTH;
-            m_cost->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(left + COST_WIDTH, bottom));
-            left += COST_WIDTH;
+            //m_cost->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(left + COST_WIDTH, bottom));
+            //left += COST_WIDTH;
             m_time->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(left + TIME_WIDTH, bottom));
             left += TIME_WIDTH;
             m_desc->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(left + DESC_WIDTH, bottom));
@@ -100,11 +144,11 @@ namespace {
 
             const Empire* empire = GetEmpire(m_empire_id);
 
-            std::shared_ptr<GG::Texture>            texture;
-            std::string                             name_text;
-            std::string                             cost_text;
-            std::string                             time_text;
-            std::string                             desc_text;
+            std::shared_ptr<GG::Texture>        texture;
+            std::string                         name_text;
+            //std::string                         cost_text;
+            std::string                         time_text;
+            std::string                         desc_text;
             std::vector<Condition::Condition*>  location_conditions;
 
             switch (m_item.build_type) {
@@ -133,22 +177,43 @@ namespace {
                 texture = ClientUI::GetTexture("");
             }
 
+            float local_pp_output = 0.0f;
+            float stockpile = 0.0f;
+            float stockpile_limit_per_turn = 0.0f;
+
             // cost / turn, and minimum production turns
             if (empire) {
+                // from industry output
+                local_pp_output = empire->GetResourcePool(RE_INDUSTRY)->GroupAvailable(m_location_id);
+
+                // from stockpile
+                stockpile = empire->GetResourcePool(RE_INDUSTRY)->Stockpile();
+                stockpile_limit_per_turn = empire->GetProductionQueue().StockpileCapacity();
+
                 std::pair<double, int> cost_time = empire->ProductionCostAndTime(m_item, m_location_id);
-                cost_text = DoubleToString(cost_time.first, 3, false);
-                time_text = std::to_string(cost_time.second);
+                //cost_text = DoubleToString(cost_time.first, 3, false);
+
+                float total_cost = static_cast<float>(cost_time.first);
+                int minimum_production_time = cost_time.second;
+
+                int production_time = ProductionTurns(total_cost, minimum_production_time, local_pp_output,
+                                                      stockpile, stockpile_limit_per_turn);
+
+                if (production_time >= MAX_PRODUCTION_TURNS)
+                    time_text = std::to_string(MAX_PRODUCTION_TURNS) + "+";
+                else
+                    time_text = std::to_string(production_time);
             }
 
             m_icon = GG::Wnd::Create<GG::StaticGraphic>(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
             m_name = GG::Wnd::Create<CUILabel>(name_text, GG::FORMAT_LEFT);
-            m_cost = GG::Wnd::Create<CUILabel>(cost_text);
+            //m_cost = GG::Wnd::Create<CUILabel>(cost_text);
             m_time = GG::Wnd::Create<CUILabel>(time_text);
             m_desc = GG::Wnd::Create<CUILabel>(desc_text, GG::FORMAT_LEFT);
 
             AttachChild(m_icon);
             AttachChild(m_name);
-            AttachChild(m_cost);
+            //AttachChild(m_cost);
             AttachChild(m_time);
             AttachChild(m_desc);
 
@@ -161,7 +226,7 @@ namespace {
         int                                     m_location_id = INVALID_OBJECT_ID;
         std::shared_ptr<GG::StaticGraphic>      m_icon;
         std::shared_ptr<GG::Label>              m_name;
-        std::shared_ptr<GG::Label>              m_cost;
+        //std::shared_ptr<GG::Label>              m_cost;
         std::shared_ptr<GG::Label>              m_time;
         std::shared_ptr<GG::Label>              m_desc;
     };
@@ -234,49 +299,6 @@ namespace {
             return ConditionDescription(location_conditions, Objects().get(candidate_object_id), source);
     }
 
-    const int MAX_PRODUCTION_TURNS = 200;
-
-    int ProductionTurns(float total_cost, int minimum_production_time, float local_pp_output,
-                        float stockpile, float stockpile_limit_per_turn)
-    {
-        float max_allocation_per_turn = total_cost / minimum_production_time;
-        //std::cout << "\nProductionTurnsprod max per turn: " << max_allocation_per_turn << "  total cost: " << total_cost
-        //          << "  min time: " << minimum_production_time << "  local pp: " << local_pp_output << "  stockpile: " << stockpile << std::endl;
-
-        // allocate production each turn, limited by total stockpile, stockpile per turn limit, and connected industry output
-        int prod_time_here = 0;
-        float total_allocated = 0.0f;
-        for (; prod_time_here < MAX_PRODUCTION_TURNS && total_allocated < total_cost;) {
-            float avail_stockpile = std::min(stockpile, stockpile_limit_per_turn);
-            float industry_output_used = local_pp_output;
-            float stockpile_used = 0.0f;
-
-            if (local_pp_output >= max_allocation_per_turn) {
-                industry_output_used = max_allocation_per_turn;
-
-            } else if (local_pp_output + avail_stockpile >= max_allocation_per_turn) {
-                industry_output_used = local_pp_output;
-                stockpile_used = max_allocation_per_turn - local_pp_output;
-
-            } else if (local_pp_output + avail_stockpile > 0.0f) {
-                industry_output_used = local_pp_output;
-                stockpile_used = avail_stockpile;
-
-            } else {
-                // no progress possible
-                break;
-            }
-
-            stockpile -= stockpile_used;
-            total_allocated += stockpile_used + industry_output_used;
-            prod_time_here++;
-            //std::cout << "prod time here: " << prod_time_here << ": stockpile used: " << stockpile_used
-            //          << "   industry used: " << industry_output_used << "  total cost: " << total_cost << std::endl;
-        }
-
-        return std::max(minimum_production_time, prod_time_here);
-    }
-
     std::shared_ptr<GG::BrowseInfoWnd> ProductionItemRowBrowseWnd(const ProductionQueue::ProductionItem& item,
                                                                   int candidate_object_id, int empire_id)
     {
@@ -314,7 +336,7 @@ namespace {
                                                      stockpile, stockpile_limit_per_turn);
 
                 // create title, description, production time and cost
-                if (prod_time_here <= MAX_PRODUCTION_TURNS) {
+                if (prod_time_here < MAX_PRODUCTION_TURNS) {
                     main_text += boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME")) %
                                                 std::to_string(prod_time_here) % candidate_name);
                 } else {

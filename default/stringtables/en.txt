@@ -4519,7 +4519,7 @@ PRODUCTION_WND_TOOLTIP_PROD_TIME
 Fully-funded production turns at %2%: %1% 
 
 NO_PRODUCTION_HERE_CANT_PRODUCE
-Cannot be produced here: no production available at %1%
+Insufficient production at %1%
 
 PRODUCTION_WND_TOOLTIP_PARTS
 Ship Parts
