@@ -315,14 +315,20 @@ public:
     void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
     void KeyPress(GG::Key key, std::uint32_t key_code_point,
                   GG::Flags<GG::ModKey> mod_keys) override;
+    void AcceptPastedText(const std::string& text) override;
     void GainingFocus() override;
     void LosingFocus() override;
     void Render() override;
     virtual bool AutoComplete() { return false; };
+    void DisallowChars(const std::string& chars)
+    { m_disallowed_chars = chars; }
     //@}
 
     mutable boost::signals2::signal<void ()> GainingFocusSignal;
     mutable boost::signals2::signal<void ()> LosingFocusSignal;
+
+private:
+    std::string m_disallowed_chars;
 };
 
 /** a FreeOrion Edit control that replaces its displayed characters with a
