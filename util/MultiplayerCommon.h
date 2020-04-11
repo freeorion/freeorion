@@ -70,8 +70,8 @@ struct FO_COMMON_API GalaxySetupData {
     std::string         m_game_uid;
 
     /** HACK! This must be set to the encoding empire's id when serializing a
-      * Universe, so that only the relevant parts of the Universe are
-      * serialized.  The use of this global variable is done just so I don't
+      * GalaxySetupData, so that only the relevant parts of the galaxy data are
+      * serialized.  The use of this local field is done just so I don't
       * have to rewrite any custom boost::serialization classes that implement
       * empire-dependent visibility. */
     int                 m_encoding_empire; ///< used during serialization to globally set what empire knowledge to use
