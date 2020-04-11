@@ -1432,6 +1432,9 @@ Count of minutes after the cookie record will be considered expired.
 OPTIONS_DB_PUBLISH_STATISTICS
 Enable sending empire staticstics to the player.
 
+OPTIONS_DB_PUBLISH_SEED
+Enable sending galaxy seed to the player.
+
 OPTIONS_DB_FIRST_TURN_TIME
 Absolute time point in format "2019-01-20 11:59:59" in UTC. If empty, first turn advance will happen after expiring interval. Requires fixed interval to be enabled.
 

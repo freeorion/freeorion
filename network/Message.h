@@ -210,7 +210,7 @@ FO_COMMON_API Message GameStartMessage(
     const EmpireManager& empires, const Universe& universe,
     const SpeciesManager& species, CombatLogManager& combat_logs,
     const SupplyManager& supply, const std::map<int, PlayerInfo>& players,
-    const GalaxySetupData& galaxy_setup_data, bool use_binary_serialization);
+    GalaxySetupData galaxy_setup_data, bool use_binary_serialization);
 
 /** creates a GAME_START message.  Contains the initial game state visible to
   * the player.  Also includes data loaded from a saved game. */
@@ -220,7 +220,7 @@ FO_COMMON_API Message GameStartMessage(
     const SpeciesManager& species, CombatLogManager& combat_logs,
     const SupplyManager& supply, const std::map<int, PlayerInfo>& players,
     const OrderSet& orders, const SaveGameUIData* ui_data,
-    const GalaxySetupData& galaxy_setup_data, bool use_binary_serialization);
+    GalaxySetupData galaxy_setup_data, bool use_binary_serialization);
 
 /** creates a GAME_START message.  Contains the initial game state visible to
   * the player.  Also includes state string loaded from a saved game. */
@@ -230,7 +230,7 @@ FO_COMMON_API Message GameStartMessage(
     const SpeciesManager& species, CombatLogManager& combat_logs,
     const SupplyManager& supply, const std::map<int, PlayerInfo>& players,
     const OrderSet& orders, const std::string* save_state_string,
-    const GalaxySetupData& galaxy_setup_data, bool use_binary_serialization);
+    GalaxySetupData galaxy_setup_data, bool use_binary_serialization);
 
 /** creates a HOST_SP_GAME acknowledgement message.  The \a player_id is the ID
   * of the receiving player.  This message should only be sent by the server.*/

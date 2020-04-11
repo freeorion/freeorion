@@ -106,7 +106,7 @@ std::map<int, SaveGameEmpireData> CompileSaveGameEmpireData() {
 int SaveGame(const std::string& filename, const ServerSaveGameData& server_save_game_data,
              const std::vector<PlayerSaveGameData>& player_save_game_data, const Universe& universe,
              const EmpireManager& empire_manager, const SpeciesManager& species_manager,
-             const CombatLogManager& combat_log_manager, const GalaxySetupData& galaxy_setup_data,
+             const CombatLogManager& combat_log_manager, GalaxySetupData galaxy_setup_data,
              bool multiplayer)
 {
     SectionedScopedTimer timer("SaveGame");
@@ -172,6 +172,7 @@ int SaveGame(const std::string& filename, const ServerSaveGameData& server_save_
         pos_before_writing = ofs.tellp();
 
         bool save_completed_as_xml = false;
+        galaxy_setup_data.m_encoding_empire = ALL_EMPIRES;
 
         if (!use_binary) {
             if (use_zlib_for_zml) {
