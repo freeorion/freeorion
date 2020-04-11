@@ -1007,7 +1007,7 @@ namespace {
     class ShipRow : public GG::ListBox::Row {
     public:
         ShipRow(GG::X w, GG::Y h, int ship_id) :
-            GG::ListBox::Row(w, h, ""),
+            GG::ListBox::Row(w, h),
             m_ship_id(ship_id)
         {
             SetName("ShipRow");
@@ -1795,9 +1795,11 @@ namespace {
     class FleetRow : public GG::ListBox::Row {
     public:
         FleetRow(int fleet_id, GG::X w, GG::Y h) :
-            GG::ListBox::Row(w, h, Objects().get<Fleet>(fleet_id) ? FLEET_DROP_TYPE_STRING : ""),
+            GG::ListBox::Row(w, h),
             m_fleet_id(fleet_id)
         {
+            if (Objects().get<Fleet>(fleet_id))
+                SetDragDropDataType(FLEET_DROP_TYPE_STRING);
             SetName("FleetRow");
             SetChildClippingMode(ClipToClient);
         }

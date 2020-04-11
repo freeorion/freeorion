@@ -1349,7 +1349,7 @@ private:
 };
 
 PartsListBox::PartsListBoxRow::PartsListBoxRow(GG::X w, GG::Y h, const AvailabilityManager& availabilities_state) :
-    CUIListBox::Row(w, h, ""),    // drag_drop_data_type = "" implies not draggable row
+    CUIListBox::Row(w, h),
     m_availabilities_state(availabilities_state)
 {}
 
@@ -2306,8 +2306,9 @@ void BasesListBox::HullAndNamePanel::SetDisplayName(const std::string& name) {
 }
 
 BasesListBox::BasesListBoxRow::BasesListBoxRow(GG::X w, GG::Y h, const std::string& hull, const std::string& name) :
-    CUIListBox::Row(w, h, BASES_LIST_BOX_DROP_TYPE)
+    CUIListBox::Row(w, h)
 {
+    SetDragDropDataType(BASES_LIST_BOX_DROP_TYPE);
     if (hull.empty()) {
         ErrorLogger() << "No hull name provided for ship row display.";
         return;

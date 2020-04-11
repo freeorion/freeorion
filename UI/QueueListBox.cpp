@@ -11,7 +11,7 @@
 // PromptRow
 ////////////////////////////////////////////////////////////
 PromptRow::PromptRow(GG::X w, const std::string& prompt) :
-    GG::ListBox::Row(w, GG::Y(20), ""),
+    GG::ListBox::Row(w, GG::Y(20)),
     m_prompt(
         GG::Wnd::Create<CUILabel>(
             prompt,

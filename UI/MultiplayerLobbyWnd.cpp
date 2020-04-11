@@ -48,12 +48,12 @@ namespace {
     // players or the host.
     struct PlayerRow : GG::ListBox::Row {
         PlayerRow() :
-            GG::ListBox::Row(GG::X(90), PlayerRowHeight(), ""),
+            GG::ListBox::Row(GG::X(90), PlayerRowHeight()),
             m_player_data(),
             m_player_id(Networking::INVALID_PLAYER_ID)
         {}
         PlayerRow(const PlayerSetupData& player_data, int player_id) :
-            GG::ListBox::Row(GG::X(90), PlayerRowHeight(), ""),
+            GG::ListBox::Row(GG::X(90), PlayerRowHeight()),
             m_player_data(player_data),
             m_player_id(player_id)
         {}
@@ -84,9 +84,10 @@ namespace {
             {}
 
             TypeRow(GG::X w, GG::Y h, Networking::ClientType type_, bool show_add_drop = false) :
-                GG::DropDownList::Row(w, h, "PlayerTypeSelectorRow"),
+                GG::DropDownList::Row(w, h),
                 type(type_)
             {
+                SetDragDropDataType("PlayerTypeSelectorRow");
                 switch (type) {
                 case Networking::CLIENT_TYPE_AI_PLAYER:
                     if (show_add_drop)
@@ -693,7 +694,7 @@ void MultiPlayerLobbyWnd::CompleteConstruction() {
 }
 
 MultiPlayerLobbyWnd::PlayerLabelRow::PlayerLabelRow(GG::X width /* = GG::X(580)*/) :
-    GG::ListBox::Row(width, PlayerRowHeight(), "")
+    GG::ListBox::Row(width, PlayerRowHeight())
 {}
 
 void MultiPlayerLobbyWnd::PlayerLabelRow::CompleteConstruction() {

@@ -319,7 +319,7 @@ namespace {
     class SitRepRow : public GG::ListBox::Row {
     public:
         SitRepRow(GG::X w, GG::Y h, const SitRepEntry& sitrep) :
-            GG::ListBox::Row(w, h, ""),
+            GG::ListBox::Row(w, h),
             m_sitrep(sitrep)
         {
             SetName("SitRepRow");

@@ -560,7 +560,7 @@ namespace {
          * @param [in] base_value optional; If greater than 0.0f: the value label is formatted to "value of base_value"
          */
         ShipFightersBrowseRow(const std::string& label, int qty, double value, double base_value = 0.0f) :
-            GG::ListBox::Row(FighterBrowseListWidth(), MeterBrowseRowHeight(), "")
+            GG::ListBox::Row(FighterBrowseListWidth(), MeterBrowseRowHeight())
         {
             const GG::Clr QTY_COLOR = GG::CLR_GRAY;
 

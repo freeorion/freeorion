@@ -530,10 +530,12 @@ namespace {
     public:
         ProductionItemRow(GG::X w, GG::Y h, const ProductionQueue::ProductionItem& item,
                           int empire_id, int location_id) :
-            GG::ListBox::Row(w, h, "", GG::ALIGN_NONE, 0),
+            GG::ListBox::Row(w, h),
             m_item(item)
         {
             SetName("ProductionItemRow");
+            SetMargin(0);
+            SetRowAlignment(GG::ALIGN_NONE);
             SetChildClippingMode(ClipToClient);
 
             if (m_item.build_type == BT_SHIP) {

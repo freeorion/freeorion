@@ -607,11 +607,13 @@ namespace {
     class PlayerRow : public GG::ListBox::Row {
     public:
         PlayerRow(GG::X w, GG::Y h, int player_id, int empire_id) :
-            GG::ListBox::Row(w, h, "", GG::ALIGN_NONE, 0),
+            GG::ListBox::Row(w, h),
             m_player_id(player_id),
             m_empire_id(empire_id),
             m_panel(nullptr)
         {
+            SetMargin(0);
+            SetRowAlignment(GG::ALIGN_NONE);
             SetName("PlayerRow");
             SetChildClippingMode(ClipToClient);
         }
