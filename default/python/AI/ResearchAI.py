@@ -9,6 +9,7 @@ from common.print_utils import print_in_columns
 from common import six
 
 import AIDependencies as Dep
+from AIDependencies import Tags
 import AIstate
 import ColonisationAI
 from aistate_interface import get_aistate
@@ -159,7 +160,7 @@ def get_max_stealth_species():
     stealth = -999
     stealth_species = ""
     for species_name in ColonisationAI.empire_colonizers:
-        this_stealth = stealth_grades.get(get_species_tag_grade(species_name, "STEALTH"), 0)
+        this_stealth = stealth_grades.get(get_species_tag_grade(species_name, Tags.STEALTH), 0)
         if this_stealth > stealth:
             stealth_species = species_name
             stealth = this_stealth

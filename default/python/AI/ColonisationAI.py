@@ -22,7 +22,8 @@ from EnumsAI import MissionType, FocusType, EmpireProductionTypes, ShipRoleType,
 from freeorion_tools import (tech_is_complete, get_species_tag_grade, cache_by_turn_persistent,
                              AITimer, get_partial_visibility_turn, cache_for_current_turn, cache_for_session)
 from AIDependencies import (INVALID_ID, OUTPOSTING_TECH, POP_CONST_MOD_MAP,
-                            POP_SIZE_MOD_MAP_MODIFIED_BY_SPECIES, POP_SIZE_MOD_MAP_NOT_MODIFIED_BY_SPECIES)
+                            POP_SIZE_MOD_MAP_MODIFIED_BY_SPECIES, POP_SIZE_MOD_MAP_NOT_MODIFIED_BY_SPECIES,
+                            Tags)
 
 colonization_timer = AITimer('getColonyFleets()')
 
@@ -81,7 +82,8 @@ def calc_max_pop(planet, species, detail):
             return 0
 
     tag_list = list(species.tags) if species else []
-    pop_tag_mod = AIDependencies.SPECIES_POPULATION_MODIFIER.get(get_species_tag_grade(species.name, "POPULATION"), 1.0)
+    pop_tag_mod = AIDependencies.SPECIES_POPULATION_MODIFIER.get(
+        get_species_tag_grade(species.name, Tags.POPULATION), 1.0)
     if planet.type == fo.planetType.gasGiant and "GASEOUS" in tag_list:
         gaseous_adjustment = AIDependencies.GASEOUS_POP_FACTOR
         detail.append("GASEOUS adjustment: %.2f" % gaseous_adjustment)
@@ -199,7 +201,7 @@ def galaxy_is_sparse():
 def rate_piloting_tag(species_name):
     grades = {'NO': 1e-8, 'BAD': 0.75, 'GOOD': GOOD_PILOT_RATING, 'GREAT': GREAT_PILOT_RATING,
               'ULTIMATE': ULT_PILOT_RATING}
-    return grades.get(get_species_tag_grade(species_name, "WEAPONS"), 1.0)
+    return grades.get(get_species_tag_grade(species_name, Tags.WEAPONS), 1.0)
 
 
 def rate_planetary_piloting(pid):
@@ -665,10 +667,10 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None, empire_rese
     planet_supply += sum(AIDependencies.SUPPLY_MOD_SPECIALS[_special].get(int(psize), 0)
                          for _special in supply_specials for psize in [-1, planet.size])
 
-    ind_tag_mod = AIDependencies.SPECIES_INDUSTRY_MODIFIER.get(get_species_tag_grade(spec_name, "INDUSTRY"), 1.0)
-    res_tag_mod = AIDependencies.SPECIES_RESEARCH_MODIFIER.get(get_species_tag_grade(spec_name, "RESEARCH"), 1.0)
+    ind_tag_mod = AIDependencies.SPECIES_INDUSTRY_MODIFIER.get(get_species_tag_grade(spec_name, Tags.INDUSTRY), 1.0)
+    res_tag_mod = AIDependencies.SPECIES_RESEARCH_MODIFIER.get(get_species_tag_grade(spec_name, Tags.RESEARCH), 1.0)
     if species:
-        supply_tag_mod = AIDependencies.SPECIES_SUPPLY_MODIFIER.get(get_species_tag_grade(spec_name, "SUPPLY"), 1)
+        supply_tag_mod = AIDependencies.SPECIES_SUPPLY_MODIFIER.get(get_species_tag_grade(spec_name, Tags.SUPPLY), 1)
     else:
         supply_tag_mod = 0
 
@@ -1270,8 +1272,8 @@ def send_colony_ships(colony_fleet_ids, evaluated_planets, mission_type):
 def _print_empire_species_roster():
     """Print empire species roster in table format to log."""
     grade_map = {"ULTIMATE": "+++", "GREAT": "++", "GOOD": "+", "AVERAGE": "o", "BAD": "-", "NO": "---"}
-    grade_tags = {'INDUSTRY': "Ind.", 'RESEARCH': "Res.", 'POPULATION': "Pop.",
-                  'SUPPLY': "Supply", 'WEAPONS': "Pilots", 'ATTACKTROOPS': "Troops"}
+    grade_tags = {Tags.INDUSTRY: "Ind.", Tags.RESEARCH: "Res.", Tags.POPULATION: "Pop.",
+                  Tags.SUPPLY: "Supply", Tags.WEAPONS: "Pilots", Tags.ATTACKTROOPS: "Troops"}
     header = [Text('species'), Sequence('Planets'), Bool('Colonizer'), Text('Shipyards')]
     header.extend(Text(v) for v in grade_tags.values())
     header.append(Sequence('Tags'))

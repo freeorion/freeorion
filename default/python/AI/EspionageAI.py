@@ -2,7 +2,7 @@ from logging import error, warning
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import AIDependencies
-from AIDependencies import ALL_EMPIRES
+from AIDependencies import ALL_EMPIRES, Tags
 from EnumsAI import EmpireMeters
 from freeorion_tools import cache_for_current_turn, get_species_tag_grade
 
@@ -102,7 +102,7 @@ def colony_detectable_by_empire(planet_id, species_name=None, empire=ALL_EMPIRES
     # overlapping with or superseded by the future_stealth_bonus, not additive with it.
     planet_stealth = max(planet_stealth, AIDependencies.BASE_PLANET_STEALTH + future_stealth_bonus)
     species_stealth_mod = AIDependencies.STEALTH_STRENGTHS_BY_SPECIES_TAG.get(
-        get_species_tag_grade(species_name, 'STEALTH'), 0)
+        get_species_tag_grade(species_name, Tags.STEALTH), 0)
     total_stealth = planet_stealth + species_stealth_mod
     if isinstance(empire, int):
         empire_detection = get_empire_detection(empire)
