@@ -456,7 +456,7 @@ def get_colony_fleets():
 # TODO: clean up suppliable versus annexable
 def assign_colonisation_values(planet_ids, mission_type, species, detail=None, return_all=False):
     """Creates a dictionary that takes planetIDs as key and their colonisation score as value."""
-    empire_research_list = [element.tech for element in fo.getEmpire().researchQueue]
+    empire_research_list = tuple(element.tech for element in fo.getEmpire().researchQueue)
     if detail is None:
         detail = []
     orig_detail = detail
@@ -594,7 +594,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None, empire_rese
         spec_name = ""
 
     if empire_research_list is None:
-        empire_research_list = [element.tech for element in empire.researchQueue]
+        empire_research_list = tuple(element.tech for element in empire.researchQueue)
     retval = 0
     character = get_aistate().character
     discount_multiplier = character.preferred_discount_multiplier([30.0, 40.0])
