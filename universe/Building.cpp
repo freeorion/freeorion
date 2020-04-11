@@ -170,12 +170,10 @@ BuildingType::BuildingType(const std::string& name,
     m_production_time(std::move(common_params.production_time)),
     m_producible(common_params.producible),
     m_capture_result(capture_result),
-    m_tags(),
     m_production_meter_consumption(std::move(common_params.production_meter_consumption)),
     m_production_special_consumption(std::move(common_params.production_special_consumption)),
     m_location(std::move(common_params.location)),
     m_enqueue_location(std::move(common_params.enqueue_location)),
-    m_effects(),
     m_icon(icon)
 {
     for (auto&& effect : common_params.effects)
@@ -197,9 +195,8 @@ void BuildingType::Init() {
         m_location->SetTopLevelContent(m_name);
     if (m_enqueue_location)
         m_enqueue_location->SetTopLevelContent(m_name);
-    for (auto& effect : m_effects) {
+    for (auto& effect : m_effects)
         effect->SetTopLevelContent(m_name);
-    }
 }
 
 std::string BuildingType::Dump(unsigned short ntabs) const {
@@ -248,67 +245,68 @@ std::string BuildingType::Dump(unsigned short ntabs) const {
 }
 
 bool BuildingType::ProductionCostTimeLocationInvariant() const {
+    // if rule is active, then scripted costs and times are ignored and actual costs are invariant
     if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_BUILDING_PRODUCTION"))
         return true;
+
+    // if cost or time are specified and not invariant, result is non-invariance
     if (m_production_cost && !(m_production_cost->TargetInvariant() && m_production_cost->SourceInvariant()))
         return false;
     if (m_production_time && !(m_production_time->TargetInvariant() && m_production_time->SourceInvariant()))
         return false;
+    // if both cost and time are not specified, result is invariance
     return true;
 }
 
 float BuildingType::ProductionCost(int empire_id, int location_id) const {
-    if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_BUILDING_PRODUCTION") || !m_production_cost) {
+    if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_BUILDING_PRODUCTION") || !m_production_cost)
         return 1.0f;
 
-    } else {
-        if (m_production_cost && m_production_cost->ConstantExpr())
-            return m_production_cost->Eval();
-        else if (m_production_cost->SourceInvariant() && m_production_cost->TargetInvariant())
-            return m_production_cost->Eval();
+    if (m_production_cost->ConstantExpr())
+        return m_production_cost->Eval();
+    else if (m_production_cost->SourceInvariant() && m_production_cost->TargetInvariant())
+        return m_production_cost->Eval();
 
-        const auto arbitrary_large_number = 999999.9f;
+    const auto ARBITRARY_LARGE_COST = 999999.9f;
 
-        auto location = Objects().get(location_id);
-        if (!location && !m_production_cost->TargetInvariant())
-            return arbitrary_large_number;
+    auto location = Objects().get(location_id);
+    if (!location && !m_production_cost->TargetInvariant())
+        return ARBITRARY_LARGE_COST;
 
-        auto source = Empires().GetSource(empire_id);
-        if (!source && !m_production_cost->SourceInvariant())
-            return arbitrary_large_number;
+    auto source = Empires().GetSource(empire_id);
+    if (!source && !m_production_cost->SourceInvariant())
+        return ARBITRARY_LARGE_COST;
 
-        ScriptingContext context(source, location);
+    ScriptingContext context(source, location);
 
-        return m_production_cost->Eval(context);
-    }
+    return m_production_cost->Eval(context);
 }
 
 float BuildingType::PerTurnCost(int empire_id, int location_id) const
 { return ProductionCost(empire_id, location_id) / std::max(1, ProductionTime(empire_id, location_id)); }
 
 int BuildingType::ProductionTime(int empire_id, int location_id) const {
-    if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_BUILDING_PRODUCTION") || !m_production_time) {
+    if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_BUILDING_PRODUCTION") || !m_production_time)
         return 1;
-    } else {
-        if (m_production_time && m_production_time->ConstantExpr())
-            return m_production_time->Eval();
-        else if (m_production_time->SourceInvariant() && m_production_time->TargetInvariant())
-            return m_production_time->Eval();
 
-        const auto arbitrary_large_number = 9999;
+    if (m_production_time->ConstantExpr())
+        return m_production_time->Eval();
+    else if (m_production_time->SourceInvariant() && m_production_time->TargetInvariant())
+        return m_production_time->Eval();
 
-        auto location = Objects().get(location_id);
-        if (!location && !m_production_time->TargetInvariant())
-            return arbitrary_large_number;
+    const int ARBITRARY_LARGE_TURNS = 9999;
 
-        auto source = Empires().GetSource(empire_id);
-        if (!source && !m_production_time->SourceInvariant())
-            return arbitrary_large_number;
+    auto location = Objects().get(location_id);
+    if (!location && !m_production_time->TargetInvariant())
+        return ARBITRARY_LARGE_TURNS;
 
-        ScriptingContext context(source, location);
+    auto source = Empires().GetSource(empire_id);
+    if (!source && !m_production_time->SourceInvariant())
+        return ARBITRARY_LARGE_TURNS;
 
-        return m_production_time->Eval(context);
-    }
+    ScriptingContext context(source, location);
+
+    return m_production_time->Eval(context);
 }
 
 bool BuildingType::ProductionLocation(int empire_id, int location_id) const {
@@ -367,9 +365,7 @@ unsigned int BuildingType::GetCheckSum() const {
 // static(s)
 BuildingTypeManager* BuildingTypeManager::s_instance = nullptr;
 
-BuildingTypeManager::BuildingTypeManager() :
-    m_building_types()
-{
+BuildingTypeManager::BuildingTypeManager() {
     if (s_instance)
         throw std::runtime_error("Attempted to create more than one BuildingTypeManager.");
 

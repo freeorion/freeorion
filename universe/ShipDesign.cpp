@@ -45,6 +45,9 @@ namespace {
     bool temp_bool = RegisterGameRules(&AddRules);
 
     const std::string EMPTY_STRING;
+    const int ARBITRARY_LARGE_TURNS = 999999;
+    const float ARBITRARY_LARGE_COST = 999999.9f;
+
 
     // create effectsgroup that increases the value of \a meter_type
     // by the result of evalulating \a increase_vr
@@ -470,23 +473,19 @@ float PartType::ProductionCost(int empire_id, int location_id, int in_design_id)
         return static_cast<float>(m_production_cost->Eval(context));
     }
 
-    const auto arbitrary_large_number = 999999.9f;
-
     auto location = Objects().get(location_id);
     if (!location && !m_production_cost->TargetInvariant())
-        return arbitrary_large_number;
+        return ARBITRARY_LARGE_COST;
 
     auto source = Empires().GetSource(empire_id);
     if (!source && !m_production_cost->SourceInvariant())
-        return arbitrary_large_number;
+        return ARBITRARY_LARGE_COST;
 
     ScriptingContext context(source, location, in_design_id);
     return static_cast<float>(m_production_cost->Eval(context));
 }
 
 int PartType::ProductionTime(int empire_id, int location_id, int in_design_id) const {
-    const auto arbitrary_large_number = 9999;
-
     if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION") || !m_production_time)
         return 1;
 
@@ -499,11 +498,11 @@ int PartType::ProductionTime(int empire_id, int location_id, int in_design_id) c
 
     auto location = Objects().get(location_id);
     if (!location && !m_production_time->TargetInvariant())
-        return arbitrary_large_number;
+        return ARBITRARY_LARGE_TURNS;
 
     auto source = Empires().GetSource(empire_id);
     if (!source && !m_production_time->SourceInvariant())
-        return arbitrary_large_number;
+        return ARBITRARY_LARGE_TURNS;
 
     ScriptingContext context(source, location, in_design_id);
     return m_production_time->Eval(context);
@@ -636,15 +635,13 @@ float HullType::ProductionCost(int empire_id, int location_id, int in_design_id)
         return static_cast<float>(m_production_cost->Eval(context));
     }
 
-    const auto arbitrary_large_number = 999999.9f;
-
     auto location = Objects().get(location_id);
     if (!location && !m_production_cost->TargetInvariant())
-        return arbitrary_large_number;
+        return ARBITRARY_LARGE_COST;
 
     auto source = Empires().GetSource(empire_id);
     if (!source && !m_production_cost->SourceInvariant())
-        return arbitrary_large_number;
+        return ARBITRARY_LARGE_COST;
 
     ScriptingContext context(source, location, in_design_id);
     return static_cast<float>(m_production_cost->Eval(context));
@@ -661,15 +658,13 @@ int HullType::ProductionTime(int empire_id, int location_id, int in_design_id) c
         return m_production_time->Eval(context);
     }
 
-    const auto arbitrary_large_number = 999999;
-
     auto location = Objects().get(location_id);
     if (!location && !m_production_time->TargetInvariant())
-        return arbitrary_large_number;
+        return ARBITRARY_LARGE_TURNS;
 
     auto source = Empires().GetSource(empire_id);
     if (!source && !m_production_time->SourceInvariant())
-        return arbitrary_large_number;
+        return ARBITRARY_LARGE_TURNS;
 
     ScriptingContext context(source, location, in_design_id);
     return m_production_time->Eval(context);
@@ -865,8 +860,8 @@ void ShipDesign::SetDescription(const std::string& description)
 bool ShipDesign::ProductionCostTimeLocationInvariant() const {
     if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION"))
         return true;
-    // as seen in ShipDesign::ProductionCost, the location is passed as the
-    // local candidate in the ScriptingContext
+    // as seen in ShipDesign::ProductionCost, the production location is passed
+    // as the local candidate in the ScriptingContext
 
     // check hull and all parts
     if (const HullType* hull = GetHullType(m_hull))
@@ -889,6 +884,7 @@ float ShipDesign::ProductionCost(int empire_id, int location_id) const {
     float cost_accumulator = 0.0f;
     if (const HullType* hull = GetHullType(m_hull))
         cost_accumulator += hull->ProductionCost(empire_id, location_id, m_id);
+
     int part_count = 0;
     for (const std::string& part_name : m_parts) {
         if (const PartType* part = GetPartType(part_name)) {
@@ -897,7 +893,11 @@ float ShipDesign::ProductionCost(int empire_id, int location_id) const {
         }
     }
 
-    return std::max(0.0f, cost_accumulator);
+    // Assuming no reasonable combination of parts and hull will add up to more
+    // than ARBITRARY_LARGE_COST. Truncating cost here to return it to indicate
+    // an uncalculable cost (ie. due to lacking a valid location object)
+
+    return std::min(std::max(0.0f, cost_accumulator), ARBITRARY_LARGE_COST);
 }
 
 float ShipDesign::PerTurnCost(int empire_id, int location_id) const
@@ -910,9 +910,14 @@ int ShipDesign::ProductionTime(int empire_id, int location_id) const {
     int time_accumulator = 1;
     if (const HullType* hull = GetHullType(m_hull))
         time_accumulator = std::max(time_accumulator, hull->ProductionTime(empire_id, location_id));
+
     for (const std::string& part_name : m_parts)
         if (const PartType* part = GetPartType(part_name))
             time_accumulator = std::max(time_accumulator, part->ProductionTime(empire_id, location_id));
+
+    // assuming that ARBITRARY_LARGE_TURNS is larger than any reasonable turns,
+    // so the std::max calls will preserve it be returned
+
     return std::max(1, time_accumulator);
 }
 

@@ -236,7 +236,7 @@ std::string Tech::Dump(unsigned short ntabs) const {
 }
 
 float Tech::ResearchCost(int empire_id) const {
-    const auto arbitrary_large_number = 999999.9f;
+    const auto ARBITRARY_LARGE_COST = 999999.9f;
 
     if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_TECH_RESEARCH") || !m_research_cost) {
         return 1.0;
@@ -248,7 +248,7 @@ float Tech::ResearchCost(int empire_id) const {
         return m_research_cost->Eval();
 
     } else if (empire_id == ALL_EMPIRES) {
-        return arbitrary_large_number;
+        return ARBITRARY_LARGE_COST;
 
     } else {
         if (m_research_cost->SourceInvariant())
@@ -256,7 +256,7 @@ float Tech::ResearchCost(int empire_id) const {
 
         auto source = Empires().GetSource(empire_id);
         if (!source)
-            return arbitrary_large_number;
+            return ARBITRARY_LARGE_COST;
 
         return m_research_cost->Eval(ScriptingContext(source));
     }
@@ -266,7 +266,7 @@ float Tech::PerTurnCost(int empire_id) const
 { return ResearchCost(empire_id) / std::max(1, ResearchTime(empire_id)); }
 
 int Tech::ResearchTime(int empire_id) const {
-    const auto arbitrary_large_number = 9999;
+    const auto ARBITRARY_LARGE_TURNS = 9999;
 
     if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_TECH_RESEARCH") || !m_research_turns) {
         return 1;
@@ -278,12 +278,12 @@ int Tech::ResearchTime(int empire_id) const {
             return m_research_turns->Eval();
 
     } else if (empire_id == ALL_EMPIRES) {
-        return arbitrary_large_number;
+        return ARBITRARY_LARGE_TURNS;
 
     } else {
         auto source = Empires().GetSource(empire_id);
         if (!source && !m_research_turns->SourceInvariant())
-            return arbitrary_large_number;
+            return ARBITRARY_LARGE_TURNS;
 
         return m_research_turns->Eval(ScriptingContext(source));
     }
