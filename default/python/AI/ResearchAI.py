@@ -9,12 +9,13 @@ from common.print_utils import print_in_columns
 from common import six
 
 import AIDependencies as Dep
+from AIDependencies import Tags
 import AIstate
 import ColonisationAI
 from aistate_interface import get_aistate
 import ShipDesignAI
 import TechsListsAI
-from freeorion_tools import chat_human, get_ai_tag_grade, tech_is_complete
+from freeorion_tools import chat_human, get_species_tag_grade, tech_is_complete
 from turn_state import state
 
 inProgressTechs = {}
@@ -158,13 +159,10 @@ def get_max_stealth_species():
     stealth_grades = {'BAD': -15, 'GOOD': 15, 'GREAT': 40, 'ULTIMATE': 60}
     stealth = -999
     stealth_species = ""
-    for specName in ColonisationAI.empire_colonizers:
-        this_spec = fo.getSpecies(specName)
-        if not this_spec:
-            continue
-        this_stealth = stealth_grades.get(get_ai_tag_grade(list(this_spec.tags), "STEALTH"), 0)
+    for species_name in ColonisationAI.empire_colonizers:
+        this_stealth = stealth_grades.get(get_species_tag_grade(species_name, Tags.STEALTH), 0)
         if this_stealth > stealth:
-            stealth_species = specName
+            stealth_species = species_name
             stealth = this_stealth
     result = (stealth_species, stealth)
     return result

@@ -9,7 +9,7 @@ import PlanetUtilsAI
 from AIDependencies import INVALID_ID
 from EnumsAI import MissionType
 from turn_state import state
-from freeorion_tools import cache_by_session_with_turnwise_update, chat_human, get_partial_visibility_turn
+from freeorion_tools import cache_for_current_turn, chat_human, get_partial_visibility_turn
 
 _DEBUG_CHAT = False
 _ACCEPTABLE_DETOUR_LENGTH = 2000
@@ -17,7 +17,7 @@ path_information = namedtuple('path_information', ['distance', 'fuel', 'path'])
 
 
 # cache this so that boost python does not need to make a new copy every time this info is needed in a turn.
-@cache_by_session_with_turnwise_update
+@cache_for_current_turn
 def _get_unobstructed_systems():
     return fo.getEmpire().supplyUnobstructedSystems
 
