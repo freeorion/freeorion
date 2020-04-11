@@ -195,6 +195,7 @@ def galaxy_is_sparse():
              ((avg_empire_systems >= 35) and (setup_data.shape != fo.galaxyShape.elliptical))))
 
 
+@cache_for_session
 def rate_piloting_tag(species_name):
     grades = {'NO': 1e-8, 'BAD': 0.75, 'GOOD': GOOD_PILOT_RATING, 'GREAT': GREAT_PILOT_RATING,
               'ULTIMATE': ULT_PILOT_RATING}
