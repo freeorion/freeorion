@@ -39,6 +39,7 @@ namespace {
     bool temp_bool = RegisterOptions(&AddOptions);
 
     const int MAX_PRODUCTION_TURNS = 200;
+    const float EPSILON = 0.001f;
 
     int ProductionTurns(float total_cost, int minimum_production_time, float local_pp_output,
                         float stockpile, float stockpile_limit_per_turn)
@@ -50,7 +51,7 @@ namespace {
         // allocate production each turn, limited by total stockpile, stockpile per turn limit, and connected industry output
         int prod_time_here = 0;
         float total_allocated = 0.0f;
-        for (; prod_time_here < MAX_PRODUCTION_TURNS && total_allocated < total_cost;) {
+        for (; prod_time_here < MAX_PRODUCTION_TURNS && total_allocated < total_cost - EPSILON;) {
             float avail_stockpile = std::min(stockpile, stockpile_limit_per_turn);
             float industry_output_used = local_pp_output;
             float stockpile_used = 0.0f;
@@ -328,26 +329,56 @@ namespace {
 
             const std::string& title = UserString(item.name);
             std::string main_text;
-            float total_cost = building_type->ProductionCost(empire_id, candidate_object_id);
-            int minimum_production_time = std::max(1, building_type->ProductionTime(empire_id, candidate_object_id));
 
-            if (obj) {
-                int prod_time_here = ProductionTurns(total_cost, minimum_production_time, local_pp_output,
-                                                     stockpile, stockpile_limit_per_turn);
 
-                // create title, description, production time and cost
-                if (prod_time_here < MAX_PRODUCTION_TURNS) {
-                    main_text += boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME")) %
-                                                std::to_string(prod_time_here) % candidate_name);
+
+            if (obj || building_type->ProductionCostTimeLocationInvariant()) {
+                // if location object is available, or cost and time are invariation to location, can safely evaluate cost and time
+                float total_cost = building_type->ProductionCost(empire_id, candidate_object_id);
+                int minimum_production_time = std::max(1, building_type->ProductionTime(empire_id, candidate_object_id));
+
+                if (obj) {
+                    // if location object is available, can evaluate production time at that location
+                    int prod_time_here = ProductionTurns(total_cost, minimum_production_time, local_pp_output,
+                                                         stockpile, stockpile_limit_per_turn);
+
+                    if (prod_time_here < MAX_PRODUCTION_TURNS) {
+                        main_text += boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME")) %
+                                                    std::to_string(prod_time_here) % candidate_name);
+                    } else {
+                        main_text += boost::io::str(FlexibleFormat(UserString("NO_PRODUCTION_HERE_CANT_PRODUCE")) %
+                                                    candidate_name);
+                    }
+                }
+
+                main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME_MINIMUM")) %
+                                                   std::to_string(minimum_production_time));
+                main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_COST")) %
+                                                   DoubleToString(total_cost, 3, false));
+
+            } else {
+                // no location object, but have location-dependent cost or time
+
+                int minimum_production_time = std::max(1, building_type->ProductionTime(empire_id, candidate_object_id));
+                // 9999 is arbitrary large time returned for evaluation failure due to lack of location object but object-dependent time
+                if (minimum_production_time >= 9999) {
+                    main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME_MINIMUM")) %
+                                                       UserString("PRODUCTION_WND_TOOLTIP_LOCATION_DEPENDENT"));
                 } else {
-                    main_text += boost::io::str(FlexibleFormat(UserString("NO_PRODUCTION_HERE_CANT_PRODUCE")) %
-                                                candidate_name);
+                    main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME_MINIMUM")) %
+                                                       std::to_string(minimum_production_time));
+                }
+
+                float total_cost = building_type->ProductionCost(empire_id, candidate_object_id);
+                // 999999.9f is arbitrary large cost returned for evaluation failure due to lack of location object but object-dependnet cost
+                if (total_cost >= 999999.9f) {
+                    main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_COST")) %
+                                                       UserString("PRODUCTION_WND_TOOLTIP_LOCATION_DEPENDENT"));
+                } else {
+                    main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_COST")) %
+                                                       DoubleToString(total_cost, 3, false));
                 }
             }
-            main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME_MINIMUM")) %
-                                               std::to_string(minimum_production_time));
-            main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_COST")) %
-                                                 DoubleToString(total_cost, 3, false));
 
             main_text += "\n\n" + UserString(building_type->Description());
 
@@ -375,24 +406,54 @@ namespace {
             // create title, description, production time and cost, hull type
             const std::string& title = design->Name(true);
             std::string main_text;
-            float total_cost = design->ProductionCost(empire_id, candidate_object_id);
-            int minimum_production_time = design->ProductionTime(empire_id, candidate_object_id);
 
-            if (obj) {
-                int prod_time_here = ProductionTurns(total_cost, minimum_production_time, local_pp_output,
-                                                     stockpile, stockpile_limit_per_turn);
+            if (obj || design->ProductionCostTimeLocationInvariant()) {
+                // if location object is available, or cost and time are invariation to location, can safely evaluate cost and time
+                float total_cost = design->ProductionCost(empire_id, candidate_object_id);
+                int minimum_production_time = std::max(1, design->ProductionTime(empire_id, candidate_object_id));
 
-                if (prod_time_here <= MAX_PRODUCTION_TURNS) {
-                    main_text += boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME")) %
-                        std::to_string(prod_time_here) % candidate_name);
+                if (obj) {
+                    // if location object is available, can evaluate production time at that location
+                    int prod_time_here = ProductionTurns(total_cost, minimum_production_time, local_pp_output,
+                                                         stockpile, stockpile_limit_per_turn);
+
+                    if (prod_time_here < MAX_PRODUCTION_TURNS) {
+                        main_text += boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME")) %
+                                                    std::to_string(prod_time_here) % candidate_name);
+                    } else {
+                        main_text += boost::io::str(FlexibleFormat(UserString("NO_PRODUCTION_HERE_CANT_PRODUCE")) %
+                                                    candidate_name);
+                    }
+                }
+
+                main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME_MINIMUM")) %
+                                                   std::to_string(minimum_production_time));
+                main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_COST")) %
+                                                   DoubleToString(total_cost, 3, false));
+
+            } else {
+                // no location object, but have location-dependent cost or time
+
+                int minimum_production_time = std::max(1, design->ProductionTime(empire_id, candidate_object_id));
+                // 9999 is arbitrary large time returned for evaluation failure due to lack of location object but object-dependent time
+                if (minimum_production_time >= 9999) {
+                    main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME_MINIMUM")) %
+                                                       UserString("PRODUCTION_WND_TOOLTIP_LOCATION_DEPENDENT"));
                 } else {
-                    main_text += boost::io::str(FlexibleFormat(UserString("NO_PRODUCTION_HERE_CANT_PRODUCE")) % candidate_name);
+                    main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME_MINIMUM")) %
+                                                       std::to_string(minimum_production_time));
+                }
+
+                float total_cost = design->ProductionCost(empire_id, candidate_object_id);
+                // 999999.9f is arbitrary large cost returned for evaluation failure due to lack of location object but object-dependnet cost
+                if (total_cost >= 999999.9f) {
+                    main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_COST")) %
+                                                       UserString("PRODUCTION_WND_TOOLTIP_LOCATION_DEPENDENT"));
+                } else {
+                    main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_COST")) %
+                                                       DoubleToString(total_cost, 3, false));
                 }
             }
-            main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME_MINIMUM")) %
-                                               std::to_string(minimum_production_time));
-            main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_COST")) %
-                                               DoubleToString(total_cost, 3, false));
 
             main_text += "\n\n" + design->Description(true);
 

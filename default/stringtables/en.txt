@@ -4515,6 +4515,9 @@ Production cost: %1%
 PRODUCTION_WND_TOOLTIP_PROD_TIME_MINIMUM
 Minimum production turns: %1%
 
+PRODUCTION_WND_TOOLTIP_LOCATION_DEPENDENT
+Depends on location
+
 PRODUCTION_WND_TOOLTIP_PROD_TIME
 Fully-funded production turns at %2%: %1% 
 
