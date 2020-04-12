@@ -89,7 +89,7 @@ namespace GG {
   * all of which will exist in whatever namespace this
   * macro is used. */
 #define GG_CLASS_ENUM(EnumName, ...)                                                    \
-    enum EnumName {                                                                     \
+    enum EnumName : int {                                                               \
         __VA_ARGS__                                                                     \
      };                                                                                 \
                                                                                         \

@@ -312,7 +312,7 @@ public:
     typedef std::map<const Wnd*, bool>::iterator DropsAcceptableIter;
 
     /** The modes of child clipping. */
-    enum ChildClippingMode {
+    enum ChildClippingMode : int {
         /** No child clipping is performed. */
         DontClip,
 
@@ -795,7 +795,7 @@ protected:
     /** The states a Wnd may be in, with respect to drag-and-drop operations.
         Wnds may wish to consider the current state when rendering to provide
         visual feedback to the user. */
-    enum DragDropRenderingState {
+    enum DragDropRenderingState : int {
         /** No drag-and-drop is taking place at all with this Wnd. */
         NOT_DRAGGED,
 

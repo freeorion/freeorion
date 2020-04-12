@@ -86,7 +86,7 @@ namespace internal
     inline bool is_code_point_valid(u32 cp)
     {
         return (cp <= CODE_POINT_MAX && !is_surrogate(cp) && cp != 0xfffe && cp != 0xffff);
-    }  
+    }
 
     template <typename octet_iterator>
     inline typename std::iterator_traits<octet_iterator>::difference_type
@@ -105,7 +105,7 @@ namespace internal
             return 0;
     }
 
-    enum utf_error {OK, NOT_ENOUGH_ROOM, INVALID_LEAD, INCOMPLETE_SEQUENCE, OVERLONG_SEQUENCE, INVALID_CODE_POINT};
+    enum utf_error : int {OK, NOT_ENOUGH_ROOM, INVALID_LEAD, INCOMPLETE_SEQUENCE, OVERLONG_SEQUENCE, INVALID_CODE_POINT};
 
     template <typename octet_iterator>
     utf_error validate_next(octet_iterator& it, octet_iterator end, uint32_t* code_point)

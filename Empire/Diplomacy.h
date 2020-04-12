@@ -9,7 +9,7 @@
 
 class FO_COMMON_API DiplomaticMessage {
 public:
-    enum DiplomaticMessageType {
+    enum DiplomaticMessageType : int {
         INVALID_DIPLOMATIC_MESSAGE_TYPE = -1,
         WAR_DECLARATION,
         PEACE_PROPOSAL,

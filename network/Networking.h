@@ -16,7 +16,7 @@ namespace Networking {
     FO_COMMON_API int DiscoveryPort();
     FO_COMMON_API int MessagePort();
 
-    enum ClientType {
+    enum ClientType : int {
         INVALID_CLIENT_TYPE = -1,
         CLIENT_TYPE_AI_PLAYER,
         CLIENT_TYPE_HUMAN_PLAYER,

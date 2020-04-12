@@ -16,13 +16,13 @@ namespace Condition {
 
 typedef std::vector<std::shared_ptr<const UniverseObject>> ObjectSet;
 
-enum Invariance {
+enum Invariance : int {
     UNKNOWN_INVARIANCE, ///< This condition hasn't yet calculated this invariance type
     INVARIANT,          ///< This condition is invariant to a particular type of object change
     VARIANT             ///< This condition's result depends on the state of a particular object
 };
 
-enum SearchDomain {
+enum SearchDomain : int {
     NON_MATCHES,    ///< The Condition will only examine items in the non matches set; those that match the Condition will be inserted into the matches set.
     MATCHES         ///< The Condition will only examine items in the matches set; those that do not match the Condition will be inserted into the nonmatches set.
 };
