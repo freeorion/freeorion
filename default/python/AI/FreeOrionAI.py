@@ -372,7 +372,7 @@ def generateOrders():  # pylint: disable=invalid-name
             statprof.stop()
             statprof.display()
             statprof.start()
-        except:
+        except:  # noqa: E722
             pass
 
 

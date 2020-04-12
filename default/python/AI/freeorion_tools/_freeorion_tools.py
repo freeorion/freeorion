@@ -111,7 +111,7 @@ class ConsoleLogHandler(logging.Handler):
         except (KeyboardInterrupt, SystemExit):
             raise
         # Hide errors from within the ConsoleLogHandler
-        except:
+        except:  # noqa: E722
             self.handleError(record)
 
 
@@ -217,7 +217,7 @@ def tuple_to_dict(tup):
     except TypeError:
         try:
             return {k: v for k, v in [tup]}
-        except:
+        except:  # noqa: E722
             error("Can't convert tuple_list to dict: %s", tup)
             return {}
 

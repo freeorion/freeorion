@@ -691,7 +691,7 @@ def generate_classic_research_orders():
                     debug("    Enqueued Tech: %20s \t\t %8.0f \t %8.0f", name, this_cost, cum_cost)
                 else:
                     warning("    Failed attempt to enqueued Tech: " + name)
-            except:
+            except:  # noqa: E722
                 warning("    Failed attempt to enqueued Tech: " + name, exc_info=True)
 
         debug('\n\nAll techs:')

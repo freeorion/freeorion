@@ -127,7 +127,7 @@ def main():
             allData[details['name']] = data
             empireColors[details['name']] = details['color']
             species[details['name']] = details['species']
-        except:
+        except:  # noqa: E722
             print("error processing %s" % lfile)
             print("Error: exception triggered and caught: ", traceback.format_exc())
 

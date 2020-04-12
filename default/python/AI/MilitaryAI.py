@@ -706,7 +706,7 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
         else:
             try:
                 capital_sys_id = next(iter(aistate.fleetStatus.items()))[1]['sysID']
-            except:
+            except:  # noqa: E722
                 pass
 
     num_targets = max(10, PriorityAI.allotted_outpost_targets)
