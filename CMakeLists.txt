@@ -242,6 +242,8 @@ set(Boost_PYTHON_SUFFIX "${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}")
 
 find_package(ZLIB REQUIRED)
 if(NOT BUILD_HEADLESS)
+    set(SDL_NO_MAIN true)
+    find_package(SDL REQUIRED)
     find_package(Freetype REQUIRED)
     find_package(OpenGL REQUIRED)
     find_package(OpenAL REQUIRED)
@@ -610,6 +612,7 @@ if(NOT BUILD_HEADLESS)
 
     target_include_directories(freeorion SYSTEM
         PRIVATE
+            ${SDL_INCLUDE_DIRS}
             ${OPENGL_INCLUDE_DIR}
             ${OPENAL_INCLUDE_DIR}
             ${OGG_INCLUDE_DIRS}
@@ -620,7 +623,7 @@ if(NOT BUILD_HEADLESS)
     target_link_libraries(freeorion
         freeorioncommon
         freeorionparse
-        GiGi::GiGiSDL
+        ${SDL_LIBRARIES}
         ${OPENGL_gl_LIBRARY}
         ${OPENAL_LIBRARY}
         ${OGG_LIBRARIES}
@@ -657,8 +660,6 @@ if(APPLE)
             ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:freeorionparse>" "$<TARGET_FILE_DIR:freeorion>/../SharedSupport"
         COMMAND
             ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:GiGi>" "$<TARGET_FILE_DIR:freeorion>/../SharedSupport"
-        COMMAND
-           ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:GiGiSDL>" "$<TARGET_FILE_DIR:freeorion>/../SharedSupport"
         COMMAND
            ${CMAKE_COMMAND} -E copy_if_different "${Boost_ATOMIC_LIBRARY}" "$<TARGET_FILE_DIR:freeorion>/../SharedSupport"
         COMMAND

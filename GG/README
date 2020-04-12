@@ -1,12 +1,6 @@
-GiGi (aka GG) is a C++ OpenGL GUI library.  It has a driver that work with SDL
-(http://www.libsdl.org).
+# GiGi
 
-For documentation of building GG, you can check out:
-
-http://gigi.sourceforge.net/doxygen
-
-However, this documentation is often pretty out of date, so try building the
-documentation from the sources.
+GiGi is a C++ OpenGL GUI library.
 
 For information on building GG from sources, see INSTALLING.
 For information on packaging GG for Linux distributions, see PACKAGING.

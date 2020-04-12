@@ -131,7 +131,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>../../;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Common.lib;Parsers.lib;GiGi.lib;GiGiSDL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Common.lib;Parsers.lib;GiGi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>../../FreeOrion.exe</OutputFile>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <IgnoreSpecificDefaultLibraries>LIBCMT; LIBCPMT</IgnoreSpecificDefaultLibraries>
@@ -159,7 +159,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>../../;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Common.lib;Parsers.lib;GiGi.lib;GiGiSDL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Common.lib;Parsers.lib;GiGi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>../../FreeOrion.exe</OutputFile>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <IgnoreSpecificDefaultLibraries>LIBCMT; LIBCPMT</IgnoreSpecificDefaultLibraries>
@@ -228,6 +228,7 @@
     <ClInclude Include="..\..\UI\ResearchWnd.h" />
     <ClInclude Include="..\..\UI\ResourceBrowseWnd.h" />
     <ClInclude Include="..\..\UI\ResourcePanel.h" />
+    <ClInclude Include="..\..\UI\SDLGUI.h" />
     <ClInclude Include="..\..\UI\ServerConnectWnd.h" />
     <ClInclude Include="..\..\UI\ShaderProgram.h" />
     <ClInclude Include="..\..\UI\SidePanel.h" />
@@ -347,6 +348,7 @@
     <ClCompile Include="..\..\UI\ResourceBrowseWnd.cpp" />
     <ClCompile Include="..\..\UI\ResourcePanel.cpp" />
     <ClCompile Include="..\..\UI\SaveFileDialog.cpp" />
+    <ClCompile Include="..\..\UI\SDLGUI.cpp" />
     <ClCompile Include="..\..\UI\ServerConnectWnd.cpp" />
     <ClCompile Include="..\..\UI\ShaderProgram.cpp" />
     <ClCompile Include="..\..\UI\SidePanel.cpp" />

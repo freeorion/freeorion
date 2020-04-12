@@ -6,8 +6,7 @@
     \section design_purpose Purpose 
     GG is designed to achieve several goals:
     - Platform-independence: GG should be buildable on any platform that supports OpenGL
-    - Driver-independence: GG should be a standalone GUI framework that does not require any particular application framework;
-    though a SDL driver are supplied, GG should be usable with any driver code the user wishes to supply
+    - Driver-independence: GG should be a standalone GUI framework that does not require any particular application framework
     - Easy extensibility: new controls and GUI behavior should be easy to incorporate
     - Complete graphical control for the user/designer: the user should not be limited by the author's lack of artistic skill!
     - Independence of UI elements from the source code: GG UI elements should be configurable as text files, so that UI design 
@@ -101,8 +100,7 @@
     (position and button depression), setting mouse delay repeat (see GG::GUI
     for a description of this), entering and exiting from an orthographic
     projection (2D) rendering mode.  Most of these services must be provided
-    by the user when subclassing from GG::GUI; if SDLGUI is used, these
-    services are already implemented.
+    by the user when subclassing from GG::GUI.
 
     <p>
 
@@ -221,9 +219,9 @@
     \section text_handling_user_input User Input
 
     Unicode characters can be input by the user, as long as the input driver
-    handles Unicode input.  The SDL reference driver does.  GG will convert
-    any Unicode input to a multibyte UTF-8 sequence before adding it to a
-    user-editable string (e.g. as in a GG::Edit).
+    handles Unicode input.  GG will convert any Unicode input to a multibyte
+    UTF-8 sequence before adding it to a user-editable string (e.g. as in a
+    GG::Edit).
 
 */
 
@@ -277,9 +275,6 @@
     At least one of:
     - libpng - http://www.libpng.org/pub/png/libpng.html
     - libtiff - http://www.libtiff.org
-
-    Optional libraries for input drivers:
-    - SDL >= 1.2 - http://www.libsdl.org
 
     GG's documentation relies on Doxygen
     (http://www.stack.nl/~dimitri/doxygen). If you have Doxygen installed in a
@@ -457,11 +452,6 @@
     different accelerators.  Each accelerator has an associated signal to
     which arbitrarily many slots can be connected.  \see The GG::GUI
     description.
-
-    \section tour_user_input_drivers User Input Drivers
-
-    A <a href="http://libsdl.org">SDL</a> input driver is currently available
-    for use with GG.
 
     \section tour_timers Timers
 

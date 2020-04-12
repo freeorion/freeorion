@@ -579,7 +579,6 @@ EXCLUDE_SYMBOLS        = GG::detail \
                          boost \
                          boost::archive \
                          GG_API \
-                         GG_SDL_API \
                          FT_ULong \
                          FT_Face
 

@@ -1,5 +1,5 @@
 // -*- C++ -*-
-/* GG is a GUI for SDL and OpenGL.
+/* GG is a GUI for OpenGL.
    Copyright (C) 2003-2008 T. Zachary Laine
 
    This library is free software; you can redistribute it and/or
@@ -115,7 +115,6 @@ MyEventPump pump;
 while ( ... ) {
     // Application-specific code to grab events from the OS or other
     // lower-level driver layer and pass the GG-relevant ones to GG goes here.
-    // See SDLGUI::HandleSystemEvents() for an example.
     pump();
 }
 \endverbatim */

@@ -1,4 +1,4 @@
-# GG is a GUI for SDL and OpenGL.
+# GG is a GUI for OpenGL.
 #
 # Copyright (C) 2009-2011 T. Zach Laine
 #
@@ -46,7 +46,6 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 option(ENABLE_PNG_TEXTURES "Enable PNG texture support." ON)
 option(ENABLE_TIFF_TEXTURES "Enable TIFF texture support." OFF)
-option(BUILD_SDL_DRIVER "Builds GG SDL support (the GiGiSDL library)." ON)
 option(BUILD_DOCUMENTATION "Builds HTML documentation." OFF)
 option(BUILD_TESTING "Build the testing tree." OFF)
 option(BUILD_DEVEL_PACKAGE "Install development files." ON)
@@ -97,9 +96,6 @@ if(NOT BUILD_HEADLESS)
     else()
         set(int_have_tiff 0)
     endif()
-    set(SDL_NO_MAIN true)
-    
-    find_package(SDL REQUIRED)
 endif()
 
 include_directories(
@@ -160,56 +156,34 @@ if(NOT BUILD_HEADLESS)
             Boost::regex
             ${FREETYPE_LIBRARIES}
     )
-    
+
     if(TARGET PNG::PNG)
         target_link_libraries(GiGi PRIVATE PNG::PNG)
     endif()
-    
+
     if(TARGET TIFF::TIFF)
         target_link_libraries(GiGi PRIVATE TIFF::TIFF)
     endif()
-    
-    
-    add_library(GiGiSDL "")
-    
-    add_library(GiGi::GiGiSDL ALIAS GiGiSDL)
-    
-    target_include_directories(GiGiSDL SYSTEM
-        INTERFACE
-            ${SDL_INCLUDE_DIR}
-        PUBLIC
-            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-    )
-    
-    target_link_libraries(GiGiSDL
-        PUBLIC
-            GiGi::GiGi
-            ${SDL_LIBRARIES}
-        PRIVATE
-            Boost::boost
-            Boost::disable_autolinking
-            Boost::dynamic_linking
-    )
-    
-    
+
+
     ##
     ## Recurse into sources.
     ##
-    
+
     add_subdirectory(GG)
     add_subdirectory(src)
-    
+
     if(BUILD_TESTING)
         enable_testing()
         enable_coverage()
-    
+
         if(NOT TARGET unittest)
             add_custom_target(unittest
                 COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
                 COMMENT "Run tests for ${CMAKE_PROJECT_NAME}"
             )
         endif()
-    
+
         add_subdirectory(test)
     endif()
 endif()
@@ -261,36 +235,6 @@ if(UNIX AND BUILD_DEVEL_PACKAGE AND NOT BUILD_HEADLESS)
 endif()
 
 
-if(UNIX AND NOT APPLE AND NOT BUILD_HEADLESS)
-    install(
-        TARGETS GiGiSDL
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        COMPONENT COMPONENT_GIGISDL
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-        COMPONENT COMPONENT_GIGISDL
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        COMPONENT COMPONENT_GIGISDL_DEVEL
-    )
-endif()
-
-if(UNIX AND BUILD_DEVEL_PACKAGE AND NOT BUILD_HEADLESS)
-    get_pkg_config_libs(pkg_config_libs ${GiGiSDL_LINK_LIBS})
-
-    configure_file(
-        ${CMAKE_CURRENT_SOURCE_DIR}/cmake/GiGiSDL.pc.in
-        ${CMAKE_BINARY_DIR}/GiGiSDL.pc
-        @ONLY
-    )
-
-    install(
-        FILES ${CMAKE_BINARY_DIR}/GiGiSDL.pc
-        DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
-        COMPONENT COMPONENT_GIGI_DEVEL
-        OPTIONAL
-    )
-endif()
-
-
 set(CPACK_PACKAGE_VERSION ${GIGI_VERSION})
 set(CPACK_PACKAGE_VENDOR "T. Zachary Laine")
 set(CPACK_PACKAGE_CONTACT ${CPACK_PACKAGE_VENDOR})
@@ -308,17 +252,9 @@ set(CPACK_RPM_PACKAGE_REQUIRES)
 list(APPEND CPACK_RPM_PACKAGE_REQUIRES Mesa freetype2)
 list(APPEND CPACK_RPM_PACKAGE_REQUIRES gigi=${GIGI_VERSION})
 
-if(BUILD_SDL_DRIVER)
-    list(APPEND CPACK_RPM_PACKAGE_REQUIRES SDL>=1.2)
-endif()
-
 if(BUILD_DEVEL_PACKAGE)
     list(APPEND CPACK_RPM_PACKAGE_REQUIRES boost-devel>=1.44.0 Mesa-devel freetype2-devel)
     list(APPEND CPACK_RPM_PACKAGE_REQUIRES gigi-devel=${GIGI_VERSION})
-endif()
-
-if(BUILD_DEVEL_PACKAGE AND BUILD_SDL_DRIVER)
-    list(APPEND CPACK_RPM_PACKAGE_REQUIRES SDL-devel>=1.2)
 endif()
 
 # Deb-specific settings
@@ -327,17 +263,9 @@ set(CPACK_DEBIAN_PACKAGE_SECTION libs)
 set(CPACK_DEBIAN_PACKAGE_DEPENDS "libgl1-mesa-glx | libgl1, libfreetype6")
 set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, gigi (= ${GIGI_VERSION})")
 
-if(BUILD_SDL_DRIVER)
-    set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, libsdl1.2debian (>= 1.2)")
-endif()
-
 if(BUILD_DEVEL_PACKAGE)
     set(CPACK_DEBIAN_PACKAGE_DEPENDS "boost-devel (>= 1.44.0), libgl1-mesa-dev | libgl-dev, libfreetype6-dev")
     set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, gigi-dev (= ${GIGI_VERSION})")
-endif()
-
-if(BUILD_DEVEL_PACKAGE AND BUILD_SDL_DRIVER)
-    set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, libsdl1.2-dev (>= 1.2)")
 endif()
 
 if(UNIX)
@@ -369,27 +297,11 @@ cpack_add_component(
 )
 
 cpack_add_component(
-    COMPONENT_GIGISDL
-    DISPLAY_NAME GiGiSDL
-    DESCRIPTION "An SDL input driver (http://www.libsdl.org)."
-    GROUP COMPONENT_GROUP_RUNTIME
-    DEPENDS COMPONENT_GIGI
-)
-
-cpack_add_component(
     COMPONENT_GIGI_DEVEL
     DISPLAY_NAME "GiGi"
     DESCRIPTION "The files necessary to do development with GiGi."
     GROUP COMPONENT_GROUP_DEVEL
     DEPENDS COMPONENT_GIGI
-)
-
-cpack_add_component(
-    COMPONENT_GIGISDL_DEVEL
-    DISPLAY_NAME "GiGiSDL"
-    DESCRIPTION "The files necessary to do development with GiGiSDL."
-    GROUP COMPONENT_GROUP_DEVEL
-    DEPENDS COMPONENT_GIGI_DEVEL COMPONENT_GIGISDL
 )
 
 cpack_add_component_group(
