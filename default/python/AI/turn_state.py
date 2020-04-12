@@ -71,7 +71,7 @@ class State(object):
                 if AIDependencies.PANOPTICON_SPECIAL in planet.specials:
                     self.__have_panopticon = True
                 if population > 0 and AIDependencies.COMPUTRONIUM_SPECIAL in planet.specials:
-                        self.__have_computronium = True  # TODO: Check if species can set research focus
+                    self.__have_computronium = True  # TODO: Check if species can set research focus
 
                 if planet.focus == FocusType.FOCUS_INDUSTRY:
                     self.__num_industrialists += population
