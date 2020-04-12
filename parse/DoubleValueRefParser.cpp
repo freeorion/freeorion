@@ -2,7 +2,7 @@
 
 #include "Parse.h"
 #include "MovableEnvelope.h"
-#include "../universe/ValueRefs.h"
+#include "../universe/ValueRef.h"
 
 #include <boost/spirit/include/phoenix.hpp>
 

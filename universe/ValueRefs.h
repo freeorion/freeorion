@@ -71,7 +71,7 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-enum ReferenceType {
+enum ReferenceType : int {
     INVALID_REFERENCE_TYPE = -1,
     NON_OBJECT_REFERENCE,               // ValueRef::Variable is not evalulated on any specific object
     SOURCE_REFERENCE,                   // ValueRef::Variable is evaluated on the source object
@@ -117,22 +117,6 @@ private:
     friend class boost::serialization::access;
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
-};
-
-enum StatisticType {
-    INVALID_STATISTIC_TYPE = -1,
-    COUNT,  // returns the number of objects matching the condition
-    UNIQUE_COUNT,   // returns the number of distinct property values of objects matching the condition. eg. if 3 objects have the property value "small", and two have "big", then this value is 2, as there are 2 unique property values.
-    IF,     // returns T(1) if anything matches the condition, or T(0) otherwise
-    SUM,    // returns the sum of the property values of all objects matching the condition
-    MEAN,   // returns the mean of the property values of all objects matching the condition
-    RMS,    // returns the sqrt of the mean of the squares of the property values of all objects matching the condition
-    MODE,   // returns the most common property value of objects matching the condition.  supported for non-numeric types such as enums.
-    MAX,    // returns the maximum value of the property amongst objects matching the condition
-    MIN,    // returns the minimum value of the property amongst objects matching the condition
-    SPREAD, // returns the (positive) difference between the maximum and minimum values of the property amongst objects matching the condition
-    STDEV,  // returns the standard deviation of the property values of all objects matching the condition
-    PRODUCT // returns the product of the property values of all objects matching the condition
 };
 
 /** The variable statistic class.   The value returned by this node is
@@ -335,7 +319,7 @@ private:
 
 /** Returns the in-game name of the object / empire / etc. with a specified id. */
 struct FO_COMMON_API NameLookup final : public Variable<std::string> {
-    enum LookupType {
+    enum LookupType : int {
         INVALID_LOOKUP = -1,
         OBJECT_NAME,
         EMPIRE_NAME,
@@ -371,7 +355,7 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-enum OpType {
+enum OpType : int {
     PLUS,
     MINUS,
     TIMES,

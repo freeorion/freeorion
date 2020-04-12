@@ -1,7 +1,7 @@
 #include "EffectParser1.h"
 
 #include "../universe/Effects.h"
-#include "../universe/ValueRefs.h"
+#include "../universe/ValueRef.h"
 #include "../universe/Enums.h"
 
 #include <boost/spirit/include/phoenix.hpp>
@@ -11,8 +11,8 @@ namespace qi = boost::spirit::qi;
 namespace phoenix = boost::phoenix;
 
 namespace parse { namespace detail {
-    using PassedMessageParams =  std::vector<std::pair<std::string,
-        MovableEnvelope<ValueRef::ValueRef<std::string>>>>;
+    using PassedMessageParams =
+        std::vector<std::pair<std::string, MovableEnvelope<ValueRef::ValueRef<std::string>>>>;
 
     effect_payload construct_GenerateSitRepMessage1(
         const std::string& message_string, const std::string& icon,
