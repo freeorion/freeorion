@@ -21,6 +21,8 @@
 #include "UniverseObject.h"
 #include "UniverseGenerator.h"
 #include "Predicates.h"
+#include "ShipPartHull.h"
+#include "ShipDesign.h"
 #include "Special.h"
 #include "Species.h"
 #include "Tech.h"
@@ -1406,7 +1408,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
         const ShipDesign* ship_design = ship->Design();
         if (!ship_design)
             continue;
-        const HullType* hull_type = ship_design->GetHull();
+        const HullType* hull_type = GetHullType(ship_design->Hull());
         if (!hull_type) {
             ErrorLogger() << "GetEffectsAndTargets couldn't get HullType";
             continue;

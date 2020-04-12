@@ -10,6 +10,7 @@
 #include "../universe/Ship.h"
 #include "../universe/Fighter.h"
 #include "../universe/ShipDesign.h"
+#include "../universe/ShipPartHull.h"
 #include "../universe/System.h"
 #include "../universe/Species.h"
 #include "../universe/Enums.h"

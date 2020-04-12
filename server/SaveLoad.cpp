@@ -7,7 +7,7 @@
 #include "../universe/Fleet.h"
 #include "../universe/Ship.h"
 #include "../universe/Planet.h"
-#include "../universe/ShipDesign.h"
+//#include "../universe/ShipDesign.h"
 #include "../universe/System.h"
 #include "../universe/Species.h"
 #include "../util/Directories.h"

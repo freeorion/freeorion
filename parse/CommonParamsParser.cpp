@@ -21,10 +21,10 @@ namespace phoenix = boost::phoenix;
 namespace parse { namespace detail {
     /** Open parsed envelopes of consumption pairs. Return a map of unique_ptr. */
     template <typename T>
-    CommonParams::ConsumptionMap<T> OpenConsumptionEnvelopes(
+    ConsumptionMap<T> OpenConsumptionEnvelopes(
         const common_params_rules::ConsumptionMapPackaged<T>& in, bool& pass)
     {
-        CommonParams::ConsumptionMap<T> retval;
+        ConsumptionMap<T> retval;
         for (auto&& name_and_values : in)
             retval[name_and_values.first] = {
                 name_and_values.second.first.OpenEnvelope(pass),

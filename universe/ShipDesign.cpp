@@ -1,5 +1,6 @@
 #include "ShipDesign.h"
 
+#include "ShipPartHull.h"
 #include "../util/OptionsDB.h"
 #include "../util/Logger.h"
 #include "../util/AppInterface.h"
@@ -998,7 +999,7 @@ float ShipDesign::AdjustedAttack(float shield) const {
 std::vector<std::string> ShipDesign::Parts(ShipSlotType slot_type) const {
     std::vector<std::string> retval;
 
-    const HullType* hull = GetHull();
+    const HullType* hull = GetHullTypeManager().GetHullType(m_hull);
     if (!hull) {
         ErrorLogger() << "Design hull not found: " << m_hull;
         return retval;
@@ -1075,7 +1076,7 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id) const {
         return false;
 
     // apply hull location conditions to potential location
-    const HullType* hull = GetHull();
+    const HullType* hull = GetHullType(m_hull);
     if (!hull) {
         ErrorLogger() << "ShipDesign::ProductionLocation  ShipDesign couldn't get its own hull with name " << m_hull;
         return false;

@@ -8,6 +8,7 @@
 #include "Fleet.h"
 #include "Predicates.h"
 #include "ShipDesign.h"
+#include "ShipPartHull.h"
 #include "Species.h"
 #include "Universe.h"
 #include "Enums.h"

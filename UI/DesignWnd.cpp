@@ -20,6 +20,7 @@
 #include "../universe/ConditionAll.h"
 #include "../universe/UniverseObject.h"
 #include "../universe/ShipDesign.h"
+#include "../universe/ShipPartHull.h"
 #include "../universe/Enums.h"
 
 #include <GG/StaticGraphic.h>
@@ -4446,7 +4447,7 @@ void DesignWnd::MainPanel::SetDesign(const ShipDesign* ship_design) {
     m_design_description_edit->SetText(ship_design->Description());
 
     bool suppress_design_changed_signal = true;
-    SetHull(ship_design->GetHull(), !suppress_design_changed_signal);
+    SetHull(ship_design->Hull(), !suppress_design_changed_signal);
 
     SetParts(ship_design->Parts());
     DesignChangedSignal();

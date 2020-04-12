@@ -21,12 +21,15 @@ class BuildingType;
 class Special;
 class Species;
 class FieldType;
+class HullType;
+class PartType;
 const Tech*         GetTech(const std::string& name);
 const BuildingType* GetBuildingType(const std::string& name);
 const Special*      GetSpecial(const std::string& name);
 const Species*      GetSpecies(const std::string& name);
 const FieldType*    GetFieldType(const std::string& name);
-
+const HullType*     GetHullType(const std::string& name);
+const PartType*     GetPartType(const std::string& name);
 
 namespace {
     //! Return @p content surrounded by the given @p tags.

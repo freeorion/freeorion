@@ -18,6 +18,7 @@
 #include "../Empire/EmpireManager.h"
 #include "../universe/Building.h"
 #include "../universe/ShipDesign.h"
+#include "../universe/ShipPartHull.h"
 #include "../universe/Conditions.h"
 #include "../universe/Enums.h"
 #include "../universe/ValueRef.h"
@@ -285,7 +286,7 @@ namespace {
                 can_colonize_cond.reset(new Condition::CanColonize());
                 location_conditions.push_back(can_colonize_cond.get());
             }
-            if (const HullType* hull_type = ship_design->GetHull())
+            if (const HullType* hull_type = GetHullType(ship_design->Hull()))
                 location_conditions.push_back(const_cast<Condition::Condition*>(hull_type->Location()));
             for (const std::string& part_name : ship_design->Parts()) {
                 if (const PartType* part_type = GetPartType(part_name))

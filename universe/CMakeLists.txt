@@ -1,6 +1,7 @@
 target_sources(freeorioncommon
     PUBLIC
         ${CMAKE_CURRENT_LIST_DIR}/Building.h
+        ${CMAKE_CURRENT_LIST_DIR}/CommonParams.h
         ${CMAKE_CURRENT_LIST_DIR}/Condition.h
         ${CMAKE_CURRENT_LIST_DIR}/ConditionAll.h
         ${CMAKE_CURRENT_LIST_DIR}/ConditionSource.h
@@ -21,6 +22,7 @@ target_sources(freeorioncommon
         ${CMAKE_CURRENT_LIST_DIR}/ResourceCenter.h
         ${CMAKE_CURRENT_LIST_DIR}/ScriptingContext.h
         ${CMAKE_CURRENT_LIST_DIR}/ShipDesign.h
+        ${CMAKE_CURRENT_LIST_DIR}/ShipPartHull.h
         ${CMAKE_CURRENT_LIST_DIR}/Ship.h
         ${CMAKE_CURRENT_LIST_DIR}/Special.h
         ${CMAKE_CURRENT_LIST_DIR}/Species.h

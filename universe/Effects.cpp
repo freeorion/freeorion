@@ -19,6 +19,7 @@
 #include "Field.h"
 #include "Fleet.h"
 #include "Ship.h"
+#include "ShipDesign.h"
 #include "Tech.h"
 #include "Species.h"
 #include "Enums.h"

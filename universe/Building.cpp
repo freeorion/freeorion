@@ -1,5 +1,6 @@
 #include "Building.h"
 
+#include "CommonParams.h"
 #include "Condition.h"
 #include "Effect.h"
 #include "Planet.h"

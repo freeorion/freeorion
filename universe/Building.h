@@ -3,13 +3,14 @@
 
 #include "UniverseObject.h"
 #include "ObjectMap.h"
-#include "ShipDesign.h"
+#include "CommonParams.h"
 #include "../util/Export.h"
 #include "../util/Pending.h"
 
 #include <boost/algorithm/string/case_conv.hpp>
 
 class BuildingType;
+
 namespace Effect {
     class EffectsGroup;
 }
@@ -106,17 +107,15 @@ public:
     float                           PerTurnCost(int empire_id, int location_id) const;      ///< returns the maximum number of production points per turn that can be spend on this building
     int                             ProductionTime(int empire_id, int location_id) const;   ///< returns the number of turns required to build this building at this location by this empire
 
-    const ValueRef::ValueRef<double>* Cost() const      { return m_production_cost.get(); }   ///< returns the ValueRef that determines ProductionCost()
-    const ValueRef::ValueRef<int>*    Time() const      { return m_production_time.get(); }   ///< returns the ValueRef that determines ProductionTime()
+    const ValueRef::ValueRef<double>*   Cost() const    { return m_production_cost.get(); } ///< returns the ValueRef that determines ProductionCost()
+    const ValueRef::ValueRef<int>*      Time() const    { return m_production_time.get(); } ///< returns the ValueRef that determines ProductionTime()
 
-    bool                            Producible() const      { return m_producible; }        ///< returns whether this building type is producible by players and appears on the production screen
+    bool                            Producible() const  { return m_producible; }            ///< returns whether this building type is producible by players and appears on the production screen
 
-    const CommonParams::ConsumptionMap<MeterType>&
-                                    ProductionMeterConsumption() const  { return m_production_meter_consumption; }
-    const CommonParams::ConsumptionMap<std::string>&
-                                    ProductionSpecialConsumption() const{ return m_production_special_consumption; }
+    const ConsumptionMap<MeterType>&    ProductionMeterConsumption() const      { return m_production_meter_consumption; }
+    const ConsumptionMap<std::string>&  ProductionSpecialConsumption() const    { return m_production_special_consumption; }
 
-    const std::set<std::string>&    Tags() const            { return m_tags; }
+    const std::set<std::string>&    Tags() const        { return m_tags; }
     const Condition::Condition* Location() const        { return m_location.get(); }    ///< returns the condition that determines the locations where this building can be produced
 
     /** Returns a condition that can be used by the UI to further filter (beyond
@@ -160,15 +159,15 @@ private:
 
     std::string                                         m_name;
     std::string                                         m_description;
-    std::unique_ptr<ValueRef::ValueRef<double>>     m_production_cost;
-    std::unique_ptr<ValueRef::ValueRef<int>>        m_production_time;
-    bool                                                m_producible;
+    std::unique_ptr<ValueRef::ValueRef<double>>         m_production_cost;
+    std::unique_ptr<ValueRef::ValueRef<int>>            m_production_time;
+    bool                                                m_producible = true;
     CaptureResult                                       m_capture_result;
     std::set<std::string>                               m_tags;
-    CommonParams::ConsumptionMap<MeterType>             m_production_meter_consumption;
-    CommonParams::ConsumptionMap<std::string>           m_production_special_consumption;
-    std::unique_ptr<Condition::Condition>           m_location;
-    std::unique_ptr<Condition::Condition>           m_enqueue_location;
+    ConsumptionMap<MeterType>                           m_production_meter_consumption;
+    ConsumptionMap<std::string>                         m_production_special_consumption;
+    std::unique_ptr<Condition::Condition>               m_location;
+    std::unique_ptr<Condition::Condition>               m_enqueue_location;
     std::vector<std::shared_ptr<Effect::EffectsGroup>>  m_effects;
     std::string                                         m_icon;
 };

@@ -196,6 +196,7 @@
     <ClInclude Include="..\..\network\MessageQueue.h" />
     <ClInclude Include="..\..\network\Networking.h" />
     <ClInclude Include="..\..\universe\Building.h" />
+    <ClInclude Include="..\..\universe\CommonParams.h" />
     <ClInclude Include="..\..\universe\Condition.h" />
     <ClInclude Include="..\..\universe\ConditionAll.h" />
     <ClInclude Include="..\..\universe\Conditions.h" />

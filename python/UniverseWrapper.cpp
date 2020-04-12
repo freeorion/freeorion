@@ -4,6 +4,7 @@
 #include "../universe/Fleet.h"
 #include "../universe/Ship.h"
 #include "../universe/ShipDesign.h"
+#include "../universe/ShipPartHull.h"
 #include "../universe/Building.h"
 #include "../universe/ResourceCenter.h"
 #include "../universe/PopCenter.h"
@@ -184,6 +185,10 @@ namespace {
     const Meter*            (Ship::*ShipGetPartMeter)(MeterType, const std::string&) const =    &Ship::GetPartMeter;
     const Ship::PartMeterMap&
                             (Ship::*ShipPartMeters)(void) const =                               &Ship::PartMeters;
+
+    const HullType* ShipDesignHullP(const ShipDesign& design)
+    { return GetHullType(design.Hull()); }
+    std::function<const HullType*(const ShipDesign& ship)> ShipDesignHullFunc = &ShipDesignHullP;
 
     const std::string& ShipDesignName(const ShipDesign& ship_design)
     { return ship_design.Name(false); }
@@ -568,7 +573,11 @@ namespace FreeOrionPython {
             .add_property("costTimeLocationInvariant",
                                                 &ShipDesign::ProductionCostTimeLocationInvariant)
             .add_property("hull",               make_function(&ShipDesign::Hull,            return_value_policy<return_by_value>()))
-            .add_property("hull_type",          make_function(&ShipDesign::GetHull,         return_value_policy<reference_existing_object>()))
+            .add_property("hull_type",          make_function(
+                                                    ShipDesignHullFunc,
+                                                    return_value_policy<reference_existing_object>(),
+                                                    boost::mpl::vector<const HullType*, const ShipDesign&>()
+                                                ))
             .add_property("parts",              make_function(PartsVoid,                    return_internal_reference<>()))
             .add_property("attackStats",        make_function(
                                                     AttackStatsFunc,

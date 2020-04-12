@@ -10,6 +10,8 @@
 #include "Fighter.h"
 #include "Fleet.h"
 #include "Ship.h"
+#include "ShipDesign.h"
+#include "ShipPartHull.h"
 #include "ObjectMap.h"
 #include "Planet.h"
 #include "System.h"

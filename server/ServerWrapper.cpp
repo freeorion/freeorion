@@ -11,6 +11,7 @@
 #include "../universe/Building.h"
 #include "../universe/Fleet.h"
 #include "../universe/Ship.h"
+#include "../universe/ShipDesign.h"
 #include "../universe/Field.h"
 #include "../universe/Tech.h"
 #include "../universe/Pathfinder.h"
