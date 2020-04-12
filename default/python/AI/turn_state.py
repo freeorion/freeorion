@@ -279,4 +279,5 @@ class State(object):
     def set_medium_pilot_rating(self, value):
         self.__medium_pilot_rating = value
 
+
 state = State()
