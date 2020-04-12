@@ -519,7 +519,7 @@ def compare_action(args):
 
     print("""
 Summary comparing '{}' against '{}':
-    Keys translated - {}/{} ({:3.1f}%)
+    Keys matching - {}/{} ({:3.1f}%)
     Keys not in reference - {}
     Value is reference - {}
     Values layout mismatch - {}
