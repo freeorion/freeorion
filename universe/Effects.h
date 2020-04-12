@@ -5,16 +5,10 @@
 
 #include "../util/Export.h"
 
-#include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
 #include <boost/optional/optional.hpp>
 
-#include <vector>
-
-class UniverseObject;
-
 namespace Condition {
-    struct Condition;
     typedef std::vector<std::shared_ptr<const UniverseObject>> ObjectSet;
 }
 
