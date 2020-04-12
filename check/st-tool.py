@@ -475,11 +475,12 @@ def check_action(args):
         for key in source_st.keys():
             entry = source_st[key]
 
-            for match in re.finditer(INTERNAL_REFERENCE_PATTERN.format('.*?'), entry.value):
-                match = match['key']
-                if not (match in source_st.keys() or (reference_st and match in reference_st.keys())):
-                    print("{}:{}: Referenced key '{}' in value of '{}' was not found.".format(source_st.fpath, entry.keyline, match, entry.key))
-                    exit_code = 1
+            if entry.value:
+                for match in re.finditer(INTERNAL_REFERENCE_PATTERN.format('.*?'), entry.value):
+                    match = match['key']
+                    if not (match in source_st.keys() or (reference_st and match in reference_st.keys())):
+                        print("{}:{}: Referenced key '{}' in value of '{}' was not found.".format(source_st.fpath, entry.keyline, match, entry.key))
+                        exit_code = 1
 
     return exit_code
 
