@@ -60,7 +60,8 @@ FO_COMMON_API void ChangeLoggerThresholdInOptionsDB(const std::string& option_na
 enum class LoggerTypes {
     exec = 1,  ///< the unnamed logger for a particular executable
     named = 2, ///< a normal named source
-    both = exec | named};
+    both = exec | named
+};
 
 /** Return the option names, labels and levels for logger oy \p type from OptionsDB. */
 FO_COMMON_API std::set<std::tuple<std::string, std::string, LogLevel>>
