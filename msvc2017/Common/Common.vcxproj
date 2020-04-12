@@ -197,7 +197,9 @@
     <ClInclude Include="..\..\network\Networking.h" />
     <ClInclude Include="..\..\universe\Building.h" />
     <ClInclude Include="..\..\universe\Condition.h" />
+    <ClInclude Include="..\..\universe\ConditionAll.h" />
     <ClInclude Include="..\..\universe\Conditions.h" />
+    <ClInclude Include="..\..\universe\ConditionSource.h" />
     <ClInclude Include="..\..\universe\Effects.h" />
     <ClInclude Include="..\..\universe\Effect.h" />
     <ClInclude Include="..\..\universe\Encyclopedia.h" />

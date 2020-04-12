@@ -4,11 +4,12 @@
 
 #include "EnumsFwd.h"
 #include "Condition.h"
+#include "ConditionSource.h"
+#include "ConditionAll.h"
 
 #include "../util/Export.h"
 #include "../util/CheckSums.h"
 
-#include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
 
 #include <memory>
@@ -172,31 +173,6 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Matches all objects. */
-struct FO_COMMON_API All final : public Condition {
-    All() : Condition() {}
-
-    bool operator==(const Condition& rhs) const override;
-    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    std::string Description(bool negated = false) const override;
-    std::string Dump(unsigned short ntabs = 0) const override;
-    bool RootCandidateInvariant() const override
-    { return true; }
-    bool TargetInvariant() const override
-    { return true; }
-    bool SourceInvariant() const override
-    { return true; }
-    void SetTopLevelContent(const std::string& content_name) override
-    {}
-    unsigned int GetCheckSum() const override;
-
-private:
-    friend class boost::serialization::access;
-    template <class Archive>
-    void serialize(Archive& ar, const unsigned int version);
-};
-
 /** Matches no objects. Currently only has an experimental use for efficient immediate rejection as the top-line condition.
  *  Essentially the entire point of this Condition is to provide the specialized GetDefaultInitialCandidateObjects() */
 struct FO_COMMON_API None final : public Condition {
@@ -250,31 +226,6 @@ private:
 
     std::unique_ptr<ValueRef::ValueRef<int>> m_empire_id;
     EmpireAffiliationType m_affiliation;
-
-    friend class boost::serialization::access;
-    template <class Archive>
-    void serialize(Archive& ar, const unsigned int version);
-};
-
-/** Matches the source object only. */
-struct FO_COMMON_API Source final : public Condition {
-    Source() : Condition() {}
-
-    bool operator==(const Condition& rhs) const override;
-    void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                           ObjectSet& condition_non_targets) const override;
-    bool RootCandidateInvariant() const override
-    { return true; }
-    bool TargetInvariant() const override
-    { return true; }
-    std::string Description(bool negated = false) const override;
-    std::string Dump(unsigned short ntabs = 0) const override;
-    void SetTopLevelContent(const std::string& content_name) override
-    {}
-    unsigned int GetCheckSum() const override;
-
-private:
-    bool Match(const ScriptingContext& local_context) const override;
 
     friend class boost::serialization::access;
     template <class Archive>
