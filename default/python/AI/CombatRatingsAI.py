@@ -429,8 +429,8 @@ def combine_ratings(rating1, rating2):
     A natural extension for the combined rating of two ships is
     r_tot = (a_1+a_2)*(s_1+s_2)                                                     (2)
 
-    Assuming         a_i \approx s_i                                                (3)
-    It follows that  a_i \approx \sqrt(r_i) \approx s_i                             (4)
+    Assuming         a_i approx s_i                                                 (3)
+    It follows that  a_i approx sqrt(r_i) approx s_i                                (4)
     And thus         r_tot = (sqrt(r_1)+sqrt(r_2))^2 = r1 + r2 + 2*sqrt(r1*r2)      (5)
 
     Note that this function has commutative and associative properties.

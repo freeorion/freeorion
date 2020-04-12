@@ -804,6 +804,7 @@ class CombatTarget:
     }
 # </editor-fold>
 
+
 # <editor-fold desc="Effect Scripting for Shipdesigns">
 # <editor-fold desc="Tokens">
 # known tokens the AI can handle

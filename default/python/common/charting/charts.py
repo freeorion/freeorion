@@ -35,45 +35,45 @@ def show_only_some(x, pos):
 
 
 def parse_file(file_name, ai=True):
-        print("processing file ", file_name)
-        sys.stdout.flush()
-        got_colors = False
-        got_species = False
-        got_name = False
-        data = {"PP": [], "RP": [], "RP_Ratio": [], "ShipCount": [], "turnsP": [], "turnPP": [], "PP + 2RP": []}
-        details = {'color': {1, 1, 1, 1}, 'name': "", 'species': ""}
-        with open(six.ensure_text(file_name, 'utf-8'), 'r') as lf:
-            while True:
-                line = lf.readline()
-                if not line:
-                    break
-                if not got_colors and "EmpireColors:" in line:
-                    colors = line.split("EmpireColors:")[1].split()
-                    if len(colors) == 4:
-                        got_colors = True
-                        if isinstance(colors[0], str):
-                            details['color'] = tuple(map(lambda x: float(x) / 255.0, colors))
-                        else:
-                            details['color'] = tuple(map(lambda x: float(ord(x[0])) / 255.0, colors))
-                if ai and not got_species and "CapitalID:" in line:
-                    got_species = True
-                    details['species'] = line.split("Species:")[1].strip()
-                if ai and not got_name and "EmpireID:" in line:
-                    got_name = True
-                    details['name'] = line.split("Name:")[1].split("Turn:")[0].strip()
-                if "Current Output (turn" in line:
-                    info = line.split("Current Output (turn")[1]
-                    parts = info.split(')')
-                    data['turnsP'].append((int(parts[0])))
-                    data['turnPP'].append((int(parts[0]), float(parts[1].split('/')[-1])))
-                    rppp = parts[1].split('(')[-1].split('/')
-                    data['PP'].append(float(rppp[1]))
-                    data['RP'].append(float(rppp[0]))
-                    data['PP + 2RP'].append(float(rppp[1]) + 2 * float(rppp[0]))
-                    data['RP_Ratio'].append(float(rppp[0]) / (float(rppp[1]) + 0.001))
-                if "Empire Ship Count:" in line:
-                    data['ShipCount'].append(int(line.split("Empire Ship Count:")[1]))
-        return data, details
+    print("processing file ", file_name)
+    sys.stdout.flush()
+    got_colors = False
+    got_species = False
+    got_name = False
+    data = {"PP": [], "RP": [], "RP_Ratio": [], "ShipCount": [], "turnsP": [], "turnPP": [], "PP + 2RP": []}
+    details = {'color': {1, 1, 1, 1}, 'name': "", 'species': ""}
+    with open(six.ensure_text(file_name, 'utf-8'), 'r') as lf:
+        while True:
+            line = lf.readline()
+            if not line:
+                break
+            if not got_colors and "EmpireColors:" in line:
+                colors = line.split("EmpireColors:")[1].split()
+                if len(colors) == 4:
+                    got_colors = True
+                    if isinstance(colors[0], str):
+                        details['color'] = tuple(map(lambda x: float(x) / 255.0, colors))
+                    else:
+                        details['color'] = tuple(map(lambda x: float(ord(x[0])) / 255.0, colors))
+            if ai and not got_species and "CapitalID:" in line:
+                got_species = True
+                details['species'] = line.split("Species:")[1].strip()
+            if ai and not got_name and "EmpireID:" in line:
+                got_name = True
+                details['name'] = line.split("Name:")[1].split("Turn:")[0].strip()
+            if "Current Output (turn" in line:
+                info = line.split("Current Output (turn")[1]
+                parts = info.split(')')
+                data['turnsP'].append((int(parts[0])))
+                data['turnPP'].append((int(parts[0]), float(parts[1].split('/')[-1])))
+                rppp = parts[1].split('(')[-1].split('/')
+                data['PP'].append(float(rppp[1]))
+                data['RP'].append(float(rppp[0]))
+                data['PP + 2RP'].append(float(rppp[1]) + 2 * float(rppp[0]))
+                data['RP_Ratio'].append(float(rppp[0]) / (float(rppp[1]) + 0.001))
+            if "Empire Ship Count:" in line:
+                data['ShipCount'].append(int(line.split("Empire Ship Count:")[1]))
+    return data, details
 
 
 def main():
@@ -229,6 +229,7 @@ def main():
         if saveFile:
             pylab.savefig(graphDir + os.sep + plotType + "_" + fileRoot + ".png")
         pylab.show()
+
 
 if __name__ == "__main__":
     main()

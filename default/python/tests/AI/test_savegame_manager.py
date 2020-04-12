@@ -102,7 +102,7 @@ def test_encoding_old_style_class():
     if six.PY2:
         with pytest.raises(savegame_codec.CanNotSaveGameException,
                            message="Could save Old style class",
-                           match="Encountered unsupported object test_savegame_manager.OldStyleClass \(<type 'classobj'>\)"):
+                           match=r"Encountered unsupported object test_savegame_manager.OldStyleClass \(<type 'classobj'>\)"):
             check_encoding(OldStyleClass)
 
 

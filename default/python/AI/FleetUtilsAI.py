@@ -137,7 +137,7 @@ def get_fleets_for_mission(target_stats, min_stats, cur_stats, starting_system,
                     not MoveUtilsAI.can_travel_to_system(fleet_id, this_system_obj,
                                                          target_stats['target_system'],
                                                          ensure_return=ensure_return)):
-                    continue
+                continue
 
             # check species for colonization missions
             if species:

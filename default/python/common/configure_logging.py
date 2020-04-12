@@ -81,7 +81,7 @@ import traceback
 
 try:
     import freeorion_logger  # FreeOrion logger interface pylint: disable=import-error
-except ImportError as e:
+except ImportError:
 
     # Create an alternative logger for use in testing when the server is unavailable
     class _FreeOrionLoggerForTest(object):
