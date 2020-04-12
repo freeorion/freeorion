@@ -29,8 +29,8 @@ class AuthProvider:
                         first_line = False
                         self.default_roles = self.__parse_roles(line.strip())
                     else:
-                        l = line.rsplit(':', 2)
-                        self.logins[l[0]] = (l[2].strip(), self.__parse_roles(l[1].strip()))
+                        part1, roles, part3 = line.rsplit(':', 2)
+                        self.logins[part1] = (part3.strip(), self.__parse_roles(roles.strip()))
         except IOError:
             exctype, value = sys.exc_info()[:2]
             warning("Cann't read auth file %s: %s %s" % (fo.get_user_config_dir() + "/auth.txt", exctype, value))
