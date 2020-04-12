@@ -1,12 +1,12 @@
 #include "Field.h"
 
-#include "Conditions.h"
+#include "ConditionSource.h"
 #include "Effects.h"
 #include "Enums.h"
 #include "Meter.h"
 #include "Predicates.h"
 #include "Universe.h"
-#include "ValueRefs.h"
+#include "ValueRefs.h"  // Operation, PLUS, Variable, Constant, EFFECT_TARGET_VALUE_REFERENCE, UserString
 #include "../util/AppInterface.h"
 #include "../util/OptionsDB.h"
 #include "../util/Logger.h"

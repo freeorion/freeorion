@@ -7,14 +7,14 @@
 #include "../util/CheckSums.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
-#include "Conditions.h"
+#include "ConditionSource.h"
 #include "Effects.h"
 #include "Planet.h"
 #include "Ship.h"
 #include "Predicates.h"
 #include "Species.h"
 #include "Universe.h"
-#include "ValueRefs.h"
+#include "ValueRefs.h"  // Operation, PLUS, TIMES, Variable, EFFECT_TARGET_VALUE_REFERENCE, Constant, ComplexVariable
 #include "Enums.h"
 
 #include <cfloat>

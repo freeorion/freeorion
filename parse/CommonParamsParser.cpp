@@ -9,7 +9,7 @@
 #include "EffectParser.h"
 #include "ValueRefParser.h"
 
-#include "../universe/Conditions.h"
+#include "../universe/ConditionAll.h"
 #include "../universe/Effect.h"
 #include "../universe/ValueRefs.h"
 
@@ -139,7 +139,7 @@ namespace parse { namespace detail {
         consumable_special
             =   tok.Special_
             > (
-                label(tok.Name_)        > tok.string
+                label(tok.Name_)            > tok.string
                 >   label(tok.Consumption_) > double_rules.expr
                 > -(label(tok.Condition_)   > condition_parser )
             )

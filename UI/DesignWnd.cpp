@@ -17,7 +17,7 @@
 #include "../util/Directories.h"
 #include "../Empire/Empire.h"
 #include "../client/human/HumanClientApp.h"
-#include "../universe/Conditions.h"
+#include "../universe/ConditionAll.h"
 #include "../universe/UniverseObject.h"
 #include "../universe/ShipDesign.h"
 #include "../universe/Enums.h"
@@ -129,8 +129,7 @@ namespace {
         }
     }
 
-    typedef std::map<std::pair<ShipPartClass, ShipSlotType>,
-                     std::vector<const PartType*>>              PartGroupsType;
+    typedef std::map<std::pair<ShipPartClass, ShipSlotType>, std::vector<const PartType*>> PartGroupsType;
 
     const std::string DESIGN_FILENAME_PREFIX = "ShipDesign-";
     const std::string DESIGN_FILENAME_EXTENSION = ".focs.txt";
