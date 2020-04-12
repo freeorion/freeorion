@@ -8,7 +8,7 @@
 # make any stringtable keys beginning with "FUNCTIONAL_".
 # New Sitreps priorities should be added to
 # `default/customizations/common_user_customizations.txt`.
-
+#
 # semi-randomly collected characters to force font code page loading
 # 肛門オーガズム
 # åřžßąłżęЗыдШит
@@ -1052,6 +1052,7 @@ Server cannot properly read messages from your client, most likely due to incomp
 ERROR_CHECKSUM_MISMATCH
 Content checksum on the server and the client differs.
 
+
 ##
 ## Game Rules
 ##
@@ -1254,24 +1255,25 @@ All Allowed
 RULE_DIPLOMACY_FORBIDDEN_FOR_ALL
 All Forbidden
 
+
 ##
 ## Command-line and options database entries
 ##
 
 COMMAND_LINE_NOT_FOUND
-'''No options or sections found matching'''
+No options or sections found matching
 
 COMMAND_LINE_USAGE
-'''Usage: -h | --help [group name | option name]'''
+Usage: -h | --help [group name | option name]
 
 COMMAND_LINE_DEFAULT
-'''Default'''
+Default
 
 COMMAND_LINE_SECTIONS
-'''Option Groups'''
+Option Groups
 
 COMMAND_LINE_OPTIONS
-'''Options'''
+Options
 
 OPTIONS_DB_HELP
 '''Print this help message.
@@ -1808,7 +1810,7 @@ OPTIONS_DB_GAMESETUP_SEED
 Galaxies generated with the same settings and the same seed will be identical.'''
 
 OPTIONS_DB_GAMESETUP_UID
-'''The game UID for new games. Server-only option can be used for predictable game name on hostless servers.'''
+The game UID for new games. Server-only option can be used for predictable game name on hostless servers.
 
 OPTIONS_DB_GAMESETUP_STARS
 '''The approximate number of systems in the galaxy to be generated.
@@ -2396,6 +2398,7 @@ PLAYER_ENTERED_GAME
 # %1% is a player name
 PLAYER_LEFT_GAME
 %1% left game
+
 
 ##
 ## Galaxy Setup Screen
@@ -3227,7 +3230,6 @@ Successfully wrote config.xml
 OPTIONS_CREATE_ALL_CONFIG_FAILURE
 Unable to write config.xml, check log file for details.
 
-
 OPTIONS_WRITE_ALL_CONFIG
 Write Complete Config File
 
@@ -3238,7 +3240,6 @@ OPTIONS_CREATE_ALL_CONFIG_TOOLTIP_DESC
 '''Saves the current config settings in config.xml including all settings, even if not modified from their defaults.
 
 The existing options.xml is overwitten, but may be regenerated (with just non-default options) if another option is changed, including by repositioning some game windows or within the options window.'''
-
 
 
 ##
@@ -3622,6 +3623,7 @@ Add Building to Top of Queue
 
 MENUITEM_ENQUEUE_BUILDING
 Add Building to Queue
+
 
 ##
 ## Side panel/Resources panel
@@ -4505,7 +4507,6 @@ Move to Top
 MOVE_DOWN_LIST_ITEM
 Move to Bottom
 
-
 SPLIT_INCOMPLETE
 Separate Current Repetition
 
@@ -4522,7 +4523,7 @@ PRODUCTION_WND_TOOLTIP_LOCATION_DEPENDENT
 Depends on location
 
 PRODUCTION_WND_TOOLTIP_PROD_TIME
-Fully-funded production turns at %2%: %1% 
+Fully-funded production turns at %2%: %1%
 
 NO_PRODUCTION_HERE_CANT_PRODUCE
 Insufficient production at %1%
@@ -4805,7 +4806,7 @@ Statistics Test 3
 
 # %1% name of the species.
 ENC_SPECIES_PLANET_TYPE_SUITABILITY_COLUMN1
-'''%1%:'''
+%1%:
 
 # %1% content of ENC_SPECIES_PLANET_TYPE_SUITABILITY_COLUMN1 expanded to match
 #     column width.
@@ -4858,7 +4859,6 @@ Scale to Zero
 
 SCALE_FREE
 Scale Free
-
 
 ENC_GALAXY_SETUP
 [Game - Galaxy]
@@ -5527,10 +5527,8 @@ Management
 
 
 ##
-## Encyclopedia subcategories
+## Encyclopedia articles in Guides category
 ##
-
-# In Guides category
 
 INTERFACE_TITLE
 *Interface*
@@ -5538,7 +5536,10 @@ INTERFACE_TITLE
 INTERFACE_TEXT
 Non-exhaustive list of FreeOrion Interface features:
 
-# In Game Concepts category
+
+##
+## Encyclopedia articles in Game Concepts category
+##
 
 DIPLOMACY_TITLE
 Diplomacy
@@ -6399,6 +6400,7 @@ MESSAGES_WHISPER
 MESSAGES_INVALID
 Invalid player or no message entered.
 
+
 ##
 ## Players list
 ##
@@ -6678,6 +6680,7 @@ Any
 ## Situation report
 ##
 ## Format: Ideally always start with Location: with ship/fleet names near the end.
+##
 
 SITREP_PANEL_TITLE
 Situation Report - Initial turn
@@ -7340,6 +7343,7 @@ Victory
 
 SITREP_EMPIRE_ELIMINATED
 The %empire% has been defeated!
+
 SITREP_EMPIRE_ELIMINATED_LABEL
 Empire Eliminated
 
@@ -7511,7 +7515,10 @@ Opinions of Empires:
 OPINIONS_OF_OTHER_SPECIES
 Opinions of Other Species:
 
-# Species Pedia Categories
+
+##
+## Encyclopedia articles in Species Types category
+##
 
 LITHIC_SPECIES_CLASS
 Lithic
@@ -7549,7 +7556,10 @@ Gaseous
 GASEOUS_SPECIES_CLASS_DESC
 List of [[encyclopedia GASEOUS_SPECIES_TITLE]] species:
 
-# Species Pedia Articles
+
+##
+## Encyclopedia articles in Species category
+##
 
 SP_HUMAN
 Human
@@ -7787,6 +7797,7 @@ The Sly are very long-lived and keep the songs alive in which the whole cultural
 
 SP_LEMBALALAM
 Lembala'Lam
+
 SP_LEMBALALAM_GAMEPLAY_DESC
 '''Egocentric, degenerated ancient reptiles that no longer reproduce.
 Prefer [[PT_DESERT]] Planets.
@@ -8051,7 +8062,7 @@ Prefer [[PT_BARREN]] planets.
 '''
 
 SP_TRENCHERS_DESC
-'''<img src="species/trenchers.png"></img>'''
+<img src="species/trenchers.png"></img>
 
 SP_RAAAGH
 Raaagh
@@ -8403,6 +8414,7 @@ SP_EXOBOT_DESC
 
 SP_ANCIENT_GUARDIANS
 Ancient Guardians
+
 SP_ANCIENT_GUARDIANS_GAMEPLAY_DESC
 '''Guardian Robots constructed by a Precursor civilization aeons ago
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
@@ -9548,7 +9560,10 @@ PATH_SAVE
 PATH_TEMP
 ''''''
 
-# Ship hull categories
+
+##
+## Ship hull categories
+##
 
 HULL_LINE_GENERIC
 Hull Line: Generic
@@ -10490,7 +10505,7 @@ DESC_AND_BEFORE_OPERANDS
 ''' ['''
 
 DESC_AND_BETWEEN_OPERANDS
-''', and'''
+, and
 
 DESC_AND_AFTER_OPERANDS
 ''' ]'''
@@ -10505,30 +10520,28 @@ DESC_AND_AFTER_SINGLE_OPERAND
 # We actually describe the the logically equivalent expression ( (not A) or (not B) or (not C) )
 # Note: the operands (not A), (not B).. are handled in the descriptions of A, B.. respectively
 DESC_NOT_AND_BEFORE_OPERANDS
-'''[[DESC_NOT_OR_BEFORE_OPERANDS]]'''
+[[DESC_NOT_OR_BEFORE_OPERANDS]]
 
 DESC_NOT_AND_BETWEEN_OPERANDS
-'''[[DESC_NOT_OR_BETWEEN_OPERANDS]]'''
+[[DESC_NOT_OR_BETWEEN_OPERANDS]]
 
 DESC_NOT_AND_AFTER_OPERANDS
-'''[[DESC_NOT_OR_AFTER_OPERANDS]]'''
-
+[[DESC_NOT_OR_AFTER_OPERANDS]]
 
 # Description for 'not ( AND [ A ] )' expressions
 # Actually instead we describe 'OR [ not A ]' and leave the description of negation to A
 DESC_NOT_AND_BEFORE_SINGLE_OPERAND
-'''[[DESC_OR_BEFORE_SINGLE_OPERAND]]'''
+[[DESC_OR_BEFORE_SINGLE_OPERAND]]
 
 DESC_NOT_AND_AFTER_SINGLE_OPERAND
-'''[[DESC_OR_AFTER_SINGLE_OPERAND]]'''
-
+[[DESC_OR_AFTER_SINGLE_OPERAND]]
 
 # OR Descriptions: for expressions of the form ( A or B or C )
 DESC_OR_BEFORE_OPERANDS
 ''' (either'''
 
 DESC_OR_BETWEEN_OPERANDS
-''', or'''
+, or
 
 DESC_OR_AFTER_OPERANDS
 ''' )'''
@@ -10539,62 +10552,58 @@ DESC_OR_BEFORE_SINGLE_OPERAND
 DESC_OR_AFTER_SINGLE_OPERAND
 ''''''
 
-
 # NOT OR Descriptions; for expressions of the form 'NOT OR [ A B C ]'
 # We actually describe the logically equivalent expression 'AND [ (NOT A) (NOT B) (NOT C) ]'
 # Note: (NOT A), (NOT B).. are handled in the descriptions of A, B.. respectively
 DESC_NOT_OR_BEFORE_OPERANDS
-'''[[DESC_AND_BEFORE_OPERANDS]]'''
+[[DESC_AND_BEFORE_OPERANDS]]
 
 DESC_NOT_OR_BETWEEN_OPERANDS
-'''[[DESC_AND_BETWEEN_OPERANDS]]'''
+[[DESC_AND_BETWEEN_OPERANDS]]
 
 DESC_NOT_OR_AFTER_OPERANDS
-'''[[DESC_AND_AFTER_OPERANDS]]'''
+[[DESC_AND_AFTER_OPERANDS]]
 
 # for expressions of the form 'NOT OR [ A ]' we describe instead 'AND [ NOT A ]'
 # Note: (NOT A) is handled in the description of A
 DESC_NOT_OR_BEFORE_SINGLE_OPERAND
-'''[[DESC_AND_BEFORE_SINGLE_OPERAND]]'''
+[[DESC_AND_BEFORE_SINGLE_OPERAND]]
 
 DESC_NOT_OR_AFTER_SINGLE_OPERAND
-'''[[DESC_AND_AFTER_SINGLE_OPERAND]]'''
-
-
+[[DESC_AND_AFTER_SINGLE_OPERAND]]
 
 # OrderedAlternativesOf Descriptions for expressions 'OrderedAlternativesOf [ A B C ]'
 DESC_ORDERED_ALTERNATIVES_BEFORE_OPERANDS
-'''that matches the first matching condition {'''
+that matches the first matching condition {
 
 DESC_ORDERED_ALTERNATIVES_BETWEEN_OPERANDS
-''', else'''
+, else
 
 DESC_ORDERED_ALTERNATIVES_AFTER_OPERANDS
 ''' }'''
 
 DESC_ORDERED_ALTERNATIVES_BEFORE_SINGLE_OPERAND
-'''{'''
+{
 
 DESC_ORDERED_ALTERNATIVES_AFTER_SINGLE_OPERAND
-'''(iff it also has non-matches)}'''
+(iff it also has non-matches)}
 
 # Expressions like  'NOT OrderedAlternativesOf [ A B C ]'
 # Note: returned matches rely on (NOT A), (NOT B).. and are handled in the descriptions of A, B.. respectively
 DESC_NOT_ORDERED_ALTERNATIVES_BEFORE_OPERANDS
-'''that matches the first matching conditions' non-matching candidates: {'''
+that matches the first matching conditions' non-matching candidates: {
 
 DESC_NOT_ORDERED_ALTERNATIVES_BETWEEN_OPERANDS
-''', else'''
+, else
 
 DESC_NOT_ORDERED_ALTERNATIVES_AFTER_OPERANDS
 ''' }'''
 
 DESC_NOT_ORDERED_ALTERNATIVES_BEFORE_SINGLE_OPERAND
-'''{'''
+{
 
 DESC_NOT_ORDERED_ALTERNATIVES_AFTER_SINGLE_OPERAND
-'''(iff it also has non-matches)}'''
-
+(iff it also has non-matches)}
 
 # %1% textual description of the lower turn limit.
 # %2% textual description of the upper turn limit.
@@ -11220,6 +11229,7 @@ Although high level initial design and initial facility setup still require acti
 
 PRO_EXOBOTS
 Exobots
+
 PRO_EXOBOTS_DESC
 Allows the construction of [[species SP_EXOBOT]] colonies optimized for industry on [[PE_HOSTILE]] planets.
 
@@ -11548,11 +11558,13 @@ A hull constructed from pure energy, while far more versatile than a solid hull,
 
 SHP_KRILL_SPAWN
 Krill Spawner
+
 SHP_KRILL_SPAWN_DESC
 Unlocks the [[shippart SP_KRILL_SPAWNER]] ship part, which causes wild space krill to appear in systems with asteroid belts.
 
 SPY_ROOT_DECEPTION
 Deception
+
 SPY_ROOT_DECEPTION_DESC
 The art of deception is not natural to every species, but the ability to hide the truth can be most useful.
 
@@ -12012,7 +12024,11 @@ Bombardment
 SHP_BOMBARD_DESC
 Allows development of planetary bombardment weapons.
 
-##Fighter explanation, needs improving and a Pedia article writing
+
+##
+## Fighter explanation, needs improving and a Pedia article writing
+##
+
 SHP_FIGHTERS_1
 Fighters and Launch Bays
 
@@ -13310,6 +13326,7 @@ Super Tester Colony
 
 BLD_COL_SUPER_TEST_DESC
 [[BLD_COL_PART_1]] Super Tester colony. [[BLD_COL_PART_2]] Super Tester colony [[BLD_COL_PART_3]].
+
 
 ##
 ## Hull and ship part description templates
@@ -14645,17 +14662,16 @@ BLD_COL_PART_3
 owned by the empire, and will increase the farther away it is; the increase will be reduced by researching techs that enable faster colony ships such as engine parts and faster hulls
 
 
-# Macro keys formatting for ship designs, hulls or parts:
-# BLD_SHIPYARD_TYPE1_TYPE2_REQUIRED (required building type(s) owned by
-#                                    empire only in the same system)
-# ANY_SYSTEM (building owned in any system by empire or ally)
-# Any other key formatting is self-explanatory (e.g. LIVING_HULL_AUTO_REGEN)
-
 ##
 ## Ship design/hull macros
 ##
-
-# Keys used in Predefined Ship Designs and Ship Hulls sections
+## Macro keys formatting for ship designs, hulls or parts:
+## BLD_SHIPYARD_TYPE1_TYPE2_REQUIRED (required building type(s) owned by
+##                                    empire only in the same system)
+## ANY_SYSTEM (building owned in any system by empire or ally)
+## Any other key formatting is self-explanatory (e.g. LIVING_HULL_AUTO_REGEN)
+## Keys used in Predefined Ship Designs and Ship Hulls sections
+##
 
 BLD_SHIPYARD_BASE_REQUIRED
 Can only be built at a location with a [[buildingtype BLD_SHIPYARD_BASE]].
@@ -14699,7 +14715,10 @@ Can only be built at a location with a [[buildingtype BLD_SHIPYARD_BASE]], an [[
 BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_XENO_FAC_ORG_CELL_GRO_CHAMB_REQUIRED
 Can only be built at a location with a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], a [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] and a [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]].
 
-# Other than Requirements
+
+##
+## Other than Requirements
+##
 
 SHIPDESIGN_DETECTION_RESEARCH_TIPS
 Further [[metertype METER_RESEARCH]] aimed at improving [[metertype METER_DETECTION]] would allow for better designs.
@@ -14726,8 +14745,8 @@ SHIPDESIGN_PLANET_INVASION
 ##
 ## Ship part/tech application macros
 ##
-
-# Keys used in Ship Parts and Technology Application sections
+## Keys used in Ship Parts and Technology Application sections
+##
 
 BLD_SHIPYARD_ORG_XENO_FAC_ORG_CELL_GRO_CHAMB_REQUIRED_ANY_SYSTEM
 This part can only be built if there is a [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] and a [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] somewhere in the empire or an ally's empire.
@@ -15644,7 +15663,6 @@ Krill Spawner
 ##
 ## AI diplomacy strings and lists
 ##
-
 
 # Newline separated list of polite alliance proposal acknowlegements.
 AI_ALLIANCE_PROPOSAL_ACKNOWLEDGEMENTS_MILD_LIST
