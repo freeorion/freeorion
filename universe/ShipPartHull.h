@@ -1,11 +1,6 @@
 #ifndef _ShipPartHull_h_
 #define _ShipPartHull_h_
 
-//#include <boost/algorithm/string/case_conv.hpp>
-//#include <boost/filesystem/operations.hpp>
-//#include <boost/functional/hash.hpp>
-//#include <boost/optional/optional.hpp>
-//#include <boost/variant.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
 
