@@ -42,7 +42,7 @@ _test_python_common: &_test_python_common
   dist: bionic
   language: python
   install:
-    - pip install pytest==3.6.3
+    - pip install pytest==5.4.1
   script:
     - pytest
 
