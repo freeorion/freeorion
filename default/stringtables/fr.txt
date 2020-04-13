@@ -8,7 +8,7 @@ Français
 # any stringtable keys beginning with "FUNCTIONAL_".
 # New Sitreps priorities should be added to
 # `default/customizations/common_user_customizations.txt`.
-
+#
 # semi-randomly collected characters to force font code page loading
 # 肛門オーガズム
 # åřžßąłżęЗыдШит
@@ -1052,6 +1052,7 @@ Le serveur ne peut pas lire correctement les messages de votre client, probablem
 ERROR_CHECKSUM_MISMATCH
 Le contenu de contrôle entre le serveur et le client diffère.
 
+
 ##
 ## Game Rules
 ##
@@ -1254,24 +1255,25 @@ Toutes autorisées
 RULE_DIPLOMACY_FORBIDDEN_FOR_ALL
 Toutes interdites
 
+
 ##
 ## Command-line and options database entries
 ##
 
 COMMAND_LINE_NOT_FOUND
-'''Aucune option ou section correspondante trouvée'''
+Aucune option ou section correspondante trouvée
 
 COMMAND_LINE_USAGE
-'''Usage: -h | --help [nom groupe | nom option]'''
+Usage: -h | --help [nom groupe | nom option]
 
 COMMAND_LINE_DEFAULT
-'''Défaut'''
+Défaut
 
 COMMAND_LINE_SECTIONS
-'''Groupes d'Options'''
+Groupes d'Options
 
 COMMAND_LINE_OPTIONS  # translated
-'''Options'''
+Options
 
 OPTIONS_DB_HELP
 '''Afficher ce message d'aide.
@@ -1430,7 +1432,10 @@ OPTIONS_DB_COOKIES_EXPIRE
 Valeur en minutes au-delà de laquelle le cookie enregistré sera considéré comme expiré.
 
 OPTIONS_DB_PUBLISH_STATISTICS
-Activer l'envoi des statistiques d'empire au joueur.
+Autoriser l'envoi des statistiques d'empire au joueur.
+
+OPTIONS_DB_PUBLISH_SEED
+Autoriser l'envoi de la Graine de galaxie au joueur.
 
 OPTIONS_DB_FIRST_TURN_TIME
 Référence de temps absolu au format "2019-01-20 11:59:59" UTC. Si vide, la fin du premier tour interviendra après l'intervalle d'expiration. Nécessite l'activation de l'intervalle fixe.
@@ -1443,6 +1448,9 @@ Le passage au tour suivant est exécuté à intervalle fixe, indépendamment du 
 
 OPTIONS_DB_CLIENT_MESSAGE_SIZE_MAX
 Limite de taille en octets des messages client.
+
+OPTIONS_DB_DROP_EMPIRE_READY
+Annuler la lecture du statut de l'empire en rejoignant une partie en cours.
 
 OPTIONS_DB_UI_MAIN_MENU_X
 Position horizontale du centre du menu principal de l'écran d'introduction, en pourcentage de la largeur totale de la fenêtre de jeu ou du plein écran.
@@ -1802,7 +1810,7 @@ OPTIONS_DB_GAMESETUP_SEED
 Les galaxies générées avec les mêmes options et la même Graine de hasard seront identiques.'''
 
 OPTIONS_DB_GAMESETUP_UID
-'''L'UID de la partie pour les nouvelles parties. L'option serveur-seul peut être utilisée pour obtenir un nom de partie prévisible sur les serveurs sans hôte.'''
+L'UID de la partie pour les nouvelles parties. L'option serveur-seul peut être utilisée pour obtenir un nom de partie prévisible sur les serveurs sans hôte.
 
 OPTIONS_DB_GAMESETUP_STARS
 '''Le nombre approximatif de systèmes stellaires à générer dans la galaxie.
@@ -2390,6 +2398,7 @@ PLAYER_ENTERED_GAME
 # %1% is a player name
 PLAYER_LEFT_GAME
 %1% a quitté la partie
+
 
 ##
 ## Galaxy Setup Screen
@@ -3221,7 +3230,6 @@ Fichier config.xml créé avec succès.
 OPTIONS_CREATE_ALL_CONFIG_FAILURE
 Impossible de créer le fichier config.xml, consultez le fichier log pour plus de détails.
 
-
 OPTIONS_WRITE_ALL_CONFIG
 Écrire Fichier de Configuration Complète
 
@@ -3232,7 +3240,6 @@ OPTIONS_CREATE_ALL_CONFIG_TOOLTIP_DESC
 '''Sauvegarde les réglages actuels dans le fichier config.xml en incluant tous les réglages, même ceux dont les valeurs par défaut n'ont pas été modifiées.
 
 Le fichier options.xml existant est remplacé, mais peut être recréé (avec seulement les réglages modifiés) si une nouvelle option est modifiée, y compris le repositionnement de certaines fenêtres de jeu ou via le Menu Options.'''
-
 
 
 ##
@@ -3616,6 +3623,7 @@ Ajouter Structure en tête de file d'attente
 
 MENUITEM_ENQUEUE_BUILDING
 Ajouter Structure en file d'attente
+
 
 ##
 ## Side panel/Resources panel
@@ -4499,7 +4507,6 @@ Déplacer en tête de liste
 MOVE_DOWN_LIST_ITEM
 Déplacer en fin de liste
 
-
 SPLIT_INCOMPLETE
 Dissocier Répétition actuelle
 
@@ -4509,8 +4516,17 @@ Dupliquer
 PRODUCTION_WND_TOOLTIP_PROD_COST
 Coût production: %1%
 
+PRODUCTION_WND_TOOLTIP_PROD_TIME_MINIMUM
+Tours minimum production: %1%
+
+PRODUCTION_WND_TOOLTIP_LOCATION_DEPENDENT
+Dépend du lieu de production
+
 PRODUCTION_WND_TOOLTIP_PROD_TIME
-Temps production: %1%
+Tours de production entièrement financée sur %2%: %1%
+
+NO_PRODUCTION_HERE_CANT_PRODUCE
+Production insuffisante sur %1%
 
 PRODUCTION_WND_TOOLTIP_PARTS
 Équipements Astronef
@@ -4790,7 +4806,7 @@ Population
 
 # %1% name of the species.
 ENC_SPECIES_PLANET_TYPE_SUITABILITY_COLUMN1
-'''%1%:'''
+%1%:
 
 # %1% content of ENC_SPECIES_PLANET_TYPE_SUITABILITY_COLUMN1 expanded to match
 #     column width.
@@ -4843,7 +4859,6 @@ SCALE_TO_ZERO
 
 SCALE_FREE
 Sans Échelle
-
 
 ENC_GALAXY_SETUP
 [Partie - Galaxie]
@@ -5124,7 +5139,7 @@ ENC_AUTO_TIME_COST_INVARIANT_STR
 
 <u>Temps et Coût</u>
 
-Le temps et le coût pour %1% cet objet ne varient pas selon le lieu.'''
+Le temps et le coût pour %1% cet objet ne varient pas selon le lieu de production.'''
 
 # %1% content of ENC_VERB_PRODUCE_STR.
 ENC_AUTO_TIME_COST_VARIABLE_STR
@@ -5132,7 +5147,7 @@ ENC_AUTO_TIME_COST_VARIABLE_STR
 
 <u>Temps et Coût</u>
 
-Le temps et/ou le coût pour %1% cet objet varient selon le lieu.
+Le temps et/ou le coût pour %1% cet objet varient selon le lieu de production.
 Dans les expressions décrivant ces variations, le terme Source correspond à la Capitale de l'empire en question, et le terme Cible correspond au lieu pris en considération.
 '''
 
@@ -5512,10 +5527,8 @@ Gestion
 
 
 ##
-## Encyclopedia subcategories
+## Encyclopedia articles in Guides category
 ##
-
-# In Guides category
 
 INTERFACE_TITLE
 *Interface*
@@ -5523,7 +5536,10 @@ INTERFACE_TITLE
 INTERFACE_TEXT
 Liste non-exhaustive des fonctionnalités de l'Interface de FreeOrion :
 
-# In Game Concepts category
+
+##
+## Encyclopedia articles in Game Concepts category
+##
 
 DIPLOMACY_TITLE
 Diplomatie
@@ -6384,6 +6400,7 @@ MESSAGES_WHISPER
 MESSAGES_INVALID
 Joueur invalide ou aucun message saisi.
 
+
 ##
 ## Players list
 ##
@@ -6663,6 +6680,7 @@ Tout
 ## Situation report
 ##
 ## Format: Ideally always start with Location: with ship/fleet names near the end.
+##
 
 SITREP_PANEL_TITLE
 Rapport de Situation - Tour initial
@@ -7325,6 +7343,7 @@ Victoire
 
 SITREP_EMPIRE_ELIMINATED
 L'empire %empire% a été vaincu!
+
 SITREP_EMPIRE_ELIMINATED_LABEL
 Empire vaincu
 
@@ -7496,7 +7515,10 @@ Opinions des Empires :
 OPINIONS_OF_OTHER_SPECIES
 Opinions des autres Espèces :
 
-# Species Pedia Categories
+
+##
+## Encyclopedia articles in Species Types category
+##
 
 LITHIC_SPECIES_CLASS
 Lithique
@@ -7534,7 +7556,10 @@ Gazeux
 GASEOUS_SPECIES_CLASS_DESC
 Liste des espèces à [[encyclopedia GASEOUS_SPECIES_TITLE]]:
 
-# Species Pedia Articles
+
+##
+## Encyclopedia articles in Species category
+##
 
 SP_HUMAN
 Humain
@@ -7772,6 +7797,7 @@ Les Sly ont une espérance de vie très importante et transmettent de générati
 
 SP_LEMBALALAM  # translated
 Lembala'Lam
+
 SP_LEMBALALAM_GAMEPLAY_DESC
 '''Reptiles ancestraux égocentriques et dégénérescents, ne pouvant plus se reproduire.
 Préfèrent les Planètes [[PT_DESERT]]s.
@@ -8035,8 +8061,8 @@ Préfèrent les Planètes [[PT_BARREN]]s.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
 '''
 
-#SP_TRENCHERS_DESC
-#'''<img src="species/trenchers.png"></img>'''
+SP_TRENCHERS_DESC  # translated
+<img src="species/trenchers.png"></img>
 
 SP_RAAAGH  # translated
 Raaagh
@@ -8388,6 +8414,7 @@ SP_EXOBOT_DESC
 
 SP_ANCIENT_GUARDIANS
 Gardiens Ancestraux
+
 SP_ANCIENT_GUARDIANS_GAMEPLAY_DESC
 '''Robots gardiens conçus en des temps immémoriaux par une civilisation de Précurseurs.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
@@ -9533,7 +9560,10 @@ PATH_SAVE
 PATH_TEMP
 ''''''
 
-# Ship hull categories
+
+##
+## Ship hull categories
+##
 
 HULL_LINE_GENERIC
 Classe Coque: Générique
@@ -10475,7 +10505,7 @@ DESC_AND_BEFORE_OPERANDS
 ''' ['''
 
 DESC_AND_BETWEEN_OPERANDS
-''', et'''
+, et
 
 DESC_AND_AFTER_OPERANDS
 ''' ]'''
@@ -10490,30 +10520,28 @@ DESC_AND_AFTER_SINGLE_OPERAND
 # We actually describe the the logically equivalent expression ( (not A) or (not B) or (not C) )
 # Note: the operands (not A), (not B).. are handled in the descriptions of A, B.. respectively
 DESC_NOT_AND_BEFORE_OPERANDS
-'''[[DESC_NOT_OR_BEFORE_OPERANDS]]'''
+[[DESC_NOT_OR_BEFORE_OPERANDS]]
 
 DESC_NOT_AND_BETWEEN_OPERANDS
-'''[[DESC_NOT_OR_BETWEEN_OPERANDS]]'''
+[[DESC_NOT_OR_BETWEEN_OPERANDS]]
 
 DESC_NOT_AND_AFTER_OPERANDS
-'''[[DESC_NOT_OR_AFTER_OPERANDS]]'''
-
+[[DESC_NOT_OR_AFTER_OPERANDS]]
 
 # Description for 'not ( AND [ A ] )' expressions
 # Actually instead we describe 'OR [ not A ]' and leave the description of negation to A
 DESC_NOT_AND_BEFORE_SINGLE_OPERAND
-'''[[DESC_OR_BEFORE_SINGLE_OPERAND]]'''
+[[DESC_OR_BEFORE_SINGLE_OPERAND]]
 
 DESC_NOT_AND_AFTER_SINGLE_OPERAND
-'''[[DESC_OR_AFTER_SINGLE_OPERAND]]'''
-
+[[DESC_OR_AFTER_SINGLE_OPERAND]]
 
 # OR Descriptions: for expressions of the form ( A or B or C )
 DESC_OR_BEFORE_OPERANDS
 ''' (soit'''
 
 DESC_OR_BETWEEN_OPERANDS
-''', ou'''
+, ou
 
 DESC_OR_AFTER_OPERANDS
 ''' )'''
@@ -10524,62 +10552,58 @@ DESC_OR_BEFORE_SINGLE_OPERAND
 DESC_OR_AFTER_SINGLE_OPERAND
 ''''''
 
-
 # NOT OR Descriptions; for expressions of the form 'NOT OR [ A B C ]'
 # We actually describe the logically equivalent expression 'AND [ (NOT A) (NOT B) (NOT C) ]'
 # Note: (NOT A), (NOT B).. are handled in the descriptions of A, B.. respectively
 DESC_NOT_OR_BEFORE_OPERANDS
-'''[[DESC_AND_BEFORE_OPERANDS]]'''
+[[DESC_AND_BEFORE_OPERANDS]]
 
 DESC_NOT_OR_BETWEEN_OPERANDS
-'''[[DESC_AND_BETWEEN_OPERANDS]]'''
+[[DESC_AND_BETWEEN_OPERANDS]]
 
 DESC_NOT_OR_AFTER_OPERANDS
-'''[[DESC_AND_AFTER_OPERANDS]]'''
+[[DESC_AND_AFTER_OPERANDS]]
 
 # for expressions of the form 'NOT OR [ A ]' we describe instead 'AND [ NOT A ]'
 # Note: (NOT A) is handled in the description of A
 DESC_NOT_OR_BEFORE_SINGLE_OPERAND
-'''[[DESC_AND_BEFORE_SINGLE_OPERAND]]'''
+[[DESC_AND_BEFORE_SINGLE_OPERAND]]
 
 DESC_NOT_OR_AFTER_SINGLE_OPERAND
-'''[[DESC_AND_AFTER_SINGLE_OPERAND]]'''
-
-
+[[DESC_AND_AFTER_SINGLE_OPERAND]]
 
 # OrderedAlternativesOf Descriptions for expressions 'OrderedAlternativesOf [ A B C ]'
 DESC_ORDERED_ALTERNATIVES_BEFORE_OPERANDS
-'''qui correspond à la première condition d'éligibilité {'''
+qui correspond à la première condition d'éligibilité {
 
 DESC_ORDERED_ALTERNATIVES_BETWEEN_OPERANDS
-''', soit'''
+, soit
 
 DESC_ORDERED_ALTERNATIVES_AFTER_OPERANDS
 ''' }'''
 
 DESC_ORDERED_ALTERNATIVES_BEFORE_SINGLE_OPERAND
-'''{'''
+{
 
 DESC_ORDERED_ALTERNATIVES_AFTER_SINGLE_OPERAND
-'''(si également des non-correspondances)}'''
+(si également des non-correspondances)}
 
 # Expressions like  'NOT OrderedAlternativesOf [ A B C ]'
 # Note: returned matches rely on (NOT A), (NOT B).. and are handled in the descriptions of A, B.. respectively
 DESC_NOT_ORDERED_ALTERNATIVES_BEFORE_OPERANDS
-'''qui correspond à la première condition d'éligibilité pour les candidats non-éligibles: {'''
+qui correspond à la première condition d'éligibilité pour les candidats non-éligibles: {
 
 DESC_NOT_ORDERED_ALTERNATIVES_BETWEEN_OPERANDS
-''', soit'''
+, soit
 
 DESC_NOT_ORDERED_ALTERNATIVES_AFTER_OPERANDS
 ''' }'''
 
 DESC_NOT_ORDERED_ALTERNATIVES_BEFORE_SINGLE_OPERAND
-'''{'''
+{
 
 DESC_NOT_ORDERED_ALTERNATIVES_AFTER_SINGLE_OPERAND
-'''(si également des non-correspondances)}'''
-
+(si également des non-correspondances)}
 
 # %1% textual description of the lower turn limit.
 # %2% textual description of the upper turn limit.
@@ -11159,7 +11183,7 @@ En atteignant ce degré de sophistication, les Stocks Génériques peuvent être
 Cela exempte le service du Stock Impérial de connaître à l'avance quels biens seront exactement demandés. Prévoir le lieu de la demande et les quantités s'avère désormais suffisant.
 
 Il s'agit donc d'une technologie d'amélioration du Stock Impérial. Le [[metertype METER_STOCKPILE]] augmente de 2, plus un supplément de 0.01 par [[metertype METER_POPULATION]], plus un supplément de 3 pour chaque planète réglée sur le [[encyclopedia STOCKPILE_FOCUS_TITLE]].
-Ces amélioriations sont cumulables avec le bonus de la technologie [[tech PRO_PREDICTIVE_STOCKPILING]].'''
+Ces améliorations sont cumulables avec le bonus de la technologie [[tech PRO_PREDICTIVE_STOCKPILING]].'''
 
 PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY
 Complexe d'Intrication Interstellaire
@@ -11169,7 +11193,7 @@ PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY_DESC
 Dissocier le personnel et les moyens de production favorise un procédé optimal de conception et augmente l'efficience du service de Stock Impérial.
 
 Il s'agit donc d'une technologie d'amélioration du Stock Impérial. Le [[metertype METER_STOCKPILE]] augmente de 6, plus un supplément de 0.02 par [[metertype METER_POPULATION]].
-Ces amélioriations sont cumulables avec les bonus des technologies [[tech PRO_PREDICTIVE_STOCKPILING]], [[tech PRO_GENERIC_SUPPLIES]] et [[tech PRO_VOID_PREDICTION]].
+Ces améliorations sont cumulables avec les bonus des technologies [[tech PRO_PREDICTIVE_STOCKPILING]], [[tech PRO_GENERIC_SUPPLIES]] et [[tech PRO_VOID_PREDICTION]].
 
 Débloque également la structure [[buildingtype BLD_STOCKPILING_CENTER]], augmentant additionnellement le [[metertype METER_STOCKPILE]] de 0.1 par [[metertype METER_INDUSTRY]].'''
 
@@ -11181,7 +11205,7 @@ PRO_VOID_PREDICTION_DESC
 Pour le service du Stock Impérial, la Prédiction du Vide est l'instrument par excellence permettant de fournir les bons matériaux avant même que le besoin ne se manifeste.
 
 Il s'agit donc d'une technologie d'amélioration du Stock Impérial. Le [[metertype METER_STOCKPILE]] augmente de 0.2 par [[metertype METER_POPULATION]].
-Ces amélioriations sont cumulables avec les bonus des technologies [[tech PRO_PREDICTIVE_STOCKPILING]], [[tech PRO_GENERIC_SUPPLIES]] et [[tech PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY]].'''
+Ces améliorations sont cumulables avec les bonus des technologies [[tech PRO_PREDICTIVE_STOCKPILING]], [[tech PRO_GENERIC_SUPPLIES]] et [[tech PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY]].'''
 
 PRO_MICROGRAV_MAN
 Production en Microgravité
@@ -11205,6 +11229,7 @@ Bien qu'un haut niveau en conception et en configuration d'usine requiert toujou
 
 PRO_EXOBOTS  # translated
 Exobots
+
 PRO_EXOBOTS_DESC
 Permet la construction de colonies d'[[species SP_EXOBOT]]s optimisés pour l'industrie sur les Planètes [[PE_HOSTILE]]s.
 
@@ -11533,11 +11558,13 @@ Une coque constituée d'énergie pure, bien que plus efficiente que n'importe qu
 
 SHP_KRILL_SPAWN
 Génération de Krill
+
 SHP_KRILL_SPAWN_DESC
 Débloque l'équipement [[shippart SP_KRILL_SPAWNER]] pour les astronefs, qui provoque l'apparition de krill sauvage dans les systèmes abritant des Ceintures d'Astéroïdes.
 
 SPY_ROOT_DECEPTION
 Tromperie
+
 SPY_ROOT_DECEPTION_DESC
 L'art de la tromperie n’est pas naturel à toutes les espèces, mais la possibilité de dissimuler la vérité peut s'avérer bien utile.
 
@@ -11997,7 +12024,11 @@ Bombardement
 SHP_BOMBARD_DESC
 Permet le développement d'armes de bombardement planétaire.
 
-##Fighter explanation, needs improving and a Pedia article writing
+
+##
+## Fighter explanation, needs improving and a Pedia article writing
+##
+
 SHP_FIGHTERS_1
 Chasseurs et Rampes de Lancement
 
@@ -13295,6 +13326,7 @@ Colonie Super-Testeurs
 
 BLD_COL_SUPER_TEST_DESC
 [[BLD_COL_PART_1]] colonie Super-Testeurs. [[BLD_COL_PART_2]] colonie Super-Testeurs [[BLD_COL_PART_3]].
+
 
 ##
 ## Hull and ship part description templates
@@ -14630,17 +14662,16 @@ BLD_COL_PART_3
 appartenant à l'empire, et augmentera proportionnellement à son éloignement; ce délai sera réduit si l'empire recherche des technologies permettant la production d'astronefs colonisateurs plus rapides, grâce à des équipements de motorisation plus performants et des coques d'astronefs de qualité supérieure
 
 
-# Macro keys formatting for ship designs, hulls or parts:
-# BLD_SHIPYARD_TYPE1_TYPE2_REQUIRED (required building type(s) owned by
-#                                    empire only in the same system)
-# ANY_SYSTEM (building owned in any system by empire or ally)
-# Any other key formatting is self-explanatory (e.g. LIVING_HULL_AUTO_REGEN)
-
 ##
 ## Ship design/hull macros
 ##
-
-# Keys used in Predefined Ship Designs and Ship Hulls sections
+## Macro keys formatting for ship designs, hulls or parts:
+## BLD_SHIPYARD_TYPE1_TYPE2_REQUIRED (required building type(s) owned by
+##                                    empire only in the same system)
+## ANY_SYSTEM (building owned in any system by empire or ally)
+## Any other key formatting is self-explanatory (e.g. LIVING_HULL_AUTO_REGEN)
+## Keys used in Predefined Ship Designs and Ship Hulls sections
+##
 
 BLD_SHIPYARD_BASE_REQUIRED
 Ne peut être construit qu'en un lieu disposant d'un [[buildingtype BLD_SHIPYARD_BASE]].
@@ -14684,7 +14715,10 @@ Ne peut être construit qu'en un lieu disposant d'un [[buildingtype BLD_SHIPYARD
 BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_XENO_FAC_ORG_CELL_GRO_CHAMB_REQUIRED
 Ne peut être construit qu'en un lieu disposant d'un [[buildingtype BLD_SHIPYARD_BASE]], d'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], d'une [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]], et d'une [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]].
 
-# Other than Requirements
+
+##
+## Other than Requirements
+##
 
 SHIPDESIGN_DETECTION_RESEARCH_TIPS
 La [[metertype METER_RESEARCH]] visant à améliorer le [[metertype METER_DETECTION]] permettra la conception de meilleurs modèles.
@@ -14711,8 +14745,8 @@ SHIPDESIGN_PLANET_INVASION
 ##
 ## Ship part/tech application macros
 ##
-
-# Keys used in Ship Parts and Technology Application sections
+## Keys used in Ship Parts and Technology Application sections
+##
 
 BLD_SHIPYARD_ORG_XENO_FAC_ORG_CELL_GRO_CHAMB_REQUIRED_ANY_SYSTEM
 Cet équipement ne peut être produit que si l'empire ou un empire allié dispose d'une [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] et d'une [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]].
@@ -15629,7 +15663,6 @@ Modèle Invalide
 ##
 ## AI diplomacy strings and lists
 ##
-
 
 # Newline separated list of polite alliance proposal acknowlegements.
 AI_ALLIANCE_PROPOSAL_ACKNOWLEDGEMENTS_MILD_LIST
