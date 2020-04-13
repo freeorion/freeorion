@@ -108,7 +108,6 @@ namespace {
 }
 
 GalaxySetupData::GalaxySetupData() :
-    m_seed(),
     m_size(100),
     m_shape(SPIRAL_2),
     m_age(GALAXY_SETUP_MEDIUM),

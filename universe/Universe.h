@@ -83,9 +83,9 @@ private:
     typedef std::map<int, std::set<int>>            ObjectKnowledgeMap;             ///< IDs of Empires which know information about an object (or deleted object); keyed by object id
 
     typedef const ValueRef::ValueRef<Visibility>*   VisValRef;
-    typedef std::vector<std::pair<int, VisValRef>>      SrcVisValRefVec;
-    typedef std::map<int, SrcVisValRefVec>              ObjSrcVisValRefVecMap;
-    typedef std::map<int, ObjSrcVisValRefVecMap>        EmpireObjectVisValueRefMap;
+    typedef std::vector<std::pair<int, VisValRef>>  SrcVisValRefVec;
+    typedef std::map<int, SrcVisValRefVec>          ObjSrcVisValRefVecMap;
+    typedef std::map<int, ObjSrcVisValRefVecMap>    EmpireObjectVisValueRefMap;
 
     /** Discrepancy between meter's value at start of turn, and the value that
       * this client calculate that the meter should have with the knowledge
