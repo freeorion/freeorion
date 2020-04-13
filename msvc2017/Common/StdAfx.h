@@ -87,7 +87,6 @@
 // includes from .cpp
 #include <sstream>
 
-#include <boost/smart_ptr/make_unique.hpp>
 
 #ifdef _MSC_VER
 // Note: This is a workaround for Visual C++ non-conformant pre-processor
