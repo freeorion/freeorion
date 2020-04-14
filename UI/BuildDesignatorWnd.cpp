@@ -503,13 +503,6 @@ namespace {
             // create title, description, production time and cost
             const std::string& title = UserString(item.name);
             std::string main_text = UserString("PROJECT_BT_STOCKPILE_DESC");
-            float total_cost = 1.0;
-            int production_time = 1;
-
-            //main_text += "\n\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_COST")) %
-            //                                     DoubleToString(total_cost, 3, false));
-            //main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME")) %
-            //                                   std::to_string(production_time));
 
             // do not show build conditions - always buildable
 
