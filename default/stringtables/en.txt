@@ -11329,7 +11329,7 @@ CON_FRC_ENRG_STRC
 Force-Energy Structures
 
 CON_FRC_ENRG_STRC_DESC
-'''Increases the growth of resource and infrastructure meters below target value to 3 per turn, and the decay of resource meters above target value to 5 per turn. [[metertype METER_INDUSTRY]] and [[metertype METER_RESEARCG]]l grow only if [[metertype METER_HAPPINESS]] is at least 5.
+'''Increases the growth of resource and infrastructure meters below target value to 3 per turn, and the decay of resource meters above target value to 5 per turn. [[metertype METER_INDUSTRY]] and [[metertype METER_RESEARCH]]l grow only if [[metertype METER_HAPPINESS]] is at least 5.
 
 The flexibility and versatility of force-energy structures permits a colonies buildings to be more easily re-tooled to suit new purposes, increasing the rate at which focus changes can take effect.
 
