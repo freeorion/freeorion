@@ -1672,7 +1672,7 @@ OPTIONS_DB_UI_PLANET_STATUS_CONQUERED
 %1% has just been conquered. Happiness will probably be reduced.
 
 OPTIONS_DB_UI_PLANET_STATUS_UNHAPPY
-The population on %1% is very unhappy. It can not be used as a source for settlers.
+The population on %1% is very unhappy. Neither [[metertype METER_INDUSTRY]] nor [[metertype METER_RESEARCH]] will increase. It can not be used as a source for settlers.
 
 OPTIONS_DB_UI_PLANET_STATUS_NO_SUPPLY
 %1% has been cut off from supply. Industry generated on this planet can only be used here.
@@ -5741,7 +5741,7 @@ METER_HAPPINESS_VALUE_LABEL
 Happiness
 
 METER_HAPPINESS_VALUE_DESC
-'''The Happiness of a colony's population starts out low after initial colonization or after invasion, and may also be affected by other factors. A minimum Happiness of 5 is necessary for a colony to act as a source of settlers for colonizing other planets.
+'''The Happiness of a colony's population starts out low after initial colonization or after invasion, and may also be affected by other factors. A minimum Happiness of 5 is necessary for a colony to act as a source of settlers for colonizing other planets. Also [[metertype METER_INDUSTRY]] and [[metertype METER_RESEARCH]] only start growing if Happiness is at least 5.
 
 The Target Happiness is the stable Happiness level a planet's population will approach, given the current factors influencing the planetary Happiness. Its value is connected to [[encyclopedia ENC_BUILDING_TYPE]]s built on the planet, [[encyclopedia ENC_TECH]] researched by the empire, [[encyclopedia ENC_SPECIAL]]s linked to the planet, and various other game effects. If these factors change, then the Target Happiness value is likely to shift.'''
 
@@ -6985,7 +6985,7 @@ SITREP_FOREIGN_FLEET_ARRIVED_AT_DESTINATION_LABEL
 Foreign Fleet Arrived
 
 SITREP_POP_THRESHOLD
-On %planet%: The colony has reached sufficient size and [[metertype METER_HAPPINESS]] to be a settler source for colonizing other planets.
+On %planet%: The colony has reached sufficient size and [[metertype METER_HAPPINESS]] to be a settler source for colonizing other planets. Also [[metertype METER_INDUSTRY]] and [[metertype METER_RESEARCH]] may start growing.
 
 SITREP_POP_THRESHOLD_LABEL
 Colonizing Threshold
@@ -11329,7 +11329,7 @@ CON_FRC_ENRG_STRC
 Force-Energy Structures
 
 CON_FRC_ENRG_STRC_DESC
-'''Increases the growth of resource and infrastructure meters below target value to 3 per turn, and the decay of resource meters above target value to 5 per turn.
+'''Increases the growth of resource and infrastructure meters below target value to 3 per turn, and the decay of resource meters above target value to 5 per turn. [[metertype METER_INDUSTRY]] and [[metertype METER_RESEARCG]]l grow only if [[metertype METER_HAPPINESS]] is at least 5.
 
 The flexibility and versatility of force-energy structures permits a colonies buildings to be more easily re-tooled to suit new purposes, increasing the rate at which focus changes can take effect.
 
