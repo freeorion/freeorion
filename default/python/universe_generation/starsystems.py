@@ -36,7 +36,7 @@ def pick_star_type(galaxy_age):
             if max_roll < roll:
                 max_roll = roll
                 star_type = candidate
-    except:
+    except:  # noqa: E722
         # in case of an error play save and set star type to invalid
         star_type = fo.starType.unknown
         util.report_error("Python pick_star_type: Pick star type failed\n" + sys.exc_info()[1])

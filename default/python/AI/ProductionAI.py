@@ -283,7 +283,7 @@ def generate_production_orders():
             try:
                 if fo.getBuildingType(type_id).canBeProduced(empire.empireID, homeworld.id):
                     possible_building_type_ids.append(type_id)
-            except:
+            except:  # noqa: E722
                 if fo.getBuildingType(type_id) is None:
                     debug("For empire %d, 'available Building Type priority_id' %s returns None from fo.getBuildingType(type_id)" % (empire.empireID, type_id))
                 else:
@@ -334,7 +334,7 @@ def generate_production_orders():
                 try:
                     res = fo.issueEnqueueBuildingProductionOrder("BLD_SHIPYARD_BASE", homeworld.id)
                     debug("Enqueueing BLD_SHIPYARD_BASE, with result %d" % res)
-                except:
+                except:  # noqa: E722
                     warning("Can't build shipyard at new capital, probably no population; we're hosed")
 
             for building_name in ["BLD_SHIPYARD_ORG_ORB_INC"]:
@@ -347,7 +347,7 @@ def generate_production_orders():
                             building_expense += cost / time
                             res = fo.issueRequeueProductionOrder(production_queue.size - 1, 0)  # move to front
                             debug("Requeueing %s to front of build queue, with result %d" % (building_name, res))
-                    except:
+                    except:  # noqa: E722
                         error("Exception triggered and caught: ", exc_info=True)
 
             if ("BLD_IMPERIAL_PALACE" in possible_building_types) and ("BLD_IMPERIAL_PALACE" not in (capital_buildings + queued_building_names)):
@@ -717,7 +717,7 @@ def generate_production_orders():
                             continue
                         try:
                             distance_map[sys_id] = universe.jumpDistance(homeworld.systemID, sys_id)
-                        except:
+                        except:  # noqa: E722
                             pass
                     use_sys = ([(-1, INVALID_ID)] + sorted([(dist, sys_id) for sys_id, dist in distance_map.items()]))[:2][-1][-1]  # kinda messy, but ensures a value
                 if use_sys != INVALID_ID:
@@ -730,7 +730,7 @@ def generate_production_orders():
                             building_expense += cost / time  # production_queue[production_queue.size -1].blocksize *
                             res = fo.issueRequeueProductionOrder(production_queue.size - 1, 0)  # move to front
                             debug("Requeueing %s to front of build queue, with result %d", building_name, res)
-                    except:
+                    except:  # noqa: E722
                         debug("problem queueing BLD_SOL_ORB_GEN at planet %s of system", use_loc, use_sys)
                         pass
 
@@ -756,7 +756,7 @@ def generate_production_orders():
                     continue
                 try:
                     distance_map[sys_id] = universe.jumpDistance(nominal_home.systemID, sys_id)
-                except:
+                except:  # noqa: E722
                     pass
             red_sys_list = sorted([(dist, sys_id) for sys_id, dist in distance_map.items()])
             for dist, sys_id in red_sys_list:
@@ -783,7 +783,7 @@ def generate_production_orders():
                             chat_human("Enqueueing %s at planet %s , with result %d" % (building_name, planet_used, res))
                         res = fo.issueRequeueProductionOrder(production_queue.size - 1, 0)  # move to front
                         debug("Requeueing %s to front of build queue, with result %d", building_name, res)
-                except:
+                except:  # noqa: E722
                     debug("problem queueing %s at planet %s" % (building_name, planet_used))
 
     building_name = "BLD_BLACK_HOLE_POW_GEN"
@@ -804,7 +804,7 @@ def generate_production_orders():
                         continue
                     try:
                         distance_map[sys_id] = universe.jumpDistance(homeworld.systemID, sys_id)
-                    except:
+                    except:  # noqa: E722
                         pass
                 use_sys = ([(-1, INVALID_ID)] + sorted([(dist, sys_id) for sys_id, dist in distance_map.items()]))[:2][-1][-1]  # kinda messy, but ensures a value
             if use_sys != INVALID_ID:
@@ -815,7 +815,7 @@ def generate_production_orders():
                     if res:
                         res = fo.issueRequeueProductionOrder(production_queue.size - 1, 0)  # move to front
                         debug("Requeueing %s to front of build queue, with result %d" % (building_name, res))
-                except:
+                except:  # noqa: E722
                     warning("problem queueing BLD_BLACK_HOLE_POW_GEN at planet %s of system %s", use_loc, use_sys)
                     pass
 
@@ -834,7 +834,7 @@ def generate_production_orders():
                 if res:
                     res = fo.issueRequeueProductionOrder(production_queue.size - 1, 0)  # move to front
                     debug("Requeueing %s to front of build queue, with result %d", building_name, res)
-            except:
+            except:  # noqa: E722
                 pass
 
     building_name = "BLD_GENOME_BANK"
@@ -852,7 +852,7 @@ def generate_production_orders():
                 if res:
                     res = fo.issueRequeueProductionOrder(production_queue.size - 1, 0)  # move to front
                     debug("Requeueing %s to front of build queue, with result %d", building_name, res)
-            except:
+            except:  # noqa: E722
                 pass
 
     building_name = "BLD_NEUTRONIUM_EXTRACTOR"
@@ -894,7 +894,7 @@ def generate_production_orders():
                     if res:
                         res = fo.issueRequeueProductionOrder(production_queue.size - 1, 0)  # move to front
                         debug("Requeueing %s to front of build queue, with result %d", building_name, res)
-                except:
+                except:  # noqa: E722
                     warning("problem queueing BLD_NEUTRONIUM_EXTRACTOR at planet %s of system %s" % (use_loc, use_sys))
                     pass
 

@@ -129,7 +129,7 @@ class _stdXLikeStream(object):
                 line_number = frame.f_lineno
                 function_name = frame.f_code.co_name
                 filename = frame.f_code.co_filename
-            except:
+            except:  # noqa: E722
                 (filename, line_number, function_name) = ("", "", "")
             finally:
                 # Explicitly del references to the caller's frame to avoid persistent reference cycles
