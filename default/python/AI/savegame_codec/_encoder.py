@@ -39,10 +39,14 @@ def build_savegame_string(use_compression=True):
     from aistate_interface import get_aistate
     savegame_string = encode(get_aistate())
     if use_compression:
-        import base64
-        import zlib
-        savegame_string = base64.b64encode(zlib.compress(six.ensure_binary(savegame_string, 'utf-8')))
+        savegame_string = compress(savegame_string)
     return savegame_string
+
+
+def compress(string):
+    import base64
+    import zlib
+    return base64.b64encode(zlib.compress(six.ensure_binary(string, 'utf-8')))
 
 
 def encode(o):

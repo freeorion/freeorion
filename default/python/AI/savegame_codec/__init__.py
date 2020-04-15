@@ -44,4 +44,4 @@ Example usage:
 
 from ._decoder import decode, load_savegame_string
 from ._definitions import CanNotSaveGameException, InvalidSaveGameException
-from ._encoder import encode, build_savegame_string
+from ._encoder import encode, build_savegame_string, compress

@@ -71,18 +71,26 @@ def simple_object(request, ):
     return request.param
 
 
-def check_encoding(obj):
+def check_encoding(obj, use_compression=False):
     retval = savegame_codec.encode(obj)
     assert retval
     assert isinstance(retval, str)
 
-    restored_obj = savegame_codec.decode(retval)
+    if use_compression:
+        retval = savegame_codec.compress(retval)
+        restored_obj = savegame_codec.load_savegame_string(retval)
+    else:
+        restored_obj = savegame_codec.decode(retval)
     assert type(restored_obj) == type(obj)
     assert restored_obj == obj
 
 
 def test_encoding_simple_object(simple_object):
     check_encoding(simple_object)
+
+
+def test_encoding_simple_object_with_compression(simple_object):
+    check_encoding(simple_object, True)
 
 
 def test_encoding_function():
