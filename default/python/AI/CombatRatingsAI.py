@@ -338,7 +338,7 @@ class FleetCombatStats(object):
         :return: list of ship stats
         :rtype: list
         """
-        return map(lambda x: x.get_stats(hashable=hashable), self.__ship_stats)  # pylint: disable=map-builtin-not-iterating; # PY_3_MIGRATION
+        return map(lambda x: x.get_stats(hashable=hashable), self.__ship_stats)
 
     def get_ship_combat_stats(self):
         """Returns list of ShipCombatStats of fleet."""

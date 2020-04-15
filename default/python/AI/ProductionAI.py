@@ -587,7 +587,7 @@ def generate_production_orders():
             yard_locs = []
             need_yard = {}
             top_pilot_locs = []
-            for sys_id in set(asteroid_systems.keys()).difference(asteroid_yards.keys()):  # pylint: disable=dict-keys-not-iterating; # PY_3_MIGRATION
+            for sys_id in set(asteroid_systems.keys()).difference(asteroid_yards.keys()):
                 if sys_id in top_pilot_systems:
                     for pid, _ in top_pilot_systems[sys_id]:
                         if pid not in queued_shipyard_locs:  # will catch it later if shipyard already present
@@ -599,11 +599,11 @@ def generate_production_orders():
                     for pid, _ in top_pilot_systems[sys_id]:
                         if pid not in queued_shipyard_locs:  # will catch it later if shipyard already present
                             need_yard[sys_id] = pid
-            if (not yard_locs) and len(asteroid_yards.values()) <= int(current_turn // 50):  # pylint: disable=dict-values-not-iterating; # PY_3_MIGRATION # not yet building & not enough current locs, find a location to build one
+            if (not yard_locs) and len(asteroid_yards.values()) <= int(current_turn // 50):  # not yet building & not enough current locs, find a location to build one
                 colonizer_loc_choices = []
                 builder_loc_choices = []
-                bld_systems = set(asteroid_systems.keys()).difference(asteroid_yards.keys())  # pylint: disable=dict-keys-not-iterating; # PY_3_MIGRATION
-                for sys_id in bld_systems.intersection(builder_systems.keys()):  # pylint: disable=dict-keys-not-iterating; # PY_3_MIGRATION
+                bld_systems = set(asteroid_systems.keys()).difference(asteroid_yards.keys())
+                for sys_id in bld_systems.intersection(builder_systems.keys()):
                     for this_spec, pid in builder_systems[sys_id]:
                         if this_spec in ColonisationAI.empire_colonizers:
                             if pid in (ColonisationAI.empire_colonizers[this_spec] + queued_shipyard_locs):

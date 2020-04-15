@@ -40,7 +40,6 @@ or special files with tables.
 
 ## Migration artifacts
 - `six` library and all its usage should be removed after migration
-- Comment with tag `PY_3_MIGRATION` should be checked and resolved after migration
 
 ## TODO section
 
