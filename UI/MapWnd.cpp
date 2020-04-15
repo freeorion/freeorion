@@ -5458,7 +5458,7 @@ void MapWnd::BuildingRightClicked(int building_id) {
 }
 
 void MapWnd::ReplotProjectedFleetMovement(bool append) {
-    DebugLogger() << "MapWnd::ReplotProjectedFleetMovement" << (append?" append":"");
+    TraceLogger() << "MapWnd::ReplotProjectedFleetMovement" << (append?" append":"");
     for (const auto& fleet_line : m_projected_fleet_lines) {
         const MovementLineData& data = fleet_line.second;
         if (!data.path.empty()) {
