@@ -1,5 +1,3 @@
-from __future__ import print_function
-
 """configure_logging redirects print and the logger to use the freeorion server.
 
 Output redirected to the freeorion server prints in the appropriate log:

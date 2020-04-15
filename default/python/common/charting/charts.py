@@ -17,7 +17,6 @@
 # Change dataDir to '<user>/AppData/Roaming/'
 
 
-from __future__ import print_function
 import pylab
 import os
 import sys

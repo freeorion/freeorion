@@ -1,4 +1,3 @@
-from __future__ import division
 import math
 import random
 from logging import debug, error, info, warning

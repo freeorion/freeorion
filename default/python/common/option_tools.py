@@ -1,5 +1,3 @@
-from __future__ import print_function
-
 from common import six
 import os
 import sys

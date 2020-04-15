@@ -1,4 +1,3 @@
-from __future__ import division
 from collections import Counter
 from logging import warning, error
 

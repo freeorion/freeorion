@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 """This module defines the decoding for the FreeOrion AI savegames.
 
 The decoder is subclassed from the standard library json decoder and

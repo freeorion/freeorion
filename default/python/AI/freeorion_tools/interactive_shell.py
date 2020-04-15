@@ -1,5 +1,3 @@
-from __future__ import print_function
-
 import freeOrionAIInterface as fo
 from freeorion_tools import chat_human
 from code import InteractiveInterpreter

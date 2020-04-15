@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 """
 This module extend freeOrionAIInterface from python side.
 Check that you have import of this module from FreeOrionAI.py

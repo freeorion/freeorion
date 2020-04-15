@@ -1,5 +1,3 @@
-from __future__ import print_function
-from __future__ import division
 import sys
 from collections import defaultdict
 from math import acos, ceil, cos, floor, pi, sin, sqrt
