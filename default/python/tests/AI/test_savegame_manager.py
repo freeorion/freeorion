@@ -91,19 +91,18 @@ def test_encoding_function():
     else:
         match = "Class __builtin__.function is not trusted"
 
-    with pytest.raises(savegame_codec.CanNotSaveGameException,
-                       message="Could save function",
-                       match=match):
+    with pytest.raises(savegame_codec.CanNotSaveGameException, match=match):
         check_encoding(lambda: 0)
+        pytest.fail("Could save function")
 
 
 # remove this test after migration to python3
 def test_encoding_old_style_class():
     if six.PY2:
         with pytest.raises(savegame_codec.CanNotSaveGameException,
-                           message="Could save Old style class",
                            match=r"Encountered unsupported object test_savegame_manager.OldStyleClass \(<type 'classobj'>\)"):
             check_encoding(OldStyleClass)
+            pytest.fail("Could save Old style class")
 
 
 def test_encoding_type():
@@ -112,17 +111,17 @@ def test_encoding_type():
     else:
         match = "Class __builtin__.type is not trusted"
     with pytest.raises(savegame_codec.CanNotSaveGameException,
-                       message="Could save untrusted class",
                        match=match):
         check_encoding(list)
+        pytest.fail("Could save untrusted class")
 
 
 def test_class_encoding():
     obj = DummyTestClass()
     with pytest.raises(savegame_codec.CanNotSaveGameException,
-                       message="Could save game even though test module should not be trusted",
                        match="Class test_savegame_manager.DummyTestClass is not trusted"):
         savegame_codec.encode(obj)
+        pytest.fail("Could save game even though test module should not be trusted")
 
     with TrustedScope():
         retval = savegame_codec.encode(obj)
@@ -140,21 +139,23 @@ def test_class_encoding():
         assert loaded_dict == original_dict
 
     with pytest.raises(savegame_codec.InvalidSaveGameException,
-                       message="Could load object from untrusted module",
                        match="DANGER DANGER - test_savegame_manager.DummyTestClass not trusted"):
         savegame_codec.decode(retval)
+        pytest.fail("Could load object from untrusted module")
 
 
 def test_getstate_call():
     with TrustedScope():
-        with pytest.raises(Success, message="__getstate__ was not called during encoding."):
+        with pytest.raises(Success):
             savegame_codec.encode(GetStateTester())
+            pytest.fail("__getstate__ was not called during encoding.")
 
 
 def test_setstate_call():
     with TrustedScope():
-        with pytest.raises(Success, message="__setstate__ was not called during decoding."):
+        with pytest.raises(Success):
             savegame_codec.decode(savegame_codec.encode(SetStateTester()))
+            pytest.fail("__setstate__ was not called during decoding.")
 
 
 def test_enums():
