@@ -736,21 +736,58 @@ void Fleet::SetRoute(const std::list<int>& route) {
 
     m_travel_route = route;
 
-    // Moving to where we are is not moving at all
-    if (m_travel_route.size() == 1 && this->SystemID() == m_travel_route.front()) {
-        m_travel_route.clear();
-        m_next_system = INVALID_OBJECT_ID;
-    }
+    TraceLogger() << "Fleet::SetRoute: " << this->Name() << " (" << this->ID() << ")  input: " << [&]() {
+        std::stringstream ss;
+        for (int id : m_travel_route)
+            if (const auto obj = Objects().get<UniverseObject>(id))
+                ss << obj->Name() << " (" << id << ")  ";
+        return ss.str();
+    }();
 
-    if (!m_travel_route.empty()) {
+    if (m_travel_route.size() == 1 && this->SystemID() == m_travel_route.front()) {
+        // Fleet was ordered to move to the system where it is currently,
+        // without an intermediate stop
+        m_travel_route.clear();
+        m_prev_system = m_next_system = INVALID_OBJECT_ID;
+
+    } else if (!m_travel_route.empty()) {
+        // Fleet was given a route to follow...
         if (m_prev_system != SystemID() && m_prev_system == m_travel_route.front()) {
-            m_prev_system = m_next_system;      // if already in transit and turning around, swap prev and next
+            // Fleet was ordered to return to its previous system directly
+            m_prev_system = m_next_system;
         } else if (SystemID() == route.front()) {
+            // Fleet was ordered to follow a route that starts at its current system
             m_prev_system = SystemID();
         }
+
         auto it = m_travel_route.begin();
-        m_next_system = m_prev_system == SystemID() && m_travel_route.size() > 1 ? (*++it) : (*it);
+        if (m_prev_system == SystemID() && m_travel_route.size() > 1) {
+            m_next_system = *++it;
+        } else {
+            m_next_system = *it;
+        }
+
+    } else if (m_travel_route.empty() && this->SystemID() != INVALID_OBJECT_ID) {
+        // route is empty and fleet is in a system. no movement needed.
+        // ensure next and previous systems are reset
+        m_prev_system = m_next_system = INVALID_OBJECT_ID;
+
+    } else {    // m_travel_route.empty() && this->SystemID() == INVALID_OBJECT_ID
+        if (m_next_system != INVALID_OBJECT_ID) {
+            ErrorLogger() << "Fleet::SetRoute fleet " << this->Name() << " has empty route but fleet is not in a system. Resetting route to end at next system: " << m_next_system;
+            m_travel_route.push_back(m_next_system);
+        } else {
+            ErrorLogger() << "Fleet::SetRoute fleet " << this->Name() << " has empty route but fleet is not in a system, and has no next system set.";
+        }
     }
+
+    TraceLogger() << "Fleet::SetRoute: " << this->Name() << " (" << this->ID() << ")  final: " << [&]() {
+        std::stringstream ss;
+        for (int id : m_travel_route)
+            if (const auto obj = Objects().get<UniverseObject>(id))
+                ss << obj->Name() << " (" << id << ")  ";
+        return ss.str();
+    }();
 
     StateChangedSignal();
 }
@@ -1066,32 +1103,7 @@ void Fleet::CalculateRouteTo(int target_system_id) {
         return;
     }
 
-
     int dest_system_id = target_system_id;
-
-    // Geoff: commenting out the early exit code of the owner of a fleet doesn't
-    // have visibility of the destination system, since this was preventing the
-    // human client's attempts to find routes for enemy fleets, for which the
-    // player's client doesn't know which systems are visible, and since
-    // visibility of a system on the current turn isn't necessary to plot
-    // route to it now that empire's can remember systems they've seen on
-    // previous turns.
-    //if (universe.GetObjectVisibilityByEmpire(dest_system_id, this->Owner()) <= VIS_NO_VISIBILITY) {
-    //    // destination system isn't visible to this fleet's owner, so the fleet can't move to it
-    //
-    //    // check if system to which fleet is moving is visible to the fleet's owner.  this should always be true, but just in case...
-    //    if (universe.GetObjectVisibilityByEmpire(m_next_system, this->Owner()) <= VIS_NO_VISIBILITY)
-    //        return; // next system also isn't visible; leave route empty.
-    //
-    //    // safety check: ensure supposedly visible object actually exists in known universe.
-    //    if (!Objects().get<System>(m_next_system)) {
-    //        ErrorLogger() << "Fleet::CalculateRoute found system with id " << m_next_system << " should be visible to this fleet's owner, but the system doesn't exist in the known universe!";
-    //        return; // abort if object doesn't exist in known universe... can't path to it if it's not there, even if it's considered visible for some reason...
-    //    }
-    //
-    //    // next system is visible, so move to that instead of ordered destination (m_moving_to)
-    //    dest_system_id = m_next_system;
-    //}
 
     // if we're between systems, the shortest route may be through either one
     if (this->CanChangeDirectionEnRoute()) {
