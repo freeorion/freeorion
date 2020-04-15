@@ -1,6 +1,3 @@
-from common import six
-
-
 def check_validity(value):
     """checks if value is valid"""
     return value is not None and value >= 0
@@ -26,13 +23,12 @@ class EnumMeta(type):
             return super_new(cls, name, bases, attrs)
 
         for k, v in attrs.items():
-            if not k.startswith('_') and isinstance(v, six.integer_types):
+            if not k.startswith('_') and isinstance(v, int):
                 attrs[k] = EnumItem(v, k, name)
         return super_new(cls, name, bases, attrs)
 
 
-@six.add_metaclass(EnumMeta)
-class Enum(object):
+class Enum(metaclass=EnumMeta):
     @classmethod
     def range(cls, start, end):
         result = []

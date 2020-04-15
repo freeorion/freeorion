@@ -1,7 +1,8 @@
+from io import StringIO
+
 import freeOrionAIInterface as fo
 from freeorion_tools import chat_human
 from code import InteractiveInterpreter
-from common import six
 import logging
 import sys
 from logging import error
@@ -87,8 +88,8 @@ def shell(msg):
     old_stdout = sys.stdout
     old_stderr = sys.stderr
 
-    sys.stdout = six.StringIO()
-    sys.stderr = six.StringIO()
+    sys.stdout = StringIO()
+    sys.stderr = StringIO()
     handler = logging.StreamHandler(sys.stdout)
     logging.getLogger().addHandler(handler)
 

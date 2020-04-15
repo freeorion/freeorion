@@ -40,7 +40,8 @@ don't commit logger wrapped function to repo.
 """
 import inspect
 import os
-from common import six
+from itertools import zip_longest
+
 from functools import wraps
 from logging import debug
 
@@ -126,7 +127,7 @@ def logger(callable_object, argument_wrappers=None):
     :return:
     """
     def inner(*args, **kwargs):
-        arguments = [str(wrapper(arg) if wrapper else arg) for arg, wrapper in six.moves.zip_longest(args, argument_wrappers)]
+        arguments = [str(wrapper(arg) if wrapper else arg) for arg, wrapper in zip_longest(args, argument_wrappers)]
         arguments.extend('%s=%s' % item for item in kwargs.items())
         res = callable_object(*args, **kwargs)
         frame = inspect.currentframe().f_back

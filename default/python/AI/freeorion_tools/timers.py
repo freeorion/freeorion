@@ -1,6 +1,5 @@
 import os
 import freeOrionAIInterface as fo
-from common import six
 from common.timers import Timer
 from common.option_tools import get_option_dict, check_bool, DEFAULT_SUB_DIR
 from common.option_tools import TIMERS_TO_FILE, TIMERS_USE_TIMERS, TIMERS_DUMP_FOLDER
@@ -87,7 +86,7 @@ class AILogTimer(Timer):
             mode = 'w'  # empty file
         else:
             mode = 'a'
-        with open(six.ensure_text(self.log_name, 'utf-8'), mode) as f:
+        with open(self.log_name, mode) as f:
             f.write(text)
             f.write('\n')
 

@@ -88,11 +88,9 @@ import random
 from logging import warning, debug
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
-from common import six
 
 
-@six.add_metaclass(abc.ABCMeta)
-class Trait(object):
+class Trait(metaclass=abc.ABCMeta):
     """An abstract class representing a type of trait of the AI.
 
     Traits give the AI personality along some dimension.

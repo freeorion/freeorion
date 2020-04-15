@@ -1,7 +1,7 @@
 from collections import Counter
+from functools import reduce
 from logging import warning, error
 
-from common import six
 import freeOrionAIInterface as fo
 import FleetUtilsAI
 from aistate_interface import get_aistate
@@ -454,7 +454,7 @@ def combine_ratings_list(ratings_list):
     :return: combined rating
     :rtype: float
     """
-    return six.moves.reduce(combine_ratings, ratings_list, 0)
+    return reduce(combine_ratings, ratings_list, 0)
 
 
 def rating_needed(target, current=0):

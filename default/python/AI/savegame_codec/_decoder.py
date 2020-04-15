@@ -14,7 +14,6 @@ to provide a __setstate__ method to verify and possibly sanitize the content of 
 import json
 
 import EnumsAI
-from common import six
 from freeorion_tools import profile
 from logging import debug
 
@@ -43,14 +42,14 @@ def load_savegame_string(string):
     except zlib.error:
         pass  # probably an uncompressed (or wrongly base64 decompressed) string
     try:
-        decoded_state = decode(six.ensure_str(new_string, 'utf-8'))
+        decoded_state = decode(new_string)
         debug("Decoded a zlib-compressed and apparently base64-encoded save-state string.")
         return decoded_state
     except (InvalidSaveGameException, ValueError, TypeError) as e:
         debug("Base64/zlib decoding path for savestate failed: %s" % e)
 
     try:
-        string = zlib.decompress(six.ensure_binary(string, 'utf-8'))
+        string = zlib.decompress(string.encode('utf-8'))
         debug("zlib-decompressed a non-base64-encoded save-state string.")
     except zlib.error:
         # probably an uncompressed string
@@ -59,7 +58,7 @@ def load_savegame_string(string):
     # We need to check uncompressed string, since zip archive of the empty string is not the empty string.
     if not string:
         raise Exception("Save game string is empty")
-    return decode(six.ensure_str(string, 'utf-8'))
+    return decode(string)
 
 
 def decode(obj):
@@ -127,12 +126,6 @@ class _FreeOrionAISaveGameDecoder(json.JSONDecoder):
         # for standard containers, interpret each element
         if isinstance(x, list):
             return list(self.__interpret(element) for element in x)
-
-        if six.PY2:
-            # encode a unicode str(six.text_type)
-            # according to systems standard encoding
-            if isinstance(x, six.text_type):
-                x = x.encode('utf-8')
 
         # if it is a string, check if it encodes another data type
         if isinstance(x, str):

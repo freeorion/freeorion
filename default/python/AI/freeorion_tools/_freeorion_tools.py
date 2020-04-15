@@ -1,5 +1,7 @@
 # This Python file uses the following encoding: utf-8
-from common import six
+from collections.abc import Mapping
+from io import StringIO
+
 import cProfile
 import logging
 import pstats
@@ -230,7 +232,7 @@ def profile(func):
         pr.enable()
         retval = func(*args, **kwargs)
         pr.disable()
-        s = six.StringIO()
+        s = StringIO()
         sortby = 'cumulative'
         ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
         ps.print_stats()
@@ -252,7 +254,7 @@ def get_partial_visibility_turn(obj_id):
     return visibility_turns_map.get(fo.visibility.partial, -9999)
 
 
-class ReadOnlyDict(six.moves.collections_abc.Mapping):
+class ReadOnlyDict(Mapping):
     """A dict that offers only read access.
 
      Note that if the values of the ReadOnlyDict are mutable,

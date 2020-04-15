@@ -38,9 +38,6 @@ see `putty-ignore` section in `tox.ini`. This allows ignoring certain
 warnings only for specified files, like bare excepts, that are hard to fix,
 or special files with tables.
 
-## Migration artifacts
-- `six` library and all its usage should be removed after migration
-
 ## TODO section
 
 See TODO section in tox.ini
