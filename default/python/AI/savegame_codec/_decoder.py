@@ -13,8 +13,10 @@ to provide a __setstate__ method to verify and possibly sanitize the content of 
 """
 import binascii
 import json
+from typing import Union
 
 import EnumsAI
+from AIstate import AIstate
 from freeorion_tools import profile
 
 from ._definitions import (ENUM_PREFIX, FALSE, FLOAT_PREFIX, INT_PREFIX, InvalidSaveGameException, NONE, PLACEHOLDER,
@@ -29,22 +31,21 @@ class SaveDecompressException(Exception):
 
 
 @profile
-def load_savegame_string(string: str):
+def load_savegame_string(string: Union[str, bytes]) -> AIstate:
     """
-    :rtype: AIstate
-    :raises: SaveUncompressException, InvalidSaveGameException
+    :raises: SaveDecompressException, InvalidSaveGameException
     """
     import base64
     import zlib
 
     try:
-        new_string = base64.b64decode(string.encode("utf-8"))
-    except binascii.Error as e:
+        new_string = base64.b64decode(string)
+    except (binascii.Error, ValueError, TypeError) as e:
         raise SaveDecompressException("Fail to decode base64 savestate %s" % e) from e
     try:
         new_string = zlib.decompress(new_string)
     except zlib.error as e:
-        raise SaveDecompressException("Fail to ungzip savestate %s" % e) from e
+        raise SaveDecompressException("Fail to decompress savestate %s" % e) from e
     return decode(new_string.decode('utf-8'))
 
 
