@@ -759,21 +759,32 @@ if(UNIX AND NOT APPLE)
         DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/metainfo
     )
 
-    install(
-        DIRECTORY default/
-        DESTINATION ${CMAKE_INSTALL_DATADIR}/freeorion/default
-        PATTERN "*~" EXCLUDE
-        PATTERN "*.pyc" EXCLUDE
-    )
-
-    foreach(SIZE 16 24 32 64 128 256)
+    if(NOT BUILD_HEADLESS)
         install(
-            FILES
-            ${CMAKE_SOURCE_DIR}/default/data/art/icons/FO_Icon_${SIZE}x${SIZE}.png
-            DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/${SIZE}x${SIZE}/apps/
-            RENAME freeorion.png
+            DIRECTORY default/
+            DESTINATION ${CMAKE_INSTALL_DATADIR}/freeorion/default
+            PATTERN "*~" EXCLUDE
+            PATTERN "*.pyc" EXCLUDE
         )
-    endforeach()
+
+        foreach(SIZE 16 24 32 64 128 256)
+            install(
+                FILES
+                ${CMAKE_SOURCE_DIR}/default/data/art/icons/FO_Icon_${SIZE}x${SIZE}.png
+                DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/${SIZE}x${SIZE}/apps/
+                RENAME freeorion.png
+            )
+        endforeach()
+    else()
+        install(
+            DIRECTORY default/
+            DESTINATION ${CMAKE_INSTALL_DATADIR}/freeorion/default
+            PATTERN "*~" EXCLUDE
+            PATTERN "*.pyc" EXCLUDE
+            PATTERN "*.png" EXCLUDE
+            PATTERN "*.ogg" EXCLUDE
+        )
+    endif()
 endif()
 
 if(WIN32)
