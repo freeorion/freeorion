@@ -1,4 +1,3 @@
-from __future__ import print_function
 from common.configure_logging import redirect_logging_to_freeorion_logger
 
 # Logging is redirected before other imports so that import errors appear in log files.
@@ -20,7 +19,6 @@ from util import int_hash, seed_rng, report_error, error_list
 from universe_tables import MAX_JUMPS_BETWEEN_SYSTEMS, MAX_STARLANE_LENGTH
 import universe_statistics
 
-from common import six
 from common.handlers import init_handlers
 from common.listeners import listener
 from common.option_tools import parse_config
@@ -82,7 +80,7 @@ def create_universe(psd_map):
     total_players = len(psd_map)
 
     # initialize RNG
-    h = int_hash(six.ensure_binary(gsd.seed, 'utf-8'))
+    h = int_hash(gsd.seed.encode('utf-8'))
     print("Using hashed seed", h)
     seed_rng(h)
     seed_pool = [random.random() for _ in range(100)]

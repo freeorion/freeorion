@@ -1,5 +1,3 @@
-from __future__ import print_function
-from __future__ import division
 from logging import debug, warning, error, info
 from operator import itemgetter
 

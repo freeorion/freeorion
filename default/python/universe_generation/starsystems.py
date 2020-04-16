@@ -1,4 +1,3 @@
-from __future__ import print_function
 import random
 import sys
 from itertools import product
@@ -111,7 +110,7 @@ def generate_systems(pos_list, gsd):
             continue
 
         recursion_limit = 1000
-        for _, orbit in product(range(recursion_limit), orbits):  # pylint: disable=range-builtin-not-iterating; # PY_3_MIGRATION
+        for _, orbit in product(range(recursion_limit), orbits):
             if planets.generate_a_planet(system, star_type, orbit, gsd.planet_density, gsd.shape):
                 break
         else:

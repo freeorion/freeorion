@@ -42,7 +42,6 @@ global variables:
 # TODO: Implement a better system for the new weapon upgrade functionality:
 #       - _calculate_weapon_strength() may be removed
 #       - Filtering the weapon parts must be updated: current cache does not consider tech upgrades, weapons are ignored
-from __future__ import division
 import copy
 import math
 from collections import Counter, defaultdict

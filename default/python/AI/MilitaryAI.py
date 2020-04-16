@@ -1,4 +1,3 @@
-from __future__ import division
 from logging import debug
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
@@ -716,7 +715,7 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
                            if pscore > InvasionAI.MIN_INVASION_SCORE] +
                           [pid for pid, (pscore, spec) in list(aistate.colonisablePlanetIDs.items())[:num_targets]
                            if pscore > InvasionAI.MIN_INVASION_SCORE])
-    top_target_planets.extend(aistate.qualifyingTroopBaseTargets.keys())  # pylint: disable=dict-keys-not-iterating; # PY_3_MIGRATION
+    top_target_planets.extend(aistate.qualifyingTroopBaseTargets.keys())
 
     base_col_target_systems = PlanetUtilsAI.get_systems(top_target_planets)
     top_target_systems = []

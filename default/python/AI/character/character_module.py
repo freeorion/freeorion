@@ -42,8 +42,6 @@ assigned some additional mandatory trait(s).  For example the Trith and
 a mandatory Genocidal trait.  Perhaps add a probabilty distribution of
 trait components to the FOCS description of a playable species.
 """
-from __future__ import division
-
 # Some ideas for future trait modules are:
 # TODO: challenge/difficulty -- to replace the difficulty related portions
 #                                of aggression.
@@ -90,11 +88,9 @@ import random
 from logging import warning, debug
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
-from common import six
 
 
-@six.add_metaclass(abc.ABCMeta)
-class Trait(object):
+class Trait(metaclass=abc.ABCMeta):
     """An abstract class representing a type of trait of the AI.
 
     Traits give the AI personality along some dimension.

@@ -1,4 +1,3 @@
-from __future__ import division
 import math
 import random
 from functools import partial
@@ -6,7 +5,6 @@ from logging import warning, debug
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 from common.print_utils import print_in_columns
-from common import six
 
 import AIDependencies as Dep
 from AIDependencies import Tags
@@ -389,7 +387,7 @@ def init():
     )
 
     for k, v in tech_handlers:
-        if isinstance(k, six.string_types):
+        if isinstance(k, str):
             k = (k, )  # wrap single techs to tuple
         for tech in k:
             priority_funcs[tech] = v

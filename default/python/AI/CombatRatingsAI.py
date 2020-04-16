@@ -1,8 +1,7 @@
-from __future__ import division
 from collections import Counter
+from functools import reduce
 from logging import warning, error
 
-from common import six
 import freeOrionAIInterface as fo
 import FleetUtilsAI
 from aistate_interface import get_aistate
@@ -339,7 +338,7 @@ class FleetCombatStats(object):
         :return: list of ship stats
         :rtype: list
         """
-        return map(lambda x: x.get_stats(hashable=hashable), self.__ship_stats)  # pylint: disable=map-builtin-not-iterating; # PY_3_MIGRATION
+        return map(lambda x: x.get_stats(hashable=hashable), self.__ship_stats)
 
     def get_ship_combat_stats(self):
         """Returns list of ShipCombatStats of fleet."""
@@ -455,7 +454,7 @@ def combine_ratings_list(ratings_list):
     :return: combined rating
     :rtype: float
     """
-    return six.moves.reduce(combine_ratings, ratings_list, 0)
+    return reduce(combine_ratings, ratings_list, 0)
 
 
 def rating_needed(target, current=0):

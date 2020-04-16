@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 """This package provides json-based encoding and decoding for use in FreeOrion AI savegames.
 
 The encoding is json-based with custom prefixes to support some objects

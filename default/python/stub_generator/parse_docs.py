@@ -1,5 +1,3 @@
-from __future__ import print_function
-
 from logging import error
 import re
 

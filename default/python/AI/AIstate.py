@@ -1,4 +1,3 @@
-from __future__ import division
 import copy
 from collections import Counter, OrderedDict as odict
 from logging import error, info, warning, debug
@@ -724,7 +723,7 @@ class AIstate(object):
 
     def get_all_fleet_missions(self):
         """Returns all AIFleetMissions."""
-        return self.__aiMissionsByFleetID.values()  # pylint: disable=dict-values-not-iterating; # PY_3_MIGRATION
+        return self.__aiMissionsByFleetID.values()
 
     def get_fleet_missions_map(self):
         return self.__aiMissionsByFleetID

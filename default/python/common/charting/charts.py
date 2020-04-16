@@ -17,13 +17,11 @@
 # Change dataDir to '<user>/AppData/Roaming/'
 
 
-from __future__ import print_function
 import pylab
 import os
 import sys
 from glob import glob
 import traceback
-from ... import six
 
 
 def show_only_some(x, pos):
@@ -42,7 +40,7 @@ def parse_file(file_name, ai=True):
     got_name = False
     data = {"PP": [], "RP": [], "RP_Ratio": [], "ShipCount": [], "turnsP": [], "turnPP": [], "PP + 2RP": []}
     details = {'color': {1, 1, 1, 1}, 'name': "", 'species': ""}
-    with open(six.ensure_text(file_name, 'utf-8'), 'r') as lf:
+    with open(file_name, 'r') as lf:
         while True:
             line = lf.readline()
             if not line:
