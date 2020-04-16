@@ -16,7 +16,9 @@ If not defined, its __dict__ will be encoded instead.
 
 If an object could not be encoded, raise a CanNotSaveGameException.
 """
+import base64
 import collections
+import zlib
 
 import EnumsAI
 from freeorion_tools import profile
@@ -26,7 +28,7 @@ from ._definitions import (CanNotSaveGameException, ENUM_PREFIX, FALSE, FLOAT_PR
 
 
 @profile
-def build_savegame_string(use_compression=True):
+def build_savegame_string() -> bytes:
     """Encode the AIstate and compress the resulting string with zlib.
 
     To decode the string, first call zlib.decompress() on it.
@@ -36,11 +38,7 @@ def build_savegame_string(use_compression=True):
     """
     from aistate_interface import get_aistate
     savegame_string = encode(get_aistate())
-    if use_compression:
-        import base64
-        import zlib
-        savegame_string = base64.b64encode(zlib.compress(savegame_string.encode('utf-8')))
-    return savegame_string
+    return base64.b64encode(zlib.compress(savegame_string.encode('utf-8')))
 
 
 def encode(o):
