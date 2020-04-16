@@ -16,6 +16,7 @@ AVERAGE_HAPPINESS
             activation = And [
                 Planet
                 (Source.LastTurnConquered < CurrentTurn - 5)
+                Stockpile high = 0
             ]
             effects = SetHappiness value = max(Value, 
                 1*(Statistic If Condition = And [Target Planet environment = Poor]) +
