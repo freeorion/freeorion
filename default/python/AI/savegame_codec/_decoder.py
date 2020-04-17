@@ -11,81 +11,42 @@ When classes are loaded, their __setstate__ method will be invoked if available 
 the __dict__ content will be set directly. It is the responsiblity of the trusted classes
 to provide a __setstate__ method to verify and possibly sanitize the content of the passed state.
 """
+import binascii
 import json
+from typing import Union
 
 import EnumsAI
+from AIstate import AIstate
 from freeorion_tools import profile
-from logging import debug
 
 from ._definitions import (ENUM_PREFIX, FALSE, FLOAT_PREFIX, INT_PREFIX, InvalidSaveGameException, NONE, PLACEHOLDER,
                            SET_PREFIX, TRUE, TUPLE_PREFIX, trusted_classes, )
 
 
-def _ensure_binary(s, encoding='utf-8', errors='strict'):
-    """Coerce **s** to bytes.
-      - `str` -> encoded to `bytes`
-      - `bytes` -> `bytes`
+class SaveDecompressException(Exception):
     """
-    if isinstance(s, str):
-        return s.encode(encoding, errors)
-    elif isinstance(s, bytes):
-        return s
-    else:
-        raise TypeError("not expecting type '%s'" % type(s))
-
-
-def _ensure_str(s, encoding='utf-8', errors='strict'):
-    """Coerce *s* to `str`.
-      - `str` -> `str`
-      - `bytes` -> decoded to `str`
+    Exception class for troubles with decompressing save game string.
     """
-    if not isinstance(s, (str, bytes)):
-        raise TypeError("not expecting type '%s'" % type(s))
-    elif isinstance(s, bytes):
-        s = s.decode(encoding, errors)
-    return s
+    pass
 
 
 @profile
-def load_savegame_string(string: str):
+def load_savegame_string(string: Union[str, bytes]) -> AIstate:
     """
-    :rtype: AIstate
+    :raises: SaveDecompressException, InvalidSaveGameException
     """
     import base64
     import zlib
 
-    new_string = string
     try:
-        new_string = base64.b64decode(string.encode("utf-8"))
-    except TypeError as e:
-        # The base64 module docs only mention a TypeError exception, for wrong padding
-        # Older save files won't be base64 encoded, but seemingly that doesn't trigger
-        # an exception here;
-        debug("When trying to base64 decode savestate got exception: %s" % e)
+        new_string = base64.b64decode(string)
+    except (binascii.Error, ValueError, TypeError) as e:
+        raise SaveDecompressException("Fail to decode base64 savestate %s" % e) from e
     try:
-        # depending on a previous try new_string can be str or bytes
-        new_string = zlib.decompress(_ensure_binary(new_string))
-    except zlib.error:
-        pass  # probably an uncompressed (or wrongly base64 decompressed) string
-    try:
-        # depending on a previous try new_string can be str or bytes
-        decoded_state = decode(_ensure_str(new_string))
-        debug("Decoded a zlib-compressed and apparently base64-encoded save-state string.")
-        return decoded_state
-    except (InvalidSaveGameException, ValueError, TypeError) as e:
-        debug("Base64/zlib decoding path for savestate failed: %s" % e)
-
-    try:
-        string = zlib.decompress(string.encode('utf-8'))
-        debug("zlib-decompressed a non-base64-encoded save-state string.")
-    except zlib.error:
-        # probably an uncompressed string
-        debug("Will try decoding savestate string without base64 or zlib compression.")
-
-    # We need to check uncompressed string, since zip archive of the empty string is not the empty string.
-    if not string:
-        raise Exception("Save game string is empty")
-    return decode(string)
+        new_string = zlib.decompress(new_string)
+    except zlib.error as e:
+        raise SaveDecompressException("Fail to decompress savestate %s" % e) from e
+    return decode(new_string.decode('utf-8'))
 
 
 def decode(obj):
