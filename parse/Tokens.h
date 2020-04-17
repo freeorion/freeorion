@@ -205,6 +205,7 @@
     (LastTurnActiveInBattle)                    \
     (LastTurnAttackedByShip)                    \
     (LastTurnBattleHere)                        \
+    (LastTurnColonized)                         \
     (LastTurnConquered)                         \
     (LastTurnResupplied)                        \
     (LaunchedFrom)                              \

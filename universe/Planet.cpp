@@ -117,6 +117,8 @@ void Planet::Copy(std::shared_ptr<const UniverseObject> copied_object, int empir
         this->m_rotational_period =         copied_planet->m_rotational_period;
         this->m_axial_tilt =                copied_planet->m_axial_tilt;
         this->m_turn_last_conquered =       copied_planet->m_turn_last_conquered;
+        this->m_turn_last_colonized =       copied_planet->m_turn_last_colonized;
+
 
         if (vis >= VIS_PARTIAL_VISIBILITY) {
             if (vis >= VIS_FULL_VISIBILITY) {
@@ -188,11 +190,12 @@ std::string Planet::Dump(unsigned short ntabs) const {
         os << building_id << (it == m_buildings.end() ? "" : ", ");
     }
     if (m_is_about_to_be_colonized)
-        os << " (About to be Colonize)";
+        os << " (About to be Colonized)";
     if (m_is_about_to_be_invaded)
         os << " (About to be Invaded)";
 
-    os << " conqured on turn: " << m_turn_last_conquered;
+    os << " colonized on turn: " << m_turn_last_colonized;
+    os << " conquered on turn: " << m_turn_last_conquered;
     if (m_is_about_to_be_bombarded)
         os << " (About to be Bombarded)";
     if (m_ordered_given_to_empire_id != ALL_EMPIRES)
@@ -618,6 +621,7 @@ void Planet::Reset() {
         }
     }
 
+    //m_turn_last_colonized left unchanged
     //m_turn_last_conquered left unchanged
     m_is_about_to_be_colonized = false;
     m_is_about_to_be_invaded = false;
@@ -689,6 +693,12 @@ void Planet::Conquer(int conquerer) {
     GetMeter(METER_DETECTION)->BackPropagate();
 }
 
+void Planet::SetSpecies(const std::string& species_name) {
+    if (SpeciesName().empty() && !species_name.empty())
+        m_turn_last_colonized = CurrentTurn();  // if setting species with an effect, not via Colonize, consider it a colonization when there was no previous species set
+    PopCenter::SetSpecies(species_name);
+}
+
 bool Planet::Colonize(int empire_id, const std::string& species_name, double population) {
     const Species* species = nullptr;
 
@@ -697,12 +707,13 @@ bool Planet::Colonize(int empire_id, const std::string& species_name, double pop
         // check if specified species exists and get reference
         species = GetSpecies(species_name);
         if (!species) {
-            ErrorLogger() << "Planet::Colonize couldn't get species already on planet with name: " << species_name;
+            ErrorLogger() << "Planet::Colonize couldn't get species: " << species_name;
             return false;
         }
         // check if specified species can colonize this planet
         if (EnvironmentForSpecies(species_name) < PE_HOSTILE) {
-            ErrorLogger() << "Planet::Colonize: can't colonize planet already populated by species " << species_name;
+            ErrorLogger() << "Planet::Colonize: can't colonize planet with species " << species_name << " because planet is "
+                          << m_type << " which for that species is environment: " << EnvironmentForSpecies(species_name);
             return false;
         }
     }
@@ -726,6 +737,7 @@ bool Planet::Colonize(int empire_id, const std::string& species_name, double pop
     // if desired pop > 0, we want a colony, not an outpost, so we have to set the colony species
     if (population > 0.0)
         SetSpecies(species_name);
+    m_turn_last_colonized = CurrentTurn();  // may be redundant with same in SetSpecies, but here occurrs always, whereas in SetSpecies is only done if species is initially empty
 
     // find a default focus. use first defined available focus.
     // AvailableFoci function should return a vector of all names of
@@ -758,7 +770,7 @@ bool Planet::Colonize(int empire_id, const std::string& species_name, double pop
 
     // if there are buildings on the planet, set the specified empire as their owner too
     for (auto& building : Objects().find<Building>(BuildingIDs()))
-    { building->SetOwner(empire_id); }
+        building->SetOwner(empire_id);
 
     return true;
 }

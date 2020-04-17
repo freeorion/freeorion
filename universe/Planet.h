@@ -71,6 +71,7 @@ public:
     bool IsAboutToBeBombarded() const           { return m_is_about_to_be_bombarded; }
     int OrderedGivenToEmpire() const            { return m_ordered_given_to_empire_id; }
     int LastTurnAttackedByShip() const          { return m_last_turn_attacked_by_ship; }
+    int LastTurnColonized() const               { return m_turn_last_colonized; }
     int LastTurnConquered() const               { return m_turn_last_conquered; }
 
     const std::string&  SurfaceTexture() const  { return m_surface_texture; }
@@ -85,6 +86,7 @@ public:
 
     void Reset() override;
     void Depopulate() override;
+    void SetSpecies(const std::string& species_name) override;
 
     void SetType(PlanetType type);          ///< sets the type of this Planet to \a type
     void SetOriginalType(PlanetType type);  ///< sets the original type of this Planet to \a type
@@ -161,6 +163,7 @@ private:
 
     std::set<int>   m_buildings;
 
+    int             m_turn_last_colonized = INVALID_GAME_TURN;
     int             m_turn_last_conquered = INVALID_GAME_TURN;
     bool            m_is_about_to_be_colonized = false;
     bool            m_is_about_to_be_invaded = false;

@@ -671,8 +671,6 @@ PlanetType Variable<PlanetType>::Eval(const ScriptingContext& context) const
     return INVALID_PLANET_TYPE;
 }
 
-
-
 template <>
 PlanetEnvironment Variable<PlanetEnvironment>::Eval(const ScriptingContext& context) const
 {
@@ -1061,6 +1059,12 @@ int Variable<int>::Eval(const ScriptingContext& context) const
     else if (property_name == "LastTurnAttackedByShip") {
         if (auto planet = std::dynamic_pointer_cast<const Planet>(object))
             return planet->LastTurnAttackedByShip();
+        return INVALID_GAME_TURN;
+
+    }
+    else if (property_name == "LastTurnColonized") {
+        if (auto planet = std::dynamic_pointer_cast<const Planet>(object))
+            return planet->LastTurnColonized();
         return INVALID_GAME_TURN;
 
     }
