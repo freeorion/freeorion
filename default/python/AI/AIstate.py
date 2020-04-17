@@ -84,7 +84,7 @@ def convert_to_version(state, version):
     state["version"] = version
 
 
-class AIstate(object):
+class AIstate:
     """Stores AI game state.
 
     IMPORTANT:

@@ -308,7 +308,7 @@ def dump_universe():
         fo.getUniverse().dump()  # goes to debug logger
 
 
-class LogLevelSwitcher(object):
+class LogLevelSwitcher:
     """A context manager class which controls the log level within its scope.
 
     Example usage:

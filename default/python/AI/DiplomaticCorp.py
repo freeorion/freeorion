@@ -19,7 +19,7 @@ def handle_pregame_chat(sender_player_id, message_txt):
     fo.sendChatMessage(sender_player_id, acknowledgement)
 
 
-class DiplomaticCorp(object):
+class DiplomaticCorp:
     def __init__(self):
         self.be_chatty = True
 

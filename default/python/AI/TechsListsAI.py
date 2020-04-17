@@ -26,7 +26,7 @@ def defense_techs_1():
     ]
 
 
-class TechGroup(object):
+class TechGroup:
     """ Base class for Tech groups.
 
     A TechGroup consists of some techs which need to be researched before progressing to the next TechGroup.

@@ -19,7 +19,7 @@ from turn_state import state
 inProgressTechs = {}
 
 
-class Choices(object):
+class Choices:
     # Cannot construct on import, because fo.getEmpire() is None at this time
     def init(self):
         rng = random.Random()

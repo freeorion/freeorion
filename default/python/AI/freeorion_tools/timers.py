@@ -31,7 +31,7 @@ def _get_timers_dir():
     return TIMERS_DIR
 
 
-class DummyTimer(object):
+class DummyTimer:
     """
     Dummy timer to be used if timers are disabled.
     """

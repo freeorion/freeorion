@@ -1336,7 +1336,7 @@ def __print_candidate_table(candidates, mission, show_detail=False):
     info(candidate_table)
 
 
-class OrbitalColonizationPlan(object):
+class OrbitalColonizationPlan:
     def __init__(self, target_id, source_id):
         """
         :param target_id: id of the target planet to colonize
@@ -1459,7 +1459,7 @@ class OrbitalColonizationPlan(object):
         return True
 
 
-class OrbitalColonizationManager(object):
+class OrbitalColonizationManager:
     """
     The OrbitalColonizationManager handles orbital colonization for the AI.
 

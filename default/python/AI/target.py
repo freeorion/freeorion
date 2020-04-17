@@ -4,7 +4,7 @@ import freeOrionAIInterface as fo  # pylint: disable=import-error
 from AIDependencies import INVALID_ID
 
 
-class Target(object):
+class Target:
     """
     Stores information about AI target - its id and type.
     :type id: int
