@@ -2,7 +2,7 @@
 
 #include "ParseImpl.h"
 #include "EnumParser.h"
-#include "../universe/Tech.h"
+#include "../universe/UnlockableItem.h"
 
 #include "../util/Directories.h"
 

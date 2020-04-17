@@ -4,6 +4,7 @@
 #include "../Empire/Diplomacy.h"
 #include "../universe/Predicates.h"
 #include "../universe/UniverseObject.h"
+#include "../universe/UnlockableItem.h"
 #include "../universe/Planet.h"
 #include "../universe/Tech.h"
 #include "../universe/Enums.h"

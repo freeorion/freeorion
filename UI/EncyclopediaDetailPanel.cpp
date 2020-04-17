@@ -25,6 +25,7 @@
 #include "../universe/Species.h"
 #include "../universe/Field.h"
 #include "../universe/Predicates.h"
+#include "../universe/UnlockableItem.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 #include "../util/EnumText.h"

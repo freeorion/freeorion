@@ -20,6 +20,7 @@
 #include "Field.h"
 #include "UniverseObject.h"
 #include "UniverseGenerator.h"
+#include "UnlockableItem.h"
 #include "Predicates.h"
 #include "ShipPartHull.h"
 #include "ShipDesign.h"

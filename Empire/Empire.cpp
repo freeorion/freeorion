@@ -14,6 +14,7 @@
 #include "../universe/System.h"
 #include "../universe/Tech.h"
 #include "../universe/UniverseObject.h"
+#include "../universe/UnlockableItem.h"
 #include "EmpireManager.h"
 #include "Supply.h"
 

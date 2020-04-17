@@ -148,6 +148,9 @@
     <ClInclude Include="..\..\universe\UniverseObject.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\universe\UnlockableItem.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\universe\ValueRefs.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
@@ -407,6 +410,9 @@
       <Filter>Source Files\universe</Filter>
     </ClCompile>
     <ClCompile Include="..\..\universe\UniverseObject.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\UnlockableItem.cpp">
       <Filter>Source Files\universe</Filter>
     </ClCompile>
     <ClCompile Include="..\..\util\StringTable.cpp">

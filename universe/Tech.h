@@ -130,24 +130,6 @@ private:
 };
 
 
-/** specifies a single item of game content that may be unlocked for an empire.  The \a type field
-  * stores the type of item that is being unlocked, such as a building or ship component, and the
-  * \a name field contains the name of the actual item (e.g. (UIT_BUILDING, "Superfarm") or
-  * (UIT_SHIP_PART, "Death Ray")). */
-struct FO_COMMON_API ItemSpec {
-    ItemSpec();
-    ItemSpec(UnlockableItemType type_, const std::string& name_) :
-        type(type_),
-        name(name_)
-    {}
-    std::string Dump(unsigned short ntabs = 0) const;   ///< returns a data file format representation of this object
-    UnlockableItemType type;    ///< the kind of item this is
-    std::string        name;    ///< the exact item this is
-};
-
-FO_COMMON_API bool operator==(const ItemSpec& lhs, const ItemSpec& rhs);
-bool operator!=(const ItemSpec& lhs, const ItemSpec& rhs);
-
 /** specifies a category of techs, with associated \a name, \a graphic (icon), and \a colour.*/
 struct FO_COMMON_API TechCategory {
     TechCategory() :
@@ -167,7 +149,6 @@ struct FO_COMMON_API TechCategory {
 };
 
 namespace CheckSums {
-    FO_COMMON_API void CheckSumCombine(unsigned int& sum, const ItemSpec& item);
     FO_COMMON_API void CheckSumCombine(unsigned int& sum, const TechCategory& cat);
 }
 

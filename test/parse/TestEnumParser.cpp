@@ -5,6 +5,7 @@
 #include "parse/EnumValueRefRules.h"
 #include "parse/ConditionParserImpl.h"
 #include "universe/Enums.h"
+#include "universe/UnlockableItem.h"
 
 #include <type_traits>
 
