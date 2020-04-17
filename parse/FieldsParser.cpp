@@ -4,7 +4,7 @@
 #include "EffectParser.h"
 
 #include "../universe/Effect.h"
-#include "../universe/Field.h"
+#include "../universe/FieldType.h"
 
 #include <boost/spirit/include/phoenix.hpp>
 

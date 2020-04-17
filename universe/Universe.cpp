@@ -18,6 +18,7 @@
 #include "Ship.h"
 #include "System.h"
 #include "Field.h"
+#include "FieldType.h"
 #include "UniverseObject.h"
 #include "UniverseGenerator.h"
 #include "UnlockableItem.h"

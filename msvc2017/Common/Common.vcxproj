@@ -207,6 +207,7 @@
     <ClInclude Include="..\..\universe\Enums.h" />
     <ClInclude Include="..\..\universe\EnumsFwd.h" />
     <ClInclude Include="..\..\universe\Field.h" />
+    <ClInclude Include="..\..\universe\FieldType.h" />
     <ClInclude Include="..\..\universe\Fighter.h" />
     <ClInclude Include="..\..\universe\Fleet.h" />
     <ClInclude Include="..\..\universe\IDAllocator.h" />
@@ -285,6 +286,7 @@
     <ClCompile Include="..\..\universe\Encyclopedia.cpp" />
     <ClCompile Include="..\..\universe\Enums.cpp" />
     <ClCompile Include="..\..\universe\Field.cpp" />
+    <ClCompile Include="..\..\universe\FieldType.cpp" />
     <ClCompile Include="..\..\universe\Fleet.cpp" />
     <ClCompile Include="..\..\universe\IDAllocator.cpp" />
     <ClCompile Include="..\..\universe\Meter.cpp" />

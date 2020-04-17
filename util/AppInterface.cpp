@@ -4,7 +4,7 @@
 #include "../Empire/EmpireManager.h"
 #include "../universe/Building.h"
 #include "../universe/Encyclopedia.h"
-#include "../universe/Field.h"
+#include "../universe/FieldType.h"
 #include "../universe/Special.h"
 #include "../universe/Species.h"
 #include "../universe/ShipDesign.h"

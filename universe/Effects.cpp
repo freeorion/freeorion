@@ -17,6 +17,7 @@
 #include "Planet.h"
 #include "System.h"
 #include "Field.h"
+#include "FieldType.h"
 #include "Fleet.h"
 #include "Ship.h"
 #include "ShipDesign.h"

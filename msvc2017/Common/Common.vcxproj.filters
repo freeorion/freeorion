@@ -223,6 +223,9 @@
     <ClInclude Include="..\..\universe\Field.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\universe\FieldType.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\util\ModeratorAction.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
@@ -428,6 +431,9 @@
       <Filter>Source Files\Empire</Filter>
     </ClCompile>
     <ClCompile Include="..\..\universe\Field.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\FieldType.cpp">
       <Filter>Source Files\universe</Filter>
     </ClCompile>
     <ClCompile Include="..\..\util\ModeratorAction.cpp">

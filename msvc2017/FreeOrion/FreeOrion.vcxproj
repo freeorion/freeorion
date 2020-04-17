@@ -247,6 +247,7 @@
     <ClInclude Include="..\..\universe\Effect.h" />
     <ClInclude Include="..\..\universe\Enums.h" />
     <ClInclude Include="..\..\universe\Field.h" />
+    <ClInclude Include="..\..\universe\FieldType.h" />
     <ClInclude Include="..\..\universe\Fleet.h" />
     <ClInclude Include="..\..\universe\IDAllocator.h" />
     <ClInclude Include="..\..\util\blocking_combiner.h" />

@@ -25,6 +25,7 @@
 #include "../universe/Special.h"
 #include "../universe/Species.h"
 #include "../universe/Field.h"
+#include "../universe/FieldType.h"
 #include "../universe/Predicates.h"
 #include "../universe/UnlockableItem.h"
 #include "../Empire/Empire.h"
