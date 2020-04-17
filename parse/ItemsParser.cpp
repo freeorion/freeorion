@@ -13,12 +13,12 @@
 
 #if DEBUG_PARSERS
 namespace std {
-    inline ostream& operator<<(ostream& os, const std::vector<ItemSpec>&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::vector<UnlockableItem>&) { return os; }
 }
 #endif
 
 namespace {
-    using start_rule_payload = std::vector<ItemSpec>;
+    using start_rule_payload = std::vector<UnlockableItem>;
     using start_rule_signature = void(start_rule_payload&);
 
     struct grammar : public parse::detail::grammar<start_rule_signature> {
@@ -26,7 +26,7 @@ namespace {
                 const std::string& filename,
                 const parse::text_iterator& first, const parse::text_iterator& last) :
             grammar::base_type(start),
-            item_spec_parser(tok, label)
+            unlockable_item_parser(tok, label)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
@@ -40,7 +40,7 @@ namespace {
             qi::_r1_type _r1;
 
             start
-                =   +item_spec_parser [ push_back(_r1, _1) ]
+                =   +unlockable_item_parser [ push_back(_r1, _1) ]
                 ;
 
             start.name("start");
@@ -51,7 +51,7 @@ namespace {
         using start_rule = parse::detail::rule<start_rule_signature>;
 
         parse::detail::Labeller label;
-        parse::detail::item_spec_grammar item_spec_parser;
+        parse::detail::unlockable_item_grammar unlockable_item_parser;
         start_rule start;
     };
 }

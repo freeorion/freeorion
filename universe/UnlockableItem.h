@@ -23,9 +23,9 @@ GG_ENUM(UnlockableItemType,
 //! building or ship component, and the  @a name field contains the name of the
 //! actual item (e.g. (UIT_BUILDING, "Superfarm") or
 //! (UIT_SHIP_PART, "Death Ray")).
-struct FO_COMMON_API ItemSpec {
-    ItemSpec();
-    ItemSpec(UnlockableItemType type_, const std::string& name_) :
+struct FO_COMMON_API UnlockableItem {
+    UnlockableItem();
+    UnlockableItem(UnlockableItemType type_, const std::string& name_) :
         type(type_),
         name(name_)
     {}
@@ -49,13 +49,13 @@ struct FO_COMMON_API ItemSpec {
 };
 
 
-FO_COMMON_API bool operator==(const ItemSpec& lhs, const ItemSpec& rhs);
+FO_COMMON_API bool operator==(const UnlockableItem& lhs, const UnlockableItem& rhs);
 
-bool operator!=(const ItemSpec& lhs, const ItemSpec& rhs);
+bool operator!=(const UnlockableItem& lhs, const UnlockableItem& rhs);
 
 
 namespace CheckSums {
-    FO_COMMON_API void CheckSumCombine(unsigned int& sum, const ItemSpec& item);
+    FO_COMMON_API void CheckSumCombine(unsigned int& sum, const UnlockableItem& item);
 }
 
 #endif // _UnlockableItem_h_

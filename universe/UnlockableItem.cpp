@@ -4,12 +4,12 @@
 #include "../util/CheckSums.h"
 
 
-ItemSpec::ItemSpec() :
+UnlockableItem::UnlockableItem() :
     type(INVALID_UNLOCKABLE_ITEM_TYPE),
     name()
 {}
 
-std::string ItemSpec::Dump(unsigned short ntabs) const {
+std::string UnlockableItem::Dump(unsigned short ntabs) const {
     std::string retval = "Item type = ";
     switch (type) {
     case UIT_BUILDING:      retval += "Building";   break;
@@ -23,17 +23,17 @@ std::string ItemSpec::Dump(unsigned short ntabs) const {
     return retval;
 }
 
-bool operator==(const ItemSpec& lhs, const ItemSpec& rhs) {
+bool operator==(const UnlockableItem& lhs, const UnlockableItem& rhs) {
     return lhs.type == rhs.type &&
     lhs.name == rhs.name;
 }
 
-bool operator!=(const ItemSpec& lhs, const ItemSpec& rhs)
+bool operator!=(const UnlockableItem& lhs, const UnlockableItem& rhs)
 { return !(lhs == rhs); }
 
 
 namespace CheckSums {
-    void CheckSumCombine(unsigned int& sum, const ItemSpec& item) {
+    void CheckSumCombine(unsigned int& sum, const UnlockableItem& item) {
         TraceLogger() << "CheckSumCombine(Slot): " << typeid(item).name();
         CheckSumCombine(sum, item.type);
         CheckSumCombine(sum, item.name);

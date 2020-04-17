@@ -957,7 +957,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
             GG::Y icon_top = icon_bottom - icon_height;
 
             // add icons for unlocked items
-            for (const ItemSpec& item : tech->UnlockedItems()) {
+            for (const UnlockableItem& item : tech->UnlockedItems()) {
                 std::shared_ptr<GG::Texture> texture;
                 switch (item.type) {
                 case UIT_BUILDING:  texture = ClientUI::BuildingIcon(item.name);    break;

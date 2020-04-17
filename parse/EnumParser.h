@@ -9,7 +9,7 @@
 
 #include <boost/spirit/include/qi.hpp>
 
-struct ItemSpec;
+struct UnlockableItem;
 
 namespace parse {
     struct empire_affiliation_enum_grammar : public detail::enum_grammar<EmpireAffiliationType> {
@@ -63,14 +63,14 @@ namespace parse {
     };
 
     namespace detail {
-    using item_spec_rule_type = rule<ItemSpec ()>;
-    using item_spec_grammar_type = grammar<ItemSpec ()>;
+    using unlockable_item_rule_type = rule<UnlockableItem ()>;
+    using unlockable_item_grammar_type = grammar<UnlockableItem ()>;
 
-    struct item_spec_grammar : public item_spec_grammar_type {
-        item_spec_grammar(const parse::lexer& tok,
+    struct unlockable_item_grammar : public unlockable_item_grammar_type {
+        unlockable_item_grammar(const parse::lexer& tok,
                           Labeller& label);
         parse::unlockable_item_enum_grammar unlockable_item_type_enum;
-        item_spec_rule_type start;
+        unlockable_item_rule_type start;
     };
     }
 }

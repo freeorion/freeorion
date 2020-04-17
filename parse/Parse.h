@@ -25,7 +25,7 @@ class Special;
 class Species;
 struct EncyclopediaArticle;
 class GameRules;
-struct ItemSpec;
+struct UnlockableItem;
 
 namespace ValueRef {
     template <typename T>
@@ -51,8 +51,8 @@ namespace parse {
     template <typename T>
     FO_PARSE_API T techs(const boost::filesystem::path& path);
 
-    FO_PARSE_API std::vector<ItemSpec> items(const boost::filesystem::path& path);
-    FO_PARSE_API std::vector<ItemSpec> starting_buildings(const boost::filesystem::path& path);
+    FO_PARSE_API std::vector<UnlockableItem> items(const boost::filesystem::path& path);
+    FO_PARSE_API std::vector<UnlockableItem> starting_buildings(const boost::filesystem::path& path);
     FO_PARSE_API std::map<std::string, std::unique_ptr<PartType>> ship_parts(const boost::filesystem::path& path);
     FO_PARSE_API std::map<std::string, std::unique_ptr<HullType>> ship_hulls(const boost::filesystem::path& path);
 

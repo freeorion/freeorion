@@ -321,7 +321,7 @@ namespace {
             ErrorLogger() << "EmpireUnlockItem: couldn't get empire with ID " << empire_id;
             return;
         }
-        ItemSpec item = ItemSpec(item_type, item_name);
+        UnlockableItem item = UnlockableItem(item_type, item_name);
         empire->UnlockItem(item);
     }
 
@@ -346,7 +346,7 @@ namespace {
     }
 
     // Wrapper for preunlocked items
-    list LoadItemSpecList() {
+    list LoadUnlockableItemList() {
         list py_items;
         auto& items = GetUniverse().InitiallyUnlockedItems();
         for (const auto& item : items) {
@@ -1333,7 +1333,7 @@ namespace FreeOrionPython {
         def("design_get_premade_list",          ShipDesignGetPremadeList);
         def("design_get_monster_list",          ShipDesignGetMonsterList);
 
-        def("load_item_spec_list",              LoadItemSpecList);
+        def("load_unlockable_item_list",        LoadUnlockableItemList);
         def("load_starting_buildings",          LoadStartingBuildings);
         def("load_fleet_plan_list",             LoadFleetPlanList);
         def("load_monster_fleet_plan_list",     LoadMonsterFleetPlanList);

@@ -38,7 +38,7 @@ normalization_dict = {
     'IntSetSet': 'int_set_set',
     'IntVec': 'int_list',
     'IntVisibilityMap': 'int_visibility_map',
-    'ItemSpecVec': 'item_spec_vec',
+    'UnlockableItemVec': 'unlockable_item_vec',
     'StringSet': 'string_set',
     'VisibilityIntMap': 'visibility_int_map',
     'buildingType': 'buildingType',

@@ -635,7 +635,7 @@ class IntVec(object):
         return None
 
 
-class ItemSpec(object):
+class UnlockableItem(object):
     @property
     def name(self):
         pass
@@ -645,7 +645,7 @@ class ItemSpec(object):
         pass
 
 
-class ItemSpecVec(object):
+class UnlockableItemVec(object):
     def __contains__(self, obj):
         """
         :param obj:
@@ -2344,7 +2344,7 @@ class tech(object):
 
     @property
     def unlockedItems(self):
-        return ItemSpecVec()
+        return UnlockableItemVec()
 
     @property
     def unlockedTechs(self):
@@ -4259,7 +4259,7 @@ def load_fleet_plan_list():
     return list()
 
 
-def load_item_spec_list():
+def load_unlockable_item_list():
     """
     :rtype: list
     """

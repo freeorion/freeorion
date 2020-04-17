@@ -622,7 +622,7 @@ class IntVec(object):
         return None
 
 
-class ItemSpec(object):
+class UnlockableItem(object):
     @property
     def name(self):
         return str()
@@ -632,7 +632,7 @@ class ItemSpec(object):
         return unlockableItemType()
 
 
-class ItemSpecVec(object):
+class UnlockableItemVec(object):
     def __contains__(self, obj):
         """
         :param obj:
@@ -2315,7 +2315,7 @@ class tech(object):
 
     @property
     def unlockedItems(self):
-        return ItemSpecVec()
+        return UnlockableItemVec()
 
     @property
     def unlockedTechs(self):

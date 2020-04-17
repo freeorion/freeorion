@@ -170,16 +170,16 @@ void Universe::ResetAllIDAllocation(const std::vector<int>& empire_ids) {
                   << " and highest design id = " << highest_allocated_design_id;
 }
 
-void Universe::SetInitiallyUnlockedItems(Pending::Pending<std::vector<ItemSpec>>&& future)
+void Universe::SetInitiallyUnlockedItems(Pending::Pending<std::vector<UnlockableItem>>&& future)
 { m_pending_items = std::move(future); }
 
-const std::vector<ItemSpec>& Universe::InitiallyUnlockedItems() const
+const std::vector<UnlockableItem>& Universe::InitiallyUnlockedItems() const
 { return Pending::SwapPending(m_pending_items, m_unlocked_items); }
 
-void Universe::SetInitiallyUnlockedBuildings(Pending::Pending<std::vector<ItemSpec>>&& future)
+void Universe::SetInitiallyUnlockedBuildings(Pending::Pending<std::vector<UnlockableItem>>&& future)
 { m_pending_buildings = std::move(future); }
 
-const std::vector<ItemSpec>& Universe::InitiallyUnlockedBuildings() const
+const std::vector<UnlockableItem>& Universe::InitiallyUnlockedBuildings() const
 { return Pending::SwapPending(m_pending_buildings, m_unlocked_buildings); }
 
 void Universe::SetInitiallyUnlockedFleetPlans(Pending::Pending<std::vector<std::unique_ptr<FleetPlan>>>&& future)
