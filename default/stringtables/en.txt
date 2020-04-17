@@ -5741,7 +5741,7 @@ METER_HAPPINESS_VALUE_LABEL
 Happiness
 
 METER_HAPPINESS_VALUE_DESC
-'''The Happiness of a colony's population starts out low after initial colonization or after invasion, and may also be affected by other factors. A minimum Happiness of 5 is necessary for a colony to act as a source of settlers for colonizing other planets. Also [[metertype METER_INDUSTRY]] and [[metertype METER_RESEARCH]] only start growing if Happiness is at least 5.
+'''The Happiness of a colony's population starts out between 1 and 5 after initial colonization depending on how suitable the planet's [[encyclopedia ENVIRONMENT_TITLE]] is for that species. Happiness is reduced to 0 after invasion and may also be affected by other factors. A minimum Happiness of 5 is necessary for a colony to act as a source of settlers for colonizing other planets. Also [[metertype METER_INDUSTRY]] and [[metertype METER_RESEARCH]] only start growing if Happiness is at least 5.
 
 The Target Happiness is the stable Happiness level a planet's population will approach, given the current factors influencing the planetary Happiness. Its value is connected to [[encyclopedia ENC_BUILDING_TYPE]]s built on the planet, [[encyclopedia ENC_TECH]] researched by the empire, [[encyclopedia ENC_SPECIAL]]s linked to the planet, and various other game effects. If these factors change, then the Target Happiness value is likely to shift.'''
 
@@ -7451,7 +7451,7 @@ BEGINNER_HINT_14
 14: Research [[metertype METER_SUPPLY]] improvements, like the [[tech CON_ORBITAL_CON]], to increase the distance from your systems that your supply lines reach.
 
 BEGINNER_HINT_15
-15: Most species start out with a [[metertype METER_HAPPINESS]] of 1 when you capture their planet, and this will normally increase by 1 per turn. Look out for [[encyclopedia XENOPHOBIC_SPECIES_TITLE]] species though! They don't like being near other species and this will effect the happiness and other values of both them and the other nearby species.
+15: Most species start out with a [[metertype METER_HAPPINESS]] of 0 when you capture their planet, and this will normally increase by 1 per turn. Look out for [[encyclopedia XENOPHOBIC_SPECIES_TITLE]] species though! They don't like being near other species and this will effect the happiness and other values of both them and the other nearby species.
 
 BEGINNER_HINT_16
 16: You may want to hold off on researching [[tech LRN_PSIONICS]] until your empire includes a species with [[encyclopedia TELEPATHIC_TITLE]].
@@ -11329,7 +11329,7 @@ CON_FRC_ENRG_STRC
 Force-Energy Structures
 
 CON_FRC_ENRG_STRC_DESC
-'''Increases the growth of resource and infrastructure meters below target value to 3 per turn, and the decay of resource meters above target value to 5 per turn. [[metertype METER_INDUSTRY]] and [[metertype METER_RESEARCH]]l grow only if [[metertype METER_HAPPINESS]] is at least 5.
+'''Increases the growth of resource and infrastructure meters below target value to 3 per turn, and the decay of resource meters above target value to 5 per turn. [[metertype METER_INDUSTRY]] and [[metertype METER_RESEARCH]] grow only if [[metertype METER_HAPPINESS]] is at least 5.
 
 The flexibility and versatility of force-energy structures permits a colonies buildings to be more easily re-tooled to suit new purposes, increasing the rate at which focus changes can take effect.
 

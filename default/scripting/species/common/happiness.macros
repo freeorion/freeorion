@@ -10,7 +10,19 @@ AVERAGE_HAPPINESS
             effects = SetHappiness value = Value +
                 min(abs(Value(Target.TargetHappiness) - Value), 1) *
                     (1 - 2*(Statistic If condition = And [Target (Value > Value(Target.TargetHappiness))]))
-            
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                (Source.LastTurnConquered < CurrentTurn - 5)
+                Stockpile high = 0
+            ]
+            effects = SetHappiness value = max(Value, 
+                1*(Statistic If Condition = And [Target Planet environment = Poor]) +
+                2*(Statistic If Condition = And [Target Planet environment = Adequate]) +
+                4*(Statistic If Condition = And [Target Planet environment = Good]))
+
         EffectsGroup
             scope = Source
             activation = Planet
