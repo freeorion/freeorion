@@ -1069,6 +1069,14 @@ void ServerApp::ExpireTurn() {
 bool ServerApp::IsTurnExpired() const
 { return m_turn_expired; }
 
+bool ServerApp::IsHaveWinner() const {
+    for (const auto& empire : m_empires) {
+        if (empire.second->Won())
+            return true;
+    }
+    return false;
+}
+
 namespace {
     /** Verifies that a human player is connected with the indicated \a id. */
     bool HumanPlayerWithIdConnected(const ServerNetworking& sn, int id) {
