@@ -2,20 +2,14 @@
 #define _ShipDesign_h_
 
 
-#include <unordered_map>
-#include <stdexcept>
-
-#include <boost/filesystem/operations.hpp>
 #include <boost/functional/hash.hpp>
 #include <boost/optional/optional.hpp>
-#include <boost/variant.hpp>
 #include <boost/serialization/access.hpp>
-#include <boost/serialization/nvp.hpp>
-#include <boost/uuid/uuid.hpp>
 #include <boost/uuid/nil_generator.hpp>
-
+#include <boost/uuid/uuid.hpp>
 #include "EnumsFwd.h"
 #include "../util/Pending.h"
+
 
 FO_COMMON_API extern const int INVALID_OBJECT_ID;
 FO_COMMON_API extern const int INVALID_DESIGN_ID;

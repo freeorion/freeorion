@@ -26,7 +26,7 @@
 #include "../universe/Ship.h"
 #include "../universe/ShipDesign.h"
 #include "../universe/ShipPart.h"
-#include "../universe/ShipPartHull.h"
+#include "../universe/ShipHull.h"
 #include "../universe/Tech.h"
 #include "../universe/Special.h"
 #include "../universe/Species.h"

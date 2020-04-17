@@ -4,7 +4,7 @@
 #include "Fleet.h"
 #include "ShipDesign.h"
 #include "ShipPart.h"
-#include "ShipPartHull.h"
+#include "ShipHull.h"
 #include "Ship.h"
 #include "Planet.h"
 #include "Predicates.h"

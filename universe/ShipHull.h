@@ -1,5 +1,5 @@
-#ifndef _ShipPartHull_h_
-#define _ShipPartHull_h_
+#ifndef _ShipHull_h_
+#define _ShipHull_h_
 
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
@@ -249,4 +249,4 @@ void HullType::serialize(Archive& ar, const unsigned int version)
 }
 
 
-#endif // _ShipPartHull_h_
+#endif // _ShipHull_h_

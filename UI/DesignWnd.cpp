@@ -21,7 +21,7 @@
 #include "../universe/UniverseObject.h"
 #include "../universe/ShipDesign.h"
 #include "../universe/ShipPart.h"
-#include "../universe/ShipPartHull.h"
+#include "../universe/ShipHull.h"
 #include "../universe/Enums.h"
 
 #include <GG/StaticGraphic.h>

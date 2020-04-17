@@ -13,7 +13,7 @@
 #include "Ship.h"
 #include "ShipDesign.h"
 #include "ShipPart.h"
-#include "ShipPartHull.h"
+#include "ShipHull.h"
 #include "ObjectMap.h"
 #include "Planet.h"
 #include "System.h"

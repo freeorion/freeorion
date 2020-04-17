@@ -9,7 +9,7 @@
 #include "Predicates.h"
 #include "ShipDesign.h"
 #include "ShipPart.h"
-#include "ShipPartHull.h"
+#include "ShipHull.h"
 #include "Species.h"
 #include "Universe.h"
 #include "Enums.h"

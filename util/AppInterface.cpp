@@ -9,7 +9,7 @@
 #include "../universe/Species.h"
 #include "../universe/ShipDesign.h"
 #include "../universe/ShipPart.h"
-#include "../universe/ShipPartHull.h"
+#include "../universe/ShipHull.h"
 #include "../universe/Tech.h"
 #include "../util/Directories.h"
 #include "../util/GameRules.h"

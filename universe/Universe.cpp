@@ -25,7 +25,7 @@
 #include "UnlockableItem.h"
 #include "Predicates.h"
 #include "ShipPart.h"
-#include "ShipPartHull.h"
+#include "ShipHull.h"
 #include "ShipDesign.h"
 #include "Special.h"
 #include "Species.h"
