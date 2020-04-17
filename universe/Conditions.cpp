@@ -7,6 +7,7 @@
 #include "Pathfinder.h"
 #include "Universe.h"
 #include "Building.h"
+#include "BuildingType.h"
 #include "Fighter.h"
 #include "Fleet.h"
 #include "Ship.h"

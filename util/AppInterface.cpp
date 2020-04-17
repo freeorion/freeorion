@@ -2,7 +2,7 @@
 
 #include "../parse/Parse.h"
 #include "../Empire/EmpireManager.h"
-#include "../universe/Building.h"
+#include "../universe/BuildingType.h"
 #include "../universe/Encyclopedia.h"
 #include "../universe/FieldType.h"
 #include "../universe/Special.h"

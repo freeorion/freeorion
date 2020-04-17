@@ -6,6 +6,7 @@
 #include "../util/AppInterface.h"
 #include "../util/SitRepEntry.h"
 #include "../universe/Building.h"
+#include "../universe/BuildingType.h"
 #include "../universe/Fleet.h"
 #include "../universe/Ship.h"
 #include "../universe/ShipDesign.h"

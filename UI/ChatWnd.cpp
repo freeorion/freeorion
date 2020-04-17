@@ -14,7 +14,7 @@
 #include "../universe/Special.h"
 #include "../universe/Species.h"
 #include "../universe/Tech.h"
-#include "../universe/Building.h"
+#include "../universe/BuildingType.h"
 #include "../util/Directories.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"

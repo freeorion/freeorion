@@ -12,6 +12,7 @@
 #include "../Empire/EmpireManager.h"
 #include "IDAllocator.h"
 #include "Building.h"
+#include "BuildingType.h"
 #include "Effect.h"
 #include "Fleet.h"
 #include "FleetPlan.h"

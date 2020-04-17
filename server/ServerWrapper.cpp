@@ -10,6 +10,7 @@
 #include "../universe/System.h"
 #include "../universe/Planet.h"
 #include "../universe/Building.h"
+#include "../universe/BuildingType.h"
 #include "../universe/Fleet.h"
 #include "../universe/FleetPlan.h"
 #include "../universe/Ship.h"

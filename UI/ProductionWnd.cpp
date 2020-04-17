@@ -13,7 +13,7 @@
 #include "../util/i18n.h"
 #include "../util/Order.h"
 #include "../util/ScopedTimer.h"
-#include "../universe/Building.h"
+#include "../universe/BuildingType.h"
 #include "../universe/ShipDesign.h"
 #include "../universe/Enums.h"
 

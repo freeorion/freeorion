@@ -14,6 +14,7 @@
 #include "Universe.h"
 #include "UniverseObject.h"
 #include "Building.h"
+#include "BuildingType.h"
 #include "Planet.h"
 #include "System.h"
 #include "Field.h"
