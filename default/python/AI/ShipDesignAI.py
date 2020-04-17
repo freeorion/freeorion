@@ -1161,26 +1161,27 @@ class ShipDesigner(object):
 
         if verbose:
             debug("Trying to find optimum designs for shiptype class %s" % self.__class__.__name__)
+
+        relevant_techs = []
+
+        def extend_completed_techs(techs: Iterable):
+            relevant_techs.extend(_tech for _tech in techs if tech_is_complete(_tech))
+
+        if WEAPONS & self.useful_part_classes:
+            extend_completed_techs(AIDependencies.WEAPON_UPGRADE_TECHS)
+        if FIGHTER_HANGAR & self.useful_part_classes:
+            extend_completed_techs(AIDependencies.FIGHTER_UPGRADE_TECHS)
+        if FUEL & self.useful_part_classes:
+            extend_completed_techs(AIDependencies.FUEL_UPGRADE_TECHS)
+        extend_completed_techs(AIDependencies.TECH_EFFECTS)
+
+        relevant_techs = tuple(set(relevant_techs))
+        design_cache_tech = design_cache_reqs.setdefault(relevant_techs, {})
+
         for pid in planets:
             planet = universe.getPlanet(pid)
             self.pid = pid
             self.update_species(planet.speciesName)
-
-            relevant_techs = []
-
-            def extend_completed_techs(techs: Iterable):
-                relevant_techs.extend(_tech for _tech in techs if tech_is_complete(_tech))
-
-            if WEAPONS & self.useful_part_classes:
-                extend_completed_techs(AIDependencies.WEAPON_UPGRADE_TECHS)
-            if FIGHTER_HANGAR & self.useful_part_classes:
-                extend_completed_techs(AIDependencies.FIGHTER_UPGRADE_TECHS)
-            if FUEL & self.useful_part_classes:
-                extend_completed_techs(AIDependencies.FUEL_UPGRADE_TECHS)
-            extend_completed_techs(AIDependencies.TECH_EFFECTS)
-
-            relevant_techs = tuple(set(relevant_techs))
-            design_cache_tech = design_cache_reqs.setdefault(relevant_techs, {})
 
             # The piloting species is only important if its modifiers are of any use to the design
             # Therefore, consider only those treats that are actually useful. Note that the
