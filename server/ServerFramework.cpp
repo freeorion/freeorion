@@ -7,7 +7,6 @@
 #include "../util/Logger.h"
 #include "../universe/Condition.h"
 #include "../universe/Universe.h"
-#include "../universe/UniverseGenerator.h"
 
 #include <boost/filesystem.hpp>
 #include <boost/python.hpp>

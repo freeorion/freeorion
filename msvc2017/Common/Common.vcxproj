@@ -209,6 +209,7 @@
     <ClInclude Include="..\..\universe\Field.h" />
     <ClInclude Include="..\..\universe\Fighter.h" />
     <ClInclude Include="..\..\universe\Fleet.h" />
+    <ClInclude Include="..\..\universe\FleetPlan.h" />
     <ClInclude Include="..\..\universe\IDAllocator.h" />
     <ClInclude Include="..\..\universe\ScriptingContext.h" />
     <ClInclude Include="..\..\universe\ValueRef.h" />
@@ -286,6 +287,7 @@
     <ClCompile Include="..\..\universe\Enums.cpp" />
     <ClCompile Include="..\..\universe\Field.cpp" />
     <ClCompile Include="..\..\universe\Fleet.cpp" />
+    <ClCompile Include="..\..\universe\FleetPlan.cpp" />
     <ClCompile Include="..\..\universe\IDAllocator.cpp" />
     <ClCompile Include="..\..\universe\Meter.cpp" />
     <ClCompile Include="..\..\universe\ObjectMap.cpp" />

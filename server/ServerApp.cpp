@@ -9,6 +9,7 @@
 #include "../universe/Building.h"
 #include "../universe/Condition.h"
 #include "../universe/Fleet.h"
+#include "../universe/FleetPlan.h"
 #include "../universe/Ship.h"
 #include "../universe/ShipDesign.h"
 #include "../universe/Planet.h"

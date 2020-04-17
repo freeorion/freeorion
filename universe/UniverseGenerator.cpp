@@ -287,16 +287,6 @@ namespace Delauney {
     }
 }
 
-////////////////////////////////////////
-// FleetPlan                          //
-////////////////////////////////////////
-const std::string& FleetPlan::Name() const {
-    if (m_name_in_stringtable)
-        return UserString(m_name);
-    else
-        return m_name;
-}
-
 namespace {
     int IntSetMapSizeCount(const std::map<int, std::set<int>>& in) {
         int retval{0};

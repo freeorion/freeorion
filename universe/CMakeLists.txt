@@ -13,6 +13,7 @@ target_sources(freeorioncommon
         ${CMAKE_CURRENT_LIST_DIR}/Field.h
         ${CMAKE_CURRENT_LIST_DIR}/Fighter.h
         ${CMAKE_CURRENT_LIST_DIR}/Fleet.h
+        ${CMAKE_CURRENT_LIST_DIR}/FleetPlan.h
         ${CMAKE_CURRENT_LIST_DIR}/IDAllocator.h
         ${CMAKE_CURRENT_LIST_DIR}/Meter.h
         ${CMAKE_CURRENT_LIST_DIR}/ObjectMap.h
@@ -45,6 +46,7 @@ target_sources(freeorioncommon
         ${CMAKE_CURRENT_LIST_DIR}/Field.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Fighter.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Fleet.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/FleetPlan.cpp
         ${CMAKE_CURRENT_LIST_DIR}/IDAllocator.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Meter.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ObjectMap.cpp
