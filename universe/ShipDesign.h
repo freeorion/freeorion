@@ -5,7 +5,6 @@
 #include <unordered_map>
 #include <stdexcept>
 
-#include <boost/algorithm/string/case_conv.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/functional/hash.hpp>
 #include <boost/optional/optional.hpp>

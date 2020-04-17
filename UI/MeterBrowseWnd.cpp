@@ -9,7 +9,7 @@
 #include "../universe/PopCenter.h"
 #include "../universe/Ship.h"
 #include "../universe/ShipDesign.h"
-#include "../universe/ShipPartHull.h"
+#include "../universe/ShipPart.h"
 #include "../universe/UniverseObject.h"
 #include "../universe/Enums.h"
 #include "../Empire/Empire.h"

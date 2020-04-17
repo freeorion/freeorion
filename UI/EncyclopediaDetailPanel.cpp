@@ -19,6 +19,7 @@
 #include "../universe/System.h"
 #include "../universe/Ship.h"
 #include "../universe/ShipDesign.h"
+#include "../universe/ShipPart.h"
 #include "../universe/ShipPartHull.h"
 #include "../universe/Fleet.h"
 #include "../universe/Special.h"

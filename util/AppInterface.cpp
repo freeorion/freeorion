@@ -8,6 +8,7 @@
 #include "../universe/Special.h"
 #include "../universe/Species.h"
 #include "../universe/ShipDesign.h"
+#include "../universe/ShipPart.h"
 #include "../universe/ShipPartHull.h"
 #include "../universe/Tech.h"
 #include "../util/Directories.h"

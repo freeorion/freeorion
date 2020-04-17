@@ -20,6 +20,7 @@
 #include "../universe/ConditionAll.h"
 #include "../universe/UniverseObject.h"
 #include "../universe/ShipDesign.h"
+#include "../universe/ShipPart.h"
 #include "../universe/ShipPartHull.h"
 #include "../universe/Enums.h"
 

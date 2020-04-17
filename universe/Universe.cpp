@@ -22,6 +22,7 @@
 #include "UniverseGenerator.h"
 #include "UnlockableItem.h"
 #include "Predicates.h"
+#include "ShipPart.h"
 #include "ShipPartHull.h"
 #include "ShipDesign.h"
 #include "Special.h"

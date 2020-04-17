@@ -221,6 +221,7 @@
     <ClInclude Include="..\..\universe\ResourceCenter.h" />
     <ClInclude Include="..\..\universe\Ship.h" />
     <ClInclude Include="..\..\universe\ShipDesign.h" />
+    <ClInclude Include="..\..\universe\ShipPart.h" />
     <ClInclude Include="..\..\universe\Special.h" />
     <ClInclude Include="..\..\universe\Species.h" />
     <ClInclude Include="..\..\universe\System.h" />
@@ -294,6 +295,7 @@
     <ClCompile Include="..\..\universe\ResourceCenter.cpp" />
     <ClCompile Include="..\..\universe\Ship.cpp" />
     <ClCompile Include="..\..\universe\ShipDesign.cpp" />
+    <ClCompile Include="..\..\universe\ShipPart.cpp" />
     <ClCompile Include="..\..\universe\Special.cpp" />
     <ClCompile Include="..\..\universe\Species.cpp" />
     <ClCompile Include="..\..\universe\System.cpp" />

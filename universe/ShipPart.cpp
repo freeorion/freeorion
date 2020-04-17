@@ -1,0 +1,430 @@
+#include "ShipPart.h"
+
+#include <boost/algorithm/string/case_conv.hpp>
+
+#include "Enums.h"
+#include "ConditionSource.h"
+#include "Effects.h"
+#include "ValueRefs.h"
+#include "../Empire/Empire.h"
+#include "../Empire/EmpireManager.h"
+#include "../util/CheckSums.h"
+#include "../util/GameRules.h"
+
+
+namespace {
+    const int ARBITRARY_LARGE_TURNS = 999999;
+    const float ARBITRARY_LARGE_COST = 999999.9f;
+
+    // create effectsgroup that increases the value of \a meter_type
+    // by the result of evalulating \a increase_vr
+    std::shared_ptr<Effect::EffectsGroup>
+    IncreaseMeter(MeterType meter_type,
+                  std::unique_ptr<ValueRef::ValueRef<double>>&& increase_vr)
+    {
+        typedef std::vector<std::unique_ptr<Effect::Effect>> Effects;
+        auto scope = std::make_unique<Condition::Source>();
+        auto activation = std::make_unique<Condition::Source>();
+
+        auto vr =
+            std::make_unique<ValueRef::Operation<double>>(
+                ValueRef::PLUS,
+                std::make_unique<ValueRef::Variable<double>>(
+                    ValueRef::EFFECT_TARGET_VALUE_REFERENCE, std::vector<std::string>()),
+                std::move(increase_vr)
+            );
+        auto effects = Effects();
+        effects.push_back(std::make_unique<Effect::SetMeter>(meter_type, std::move(vr)));
+        return std::make_shared<Effect::EffectsGroup>(std::move(scope), std::move(activation), std::move(effects));
+    }
+
+    // create effectsgroup that increases the value of \a meter_type
+    // by the specified amount \a fixed_increase
+    std::shared_ptr<Effect::EffectsGroup>
+    IncreaseMeter(MeterType meter_type, float fixed_increase) {
+        auto increase_vr = std::make_unique<ValueRef::Constant<double>>(fixed_increase);
+        return IncreaseMeter(meter_type, std::move(increase_vr));
+    }
+
+    // create effectsgroup that increases the value of the part meter
+    // of type \a meter_type for part name \a part_name by the fixed
+    // amount \a increase
+    std::shared_ptr<Effect::EffectsGroup>
+    IncreaseMeter(MeterType meter_type, const std::string& part_name,
+                  float increase, bool allow_stacking = true)
+    {
+        typedef std::vector<std::unique_ptr<Effect::Effect>> Effects;
+        auto scope = std::make_unique<Condition::Source>();
+        auto activation = std::make_unique<Condition::Source>();
+
+        auto value_vr = std::make_unique<ValueRef::Operation<double>>(
+            ValueRef::PLUS,
+            std::make_unique<ValueRef::Variable<double>>(
+                ValueRef::EFFECT_TARGET_VALUE_REFERENCE, std::vector<std::string>()),
+            std::make_unique<ValueRef::Constant<double>>(increase)
+        );
+
+        auto part_name_vr =
+            std::make_unique<ValueRef::Constant<std::string>>(part_name);
+
+        std::string stacking_group = (allow_stacking ? "" :
+            (part_name + "_" + boost::lexical_cast<std::string>(meter_type) + "_PartMeter"));
+
+        auto effects = Effects();
+        effects.push_back(std::make_unique<Effect::SetShipPartMeter>(
+                              meter_type, std::move(part_name_vr), std::move(value_vr)));
+
+        return std::make_shared<Effect::EffectsGroup>(
+            std::move(scope), std::move(activation), std::move(effects), part_name, stacking_group);
+    }
+
+    // create effectsgroup that increases the value of \a meter_type
+    // by the product of \a base_increase and the value of the game
+    // rule of type double with the name \a scaling_factor_rule_name
+    std::shared_ptr<Effect::EffectsGroup>
+    IncreaseMeter(MeterType meter_type, float base_increase,
+                  const std::string& scaling_factor_rule_name)
+    {
+        // if no rule specified, revert to fixed constant increase
+        if (scaling_factor_rule_name.empty())
+            return IncreaseMeter(meter_type, base_increase);
+
+        auto increase_vr = std::make_unique<ValueRef::Operation<double>>(
+            ValueRef::TIMES,
+            std::make_unique<ValueRef::Constant<double>>(base_increase),
+            std::make_unique<ValueRef::ComplexVariable<double>>(
+                "GameRule", nullptr, nullptr, nullptr,
+                std::make_unique<ValueRef::Constant<std::string>>(scaling_factor_rule_name)
+            )
+        );
+
+        return IncreaseMeter(meter_type, std::move(increase_vr));
+    }
+}
+
+
+PartType::PartType() :
+    m_class(INVALID_SHIP_PART_CLASS)
+{}
+
+PartType::PartType(ShipPartClass part_class, double capacity, double stat2,
+                   CommonParams& common_params, const MoreCommonParams& more_common_params,
+                   std::vector<ShipSlotType> mountable_slot_types,
+                   const std::string& icon, bool add_standard_capacity_effect,
+                   std::unique_ptr<Condition::Condition>&& combat_targets) :
+    m_name(more_common_params.name),
+    m_description(more_common_params.description),
+    m_class(part_class),
+    m_capacity(capacity),
+    m_secondary_stat(stat2),
+    m_producible(common_params.producible),
+    m_production_cost(std::move(common_params.production_cost)),
+    m_production_time(std::move(common_params.production_time)),
+    m_mountable_slot_types(mountable_slot_types),
+    m_production_meter_consumption(std::move(common_params.production_meter_consumption)),
+    m_production_special_consumption(std::move(common_params.production_special_consumption)),
+    m_location(std::move(common_params.location)),
+    m_exclusions(more_common_params.exclusions),
+    m_icon(icon),
+    m_add_standard_capacity_effect(add_standard_capacity_effect),
+    m_combat_targets(std::move(combat_targets))
+{
+    Init(std::move(common_params.effects));
+
+    for (const std::string& tag : common_params.tags)
+        m_tags.insert(boost::to_upper_copy<std::string>(tag));
+
+    TraceLogger() << "PartType::PartType: name: " << m_name
+                  << " description: " << m_description
+                  << " class: " << m_class
+                  << " capacity: " << m_capacity
+                  << " secondary stat: " << m_secondary_stat
+                  //<< " prod cost: " << m_production_cost
+                  //<< " prod time: " << m_production_time
+                  << " producible: " << m_producible
+                  //<< " mountable slot types: " << m_mountable_slot_types
+                  //<< " tags: " << m_tags
+                  //<< " prod meter consump: " << m_production_meter_consumption
+                  //<< " prod special consump: " << m_production_special_consumption
+                  //<< " location: " << m_location
+                  //<< " exclusions: " << m_exclusions
+                  //<< " effects: " << m_effects
+                  << " icon: " << m_icon
+                  << " add standard cap effect: " << m_add_standard_capacity_effect;
+}
+
+void PartType::Init(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects) {
+    if ((m_capacity != 0 || m_secondary_stat != 0) && m_add_standard_capacity_effect) {
+        switch (m_class) {
+        case PC_COLONY:
+        case PC_TROOPS:
+            m_effects.push_back(IncreaseMeter(METER_CAPACITY,       m_name, m_capacity, false));
+            break;
+        case PC_FIGHTER_HANGAR: {   // capacity indicates how many fighters are stored in this type of part (combined for all copies of the part)
+            m_effects.push_back(IncreaseMeter(METER_MAX_CAPACITY,       m_name, m_capacity, true));         // stacking capacities allowed for this part, so each part contributes to the total capacity
+            m_effects.push_back(IncreaseMeter(METER_MAX_SECONDARY_STAT, m_name, m_secondary_stat, false));  // stacking damage not allowed, as damage per shot should be the same regardless of number of shots
+            break;
+        }
+        case PC_FIGHTER_BAY:        // capacity indicates how many fighters each instance of the part can launch per combat bout...
+        case PC_DIRECT_WEAPON: {    // capacity indicates weapon damage per shot
+            m_effects.push_back(IncreaseMeter(METER_MAX_CAPACITY,       m_name, m_capacity, false));
+            m_effects.push_back(IncreaseMeter(METER_MAX_SECONDARY_STAT, m_name, m_secondary_stat, false));
+            break;
+        }
+        case PC_SHIELD:
+            m_effects.push_back(IncreaseMeter(METER_MAX_SHIELD,     m_capacity));
+            break;
+        case PC_DETECTION:
+            m_effects.push_back(IncreaseMeter(METER_DETECTION,      m_capacity));
+            break;
+        case PC_STEALTH:
+            m_effects.push_back(IncreaseMeter(METER_STEALTH,        m_capacity));
+            break;
+        case PC_FUEL:
+            m_effects.push_back(IncreaseMeter(METER_MAX_FUEL,       m_capacity));
+            break;
+        case PC_ARMOUR:
+            m_effects.push_back(IncreaseMeter(METER_MAX_STRUCTURE,  m_capacity,     "RULE_SHIP_STRUCTURE_FACTOR"));
+            break;
+        case PC_SPEED:
+            m_effects.push_back(IncreaseMeter(METER_SPEED,          m_capacity,     "RULE_SHIP_SPEED_FACTOR"));
+            break;
+        case PC_RESEARCH:
+            m_effects.push_back(IncreaseMeter(METER_TARGET_RESEARCH,m_capacity));
+            break;
+        case PC_INDUSTRY:
+            m_effects.push_back(IncreaseMeter(METER_TARGET_INDUSTRY,m_capacity));
+            break;
+        case PC_TRADE:
+            m_effects.push_back(IncreaseMeter(METER_TARGET_TRADE,   m_capacity));
+            break;
+        default:
+            break;
+        }
+    }
+
+    if (m_production_cost)
+        m_production_cost->SetTopLevelContent(m_name);
+    if (m_production_time)
+        m_production_time->SetTopLevelContent(m_name);
+    if (m_location)
+        m_location->SetTopLevelContent(m_name);
+    if (m_combat_targets)
+        m_combat_targets->SetTopLevelContent(m_name);
+    for (auto&& effect : effects) {
+        effect->SetTopLevelContent(m_name);
+        m_effects.emplace_back(std::move(effect));
+    }
+}
+
+PartType::~PartType()
+{}
+
+float PartType::Capacity() const {
+    switch (m_class) {
+    case PC_ARMOUR:
+        return m_capacity * GetGameRules().Get<double>("RULE_SHIP_STRUCTURE_FACTOR");
+        break;
+    case PC_SPEED:
+        return m_capacity * GetGameRules().Get<double>("RULE_SHIP_SPEED_FACTOR");
+        break;
+    default:
+        return m_capacity;
+    }
+}
+
+float PartType::SecondaryStat() const
+{ return m_secondary_stat; }
+
+std::string PartType::CapacityDescription() const {
+    std::string desc_string;
+    float main_stat = Capacity();
+    float sdry_stat = SecondaryStat();
+
+    switch (m_class) {
+    case PC_FUEL:
+    case PC_TROOPS:
+    case PC_COLONY:
+    case PC_FIGHTER_BAY:
+        desc_string += str(FlexibleFormat(UserString("PART_DESC_CAPACITY")) % main_stat);
+        break;
+    case PC_DIRECT_WEAPON:
+        desc_string += str(FlexibleFormat(UserString("PART_DESC_DIRECT_FIRE_STATS")) % main_stat % sdry_stat);
+        break;
+    case PC_FIGHTER_HANGAR:
+        desc_string += str(FlexibleFormat(UserString("PART_DESC_HANGAR_STATS")) % main_stat % sdry_stat);
+        break;
+    case PC_SHIELD:
+        desc_string = str(FlexibleFormat(UserString("PART_DESC_SHIELD_STRENGTH")) % main_stat);
+        break;
+    case PC_DETECTION:
+        desc_string = str(FlexibleFormat(UserString("PART_DESC_DETECTION")) % main_stat);
+        break;
+    default:
+        desc_string = str(FlexibleFormat(UserString("PART_DESC_STRENGTH")) % main_stat);
+        break;
+    }
+    return desc_string;
+}
+
+bool PartType::CanMountInSlotType(ShipSlotType slot_type) const {
+    if (INVALID_SHIP_SLOT_TYPE == slot_type)
+        return false;
+    for (ShipSlotType mountable_slot_type : m_mountable_slot_types)
+        if (mountable_slot_type == slot_type)
+            return true;
+    return false;
+}
+
+bool PartType::ProductionCostTimeLocationInvariant() const {
+    if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION"))
+        return true;
+    if (m_production_cost && !m_production_cost->TargetInvariant())
+        return false;
+    if (m_production_time && !m_production_time->TargetInvariant())
+        return false;
+    return true;
+}
+
+float PartType::ProductionCost(int empire_id, int location_id, int in_design_id) const {
+    if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION") || !m_production_cost)
+        return 1.0f;
+
+    if (m_production_cost->ConstantExpr()) {
+        return static_cast<float>(m_production_cost->Eval());
+    } else if (m_production_cost->SourceInvariant() && m_production_cost->TargetInvariant()) {
+        ScriptingContext context(nullptr, nullptr, in_design_id);
+        return static_cast<float>(m_production_cost->Eval(context));
+    }
+
+    auto location = Objects().get(location_id);
+    if (!location && !m_production_cost->TargetInvariant())
+        return ARBITRARY_LARGE_COST;
+
+    auto source = Empires().GetSource(empire_id);
+    if (!source && !m_production_cost->SourceInvariant())
+        return ARBITRARY_LARGE_COST;
+
+    ScriptingContext context(source, location, in_design_id);
+    return static_cast<float>(m_production_cost->Eval(context));
+}
+
+int PartType::ProductionTime(int empire_id, int location_id, int in_design_id) const {
+    if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION") || !m_production_time)
+        return 1;
+
+    if (m_production_time->ConstantExpr()) {
+        return m_production_time->Eval();
+    } else if (m_production_time->SourceInvariant() && m_production_time->TargetInvariant()) {
+        ScriptingContext context(nullptr, nullptr, in_design_id);
+        return m_production_time->Eval(context);
+    }
+
+    auto location = Objects().get(location_id);
+    if (!location && !m_production_time->TargetInvariant())
+        return ARBITRARY_LARGE_TURNS;
+
+    auto source = Empires().GetSource(empire_id);
+    if (!source && !m_production_time->SourceInvariant())
+        return ARBITRARY_LARGE_TURNS;
+
+    ScriptingContext context(source, location, in_design_id);
+    return m_production_time->Eval(context);
+}
+
+unsigned int PartType::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, m_name);
+    CheckSums::CheckSumCombine(retval, m_description);
+    CheckSums::CheckSumCombine(retval, m_class);
+    CheckSums::CheckSumCombine(retval, m_capacity);
+    CheckSums::CheckSumCombine(retval, m_secondary_stat);
+    CheckSums::CheckSumCombine(retval, m_production_cost);
+    CheckSums::CheckSumCombine(retval, m_production_time);
+    CheckSums::CheckSumCombine(retval, m_producible);
+    CheckSums::CheckSumCombine(retval, m_mountable_slot_types);
+    CheckSums::CheckSumCombine(retval, m_tags);
+    CheckSums::CheckSumCombine(retval, m_production_meter_consumption);
+    CheckSums::CheckSumCombine(retval, m_production_special_consumption);
+    CheckSums::CheckSumCombine(retval, m_location);
+    CheckSums::CheckSumCombine(retval, m_exclusions);
+    CheckSums::CheckSumCombine(retval, m_effects);
+    CheckSums::CheckSumCombine(retval, m_icon);
+    CheckSums::CheckSumCombine(retval, m_add_standard_capacity_effect);
+
+    return retval;
+}
+
+
+/////////////////////////////////////
+// PartTypeManager                 //
+/////////////////////////////////////
+// static
+PartTypeManager* PartTypeManager::s_instance = nullptr;
+
+PartTypeManager::PartTypeManager() {
+    if (s_instance)
+        throw std::runtime_error("Attempted to create more than one PartTypeManager.");
+
+    // Only update the global pointer on sucessful construction.
+    s_instance = this;
+}
+
+const PartType* PartTypeManager::GetPartType(const std::string& name) const {
+    CheckPendingPartTypes();
+    auto it = m_parts.find(name);
+    return it != m_parts.end() ? it->second.get() : nullptr;
+}
+
+PartTypeManager& PartTypeManager::GetPartTypeManager() {
+    static PartTypeManager manager;
+    return manager;
+}
+
+PartTypeManager::iterator PartTypeManager::begin() const {
+    CheckPendingPartTypes();
+    return m_parts.begin();
+}
+
+PartTypeManager::iterator PartTypeManager::end() const{
+    CheckPendingPartTypes();
+    return m_parts.end();
+}
+
+unsigned int PartTypeManager::GetCheckSum() const {
+    CheckPendingPartTypes();
+    unsigned int retval{0};
+    for (auto const& name_part_pair : m_parts)
+        CheckSums::CheckSumCombine(retval, name_part_pair);
+    CheckSums::CheckSumCombine(retval, m_parts.size());
+
+
+    DebugLogger() << "PartTypeManager checksum: " << retval;
+    return retval;
+}
+
+void PartTypeManager::SetPartTypes(Pending::Pending<PartTypeMap>&& pending_part_types)
+{ m_pending_part_types = std::move(pending_part_types); }
+
+void PartTypeManager::CheckPendingPartTypes() const {
+    if (!m_pending_part_types)
+        return;
+
+    Pending::SwapPending(m_pending_part_types, m_parts);
+
+    TraceLogger() << [this]() {
+            std::string retval("Part Types:");
+            for (const auto& pair : m_parts) {
+                const auto& part = pair.second;
+                retval.append("\n\t" + part->Name() + " class: " + boost::lexical_cast<std::string>(part->Class()));
+            }
+            return retval;
+        }();
+}
+
+PartTypeManager& GetPartTypeManager()
+{ return PartTypeManager::GetPartTypeManager(); }
+
+const PartType* GetPartType(const std::string& name)
+{ return GetPartTypeManager().GetPartType(name); }

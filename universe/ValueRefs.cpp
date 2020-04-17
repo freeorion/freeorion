@@ -3,6 +3,7 @@
 #include "Building.h"
 #include "Fleet.h"
 #include "ShipDesign.h"
+#include "ShipPart.h"
 #include "ShipPartHull.h"
 #include "Ship.h"
 #include "Planet.h"
