@@ -251,7 +251,7 @@ unsigned int HullType::NumSlots(ShipSlotType slot_type) const {
     return count;
 }
 
-// HullType:: and PartType::ProductionCost and ProductionTime are almost identical.
+// HullType:: and ShipPart::ProductionCost and ProductionTime are almost identical.
 // Chances are, the same is true of buildings and techs as well.
 // TODO: Eliminate duplication
 bool HullType::ProductionCostTimeLocationInvariant() const {
@@ -509,7 +509,7 @@ bool ShipDesign::ProductionCostTimeLocationInvariant() const {
             return false;
 
     for (const std::string& part_name : m_parts)
-        if (const PartType* part = GetPartType(part_name))
+        if (const ShipPart* part = GetShipPart(part_name))
             if (!part->ProductionCostTimeLocationInvariant())
                 return false;
 
@@ -527,7 +527,7 @@ float ShipDesign::ProductionCost(int empire_id, int location_id) const {
 
     int part_count = 0;
     for (const std::string& part_name : m_parts) {
-        if (const PartType* part = GetPartType(part_name)) {
+        if (const ShipPart* part = GetShipPart(part_name)) {
             cost_accumulator += part->ProductionCost(empire_id, location_id, m_id);
             part_count++;
         }
@@ -552,7 +552,7 @@ int ShipDesign::ProductionTime(int empire_id, int location_id) const {
         time_accumulator = std::max(time_accumulator, hull->ProductionTime(empire_id, location_id));
 
     for (const std::string& part_name : m_parts)
-        if (const PartType* part = GetPartType(part_name))
+        if (const ShipPart* part = GetShipPart(part_name))
             time_accumulator = std::max(time_accumulator, part->ProductionTime(empire_id, location_id));
 
     // assuming that ARBITRARY_LARGE_TURNS is larger than any reasonable turns,
@@ -565,7 +565,7 @@ bool ShipDesign::CanColonize() const {
     for (const std::string& part_name : m_parts) {
         if (part_name.empty())
             continue;
-        if (const PartType* part = GetPartType(part_name))
+        if (const ShipPart* part = GetShipPart(part_name))
             if (part->Class() == PC_COLONY)
                 return true;
     }
@@ -575,9 +575,9 @@ bool ShipDesign::CanColonize() const {
 float ShipDesign::Defense() const {
     // accumulate defense from defensive parts in design.
     float total_defense = 0.0f;
-    const PartTypeManager& part_manager = GetPartTypeManager();
+    const ShipPartManager& part_manager = GetShipPartManager();
     for (const std::string& part_name : Parts()) {
-        const PartType* part = part_manager.GetPartType(part_name);
+        const ShipPart* part = part_manager.GetShipPart(part_name);
         if (part && (part->Class() == PC_SHIELD || part->Class() == PC_ARMOUR))
             total_defense += part->Capacity();
     }
@@ -598,7 +598,7 @@ float ShipDesign::AdjustedAttack(float shield) const {
     float direct_attack = 0.0f;
 
     for (const std::string& part_name : m_parts) {
-        const PartType* part = GetPartType(part_name);
+        const ShipPart* part = GetShipPart(part_name);
         if (!part)
             continue;
         ShipPartClass part_class = part->Class();
@@ -660,7 +660,7 @@ std::vector<std::string> ShipDesign::Weapons() const {
     std::vector<std::string> retval;
     retval.reserve(m_parts.size());
     for (const auto& part_name : m_parts) {
-        const PartType* part = GetPartType(part_name);
+        const ShipPart* part = GetShipPart(part_name);
         if (!part)
             continue;
         ShipPartClass part_class = part->Class();
@@ -730,7 +730,7 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id) const {
         if (part_name.empty())
             continue;       // empty slots don't limit build location
 
-        const PartType* part = GetPartType(part_name);
+        const ShipPart* part = GetShipPart(part_name);
         if (!part) {
             ErrorLogger() << "ShipDesign::ProductionLocation  ShipDesign couldn't get part with name " << part_name;
             return false;
@@ -828,8 +828,8 @@ ShipDesign::MaybeInvalidDesign(const std::string& hull_in,
             continue;
 
         // Parts must exist...
-        const auto part_type = GetPartType(part_name);
-        if (!part_type) {
+        const auto ship_part = GetShipPart(part_name);
+        if (!ship_part) {
             if (produce_log)
                 WarnLogger() << "Invalid ShipDesign part \"" << part_name << "\" not found"
                              << ". Removing \"" << part_name <<"\"";
@@ -837,7 +837,7 @@ ShipDesign::MaybeInvalidDesign(const std::string& hull_in,
             continue;
         }
 
-        for (const auto& excluded : part_type->Exclusions()) {
+        for (const auto& excluded : ship_part->Exclusions()) {
             // confict if a different excluded part is present, or if there are
             // two or more of a part that excludes itself
             if ((excluded == part_name && component_name_counts[excluded] > 1) ||
@@ -854,7 +854,7 @@ ShipDesign::MaybeInvalidDesign(const std::string& hull_in,
         // verify part can mount in indicated slot
         const ShipSlotType& slot_type = slots[ii].type;
 
-        if (!part_type->CanMountInSlotType(slot_type)) {
+        if (!ship_part->CanMountInSlotType(slot_type)) {
             if (produce_log)
                 DebugLogger() << "Invalid ShipDesign part \"" << part_name << "\" can't be mounted in "
                               << slot_type << " slot. Removing \"" << part_name <<"\"";
@@ -928,7 +928,7 @@ void ShipDesign::BuildStatCaches() {
         if (part_name.empty())
             continue;
 
-        const PartType* part = GetPartType(part_name);
+        const ShipPart* part = GetShipPart(part_name);
         if (!part) {
             ErrorLogger() << "ShipDesign::BuildStatCaches couldn't get part with name " << part_name;
             continue;
@@ -1000,7 +1000,7 @@ void ShipDesign::BuildStatCaches() {
         m_has_fighters = has_fighter_bays && has_fighter_hangars;
         m_is_armed = m_is_armed || (can_launch_fighters && has_armed_fighters);
 
-        m_num_part_types[part_name]++;
+        m_num_ship_parts[part_name]++;
         if (part_class > INVALID_SHIP_PART_CLASS && part_class < NUM_SHIP_PART_CLASSES)
             m_num_part_classes[part_class]++;
     }

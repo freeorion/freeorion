@@ -1473,7 +1473,7 @@ namespace {
         if (parsed_map_name == "SpeciesShipsScrapped")
             return empire->SpeciesShipsScrapped();
         if (parsed_map_name == "ShipPartsOwned")
-            return empire->ShipPartTypesOwned();
+            return empire->ShipPartsOwned();
         if (parsed_map_name == "TurnTechResearched")
             return empire->ResearchedTechs();
 
@@ -1894,21 +1894,21 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
             return 0;
         }
 
-        std::string part_type_name;
+        std::string ship_part_name;
         if (m_string_ref1) {
-            part_type_name = m_string_ref1->Eval(context);
+            ship_part_name = m_string_ref1->Eval(context);
         }
 
         const ShipDesign* design = GetShipDesign(design_id);
         if (!design)
             return 0;
 
-        if (part_type_name.empty())
+        if (ship_part_name.empty())
             return design->PartCount();
 
         int count = 0;
         for (const std::string& part : design->Parts()) {
-            if (part_type_name == part)
+            if (ship_part_name == part)
                 count++;
         }
         return count;
@@ -1944,7 +1944,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         for (const std::string& part_name : design->Parts()) {
             if (part_name.empty())
                 continue;
-            const PartType* part = GetPartType(part_name);
+            const ShipPart* part = GetShipPart(part_name);
             if (!part)
                 continue;
             if (part->Class() == part_class)
@@ -2146,27 +2146,27 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
 
     }
     else if (variable_name == "PartCapacity") {
-        std::string part_type_name;
+        std::string ship_part_name;
         if (m_string_ref1)
-            part_type_name = m_string_ref1->Eval(context);
+            ship_part_name = m_string_ref1->Eval(context);
 
-        const PartType* part_type = GetPartType(part_type_name);
-        if (!part_type)
+        const ShipPart* ship_part = GetShipPart(ship_part_name);
+        if (!ship_part)
             return 0.0;
 
-        return part_type->Capacity();
+        return ship_part->Capacity();
 
     }
     else if (variable_name == "PartSecondaryStat") {
-        std::string part_type_name;
+        std::string ship_part_name;
         if (m_string_ref1)
-            part_type_name = m_string_ref1->Eval(context);
+            ship_part_name = m_string_ref1->Eval(context);
 
-        const PartType* part_type = GetPartType(part_type_name);
-        if (!part_type)
+        const ShipPart* ship_part = GetShipPart(ship_part_name);
+        if (!ship_part)
             return 0.0;
 
-        return part_type->SecondaryStat();
+        return ship_part->SecondaryStat();
 
     }
     else if (variable_name == "ShipDesignCost") {

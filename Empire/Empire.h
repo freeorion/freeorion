@@ -219,7 +219,8 @@ public:
     void UnlockItem(const UnlockableItem& item);
 
     void AddBuildingType(const std::string& name);   ///< Inserts the given BuildingType into the Empire's list of available BuldingTypes.
-    void AddPartType(const std::string& name);       ///< Inserts the given ship PartType into the Empire's list of available BuldingTypes.
+    //! Inserts the given ShipPart into the Empire's list of available ShipPart%s.
+    void AddShipPart(const std::string& name);
     void AddHullType(const std::string& name);       ///< Inserts the given ship HullType into the Empire's list of available BuldingTypes.
     void AddExploredSystem(int ID);                  ///< Inserts the given ID into the Empire's list of explored systems.
 
@@ -249,7 +250,8 @@ public:
     void LockItem(const UnlockableItem& item);
 
     void RemoveBuildingType(const std::string& name);///< Removes the given BuildingType from the empire's list
-    void RemovePartType(const std::string& name);    ///< Removes the given PartType from the empire's list
+    //! Removes the given ShipPart from the empire's list
+    void RemoveShipPart(const std::string& name);
     void RemoveHullType(const std::string& name);    ///< Removes the given HullType from the empire's list
     void RemoveShipDesign(int ship_design_id);       ///< Removes the ShipDesign with the given id from the empire's set
 
@@ -339,7 +341,7 @@ public:
 
     std::map<std::string, int>&     SpeciesShipsOwned()     { return m_species_ships_owned; }
     std::map<int, int>&             ShipDesignsOwned()      { return m_ship_designs_owned; }
-    std::map<std::string, int>&     ShipPartTypesOwned()    { return m_ship_part_types_owned; }
+    std::map<std::string, int>&     ShipPartsOwned()        { return m_ship_parts_owned; }
     std::map<ShipPartClass, int>&   ShipPartClassOwned()    { return m_ship_part_class_owned; }
     std::map<std::string, int>&     SpeciesColoniesOwned()  { return m_species_colonies_owned; }
     int&                            OutpostsOwned()         { return m_outposts_owned; }
@@ -407,7 +409,8 @@ private:
     ProductionQueue                 m_production_queue;         ///< the queue of items being or waiting to be built
 
     std::set<std::string>           m_available_building_types; ///< list of acquired BuildingType.  These are string names referencing BuildingType objects
-    std::set<std::string>           m_available_part_types;     ///< list of acquired ship PartType.  These are string names referencing PartType objects
+    //! List of acquired ShipPart referenced by name.
+    std::set<std::string>           m_available_ship_parts;
     std::set<std::string>           m_available_hull_types;     ///< list of acquired ship HullType.  These are string names referencing HullType objects
     std::set<int>                   m_explored_systems;         ///< systems explored by this empire
     std::set<int>                   m_known_ship_designs;       ///< ids of ship designs in the universe that this empire knows about
@@ -422,7 +425,10 @@ private:
 
     std::map<std::string, int>      m_species_ships_owned;      ///< how many ships of each species does this empire currently own?
     std::map<int, int>              m_ship_designs_owned;       ///< how many ships of each design does this empire currently own?
-    std::map<std::string, int>      m_ship_part_types_owned;    ///< how many ship parts are currently owned, indexed by PartType
+
+    //! How many ShipPart%s are currently owned, indexed by ShipPart
+    std::map<std::string, int>      m_ship_parts_owned;
+
     std::map<ShipPartClass, int>    m_ship_part_class_owned;    ///< how many ship parts are currently owned, indexed by ShipPartClass
     std::map<std::string, int>      m_species_colonies_owned;   ///< how many colonies of each species does this empire currently own?
     int                             m_outposts_owned = 0;       ///< how many uncolonized outposts does this empire currently own?

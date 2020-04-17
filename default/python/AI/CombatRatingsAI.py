@@ -7,7 +7,7 @@ import FleetUtilsAI
 from aistate_interface import get_aistate
 from EnumsAI import MissionType
 from freeorion_tools import dict_to_tuple, tuple_to_dict, cache_for_current_turn
-from ShipDesignAI import get_part_type
+from ShipDesignAI import get_ship_part
 from AIDependencies import INVALID_ID, CombatTarget
 
 
@@ -193,7 +193,7 @@ class ShipCombatStats:
             for partname in design.parts:
                 if not partname:
                     continue
-                pc = get_part_type(partname).partClass
+                pc = get_ship_part(partname).partClass
                 if pc == fo.shipPartClass.shortRange:
                     allowed_targets = get_allowed_targets(partname)
                     damage = ship.currentPartMeterValue(meter_choice, partname)

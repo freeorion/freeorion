@@ -5313,8 +5313,8 @@ namespace {
 
             int count = 0;
             for (const std::string& name : design->Parts()) {
-                if (const PartType* part_type = GetPartType(name)) {
-                    if (part_type->Class() == m_part_class)
+                if (const ShipPart* ship_part = GetShipPart(name)) {
+                    if (ship_part->Class() == m_part_class)
                         ++count;
                 }
             }
@@ -9239,7 +9239,7 @@ namespace {
             break;
         }
         case CONTENT_SHIP_PART: {
-            if (auto p = GetPartType(name1))
+            if (auto p = GetShipPart(name1))
                 return p->Location();
             break;
         }
@@ -9447,7 +9447,7 @@ namespace {
             break;
         }
         case CONTENT_SHIP_PART: {
-            if (auto p = GetPartType(name))
+            if (auto p = GetShipPart(name))
                 return p->CombatTargets();
             break;
         }

@@ -210,7 +210,7 @@ namespace {
         std::vector<int> results;
         results.reserve(ship_design.Parts().size());
         for (const std::string& part_name : ship_design.Parts()) {
-            const PartType* part = GetPartType(part_name);
+            const ShipPart* part = GetShipPart(part_name);
             if (part && part->Class() == PC_DIRECT_WEAPON)  // TODO: handle other weapon classes when they are implemented
                 results.push_back(part->Capacity());
         }
@@ -594,19 +594,19 @@ namespace FreeOrionPython {
         def("getPredefinedShipDesign",          &GetPredefinedShipDesign,                   return_value_policy<reference_existing_object>(), "Returns the ship design (ShipDesign) with the indicated name (string).");
 
 
-        class_<PartType, noncopyable>("partType", no_init)
-            .add_property("name",               make_function(&PartType::Name,              return_value_policy<copy_const_reference>()))
-            .add_property("partClass",          &PartType::Class)
-            .add_property("capacity",           &PartType::Capacity)
-            .add_property("secondaryStat",      &PartType::SecondaryStat)
-            .add_property("mountableSlotTypes", make_function(&PartType::MountableSlotTypes,return_value_policy<return_by_value>()))
-            .def("productionCost",              &PartType::ProductionCost)
-            .def("productionTime",              &PartType::ProductionTime)
-            .def("canMountInSlotType",          &PartType::CanMountInSlotType)
+        class_<ShipPart, noncopyable>("shipPart", no_init)
+            .add_property("name",               make_function(&ShipPart::Name,              return_value_policy<copy_const_reference>()))
+            .add_property("partClass",          &ShipPart::Class)
+            .add_property("capacity",           &ShipPart::Capacity)
+            .add_property("secondaryStat",      &ShipPart::SecondaryStat)
+            .add_property("mountableSlotTypes", make_function(&ShipPart::MountableSlotTypes,return_value_policy<return_by_value>()))
+            .def("productionCost",              &ShipPart::ProductionCost)
+            .def("productionTime",              &ShipPart::ProductionTime)
+            .def("canMountInSlotType",          &ShipPart::CanMountInSlotType)
             .add_property("costTimeLocationInvariant",
-                                                &PartType::ProductionCostTimeLocationInvariant)
+                                                &ShipPart::ProductionCostTimeLocationInvariant)
         ;
-        def("getPartType",                      &GetPartType,                               return_value_policy<reference_existing_object>(), "Returns the ship part (PartType) with the indicated name (string).");
+        def("getShipPart",                      &GetShipPart,                               return_value_policy<reference_existing_object>(), "Returns the ShipPart with the indicated name (string).");
 
         class_<HullType, noncopyable>("hullType", no_init)
             .add_property("name",               make_function(&HullType::Name,              return_value_policy<copy_const_reference>()))

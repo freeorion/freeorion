@@ -156,7 +156,7 @@ public:
     static const std::string SPECIAL_TAG;
     //! Variable value is a HullType::Name().
     static const std::string SHIP_HULL_TAG;
-    //! Variable value is a PartType::Name().
+    //! Variable value is a ShipPart::Name().
     static const std::string SHIP_PART_TAG;
     //! Variable value is a Species::Name().
     static const std::string SPECIES_TAG;

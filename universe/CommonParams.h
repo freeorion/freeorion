@@ -28,9 +28,10 @@ template <typename T>
 using ConsumptionMap = std::map<T, std::pair<std::unique_ptr<ValueRef::ValueRef<double>>,
                                              std::unique_ptr<Condition::Condition>>>;
 
-/** Common parameters for PartType, HullType, and BuildingType constructors.
-  * Used as temporary storage for parsing to reduce number of sub-items parsed
-  * per item. */
+//! Common parameters for ShipPart, HullType, and BuildingType constructors.
+//!
+//! Used as temporary storage for parsing to reduce number of sub-items parsed
+//! per item.
 struct FO_COMMON_API CommonParams {
     CommonParams();
     CommonParams(std::unique_ptr<ValueRef::ValueRef<double>>&& production_cost_,

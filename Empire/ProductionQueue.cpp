@@ -442,10 +442,10 @@ ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id) c
             }
 
             for (const std::string& part_name : sd->Parts()) {
-                const PartType* pt = GetPartType(part_name);
-                if (!pt)
+                const ShipPart* part = GetShipPart(part_name);
+                if (!part)
                     continue;
-                for (const auto& psc : pt->ProductionSpecialConsumption()) {
+                for (const auto& psc : part->ProductionSpecialConsumption()) {
                     if (!psc.second.first)
                         continue;
                     retval[psc.first][location_id] += psc.second.first->Eval(context);
@@ -495,7 +495,7 @@ ProductionQueue::ProductionItem::CompletionMeterConsumption(int location_id) con
             }
 
             for (const std::string& part_name : sd->Parts()) {
-                const PartType* pt = GetPartType(part_name);
+                const ShipPart* pt = GetShipPart(part_name);
                 if (!pt)
                     continue;
                 for (const auto& pmc : pt->ProductionMeterConsumption()) {

@@ -523,7 +523,7 @@ void ShipDamageBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
 
     // for each weapon part, get its damage meter value
     for (const std::string& part_name : design->Parts()) {
-        const PartType* part = GetPartType(part_name);
+        const ShipPart* part = GetShipPart(part_name);
         if (!part)
             continue;
         ShipPartClass part_class = part->Class();
@@ -779,7 +779,7 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
 
     // populate values from hangars and bays
     for (std::string part_name : parts) {
-        const PartType* part = GetPartType(part_name);
+        const ShipPart* part = GetShipPart(part_name);
         if (!part)
             continue;
         ShipPartClass part_class = part->Class();

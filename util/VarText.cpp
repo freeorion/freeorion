@@ -22,14 +22,14 @@ class Special;
 class Species;
 class FieldType;
 class HullType;
-class PartType;
+class ShipPart;
 const Tech*         GetTech(const std::string& name);
 const BuildingType* GetBuildingType(const std::string& name);
 const Special*      GetSpecial(const std::string& name);
 const Species*      GetSpecies(const std::string& name);
 const FieldType*    GetFieldType(const std::string& name);
 const HullType*     GetHullType(const std::string& name);
-const PartType*     GetPartType(const std::string& name);
+const ShipPart*     GetShipPart(const std::string& name);
 
 namespace {
     //! Return @p content surrounded by the given @p tags.
@@ -156,7 +156,7 @@ namespace {
             {VarText::SHIP_HULL_TAG, [](const std::string& data)
                 { return NameString<HullType, GetHullType>(data, VarText::SHIP_HULL_TAG); }},
             {VarText::SHIP_PART_TAG, [](const std::string& data)
-                { return NameString<PartType, GetPartType>(data, VarText::SHIP_PART_TAG); }},
+                { return NameString<ShipPart, GetShipPart>(data, VarText::SHIP_PART_TAG); }},
             {VarText::SPECIAL_TAG, [](const std::string& data)
                 { return NameString<Special, GetSpecial>(data, VarText::SPECIAL_TAG); }},
             {VarText::SPECIES_TAG, [](const std::string& data)

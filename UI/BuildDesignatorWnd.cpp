@@ -290,8 +290,8 @@ namespace {
             if (const HullType* hull_type = GetHullType(ship_design->Hull()))
                 location_conditions.push_back(const_cast<Condition::Condition*>(hull_type->Location()));
             for (const std::string& part_name : ship_design->Parts()) {
-                if (const PartType* part_type = GetPartType(part_name))
-                    location_conditions.push_back(const_cast<Condition::Condition*>(part_type->Location()));
+                if (const ShipPart* part = GetShipPart(part_name))
+                    location_conditions.push_back(const_cast<Condition::Condition*>(part->Location()));
             }
         }
         auto source = GetSourceObjectForEmpire(empire_id);
@@ -1459,8 +1459,8 @@ void BuildDesignatorWnd::ShowPlanetInEncyclopedia(int planet_id)
 void BuildDesignatorWnd::ShowTechInEncyclopedia(const std::string& tech_name)
 { m_enc_detail_panel->SetTech(tech_name); }
 
-void BuildDesignatorWnd::ShowPartTypeInEncyclopedia(const std::string& part_type_name)
-{ m_enc_detail_panel->SetPartType(part_type_name); }
+void BuildDesignatorWnd::ShowShipPartInEncyclopedia(const std::string& part_name)
+{ m_enc_detail_panel->SetShipPart(part_name); }
 
 void BuildDesignatorWnd::ShowSpeciesInEncyclopedia(const std::string& species_name)
 { m_enc_detail_panel->SetSpecies(species_name); }

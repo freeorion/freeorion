@@ -103,11 +103,11 @@ namespace {
 }
 
 
-PartType::PartType() :
+ShipPart::ShipPart() :
     m_class(INVALID_SHIP_PART_CLASS)
 {}
 
-PartType::PartType(ShipPartClass part_class, double capacity, double stat2,
+ShipPart::ShipPart(ShipPartClass part_class, double capacity, double stat2,
                    CommonParams& common_params, const MoreCommonParams& more_common_params,
                    std::vector<ShipSlotType> mountable_slot_types,
                    const std::string& icon, bool add_standard_capacity_effect,
@@ -134,7 +134,7 @@ PartType::PartType(ShipPartClass part_class, double capacity, double stat2,
     for (const std::string& tag : common_params.tags)
         m_tags.insert(boost::to_upper_copy<std::string>(tag));
 
-    TraceLogger() << "PartType::PartType: name: " << m_name
+    TraceLogger() << "ShipPart::ShipPart: name: " << m_name
                   << " description: " << m_description
                   << " class: " << m_class
                   << " capacity: " << m_capacity
@@ -153,7 +153,7 @@ PartType::PartType(ShipPartClass part_class, double capacity, double stat2,
                   << " add standard cap effect: " << m_add_standard_capacity_effect;
 }
 
-void PartType::Init(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects) {
+void ShipPart::Init(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects) {
     if ((m_capacity != 0 || m_secondary_stat != 0) && m_add_standard_capacity_effect) {
         switch (m_class) {
         case PC_COLONY:
@@ -217,10 +217,10 @@ void PartType::Init(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects
     }
 }
 
-PartType::~PartType()
+ShipPart::~ShipPart()
 {}
 
-float PartType::Capacity() const {
+float ShipPart::Capacity() const {
     switch (m_class) {
     case PC_ARMOUR:
         return m_capacity * GetGameRules().Get<double>("RULE_SHIP_STRUCTURE_FACTOR");
@@ -233,10 +233,10 @@ float PartType::Capacity() const {
     }
 }
 
-float PartType::SecondaryStat() const
+float ShipPart::SecondaryStat() const
 { return m_secondary_stat; }
 
-std::string PartType::CapacityDescription() const {
+std::string ShipPart::CapacityDescription() const {
     std::string desc_string;
     float main_stat = Capacity();
     float sdry_stat = SecondaryStat();
@@ -267,7 +267,7 @@ std::string PartType::CapacityDescription() const {
     return desc_string;
 }
 
-bool PartType::CanMountInSlotType(ShipSlotType slot_type) const {
+bool ShipPart::CanMountInSlotType(ShipSlotType slot_type) const {
     if (INVALID_SHIP_SLOT_TYPE == slot_type)
         return false;
     for (ShipSlotType mountable_slot_type : m_mountable_slot_types)
@@ -276,7 +276,7 @@ bool PartType::CanMountInSlotType(ShipSlotType slot_type) const {
     return false;
 }
 
-bool PartType::ProductionCostTimeLocationInvariant() const {
+bool ShipPart::ProductionCostTimeLocationInvariant() const {
     if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION"))
         return true;
     if (m_production_cost && !m_production_cost->TargetInvariant())
@@ -286,7 +286,7 @@ bool PartType::ProductionCostTimeLocationInvariant() const {
     return true;
 }
 
-float PartType::ProductionCost(int empire_id, int location_id, int in_design_id) const {
+float ShipPart::ProductionCost(int empire_id, int location_id, int in_design_id) const {
     if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION") || !m_production_cost)
         return 1.0f;
 
@@ -309,7 +309,7 @@ float PartType::ProductionCost(int empire_id, int location_id, int in_design_id)
     return static_cast<float>(m_production_cost->Eval(context));
 }
 
-int PartType::ProductionTime(int empire_id, int location_id, int in_design_id) const {
+int ShipPart::ProductionTime(int empire_id, int location_id, int in_design_id) const {
     if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION") || !m_production_time)
         return 1;
 
@@ -332,7 +332,7 @@ int PartType::ProductionTime(int empire_id, int location_id, int in_design_id) c
     return m_production_time->Eval(context);
 }
 
-unsigned int PartType::GetCheckSum() const {
+unsigned int ShipPart::GetCheckSum() const {
     unsigned int retval{0};
 
     CheckSums::CheckSumCombine(retval, m_name);
@@ -357,61 +357,57 @@ unsigned int PartType::GetCheckSum() const {
 }
 
 
-/////////////////////////////////////
-// PartTypeManager                 //
-/////////////////////////////////////
-// static
-PartTypeManager* PartTypeManager::s_instance = nullptr;
+ShipPartManager* ShipPartManager::s_instance = nullptr;
 
-PartTypeManager::PartTypeManager() {
+ShipPartManager::ShipPartManager() {
     if (s_instance)
-        throw std::runtime_error("Attempted to create more than one PartTypeManager.");
+        throw std::runtime_error("Attempted to create more than one ShipPartManager.");
 
     // Only update the global pointer on sucessful construction.
     s_instance = this;
 }
 
-const PartType* PartTypeManager::GetPartType(const std::string& name) const {
-    CheckPendingPartTypes();
+const ShipPart* ShipPartManager::GetShipPart(const std::string& name) const {
+    CheckPendingShipParts();
     auto it = m_parts.find(name);
     return it != m_parts.end() ? it->second.get() : nullptr;
 }
 
-PartTypeManager& PartTypeManager::GetPartTypeManager() {
-    static PartTypeManager manager;
+ShipPartManager& ShipPartManager::GetShipPartManager() {
+    static ShipPartManager manager;
     return manager;
 }
 
-PartTypeManager::iterator PartTypeManager::begin() const {
-    CheckPendingPartTypes();
+ShipPartManager::iterator ShipPartManager::begin() const {
+    CheckPendingShipParts();
     return m_parts.begin();
 }
 
-PartTypeManager::iterator PartTypeManager::end() const{
-    CheckPendingPartTypes();
+ShipPartManager::iterator ShipPartManager::end() const{
+    CheckPendingShipParts();
     return m_parts.end();
 }
 
-unsigned int PartTypeManager::GetCheckSum() const {
-    CheckPendingPartTypes();
+unsigned int ShipPartManager::GetCheckSum() const {
+    CheckPendingShipParts();
     unsigned int retval{0};
     for (auto const& name_part_pair : m_parts)
         CheckSums::CheckSumCombine(retval, name_part_pair);
     CheckSums::CheckSumCombine(retval, m_parts.size());
 
 
-    DebugLogger() << "PartTypeManager checksum: " << retval;
+    DebugLogger() << "ShipPartManager checksum: " << retval;
     return retval;
 }
 
-void PartTypeManager::SetPartTypes(Pending::Pending<PartTypeMap>&& pending_part_types)
-{ m_pending_part_types = std::move(pending_part_types); }
+void ShipPartManager::SetShipParts(Pending::Pending<ShipPartMap>&& pending_ship_parts)
+{ m_pending_ship_parts = std::move(pending_ship_parts); }
 
-void PartTypeManager::CheckPendingPartTypes() const {
-    if (!m_pending_part_types)
+void ShipPartManager::CheckPendingShipParts() const {
+    if (!m_pending_ship_parts)
         return;
 
-    Pending::SwapPending(m_pending_part_types, m_parts);
+    Pending::SwapPending(m_pending_ship_parts, m_parts);
 
     TraceLogger() << [this]() {
             std::string retval("Part Types:");
@@ -423,8 +419,8 @@ void PartTypeManager::CheckPendingPartTypes() const {
         }();
 }
 
-PartTypeManager& GetPartTypeManager()
-{ return PartTypeManager::GetPartTypeManager(); }
+ShipPartManager& GetShipPartManager()
+{ return ShipPartManager::GetShipPartManager(); }
 
-const PartType* GetPartType(const std::string& name)
-{ return GetPartTypeManager().GetPartType(name); }
+const ShipPart* GetShipPart(const std::string& name)
+{ return GetShipPartManager().GetShipPart(name); }

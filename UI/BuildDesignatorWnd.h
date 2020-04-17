@@ -87,7 +87,7 @@ public:
     void ShowShipDesignInEncyclopedia(int design_id);
     void ShowPlanetInEncyclopedia(int planet_id);
     void ShowTechInEncyclopedia(const std::string& tech_name);
-    void ShowPartTypeInEncyclopedia(const std::string& part_type_name);
+    void ShowShipPartInEncyclopedia(const std::string& part_name);
     void ShowSpeciesInEncyclopedia(const std::string& species_name);
     void ShowEmpireInEncyclopedia(int empire_id);
     void ShowSpecialInEncyclopedia(const std::string& special_name);

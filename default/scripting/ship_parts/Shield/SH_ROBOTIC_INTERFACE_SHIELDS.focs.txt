@@ -9,7 +9,7 @@ Part
     tags = [ "PEDIA_PC_SHIELD" ]
     location = And [
         OwnedBy empire = Source.Owner
-        /// @content_tag{ROBOTIC} Allows a location to produce this PartType
+        /// @content_tag{ROBOTIC} Allows a location to produce this ShipPart
         HasTag name = "ROBOTIC"
     ]
     effectsgroups =
@@ -19,7 +19,7 @@ Part
             scope = And [
                 Source
                 HasTag name = "ROBOTIC"
-                /// @content_tag{ROBOTIC_HULL} Combined with ROBOTIC tag, allows shield increase from this PartType
+                /// @content_tag{ROBOTIC_HULL} Combined with ROBOTIC tag, allows shield increase from this ShipPart
                 HasTag name = "ROBOTIC_HULL"
             ]
             activation = ([[ROBOTIC_SHIELD_EFFECT]] >= [[BEST_SHIELD_EFFECT]])

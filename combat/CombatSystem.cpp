@@ -375,7 +375,7 @@ namespace {
                        float part_attack_,
                        const ::Condition::Condition* combat_targets_ = nullptr) :
             part_class(part_class_),
-            part_type_name(part_name_),
+            ship_part_name(part_name_),
             part_attack(part_attack_),
             combat_targets(combat_targets_)
         {}
@@ -384,7 +384,7 @@ namespace {
                        const std::string& fighter_type_name_,
                        const ::Condition::Condition* combat_targets_ = nullptr) :
             part_class(part_class_),
-            part_type_name(part_name_),
+            ship_part_name(part_name_),
             combat_targets(combat_targets_),
             fighters_launched(fighters_launched_),
             fighter_damage(fighter_damage_),
@@ -392,7 +392,7 @@ namespace {
         {}
 
         ShipPartClass                       part_class;
-        std::string                         part_type_name;
+        std::string                         ship_part_name;
         float                               part_attack = 0.0f;     // for direct damage parts
         const ::Condition::Condition*   combat_targets = nullptr;
         int                                 fighters_launched = 0;  // for fighter bays, input value should be limited by ship available fighters to launch
@@ -421,7 +421,7 @@ namespace {
         float shield = (target_shield ? target_shield->Current() : 0.0f);
 
         DebugLogger() << "AttackShipShip: attacker: " << attacker->Name()
-                      << "  weapon: " << weapon.part_type_name << " power: " << power
+                      << "  weapon: " << weapon.ship_part_name << " power: " << power
                       << "  target: " << target->Name() << " shield: " << target_shield->Current()
                       << " structure: " << target_structure->Current();
 
@@ -435,7 +435,7 @@ namespace {
                                 << target->Name() << " (" << target->ID() << ")";
         }
 
-        combat_event->AddEvent(round, target->ID(), target->Owner(), weapon.part_type_name,
+        combat_event->AddEvent(round, target->ID(), target->Owner(), weapon.ship_part_name,
                                power, shield, damage);
 
         attacker->SetLastTurnActiveInCombat(CurrentTurn());
@@ -515,7 +515,7 @@ namespace {
 
         //TODO report the planet damage details more clearly
         float total_damage = shield_damage + defense_damage + construction_damage;
-        combat_event->AddEvent(round, target->ID(), target->Owner(), weapon.part_type_name,
+        combat_event->AddEvent(round, target->ID(), target->Owner(), weapon.ship_part_name,
                                power, 0.0f, total_damage);
 
         attacker->SetLastTurnActiveInCombat(CurrentTurn());
@@ -536,7 +536,7 @@ namespace {
                                 << " damage to " << target->Name() << " (" << target->ID() << ")";
             target->SetDestroyed();
         }
-        combat_event->AddEvent(round, target->ID(), target->Owner(), weapon.part_type_name,
+        combat_event->AddEvent(round, target->ID(), target->Owner(), weapon.ship_part_name,
                                power, 0.0f, 1.0f);
         attacker->SetLastTurnActiveInCombat(CurrentTurn());
     }
@@ -578,7 +578,7 @@ namespace {
                                 << target->ID() << ")";
         }
 
-        combat_event->AddEvent(round, target->ID(), target->Owner(), weapon.part_type_name,
+        combat_event->AddEvent(round, target->ID(), target->Owner(), weapon.ship_part_name,
                                power, shield, damage);
 
         target->SetLastTurnActiveInCombat(CurrentTurn());
@@ -655,7 +655,7 @@ namespace {
 
         //TODO report the planet damage details more clearly
         float total_damage = shield_damage + defense_damage + construction_damage;
-        combat_event->AddEvent(round, target->ID(), target->Owner(), weapon.part_type_name,
+        combat_event->AddEvent(round, target->ID(), target->Owner(), weapon.ship_part_name,
                                power, 0.0f, total_damage);
 
         //attacker->SetLastTurnActiveInCombat(CurrentTurn());
@@ -682,7 +682,7 @@ namespace {
             target->SetDestroyed();
         }
 
-        combat_event->AddEvent(round, target->ID(), target->Owner(), weapon.part_type_name,
+        combat_event->AddEvent(round, target->ID(), target->Owner(), weapon.ship_part_name,
                                power, 0.0f, 1.0f);
     }
 
@@ -721,7 +721,7 @@ namespace {
 
         float pierced_shield_value(-1.0);
         CombatEventPtr attack_event = std::make_shared<WeaponFireEvent>(
-            bout, round, attacker->ID(), target->ID(), weapon.part_type_name,
+            bout, round, attacker->ID(), target->ID(), weapon.ship_part_name,
             std::tie(power, pierced_shield_value, damage),
             attacker->Owner(), target->Owner());
         attacks_event->AddEvent(attack_event);
@@ -798,7 +798,7 @@ namespace {
 
         float pierced_shield_value(0.0);
         CombatEventPtr attack_event = std::make_shared<WeaponFireEvent>(
-            bout, round, attacker->ID(), target->ID(), weapon.part_type_name,
+            bout, round, attacker->ID(), target->ID(), weapon.ship_part_name,
             std::tie(power, pierced_shield_value, total_damage),
             attacker->Owner(), target->Owner());
         attacks_event->AddEvent(attack_event);
@@ -880,7 +880,7 @@ namespace {
         if (!design)
             return retval;
 
-        std::set<std::string> seen_hangar_part_types;
+        std::set<std::string> seen_hangar_ship_parts;
         int available_fighters = 0;
         float fighter_attack = 0.0f;
         std::string fighter_name = UserString("OBJ_FIGHTER");
@@ -889,7 +889,7 @@ namespace {
 
         // determine what ship does during combat, based on parts and their meters...
         for (const auto& part_name : design->Parts()) {
-            const PartType* part = GetPartType(part_name);
+            const ShipPart* part = GetShipPart(part_name);
             if (!part)
                 continue;
             ShipPartClass part_class = part->Class();
@@ -914,9 +914,9 @@ namespace {
 
             } else if (part_class == PC_FIGHTER_HANGAR) {
                 // hangar max-capacity-modification effects stack, so only add capacity for each hangar type once
-                if (!seen_hangar_part_types.count(part_name)) {
+                if (!seen_hangar_ship_parts.count(part_name)) {
                     available_fighters += ship->CurrentPartMeterValue(METER_CAPACITY, part_name);
-                    seen_hangar_part_types.insert(part_name);
+                    seen_hangar_ship_parts.insert(part_name);
 
                     if (!part_combat_targets)
                         part_combat_targets = is_enemy_ship_or_fighter.get();
@@ -1310,7 +1310,7 @@ namespace {
             weapons = ShipWeaponsStrengths(attack_ship);    // includes info about fighter launches with PC_FIGHTER_BAY part class, and direct fire weapons with PC_DIRECT_WEAPON part class
             for (PartAttackInfo& part : weapons) {
                 if (part.part_class == PC_DIRECT_WEAPON) {
-                    DebugLogger(combat) << "Attacker Ship has direct weapon: " << part.part_type_name
+                    DebugLogger(combat) << "Attacker Ship has direct weapon: " << part.ship_part_name
                                         << " attack: " << part.part_attack;
                 } else if (part.part_class == PC_FIGHTER_BAY) {
                     DebugLogger(combat) << "Attacker Ship can fighter launch: " << part.fighters_launched
@@ -1389,7 +1389,7 @@ namespace {
             // select object from valid targets for this object's owner
             DebugLogger(combat) << "Attacker " << attacker->Name() << " ("
                                 << attacker->ID() << ") attacks with weapon "
-                                << weapon.part_type_name << " with power " << weapon.part_attack;
+                                << weapon.ship_part_name << " with power " << weapon.part_attack;
 
             if (!weapon.combat_targets) {
                 DebugLogger(combat) << "Weapon has no targeting condition?? Should have been set when initializing PartAttackInfo";
@@ -1441,7 +1441,7 @@ namespace {
 
         // get how many fighters are initialy in each part type...
         // may be multiple hangar part types, each with different capacity (number of stored fighters)
-        std::map<std::string, Meter*> part_type_fighter_hangar_capacities;
+        std::map<std::string, Meter*> ship_part_fighter_hangar_capacities;
 
         const ShipDesign* design = ship->Design();
         if (!design) {
@@ -1451,18 +1451,18 @@ namespace {
 
         // get hangar part meter values
         for (const std::string& part_name : design->Parts()) {
-            const PartType* part = GetPartType(part_name);
+            const ShipPart* part = GetShipPart(part_name);
             if (!part)
                 continue;
             if (part->Class() != PC_FIGHTER_HANGAR)
                 continue;
-            part_type_fighter_hangar_capacities[part_name] = ship->GetPartMeter(METER_CAPACITY, part_name);
+            ship_part_fighter_hangar_capacities[part_name] = ship->GetPartMeter(METER_CAPACITY, part_name);
         }
 
         // reduce meters until requested fighter reduction is achived
         // doesn't matter which part's capacity meters are reduced, as all
         // fighters are the same on the ship
-        for (auto& part : part_type_fighter_hangar_capacities) {
+        for (auto& part : ship_part_fighter_hangar_capacities) {
             if (!part.second)
                 continue;
             float reduction = std::min(part.second->Current(), launched_fighters);
@@ -1544,7 +1544,7 @@ namespace {
 
         // get how many fighters are initialy in each part type...
         // may be multiple hangar part types, each with different capacity (number of stored fighters)
-        std::map<std::string, std::pair<Meter*, Meter*>> part_type_fighter_hangar_capacities;
+        std::map<std::string, std::pair<Meter*, Meter*>> ship_part_fighter_hangar_capacities;
 
         const ShipDesign* design = ship->Design();
         if (!design) {
@@ -1554,19 +1554,19 @@ namespace {
 
         // get hangar part meter values
         for (const std::string& part_name : design->Parts()) {
-            const PartType* part = GetPartType(part_name);
+            const ShipPart* part = GetShipPart(part_name);
             if (!part)
                 continue;
             if (part->Class() != PC_FIGHTER_HANGAR)
                 continue;
-            part_type_fighter_hangar_capacities[part_name].first = ship->GetPartMeter(METER_CAPACITY, part_name);
-            part_type_fighter_hangar_capacities[part_name].second = ship->GetPartMeter(METER_MAX_CAPACITY, part_name);
+            ship_part_fighter_hangar_capacities[part_name].first = ship->GetPartMeter(METER_CAPACITY, part_name);
+            ship_part_fighter_hangar_capacities[part_name].second = ship->GetPartMeter(METER_MAX_CAPACITY, part_name);
         }
 
         // increase capacity meters until requested fighter allocation is
         // recovered. ioesn't matter which part's capacity meters are increased,
         // since all fighters are the same on the ship
-        for (auto& part : part_type_fighter_hangar_capacities) {
+        for (auto& part : ship_part_fighter_hangar_capacities) {
             if (!part.second.first || !part.second.second)
                 continue;
             float space = part.second.second->Current() - part.second.first->Current();

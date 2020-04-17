@@ -153,8 +153,8 @@ public:
     const std::string&              Model() const           { return m_3D_model; }  ///< returns filename of 3D model that represents ships of design
     bool                            LookupInStringtable() const { return m_name_desc_in_stringtable; }
 
-    /** returns number of parts in this ship design, indexed by PartType name */
-    const std::map<std::string, int>&   PartTypeCount() const { return m_num_part_types; }
+    //! Returns number of parts in this ship design, indexed by ShipPart name
+    const std::map<std::string, int>&   ShipPartCount() const { return m_num_ship_parts; }
     int                                 PartCount() const;
 
     /** returns number of parts in this ship design, indexed by ShipPartClass */
@@ -241,7 +241,7 @@ private:
     float   m_industry_generation = 0.0f;
     float   m_trade_generation = 0.0f;
     bool    m_is_production_location = false;
-    std::map<std::string, int>      m_num_part_types;
+    std::map<std::string, int>      m_num_ship_parts;
     std::map<ShipPartClass, int>    m_num_part_classes;
     bool    m_producible = false;
 

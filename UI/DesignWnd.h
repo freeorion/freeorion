@@ -53,8 +53,8 @@ public:
     void Reset();
     void Sanitize();
 
-    /** Shows \a part_type in design encyclopedia window */
-    void ShowPartTypeInEncyclopedia(const std::string& part_type);
+    //! Shows @a ship_part in design encyclopedia window
+    void ShowShipPartInEncyclopedia(const std::string& ship_part);
 
     /** Shows \a hull_type in design encyclopedia window */
     void ShowHullTypeInEncyclopedia(const std::string& hull_type);
