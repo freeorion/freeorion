@@ -363,6 +363,10 @@ FUEL_TANK_UPGRADE_DICT = {
     "FU_RAMSCOOP": (),
     "FU_ZERO_FUEL": (),
 }
+
+# DO NOT TOUCH THIS ENTRY BUT UPDATE FUEL_TANK_UPGRADE_DICT INSTEAD!
+FUEL_UPGRADE_TECHS = frozenset(tech_name for _dict in (FUEL_TANK_UPGRADE_DICT, )
+                               for tups in _dict.values() for (tech_name, _) in tups)
 # </editor-fold>
 
 # <editor-fold desc="Weapon techs">
@@ -406,7 +410,10 @@ FIGHTER_CAPACITY_UPGRADE_DICT = {
 }
 
 # DO NOT TOUCH THIS ENTRY BUT UPDATE WEAPON_UPGRADE_DICT INSTEAD!
-WEAPON_UPGRADE_TECHS = [tech_name for tups in WEAPON_UPGRADE_DICT.values() for (tech_name, _) in tups]
+WEAPON_UPGRADE_TECHS = frozenset(tech_name for _dict in (WEAPON_UPGRADE_DICT, WEAPON_ROF_UPGRADE_DICT)
+                                 for tups in _dict.values() for (tech_name, _) in tups)
+FIGHTER_UPGRADE_TECHS = frozenset(tech_name for _dict in (FIGHTER_DAMAGE_UPGRADE_DICT, FIGHTER_CAPACITY_UPGRADE_DICT)
+                                  for tups in _dict.values() for (tech_name, _) in tups)
 # </editor-fold>
 
 # <editor-fold desc="Tech Groups for Automated Research Approach">
