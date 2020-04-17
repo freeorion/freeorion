@@ -864,8 +864,7 @@ bool SetEmpireHomeworld(Empire* empire, int planet_id, std::string species_name)
     return true;
 }
 
-void InitEmpires(const std::map<int, PlayerSetupData>& player_setup_data)
-{
+void InitEmpires(const std::map<int, PlayerSetupData>& player_setup_data) {
     DebugLogger() << "Initializing " << player_setup_data.size() << " empires";
 
     // copy empire colour table, so that individual colours can be removed after they're used
