@@ -82,7 +82,7 @@ def min_planets_in_vicinity_limit(num_systems):
     return min(HS_MIN_PLANETS_IN_VICINITY_TOTAL, num_systems * HS_MIN_PLANETS_IN_VICINITY_PER_SYSTEM)
 
 
-class HomeSystemFinder(object):
+class HomeSystemFinder:
     """Finds a set of home systems with a least ''num_home_systems'' systems."""
     def __init__(self, _num_home_systems):
         # cache of sytem merits

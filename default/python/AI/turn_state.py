@@ -11,7 +11,7 @@ from EnumsAI import FocusType
 PlanetInfo = namedtuple('PlanetInfo', ['pid', 'species_name', 'owner', 'system_id'])
 
 
-class State(object):
+class State:
     """
     This class represent state for current turn.
     It contains variables that renewed each turn.

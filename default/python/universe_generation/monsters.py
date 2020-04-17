@@ -8,7 +8,7 @@ from galaxy import DisjointSets
 from util import MapGenerationError, report_error
 
 
-class StarlaneAlteringMonsters(object):
+class StarlaneAlteringMonsters:
     def __init__(self, systems):
         self.systems = systems
         self.placed = set()

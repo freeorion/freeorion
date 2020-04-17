@@ -151,7 +151,7 @@ def normalize_rtype(rtype):
     return rtype
 
 
-class Docs(object):
+class Docs:
     def __init__(self, text, indent, is_class=False):
         self.indent = indent
         self.is_class = is_class

@@ -34,7 +34,7 @@ def print_in_columns(items, columns=2, printer=print):
         printer(template % row)
 
 
-class Base(object):
+class Base:
     header_fmt = ''
     fmt = None
 
@@ -108,7 +108,7 @@ class Sequence(Text):
         return self.fmt.format(', '.join(vals), **self.kwargs)
 
 
-class Table(object):
+class Table:
 
     def __init__(self, headers, vertical_sep='|', header_sep='=', bottom_sep='-', table_name=None):
         """

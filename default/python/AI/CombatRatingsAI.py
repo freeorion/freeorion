@@ -67,9 +67,9 @@ def default_ship_stats():
                                   damage_vs_planets, has_bomber))
 
 
-class ShipCombatStats(object):
+class ShipCombatStats:
     """Stores all relevant stats of a ship for combat strength evaluation."""
-    class BasicStats(object):
+    class BasicStats:
         """Stores non-fighter-related stats."""
         def __init__(self, attacks, structure, shields):
             """
@@ -100,7 +100,7 @@ class ShipCombatStats(object):
         def __str__(self):
             return str(self.get_stats())
 
-    class FighterStats(object):
+    class FighterStats:
         """ Stores fighter-related stats """
         def __init__(self, capacity, launch_rate, damage):
             self.capacity = capacity
@@ -116,7 +116,7 @@ class ShipCombatStats(object):
             """
             return self.capacity, self.launch_rate, self.damage
 
-    class AntiFighterStats(object):
+    class AntiFighterStats:
         def __init__(self, flak_shots: int, has_interceptors: bool):
             """
             :param flak_shots: number of shots per bout with flak weapon part
@@ -134,7 +134,7 @@ class ShipCombatStats(object):
             """
             return self.flak_shots, self.has_interceptors
 
-    class AntiPlanetStats(object):
+    class AntiPlanetStats:
         def __init__(self, damage_vs_planets, has_bomber):
             self.damage_vs_planets = damage_vs_planets
             self.has_bomber = has_bomber
@@ -322,7 +322,7 @@ class ShipCombatStats(object):
                 + self.get_anti_fighter_stats() + self.get_anti_planet_stats())
 
 
-class FleetCombatStats(object):
+class FleetCombatStats:
     """Stores combat related stats of the fleet."""
     def __init__(self, fleet_id=INVALID_ID, consider_refuel=False):
         self.__fleet_id = fleet_id

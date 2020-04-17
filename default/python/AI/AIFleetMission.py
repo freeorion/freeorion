@@ -49,7 +49,7 @@ MERGEABLE_MISSION_TYPES = (
 )
 
 
-class AIFleetMission(object):
+class AIFleetMission:
     """
     Stores information about AI mission. Every mission has fleetID and AI targets depending upon AI fleet mission type.
     :type orders: list[AIFleetOrder]

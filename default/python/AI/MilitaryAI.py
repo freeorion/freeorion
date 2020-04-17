@@ -153,7 +153,7 @@ def avail_mil_needing_repair(mil_fleet_ids, split_ships=False, on_mission=False,
 
 
 # TODO Move relevant initialization code from get_military_fleets into this class
-class AllocationHelper(object):
+class AllocationHelper:
 
     def __init__(self, already_assigned_rating, already_assigned_rating_vs_planets, available_rating, try_reset):
         """
@@ -194,7 +194,7 @@ class AllocationHelper(object):
             self._remaining_rating = rating_difference(self._remaining_rating, min_rating)
 
 
-class Allocator(object):
+class Allocator:
     """
     Base class for Military allocation for a single system.
 
