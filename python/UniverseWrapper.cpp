@@ -17,6 +17,8 @@
 #include "../universe/Enums.h"
 #include "../universe/Effect.h"
 #include "../universe/Predicates.h"
+#include "../universe/ScriptingContext.h"
+#include "../universe/Condition.h"
 #include "../util/Logger.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/GameRules.h"
@@ -237,6 +239,26 @@ namespace {
 
     bool EnqueueLocationTest(const BuildingType& building_type, int empire_id, int loc_id)
     { return building_type.EnqueueLocation(empire_id, loc_id);}
+
+    bool HullProductionLocation(const HullType& hull, int location_id) {
+        auto location = Objects().get(location_id);
+        if (!location) {
+            ErrorLogger() << "UniverseWrapper::HullProductionLocation Could not find location with id " << location_id;
+            return false;
+        }
+        ScriptingContext location_as_source_context(location, location);
+        return hull.Location()->Eval(location_as_source_context, location);
+    }
+
+    bool ShipPartProductionLocation(const ShipPart& part_type, int location_id) {
+        auto location = Objects().get(location_id);
+        if (!location) {
+            ErrorLogger() << "UniverseWrapper::PartTypeProductionLocation Could not find location with id " << location_id;
+            return false;
+        }
+        ScriptingContext location_as_source_context(location, location);
+        return part_type.Location()->Eval(location_as_source_context, location);
+    }
 
     bool RuleExistsAnyType(const GameRules& rules, const std::string& name)
     { return rules.RuleExists(name); }
@@ -605,6 +627,7 @@ namespace FreeOrionPython {
             .def("canMountInSlotType",          &ShipPart::CanMountInSlotType)
             .add_property("costTimeLocationInvariant",
                                                 &ShipPart::ProductionCostTimeLocationInvariant)
+            .def("productionLocation",          &ShipPartProductionLocation, "Returns the result of Location condition (bool) in passed location_id (int)")
         ;
         def("getShipPart",                      &GetShipPart,                               return_value_policy<reference_existing_object>(), "Returns the ShipPart with the indicated name (string).");
 
@@ -627,6 +650,7 @@ namespace FreeOrionPython {
             .add_property("costTimeLocationInvariant",
                                                 &HullType::ProductionCostTimeLocationInvariant)
             .def("hasTag",                      &HullType::HasTag)
+            .def("productionLocation",          &HullProductionLocation, "Returns the result of Location condition (bool) in passed location_id (int)")
         ;
         def("getHullType",                      &GetHullType,                               return_value_policy<reference_existing_object>(), "Returns the ship hull (HullType) with the indicated name (string).");
 
