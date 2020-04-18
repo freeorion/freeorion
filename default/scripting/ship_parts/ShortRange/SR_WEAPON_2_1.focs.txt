@@ -6,9 +6,12 @@ Part
     NoDefaultCapacityEffect
     combatTargets = And [
         [[COMBAT_TARGETS_VISIBLE_ENEMY]]
-        Or [
-           [[COMBAT_TARGETS_NOT_DESTROYED_SHIP]]
-           [[COMBAT_TARGETS_PLANET_WITH_DEFENSE]]
+        OrderedAlternativesOf [
+            Or [
+               [[COMBAT_TARGETS_NOT_DESTROYED_SHIP]]
+               [[COMBAT_TARGETS_PLANET_WITH_DEFENSE]]
+            ]
+            Planet
         ]
     ]
     mountableSlotTypes = External
