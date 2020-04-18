@@ -10103,6 +10103,23 @@ OrderedAlternativesOf::OrderedAlternativesOf(
     m_operands(std::move(operands))
 {}
 
+OrderedAlternativesOf::OrderedAlternativesOf(std::unique_ptr<Condition>&& operand1,
+       std::unique_ptr<Condition>&& operand2,
+       std::unique_ptr<Condition>&& operand3,
+       std::unique_ptr<Condition>&& operand4) :
+    Condition()
+{
+    // would prefer to initialize the vector m_operands in the initializer list, but this is difficult with non-copyable unique_ptr parameters
+    if (operand1)
+        m_operands.push_back(std::move(operand1));
+    if (operand2)
+        m_operands.push_back(std::move(operand2));
+    if (operand3)
+        m_operands.push_back(std::move(operand3));
+    if (operand4)
+        m_operands.push_back(std::move(operand4));
+}
+
 bool OrderedAlternativesOf::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;

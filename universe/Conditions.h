@@ -1850,6 +1850,10 @@ private:
   * any of the conditions, it matches nothing. */
 struct FO_COMMON_API OrderedAlternativesOf final : public Condition {
     explicit OrderedAlternativesOf(std::vector<std::unique_ptr<Condition>>&& operands);
+    OrderedAlternativesOf(std::unique_ptr<Condition>&& operand1,
+       std::unique_ptr<Condition>&& operand2,
+       std::unique_ptr<Condition>&& operand3 = nullptr,
+       std::unique_ptr<Condition>&& operand4 = nullptr);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
