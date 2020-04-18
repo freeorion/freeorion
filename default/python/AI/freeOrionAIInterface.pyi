@@ -1734,7 +1734,7 @@ class meter(object):
         return float()
 
 
-class partType(object):
+class shipPart(object):
     @property
     def capacity(self):
         return float()
@@ -3801,15 +3801,15 @@ def getOrders():
     return OrderSet()
 
 
-def getPartType(string):
+def getShipPart(string):
     """
-    Returns the ship part (PartType) with the indicated name (string).
+    Returns the ShipPart with the indicated name (string).
 
     :param string:
     :type string: str
-    :rtype: partType
+    :rtype: shipPart
     """
-    return partType()
+    return shipPart()
 
 
 def getSaveStateString():

@@ -17,7 +17,7 @@ def inspect_universe_generation_interface(*args, **kwargs):
             fo.getBuildingType('BLD_SHIPYARD_BASE'),
             hull_type,
             hull_type.slots,
-            fo.getPartType('SR_WEAPON_1_1'),
+            fo.getShipPart('SR_WEAPON_1_1'),
             fo.getSpecial('MODERATE_TECH_NATIVES_SPECIAL'),
             species,
             fo.diplomaticMessage(1, 2, fo.diplomaticMessageType.acceptPeaceProposal),

@@ -186,7 +186,7 @@ void Empire::serialize(Archive& ar, const unsigned int version)
             & BOOST_SERIALIZATION_NVP(m_research_progress)
             & BOOST_SERIALIZATION_NVP(m_production_queue)
             & BOOST_SERIALIZATION_NVP(m_available_building_types)
-            & BOOST_SERIALIZATION_NVP(m_available_part_types)
+            & boost::serialization::make_nvp("m_available_part_types", m_available_ship_parts)
             & BOOST_SERIALIZATION_NVP(m_available_hull_types);
     }
 
@@ -205,7 +205,7 @@ void Empire::serialize(Archive& ar, const unsigned int version)
 
             & BOOST_SERIALIZATION_NVP(m_species_ships_owned)
             & BOOST_SERIALIZATION_NVP(m_ship_designs_owned)
-            & BOOST_SERIALIZATION_NVP(m_ship_part_types_owned)
+            & boost::serialization::make_nvp("m_ship_part_types_owned", m_ship_parts_owned)
             & BOOST_SERIALIZATION_NVP(m_ship_part_class_owned)
             & BOOST_SERIALIZATION_NVP(m_species_colonies_owned)
             & BOOST_SERIALIZATION_NVP(m_outposts_owned)

@@ -4330,16 +4330,16 @@ void MapWnd::ShowBuildingType(const std::string& building_type_name) {
     }
 }
 
-void MapWnd::ShowPartType(const std::string& part_type_name) {
+void MapWnd::ShowShipPart(const std::string& ship_part_name) {
     if (m_design_wnd->Visible())
-        m_design_wnd->ShowPartTypeInEncyclopedia(part_type_name);
+        m_design_wnd->ShowShipPartInEncyclopedia(ship_part_name);
     if (m_in_production_view_mode) {
         m_production_wnd->ShowPedia();
-        m_production_wnd->ShowPartTypeInEncyclopedia(part_type_name);
+        m_production_wnd->ShowShipPartInEncyclopedia(ship_part_name);
     } else {
         if (!m_pedia_panel->Visible())
             TogglePedia();
-        m_pedia_panel->SetPartType(part_type_name);
+        m_pedia_panel->SetShipPart(ship_part_name);
     }
 }
 

@@ -27,7 +27,7 @@ normalization_dict = {
     'tech': 'tech_object',
     'list': 'item_list',
     'planet': 'planet_object',
-    'partType': 'part_type',
+    'shipPart': 'ship_part',
     'resPool': 'res_pool',
     'researchQueueElement': 'research_queue_element',
     'shipSlotType': 'ship_slot_type',

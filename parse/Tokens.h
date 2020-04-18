@@ -310,7 +310,6 @@
     (Parts)                                     \
     (PartOfClassInShipDesign)                   \
     (PartsInShipDesign)                         \
-    (PartType)                                  \
     (Passive)                                   \
     (PeaceWith)                                 \
     (Planet)                                    \

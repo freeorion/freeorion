@@ -314,7 +314,7 @@ class ShipDesignCache:
             hulls_to_update -= cached_items
 
         for partname in parts_to_update:
-            part = get_part_type(partname)
+            part = get_ship_part(partname)
             for pid in pids:
                 self.production_cost.setdefault(pid, {})[partname] = part.productionCost(empire_id, pid, INVALID_ID)
                 self.production_time.setdefault(pid, {})[partname] = part.productionTime(empire_id, pid, INVALID_ID)
@@ -353,7 +353,7 @@ class ShipDesignCache:
             for partname in self.part_by_partname:
                 cached_name = self.part_by_partname[partname].name
                 if cached_name != partname:
-                    self.part_by_partname[partname] = fo.getPartType(partname)
+                    self.part_by_partname[partname] = fo.getShipPart(partname)
                     error("Part cache corrupted. Expected: %s, got: %s. Cache was repaired." % (partname, cached_name))
         except Exception as e:
             self.part_by_partname.clear()
@@ -436,7 +436,7 @@ class ShipDesignCache:
         testdesign_names_part = [name for name in testdesign_names if name.startswith(TESTDESIGN_NAME_PART)]
         available_slot_types = {slottype for slotlist in [get_hulltype(hull).slots for hull in available_hulls]
                                 for slottype in slotlist}
-        new_parts = [get_part_type(part) for part in empire.availableShipParts
+        new_parts = [get_ship_part(part) for part in empire.availableShipParts
                      if part not in self.strictly_worse_parts]
         pid = next(iter(self.production_cost.keys()))  # as only location invariant parts are considered, use arbitrary planet.
         for new_part in new_parts:
@@ -448,7 +448,7 @@ class ShipDesignCache:
                 continue
             for part_class in ALL_META_CLASSES:
                 if new_part.partClass in part_class:
-                    for old_part in [get_part_type(part) for part in self.strictly_worse_parts
+                    for old_part in [get_ship_part(part) for part in self.strictly_worse_parts
                                      if part != new_part.name]:
                         if not old_part.costTimeLocationInvariant:
                             debug("old part %s not location invariant!" % old_part.name)
@@ -467,7 +467,7 @@ class ShipDesignCache:
                                 debug("Part %s is strictly worse than part %s" % (b.name, a.name))
                     break
         available_parts = sorted(self.strictly_worse_parts.keys(),
-                                 key=lambda item: get_part_type(item).capacity, reverse=True)
+                                 key=lambda item: get_ship_part(item).capacity, reverse=True)
 
         # in case of a load, we need to rebuild our Cache.
         if not self.testhulls:
@@ -521,7 +521,7 @@ class ShipDesignCache:
         for pid in inhabited_planets:
             planetname = universe.getPlanet(pid).name
             local_hulls = self.hulls_for_planets[pid]
-            needs_update = [get_part_type(partname) for partname in available_parts
+            needs_update = [get_ship_part(partname) for partname in available_parts
                             if not any(["%s_%s_%s" % (TESTDESIGN_NAME_PART, partname, hullname) in testdesign_names_part
                                        for hullname in local_hulls])]
             if not needs_update:
@@ -584,7 +584,7 @@ class ShipDesignCache:
             for partname in available_parts:
                 if partname in local_ignore:
                     continue
-                part_slottypes = get_part_type(partname).mountableSlotTypes
+                part_slottypes = get_ship_part(partname).mountableSlotTypes
                 ship_design = None
                 for hullname in local_testhulls:
                     if not any((slot in get_hulltype(hullname).slots for slot in part_slottypes)):
@@ -834,7 +834,7 @@ class ShipDesigner:
         :param partname_list: contains partnames as strings
         :type partname_list: list"""
         self.partnames = partname_list
-        self.parts = [get_part_type(part) for part in partname_list if part]
+        self.parts = [get_ship_part(part) for part in partname_list if part]
 
     def update_species(self, species):
         """Set the piloting species.
@@ -1148,7 +1148,7 @@ class ShipDesigner:
 
         additional_part_dict = {}
         for partname in additional_parts:
-            for slot in get_part_type(partname).mountableSlotTypes:
+            for slot in get_ship_part(partname).mountableSlotTypes:
                 additional_part_dict.setdefault(slot, []).append(partname)
 
         # TODO: Rework caching to only cache raw stats of designs, then evaluate them
@@ -1282,10 +1282,10 @@ class ShipDesigner:
             slottype: list(
                 zip(
                     partname_dict[slottype],
-                    (get_part_type(x) for x in partname_dict[slottype])
+                    (get_ship_part(x) for x in partname_dict[slottype])
                 )
             ) for slottype in partname_dict
-        }  # {slottype: [(partname, parttype_object)]}
+        }  # {slottype: [(partname, shippart_object)]}
 
         for slottype in part_dict:
             part_dict[slottype] = [tup for tup in part_dict[slottype] if tup[1].partClass in self.useful_part_classes]
@@ -1730,7 +1730,7 @@ class WarShipDesigner(MilitaryShipDesignerBaseClass):
         # As this is a simple rational function in n, the maximizing problem can be solved analytically.
         # The analytical solution (after rounding to the nearest integer)is a good starting guess for our best design.
         ret_val = (len(available_parts) + 1) * [0]
-        parts = [get_part_type(part) for part in available_parts]
+        parts = [get_ship_part(part) for part in available_parts]
         weapons = [part for part in parts if part.partClass in WEAPONS]
         armours = [part for part in parts if part.partClass in ARMOUR]
         if weapons:
@@ -1742,7 +1742,7 @@ class WarShipDesigner(MilitaryShipDesignerBaseClass):
                 armour_part = max(armours, key=_get_capacity)
                 armour = armour_part.name
                 idxarmour = available_parts.index(armour)
-                a = get_part_type(armour).capacity
+                a = get_ship_part(armour).capacity
                 ca = Cache.production_cost[self.pid].get(armour, armour_part.productionCost(fo.empireID(), self.pid, INVALID_ID))
                 s = num_slots
                 h = self.hull.structure
@@ -1820,7 +1820,7 @@ class CarrierShipDesigner(MilitaryShipDesignerBaseClass):
         hangar_parts = set()
         for partlist in available_parts.values():
             for partname in partlist:
-                part = get_part_type(partname)
+                part = get_ship_part(partname)
                 if part.partClass == fo.shipPartClass.fighterHangar:
                     hangar_parts.add(partname)
         if verbose:
@@ -1873,7 +1873,7 @@ class TroopShipDesignerBaseClass(ShipDesigner):
 
     def _starting_guess(self, available_parts, num_slots):
         # fill completely with biggest troop pods. If none are available for this slot type, leave empty.
-        troop_pods = [get_part_type(part) for part in available_parts if get_part_type(part).partClass in TROOPS]
+        troop_pods = [get_ship_part(part) for part in available_parts if get_ship_part(part).partClass in TROOPS]
         ret_val = (len(available_parts)+1)*[0]
         if troop_pods:
             biggest_troop_pod = max(troop_pods, key=_get_capacity).name
@@ -1890,7 +1890,7 @@ class TroopShipDesignerBaseClass(ShipDesigner):
     def _class_specific_filter(self, partname_dict):
         for slot in partname_dict:
             remaining_parts = [part for part in partname_dict[slot] if
-                               get_part_type(part).partClass in TROOPS.union(ARMOUR)]
+                               get_ship_part(part).partClass in TROOPS.union(ARMOUR)]
             partname_dict[slot] = remaining_parts
 
 
@@ -1963,7 +1963,7 @@ class ColonisationShipDesignerBaseClass(ShipDesigner):
         ret_val = (len(available_parts)+1)*[0]
         if num_slots == 0:
             return ret_val
-        parts = [get_part_type(part) for part in available_parts]
+        parts = [get_ship_part(part) for part in available_parts]
         colo_parts = [part for part in parts if part.partClass in COLONISATION and part.capacity > 0]
         if colo_parts:
             colo_part = max(colo_parts, key=lambda x: x.capacity)
@@ -1977,7 +1977,7 @@ class ColonisationShipDesignerBaseClass(ShipDesigner):
     def _class_specific_filter(self, partname_dict):
         # remove outpost pods
         for slot in partname_dict:
-            parts = [get_part_type(part) for part in partname_dict[slot]]
+            parts = [get_ship_part(part) for part in partname_dict[slot]]
             for part in parts:
                 if part.partClass in COLONISATION and part.capacity == 0:
                     partname_dict[slot].remove(part.name)
@@ -2049,7 +2049,7 @@ class OutpostShipDesignerBaseClass(ShipDesigner):
     def _class_specific_filter(self, partname_dict):
         # filter all colo pods
         for slot in partname_dict:
-            parts = [get_part_type(part) for part in partname_dict[slot]]
+            parts = [get_ship_part(part) for part in partname_dict[slot]]
             for part in parts:
                 if part.partClass in COLONISATION and part.capacity != 0:
                     partname_dict[slot].remove(part.name)
@@ -2059,7 +2059,7 @@ class OutpostShipDesignerBaseClass(ShipDesigner):
         ret_val = (len(available_parts)+1)*[0]
         if num_slots == 0:
             return ret_val
-        parts = [get_part_type(part) for part in available_parts]
+        parts = [get_ship_part(part) for part in available_parts]
         colo_parts = [part for part in parts if part.partClass in COLONISATION and part.capacity == 0]
         if colo_parts:
             colo_part = colo_parts[0]
@@ -2307,22 +2307,22 @@ def _get_design_by_name(design_name, update_invalid=False, looking_for_new_desig
     return design
 
 
-def get_part_type(partname):
-    """Return the partType object (fo.getPartType(partname)) of the given partname.
+def get_ship_part(partname):
+    """Return the shipPart object (fo.getShipPart(partname)) of the given partname.
 
     As the function in late game may be called some thousand times, the results are cached.
 
     :type partname: str
-    :rtype: fo.partType
+    :rtype: fo.shipPart
     """
     if not partname:
         return None
     if partname in Cache.part_by_partname:
         return Cache.part_by_partname[partname]
     else:
-        parttype = fo.getPartType(partname)
-        if parttype:
-            Cache.part_by_partname[partname] = parttype
+        shippart = fo.getShipPart(partname)
+        if shippart:
+            Cache.part_by_partname[partname] = shippart
             return Cache.part_by_partname[partname]
         else:
             warning("Could not find part %s" % partname)

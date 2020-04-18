@@ -10,7 +10,7 @@ from AIDependencies import INVALID_ID
 from aistate_interface import get_aistate
 from freeorion_tools import assertion_fails
 from EnumsAI import MissionType, ShipRoleType
-from ShipDesignAI import get_part_type
+from ShipDesignAI import get_ship_part
 from target import TargetPlanet, TargetFleet, TargetSystem
 
 
@@ -429,7 +429,7 @@ def assess_fleet_role(fleet_id):
 
 
 def assess_ship_design_role(design):
-    parts = [get_part_type(partname) for partname in design.parts if partname and get_part_type(partname)]
+    parts = [get_ship_part(partname) for partname in design.parts if partname and get_ship_part(partname)]
 
     if any(p.partClass == fo.shipPartClass.colony and p.capacity == 0 for p in parts):
         if design.speed > 0:
@@ -630,7 +630,7 @@ def get_fighter_capacity_of_fleet(fleet_id):
         design = ship and ship.design
         design_parts = design.parts if design and design.hasFighters else []
         for partname in design_parts:
-            part = get_part_type(partname)
+            part = get_ship_part(partname)
             if part and part.partClass == fo.shipPartClass.fighterHangar:
                 cur_capacity += ship.currentPartMeterValue(fo.meterType.capacity, partname)
                 max_capacity += ship.currentPartMeterValue(fo.meterType.maxCapacity, partname)

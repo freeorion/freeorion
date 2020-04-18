@@ -225,29 +225,6 @@ GG_ENUM(ResourceType,
     NUM_RESOURCE_TYPES
 )
 
-/** Types "classes" of ship parts */
-GG_ENUM(ShipPartClass,
-    INVALID_SHIP_PART_CLASS = -1,
-    PC_DIRECT_WEAPON,       ///< direct-fire weapons
-    PC_FIGHTER_BAY,         ///< launch aparatus for fighters, which are self-propelled platforms that function independently of ships in combat, but don't exist on the main game map
-    PC_FIGHTER_HANGAR,      ///< storage for fighters, also determines their weapon strength stat
-    PC_SHIELD,              ///< energy-based defense
-    PC_ARMOUR,              ///< defensive material on hull of ship
-    PC_TROOPS,              ///< ground troops, used to conquer planets
-    PC_DETECTION,           ///< range of vision and seeing through stealth
-    PC_STEALTH,             ///< hiding from enemies
-    PC_FUEL,                ///< distance that can be traveled away from resupply
-    PC_COLONY,              ///< transports colonists and allows ships to make new colonies
-    PC_SPEED,               ///< affects ship speed on starlanes
-    PC_GENERAL,             ///< special purpose parts that don't fall into another class
-    PC_BOMBARD,             ///< permit orbital bombardment by ships against planets
-    PC_INDUSTRY,            ///< generates production points for owner at its location
-    PC_RESEARCH,            ///< generates research points for owner
-    PC_TRADE,               ///< generates trade points for owner
-    PC_PRODUCTION_LOCATION, ///< allows production items to be produced at its location
-    NUM_SHIP_PART_CLASSES
-)
-
 /* Types of slots in hulls.  Parts may be restricted to only certain slot types */
 GG_ENUM(ShipSlotType,
     INVALID_SHIP_SLOT_TYPE = -1,

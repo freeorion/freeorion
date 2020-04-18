@@ -8,6 +8,7 @@
 #include "../universe/Special.h"
 #include "../universe/Species.h"
 #include "../universe/ShipDesign.h"
+#include "../universe/ShipPart.h"
 #include "../universe/ShipPartHull.h"
 #include "../universe/Tech.h"
 #include "../util/Directories.h"
@@ -84,7 +85,7 @@ void IApp::StartBackgroundParsing() {
         ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/species").string();
 
     if (fs::exists(rdir / "scripting/ship_parts"))
-        GetPartTypeManager().SetPartTypes(Pending::StartParsing(parse::ship_parts, rdir / "scripting/ship_parts"));
+        GetShipPartManager().SetShipParts(Pending::StartParsing(parse::ship_parts, rdir / "scripting/ship_parts"));
     else
         ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/ship_parts").string();
 

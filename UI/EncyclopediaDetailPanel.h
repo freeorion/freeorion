@@ -12,7 +12,7 @@
 
 class Planet;
 class Tech;
-class PartType;
+class ShipPart;
 class HullType;
 class BuildingType;
 class Special;
@@ -24,8 +24,9 @@ class ShipDesign;
 class GraphControl;
 
 
-/** UI class that displays in-game encyclopedic information about game
-  * content.  Tech, PartType, HullType, BuildingType, ShipDesign, etc. */
+//! UI class that displays in-game encyclopedic information about game content.
+//!
+//! Tech, ShipPart, HullType, BuildingType, ShipDesign, etc.
 class EncyclopediaDetailPanel : public CUIWnd {
 public:
     //! \name Structors //!@{
@@ -55,8 +56,8 @@ public:
     void SetItem(std::shared_ptr<const Planet> planet);
     void SetTech(const std::string& tech_name);
     void SetItem(const Tech* tech);
-    void SetPartType(const std::string& part_name);
-    void SetItem(const PartType* part);
+    void SetShipPart(const std::string& part_name);
+    void SetItem(const ShipPart* part);
     void SetHullType(const std::string& hull_name);
     void SetItem(const HullType* hull_type);
     void SetBuildingType(const std::string& building_name);

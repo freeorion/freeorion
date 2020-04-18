@@ -9,6 +9,7 @@
 #include "../universe/Fleet.h"
 #include "../universe/Ship.h"
 #include "../universe/ShipDesign.h"
+#include "../universe/ShipPart.h"
 #include "../universe/ShipPartHull.h"
 #include "../universe/Planet.h"
 #include "../universe/System.h"
@@ -397,10 +398,10 @@ bool Empire::ShipDesignKept(int ship_design_id) const
 { return m_known_ship_designs.count(ship_design_id); }
 
 const std::set<std::string>& Empire::AvailableShipParts() const
-{ return m_available_part_types; }
+{ return m_available_ship_parts; }
 
 bool Empire::ShipPartAvailable(const std::string& name) const
-{ return m_available_part_types.count(name); }
+{ return m_available_ship_parts.count(name); }
 
 const std::set<std::string>& Empire::AvailableShipHulls() const
 { return m_available_hull_types; }
@@ -615,7 +616,7 @@ void Empire::Eliminate() {
     m_research_progress.clear();
     m_production_queue.clear();
     // m_available_building_types;
-    // m_available_part_types;
+    // m_available_ship_parts;
     // m_available_hull_types;
     // m_explored_systems;
     // m_known_ship_designs;
@@ -1391,7 +1392,7 @@ void Empire::UnlockItem(const UnlockableItem& item) {
         AddBuildingType(item.name);
         break;
     case UIT_SHIP_PART:
-        AddPartType(item.name);
+        AddShipPart(item.name);
         break;
     case UIT_SHIP_HULL:
         AddHullType(item.name);
@@ -1421,15 +1422,15 @@ void Empire::AddBuildingType(const std::string& name) {
     AddSitRepEntry(CreateBuildingTypeUnlockedSitRep(name));
 }
 
-void Empire::AddPartType(const std::string& name) {
-    const PartType* part_type = GetPartType(name);
-    if (!part_type) {
-        ErrorLogger() << "Empire::AddPartType given an invalid part type name: " << name;
+void Empire::AddShipPart(const std::string& name) {
+    const ShipPart* ship_part = GetShipPart(name);
+    if (!ship_part) {
+        ErrorLogger() << "Empire::AddShipPart given an invalid ship part name: " << name;
         return;
     }
-    if (!part_type->Producible())
+    if (!ship_part->Producible())
         return;
-    m_available_part_types.insert(name);
+    m_available_ship_parts.insert(name);
     AddSitRepEntry(CreateShipPartUnlockedSitRep(name));
 }
 
@@ -1542,7 +1543,7 @@ void Empire::LockItem(const UnlockableItem& item) {
         RemoveBuildingType(item.name);
         break;
     case UIT_SHIP_PART:
-        RemovePartType(item.name);
+        RemoveShipPart(item.name);
         break;
     case UIT_SHIP_HULL:
         RemoveHullType(item.name);
@@ -1564,11 +1565,11 @@ void Empire::RemoveBuildingType(const std::string& name) {
     m_available_building_types.erase(name);
 }
 
-void Empire::RemovePartType(const std::string& name) {
-    auto it = m_available_part_types.find(name);
-    if (it == m_available_part_types.end())
-        DebugLogger() << "Empire::RemovePartType asked to remove part type " << name << " that was no available to this empire";
-    m_available_part_types.erase(name);
+void Empire::RemoveShipPart(const std::string& name) {
+    auto it = m_available_ship_parts.find(name);
+    if (it == m_available_ship_parts.end())
+        DebugLogger() << "Empire::RemoveShipPart asked to remove part type " << name << " that was no available to this empire";
+    m_available_ship_parts.erase(name);
 }
 
 void Empire::RemoveHullType(const std::string& name) {
@@ -2244,16 +2245,16 @@ void Empire::UpdateOwnedObjectCounters() {
     }
 
     // update ship part counts
-    m_ship_part_types_owned.clear();
+    m_ship_parts_owned.clear();
     m_ship_part_class_owned.clear();
     for (const auto& design_count : m_ship_designs_owned) {
         const ShipDesign* design = GetShipDesign(design_count.first);
         if (!design)
             continue;
 
-        // update count of PartTypes
-        for (const auto& part_type : design->PartTypeCount())
-            m_ship_part_types_owned[part_type.first] += part_type.second * design_count.second;
+        // update count of ShipParts
+        for (const auto& ship_part : design->ShipPartCount())
+            m_ship_parts_owned[ship_part.first] += ship_part.second * design_count.second;
 
         // update count of ShipPartClasses
         for (const auto& part_class : design->PartClassCount())

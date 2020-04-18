@@ -24,6 +24,7 @@
 #include "../universe/System.h"
 #include "../universe/Ship.h"
 #include "../universe/ShipDesign.h"
+#include "../universe/ShipPart.h"
 #include "../universe/ShipPartHull.h"
 #include "../universe/Tech.h"
 #include "../universe/Special.h"
@@ -293,7 +294,7 @@ std::shared_ptr<GG::Texture> ClientUI::FieldTexture(const std::string& field_typ
 }
 
 std::shared_ptr<GG::Texture> ClientUI::PartIcon(const std::string& part_name) {
-    const PartType* part = GetPartType(part_name);
+    const ShipPart* part = GetShipPart(part_name);
     std::string texture_name;
     if (part)
         texture_name = part->Icon();
@@ -880,7 +881,7 @@ bool ClientUI::ZoomToContent(const std::string& name, bool reverse_lookup/* = fa
             if (boost::iequals(name, UserString(entry.first)))
                 return ZoomToShipHull(entry.first);
 
-        for (const auto& entry : GetPartTypeManager())
+        for (const auto& entry : GetShipPartManager())
             if (boost::iequals(name, UserString(entry.first)))
                 return ZoomToShipPart(entry.first);
 
@@ -930,9 +931,9 @@ bool ClientUI::ZoomToShipHull(const std::string& hull_name) {
 }
 
 bool ClientUI::ZoomToShipPart(const std::string& part_name) {
-    if (!GetPartType(part_name))
+    if (!GetShipPart(part_name))
         return false;
-    GetMapWnd()->ShowPartType(part_name);
+    GetMapWnd()->ShowShipPart(part_name);
     return true;
 }
 

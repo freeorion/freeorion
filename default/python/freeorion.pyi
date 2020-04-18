@@ -1763,7 +1763,7 @@ class meter(object):
         pass
 
 
-class partType(object):
+class shipPart(object):
     @property
     def capacity(self):
         return float()
@@ -3950,15 +3950,15 @@ def getHullType(string):
     return hullType()
 
 
-def getPartType(string):
+def getShipPart(string):
     """
-    Returns the ship part (PartType) with the indicated name (string).
+    Returns the ShipPart with the indicated name (string).
 
     :param string:
     :type string: str
-    :rtype: partType
+    :rtype: shipPart
     """
-    return partType()
+    return shipPart()
 
 
 def getShipDesign(number):

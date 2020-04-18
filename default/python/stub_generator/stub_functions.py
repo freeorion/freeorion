@@ -96,7 +96,7 @@ def inspect_universe_generation():
     # fo.getBuildingType(string)
     # fo.getFieldType(string)
     # fo.getHullType(string)
-    # fo.getPartType(string)
+    # fo.getShipPart(string)
     # fo.getShipDesign(number)
     # fo.getSpecial(string)
     # fo.getSpecies(string)

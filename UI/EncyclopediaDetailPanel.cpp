@@ -19,6 +19,7 @@
 #include "../universe/System.h"
 #include "../universe/Ship.h"
 #include "../universe/ShipDesign.h"
+#include "../universe/ShipPart.h"
 #include "../universe/ShipPartHull.h"
 #include "../universe/Fleet.h"
 #include "../universe/Special.h"
@@ -191,7 +192,7 @@ namespace {
 
         }
         else if (dir_name == "ENC_SHIP_PART") {
-            for (const auto& entry : GetPartTypeManager()) {
+            for (const auto& entry : GetShipPartManager()) {
                 std::string custom_category = DetermineCustomCategory(entry.second->Tags());
                 if (custom_category.empty()) {
                     sorted_entries_list.insert({UserString(entry.first),
@@ -479,7 +480,7 @@ namespace {
             std::map<std::string, std::pair<std::string, std::string>> dir_entries;
 
             // part types
-            for (const auto& entry : GetPartTypeManager())
+            for (const auto& entry : GetShipPartManager())
                 if (DetermineCustomCategory(entry.second->Tags()) == dir_name)
                     dir_entries[UserString(entry.first)] =
                         std::make_pair(VarText::SHIP_PART_TAG, entry.first);
@@ -926,7 +927,7 @@ void EncyclopediaDetailPanel::HandleLinkClick(const std::string& link_type, cons
         } else if (link_type == VarText::SHIP_HULL_TAG) {
             this->SetHullType(data);
         } else if (link_type == VarText::SHIP_PART_TAG) {
-            this->SetPartType(data);
+            this->SetShipPart(data);
         } else if (link_type == VarText::SPECIES_TAG) {
             this->SetSpecies(data);
         } else if (link_type == TextLinker::ENCYCLOPEDIA_TAG) {
@@ -1179,7 +1180,7 @@ namespace {
                                             std::string& specific_type, std::string& detailed_description,
                                             GG::Clr& color)
     {
-        const PartType* part = GetPartType(item_name);
+        const ShipPart* part = GetShipPart(item_name);
         if (!part) {
             ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't find part with name " << item_name;
             return;
@@ -1212,7 +1213,7 @@ namespace {
         if (!exclusions.empty()) {
             detailed_description += "\n\n" + UserString("ENC_SHIP_EXCLUSIONS");
             for (const auto& exclusion : exclusions) {
-                if (GetPartType(exclusion)) {
+                if (GetShipPart(exclusion)) {
                     detailed_description += LinkTaggedText(VarText::SHIP_PART_TAG, exclusion) + "  ";
                 } else if (GetHullType(exclusion)) {
                     detailed_description += LinkTaggedText(VarText::SHIP_HULL_TAG, exclusion) + "  ";
@@ -1286,7 +1287,7 @@ namespace {
         if (!exclusions.empty()) {
             detailed_description += "\n\n" + UserString("ENC_SHIP_EXCLUSIONS");
             for (const std::string& exclusion : exclusions) {
-                if (GetPartType(exclusion)) {
+                if (GetShipPart(exclusion)) {
                     detailed_description += LinkTaggedText(VarText::SHIP_PART_TAG, exclusion) + "  ";
                 } else if (GetHullType(exclusion)) {
                     detailed_description += LinkTaggedText(VarText::SHIP_HULL_TAG, exclusion) + "  ";
@@ -3113,7 +3114,7 @@ void EncyclopediaDetailPanel::SetTech(const std::string& tech_name) {
     AddItem("ENC_TECH", tech_name);
 }
 
-void EncyclopediaDetailPanel::SetPartType(const std::string& part_name) {
+void EncyclopediaDetailPanel::SetShipPart(const std::string& part_name) {
     if (m_items_it != m_items.end() && part_name == m_items_it->second)
         return;
     AddItem("ENC_SHIP_PART", part_name);
@@ -3235,8 +3236,8 @@ void EncyclopediaDetailPanel::SetItem(std::shared_ptr<const Planet> planet)
 void EncyclopediaDetailPanel::SetItem(const Tech* tech)
 { SetTech(tech ? tech->Name() : EMPTY_STRING); }
 
-void EncyclopediaDetailPanel::SetItem(const PartType* part)
-{ SetPartType(part ? part->Name() : EMPTY_STRING); }
+void EncyclopediaDetailPanel::SetItem(const ShipPart* part)
+{ SetShipPart(part ? part->Name() : EMPTY_STRING); }
 
 void EncyclopediaDetailPanel::SetItem(const HullType* hull_type)
 { SetHullType(hull_type ? hull_type->Name() : EMPTY_STRING); }
