@@ -25,7 +25,7 @@ namespace ValueRef {
     struct ValueRef;
 }
 class TechManager;
-struct ItemSpec;
+struct UnlockableItem;
 
 /** encasulates the data for a single FreeOrion technology */
 class FO_COMMON_API Tech {
@@ -60,7 +60,7 @@ public:
          const std::set<std::string>& tags,
          const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects,
          const std::set<std::string>& prerequisites,
-         const std::vector<ItemSpec>& unlocked_items,
+         const std::vector<UnlockableItem>& unlocked_items,
          const std::string& graphic);
 
     /** basic ctor taking helper struct to reduce number of direct parameters
@@ -68,7 +68,7 @@ public:
     Tech(TechInfo& tech_info,
          std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
          const std::set<std::string>& prerequisites,
-         const std::vector<ItemSpec>& unlocked_items,
+         const std::vector<UnlockableItem>& unlocked_items,
          const std::string& graphic);
 
     ~Tech();
@@ -95,7 +95,11 @@ public:
 
     const std::set<std::string>&    Prerequisites() const { return m_prerequisites; }   //!< returns the set of names of all techs required before this one can be researched
     const std::string&              Graphic() const       { return m_graphic; }         //!< returns the name of the grapic file for this tech
-    const std::vector<ItemSpec>&    UnlockedItems() const { return m_unlocked_items; }  //!< returns the set all items that are unlocked by researching this tech
+
+    //! Returns the set all items that are unlocked by researching this tech
+    const std::vector<UnlockableItem>&    UnlockedItems() const
+    { return m_unlocked_items; }
+
     const std::set<std::string>&    UnlockedTechs() const { return m_unlocked_techs; }  //!< returns the set of names of all techs for which this one is a prerequisite
 
     /** Returns a number, calculated from the contained data, which should be
@@ -122,31 +126,13 @@ private:
     std::set<std::string>           m_tags;
     std::vector<std::shared_ptr<Effect::EffectsGroup>> m_effects;
     std::set<std::string>           m_prerequisites;
-    std::vector<ItemSpec>           m_unlocked_items;
+    std::vector<UnlockableItem>     m_unlocked_items;
     std::string                     m_graphic;
     std::set<std::string>           m_unlocked_techs;
 
     friend class TechManager;
 };
 
-
-/** specifies a single item of game content that may be unlocked for an empire.  The \a type field
-  * stores the type of item that is being unlocked, such as a building or ship component, and the
-  * \a name field contains the name of the actual item (e.g. (UIT_BUILDING, "Superfarm") or
-  * (UIT_SHIP_PART, "Death Ray")). */
-struct FO_COMMON_API ItemSpec {
-    ItemSpec();
-    ItemSpec(UnlockableItemType type_, const std::string& name_) :
-        type(type_),
-        name(name_)
-    {}
-    std::string Dump(unsigned short ntabs = 0) const;   ///< returns a data file format representation of this object
-    UnlockableItemType type;    ///< the kind of item this is
-    std::string        name;    ///< the exact item this is
-};
-
-FO_COMMON_API bool operator==(const ItemSpec& lhs, const ItemSpec& rhs);
-bool operator!=(const ItemSpec& lhs, const ItemSpec& rhs);
 
 /** specifies a category of techs, with associated \a name, \a graphic (icon), and \a colour.*/
 struct FO_COMMON_API TechCategory {
@@ -167,7 +153,6 @@ struct FO_COMMON_API TechCategory {
 };
 
 namespace CheckSums {
-    FO_COMMON_API void CheckSumCombine(unsigned int& sum, const ItemSpec& item);
     FO_COMMON_API void CheckSumCombine(unsigned int& sum, const TechCategory& cat);
 }
 

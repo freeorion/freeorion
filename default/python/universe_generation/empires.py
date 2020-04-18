@@ -506,7 +506,7 @@ def setup_empire(empire, empire_name, home_system, starting_species, player_name
     # unlock starting techs, buildings, hulls, ship parts, etc.
     # use default content file
     print("Player", player_name, ": add unlocked items")
-    for item in fo.load_item_spec_list():
+    for item in fo.load_unlockable_item_list():
         fo.empire_unlock_item(empire, item.type, item.name)
 
     # add premade ship designs to empire

@@ -74,7 +74,7 @@ def inspect_ai_interface():
         ],
         classes_to_ignore=(
             'IntSet', 'StringSet', 'IntIntMap', 'ShipSlotVec', 'VisibilityIntMap', 'IntDblMap',
-            'IntBoolMap', 'ItemSpecVec', 'PairIntInt_IntMap', 'IntSetSet', 'StringVec',
+            'IntBoolMap', 'UnlockableItemVec', 'PairIntInt_IntMap', 'IntSetSet', 'StringVec',
             'IntPairVec', 'IntFltMap', 'MeterTypeStringPair', 'MeterTypeMeterMap', 'universeObject',
             # this item cannot be get from generate orders
             'diplomaticStatusUpdate',

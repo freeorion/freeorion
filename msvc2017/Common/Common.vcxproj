@@ -226,6 +226,7 @@
     <ClInclude Include="..\..\universe\System.h" />
     <ClInclude Include="..\..\universe\Tech.h" />
     <ClInclude Include="..\..\universe\Universe.h" />
+    <ClInclude Include="..\..\universe\UnlockableItem.h" />
     <ClInclude Include="..\..\universe\Pathfinder.h" />
     <ClInclude Include="..\..\universe\UniverseObject.h" />
     <ClInclude Include="..\..\universe\ValueRefs.h" />
@@ -298,6 +299,7 @@
     <ClCompile Include="..\..\universe\System.cpp" />
     <ClCompile Include="..\..\universe\Tech.cpp" />
     <ClCompile Include="..\..\universe\Universe.cpp" />
+    <ClCompile Include="..\..\universe\UnlockableItem.cpp" />
     <ClCompile Include="..\..\universe\Pathfinder.cpp" />
     <ClCompile Include="..\..\universe\UniverseObject.cpp" />
     <ClCompile Include="..\..\util\AppInterface.cpp" />

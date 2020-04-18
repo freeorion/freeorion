@@ -1,4 +1,5 @@
 #include "../universe/Enums.h"
+#include "../universe/UnlockableItem.h"
 #include "../Empire/Diplomacy.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/GameRules.h"

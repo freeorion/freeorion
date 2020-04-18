@@ -30,7 +30,7 @@ class ShipDesign;
 class System;
 class Pathfinder;
 class IDAllocator;
-struct ItemSpec;
+struct UnlockableItem;
 class FleetPlan;
 class MonsterFleetPlan;
 
@@ -401,15 +401,15 @@ public:
     }
     //@}
 
-    /** Set items unlocked before turn 1 from \p future.*/
-    void SetInitiallyUnlockedItems(Pending::Pending<std::vector<ItemSpec>>&& future);
-    /** Items unlocked before turn 1.*/
-    const std::vector<ItemSpec>& InitiallyUnlockedItems() const;
+    //! Set items unlocked before turn 1 from \p future.
+    void SetInitiallyUnlockedItems(Pending::Pending<std::vector<UnlockableItem>>&& future);
+    //! Items unlocked before turn 1.
+    const std::vector<UnlockableItem>& InitiallyUnlockedItems() const;
 
-    /** Set buildings unlocked before turn 1 from \p future.*/
-    void SetInitiallyUnlockedBuildings(Pending::Pending<std::vector<ItemSpec>>&& future);
-    /** Buildings unlocked before turn 1.*/
-    const std::vector<ItemSpec>& InitiallyUnlockedBuildings() const;
+    //! Set buildings unlocked before turn 1 from \p future.
+    void SetInitiallyUnlockedBuildings(Pending::Pending<std::vector<UnlockableItem>>&& future);
+    //! Buildings unlocked before turn 1.
+    const std::vector<UnlockableItem>& InitiallyUnlockedBuildings() const;
 
     /** Set fleets unlocked before turn 1 from \p future.*/
     void SetInitiallyUnlockedFleetPlans(Pending::Pending<std::vector<std::unique_ptr<FleetPlan>>>&& future);
@@ -530,22 +530,22 @@ private:
     std::map<std::string, std::map<int, std::map<int, double>>>
                                     m_stat_records;                     ///< storage for statistics calculated for empires. Indexed by stat name (string), contains a map indexed by empire id, contains a map from turn number (int) to stat value (double).
 
-    /** @name Parsed items
-        Various unlocked items are kept as a Pending::Pending while being parsed and
-        then transfered.  They are mutable to allow processing in const accessors. */
-    ///@{
-    mutable boost::optional<Pending::Pending<std::vector<ItemSpec>>>                            m_pending_items = boost::none;
-    mutable boost::optional<Pending::Pending<std::vector<ItemSpec>>>                            m_pending_buildings = boost::none;
+    //! @name Parsed items
+    //! Various unlocked items are kept as a Pending::Pending while being parsed and
+    //! then transfered.  They are mutable to allow processing in const accessors.
+    //! @{
+    mutable boost::optional<Pending::Pending<std::vector<UnlockableItem>>>                      m_pending_items = boost::none;
+    mutable boost::optional<Pending::Pending<std::vector<UnlockableItem>>>                      m_pending_buildings = boost::none;
     mutable boost::optional<Pending::Pending<std::vector<std::unique_ptr<FleetPlan>>>>          m_pending_fleet_plans = boost::none;
     mutable boost::optional<Pending::Pending<std::vector<std::unique_ptr<MonsterFleetPlan>>>>   m_pending_monster_fleet_plans = boost::none;
     mutable boost::optional<Pending::Pending<EmpireStatsMap>>                                   m_pending_empire_stats = boost::none;
 
-    mutable std::vector<ItemSpec>                           m_unlocked_items;
-    mutable std::vector<ItemSpec>                           m_unlocked_buildings;
+    mutable std::vector<UnlockableItem>                     m_unlocked_items;
+    mutable std::vector<UnlockableItem>                     m_unlocked_buildings;
     mutable std::vector<std::unique_ptr<FleetPlan>>         m_unlocked_fleet_plans;
     mutable std::vector<std::unique_ptr<MonsterFleetPlan>>  m_monster_fleet_plans;
     mutable EmpireStatsMap                                  m_empire_stats;
-    ///@}
+    //! @}
 
     /** Fills \a designs_to_serialize with ShipDesigns known to the empire with
       * the ID \a encoding empire.  If encoding_empire is ALL_EMPIRES, then all

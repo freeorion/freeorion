@@ -14,6 +14,7 @@
 #include "../universe/System.h"
 #include "../universe/Tech.h"
 #include "../universe/UniverseObject.h"
+#include "../universe/UnlockableItem.h"
 #include "EmpireManager.h"
 #include "Supply.h"
 
@@ -1373,7 +1374,7 @@ void Empire::ApplyNewTechs() {
             continue;
         }
 
-        for (const ItemSpec& item : tech->UnlockedItems())
+        for (const UnlockableItem& item : tech->UnlockedItems())
             UnlockItem(item);  // potential infinite if a tech (in)directly unlocks itself?
 
         if (!m_techs.count(new_tech)) {
@@ -1384,7 +1385,7 @@ void Empire::ApplyNewTechs() {
     m_newly_researched_techs.clear();
 }
 
-void Empire::UnlockItem(const ItemSpec& item) {
+void Empire::UnlockItem(const UnlockableItem& item) {
     switch (item.type) {
     case UIT_BUILDING:
         AddBuildingType(item.name);
@@ -1402,7 +1403,7 @@ void Empire::UnlockItem(const ItemSpec& item) {
         AddNewlyResearchedTechToGrantAtStartOfNextTurn(item.name);
         break;
     default:
-        ErrorLogger() << "Empire::UnlockItem : passed ItemSpec with unrecognized UnlockableItemType";
+        ErrorLogger() << "Empire::UnlockItem : passed UnlockableItem with unrecognized UnlockableItemType";
     }
 }
 
@@ -1535,7 +1536,7 @@ void Empire::AddSitRepEntry(const SitRepEntry& entry)
 void Empire::RemoveTech(const std::string& name)
 { m_techs.erase(name); }
 
-void Empire::LockItem(const ItemSpec& item) {
+void Empire::LockItem(const UnlockableItem& item) {
     switch (item.type) {
     case UIT_BUILDING:
         RemoveBuildingType(item.name);
@@ -1553,7 +1554,7 @@ void Empire::LockItem(const ItemSpec& item) {
         RemoveTech(item.name);
         break;
     default:
-        ErrorLogger() << "Empire::LockItem : passed ItemSpec with unrecognized UnlockableItemType";
+        ErrorLogger() << "Empire::LockItem : passed UnlockableItem with unrecognized UnlockableItemType";
     }
 }
 

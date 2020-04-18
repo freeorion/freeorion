@@ -13,9 +13,10 @@
 #include "../util/OptionsDB.h"
 #include "../util/Directories.h"
 #include "../util/ScopedTimer.h"
-#include "../universe/Tech.h"
 #include "../universe/Effects.h"
 #include "../universe/Enums.h"
+#include "../universe/Tech.h"
+#include "../universe/UnlockableItem.h"
 #include "../universe/ValueRef.h"
 #include "../Empire/Empire.h"
 #include "TechTreeLayout.h"
@@ -956,7 +957,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
             GG::Y icon_top = icon_bottom - icon_height;
 
             // add icons for unlocked items
-            for (const ItemSpec& item : tech->UnlockedItems()) {
+            for (const UnlockableItem& item : tech->UnlockedItems()) {
                 std::shared_ptr<GG::Texture> texture;
                 switch (item.type) {
                 case UIT_BUILDING:  texture = ClientUI::BuildingIcon(item.name);    break;

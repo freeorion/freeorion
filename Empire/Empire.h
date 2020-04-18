@@ -12,7 +12,7 @@
 
 #include <string>
 
-struct ItemSpec;
+struct UnlockableItem;
 class ShipDesign;
 class SitRepEntry;
 class ResourcePool;
@@ -213,7 +213,11 @@ public:
 
     void AddNewlyResearchedTechToGrantAtStartOfNextTurn(const std::string& name);    ///< Inserts the given Tech into the Empire's list of innovations. Call ApplyAddedTech to make it effective.
     void ApplyNewTechs();                            ///< Moves all Techs from the Empire's list of innovations into the Empire's list of available technologies.
-    void UnlockItem(const ItemSpec& item);           ///< Adds a given producible item (Building, Ship Hull, Ship part) to the list of available items.
+
+    //! Adds a given producible item (Building, Ship Hull, Ship part) to the
+    //! list of available items.
+    void UnlockItem(const UnlockableItem& item);
+
     void AddBuildingType(const std::string& name);   ///< Inserts the given BuildingType into the Empire's list of available BuldingTypes.
     void AddPartType(const std::string& name);       ///< Inserts the given ship PartType into the Empire's list of available BuldingTypes.
     void AddHullType(const std::string& name);       ///< Inserts the given ship HullType into the Empire's list of available BuldingTypes.
@@ -239,7 +243,11 @@ public:
     void ClearSitRep();                              ///< Clears all sitrep entries
 
     void RemoveTech(const std::string& name);        ///< Removes the given Tech from the empire's list
-    void LockItem(const ItemSpec& item);             ///< Removes a given producible item (Building, Ship Hull, Ship Part) from the list of available items.
+
+    //! Removes a given producible item (Building, Ship Hull, Ship Part) from
+    //! the list of available items.
+    void LockItem(const UnlockableItem& item);
+
     void RemoveBuildingType(const std::string& name);///< Removes the given BuildingType from the empire's list
     void RemovePartType(const std::string& name);    ///< Removes the given PartType from the empire's list
     void RemoveHullType(const std::string& name);    ///< Removes the given HullType from the empire's list

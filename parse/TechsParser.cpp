@@ -9,6 +9,7 @@
 #include "../universe/Effect.h"
 #include "../universe/Species.h"
 #include "../universe/Tech.h"
+#include "../universe/UnlockableItem.h"
 #include "../universe/ValueRef.h"
 #include "../util/Directories.h"
 
@@ -20,7 +21,7 @@
 
 #if DEBUG_PARSERS
 namespace std {
-    inline ostream& operator<<(ostream& os, const std::vector<ItemSpec>&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::vector<UnlockableItem>&) { return os; }
     inline ostream& operator<<(ostream& os, const std::set<std::string>&) { return os; }
     inline ostream& operator<<(ostream& os, const parse::effects_group_payload&) { return os; }
     inline ostream& operator<<(ostream& os, const Tech::TechInfo&) { return os; }
@@ -52,7 +53,7 @@ namespace {
                      const parse::detail::MovableEnvelope<Tech::TechInfo>& tech_info,
                      const boost::optional<parse::effects_group_payload>& effects,
                      const boost::optional<std::set<std::string>>& prerequisites,
-                     const boost::optional<std::vector<ItemSpec>>& unlocked_items,
+                     const boost::optional<std::vector<UnlockableItem>>& unlocked_items,
                      const boost::optional<std::string>& graphic,
                      bool& pass)
     {
@@ -60,7 +61,7 @@ namespace {
             *tech_info.OpenEnvelope(pass),
             (effects ? parse::detail::OpenEnvelopes(*effects, pass) : std::vector<std::unique_ptr<Effect::EffectsGroup>>()),
             (prerequisites ? *prerequisites : std::set<std::string>()),
-            (unlocked_items ? *unlocked_items : std::vector<ItemSpec>()),
+            (unlocked_items ? *unlocked_items : std::vector<UnlockableItem>()),
             (graphic ? *graphic : std::string()));
 
         if (check_tech(techs, tech_ptr)) {
@@ -95,8 +96,8 @@ namespace {
             double_rules(tok, label, condition_parser, string_grammar),
             effects_group_grammar(tok, label, condition_parser, string_grammar),
             tags_parser(tok, label),
-            item_spec_parser(tok, label),
-            one_or_more_item_specs(item_spec_parser),
+            unlockable_item_parser(tok, label),
+            one_or_more_unlockable_items(unlockable_item_parser),
             color_parser(tok)
         {
             namespace phoenix = boost::phoenix;
@@ -150,7 +151,7 @@ namespace {
 
             unlocks
                 %=   label(tok.Unlock_)
-                >  one_or_more_item_specs
+                >  one_or_more_unlockable_items
                 ;
 
             tech
@@ -200,7 +201,7 @@ namespace {
 
         using tech_info_rule = parse::detail::rule<parse::detail::MovableEnvelope<Tech::TechInfo> ()>;
         using prerequisites_rule = parse::detail::rule<std::set<std::string> ()>;
-        using unlocks_rule = parse::detail::rule<std::vector<ItemSpec> ()>;
+        using unlocks_rule = parse::detail::rule<std::vector<UnlockableItem> ()>;
         using tech_rule = parse::detail::rule<void (TechManager::TechContainer&)>;
         using category_rule = parse::detail::rule<void (std::map<std::string, std::unique_ptr<TechCategory>>&)>;
         using start_rule = parse::detail::rule<void (TechManager::TechContainer&)>;
@@ -214,9 +215,9 @@ namespace {
         parse::double_parser_rules              double_rules;
         parse::effects_group_grammar            effects_group_grammar;
         parse::detail::tags_grammar             tags_parser;
-        parse::detail::item_spec_grammar        item_spec_parser;
-        parse::detail::single_or_bracketed_repeat<parse::detail::item_spec_grammar>
-                                                one_or_more_item_specs;
+        parse::detail::unlockable_item_grammar  unlockable_item_parser;
+        parse::detail::single_or_bracketed_repeat<parse::detail::unlockable_item_grammar>
+                                                one_or_more_unlockable_items;
         parse::detail::color_parser_grammar     color_parser;
         parse::detail::rule<bool()>             researchable;
         tech_info_rule                          tech_info;

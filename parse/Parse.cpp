@@ -6,7 +6,7 @@
 #include "EnumParser.h"
 #include "ValueRefParser.h"
 
-#include "../universe/Tech.h"
+#include "../universe/UnlockableItem.h"
 #include "../util/Logger.h"
 #include "../util/Directories.h"
 
@@ -23,7 +23,7 @@
 namespace std {
     inline ostream& operator<<(ostream& os, const std::vector<Effect::Effect*>&) { return os; }
     inline ostream& operator<<(ostream& os, const GG::Clr&) { return os; }
-    inline ostream& operator<<(ostream& os, const ItemSpec&) { return os; }
+    inline ostream& operator<<(ostream& os, const UnlockableItem&) { return os; }
 }
 #endif
 
@@ -487,8 +487,8 @@ namespace parse {
 #endif
     }
 
-    item_spec_grammar::item_spec_grammar(const parse::lexer& tok, Labeller& label) :
-        item_spec_grammar::base_type(start, "item_spec_grammar"),
+    unlockable_item_grammar::unlockable_item_grammar(const parse::lexer& tok, Labeller& label) :
+        unlockable_item_grammar::base_type(start, "unlockable_item_grammar"),
         unlockable_item_type_enum(tok)
     {
         namespace phoenix = boost::phoenix;
@@ -505,10 +505,10 @@ namespace parse {
             =  ( omit_[tok.Item_]
             >    label(tok.Type_) > unlockable_item_type_enum
             >    label(tok.Name_) > tok.string
-               ) [ _val = construct<ItemSpec>(_1, _2) ]
+               ) [ _val = construct<UnlockableItem>(_1, _2) ]
             ;
 
-        start.name("ItemSpec");
+        start.name("UnlockableItem");
 
 #if DEBUG_PARSERS
         debug(start);

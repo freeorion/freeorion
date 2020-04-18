@@ -25,6 +25,7 @@
 #include "../universe/Species.h"
 #include "../universe/Field.h"
 #include "../universe/Predicates.h"
+#include "../universe/UnlockableItem.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 #include "../util/EnumText.h"
@@ -1055,7 +1056,7 @@ namespace {
         return location ? location->ID() : INVALID_OBJECT_ID;
     }
 
-    std::vector<std::string> TechsThatUnlockItem(const ItemSpec& item) {
+    std::vector<std::string> TechsThatUnlockItem(const UnlockableItem& item) {
         std::vector<std::string> retval;
 
         for (const auto& tech : GetTechManager()) {
@@ -1063,7 +1064,7 @@ namespace {
             const std::string& tech_name = tech->Name();
 
             bool found_item = false;
-            for (const ItemSpec& unlocked_item : tech->UnlockedItems()) {
+            for (const UnlockableItem& unlocked_item : tech->UnlockedItems()) {
                 if (unlocked_item == item) {
                     found_item = true;
                     break;
@@ -1221,7 +1222,7 @@ namespace {
             }
         }
 
-        auto unlocked_by_techs = TechsThatUnlockItem(ItemSpec(UIT_SHIP_PART, item_name));
+        auto unlocked_by_techs = TechsThatUnlockItem(UnlockableItem(UIT_SHIP_PART, item_name));
         if (!unlocked_by_techs.empty()) {
             detailed_description += "\n\n" + UserString("ENC_UNLOCKED_BY");
             for (const auto& tech_name : unlocked_by_techs)
@@ -1295,7 +1296,7 @@ namespace {
             }
         }
 
-        auto unlocked_by_techs = TechsThatUnlockItem(ItemSpec(UIT_SHIP_HULL, item_name));
+        auto unlocked_by_techs = TechsThatUnlockItem(UnlockableItem(UIT_SHIP_HULL, item_name));
         if (!unlocked_by_techs.empty()) {
             detailed_description += "\n\n" + UserString("ENC_UNLOCKED_BY");
             for (const auto& tech_name : unlocked_by_techs)
@@ -1353,7 +1354,7 @@ namespace {
         }
 
         if (!unlocked_items.empty()) {
-            for (const ItemSpec& item : unlocked_items) {
+            for (const UnlockableItem& item : unlocked_items) {
                 std::string TAG;
                 switch (item.type) {
                 case UIT_BUILDING:      TAG = VarText::BUILDING_TYPE_TAG;       break;
@@ -1450,7 +1451,7 @@ namespace {
                 detailed_description += "\n\nEffects:\n" + Dump(building_type->Effects());
         }
 
-        auto unlocked_by_techs = TechsThatUnlockItem(ItemSpec(UIT_BUILDING, item_name));
+        auto unlocked_by_techs = TechsThatUnlockItem(UnlockableItem(UIT_BUILDING, item_name));
         if (!unlocked_by_techs.empty()) {
             detailed_description += "\n\n" + UserString("ENC_UNLOCKED_BY");
             for (const std::string& tech_name : unlocked_by_techs)

@@ -29,6 +29,7 @@ target_sources(freeorioncommon
         ${CMAKE_CURRENT_LIST_DIR}/System.h
         ${CMAKE_CURRENT_LIST_DIR}/Tech.h
         ${CMAKE_CURRENT_LIST_DIR}/Universe.h
+        ${CMAKE_CURRENT_LIST_DIR}/UnlockableItem.h
         ${CMAKE_CURRENT_LIST_DIR}/Pathfinder.h
         ${CMAKE_CURRENT_LIST_DIR}/UniverseObject.h
         ${CMAKE_CURRENT_LIST_DIR}/ValueRef.h
@@ -57,6 +58,7 @@ target_sources(freeorioncommon
         ${CMAKE_CURRENT_LIST_DIR}/System.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Tech.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Universe.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/UnlockableItem.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Pathfinder.cpp
         ${CMAKE_CURRENT_LIST_DIR}/UniverseObject.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ValueRefs.cpp

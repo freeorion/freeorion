@@ -4,6 +4,7 @@
 #include "../Empire/Diplomacy.h"
 #include "../universe/Predicates.h"
 #include "../universe/UniverseObject.h"
+#include "../universe/UnlockableItem.h"
 #include "../universe/Planet.h"
 #include "../universe/Tech.h"
 #include "../universe/Enums.h"
@@ -265,8 +266,8 @@ namespace FreeOrionPython {
         class_<std::vector<IntPair>>("IntPairVec")
             .def(boost::python::vector_indexing_suite<std::vector<IntPair>, true>())
         ;
-        class_<std::vector<ItemSpec>>("ItemSpecVec")
-            .def(boost::python::vector_indexing_suite<std::vector<ItemSpec>, true>())
+        class_<std::vector<UnlockableItem>>("UnlockableItemVec")
+            .def(boost::python::vector_indexing_suite<std::vector<UnlockableItem>, true>())
         ;
         boost::python::to_python_converter<FloatIntPair, FloatIntPairConverter>();
 
@@ -478,9 +479,9 @@ namespace FreeOrionPython {
         boost::python::setattr(techsInCategoryFunc, "__doc__", boost::python::str("Returns the names of all techs (StringVec) in the indicated tech category name (string)."));
         def("techsInCategory", techsInCategoryFunc);
 
-        class_<ItemSpec>("ItemSpec", init<UnlockableItemType, const std::string&>())
-            .add_property("type",               &ItemSpec::type)
-            .add_property("name",               &ItemSpec::name)
+        class_<UnlockableItem>("UnlockableItem", init<UnlockableItemType, const std::string&>())
+            .add_property("type",               &UnlockableItem::type)
+            .add_property("name",               &UnlockableItem::name)
         ;
 
         ///////////////////
