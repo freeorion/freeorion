@@ -1537,7 +1537,6 @@ CreateShip::CreateShip(std::unique_ptr<ValueRef::ValueRef<std::string>>&& predef
                        std::unique_ptr<ValueRef::ValueRef<std::string>>&& ship_name,
                        std::vector<std::unique_ptr<Effect>>&& effects_to_apply_after) :
     m_design_name(std::move(predefined_ship_design_name)),
-    m_design_id(nullptr),
     m_empire_id(std::move(empire_id)),
     m_species_name(std::move(species_name)),
     m_name(std::move(ship_name)),
@@ -1549,7 +1548,6 @@ CreateShip::CreateShip(std::unique_ptr<ValueRef::ValueRef<int>>&& ship_design_id
                        std::unique_ptr<ValueRef::ValueRef<std::string>>&& species_name,
                        std::unique_ptr<ValueRef::ValueRef<std::string>>&& ship_name,
                        std::vector<std::unique_ptr<Effect>>&& effects_to_apply_after) :
-    m_design_name(nullptr),
     m_design_id(std::move(ship_design_id)),
     m_empire_id(std::move(empire_id)),
     m_species_name(std::move(species_name)),
@@ -1716,8 +1714,6 @@ CreateField::CreateField(std::unique_ptr<ValueRef::ValueRef<std::string>>&& fiel
                          std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
                          std::vector<std::unique_ptr<Effect>>&& effects_to_apply_after) :
     m_field_type_name(std::move(field_type_name)),
-    m_x(nullptr),
-    m_y(nullptr),
     m_size(std::move(size)),
     m_name(std::move(name)),
     m_effects_to_apply_after(std::move(effects_to_apply_after))
@@ -1879,7 +1875,6 @@ CreateSystem::CreateSystem(std::unique_ptr<ValueRef::ValueRef<double>>&& x,
                            std::unique_ptr<ValueRef::ValueRef<double>>&& y,
                            std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
                            std::vector<std::unique_ptr<Effect>>&& effects_to_apply_after) :
-    m_type(nullptr),
     m_x(std::move(x)),
     m_y(std::move(y)),
     m_name(std::move(name)),
@@ -2570,16 +2565,13 @@ unsigned int MoveTo::GetCheckSum() const {
 MoveInOrbit::MoveInOrbit(std::unique_ptr<ValueRef::ValueRef<double>>&& speed,
                          std::unique_ptr<Condition::Condition>&& focal_point_condition) :
     m_speed(std::move(speed)),
-    m_focal_point_condition(std::move(focal_point_condition)),
-    m_focus_x(nullptr),
-    m_focus_y(nullptr)
+    m_focal_point_condition(std::move(focal_point_condition))
 {}
 
 MoveInOrbit::MoveInOrbit(std::unique_ptr<ValueRef::ValueRef<double>>&& speed,
                          std::unique_ptr<ValueRef::ValueRef<double>>&& focus_x/* = 0*/,
                          std::unique_ptr<ValueRef::ValueRef<double>>&& focus_y/* = 0*/) :
     m_speed(std::move(speed)),
-    m_focal_point_condition(nullptr),
     m_focus_x(std::move(focus_x)),
     m_focus_y(std::move(focus_y))
 {}
@@ -2717,16 +2709,13 @@ unsigned int MoveInOrbit::GetCheckSum() const {
 MoveTowards::MoveTowards(std::unique_ptr<ValueRef::ValueRef<double>>&& speed,
                          std::unique_ptr<Condition::Condition>&& dest_condition) :
     m_speed(std::move(speed)),
-    m_dest_condition(std::move(dest_condition)),
-    m_dest_x(nullptr),
-    m_dest_y(nullptr)
+    m_dest_condition(std::move(dest_condition))
 {}
 
 MoveTowards::MoveTowards(std::unique_ptr<ValueRef::ValueRef<double>>&& speed,
                          std::unique_ptr<ValueRef::ValueRef<double>>&& dest_x/* = 0*/,
                          std::unique_ptr<ValueRef::ValueRef<double>>&& dest_y/* = 0*/) :
     m_speed(std::move(speed)),
-    m_dest_condition(nullptr),
     m_dest_x(std::move(dest_x)),
     m_dest_y(std::move(dest_y))
 {}

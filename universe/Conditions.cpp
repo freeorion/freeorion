@@ -2200,21 +2200,12 @@ unsigned int Building::GetCheckSum() const {
 // HasSpecial                                            //
 ///////////////////////////////////////////////////////////
 HasSpecial::HasSpecial() :
-    Condition(),
-    m_name(nullptr),
-    m_capacity_low(nullptr),
-    m_capacity_high(nullptr),
-    m_since_turn_low(),
-    m_since_turn_high()
+    Condition()
 {}
 
 HasSpecial::HasSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
     Condition(),
-    m_name(std::move(name)),
-    m_capacity_low(nullptr),
-    m_capacity_high(nullptr),
-    m_since_turn_low(),
-    m_since_turn_high()
+    m_name(std::move(name))
 {}
 
 HasSpecial::HasSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
@@ -2222,8 +2213,6 @@ HasSpecial::HasSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
                        std::unique_ptr<ValueRef::ValueRef<int>>&& since_turn_high) :
     Condition(),
     m_name(std::move(name)),
-    m_capacity_low(nullptr),
-    m_capacity_high(nullptr),
     m_since_turn_low(std::move(since_turn_low)),
     m_since_turn_high(std::move(since_turn_high))
 {}
@@ -2234,18 +2223,12 @@ HasSpecial::HasSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
     Condition(),
     m_name(std::move(name)),
     m_capacity_low(std::move(capacity_low)),
-    m_capacity_high(std::move(capacity_high)),
-    m_since_turn_low(nullptr),
-    m_since_turn_high(nullptr)
+    m_capacity_high(std::move(capacity_high))
 {}
 
 HasSpecial::HasSpecial(const std::string& name) :
     Condition(),
-    m_name(std::make_unique<ValueRef::Constant<std::string>>(name)),
-    m_capacity_low(nullptr),
-    m_capacity_high(nullptr),
-    m_since_turn_low(nullptr),
-    m_since_turn_high(nullptr)
+    m_name(std::make_unique<ValueRef::Constant<std::string>>(name))
 {}
 
 bool HasSpecial::operator==(const Condition& rhs) const {
@@ -4259,7 +4242,6 @@ Enqueued::Enqueued(std::unique_ptr<ValueRef::ValueRef<int>>&& design_id,
                    std::unique_ptr<ValueRef::ValueRef<int>>&& high) :
     Condition(),
     m_build_type(BT_SHIP),
-    m_name(),
     m_design_id(std::move(design_id)),
     m_empire_id(std::move(empire_id)),
     m_low(std::move(low)),
@@ -4268,12 +4250,7 @@ Enqueued::Enqueued(std::unique_ptr<ValueRef::ValueRef<int>>&& design_id,
 
 Enqueued::Enqueued() :
     Condition(),
-    m_build_type(BT_NOT_BUILDING),
-    m_name(),
-    m_design_id(nullptr),
-    m_empire_id(nullptr),
-    m_low(nullptr),
-    m_high(nullptr)
+    m_build_type(BT_NOT_BUILDING)
 {}
 
 Enqueued::Enqueued(BuildType build_type,
@@ -4284,7 +4261,6 @@ Enqueued::Enqueued(BuildType build_type,
     Condition(),
     m_build_type(build_type),
     m_name(std::move(name)),
-    m_design_id(nullptr),
     m_empire_id(std::move(empire_id)),
     m_low(std::move(low)),
     m_high(std::move(high))
@@ -6792,14 +6768,12 @@ OwnerHasBuildingTypeAvailable::OwnerHasBuildingTypeAvailable(
 
 OwnerHasBuildingTypeAvailable::OwnerHasBuildingTypeAvailable(const std::string& name) :
     Condition(),
-    m_name(std::make_unique<ValueRef::Constant<std::string>>(name)),
-    m_empire_id(nullptr)
+    m_name(std::make_unique<ValueRef::Constant<std::string>>(name))
 {}
 
 OwnerHasBuildingTypeAvailable::OwnerHasBuildingTypeAvailable(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
     Condition(),
-    m_name(std::move(name)),
-    m_empire_id(nullptr)
+    m_name(std::move(name))
 {}
 
 bool OwnerHasBuildingTypeAvailable::operator==(const Condition& rhs) const {
@@ -6946,14 +6920,12 @@ OwnerHasShipDesignAvailable::OwnerHasShipDesignAvailable(
 
 OwnerHasShipDesignAvailable::OwnerHasShipDesignAvailable(int design_id) :
     Condition(),
-    m_id(std::make_unique<ValueRef::Constant<int>>(design_id)),
-    m_empire_id(nullptr)
+    m_id(std::make_unique<ValueRef::Constant<int>>(design_id))
 {}
 
 OwnerHasShipDesignAvailable::OwnerHasShipDesignAvailable(std::unique_ptr<ValueRef::ValueRef<int>>&& design_id) :
     Condition(),
-    m_id(std::move(design_id)),
-    m_empire_id(nullptr)
+    m_id(std::move(design_id))
 {}
 
 bool OwnerHasShipDesignAvailable::operator==(const Condition& rhs) const {

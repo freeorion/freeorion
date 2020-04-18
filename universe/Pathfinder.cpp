@@ -491,11 +491,8 @@ namespace {
         typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS,
                                       vertex_property_t, edge_property_t> SystemGraph;
 
-        struct EdgeVisibilityFilter     {
-            EdgeVisibilityFilter() :
-                m_graph(nullptr),
-                m_empire_id(ALL_EMPIRES)
-            {}
+        struct EdgeVisibilityFilter {
+            EdgeVisibilityFilter() {}
 
             EdgeVisibilityFilter(const SystemGraph* graph, int empire_id) :
                 m_graph(graph),
@@ -532,8 +529,8 @@ namespace {
             }
 
             private:
-            const SystemGraph*      m_graph;
-            int                     m_empire_id;
+            const SystemGraph*  m_graph = nullptr;
+            int                 m_empire_id = ALL_EMPIRES;
         };
         typedef boost::filtered_graph<SystemGraph, EdgeVisibilityFilter> EmpireViewSystemGraph;
         typedef std::map<int, std::shared_ptr<EmpireViewSystemGraph>> EmpireViewSystemGraphMap;
@@ -559,11 +556,7 @@ namespace {
         }
 
         struct SystemPredicateFilter {
-            SystemPredicateFilter() :
-                m_graph(nullptr),
-                m_empire_id(ALL_EMPIRES),
-                m_pred(nullptr)
-            {}
+            SystemPredicateFilter() {}
 
             SystemPredicateFilter(const SystemGraph* graph, int empire_id,
                                   const Pathfinder::SystemExclusionPredicateType& pred) :
@@ -623,8 +616,8 @@ namespace {
             }
 
         private:
-            const SystemGraph* m_graph;
-            int m_empire_id;
+            const SystemGraph* m_graph = nullptr;
+            int m_empire_id = ALL_EMPIRES;
             Pathfinder::SystemExclusionPredicateType m_pred;
         };
         typedef boost::filtered_graph<SystemGraph, SystemPredicateFilter> SystemPredicateGraph;

@@ -484,11 +484,11 @@ struct FO_COMMON_API HasSpecial final : public Condition {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::unique_ptr<ValueRef::ValueRef<std::string>> m_name;
-    std::unique_ptr<ValueRef::ValueRef<double>> m_capacity_low;
-    std::unique_ptr<ValueRef::ValueRef<double>> m_capacity_high;
-    std::unique_ptr<ValueRef::ValueRef<int>> m_since_turn_low;
-    std::unique_ptr<ValueRef::ValueRef<int>> m_since_turn_high;
+    std::unique_ptr<ValueRef::ValueRef<std::string>>    m_name;
+    std::unique_ptr<ValueRef::ValueRef<double>>         m_capacity_low;
+    std::unique_ptr<ValueRef::ValueRef<double>>         m_capacity_high;
+    std::unique_ptr<ValueRef::ValueRef<int>>            m_since_turn_low;
+    std::unique_ptr<ValueRef::ValueRef<int>>            m_since_turn_high;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -817,11 +817,11 @@ private:
     bool Match(const ScriptingContext& local_context) const override;
 
     BuildType m_build_type;
-    std::unique_ptr<ValueRef::ValueRef<std::string>> m_name;
-    std::unique_ptr<ValueRef::ValueRef<int>> m_design_id;
-    std::unique_ptr<ValueRef::ValueRef<int>> m_empire_id;
-    std::unique_ptr<ValueRef::ValueRef<int>> m_low;
-    std::unique_ptr<ValueRef::ValueRef<int>> m_high;
+    std::unique_ptr<ValueRef::ValueRef<std::string>>    m_name;
+    std::unique_ptr<ValueRef::ValueRef<int>>            m_design_id;
+    std::unique_ptr<ValueRef::ValueRef<int>>            m_empire_id;
+    std::unique_ptr<ValueRef::ValueRef<int>>            m_low;
+    std::unique_ptr<ValueRef::ValueRef<int>>            m_high;
 
     friend class boost::serialization::access;
     template <class Archive>

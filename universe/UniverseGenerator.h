@@ -60,7 +60,7 @@ protected:
     double                          m_spawn_rate = 1.0;
     int                             m_spawn_limit = 9999;
     // Use shared_ptr insead of unique_ptr because boost::python requires a deleter
-    const std::shared_ptr<Condition::Condition> m_location = nullptr;
+    const std::shared_ptr<Condition::Condition> m_location;
 };
 
 /** Set active meter current values equal to target/max meter current
