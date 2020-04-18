@@ -55,7 +55,7 @@ import CombatRatingsAI
 import FleetUtilsAI
 from AIDependencies import INVALID_ID, Tags
 from aistate_interface import get_aistate
-from freeorion_tools import UserString, get_species_tag_grade, tech_is_complete, assertion_fails
+from freeorion_tools import UserString, get_species_tag_grade, tech_is_complete, assertion_fails, cache_for_session
 from turn_state import state
 
 # Define meta classes for the ship parts  TODO storing as set may not be needed anymore
@@ -2092,26 +2092,20 @@ def _get_design_by_name(design_name, update_invalid=False, looking_for_new_desig
     return design
 
 
-def get_ship_part(partname):
-    """Return the shipPart object (fo.getShipPart(partname)) of the given partname.
+@cache_for_session
+def get_ship_part(part_name: str):
+    """Return the shipPart object (fo.getShipPart(part_name)) of the given part_name.
 
     As the function in late game may be called some thousand times, the results are cached.
-
-    :type partname: str
-    :rtype: fo.shipPart
     """
-    if not partname:
+    if not part_name:
         return None
-    if partname in Cache.part_by_partname:
-        return Cache.part_by_partname[partname]
-    else:
-        shippart = fo.getShipPart(partname)
-        if shippart:
-            Cache.part_by_partname[partname] = shippart
-            return Cache.part_by_partname[partname]
-        else:
-            warning("Could not find part %s" % partname)
-            return None
+
+    part_type = fo.getShipPart(part_name)
+    if not part_type:
+        warning("Could not find part %s" % part_name)
+
+    return part_type
 
 
 def _build_reference_name(hullname, partlist):
