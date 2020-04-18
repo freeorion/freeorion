@@ -53,11 +53,11 @@ private:
 
     // some helper objects needed to initialize and run the Python interface
 #if defined(FREEORION_MACOSX) || defined(FREEORION_WIN32)
-    wchar_t*                m_home_dir;
-    wchar_t*                m_program_name;
+    wchar_t*                m_home_dir = nullptr;
+    wchar_t*                m_program_name = nullptr;
 #endif
-    boost::optional<boost::python::dict> m_namespace; // stores main namespace in optional to be finalized before Python interpreter
-    boost::python::object*  m_python_module_error;  // used to track if and which Python module contains the "error_report" function ErrorReport should call
+    boost::optional<boost::python::dict> m_namespace;           // stores main namespace in optional to be finalized before Python interpreter
+    boost::python::object*  m_python_module_error = nullptr;    // used to track if and which Python module contains the "error_report" function ErrorReport should call
 };
 
 // returns root folder containing all the Python scripts

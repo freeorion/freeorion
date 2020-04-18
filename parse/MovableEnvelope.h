@@ -172,7 +172,7 @@ namespace parse { namespace detail {
         template <typename U>
         friend class MovableEnvelope;
 
-        mutable std::unique_ptr<T> obj = nullptr;
+        mutable std::unique_ptr<T> obj;
 
         mutable T* original_obj = nullptr;
     };

@@ -29,21 +29,13 @@ BOOST_PYTHON_MODULE(freeorion_logger) {
     FreeOrionPython::WrapLogger();
 }
 
-PythonBase::PythonBase() :
-#if defined(FREEORION_MACOSX) || defined(FREEORION_WIN32)
-    m_home_dir(nullptr),
-    m_program_name(nullptr),
-#endif
-    m_python_module_error(nullptr)
-{
-}
+PythonBase::PythonBase()
+{}
 
-PythonBase::~PythonBase() {
-    Finalize();
-}
+PythonBase::~PythonBase()
+{ Finalize(); }
 
-bool PythonBase::Initialize()
-{
+bool PythonBase::Initialize() {
     DebugLogger() << "Initializing FreeOrion Python interface";
 
     try {
