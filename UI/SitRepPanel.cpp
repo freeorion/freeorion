@@ -308,8 +308,8 @@ namespace {
         }
 
         const SitRepEntry&                  m_sitrep_entry;
-        std::shared_ptr<GG::StaticGraphic>  m_icon = nullptr;
-        std::shared_ptr<SitRepLinkText>     m_link_text = nullptr;
+        std::shared_ptr<GG::StaticGraphic>  m_icon;
+        std::shared_ptr<SitRepLinkText>     m_link_text;
     };
 
     ////////////////////////////////////////////////
@@ -365,7 +365,7 @@ namespace {
         const SitRepEntry& GetSitRepEntry() const { return m_panel->GetSitRepEntry(); }
 
     private:
-        std::shared_ptr<SitRepDataPanel>    m_panel = nullptr;
+        std::shared_ptr<SitRepDataPanel>    m_panel;
         const SitRepEntry                   m_sitrep;
     };
 }

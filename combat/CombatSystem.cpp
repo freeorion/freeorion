@@ -391,10 +391,10 @@ namespace {
             fighter_type_name(fighter_type_name_)
         {}
 
-        ShipPartClass                       part_class;
+        ShipPartClass                       part_class = INVALID_SHIP_PART_CLASS;
         std::string                         ship_part_name;
         float                               part_attack = 0.0f;     // for direct damage parts
-        const ::Condition::Condition*   combat_targets = nullptr;
+        const ::Condition::Condition*       combat_targets = nullptr;
         int                                 fighters_launched = 0;  // for fighter bays, input value should be limited by ship available fighters to launch
         float                               fighter_damage = 0.0f;  // for fighter bays, input value should be determined by ship fighter weapon setup
         std::string                         fighter_type_name;
