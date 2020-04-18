@@ -55,7 +55,7 @@ import CombatRatingsAI
 import FleetUtilsAI
 from AIDependencies import INVALID_ID, Tags
 from aistate_interface import get_aistate
-from freeorion_tools import UserString, get_species_tag_grade, tech_is_complete
+from freeorion_tools import UserString, get_species_tag_grade, tech_is_complete, assertion_fails
 from turn_state import state
 
 # Define meta classes for the ship parts  TODO storing as set may not be needed anymore
@@ -73,14 +73,6 @@ FIGHTER_BAY = frozenset({fo.shipPartClass.fighterBay})
 FIGHTER_HANGAR = frozenset({fo.shipPartClass.fighterHangar})
 ALL_META_CLASSES = frozenset({WEAPONS, ARMOUR, DETECTION, FUEL, STEALTH, SHIELDS,
                               COLONISATION, ENGINES, TROOPS, GENERAL})
-
-# Prefixes for the test ship designs
-TESTDESIGN_NAME_BASE = "AI_TESTDESIGN"
-TESTDESIGN_NAME_HULL = TESTDESIGN_NAME_BASE + "_HULL"
-TESTDESIGN_NAME_PART = TESTDESIGN_NAME_BASE + "_PART"
-
-# Hardcoded preferred hullname for testdesigns, should be a hull without conditions but with maximum different slottypes
-TESTDESIGN_PREFERRED_HULL = "SH_BASIC_MEDIUM"
 
 MISSING_REQUIREMENT_MULTIPLIER = -1000
 INVALID_DESIGN_RATING = -999  # this needs to be negative but greater than MISSING_REQUIREMENT_MULTIPLIER
@@ -113,11 +105,9 @@ class ShipDesignCache:
     update_for_new_turn(self): Updates the cache for the current turn, to be called once at the beginning of each turn.
 
     Important members:
-    testhulls:                 # set of all hullnames used for testdesigns
     design_id_by_name          # {"designname": designid}
     part_by_partname           # {"partname": part object}
     map_reference_design_name  # {"reference_designname": "ingame_designname"}, cf. _build_reference_name()
-    strictly_worse_parts       # strictly worse parts: {"part": ["worsePart1", "worsePart2"]}
     hulls_for_planets          # buildable hulls per planet {planetID: ["buildableHull1", "buildableHull2", ...]}
     parts_for_planets          # buildable parts per planet and slot: {planetID: {slottype1: ["part1", "part2"]}}
     best_designs               # {shipclass: {reqTup: {species: {available_parts: {hull: (rating, best_parts)}}}}}
@@ -125,17 +115,15 @@ class ShipDesignCache:
     production_time            # {planetID: {"partname1": local_production_time, "hullname1": local_production_time}}
 
     Debug methods:
-    print_CACHENAME(self), e.g. print_testhulls: prints content of the cache in some nicer format
+    print_CACHENAME(self), e.g. print_hulls_for_planets: prints content of the cache in some nicer format
     print_all(self): calls all the printing functions
     """
 
     def __init__(self):
         """Cache is empty on creation"""
-        self.testhulls = set()
         self.design_id_by_name = {}
         self.part_by_partname = {}
         self.map_reference_design_name = {}
-        self.strictly_worse_parts = {}
         self.hulls_for_planets = {}
         self.parts_for_planets = {}
         self.best_designs = {}
@@ -154,11 +142,7 @@ class ShipDesignCache:
             self._build_cache_after_load()
         self._check_cache_for_consistency()
         self.update_cost_cache()
-        self._update_buildable_items_this_turn(verbose=False)
-
-    def print_testhulls(self):
-        """Print the testhulls cache."""
-        debug("Testhull cache: %s" % self.testhulls)
+        self._update_buildable_items_this_turn()
 
     def print_design_id_by_name(self):
         """Print the design_id_by_name cache."""
@@ -167,12 +151,6 @@ class ShipDesignCache:
     def print_part_by_partname(self):
         """Print the part_by_partname cache."""
         debug("Parts cached by name: %s" % self.part_by_partname)
-
-    def print_strictly_worse_parts(self):
-        """Print the strictly_worse_parts cache."""
-        debug("List of strictly worse parts (ignoring slots):")
-        for part in self.strictly_worse_parts:
-            debug("  %s: %s" % (part, self.strictly_worse_parts[part]))
 
     def print_map_reference_design_name(self):
         """Print the ingame, reference name map of shipdesigns."""
@@ -270,10 +248,8 @@ class ShipDesignCache:
     def print_all(self):
         """Print the entire ship design cache."""
         debug("Printing the ShipDesignAI cache...")
-        self.print_testhulls()
         self.print_design_id_by_name()
         self.print_part_by_partname()
-        self.print_strictly_worse_parts()
         self.print_map_reference_design_name()
         self.print_hulls_for_planets()
         self.print_parts_for_planets()
@@ -336,8 +312,6 @@ class ShipDesignCache:
             warning("ShipDesignAI.Cache._build_cache_after_load() called but cache is not empty.")
         for design_id in fo.getEmpire().allShipDesigns:
             design = fo.getShipDesign(design_id)
-            if TESTDESIGN_NAME_BASE in design.name:
-                continue
             reference_name = _build_reference_name(design.hull, design.parts)
             self.map_reference_design_name[reference_name] = design.name
             self.design_id_by_name[design.name] = design_id
@@ -391,221 +365,32 @@ class ShipDesignCache:
             if bad_ref is not None:
                 del self.map_reference_design_name[bad_ref]
 
-    def _update_buildable_items_this_turn(self, verbose=False):
-        """Calculate which parts and hulls can be built on each planet this turn.
-
-        :param verbose: toggles detailed debugging output.
-        :type verbose: bool
-        """
-        # TODO: Refactor this function
-        # The AI currently has no way of checking building requirements of individual parts and hulls directly.
-        # It can only check if we can build a design. Therefore, we use specific testdesigns to check if we can
-        # build a hull or part.
-        # The building requirements are constant so calculate this only once at the beginning of each turn.
-        #
-        # Code structure:
-        #   1. Update hull test designs
-        #   2. Get a list of buildable ship hulls for each planet
-        #   3. Update ship part test designs
-        #   4. Cache the list of buildable ship parts for each planet
-        #
+    def _update_buildable_items_this_turn(self):
+        """Calculate which parts and hulls can be built on each planet this turn."""
         self.hulls_for_planets.clear()
         self.parts_for_planets.clear()
-        inhabited_planets = state.get_inhabited_planets()
-        if not inhabited_planets:
-            debug("No inhabited planets found. The design process was aborted.")
-            return
-        get_shipdesign = fo.getShipDesign
-        get_hulltype = fo.getHullType
         empire = fo.getEmpire()
-        empire_id = empire.empireID
-        universe = fo.getUniverse()
-        available_hulls = list(empire.availableShipHulls)   # copy so we can sort it locally
-        # Later on in the code, we need to find suitable testhulls, i.e. buildable hulls for all slottypes.
-        # To reduce the number of lookups, move the hardcoded TESTDESIGN_PREFERED_HULL to the front of the list.
-        # This hull should be buildable on each planet and also cover the most common slottypes.
-        try:
-            idx = available_hulls.index(TESTDESIGN_PREFERRED_HULL)
-            available_hulls[0], available_hulls[idx] = available_hulls[idx], available_hulls[0]
-        except ValueError:
-            warning("Tried to use '%s' as testhull but not in available_hulls." % TESTDESIGN_PREFERRED_HULL)
-            warning("Please update ShipDesignAI.py according to the new content.")
-        testdesign_names = [get_shipdesign(design_id).name for design_id in empire.allShipDesigns
-                            if get_shipdesign(design_id).name.startswith(TESTDESIGN_NAME_BASE)]
-        testdesign_names_hull = [name for name in testdesign_names if name.startswith(TESTDESIGN_NAME_HULL)]
-        testdesign_names_part = [name for name in testdesign_names if name.startswith(TESTDESIGN_NAME_PART)]
-        available_slot_types = {slottype for slotlist in [get_hulltype(hull).slots for hull in available_hulls]
-                                for slottype in slotlist}
-        new_parts = [get_ship_part(part) for part in empire.availableShipParts
-                     if part not in self.strictly_worse_parts]
-        pid = next(iter(self.production_cost.keys()))  # as only location invariant parts are considered, use arbitrary planet.
-        for new_part in new_parts:
-            self.strictly_worse_parts[new_part.name] = []
-            if new_part.partClass in WEAPONS:
-                continue  # TODO:  Update cache-functionality to handle tech upgrades
-            if not new_part.costTimeLocationInvariant:
-                debug("new part %s not location invariant!" % new_part.name)
-                continue
-            for part_class in ALL_META_CLASSES:
-                if new_part.partClass in part_class:
-                    for old_part in [get_ship_part(part) for part in self.strictly_worse_parts
-                                     if part != new_part.name]:
-                        if not old_part.costTimeLocationInvariant:
-                            debug("old part %s not location invariant!" % old_part.name)
-                            continue
-                        if old_part.partClass in part_class:
-                            if new_part.capacity >= old_part.capacity:
-                                a = new_part
-                                b = old_part
-                            else:
-                                a = old_part
-                                b = new_part
-                            if (self.production_cost[pid][a.name] <= self.production_cost[pid][b.name]
-                                    and {x for x in a.mountableSlotTypes} >= {x for x in b.mountableSlotTypes}
-                                    and self.production_time[pid][a.name] <= self.production_time[pid][b.name]):
-                                self.strictly_worse_parts[a.name].append(b.name)
-                                debug("Part %s is strictly worse than part %s" % (b.name, a.name))
-                    break
-        available_parts = sorted(self.strictly_worse_parts.keys(),
-                                 key=lambda item: get_ship_part(item).capacity, reverse=True)
+        all_hulls = list(empire.availableShipHulls)
+        all_parts = list(empire.availableShipParts)
 
-        # in case of a load, we need to rebuild our Cache.
-        if not self.testhulls:
-            debug("Testhull cache not found. This may happen only at first turn after game start or load.")
-            for hullname in available_hulls:
-                des = [des_ for des_ in testdesign_names_part if des_.endswith(hullname)]
-                if des:
-                    self.testhulls.add(hullname)
-            if verbose:
-                debug("Rebuilt Cache. The following hulls are used in testdesigns for parts: %s" % self.testhulls)
-
-        # 1. Update hull test designs
-        debug("Updating Testdesigns for hulls...")
-        if verbose:
-            debug("Available Hulls: %s" % available_hulls)
-            debug("Existing Designs (prefix: %s): %s" % (
-                TESTDESIGN_NAME_HULL, [x.replace(TESTDESIGN_NAME_HULL, "") for x in testdesign_names_hull]))
-        for hull in [get_hulltype(hullname) for hullname in available_hulls
-                     if "%s_%s" % (TESTDESIGN_NAME_HULL, hullname) not in testdesign_names_hull]:
-            partlist = len(hull.slots) * [""]
-            testdesign_name = "%s_%s" % (TESTDESIGN_NAME_HULL, hull.name)
-            _create_ship_design(testdesign_name, hull.name, partlist,
-                                description="TESTPURPOSE ONLY", verbose=verbose)
-
-        # 2. Cache the list of buildable ship hulls for each planet
-        debug("Caching buildable hulls per planet...")
-        testname = "%s_%s" % (TESTDESIGN_NAME_HULL, "%s")
-        for pid in inhabited_planets:
-            self.hulls_for_planets[pid] = []
-        for hullname in available_hulls:
-            testdesign = _get_design_by_name(testname % hullname)
-            if testdesign:
-                for pid in inhabited_planets:
-                    if _can_build(testdesign, empire_id, pid):
-                        self.hulls_for_planets[pid].append(hullname)
-            else:
-                warning("Missing testdesign for hull %s!" % hullname)
-
-        # 3. Update ship part test designs
-        #     Because there are different slottypes, we need to find a hull that can host said slot.
-        #     However, not every planet can build every hull. Thus, for each inhabited planet:
-        #       I. Check which parts do not have a testdesign yet with a hull we can build on this planet
-        #       II. If there are parts, find out which slots we need
-        #       III. For each slot type, try to find a hull we can build on this planet
-        #            and use this hull for all the parts hostable in this type.
-        debug("Updating test designs for ship parts...")
-        if verbose:
-            debug("Available parts: %s" % available_parts)
-            debug("Existing Designs (prefix: %s): %s" % (
-                TESTDESIGN_NAME_PART, [x.replace(TESTDESIGN_NAME_PART, "") for x in testdesign_names_part]))
-        for pid in inhabited_planets:
-            planetname = universe.getPlanet(pid).name
-            local_hulls = self.hulls_for_planets[pid]
-            needs_update = [get_ship_part(partname) for partname in available_parts
-                            if not any(["%s_%s_%s" % (TESTDESIGN_NAME_PART, partname, hullname) in testdesign_names_part
-                                       for hullname in local_hulls])]
-            if not needs_update:
-                if verbose:
-                    debug("Planet %s: Test designs are up to date" % planetname)
-                continue
-            if verbose:
-                debug("Planet %s: The following parts appear to need a new design: %s" % (
-                    planetname, [part.name for part in needs_update]))
-            for slot in available_slot_types:
-                testhull = next((hullname for hullname in local_hulls if slot in get_hulltype(hullname).slots), None)
-                if testhull is None:
-                    if verbose:
-                        debug("Failure: Could not find a hull with slots of type '%s' for this planet" % slot.name)
+        for pid in state.get_inhabited_planets():
+            for hull_name in all_hulls:
+                hull = fo.getHullType(hull_name)
+                if assertion_fails(hull is not None):
                     continue
-                else:
-                    if verbose:
-                        debug("Using hull %s for slots of type '%s'" % (testhull, slot.name))
-                    self.testhulls.add(testhull)
-                slotlist = [s for s in get_hulltype(testhull).slots]
-                slot_index = slotlist.index(slot)
-                num_slots = len(slotlist)
-                for part in [part_ for part_ in needs_update if slot in part_.mountableSlotTypes]:
-                    partlist = num_slots * [""]
-                    partlist[slot_index] = part.name
-                    testdesign_name = "%s_%s_%s" % (TESTDESIGN_NAME_PART, part.name, testhull)
-                    res = _create_ship_design(testdesign_name, testhull, partlist,
-                                              description="TESTPURPOSE ONLY", verbose=verbose)
-                    if res:
-                        testdesign_names_part.append(testdesign_name)
-                    else:
-                        continue
-                    needs_update.remove(part)  # We only need one design per part, not for every possible slot
 
-        #  later on in the code, we will have to check multiple times if the test hulls are in
-        #  the list of buildable hulls for the planet. As the ordering is preserved, move the
-        #  testhulls to the front of the availableHull list to save some time in the checks.
-        for i, s in enumerate(self.testhulls):
-            try:
-                idx = available_hulls.index(s)
-                if i != idx:
-                    available_hulls[i], available_hulls[idx] = available_hulls[idx], available_hulls[i]
-            except ValueError:
-                error("hull in testhull cache not in available_hulls even though it is supposed to be a proper subset.",
-                      exc_info=True)
+                if hull.productionLocation(pid):
+                    self.hulls_for_planets.setdefault(pid, []).append(hull_name)
 
-        # 4. Cache the list of buildable ship parts for each planet
-        debug("Caching buildable ship parts per planet...")
-        for pid in inhabited_planets:
-            local_testhulls = [hull for hull in self.testhulls
-                               if hull in self.hulls_for_planets[pid]]
-            this_planet = universe.getPlanet(pid)
-            if verbose:
-                debug("Testhulls for %s are %s" % (this_planet, local_testhulls))
-            self.parts_for_planets[pid] = {}
-            local_ignore = set()
-            local_cache = self.parts_for_planets[pid]
-            for slot in available_slot_types:
-                local_cache[slot] = []
-            for partname in available_parts:
-                if partname in local_ignore:
+            for part_name in all_parts:
+                ship_part = get_ship_part(part_name)
+                if assertion_fails(ship_part is not None):
                     continue
-                part_slottypes = get_ship_part(partname).mountableSlotTypes
-                ship_design = None
-                for hullname in local_testhulls:
-                    if not any((slot in get_hulltype(hullname).slots for slot in part_slottypes)):
-                        continue
-                    ship_design = _get_design_by_name("%s_%s_%s" % (TESTDESIGN_NAME_PART, partname, hullname))
-                    if ship_design:
-                        if _can_build(ship_design, empire_id, pid):
-                            for slot in part_slottypes:
-                                local_cache.setdefault(slot, []).append(partname)
-                                local_ignore.update(self.strictly_worse_parts[partname])
-                        break
-                if verbose and not ship_design:
-                    planetname = universe.getPlanet(pid).name
-                    debug("Failure: Couldn't find a testdesign for part %s on planet %s." % (partname, planetname))
-            # make sure we do not edit the list later on this turn => tuple: immutable
-            # This also allows to shallowcopy the cache.
-            for slot in local_cache:
-                local_cache[slot] = tuple(local_cache[slot])
 
-            if verbose:
-                debug("Parts for Planet: %s: " % universe.getPlanet(pid).name, self.parts_for_planets[pid])
+                slot_types = ship_part.mountableSlotTypes
+                if ship_part.productionLocation(pid):
+                    for slot_type in slot_types:
+                        self.parts_for_planets.setdefault(pid, {}).setdefault(slot_type, []).append(part_name)
 
 
 Cache = ShipDesignCache()
