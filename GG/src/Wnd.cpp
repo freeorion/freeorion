@@ -41,9 +41,7 @@ namespace {
     namespace mi = boost::multi_index;
     struct GridLayoutWnd
     {
-        GridLayoutWnd() :
-            wnd(nullptr)
-        {}
+        GridLayoutWnd() {}
 
         GridLayoutWnd(std::shared_ptr<Wnd>& wnd_, const Pt& ul_, const Pt& lr_) : wnd(wnd_), ul(ul_), lr(lr_) {}
         std::shared_ptr<Wnd> wnd;
@@ -53,26 +51,26 @@ namespace {
     struct IsLeft
     {
         bool operator()(const Pt& lhs, const Pt& rhs) const {return lhs.x < rhs.x;}
-        bool operator()(X x, const Pt& pt) const       {return x < pt.x;}
-        bool operator()(const Pt& pt, X x) const       {return pt.x < x;}
+        bool operator()(X x, const Pt& pt) const            {return x < pt.x;}
+        bool operator()(const Pt& pt, X x) const            {return pt.x < x;}
     };
     struct IsTop
     {
         bool operator()(const Pt& lhs, const Pt& rhs) const {return lhs.y < rhs.y;}
-        bool operator()(Y y, const Pt& pt) const       {return y < pt.y;}
-        bool operator()(const Pt& pt, Y y) const       {return pt.y < y;}
+        bool operator()(Y y, const Pt& pt) const            {return y < pt.y;}
+        bool operator()(const Pt& pt, Y y) const            {return pt.y < y;}
     };
     struct IsRight
     {
         bool operator()(const Pt& lhs, const Pt& rhs) const {return rhs.x < lhs.x;}
-        bool operator()(X x, const Pt& pt) const       {return pt.x < x;}
-        bool operator()(const Pt& pt, X x) const       {return x < pt.x;}
+        bool operator()(X x, const Pt& pt) const            {return pt.x < x;}
+        bool operator()(const Pt& pt, X x) const            {return x < pt.x;}
     };
     struct IsBottom
     {
         bool operator()(const Pt& lhs, const Pt& rhs) const {return rhs.y < lhs.y;}
-        bool operator()(Y y, const Pt& pt) const       {return pt.y < y;}
-        bool operator()(const Pt& pt, Y y) const       {return y < pt.y;}
+        bool operator()(Y y, const Pt& pt) const            {return pt.y < y;}
+        bool operator()(const Pt& pt, Y y) const            {return y < pt.y;}
     };
     struct Pointer {};
     struct LayoutLeft {};

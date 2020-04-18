@@ -332,21 +332,21 @@ private:
         m_text_elements changes.*/
     void RecomputeLineData();
 
-    std::string                 m_text;
-    Flags<TextFormat>           m_format;      ///< the formatting used to display the text (vertical and horizontal alignment, etc.)
-    Clr                         m_text_color;  ///< the color of the text itself (may differ from GG::Control::m_color)
-    bool                        m_clip_text;
-    bool                        m_set_min_size;
+    std::string                                     m_text;
+    Flags<TextFormat>                               m_format;      ///< the formatting used to display the text (vertical and horizontal alignment, etc.)
+    Clr                                             m_text_color;  ///< the color of the text itself (may differ from GG::Control::m_color)
+    bool                                            m_clip_text = false;
+    bool                                            m_set_min_size = false;
     std::vector<std::shared_ptr<Font::TextElement>> m_text_elements;
-    std::vector<Font::LineData> m_line_data;
-    CPSize                      m_code_points;
-    std::shared_ptr<Font> m_font;
-    Pt                          m_text_ul;     ///< stored relative to the control's UpperLeft()
-    Pt                          m_text_lr;     ///< stored relative to the control's UpperLeft()
-    std::unique_ptr<Font::RenderCache> m_render_cache;///< Cache much of text rendering.
+    std::vector<Font::LineData>                     m_line_data;
+    CPSize                                          m_code_points{0};
+    std::shared_ptr<Font>                           m_font;
+    Pt                                              m_text_ul;     ///< stored relative to the control's UpperLeft()
+    Pt                                              m_text_lr;     ///< stored relative to the control's UpperLeft()
+    std::unique_ptr<Font::RenderCache>              m_render_cache;///< Cache much of text rendering.
 
-    mutable X                   m_cached_minusable_size_width;
-    mutable Pt                  m_cached_minusable_size;
+    mutable X                                       m_cached_minusable_size_width{X0};
+    mutable Pt                                      m_cached_minusable_size;
 };
 
 typedef TextControl Label;

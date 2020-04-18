@@ -282,15 +282,15 @@ private:
     /** Shows or hides the left-right buttons based on whether they are currently needed. */
     void RecalcLeftRightButton();
 
-    std::shared_ptr<RadioButtonGroup>         m_tabs;
-    std::vector<std::shared_ptr<StateButton>> m_tab_buttons;
-    std::shared_ptr<Font> m_font;
-    std::shared_ptr<Button>                   m_left_button;
-    std::shared_ptr<Button>                   m_right_button;
-    std::shared_ptr<Layout>                   m_left_right_button_layout;
-    Flags<TextFormat>         m_format;
-    Clr                       m_text_color;
-    std::size_t               m_first_tab_shown;
+    std::shared_ptr<RadioButtonGroup>           m_tabs;
+    std::vector<std::shared_ptr<StateButton>>   m_tab_buttons;
+    std::shared_ptr<Font>                       m_font;
+    std::shared_ptr<Button>                     m_left_button;
+    std::shared_ptr<Button>                     m_right_button;
+    std::shared_ptr<Layout>                     m_left_right_button_layout;
+    Flags<TextFormat>                           m_format;
+    Clr                                         m_text_color;
+    std::size_t                                 m_first_tab_shown = 0;
 };
 
 } // namespace GG

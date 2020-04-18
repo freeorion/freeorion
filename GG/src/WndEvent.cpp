@@ -78,51 +78,27 @@ GG_FLAGSPEC_IMPL(ModKey);
 WndEvent::WndEvent(EventType type, const Pt& pt, Flags<ModKey> mod_keys) :
     m_type(type),
     m_point(pt),
-    m_key(GGK_NONE),
-    m_key_code_point(0),
-    m_mod_keys(mod_keys),
-    m_wheel_move(0),
-    m_ticks(0),
-    m_timer(nullptr),
-    m_text(nullptr)
+    m_mod_keys(mod_keys)
 {}
 
 WndEvent::WndEvent(EventType type, const Pt& pt, const Pt& move, Flags<ModKey> mod_keys) :
     m_type(type),
     m_point(pt),
-    m_key(GGK_NONE),
-    m_key_code_point(0),
     m_mod_keys(mod_keys),
-    m_drag_move(move),
-    m_wheel_move(0),
-    m_ticks(0),
-    m_timer(nullptr),
-    m_text(nullptr)
+    m_drag_move(move)
 {}
 
 WndEvent::WndEvent(EventType type, const Pt& pt, int move, Flags<ModKey> mod_keys) :
     m_type(type),
     m_point(pt),
-    m_key(GGK_NONE),
-    m_key_code_point(0),
     m_mod_keys(mod_keys),
-    m_wheel_move(move),
-    m_ticks(0),
-    m_timer(nullptr),
-    m_text(nullptr)
+    m_wheel_move(move)
 {}
 
 WndEvent::WndEvent(EventType type, const Pt& pt, const std::map<std::shared_ptr<Wnd>, Pt>& drag_drop_wnds, Flags<ModKey> mod_keys) :
     m_type(type),
     m_point(pt),
-    m_key(GGK_NONE),
-    m_key_code_point(0),
-    m_mod_keys(mod_keys),
-    m_wheel_move(0),
-    m_drag_drop_wnds(),
-    m_ticks(0),
-    m_timer(nullptr),
-    m_text(nullptr)
+    m_mod_keys(mod_keys)
 {
     // initialize storage for acceptable Wnds
     for (const auto& drag_drop_wnd : drag_drop_wnds) {
@@ -134,27 +110,14 @@ WndEvent::WndEvent(EventType type, const Pt& pt, const std::map<std::shared_ptr<
 WndEvent::WndEvent(EventType type, const Pt& pt, const std::vector<std::shared_ptr<Wnd>>& drag_drop_wnds, Flags<ModKey> mod_keys) :
     m_type(type),
     m_point(pt),
-    m_key(GGK_NONE),
-    m_key_code_point(0),
     m_mod_keys(mod_keys),
-    m_wheel_move(0),
-    m_ticks(0),
-    m_timer(nullptr),
-    m_text(nullptr),
     m_dropped_wnds(drag_drop_wnds)
 {}
 
 WndEvent::WndEvent(EventType type, const Pt& pt, const Wnd* const drag_wnd, Flags<ModKey> mod_keys) :
     m_type(type),
     m_point(pt),
-    m_key(GGK_NONE),
-    m_key_code_point(0),
-    m_mod_keys(mod_keys),
-    m_wheel_move(0),
-    m_drag_drop_wnds(),
-    m_ticks(0),
-    m_timer(nullptr),
-    m_text(nullptr)
+    m_mod_keys(mod_keys)
 {
     // initialize storage for single dragged Wnd
     m_drag_drop_wnds[drag_wnd] = pt;
@@ -165,44 +128,22 @@ WndEvent::WndEvent(EventType type, Key key, std::uint32_t code_point, Flags<ModK
     m_type(type),
     m_key(key),
     m_key_code_point(code_point),
-    m_mod_keys(mod_keys),
-    m_wheel_move(0),
-    m_ticks(0),
-    m_timer(nullptr),
-    m_text(nullptr)
+    m_mod_keys(mod_keys)
 {}
 
 WndEvent::WndEvent(EventType type, unsigned int ticks, Timer* timer) :
     m_type(type),
-    m_key(GGK_NONE),
-    m_key_code_point(0),
-    m_mod_keys(),
-    m_wheel_move(0),
     m_ticks(ticks),
-    m_timer(timer),
-    m_text(nullptr)
+    m_timer(timer)
 {}
 
 WndEvent::WndEvent (WndEvent::EventType type, const std::string* text):
     m_type(type),
-    m_key(GGK_NONE),
-    m_key_code_point(0),
-    m_mod_keys(),
-    m_wheel_move(0),
-    m_ticks(0),
-    m_timer(nullptr),
     m_text(text)
 {}
 
 WndEvent::WndEvent(EventType type) :
-    m_type(type),
-    m_key(GGK_NONE),
-    m_key_code_point(0),
-    m_mod_keys(), 
-    m_wheel_move(0),
-    m_ticks(0),
-    m_timer(nullptr),
-    m_text(nullptr)
+    m_type(type)
 {}
 
 WndEvent::EventType WndEvent::Type() const
@@ -276,6 +217,6 @@ std::string EventTypeName(const WndEvent& event) {
     case WndEvent::GainingFocus:    return "(GainingFocus)";
     case WndEvent::LosingFocus:     return "(LosingFocus)";
     case WndEvent::TimerFiring:     return "(TimerFiring)";
-    default:                            return "(Unknown Event Type)";
+    default:                        return "(Unknown Event Type)";
     }
 }

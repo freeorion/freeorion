@@ -260,13 +260,9 @@ const X TabBar::BUTTON_WIDTH(10);
 TabBar::TabBar(const std::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/,
                Flags<WndFlag> flags/* = INTERACTIVE*/) :
     Control(X0, Y0, X1, TabHeightFromFont(font), flags),
-    m_tabs(nullptr),
     m_font(font),
-    m_left_button(nullptr),
-    m_right_button(nullptr),
     m_left_right_button_layout(Wnd::Create<Layout>(X0, Y0, X1, TabHeightFromFont(font), 1, 3)),
-    m_text_color(text_color),
-    m_first_tab_shown(0)
+    m_text_color(text_color)
 {
     SetColor(color);
 }

@@ -3362,12 +3362,12 @@ public:
 private:
     void DoLayout();
 
-    std::shared_ptr<GG::TabWnd>                 m_tabs = nullptr;
-    std::shared_ptr<EmptyHullsListBox>          m_hulls_list = nullptr;         // empty hulls on which a new design can be based
-    std::shared_ptr<CompletedDesignsListBox>    m_designs_list= nullptr;        // designs this empire has created or learned how to make
-    std::shared_ptr<SavedDesignsListBox>        m_saved_designs_list = nullptr; // designs saved to files
-    std::shared_ptr<MonstersListBox>            m_monsters_list = nullptr;      // monster designs
-    std::shared_ptr<AllDesignsListBox>          m_all_list = nullptr;           // all designs known to empire
+    std::shared_ptr<GG::TabWnd>                 m_tabs;
+    std::shared_ptr<EmptyHullsListBox>          m_hulls_list;           // empty hulls on which a new design can be based
+    std::shared_ptr<CompletedDesignsListBox>    m_designs_list;         // designs this empire has created or learned how to make
+    std::shared_ptr<SavedDesignsListBox>        m_saved_designs_list;   // designs saved to files
+    std::shared_ptr<MonstersListBox>            m_monsters_list;        // monster designs
+    std::shared_ptr<AllDesignsListBox>          m_all_list;             // all designs known to empire
 
     // Holds the state of the availabilities filter.
     AvailabilityManager                         m_availabilities_state{false, true, false};
@@ -3611,8 +3611,8 @@ private:
     ShipSlotType                        m_slot_type = INVALID_SHIP_SLOT_TYPE;
     double                              m_x_position_fraction = 0.4;    //!< position on hull image where slot should be shown, as a fraction of that image's size
     double                              m_y_position_fraction = 0.4;
-    std::shared_ptr<PartControl>        m_part_control = nullptr;
-    std::shared_ptr<GG::StaticGraphic>  m_background = nullptr;
+    std::shared_ptr<PartControl>        m_part_control;
+    std::shared_ptr<GG::StaticGraphic>  m_background;
 };
 
 SlotControl::SlotControl() :
@@ -4046,7 +4046,7 @@ private:
     //! adding the part is possible
     std::pair<int, int> FindSlotForPartWithSwapping(const ShipPart* part);
 
-    const HullType*                             m_hull = nullptr;
+    const HullType*                             m_hull;
     std::vector<std::shared_ptr<SlotControl>>   m_slots;
     boost::optional<int>                        m_replaced_design_id = boost::none;     // The design id if this design is replacable
     boost::optional<boost::uuids::uuid>         m_replaced_design_uuid = boost::none;   // The design uuid if this design is replacable
@@ -4055,16 +4055,16 @@ private:
     /// This tracks the last relevant selected tab in the base selector
     DesignWnd::BaseSelector::BaseSelectorTab    m_type_to_create = DesignWnd::BaseSelector::BaseSelectorTab::Current;
 
-    mutable std::shared_ptr<ShipDesign>         m_incomplete_design = nullptr;
+    mutable std::shared_ptr<ShipDesign>         m_incomplete_design;
 
-    std::shared_ptr<GG::StaticGraphic>          m_background_image = nullptr;
-    std::shared_ptr<GG::Label>                  m_design_name_label = nullptr;
-    std::shared_ptr<GG::Edit>                   m_design_name = nullptr;
-    std::shared_ptr<GG::StateButton>            m_design_description_toggle = nullptr;
-    std::shared_ptr<GG::MultiEdit>              m_design_description_edit = nullptr;
-    std::shared_ptr<GG::Button>                 m_replace_button = nullptr;
-    std::shared_ptr<GG::Button>                 m_confirm_button = nullptr;
-    std::shared_ptr<GG::Button>                 m_clear_button = nullptr;
+    std::shared_ptr<GG::StaticGraphic>          m_background_image;
+    std::shared_ptr<GG::Label>                  m_design_name_label;
+    std::shared_ptr<GG::Edit>                   m_design_name;
+    std::shared_ptr<GG::StateButton>            m_design_description_toggle;
+    std::shared_ptr<GG::MultiEdit>              m_design_description_edit;
+    std::shared_ptr<GG::Button>                 m_replace_button;
+    std::shared_ptr<GG::Button>                 m_confirm_button;
+    std::shared_ptr<GG::Button>                 m_clear_button;
     bool                                        m_disabled_by_name = false; // if the design confirm button is currently disabled due to empty name
     bool                                        m_disabled_by_part_conflict = false;
 

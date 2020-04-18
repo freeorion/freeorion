@@ -147,27 +147,25 @@ public:
     //@}
 
 private:
-    EventType                   m_type;
-    Pt                          m_point;
-    Key                         m_key;
+    EventType                       m_type;
+    Pt                              m_point;
+    Key                             m_key{GGK_NONE};
 
-    std::uint32_t m_key_code_point;
+    std::uint32_t                   m_key_code_point = 0;
 
-    Flags<ModKey>               m_mod_keys;
-    Pt                          m_drag_move;
-    int                         m_wheel_move;
+    Flags<ModKey>                   m_mod_keys;
+    Pt                              m_drag_move;
+    int                             m_wheel_move = 0;
 
-    std::map<const Wnd* const, Pt>            m_drag_drop_wnds;
+    std::map<const Wnd* const, Pt>  m_drag_drop_wnds;
 
-    unsigned int                m_ticks;
-    Timer*                      m_timer;
-    const std::string*          m_text;
+    unsigned int                    m_ticks = 0;
+    Timer*                          m_timer = nullptr;
+    const std::string*              m_text = nullptr;
 
-    mutable std::vector<std::shared_ptr<Wnd>> m_dropped_wnds;
-    mutable std::map<const Wnd*, bool>  m_acceptable_drop_wnds;
+    mutable std::vector<std::shared_ptr<Wnd>>   m_dropped_wnds;
+    mutable std::map<const Wnd*, bool>          m_acceptable_drop_wnds;
 };
-
-GG_API std::string EventTypeName(const GG::WndEvent& event);
 
 } // namespace GG
 

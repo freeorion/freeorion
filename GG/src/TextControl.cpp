@@ -44,13 +44,7 @@ TextControl::TextControl(X x, Y y, X w, Y h, const std::string& str,
     Control(x, y, w, h, flags),
     m_format(format),
     m_text_color(color),
-    m_clip_text(false),
-    m_set_min_size(false),
-    m_code_points(0),
-    m_font(font),
-    m_render_cache(nullptr),
-    m_cached_minusable_size_width(X0),
-    m_cached_minusable_size(Pt())
+    m_font(font)
 {
     ValidateFormat();
     SetText(str);
@@ -62,17 +56,9 @@ TextControl::TextControl(X x, Y y, X w, Y h, const std::string& str,
                          Clr color /*= CLR_BLACK*/, Flags<TextFormat> format /*= FORMAT_NONE*/,
                          Flags<WndFlag> flags /*= NO_WND_FLAGS*/) :
     Control(x, y, w, h, flags),
-    m_text(),
     m_format(format),
     m_text_color(color),
-    m_clip_text(false),
-    m_set_min_size(false),
-    m_text_elements(),
-    m_code_points(0),
-    m_font(font),
-    m_render_cache(nullptr),
-    m_cached_minusable_size_width(X0),
-    m_cached_minusable_size(Pt())
+    m_font(font)
 {
     ValidateFormat();
     SetText(str, text_elements);
@@ -88,7 +74,6 @@ TextControl::TextControl(const TextControl& that) :
     m_text_elements(that.m_text_elements),
     m_code_points(that.m_code_points),
     m_font(that.m_font),
-    m_render_cache(nullptr),
     m_cached_minusable_size_width(that.m_cached_minusable_size_width),
     m_cached_minusable_size(that.m_cached_minusable_size)
 {
