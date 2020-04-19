@@ -5897,7 +5897,7 @@ OUTPOSTS_TITLE
 Outpost
 
 OUTPOSTS_TEXT
-Outposts are unmanned stations, which can be founded in places too hostile for a colony to survive. They have no [[metertype METER_POPULATION]], and normally produce no resources. But they create [[metertype METER_SUPPLY]] (with the right tech) and provide vision. Colonies can be founded on planets that already have an Outpost. Building an Outpost requires a ship with an [[shippart CO_OUTPOST_POD]]. Outposts are also formed when the Population of a colony drops to zero for any reason.
+Outposts are unmanned stations, which can be founded in places too hostile for a colony to survive. They have no [[metertype METER_POPULATION]], and normally produce no resources. But they create [[metertype METER_SUPPLY]] (with the right tech) and provide fuel and vision. Colonies can be founded on planets that already have an Outpost. Building an Outpost requires a ship with an [[shippart CO_OUTPOST_POD]]. Outposts are also formed when the Population of a colony drops to zero for any reason.
 
 HOMEWORLDS_TITLE
 Homeworld
@@ -11301,6 +11301,12 @@ Neutronium Extraction
 
 PRO_NEUTRONIUM_EXTRACTION_DESC
 The core of a [[STAR_NEUTRON]] star consists of degenerate neutron matter, compressed by gravity to a density far greater than the heaviest normal matter. This exotic material has numerous applications once extracted from the star, allowing production of otherwise impossible structures and ship parts.
+
+CON_OUTPOST
+Outposts
+
+CON_OUTPOST_DESC
+The technology necessary for establishing [[encyclopedia OUTPOSTS_TITLE]] on planets and asteroid belts.
 
 CON_ARCH_PSYCH
 Architectural Psychology
