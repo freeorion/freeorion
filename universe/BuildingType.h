@@ -151,8 +151,8 @@ private:
 //! Holds all FreeOrion BuildingType%s.  Types may be looked up by name.
 class BuildingTypeManager {
 public:
-    using BuildingTypeMap = std::map<std::string, std::unique_ptr<BuildingType>>;
-    using iterator = BuildingTypeMap::const_iterator;
+    using container_type = std::map<std::string, std::unique_ptr<BuildingType>>;
+    using iterator = container_type::const_iterator;
 
     //! Returns the building type with the name @p name; you should use the
     //! free function GetBuildingType(...) instead, mainly to save some typing.
@@ -177,7 +177,7 @@ public:
     auto GetCheckSum() const -> unsigned int;
 
     //! Sets building types to the future value of \p pending_building_types.
-    FO_COMMON_API void SetBuildingTypes(Pending::Pending<BuildingTypeMap>&& pending_building_types);
+    FO_COMMON_API void SetBuildingTypes(Pending::Pending<container_type>&& pending_building_types);
 
 private:
     BuildingTypeManager();
@@ -187,11 +187,11 @@ private:
 
     //! Future building type being parsed by parser.
     //! Mutable so that it can be assigned to m_building_types when completed.
-    mutable boost::optional<Pending::Pending<BuildingTypeMap>> m_pending_building_types = boost::none;
+    mutable boost::optional<Pending::Pending<container_type>> m_pending_building_types = boost::none;
 
     //! Map of building types identified by the BuildingType::Name.
     //! mutable so that when the parse complete it can be updated.
-    mutable BuildingTypeMap m_building_types;
+    mutable container_type m_building_types;
 
     static BuildingTypeManager* s_instance;
 };

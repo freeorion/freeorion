@@ -265,7 +265,7 @@ unsigned int BuildingTypeManager::GetCheckSum() const {
     return retval;
 }
 
-void BuildingTypeManager::SetBuildingTypes(Pending::Pending<BuildingTypeMap>&& pending_building_types)
+void BuildingTypeManager::SetBuildingTypes(Pending::Pending<container_type>&& pending_building_types)
 { m_pending_building_types = std::move(pending_building_types); }
 
 void BuildingTypeManager::CheckPendingBuildingTypes() const
