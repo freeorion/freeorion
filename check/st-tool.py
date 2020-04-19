@@ -564,7 +564,7 @@ if __name__ == "__main__":
         * String tables contain the language name as first line, followed by
           the file notes.
         * Section titles are prefixed with a block comment (prefix '##').
-        * Section titles have two leading whitespaces and one trailingi
+        * Section titles have two leading whitespaces and one trailing
           whitespace.
         """),
         formatter_class=argparse.RawTextHelpFormatter)
