@@ -253,8 +253,8 @@ namespace CheckSums {
 //! Holds FreeOrion hull types
 class FO_COMMON_API ShipHullManager {
 public:
-    using ShipHullMap = std::map<std::string, std::unique_ptr<ShipHull>>;
-    using iterator = ShipHullMap::const_iterator;
+    using container_type = std::map<std::string, std::unique_ptr<ShipHull>>;
+    using iterator = container_type::const_iterator;
 
     //! Returns the hull type with the name @a name; you should use the free
     //! function GetShipHull() instead
@@ -282,7 +282,7 @@ public:
     auto GetCheckSum() const -> unsigned int;
 
     //! Sets hull types to the future value of \p pending_ship_hulls.
-    FO_COMMON_API void SetShipHulls(Pending::Pending<ShipHullMap>&& pending_ship_hulls);
+    FO_COMMON_API void SetShipHulls(Pending::Pending<container_type>&& pending_ship_hulls);
 
 private:
     ShipHullManager();
@@ -291,10 +291,10 @@ private:
     void CheckPendingShipHulls() const;
 
     //! Future hull type being parsed by parser.
-    mutable boost::optional<Pending::Pending<ShipHullMap>> m_pending_ship_hulls = boost::none;
+    mutable boost::optional<Pending::Pending<container_type>> m_pending_ship_hulls = boost::none;
 
     //! Set of hull types.
-    mutable ShipHullMap m_hulls;
+    mutable container_type m_hulls;
 
     static ShipHullManager* s_instance;
 };

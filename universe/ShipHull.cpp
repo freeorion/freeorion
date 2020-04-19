@@ -285,7 +285,7 @@ unsigned int ShipHullManager::GetCheckSum() const {
     return retval;
 }
 
-void ShipHullManager::SetShipHulls(Pending::Pending<ShipHullMap>&& pending_ship_hulls)
+void ShipHullManager::SetShipHulls(Pending::Pending<container_type>&& pending_ship_hulls)
 { m_pending_ship_hulls = std::move(pending_ship_hulls); }
 
 void ShipHullManager::CheckPendingShipHulls() const {
