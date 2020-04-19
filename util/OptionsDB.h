@@ -135,7 +135,7 @@ public:
     /** returns the value of option \a name. Note that the exact type of item
       * stored in the option \a name must be known in advance.  This means that
       * Get() must be called as Get<int>("foo"), etc. */
-    template <class T>
+    template <typename T>
     T Get(const std::string& name) const
     {
         auto it = m_options.find(name);
@@ -157,7 +157,7 @@ public:
     /** returns the default value of option \a name. Note that the exact type
       * of item stored in the option \a name must be known in advance.  This
       * means that GetDefault() must be called as Get<int>("foo"), etc. */
-    template <class T>
+    template <typename T>
     T GetDefault(const std::string& name) const
     {
         auto it = m_options.find(name);
@@ -216,7 +216,7 @@ public:
     mutable OptionRemovedSignalType OptionRemovedSignal; ///< the change removed signal object for this DB
 
     /** adds an Option, optionally with a custom validator */
-    template <class T>
+    template <typename T>
     void Add(const std::string& name, const std::string& description, T default_value,
              const ValidatorBase& validator = Validator<T>(), bool storable = true,
              const std::string& section = std::string())
@@ -246,7 +246,7 @@ public:
 
     /** adds an Option with an alternative one-character shortened name,
       * optionally with a custom validator */
-    template <class T>
+    template <typename T>
     void Add(char short_name, const std::string& name, const std::string& description, T default_value,
              const ValidatorBase& validator = Validator<T>(), bool storable = true,
              const std::string& section = std::string())
@@ -329,7 +329,7 @@ public:
     void RemoveUnrecognized(const std::string& prefix = "");
 
     /** sets the value of option \a name to \a value */
-    template <class T>
+    template <typename T>
     void Set(const std::string& name, const T& value)
     {
         auto it = m_options.find(name);
@@ -339,7 +339,7 @@ public:
     }
 
     /** Set the default value of option @p name to @p value */
-    template <class T>
+    template <typename T>
     void SetDefault(const std::string& name, const T& value) {
         std::map<std::string, Option>::iterator it = m_options.find(name);
         if (!OptionExists(it))

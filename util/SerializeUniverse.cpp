@@ -34,7 +34,7 @@ BOOST_CLASS_VERSION(ShipDesign, 2)
 BOOST_CLASS_EXPORT(Universe)
 BOOST_CLASS_VERSION(Universe, 1)
 
-template <class Archive>
+template <typename Archive>
 void ObjectMap::serialize(Archive& ar, const unsigned int version)
 {
     ar & BOOST_SERIALIZATION_NVP(m_objects);
@@ -44,7 +44,7 @@ void ObjectMap::serialize(Archive& ar, const unsigned int version)
         CopyObjectsToSpecializedMaps();
 }
 
-template <class Archive>
+template <typename Archive>
 void Universe::serialize(Archive& ar, const unsigned int version)
 {
     ObjectMap                       objects;
@@ -195,7 +195,7 @@ void Universe::serialize(Archive& ar, const unsigned int version)
     DebugLogger() << "Universe " << serializing_label << " done";
 }
 
-template <class Archive>
+template <typename Archive>
 void UniverseObject::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_id)
@@ -209,7 +209,7 @@ void UniverseObject::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_created_on_turn);
 }
 
-template <class Archive>
+template <typename Archive>
 void System::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
@@ -225,14 +225,14 @@ void System::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_last_turn_battle_here);
 }
 
-template <class Archive>
+template <typename Archive>
 void Field::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
         & BOOST_SERIALIZATION_NVP(m_type_name);
 }
 
-template <class Archive>
+template <typename Archive>
 void Planet::serialize(Archive& ar, const unsigned int version)
 {
    ar   & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
@@ -267,7 +267,7 @@ void Planet::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_last_turn_attacked_by_ship);
 }
 
-template <class Archive>
+template <typename Archive>
 void Building::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
@@ -277,7 +277,7 @@ void Building::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_produced_by_empire_id);
 }
 
-template <class Archive>
+template <typename Archive>
 void Fleet::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
@@ -295,7 +295,7 @@ void Fleet::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_arrival_starlane);
 }
 
-template <class Archive>
+template <typename Archive>
 void Ship::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
@@ -317,7 +317,7 @@ void Ship::serialize(Archive& ar, const unsigned int version)
     }
 }
 
-template <class Archive>
+template <typename Archive>
 void ShipDesign::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_id)
@@ -370,7 +370,7 @@ void SpeciesManager::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& a
 template
 void SpeciesManager::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, const unsigned int version);
 
-template <class Archive>
+template <typename Archive>
 void SpeciesManager::serialize(Archive& ar, const unsigned int version)
 {
     // Don't need to send all the data about species, as this is derived from
@@ -420,25 +420,25 @@ void System::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ar, const
 template
 void System::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, const unsigned int version);
 
-template <class Archive>
+template <typename Archive>
 void Serialize(Archive& oa, const Universe& universe)
 { oa << BOOST_SERIALIZATION_NVP(universe); }
 template FO_COMMON_API void Serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& oa, const Universe& universe);
 template FO_COMMON_API void Serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& oa, const Universe& universe);
 
-template <class Archive>
+template <typename Archive>
 void Serialize(Archive& oa, const std::map<int, std::shared_ptr<UniverseObject>>& objects)
 { oa << BOOST_SERIALIZATION_NVP(objects); }
 template void Serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& oa, const std::map<int, std::shared_ptr<UniverseObject>>& objects);
 template void Serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& oa, const std::map<int, std::shared_ptr<UniverseObject>>& objects);
 
-template <class Archive>
+template <typename Archive>
 void Deserialize(Archive& ia, Universe& universe)
 { ia >> BOOST_SERIALIZATION_NVP(universe); }
 template FO_COMMON_API void Deserialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ia, Universe& universe);
 template FO_COMMON_API void Deserialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ia, Universe& universe);
 
-template <class Archive>
+template <typename Archive>
 void Deserialize(Archive& ia, std::map<int, std::shared_ptr<UniverseObject>>& objects)
 { ia >> BOOST_SERIALIZATION_NVP(objects); }
 template void Deserialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ia, std::map<int, std::shared_ptr<UniverseObject>>& objects);

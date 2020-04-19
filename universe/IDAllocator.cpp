@@ -283,7 +283,7 @@ std::string IDAllocator::StateString() const {
     return ss.str();
 }
 
-template <class Archive>
+template <typename Archive>
 void IDAllocator::SerializeForEmpire(Archive& ar, const unsigned int version, int empire_id) {
     DebugLogger(IDallocator) << (Archive::is_loading::value ? "Deserialize " : "Serialize ")
                              << "IDAllocator()  server id = "

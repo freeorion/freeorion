@@ -45,7 +45,7 @@ namespace GG {
 
     typedef TextControl Label;
 
-    template <class T>
+    template <typename T>
     class Spin;
 }
 

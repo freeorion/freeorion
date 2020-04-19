@@ -31,7 +31,7 @@ struct FO_COMMON_API BoutBeginEvent : public CombatEvent {
 
 private:
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -62,7 +62,7 @@ private:
     std::vector<CombatEventPtr> events;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -88,7 +88,7 @@ protected:
     std::vector<CombatEventPtr> events;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -119,7 +119,7 @@ private:
     EmpireToObjectVisibilityMap empire_to_object_visibility;// filled by AutoresolveInfo::ReportInvisibleObjects
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -154,7 +154,7 @@ struct FO_COMMON_API StealthChangeEvent : public CombatEvent {
         Visibility visibility;
 
         friend class boost::serialization::access;
-        template <class Archive>
+        template <typename Archive>
         void serialize(Archive& ar, const unsigned int version);
     };
 
@@ -163,7 +163,7 @@ private:
     std::map<int, std::vector<StealthChangeEventDetailPtr>> events;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -206,7 +206,7 @@ struct FO_COMMON_API WeaponFireEvent : public CombatEvent {
 
 private:
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -225,7 +225,7 @@ struct FO_COMMON_API IncapacitationEvent : public CombatEvent {
 
 private:
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -245,7 +245,7 @@ private:
     std::map<std::pair<int, int>, unsigned int> events;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -266,7 +266,7 @@ struct FO_COMMON_API FighterLaunchEvent : public CombatEvent {
 
 private:
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -285,7 +285,7 @@ private:
     std::map<int, unsigned int> events;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -313,7 +313,7 @@ private:
     std::map<int, std::vector<WeaponFireEvent::WeaponFireEventPtr>> events;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 

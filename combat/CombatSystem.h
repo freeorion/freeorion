@@ -53,9 +53,9 @@ private:
     void    InitializeObjectVisibility();
 
     friend class boost::serialization::access;
-    template<class Archive>
+    template <typename Archive>
     void save(Archive & ar, const unsigned int version) const;
-    template<class Archive>
+    template <typename Archive>
     void load(Archive & ar, const unsigned int version);
     BOOST_SERIALIZATION_SPLIT_MEMBER()
 };
@@ -63,7 +63,7 @@ private:
 /** Auto-resolves a battle. */
 void AutoResolveCombat(CombatInfo& combat_info);
 
-template <class Archive>
+template <typename Archive>
 void CombatInfo::save(Archive & ar, const unsigned int version) const
 {
     std::set<int>                       filtered_empire_ids;
@@ -93,7 +93,7 @@ void CombatInfo::save(Archive & ar, const unsigned int version) const
         & BOOST_SERIALIZATION_NVP(filtered_combat_events);
 }
 
-template <class Archive>
+template <typename Archive>
 void CombatInfo::load(Archive & ar, const unsigned int version)
 {
     std::set<int>                       filtered_empire_ids;

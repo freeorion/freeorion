@@ -44,8 +44,8 @@ namespace GG {
 
 // forward declaration of helper functions and classes
 namespace spin_details {
-    template <class T> T mod(T, T);
-    template <class T> T div(T, T);
+    template <typename T> T mod(T, T);
+    template <typename T> T div(T, T);
 }
 
 
@@ -68,7 +68,7 @@ namespace spin_details {
     at arbitrary sizes, and note that Spin buttons are always H wide by H/2
     tall, where H is the height of the Spin, less the thickness of the Spin's
     border. */
-template <class T>
+template <typename T>
 class Spin : public Control
 {
 public:
@@ -172,7 +172,7 @@ private:
 
 
 // template implementations
-template<class T>
+template <typename T>
 Spin<T>::Spin(T value, T step, T min, T max, bool edits, const std::shared_ptr<Font>& font, Clr color,
               Clr text_color/* = CLR_BLACK*/) :
     Control(X0, Y0, X1, font->Height() + 2 * PIXEL_MARGIN, INTERACTIVE),
@@ -193,7 +193,7 @@ Spin<T>::Spin(T value, T step, T min, T max, bool edits, const std::shared_ptr<F
         ValueChangedSignal.connect(&ValueChangedEcho);
 }
 
-template<class T>
+template <typename T>
 void Spin<T>::CompleteConstruction()
 {
     const auto& style = GetStyleFactory();
@@ -208,11 +208,11 @@ void Spin<T>::CompleteConstruction()
     Spin<T>::SetEditTextFromValue();
 }
 
-template<class T>
+template <typename T>
 Spin<T>::~Spin()
 {}
 
-template<class T>
+template <typename T>
 Pt Spin<T>::MinUsableSize() const
 {
     Pt edit_min = m_edit->MinUsableSize();
@@ -222,47 +222,47 @@ Pt Spin<T>::MinUsableSize() const
               std::max(up_min.y + down_min.y, edit_min.y) + 2 * BORDER_THICK);
 }
 
-template<class T>
+template <typename T>
 T Spin<T>::Value() const
 { return m_value; }
 
-template<class T>
+template <typename T>
 T Spin<T>::StepSize() const
 { return m_step_size; }
 
-template<class T>
+template <typename T>
 T Spin<T>::MinValue() const
 { return m_min_value; }
 
-template<class T>
+template <typename T>
 T Spin<T>::MaxValue() const
 { return m_max_value; }
 
-template<class T>
+template <typename T>
 bool Spin<T>::Editable() const 
 { return m_editable; }
 
-template<class T>
+template <typename T>
 X Spin<T>::ButtonWidth() const
 { return m_button_width; }
 
-template<class T>
+template <typename T>
 Clr Spin<T>::TextColor() const
 { return m_edit->TextColor(); }
 
-template<class T>
+template <typename T>
 Clr Spin<T>::InteriorColor() const
 { return m_edit->InteriorColor(); }
 
-template<class T>
+template <typename T>
 Clr Spin<T>::HiliteColor() const
 { return m_edit->HiliteColor(); }
 
-template<class T>
+template <typename T>
 Clr Spin<T>::SelectedTextColor() const
 { return m_edit->SelectedTextColor(); }
 
-template<class T>
+template <typename T>
 void Spin<T>::Render()
 {
     Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
@@ -271,7 +271,7 @@ void Spin<T>::Render()
     BeveledRectangle(ul, lr, int_color_to_use, color_to_use, false, BORDER_THICK);
 }
 
-template<class T>
+template <typename T>
 void Spin<T>::SizeMove(const Pt& ul, const Pt& lr)
 {
     Wnd::SizeMove(ul, lr);
@@ -284,7 +284,7 @@ void Spin<T>::SizeMove(const Pt& ul, const Pt& lr)
                             Pt(BUTTON_X_POS + m_button_width, BORDER_THICK + BUTTONS_HEIGHT));
 }
 
-template<class T>
+template <typename T>
 void Spin<T>::Disable(bool b/* = true*/)
 {
     Control::Disable(b);
@@ -293,7 +293,7 @@ void Spin<T>::Disable(bool b/* = true*/)
     m_down_button->Disable(b);
 }
 
-template<class T>
+template <typename T>
 void Spin<T>::SetColor(Clr c)
 {
     Control::SetColor(c);
@@ -301,26 +301,26 @@ void Spin<T>::SetColor(Clr c)
     m_down_button->SetColor(c);
 }
 
-template<class T>
+template <typename T>
 void Spin<T>::Incr()
 { SetValueImpl(m_value + m_step_size, false); }
 
-template<class T>
+template <typename T>
 void Spin<T>::Decr()
 { SetValueImpl(m_value - m_step_size, false); }
 
-template<class T>
+template <typename T>
 void Spin<T>::SetValue(T value)
 { SetValueImpl(value, false); }
 
-template<class T>
+template <typename T>
 void Spin<T>::SetStepSize(T step)
 {
     m_step_size = step;
     SetValue(m_value);
 }
 
-template<class T>
+template <typename T>
 void Spin<T>::SetMinValue(T value)
 {
     m_min_value = value;
@@ -328,7 +328,7 @@ void Spin<T>::SetMinValue(T value)
         SetValue(m_min_value);
 }
 
-template<class T>
+template <typename T>
 void Spin<T>::SetMaxValue(T value)
 {
     m_max_value = value;
@@ -336,11 +336,11 @@ void Spin<T>::SetMaxValue(T value)
         SetValue(m_max_value);
 }
 
-template<class T>
+template <typename T>
 void Spin<T>::SetTextColor(Clr c)
 { m_edit->SetTextColor(c); }
 
-template<class T>
+template <typename T>
 void Spin<T>::SetButtonWidth(X width)
 {
     if (1 <= width) {
@@ -351,31 +351,31 @@ void Spin<T>::SetButtonWidth(X width)
     }
 }
 
-template<class T>
+template <typename T>
 void Spin<T>::SetInteriorColor(Clr c)
 { m_edit->SetInteriorColor(c); }
 
-template<class T>
+template <typename T>
 void Spin<T>::SetHiliteColor(Clr c)
 { m_edit->SetHiliteColor(c); }
 
-template<class T>
+template <typename T>
 void Spin<T>::SetSelectedTextColor(Clr c)
 { m_edit->SetSelectedTextColor(c); }
 
-template<class T>
+template <typename T>
 Button* Spin<T>::UpButton() const
 { return m_up_button.get(); }
 
-template<class T>
+template <typename T>
 Button* Spin<T>::DownButton() const
 { return m_down_button.get(); }
 
-template<class T>
+template <typename T>
 Edit* Spin<T>::GetEdit() const
 { return m_edit.get(); }
 
-template<class T>
+template <typename T>
 void Spin<T>::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys)
 {
     if (Disabled()) {
@@ -405,7 +405,7 @@ void Spin<T>::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_
     }
 }
 
-template<class T>
+template <typename T>
 void Spin<T>::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
 {
     if (Disabled()) {
@@ -419,7 +419,7 @@ void Spin<T>::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
         DecrImpl(true);
 }
 
-template<class T>
+template <typename T>
 bool Spin<T>::EventFilter(Wnd* w, const WndEvent& event)
 {
     if (w == m_edit.get()) {
@@ -433,14 +433,14 @@ bool Spin<T>::EventFilter(Wnd* w, const WndEvent& event)
     return false;
 }
 
-template<class T>
+template <typename T>
 void Spin<T>::SetEditTextFromValue()
 {
     if (m_edit)
         m_edit->SetText(std::to_string(m_value));
 }
 
-template<class T>
+template <typename T>
 void Spin<T>::ConnectSignals()
 {
     m_edit->FocusUpdateSignal.connect(
@@ -451,7 +451,7 @@ void Spin<T>::ConnectSignals()
         boost::bind(&Spin::DecrImpl, this, true));
 }
 
-template<class T>
+template <typename T>
 void Spin<T>::ValueUpdated(const std::string& val_text)
 {
     T value;
@@ -464,15 +464,15 @@ void Spin<T>::ValueUpdated(const std::string& val_text)
     SetValueImpl(value, true);
 }
 
-template<class T>
+template <typename T>
 void Spin<T>::IncrImpl(bool signal)
 { SetValueImpl(static_cast<T>(m_value + m_step_size), signal); }
 
-template<class T>
+template <typename T>
 void Spin<T>::DecrImpl(bool signal)
 { SetValueImpl(static_cast<T>(m_value - m_step_size), signal); }
 
-template<class T>
+template <typename T>
 void Spin<T>::SetValueImpl(T value, bool signal)
 {
     //std::cout << "Spin<T>::SetValueImpl(" << value << ", " << signal << ")" << std::endl;
@@ -507,15 +507,15 @@ void Spin<T>::SetValueImpl(T value, bool signal)
         ValueChangedSignal(m_value);
 }
 
-template <class T>
+template <typename T>
 void Spin<T>::ValueChangedEcho(const T& value)
 { std::cerr << "GG SIGNAL : Spin<>::ValueChangedSignal(value=" << value << ")\n"; }
 
 
 namespace spin_details {
     // provides a typesafe mod function
-    template <class T> inline
-    T mod (T dividend, T divisor) {return static_cast<T>(dividend % divisor);}
+    template <typename T>
+    inline T mod (T dividend, T divisor) {return static_cast<T>(dividend % divisor);}
 
     // template specializations
     template <> inline
@@ -526,8 +526,8 @@ namespace spin_details {
     long double mod<long double> (long double dividend, long double divisor) {return std::fmod(dividend, divisor);}
 
     // provides a typesafe div function
-    template <class T> inline 
-    T div (T dividend, T divisor) {return static_cast<T>(dividend / divisor);}
+    template <typename T>
+    inline T div (T dividend, T divisor) {return static_cast<T>(dividend / divisor);}
 
     // template specializations
     template <> inline

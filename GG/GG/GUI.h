@@ -126,7 +126,7 @@ private:
     struct OrCombiner
     {
         typedef bool result_type; 
-        template<class InIt> bool operator()(InIt first, InIt last) const;
+        template <typename InIt> bool operator()(InIt first, InIt last) const;
     };
 
 public:
@@ -330,14 +330,14 @@ public:
 
     /** Returns a shared_ptr to the desired font, supporting all the
         characters in the UnicodeCharsets in the range [first, last). */
-    template <class CharSetIter>
+    template <typename CharSetIter>
     std::shared_ptr<Font> GetFont(const std::string& font_filename, unsigned int pts,
                                   CharSetIter first, CharSetIter last);
 
     /** Returns a shared_ptr to the desired font, supporting all the
         characters in the UnicodeCharsets in the range [first, last), from the
         in-memory contents \a file_contents. */
-    template <class CharSetIter>
+    template <typename CharSetIter>
     std::shared_ptr<Font> GetFont(const std::string& font_filename, unsigned int pts,
                                   const std::vector<unsigned char>& file_contents,
                                   CharSetIter first, CharSetIter last);
@@ -491,7 +491,7 @@ GG_API Flags<ModKey> MassagedAccelModKeys(Flags<ModKey> mod_keys);
 
 
 // template implementations
-template<class InIt> 
+template <typename InIt>
 bool GUI::OrCombiner::operator()(InIt first, InIt last) const
 {
     bool retval = false;
@@ -500,12 +500,12 @@ bool GUI::OrCombiner::operator()(InIt first, InIt last) const
     return retval;
 }
 
-template <class CharSetIter>
+template <typename CharSetIter>
 std::shared_ptr<Font> GUI::GetFont(const std::string& font_filename, unsigned int pts,
                                    CharSetIter first, CharSetIter last)
 { return GetFontManager().GetFont(font_filename, pts, first, last); }
 
-template <class CharSetIter>
+template <typename CharSetIter>
 std::shared_ptr<Font> GUI::GetFont(const std::string& font_filename, unsigned int pts,
                                    const std::vector<unsigned char>& file_contents,
                                    CharSetIter first, CharSetIter last)

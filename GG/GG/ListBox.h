@@ -488,7 +488,7 @@ public:
 
         If you want to use operator<() with a Row subclass DerivedRow that has
         a custom SortKeyType, use DefaultRowCmp<DerivedRow>. */
-    template <class RowType>
+    template <typename RowType>
     struct DefaultRowCmp
     {
         /** Returns true iff lhs.SortKey( \a column ) < rhs.SortKey( \a column ). */
@@ -662,7 +662,7 @@ private:
 
 
 // template implementations
-template <class RowType>
+template <typename RowType>
 bool GG::ListBox::DefaultRowCmp<RowType>::operator()(const GG::ListBox::Row& lhs, const GG::ListBox::Row& rhs, std::size_t column) const
 {
     return static_cast<const RowType&>(lhs).SortKey(column) < static_cast<const RowType&>(rhs).SortKey(column);

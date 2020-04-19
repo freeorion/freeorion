@@ -57,7 +57,7 @@ namespace detail {
 
 /** \brief Metafunction predicate that evaluates as true iff \a T is a GG flag
     type, declared by using GG_FLAG_TYPE. */
-template <class T>
+template <typename T>
 struct is_flag_type : std::false_type {};
 
 
@@ -142,7 +142,7 @@ struct is_flag_type : std::false_type {};
     unloaded.  \note All user-instantiated FlagSpecs must provide their own
     implementations of the instance() static function (all the GG-provided
     FlagSpec instantiations provide such implementations already). */
-template <class FlagType>
+template <typename FlagType>
 class GG_API FlagSpec
 {
 public:
@@ -257,17 +257,17 @@ private:
 };
 
 
-template <class FlagType>
+template <typename FlagType>
 class Flags;
 
-template <class FlagType>
+template <typename FlagType>
 std::ostream& operator<<(std::ostream& os, Flags<FlagType> flags);
 
 /** \brief A set of flags of the same type.
 
     Individual flags and sets of flags can be passed as parameters and/or be
     stored as member variables in Flags objects. */
-template <class FlagType>
+template <typename FlagType>
 class Flags
 {
 private:
@@ -351,7 +351,7 @@ private:
 };
 
 /** Writes \a flags to \a os in the format "flag1 | flag2 | ... flagn". */
-template <class FlagType>
+template <typename FlagType>
 std::ostream& operator<<(std::ostream& os, Flags<FlagType> flags)
 {
     unsigned int flags_data = flags.m_flags;
@@ -370,7 +370,7 @@ std::ostream& operator<<(std::ostream& os, Flags<FlagType> flags)
 
 /** Returns a Flags object that consists of the bitwise-or of \a lhs and \a
     rhs. */
-template <class FlagType>
+template <typename FlagType>
 Flags<FlagType> operator|(Flags<FlagType> lhs, Flags<FlagType> rhs)
 {
     Flags<FlagType> retval(lhs);
@@ -380,19 +380,19 @@ Flags<FlagType> operator|(Flags<FlagType> lhs, Flags<FlagType> rhs)
 
 /** Returns a Flags object that consists of the bitwise-or of \a lhs and \a
     rhs. */
-template <class FlagType>
+template <typename FlagType>
 Flags<FlagType> operator|(Flags<FlagType> lhs, FlagType rhs)
 { return lhs | Flags<FlagType>(rhs); }
 
 /** Returns a Flags object that consists of the bitwise-or of \a lhs and \a
     rhs. */
-template <class FlagType>
+template <typename FlagType>
 Flags<FlagType> operator|(FlagType lhs, Flags<FlagType> rhs)
 { return Flags<FlagType>(lhs) | rhs; }
 
 /** Returns a Flags object that consists of the bitwise-or of \a lhs and \a
     rhs. */
-template <class FlagType>
+template <typename FlagType>
 typename std::enable_if<
     is_flag_type<FlagType>::value,
     Flags<FlagType>
@@ -402,7 +402,7 @@ operator|(FlagType lhs, FlagType rhs)
 
 /** Returns a Flags object that consists of the bitwise-and of \a lhs and \a
     rhs. */
-template <class FlagType>
+template <typename FlagType>
 Flags<FlagType> operator&(Flags<FlagType> lhs, Flags<FlagType> rhs)
 {
     Flags<FlagType> retval(lhs);
@@ -412,19 +412,19 @@ Flags<FlagType> operator&(Flags<FlagType> lhs, Flags<FlagType> rhs)
 
 /** Returns a Flags object that consists of the bitwise-and of \a lhs and \a
     rhs. */
-template <class FlagType>
+template <typename FlagType>
 Flags<FlagType> operator&(Flags<FlagType> lhs, FlagType rhs)
 { return lhs & Flags<FlagType>(rhs); }
 
 /** Returns a Flags object that consists of the bitwise-and of \a lhs and \a
     rhs. */
-template <class FlagType>
+template <typename FlagType>
 Flags<FlagType> operator&(FlagType lhs, Flags<FlagType> rhs)
 { return Flags<FlagType>(lhs) & rhs; }
 
 /** Returns a Flags object that consists of the bitwise-and of \a lhs and \a
     rhs. */
-template <class FlagType>
+template <typename FlagType>
 typename std::enable_if<
     is_flag_type<FlagType>::value,
     Flags<FlagType>
@@ -434,7 +434,7 @@ operator&(FlagType lhs, FlagType rhs)
 
 /** Returns a Flags object that consists of the bitwise-xor of \a lhs and \a
     rhs. */
-template <class FlagType>
+template <typename FlagType>
 Flags<FlagType> operator^(Flags<FlagType> lhs, Flags<FlagType> rhs)
 {
     Flags<FlagType> retval(lhs);
@@ -444,19 +444,19 @@ Flags<FlagType> operator^(Flags<FlagType> lhs, Flags<FlagType> rhs)
 
 /** Returns a Flags object that consists of the bitwise-xor of \a lhs and \a
     rhs. */
-template <class FlagType>
+template <typename FlagType>
 Flags<FlagType> operator^(Flags<FlagType> lhs, FlagType rhs)
 { return lhs ^ Flags<FlagType>(rhs); }
 
 /** Returns a Flags object that consists of the bitwise-xor of \a lhs and \a
     rhs. */
-template <class FlagType>
+template <typename FlagType>
 Flags<FlagType> operator^(FlagType lhs, Flags<FlagType> rhs)
 { return Flags<FlagType>(lhs) ^ rhs; }
 
 /** Returns a Flags object that consists of the bitwise-xor of \a lhs and \a
     rhs. */
-template <class FlagType>
+template <typename FlagType>
 typename std::enable_if<
     is_flag_type<FlagType>::value,
     Flags<FlagType>
@@ -466,7 +466,7 @@ operator^(FlagType lhs, FlagType rhs)
 
 /** Returns a Flags object that consists of all the flags known to
     FlagSpec<FlagType>::instance() except those in \a flags. */
-template <class FlagType>
+template <typename FlagType>
 Flags<FlagType> operator~(Flags<FlagType> flags)
 {
     Flags<FlagType> retval;
@@ -479,7 +479,7 @@ Flags<FlagType> operator~(Flags<FlagType> flags)
 
 /** Returns a Flags object that consists of all the flags known to
     FlagSpec<FlagType>::instance() except \a flag. */
-template <class FlagType>
+template <typename FlagType>
 typename std::enable_if<
     is_flag_type<FlagType>::value,
     Flags<FlagType>

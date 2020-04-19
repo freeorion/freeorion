@@ -85,7 +85,7 @@ private:
     std::string                                         m_graphic ="";
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -97,7 +97,7 @@ FO_COMMON_API const Special* GetSpecial(const std::string& name);
 FO_COMMON_API std::vector<std::string> SpecialNames();
 
 // template implementations
-template <class Archive>
+template <typename Archive>
 void Special::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_name)

@@ -61,7 +61,7 @@ public:
              int produced_by_empire_id = ALL_EMPIRES);
 
 protected:
-    template <class T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
+    template <typename T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
 
 public:
     ~Building() {}
@@ -78,7 +78,7 @@ private:
     int         m_produced_by_empire_id = ALL_EMPIRES;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 

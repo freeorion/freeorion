@@ -44,7 +44,7 @@ class GroupBox;
 class ListBox;
 class RadioButtonGroup;
 class Scroll;
-template <class T>
+template <typename T>
 class Slider;
 class StateButton;
 class TabBar;

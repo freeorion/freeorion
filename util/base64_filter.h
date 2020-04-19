@@ -126,7 +126,7 @@ struct urlsafe_base64_traits
 };
 
 
-template<class Derived, class CharT, std::streamsize MaxBlockSize>
+template<typename Derived, typename CharT, std::streamsize MaxBlockSize>
 class arbitrary_positional_facade;
 
 class core_access
@@ -134,23 +134,23 @@ class core_access
 #if defined(BOOST_NO_MEMBER_TEMPLATE_FRIENDS)
 public:
 #else
-    template<class Derived, class CharT, std::streamsize MaxBlockSize>
+    template<typename Derived, typename CharT, std::streamsize MaxBlockSize>
     friend class arbitrary_positional_facade;
 
     friend struct device_operations;
 
-    template<class Device>
+    template <typename Device>
     friend struct filter_operations;
 #endif
 
-    template<class RepositionalSource, class CharT>
+    template<typename RepositionalSource, typename CharT>
     static std::streamsize read_blocks(
         RepositionalSource& src, CharT* s, std::streamsize n)
     {
         return src.read_blocks(s, n);
     }
 
-    template<class RepositionalInputFilter, class Source>
+    template<typename RepositionalInputFilter, typename Source>
     static std::streamsize read_blocks(
         RepositionalInputFilter& filter, Source& src,
         typename boost::iostreams::char_type_of<Source>::type* s,
@@ -159,14 +159,14 @@ public:
         return filter.read_blocks(src, s, n);
     }
 
-    template<class RepositionalSink, class CharT>
+    template<typename RepositionalSink, typename CharT>
     static std::streamsize write_blocks(
         RepositionalSink& sink, const CharT* s, std::streamsize n)
     {
         return sink.write_blocks(s, n);
     }
 
-    template<class RepositionalOutputFilter, class Sink>
+    template<typename RepositionalOutputFilter, typename Sink>
     static std::streamsize write_blocks(
         RepositionalOutputFilter& filter, Sink& sink,
         const typename boost::iostreams::char_type_of<Sink>::type* s,
@@ -175,14 +175,14 @@ public:
         return filter.write_blocks(sink, s, n);
     }
 
-    template<class RepositionalSink, class CharT>
+    template<typename RepositionalSink, typename CharT>
     static void close_with_flush(
         RepositionalSink& sink, const CharT* s, std::streamsize n)
     {
         return sink.close_with_flush(s, n);
     }
 
-    template<class RepositionalOutputFilter, class Sink>
+    template<typename RepositionalOutputFilter, typename Sink>
     static void close_with_flush(
         RepositionalOutputFilter& filter, Sink& sink,
         const typename boost::iostreams::char_type_of<Sink>::type* s,
@@ -191,7 +191,7 @@ public:
         return filter.close_with_flush(sink, s, n);
     }
 
-    template<class RepositionalDevice>
+    template <typename RepositionalDevice>
     static std::streampos seek_blocks(
         RepositionalDevice& dev,
         boost::iostreams::stream_offset off, BOOST_IOS::seekdir way)
@@ -201,14 +201,14 @@ public:
 
     struct device_operations
     {
-        template<class RepositionalDevice, class CharT>
+        template<typename RepositionalDevice, typename CharT>
         std::streamsize read_blocks(
             RepositionalDevice& t, CharT* s, std::streamsize n) const
         {
             return core_access::read_blocks(t, s, n);
         }
 
-        template<class RepositionalDevice, class CharT>
+        template<typename RepositionalDevice, typename CharT>
         std::streamsize write_blocks(
             RepositionalDevice& t, const CharT* s, std::streamsize n) const
         {
@@ -216,7 +216,7 @@ public:
         }
     };
 
-    template<class Device>
+    template <typename Device>
     struct filter_operations
     {
         typedef typename boost::iostreams::
@@ -226,14 +226,14 @@ public:
 
         explicit filter_operations(Device& dev) : dev_ptr_(&dev) {}
 
-        template<class RepositionalInputFilter>
+        template <typename RepositionalInputFilter>
         std::streamsize read_blocks(
             RepositionalInputFilter& t, char_type* s, std::streamsize n) const
         {
             return core_access::read_blocks(t, *dev_ptr_, s, n);
         }
 
-        template<class RepositionalOutputFilter>
+        template <typename RepositionalOutputFilter>
         std::streamsize write_blocks(
             RepositionalOutputFilter& t,
             const char_type* s, std::streamsize n) const
@@ -243,7 +243,7 @@ public:
     };
 };
 
-template<class Derived, class CharT, std::streamsize MaxBlockSize>
+template<typename Derived, typename CharT, std::streamsize MaxBlockSize>
 class arbitrary_positional_facade
 {
 private:
@@ -279,7 +279,7 @@ public:
         return read_impl(core_access::device_operations(), s, n);
     }
 
-    template<class Source>
+    template <typename Source>
     std::streamsize read(Source& src, char_type* s, std::streamsize n)
     {
         return read_impl(core_access::filter_operations<Source>(src), s, n);
@@ -290,7 +290,7 @@ public:
         return write_impl(core_access::device_operations(), s, n);
     }
 
-    template<class Sink>
+    template <typename Sink>
     std::streamsize write(Sink& sink, const char_type* s, std::streamsize n)
     {
         return write_impl(core_access::filter_operations<Sink>(sink), s, n);
@@ -302,7 +302,7 @@ public:
         core_access::close_with_flush(derived(), buffer_, count_);
     }
 
-    template<class Sink>
+    template <typename Sink>
     void close(Sink& sink)
     {
         BOOST_ASSERT(count_ < block_size_);
@@ -390,7 +390,7 @@ private:
     std::streamsize block_size_;
     std::streamsize count_;
 
-    template<class Op>
+    template <typename Op>
     std::streamsize read_impl(const Op& op, char_type* s, std::streamsize n)
     {
         std::streamsize total = 0;
@@ -443,7 +443,7 @@ private:
         return total != 0 ? total : -1;
     }
 
-    template<class Op>
+    template <typename Op>
     std::streamsize write_impl(
         const Op& op, const char_type* s, std::streamsize n)
     {
@@ -493,7 +493,7 @@ private:
 };
 
 
-template<class Traits>
+template <typename Traits>
 class basic_base64_encoder
     : public arbitrary_positional_facade<basic_base64_encoder<Traits>, char, 3>
 {
@@ -530,7 +530,7 @@ private:
         dst[3] = Traits::encode((tmp      ) & 0x3F);
     }
 
-    template<class Sink>
+    template <typename Sink>
     std::streamsize write_blocks(Sink& sink, const char* s, std::streamsize n)
     {
         for (int i = 0; i < n; ++i)
@@ -543,7 +543,7 @@ private:
         return n*3;
     }
 
-    template<class Sink>
+    template <typename Sink>
     void close_with_flush(Sink& sink, const char* s, std::streamsize n)
     {
         if (n != 0)
@@ -563,7 +563,7 @@ private:
     }
 };
 
-template<class Traits>
+template <typename Traits>
 class basic_base64_decoder
     : public arbitrary_positional_facade<basic_base64_decoder<Traits>, char, 3>
 {
@@ -620,7 +620,7 @@ private:
         return n;
     }
 
-    template<class Source>
+    template <typename Source>
     std::streamsize read_blocks(Source& src, char* s, std::streamsize n)
     {
         std::streamsize total = 0;
@@ -638,7 +638,7 @@ private:
         return (total != 0) ? total : -1;
     }
 
-    template<class Source>
+    template <typename Source>
     void close_with_flush(Source&, const char*, std::streamsize)
     {
     }

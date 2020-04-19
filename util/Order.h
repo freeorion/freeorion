@@ -86,7 +86,7 @@ private:
     mutable bool m_executed = false;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -131,7 +131,7 @@ private:
     std::string m_name;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -184,7 +184,7 @@ private:
     bool m_aggressive;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -238,7 +238,7 @@ private:
     bool m_append = false;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -285,7 +285,7 @@ private:
     std::vector<int> m_add_ships;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -334,7 +334,7 @@ private:
     int m_planet = INVALID_OBJECT_ID;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -383,7 +383,7 @@ private:
     int m_planet = INVALID_OBJECT_ID;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -430,7 +430,7 @@ private:
     int m_planet = INVALID_OBJECT_ID;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -469,7 +469,7 @@ private:
     std::string m_focus;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -504,7 +504,7 @@ private:
     static const int INVALID_PAUSE_RESUME = -1;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -563,7 +563,7 @@ private:
     static const int INVALID_QUANTITY = -1000;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -638,7 +638,7 @@ private:
     // end details of design to create
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -679,7 +679,7 @@ private:
     int m_object_id = INVALID_OBJECT_ID;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -724,7 +724,7 @@ private:
     bool m_aggression = false;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -770,7 +770,7 @@ private:
     int m_recipient_empire_id = ALL_EMPIRES;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -805,7 +805,7 @@ private:
     int m_object_id = INVALID_OBJECT_ID;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 

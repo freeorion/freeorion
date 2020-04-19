@@ -46,7 +46,7 @@ namespace GG {
     /** This class is not meant for public consumption.
       * Access this class through the functions generated
       * in the GG_ENUM or GG_CLASS_ENUM macro invocation. */
-    template <class EnumType>
+    template <typename EnumType>
     class EnumMap {
     public:
         const std::string& operator[](EnumType value) const;
@@ -64,7 +64,7 @@ namespace GG {
     /** Do not call this function directly.
       * Instead, rely on the functions generated
       * by the GG_ENUM or GG_CLASS_ENUM macro invocations. */
-    template <class EnumType>
+    template <typename EnumType>
     EnumMap<EnumType>& GetEnumMap() {
         static EnumMap<EnumType> map;
         return map;
@@ -73,7 +73,7 @@ namespace GG {
     /** Do not call this function directly.
       * Instead, rely on the functions generated
       * by the GG_ENUM or GG_CLASS_ENUM macro invocations. */
-    template <class EnumType>
+    template <typename EnumType>
     void BuildEnumMap(EnumMap<EnumType>& map, const std::string& enum_name, const char* comma_separated_names) {
         std::stringstream name_stream(comma_separated_names);
 
@@ -145,7 +145,7 @@ namespace GG {
       /////////////
      // EnumMap //
     /////////////
-    template <class EnumType>
+    template <typename EnumType>
     const std::string& EnumMap<EnumType>::operator[](EnumType value) const {
         auto it = m_value_to_name_map.find(value);
         if (it != m_value_to_name_map.end()) {
@@ -156,7 +156,7 @@ namespace GG {
         }
     }
 
-    template <class EnumType>
+    template <typename EnumType>
     EnumType EnumMap<EnumType>::operator[](const std::string& name) const {
         auto it = m_name_to_value_map.find(name);
         if (it != m_name_to_value_map.end()) {
@@ -166,12 +166,12 @@ namespace GG {
         }
     }
 
-    template <class EnumType>
+    template <typename EnumType>
     size_t EnumMap<EnumType>::size() const {
         return m_name_to_value_map.size();
     }
 
-    template <class EnumType>
+    template <typename EnumType>
     void EnumMap<EnumType>::Insert(int& default_value, const std::string& entry) {
         std::stringstream name_and_value(entry);
 

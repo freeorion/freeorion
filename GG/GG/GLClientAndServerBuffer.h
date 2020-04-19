@@ -34,7 +34,7 @@ protected:
 // GLClientAndServerBufferBase
 // template class for buffers with different types of content
 ///////////////////////////////////////////////////////////////////////////
-template <class vtype> 
+template <typename vtype>
 class GG_API GLClientAndServerBufferBase : public GLBufferBase
 {
 private:

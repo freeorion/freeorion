@@ -125,7 +125,7 @@ bool SaveGamePreviewData::Valid() const
 void SaveGamePreviewData::SetBinary(bool bin)
 { description = bin ? BIN_SAVE_FILE_DESCRIPTION : XML_SAVE_FILE_DESCRIPTION; }
 
-template<class Archive>
+template <typename Archive>
 void SaveGamePreviewData::serialize(Archive& ar, unsigned int version)
 {
     if (version >= 2) {
@@ -160,7 +160,7 @@ template void SaveGamePreviewData::serialize<freeorion_xml_oarchive>(freeorion_x
 template void SaveGamePreviewData::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, unsigned int);
 
 
-template<class Archive>
+template <typename Archive>
 void FullPreview::serialize(Archive& ar, unsigned int version)
 {
     ar & BOOST_SERIALIZATION_NVP(filename)

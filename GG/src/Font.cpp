@@ -77,7 +77,7 @@ namespace {
     const std::string ALIGN_RIGHT_TAG = "right";
     const std::string PRE_TAG = "pre";
 
-    template <class T>
+    template <typename T>
     T NextPowerOfTwo(T input)
     {
         T value(1);

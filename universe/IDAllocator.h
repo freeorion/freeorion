@@ -65,7 +65,7 @@ public:
     void ObfuscateBeforeSerialization();
 
     /** Serialize while stripping out information not known to \p empire_id. */
-    template <class Archive>
+    template <typename Archive>
         void SerializeForEmpire(Archive& ar, const unsigned int version, int empire_id);
 
 private:

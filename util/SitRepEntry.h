@@ -31,7 +31,7 @@ private:
     std::string m_label;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -67,7 +67,7 @@ FO_COMMON_API SitRepEntry CreateSitRep(const std::string& template_string, int t
                                        const std::vector<std::pair<std::string, std::string>>& parameters, const std::string label = "", bool stringtable_lookup = true);
 //! @}
 
-template <class Archive>
+template <typename Archive>
 void SitRepEntry::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(VarText)

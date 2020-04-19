@@ -246,7 +246,7 @@ private:
     bool    m_producible = false;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 

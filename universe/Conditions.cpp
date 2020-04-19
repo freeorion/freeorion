@@ -110,7 +110,7 @@ namespace {
       * \a pred to each object, to test if it should remain in its current set
       * or be transferred from the \a search_domain specified set into the
       * other. */
-    template <class Pred>
+    template <typename Pred>
     void EvalImpl(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
                   Condition::SearchDomain search_domain, const Pred& pred)
     {

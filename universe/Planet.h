@@ -130,7 +130,7 @@ public:
     ~Planet() {}
 
 protected:
-    template <class T>
+    template <typename T>
     friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
 
 protected:
@@ -174,7 +174,7 @@ private:
     std::string     m_surface_texture;  // intentionally not serialized; set by local effects
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 

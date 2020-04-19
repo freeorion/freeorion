@@ -15,7 +15,7 @@
 #include <boost/uuid/random_generator.hpp>
 
 
-template <class Archive>
+template <typename Archive>
 void ResearchQueue::Element::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(name)
@@ -30,7 +30,7 @@ template void ResearchQueue::Element::serialize<freeorion_bin_iarchive>(freeorio
 template void ResearchQueue::Element::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
 template void ResearchQueue::Element::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
 
-template <class Archive>
+template <typename Archive>
 void ResearchQueue::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_queue)
@@ -44,7 +44,7 @@ template void ResearchQueue::serialize<freeorion_bin_iarchive>(freeorion_bin_iar
 template void ResearchQueue::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
 template void ResearchQueue::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
 
-template <class Archive>
+template <typename Archive>
 void ProductionQueue::ProductionItem::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(build_type)
@@ -57,7 +57,7 @@ template void ProductionQueue::ProductionItem::serialize<freeorion_bin_iarchive>
 template void ProductionQueue::ProductionItem::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
 template void ProductionQueue::ProductionItem::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
 
-template <class Archive>
+template <typename Archive>
 void ProductionQueue::Element::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(item)
@@ -107,7 +107,7 @@ template void ProductionQueue::Element::serialize<freeorion_bin_iarchive>(freeor
 template void ProductionQueue::Element::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
 template void ProductionQueue::Element::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
 
-template <class Archive>
+template <typename Archive>
 void ProductionQueue::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_queue)
@@ -123,7 +123,7 @@ template void ProductionQueue::serialize<freeorion_bin_iarchive>(freeorion_bin_i
 template void ProductionQueue::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
 template void ProductionQueue::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
 
-template <class Archive>
+template <typename Archive>
 void Empire::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_id)
@@ -256,7 +256,7 @@ namespace {
     { return std::make_pair(std::max(id1, ind2), std::min(id1, ind2)); }
 }
 
-template <class Archive>
+template <typename Archive>
 void EmpireManager::serialize(Archive& ar, const unsigned int version)
 {
     if (Archive::is_loading::value) {
@@ -308,7 +308,7 @@ template void EmpireManager::serialize<freeorion_bin_iarchive>(freeorion_bin_iar
 template void EmpireManager::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
 template void EmpireManager::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
 
-template <class Archive>
+template <typename Archive>
 void DiplomaticMessage::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_sender_empire)
@@ -321,7 +321,7 @@ template void DiplomaticMessage::serialize<freeorion_bin_iarchive>(freeorion_bin
 template void DiplomaticMessage::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
 template void DiplomaticMessage::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
 
-template <class Archive>
+template <typename Archive>
 void SupplyManager::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_supply_starlane_traversals)

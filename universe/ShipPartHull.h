@@ -45,7 +45,7 @@ struct HullTypeStats {
     bool    default_stealth_effects = true;
     bool    default_structure_effects = true;
 
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int) {
         ar  & BOOST_SERIALIZATION_NVP(fuel)
             & BOOST_SERIALIZATION_NVP(speed)
@@ -156,7 +156,7 @@ private:
     std::string                                         m_icon;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -225,7 +225,7 @@ FO_COMMON_API const HullType* GetHullType(const std::string& name);
 
 
 // template implementations
-template <class Archive>
+template <typename Archive>
 void HullType::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_name)

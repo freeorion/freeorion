@@ -22,7 +22,7 @@ struct FO_COMMON_API CombatParticipantState {
     CombatParticipantState(const UniverseObject& object);
 private:
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -40,7 +40,7 @@ struct FO_COMMON_API CombatLog {
     std::map<int, CombatParticipantState> participant_states;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -66,7 +66,7 @@ public:
 
     /** Serialize log headers so that the receiving LogManager can then request
         complete logs in the background.*/
-    template <class Archive>
+    template <typename Archive>
     void SerializeIncompleteLogs(Archive& ar, const unsigned int version);
     //@}
 
@@ -81,7 +81,7 @@ private:
     std::unique_ptr<Impl> const m_impl;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 

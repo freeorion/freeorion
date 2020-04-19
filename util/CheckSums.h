@@ -19,14 +19,14 @@ namespace CheckSums {
     FO_COMMON_API void CheckSumCombine(unsigned int& sum, const std::string& c);
 
     // integeral types
-    template <class T>
+    template <typename T>
     void CheckSumCombine(unsigned int& sum, T t,
                          typename std::enable_if<std::is_signed<T>::value, T>::type* = nullptr)
     {
         sum += static_cast<unsigned int>(std::abs(t));
         sum %= CHECKSUM_MODULUS;
     }
-    template <class T>
+    template <typename T>
     void CheckSumCombine(unsigned int& sum, T t,
                          typename std::enable_if<std::is_unsigned<T>::value, T>::type* = nullptr)
     {
@@ -35,7 +35,7 @@ namespace CheckSums {
     }
 
     // classes that have GetCheckSum methods
-    template <class C>
+    template <typename C>
     void CheckSumCombine(unsigned int& sum, const C& c,
                          decltype(std::declval<C>().GetCheckSum())* = nullptr)
     {
@@ -45,7 +45,7 @@ namespace CheckSums {
     }
 
     // enums
-    template <class T>
+    template <typename T>
     void CheckSumCombine(unsigned int& sum, T t,
                          typename std::enable_if<std::is_enum<T>::value, T>::type* = nullptr)
     {
@@ -54,21 +54,21 @@ namespace CheckSums {
     }
 
     // pointer types
-    template <class T>
+    template <typename T>
     void CheckSumCombine(unsigned int& sum, const T* p)
     {
         TraceLogger() << "CheckSumCombine(T*): " << typeid(p).name();
         if (p)
             CheckSumCombine(sum, *p);
     }
-    template <class T>
+    template <typename T>
     void CheckSumCombine(unsigned int& sum, const typename std::shared_ptr<T>& p)
     {
         TraceLogger() << "CheckSumCombine(shared_ptr<T>): " << typeid(p).name();
         if (p)
             CheckSumCombine(sum, *p);
     }
-    template <class T>
+    template <typename T>
     void CheckSumCombine(unsigned int& sum, const typename std::unique_ptr<T>& p)
     {
         TraceLogger() << "CheckSumCombine(unique_ptr<T>): " << typeid(p).name();
@@ -77,7 +77,7 @@ namespace CheckSums {
     }
 
     // pairs (including map value types)
-    template <class C, class D>
+    template <typename C, typename D>
     void CheckSumCombine(unsigned int& sum, const std::pair<C, D>& p)
     {
         TraceLogger() << "CheckSumCombine(pair): " << typeid(p).name();
@@ -86,7 +86,7 @@ namespace CheckSums {
     }
 
     // iterable containers
-    template <class C>
+    template <typename C>
     void CheckSumCombine(unsigned int& sum, const C& c,
                          decltype(std::declval<C>().begin())* = nullptr,
                          decltype(std::declval<C>().end())* = nullptr)

@@ -161,7 +161,7 @@ private:
     const GG::Wnd* target;
 };
 
-template<class W>
+template <typename W>
 class FocusWindowIsA {
 public:
     bool operator()() const {
