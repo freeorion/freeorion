@@ -4,15 +4,15 @@ Part
     class = ShortRange
     damage = 3
     NoDefaultCapacityEffect
-    combatTargets = And [
-        [[COMBAT_TARGETS_VISIBLE_ENEMY]]
-        OrderedAlternativesOf [
+    combatTargets = OrderedAlternativesOf [
+        And [
+            [[COMBAT_TARGETS_VISIBLE_ENEMY]]
             Or [
                [[COMBAT_TARGETS_NOT_DESTROYED_SHIP]]
                [[COMBAT_TARGETS_PLANET_WITH_DEFENSE]]
             ]
-            Planet
         ]
+        And [ [[COMBAT_TARGETS_VISIBLE_ENEMY]]  Planet ]
     ]
     mountableSlotTypes = External
     buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
