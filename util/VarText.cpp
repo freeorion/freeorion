@@ -21,14 +21,14 @@ class BuildingType;
 class Special;
 class Species;
 class FieldType;
-class HullType;
+class ShipHull;
 class ShipPart;
 const Tech*         GetTech(const std::string& name);
 const BuildingType* GetBuildingType(const std::string& name);
 const Special*      GetSpecial(const std::string& name);
 const Species*      GetSpecies(const std::string& name);
 const FieldType*    GetFieldType(const std::string& name);
-const HullType*     GetHullType(const std::string& name);
+const ShipHull*     GetShipHull(const std::string& name);
 const ShipPart*     GetShipPart(const std::string& name);
 
 namespace {
@@ -154,7 +154,7 @@ namespace {
             {VarText::BUILDING_TYPE_TAG, [](const std::string& data)
                 { return NameString<BuildingType, GetBuildingType>(data, VarText::BUILDING_TYPE_TAG); }},
             {VarText::SHIP_HULL_TAG, [](const std::string& data)
-                { return NameString<HullType, GetHullType>(data, VarText::SHIP_HULL_TAG); }},
+                { return NameString<ShipHull, GetShipHull>(data, VarText::SHIP_HULL_TAG); }},
             {VarText::SHIP_PART_TAG, [](const std::string& data)
                 { return NameString<ShipPart, GetShipPart>(data, VarText::SHIP_PART_TAG); }},
             {VarText::SPECIAL_TAG, [](const std::string& data)

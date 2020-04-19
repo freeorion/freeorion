@@ -56,7 +56,7 @@ def inspect_ai_interface():
             fo.getFieldType('FLD_ION_STORM'),
             fo.getBuildingType('BLD_SHIPYARD_BASE'),
             fo.getGalaxySetupData(),
-            fo.getHullType('SH_XENTRONIUM'),
+            fo.getShipHull('SH_XENTRONIUM'),
             fo.getShipPart('SR_WEAPON_1_1'),
             fo.getSpecial('MODERATE_TECH_NATIVES_SPECIAL'),
             fo.getSpecies('SP_ABADDONI'),

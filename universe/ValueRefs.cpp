@@ -1985,16 +1985,16 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         return retval;
     }
     else if (variable_name == "SlotsInHull") {
-        const HullType* hull_type = nullptr;
+        const ShipHull* ship_hull = nullptr;
         if (m_string_ref1) {
             std::string hull_name = m_string_ref1->Eval(context);
-            hull_type = GetHullType(hull_name);
-            if (!hull_type)
+            ship_hull = GetShipHull(hull_name);
+            if (!ship_hull)
                 return 0;
         } else {
             return 0;
         }
-        return hull_type->Slots().size();
+        return ship_hull->Slots().size();
     }
     else if (variable_name == "SlotsInShipDesign") {
         int design_id = INVALID_DESIGN_ID;
@@ -2010,10 +2010,10 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         if (!design)
             return 0;
 
-        const HullType* hull_type = GetHullType(design->Hull());
-        if (!hull_type)
+        const ShipHull* ship_hull = GetShipHull(design->Hull());
+        if (!ship_hull)
             return 0;
-        return hull_type->Slots().size();
+        return ship_hull->Slots().size();
     }
     else if (variable_name == "SpecialAddedOnTurn") {
         int object_id = INVALID_OBJECT_ID;
@@ -2096,51 +2096,51 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         return 0.0;
     }
     else if (variable_name == "HullFuel") {
-        std::string hull_type_name;
+        std::string ship_hull_name;
         if (m_string_ref1)
-            hull_type_name = m_string_ref1->Eval(context);
+            ship_hull_name = m_string_ref1->Eval(context);
 
-        const HullType* hull_type = GetHullType(hull_type_name);
-        if (!hull_type)
+        const ShipHull* ship_hull = GetShipHull(ship_hull_name);
+        if (!ship_hull)
             return 0.0;
 
-        return hull_type->Fuel();
+        return ship_hull->Fuel();
 
     }
     else if (variable_name == "HullStealth") {
-        std::string hull_type_name;
+        std::string ship_hull_name;
         if (m_string_ref1)
-            hull_type_name = m_string_ref1->Eval(context);
+            ship_hull_name = m_string_ref1->Eval(context);
 
-        const HullType* hull_type = GetHullType(hull_type_name);
-        if (!hull_type)
+        const ShipHull* ship_hull = GetShipHull(ship_hull_name);
+        if (!ship_hull)
             return 0.0;
 
-        return hull_type->Stealth();
+        return ship_hull->Stealth();
 
     }
     else if (variable_name == "HullStructure") {
-        std::string hull_type_name;
+        std::string ship_hull_name;
         if (m_string_ref1)
-            hull_type_name = m_string_ref1->Eval(context);
+            ship_hull_name = m_string_ref1->Eval(context);
 
-        const HullType* hull_type = GetHullType(hull_type_name);
-        if (!hull_type)
+        const ShipHull* ship_hull = GetShipHull(ship_hull_name);
+        if (!ship_hull)
             return 0.0f;
 
-        return hull_type->Structure();
+        return ship_hull->Structure();
 
     }
     else if (variable_name == "HullSpeed") {
-        std::string hull_type_name;
+        std::string ship_hull_name;
         if (m_string_ref1)
-            hull_type_name = m_string_ref1->Eval(context);
+            ship_hull_name = m_string_ref1->Eval(context);
 
-        const HullType* hull_type = GetHullType(hull_type_name);
-        if (!hull_type)
+        const ShipHull* ship_hull = GetShipHull(ship_hull_name);
+        if (!ship_hull)
             return 0.0;
 
-        return hull_type->Speed();
+        return ship_hull->Speed();
 
     }
     else if (variable_name == "PartCapacity") {

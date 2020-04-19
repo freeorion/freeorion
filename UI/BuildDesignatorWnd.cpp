@@ -287,8 +287,8 @@ namespace {
                 can_colonize_cond.reset(new Condition::CanColonize());
                 location_conditions.push_back(can_colonize_cond.get());
             }
-            if (const HullType* hull_type = GetHullType(ship_design->Hull()))
-                location_conditions.push_back(const_cast<Condition::Condition*>(hull_type->Location()));
+            if (const ShipHull* ship_hull = GetShipHull(ship_design->Hull()))
+                location_conditions.push_back(const_cast<Condition::Condition*>(ship_hull->Location()));
             for (const std::string& part_name : ship_design->Parts()) {
                 if (const ShipPart* part = GetShipPart(part_name))
                     location_conditions.push_back(const_cast<Condition::Condition*>(part->Location()));

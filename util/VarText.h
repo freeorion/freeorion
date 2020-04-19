@@ -154,7 +154,7 @@ public:
     static const std::string BUILDING_TYPE_TAG;
     //! Variable value is a Special::Name().
     static const std::string SPECIAL_TAG;
-    //! Variable value is a HullType::Name().
+    //! Variable value is a ShipHull::Name().
     static const std::string SHIP_HULL_TAG;
     //! Variable value is a ShipPart::Name().
     static const std::string SHIP_PART_TAG;

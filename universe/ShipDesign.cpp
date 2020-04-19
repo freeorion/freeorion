@@ -183,7 +183,7 @@ bool ShipDesign::ProductionCostTimeLocationInvariant() const {
     // as the local candidate in the ScriptingContext
 
     // check hull and all parts
-    if (const HullType* hull = GetHullType(m_hull))
+    if (const ShipHull* hull = GetShipHull(m_hull))
         if (!hull->ProductionCostTimeLocationInvariant())
             return false;
 
@@ -201,7 +201,7 @@ float ShipDesign::ProductionCost(int empire_id, int location_id) const {
         return 1.0f;
 
     float cost_accumulator = 0.0f;
-    if (const HullType* hull = GetHullType(m_hull))
+    if (const ShipHull* hull = GetShipHull(m_hull))
         cost_accumulator += hull->ProductionCost(empire_id, location_id, m_id);
 
     int part_count = 0;
@@ -227,7 +227,7 @@ int ShipDesign::ProductionTime(int empire_id, int location_id) const {
         return 1;
 
     int time_accumulator = 1;
-    if (const HullType* hull = GetHullType(m_hull))
+    if (const ShipHull* hull = GetShipHull(m_hull))
         time_accumulator = std::max(time_accumulator, hull->ProductionTime(empire_id, location_id));
 
     for (const std::string& part_name : m_parts)
@@ -317,7 +317,7 @@ float ShipDesign::AdjustedAttack(float shield) const {
 std::vector<std::string> ShipDesign::Parts(ShipSlotType slot_type) const {
     std::vector<std::string> retval;
 
-    const HullType* hull = GetHullTypeManager().GetHullType(m_hull);
+    const ShipHull* hull = GetShipHullManager().GetShipHull(m_hull);
     if (!hull) {
         ErrorLogger() << "Design hull not found: " << m_hull;
         return retval;
@@ -394,7 +394,7 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id) const {
         return false;
 
     // apply hull location conditions to potential location
-    const HullType* hull = GetHullType(m_hull);
+    const ShipHull* hull = GetShipHull(m_hull);
     if (!hull) {
         ErrorLogger() << "ShipDesign::ProductionLocation  ShipDesign couldn't get its own hull with name " << m_hull;
         return false;
@@ -440,16 +440,16 @@ ShipDesign::MaybeInvalidDesign(const std::string& hull_in,
     auto parts = parts_in;
 
     // ensure hull type exists
-    auto hull_type = GetHullTypeManager().GetHullType(hull);
-    if (!hull_type) {
+    auto ship_hull = GetShipHullManager().GetShipHull(hull);
+    if (!ship_hull) {
         is_valid = false;
         if (produce_log)
             WarnLogger() << "Invalid ShipDesign hull not found: " << hull;
 
-        const auto hull_it = GetHullTypeManager().begin();
-        if (hull_it != GetHullTypeManager().end()) {
+        const auto hull_it = GetShipHullManager().begin();
+        if (hull_it != GetShipHullManager().end()) {
             hull = hull_it->first;
-            hull_type = hull_it->second.get();
+            ship_hull = hull_it->second.get();
             if (produce_log)
                 WarnLogger() << "Invalid ShipDesign hull falling back to: " << hull;
         } else {
@@ -462,25 +462,25 @@ ShipDesign::MaybeInvalidDesign(const std::string& hull_in,
     }
 
     // ensure hull type has at least enough slots for passed parts
-    if (parts.size() > hull_type->NumSlots()) {
+    if (parts.size() > ship_hull->NumSlots()) {
         is_valid = false;
         if (produce_log)
             WarnLogger() << "Invalid ShipDesign given " << parts.size() << " parts for hull with "
-                         << hull_type->NumSlots() << " slots.  Truncating last "
-                         << (parts.size() - hull_type->NumSlots()) << " parts.";
+                         << ship_hull->NumSlots() << " slots.  Truncating last "
+                         << (parts.size() - ship_hull->NumSlots()) << " parts.";
     }
 
     // If parts is smaller than the full hull size pad it and the incoming parts
-    if (parts.size() < hull_type->NumSlots())
-        parts_in.resize(hull_type->NumSlots(), "");
+    if (parts.size() < ship_hull->NumSlots())
+        parts_in.resize(ship_hull->NumSlots(), "");
 
     // Truncate or pad with "" parts.
-    parts.resize(hull_type->NumSlots(), "");
+    parts.resize(ship_hull->NumSlots(), "");
 
-    const auto& slots = hull_type->Slots();
+    const auto& slots = ship_hull->Slots();
 
     // check hull exclusions against all parts...
-    const auto& hull_exclusions = hull_type->Exclusions();
+    const auto& hull_exclusions = ship_hull->Exclusions();
     for (auto& part_name : parts) {
         if (part_name.empty())
             continue;
@@ -488,7 +488,7 @@ ShipDesign::MaybeInvalidDesign(const std::string& hull_in,
             is_valid = false;
             if (produce_log)
                 WarnLogger() << "Invalid ShipDesign part \"" << part_name << "\" is excluded by \""
-                             << hull_type->Name() << "\". Removing \"" << part_name <<"\"";
+                             << ship_hull->Name() << "\". Removing \"" << part_name <<"\"";
             part_name.clear();
         }
     }
@@ -582,7 +582,7 @@ void ShipDesign::ForceValidDesignOrThrow(const boost::optional<std::invalid_argu
 }
 
 void ShipDesign::BuildStatCaches() {
-    const HullType* hull = GetHullType(m_hull);
+    const ShipHull* hull = GetShipHull(m_hull);
     if (!hull) {
         ErrorLogger() << "ShipDesign::BuildStatCaches couldn't get hull with name " << m_hull;
         return;

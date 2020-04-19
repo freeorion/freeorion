@@ -162,7 +162,7 @@ std::set<std::string> Ship::Tags() const {
     if (!design)
         return retval;
 
-    const HullType* hull = ::GetHullType(design->Hull());
+    const ShipHull* hull = ::GetShipHull(design->Hull());
     if (!hull)
         return retval;
     retval.insert(hull->Tags().begin(), hull->Tags().end());
@@ -184,7 +184,7 @@ bool Ship::HasTag(const std::string& name) const {
     const ShipDesign* design = GetShipDesign(m_design_id);
     if (design) {
         // check hull for tag
-        const HullType* hull = ::GetHullType(design->Hull());
+        const ShipHull* hull = ::GetShipHull(design->Hull());
         if (hull && hull->Tags().count(name))
             return true;
 

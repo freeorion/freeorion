@@ -187,7 +187,7 @@ void Empire::serialize(Archive& ar, const unsigned int version)
             & BOOST_SERIALIZATION_NVP(m_production_queue)
             & BOOST_SERIALIZATION_NVP(m_available_building_types)
             & boost::serialization::make_nvp("m_available_part_types", m_available_ship_parts)
-            & BOOST_SERIALIZATION_NVP(m_available_hull_types);
+            & boost::serialization::make_nvp("m_available_hull_types", m_available_ship_hulls);
     }
 
     ar  & BOOST_SERIALIZATION_NVP(m_supply_system_ranges)

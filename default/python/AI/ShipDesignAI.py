@@ -295,7 +295,7 @@ class ShipDesignCache:
                 self.production_cost.setdefault(pid, {})[partname] = part.productionCost(empire_id, pid, INVALID_ID)
                 self.production_time.setdefault(pid, {})[partname] = part.productionTime(empire_id, pid, INVALID_ID)
         for hullname in hulls_to_update:
-            hull = fo.getHullType(hullname)
+            hull = fo.getShipHull(hullname)
             for pid in pids:
                 self.production_cost.setdefault(pid, {})[hullname] = hull.productionCost(empire_id, pid, INVALID_ID)
                 self.production_time.setdefault(pid, {})[hullname] = hull.productionTime(empire_id, pid, INVALID_ID)
@@ -375,7 +375,7 @@ class ShipDesignCache:
 
         for pid in state.get_inhabited_planets():
             for hull_name in all_hulls:
-                hull = fo.getHullType(hull_name)
+                hull = fo.getShipHull(hull_name)
                 if assertion_fails(hull is not None):
                     continue
 
@@ -611,7 +611,7 @@ class ShipDesigner:
         :param hullname:
         :type hullname: str
         """
-        self.hull = fo.getHullType(hullname)
+        self.hull = fo.getShipHull(hullname)
 
     def update_parts(self, partname_list):
         """Set both partnames and parts attributes.

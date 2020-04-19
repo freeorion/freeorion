@@ -191,9 +191,9 @@ namespace {
     const Ship::PartMeterMap&
                             (Ship::*ShipPartMeters)(void) const =                               &Ship::PartMeters;
 
-    const HullType* ShipDesignHullP(const ShipDesign& design)
-    { return GetHullType(design.Hull()); }
-    std::function<const HullType*(const ShipDesign& ship)> ShipDesignHullFunc = &ShipDesignHullP;
+    const ShipHull* ShipDesignHullP(const ShipDesign& design)
+    { return GetShipHull(design.Hull()); }
+    std::function<const ShipHull*(const ShipDesign& ship)> ShipDesignHullFunc = &ShipDesignHullP;
 
     const std::string& ShipDesignName(const ShipDesign& ship_design)
     { return ship_design.Name(false); }
@@ -222,16 +222,16 @@ namespace {
     }
     std::function<std::vector<int> (const ShipDesign&)> AttackStatsFunc = &AttackStatsP;
 
-    std::vector<ShipSlotType> HullSlots(const HullType& hull) {
+    std::vector<ShipSlotType> HullSlots(const ShipHull& hull) {
         std::vector<ShipSlotType> retval;
-        for (const HullType::Slot& slot : hull.Slots())
+        for (const ShipHull::Slot& slot : hull.Slots())
             retval.push_back(slot.type);
         return retval;
     }
-    std::function<std::vector<ShipSlotType> (const HullType&)> HullSlotsFunc = &HullSlots;
+    std::function<std::vector<ShipSlotType> (const ShipHull&)> HullSlotsFunc = &HullSlots;
 
-    unsigned int            (HullType::*NumSlotsTotal)(void) const =                            &HullType::NumSlots;
-    unsigned int            (HullType::*NumSlotsOfSlotType)(ShipSlotType) const =               &HullType::NumSlots;
+    unsigned int            (ShipHull::*NumSlotsTotal)(void) const =                            &ShipHull::NumSlots;
+    unsigned int            (ShipHull::*NumSlotsOfSlotType)(ShipSlotType) const =               &ShipHull::NumSlots;
 
     bool ObjectInField(const Field& field, const UniverseObject& obj)
     { return field.InField(obj.X(), obj.Y()); }
@@ -242,7 +242,7 @@ namespace {
     bool EnqueueLocationTest(const BuildingType& building_type, int empire_id, int loc_id)
     { return building_type.EnqueueLocation(empire_id, loc_id);}
 
-    bool HullProductionLocation(const HullType& hull, int location_id) {
+    bool HullProductionLocation(const ShipHull& hull, int location_id) {
         auto location = Objects().get(location_id);
         if (!location) {
             ErrorLogger() << "UniverseWrapper::HullProductionLocation Could not find location with id " << location_id;
@@ -598,10 +598,10 @@ namespace FreeOrionPython {
             .add_property("costTimeLocationInvariant",
                                                 &ShipDesign::ProductionCostTimeLocationInvariant)
             .add_property("hull",               make_function(&ShipDesign::Hull,            return_value_policy<return_by_value>()))
-            .add_property("hull_type",          make_function(
+            .add_property("ship_hull",          make_function(
                                                     ShipDesignHullFunc,
                                                     return_value_policy<reference_existing_object>(),
-                                                    boost::mpl::vector<const HullType*, const ShipDesign&>()
+                                                    boost::mpl::vector<const ShipHull*, const ShipDesign&>()
                                                 ))
             .add_property("parts",              make_function(PartsVoid,                    return_internal_reference<>()))
             .add_property("attackStats",        make_function(
@@ -633,28 +633,28 @@ namespace FreeOrionPython {
         ;
         def("getShipPart",                      &GetShipPart,                               return_value_policy<reference_existing_object>(), "Returns the ShipPart with the indicated name (string).");
 
-        class_<HullType, noncopyable>("hullType", no_init)
-            .add_property("name",               make_function(&HullType::Name,              return_value_policy<copy_const_reference>()))
+        class_<ShipHull, noncopyable>("shipHull", no_init)
+            .add_property("name",               make_function(&ShipHull::Name,              return_value_policy<copy_const_reference>()))
             .add_property("numSlots",           make_function(NumSlotsTotal,                return_value_policy<return_by_value>()))
-            .add_property("structure",          &HullType::Structure)
-            .add_property("stealth",            &HullType::Stealth)
-            .add_property("fuel",               &HullType::Fuel)
-            .add_property("starlaneSpeed",      &HullType::Speed) // TODO: Remove this after transition period
-            .add_property("speed",              &HullType::Speed)
+            .add_property("structure",          &ShipHull::Structure)
+            .add_property("stealth",            &ShipHull::Stealth)
+            .add_property("fuel",               &ShipHull::Fuel)
+            .add_property("starlaneSpeed",      &ShipHull::Speed) // TODO: Remove this after transition period
+            .add_property("speed",              &ShipHull::Speed)
             .def("numSlotsOfSlotType",          NumSlotsOfSlotType)
             .add_property("slots",              make_function(
                                                     HullSlotsFunc,
                                                     return_value_policy<return_by_value>(),
-                                                    boost::mpl::vector<std::vector<ShipSlotType>, const HullType&>()
+                                                    boost::mpl::vector<std::vector<ShipSlotType>, const ShipHull&>()
                                                 ))
-            .def("productionCost",              &HullType::ProductionCost)
-            .def("productionTime",              &HullType::ProductionTime)
+            .def("productionCost",              &ShipHull::ProductionCost)
+            .def("productionTime",              &ShipHull::ProductionTime)
             .add_property("costTimeLocationInvariant",
-                                                &HullType::ProductionCostTimeLocationInvariant)
-            .def("hasTag",                      &HullType::HasTag)
+                                                &ShipHull::ProductionCostTimeLocationInvariant)
+            .def("hasTag",                      &ShipHull::HasTag)
             .def("productionLocation",          &HullProductionLocation, "Returns the result of Location condition (bool) in passed location_id (int)")
         ;
-        def("getHullType",                      &GetHullType,                               return_value_policy<reference_existing_object>(), "Returns the ship hull (HullType) with the indicated name (string).");
+        def("getShipHull",                      &GetShipHull,                               return_value_policy<reference_existing_object>(), "Returns the ship hull with the indicated name (string).");
 
         //////////////////
         //   Building   //

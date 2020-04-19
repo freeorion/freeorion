@@ -9207,7 +9207,7 @@ namespace {
             break;
         }
         case CONTENT_SHIP_HULL: {
-            if (auto h = GetHullType(name1))
+            if (auto h = GetShipHull(name1))
                 return h->Location();
             break;
         }

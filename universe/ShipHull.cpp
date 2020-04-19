@@ -77,9 +77,10 @@ namespace {
 }
 
 
-HullType::HullType() {}
+ShipHull::ShipHull()
+{}
 
-HullType::HullType(const HullTypeStats& stats,
+ShipHull::ShipHull(const ShipHullStats& stats,
                    CommonParams&& common_params,
                    const MoreCommonParams& more_common_params,
                    const std::vector<Slot>& slots,
@@ -108,14 +109,14 @@ HullType::HullType(const HullTypeStats& stats,
         m_tags.insert(boost::to_upper_copy<std::string>(tag));
 }
 
-HullType::Slot::Slot() :
+ShipHull::Slot::Slot() :
     type(INVALID_SHIP_SLOT_TYPE)
 {}
 
-HullType::~HullType() {}
+ShipHull::~ShipHull() {}
 
-void HullType::Init(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
-                    const HullTypeStats& stats)
+void ShipHull::Init(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
+                    const ShipHullStats& stats)
 {
     if (stats.default_fuel_effects && m_fuel != 0)
         m_effects.push_back(IncreaseMeter(METER_MAX_FUEL,       m_fuel));
@@ -138,13 +139,13 @@ void HullType::Init(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects
     }
 }
 
-float HullType::Speed() const
+float ShipHull::Speed() const
 { return m_speed * GetGameRules().Get<double>("RULE_SHIP_SPEED_FACTOR"); }
 
-float HullType::Structure() const
+float ShipHull::Structure() const
 { return m_structure * GetGameRules().Get<double>("RULE_SHIP_STRUCTURE_FACTOR"); }
 
-unsigned int HullType::NumSlots(ShipSlotType slot_type) const {
+unsigned int ShipHull::NumSlots(ShipSlotType slot_type) const {
     unsigned int count = 0;
     for (const Slot& slot : m_slots)
         if (slot.type == slot_type)
@@ -152,10 +153,10 @@ unsigned int HullType::NumSlots(ShipSlotType slot_type) const {
     return count;
 }
 
-// HullType:: and ShipPart::ProductionCost and ProductionTime are almost identical.
+// ShipHull:: and ShipPart::ProductionCost and ProductionTime are almost identical.
 // Chances are, the same is true of buildings and techs as well.
 // TODO: Eliminate duplication
-bool HullType::ProductionCostTimeLocationInvariant() const {
+bool ShipHull::ProductionCostTimeLocationInvariant() const {
     if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION"))
         return true;
     if (m_production_cost && !m_production_cost->LocalCandidateInvariant())
@@ -165,7 +166,7 @@ bool HullType::ProductionCostTimeLocationInvariant() const {
     return true;
 }
 
-float HullType::ProductionCost(int empire_id, int location_id, int in_design_id) const {
+float ShipHull::ProductionCost(int empire_id, int location_id, int in_design_id) const {
     if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION") || !m_production_cost)
         return 1.0f;
 
@@ -188,7 +189,7 @@ float HullType::ProductionCost(int empire_id, int location_id, int in_design_id)
     return static_cast<float>(m_production_cost->Eval(context));
 }
 
-int HullType::ProductionTime(int empire_id, int location_id, int in_design_id) const {
+int ShipHull::ProductionTime(int empire_id, int location_id, int in_design_id) const {
     if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION") || !m_production_time)
         return 1;
 
@@ -211,7 +212,7 @@ int HullType::ProductionTime(int empire_id, int location_id, int in_design_id) c
     return m_production_time->Eval(context);
 }
 
-unsigned int HullType::GetCheckSum() const {
+unsigned int ShipHull::GetCheckSum() const {
     unsigned int retval{0};
 
     CheckSums::CheckSumCombine(retval, m_name);
@@ -237,65 +238,61 @@ unsigned int HullType::GetCheckSum() const {
 }
 
 
-/////////////////////////////////////
-// HullTypeManager                 //
-/////////////////////////////////////
-// static
-HullTypeManager* HullTypeManager::s_instance = nullptr;
+ShipHullManager* ShipHullManager::s_instance = nullptr;
 
-HullTypeManager::HullTypeManager() {
+ShipHullManager::ShipHullManager() {
     if (s_instance)
-        throw std::runtime_error("Attempted to create more than one HullTypeManager.");
+        throw std::runtime_error("Attempted to create more than one ShipHullManager.");
 
     // Only update the global pointer on sucessful construction.
     s_instance = this;
 }
 
-const HullType* HullTypeManager::GetHullType(const std::string& name) const {
-    CheckPendingHullTypes();
+const ShipHull* ShipHullManager::GetShipHull(const std::string& name) const {
+    CheckPendingShipHulls();
     auto it = m_hulls.find(name);
     return it != m_hulls.end() ? it->second.get() : nullptr;
 }
 
-HullTypeManager& HullTypeManager::GetHullTypeManager() {
-    static HullTypeManager manager;
+ShipHullManager& ShipHullManager::GetShipHullManager() {
+    static ShipHullManager manager;
     return manager;
 }
 
-HullTypeManager::iterator HullTypeManager::begin() const {
-    CheckPendingHullTypes();
+ShipHullManager::iterator ShipHullManager::begin() const {
+    CheckPendingShipHulls();
     return m_hulls.begin();
 }
 
-HullTypeManager::iterator HullTypeManager::end() const {
-    CheckPendingHullTypes();
+ShipHullManager::iterator ShipHullManager::end() const {
+    CheckPendingShipHulls();
     return m_hulls.end();
 }
 
-std::size_t HullTypeManager::size() const {
-    CheckPendingHullTypes();
+std::size_t ShipHullManager::size() const {
+    CheckPendingShipHulls();
     return m_hulls.size();
 }
 
-unsigned int HullTypeManager::GetCheckSum() const {
-    CheckPendingHullTypes();
+unsigned int ShipHullManager::GetCheckSum() const {
+    CheckPendingShipHulls();
     unsigned int retval{0};
     for (auto const& name_hull_pair : m_hulls)
         CheckSums::CheckSumCombine(retval, name_hull_pair);
     CheckSums::CheckSumCombine(retval, m_hulls.size());
 
-    DebugLogger() << "HullTypeManager checksum: " << retval;
+    DebugLogger() << "ShipHullManager checksum: " << retval;
     return retval;
 }
 
-void HullTypeManager::SetHullTypes(Pending::Pending<HullTypeMap>&& pending_hull_types)
-{ m_pending_hull_types = std::move(pending_hull_types); }
+void ShipHullManager::SetShipHulls(Pending::Pending<ShipHullMap>&& pending_ship_hulls)
+{ m_pending_ship_hulls = std::move(pending_ship_hulls); }
 
-void HullTypeManager::CheckPendingHullTypes() const {
-    if (!m_pending_hull_types)
+void ShipHullManager::CheckPendingShipHulls() const {
+    if (!m_pending_ship_hulls)
         return;
 
-    Pending::SwapPending(m_pending_hull_types, m_hulls);
+    Pending::SwapPending(m_pending_ship_hulls, m_hulls);
 
     TraceLogger() << [this]() {
         std::string retval("Hull Types:");
@@ -306,12 +303,12 @@ void HullTypeManager::CheckPendingHullTypes() const {
     }();
 
     if (m_hulls.empty())
-        ErrorLogger() << "HullTypeManager expects at least one hull type.  All ship design construction will fail.";
+        ErrorLogger() << "ShipHullManager expects at least one hull type.  All ship design construction will fail.";
 }
 
 
 namespace CheckSums {
-    void CheckSumCombine(unsigned int& sum, const HullType::Slot& slot) {
+    void CheckSumCombine(unsigned int& sum, const ShipHull::Slot& slot) {
         TraceLogger() << "CheckSumCombine(Slot): " << typeid(slot).name();
         CheckSumCombine(sum, slot.x);
         CheckSumCombine(sum, slot.y);
@@ -320,8 +317,8 @@ namespace CheckSums {
 }
 
 
-HullTypeManager& GetHullTypeManager()
-{ return HullTypeManager::GetHullTypeManager(); }
+ShipHullManager& GetShipHullManager()
+{ return ShipHullManager::GetShipHullManager(); }
 
-const HullType* GetHullType(const std::string& name)
-{ return GetHullTypeManager().GetHullType(name); }
+const ShipHull* GetShipHull(const std::string& name)
+{ return GetShipHullManager().GetShipHull(name); }

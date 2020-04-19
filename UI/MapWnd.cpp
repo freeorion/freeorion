@@ -4343,13 +4343,13 @@ void MapWnd::ShowShipPart(const std::string& ship_part_name) {
     }
 }
 
-void MapWnd::ShowHullType(const std::string& hull_type_name) {
+void MapWnd::ShowShipHull(const std::string& ship_hull_name) {
     if (m_design_wnd->Visible()) {
-        m_design_wnd->ShowHullTypeInEncyclopedia(hull_type_name);
+        m_design_wnd->ShowShipHullInEncyclopedia(ship_hull_name);
     } else {
         if (!m_pedia_panel->Visible())
             TogglePedia();
-        m_pedia_panel->SetHullType(hull_type_name);
+        m_pedia_panel->SetShipHull(ship_hull_name);
     }
 }
 

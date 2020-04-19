@@ -52,7 +52,7 @@ private:
     ShipDesign();
 public:
     /** The public ShipDesign constructor will only construct valid ship
-        designs, as long as the HullTypeManager has at least one hull.
+        designs, as long as the ShipHullManager has at least one hull.
 
         If \p should_throw is not boost::none and the passed in parameters (\p
         hull and \p parts) would result in an invalid design it generates an

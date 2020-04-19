@@ -164,7 +164,10 @@ public:
     //! the ShipPart @a ship_part_name.
     void ShowShipPart(const std::string& ship_part_name);
 
-    void ShowHullType(const std::string& hull_type_name);        //!< brings up the production screen and displays info about the buildtype \a type_name
+    //! Brings up the production screen and displays info about the ShipHull
+    //! @p ship_hull_name
+    void ShowShipHull(const std::string& ship_hull_name);
+
     void ShowShipDesign(int design_id);                          //!< brings up the production screen and displays info about the buildtype \a type_name
     void ShowSpecial(const std::string& special_name);           //!< brings up encyclopedia panel and displays info about the special with name \a special_name
     void ShowSpecies(const std::string& species_name);           //!< brings up encyclopedia panel and displays info about the species with name \a species_name

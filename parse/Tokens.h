@@ -181,7 +181,6 @@
     (HullSpeed)                                 \
     (HullStealth)                               \
     (HullStructure)                             \
-    (HullType)                                  \
     (Human)                                     \
     (Icon)                                      \
     (ID)                                        \

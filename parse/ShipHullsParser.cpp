@@ -20,35 +20,35 @@
 
 #if DEBUG_PARSERS
 namespace std {
-    inline ostream& operator<<(ostream& os, const std::vector<HullType::Slot>&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::vector<ShipHull::Slot>&) { return os; }
     inline ostream& operator<<(ostream& os, const parse::effects_group_payload&) { return os; }
-    inline ostream& operator<<(ostream& os, const std::map<std::string, std::unique_ptr<HullType>>&) { return os; }
-    inline ostream& operator<<(ostream& os, const std::pair<const std::string, std::unique_ptr<HullType>>&) { return os; }
-    inline ostream& operator<<(ostream& os, const HullType::Slot&) { return os; }
-    inline ostream& operator<<(ostream& os, const HullTypeStats&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::map<std::string, std::unique_ptr<ShipHull>>&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::pair<const std::string, std::unique_ptr<ShipHull>>&) { return os; }
+    inline ostream& operator<<(ostream& os, const ShipHull::Slot&) { return os; }
+    inline ostream& operator<<(ostream& os, const ShipHullStats&) { return os; }
 }
 #endif
 
 namespace {
     const boost::phoenix::function<parse::detail::is_unique> is_unique_;
 
-    void insert_hulltype(std::map<std::string, std::unique_ptr<HullType>>& hulltypes,
-                         const HullTypeStats& stats,
+    void insert_shiphull(std::map<std::string, std::unique_ptr<ShipHull>>& shiphulls,
+                         const ShipHullStats& stats,
                          const std::unique_ptr<CommonParams>& common_params,
                          const MoreCommonParams& more_common_params,
-                         const boost::optional<std::vector<HullType::Slot>>& slots,
+                         const boost::optional<std::vector<ShipHull::Slot>>& slots,
                          const std::string& icon, const std::string& graphic)
     {
-        auto hulltype = std::make_unique<HullType>(
+        auto shiphull = std::make_unique<ShipHull>(
             stats, std::move(*common_params), more_common_params,
-            (slots ? *slots : std::vector<HullType::Slot>()),
+            (slots ? *slots : std::vector<ShipHull::Slot>()),
             icon, graphic);
-        hulltypes.emplace(hulltype->Name(), std::move(hulltype));
+        shiphulls.emplace(shiphull->Name(), std::move(shiphull));
     }
 
-    BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_hulltype_, insert_hulltype, 7)
+    BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_shiphull_, insert_shiphull, 7)
 
-    using start_rule_payload = std::map<std::string, std::unique_ptr<HullType>>;
+    using start_rule_payload = std::map<std::string, std::unique_ptr<ShipHull>>;
     using start_rule_signature = void(start_rule_payload&);
 
     struct grammar : public parse::detail::grammar<start_rule_signature> {
@@ -95,7 +95,7 @@ namespace {
                 >   matches_[tok.NoDefaultStealthEffect_]   // _6
                 >   label(tok.Structure_)   >   double_rule // _7
                 >   matches_[tok.NoDefaultStructureEffect_])// _8
-                    [ _val = construct<HullTypeStats>(_3, _1, _5, _7, _4, _2, _6, _8) ]
+                    [ _val = construct<ShipHullStats>(_3, _1, _5, _7, _4, _2, _6, _8) ]
                 ;
 
             slot
@@ -103,7 +103,7 @@ namespace {
                 >   label(tok.Type_) > ship_slot_type_enum
                 >   label(tok.Position_)
                 >   '(' > double_rule > ',' > double_rule > lit(')'))
-                    [ _val = construct<HullType::Slot>(_1, _2, _3) ]
+                    [ _val = construct<ShipHull::Slot>(_1, _2, _3) ]
                 ;
 
             hull
@@ -115,7 +115,7 @@ namespace {
                 >   label(tok.Icon_)    > tok.string
                 >   label(tok.Graphic_) > tok.string)
                 [ _pass = is_unique_(_r1, _1, phoenix::bind(&MoreCommonParams::name, _2)),
-                  insert_hulltype_(_r1, _3,
+                  insert_shiphull_(_r1, _3,
                                    deconstruct_movable_(_5, _pass),
                                    _2, _4, _6, _7) ]
                 ;
@@ -138,12 +138,12 @@ namespace {
             qi::on_error<qi::fail>(start, parse::report_error(filename, first, last, _1, _2, _3, _4));
         }
 
-        using hull_stats_rule = parse::detail::rule<HullTypeStats ()>;
+        using hull_stats_rule = parse::detail::rule<ShipHullStats ()>;
 
-        using slot_rule =  parse::detail::rule<HullType::Slot ()>;
+        using slot_rule =  parse::detail::rule<ShipHull::Slot ()>;
 
         using hull_rule = parse::detail::rule<
-            void (std::map<std::string, std::unique_ptr<HullType>>&)
+            void (std::map<std::string, std::unique_ptr<ShipHull>>&)
         >;
 
         using start_rule = parse::detail::rule<start_rule_signature>;

@@ -221,7 +221,11 @@ public:
     void AddBuildingType(const std::string& name);   ///< Inserts the given BuildingType into the Empire's list of available BuldingTypes.
     //! Inserts the given ShipPart into the Empire's list of available ShipPart%s.
     void AddShipPart(const std::string& name);
-    void AddHullType(const std::string& name);       ///< Inserts the given ship HullType into the Empire's list of available BuldingTypes.
+
+    //! Inserts the given ship ShipHull into the Empire's list of available
+    //! ShipHull%s.
+    void AddShipHull(const std::string& name);
+
     void AddExploredSystem(int ID);                  ///< Inserts the given ID into the Empire's list of explored systems.
 
     /** inserts given design id into the empire's set of designs in front of next design */
@@ -252,7 +256,10 @@ public:
     void RemoveBuildingType(const std::string& name);///< Removes the given BuildingType from the empire's list
     //! Removes the given ShipPart from the empire's list
     void RemoveShipPart(const std::string& name);
-    void RemoveHullType(const std::string& name);    ///< Removes the given HullType from the empire's list
+
+    //! Removes the given ShipHull from the empire's list
+    void RemoveShipHull(const std::string& name);
+
     void RemoveShipDesign(int ship_design_id);       ///< Removes the ShipDesign with the given id from the empire's set
 
     /** Calculates ranges that systems can send fleet and resource supplies,
@@ -411,7 +418,10 @@ private:
     std::set<std::string>           m_available_building_types; ///< list of acquired BuildingType.  These are string names referencing BuildingType objects
     //! List of acquired ShipPart referenced by name.
     std::set<std::string>           m_available_ship_parts;
-    std::set<std::string>           m_available_hull_types;     ///< list of acquired ship HullType.  These are string names referencing HullType objects
+
+    //! List of acquired ship ShipHull referenced by name.
+    std::set<std::string>           m_available_ship_hulls;
+
     std::set<int>                   m_explored_systems;         ///< systems explored by this empire
     std::set<int>                   m_known_ship_designs;       ///< ids of ship designs in the universe that this empire knows about
 
