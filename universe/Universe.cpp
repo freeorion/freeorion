@@ -901,7 +901,7 @@ namespace {
             boost::condition_variable_any m_state_changed;
         };
         StoreTargetsAndCausesOfEffectsGroupsWorkItem(
-            ObjectMap&                                                  the_object_map,
+            const ObjectMap&                                            the_object_map,
             const std::shared_ptr<Effect::EffectsGroup>&                the_effects_group,
             const std::vector<std::shared_ptr<const UniverseObject>>&   the_sources,
             EffectsCauseType                                            the_effect_cause_type,
@@ -919,7 +919,7 @@ namespace {
 
     private:
         // WARNING: do NOT copy the shared_pointers! Use raw pointers, shared_ptr may not be thread-safe.
-        ObjectMap&                                                  m_object_map;
+        const ObjectMap&                                            m_object_map;
         std::shared_ptr<Effect::EffectsGroup>                       m_effects_group;
         const std::vector<std::shared_ptr<const UniverseObject>>*   m_sources;
         EffectsCauseType                                            m_effect_cause_type;
@@ -941,7 +941,7 @@ namespace {
     };
 
     StoreTargetsAndCausesOfEffectsGroupsWorkItem::StoreTargetsAndCausesOfEffectsGroupsWorkItem(
-            ObjectMap&                                                  the_object_map,
+            const ObjectMap&                                            the_object_map,
             const std::shared_ptr<Effect::EffectsGroup>&                the_effects_group,
             const std::vector<std::shared_ptr<const UniverseObject>>&   the_sources,
             EffectsCauseType                                            the_effect_cause_type,
@@ -1195,18 +1195,19 @@ namespace {
 
 } // namespace
 
-void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes) {
+void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes) const {
     targets_causes.clear();
     GetEffectsAndTargets(targets_causes, std::vector<int>());
 }
 
 void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
-                                    const std::vector<int>& target_objects)
+                                    const std::vector<int>& target_objects) const
 {
     ScopedTimer timer("Universe::GetEffectsAndTargets");
 
-    // transfer target objects from input vector to a set
-    Effect::TargetSet all_potential_targets = m_objects.find(target_objects);
+    // assemble target objects from input vector of IDs
+    Condition::ObjectSet const_target_objects{m_objects.find(target_objects)};
+    Effect::TargetSet& all_potential_targets = reinterpret_cast<Effect::TargetSet&>(const_target_objects);
 
     TraceLogger(effects) << "GetEffectsAndTargets target objects:";
     for (auto& obj : all_potential_targets)
