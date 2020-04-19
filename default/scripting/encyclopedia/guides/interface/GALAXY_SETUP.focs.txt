@@ -1,0 +1,6 @@
+Article
+    name = "GALAXY_SETUP_TITLE"
+    category = "INTERFACE_TITLE"
+    short_description = "GALAXY_SETUP_SHORT_DESC"
+    description = "GALAXY_SETUP_TEXT"
+    icon = ""
