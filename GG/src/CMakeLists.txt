@@ -40,7 +40,6 @@ target_sources(GiGi
         ${CMAKE_CURRENT_LIST_DIR}/DropDownList.cpp
         ${CMAKE_CURRENT_LIST_DIR}/DynamicGraphic.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Edit.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/EventPump.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Font.cpp
         ${CMAKE_CURRENT_LIST_DIR}/GLClientAndServerBuffer.cpp
         ${CMAKE_CURRENT_LIST_DIR}/GroupBox.cpp

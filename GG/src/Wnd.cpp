@@ -27,7 +27,6 @@
 #include <GG/GUI.h>
 #include <GG/BrowseInfoWnd.h>
 #include <GG/DrawUtil.h>
-#include <GG/EventPump.h>
 #include <GG/Layout.h>
 #include <GG/WndEvent.h>
 
@@ -932,8 +931,7 @@ bool Wnd::Run()
         gui->RegisterModal(shared_from_this());
         ModalInit();
         m_done = false;
-        std::shared_ptr<ModalEventPump> pump = gui->CreateModalEventPump(m_done);
-        (*pump)();
+        gui->RunModal(shared_from_this(), m_done);
         gui->Remove(shared_from_this());
         retval = true;
     }

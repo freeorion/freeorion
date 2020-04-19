@@ -297,8 +297,7 @@ int mainSetupAndRun() {
         }
 
         // run rendering loop
-        app();  // calls GUI::operator() which calls SDLGUI::Run() which starts rendering loop
-
+        app.Run();
 #ifndef FREEORION_CHMAIN_KEEP_STACKTRACE
     } catch (const std::invalid_argument& e) {
         ErrorLogger() << "main() caught exception(std::invalid_argument): " << e.what();

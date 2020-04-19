@@ -194,7 +194,7 @@ void ModalListPicker::CompleteConstruction()
 
 ModalListPicker::~ModalListPicker()
 {
-    // Shut down the ModalEventPump
+    // Exit the modal run
     EndRun();
 }
 

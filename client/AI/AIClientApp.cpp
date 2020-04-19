@@ -114,9 +114,6 @@ AIClientApp::~AIClientApp() {
     DebugLogger() << "AIClientApp exited cleanly for ai client " << PlayerName();
 }
 
-void AIClientApp::operator()()
-{ Run(); }
-
 void AIClientApp::ExitApp(int code) {
     DebugLogger() << "Initiating Exit (code " << code << " - " << (code ? "error" : "normal") << " termination)";
     if (code)

@@ -3207,7 +3207,7 @@ void SidePanel::RefreshSystemNames() {
     //    return;
 
     // Repopulate the system with all of the names of known systems, if it is closed.
-    // If it is open do not change the system names because it runs in a seperate ModalEventPump
+    // If it is open do not change the system names because it runs in a seperate modal
     // from the main UI.
     if (m_system_name->Dropped())
         return;

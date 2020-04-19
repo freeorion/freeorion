@@ -150,7 +150,7 @@ extern GG_API const WndFlag NO_WND_FLAGS;
     local execution of the GUI's event pump.  Execution of the code that calls
     Run() is effectively halted until Run() returns.  Derived classes that
     wish to use modal execution should set m_done = true to escape from the
-    modal execution loop.  EventPump has more information about processing
+    modal execution loop.  GUI::RunModal has more information about processing
     during modal dialog execution.
 
     <br>Note that OnTop() and Modal() flags only apply to top-level

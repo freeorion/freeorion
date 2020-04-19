@@ -113,9 +113,6 @@
     <ClInclude Include="..\..\GG\GG\Enum.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\GG\GG\EventPump.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\GG\GG\Exception.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -294,9 +291,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\GG\src\Edit.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\GG\src\EventPump.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\GG\src\Font.cpp">

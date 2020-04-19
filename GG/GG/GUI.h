@@ -46,8 +46,6 @@ namespace GG {
 
 class Cursor;
 class Wnd;
-class EventPumpBase;
-class ModalEventPump;
 class StyleFactory;
 class Texture;
 class Timer;
@@ -80,12 +78,11 @@ std::shared_ptr<T> LockAndResetIfExpired(std::weak_ptr<T>& ptr) {
 
     <p>The user is required to provide several functions.  The most vital
     functions the user is required to provide are: Enter2DMode(),
-    Exit2DMode(), DeltaT(), PollAndRender() [virtual private], and Run()
-    [virtual private].  Without these, GUI is pretty useless.  In addition,
-    HandleEvent() must be driven from PollAndRender().  The code driving
-    HandleEvent() must interact with the hardware and/or operating system, and
-    supply the appropriate EventType's, key presses, and mouse position info
-    to HandleEvent().
+    Exit2DMode() and Run()[virtual private].  Without these, GUI is pretty
+    useless.  In addition, HandleEvent() must be driven from Run().  The
+    code driving HandleEvent() must interact with the hardware and/or operating
+    system, and supply the appropriate EventType's, key presses, and mouse
+    position info to HandleEvent().
 
     <p>Keyboard accelerators may be defined, as mentioned above.  Each defined
     accelerator has its own signal which is emitted each time the accelerator
@@ -176,7 +173,6 @@ public:
     std::shared_ptr<Wnd>        PrevFocusInteractiveWnd() const;    ///< returns the previous Wnd to the current FocusWnd. Cycles through INTERACTIVE Wnds, in order determined by parent-child relationships
     std::shared_ptr<Wnd>        NextFocusInteractiveWnd() const;    ///< returns the next Wnd to the current FocusWnd.
     std::shared_ptr<Wnd>        GetWindowUnder(const Pt& pt) const; ///< returns the GG::Wnd under the point pt
-    unsigned int                DeltaT() const;                     ///< returns ms since last frame was rendered
     virtual unsigned int        Ticks() const = 0;                  ///< returns milliseconds since the app started running
     bool                        RenderingDragDropWnds() const;      ///< returns true iff drag-and-drop Wnds are currently being rendered
     bool                        FPSEnabled() const;                 ///< returns true iff FPS calulations are turned on
@@ -243,11 +239,13 @@ public:
     //@}
 
     /** \name Mutators */ ///@{
-    void            operator()();                 ///< external interface to Run()
+    //! Executes main event handler/render loop
+    virtual void    Run() = 0;
+
     virtual void    ExitApp(int code = 0) = 0;           ///< does basic clean-up, then calls exit(); callable from anywhere in user code via GetGUI()
 
     /** Handles all waiting system events (from SDL, DirectInput, etc.).  This
-        function should only be called from custom EventPump event
+        function should only be called from custom RunModal event
         handlers. */
     virtual void    HandleSystemEvents() = 0;
 
@@ -268,13 +266,10 @@ public:
     /** Adds \p wnd onto the modal windows "stack".  Modal windows are owned by the GUI as a
         top-level window. */
     void            RegisterModal(std::shared_ptr<Wnd> wnd);
+    void            RunModal(std::shared_ptr<Wnd> wnd, bool& done);
     void            Remove(const std::shared_ptr<Wnd>& wnd);               ///< removes \a wnd from the z-list.  Removing a null pointer or removing the same window multiple times is a no-op.
     void            MoveUp(const std::shared_ptr<Wnd>& wnd);               ///< moves \a wnd to the top of the z-list
     void            MoveDown(const std::shared_ptr<Wnd>& wnd);             ///< moves \a wnd to the bottom of the z-list
-
-    /** Creates a new ModalEventPump that will terminate when \a done is set to
-        true. */
-    virtual std::shared_ptr<ModalEventPump> CreateModalEventPump(bool& done);
 
     /** Adds \a wnd to the set of current drag-and-drop Wnds, to be rendered
         \a offset pixels from the cursor position. \a originating_wnd
@@ -463,14 +458,7 @@ protected:
     virtual void   RenderBegin() = 0;      ///< clears the backbuffer, etc.
     virtual void   Render();               ///< renders the windows in the z-list
     virtual void   RenderEnd() = 0;        ///< swaps buffers, etc.
-
-    // EventPumpBase interface
-    void SetFPS(double FPS);               ///< sets the FPS value based on the most recent calculation
-    void SetDeltaT(unsigned int delta_t);  ///< sets the time between the most recent frame and the one before it, in ms
-
     //@}
-
-    virtual void   Run() = 0;              ///< initializes GUI state, then executes main event handler/render loop (PollAndRender())
 
     /** Determine if the app has the mouse focus. */
     virtual bool AppHasMouseFocus() const { return true; };
@@ -486,7 +474,6 @@ private:
     static GUI*                       s_gui;
     std::unique_ptr<GUIImpl>          m_impl;
 
-    friend class EventPumpBase; ///< allows EventPumpBase types to drive GUI
     friend struct GUIImpl;
 };
 
