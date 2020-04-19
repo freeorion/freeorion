@@ -90,15 +90,13 @@ public:
 
     /** Returns all the objects of type T */
     template <class T = UniverseObject>
-    boost::select_second_const_range<container_type<T>> all() const {
-        return Map<T>() | boost::adaptors::map_values;
-    }
+    boost::select_second_const_range<container_type<T>> all() const
+    { return Map<T>() | boost::adaptors::map_values; }
 
     /** Returns all the objects of type T */
     template <class T = UniverseObject>
-    boost::select_second_mutable_range<container_type<T>> all() {
-        return Map<T>() | boost::adaptors::map_values;
-    }
+    boost::select_second_mutable_range<container_type<T>> all()
+    { return Map<T>() | boost::adaptors::map_values; }
 
     /** Returns the IDs of all objects not known to have been destroyed. */
     std::vector<int>        FindExistingObjectIDs() const;
@@ -109,26 +107,26 @@ public:
     std::string             Dump(unsigned short ntabs = 0) const;
 
     /**  */
-    std::shared_ptr<UniverseObject> ExistingObject(int id);
-    const container_type<UniverseObject>& ExistingObjects()
-    { return m_existing_objects; }
-    const container_type<UniverseObject>& ExistingResourceCenters()
-    { return m_existing_resource_centers; }
-    const container_type<UniverseObject>& ExistingPopCenters()
-    { return m_existing_pop_centers; }
-    const container_type<UniverseObject>& ExistingShips()
-    { return m_existing_ships; }
-    const container_type<UniverseObject>& ExistingFleets()
-    { return m_existing_fleets; }
-    const container_type<UniverseObject>& ExistingPlanets()
-    { return m_existing_planets; }
-    const container_type<UniverseObject>& ExistingSystems()
-    { return m_existing_systems; }
-    const container_type<UniverseObject>& ExistingBuildings()
-    { return m_existing_buildings; }
-    const container_type<UniverseObject>& ExistingFields()
-    { return m_existing_fields; }
+    std::shared_ptr<const UniverseObject> ExistingObject(int id) const;
 
+    const container_type<const UniverseObject>& ExistingObjects() const
+    { return m_existing_objects; }
+    const container_type<const UniverseObject>& ExistingResourceCenters() const
+    { return m_existing_resource_centers; }
+    const container_type<const UniverseObject>& ExistingPopCenters() const
+    { return m_existing_pop_centers; }
+    const container_type<const UniverseObject>& ExistingShips() const
+    { return m_existing_ships; }
+    const container_type<const UniverseObject>& ExistingFleets() const
+    { return m_existing_fleets; }
+    const container_type<const UniverseObject>& ExistingPlanets() const
+    { return m_existing_planets; }
+    const container_type<const UniverseObject>& ExistingSystems() const
+    { return m_existing_systems; }
+    const container_type<const UniverseObject>& ExistingBuildings() const
+    { return m_existing_buildings; }
+    const container_type<const UniverseObject>& ExistingFields() const
+    { return m_existing_fields; }
     //@}
 
     /** \name Mutators */ //@{
@@ -207,25 +205,25 @@ private:
     template <class T>
     static void SwapMap(container_type<T>& map, ObjectMap& rhs);
 
-    container_type<UniverseObject> m_objects;
-    container_type<ResourceCenter> m_resource_centers;
-    container_type<PopCenter> m_pop_centers;
-    container_type<Ship> m_ships;
-    container_type<Fleet> m_fleets;
-    container_type<Planet> m_planets;
-    container_type<System> m_systems;
-    container_type<Building> m_buildings;
-    container_type<Field> m_fields;
+    container_type<UniverseObject>  m_objects;
+    container_type<ResourceCenter>  m_resource_centers;
+    container_type<PopCenter>       m_pop_centers;
+    container_type<Ship>            m_ships;
+    container_type<Fleet>           m_fleets;
+    container_type<Planet>          m_planets;
+    container_type<System>          m_systems;
+    container_type<Building>        m_buildings;
+    container_type<Field>           m_fields;
 
-    container_type<UniverseObject> m_existing_objects;
-    container_type<UniverseObject> m_existing_resource_centers;
-    container_type<UniverseObject> m_existing_pop_centers;
-    container_type<UniverseObject> m_existing_ships;
-    container_type<UniverseObject> m_existing_fleets;
-    container_type<UniverseObject> m_existing_planets;
-    container_type<UniverseObject> m_existing_systems;
-    container_type<UniverseObject> m_existing_buildings;
-    container_type<UniverseObject> m_existing_fields;
+    container_type<const UniverseObject>  m_existing_objects;
+    container_type<const UniverseObject>  m_existing_resource_centers;
+    container_type<const UniverseObject>  m_existing_pop_centers;
+    container_type<const UniverseObject>  m_existing_ships;
+    container_type<const UniverseObject>  m_existing_fleets;
+    container_type<const UniverseObject>  m_existing_planets;
+    container_type<const UniverseObject>  m_existing_systems;
+    container_type<const UniverseObject>  m_existing_buildings;
+    container_type<const UniverseObject>  m_existing_fields;
 
     friend class boost::serialization::access;
     template <class Archive>

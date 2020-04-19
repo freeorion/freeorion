@@ -784,8 +784,9 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, boo
     if (objects_vec.empty()) {
         object_ptrs.reserve(m_objects.ExistingObjects().size());
         std::transform(m_objects.ExistingObjects().begin(), m_objects.ExistingObjects().end(),
-                       std::back_inserter(object_ptrs),
-                       boost::bind(&std::map<int, std::shared_ptr<UniverseObject>>::value_type::second, _1));
+                       std::back_inserter(object_ptrs), [](const std::map<int, std::shared_ptr<const UniverseObject>>::value_type& p) {
+            return std::const_pointer_cast<UniverseObject>(p.second);
+        });
     }
 
     for (auto& obj : object_ptrs) {
@@ -1119,7 +1120,7 @@ namespace {
         std::string match_log;
         // process all sources in set provided
         for (auto& source : *m_sources) {
-            ScriptingContext source_context(source, &m_object_map);
+            ScriptingContext source_context(source, m_object_map);
             int source_object_id = (source ? source->ID() : INVALID_OBJECT_ID);
             ScopedTimer update_timer("... StoreTargetsAndCausesOfEffectsGroups done processing source " +
                                      std::to_string(source_object_id) +
@@ -1622,7 +1623,8 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
                                  << " " << effects_group->AccountingLabel() << " " << effects_group->StackingGroup() << ")";
 
             // execute Effects in the EffectsGroup
-            effects_group->Execute(ScriptingContext(nullptr, m_objects),
+            ScriptingContext context{m_objects};
+            effects_group->Execute(context,
                                    group_targets_causes,
                                    update_effect_accounting ? &m_effect_accounting_map : nullptr,
                                    only_meter_effects,

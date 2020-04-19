@@ -24,7 +24,7 @@ class FO_COMMON_API NoOp final : public Effect {
 public:
     NoOp();
 
-    void            Execute(const ScriptingContext& context) const override;
+    void            Execute(ScriptingContext& context) const override;
     std::string     Dump(unsigned short ntabs = 0) const override;
     void            SetTopLevelContent(const std::string& content_name) override {}
     unsigned int    GetCheckSum() const override;
@@ -46,11 +46,11 @@ public:
              std::unique_ptr<ValueRef::ValueRef<double>>&& value,
              const boost::optional<std::string>& accounting_label = boost::none);
 
-    void Execute(const ScriptingContext& context) const override;
+    void Execute(ScriptingContext& context) const override;
 
-    void Execute(const ScriptingContext& context, const TargetSet& targets) const override;
+    void Execute(ScriptingContext& context, const TargetSet& targets) const override;
 
-    void Execute(const ScriptingContext& context,
+    void Execute(ScriptingContext& context,
                  const TargetSet& targets,
                  AccountingMap* accounting_map,
                  const EffectCause& effect_cause,
@@ -90,9 +90,9 @@ public:
                      std::unique_ptr<ValueRef::ValueRef<std::string>>&& part_name,
                      std::unique_ptr<ValueRef::ValueRef<double>>&& value);
 
-    void Execute(const ScriptingContext& context) const override;
-    void Execute(const ScriptingContext& context, const TargetSet& targets) const override;
-    void Execute(const ScriptingContext& context,
+    void Execute(ScriptingContext& context) const override;
+    void Execute(ScriptingContext& context, const TargetSet& targets) const override;
+    void Execute(ScriptingContext& context,
                  const TargetSet& targets,
                  AccountingMap* accounting_map,
                  const EffectCause& effect_cause,
@@ -110,7 +110,7 @@ public:
 
 private:
     std::unique_ptr<ValueRef::ValueRef<std::string>>    m_part_name;
-    MeterType                                               m_meter;
+    MeterType                                           m_meter;
     std::unique_ptr<ValueRef::ValueRef<double>>         m_value;
 
     friend class boost::serialization::access;
@@ -128,9 +128,9 @@ public:
     SetEmpireMeter(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id, const std::string& meter,
                    std::unique_ptr<ValueRef::ValueRef<double>>&& value);
 
-    void Execute(const ScriptingContext& context) const override;
-    void Execute(const ScriptingContext& context, const TargetSet& targets) const override;
-    void Execute(const ScriptingContext& context,
+    void Execute(ScriptingContext& context) const override;
+    void Execute(ScriptingContext& context, const TargetSet& targets) const override;
+    void Execute(ScriptingContext& context,
                  const TargetSet& targets,
                  AccountingMap* accounting_map,
                  const EffectCause& effect_cause,
@@ -147,7 +147,7 @@ public:
 
 private:
     std::unique_ptr<ValueRef::ValueRef<int>>    m_empire_id;
-    std::string                                     m_meter;
+    std::string                                 m_meter;
     std::unique_ptr<ValueRef::ValueRef<double>> m_value;
 
     friend class boost::serialization::access;
@@ -165,14 +165,14 @@ public:
                        ResourceType stockpile,
                        std::unique_ptr<ValueRef::ValueRef<double>>&& value);
 
-    void Execute(const ScriptingContext& context) const override;
+    void Execute(ScriptingContext& context) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
 
 private:
     std::unique_ptr<ValueRef::ValueRef<int>>    m_empire_id;
-    ResourceType                                    m_stockpile;
+    ResourceType                                m_stockpile;
     std::unique_ptr<ValueRef::ValueRef<double>> m_value;
 
     friend class boost::serialization::access;
@@ -188,7 +188,7 @@ public:
     explicit SetEmpireCapital();
     explicit SetEmpireCapital(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id);
 
-    void            Execute(const ScriptingContext& context) const override;
+    void            Execute(ScriptingContext& context) const override;
     std::string     Dump(unsigned short ntabs = 0) const override;
     void            SetTopLevelContent(const std::string& content_name) override;
     unsigned int    GetCheckSum() const override;
@@ -209,7 +209,7 @@ class FO_COMMON_API SetPlanetType final : public Effect {
 public:
     explicit SetPlanetType(std::unique_ptr<ValueRef::ValueRef<PlanetType>>&& type);
 
-    void Execute(const ScriptingContext& context) const override;
+    void Execute(ScriptingContext& context) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
@@ -231,7 +231,7 @@ class FO_COMMON_API SetPlanetSize final : public Effect {
 public:
     explicit SetPlanetSize(std::unique_ptr<ValueRef::ValueRef<PlanetSize>>&& size);
 
-    void Execute(const ScriptingContext& context) const override;
+    void Execute(ScriptingContext& context) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
@@ -250,7 +250,7 @@ class FO_COMMON_API SetSpecies final : public Effect {
 public:
     explicit SetSpecies(std::unique_ptr<ValueRef::ValueRef<std::string>>&& species);
 
-    void Execute(const ScriptingContext& context) const override;
+    void Execute(ScriptingContext& context) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
@@ -269,7 +269,7 @@ class FO_COMMON_API SetOwner final : public Effect {
 public:
     explicit SetOwner(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id);
 
-    void Execute(const ScriptingContext& context) const override;
+    void Execute(ScriptingContext& context) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
@@ -290,7 +290,7 @@ public:
                             std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
                             std::unique_ptr<ValueRef::ValueRef<double>>&& opinion);
 
-    void Execute(const ScriptingContext& context) const override;
+    void Execute(ScriptingContext& context) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
@@ -313,7 +313,7 @@ public:
                              std::unique_ptr<ValueRef::ValueRef<std::string>>&& rated_species_name,
                              std::unique_ptr<ValueRef::ValueRef<double>>&& opinion);
 
-    void Execute(const ScriptingContext& context) const override;
+    void Execute(ScriptingContext& context) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
@@ -337,7 +337,7 @@ public:
                  std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
                  std::vector<std::unique_ptr<Effect>>&& effects_to_apply_after);
 
-    void Execute(const ScriptingContext& context) const override;
+    void Execute(ScriptingContext& context) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
@@ -360,7 +360,7 @@ public:
                    std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
                    std::vector<std::unique_ptr<Effect>>&& effects_to_apply_after);
 
-    void Execute(const ScriptingContext& context) const override;
+    void Execute(ScriptingContext& context) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
@@ -392,7 +392,7 @@ public:
                std::unique_ptr<ValueRef::ValueRef<std::string>>&& ship_name,
                std::vector<std::unique_ptr<Effect>>&& effects_to_apply_after);
 
-    void Execute(const ScriptingContext& context) const override;
+    void Execute(ScriptingContext& context) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
@@ -426,7 +426,7 @@ public:
                 std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
                 std::vector<std::unique_ptr<Effect>>&& effects_to_apply_after);
 
-    void Execute(const ScriptingContext& context) const override;
+    void Execute(ScriptingContext& context) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
@@ -459,7 +459,7 @@ public:
                  std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
                  std::vector<std::unique_ptr<Effect>>&& effects_to_apply_after);
 
-    void Execute(const ScriptingContext& context) const override;
+    void Execute(ScriptingContext& context) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
@@ -485,7 +485,7 @@ class FO_COMMON_API Destroy final : public Effect {
 public:
     Destroy();
 
-    void Execute(const ScriptingContext& context) const override;
+    void Execute(ScriptingContext& context) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override {}
     unsigned int GetCheckSum() const override;
@@ -503,7 +503,7 @@ public:
     explicit AddSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
                         std::unique_ptr<ValueRef::ValueRef<double>>&& capacity = nullptr);
 
-    void Execute(const ScriptingContext& context) const override;
+    void Execute(ScriptingContext& context) const override;
 
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -526,7 +526,7 @@ public:
     explicit RemoveSpecial(const std::string& name);
     explicit RemoveSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
 
-    void Execute(const ScriptingContext& context) const override;
+    void Execute(ScriptingContext& context) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
@@ -545,7 +545,7 @@ class FO_COMMON_API AddStarlanes final : public Effect {
 public:
     explicit AddStarlanes(std::unique_ptr<Condition::Condition>&& other_lane_endpoint_condition);
 
-    void Execute(const ScriptingContext& context) const override;
+    void Execute(ScriptingContext& context) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
@@ -564,7 +564,7 @@ class FO_COMMON_API RemoveStarlanes final : public Effect {
 public:
     explicit RemoveStarlanes(std::unique_ptr<Condition::Condition>&& other_lane_endpoint_condition);
 
-    void            Execute(const ScriptingContext& context) const override;
+    void            Execute(ScriptingContext& context) const override;
     std::string     Dump(unsigned short ntabs = 0) const override;
     void            SetTopLevelContent(const std::string& content_name) override;
     unsigned int    GetCheckSum() const override;
@@ -583,7 +583,7 @@ class FO_COMMON_API SetStarType final : public Effect {
 public:
     explicit SetStarType(std::unique_ptr<ValueRef::ValueRef<StarType>>&& type);
 
-    void            Execute(const ScriptingContext& context) const override;
+    void            Execute(ScriptingContext& context) const override;
     std::string     Dump(unsigned short ntabs = 0) const override;
     void            SetTopLevelContent(const std::string& content_name) override;
     unsigned int    GetCheckSum() const override;
@@ -604,7 +604,7 @@ class FO_COMMON_API MoveTo final : public Effect {
 public:
     explicit MoveTo(std::unique_ptr<Condition::Condition>&& location_condition);
 
-    void            Execute(const ScriptingContext& context) const override;
+    void            Execute(ScriptingContext& context) const override;
     std::string     Dump(unsigned short ntabs = 0) const override;
     void            SetTopLevelContent(const std::string& content_name) override;
     unsigned int    GetCheckSum() const override;
@@ -628,7 +628,7 @@ public:
                 std::unique_ptr<ValueRef::ValueRef<double>>&& focus_x = nullptr,
                 std::unique_ptr<ValueRef::ValueRef<double>>&& focus_y = nullptr);
 
-    void            Execute(const ScriptingContext& context) const override;
+    void            Execute(ScriptingContext& context) const override;
     std::string     Dump(unsigned short ntabs = 0) const override;
     void            SetTopLevelContent(const std::string& content_name) override;
     unsigned int    GetCheckSum() const override;
@@ -654,7 +654,7 @@ public:
                 std::unique_ptr<ValueRef::ValueRef<double>>&& dest_x = nullptr,
                 std::unique_ptr<ValueRef::ValueRef<double>>&& dest_y = nullptr);
 
-    void            Execute(const ScriptingContext& context) const override;
+    void            Execute(ScriptingContext& context) const override;
     std::string     Dump(unsigned short ntabs = 0) const override;
     void            SetTopLevelContent(const std::string& content_name) override;
     unsigned int    GetCheckSum() const override;
@@ -678,7 +678,7 @@ class FO_COMMON_API SetDestination final : public Effect {
 public:
     explicit SetDestination(std::unique_ptr<Condition::Condition>&& location_condition);
 
-    void            Execute(const ScriptingContext& context) const override;
+    void            Execute(ScriptingContext& context) const override;
     std::string     Dump(unsigned short ntabs = 0) const override;
     void            SetTopLevelContent(const std::string& content_name) override;
     unsigned int    GetCheckSum() const override;
@@ -696,7 +696,7 @@ class FO_COMMON_API SetAggression final : public Effect {
 public:
     explicit SetAggression(bool aggressive);
 
-    void            Execute(const ScriptingContext& context) const override;
+    void            Execute(ScriptingContext& context) const override;
     std::string     Dump(unsigned short ntabs = 0) const override;
     void            SetTopLevelContent(const std::string& content_name) override {}
     unsigned int    GetCheckSum() const override;
@@ -715,7 +715,7 @@ class FO_COMMON_API Victory final : public Effect {
 public:
     explicit Victory(const std::string& reason_string); // TODO: Make this a ValueRef<std::string>*
 
-    void            Execute(const ScriptingContext& context) const override;
+    void            Execute(ScriptingContext& context) const override;
     std::string     Dump(unsigned short ntabs = 0) const override;
     void            SetTopLevelContent(const std::string& content_name) override {}
     unsigned int    GetCheckSum() const override;
@@ -736,7 +736,7 @@ public:
                           std::unique_ptr<ValueRef::ValueRef<double>>&& research_progress,
                           std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id = nullptr);
 
-    void            Execute(const ScriptingContext& context) const override;
+    void            Execute(ScriptingContext& context) const override;
     std::string     Dump(unsigned short ntabs = 0) const override;
     void            SetTopLevelContent(const std::string& content_name) override;
     unsigned int    GetCheckSum() const override;
@@ -756,7 +756,7 @@ public:
     explicit GiveEmpireTech(std::unique_ptr<ValueRef::ValueRef<std::string>>&& tech_name,
                             std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id = nullptr);
 
-    void            Execute(const ScriptingContext& context) const override;
+    void            Execute(ScriptingContext& context) const override;
     std::string     Dump(unsigned short ntabs = 0) const override;
     void            SetTopLevelContent(const std::string& content_name) override;
     unsigned int    GetCheckSum() const override;
@@ -799,7 +799,7 @@ public:
                           const std::string& label = "",
                           bool stringtable_lookup = true);
 
-    void                Execute(const ScriptingContext& context) const override;
+    void                Execute(ScriptingContext& context) const override;
     bool                IsSitrepEffect() const override     { return true; }
     std::string         Dump(unsigned short ntabs = 0) const override;
     void                SetTopLevelContent(const std::string& content_name) override;
@@ -837,7 +837,7 @@ public:
     SetOverlayTexture(const std::string& texture, std::unique_ptr<ValueRef::ValueRef<double>>&& size);
     SetOverlayTexture(const std::string& texture, ValueRef::ValueRef<double>* size);
 
-    void Execute(const ScriptingContext& context) const override;
+    void Execute(ScriptingContext& context) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     bool IsAppearanceEffect() const override { return true; }
     void SetTopLevelContent(const std::string& content_name) override;
@@ -857,7 +857,7 @@ class FO_COMMON_API SetTexture final : public Effect {
 public:
     explicit SetTexture(const std::string& texture);
 
-    void Execute(const ScriptingContext& context) const override;
+    void Execute(ScriptingContext& context) const override;
 
     std::string Dump(unsigned short ntabs = 0) const override;
     bool IsAppearanceEffect() const override { return true; }
@@ -881,7 +881,7 @@ public:
                   std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id = nullptr,
                   std::unique_ptr<Condition::Condition>&& of_objects = nullptr);    // if not specified, acts on target. if specified, acts on all matching objects
 
-    void Execute(const ScriptingContext& context) const override;
+    void Execute(ScriptingContext& context) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -918,13 +918,13 @@ public:
                 std::vector<std::unique_ptr<Effect>>&& true_effects,
                 std::vector<std::unique_ptr<Effect>>&& false_effects);
 
-    void Execute(const ScriptingContext& context) const override;
+    void Execute(ScriptingContext& context) const override;
     /** Note: executes all of the true or all of the false effects on each
         target, without considering any of the only_* type flags. */
 
-    void Execute(const ScriptingContext& context, const TargetSet& targets) const override;
+    void Execute(ScriptingContext& context, const TargetSet& targets) const override;
 
-    void Execute(const ScriptingContext& context,
+    void Execute(ScriptingContext& context,
                  const TargetSet& targets,
                  AccountingMap* accounting_map,
                  const EffectCause& effect_cause,

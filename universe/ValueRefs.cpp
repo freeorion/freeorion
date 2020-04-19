@@ -77,19 +77,19 @@ namespace {
             std::string property_name = *first;
             if (property_name == "Planet") {
                 if (auto b = std::dynamic_pointer_cast<const Building>(obj)) {
-                    obj = context.objects.get<Planet>(b->PlanetID());
+                    obj = context.ContextObjects().get<Planet>(b->PlanetID());
                 } else {
                     ErrorLogger() << "FollowReference : object not a building, so can't get its planet.";
                     obj = nullptr;
                 }
             } else if (property_name == "System") {
                 if (obj)
-                    obj = context.objects.get<System>(obj->SystemID());
+                    obj = context.ContextObjects().get<System>(obj->SystemID());
                 if (!obj)
                     ErrorLogger() << "FollowReference : Unable to get system for object";
             } else if (property_name == "Fleet") {
                 if (auto s = std::dynamic_pointer_cast<const Ship>(obj)) {
-                    obj = context.objects.get<Fleet>(s->FleetID());
+                    obj = context.ContextObjects().get<Fleet>(s->FleetID());
                 } else {
                     ErrorLogger() << "FollowReference : object not a ship, so can't get its fleet";
                     obj = nullptr;
@@ -147,18 +147,18 @@ namespace {
             if (property_name_part == "Planet") {
                 if (auto b = std::dynamic_pointer_cast<const Building>(obj)) {
                     retval += "(" + std::to_string(b->PlanetID()) + "): ";
-                    obj = context.objects.get<Planet>(b->PlanetID());
+                    obj = context.ContextObjects().get<Planet>(b->PlanetID());
                 } else
                     obj = nullptr;
             } else if (property_name_part == "System") {
                 if (obj) {
                     retval += "(" + std::to_string(obj->SystemID()) + "): ";
-                    obj = context.objects.get<System>(obj->SystemID());
+                    obj = context.ContextObjects().get<System>(obj->SystemID());
                 }
             } else if (property_name_part == "Fleet") {
                 if (auto s = std::dynamic_pointer_cast<const Ship>(obj))  {
                     retval += "(" + std::to_string(s->FleetID()) + "): ";
-                    obj = context.objects.get<Fleet>(s->FleetID());
+                    obj = context.ContextObjects().get<Fleet>(s->FleetID());
                 } else
                     obj = nullptr;
             }
@@ -1046,7 +1046,7 @@ int Variable<int>::Eval(const ScriptingContext& context) const
     else if (property_name == "LastTurnBattleHere") {
         if (auto const_system = std::dynamic_pointer_cast<const System>(object))
             return const_system->LastTurnBattleHere();
-        else if (auto system = context.objects.get<System>(object->SystemID()))
+        else if (auto system = context.ContextObjects().get<System>(object->SystemID()))
             return system->LastTurnBattleHere();
         return INVALID_GAME_TURN;
 
@@ -1082,7 +1082,7 @@ int Variable<int>::Eval(const ScriptingContext& context) const
 
     }
     else if (property_name == "Orbit") {
-        if (auto system = context.objects.get<System>(object->SystemID()))
+        if (auto system = context.ContextObjects().get<System>(object->SystemID()))
             return system->OrbitOfPlanet(object->ID());
         return -1;
 
@@ -1391,7 +1391,7 @@ PlanetEnvironment ComplexVariable<PlanetEnvironment>::Eval(const ScriptingContex
         int planet_id = INVALID_OBJECT_ID;
         if (m_int_ref1)
             planet_id = m_int_ref1->Eval(context);
-        const auto planet = context.objects.get<Planet>(planet_id);
+        const auto planet = context.ContextObjects().get<Planet>(planet_id);
         if (!planet)
             return INVALID_PLANET_ENVIRONMENT;
 
@@ -2023,7 +2023,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
             object_id = m_int_ref1->Eval(context);
         if (object_id == INVALID_OBJECT_ID)
             return 0;
-        auto object = context.objects.get(object_id);
+        auto object = context.ContextObjects().get(object_id);
         if (!object)
             return 0;
 
@@ -2209,14 +2209,14 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         int object1_id = INVALID_OBJECT_ID;
         if (m_int_ref1)
             object1_id = m_int_ref1->Eval(context);
-        auto obj1 = context.objects.get(object1_id);
+        auto obj1 = context.ContextObjects().get(object1_id);
         if (!obj1)
             return 0.0;
 
         int object2_id = INVALID_OBJECT_ID;
         if (m_int_ref2)
             object2_id = m_int_ref2->Eval(context);
-        auto obj2 = context.objects.get(object2_id);
+        auto obj2 = context.ContextObjects().get(object2_id);
         if (!obj2)
             return 0.0;
 
@@ -2264,7 +2264,7 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         int object_id = INVALID_OBJECT_ID;
         if (m_int_ref1)
             object_id = m_int_ref1->Eval(context);
-        auto object = context.objects.get(object_id);
+        auto object = context.ContextObjects().get(object_id);
         if (!object)
             return 0.0;
 
@@ -2280,7 +2280,7 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         int object_id = INVALID_OBJECT_ID;
         if (m_int_ref1)
             object_id = m_int_ref1->Eval(context);
-        auto object = context.objects.get(object_id);
+        auto object = context.ContextObjects().get(object_id);
         if (!object)
             return 0.0;
         auto ship = std::dynamic_pointer_cast<const Ship>(object);
@@ -2966,7 +2966,7 @@ std::string NameLookup::Eval(const ScriptingContext& context) const {
 
     switch (m_lookup_type) {
     case OBJECT_NAME: {
-        auto obj = context.objects.get(m_value_ref->Eval(context));
+        auto obj = context.ContextObjects().get(m_value_ref->Eval(context));
         return obj ? obj->Name() : "";
         break;
     }

@@ -328,7 +328,7 @@ std::string ObjectMap::Dump(unsigned short ntabs) const {
     return dump_stream.str();
 }
 
-std::shared_ptr<UniverseObject> ObjectMap::ExistingObject(int id) {
+std::shared_ptr<const UniverseObject> ObjectMap::ExistingObject(int id) const {
     auto it = m_existing_objects.find(id);
     if (it != m_existing_objects.end())
         return it->second;

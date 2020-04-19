@@ -76,11 +76,11 @@ namespace Effect {
     public:
         virtual ~Effect();
 
-        virtual void Execute(const ScriptingContext& context) const = 0;
+        virtual void Execute(ScriptingContext& context) const = 0;
 
-        virtual void Execute(const ScriptingContext& context, const TargetSet& targets) const;
+        virtual void Execute(ScriptingContext& context, const TargetSet& targets) const;
 
-        void Execute(const ScriptingContext& context,
+        void Execute(ScriptingContext& context,
                      const TargetsCauses& targets_causes,
                      AccountingMap* accounting_map,
                      bool only_meter_effects = false,
@@ -88,7 +88,7 @@ namespace Effect {
                      bool include_empire_meter_effects = false,
                      bool only_generate_sitrep_effects = false) const;
 
-        virtual void Execute(const ScriptingContext& context,
+        virtual void Execute(ScriptingContext& context,
                              const TargetSet& targets,
                              AccountingMap* accounting_map,
                              const EffectCause& effect_cause,
@@ -149,7 +149,7 @@ namespace Effect {
         virtual ~EffectsGroup();
 
         /** execute all effects in group */
-        void    Execute(const ScriptingContext& context,
+        void    Execute(ScriptingContext& context,
                         const TargetsCauses& targets_causes,
                         AccountingMap* accounting_map = nullptr,
                         bool only_meter_effects = false,

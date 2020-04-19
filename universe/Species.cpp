@@ -598,7 +598,7 @@ void SpeciesManager::UpdatePopulationCounter() {
         if (obj->ObjectType() != OBJ_PLANET && obj->ObjectType() != OBJ_POP_CENTER)
             continue;
 
-        auto pop_center = std::dynamic_pointer_cast<PopCenter>(obj);
+        auto pop_center = std::dynamic_pointer_cast<const PopCenter>(obj);
         if (!pop_center)
             continue;
 
