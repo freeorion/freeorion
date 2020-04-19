@@ -314,9 +314,9 @@ namespace {
             std::unique_ptr<Condition::Condition>{VisibleEnemyOfOwnerCondition()});
 
     const std::unique_ptr<Condition::Condition> is_enemy_ship_fighter_or_armed_planet =
-        std::make_unique<Condition::And>(
-            std::unique_ptr<Condition::Condition>{VisibleEnemyOfOwnerCondition()},  // enemies
-            std::make_unique<Condition::OrderedAlternativesOf>(
+        std::make_unique<Condition::OrderedAlternativesOf>(
+            std::make_unique<Condition::And>(
+                std::unique_ptr<Condition::Condition>{VisibleEnemyOfOwnerCondition()},  // enemies
                 std::make_unique<Condition::Or>(
                     std::make_unique<Condition::And>(
                         std::make_unique<Condition::Type>(OBJ_SHIP),
@@ -344,9 +344,11 @@ namespace {
                                 std::make_unique<Condition::MeterValue>(
                                     METER_CONSTRUCTION,
                                     nullptr,
-                                    std::make_unique<ValueRef::Constant<double>>(0.0)))))),
+                                    std::make_unique<ValueRef::Constant<double>>(0.0))))))),
                 // Secondary Tier of AlternativesOf - target defenseless Planets
-                std::make_unique<Condition::Type>(OBJ_PLANET)));
+                std::make_unique<Condition::And>(
+                    std::unique_ptr<Condition::Condition>{VisibleEnemyOfOwnerCondition()},  // enemies
+                    std::make_unique<Condition::Type>(OBJ_PLANET)));
 
     const std::unique_ptr<Condition::Condition> if_source_is_planet_then_ships_else_all =
         std::make_unique<Condition::Or>(
