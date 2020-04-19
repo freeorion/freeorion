@@ -6,6 +6,7 @@ import os
 import re
 import subprocess
 import sys
+import textwrap
 from collections import namedtuple, OrderedDict
 
 STRING_TABLE_KEY_PATTERN = r'^[A-Z0-9_]+$'
@@ -474,11 +475,12 @@ def check_action(args):
         for key in source_st.keys():
             entry = source_st[key]
 
-            for match in re.finditer(INTERNAL_REFERENCE_PATTERN.format('.*?'), entry.value):
-                match = match['key']
-                if not (match in source_st.keys() or (reference_st and match in reference_st.keys())):
-                    print("{}:{}: Referenced key '{}' in value of '{}' was not found.".format(source_st.fpath, entry.keyline, match, entry.key))
-                    exit_code = 1
+            if entry.value:
+                for match in re.finditer(INTERNAL_REFERENCE_PATTERN.format('.*?'), entry.value):
+                    match = match['key']
+                    if not (match in source_st.keys() or (reference_st and match in reference_st.keys())):
+                        print("{}:{}: Referenced key '{}' in value of '{}' was not found.".format(source_st.fpath, entry.keyline, match, entry.key))
+                        exit_code = 1
 
     return exit_code
 
@@ -518,7 +520,7 @@ def compare_action(args):
 
     print("""
 Summary comparing '{}' against '{}':
-    Keys translated - {}/{} ({:3.1f}%)
+    Keys matching - {}/{} ({:3.1f}%)
     Keys not in reference - {}
     Value is reference - {}
     Values layout mismatch - {}
@@ -542,29 +544,76 @@ Summary comparing '{}' against '{}':
 
 
 if __name__ == "__main__":
-    root_parser = argparse.ArgumentParser()
-    verb_parsers = root_parser.add_subparsers()
+    root_parser = argparse.ArgumentParser(description="Verify and modify string tables")
+    verb_parsers = root_parser.add_subparsers(
+        title="verbs", description="For more details run `{} <verb> --help`.".format(root_parser.prog),
+    )
 
-    format_parser = verb_parsers.add_parser('format', help="format a string table and exit")
+    format_parser = verb_parsers.add_parser('format',
+        help="format a string table and exit",
+        description=textwrap.dedent("""\
+        Pretty prints a given string table onto the standard output.
+
+        Formatting a string tables makes sure that:
+        * Translation entries (translated or not) are separated by one empty
+          line.
+        * Translation notes (prefix: '# ') and untranslated entries
+          (prefix: '#*') are properly prefixed and formatted
+        * Translation notes, key and value don't have empty lines between
+          each other.
+        * String tables contain the language name as first line, followed by
+          the file notes.
+        * Section titles are prefixed with a block comment (prefix '##').
+        * Section titles have two leading whitespaces and one trailing
+          whitespace.
+        """),
+        formatter_class=argparse.RawTextHelpFormatter)
     format_parser.set_defaults(action=format_action)
     format_parser.add_argument('source', metavar='SOURCE', help="string table to format",
         type=argparse.FileType(encoding='utf-8', errors='strict'))
 
-    sync_parser = verb_parsers.add_parser('sync', help="synchronize two string tables and exit")
+    sync_parser = verb_parsers.add_parser('sync',
+        help="synchronize two string tables and exit",
+        description=textwrap.dedent("""\
+        Synchronizes two string tables by copying over translation entry key,
+        notes, section titles and includes from the reference into the source,
+        while preserving existing translation values, language name and file notes
+        from source.
+
+        Source translation entries without matching reference counterpart are
+        discarded.
+
+        The resulting string table is printed out to standard output.
+        """),
+        formatter_class=argparse.RawTextHelpFormatter)
     sync_parser.set_defaults(action=sync_action)
     sync_parser.add_argument('reference', metavar='REFERENCE', help="reference string table",
         type=argparse.FileType(encoding='utf-8', errors='strict'))
     sync_parser.add_argument('source', metavar='SOURCE', help="string table to sync",
         type=argparse.FileType(encoding='utf-8', errors='strict'))
 
-    rename_key_parser = verb_parsers.add_parser('rename-key', help="rename all occurences of a key within a stringtable and exit")
+    rename_key_parser = verb_parsers.add_parser('rename-key',
+        help="rename all occurences of a key within a stringtable and exit",
+        description=textwrap.dedent("""\
+        Replace all occurances of a translation entry key within the given key,
+        including internal references.
+
+        The resulting string table is printed out to standard output.
+        """),
+        formatter_class=argparse.RawTextHelpFormatter)
     rename_key_parser.set_defaults(action=rename_key_action)
     rename_key_parser.add_argument('source', metavar='SOURCE', help="string table to rename old key within",
         type=argparse.FileType(encoding='utf-8', errors='strict'))
     rename_key_parser.add_argument('old_key', metavar='OLD_KEY', help="key to rename")
     rename_key_parser.add_argument('new_key', metavar='NEW_KEY', help="new key name")
 
-    check_parser = verb_parsers.add_parser('check', help="check a stringtable for consistency and exit")
+    check_parser = verb_parsers.add_parser('check',
+        help="check a stringtable for consistency and exit",
+        description=textwrap.dedent("""\
+        Check if all references within translation entries are provided by the source or
+        or the reference string table.
+        """),
+        formatter_class=argparse.RawTextHelpFormatter)
     check_parser.set_defaults(action=check_action)
     check_parser.add_argument('-r', '--reference', metavar='REFERENCE', help="reference string table",
         type=argparse.FileType(encoding='utf-8', errors='strict'))
@@ -572,9 +621,14 @@ if __name__ == "__main__":
         nargs='+',
         type=argparse.FileType(encoding='utf-8', errors='strict'))
 
-    compare_parser = verb_parsers.add_parser('compare', help="compare two string tables and exit")
+    compare_parser = verb_parsers.add_parser('compare',
+        help="compare two string tables and exit",
+        description=textwrap.dedent("""\
+        Compare two string tables and point out differences between them.
+        """),
+        formatter_class=argparse.RawTextHelpFormatter)
     compare_parser.set_defaults(action=compare_action)
-    compare_parser.add_argument('-s', '--summary-only', help="print only a summary of keys", action='store_true', dest='summary_only')
+    compare_parser.add_argument('-s', '--summary-only', help="print only a summary of differences", action='store_true', dest='summary_only')
     compare_parser.add_argument('reference', metavar='REFERENCE', help="reference string table",
         type=argparse.FileType(encoding='utf-8', errors='strict'))
     compare_parser.add_argument('source', metavar='SOURCE', help="string table to compare",
