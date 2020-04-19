@@ -129,7 +129,7 @@ unsigned int FieldTypeManager::GetCheckSum() const {
     return retval;
 }
 
-void FieldTypeManager::SetFieldTypes(Pending::Pending<FieldTypeMap>&& future)
+void FieldTypeManager::SetFieldTypes(Pending::Pending<container_type>&& future)
 { m_pending_types = std::move(future); }
 
 void FieldTypeManager::CheckPendingFieldTypes() const

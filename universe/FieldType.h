@@ -70,8 +70,8 @@ private:
 
 class FieldTypeManager {
 public:
-    using FieldTypeMap = std::map<std::string, std::unique_ptr<FieldType>>;
-    using iterator = FieldTypeMap::const_iterator;
+    using container_type = std::map<std::string, std::unique_ptr<FieldType>>;
+    using iterator = container_type::const_iterator;
 
     //! Returns the field type with the name \a name; you should use the free
     //! free function GetFieldType(...) instead, mainly to save some typing.
@@ -96,7 +96,7 @@ public:
     auto GetCheckSum() const -> unsigned int;
 
     //! Sets types to the value of @p future.
-    FO_COMMON_API void SetFieldTypes(Pending::Pending<FieldTypeMap>&& future);
+    FO_COMMON_API void SetFieldTypes(Pending::Pending<container_type>&& future);
 
 private:
     FieldTypeManager();
@@ -106,9 +106,9 @@ private:
 
     //! Future types being parsed by parser.
     //! mutable so that it can be assigned to m_field_types when completed.
-    mutable boost::optional<Pending::Pending<FieldTypeMap>> m_pending_types = boost::none;
+    mutable boost::optional<Pending::Pending<container_type>> m_pending_types = boost::none;
 
-    mutable FieldTypeMap m_field_types;
+    mutable container_type m_field_types;
 
     static FieldTypeManager* s_instance;
 };
