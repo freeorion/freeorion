@@ -47,33 +47,7 @@ namespace {
         }
     }
 
-    // Setup file sink, formatting, and \p name channel filter for \p logger.
-    void ConfigurePythonLogger(NamedThreadedLogger& logger, const std::string& name) {
-        if (name.empty())
-            return;
-
-        SetLoggerThreshold(name, default_log_level_threshold);
-
-        ApplyConfigurationToFileSinkFrontEnd(
-            name,
-            std::bind(ConfigureFileSinkFrontEnd, std::placeholders::_1, name));
-
-        LoggerCreatedSignal(name);
-    }
-
-    // Place in source file to create the previously defined global logger \p name
-#define DeclareThreadSafePythonLogger(name)                       \
-    BOOST_LOG_INLINE_GLOBAL_LOGGER_INIT(                          \
-        FO_GLOBAL_LOGGER_NAME(name), NamedThreadedLogger)         \
-    {                                                             \
-        auto lg = NamedThreadedLogger(                            \
-            (boost::log::keywords::severity = LogLevel::debug),   \
-            (boost::log::keywords::channel = #name));             \
-        ConfigurePythonLogger(lg, #name);                         \
-        return lg;                                                \
-    }
-
-    DeclareThreadSafePythonLogger(python);
+    DeclareThreadSafeLogger(python);
 
     // Assemble a python message that is the same as the C++ message format.
     void PythonLogger(const std::string& msg,

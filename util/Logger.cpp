@@ -142,6 +142,10 @@ namespace {
         return forced_threshold;
     }
 
+    using LoggerTextFileSinkFrontend = boost::log::sinks::synchronous_sink<boost::log::sinks::text_file_backend>;
+
+    using LoggerFileSinkFrontEndConfigurer = std::function<void(LoggerTextFileSinkFrontend& sink_frontend)>;
+
     boost::shared_ptr<LoggerTextFileSinkFrontend::sink_backend_type>& FileSinkBackend() {
         // Create the sink backend as a function local static variable to avoid the static
         // initilization fiasco.
@@ -310,6 +314,22 @@ namespace {
 
         return logger_threshold_setter.SetThreshold(source, threshold);
     }
+
+    void ConfigureFileSinkFrontEnd(LoggerTextFileSinkFrontend& sink_frontend, const std::string& channel_name) {
+        // Create the format
+        sink_frontend.set_formatter(
+            expr::stream
+            << expr::format_date_time<boost::posix_time::ptime>("TimeStamp", "%H:%M:%S.%f")
+            << " {" << thread_id << "}"
+            << " [" << log_severity << "] "
+            << DisplayName(channel_name)
+            << " : " << log_src_filename << ":" << log_src_linenum << " : "
+            << expr::message
+        );
+
+        // Set a filter to only format this channel
+        sink_frontend.set_filter(log_channel == channel_name);
+    }
 }
 
 void SetLoggerThreshold(const std::string& source, LogLevel threshold) {
@@ -396,22 +416,6 @@ namespace {
         LoggerCreatedSignal = LoggerCreatedSignalType();
         return true;
     };
-}
-
-void ConfigureFileSinkFrontEnd(LoggerTextFileSinkFrontend& sink_frontend, const std::string& channel_name) {
-    // Create the format
-    sink_frontend.set_formatter(
-        expr::stream
-        << expr::format_date_time<boost::posix_time::ptime>("TimeStamp", "%H:%M:%S.%f")
-        << " {" << thread_id << "}"
-        << " [" << log_severity << "] "
-        << DisplayName(channel_name)
-        << " : " << log_src_filename << ":" << log_src_linenum << " : "
-        << expr::message
-    );
-
-    // Set a filter to only format this channel
-    sink_frontend.set_filter(log_channel == channel_name);
 }
 
 void ConfigureLogger(NamedThreadedLogger& logger, const std::string& name) {
