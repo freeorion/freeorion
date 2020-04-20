@@ -13,7 +13,7 @@ BOOST_CLASS_EXPORT(Moderator::CreateSystem)
 BOOST_CLASS_EXPORT(Moderator::CreatePlanet)
 
 
-template <class Archive>
+template <typename Archive>
 void Moderator::ModeratorAction::serialize(Archive& ar, const unsigned int version)
 {}
 
@@ -22,7 +22,7 @@ template void Moderator::ModeratorAction::serialize<freeorion_bin_iarchive>(free
 template void Moderator::ModeratorAction::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
 template void Moderator::ModeratorAction::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
 
-template <class Archive>
+template <typename Archive>
 void Moderator::DestroyUniverseObject::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ModeratorAction)
@@ -34,7 +34,7 @@ template void Moderator::DestroyUniverseObject::serialize<freeorion_bin_iarchive
 template void Moderator::DestroyUniverseObject::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
 template void Moderator::DestroyUniverseObject::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
 
-template <class Archive>
+template <typename Archive>
 void Moderator::SetOwner::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ModeratorAction)
@@ -47,7 +47,7 @@ template void Moderator::SetOwner::serialize<freeorion_bin_iarchive>(freeorion_b
 template void Moderator::SetOwner::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
 template void Moderator::SetOwner::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
 
-template <class Archive>
+template <typename Archive>
 void Moderator::AddStarlane::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ModeratorAction)
@@ -60,7 +60,7 @@ template void Moderator::AddStarlane::serialize<freeorion_bin_iarchive>(freeorio
 template void Moderator::AddStarlane::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
 template void Moderator::AddStarlane::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
 
-template <class Archive>
+template <typename Archive>
 void Moderator::RemoveStarlane::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ModeratorAction)
@@ -73,7 +73,7 @@ template void Moderator::RemoveStarlane::serialize<freeorion_bin_iarchive>(freeo
 template void Moderator::RemoveStarlane::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
 template void Moderator::RemoveStarlane::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
 
-template <class Archive>
+template <typename Archive>
 void Moderator::CreateSystem::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ModeratorAction)
@@ -87,7 +87,7 @@ template void Moderator::CreateSystem::serialize<freeorion_bin_iarchive>(freeori
 template void Moderator::CreateSystem::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
 template void Moderator::CreateSystem::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
 
-template <class Archive>
+template <typename Archive>
 void Moderator::CreatePlanet::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ModeratorAction)

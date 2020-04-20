@@ -36,7 +36,7 @@
 namespace GG {
 
 class Font;
-template <class T>
+template <typename T>
 class Slider;
 
 /** \brief Contains the necessary data to represent a color in HSV space, with

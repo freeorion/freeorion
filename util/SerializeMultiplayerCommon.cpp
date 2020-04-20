@@ -13,7 +13,7 @@
 #include <boost/uuid/uuid_io.hpp>
 
 
-template <class Archive>
+template <typename Archive>
 void GalaxySetupData::serialize(Archive& ar, const unsigned int version)
 {
     if (Archive::is_saving::value && m_encoding_empire != ALL_EMPIRES && (!GetOptionsDB().Get<bool>("network.server.publish-seed"))) {
@@ -52,7 +52,7 @@ template void GalaxySetupData::serialize<freeorion_xml_oarchive>(freeorion_xml_o
 template void GalaxySetupData::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
 
 
-template <class Archive>
+template <typename Archive>
 void SinglePlayerSetupData::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(GalaxySetupData)
@@ -67,7 +67,7 @@ template void SinglePlayerSetupData::serialize<freeorion_xml_oarchive>(freeorion
 template void SinglePlayerSetupData::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
 
 
-template <class Archive>
+template <typename Archive>
 void SaveGameUIData::serialize(Archive& ar, const unsigned int version)
 {
     TraceLogger() << "SaveGameUIData::serialize " << (Archive::is_saving::value ? "saving" : "loading")
@@ -159,7 +159,7 @@ template void SaveGameUIData::serialize<freeorion_xml_oarchive>(freeorion_xml_oa
 template void SaveGameUIData::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
 
 
-template <class Archive>
+template <typename Archive>
 void SaveGameEmpireData::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_empire_id)
@@ -181,7 +181,7 @@ template void SaveGameEmpireData::serialize<freeorion_xml_oarchive>(freeorion_xm
 template void SaveGameEmpireData::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
 
 
-template <class Archive>
+template <typename Archive>
 void PlayerSaveHeaderData::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_name)
@@ -195,7 +195,7 @@ template void PlayerSaveHeaderData::serialize<freeorion_xml_oarchive>(freeorion_
 template void PlayerSaveHeaderData::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
 
 
-template <class Archive>
+template <typename Archive>
 void PlayerSaveGameData::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_name)
@@ -216,7 +216,7 @@ template void PlayerSaveGameData::serialize<freeorion_xml_oarchive>(freeorion_xm
 template void PlayerSaveGameData::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
 
 
-template <class Archive>
+template <typename Archive>
 void ServerSaveGameData::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_current_turn);
@@ -228,7 +228,7 @@ template void ServerSaveGameData::serialize<freeorion_xml_oarchive>(freeorion_xm
 template void ServerSaveGameData::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
 
 
-template <class Archive>
+template <typename Archive>
 void PlayerSetupData::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_player_name)
@@ -253,7 +253,7 @@ template void PlayerSetupData::serialize<freeorion_xml_oarchive>(freeorion_xml_o
 template void PlayerSetupData::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
 
 
-template <class Archive>
+template <typename Archive>
 void MultiplayerLobbyData::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(GalaxySetupData)
@@ -278,7 +278,7 @@ template void MultiplayerLobbyData::serialize<freeorion_xml_oarchive>(freeorion_
 template void MultiplayerLobbyData::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
 
 
-template <class Archive>
+template <typename Archive>
 void ChatHistoryEntity::serialize(Archive& ar, const unsigned int version)
 {
     if (version < 1) {
@@ -299,7 +299,7 @@ template void ChatHistoryEntity::serialize<freeorion_xml_oarchive>(freeorion_xml
 template void ChatHistoryEntity::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
 
 
-template <class Archive>
+template <typename Archive>
 void PlayerInfo::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(name)

@@ -155,12 +155,12 @@ private:
     std::unique_ptr<Condition::Condition>               m_combat_targets;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
 
-template <class Archive>
+template <typename Archive>
 void ShipPart::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_name)

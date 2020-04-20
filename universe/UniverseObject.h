@@ -198,7 +198,7 @@ protected:
     UniverseObject();
     UniverseObject(const std::string name, double x, double y);
 
-    template <class T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
+    template <typename T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
 
 public:
     virtual ~UniverseObject();
@@ -234,7 +234,7 @@ private:
     int                                             m_created_on_turn = INVALID_GAME_TURN;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 

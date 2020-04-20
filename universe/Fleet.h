@@ -149,7 +149,7 @@ public:
     Fleet(const std::string& name, double x, double y, int owner);      ///< general ctor taking name, position and owner id
 
 protected:
-    template <class T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
+    template <typename T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
 
 public:
     ~Fleet() {}
@@ -183,7 +183,7 @@ private:
     int                         m_arrival_starlane = INVALID_OBJECT_ID; // see comment for ArrivalStarlane()
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 

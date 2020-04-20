@@ -53,7 +53,7 @@ class WndEvent;
     increase upward by default.  Note that it is acceptable to define a range
     that increases from min to max, or one that decreases from min to max;
     both are legal. */
-template <class T>
+template <typename T>
 class Slider : public Control
 {
 public:
@@ -151,10 +151,10 @@ private:
 };
 
 // template implementations
-template <class T>
+template <typename T>
 const T Slider<T>::INVALID_PAGE_SIZE = std::numeric_limits<T>::max();
 
-template <class T>
+template <typename T>
 Slider<T>::Slider(T min, T max, Orientation orientation,
                   Clr color, int unsigned tab_width, int unsigned line_width/* = 5*/,
                   Flags<WndFlag> flags/* = INTERACTIVE*/) :
@@ -175,7 +175,7 @@ Slider<T>::Slider(T min, T max, Orientation orientation,
     Control::SetColor(color);
 }
 
-template <class T>
+template <typename T>
 void Slider<T>::CompleteConstruction()
 {
     AttachChild(m_tab);
@@ -188,7 +188,7 @@ void Slider<T>::CompleteConstruction()
     }
 }
 
-template <class T>
+template <typename T>
 Pt Slider<T>::MinUsableSize() const
 {
     Pt tab_min = m_tab->MinUsableSize();
@@ -196,31 +196,31 @@ Pt Slider<T>::MinUsableSize() const
               m_orientation == VERTICAL ? Size().y : tab_min.y);
 }
 
-template <class T>
+template <typename T>
 T Slider<T>::Posn() const
 { return m_posn; }
 
-template <class T>
+template <typename T>
 std::pair<T, T> Slider<T>::SliderRange() const
 { return std::pair<T, T>(m_range_min, m_range_max); }
 
-template <class T>
+template <typename T>
 T Slider<T>::PageSize() const
 { return m_page_sz != INVALID_PAGE_SIZE ? m_page_sz : (m_range_max - m_range_min) / 10; }
 
-template <class T>
+template <typename T>
 Orientation Slider<T>::GetOrientation() const
 { return m_orientation; }
 
-template <class T>
+template <typename T>
 unsigned int Slider<T>::TabWidth() const
 { return m_tab_width; }
 
-template <class T>
+template <typename T>
 unsigned int Slider<T>::LineWidth() const
 { return m_line_width; }
 
-template <class T>
+template <typename T>
 void Slider<T>::Render()
 {
     const Pt UL = UpperLeft();
@@ -242,7 +242,7 @@ void Slider<T>::Render()
     FlatRectangle(ul, lr, color_to_use, CLR_BLACK, 1);
 }
 
-template <class T>
+template <typename T>
 void Slider<T>::SizeMove(const Pt& ul, const Pt& lr)
 {
     Wnd::SizeMove(ul, lr);
@@ -253,21 +253,21 @@ void Slider<T>::SizeMove(const Pt& ul, const Pt& lr)
     MoveTabToPosn();
 }
 
-template <class T>
+template <typename T>
 void Slider<T>::Disable(bool b/* = true*/)
 {
     Control::Disable(b);
     m_tab->Disable(b);
 }
 
-template <class T>
+template <typename T>
 void Slider<T>::SetColor(Clr c)
 {
     Control::SetColor(c);
     m_tab->SetColor(c);
 }
 
-template <class T>
+template <typename T>
 void Slider<T>::SizeSlider(T min, T max)
 {
     assert(m_range_min != m_range_max);
@@ -281,27 +281,27 @@ void Slider<T>::SizeSlider(T min, T max)
         MoveTabToPosn();
 }
 
-template <class T>
+template <typename T>
 void Slider<T>::SetMax(T max)
 { SizeSlider(m_range_min, max); }
 
-template <class T>
+template <typename T>
 void Slider<T>::SetMin(T min)
 { SizeSlider(min, m_range_max); }
 
-template <class T>
+template <typename T>
 void Slider<T>::SlideTo(T p)
 { SlideToImpl(p, false); }
 
-template <class T>
+template <typename T>
 void Slider<T>::SetPageSize(T size)
 { m_page_sz = size; }
 
-template <class T>
+template <typename T>
 Button* Slider<T>::Tab() const
 { return m_tab.get(); }
 
-template <class T>
+template <typename T>
 T Slider<T>::PtToPosn(const Pt& pt) const
 {
     Pt ul = UpperLeft(), lr = LowerRight();
@@ -321,11 +321,11 @@ T Slider<T>::PtToPosn(const Pt& pt) const
     return m_range_min + static_cast<T>((m_range_max - m_range_min) * fractional_distance);
 }
 
-template <class T>
+template <typename T>
 void Slider<T>::LClick(const Pt& pt, Flags<ModKey> mod_keys)
 { SlideToImpl(m_posn < PtToPosn(pt) ? m_posn + PageSize() : m_posn - PageSize(), true); }
 
-template <class T>
+template <typename T>
 void Slider<T>::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys)
 {
     if (!Disabled()) {
@@ -367,7 +367,7 @@ void Slider<T>::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mo
     }
 }
 
-template <class T>
+template <typename T>
 bool Slider<T>::EventFilter(Wnd* w, const WndEvent& event)
 {
     if (w == m_tab.get()) {
@@ -406,7 +406,7 @@ bool Slider<T>::EventFilter(Wnd* w, const WndEvent& event)
     return false;
 }
 
-template <class T>
+template <typename T>
 void Slider<T>::MoveTabToPosn()
 {
     assert((m_range_min <= m_posn && m_posn <= m_range_max) ||
@@ -421,7 +421,7 @@ void Slider<T>::MoveTabToPosn()
         m_tab->MoveTo(Pt(X(pixel_distance), m_tab->RelativeUpperLeft().y));
 }
 
-template <class T>
+template <typename T>
 void Slider<T>::UpdatePosn()
 {
     T old_posn = m_posn;
@@ -433,7 +433,7 @@ void Slider<T>::UpdatePosn()
         SlidSignal(m_posn, m_range_min, m_range_max);
 }
 
-template <class T>
+template <typename T>
 void Slider<T>::SlideToImpl(T p, bool signal)
 {
     T old_posn = m_posn;
@@ -450,12 +450,12 @@ void Slider<T>::SlideToImpl(T p, bool signal)
     }
 }
 
-template <class T>
+template <typename T>
 Slider<T>::SlidEcho::SlidEcho(const std::string& name) :
     m_name(name)
 {}
 
-template <class T>
+template <typename T>
 void Slider<T>::SlidEcho::operator()(T pos, T min, T max)
 {
     std::cerr << "GG SIGNAL : " << m_name

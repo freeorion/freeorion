@@ -33,11 +33,11 @@ private:
     float               m_population = 0.0f;    ///< total population of all PopCenters in pool
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
-template <class Archive>
+template <typename Archive>
 void PopulationPool::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_pop_center_ids);

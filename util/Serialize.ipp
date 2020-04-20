@@ -27,7 +27,7 @@
 
 namespace boost { namespace serialization {
 
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, GG::Clr& clr, const unsigned int version)
     {
         ar  & BOOST_SERIALIZATION_NVP(clr.r)

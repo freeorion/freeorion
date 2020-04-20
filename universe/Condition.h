@@ -99,7 +99,7 @@ private:
     virtual bool Match(const ScriptingContext& local_context) const;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 

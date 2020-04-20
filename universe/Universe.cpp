@@ -82,17 +82,20 @@ namespace {
     // determining how much of their speed is consumed by the jump
     // unused variable const double    WORMHOLE_TRAVEL_DISTANCE = 0.1;
 
-    template <class Key, class Value> struct constant_property
+    template <typename Key, typename Value>
+    struct constant_property
     { Value m_value; };
 }
 
 namespace boost {
-    template <class Key, class Value> struct property_traits<constant_property<Key, Value>> {
+    template <typename Key, typename Value>
+    struct property_traits<constant_property<Key, Value>> {
         typedef Value value_type;
         typedef Key key_type;
         typedef readable_property_map_tag category;
     };
-    template <class Key, class Value> const Value& get(const constant_property<Key, Value>& pmap, const Key&) { return pmap.m_value; }
+    template <typename Key, typename Value>
+    const Value& get(const constant_property<Key, Value>& pmap, const Key&) { return pmap.m_value; }
 }
 
 

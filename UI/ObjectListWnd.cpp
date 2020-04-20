@@ -401,7 +401,7 @@ namespace {
 
     const std::string FILTER_OPTIONS_WND_NAME = "object-list-filter";
 
-    template <class enumT>
+    template <typename enumT>
     std::unique_ptr<ValueRef::ValueRef<enumT>> CopyEnumValueRef(const ValueRef::ValueRef<enumT>* const value_ref) {
         if (auto constant = dynamic_cast<const ValueRef::Constant<enumT>*>(value_ref))
             return std::make_unique<ValueRef::Constant<enumT>>(constant->Value());

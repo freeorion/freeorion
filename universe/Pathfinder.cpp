@@ -41,7 +41,8 @@ namespace {
         The table is assumed symmetric.  If present row i element j will
         equal row j element i.
      */
-    template <class T> struct distance_matrix_storage {
+    template <typename T>
+    struct distance_matrix_storage {
         typedef T value_type;  ///< An integral type for number of hops.
         typedef std::vector<T>& row_ref;  ///< A reference to row type
 
@@ -85,7 +86,7 @@ namespace {
     //may be true that because this is a computed value that depends on
     //the system topology that almost never changes that the
     //synchronization costs way out-weigh the saved computation costs.
-    template <class Storage, class T = typename Storage::value_type, class Row = typename Storage::row_ref>
+    template <typename Storage, typename T = typename Storage::value_type, typename Row = typename Storage::row_ref>
     class distance_matrix_cache {
         public:
         distance_matrix_cache(Storage& the_storage) : m_storage(the_storage) {}
@@ -224,7 +225,7 @@ namespace SystemPathing {
         struct FoundDestination {}; // exception type thrown when destination is found
 
         PathFindingShortCircuitingVisitor(int dest_system) : destination_system(dest_system) {}
-        template <class Vertex, class Graph>
+        template <typename Vertex, typename Graph>
         void operator()(Vertex u, Graph& g)
         {
             if (static_cast<int>(u) == destination_system)
@@ -238,7 +239,8 @@ namespace SystemPathing {
       *  - short-circuit exit on found match
       *  - maximum search depth
       */
-    template <class Graph, class Edge, class Vertex> class BFSVisitorImpl
+    template <typename Graph, typename Edge, typename Vertex>
+    class BFSVisitorImpl
     {
     public:
         class FoundDestination {};
@@ -308,7 +310,7 @@ namespace SystemPathing {
       * just that system in it, and the path lenth is 0.  If there is no path
       * between the two vertices, then the list is empty and the path length
       * is -1.0 */
-    template <class Graph>
+    template <typename Graph>
     std::pair<std::list<int>, double> ShortestPathImpl(const Graph& graph, int system1_id, int system2_id,
                                                        double linear_distance, const boost::unordered_map<int, size_t>& id_to_graph_index)
     {
@@ -388,7 +390,7 @@ namespace SystemPathing {
       * as system2_id, the path has just that system in it, and the path lenth
       * is 0.  If there is no path between the two vertices, then the list is
       * empty and the path length is -1 */
-    template <class Graph>
+    template <typename Graph>
     std::pair<std::list<int>, int> LeastJumpsPathImpl(const Graph& graph, int system1_id, int system2_id,
                                                       const boost::unordered_map<int, size_t>& id_to_graph_index,
                                                       int max_jumps = INT_MAX)
@@ -452,7 +454,7 @@ namespace SystemPathing {
         return retval;
     }
 
-    template <class Graph>
+    template <typename Graph>
     std::multimap<double, int> ImmediateNeighborsImpl(const Graph& graph, int system_id,
                                                       const boost::unordered_map<int, size_t>& id_to_graph_index)
     {

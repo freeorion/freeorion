@@ -139,7 +139,7 @@ protected:
     System(StarType star, const std::map<int, bool>& lanes_and_holes,
            const std::string& name, double x, double y);
 
-    template <class T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
+    template <typename T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
 
 public:
     ~System() {}
@@ -165,7 +165,7 @@ private:
     double              m_overlay_size = 1.0;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 

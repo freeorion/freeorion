@@ -194,11 +194,11 @@ protected:
 
 private:
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
-template <class Archive>
+template <typename Archive>
 void VarText::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_template_string)

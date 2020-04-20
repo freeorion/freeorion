@@ -47,11 +47,11 @@ namespace GG {
 
 extern GG_API const bool INSTRUMENT_ALL_SIGNALS;
 
-template <class FlagType>
+template <typename FlagType>
 class Flags;
 class ModKey;
 
-template <class T>
+template <typename T>
 class ScopedAssign
 {
 public:

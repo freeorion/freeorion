@@ -8,10 +8,10 @@
 #include <boost/thread/thread.hpp>
 #include <vector>
 
-template <class WorkItem>
+template <typename WorkItem>
 class RunQueue;
 
-template <class WorkItem>
+template <typename WorkItem>
 struct ThreadQueue : public boost::noncopyable {
     RunQueue<WorkItem>*     global_queue;
     volatile unsigned       running_queue_size;
@@ -26,7 +26,7 @@ struct ThreadQueue : public boost::noncopyable {
     void operator ()();
 };
 
-template <class WorkItem>
+template <typename WorkItem>
 class RunQueue : public boost::noncopyable {
 public:
     RunQueue(unsigned n_threads);

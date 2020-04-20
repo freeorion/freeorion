@@ -55,7 +55,7 @@
 using namespace GG;
 
 namespace {
-    template <class T>
+    template <typename T>
     T PowerOfTwo(T input)
     {
         T value(1);

@@ -103,7 +103,7 @@ public:
     /** Adds a rule, optionally with a custom validator.
         Adds option setup.rules.{RULE_NAME} to override default value and
         option setup.rules.server-locked.{RULE_NAME} to block rule changes from players */
-    template <class T>
+    template <typename T>
     void Add(const std::string& name, const std::string& description,
              const std::string& category, T default_value,
              bool engine_interal, const ValidatorBase& validator = Validator<T>())

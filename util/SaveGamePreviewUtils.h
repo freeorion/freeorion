@@ -43,7 +43,7 @@ struct FO_COMMON_API SaveGamePreviewData {
     unsigned int        uncompressed_text_size = 0;     /// How many bytes capacity does the uncompressed save text take up? (ie. the part that was / will be compressed with zlib for compressed xml format saves)
     unsigned int        compressed_text_size = 0;       /// How many bytes capacity does the compressed save text take up?
 
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, unsigned int version);
 };
 
@@ -61,7 +61,7 @@ struct FO_COMMON_API FullPreview {
     GalaxySetupData     galaxy;
 private:
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -72,7 +72,7 @@ struct FO_COMMON_API PreviewInformation {
     std::vector<FullPreview>    previews;       /// The previews of the saves in this folder
 private:
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 

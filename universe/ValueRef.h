@@ -10,7 +10,7 @@ namespace ValueRef {
 
 /** The base class for all ValueRef classes.  This class provides the public
   * interface for a ValueRef expression tree. */
-template <class T>
+template <typename T>
 struct FO_COMMON_API ValueRef
 {
     virtual ~ValueRef()
@@ -63,7 +63,7 @@ struct FO_COMMON_API ValueRef
 
 private:
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 

@@ -51,7 +51,8 @@ namespace Effect {
 }
 
 namespace ValueRef {
-    template <class T> struct ValueRef;
+    template <typename T>
+    struct ValueRef;
 }
 
 #if defined(_MSC_VER)
@@ -589,7 +590,7 @@ private:
     std::unique_ptr<IDAllocator> const m_design_id_allocator;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 

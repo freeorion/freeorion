@@ -4,7 +4,7 @@
 #include <boost/thread/thread.hpp>
 #include <algorithm>
 
-template <class WorkItem>
+template <typename WorkItem>
 ThreadQueue<WorkItem>::ThreadQueue(RunQueue<WorkItem>* the_global_queue) : work_queue_1(), work_queue_2() {
     global_queue         = the_global_queue;
     running_queue_size   = 0U;
@@ -14,7 +14,7 @@ ThreadQueue<WorkItem>::ThreadQueue(RunQueue<WorkItem>* the_global_queue) : work_
     thread = boost::thread(boost::ref(*this));
 }
 
-template <class WorkItem>
+template <typename WorkItem>
 void ThreadQueue<WorkItem>::operator ()() {
     while (true) {
         while (running_queue_size) {
@@ -45,7 +45,7 @@ void ThreadQueue<WorkItem>::operator ()() {
     }
 }
 
-template <class WorkItem>
+template <typename WorkItem>
 RunQueue<WorkItem>::RunQueue(unsigned n_threads) :
     m_terminate (false),
     m_schedule_mutex(),
@@ -62,7 +62,7 @@ RunQueue<WorkItem>::RunQueue(unsigned n_threads) :
     }
 }
 
-template <class WorkItem>
+template <typename WorkItem>
 RunQueue<WorkItem>::~RunQueue() {
     {
         boost::shared_lock<boost::shared_mutex> schedule_lock(m_schedule_mutex);
@@ -73,7 +73,7 @@ RunQueue<WorkItem>::~RunQueue() {
         thread_queue->thread.join();
 }
 
-template <class WorkItem>
+template <typename WorkItem>
 void RunQueue<WorkItem>::AddWork(WorkItem* item) {
     boost::shared_lock<boost::shared_mutex> schedule_lock(m_schedule_mutex);
     const unsigned old_transfer_queue_size = m_transfer_queue_size++;
@@ -85,7 +85,8 @@ void RunQueue<WorkItem>::AddWork(WorkItem* item) {
 }
 
 namespace {
-    template <class Lockable> class scoped_unlock : public boost::noncopyable {
+    template <typename Lockable>
+    class scoped_unlock : public boost::noncopyable {
     private:
         Lockable& m_lockable;
     public:
@@ -94,7 +95,7 @@ namespace {
     };
 }
 
-template <class WorkItem>
+template <typename WorkItem>
 void RunQueue<WorkItem>::Wait(boost::unique_lock<boost::shared_mutex>& lock) {
     scoped_unlock< boost::unique_lock<boost::shared_mutex> > wait_unlock(lock); // create before schedule_lock, destroy after schedule_lock
     boost::unique_lock<boost::shared_mutex> schedule_lock(m_schedule_mutex); // create after wait_unlock, destroy before wait_unlock
@@ -110,7 +111,7 @@ void RunQueue<WorkItem>::Wait(boost::unique_lock<boost::shared_mutex>& lock) {
     }
 }
 
-template <class WorkItem>
+template <typename WorkItem>
 bool RunQueue<WorkItem>::Schedule(ThreadQueue<WorkItem>& requested_by) {
     boost::unique_lock<boost::shared_mutex> schedule_lock(m_schedule_mutex);
     unsigned total_workload;
@@ -195,7 +196,7 @@ bool RunQueue<WorkItem>::Schedule(ThreadQueue<WorkItem>& requested_by) {
     return false; // should be unreachable
 }
 
-template <class WorkItem>
+template <typename WorkItem>
 void RunQueue<WorkItem>::GetTotalWorkload(unsigned& total_workload, unsigned& scheduleable_workload) {
     total_workload = scheduleable_workload = m_transfer_queue_size;
 

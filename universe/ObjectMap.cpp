@@ -37,18 +37,18 @@
 
 
 namespace {
-    template<class T>
+    template <typename T>
     static void ClearMap(ObjectMap::container_type<T>& map)
     { map.clear(); }
 
-    template <class T>
+    template <typename T>
     static void TryInsertIntoMap(ObjectMap::container_type<T>& map, std::shared_ptr<UniverseObject> item)
     {
         if (dynamic_cast<T*>(item.get()))
             map[item->ID()] = std::dynamic_pointer_cast<T, UniverseObject>(item);
     }
 
-    template<class T>
+    template <typename T>
     void EraseFromMap(ObjectMap::container_type<T>& map, int id)
     { map.erase(id); }
 }
@@ -337,7 +337,7 @@ std::shared_ptr<const UniverseObject> ObjectMap::ExistingObject(int id) const {
 
 // Static helpers
 
-template<class T>
+template <typename T>
 void ObjectMap::SwapMap(ObjectMap::container_type<T>& map, ObjectMap& rhs)
 { map.swap(rhs.Map<T>()); }
 

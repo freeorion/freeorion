@@ -53,7 +53,7 @@ public:
     ~Field();
 
 protected:
-    template <class T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
+    template <typename T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
 
     /** Returns new copy of this Field. */
     Field* Clone(int empire_id = ALL_EMPIRES) const override;
@@ -63,7 +63,7 @@ private:
     std::string m_type_name;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 

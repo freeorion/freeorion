@@ -78,7 +78,7 @@ struct FO_COMMON_API GalaxySetupData {
 
 private:
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -101,7 +101,7 @@ struct FO_COMMON_API SaveGameUIData {
 
 private:
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -143,7 +143,7 @@ struct FO_COMMON_API SaveGameEmpireData {
 
 private:
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -170,7 +170,7 @@ struct FO_COMMON_API PlayerSaveHeaderData {
 
 private:
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -200,7 +200,7 @@ struct FO_COMMON_API PlayerSaveGameData : public PlayerSaveHeaderData {
 
 private:
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -221,7 +221,7 @@ struct FO_COMMON_API ServerSaveGameData {
 
 private:
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -256,7 +256,7 @@ struct PlayerSetupData {
 
 private:
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 bool FO_COMMON_API operator==(const PlayerSetupData& lhs, const PlayerSetupData& rhs);
@@ -283,7 +283,7 @@ struct SinglePlayerSetupData : public GalaxySetupData {
 
 private:
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -344,7 +344,7 @@ struct FO_COMMON_API MultiplayerLobbyData : public GalaxySetupData {
 
 private:
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -364,7 +364,7 @@ struct FO_COMMON_API ChatHistoryEntity {
 
 private:
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -392,7 +392,7 @@ struct PlayerInfo {
     bool                    host;           ///< true iff this is the host player
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 

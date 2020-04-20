@@ -54,14 +54,14 @@ private:
     float m_initial_value = DEFAULT_VALUE;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
 BOOST_CLASS_VERSION(Meter, 1)
 
 // template implementations
-template <class Archive>
+template <typename Archive>
 void Meter::serialize(Archive& ar, const unsigned int version)
 {
     if (Archive::is_loading::value && version < 1) {

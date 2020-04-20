@@ -73,7 +73,7 @@ namespace {
 
     const Meter* (Empire::*EmpireGetMeter)(const std::string&) const = &Empire::GetMeter;
 
-    template<class T1, class T2>
+    template<typename T1, typename T2>
     struct PairToTupleConverter {
         static PyObject* convert(const std::pair<T1, T2>& pair) {
             return boost::python::incref(boost::python::make_tuple(pair.first, pair.second).ptr());

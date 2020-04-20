@@ -42,7 +42,7 @@ void GLBufferBase::harmonizeBufferType(GLBufferBase& other)
 ///////////////////////////////////////////////////////////////////////////
 // GLClientAndServerBufferBase<vtype> template
 ///////////////////////////////////////////////////////////////////////////
-template <class vtype>
+template <typename vtype>
 GLClientAndServerBufferBase<vtype>::GLClientAndServerBufferBase(std::size_t elementsPerItem) :
     GLBufferBase(),
     b_data(),
@@ -50,26 +50,26 @@ GLClientAndServerBufferBase<vtype>::GLClientAndServerBufferBase(std::size_t elem
     b_elements_per_item(elementsPerItem)
 {}
 
-template <class vtype>
+template <typename vtype>
 std::size_t GLClientAndServerBufferBase<vtype>::size() const
 { return b_size; }
 
-template <class vtype>
+template <typename vtype>
 bool GLClientAndServerBufferBase<vtype>::empty() const
 { return b_size == 0; }
 
-template <class vtype>
+template <typename vtype>
 void GLClientAndServerBufferBase<vtype>::reserve(std::size_t num_items)
 { b_data.reserve(num_items * b_elements_per_item); }
 
-template <class vtype>
+template <typename vtype>
 void GLClientAndServerBufferBase<vtype>::store(vtype item)
 {
     b_data.push_back(item);
     b_size=b_data.size() / b_elements_per_item;
 }
 
-template <class vtype>
+template <typename vtype>
 void GLClientAndServerBufferBase<vtype>::store(vtype item1, vtype item2)
 {
     b_data.push_back(item1);
@@ -77,7 +77,7 @@ void GLClientAndServerBufferBase<vtype>::store(vtype item1, vtype item2)
     b_size=b_data.size() / b_elements_per_item;
 }
 
-template <class vtype>
+template <typename vtype>
 void GLClientAndServerBufferBase<vtype>::store(vtype item1, vtype item2, vtype item3)
 {
     b_data.push_back(item1);
@@ -86,7 +86,7 @@ void GLClientAndServerBufferBase<vtype>::store(vtype item1, vtype item2, vtype i
     b_size=b_data.size() / b_elements_per_item;
 }
 
-template <class vtype> 
+template <typename vtype>
 void GLClientAndServerBufferBase<vtype>::store(vtype item1, vtype item2, vtype item3, vtype item4)
 {
     b_data.push_back(item1);
@@ -96,7 +96,7 @@ void GLClientAndServerBufferBase<vtype>::store(vtype item1, vtype item2, vtype i
     b_size=b_data.size() / b_elements_per_item;
 }
 
-template <class vtype>
+template <typename vtype>
 void GLClientAndServerBufferBase<vtype>::createServerBuffer()
 {
     glGenBuffers(1, &b_name);
@@ -110,7 +110,8 @@ void GLClientAndServerBufferBase<vtype>::createServerBuffer()
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-template <class vtype> void GLClientAndServerBufferBase<vtype>::clear()
+template <typename vtype>
+void GLClientAndServerBufferBase<vtype>::clear()
 {
     dropServerBuffer();
     b_size = 0;

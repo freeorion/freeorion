@@ -13,16 +13,20 @@
 
 // these are needed by the StepValidator
 namespace details {
-    template <class T> inline T mod (T dividend, T divisor)
+    template <typename T>
+    inline T mod (T dividend, T divisor)
     { return (dividend % divisor); }
 
-    template <> inline float mod<float>(float dividend, float divisor)
+    template <>
+    inline float mod<float>(float dividend, float divisor)
     { return std::fmod(dividend, divisor); }
 
-    template <> inline double mod<double>(double dividend, double divisor)
+    template <>
+    inline double mod<double>(double dividend, double divisor)
     { return std::fmod(dividend, divisor); }
 
-    template <> inline long double mod<long double>(long double dividend, long double divisor)
+    template <>
+    inline long double mod<long double>(long double dividend, long double divisor)
     { return std::fmod(dividend, divisor); }
 }
 
@@ -43,7 +47,7 @@ struct ValidatorBase
 };
 
 /** determines if a string is a valid value for an OptionsDB option */
-template <class T>
+template <typename T>
 struct Validator : public ValidatorBase
 {
     boost::any Validate(const std::string& str) const override
@@ -73,7 +77,7 @@ struct Validator<std::vector<std::string>> : public ValidatorBase
 };
 
 /** a Validator that constrains the range of valid values */
-template <class T>
+template <typename T>
 struct RangedValidator : public Validator<T>
 {
     RangedValidator(const T& min, const T& max) : m_min(min), m_max(max) {}
@@ -96,7 +100,7 @@ struct RangedValidator : public Validator<T>
     (eg: 0, 25, 50, ...).  The steps are assumed to begin at the
     validated type's default-constructed value, unless another origin
     is specified. */
-template <class T>
+template <typename T>
 struct StepValidator : public Validator<T>
 {
     StepValidator(const T& step, const T& origin = T()) : m_step_size(step), m_origin(origin) {}
@@ -116,7 +120,7 @@ struct StepValidator : public Validator<T>
 };
 
 /** a Validator similar to a StepValidator, but that further constrains the valid values to be within a certain range (eg: [25, 50, ..., 200]). */
-template <class T>
+template <typename T>
 struct RangedStepValidator : public Validator<T>
 {
 public:
@@ -143,7 +147,7 @@ public:
 
 /// a Validator that specifies a finite number of valid values.
 /** Probably won't work well with floating point types. */
-template <class T>
+template <typename T>
 struct DiscreteValidator : public Validator<T>
 {
     DiscreteValidator(const T& single_value) :
@@ -154,7 +158,7 @@ struct DiscreteValidator : public Validator<T>
         m_values(values)
     { }
 
-    template <class iter>
+    template <typename iter>
     DiscreteValidator(iter start, iter finish) :
         m_values(start, finish)
     { }
@@ -184,7 +188,7 @@ struct DiscreteValidator : public Validator<T>
 /** Stores and owns clones of the provided validators in std::unique_ptr.
  *  Always calls m_validator_a->Validate(). Only calls m_validator_b->Validate()
  *  if the first one throws. */
-template <class T>
+template <typename T>
 struct OrValidator : public Validator<T>
 {
     OrValidator(const Validator<T>& validator_a,
