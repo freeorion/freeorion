@@ -1,20 +1,16 @@
 #include "UniverseGenerator.h"
 
-#include "../util/Directories.h"
 #include "../util/Random.h"
 #include "../util/i18n.h"
-#include "../util/Logger.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/GameRules.h"
 #include "../util/AppInterface.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 
-#include "Planet.h"
-#include "System.h"
-#include "Species.h"
-#include "Enums.h"
-#include "Condition.h"
+#include "../universe/Planet.h"
+#include "../universe/System.h"
+#include "../universe/Species.h"
 
 #include <limits>
 
@@ -285,16 +281,6 @@ namespace Delauney {
 
         return triangle_list;
     }
-}
-
-////////////////////////////////////////
-// FleetPlan                          //
-////////////////////////////////////////
-const std::string& FleetPlan::Name() const {
-    if (m_name_in_stringtable)
-        return UserString(m_name);
-    else
-        return m_name;
 }
 
 namespace {

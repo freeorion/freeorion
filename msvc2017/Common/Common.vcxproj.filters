@@ -100,6 +100,9 @@
     <ClInclude Include="..\..\universe\Fleet.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\universe\FleetPlan.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\universe\IDAllocator.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
@@ -368,6 +371,9 @@
       <Filter>Source Files\universe</Filter>
     </ClCompile>
     <ClCompile Include="..\..\universe\Fleet.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\FleetPlan.cpp">
       <Filter>Source Files\universe</Filter>
     </ClCompile>
     <ClCompile Include="..\..\universe\IDAllocator.cpp">

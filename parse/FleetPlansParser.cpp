@@ -4,7 +4,7 @@
 #include "MovableEnvelope.h"
 
 #include "../universe/Condition.h"
-#include "../universe/UniverseGenerator.h"
+#include "../universe/FleetPlan.h"
 #include "../util/Directories.h"
 
 #include <boost/spirit/include/phoenix.hpp>

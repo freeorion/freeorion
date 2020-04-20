@@ -6,6 +6,7 @@ target_sources(freeoriond
         ${CMAKE_CURRENT_LIST_DIR}/ServerFSM.h
         ${CMAKE_CURRENT_LIST_DIR}/ServerNetworking.h
         ${CMAKE_CURRENT_LIST_DIR}/ServerWrapper.h
+        ${CMAKE_CURRENT_LIST_DIR}/UniverseGenerator.h
     PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/dmain.cpp
         ${CMAKE_CURRENT_LIST_DIR}/SaveLoad.cpp
@@ -14,4 +15,5 @@ target_sources(freeoriond
         ${CMAKE_CURRENT_LIST_DIR}/ServerFSM.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ServerNetworking.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ServerWrapper.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/UniverseGenerator.cpp
 )
