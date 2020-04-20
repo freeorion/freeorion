@@ -3,6 +3,7 @@
 #include <boost/log/core.hpp>
 #include <boost/log/trivial.hpp>
 #include <boost/log/expressions.hpp>
+#include <boost/log/attributes/current_thread_id.hpp>
 #include <boost/log/attributes/value_extraction.hpp>
 #include <boost/log/expressions/keyword.hpp>
 #include <boost/log/sinks/frontend_requirements.hpp>
@@ -270,6 +271,12 @@ const std::string& DefaultExecLoggerName()
 
 std::vector<std::string> CreatedLoggersNames()
 { return GetLoggersToSinkFrontEnds().LoggersNames(); }
+
+BOOST_LOG_ATTRIBUTE_KEYWORD(log_severity, "Severity", LogLevel);
+BOOST_LOG_ATTRIBUTE_KEYWORD(log_channel, "Channel", std::string)
+BOOST_LOG_ATTRIBUTE_KEYWORD(log_src_filename, "SrcFilename", std::string);
+BOOST_LOG_ATTRIBUTE_KEYWORD(log_src_linenum, "SrcLinenum", int);
+BOOST_LOG_ATTRIBUTE_KEYWORD(thread_id, "ThreadID", boost::log::attributes::current_thread_id::value_type);
 
 namespace {
 
