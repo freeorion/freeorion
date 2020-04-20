@@ -19,6 +19,7 @@
 #include "Ship.h"
 #include "System.h"
 #include "Field.h"
+#include "FieldType.h"
 #include "UniverseObject.h"
 #include "UnlockableItem.h"
 #include "Predicates.h"

@@ -15,6 +15,7 @@
 #include "../universe/Ship.h"
 #include "../universe/ShipDesign.h"
 #include "../universe/Field.h"
+#include "../universe/FieldType.h"
 #include "../universe/Tech.h"
 #include "../universe/Pathfinder.h"
 #include "../universe/Universe.h"

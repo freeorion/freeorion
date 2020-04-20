@@ -11,6 +11,7 @@ target_sources(freeorioncommon
         ${CMAKE_CURRENT_LIST_DIR}/Encyclopedia.h
         ${CMAKE_CURRENT_LIST_DIR}/Enums.h
         ${CMAKE_CURRENT_LIST_DIR}/Field.h
+        ${CMAKE_CURRENT_LIST_DIR}/FieldType.h
         ${CMAKE_CURRENT_LIST_DIR}/Fighter.h
         ${CMAKE_CURRENT_LIST_DIR}/Fleet.h
         ${CMAKE_CURRENT_LIST_DIR}/FleetPlan.h
@@ -44,6 +45,7 @@ target_sources(freeorioncommon
         ${CMAKE_CURRENT_LIST_DIR}/Encyclopedia.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Enums.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Field.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/FieldType.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Fighter.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Fleet.cpp
         ${CMAKE_CURRENT_LIST_DIR}/FleetPlan.cpp

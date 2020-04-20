@@ -12,6 +12,7 @@
 #include "../universe/Planet.h"
 #include "../universe/System.h"
 #include "../universe/Field.h"
+#include "../universe/FieldType.h"
 #include "../universe/Special.h"
 #include "../universe/Species.h"
 #include "../universe/Enums.h"
