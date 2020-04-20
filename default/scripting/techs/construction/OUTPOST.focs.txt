@@ -1,0 +1,27 @@
+Tech
+    name = "CON_OUTPOST"
+    description = "CON_OUTPOST_DESC"
+    short_description = "CON_OUTPOST"
+    category = "CONSTRUCTION_CATEGORY"
+    researchcost = 1
+    researchturns = 1
+    tags = [ "PEDIA_CONSTRUCTION_CATEGORY" ]
+
+    // Effects for outposts
+    effectsgroups = [
+        // For colonies see STANDARD_CONSTRUCTION in default/scripting/species/common/general.macros
+        EffectsGroup    // always ensure minimum value of one, as this is necessary for being attacked
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Population high = 0
+            ]
+            // has to happen after e.g. FORCE_ENERGY_STRC effects which also happens at AFTER_ALL_TARGET_MAX_METERS_PRIORITY
+            priority = [[METER_OVERRIDE_PRIORITY]]
+            effects = [
+                SetTargetConstruction value = max(Value, 1)
+                SetConstruction value = max(Value, 1)
+            ]
+    ]
+
+#include "/scripting/common/priorities.macros"
