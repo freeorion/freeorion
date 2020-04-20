@@ -211,12 +211,24 @@ FO_COMMON_API void OverrideAllLoggersThresholds(const boost::optional<LogLevel>&
 
 FO_COMMON_API const std::string& DefaultExecLoggerName();
 
+/** Apply \p configure_front_end to a new FileSinkFrontEnd for \p channel_name.  During static
+    initialization if the backend does not yet exist, then \p configure_front_end will be
+    stored until the backend is created.*/
+using LoggerTextFileSinkFrontend = boost::log::sinks::synchronous_sink<boost::log::sinks::text_file_backend>;
+using LoggerFileSinkFrontEndConfigurer = std::function<void(LoggerTextFileSinkFrontend& sink_frontend)>;
+FO_COMMON_API void ApplyConfigurationToFileSinkFrontEnd(
+    const std::string& channel_name,
+    const LoggerFileSinkFrontEndConfigurer& configure_front_end);
+
 /** A type for loggers (sources) that allows for severity and a logger name (channel in
     boost parlance) and supports multithreading.*/
 using NamedThreadedLogger = boost::log::sources::severity_channel_logger_mt<
     LogLevel,     ///< the type of the severity level
     std::string   ///< the channel name of the logger
     >;
+
+// Setup the file sink for @p logger
+FO_COMMON_API void ConfigureFileSinkFrontEnd(LoggerTextFileSinkFrontend& sink_frontend, const std::string& channel_name);
 
 // Setup file sink, formatting, and \p name channel filter for \p logger.
 FO_COMMON_API void ConfigureLogger(NamedThreadedLogger& logger, const std::string& name);
@@ -278,18 +290,26 @@ BOOST_LOG_ATTRIBUTE_KEYWORD(thread_id, "ThreadID", boost::log::attributes::curre
     BOOST_LOG_STREAM_WITH_PARAMS(                                       \
         FO_GLOBAL_LOGGER_NAME(name)::get(),                             \
         (boost::log::keywords::severity = lvl))                         \
-    << boost::log::add_value("SrcFilename", __BASE_FILENAME__)          \
-    << boost::log::add_value("SrcLinenum", __LINE__)
 
-#define TraceLogger(name) FO_LOGGER(name, LogLevel::trace)
+#define TraceLogger(name) FO_LOGGER(name, LogLevel::trace)              \
+ << boost::log::add_value("SrcFilename", __BASE_FILENAME__)             \
+ << boost::log::add_value("SrcLinenum", __LINE__)
 
-#define DebugLogger(name) FO_LOGGER(name, LogLevel::debug)
+#define DebugLogger(name) FO_LOGGER(name, LogLevel::debug)              \
+ << boost::log::add_value("SrcFilename", __BASE_FILENAME__)             \
+ << boost::log::add_value("SrcLinenum", __LINE__)
 
-#define InfoLogger(name) FO_LOGGER(name, LogLevel::info)
+#define InfoLogger(name) FO_LOGGER(name, LogLevel::info)                \
+ << boost::log::add_value("SrcFilename", __BASE_FILENAME__)             \
+ << boost::log::add_value("SrcLinenum", __LINE__)
 
-#define WarnLogger(name) FO_LOGGER(name, LogLevel::warn)
+#define WarnLogger(name) FO_LOGGER(name, LogLevel::warn)                \
+ << boost::log::add_value("SrcFilename", __BASE_FILENAME__)             \
+ << boost::log::add_value("SrcLinenum", __LINE__)
 
-#define ErrorLogger(name) FO_LOGGER(name, LogLevel::error)
+#define ErrorLogger(name) FO_LOGGER(name, LogLevel::error)              \
+ << boost::log::add_value("SrcFilename", __BASE_FILENAME__)             \
+ << boost::log::add_value("SrcLinenum", __LINE__)
 
 
 #else
@@ -302,29 +322,28 @@ BOOST_LOG_ATTRIBUTE_KEYWORD(thread_id, "ThreadID", boost::log::attributes::curre
 #define FO_LOGGER_PRESTITCHED(lvl, logger)                              \
     BOOST_LOG_STREAM_WITH_PARAMS(                                       \
         logger::get(),                                                  \
-        (boost::log::keywords::severity = lvl))                         \
-    << boost::log::add_value("SrcFilename", __BASE_FILENAME__)          \
-    << boost::log::add_value("SrcLinenum", __LINE__)
+        (boost::log::keywords::severity = lvl))
 
-#define TraceLogger(...) FO_LOGGER_PRESTITCHED(LogLevel::trace, fo_logger_global_##__VA_ARGS__)
-#define DebugLogger(...) FO_LOGGER_PRESTITCHED(LogLevel::debug, fo_logger_global_##__VA_ARGS__)
-#define InfoLogger(...)  FO_LOGGER_PRESTITCHED(LogLevel::info,  fo_logger_global_##__VA_ARGS__)
-#define WarnLogger(...)  FO_LOGGER_PRESTITCHED(LogLevel::warn,  fo_logger_global_##__VA_ARGS__)
-#define ErrorLogger(...) FO_LOGGER_PRESTITCHED(LogLevel::error, fo_logger_global_##__VA_ARGS__)
+#define TraceLogger(...) FO_LOGGER_PRESTITCHED(LogLevel::trace, fo_logger_global_##__VA_ARGS__)  \
+ << boost::log::add_value("SrcFilename", __BASE_FILENAME__)                                      \
+ << boost::log::add_value("SrcLinenum", __LINE__)
+#define DebugLogger(...) FO_LOGGER_PRESTITCHED(LogLevel::debug, fo_logger_global_##__VA_ARGS__)  \
+ << boost::log::add_value("SrcFilename", __BASE_FILENAME__)                                      \
+ << boost::log::add_value("SrcLinenum", __LINE__)
+#define InfoLogger(...)  FO_LOGGER_PRESTITCHED(LogLevel::info,  fo_logger_global_##__VA_ARGS__)  \
+ << boost::log::add_value("SrcFilename", __BASE_FILENAME__)                                      \
+ << boost::log::add_value("SrcLinenum", __LINE__)
+#define WarnLogger(...)  FO_LOGGER_PRESTITCHED(LogLevel::warn,  fo_logger_global_##__VA_ARGS__)  \
+ << boost::log::add_value("SrcFilename", __BASE_FILENAME__)                                      \
+ << boost::log::add_value("SrcLinenum", __LINE__)
+#define ErrorLogger(...) FO_LOGGER_PRESTITCHED(LogLevel::error, fo_logger_global_##__VA_ARGS__)  \
+ << boost::log::add_value("SrcFilename", __BASE_FILENAME__)                                      \
+ << boost::log::add_value("SrcLinenum", __LINE__)
 
 
 #endif
 
 /** Sets the \p threshold of \p source.  \p source == "" is the default logger.*/
 FO_COMMON_API void SetLoggerThreshold(const std::string& source, LogLevel threshold);
-
-/** Apply \p configure_front_end to a new FileSinkFrontEnd for \p channel_name.  During static
-    initialization if the backend does not yet exist, then \p configure_front_end will be
-    stored until the backend is created.*/
-using LoggerTextFileSinkFrontend = boost::log::sinks::synchronous_sink<boost::log::sinks::text_file_backend>;
-using LoggerFileSinkFrontEndConfigurer = std::function<void(LoggerTextFileSinkFrontend& sink_frontend)>;
-FO_COMMON_API void ApplyConfigurationToFileSinkFrontEnd(
-    const std::string& channel_name,
-    const LoggerFileSinkFrontEndConfigurer& configure_front_end);
 
 #endif // _Logger_h_
