@@ -1441,7 +1441,7 @@ OPTIONS_DB_FIRST_TURN_TIME
 Référence de temps absolu au format "2019-01-20 11:59:59" UTC. Si vide, la fin du premier tour interviendra après l'intervalle d'expiration. Nécessite l'activation de l'intervalle fixe.
 
 OPTIONS_DB_TIMEOUT_INTERVAL
-Intervalle maximum en secondes entre la validation de chaque tour. Si 0, la fin du tour par temps limite est désactivée, et le passage au tour suivant interviendra seulement une fois que tous les joueurs auront terminé leur tour.
+Intervalle maximum en secondes entre la validation automatique de chaque tour. Si 0, la fin du tour par temps limite est désactivée, et le passage au tour suivant interviendra seulement une fois que tous les joueurs auront terminé leur tour. La validation automatique d'un tour est également désactivée après qu'un joueur ait gagné la partie.
 
 OPTIONS_DB_TIMEOUT_FIXED_INTERVAL
 Le passage au tour suivant est exécuté à intervalle fixe, indépendamment du fait que les joueurs aient envoyé ou non leurs ordres pour le tour en cours.
@@ -1672,7 +1672,7 @@ OPTIONS_DB_UI_PLANET_STATUS_CONQUERED
 La planète %1% vient d'être conquise. Le Bonheur sera probablement réduit.
 
 OPTIONS_DB_UI_PLANET_STATUS_UNHAPPY
-La Population sur la planète %1% est très mécontente. Elle ne peut donc entreprendre aucune colonisation.
+La Population sur la planète %1% est très mécontente. Ni l'[[metertype METER_INDUSTRY]] ni la [[metertype METER_RESEARCH]] n'augmenteront. Cette population ne peut entreprendre aucune colonisation.
 
 OPTIONS_DB_UI_PLANET_STATUS_NO_SUPPLY
 La planète %1% est déconnectée des lignes d'Approvisionnement. L'Industrie générée sur cette planète ne peut être utilisée que localement.
@@ -5741,7 +5741,7 @@ METER_HAPPINESS_VALUE_LABEL
 Bonheur
 
 METER_HAPPINESS_VALUE_DESC
-'''Le Bonheur de la [[metertype METER_POPULATION]] d'une colonie est initialement faible suite au succès d'une colonisation ou d'une invasion, et peut également dépendre d'autres facteurs. Un Bonheur minimum de 5 est requis pour qu'une colonie puisse lancer la colonisation d'autres planètes.
+'''Le Bonheur de la [[metertype METER_POPULATION]] d'une colonie débute entre 1 et 5 suite à la colonisation initiale, et dépend de l'adaptation de l'[[encyclopedia ENC_SPECIES]] à l'[[encyclopedia ENVIRONMENT_TITLE]] de la planète. Le Bonheur est réduit à 0 suite à une invasion, et peut également dépendre d'autres facteurs. Un Bonheur minimum de 5 est requis pour qu'une colonie puisse entreprendre la colonisation d'autres planètes. L'[[metertype METER_INDUSTRY]] et la [[metertype METER_RESEARCH]] ne commenceront à croître que si le Bonheur est au moins égal à 5.
 
 La Projection Bonheur est le niveau optimal de Bonheur que la Population d'une planète tend à approcher, compte tenu des différents facteurs influençant le Bonheur planétaire. Sa valeur est liée aux <encyclopedia ENC_BUILDING_TYPE>Types de Structures</encyclopedia> bâtis sur la planète, aux [[encyclopedia ENC_TECH]] recherchées par l'empire, aux <encyclopedia ENC_SPECIAL>Particularités</encyclopedia> liées à la planète, ainsi que divers effets de jeu. Si ces facteurs changent, alors la valeur de Projection Bonheur est susceptible de fluctuer à son tour.'''
 
@@ -5897,7 +5897,7 @@ OUTPOSTS_TITLE
 Avant-Poste
 
 OUTPOSTS_TEXT
-Les Avant-Postes sont des stations inhabitées pouvant être implantées en des lieux trop hostiles pour la survie d'une colonie. Ils n'ont pas de [[metertype METER_POPULATION]] et ne produisent en principe aucune ressource, mais peuvent cependant contribuer aux lignes d'[[metertype METER_SUPPLY]] de l'empire (à l'aide de la technologie appropriée) et augmenter sa zone de détection. Des colonies peuvent être fondées sur les planètes déjà pourvues d'un Avant-Poste. Pour construire un Avant-Poste, il suffit de placer un [[shippart CO_OUTPOST_POD]] sur un astronef. Des Avant-Postes sont également créés lorsque la Population d'une colonie tombe à zéro, quelle qu'en soit la raison.
+Les Avant-Postes sont des stations inhabitées pouvant être implantées en des lieux trop hostiles pour la survie d'une colonie. Ils n'ont pas de [[metertype METER_POPULATION]] et ne produisent en principe aucune ressource, mais peuvent cependant contribuer aux lignes d'[[metertype METER_SUPPLY]] de l'empire (à l'aide de la technologie appropriée), augmenter sa zone de détection et fournir du carburant. Des colonies peuvent être fondées sur les planètes déjà pourvues d'un Avant-Poste. Pour construire un Avant-Poste, il suffit de placer un [[shippart CO_OUTPOST_POD]] sur un astronef. Des Avant-Postes sont également créés lorsque la Population d'une colonie tombe à zéro, quelle qu'en soit la raison.
 
 HOMEWORLDS_TITLE
 Planète Natale
@@ -6547,6 +6547,9 @@ Dern. Tour Bataille
 LAST_TURN_RESUPPLIED
 Dern. Tour Approvisionnement
 
+LAST_TURN_COLONIZED
+Dern. Tour Colonisation
+
 LAST_TURN_CONQUERED
 Dern. Tour Conquête
 
@@ -6985,7 +6988,7 @@ SITREP_FOREIGN_FLEET_ARRIVED_AT_DESTINATION_LABEL
 Flotte étrangère arrivée à destination
 
 SITREP_POP_THRESHOLD
-Sur %planet% : la colonie a atteint la taille et le [[metertype METER_HAPPINESS]] prérequis pour entreprendre la colonisation d'autres planètes.
+Sur %planet% : la colonie a atteint la taille et le [[metertype METER_HAPPINESS]] prérequis pour entreprendre la colonisation d'autres planètes. L'[[metertype METER_INDUSTRY]] et la [[metertype METER_RESEARCH]] peuvent commencer à croître.
 
 SITREP_POP_THRESHOLD_LABEL
 Seuil de Colonisation
@@ -7451,7 +7454,7 @@ BEGINNER_HINT_14
 14: Recherchez les technologies améliorant l'[[metertype METER_SUPPLY]], telle la [[tech CON_ORBITAL_CON]], afin d'accroître la distance que vos lignes d'approvisonnement peuvent atteindre à partir de vos systèmes.
 
 BEGINNER_HINT_15
-15: La plupart des espèces se retrouvent avec un indicateur [[metertype METER_HAPPINESS]] de 1 lorsque vous capturez leur planète, puis ce dernier augmente normalement de 1 à chaque tour. Faites cependant attention aux espèces [[encyclopedia XENOPHOBIC_SPECIES_TITLE]]s! Elles n'apprécient guère la proximité d'autres espèces et cela aura un effet négatif sur le Bonheur ainsi que d'autres indicateurs, à la fois pour l'espèce xénophobe et les autres espèces à proximité.
+15: La plupart des espèces se retrouvent avec un indicateur [[metertype METER_HAPPINESS]] de 0 lorsque vous capturez leur planète, puis ce dernier augmente normalement de 1 à chaque tour. Faites cependant attention aux espèces [[encyclopedia XENOPHOBIC_SPECIES_TITLE]]s! Elles n'apprécient guère la proximité d'autres espèces et cela aura un effet négatif sur le Bonheur ainsi que d'autres indicateurs, à la fois pour l'espèce xénophobe et les autres espèces à proximité.
 
 BEGINNER_HINT_16
 16: Il est plus judicieux de ne pas développer la technologie [[tech LRN_PSIONICS]] tant que votre empire n'abrite pas une espèce maîtrisant la [[encyclopedia TELEPATHIC_TITLE]].
@@ -11299,6 +11302,12 @@ Extraction Neutronium
 PRO_NEUTRONIUM_EXTRACTION_DESC
 Le cœur d'une Étoile [[STAR_NEUTRON]] est constitué de matière dégénérée, comprimée par la gravité et d'une densité infiniment plus importante que la matière normale la plus lourde. Ce matériau exotique présente de nombreuses applications une fois extrait de l'étoile, permettant ainsi la production de structures et d'équipements d'astronef inédits et performants.
 
+CON_OUTPOST
+Avant-Poste
+
+CON_OUTPOST_DESC
+La technologie nécessaire pour établir un [[encyclopedia OUTPOSTS_TITLE]] sur toute planète ou ceinture d'astéroïdes.
+
 CON_ARCH_PSYCH
 Psychologie Architecturale
 
@@ -11329,7 +11338,7 @@ CON_FRC_ENRG_STRC
 Structures Synergiques
 
 CON_FRC_ENRG_STRC_DESC
-'''Accroît la progression des indicateurs de ressources et d'infrastructure inférieurs à la valeur projetée de 3 par tour, et la diminution des indicateurs de ressources supérieurs à la valeur projetée de 5 par tour.
+'''Accroît la progression des indicateurs de ressources et d'infrastructure inférieurs à la valeur projetée de 3 par tour, et la diminution des indicateurs de ressources supérieurs à la valeur projetée de 5 par tour. L'[[metertype METER_INDUSTRY]] et la [[metertype METER_RESEARCH]] n'augmentent que si le [[metertype METER_HAPPINESS]] est au moins égal à 5.
 
 La flexibilité et la versatilité des structures synergiques permettent de redéfinir plus facilement le rôle des infrastructures des colonies en vue de nouvelles applications, augmentant ainsi la rapidité et le taux d'une modification de Focus.
 
