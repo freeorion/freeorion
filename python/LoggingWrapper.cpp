@@ -69,19 +69,19 @@ namespace {
         // if that log level is disabled.
         switch (log_level) {
         case LogLevel::trace:
-            FO_LOGGER(python, LogLevel::trace) << python_logger << boost::log::add_value("SrcFilename", filename) << boost::log::add_value("SrcLinenum", lineno) << " : " << msg;
+            FO_LOGGER(LogLevel::trace, python) << python_logger << boost::log::add_value("SrcFilename", filename) << boost::log::add_value("SrcLinenum", lineno) << " : " << msg;
             break;
         case LogLevel::debug:
-            FO_LOGGER(python, LogLevel::debug) << python_logger << boost::log::add_value("SrcFilename", filename) << boost::log::add_value("SrcLinenum", lineno) << " : " << msg;
+            FO_LOGGER(LogLevel::debug, python) << python_logger << boost::log::add_value("SrcFilename", filename) << boost::log::add_value("SrcLinenum", lineno) << " : " << msg;
             break;
         case LogLevel::info:
-            FO_LOGGER(python, LogLevel::info)  << python_logger << boost::log::add_value("SrcFilename", filename) << boost::log::add_value("SrcLinenum", lineno) << " : " << msg;
+            FO_LOGGER(LogLevel::info, python)  << python_logger << boost::log::add_value("SrcFilename", filename) << boost::log::add_value("SrcLinenum", lineno) << " : " << msg;
             break;
         case LogLevel::warn:
-            FO_LOGGER(python, LogLevel::warn)  << python_logger << boost::log::add_value("SrcFilename", filename) << boost::log::add_value("SrcLinenum", lineno) << " : " << msg;
+            FO_LOGGER(LogLevel::warn, python)  << python_logger << boost::log::add_value("SrcFilename", filename) << boost::log::add_value("SrcLinenum", lineno) << " : " << msg;
             break;
         case LogLevel::error:
-            FO_LOGGER(python, LogLevel::error) << python_logger << boost::log::add_value("SrcFilename", filename) << boost::log::add_value("SrcLinenum", lineno) << " : " << msg;
+            FO_LOGGER(LogLevel::error, python) << python_logger << boost::log::add_value("SrcFilename", filename) << boost::log::add_value("SrcLinenum", lineno) << " : " << msg;
             break;
         }
     }

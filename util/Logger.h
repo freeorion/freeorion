@@ -1,22 +1,16 @@
 #ifndef _Logger_h_
 #define _Logger_h_
 
-#include <boost/log/sources/severity_channel_logger.hpp>
-#include <boost/log/utility/manipulators/add_value.hpp>
-#include <boost/log/sources/global_logger_storage.hpp>
-#include <boost/signals2/signal.hpp>
-
-#ifdef FREEORION_WIN32
-// Note: The is a workaround for Visual C++ non-conformant pre-processor
-// handling of empty macro arguments.
-// https://msdn.microsoft.com/en-us/library/hh567368.aspx
-// https://blogs.msdn.microsoft.com/vcblog/2017/03/07/c-standards-conformance-from-microsoft/
-#include <boost/preprocessor/control/if.hpp>
-#include <boost/preprocessor/facilities/is_empty_variadic.hpp>
-#endif
 
 #include <string>
 #include <unordered_map>
+#include <boost/log/sources/global_logger_storage.hpp>
+#include <boost/log/sources/severity_channel_logger.hpp>
+#include <boost/log/utility/manipulators/add_value.hpp>
+#include <boost/preprocessor/control/if.hpp>
+#include <boost/preprocessor/facilities/is_empty.hpp>
+#include <boost/preprocessor/logical/and.hpp>
+#include <boost/signals2/signal.hpp>
 
 #include "Export.h"
 
@@ -161,26 +155,6 @@ std::basic_ostream<CharT, TraitsT>& operator<<(
 
 std::unordered_map<std::string, LogLevel> ValidNameToLogLevel();
 
-// Prefix \p name to create a global logger name less likely to collide.
-#ifndef FREEORION_WIN32
-
-#define FO_GLOBAL_LOGGER_NAME(name) fo_logger_global_##name
-
-#else
-
-// Note: The is a workaround for Visual C++ non-conformant pre-processor
-// handling of empty macro arguments.
-// https://msdn.microsoft.com/en-us/library/hh567368.aspx
-// https://blogs.msdn.microsoft.com/vcblog/2017/03/07/c-standards-conformance-from-microsoft/
-#define FO_GLOBAL_LOGGER_NAME_NO_ARG() fo_logger_global_
-#define FO_GLOBAL_LOGGER_NAME_ONE_ARG(name) fo_logger_global_##name
-#define FO_GLOBAL_LOGGER_NAME(...)                                      \
-    BOOST_PP_IF(BOOST_PP_IS_EMPTY(__VA_ARGS__),                         \
-                FO_GLOBAL_LOGGER_NAME_NO_ARG(),                         \
-                FO_GLOBAL_LOGGER_NAME_ONE_ARG(__VA_ARGS__))
-
-#endif
-
 /** Initializes the logging system. Log to the \p log_file.  If \p log_file already exists it will
  * be deleted. \p unnamed_logger_identifier is the name used in the log file to identify logs from
  * the singular unnamed logger for this executable.  Logs from the named loggers are identified by
@@ -217,18 +191,6 @@ using NamedThreadedLogger = boost::log::sources::severity_channel_logger_mt<
 // Setup file sink, formatting, and \p name channel filter for \p logger.
 FO_COMMON_API void ConfigureLogger(NamedThreadedLogger& logger, const std::string& name);
 
-// Place in source file to create the previously defined global logger \p name
-#define DeclareThreadSafeLogger(name)                                   \
-    BOOST_LOG_INLINE_GLOBAL_LOGGER_INIT(                                \
-        FO_GLOBAL_LOGGER_NAME(name), NamedThreadedLogger)               \
-    {                                                                   \
-        auto lg = NamedThreadedLogger(                                  \
-            (boost::log::keywords::severity = LogLevel::debug),         \
-            (boost::log::keywords::channel = #name));                   \
-        ConfigureLogger(lg, #name);                                     \
-        return lg;                                                      \
-    }
-
 // Signal that logger \p name has been created
 using LoggerCreatedSignalType = boost::signals2::signal<void (const std::string logger)>;
 FO_COMMON_API extern LoggerCreatedSignalType LoggerCreatedSignal;
@@ -237,89 +199,73 @@ FO_COMMON_API extern LoggerCreatedSignalType LoggerCreatedSignal;
 // loggers intialized during static initialization.
 FO_COMMON_API std::vector<std::string> CreatedLoggersNames();
 
-// Create the default logger
-#ifndef FREEORION_WIN32
-
-DeclareThreadSafeLogger();
-
-#else
 
 // Note: The is a workaround for Visual C++ non-conformant pre-processor
 // handling of empty macro arguments.
 // https://msdn.microsoft.com/en-us/library/hh567368.aspx
 // https://blogs.msdn.microsoft.com/vcblog/2017/03/07/c-standards-conformance-from-microsoft/
-BOOST_LOG_INLINE_GLOBAL_LOGGER_INIT(                                    \
-    fo_logger_global_, NamedThreadedLogger)                             \
-{                                                                       \
-    auto lg = NamedThreadedLogger(                                      \
-        (boost::log::keywords::severity = LogLevel::debug),             \
-        (boost::log::keywords::channel = ""));                          \
-    ConfigureLogger(lg, "");                                            \
-    return lg;                                                          \
-}
-
+#if defined(FREEORION_WIN32)
+# define FO_LOGGER_WIN32_WORKAROUND 1
+#else
+# define FO_LOGGER_WIN32_WORKAROUND 0
 #endif
+
+// Prefix \p name to create a global logger name less likely to collide.
+#define FO_GLOBAL_LOGGER_NAME(...)                             \
+    fo_logger_global_ ## __VA_ARGS__
+
+// Place in source file to create the previously defined global logger \p name
+#define DeclareThreadSafeLogger(...)   \
+    BOOST_LOG_INLINE_GLOBAL_LOGGER_INIT(                          \
+        FO_GLOBAL_LOGGER_NAME(__VA_ARGS__), NamedThreadedLogger)  \
+    {                                                             \
+        constexpr auto channel = BOOST_PP_IF(                     \
+            BOOST_PP_AND(                                         \
+                FO_LOGGER_WIN32_WORKAROUND,                       \
+                BOOST_PP_IS_EMPTY(__VA_ARGS__)),                  \
+            "",                                                   \
+            #__VA_ARGS__);                                        \
+        auto lg = NamedThreadedLogger(                            \
+            (boost::log::keywords::severity = LogLevel::debug),   \
+            (boost::log::keywords::channel = channel));           \
+        ConfigureLogger(lg, channel);                             \
+        return lg;                                                \
+    }
+
+
+// Create the default logger
+DeclareThreadSafeLogger();
+
 
 #define __BASE_FILENAME__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__)
 
-#ifndef FREEORION_WIN32
 
-#define FO_LOGGER(name, lvl)                                            \
-    BOOST_LOG_STREAM_WITH_PARAMS(                                       \
-        FO_GLOBAL_LOGGER_NAME(name)::get(),                             \
-        (boost::log::keywords::severity = lvl))                         \
+#define FO_LOGGER(lvl, ...)                         \
+    BOOST_LOG_STREAM_WITH_PARAMS(                   \
+        FO_GLOBAL_LOGGER_NAME(__VA_ARGS__)::get(),  \
+        (boost::log::keywords::severity = lvl))     \
 
-#define TraceLogger(name) FO_LOGGER(name, LogLevel::trace)              \
- << boost::log::add_value("SrcFilename", __BASE_FILENAME__)             \
+
+#define TraceLogger(...) FO_LOGGER(LogLevel::trace, __VA_ARGS__)  \
+ << boost::log::add_value("SrcFilename", __BASE_FILENAME__)       \
  << boost::log::add_value("SrcLinenum", __LINE__)
 
-#define DebugLogger(name) FO_LOGGER(name, LogLevel::debug)              \
- << boost::log::add_value("SrcFilename", __BASE_FILENAME__)             \
+#define DebugLogger(...) FO_LOGGER(LogLevel::debug, __VA_ARGS__)  \
+ << boost::log::add_value("SrcFilename", __BASE_FILENAME__)       \
  << boost::log::add_value("SrcLinenum", __LINE__)
 
-#define InfoLogger(name) FO_LOGGER(name, LogLevel::info)                \
- << boost::log::add_value("SrcFilename", __BASE_FILENAME__)             \
+#define InfoLogger(...) FO_LOGGER(LogLevel::info, __VA_ARGS__)    \
+ << boost::log::add_value("SrcFilename", __BASE_FILENAME__)       \
  << boost::log::add_value("SrcLinenum", __LINE__)
 
-#define WarnLogger(name) FO_LOGGER(name, LogLevel::warn)                \
- << boost::log::add_value("SrcFilename", __BASE_FILENAME__)             \
+#define WarnLogger(...) FO_LOGGER(LogLevel::warn, __VA_ARGS__)    \
+ << boost::log::add_value("SrcFilename", __BASE_FILENAME__)       \
  << boost::log::add_value("SrcLinenum", __LINE__)
 
-#define ErrorLogger(name) FO_LOGGER(name, LogLevel::error)              \
- << boost::log::add_value("SrcFilename", __BASE_FILENAME__)             \
+#define ErrorLogger(...) FO_LOGGER(LogLevel::error, __VA_ARGS__)  \
+ << boost::log::add_value("SrcFilename", __BASE_FILENAME__)       \
  << boost::log::add_value("SrcLinenum", __LINE__)
 
-
-#else
-
-
-// Note: The is a workaround for Visual C++ non-conformant pre-processor
-// handling of empty macro arguments.
-// https://msdn.microsoft.com/en-us/library/hh567368.aspx
-// https://blogs.msdn.microsoft.com/vcblog/2017/03/07/c-standards-conformance-from-microsoft/
-#define FO_LOGGER_PRESTITCHED(lvl, logger)                              \
-    BOOST_LOG_STREAM_WITH_PARAMS(                                       \
-        logger::get(),                                                  \
-        (boost::log::keywords::severity = lvl))
-
-#define TraceLogger(...) FO_LOGGER_PRESTITCHED(LogLevel::trace, fo_logger_global_##__VA_ARGS__)  \
- << boost::log::add_value("SrcFilename", __BASE_FILENAME__)                                      \
- << boost::log::add_value("SrcLinenum", __LINE__)
-#define DebugLogger(...) FO_LOGGER_PRESTITCHED(LogLevel::debug, fo_logger_global_##__VA_ARGS__)  \
- << boost::log::add_value("SrcFilename", __BASE_FILENAME__)                                      \
- << boost::log::add_value("SrcLinenum", __LINE__)
-#define InfoLogger(...)  FO_LOGGER_PRESTITCHED(LogLevel::info,  fo_logger_global_##__VA_ARGS__)  \
- << boost::log::add_value("SrcFilename", __BASE_FILENAME__)                                      \
- << boost::log::add_value("SrcLinenum", __LINE__)
-#define WarnLogger(...)  FO_LOGGER_PRESTITCHED(LogLevel::warn,  fo_logger_global_##__VA_ARGS__)  \
- << boost::log::add_value("SrcFilename", __BASE_FILENAME__)                                      \
- << boost::log::add_value("SrcLinenum", __LINE__)
-#define ErrorLogger(...) FO_LOGGER_PRESTITCHED(LogLevel::error, fo_logger_global_##__VA_ARGS__)  \
- << boost::log::add_value("SrcFilename", __BASE_FILENAME__)                                      \
- << boost::log::add_value("SrcLinenum", __LINE__)
-
-
-#endif
 
 /** Sets the \p threshold of \p source.  \p source == "" is the default logger.*/
 FO_COMMON_API void SetLoggerThreshold(const std::string& source, LogLevel threshold);
