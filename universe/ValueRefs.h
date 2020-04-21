@@ -109,7 +109,7 @@ struct FO_COMMON_API Variable : public ValueRef<T>
     unsigned int GetCheckSum() const override;
 
 protected:
-    mutable ReferenceType       m_ref_type = INVALID_REFERENCE_TYPE;
+    ReferenceType               m_ref_type = INVALID_REFERENCE_TYPE;
     std::vector<std::string>    m_property_name;
     bool                        m_return_immediate_value = false;
 
