@@ -88,9 +88,9 @@ struct FO_COMMON_API Condition {
     { return 0; }
 
 protected:
-    mutable Invariance m_root_candidate_invariant = UNKNOWN_INVARIANCE;
-    mutable Invariance m_target_invariant = UNKNOWN_INVARIANCE;
-    mutable Invariance m_source_invariant = UNKNOWN_INVARIANCE;
+    Invariance m_root_candidate_invariant = UNKNOWN_INVARIANCE;
+    Invariance m_target_invariant = UNKNOWN_INVARIANCE;
+    Invariance m_source_invariant = UNKNOWN_INVARIANCE;
 
 private:
     struct MatchHelper;
