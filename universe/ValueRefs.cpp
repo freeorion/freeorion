@@ -199,46 +199,44 @@ namespace {
     };
 
     const std::map<std::string, MeterType>& GetMeterNameMap() {
-        static std::map<std::string, MeterType> meter_name_map;
-        if (meter_name_map.empty()) {
-            // todo: maybe need some thread guards here?
-            meter_name_map["Population"] =         METER_POPULATION;
-            meter_name_map["TargetPopulation"] =   METER_TARGET_POPULATION;
-            meter_name_map["Industry"] =           METER_INDUSTRY;
-            meter_name_map["TargetIndustry"] =     METER_TARGET_INDUSTRY;
-            meter_name_map["Research"] =           METER_RESEARCH;
-            meter_name_map["TargetResearch"] =     METER_TARGET_RESEARCH;
-            meter_name_map["Trade"] =              METER_TRADE;
-            meter_name_map["TargetTrade"] =        METER_TARGET_TRADE;
-            meter_name_map["Construction"] =       METER_CONSTRUCTION;
-            meter_name_map["TargetConstruction"] = METER_TARGET_CONSTRUCTION;
-            meter_name_map["Happiness"] =          METER_HAPPINESS;
-            meter_name_map["TargetHappiness"] =    METER_TARGET_HAPPINESS;
-            meter_name_map["MaxFuel"] =            METER_MAX_FUEL;
-            meter_name_map["Fuel"] =               METER_FUEL;
-            meter_name_map["MaxStructure"] =       METER_MAX_STRUCTURE;
-            meter_name_map["Structure"] =          METER_STRUCTURE;
-            meter_name_map["MaxShield"] =          METER_MAX_SHIELD;
-            meter_name_map["Shield"] =             METER_SHIELD;
-            meter_name_map["MaxDefense"] =         METER_MAX_DEFENSE;
-            meter_name_map["Defense"] =            METER_DEFENSE;
-            meter_name_map["MaxTroops"] =          METER_MAX_TROOPS;
-            meter_name_map["Troops"] =             METER_TROOPS;
-            meter_name_map["RebelTroops"] =        METER_REBEL_TROOPS;
-            meter_name_map["Supply"] =             METER_SUPPLY;
-            meter_name_map["MaxSupply"] =          METER_MAX_SUPPLY;
-            meter_name_map["Stockpile"] =          METER_STOCKPILE;
-            meter_name_map["MaxStockpile"] =       METER_MAX_STOCKPILE;
-            meter_name_map["Stealth"] =            METER_STEALTH;
-            meter_name_map["Detection"] =          METER_DETECTION;
-            meter_name_map["Speed"] =              METER_SPEED;
-            meter_name_map["Damage"] =             METER_CAPACITY;
-            meter_name_map["Capacity"] =           METER_CAPACITY;
-            meter_name_map["MaxCapacity"] =        METER_MAX_CAPACITY;
-            meter_name_map["SecondaryStat"] =      METER_SECONDARY_STAT;
-            meter_name_map["MaxSecondaryStat"] =   METER_MAX_SECONDARY_STAT;
-            meter_name_map["Size"] =               METER_SIZE;
-        }
+        static const std::map<std::string, MeterType> meter_name_map{
+            {"Population",           METER_POPULATION},
+            {"TargetPopulation",     METER_TARGET_POPULATION},
+            {"Industry",             METER_INDUSTRY},
+            {"TargetIndustry",       METER_TARGET_INDUSTRY},
+            {"Research",             METER_RESEARCH},
+            {"TargetResearch",       METER_TARGET_RESEARCH},
+            {"Trade",                METER_TRADE},
+            {"TargetTrade",          METER_TARGET_TRADE},
+            {"Construction",         METER_CONSTRUCTION},
+            {"TargetConstruction",   METER_TARGET_CONSTRUCTION},
+            {"Happiness",            METER_HAPPINESS},
+            {"TargetHappiness",      METER_TARGET_HAPPINESS},
+            {"MaxFuel",              METER_MAX_FUEL},
+            {"Fuel",                 METER_FUEL},
+            {"MaxStructure",         METER_MAX_STRUCTURE},
+            {"Structure",            METER_STRUCTURE},
+            {"MaxShield",            METER_MAX_SHIELD},
+            {"Shield",               METER_SHIELD},
+            {"MaxDefense",           METER_MAX_DEFENSE},
+            {"Defense",              METER_DEFENSE},
+            {"MaxTroops",            METER_MAX_TROOPS},
+            {"Troops",               METER_TROOPS},
+            {"RebelTroops",          METER_REBEL_TROOPS},
+            {"Supply",               METER_SUPPLY},
+            {"MaxSupply",            METER_MAX_SUPPLY},
+            {"Stockpile",            METER_STOCKPILE},
+            {"MaxStockpile",         METER_MAX_STOCKPILE},
+            {"Stealth",              METER_STEALTH},
+            {"Detection",            METER_DETECTION},
+            {"Speed",                METER_SPEED},
+            {"Damage",               METER_CAPACITY},
+            {"Capacity",             METER_CAPACITY},
+            {"MaxCapacity",          METER_MAX_CAPACITY},
+            {"SecondaryStat",        METER_SECONDARY_STAT},
+            {"MaxSecondaryStat",     METER_MAX_SECONDARY_STAT},
+            {"Size",                 METER_SIZE}
+        };
         return meter_name_map;
     }
 
