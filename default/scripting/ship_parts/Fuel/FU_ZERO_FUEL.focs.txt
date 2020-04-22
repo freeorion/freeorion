@@ -1,6 +1,7 @@
 Part
     name = "FU_ZERO_FUEL"
     description = "FU_ZERO_FUEL_DESC"
+    exclusions = "SH_COLONY_BASE"
     class = Fuel
     capacity = 0
     NoDefaultCapacityEffect

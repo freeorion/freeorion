@@ -1,6 +1,7 @@
 Part
     name = "FU_RAMSCOOP"
     description = "FU_RAMSCOOP_DESC"
+    exclusions = "SH_COLONY_BASE"
     class = Fuel
     capacity = 0
     NoDefaultCapacityEffect
