@@ -27,7 +27,7 @@ MULTILINE_CPP_IS_BRIEF = NO
 INHERIT_DOCS           = YES
 SEPARATE_MEMBER_PAGES  = NO
 TAB_SIZE               = 4
-ALIASES                = content_tag{1}="\xrefitem content_tags \"Definition Tag\" \"Content Definition Tags\" \1"
+ALIASES                = content_tag{1}="\xrefitem content_tags \"\" \"\" \b \1"
 TCL_SUBST              =
 OPTIMIZE_OUTPUT_FOR_C  = NO
 OPTIMIZE_OUTPUT_JAVA   = NO
@@ -106,7 +106,6 @@ INPUT                  = @FreeOrion_SOURCE_DIR@/README.md \
                          @FreeOrion_SOURCE_DIR@/ChangeLog.md \
                          @FreeOrion_SOURCE_DIR@/doc \
                          @FreeOrion_CPP_APIDOC_OUTDIR@/all_tags.dox \
-                         @FreeOrion_SOURCE_DIR@/doc/content_tags_alias.dox \
                          @FreeOrion_SOURCE_DIR@/AI \
                          @FreeOrion_SOURCE_DIR@/client \
                          @FreeOrion_SOURCE_DIR@/combat \
