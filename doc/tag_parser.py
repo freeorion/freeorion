@@ -5,16 +5,11 @@ import fnmatch
 import argparse
 
 arguments = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-                                    description='Parses files for content tags.  Formulates a new file from a template'
-                                                ' and a doxygen suitable listing of the parse results.',
+                                    description='Parses files for content tags and creates and a doxygen suitable listing from the parse results.',
                                     epilog='%(prog)s Parses FILES in the MATCH directory for TAGs.'
-                                           'The TEMPLATE file is then read into the OUTPUT file, replacing any'
-                                           ' comment lines with a match for TEMPLATE_VAR with the results of the'
-                                           ' parsed files. The comment lines may be in either # or /// form in a file,'
+                                           'The comment lines may be in either # or /// form in a file,'
                                            ' but only one form throughout a file.  The results of the parse are'
                                            ' formatted for a doxygen ".dox" file.')
-arguments.add_argument('--template', required=True,
-                       help='Full path to an input template.')
 arguments.add_argument('--match', default='./',
                        help='Root directory to search for files to parse.')
 arguments.add_argument('-f', '--files', metavar='MASK', nargs='*', default=['*.*'],
@@ -23,8 +18,6 @@ arguments.add_argument('-x', '--exclude', metavar='MASK', nargs='*', default=[],
                        help='One or more file masks to exclude from results matching source_mask(s).')
 arguments.add_argument('--tag', nargs=2, default=['@content_tag{', '}'], help='Set of opening and closing'
                        ' strings which surround a tag name and precede the tag documentation.')
-arguments.add_argument('-t', '--template_var', default='${CONTENT_DOCUMENTATION}',
-                       help='String from source file to replace with formatted results from parsed tags.')
 arguments.add_argument('-o', '--output', default='output.txt', help='Full path to an output file.')
 arguments.add_argument('--link_source', metavar='CONTEXT_DIR BASE_URL LINE_PREFIX]', nargs='*', default=[],
                        help='Display linked source before each tag documentation. Requires arguments in order:'
@@ -128,24 +121,22 @@ for _file_path, _, _files in os.walk(args.get('match')):
 
 output_buff = []
 
-# read in template, replacing template_var with tags formatted for doxygen
-with open(args.get('template'), 'r') as input_file:
-    for input_line in input_file:
-        if args.get('template_var') in input_line:
-            output_buff.append('<dl class="reflist">\n')
-            for tag in sorted(all_tags):
-                output_buff.append('<dt>' + tag + '</dt>\n<dd>')
-                for source in all_tags[tag]:
-                    description = str.format('{0}  ', source[2])
-                    # prepend source and link if requested
-                    link_str = get_link(source[0], source[1])
-                    if link_str:
-                        link_str += " - "
-                    output_buff.append(link_str + description + '<br />\n')
-                output_buff.append('</dd>\n')
-            output_buff.append('</dl>\n')
-        else:
-            output_buff.append(input_line)
+# create tags formatted for doxygen
+
+output_buff.append('/**\n')
+output_buff.append('@page content_tag_listing Content Definition Tag Listing\n')
+output_buff.append('This page is required to load parsed data into the documentation, the actual listing can be found @ref content_tags\n')
+for tag in sorted(all_tags):
+    output_buff.append('@content_tag{' + tag + '} ')
+    for source in all_tags[tag]:
+        description = str.format('{0}  ', source[2])
+        # prepend source and link if requested
+        link_str = get_link(source[0], source[1])
+        if link_str:
+            link_str += " - "
+        output_buff.append(link_str + description)
+    output_buff.append('\n')
+output_buff.append('*/\n')
 
 if args.get('dry_run'):
     source_count = 0
