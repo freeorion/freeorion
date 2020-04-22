@@ -1,7 +1,9 @@
-# Build FreeOrion
+Building FreeOrion
+==================
 
 
-## Hardware and OS Requirements
+Hardware and OS Requirements
+----------------------------
 
 FreeOrion will compile on Windows 7 (or later), Mac OS X 10.10 (or later) and
 Linux operating systems. Other operating systems have reported to work, but
@@ -14,7 +16,8 @@ to compile ; 6 GiB RAM or more is recommended. To build FreeOrion, expect up to
 45 minutes on a Intel Core i5 system.
 
 
-## Required Software Dependencies
+Required Software Dependencies
+------------------------------
 
 FreeOrion depends on the following software to build:
 
@@ -42,7 +45,8 @@ FreeOrion depends on the following libraries or APIs to run:
   * [SDL2]
 
 
-## Obtaining FreeOrion Source Code and Software Dependencies
+Obtaining FreeOrion Source Code and Software Dependencies
+---------------------------------------------------------
 
 For Windows and Mac OS X a [Software Development Kit] is provided as download to
 compile FreeOrion from source. It contains the preconfigured and -compiled build

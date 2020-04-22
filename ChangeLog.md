@@ -1,10 +1,11 @@
-# Changelog
+Changelog
+========
 
 Notable changes to the FreeOrion project will be documented in this file.
 
 
-## [v0.4.9+] - TBA
-
+[v0.4.9+] - TBA
+---------------
 
 #### Technical / Internal
 
@@ -13,10 +14,10 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Provide FreeDesktop.org AppStream metainfo file.
 
 
-## [v0.4.9] - 2020-02-02
+[v0.4.9] - 2020-02-02
+---------------------
 
-
-#### Key Changes
+### Key Changes
 
 - Multiplayer enhancements
     - Hostless servers can be started without connected players and left running for players to join to play their turns asynchronously
@@ -92,6 +93,7 @@ Notable changes to the FreeOrion project will be documented in this file.
     - Various GUI layout tweaks
     - Added warning when stockpile contributions would put the stockpile above ten turns of maximum-rate extraction
 
+
 #### Content / Gameplay
 
 - Translation updates: French, German, Russian
@@ -107,6 +109,7 @@ Notable changes to the FreeOrion project will be documented in this file.
     - Aggressive fleets are always visible at the start of combat
     - Enable a part-based upkeep calculation rather than ship-based
     - Empires are only told that another empire has researched a tech when both empires have researched it - currently may break client-side meter estimate calculations
+
 
 #### Balance
 
@@ -127,6 +130,7 @@ Notable changes to the FreeOrion project will be documented in this file.
     - Planets have an effective minimum infrastructure of 1 to trigger combat each turn to ensure there are no turns when invading isn't allowed due to cycling of meter growth and combat occurring
     - Interceptors launch at double the rate of other fighters
 
+
 #### AI
 
 - Improved AI judgement about fleet strengths and ship capacities with fighters
@@ -145,6 +149,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Reduced AI invasion overkill / waste
 - Made AI consider lost fleets when determining unknown threats
 - Made AI scrap Gateway to the Void building on planets it captures, if the planet has one. The AI can't handle that building and it's presence severely disrupted the AI in such cases.
+
 
 #### Bugs
 
@@ -188,6 +193,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Fixed issue where, after playing a game with modified rules, the default setting for a new game and the rule values in the intro screen pedia would be those of the previously-played game, rather than the defined rule default values
 - Fixed issue where, when a certain system (system 0) was destroyed (e.g. by a Black Hole Collapser), an empire aware of this destruction would forget all starlane connections and loose all supply propagation between it's systems
 
+
 ### Technical / Internal
 
 - Added basic support for a UDP message interface to query the server containing simple FOCS expressions
@@ -213,8 +219,8 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Prevent AIs from replaying turns after loading a game, unless specified in configuration
 
 
-## [v0.4.8] - 2018-08-23
-
+[v0.4.8] - 2018-08-23
+---------------------
 
 ### Key Changes
 
@@ -244,7 +250,6 @@ Notable changes to the FreeOrion project will be documented in this file.
 
 
 ### Detailed Changelog
-
 
 #### Graphics / Interface
 
@@ -324,6 +329,7 @@ Notable changes to the FreeOrion project will be documented in this file.
     - Sorted researched techs list on empire pedia article by researched turn.
     - Made several GUI widgets react immediately to being pressed, instead of waiting until the mouse is released to complete the "click".
 
+
 #### Content / Gameplay
 
 - New pedia articles, article categorization, extended articles, corrections
@@ -352,6 +358,7 @@ Notable changes to the FreeOrion project will be documented in this file.
     - Planet size balance adjustments
     - How much to over-allocate on production queue to prevent rounding-related extra turns to complete items
 
+
 #### Balance
 
 - Super testers now have perfect stealth, which allows testing without AI interference.
@@ -369,6 +376,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Newly created ships and monsters now cannot block supply (until they have survived a turn) or enemy fleet movement.
 - Do not remove production/research on dying planets while there is still remaining population.
 
+
 #### AI
 
 - Made AI consider cancelling colony buildings if a better species becomes available.
@@ -382,6 +390,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Adjusted AI tech priorities.
 - Made AI consider refueling when calculating fleet routes.
 - Improved AI interaction with stealthed planets.
+
 
 #### Bugs
 
@@ -422,6 +431,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Fixed missing combat sensor ghosts.
 - Fixed issues with visibility of stale objects.
 
+
 #### Technical / Internal
 
 - OSX version is now built as 64 bit binary.
@@ -461,8 +471,8 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Added an ID to each game, which can be viewed in the pedia.
 
 
-## [v0.4.7.1] - 2017-09-03
-
+[v0.4.7.1] - 2017-09-03
+-----------------------
 
 #### Bug Fixes
 
@@ -474,9 +484,8 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Fixed bug which caused starlanes not to be rendered on certain systems/setups.
 
 
-
-## [v0.4.7] - 2017-04-24
-
+[v0.4.7] - 2017-04-24
+---------------------
 
 ### Key Changes
 
@@ -507,7 +516,6 @@ Notable changes to the FreeOrion project will be documented in this file.
 
 
 ### Detailed Changelog
-
 
 #### Graphics / GUI
 
@@ -705,9 +713,8 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Allow build of program with unknown git commit.
 
 
-
-## [v0.4.6] - 2016-09-16
-
+[v0.4.6] - 2016-09-16
+---------------------
 
 ### Key Changes
 
@@ -724,7 +731,6 @@ substantially improve usability, responsiveness, and system resource usage.
 
 
 ### Detailed Changelog
-
 
 #### Graphics / GUI
 
@@ -1018,8 +1024,8 @@ XDG Base Directory Specification
 - Reorganized content definitions into multiple files
 
 
-## [v0.4.5] - 2015-09-08
-
+[v0.4.5] - 2015-09-08
+---------------------
 
 ### Key Changes
 
@@ -1041,7 +1047,6 @@ XDG Base Directory Specification
 
 
 ### Detailed Changelog
-
 
 #### Graphics / GUI
 
@@ -1253,8 +1258,8 @@ XDG Base Directory Specification
 - Fixed Exobots not having Bad Ground Troops as described.
 
 
-## [v0.4.4] - 2014-09-07
-
+[v0.4.4] - 2014-09-07
+---------------------
 
 ### Key Changes
 
@@ -1270,7 +1275,6 @@ XDG Base Directory Specification
 
 
 ### Detailed Changelog
-
 
 #### New Features / Improvements
 
@@ -1535,8 +1539,8 @@ XDG Base Directory Specification
   crashes.
 
 
-## [v0.4.3] - 2013-10-26
-
+[v0.4.3] - 2013-10-26
+---------------------
 
 ### Key Changes
 
@@ -1726,8 +1730,8 @@ XDG Base Directory Specification
 - Numerous other bug fixes.
 
 
-## [v0.4.2] - 2013-02-20
-
+[v0.4.2] - 2013-02-20
+---------------------
 
 ### Key Changes
 
@@ -1936,8 +1940,8 @@ XDG Base Directory Specification
   basic visibility.
 
 
-## [v0.4.1] - 2012-08-03
-
+[v0.4.1] - 2012-08-03
+---------------------
 
 ### New Features/Improvements
 
@@ -2086,8 +2090,8 @@ XDG Base Directory Specification
 - Many description improvements, and some spelling corrections.
 
 
-## [v0.4] - 2012-02-05
-
+[v0.4] - 2012-02-05
+-------------------
 
 ### New Features / Improvements
 
@@ -2173,8 +2177,8 @@ XDG Base Directory Specification
   moving fleet.
 
 
-## [v0.3.17] - 2011-09-23
-
+[v0.3.17] - 2011-09-23
+----------------------
 
 ### New Features / Improvements
 
@@ -2264,8 +2268,8 @@ XDG Base Directory Specification
   the FleetWnd.
 
 
-## [v0.3.16] - 2011-06-15
-
+[v0.3.16] - 2011-06-15
+----------------------
 
 Changes since the last release include:
 
@@ -2333,8 +2337,8 @@ Changes since the last release include:
   disconnection.
 
 
-## [v0.3.15] - 2010-08-04
-
+[v0.3.15] - 2010-08-04
+----------------------
 
 Changes since the last release include:
 
@@ -2494,8 +2498,8 @@ Changes since the last release include:
 - Various stringtable changes / updates, etc.
 
 
-## [v0.3.14] - 2010-04-30
-
+[v0.3.14] - 2010-04-30
+----------------------
 
 Changes since the last release include:
 
@@ -2624,7 +2628,8 @@ Changes since the last release include:
 - Fixed some issues with Win32 installer and uninstaller.
 
 
-## [v0.3.13] - 2009-05-24
+[v0.3.13] - 2009-05-24
+----------------------
 
 Changes since the last release include:
 
@@ -2714,7 +2719,8 @@ Changes since the last release include:
   are getting "Invalid UTF-8" crashes.
 
 
-## [v0.3.11] - 2009-01-09
+[v0.3.11] - 2009-01-09
+----------------------
 
 - Fixed effect accounting, seen on tooltips for meter icons for planets on the
   sidepanel, so that newly-created buildings take effect immediately.
@@ -2752,8 +2758,8 @@ Changes since the last release include:
 - Various other minor bug fixes and tweaks.
 
 
-## [v0.3.10] -  2008-01-25
-
+[v0.3.10] -  2008-01-25
+-----------------------
 
 This is an unstable development update, with various new features, but also
 various bugs.  Changes since the last release include:
@@ -2788,8 +2794,8 @@ various bugs.  Changes since the last release include:
 - Various other bug fixes (and additions).
 
 
-## v0.3.9 - ???
-
+[v0.3.9] - ???
+--------------
 
 Changes since the last release include:
 
@@ -2812,8 +2818,8 @@ Changes since the last release include:
   Windows and Linux.
 
 
-## [v0.3.8] - ???
-
+[v0.3.8] - ???
+--------------
 
 If you're confused about version numbers, pretend the last few "RC" releases
 didn't have the RC.  Release naming should be more consistent in future.
@@ -2824,8 +2830,8 @@ scripting has been significantly increased, should anyone else be interested in
 working on that.
 
 
-## [v0.3.1-RC7] - ???
-
+[v0.3.1-RC7] - ???
+------------------
 
 Some new stuff includes:
 
@@ -2842,8 +2848,8 @@ Some new stuff includes:
 - Various UI improvements.
 
 
-## [v0.3.1-RC6] - ???
-
+[v0.3.1-RC6] - ???
+------------------
 
 The full list of changes is too lengthy to list completely, but some of the
 notables include:
@@ -2875,8 +2881,8 @@ notables include:
 - Various bugs have been fixed…
 
 
-## [v0.3.1-RC5] - ???
-
+[v0.3.1-RC5] - ???
+------------------
 
 RC5 has been released.  It represents a lot of behind-the-scenes work, and some
 more user-noticable stuff too.
