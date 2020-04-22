@@ -103,73 +103,100 @@ can be listet by invoking `git tag -l`, where releases are indicated by a
 leading `v` followed by the release version number.
 
 
-# Compiling FreeOrion
+Compiling FreeOrion
+-------------------
 
 FreeOrion uses CMake as build system on most platforms. On Windows a manually
 maintained Visual Studio Project is used for building.
 
-Step by step procedure:
 
- * Enter the _source directory_.
- * On Windows:
-   * Open `msvc2017\FreeOrion.sln` with Visual Studio.
-   * Compile the whole project by selecting the `Build` -> `Build Solution`
-     menu entry.
+### Windows (Visual Studio)
 
- * On Windows (cmake):
-   * Change into the `Freeorion` directory.
-   * Create a `build` directory, which will contain all compile FreeOrion
-     build artifacs.
-   * Change into the `build` directory on the command line.
-   * Execute cmake to generate Makefiles:
+To build FreeOrion open the `FreeOrion.sln` project solution within
+`_source directory_\msvc2017` with Visual Studio.  Now compile the whole
+project by selecting the `Build` -> `Build Solution` menu entry.
 
-     ```
-     cmake .. -G "Visual Studio 15 2017"
-     ```
-   * Compile the whole project by calling `MSBuild.exe -p:Configuration=Release FreeOrion.sln`
-     within the build directory. In case you want to utilize multiple CPU
-     cores, you can add the `-m` option to the command.
-   * Alternatively, you can compile the project by the Visual Studio GUI.
+After the build finished successfully the binaries can be found within
+the `freeorion-project/FreeOrion` directory.
 
 
- * On Mac OS X:
-   * Create a `build` directory, which will contain all compile FreeOrion
-     build artifacs.
-   * Change into the `build` directory on the command line.
-   * Execute cmake to generate a Xcode project file:
+### Windows (CMake; work in progress)
 
-     ```
-     cmake -GXcode ..
-     ```
-   * Open `FreeOrion.xcodeproj` with Xcode.
-   * Compile the whole project by selecting the `ALL_BUILD` scheme and
-     pressing 'Command' + 'B'.
+Create a `build` directory inside the _source_directory_ and change into
+this directory. It will contain all compile FreeOrion build artifacs.
 
+Execute cmake to generate a Visual Studio solution:
 
- * On Linux and other Operating Systems
-   * Create a `build` directory, which will contain all compile FreeOrion
-     build artifacs.
-   * Change into the `build` directory on the command line.
-   * Execute cmake to generate Makefiles:
+```
+cmake .. -G "Visual Studio 15 2017"
+```
 
-     ```
-     cmake ..
-     ```
-   * Compile the whole project by calling `make` within the build directory.
-     In case you want to utilize multiple CPU cores by running parallel compile
-     jobs check out the the [make jobs](`--jobs`) parameter of `make`.
+After successfully creating the Makefiles build the whole project by
+calling:
 
+```
+MSBuild.exe -p:Configuration=Release FreeOrion.sln
+```
 
+In case you want to utilize multiple CPU cores by running parallel
+compile jobs, you can add the `-m` option to the command.
+
+Alternatively, you can build FreeOrion by opening the `FreeOrion.sln`
+project solution with Visual Studio.  Now compile the whole project
+by selecting the `Build` -> `Build Solution` menu entry.
 This will leave you with a build of FreeOrion executables.
 
- * `freeorion-project/FreeOrion` on Windows if you compile it with the 
-    standalone msvc project.
- * `freeorion-project/Freeorion/build/Release` on Windows if you compile it 
-    with CMake. To run the executable without creating the symbolic link, you
-    can first change the directory to `freeorion-project/Freeorion`, then run
-    `./build/Release/FreeOrion.exe`.
- * `freeorion-project/build/Release` on Mac OS X.
- * `freeorion-project/freeorion/build` on Linux and other Operating Systems.
+After the build finished successfully the binaries can be found within
+the `freeorion-project/Freeorion/build/Release` directory.
+
+To run the executable without creating the symbolic link, you can first
+change the directory to `freeorion-project/Freeorion`, then run
+`./build/Release/FreeOrion.exe`.
+
+
+### Mac OS X
+
+Create a `build` directory aside the _source_directory_ and change into
+this directory. It will contain all compile FreeOrion build artifacs.
+
+Execute `cmake` to generate a Xcode project file:
+
+```bash
+cmake -G Xcode ../freeorion
+```
+
+After successfully creating the Project file, open `FreeOrion.xcodeproj`
+with Xcode. Now compile the whole project by selecting the `ALL_BUILD`
+scheme and pressing 'Command' + 'B'.
+
+After the build finished successfully the binaries can be found within
+the `freeorion-project/build/Release` directory.
+
+
+### Linux and other Operating Systems
+
+Create a `build` directory aside the _source_directory_ and change into
+this directory. It will contain all compile FreeOrion build artifacs.
+
+Execute `cmake` to generate Makefiles:
+
+```bash
+cmake ../freeorion
+```
+
+After successfully creating the Makefiles build the whole project by
+calling:
+
+```bash
+make
+```
+
+In case you want to utilize multiple CPU cores by running parallel
+compile jobs check out the the [make jobs](`--jobs`) parameter of
+`make`.
+
+After the build finished successfully the binaries can be found within
+the `freeorion-project/build` directory.
 
 
 [Visual Studio]: https://www.visualstudio.com/de/vs/older-downloads/
