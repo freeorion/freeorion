@@ -141,6 +141,7 @@ Step by step procedure:
    * Compile the whole project by selecting the `ALL_BUILD` scheme and
      pressing 'Command' + 'B'.
 
+
  * On Linux and other Operating Systems
    * Create a `build` directory, which will contain all compile FreeOrion
      build artifacs.
@@ -153,12 +154,7 @@ Step by step procedure:
    * Compile the whole project by calling `make` within the build directory.
      In case you want to utilize multiple CPU cores by running parallel compile
      jobs check out the the [make jobs](`--jobs`) parameter of `make`.
-   * Create a symbolic link to the data directory inside the build directoy
-     by invoking:
 
-     ```
-     ln -s ../default .
-     ```
 
 This will leave you with a build of FreeOrion executables.
 
