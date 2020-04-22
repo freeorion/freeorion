@@ -778,6 +778,11 @@ SYSTEM_SHIP_FACILITIES = frozenset((
 PART_KRILL_SPAWNER = "SP_KRILL_SPAWNER"
 
 
+HULL_EXCLUDED_SHIP_PART_CLASSES = {
+    "SH_COLONY_BASE": (fo.shipPartClass.fuel, fo.shipPartClass.speed)
+}
+
+
 # <editor-fold desc="Allowed Combat Targets">
 # TODO: Inherit from enum.Flag after switch to Python 3.6+
 class CombatTarget:
