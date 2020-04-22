@@ -47,47 +47,7 @@ namespace {
         }
     }
 
-    void ConfigurePythonFileSinkFrontEnd(LoggerTextFileSinkFrontend& sink_frontend, const std::string& channel_name) {
-        // Create the format
-        sink_frontend.set_formatter(
-            expr::stream
-            << expr::format_date_time<boost::posix_time::ptime>("TimeStamp", "%H:%M:%S.%f")
-            << " {" << thread_id << "}"
-            << " [" << log_severity << "] "
-            << expr::message
-        );
-
-        // Set a filter to only format this channel
-        sink_frontend.set_filter(log_channel == channel_name);
-    }
-
-    // Setup file sink, formatting, and \p name channel filter for \p logger.
-    void ConfigurePythonLogger(NamedThreadedLogger& logger, const std::string& name) {
-        if (name.empty())
-            return;
-
-        SetLoggerThreshold(name, default_log_level_threshold);
-
-        ApplyConfigurationToFileSinkFrontEnd(
-            name,
-            std::bind(ConfigurePythonFileSinkFrontEnd, std::placeholders::_1, name));
-
-        LoggerCreatedSignal(name);
-    }
-
-    // Place in source file to create the previously defined global logger \p name
-#define DeclareThreadSafePythonLogger(name)                       \
-    BOOST_LOG_INLINE_GLOBAL_LOGGER_INIT(                          \
-        FO_GLOBAL_LOGGER_NAME(name), NamedThreadedLogger)         \
-    {                                                             \
-        auto lg = NamedThreadedLogger(                            \
-            (boost::log::keywords::severity = LogLevel::debug),   \
-            (boost::log::keywords::channel = #name));             \
-        ConfigurePythonLogger(lg, #name);                         \
-        return lg;                                                \
-    }
-
-    DeclareThreadSafePythonLogger(python);
+    DeclareThreadSafeLogger(python);
 
     // Assemble a python message that is the same as the C++ message format.
     void PythonLogger(const std::string& msg,
@@ -95,26 +55,33 @@ namespace {
                       const std::string& python_logger,
                       const std::string& filename,
                       // const std::string& function_name,
-                      const std::string& lineno)
+                      const std::string& linenostr)
     {
+        int lineno{0};
+
+        try {
+            lineno = std::stoi(linenostr);
+        } catch(...)
+        {}
+
         // Assembling the log in the stream input to the logger means that the
         // string assembly is gated by the log level.  logs are not assembled
         // if that log level is disabled.
         switch (log_level) {
         case LogLevel::trace:
-            TraceLogger(python) << python_logger << " : " << filename << ":" /*<< function_name << ":"*/ << lineno << " : " << msg;
+            FO_LOGGER(LogLevel::trace, python) << python_logger << boost::log::add_value("SrcFilename", filename) << boost::log::add_value("SrcLinenum", lineno) << " : " << msg;
             break;
         case LogLevel::debug:
-            DebugLogger(python) << python_logger << " : " << filename << ":" /*<< function_name << ":"*/ << lineno << " : " << msg;
+            FO_LOGGER(LogLevel::debug, python) << python_logger << boost::log::add_value("SrcFilename", filename) << boost::log::add_value("SrcLinenum", lineno) << " : " << msg;
             break;
         case LogLevel::info:
-            InfoLogger(python)  << python_logger << " : " << filename << ":" /*<< function_name << ":"*/ << lineno << " : " << msg;
+            FO_LOGGER(LogLevel::info, python)  << python_logger << boost::log::add_value("SrcFilename", filename) << boost::log::add_value("SrcLinenum", lineno) << " : " << msg;
             break;
         case LogLevel::warn:
-            WarnLogger(python)  << python_logger << " : " << filename << ":" /*<< function_name << ":"*/ << lineno << " : " << msg;
+            FO_LOGGER(LogLevel::warn, python)  << python_logger << boost::log::add_value("SrcFilename", filename) << boost::log::add_value("SrcLinenum", lineno) << " : " << msg;
             break;
         case LogLevel::error:
-            ErrorLogger(python) << python_logger << " : " << filename << ":" /*<< function_name << ":"*/ << lineno << " : " << msg;
+            FO_LOGGER(LogLevel::error, python) << python_logger << boost::log::add_value("SrcFilename", filename) << boost::log::add_value("SrcLinenum", lineno) << " : " << msg;
             break;
         }
     }
