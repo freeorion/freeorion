@@ -3,12 +3,12 @@ Tech
     description = "LRN_PSIONICS_DESC"
     short_description = "THEORY_SHORT_DESC"
     category = "LEARNING_CATEGORY"
-    researchcost = 300 * [[TECH_COST_MULTIPLIER]] - (250 * [[TECH_COST_MULTIPLIER]] * Statistic If condition = AND [
+    researchcost = 300 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 8 - (4 * Statistic If condition = AND [
         OwnedBy empire = Source.Owner
         /// @content_tag{TELEPATHIC} Decreases research cost of this tech for empires that own any object with this tag
         HasTag name = "TELEPATHIC"
     ])
-    researchturns = 4
     tags = [ "PEDIA_LEARNING_CATEGORY" "THEORY" ]
     prerequisites = "LRN_TRANSLING_THT"
     graphic = "icons/tech/psionics.png"
