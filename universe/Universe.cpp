@@ -493,7 +493,7 @@ void Universe::ApplyAllEffectsAndUpdateMeters(bool do_accounting) {
     // Effects, since the application of these Effects may affect the activation
     // and scoping evaluations
     Effect::TargetsCauses targets_causes;
-    GetEffectsAndTargets(targets_causes);
+    GetEffectsAndTargets(targets_causes, false);
 
     // revert all current meter values (which are modified by effects) to
     // their initial state for this turn, so that max/target/unpaired meter
@@ -522,7 +522,7 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_i
     // cache all activation and scoping condition results before applying Effects, since the application of
     // these Effects may affect the activation and scoping evaluations
     Effect::TargetsCauses targets_causes;
-    GetEffectsAndTargets(targets_causes, object_ids);
+    GetEffectsAndTargets(targets_causes, object_ids, true);
 
     std::vector<std::shared_ptr<UniverseObject>> objects = m_objects.find(object_ids);
 
@@ -550,7 +550,7 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(bool do_accounting) {
     }
 
     Effect::TargetsCauses targets_causes;
-    GetEffectsAndTargets(targets_causes);
+    GetEffectsAndTargets(targets_causes, true);
 
     TraceLogger(effects) << "Universe::ApplyMeterEffectsAndUpdateMeters resetting...";
     for (const auto& object : m_objects.all()) {
@@ -584,7 +584,7 @@ void Universe::ApplyAppearanceEffects(const std::vector<int>& object_ids) {
     // Effects, since the application of these Effects may affect the
     // activation and scoping evaluations
     Effect::TargetsCauses targets_causes;
-    GetEffectsAndTargets(targets_causes, object_ids);
+    GetEffectsAndTargets(targets_causes, object_ids, false);
     ExecuteEffects(targets_causes, false, false, true);
 }
 
@@ -595,7 +595,7 @@ void Universe::ApplyAppearanceEffects() {
     // Effects, since the application of Effects in general (even if not these
     // particular Effects) may affect the activation and scoping evaluations
     Effect::TargetsCauses targets_causes;
-    GetEffectsAndTargets(targets_causes);
+    GetEffectsAndTargets(targets_causes, false);
     ExecuteEffects(targets_causes, false, false, true);
 }
 
@@ -606,7 +606,7 @@ void Universe::ApplyGenerateSitRepEffects() {
     // Effects, since the application of Effects in general (even if not these
     // particular Effects) may affect the activation and scoping evaluations
     Effect::TargetsCauses targets_causes;
-    GetEffectsAndTargets(targets_causes);
+    GetEffectsAndTargets(targets_causes, false);
     ExecuteEffects(targets_causes, false, false, false, false, true);
 }
 
@@ -828,7 +828,7 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, boo
     // cache all activation and scoping condition results before applying Effects, since the application of
     // these Effects may affect the activation and scoping evaluations
     Effect::TargetsCauses targets_causes;
-    GetEffectsAndTargets(targets_causes, objects_vec);
+    GetEffectsAndTargets(targets_causes, objects_vec, true);
 
     // Apply and record effect meter adjustments
     ExecuteEffects(targets_causes, do_accounting, true, false, false, false);
@@ -983,6 +983,7 @@ namespace {
         const std::string& specific_cause_name,
         const Condition::ObjectSet& source_objects,
         const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects_groups,
+        bool only_meter_effects,
         const ObjectMap& object_map,
         const Condition::ObjectSet& potential_targets,
         const std::unordered_set<int>& potential_target_ids,
@@ -991,6 +992,8 @@ namespace {
         int& n)
     {
         for (auto& effects_group : effects_groups) {
+            if (only_meter_effects && !effects_group->HasMeterEffects())
+                continue;
             if (!effects_group->Scope())
                 continue;
             n++;
@@ -1038,13 +1041,14 @@ namespace {
     }
 } // namespace
 
-void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes) const {
+void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes, bool only_meter_effects) const {
     targets_causes.clear();
-    GetEffectsAndTargets(targets_causes, std::vector<int>());
+    GetEffectsAndTargets(targets_causes, std::vector<int>(), only_meter_effects);
 }
 
 void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
-                                    const std::vector<int>& target_object_ids) const
+                                    const std::vector<int>& target_object_ids,
+                                    bool only_meter_effects) const
 {
     SectionedScopedTimer type_timer("Effect TargetSets Evaluation", std::chrono::microseconds(0));
 
@@ -1108,6 +1112,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
 
         DispatchEffectsGroupScopeEvaluations(ECT_SPECIES, species_name,
                                              source_objects, species->Effects(),
+                                             only_meter_effects,
                                              m_objects, potential_targets,
                                              potential_ids_set,
                                              targets_causes_reorder_buffer,
@@ -1143,6 +1148,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
 
         DispatchEffectsGroupScopeEvaluations(ECT_SPECIAL, special_name,
                                              source_objects, special->Effects(),
+                                             only_meter_effects,
                                              m_objects, potential_targets,
                                              potential_ids_set,
                                              targets_causes_reorder_buffer,
@@ -1172,6 +1178,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
 
             DispatchEffectsGroupScopeEvaluations(ECT_TECH, tech_name,
                                                  source_objects, tech->Effects(),
+                                                 only_meter_effects,
                                                  m_objects, potential_targets,
                                                  potential_ids_set,
                                                  targets_causes_reorder_buffer,
@@ -1208,6 +1215,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
 
         DispatchEffectsGroupScopeEvaluations(ECT_BUILDING, building_type_name,
                                              source_objects, building_type->Effects(),
+                                             only_meter_effects,
                                              m_objects, potential_targets,
                                              potential_ids_set,
                                              targets_causes_reorder_buffer,
@@ -1260,6 +1268,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
 
         DispatchEffectsGroupScopeEvaluations(ECT_SHIP_HULL, ship_hull_name,
                                              source_objects, ship_hull->Effects(),
+                                             only_meter_effects,
                                              m_objects, potential_targets,
                                              potential_ids_set,
                                              targets_causes_reorder_buffer,
@@ -1276,6 +1285,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
 
         DispatchEffectsGroupScopeEvaluations(ECT_SHIP_PART, ship_part_name,
                                              source_objects, ship_part->Effects(),
+                                             only_meter_effects,
                                              m_objects, potential_targets,
                                              potential_ids_set,
                                              targets_causes_reorder_buffer,
@@ -1312,6 +1322,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
 
         DispatchEffectsGroupScopeEvaluations(ECT_FIELD, field_type_name,
                                              source_objects, field_type->Effects(),
+                                             only_meter_effects,
                                              m_objects, potential_targets,
                                              potential_ids_set,
                                              targets_causes_reorder_buffer,

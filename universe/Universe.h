@@ -465,14 +465,16 @@ private:
 
     /** Clears \a targets_causes, and then populates with all
       * EffectsGroups and their targets in the known universe. */
-    void GetEffectsAndTargets(Effect::TargetsCauses& targets_causes) const;
+    void GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
+                              bool only_meter_effects = false) const;
 
     /** Removes entries in \a targets_causes about effects groups acting
       * on objects in \a target_objects, and then repopulates for EffectsGroups
       * that act on at least one of the objects in \a target_objects. If
       * \a target_objects is empty then default target candidates will be used. */
     void GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
-                              const std::vector<int>& target_objects) const;
+                              const std::vector<int>& target_objects,
+                              bool only_meter_effects = false) const;
 
     void ResetObjectMeters(const std::vector<std::shared_ptr<UniverseObject>>& objects,
                            bool target_max_unpaired = true, bool active = true);
