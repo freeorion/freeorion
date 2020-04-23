@@ -16,7 +16,7 @@
 #include "../universe/UniverseObject.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
-#include "../universe/Building.h"
+#include "../universe/BuildingType.h"
 #include "../universe/ShipDesign.h"
 #include "../universe/ShipPart.h"
 #include "../universe/ShipPartHull.h"

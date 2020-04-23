@@ -196,6 +196,7 @@
     <ClInclude Include="..\..\network\MessageQueue.h" />
     <ClInclude Include="..\..\network\Networking.h" />
     <ClInclude Include="..\..\universe\Building.h" />
+    <ClInclude Include="..\..\universe\BuildingType.h" />
     <ClInclude Include="..\..\universe\CommonParams.h" />
     <ClInclude Include="..\..\universe\Condition.h" />
     <ClInclude Include="..\..\universe\ConditionAll.h" />
@@ -283,6 +284,7 @@
     <ClCompile Include="..\..\util\ScopedTimer.cpp" />
     <ClCompile Include="..\..\util\StringTable.cpp" />
     <ClCompile Include="..\..\universe\Building.cpp" />
+    <ClCompile Include="..\..\universe\BuildingType.cpp" />
     <ClCompile Include="..\..\universe\Effect.cpp" />
     <ClCompile Include="..\..\universe\Encyclopedia.cpp" />
     <ClCompile Include="..\..\universe\Enums.cpp" />

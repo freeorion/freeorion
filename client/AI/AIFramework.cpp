@@ -2,7 +2,7 @@
 
 #include "AIClientApp.h"
 #include "AIWrapper.h"
-#include "../../universe/Building.h"
+#include "../../universe/BuildingType.h"
 #include "../../universe/Universe.h"
 #include "../../util/Directories.h"
 #include "../../util/Logger.h"

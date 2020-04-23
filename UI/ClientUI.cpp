@@ -19,6 +19,7 @@
 #include "../util/i18n.h"
 #include "../util/OptionsDB.h"
 #include "../universe/Building.h"
+#include "../universe/BuildingType.h"
 #include "../universe/Fleet.h"
 #include "../universe/Planet.h"
 #include "../universe/System.h"

@@ -1,6 +1,7 @@
 #include "Planet.h"
 
 #include "Building.h"
+#include "BuildingType.h"
 #include "Condition.h"
 #include "Fleet.h"
 #include "Ship.h"

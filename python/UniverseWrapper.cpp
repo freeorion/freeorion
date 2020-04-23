@@ -7,6 +7,7 @@
 #include "../universe/ShipPart.h"
 #include "../universe/ShipPartHull.h"
 #include "../universe/Building.h"
+#include "../universe/BuildingType.h"
 #include "../universe/ResourceCenter.h"
 #include "../universe/PopCenter.h"
 #include "../universe/Planet.h"

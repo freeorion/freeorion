@@ -15,6 +15,7 @@
 #include "../universe/Universe.h"
 #include "../universe/Tech.h"
 #include "../universe/Building.h"
+#include "../universe/BuildingType.h"
 #include "../universe/Planet.h"
 #include "../universe/System.h"
 #include "../universe/Ship.h"
