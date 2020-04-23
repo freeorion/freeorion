@@ -4348,9 +4348,9 @@ int DesignWnd::MainPanel::FindEmptySlotForPart(const ShipPart* part) {
 
     for (unsigned int i = 0; i < m_slots.size(); ++i) {             // scan through slots to find one that can mount part
         const ShipSlotType slot_type = m_slots[i]->SlotType();
-        const ShipPart* part = m_slots[i]->GetPart();
+        const ShipPart* slotted_part = m_slots[i]->GetPart();
 
-        if (!part && part->CanMountInSlotType(slot_type)) {
+        if (!slotted_part && part->CanMountInSlotType(slot_type)) {
             result = i;
             return result;
         }
