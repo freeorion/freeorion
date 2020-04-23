@@ -1039,7 +1039,7 @@ namespace {
                     specific_cause_name,
                     &potential_target_ids,
                     local_potential_targets{potential_targets},
-                    &targets_causes_vec_out{targets_causes_reorder_buffer_out.back()},
+                    &targets_causes_vec_out = targets_causes_reorder_buffer_out.back(),
                     n
                 ]() mutable
             {
