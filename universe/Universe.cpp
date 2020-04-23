@@ -36,7 +36,18 @@
 #include "Encyclopedia.h"
 
 #include <boost/property_map/property_map.hpp>
-#include <boost/asio.hpp>
+#if BOOST_VERSION >= 106600
+#  include <boost/asio/thread_pool.hpp>
+#  include <boost/asio/post.hpp>
+#else
+namespace boost { namespace asio {
+    struct thread_pool {
+        thread_pool(int) {}
+        void join() {}
+    };
+    void post(thread_pool, std::function<void()> func) { func(); }
+ } }
+#endif
 
 FO_COMMON_API extern const int INVALID_DESIGN_ID;
 
