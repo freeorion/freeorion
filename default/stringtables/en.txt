@@ -2270,7 +2270,7 @@ The following buttons are available:
 [[encyclopedia SINGLE_PLAYER_TITLE]] - Start a new game for 1 player to play against AI opponents. Various game options can be set before creating a Galaxy and starting the game.
 [[encyclopedia QUICK_START_TITLE]] - Start a new single player game using the options set by the last single player game created.
 [[encyclopedia MULTI_PLAYER_TITLE]] - Start playing a multiple player game by joining an existing multi player game or by creating a new game for other players.
-[[encyclopedia LOAD_GAME_TITLE]] - Load a previously saved game.
+[[encyclopedia LOAD_GAME_TITLE]] - Load a previously saved single player game.
 [[encyclopedia MAIN_OPTIONS_TITLE]] - Set the game options (quite a lot); not the new game parameters.
 [[encyclopedia PEDIA_TITLE]] - Help pages; referred to as Pedia pages in the game.
 <u>[[INTRO_BTN_ABOUT]]</u> - A note about FreeOrion.
@@ -2398,9 +2398,9 @@ SAVE_LOAD_TEXT
 If the file cannot be saved, for whatever reason, and you get "[[UNABLE_TO_WRITE_SAVE_FILE]]", check that you have not used invalid characters in the filename or an incorrect save directory (e.g. on a removed USB drive).
 
 <u>Loading Games</u>:
-Games can be loaded from the [[INTRO_WINDOW_TITLE]] or the in-game menu.
+Single Player games can be loaded from the [[INTRO_WINDOW_TITLE]] or the in-game menu.
 
-The <u>[[INTRO_BTN_CONTINUE]]</u> button loads the last manual or auto save by date, looking in the Directory set in the [[OPTIONS_FOLDER_SAVE]] field of the [[encyclopedia MAIN_OPTIONS_TITLE]] and its 'auto' sub-directory.
+The <u>[[INTRO_BTN_CONTINUE]]</u> button loads the last manual or auto saved single player game by date, looking in the Directory set in the [[OPTIONS_FOLDER_SAVE]] field of the [[encyclopedia MAIN_OPTIONS_TITLE]] and its 'auto' sub-directory.
 
 <u>Save Game Files panel</u>:
 A Load or Save action opens the Save Game Files panel. A file is selected using the scroll bar and clicking on the file, or by typing in the File: field. For a Load action, the file must exist before the OK button is clickable. For a Save action, an existing file requires a confirmation before it is overwritten.
