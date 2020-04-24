@@ -80,14 +80,6 @@ namespace Effect {
 
         virtual void Execute(ScriptingContext& context, const TargetSet& targets) const;
 
-        void Execute(ScriptingContext& context,
-                     const TargetsCauses& targets_causes,
-                     AccountingMap* accounting_map,
-                     bool only_meter_effects = false,
-                     bool only_appearance_effects = false,
-                     bool include_empire_meter_effects = false,
-                     bool only_generate_sitrep_effects = false) const;
-
         virtual void Execute(ScriptingContext& context,
                              const TargetSet& targets,
                              AccountingMap* accounting_map,
