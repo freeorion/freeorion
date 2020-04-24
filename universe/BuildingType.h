@@ -158,6 +158,8 @@ public:
     //! free function GetBuildingType(...) instead, mainly to save some typing.
     auto GetBuildingType(const std::string& name) const -> const BuildingType*;
 
+    auto NumBuildingTypes() const -> std::size_t { return m_building_types.size(); }
+
     //! iterator to the first building type
     FO_COMMON_API auto begin() const -> iterator;
 
