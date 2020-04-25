@@ -5868,7 +5868,7 @@ HOMEWORLDS_TITLE
 Родной мир
 
 HOMEWORLDS_TEXT
-Домашние миры-это планеты, на которых находятся виды, когда начинается игра (обратите внимание, что один вид может иметь несколько домашних миров). [[Tech SPY_CUSTOM_ADVISORIES]] показывает их существование и количество, но не их местоположение. Быть родным миром дает планете несколько преимуществ, пока она все еще населена оригинальными видами: [[metertype METER_TARGET_POPULATION]], [[metertype METER_MAX_TROOPS]] и [[metertype METER_TARGET_HAPPINESS]] все увеличиваются, и [[encyclopedia GROWTH_FOCUS_TITLE]] включен (если только вид не является [[encyclopedia SELF_SUSTAINING_SPECIES_CLASS]]) и увеличивается [[metertype METER_TARGET_POPULATION]] других колоний с тем же видом.
+Домашние миры-это планеты, на которых находятся виды, когда начинается игра (обратите внимание, что один вид может иметь несколько домашних миров). [[tech SPY_CUSTOM_ADVISORIES]] показывает их существование и количество, но не их местоположение. Быть родным миром дает планете несколько преимуществ, пока она все еще населена оригинальными видами: [[metertype METER_TARGET_POPULATION]], [[metertype METER_MAX_TROOPS]] и [[metertype METER_TARGET_HAPPINESS]] все увеличиваются, и [[encyclopedia GROWTH_FOCUS_TITLE]] включен (если только вид не является [[encyclopedia SELF_SUSTAINING_SPECIES_CLASS]]) и увеличивается [[metertype METER_TARGET_POPULATION]] других колоний с тем же видом.
 
 FOCUS_TITLE
 Цели
@@ -6078,7 +6078,7 @@ DESIGN_WINDOW_ARTICLE_TITLE
 DESIGN_WINDOW_ARTICLE_TEXT
 '''[[DESIGN_WINDOW_ARTICLE_TITLE]] предназначено для просмотра или изменения конструкций монстров или кораблей
 
-Конструкции и детали корабля могут быть [[PRODUCTION_WND_AVAILABILITY_AVAILABLE]], [[PRODUCTION_WND_AVAILABILITY_UNAVAILABLE]] или [[PRODUCTION_WND_AVAILABILITY_OBSOLETE]]. [[PRODUCTION_WND_AVAILABILITY_AVAILABLE]] конструкции и детали не ограничены для использования империей. [[PRODUCTION_WND_AVAILABILITY_UNAVAILABLE]] конструкции и детали каким-то образом ограничены. Некоторые недоступные конструкции и детали могут быть разблокированы путем исследования связанных с ними [[encyclopedia ENC_TECH]]. [[PRODUCTION_WND_AVAILABILITY_OBSOLETE]] конструкции, корпуса и детали устаревают/не выпускаются по желанию империи. [[PRODUCTION_WND_AVAILABILITY_OBSOLETE]] конструкции не появится в [[PRODUCTION_WINDOW_ARTICLE_TITLE энциклопедия]] и в [[DESIGN_WINDOW_ARTICLE_TITLE]] в "[[PRODUCTION_WND_AVAILABILITY_OBSOLETE]] фильтр" переключается для отображения их.
+Конструкции и детали корабля могут быть [[PRODUCTION_WND_AVAILABILITY_AVAILABLE]], [[PRODUCTION_WND_AVAILABILITY_UNAVAILABLE]] или [[PRODUCTION_WND_AVAILABILITY_OBSOLETE]]. [[PRODUCTION_WND_AVAILABILITY_AVAILABLE]] конструкции и детали не ограничены для использования империей. [[PRODUCTION_WND_AVAILABILITY_UNAVAILABLE]] конструкции и детали каким-то образом ограничены. Некоторые недоступные конструкции и детали могут быть разблокированы путем исследования связанных с ними [[encyclopedia ENC_TECH]]. [[PRODUCTION_WND_AVAILABILITY_OBSOLETE]] конструкции, корпуса и детали устаревают/не выпускаются по желанию империи. [[PRODUCTION_WND_AVAILABILITY_OBSOLETE]] конструкции не появится в [[PRODUCTION_WINDOW_ARTICLE_TITLE]] энциклопедия и в [[DESIGN_WINDOW_ARTICLE_TITLE]] в "[[PRODUCTION_WND_AVAILABILITY_OBSOLETE]] фильтр" переключается для отображения их.
 
 Есть четыре вспомогательных окна:  [[DESIGN_WND_STARTS]], [[DESIGN_WND_PART_PALETTE_TITLE]], [[DESIGN_WND_MAIN_PANEL_TITLE]] и [[MAP_BTN_PEDIA]].
 
@@ -11145,7 +11145,7 @@ PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY_DESC
 Это технология, улучшающая имперские резервы. [[metertype METER_STOCKPILE]] повышается на 6, и дополнительно - по 0.02 за единицу населения империи.
 Эти улучшения складываются вместе с теми, которые дают исследования [[tech PRO_PREDICTIVE_STOCKPILING]], [[tech PRO_GENERIC_SUPPLIES]] и [[tech PRO_VOID_PREDICTION]].
 
-Эта технология также разблокирует [[building BLD_STOCKPILING_CENTER]], который дополнительно повышает [[metertype METER_STOCKPILE]] на 0.1 за единицу промышленности.'''
+Эта технология также разблокирует [[buildingtype BLD_STOCKPILING_CENTER]], который дополнительно повышает [[metertype METER_STOCKPILE]] на 0.1 за единицу промышленности.'''
 
 PRO_VOID_PREDICTION
 Прогнозирование пустоты
