@@ -13418,10 +13418,10 @@ FT_HANGAR_1_DESC
 Storage system for minimally armed fighters. Can attack enemy fighters only. Launches faster: A [[shippart FT_BAY_1]] can launch all fighters in a single [[shippart FT_HANGAR_1]].
 
 FT_HANGAR_2
-Fighter Hangar
+Strike Fighter Hangar
 
 FT_HANGAR_2_FIGHTER
-Fighter
+Strike Fighter
 
 FT_HANGAR_2_DESC
 Storage system for lightly armed fighters. Can attack enemy ships and fighters.
