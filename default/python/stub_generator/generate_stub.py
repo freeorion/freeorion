@@ -1,77 +1,90 @@
 from logging import warning, error
 from operator import itemgetter
 
-from parse_docs import Docs
+from stub_generator.constants import TYPE, NAME, CLASS_NAME, ATTRS, PARENTS, DOC, ENUM_PAIRS
+from stub_generator.parse_docs import Docs
 
 
-def handle_class(info):
-    name = info['name']
-    docs = info['doc']
-    attrs = info['attrs']
+def _handle_class(info):
+    name = info[NAME]
+    docs = info[DOC]
+    attrs = info[ATTRS]
     assert not docs, "Got docs need to handle it"
-    parents = info['parents']
+    parents = info[PARENTS]
     if not parents:
         parents = ['object']  # instance is boost wrapper
-    result = ['class %s(%s):' % (name, ', '.join(parents))]
+    result = []
+
+    if 'object' in parents:
+        parents.remove('object')
+    if parents:
+        result.append('class %s(%s):' % (name, ', '.join(parents)))
+    else:
+        result.append('class %s:' % name)
 
     properties = []
     instance_methods = []
     for attr_name, attr in sorted(attrs.items()):
-        if attr['type'] == "<type 'property'>":
+        if attr['type'] == "<class 'property'>":
             properties.append((attr_name, attr.get('rtype', '')))
-        elif attr['type'] == "<type 'instancemethod'>":
+        elif attr['type'] in ("<class 'Boost.Python.function'>", "<class 'function'>"):
             instance_methods.append(attr['routine'])
         else:
-            warning("Skipping '%s': %s" % (name, attr))
+            warning("Skipping '%s' (%s): %s" % (name, attr['type'], attr))
 
     for property_name, rtype in properties:
         if not rtype:
-            return_text = 'pass'
+            return_annotation = ''
         elif rtype.startswith("<type"):
-            return_text = 'return %s()' % rtype[7:-2]
+            return_annotation = '-> %s' % rtype[7:-2]
         else:
-            return_text = 'return %s()' % rtype.split('.')[-1].strip("'>")
+            return_annotation = '-> %s' % rtype.split('.')[-1].strip("'>")
 
         if property_name == 'class':
             result.append('    # cant define it via python in that way')
             result.append('    # @property')
-            result.append('    # def %s(self): ' % property_name)
-            result.append('    #    %s' % return_text)
+            result.append('    # def %s(self)%s: ' % (property_name, return_annotation))
+            result.append('    #    ...')
         else:
             result.append('    @property')
-            result.append('    def %s(self):' % property_name)
-            result.append('        %s' % return_text)
+            result.append('    def %s(self)%s:' % (property_name, return_annotation))
+            result.append('        ...')
         result.append('')
 
     for routine_name, routine_docs in instance_methods:
         docs = Docs(routine_docs, 2, is_class=True)
         # TODO: Subclass map-like classes from dict (or custom class) rather than this hack
+
         if docs.rtype in ('VisibilityIntMap', 'IntIntMap'):
-            docs.rtype = 'dict[int, int]'
-            return_string = 'return dict()'
-        elif docs.rtype == 'None':
-            return_string = 'return None'
-        else:
-            return_string = 'return %s()' % docs.rtype
+            docs.rtype = 'Dict[int, int]'
 
         doc_string = docs.get_doc_string()
-        result.append('    def %s(%s):' % (routine_name, docs.get_argument_string()))
-        result.append(doc_string)
-        result.append('        %s' % return_string)
+        if doc_string:
+            doc_string = '\n' + doc_string
+            end = ''
+        else:
+            end = '\n        ...'
+        result.append(
+            '    def %s(%s) -> %s:%s%s' % (routine_name, docs.get_argument_string(), docs.rtype, doc_string, end))
         result.append('')
     if not (properties or instance_methods):
-        result.append('    pass')
+        result.append('    ...')
     if not result[-1]:
         result.pop()
     return '\n'.join(result)
 
 
-def handle_function(doc):
-    name = doc['name']
-    doc = Docs(doc['doc'], 1)
-    return_string = 'return %s%s' % (doc.rtype, '()' if doc.rtype != 'None' else '')
-
-    res = 'def %s(%s):\n%s\n    %s' % (name, doc.get_argument_string(), doc.get_doc_string(), return_string)
+def _handle_function(doc):
+    name = doc[NAME]
+    doc = Docs(doc[DOC], 1)
+    return_annotation = ' -> %s' % doc.rtype if doc.rtype else ''
+    docstring = doc.get_doc_string()
+    if docstring:
+        docstring = '\n' + docstring
+        end = ''
+    else:
+        end = '\n    ...'
+    res = 'def %s(%s) %s:%s%s' % (name, doc.get_argument_string(), return_annotation, docstring, end)
     return res
 
 
@@ -81,93 +94,115 @@ ENUM_STUB = ('class Enum(int):\n'
              '        return super(Enum, cls).__new__(cls, args[0])')
 
 
-def handle_enum(info):
-    name = info['name']
-    enum_dicts = info['enum_dicts']
+def _handle_enum(info):
+    name = info[NAME]
+    enum_items = info[ENUM_PAIRS]
     result = ['class %s(Enum):' % name,
               '    def __init__(self, numerator, name):',
               '        self.name = name',
               ''
               ]
-
-    for _, (value, text) in sorted(enum_dicts.items()):
+    pairs = sorted(enum_items)
+    for value, text in pairs:
         result.append('    %s = None  # %s(%s, "%s")' % (text, name, value, text))
     result.append('')
     result.append('')  # two empty lines between enum and its items declaration
 
-    for _, (value, text) in sorted(enum_dicts.items(), key=lambda x: x[1][0]):
+    for value, text in pairs:
         result.append('%s.%s = %s(%s, "%s")' % (name, text, name, value, text))
     return '\n'.join(result)
 
 
-known_types = {'boost_class',
-               'enum',
-               'function',
-               'instance'}
+_KNOWN_TYPES = {
+    'boost_class',
+    'enum',
+    'function',
+    'instance',
+}
 
 
-def make_stub(data, result_path, classes_to_ignore):
+def _sort_by_type(data):
     groups = {}
     for info in data:
-        if info['type'] in known_types:
-            groups.setdefault(info['type'], []).append(info)
+        if info[TYPE] in _KNOWN_TYPES:
+            groups.setdefault(info[TYPE], []).append(info)
         else:
-            error('Unknown type "%s" in "%s' % (info['type'], info))
-    classes = [x for x in groups['boost_class'] if not x['name'].startswith('map_indexing_suite_')]
-    clases_map = {x['name']: x for x in classes}
-    instance_names = {instance['class_name'] for instance in groups.get('instance', [])}
+            error('Unknown type "%s" in "%s' % (info[TYPE], info))
 
-    enums = sorted(groups['enum'], key=itemgetter('name'))
-    enums_names = [x['name'] for x in enums]
+    return tuple(groups.get(name, []) for name in ('boost_class', 'enum', 'instance', 'function'))
 
-    missed_instances = instance_names.symmetric_difference(clases_map).difference(classes_to_ignore)
+
+def _report_classes_without_instances(classes_map, instance_names, classes_to_ignore):
+    missed_instances = instance_names.symmetric_difference(classes_map).difference(classes_to_ignore)
     warning(
         "Classes without instances (%s): %s",
         len(missed_instances),
         ', '.join(sorted(missed_instances, key=str.lower))
     )
 
-    for instance in groups.get('instance', []):
-        class_name = instance['class_name']
+
+def make_stub(data, result_path, classes_to_ignore):
+    classes, enums, instances, functions = _sort_by_type(data)
+    # exclude technical Map classes that are prefixed with map_indexing_suite_ classes
+    classes = [x for x in classes if not x[NAME].startswith('map_indexing_suite_')]
+    classes_map = {x[NAME]: x for x in classes}
+
+    _report_classes_without_instances(
+        classes_map,
+        {instance[CLASS_NAME] for instance in instances},
+        classes_to_ignore)
+
+    enums = sorted(enums, key=itemgetter(NAME))
+    enums_names = [x[NAME] for x in enums]
+
+    # enrich class data with the instance data
+    # class properties does not provide any useful info, so we use instance to find return type of the properties
+    for instance in instances:
+        class_name = instance[CLASS_NAME]
         if class_name in enums_names:
             warning("skipping enum instance: %s" % class_name)
             continue
+        class_attrs = classes_map[class_name][ATTRS]
+        instance_attrs = instance[ATTRS]
 
-        class_attrs = clases_map[class_name]['attrs']
-        instance_attrs = instance['attrs']
-
-        for k, v in class_attrs.items():
-            inst = instance_attrs.get(k)
+        for attribute_name, class_attibute in class_attrs.items():
+            inst = instance_attrs.get(attribute_name)
             if not inst:
                 continue
+            type_ = class_attibute['type']
 
-            if v['type'] == "<type 'property'>":
-                v['rtype'] = inst['type']
-            elif v['type'] == "<type 'instancemethod'>":
-                pass
-            else:
-                error("Unknown class attribute type: '%s'" % v['type'])
+            if type_ in ("<class 'Boost.Python.function'>", "<class 'function'>"):
+                continue
+
+            if type_ == "<class 'property'>":
+                assert class_attibute['getter'] is None  # if we will have docs here, handle them
+                class_attibute['rtype'] = inst['type'][8:-2]  # "<class 'str'>" - > str TODO extract to function
+                continue
+            error("Unknown class attribute type: '%s' for %s.%s: %s" % (
+                type_, class_name, attribute_name, class_attibute))
+
     res = [
         '# Autogenerated do not modify manually!\n'
         '# This is a type-hinting python stub file, used by python IDEs to provide type hints. For more information\n'
         '# about stub files, see https://www.python.org/dev/peps/pep-0484/#stub-files\n'
         '# During execution, the actual module is made available via\n'
-        '# a C++ Boost-python process as part of the launch.'
-        ''
-        '# type: ignore'
+        '# a C++ Boost-python process as part of the launch.\n'
+        'from typing import Dict'
     ]
-    classes = sorted(classes, key=lambda class_: (len(class_['parents']), class_['parents'] and class_['parents'][0] or '', class_['name']))  # put classes with no parents on first place
+    classes = sorted(classes, key=lambda class_: (
+        len(class_[PARENTS]), class_[PARENTS] and class_[PARENTS][0] or '',
+        class_[NAME]))  # put classes with no parents on first place
 
     for cls in classes:
-        res.append(handle_class(cls))
+        res.append(_handle_class(cls))
 
     res.append(ENUM_STUB)
 
-    for enum in sorted(enums, key=itemgetter('name')):
-        res.append(handle_enum(enum))
+    for enum in sorted(enums, key=itemgetter(NAME)):
+        res.append(_handle_enum(enum))
 
-    for function in sorted(groups['function'], key=itemgetter('name')):
-        res.append(handle_function(function))
+    for function in sorted(functions, key=itemgetter(NAME)):
+        res.append(_handle_function(function))
 
     with open(result_path, 'w') as f:
         f.write('\n\n\n'.join(res))

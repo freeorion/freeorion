@@ -2,37 +2,28 @@ import os
 from inspect import getdoc, isroutine
 from logging import warning, error, debug
 
-from generate_stub import make_stub
+from stub_generator.constants import TYPE, NAME, ATTRS, DOC, PARENTS, CLASS_NAME, ENUM_PAIRS
 
 
-def get_member_info(name, member):
+def _get_member_info(name, member):
     info = {
         'type': str(type(member)),
     }
-
     if isinstance(member, property):
-        info['getter'] = (member.fget.__name__, getdoc(member.fget))
+        info['getter'] = getdoc(member.fget)
     elif isroutine(member):
         info['routine'] = (member.__name__, getdoc(member))
-    elif 'freeOrionAIInterface' in info['type']:
-        info['value'] = str(member)
-    elif isinstance(member, int):
-        if type(member) == int:
-            info['value'] = member
-        else:
-            info['value'] = str(member)
-    elif isinstance(member, (str, bool, float, int)):
-        info['value'] = member
-    elif isinstance(member, (list, tuple, dict, set, frozenset)):
-        if not len(member):
-            info['value'] = member
+    elif isinstance(member, (int, str, float, list, tuple, dict, set, frozenset)):
+        pass  # we don't need any
+    elif 'freeOrionAIInterface' in info['type'] or "freeorion" in info['type']:
+        pass  # TODO we got some instance here, probably we should inspect it too.
     else:
         # instance properties will be already resolved
         warning('[%s] Unexpected member "%s"(%s)', name, type(member), member)
     return info
 
 
-def getmembers(obj, predicate=None):
+def _getmembers(obj, predicate=None):
     """Return all members of an object as (name, value) pairs sorted by name.
     Optionally, only return members that satisfy a given predicate."""
     results = []
@@ -50,100 +41,95 @@ def getmembers(obj, predicate=None):
     return results
 
 
-def inspect_instance(instance):
+def _inspect_instance(instance):
     parents = instance.__class__.mro()[1:-2]
     parent_attrs = sum((dir(parent) for parent in instance.__class__.mro()[1:]), [])
 
-    info = dict(class_name=instance.__class__.__name__,
-                type='instance',
-                attrs={},
-                parents=[str(parent.__name__) for parent in parents])
-    for attr_name, member in getmembers(instance):
+    info = {
+        CLASS_NAME: instance.__class__.__name__,
+        TYPE: 'instance',
+        ATTRS: {},
+        PARENTS: [str(parent.__name__) for parent in parents]
+    }
+    for attr_name, member in _getmembers(instance):
         if attr_name not in parent_attrs + ['__module__']:
-            info['attrs'][attr_name] = get_member_info('%s.%s' % (instance.__class__.__name__, attr_name), member)
+            info['attrs___'][attr_name] = _get_member_info('%s.%s' % (instance.__class__.__name__, attr_name), member)
     return info
 
 
-def inspect_boost_class(class_name, obj):
+def _inspect_boost_class(class_name, obj):
     parents = obj.mro()[1:-2]
     parent_attrs = sum((dir(parent) for parent in obj.mro()[1:]), [])
 
-    info = {'type': "boost_class",
-            'name': class_name,
-            'attrs': {},
-            'doc': getdoc(obj),
-            'parents': [str(parent.__name__) for parent in parents]
-            }
-    for attr_name, member in getmembers(obj):
+    info = {
+        TYPE: "boost_class",
+        NAME: class_name,
+        ATTRS: {},
+        DOC: getdoc(obj),
+        PARENTS: [str(parent.__name__) for parent in parents]
+    }
+    for attr_name, member in _getmembers(obj):
         if attr_name not in parent_attrs + ['__module__', '__instance_size__']:
-            info['attrs'][attr_name] = get_member_info('%s.%s' % (class_name, attr_name), member)
+            info[ATTRS][attr_name] = _get_member_info('%s.%s' % (class_name, attr_name), member)
     return info
 
 
-def inspect_boost_function(name, value):
+def _inspect_boost_function(name, value):
     return {
-        'type': 'function',
-        'name': name,
-        'doc': getdoc(value)
+        TYPE: 'function',
+        NAME: name,
+        DOC: getdoc(value)
     }
 
 
-def inspect_type(name, obj):
-    enum_dict = {}
-    for k, v in obj.names.items():
-        enum_dict.setdefault(v, [None, None])[1] = k
-
-    for k, v in obj.values.items():
-        enum_dict.setdefault(v, [None, None])[0] = k
-    return {'type': "enum",
-            'name': name,
-            'enum_dicts': enum_dict,
-            }
+def _inspect_type(name, obj):
+    return {
+        TYPE: "enum",
+        NAME: name,
+        ENUM_PAIRS: [(v, k) for k, v in obj.names.items()],
+    }
 
 
-switcher = {
-    "<type 'type'>": inspect_type,
-    "<type 'Boost.Python.class'>": inspect_boost_class,
-    "<type 'Boost.Python.function'>": inspect_boost_function,
+_SWITCHER = {
+    "<class 'type'>": _inspect_type,
+    "<class 'Boost.Python.class'>": _inspect_boost_class,
+    "<class 'Boost.Python.function'>": _inspect_boost_function,
 }
 
+_NAMES_TO_IGNORE = {'__doc__', '__package__', '__name__', 'INVALID_GAME_TURN', 'to_str', '__loader__', }
+_INVALID_CLASSES = {"method"}
 
-def _inspect(obj, instances):
+
+def get_module_info(obj, instances, dump=False):
     data = []
+    for name, member in _getmembers(obj):
+        if name in _NAMES_TO_IGNORE:
+            continue
 
-    for name, member in getmembers(obj):
-        function = switcher.get(str(type(member)), None)
-        if function:
-            data.append(function(name, member))
-        elif name in ('__doc__', '__package__', '__name__', 'INVALID_GAME_TURN', 'to_str'):
-            pass
+        object_handler = _SWITCHER.get(str(type(member)), None)
+        if object_handler:
+            data.append(object_handler(name, member))
         else:
             warning("Unknown: '%s' of type '%s': %s" % (name, type(member), member))
+
     for i, instance in enumerate(instances, start=2):
         if isinstance(instance, (str, float, int)):
-            warning("Argument number %s(1-based) is builtin python instance: (%s) %s", i, type(instance), instance)
+            warning("Argument number %s(counting start from 1) is builtin python instance: (%s) %s", i, type(instance), instance)
+            continue
+        if instance.__class__.__name__ in _INVALID_CLASSES:
+            warning("Argument number %s(counting start from 1) is not allowed: (%s) %s", i, type(instance),
+                    instance)
             continue
         try:
-            data.append(inspect_instance(instance))
+            data.append(_inspect_instance(instance))
         except Exception as e:
             error("Error inspecting: '%s' with '%s': %s", type(instance), type(e), e, exc_info=True)
+    if dump:
+
+        dump_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '%s_info.json' % obj.__name__)
+        with open(dump_path, 'w') as f:
+            import json
+            json.dump(sorted(data, key=lambda x: (x.get(NAME, '') or x[CLASS_NAME], x.get(TYPE, ''))), f, indent=4, sort_keys=True)
+            pass
+        debug("File with interface info is dumped: %s" % dump_path)
     return data
-
-
-def inspect(obj, instances, classes_to_ignore, path):
-    """
-    Inspect interface and generate stub. Writes its logs to freeoriond.log.
-
-    :param obj: main interface module (freeOrionAIInterface for AI)
-    :param instances:  list of instances, required to get more detailed information about them
-    :param classes_to_ignore: classes that should not to be reported when check for missed instances done.
-                              this argument required because some classes present in interface
-                              but have no methods, to get their instances.
-    :param path: relative path from python folder
-    """
-    debug("\n\nStart generating skeleton for %s\n\n" % obj.__name__)
-    python_folder_path = os.path.normpath(os.path.join(os.path.dirname(__file__), '..'))
-    result_folder = os.path.join(python_folder_path, path)
-    result_path = os.path.join(result_folder, '%s.pyi' % obj.__name__)
-    make_stub(_inspect(obj, instances), result_path, classes_to_ignore)
-    debug("Skeleton written to %s" % result_path)

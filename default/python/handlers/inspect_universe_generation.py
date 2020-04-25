@@ -1,5 +1,5 @@
 from common.listeners import register_post_handler
-from stub_generator import inspect
+from stub_generator import generate_stub
 
 
 def inspect_universe_generation_interface(*args, **kwargs):
@@ -10,7 +10,7 @@ def inspect_universe_generation_interface(*args, **kwargs):
     rules = fo.getGameRules()
     ship_hull = fo.getShipHull('SH_XENTRONIUM')
     species = fo.getSpecies('SP_ABADDONI')
-    inspect(
+    generate_stub(
         fo,
         instances=[
             fo.getFieldType('FLD_ION_STORM'),
@@ -24,7 +24,6 @@ def inspect_universe_generation_interface(*args, **kwargs):
             rules,
             tech,
             tech.unlockedItems,
-            rules.getRulesAsStrings,
             universe,
             universe.effectAccounting,
             universe.buildingIDs,
@@ -33,6 +32,7 @@ def inspect_universe_generation_interface(*args, **kwargs):
             empire.colour,
             empire.productionQueue,
             empire.researchQueue,
+
         ],
         classes_to_ignore=(
             'IntBoolMap', 'IntDblMap', 'IntFltMap', 'IntIntMap', 'IntPairVec', 'IntSetSet',
@@ -41,6 +41,7 @@ def inspect_universe_generation_interface(*args, **kwargs):
             'AccountingInfoVec', 'IntSet', 'StringSet', 'StringVec',
         ),
         path=".",
+        dump=False,
     )
 
 
