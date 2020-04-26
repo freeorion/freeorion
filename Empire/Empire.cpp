@@ -1974,6 +1974,9 @@ void Empire::CheckProductionProgress() {
                 // have been applied, letting new ships start with maxed
                 // everything that is traced with an associated max meter.
                 ship->SetShipMetersToMax();
+                // set ship speed so that it can be affected by Interstellar Logistic check for non-zero speed
+                if (auto* design = GetShipDesign(elem.item.design_id))
+                    ship->GetMeter(METER_SPEED)->Set(design->Speed(), design->Speed());
                 ship->BackPropagateMeters();
 
                 ship->Rename(NewShipName());
