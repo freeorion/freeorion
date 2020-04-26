@@ -212,6 +212,9 @@ void EffectsGroup::Execute(ScriptingContext& context,
 
         // execute effect separately for every source and target set
         for (auto& source_targets_entry : source_effects_targets_causes) {
+            if (source_targets_entry.first.effects_group != this)
+                WarnLogger() << "EffectsGroup::Execute executing on a source-targets-causes vector with an effect that is not this effectsgroup";
+
             source_context.source = context.ContextObjects().get(source_targets_entry.first.source_object_id);
             auto& target_set{source_targets_entry.second.target_set};
             const auto& effect_cause{source_targets_entry.second.effect_cause};
