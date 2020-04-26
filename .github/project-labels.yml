@@ -1,0 +1,142 @@
+- name: category:bug
+  color: "5319e7"
+  description: >
+    The Issue/PR describes or solves a perceived malfunction within the game.
+- name: category:feature
+  color: "5319e7"
+  description: The Issue/PR describes or implements a new game feature.
+- name: category:refactoring
+  color: "5319e7"
+  description: The Issue/PR describes or contains an improved implementation.
+- name: category:tweak
+  color: "5319e7"
+  description: >
+    The PR contains insignificant code changes, like code style grooming or
+    value tweaking.
+- name: component:AI
+  color: "d93f0b"
+  description: >
+    The Issue/PR deals with the Python AI decision making code or affects it.
+- name: component:art music text assets
+  color: "d93f0b"
+  description: >
+    The Issue/PR deals with creating, modifying or verifying game assets.
+- name: component:build system
+  color: "d93f0b"
+  description: >
+    The Issue/PR deals with CMake, Visual Studio or the general build process.
+- name: component:content scripting
+  color: "d93f0b"
+  description: >
+    The Issue/PR deals with the FOCS language, turn events or the universe
+    generator.
+- name: component:deployment
+  color: "d93f0b"
+  description: >
+    The Issue/PR deals with the deployment process or distribution packages.
+- name: component:game mechanic
+  color: "d93f0b"
+  description: >
+    The Issue/PR deals with the currently used or planned game mechanics.
+- name: component:infrastructure
+  color: "d93f0b"
+  description: >
+    The Issue/PR deals with development aiding infrastructure like CI,
+    distribution or helper tools.
+- name: component:internal
+  color: "d93f0b"
+  description: >
+    The Issue/PR deals with any project component that has no explicit
+    `component` label.
+- name: component:network
+  color: "d93f0b"
+  desscription: >
+    The Issue/PR deals with TCP/IP networking and establishing a test network
+    infrastructure.
+- name: component:technical docs
+  color: "d93f0b"
+  description: >
+    The Issue/PR deals with technical documentation like API, style, workflow
+    or similar documentation.
+- name: component:translation
+  color: "d93f0b"
+  description: >
+    The Issue/PR deals with the game terminology and the translation process
+    in general.
+- name: component:UI
+  color: "d93f0b"
+  description: >
+    The Issue/PR deals with the game interface, a consistent representation
+    style in-game.
+- name: component:user manual
+  color: "d93f0b"
+  description: >
+    The Issue/PR deals with end-user documentation targeted towards players and
+    server hosters.
+- name: priority:high
+  color: "2ab255"
+  description: >
+    The Issue/PR is very urgent or important and should be addressed/finished
+    as soon as possible.
+- name: priority:low
+  color: "2ab255"
+  description: >
+    The Issue/PR is of minor importance/urgency and can be set aside for more
+    urgent tasks.
+- name: status:abandoned
+  color: "c5def5"
+  description: The contributor providing the PR has stopped working on it.
+- name: status:cherry-pick for release
+  color: "c5def5"
+  description: The PR should be applied to the currently open release branch.
+- name: status:duplicate
+  color: "c5def5"
+  description: >
+    The topic of the Issue/PR is or was already covered by another Issue/PR.
+- name: status:superseded
+  color: "c5def5"
+  description: >
+    The PR implementation is insufficient and a follow up implementation PR
+    exists.
+- name: status:help wanted
+  color: "c5def5"
+  description: >
+    Other developers or external contributors are welcome to take over this
+    Issue/PR.
+- name: status:invalid
+  color: "c5def5"
+  description: >
+    The Issue is not classified as a formal valid Issue report or applicable PR.
+- name: status:merged
+  color: "c5def5"
+  description: >
+    All relevant commits of this PR were merged into the master development
+    branch.
+- name: status:resolved
+  color: "c5def5"
+  description: >
+    The Issue was resolved, either by answering properly or fixing the
+    underlying bug.
+- name: status:testing requested
+  color: "c5def5"
+  description: >
+    The Implementation can't be tested sufficiently by the developer and
+    require support.
+- name: status:won't fix
+  color: "c5def5"
+  description: >
+    The Issue won't be fixed as implementation or maintainance effort required
+    would be execessive.
+- name: status:workaround
+  color: "c5def5"
+  description: The Issue/PR provides a workaround for the underlying problem.
+- name: status:work in progress
+  color: "c5def5"
+  description: >
+    The PR contains some implementation but isn't ready for merging onto the
+    main development branch.
+- name: status:works for me
+  color: "c5def5"
+  description: >
+    The Issue can't be reproduced or it doesn't contain sufficient information
+    to reproduce it.
