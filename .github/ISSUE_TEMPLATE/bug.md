@@ -1,13 +1,16 @@
+---
+name: Report bug
+about: Report problems and bugs with FreeOrion.
+labels: "category:bug"
+---
 <!--
-Please fill in a a meaningful and concise issue title in the title field above.
+Please fill in a a meaningful and concise title in the field above.
 It helps us to classify the issue even  before reading the body and handling the
-issue a bit better.  Prefix the title with labels you find appropriate to
-describe the issue like "[Bug]" in case of a bug, "[Feature]" for a feature
-request.
+issue a bit better.
 
 Examples:
-  * Great: "[Bug] Unable to select fleet in galaxy map"
-  * Good: "[Bug] Unable to click fleet"
+  * Great: "Unable to select fleet in galaxy map"
+  * Good: "Unable to click fleet"
   * Not really okay: "Issue with fleets"
   * Horrible: "HELP!!!"
 -->
