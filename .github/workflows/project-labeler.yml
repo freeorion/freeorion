@@ -1,8 +1,5 @@
 name: Set Project labels
-on:
-  push:
-    branches:
-      - master
+on: push
 jobs:
   project-labeler:
     name: Project Labeler
@@ -15,5 +12,6 @@ jobs:
         uses: crazy-max/ghaction-github-labeler@v1
         with:
           yaml_file: .github/project-labels.yml
+          dry_run: ${{ "master" != github.ref }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
