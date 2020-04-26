@@ -1,4 +1,4 @@
-﻿Russian
+﻿﻿Russian
 
 # This is the Russian String Table file for FreeOrion
 #
