@@ -47,7 +47,7 @@ namespace Effect {
     class EffectsGroup;
     typedef std::vector<std::shared_ptr<UniverseObject>> TargetSet;
     typedef std::unordered_map<int, boost::container::flat_map<MeterType, std::vector<AccountingInfo>>> AccountingMap;
-    typedef std::vector<std::pair<SourcedEffectsGroup, TargetsAndCause>> TargetsCauses;
+    typedef std::vector<std::pair<SourcedEffectsGroup, TargetsAndCause>> SourcesEffectsTargetsAndCausesVec;
 }
 
 namespace ValueRef {
@@ -463,16 +463,16 @@ private:
     /** Inserts object \p obj into the universe with the given \p id. */
     void InsertIDCore(std::shared_ptr<UniverseObject> obj, int id);
 
-    /** Clears \a targets_causes, and then populates with all
+    /** Clears \a source_effects_targets_causes, and then populates with all
       * EffectsGroups and their targets in the known universe. */
-    void GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
+    void GetEffectsAndTargets(Effect::SourcesEffectsTargetsAndCausesVec& source_effects_targets_causes,
                               bool only_meter_effects = false) const;
 
-    /** Removes entries in \a targets_causes about effects groups acting
+    /** Removes entries in \a source_effects_targets_causes about effects groups acting
       * on objects in \a target_objects, and then repopulates for EffectsGroups
       * that act on at least one of the objects in \a target_objects. If
       * \a target_objects is empty then default target candidates will be used. */
-    void GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
+    void GetEffectsAndTargets(Effect::SourcesEffectsTargetsAndCausesVec& source_effects_targets_causes,
                               const std::vector<int>& target_objects,
                               bool only_meter_effects = false) const;
 
@@ -484,7 +484,7 @@ private:
       * executed.  This is useful on server or clients to update meter
       * values after the rest of effects (including non-meter effects) have
       * been executed. */
-    void ExecuteEffects(const Effect::TargetsCauses& targets_causes,
+    void ExecuteEffects(const Effect::SourcesEffectsTargetsAndCausesVec& source_effects_targets_causes,
                         bool update_effect_accounting,
                         bool only_meter_effects = false,
                         bool only_appearance_effects = false,

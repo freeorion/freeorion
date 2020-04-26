@@ -194,7 +194,8 @@ EffectsGroup::~EffectsGroup()
 {}
 
 void EffectsGroup::Execute(ScriptingContext& context,
-                           const TargetsCauses& targets_causes, AccountingMap* accounting_map,
+                           const SourcesEffectsTargetsAndCausesVec& source_effects_targets_causes,
+                           AccountingMap* accounting_map,
                            bool only_meter_effects, bool only_appearance_effects,
                            bool include_empire_meter_effects,
                            bool only_generate_sitrep_effects) const
@@ -210,9 +211,9 @@ void EffectsGroup::Execute(ScriptingContext& context,
         { continue; }
 
         // execute effect separately for every source and target set
-        for (auto& source_targets_entry : targets_causes) {
+        for (auto& source_targets_entry : source_effects_targets_causes) {
             source_context.source = context.ContextObjects().get(source_targets_entry.first.source_object_id);
-            auto& target_set = source_targets_entry.second.target_set;
+            auto& target_set{source_targets_entry.second.target_set};
             const auto& effect_cause{source_targets_entry.second.effect_cause};
 
             effect->Execute(source_context, target_set, accounting_map, effect_cause,

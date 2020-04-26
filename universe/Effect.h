@@ -53,10 +53,10 @@ namespace Effect {
     /** Combination of an EffectsGroup and the id of a source object. */
     struct SourcedEffectsGroup {
         SourcedEffectsGroup();
-        SourcedEffectsGroup(int source_object_id_, const std::shared_ptr<EffectsGroup>& effects_group_);
+        SourcedEffectsGroup(int source_object_id_, const EffectsGroup* effects_group_);
         bool operator<(const SourcedEffectsGroup& right) const;
         int source_object_id;
-        std::shared_ptr<EffectsGroup> effects_group;
+        const EffectsGroup* effects_group;
     };
 
     /** Map from (effects group and source object) to target set of for
@@ -65,7 +65,7 @@ namespace Effect {
       * same effectsgroup.  This is useful when a Ship has multiple copies
       * of the same effects group due to having multiple copies of the same
       * ship part in its design. */
-    typedef std::vector<std::pair<SourcedEffectsGroup, TargetsAndCause>> TargetsCauses;
+    typedef std::vector<std::pair<SourcedEffectsGroup, TargetsAndCause>> SourcesEffectsTargetsAndCausesVec;
 
     /** The base class for all Effects.  When an Effect is executed, the source
     * object (the object to which the Effect or its containing EffectGroup is
@@ -135,19 +135,20 @@ namespace Effect {
                      std::unique_ptr<Condition::Condition>&& activation,
                      std::vector<std::unique_ptr<Effect>>&& effects,
                      const std::string& accounting_label = "",
-                     const std::string& stacking_group = "", int priority = 0,
+                     const std::string& stacking_group = "",
+                     int priority = 0,
                      const std::string& description = "",
                      const std::string& content_name = "");
         virtual ~EffectsGroup();
 
         /** execute all effects in group */
-        void    Execute(ScriptingContext& context,
-                        const TargetsCauses& targets_causes,
-                        AccountingMap* accounting_map = nullptr,
-                        bool only_meter_effects = false,
-                        bool only_appearance_effects = false,
-                        bool include_empire_meter_effects = false,
-                        bool only_generate_sitrep_effects = false) const;
+        void Execute(ScriptingContext& context,
+                     const SourcesEffectsTargetsAndCausesVec& source_effects_targets_causes,
+                     AccountingMap* accounting_map = nullptr,
+                     bool only_meter_effects = false,
+                     bool only_appearance_effects = false,
+                     bool include_empire_meter_effects = false,
+                     bool only_generate_sitrep_effects = false) const;
 
         const std::string&              StackingGroup() const       { return m_stacking_group; }
         Condition::Condition*           Scope() const               { return m_scope.get(); }
@@ -172,7 +173,7 @@ namespace Effect {
         std::string                             m_stacking_group;
         std::vector<std::unique_ptr<Effect>>    m_effects;
         std::string                             m_accounting_label;
-        int                                     m_priority;
+        int                                     m_priority; // constructor sets this, so don't need a default value here
         std::string                             m_description;
         std::string                             m_content_name;
 
