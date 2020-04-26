@@ -147,7 +147,7 @@ namespace Effect {
 
         /** execute all effects in group */
         void Execute(ScriptingContext& source_context,
-                     const TargetsAndCause& targets_causes,
+                     const TargetsAndCause& targets_cause,
                      AccountingMap* accounting_map = nullptr,
                      bool only_meter_effects = false,
                      bool only_appearance_effects = false,

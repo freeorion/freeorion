@@ -194,7 +194,7 @@ EffectsGroup::~EffectsGroup()
 {}
 
 void EffectsGroup::Execute(ScriptingContext& context,
-                           const TargetsAndCause& targets_causes,
+                           const TargetsAndCause& targets_cause,
                            AccountingMap* accounting_map,
                            bool only_meter_effects, bool only_appearance_effects,
                            bool include_empire_meter_effects,
@@ -212,8 +212,8 @@ void EffectsGroup::Execute(ScriptingContext& context,
             || (only_generate_sitrep_effects  && !effect->IsSitrepEffect()))
         { continue; }
 
-        effect->Execute(context, targets_causes.target_set, accounting_map,
-                        targets_causes.effect_cause,
+        effect->Execute(context, targets_cause.target_set, accounting_map,
+                        targets_cause.effect_cause,
                         only_meter_effects, only_appearance_effects,
                         include_empire_meter_effects, only_generate_sitrep_effects);
     }
