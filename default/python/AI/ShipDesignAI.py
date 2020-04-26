@@ -1004,6 +1004,12 @@ class ShipDesigner:
             best_hull = None
             best_parts = None
             for hullname in available_hulls:
+                # TODO: Expose FOCS Exclusions and replace manually maintained AIDependencies dict
+                hull_excluded_part_classes = AIDependencies.HULL_EXCLUDED_SHIP_PART_CLASSES.get(hullname, [])
+                available_parts_in_hull = {
+                    slot: [part_name for part_name in available_parts[slot]
+                           if get_ship_part(part_name).partClass not in hull_excluded_part_classes]
+                    for slot in available_parts}
                 if hullname in design_cache_parts:
                     cache = design_cache_parts[hullname]
                     best_hull_rating = cache[0]
@@ -1013,7 +1019,7 @@ class ShipDesigner:
                             hullname, best_hull_rating, current_parts))
                 else:
                     self.update_hull(hullname)
-                    best_hull_rating, current_parts = self._filling_algorithm(available_parts)
+                    best_hull_rating, current_parts = self._filling_algorithm(available_parts_in_hull)
                     design_cache_parts.update({hullname: (best_hull_rating, current_parts)})
                     if verbose:
                         debug("Best rating for hull %s: %f %s" % (hullname, best_hull_rating, current_parts))
