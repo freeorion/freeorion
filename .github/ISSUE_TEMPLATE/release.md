@@ -1,6 +1,6 @@
 ---
 name: Publish release
-about: Create a tracking issue for a FreeOrion release.
+about: "Team only: Create a tracking issue for a FreeOrion release."
 title: Release X.Y.Z preparation
 assignees: Vezzra
 ---
