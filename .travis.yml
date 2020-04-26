@@ -43,25 +43,8 @@ _linux_setup_common: &_linux_setup_common
     - ccache --cleanup
     - ccache --show-stats
 
-_test_python_common: &_test_python_common
-  stage: test
-  os: linux
-  dist: bionic
-  language: python
-  install:
-    - pip install pytest==5.4.1
-  script:
-    - pytest
-
 jobs:
   include:
-    - name: Lint AI with Python 3.5
-      <<: *_linux_setup_common
-      stage: lint
-      script:
-        - cmake ..
-        - cmake --build . --target check-pep8
-
     - name: Lint string tables
       stage: lint
       os: linux
@@ -152,15 +135,3 @@ jobs:
       before_cache:
         - ccache --cleanup
         - ccache --show-stats
-
-    - name: Unittest AI with Python 3.5
-      <<: *_test_python_common
-      python: 3.5
-      before_install:
-        - alias pip=/usr/bin/pip3
-
-    - name: Unittest AI with Python 3.8
-      <<: *_test_python_common
-      python: 3.8
-      before_install:
-        - alias pip=/usr/bin/pip3

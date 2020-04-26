@@ -1,0 +1,45 @@
+name: Test AI with linting and unit tests
+on: push
+jobs:
+  test-AI:
+    name: AI source linting and testing
+    runs-on: ubuntu-18.04
+    strategy:
+      matrix:
+        python-version:
+          - 3.6
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Set up system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --assume-yes \
+          libboost1.62-all-dev \
+          libglew-dev \
+          libogg-dev \
+          libopenal-dev \
+          libsdl2-dev \
+          libvorbis-dev \
+          ninja-build
+      - name: Set up python test dependencies
+        run: |
+          python3 -m pip install flake8==3.7.9 pytest==5.4.1
+      - name: Create build directory
+        run: |
+          mkdir build
+          cd build
+          cmake -G Ninja ..
+      - name: Lint AI sources against PEP8
+        if: always()
+        working-directory: build
+        run: |
+          ninja check-pep8
+      - name: Unit test AI sources
+        if: always()
+        run: |
+          pytest
