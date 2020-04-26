@@ -1,4 +1,4 @@
-﻿﻿Russian
+﻿Russian
 
 # This is the Russian String Table file for FreeOrion
 #
@@ -684,19 +684,19 @@ SM_GUARD_1
 Часовой
 
 SM_GUARD_1_DESC
-Небольшой беспилотный сторожевой корабль. [[SM_GUARD_MACRO]]
+Небольшой беспилотный сторожевой корабль [[SM_GUARD_MACRO]].
 
 SM_GUARD_2
 Страж
 
 SM_GUARD_2_DESC
-Беспилотный сторожевой корабль. [[SM_GUARD_MACRO]]
+Беспилотный сторожевой корабль [[SM_GUARD_MACRO]].
 
 SM_GUARD_3
 Надзиратель
 
 SM_GUARD_3_DESC
-Мощный, беспилотный сторожевой корабль. [[SM_GUARD_MACRO]]
+Мощный, беспилотный сторожевой корабль [[SM_GUARD_MACRO]].
 
 SM_KRAKEN_1
 Маленький кракен
@@ -1436,7 +1436,10 @@ OPTIONS_DB_COOKIES_EXPIRE
 Количество минут после того, как запись cookie будет считаться просроченной.
 
 OPTIONS_DB_PUBLISH_STATISTICS
-Включить отправку статики империи игроку.
+Включить отправку статистики империи игроку.
+
+OPTIONS_DB_PUBLISH_SEED
+Включить отправку семени галактики игроку.
 
 OPTIONS_DB_FIRST_TURN_TIME
 Абсолютный момент времени в формате «2019-01-20 11:59:59» в UTC. Если пусто, продвижение первого хода произойдет после истечения интервала. Требуется фиксированный интервал для включения.
@@ -1449,6 +1452,9 @@ OPTIONS_DB_TIMEOUT_FIXED_INTERVAL
 
 OPTIONS_DB_CLIENT_MESSAGE_SIZE_MAX
 Ограничение размера клиентского сообщения в байтах.
+
+OPTIONS_DB_DROP_EMPIRE_READY
+Откажитесь от готовности империи присоединиться к игре.
 
 OPTIONS_DB_UI_MAIN_MENU_X
 Позиция центра главного меню экрана, как часть полной ширины приложения.
@@ -2397,6 +2403,7 @@ PLAYER_ENTERED_GAME
 PLAYER_LEFT_GAME
 %1% покинул игру
 
+
 ##
 ## Galaxy Setup Screen
 ##
@@ -2702,6 +2709,9 @@ SAVE_REALLY_OVERRIDE
 
 OPTIONS_TITLE
 Настройка
+
+OPTIONS_PEDIA_SEARCH_ARTICLE_TEXT
+Поиск текста статьи энциклопедии
 
 OPTIONS_MULTIPLE_FLEET_WNDS
 Несколько окон для флота
@@ -3200,8 +3210,11 @@ OPTIONS_CREATE_PERSISTENT_CONFIG_TOOLTIP_TITLE
 
 OPTIONS_CREATE_PERSISTENT_CONFIG_TOOLTIP_DESC
 '''Сохраняет текущие параметры конфигурации в качестве постоянных параметров по умолчанию.
+
 Такие настройки имеют приоритет над любыми настройками в config.xml, но не командной строкой.
+
 Сохраняет только те настройки, которые были изменены из значений по умолчанию.
+
 Все существующие постоянные конфигурационные файлы перезаписываются.
 
 Данные настройки могут стать невалидными при смене версий игры.
@@ -3214,6 +3227,23 @@ OPTIONS_CREATE_PERSISTENT_CONFIG_SUCCESS
 
 OPTIONS_CREATE_PERSISTENT_CONFIG_FAILURE
 Невозможно создать файл persistent_config.xml. Подробности ошибки смотрите в файле логов.
+
+OPTIONS_CREATE_ALL_CONFIG_SUCCESS
+Успешно записал config.xml
+
+OPTIONS_CREATE_ALL_CONFIG_FAILURE
+Не удалось записать файл config.xml, дополнительные сведения смотрите в файле журнала.
+
+OPTIONS_WRITE_ALL_CONFIG
+Запись в полный конфигурационный файл
+
+OPTIONS_CREATE_ALL_CONFIG_TOOLTIP_TITLE
+Создать полную конфигурацию (промежуточная функция)
+
+OPTIONS_CREATE_ALL_CONFIG_TOOLTIP_DESC
+'''Сохраняет текущие параметры конфигурации в config.xml, включая все параметры, даже если они не были изменены по умолчанию.
+
+Существующий файл options.xml перезаписывается, но может быть восстановлен (только с параметрами, отличными от заданных по умолчанию), если другой параметр был изменен, в том числе путем изменения положения некоторых игровых окон или в окне параметров.'''
 
 
 ##
@@ -3597,6 +3627,7 @@ MENUITEM_ENQUEUE_BUILDING_TO_TOP_OF_QUEUE
 
 MENUITEM_ENQUEUE_BUILDING
 Добавить здание в очередь
+
 
 ##
 ## Side panel/Resources panel
@@ -4417,7 +4448,7 @@ PRODUCTION_QUEUE_MULTIPLES
 
 # %1% number of repetions an item should be produced on after another.
 PRODUCTION_QUEUE_REPETITIONS
-%1%
+%1%⟳
 
 # %1% production points already spent on an item.
 # %2% total production points required to complete the item production.
@@ -4480,7 +4511,6 @@ MOVE_UP_LIST_ITEM
 MOVE_DOWN_LIST_ITEM
 Переместить в низ
 
-
 SPLIT_INCOMPLETE
 Разделить повторения
 
@@ -4489,6 +4519,15 @@ DUPLICATE
 
 PRODUCTION_WND_TOOLTIP_PROD_COST
 Стоимость производства: %1%
+
+PRODUCTION_WND_TOOLTIP_PROD_TIME_MINIMUM
+Минимум производства за ход:% 1%
+
+PRODUCTION_WND_TOOLTIP_LOCATION_DEPENDENT
+Зависит от местоположения
+
+PRODUCTION_WND_TOOLTIP_PROD_TIME
+Полностью финансируемое производство превращается в %2%: %1%
 
 PRODUCTION_WND_TOOLTIP_PROD_TIME
 Время производства: %1%
@@ -4825,7 +4864,6 @@ SCALE_TO_ZERO
 SCALE_FREE
 Свободный масштаб
 
-
 ENC_GALAXY_SETUP
 [Игра - Галактика]
 
@@ -5105,7 +5143,7 @@ ENC_AUTO_TIME_COST_INVARIANT_STR
 
 <u>Время и стоимость</u>
 
-Время и стоимость %1% этого элемента не зависит от местоположения'''
+Время и стоимость %1% этого элемента не зависит от местоположения.'''
 
 # %1% content of ENC_VERB_PRODUCE_STR.
 ENC_AUTO_TIME_COST_VARIABLE_STR
@@ -5413,7 +5451,7 @@ COMBAT_SUMMARY_GRAPH_HEIGHT_EQUAL
 Высота графов: Равная
 
 COMBAT_SUMMARY_GRAPH_HEIGHT_PROPORTIONAL_TIP
-Графики сражающихся империй сейчас масштабируются по отношению к самому высокому значению показателя [[OPTIONS_COMBAT_SUMMARY_HEALTH_COLOR]] во флоте.
+Графики сражающихся империй в настоящее время масштабируются по отношению к самому высокому максимуму здоровья в их флотах.
 
 COMBAT_SUMMARY_GRAPH_HEIGHT_EQUAL_TIP
 Графики сражающихся империй сейчас одинаковы.
@@ -5493,10 +5531,8 @@ MANAGEMENT_TITLE_SHORT_DESC
 
 
 ##
-## Encyclopedia subcategories
+## Encyclopedia articles in Guides category
 ##
-
-# In Guides category
 
 INTERFACE_TITLE
 *Интерфейс*
@@ -5504,7 +5540,10 @@ INTERFACE_TITLE
 INTERFACE_TEXT
 Неполный список особенностей интерфейса FreeOrion:
 
-# In Game Concepts category
+
+##
+## Encyclopedia articles in Game Concepts category
+##
 
 DIPLOMACY_TITLE
 Дипломатия
@@ -5516,7 +5555,7 @@ METABOLISM_TITLE
 Метаболизм
 
 METABOLISM_TEXT
-Метаболизм [[encyclopedia ENC_SPECIES]] в галактике попадает в один из перечисленных здесь типов
+Метаболизм [[encyclopedia ENC_SPECIES]] в галактике попадает в один из перечисленных здесь типов.
 
 PLANET_MANAGEMENT_TITLE
 Управление планетами
@@ -6145,10 +6184,10 @@ FIELDS_TEXT
 ##
 
 GENERAL_PEDIA_REFERENCE
-Информацию такую как эта, можно получить через «Энциклопедию» [[encyclopedia ENC_INDEX]]
+Информацию такую как эта, можно получить через «Энциклопедию» [[encyclopedia ENC_INDEX]].
 
 DETAILED_PEDIA_REFERENCE
-[[GENERAL_PEDIA_REFERENCE]] Энциклопедию можно открыть и закрыть через фиолетовый значок с вопросительным знаком в верхней правой части основного экрана [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]]. В ней можно перемещаться по горячим ссылкам и с помощью стрелок в правом нижнем углу окна энциклопедии
+[[GENERAL_PEDIA_REFERENCE]] Энциклопедию можно открыть и закрыть через фиолетовый значок с вопросительным знаком в верхней правой части основного экрана [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]]. В ней можно перемещаться по горячим ссылкам и с помощью стрелок в правом нижнем углу окна энциклопедии.
 
 GREETINGS_GUIDE_TITLE
 **Приветствую**
@@ -6165,7 +6204,7 @@ GREETINGS_GUIDE_TEXT
 [[DETAILED_PEDIA_REFERENCE]]
 [[GREETINGS_GUIDE_REFERENCE]]
 
-FreeOrion - бесплатная, с открытым исходным кодом, пошаговая космическая империя и галактическая завоевательная (4X) компьютерная игра, разработанная и спроектированная проектом FreeOrion. FreeOrion вдохновлен традицией игр Master of Orion, но не является клоном или римейком этой серии или любой другой игры
+FreeOrion - бесплатная, с открытым исходным кодом, пошаговая космическая империя и галактическая завоевательная (4X) компьютерная игра, разработанная и спроектированная проектом FreeOrion. FreeOrion вдохновлен традицией игр Master of Orion, но не является клоном или римейком этой серии или любой другой игры.
 
 Дополнительная информация доступна по адресу freeorion.org
 '''
@@ -6362,6 +6401,7 @@ MESSAGES_WHISPER
 MESSAGES_INVALID
 Invalid player or no message entered.
 
+
 ##
 ## Players list
 ##
@@ -6508,6 +6548,9 @@ LAST_TURN_ACTIVE_IN_BATTLE
 LAST_TURN_RESUPPLIED
 Последний ход пополнения
 
+LAST_TURN_COLONIZED
+Последний ход колонизации
+
 LAST_TURN_CONQUERED
 Последний ход завоевания
 
@@ -6641,6 +6684,7 @@ CONDITION_ANY
 ## Situation report
 ##
 ## Format: Ideally always start with Location: with ship/fleet names near the end.
+##
 
 SITREP_PANEL_TITLE
 Отчет о событиях - начальный ход
@@ -7303,6 +7347,7 @@ SITREP_VICTORY_LABEL
 
 SITREP_EMPIRE_ELIMINATED
 Империя %empire% была уничтожена
+
 SITREP_EMPIRE_ELIMINATED_LABEL
 Империя уничтожена
 
@@ -7474,7 +7519,10 @@ OPINIONS_OF_EMPIRES
 OPINIONS_OF_OTHER_SPECIES
 Мнения других видов:
 
-# Species Pedia Categories
+
+##
+## Encyclopedia articles in Species Types category
+##
 
 LITHIC_SPECIES_CLASS
 Педобионты
@@ -7512,7 +7560,10 @@ GASEOUS_SPECIES_CLASS
 GASEOUS_SPECIES_CLASS_DESC
 Список [[encyclopedia GASEOUS_SPECIES_TITLE]] видов:
 
-# Species Pedia Articles
+
+##
+## Encyclopedia articles in Species category
+##
 
 SP_HUMAN
 Люди
@@ -7750,6 +7801,7 @@ SP_SLY_DESC
 
 SP_LEMBALALAM
 Лембала-Лам
+
 SP_LEMBALALAM_GAMEPLAY_DESC
 '''Эгоцентричные, дегенерировавшие древние рептилии, утратившие возможность к размножению.
 Предпочитают [[PT_DESERT]] планеты.
@@ -8162,7 +8214,8 @@ SP_ABADDONI_GAMEPLAY_DESC
 
 SP_ABADDONI_DESC
 '''Описание:
-Абаддони имеют форму куриного яйца, высоту 0,8 метра и тёмно-красный с чёрными пятнами окрас. Их основная отличительная черта - это большой рот, начинающийся из одной точки на голове и открывающийся на треть спины. На конце каждой из коротких, похожих на крабовые ног находится выпуклый мешочек, позволяющий Абаддони перемещаться по потолку. Поскольку Абаддони живут под землёй, у них отсутствуют глаза, и в основном они полагаются на обоняние, в меньшей степени - на слух и осязание.
+Абаддони имеют форму куриного яйца, высоту 0,8 метра и тёмно-красный с чёрными пятнами окрас. Их основная отличительная черта - это большой рот, начинающийся из одной точки на голове и открывающийся на треть спины. 
+На конце каждой из коротких, похожих на крабовые ног находится выпуклый мешочек, позволяющий Абаддони перемещаться по потолку. Поскольку Абаддони живут под землёй, у них отсутствуют глаза, и в основном они полагаются на обоняние, в меньшей степени - на слух и осязание.
 
 Социальный строй:
 Весь вид Абаддони живет под диктатурой, возглавляемой искусственным интеллектом под названием Мать. Этот интеллект был создан Абаддони в качестве помощника своему правительству, но постепенно взял верх надо всем. Теперь каждому новорождённому Абаддони вживляют в мозг беспроводной передатчик, чтобы Мать всегда могла читать его мысли и ограничивать действия, когда ей нужно. Теперь между Абаддони нет никакой социальной структуры - все они, по сути своей, рабы.
@@ -8366,6 +8419,7 @@ SP_EXOBOT_DESC
 
 SP_ANCIENT_GUARDIANS
 Древние стражи
+
 SP_ANCIENT_GUARDIANS_GAMEPLAY_DESC
 '''Стражи-роботы, построенные цивилизацией Предтеч целую вечность назад.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
@@ -8898,6 +8952,7 @@ PT_OCEAN
 # Planet types
 PT_ASTEROIDS
 Астероидный пояс
+
 # Planet types
 PT_GASGIANT
 Газовый гигант
@@ -9507,7 +9562,10 @@ PATH_SAVE
 PATH_TEMP
 ''''''
 
-# Ship hull categories
+
+##
+## Ship hull categories
+##
 
 HULL_LINE_GENERIC
 Тип корпуса: обычный
@@ -10449,7 +10507,7 @@ DESC_AND_BEFORE_OPERANDS
 ''' ['''
 
 DESC_AND_BETWEEN_OPERANDS
-''', или'''
+, and
 
 DESC_AND_AFTER_OPERANDS
 ''' ]'''
@@ -10464,30 +10522,28 @@ DESC_AND_AFTER_SINGLE_OPERAND
 # We actually describe the the logically equivalent expression ( (not A) or (not B) or (not C) )
 # Note: the operands (not A), (not B).. are handled in the descriptions of A, B.. respectively
 DESC_NOT_AND_BEFORE_OPERANDS
-'''[[DESC_NOT_OR_BEFORE_OPERANDS]]'''
+[[DESC_NOT_OR_BEFORE_OPERANDS]]
 
 DESC_NOT_AND_BETWEEN_OPERANDS
-'''[[DESC_NOT_OR_BETWEEN_OPERANDS]]'''
+[[DESC_NOT_OR_BETWEEN_OPERANDS]]
 
 DESC_NOT_AND_AFTER_OPERANDS
-'''[[DESC_NOT_OR_AFTER_OPERANDS]]'''
-
+[[DESC_NOT_OR_AFTER_OPERANDS]]
 
 # Description for 'not ( AND [ A ] )' expressions
 # Actually instead we describe 'OR [ not A ]' and leave the description of negation to A
 DESC_NOT_AND_BEFORE_SINGLE_OPERAND
-'''[[DESC_OR_BEFORE_SINGLE_OPERAND]]'''
+[[DESC_OR_BEFORE_SINGLE_OPERAND]]
 
 DESC_NOT_AND_AFTER_SINGLE_OPERAND
-'''[[DESC_OR_AFTER_SINGLE_OPERAND]]'''
-
+[[DESC_OR_AFTER_SINGLE_OPERAND]]
 
 # OR Descriptions: for expressions of the form ( A or B or C )
 DESC_OR_BEFORE_OPERANDS
 ''' (either'''
 
 DESC_OR_BETWEEN_OPERANDS
-''', или'''
+, or
 
 DESC_OR_AFTER_OPERANDS
 ''' )'''
@@ -10498,62 +10554,58 @@ DESC_OR_BEFORE_SINGLE_OPERAND
 DESC_OR_AFTER_SINGLE_OPERAND
 ''''''
 
-
 # NOT OR Descriptions; for expressions of the form 'NOT OR [ A B C ]'
 # We actually describe the logically equivalent expression 'AND [ (NOT A) (NOT B) (NOT C) ]'
 # Note: (NOT A), (NOT B).. are handled in the descriptions of A, B.. respectively
 DESC_NOT_OR_BEFORE_OPERANDS
-'''[[DESC_AND_BEFORE_OPERANDS]]'''
+[[DESC_AND_BEFORE_OPERANDS]]
 
 DESC_NOT_OR_BETWEEN_OPERANDS
-'''[[DESC_AND_BETWEEN_OPERANDS]]'''
+[[DESC_AND_BETWEEN_OPERANDS]]
 
 DESC_NOT_OR_AFTER_OPERANDS
-'''[[DESC_AND_AFTER_OPERANDS]]'''
+[[DESC_AND_AFTER_OPERANDS]]
 
 # for expressions of the form 'NOT OR [ A ]' we describe instead 'AND [ NOT A ]'
 # Note: (NOT A) is handled in the description of A
 DESC_NOT_OR_BEFORE_SINGLE_OPERAND
-'''[[DESC_AND_BEFORE_SINGLE_OPERAND]]'''
+[[DESC_AND_BEFORE_SINGLE_OPERAND]]
 
 DESC_NOT_OR_AFTER_SINGLE_OPERAND
-'''[[DESC_AND_AFTER_SINGLE_OPERAND]]'''
-
-
+[[DESC_AND_AFTER_SINGLE_OPERAND]]
 
 # OrderedAlternativesOf Descriptions for expressions 'OrderedAlternativesOf [ A B C ]'
 DESC_ORDERED_ALTERNATIVES_BEFORE_OPERANDS
-'''that matches the first matching condition {'''
+that matches the first matching condition {
 
 DESC_ORDERED_ALTERNATIVES_BETWEEN_OPERANDS
-''', еще'''
+, else
 
 DESC_ORDERED_ALTERNATIVES_AFTER_OPERANDS
 ''' }'''
 
 DESC_ORDERED_ALTERNATIVES_BEFORE_SINGLE_OPERAND
-'''{'''
+{
 
 DESC_ORDERED_ALTERNATIVES_AFTER_SINGLE_OPERAND
-'''(iff it also has non-matches)}'''
+(iff it also has non-matches)}
 
 # Expressions like  'NOT OrderedAlternativesOf [ A B C ]'
 # Note: returned matches rely on (NOT A), (NOT B).. and are handled in the descriptions of A, B.. respectively
 DESC_NOT_ORDERED_ALTERNATIVES_BEFORE_OPERANDS
-'''that matches the first matching conditions' non-matching candidates: {'''
+that matches the first matching conditions' non-matching candidates: {
 
 DESC_NOT_ORDERED_ALTERNATIVES_BETWEEN_OPERANDS
-''', else'''
+, else
 
 DESC_NOT_ORDERED_ALTERNATIVES_AFTER_OPERANDS
 ''' }'''
 
 DESC_NOT_ORDERED_ALTERNATIVES_BEFORE_SINGLE_OPERAND
-'''{'''
+{
 
 DESC_NOT_ORDERED_ALTERNATIVES_AFTER_SINGLE_OPERAND
-'''(iff it also has non-matches)}'''
-
+(iff it also has non-matches)}
 
 # %1% textual description of the lower turn limit.
 # %2% textual description of the upper turn limit.
@@ -11179,6 +11231,7 @@ PRO_ROBOTIC_PROD_DESC
 
 PRO_EXOBOTS
 Экзоботы
+
 PRO_EXOBOTS_DESC
 Позволяет производить экзоботов, оптимизированных для производства и добычи на враждебных планетах.
 
@@ -11247,6 +11300,12 @@ PRO_NEUTRONIUM_EXTRACTION
 
 PRO_NEUTRONIUM_EXTRACTION_DESC
 Ядро звезды [[STAR_NEUTRON]] состоит из вырожденного нейтронного вещества, сжатого под действием силы гравитации до плотности, намного большей чем самая тяжелая нормальная материя. Этот экзотический материал имеет многочисленные применения, как только это вещество будет извлечено из звезды, перед вами откроются невероятные возможности позволяющие производить конструкции и части кораблей.
+
+CON_OUTPOST
+Аванпосты
+
+CON_OUTPOST_DESC
+Технология, необходимая для создания [[encyclopedia OUTPOSTS_TITLE]] на планетах и поясах астероидов.
 
 CON_ARCH_PSYCH
 Архитектурная психология
@@ -11507,11 +11566,13 @@ SHP_SOLAR_CONT_DESC
 
 SHP_KRILL_SPAWN
 Спаунер планктона
+
 SHP_KRILL_SPAWN_DESC
 Разблокирует [[shippart SP_KRILL_SPAWNER]] деталь корабля, которая заставляет дикий космический криль появляться в системах с поясами астероидов.
 
 SPY_ROOT_DECEPTION
 Маскировка
+
 SPY_ROOT_DECEPTION_DESC
 Искусство обмана не является естественным для каждого вида, но способность скрывать правду может быть весьма полезной.
 
@@ -11971,7 +12032,11 @@ SHP_BOMBARD
 SHP_BOMBARD_DESC
 Позволяет развивать оружие планетарной бомбардировки.
 
-##Fighter explanation, needs improving and a Pedia article writing
+
+##
+## Fighter explanation, needs improving and a Pedia article writing
+##
+
 SHP_FIGHTERS_1
 Истребители и пусковые площадки
 
@@ -11979,6 +12044,9 @@ SHP_FIGHTERS_1_DESC
 '''Позволяет вашей империи строить пусковые площадки и корабли использующие ангары для истребителей. На корабле может быть только один тип ангара, однако, общее количество слотов для использования остается прежним. Каждый [[encyclopedia PC_FIGHTER_HANGAR]] имеет максимальную вместимость истребителей и все эти истребители будут иметь одинаковую силу (которая может быть изменена видовыми способностями и дальнейшими исследованиями).
 
 [[encyclopedia PC_FIGHTER_BAY]] может запустить несколько истребителей в каждом раунде боя. Эти истребителей станут и действующими целями и будут способны атаковать корабли и другие истребители в последующих раундах боя, но одно попадание из любого источника уничтожит его. В отличие от [[encyclopedia DAMAGE_TITLE]]а нанесенного обычным оружием, урон наносимый истребителями игнорирует [[metertype METER_SHIELD]] на военных кораблях (они стреляют внутри силового поля щитов).
+
+Особенности пилотирования влияют на истребителей [[FT_HANGAR_2]], [[FT_HANGAR_3]] и [[FT_HANGAR_4]] точно так же: плохое пилотирование уменьшает урон на 1 на каждого бойца; хорошее пилотирование увеличивает урон на 1, отличное пилотирование на 2 и максимальное пилотирование на 3 за каждый выстрел.
+Особенности пилотирования не влияют на [[FT_HANGAR_1]] истребителей.
 
 В конце боя авианосцы будут собирать оставшихся истребителей. Если авианосец находится в зоне [[metertype METER_SUPPLY]] сразу после того, как движение станет доступным, он пополнит ангар до максимума.'''
 
@@ -13434,6 +13502,18 @@ SR_WEAPON_4_1_DESC
 
 [[encyclopedia DAMAGE_TITLE]] от оружия представляет собой комбинация урона от выстрела и любых активных модификаторов. Каждый смертельный луч на корабле, построенный видом с признаком пилотирования, будет наносить дополнительно 5 урона на пилотный уровень (-5 для плохих пилотов).'''
 
+SR_ARC_DISRUPTOR
+Дуговой разрушитель
+
+SR_ARC_DISRUPTOR_DESC
+'''Дуговой разрушитель, многоцелевое корабельное оружие, которое имеет хорошие долгосрочные варианты исследований по модернизации.
+
+Заряженные поляронные конденсаторы генерируют волну молекулярного разрушения, которая проходит через пространство, поражая несколько кораблей, прежде чем рассеяться. Поток разрушения может быть существенно отклонен вокруг щитов корабля.
+
+Модернизация технологии оружия увеличит урон выстрела.
+
+[[Encyclopedia DAMAGE_TITLE]] оружия представляет собой комбинацию урона от выстрела и любых активных модификаторов. Пилотная черта не влияет на урон.'''
+
 SR_SPINAL_ANTIMATTER
 Спинальная антиматериальная пушка
 
@@ -14588,17 +14668,17 @@ BLD_COL_PART_2
 BLD_COL_PART_3
 Время создания будет и дальше увеличивать сокращение путем исследования технологий, которые позволят быстрее направлять колонии используя новые детали двигателей и более быстрые корпуса
 
-# Macro keys formatting for ship designs, hulls or parts:
-# BLD_SHIPYARD_TYPE1_TYPE2_REQUIRED (required building type(s) owned by
-#                                    empire only in the same system)
-# ANY_SYSTEM (building owned in any system by empire or ally)
-# Any other key formatting is self-explanatory (e.g. LIVING_HULL_AUTO_REGEN)
 
 ##
 ## Ship design/hull macros
 ##
-
-# Keys used in Predefined Ship Designs and Ship Hulls sections
+## Macro keys formatting for ship designs, hulls or parts:
+## BLD_SHIPYARD_TYPE1_TYPE2_REQUIRED (required building type(s) owned by
+##                                    empire only in the same system)
+## ANY_SYSTEM (building owned in any system by empire or ally)
+## Any other key formatting is self-explanatory (e.g. LIVING_HULL_AUTO_REGEN)
+## Keys used in Predefined Ship Designs and Ship Hulls sections
+##
 
 BLD_SHIPYARD_BASE_REQUIRED
 Может быть построен только на [[buildingtype BLD_SHIPYARD_BASE]].
@@ -14642,7 +14722,10 @@ BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_CELL_GRO_CHAMB_REQUIRED
 BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_XENO_FAC_ORG_CELL_GRO_CHAMB_REQUIRED
 Может быть построен только при наличии [[buildingtype BLD_SHIPYARD_BASE]], [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] и [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] в системе.
 
-# Other than Requirements
+
+##
+## Other than Requirements
+##
 
 SHIPDESIGN_DETECTION_RESEARCH_TIPS
 Дальнейшие [[metertype METER_RESEARCH]], направленные на улучшение параметра [[metertype METER_DETECTION]], позволят усовершенствовать этот дизайн корабля.
@@ -14669,8 +14752,8 @@ SHIPDESIGN_PLANET_INVASION
 ##
 ## Ship part/tech application macros
 ##
-
-# Keys used in Ship Parts and Technology Application sections
+## Keys used in Ship Parts and Technology Application sections
+##
 
 BLD_SHIPYARD_ORG_XENO_FAC_ORG_CELL_GRO_CHAMB_REQUIRED_ANY_SYSTEM
 Эта часть корабля может быть построена только если есть [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] и [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] где-то в империи или империи союзника.
@@ -14832,7 +14915,7 @@ ULTIMATE_DEFENSE_TROOPS_DESC
 +++	Превосходные защитные [[metertype METER_TROOPS]]: 300%
 
 ANCIENT_DEFENSE_TROOPS_DESC
-+++	Древняя оборонительная платформа [[metertype METER_TROOPS]]: 10 за население
++++	Древняя оборонительная платформа [[metertype METER_TROOPS]]: 10 для [[metertype METER_POPULATION]]
 
 NO_OFFENSE_TROOPS_DESC
 −−−	Нет наступающих [[metertype METER_TROOPS]]
@@ -15587,7 +15670,6 @@ AI_SHIPDESIGN_NAME_KRILLSPAWNER
 ##
 ## AI diplomacy strings and lists
 ##
-
 
 # Newline separated list of polite alliance proposal acknowlegements.
 AI_ALLIANCE_PROPOSAL_ACKNOWLEDGEMENTS_MILD_LIST
