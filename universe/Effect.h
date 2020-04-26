@@ -90,11 +90,15 @@ namespace Effect {
                              bool only_generate_sitrep_effects = false) const;
 
         virtual std::string     Dump(unsigned short ntabs = 0) const = 0;
+
         virtual bool            IsMeterEffect() const { return false; }
         virtual bool            IsEmpireMeterEffect() const { return false; }
         virtual bool            IsAppearanceEffect() const { return false; }
         virtual bool            IsSitrepEffect() const { return false; }
         virtual bool            IsConditionalEffect() const { return false; }
+
+        // TODO: source-invariant?
+
         virtual void            SetTopLevelContent(const std::string& content_name) = 0;
         virtual unsigned int    GetCheckSum() const;
 
@@ -142,8 +146,8 @@ namespace Effect {
         virtual ~EffectsGroup();
 
         /** execute all effects in group */
-        void Execute(ScriptingContext& context,
-                     const SourcesEffectsTargetsAndCausesVec& source_effects_targets_causes,
+        void Execute(ScriptingContext& source_context,
+                     const TargetsAndCause& targets_causes,
                      AccountingMap* accounting_map = nullptr,
                      bool only_meter_effects = false,
                      bool only_appearance_effects = false,

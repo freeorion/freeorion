@@ -194,14 +194,16 @@ EffectsGroup::~EffectsGroup()
 {}
 
 void EffectsGroup::Execute(ScriptingContext& context,
-                           const SourcesEffectsTargetsAndCausesVec& source_effects_targets_causes,
+                           const TargetsAndCause& targets_causes,
                            AccountingMap* accounting_map,
                            bool only_meter_effects, bool only_appearance_effects,
                            bool include_empire_meter_effects,
                            bool only_generate_sitrep_effects) const
 {
+    if (!context.source)    // todo: move into loop and check only when an effect is source-variant
+        WarnLogger() << "EffectsGroup being executed without a defined source object";
+
     // execute each effect of the group one by one, unless filtered by flags
-    ScriptingContext source_context{context};
     for (auto& effect : m_effects) {
         // skip excluded effect types
         if (   (only_appearance_effects       && !effect->IsAppearanceEffect())
@@ -210,19 +212,10 @@ void EffectsGroup::Execute(ScriptingContext& context,
             || (only_generate_sitrep_effects  && !effect->IsSitrepEffect()))
         { continue; }
 
-        // execute effect separately for every source and target set
-        for (auto& source_targets_entry : source_effects_targets_causes) {
-            if (source_targets_entry.first.effects_group != this)
-                WarnLogger() << "EffectsGroup::Execute executing on a source-targets-causes vector with an effect that is not this effectsgroup";
-
-            source_context.source = context.ContextObjects().get(source_targets_entry.first.source_object_id);
-            auto& target_set{source_targets_entry.second.target_set};
-            const auto& effect_cause{source_targets_entry.second.effect_cause};
-
-            effect->Execute(source_context, target_set, accounting_map, effect_cause,
-                            only_meter_effects, only_appearance_effects,
-                            include_empire_meter_effects, only_generate_sitrep_effects);
-        }
+        effect->Execute(context, targets_causes.target_set, accounting_map,
+                        targets_causes.effect_cause,
+                        only_meter_effects, only_appearance_effects,
+                        include_empire_meter_effects, only_generate_sitrep_effects);
     }
 }
 

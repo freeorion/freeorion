@@ -503,7 +503,7 @@ void Universe::ApplyAllEffectsAndUpdateMeters(bool do_accounting) {
     // cache all activation and scoping condition results before applying
     // Effects, since the application of these Effects may affect the activation
     // and scoping evaluations
-    Effect::SourcesEffectsTargetsAndCausesVec source_effects_targets_causes;
+    std::map<int, Effect::SourcesEffectsTargetsAndCausesVec> source_effects_targets_causes;
     GetEffectsAndTargets(source_effects_targets_causes, false);
 
     // revert all current meter values (which are modified by effects) to
@@ -532,7 +532,7 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_i
     }
     // cache all activation and scoping condition results before applying Effects, since the application of
     // these Effects may affect the activation and scoping evaluations
-    Effect::SourcesEffectsTargetsAndCausesVec source_effects_targets_causes;
+    std::map<int, Effect::SourcesEffectsTargetsAndCausesVec> source_effects_targets_causes;
     GetEffectsAndTargets(source_effects_targets_causes, object_ids, true);
 
     std::vector<std::shared_ptr<UniverseObject>> objects = m_objects.find(object_ids);
@@ -560,7 +560,7 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(bool do_accounting) {
         do_accounting = GetOptionsDB().Get<bool>("effects.accounting.enabled");
     }
 
-    Effect::SourcesEffectsTargetsAndCausesVec source_effects_targets_causes;
+    std::map<int, Effect::SourcesEffectsTargetsAndCausesVec> source_effects_targets_causes;
     GetEffectsAndTargets(source_effects_targets_causes, true);
 
     TraceLogger(effects) << "Universe::ApplyMeterEffectsAndUpdateMeters resetting...";
@@ -594,7 +594,7 @@ void Universe::ApplyAppearanceEffects(const std::vector<int>& object_ids) {
     // cache all activation and scoping condition results before applying
     // Effects, since the application of these Effects may affect the
     // activation and scoping evaluations
-    Effect::SourcesEffectsTargetsAndCausesVec source_effects_targets_causes;
+    std::map<int, Effect::SourcesEffectsTargetsAndCausesVec> source_effects_targets_causes;
     GetEffectsAndTargets(source_effects_targets_causes, object_ids, false);
     ExecuteEffects(source_effects_targets_causes, false, false, true);
 }
@@ -605,7 +605,7 @@ void Universe::ApplyAppearanceEffects() {
     // cache all activation and scoping condition results before applying
     // Effects, since the application of Effects in general (even if not these
     // particular Effects) may affect the activation and scoping evaluations
-    Effect::SourcesEffectsTargetsAndCausesVec source_effects_targets_causes;
+    std::map<int, Effect::SourcesEffectsTargetsAndCausesVec> source_effects_targets_causes;
     GetEffectsAndTargets(source_effects_targets_causes, false);
     ExecuteEffects(source_effects_targets_causes, false, false, true);
 }
@@ -616,7 +616,7 @@ void Universe::ApplyGenerateSitRepEffects() {
     // cache all activation and scoping condition results before applying
     // Effects, since the application of Effects in general (even if not these
     // particular Effects) may affect the activation and scoping evaluations
-    Effect::SourcesEffectsTargetsAndCausesVec source_effects_targets_causes;
+    std::map<int, Effect::SourcesEffectsTargetsAndCausesVec> source_effects_targets_causes;
     GetEffectsAndTargets(source_effects_targets_causes, false);
     ExecuteEffects(source_effects_targets_causes, false, false, false, false, true);
 }
@@ -838,7 +838,7 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, boo
 
     // cache all activation and scoping condition results before applying Effects, since the application of
     // these Effects may affect the activation and scoping evaluations
-    Effect::SourcesEffectsTargetsAndCausesVec source_effects_targets_causes;
+    std::map<int, Effect::SourcesEffectsTargetsAndCausesVec> source_effects_targets_causes;
     GetEffectsAndTargets(source_effects_targets_causes, objects_vec, true);
 
     // Apply and record effect meter adjustments
@@ -1052,14 +1052,14 @@ namespace {
     }
 } // namespace
 
-void Universe::GetEffectsAndTargets(Effect::SourcesEffectsTargetsAndCausesVec& source_effects_targets_causes,
+void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsAndCausesVec>& source_effects_targets_causes,
                                     bool only_meter_effects) const
 {
     source_effects_targets_causes.clear();
     GetEffectsAndTargets(source_effects_targets_causes, std::vector<int>(), only_meter_effects);
 }
 
-void Universe::GetEffectsAndTargets(Effect::SourcesEffectsTargetsAndCausesVec& source_effects_targets_causes,
+void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsAndCausesVec>& source_effects_targets_causes,
                                     const std::vector<int>& target_object_ids,
                                     bool only_meter_effects) const
 {
@@ -1342,18 +1342,23 @@ void Universe::GetEffectsAndTargets(Effect::SourcesEffectsTargetsAndCausesVec& s
                                              thread_pool, n);
     }
 
+
+    // wait for evaluation of conditions dispatched above
     type_timer.EnterSection("eval waiting");
     thread_pool.join();
 
-    // add results to source_effects_targets_causes in issue order
-    // FIXME: each job is an effectsgroup, and we need that separation for execution anyway, so maintain it here instead of merging.
+
+    // add results to source_effects_targets_causes, sorted by effect priority, then in issue order
     type_timer.EnterSection("reordering");
-    for (const auto& job_results : source_effects_targets_causes_reorder_buffer)
-        for (const auto& result : job_results)
-            source_effects_targets_causes.push_back(result);   // looping over source_effects_targets_causes_reorder_buffer to sum up the sizes of job_results in order to reserve space in source_effects_targets_causes was slower than just push_back into source_effects_targets_causes and letting it reallocate itself as needed, in my test
+    for (const auto& job_results : source_effects_targets_causes_reorder_buffer) {
+        for (const auto& result : job_results) {
+            int priority = result.first.effects_group->Priority();
+            source_effects_targets_causes[priority].push_back(result);
+        }
+    }
 }
 
-void Universe::ExecuteEffects(const Effect::SourcesEffectsTargetsAndCausesVec& source_effects_targets_causes,
+void Universe::ExecuteEffects(std::map<int, Effect::SourcesEffectsTargetsAndCausesVec>& source_effects_targets_causes,
                               bool update_effect_accounting,
                               bool only_meter_effects/* = false*/,
                               bool only_appearance_effects/* = false*/,
@@ -1363,36 +1368,22 @@ void Universe::ExecuteEffects(const Effect::SourcesEffectsTargetsAndCausesVec& s
     ScopedTimer timer("Universe::ExecuteEffects", true);
 
     m_marked_destroyed.clear();
-    std::map<std::string, std::set<int>> executed_nonstacking_effects;
+    std::map<std::string, std::set<int>> executed_nonstacking_effects;  // for each stacking group, which objects have had effects executed on them
 
-    // grouping targets causes by effects group
-    // sorting by effects group has already been done in GetEffectsAndTargets()
-    // FIXME: GetEffectsAndTargets already produces this separation, exploit that
-    std::map<int, std::vector<std::pair<const Effect::EffectsGroup*, Effect::SourcesEffectsTargetsAndCausesVec>>>
-        dispatched_source_effects_targets_causes;
 
-    {
-        const Effect::EffectsGroup* last_effects_group = nullptr;
-        Effect::SourcesEffectsTargetsAndCausesVec* group_source_effects_targets_causes = nullptr;
+    // within each priority group, execute effects in dispatch order
+    for (auto& priority_group : source_effects_targets_causes) {
+        int priority = priority_group.first;
+        Effect::SourcesEffectsTargetsAndCausesVec& setc{priority_group.second};
 
-        for (const auto& targets_cause : source_effects_targets_causes) {
-            const Effect::SourcedEffectsGroup& sourced_effects_group = targets_cause.first;
-            const Effect::EffectsGroup* effects_group = sourced_effects_group.effects_group;
+        // construct a source context, which is updated for each entry in sources-effects-targets.
+        // execute each effectsgroup on its target set
+        ScriptingContext source_context;
+        for (std::pair<Effect::SourcedEffectsGroup, Effect::TargetsAndCause>& effect_group_entry : setc) {
+            Effect::TargetsAndCause& targets_and_cause{effect_group_entry.second};
+            Effect::TargetSet& target_set{targets_and_cause.target_set};
 
-            if (effects_group != last_effects_group) {
-                last_effects_group = effects_group;
-                dispatched_source_effects_targets_causes[effects_group->Priority()].push_back(
-                    {effects_group, Effect::SourcesEffectsTargetsAndCausesVec()});
-                group_source_effects_targets_causes = &dispatched_source_effects_targets_causes[effects_group->Priority()].back().second;
-            }
-            group_source_effects_targets_causes->push_back(targets_cause);
-        }
-    }
-
-    // execute each effects group one by one
-    for (auto& priority_group : dispatched_source_effects_targets_causes) {
-        for (auto& effect_group_entry : priority_group.second) {
-            const Effect::EffectsGroup* effects_group = effect_group_entry.first;
+            const Effect::EffectsGroup* effects_group = effect_group_entry.first.effects_group;
 
             if (only_meter_effects && !effects_group->HasMeterEffects())
                 continue;
@@ -1401,62 +1392,44 @@ void Universe::ExecuteEffects(const Effect::SourcesEffectsTargetsAndCausesVec& s
             if (only_generate_sitrep_effects && !effects_group->HasSitrepEffects())
                 continue;
 
-            Effect::SourcesEffectsTargetsAndCausesVec& group_source_effects_targets_causes = effect_group_entry.second;
-            std::string stacking_group = effects_group->StackingGroup();
-            ScopedTimer update_timer(
-                "Universe::ExecuteEffects effgrp (" + effects_group->AccountingLabel() + ") from "
-                + std::to_string(group_source_effects_targets_causes.size()) + " sources"
-            );
+            const std::string& stacking_group{effects_group->StackingGroup()};
 
-            // if other EffectsGroups or sources with the same stacking group have affected some of the
-            // targets in the scope of the current EffectsGroup, skip them
-            // and add the remaining objects affected by it to executed_nonstacking_effects
+            // 1) If other EffectsGroups or sources with the same stacking group
+            // have acted on some of the targets in the scope of the current
+            // EffectsGroup, skip them.
+            // 2) Add remaining objects to executed_nonstacking_effects, as effects
+            // with the starting group are now acting on them
             if (!stacking_group.empty()) {
                 std::set<int>& non_stacking_targets = executed_nonstacking_effects[stacking_group];
 
-                for (auto targets_it = group_source_effects_targets_causes.begin();
-                     targets_it != group_source_effects_targets_causes.end();)
-                {
-                    Effect::TargetsAndCause& targets_and_cause = targets_it->second;
-                    Effect::TargetSet& targets = targets_and_cause.target_set;
+                // this is a set difference/union algorithm:
+                // targets              -= non_stacking_targets
+                // non_stacking_targets += targets
+                for (auto object_it = target_set.begin(); object_it != target_set.end();) {
+                    int object_id = (*object_it)->ID();
+                    auto it = non_stacking_targets.find(object_id);
 
-                    // this is a set difference/union algorithm:
-                    // targets              -= non_stacking_targets
-                    // non_stacking_targets += targets
-                    for (auto object_it = targets.begin();
-                         object_it != targets.end();)
-                    {
-                        int object_id = (*object_it)->ID();
-                        auto it = non_stacking_targets.find(object_id);
-
-                        if (it != non_stacking_targets.end()) {
-                            *object_it = targets.back();
-                            targets.pop_back();
-                        } else {
-                            non_stacking_targets.insert(object_id);
-                            ++object_it;
-                        }
-                    }
-
-                    if (targets.empty()) {
-                        *targets_it = group_source_effects_targets_causes.back();
-                        group_source_effects_targets_causes.pop_back();
+                    if (it != non_stacking_targets.end()) {
+                        *object_it = target_set.back();
+                        target_set.pop_back();
                     } else {
-                        ++targets_it;
+                        non_stacking_targets.insert(object_id);
+                        ++object_it;
                     }
                 }
             }
 
-            if (group_source_effects_targets_causes.empty())
+            // were all objects in target set removed due to stacking? If so, skip to next effect / source / target set
+            if (target_set.empty())
                 continue;
 
             TraceLogger(effects) << "\n\n * * * * * * * * * * * (new effects group log entry)(" << effects_group->TopLevelContent()
                                  << " " << effects_group->AccountingLabel() << " " << effects_group->StackingGroup() << ")";
 
             // execute Effects in the EffectsGroup
-            ScriptingContext context{m_objects};
-            effects_group->Execute(context,
-                                   group_source_effects_targets_causes,
+            source_context.source = source_context.ContextObjects().get(effect_group_entry.first.source_object_id);
+            effects_group->Execute(source_context,
+                                   targets_and_cause,
                                    update_effect_accounting ? &m_effect_accounting_map : nullptr,
                                    only_meter_effects,
                                    only_appearance_effects,
@@ -1472,7 +1445,6 @@ void Universe::ExecuteEffects(const Effect::SourcesEffectsTargetsAndCausesVec& s
     // but, do now collect info about source objects for destruction, to sure
     // their info is available even if they are destroyed by the upcoming effect
     // destruction
-
     for (auto& entry : m_marked_destroyed) {
         int obj_id = entry.first;
         auto obj = m_objects.get(obj_id);

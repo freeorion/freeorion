@@ -42,8 +42,8 @@ namespace Condition {
 
 namespace Effect {
     struct AccountingInfo;
-    struct TargetsAndCause;
-    struct SourcedEffectsGroup;
+    struct TargetsAndCause;     // struct TargetsAndCause { TargetSet target_set; EffectCause effect_cause; };
+    struct SourcedEffectsGroup; // struct SourcedEffectsGroup { int source_object_id; const EffectsGroup* effects_group; };
     class EffectsGroup;
     typedef std::vector<std::shared_ptr<UniverseObject>> TargetSet;
     typedef std::unordered_map<int, boost::container::flat_map<MeterType, std::vector<AccountingInfo>>> AccountingMap;
@@ -465,14 +465,14 @@ private:
 
     /** Clears \a source_effects_targets_causes, and then populates with all
       * EffectsGroups and their targets in the known universe. */
-    void GetEffectsAndTargets(Effect::SourcesEffectsTargetsAndCausesVec& source_effects_targets_causes,
+    void GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsAndCausesVec>& source_effects_targets_causes,
                               bool only_meter_effects = false) const;
 
     /** Removes entries in \a source_effects_targets_causes about effects groups acting
       * on objects in \a target_objects, and then repopulates for EffectsGroups
       * that act on at least one of the objects in \a target_objects. If
       * \a target_objects is empty then default target candidates will be used. */
-    void GetEffectsAndTargets(Effect::SourcesEffectsTargetsAndCausesVec& source_effects_targets_causes,
+    void GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsAndCausesVec>& source_effects_targets_causes,
                               const std::vector<int>& target_objects,
                               bool only_meter_effects = false) const;
 
@@ -484,7 +484,7 @@ private:
       * executed.  This is useful on server or clients to update meter
       * values after the rest of effects (including non-meter effects) have
       * been executed. */
-    void ExecuteEffects(const Effect::SourcesEffectsTargetsAndCausesVec& source_effects_targets_causes,
+    void ExecuteEffects(std::map<int, Effect::SourcesEffectsTargetsAndCausesVec>& source_effects_targets_causes,
                         bool update_effect_accounting,
                         bool only_meter_effects = false,
                         bool only_appearance_effects = false,
