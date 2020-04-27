@@ -2583,7 +2583,7 @@ GAME_MENU_LOAD
 Charger
 
 GAME_MENU_RESIGN
-Quitter
+Quitter vers Menu
 
 GAME_MENU_CONCEDE
 Capituler
@@ -13418,10 +13418,10 @@ FT_HANGAR_1_DESC
 Système de stockage pour chasseurs faiblement armés. Peut seulement attaquer les chasseurs ennemis. Lancement plus rapide: une [[shippart FT_BAY_1]] peut lancer simultanément tous les chasseurs d'un [[shippart FT_HANGAR_1]].
 
 FT_HANGAR_2
-Hangar Chasseur
+Hangar Chasseur d'Attaque
 
 FT_HANGAR_2_FIGHTER
-Chasseur
+Chasseur d'Attaque
 
 FT_HANGAR_2_DESC
 Système de stockage pour chasseurs moyennement armés. Peut attaquer les astronefs et chasseurs ennemis.
