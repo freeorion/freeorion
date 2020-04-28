@@ -48,6 +48,9 @@ PROT_FOCUS_MULTIPLIER = 2.0
 TECH_COST_MULTIPLIER = 2.0
 FOCUS_CHANGE_PENALTY = 1
 
+SHIP_WEAPON_DAMAGE_FACTOR = fo.getGameRules().getDouble("RULE_SHIP_WEAPON_DAMAGE_FACTOR")
+FIGHTER_DAMAGE_FACTOR = fo.getGameRules().getDouble("RULE_FIGHTER_DAMAGE_FACTOR")
+
 # Colonization details
 COLONY_POD_COST = 120  # TODO Query directly from part
 OUTPOST_POD_COST = 50  # TODO Query directly from part
@@ -371,16 +374,17 @@ FUEL_UPGRADE_TECHS = frozenset(tech_name for _dict in (FUEL_TANK_UPGRADE_DICT, )
 
 # <editor-fold desc="Weapon techs">
 # TODO (Morlic): Consider using only 1 dict with (capacity, secondaryStat) tuple as entries
-WEAPON_UPGRADE_DICT = {
-    # "PARTNAME": tuple((tech_name, dmg_upgrade), (tech_name2, dmg_upgrade2), ...)
-    "SR_WEAPON_0_1": (),
-    "SR_WEAPON_1_1": tuple(("SHP_WEAPON_1_%d" % i, 1) for i in [2, 3, 4]),
-    "SR_WEAPON_2_1": tuple(("SHP_WEAPON_2_%d" % i, 2) for i in [2, 3, 4]),
-    "SR_WEAPON_3_1": tuple(("SHP_WEAPON_3_%d" % i, 3) for i in [2, 3, 4]),
-    "SR_WEAPON_4_1": tuple(("SHP_WEAPON_4_%d" % i, 5) for i in [2, 3, 4]),
-    "SR_ARC_DISRUPTOR": tuple(("SHP_WEAPON_ARC_DISRUPTOR_%d" % i, i) for i in [2, 3]),
-    "SR_SPINAL_ANTIMATTER": (),
-}
+WEAPON_UPGRADE_DICT = {part_name: tuple({tech_name: damage * SHIP_WEAPON_DAMAGE_FACTOR for tech_name, damage, in techs_damage.items()}.items()) for part_name, techs_damage in {
+    # Output "PARTNAME": tuple((tech_name, dmg_upgrade), (tech_name2, dmg_upgrade2), ...)
+    #  Input "PARTNAME": {tech_name: dmg_upgrade, tech_name2, dmg_upgrade2, ...}
+    "SR_WEAPON_0_1": {},
+    "SR_WEAPON_1_1": {"SHP_WEAPON_1_%d" % i: 1 for i in [2, 3, 4]},
+    "SR_WEAPON_2_1": {"SHP_WEAPON_2_%d" % i: 2 for i in [2, 3, 4]},
+    "SR_WEAPON_3_1": {"SHP_WEAPON_3_%d" % i: 3 for i in [2, 3, 4]},
+    "SR_WEAPON_4_1": {"SHP_WEAPON_4_%d" % i: 5 for i in [2, 3, 4]},
+    "SR_ARC_DISRUPTOR": {"SHP_WEAPON_ARC_DISRUPTOR_%d" % i: i for i in [2, 3]},
+    "SR_SPINAL_ANTIMATTER": {},
+}.items()}
 
 WEAPON_ROF_UPGRADE_DICT = {
     # "PARTNAME": tuple((tech_name, rof_upgrade), (tech_name2, rof_upgrade2), ...)
@@ -393,13 +397,14 @@ WEAPON_ROF_UPGRADE_DICT = {
     "SR_SPINAL_ANTIMATTER": (),
 }
 
-FIGHTER_DAMAGE_UPGRADE_DICT = {
-    # "PARTNAME": tuple((tech_name, dmg_upgrade), (tech_name2, dmg_upgrade2), ...)
-    "FT_HANGAR_1": (("SHP_FIGHTERS_2", 0), ("SHP_FIGHTERS_3", 0), ("SHP_FIGHTERS_4", 0)),
-    "FT_HANGAR_2": (("SHP_FIGHTERS_2", 2), ("SHP_FIGHTERS_3", 2), ("SHP_FIGHTERS_4", 2)),
-    "FT_HANGAR_3": (("SHP_FIGHTERS_2", 3), ("SHP_FIGHTERS_3", 3), ("SHP_FIGHTERS_4", 3)),
-    "FT_HANGAR_4": (("SHP_FIGHTERS_2", 6), ("SHP_FIGHTERS_3", 6), ("SHP_FIGHTERS_4", 6)),
-}
+FIGHTER_DAMAGE_UPGRADE_DICT = {part_name: tuple({tech_name: damage * FIGHTER_DAMAGE_FACTOR for tech_name, damage, in techs_damage.items()}.items()) for part_name, techs_damage in {
+    # Output "PARTNAME": tuple((tech_name, dmg_upgrade), (tech_name2, dmg_upgrade2), ...)
+    #  Input "PARTNAME": {tech_name: dmg_upgrade, tech_name2: dmg_upgrade2, ...}
+    "FT_HANGAR_1": {"SHP_FIGHTERS_2": 0, "SHP_FIGHTERS_3": 0, "SHP_FIGHTERS_4": 0},
+    "FT_HANGAR_2": {"SHP_FIGHTERS_2": 2, "SHP_FIGHTERS_3": 2, "SHP_FIGHTERS_4": 2},
+    "FT_HANGAR_3": {"SHP_FIGHTERS_2": 3, "SHP_FIGHTERS_3": 3, "SHP_FIGHTERS_4": 3},
+    "FT_HANGAR_4": {"SHP_FIGHTERS_2": 6, "SHP_FIGHTERS_3": 6, "SHP_FIGHTERS_4": 6},
+}.items()}
 
 FIGHTER_CAPACITY_UPGRADE_DICT = {
     # "PARTNAME": tuple((tech_name, capacity_upgrade), (tech_name2, capacity_upgrade2), ...)
