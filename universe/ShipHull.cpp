@@ -14,7 +14,7 @@ namespace {
         rules.Add<double>("RULE_SHIP_SPEED_FACTOR", "RULE_SHIP_SPEED_FACTOR_DESC",
                           "BALANCE", 1.0, true, RangedValidator<double>(0.1, 10.0));
         rules.Add<double>("RULE_SHIP_STRUCTURE_FACTOR", "RULE_SHIP_STRUCTURE_FACTOR_DESC",
-                          "BALANCE", 1.0, true, RangedValidator<double>(0.1, 10.0));
+                          "BALANCE", 8.0, true, RangedValidator<double>(0.1, 80.0));
     }
     bool temp_bool = RegisterGameRules(&AddRules);
 
