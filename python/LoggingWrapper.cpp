@@ -50,7 +50,6 @@ namespace {
     void PythonLogger(const std::string& msg,
                       const LogLevel log_level,
                       const std::string& filename,
-                      // const std::string& function_name,
                       const std::string& linenostr)
     {
         int lineno{0};
@@ -71,13 +70,12 @@ namespace {
 
     template<LogLevel log_level>
     void PythonLoggerWrapper(const std::string& msg, const std::string& filename,
-                             const std::string& function_name, const std::string& lineno)
+                             const std::string& lineno)
     {
-        (void)function_name;
         static std::stringstream log_stream("");
         send_to_log(log_stream, msg,
                     std::bind(&PythonLogger, std::placeholders::_1,
-                              log_level, filename, /*function_name,*/ lineno));
+                              log_level, filename, lineno));
     }
 }
 
