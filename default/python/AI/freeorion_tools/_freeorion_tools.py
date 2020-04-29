@@ -10,6 +10,7 @@ import traceback
 from functools import wraps
 from logging import debug, error
 from aistate_interface import get_aistate
+from common.configure_logging import FOLogFormatter
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 
@@ -131,8 +132,8 @@ class ConsoleLogHandler(logging.Handler):
 console_handler = ConsoleLogHandler()
 
 console_handler.setFormatter(
-    logging.Formatter(RED % ('%s : %%(filename)s:%%(funcName)s():%%(lineno)d  - %%(message)s'
-                             % fo.userString('AI_ERROR_MSG'))))
+    FOLogFormatter(RED % ('%s : %%(filename)s:%%(funcName)s():%%(lineno)d  - %%(message)s'
+                          % fo.userString('AI_ERROR_MSG'))))
 
 console_handler.setLevel(logging.ERROR)
 

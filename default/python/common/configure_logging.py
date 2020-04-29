@@ -157,16 +157,24 @@ class _LoggerHandler(logging.Handler):
         }[level]
 
     def emit(self, record):
-        record.message = record.getMessage()
-        msg = str(record.message) + "\n"
-        if record.exc_info:
-            if not isinstance(record.exc_info, tuple):
-                # record.exc_info is not a local variable and will be garbage collected when record
-                # is garbage collected by the logging library
-                record.exc_info = sys.exc_info()
-            traceback_msg = "".join(traceback.format_exception(*record.exc_info))
-            msg += traceback_msg
+        msg = self.format(record)
         self.logger(msg, str(record.filename), record.lineno)
+
+
+class FOLogFormatter(logging.Formatter):
+
+    def formatException(self, ei):
+        exc_text = "".join(traceback.format_exception(*ei))
+        tb = ei[2]
+        if not tb:
+            return exc_text
+        while tb.tb_next:
+            tb = tb.tb_next
+
+        exc_text += "Local context: "
+        exc_text += str(tb.tb_frame.f_locals)
+        exc_text += "\n"
+        return exc_text
 
 
 class _SingleLevelFilter(logging.Filter):
@@ -183,6 +191,7 @@ def _create_narrow_handler(level):
     """Create a handler for logger that forwards a single level of log
     to the appropriate stream in the C++ app."""
     h = _LoggerHandler(level)
+    h.setFormatter(FOLogFormatter())
     h.addFilter(_SingleLevelFilter(level))
     h.setLevel(level)
     return h
