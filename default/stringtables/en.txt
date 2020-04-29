@@ -13887,7 +13887,7 @@ SH_ROBOTIC_INTERFACE_SHIELDS
 Robotic Interface: Shields
 
 SH_ROBOTIC_INTERFACE_SHIELDS_DESC
-'''Robotic Interface: Shields have a shield strength of roughly 1 shield strength per other Robotic Interface: Shielded ships at the same location, though with diminishing returns at higher numbers. The effect is capped at 20 shield strength, only applies to ships crewed by [[encyclopedia ROBOTIC_SPECIES_TITLE]] species and can only be placed in a [[encyclopedia HULL_LINE_ROBOTIC]] ship.
+'''Robotic Interface: Shields have a shield strength of roughly 6 shield strength per other Robotic Interface: Shielded ships at the same location, though with diminishing returns at higher numbers. The effect is capped at 20 shield strength, only applies to ships crewed by [[encyclopedia ROBOTIC_SPECIES_TITLE]] species and can only be placed in a [[encyclopedia HULL_LINE_ROBOTIC]] ship.
 
 Robotic species have an inherent ability to network together and thereby substantially increase their sheer computational power. Robotic Interface: Shields use that network to calculate the trajectory of incoming fire and applying shield strength at the point of impact.
 '''

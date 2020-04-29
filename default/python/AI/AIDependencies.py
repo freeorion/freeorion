@@ -911,11 +911,11 @@ HULL_EFFECTS = {
     },
     "SH_MINIASTEROID_SWARM": {
         ASTEROID_STEALTH: 20,
-        SHIELDS: 5,
+        SHIELDS: 5 * SHIP_WEAPON_DAMAGE_FACTOR,
     },
     "SH_SCATTERED_ASTEROID": {
         ASTEROID_STEALTH: 40,
-        SHIELDS: 3,
+        SHIELDS: 3 * SHIP_WEAPON_DAMAGE_FACTOR,
     },
     # Organic line
     "SH_ORGANIC": {

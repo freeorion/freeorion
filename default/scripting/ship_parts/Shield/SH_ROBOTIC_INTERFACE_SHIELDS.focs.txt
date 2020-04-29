@@ -25,7 +25,7 @@ Part
             activation = ([[ROBOTIC_SHIELD_EFFECT]] >= [[BEST_SHIELD_EFFECT]])
             stackinggroup = "ROBOTIC_SHIELD_PART_STACK"
             accountinglabel = "ROBOTIC_INTERFACE_EFFECT"
-            effects = SetMaxShield value = Value - [[BEST_SHIELD_EFFECT]] + [[ROBOTIC_SHIELD_EFFECT]]
+            effects = SetMaxShield value = Value - [[BEST_SHIELD_EFFECT]] + ( [[ROBOTIC_SHIELD_EFFECT]] * (GameRule name = "RULE_SHIP_WEAPON_DAMAGE_FACTOR") )
     icon = "icons/ship_parts/robotic-interface-shields.png"
 
 

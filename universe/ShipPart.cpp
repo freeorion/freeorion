@@ -211,7 +211,7 @@ void ShipPart::Init(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects
             break;
         }
         case PC_SHIELD:
-            m_effects.push_back(IncreaseMeter(METER_MAX_SHIELD,     m_capacity));
+            m_effects.push_back(IncreaseMeter(METER_MAX_SHIELD,     m_capacity,     "RULE_SHIP_WEAPON_DAMAGE_FACTOR"));
             break;
         case PC_DETECTION:
             m_effects.push_back(IncreaseMeter(METER_DETECTION,      m_capacity));
@@ -265,6 +265,7 @@ float ShipPart::Capacity() const {
         return m_capacity * GetGameRules().Get<double>("RULE_SHIP_STRUCTURE_FACTOR");
         break;
     case PC_DIRECT_WEAPON:
+    case PC_SHIELDS:
         return m_capacity * GetGameRules().Get<double>("RULE_SHIP_WEAPON_DAMAGE_FACTOR");
         break;
     case PC_SPEED:

@@ -8,7 +8,7 @@ STANDARD_SHIP_SHIELDS
             ]
             accountinglabel = "DIFFICULTY"
             priority = [[DEFAULT_PRIORITY]]
-            effects = SetMaxShield value = Value + 1
+            effects = SetMaxShield value = Value + (1* (GameRule name = "RULE_SHIP_WEAPON_DAMAGE_FACTOR"))
             
         EffectsGroup // increase to max when not in battle
             scope = Source
@@ -30,5 +30,5 @@ EffectsGroup
                 Source
                 Ship
             ]
-            effects = SetMaxShield value = Value + 1
+            effects = SetMaxShield value = Value + (1 * (GameRule name = "RULE_SHIP_WEAPON_DAMAGE_FACTOR"))
 '''
