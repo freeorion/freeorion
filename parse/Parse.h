@@ -17,7 +17,7 @@
 class BuildingType;
 class FieldType;
 class FleetPlan;
-class HullType;
+class ShipHull;
 class MonsterFleetPlan;
 class ShipPart;
 struct ParsedShipDesign;
@@ -54,7 +54,7 @@ namespace parse {
     FO_PARSE_API std::vector<UnlockableItem> items(const boost::filesystem::path& path);
     FO_PARSE_API std::vector<UnlockableItem> starting_buildings(const boost::filesystem::path& path);
     FO_PARSE_API std::map<std::string, std::unique_ptr<ShipPart>> ship_parts(const boost::filesystem::path& path);
-    FO_PARSE_API std::map<std::string, std::unique_ptr<HullType>> ship_hulls(const boost::filesystem::path& path);
+    FO_PARSE_API std::map<std::string, std::unique_ptr<ShipHull>> ship_hulls(const boost::filesystem::path& path);
 
     /** Parse all ship designs in directory \p path, store them with their filename in \p
         design_and_path. If a file exists called ShipDesignOrdering.focs.txt, parse it and

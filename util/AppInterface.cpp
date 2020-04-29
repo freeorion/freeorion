@@ -9,7 +9,7 @@
 #include "../universe/Species.h"
 #include "../universe/ShipDesign.h"
 #include "../universe/ShipPart.h"
-#include "../universe/ShipPartHull.h"
+#include "../universe/ShipHull.h"
 #include "../universe/Tech.h"
 #include "../util/Directories.h"
 #include "../util/GameRules.h"
@@ -90,7 +90,7 @@ void IApp::StartBackgroundParsing() {
         ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/ship_parts").string();
 
     if (fs::exists(rdir / "scripting/ship_hulls"))
-        GetHullTypeManager().SetHullTypes(Pending::StartParsing(parse::ship_hulls, rdir / "scripting/ship_hulls"));
+        GetShipHullManager().SetShipHulls(Pending::StartParsing(parse::ship_hulls, rdir / "scripting/ship_hulls"));
     else
         ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/ship_hulls").string();
 

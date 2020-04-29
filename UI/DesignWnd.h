@@ -56,8 +56,8 @@ public:
     //! Shows @a ship_part in design encyclopedia window
     void ShowShipPartInEncyclopedia(const std::string& ship_part);
 
-    /** Shows \a hull_type in design encyclopedia window */
-    void ShowHullTypeInEncyclopedia(const std::string& hull_type);
+    //! Shows @p ship_hull in design encyclopedia window
+    void ShowShipHullInEncyclopedia(const std::string& ship_hull);
 
     /** Shows ship design with id \a design_id in design encyclopedia window */
     void ShowShipDesignInEncyclopedia(int design_id);

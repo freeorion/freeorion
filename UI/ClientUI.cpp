@@ -26,7 +26,7 @@
 #include "../universe/Ship.h"
 #include "../universe/ShipDesign.h"
 #include "../universe/ShipPart.h"
-#include "../universe/ShipPartHull.h"
+#include "../universe/ShipHull.h"
 #include "../universe/Tech.h"
 #include "../universe/Special.h"
 #include "../universe/Species.h"
@@ -305,7 +305,7 @@ std::shared_ptr<GG::Texture> ClientUI::PartIcon(const std::string& part_name) {
 }
 
 std::shared_ptr<GG::Texture> ClientUI::HullTexture(const std::string& hull_name) {
-    const HullType* hull = GetHullType(hull_name);
+    const ShipHull* hull = GetShipHull(hull_name);
     std::string texture_name;
     if (hull) {
         texture_name = hull->Graphic();
@@ -318,7 +318,7 @@ std::shared_ptr<GG::Texture> ClientUI::HullTexture(const std::string& hull_name)
 }
 
 std::shared_ptr<GG::Texture> ClientUI::HullIcon(const std::string& hull_name) {
-    const HullType* hull = GetHullType(hull_name);
+    const ShipHull* hull = GetShipHull(hull_name);
     std::string texture_name;
     if (hull) {
         texture_name = hull->Icon();
@@ -878,7 +878,7 @@ bool ClientUI::ZoomToContent(const std::string& name, bool reverse_lookup/* = fa
             if (boost::iequals(name, UserString(special_name)))
                 return ZoomToSpecial(special_name);
 
-        for (const auto& entry : GetHullTypeManager())
+        for (const auto& entry : GetShipHullManager())
             if (boost::iequals(name, UserString(entry.first)))
                 return ZoomToShipHull(entry.first);
 
@@ -925,9 +925,9 @@ bool ClientUI::ZoomToSpecial(const std::string& special_name) {
 }
 
 bool ClientUI::ZoomToShipHull(const std::string& hull_name) {
-    if (!GetHullType(hull_name))
+    if (!GetShipHull(hull_name))
         return false;
-    GetMapWnd()->ShowHullType(hull_name);
+    GetMapWnd()->ShowShipHull(hull_name);
     return true;
 }
 

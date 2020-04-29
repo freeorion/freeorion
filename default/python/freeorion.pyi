@@ -1675,7 +1675,7 @@ class fieldType(object):
         return str()
 
 
-class hullType(object):
+class shipHull(object):
     @property
     def costTimeLocationInvariant(self):
         return bool()
@@ -2119,7 +2119,7 @@ class shipDesign(object):
         pass
 
     @property
-    def hull_type(self):
+    def ship_hull(self):
         pass
 
     @property
@@ -3939,15 +3939,15 @@ def getGameRules():
     return GameRules()
 
 
-def getHullType(string):
+def getShipHull(string):
     """
-    Returns the ship hull (HullType) with the indicated name (string).
+    Returns the ship hull with the indicated name (string).
 
     :param string:
     :type string: str
-    :rtype: hullType
+    :rtype: shipHull
     """
-    return hullType()
+    return shipHull()
 
 
 def getShipPart(string):

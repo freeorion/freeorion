@@ -25,7 +25,7 @@
 #include "UnlockableItem.h"
 #include "Predicates.h"
 #include "ShipPart.h"
-#include "ShipPartHull.h"
+#include "ShipHull.h"
 #include "ShipDesign.h"
 #include "Special.h"
 #include "Species.h"
@@ -1407,7 +1407,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     // determine ship hulls and parts of each type in a single pass
     // the same ship might be added multiple times if it contains the part multiple times
     // recomputing targets for the same ship and part is kind of silly here, but shouldn't hurt
-    std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>> ships_by_hull_type;
+    std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>> ships_by_ship_hull;
     std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>> ships_by_ship_part;
 
     for (auto& ship : m_objects.all<Ship>()) {
@@ -1417,13 +1417,13 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
         const ShipDesign* ship_design = ship->Design();
         if (!ship_design)
             continue;
-        const HullType* hull_type = GetHullType(ship_design->Hull());
-        if (!hull_type) {
-            ErrorLogger() << "GetEffectsAndTargets couldn't get HullType";
+        const ShipHull* ship_hull = GetShipHull(ship_design->Hull());
+        if (!ship_hull) {
+            ErrorLogger() << "GetEffectsAndTargets couldn't get ShipHull";
             continue;
         }
 
-        ships_by_hull_type[hull_type->Name()].push_back(ship);
+        ships_by_ship_hull[ship_hull->Name()].push_back(ship);
 
         for (const std::string& part : ship_design->Parts()) {
             if (part.empty())
@@ -1439,19 +1439,19 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     }
 
     // enforce hull types effects order
-    for (const auto& entry : GetHullTypeManager()) {
-        const std::string& hull_type_name = entry.first;
-        const auto& hull_type = entry.second;
-        auto ships_by_hull_type_it = ships_by_hull_type.find(hull_type_name);
+    for (const auto& entry : GetShipHullManager()) {
+        const std::string& ship_hull_name = entry.first;
+        const auto& ship_hull = entry.second;
+        auto ships_by_ship_hull_it = ships_by_ship_hull.find(ship_hull_name);
 
-        if (ships_by_hull_type_it == ships_by_hull_type.end())
+        if (ships_by_ship_hull_it == ships_by_ship_hull.end())
             continue;
 
-        for (auto& effects_group : hull_type->Effects()) {
+        for (auto& effects_group : ship_hull->Effects()) {
             targets_causes_reorder_buffer.push_back(Effect::TargetsCauses());
             run_queue.AddWork(new StoreTargetsAndCausesOfEffectsGroupsWorkItem(
-                m_objects, effects_group, ships_by_hull_type_it->second,
-                ECT_SHIP_HULL, hull_type_name,
+                m_objects, effects_group, ships_by_ship_hull_it->second,
+                ECT_SHIP_HULL, ship_hull_name,
                 all_potential_targets, targets_causes_reorder_buffer.back(),
                 cached_source_condition_matches,
                 invariant_condition_matches,
@@ -3155,7 +3155,7 @@ std::map<std::string, unsigned int> CheckSumContent() {
     checksums["BuildingTypeManager"] = GetBuildingTypeManager().GetCheckSum();
     checksums["Encyclopedia"] = GetEncyclopedia().GetCheckSum();
     checksums["FieldTypeManager"] = GetFieldTypeManager().GetCheckSum();
-    checksums["HullTypeManager"] = GetHullTypeManager().GetCheckSum();
+    checksums["ShipHullManager"] = GetShipHullManager().GetCheckSum();
     checksums["ShipPartManager"] = GetShipPartManager().GetCheckSum();
     checksums["PredefinedShipDesignManager"] = GetPredefinedShipDesignManager().GetCheckSum();
     checksums["SpeciesManager"] = GetSpeciesManager().GetCheckSum();

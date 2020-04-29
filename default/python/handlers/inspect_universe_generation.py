@@ -8,15 +8,15 @@ def inspect_universe_generation_interface(*args, **kwargs):
     universe = fo.get_universe()
     empire = fo.get_empire(1)
     rules = fo.getGameRules()
-    hull_type = fo.getHullType('SH_XENTRONIUM')
+    ship_hull = fo.getShipHull('SH_XENTRONIUM')
     species = fo.getSpecies('SP_ABADDONI')
     inspect(
         fo,
         instances=[
             fo.getFieldType('FLD_ION_STORM'),
             fo.getBuildingType('BLD_SHIPYARD_BASE'),
-            hull_type,
-            hull_type.slots,
+            ship_hull,
+            ship_hull.slots,
             fo.getShipPart('SR_WEAPON_1_1'),
             fo.getSpecial('MODERATE_TECH_NATIVES_SPECIAL'),
             species,

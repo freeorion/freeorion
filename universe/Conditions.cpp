@@ -13,7 +13,7 @@
 #include "Ship.h"
 #include "ShipDesign.h"
 #include "ShipPart.h"
-#include "ShipPartHull.h"
+#include "ShipHull.h"
 #include "ObjectMap.h"
 #include "Planet.h"
 #include "System.h"
@@ -9207,7 +9207,7 @@ namespace {
             break;
         }
         case CONTENT_SHIP_HULL: {
-            if (auto h = GetHullType(name1))
+            if (auto h = GetShipHull(name1))
                 return h->Location();
             break;
         }

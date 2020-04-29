@@ -37,7 +37,7 @@ def inspect_universe_generation():
 
     universe_object = universe.getObject(universe.systemIDs[0])
 
-    # fo.getHullType ?
+    # fo.getShipHull ?
 
     species = None
     special = None
@@ -95,7 +95,7 @@ def inspect_universe_generation():
 
     # fo.getBuildingType(string)
     # fo.getFieldType(string)
-    # fo.getHullType(string)
+    # fo.getShipHull(string)
     # fo.getShipPart(string)
     # fo.getShipDesign(number)
     # fo.getSpecial(string)

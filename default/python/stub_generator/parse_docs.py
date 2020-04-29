@@ -46,7 +46,7 @@ normalization_dict = {
     'resourceType': 'resource_type',
     'buildType': 'build_type',
     'field': 'field',
-    'hullType': 'hull_type',
+    'shipHull': 'ship_hull',
     'PlanetSize': 'planet_size',
     'planetSize': 'planet_size',
     'unlockableItemType': 'unlockable_item_type',

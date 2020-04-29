@@ -24,10 +24,10 @@ target_sources(freeorioncommon
         ${CMAKE_CURRENT_LIST_DIR}/Predicates.h
         ${CMAKE_CURRENT_LIST_DIR}/ResourceCenter.h
         ${CMAKE_CURRENT_LIST_DIR}/ScriptingContext.h
-        ${CMAKE_CURRENT_LIST_DIR}/ShipDesign.h
-        ${CMAKE_CURRENT_LIST_DIR}/ShipPart.h
-        ${CMAKE_CURRENT_LIST_DIR}/ShipPartHull.h
         ${CMAKE_CURRENT_LIST_DIR}/Ship.h
+        ${CMAKE_CURRENT_LIST_DIR}/ShipDesign.h
+        ${CMAKE_CURRENT_LIST_DIR}/ShipHull.h
+        ${CMAKE_CURRENT_LIST_DIR}/ShipPart.h
         ${CMAKE_CURRENT_LIST_DIR}/Special.h
         ${CMAKE_CURRENT_LIST_DIR}/Species.h
         ${CMAKE_CURRENT_LIST_DIR}/System.h
@@ -60,6 +60,7 @@ target_sources(freeorioncommon
         ${CMAKE_CURRENT_LIST_DIR}/ResourceCenter.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Ship.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ShipDesign.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ShipHull.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ShipPart.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Special.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Species.cpp

@@ -10,8 +10,8 @@
 #include "../universe/Fleet.h"
 #include "../universe/Ship.h"
 #include "../universe/ShipDesign.h"
+#include "../universe/ShipHull.h"
 #include "../universe/ShipPart.h"
-#include "../universe/ShipPartHull.h"
 #include "../universe/Planet.h"
 #include "../universe/System.h"
 #include "../universe/Tech.h"
@@ -405,10 +405,10 @@ bool Empire::ShipPartAvailable(const std::string& name) const
 { return m_available_ship_parts.count(name); }
 
 const std::set<std::string>& Empire::AvailableShipHulls() const
-{ return m_available_hull_types; }
+{ return m_available_ship_hulls; }
 
 bool Empire::ShipHullAvailable(const std::string& name) const
-{ return m_available_hull_types.count(name); }
+{ return m_available_ship_hulls.count(name); }
 
 const ProductionQueue& Empire::GetProductionQueue() const
 { return m_production_queue; }
@@ -618,7 +618,7 @@ void Empire::Eliminate() {
     m_production_queue.clear();
     // m_available_building_types;
     // m_available_ship_parts;
-    // m_available_hull_types;
+    // m_available_ship_hulls;
     // m_explored_systems;
     // m_known_ship_designs;
     m_sitrep_entries.clear();
@@ -1396,7 +1396,7 @@ void Empire::UnlockItem(const UnlockableItem& item) {
         AddShipPart(item.name);
         break;
     case UIT_SHIP_HULL:
-        AddHullType(item.name);
+        AddShipHull(item.name);
         break;
     case UIT_SHIP_DESIGN:
         AddShipDesign(GetPredefinedShipDesignManager().GetDesignID(item.name));
@@ -1435,15 +1435,15 @@ void Empire::AddShipPart(const std::string& name) {
     AddSitRepEntry(CreateShipPartUnlockedSitRep(name));
 }
 
-void Empire::AddHullType(const std::string& name) {
-    const HullType* hull_type = GetHullType(name);
-    if (!hull_type) {
-        ErrorLogger() << "Empire::AddHullType given an invalid hull type name: " << name;
+void Empire::AddShipHull(const std::string& name) {
+    const ShipHull* ship_hull = GetShipHull(name);
+    if (!ship_hull) {
+        ErrorLogger() << "Empire::AddShipHull given an invalid hull type name: " << name;
         return;
     }
-    if (!hull_type->Producible())
+    if (!ship_hull->Producible())
         return;
-    m_available_hull_types.insert(name);
+    m_available_ship_hulls.insert(name);
     AddSitRepEntry(CreateShipHullUnlockedSitRep(name));
 }
 
@@ -1547,7 +1547,7 @@ void Empire::LockItem(const UnlockableItem& item) {
         RemoveShipPart(item.name);
         break;
     case UIT_SHIP_HULL:
-        RemoveHullType(item.name);
+        RemoveShipHull(item.name);
         break;
     case UIT_SHIP_DESIGN:
         RemoveShipDesign(GetPredefinedShipDesignManager().GetDesignID(item.name));
@@ -1573,11 +1573,11 @@ void Empire::RemoveShipPart(const std::string& name) {
     m_available_ship_parts.erase(name);
 }
 
-void Empire::RemoveHullType(const std::string& name) {
-    auto it = m_available_hull_types.find(name);
-    if (it == m_available_hull_types.end())
-        DebugLogger() << "Empire::RemoveHullType asked to remove hull type " << name << " that was no available to this empire";
-    m_available_hull_types.erase(name);
+void Empire::RemoveShipHull(const std::string& name) {
+    auto it = m_available_ship_hulls.find(name);
+    if (it == m_available_ship_hulls.end())
+        DebugLogger() << "Empire::RemoveShipHull asked to remove hull type " << name << " that was no available to this empire";
+    m_available_ship_hulls.erase(name);
 }
 
 void Empire::ClearSitRep()

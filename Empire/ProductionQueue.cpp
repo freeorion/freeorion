@@ -3,8 +3,8 @@
 #include "Empire.h"
 #include "../universe/BuildingType.h"
 #include "../universe/Condition.h"
+#include "../universe/ShipHull.h"
 #include "../universe/ShipPart.h"
-#include "../universe/ShipPartHull.h"
 #include "../universe/ShipDesign.h"
 #include "../universe/ValueRef.h"
 #include "../util/AppInterface.h"
@@ -433,8 +433,8 @@ ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id) c
             auto location_obj = Objects().get(location_id);
             ScriptingContext context(location_obj);
 
-            if (const HullType* ht = GetHullType(sd->Hull())) {
-                for (const auto& psc : ht->ProductionSpecialConsumption()) {
+            if (const ShipHull* ship_hull = GetShipHull(sd->Hull())) {
+                for (const auto& psc : ship_hull->ProductionSpecialConsumption()) {
                     if (!psc.second.first)
                         continue;
                     retval[psc.first][location_id] += psc.second.first->Eval(context);
@@ -486,8 +486,8 @@ ProductionQueue::ProductionItem::CompletionMeterConsumption(int location_id) con
             auto obj = Objects().get(location_id);
             ScriptingContext context(obj);
 
-            if (const HullType* ht = GetHullType(sd->Hull())) {
-                for (const auto& pmc : ht->ProductionMeterConsumption()) {
+            if (const ShipHull* ship_hull = GetShipHull(sd->Hull())) {
+                for (const auto& pmc : ship_hull->ProductionMeterConsumption()) {
                     if (!pmc.second.first)
                         continue;
                     retval[pmc.first][location_id] += pmc.second.first->Eval(context);

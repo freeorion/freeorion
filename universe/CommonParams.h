@@ -28,7 +28,7 @@ template <typename T>
 using ConsumptionMap = std::map<T, std::pair<std::unique_ptr<ValueRef::ValueRef<double>>,
                                              std::unique_ptr<Condition::Condition>>>;
 
-//! Common parameters for ShipPart, HullType, and BuildingType constructors.
+//! Common parameters for ShipPart, ShipHull, and BuildingType constructors.
 //!
 //! Used as temporary storage for parsing to reduce number of sub-items parsed
 //! per item.
