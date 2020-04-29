@@ -136,7 +136,7 @@ class _stdXLikeStream:
             (filename, line_number, function_name) = ("", "", "")
 
         try:
-            self.logger(msg, "python", str(os.path.split(filename)[1]), str(function_name), str(line_number))
+            self.logger(msg, str(os.path.split(filename)[1]), str(line_number))
 
         finally:
             # Explicitly del references to the caller's frame to avoid persistent reference cycles
@@ -168,8 +168,7 @@ class _LoggerHandler(logging.Handler):
                 record.exc_info = sys.exc_info()
             traceback_msg = "".join(traceback.format_exception(*record.exc_info))
             msg += traceback_msg
-        self.logger(msg, "python", str(record.filename),
-                    str(record.funcName), str(record.lineno))
+        self.logger(msg, str(record.filename), str(record.lineno))
 
 
 class _SingleLevelFilter(logging.Filter):
