@@ -6945,6 +6945,18 @@ On %planet%: A new %species% colony has been established.
 SITREP_NEW_COLONY_ESTABLISHED_LABEL
 New Colony Established
 
+SITREP_FLEET_GIFTED
+%fleet% was gifted by %empire%
+
+SITREP_FLEET_GIFTED_LABEL
+Fleet Gifted
+
+SITREP_PLANET_GIFTED
+%planet% was gifted by %empire%
+
+SITREP_PLANET_GIFTED_LABEL
+Planet Gifted
+
 SITREP_FLEET_ARRIVED_AT_DESTINATION
 At %system%: %fleet% (%rawtext% ships) has arrived.
 

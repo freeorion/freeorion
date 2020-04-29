@@ -3110,6 +3110,13 @@ namespace {
                 }
                 gifted_obj->SetOwner(recipient_empire_id);
 
+                if (Empire* empire = GetEmpire(recipient_empire_id)) {
+                    if (gifted_obj->ObjectType() == OBJ_PLANET)
+                        empire->AddSitRepEntry(CreatePlanetGiftedSitRep(gifted_obj->ID(), initial_owner_empire_id));
+                    else if (gifted_obj->ObjectType() == OBJ_FLEET)
+                        empire->AddSitRepEntry(CreateFleetGiftedSitRep(gifted_obj->ID(), initial_owner_empire_id));
+                }
+
                 Empire::ConquerProductionQueueItemsAtLocation(gifted_obj->ID(), recipient_empire_id);
             }
         }
