@@ -274,6 +274,11 @@ class ReadOnlyDict(Mapping):
           print k, v
       my_dict[5] = 4  # throws TypeError
       del my_dict[1]  # throws TypeError
+
+      Implementation note:
+
+     The checks that values are hashable is the main difference from the built-in types.MappingProxyType.
+     MappingProxyType has slightly different signature and cannot be inherited.
      """
 
     def __init__(self, *args, **kwargs):
