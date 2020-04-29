@@ -21,6 +21,6 @@ Tech
                 ]
                 Structure high = LocalCandidate.MaxStructure - 0.001
             ]
-            effects = SetStructure value = Value + 1
+            effects = SetStructure value = Value + (GameRule name = "RULE_SHIP_STRUCTURE_FACTOR")
 
 #include "/scripting/common/base_prod.macros"

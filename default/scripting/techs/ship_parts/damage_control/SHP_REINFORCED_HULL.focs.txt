@@ -13,7 +13,7 @@ Tech
                 Ship
                 OwnedBy empire = Source.Owner
             ]
-            effects = SetMaxStructure value = Value + 5
+            effects = SetMaxStructure value = Value + (5 * (GameRule name = "RULE_SHIP_STRUCTURE_FACTOR"))
     graphic = "icons/tech/structural_integrity_fields.png"
 
 #include "/scripting/common/base_prod.macros"
