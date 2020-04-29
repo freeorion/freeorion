@@ -2,11 +2,8 @@
 
 #include "../util/Logger.h"
 
-#include <boost/log/expressions.hpp>
-#include <boost/log/support/date_time.hpp>
+#include <boost/log/utility/manipulators/add_value.hpp>
 #include <boost/python.hpp>
-
-namespace expr = boost::log::expressions;
 
 namespace {
     // Expose interface for redirecting standard output and error to FreeOrion
@@ -67,7 +64,10 @@ namespace {
         // Assembling the log in the stream input to the logger means that the
         // string assembly is gated by the log level.  logs are not assembled
         // if that log level is disabled.
-        FO_LOGGER(log_level, python) << python_logger << boost::log::add_value("SrcFilename", filename) << boost::log::add_value("SrcLinenum", lineno) << " : " << msg;
+        FO_LOGGER(log_level, python) << python_logger
+                                     << boost::log::add_value("SrcFilename", filename)
+                                     << boost::log::add_value("SrcLinenum", lineno)
+                                     << " : " << msg;
     }
 
 
