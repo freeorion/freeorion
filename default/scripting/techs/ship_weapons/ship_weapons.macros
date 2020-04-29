@@ -31,7 +31,7 @@ WEAPON_UPGRADE_CAPACITY_EFFECTS
                         [[SHIP_PART_UPGRADE_RESUPPLY_CHECK(CurrentContent)]]
             ]
             accountinglabel = "@1@"
-            effects = SetMaxCapacity partname = "@1@" value = Value + @2@
+            effects = SetMaxCapacity partname = "@1@" value = Value + ( @2@ * GameRule name = "RULE_SHIP_WEAPON_DAMAGE_FACTOR")
 
 // Inform the researching empire that ships in supply will get upgraded before next combat
         EffectsGroup
@@ -45,7 +45,7 @@ WEAPON_UPGRADE_CAPACITY_EFFECTS
                   tag = "empire"    data = Source.Owner
                   tag = "shippart"  data = "@1@"
                   tag = "tech"   data = CurrentContent
-                  tag = "dam"   data = @2@
+                  tag = "dam"   data = @2@ * (GameRule name = "RULE_SHIP_WEAPON_DAMAGE_FACTOR")
               ]
               empire = Target.Owner
 
