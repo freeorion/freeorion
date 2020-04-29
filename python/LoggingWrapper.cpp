@@ -49,7 +49,6 @@ namespace {
     // Assemble a python message that is the same as the C++ message format.
     void PythonLogger(const std::string& msg,
                       const LogLevel log_level,
-                      const std::string& python_logger,
                       const std::string& filename,
                       // const std::string& function_name,
                       const std::string& linenostr)
@@ -64,22 +63,21 @@ namespace {
         // Assembling the log in the stream input to the logger means that the
         // string assembly is gated by the log level.  logs are not assembled
         // if that log level is disabled.
-        FO_LOGGER(log_level, python) << python_logger
-                                     << boost::log::add_value("SrcFilename", filename)
+        FO_LOGGER(log_level, python) << boost::log::add_value("SrcFilename", filename)
                                      << boost::log::add_value("SrcLinenum", lineno)
-                                     << " : " << msg;
+                                     << msg;
     }
 
 
     template<LogLevel log_level>
-    void PythonLoggerWrapper(const std::string& msg, const std::string& logger_name, const std::string& filename,
+    void PythonLoggerWrapper(const std::string& msg, const std::string& filename,
                              const std::string& function_name, const std::string& lineno)
     {
         (void)function_name;
         static std::stringstream log_stream("");
         send_to_log(log_stream, msg,
                     std::bind(&PythonLogger, std::placeholders::_1,
-                              log_level, logger_name, filename, /*function_name,*/ lineno));
+                              log_level, filename, /*function_name,*/ lineno));
     }
 }
 
