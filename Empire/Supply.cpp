@@ -845,8 +845,8 @@ void SupplyManager::Update() {
         }
 
         // also add connections from all fleet-supplyable systems to themselves, so that
-        // any fleet supply able system with no connection to another system can still
-        // have resource sharing within tiself
+        // any fleet supplyable system with no connection to another system can still
+        // have resource sharing within itself
         for (int system_id : ally_merged_fleet_supplyable_system_ids[empire_id])
             supply_groups_map[system_id].insert(system_id);
 
