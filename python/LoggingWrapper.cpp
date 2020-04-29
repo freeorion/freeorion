@@ -46,35 +46,15 @@ namespace {
 
     DeclareThreadSafeLogger(python);
 
-    // Assemble a python message that is the same as the C++ message format.
-    void PythonLogger(const std::string& msg,
-                      const LogLevel log_level,
-                      const std::string& filename,
-                      const std::string& linenostr)
-    {
-        int lineno{0};
-
-        try {
-            lineno = std::stoi(linenostr);
-        } catch(...)
-        {}
-
-        // Assembling the log in the stream input to the logger means that the
-        // string assembly is gated by the log level.  logs are not assembled
-        // if that log level is disabled.
-        FO_LOGGER(log_level, python) << boost::log::add_value("SrcFilename", filename)
-                                     << boost::log::add_value("SrcLinenum", lineno)
-                                     << msg;
-    }
-
-
     template<LogLevel log_level>
     void PythonLoggerWrapper(const std::string& msg, const std::string& filename,
-                             const std::string& lineno)
+                             const int lineno)
     {
         static std::stringstream log_stream("");
         auto logger_func = [&](const std::string& arg) {
-            PythonLogger(arg, log_level, filename, lineno);
+            FO_LOGGER(log_level, python) << boost::log::add_value("SrcFilename", filename)
+                                         << boost::log::add_value("SrcLinenum", lineno)
+                                         << arg;
         };
         send_to_log(log_stream, msg, logger_func);
     }
