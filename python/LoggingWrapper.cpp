@@ -67,73 +67,29 @@ namespace {
         // Assembling the log in the stream input to the logger means that the
         // string assembly is gated by the log level.  logs are not assembled
         // if that log level is disabled.
-        switch (log_level) {
-        case LogLevel::trace:
-            FO_LOGGER(LogLevel::trace, python) << python_logger << boost::log::add_value("SrcFilename", filename) << boost::log::add_value("SrcLinenum", lineno) << " : " << msg;
-            break;
-        case LogLevel::debug:
-            FO_LOGGER(LogLevel::debug, python) << python_logger << boost::log::add_value("SrcFilename", filename) << boost::log::add_value("SrcLinenum", lineno) << " : " << msg;
-            break;
-        case LogLevel::info:
-            FO_LOGGER(LogLevel::info, python)  << python_logger << boost::log::add_value("SrcFilename", filename) << boost::log::add_value("SrcLinenum", lineno) << " : " << msg;
-            break;
-        case LogLevel::warn:
-            FO_LOGGER(LogLevel::warn, python)  << python_logger << boost::log::add_value("SrcFilename", filename) << boost::log::add_value("SrcLinenum", lineno) << " : " << msg;
-            break;
-        case LogLevel::error:
-            FO_LOGGER(LogLevel::error, python) << python_logger << boost::log::add_value("SrcFilename", filename) << boost::log::add_value("SrcLinenum", lineno) << " : " << msg;
-            break;
-        }
+        FO_LOGGER(log_level, python) << python_logger << boost::log::add_value("SrcFilename", filename) << boost::log::add_value("SrcLinenum", lineno) << " : " << msg;
     }
 
-    void PythonLoggerWrapper(const LogLevel log_level, const std::string& msg,
-                             const std::string& logger_name, const std::string& filename,
-                             /*const std::string& function_name,*/ const std::string& lineno)
+
+    template<LogLevel log_level>
+    void PythonLoggerWrapper(const std::string& msg, const std::string& logger_name, const std::string& filename,
+                             const std::string& function_name, const std::string& lineno)
     {
+        (void)function_name;
         static std::stringstream log_stream("");
         send_to_log(log_stream, msg,
                     std::bind(&PythonLogger, std::placeholders::_1,
                               log_level, logger_name, filename, /*function_name,*/ lineno));
-    }
-
-
-    // debug/stdout logger
-    void PythonLoggerDebug(const std::string& msg, const std::string& logger_name,
-                           const std::string& filename, const std::string& function_name, const std::string& lineno)
-    {
-        PythonLoggerWrapper(LogLevel::debug, msg, logger_name, filename, /*function_name,*/ lineno);
-    }
-
-
-    // info logger
-    void PythonLoggerInfo(const std::string& msg, const std::string& logger_name,
-                          const std::string& filename, const std::string& function_name, const std::string& lineno)
-    {
-        PythonLoggerWrapper(LogLevel::info, msg, logger_name, filename, /*function_name,*/ lineno);
-    }
-
-    // warn logger
-    void PythonLoggerWarn(const std::string& msg, const std::string& logger_name,
-                          const std::string& filename, const std::string& function_name, const std::string& lineno)
-    {
-        PythonLoggerWrapper(LogLevel::warn, msg, logger_name, filename, /*function_name,*/ lineno);
-    }
-
-    // error logger
-    void PythonLoggerError(const std::string& msg, const std::string& logger_name,
-                           const std::string& filename, const std::string& function_name, const std::string& lineno)
-    {
-        PythonLoggerWrapper(LogLevel::error, msg, logger_name, filename, /*function_name,*/ lineno);
     }
 }
 
 namespace FreeOrionPython {
     using boost::python::def;
     void WrapLogger() {
-        def("debug", PythonLoggerDebug);
-        def("info", PythonLoggerInfo);
-        def("warn", PythonLoggerWarn);
-        def("error", PythonLoggerError);
-        def("fatal", PythonLoggerError);
+        def("debug", PythonLoggerWrapper<LogLevel::debug>);
+        def("info", PythonLoggerWrapper<LogLevel::info>);
+        def("warn", PythonLoggerWrapper<LogLevel::warn>);
+        def("error", PythonLoggerWrapper<LogLevel::error>);
+        def("fatal", PythonLoggerWrapper<LogLevel::error>);
     }
 }
