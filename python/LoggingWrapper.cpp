@@ -73,9 +73,10 @@ namespace {
                              const std::string& lineno)
     {
         static std::stringstream log_stream("");
-        send_to_log(log_stream, msg,
-                    std::bind(&PythonLogger, std::placeholders::_1,
-                              log_level, filename, lineno));
+        auto logger_func = [&](const std::string& arg) {
+            PythonLogger(arg, log_level, filename, lineno);
+        };
+        send_to_log(log_stream, msg, logger_func);
     }
 }
 
