@@ -5,8 +5,8 @@ Part
     class = Shield
     capacity = 3
     mountableSlotTypes = Internal
-    buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
-    buildtime = 2
+    buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildtime = 3
     tags = [ "PEDIA_PC_SHIELD" ]
     location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/defense_grid.png"
