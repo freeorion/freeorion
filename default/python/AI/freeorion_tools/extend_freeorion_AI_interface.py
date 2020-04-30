@@ -107,6 +107,9 @@ def patch_interface():
 
     fo.IntIntMap.__str__ = int_int_map_to_string
 
+    fo.StatRecordsMap.__getitem__ = to_dict(fo.StatRecordsMap.__getitem__)
+    fo.IntIntDblMapMap.__getitem__ = to_dict(fo.IntIntDblMapMap.__getitem__)
+
 
 def logger(callable_object, argument_wrappers=None):
     """
