@@ -194,14 +194,14 @@ class HomeSystemFinder:
 
                 # Quit successfully if the lowest merit system meets the minimum threshold
                 if merit >= min_planets_in_vicinity_limit(
-                        len(fo.systems_within_jumps_unordered(vicinity_range(self.systems_per_empire), [system]))
+                        len(fo.systems_within_jumps_unordered(vicinity_range(self.systems_per_empire), [system])),
                         self.planet_density):
                     break
 
         return best_candidate
 
 
-def find_home_systems(num_home_systems, pool_list, jump_distance, min_jump_distance, systems_per_empire):
+def find_home_systems(num_home_systems, pool_list, jump_distance, min_jump_distance, systems_per_empire, planet_density):
     """
     Tries to find a specified number of home systems which are as far apart from each other as possible.
     Starts with the specified jump distance and reduces that limit until enough systems can be found or the
@@ -211,7 +211,7 @@ def find_home_systems(num_home_systems, pool_list, jump_distance, min_jump_dista
     of the pool for logging purposes as second element.
     """
 
-    finder = HomeSystemFinder(num_home_systems, systems_per_empire)
+    finder = HomeSystemFinder(num_home_systems, systems_per_empire, planet_density)
     # try to find home systems, decrease the min jumps until enough systems can be found, or the jump distance drops
     # below the specified minimum jump distance (which means failure)
     while jump_distance >= min_jump_distance:
@@ -367,8 +367,7 @@ def compile_home_system_list(num_home_systems, systems, gsd):
         systems_in_vicinity = fo.systems_within_jumps_unordered(vicinity_range(systems_per_empire), [system])
         if len(systems_in_vicinity) >= min_systems_in_vicinity:
             pool_matching_sys_limit.append(system)
-            if count_planets_in_systems(systems_in_vicinity) >= 
-                    min_planets_in_vicinity_limit(len(systems_in_vicinity), gsd.planet_density):
+            if count_planets_in_systems(systems_in_vicinity) >= min_planets_in_vicinity_limit(len(systems_in_vicinity), gsd.planet_density):
                 pool_matching_sys_and_planet_limit.append(system)
     print(len(pool_matching_sys_and_planet_limit),
           "systems meet the min systems and planets in the near vicinity limit")
@@ -390,7 +389,7 @@ def compile_home_system_list(num_home_systems, systems, gsd):
         # specify 0 as number of requested home systems to pick as much systems as possible
         (pool_matching_sys_limit, "pool of systems that meet at least the min systems limit"),
     ]
-    home_systems = find_home_systems(num_home_systems, pool_list, min_jumps, HS_MIN_DISTANCE_PRIORITY_LIMIT, systems_per_empire)
+    home_systems = find_home_systems(num_home_systems, pool_list, min_jumps, HS_MIN_DISTANCE_PRIORITY_LIMIT, systems_per_empire, gsd.planet_density)
 
     # check if the first attempt delivered a list with enough home systems
     # if not, we make our second attempt, this time disregarding the filtered pools and using all systems, starting
@@ -398,7 +397,7 @@ def compile_home_system_list(num_home_systems, systems, gsd):
     # systems as possible
     if len(home_systems) < num_home_systems:
         print("Second attempt: trying to pick home systems from all systems")
-        home_systems = find_home_systems(num_home_systems, [(systems, "complete pool")], min_jumps, 1, systems_per_empire)
+        home_systems = find_home_systems(num_home_systems, [(systems, "complete pool")], min_jumps, 1, systems_per_empire, gsd.planet_density)
 
     # check if the selection process delivered a list with enough home systems
     # if not, our galaxy obviously is too crowded, report an error and return an empty list
@@ -446,8 +445,7 @@ def compile_home_system_list(num_home_systems, systems, gsd):
         systems_in_vicinity = fo.systems_within_jumps_unordered(vicinity_range(systems_per_empire), [home_system])
         num_systems_in_vicinity = len(systems_in_vicinity)
         num_planets_in_vicinity = count_planets_in_systems(systems_in_vicinity)
-        num_planets_to_add = min_planets_in_vicinity_limit(num_systems_in_vicinity, gsd.planet_density)
-                             - num_planets_in_vicinity
+        num_planets_to_add = min_planets_in_vicinity_limit(num_systems_in_vicinity, gsd.planet_density) - num_planets_in_vicinity
         print("Home system", home_system, "has", num_systems_in_vicinity, "systems and", num_planets_in_vicinity,
               "planets in the near vicinity, required minimum:",
               min_planets_in_vicinity_limit(num_systems_in_vicinity, gsd.planet_density))
