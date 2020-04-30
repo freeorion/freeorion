@@ -9571,30 +9571,30 @@ unsigned int CombatTarget::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 namespace {
     void SetConditionVariance(std::vector<std::unique_ptr<Condition>>& operands,
-                              Invariance& root_invariant,
-                              Invariance& target_invariant,
-                              Invariance& source_invariant)
+                              bool& root_invariant,
+                              bool& target_invariant,
+                              bool& source_invariant)
     {
-        root_invariant = INVARIANT;
+        root_invariant = true;
         for (auto& operand : operands) {
             if (!operand->RootCandidateInvariant()) {
-                root_invariant = VARIANT;
+                root_invariant = false;
                 break;
             }
         }
 
-        target_invariant = INVARIANT;
+        target_invariant = true;
         for (auto& operand : operands) {
             if (!operand->TargetInvariant()) {
-                target_invariant = VARIANT;
+                target_invariant = false;
                 break;
             }
         }
 
-        source_invariant = INVARIANT;
+        source_invariant = true;
         for (auto& operand : operands) {
             if (!operand->SourceInvariant()) {
-                source_invariant = VARIANT;
+                source_invariant = false;
                 break;
             }
         }
@@ -9708,13 +9708,13 @@ void And::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
 }
 
 bool And::RootCandidateInvariant() const
-{ return m_root_candidate_invariant == INVARIANT; }
+{ return m_root_candidate_invariant; }
 
 bool And::TargetInvariant() const
-{ return m_target_invariant == INVARIANT; }
+{ return m_target_invariant; }
 
 bool And::SourceInvariant() const
-{ return m_source_invariant == INVARIANT; }
+{ return m_source_invariant; }
 
 std::string And::Description(bool negated/* = false*/) const {
     std::string values_str;
@@ -9881,13 +9881,13 @@ void Or::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
 }
 
 bool Or::RootCandidateInvariant() const
-{ return m_root_candidate_invariant == INVARIANT; }
+{ return m_root_candidate_invariant; }
 
 bool Or::TargetInvariant() const
-{ return m_target_invariant == INVARIANT; }
+{ return m_target_invariant; }
 
 bool Or::SourceInvariant() const
-{ return m_source_invariant == INVARIANT; }
+{ return m_source_invariant; }
 
 std::string Or::Description(bool negated/* = false*/) const {
     std::string values_str;
@@ -9952,9 +9952,9 @@ Not::Not(std::unique_ptr<Condition>&& operand) :
     Condition(),
     m_operand(std::move(operand))
 {
-    m_root_candidate_invariant = m_operand->RootCandidateInvariant() ? INVARIANT : VARIANT;
-    m_target_invariant = m_operand->TargetInvariant() ? INVARIANT : VARIANT;
-    m_source_invariant = m_operand->SourceInvariant() ? INVARIANT : VARIANT;
+    m_root_candidate_invariant = m_operand->RootCandidateInvariant();
+    m_target_invariant = m_operand->TargetInvariant();
+    m_source_invariant = m_operand->SourceInvariant();
 }
 
 bool Not::operator==(const Condition& rhs) const {
@@ -9990,13 +9990,13 @@ void Not::Eval(const ScriptingContext& parent_context, ObjectSet& matches, Objec
 }
 
 bool Not::RootCandidateInvariant() const
-{ return m_root_candidate_invariant == INVARIANT; }
+{ return m_root_candidate_invariant; }
 
 bool Not::TargetInvariant() const
-{ return m_target_invariant == INVARIANT; }
+{ return m_target_invariant; }
 
 bool Not::SourceInvariant() const
-{ return m_source_invariant == INVARIANT; }
+{ return m_source_invariant; }
 
 std::string Not::Description(bool negated/* = false*/) const
 { return m_operand->Description(!negated); }
@@ -10156,13 +10156,13 @@ void OrderedAlternativesOf::Eval(const ScriptingContext& parent_context,
 }
 
 bool OrderedAlternativesOf::RootCandidateInvariant() const
-{ return m_root_candidate_invariant == INVARIANT; }
+{ return m_root_candidate_invariant; }
 
 bool OrderedAlternativesOf::TargetInvariant() const
-{ return m_target_invariant == INVARIANT; }
+{ return m_target_invariant; }
 
 bool OrderedAlternativesOf::SourceInvariant() const
-{ return m_source_invariant == INVARIANT; }
+{ return m_source_invariant; }
 
 std::string OrderedAlternativesOf::Description(bool negated/* = false*/) const {
     std::string values_str;

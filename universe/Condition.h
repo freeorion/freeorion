@@ -16,12 +16,6 @@ namespace Condition {
 
 typedef std::vector<std::shared_ptr<const UniverseObject>> ObjectSet;
 
-enum Invariance : int {
-    UNKNOWN_INVARIANCE, ///< This condition hasn't yet calculated this invariance type
-    INVARIANT,          ///< This condition is invariant to a particular type of object change
-    VARIANT             ///< This condition's result depends on the state of a particular object
-};
-
 enum SearchDomain : int {
     NON_MATCHES,    ///< The Condition will only examine items in the non matches set; those that match the Condition will be inserted into the matches set.
     MATCHES         ///< The Condition will only examine items in the matches set; those that do not match the Condition will be inserted into the nonmatches set.
@@ -88,9 +82,9 @@ struct FO_COMMON_API Condition {
     { return 0; }
 
 protected:
-    Invariance m_root_candidate_invariant = UNKNOWN_INVARIANCE;
-    Invariance m_target_invariant = UNKNOWN_INVARIANCE;
-    Invariance m_source_invariant = UNKNOWN_INVARIANCE;
+    bool m_root_candidate_invariant = false;
+    bool m_target_invariant = false;
+    bool m_source_invariant = false;
 
 private:
     struct MatchHelper;
