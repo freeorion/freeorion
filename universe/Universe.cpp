@@ -1274,10 +1274,10 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     for (const auto& entry : GetShipHullManager()) {
         const std::string& ship_hull_name = entry.first;
         const auto& ship_hull = entry.second;
-        auto ships_by_ship_hull_it = ships_by_ship_hull.find(ship_hull_name);
-        if (ships_by_ship_hull_it == ships_by_ship_hull.end())
+        auto ships_by_hull_it = ships_by_ship_hull.find(ship_hull_name);
+        if (ships_by_hull_it == ships_by_ship_hull.end())
             continue;
-        const auto& source_objects = ships_by_hull_type_it->second;
+        const auto& source_objects = ships_by_hull_it->second;
 
         DispatchEffectsGroupScopeEvaluations(ECT_SHIP_HULL, ship_hull_name,
                                              source_objects, ship_hull->Effects(),
