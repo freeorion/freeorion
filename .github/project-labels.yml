@@ -51,8 +51,7 @@
 - name: component:network
   color: "d93f0b"
   desscription: >
-    The Issue/PR deals with TCP/IP networking and establishing a test network
-    infrastructure.
+    The Issue/PR deals with network communication between clients and server.
 - name: component:technical docs
   color: "d93f0b"
   description: >
@@ -61,8 +60,8 @@
 - name: component:translation
   color: "d93f0b"
   description: >
-    The Issue/PR deals with the game terminology and the translation process
-    in general.
+    The Issue/PR provides or updates translations or deals with the translation
+    process in general.
 - name: component:UI
   color: "d93f0b"
   description: >
@@ -101,8 +100,8 @@
 - name: status:help wanted
   color: "c5def5"
   description: >
-    Other developers or external contributors are welcome to take over this
-    Issue/PR.
+    Other developers or external contributors are welcome to support developing
+    this Issue/PR.
 - name: status:invalid
   color: "c5def5"
   description: >
