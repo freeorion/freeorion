@@ -3,10 +3,13 @@ Tech
     description = "PRO_EXOBOTS_DESC"
     short_description = "EXOBOT_SHORT_DESC"
     category = "PRODUCTION_CATEGORY"
-    researchcost = 50 * [[TECH_COST_MULTIPLIER]]
-    researchturns = 5
+    researchcost = 60 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 6
     tags = [ "PEDIA_PRODUCTION_CATEGORY" ]
-    prerequisites = "PRO_SENTIENT_AUTOMATION"
+    prerequisites = [
+        "LRN_ARTIF_MINDS"
+        "PRO_NANOTECH_PROD"
+    ]
     unlock = Item type = Building name = "BLD_COL_EXOBOT"
 
     graphic = "icons/species/robotic-01.png"
