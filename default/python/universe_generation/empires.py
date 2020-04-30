@@ -147,7 +147,6 @@ class HomeSystemFinder:
         # Cap the number of attempts to the smaller of the number of systems in the pool, or 100
         attempts = min(100, len(systems_pool))
 
-
         while attempts and num_complete_misses_remaining:
             # use a local pool of all candidate systems better than the worst threshold merit
             all_merit_system = [(m, s) for (m, s) in all_merit_system if m > current_merit_lower_bound]
@@ -347,8 +346,7 @@ def compile_home_system_list(num_home_systems, systems, gsd):
     # b.) lower than the minimum jump distance limit that should be considered high priority (see options.py),
     #     otherwise no attempt at all would be made to enforce the other requirements for home systems (see below)
     systems_per_empire = len(systems)/num_home_systems
-    min_jumps = min( max(int(systems_per_empire**(0.75)), HS_MIN_DISTANCE_PRIORITY_LIMIT),
-                     HS_MAX_JUMP_DISTANCE_LIMIT)
+    min_jumps = min(max(int(systems_per_empire**(0.75)), HS_MIN_DISTANCE_PRIORITY_LIMIT), HS_MAX_JUMP_DISTANCE_LIMIT)
 
     # home systems must have a certain minimum of systems and planets in their near vicinity
     # we will try to select our home systems from systems that match this criteria, if that fails, we will select our

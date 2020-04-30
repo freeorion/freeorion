@@ -58,5 +58,5 @@ HS_MIN_DISTANCE_PRIORITY_LIMIT = 4
 # These two options define which types of planets are counted when determining the number of planets in the near
 # vicinity of a home system. HS_ACCEPTABLE_PLANET_SIZES is actually only needed for the process of adding planets
 # to the near vicinity of a home system in case that's needed to meet the limit.
-HS_ACCEPTABLE_PLANET_TYPES = planet_types_real + (fo.planetType.asteroids,fo.planetType.gasGiant,)
-HS_ACCEPTABLE_PLANET_SIZES = planet_sizes_real + (fo.planetSize.asteroids,fo.planetSize.gasGiant,)
+HS_ACCEPTABLE_PLANET_TYPES = planet_types_real + (fo.planetType.asteroids, fo.planetType.gasGiant,)
+HS_ACCEPTABLE_PLANET_SIZES = planet_sizes_real + (fo.planetSize.asteroids, fo.planetSize.gasGiant,)
