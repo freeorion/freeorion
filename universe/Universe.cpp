@@ -442,6 +442,10 @@ bool Universe::InsertShipDesignID(ShipDesign* ship_design, boost::optional<int> 
         return false;
     }
 
+    if (m_ship_designs.count(id)) {
+        ErrorLogger() << "Ship design id " << id << " already exists.";
+        return false;
+    }
     ship_design->SetID(id);
     m_ship_designs[id] = ship_design;
     return true;

@@ -1204,9 +1204,13 @@ void ShipDesignOrder::ExecuteImpl() const {
             // On the client create a new design id
             universe.InsertShipDesign(new_ship_design);
             m_design_id = new_ship_design->ID();
+            DebugLogger() << "ShipDesignOrder::ExecuteImpl Create new ship design ID " << m_design_id;
         } else {
             // On the server use the design id passed from the client
-            universe.InsertShipDesignID(new_ship_design, EmpireID(), m_design_id);
+            if (!universe.InsertShipDesignID(new_ship_design, EmpireID(), m_design_id)) {
+                ErrorLogger() << "Couldn't insert ship design by ID " << m_design_id;
+                return;
+            }
         }
 
         universe.SetEmpireKnowledgeOfShipDesign(m_design_id, EmpireID());
