@@ -5670,7 +5670,11 @@ unsigned int NumberedShipDesign::GetCheckSum() const {
 ProducedByEmpire::ProducedByEmpire(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id) :
     Condition(),
     m_empire_id(std::move(empire_id))
-{}
+{
+    m_root_candidate_invariant = !m_empire_id || m_empire_id->RootCandidateInvariant();
+    m_target_invariant = !m_empire_id || m_empire_id->TargetInvariant();
+    m_source_invariant = !m_empire_id || m_empire_id->SourceInvariant();
+}
 
 bool ProducedByEmpire::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -5722,15 +5726,6 @@ void ProducedByEmpire::Eval(const ScriptingContext& parent_context,
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
 }
-
-bool ProducedByEmpire::RootCandidateInvariant() const
-{ return !m_empire_id || m_empire_id->RootCandidateInvariant(); }
-
-bool ProducedByEmpire::TargetInvariant() const
-{ return !m_empire_id || m_empire_id->TargetInvariant(); }
-
-bool ProducedByEmpire::SourceInvariant() const
-{ return !m_empire_id || m_empire_id->SourceInvariant(); }
 
 std::string ProducedByEmpire::Description(bool negated/* = false*/) const {
     std::string empire_str;
