@@ -2229,12 +2229,15 @@ unsigned int Building::GetCheckSum() const {
 // HasSpecial                                            //
 ///////////////////////////////////////////////////////////
 HasSpecial::HasSpecial() :
-    Condition()
+    HasSpecial(nullptr, std::unique_ptr<ValueRef::ValueRef<int>>{}, std::unique_ptr<ValueRef::ValueRef<int>>{})
+{}
+
+HasSpecial::HasSpecial(const std::string& name) :
+    HasSpecial(std::move(std::make_unique<ValueRef::Constant<std::string>>(name)), std::unique_ptr<ValueRef::ValueRef<int>>{}, std::unique_ptr<ValueRef::ValueRef<int>>{})
 {}
 
 HasSpecial::HasSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
-    Condition(),
-    m_name(std::move(name))
+    HasSpecial(std::move(name), std::unique_ptr<ValueRef::ValueRef<int>>{}, std::unique_ptr<ValueRef::ValueRef<int>>{})
 {}
 
 HasSpecial::HasSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
@@ -2253,11 +2256,6 @@ HasSpecial::HasSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
     m_name(std::move(name)),
     m_capacity_low(std::move(capacity_low)),
     m_capacity_high(std::move(capacity_high))
-{}
-
-HasSpecial::HasSpecial(const std::string& name) :
-    Condition(),
-    m_name(std::make_unique<ValueRef::Constant<std::string>>(name))
 {}
 
 bool HasSpecial::operator==(const Condition& rhs) const {
