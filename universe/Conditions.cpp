@@ -1720,6 +1720,10 @@ unsigned int Homeworld::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // Capital                                               //
 ///////////////////////////////////////////////////////////
+Capital::Capital() :
+    Condition()
+{}
+
 bool Capital::operator==(const Condition& rhs) const
 { return Condition::operator==(rhs); }
 

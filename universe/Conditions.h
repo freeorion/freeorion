@@ -321,8 +321,7 @@ private:
 
 /** Matches planets that are an empire's capital. */
 struct FO_COMMON_API Capital final : public Condition {
-    Capital() : Condition() {}
-
+    Capital();
     bool operator==(const Condition& rhs) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
