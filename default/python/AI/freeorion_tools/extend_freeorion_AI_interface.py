@@ -46,7 +46,7 @@ from functools import wraps
 from logging import debug
 
 import freeOrionAIInterface as fo
-from ._freeorion_tools import dict_from_map
+from ._freeorion_tools import dict_from_map, dict_from_map_recursive
 
 
 PLANET = 'P'
@@ -63,6 +63,14 @@ def to_dict(method):
     return wrapper
 
 
+def to_dict_recursive(method):
+    @wraps(method)
+    def wrapper(*args):
+        return dict_from_map_recursive(method(*args))
+
+    return wrapper
+
+
 def to_str(prefix, id, name):
     return '{}_{}<{}>'.format(prefix, id, name)
 
@@ -71,7 +79,7 @@ def patch_interface():
     fo.universe.getVisibilityTurnsMap = to_dict(fo.universe.getVisibilityTurnsMap)
     fo.empire.supplyProjections = to_dict(fo.empire.supplyProjections)
     fo.GameRules.getRulesAsStrings = to_dict(fo.GameRules.getRulesAsStrings)
-    fo.universe.statRecords = to_dict(fo.universe.statRecords)
+    fo.universe.statRecords = to_dict_recursive(fo.universe.statRecords)
 
     fo.to_str = to_str
 
@@ -106,9 +114,6 @@ def patch_interface():
         return str(dict_from_map(int_int_map))
 
     fo.IntIntMap.__str__ = int_int_map_to_string
-
-    fo.StatRecordsMap.__getitem__ = to_dict(fo.StatRecordsMap.__getitem__)
-    fo.IntIntDblMapMap.__getitem__ = to_dict(fo.IntIntDblMapMap.__getitem__)
 
 
 def logger(callable_object, argument_wrappers=None):

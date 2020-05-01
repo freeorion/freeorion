@@ -23,6 +23,16 @@ def dict_from_map(thismap):
     return {el.key(): el.data() for el in thismap}
 
 
+def dict_from_map_recursive(thismap):
+    retval = {}
+    try:
+        for el in thismap:
+            retval[el.key()] = dict_from_map_recursive(el.data())
+        return retval
+    except:
+        return dict_from_map(thismap)
+
+
 def get_ai_tag_grade(tag_list, tag_type):
     """
     Accepts a list of string tags and a tag_type (like 'WEAPONS').
