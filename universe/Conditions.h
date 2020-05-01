@@ -307,12 +307,6 @@ struct FO_COMMON_API Capital final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    bool RootCandidateInvariant() const override
-    { return true; }
-    bool TargetInvariant() const override
-    { return true; }
-    bool SourceInvariant() const override
-    { return true; }
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override
