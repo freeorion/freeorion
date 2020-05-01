@@ -6640,8 +6640,7 @@ OwnerHasTech::OwnerHasTech(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
 {}
 
 OwnerHasTech::OwnerHasTech(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
-    Condition(),
-    m_name(std::move(name))
+    OwnerHasTech(nullptr, std::move(name))
 {}
 
 bool OwnerHasTech::operator==(const Condition& rhs) const {
