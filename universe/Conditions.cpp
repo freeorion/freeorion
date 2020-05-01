@@ -8025,7 +8025,11 @@ unsigned int CanAddStarlaneConnection::GetCheckSum() const {
 ExploredByEmpire::ExploredByEmpire(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id) :
     Condition(),
     m_empire_id(std::move(empire_id))
-{}
+{
+    m_root_candidate_invariant = m_empire_id->RootCandidateInvariant();
+    m_target_invariant = m_empire_id->TargetInvariant();
+    m_source_invariant = m_empire_id->SourceInvariant();
+}
 
 bool ExploredByEmpire::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -8078,15 +8082,6 @@ void ExploredByEmpire::Eval(const ScriptingContext& parent_context,
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
 }
-
-bool ExploredByEmpire::RootCandidateInvariant() const
-{ return m_empire_id->RootCandidateInvariant(); }
-
-bool ExploredByEmpire::TargetInvariant() const
-{ return m_empire_id->TargetInvariant(); }
-
-bool ExploredByEmpire::SourceInvariant() const
-{ return m_empire_id->SourceInvariant(); }
 
 std::string ExploredByEmpire::Description(bool negated/* = false*/) const {
     std::string empire_str;
