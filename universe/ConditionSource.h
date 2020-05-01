@@ -10,7 +10,7 @@ namespace Condition {
 
 /** Matches the source object only. */
 struct FO_COMMON_API Source final : public Condition {
-    Source() : Condition() {}
+    Source();
 
     bool operator==(const Condition& rhs) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,

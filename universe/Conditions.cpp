@@ -1362,6 +1362,10 @@ unsigned int EmpireAffiliation::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // Source                                                //
 ///////////////////////////////////////////////////////////
+Source::Source() :
+    Condition()
+{}
+
 bool Source::operator==(const Condition& rhs) const
 { return Condition::operator==(rhs); }
 
