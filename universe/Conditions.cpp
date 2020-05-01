@@ -1369,7 +1369,11 @@ unsigned int EmpireAffiliation::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 Source::Source() :
     Condition()
-{}
+{
+    m_root_candidate_invariant = true;
+    m_target_invariant = true;
+    m_source_invariant = false;
+}
 
 bool Source::operator==(const Condition& rhs) const
 { return Condition::operator==(rhs); }
