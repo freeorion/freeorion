@@ -8703,6 +8703,10 @@ unsigned int CanColonize::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // CanProduceShips                                       //
 ///////////////////////////////////////////////////////////
+CanProduceShips::CanProduceShips() :
+    Condition()
+{}
+
 bool CanProduceShips::operator==(const Condition& rhs) const
 { return Condition::operator==(rhs); }
 

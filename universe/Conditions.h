@@ -1578,7 +1578,7 @@ private:
 
 /** Matches objects whose species has the ability to produce ships. */
 struct FO_COMMON_API CanProduceShips final : public Condition {
-    CanProduceShips() : Condition() {}
+    CanProduceShips();
 
     bool operator==(const Condition& rhs) const override;
     bool RootCandidateInvariant() const override
