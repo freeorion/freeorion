@@ -176,8 +176,7 @@ private:
 /** Matches no objects. Currently only has an experimental use for efficient immediate rejection as the top-line condition.
  *  Essentially the entire point of this Condition is to provide the specialized GetDefaultInitialCandidateObjects() */
 struct FO_COMMON_API None final : public Condition {
-    None() : Condition() {}
-
+    None();
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;

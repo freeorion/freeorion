@@ -1082,6 +1082,10 @@ unsigned int All::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // None                                                  //
 ///////////////////////////////////////////////////////////
+None::None() :
+    Condition()
+{}
+
 void None::Eval(const ScriptingContext& parent_context,
                 ObjectSet& matches, ObjectSet& non_matches,
                 SearchDomain search_domain/* = NON_MATCHES*/) const
