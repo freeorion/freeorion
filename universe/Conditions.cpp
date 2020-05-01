@@ -26,6 +26,7 @@
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Supply.h"
 
+#include <boost/algorithm/cxx11/all_of.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/bind.hpp>
 #include <boost/graph/adjacency_list.hpp>
@@ -9280,38 +9281,6 @@ unsigned int CombatTarget::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // And                                                   //
 ///////////////////////////////////////////////////////////
-namespace {
-    void SetConditionVariance(std::vector<std::unique_ptr<Condition>>& operands,
-                              bool& root_invariant,
-                              bool& target_invariant,
-                              bool& source_invariant)
-    {
-        root_invariant = true;
-        for (auto& operand : operands) {
-            if (!operand->RootCandidateInvariant()) {
-                root_invariant = false;
-                break;
-            }
-        }
-
-        target_invariant = true;
-        for (auto& operand : operands) {
-            if (!operand->TargetInvariant()) {
-                target_invariant = false;
-                break;
-            }
-        }
-
-        source_invariant = true;
-        for (auto& operand : operands) {
-            if (!operand->SourceInvariant()) {
-                source_invariant = false;
-                break;
-            }
-        }
-    }
-}
-
 And::And(std::vector<std::unique_ptr<Condition>>&& operands) :
     Condition(),
     m_operands(std::move(operands))
