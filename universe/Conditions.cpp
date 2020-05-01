@@ -7641,6 +7641,11 @@ unsigned int WithinStarlaneJumps::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // CanAddStarlaneConnection                              //
 ///////////////////////////////////////////////////////////
+CanAddStarlaneConnection::CanAddStarlaneConnection(std::unique_ptr<Condition>&& condition) :
+    Condition(),
+    m_condition(std::move(condition))
+{}
+
 bool CanAddStarlaneConnection::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;

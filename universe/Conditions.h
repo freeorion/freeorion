@@ -1391,10 +1391,7 @@ private:
   * any other lanes, pass too close to another system, or be too close in angle
   * to an existing lane. */
 struct FO_COMMON_API CanAddStarlaneConnection : Condition {
-    explicit CanAddStarlaneConnection(std::unique_ptr<Condition>&& condition) :
-        Condition(),
-        m_condition(std::move(condition))
-    {}
+    explicit CanAddStarlaneConnection(std::unique_ptr<Condition>&& condition);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
