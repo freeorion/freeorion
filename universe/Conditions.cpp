@@ -8260,7 +8260,11 @@ unsigned int Aggressive::GetCheckSum() const {
 FleetSupplyableByEmpire::FleetSupplyableByEmpire(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id) :
     Condition(),
     m_empire_id(std::move(empire_id))
-{}
+{
+    m_root_candidate_invariant = m_empire_id->RootCandidateInvariant();
+    m_target_invariant = m_empire_id->TargetInvariant();
+    m_source_invariant = m_empire_id->SourceInvariant();
+}
 
 bool FleetSupplyableByEmpire::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -8317,15 +8321,6 @@ void FleetSupplyableByEmpire::Eval(const ScriptingContext& parent_context,
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
 }
-
-bool FleetSupplyableByEmpire::RootCandidateInvariant() const
-{ return m_empire_id->RootCandidateInvariant(); }
-
-bool FleetSupplyableByEmpire::TargetInvariant() const
-{ return m_empire_id->TargetInvariant(); }
-
-bool FleetSupplyableByEmpire::SourceInvariant() const
-{ return m_empire_id->SourceInvariant(); }
 
 std::string FleetSupplyableByEmpire::Description(bool negated/* = false*/) const {
     std::string empire_str;
