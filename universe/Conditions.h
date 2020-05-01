@@ -1443,7 +1443,7 @@ private:
 /** Matches objects that are moving. ... What does that mean?  Departing this
   * turn, or were located somewhere else last turn...? */
 struct FO_COMMON_API Stationary final : public Condition {
-    explicit Stationary() : Condition() {}
+    explicit Stationary();
 
     bool operator==(const Condition& rhs) const override;
     bool RootCandidateInvariant() const override

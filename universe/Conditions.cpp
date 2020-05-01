@@ -8200,6 +8200,10 @@ unsigned int ExploredByEmpire::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // Stationary                                            //
 ///////////////////////////////////////////////////////////
+Stationary::Stationary() :
+    Condition()
+{}
+
 bool Stationary::operator==(const Condition& rhs) const
 { return Condition::operator==(rhs); }
 
