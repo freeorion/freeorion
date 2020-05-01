@@ -2503,7 +2503,11 @@ HasTag::HasTag(const std::string& name) :
 HasTag::HasTag(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
     Condition(),
     m_name(std::move(name))
-{}
+{
+    m_root_candidate_invariant = !m_name || m_name->RootCandidateInvariant();
+    m_target_invariant = !m_name || m_name->TargetInvariant();
+    m_source_invariant = !m_name || m_name->SourceInvariant();
+}
 
 bool HasTag::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -2564,15 +2568,6 @@ void HasTag::Eval(const ScriptingContext& parent_context,
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
 }
-
-bool HasTag::RootCandidateInvariant() const
-{ return !m_name || m_name->RootCandidateInvariant(); }
-
-bool HasTag::TargetInvariant() const
-{ return !m_name || m_name->TargetInvariant(); }
-
-bool HasTag::SourceInvariant() const
-{ return !m_name || m_name->SourceInvariant(); }
 
 std::string HasTag::Description(bool negated/* = false*/) const {
     std::string name_str;
