@@ -1407,6 +1407,10 @@ unsigned int Source::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // RootCandidate                                         //
 ///////////////////////////////////////////////////////////
+RootCandidate::RootCandidate() :
+    Condition()
+{}
+
 bool RootCandidate::operator==(const Condition& rhs) const
 { return Condition::operator==(rhs); }
 

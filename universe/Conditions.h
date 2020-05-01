@@ -236,8 +236,7 @@ private:
   * whole compound condition, rather than an object just being matched in a
   * subcondition in order to evaluate the outer condition. */
 struct FO_COMMON_API RootCandidate final : public Condition {
-    RootCandidate() : Condition() {}
-
+    RootCandidate();
     bool operator==(const Condition& rhs) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
