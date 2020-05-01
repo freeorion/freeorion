@@ -1791,7 +1791,11 @@ unsigned int Capital::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 Monster::Monster() :
     Condition()
-{}
+{
+    m_root_candidate_invariant = true;
+    m_target_invariant = true;
+    m_source_invariant = true;
+}
 
 bool Monster::operator==(const Condition& rhs) const
 { return Condition::operator==(rhs); }
