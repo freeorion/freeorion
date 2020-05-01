@@ -1509,7 +1509,11 @@ Homeworld::Homeworld() :
 Homeworld::Homeworld(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names) :
     Condition(),
     m_names(std::move(names))
-{}
+{
+    m_root_candidate_invariant = boost::algorithm::all_of(m_names, [](auto& e){ return e->RootCandidateInvariant(); });
+    m_target_invariant = boost::algorithm::all_of(m_names, [](auto& e){ return e->TargetInvariant(); });
+    m_source_invariant = boost::algorithm::all_of(m_names, [](auto& e){ return e->SourceInvariant(); });
+}
 
 bool Homeworld::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -1605,30 +1609,6 @@ void Homeworld::Eval(const ScriptingContext& parent_context,
         // re-evaluate allowed names for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
-}
-
-bool Homeworld::RootCandidateInvariant() const {
-    for (auto& name : m_names) {
-        if (!name->RootCandidateInvariant())
-            return false;
-    }
-    return true;
-}
-
-bool Homeworld::TargetInvariant() const {
-    for (auto& name : m_names) {
-        if (!name->TargetInvariant())
-            return false;
-    }
-    return true;
-}
-
-bool Homeworld::SourceInvariant() const {
-    for (auto& name : m_names) {
-        if (!name->SourceInvariant())
-            return false;
-    }
-    return true;
 }
 
 std::string Homeworld::Description(bool negated/* = false*/) const {
