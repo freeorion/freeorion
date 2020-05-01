@@ -1418,7 +1418,11 @@ unsigned int Source::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 RootCandidate::RootCandidate() :
     Condition()
-{}
+{
+    m_root_candidate_invariant = false;
+    m_target_invariant = true;
+    m_source_invariant = true;
+}
 
 bool RootCandidate::operator==(const Condition& rhs) const
 { return Condition::operator==(rhs); }
