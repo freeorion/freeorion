@@ -1814,6 +1814,10 @@ unsigned int Monster::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // Armed                                                 //
 ///////////////////////////////////////////////////////////
+Armed::Armed() :
+    Condition()
+{}
+
 bool Armed::operator==(const Condition& rhs) const
 { return Condition::operator==(rhs); }
 

@@ -373,8 +373,7 @@ private:
 
 /** Matches armed ships and monsters. */
 struct FO_COMMON_API Armed final : public Condition {
-    Armed() : Condition() {}
-
+    Armed();
     bool operator==(const Condition& rhs) const override;
     bool RootCandidateInvariant() const override
     { return true; }
