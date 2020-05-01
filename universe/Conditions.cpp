@@ -3573,7 +3573,11 @@ unsigned int PlanetType::GetCheckSum() const {
 PlanetSize::PlanetSize(std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetSize>>>&& sizes) :
     Condition(),
     m_sizes(std::move(sizes))
-{}
+{
+    m_root_candidate_invariant = boost::algorithm::all_of(m_sizes, [](auto& e){ return e->RootCandidateInvariant(); });
+    m_target_invariant = boost::algorithm::all_of(m_sizes, [](auto& e){ return e->TargetInvariant(); });
+    m_source_invariant = boost::algorithm::all_of(m_sizes, [](auto& e){ return e->SourceInvariant(); });
+}
 
 bool PlanetSize::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -3650,30 +3654,6 @@ void PlanetSize::Eval(const ScriptingContext& parent_context,
         // re-evaluate contained objects for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
-}
-
-bool PlanetSize::RootCandidateInvariant() const {
-    for (auto& size : m_sizes) {
-        if (!size->RootCandidateInvariant())
-            return false;
-    }
-    return true;
-}
-
-bool PlanetSize::TargetInvariant() const {
-    for (auto& size : m_sizes) {
-        if (!size->TargetInvariant())
-            return false;
-    }
-    return true;
-}
-
-bool PlanetSize::SourceInvariant() const {
-    for (auto& size : m_sizes) {
-        if (!size->SourceInvariant())
-            return false;
-    }
-    return true;
 }
 
 std::string PlanetSize::Description(bool negated/* = false*/) const {
