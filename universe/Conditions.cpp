@@ -1041,6 +1041,10 @@ unsigned int SortedNumberOf::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // All                                                   //
 ///////////////////////////////////////////////////////////
+All::All() :
+    Condition()
+{}
+
 void All::Eval(const ScriptingContext& parent_context,
                           ObjectSet& matches, ObjectSet& non_matches,
                           SearchDomain search_domain/* = NON_MATCHES*/) const

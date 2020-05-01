@@ -10,7 +10,7 @@ namespace Condition {
 
 /** Matches all objects. */
 struct FO_COMMON_API All final : public Condition {
-    All() : Condition() {}
+    All();
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
