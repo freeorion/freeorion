@@ -3408,7 +3408,11 @@ unsigned int ObjectID::GetCheckSum() const {
 PlanetType::PlanetType(std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetType>>>&& types) :
     Condition(),
     m_types(std::move(types))
-{}
+{
+    m_root_candidate_invariant = boost::algorithm::all_of(m_types, [](auto& e){ return e->RootCandidateInvariant(); });
+    m_target_invariant = boost::algorithm::all_of(m_types, [](auto& e){ return e->TargetInvariant(); });
+    m_source_invariant = boost::algorithm::all_of(m_types, [](auto& e){ return e->SourceInvariant(); });
+}
 
 bool PlanetType::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -3482,30 +3486,6 @@ void PlanetType::Eval(const ScriptingContext& parent_context,
         // re-evaluate contained objects for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
-}
-
-bool PlanetType::RootCandidateInvariant() const {
-    for (auto& type : m_types) {
-        if (!type->RootCandidateInvariant())
-            return false;
-    }
-    return true;
-}
-
-bool PlanetType::TargetInvariant() const {
-    for (auto& type : m_types) {
-        if (!type->TargetInvariant())
-            return false;
-    }
-    return true;
-}
-
-bool PlanetType::SourceInvariant() const {
-    for (auto& type : m_types) {
-        if (!type->SourceInvariant())
-            return false;
-    }
-    return true;
 }
 
 std::string PlanetType::Description(bool negated/* = false*/) const {
