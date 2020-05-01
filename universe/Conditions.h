@@ -1851,11 +1851,7 @@ private:
 /** Matches whatever its subcondition matches, but has a customized description
   * string that is returned by Description() by looking up in the stringtable. */
 struct FO_COMMON_API Described final : public Condition {
-    Described(std::unique_ptr<Condition>&& condition, const std::string& desc_stringtable_key) :
-        Condition(),
-            m_condition(std::move(condition)),
-        m_desc_stringtable_key(desc_stringtable_key)
-    {}
+    Described(std::unique_ptr<Condition>&& condition, const std::string& desc_stringtable_key);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,

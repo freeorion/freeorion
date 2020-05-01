@@ -10298,6 +10298,12 @@ const std::vector<Condition*> OrderedAlternativesOf::Operands() const {
 ///////////////////////////////////////////////////////////
 // Described                                             //
 ///////////////////////////////////////////////////////////
+Described::Described(std::unique_ptr<Condition>&& condition, const std::string& desc_stringtable_key) :
+    Condition(),
+    m_condition(std::move(condition)),
+    m_desc_stringtable_key(desc_stringtable_key)
+{}
+
 bool Described::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;
