@@ -1859,8 +1859,7 @@ Type::Type(std::unique_ptr<ValueRef::ValueRef<UniverseObjectType>>&& type) :
 {}
 
 Type::Type(UniverseObjectType type) :
-    Condition(),
-    m_type(std::make_unique<ValueRef::Constant<UniverseObjectType>>(type))
+    Type(std::move(std::make_unique<ValueRef::Constant<UniverseObjectType>>(type)))
 {}
 
 bool Type::operator==(const Condition& rhs) const {
