@@ -165,7 +165,7 @@ struct FO_COMMON_API SortedNumberOf final : public Condition {
 private:
     std::unique_ptr<ValueRef::ValueRef<int>> m_number;
     std::unique_ptr<ValueRef::ValueRef<double>> m_sort_key;
-    SortingMethod m_sorting_method = SORT_RANDOM;
+    SortingMethod m_sorting_method;
     std::unique_ptr<Condition> m_condition;
 
     friend class boost::serialization::access;

@@ -628,8 +628,7 @@ unsigned int Turn::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 SortedNumberOf::SortedNumberOf(std::unique_ptr<ValueRef::ValueRef<int>>&& number,
                                std::unique_ptr<Condition>&& condition) :
-    m_number(std::move(number)),
-    m_condition(std::move(condition))
+    SortedNumberOf(std::move(number), nullptr, SORT_RANDOM, std::move(condition))
 {}
 
 SortedNumberOf::SortedNumberOf(std::unique_ptr<ValueRef::ValueRef<int>>&& number,
