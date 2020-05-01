@@ -347,8 +347,7 @@ private:
 
 /** Matches space monsters. */
 struct FO_COMMON_API Monster final : public Condition {
-    Monster() : Condition() {}
-
+    Monster();
     bool operator==(const Condition& rhs) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;

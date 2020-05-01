@@ -1768,6 +1768,10 @@ unsigned int Capital::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // Monster                                               //
 ///////////////////////////////////////////////////////////
+Monster::Monster() :
+    Condition()
+{}
+
 bool Monster::operator==(const Condition& rhs) const
 { return Condition::operator==(rhs); }
 
