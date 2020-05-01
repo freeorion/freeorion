@@ -1133,7 +1133,11 @@ EmpireAffiliation::EmpireAffiliation(std::unique_ptr<ValueRef::ValueRef<int>>&& 
                                      EmpireAffiliationType affiliation) :
     m_empire_id(std::move(empire_id)),
     m_affiliation(affiliation)
-{}
+{
+    m_root_candidate_invariant = !m_empire_id || m_empire_id->RootCandidateInvariant();
+    m_target_invariant = !m_empire_id || m_empire_id->TargetInvariant();
+    m_source_invariant = !m_empire_id || m_empire_id->SourceInvariant();
+}
 
 EmpireAffiliation::EmpireAffiliation(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id) :
     EmpireAffiliation(std::move(empire_id), AFFIL_SELF)
@@ -1255,15 +1259,6 @@ void EmpireAffiliation::Eval(const ScriptingContext& parent_context,
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
 }
-
-bool EmpireAffiliation::RootCandidateInvariant() const
-{ return m_empire_id ? m_empire_id->RootCandidateInvariant() : true; }
-
-bool EmpireAffiliation::TargetInvariant() const
-{ return m_empire_id ? m_empire_id->TargetInvariant() : true; }
-
-bool EmpireAffiliation::SourceInvariant() const
-{ return m_empire_id ? m_empire_id->SourceInvariant() : true; }
 
 std::string EmpireAffiliation::Description(bool negated/* = false*/) const {
     std::string empire_str;
