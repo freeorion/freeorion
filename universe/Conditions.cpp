@@ -1128,13 +1128,11 @@ EmpireAffiliation::EmpireAffiliation(std::unique_ptr<ValueRef::ValueRef<int>>&& 
 {}
 
 EmpireAffiliation::EmpireAffiliation(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id) :
-    m_empire_id(std::move(empire_id)),
-    m_affiliation(AFFIL_SELF)
+    EmpireAffiliation(std::move(empire_id), AFFIL_SELF)
 {}
 
 EmpireAffiliation::EmpireAffiliation(EmpireAffiliationType affiliation) :
-    m_empire_id(nullptr),
-    m_affiliation(affiliation)
+    EmpireAffiliation(nullptr, affiliation)
 {}
 
 bool EmpireAffiliation::operator==(const Condition& rhs) const {
