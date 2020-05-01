@@ -1087,7 +1087,11 @@ unsigned int All::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 None::None() :
     Condition()
-{}
+{
+    m_root_candidate_invariant = true;
+    m_target_invariant = true;
+    m_source_invariant = true;
+}
 
 void None::Eval(const ScriptingContext& parent_context,
                 ObjectSet& matches, ObjectSet& non_matches,
