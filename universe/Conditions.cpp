@@ -10239,7 +10239,11 @@ Described::Described(std::unique_ptr<Condition>&& condition, const std::string& 
     Condition(),
     m_condition(std::move(condition)),
     m_desc_stringtable_key(desc_stringtable_key)
-{}
+{
+    m_root_candidate_invariant = !m_condition || m_condition->RootCandidateInvariant();
+    m_target_invariant = !m_condition || m_condition->TargetInvariant();
+    m_source_invariant = !m_condition || m_condition->SourceInvariant();
+}
 
 bool Described::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -10274,15 +10278,6 @@ std::string Described::Description(bool negated/* = false*/) const {
         return m_condition->Description(negated);
     return "";
 }
-
-bool Described::RootCandidateInvariant() const
-{ return !m_condition || m_condition->RootCandidateInvariant(); }
-
-bool Described::TargetInvariant() const
-{ return !m_condition || m_condition->TargetInvariant(); }
-
-bool Described::SourceInvariant() const
-{ return !m_condition || m_condition->SourceInvariant(); }
 
 void Described::SetTopLevelContent(const std::string& content_name) {
     if (m_condition)
