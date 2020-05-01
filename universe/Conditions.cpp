@@ -6941,13 +6941,11 @@ OwnerHasShipDesignAvailable::OwnerHasShipDesignAvailable(
 {}
 
 OwnerHasShipDesignAvailable::OwnerHasShipDesignAvailable(int design_id) :
-    Condition(),
-    m_id(std::make_unique<ValueRef::Constant<int>>(design_id))
+    OwnerHasShipDesignAvailable(nullptr, std::move(std::make_unique<ValueRef::Constant<int>>(design_id)))
 {}
 
 OwnerHasShipDesignAvailable::OwnerHasShipDesignAvailable(std::unique_ptr<ValueRef::ValueRef<int>>&& design_id) :
-    Condition(),
-    m_id(std::move(design_id))
+    OwnerHasShipDesignAvailable(nullptr, std::move(design_id))
 {}
 
 bool OwnerHasShipDesignAvailable::operator==(const Condition& rhs) const {
