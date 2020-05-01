@@ -3320,7 +3320,11 @@ unsigned int InSystem::GetCheckSum() const {
 ObjectID::ObjectID(std::unique_ptr<ValueRef::ValueRef<int>>&& object_id) :
     Condition(),
     m_object_id(std::move(object_id))
-{}
+{
+    m_root_candidate_invariant = !m_object_id || m_object_id->RootCandidateInvariant();
+    m_target_invariant = !m_object_id || m_object_id->TargetInvariant();
+    m_source_invariant = !m_object_id || m_object_id->SourceInvariant();
+}
 
 bool ObjectID::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -3367,15 +3371,6 @@ void ObjectID::Eval(const ScriptingContext& parent_context,
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
 }
-
-bool ObjectID::RootCandidateInvariant() const
-{ return !m_object_id || m_object_id->RootCandidateInvariant(); }
-
-bool ObjectID::TargetInvariant() const
-{ return !m_object_id || m_object_id->TargetInvariant(); }
-
-bool ObjectID::SourceInvariant() const
-{ return !m_object_id || m_object_id->SourceInvariant(); }
 
 std::string ObjectID::Description(bool negated/* = false*/) const {
     std::string object_str;
