@@ -1507,12 +1507,6 @@ struct FO_COMMON_API CanColonize final : public Condition {
     explicit CanColonize();
 
     bool operator==(const Condition& rhs) const override;
-    bool RootCandidateInvariant() const override
-    { return true; }
-    bool TargetInvariant() const override
-    { return true; }
-    bool SourceInvariant() const override
-    { return true; }
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override

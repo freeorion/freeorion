@@ -8643,7 +8643,11 @@ unsigned int ResourceSupplyConnectedByEmpire::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 CanColonize::CanColonize() :
     Condition()
-{}
+{
+    m_root_candidate_invariant = true;
+    m_target_invariant = true;
+    m_source_invariant = true;
+}
 
 bool CanColonize::operator==(const Condition& rhs) const
 { return Condition::operator==(rhs); }
