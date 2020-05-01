@@ -5567,7 +5567,11 @@ unsigned int PredefinedShipDesign::GetCheckSum() const {
 NumberedShipDesign::NumberedShipDesign(std::unique_ptr<ValueRef::ValueRef<int>>&& design_id) :
     Condition(),
     m_design_id(std::move(design_id))
-{}
+{
+    m_root_candidate_invariant = !m_design_id || m_design_id->RootCandidateInvariant();
+    m_target_invariant = !m_design_id || m_design_id->TargetInvariant();
+    m_source_invariant = !m_design_id || m_design_id->SourceInvariant();
+}
 
 bool NumberedShipDesign::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -5621,15 +5625,6 @@ void NumberedShipDesign::Eval(const ScriptingContext& parent_context,
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
 }
-
-bool NumberedShipDesign::RootCandidateInvariant() const
-{ return !m_design_id || m_design_id->RootCandidateInvariant(); }
-
-bool NumberedShipDesign::TargetInvariant() const
-{ return !m_design_id || m_design_id->TargetInvariant(); }
-
-bool NumberedShipDesign::SourceInvariant() const
-{ return !m_design_id || m_design_id->SourceInvariant(); }
 
 std::string NumberedShipDesign::Description(bool negated/* = false*/) const {
     std::string id_str = m_design_id->ConstantExpr() ?
