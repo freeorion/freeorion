@@ -8726,7 +8726,11 @@ unsigned int CanProduceShips::GetCheckSum() const {
 OrderedBombarded::OrderedBombarded(std::unique_ptr<Condition>&& by_object_condition) :
     Condition(),
     m_by_object_condition(std::move(by_object_condition))
-{}
+{
+    m_root_candidate_invariant = m_by_object_condition->RootCandidateInvariant();
+    m_target_invariant = m_by_object_condition->TargetInvariant();
+    m_source_invariant = m_by_object_condition->SourceInvariant();
+}
 
 bool OrderedBombarded::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -8792,15 +8796,6 @@ void OrderedBombarded::Eval(const ScriptingContext& parent_context,
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
 }
-
-bool OrderedBombarded::RootCandidateInvariant() const
-{ return m_by_object_condition->RootCandidateInvariant(); }
-
-bool OrderedBombarded::TargetInvariant() const
-{ return m_by_object_condition->TargetInvariant(); }
-
-bool OrderedBombarded::SourceInvariant() const
-{ return m_by_object_condition->SourceInvariant(); }
 
 std::string OrderedBombarded::Description(bool negated/* = false*/) const {
     std::string by_str;
