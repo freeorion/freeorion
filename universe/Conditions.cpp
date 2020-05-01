@@ -9446,7 +9446,11 @@ CombatTarget::CombatTarget(ContentType content_type,
     Condition(),
     m_name(std::move(name)),
     m_content_type(content_type)
-{}
+{
+    m_root_candidate_invariant = !m_name || m_name->RootCandidateInvariant();
+    m_target_invariant = !m_name|| m_name->TargetInvariant();
+    m_source_invariant = !m_name || m_name->SourceInvariant();
+}
 
 bool CombatTarget::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -9496,15 +9500,6 @@ void CombatTarget::Eval(const ScriptingContext& parent_context,
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
 }
-
-bool CombatTarget::RootCandidateInvariant() const
-{ return (!m_name || m_name->RootCandidateInvariant()); }
-
-bool CombatTarget::TargetInvariant() const
-{ return (!m_name|| m_name->TargetInvariant()); }
-
-bool CombatTarget::SourceInvariant() const
-{ return (!m_name || m_name->SourceInvariant()); }
 
 std::string CombatTarget::Description(bool negated/* = false*/) const {
     std::string name_str;
@@ -9610,7 +9605,11 @@ namespace {
 And::And(std::vector<std::unique_ptr<Condition>>&& operands) :
     Condition(),
     m_operands(std::move(operands))
-{ SetConditionVariance(m_operands, m_root_candidate_invariant, m_target_invariant, m_source_invariant); }
+{
+    m_root_candidate_invariant = boost::algorithm::all_of(m_operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
+    m_target_invariant = boost::algorithm::all_of(m_operands, [](auto& e){ return !e || e->TargetInvariant(); });
+    m_source_invariant = boost::algorithm::all_of(m_operands, [](auto& e){ return !e || e->SourceInvariant(); });
+}
 
 And::And(std::unique_ptr<Condition>&& operand1, std::unique_ptr<Condition>&& operand2,
          std::unique_ptr<Condition>&& operand3, std::unique_ptr<Condition>&& operand4) :
