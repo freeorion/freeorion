@@ -6273,10 +6273,7 @@ unsigned int ShipPartMeterValue::GetCheckSum() const {
 EmpireMeterValue::EmpireMeterValue(const std::string& meter,
                                    std::unique_ptr<ValueRef::ValueRef<double>>&& low,
                                    std::unique_ptr<ValueRef::ValueRef<double>>&& high) :
-    Condition(),
-    m_meter(meter),
-    m_low(std::move(low)),
-    m_high(std::move(high))
+    EmpireMeterValue(nullptr, meter, std::move(low), std::move(high))
 {}
 
 EmpireMeterValue::EmpireMeterValue(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
