@@ -2737,6 +2737,11 @@ unsigned int CreatedOnTurn::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // Contains                                              //
 ///////////////////////////////////////////////////////////
+Contains::Contains(std::unique_ptr<Condition>&& condition) :
+    Condition(),
+    m_condition(std::move(condition))
+{}
+
 bool Contains::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;
