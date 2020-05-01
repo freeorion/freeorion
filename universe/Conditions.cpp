@@ -5454,11 +5454,6 @@ PredefinedShipDesign::PredefinedShipDesign(std::unique_ptr<ValueRef::ValueRef<st
     m_name(std::move(name))
 {}
 
-PredefinedShipDesign::PredefinedShipDesign(ValueRef::ValueRef<std::string>* name) :
-    Condition(),
-    m_name(name)
-{}
-
 bool PredefinedShipDesign::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;

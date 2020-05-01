@@ -962,7 +962,6 @@ private:
   * \a name */
 struct FO_COMMON_API PredefinedShipDesign final : public Condition {
     explicit PredefinedShipDesign(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
-    explicit PredefinedShipDesign(ValueRef::ValueRef<std::string>* name);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
