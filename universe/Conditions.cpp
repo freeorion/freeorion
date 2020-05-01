@@ -8724,7 +8724,11 @@ unsigned int CanColonize::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 CanProduceShips::CanProduceShips() :
     Condition()
-{}
+{
+    m_root_candidate_invariant = true;
+    m_target_invariant = true;
+    m_source_invariant = true;
+}
 
 bool CanProduceShips::operator==(const Condition& rhs) const
 { return Condition::operator==(rhs); }
