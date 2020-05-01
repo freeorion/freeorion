@@ -4054,8 +4054,7 @@ Species::Species(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&&
 {}
 
 Species::Species() :
-    Condition(),
-    m_names()
+    Species(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>{})
 {}
 
 bool Species::operator==(const Condition& rhs) const {
