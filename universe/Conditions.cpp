@@ -3168,7 +3168,11 @@ unsigned int ContainedBy::GetCheckSum() const {
 InSystem::InSystem(std::unique_ptr<ValueRef::ValueRef<int>>&& system_id) :
     Condition(),
     m_system_id(std::move(system_id))
-{}
+{
+    m_root_candidate_invariant = !m_system_id || m_system_id->RootCandidateInvariant();
+    m_target_invariant = !m_system_id || m_system_id->TargetInvariant();
+    m_source_invariant = !m_system_id || m_system_id->SourceInvariant();
+}
 
 bool InSystem::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -3218,15 +3222,6 @@ void InSystem::Eval(const ScriptingContext& parent_context,
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
 }
-
-bool InSystem::RootCandidateInvariant() const
-{ return !m_system_id || m_system_id->RootCandidateInvariant(); }
-
-bool InSystem::TargetInvariant() const
-{ return !m_system_id || m_system_id->TargetInvariant(); }
-
-bool InSystem::SourceInvariant() const
-{ return !m_system_id || m_system_id->SourceInvariant(); }
 
 std::string InSystem::Description(bool negated/* = false*/) const {
     std::string system_str;
