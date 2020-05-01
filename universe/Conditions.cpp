@@ -1042,7 +1042,11 @@ unsigned int SortedNumberOf::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 All::All() :
     Condition()
-{}
+{
+    m_root_candidate_invariant = true;
+    m_target_invariant = true;
+    m_source_invariant = true;
+}
 
 void All::Eval(const ScriptingContext& parent_context,
                           ObjectSet& matches, ObjectSet& non_matches,
