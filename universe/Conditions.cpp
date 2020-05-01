@@ -2471,13 +2471,11 @@ unsigned int HasSpecial::GetCheckSum() const {
 // HasTag                                                //
 ///////////////////////////////////////////////////////////
 HasTag::HasTag() :
-    Condition(),
-    m_name()
+    HasTag(std::unique_ptr<ValueRef::ValueRef<std::string>>{})
 {}
 
 HasTag::HasTag(const std::string& name) :
-    Condition(),
-    m_name(std::make_unique<ValueRef::Constant<std::string>>(name))
+    HasTag(std::move(std::make_unique<ValueRef::Constant<std::string>>(name)))
 {}
 
 HasTag::HasTag(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
