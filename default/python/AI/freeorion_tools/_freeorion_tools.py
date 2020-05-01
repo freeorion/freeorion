@@ -29,7 +29,7 @@ def dict_from_map_recursive(thismap):
         for el in thismap:
             retval[el.key()] = dict_from_map_recursive(el.data())
         return retval
-    except:
+    except Exception:
         return dict_from_map(thismap)
 
 
