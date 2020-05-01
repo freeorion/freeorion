@@ -7586,7 +7586,11 @@ unsigned int WithinStarlaneJumps::GetCheckSum() const {
 CanAddStarlaneConnection::CanAddStarlaneConnection(std::unique_ptr<Condition>&& condition) :
     Condition(),
     m_condition(std::move(condition))
-{}
+{
+    m_root_candidate_invariant = m_condition->RootCandidateInvariant();
+    m_target_invariant = m_condition->TargetInvariant();
+    m_source_invariant = m_condition->SourceInvariant();
+}
 
 bool CanAddStarlaneConnection::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -7973,15 +7977,6 @@ void CanAddStarlaneConnection::Eval(const ScriptingContext& parent_context,
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
 }
-
-bool CanAddStarlaneConnection::RootCandidateInvariant() const
-{ return m_condition->RootCandidateInvariant(); }
-
-bool CanAddStarlaneConnection::TargetInvariant() const
-{ return m_condition->TargetInvariant(); }
-
-bool CanAddStarlaneConnection::SourceInvariant() const
-{ return m_condition->SourceInvariant(); }
 
 std::string CanAddStarlaneConnection::Description(bool negated/* = false*/) const {
     return str(FlexibleFormat((!negated)
