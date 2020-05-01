@@ -5434,7 +5434,11 @@ unsigned int DesignHasPartClass::GetCheckSum() const {
 PredefinedShipDesign::PredefinedShipDesign(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
     Condition(),
     m_name(std::move(name))
-{}
+{
+    m_root_candidate_invariant = !m_name || m_name->RootCandidateInvariant();
+    m_target_invariant = !m_name || m_name->TargetInvariant();
+    m_source_invariant = !m_name || m_name->SourceInvariant();
+}
 
 bool PredefinedShipDesign::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -5506,15 +5510,6 @@ void PredefinedShipDesign::Eval(const ScriptingContext& parent_context,
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
 }
-
-bool PredefinedShipDesign::RootCandidateInvariant() const
-{ return !m_name || m_name->RootCandidateInvariant(); }
-
-bool PredefinedShipDesign::TargetInvariant() const
-{ return !m_name || m_name->TargetInvariant(); }
-
-bool PredefinedShipDesign::SourceInvariant() const
-{ return !m_name || m_name->SourceInvariant(); }
 
 std::string PredefinedShipDesign::Description(bool negated/* = false*/) const {
     std::string name_str;
