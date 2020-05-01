@@ -1448,6 +1448,10 @@ unsigned int RootCandidate::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // Target                                                //
 ///////////////////////////////////////////////////////////
+Target::Target() :
+    Condition()
+{}
+
 bool Target::operator==(const Condition& rhs) const
 { return Condition::operator==(rhs); }
 

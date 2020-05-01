@@ -265,8 +265,7 @@ private:
 
 /** Matches the target of an effect being executed. */
 struct FO_COMMON_API Target final : public Condition {
-    Target() : Condition() {}
-
+    Target();
     bool operator==(const Condition& rhs) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
