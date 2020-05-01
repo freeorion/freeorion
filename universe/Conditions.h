@@ -1468,14 +1468,8 @@ private:
 
 /** Matches objects that are aggressive fleets or are in aggressive fleets. */
 struct FO_COMMON_API Aggressive final : public Condition {
-    explicit Aggressive() :
-        Condition(),
-        m_aggressive(true)
-    {}
-    explicit Aggressive(bool aggressive) :
-        Condition(),
-        m_aggressive(aggressive)
-    {}
+    explicit Aggressive();
+    explicit Aggressive(bool aggressive);
 
     bool operator==(const Condition& rhs) const override;
     bool RootCandidateInvariant() const override

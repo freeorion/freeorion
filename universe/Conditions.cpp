@@ -8257,6 +8257,15 @@ unsigned int Stationary::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // Aggressive                                            //
 ///////////////////////////////////////////////////////////
+Aggressive::Aggressive() :
+    Aggressive(true)
+{}
+
+Aggressive::Aggressive(bool aggressive) :
+    Condition(),
+    m_aggressive(aggressive)
+{}
+
 bool Aggressive::operator==(const Condition& rhs) const
 { return Condition::operator==(rhs); }
 
