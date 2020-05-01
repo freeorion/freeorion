@@ -8626,6 +8626,10 @@ unsigned int ResourceSupplyConnectedByEmpire::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // CanColonize                                           //
 ///////////////////////////////////////////////////////////
+CanColonize::CanColonize() :
+    Condition()
+{}
+
 bool CanColonize::operator==(const Condition& rhs) const
 { return Condition::operator==(rhs); }
 

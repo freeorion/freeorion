@@ -1553,7 +1553,7 @@ private:
 
 /** Matches objects whose species has the ability to found new colonies. */
 struct FO_COMMON_API CanColonize final : public Condition {
-    explicit CanColonize() : Condition() {}
+    explicit CanColonize();
 
     bool operator==(const Condition& rhs) const override;
     bool RootCandidateInvariant() const override
