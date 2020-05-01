@@ -4494,7 +4494,11 @@ unsigned int Enqueued::GetCheckSum() const {
 FocusType::FocusType(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names) :
     Condition(),
     m_names(std::move(names))
-{}
+{
+    m_root_candidate_invariant = boost::algorithm::all_of(m_names, [](auto& e){ return e->RootCandidateInvariant(); });
+    m_target_invariant = boost::algorithm::all_of(m_names, [](auto& e){ return e->TargetInvariant(); });
+    m_source_invariant = boost::algorithm::all_of(m_names, [](auto& e){ return e->SourceInvariant(); });
+}
 
 bool FocusType::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -4570,30 +4574,6 @@ void FocusType::Eval(const ScriptingContext& parent_context,
         // re-evaluate allowed building types range for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
-}
-
-bool FocusType::RootCandidateInvariant() const {
-    for (auto& name : m_names) {
-        if (!name->RootCandidateInvariant())
-            return false;
-    }
-    return true;
-}
-
-bool FocusType::TargetInvariant() const {
-    for (auto& name : m_names) {
-        if (!name->TargetInvariant())
-            return false;
-    }
-    return true;
-}
-
-bool FocusType::SourceInvariant() const {
-    for (auto& name : m_names) {
-        if (!name->SourceInvariant())
-            return false;
-    }
-    return true;
 }
 
 std::string FocusType::Description(bool negated/* = false*/) const {
