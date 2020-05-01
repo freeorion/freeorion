@@ -4283,8 +4283,7 @@ Enqueued::Enqueued(std::unique_ptr<ValueRef::ValueRef<int>>&& design_id,
 {}
 
 Enqueued::Enqueued() :
-    Condition(),
-    m_build_type(BT_NOT_BUILDING)
+    Enqueued(BT_NOT_BUILDING, nullptr, nullptr, nullptr)
 {}
 
 Enqueued::Enqueued(BuildType build_type,
