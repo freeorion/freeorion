@@ -1883,7 +1883,11 @@ unsigned int Armed::GetCheckSum() const {
 Type::Type(std::unique_ptr<ValueRef::ValueRef<UniverseObjectType>>&& type) :
     Condition(),
     m_type(std::move(type))
-{}
+{
+    m_root_candidate_invariant = m_type->RootCandidateInvariant();
+    m_target_invariant = m_type->TargetInvariant();
+    m_source_invariant = m_type->SourceInvariant();
+}
 
 Type::Type(UniverseObjectType type) :
     Type(std::move(std::make_unique<ValueRef::Constant<UniverseObjectType>>(type)))
@@ -1953,15 +1957,6 @@ void Type::Eval(const ScriptingContext& parent_context,
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
 }
-
-bool Type::RootCandidateInvariant() const
-{ return m_type->RootCandidateInvariant(); }
-
-bool Type::TargetInvariant() const
-{ return m_type->TargetInvariant(); }
-
-bool Type::SourceInvariant() const
-{ return m_type->SourceInvariant(); }
 
 std::string Type::Description(bool negated/* = false*/) const {
     std::string value_str = m_type->ConstantExpr() ?
