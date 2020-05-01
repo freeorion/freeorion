@@ -70,14 +70,14 @@ def count_planets_in_systems(systems, planet_types_filter=HS_ACCEPTABLE_PLANET_T
 def vicinity_range(systems_per_empire):
     """
     Calculates the vicinity range (jumps away from home world) for the specified number of systems per empire.
-    This limit the square root of systems_per_empire with a minimum value of HS_MIN_VICINITY_RANGE and
+    This limit is the square root of systems_per_empire with a minimum value of HS_MIN_VICINITY_RANGE and
     a maximum value of HS_MAX_VICINITY_RANGE.
     """
     return min(HS_MAX_VICINITY_RANGE, max(HS_MIN_VICINITY_RANGE, int(systems_per_empire**0.5)))
 
 
 def calculate_home_system_merit(system, systems_per_empire):
-    """Calculate the system's merit as the number of planets within its vecinity range."""
+    """Calculate the system's merit as the number of planets within its vicinity range."""
     return count_planets_in_systems(fo.systems_within_jumps_unordered(vicinity_range(systems_per_empire), [system]))
 
 
