@@ -2949,7 +2949,11 @@ unsigned int Contains::GetCheckSum() const {
 ContainedBy::ContainedBy(std::unique_ptr<Condition>&& condition) :
     Condition(),
     m_condition(std::move(condition))
-{}
+{
+    m_root_candidate_invariant = m_condition->RootCandidateInvariant();
+    m_target_invariant = m_condition->TargetInvariant();
+    m_source_invariant = m_condition->SourceInvariant();
+}
 
 bool ContainedBy::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -3096,15 +3100,6 @@ void ContainedBy::Eval(const ScriptingContext& parent_context,
         EvalImpl(matches, non_matches, search_domain, ContainedBySimpleMatch(subcondition_matches));
     }
 }
-
-bool ContainedBy::RootCandidateInvariant() const
-{ return m_condition->RootCandidateInvariant(); }
-
-bool ContainedBy::TargetInvariant() const
-{ return m_condition->TargetInvariant(); }
-
-bool ContainedBy::SourceInvariant() const
-{ return m_condition->SourceInvariant(); }
 
 std::string ContainedBy::Description(bool negated/* = false*/) const {
     return str(FlexibleFormat((!negated)
