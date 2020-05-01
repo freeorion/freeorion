@@ -2937,6 +2937,11 @@ unsigned int Contains::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // ContainedBy                                           //
 ///////////////////////////////////////////////////////////
+ContainedBy::ContainedBy(std::unique_ptr<Condition>&& condition) :
+    Condition(),
+    m_condition(std::move(condition))
+{}
+
 bool ContainedBy::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;

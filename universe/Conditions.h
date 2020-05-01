@@ -579,11 +579,7 @@ private:
   * \a condition.  Container objects are Systems, Planets (which contain
   * Buildings), and Fleets (which contain Ships). */
 struct FO_COMMON_API ContainedBy final : public Condition {
-    ContainedBy(std::unique_ptr<Condition>&& condition) :
-        Condition(),
-        m_condition(std::move(condition))
-    {}
-
+    ContainedBy(std::unique_ptr<Condition>&& condition);
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
