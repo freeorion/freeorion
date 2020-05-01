@@ -7206,7 +7206,11 @@ unsigned int OwnerHasShipPartAvailable::GetCheckSum() const {
 VisibleToEmpire::VisibleToEmpire(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id) :
     Condition(),
     m_empire_id(std::move(empire_id))
-{}
+{
+    m_root_candidate_invariant = !m_empire_id || m_empire_id->RootCandidateInvariant();
+    m_target_invariant = !m_empire_id || m_empire_id->TargetInvariant();
+    m_source_invariant = !m_empire_id || m_empire_id->SourceInvariant();
+}
 
 bool VisibleToEmpire::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -7272,15 +7276,6 @@ void VisibleToEmpire::Eval(const ScriptingContext& parent_context,
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
 }
-
-bool VisibleToEmpire::RootCandidateInvariant() const
-{ return !m_empire_id || m_empire_id->RootCandidateInvariant(); }
-
-bool VisibleToEmpire::TargetInvariant() const
-{ return !m_empire_id || m_empire_id->TargetInvariant(); }
-
-bool VisibleToEmpire::SourceInvariant() const
-{ return !m_empire_id || m_empire_id->SourceInvariant(); }
 
 std::string VisibleToEmpire::Description(bool negated/* = false*/) const {
     std::string empire_str;
