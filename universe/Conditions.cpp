@@ -6791,13 +6791,11 @@ OwnerHasBuildingTypeAvailable::OwnerHasBuildingTypeAvailable(
 {}
 
 OwnerHasBuildingTypeAvailable::OwnerHasBuildingTypeAvailable(const std::string& name) :
-    Condition(),
-    m_name(std::make_unique<ValueRef::Constant<std::string>>(name))
+    OwnerHasBuildingTypeAvailable(nullptr, std::move(std::make_unique<ValueRef::Constant<std::string>>(name)))
 {}
 
 OwnerHasBuildingTypeAvailable::OwnerHasBuildingTypeAvailable(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
-    Condition(),
-    m_name(std::move(name))
+    OwnerHasBuildingTypeAvailable(nullptr, std::move(name))
 {}
 
 bool OwnerHasBuildingTypeAvailable::operator==(const Condition& rhs) const {
