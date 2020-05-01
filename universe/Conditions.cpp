@@ -5779,7 +5779,11 @@ unsigned int ProducedByEmpire::GetCheckSum() const {
 Chance::Chance(std::unique_ptr<ValueRef::ValueRef<double>>&& chance) :
     Condition(),
     m_chance(std::move(chance))
-{}
+{
+    m_root_candidate_invariant = !m_chance || m_chance->RootCandidateInvariant();
+    m_target_invariant = !m_chance || m_chance->TargetInvariant();
+    m_source_invariant = !m_chance || m_chance->SourceInvariant();
+}
 
 bool Chance::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -5824,15 +5828,6 @@ void Chance::Eval(const ScriptingContext& parent_context,
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
 }
-
-bool Chance::RootCandidateInvariant() const
-{ return !m_chance || m_chance->RootCandidateInvariant(); }
-
-bool Chance::TargetInvariant() const
-{ return !m_chance || m_chance->TargetInvariant(); }
-
-bool Chance::SourceInvariant() const
-{ return !m_chance || m_chance->SourceInvariant(); }
 
 std::string Chance::Description(bool negated/* = false*/) const {
     if (m_chance->ConstantExpr()) {
