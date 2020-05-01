@@ -7091,13 +7091,11 @@ OwnerHasShipPartAvailable::OwnerHasShipPartAvailable(
 {}
 
 OwnerHasShipPartAvailable::OwnerHasShipPartAvailable(const std::string& name) :
-    Condition(),
-    m_name(std::make_unique<ValueRef::Constant<std::string>>(name))
+    OwnerHasShipPartAvailable(nullptr, std::move(std::make_unique<ValueRef::Constant<std::string>>(name)))
 {}
 
 OwnerHasShipPartAvailable::OwnerHasShipPartAvailable(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
-    Condition(),
-    m_name(std::move(name))
+    OwnerHasShipPartAvailable(nullptr, std::move(name))
 {}
 
 bool OwnerHasShipPartAvailable::operator==(const Condition& rhs) const {
