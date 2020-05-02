@@ -3728,7 +3728,17 @@ PlanetEnvironment::PlanetEnvironment(std::vector<std::unique_ptr<ValueRef::Value
     Condition(),
     m_environments(std::move(environments)),
     m_species_name(std::move(species_name_ref))
-{}
+{
+    m_root_candidate_invariant =
+        (!m_species_name || m_species_name->RootCandidateInvariant()) &&
+        boost::algorithm::all_of(m_environments, [](auto& e){ return !e || e->RootCandidateInvariant(); });
+    m_target_invariant =
+        (!m_species_name || m_species_name->TargetInvariant()) &&
+        boost::algorithm::all_of(m_environments, [](auto& e){ return !e || e->TargetInvariant(); });
+    m_source_invariant =
+        (!m_species_name || m_species_name->SourceInvariant()) &&
+        boost::algorithm::all_of(m_environments, [](auto& e){ return !e || e->SourceInvariant(); });
+}
 
 bool PlanetEnvironment::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -3815,36 +3825,6 @@ void PlanetEnvironment::Eval(const ScriptingContext& parent_context,
         // re-evaluate contained objects for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
-}
-
-bool PlanetEnvironment::RootCandidateInvariant() const {
-    if (m_species_name && !m_species_name->RootCandidateInvariant())
-        return false;
-    for (auto& environment : m_environments) {
-        if (!environment->RootCandidateInvariant())
-            return false;
-    }
-    return true;
-}
-
-bool PlanetEnvironment::TargetInvariant() const {
-    if (m_species_name && !m_species_name->TargetInvariant())
-        return false;
-    for (auto& environment : m_environments) {
-        if (!environment->TargetInvariant())
-            return false;
-    }
-    return true;
-}
-
-bool PlanetEnvironment::SourceInvariant() const {
-    if (m_species_name && !m_species_name->SourceInvariant())
-        return false;
-    for (auto& environment : m_environments) {
-        if (!environment->SourceInvariant())
-            return false;
-    }
-    return true;
 }
 
 std::string PlanetEnvironment::Description(bool negated/* = false*/) const {
