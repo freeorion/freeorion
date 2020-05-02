@@ -6248,7 +6248,12 @@ EmpireStockpileValue::EmpireStockpileValue(ResourceType stockpile,
     m_stockpile(stockpile),
     m_low(std::move(low)),
     m_high(std::move(high))
-{}
+{
+    auto operands = {m_low.get(), m_high.get()};
+    m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
+    m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
+    m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
+}
 
 bool EmpireStockpileValue::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -6302,15 +6307,6 @@ void EmpireStockpileValue::Eval(const ScriptingContext& parent_context,
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
 }
-
-bool EmpireStockpileValue::RootCandidateInvariant() const
-{ return (m_low->RootCandidateInvariant() && m_high->RootCandidateInvariant()); }
-
-bool EmpireStockpileValue::TargetInvariant() const
-{ return (m_low->TargetInvariant() && m_high->TargetInvariant()); }
-
-bool EmpireStockpileValue::SourceInvariant() const
-{ return (m_low->SourceInvariant() && m_high->SourceInvariant()); }
 
 std::string EmpireStockpileValue::Description(bool negated/* = false*/) const {
     std::string low_str = m_low->ConstantExpr() ?
