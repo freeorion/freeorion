@@ -9883,7 +9883,9 @@ OrderedAlternativesOf::OrderedAlternativesOf(
     Condition(),
     m_operands(std::move(operands))
 {
-    SetConditionVariance(m_operands, m_root_candidate_invariant, m_target_invariant, m_source_invariant);
+    m_root_candidate_invariant = boost::algorithm::all_of(m_operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
+    m_target_invariant = boost::algorithm::all_of(m_operands, [](auto& e){ return !e || e->TargetInvariant(); });
+    m_source_invariant = boost::algorithm::all_of(m_operands, [](auto& e){ return !e || e->SourceInvariant(); });
 }
 
 bool OrderedAlternativesOf::operator==(const Condition& rhs) const {
@@ -10000,15 +10002,6 @@ void OrderedAlternativesOf::Eval(const ScriptingContext& parent_context,
         FCMoveContent(matches, non_matches);
     }
 }
-
-bool OrderedAlternativesOf::RootCandidateInvariant() const
-{ return m_root_candidate_invariant; }
-
-bool OrderedAlternativesOf::TargetInvariant() const
-{ return m_target_invariant; }
-
-bool OrderedAlternativesOf::SourceInvariant() const
-{ return m_source_invariant; }
 
 std::string OrderedAlternativesOf::Description(bool negated/* = false*/) const {
     std::string values_str;
