@@ -325,7 +325,18 @@ Number::Number(std::unique_ptr<ValueRef::ValueRef<int>>&& low,
     m_low(std::move(low)),
     m_high(std::move(high)),
     m_condition(std::move(condition))
-{}
+{
+    auto operands = {m_low.get(), m_high.get()};
+    m_root_candidate_invariant =
+        m_condition->RootCandidateInvariant() &&
+        boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
+    m_target_invariant =
+        m_condition->TargetInvariant() &&
+        boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
+    m_source_invariant =
+        m_condition->SourceInvariant() &&
+        boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
+}
 
 bool Number::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -421,24 +432,6 @@ void Number::Eval(const ScriptingContext& parent_context,
             non_matches.clear();
         }
     }
-}
-
-bool Number::RootCandidateInvariant() const {
-    return (!m_low || m_low->RootCandidateInvariant()) &&
-           (!m_high || m_high->RootCandidateInvariant()) &&
-           m_condition->RootCandidateInvariant();
-}
-
-bool Number::TargetInvariant() const {
-    return (!m_low || m_low->TargetInvariant()) &&
-           (!m_high || m_high->TargetInvariant()) &&
-           m_condition->TargetInvariant();
-}
-
-bool Number::SourceInvariant() const {
-    return (!m_low || m_low->SourceInvariant()) &&
-           (!m_high || m_high->SourceInvariant()) &&
-           m_condition->SourceInvariant();
 }
 
 bool Number::Match(const ScriptingContext& local_context) const {
