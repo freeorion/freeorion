@@ -912,7 +912,7 @@ namespace {
         const Condition::ObjectSet&                 source_objects,
         EffectsCauseType                            effect_cause_type,
         const std::string&                          specific_cause_name,
-        const std::unordered_set<int>&              candidate_object_ids,
+        const std::unordered_set<int>&              candidate_object_ids,   // TODO: Can this be removed along with scope is source test?
         Condition::ObjectSet&                       candidate_objects_in,
         Effect::SourcesEffectsTargetsAndCausesVec&  source_effects_targets_causes_out,
         int n)
@@ -924,8 +924,6 @@ namespace {
         auto scope = effects_group->Scope();
         if (!scope)
             return;
-        auto activation = effects_group->Activation();
-
         bool scope_is_just_source = dynamic_cast<Condition::Source*>(scope);
 
         auto message{"StoreTargetsAndCausesOfEffectsGroup < " + std::to_string(n) + " >"
@@ -940,11 +938,8 @@ namespace {
         ScriptingContext source_context(object_map);
 
         for (auto& source : source_objects) {
-            // check activation condition with current source
+            // assuming input sources objects set was already filtered with activation condition
             source_context.source = source;
-            if (activation && !activation->Eval(source_context, source))
-                continue;
-
             // construct output in-place
 
             // SourcedEffectsGroup {int source_object_id; const EffectsGroup* effects_group;}
@@ -986,7 +981,7 @@ namespace {
         }
     }
 
-    /** Extract info for scope condition evaluations fand dispatch those
+    /** Collect info for scope condition evaluations and dispatch those
       * evaluations to \a thread_pool. Not thread-safe, but the individual
       * condition evaluations should be safe to evaluate in parallel. */
     void DispatchEffectsGroupScopeEvaluations(
@@ -1002,11 +997,43 @@ namespace {
         boost::asio::thread_pool& thread_pool,
         int& n)
     {
-        for (auto& effects_group : effects_groups) {
+        std::vector<Condition::ObjectSet> active_sources{effects_groups.size()};
+
+        // evaluate activation conditions of effects_groups on input source objects
+        ScriptingContext source_context{object_map};
+        for (std::size_t i = 0; i < effects_groups.size(); ++i) {
+            const auto* effects_group = effects_groups.at(i).get();
             if (only_meter_effects && !effects_group->HasMeterEffects())
                 continue;
             if (!effects_group->Scope())
                 continue;
+
+            if (!effects_group->Activation()) {
+                // no activation condition, leave all sources active
+                active_sources[i] = source_objects;
+
+            } else {
+                if (effects_group->Activation()->SourceInvariant()) {
+                    // can apply condition to all source objects simultaneously
+                    Condition::ObjectSet rejected;
+                    active_sources[i] = source_objects; // copy input source objects set
+                    source_context.source = nullptr;
+                    effects_group->Activation()->Eval(source_context, active_sources[i], rejected, Condition::MATCHES);
+                } else {
+                    // need to apply separately to each source object
+                    for (auto& obj : source_objects) {
+                        source_context.source = obj;
+                        if (effects_group->Activation()->Eval(source_context, obj))
+                            active_sources[i].push_back(obj);
+                    }
+                }
+            }
+        }
+
+        // evaluate scope conditions for source objects that are active
+        for (std::size_t i = 0; i < effects_groups.size(); ++i) {
+            const auto* effects_group = effects_groups.at(i).get();
+
             n++;
 
             // allocate space to store output of effectsgroup targets evaluation
@@ -1033,8 +1060,8 @@ namespace {
                 thread_pool,
                 [
                     &object_map,
-                    eff_g{effects_group.get()},
-                    source_objects,
+                    effects_group,
+                    active_source_objects{active_sources[i]},
                     effect_cause_type,
                     specific_cause_name,
                     &potential_target_ids,
@@ -1043,7 +1070,7 @@ namespace {
                     n
                 ]() mutable
             {
-                StoreTargetsAndCausesOfEffectsGroup(object_map, eff_g, source_objects,
+                StoreTargetsAndCausesOfEffectsGroup(object_map, effects_group, active_source_objects,
                                                     effect_cause_type, specific_cause_name,
                                                     potential_target_ids, local_potential_targets,
                                                     source_effects_targets_causes_vec_out, n);
