@@ -55,7 +55,7 @@ struct FO_COMMON_API Condition {
     //! condition is a subcondition to another Condition or a ValueRef, this
     //! condition may be evaluated once and its result used to match all local
     //! candidates to that condition.
-    virtual bool RootCandidateInvariant() const
+    bool RootCandidateInvariant() const
     { return m_root_candidate_invariant; }
 
     //! (Almost) all conditions are varying with local candidates; this is the
@@ -67,12 +67,12 @@ struct FO_COMMON_API Condition {
 
     //! Returns true iff this condition's evaluation does not reference the
     //! target object.
-    virtual bool TargetInvariant() const
+    bool TargetInvariant() const
     { return m_target_invariant; }
 
     //! Returns true iff this condition's evaluation does not reference the
     //! source object.
-    virtual bool SourceInvariant() const
+    bool SourceInvariant() const
     { return m_source_invariant; }
 
     virtual std::string Description(bool negated = false) const = 0;
