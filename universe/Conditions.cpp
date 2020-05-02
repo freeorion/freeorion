@@ -9844,15 +9844,6 @@ void Not::Eval(const ScriptingContext& parent_context, ObjectSet& matches, Objec
     }
 }
 
-bool Not::RootCandidateInvariant() const
-{ return m_root_candidate_invariant; }
-
-bool Not::TargetInvariant() const
-{ return m_target_invariant; }
-
-bool Not::SourceInvariant() const
-{ return m_source_invariant; }
-
 std::string Not::Description(bool negated/* = false*/) const
 { return m_operand->Description(!negated); }
 
