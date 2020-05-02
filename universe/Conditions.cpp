@@ -9005,7 +9005,12 @@ Location::Location(ContentType content_type,
     m_name1(std::move(name1)),
     m_name2(std::move(name2)),
     m_content_type(content_type)
-{}
+{
+    auto operands = {m_name1.get(), m_name2.get()};
+    m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
+    m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
+    m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
+}
 
 bool Location::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -9056,21 +9061,6 @@ void Location::Eval(const ScriptingContext& parent_context,
         // re-evaluate value and ranges for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
-}
-
-bool Location::RootCandidateInvariant() const {
-    return (!m_name1    || m_name1->RootCandidateInvariant()) &&
-           (!m_name2    || m_name2->RootCandidateInvariant());
-}
-
-bool Location::TargetInvariant() const {
-    return (!m_name1    || m_name1->TargetInvariant()) &&
-           (!m_name2    || m_name2->TargetInvariant());
-}
-
-bool Location::SourceInvariant() const {
-    return (!m_name1    || m_name1->SourceInvariant()) &&
-           (!m_name2    || m_name2->SourceInvariant());
 }
 
 std::string Location::Description(bool negated/* = false*/) const {
