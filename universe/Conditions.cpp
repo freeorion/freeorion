@@ -9650,7 +9650,11 @@ const std::vector<Condition*> And::Operands() const {
 Or::Or(std::vector<std::unique_ptr<Condition>>&& operands) :
     Condition(),
     m_operands(std::move(operands))
-{ SetConditionVariance(m_operands, m_root_candidate_invariant, m_target_invariant, m_source_invariant); }
+{
+    m_root_candidate_invariant = boost::algorithm::all_of(m_operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
+    m_target_invariant = boost::algorithm::all_of(m_operands, [](auto& e){ return !e || e->TargetInvariant(); });
+    m_source_invariant = boost::algorithm::all_of(m_operands, [](auto& e){ return !e || e->SourceInvariant(); });
+}
 
 Or::Or(std::unique_ptr<Condition>&& operand1,
        std::unique_ptr<Condition>&& operand2,
@@ -9668,7 +9672,9 @@ Or::Or(std::unique_ptr<Condition>&& operand1,
     if (operand4)
         m_operands.push_back(std::move(operand4));
 
-    SetConditionVariance(m_operands, m_root_candidate_invariant, m_target_invariant, m_source_invariant);
+    m_root_candidate_invariant = boost::algorithm::all_of(m_operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
+    m_target_invariant = boost::algorithm::all_of(m_operands, [](auto& e){ return !e || e->TargetInvariant(); });
+    m_source_invariant = boost::algorithm::all_of(m_operands, [](auto& e){ return !e || e->SourceInvariant(); });
 }
 
 bool Or::operator==(const Condition& rhs) const {
@@ -9737,15 +9743,6 @@ void Or::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
         // conditions
     }
 }
-
-bool Or::RootCandidateInvariant() const
-{ return m_root_candidate_invariant; }
-
-bool Or::TargetInvariant() const
-{ return m_target_invariant; }
-
-bool Or::SourceInvariant() const
-{ return m_source_invariant; }
 
 std::string Or::Description(bool negated/* = false*/) const {
     std::string values_str;
