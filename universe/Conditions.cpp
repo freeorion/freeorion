@@ -6069,7 +6069,18 @@ EmpireMeterValue::EmpireMeterValue(std::unique_ptr<ValueRef::ValueRef<int>>&& em
     m_meter(meter),
     m_low(std::move(low)),
     m_high(std::move(high))
-{}
+{
+    auto operands = {m_low.get(), m_high.get()};
+    m_root_candidate_invariant =
+        (!m_empire_id || m_empire_id->RootCandidateInvariant()) &&
+        boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
+    m_target_invariant =
+        (!m_empire_id || m_empire_id->TargetInvariant()) &&
+        boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
+    m_source_invariant =
+        (!m_empire_id || m_empire_id->SourceInvariant()) &&
+        boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
+}
 
 bool EmpireMeterValue::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -6123,24 +6134,6 @@ void EmpireMeterValue::Eval(const ScriptingContext& parent_context,
         // re-evaluate allowed turn range for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
-}
-
-bool EmpireMeterValue::RootCandidateInvariant() const {
-    return (!m_empire_id || m_empire_id->RootCandidateInvariant()) &&
-           (!m_low || m_low->RootCandidateInvariant()) &&
-           (!m_high || m_high->RootCandidateInvariant());
-}
-
-bool EmpireMeterValue::TargetInvariant() const {
-    return (!m_empire_id || m_empire_id->TargetInvariant()) &&
-           (!m_low || m_low->TargetInvariant()) &&
-           (!m_high || m_high->TargetInvariant());
-}
-
-bool EmpireMeterValue::SourceInvariant() const {
-    return (!m_empire_id || m_empire_id->SourceInvariant()) &&
-           (!m_low || m_low->SourceInvariant()) &&
-           (!m_high || m_high->SourceInvariant());
 }
 
 std::string EmpireMeterValue::Description(bool negated/* = false*/) const {
