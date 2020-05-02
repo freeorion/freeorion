@@ -4178,7 +4178,12 @@ Enqueued::Enqueued(std::unique_ptr<ValueRef::ValueRef<int>>&& design_id,
     m_empire_id(std::move(empire_id)),
     m_low(std::move(low)),
     m_high(std::move(high))
-{}
+{
+    auto operands = {m_design_id.get(), m_empire_id.get(), m_low.get(), m_high.get()};
+    m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
+    m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
+    m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
+}
 
 Enqueued::Enqueued() :
     Enqueued(BT_NOT_BUILDING, nullptr, nullptr, nullptr)
@@ -4195,7 +4200,18 @@ Enqueued::Enqueued(BuildType build_type,
     m_empire_id(std::move(empire_id)),
     m_low(std::move(low)),
     m_high(std::move(high))
-{}
+{
+    auto operands = {m_empire_id.get(), m_low.get(), m_high.get()};
+    m_root_candidate_invariant =
+        (!m_name || m_name->RootCandidateInvariant()) &&
+        boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
+    m_target_invariant =
+        (!m_name || m_name->TargetInvariant()) &&
+        boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
+    m_source_invariant =
+        (!m_name || m_name->SourceInvariant()) &&
+        boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
+}
 
 bool Enqueued::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -4331,36 +4347,6 @@ void Enqueued::Eval(const ScriptingContext& parent_context,
         // re-evaluate allowed building types range for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
-}
-
-bool Enqueued::RootCandidateInvariant() const {
-    if ((m_name &&      !m_name->RootCandidateInvariant()) ||
-        (m_design_id && !m_design_id->RootCandidateInvariant()) ||
-        (m_empire_id && !m_empire_id->RootCandidateInvariant()) ||
-        (m_low &&       !m_low->RootCandidateInvariant()) ||
-        (m_high &&      !m_high->RootCandidateInvariant()))
-    { return false; }
-    return true;
-}
-
-bool Enqueued::TargetInvariant() const {
-    if ((m_name &&      !m_name->TargetInvariant()) ||
-        (m_design_id && !m_design_id->TargetInvariant()) ||
-        (m_empire_id && !m_empire_id->TargetInvariant()) ||
-        (m_low &&       !m_low->TargetInvariant()) ||
-        (m_high &&      !m_high->TargetInvariant()))
-    { return false; }
-    return true;
-}
-
-bool Enqueued::SourceInvariant() const {
-    if ((m_name &&      !m_name->SourceInvariant()) ||
-        (m_design_id && !m_design_id->SourceInvariant()) ||
-        (m_empire_id && !m_empire_id->SourceInvariant()) ||
-        (m_low &&       !m_low->SourceInvariant()) ||
-        (m_high &&      !m_high->SourceInvariant()))
-    { return false; }
-    return true;
 }
 
 std::string Enqueued::Description(bool negated/* = false*/) const {
