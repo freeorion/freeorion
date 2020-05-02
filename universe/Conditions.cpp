@@ -5894,7 +5894,18 @@ ShipPartMeterValue::ShipPartMeterValue(std::unique_ptr<ValueRef::ValueRef<std::s
     m_meter(meter),
     m_low(std::move(low)),
     m_high(std::move(high))
-{}
+{
+    auto operands = {m_low.get(), m_high.get()};
+    m_root_candidate_invariant =
+        (!m_part_name || m_part_name->RootCandidateInvariant()) &&
+        boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
+    m_target_invariant =
+        (!m_part_name || m_part_name->TargetInvariant()) &&
+        boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
+    m_source_invariant =
+        (!m_part_name || m_part_name->SourceInvariant()) &&
+        boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
+}
 
 bool ShipPartMeterValue::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -5962,24 +5973,6 @@ void ShipPartMeterValue::Eval(const ScriptingContext& parent_context,
         // re-evaluate allowed turn range for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
-}
-
-bool ShipPartMeterValue::RootCandidateInvariant() const {
-    return ((!m_part_name || m_part_name->RootCandidateInvariant()) &&
-            (!m_low || m_low->RootCandidateInvariant()) &&
-            (!m_high || m_high->RootCandidateInvariant()));
-}
-
-bool ShipPartMeterValue::TargetInvariant() const {
-    return ((!m_part_name || m_part_name->TargetInvariant()) &&
-            (!m_low || m_low->TargetInvariant()) &&
-            (!m_high || m_high->TargetInvariant()));
-}
-
-bool ShipPartMeterValue::SourceInvariant() const {
-    return ((!m_part_name || m_part_name->SourceInvariant()) &&
-            (!m_low || m_low->SourceInvariant()) &&
-            (!m_high || m_high->SourceInvariant()));
 }
 
 std::string ShipPartMeterValue::Description(bool negated/* = false*/) const {
