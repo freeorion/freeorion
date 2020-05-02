@@ -5114,7 +5114,12 @@ DesignHasPartClass::DesignHasPartClass(ShipPartClass part_class,
     m_low(std::move(low)),
     m_high(std::move(high)),
     m_class(std::move(part_class))
-{}
+{
+    auto operands = {m_low.get(), m_high.get()};
+    m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
+    m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
+    m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
+}
 
 bool DesignHasPartClass::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -5191,15 +5196,6 @@ void DesignHasPartClass::Eval(const ScriptingContext& parent_context,
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
 }
-
-bool DesignHasPartClass::RootCandidateInvariant() const
-{ return (!m_low || m_low->RootCandidateInvariant()) && (!m_high || m_high->RootCandidateInvariant()); }
-
-bool DesignHasPartClass::TargetInvariant() const
-{ return (!m_low || m_low->TargetInvariant()) && (!m_high || m_high->TargetInvariant()); }
-
-bool DesignHasPartClass::SourceInvariant() const
-{ return (!m_low || m_low->SourceInvariant()) && (!m_high || m_high->SourceInvariant()); }
 
 std::string DesignHasPartClass::Description(bool negated/* = false*/) const {
     std::string low_str = "1";
