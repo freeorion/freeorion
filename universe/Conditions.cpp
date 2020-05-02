@@ -6701,7 +6701,12 @@ OwnerHasShipDesignAvailable::OwnerHasShipDesignAvailable(
     Condition(),
     m_id(std::move(design_id)),
     m_empire_id(std::move(empire_id))
-{}
+{
+    auto operands = {m_id.get(), m_empire_id.get()};
+    m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
+    m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
+    m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
+}
 
 OwnerHasShipDesignAvailable::OwnerHasShipDesignAvailable(int design_id) :
     OwnerHasShipDesignAvailable(nullptr, std::move(std::make_unique<ValueRef::Constant<int>>(design_id)))
@@ -6774,21 +6779,6 @@ void OwnerHasShipDesignAvailable::Eval(const ScriptingContext& parent_context,
         // re-evaluate allowed turn range for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
-}
-
-bool OwnerHasShipDesignAvailable::RootCandidateInvariant() const {
-    return (!m_empire_id || m_empire_id->RootCandidateInvariant()) &&
-           (!m_id || m_id->RootCandidateInvariant());
-}
-
-bool OwnerHasShipDesignAvailable::TargetInvariant() const {
-    return (!m_empire_id || m_empire_id->TargetInvariant()) &&
-           (!m_id || m_id->TargetInvariant());
-}
-
-bool OwnerHasShipDesignAvailable::SourceInvariant() const {
-    return (!m_empire_id || m_empire_id->SourceInvariant()) &&
-           (!m_id || m_id->SourceInvariant());
 }
 
 std::string OwnerHasShipDesignAvailable::Description(bool negated/* = false*/) const {
