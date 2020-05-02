@@ -5699,7 +5699,12 @@ MeterValue::MeterValue(MeterType meter,
     m_meter(meter),
     m_low(std::move(low)),
     m_high(std::move(high))
-{}
+{
+    auto operands = {m_low.get(), m_high.get()};
+    m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
+    m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
+    m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
+}
 
 bool MeterValue::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -5803,15 +5808,6 @@ void MeterValue::Eval(const ScriptingContext& parent_context,
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
 }
-
-bool MeterValue::RootCandidateInvariant() const
-{ return (!m_low || m_low->RootCandidateInvariant()) && (!m_high || m_high->RootCandidateInvariant()); }
-
-bool MeterValue::TargetInvariant() const
-{ return (!m_low || m_low->TargetInvariant()) && (!m_high || m_high->TargetInvariant()); }
-
-bool MeterValue::SourceInvariant() const
-{ return (!m_low || m_low->SourceInvariant()) && (!m_high || m_high->SourceInvariant()); }
 
 std::string MeterValue::Description(bool negated/* = false*/) const {
     std::string low_str = (m_low ? (m_low->ConstantExpr() ?
