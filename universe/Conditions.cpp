@@ -8151,7 +8151,11 @@ ResourceSupplyConnectedByEmpire::ResourceSupplyConnectedByEmpire(
     Condition(),
     m_empire_id(std::move(empire_id)),
     m_condition(std::move(condition))
-{}
+{
+    m_root_candidate_invariant = m_empire_id->RootCandidateInvariant() && m_condition->RootCandidateInvariant();
+    m_target_invariant = m_empire_id->TargetInvariant() && m_condition->TargetInvariant();
+    m_source_invariant = m_empire_id->SourceInvariant() && m_condition->SourceInvariant();
+}
 
 bool ResourceSupplyConnectedByEmpire::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -8261,15 +8265,6 @@ void ResourceSupplyConnectedByEmpire::Eval(const ScriptingContext& parent_contex
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
 }
-
-bool ResourceSupplyConnectedByEmpire::RootCandidateInvariant() const
-{ return m_empire_id->RootCandidateInvariant() && m_condition->RootCandidateInvariant(); }
-
-bool ResourceSupplyConnectedByEmpire::TargetInvariant() const
-{ return m_empire_id->TargetInvariant() && m_condition->TargetInvariant(); }
-
-bool ResourceSupplyConnectedByEmpire::SourceInvariant() const
-{ return m_empire_id->SourceInvariant() && m_condition->SourceInvariant(); }
 
 bool ResourceSupplyConnectedByEmpire::Match(const ScriptingContext& local_context) const {
     auto candidate = local_context.condition_local_candidate;
