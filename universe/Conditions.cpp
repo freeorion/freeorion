@@ -4663,7 +4663,11 @@ unsigned int FocusType::GetCheckSum() const {
 StarType::StarType(std::vector<std::unique_ptr<ValueRef::ValueRef< ::StarType>>>&& types) :
     Condition(),
     m_types(std::move(types))
-{}
+{
+    m_root_candidate_invariant = boost::algorithm::all_of(m_types, [](auto& e){ return e->RootCandidateInvariant(); });
+    m_target_invariant = boost::algorithm::all_of(m_types, [](auto& e){ return e->TargetInvariant(); });
+    m_source_invariant = boost::algorithm::all_of(m_types, [](auto& e){ return e->SourceInvariant(); });
+}
 
 bool StarType::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -4731,30 +4735,6 @@ void StarType::Eval(const ScriptingContext& parent_context,
         // re-evaluate contained objects for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
-}
-
-bool StarType::RootCandidateInvariant() const {
-    for (auto& type : m_types) {
-        if (!type->RootCandidateInvariant())
-            return false;
-    }
-    return true;
-}
-
-bool StarType::TargetInvariant() const {
-    for (auto& type : m_types) {
-        if (!type->TargetInvariant())
-            return false;
-    }
-    return true;
-}
-
-bool StarType::SourceInvariant() const {
-    for (auto& type : m_types) {
-        if (!type->SourceInvariant())
-            return false;
-    }
-    return true;
 }
 
 std::string StarType::Description(bool negated/* = false*/) const {
