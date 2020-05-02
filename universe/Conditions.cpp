@@ -7113,7 +7113,17 @@ WithinDistance::WithinDistance(std::unique_ptr<ValueRef::ValueRef<double>>&& dis
     Condition(),
     m_distance(std::move(distance)),
     m_condition(std::move(condition))
-{}
+{
+    m_root_candidate_invariant =
+        m_distance->RootCandidateInvariant() &&
+        m_condition->RootCandidateInvariant();
+    m_target_invariant =
+        m_distance->TargetInvariant() &&
+        m_condition->TargetInvariant();
+    m_source_invariant =
+        m_distance->SourceInvariant() &&
+        m_condition->SourceInvariant();
+}
 
 bool WithinDistance::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -7179,15 +7189,6 @@ void WithinDistance::Eval(const ScriptingContext& parent_context,
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
 }
-
-bool WithinDistance::RootCandidateInvariant() const
-{ return m_distance->RootCandidateInvariant() && m_condition->RootCandidateInvariant(); }
-
-bool WithinDistance::TargetInvariant() const
-{ return m_distance->TargetInvariant() && m_condition->TargetInvariant(); }
-
-bool WithinDistance::SourceInvariant() const
-{ return m_distance->SourceInvariant() && m_condition->SourceInvariant(); }
 
 std::string WithinDistance::Description(bool negated/* = false*/) const {
     std::string value_str = m_distance->ConstantExpr() ?
