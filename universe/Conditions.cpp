@@ -8739,7 +8739,12 @@ ValueTest::ValueTest(std::unique_ptr<ValueRef::ValueRef<double>>&& value_ref1,
     m_value_ref3(std::move(value_ref3)),
     m_compare_type1(comp1),
     m_compare_type2(comp2)
-{}
+{
+    auto operands = {m_value_ref1.get(), m_value_ref2.get(), m_value_ref3.get()};
+    m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
+    m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
+    m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
+}
 
 ValueTest::ValueTest(std::unique_ptr<ValueRef::ValueRef<std::string>>&& value_ref1,
                      ComparisonType comp1,
@@ -8753,9 +8758,10 @@ ValueTest::ValueTest(std::unique_ptr<ValueRef::ValueRef<std::string>>&& value_re
     m_compare_type1(comp1),
     m_compare_type2(comp2)
 {
-    /*DebugLogger() << "String ValueTest(" << value_ref1->Dump(ntabs) << " "
-                                         << CompareTypeString(comp1) << " "
-                                         << value_ref2->Dump(ntabs) << ")";*/
+    auto operands = {m_string_value_ref1.get(), m_string_value_ref2.get(), m_string_value_ref3.get()};
+    m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
+    m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
+    m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
 }
 
 ValueTest::ValueTest(std::unique_ptr<ValueRef::ValueRef<int>>&& value_ref1,
@@ -8770,7 +8776,10 @@ ValueTest::ValueTest(std::unique_ptr<ValueRef::ValueRef<int>>&& value_ref1,
     m_compare_type1(comp1),
     m_compare_type2(comp2)
 {
-    //DebugLogger() << "ValueTest(double)";
+    auto operands = {m_int_value_ref1.get(), m_int_value_ref2.get(), m_int_value_ref3.get()};
+    m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
+    m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
+    m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
 }
 
 bool ValueTest::operator==(const Condition& rhs) const {
@@ -8832,42 +8841,6 @@ void ValueTest::Eval(const ScriptingContext& parent_context,
         // re-evaluate value and ranges for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
-}
-
-bool ValueTest::RootCandidateInvariant() const {
-    return (!m_value_ref1           || m_value_ref1->RootCandidateInvariant()) &&
-           (!m_value_ref2           || m_value_ref2->RootCandidateInvariant()) &&
-           (!m_value_ref3           || m_value_ref3->RootCandidateInvariant()) &&
-           (!m_string_value_ref1    || m_string_value_ref1->RootCandidateInvariant()) &&
-           (!m_string_value_ref2    || m_string_value_ref2->RootCandidateInvariant()) &&
-           (!m_string_value_ref3    || m_string_value_ref3->RootCandidateInvariant()) &&
-           (!m_int_value_ref1       || m_int_value_ref1->RootCandidateInvariant()) &&
-           (!m_int_value_ref2       || m_int_value_ref2->RootCandidateInvariant()) &&
-           (!m_int_value_ref3       || m_int_value_ref3->RootCandidateInvariant());
-}
-
-bool ValueTest::TargetInvariant() const {
-    return (!m_value_ref1           || m_value_ref1->TargetInvariant()) &&
-           (!m_value_ref2           || m_value_ref2->TargetInvariant()) &&
-           (!m_value_ref3           || m_value_ref3->TargetInvariant()) &&
-           (!m_string_value_ref1    || m_string_value_ref1->TargetInvariant()) &&
-           (!m_string_value_ref2    || m_string_value_ref2->TargetInvariant()) &&
-           (!m_string_value_ref3    || m_string_value_ref3->TargetInvariant()) &&
-           (!m_int_value_ref1       || m_int_value_ref1->TargetInvariant()) &&
-           (!m_int_value_ref2       || m_int_value_ref2->TargetInvariant()) &&
-           (!m_int_value_ref3       || m_int_value_ref3->TargetInvariant());
-}
-
-bool ValueTest::SourceInvariant() const {
-    return (!m_value_ref1           || m_value_ref1->SourceInvariant()) &&
-           (!m_value_ref2           || m_value_ref2->SourceInvariant()) &&
-           (!m_value_ref3           || m_value_ref3->SourceInvariant()) &&
-           (!m_string_value_ref1    || m_string_value_ref1->SourceInvariant()) &&
-           (!m_string_value_ref2    || m_string_value_ref2->SourceInvariant()) &&
-           (!m_string_value_ref3    || m_string_value_ref3->SourceInvariant()) &&
-           (!m_int_value_ref1       || m_int_value_ref1->SourceInvariant()) &&
-           (!m_int_value_ref2       || m_int_value_ref2->SourceInvariant()) &&
-           (!m_int_value_ref3       || m_int_value_ref3->SourceInvariant());
 }
 
 std::string ValueTest::Description(bool negated/* = false*/) const {
