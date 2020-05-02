@@ -51,7 +51,6 @@ Hull
         
          EffectsGroup
             scope = Source
-            activation = Source
             effects = [
                 SetMaxCapacity partname = "SR_JAWS" value = Value + min(Source.Age*0.1, 8)
                 SetCapacity partname = "SR_JAWS" value = Value + min(Source.Age*0.1, 8)

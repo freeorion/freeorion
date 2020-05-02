@@ -21,7 +21,7 @@ STANDARD_DEFENSE_GROWTH
             activation = And [
                 Planet
                 Unowned
-                (Source.LastTurnAttackedByShip  < CurrentTurn)
+                (LocalCandidate.LastTurnAttackedByShip  < CurrentTurn)
             ]
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
             effects = SetDefense value = min(Value(Target.MaxDefense), Value + 1)

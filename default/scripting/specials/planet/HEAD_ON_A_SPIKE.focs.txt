@@ -5,7 +5,6 @@ Special
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Source
             effects = [
                 SetMaxDefense value = Value + 1
                 SetMaxShield value = Value + 1

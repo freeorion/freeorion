@@ -4,7 +4,7 @@ AVERAGE_HAPPINESS
             scope = Source
             activation = And [
                 Planet
-                (Source.LastTurnConquered < CurrentTurn)
+                (LocalCandidate.LastTurnConquered < CurrentTurn)
             ]
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
             effects = SetHappiness value = Value +
@@ -15,8 +15,8 @@ AVERAGE_HAPPINESS
             scope = Source
             activation = And [
                 Planet
-                (Source.LastTurnConquered < CurrentTurn - 5)
-                (Source.LastTurnColonized = CurrentTurn)
+                (LocalCandidate.LastTurnConquered < CurrentTurn - 5)
+                (LocalCandidate.LastTurnColonized = CurrentTurn)
             ]
             effects = SetHappiness value = max(Value,
                 1*(Statistic If Condition = And [Target Planet environment = Poor]) +

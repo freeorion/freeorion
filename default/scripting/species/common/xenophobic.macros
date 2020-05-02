@@ -13,9 +13,9 @@ XENOPHOBIC_SELF
                 PopulationCenter
                 Number low = 1 condition = And [
                     PopulationCenter
-                    OwnedBy empire = Source.Owner
+                    OwnedBy empire = RootCandidate.Owner
                     Not OR [ 
-                        Species name = Source.Species
+                        Species name = RootCandidate.Species
                         Species name = "SP_EXOBOT"
                     ]
                     Not Population high = 0

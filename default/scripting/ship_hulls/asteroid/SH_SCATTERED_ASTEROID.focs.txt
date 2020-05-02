@@ -70,7 +70,6 @@ Hull
                     OwnedBy affiliation = AllyOf empire = Source.Owner
                 ]
             ]
-            activation = Source
             stackinggroup = "FLAGSHIP_EFFECT_SCATTERED_ASTEROID"
             effects = SetMaxShield value = Value + 3
 

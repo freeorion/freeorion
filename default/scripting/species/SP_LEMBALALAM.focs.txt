@@ -77,9 +77,7 @@ Species
         // Give techs to empire
         EffectsGroup
             scope = Source
-            activation = And [
-                Not OwnerHasTech name = "SPY_STEALTH_1"
-            ]
+            activation = Not OwnerHasTech name = "SPY_STEALTH_1"
             stackinggroup = "LEMBALALAM_TECH_UNLOCK"
             effects = [
                 GiveEmpireTech name = "SPY_STEALTH_1" empire = Target.Owner                
@@ -118,9 +116,7 @@ Species
 
         EffectsGroup
             scope = Source
-            activation = And [
-                Not OwnerHasTech name = "GRO_LIFECYCLE_MAN"
-            ]
+            activation = Not OwnerHasTech name = "GRO_LIFECYCLE_MAN"
             stackinggroup = "LEMBALALAM_TECH_UNLOCK"
             effects = [
                 GiveEmpireTech name = "GRO_LIFECYCLE_MAN" empire = Target.Owner                

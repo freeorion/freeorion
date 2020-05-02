@@ -39,7 +39,6 @@ Hull
         [[ASTEROID_FIELD_STEALTH_BONUS]]
         EffectsGroup
             scope = Source
-            activation = Source
             effects = SetMaxShield value = Value + 5
 
         [[AVERAGE_BASE_FUEL_REGEN]]

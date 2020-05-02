@@ -22,8 +22,8 @@ STANDARD_SHIELD_GROWTH
             activation = And [
                 Planet
                 Unowned
-                (Source.LastTurnConquered < CurrentTurn)
-                (Source.LastTurnAttackedByShip  < CurrentTurn)
+                (LocalCandidate.LastTurnConquered < CurrentTurn)
+                (LocalCandidate.LastTurnAttackedByShip  < CurrentTurn)
             ]
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
             effects = SetShield value = min(Value(Target.MaxShield), Value + 1)

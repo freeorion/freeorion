@@ -40,7 +40,6 @@ Hull
                 ]
                 Structure high = LocalCandidate.MaxStructure - 0.001
             ]
-            activation = Source
             effects = SetStructure value = Value + 2
 
         [[AVERAGE_FUEL_EFFICIENCY]]

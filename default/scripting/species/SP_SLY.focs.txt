@@ -46,11 +46,11 @@ Species
                 Ship
                 Stationary
                 ContainedBy And [
-                    Object id = Source.SystemID
+                    Object id = RootCandidate.SystemID
                     System
                     Contains condition = And [
                         Planet type = GasGiant
-                        Not OwnedBy affiliation = EnemyOf empire = Source.Owner
+                        Not OwnedBy affiliation = EnemyOf empire = RootCandidate.Owner
                     ]
                 ]
             ]

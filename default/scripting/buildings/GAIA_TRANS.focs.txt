@@ -28,7 +28,6 @@ BuildingType
                 Object id = Source.PlanetID
                 Planet
             ]
-            activation = Source
             effects = [
                 AddSpecial name = "GAIA_SPECIAL"
                 GenerateSitRepMessage
@@ -41,7 +40,6 @@ BuildingType
 
         EffectsGroup
             scope = Source
-            activation = Source
             effects = Destroy
     ]
     icon = "icons/specials_huge/gaia.png"

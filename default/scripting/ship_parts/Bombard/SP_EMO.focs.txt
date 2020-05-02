@@ -48,9 +48,9 @@ Part
                 HasTag name = "ROBOTIC"
             ]
             activation = And [
-                            Unowned
-                            InSystem
-                         ]
+                Unowned
+                InSystem
+            ]
             priority = [[EARLY_POPULATION_PRIORITY]]
             effects = [
                 SetPopulation value = Value - 1

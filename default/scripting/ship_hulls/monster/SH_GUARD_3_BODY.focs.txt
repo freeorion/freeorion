@@ -26,7 +26,6 @@ Hull
         [[UNOWNED_OWNED_VISION_BONUS(GOOD,50,50)]]
         EffectsGroup
             scope = Source
-            activation = Source
             effects = [
                 SetMaxDamage partname = "SR_WEAPON_0_1" value = Value + 3
                 SetMaxDamage partname = "SR_WEAPON_4_1" value = Value + 15

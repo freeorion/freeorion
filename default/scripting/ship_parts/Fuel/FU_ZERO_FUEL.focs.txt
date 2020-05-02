@@ -13,7 +13,6 @@ Part
     effectsgroups =
         EffectsGroup
             scope = Source
-            activation = Source
             effects = SetFuel value = Target.MaxFuel
     icon = "icons/ship_parts/zero-point-generator.png"
 

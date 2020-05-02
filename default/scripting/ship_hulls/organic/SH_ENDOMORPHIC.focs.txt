@@ -35,12 +35,10 @@ Hull
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Source
             effects = SetDetection value = Value + 50
 
         EffectsGroup
             scope = Source
-            activation = Source
             accountinglabel = "ORGANIC_GROWTH"
             effects = SetMaxStructure value = Value + min(Source.Age*0.5, 15)
 

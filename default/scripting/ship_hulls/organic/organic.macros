@@ -2,7 +2,6 @@
 LIVING_HULL_EFFECTS_GROUPS
 '''EffectsGroup
     scope = Source
-    activation = Source
     effects = [
         SetStructure value = Value + 2
         SetDetection value = Value + 50
@@ -16,7 +15,7 @@ LIVING_HULL_BASE_FUEL_REGEN
     description = "LIVING_HULL_BASE_FUEL_REGEN_DESC"
     scope = Source
     activation = And [
-        Turn low = Source.ArrivedOnTurn + 1
+        Turn low = LocalCandidate.ArrivedOnTurn + 1
         Stationary
         (Source.Fuel < Source.MaxFuel)
     ]

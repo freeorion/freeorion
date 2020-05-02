@@ -17,7 +17,6 @@ BuildingType
                 Object id = Source.PlanetID
                 Planet
             ]
-            activation = Source
             effects = AddSpecial name = "RESONANT_MOON_SPECIAL"
     icon = "icons/specials_huge/resonant_moon.png"
 

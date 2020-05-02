@@ -50,7 +50,6 @@ Hull
                     OwnedBy affiliation = AllyOf empire = Source.Owner
                 ]
             ]
-            activation = Source
             stackinggroup = "FLAGSHIP_EFFECT_SENTIENT"
             effects = [
                 SetStealth value = Value + 20
@@ -59,7 +58,6 @@ Hull
 
         EffectsGroup
             scope = Source
-            activation = Source
             accountinglabel = "ORGANIC_GROWTH"
             effects = SetMaxStructure value = Value + min(Source.Age*1, 45)
 

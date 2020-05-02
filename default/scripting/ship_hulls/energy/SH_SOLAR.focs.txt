@@ -70,10 +70,7 @@ Hull
                     OwnedBy affiliation = AllyOf empire = Source.Owner
                 ]
             ]
-            activation = And [
-                Source
-                InSystem
-            ]
+            activation = InSystem
             effects = SetFuel value = Target.MaxFuel
 
         EffectsGroup
@@ -85,7 +82,6 @@ Hull
                     OwnedBy affiliation = AllyOf empire = Source.Owner
                 ]
             ]
-            activation = Source
             stackinggroup = "FLAGSHIP_EFFECT_SOLAR"
             effects = SetStealth value = Value - 100
 

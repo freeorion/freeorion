@@ -24,7 +24,6 @@ Hull
         [[MONSTER_SHIELD_REGENERATION]]
          EffectsGroup
             scope = Source
-            activation = Source
             effects = [
                 SetMaxCapacity partname = "SR_TENTACLE" value = Value + min(Source.Age*0.3, 15)
                 SetCapacity partname = "SR_TENTACLE" value = Value + min(Source.Age*0.3, 15)
