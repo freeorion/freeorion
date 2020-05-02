@@ -7249,7 +7249,11 @@ WithinStarlaneJumps::WithinStarlaneJumps(std::unique_ptr<ValueRef::ValueRef<int>
     Condition(),
     m_jumps(std::move(jumps)),
     m_condition(std::move(condition))
-{}
+{
+    m_root_candidate_invariant = m_jumps->RootCandidateInvariant() && m_condition->RootCandidateInvariant();
+    m_target_invariant = m_jumps->TargetInvariant() && m_condition->TargetInvariant();
+    m_source_invariant = m_jumps->SourceInvariant() && m_condition->SourceInvariant();
+}
 
 bool WithinStarlaneJumps::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -7287,15 +7291,6 @@ void WithinStarlaneJumps::Eval(const ScriptingContext& parent_context,
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
 }
-
-bool WithinStarlaneJumps::RootCandidateInvariant() const
-{ return m_jumps->RootCandidateInvariant() && m_condition->RootCandidateInvariant(); }
-
-bool WithinStarlaneJumps::TargetInvariant() const
-{ return m_jumps->TargetInvariant() && m_condition->TargetInvariant(); }
-
-bool WithinStarlaneJumps::SourceInvariant() const
-{ return m_jumps->SourceInvariant() && m_condition->SourceInvariant(); }
 
 std::string WithinStarlaneJumps::Description(bool negated/* = false*/) const {
     std::string value_str = m_jumps->ConstantExpr() ? std::to_string(m_jumps->Eval()) : m_jumps->Description();
