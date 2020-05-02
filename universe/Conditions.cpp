@@ -6841,7 +6841,17 @@ OwnerHasShipPartAvailable::OwnerHasShipPartAvailable(
     Condition(),
     m_name(std::move(name)),
     m_empire_id(std::move(empire_id))
-{}
+{
+    m_root_candidate_invariant =
+        (!m_empire_id || m_empire_id->RootCandidateInvariant()) &&
+        (!m_name || m_name->RootCandidateInvariant());
+    m_target_invariant =
+        (!m_empire_id || m_empire_id->TargetInvariant()) &&
+        (!m_name || m_name->TargetInvariant());
+    m_source_invariant =
+        (!m_empire_id || m_empire_id->TargetInvariant()) &&
+        (!m_name || m_name->TargetInvariant());
+}
 
 OwnerHasShipPartAvailable::OwnerHasShipPartAvailable(const std::string& name) :
     OwnerHasShipPartAvailable(nullptr, std::move(std::make_unique<ValueRef::Constant<std::string>>(name)))
@@ -6915,21 +6925,6 @@ void OwnerHasShipPartAvailable::Eval(const ScriptingContext& parent_context,
         // re-evaluate allowed turn range for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
-}
-
-bool OwnerHasShipPartAvailable::RootCandidateInvariant() const {
-    return (!m_empire_id || m_empire_id->RootCandidateInvariant()) &&
-           (!m_name || m_name->RootCandidateInvariant());
-}
-
-bool OwnerHasShipPartAvailable::TargetInvariant() const {
-    return (!m_empire_id || m_empire_id->TargetInvariant()) &&
-           (!m_name || m_name->TargetInvariant());
-}
-
-bool OwnerHasShipPartAvailable::SourceInvariant() const {
-    return (!m_empire_id || m_empire_id->TargetInvariant()) &&
-           (!m_name || m_name->TargetInvariant());
 }
 
 std::string OwnerHasShipPartAvailable::Description(bool negated/* = false*/) const {

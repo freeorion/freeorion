@@ -1141,9 +1141,6 @@ struct FO_COMMON_API OwnerHasShipPartAvailable final : public Condition {
     bool            operator==(const Condition& rhs) const override;
     void            Eval(const ScriptingContext& parent_context, ObjectSet& matches,
                          ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool            RootCandidateInvariant() const override;
-    bool            TargetInvariant() const override;
-    bool            SourceInvariant() const override;
     std::string     Description(bool negated = false) const override;
     std::string     Dump(unsigned short ntabs = 0) const override;
     void            SetTopLevelContent(const std::string& content_name) override;
