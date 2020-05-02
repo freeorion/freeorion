@@ -1660,7 +1660,11 @@ private:
 // template implementations
 template <typename Archive>
 void Condition::serialize(Archive& ar, const unsigned int version)
-{}
+{
+    ar  & BOOST_SERIALIZATION_NVP(m_root_candidate_invariant)
+        & BOOST_SERIALIZATION_NVP(m_target_invariant)
+        & BOOST_SERIALIZATION_NVP(m_source_invariant);
+}
 
 template <typename Archive>
 void Number::serialize(Archive& ar, const unsigned int version)
