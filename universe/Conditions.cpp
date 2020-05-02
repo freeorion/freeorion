@@ -628,7 +628,21 @@ SortedNumberOf::SortedNumberOf(std::unique_ptr<ValueRef::ValueRef<int>>&& number
     m_sort_key(std::move(sort_key_ref)),
     m_sorting_method(sorting_method),
     m_condition(std::move(condition))
-{}
+{
+    m_root_candidate_invariant =
+        (!m_number || m_number->RootCandidateInvariant()) &&
+        (!m_sort_key || m_sort_key->RootCandidateInvariant()) &&
+        (!m_condition || m_condition->RootCandidateInvariant());
+    m_target_invariant =
+        (!m_number || m_number->TargetInvariant()) &&
+        (!m_sort_key || m_sort_key->TargetInvariant()) &&
+        (!m_condition || m_condition->TargetInvariant());
+    m_source_invariant =
+        (!m_number || m_number->SourceInvariant()) &&
+        (!m_sort_key || m_sort_key->SourceInvariant()) &&
+        (!m_condition || m_condition->SourceInvariant());
+
+}
 
 bool SortedNumberOf::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -909,21 +923,6 @@ void SortedNumberOf::Eval(const ScriptingContext& parent_context,
         // possibly having transferred some objects into non_matches from matches
     }
 }
-
-bool SortedNumberOf::RootCandidateInvariant() const
-{ return ((!m_number || m_number->SourceInvariant()) &&
-          (!m_sort_key || m_sort_key->SourceInvariant()) &&
-          (!m_condition || m_condition->SourceInvariant())); }
-
-bool SortedNumberOf::TargetInvariant() const
-{ return ((!m_number || m_number->SourceInvariant()) &&
-          (!m_sort_key || m_sort_key->SourceInvariant()) &&
-          (!m_condition || m_condition->SourceInvariant())); }
-
-bool SortedNumberOf::SourceInvariant() const
-{ return ((!m_number || m_number->SourceInvariant()) &&
-          (!m_sort_key || m_sort_key->SourceInvariant()) &&
-          (!m_condition || m_condition->SourceInvariant())); }
 
 std::string SortedNumberOf::Description(bool negated/* = false*/) const {
     std::string number_str = m_number->ConstantExpr() ? m_number->Dump() : m_number->Description();
