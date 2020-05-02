@@ -50,30 +50,30 @@ struct FO_COMMON_API Condition {
     virtual void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                                    ObjectSet& condition_non_targets) const;
 
-    /** Returns true iff this condition's evaluation does not reference
-      * the RootCandidate objects.  This requirement ensures that if this
-      * condition is a subcondition to another Condition or a ValueRef, this
-      * condition may be evaluated once and its result used to match all local
-      * candidates to that condition. */
+    //! Returns true iff this condition's evaluation does not reference
+    //! the RootCandidate objects.  This requirement ensures that if this
+    //! condition is a subcondition to another Condition or a ValueRef, this
+    //! condition may be evaluated once and its result used to match all local
+    //! candidates to that condition.
     virtual bool RootCandidateInvariant() const
-    { return false; }
+    { return m_root_candidate_invariant; }
 
-    /** (Almost) all conditions are varying with local candidates; this is the
-      * point of evaluating a condition.  This funciton is provided for
-      * consistency with ValueRef, which may not depend on the local candidiate
-      * of an enclosing condition. */
+    //! (Almost) all conditions are varying with local candidates; this is the
+    //! point of evaluating a condition.  This funciton is provided for
+    //! consistency with ValueRef, which may not depend on the local candidiate
+    //! of an enclosing condition.
     bool LocalCandidateInvariant() const
     { return false; }
 
-    /** Returns true iff this condition's evaluation does not reference the
-      * target object.*/
+    //! Returns true iff this condition's evaluation does not reference the
+    //! target object.
     virtual bool TargetInvariant() const
-    { return false; }
+    { return m_target_invariant; }
 
-    /** Returns true iff this condition's evaluation does not reference the
-      * source object.*/
+    //! Returns true iff this condition's evaluation does not reference the
+    //! source object.
     virtual bool SourceInvariant() const
-    { return false; }
+    { return m_source_invariant; }
 
     virtual std::string Description(bool negated = false) const = 0;
     virtual std::string Dump(unsigned short ntabs = 0) const = 0;
