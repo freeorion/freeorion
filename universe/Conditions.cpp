@@ -9485,7 +9485,9 @@ And::And(std::unique_ptr<Condition>&& operand1, std::unique_ptr<Condition>&& ope
     if (operand4)
         m_operands.push_back(std::move(operand4));
 
-    SetConditionVariance(m_operands, m_root_candidate_invariant, m_target_invariant, m_source_invariant);
+    m_root_candidate_invariant = boost::algorithm::all_of(m_operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
+    m_target_invariant = boost::algorithm::all_of(m_operands, [](auto& e){ return !e || e->TargetInvariant(); });
+    m_source_invariant = boost::algorithm::all_of(m_operands, [](auto& e){ return !e || e->SourceInvariant(); });
 }
 
 bool And::operator==(const Condition& rhs) const {
@@ -9571,15 +9573,6 @@ void And::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
     TraceLogger(conditions) << "And::Eval final matches (" << matches.size() << "): " << ObjList(matches)
                             << " and non_matches (" << non_matches.size() << "): " << ObjList(non_matches);
 }
-
-bool And::RootCandidateInvariant() const
-{ return m_root_candidate_invariant; }
-
-bool And::TargetInvariant() const
-{ return m_target_invariant; }
-
-bool And::SourceInvariant() const
-{ return m_source_invariant; }
 
 std::string And::Description(bool negated/* = false*/) const {
     std::string values_str;
