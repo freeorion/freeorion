@@ -2229,7 +2229,18 @@ HasSpecial::HasSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
     m_name(std::move(name)),
     m_since_turn_low(std::move(since_turn_low)),
     m_since_turn_high(std::move(since_turn_high))
-{}
+{
+    auto operands = {m_since_turn_low.get(), m_since_turn_high.get()};
+    m_root_candidate_invariant =
+        (!m_name || m_name->RootCandidateInvariant()) &&
+        boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
+    m_target_invariant =
+        (!m_name || m_name->TargetInvariant()) &&
+        boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
+    m_source_invariant =
+        (!m_name || m_name->SourceInvariant()) &&
+        boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
+}
 
 HasSpecial::HasSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
                        std::unique_ptr<ValueRef::ValueRef<double>>&& capacity_low,
@@ -2238,7 +2249,18 @@ HasSpecial::HasSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
     m_name(std::move(name)),
     m_capacity_low(std::move(capacity_low)),
     m_capacity_high(std::move(capacity_high))
-{}
+{
+    auto operands = {m_capacity_low.get(), m_capacity_high.get()};
+    m_root_candidate_invariant =
+        (!m_name || m_name->RootCandidateInvariant()) &&
+        boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
+    m_target_invariant =
+        (!m_name || m_name->TargetInvariant()) &&
+        boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
+    m_source_invariant =
+        (!m_name || m_name->SourceInvariant()) &&
+        boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
+}
 
 bool HasSpecial::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -2317,27 +2339,6 @@ void HasSpecial::Eval(const ScriptingContext& parent_context,
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
 }
-
-bool HasSpecial::RootCandidateInvariant() const
-{ return ((!m_name || m_name->RootCandidateInvariant()) &&
-          (!m_capacity_low || m_capacity_low->RootCandidateInvariant()) &&
-          (!m_capacity_high || m_capacity_high->RootCandidateInvariant()) &&
-          (!m_since_turn_low || m_since_turn_low->RootCandidateInvariant()) &&
-          (!m_since_turn_high || m_since_turn_high->RootCandidateInvariant())); }
-
-bool HasSpecial::TargetInvariant() const
-{ return ((!m_name || m_name->TargetInvariant()) &&
-          (!m_capacity_low || m_capacity_low->TargetInvariant()) &&
-          (!m_capacity_high || m_capacity_high->TargetInvariant()) &&
-          (!m_since_turn_low || m_since_turn_low->TargetInvariant()) &&
-          (!m_since_turn_high || m_since_turn_high->TargetInvariant())); }
-
-bool HasSpecial::SourceInvariant() const
-{ return ((!m_name || m_name->SourceInvariant()) &&
-          (!m_capacity_low || m_capacity_low->SourceInvariant()) &&
-          (!m_capacity_high || m_capacity_high->SourceInvariant()) &&
-          (!m_since_turn_low || m_since_turn_low->SourceInvariant()) &&
-          (!m_since_turn_high || m_since_turn_high->SourceInvariant())); }
 
 std::string HasSpecial::Description(bool negated/* = false*/) const {
     std::string name_str;
