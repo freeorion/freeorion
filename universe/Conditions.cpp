@@ -6410,7 +6410,17 @@ OwnerHasTech::OwnerHasTech(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
     Condition(),
     m_name(std::move(name)),
     m_empire_id(std::move(empire_id))
-{}
+{
+    m_root_candidate_invariant =
+        (!m_empire_id || m_empire_id->RootCandidateInvariant()) &&
+        (!m_name || m_name->RootCandidateInvariant());
+    m_target_invariant =
+        (!m_empire_id || m_empire_id->TargetInvariant()) &&
+        (!m_name || m_name->TargetInvariant());
+    m_source_invariant =
+        (!m_empire_id || m_empire_id->SourceInvariant()) &&
+        (!m_name || m_name->SourceInvariant());
+}
 
 OwnerHasTech::OwnerHasTech(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
     OwnerHasTech(nullptr, std::move(name))
@@ -6479,21 +6489,6 @@ void OwnerHasTech::Eval(const ScriptingContext& parent_context,
         // re-evaluate allowed turn range for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
-}
-
-bool OwnerHasTech::RootCandidateInvariant() const {
-    return (!m_empire_id || m_empire_id->RootCandidateInvariant()) &&
-           (!m_name || m_name->RootCandidateInvariant());
-}
-
-bool OwnerHasTech::TargetInvariant() const {
-    return (!m_empire_id || m_empire_id->TargetInvariant()) &&
-           (!m_name || m_name->TargetInvariant());
-}
-
-bool OwnerHasTech::SourceInvariant() const {
-    return (!m_empire_id || m_empire_id->SourceInvariant()) &&
-           (!m_name || m_name->SourceInvariant());
 }
 
 std::string OwnerHasTech::Description(bool negated/* = false*/) const {
