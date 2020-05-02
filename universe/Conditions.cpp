@@ -4926,7 +4926,18 @@ DesignHasPart::DesignHasPart(std::unique_ptr<ValueRef::ValueRef<std::string>>&& 
     m_low(std::move(low)),
     m_high(std::move(high)),
     m_name(std::move(name))
-{}
+{
+    auto operands = {m_low.get(), m_high.get()};
+    m_root_candidate_invariant =
+        (!m_name || m_name->RootCandidateInvariant()) &&
+        boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
+    m_target_invariant =
+        (!m_name || m_name->TargetInvariant()) &&
+        boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
+    m_source_invariant =
+        (!m_name || m_name->SourceInvariant()) &&
+        boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
+}
 
 bool DesignHasPart::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -5012,21 +5023,6 @@ void DesignHasPart::Eval(const ScriptingContext& parent_context,
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
 }
-
-bool DesignHasPart::RootCandidateInvariant() const
-{   return (!m_low || m_low->RootCandidateInvariant()) &&
-           (!m_high || m_high->RootCandidateInvariant()) &&
-           (!m_name || m_name->RootCandidateInvariant()); }
-
-bool DesignHasPart::TargetInvariant() const
-{   return (!m_low || m_low->TargetInvariant()) &&
-           (!m_high || m_high->TargetInvariant()) &&
-           (!m_name || m_name->TargetInvariant()); }
-
-bool DesignHasPart::SourceInvariant() const
-{   return (!m_low || m_low->SourceInvariant()) &&
-           (!m_high || m_high->SourceInvariant()) &&
-           (!m_name || m_name->SourceInvariant()); }
 
 std::string DesignHasPart::Description(bool negated/* = false*/) const {
     std::string low_str = "1";
