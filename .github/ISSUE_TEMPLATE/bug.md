@@ -3,6 +3,8 @@ name: Report bug
 about: Report problems and bugs with FreeOrion.
 labels: "category:bug"
 ---
+Bug Report
+==========
 <!--
 Please fill in a a meaningful and concise title in the field above.
 It helps us to classify the issue even  before reading the body and handling the
@@ -16,7 +18,8 @@ Examples:
 -->
 
 
-### Environment
+Environment
+-----------
 <!--
 You don't need to provide the information in section when they are not useful in
 the context of this issue.  For example a crashing hosted server may not need
@@ -40,7 +43,8 @@ so, `Windows 8 Pro` instead of `Windows` or `Mac OSX Mountain Lion` instead of
   * Compiled from source
 
 
-### Description
+Description
+-----------
 <!--
 Add a meaningful description of the bug you encountered.
 
@@ -55,14 +59,16 @@ found on
 -->
 
 
-### Expected Result
+Expected Result
+---------------
 <!--
 When you enter an issue please add a description of what behaviour you would
 expect from the game instead of the issue.
 -->
 
 
-### Steps to reproduce
+Steps to reproduce
+------------------
 <!--
 If the error only manifests itself after doing a certain number of actions
 please add a list of steps to reproduce the bug.  If the error only occurs in
