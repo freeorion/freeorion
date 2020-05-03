@@ -981,6 +981,7 @@ namespace {
         }
     }
 
+
     /** Collect info for scope condition evaluations and dispatch those
       * evaluations to \a thread_pool. Not thread-safe, but the individual
       * condition evaluations should be safe to evaluate in parallel. */
@@ -997,9 +998,12 @@ namespace {
         boost::asio::thread_pool& thread_pool,
         int& n)
     {
-        std::vector<Condition::ObjectSet> active_sources{effects_groups.size()};
+        std::vector<std::pair<Condition::Condition*, int>> already_evaluated_activation_condition_idx;
+        already_evaluated_activation_condition_idx.reserve(effects_groups.size());
+
 
         // evaluate activation conditions of effects_groups on input source objects
+        std::vector<Condition::ObjectSet> active_sources{effects_groups.size()};
         ScriptingContext source_context{object_map};
         for (std::size_t i = 0; i < effects_groups.size(); ++i) {
             const auto* effects_group = effects_groups.at(i).get();
@@ -1011,24 +1015,48 @@ namespace {
             if (!effects_group->Activation()) {
                 // no activation condition, leave all sources active
                 active_sources[i] = source_objects;
+                continue;
 
             } else {
+                // check if this activation condition has already been evaluated
+                bool cache_hit = false;
+                for (const auto& cond_idx : already_evaluated_activation_condition_idx) {
+                    if (*cond_idx.first == *(effects_group->Activation())) {
+                        // copy previously condition evaluation result
+                        //DebugLogger() << "Activation condition cache hit idx: " << cond_idx.second;
+                        active_sources[i] = active_sources[cond_idx.second];
+                        cache_hit = true;
+                        break;
+                    }
+                }
+                if (cache_hit)
+                    continue;
+
+                // no cache hit; need to evalution activation condition on input source objects
                 if (effects_group->Activation()->SourceInvariant()) {
                     // can apply condition to all source objects simultaneously
                     Condition::ObjectSet rejected;
+                    rejected.reserve(source_objects.size());
                     active_sources[i] = source_objects; // copy input source objects set
                     source_context.source = nullptr;
                     effects_group->Activation()->Eval(source_context, active_sources[i], rejected, Condition::MATCHES);
+
                 } else {
                     // need to apply separately to each source object
+                    active_sources[i].reserve(source_objects.size());
                     for (auto& obj : source_objects) {
                         source_context.source = obj;
                         if (effects_group->Activation()->Eval(source_context, obj))
                             active_sources[i].push_back(obj);
                     }
                 }
+
+                // save evaluation lookup index in cache
+                already_evaluated_activation_condition_idx.emplace_back(
+                    std::make_pair(effects_group->Activation(), i));
             }
         }
+
 
         // evaluate scope conditions for source objects that are active
         for (std::size_t i = 0; i < effects_groups.size(); ++i) {
