@@ -86,7 +86,7 @@ def min_planets_in_vicinity_limit(num_systems, planet_density):
     Calculates the minimum planet limit for the specified number of systems and planet density.
     This limit is the number of systems multiplied by 1, 1.5 or 2 depending on planet density.
     """
-    return int(num_systems * (1 + planet_density)/2.0)
+    return int(num_systems * planet_density / 2.0)
 
 
 class HomeSystemFinder:
