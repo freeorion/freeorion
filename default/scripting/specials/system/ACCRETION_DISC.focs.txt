@@ -32,8 +32,8 @@ Special
 
         EffectsGroup
             scope = And [
+                InSystem id = Source.SystemID
                 Planet
-                ContainedBy Source
             ]
             effects = SetMaxSupply value = Value - 1
     ]
