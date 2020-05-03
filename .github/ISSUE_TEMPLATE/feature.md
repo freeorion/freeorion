@@ -1,6 +1,6 @@
 ---
 name: Feature request
-about: Propose a new functionality to FreeOrion.
+about: Propose a new or improved functionality to FreeOrion.
 labels: "category:feature"
 ---
 Feature request
