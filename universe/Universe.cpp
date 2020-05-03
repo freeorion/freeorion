@@ -913,7 +913,7 @@ namespace {
         EffectsCauseType                            effect_cause_type,
         const std::string&                          specific_cause_name,
         const std::unordered_set<int>&              candidate_object_ids,   // TODO: Can this be removed along with scope is source test?
-        Condition::ObjectSet&                       candidate_objects_in,
+        Condition::ObjectSet&                       candidate_objects_in,   // may be empty: indicates to test for full universe of objects
         Effect::SourcesEffectsTargetsAndCausesVec&  source_effects_targets_causes_out,
         int n)
     {
@@ -946,11 +946,11 @@ namespace {
             // EffectCause {EffectsCauseType cause_type; std::string specific_cause; std::string custom_label; }
             // TargetsAndCause {TargetSet target_set; EffectCause effect_cause;}
             // typedef std::vector<std::pair<SourcedEffectsGroup, TargetsAndCause>> SourcesEffectsTargetsAndCausesVec;
-            source_effects_targets_causes_out.emplace_back(std::make_pair(
+            source_effects_targets_causes_out.emplace_back(
                 Effect::SourcedEffectsGroup{source->ID(), effects_group},
                 Effect::TargetsAndCause{
                     {}, // empty Effect::TargetSet
-                    Effect::EffectCause{effect_cause_type, specific_cause_name, effects_group->AccountingLabel()}}));
+                    Effect::EffectCause{effect_cause_type, specific_cause_name, effects_group->AccountingLabel()}});
 
             // extract output Effect::TargetSet and alias to receive condition matches
             Effect::TargetSet& matched_targets{source_effects_targets_causes_out.back().second.target_set};
@@ -994,13 +994,18 @@ namespace {
         const ObjectMap& object_map,
         const Condition::ObjectSet& potential_targets,
         const std::unordered_set<int>& potential_target_ids,
-        std::list<Effect::SourcesEffectsTargetsAndCausesVec>& source_effects_targets_causes_reorder_buffer_out,
+        std::list<std::pair<Effect::SourcesEffectsTargetsAndCausesVec,
+                            Effect::SourcesEffectsTargetsAndCausesVec*>>& source_effects_targets_causes_reorder_buffer_out,
         boost::asio::thread_pool& thread_pool,
         int& n)
     {
         std::vector<std::pair<Condition::Condition*, int>> already_evaluated_activation_condition_idx;
         already_evaluated_activation_condition_idx.reserve(effects_groups.size());
 
+        TraceLogger(effects) << "Checking activation condition for " << source_objects.size()
+                             << " sources and "
+                             << (potential_targets.empty() ? "full universe" : std::to_string(potential_targets.size()))
+                             << " potential targets";
 
         // evaluate activation conditions of effects_groups on input source objects
         std::vector<Condition::ObjectSet> active_sources{effects_groups.size()};
@@ -1022,17 +1027,15 @@ namespace {
                 bool cache_hit = false;
                 for (const auto& cond_idx : already_evaluated_activation_condition_idx) {
                     if (*cond_idx.first == *(effects_group->Activation())) {
-                        // copy previously condition evaluation result
-                        //DebugLogger() << "Activation condition cache hit idx: " << cond_idx.second;
-                        active_sources[i] = active_sources[cond_idx.second];
+                        active_sources[i] = active_sources[cond_idx.second];    // copy previous condition evaluation result
                         cache_hit = true;
                         break;
                     }
                 }
                 if (cache_hit)
-                    continue;
+                    continue;   // don't need to evaluate activation condition on these sources again
 
-                // no cache hit; need to evalution activation condition on input source objects
+                // no cache hit; need to evaluate activation condition on input source objects
                 if (effects_group->Activation()->SourceInvariant()) {
                     // can apply condition to all source objects simultaneously
                     Condition::ObjectSet rejected;
@@ -1052,25 +1055,93 @@ namespace {
                 }
 
                 // save evaluation lookup index in cache
-                already_evaluated_activation_condition_idx.emplace_back(
-                    std::make_pair(effects_group->Activation(), i));
+                already_evaluated_activation_condition_idx.emplace_back(effects_group->Activation(), i);
             }
         }
 
 
+        TraceLogger(effects) << "After activation condition, for " << effects_groups.size() << " effects groups "
+                             << "have # sources: " << [&active_sources]()
+        {
+            std::stringstream ss;
+            for (auto& src_set : active_sources)
+                ss << src_set.size() << ", ";
+            return ss.str();
+        }();
+
+
+        // TODO: is it faster to index by scope and activation condition or scope and filtered sources set?
+        std::vector<std::tuple<Condition::Condition*, Condition::ObjectSet,
+                               Effect::SourcesEffectsTargetsAndCausesVec*>> already_dispatched_scope_condition_ptrs;
+        already_evaluated_activation_condition_idx.reserve(effects_groups.size());
+
+
         // evaluate scope conditions for source objects that are active
         for (std::size_t i = 0; i < effects_groups.size(); ++i) {
-            const auto* effects_group = effects_groups.at(i).get();
+            if (active_sources[i].empty()) {
+                TraceLogger(effects) << "Skipping empty active sources set";
+                continue;
+            }
+            TraceLogger(effects) << "Handing active sources set of size: " << active_sources[i].size();
 
+            const auto* effects_group = effects_groups.at(i).get();
             n++;
 
             // allocate space to store output of effectsgroup targets evaluation
             // for the sources and this effects group
             source_effects_targets_causes_reorder_buffer_out.emplace_back();
+            source_effects_targets_causes_reorder_buffer_out.back().second = nullptr;   // default, may be overwritten
+
+
+            // check if the scope-condition + sources set has already been dispatched
+            bool cache_hit = false;
+            if (effects_group->Scope()) {
+                for (const auto& cond_sources_ptr : already_dispatched_scope_condition_ptrs) {
+                    if (*std::get<0>(cond_sources_ptr) == *(effects_group->Scope()) &&
+                         std::get<1>(cond_sources_ptr) == active_sources[i])
+                    {
+                        TraceLogger(effects) << "scope condition cache hit !";
+
+                        // record pointer to previously-dispatched result struct
+                        // that will contain the results to copy later, after
+                        // all dispatched condition evauations have resolved
+                        source_effects_targets_causes_reorder_buffer_out.back().second = std::get<2>(cond_sources_ptr);
+
+                        // allocate result structs that contain empty
+                        // Effect::TargetSets that will be filled later
+                        auto& vec_out{source_effects_targets_causes_reorder_buffer_out.back().first};
+                        for (auto& source : active_sources[i]) {
+                            source_context.source = source;
+                            vec_out.emplace_back(
+                                Effect::SourcedEffectsGroup{source->ID(), effects_group},
+                                Effect::TargetsAndCause{
+                                    {}, // empty Effect::TargetSet
+                                    Effect::EffectCause{effect_cause_type, specific_cause_name,
+                                                        effects_group->AccountingLabel()}});
+                        }
+
+                        cache_hit = true;
+                        break;
+                    }
+                }
+            }
+            if (cache_hit)
+                continue;
+            if (!cache_hit) {
+                TraceLogger(effects) << "scope condition cache miss idx: " << n;
+
+                // add cache entry for this combination, with pointer to the
+                // storage that will contain the to-be-dispatched scope
+                // condition evaluation results
+                already_dispatched_scope_condition_ptrs.emplace_back(
+                    effects_group->Scope(), active_sources[i],
+                    &source_effects_targets_causes_reorder_buffer_out.back().first);
+            }
+
 
             TraceLogger(effects) << "Dispatching Scope Evaluations < " << n << " > sources: " << [&]() {
                 std::stringstream ss;
-                for (auto& obj : source_objects)
+                for (auto& obj : active_sources[i])
                     ss << obj->ID() << ", ";
                 return ss.str();
             }()
@@ -1094,7 +1165,7 @@ namespace {
                     specific_cause_name,
                     &potential_target_ids,
                     local_potential_targets{potential_targets},
-                    &source_effects_targets_causes_vec_out = source_effects_targets_causes_reorder_buffer_out.back(),
+                    &source_effects_targets_causes_vec_out = source_effects_targets_causes_reorder_buffer_out.back().first,
                     n
                 ]() mutable
             {
@@ -1129,10 +1200,19 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
         TraceLogger(effects) << obj->Dump();
 
 
-    std::list<Effect::SourcesEffectsTargetsAndCausesVec> source_effects_targets_causes_reorder_buffer; // list, not vector, to avoid invaliding iterators when pushing more items onto list due to vector reallocation
+    // list, not vector, to avoid invaliding iterators when pushing more items
+    // onto list due to vector reallocation.
+    // .first are results of evaluating an effectsgroups's activation and source
+    // conditions for a set of candidate source objects
+    // .second may be nullptr, in which case it is ignored, or may be a pointer
+    // to another earlier entry in this list, which contains the results of
+    // evaluating the same scope condition on the same set of activation-passing
+    // source objects, and which should be copied into the paired Vec
+    std::list<std::pair<Effect::SourcesEffectsTargetsAndCausesVec,
+                        Effect::SourcesEffectsTargetsAndCausesVec*>> source_effects_targets_causes_reorder_buffer;
+
     const unsigned int num_threads = static_cast<unsigned int>(std::max(1, EffectsProcessingThreads()));
     boost::asio::thread_pool thread_pool(num_threads);
-
 
     int n = 1;  // count dispatched condition evaluations
 
@@ -1177,6 +1257,8 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
         if (species_objects_it == species_objects.end())
             continue;
         const auto& source_objects = species_objects_it->second;
+        if (source_objects.empty())
+            continue;
 
         DispatchEffectsGroupScopeEvaluations(ECT_SPECIES, species_name,
                                              source_objects, species->Effects(),
@@ -1213,6 +1295,8 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
         if (specials_objects_it == specials_objects.end())
             continue;
         const auto& source_objects = specials_objects_it->second;
+        if (source_objects.empty())
+            continue;
 
         DispatchEffectsGroupScopeEvaluations(ECT_SPECIAL, special_name,
                                              source_objects, special->Effects(),
@@ -1280,6 +1364,8 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
         if (buildings_by_type_it == buildings_by_type.end())
             continue;
         const auto& source_objects = buildings_by_type_it->second;
+        if (source_objects.empty())
+            continue;
 
         DispatchEffectsGroupScopeEvaluations(ECT_BUILDING, building_type_name,
                                              source_objects, building_type->Effects(),
@@ -1333,6 +1419,8 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
         if (ships_by_hull_it == ships_by_ship_hull.end())
             continue;
         const auto& source_objects = ships_by_hull_it->second;
+        if (source_objects.empty())
+            continue;
 
         DispatchEffectsGroupScopeEvaluations(ECT_SHIP_HULL, ship_hull_name,
                                              source_objects, ship_hull->Effects(),
@@ -1350,6 +1438,8 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
         if (ships_by_ship_part_it == ships_by_ship_part.end())
             continue;
         const auto& source_objects = ships_by_ship_part_it->second;
+        if (source_objects.empty())
+            continue;
 
         DispatchEffectsGroupScopeEvaluations(ECT_SHIP_PART, ship_part_name,
                                              source_objects, ship_part->Effects(),
@@ -1387,6 +1477,8 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
         if (fields_by_type_it == fields_by_type.end())
             continue;
         const auto& source_objects = fields_by_type_it->second;
+        if (source_objects.empty())
+            continue;
 
         DispatchEffectsGroupScopeEvaluations(ECT_FIELD, field_type_name,
                                              source_objects, field_type->Effects(),
@@ -1406,9 +1498,32 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     // add results to source_effects_targets_causes, sorted by effect priority, then in issue order
     type_timer.EnterSection("reordering");
     for (const auto& job_results : source_effects_targets_causes_reorder_buffer) {
-        for (const auto& result : job_results) {
-            int priority = result.first.effects_group->Priority();
-            source_effects_targets_causes[priority].push_back(result);
+        if (job_results.second) {
+            // entry in reorder buffer contains empty Effect::TargetSets that
+            // should be populated from the pointed-to earlier entry
+            const auto& resolved_scope_target_sets{*job_results.second};
+            TraceLogger(effects) << "Reordering using cached result of size " << resolved_scope_target_sets.size()
+                                 << "  for expected result of size: " << job_results.first.size();
+
+            for (std::size_t i = 0; i < std::min(job_results.first.size(), resolved_scope_target_sets.size()); ++i) {
+                // create entry in output with empty TargetSet
+                auto& result{job_results.first[i]};
+                int priority = result.first.effects_group->Priority();
+                source_effects_targets_causes[priority].push_back(result);
+
+                // overwrite empty placeholder TargetSet with contents of
+                // pointed-to earlier entry
+                source_effects_targets_causes[priority].back().second.target_set =
+                    resolved_scope_target_sets.at(i).second.target_set;
+            }
+
+        } else {
+            // entry in reorder buffer contains the results of an effectsgroup
+            // scope/activation being evaluatied with a set of source objects
+            for (const auto& result : job_results.first) {
+                int priority = result.first.effects_group->Priority();
+                source_effects_targets_causes[priority].push_back(result);
+            }
         }
     }
 }
