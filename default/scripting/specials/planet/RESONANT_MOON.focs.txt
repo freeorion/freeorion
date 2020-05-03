@@ -22,11 +22,8 @@ Special
 
         EffectsGroup
             scope = And [
+                InSystem id = Source.SystemID
                 Ship
-                ContainedBy And [
-                    Object id = Source.SystemID
-                    System
-                ]
                 OwnedBy empire = Source.Owner
             ]
             stackinggroup = "RESONANT_MOON_STACK"
