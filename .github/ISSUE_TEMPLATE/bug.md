@@ -19,9 +19,9 @@ Examples:
 ### Environment
 <!--
 You don't need to provide the information in section when they are not useful in
-the context of this issue.  For example feature requests may not need a
-FreeOrion version, but maybe depend on the operating system you use.  When in
-doubt provide all information you have available.
+the context of this issue.  For example a crashing hosted server may not need
+information about the graphic card, but maybe depend on the operating system you
+use.  When in doubt provide all information you have available.
 
 You can find the FreeOrion version number in the lower right corner of the game
 main screen.
@@ -42,8 +42,7 @@ so, `Windows 8 Pro` instead of `Windows` or `Mac OSX Mountain Lion` instead of
 
 ### Description
 <!--
-Add a meaningful description of the bug you encountered or of the feature you
-want to request.
+Add a meaningful description of the bug you encountered.
 
 If a screenshot or image helps to describe the issue content feel free to create
 one.
@@ -58,8 +57,6 @@ found on
 
 ### Expected Result
 <!--
-If this issue is not a bug you can remove this section.
-
 When you enter an issue please add a description of what behaviour you would
 expect from the game instead of the issue.
 -->
@@ -67,11 +64,11 @@ expect from the game instead of the issue.
 
 ### Steps to reproduce
 <!--
-If this issue is not a bug you can remove this section.
-
 If the error only manifests itself after doing a certain number of actions
 please add a list of steps to reproduce the bug.  If the error only occurs in
 a certain game state please be sure to add a save game to the issue.
+
+To upload save games please pack them into a Zip archive (*.zip) first.
 -->
 * First step.
 * Second step.
