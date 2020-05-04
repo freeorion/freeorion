@@ -6945,6 +6945,18 @@ Sur %planet% : une nouvelle colonie %species% s'est établie.
 SITREP_NEW_COLONY_ESTABLISHED_LABEL
 Nouvelle colonie établie
 
+SITREP_FLEET_GIFTED
+La flotte %fleet% a été offerte par %empire%.
+
+SITREP_FLEET_GIFTED_LABEL
+Flotte offerte
+
+SITREP_PLANET_GIFTED
+La planète %planet% a été offerte par %empire%.
+
+SITREP_PLANET_GIFTED_LABEL
+Planète offerte
+
 SITREP_FLEET_ARRIVED_AT_DESTINATION
 La flotte %fleet% (%rawtext% astronefs) a atteint le système %system%.
 
