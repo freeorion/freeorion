@@ -317,6 +317,10 @@ namespace FreeOrionPython {
         class_<std::vector<ShipSlotType>>("ShipSlotVec")
             .def(boost::python::vector_indexing_suite<std::vector<ShipSlotType>, true>())
         ;
+        class_<std::map<std::string, std::string>>("StringsMap")
+            .def(boost::python::map_indexing_suite<std::map<std::string, std::string>, true>())
+        ;
+
         class_<std::map<MeterType, Meter>>("MeterTypeMeterMap")
             .def(boost::python::map_indexing_suite<std::map<MeterType, Meter>, true>())
         ;
@@ -327,6 +331,15 @@ namespace FreeOrionPython {
         ;
         class_<Ship::PartMeterMap>("ShipPartMeterMap")
             .def(boost::python::map_indexing_suite<Ship::PartMeterMap>())
+        ;
+
+        class_<std::map<std::string, std::map<int, std::map<int, double>>>>("StatRecordsMap")
+            .def(boost::python::map_indexing_suite<
+                 std::map<std::string, std::map<int, std::map<int, double>>>, true>())
+        ;
+        class_<std::map<int, std::map<int, double>>>("IntIntDblMapMap")
+            .def(boost::python::map_indexing_suite<
+                 std::map<int, std::map<int, double>>, true>())
         ;
 
         ///////////////////////////
@@ -377,15 +390,15 @@ namespace FreeOrionPython {
             .def("getBuilding",                 make_function(GetBuildingP,         return_value_policy<reference_existing_object>()))
             .def("getGenericShipDesign",        &Universe::GetGenericShipDesign,    return_value_policy<reference_existing_object>(), "Returns the ship design (ShipDesign) with the indicated name (string).")
 
-            .add_property("allObjectIDs",       make_function(ObjectIDs<UniverseObject>,  return_value_policy<return_by_value>()))
-            .add_property("fleetIDs",           make_function(ObjectIDs<Fleet>,           return_value_policy<return_by_value>()))
-            .add_property("systemIDs",          make_function(ObjectIDs<System>,          return_value_policy<return_by_value>()))
-            .add_property("fieldIDs",           make_function(ObjectIDs<Field>,           return_value_policy<return_by_value>()))
-            .add_property("planetIDs",          make_function(ObjectIDs<Planet>,          return_value_policy<return_by_value>()))
-            .add_property("shipIDs",            make_function(ObjectIDs<Ship>,            return_value_policy<return_by_value>()))
-            .add_property("buildingIDs",        make_function(ObjectIDs<Building>,        return_value_policy<return_by_value>()))
+            .add_property("allObjectIDs",       make_function(ObjectIDs<UniverseObject>,return_value_policy<return_by_value>()))
+            .add_property("fleetIDs",           make_function(ObjectIDs<Fleet>,         return_value_policy<return_by_value>()))
+            .add_property("systemIDs",          make_function(ObjectIDs<System>,        return_value_policy<return_by_value>()))
+            .add_property("fieldIDs",           make_function(ObjectIDs<Field>,         return_value_policy<return_by_value>()))
+            .add_property("planetIDs",          make_function(ObjectIDs<Planet>,        return_value_policy<return_by_value>()))
+            .add_property("shipIDs",            make_function(ObjectIDs<Ship>,          return_value_policy<return_by_value>()))
+            .add_property("buildingIDs",        make_function(ObjectIDs<Building>,      return_value_policy<return_by_value>()))
             .def("destroyedObjectIDs",          make_function(&Universe::EmpireKnownDestroyedObjectIDs,
-                                                                                    return_value_policy<return_by_value>()))
+                                                              return_value_policy<return_by_value>()))
 
             .def("systemHasStarlane",           make_function(
                                                     SystemHasVisibleStarlanesFunc,
@@ -470,6 +483,16 @@ namespace FreeOrionPython {
                                                     &Universe::GetObjectVisibilityByEmpire,
                                                     return_value_policy<return_by_value>()
                                                 ))
+
+            // Indexed by stat name (string), contains a map indexed by empire id,
+            // contains a map from turn number (int) to stat value (double).
+            .def("statRecords",                 make_function(
+                                                    &Universe::GetStatRecords,
+                                                    return_value_policy<reference_existing_object>()),
+                                                "Empire statistics recorded by the server each turn. Indexed first by "
+                                                "staistic name (string), then by empire id (int), then by turn "
+                                                "number (int), pointing to the statisic value (double)."
+                                                )
 
             .def("dump",                        &DumpObjects)
         ;
@@ -807,11 +830,6 @@ namespace FreeOrionPython {
             .add_property("maxAIAggression",    make_function(&GalaxySetupData::GetAggression,      return_value_policy<return_by_value>()))
             .add_property("gameUID",            make_function(&GalaxySetupData::GetGameUID,         return_value_policy<return_by_value>()),
                                                 &GalaxySetupData::SetGameUID);
-
-
-        class_<std::map<std::string, std::string>>("StringsMap")
-            .def(boost::python::map_indexing_suite<std::map<std::string, std::string>, true>())
-        ;
 
         class_<GameRules, noncopyable>("GameRules", no_init)
             .add_property("empty",              make_function(&GameRules::Empty,                return_value_policy<return_by_value>()))
