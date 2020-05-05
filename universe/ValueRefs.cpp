@@ -1414,7 +1414,6 @@ Visibility ComplexVariable<Visibility>::Eval(const ScriptingContext& context) co
 
 namespace {
     static std::map<std::string, int> EMPTY_STRING_INT_MAP;
-    static std::map<int, int> EMPTY_INT_INT_MAP;
 
     const std::map<std::string, int>& GetEmpireStringIntMap(int empire_id, const std::string& parsed_map_name) {
         Empire* empire = GetEmpire(empire_id);
@@ -1451,29 +1450,6 @@ namespace {
             return empire->ResearchedTechs();
 
         return EMPTY_STRING_INT_MAP;
-    }
-
-    const std::map<int, int>& GetEmpireIntIntMap(int empire_id, const std::string& parsed_map_name) {
-        Empire* empire = GetEmpire(empire_id);
-        if (!empire)
-            return EMPTY_INT_INT_MAP;
-
-        if (parsed_map_name == "EmpireShipsDestroyed")
-            return empire->EmpireShipsDestroyed();
-        if (parsed_map_name == "ShipDesignsDestroyed")
-            return empire->ShipDesignsDestroyed();
-        if (parsed_map_name == "ShipDesignsLost")
-            return empire->ShipDesignsLost();
-        if (parsed_map_name == "ShipDesignsOwned")
-            return empire->ShipDesignsOwned();
-        if (parsed_map_name == "ShipDesignsInProduction")
-            return empire->ShipDesignsInProduction();
-        if (parsed_map_name == "ShipDesignsProduced")
-            return empire->ShipDesignsProduced();
-        if (parsed_map_name == "ShipDesignsScrapped")
-            return empire->ShipDesignsScrapped();
-
-        return EMPTY_INT_INT_MAP;
     }
 
     // gets property for a particular map key string for one or all empires
@@ -1521,66 +1497,6 @@ namespace {
                 sum += property_entry.second;
         }
         return sum;
-    }
-
-    // gets property for a particular map key int for one or all empires
-    int GetIntEmpirePropertySingleKey(int empire_id, const std::string& parsed_property_name,
-                                      int map_key)
-    {
-        int sum = 0;
-
-        // single empire
-        if (empire_id != ALL_EMPIRES) {
-            const auto& map = GetEmpireIntIntMap(empire_id, parsed_property_name);
-            auto it = map.find(map_key);
-            if (it == map.end())
-                return 0;
-            return it->second;
-        }
-
-        // all empires summed
-        for (const auto& empire_entry : Empires()) {
-            const auto& map = GetEmpireIntIntMap(empire_entry.first, parsed_property_name);
-            auto map_it = map.find(map_key);
-            if (map_it != map.end())
-                sum += map_it->second;
-        }
-        return sum;
-    }
-
-    // gets property for the sum of all map keys for one or all empires
-    int GetIntEmpirePropertySumAllIntKeys(int empire_id, const std::string& parsed_property_name) {
-        int sum = 0;
-
-        // single empire
-        if (empire_id != ALL_EMPIRES) {
-            // sum of all key entries for this empire
-            for (const auto& property_entry : GetEmpireIntIntMap(empire_id, parsed_property_name))
-                sum += property_entry.second;
-            return sum;
-        }
-
-        // all empires summed
-        for (const auto& empire_entry : Empires()) {
-            for (const auto& property_entry : GetEmpireIntIntMap(empire_entry.first, parsed_property_name))
-                sum += property_entry.second;
-        }
-        return sum;
-    }
-
-    // gets map index int for content specified by a string. eg. look up
-    // predefined ship design id by name.
-    // how to look up such strings depends on the parsed property name.
-    int GetIntKeyFromContentStringKey(const std::string& parsed_property_name,
-                                      const std::string& key_string)
-    {
-        if (boost::istarts_with(parsed_property_name, "ShipDesign")) {
-            // look up ship design id corresponding to specified predefined ship design name
-            const ShipDesign* design = GetPredefinedShipDesign(key_string);
-            if (design)
-                return design->ID();
-        }
-        return -1;
     }
 }
 
@@ -1639,27 +1555,41 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         return GetIntEmpirePropertySumAllStringKeys(empire_id, variable_name);
     }
 
+    std::function<const std::map<int, int>& (const Empire&)> empire_property_int_key{nullptr};
+
+    if (variable_name == "EmpireShipsDestroyed")
+        empire_property_int_key = &Empire::EmpireShipsDestroyed;
+    if (variable_name == "ShipDesignsDestroyed")
+        empire_property_int_key = &Empire::ShipDesignsDestroyed;
+    if (variable_name == "ShipDesignsLost")
+        empire_property_int_key = &Empire::ShipDesignsLost;
+    if (variable_name == "ShipDesignsOwned")
+        empire_property_int_key = &Empire::ShipDesignsOwned;
+    if (variable_name == "ShipDesignsInProduction")
+        empire_property_int_key = &Empire::ShipDesignsInProduction;
+    if (variable_name == "ShipDesignsProduced")
+        empire_property_int_key = &Empire::ShipDesignsProduced;
+    if (variable_name == "ShipDesignsScrapped")
+        empire_property_int_key = &Empire::ShipDesignsScrapped;
+
     // empire properties indexed by integers
-    if (variable_name == "EmpireShipsDestroyed" ||
-        variable_name == "ShipDesignsDestroyed" ||
-        variable_name == "ShipDesignsInProduction" ||
-        variable_name == "ShipDesignsLost" ||
-        variable_name == "ShipDesignsOwned" ||
-        variable_name == "ShipDesignsProduced" ||
-        variable_name == "ShipDesignsScrapped")
-    {
-        int empire_id = ALL_EMPIRES;
+    if (empire_property_int_key) {
+        using namespace boost::adaptors;
+
+        Empire* empire{nullptr};
         if (m_int_ref1) {
-            empire_id = m_int_ref1->Eval(context);
+            int empire_id = m_int_ref1->Eval(context);
             if (empire_id == ALL_EMPIRES)
                 return 0;
+            empire = GetEmpire(empire_id);
         }
 
+        std::function<bool (const std::map<int, int>::value_type&)> key_filter{nullptr};
+        key_filter = [](auto e){ return true; };
+
         // if a key integer specified, get just that entry (for single empire or sum of all empires)
-        if (m_int_ref2) {
-            int key_int = m_int_ref2->Eval(context);
-            return GetIntEmpirePropertySingleKey(empire_id, variable_name, key_int);
-        }
+        if (m_int_ref2)
+            key_filter = [k = m_int_ref2->Eval(context)](auto e){ return k == e.first; };
 
         // although indexed by integers, some of these may be specified by a
         // string that needs to be looked up. if a key string specified, get
@@ -1668,12 +1598,23 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
             std::string key_string = m_string_ref1->Eval(context);
             if (key_string.empty())
                 return 0;
-            int key_int = GetIntKeyFromContentStringKey(variable_name, key_string);
-            return GetIntEmpirePropertySingleKey(empire_id, variable_name, key_int);
+            int key_int = -1;
+            if (boost::istarts_with(variable_name, "ShipDesign")) {
+                // look up ship design id corresponding to specified predefined ship design name
+                const ShipDesign* design = GetPredefinedShipDesign(key_string);
+                if (design)
+                    key_int = design->ID();
+            }
+            key_filter = [k = key_int](auto e){ return k == e.first; };
         }
 
-        // if no key specified, get sum of all entries (for single empire or sum of all empires)
-        return GetIntEmpirePropertySumAllIntKeys(empire_id, variable_name);
+        if (empire)
+            return boost::accumulate(empire_property_int_key(*empire) | filtered(key_filter) | map_values, 0);
+
+        int sum = 0;
+        for (const auto& empire_entry : Empires())
+            sum += boost::accumulate(empire_property_int_key(*(empire_entry.second)) | filtered(key_filter) | map_values, 0);
+        return sum;
     }
 
     // empire properties indexed by string or ShipPartClass (as int)
