@@ -2015,6 +2015,29 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
 {
     const std::string& variable_name = m_property_name.back();
 
+    std::function<float (const ShipHull&)> hull_property{nullptr};
+
+    if (variable_name == "HullFuel")
+        hull_property = &ShipHull::Fuel;
+    else if (variable_name == "HullStealth")
+        hull_property = &ShipHull::Stealth;
+    else if (variable_name == "HullStructure")
+        hull_property = &ShipHull::Structure;
+    else if (variable_name == "HullSpeed")
+        hull_property = &ShipHull::Speed;
+
+    if (hull_property) {
+        std::string ship_hull_name;
+        if (m_string_ref1)
+            ship_hull_name = m_string_ref1->Eval(context);
+
+        const ShipHull* ship_hull = GetShipHull(ship_hull_name);
+        if (!ship_hull)
+            return 0.0f;
+
+        return hull_property(*ship_hull);
+    }
+
     // empire properties indexed by integers
     if (variable_name == "PropagatedSystemSupplyRange" ||
         variable_name == "SystemSupplyRange" ||
@@ -2067,54 +2090,6 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         } catch (...) {
         }
         return 0.0;
-    }
-    else if (variable_name == "HullFuel") {
-        std::string ship_hull_name;
-        if (m_string_ref1)
-            ship_hull_name = m_string_ref1->Eval(context);
-
-        const ShipHull* ship_hull = GetShipHull(ship_hull_name);
-        if (!ship_hull)
-            return 0.0;
-
-        return ship_hull->Fuel();
-
-    }
-    else if (variable_name == "HullStealth") {
-        std::string ship_hull_name;
-        if (m_string_ref1)
-            ship_hull_name = m_string_ref1->Eval(context);
-
-        const ShipHull* ship_hull = GetShipHull(ship_hull_name);
-        if (!ship_hull)
-            return 0.0;
-
-        return ship_hull->Stealth();
-
-    }
-    else if (variable_name == "HullStructure") {
-        std::string ship_hull_name;
-        if (m_string_ref1)
-            ship_hull_name = m_string_ref1->Eval(context);
-
-        const ShipHull* ship_hull = GetShipHull(ship_hull_name);
-        if (!ship_hull)
-            return 0.0f;
-
-        return ship_hull->Structure();
-
-    }
-    else if (variable_name == "HullSpeed") {
-        std::string ship_hull_name;
-        if (m_string_ref1)
-            ship_hull_name = m_string_ref1->Eval(context);
-
-        const ShipHull* ship_hull = GetShipHull(ship_hull_name);
-        if (!ship_hull)
-            return 0.0;
-
-        return ship_hull->Speed();
-
     }
     else if (variable_name == "PartCapacity") {
         std::string ship_part_name;
