@@ -82,9 +82,6 @@ struct FO_COMMON_API Number final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -110,9 +107,6 @@ struct FO_COMMON_API Turn final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -154,9 +148,6 @@ struct FO_COMMON_API SortedNumberOf final : public Condition {
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -165,7 +156,7 @@ struct FO_COMMON_API SortedNumberOf final : public Condition {
 private:
     std::unique_ptr<ValueRef::ValueRef<int>> m_number;
     std::unique_ptr<ValueRef::ValueRef<double>> m_sort_key;
-    SortingMethod m_sorting_method = SORT_RANDOM;
+    SortingMethod m_sorting_method;
     std::unique_ptr<Condition> m_condition;
 
     friend class boost::serialization::access;
@@ -176,8 +167,7 @@ private:
 /** Matches no objects. Currently only has an experimental use for efficient immediate rejection as the top-line condition.
  *  Essentially the entire point of this Condition is to provide the specialized GetDefaultInitialCandidateObjects() */
 struct FO_COMMON_API None final : public Condition {
-    None() : Condition() {}
-
+    None();
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
@@ -186,12 +176,6 @@ struct FO_COMMON_API None final : public Condition {
     { /* efficient rejection of everything. */ }
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
-    bool RootCandidateInvariant() const override
-    { return true; }
-    bool TargetInvariant() const override
-    { return true; }
-    bool SourceInvariant() const override
-    { return true; }
     void SetTopLevelContent(const std::string& content_name) override
     {}
     unsigned int GetCheckSum() const override;
@@ -213,9 +197,6 @@ struct FO_COMMON_API EmpireAffiliation final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -237,17 +218,10 @@ private:
   * whole compound condition, rather than an object just being matched in a
   * subcondition in order to evaluate the outer condition. */
 struct FO_COMMON_API RootCandidate final : public Condition {
-    RootCandidate() : Condition() {}
-
+    RootCandidate();
     bool operator==(const Condition& rhs) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    bool RootCandidateInvariant() const override
-    { return false; }
-    bool TargetInvariant() const override
-    { return true; }
-    bool SourceInvariant() const override
-    { return true; }
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override
@@ -267,17 +241,10 @@ private:
 
 /** Matches the target of an effect being executed. */
 struct FO_COMMON_API Target final : public Condition {
-    Target() : Condition() {}
-
+    Target();
     bool operator==(const Condition& rhs) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    bool RootCandidateInvariant() const override
-    { return true; }
-    bool TargetInvariant() const override
-    { return false; }
-    bool SourceInvariant() const override
-    { return true; }
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override
@@ -304,9 +271,6 @@ struct FO_COMMON_API Homeworld final : public Condition {
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -324,17 +288,10 @@ private:
 
 /** Matches planets that are an empire's capital. */
 struct FO_COMMON_API Capital final : public Condition {
-    Capital() : Condition() {}
-
+    Capital();
     bool operator==(const Condition& rhs) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    bool RootCandidateInvariant() const override
-    { return true; }
-    bool TargetInvariant() const override
-    { return true; }
-    bool SourceInvariant() const override
-    { return true; }
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override
@@ -351,17 +308,10 @@ private:
 
 /** Matches space monsters. */
 struct FO_COMMON_API Monster final : public Condition {
-    Monster() : Condition() {}
-
+    Monster();
     bool operator==(const Condition& rhs) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    bool RootCandidateInvariant() const override
-    { return true; }
-    bool TargetInvariant() const override
-    { return true; }
-    bool SourceInvariant() const override
-    { return true; }
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override
@@ -378,15 +328,8 @@ private:
 
 /** Matches armed ships and monsters. */
 struct FO_COMMON_API Armed final : public Condition {
-    Armed() : Condition() {}
-
+    Armed();
     bool operator==(const Condition& rhs) const override;
-    bool RootCandidateInvariant() const override
-    { return true; }
-    bool TargetInvariant() const override
-    { return true; }
-    bool SourceInvariant() const override
-    { return true; }
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override
@@ -411,9 +354,6 @@ struct FO_COMMON_API Type final : public Condition {
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -439,9 +379,6 @@ struct FO_COMMON_API Building final : public Condition {
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -473,9 +410,6 @@ struct FO_COMMON_API HasSpecial final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -504,9 +438,6 @@ struct FO_COMMON_API HasTag final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -530,9 +461,6 @@ struct FO_COMMON_API CreatedOnTurn final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -553,19 +481,12 @@ private:
   * \a condition.  Container objects are Systems, Planets (which contain
   * Buildings), and Fleets (which contain Ships). */
 struct FO_COMMON_API Contains final : public Condition {
-    Contains(std::unique_ptr<Condition>&& condition) :
-        Condition(),
-        m_condition(std::move(condition))
-    {}
-
+    Contains(std::unique_ptr<Condition>&& condition);
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -585,19 +506,12 @@ private:
   * \a condition.  Container objects are Systems, Planets (which contain
   * Buildings), and Fleets (which contain Ships). */
 struct FO_COMMON_API ContainedBy final : public Condition {
-    ContainedBy(std::unique_ptr<Condition>&& condition) :
-        Condition(),
-        m_condition(std::move(condition))
-    {}
-
+    ContainedBy(std::unique_ptr<Condition>&& condition);
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -622,9 +536,6 @@ struct FO_COMMON_API InSystem final : public Condition {
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -649,9 +560,6 @@ struct FO_COMMON_API ObjectID final : public Condition {
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -678,9 +586,6 @@ struct FO_COMMON_API PlanetType final : public Condition {
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -707,9 +612,6 @@ struct FO_COMMON_API PlanetSize final : public Condition {
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -737,9 +639,6 @@ struct FO_COMMON_API PlanetEnvironment final : public Condition {
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -768,9 +667,6 @@ struct FO_COMMON_API Species final : public Condition {
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -805,9 +701,6 @@ struct FO_COMMON_API Enqueued final : public Condition {
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -835,9 +728,6 @@ struct FO_COMMON_API FocusType final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
@@ -863,9 +753,6 @@ struct FO_COMMON_API StarType final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -890,9 +777,6 @@ struct FO_COMMON_API DesignHasHull final : public Condition {
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -920,9 +804,6 @@ struct FO_COMMON_API DesignHasPart final : public Condition {
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -952,9 +833,6 @@ struct FO_COMMON_API DesignHasPartClass final : public Condition {
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -976,14 +854,10 @@ private:
   * \a name */
 struct FO_COMMON_API PredefinedShipDesign final : public Condition {
     explicit PredefinedShipDesign(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
-    explicit PredefinedShipDesign(ValueRef::ValueRef<std::string>* name);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1006,9 +880,6 @@ struct FO_COMMON_API NumberedShipDesign final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1031,9 +902,6 @@ struct FO_COMMON_API ProducedByEmpire final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1056,9 +924,6 @@ struct FO_COMMON_API Chance final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1084,9 +949,6 @@ struct FO_COMMON_API MeterValue final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1115,9 +977,6 @@ struct FO_COMMON_API ShipPartMeterValue final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1146,9 +1005,6 @@ struct FO_COMMON_API EmpireMeterValue final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1177,9 +1033,6 @@ struct FO_COMMON_API EmpireStockpileValue final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1207,9 +1060,6 @@ struct FO_COMMON_API OwnerHasTech final : public Condition {
     bool            operator==(const Condition& rhs) const override;
     void            Eval(const ScriptingContext& parent_context, ObjectSet& matches,
                          ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool            RootCandidateInvariant() const override;
-    bool            TargetInvariant() const override;
-    bool            SourceInvariant() const override;
     std::string     Description(bool negated = false) const override;
     std::string     Dump(unsigned short ntabs = 0) const override;
     void            SetTopLevelContent(const std::string& content_name) override;
@@ -1236,9 +1086,6 @@ struct FO_COMMON_API OwnerHasBuildingTypeAvailable final : public Condition {
     bool            operator==(const Condition& rhs) const override;
     void            Eval(const ScriptingContext& parent_context, ObjectSet& matches,
                          ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool            RootCandidateInvariant() const override;
-    bool            TargetInvariant() const override;
-    bool            SourceInvariant() const override;
     std::string     Description(bool negated = false) const override;
     std::string     Dump(unsigned short ntabs = 0) const override;
     void            SetTopLevelContent(const std::string& content_name) override;
@@ -1265,9 +1112,6 @@ struct FO_COMMON_API OwnerHasShipDesignAvailable final : public Condition {
     bool            operator==(const Condition& rhs) const override;
     void            Eval(const ScriptingContext& parent_context, ObjectSet& matches,
                          ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool            RootCandidateInvariant() const override;
-    bool            TargetInvariant() const override;
-    bool            SourceInvariant() const override;
     std::string     Description(bool negated = false) const override;
     std::string     Dump(unsigned short ntabs = 0) const override;
     void            SetTopLevelContent(const std::string& content_name) override;
@@ -1294,9 +1138,6 @@ struct FO_COMMON_API OwnerHasShipPartAvailable final : public Condition {
     bool            operator==(const Condition& rhs) const override;
     void            Eval(const ScriptingContext& parent_context, ObjectSet& matches,
                          ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool            RootCandidateInvariant() const override;
-    bool            TargetInvariant() const override;
-    bool            SourceInvariant() const override;
     std::string     Description(bool negated = false) const override;
     std::string     Dump(unsigned short ntabs = 0) const override;
     void            SetTopLevelContent(const std::string& content_name) override;
@@ -1320,9 +1161,6 @@ struct FO_COMMON_API VisibleToEmpire final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1349,9 +1187,6 @@ struct FO_COMMON_API WithinDistance final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1379,9 +1214,6 @@ struct FO_COMMON_API WithinStarlaneJumps final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1405,17 +1237,11 @@ private:
   * any other lanes, pass too close to another system, or be too close in angle
   * to an existing lane. */
 struct FO_COMMON_API CanAddStarlaneConnection : Condition {
-    explicit CanAddStarlaneConnection(std::unique_ptr<Condition>&& condition) :
-        Condition(),
-        m_condition(std::move(condition))
-    {}
+    explicit CanAddStarlaneConnection(std::unique_ptr<Condition>&& condition);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1439,9 +1265,6 @@ struct FO_COMMON_API ExploredByEmpire final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1460,15 +1283,9 @@ private:
 /** Matches objects that are moving. ... What does that mean?  Departing this
   * turn, or were located somewhere else last turn...? */
 struct FO_COMMON_API Stationary final : public Condition {
-    explicit Stationary() : Condition() {}
+    explicit Stationary();
 
     bool operator==(const Condition& rhs) const override;
-    bool RootCandidateInvariant() const override
-    { return true; }
-    bool TargetInvariant() const override
-    { return true; }
-    bool SourceInvariant() const override
-    { return true; }
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override
@@ -1485,22 +1302,10 @@ private:
 
 /** Matches objects that are aggressive fleets or are in aggressive fleets. */
 struct FO_COMMON_API Aggressive final : public Condition {
-    explicit Aggressive() :
-        Condition(),
-        m_aggressive(true)
-    {}
-    explicit Aggressive(bool aggressive) :
-        Condition(),
-        m_aggressive(aggressive)
-    {}
+    explicit Aggressive();
+    explicit Aggressive(bool aggressive);
 
     bool operator==(const Condition& rhs) const override;
-    bool RootCandidateInvariant() const override
-    { return true; }
-    bool TargetInvariant() const override
-    { return true; }
-    bool SourceInvariant() const override
-    { return true; }
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override
@@ -1527,9 +1332,6 @@ struct FO_COMMON_API FleetSupplyableByEmpire final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1555,9 +1357,6 @@ struct FO_COMMON_API ResourceSupplyConnectedByEmpire final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1576,15 +1375,9 @@ private:
 
 /** Matches objects whose species has the ability to found new colonies. */
 struct FO_COMMON_API CanColonize final : public Condition {
-    explicit CanColonize() : Condition() {}
+    explicit CanColonize();
 
     bool operator==(const Condition& rhs) const override;
-    bool RootCandidateInvariant() const override
-    { return true; }
-    bool TargetInvariant() const override
-    { return true; }
-    bool SourceInvariant() const override
-    { return true; }
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override
@@ -1601,15 +1394,9 @@ private:
 
 /** Matches objects whose species has the ability to produce ships. */
 struct FO_COMMON_API CanProduceShips final : public Condition {
-    CanProduceShips() : Condition() {}
+    CanProduceShips();
 
     bool operator==(const Condition& rhs) const override;
-    bool RootCandidateInvariant() const override
-    { return true; }
-    bool TargetInvariant() const override
-    { return true; }
-    bool SourceInvariant() const override
-    { return true; }
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override
@@ -1632,9 +1419,6 @@ struct FO_COMMON_API OrderedBombarded final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     virtual void SetTopLevelContent(const std::string& content_name) override;
@@ -1674,9 +1458,6 @@ struct FO_COMMON_API ValueTest final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1714,9 +1495,6 @@ public:
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1744,9 +1522,6 @@ public:
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1777,9 +1552,6 @@ struct FO_COMMON_API And final : public Condition {
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1805,9 +1577,6 @@ struct FO_COMMON_API Or final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     virtual void SetTopLevelContent(const std::string& content_name) override;
@@ -1828,9 +1597,6 @@ struct FO_COMMON_API Not final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1854,9 +1620,6 @@ struct FO_COMMON_API OrderedAlternativesOf final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1874,18 +1637,11 @@ private:
 /** Matches whatever its subcondition matches, but has a customized description
   * string that is returned by Description() by looking up in the stringtable. */
 struct FO_COMMON_API Described final : public Condition {
-    Described(std::unique_ptr<Condition>&& condition, const std::string& desc_stringtable_key) :
-        Condition(),
-            m_condition(std::move(condition)),
-        m_desc_stringtable_key(desc_stringtable_key)
-    {}
+    Described(std::unique_ptr<Condition>&& condition, const std::string& desc_stringtable_key);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override
     { return m_condition ? m_condition->Dump(ntabs) : ""; }
@@ -1904,7 +1660,11 @@ private:
 // template implementations
 template <typename Archive>
 void Condition::serialize(Archive& ar, const unsigned int version)
-{}
+{
+    ar  & BOOST_SERIALIZATION_NVP(m_root_candidate_invariant)
+        & BOOST_SERIALIZATION_NVP(m_target_invariant)
+        & BOOST_SERIALIZATION_NVP(m_source_invariant);
+}
 
 template <typename Archive>
 void Number::serialize(Archive& ar, const unsigned int version)

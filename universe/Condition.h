@@ -16,12 +16,6 @@ namespace Condition {
 
 typedef std::vector<std::shared_ptr<const UniverseObject>> ObjectSet;
 
-enum Invariance : int {
-    UNKNOWN_INVARIANCE, ///< This condition hasn't yet calculated this invariance type
-    INVARIANT,          ///< This condition is invariant to a particular type of object change
-    VARIANT             ///< This condition's result depends on the state of a particular object
-};
-
 enum SearchDomain : int {
     NON_MATCHES,    ///< The Condition will only examine items in the non matches set; those that match the Condition will be inserted into the matches set.
     MATCHES         ///< The Condition will only examine items in the matches set; those that do not match the Condition will be inserted into the nonmatches set.
@@ -56,30 +50,30 @@ struct FO_COMMON_API Condition {
     virtual void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                                    ObjectSet& condition_non_targets) const;
 
-    /** Returns true iff this condition's evaluation does not reference
-      * the RootCandidate objects.  This requirement ensures that if this
-      * condition is a subcondition to another Condition or a ValueRef, this
-      * condition may be evaluated once and its result used to match all local
-      * candidates to that condition. */
-    virtual bool RootCandidateInvariant() const
-    { return false; }
+    //! Returns true iff this condition's evaluation does not reference
+    //! the RootCandidate objects.  This requirement ensures that if this
+    //! condition is a subcondition to another Condition or a ValueRef, this
+    //! condition may be evaluated once and its result used to match all local
+    //! candidates to that condition.
+    bool RootCandidateInvariant() const
+    { return m_root_candidate_invariant; }
 
-    /** (Almost) all conditions are varying with local candidates; this is the
-      * point of evaluating a condition.  This funciton is provided for
-      * consistency with ValueRef, which may not depend on the local candidiate
-      * of an enclosing condition. */
+    //! (Almost) all conditions are varying with local candidates; this is the
+    //! point of evaluating a condition.  This funciton is provided for
+    //! consistency with ValueRef, which may not depend on the local candidiate
+    //! of an enclosing condition.
     bool LocalCandidateInvariant() const
     { return false; }
 
-    /** Returns true iff this condition's evaluation does not reference the
-      * target object.*/
-    virtual bool TargetInvariant() const
-    { return false; }
+    //! Returns true iff this condition's evaluation does not reference the
+    //! target object.
+    bool TargetInvariant() const
+    { return m_target_invariant; }
 
-    /** Returns true iff this condition's evaluation does not reference the
-      * source object.*/
-    virtual bool SourceInvariant() const
-    { return false; }
+    //! Returns true iff this condition's evaluation does not reference the
+    //! source object.
+    bool SourceInvariant() const
+    { return m_source_invariant; }
 
     virtual std::string Description(bool negated = false) const = 0;
     virtual std::string Dump(unsigned short ntabs = 0) const = 0;
@@ -88,9 +82,9 @@ struct FO_COMMON_API Condition {
     { return 0; }
 
 protected:
-    Invariance m_root_candidate_invariant = UNKNOWN_INVARIANCE;
-    Invariance m_target_invariant = UNKNOWN_INVARIANCE;
-    Invariance m_source_invariant = UNKNOWN_INVARIANCE;
+    bool m_root_candidate_invariant = false;
+    bool m_target_invariant = false;
+    bool m_source_invariant = false;
 
 private:
     struct MatchHelper;
