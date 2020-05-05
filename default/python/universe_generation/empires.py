@@ -545,3 +545,55 @@ def setup_empire(empire, empire_name, home_system, starting_species, player_name
                              % (ship_design, fleet_plan.name()))
 
     return True
+
+
+def home_system_layout(home_systems, systems):
+    """
+    Home systems layout generation to place teams.
+    Returns map from home system to neighbor home systems
+    """
+    # for each system found nearest home systems
+    # maybe multiple if home worlds placed on the same jump distnace
+    system_hs = {}
+    for system in systems:
+        nearest_hs = set()
+        nearest_dist = None
+        for hs in home_systems:
+            dist = fo.jump_distance(system, hs)
+            if nearest_dist is None or nearest_dist > dist:
+                nearest_dist = dist
+                nearest_hs = set([hs])
+            elif nearest_dist == dist:
+                nearest_hs.add(hs)
+        system_hs[system] = nearest_hs
+
+    # homeworld is connected to the other
+    # if both are nearest for some system
+    # if each of them is nearest for systems on the starline ends
+    home_system_connections = {}
+    for system, connected_home_systems in system_hs.items():
+        if len(connected_home_systems) >= 2:
+            for hs1 in connected_home_systems:
+                for hs2 in connected_home_systems:
+                    if hs1 < hs2:
+                        conns = home_system_connections.get(hs1, set())
+                        conns.add(hs2)
+                        home_system_connections[hs1] = conns
+                        conns = home_system_connections.get(hs2, set())
+                        conns.add(hs1)
+                        home_system_connections[hs2] = conns
+
+    for system, connected_home_systems in system_hs.items():
+        adj_systems = fo.systems_within_jumps_unordered(1, [system])
+        for system2 in adj_systems:
+            connected_home_systems2 = system_hs.get(system2, set())
+            for hs1 in connected_home_systems:
+                for hs2 in connected_home_systems2:
+                    if hs1 < hs2:
+                        conns = home_system_connections.get(hs1, set())
+                        conns.add(hs2)
+                        home_system_connections[hs1] = conns
+                        conns = home_system_connections.get(hs2, set())
+                        conns.add(hs1)
+                        home_system_connections[hs2] = conns
+    return home_system_connections
