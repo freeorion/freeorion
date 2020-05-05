@@ -727,19 +727,18 @@ StarType Variable<StarType>::Eval(const ScriptingContext& context) const
         return INVALID_STAR_TYPE;
     }
 
-    if (property_name == "StarType") {
-        if (auto s = std::dynamic_pointer_cast<const System>(object))
-            return s->GetStarType();
-        return INVALID_STAR_TYPE;
+    std::function<StarType (const System&)> system_property{nullptr};
 
-    } else if (property_name == "NextOlderStarType") {
-        if (auto s = std::dynamic_pointer_cast<const System>(object))
-            return s->NextOlderStarType();
-        return INVALID_STAR_TYPE;
+    if (property_name == "StarType")
+        system_property = &System::GetStarType;
+    else if (property_name == "NextOlderStarType")
+        system_property = &System::NextOlderStarType;
+    else if (property_name == "NextYoungerStarType")
+        system_property = &System::NextYoungerStarType;
 
-    } else if (property_name == "NextYoungerStarType") {
+    if (system_property) {
         if (auto s = std::dynamic_pointer_cast<const System>(object))
-            return s->NextYoungerStarType();
+            return system_property(*s);
         return INVALID_STAR_TYPE;
     }
 
