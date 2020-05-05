@@ -28,6 +28,8 @@
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/split.hpp>
+#include <boost/range/adaptor/map.hpp>
+#include <boost/range/numeric.hpp>
 
 #include <functional>
 #include <iomanip>
@@ -1489,18 +1491,6 @@ namespace {
         return EMPTY_INT_FLOAT_MAP;
     }
 
-    int GetIntEmpirePropertyNoKeyImpl(int empire_id, const std::string& parsed_property_name) {
-        Empire* empire = GetEmpire(empire_id);
-        if (!empire)
-            return 0;
-
-        if (parsed_property_name == "OutpostsOwned")
-            return empire->OutpostsOwned();
-        // todo: add all the various OwnerWhatever ValueRef stuff here
-
-        return 0;
-    }
-
     // gets property for a particular map key string for one or all empires
     int GetIntEmpirePropertySingleKey(int empire_id, const std::string& parsed_property_name,
                                       const std::string& map_key)
@@ -1649,21 +1639,6 @@ namespace {
                 return design->ID();
         }
         return -1;
-    }
-
-    // gets unkeyed property for one or all empires
-    int GetIntEmpirePropertyNoKey(int empire_id, const std::string& parsed_property_name) {
-        int sum = 0;
-
-        if (empire_id != ALL_EMPIRES) {
-            // single empire
-            return GetIntEmpirePropertyNoKeyImpl(empire_id, parsed_property_name);
-        }
-
-        // all empires summed
-        for (const auto& empire_entry : Empires())
-            sum += GetIntEmpirePropertyNoKeyImpl(empire_entry.first, parsed_property_name);
-        return sum;
     }
 }
 
@@ -1814,14 +1789,25 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
 
     // unindexed empire proprties
     if (variable_name == "OutpostsOwned") {
-        int empire_id = ALL_EMPIRES;
+        Empire* empire{nullptr};
         if (m_int_ref1) {
-            empire_id = m_int_ref1->Eval(context);
+            int empire_id = m_int_ref1->Eval(context);
             if (empire_id == ALL_EMPIRES)
+                return 0;
+            empire = GetEmpire(empire_id);
+            if (!empire)
                 return 0;
         }
 
-        return GetIntEmpirePropertyNoKey(empire_id, variable_name);
+        std::function<int (const Empire*)> empire_property{nullptr};
+        empire_property = &Empire::OutpostsOwned;
+
+        using namespace boost::adaptors;
+
+        if (!empire)
+            return boost::accumulate(Empires() | map_values | transformed(empire_property), 0);
+
+        return empire_property(empire);
     }
 
     // non-empire properties
