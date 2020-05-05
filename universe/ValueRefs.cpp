@@ -1412,147 +1412,74 @@ Visibility ComplexVariable<Visibility>::Eval(const ScriptingContext& context) co
     return INVALID_VISIBILITY;
 }
 
-namespace {
-    static std::map<std::string, int> EMPTY_STRING_INT_MAP;
-
-    const std::map<std::string, int>& GetEmpireStringIntMap(int empire_id, const std::string& parsed_map_name) {
-        Empire* empire = GetEmpire(empire_id);
-        if (!empire)
-            return EMPTY_STRING_INT_MAP;
-
-        if (parsed_map_name == "BuildingTypesOwned")
-            return empire->BuildingTypesOwned();
-        if (parsed_map_name == "BuildingTypesProduced")
-            return empire->BuildingTypesProduced();
-        if (parsed_map_name == "BuildingTypesScrapped")
-            return empire->BuildingTypesScrapped();
-        if (parsed_map_name == "SpeciesColoniesOwned")
-            return empire->SpeciesColoniesOwned();
-        if (parsed_map_name == "SpeciesPlanetsBombed")
-            return empire->SpeciesPlanetsBombed();
-        if (parsed_map_name == "SpeciesPlanetsDepoped")
-            return empire->SpeciesPlanetsDepoped();
-        if (parsed_map_name == "SpeciesPlanetsInvaded")
-            return empire->SpeciesPlanetsInvaded();
-        if (parsed_map_name == "SpeciesShipsDestroyed")
-            return empire->SpeciesShipsDestroyed();
-        if (parsed_map_name == "SpeciesShipsLost")
-            return empire->SpeciesShipsLost();
-        if (parsed_map_name == "SpeciesShipsOwned")
-            return empire->SpeciesShipsOwned();
-        if (parsed_map_name == "SpeciesShipsProduced")
-            return empire->SpeciesShipsProduced();
-        if (parsed_map_name == "SpeciesShipsScrapped")
-            return empire->SpeciesShipsScrapped();
-        if (parsed_map_name == "ShipPartsOwned")
-            return empire->ShipPartsOwned();
-        if (parsed_map_name == "TurnTechResearched")
-            return empire->ResearchedTechs();
-
-        return EMPTY_STRING_INT_MAP;
-    }
-
-    // gets property for a particular map key string for one or all empires
-    int GetIntEmpirePropertySingleKey(int empire_id, const std::string& parsed_property_name,
-                                      const std::string& map_key)
-    {
-        int sum = 0;
-        if (map_key.empty())
-            return sum;
-
-        // single empire
-        if (empire_id != ALL_EMPIRES) {
-            const auto& map = GetEmpireStringIntMap(empire_id, parsed_property_name);
-            auto it = map.find(map_key);
-            if (it == map.end())
-                return 0;
-            return it->second;
-        }
-
-        // all empires summed
-        for (auto& entry : Empires()) {
-            const auto& map = GetEmpireStringIntMap(entry.first, parsed_property_name);
-            auto map_it = map.find(map_key);
-            if (map_it != map.end())
-                sum += map_it->second;
-        }
-        return sum;
-    }
-
-    // gets property for the sum of all map keys for one or all empires
-    int GetIntEmpirePropertySumAllStringKeys(int empire_id, const std::string& parsed_property_name) {
-        int sum = 0;
-
-        // single empire
-        if (empire_id != ALL_EMPIRES) {
-            // sum of all key entries for this empire
-            for (const auto& entry : GetEmpireStringIntMap(empire_id, parsed_property_name))
-                sum += entry.second;
-            return sum;
-        }
-
-        // all empires summed
-        for (const auto& empire_entry : Empires()) {
-            for (const auto& property_entry : GetEmpireStringIntMap(empire_entry.first, parsed_property_name))
-                sum += property_entry.second;
-        }
-        return sum;
-    }
-}
-
 template <>
 int ComplexVariable<int>::Eval(const ScriptingContext& context) const
 {
     const std::string& variable_name = m_property_name.back();
 
+    std::function<const std::map<std::string, int>& (const Empire&)> empire_property_string_key{nullptr};
+
+    if (variable_name == "BuildingTypesOwned")
+        empire_property_string_key = &Empire::BuildingTypesOwned;
+    if (variable_name == "BuildingTypesProduced")
+        empire_property_string_key = &Empire::BuildingTypesProduced;
+    if (variable_name == "BuildingTypesScrapped")
+        empire_property_string_key = &Empire::BuildingTypesScrapped;
+    if (variable_name == "SpeciesColoniesOwned")
+        empire_property_string_key = &Empire::SpeciesColoniesOwned;
+    if (variable_name == "SpeciesPlanetsBombed")
+        empire_property_string_key = &Empire::SpeciesPlanetsBombed;
+    if (variable_name == "SpeciesPlanetsDepoped")
+        empire_property_string_key = &Empire::SpeciesPlanetsDepoped;
+    if (variable_name == "SpeciesPlanetsInvaded")
+        empire_property_string_key = &Empire::SpeciesPlanetsInvaded;
+    if (variable_name == "SpeciesShipsDestroyed")
+        empire_property_string_key = &Empire::SpeciesShipsDestroyed;
+    if (variable_name == "SpeciesShipsLost")
+        empire_property_string_key = &Empire::SpeciesShipsLost;
+    if (variable_name == "SpeciesShipsOwned")
+        empire_property_string_key = &Empire::SpeciesShipsOwned;
+    if (variable_name == "SpeciesShipsProduced")
+        empire_property_string_key = &Empire::SpeciesShipsProduced;
+    if (variable_name == "SpeciesShipsScrapped")
+        empire_property_string_key = &Empire::SpeciesShipsScrapped;
+    if (variable_name == "TurnTechResearched")
+        empire_property_string_key = &Empire::ResearchedTechs;
+
     // empire properties indexed by strings
-    if (variable_name == "BuildingTypesOwned" ||
-        variable_name == "BuildingTypesProduced" ||
-        variable_name == "BuildingTypesScrapped" ||
-        variable_name == "SpeciesColoniesOwned" ||
-        variable_name == "SpeciesPlanetsBombed" ||
-        variable_name == "SpeciesPlanetsDepoped" ||
-        variable_name == "SpeciesPlanetsInvaded" ||
-        variable_name == "SpeciesShipsDestroyed" ||
-        variable_name == "SpeciesShipsLost" ||
-        variable_name == "SpeciesShipsOwned" ||
-        variable_name == "SpeciesShipsProduced" ||
-        variable_name == "SpeciesShipsScrapped" ||
-        variable_name == "TurnTechResearched")
-    {
-        int empire_id = ALL_EMPIRES;
+    if (empire_property_string_key) {
+        using namespace boost::adaptors;
+
+        Empire* empire{nullptr};
         if (m_int_ref1) {
-            empire_id = m_int_ref1->Eval(context);
+            int empire_id = m_int_ref1->Eval(context);
             if (empire_id == ALL_EMPIRES)
                 return 0;
+            empire = GetEmpire(empire_id);
         }
-        std::string key_string;
+
+        std::function<bool (const std::map<std::string, int>::value_type&)> key_filter{nullptr};
+        key_filter = [](auto e){ return true; };
+
         if (m_string_ref1) {
-            key_string = m_string_ref1->Eval(context);
+            std::string key_string = m_string_ref1->Eval(context);
             if (key_string.empty())
                 return 0;
 
-            // if a string specified, get just that entry (for single empire, or
-            // summed for all empires)
-            if (variable_name != "TurnTechResearched") {
-                return GetIntEmpirePropertySingleKey(empire_id, variable_name,
-                                                     key_string);
-            } else {
+            if (empire && variable_name == "TurnTechResearched" && !empire->TechResearched(key_string))
                 // special case for techs: make unresearched-tech's research-turn a big number
-                if (const auto* empire = GetEmpire(empire_id)) {
-                    if (empire->TechResearched(key_string))
-                        return GetIntEmpirePropertySingleKey(empire_id, variable_name,
-                                                             key_string);
-                    return IMPOSSIBLY_LARGE_TURN;
-                }
-                return GetIntEmpirePropertySingleKey(empire_id, variable_name,
-                                                     key_string);
-            }
+                return IMPOSSIBLY_LARGE_TURN;
+
+            key_filter = [k = key_string](auto e){ return k == e.first; };
         }
 
-        // if no string specified, get sum of all entries (for single empire
-        // or summed for all empires)
-        return GetIntEmpirePropertySumAllStringKeys(empire_id, variable_name);
+        if (empire)
+            return boost::accumulate(empire_property_string_key(*empire) | filtered(key_filter) | map_values, 0);
+
+        int sum = 0;
+        for (const auto& empire_entry : Empires())
+            sum += boost::accumulate(empire_property_string_key(*(empire_entry.second)) | filtered(key_filter) | map_values, 0);
+        return sum;
     }
 
     std::function<const std::map<int, int>& (const Empire&)> empire_property_int_key{nullptr};
@@ -1617,57 +1544,56 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         return sum;
     }
 
+    empire_property_string_key = nullptr;
+    if (variable_name == "ShipPartsOwned")
+        empire_property_string_key = &Empire::ShipPartsOwned;
+
     // empire properties indexed by string or ShipPartClass (as int)
-    if (variable_name == "ShipPartsOwned") {
-        int empire_id = ALL_EMPIRES;
+    if (empire_property_string_key) {
+        using namespace boost::adaptors;
+
+        Empire* empire{nullptr};
         if (m_int_ref1) {
-            empire_id = m_int_ref1->Eval(context);
+            int empire_id = m_int_ref1->Eval(context);
             if (empire_id == ALL_EMPIRES)
                 return 0;
+            empire = GetEmpire(empire_id);
         }
 
-        // get key if either was specified
-        std::string key_string;
-        int key_int = NUM_SHIP_PART_CLASSES;
-        if (m_string_ref1) {
-            key_string = m_string_ref1->Eval(context);
-            if (key_string.empty())
-                return 0;
-        } else if (m_int_ref2) {
-            key_int = m_int_ref2->Eval(context);
-            if (key_int <= INVALID_SHIP_PART_CLASS || key_int >= NUM_SHIP_PART_CLASSES)
-                return 0;
-        }
+        std::function<bool (const std::map<std::string, int>::value_type&)> key_filter{nullptr};
+        key_filter = [](auto e){ return true; };
 
         // if a key string specified, get just that entry (for single empire or sum of all empires)
-        if (m_string_ref1)
-            return GetIntEmpirePropertySingleKey(empire_id, variable_name, key_string);
+        if (m_string_ref1) {
+            std::string key_string = m_string_ref1->Eval(context);
+            if (key_string.empty())
+                return 0;
 
-        // if a key integer specified, get just that entry (for single empire or sum of all empires)
-        if (m_int_ref2) {
-            ShipPartClass part_class = ShipPartClass(key_int);
+            key_filter = [k = key_string](auto e){ return k == e.first; };
+        }
+        else if (m_int_ref2) {
+            int key_int = m_int_ref2->Eval(context);
+            if (key_int <= INVALID_SHIP_PART_CLASS || key_int >= NUM_SHIP_PART_CLASSES)
+                return 0;
+
+            auto key_filter = [part_class = ShipPartClass(key_int)](const std::map<ShipPartClass, int>::value_type& e){ return e.first == part_class; };
+
+            if (empire)
+                return boost::accumulate(empire->ShipPartClassOwned() | filtered(key_filter) | map_values, 0);
+
             int sum = 0;
-            // single empire
-            if (empire_id != ALL_EMPIRES) {
-                Empire* empire = GetEmpire(empire_id);
-                for (const auto& property_entry : empire->ShipPartClassOwned())
-                    if (part_class == NUM_SHIP_PART_CLASSES || property_entry.first == part_class)
-                        sum += property_entry.second;
-                return sum;
-            }
-
-            // all empires summed
-            for (const auto& empire_entry : Empires()) {
-                Empire* empire = GetEmpire(empire_entry.first);
-                for (const auto& property_entry : empire->ShipPartClassOwned())
-                    if (part_class == NUM_SHIP_PART_CLASSES || property_entry.first == part_class)
-                        sum += property_entry.second;
-            }
+            for (const auto& empire_entry : Empires())
+                sum += boost::accumulate(empire_entry.second->ShipPartClassOwned() | filtered(key_filter) | map_values, 0);
             return sum;
         }
 
-        // no key string or integer provided, get all (for single empire or sum of all empires)
-        return GetIntEmpirePropertySumAllStringKeys(empire_id, variable_name);
+        if (empire)
+            return boost::accumulate(empire_property_string_key(empire) | filtered(key_filter) | map_values, 0);
+
+        int sum = 0;
+        for (const auto& empire_entry : Empires())
+            sum += boost::accumulate(empire_property_string_key(empire_entry.second) | filtered(key_filter) | map_values, 0);
+        return sum;
     }
 
     // unindexed empire proprties
