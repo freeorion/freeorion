@@ -950,6 +950,23 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         return INVALID_GAME_TURN;
     }
 
+    std::function<int (const Fleet&)> fleet_property{nullptr};
+
+    if (property_name == "FinalDestinationID")
+        fleet_property = &Fleet::FinalDestinationID;
+    else if (property_name == "NextSystemID")
+        fleet_property = &Fleet::NextSystemID;
+    else if (property_name == "PreviousSystemID")
+        fleet_property = &Fleet::PreviousSystemID;
+    else if (property_name == "ArrivalStarlaneID")
+        fleet_property = &Fleet::ArrivalStarlane;
+
+    if (fleet_property) {
+        if (auto fleet = std::dynamic_pointer_cast<const Fleet>(object))
+            return fleet_property(*fleet);
+        return INVALID_OBJECT_ID;
+    }
+
     if (property_name == "TurnsSinceFocusChange") {
         if (auto planet = std::dynamic_pointer_cast<const Planet>(object))
             return planet->TurnsSinceFocusChange();
@@ -996,30 +1013,6 @@ int Variable<int>::Eval(const ScriptingContext& context) const
     }
     else if (property_name == "SystemID") {
         return object->SystemID();
-
-    }
-    else if (property_name == "FinalDestinationID") {
-        if (auto fleet = std::dynamic_pointer_cast<const Fleet>(object))
-            return fleet->FinalDestinationID();
-        return INVALID_OBJECT_ID;
-
-    }
-    else if (property_name == "NextSystemID") {
-        if (auto fleet = std::dynamic_pointer_cast<const Fleet>(object))
-            return fleet->NextSystemID();
-        return INVALID_OBJECT_ID;
-
-    }
-    else if (property_name == "PreviousSystemID") {
-        if (auto fleet = std::dynamic_pointer_cast<const Fleet>(object))
-            return fleet->PreviousSystemID();
-        return INVALID_OBJECT_ID;
-
-    }
-    else if (property_name == "ArrivalStarlaneID") {
-        if (auto fleet = std::dynamic_pointer_cast<const Fleet>(object))
-            return fleet->ArrivalStarlane();
-        return INVALID_OBJECT_ID;
 
     }
     else if (property_name == "NearestSystemID") {
