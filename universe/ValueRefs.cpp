@@ -599,19 +599,18 @@ PlanetSize Variable<PlanetSize>::Eval(const ScriptingContext& context) const
         return INVALID_PLANET_SIZE;
     }
 
-    if (property_name == "PlanetSize") {
-        if (auto p = std::dynamic_pointer_cast<const Planet>(object))
-            return p->Size();
-        return INVALID_PLANET_SIZE;
+    std::function<PlanetSize (const Planet&)> planet_property{nullptr};
 
-    } else if (property_name == "NextLargerPlanetSize") {
-        if (auto p = std::dynamic_pointer_cast<const Planet>(object))
-            return p->NextLargerPlanetSize();
-        return INVALID_PLANET_SIZE;
+    if (property_name == "PlanetSize")
+        planet_property = &Planet::Size;
+    else if (property_name == "NextLargerPlanetSize")
+        planet_property = &Planet::NextLargerPlanetSize;
+    else if (property_name == "NextSmallerPlanetSize")
+        planet_property = &Planet::NextSmallerPlanetSize;
 
-    } else if (property_name == "NextSmallerPlanetSize") {
+    if (planet_property) {
         if (auto p = std::dynamic_pointer_cast<const Planet>(object))
-            return p->NextSmallerPlanetSize();
+            return planet_property(*p);
         return INVALID_PLANET_SIZE;
     }
 
