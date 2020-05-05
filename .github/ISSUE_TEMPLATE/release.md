@@ -1,6 +1,12 @@
+---
+name: Publish release
+about: "Team only: Create a tracking issue for a FreeOrion release."
+title: Release X.Y.Z preparation
+assignees: Vezzra
+---
 <!--
-Please  use the issue title 'Release X.Y.Z preparation' and replace X, Y and Z
-with the major, minor and patch release version number.
+Please replace X, Y and Z with the major, minor and patch release version
+number in the title above.
 
 The X.Y.Z convention as placeholder for the actual version number is used
 thoughout this document.

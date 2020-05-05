@@ -1,24 +1,30 @@
+---
+name: Report bug
+about: Report problems and bugs with FreeOrion.
+labels: "category:bug"
+---
+Bug Report
+==========
 <!--
-Please fill in a a meaningful and concise issue title in the title field above.
+Please fill in a a meaningful and concise title in the field above.
 It helps us to classify the issue even  before reading the body and handling the
-issue a bit better.  Prefix the title with labels you find appropriate to
-describe the issue like "[Bug]" in case of a bug, "[Feature]" for a feature
-request.
+issue a bit better.
 
 Examples:
-  * Great: "[Bug] Unable to select fleet in galaxy map"
-  * Good: "[Bug] Unable to click fleet"
+  * Great: "Unable to select fleet in galaxy map"
+  * Good: "Unable to click fleet"
   * Not really okay: "Issue with fleets"
   * Horrible: "HELP!!!"
 -->
 
 
-### Environment
+Environment
+-----------
 <!--
 You don't need to provide the information in section when they are not useful in
-the context of this issue.  For example feature requests may not need a
-FreeOrion version, but maybe depend on the operating system you use.  When in
-doubt provide all information you have available.
+the context of this issue.  For example a crashing hosted server may not need
+information about the graphic card, but maybe depend on the operating system you
+use.  When in doubt provide all information you have available.
 
 You can find the FreeOrion version number in the lower right corner of the game
 main screen.
@@ -37,10 +43,10 @@ so, `Windows 8 Pro` instead of `Windows` or `Mac OSX Mountain Lion` instead of
   * Compiled from source
 
 
-### Description
+Description
+-----------
 <!--
-Add a meaningful description of the bug you encountered or of the feature you
-want to request.
+Add a meaningful description of the bug you encountered.
 
 If a screenshot or image helps to describe the issue content feel free to create
 one.
@@ -53,22 +59,22 @@ found on
 -->
 
 
-### Expected Result
+Expected Result
+---------------
 <!--
-If this issue is not a bug you can remove this section.
-
 When you enter an issue please add a description of what behaviour you would
 expect from the game instead of the issue.
 -->
 
 
-### Steps to reproduce
+Steps to reproduce
+------------------
 <!--
-If this issue is not a bug you can remove this section.
-
 If the error only manifests itself after doing a certain number of actions
 please add a list of steps to reproduce the bug.  If the error only occurs in
 a certain game state please be sure to add a save game to the issue.
+
+To upload save games please pack them into a Zip archive (*.zip) first.
 -->
 * First step.
 * Second step.
