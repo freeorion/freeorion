@@ -2308,8 +2308,42 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
 {
     const std::string& variable_name = m_property_name.back();
 
+    std::function<std::string (const Empire&)> empire_property{nullptr};
+    auto null_property = [](const Empire&) -> std::string { return ""; };
+
     // unindexed empire properties
-    if (variable_name == "LowestCostEnqueuedTech") {
+    if (variable_name == "LowestCostEnqueuedTech")
+        empire_property = &Empire::LeastExpensiveEnqueuedTech;
+    else if (variable_name == "HighestCostEnqueuedTech")
+        empire_property = &Empire::MostExpensiveEnqueuedTech;
+    else if (variable_name == "TopPriorityEnqueuedTech")
+        empire_property = &Empire::TopPriorityEnqueuedTech;
+    else if (variable_name == "MostSpentEnqueuedTech")
+        empire_property = &Empire::MostRPSpentEnqueuedTech;
+    else if (variable_name == "LowestCostResearchableTech")
+        empire_property = &Empire::LeastExpensiveResearchableTech;
+    else if (variable_name == "HighestCostResearchableTech")
+        empire_property = &Empire::MostExpensiveResearchableTech;
+    else if (variable_name == "TopPriorityResearchableTech")
+        empire_property = &Empire::TopPriorityResearchableTech;
+    else if (variable_name == "MostSpentResearchableTech")
+        empire_property = &Empire::MostExpensiveResearchableTech;
+    else if (variable_name == "MostSpentTransferrableTech")
+        empire_property = null_property;
+    else if (variable_name == "RandomTransferrableTech")
+        empire_property = null_property;
+    else if (variable_name == "MostPopulousSpecies")
+        empire_property = null_property;
+    else if (variable_name == "MostHappySpecies")
+        empire_property = null_property;
+    else if (variable_name == "LeastHappySpecies")
+        empire_property = null_property;
+    else if (variable_name == "RandomColonizableSpecies")
+        empire_property = null_property;
+    else if (variable_name == "RandomControlledSpecies")
+        empire_property = null_property;
+
+    if (empire_property) {
         int empire_id = ALL_EMPIRES;
         if (m_int_ref1) {
             empire_id = m_int_ref1->Eval(context);
@@ -2319,45 +2353,11 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
         const Empire* empire = GetEmpire(empire_id);
         if (!empire)
             return "";
-        return empire->LeastExpensiveEnqueuedTech();
 
-    } else if (variable_name == "HighestCostEnqueuedTech") {
-        int empire_id = ALL_EMPIRES;
-        if (m_int_ref1) {
-            empire_id = m_int_ref1->Eval(context);
-            if (empire_id == ALL_EMPIRES)
-                return "";
-        }
-        const Empire* empire = GetEmpire(empire_id);
-        if (!empire)
-            return "";
-        return empire->MostExpensiveEnqueuedTech();
+        return empire_property(*empire);
+    }
 
-    } else if (variable_name == "TopPriorityEnqueuedTech") {
-        int empire_id = ALL_EMPIRES;
-        if (m_int_ref1) {
-            empire_id = m_int_ref1->Eval(context);
-            if (empire_id == ALL_EMPIRES)
-                return "";
-        }
-        const Empire* empire = GetEmpire(empire_id);
-        if (!empire)
-            return "";
-        return empire->TopPriorityEnqueuedTech();
-
-    } else if (variable_name == "MostSpentEnqueuedTech") {
-        int empire_id = ALL_EMPIRES;
-        if (m_int_ref1) {
-            empire_id = m_int_ref1->Eval(context);
-            if (empire_id == ALL_EMPIRES)
-                return "";
-        }
-        const Empire* empire = GetEmpire(empire_id);
-        if (!empire)
-            return "";
-        return empire->MostRPSpentEnqueuedTech();
-
-    } else if (variable_name == "RandomEnqueuedTech") {
+    if (variable_name == "RandomEnqueuedTech") {
         int empire_id = ALL_EMPIRES;
         if (m_int_ref1) {
             empire_id = m_int_ref1->Eval(context);
@@ -2374,53 +2374,6 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
             return "";
         std::size_t idx = RandSmallInt(0, static_cast<int>(all_enqueued_techs.size()) - 1);
         return *std::next(all_enqueued_techs.begin(), idx);
-    } else if (variable_name == "LowestCostResearchableTech") {
-        int empire_id = ALL_EMPIRES;
-        if (m_int_ref1) {
-            empire_id = m_int_ref1->Eval(context);
-            if (empire_id == ALL_EMPIRES)
-                return "";
-        }
-        const Empire* empire = GetEmpire(empire_id);
-        if (!empire)
-            return "";
-        return empire->LeastExpensiveResearchableTech();
-
-    } else if (variable_name == "HighestCostResearchableTech") {
-        int empire_id = ALL_EMPIRES;
-        if (m_int_ref1) {
-            empire_id = m_int_ref1->Eval(context);
-            if (empire_id == ALL_EMPIRES)
-                return "";
-        }
-        const Empire* empire = GetEmpire(empire_id);
-        if (!empire)
-            return "";
-        return empire->MostExpensiveResearchableTech();
-
-    } else if (variable_name == "TopPriorityResearchableTech") {
-        int empire_id = ALL_EMPIRES;
-        if (m_int_ref1) {
-            empire_id = m_int_ref1->Eval(context);
-            if (empire_id == ALL_EMPIRES)
-                return "";
-        }
-        const Empire* empire = GetEmpire(empire_id);
-        if (!empire)
-            return "";
-        return empire->TopPriorityResearchableTech();
-
-    } else if (variable_name == "MostSpentResearchableTech") {
-        int empire_id = ALL_EMPIRES;
-        if (m_int_ref1) {
-            empire_id = m_int_ref1->Eval(context);
-            if (empire_id == ALL_EMPIRES)
-                return "";
-        }
-        const Empire* empire = GetEmpire(empire_id);
-        if (!empire)
-            return "";
-        return empire->MostExpensiveResearchableTech();
 
     } else if (variable_name == "RandomResearchableTech") {
         int empire_id = ALL_EMPIRES;
@@ -2546,83 +2499,6 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
             }
         }
         return retval;
-
-    } else if (variable_name == "MostSpentTransferrableTech") {
-        int empire_id = ALL_EMPIRES;
-        if (m_int_ref1) {
-            empire_id = m_int_ref1->Eval(context);
-            if (empire_id == ALL_EMPIRES)
-                return "";
-        }
-        const Empire* empire = GetEmpire(empire_id);
-        if (!empire)
-            return "";
-
-    } else if (variable_name == "RandomTransferrableTech") {
-        int empire_id = ALL_EMPIRES;
-        if (m_int_ref1) {
-            empire_id = m_int_ref1->Eval(context);
-            if (empire_id == ALL_EMPIRES)
-                return "";
-        }
-        const Empire* empire = GetEmpire(empire_id);
-        if (!empire)
-            return "";
-
-    } else if (variable_name == "MostPopulousSpecies") {
-        int empire_id = ALL_EMPIRES;
-        if (m_int_ref1) {
-            empire_id = m_int_ref1->Eval(context);
-            if (empire_id == ALL_EMPIRES)
-                return "";
-        }
-        const Empire* empire = GetEmpire(empire_id);
-        if (!empire)
-            return "";
-
-    } else if (variable_name == "MostHappySpecies") {
-        int empire_id = ALL_EMPIRES;
-        if (m_int_ref1) {
-            empire_id = m_int_ref1->Eval(context);
-            if (empire_id == ALL_EMPIRES)
-                return "";
-        }
-        const Empire* empire = GetEmpire(empire_id);
-        if (!empire)
-            return "";
-
-    } else if (variable_name == "LeastHappySpecies") {
-        int empire_id = ALL_EMPIRES;
-        if (m_int_ref1) {
-            empire_id = m_int_ref1->Eval(context);
-            if (empire_id == ALL_EMPIRES)
-                return "";
-        }
-        const Empire* empire = GetEmpire(empire_id);
-        if (!empire)
-            return "";
-
-    } else if (variable_name == "RandomColonizableSpecies") {
-        int empire_id = ALL_EMPIRES;
-        if (m_int_ref1) {
-            empire_id = m_int_ref1->Eval(context);
-            if (empire_id == ALL_EMPIRES)
-                return "";
-        }
-        const Empire* empire = GetEmpire(empire_id);
-        if (!empire)
-            return "";
-
-    } else if (variable_name == "RandomControlledSpecies") {
-        int empire_id = ALL_EMPIRES;
-        if (m_int_ref1) {
-            empire_id = m_int_ref1->Eval(context);
-            if (empire_id == ALL_EMPIRES)
-                return "";
-        }
-        const Empire* empire = GetEmpire(empire_id);
-        if (!empire)
-            return "";
     }
 
     // non-empire properties
