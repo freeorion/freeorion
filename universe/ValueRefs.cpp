@@ -1175,7 +1175,29 @@ std::string Variable<std::string>::Eval(const ScriptingContext& context) const
     } else if (property_name == "TypeName") {
         return boost::lexical_cast<std::string>(object->ObjectType());
 
-    } else if (property_name == "Species") {
+    }
+
+    std::function<std::string (const Empire&)> empire_property{nullptr};
+
+    if (property_name == "OwnerLeastExpensiveEnqueuedTech")
+        empire_property = &Empire::LeastExpensiveEnqueuedTech;
+    else if (property_name == "OwnerMostExpensiveEnqueuedTech")
+        empire_property = &Empire::MostExpensiveEnqueuedTech;
+    else if (property_name == "OwnerMostRPCostLeftEnqueuedTech")
+        empire_property = &Empire::MostRPCostLeftEnqueuedTech;
+    else if (property_name == "OwnerMostRPSpentEnqueuedTech")
+        empire_property = &Empire::MostRPSpentEnqueuedTech;
+    else if (property_name == "OwnerTopPriorityEnqueuedTech")
+        empire_property = &Empire::TopPriorityEnqueuedTech;
+
+    if (empire_property) {
+        const Empire* empire = GetEmpire(object->Owner());
+        if (!empire)
+            return "";
+        return empire_property(*empire);
+    }
+
+    if (property_name == "Species") {
         if (auto planet = std::dynamic_pointer_cast<const Planet>(object))
             return planet->SpeciesName();
         else if (auto ship = std::dynamic_pointer_cast<const Ship>(object))
@@ -1216,35 +1238,6 @@ std::string Variable<std::string>::Eval(const ScriptingContext& context) const
             return species->PreferredFocus();
         return "";
 
-    } else if (property_name == "OwnerLeastExpensiveEnqueuedTech") {
-        const Empire* empire = GetEmpire(object->Owner());
-        if (!empire)
-            return "";
-        return empire->LeastExpensiveEnqueuedTech();
-
-    } else if (property_name == "OwnerMostExpensiveEnqueuedTech") {
-        const Empire* empire = GetEmpire(object->Owner());
-        if (!empire)
-            return "";
-        return empire->MostExpensiveEnqueuedTech();
-
-    } else if (property_name == "OwnerMostRPCostLeftEnqueuedTech") {
-        const Empire* empire = GetEmpire(object->Owner());
-        if (!empire)
-            return "";
-        return empire->MostRPCostLeftEnqueuedTech();
-
-    } else if (property_name == "OwnerMostRPSpentEnqueuedTech") {
-        const Empire* empire = GetEmpire(object->Owner());
-        if (!empire)
-            return "";
-        return empire->MostRPSpentEnqueuedTech();
-
-    } else if (property_name == "OwnerTopPriorityEnqueuedTech") {
-        const Empire* empire = GetEmpire(object->Owner());
-        if (!empire)
-            return "";
-        return empire->TopPriorityEnqueuedTech();
     }
 
     LOG_UNKNOWN_VARIABLE_PROPERTY_TRACE(std::string)
