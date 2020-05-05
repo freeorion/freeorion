@@ -967,6 +967,21 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         return INVALID_OBJECT_ID;
     }
 
+    std::function<int (const Planet&)> planet_property{nullptr};
+
+    if (property_name == "LastTurnAttackedByShip")
+        planet_property = &Planet::LastTurnAttackedByShip;
+    else if (property_name == "LastTurnColonized")
+        planet_property = &Planet::LastTurnColonized;
+    else if (property_name == "LastTurnConquered")
+        planet_property = &Planet::LastTurnConquered;
+
+    if (planet_property) {
+        if (auto planet = std::dynamic_pointer_cast<const Planet>(object))
+            return planet_property(*planet);
+        return INVALID_GAME_TURN;
+    }
+
     if (property_name == "TurnsSinceFocusChange") {
         if (auto planet = std::dynamic_pointer_cast<const Planet>(object))
             return planet->TurnsSinceFocusChange();
@@ -1038,24 +1053,6 @@ int Variable<int>::Eval(const ScriptingContext& context) const
             return const_system->LastTurnBattleHere();
         else if (auto system = context.ContextObjects().get<System>(object->SystemID()))
             return system->LastTurnBattleHere();
-        return INVALID_GAME_TURN;
-
-    }
-    else if (property_name == "LastTurnAttackedByShip") {
-        if (auto planet = std::dynamic_pointer_cast<const Planet>(object))
-            return planet->LastTurnAttackedByShip();
-        return INVALID_GAME_TURN;
-
-    }
-    else if (property_name == "LastTurnColonized") {
-        if (auto planet = std::dynamic_pointer_cast<const Planet>(object))
-            return planet->LastTurnColonized();
-        return INVALID_GAME_TURN;
-
-    }
-    else if (property_name == "LastTurnConquered") {
-        if (auto planet = std::dynamic_pointer_cast<const Planet>(object))
-            return planet->LastTurnConquered();
         return INVALID_GAME_TURN;
 
     }
