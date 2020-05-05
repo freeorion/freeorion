@@ -28,6 +28,7 @@
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/split.hpp>
+#include <boost/range/adaptor/filtered.hpp>
 #include <boost/range/adaptor/map.hpp>
 #include <boost/range/numeric.hpp>
 
@@ -1414,7 +1415,6 @@ Visibility ComplexVariable<Visibility>::Eval(const ScriptingContext& context) co
 namespace {
     static std::map<std::string, int> EMPTY_STRING_INT_MAP;
     static std::map<int, int> EMPTY_INT_INT_MAP;
-    static std::map<int, float> EMPTY_INT_FLOAT_MAP;
 
     const std::map<std::string, int>& GetEmpireStringIntMap(int empire_id, const std::string& parsed_map_name) {
         Empire* empire = GetEmpire(empire_id);
@@ -1474,21 +1474,6 @@ namespace {
             return empire->ShipDesignsScrapped();
 
         return EMPTY_INT_INT_MAP;
-    }
-
-    const std::map<int, float>& GetEmpireIntFloatMap(int empire_id, const std::string& parsed_map_name) {
-        Empire* empire = GetEmpire(empire_id);
-        if (!empire)
-            return EMPTY_INT_FLOAT_MAP;
-
-        if (parsed_map_name == "PropagatedSystemSupplyRange")
-            return GetSupplyManager().PropagatedSupplyRanges(empire_id);
-        if (parsed_map_name == "SystemSupplyRange")
-            return empire->SystemSupplyRanges();
-        if (parsed_map_name == "PropagatedSystemSupplyDistance")
-            return GetSupplyManager().PropagatedSupplyDistances(empire_id);
-
-        return EMPTY_INT_FLOAT_MAP;
     }
 
     // gets property for a particular map key string for one or all empires
@@ -1563,30 +1548,6 @@ namespace {
         return sum;
     }
 
-    float GetFloatEmpirePropertySingleKey(int empire_id, const std::string& parsed_property_name,
-                                          int map_key)
-    {
-        float sum = 0.0f;
-
-        // single empire
-        if (empire_id != ALL_EMPIRES) {
-            const auto& map = GetEmpireIntFloatMap(empire_id, parsed_property_name);
-            auto it = map.find(map_key);
-            if (it == map.end())
-                return 0.0f;
-            return it->second;
-        }
-
-        // all empires summed
-        for (const auto& empire_entry : Empires()) {
-            const auto& map = GetEmpireIntFloatMap(empire_entry.first, parsed_property_name);
-            auto map_it = map.find(map_key);
-            if (map_it != map.end())
-                sum += map_it->second;
-        }
-        return sum;
-    }
-
     // gets property for the sum of all map keys for one or all empires
     int GetIntEmpirePropertySumAllIntKeys(int empire_id, const std::string& parsed_property_name) {
         int sum = 0;
@@ -1602,25 +1563,6 @@ namespace {
         // all empires summed
         for (const auto& empire_entry : Empires()) {
             for (const auto& property_entry : GetEmpireIntIntMap(empire_entry.first, parsed_property_name))
-                sum += property_entry.second;
-        }
-        return sum;
-    }
-
-    float  GetFloatEmpirePropertySumAllIntKeys(int empire_id, const std::string& parsed_property_name) {
-        float sum = 0.0f;
-
-        // single empire
-        if (empire_id != ALL_EMPIRES) {
-            // sum of all key entries for this empire
-            for (const auto& property_entry : GetEmpireIntFloatMap(empire_id, parsed_property_name))
-                sum += property_entry.second;
-            return sum;
-        }
-
-        // all empires summed
-        for (const auto& empire_entry : Empires()) {
-            for (const auto& property_entry : GetEmpireIntFloatMap(empire_entry.first, parsed_property_name))
                 sum += property_entry.second;
         }
         return sum;
@@ -2025,25 +1967,40 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
     }
 
     // empire properties indexed by integers
-    if (variable_name == "PropagatedSystemSupplyRange" ||
-        variable_name == "SystemSupplyRange" ||
-        variable_name == "PropagatedSystemSupplyDistance")
-    {
-        int empire_id = ALL_EMPIRES;
+    std::function<const std::map<int, float>& (const Empire&)> empire_property{nullptr};
+
+    if (variable_name == "PropagatedSystemSupplyRange")
+        empire_property = [](const Empire& empire){ return GetSupplyManager().PropagatedSupplyRanges(empire.EmpireID()); };
+    if (variable_name == "SystemSupplyRange")
+        empire_property = &Empire::SystemSupplyRanges;
+    if (variable_name == "PropagatedSystemSupplyDistance")
+        empire_property = [](const Empire& empire){ return GetSupplyManager().PropagatedSupplyDistances(empire.EmpireID()); };
+
+    if (empire_property) {
+        using namespace boost::adaptors;
+
+        Empire* empire{nullptr};
+
         if (m_int_ref1) {
-            empire_id = m_int_ref1->Eval(context);
+            int empire_id = m_int_ref1->Eval(context);
             if (empire_id == ALL_EMPIRES)
                 return 0.0;
+            empire = GetEmpire(empire_id);
         }
 
-        // if a key integer is specified, get just that entry (for single empire or sum of all empires)
-        if (m_int_ref2) {
-            int key_int = m_int_ref2->Eval(context);
-            return GetFloatEmpirePropertySingleKey(empire_id, variable_name, key_int);
-        }
+        std::function<bool (const std::map<int, float>::value_type&)> key_filter;
+        key_filter = [](auto k){ return true; };
 
-        // if no key specified, get sum of all entries (for single empire or sum of all empires)
-        return GetFloatEmpirePropertySumAllIntKeys(empire_id, variable_name);
+        if (m_int_ref2)
+            key_filter = [k = m_int_ref2->Eval(context)](auto e){ return k == e.first; };
+
+        if (empire)
+            return boost::accumulate(empire_property(*empire) | filtered(key_filter) | map_values, 0.0f);
+
+        float sum = 0.0f;
+        for (const auto& empire_entry : Empires())
+            sum += boost::accumulate(empire_property(*(empire_entry.second)) | filtered(key_filter) | map_values, 0.0f);
+        return sum;
     }
 
     // non-empire properties
