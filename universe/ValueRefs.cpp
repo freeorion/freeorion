@@ -29,6 +29,7 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/split.hpp>
 
+#include <functional>
 #include <iomanip>
 #include <iterator>
 
@@ -633,34 +634,24 @@ PlanetType Variable<PlanetType>::Eval(const ScriptingContext& context) const
         return INVALID_PLANET_TYPE;
     }
 
-    if (property_name == "PlanetType") {
-        if (auto p = std::dynamic_pointer_cast<const Planet>(object))
-            return p->Type();
-        return INVALID_PLANET_TYPE;
+    std::function<PlanetType (const Planet&)> planet_property{nullptr};
 
-    } else if (property_name == "OriginalType") {
-        if (auto p = std::dynamic_pointer_cast<const Planet>(object))
-            return p->OriginalType();
-        return INVALID_PLANET_TYPE;
+    if (property_name == "PlanetType")
+        planet_property = &Planet::Type;
+    else if (property_name == "OriginalType")
+        planet_property = &Planet::OriginalType;
+    else if (property_name == "NextCloserToOriginalPlanetType")
+        planet_property = &Planet::NextCloserToOriginalPlanetType;
+    else if (property_name == "NextBetterPlanetType")
+        planet_property = std::bind(&Planet::NextBetterPlanetTypeForSpecies, std::placeholders::_1, "");
+    else if (property_name == "ClockwiseNextPlanetType")
+        planet_property = &Planet::ClockwiseNextPlanetType;
+    else if (property_name == "CounterClockwiseNextPlanetType")
+        planet_property = &Planet::CounterClockwiseNextPlanetType;
 
-    } else if (property_name == "NextCloserToOriginalPlanetType") {
+    if (planet_property) {
         if (auto p = std::dynamic_pointer_cast<const Planet>(object))
-            return p->NextCloserToOriginalPlanetType();
-        return INVALID_PLANET_TYPE;
-
-    } else if (property_name == "NextBetterPlanetType") {
-        if (auto p = std::dynamic_pointer_cast<const Planet>(object))
-            return p->NextBetterPlanetTypeForSpecies();
-        return INVALID_PLANET_TYPE;
-
-    } else if (property_name == "ClockwiseNextPlanetType") {
-        if (auto p = std::dynamic_pointer_cast<const Planet>(object))
-            return p->ClockwiseNextPlanetType();
-        return INVALID_PLANET_TYPE;
-
-    } else if (property_name == "CounterClockwiseNextPlanetType") {
-        if (auto p = std::dynamic_pointer_cast<const Planet>(object))
-            return p->CounterClockwiseNextPlanetType();
+            return planet_property(*p);
         return INVALID_PLANET_TYPE;
     }
 
