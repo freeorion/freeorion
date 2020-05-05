@@ -194,17 +194,28 @@ EffectsGroup::~EffectsGroup()
 {}
 
 void EffectsGroup::Execute(ScriptingContext& context,
-                           const TargetsCauses& targets_causes, AccountingMap* accounting_map,
+                           const TargetsAndCause& targets_cause,
+                           AccountingMap* accounting_map,
                            bool only_meter_effects, bool only_appearance_effects,
                            bool include_empire_meter_effects,
                            bool only_generate_sitrep_effects) const
 {
+    if (!context.source)    // todo: move into loop and check only when an effect is source-variant
+        WarnLogger() << "EffectsGroup being executed without a defined source object";
+
     // execute each effect of the group one by one, unless filtered by flags
     for (auto& effect : m_effects) {
-        effect->Execute(context, targets_causes, accounting_map,
+        // skip excluded effect types
+        if (   (only_appearance_effects       && !effect->IsAppearanceEffect())
+            || (only_meter_effects            && !effect->IsMeterEffect())
+            || (!include_empire_meter_effects &&  effect->IsEmpireMeterEffect())
+            || (only_generate_sitrep_effects  && !effect->IsSitrepEffect()))
+        { continue; }
+
+        effect->Execute(context, targets_cause.target_set, accounting_map,
+                        targets_cause.effect_cause,
                         only_meter_effects, only_appearance_effects,
-                        include_empire_meter_effects,
-                        only_generate_sitrep_effects);
+                        include_empire_meter_effects, only_generate_sitrep_effects);
     }
 }
 
@@ -317,40 +328,18 @@ Effect::~Effect()
 {}
 
 void Effect::Execute(ScriptingContext& context,
-                     const TargetsCauses& targets_causes,
-                     AccountingMap* accounting_map,
-                     bool only_meter_effects, bool only_appearance_effects,
-                     bool include_empire_meter_effects,
-                     bool only_generate_sitrep_effects) const
-{
-    if (   (only_appearance_effects      && !this->IsAppearanceEffect())
-        || (only_meter_effects           && !this->IsMeterEffect())
-        || (!include_empire_meter_effects && this->IsEmpireMeterEffect())
-        || (only_generate_sitrep_effects && !this->IsSitrepEffect()))
-    { return; }
-    // apply this effect for each source causing it
-    for (const auto& targets_entry : targets_causes) {
-        auto source = context.ContextObjects().get(targets_entry.first.source_object_id);
-        ScriptingContext source_context(source, context);
-        Execute(source_context, targets_entry.second.target_set,
-                accounting_map, targets_entry.second.effect_cause,
-                only_meter_effects, only_appearance_effects,
-                include_empire_meter_effects, only_generate_sitrep_effects);
-    }
-}
-
-void Effect::Execute(ScriptingContext& context,
                      const TargetSet& targets,
                      AccountingMap* accounting_map,
                      const EffectCause& effect_cause,
-                     bool only_meter_effects, bool only_appearance_effects,
+                     bool only_meter_effects,
+                     bool only_appearance_effects,
                      bool include_empire_meter_effects,
                      bool only_generate_sitrep_effects) const
 {
-    if (   (only_appearance_effects      && !this->IsAppearanceEffect())
-        || (only_meter_effects           && !this->IsMeterEffect())
-        || (!include_empire_meter_effects && this->IsEmpireMeterEffect())
-        || (only_generate_sitrep_effects && !this->IsSitrepEffect()))
+    if (   (only_appearance_effects       && !this->IsAppearanceEffect())
+        || (only_meter_effects            && !this->IsMeterEffect())
+        || (!include_empire_meter_effects &&  this->IsEmpireMeterEffect())
+        || (only_generate_sitrep_effects  && !this->IsSitrepEffect()))
     { return; }
     // generic / most effects don't do anything special for accounting, so just
     // use standard Execute. overrides may implement something else.

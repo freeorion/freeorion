@@ -162,18 +162,22 @@ void PythonBase::Finalize() {
             (*m_python_module_error) = object();
             m_python_module_error = nullptr;
         }
-
-        Py_Finalize();
+        try {
+            Py_Finalize();
 #if defined(FREEORION_MACOSX) || defined(FREEORION_WIN32)
-        if (m_home_dir != nullptr) {
-            PyMem_RawFree(m_home_dir);
-            m_home_dir = nullptr;
-        }
-        if (m_program_name != nullptr) {
-            PyMem_RawFree(m_program_name);
-            m_program_name = nullptr;
-        }
+            if (m_home_dir != nullptr) {
+                PyMem_RawFree(m_home_dir);
+                m_home_dir = nullptr;
+            }
+            if (m_program_name != nullptr) {
+                PyMem_RawFree(m_program_name);
+                m_program_name = nullptr;
+            }
 #endif
+        } catch (const std::exception& e) {
+            ErrorLogger() << "Caught exception when cleaning up FreeOrion Python interface: " << e.what();
+            return;
+        }
         DebugLogger() << "Cleaned up FreeOrion Python interface";
     }
 }
