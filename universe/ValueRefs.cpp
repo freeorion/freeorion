@@ -934,7 +934,23 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         return object->AgeInTurns();
 
     }
-    else if (property_name == "TurnsSinceFocusChange") {
+
+    std::function<int (const Ship&)> ship_property{nullptr};
+
+    if (property_name == "ArrivedOnTurn")
+        ship_property = &Ship::ArrivedOnTurn;
+    else if (property_name == "LastTurnActiveInBattle")
+        ship_property = &Ship::LastTurnActiveInCombat;
+    else if (property_name == "LastTurnResupplied")
+        ship_property = &Ship::LastResuppliedOnTurn;
+
+    if (ship_property) {
+        if (auto ship = std::dynamic_pointer_cast<const Ship>(object))
+            return ship_property(*ship);
+        return INVALID_GAME_TURN;
+    }
+
+    if (property_name == "TurnsSinceFocusChange") {
         if (auto planet = std::dynamic_pointer_cast<const Planet>(object))
             return planet->TurnsSinceFocusChange();
         return 0;
@@ -946,12 +962,6 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         else if (auto building = std::dynamic_pointer_cast<const Building>(object))
             return building->ProducedByEmpireID();
         return ALL_EMPIRES;
-
-    }
-    else if (property_name == "ArrivedOnTurn") {
-        if (auto ship = std::dynamic_pointer_cast<const Ship>(object))
-            return ship->ArrivedOnTurn();
-        return INVALID_GAME_TURN;
 
     }
     else if (property_name == "DesignID") {
@@ -1038,12 +1048,6 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         return INVALID_GAME_TURN;
 
     }
-    else if (property_name == "LastTurnActiveInBattle") {
-        if (auto ship = std::dynamic_pointer_cast<const Ship>(object))
-            return ship->LastTurnActiveInCombat();
-        return INVALID_GAME_TURN;
-
-    }
     else if (property_name == "LastTurnAttackedByShip") {
         if (auto planet = std::dynamic_pointer_cast<const Planet>(object))
             return planet->LastTurnAttackedByShip();
@@ -1059,12 +1063,6 @@ int Variable<int>::Eval(const ScriptingContext& context) const
     else if (property_name == "LastTurnConquered") {
         if (auto planet = std::dynamic_pointer_cast<const Planet>(object))
             return planet->LastTurnConquered();
-        return INVALID_GAME_TURN;
-
-    }
-    else if (property_name == "LastTurnResupplied") {
-        if (auto ship = std::dynamic_pointer_cast<const Ship>(object))
-            return ship->LastResuppliedOnTurn();
         return INVALID_GAME_TURN;
 
     }
