@@ -808,22 +808,25 @@ double Variable<double>::Eval(const ScriptingContext& context) const
     } else if (property_name == "Y") {
         return object->Y();
 
-    } else if (property_name == "SizeAsDouble") {
+    }
+
+    std::function<double (const Planet&)> planet_property{nullptr};
+
+    if (property_name == "SizeAsDouble")
+        planet_property = &Planet::Size;
+    else if (property_name == "HabitableSize")
+        planet_property = &Planet::HabitableSize;
+    else if (property_name == "DistanceFromOriginalType")
+        planet_property = &Planet::DistanceFromOriginalType;
+
+    if (planet_property) {
         if (auto planet = std::dynamic_pointer_cast<const Planet>(object))
-            return planet->Size();
+            return planet_property(*planet);
         return 0.0;
 
-    } else if (property_name == "HabitableSize") {
-        if (auto planet = std::dynamic_pointer_cast<const Planet>(object))
-            return planet->HabitableSize();
-        return 0.0;
+    }
 
-    } else if (property_name == "DistanceFromOriginalType") {
-        if (auto planet = std::dynamic_pointer_cast<const Planet>(object))
-            return planet->DistanceFromOriginalType();
-        return 0.0;
-
-    } else if (property_name == "CombatBout") {
+    if (property_name == "CombatBout") {
         return context.combat_info.bout;
 
     } else if (property_name == "CurrentTurn") {
