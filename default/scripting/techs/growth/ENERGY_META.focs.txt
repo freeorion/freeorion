@@ -26,7 +26,7 @@ Tech
             ]
             stackinggroup = "DEFENSE_NET_STACK_GM"
             priority = [[LATE_PRIORITY]]
-            effects = SetMaxDefense value = Value + 10 accountinglabel = "GRO_ENERGY_META"
+            effects = SetMaxDefense value = Value + ( 10 * [[PLANET_DEFENSE_FACTOR]] ) accountinglabel = "GRO_ENERGY_META"
 
         EffectsGroup
             scope = And [
@@ -35,7 +35,7 @@ Tech
             ]
             stackinggroup = "PLANET_SHIELDS_STACK_GEM"
             priority = [[LATE_PRIORITY]]
-            effects = SetMaxShield value = Value + 50 accountinglabel = "GRO_ENERGY_META"
+            effects = SetMaxShield value = Value + ( 50 * [[PLANET_SHIELD_FACTOR]] ) accountinglabel = "GRO_ENERGY_META"
 
         EffectsGroup
             scope = And [
@@ -61,3 +61,4 @@ Tech
 
 #include "/scripting/common/base_prod.macros"
 #include "/scripting/common/priorities.macros"
+#include "/scripting/common/misc.macros"

@@ -63,7 +63,7 @@ Species
                 Source
                 Planet
             ]
-            effects = SetMaxDefense value = Value + 5
+            effects = SetMaxDefense value = Value + ( 5 * [[PLANET_DEFENSE_FACTOR]] )
 
         EffectsGroup
             description = "GOOD_PLANETARY_SHIELD_DESC"
@@ -71,7 +71,7 @@ Species
                 Source
                 Planet
             ]
-            effects = SetMaxShield value = Value + 5
+            effects = SetMaxShield value = Value + ( 5 * [[PLANET_SHIELD_FACTOR]] )
 
         [[AVERAGE_PLANETARY_SHIELDS]]
         [[AVERAGE_PLANETARY_DEFENSE]]

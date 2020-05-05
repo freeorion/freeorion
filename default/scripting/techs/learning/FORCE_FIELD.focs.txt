@@ -16,10 +16,12 @@ Tech
             ]
             stackinggroup = "PLANET_SHIELDS_STACK_FF"
             priority = [[DEFAULT_PRIORITY]]
-            effects = SetMaxShield value = Value + 10 accountinglabel = "LRN_FORCE_FIELD"
+            effects = SetMaxShield value = Value + ( 10 * [[PLANET_SHIELD_FACTOR]] ) accountinglabel = "LRN_FORCE_FIELD"
     ]
     graphic = "icons/tech/forcefield_harmonics.png"
 
 #include "/scripting/common/base_prod.macros"
 
 #include "/scripting/common/priorities.macros"
+
+#include "/scripting/common/misc.macros"

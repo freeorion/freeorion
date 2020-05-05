@@ -8,7 +8,7 @@ NATIVE_PLANETARY_SHIELDS
             ]
             accountinglabel = "NATIVE_PLANETARY_SHIELDS_LABEL"
             priority = [[DEFAULT_PRIORITY]]
-            effects = SetMaxShield value = Value + @1@
+            effects = SetMaxShield value = Value + ( @1@ )
 '''
 
 
@@ -26,7 +26,7 @@ STANDARD_SHIELD_GROWTH
                 (LocalCandidate.LastTurnAttackedByShip  < CurrentTurn)
             ]
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
-            effects = SetShield value = min(Value(Target.MaxShield), Value + 1)
+            effects = SetShield value = min(Value(Target.MaxShield), Value + [[PLANET_SHIELD_FACTOR]] )
 '''
 
 PROTECTION_FOCUS_SHIELDS
@@ -42,3 +42,4 @@ PROTECTION_FOCUS_SHIELDS
 '''
 
 #include "/scripting/common/priorities.macros"
+#include "/scripting/common/misc.macros"

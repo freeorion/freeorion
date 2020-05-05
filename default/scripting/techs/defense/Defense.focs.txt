@@ -24,8 +24,8 @@ Tech
             ]
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
             effects = [
-                SetShield value = min(Value + 1, Value(Target.MaxShield))
-                SetDefense value = min(Value + 1, Value(Target.MaxDefense))
+                SetShield value = min(Value + [[PLANET_SHIELD_FACTOR]], Value(Target.MaxShield))
+                SetDefense value = min(Value + [[PLANET_DEFENSE_FACTOR]], Value(Target.MaxDefense))
                 SetTroops value = min(Value + 1, Value(Target.MaxTroops))
             ]
     ]
@@ -88,3 +88,4 @@ Tech
 #include "mines.macros"
 #include "/scripting/common/priorities.macros"
 #include "/scripting/common/base_prod.macros"
+#include "/scripting/common/misc.macros"

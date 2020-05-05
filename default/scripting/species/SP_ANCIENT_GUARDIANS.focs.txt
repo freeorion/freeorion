@@ -34,7 +34,7 @@ Species
                 Source
                 Planet
             ]
-            effects = SetMaxShield value = Value + 500
+            effects = SetMaxShield value = Value + ( 500 * [[PLANET_SHIELD_FACTOR]] )
 
         // huge bonus to ground troops
         EffectsGroup
