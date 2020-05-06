@@ -1443,6 +1443,8 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         empire_property_string_key = &Empire::SpeciesShipsProduced;
     if (variable_name == "SpeciesShipsScrapped")
         empire_property_string_key = &Empire::SpeciesShipsScrapped;
+    if (variable_name == "ShipPartsOwned")
+        empire_property_string_key = &Empire::ShipPartsOwned;
     if (variable_name == "TurnTechResearched")
         empire_property_string_key = &Empire::ResearchedTechs;
 
@@ -1471,6 +1473,21 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
                 return IMPOSSIBLY_LARGE_TURN;
 
             key_filter = [k = key_string](auto e){ return k == e.first; };
+        }
+        else if (variable_name == "ShipPartsOwned" && m_int_ref2) {
+            int key_int = m_int_ref2->Eval(context);
+            if (key_int <= INVALID_SHIP_PART_CLASS || key_int >= NUM_SHIP_PART_CLASSES)
+                return 0;
+
+            auto key_filter = [part_class = ShipPartClass(key_int)](const std::map<ShipPartClass, int>::value_type& e){ return e.first == part_class; };
+
+            if (empire)
+                return boost::accumulate(empire->ShipPartClassOwned() | filtered(key_filter) | map_values, 0);
+
+            int sum = 0;
+            for (const auto& empire_entry : Empires())
+                sum += boost::accumulate(empire_entry.second->ShipPartClassOwned() | filtered(key_filter) | map_values, 0);
+            return sum;
         }
 
         if (empire)
@@ -1541,58 +1558,6 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         int sum = 0;
         for (const auto& empire_entry : Empires())
             sum += boost::accumulate(empire_property_int_key(*(empire_entry.second)) | filtered(key_filter) | map_values, 0);
-        return sum;
-    }
-
-    empire_property_string_key = nullptr;
-    if (variable_name == "ShipPartsOwned")
-        empire_property_string_key = &Empire::ShipPartsOwned;
-
-    // empire properties indexed by string or ShipPartClass (as int)
-    if (empire_property_string_key) {
-        using namespace boost::adaptors;
-
-        Empire* empire{nullptr};
-        if (m_int_ref1) {
-            int empire_id = m_int_ref1->Eval(context);
-            if (empire_id == ALL_EMPIRES)
-                return 0;
-            empire = GetEmpire(empire_id);
-        }
-
-        std::function<bool (const std::map<std::string, int>::value_type&)> key_filter{nullptr};
-        key_filter = [](auto e){ return true; };
-
-        // if a key string specified, get just that entry (for single empire or sum of all empires)
-        if (m_string_ref1) {
-            std::string key_string = m_string_ref1->Eval(context);
-            if (key_string.empty())
-                return 0;
-
-            key_filter = [k = key_string](auto e){ return k == e.first; };
-        }
-        else if (m_int_ref2) {
-            int key_int = m_int_ref2->Eval(context);
-            if (key_int <= INVALID_SHIP_PART_CLASS || key_int >= NUM_SHIP_PART_CLASSES)
-                return 0;
-
-            auto key_filter = [part_class = ShipPartClass(key_int)](const std::map<ShipPartClass, int>::value_type& e){ return e.first == part_class; };
-
-            if (empire)
-                return boost::accumulate(empire->ShipPartClassOwned() | filtered(key_filter) | map_values, 0);
-
-            int sum = 0;
-            for (const auto& empire_entry : Empires())
-                sum += boost::accumulate(empire_entry.second->ShipPartClassOwned() | filtered(key_filter) | map_values, 0);
-            return sum;
-        }
-
-        if (empire)
-            return boost::accumulate(empire_property_string_key(empire) | filtered(key_filter) | map_values, 0);
-
-        int sum = 0;
-        for (const auto& empire_entry : Empires())
-            sum += boost::accumulate(empire_property_string_key(empire_entry.second) | filtered(key_filter) | map_values, 0);
         return sum;
     }
 
