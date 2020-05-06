@@ -265,7 +265,7 @@ float ShipPart::Capacity() const {
         return m_capacity * GetGameRules().Get<double>("RULE_SHIP_STRUCTURE_FACTOR");
         break;
     case PC_DIRECT_WEAPON:
-    case PC_SHIELDS:
+    case PC_SHIELD:
         return m_capacity * GetGameRules().Get<double>("RULE_SHIP_WEAPON_DAMAGE_FACTOR");
         break;
     case PC_SPEED:
