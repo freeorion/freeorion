@@ -5,7 +5,7 @@ Species
     CanProduceShips
     CanColonize
 
-    Tags = [ "ROBOTIC" "BAD_RESEARCH" "BAD_WEAPONS" "AVERAGE_SUPPLY" "CTRL_ALWAYS_REPORT" "BAD_ATTACKTROOPS" "PEDIA_ROBOTIC_SPECIES_CLASS" ]
+    Tags = [ "ROBOTIC" "BAD_POPULATION" "BAD_RESEARCH" "BAD_INDUSTRY" "BAD_WEAPONS" "AVERAGE_SUPPLY" "CTRL_ALWAYS_REPORT" "BAD_ATTACKTROOPS" "PEDIA_ROBOTIC_SPECIES_CLASS"]
 
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -15,16 +15,15 @@ Species
     ]
 
     effectsgroups = [
-        [[AVERAGE_INDUSTRY]]
+        [[BAD_INDUSTRY]]
         [[BAD_RESEARCH]]
         [[NO_STOCKPILE]]
 
-        [[AVERAGE_POPULATION]]
+        [[BAD_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
         [[BAD_DEFENSE_TROOPS]]
         [[BAD_OFFENSE_TROOPS]]
-        [[BAD_WEAPONS]]
 
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
@@ -33,15 +32,15 @@ Species
     ]
 
     environments = [
-        type = Swamp        environment = Hostile
-        type = Toxic        environment = Poor
+        type = Swamp        environment = Adequate
+        type = Toxic        environment = Adequate
         type = Inferno      environment = Adequate
         type = Radiated     environment = Adequate
         type = Barren       environment = Adequate
-        type = Tundra       environment = Poor
-        type = Desert       environment = Hostile
-        type = Terran       environment = Hostile
-        type = Ocean        environment = Hostile
+        type = Tundra       environment = Adequate
+        type = Desert       environment = Adequate
+        type = Terran       environment = Adequate
+        type = Ocean        environment = Adequate
         type = Asteroids    environment = Poor
         type = Gasgiant     environment = Uninhabitable
     ]
