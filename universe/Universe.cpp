@@ -1641,34 +1641,6 @@ void Universe::ExecuteEffects(std::map<int, Effect::SourcesEffectsTargetsAndCaus
     }
 }
 
-namespace {
-    static const std::string EMPTY_STRING;
-
-    const std::string& GetSpeciesFromObject(std::shared_ptr<const UniverseObject> obj) {
-        switch (obj->ObjectType()) {
-        case OBJ_PLANET: {
-            auto obj_planet = std::static_pointer_cast<const Planet>(obj);
-            return obj_planet->SpeciesName();
-            break;
-        }
-        case OBJ_SHIP: {
-            auto obj_ship = std::static_pointer_cast<const Ship>(obj);
-            return obj_ship->SpeciesName();
-            break;
-        }
-        default:
-            return EMPTY_STRING;
-        }
-    }
-
-    int GetDesignIDFromObject(std::shared_ptr<const UniverseObject> obj) {
-        if (obj->ObjectType() != OBJ_SHIP)
-            return INVALID_DESIGN_ID;
-        auto shp = std::static_pointer_cast<const Ship>(obj);
-        return shp->DesignID();
-    }
-}
-
 void Universe::CountDestructionInStats(int object_id, int source_object_id) {
     auto obj = m_objects.get(object_id);
     if (!obj)
@@ -1676,30 +1648,11 @@ void Universe::CountDestructionInStats(int object_id, int source_object_id) {
     auto source = m_objects.get(source_object_id);
     if (!source)
         return;
-
-    const std::string& species_for_obj = GetSpeciesFromObject(obj);
-
-    int empire_for_obj_id = obj->Owner();
-    int empire_for_source_id = source->Owner();
-
-    int design_for_obj_id = GetDesignIDFromObject(obj);
-
-    if (Empire* source_empire = GetEmpire(empire_for_source_id)) {
-        source_empire->EmpireShipsDestroyed()[empire_for_obj_id]++;
-
-        if (design_for_obj_id != INVALID_DESIGN_ID)
-            source_empire->ShipDesignsDestroyed()[design_for_obj_id]++;
-
-        if (species_for_obj.empty())
-            source_empire->SpeciesShipsDestroyed()[species_for_obj]++;
-    }
-
-    if (Empire* obj_empire = GetEmpire(empire_for_obj_id)) {
-        if (!species_for_obj.empty())
-            obj_empire->SpeciesShipsLost()[species_for_obj]++;
-
-        if (design_for_obj_id != INVALID_DESIGN_ID)
-            obj_empire->ShipDesignsLost()[design_for_obj_id]++;
+    if (auto shp = std::dynamic_pointer_cast<const Ship>(obj)) {
+        if (auto source_empire = GetEmpire(source->Owner()))
+            source_empire->RecordShipShotDown(*shp);
+        if (auto obj_empire = GetEmpire(obj->Owner()))
+            obj_empire->RecordShipLost(*shp);
     }
 }
 

@@ -2305,6 +2305,34 @@ int Empire::TotalShipsOwned() const {
     return counter;
 }
 
+void Empire::RecordShipShotDown(const Ship& ship) {
+    m_empire_ships_destroyed[ship.Owner()]++;
+    m_ship_designs_destroyed[ship.DesignID()]++;
+    m_species_ships_destroyed[ship.SpeciesName()]++;
+}
+
+void Empire::RecordShipLost(const Ship& ship) {
+    m_species_ships_lost[ship.SpeciesName()]++;
+    m_ship_designs_lost[ship.DesignID()]++;
+}
+
+void Empire::RecordShipScrapped(const Ship& ship) {
+    m_ship_designs_scrapped[ship.DesignID()]++;
+    m_species_ships_scrapped[ship.SpeciesName()]++;
+}
+
+void Empire::RecordBuildingScrapped(const Building& building) {
+    m_building_types_scrapped[building.BuildingTypeName()]++;
+}
+
+void Empire::RecordPlanetInvaded(const Planet& planet) {
+    m_species_planets_invaded[planet.SpeciesName()]++;
+}
+
+void Empire::RecordPlanetDepopulated(const Planet& planet) {
+    m_species_planets_depoped[planet.SpeciesName()]++;
+}
+
 int Empire::TotalShipPartsOwned() const {
     // sum counts of all ship parts owned by this empire
     int retval = 0;
