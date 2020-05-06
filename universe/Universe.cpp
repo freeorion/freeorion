@@ -932,7 +932,7 @@ namespace {
                      + (scope_is_just_source ? "  [Scope = Source]" : "")
                      + "  sources: " + std::to_string(source_objects.size())};
 
-        ScopedTimer timer(message, std::chrono::milliseconds(5));
+        ScopedTimer timer(message, std::chrono::milliseconds(20));
 
         source_effects_targets_causes_out.reserve(source_objects.size());
         ScriptingContext source_context(object_map);
@@ -1543,7 +1543,7 @@ void Universe::ExecuteEffects(std::map<int, Effect::SourcesEffectsTargetsAndCaus
 
     // within each priority group, execute effects in dispatch order
     for (auto& priority_group : source_effects_targets_causes) {
-        int priority = priority_group.first;
+        //int priority = priority_group.first;
         Effect::SourcesEffectsTargetsAndCausesVec& setc{priority_group.second};
 
         // construct a source context, which is updated for each entry in sources-effects-targets.
