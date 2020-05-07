@@ -63,6 +63,7 @@
     (Construction)                              \
     (Consumption)                               \
     (ContainedBy)                               \
+    (ContainerID)                               \
     (Contains)                                  \
     (Core)                                      \
     (Cos)                                       \
@@ -285,6 +286,7 @@
     (Off)                                       \
     (On)                                        \
     (OneOf)                                     \
+    (OnPlanet)                                  \
     (Opinion)                                   \
     (Or)                                        \
     (Orange)                                    \

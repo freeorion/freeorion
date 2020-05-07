@@ -920,6 +920,14 @@ int Variable<int>::Eval(const ScriptingContext& context) const
     if (property_name == "Owner") {
         return object->Owner();
     }
+    else if (property_name == "SystemID") {
+        return object->SystemID();
+
+    }
+    else if (property_name == "ContainerID") {
+        return object->ContainerObjectID();
+
+    }
     else if (property_name == "SupplyingEmpire") {
         return GetSupplyManager().EmpireThatCanSupplyAt(object->SystemID());
     }
@@ -1023,10 +1031,6 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         else if (auto planet = std::dynamic_pointer_cast<const Planet>(object))
             return planet->ID();
         return INVALID_OBJECT_ID;
-
-    }
-    else if (property_name == "SystemID") {
-        return object->SystemID();
 
     }
     else if (property_name == "NearestSystemID") {

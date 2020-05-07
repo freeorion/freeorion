@@ -33,6 +33,7 @@ parse::detail::simple_int_parser_rules::simple_int_parser_rules(const parse::lex
         |   tok.FleetID_
         |   tok.PlanetID_
         |   tok.SystemID_
+        |   tok.ContainerID_
         |   tok.FinalDestinationID_
         |   tok.NextSystemID_
         |   tok.NearestSystemID_
