@@ -2571,58 +2571,20 @@ namespace {
                 auto target_ship = Objects().get<Ship>(attack_event->target_id);
                 if (!target_ship)
                     continue;
-                int target_empire_id = target_ship->Owner();
-                int target_design_id = target_ship->DesignID();
-                const std::string& target_species_name = target_ship->SpeciesName();
-                Empire* target_empire = GetEmpire(target_empire_id);
+                Empire* target_empire = GetEmpire(target_ship->Owner());
 
                 DebugLogger() << "Attacker " << attacker->Name() << " (id: " << attacker->ID() << "  empire: " << attacker_empire_id << ")  attacks "
                               << target_ship->Name() << " (id: " << target_ship->ID() << "  empire: "
-                              << (target_empire ? std::to_string(target_empire->EmpireID()) : "(unowned)") << "  species: " << target_species_name << ")";
+                              << (target_empire ? std::to_string(target_empire->EmpireID()) : "(unowned)") << "  species: " << target_ship->SpeciesName() << ")";
 
-                std::map<int, int>::iterator map_it;
-                std::map<std::string, int>::iterator species_it;
-
-                if (attacker_empire) {
-                    // record destruction of an empire's ship by attacker empire
-                    map_it = attacker_empire->EmpireShipsDestroyed().find(target_empire_id);
-                    if (map_it == attacker_empire->EmpireShipsDestroyed().end())
-                        attacker_empire->EmpireShipsDestroyed()[target_empire_id] = 1;
-                    else
-                        map_it->second++;
-
-                    // record destruction of a design by attacker empire
-                    map_it = attacker_empire->ShipDesignsDestroyed().find(target_design_id);
-                    if (map_it == attacker_empire->ShipDesignsDestroyed().end())
-                        attacker_empire->ShipDesignsDestroyed()[target_design_id] = 1;
-                    else
-                        map_it->second++;
-
-                    // record destruction of ship with a species on it by attacker empire
-                    species_it = attacker_empire->SpeciesShipsDestroyed().find(target_species_name);
-                    if (species_it == attacker_empire->SpeciesShipsDestroyed().end())
-                        attacker_empire->SpeciesShipsDestroyed()[target_species_name] = 1;
-                    else
-                        species_it->second++;
-                }
+                if (attacker_empire)
+                    attacker_empire->RecordShipShotDown(*target_ship);
 
                 if (target_empire) {
                     if (already_logged__target_ships.count(attack_event->target_id))
                         continue;
                     already_logged__target_ships.insert(attack_event->target_id);
-                    // record destruction of a ship with a species on it owned by defender empire
-                    species_it = target_empire->SpeciesShipsLost().find(target_species_name);
-                    if (species_it == target_empire->SpeciesShipsLost().end())
-                        target_empire->SpeciesShipsLost()[target_species_name] = 1;
-                    else
-                        species_it->second++;
-
-                    // record destruction of with a design owned by defender empire
-                    map_it = target_empire->ShipDesignsLost().find(target_design_id);
-                    if (map_it == target_empire->ShipDesignsLost().end())
-                        target_empire->ShipDesignsLost()[target_design_id] = 1;
-                    else
-                        map_it->second++;
+                    target_empire->RecordShipLost(*target_ship);
                 }
             }
         }
@@ -2635,20 +2597,14 @@ namespace {
             auto planet = Objects().get<Planet>(planet_id);
             if (!planet)
                 continue;
-            const auto& planet_species = planet->SpeciesName();
-            if (planet_species.empty())
+            if (planet->SpeciesName().empty())
                 continue;
 
             for (const auto& empire_troops : planet_empire_troops.second) {
                 Empire* invader_empire = GetEmpire(empire_troops.first);
                 if (!invader_empire)
                     continue;
-
-                auto species_it = invader_empire->SpeciesPlanetsInvaded().find(planet_species);
-                if (species_it == invader_empire->SpeciesPlanetsInvaded().end())
-                    invader_empire->SpeciesPlanetsInvaded()[planet_species] = 1;
-                else
-                    species_it->second++;
+                invader_empire->RecordPlanetInvaded(*planet);
             }
         }
     }
@@ -3150,19 +3106,8 @@ namespace {
 
             // record scrapping in empire stats
             Empire* scrapping_empire = GetEmpire(ship->Owner());
-            if (scrapping_empire) {
-                auto& designs_scrapped = scrapping_empire->ShipDesignsScrapped();
-                if (designs_scrapped.count(ship->DesignID()))
-                    designs_scrapped[ship->DesignID()]++;
-                else
-                    designs_scrapped[ship->DesignID()] = 1;
-
-                auto& species_ships_scrapped = scrapping_empire->SpeciesShipsScrapped();
-                if (species_ships_scrapped.count(ship->SpeciesName()))
-                    species_ships_scrapped[ship->SpeciesName()]++;
-                else
-                    species_ships_scrapped[ship->SpeciesName()] = 1;
-            }
+            if (scrapping_empire)
+                scrapping_empire->RecordShipScrapped(*ship);
 
             //scrapped_object_ids.push_back(ship->ID());
             GetUniverse().Destroy(ship->ID());
@@ -3184,13 +3129,8 @@ namespace {
 
             // record scrapping in empire stats
             Empire* scrapping_empire = GetEmpire(building->Owner());
-            if (scrapping_empire) {
-                auto& buildings_scrapped = scrapping_empire->BuildingTypesScrapped();
-                if (buildings_scrapped.count(building->BuildingTypeName()))
-                    buildings_scrapped[building->BuildingTypeName()]++;
-                else
-                    buildings_scrapped[building->BuildingTypeName()] = 1;
-            }
+            if (scrapping_empire)
+                scrapping_empire->RecordBuildingScrapped(*building);
 
             //scrapped_object_ids.push_back(building->ID());
             GetUniverse().Destroy(building->ID());

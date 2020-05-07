@@ -834,14 +834,8 @@ void Planet::PopGrowthProductionResearchPhase() {
         if (Empire* empire = GetEmpire(this->Owner())) {
             empire->AddSitRepEntry(CreatePlanetDepopulatedSitRep(this->ID()));
 
-            if (!HasTag(TAG_STAT_SKIP_DEPOP)) {
-                // record depopulation of planet with species while owned by this empire
-                auto species_it = empire->SpeciesPlanetsDepoped().find(SpeciesName());
-                if (species_it == empire->SpeciesPlanetsDepoped().end())
-                    empire->SpeciesPlanetsDepoped()[SpeciesName()] = 1;
-                else
-                    species_it->second++;
-            }
+            if (!HasTag(TAG_STAT_SKIP_DEPOP))
+                empire->RecordPlanetDepopulated(*this);
         }
         // remove species
         PopCenter::Reset();
