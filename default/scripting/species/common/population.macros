@@ -225,6 +225,19 @@ GASEOUS_BONUS
             effects = SetTargetPopulation value = Value - 0.5*abs(Value)
 '''
 
+MINDLESS_BONUS
+'''     EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Not Planet type = Asteroids
+                HasTag name = "MINDLESS_SPECIES"
+            ]
+            accountinglabel = "MINDLESS_SPECIES"
+            priority = [[TARGET_POPULATION_SCALING_PRIORITY]]
+            effects = SetTargetPopulation value = Value - 0.5*abs(Value)
+'''
+
 // @1@ Species key
 LIFECYCLE_MANIP_POPULATION_EFFECTS
 '''
