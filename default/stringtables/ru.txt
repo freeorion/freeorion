@@ -1058,6 +1058,7 @@ ERROR_INCOMPATIBLE_VERSION
 ERROR_CHECKSUM_MISMATCH
 Контрольная сумма содержимого на сервере и клиенте отличается.
 
+
 ##
 ## Game Rules
 ##
@@ -4530,9 +4531,6 @@ PRODUCTION_WND_TOOLTIP_LOCATION_DEPENDENT
 PRODUCTION_WND_TOOLTIP_PROD_TIME
 Полностью финансируемое производство превращается в %2%: %1%
 
-PRODUCTION_WND_TOOLTIP_PROD_TIME
-Время производства: %1%
-
 NO_PRODUCTION_HERE_CANT_PRODUCE
 Недостаточное производство на %1%
 
@@ -6394,16 +6392,16 @@ MESSAGES_ALLIANCE
 %1% и %2% вступили в альянс.
 
 MESSAGES_HELP_COMMAND
-'''/pedia [article]: open the specified article in the pedia
-/pm [player] [message]: sends private message to specified player
-/zoom [object]: zoom to the specified universe object (system, planet, ship, fleet or building)
+'''/pedia [article]: открыть указанную статью в энциклопедии
+/pm [player] [message]: отправляет личное сообщение указанному игроку
+/zoom [object]: приблизиться к указанному объекту вселенной (системе, планете, кораблю, флоту или зданию)
 '''
 
 MESSAGES_WHISPER
 (Шепчет)
 
 MESSAGES_INVALID
-Invalid player or no message entered.
+Неверный игрок или сообщение не введено.
 
 
 ##
@@ -6949,6 +6947,18 @@ SITREP_NEW_COLONY_ESTABLISHED
 
 SITREP_NEW_COLONY_ESTABLISHED_LABEL
 Новая колония заселена
+
+SITREP_FLEET_GIFTED
+%fleet% был подарен %empire%
+
+SITREP_FLEET_GIFTED_LABEL
+Подаренный флот
+
+SITREP_PLANET_GIFTED
+%planet% была подарена %empire%
+
+SITREP_PLANET_GIFTED_LABEL
+Подаренная планета
 
 SITREP_FLEET_ARRIVED_AT_DESTINATION
 Флот %fleet% (из %rawtext% кораблей) прибыл в систему %system%.
@@ -9419,6 +9429,9 @@ PC_TROOPS_DESC
 '''Войска увеличивают значение [[metertype METER_TROOPS]] на борту, которое можно использовать для вторжения на планеты противника.
 
 Чтобы успешно вторгнуться на планету, общее количество [[metertype METER_TROOPS]] из всех вторгшихся кораблей должно превышать общую защиту (соединений имеющихся у защитника).
+
+При вторжении на планету, корабли войск, выбранные в окне флота, будут использоваться для вторжения. Если корабли войск не выбраны, корабли войск будут автоматически выбраны из доступных кораблей в зависимости от количества обороняющихся войск.
+
 Во время операции по посадке может быть уничтожена часть кораблей вторжения (любые другие соединения входящие в состав уничтоженного корабля также теряются).'''
 
 # Ship part classes
