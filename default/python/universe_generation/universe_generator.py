@@ -145,7 +145,7 @@ def create_universe(psd_map):
                 report_error("Python create_universe: couldn't set up empire for team %d" % team)
             psds = psds_new
         # place leftovers
-        for empire, psd, home_system in zip(psds, home_systems):
+        for (empire, psd), home_system in zip(psds, home_systems):
             if not setup_empire(empire, psd.empire_name, home_system, psd.starting_species, psd.player_name):
                 report_error("Python create_universe: couldn't set up empire for player %s" % psd.player_name)
     else:
