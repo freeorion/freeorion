@@ -15434,6 +15434,9 @@ Protection Focus
 GASEOUS_LABEL
 Gas Giant Environment
 
+MINDLESS_LABEL
+Mindless Species
+
 XENOPHOBIC_LABEL_SELF
 Xenophobic Frenzy (other species nearby)
 
