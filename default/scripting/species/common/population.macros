@@ -5,6 +5,7 @@ BASIC_POPULATION
         [[SELF_SUSTAINING_BONUS]]
         [[PHOTOTROPHIC_BONUS]]
         [[GASEOUS_BONUS]]
+        [[MINDLESS_BONUS]]
         [[HOMEWORLD_GROWTH_FOCUS_BOOST]]
 
 
@@ -233,7 +234,7 @@ MINDLESS_BONUS
                 Not Planet type = Asteroids
                 HasTag name = "MINDLESS_SPECIES"
             ]
-            accountinglabel = "MINDLESS_SPECIES"
+            accountinglabel = "MINDLESS_LABEL"
             priority = [[TARGET_POPULATION_SCALING_PRIORITY]]
             effects = SetTargetPopulation value = Value - 0.5*abs(Value)
 '''
