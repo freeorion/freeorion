@@ -65,8 +65,7 @@
 - name: component:UI
   color: "d93f0b"
   description: >
-    The Issue/PR deals with the game interface, a consistent representation
-    style in-game.
+    The Issue/PR deals with the game user interface, graphical or other.
 - name: component:user manual
   color: "d93f0b"
   description: >
