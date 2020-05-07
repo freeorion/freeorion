@@ -19,7 +19,7 @@ Species
         [[BAD_RESEARCH]]
         [[NO_STOCKPILE]]
 
-        [[AVERAGE_POPULATION]]
+        [[BAD_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[BAD_SUPPLY]]
         [[BAD_DEFENSE_TROOPS]]
