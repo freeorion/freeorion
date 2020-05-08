@@ -1,5 +1,5 @@
 find_package(CPPCheck)
-find_package(PyCodestyle)
+find_package(Flake8)
 
 if(CPPCHECK_FOUND)
     add_custom_target(check-cpp
@@ -12,22 +12,13 @@ if(CPPCHECK_FOUND)
     )
 endif()
 
-if(PYCODESTYLE_FOUND)
-    configure_file(pep8.ini.in pep8.ini)
-    # The script wrapper discards the exit code of `pep8` to allow
-    # continuing the build even when there are errors found by `pep8`.
-    file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/pep8.cmake"
-        "execute_process(
-            COMMAND \"${PYCODESTYLE_EXECUTABLE}\" \"--config=${CMAKE_CURRENT_BINARY_DIR}/pep8.ini\"
-                \"${PROJECT_SOURCE_DIR}\"
-            WORKING_DIRECTORY \"${CMAKE_CURRENT_BINARY_DIR}\")
-    ")
+if(TARGET Flake8::flake8)
     add_custom_target(check-pep8
-        "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/pep8.cmake"
-        DEPENDS pep8.ini.in
+        COMMAND "$<TARGET_FILE:Flake8::flake8>"
         COMMENT "Check python code for PEP-8 style conformance"
         VERBATIM
-        SOURCES pep8.ini.in
+        SOURCES "${PROJECT_SOURCE_DIR}/default/python/tox.ini"
+        WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/default/python"
     )
 endif()
 
@@ -41,6 +32,6 @@ if(CPPCHECK_FOUND)
     add_dependencies(check check-cpp)
 endif()
 
-if(PYCODESTYLE_FOUND)
+if(TARGET check-pep8)
     add_dependencies(check check-pep8)
 endif()
