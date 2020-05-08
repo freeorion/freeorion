@@ -878,7 +878,7 @@ HULL_EFFECTS = {
     # "HULLNAME": { Token1: Value1, Token2: Value2, ...}
     # Robotic line
     "SH_ROBOTIC": {
-        REPAIR_PER_TURN: 2,
+        REPAIR_PER_TURN: 2 * SHIP_STRUCTURE_FACTOR,
     },
     "SH_SPACE_FLUX_BUBBLE": {
         STEALTH_MODIFIER: -30,
@@ -921,7 +921,7 @@ HULL_EFFECTS = {
     },
     # Organic line
     "SH_ORGANIC": {
-        REPAIR_PER_TURN: 2,
+        REPAIR_PER_TURN: 2 * SHIP_STRUCTURE_FACTOR,
         FUEL_PER_TURN: 0.2,
         DETECTION: 10,
         ORGANIC_GROWTH: (0.2, 5),
@@ -931,19 +931,19 @@ HULL_EFFECTS = {
         ORGANIC_GROWTH: (0.5, 15),
     },
     "SH_SYMBIOTIC": {
-        REPAIR_PER_TURN: 2,
+        REPAIR_PER_TURN: 2 * SHIP_STRUCTURE_FACTOR,
         FUEL_PER_TURN: 0.2,
         DETECTION: 50,
         ORGANIC_GROWTH: (0.2, 10),
     },
     "SH_PROTOPLASMIC": {
-        REPAIR_PER_TURN: 2,
+        REPAIR_PER_TURN: 2 * SHIP_STRUCTURE_FACTOR,
         FUEL_PER_TURN: 0.2,
         DETECTION: 50,
         ORGANIC_GROWTH: (0.5, 25),
     },
     "SH_ENDOSYMBIOTIC": {
-        REPAIR_PER_TURN: 2,
+        REPAIR_PER_TURN: 2 * SHIP_STRUCTURE_FACTOR,
         FUEL_PER_TURN: 0.2,
         DETECTION: 50,
         ORGANIC_GROWTH: (0.5, 15),
@@ -959,7 +959,7 @@ HULL_EFFECTS = {
         ORGANIC_GROWTH: (0.5, 25),
     },
     "SH_SENTIENT": {
-        REPAIR_PER_TURN: 2,
+        REPAIR_PER_TURN: 2 * SHIP_STRUCTURE_FACTOR,
         FUEL_PER_TURN: 0.2,
         DETECTION: 70,
         ORGANIC_GROWTH: (1, 45),

@@ -40,7 +40,7 @@ Hull
                 ]
                 Structure high = LocalCandidate.MaxStructure - 0.001
             ]
-            effects = SetStructure value = Value + 2
+            effects = SetStructure value = Value + (2 * [[SHIP_STRUCTURE_FACTOR]])
 
         [[AVERAGE_FUEL_EFFICIENCY]]
         [[ADD_HULL_FUEL_TO_MAX_FUEL_METER]]
@@ -58,3 +58,5 @@ Hull
 #include "../ship_hulls.macros"
 
 #include "/scripting/common/upkeep.macros"
+
+#include "/scripting/common/misc.macros"
