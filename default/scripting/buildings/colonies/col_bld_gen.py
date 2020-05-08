@@ -108,7 +108,7 @@ BuildingType
     ]
     effectsgroups = [
         [[LIFECYCLE_MANIP_POPULATION_EFFECTS("${id}")]]
-        
+
         EffectsGroup
             scope = And [
                 Object id = Source.PlanetID
@@ -126,7 +126,7 @@ BuildingType
                     ]
                     empire = Source.Owner
             ]
-            
+
         EffectsGroup
             scope = Source
             activation = Turn low = Source.CreationTurn + 2
