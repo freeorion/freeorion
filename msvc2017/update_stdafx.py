@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import os
+import pathlib
 import re
 
 MIN_CPP_INCLUDE_COUNT = 5
@@ -31,13 +31,14 @@ POSTAMBLE = """
 def find_files_from_vcxproj(vcxproj, includetype, fileextension):
     pattern = r"^\s*<" + includetype + r"\s+Include=\"(?P<include>[^\"]+" + fileextension + r")\"\s*/>"
     vcxproj_pattern = re.compile(pattern)
-    base_path = os.path.dirname(vcxproj)
+    base_path = pathlib.Path(vcxproj).parent
 
     with open(vcxproj) as f:
         for i, line in enumerate(f):
             match = vcxproj_pattern.match(line)
             if match and match.group('include') not in IGNORE_INCLUDES:
-                yield os.path.join(base_path, match.group('include'))
+                in_project_path = pathlib.PureWindowsPath(match.group('include'))
+                yield str(base_path.joinpath(in_project_path))
 
 
 include_pattern = re.compile(r"^#include[ \t]+<(?P<include>(?:(?P<lib>[^/>]+)/)?[^>]+)>")
@@ -56,7 +57,10 @@ def find_includes_from_cpp_or_h(filename):
             elif if_nesting_level == 0:
                 match = include_pattern.match(line)
                 if match and match.group('include') not in IGNORE_INCLUDES:
-                    yield (match.group('include'), match.group('lib'))
+                    lib = ""
+                    if match.group('lib'):
+                        lib = match.group('lib')
+                    yield (match.group('include'), lib)
 
 
 def assemble_precompile_header_includes(headeronly_vcxproj_files, vcxproj_files):
@@ -126,7 +130,7 @@ def update_stdafx_h(stdafx_h_filename, header_only_vcxproj_files, vcxproj_files)
             last_type = type
         if last_proj != proj:
             lines.append("")
-            lines.append("// " + os.path.splitext(os.path.basename(proj))[0])
+            lines.append("// " + pathlib.Path(proj).stem)
             last_proj = proj
         if last_lib != lib:
             if lib:
