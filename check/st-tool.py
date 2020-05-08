@@ -1,8 +1,6 @@
 #!/usr/bin/python3
 import argparse
 import datetime
-import errno
-import os
 import re
 import subprocess
 import sys
@@ -14,6 +12,7 @@ STRING_TABLE_KEY_PATTERN = r'^[A-Z0-9_]+$'
 INTERNAL_REFERENCE_PATTERN = r'\[\[(?P<ref_type>(?:(?:encyclopedia|(?:building|field|meter)type|predefinedshipdesign|ship(?:hull|part)|special|species|tech) )?)(?P<key>{})\]\]'
 # Provides the named capture groups 'sha', 'old_line', 'new_line' and 'range'
 GIT_BLAME_INCREMENTAL_PATTERN = r'^(?P<sha>[0-9a-f]{40}) (?P<old_line>[1-9][0-9]*) (?P<new_line>[1-9][0-9]*)(?P<range> [1-9][0-9]*)?$'
+
 
 class StringTableEntry(object):
     def __init__(self, key, keyline, value, notes, value_times):
@@ -137,7 +136,7 @@ class StringTable(object):
         section = []
         entries = []
         includes = []
-        blames = OrderedDict();
+        blames = OrderedDict()
 
         key = None
         keyline = None
@@ -264,7 +263,7 @@ class StringTable(object):
                 vline_end = fline
                 continue
 
-            raise ValueError("{}:{}: Impossible parser state; last valid line: {}".format(fpath, fline_start, line))
+            raise ValueError("{}:{}: Impossible parser state; last valid line: {}".format(fpath, vline_start, line))
 
         if key:
             raise ValueError("{}:{}: Key '{}' without value".format(fpath, vline_start, key))
@@ -347,10 +346,10 @@ class StringTable(object):
                 if left[key].value == right[key].value:
                     identical.add(key)
                 if (left[key].value.startswith('[[') and 2 == left[key].value.count('[') and
-                    left[key].value.endswith(']]') and 2 == left[key].value.count(']')):
+                        left[key].value.endswith(']]') and 2 == left[key].value.count(']')):
                     left_pure_reference.add(key)
                 if (right[key].value.startswith('[[') and 2 == right[key].value.count('[') and
-                    right[key].value.endswith(']]') and 2 == right[key].value.count(']')):
+                        right[key].value.endswith(']]') and 2 == right[key].value.count(']')):
                     right_pure_reference.add(key)
                 if len(left[key].value_times) != len(right[key].value_times):
                     layout_mismatch.add(key)
@@ -369,7 +368,7 @@ class StringTable(object):
             untranslated=untranslated, identical=identical,
             layout_mismatch=layout_mismatch)
 
-    @staticmethod 
+    @staticmethod
     def sync(reference, source):
         entries = []
 
@@ -549,7 +548,8 @@ if __name__ == "__main__":
         title="verbs", description="For more details run `{} <verb> --help`.".format(root_parser.prog),
     )
 
-    format_parser = verb_parsers.add_parser('format',
+    format_parser = verb_parsers.add_parser(
+        'format',
         help="format a string table and exit",
         description=textwrap.dedent("""\
         Pretty prints a given string table onto the standard output.
@@ -569,10 +569,12 @@ if __name__ == "__main__":
         """),
         formatter_class=argparse.RawTextHelpFormatter)
     format_parser.set_defaults(action=format_action)
-    format_parser.add_argument('source', metavar='SOURCE', help="string table to format",
+    format_parser.add_argument(
+        'source', metavar='SOURCE', help="string table to format",
         type=argparse.FileType(encoding='utf-8', errors='strict'))
 
-    sync_parser = verb_parsers.add_parser('sync',
+    sync_parser = verb_parsers.add_parser(
+        'sync',
         help="synchronize two string tables and exit",
         description=textwrap.dedent("""\
         Synchronizes two string tables by copying over translation entry key,
@@ -587,12 +589,15 @@ if __name__ == "__main__":
         """),
         formatter_class=argparse.RawTextHelpFormatter)
     sync_parser.set_defaults(action=sync_action)
-    sync_parser.add_argument('reference', metavar='REFERENCE', help="reference string table",
+    sync_parser.add_argument(
+        'reference', metavar='REFERENCE', help="reference string table",
         type=argparse.FileType(encoding='utf-8', errors='strict'))
-    sync_parser.add_argument('source', metavar='SOURCE', help="string table to sync",
+    sync_parser.add_argument(
+        'source', metavar='SOURCE', help="string table to sync",
         type=argparse.FileType(encoding='utf-8', errors='strict'))
 
-    rename_key_parser = verb_parsers.add_parser('rename-key',
+    rename_key_parser = verb_parsers.add_parser(
+        'rename-key',
         help="rename all occurences of a key within a stringtable and exit",
         description=textwrap.dedent("""\
         Replace all occurances of a translation entry key within the given key,
@@ -602,12 +607,14 @@ if __name__ == "__main__":
         """),
         formatter_class=argparse.RawTextHelpFormatter)
     rename_key_parser.set_defaults(action=rename_key_action)
-    rename_key_parser.add_argument('source', metavar='SOURCE', help="string table to rename old key within",
+    rename_key_parser.add_argument(
+        'source', metavar='SOURCE', help="string table to rename old key within",
         type=argparse.FileType(encoding='utf-8', errors='strict'))
     rename_key_parser.add_argument('old_key', metavar='OLD_KEY', help="key to rename")
     rename_key_parser.add_argument('new_key', metavar='NEW_KEY', help="new key name")
 
-    check_parser = verb_parsers.add_parser('check',
+    check_parser = verb_parsers.add_parser(
+        'check',
         help="check a stringtable for consistency and exit",
         description=textwrap.dedent("""\
         Check if all references within translation entries are provided by the source or
@@ -615,13 +622,16 @@ if __name__ == "__main__":
         """),
         formatter_class=argparse.RawTextHelpFormatter)
     check_parser.set_defaults(action=check_action)
-    check_parser.add_argument('-r', '--reference', metavar='REFERENCE', help="reference string table",
+    check_parser.add_argument(
+        '-r', '--reference', metavar='REFERENCE', help="reference string table",
         type=argparse.FileType(encoding='utf-8', errors='strict'))
-    check_parser.add_argument('sources', metavar='SOURCES', help="string tables to check",
+    check_parser.add_argument(
+        'sources', metavar='SOURCES', help="string tables to check",
         nargs='+',
         type=argparse.FileType(encoding='utf-8', errors='strict'))
 
-    compare_parser = verb_parsers.add_parser('compare',
+    compare_parser = verb_parsers.add_parser(
+        'compare',
         help="compare two string tables and exit",
         description=textwrap.dedent("""\
         Compare two string tables and point out differences between them.
@@ -629,9 +639,11 @@ if __name__ == "__main__":
         formatter_class=argparse.RawTextHelpFormatter)
     compare_parser.set_defaults(action=compare_action)
     compare_parser.add_argument('-s', '--summary-only', help="print only a summary of differences", action='store_true', dest='summary_only')
-    compare_parser.add_argument('reference', metavar='REFERENCE', help="reference string table",
+    compare_parser.add_argument(
+        'reference', metavar='REFERENCE', help="reference string table",
         type=argparse.FileType(encoding='utf-8', errors='strict'))
-    compare_parser.add_argument('source', metavar='SOURCE', help="string table to compare",
+    compare_parser.add_argument(
+        'source', metavar='SOURCE', help="string table to compare",
         type=argparse.FileType(encoding='utf-8', errors='strict'))
 
     args = root_parser.parse_args()
