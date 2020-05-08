@@ -2,12 +2,13 @@ find_package(CPPCheck)
 find_package(Flake8)
 find_package(PythonInterp ${MINIMUM_PYTHON_VERSION})
 
-if(CPPCHECK_FOUND)
+if(TARGET Cppcheck::cppcheck)
     add_custom_target(check-cpp
-        ${CPPCHECK_EXECUTABLE}
+        COMMAND
+            "$<TARGET_FILE:Cppcheck::cppcheck>"
             --quiet
             --template=gcc
-            --std=c++11
+            --std=c++14
             ${PROJECT_SOURCE_DIR}
         COMMENT "Check C++ for problematic code"
     )
@@ -37,7 +38,7 @@ if(NOT TARGET check)
     )
 endif()
 
-if(CPPCHECK_FOUND)
+if(TARGET check-cpp)
     add_dependencies(check check-cpp)
 endif()
 
