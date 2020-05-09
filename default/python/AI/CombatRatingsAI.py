@@ -302,7 +302,7 @@ class ShipCombatStats:
         if launch_rate == 0:
             return 0
         full_launch_bouts = capacity // launch_rate
-        survival_rate = 0.2 # TODO estimate chance of a fighter not to be shot down in a bout
+        survival_rate = 0.2  # TODO estimate chance of a fighter not to be shot down in a bout
         flying_fighters = 0
         total_fighter_damage = 0
         # Cut that values down to a single turn (four bouts means max three launch bouts)
