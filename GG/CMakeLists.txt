@@ -89,7 +89,7 @@ if(NOT BUILD_HEADLESS)
     else()
         set(int_have_png 0)
     endif()
-    
+
     if(ENABLE_TIFF_TEXTURES)
         find_package(TIFF REQUIRED)
         set(int_have_tiff 1)
@@ -114,29 +114,32 @@ configure_file(
 ## Define main project targets.
 ##
 
-add_library(GiGi "")
+add_library(GiGiHeader INTERFACE)
+add_library(GiGi::header ALIAS GiGiHeader)
 
-add_library(GiGi::GiGi ALIAS GiGi)
-
-target_compile_definitions(GiGi
-    PRIVATE
-        -DFONS_USE_FREETYPE
-        # Starting with boost 1.68 boost::gil integrates support for
-        # grayscale-alpha png images, so prefer their implementation
-        # instead of our hacky gilext code.
-        $<$<VERSION_LESS:${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION},1.68>:GIGI_CONFIG_USE_OLD_IMPLEMENTATION_OF_GIL_PNG_IO>
-        $<$<VERSION_GREATER:${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION},1.67>:BOOST_GIL_IO_ENABLE_GRAY_ALPHA>
-        $<$<VERSION_GREATER:${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION},1.71>:BOOST_GIL_USES_MP11>
-)
-
-target_include_directories(GiGi
-    PUBLIC
+target_include_directories(GiGiHeader
+    INTERFACE
+        Boost::boost
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
 )
 
-set_target_properties(GiGi PROPERTIES LINKER_LANGUAGE CXX)
-
 if(NOT BUILD_HEADLESS)
+    add_library(GiGi "")
+    add_library(GiGi::GiGi ALIAS GiGi)
+
+    target_compile_definitions(GiGi
+        PUBLIC
+            GiGiHeader
+        PRIVATE
+            -DFONS_USE_FREETYPE
+            # Starting with boost 1.68 boost::gil integrates support for
+            # grayscale-alpha png images, so prefer their implementation
+            # instead of our hacky gilext code.
+            $<$<VERSION_LESS:${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION},1.68>:GIGI_CONFIG_USE_OLD_IMPLEMENTATION_OF_GIL_PNG_IO>
+            $<$<VERSION_GREATER:${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION},1.67>:BOOST_GIL_IO_ENABLE_GRAY_ALPHA>
+            $<$<VERSION_GREATER:${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION},1.71>:BOOST_GIL_USES_MP11>
+)
+
     target_include_directories(GiGi
         INTERFACE
             ${OPENGL_INCLUDE_DIR}
@@ -146,13 +149,13 @@ if(NOT BUILD_HEADLESS)
 
     target_link_libraries(GiGi
         PUBLIC
-            GLEW::GLEW
-            Boost::boost
+            GiGiHeader
             Boost::disable_autolinking
             Boost::dynamic_linking
-            Boost::filesystem
+            GLEW::GLEW
             ${OPENGL_gl_LIBRARY}
         PRIVATE
+            Boost::filesystem
             Boost::regex
             ${FREETYPE_LIBRARIES}
     )

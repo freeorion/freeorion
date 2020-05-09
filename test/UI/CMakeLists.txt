@@ -23,7 +23,8 @@ add_library(fo_acceptance_runner STATIC
 
 target_link_libraries(fo_acceptance_runner
     PUBLIC
-        GiGi
+        Boost::system
+        GiGi::GiGi
         GLEW::GLEW
         ${SDL_LIBRARIES}
 )
