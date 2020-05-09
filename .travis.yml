@@ -17,10 +17,17 @@ _lint_python_common: &_lint_python_common
     - flake8
     - python -m compileall -q .
 
-_build_cpp_common: &_build_cpp_common
-  stage: build
+_linux_setup_common: &_linux_setup_common
+  os: linux
+  dist: bionic
   language: cpp
   cache: ccache
+  before_install:
+    # timeout before Travis kills jobs so that ccache is always at least partially populated
+    - >
+      function cmake {
+          timeout 40m cmake $@
+      }
   install:
     # The build cache for a full project build currently packs around 340M
     # in combination wit a bug in ccache before 3.4.2 prematurely cleaned
@@ -28,6 +35,16 @@ _build_cpp_common: &_build_cpp_common
     # to 500MB
     - ccache --set-config=max_size=500M --set-config=sloppiness=file_macro
     - ccache --zero-stats
+    - >
+      sudo apt-get install --assume-yes
+      libboost1.62-all-dev
+      libglew-dev
+      libogg-dev
+      libopenal-dev
+      libsdl2-dev
+      libvorbis-dev
+      cppcheck
+      doxygen
   before_script:
     - mkdir build
     - cd build
@@ -67,26 +84,11 @@ jobs:
         - diff -u default/stringtables/en.txt <(check/st-tool.py format default/stringtables/en.txt) || { echo "String table is not properly formatted"; exit 1; }
 
     - name: Build C++ API documentation
+      <<: *_linux_setup_common
       stage: build
-      os: linux
-      dist: bionic
-      language: shell
-      services:
-        - docker
       env:
         # Auth token to push API documentation
         - secure: "JKeXk8p65hodb12PVRST6A90swsNubc+46EbSJGSghldIxbFWLBAlwU+KLeOMO4V0veu6k4lnMa50V0UYFZmoUsS6W0aL5Ybo98SpzXHiNLOmOluoqJoF9TBsOTCCRFbWbccgJyVEtulgRcdml96naS51lq9Sw/VO/N3Z472304="
-      before_install:
-        - docker pull freeorion/freeorion-travis-build
-        # Add transparent cmake function to allow possible cross platform use of
-        # build sections.
-        - >
-          function cmake {
-              docker run -v "${TRAVIS_BUILD_DIR}:/freeorion"  -w /freeorion/build freeorion/freeorion-travis-build timeout 40m /usr/bin/cmake $@
-          }
-      before_script:
-        - mkdir build
-        - cd build
       script:
         - cmake ..
         - cmake --build . --target cpp-apidoc
@@ -112,63 +114,52 @@ jobs:
           branch: master
 
     - name: Build FreeOrion on Ubunutu 18.04 (Bionic)
-      <<: *_build_cpp_common
-      os: linux
-      dist: bionic
+      <<: *_linux_setup_common
+      stage: build
       env:
         - CACHE_NAME=linux-full
-      services:
-        - docker
-      before_install:
-        - docker pull freeorion/freeorion-travis-build
-        # mount ccache dir and set its environment variable
-        # timeout before Travis kills jobs so that ccache is always at least partially populated
-        - >
-          function cmake {
-              docker run -v "${TRAVIS_BUILD_DIR}:/freeorion"  -v "${HOME}/.ccache:/ccache_dir" -e CCACHE_DIR='/ccache_dir' -w /freeorion/build freeorion/freeorion-travis-build timeout 40m /usr/bin/cmake $@
-          }
       script:
         - cmake -DBUILD_TESTING=ON ..
         - cmake --build . -- -j 2
 
     - name: Build headless FreeOrion on Ubunutu 18.04 (Bionic)
-      <<: *_build_cpp_common
-      os: linux
-      dist: bionic
+      <<: *_linux_setup_common
+      stage: build
       env:
         - CACHE_NAME=linux-headless
-      services:
-        - docker
-      before_install:
-        - docker pull freeorion/freeorion-travis-build
-        # mount ccache dir and set its environment variable
-        # timeout before Travis kills jobs so that ccache is always at least partially populated
-        - >
-          function cmake {
-              docker run -v "${TRAVIS_BUILD_DIR}:/freeorion"  -v "${HOME}/.ccache:/ccache_dir" -e CCACHE_DIR='/ccache_dir' -w /freeorion/build freeorion/freeorion-travis-build timeout 40m /usr/bin/cmake $@
-          }
       script:
         - cmake -DBUILD_HEADLESS=ON -DBUILD_TESTING=ON ..
         - cmake --build . -- -j 2
 
     - name: Build FreeOrion on MacOS 10.12
-      <<: *_build_cpp_common
+      stage: build
       os: osx
       osx_image: xcode8.3
+      language: cpp
       compiler: clang
+      cache: ccache
       env:
         - CACHE_NAME=macos-full
       before_install:
-        - brew install ccache
         - export PATH="/usr/local/opt/ccache/libexec:$PATH"
         # timeout before Travis kills jobs so that ccache is always at least partially populated
         - >
           function cmake {
               /usr/local/bin/gtimeout 40m /usr/local/bin/cmake $@
           }
+      install:
+        - brew install ccache
+        - ccache --set-config=max_size=500M --set-config=sloppiness=file_macro
+        - ccache --zero-stats
+      before_script:
+        - mkdir build
+        - cd build
       script:
         - cmake -GXcode -DBUILD_TESTING=ON ..
         - cmake --build . --config Release -- -parallelizeTargets -jobs $(sysctl hw.ncpu | awk '{print $2}')
+      before_cache:
+        - ccache --cleanup
+        - ccache --show-stats
 
     - name: Unittest AI with Python 3.5
       <<: *_test_python_common
