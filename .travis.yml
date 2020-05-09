@@ -109,18 +109,20 @@ jobs:
       stage: build
       env:
         - CACHE_NAME=linux-full
+        - CMAKE_BUILD_PARALLEL_LEVEL=2
       script:
         - cmake -DBUILD_TESTING=ON ..
-        - cmake --build . -- -j 2
+        - cmake --build .
 
     - name: Build headless FreeOrion on Ubunutu 18.04 (Bionic)
       <<: *_linux_setup_common
       stage: build
       env:
         - CACHE_NAME=linux-headless
+        - CMAKE_BUILD_PARALLEL_LEVEL=2
       script:
         - cmake -DBUILD_HEADLESS=ON -DBUILD_TESTING=ON ..
-        - cmake --build . -- -j 2
+        - cmake --build .
 
     - name: Build FreeOrion on MacOS 10.12
       stage: build
@@ -131,6 +133,7 @@ jobs:
       cache: ccache
       env:
         - CACHE_NAME=macos-full
+        - CMAKE_BUILD_PARALLEL_LEVEL=2
       before_install:
         - export PATH="/usr/local/opt/ccache/libexec:$PATH"
         # timeout before Travis kills jobs so that ccache is always at least partially populated
@@ -147,7 +150,7 @@ jobs:
         - cd build
       script:
         - cmake -GXcode -DBUILD_TESTING=ON ..
-        - cmake --build . --config Release -- -parallelizeTargets -jobs $(sysctl hw.ncpu | awk '{print $2}')
+        - cmake --build . --config Release -- -parallelizeTargets
       before_cache:
         - ccache --cleanup
         - ccache --show-stats
