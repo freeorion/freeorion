@@ -3110,9 +3110,9 @@ unsigned int ContainedBy::GetCheckSum() const {
 }
 
 ///////////////////////////////////////////////////////////
-// InSystem                                              //
+// InOrIsSystem                                          //
 ///////////////////////////////////////////////////////////
-InSystem::InSystem(std::unique_ptr<ValueRef::ValueRef<int>>&& system_id) :
+InOrIsSystem::InOrIsSystem(std::unique_ptr<ValueRef::ValueRef<int>>&& system_id) :
     Condition(),
     m_system_id(std::move(system_id))
 {
@@ -3121,13 +3121,13 @@ InSystem::InSystem(std::unique_ptr<ValueRef::ValueRef<int>>&& system_id) :
     m_source_invariant = !m_system_id || m_system_id->SourceInvariant();
 }
 
-bool InSystem::operator==(const Condition& rhs) const {
+bool InOrIsSystem::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;
     if (typeid(*this) != typeid(rhs))
         return false;
 
-    const InSystem& rhs_ = static_cast<const InSystem&>(rhs);
+    const InOrIsSystem& rhs_ = static_cast<const InOrIsSystem&>(rhs);
 
     CHECK_COND_VREF_MEMBER(m_system_id)
 
@@ -3144,24 +3144,24 @@ namespace {
             if (!candidate)
                 return false;
             if (m_system_id == INVALID_OBJECT_ID)
-                return candidate->SystemID() != INVALID_OBJECT_ID;  // match objects in any system
+                return candidate->SystemID() != INVALID_OBJECT_ID;  // match objects in any system (including any system itself)
             else
-                return candidate->SystemID() == m_system_id;        // match objects in specified system
+                return candidate->SystemID() == m_system_id;        // match objects in specified system (including that system itself)
         }
 
         int m_system_id;
     };
 }
 
-void InSystem::Eval(const ScriptingContext& parent_context,
-                    ObjectSet& matches, ObjectSet& non_matches,
-                    SearchDomain search_domain/* = NON_MATCHES*/) const
+void InOrIsSystem::Eval(const ScriptingContext& parent_context,
+                        ObjectSet& matches, ObjectSet& non_matches,
+                        SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = !m_system_id || m_system_id->ConstantExpr() ||
                             (m_system_id->LocalCandidateInvariant() &&
                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
-        // evaluate empire id once, and use to check all candidate objects
+        // evaluate system id once, and use to check all candidate objects
         int system_id = (m_system_id ? m_system_id->Eval(parent_context) : INVALID_OBJECT_ID);
         EvalImpl(matches, non_matches, search_domain, InSystemSimpleMatch(system_id));
     } else {
@@ -3170,7 +3170,7 @@ void InSystem::Eval(const ScriptingContext& parent_context,
     }
 }
 
-std::string InSystem::Description(bool negated/* = false*/) const {
+std::string InOrIsSystem::Description(bool negated/* = false*/) const {
     std::string system_str;
     int system_id = INVALID_OBJECT_ID;
     if (m_system_id && m_system_id->ConstantExpr())
@@ -3193,7 +3193,7 @@ std::string InSystem::Description(bool negated/* = false*/) const {
     return str(FlexibleFormat(description_str) % system_str);
 }
 
-std::string InSystem::Dump(unsigned short ntabs) const {
+std::string InOrIsSystem::Dump(unsigned short ntabs) const {
     std::string retval = DumpIndent(ntabs) + "InSystem";
     if (m_system_id)
         retval += " id = " + m_system_id->Dump(ntabs);
@@ -3201,8 +3201,8 @@ std::string InSystem::Dump(unsigned short ntabs) const {
     return retval;
 }
 
-void InSystem::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                 ObjectSet& condition_non_targets) const
+void InOrIsSystem::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                                     ObjectSet& condition_non_targets) const
 {
     if (!m_system_id) {
         // can match objects in any system, or any system
@@ -3236,28 +3236,178 @@ void InSystem::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_
     condition_non_targets.push_back(system);
 }
 
-bool InSystem::Match(const ScriptingContext& local_context) const {
+bool InOrIsSystem::Match(const ScriptingContext& local_context) const {
     auto candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "InSystem::Match passed no candidate object";
+        ErrorLogger() << "InOrIsSystem::Match passed no candidate object";
         return false;
     }
     int system_id = (m_system_id ? m_system_id->Eval(local_context) : INVALID_OBJECT_ID);
     return InSystemSimpleMatch(system_id)(candidate);
 }
 
-void InSystem::SetTopLevelContent(const std::string& content_name) {
+void InOrIsSystem::SetTopLevelContent(const std::string& content_name) {
     if (m_system_id)
         m_system_id->SetTopLevelContent(content_name);
 }
 
-unsigned int InSystem::GetCheckSum() const {
+unsigned int InOrIsSystem::GetCheckSum() const {
     unsigned int retval{0};
 
-    CheckSums::CheckSumCombine(retval, "Condition::InSystem");
+    CheckSums::CheckSumCombine(retval, "Condition::InOrIsSystem");
     CheckSums::CheckSumCombine(retval, m_system_id);
 
-    TraceLogger() << "GetCheckSum(InSystem): retval: " << retval;
+    TraceLogger() << "GetCheckSum(InOrIsSystem): retval: " << retval;
+    return retval;
+}
+
+///////////////////////////////////////////////////////////
+// OnPlanet                                              //
+///////////////////////////////////////////////////////////
+OnPlanet::OnPlanet(std::unique_ptr<ValueRef::ValueRef<int>>&& planet_id) :
+    Condition(),
+    m_planet_id(std::move(planet_id))
+{
+    m_root_candidate_invariant = !m_planet_id || m_planet_id->RootCandidateInvariant();
+    m_target_invariant = !m_planet_id || m_planet_id->TargetInvariant();
+    m_source_invariant = !m_planet_id || m_planet_id->SourceInvariant();
+}
+
+bool OnPlanet::operator==(const Condition& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const OnPlanet& rhs_ = static_cast<const OnPlanet&>(rhs);
+
+    CHECK_COND_VREF_MEMBER(m_planet_id)
+
+    return true;
+}
+
+namespace {
+    struct OnPlanetSimpleMatch {
+        OnPlanetSimpleMatch(int planet_id) :
+            m_planet_id(planet_id)
+        {}
+
+        bool operator()(std::shared_ptr<const UniverseObject> candidate) const {
+            if (!candidate)
+                return false;
+            auto building = std::dynamic_pointer_cast<const ::Building>(candidate);
+            if (!building)
+                return false;
+
+            if (m_planet_id == INVALID_OBJECT_ID)
+                return building->PlanetID() != INVALID_OBJECT_ID;  // match objects on any planet
+            else
+                return building->PlanetID() == m_planet_id;        // match objects on specified planet
+        }
+
+        int m_planet_id;
+    };
+}
+
+void OnPlanet::Eval(const ScriptingContext& parent_context,
+                    ObjectSet& matches, ObjectSet& non_matches,
+                    SearchDomain search_domain/* = NON_MATCHES*/) const
+{
+    bool simple_eval_safe = !m_planet_id || m_planet_id->ConstantExpr() ||
+                            (m_planet_id->LocalCandidateInvariant() &&
+                            (parent_context.condition_root_candidate || RootCandidateInvariant()));
+    if (simple_eval_safe) {
+        // evaluate planet id once, and use to check all candidate objects
+        int planet_id = (m_planet_id ? m_planet_id->Eval(parent_context) : INVALID_OBJECT_ID);
+        EvalImpl(matches, non_matches, search_domain, OnPlanetSimpleMatch(planet_id));
+    } else {
+        // re-evaluate empire id for each candidate object
+        Condition::Eval(parent_context, matches, non_matches, search_domain);
+    }
+}
+
+std::string OnPlanet::Description(bool negated/* = false*/) const {
+    std::string planet_str;
+    int planet_id = INVALID_OBJECT_ID;
+    if (m_planet_id && m_planet_id->ConstantExpr())
+        planet_id = m_planet_id->Eval();
+    if (auto planet = Objects().get<Planet>(planet_id))
+        planet_str = planet->Name();
+    else if (m_planet_id)
+        planet_str = m_planet_id->Description();
+
+    std::string description_str;
+    if (!planet_str.empty())
+        description_str = (!negated)
+            ? UserString("DESC_ON_PLANET")
+            : UserString("DESC_ON_PLANET_NOT");
+    else
+        description_str = (!negated)
+            ? UserString("DESC_ON_PLANET_SIMPLE")
+            : UserString("DESC_ON_PLANET_SIMPLE_NOT");
+
+    return str(FlexibleFormat(description_str) % planet_str);
+}
+
+std::string OnPlanet::Dump(unsigned short ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "OnPlanet";
+    if (m_planet_id)
+        retval += " id = " + m_planet_id->Dump(ntabs);
+    retval += "\n";
+    return retval;
+}
+
+void OnPlanet::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                                 ObjectSet& condition_non_targets) const
+{
+    if (!m_planet_id) {
+        // only buildings can be on planets
+        AddBuildingSet(parent_context.ContextObjects(), condition_non_targets);
+        return;
+    }
+
+    bool simple_eval_safe = m_planet_id->ConstantExpr() ||
+                            (m_planet_id->LocalCandidateInvariant() &&
+                            (parent_context.condition_root_candidate || RootCandidateInvariant()));
+
+    if (!simple_eval_safe) {
+        // only buildings can be on planets
+        AddBuildingSet(parent_context.ContextObjects(), condition_non_targets);
+        return;
+    }
+
+    // simple case of a single specified system id; can add just objects in that system
+    int planet_id = m_planet_id->Eval(parent_context);
+    auto planet = parent_context.ContextObjects().get<Planet>(planet_id);
+    if (!planet)
+        return;
+
+    // insert all objects that have the specified planet id
+    condition_non_targets = parent_context.ContextObjects().find(planet->BuildingIDs());
+}
+
+bool OnPlanet::Match(const ScriptingContext& local_context) const {
+    auto candidate = local_context.condition_local_candidate;
+    if (!candidate) {
+        ErrorLogger() << "OnPlanet::Match passed no candidate object";
+        return false;
+    }
+    int planet_id = (m_planet_id ? m_planet_id->Eval(local_context) : INVALID_OBJECT_ID);
+    return OnPlanetSimpleMatch(planet_id)(candidate);
+}
+
+void OnPlanet::SetTopLevelContent(const std::string& content_name) {
+    if (m_planet_id)
+        m_planet_id->SetTopLevelContent(content_name);
+}
+
+unsigned int OnPlanet::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::OnPlanet");
+    CheckSums::CheckSumCombine(retval, m_planet_id);
+
+    TraceLogger() << "GetCheckSum(OnPlanet): retval: " << retval;
     return retval;
 }
 

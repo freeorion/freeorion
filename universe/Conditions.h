@@ -527,9 +527,11 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Matches all objects that are in the system with the indicated \a system_id */
-struct FO_COMMON_API InSystem final : public Condition {
-    InSystem(std::unique_ptr<ValueRef::ValueRef<int>>&& system_id);
+/** Matches all objects that are in the system with the indicated \a system_id
+  * or that are that system. If \a system_id is INVALID_OBJECT_ID then matches
+  * all objects in any system*/
+struct FO_COMMON_API InOrIsSystem final : public Condition {
+    InOrIsSystem(std::unique_ptr<ValueRef::ValueRef<int>>&& system_id);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -550,6 +552,33 @@ private:
     template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
+
+/** Matches all objects that are on the planet with the indicated \a planet_id
+  * or that are that planet. If \a planet_id is INVALID_OBJECT_ID then matches
+  * all objects on any planet */
+struct FO_COMMON_API OnPlanet final : public Condition {
+    OnPlanet(std::unique_ptr<ValueRef::ValueRef<int>>&& planet_id);
+
+    bool operator==(const Condition& rhs) const override;
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+    void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                           ObjectSet& condition_non_targets) const override;
+    std::string Description(bool negated = false) const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
+    void SetTopLevelContent(const std::string& content_name) override;
+    unsigned int GetCheckSum() const override;
+
+private:
+    bool Match(const ScriptingContext& local_context) const override;
+
+    std::unique_ptr<ValueRef::ValueRef<int>> m_planet_id;
+
+    friend class boost::serialization::access;
+    template <typename Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
 
 /** Matches the object with the id \a object_id */
 struct FO_COMMON_API ObjectID final : public Condition {
@@ -1795,10 +1824,17 @@ void ContainedBy::serialize(Archive& ar, const unsigned int version)
 }
 
 template <typename Archive>
-void InSystem::serialize(Archive& ar, const unsigned int version)
+void InOrIsSystem::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_system_id);
+}
+
+template <typename Archive>
+void OnPlanet::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
+        & BOOST_SERIALIZATION_NVP(m_planet_id);
 }
 
 template <typename Archive>

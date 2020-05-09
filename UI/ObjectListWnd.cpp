@@ -443,7 +443,7 @@ namespace {
             return EXPLOREDBYEMPIRE_CONDITION;
         else if (dynamic_cast<const Condition::ContainedBy* const>(condition))
             return CONTAINEDBY_CONDITION;
-        else if (dynamic_cast<const Condition::InSystem* const>(condition))
+        else if (dynamic_cast<const Condition::InOrIsSystem* const>(condition))
             return INSYSTEM_CONDITION;
         else if (dynamic_cast<const Condition::ObjectID* const>(condition))
             return OBJECTID_CONDITION;
