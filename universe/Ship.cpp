@@ -280,7 +280,7 @@ bool Ship::CanBombard() const {
 }
 
 float Ship::Speed() const
-{ return InitialMeterValue(METER_SPEED); }
+{ return GetMeter(METER_SPEED)->Initial(); }
 
 float Ship::ColonyCapacity() const {
     float retval = 0.0f;

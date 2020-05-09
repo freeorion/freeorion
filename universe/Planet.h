@@ -27,8 +27,7 @@ public:
     bool                    Contains(int object_id) const override;
     bool                    ContainedBy(int object_id) const override;
 
-    float                   CurrentMeterValue(MeterType type) const override;
-    float                   InitialMeterValue(MeterType type) const override;
+    const Meter*            GetMeter(MeterType type) const override;
 
     std::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
 
@@ -143,8 +142,6 @@ private:
 
     Visibility GetVisibility(int empire_id) const override
     { return UniverseObject::GetVisibility(empire_id); }
-
-    const Meter* GetMeter(MeterType type) const override;
 
     void AddMeter(MeterType meter_type) override
     { UniverseObject::AddMeter(meter_type); }

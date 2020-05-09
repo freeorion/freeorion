@@ -715,9 +715,9 @@ float Fleet::ResourceOutput(ResourceType type) const {
         return output;
 
     // determine resource output of each ship in this fleet
-    for (auto& ship : Objects().find<const Ship>(m_ships)) {
-        output += ship->CurrentMeterValue(meter_type);
-    }
+    for (auto& ship : Objects().find<const Ship>(m_ships))
+        output += ship->GetMeter(meter_type)->Current();
+
     return output;
 }
 
@@ -1240,8 +1240,9 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id) const {
 
     float lowest_ship_stealth = 99999.9f; // arbitrary large number. actual stealth of ships should be less than this...
     for (auto& ship : Objects().find<const Ship>(this->ShipIDs())) {
-        if (lowest_ship_stealth > ship->CurrentMeterValue(METER_STEALTH))
-            lowest_ship_stealth = ship->CurrentMeterValue(METER_STEALTH);
+        float ship_stealth = ship->GetMeter(METER_STEALTH)->Current();
+        if (lowest_ship_stealth > ship_stealth)
+            lowest_ship_stealth = ship_stealth;
     }
 
     float monster_detection = 0.0f;
@@ -1251,7 +1252,7 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id) const {
             continue;
 
         for (auto& ship : Objects().find<const Ship>(fleet->ShipIDs())) {
-            float cur_detection = ship->CurrentMeterValue(METER_DETECTION);
+            float cur_detection = ship->GetMeter(METER_DETECTION)->Current();
             if (cur_detection >= monster_detection)
                 monster_detection = cur_detection;
         }
@@ -1354,7 +1355,7 @@ float Fleet::Structure() const {
     for (const auto& ship : Objects().find<Ship>(m_ships)) {
         if (!ship || ship->OrderedScrapped())
             continue;
-        retval += ship->CurrentMeterValue(METER_STRUCTURE);
+        retval += ship->GetMeter(METER_STRUCTURE)->Current();
         fleet_is_scrapped = false;
     }
 
@@ -1373,7 +1374,7 @@ float Fleet::Shields() const {
     for (const auto& ship : Objects().find<Ship>(m_ships)) {
         if (!ship || ship->OrderedScrapped())
             continue;
-        retval += ship->CurrentMeterValue(METER_SHIELD);
+        retval += ship->GetMeter(METER_SHIELD)->Current();
         fleet_is_scrapped = false;
     }
 

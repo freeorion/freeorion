@@ -148,11 +148,12 @@ void ResourcePool::Update() {
         if (object_system_group.empty()) {
             object_system_group.insert(object_id);  // just use this already-available set to store the object id, even though it is not likely actually a system
 
-            float obj_output = obj->GetMeter(meter_type) ? obj->CurrentMeterValue(meter_type) : 0.0f;
-            m_connected_object_groups_resource_output[object_system_group] = obj_output;
+            const auto* mmt = obj->GetMeter(meter_type);
+            m_connected_object_groups_resource_output[object_system_group] = mmt ? mmt->Current() : 0.0f;
 
-            float obj_target_output = obj->GetMeter(target_meter_type) ? obj->CurrentMeterValue(target_meter_type) : 0.0f;
-            m_connected_object_groups_resource_target_output[object_system_group] = obj_target_output;
+            const auto* mtmt = obj->GetMeter(target_meter_type);
+            m_connected_object_groups_resource_target_output[object_system_group] = mtmt ? mtmt->Current() : 0.0f;
+
             continue;
         }
 
@@ -169,10 +170,10 @@ void ResourcePool::Update() {
         float total_group_output = 0.0f;
         float total_group_target_output = 0.0f;
         for (auto& obj : object_group) {
-            if (obj->GetMeter(meter_type))
-                total_group_output += obj->CurrentMeterValue(meter_type);
-            if (obj->GetMeter(target_meter_type))
-                total_group_target_output += obj->CurrentMeterValue(target_meter_type);
+            if (const auto* m = obj->GetMeter(meter_type))
+                total_group_output += m->Current();
+            if (const auto* m = obj->GetMeter(target_meter_type))
+                total_group_target_output += m->Current();
             object_group_ids.insert(obj->ID());
         }
         m_connected_object_groups_resource_output[object_group_ids] = total_group_output;

@@ -110,8 +110,6 @@ public:
 
     const MeterMap&             Meters() const { return m_meters; }             ///< returns this UniverseObject's meters
     const Meter*                GetMeter(MeterType type) const;                 ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
-    float                       CurrentMeterValue(MeterType type) const;        ///< returns current value of the specified meter \a type
-    float                       InitialMeterValue(MeterType type) const;        ///< returns this turn's initial value for the specified meter \a type
 
     Visibility                  GetVisibility(int empire_id) const; ///< returns the visibility status of this universe object relative to the input empire.
 

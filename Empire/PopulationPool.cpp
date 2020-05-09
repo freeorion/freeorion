@@ -22,7 +22,7 @@ void PopulationPool::Update() {
     for (const auto& center : Objects().find<PopCenter>(m_pop_center_ids)) {
         if (!center)
             continue;
-        m_population += center->CurrentMeterValue(METER_POPULATION);
+        m_population += center->GetMeter(METER_POPULATION)->Current();
     }
     ChangedSignal();
 }

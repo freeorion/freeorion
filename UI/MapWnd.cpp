@@ -672,7 +672,7 @@ public:
             for (const auto& ship : Objects().find<Ship>(fleet->ShipIDs())) {
                 if (!ship)
                     continue;
-                const float ship_range = ship->InitialMeterValue(METER_DETECTION);
+                const float ship_range = ship->GetMeter(METER_DETECTION)->Initial();
                 if (ship_range > 20)
                     fixed_distances.insert(ship_range);
                 const float ship_speed = ship->Speed();
@@ -685,7 +685,7 @@ public:
             for (const auto& planet : Objects().find<Planet>(system->PlanetIDs())) {
                 if (!planet)
                     continue;
-                const float planet_range = planet->InitialMeterValue(METER_DETECTION);
+                const float planet_range = planet->GetMeter(METER_DETECTION)->Initial();
                 if (planet_range > 20)
                     fixed_distances.insert(planet_range);
             }
@@ -2078,7 +2078,9 @@ void MapWnd::RenderSystems() {
                         }
 
                         // remember if this system has neutrals
-                        if (planet->Unowned() && !planet->SpeciesName().empty() && planet->InitialMeterValue(METER_POPULATION) > 0.0) {
+                        if (planet->Unowned() && !planet->SpeciesName().empty() &&
+                            planet->GetMeter(METER_POPULATION)->Initial() > 0.0f)
+                        {
                             has_neutrals = true;
 
                             std::map<int, int>::iterator it = colony_count_by_empire_id.find(ALL_EMPIRES);
@@ -3965,7 +3967,7 @@ void MapWnd::InitFieldRenderingBuffers() {
         auto field = Objects().get<Field>(field_icon.first);
         if (!field)
             continue;
-        const float FIELD_SIZE = field->InitialMeterValue(METER_SIZE);  // field size is its radius
+        const float FIELD_SIZE = field->GetMeter(METER_SIZE)->Initial();  // field size is its radius
         if (FIELD_SIZE <= 0)
             continue;
         auto field_texture = field_icon.second->FieldTexture();
@@ -4779,7 +4781,7 @@ void MapWnd::DoFieldIconsLayout() {
             continue;
         }
 
-        double RADIUS = ZoomFactor() * field->InitialMeterValue(METER_SIZE);    // Field's METER_SIZE gives the radius of the field
+        double RADIUS = ZoomFactor() * field->GetMeter(METER_SIZE)->Initial();    // Field's METER_SIZE gives the radius of the field
 
         GG::Pt icon_ul(GG::X(static_cast<int>(field->X()*ZoomFactor() - RADIUS)),
                        GG::Y(static_cast<int>(field->Y()*ZoomFactor() - RADIUS)));
@@ -6825,7 +6827,7 @@ void MapWnd::RefreshPopulationIndicator() {
         const std::string& species_name = pc->SpeciesName();
         if (species_name.empty())
             continue;
-        float this_pop = pc->InitialMeterValue(METER_POPULATION);
+        float this_pop = pc->GetMeter(METER_POPULATION)->Initial();
         population_counts[species_name] += this_pop;
         if (const Species* species = GetSpecies(species_name) ) {
             for (const std::string& tag : species->Tags()) {

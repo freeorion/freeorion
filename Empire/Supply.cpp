@@ -257,10 +257,10 @@ namespace {
         for (auto obj : Objects().find(sys->ObjectIDs())) {
             if (!obj || !obj->OwnedBy(empire_id))
                 continue;
-            if (obj->Meters().count(METER_SUPPLY) > 0)
-                accumulator_current += obj->CurrentMeterValue(METER_SUPPLY);
-            if (obj->Meters().count(METER_MAX_SUPPLY) > 0)
-                accumulator_max += obj->CurrentMeterValue(METER_MAX_SUPPLY);
+            if (const auto* m = obj->GetMeter(METER_SUPPLY))
+                accumulator_current += m->Current();
+            if (const auto* m = obj->GetMeter(METER_MAX_SUPPLY))
+                accumulator_max += m->Current();
         }
         return {accumulator_current, accumulator_max};
     }
@@ -274,8 +274,8 @@ namespace {
         for (auto obj : Objects().find(OwnedVisitor(empire_id))) {
             if (!obj)
                 continue;
-            if (obj->Meters().count(METER_SUPPLY) > 0)
-                accumulator_current += obj->CurrentMeterValue(METER_SUPPLY);
+            if (auto* m = obj->GetMeter(METER_SUPPLY))
+                accumulator_current += m->Current();
         }
         return accumulator_current;
     }

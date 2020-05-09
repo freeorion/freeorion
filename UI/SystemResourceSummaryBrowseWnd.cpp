@@ -196,7 +196,7 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
         if (!rc) continue;
 
         std::string name = obj->Name();
-        double production = rc->InitialMeterValue(ResourceToMeter(m_resource_type));
+        double production = rc->GetMeter(ResourceToMeter(m_resource_type))->Initial();
         m_production += production;
 
         std::string amount_text = DoubleToString(production, 3, false);

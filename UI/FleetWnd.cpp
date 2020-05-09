@@ -881,7 +881,7 @@ namespace {
             else if (stat_name == METER_POPULATION)
                 return ship->ColonyCapacity();
             else if (ship->UniverseObject::GetMeter(stat_name))
-                return ship->InitialMeterValue(stat_name);
+                return ship->GetMeter(stat_name)->Initial();
 
             ErrorLogger() << "ShipDataPanel::StatValue couldn't get stat of name: " << stat_name;
         }
@@ -959,11 +959,11 @@ namespace {
             meters_icons.push_back({METER_TROOPS,         TroopIcon()});
         if (ship->CanColonize())
             meters_icons.push_back({METER_POPULATION,     ColonyIcon()});
-        if (ship->InitialMeterValue(METER_INDUSTRY) > 0.0f)
+        if (ship->GetMeter(METER_INDUSTRY)->Initial() > 0.0f)
             meters_icons.push_back({METER_INDUSTRY,       IndustryIcon()});
-        if (ship->InitialMeterValue(METER_RESEARCH) > 0.0f)
+        if (ship->GetMeter(METER_RESEARCH)->Initial() > 0.0f)
             meters_icons.push_back({METER_RESEARCH,       ResearchIcon()});
-        if (ship->InitialMeterValue(METER_TRADE) > 0.0f)
+        if (ship->GetMeter(METER_TRADE)->Initial() > 0.0f)
             meters_icons.push_back({METER_TRADE,          TradeIcon()});
 
         for (auto& meter : {METER_SHIELD, METER_FUEL, METER_DETECTION,
@@ -1536,10 +1536,10 @@ void FleetDataPanel::SetStatIconValues() {
             fighters_tally += ship->FighterCount();
             troops_tally += ship->TroopCapacity();
             colony_tally += ship->ColonyCapacity();
-            structure_tally += ship->InitialMeterValue(METER_STRUCTURE);
-            shield_tally += ship->InitialMeterValue(METER_SHIELD);
-            fuels.push_back(ship->InitialMeterValue(METER_FUEL));
-            speeds.push_back(ship->InitialMeterValue(METER_SPEED));
+            structure_tally += ship->GetMeter(METER_STRUCTURE)->Initial();
+            shield_tally += ship->GetMeter(METER_SHIELD)->Initial();
+            fuels.push_back(ship->GetMeter(METER_FUEL)->Initial());
+            speeds.push_back(ship->GetMeter(METER_SPEED)->Initial());
         }
     }
     if (!fuels.empty())
@@ -2884,8 +2884,8 @@ void FleetWnd::SetStatIconValues() {
                 ship_count++;
                 damage_tally += ship->TotalWeaponsDamage(0.0f, false);
                 fighters_tally += ship->FighterCount();
-                structure_tally += ship->InitialMeterValue(METER_STRUCTURE);
-                shield_tally += ship->InitialMeterValue(METER_SHIELD);
+                structure_tally += ship->GetMeter(METER_STRUCTURE)->Initial();
+                shield_tally += ship->GetMeter(METER_SHIELD)->Initial();
                 troop_tally += ship->TroopCapacity();
                 colony_tally += ship->ColonyCapacity();
             }
@@ -3393,10 +3393,10 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
             continue;
 
         // find damaged ships
-        if (ship->InitialMeterValue(METER_STRUCTURE) < ship->InitialMeterValue(METER_MAX_STRUCTURE))
+        if (ship->GetMeter(METER_STRUCTURE)->Initial() < ship->GetMeter(METER_MAX_STRUCTURE)->Initial())
             damaged_ship_ids.push_back(ship->ID());
         // find ships with no remaining fuel
-        if (ship->InitialMeterValue(METER_FUEL) < 1)
+        if (ship->GetMeter(METER_FUEL)->Initial() < 1.0f)
             unfueled_ship_ids.push_back(ship->ID());
         // find ships that can carry fighters but dont have a full complement of them
         if (ship->HasFighters() && ship->FighterCount() < ship->FighterMax())

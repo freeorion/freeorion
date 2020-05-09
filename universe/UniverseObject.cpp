@@ -247,22 +247,6 @@ const Meter* UniverseObject::GetMeter(MeterType type) const {
     return nullptr;
 }
 
-float UniverseObject::CurrentMeterValue(MeterType type) const {
-    auto it = m_meters.find(type);
-    if (it == m_meters.end())
-        throw std::invalid_argument("UniverseObject::CurrentMeterValue was passed a MeterType that this UniverseObject does not have: " + boost::lexical_cast<std::string>(type));
-
-    return it->second.Current();
-}
-
-float UniverseObject::InitialMeterValue(MeterType type) const {
-    auto it = m_meters.find(type);
-    if (it == m_meters.end())
-        throw std::invalid_argument("UniverseObject::InitialMeterValue was passed a MeterType that this UniverseObject does not have: " + boost::lexical_cast<std::string>(type));
-
-    return it->second.Initial();
-}
-
 void UniverseObject::AddMeter(MeterType meter_type) {
     if (INVALID_METER_TYPE == meter_type)
         ErrorLogger() << "UniverseObject::AddMeter asked to add invalid meter type!";

@@ -134,8 +134,8 @@ namespace {
     { return object->ObjectType() == UniverseObjectType::OBJ_SHIP; }
 
     bool HasPopulation(std::shared_ptr<UniverseObject> object) {
-        return object->GetMeter(METER_POPULATION) &&
-               object->InitialMeterValue(METER_POPULATION) > 0.0f;
+        const auto* m = object->GetMeter(METER_POPULATION);
+        return m && m->Initial() > 0.0f;
     }
 
     std::string EmpireIdToText(int empire_id) {

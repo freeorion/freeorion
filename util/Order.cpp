@@ -528,7 +528,7 @@ bool ColonizeOrder::Check(int empire_id, int ship_id, int planet_id) {
         ErrorLogger() << "ColonizeOrder::Check() : couldn't get planet with id " << planet_id;
         return false;
     }
-    if (planet->InitialMeterValue(METER_POPULATION) > 0.0f) {
+    if (planet->GetMeter(METER_POPULATION)->Initial() > 0.0f) {
         ErrorLogger() << "ColonizeOrder::Check() : given planet that already has population";
         return false;
     }
@@ -678,12 +678,12 @@ bool InvadeOrder::Check(int empire_id, int ship_id, int planet_id) {
         return false;
     }
 
-    if (planet->Unowned() && planet->InitialMeterValue(METER_POPULATION) == 0.0) {
+    if (planet->Unowned() && planet->GetMeter(METER_POPULATION)->Initial() == 0.0) {
         ErrorLogger() << "InvadeOrder::ExecuteImpl given unpopulated planet";
         return false;
     }
 
-    if (planet->InitialMeterValue(METER_SHIELD) > 0.0) {
+    if (planet->GetMeter(METER_SHIELD)->Initial() > 0.0) {
         ErrorLogger() << "InvadeOrder::ExecuteImpl given planet with shield > 0";
         return false;
     }

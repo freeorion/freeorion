@@ -53,10 +53,9 @@ void MilitaryPanel::CompleteConstruction() {
     std::vector<std::pair<MeterType, MeterType>> meters;
 
     // small meter indicators - for use when panel is collapsed
-    for (MeterType meter : {METER_SHIELD, METER_DEFENSE, METER_TROOPS, METER_DETECTION, METER_STEALTH})
-    {
+    for (MeterType meter : {METER_SHIELD, METER_DEFENSE, METER_TROOPS, METER_DETECTION, METER_STEALTH}) {
         auto stat = GG::Wnd::Create<StatisticIcon>(
-            ClientUI::MeterIcon(meter), obj->InitialMeterValue(meter),
+            ClientUI::MeterIcon(meter), obj->GetMeter(meter)->Initial(),
             3, false, MeterIconSize().x, MeterIconSize().y);
         AttachChild(stat);
         m_meter_stats.push_back({meter, stat});
@@ -109,7 +108,7 @@ void MilitaryPanel::Update() {
 
     // tooltips
     for (auto& meter_stat : m_meter_stats) {
-        meter_stat.second->SetValue(obj->InitialMeterValue(meter_stat.first));
+        meter_stat.second->SetValue(obj->GetMeter(meter_stat.first)->Initial());
 
         auto browse_wnd = GG::Wnd::Create<MeterBrowseWnd>(m_planet_id, meter_stat.first, AssociatedMeterType(meter_stat.first));
         meter_stat.second->SetBrowseInfoWnd(browse_wnd);

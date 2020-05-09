@@ -2100,7 +2100,7 @@ namespace {
         for (auto& planet : Objects().find<const Planet>(system->PlanetIDs())) {
             if (!planet->Unowned())
                 empire_planets[planet->Owner()].insert(planet->ID());
-            else if (planet->InitialMeterValue(METER_POPULATION) > 0.0f)
+            else if (planet->GetMeter(METER_POPULATION)->Initial() > 0.0f)
                 empire_planets[ALL_EMPIRES].insert(planet->ID());
         }
     }
@@ -2143,8 +2143,8 @@ namespace {
         for (const auto& ship : Objects().find<Ship>(system->ShipIDs())) {
             if (!ship || !ship->Unowned())  // only want unowned / monster ships
                 continue;
-            if (ship->InitialMeterValue(METER_DETECTION) > monster_detection_strength_here)
-                monster_detection_strength_here = ship->InitialMeterValue(METER_DETECTION);
+            if (ship->GetMeter(METER_DETECTION)->Initial() > monster_detection_strength_here)
+                monster_detection_strength_here = ship->GetMeter(METER_DETECTION)->Initial();
         }
 
         // test each ship in each fleet for visibility by best monster detection here
@@ -2160,7 +2160,7 @@ namespace {
                 if (!ship)
                     continue;
                 // if a ship is low enough stealth, its fleet can be seen by monsters
-                if (monster_detection_strength_here >= ship->InitialMeterValue(METER_STEALTH)) {
+                if (monster_detection_strength_here >= ship->GetMeter(METER_STEALTH)->Initial()) {
                     visible_fleets.insert(fleet->ID());
                     break;  // fleet is seen, so don't need to check any more ships in it
                 }
@@ -2192,7 +2192,7 @@ namespace {
                     continue;
                 // skip planets that have no owner and that are unpopulated; don't matter for combat conditions test
                 auto planet = Objects().get<Planet>(planet_id);
-                if (planet->Unowned() && planet->InitialMeterValue(METER_POPULATION) <= 0.0f)
+                if (planet->Unowned() && planet->GetMeter(METER_POPULATION)->Initial() <= 0.0f)
                     continue;
                 visible_planets.insert(planet->ID());
             }
@@ -2208,8 +2208,8 @@ namespace {
         for (auto& ship : Objects().find<const Ship>(system->ShipIDs())) {
             if (!ship->Unowned())  // only want unowned / monster ships
                 continue;
-            if (ship->InitialMeterValue(METER_DETECTION) > monster_detection_strength_here)
-                monster_detection_strength_here = ship->InitialMeterValue(METER_DETECTION);
+            if (ship->GetMeter(METER_DETECTION)->Initial() > monster_detection_strength_here)
+                monster_detection_strength_here = ship->GetMeter(METER_DETECTION)->Initial();
         }
 
         // test each planet for visibility by best monster detection here
@@ -2217,7 +2217,7 @@ namespace {
             if (planet->Unowned())
                 continue;       // only want empire-owned planets; unowned planets visible to monsters don't matter for combat conditions test
             // if a planet is low enough stealth, it can be seen by monsters
-            if (monster_detection_strength_here >= planet->InitialMeterValue(METER_STEALTH))
+            if (monster_detection_strength_here >= planet->GetMeter(METER_STEALTH)->Initial())
                 visible_planets.insert(planet->ID());
         }
     }
@@ -2872,13 +2872,13 @@ namespace {
                 ErrorLogger() << "HandleInvasion couldn't get planet";
                 continue;
             }
-            if (planet->InitialMeterValue(METER_TROOPS) > 0.0f) {
+            if (planet->GetMeter(METER_TROOPS)->Initial() > 0.0f) {
                 // empires may have garrisons on planets
-                planet_empire_troops[planet->ID()][planet->Owner()] += planet->InitialMeterValue(METER_TROOPS) + 0.0001;    // small bonus to ensure ties are won by initial owner
+                planet_empire_troops[planet->ID()][planet->Owner()] += planet->GetMeter(METER_TROOPS)->Initial() + 0.0001;    // small bonus to ensure ties are won by initial owner
             }
-            if (!planet->Unowned() && planet->InitialMeterValue(METER_REBEL_TROOPS) > 0.0f) {
+            if (!planet->Unowned() && planet->GetMeter(METER_REBEL_TROOPS)->Initial() > 0.0f) {
                 // rebels may be present on empire-owned planets
-                planet_empire_troops[planet->ID()][ALL_EMPIRES] += planet->InitialMeterValue(METER_REBEL_TROOPS);
+                planet_empire_troops[planet->ID()][ALL_EMPIRES] += planet->GetMeter(METER_REBEL_TROOPS)->Initial();
             }
         }
 

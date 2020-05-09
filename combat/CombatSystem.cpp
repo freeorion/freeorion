@@ -62,7 +62,7 @@ CombatInfo::CombatInfo(int system_id_, int turn_) :
     auto planets = Objects().find<Planet>(system->PlanetIDs());
     for (auto& planet : planets) {
         // if planet is populated or has an owner, add owner to empires that have assets in this battle
-        if (!planet->Unowned() || planet->InitialMeterValue(METER_POPULATION) > 0.0f)
+        if (!planet->Unowned() || planet->GetMeter(METER_POPULATION)->Initial() > 0.0f)
             empire_ids.insert(planet->Owner());
         // add planets to objects in combat
         objects.insert(planet);
@@ -85,10 +85,10 @@ float CombatInfo::GetMonsterDetection() const {
     float monster_detection = 0.0;
     for (const auto& obj : objects.all<Ship>())
         if (obj->Unowned())
-            monster_detection = std::max(monster_detection, obj->InitialMeterValue(METER_DETECTION));
+            monster_detection = std::max(monster_detection, obj->GetMeter(METER_DETECTION)->Initial());
     for (const auto& obj : objects.all<Planet>())
         if (obj->Unowned())
-            monster_detection = std::max(monster_detection, obj->InitialMeterValue(METER_DETECTION));
+            monster_detection = std::max(monster_detection, obj->GetMeter(METER_DETECTION)->Initial());
     return monster_detection;
 }
 
@@ -204,9 +204,10 @@ void CombatInfo::InitializeObjectVisibility() {
                         DebugLogger() << "Planet " << obj->Name() << " visible from universe state";
                     }
                 }
-                if (vis < VIS_PARTIAL_VISIBILITY && empire_detection >= obj->CurrentMeterValue(METER_STEALTH)) {
+                if (vis < VIS_PARTIAL_VISIBILITY && empire_detection >= obj->GetMeter(METER_STEALTH)->Current()) {
                     vis = VIS_PARTIAL_VISIBILITY;
-                    DebugLogger() << "Planet " << obj->Name() << " visible empire stealth check: " << empire_detection << " >= " << obj->CurrentMeterValue(METER_STEALTH);
+                    DebugLogger() << "Planet " << obj->Name() << " visible empire stealth check: " << empire_detection
+                                  << " >= " << obj->GetMeter(METER_STEALTH)->Current();
                 }
                 if (vis == VIS_BASIC_VISIBILITY) {
                     DebugLogger() << "Planet " << obj->Name() << " has just basic visibility by default";
@@ -224,9 +225,10 @@ void CombatInfo::InitializeObjectVisibility() {
                         DebugLogger() << "Ship " << obj->Name() << " visible from universe state";
                     }
                 }
-                if (vis < VIS_PARTIAL_VISIBILITY && empire_detection >= obj->CurrentMeterValue(METER_STEALTH)) {
+                if (vis < VIS_PARTIAL_VISIBILITY && empire_detection >= obj->GetMeter(METER_STEALTH)->Current()) {
                     vis = VIS_PARTIAL_VISIBILITY;
-                    DebugLogger() << "Ship " << obj->Name() << " visible empire stealth check: " << empire_detection << " >= " << obj->CurrentMeterValue(METER_STEALTH);
+                    DebugLogger() << "Ship " << obj->Name() << " visible empire stealth check: " << empire_detection
+                                  << " >= " << obj->GetMeter(METER_STEALTH)->Current();
                 }
                 if (vis < VIS_PARTIAL_VISIBILITY && GetGameRules().Get<bool>("RULE_AGGRESSIVE_SHIPS_COMBAT_VISIBLE")) {
                     if (auto ship = std::dynamic_pointer_cast<Ship>(obj)) {
@@ -864,7 +866,7 @@ namespace {
         if (auto ship = std::dynamic_pointer_cast<const Ship>(obj)) {
             return ship->IsArmed();
         } else if (auto planet = std::dynamic_pointer_cast<const Planet>(obj)) {
-            return planet->CurrentMeterValue(METER_DEFENSE) > 0.0f;
+            return obj->GetMeter(METER_DEFENSE)->Current() > 0.0f;
         } else if (auto fighter = std::dynamic_pointer_cast<const Fighter>(obj)) {
             return fighter->Damage() > 0.0f;
         } else {
@@ -1131,7 +1133,7 @@ namespace {
                 }
 
             } else if (target->ObjectType() == OBJ_SHIP) {
-                if (target->CurrentMeterValue(METER_STRUCTURE) <= 0.0f) {
+                if (target->GetMeter(METER_STRUCTURE)->Current() <= 0.0f) {
                     DebugLogger(combat) << "!! Target Ship " << target_id << " is destroyed!";
                     // object id destroyed
                     combat_info.destroyed_object_ids.insert(target_id);
@@ -1161,9 +1163,9 @@ namespace {
                     // remove disabled planet's ID from lists of valid attackers
                     valid_attacker_object_ids.erase(target_id);
                 }
-                if (target->CurrentMeterValue(METER_SHIELD) <= 0.0f &&
-                    target->CurrentMeterValue(METER_DEFENSE) <= 0.0f &&
-                    target->CurrentMeterValue(METER_CONSTRUCTION) <= 0.0f)
+                if (target->GetMeter(METER_SHIELD)->Current() <= 0.0f &&
+                    target->GetMeter(METER_DEFENSE)->Current() <= 0.0f &&
+                    target->GetMeter(METER_CONSTRUCTION)->Current() <= 0.0f)
                 {
                     // An outpost can enter combat in essentially an
                     // incapacitated state, but if it is removed from combat
@@ -1324,7 +1326,7 @@ namespace {
 
         } else if (attack_planet) {     // treat planet defenses as direct fire weapon that only target ships
             weapons.push_back(PartAttackInfo(PC_DIRECT_WEAPON, UserStringNop("DEF_DEFENSE"),
-                                             attack_planet->CurrentMeterValue(METER_DEFENSE),
+                                             attack_planet->GetMeter(METER_DEFENSE)->Current(),
                                              is_enemy_ship.get()));
 
         } else if (attack_fighter) {    // treat fighter damage as direct fire weapon

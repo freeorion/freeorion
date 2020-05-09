@@ -430,8 +430,8 @@ namespace {
                 if (empire) {
                     if (planet->Owner() == empire->EmpireID()) {
                         empires_planet_count      += 1;
-                        empires_production_points += planet->InitialMeterValue(METER_INDUSTRY);
-                        empires_research_points   += planet->InitialMeterValue(METER_RESEARCH);
+                        empires_production_points += planet->GetMeter(METER_INDUSTRY)->Initial();
+                        empires_research_points   += planet->GetMeter(METER_RESEARCH)->Initial();
                     }
                 }
             }

@@ -1561,7 +1561,7 @@ void BuildDesignatorWnd::SelectDefaultPlanet() {
         if (!m_side_panel->PlanetSelectable(planet_id))
             continue;
 
-        double planet_pop = planet->InitialMeterValue(METER_POPULATION);
+        double planet_pop = planet->GetMeter(METER_POPULATION)->Initial();
         if (planet_pop > best_planet_pop) {
             // found new planet to pick
             //found_planet = true;

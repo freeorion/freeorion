@@ -2106,8 +2106,8 @@ namespace {
         // meter values for display
 
         auto& species = ship->SpeciesName().empty() ? "Generic" : UserString(ship->SpeciesName());
-        float structure = ship->CurrentMeterValue(METER_MAX_STRUCTURE);
-        float shield = ship->CurrentMeterValue(METER_MAX_SHIELD);
+        float structure = ship->GetMeter(METER_MAX_STRUCTURE)->Current();
+        float shield = ship->GetMeter(METER_MAX_SHIELD)->Current();
         float attack = ship->TotalWeaponsDamage();
         float strength = std::pow(attack * structure, 0.6f);
         float typical_shot = *std::max_element(enemy_shots.begin(), enemy_shots.end());
@@ -2118,10 +2118,10 @@ namespace {
             % ship->SumCurrentPartMeterValuesForPartClass(METER_MAX_SECONDARY_STAT, PC_DIRECT_WEAPON)
             % structure
             % shield
-            % ship->CurrentMeterValue(METER_DETECTION)
-            % ship->CurrentMeterValue(METER_STEALTH)
-            % ship->CurrentMeterValue(METER_SPEED)
-            % ship->CurrentMeterValue(METER_MAX_FUEL)
+            % ship->GetMeter(METER_DETECTION)->Current()
+            % ship->GetMeter(METER_STEALTH)->Current()
+            % ship->GetMeter(METER_SPEED)->Current()
+            % ship->GetMeter(METER_MAX_FUEL)->Current()
             % ship->SumCurrentPartMeterValuesForPartClass(METER_CAPACITY, PC_COLONY)
             % ship->SumCurrentPartMeterValuesForPartClass(METER_CAPACITY, PC_TROOPS)
             % ship->FighterMax()
@@ -2206,7 +2206,7 @@ namespace {
                 if (!this_ship->SpeciesName().empty())
                     additional_species.insert(this_ship->SpeciesName());
                 if (!this_ship->OwnedBy(client_empire_id)) {
-                    enemy_DR = this_ship->InitialMeterValue(METER_MAX_SHIELD);
+                    enemy_DR = this_ship->GetMeter(METER_MAX_SHIELD)->Initial();
                     DebugLogger() << "Using selected ship for enemy values, DR: " << enemy_DR;
                     enemy_shots.clear();
                     auto this_damage = this_ship->AllWeaponsMaxDamage();
@@ -2321,8 +2321,11 @@ namespace {
         if (selected_ship != INVALID_OBJECT_ID) {
             chosen_ships.insert(selected_ship);
             if (const auto this_ship = Objects().get<Ship>(selected_ship)) {
-                if (!additional_species.empty() && ((this_ship->InitialMeterValue(METER_MAX_SHIELD) > 0) || !this_ship->OwnedBy(client_empire_id))) {
-                    enemy_DR = this_ship->InitialMeterValue(METER_MAX_SHIELD);
+                if (!additional_species.empty() && (
+                        (this_ship->GetMeter(METER_MAX_SHIELD)->Initial() > 0) ||
+                         !this_ship->OwnedBy(client_empire_id)))
+                {
+                    enemy_DR = this_ship->GetMeter(METER_MAX_SHIELD)->Initial();
                     DebugLogger() << "Using selected ship for enemy values, DR: " << enemy_DR;
                     enemy_shots.clear();
                     auto this_damage = this_ship->AllWeaponsMaxDamage();
@@ -2493,7 +2496,7 @@ namespace {
                 planet_environment = species->GetPlanetEnvironment(planet.Type());
 
             float planet_capacity = ((planet_environment == PE_UNINHABITABLE) ?
-                                     0.0f : planet.CurrentMeterValue(METER_TARGET_POPULATION)); // want value after temporary meter update, so get current, not initial value of meter
+                                     0.0f : planet.GetMeter(METER_TARGET_POPULATION)->Current()); // want value after temporary meter update, so get current, not initial value of meter
 
             retval.insert({planet_capacity, {species_name, planet_environment}});
         }

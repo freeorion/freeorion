@@ -192,6 +192,20 @@ namespace {
     const Meter*            (Ship::*ShipGetPartMeter)(MeterType, const std::string&) const =    &Ship::GetPartMeter;
     const auto&             (Ship::*ShipPartMeters)(void) const =                               &Ship::PartMeters;
 
+    float ObjectCurrentMeterValueP(const UniverseObject& o, MeterType meter_type) {
+        if (auto* m = o.GetMeter(meter_type))
+            return m->Current();
+        return 0.0f;
+    }
+    std::function<float(const UniverseObject&, MeterType)> ObjectCurrentMeterValueFunc = &ObjectCurrentMeterValueP;
+
+    float ObjectInitialMeterValueP(const UniverseObject& o, MeterType meter_type) {
+        if (auto* m = o.GetMeter(meter_type))
+            return m->Initial();
+        return 0.0f;
+    }
+    std::function<float(const UniverseObject&, MeterType)> ObjectInitialMeterValueFunc = &ObjectInitialMeterValueP;
+
     const ShipHull* ShipDesignHullP(const ShipDesign& design)
     { return GetShipHull(design.Hull()); }
     std::function<const ShipHull*(const ShipDesign& ship)> ShipDesignHullFunc = &ShipDesignHullP;
@@ -520,8 +534,16 @@ namespace FreeOrionPython {
             .def("containedBy",                 &UniverseObject::ContainedBy)
             .add_property("containedObjects",   make_function(&UniverseObject::ContainedObjectIDs,  return_value_policy<return_by_value>()))
             .add_property("containerObject",    &UniverseObject::ContainerObjectID)
-            .def("currentMeterValue",           &UniverseObject::CurrentMeterValue)
-            .def("initialMeterValue",           &UniverseObject::InitialMeterValue)
+            .def("currentMeterValue",           make_function(
+                                                    ObjectCurrentMeterValueFunc,
+                                                    return_value_policy<return_by_value>(),
+                                                    boost::mpl::vector<float, const UniverseObject&, MeterType>()
+                                                ))
+            .def("initialMeterValue",           make_function(
+                                                    ObjectInitialMeterValueFunc,
+                                                    return_value_policy<return_by_value>(),
+                                                    boost::mpl::vector<float, const UniverseObject&, MeterType>()
+                                                ))
             .add_property("tags",               make_function(&UniverseObject::Tags,        return_value_policy<return_by_value>()))
             .def("hasTag",                      &UniverseObject::HasTag)
             .add_property("meters",             make_function(
