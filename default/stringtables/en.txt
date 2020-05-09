@@ -10742,7 +10742,6 @@ DESC_ON_PLANET_SIMPLE
 DESC_ON_PLANET_SIMPLE_NOT
 ''' that is not on a planet'''
 
-
 # %1% FIXME
 DESC_OBJECT_ID
 ''' that is the object with id %1%'''
