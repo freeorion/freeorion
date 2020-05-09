@@ -354,16 +354,13 @@ target_compile_definitions(freeorioncommon
         -DFREEORION_PYTHON_VERSION=\"${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}\"
 )
 
-target_include_directories(freeorioncommon SYSTEM
-    PUBLIC
-        $<TARGET_PROPERTY:GiGi::GiGi,INCLUDE_DIRECTORIES>
-)
-
 target_link_libraries(freeorioncommon
-    INTERFACE
+    PUBLIC
+        GiGi::header
         Boost::boost
         Boost::disable_autolinking
         Boost::dynamic_linking
+    INTERFACE
         Boost::filesystem
         Boost::iostreams
         Boost::locale
@@ -394,26 +391,16 @@ add_library(freeorionparseobj OBJECT "")
 # dependencies via imported targets and target_link_libraries starting 3.12.
 # For now manually unpack the compiler definitions and include directories.
 target_compile_definitions(freeorionparseobj
-    INTERFACE
-        $<TARGET_PROPERTY:Boost::disable_autolinking,COMPILE_DEFINITIONS>
-        $<TARGET_PROPERTY:Boost::dynamic_linking,COMPILE_DEFINITIONS>
     PUBLIC
-        $<TARGET_PROPERTY:GiGi::GiGi,COMPILE_DEFINITIONS>
+        $<TARGET_PROPERTY:Boost::boost,INTERFACE_COMPILE_DEFINITIONS>
+        $<TARGET_PROPERTY:GiGi::header,INTERFACE_COMPILE_DEFINITIONS>
 )
 
 target_include_directories(freeorionparseobj
-    INTERFACE
-        $<TARGET_PROPERTY:Boost::boost,INCLUDE_DIRECTORIES>
     PUBLIC
-        $<TARGET_PROPERTY:GiGi::GiGi,INCLUDE_DIRECTORIES>
+        $<TARGET_PROPERTY:Boost::boost,INTERFACE_INCLUDE_DIRECTORIES>
+        $<TARGET_PROPERTY:GiGi::header,INTERFACE_INCLUDE_DIRECTORIES>
 )
-
-if(NOT BUILD_HEADLESS)
-    target_link_libraries(freeorioncommon
-        PUBLIC
-            GiGi::GiGi
-    )
-endif()
 
 set_property(TARGET freeorionparseobj
     PROPERTY
@@ -621,6 +608,7 @@ if(NOT BUILD_HEADLESS)
     target_link_libraries(freeorion
         freeorioncommon
         freeorionparse
+        GiGi::GiGi
         ${SDL_LIBRARIES}
         ${OPENGL_gl_LIBRARY}
         ${OPENAL_LIBRARY}
