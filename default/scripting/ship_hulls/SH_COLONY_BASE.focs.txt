@@ -5,7 +5,7 @@ Hull
     fuel = 0
     NoDefaultFuelEffect
     stealth = 5
-    structure = 2
+    structure = [[COLONY_BASE_HULL_STRUCTURE]]
     slots = [
         Slot type = Internal position = (0.38, 0.50)
         Slot type = Internal position = (0.50, 0.50)
@@ -23,3 +23,5 @@ Hull
 #include "ship_hulls.macros"
 
 #include "/scripting/common/upkeep.macros"
+
+#include "/scripting/common/misc.macros"
