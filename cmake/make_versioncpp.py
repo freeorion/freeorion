@@ -60,7 +60,7 @@ class Generator(object):
         try:
             with open(self.infile) as template_file:
                 template = Template(template_file.read())
-        except:
+        except IOError:
             print("WARNING: Can't access %s, %s not updated!" % (self.infile, self.outfile))
             return
 
@@ -136,7 +136,7 @@ try:
     commit = check_output(["git", "show", "-s", "--format=%h", "--abbrev=7", "HEAD"], universal_newlines=True).strip()
     timestamp = float(check_output(["git", "show", "-s", "--format=%ct", "HEAD"], universal_newlines=True).strip())
     build_no = ".".join([datetime.utcfromtimestamp(timestamp).strftime("%Y-%m-%d"), commit])
-except:
+except IOError:
     print("WARNING: git not installed or not setup correctly")
 
 for generator in generators:
