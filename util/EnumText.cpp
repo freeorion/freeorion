@@ -1,6 +1,6 @@
 #include "EnumText.h"
 
-#include "util/i18n.h"
+#include "i18n.h"
 
 namespace{
     const std::string EMPTY_STRING;
