@@ -357,8 +357,6 @@ target_compile_definitions(freeorioncommon
 target_include_directories(freeorioncommon SYSTEM
     PUBLIC
         $<TARGET_PROPERTY:GiGi::GiGi,INCLUDE_DIRECTORIES>
-    PRIVATE
-        ${CMAKE_SOURCE_DIR}
 )
 
 target_link_libraries(freeorioncommon

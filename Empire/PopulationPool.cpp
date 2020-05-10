@@ -1,8 +1,8 @@
 #include "PopulationPool.h"
 
-#include "universe/Enums.h"
-#include "universe/PopCenter.h"
-#include "util/AppInterface.h"
+#include "../universe/Enums.h"
+#include "../universe/PopCenter.h"
+#include "../util/AppInterface.h"
 
 PopulationPool::PopulationPool()
 {}

@@ -1,11 +1,10 @@
 #include "OptionsDB.h"
 
+#include "Directories.h"
 #include "i18n.h"
 #include "Logger.h"
 #include "OptionValidators.h"
 #include "XMLDoc.h"
-
-#include "util/Directories.h"
 
 #include <iostream>
 #include <iomanip>
