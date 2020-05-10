@@ -16,7 +16,6 @@
 #include "../Empire/Supply.h"
 
 #include <boost/algorithm/cxx11/all_of.hpp>
-#include <boost/bind.hpp>
 
 namespace {
     const bool ALLOW_ALLIED_SUPPLY = true;
@@ -69,7 +68,7 @@ namespace {
         // system containing a fleet, b) the starlane on which a fleet is travelling
         // and c) both systems terminating a starlane on which a fleet is travelling.
         auto end_it = std::find_if(full_route.begin(), visible_end_it,
-                                   boost::bind(&SystemHasNoVisibleStarlanes, _1, empire_id));
+                                   std::bind(&SystemHasNoVisibleStarlanes, std::placeholders::_1, empire_id));
 
         std::list<int> truncated_route;
         std::copy(full_route.begin(), end_it, std::back_inserter(truncated_route));
