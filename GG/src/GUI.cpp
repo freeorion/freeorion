@@ -55,12 +55,12 @@
 #include <boost/format.hpp>
 #include <boost/xpressive/xpressive.hpp>
 
-#include <thread>
 #include <cassert>
-#include <iostream>
-#include <fstream>
-#include <list>
 #include <functional>
+#include <fstream>
+#include <iostream>
+#include <list>
+#include <thread>
 
 using namespace GG;
 
