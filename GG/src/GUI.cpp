@@ -60,7 +60,7 @@
 #include <iostream>
 #include <fstream>
 #include <list>
-
+#include <functional>
 
 using namespace GG;
 
@@ -1667,8 +1667,8 @@ void GUI::RenderWindow(Wnd* wnd)
     } else {
         std::vector<std::shared_ptr<Wnd>> children_copy{wnd->m_children.begin(), wnd->m_children.end()};
         const auto& client_child_begin =
-            std::partition(children_copy.begin(), children_copy.end(),
-                           boost::bind(&Wnd::NonClientChild, _1));
+            std::partition(children_copy.begin(), children_copy.end(), std::bind(
+                static_cast<bool (Wnd::*)() const>(&Wnd::NonClientChild), std::placeholders::_1));
 
         if (children_copy.begin() != client_child_begin) {
             wnd->BeginNonclientClipping();

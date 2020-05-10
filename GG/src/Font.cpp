@@ -506,6 +506,8 @@ namespace {
             xpr::mark_tag whitespace_tag(4);
             xpr::mark_tag text_tag(5);
 
+            using std::placeholders::_1;
+
             // The comments before each regex are intended to clarify the mapping from xpressive
             // notation to the more typical regex notation.  If you read xpressive or don't read
             // regex then ignore them.
@@ -516,11 +518,11 @@ namespace {
 
             //+_w one or more greed word chars,  () group no capture,  [] semantic operation
             const xpr::sregex OPEN_TAG_NAME =
-                (+xpr::_w)[xpr::check(boost::bind(&CompiledRegex::MatchesKnownTag, this, _1))];
+                (+xpr::_w)[xpr::check(std::bind(&CompiledRegex::MatchesKnownTag, this, _1))];
 
             // (+_w) one or more greedy word check matches stack
             const xpr::sregex CLOSE_TAG_NAME =
-                (+xpr::_w)[xpr::check(boost::bind(&CompiledRegex::MatchesTopOfStack, this, _1))];
+                (+xpr::_w)[xpr::check(std::bind(&CompiledRegex::MatchesTopOfStack, this, _1))];
 
             // *blank  'zero or more greedy whitespace',   >> 'followed by',    _ln 'newline',
             // (set = 'a', 'b') is '[ab]',    +blank 'one or more greedy blank'

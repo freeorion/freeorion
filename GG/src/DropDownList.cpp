@@ -174,12 +174,14 @@ ModalListPicker::ModalListPicker(Clr color, const DropDownList* relative_to_wnd,
 
 void ModalListPicker::CompleteConstruction()
 {
+    namespace ph = std::placeholders;
+
     m_lb_wnd->SelRowsChangedSignal.connect(
-        boost::bind(&ModalListPicker::LBSelChangedSlot, this, _1));
+        std::bind(&ModalListPicker::LBSelChangedSlot, this, ph::_1));
     m_lb_wnd->LeftClickedRowSignal.connect(
-        boost::bind(&ModalListPicker::LBLeftClickSlot, this, _1, _2, _3));
+        std::bind(&ModalListPicker::LBLeftClickSlot, this, ph::_1, ph::_2, ph::_3));
     GUI::GetGUI()->WindowResizedSignal.connect(
-        boost::bind(&ModalListPicker::WindowResizedSlot, this, _1, _2));
+        std::bind(&ModalListPicker::WindowResizedSlot, this, ph::_1, ph::_2));
     AttachChild(m_lb_wnd);
     m_lb_wnd->InstallEventFilter(shared_from_this());
 

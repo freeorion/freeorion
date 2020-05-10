@@ -90,7 +90,9 @@ namespace GG {
         AttachChild(m_vscroll);
         AttachChild(m_content);
 
-        m_vscroll->ScrolledSignal.connect(boost::bind(&ScrollPanel::OnScrolled, this, _1, _2, _3, _4));
+        namespace ph = std::placeholders;
+
+        m_vscroll->ScrolledSignal.connect(std::bind(&ScrollPanel::OnScrolled, this, ph::_1, ph::_2, ph::_3, ph::_4));
 
         DoLayout();
     }
