@@ -1047,8 +1047,7 @@ void MapWnd::CompleteConstruction() {
     // clickable area to the adjacent edges of the toolbar containing it
     std::function<bool (const SettableInWindowCUIButton*, const GG::Pt&)> in_window_func =
         std::bind(&InRect, std::bind(&WndLeft, _1), std::bind(&WndTop, m_toolbar.get()),
-                             std::bind(&WndRight, _1), std::bind(&WndBottom, _1),
-                    _2);
+                  std::bind(&WndRight, _1), std::bind(&WndBottom, _1), _2);
     // Menu button
     m_btn_menu = Wnd::Create<SettableInWindowCUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "menu.png")),
@@ -1063,9 +1062,8 @@ void MapWnd::CompleteConstruction() {
         UserString("MAP_BTN_MENU"), UserString("MAP_BTN_MENU_DESC")));
 
     in_window_func =
-        std::bind(&InRect, std::bind(&WndLeft, _1),   std::bind(&WndTop, m_toolbar.get()),
-                             std::bind(&WndRight, _1),  std::bind(&WndBottom, _1),
-                    _2);
+        std::bind(&InRect, std::bind(&WndLeft, _1), std::bind(&WndTop, m_toolbar.get()),
+                  std::bind(&WndRight, _1), std::bind(&WndBottom, _1), _2);
     // Encyclo"pedia" button
     m_btn_pedia = Wnd::Create<SettableInWindowCUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "pedia.png")),
@@ -1080,9 +1078,8 @@ void MapWnd::CompleteConstruction() {
         UserString("MAP_BTN_PEDIA"), UserString("MAP_BTN_PEDIA_DESC")));
 
     in_window_func =
-        std::bind(&InRect, std::bind(&WndLeft, _1),   std::bind(&WndTop, m_toolbar.get()),
-                             std::bind(&WndRight, _1),  std::bind(&WndBottom, _1),
-                    _2);
+        std::bind(&InRect, std::bind(&WndLeft, _1), std::bind(&WndTop, m_toolbar.get()),
+                  std::bind(&WndRight, _1), std::bind(&WndBottom, _1), _2);
     // Graphs button
     m_btn_graphs = Wnd::Create<SettableInWindowCUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "charts.png")),
@@ -1097,9 +1094,8 @@ void MapWnd::CompleteConstruction() {
         UserString("MAP_BTN_GRAPH"), UserString("MAP_BTN_GRAPH_DESC")));
 
     in_window_func =
-        std::bind(&InRect, std::bind(&WndLeft, _1),   std::bind(&WndTop, m_toolbar.get()),
-                             std::bind(&WndRight, _1),  std::bind(&WndBottom, _1),
-                    _2);
+        std::bind(&InRect, std::bind(&WndLeft, _1),  std::bind(&WndTop, m_toolbar.get()),
+                  std::bind(&WndRight, _1),  std::bind(&WndBottom, _1), _2);
     // Design button
     m_btn_design = Wnd::Create<SettableInWindowCUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "design.png")),
@@ -1114,9 +1110,8 @@ void MapWnd::CompleteConstruction() {
         UserString("MAP_BTN_DESIGN"), UserString("MAP_BTN_DESIGN_DESC")));
 
     in_window_func =
-        std::bind(&InRect, std::bind(&WndLeft, _1),   std::bind(&WndTop, m_toolbar.get()),
-                             std::bind(&WndRight, _1),  std::bind(&WndBottom, _1),
-                    _2);
+        std::bind(&InRect, std::bind(&WndLeft, _1), std::bind(&WndTop, m_toolbar.get()),
+                  std::bind(&WndRight, _1), std::bind(&WndBottom, _1), _2);
     // Production button
     m_btn_production = Wnd::Create<SettableInWindowCUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "production.png")),
@@ -1131,9 +1126,8 @@ void MapWnd::CompleteConstruction() {
         UserString("MAP_BTN_PRODUCTION"), UserString("MAP_BTN_PRODUCTION_DESC")));
 
     in_window_func =
-        std::bind(&InRect, std::bind(&WndLeft, _1),   std::bind(&WndTop, m_toolbar.get()),
-                             std::bind(&WndRight, _1),  std::bind(&WndBottom, _1),
-                    _2);
+        std::bind(&InRect, std::bind(&WndLeft, _1), std::bind(&WndTop, m_toolbar.get()),
+                  std::bind(&WndRight, _1), std::bind(&WndBottom, _1), _2);
     // Research button
     m_btn_research = Wnd::Create<SettableInWindowCUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "research.png")),
@@ -1148,9 +1142,8 @@ void MapWnd::CompleteConstruction() {
         UserString("MAP_BTN_RESEARCH"), UserString("MAP_BTN_RESEARCH_DESC")));
 
     in_window_func =
-        std::bind(&InRect, std::bind(&WndLeft, _1),   std::bind(&WndTop, m_toolbar.get()),
-                             std::bind(&WndRight, _1),  std::bind(&WndBottom, _1),
-                    _2);
+        std::bind(&InRect, std::bind(&WndLeft, _1), std::bind(&WndTop, m_toolbar.get()),
+                  std::bind(&WndRight, _1), std::bind(&WndBottom, _1), _2);
     // Objects button
     m_btn_objects = Wnd::Create<SettableInWindowCUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "objects.png")),
@@ -1165,9 +1158,8 @@ void MapWnd::CompleteConstruction() {
         UserString("MAP_BTN_OBJECTS"), UserString("MAP_BTN_OBJECTS_DESC")));
 
     in_window_func =
-        std::bind(&InRect, std::bind(&WndLeft, _1),   std::bind(&WndTop, m_toolbar.get()),
-                             std::bind(&WndRight, _1),  std::bind(&WndBottom, _1),
-                    _2);
+        std::bind(&InRect, std::bind(&WndLeft, _1), std::bind(&WndTop, m_toolbar.get()),
+                  std::bind(&WndRight, _1), std::bind(&WndBottom, _1), _2);
     // Empires button
     m_btn_empires = Wnd::Create<SettableInWindowCUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "empires.png")),
@@ -1182,9 +1174,8 @@ void MapWnd::CompleteConstruction() {
         UserString("MAP_BTN_EMPIRES"), UserString("MAP_BTN_EMPIRES_DESC")));
 
     in_window_func =
-        std::bind(&InRect, std::bind(&WndLeft, _1),  std::bind(&WndTop, m_toolbar.get()),
-                             std::bind(&WndRight, _1), std::bind(&WndBottom, _1),
-                    _2);
+        std::bind(&InRect, std::bind(&WndLeft, _1), std::bind(&WndTop, m_toolbar.get()),
+                  std::bind(&WndRight, _1), std::bind(&WndBottom, _1), _2);
     // SitRep button
     m_btn_siterep = Wnd::Create<SettableInWindowCUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "sitrep.png")),
@@ -1199,9 +1190,8 @@ void MapWnd::CompleteConstruction() {
         UserString("MAP_BTN_SITREP"), UserString("MAP_BTN_SITREP_DESC")));
 
     in_window_func =
-        std::bind(&InRect, std::bind(&WndLeft, _1),  std::bind(&WndTop, m_toolbar.get()),
-                             std::bind(&WndRight, _1), std::bind(&WndBottom, _1),
-                    _2);
+        std::bind(&InRect, std::bind(&WndLeft, _1), std::bind(&WndTop, m_toolbar.get()),
+                  std::bind(&WndRight, _1), std::bind(&WndBottom, _1), _2);
     // Messages button
     m_btn_messages = Wnd::Create<SettableInWindowCUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "messages.png")),
@@ -1216,9 +1206,8 @@ void MapWnd::CompleteConstruction() {
         UserString("MAP_BTN_MESSAGES"), UserString("MAP_BTN_MESSAGES_DESC")));
 
     in_window_func =
-        std::bind(&InRect, std::bind(&WndLeft, _1),  std::bind(&WndTop, m_toolbar.get()),
-                             std::bind(&WndRight, _1), std::bind(&WndBottom, _1),
-                    _2);
+        std::bind(&InRect, std::bind(&WndLeft, _1), std::bind(&WndTop, m_toolbar.get()),
+                  std::bind(&WndRight, _1), std::bind(&WndBottom, _1), _2);
     // Moderator button
     m_btn_moderator = Wnd::Create<SettableInWindowCUIButton>(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "moderator.png")),
