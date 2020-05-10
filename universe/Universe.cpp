@@ -36,6 +36,7 @@
 #include "Encyclopedia.h"
 
 #include <boost/property_map/property_map.hpp>
+#include <boost/algorithm/string.hpp>
 #if BOOST_VERSION >= 106600
 #  include <boost/asio/thread_pool.hpp>
 #  include <boost/asio/post.hpp>
@@ -929,8 +930,8 @@ namespace {
         auto message{"StoreTargetsAndCausesOfEffectsGroup < " + std::to_string(n) + " >"
                      + "  cause type: " + boost::lexical_cast<std::string>(effect_cause_type)
                      + "  specific cause: " + specific_cause_name
-                     + (scope_is_just_source ? "  [Scope = Source]" : "")
-                     + "  sources: " + std::to_string(source_objects.size())};
+                     + "  sources: " + std::to_string(source_objects.size())
+                     + "  scope: " + boost::algorithm::erase_all_copy(effects_group->Scope()->Dump(), "\n")};
 
         ScopedTimer timer(message, std::chrono::milliseconds(20));
 
