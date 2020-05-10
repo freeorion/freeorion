@@ -46,7 +46,7 @@ CUI_MinRestoreButton::CUI_MinRestoreButton() :
     m_mode(Mode::MINIMIZE)
 {
     LeftClickedSignal.connect(
-        boost::bind(&CUI_MinRestoreButton::Toggle, this));
+        std::bind(&CUI_MinRestoreButton::Toggle, this));
 }
 
 void CUI_MinRestoreButton::Render() {
@@ -192,7 +192,7 @@ void CUIWnd::Init() {
     if (!m_config_name.empty()) {
         LoadOptions();
         HumanClientApp::GetApp()->FullscreenSwitchSignal.connect(
-            boost::bind(&CUIWnd::LoadOptions, this));
+            std::bind(&CUIWnd::LoadOptions, this));
     }
 
     // User-dragable windows recalculate their position only when told to (e.g.
@@ -201,10 +201,10 @@ void CUIWnd::Init() {
     // every resize event.
     if (Dragable() || m_resizable)
         HumanClientApp::GetApp()->RepositionWindowsSignal.connect(
-            boost::bind(&CUIWnd::ResetDefaultPosition, this));
+            std::bind(&CUIWnd::ResetDefaultPosition, this));
     else
         HumanClientApp::GetApp()->WindowResizedSignal.connect(
-            boost::bind(&CUIWnd::ResetDefaultPosition, this));
+            std::bind(&CUIWnd::ResetDefaultPosition, this));
 }
 
 void CUIWnd::InitSizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -463,7 +463,7 @@ void CUIWnd::InitButtons() {
             &PlayCloseSound);
         m_close_button->Resize(GG::Pt(GG::X(ClientUI::TitlePts()), GG::Y(ClientUI::TitlePts())));
         m_close_button->LeftClickedSignal.connect(
-            boost::bind(&CUIWnd::CloseClicked, this));
+            std::bind(&CUIWnd::CloseClicked, this));
         AttachChild(m_close_button);
         m_close_button->NonClientChild(true);
     }
@@ -473,7 +473,7 @@ void CUIWnd::InitButtons() {
         m_minimize_button = Wnd::Create<CUI_MinRestoreButton>();
         m_minimize_button->Resize(GG::Pt(GG::X(ClientUI::TitlePts()), GG::Y(ClientUI::TitlePts())));
         m_minimize_button->LeftClickedSignal.connect(
-            boost::bind(&CUIWnd::MinimizeClicked, this));
+            std::bind(&CUIWnd::MinimizeClicked, this));
         AttachChild(m_minimize_button);
         m_minimize_button->NonClientChild(true);
     }
@@ -483,7 +483,7 @@ void CUIWnd::InitButtons() {
         m_pin_button = Wnd::Create<CUI_PinButton>();
         m_pin_button->Resize(GG::Pt(GG::X(ClientUI::TitlePts()), GG::Y(ClientUI::TitlePts())));
         m_pin_button->LeftClickedSignal.connect(
-            boost::bind(&CUIWnd::PinClicked, this));
+            std::bind(&CUIWnd::PinClicked, this));
         AttachChild(m_pin_button);
         m_pin_button->NonClientChild(true);
     }
@@ -960,9 +960,9 @@ void CUIEditWnd::CompleteConstruction() {
     AttachChild(m_cancel_bn);
 
     m_ok_bn->LeftClickedSignal.connect(
-        boost::bind(&CUIEditWnd::OkClicked, this));
+        std::bind(&CUIEditWnd::OkClicked, this));
     m_cancel_bn->LeftClickedSignal.connect(
-        boost::bind(&CUIWnd::CloseClicked, static_cast<CUIWnd*>(this)));
+        std::bind(&CUIWnd::CloseClicked, static_cast<CUIWnd*>(this)));
 
     m_edit->SelectAll();
 }

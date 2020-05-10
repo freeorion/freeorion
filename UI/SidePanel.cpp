@@ -977,14 +977,15 @@ void SidePanel::PlanetPanel::CompleteConstruction() {
     m_planet_name->Resize(m_planet_name->MinUsableSize());
     AttachChild(m_planet_name);
 
+    using std::placeholders::_1;
 
     // focus-selection droplist
     m_focus_drop = GG::Wnd::Create<CUIDropDownList>(6);
     AttachChild(m_focus_drop);
     m_focus_drop->SelChangedSignal.connect(
-        boost::bind(&SidePanel::PlanetPanel::FocusDropListSelectionChangedSlot, this, _1));
+        std::bind(&SidePanel::PlanetPanel::FocusDropListSelectionChangedSlot, this, _1));
     this->FocusChangedSignal.connect(
-        boost::bind(&SidePanel::PlanetPanel::SetFocus, this, _1));
+        std::bind(&SidePanel::PlanetPanel::SetFocus, this, _1));
     m_focus_drop->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_focus_drop->SetStyle(GG::LIST_NOSORT | GG::LIST_SINGLESEL);
     m_focus_drop->ManuallyManageColProps();
@@ -999,22 +1000,22 @@ void SidePanel::PlanetPanel::CompleteConstruction() {
     m_population_panel = GG::Wnd::Create<PopulationPanel>(panel_width, m_planet_id);
     AttachChild(m_population_panel);
     m_population_panel->ExpandCollapseSignal.connect(
-        boost::bind(&SidePanel::PlanetPanel::RequirePreRender, this));
+        std::bind(&SidePanel::PlanetPanel::RequirePreRender, this));
 
     m_resource_panel = GG::Wnd::Create<ResourcePanel>(panel_width, m_planet_id);
     AttachChild(m_resource_panel);
     m_resource_panel->ExpandCollapseSignal.connect(
-        boost::bind(&SidePanel::PlanetPanel::RequirePreRender, this));
+        std::bind(&SidePanel::PlanetPanel::RequirePreRender, this));
 
     m_military_panel = GG::Wnd::Create<MilitaryPanel>(panel_width, m_planet_id);
     AttachChild(m_military_panel);
     m_military_panel->ExpandCollapseSignal.connect(
-        boost::bind(&SidePanel::PlanetPanel::RequirePreRender, this));
+        std::bind(&SidePanel::PlanetPanel::RequirePreRender, this));
 
     m_buildings_panel = GG::Wnd::Create<BuildingsPanel>(panel_width, 4, m_planet_id);
     AttachChild(m_buildings_panel);
     m_buildings_panel->ExpandCollapseSignal.connect(
-        boost::bind(&SidePanel::PlanetPanel::RequirePreRender, this));
+        std::bind(&SidePanel::PlanetPanel::RequirePreRender, this));
     m_buildings_panel->BuildingRightClickedSignal.connect(
         BuildingRightClickedSignal);
 
@@ -1028,15 +1029,15 @@ void SidePanel::PlanetPanel::CompleteConstruction() {
 
     m_colonize_button = Wnd::Create<CUIButton>(UserString("PL_COLONIZE"));
     m_colonize_button->LeftClickedSignal.connect(
-        boost::bind(&SidePanel::PlanetPanel::ClickColonize, this));
+        std::bind(&SidePanel::PlanetPanel::ClickColonize, this));
 
     m_invade_button   = Wnd::Create<CUIButton>(UserString("PL_INVADE"));
     m_invade_button->LeftClickedSignal.connect(
-        boost::bind(&SidePanel::PlanetPanel::ClickInvade, this));
+        std::bind(&SidePanel::PlanetPanel::ClickInvade, this));
 
     m_bombard_button  = Wnd::Create<CUIButton>(UserString("PL_BOMBARD"));
     m_bombard_button->LeftClickedSignal.connect(
-        boost::bind(&SidePanel::PlanetPanel::ClickBombard, this));
+        std::bind(&SidePanel::PlanetPanel::ClickBombard, this));
 
     SetChildClippingMode(ClipToWindow);
 
@@ -1995,7 +1996,7 @@ void SidePanel::PlanetPanel::Refresh() {
     // which should be connected to SidePanel::PlanetPanel::DoLayout
 
     m_planet_connection = planet->StateChangedSignal.connect(
-        boost::bind(&SidePanel::PlanetPanel::Refresh, this), boost::signals2::at_front);
+        std::bind(&SidePanel::PlanetPanel::Refresh, this), boost::signals2::at_front);
 }
 
 void SidePanel::PlanetPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -2505,8 +2506,11 @@ SidePanel::PlanetPanelContainer::PlanetPanelContainer() :
 {
     SetName("PlanetPanelContainer");
     SetChildClippingMode(ClipToClient);
+
+    namespace ph = std::placeholders;
+
     m_vscroll->ScrolledSignal.connect(
-        boost::bind(&SidePanel::PlanetPanelContainer::VScroll, this, _1, _2, _3, _4));
+        std::bind(&SidePanel::PlanetPanelContainer::VScroll, this, ph::_1, ph::_2, ph::_3, ph::_4));
     RequirePreRender();
 }
 
@@ -2604,7 +2608,7 @@ void SidePanel::PlanetPanelContainer::SetPlanets(const std::vector<int>& planet_
         m_planet_panels.back()->BuildingRightClickedSignal.connect(
             BuildingRightClickedSignal);
         m_planet_panels.back()->ResizedSignal.connect(
-            boost::bind(&SidePanel::PlanetPanelContainer::RequirePreRender, this));
+            std::bind(&SidePanel::PlanetPanelContainer::RequirePreRender, this));
         m_planet_panels.back()->OrderButtonChangedSignal.connect(
             [this](int excluded_planet_id) {
                 RefreshAllPlanetPanels(excluded_planet_id, true);
@@ -2980,18 +2984,20 @@ void SidePanel::CompleteConstruction() {
     m_system_resource_summary = GG::Wnd::Create<MultiIconValueIndicator>(Width() - EDGE_PAD*2);
     AttachChild(m_system_resource_summary);
 
+    using std::placeholders::_1;
+
     m_system_name->DropDownOpenedSignal.connect(
-        boost::bind(&SidePanel::SystemNameDropListOpenedSlot, this, _1));
+        std::bind(&SidePanel::SystemNameDropListOpenedSlot, this, _1));
     m_system_name->SelChangedSignal.connect(
-        boost::bind(&SidePanel::SystemSelectionChangedSlot, this, _1));
+        std::bind(&SidePanel::SystemSelectionChangedSlot, this, _1));
     m_system_name->SelChangedWhileDroppedSignal.connect(
-        boost::bind(&SidePanel::SystemSelectionChangedSlot, this, _1));
+        std::bind(&SidePanel::SystemSelectionChangedSlot, this, _1));
     m_button_prev->LeftClickedSignal.connect(
-        boost::bind(&SidePanel::PrevButtonClicked, this));
+        std::bind(&SidePanel::PrevButtonClicked, this));
     m_button_next->LeftClickedSignal.connect(
-        boost::bind(&SidePanel::NextButtonClicked, this));
+        std::bind(&SidePanel::NextButtonClicked, this));
     m_planet_panel_container->PlanetClickedSignal.connect(
-        boost::bind(&SidePanel::PlanetClickedSlot, this, _1));
+        std::bind(&SidePanel::PlanetClickedSlot, this, _1));
     m_planet_panel_container->PlanetLeftDoubleClickedSignal.connect(
         PlanetDoubleClickedSignal);
     m_planet_panel_container->PlanetRightClickedSignal.connect(

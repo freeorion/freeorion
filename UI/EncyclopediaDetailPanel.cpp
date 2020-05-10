@@ -622,11 +622,11 @@ void EncyclopediaDetailPanel::CompleteConstruction() {
     m_next_button->Disable();
 
     m_index_button->LeftClickedSignal.connect(
-        boost::bind(&EncyclopediaDetailPanel::OnIndex, this));
+        std::bind(&EncyclopediaDetailPanel::OnIndex, this));
     m_back_button->LeftClickedSignal.connect(
-        boost::bind(&EncyclopediaDetailPanel::OnBack, this));
+        std::bind(&EncyclopediaDetailPanel::OnBack, this));
     m_next_button->LeftClickedSignal.connect(
-        boost::bind(&EncyclopediaDetailPanel::OnNext, this));
+        std::bind(&EncyclopediaDetailPanel::OnNext, this));
 
     m_description_rich_text = GG::Wnd::Create<GG::RichText>(
         GG::X(0), GG::Y(0), ClientWidth(), ClientHeight(), "",
@@ -636,17 +636,19 @@ void EncyclopediaDetailPanel::CompleteConstruction() {
     m_scroll_panel = GG::Wnd::Create<GG::ScrollPanel>(GG::X(0), GG::Y(0), ClientWidth(),
                                                       ClientHeight(), m_description_rich_text);
 
+    namespace ph = std::placeholders;
+
     // Copy default block factory.
     std::shared_ptr<GG::RichText::BLOCK_FACTORY_MAP>
         factory_map(new GG::RichText::BLOCK_FACTORY_MAP(*GG::RichText::DefaultBlockFactoryMap()));
     auto factory = new CUILinkTextBlock::Factory();
     // Wire this factory to produce links that talk to us.
     factory->LinkClickedSignal.connect(
-        boost::bind(&EncyclopediaDetailPanel::HandleLinkClick, this, _1, _2));
+        std::bind(&EncyclopediaDetailPanel::HandleLinkClick, this, ph::_1, ph::_2));
     factory->LinkDoubleClickedSignal.connect(
-        boost::bind(&EncyclopediaDetailPanel::HandleLinkDoubleClick, this, _1, _2));
+        std::bind(&EncyclopediaDetailPanel::HandleLinkDoubleClick, this, ph::_1, ph::_2));
     factory->LinkRightClickedSignal.connect(
-        boost::bind(&EncyclopediaDetailPanel::HandleLinkDoubleClick, this, _1, _2));
+        std::bind(&EncyclopediaDetailPanel::HandleLinkDoubleClick, this, ph::_1, ph::_2));
     (*factory_map)[GG::RichText::PLAINTEXT_TAG] =
         std::shared_ptr<GG::RichText::IBlockControlFactory>(factory);
     m_description_rich_text->SetBlockFactoryMap(factory_map);
@@ -661,7 +663,7 @@ void EncyclopediaDetailPanel::CompleteConstruction() {
     auto search_edit = GG::Wnd::Create<SearchEdit>();
     m_search_edit = search_edit;
     search_edit->TextEnteredSignal.connect(
-        boost::bind(&EncyclopediaDetailPanel::HandleSearchTextEntered, this));
+        std::bind(&EncyclopediaDetailPanel::HandleSearchTextEntered, this));
 
     AttachChild(m_search_edit);
     AttachChild(m_graph);

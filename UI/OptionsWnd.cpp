@@ -265,8 +265,10 @@ namespace {
             m_hscroll =  GG::Wnd::Create<CUIScroll>(GG::HORIZONTAL);
             AttachChild(m_hscroll);
 
+            namespace ph = std::placeholders;
+
             m_hscroll->ScrolledSignal.connect(
-                boost::bind(&FontTextureWnd::ScrolledSlot, this, _1, _2, _3, _4));
+                std::bind(&FontTextureWnd::ScrolledSlot, this, ph::_1, ph::_2, ph::_3, ph::_4));
             DoLayout();
         }
 
@@ -793,7 +795,7 @@ void OptionsWnd::CompleteConstruction() {
 
     // Connect the done and cancel button
     m_done_button->LeftClickedSignal.connect(
-        boost::bind(&OptionsWnd::DoneClicked, this));
+        std::bind(&OptionsWnd::DoneClicked, this));
 }
 
 void OptionsWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -915,9 +917,9 @@ void OptionsWnd::HotkeyOption(GG::ListBox* page, int indentation_level, const st
                                                layout, indentation_level);
 
     button->LeftClickedSignal.connect(
-        boost::bind(HandleSetHotkeyOption, hotkey_name, button.get()));
+        std::bind(HandleSetHotkeyOption, hotkey_name, button.get()));
     button->RightClickedSignal.connect(
-        boost::bind(HandleResetHotkeyOption, hotkey_name, button.get()));
+        std::bind(HandleResetHotkeyOption, hotkey_name, button.get()));
 
     page->Insert(row);
 }
@@ -1015,10 +1017,13 @@ void OptionsWnd::MusicVolumeOption(GG::ListBox* page, int indentation_level, Sou
     button->SetBrowseText(UserString(GetOptionsDB().GetDescription("audio.music.enabled")));
     slider->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     slider->SetBrowseText(UserString(GetOptionsDB().GetDescription("audio.music.volume")));
+
+    namespace ph = std::placeholders;
+
     button->CheckedSignal.connect(
-        boost::bind(&OptionsWnd::SoundOptionsFeedback::MusicClicked, &fb, _1));
+        std::bind(&OptionsWnd::SoundOptionsFeedback::MusicClicked, &fb, ph::_1));
     slider->SlidSignal.connect(
-        boost::bind(&OptionsWnd::SoundOptionsFeedback::MusicVolumeSlid, &fb, _1, _2, _3));
+        std::bind(&OptionsWnd::SoundOptionsFeedback::MusicVolumeSlid, &fb, ph::_1, ph::_2, ph::_3));
     fb.SetMusicButton(std::move(button));
 }
 
@@ -1044,10 +1049,13 @@ void OptionsWnd::VolumeOption(GG::ListBox* page, int indentation_level, const st
     button->SetBrowseText(UserString(GetOptionsDB().GetDescription(toggle_option_name)));
     slider->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     slider->SetBrowseText(UserString(GetOptionsDB().GetDescription(volume_option_name)));
+
+    namespace ph = std::placeholders;
+
     button->CheckedSignal.connect(
-        boost::bind(&OptionsWnd::SoundOptionsFeedback::SoundEffectsEnableClicked, &fb, _1));
+        std::bind(&OptionsWnd::SoundOptionsFeedback::SoundEffectsEnableClicked, &fb, ph::_1));
     slider->SlidAndStoppedSignal.connect(
-        boost::bind(&OptionsWnd::SoundOptionsFeedback::UISoundsVolumeSlid, &fb, _1, _2, _3));
+        std::bind(&OptionsWnd::SoundOptionsFeedback::UISoundsVolumeSlid, &fb, ph::_1, ph::_2, ph::_3));
     fb.SetEffectsButton(std::move(button));
 }
 
@@ -1278,7 +1286,7 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
                                           apply_button, indentation_level);
     page->Insert(row);
     apply_button->LeftClickedSignal.connect(
-        boost::bind(&HumanClientApp::Reinitialize, HumanClientApp::GetApp()));
+        std::bind(&HumanClientApp::Reinitialize, HumanClientApp::GetApp()));
 
     drop_list->SelChangedSignal.connect(
         [drop_list](GG::ListBox::iterator it) {

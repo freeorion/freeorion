@@ -36,24 +36,26 @@ public:
         m_tabs->AddWnd(m_log_scroller, UserString("COMBAT_LOG"));
         m_wnd.AttachChild(m_tabs);
 
+        namespace ph = std::placeholders;
+
         m_log->LinkClickedSignal.connect(
-            boost::bind(&Impl::HandleLinkClick, this, _1, _2));
+            std::bind(&Impl::HandleLinkClick, this, ph::_1, ph::_2));
         m_log->LinkDoubleClickedSignal.connect(
-            boost::bind(&Impl::HandleLinkDoubleClick, this, _1, _2));
+            std::bind(&Impl::HandleLinkDoubleClick, this, ph::_1, ph::_2));
         m_log->LinkRightClickedSignal.connect(
-            boost::bind(&Impl::HandleLinkDoubleClick, this, _1, _2));
+            std::bind(&Impl::HandleLinkDoubleClick, this, ph::_1, ph::_2));
         m_log->WndChangedSignal.connect(
-            boost::bind(&Impl::HandleWindowChanged, this));
+            std::bind(&Impl::HandleWindowChanged, this));
 
         // Catch the window-changed signal from the tab bar so that layout
         // updates can be performed for the newly-selected window.
         m_tabs->TabChangedSignal.connect(
-            boost::bind(&Impl::HandleTabChanged, this, _1));
+            std::bind(&Impl::HandleTabChanged, this, ph::_1));
 
         // This can be called whether m_graphical is the selected window or
         // not, but it will still only use the min size of the selected window.
         m_graphical->MinSizeChangedSignal.connect(
-            boost::bind(&Impl::UpdateMinSize, this));
+            std::bind(&Impl::UpdateMinSize, this));
     }
 
     void SetLog(int log_id) {

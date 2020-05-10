@@ -258,9 +258,9 @@ namespace {
         AccordionPanel::SetInteriorColor(ClientUI::CtrlColor());
 
         m_expand_button->LeftPressedSignal.connect(
-            boost::bind(&CombatLogAccordionPanel::ToggleExpansion, this));
+            std::bind(&CombatLogAccordionPanel::ToggleExpansion, this));
         this->ExpandCollapseSignal.connect(
-            boost::bind(&CombatLogWnd::Impl::HandleWndChanged, &log));
+            std::bind(&CombatLogWnd::Impl::HandleWndChanged, &log));
 
         SetBorderMargin(BORDER_MARGIN);
 
@@ -337,9 +337,9 @@ namespace {
         AccordionPanel::SetInteriorColor(ClientUI::CtrlColor());
 
         m_expand_button->LeftPressedSignal.connect(
-            boost::bind(&EmpireForcesAccordionPanel::ToggleExpansion, this));
+            std::bind(&EmpireForcesAccordionPanel::ToggleExpansion, this));
         this->ExpandCollapseSignal.connect(
-            boost::bind(&CombatLogWnd::Impl::HandleWndChanged, &log));
+            std::bind(&CombatLogWnd::Impl::HandleWndChanged, &log));
 
         SetBorderMargin(BORDER_MARGIN);
 
@@ -434,14 +434,16 @@ namespace {
             // Register for signals that might bring the text into view
             if (const auto* log = FindParentOfType<CombatLogWnd>(&parent)) {
                 m_signals.push_back(log->WndChangedSignal.connect(
-                    boost::bind(&LazyScrollerLinkText::HandleMaybeVisible, this)));
+                    std::bind(&LazyScrollerLinkText::HandleMaybeVisible, this)));
             }
+
+            namespace ph = std::placeholders;
 
             if (const auto* scroll_panel = FindParentOfType<GG::ScrollPanel>(&parent)) {
                 const auto* scroll = scroll_panel->GetScroll();
                 m_signals.push_back(scroll->ScrolledAndStoppedSignal.connect(
-                    boost::bind(&LazyScrollerLinkText::HandleScrolledAndStopped,
-                                this, _1, _2, _3, _4)));
+                    std::bind(&LazyScrollerLinkText::HandleScrolledAndStopped,
+                              this, ph::_1, ph::_2, ph::_3, ph::_4)));
             }
 
             // Parent doesn't contain any of the expected parents so just
@@ -508,7 +510,7 @@ std::shared_ptr<LinkText> CombatLogWnd::Impl::DecorateLinkText(const std::string
     links->LinkClickedSignal.connect(m_wnd.LinkClickedSignal);
     links->LinkDoubleClickedSignal.connect(m_wnd.LinkDoubleClickedSignal);
     links->LinkRightClickedSignal.connect(m_wnd.LinkRightClickedSignal);
-    links->ChangedSignal.connect(boost::bind(&CombatLogWnd::Impl::HandleWndChanged, this));
+    links->ChangedSignal.connect(std::bind(&CombatLogWnd::Impl::HandleWndChanged, this));
 
     return links;
 }

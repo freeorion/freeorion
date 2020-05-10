@@ -603,7 +603,7 @@ public:
         std::set<int> dummy = std::set<int>();
         Update(1.0, dummy, INVALID_OBJECT_ID);
         GetOptionsDB().OptionChangedSignal("ui.map.scale.legend.shown").connect(
-            boost::bind(&MapScaleLine::UpdateEnabled, this));
+            std::bind(&MapScaleLine::UpdateEnabled, this));
         UpdateEnabled();
     }
 
@@ -975,8 +975,11 @@ void MapWnd::CompleteConstruction() {
 
     SetName("MapWnd");
 
+    using std::placeholders::_1;
+    using std::placeholders::_2;
+
     GetUniverse().UniverseObjectDeleteSignal.connect(
-        boost::bind(&MapWnd::UniverseObjectDeleted, this, _1));
+        std::bind(&MapWnd::UniverseObjectDeleted, this, _1));
 
     // toolbar
     m_toolbar = GG::Wnd::Create<CUIToolBar>();
@@ -1003,7 +1006,7 @@ void MapWnd::CompleteConstruction() {
                                         unready_button_longest_reasonable_text);
     m_btn_turn->Resize(m_btn_turn->MinUsableSize());
     m_btn_turn->LeftClickedSignal.connect(
-        boost::bind(&MapWnd::EndTurn, this));
+        std::bind(&MapWnd::EndTurn, this));
     m_btn_turn->LeftClickedSignal.connect(
         &PlayTurnButtonClickSound);
     RefreshTurnButtonTooltip();
@@ -1017,7 +1020,7 @@ void MapWnd::CompleteConstruction() {
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "manual_turn_mouseover.png")));
 
     m_btn_auto_turn->LeftClickedSignal.connect(
-        boost::bind(&MapWnd::ToggleAutoEndTurn, this));
+        std::bind(&MapWnd::ToggleAutoEndTurn, this));
     m_btn_auto_turn->Resize(GG::Pt(GG::X(24), GG::Y(24)));
     m_btn_auto_turn->SetMinSize(GG::Pt(GG::X(24), GG::Y(24)));
     ToggleAutoEndTurn();    // toggle twice to set textures without changing default setting state
@@ -1043,8 +1046,8 @@ void MapWnd::CompleteConstruction() {
     // create custom InWindow function for Menu button that extends its
     // clickable area to the adjacent edges of the toolbar containing it
     std::function<bool (const SettableInWindowCUIButton*, const GG::Pt&)> in_window_func =
-        boost::bind(&InRect, boost::bind(&WndLeft, _1), boost::bind(&WndTop, m_toolbar.get()),
-                             boost::bind(&WndRight, _1), boost::bind(&WndBottom, _1),
+        std::bind(&InRect, std::bind(&WndLeft, _1), std::bind(&WndTop, m_toolbar.get()),
+                             std::bind(&WndRight, _1), std::bind(&WndBottom, _1),
                     _2);
     // Menu button
     m_btn_menu = Wnd::Create<SettableInWindowCUIButton>(
@@ -1054,14 +1057,14 @@ void MapWnd::CompleteConstruction() {
         in_window_func);
     m_btn_menu->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     m_btn_menu->LeftClickedSignal.connect(
-        boost::bind(&MapWnd::ShowMenu, this));
+        std::bind(&MapWnd::ShowMenu, this));
     m_btn_menu->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_btn_menu->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
         UserString("MAP_BTN_MENU"), UserString("MAP_BTN_MENU_DESC")));
 
     in_window_func =
-        boost::bind(&InRect, boost::bind(&WndLeft, _1),   boost::bind(&WndTop, m_toolbar.get()),
-                             boost::bind(&WndRight, _1),  boost::bind(&WndBottom, _1),
+        std::bind(&InRect, std::bind(&WndLeft, _1),   std::bind(&WndTop, m_toolbar.get()),
+                             std::bind(&WndRight, _1),  std::bind(&WndBottom, _1),
                     _2);
     // Encyclo"pedia" button
     m_btn_pedia = Wnd::Create<SettableInWindowCUIButton>(
@@ -1071,14 +1074,14 @@ void MapWnd::CompleteConstruction() {
         in_window_func);
     m_btn_pedia->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     m_btn_pedia->LeftClickedSignal.connect(
-        boost::bind(&MapWnd::TogglePedia, this));
+        std::bind(&MapWnd::TogglePedia, this));
     m_btn_pedia->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_btn_pedia->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
         UserString("MAP_BTN_PEDIA"), UserString("MAP_BTN_PEDIA_DESC")));
 
     in_window_func =
-        boost::bind(&InRect, boost::bind(&WndLeft, _1),   boost::bind(&WndTop, m_toolbar.get()),
-                             boost::bind(&WndRight, _1),  boost::bind(&WndBottom, _1),
+        std::bind(&InRect, std::bind(&WndLeft, _1),   std::bind(&WndTop, m_toolbar.get()),
+                             std::bind(&WndRight, _1),  std::bind(&WndBottom, _1),
                     _2);
     // Graphs button
     m_btn_graphs = Wnd::Create<SettableInWindowCUIButton>(
@@ -1088,14 +1091,14 @@ void MapWnd::CompleteConstruction() {
         in_window_func);
     m_btn_graphs->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     m_btn_graphs->LeftClickedSignal.connect(
-        boost::bind(&MapWnd::ShowGraphs, this));
+        std::bind(&MapWnd::ShowGraphs, this));
     m_btn_graphs->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_btn_graphs->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
         UserString("MAP_BTN_GRAPH"), UserString("MAP_BTN_GRAPH_DESC")));
 
     in_window_func =
-        boost::bind(&InRect, boost::bind(&WndLeft, _1),   boost::bind(&WndTop, m_toolbar.get()),
-                             boost::bind(&WndRight, _1),  boost::bind(&WndBottom, _1),
+        std::bind(&InRect, std::bind(&WndLeft, _1),   std::bind(&WndTop, m_toolbar.get()),
+                             std::bind(&WndRight, _1),  std::bind(&WndBottom, _1),
                     _2);
     // Design button
     m_btn_design = Wnd::Create<SettableInWindowCUIButton>(
@@ -1105,14 +1108,14 @@ void MapWnd::CompleteConstruction() {
         in_window_func);
     m_btn_design->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     m_btn_design->LeftClickedSignal.connect(
-        boost::bind(&MapWnd::ToggleDesign, this));
+        std::bind(&MapWnd::ToggleDesign, this));
     m_btn_design->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_btn_design->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
         UserString("MAP_BTN_DESIGN"), UserString("MAP_BTN_DESIGN_DESC")));
 
     in_window_func =
-        boost::bind(&InRect, boost::bind(&WndLeft, _1),   boost::bind(&WndTop, m_toolbar.get()),
-                             boost::bind(&WndRight, _1),  boost::bind(&WndBottom, _1),
+        std::bind(&InRect, std::bind(&WndLeft, _1),   std::bind(&WndTop, m_toolbar.get()),
+                             std::bind(&WndRight, _1),  std::bind(&WndBottom, _1),
                     _2);
     // Production button
     m_btn_production = Wnd::Create<SettableInWindowCUIButton>(
@@ -1122,14 +1125,14 @@ void MapWnd::CompleteConstruction() {
         in_window_func);
     m_btn_production->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     m_btn_production->LeftClickedSignal.connect(
-        boost::bind(&MapWnd::ToggleProduction, this));
+        std::bind(&MapWnd::ToggleProduction, this));
     m_btn_production->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_btn_production->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
         UserString("MAP_BTN_PRODUCTION"), UserString("MAP_BTN_PRODUCTION_DESC")));
 
     in_window_func =
-        boost::bind(&InRect, boost::bind(&WndLeft, _1),   boost::bind(&WndTop, m_toolbar.get()),
-                             boost::bind(&WndRight, _1),  boost::bind(&WndBottom, _1),
+        std::bind(&InRect, std::bind(&WndLeft, _1),   std::bind(&WndTop, m_toolbar.get()),
+                             std::bind(&WndRight, _1),  std::bind(&WndBottom, _1),
                     _2);
     // Research button
     m_btn_research = Wnd::Create<SettableInWindowCUIButton>(
@@ -1139,14 +1142,14 @@ void MapWnd::CompleteConstruction() {
         in_window_func);
     m_btn_research->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     m_btn_research->LeftClickedSignal.connect(
-        boost::bind(&MapWnd::ToggleResearch, this));
+        std::bind(&MapWnd::ToggleResearch, this));
     m_btn_research->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_btn_research->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
         UserString("MAP_BTN_RESEARCH"), UserString("MAP_BTN_RESEARCH_DESC")));
 
     in_window_func =
-        boost::bind(&InRect, boost::bind(&WndLeft, _1),   boost::bind(&WndTop, m_toolbar.get()),
-                             boost::bind(&WndRight, _1),  boost::bind(&WndBottom, _1),
+        std::bind(&InRect, std::bind(&WndLeft, _1),   std::bind(&WndTop, m_toolbar.get()),
+                             std::bind(&WndRight, _1),  std::bind(&WndBottom, _1),
                     _2);
     // Objects button
     m_btn_objects = Wnd::Create<SettableInWindowCUIButton>(
@@ -1156,14 +1159,14 @@ void MapWnd::CompleteConstruction() {
         in_window_func);
     m_btn_objects->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     m_btn_objects->LeftClickedSignal.connect(
-        boost::bind(&MapWnd::ToggleObjects, this));
+        std::bind(&MapWnd::ToggleObjects, this));
     m_btn_objects->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_btn_objects->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
         UserString("MAP_BTN_OBJECTS"), UserString("MAP_BTN_OBJECTS_DESC")));
 
     in_window_func =
-        boost::bind(&InRect, boost::bind(&WndLeft, _1),   boost::bind(&WndTop, m_toolbar.get()),
-                             boost::bind(&WndRight, _1),  boost::bind(&WndBottom, _1),
+        std::bind(&InRect, std::bind(&WndLeft, _1),   std::bind(&WndTop, m_toolbar.get()),
+                             std::bind(&WndRight, _1),  std::bind(&WndBottom, _1),
                     _2);
     // Empires button
     m_btn_empires = Wnd::Create<SettableInWindowCUIButton>(
@@ -1173,14 +1176,14 @@ void MapWnd::CompleteConstruction() {
         in_window_func);
     m_btn_empires->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     m_btn_empires->LeftClickedSignal.connect(
-        boost::bind(&MapWnd::ToggleEmpires, this));
+        std::bind(&MapWnd::ToggleEmpires, this));
     m_btn_empires->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_btn_empires->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
         UserString("MAP_BTN_EMPIRES"), UserString("MAP_BTN_EMPIRES_DESC")));
 
     in_window_func =
-        boost::bind(&InRect, boost::bind(&WndLeft, _1),  boost::bind(&WndTop, m_toolbar.get()),
-                             boost::bind(&WndRight, _1), boost::bind(&WndBottom, _1),
+        std::bind(&InRect, std::bind(&WndLeft, _1),  std::bind(&WndTop, m_toolbar.get()),
+                             std::bind(&WndRight, _1), std::bind(&WndBottom, _1),
                     _2);
     // SitRep button
     m_btn_siterep = Wnd::Create<SettableInWindowCUIButton>(
@@ -1190,14 +1193,14 @@ void MapWnd::CompleteConstruction() {
         in_window_func);
     m_btn_siterep->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     m_btn_siterep->LeftClickedSignal.connect(
-        boost::bind(&MapWnd::ToggleSitRep, this));
+        std::bind(&MapWnd::ToggleSitRep, this));
     m_btn_siterep->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_btn_siterep->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
         UserString("MAP_BTN_SITREP"), UserString("MAP_BTN_SITREP_DESC")));
 
     in_window_func =
-        boost::bind(&InRect, boost::bind(&WndLeft, _1),  boost::bind(&WndTop, m_toolbar.get()),
-                             boost::bind(&WndRight, _1), boost::bind(&WndBottom, _1),
+        std::bind(&InRect, std::bind(&WndLeft, _1),  std::bind(&WndTop, m_toolbar.get()),
+                             std::bind(&WndRight, _1), std::bind(&WndBottom, _1),
                     _2);
     // Messages button
     m_btn_messages = Wnd::Create<SettableInWindowCUIButton>(
@@ -1207,14 +1210,14 @@ void MapWnd::CompleteConstruction() {
         in_window_func);
     m_btn_messages->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     m_btn_messages->LeftClickedSignal.connect(
-        boost::bind(&MapWnd::ToggleMessages, this));
+        std::bind(&MapWnd::ToggleMessages, this));
     m_btn_messages->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_btn_messages->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
         UserString("MAP_BTN_MESSAGES"), UserString("MAP_BTN_MESSAGES_DESC")));
 
     in_window_func =
-        boost::bind(&InRect, boost::bind(&WndLeft, _1),  boost::bind(&WndTop, m_toolbar.get()),
-                             boost::bind(&WndRight, _1), boost::bind(&WndBottom, _1),
+        std::bind(&InRect, std::bind(&WndLeft, _1),  std::bind(&WndTop, m_toolbar.get()),
+                             std::bind(&WndRight, _1), std::bind(&WndBottom, _1),
                     _2);
     // Moderator button
     m_btn_moderator = Wnd::Create<SettableInWindowCUIButton>(
@@ -1224,7 +1227,7 @@ void MapWnd::CompleteConstruction() {
         in_window_func);
     m_btn_moderator->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     m_btn_moderator->LeftClickedSignal.connect(
-        boost::bind(&MapWnd::ToggleModeratorActions, this));
+        std::bind(&MapWnd::ToggleModeratorActions, this));
     m_btn_moderator->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_btn_moderator->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
         UserString("MAP_BTN_MODERATOR"), UserString("MAP_BTN_MODERATOR_DESC")));
@@ -1240,7 +1243,7 @@ void MapWnd::CompleteConstruction() {
     m_industry = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(METER_INDUSTRY), 0, 3, false,
                                                 ICON_DUAL_WIDTH, m_btn_turn->Height());
     m_industry->SetName("Industry StatisticIcon");
-    m_industry->LeftClickedSignal.connect(boost::bind(&MapWnd::ToggleProduction, this));
+    m_industry->LeftClickedSignal.connect(std::bind(&MapWnd::ToggleProduction, this));
 
     m_stockpile = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(METER_STOCKPILE), 0, 3, false,
                                                  ICON_DUAL_WIDTH, m_btn_turn->Height());
@@ -1249,7 +1252,7 @@ void MapWnd::CompleteConstruction() {
     m_research = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(METER_RESEARCH), 0, 3, false,
                                                 ICON_DUAL_WIDTH, m_btn_turn->Height());
     m_research->SetName("Research StatisticIcon");
-    m_research->LeftClickedSignal.connect(boost::bind(&MapWnd::ToggleResearch, this));
+    m_research->LeftClickedSignal.connect(std::bind(&MapWnd::ToggleResearch, this));
 
     m_trade = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(METER_TRADE), 0, 3, false,
                                              ICON_DUAL_WIDTH, m_btn_turn->Height());
@@ -1290,9 +1293,9 @@ void MapWnd::CompleteConstruction() {
     m_research_wasted->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
 
     m_industry_wasted->LeftClickedSignal.connect(
-        boost::bind(&MapWnd::ZoomToSystemWithWastedPP, this));
+        std::bind(&MapWnd::ZoomToSystemWithWastedPP, this));
     m_research_wasted->LeftClickedSignal.connect(
-        boost::bind(&MapWnd::ToggleResearch, this));
+        std::bind(&MapWnd::ToggleResearch, this));
 
     //Set the correct tooltips
     RefreshIndustryResourceIndicator();
@@ -1439,10 +1442,10 @@ void MapWnd::CompleteConstruction() {
     m_zoom_slider->SlideTo(m_zoom_steps_in);
     GG::GUI::GetGUI()->Register(m_zoom_slider);
     m_zoom_slider->Hide();
-    m_zoom_slider->SlidSignal.connect(
-        boost::bind(&MapWnd::SetZoom, this, _1, false));
+    m_zoom_slider->SlidSignal.connect(std::bind(
+        static_cast<void (MapWnd::*)(double, bool)>(&MapWnd::SetZoom), this, _1, false));
     GetOptionsDB().OptionChangedSignal("ui.map.zoom.slider.shown").connect(
-        boost::bind(&MapWnd::RefreshSliders, this));
+        std::bind(&MapWnd::RefreshSliders, this));
 
     ///////////////////
     // Map sub-windows
@@ -1453,15 +1456,15 @@ void MapWnd::CompleteConstruction() {
     GG::GUI::GetGUI()->Register(m_side_panel);
 
     SidePanel::SystemSelectedSignal.connect(
-        boost::bind(&MapWnd::SelectSystem, this, _1));
+        std::bind(&MapWnd::SelectSystem, this, _1));
     SidePanel::PlanetSelectedSignal.connect(
-        boost::bind(&MapWnd::SelectPlanet, this, _1));
+        std::bind(&MapWnd::SelectPlanet, this, _1));
     SidePanel::PlanetDoubleClickedSignal.connect(
-        boost::bind(&MapWnd::PlanetDoubleClicked, this, _1));
+        std::bind(&MapWnd::PlanetDoubleClicked, this, _1));
     SidePanel::PlanetRightClickedSignal.connect(
-        boost::bind(&MapWnd::PlanetRightClicked, this, _1));
+        std::bind(&MapWnd::PlanetRightClicked, this, _1));
     SidePanel::BuildingRightClickedSignal.connect(
-        boost::bind(&MapWnd::BuildingRightClicked, this, _1));
+        std::bind(&MapWnd::BuildingRightClicked, this, _1));
 
     // not strictly necessary, as in principle whenever any ResourceCenter
     // changes, all meter estimates and resource pools should / could be
@@ -1471,13 +1474,13 @@ void MapWnd::CompleteConstruction() {
     // changes on the sidepanel, and most differences in meter estimates
     // and resource pools due to this will be in the same system
     SidePanel::ResourceCenterChangedSignal.connect(
-        boost::bind(&MapWnd::UpdateSidePanelSystemObjectMetersAndResourcePools, this));
+        std::bind(&MapWnd::UpdateSidePanelSystemObjectMetersAndResourcePools, this));
 
     // situation report window
     m_sitrep_panel = GG::Wnd::Create<SitRepPanel>(SITREP_WND_NAME);
     // Wnd is manually closed by user
     m_sitrep_panel->ClosingSignal.connect(
-        boost::bind(&MapWnd::HideSitRep, this));
+        std::bind(&MapWnd::HideSitRep, this));
     if (m_sitrep_panel->Visible()) {
         PushWndStack(m_sitrep_panel);
         m_btn_siterep->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "sitrep_mouseover.png")));
@@ -1488,7 +1491,7 @@ void MapWnd::CompleteConstruction() {
     m_pedia_panel = GG::Wnd::Create<EncyclopediaDetailPanel>(GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE | PINABLE, MAP_PEDIA_WND_NAME);
     // Wnd is manually closed by user
     m_pedia_panel->ClosingSignal.connect(
-        boost::bind(&MapWnd::HidePedia, this));
+        std::bind(&MapWnd::HidePedia, this));
     if (m_pedia_panel->Visible()) {
         PushWndStack(m_pedia_panel);
         m_btn_pedia->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "pedia_mouseover.png")));
@@ -1499,9 +1502,9 @@ void MapWnd::CompleteConstruction() {
     m_object_list_wnd = GG::Wnd::Create<ObjectListWnd>(OBJECT_WND_NAME);
     // Wnd is manually closed by user
     m_object_list_wnd->ClosingSignal.connect(
-        boost::bind(&MapWnd::HideObjects, this));
+        std::bind(&MapWnd::HideObjects, this));
     m_object_list_wnd->ObjectDumpSignal.connect(
-        boost::bind(&ClientUI::DumpObject, ClientUI::GetClientUI(), _1));
+        std::bind(&ClientUI::DumpObject, ClientUI::GetClientUI(), _1));
     if (m_object_list_wnd->Visible()) {
         PushWndStack(m_object_list_wnd);
         m_btn_objects->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "objects_mouseover.png")));
@@ -1511,7 +1514,7 @@ void MapWnd::CompleteConstruction() {
     // moderator actions
     m_moderator_wnd = GG::Wnd::Create<ModeratorActionsWnd>(MODERATOR_WND_NAME);
     m_moderator_wnd->ClosingSignal.connect(
-        boost::bind(&MapWnd::HideModeratorActions, this));
+        std::bind(&MapWnd::HideModeratorActions, this));
     if (m_moderator_wnd->Visible()) {
         PushWndStack(m_moderator_wnd);
         m_btn_moderator->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "moderator_mouseover.png")));
@@ -1529,7 +1532,7 @@ void MapWnd::CompleteConstruction() {
         if (const auto& msg_wnd = cui->GetMessageWnd()) {
             // Wnd is manually closed by user
             msg_wnd->ClosingSignal.connect(
-                boost::bind(&MapWnd::HideMessages, this));
+                std::bind(&MapWnd::HideMessages, this));
             if (msg_wnd->Visible()) {
                 PushWndStack(msg_wnd);
                 m_btn_messages->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages_mouseover.png")));
@@ -1539,7 +1542,7 @@ void MapWnd::CompleteConstruction() {
         if (const auto& plr_wnd = cui->GetPlayerListWnd()) {
             // Wnd is manually closed by user
             plr_wnd->ClosingSignal.connect(
-                boost::bind(&MapWnd::HideEmpires, this));
+                std::bind(&MapWnd::HideEmpires, this));
             if (plr_wnd->Visible()) {
                 PushWndStack(plr_wnd);
                 m_btn_empires->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "empires_mouseover.png")));
@@ -1549,7 +1552,7 @@ void MapWnd::CompleteConstruction() {
     }
 
     HumanClientApp::GetApp()->RepositionWindowsSignal.connect(
-        boost::bind(&MapWnd::InitializeWindows, this));
+        std::bind(&MapWnd::InitializeWindows, this));
 
     // research window
     m_research_wnd = GG::Wnd::Create<ResearchWnd>(AppWidth(), AppHeight() - m_toolbar->Height());
@@ -1563,9 +1566,9 @@ void MapWnd::CompleteConstruction() {
     GG::GUI::GetGUI()->Register(m_production_wnd);
     m_production_wnd->Hide();
     m_production_wnd->SystemSelectedSignal.connect(
-        boost::bind(&MapWnd::SelectSystem, this, _1));
+        std::bind(&MapWnd::SelectSystem, this, _1));
     m_production_wnd->PlanetSelectedSignal.connect(
-        boost::bind(&MapWnd::SelectPlanet, this, _1));
+        std::bind(&MapWnd::SelectPlanet, this, _1));
 
     // design window
     m_design_wnd = GG::Wnd::Create<DesignWnd>(AppWidth(), AppHeight() - m_toolbar->Height());
@@ -1579,11 +1582,11 @@ void MapWnd::CompleteConstruction() {
     // General Gamestate response signals
     //////////////////
     FleetUIManager& fm = FleetUIManager::GetFleetUIManager();
-    fm.ActiveFleetWndChangedSignal.connect(boost::bind(&MapWnd::SelectedFleetsChanged, this));
-    fm.ActiveFleetWndSelectedFleetsChangedSignal.connect(boost::bind(&MapWnd::SelectedFleetsChanged, this));
-    fm.ActiveFleetWndSelectedShipsChangedSignal.connect(boost::bind(&MapWnd::SelectedShipsChanged, this));
-    fm.FleetRightClickedSignal.connect(boost::bind(&MapWnd::FleetRightClicked, this, _1));
-    fm.ShipRightClickedSignal.connect(boost::bind(&MapWnd::ShipRightClicked, this, _1));
+    fm.ActiveFleetWndChangedSignal.connect(std::bind(&MapWnd::SelectedFleetsChanged, this));
+    fm.ActiveFleetWndSelectedFleetsChangedSignal.connect(std::bind(&MapWnd::SelectedFleetsChanged, this));
+    fm.ActiveFleetWndSelectedShipsChangedSignal.connect(std::bind(&MapWnd::SelectedShipsChanged, this));
+    fm.FleetRightClickedSignal.connect(std::bind(&MapWnd::FleetRightClicked, this, _1));
+    fm.ShipRightClickedSignal.connect(std::bind(&MapWnd::ShipRightClicked, this, _1));
 
     DoLayout();
 
@@ -2753,7 +2756,7 @@ void MapWnd::InitTurn() {
                 for (auto& fleet : fleets) {
                     if (!m_fleet_state_change_signals.count(fleet->ID()))
                         m_fleet_state_change_signals[fleet->ID()] = fleet->StateChangedSignal.connect(
-                            boost::bind(&MapWnd::RefreshFleetButtons, this));
+                            std::bind(&MapWnd::RefreshFleetButtons, this));
                 }
             }));
         m_system_fleet_insert_remove_signals[system->ID()].push_back(system->FleetsRemovedSignal.connect(
@@ -2777,7 +2780,7 @@ void MapWnd::InitTurn() {
     // fleets to move updates their displayed path and rearranges fleet buttons (if necessary)
     for (auto& fleet : Objects().all<Fleet>()) {
         m_fleet_state_change_signals[fleet->ID()] = fleet->StateChangedSignal.connect(
-            boost::bind(&MapWnd::RefreshFleetButtons, this));
+            std::bind(&MapWnd::RefreshFleetButtons, this));
     }
 
     // set turn button to current turn
@@ -2830,20 +2833,20 @@ void MapWnd::InitTurn() {
     Empire* this_client_empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
     if (this_client_empire) {
         this_client_empire->GetResourcePool(RE_TRADE)->ChangedSignal.connect(
-            boost::bind(&MapWnd::RefreshTradeResourceIndicator, this));
+            std::bind(&MapWnd::RefreshTradeResourceIndicator, this));
         this_client_empire->GetResourcePool(RE_RESEARCH)->ChangedSignal.connect(
-            boost::bind(&MapWnd::RefreshResearchResourceIndicator, this));
+            std::bind(&MapWnd::RefreshResearchResourceIndicator, this));
         this_client_empire->GetResourcePool(RE_INDUSTRY)->ChangedSignal.connect(
-            boost::bind(&MapWnd::RefreshIndustryResourceIndicator, this));
+            std::bind(&MapWnd::RefreshIndustryResourceIndicator, this));
         this_client_empire->GetPopulationPool().ChangedSignal.connect(
-            boost::bind(&MapWnd::RefreshPopulationIndicator, this));
+            std::bind(&MapWnd::RefreshPopulationIndicator, this));
         this_client_empire->GetProductionQueue().ProductionQueueChangedSignal.connect(
-            boost::bind(&MapWnd::RefreshIndustryResourceIndicator, this));
+            std::bind(&MapWnd::RefreshIndustryResourceIndicator, this));
         // so lane colouring to indicate wasted PP is updated
         this_client_empire->GetProductionQueue().ProductionQueueChangedSignal.connect(
-            boost::bind(&MapWnd::InitStarlaneRenderingBuffers, this));
+            std::bind(&MapWnd::InitStarlaneRenderingBuffers, this));
         this_client_empire->GetResearchQueue().ResearchQueueChangedSignal.connect(
-            boost::bind(&MapWnd::RefreshResearchResourceIndicator, this));
+            std::bind(&MapWnd::RefreshResearchResourceIndicator, this));
     }
 
     m_toolbar->Show();
@@ -2940,6 +2943,9 @@ void MapWnd::InitTurnRendering() {
     DebugLogger() << "MapWnd::InitTurnRendering";
     ScopedTimer timer("MapWnd::InitTurnRendering", true);
 
+    using std::placeholders::_1;
+    using std::placeholders::_2;
+
     // adjust size of map window for universe and application size
     Resize(GG::Pt(static_cast<GG::X>(GetUniverse().UniverseWidth() * ZOOM_MAX + AppWidth() * 1.5),
                   static_cast<GG::Y>(GetUniverse().UniverseWidth() * ZOOM_MAX + AppHeight() * 1.5)));
@@ -2979,15 +2985,15 @@ void MapWnd::InitTurnRendering() {
 
         // connect UI response signals.  TODO: Make these configurable in GUI?
         icon->LeftClickedSignal.connect(
-            boost::bind(&MapWnd::SystemLeftClicked, this, _1));
-        icon->RightClickedSignal.connect(
-            boost::bind(&MapWnd::SystemRightClicked, this, _1, _2));
+            std::bind(&MapWnd::SystemLeftClicked, this, _1));
+        icon->RightClickedSignal.connect(std::bind(
+            static_cast<void (MapWnd::*)(int, GG::Flags<GG::ModKey>)>(&MapWnd::SystemRightClicked), this, _1, _2));
         icon->LeftDoubleClickedSignal.connect(
-            boost::bind(&MapWnd::SystemDoubleClicked, this, _1));
+            std::bind(&MapWnd::SystemDoubleClicked, this, _1));
         icon->MouseEnteringSignal.connect(
-            boost::bind(&MapWnd::MouseEnteringSystem, this, _1, _2));
+            std::bind(&MapWnd::MouseEnteringSystem, this, _1, _2));
         icon->MouseLeavingSignal.connect(
-            boost::bind(&MapWnd::MouseLeavingSystem, this, _1));
+            std::bind(&MapWnd::MouseLeavingSystem, this, _1));
     }
 
     // temp: reset starfield each turn
@@ -3028,8 +3034,8 @@ void MapWnd::InitTurnRendering() {
 
         AttachChild(icon);
 
-        icon->RightClickedSignal.connect(
-            boost::bind(&MapWnd::FieldRightClicked, this, _1));
+        icon->RightClickedSignal.connect(std::bind(
+            static_cast<void (MapWnd::*)(int)>(&MapWnd::FieldRightClicked), this, _1));
     }
 
     // position field icons
@@ -5115,9 +5121,9 @@ void MapWnd::CreateFleetButtonsOfType(FleetButtonMap& type_fleet_buttons,
                 m_fleet_buttons[fleet_id] = fb;
 
             fb->LeftClickedSignal.connect(
-                boost::bind(&MapWnd::FleetButtonLeftClicked, this, fb.get()));
+                std::bind(&MapWnd::FleetButtonLeftClicked, this, fb.get()));
             fb->RightClickedSignal.connect(
-                boost::bind(&MapWnd::FleetButtonRightClicked, this, fb.get()));
+                std::bind(&MapWnd::FleetButtonRightClicked, this, fb.get()));
             AttachChild(std::move(fb));
         }
     }
@@ -7142,87 +7148,87 @@ namespace {
 void MapWnd::ConnectKeyboardAcceleratorSignals() {
     HotkeyManager* hkm = HotkeyManager::GetManager();
 
-    hkm->Connect(boost::bind(&MapWnd::ReturnToMap, this), "ui.map.open",
+    hkm->Connect(std::bind(&MapWnd::ReturnToMap, this), "ui.map.open",
                  AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::EndTurn, this), "ui.turn.end",
+    hkm->Connect(std::bind(&MapWnd::EndTurn, this), "ui.turn.end",
                  AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::ToggleSitRep, this), "ui.map.sitrep",
+    hkm->Connect(std::bind(&MapWnd::ToggleSitRep, this), "ui.map.sitrep",
                  AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::ToggleResearch, this), "ui.research",
+    hkm->Connect(std::bind(&MapWnd::ToggleResearch, this), "ui.research",
                  AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::ToggleProduction, this), "ui.production",
+    hkm->Connect(std::bind(&MapWnd::ToggleProduction, this), "ui.production",
                  AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::ToggleDesign, this), "ui.design",
+    hkm->Connect(std::bind(&MapWnd::ToggleDesign, this), "ui.design",
                  AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::ToggleObjects, this), "ui.map.objects",
+    hkm->Connect(std::bind(&MapWnd::ToggleObjects, this), "ui.map.objects",
                  AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::ToggleMessages, this), "ui.map.messages",
+    hkm->Connect(std::bind(&MapWnd::ToggleMessages, this), "ui.map.messages",
                  AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::ToggleEmpires, this), "ui.map.empires",
+    hkm->Connect(std::bind(&MapWnd::ToggleEmpires, this), "ui.map.empires",
                  AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::TogglePedia, this), "ui.pedia",
+    hkm->Connect(std::bind(&MapWnd::TogglePedia, this), "ui.pedia",
                  AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::ShowGraphs, this), "ui.map.graphs",
+    hkm->Connect(std::bind(&MapWnd::ShowGraphs, this), "ui.map.graphs",
                  AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::ShowMenu, this), "ui.gamemenu",
+    hkm->Connect(std::bind(&MapWnd::ShowMenu, this), "ui.gamemenu",
                  AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::KeyboardZoomIn, this), "ui.zoom.in",
+    hkm->Connect(std::bind(&MapWnd::KeyboardZoomIn, this), "ui.zoom.in",
                  AndCondition({NotCoveredMapWndCondition(*this), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::KeyboardZoomIn, this), "ui.zoom.in.alt",
+    hkm->Connect(std::bind(&MapWnd::KeyboardZoomIn, this), "ui.zoom.in.alt",
                  AndCondition({NotCoveredMapWndCondition(*this), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::KeyboardZoomOut, this), "ui.zoom.out",
+    hkm->Connect(std::bind(&MapWnd::KeyboardZoomOut, this), "ui.zoom.out",
                  AndCondition({NotCoveredMapWndCondition(*this), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::KeyboardZoomOut, this), "ui.zoom.out.alt",
+    hkm->Connect(std::bind(&MapWnd::KeyboardZoomOut, this), "ui.zoom.out.alt",
                  AndCondition({NotCoveredMapWndCondition(*this), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::ZoomToHomeSystem, this), "ui.map.system.zoom.home",
+    hkm->Connect(std::bind(&MapWnd::ZoomToHomeSystem, this), "ui.map.system.zoom.home",
                  AndCondition({NotCoveredMapWndCondition(*this), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::ZoomToPrevSystem, this), "ui.map.system.zoom.prev",
+    hkm->Connect(std::bind(&MapWnd::ZoomToPrevSystem, this), "ui.map.system.zoom.prev",
                  AndCondition({NotCoveredMapWndCondition(*this), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::ZoomToNextSystem, this), "ui.map.system.zoom.next",
+    hkm->Connect(std::bind(&MapWnd::ZoomToNextSystem, this), "ui.map.system.zoom.next",
                  AndCondition({NotCoveredMapWndCondition(*this), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::ZoomToPrevOwnedSystem, this), "ui.map.system.owned.zoom.prev",
+    hkm->Connect(std::bind(&MapWnd::ZoomToPrevOwnedSystem, this), "ui.map.system.owned.zoom.prev",
                  AndCondition({NotCoveredMapWndCondition(*this), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::ZoomToNextOwnedSystem, this), "ui.map.system.owned.zoom.next",
+    hkm->Connect(std::bind(&MapWnd::ZoomToNextOwnedSystem, this), "ui.map.system.owned.zoom.next",
                  AndCondition({NotCoveredMapWndCondition(*this), NoModalWndsOpenCondition}));
 
     // the list of windows for which the fleet shortcuts are blacklisted.
     std::initializer_list<const GG::Wnd*> bl = {m_research_wnd.get(), m_production_wnd.get(), m_design_wnd.get()};
 
-    hkm->Connect(boost::bind(&MapWnd::ZoomToPrevFleet, this), "ui.map.fleet.zoom.prev",
+    hkm->Connect(std::bind(&MapWnd::ZoomToPrevFleet, this), "ui.map.fleet.zoom.prev",
                  AndCondition({OrCondition({InvisibleWindowCondition(bl), VisibleWindowCondition(this)}), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::ZoomToNextFleet, this), "ui.map.fleet.zoom.next",
+    hkm->Connect(std::bind(&MapWnd::ZoomToNextFleet, this), "ui.map.fleet.zoom.next",
                  AndCondition({OrCondition({InvisibleWindowCondition(bl), VisibleWindowCondition(this)}), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::ZoomToPrevIdleFleet, this), "ui.map.fleet.idle.zoom.prev",
+    hkm->Connect(std::bind(&MapWnd::ZoomToPrevIdleFleet, this), "ui.map.fleet.idle.zoom.prev",
                  AndCondition({OrCondition({InvisibleWindowCondition(bl), VisibleWindowCondition(this)}), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::ZoomToNextIdleFleet, this), "ui.map.fleet.idle.zoom.next",
-                 AndCondition({OrCondition({InvisibleWindowCondition(bl), VisibleWindowCondition(this)}), NoModalWndsOpenCondition}));
-
-    hkm->Connect(boost::bind(&MapWnd::PanX, this, GG::X(50)),   "ui.pan.right",
-                 AndCondition({OrCondition({InvisibleWindowCondition(bl), VisibleWindowCondition(this)}), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::PanX, this, GG::X(-50)),  "ui.pan.left",
-                 AndCondition({OrCondition({InvisibleWindowCondition(bl), VisibleWindowCondition(this)}), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::PanY, this, GG::Y(50)),   "ui.pan.down",
-                 AndCondition({OrCondition({InvisibleWindowCondition(bl), VisibleWindowCondition(this)}), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::PanY, this, GG::Y(-50)),  "ui.pan.up",
+    hkm->Connect(std::bind(&MapWnd::ZoomToNextIdleFleet, this), "ui.map.fleet.idle.zoom.next",
                  AndCondition({OrCondition({InvisibleWindowCondition(bl), VisibleWindowCondition(this)}), NoModalWndsOpenCondition}));
 
-    hkm->Connect(boost::bind(&ToggleBoolOption, "ui.map.scale.legend.shown"), "ui.map.scale.legend",
+    hkm->Connect(std::bind(&MapWnd::PanX, this, GG::X(50)),   "ui.pan.right",
                  AndCondition({OrCondition({InvisibleWindowCondition(bl), VisibleWindowCondition(this)}), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&ToggleBoolOption, "ui.map.scale.circle.shown"), "ui.map.scale.circle",
+    hkm->Connect(std::bind(&MapWnd::PanX, this, GG::X(-50)),  "ui.pan.left",
+                 AndCondition({OrCondition({InvisibleWindowCondition(bl), VisibleWindowCondition(this)}), NoModalWndsOpenCondition}));
+    hkm->Connect(std::bind(&MapWnd::PanY, this, GG::Y(50)),   "ui.pan.down",
+                 AndCondition({OrCondition({InvisibleWindowCondition(bl), VisibleWindowCondition(this)}), NoModalWndsOpenCondition}));
+    hkm->Connect(std::bind(&MapWnd::PanY, this, GG::Y(-50)),  "ui.pan.up",
+                 AndCondition({OrCondition({InvisibleWindowCondition(bl), VisibleWindowCondition(this)}), NoModalWndsOpenCondition}));
+
+    hkm->Connect(std::bind(&ToggleBoolOption, "ui.map.scale.legend.shown"), "ui.map.scale.legend",
+                 AndCondition({OrCondition({InvisibleWindowCondition(bl), VisibleWindowCondition(this)}), NoModalWndsOpenCondition}));
+    hkm->Connect(std::bind(&ToggleBoolOption, "ui.map.scale.circle.shown"), "ui.map.scale.circle",
                  AndCondition({OrCondition({InvisibleWindowCondition(bl), VisibleWindowCondition(this)}), NoModalWndsOpenCondition}));
 
 
     // these are general-use hotkeys, only connected here as a convenient location to do so once.
-    hkm->Connect(boost::bind(&GG::GUI::CutFocusWndText, GG::GUI::GetGUI()), "ui.cut");
-    hkm->Connect(boost::bind(&GG::GUI::CopyFocusWndText, GG::GUI::GetGUI()), "ui.copy");
-    hkm->Connect(boost::bind(&GG::GUI::PasteFocusWndClipboardText, GG::GUI::GetGUI()), "ui.paste");
+    hkm->Connect(std::bind(&GG::GUI::CutFocusWndText, GG::GUI::GetGUI()), "ui.cut");
+    hkm->Connect(std::bind(&GG::GUI::CopyFocusWndText, GG::GUI::GetGUI()), "ui.copy");
+    hkm->Connect(std::bind(&GG::GUI::PasteFocusWndClipboardText, GG::GUI::GetGUI()), "ui.paste");
 
-    hkm->Connect(boost::bind(&GG::GUI::FocusWndSelectAll, GG::GUI::GetGUI()), "ui.select.all");
-    hkm->Connect(boost::bind(&GG::GUI::FocusWndDeselect, GG::GUI::GetGUI()), "ui.select.none");
+    hkm->Connect(std::bind(&GG::GUI::FocusWndSelectAll, GG::GUI::GetGUI()), "ui.select.all");
+    hkm->Connect(std::bind(&GG::GUI::FocusWndDeselect, GG::GUI::GetGUI()), "ui.select.none");
 
-    //hkm->Connect(boost::bind(&GG::GUI::SetPrevFocusWndInCycle, GG::GUI::GetGUI()), "ui.focus.prev",
+    //hkm->Connect(std::bind(&GG::GUI::SetPrevFocusWndInCycle, GG::GUI::GetGUI()), "ui.focus.prev",
     //             NoModalWndsOpenCondition);
-    //hkm->Connect(boost::bind(&GG::GUI::SetNextFocusWndInCycle, GG::GUI::GetGUI()), "ui.focus.next",
+    //hkm->Connect(std::bind(&GG::GUI::SetNextFocusWndInCycle, GG::GUI::GetGUI()), "ui.focus.next",
     //             NoModalWndsOpenCondition);
 
     hkm->RebuildShortcuts();

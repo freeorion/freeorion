@@ -1077,22 +1077,27 @@ void TechTreeWnd::LayoutPanel::CompleteConstruction() {
     AttachChild(m_zoom_in_button);
     AttachChild(m_zoom_out_button);
 
+    using std::placeholders::_1;
+    using std::placeholders::_2;
+    using std::placeholders::_3;
+    using std::placeholders::_4;
+
     m_layout_surface->DraggedSignal.connect(
-        boost::bind(&TechTreeWnd::LayoutPanel::TreeDraggedSlot, this, _1));
+        std::bind(&TechTreeWnd::LayoutPanel::TreeDraggedSlot, this, _1));
     m_layout_surface->ButtonUpSignal.connect(
-        boost::bind(&TechTreeWnd::LayoutPanel::TreeDragEnd, this, _1));
+        std::bind(&TechTreeWnd::LayoutPanel::TreeDragEnd, this, _1));
     m_layout_surface->ButtonDownSignal.connect(
-        boost::bind(&TechTreeWnd::LayoutPanel::TreeDragBegin, this, _1));
+        std::bind(&TechTreeWnd::LayoutPanel::TreeDragBegin, this, _1));
     m_layout_surface->ZoomedSignal.connect(
-        boost::bind(&TechTreeWnd::LayoutPanel::TreeZoomedSlot, this, _1));
+        std::bind(&TechTreeWnd::LayoutPanel::TreeZoomedSlot, this, _1));
     m_vscroll->ScrolledSignal.connect(
-        boost::bind(&TechTreeWnd::LayoutPanel::ScrolledSlot, this, _1, _2, _3, _4));
+        std::bind(&TechTreeWnd::LayoutPanel::ScrolledSlot, this, _1, _2, _3, _4));
     m_hscroll->ScrolledSignal.connect(
-        boost::bind(&TechTreeWnd::LayoutPanel::ScrolledSlot, this, _1, _2, _3, _4));
+        std::bind(&TechTreeWnd::LayoutPanel::ScrolledSlot, this, _1, _2, _3, _4));
     m_zoom_in_button->LeftClickedSignal.connect(
-        boost::bind(&TechTreeWnd::LayoutPanel::TreeZoomedSlot, this, 1));
+        std::bind(&TechTreeWnd::LayoutPanel::TreeZoomedSlot, this, 1));
     m_zoom_out_button->LeftClickedSignal.connect(
-        boost::bind(&TechTreeWnd::LayoutPanel::TreeZoomedSlot, this, -1));
+        std::bind(&TechTreeWnd::LayoutPanel::TreeZoomedSlot, this, -1));
 
     ConnectKeyboardAcceleratorSignals();
 
@@ -1111,13 +1116,13 @@ void TechTreeWnd::LayoutPanel::CompleteConstruction() {
 void TechTreeWnd::LayoutPanel::ConnectKeyboardAcceleratorSignals() {
     HotkeyManager* hkm = HotkeyManager::GetManager();
 
-    hkm->Connect(boost::bind(&TechTreeWnd::LayoutPanel::TreeZoomInKeyboard, this), "ui.zoom.in",
+    hkm->Connect(std::bind(&TechTreeWnd::LayoutPanel::TreeZoomInKeyboard, this), "ui.zoom.in",
                  AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&TechTreeWnd::LayoutPanel::TreeZoomInKeyboard, this), "ui.zoom.in.alt",
+    hkm->Connect(std::bind(&TechTreeWnd::LayoutPanel::TreeZoomInKeyboard, this), "ui.zoom.in.alt",
                  AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&TechTreeWnd::LayoutPanel::TreeZoomOutKeyboard, this), "ui.zoom.out",
+    hkm->Connect(std::bind(&TechTreeWnd::LayoutPanel::TreeZoomOutKeyboard, this), "ui.zoom.out",
                  AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&TechTreeWnd::LayoutPanel::TreeZoomOutKeyboard, this), "ui.zoom.out.alt",
+    hkm->Connect(std::bind(&TechTreeWnd::LayoutPanel::TreeZoomOutKeyboard, this), "ui.zoom.out.alt",
                  AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
 
     hkm->RebuildShortcuts();
@@ -1385,7 +1390,7 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position) {
         tech_panel->MoveTo(GG::Pt(node->GetX(), node->GetY()));
         m_layout_surface->AttachChild(tech_panel);
         tech_panel->TechLeftClickedSignal.connect(
-            boost::bind(&TechTreeWnd::LayoutPanel::SelectTech, this, _1));
+            std::bind(&TechTreeWnd::LayoutPanel::SelectTech, this, std::placeholders::_1));
         tech_panel->TechDoubleClickedSignal.connect(
             TechDoubleClickedSignal);
         tech_panel->TechPediaDisplaySignal.connect(
@@ -1725,12 +1730,16 @@ TechTreeWnd::TechListBox::TechListBox(GG::X w, GG::Y h) :
 void TechTreeWnd::TechListBox::CompleteConstruction() {
     CUIListBox::CompleteConstruction();
 
+    using std::placeholders::_1;
+    using std::placeholders::_2;
+    using std::placeholders::_3;
+
     DoubleClickedRowSignal.connect(
-        boost::bind(&TechListBox::TechDoubleClicked, this, _1, _2, _3));
+        std::bind(&TechListBox::TechDoubleClicked, this, _1, _2, _3));
     LeftClickedRowSignal.connect(
-        boost::bind(&TechListBox::TechLeftClicked, this, _1, _2, _3));
+        std::bind(&TechListBox::TechLeftClicked, this, _1, _2, _3));
     RightClickedRowSignal.connect(
-        boost::bind(&TechListBox::TechRightClicked, this, _1, _2, _3));
+        std::bind(&TechListBox::TechRightClicked, this, _1, _2, _3));
 
     SetStyle(GG::LIST_NOSEL);
 
@@ -2001,28 +2010,31 @@ void TechTreeWnd::CompleteConstruction() {
 
     Sound::TempUISoundDisabler sound_disabler;
 
+    using std::placeholders::_1;
+    using std::placeholders::_2;
+
     m_layout_panel = GG::Wnd::Create<LayoutPanel>(Width(), Height());
     m_layout_panel->TechSelectedSignal.connect(
-        boost::bind(&TechTreeWnd::TechLeftClickedSlot, this, _1, _2));
+        std::bind(&TechTreeWnd::TechLeftClickedSlot, this, _1, _2));
     m_layout_panel->TechDoubleClickedSignal.connect(
         [this](const std::string& tech_name, GG::Flags<GG::ModKey> modkeys){ this->AddTechToResearchQueue(tech_name, modkeys & GG::MOD_KEY_CTRL); });
     m_layout_panel->TechPediaDisplaySignal.connect(
-        boost::bind(&TechTreeWnd::TechPediaDisplaySlot, this, _1));
+        std::bind(&TechTreeWnd::TechPediaDisplaySlot, this, _1));
     AttachChild(m_layout_panel);
 
     m_tech_list = GG::Wnd::Create<TechListBox>(Width(), Height());
     m_tech_list->TechLeftClickedSignal.connect(
-        boost::bind(&TechTreeWnd::TechLeftClickedSlot, this, _1, _2));
+        std::bind(&TechTreeWnd::TechLeftClickedSlot, this, _1, _2));
     m_tech_list->TechDoubleClickedSignal.connect(
         [this](const std::string& tech_name, GG::Flags<GG::ModKey> modkeys){ this->AddTechToResearchQueue(tech_name, modkeys & GG::MOD_KEY_CTRL); });
     m_tech_list->TechPediaDisplaySignal.connect(
-        boost::bind(&TechTreeWnd::TechPediaDisplaySlot, this, _1));
+        std::bind(&TechTreeWnd::TechPediaDisplaySlot, this, _1));
 
     m_enc_detail_panel = GG::Wnd::Create<EncyclopediaDetailPanel>(GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE | PINABLE, RES_PEDIA_WND_NAME);
     m_tech_tree_controls =  GG::Wnd::Create<TechTreeControls>(RES_CONTROLS_WND_NAME);
 
     m_enc_detail_panel->ClosingSignal.connect(
-        boost::bind(&TechTreeWnd::HidePedia, this));
+        std::bind(&TechTreeWnd::HidePedia, this));
 
     InitializeWindows();
     // Make sure the controls don't overlap the bottom scrollbar
@@ -2033,7 +2045,7 @@ void TechTreeWnd::CompleteConstruction() {
     }
 
     HumanClientApp::GetApp()->RepositionWindowsSignal.connect(
-        boost::bind(&TechTreeWnd::InitializeWindows, this));
+        std::bind(&TechTreeWnd::InitializeWindows, this));
 
     AttachChild(m_enc_detail_panel);
     AttachChild(m_tech_tree_controls);
@@ -2072,7 +2084,7 @@ void TechTreeWnd::CompleteConstruction() {
 
     // connect view type selector
     m_tech_tree_controls->m_view_type_button->CheckedSignal.connect(
-        boost::bind(&TechTreeWnd::ToggleViewType, this, _1));
+        std::bind(&TechTreeWnd::ToggleViewType, this, _1));
 
     //TechTreeWnd in typically constructed before the UI client has
     //accesss to the technologies so showing these categories takes a
