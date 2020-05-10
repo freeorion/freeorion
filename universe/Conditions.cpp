@@ -70,42 +70,42 @@ namespace {
         condition_non_targets.reserve(condition_non_targets.size() + objects.ExistingFleets().size());
         std::transform(objects.ExistingFleets().begin(), objects.ExistingFleets().end(),
                        std::back_inserter(condition_non_targets),
-                       std::bind(&std::map<int, std::shared_ptr<const UniverseObject>>::value_type::second,_1));
+                       std::bind(&std::map<int, std::shared_ptr<const UniverseObject>>::value_type::second, _1));
     }
 
     void AddPlanetSet(const ObjectMap& objects, Condition::ObjectSet& condition_non_targets) {
         condition_non_targets.reserve(condition_non_targets.size() + objects.ExistingPlanets().size());
         std::transform(objects.ExistingPlanets().begin(), objects.ExistingPlanets().end(),
                        std::back_inserter(condition_non_targets),
-                       std::bind(&std::map<int, std::shared_ptr<const UniverseObject>>::value_type::second,_1));
+                       std::bind(&std::map<int, std::shared_ptr<const UniverseObject>>::value_type::second, _1));
     }
 
     void AddPopCenterSet(const ObjectMap& objects, Condition::ObjectSet& condition_non_targets) {
         condition_non_targets.reserve(condition_non_targets.size() + objects.ExistingPopCenters().size());
         std::transform(objects.ExistingPopCenters().begin(), objects.ExistingPopCenters().end(),
                        std::back_inserter(condition_non_targets),
-                       std::bind(&std::map<int, std::shared_ptr<const UniverseObject>>::value_type::second,_1));
+                       std::bind(&std::map<int, std::shared_ptr<const UniverseObject>>::value_type::second, _1));
     }
 
     void AddResCenterSet(const ObjectMap& objects, Condition::ObjectSet& condition_non_targets) {
         condition_non_targets.reserve(condition_non_targets.size() + objects.ExistingResourceCenters().size());
         std::transform(objects.ExistingResourceCenters().begin(), objects.ExistingResourceCenters().end(),
                        std::back_inserter(condition_non_targets),
-                       std::bind(&std::map<int, std::shared_ptr<const UniverseObject>>::value_type::second,_1));
+                       std::bind(&std::map<int, std::shared_ptr<const UniverseObject>>::value_type::second, _1));
     }
 
     void AddShipSet(const ObjectMap& objects, Condition::ObjectSet& condition_non_targets) {
         condition_non_targets.reserve(condition_non_targets.size() + objects.ExistingShips().size());
         std::transform(objects.ExistingShips().begin(), objects.ExistingShips().end(),
                        std::back_inserter(condition_non_targets),
-                       std::bind(&std::map<int, std::shared_ptr<const UniverseObject>>::value_type::second,_1));
+                       std::bind(&std::map<int, std::shared_ptr<const UniverseObject>>::value_type::second, _1));
     }
 
     void AddSystemSet(const ObjectMap& objects, Condition::ObjectSet& condition_non_targets) {
         condition_non_targets.reserve(condition_non_targets.size() + objects.ExistingSystems().size());
         std::transform(objects.ExistingSystems().begin(), objects.ExistingSystems().end(),
                        std::back_inserter(condition_non_targets),
-                       std::bind(&std::map<int, std::shared_ptr<const UniverseObject>>::value_type::second,_1));
+                       std::bind(&std::map<int, std::shared_ptr<const UniverseObject>>::value_type::second, _1));
     }
 
     /** Used by 4-parameter Condition::Eval function, and some of its
