@@ -30,8 +30,6 @@
 
 #include <iterator>
 
-using namespace std::placeholders;
-
 namespace {
     const std::string PROD_PEDIA_WND_NAME = "production.pedia";
     const std::string PROD_SELECTOR_WND_NAME = "production.selector";
