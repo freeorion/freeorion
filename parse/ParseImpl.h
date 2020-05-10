@@ -21,13 +21,6 @@ namespace Effect {
 }
 
 namespace parse { namespace detail {
-    template <typename T, typename U>
-    void emplace_back_1(std::vector<T>& vect, U&& item) {
-        return vect.emplace_back(std::forward<U>(item));
-    }
-
-    BOOST_PHOENIX_ADAPT_FUNCTION(void, emplace_back_1_, emplace_back_1, 2)
-
     /// A functor to determine if \p key will be unique in \p map of \p type, and log an error otherwise.
     struct is_unique {
         typedef bool result_type;

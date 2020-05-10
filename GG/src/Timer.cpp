@@ -83,7 +83,7 @@ void Timer::Connect(Wnd* wnd)
 {
     Disconnect(wnd);
     m_wnd_connections[wnd] = FiredSignal.connect(
-        boost::bind(&Wnd::TimerFiring, wnd, _1, _2));
+        std::bind(&Wnd::TimerFiring, wnd, std::placeholders::_1, std::placeholders::_2));
 }
 
 void Timer::Disconnect(Wnd* wnd)

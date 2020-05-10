@@ -23,7 +23,6 @@
 
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/erase.hpp>
-#include <boost/bind.hpp>
 #include <boost/thread/condition.hpp>
 #include <boost/thread/thread.hpp>
 #include <boost/optional/optional.hpp>
@@ -89,12 +88,13 @@ namespace {
                                 this,
                                 boost::asio::placeholders::error,
                                 boost::asio::placeholders::bytes_transferred));
+
 #if BOOST_VERSION >= 106600
                 m_timer.expires_after(std::chrono::seconds(2));
 #else
                 m_timer.expires_from_now(std::chrono::seconds(2));
 #endif
-                m_timer.async_wait(boost::bind(&ServerDiscoverer::CloseSocket, this));
+                m_timer.async_wait(std::bind(&ServerDiscoverer::CloseSocket, this));
                 m_io_context->run();
                 m_io_context->reset();
                 if (m_receive_successful) {
@@ -118,6 +118,7 @@ namespace {
                                 this,
                                 boost::asio::placeholders::error,
                                 boost::asio::placeholders::bytes_transferred));
+
             } else if (!error) {
                 std::string buffer_string(m_recv_buf.begin(), m_recv_buf.begin() + length);
                 if (boost::algorithm::starts_with(buffer_string, DISCOVERY_ANSWER)) {
@@ -400,7 +401,7 @@ bool ClientNetworking::Impl::ConnectToServer(
                                          << std::chrono::duration_cast<std::chrono::milliseconds>(connection_time).count() << " ms.";
 
                     DebugLogger(network) << "ConnectToServer() : starting networking thread";
-                    boost::thread(boost::bind(&ClientNetworking::Impl::NetworkingThread, this, self->shared_from_this()));
+                    boost::thread(std::bind(&ClientNetworking::Impl::NetworkingThread, this, self->shared_from_this()));
                     break;
                 } else {
                     TraceLogger(network) << "Failed to connect to host_name: " << it->host_name()
@@ -454,7 +455,7 @@ void ClientNetworking::Impl::DisconnectFromServer() {
     }
 
     if (is_open)
-        m_io_context.post(boost::bind(&ClientNetworking::Impl::DisconnectFromServerImpl, this));
+        m_io_context.post(std::bind(&ClientNetworking::Impl::DisconnectFromServerImpl, this));
 }
 
 void ClientNetworking::Impl::SetPlayerID(int player_id) {
@@ -474,7 +475,7 @@ void ClientNetworking::Impl::SendMessage(const Message& message) {
         return;
     }
     TraceLogger(network) << "ClientNetworking::SendMessage() : sending message " << message;
-    m_io_context.post(boost::bind(&ClientNetworking::Impl::SendMessageImpl, this, message));
+    m_io_context.post(std::bind(&ClientNetworking::Impl::SendMessageImpl, this, message));
 }
 
 boost::optional<Message> ClientNetworking::Impl::GetMessage() {

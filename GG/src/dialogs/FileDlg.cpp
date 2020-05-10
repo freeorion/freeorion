@@ -214,18 +214,20 @@ void FileDlg::CompleteConstruction()
     PopulateFilters();
     UpdateList();
 
+    namespace ph = std::placeholders;
+
     m_ok_button->LeftClickedSignal.connect(
-        boost::bind(&FileDlg::OkClicked, this));
+        std::bind(&FileDlg::OkClicked, this));
     m_cancel_button->LeftClickedSignal.connect(
-        boost::bind(&FileDlg::CancelClicked, this));
+        std::bind(&FileDlg::CancelClicked, this));
     m_files_list->SelRowsChangedSignal.connect(
-        boost::bind(&FileDlg::FileSetChanged, this, _1));
+        std::bind(&FileDlg::FileSetChanged, this, ph::_1));
     m_files_list->DoubleClickedRowSignal.connect(
-        boost::bind(&FileDlg::FileDoubleClicked, this, _1, _2, _3));
+        std::bind(&FileDlg::FileDoubleClicked, this, ph::_1, ph::_2, ph::_3));
     m_files_edit->EditedSignal.connect(
-        boost::bind(&FileDlg::FilesEditChanged, this, _1));
+        std::bind(&FileDlg::FilesEditChanged, this, ph::_1));
     m_filter_list->SelChangedSignal.connect(
-        boost::bind(&FileDlg::FilterChanged, this, _1));
+        std::bind(&FileDlg::FilterChanged, this, ph::_1));
 
     if (!m_init_filename.empty()) {
         fs::path filename_path = fs::system_complete(fs::path(m_init_filename));

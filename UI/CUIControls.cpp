@@ -890,7 +890,7 @@ void CUIEdit::CompleteConstruction() {
     SetHiliteColor(ClientUI::EditHiliteColor());
 
     HotkeyManager* hkm = HotkeyManager::GetManager();
-    auto fx = boost::bind(&CUIEdit::AutoComplete, this);
+    auto fx = std::bind(&CUIEdit::AutoComplete, this);
     hkm->Connect(fx, "ui.autocomplete", FocusWindowCondition(this));
     hkm->RebuildShortcuts();
 }
@@ -2222,7 +2222,7 @@ FPSIndicator::FPSIndicator(void) :
     m_displayed_FPS(0)
 {
     GetOptionsDB().OptionChangedSignal("video.fps.shown").connect(
-        boost::bind(&FPSIndicator::UpdateEnabled, this));
+        std::bind(&FPSIndicator::UpdateEnabled, this));
     UpdateEnabled();
     RequirePreRender();
 }

@@ -248,6 +248,8 @@ namespace {
             m_link_text->SetDecorator(TextLinker::BROWSE_PATH_TAG, new PathTypeDecorator());
             AttachChild(m_link_text);
 
+            namespace ph = std::placeholders;
+
             m_link_text->LinkClickedSignal.connect(
                 &HandleLinkClick);
             m_link_text->LinkDoubleClickedSignal.connect(
@@ -255,7 +257,7 @@ namespace {
             m_link_text->LinkRightClickedSignal.connect(
                 &HandleLinkClick);
             m_link_text->RightClickedSignal.connect(
-                boost::bind(&SitRepDataPanel::RClick, this, _1, _2));
+                std::bind(&SitRepDataPanel::RClick, this, ph::_1, ph::_2));
 
             DoLayout(UpperLeft(), Width());
         }
@@ -358,8 +360,9 @@ namespace {
                                                        ClientWidth() - GG::X(2 * GetLayout()->BorderMargin()),
                                                        ClientHeight() - GG::Y(2 * GetLayout()->BorderMargin()), m_sitrep);
             push_back(m_panel);
+            namespace ph = std::placeholders;
             m_panel->RightClickedSignal.connect(
-                boost::bind(&SitRepRow::RClick, this, _1, _2));
+                std::bind(&SitRepRow::RClick, this, ph::_1, ph::_2));
         }
 
         const SitRepEntry& GetSitRepEntry() const { return m_panel->GetSitRepEntry(); }
@@ -398,18 +401,22 @@ void SitRepPanel::CompleteConstruction() {
     m_filter_button = Wnd::Create<CUIButton>(UserString("FILTERS"));
     AttachChild(m_filter_button);
 
+    using std::placeholders::_1;
+    using std::placeholders::_2;
+    using std::placeholders::_3;
+
     m_prev_turn_button->LeftClickedSignal.connect(
-        boost::bind(&SitRepPanel::PrevClicked, this));
+        std::bind(&SitRepPanel::PrevClicked, this));
     m_next_turn_button->LeftClickedSignal.connect(
-        boost::bind(&SitRepPanel::NextClicked, this));
+        std::bind(&SitRepPanel::NextClicked, this));
     m_last_turn_button->LeftClickedSignal.connect(
-        boost::bind(&SitRepPanel::LastClicked, this));
+        std::bind(&SitRepPanel::LastClicked, this));
     m_filter_button->LeftClickedSignal.connect(
-        boost::bind(&SitRepPanel::FilterClicked, this));
+        std::bind(&SitRepPanel::FilterClicked, this));
     m_sitreps_lb->DoubleClickedRowSignal.connect(
-        boost::bind(&SitRepPanel::IgnoreSitRep, this, _1, _2, _3));
+        std::bind(&SitRepPanel::IgnoreSitRep, this, _1, _2, _3));
     m_sitreps_lb->RightClickedRowSignal.connect(
-        boost::bind(&SitRepPanel::DismissalMenu, this, _1, _2, _3));
+        std::bind(&SitRepPanel::DismissalMenu, this, _1, _2, _3));
 
     CUIWnd::CompleteConstruction();
 

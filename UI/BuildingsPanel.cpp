@@ -65,7 +65,7 @@ void BuildingsPanel::CompleteConstruction() {
     }
 
     m_expand_button->LeftPressedSignal.connect(
-        boost::bind(&BuildingsPanel::ExpandCollapseButtonPressed, this));
+        std::bind(&BuildingsPanel::ExpandCollapseButtonPressed, this));
 
     // get owner, connect its production queue changed signal to update this panel
     auto planet = Objects().get(m_planet_id);
@@ -73,7 +73,7 @@ void BuildingsPanel::CompleteConstruction() {
         if (const Empire* empire = GetEmpire(planet->Owner())) {
             const ProductionQueue& queue = empire->GetProductionQueue();
             queue.ProductionQueueChangedSignal.connect(
-                boost::bind(&BuildingsPanel::RequirePreRender, this));
+                std::bind(&BuildingsPanel::RequirePreRender, this));
         }
     }
 
@@ -261,7 +261,7 @@ BuildingIndicator::BuildingIndicator(GG::X w, int building_id) :
 {
     if (auto building = Objects().get<Building>(m_building_id))
         building->StateChangedSignal.connect(
-            boost::bind(&BuildingIndicator::RequirePreRender, this));
+            std::bind(&BuildingIndicator::RequirePreRender, this));
 }
 
 BuildingIndicator::BuildingIndicator(GG::X w, const std::string& building_type,

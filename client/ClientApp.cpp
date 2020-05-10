@@ -10,7 +10,6 @@
 #include "ClientNetworking.h"
 
 #include <stdexcept>
-#include <boost/bind.hpp>
 #include <boost/lexical_cast.hpp>
 
 ClientApp::ClientApp() :
