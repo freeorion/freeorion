@@ -10714,11 +10714,11 @@ DESC_CONTAINED_BY
 DESC_CONTAINED_BY_NOT
 ''' ne se situant pas dans un lieu%1%'''
 
-# %1% FIXME
+# %1% text description of what system's ID the candidate object should be in
 DESC_IN_SYSTEM
 ''' étant dans un système avec un id %1%'''
 
-# %1% FIXME
+# %1% text description of what system's ID the candidate object should not be in
 DESC_IN_SYSTEM_NOT
 ''' n'étant pas dans un système avec un id %1%'''
 
@@ -10727,6 +10727,20 @@ DESC_IN_SYSTEM_SIMPLE
 
 DESC_IN_SYSTEM_SIMPLE_NOT
 ''' n'étant pas dans un système'''
+
+# %1% text description of what planet's ID the candidate object should be on
+DESC_ON_PLANET
+''' étant sur la planète avec un id %1%'''
+
+# %1% text description of what planet's ID the candidate object should not be on
+DESC_ON_PLANET_NOT
+''' n'étant pas sur la planète avec un id %1%'''
+
+DESC_ON_PLANET_SIMPLE
+''' étant sur la planète'''
+
+DESC_ON_PLANET_SIMPLE_NOT
+''' n'étant pas sur la planète'''
 
 # %1% FIXME
 DESC_OBJECT_ID
