@@ -579,7 +579,6 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-
 /** Matches the object with the id \a object_id */
 struct FO_COMMON_API ObjectID final : public Condition {
     ObjectID(std::unique_ptr<ValueRef::ValueRef<int>>&& object_id);
@@ -1567,7 +1566,6 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-
 /** Matches all objects that match every Condition in \a operands. */
 struct FO_COMMON_API And final : public Condition {
     explicit And(std::vector<std::unique_ptr<Condition>>&& operands);
@@ -1606,6 +1604,8 @@ struct FO_COMMON_API Or final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+    void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                           ObjectSet& condition_non_targets) const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     virtual void SetTopLevelContent(const std::string& content_name) override;

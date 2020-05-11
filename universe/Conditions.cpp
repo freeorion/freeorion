@@ -3,6 +3,7 @@
 #include "../util/Logger.h"
 #include "../util/Random.h"
 #include "../util/i18n.h"
+#include "../util/ScopedTimer.h"
 #include "UniverseObject.h"
 #include "Pathfinder.h"
 #include "Universe.h"
@@ -9744,6 +9745,43 @@ std::string Or::Description(bool negated/* = false*/) const {
             : UserString("DESC_NOT_OR_AFTER_OPERANDS");
     }
     return values_str;
+}
+
+void Or::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, ObjectSet& condition_non_targets) const {
+    if (m_operands.empty())
+        return;
+
+    if (m_operands.size() == 1) {
+        // get condition_non_targets from the single / only operand condition
+        m_operands[0]->GetDefaultInitialCandidateObjects(parent_context, condition_non_targets);
+        return;
+    }
+
+    if (parent_context.source && m_operands.size() == 2) {
+        if (auto* src_condition = dynamic_cast<const Source*>(m_operands[0].get())) {
+            // special case when first of two subconditions is just Source:
+            // get the default candidates of the second and add the source if
+            // it is not already present.
+            // TODO: extend to other single-match conditions: RootCandidate, Target
+            // TODO: predetermine this situation to avoid repeat runtime dynamic-casts
+            // TODO: fancier deep inspection of m_operands to determine optimal
+            //       way to combine the default candidates...
+
+            m_operands[1]->GetDefaultInitialCandidateObjects(parent_context, condition_non_targets);
+            if (std::find(condition_non_targets.begin(), condition_non_targets.end(), parent_context.source) ==
+                condition_non_targets.end())
+            { condition_non_targets.push_back(parent_context.source); }
+            return;
+        }
+    }
+
+    // default / fallback
+    Condition::GetDefaultInitialCandidateObjects(parent_context, condition_non_targets);
+
+    // Also tried looping over all subconditions in m_operands and putting all
+    // of their initial candidates into an unordered_set (to remove duplicates)
+    // and then copying the result back into condition_non_targets but this was
+    // substantially slower for many Or conditions
 }
 
 std::string Or::Dump(unsigned short ntabs) const {
