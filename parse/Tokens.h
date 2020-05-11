@@ -195,9 +195,7 @@
     (Invisible)                                 \
     (Item)                                      \
     (Jumps)                                     \
-    (JumpsBetween)                              \
-    (Keymap)                                    \
-    (Keys)
+    (JumpsBetween)
 
 #define TOKEN_SEQ_6                             \
     (Label)                                     \

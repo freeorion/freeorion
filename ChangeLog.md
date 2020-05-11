@@ -7,6 +7,13 @@ Notable changes to the FreeOrion project will be documented in this file.
 [v0.4.9+] - TBA
 ---------------
 
+### Detailed Changelog
+
+#### Removed features
+
+- Removed the scripting/keymaps.inf configuration file, which allowed users to remap one keycode to another to simulate keyboard layouts.
+  The functionality is already handled by the operating system and exposed by SDL2.
+
 #### Technical / Internal
 
 - C++14 is now supported and required to compile.

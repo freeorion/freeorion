@@ -107,9 +107,6 @@
     <ClCompile Include="..\..\parse\EffectParser2.cpp">
       <Filter>Source Files\parse</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\parse\KeymapParser.cpp">
-      <Filter>Source Files\parse</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\parse\ConditionParser4.cpp">
       <Filter>Source Files\parse</Filter>
     </ClCompile>
