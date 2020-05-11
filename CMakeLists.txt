@@ -358,6 +358,7 @@ target_compile_definitions(freeorioncommon
 target_link_libraries(freeorioncommon
     PUBLIC
         GiGi::header
+        yaml-cpp
         Boost::boost
         Boost::disable_autolinking
         Boost::dynamic_linking
@@ -609,7 +610,6 @@ if(NOT BUILD_HEADLESS)
     target_link_libraries(freeorion
         freeorioncommon
         freeorionparse
-        yaml-cpp
         GiGi::GiGi
         ${SDL_LIBRARIES}
         ${OPENGL_gl_LIBRARY}

@@ -7,12 +7,14 @@
 #   define FO_PARSE_API
 #endif
 
-#include <boost/filesystem/path.hpp>
-#include <boost/uuid/uuid.hpp>
-
 #include <map>
 #include <set>
 #include <vector>
+#include <boost/filesystem/path.hpp>
+#include <boost/uuid/uuid.hpp>
+#include <GG/Clr.h>
+#include <yaml-cpp/yaml.h>
+
 
 class BuildingType;
 class FieldType;
@@ -84,5 +86,15 @@ namespace parse {
     FO_PARSE_API bool double_free_variable(std::string& text);
     FO_PARSE_API bool string_free_variable(std::string& text);
 }
+
+
+namespace YAML {
+    template <>
+    struct FO_PARSE_API convert<GG::Clr> {
+        static bool decode(const Node& node, GG::Clr& rhs);
+    };
+
+}
+
 
 #endif

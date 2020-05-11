@@ -1,13 +1,14 @@
 #include "EmpireManager.h"
 
 #include "Empire.h"
+#include "../parse/Parse.h"
 #include "../util/Directories.h"
 #include "../util/GameRules.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
-#include "../util/XMLDoc.h"
 
 #include <boost/filesystem/fstream.hpp>
+#include <yaml-cpp/yaml.h>
 
 namespace {
     // sorted pair, so order of empire IDs specified doesn't matter
@@ -381,25 +382,15 @@ std::vector<GG::Clr>& EmpireColorsNonConst() {
 void InitEmpireColors(const boost::filesystem::path& path) {
     auto& colors = EmpireColorsNonConst();
 
-    XMLDoc doc;
-
-    boost::filesystem::ifstream ifs(path);
-    if (ifs) {
-        doc.ReadDoc(ifs);
+    YAML::Node doc;
+    try {
+        boost::filesystem::ifstream ifs(path);
+        doc = YAML::Load(ifs);
         ifs.close();
-    } else {
-        ErrorLogger() << "Unable to open data file " << path.filename();
-        return;
+        colors = doc.as<std::vector<GG::Clr>>();
     }
-
-    for (const XMLElement& elem : doc.root_node.children) {
-        try {
-            std::string hex_colour("#");
-            hex_colour.append(elem.attributes.at("hex"));
-            colors.push_back(GG::HexClr(hex_colour));
-        } catch(const std::exception& e) {
-            ErrorLogger() << "empire_colors.xml: " << e.what() << std::endl;
-        }
+    catch(YAML::Exception& e) {
+        ErrorLogger() << "InitEmpireColors: " << e.mark.line << ":" << e.mark.column << ": " << e.what();
     }
 }
 const std::vector<GG::Clr>& EmpireColors() {

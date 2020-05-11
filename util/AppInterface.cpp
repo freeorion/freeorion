@@ -120,8 +120,8 @@ void IApp::StartBackgroundParsing() {
     else
         ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/techs").string();
 
-    if (fs::exists(rdir / "empire_colors.xml"))
-        InitEmpireColors(rdir / "empire_colors.xml");
+    if (fs::exists(rdir / "empire_colors.yml"))
+        InitEmpireColors(rdir / "empire_colors.yml");
     else
-        ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "empire_colors.xml").string();
+        ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "empire_colors.yml").string();
 }

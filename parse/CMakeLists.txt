@@ -75,4 +75,5 @@ target_sources(freeorionparseobj
         ${CMAKE_CURRENT_LIST_DIR}/UniverseObjectTypeValueRefParser.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ValueRefParser.cpp
         ${CMAKE_CURRENT_LIST_DIR}/VisibilityValueRefParser.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/YAMLConverters.cpp
 )

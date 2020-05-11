@@ -32,6 +32,7 @@
 #include "TextBrowseWnd.h"
 #include "../client/human/HumanClientApp.h"
 #include "../Empire/Empire.h"
+#include "../parse/Parse.h"
 #include "../universe/Building.h"
 #include "../universe/Fleet.h"
 #include "../universe/ShipDesign.h"
@@ -548,25 +549,6 @@ namespace YAML {
 
         if (GG::EnumMap<StarType>::BAD_VALUE == rhs)
             return false;
-
-        return true;
-    }
-
-    template <>
-    struct convert<GG::Clr> {
-        static bool decode(const Node& node, GG::Clr& rhs);
-    };
-
-    bool convert<GG::Clr>::decode(const Node& node, GG::Clr& rhs) {
-        if (!node.IsScalar())
-            return false;
-
-        try {
-            rhs = GG::HexClr(node.as<std::string>());
-        }
-        catch(const std::exception& e) {
-            return false;
-        }
 
         return true;
     }

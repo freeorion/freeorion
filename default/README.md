@@ -41,5 +41,5 @@ content changes.  See file for details.
 **Required file and content.**
 * credits.yml  -  Acknowledgments of those who have made FreeOrion possible.
 **Required file and content.**
-* empire_colors.xml  -  Color options available for empires to select from. 
+* empire_colors.yml  -  Color options available for empires to select from.
 **This file containing at least one GG::Clr node is required.**

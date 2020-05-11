@@ -21,7 +21,6 @@
 
 class Empire;
 struct UniverseObjectVisitor;
-class XMLElement;
 class ShipDesign;
 class System;
 class Pathfinder;
