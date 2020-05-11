@@ -215,7 +215,6 @@
     <ClInclude Include="..\..\util\SitRepEntry.h" />
     <ClInclude Include="..\..\util\VarText.h" />
     <ClInclude Include="..\..\util\Version.h" />
-    <ClInclude Include="..\..\util\XMLDoc.h" />
     <ClInclude Include="StdAfx.h" />
   </ItemGroup>
   <ItemGroup>
