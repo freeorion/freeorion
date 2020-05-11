@@ -128,9 +128,8 @@ void CreditsWnd::DrawCredits(GG::X x1, GG::Y y1, GG::X x2, GG::Y y2, int transpa
     std::string credit;
     for (const XMLElement& group : m_credits.children) {
         if (0 == group.Tag().compare("GROUP")) {
+            credit += group.attributes.at("name") + "\n\n";
             for (const XMLElement& item : group.children) {
-                credit = "";
-
                 if (0 == item.Tag().compare("PERSON")) {    
                     if (item.attributes.count("name"))
                         credit += item.attributes.at("name");
@@ -168,16 +167,19 @@ void CreditsWnd::DrawCredits(GG::X x1, GG::Y y1, GG::X x2, GG::Y y2, int transpa
                     }
                 }
 
-                std::vector<std::shared_ptr<GG::Font::TextElement>> text_elements =
-                    m_font->ExpensiveParseFromTextToTextElements(credit, format);
-                std::vector<GG::Font::LineData> lines =
-                    m_font->DetermineLines(credit, format, x2 - x1, text_elements);
-                m_font->RenderText(GG::Pt(x1, y1 + offset), GG::Pt(x2, y2), credit, format, lines);
-                offset += m_font->TextExtent(lines).y + 2;
+                credit += "\n";
             }
-            offset += m_font->Lineskip() + 2;
+
+            credit += "\n\n";
         }
     }
+
+    std::vector<std::shared_ptr<GG::Font::TextElement>> text_elements =
+        m_font->ExpensiveParseFromTextToTextElements(credit, format);
+    std::vector<GG::Font::LineData> lines =
+        m_font->DetermineLines(credit, format, x2 - x1, text_elements);
+    m_font->RenderText(GG::Pt(x1, y1 + offset), GG::Pt(x2, y2), credit, format, lines);
+    offset = m_font->TextExtent(lines).y;
     //store complete height for self destruction
     m_credits_height = Value(offset);
 }
