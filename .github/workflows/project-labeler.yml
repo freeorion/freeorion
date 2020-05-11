@@ -1,0 +1,20 @@
+name: Set Project labels
+on:
+  push:
+    paths:
+      - .github/project-labels.yml
+jobs:
+  project-labeler:
+    name: Project Labeler
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+      - name: Run Labeler
+        if: success()
+        uses: crazy-max/ghaction-github-labeler@v1
+        with:
+          yaml_file: .github/project-labels.yml
+          dry_run: ${{ 'refs/heads/master' != github.ref }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
