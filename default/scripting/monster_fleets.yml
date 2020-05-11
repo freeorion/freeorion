@@ -1,0 +1,193 @@
+monsters:
+  - name: SM_KRILL_1
+    ships:
+      - SM_KRILL_1
+    spawnrate: 0.5
+    spawnlimit: 9999
+    location: |
+      And [
+        Not Contains Monster
+        Not WithinStarlaneJumps jumps = 2 condition = Contains And [
+          Planet
+          OwnedBy affiliation = AnyEmpire
+        ]
+      ]
+  - name: SM_TREE
+    ships:
+      - SM_TREE
+    spawnrate: 0.7
+    spawnlimit: 9999
+    location: |
+      And [
+        Star type = [Blue White Yellow Orange Red]
+        Not Contains Monster
+        Not WithinStarlaneJumps jumps = 2 condition = Contains And [
+          Planet
+          OwnedBy affiliation = AnyEmpire
+        ]
+      ]
+  - name: SM_DRONE_FACTORY
+    ships:
+      - SM_DRONE_FACTORY
+    spawnrate: 0.4
+    spawnlimit: 5
+    location: |
+      And [
+        Not Contains Or [
+          Armed
+          Monster
+        ]
+        Not WithinStarlaneJumps jumps = 3 condition = Contains And [
+          Planet
+          OwnedBy affiliation = AnyEmpire
+          Not Star type = NoStar
+        ]
+      ]
+  - name: SM_DRONE
+    ships:
+      - SM_DRONE
+    spawnrate: 0.1
+    spawnlimit: 9999
+    location: |
+      And [
+        Not Contains Or [
+          Armed
+          Monster
+        ]
+        Not WithinStarlaneJumps jumps = 2 condition = Contains And [
+          Planet
+          OwnedBy affiliation = AnyEmpire
+        ]
+      ]
+  - name: SM_FLOATER
+    ships:
+      - SM_FLOATER
+    spawnrate: 0.7
+    spawnlimit: 50
+    location: |
+      And [
+        Not Contains Monster
+        Not WithinStarlaneJumps jumps = 2 condition = Contains And [
+          Planet
+          OwnedBy affiliation = AnyEmpire
+        ]
+      ]
+  - name: SM_DRAGON
+    ships:
+      - SM_DRAGON
+    spawnrate: 0.3
+    spawnlimit: 50
+    location: |
+      And [
+        Not Contains Monster
+        Not WithinStarlaneJumps jumps = 4 condition = Contains And [
+          Planet
+          OwnedBy affiliation = AnyEmpire
+        ]
+      ]
+  - name: SM_KRAKEN_1
+    ships:
+      - SM_KRAKEN_1
+    spawnrate: 0.8
+    spawnlimit: 100
+    location: |
+      And [
+        Not Contains Monster
+        Contains Planet type = GasGiant
+        Not WithinStarlaneJumps jumps = 3 condition = Contains And [
+          Planet
+          OwnedBy affiliation = AnyEmpire
+        ]
+      ]
+  - name: SM_SNOWFLAKE_1
+    ships:
+      - SM_SNOWFLAKE_1
+    spawnrate: 1.2
+    spawnlimit: 100
+    location: |
+      And [
+        Not Contains Monster
+        Contains Planet size = Small
+        Not WithinStarlaneJumps jumps = 2 condition = Contains And [
+          Planet
+          OwnedBy affiliation = AnyEmpire
+        ]
+      ]
+  - name: SM_JUGGERNAUT_1
+    ships:
+      - SM_JUGGERNAUT_1
+    spawnrate: 1.2
+    spawnlimit: 100
+    location: |
+      And [
+        Not Contains Monster
+        Contains Planet type = Asteroids
+        Not WithinStarlaneJumps jumps = 4 condition = Contains And [
+          Planet
+          OwnedBy affiliation = AnyEmpire
+        ]
+      ]
+  - name: SM_CLOUD
+    ships:
+      - SM_CLOUD
+    spawnrate: 3.0
+    spawnlimit: 2
+    location: |
+      And [
+        Not Contains Monster
+        Not WithinStarlaneJumps jumps = 4 condition = Contains And [
+          Planet
+          OwnedBy affiliation = AnyEmpire
+        ]
+      ]
+  - name: SM_SNAIL
+    ships:
+      - SM_SNAIL
+    spawnrate: 2.0
+    spawnlimit: 20
+    location: |
+      And [
+        Not Contains Monster
+        Contains Planet type = Asteroids
+        Not WithinStarlaneJumps jumps = 2 condition = Contains And [
+          Planet
+          OwnedBy affiliation = AnyEmpire
+        ]
+      ]
+  - name: SM_EXP_OUTPOST
+    ships:
+      - SM_EXP_OUTPOST
+    spawnrate: 1000.0
+    spawnlimit: 1
+    location: |
+      And [
+        ((GameRule name = "RULE_ENABLE_EXPERIMENTORS") > 0)
+        Contains And [
+          Planet
+          Unowned
+          Not Species
+          Not Planet type = [Asteroids GasGiant]
+        ]
+        Not Contains Or [
+          HasSpecial name = "ANCIENT_RUINS_SPECIAL"
+          HasSpecial name = "PANOPTICON_SPECIAL"
+          HasSpecial name = "GAIA_SPECIAL"
+        ]
+        Not WithinStarlaneJumps jumps = 6 condition = And [
+          Planet
+          OwnedBy affiliation = AnyEmpire
+        ]
+      ]
+  - name: SM_DAMPENING_CLOUD
+    ships:
+      - SM_DAMPENING_CLOUD
+    spawnrate: 0.5
+    spawnlimit: 1
+    location: |
+      And [
+        Not Contains Monster
+        Not WithinStarlaneJumps jumps = 4 condition = Contains And [
+          Planet
+          OwnedBy affiliation = AnyEmpire
+        ]
+      ]
