@@ -1,0 +1,5 @@
+articles:
+  - name: ENC_TECH
+    category: ENC_TECH
+    description: ENC_TECH_DESC
+    icon: icons/meter/research.png

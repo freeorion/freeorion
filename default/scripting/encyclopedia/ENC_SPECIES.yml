@@ -1,0 +1,5 @@
+articles:
+  - name: ENC_SPECIES
+    category: ENC_SPECIES
+    description: ENC_SPECIES_DESC
+    icon: icons/species/humanoid-01.png
