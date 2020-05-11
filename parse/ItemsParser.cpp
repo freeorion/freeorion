@@ -1,10 +1,10 @@
 #include "Parse.h"
 
+#include <boost/filesystem/fstream.hpp>
+#include <yaml-cpp/yaml.h>
 #include "ParseImpl.h"
 #include "EnumParser.h"
 #include "../universe/UnlockableItem.h"
-
-#include <boost/spirit/include/phoenix.hpp>
 
 
 #define DEBUG_PARSERS 0
@@ -63,11 +63,28 @@ namespace parse {
         return items_;
     }
 
-    start_rule_payload starting_buildings(const boost::filesystem::path& path) {
-        const lexer lexer;
-        start_rule_payload starting_buildings_;
-        starting_buildings_.reserve(32); // should be more than enough as of this writing...
-        detail::parse_file<grammar, start_rule_payload>(lexer, path, starting_buildings_);
+    std::vector<UnlockableItem> starting_buildings(const boost::filesystem::path& path) {
+        std::vector<UnlockableItem> starting_buildings_;
+
+        YAML::Node doc;
+        try {
+            boost::filesystem::ifstream ifs(path);
+            doc = YAML::Load(ifs);
+            ifs.close();
+        }
+        catch(YAML::Exception& e) {
+            ErrorLogger() << "parse::starting_buildings: " << e.what();
+            return starting_buildings_;
+        }
+
+        if (!doc["buildings"]) {
+            ErrorLogger() << "parse::parse::starting_buildings: buildings key not found, skipping.";
+            return starting_buildings_;
+        }
+
+        for (const auto& building_node : doc["buildings"])
+            starting_buildings_.emplace_back(UIT_BUILDING, building_node.as<std::string>());
+
         return starting_buildings_;
     }
 }
