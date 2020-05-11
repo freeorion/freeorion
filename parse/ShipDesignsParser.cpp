@@ -9,6 +9,7 @@
 #include <boost/uuid/nil_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/optional/optional.hpp>
+#include <boost/lexical_cast.hpp>
 
 
 FO_COMMON_API extern const int ALL_EMPIRES;

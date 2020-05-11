@@ -3,9 +3,10 @@
 #include "../util/Logger.h"
 
 #include <boost/algorithm/string/classification.hpp>
-#include <tuple>
 #include <boost/xpressive/xpressive.hpp>
 
+#include <iostream>
+#include <tuple>
 
 parse::detail::info_visitor::info_visitor(std::ostream& os, const string& tag, std::size_t indent) :
     m_os(os),
@@ -87,8 +88,8 @@ void parse::detail::pretty_print(std::ostream& os, boost::spirit::info const& wh
     boost::apply_visitor(v, what.value);
 }
 
-void parse::detail::default_send_error_string(const std::string& str) { 
-    ErrorLogger() << str; 
+void parse::detail::default_send_error_string(const std::string& str) {
+    ErrorLogger() << str;
     // output to cout also so can be better associated with any output from parser semantic action debug output
     std::cout << str +"\n" << std::flush;
 }
