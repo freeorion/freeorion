@@ -39,7 +39,7 @@ required by FreeOrion**, the entries should be modified to reflect related
 content changes.  See file for details.
 * COPYING  -  License info related to any content in this directory.
 **Required file and content.**
-* credits.xml  -  Acknowledgments of those who have made FreeOrion possible. 
+* credits.yml  -  Acknowledgments of those who have made FreeOrion possible.
 **Required file and content.**
 * empire_colors.xml  -  Color options available for empires to select from. 
 **This file containing at least one GG::Clr node is required.**
