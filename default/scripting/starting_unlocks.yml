@@ -30,12 +30,26 @@ buildingtypes:
   - BLD_COL_TAEGHIRUS
   - BLD_COL_TRITH
   - BLD_COL_UGMORS
+  - BLD_CULTURE_ARCHIVES
   - BLD_EVACUATION
   - BLD_IMPERIAL_PALACE
   - BLD_MILITARY_COMMAND
   - BLD_SHIPYARD_BASE
   - BLD_SHIPYARD_ORBITAL_DRYDOCK
   - BLD_SUPER_TEST
+fleets:
+  - name: FN_SCOUT_FLEET
+    ships:
+      - SD_SCOUT
+  - name: FN_SCOUT_FLEET
+    ships:
+      - SD_SCOUT
+  - name: FN_BATTLE_FLEET
+    ships:
+      - SD_MARK_1
+  - name: FN_COLONY_FLEET
+    ships:
+      - SD_COLONY_SHIP
 shiphulls:
   - SH_BASIC_SMALL
   - SH_BASIC_MEDIUM

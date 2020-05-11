@@ -55,15 +55,10 @@ is required.**
 * monster_fleets.inf  -  Fleet definitions for space monsters
 (spawn rate/quantity/limitations).  **This file and at least one entry are
 required.**
-* starting_unlocks/  -  Contains lists of items that are unlocked for each
-player at the start of the game.
-* starting_unlocks/items.yml  -  Items each player starts the game with:
-completed techs and available buildings, ship hulls, and ship parts.  **This
-file and at least one entry are required.**
-* starting_unlocks/buildings.yml  -  Buildings each player starts with
-pre-built.  **This file and at least one entry are required.**
-* starting_unlocks/fleets.yml  -  Fleets each player starts with.  **This file
-and at least one entry are required.**
+* starting_unlocks.yml  -  Contains lists of items that are unlocked for each
+player at the start of the game.  Items each player starts the game with:
+completed techs and available building types, ship hulls, ship parts,
+buildings, and fleets.  **This file is required.**
 
 
 ## filename guidelines

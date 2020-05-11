@@ -165,20 +165,14 @@ void ServerApp::StartBackgroundParsing() {
     IApp::StartBackgroundParsing();
     const auto& rdir = GetResourceDir();
 
-    if (fs::exists(rdir / "scripting/starting_unlocks/items.yml"))
-        m_universe.SetInitiallyUnlockedItems(Pending::StartParsing(parse::items, rdir / "scripting/starting_unlocks/items.yml"));
+    auto starting_unlocks_path = rdir / "scripting" / "starting_unlocks.yml";
+    if (fs::exists(starting_unlocks_path)) {
+        m_universe.SetInitiallyUnlockedItems(Pending::StartParsing(parse::items, starting_unlocks_path));
+        m_universe.SetInitiallyUnlockedBuildings(Pending::StartParsing(parse::starting_buildings, starting_unlocks_path));
+        m_universe.SetInitiallyUnlockedFleetPlans(Pending::StartParsing(parse::fleet_plans, starting_unlocks_path));
+    }
     else
-        ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/starting_unlocks/items.yml").string();
-
-    if (fs::exists(rdir / "scripting/starting_unlocks/buildings.yml"))
-        m_universe.SetInitiallyUnlockedBuildings(Pending::StartParsing(parse::starting_buildings, rdir / "scripting/starting_unlocks/buildings.yml"));
-    else
-        ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/starting_unlocks/buildings.yml").string();
-
-    if (fs::exists(rdir / "scripting/starting_unlocks/fleets.yml"))
-        m_universe.SetInitiallyUnlockedFleetPlans(Pending::StartParsing(parse::fleet_plans, rdir / "scripting/starting_unlocks/fleets.yml"));
-    else
-        ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/starting_unlocks/fleets.yml").string();
+        ErrorLogger() << "Background parse path doesn't exist: " << starting_unlocks_path.string();
 
     if (fs::exists(rdir / "scripting/monster_fleets.inf"))
         m_universe.SetMonsterFleetPlans(Pending::StartParsing(parse::monster_fleet_plans, rdir / "scripting/monster_fleets.inf"));
