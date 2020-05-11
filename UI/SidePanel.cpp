@@ -5,12 +5,15 @@
 #include <boost/filesystem/fstream.hpp>
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/range/adaptor/indexed.hpp>
 #include <boost/range/irange.hpp>
+#include <GG/ClrConstants.h>
 #include <GG/DynamicGraphic.h>
 #include <GG/GUI.h>
 #include <GG/Layout.h>
 #include <GG/Scroll.h>
 #include <GG/StaticGraphic.h>
+#include <yaml-cpp/yaml.h>
 #include "BuildingsPanel.h"
 #include "CUIControls.h"
 #include "CUIWnd.h"
@@ -42,10 +45,10 @@
 #include "../util/Order.h"
 #include "../util/Random.h"
 #include "../util/ScopedTimer.h"
-#include "../util/XMLDoc.h"
 
 
 class RotatingPlanetControl;
+
 
 namespace {
     const int       EDGE_PAD(3);
@@ -61,157 +64,142 @@ namespace {
     { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.map.sidepanel.open.sound.path"), true); }
 
     struct RotatingPlanetData {
-        RotatingPlanetData(const XMLElement& elem) {
-            if (elem.Tag() != "RotatingPlanetData")
-                throw std::invalid_argument("Attempted to construct a RotatingPlanetData from an XMLElement that had a tag other than \"RotatingPlanetData\"");
-
-            planet_type = boost::lexical_cast<PlanetType>(elem.attributes.at("planet_type"));
-            filename = elem.attributes.at("filename");
-            shininess = boost::lexical_cast<double>(elem.attributes.at("shininess"));
-
-            // ensure proper bounds
-            shininess = std::max(0.0, std::min(shininess, 128.0));
-        }
-
-        PlanetType  planet_type;    ///< the type of planet for which this data may be used
-        std::string filename;       ///< the filename of the image used to texture a rotating image
-        double      shininess;      ///< the exponent of specular (shiny) reflection off of the planet; must be in [0.0, 128.0]
-    };
-
-    struct PlanetAtmosphereData {
         struct Atmosphere {
-            Atmosphere() {}
-            Atmosphere(const XMLElement& elem) {
-                if (elem.Tag() != "Atmosphere")
-                    throw std::invalid_argument("Attempted to construct an Atmosphere from an XMLElement that had a tag other than \"Atmosphere\"");
-                filename = elem.attributes.at("filename");
-                alpha = boost::lexical_cast<int>(elem.attributes.at("alpha"));
-                alpha = std::max(0, std::min(alpha, 255));
-            }
-
             std::string filename;
             int         alpha;
         };
 
-        PlanetAtmosphereData() {}
-        PlanetAtmosphereData(const XMLElement& elem) {
-            if (elem.Tag() != "PlanetAtmosphereData")
-                throw std::invalid_argument("Attempted to construct a PlanetAtmosphereData from an XMLElement that had a tag other than \"PlanetAtmosphereData\"");
-            planet_filename = elem.attributes.at("planet_filename");
-            for (const XMLElement& atmosphere : elem.Child("atmospheres").children) {
-                atmospheres.push_back(Atmosphere(atmosphere));
-            }
-        }
-
-        std::string             planet_filename; ///< the filename of the planet image that this atmosphere image data goes with
+        std::string filename;       ///< the filename of the image used to texture a rotating image
+        float       shininess;      ///< the exponent of specular (shiny) reflection off of the planet; must be in [0.0, 128.0]
         std::vector<Atmosphere> atmospheres;     ///< the filenames of the atmosphere images suitable for use with this planet image
     };
 
-    const std::map<PlanetType, std::vector<RotatingPlanetData>>&    GetRotatingPlanetData() {
+    const std::map<PlanetType, std::vector<RotatingPlanetData>>& GetRotatingPlanetData() {
         ScopedTimer timer("GetRotatingPlanetData", true);
         static std::map<PlanetType, std::vector<RotatingPlanetData>> data;
-        if (data.empty()) {
-            XMLDoc doc;
+        static bool parse_failed{false};
+
+        if (data.empty() && !parse_failed) {
+            using namespace boost::adaptors;
+
+            YAML::Node doc;
             try {
-                boost::filesystem::ifstream ifs(ClientUI::ArtDir() / "planets" / "planets.xml");
-                doc.ReadDoc(ifs);
+                boost::filesystem::ifstream ifs(ClientUI::ArtDir() / "planets" / "planets.yml");
+                doc = YAML::Load(ifs);
                 ifs.close();
-            } catch (const std::exception& e) {
-                ErrorLogger() << "GetRotatingPlanetData: error reading artdir/planets/planets.xml: " << e.what();
+                data = doc["planets"].as<std::map<PlanetType, std::vector<RotatingPlanetData>>>();
             }
-
-            if (doc.root_node.ContainsChild("GLPlanets")) {
-                const XMLElement& elem = doc.root_node.Child("GLPlanets");
-                for (const XMLElement& planet_definition : elem.children) {
-                    if (planet_definition.Tag() == "RotatingPlanetData") {
-                        try {
-                            RotatingPlanetData current_data(planet_definition);
-                            data[current_data.planet_type].push_back(current_data);
-                        } catch(const std::exception& e) {
-                            ErrorLogger() << "GetRotatingPlanetData: unable to load entry: " << e.what();
-                        }
-                    }
-                }
+            catch(YAML::TypedBadConversion<PlanetType>& e) {
+                ErrorLogger() << "GetRotatingPlanetData: " << e.mark.line << ":" << e.mark.column << ": not a known planet type";
+                parse_failed = true;
+            }
+            catch(YAML::TypedBadConversion<std::map<PlanetType, std::vector<RotatingPlanetData>>>& e) {
+                ErrorLogger() << "GetRotatingPlanetData: " << e.mark.line << ":" << e.mark.column << ": expected a map of planet types to sequences of planet surfaces";
+                parse_failed = true;
+            }
+            catch(YAML::TypedBadConversion<std::vector<RotatingPlanetData>>& e) {
+                ErrorLogger() << "GetRotatingPlanetData: " << e.mark.line << ":" << e.mark.column << ": expected a sequence of planet surfaces";
+                parse_failed = true;
+            }
+            catch(YAML::TypedBadConversion<RotatingPlanetData>& e) {
+                ErrorLogger() << "GetRotatingPlanetData: " << e.mark.line << ":" << e.mark.column << ": expected a planet surface object";
+                parse_failed = true;
+            }
+            catch(YAML::TypedBadConversion<std::vector<RotatingPlanetData::Atmosphere>>& e) {
+                ErrorLogger() << "GetRotatingPlanetData: " << e.mark.line << ":" << e.mark.column << ": expected a sequence of planet atmospheres";
+                parse_failed = true;
+            }
+            catch(YAML::TypedBadConversion<RotatingPlanetData::Atmosphere>& e) {
+                ErrorLogger() << "GetRotatingPlanetData: " << e.mark.line << ":" << e.mark.column << ": expected a planet atmosphere object";
+                parse_failed = true;
+            }
+            catch(YAML::Exception& e) {
+                ErrorLogger() << "GetRotatingPlanetData: " << e.mark.line << ":" << e.mark.column << ": " << e.what();
+                parse_failed = true;
             }
         }
+
         return data;
     }
 
-    const std::map<std::string, PlanetAtmosphereData>&              GetPlanetAtmosphereData() {
-        static std::map<std::string, PlanetAtmosphereData> data;
-        if (data.empty()) {
-            XMLDoc doc;
-            boost::filesystem::ifstream ifs(ClientUI::ArtDir() / "planets" / "atmospheres.xml");
-            doc.ReadDoc(ifs);
-            ifs.close();
+    float GetAsteroidsFPS() {
+        static float retval{-1.0};
+        static bool parse_failed{false};
 
-            for (const XMLElement& atmosphere_definition : doc.root_node.children) {
-                if (atmosphere_definition.Tag() == "PlanetAtmosphereData") {
-                    try {
-                        PlanetAtmosphereData current_data(atmosphere_definition);
-                        data[current_data.planet_filename] = current_data;
-                    } catch (const std::exception& e) {
-                        ErrorLogger() << "GetPlanetAtmosphereData: " << e.what();
-                    }
-                }
+        if (retval == -1.0 && !parse_failed) {
+            YAML::Node doc;
+            try {
+                boost::filesystem::ifstream ifs(ClientUI::ArtDir() / "planets" / "planets.yml");
+                doc = YAML::Load(ifs);
+                ifs.close();
             }
-        }
-        return data;
-    }
+            catch(YAML::Exception& e) {
+                ErrorLogger() << "GetAsteroidsFPS: " << e.what();
+                parse_failed = true;
+                return retval;
+            }
 
-    double      GetAsteroidsFPS() {
-        static double retval = -1.0;
-        if (retval == -1.0) {
-            XMLDoc doc;
-            boost::filesystem::ifstream ifs(ClientUI::ArtDir() / "planets" / "planets.xml");
-            doc.ReadDoc(ifs);
-            ifs.close();
+            if (!doc["asteroids"]["fps"]) {
+                InfoLogger() << "GetAsteroidsFPS: asteroids : no fps set, using 15.0.";
+            }
 
-            if (doc.root_node.ContainsChild("asteroids_fps"))
-                retval = boost::lexical_cast<double>(doc.root_node.Child("asteroids_fps").Text());
-            else
-                retval = 15.0;
-
-            retval = std::max(0.0, std::min(retval, 60.0));
+            retval = doc["asteroids"]["fps"].as<float>(15.0f);
+            retval = std::max(0.0f, std::min(retval, 60.0f));
         }
         return retval;
     }
 
-    double      GetRotatingPlanetAmbientIntensity() {
-        static double retval = -1.0;
+    float GetRotatingPlanetAmbientIntensity() {
+        static float retval{-1.0};
+        static bool parse_failed{false};
 
-        if (retval == -1.0) {
-            XMLDoc doc;
-            boost::filesystem::ifstream ifs(ClientUI::ArtDir() / "planets" / "planets.xml");
-            doc.ReadDoc(ifs);
-            ifs.close();
+        if (retval == -1.0 && !parse_failed) {
+            YAML::Node doc;
+            try {
+                boost::filesystem::ifstream ifs(ClientUI::ArtDir() / "planets" / "planets.yml");
+                doc = YAML::Load(ifs);
+                ifs.close();
+            }
+            catch(YAML::Exception& e) {
+                ErrorLogger() << "GetRotatingPlanetAmbientIntensity: " << e.what();
+                parse_failed = true;
+                return retval;
+            }
 
-            if (doc.root_node.ContainsChild("GLPlanets") && doc.root_node.Child("GLPlanets").ContainsChild("ambient_intensity"))
-                retval = boost::lexical_cast<double>(doc.root_node.Child("GLPlanets").Child("ambient_intensity").Text());
-            else
-                retval = 0.5;
+            if (!doc["light"]["ambient"]) {
+                InfoLogger() << "GetRotatingPlanetAmbientIntensity: light : no ambient set, using 0.5.";
+            }
 
-            retval = std::max(0.0, std::min(retval, 1.0));
+            retval = doc["light"]["ambient"].as<float>(0.5f);
+            retval = std::max(0.0f, std::min(retval, 1.0f));
         }
 
         return retval;
     }
 
-    double      GetRotatingPlanetDiffuseIntensity() {
-        static double retval = -1.0;
+    double GetRotatingPlanetDiffuseIntensity() {
+        static float retval{-1.0};
+        static bool parse_failed{false};
 
-        if (retval == -1.0) {
-            XMLDoc doc;
-            boost::filesystem::ifstream ifs(ClientUI::ArtDir() / "planets" / "planets.xml");
-            doc.ReadDoc(ifs);
-            ifs.close();
+        if (retval == -1.0 && !parse_failed) {
+            YAML::Node doc;
+            try {
+                boost::filesystem::ifstream ifs(ClientUI::ArtDir() / "planets" / "planets.yml");
+                doc = YAML::Load(ifs);
+                ifs.close();
+            }
+            catch(YAML::Exception& e) {
+                ErrorLogger() << "GetRotatingPlanetDiffuseIntensity: " << e.what();
+                parse_failed = true;
+                return retval;
+            }
 
-            if (doc.root_node.ContainsChild("GLPlanets") && doc.root_node.Child("GLPlanets").ContainsChild("diffuse_intensity"))
-                retval = boost::lexical_cast<double>(doc.root_node.Child("GLPlanets").Child("diffuse_intensity").Text());
-            else
-                retval = 0.5;
+            if (!doc["light"]["diffuse"]) {
+                InfoLogger() << "GetRotatingPlanetDiffuseIntensity: light : no diffuse set, using 0.5.";
+            }
 
-            retval = std::max(0.0, std::min(retval, 1.0));
+            retval = doc["light"]["diffuse"].as<double>(0.5f);
+            retval = std::max(0.0f, std::min(retval, 1.0f));
         }
 
         return retval;
@@ -289,65 +277,80 @@ namespace {
         }
     }
 
-    GLfloat*    GetLightPosition() {
+    GLfloat* GetLightPosition() {
         static GLfloat retval[] = {0.0, 0.0, 0.0, 0.0};
+        static bool parse_failed{false};
 
-        if (retval[0] == 0.0 && retval[1] == 0.0 && retval[2] == 0.0) {
-            XMLDoc doc;
-            boost::filesystem::ifstream ifs(ClientUI::ArtDir() / "planets" / "planets.xml");
-            doc.ReadDoc(ifs);
-            ifs.close();
+        if (retval[0] == 0.0 && retval[1] == 0.0 && retval[2] == 0.0 && !parse_failed) {
+            YAML::Node doc;
+            try {
+                boost::filesystem::ifstream ifs(ClientUI::ArtDir() / "planets" / "planets.yml");
+                doc = YAML::Load(ifs);
+                ifs.close();
+            }
+            catch(YAML::Exception& e) {
+                ErrorLogger() << "GetLightPosition: " << e.what();
+                parse_failed = true;
+                return retval;
+            }
 
-            retval[0] = boost::lexical_cast<GLfloat>(doc.root_node.Child("GLPlanets").Child("light_pos").Child("x").Text());
-            retval[1] = boost::lexical_cast<GLfloat>(doc.root_node.Child("GLPlanets").Child("light_pos").Child("y").Text());
-            retval[2] = boost::lexical_cast<GLfloat>(doc.root_node.Child("GLPlanets").Child("light_pos").Child("z").Text());
+            if (!doc["light"]["position"]) {
+                InfoLogger() << "GetLightPosition: light : no position set, using (0, 0, 0).";
+                parse_failed = true;
+                return retval;
+            }
+
+            if (!doc["light"]["position"].IsSequence() || 3 != doc["light"]["position"].size()) {
+                ErrorLogger() << "GetLightPosition: light.position is not a sequence of 3 elements, using (0, 0, 0).";
+                parse_failed = true;
+                return retval;
+            }
+
+            retval[0] = doc["light"]["position"][0].as<float>(0.0f);
+            retval[1] = doc["light"]["position"][1].as<float>(0.0f);
+            retval[2] = doc["light"]["position"][2].as<float>(0.0f);
         }
 
         return retval;
     }
 
-    const std::map<StarType, std::vector<float>>& GetStarLightColors() {
-        static std::map<StarType, std::vector<float>> light_colors;
+    const std::map<StarType, GG::Clr>& GetStarLightColors() {
+        static std::map<StarType, GG::Clr> data;
+        static bool parse_failed{false};
 
-        if (light_colors.empty()) {
-            XMLDoc doc;
-            boost::filesystem::ifstream ifs(ClientUI::ArtDir() / "planets" / "planets.xml");
-            doc.ReadDoc(ifs);
-            ifs.close();
+        if (data.empty() && !parse_failed) {
+            using namespace boost::adaptors;
 
-            if (doc.root_node.ContainsChild("GLStars") && 0 < doc.root_node.Child("GLStars").children.size()) {
-                for (const XMLElement& star_definition : doc.root_node.Child("GLStars").children) {
-                    try {
-                        std::string hex_colour("#");
-                        hex_colour.append(star_definition.attributes.at("color"));
-                        std::vector<float>& color_vec = light_colors[boost::lexical_cast<StarType>(star_definition.attributes.at("star_type"))];
-                        GG::Clr color = GG::HexClr(hex_colour);
-
-                        color_vec.push_back(color.r / 255.0f);
-                        color_vec.push_back(color.g / 255.0f);
-                        color_vec.push_back(color.b / 255.0f);
-                        color_vec.push_back(color.a / 255.0f);
-                    } catch(const std::exception& e) {
-                        std::cerr << "planets.xml: " << e.what() << std::endl;
-                    }
-                }
-            } else {
-                for (int i = STAR_BLUE; i < NUM_STAR_TYPES; ++i) {
-                    light_colors[StarType(i)].resize(4, 1.0);
-                }
+            YAML::Node doc;
+            try {
+                boost::filesystem::ifstream ifs(ClientUI::ArtDir() / "planets" / "planets.yml");
+                doc = YAML::Load(ifs);
+                ifs.close();
+                data = doc["stars"].as<std::map<StarType, GG::Clr>>();
+            }
+            catch(YAML::TypedBadConversion<StarType>& e) {
+                ErrorLogger() << "GetStarLightColors: " << e.mark.line << ":" << e.mark.column << ": not a known star type";
+                parse_failed = true;
+            }
+            catch(YAML::TypedBadConversion<GG::Clr>& e) {
+                ErrorLogger() << "GetStarLightColors: " << e.mark.line << ":" << e.mark.column << ": expected a hex web color";
+                parse_failed = true;
+            }
+            catch(YAML::Exception& e) {
+                ErrorLogger() << "GetStarLightColors: " << e.what();
+                parse_failed = true;
             }
         }
 
-        return light_colors;
+        return data;
     }
 
-    const std::vector<float>& StarLightColour(StarType star_type) {
-        static std::vector<float> white(4, 0.0f);
+    const GG::Clr& StarLightColour(StarType star_type) {
         const auto& colour_map = GetStarLightColors();
         auto it = colour_map.find(star_type);
         if (it != colour_map.end())
             return it->second;
-        return white;
+        return GG::CLR_WHITE;
     }
 
     void        RenderPlanet(const GG::Pt& center, int diameter, std::shared_ptr<GG::Texture> texture,
@@ -378,9 +381,10 @@ namespace {
         glEnable(GL_LIGHTING);
         glEnable(GL_LIGHT0);
 
-        const std::vector<float>& colour = StarLightColour(star_type);
-        glLightfv(GL_LIGHT0, GL_DIFFUSE, &colour[0]);
-        glLightfv(GL_LIGHT0, GL_SPECULAR, &colour[0]);
+        const auto& color = StarLightColour(star_type);
+        GLfloat colorf[4] {color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a / 255.0f};
+        glLightfv(GL_LIGHT0, GL_DIFFUSE, colorf);
+        glLightfv(GL_LIGHT0, GL_SPECULAR, colorf);
         glEnable(GL_TEXTURE_2D);
 
         glTranslated(Value(center.x), Value(center.y), -(diameter / 2 + 1));// relocate to locatin on screen where planet is to be rendered
@@ -500,6 +504,128 @@ namespace {
 
     bool ClientPlayerIsModerator()
     { return HumanClientApp::GetApp()->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR; }
+}
+
+
+namespace YAML {
+    template <>
+    struct convert<PlanetType> {
+        static bool decode(const Node& node, PlanetType& rhs);
+    };
+
+    bool convert<PlanetType>::decode(const Node& node, PlanetType& rhs) {
+        if (!node.IsScalar())
+            return false;
+
+        try {
+            rhs = boost::lexical_cast<PlanetType>("PT_" + boost::to_upper_copy(node.as<std::string>()));
+        }
+        catch(const boost::bad_lexical_cast&) {
+            return false;
+        }
+
+        if (GG::EnumMap<PlanetType>::BAD_VALUE == rhs)
+            return false;
+
+        return true;
+    }
+
+    template <>
+    struct convert<StarType> {
+        static bool decode(const Node& node, StarType& rhs);
+    };
+
+    bool convert<StarType>::decode(const Node& node, StarType& rhs) {
+        if (!node.IsScalar())
+            return false;
+
+        try {
+            rhs = boost::lexical_cast<StarType>("STAR_" + boost::to_upper_copy(node.as<std::string>()));
+        }
+        catch(const boost::bad_lexical_cast&) {
+            return false;
+        }
+
+        if (GG::EnumMap<StarType>::BAD_VALUE == rhs)
+            return false;
+
+        return true;
+    }
+
+    template <>
+    struct convert<GG::Clr> {
+        static bool decode(const Node& node, GG::Clr& rhs);
+    };
+
+    bool convert<GG::Clr>::decode(const Node& node, GG::Clr& rhs) {
+        if (!node.IsScalar())
+            return false;
+
+        try {
+            rhs = GG::HexClr(node.as<std::string>());
+        }
+        catch(const std::exception& e) {
+            return false;
+        }
+
+        return true;
+    }
+
+    template <>
+    struct convert<RotatingPlanetData> {
+        static bool decode(const Node& node, RotatingPlanetData& rhs);
+    };
+
+    bool convert<RotatingPlanetData>::decode(const Node& node, RotatingPlanetData& rhs) {
+        if (!node.IsMap())
+            return false;
+
+        if (!node["surface"])
+            throw YAML::KeyNotFound(node.Mark(), std::string{"surface"});
+
+        if (!node["shininess"])
+            throw YAML::KeyNotFound(node.Mark(), std::string{"shininess"});
+
+        if (3 == node.size() && !node["atmospheres"])
+            throw YAML::KeyNotFound(node.Mark(), std::string{"atmospheres"});
+
+        if (3 < node.size())
+            throw YAML::RepresentationException(node.Mark(), "unexpected attributes in planet surface object aside from: [surface, shininess, atmospheres]");
+
+        rhs = {
+            node["surface"].as<std::string>(),
+            std::max(0.0f, std::min(node["shininess"].as<float>(), 128.0f)),
+            node["atmospheres"].as<std::vector<RotatingPlanetData::Atmosphere>>(std::vector<RotatingPlanetData::Atmosphere>{})
+        };
+
+        return true;
+    }
+
+    template <>
+    struct convert<RotatingPlanetData::Atmosphere> {
+        static bool decode(const Node& node, RotatingPlanetData::Atmosphere& rhs);
+    };
+
+    bool convert<RotatingPlanetData::Atmosphere>::decode(const Node& node, RotatingPlanetData::Atmosphere& rhs) {
+        if (!node.IsMap())
+            return false;
+
+        if (!node["atmosphere"])
+            throw YAML::KeyNotFound(node.Mark(), std::string{"atmosphere"});
+
+        if (!node["transparency"])
+            throw YAML::KeyNotFound(node.Mark(), std::string{"transparency"});
+
+        if (2 != node.size())
+            throw YAML::RepresentationException(node.Mark(), "unexpected attributes in atmosphere object aside from: [atmosphere, transparency]");
+
+        rhs = {
+            node["atmosphere"].as<std::string>(),
+            std::max(0, std::min(node["transparency"].as<int>(), 255))
+        };
+
+        return true;
+    }
 }
 
 
@@ -728,10 +854,8 @@ public:
             m_surface_texture = ClientUI::GetTexture(ClientUI::ArtDir() / rpd.filename, true);
             m_shininess = rpd.shininess;
 
-            const auto& atmosphere_data = GetPlanetAtmosphereData();
-            auto it = atmosphere_data.find(rpd.filename);
-            if (it != atmosphere_data.end()) {
-                const auto& atmosphere = it->second.atmospheres[RandInt(0, it->second.atmospheres.size() - 1)];
+            if (rpd.atmospheres.empty()) {
+                const auto& atmosphere = rpd.atmospheres[RandInt(0, rpd.atmospheres.size() - 1)];
                 m_atmosphere_texture = ClientUI::GetTexture(ClientUI::ArtDir() / atmosphere.filename, true);
                 m_atmosphere_alpha = atmosphere.alpha;
                 m_atmosphere_planet_rect = GG::Rect(GG::X1, GG::Y1, m_atmosphere_texture->DefaultWidth() - 4, m_atmosphere_texture->DefaultHeight() - 4);
