@@ -122,7 +122,8 @@ REFUEL_MESSAGE
             Species name = "SP_SLY"
             ContainedBy condition = And [
                 Object id = Source.SystemID
-                Contains condition = And [ Planet type = GasGiant
+                Contains condition = And [
+                    Planet type = GasGiant
                     Not OwnedBy affiliation = EnemyOf empire = Source.Owner
             ] ] ] )
          >= 1
