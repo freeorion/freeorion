@@ -213,19 +213,22 @@ class Docs:
         self.args = args
 
     def get_argument_string(self):
-        return ', '.join(arg_name for arg_name in self.argument_declaration)
+
+        if self.is_class:
+            args = ['self']
+        else:
+            args = []
+        args.extend("%s: %s" % (arg_name, arg_type) for arg_name, arg_type in self.args[self.is_class:])
+        return ', '.join(args)
 
     def get_doc_string(self):
-        doc = ['"""']
+        doc = []
         if self.header:
-            doc.extend(self.header)
-            doc.append('')
-        for arg_name, arg_type in self.args[self.is_class:]:
-            doc.append(':param %s:' % arg_name)
-            doc.append(':type %s: %s' % (arg_name, arg_type))
+            doc.append('"""')
+            if self.header:
+                doc.extend(self.header)
+            doc.append('"""')
 
-        doc.append(':rtype: %s' % self.rtype)
-        doc.append('"""')
         return '\n'.join('%s%s' % (' ' * 4 * self.indent if x else '', x) for x in doc)
 
 
