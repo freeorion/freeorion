@@ -63,10 +63,10 @@ public:
     }
 
 private:
-    void DrawCredits(GG::X x1, GG::Y y1, GG::X x2, GG::Y y2, int transparency);
+    void DrawCredits(GG::X x1, GG::Y y1, GG::X x2, GG::Y y2);
     void OnExit();
 
-    XMLElement                  m_credits;
+    std::string                 m_credits;
     int                         m_cx, m_cy, m_cw, m_ch, m_co;
     int                         m_start_time;
     int                         m_scroll_offset = 0;
@@ -99,7 +99,55 @@ CreditsWnd::CreditsWnd(GG::X x, GG::Y y, GG::X w, GG::Y h, int cx, int cy, int c
     if (!doc.root_node.ContainsChild("CREDITS"))
         return;
 
-    m_credits = doc.root_node.Child("CREDITS");
+    auto credits_node = doc.root_node.Child("CREDITS");
+
+    for (const XMLElement& group : credits_node.children) {
+        if (0 == group.Tag().compare("GROUP")) {
+            m_credits += group.attributes.at("name") + "\n\n";
+            for (const XMLElement& item : group.children) {
+                if (0 == item.Tag().compare("PERSON")) {    
+                    if (item.attributes.count("name"))
+                        m_credits += item.attributes.at("name");
+                    if (item.attributes.count("nick") && item.attributes.at("nick").length() > 0) {
+                        m_credits += " <rgba 153 153 153 255>(";
+                        m_credits += item.attributes.at("nick");
+                        m_credits += ")</rgba>";
+                    }
+                    if (item.attributes.count("task") && item.attributes.at("task").length() > 0) {
+                        m_credits += " - <rgba 204 204 204 255>";
+                        m_credits += item.attributes.at("task");
+                        m_credits += "</rgba>";
+                    }
+                }
+
+                if (0 == item.Tag().compare("RESOURCE")) {
+                    if (item.attributes.count("author"))
+                        m_credits += item.attributes.at("author");
+                    if (item.attributes.count("title")) {
+                        m_credits += "<rgba 153 153 153 255> - ";
+                        m_credits += item.attributes.at("title");
+                        m_credits += "</rgba>\n";
+                    }
+                    if (item.attributes.count("license"))
+                        m_credits += UserString("INTRO_CREDITS_LICENSE") + " " + item.attributes.at("license");
+                    if (item.attributes.count("source")) {
+                        m_credits += "<rgba 153 153 153 255> - ";
+                        m_credits += item.attributes.at("source");
+                        m_credits += "</rgba>\n";
+                    }
+                    if (item.attributes.count("notes") && item.attributes.at("notes").length() > 0) {
+                        m_credits += "<rgba 204 204 204 255>(";
+                        m_credits += item.attributes.at("notes");
+                        m_credits += ")</rgba>";
+                    }
+                }
+
+                m_credits += "\n";
+            }
+
+            m_credits += "\n\n";
+        }
+    }
 }
 
 CreditsWnd::~CreditsWnd() {
@@ -116,69 +164,20 @@ void CreditsWnd::OnExit() {
     m_done = true;
 }
 
-void CreditsWnd::DrawCredits(GG::X x1, GG::Y y1, GG::X x2, GG::Y y2, int transparency) {
+void CreditsWnd::DrawCredits(GG::X x1, GG::Y y1, GG::X x2, GG::Y y2) {
     GG::Flags<GG::TextFormat> format = GG::FORMAT_CENTER | GG::FORMAT_TOP;
 
     //offset starts with 0, credits are place by transforming the viewport
     GG::Y offset(0);
 
     //start color is white (name), this color is valid outside the rgba tags
-    glColor(GG::Clr(transparency, transparency, transparency, 255));
-
-    std::string credit;
-    for (const XMLElement& group : m_credits.children) {
-        if (0 == group.Tag().compare("GROUP")) {
-            credit += group.attributes.at("name") + "\n\n";
-            for (const XMLElement& item : group.children) {
-                if (0 == item.Tag().compare("PERSON")) {    
-                    if (item.attributes.count("name"))
-                        credit += item.attributes.at("name");
-                    if (item.attributes.count("nick") && item.attributes.at("nick").length() > 0) {
-                        credit += " <rgba 153 153 153 " + std::to_string(transparency) +">(";
-                        credit += item.attributes.at("nick");
-                        credit += ")</rgba>";
-                    }
-                    if (item.attributes.count("task") && item.attributes.at("task").length() > 0) {
-                        credit += " - <rgba 204 204 204 " + std::to_string(transparency) +">";
-                        credit += item.attributes.at("task");
-                        credit += "</rgba>";
-                    }
-                }
-
-                if (0 == item.Tag().compare("RESOURCE")) {
-                    if (item.attributes.count("author"))
-                        credit += item.attributes.at("author");
-                    if (item.attributes.count("title")) {
-                        credit += "<rgba 153 153 153 " + std::to_string(transparency) + "> - ";
-                        credit += item.attributes.at("title");
-                        credit += "</rgba>\n";
-                    }
-                    if (item.attributes.count("license"))
-                        credit += UserString("INTRO_CREDITS_LICENSE") + " " + item.attributes.at("license");
-                    if (item.attributes.count("source")) {
-                        credit += "<rgba 153 153 153 " + std::to_string(transparency) + "> - ";
-                        credit += item.attributes.at("source");
-                        credit += "</rgba>\n";
-                    }
-                    if (item.attributes.count("notes") && item.attributes.at("notes").length() > 0) {
-                        credit += "<rgba 204 204 204 " + std::to_string(transparency) + ">(";
-                        credit += item.attributes.at("notes");
-                        credit += ")</rgba>";
-                    }
-                }
-
-                credit += "\n";
-            }
-
-            credit += "\n\n";
-        }
-    }
+    glColor(GG::Clr(255, 255, 255, 255));
 
     std::vector<std::shared_ptr<GG::Font::TextElement>> text_elements =
-        m_font->ExpensiveParseFromTextToTextElements(credit, format);
+        m_font->ExpensiveParseFromTextToTextElements(m_credits, format);
     std::vector<GG::Font::LineData> lines =
-        m_font->DetermineLines(credit, format, x2 - x1, text_elements);
-    m_font->RenderText(GG::Pt(x1, y1 + offset), GG::Pt(x2, y2), credit, format, lines);
+        m_font->DetermineLines(m_credits, format, x2 - x1, text_elements);
+    m_font->RenderText(GG::Pt(x1, y1 + offset), GG::Pt(x2, y2), m_credits, format, lines);
     offset = m_font->TextExtent(lines).y;
     //store complete height for self destruction
     m_credits_height = Value(offset);
@@ -192,7 +191,7 @@ void CreditsWnd::Render() {
         // compile credits
         m_display_list_id = glGenLists(1);
         glNewList(m_display_list_id, GL_COMPILE);
-        DrawCredits(ul.x + m_cx, ul.y + m_cy, ul.x + m_cx + m_cw, ul.y + m_cy + m_ch, 255);
+        DrawCredits(ul.x + m_cx, ul.y + m_cy, ul.x + m_cx + m_cw, ul.y + m_cy + m_ch);
         glEndList();
     }
     //time passed
@@ -217,7 +216,7 @@ void CreditsWnd::Render() {
         glCallList(m_display_list_id);
     } else {
         // draw credits directly
-        DrawCredits(ul.x + m_cx, ul.y + m_cy, ul.x + m_cx + m_cw, ul.y + m_cy + m_ch, 255);
+        DrawCredits(ul.x + m_cx, ul.y + m_cy, ul.x + m_cx + m_cw, ul.y + m_cy + m_ch);
     }
 
     glPopMatrix();
