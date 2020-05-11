@@ -57,7 +57,7 @@ is required.**
 required.**
 * starting_unlocks/  -  Contains lists of items that are unlocked for each
 player at the start of the game.
-* starting_unlocks/items.inf  -  Items each player starts the game with:
+* starting_unlocks/items.yml  -  Items each player starts the game with:
 completed techs and available buildings, ship hulls, and ship parts.  **This
 file and at least one entry are required.**
 * starting_unlocks/buildings.yml  -  Buildings each player starts with

@@ -2,64 +2,41 @@
 
 #include <boost/filesystem/fstream.hpp>
 #include <yaml-cpp/yaml.h>
-#include "ParseImpl.h"
-#include "EnumParser.h"
 #include "../universe/UnlockableItem.h"
+#include "../util/Logger.h"
 
-
-#define DEBUG_PARSERS 0
-
-#if DEBUG_PARSERS
-namespace std {
-    inline ostream& operator<<(ostream& os, const std::vector<UnlockableItem>&) { return os; }
-}
-#endif
-
-namespace {
-    using start_rule_payload = std::vector<UnlockableItem>;
-    using start_rule_signature = void(start_rule_payload&);
-
-    struct grammar : public parse::detail::grammar<start_rule_signature> {
-        grammar(const parse::lexer& tok,
-                const std::string& filename,
-                const parse::text_iterator& first, const parse::text_iterator& last) :
-            grammar::base_type(start),
-            unlockable_item_parser(tok, label)
-        {
-            namespace phoenix = boost::phoenix;
-            namespace qi = boost::spirit::qi;
-
-            using phoenix::push_back;
-
-            qi::_1_type _1;
-            qi::_2_type _2;
-            qi::_3_type _3;
-            qi::_4_type _4;
-            qi::_r1_type _r1;
-
-            start
-                =   +unlockable_item_parser [ push_back(_r1, _1) ]
-                ;
-
-            start.name("start");
-
-            qi::on_error<qi::fail>(start, parse::report_error(filename, first, last, _1, _2, _3, _4));
-        }
-
-        using start_rule = parse::detail::rule<start_rule_signature>;
-
-        parse::detail::Labeller label;
-        parse::detail::unlockable_item_grammar unlockable_item_parser;
-        start_rule start;
-    };
-}
 
 namespace parse {
-    start_rule_payload items(const boost::filesystem::path& path) {
-        const lexer lexer;
-        start_rule_payload items_;
-        items_.reserve(128);    // should be more than enough as of this writing
-        detail::parse_file<grammar, start_rule_payload>(lexer, path, items_);
+    std::vector<UnlockableItem> items(const boost::filesystem::path& path) {
+        std::vector<UnlockableItem> items_;
+
+        YAML::Node doc;
+        try {
+            boost::filesystem::ifstream ifs(path);
+            doc = YAML::Load(ifs);
+            ifs.close();
+        }
+        catch(YAML::Exception& e) {
+            ErrorLogger() << "parse::items: " << e.what();
+            return items_;
+        }
+
+        if (doc["buildingtypes"])
+            for (const auto& building_node : doc["buildingtypes"])
+                items_.emplace_back(UIT_BUILDING, building_node.as<std::string>());
+        if (doc["shiphulls"])
+            for (const auto& shiphull_node : doc["shiphulls"])
+                items_.emplace_back(UIT_SHIP_HULL, shiphull_node.as<std::string>());
+        if (doc["shipparts"])
+            for (const auto& shippart_node : doc["shipparts"])
+                items_.emplace_back(UIT_SHIP_PART, shippart_node.as<std::string>());
+        if (doc["techs"])
+            for (const auto& tech_node : doc["techs"])
+                items_.emplace_back(UIT_TECH, tech_node.as<std::string>());
+        if (doc["policies"])
+            for (const auto& tech_node : doc["policies"])
+                items_.emplace_back(UIT_POLICY, tech_node.as<std::string>());
+
         return items_;
     }
 

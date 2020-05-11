@@ -165,10 +165,10 @@ void ServerApp::StartBackgroundParsing() {
     IApp::StartBackgroundParsing();
     const auto& rdir = GetResourceDir();
 
-    if (fs::exists(rdir / "scripting/starting_unlocks/items.inf"))
-        m_universe.SetInitiallyUnlockedItems(Pending::StartParsing(parse::items, rdir / "scripting/starting_unlocks/items.inf"));
+    if (fs::exists(rdir / "scripting/starting_unlocks/items.yml"))
+        m_universe.SetInitiallyUnlockedItems(Pending::StartParsing(parse::items, rdir / "scripting/starting_unlocks/items.yml"));
     else
-        ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/starting_unlocks/items.inf").string();
+        ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/starting_unlocks/items.yml").string();
 
     if (fs::exists(rdir / "scripting/starting_unlocks/buildings.yml"))
         m_universe.SetInitiallyUnlockedBuildings(Pending::StartParsing(parse::starting_buildings, rdir / "scripting/starting_unlocks/buildings.yml"));
