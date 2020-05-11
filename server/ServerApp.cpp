@@ -175,10 +175,10 @@ void ServerApp::StartBackgroundParsing() {
     else
         ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/starting_unlocks/buildings.inf").string();
 
-    if (fs::exists(rdir / "scripting/starting_unlocks/fleets.inf"))
-        m_universe.SetInitiallyUnlockedFleetPlans(Pending::StartParsing(parse::fleet_plans, rdir / "scripting/starting_unlocks/fleets.inf"));
+    if (fs::exists(rdir / "scripting/starting_unlocks/fleets.yml"))
+        m_universe.SetInitiallyUnlockedFleetPlans(Pending::StartParsing(parse::fleet_plans, rdir / "scripting/starting_unlocks/fleets.yml"));
     else
-        ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/starting_unlocks/fleets.inf").string();
+        ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/starting_unlocks/fleets.yml").string();
 
     if (fs::exists(rdir / "scripting/monster_fleets.inf"))
         m_universe.SetMonsterFleetPlans(Pending::StartParsing(parse::monster_fleet_plans, rdir / "scripting/monster_fleets.inf"));

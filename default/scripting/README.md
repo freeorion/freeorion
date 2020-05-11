@@ -62,7 +62,7 @@ completed techs and available buildings, ship hulls, and ship parts.  **This
 file and at least one entry are required.**
 * starting_unlocks/buildings.inf  -  Buildings each player starts with
 pre-built.  **This file and at least one entry are required.**
-* starting_unlocks/fleets.inf  -  Fleets each player starts with.  **This file
+* starting_unlocks/fleets.yml  -  Fleets each player starts with.  **This file
 and at least one entry are required.**
 
 

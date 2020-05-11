@@ -1,0 +1,13 @@
+fleets:
+  - name: FN_SCOUT_FLEET
+    ships:
+      - SD_SCOUT
+  - name: FN_SCOUT_FLEET
+    ships:
+      - SD_SCOUT
+  - name: FN_BATTLE_FLEET
+    ships:
+      - SD_MARK_1
+  - name: FN_COLONY_FLEET
+    ships:
+      - SD_COLONY_SHIP
