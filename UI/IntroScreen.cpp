@@ -47,7 +47,7 @@ namespace {
 /** Displays scrolling credits. */
 class CreditsWnd : public GG::Wnd {
 public:
-    CreditsWnd(GG::X x, GG::Y y, GG::X w, GG::Y h, const XMLElement &credits, int cx, int cy, int cw, int ch, int co);
+    CreditsWnd(GG::X x, GG::Y y, GG::X w, GG::Y h, int cx, int cy, int cw, int ch, int co);
     ~CreditsWnd();
 
     void Render() override;
@@ -76,9 +76,8 @@ private:
     std::shared_ptr<GG::Font>   m_font;
 };
 
-CreditsWnd::CreditsWnd(GG::X x, GG::Y y, GG::X w, GG::Y h, const XMLElement &credits, int cx, int cy, int cw, int ch, int co) :
+CreditsWnd::CreditsWnd(GG::X x, GG::Y y, GG::X w, GG::Y h, int cx, int cy, int cw, int ch, int co) :
     GG::Wnd(x, y, w, h, GG::INTERACTIVE | GG::MODAL),
-    m_credits(credits),
     m_cx(cx),
     m_cy(cy),
     m_cw(cw),
@@ -91,6 +90,16 @@ CreditsWnd::CreditsWnd(GG::X x, GG::Y y, GG::X w, GG::Y h, const XMLElement &cre
     /** Handle app resizing by closing the credits window. */
     GG::GUI::GetGUI()->WindowResizedSignal.connect(
         boost::bind(&CreditsWnd::OnExit, this));
+
+    XMLDoc doc;
+    boost::filesystem::ifstream ifs(GetResourceDir() / "credits.xml");
+    doc.ReadDoc(ifs);
+    ifs.close();
+
+    if (!doc.root_node.ContainsChild("CREDITS"))
+        return;
+
+    m_credits = doc.root_node.Child("CREDITS");
 }
 
 CreditsWnd::~CreditsWnd() {
@@ -365,16 +374,6 @@ void IntroScreen::OnWebsite()
 { HumanClientApp::GetApp()->OpenURL("http://freeorion.org"); }
 
 void IntroScreen::OnCredits() {
-    XMLDoc doc;
-    boost::filesystem::ifstream ifs(GetResourceDir() / "credits.xml");
-    doc.ReadDoc(ifs);
-    ifs.close();
-
-
-    if (!doc.root_node.ContainsChild("CREDITS"))
-        return;
-
-    XMLElement credits = doc.root_node.Child("CREDITS");
     // only the area between the upper and lower line of the splash screen should be darkend
     // if we use another splash screen we have the change the following values
     GG::Y nUpperLine = ( 79 * GG::GUI::GetGUI()->AppHeight()) / 768;
@@ -384,7 +383,6 @@ void IntroScreen::OnCredits() {
 
     auto credits_wnd = GG::Wnd::Create<CreditsWnd>(
         GG::X0, nUpperLine, GG::GUI::GetGUI()->AppWidth(), nLowerLine-nUpperLine,
-        credits,
         credit_side_pad, 0, Value(m_menu->Left()) - credit_side_pad,
         Value(nLowerLine-nUpperLine), Value((nLowerLine-nUpperLine))/2);
 
