@@ -18,23 +18,17 @@ BuildingType
 
         EffectsGroup
             scope = Or [
+                Object id = Source.SystemID
                 And [
-                    Object id = Source.SystemID
-                    System
-                ]
-                And [
-                    Planet
                     InSystem id = Source.SystemID
+                    Planet
                     Not Source
                 ]
             ]
             effects = SetStealth value = Value + 40
 
         EffectsGroup
-            scope = And [
-                    Object id = Source.PlanetID
-                    Planet
-            ]
+            scope = Object id = Source.PlanetID
             effects = [
                 SetMaxShield value = Value + 60000
                 SetMaxDefense value = Value + [[EXPERIMENTOR_SPAWN_START_TURN]]
@@ -42,10 +36,7 @@ BuildingType
                 SetDetection value = Value + 100
             ]
         EffectsGroup
-            scope = And [
-                    Object id = Source.PlanetID
-                    Planet
-            ]
+            scope = Object id = Source.PlanetID
             activation = Or [
                // Turn high = [[EXPERIMENTOR_SPAWN_START_TURN]]
                 Not ContainedBy Contains And [ Ship OwnedBy affiliation = AnyEmpire ]

@@ -29,8 +29,8 @@ FUEL_EFFECTSGROUP
 '''     EffectsGroup
             description = "@1@_FUEL_DESC"
             scope = And [
-                Ship
                 Source
+                Ship
             ]
             accountinglabel = "@1@_FUEL_LABEL"
             priority = [[LATE_PRIORITY]]
