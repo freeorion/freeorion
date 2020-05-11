@@ -125,24 +125,22 @@ class _stdXLikeStream:
             frame = sys._getframe(1)
             try:
                 line_number = frame.f_lineno
-                function_name = frame.f_code.co_name
                 filename = frame.f_code.co_filename
             except:  # noqa: E722
-                (filename, line_number, function_name) = ("", "", "")
+                (filename, line_number) = ("", "")
             finally:
                 # Explicitly del references to the caller's frame to avoid persistent reference cycles
                 del frame
         else:
-            (filename, line_number, function_name) = ("", "", "")
+            (filename, line_number) = ("", "")
 
         try:
-            self.logger(msg, "python", str(os.path.split(filename)[1]), str(function_name), str(line_number))
+            self.logger(msg, str(os.path.split(filename)[1]), line_number)
 
         finally:
             # Explicitly del references to the caller's frame to avoid persistent reference cycles
             del filename
             del line_number
-            del function_name
 
 
 class _LoggerHandler(logging.Handler):
@@ -168,8 +166,7 @@ class _LoggerHandler(logging.Handler):
                 record.exc_info = sys.exc_info()
             traceback_msg = "".join(traceback.format_exception(*record.exc_info))
             msg += traceback_msg
-        self.logger(msg, "python", str(record.filename),
-                    str(record.funcName), str(record.lineno))
+        self.logger(msg, str(record.filename), record.lineno)
 
 
 class _SingleLevelFilter(logging.Filter):
