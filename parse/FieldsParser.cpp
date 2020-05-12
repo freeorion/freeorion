@@ -5,6 +5,7 @@
 
 #include "../universe/Effect.h"
 #include "../universe/FieldType.h"
+#include "../util/Directories.h"
 
 #include <boost/spirit/include/phoenix.hpp>
 
@@ -114,9 +115,8 @@ namespace parse {
         const lexer lexer;
         start_rule_payload field_types;
 
-        for (const boost::filesystem::path& file : ListScripts(path)) {
+        for (const auto& file : ListDir(path, IsFOCScript))
             /*auto success =*/ detail::parse_file<grammar, start_rule_payload>(lexer, file, field_types);
-        }
 
         return field_types;
     }

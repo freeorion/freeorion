@@ -550,6 +550,9 @@ std::string FilenameTimestamp() {
     return retval;
 }
 
+bool IsFOCScript(const boost::filesystem::path& path)
+{ return fs::is_regular_file(path) && ".txt" == path.extension() && path.stem().extension() == ".focs"; }
+
 std::vector<fs::path> ListDir(const fs::path& path, std::function<bool (const fs::path&)> predicate) {
     std::vector<fs::path> retval;
 

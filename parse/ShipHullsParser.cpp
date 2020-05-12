@@ -12,6 +12,7 @@
 #include "../universe/Condition.h"
 #include "../universe/ShipHull.h"
 #include "../universe/ValueRef.h"
+#include "../util/Directories.h"
 
 #include <boost/spirit/include/phoenix.hpp>
 
@@ -168,9 +169,8 @@ namespace parse {
         const lexer lexer;
         start_rule_payload hulls;
 
-        for (const boost::filesystem::path& file : ListScripts(path)) {
+        for (const auto& file : ListDir(path, IsFOCScript))
             /*auto success =*/ detail::parse_file<grammar, start_rule_payload>(lexer, file, hulls);
-        }
 
         return hulls;
     }

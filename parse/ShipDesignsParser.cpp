@@ -3,6 +3,7 @@
 #include "ParseImpl.h"
 
 #include "../universe/ShipDesign.h"
+#include "../util/Directories.h"
 
 #include <boost/spirit/include/phoenix.hpp>
 #include <boost/phoenix/function/adapt_function.hpp>
@@ -228,11 +229,7 @@ namespace parse {
 
         boost::filesystem::path manifest_file;
 
-        // Allow files with any suffix in order to convert legacy ParsedShipDesign files.
-        bool permissive_mode = true;
-        const auto& scripts = ListScripts(path, permissive_mode);
-
-        for (const auto& file : scripts) {
+        for (const auto& file : ListDir(path, IsFOCScript)) {
             TraceLogger() << "Parse ship design file " << file.filename();
             if (file.filename() == "ShipDesignOrdering.focs.txt" ) {
                 manifest_file = file;

@@ -92,6 +92,10 @@ FO_COMMON_API std::string FilenameTimestamp();
 /** Returns the path to \a to, as it appears from \a from. */
 FO_COMMON_API boost::filesystem::path RelativePath(const boost::filesystem::path& from, const boost::filesystem::path& to);
 
+//! Returns true if the given @p path referrs to a FO content script and false
+//! otherwise.
+FO_COMMON_API bool IsFOCScript(const boost::filesystem::path& path);
+
 //! Returns a vector of pathes within @p path including a recursive search
 //! though sub-dirs.  Then passing a @p predicate, the pathes need to match
 //! this predicate.  If no predicate is given pathes need to refer to files.

@@ -216,40 +216,6 @@ namespace parse {
         return true;
     }
 
-    /**  \brief Return a vector of absolute paths to script files in the given path
-     * 
-     * @param[in] path relative or absolute directory (searched recursively)
-     * @return Any *.focs.txt files in path or 'GetResourceDir() / path'.
-     */
-    std::vector<boost::filesystem::path> ListScripts(const boost::filesystem::path& path, bool allow_permissive) {
-        std::vector<boost::filesystem::path> scripts;
-
-        try {
-            const auto& files = ListDir(path);
-            for (const auto& file : files) {
-                std::string fn_ext = file.extension().string();
-                std::string fn_stem_ext = file.stem().extension().string();
-                if (fn_ext == ".txt" && fn_stem_ext == ".focs") {
-                    scripts.push_back(file);
-                } else {
-                    TraceLogger() << "Parse: Skipping file " << file.string()
-                                  << " due to extension (" << fn_stem_ext << fn_ext << ")";
-                }
-            }
-
-            // If in permissive mode and no scripts are found allow all files to be scripts.
-            if (allow_permissive && scripts.empty() && !files.empty()) {
-                WarnLogger() << PathToString(path) << " does not contain scripts with the expected suffix .focs.txt. "
-                             << " Trying a more permissive mode and ignoring file suffix.";
-                scripts = files;
-            }
-        } catch (const boost::filesystem::filesystem_error& ec) {
-            ErrorLogger() << "Error accessing file " << ec.path1() << " (" << ec.what() << ")";
-        }
-
-        return scripts;
-    }
-
     const sregex FILENAME_TEXT = -+_;   // any character, one or more times, not greedy
     const sregex FILENAME_INSERTION = bol >> "#include" >> *space >> "\"" >> (s1 = FILENAME_TEXT) >> "\"" >> *space >> _n;
 
