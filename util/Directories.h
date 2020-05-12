@@ -116,16 +116,4 @@ FO_COMMON_API boost::filesystem::path GetPath(const std::string& path_string);
 
 /** Returns if path exists and is a regular file */
 FO_COMMON_API bool IsExistingFile(const boost::filesystem::path& path);
-
-/** All paths contained in a directory filtered by a functor
- *
- * @param[in] abs_dir_path Absolute path to directory
- * @param[in] pred Predicate functor accepting a boost::filesystem::path constant reference
- * @param[in] recursive_search If true, recurses into sub-directories
- *
- * @return vector List of filesytem objects found in @p abs_dir_path which satisfy @p pred */
-FO_COMMON_API std::vector<boost::filesystem::path> PathsInDir(const boost::filesystem::path& abs_dir_path,
-                                                              std::function<bool (const boost::filesystem::path&)> pred,
-                                                              bool recursive_search);
-
 #endif
