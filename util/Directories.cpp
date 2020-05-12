@@ -550,15 +550,12 @@ std::string FilenameTimestamp() {
     return retval;
 }
 
-/**  \brief Return a vector of absolute paths to files in the given path
- *
- * @param[in] path relative or absolute directory (searched recursively)
- * @return Any regular files in
- * @return  if absolute directory: path
- * @return  if relative directory: GetResourceDir() / path
-*/
-std::vector<fs::path> ListDir(const fs::path& path) {
+std::vector<fs::path> ListDir(const fs::path& path, std::function<bool (const fs::path&)> predicate) {
     std::vector<fs::path> retval;
+
+    if (!predicate)
+        predicate = static_cast<bool (*)(const fs::path&)>(fs::is_regular_file);
+
     bool is_rel = path.is_relative();
     if (!is_rel && (fs::is_empty(path) || !fs::is_directory(path))) {
         DebugLogger() << "ListDir: File " << PathToString(path) << " was not included as it is empty or not a directoy";
@@ -568,16 +565,15 @@ std::vector<fs::path> ListDir(const fs::path& path) {
         for (fs::recursive_directory_iterator dir_it(default_path);
              dir_it != fs::recursive_directory_iterator(); ++dir_it)
         {
-            if (fs::is_regular_file(dir_it->status())) {
+            if (predicate(dir_it->path()))
                 retval.push_back(dir_it->path());
-            } else if (!fs::is_directory(dir_it->status())) {
-                TraceLogger() << "Parse: Unknown file not included: " << PathToString(dir_it->path());
-            }
+            else
+                TraceLogger() << "ListDir: Discarding non-matching path: " << PathToString(dir_it->path());
         }
     }
 
     if (retval.empty()) {
-        DebugLogger() << "ListDir: No files found for " << path.string();
+        DebugLogger() << "ListDir: No paths found for " << path.string();
     }
 
     return retval;
