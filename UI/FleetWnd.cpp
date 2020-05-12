@@ -1495,13 +1495,13 @@ void FleetDataPanel::RefreshStateChangedSignals() {
         return;
 
     m_fleet_connection = fleet->StateChangedSignal.connect(
-        std::bind(&FleetDataPanel::RequireRefresh, this));
+        boost::bind(&FleetDataPanel::RequireRefresh, this));
 
     m_ship_connections.reserve(fleet->NumShips());
     for (auto& ship : Objects().find<const Ship>(fleet->ShipIDs()))
         m_ship_connections.push_back(
             ship->StateChangedSignal.connect(
-                std::bind(&FleetDataPanel::RequireRefresh, this)));
+                boost::bind(&FleetDataPanel::RequireRefresh, this)));
 }
 
 void FleetDataPanel::SetStatIconValues() {
@@ -2457,7 +2457,7 @@ void FleetDetailPanel::SetFleet(int fleet_id) {
         auto fleet = Objects().get<Fleet>(m_fleet_id);
         if (fleet && !fleet->Empty()) {
             m_fleet_connection = fleet->StateChangedSignal.connect(
-                std::bind(&FleetDetailPanel::Refresh, this), boost::signals2::at_front);
+                boost::bind(&FleetDetailPanel::Refresh, this), boost::signals2::at_front);
         } else {
             ErrorLogger() << "FleetDetailPanel::SetFleet ignoring set to missing or empty fleet id (" << fleet_id << ")";
         }
@@ -2934,7 +2934,7 @@ void FleetWnd::RefreshStateChangedSignals() {
             continue;
         m_fleet_connections.push_back(
             fleet->StateChangedSignal.connect(
-                std::bind(&FleetWnd::RequireRefresh, this)));
+                boost::bind(&FleetWnd::RequireRefresh, this)));
     }
 }
 
