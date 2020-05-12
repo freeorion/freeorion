@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_ENCLAVE_VOID"
     description = "BLD_ENCLAVE_VOID_DESC"
-    buildcost = 100 * [[BUILDING_COST_MULTIPLIER]]
+    buildcost = 300 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 3
     location = AND [
         Not Contains Building name = "BLD_ENCLAVE_VOID"
@@ -17,7 +17,7 @@ BuildingType
             ]
             stackinggroup = "BLD_ENCLAVE_VOID_STACK"
             priority = [[EARLY_PRIORITY]]
-            effects = SetTargetResearch value = Value + Target.Population * 3.75 *  [[RESEARCH_PER_POP]]
+            effects = SetTargetResearch value = Value + Target.Population * 0.75 *  [[RESEARCH_PER_POP]]
     ]
     icon = "icons/building/science-institute.png"
 
