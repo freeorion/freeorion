@@ -4,11 +4,6 @@ English
 #
 # Translate this file to other languages.
 #
-# Notes: to avoid potential conflict with functional keys in other files, do not
-# make any stringtable keys beginning with "FUNCTIONAL_".
-# New Sitreps priorities should be added to
-# `default/customizations/common_user_customizations.txt`.
-#
 # semi-randomly collected characters to force font code page loading
 # 肛門オーガズム
 # åřžßąłżęЗыдШит
@@ -19757,6 +19752,3 @@ MONSTER_NAMES
 [[SHIP_NAME_BASQUE_MYTHOLOGY]]
 [[SHIP_NAME_UNSORTED_MYTHOLOGY]]
 [[SHIP_NAME_DEVS]]'''
-
-#include "../content_specific_parameters.txt"
-#include "../customizations/common_user_customizations.txt"

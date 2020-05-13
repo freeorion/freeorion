@@ -16058,6 +16058,7 @@ SHIPDESIGN_PLANET_INVASION
 ##
 ## Name lists
 ##
+<<<<<<< HEAD
 
 # Newline separated list of star cluster names
 #*STAR_GROUP_WORDS
@@ -19408,3 +19409,9 @@ SHIPDESIGN_PLANET_INVASION
 
 #include "../content_specific_parameters.txt"
 #include "../customizations/common_user_customizations.txt"
+||||||| constructed merge base
+
+#include "../content_specific_parameters.txt"
+#include "../customizations/common_user_customizations.txt"
+=======
+>>>>>>> Use YAML files to configure content specific parameters instead of UserStrings

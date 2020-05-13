@@ -1,5 +1,6 @@
 #include "EncyclopediaDetailPanel.h"
 
+
 #include <unordered_map>
 #include <boost/algorithm/clamp.hpp>
 #include <boost/algorithm/string/predicate.hpp>
@@ -9,6 +10,7 @@
 #include <GG/ScrollPanel.h>
 #include <GG/StaticGraphic.h>
 #include <GG/Texture.h>
+#include <yaml-cpp/yaml.h>
 #include "CUIControls.h"
 #include "CUILinkTextBlock.h"
 #include "DesignWnd.h"
@@ -1275,6 +1277,27 @@ namespace {
         }
     }
 
+    auto HullTagsToDescribe() -> const std::vector<std::string>& {
+        static std::vector<std::string> hull_tags_to_describe;
+
+        if (hull_tags_to_describe.empty()) {
+            try {
+                YAML::Node doc;
+                boost::filesystem::ifstream ifs(GetResourceDir() / "content_specific_parameters.yml");
+                doc = YAML::Load(ifs);
+                ifs.close();
+
+                for (const auto& hull_tag_node: doc["hull_desc_tags"])
+                    hull_tags_to_describe.emplace_back(hull_tag_node.as<std::string>());
+            }
+            catch(YAML::Exception& e) {
+                ErrorLogger() << "HullTagsToDesribe: " << e.what();
+            }
+        }
+
+        return hull_tags_to_describe;
+    }
+
     void RefreshDetailPanelShipHullTag(     const std::string& item_type, const std::string& item_name,
                                             std::string& name, std::shared_ptr<GG::Texture>& texture,
                                             std::shared_ptr<GG::Texture>& other_texture, int& turns,
@@ -1308,8 +1331,7 @@ namespace {
             % hull->Structure()
             % slots_list);
 
-        static std::vector<std::string> hull_tags_to_describe = UserStringList("FUNCTIONAL_HULL_DESC_TAGS_LIST");
-        for (const std::string tag : hull_tags_to_describe) {
+        for (const std::string tag : HullTagsToDescribe()) {
             if (hull->HasTag(tag)) {
                 if (UserStringExists("HULL_DESC_" + tag)) {
                     detailed_description += "\n\n" + UserString("HULL_DESC_" + tag);

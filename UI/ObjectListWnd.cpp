@@ -1,36 +1,35 @@
 #include "ObjectListWnd.h"
 
+#include <boost/lexical_cast.hpp>
+#include <boost/uuid/random_generator.hpp>
+#include <GG/Layout.h>
+#include <yaml-cpp/yaml.h>
 #include "ClientUI.h"
 #include "CUIControls.h"
 #include "CUISpin.h"
 #include "FleetButton.h"
-#include "../client/human/HumanClientApp.h"
 #include "../client/ClientNetworking.h"
-#include "../util/i18n.h"
-#include "../util/Logger.h"
-#include "../util/Order.h"
-#include "../util/ModeratorAction.h"
-#include "../util/ScopedTimer.h"
+#include "../client/human/HumanClientApp.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
-#include "../universe/System.h"
-#include "../universe/Fleet.h"
-#include "../universe/Ship.h"
-#include "../universe/ShipDesign.h"
-#include "../universe/Planet.h"
 #include "../universe/Building.h"
-#include "../universe/Field.h"
-#include "../universe/Species.h"
 #include "../universe/Conditions.h"
+#include "../universe/Enums.h"
+#include "../universe/Field.h"
+#include "../universe/Fleet.h"
+#include "../universe/Planet.h"
+#include "../universe/ShipDesign.h"
+#include "../universe/Ship.h"
+#include "../universe/Species.h"
+#include "../universe/System.h"
 #include "../universe/ValueRefs.h"
+#include "../util/Directories.h"
+#include "../util/i18n.h"
+#include "../util/Logger.h"
+#include "../util/ModeratorAction.h"
+#include "../util/Order.h"
+#include "../util/ScopedTimer.h"
 
-#include <GG/Layout.h>
-
-#include <boost/lexical_cast.hpp>
-#include <boost/uuid/random_generator.hpp>
-
-#include <iterator>
-#include <sstream>
 
 std::vector<std::string> SpecialNames();
 
@@ -460,6 +459,29 @@ namespace {
 ////////////////////////////////////////////////
 const GG::X CONDITION_WIDGET_WIDTH(380);
 
+namespace {
+    auto GetGrowthSpecialsList() -> const std::vector<std::string>& {
+        static std::vector<std::string> growth_special_names;
+
+        if (growth_special_names.empty()) {
+            try {
+                YAML::Node doc;
+                boost::filesystem::ifstream ifs(GetResourceDir() / "content_specific_parameters.yml");
+                doc = YAML::Load(ifs);
+                ifs.close();
+
+                for (const auto& growth_specials_node: doc["growth_specials"])
+                    growth_special_names.emplace_back(growth_specials_node.as<std::string>());
+            }
+            catch(YAML::Exception& e) {
+                ErrorLogger() << "GetGrowthSpecialsList: " << e.what();
+            }
+        }
+
+        return growth_special_names;
+    }
+}
+
 class ConditionWidget : public GG::Control {
 public:
     ConditionWidget(GG::X x, GG::Y y, const Condition::Condition* initial_condition = nullptr) :
@@ -536,10 +558,8 @@ public:
         } else if (condition_key == HASGROWTHSPECIAL_CONDITION) {
             std::vector<std::unique_ptr<Condition::Condition>> operands;
             // determine sitrep order
-            std::istringstream template_stream(UserString("FUNCTIONAL_GROWTH_SPECIALS_LIST"));
-            for (auto stream_it = std::istream_iterator<std::string>(template_stream);
-                 stream_it != std::istream_iterator<std::string>(); stream_it++)
-            { operands.emplace_back(std::make_unique<Condition::HasSpecial>(*stream_it)); }
+            for (const auto& special_name : GetGrowthSpecialsList())
+            { operands.emplace_back(std::make_unique<Condition::HasSpecial>(special_name)); }
 
             std::unique_ptr<Condition::Condition> this_cond = std::make_unique<Condition::Or>(std::move(operands));
             object_list_cond_description_map[this_cond->Description()] = HASGROWTHSPECIAL_CONDITION;
