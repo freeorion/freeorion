@@ -193,8 +193,10 @@ void TechTreeLayout::DoLayout(double column_width, double row_height, double x_m
     for (int i = row_index.size(); i-->0;) {
         unsigned int cur_row_count = 0;
         for (unsigned int j = row_index[i].column.size(); j --> 0; ) {
-            if (row_index[i].column[j])
+            if (row_index[i].column[j]) {
                 cur_row_count = j;
+                break;
+            }
         }
         row_count = std::max(row_count, cur_row_count);
     }
