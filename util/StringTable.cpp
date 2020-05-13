@@ -2,7 +2,6 @@
 
 #include "Logger.h"
 #include "Directories.h"
-#include "../parse/Parse.h"
 
 #include <boost/filesystem/fstream.hpp>
 #include <boost/xpressive/xpressive.hpp>
@@ -57,16 +56,16 @@ void StringTable::Load(std::shared_ptr<const StringTable> fallback) {
     auto path = FilenameToPath(m_filename);
     std::string file_contents;
 
-    bool read_success = parse::read_file(path, file_contents);
-    if (!read_success) {
+    boost::filesystem::ifstream ifs(path);
+    if (!ifs) {
         ErrorLogger() << "StringTable::Load failed to read file at path: " << path.string();
         //m_initialized intentionally left false
         return;
     }
+    std::getline(ifs, file_contents, '\0');
+    ifs.close();
     // add newline at end to avoid errors when one is left out, but is expected by parsers
     file_contents += "\n";
-
-    parse::file_substitution(file_contents, path.parent_path());
 
     std::map<std::string, std::string> fallback_lookup_strings;
     std::string fallback_table_file;
