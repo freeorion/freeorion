@@ -257,14 +257,16 @@ class roleType(object):
     clientTypeObserver = 3
     galaxySetup = 4
 
+
 class GameRules(object):
-    """GameRules mock obj"""
-    
+    """GameRules stub"""
+
     def getDouble(self, string):
-        return 1.0;
-    
+        return 1.0
+
     def getInt(self, string):
-        return 1;
+        return 1
+
 
 def userString(x):
     """userString mock"""
@@ -274,6 +276,7 @@ def userString(x):
 def userStringList(x):
     """userStringList mock"""
     return "UserStringList %s" % x
+
 
 def getGameRules():
     """getGameRules mock"""
