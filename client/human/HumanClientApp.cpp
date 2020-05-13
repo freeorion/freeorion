@@ -335,22 +335,6 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
 
     this->SetMouseLRSwapped(GetOptionsDB().Get<bool>("ui.input.mouse.button.swap.enabled"));
 
-    auto named_key_maps = parse::keymaps(GetResourceDir() / "scripting/keymaps.inf");
-    TraceLogger() << "Keymaps:";
-    for (auto& km : named_key_maps) {
-        TraceLogger() << "Keymap name = \"" << km.first << "\"";
-        for (auto& keys : km.second)
-            TraceLogger() << "    " << char(keys.first) << " : " << char(keys.second);
-    }
-    auto km_it = named_key_maps.find("TEST");
-    if (km_it != named_key_maps.end()) {
-        const auto int_key_map = km_it->second;
-        std::map<GG::Key, GG::Key> key_map;
-        for (const auto& int_key : int_key_map)
-        { key_map[GG::Key(int_key.first)] = GG::Key(int_key.second); }
-        this->SetKeyMap(key_map);
-    }
-
     ConnectKeyboardAcceleratorSignals();
 
     m_auto_turns = GetOptionsDB().Get<int>("auto-advance-n-turns");

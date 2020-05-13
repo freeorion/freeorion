@@ -84,14 +84,6 @@ namespace {
         std::string m_str;
     };
 
-    Key           KeyMappedKey(Key key, const std::map<Key, Key>& key_map)
-    {
-        auto it = key_map.find(key);
-        if (it != key_map.end())
-            return it->second;
-        return key;
-    }
-
     // calculates WndEvent::EventType corresponding to a given mouse button
     // and a given left mouse button event type. For example, given the 
     // left mouse button drag and button 2 (the right mouse button),
@@ -240,8 +232,6 @@ struct GG::GUIImpl
     std::map<std::pair<Key, Flags<ModKey>>, std::shared_ptr<GUI::AcceleratorSignalType>> m_accelerator_sigs;
 
     bool         m_mouse_lr_swap = false; // treat left and right mouse events as each other
-    std::map<Key, Key>
-                 m_key_map;               // substitute Key press events with different Key press events
 
     bool         m_rendering_drag_drop_wnds = false;
 
@@ -684,7 +674,6 @@ void GUIImpl::HandleIdle(Flags<ModKey> mod_keys, const GG::Pt& pos, int curr_tic
 
 void GUIImpl::HandleKeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys, int curr_ticks)
 {
-    key = KeyMappedKey(key, m_key_map);
     m_browse_info_wnd.reset();
     m_browse_info_mode = -1;
     m_browse_target = nullptr;
@@ -714,7 +703,6 @@ void GUIImpl::HandleKeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey
 
 void GUIImpl::HandleKeyRelease(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys, int curr_ticks)
 {
-    key = KeyMappedKey(key, m_key_map);
     m_last_key_press_repeat_time = 0;
     m_last_pressed_key_code_point.first = GGK_NONE;
     m_browse_info_wnd.reset();
@@ -1085,9 +1073,6 @@ Flags<ModKey> GUI::ModKeys() const
 bool GUI::MouseLRSwapped() const
 { return m_impl->m_mouse_lr_swap; }
 
-const std::map<Key, Key>& GUI::KeyMap() const
-{ return m_impl->m_key_map; }
-
 std::set<std::pair<CPSize, CPSize>> GUI::FindWords(const std::string& str) const
 {
     std::set<std::pair<CPSize, CPSize>> retval;
@@ -1453,9 +1438,6 @@ void GUI::EnableModalAcceleratorSignals(bool allow)
 
 void GUI::SetMouseLRSwapped(bool swapped/* = true*/)
 { m_impl->m_mouse_lr_swap = swapped; }
-
-void GUI::SetKeyMap(const std::map<Key, Key>& key_map)
-{ m_impl->m_key_map = key_map; }
 
 std::shared_ptr<Font> GUI::GetFont(const std::string& font_filename, unsigned int pts)
 { return GetFontManager().GetFont(font_filename, pts); }
