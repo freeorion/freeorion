@@ -1,7 +1,6 @@
 #include "Parse.h"
 
 #include <boost/filesystem/fstream.hpp>
-#include <boost/filesystem/operations.hpp>
 #include <yaml-cpp/yaml.h>
 #include "../universe/Encyclopedia.h"
 #include "../util/Directories.h"
@@ -9,9 +8,6 @@
 
 
 namespace parse {
-    bool IsYAML(const boost::filesystem::path& path)
-    { return boost::filesystem::is_regular_file(path) && (".yml" == path.extension() || ".yaml" == path.extension()); }
-
     Encyclopedia::ArticleMap encyclopedia_articles(const boost::filesystem::path& path) {
         Encyclopedia::ArticleMap articles;
 
