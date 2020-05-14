@@ -30,8 +30,3 @@ SHIP_SHIELD_FACTOR
 
 SHIP_STRUCTURE_FACTOR
 '''(GameRule name = "RULE_SHIP_STRUCTURE_FACTOR")'''
-
-// Is used directly in structure value, no calculation possible
-// Should be 2 / SHIP_STRUCTURE_FACTOR * SHIP_WEAPON_DAMAGE_FACTOR so the ARC DISRUPTOR can one-shot kill it
-COLONY_BASE_HULL_STRUCTURE
-'''1.5'''
