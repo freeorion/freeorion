@@ -599,7 +599,7 @@ CPSize MultiEdit::CharAt(std::size_t row, X x) const
 
     // past end of line?
     if (x > line.char_data.back().extent) {
-        //std::cout << "past line right edge at: " << line.char_data.back().extent << std::endl;
+        //std::cout << "past line right edge at: " << line.char_data.back().extent << "\n";
         //std::cout << "row: " << "  last row: " << GetLineData().size() - 1 << std::endl;
         if (row < GetLineData().size() - 1) {
             // know this row is not empty due to above check
@@ -729,11 +729,11 @@ void MultiEdit::LButtonDown(const Pt& pt, Flags<ModKey> mod_keys)
     // cursor, and remove any previous selection range
     std::pair<std::size_t, CPSize> click_pos = CharAt(ScreenToClient(pt));
     m_cursor_begin = m_cursor_end = click_pos;
-    //std::cout << "click pos: " << click_pos.first << " / " << click_pos.second << std::endl;
+    //std::cout << "click pos: " << click_pos.first << " / " << click_pos.second << "\n";
 
     CPSize idx = CharIndexOf(click_pos.first, click_pos.second);
     this->m_cursor_pos = {idx, idx};
-    //std::cout << "cursor pos: " << this->m_cursor_pos.first << std::endl;
+    //std::cout << "cursor pos: " << this->m_cursor_pos.first << "\n";
 
     // double-click-drag whole-word selection disabled due to the following code
     // resulting in weird highlighting glitches, possibly due to inconsistency
@@ -755,7 +755,7 @@ void MultiEdit::LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
     Pt click_pos = ScreenToClient(pt);
     m_cursor_end = CharAt(click_pos);
 
-    //std::cout << "MultiEdit::LDrag at row: " << m_cursor_end.first << ", col: " << m_cursor_end.second << std::endl << std::flush;
+    //std::cout << "MultiEdit::LDrag at row: " << m_cursor_end.first << ", col: " << m_cursor_end.second << std::endl;
 
     if (m_in_double_click_mode) {
         // if drag-selecting after a double click, select full words
@@ -791,7 +791,7 @@ void MultiEdit::LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
     CPSize begin_cursor_pos = CharIndexOf(m_cursor_begin.first, m_cursor_begin.second);
     CPSize end_cursor_pos = CharIndexOf(m_cursor_end.first, m_cursor_end.second);
 
-    //std::cout << "MultiEdit::LDrag cursor covers code points: " << begin_cursor_pos << " to " << end_cursor_pos << std::endl << std::flush;
+    //std::cout << "MultiEdit::LDrag cursor covers code points: " << begin_cursor_pos << " to " << end_cursor_pos << std::endl;
 
     this->m_cursor_pos = {begin_cursor_pos, end_cursor_pos};
 
@@ -1093,9 +1093,9 @@ void MultiEdit::ValidateStyle()
 
 void MultiEdit::ClearSelected()
 {
-    //std::cout << "ClearSelected" << std::endl;
-    //std::cout << "initial cursor begin: line: " << m_cursor_begin.first << " char: " << m_cursor_begin.second << std::endl;
-    //std::cout << "initial cursor end:   line: " << m_cursor_end.first << " char: " << m_cursor_end.second << std::endl;
+    //std::cout << "ClearSelected\n";
+    //std::cout << "initial cursor begin: line: " << m_cursor_begin.first << " char: " << m_cursor_begin.second << "\n";
+    //std::cout << "initial cursor end:   line: " << m_cursor_end.first << " char: " << m_cursor_end.second << "\n";
     //std::cout << "text before erase:" << Text() << std::endl;
 
     // predetermine post-erase cursor position because erasing can mess up state of cursor position members
@@ -1103,8 +1103,8 @@ void MultiEdit::ClearSelected()
     std::pair<size_t, CPSize> high_pos = HighCursorPos();
 
     Erase(low_pos.first, low_pos.second, high_pos.first, high_pos.second);
-    //std::cout << "text after  erase:" << Text() << std::endl;
-    //std::cout << "after erase cursor begin: line: " << m_cursor_begin.first << " char: " << m_cursor_begin.second << std::endl;
+    //std::cout << "text after  erase:" << Text() << "\n";
+    //std::cout << "after erase cursor begin: line: " << m_cursor_begin.first << " char: " << m_cursor_begin.second << "\n";
     //std::cout << "after erase cursor end:   line: " << m_cursor_end.first << " char: " << m_cursor_end.second << std::endl;
 
     m_cursor_end = m_cursor_begin = low_pos;
@@ -1360,15 +1360,15 @@ void MultiEdit::AcceptPastedText(const std::string& text)
 
     bool modified_text = false;
 
-    //std::cout << "before modifying text, cursor begin at line: " << m_cursor_begin.first << " char: " << m_cursor_begin.second << std::endl;
-    //std::cout << "before modifying text, cursor end at line: " << m_cursor_end.first << " char: " << m_cursor_end.second << std::endl;
-    //std::cout << "before modifying text, cursor pos: " << this->m_cursor_pos.first << " // " << this->m_cursor_pos.second << std::endl;
+    //std::cout << "before modifying text, cursor begin at line: " << m_cursor_begin.first << " char: " << m_cursor_begin.second << "\n";
+    //std::cout << "before modifying text, cursor end at line: " << m_cursor_end.first << " char: " << m_cursor_end.second << "\n";
+    //std::cout << "before modifying text, cursor pos: " << this->m_cursor_pos.first << " // " << this->m_cursor_pos.second << "\n";
 
     if (MultiSelected()) {
         ClearSelected();
         modified_text = true;
-        //std::cout << "right after clearing, cursor begin at line: " << m_cursor_begin.first << " char: " << m_cursor_begin.second << std::endl;
-        //std::cout << "right after clearing, cursor end at line: " << m_cursor_end.first << " char: " << m_cursor_end.second << std::endl;
+        //std::cout << "right after clearing, cursor begin at line: " << m_cursor_begin.first << " char: " << m_cursor_begin.second << "\n";
+        //std::cout << "right after clearing, cursor end at line: " << m_cursor_end.first << " char: " << m_cursor_end.second << "\n";
         //std::cout << "right after clearing, cursor pose: " << this->m_cursor_pos.first << " // " << this->m_cursor_pos.second << std::endl;
         m_cursor_pos.second = m_cursor_pos.first;
     }
@@ -1377,8 +1377,8 @@ void MultiEdit::AcceptPastedText(const std::string& text)
         Insert(m_cursor_pos.first, text);
         modified_text = true;
         //std::cout << "Accepted and Inserted, new text:" << Text() << std::endl;
-        //std::cout << "right after inserting, cursor begin at line: " << m_cursor_begin.first << " char: " << m_cursor_begin.second << std::endl;
-        //std::cout << "right after inserting, cursor end at line: " << m_cursor_end.first << " char: " << m_cursor_end.second << std::endl;
+        //std::cout << "right after inserting, cursor begin at line: " << m_cursor_begin.first << " char: " << m_cursor_begin.second << "\n";
+        //std::cout << "right after inserting, cursor end at line: " << m_cursor_end.first << " char: " << m_cursor_end.second << "\n";
         //std::cout << "right after inserting, cursor pose: " << this->m_cursor_pos.first << " // " << this->m_cursor_pos.second << std::endl;
     }
 

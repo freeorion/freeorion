@@ -139,7 +139,7 @@ std::string TextControl::Text(CPSize from, CPSize to) const
     CPSize low = std::max(CP0, std::min(from, to));
     CPSize high = std::min(Length(), std::max(from, to));
 
-    //std::cout << "low: " << low << "  high: " << high << std::endl << std::flush;
+    //std::cout << "low: " << low << "  high: " << high << std::endl;
 
     auto low_pos = LinePositionOf(low, m_line_data);
     auto high_pos = LinePositionOf(high, m_line_data);
@@ -151,9 +151,9 @@ std::string TextControl::Text(CPSize from, CPSize to) const
     auto high_it = m_text.begin() + Value(high_string_idx);
 
     try {
-        //std::cout << "dist begin to low: " << std::distance(m_text.begin(), low_it) << std::endl << std::flush;
-        //std::cout << "dist low to high: " << std::distance(low_it, high_it) << std::endl << std::flush;
-        //std::cout << "dist high to end: " << std::distance(high_it, m_text.end()) << std::endl << std::flush;
+        //std::cout << "dist begin to low: " << std::distance(m_text.begin(), low_it) << std::endl;
+        //std::cout << "dist low to high: " << std::distance(low_it, high_it) << std::endl;
+        //std::cout << "dist high to end: " << std::distance(high_it, m_text.end()) << std::endl;
 
         return std::string(low_it, high_it);
     } catch (...) {

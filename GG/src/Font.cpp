@@ -1442,7 +1442,7 @@ namespace DebugOutput {
             for (const auto& character : line_data[i].char_data) {
                 std::cout << text[Value(character.string_index)];
             }
-            std::cout << "\"" << std::endl;
+            std::cout << "\"\n";
             for (std::size_t j = 0; j < line_data[i].char_data.size(); ++j) {
                 for (auto& tag_elem : line_data[i].char_data[j].tags) {
                     if (tag_elem) {
@@ -1456,7 +1456,7 @@ namespace DebugOutput {
                             std::cout << "        \"" << param << "\"\n";
                         }
                         std::cout << "    tag_name=\"" << tag_elem->tag_name << "\"\n    close_tag="
-                                  << tag_elem->close_tag << std::endl;
+                                  << tag_elem->close_tag << "\n";
                     }
                 }
             }

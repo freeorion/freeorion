@@ -335,7 +335,7 @@ bool InIsoscelesTriangle(const GG::Pt& pt, const GG::Pt& ul, const GG::Pt& lr,
 void CircleArc(const GG::Pt& ul, const GG::Pt& lr, double theta1, double theta2,
                bool filled_shape)
 {
-    //std::cout << "CircleArc ul: " << ul << "  lr: " << lr << "  theta1: " << theta1 << "  theta2: " << theta2 << "  filled: " << filled_shape << std::flush << std::endl;
+    //std::cout << "CircleArc ul: " << ul << "  lr: " << lr << "  theta1: " << theta1 << "  theta2: " << theta2 << "  filled: " << filled_shape << std::endl;
     GG::GL2DVertexBuffer vert_buf;
     vert_buf.reserve(50);   // max number that BufferStoreCircleArcVertices might add
 

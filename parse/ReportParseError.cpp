@@ -91,7 +91,7 @@ void parse::detail::pretty_print(std::ostream& os, boost::spirit::info const& wh
 void parse::detail::default_send_error_string(const std::string& str) {
     ErrorLogger() << str;
     // output to cout also so can be better associated with any output from parser semantic action debug output
-    std::cout << str +"\n" << std::flush;
+    std::cout << str << std::endl;
 }
 
 std::function<void (const std::string&)> parse::report_error_::send_error_string =

@@ -1831,7 +1831,7 @@ std::shared_ptr<Wnd> GUI::CheckedGetWindowUnder(const Pt& pt, Flags<ModKey> mod_
     const auto&& wnd_under_pt = GetWindowUnder(pt);
     const auto& dragged_wnd = m_impl->m_curr_drag_wnd; // wnd being continuously repositioned / dragged around, not a drag-drop
 
-    //std::cout << "GUI::CheckedGetWindowUnder w: " << w << "  dragged_wnd: " << dragged_wnd << std::endl << std::flush;
+    //std::cout << "GUI::CheckedGetWindowUnder w: " << w << "  dragged_wnd: " << dragged_wnd << std::endl;
 
     bool unregistered_drag_drop = dragged_wnd && !dragged_wnd->DragDropDataType().empty();
     bool registered_drag_drop = !m_impl->m_drag_drop_wnds.empty();
@@ -1865,7 +1865,7 @@ std::shared_ptr<Wnd> GUI::CheckedGetWindowUnder(const Pt& pt, Flags<ModKey> mod_
     }
 
     if (!wnd_under_pt) {
-        //std::cout << "CheckedGetWindowUnder returning " << w << std::endl << std::flush;
+        //std::cout << "CheckedGetWindowUnder returning " << w << std::endl;
         return wnd_under_pt;
     }
 
@@ -1897,7 +1897,7 @@ std::shared_ptr<Wnd> GUI::CheckedGetWindowUnder(const Pt& pt, Flags<ModKey> mod_
         m_impl->HandleMouseEnter(mod_keys, pt, wnd_under_pt);
     }
 
-    //std::cout << "CheckedGetWindowUnder returning " << w << std::endl << std::flush;
+    //std::cout << "CheckedGetWindowUnder returning " << w << std::endl;
     return wnd_under_pt;
 }
 
