@@ -53,7 +53,7 @@ Tech
     tags = [ "PEDIA_DEFENSE_CATEGORY" ]
     prerequisites = "DEF_DEFENSE_NET_1"
     effectsgroups = [
-        [[EG_SYSTEM_MINES(2 * GameRule name = "RULE_SHIP_STRUCTURE_FACTOR",75,EMPIRE)]] 
+        [[EG_SYSTEM_MINES(2 * GameRule name = "RULE_SHIP_STRUCTURE_FACTOR",75,EMPIRE)]]
     ] //Priority deliberately not a macro and before all priority macros
     graphic = "icons/tech/system_defense_mines.png"
 
