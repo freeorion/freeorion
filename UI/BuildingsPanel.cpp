@@ -73,7 +73,7 @@ void BuildingsPanel::CompleteConstruction() {
         if (const Empire* empire = GetEmpire(planet->Owner())) {
             const ProductionQueue& queue = empire->GetProductionQueue();
             queue.ProductionQueueChangedSignal.connect(
-                std::bind(&BuildingsPanel::RequirePreRender, this));
+                boost::bind(&BuildingsPanel::RequirePreRender, this));
         }
     }
 
