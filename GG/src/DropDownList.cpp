@@ -177,11 +177,11 @@ void ModalListPicker::CompleteConstruction()
     namespace ph = std::placeholders;
 
     m_lb_wnd->SelRowsChangedSignal.connect(
-        std::bind(&ModalListPicker::LBSelChangedSlot, this, ph::_1));
+        boost::bind(&ModalListPicker::LBSelChangedSlot, this, _1));
     m_lb_wnd->LeftClickedRowSignal.connect(
-        std::bind(&ModalListPicker::LBLeftClickSlot, this, ph::_1, ph::_2, ph::_3));
+        boost::bind(&ModalListPicker::LBLeftClickSlot, this, _1, _2, _3));
     GUI::GetGUI()->WindowResizedSignal.connect(
-        std::bind(&ModalListPicker::WindowResizedSlot, this, ph::_1, ph::_2));
+        boost::bind(&ModalListPicker::WindowResizedSlot, this, _1, _2));
     AttachChild(m_lb_wnd);
     m_lb_wnd->InstallEventFilter(shared_from_this());
 

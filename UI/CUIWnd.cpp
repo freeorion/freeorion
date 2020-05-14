@@ -201,10 +201,10 @@ void CUIWnd::Init() {
     // every resize event.
     if (Dragable() || m_resizable)
         HumanClientApp::GetApp()->RepositionWindowsSignal.connect(
-            std::bind(&CUIWnd::ResetDefaultPosition, this));
+            boost::bind(&CUIWnd::ResetDefaultPosition, this));
     else
         HumanClientApp::GetApp()->WindowResizedSignal.connect(
-            std::bind(&CUIWnd::ResetDefaultPosition, this));
+            boost::bind(&CUIWnd::ResetDefaultPosition, this));
 }
 
 void CUIWnd::InitSizeMove(const GG::Pt& ul, const GG::Pt& lr) {

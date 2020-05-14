@@ -91,7 +91,7 @@ CreditsWnd::CreditsWnd(GG::X x, GG::Y y, GG::X w, GG::Y h, const XMLElement &cre
 
     /** Handle app resizing by closing the credits window. */
     GG::GUI::GetGUI()->WindowResizedSignal.connect(
-        std::bind(&CreditsWnd::OnExit, this));
+        boost::bind(&CreditsWnd::OnExit, this));
 }
 
 CreditsWnd::~CreditsWnd() {

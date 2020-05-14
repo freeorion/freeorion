@@ -324,11 +324,11 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
 
     namespace ph = std::placeholders;
 
-    WindowResizedSignal.connect(std::bind(&HumanClientApp::HandleWindowResize,this, ph::_1, ph::_2));
-    FocusChangedSignal.connect( std::bind(&HumanClientApp::HandleFocusChange, this, ph::_1));
-    WindowMovedSignal.connect(  std::bind(&HumanClientApp::HandleWindowMove,  this, ph::_1, ph::_2));
-    WindowClosingSignal.connect(std::bind(&HumanClientApp::HandleAppQuitting, this));
-    AppQuittingSignal.connect(  std::bind(&HumanClientApp::HandleAppQuitting, this));
+    WindowResizedSignal.connect(boost::bind(&HumanClientApp::HandleWindowResize,this, _1, _2));
+    FocusChangedSignal.connect( boost::bind(&HumanClientApp::HandleFocusChange, this, _1));
+    WindowMovedSignal.connect(  boost::bind(&HumanClientApp::HandleWindowMove,  this, _1, _2));
+    WindowClosingSignal.connect(boost::bind(&HumanClientApp::HandleAppQuitting, this));
+    AppQuittingSignal.connect(  boost::bind(&HumanClientApp::HandleAppQuitting, this));
 
     SetStringtableDependentOptionDefaults();
     SetGLVersionDependentOptionDefaults();
