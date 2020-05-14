@@ -22,7 +22,7 @@ namespace {
     // to exist on client and server.
     void AddRules(GameRules& rules) {
         rules.Add<int>("RULE_NUM_COMBAT_ROUNDS", "RULE_NUM_COMBAT_ROUNDS_DESC",
-                       "", 4, true, RangedValidator<int>(2, 20));
+                       "", 3, true, RangedValidator<int>(2, 20));
         rules.Add<bool>("RULE_AGGRESSIVE_SHIPS_COMBAT_VISIBLE", "RULE_AGGRESSIVE_SHIPS_COMBAT_VISIBLE_DESC",
                         "", false, true);
 
