@@ -272,8 +272,15 @@ Message GameStartMessage(bool single_player_game, int empire_id,
             Serialize(oa, orders);
             bool ui_data_available = (ui_data != nullptr);
             oa << BOOST_SERIALIZATION_NVP(ui_data_available);
-            if (ui_data_available)
-                oa << boost::serialization::make_nvp("ui_data", *ui_data);
+            if (ui_data_available) {
+                if (ui_data) {
+                    oa << boost::serialization::make_nvp("ui_data", *ui_data);
+                } else {
+                    ErrorLogger() << "GameStartMessage expected UI data but it was nullptr";
+                    SaveGameUIData temp_UI_data;
+                    oa << boost::serialization::make_nvp("ui_data", temp_UI_data);
+                }
+            }
             bool save_state_string_available = false;
             oa << BOOST_SERIALIZATION_NVP(save_state_string_available);
             galaxy_setup_data.m_encoding_empire = empire_id;
@@ -336,8 +343,15 @@ Message GameStartMessage(bool single_player_game, int empire_id,
             oa << BOOST_SERIALIZATION_NVP(ui_data_available);
             bool save_state_string_available = (save_state_string != nullptr);
             oa << BOOST_SERIALIZATION_NVP(save_state_string_available);
-            if (save_state_string_available)
-                oa << boost::serialization::make_nvp("save_state_string", *save_state_string);
+            if (save_state_string_available) {
+                if (save_state_string) {
+                    oa << boost::serialization::make_nvp("save_state_string", *save_state_string);
+                } else {
+                    ErrorLogger() << "GameStartMessage expectes save_state_string but it was nullptr";
+                    std::string temp_sss;
+                    oa << boost::serialization::make_nvp("save_state_string", temp_sss);
+                }
+            }
             galaxy_setup_data.m_encoding_empire = empire_id;
             oa << BOOST_SERIALIZATION_NVP(galaxy_setup_data);
         }

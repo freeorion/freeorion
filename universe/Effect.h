@@ -15,6 +15,8 @@
 
 #include "../util/Export.h"
 
+FO_COMMON_API extern const int INVALID_OBJECT_ID;
+
 class UniverseObject;
 struct ScriptingContext;
 
@@ -34,7 +36,7 @@ namespace Effect {
     /** Description of cause of an effect: the general cause type, and the
       * specific cause.  eg. Building and a particular BuildingType. */
     struct FO_COMMON_API EffectCause {
-        EffectCause();
+        explicit EffectCause();
         EffectCause(EffectsCauseType cause_type_, const std::string& specific_cause_,
                     const std::string& custom_label_ = "");
         EffectsCauseType    cause_type;     ///< general type of effect cause, eg. tech, building, special...
@@ -44,7 +46,7 @@ namespace Effect {
 
     /** Combination of targets and cause for an effects group. */
     struct TargetsAndCause {
-        TargetsAndCause();
+        explicit TargetsAndCause();
         TargetsAndCause(const TargetSet& target_set_, const EffectCause& effect_cause_);
         TargetSet target_set;
         EffectCause effect_cause;
@@ -52,11 +54,11 @@ namespace Effect {
 
     /** Combination of an EffectsGroup and the id of a source object. */
     struct SourcedEffectsGroup {
-        SourcedEffectsGroup();
+        explicit SourcedEffectsGroup();
         SourcedEffectsGroup(int source_object_id_, const EffectsGroup* effects_group_);
         bool operator<(const SourcedEffectsGroup& right) const;
-        int source_object_id;
-        const EffectsGroup* effects_group;
+        int source_object_id = INVALID_OBJECT_ID;
+        const EffectsGroup* effects_group = nullptr;
     };
 
     /** Map from (effects group and source object) to target set of for
@@ -111,16 +113,16 @@ namespace Effect {
     /** Accounting information about what the causes are and changes produced
       * by effects groups acting on meters of objects. */
     struct FO_COMMON_API AccountingInfo : public EffectCause {
-        AccountingInfo();
+        explicit AccountingInfo();
         AccountingInfo(int source_id_, EffectsCauseType cause_type_, float meter_change_,
                        float running_meter_total_, const std::string& specific_cause_ = "",
                        const std::string& custom_label_ = "");
 
         bool operator==(const AccountingInfo& rhs) const;
 
-        int     source_id;          ///< source object of effect
-        float   meter_change;       ///< net change on meter due to this effect, as best known by client's empire
-        float   running_meter_total;///< meter total as of this effect.
+        int     source_id = INVALID_OBJECT_ID;  ///< source object of effect
+        float   meter_change = 0.0f;            ///< net change on meter due to this effect, as best known by client's empire
+        float   running_meter_total = 0.0f;     ///< meter total as of this effect.
     };
 
     /** Contains one or more Effects, a Condition which indicates the objects in

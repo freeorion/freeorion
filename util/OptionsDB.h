@@ -382,7 +382,7 @@ public:
         bool            ValueIsDefault() const;
 
         std::string     name;           ///< the name of the option
-        char            short_name;     ///< the one character abbreviation of the option
+        char            short_name{0};  ///< the one character abbreviation of the option
         boost::any      value;          ///< the value of the option
         boost::any      default_value;  ///< the default value of the option
         std::string     description;    ///< a desription of the option
@@ -392,9 +392,9 @@ public:
             boolean conversions are done for them. */
         std::shared_ptr<const ValidatorBase> validator;
 
-        bool            storable;       ///< whether this option can be stored in an XML config file for use across multiple runs
-        bool            flag;
-        bool            recognized;     ///< whether this option has been registered before being specified via an XML input, unrecognized options can't be parsed (don't know their type) but are stored in case they are later registered with Add()
+        bool            storable = false;   ///< whether this option can be stored in an XML config file for use across multiple runs
+        bool            flag = false;
+        bool            recognized = false; ///< whether this option has been registered before being specified via an XML input, unrecognized options can't be parsed (don't know their type) but are stored in case they are later registered with Add()
 
         mutable std::shared_ptr<boost::signals2::signal<void ()>> option_changed_sig_ptr;
 

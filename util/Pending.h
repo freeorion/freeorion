@@ -24,12 +24,12 @@ namespace Pending {
             filename(name_)
         {}
 
-        Pending(Pending&& other) :
+        Pending(Pending&& other) noexcept :
             pending(std::move(other.pending)),
             filename(std::move(other.filename))
         {}
 
-        Pending& operator=(Pending&& other) {
+        Pending& operator=(Pending&& other) noexcept {
             pending = std::move(other.pending);
             filename = std::move(other.filename);
             return *this;

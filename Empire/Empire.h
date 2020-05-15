@@ -514,7 +514,7 @@ private:
     std::set<int>                   m_supply_unobstructed_systems;  ///< ids of system that don't block supply from flowing
     std::map<int, std::set<int>>    m_preserved_system_exit_lanes;  ///< for each system known to this empire, the set of exit lanes preserved for fleet travel even if otherwise blockaded
     std::map<int, std::set<int>>    m_pending_system_exit_lanes;    ///< pending updates to m_preserved_system_exit_lanes
-    bool                            m_ready;                        ///< readiness status of empire
+    bool                            m_ready = false;                ///< readiness status of empire
 
     friend class boost::serialization::access;
     Empire();

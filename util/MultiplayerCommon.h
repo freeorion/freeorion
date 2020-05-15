@@ -88,13 +88,13 @@ BOOST_CLASS_VERSION(GalaxySetupData, 3);
 /** Contains the UI data that must be saved in save game files in order to
   * restore games to the users' last views. */
 struct FO_COMMON_API SaveGameUIData {
-    int     map_top;
-    int     map_left;
-    double  map_zoom_steps_in;
+    int     map_top = 0;
+    int     map_left = 0;
+    double  map_zoom_steps_in = 0.0;
     std::set<int> fleets_exploring;
 
     // See DesignWnd.cpp for the usage of the following variables.
-    int obsolete_ui_event_count;
+    int obsolete_ui_event_count = 0;
     std::vector<std::pair<int, boost::optional<std::pair<bool, int>>>> ordered_ship_design_ids_and_obsolete;
     std::vector<std::pair<std::string, std::pair<bool, int>>> ordered_ship_hull_and_obsolete;
     std::unordered_map<std::string, int> obsolete_ship_parts;

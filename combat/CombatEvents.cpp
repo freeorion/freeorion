@@ -400,10 +400,7 @@ StealthChangeEvent::StealthChangeEvent(int bout_) :
 {}
 
 StealthChangeEvent::StealthChangeEventDetail::StealthChangeEventDetail() :
-    attacker_id(INVALID_OBJECT_ID),
-    target_id(INVALID_OBJECT_ID),
-    attacker_empire_id(INVALID_OBJECT_ID),
-    target_empire_id(INVALID_OBJECT_ID)
+    StealthChangeEventDetail(INVALID_OBJECT_ID, INVALID_OBJECT_ID, ALL_EMPIRES, ALL_EMPIRES, VIS_NO_VISIBILITY)
 {}
 
 StealthChangeEvent::StealthChangeEventDetail::StealthChangeEventDetail(

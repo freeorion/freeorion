@@ -87,8 +87,8 @@ namespace {
         float additional_pp_to_complete_item = item_cost - element_accumulated_PP;  // additional PP, beyond already-accumulated PP, to produce the current item of this element
         float basic_element_per_turn_limit = item_cost / build_turns;
         // the extra constraints on frontload and topping up amounts ensure that won't let complete in less than build_turns (so long as costs do not decrease)
-        float frontload = (1.0 + frontload_limit_factor/std::max(build_turns-1,1)) *
-            basic_element_per_turn_limit  - 2 * EPSILON;
+        float frontload = (1.0f + frontload_limit_factor/std::max(build_turns-1,1)) *
+            basic_element_per_turn_limit - 2.0f * EPSILON;
         float topping_up_limit = basic_element_per_turn_limit +
             std::min(topping_up_limit_factor * item_cost, basic_element_per_turn_limit - 2 * EPSILON);
         float topping_up = (additional_pp_to_complete_item < topping_up_limit) ?

@@ -298,7 +298,7 @@ public:
     {
         /** The time the cursor must linger over the Wnd before this mode
             becomes active, in ms. */
-        unsigned int time;
+        unsigned int time = 0;
 
         /** The BrowseInfoWnd used to display the browse info for this
             mode. */

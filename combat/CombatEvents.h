@@ -15,6 +15,8 @@
 
 #include "CombatEvent.h"
 
+FO_COMMON_API extern const int ALL_EMPIRES;
+FO_COMMON_API extern const int INVALID_OBJECT_ID;
 
 /** \file
  * Contains all combat event implementation declarations.
@@ -22,12 +24,13 @@
 
 /// Generated when a new bout begins in the battle
 struct FO_COMMON_API BoutBeginEvent : public CombatEvent {
-    BoutBeginEvent();
-    BoutBeginEvent(int bout);
+    explicit BoutBeginEvent();
+    explicit BoutBeginEvent(int bout);
+
     std::string DebugString() const override;
     std::string CombatLogDescription(int viewing_empire_id) const override;
 
-    int bout;
+    int bout = 0;
 
 private:
     friend class boost::serialization::access;
@@ -40,9 +43,11 @@ private:
 struct FO_COMMON_API BoutEvent : public CombatEvent {
     typedef std::shared_ptr<BoutEvent> BoutEventPtr;
 
-    BoutEvent();
-    BoutEvent(int bout);
+    explicit BoutEvent();
+    explicit BoutEvent(int bout);
+
     void AddEvent(const CombatEventPtr& event);
+
     std::string DebugString() const override;
     std::string CombatLogDescription(int viewing_empire_id) const override;
     std::vector<ConstCombatEventPtr> SubEvents(int viewing_empire_id) const override;
@@ -57,7 +62,7 @@ struct FO_COMMON_API BoutEvent : public CombatEvent {
     { return true; }
 
 private:
-    int bout;
+    int bout = 0;
 
     std::vector<CombatEventPtr> events;
 
@@ -72,8 +77,10 @@ private:
 struct FO_COMMON_API SimultaneousEvents : public CombatEvent {
     typedef std::shared_ptr<SimultaneousEvents> SimultaneousEventsPtr;
 
-    SimultaneousEvents();
+    explicit SimultaneousEvents();
+
     void AddEvent(const CombatEventPtr& event);
+
     std::string DebugString() const override;
     std::string CombatLogDescription(int viewing_empire_id) const override;
     std::vector<ConstCombatEventPtr> SubEvents(int viewing_empire_id) const override;
@@ -109,8 +116,8 @@ typedef std::shared_ptr<FighterLaunchesEvent> FighterLaunchesEventPtr;
 struct FO_COMMON_API InitialStealthEvent : public CombatEvent {
     typedef std::map<int, std::map<int, Visibility>> EmpireToObjectVisibilityMap;
 
-    InitialStealthEvent();
-    InitialStealthEvent(const EmpireToObjectVisibilityMap& x);
+    explicit InitialStealthEvent();
+    explicit InitialStealthEvent(const EmpireToObjectVisibilityMap& x);
 
     std::string DebugString() const override;
     std::string CombatLogDescription(int viewing_empire_id) const override;
@@ -126,8 +133,8 @@ private:
 /**StealthChangeEvent describes changes in the visibility of objects during combat.
  At this time always decloaking.*/
 struct FO_COMMON_API StealthChangeEvent : public CombatEvent {
-    StealthChangeEvent();
-    StealthChangeEvent(int bout);
+    explicit StealthChangeEvent();
+    explicit StealthChangeEvent(int bout);
 
     std::string DebugString() const override;
     std::string CombatLogDescription(int viewing_empire_id) const override;
@@ -140,17 +147,17 @@ struct FO_COMMON_API StealthChangeEvent : public CombatEvent {
     typedef std::shared_ptr<StealthChangeEventDetail> StealthChangeEventDetailPtr;
     typedef std::shared_ptr<const StealthChangeEventDetail> ConstStealthChangeEventDetailPtr;
     struct StealthChangeEventDetail : public CombatEvent {
-        StealthChangeEventDetail();
+        explicit StealthChangeEventDetail();
         StealthChangeEventDetail(int attacker_id_, int target_id_, int attacker_empire_,
                                  int target_empire_, Visibility new_visibility_);
 
         std::string DebugString() const override;
         std::string CombatLogDescription(int viewing_empire_id) const override;
 
-        int attacker_id;
-        int target_id;
-        int attacker_empire_id;
-        int target_empire_id;
+        int attacker_id = INVALID_OBJECT_ID;
+        int target_id = INVALID_OBJECT_ID;
+        int attacker_empire_id = ALL_EMPIRES;
+        int target_empire_id = ALL_EMPIRES;
         Visibility visibility;
 
         friend class boost::serialization::access;
@@ -159,7 +166,7 @@ struct FO_COMMON_API StealthChangeEvent : public CombatEvent {
     };
 
 private:
-    int bout;
+    int bout = 0;
     std::map<int, std::vector<StealthChangeEventDetailPtr>> events;
 
     friend class boost::serialization::access;
@@ -173,7 +180,7 @@ struct FO_COMMON_API WeaponFireEvent : public CombatEvent {
     typedef std::shared_ptr<WeaponFireEvent> WeaponFireEventPtr;
     typedef std::shared_ptr<const WeaponFireEvent> ConstWeaponFireEventPtr;
 
-    WeaponFireEvent();
+    explicit WeaponFireEvent();
 
     /** WeaponFireEvent encodes a single attack in \p bout, \p round by \p
         attacker_id owned by \p attacker_owner_id on \p target_id with \p
@@ -193,16 +200,16 @@ struct FO_COMMON_API WeaponFireEvent : public CombatEvent {
     bool AreDetailsEmpty(int viewing_empire_id) const override { return false; }
     boost::optional<int> PrincipalFaction(int viewing_empire_id) const override;
 
-    int bout;
-    int round;
-    int attacker_id;
-    int target_id;
+    int bout = 0;
+    int round = 0;
+    int attacker_id = INVALID_OBJECT_ID;
+    int target_id = INVALID_OBJECT_ID;
     std::string weapon_name;
-    float power;
-    float shield;
-    float damage;
-    int attacker_owner_id;
-    int target_owner_id;
+    float power = 0.0f;
+    float shield = 0.0f;
+    float damage = 0.0f;
+    int attacker_owner_id = ALL_EMPIRES;
+    int target_owner_id = ALL_EMPIRES;
 
 private:
     friend class boost::serialization::access;
@@ -213,15 +220,15 @@ private:
 /// Created when an object becomes unable to fight anymore,
 /// eg. a ship is destroyed or a planet loses all defence
 struct FO_COMMON_API IncapacitationEvent : public CombatEvent {
-    IncapacitationEvent();
+    explicit IncapacitationEvent();
     IncapacitationEvent(int bout_, int object_id_, int object_owner_id_);
     std::string DebugString() const override;
     std::string CombatLogDescription(int viewing_empire_id) const override;
     boost::optional<int> PrincipalFaction(int viewing_empire_id) const override;
 
-    int bout;
-    int object_id;
-    int object_owner_id;
+    int bout = 0;
+    int object_id = INVALID_OBJECT_ID;
+    int object_owner_id = ALL_EMPIRES;
 
 private:
     friend class boost::serialization::access;
@@ -232,14 +239,14 @@ private:
 
 /** FightersAttackFightersEvent aggregates all the fighter on fighter combat for one bout.*/
 struct FO_COMMON_API FightersAttackFightersEvent : public CombatEvent {
-    FightersAttackFightersEvent();
-    FightersAttackFightersEvent(int bout);
+    explicit FightersAttackFightersEvent();
+    explicit FightersAttackFightersEvent(int bout);
     std::string DebugString() const override;
     std::string CombatLogDescription(int viewing_empire_id) const override;
     void AddEvent(int attacker_empire_, int target_empire_);
 
 private:
-    int bout;
+    int bout = 0;
 
     // Store the number of each of the identical fighter combat events.
     std::map<std::pair<int, int>, unsigned int> events;
@@ -253,16 +260,16 @@ private:
 struct FO_COMMON_API FighterLaunchEvent : public CombatEvent {
     typedef std::shared_ptr<FighterLaunchEvent> FighterLaunchEventPtr;
 
-    FighterLaunchEvent();
+    explicit FighterLaunchEvent();
     FighterLaunchEvent(int bout_, int launched_from_id_, int fighter_owner_empire_id_, int number_launched_);
     std::string DebugString() const override;
     std::string CombatLogDescription(int viewing_empire_id) const override;
     boost::optional<int> PrincipalFaction(int viewing_empire_id) const override;
 
-    int bout;
-    int fighter_owner_empire_id;    // may be ALL_EMPIRE if fighter was owned by no empire
-    int launched_from_id;
-    int number_launched;
+    int bout = 0;
+    int fighter_owner_empire_id = ALL_EMPIRES;
+    int launched_from_id = INVALID_OBJECT_ID;
+    int number_launched = 0;
 
 private:
     friend class boost::serialization::access;
@@ -272,14 +279,14 @@ private:
 
 /** FightersDestroyedEvent aggregates all the fighters destroyed during one combat bout.*/
 struct FO_COMMON_API FightersDestroyedEvent : public CombatEvent {
-    FightersDestroyedEvent();
-    FightersDestroyedEvent(int bout);
+    explicit FightersDestroyedEvent();
+    explicit FightersDestroyedEvent(int bout);
     std::string DebugString() const override;
     std::string CombatLogDescription(int viewing_empire_id) const override;
     void AddEvent(int target_empire_);
 
 private:
-    int bout;
+    int bout = 0;
 
     // Store the number of each of the identical fighter combat events.
     std::map<int, unsigned int> events;
@@ -295,19 +302,21 @@ struct FO_COMMON_API WeaponsPlatformEvent : public CombatEvent {
     typedef std::shared_ptr<WeaponsPlatformEvent> WeaponsPlatformEventPtr;
     typedef std::shared_ptr<const WeaponsPlatformEvent> ConstWeaponsPlatformEventPtr;
 
-    WeaponsPlatformEvent();
+    explicit WeaponsPlatformEvent();
     WeaponsPlatformEvent(int bout, int attacker_id, int attacker_owner_id_);
+
     void AddEvent(int round, int target_id, int target_owner_id_, std::string const & weapon_name_,
                   float power_, float shield_, float damage_);
+
     std::string DebugString() const override;
     std::string CombatLogDescription(int viewing_empire_id) const override;
     std::vector<ConstCombatEventPtr> SubEvents(int viewing_empire_id) const override;
     bool AreSubEventsEmpty(int viewing_empire_id) const override;
     boost::optional<int> PrincipalFaction(int viewing_empire_id) const override;
 
-    int bout;
-    int attacker_id;
-    int attacker_owner_id;
+    int bout = 0;
+    int attacker_id = INVALID_OBJECT_ID;
+    int attacker_owner_id = ALL_EMPIRES;
 
 private:
     std::map<int, std::vector<WeaponFireEvent::WeaponFireEventPtr>> events;
