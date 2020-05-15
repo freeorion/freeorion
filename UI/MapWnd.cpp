@@ -979,7 +979,7 @@ void MapWnd::CompleteConstruction() {
     using std::placeholders::_2;
 
     GetUniverse().UniverseObjectDeleteSignal.connect(
-        std::bind(&MapWnd::UniverseObjectDeleted, this, _1));
+        boost::bind(&MapWnd::UniverseObjectDeleted, this, boost::placeholders::_1));
 
     // toolbar
     m_toolbar = GG::Wnd::Create<CUIToolBar>();
@@ -1020,7 +1020,7 @@ void MapWnd::CompleteConstruction() {
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "manual_turn_mouseover.png")));
 
     m_btn_auto_turn->LeftClickedSignal.connect(
-        std::bind(&MapWnd::ToggleAutoEndTurn, this));
+        boost::bind(&MapWnd::ToggleAutoEndTurn, this));
     m_btn_auto_turn->Resize(GG::Pt(GG::X(24), GG::Y(24)));
     m_btn_auto_turn->SetMinSize(GG::Pt(GG::X(24), GG::Y(24)));
     ToggleAutoEndTurn();    // toggle twice to set textures without changing default setting state

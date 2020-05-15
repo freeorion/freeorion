@@ -1904,14 +1904,12 @@ public:
         m_header_row = GG::Wnd::Create<ObjectHeaderRow>(GG::X1, ListRowHeight());
         SetColHeaders(m_header_row); // Gives ownership
 
-        using std::placeholders::_1;
-
         m_header_row->ColumnsChangedSignal.connect(
-            std::bind(&ObjectListBox::Refresh, this));
+            boost::bind(&ObjectListBox::Refresh, this));
         m_header_row->ColumnHeaderLeftClickSignal.connect(
-            std::bind(&ObjectListBox::SortingClicked, this, _1));
+            boost::bind(&ObjectListBox::SortingClicked, this, _1));
         m_obj_deleted_connection = GetUniverse().UniverseObjectDeleteSignal.connect(
-            std::bind(&ObjectListBox::UniverseObjectDeleted, this, _1));
+            boost::bind(&ObjectListBox::UniverseObjectDeleted, this, _1));
     }
 
     virtual ~ObjectListBox()
