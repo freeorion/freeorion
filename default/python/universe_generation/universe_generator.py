@@ -128,7 +128,7 @@ def create_universe(psd_map):
     print("Teams: ", teams)
 
     seed_rng(seed_pool.pop())
-    if len(teams) > 0:
+    if teams:
         psds = list(psd_map.items())
         for home_system, team in place_teams(home_systems, systems, teams):
             home_systems.remove(home_system)

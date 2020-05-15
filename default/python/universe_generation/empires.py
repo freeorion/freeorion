@@ -9,7 +9,7 @@ from options import (HS_ACCEPTABLE_PLANET_SIZES, HS_ACCEPTABLE_PLANET_TYPES, HS_
                      HS_MIN_PLANETS_IN_VICINITY_TOTAL, HS_MIN_SYSTEMS_IN_VICINITY, HS_VICINITY_RANGE)
 from planets import calc_planet_size, calc_planet_type, planet_sizes_real, planet_types_real
 from starsystems import pick_star_type, star_types_real
-from util import report_error
+from util import report_error, unique_product
 
 
 def get_empire_name_generator():
@@ -550,7 +550,7 @@ def setup_empire(empire, empire_name, home_system, starting_species, player_name
 def home_system_layout(home_systems, systems):
     """
     Home systems layout generation to place teams.
-    Returns map from home system to neighbor home systems
+    Returns map from home system to neighbor home systems.
     """
     # for each system found nearest home systems
     # maybe multiple if home worlds placed on the same jump distnace
@@ -562,7 +562,7 @@ def home_system_layout(home_systems, systems):
             dist = fo.jump_distance(system, hs)
             if nearest_dist is None or nearest_dist > dist:
                 nearest_dist = dist
-                nearest_hs = set([hs])
+                nearest_hs = {hs}
             elif nearest_dist == dist:
                 nearest_hs.add(hs)
         system_hs[system] = nearest_hs
@@ -573,27 +573,15 @@ def home_system_layout(home_systems, systems):
     home_system_connections = {}
     for system, connected_home_systems in system_hs.items():
         if len(connected_home_systems) >= 2:
-            for hs1 in connected_home_systems:
-                for hs2 in connected_home_systems:
-                    if hs1 < hs2:
-                        conns = home_system_connections.get(hs1, set())
-                        conns.add(hs2)
-                        home_system_connections[hs1] = conns
-                        conns = home_system_connections.get(hs2, set())
-                        conns.add(hs1)
-                        home_system_connections[hs2] = conns
+            for hs1, hs2 in unique_product(connected_home_systems, connected_home_systems):
+                home_system_connections.setdefault(hs1, set()).add(hs2)
+                home_system_connections.setdefault(hs2, set()).add(hs1)
 
     for system, connected_home_systems in system_hs.items():
         adj_systems = fo.systems_within_jumps_unordered(1, [system])
         for system2 in adj_systems:
             connected_home_systems2 = system_hs.get(system2, set())
-            for hs1 in connected_home_systems:
-                for hs2 in connected_home_systems2:
-                    if hs1 < hs2:
-                        conns = home_system_connections.get(hs1, set())
-                        conns.add(hs2)
-                        home_system_connections[hs1] = conns
-                        conns = home_system_connections.get(hs2, set())
-                        conns.add(hs1)
-                        home_system_connections[hs2] = conns
+            for hs1, hs2 in unique_product(connected_home_systems, connected_home_systems2):
+                home_system_connections.setdefault(hs1, set()).add(hs2)
+                home_system_connections.setdefault(hs2, set()).add(hs1)
     return home_system_connections

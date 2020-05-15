@@ -1,4 +1,4 @@
-from logging import warning
+from logging import warning, debug
 
 from common.configure_logging import redirect_logging_to_freeorion_logger
 
@@ -7,43 +7,52 @@ redirect_logging_to_freeorion_logger()
 
 import freeorion as fo
 
+from typing import Dict, Tuple, List
+
 from operator import itemgetter
 from empires import home_system_layout
+from util import unique_product
 
 
-def home_system_team_core(home_systems, teams):
+def home_system_team_core(home_systems: List[int], teams: List[Tuple[int, int]]) -> Dict[int, int]:
     """
-    Choose core for teams
-    Returns map from team to core home system
+    Choose core for teams which is a list of pairs team id and count of empires in the team.
+    Returns map from team to core home system.
     """
-    print("Teams: ", teams)
+    if not teams:
+        return {}
+    debug("Teams: %s", teams)
     # sort all home systems by distance
     home_systems_distances = {}
-    for hs1 in home_systems:
-        for hs2 in home_systems:
-            if hs1 < hs2:
-                dist = fo.jump_distance(hs1, hs2)
-                home_systems_distances[(hs1, hs2)] = dist
+    for hs1, hs2 in unique_product(home_systems, home_systems):
+        dist = fo.jump_distance(hs1, hs2)
+        home_systems_distances[(hs1, hs2)] = dist
     home_systems_sorted = sorted(home_systems_distances.items(), key=itemgetter(1), reverse=True)
-    print("Home systems sorted: ", home_systems_sorted)
+    debug("Home systems sorted: %s", home_systems_sorted)
 
     result = {}
-    if len(teams) == 0 or len(home_systems_sorted) == 0:
+    if not home_systems_sorted:
         pass
     elif len(teams) == 1:
-        result[teams[0][0]] = home_systems_sorted[0][0][0]
+        first_team = teams[0][0]
+        first_of_most_distant_systems = home_systems_sorted[0][0][0]
+        result[first_team] = first_of_most_distant_systems
     else:
-        result[teams[0][0]] = home_systems_sorted[0][0][0]
-        result[teams[1][0]] = home_systems_sorted[0][0][1]
+        first_team = teams[0][0]
+        first_of_most_distant_systems = home_systems_sorted[0][0][0]
+        second_team = teams[1][0]
+        second_of_most_distant_systems = home_systems_sorted[0][0][1]
+        result[first_team] = first_of_most_distant_systems
+        result[second_team] = second_of_most_distant_systems
         if len(teams) > 2:
-            warning("Teamed placement poorly implemented for ", len(teams), " teams")
+            warning("Teamed placement poorly implemented for %d teams", len(teams))
     return result
 
 
-def place_teams_layout(layout, cores, placement_teams):
+def place_teams_layout(layout: Dict[int, List[int]], cores: Dict[int, int], placement_teams: List[int]) -> Dict[int, int]:
     """
-    Place teams on home systems layout
-    Returns map from home system to team
+    Place teams on home systems layout.
+    Returns map from home system to team.
     """
     # set team cores
     left_home_systems = set(layout.keys())
@@ -60,7 +69,7 @@ def place_teams_layout(layout, cores, placement_teams):
         for hs in left_home_systems:
             cnt = len([n for n in layout[hs] if result.get(n, -1) == team])
             if neighbors_count is None or cnt > neighbors_count:
-                choose_hs = set([hs])
+                choose_hs = {hs}
                 neighbors_count = cnt
             elif cnt == neighbors_count:
                 choose_hs.add(hs)
@@ -78,34 +87,34 @@ def place_teams_layout(layout, cores, placement_teams):
                             dist_to_enemy = dist
                 if max_dist_to_enemy is None or dist_to_enemy > max_dist_to_enemy:
                     max_dist_to_enemy = dist_to_enemy
-                    choose_hs2 = set([hs])
+                    choose_hs2 = {hs}
                 elif dist_to_enemy == max_dist_to_enemy:
                     choose_hs2.add(hs)
             choose_hs = choose_hs2
 
-        if len(choose_hs) > 0:
+        if choose_hs:
             hs = choose_hs.pop()
             result[hs] = team
             left_home_systems.remove(hs)
     return result.items()
 
 
-def place_teams(home_systems, systems, teams):
+def place_teams(home_systems: List[int], systems: List[int], teams: Dict[int, int]) -> Dict[int, int]:
     """
-    Place teams on home systems layout
-    Returns map from home system to team
+    Place teams on home systems layout.
+    Returns map from home system to team.
     """
     # choose team's core home system
     home_system_teams = home_system_team_core(home_systems, sorted(teams.items(), key=itemgetter(1), reverse=True))
-    print("Home systems team core: ", home_system_teams)
+    debug("Home systems team core: %s", home_system_teams)
     # choose order of placing teams exclude already placed cores
     placement_list = []
     for team in home_system_teams.keys():
         placement_list += [(i, team) for i in range(teams[team] - (1 if team in home_system_teams.keys() else 0))]
     placement_list.sort(reverse=True)
     placement_teams = [i[1] for i in placement_list]
-    print("Placement teams: ", placement_teams)
+    debug("Placement teams: %s", placement_teams)
     # calculate placement based on teams
     layout = home_system_layout(home_systems, systems)
-    print("Home systems layout: ", layout)
+    debug("Home systems layout: %s", layout)
     return place_teams_layout(layout, home_system_teams, placement_teams)
