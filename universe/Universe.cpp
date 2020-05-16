@@ -1798,11 +1798,6 @@ void Universe::SetEmpireSpecialVisibility(int empire_id, int object_id,
 {
     if (empire_id == ALL_EMPIRES || special_name.empty() || object_id == INVALID_OBJECT_ID)
         return;
-    //auto obj = m_objects.get(object_id);
-    //if (!obj)
-    //    return;
-    //if (!obj->HasSpecial(special_name))
-    //    return;
     if (visible)
         m_empire_object_visible_specials[empire_id][object_id].insert(special_name);
     else
@@ -2071,6 +2066,8 @@ namespace {
         // set every object visible to all empires
         for (const auto& obj : universe.Objects().all()) {
             for (auto& empire_entry : Empires()) {
+                if (empire_entry.second->Eliminated())
+                    continue;
                 // objects
                 universe.SetEmpireObjectVisibility(empire_entry.first, obj->ID(), VIS_FULL_VISIBILITY);
                 // specials on objects
@@ -2399,8 +2396,11 @@ void Universe::UpdateEmpireObjectVisibilities() {
     for (auto& empire_entry : Empires()) {
         int empire_id = empire_entry.first;
         const Empire* empire = empire_entry.second;
-        for (int design_id : empire->ShipDesigns()) {
-            m_empire_known_ship_design_ids[empire_id].insert(design_id);
+        if (empire->Eliminated()) {
+            m_empire_known_ship_design_ids.erase(empire_id);
+        } else {
+            for (int design_id : empire->ShipDesigns())
+                m_empire_known_ship_design_ids[empire_id].insert(design_id);
         }
     }
 
