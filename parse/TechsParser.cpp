@@ -242,9 +242,8 @@ namespace parse {
 
         /*auto success =*/ detail::parse_file<grammar, TechManager::TechContainer>(lexer, path / "Categories.inf", techs_);
 
-        for (const boost::filesystem::path& file : ListScripts(path)) {
+        for (const auto& file : ListDir(path, IsFOCScript))
             /*auto success =*/ detail::parse_file<grammar, TechManager::TechContainer>(lexer, file, techs_);
-        }
 
         return std::make_tuple(std::move(techs_), std::move(categories), categories_seen);
     }

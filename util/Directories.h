@@ -92,8 +92,14 @@ FO_COMMON_API std::string FilenameTimestamp();
 /** Returns the path to \a to, as it appears from \a from. */
 FO_COMMON_API boost::filesystem::path RelativePath(const boost::filesystem::path& from, const boost::filesystem::path& to);
 
-/** Returns a vector of files within \a path including a recursive search though sub-dirs */
-FO_COMMON_API std::vector<boost::filesystem::path> ListDir(const boost::filesystem::path& path);
+//! Returns true if the given @p path referrs to a FO content script and false
+//! otherwise.
+FO_COMMON_API bool IsFOCScript(const boost::filesystem::path& path);
+
+//! Returns a vector of pathes within @p path including a recursive search
+//! though sub-dirs.  Then passing a @p predicate, the pathes need to match
+//! this predicate.  If no predicate is given pathes need to refer to files.
+FO_COMMON_API std::vector<boost::filesystem::path> ListDir(const boost::filesystem::path& path, std::function<bool (const boost::filesystem::path&)> predicate=nullptr);
 
 /** Returns true iff the string \a in is valid UTF-8. */
 FO_COMMON_API bool IsValidUTF8(const std::string& in);
@@ -110,16 +116,4 @@ FO_COMMON_API boost::filesystem::path GetPath(const std::string& path_string);
 
 /** Returns if path exists and is a regular file */
 FO_COMMON_API bool IsExistingFile(const boost::filesystem::path& path);
-
-/** All paths contained in a directory filtered by a functor
- *
- * @param[in] abs_dir_path Absolute path to directory
- * @param[in] pred Predicate functor accepting a boost::filesystem::path constant reference
- * @param[in] recursive_search If true, recurses into sub-directories
- *
- * @return vector List of filesytem objects found in @p abs_dir_path which satisfy @p pred */
-FO_COMMON_API std::vector<boost::filesystem::path> PathsInDir(const boost::filesystem::path& abs_dir_path,
-                                                              std::function<bool (const boost::filesystem::path&)> pred,
-                                                              bool recursive_search);
-
 #endif

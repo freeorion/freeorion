@@ -11,6 +11,7 @@
 #include "../universe/Condition.h"
 #include "../universe/Effect.h"
 #include "../universe/Species.h"
+#include "../util/Directories.h"
 
 #include <boost/spirit/include/phoenix.hpp>
 
@@ -288,7 +289,7 @@ namespace parse {
 
         boost::filesystem::path manifest_file;
 
-        for (const boost::filesystem::path& file : ListScripts(path)) {
+        for (const auto& file : ListDir(path, IsFOCScript)) {
             if (file.filename() == "SpeciesCensusOrdering.focs.txt" ) {
                 manifest_file = file;
                 continue;

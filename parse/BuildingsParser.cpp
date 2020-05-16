@@ -10,6 +10,7 @@
 #include "../universe/Enums.h"
 #include "../universe/Condition.h"
 #include "../universe/ValueRef.h"
+#include "../util/Directories.h"
 
 
 #define DEBUG_PARSERS 0
@@ -120,9 +121,9 @@ namespace parse {
     start_rule_payload buildings(const boost::filesystem::path& path) {
         const lexer lexer;
         start_rule_payload building_types;
-        for (const boost::filesystem::path& file : ListScripts(path)) {
+
+        for (const auto& file : ListDir(path, IsFOCScript))
             /*auto success =*/ detail::parse_file<grammar, start_rule_payload>(lexer, file, building_types);
-        }
 
         return building_types;
     }

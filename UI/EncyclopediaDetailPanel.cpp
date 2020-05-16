@@ -2592,13 +2592,16 @@ namespace {
         boost::algorithm::to_lower(planet_type_str);
 
         if (!filenames_by_type.count(planet_type)) {
-            auto pe_type_func = [planet_type_str](const boost::filesystem::path& path) {
-                return IsExistingFile(path) && boost::algorithm::starts_with(path.filename().string(), planet_type_str);
+            auto pe_path = ClientUI::ArtDir() / "encyclopedia" / "planet_environments";
+
+            auto pe_type_func = [planet_type_str, pe_path](const boost::filesystem::path& path) {
+                return IsExistingFile(path)
+                    && (pe_path == path.parent_path())
+                    && boost::algorithm::starts_with(path.filename().string(), planet_type_str);
             };
 
-            auto pe_path = ClientUI::ArtDir() / "encyclopedia/planet_environments";
             // retain only the filenames of each path
-            for (const auto& file_path : PathsInDir(pe_path, pe_type_func, false))
+            for (const auto& file_path : ListDir(pe_path, pe_type_func))
                 filenames_by_type[planet_type].emplace_back(PathToString(file_path.filename()));
         }
 
