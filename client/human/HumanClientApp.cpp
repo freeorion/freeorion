@@ -1422,7 +1422,15 @@ void HumanClientApp::ExitSDL(int exit_code)
 { SDLGUI::ExitApp(exit_code); }
 
 void HumanClientApp::ResetOrExitApp(bool reset, bool skip_savegame, int exit_code /* = 0*/) {
-    if (m_exit_handled) return;
+    if (m_exit_handled) {
+        static int repeat_count = 0;
+        if (repeat_count++ > 2) {
+            m_exit_handled = false;
+            skip_savegame = true;
+        } else {
+            return;
+        }
+    }
     m_exit_handled = true;
     DebugLogger() << (reset ? "HumanClientApp::ResetToIntro" : "HumanClientApp::ExitApp");
 
