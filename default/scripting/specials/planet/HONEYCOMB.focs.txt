@@ -55,19 +55,6 @@ Special
                 SetPlanetType type = Barren
             ]
 
-        EffectsGroup     
-            scope = Source     
-            activation = AND [
-                Turn high = 0
-                (GalaxyMaxAIAggression >= 1)
-                (GalaxyMonsterFrequency >= 1)
-                Not ContainedBy Contains OR [
-                    Design name = "SM_EXP_OUTPOST"
-                    Building name = "BLD_EXPERIMENTOR_OUTPOST"
-                ]
-            ]
-            effects = CreateShip designname = "SM_GUARD_3"
-
         EffectsGroup
             scope = And [
                 Planet
@@ -78,10 +65,13 @@ Special
             activation = Focus type = "FOCUS_INDUSTRY"
             stackinggroup = "HONEYCOMB_STACK"
             priority = [[VERY_LATE_PRIORITY]]
-            effects = SetTargetIndustry value = Value + Target.Population * 2.5 * [[INDUSTRY_PER_POP]]
+            effects = SetTargetIndustry value = Value + Target.Population * 0.5 * [[INDUSTRY_PER_POP]]
 
+        [[CHANCE_OF_GUARD_2]]
     ]
     graphic = "icons/specials_huge/honeycomb.png"
+
+#include "monster_guard.macros"
 
 #include "/scripting/common/base_prod.macros"
 

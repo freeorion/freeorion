@@ -25,7 +25,7 @@ BuildingType
             ]
             stackinggroup = "BLD_HYPER_DAM_BONUS"
             priority = [[VERY_LATE_PRIORITY]]
-            effects = SetTargetIndustry value = Value + Target.Population * 5 * [[INDUSTRY_PER_POP]]
+            effects = SetTargetIndustry value = Value + Target.Population * 1.0 * [[INDUSTRY_PER_POP]]
 
         EffectsGroup
             scope = And [

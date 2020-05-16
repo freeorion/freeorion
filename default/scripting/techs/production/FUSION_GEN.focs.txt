@@ -15,7 +15,7 @@ Tech
                 Focus type = "FOCUS_INDUSTRY"
             ]
             priority = [[EARLY_PRIORITY]]
-            effects = SetTargetIndustry value = Value + Target.Population * 1.0 * [[INDUSTRY_PER_POP]]
+            effects = SetTargetIndustry value = Value + Target.Population * 0.25 * [[INDUSTRY_PER_POP]]
     ]
     graphic = "icons/tech/fusion_generation.png"
 
