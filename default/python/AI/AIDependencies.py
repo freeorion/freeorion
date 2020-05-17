@@ -222,12 +222,12 @@ POP_PROPORTIONAL_MOD_SPECIALS = {
 # </editor-fold>
 
 # <editor-fold desc="Industry related specials">
-HONEYCOMB_IND_MULTIPLIER = 2.5
+HONEYCOMB_IND_MULTIPLIER = 1.0
 # </editor-fold>
 
 # <editor-fold desc="Research related specials">
 COMPUTRONIUM_SPECIAL = "COMPUTRONIUM_SPECIAL"
-COMPUTRONIUM_RES_MULTIPLIER = 1.0
+COMPUTRONIUM_RES_MULTIPLIER = 0.5
 
 ANCIENT_RUINS_SPECIAL = "ANCIENT_RUINS_SPECIAL"
 # </editor-fold>
@@ -314,17 +314,17 @@ supply_range_techs = {
 # <editor-fold desc="Industry bossting techs">
 # Industry modifiers per population - [[EARLY_PRIORITY]]: Affected by species modifiers
 INDUSTRY_EFFECTS_PER_POP_MODIFIED_BY_SPECIES = {
-    "PRO_FUSION_GEN": 1.0,
-    "GRO_ENERGY_META": 1.0,
-    "PRO_INDUSTRY_CENTER_I": 1.0,
-    "PRO_INDUSTRY_CENTER_II": 1.0,
-    "PRO_INDUSTRY_CENTER_III": 1.0,
+    "PRO_FUSION_GEN": 0.25,
+    "GRO_ENERGY_META": 0.5,
+    "PRO_INDUSTRY_CENTER_I": 0.25,
+    "PRO_INDUSTRY_CENTER_II": 0.25,
+    "PRO_INDUSTRY_CENTER_III": 0.25,
 }
 # Industry modifiers per population - [[LATE_PRIORITY]] or later: Not affected by species modifiers
 INDUSTRY_EFFECTS_PER_POP_NOT_MODIFIED_BY_SPECIES = {
-    "PRO_ROBOTIC_PROD": 0.5,
-    "PRO_SOL_ORB_GEN": 2.0,  # TODO don't assume will build a gen at a blue/white star
-    PRO_SINGULAR_GEN: 5.0,
+    "PRO_ROBOTIC_PROD": 0.25,
+    "PRO_SOL_ORB_GEN": 0.75,  # TODO don't assume will build a gen at a blue/white star
+    PRO_SINGULAR_GEN: 1.0,
 }
 # </editor-fold>
 
