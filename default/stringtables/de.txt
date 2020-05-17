@@ -5118,7 +5118,7 @@ LRN_ALGO_ELEGANCE
 Algorithmische Eleganz
 
 LRN_ALGO_ELEGANCE_DESC
-'''Erhöht die [[metertype METER_RESEARCH]] auf allen Planeten mit Forschungsfokus um 0.05 pro Einwohner.
+'''Erhöht die [[metertype METER_RESEARCH]] auf allen Planeten mit Forschungsfokus um 0,05 pro Einwohner.
 
 Die steigende Komplexität der Probleme in der Datenanalyse überfordert herkömmliche Algorithmen. Von dieser Entwicklungsstufe an werden andere algorithmische Ansätze und Funktionen notwendig; die Eleganz der Lösung muss ästhetisch und metaphorisch optimiert werden.'''
 
@@ -5211,7 +5211,7 @@ LRN_QUANT_NET
 Quanten Netzwerk
 
 LRN_QUANT_NET_DESC
-'''Increases target [[metertype METER_RESEARCH]] on all planets with the Research focus by 0.1 per Population.
+'''Increases target [[metertype METER_RESEARCH]] on all planets with the Research focus by 0,1 per Population.
 
 A massive, empire-wide data network able to transfer information instantaneously between any two places, rather than via the lengthy and indirect path of Sternstraßen. This advancement greatly facilitates research throughout the empire.
 
@@ -5277,7 +5277,7 @@ GRO_ENERGY_META
 Transmetabolismus
 
 GRO_ENERGY_META_DESC
-'''Erhöht den Treibstofftank auf allen Schiffen um 2, die maximale [[metertype METER_DEFENSE]] auf allen Planeten um 5, den maximalen [[metertype METER_SHIELD]] auf allen Planeten um 5, die maximale [[metertype METER_INDUSTRY]] auf allen Planeten mit Industriefokus um 0.1 pro Bevölkerung, sowie die maximale [[metertype METER_RESEARCH]] auf allen Planeten mit Forschungsfokus um 0.2 pro Bevölkerung.
+'''Erhöht den Treibstofftank auf allen Schiffen um 2, die maximale [[metertype METER_DEFENSE]] auf allen Planeten um 5, den maximalen [[metertype METER_SHIELD]] auf allen Planeten um 5, die maximale [[metertype METER_INDUSTRY]] auf allen Planeten mit Industriefokus um 0,1 pro Bevölkerung, sowie die maximale [[metertype METER_RESEARCH]] auf allen Planeten mit Forschungsfokus um 0,2 pro Bevölkerung.
 
 While transforming an entire population into beings of pure energy would be impractical, certain tasks are better suited to individuals able to manifest themselves non-corporeally. Ship's crews for example, would no longer have to waste space with crew quarters or rations storage. Beings with greater energy channeling abilities would be able to enhance planetary shields and defense, and resource production would be generally enhanced.
 
@@ -5297,7 +5297,7 @@ PRO_ROBOTIC_PROD
 Automatisierung
 
 PRO_ROBOTIC_PROD_DESC
-'''Increases target [[metertype METER_INDUSTRY]] on all planets with the Industry focus by 0.05 per Population.
+'''Increases target [[metertype METER_INDUSTRY]] on all planets with the Industry focus by 0,05 per Population.
 
 Exobots vereinen auf einzigartige Weise Formschönheit und Funktionalität. Es handelt sich dabei um Roboter, die nahezu jegliche Montagearbeit erledigen können, von Elektrotechnik hin zu weitreichenden Bauarbeiten. Sie lassen sich leicht in Massen herstellen und können hervorragend in Siedlungen eingesetzt werden, die nicht die Infrastruktur und Arbeitskräfte für spezialisierte Fabriken besitzen. Jede Siedlung erhält einen Standardsatz Exobots, welche die frühe Entwicklung der Siedlung maßgeblich beschleunigen.
 
@@ -5313,7 +5313,7 @@ PRO_FUSION_GEN
 Kernfusion
 
 PRO_FUSION_GEN_DESC
-'''Increases target [[metertype METER_INDUSTRY]] on planets with the Industry focus by 0.05 per Population.
+'''Increases target [[metertype METER_INDUSTRY]] on planets with the Industry focus by 0,05 per Population.
 
 Fusion plants, while expensive to produce and maintain, easily pay for themselves on industrialized worlds with ever increasing power demands. Reliance on old fission based nuclear plants will gradually become a thing of the past.
 
@@ -5580,7 +5580,7 @@ LRN_DISTRIB_THOUGHT
 Hirnrechennetzwerk
 
 LRN_DISTRIB_THOUGHT_DESC
-'''Increases target [[metertype METER_RESEARCH]] on all planets with any focus by 0.1 per Population.
+'''Increases target [[metertype METER_RESEARCH]] on all planets with any focus by 0,1 per Population.
 
 Der Durchschnittsbürger verschwendet wortwörtlich sein Hirn, das eine der besten Rechenmaschinen des Universums darstellt. Indem sie sich durch einen simplen cybernetischen Transceiver in die untätigen Gehirne einer hinreichend großen Population einschalten, erhalten die Forschungszentren einer Welt Zugang zu günstiger, reichhaltiger Rechenleistung.'''
 
@@ -6300,7 +6300,7 @@ BLD_BLACK_HOLE_POW_GEN
 Schwarzes-Loch-Generator
 
 BLD_BLACK_HOLE_POW_GEN_DESC
-'''Erhöht auf allen via [[metertype METER_SUPPLY]] verbundenen Planeten mit Industriefokus [[metertype METER_TARGET_INDUSTRY]] um 0.2 per [[metertype METER_POPULATION]].
+'''Erhöht auf allen via [[metertype METER_SUPPLY]] verbundenen Planeten mit Industriefokus [[metertype METER_TARGET_INDUSTRY]] um 0,2 per [[metertype METER_POPULATION]].
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
 [[BUILDING_AVAILABLE_ON_OUTPOSTS]], setzt aber ein [[STAR_BLACK]] im System voraus.'''
