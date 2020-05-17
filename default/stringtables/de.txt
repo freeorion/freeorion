@@ -3841,7 +3841,7 @@ COMPUTRONIUM_SPECIAL
 Computroniummond
 
 COMPUTRONIUM_SPECIAL_DESC
-'''Solange dieser Planet auf [[metertype METER_RESEARCH]] fokussiert ist, erhalten alle Planeten im Imperium, die auf [[METER_RESEARCH]] fokussiert sind, 0,2 [[metertype METER_TARGET_RESEARCH]] pro [[metertype METER_POPULATION]].
+'''Solange dieser Planet auf [[metertype METER_RESEARCH]] fokussiert ist, erhalten alle Planeten im Imperium, die auf [[METER_RESEARCH]] fokussiert sind, 0,1 [[metertype METER_TARGET_RESEARCH]] pro [[metertype METER_POPULATION]].
 
 Der Mond dieses Planeten ist in Wirklichkeit ein von einer verschwundenen Zivilisation erbauter, gigantischer Supercomputer, der komplexe Berechnungen und Simulationen schneller durchführt, als man sie eingeben kann.'''
 
@@ -5118,7 +5118,7 @@ LRN_ALGO_ELEGANCE
 Algorithmische Eleganz
 
 LRN_ALGO_ELEGANCE_DESC
-'''Erhöht die [[metertype METER_RESEARCH]] auf allen Planeten mit Forschungsfokus um 0.1 pro Einwohner.
+'''Erhöht die [[metertype METER_RESEARCH]] auf allen Planeten mit Forschungsfokus um 0.05 pro Einwohner.
 
 Die steigende Komplexität der Probleme in der Datenanalyse überfordert herkömmliche Algorithmen. Von dieser Entwicklungsstufe an werden andere algorithmische Ansätze und Funktionen notwendig; die Eleganz der Lösung muss ästhetisch und metaphorisch optimiert werden.'''
 
@@ -5211,7 +5211,7 @@ LRN_QUANT_NET
 Quanten Netzwerk
 
 LRN_QUANT_NET_DESC
-'''Increases target [[metertype METER_RESEARCH]] on all planets with the Research focus by 0.5 per Population.
+'''Increases target [[metertype METER_RESEARCH]] on all planets with the Research focus by 0.1 per Population.
 
 A massive, empire-wide data network able to transfer information instantaneously between any two places, rather than via the lengthy and indirect path of Sternstraßen. This advancement greatly facilitates research throughout the empire.
 
@@ -5277,7 +5277,7 @@ GRO_ENERGY_META
 Transmetabolismus
 
 GRO_ENERGY_META_DESC
-'''Erhöht den Treibstofftank auf allen Schiffen um 2, die maximale [[metertype METER_DEFENSE]] auf allen Planeten um 5, den maximalen [[metertype METER_SHIELD]] auf allen Planeten um 5, die maximale [[metertype METER_INDUSTRY]] auf allen Planeten mit Industriefokus um 0.2 pro Bevölkerung, sowie die maximale [[metertype METER_RESEARCH]] auf allen Planeten mit Forschungsfokus um 0.5 pro Bevölkerung.
+'''Erhöht den Treibstofftank auf allen Schiffen um 2, die maximale [[metertype METER_DEFENSE]] auf allen Planeten um 5, den maximalen [[metertype METER_SHIELD]] auf allen Planeten um 5, die maximale [[metertype METER_INDUSTRY]] auf allen Planeten mit Industriefokus um 0.1 pro Bevölkerung, sowie die maximale [[metertype METER_RESEARCH]] auf allen Planeten mit Forschungsfokus um 0.2 pro Bevölkerung.
 
 While transforming an entire population into beings of pure energy would be impractical, certain tasks are better suited to individuals able to manifest themselves non-corporeally. Ship's crews for example, would no longer have to waste space with crew quarters or rations storage. Beings with greater energy channeling abilities would be able to enhance planetary shields and defense, and resource production would be generally enhanced.
 
@@ -5297,7 +5297,7 @@ PRO_ROBOTIC_PROD
 Automatisierung
 
 PRO_ROBOTIC_PROD_DESC
-'''Increases target [[metertype METER_INDUSTRY]] on all planets with the Industry focus by 0.1 per Population.
+'''Increases target [[metertype METER_INDUSTRY]] on all planets with the Industry focus by 0.05 per Population.
 
 Exobots vereinen auf einzigartige Weise Formschönheit und Funktionalität. Es handelt sich dabei um Roboter, die nahezu jegliche Montagearbeit erledigen können, von Elektrotechnik hin zu weitreichenden Bauarbeiten. Sie lassen sich leicht in Massen herstellen und können hervorragend in Siedlungen eingesetzt werden, die nicht die Infrastruktur und Arbeitskräfte für spezialisierte Fabriken besitzen. Jede Siedlung erhält einen Standardsatz Exobots, welche die frühe Entwicklung der Siedlung maßgeblich beschleunigen.
 
@@ -5313,7 +5313,7 @@ PRO_FUSION_GEN
 Kernfusion
 
 PRO_FUSION_GEN_DESC
-'''Increases target [[metertype METER_INDUSTRY]] on planets with the Industry focus by 0.2 per Population.
+'''Increases target [[metertype METER_INDUSTRY]] on planets with the Industry focus by 0.05 per Population.
 
 Fusion plants, while expensive to produce and maintain, easily pay for themselves on industrialized worlds with ever increasing power demands. Reliance on old fission based nuclear plants will gradually become a thing of the past.
 
@@ -6134,7 +6134,7 @@ BLD_INDUSTRY_CENTER
 Industriezentrum
 
 BLD_INDUSTRY_CENTER_DESC
-'''Erhöht auf allen Planeten mit Industriefokus, die über die [[metertype METER_SUPPLY]]slinie verbunden sind, [[metertype METER_TARGET_INDUSTRY]] um 0,2 pro [[metertype METER_POPULATION]].
+'''Erhöht auf allen Planeten mit Industriefokus, die über die [[metertype METER_SUPPLY]]slinie verbunden sind, [[metertype METER_TARGET_INDUSTRY]] um 0,05 pro [[metertype METER_POPULATION]].
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
 Die Verbesserung [[tech PRO_INDUSTRY_CENTER_II]] erhöht den Bonus auf das doppelte.
@@ -6186,7 +6186,7 @@ BLD_COLLECTIVE_NET
 Kollektives Gedankennetzwerk
 
 BLD_COLLECTIVE_NET_DESC
-'''Erhöht [[metertype METER_TARGET_INDUSTRY]] auf Planeten mit Industriefokus um 0,5 pro [[metertype METER_POPULATION]] und [[metertype METER_TARGET_RESEARCH]] auf Planeten mit Forschungsfokus um 0,5 pro [[metertype METER_POPULATION]]. Sternstraßensprünge innerhalb von 200uu stören die Funktion dieses Gebäudes und negieren den Bonus.
+'''Erhöht [[metertype METER_TARGET_INDUSTRY]] auf Planeten mit Industriefokus um 0,1 pro [[metertype METER_POPULATION]] und [[metertype METER_TARGET_RESEARCH]] auf Planeten mit Forschungsfokus um 0,1 pro [[metertype METER_POPULATION]]. Sternstraßensprünge innerhalb von 200uu stören die Funktion dieses Gebäudes und negieren den Bonus.
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
 Durch die Übertragung des Geistes in den Cyberspace können unzählige Wesen vereint agieren und so Probleme lösen und Gedanken fassen, die einem einzelnen Wesen nicht möglich wären.'''
@@ -6203,7 +6203,7 @@ BLD_ENCLAVE_VOID
 Enklave der Leere
 
 BLD_ENCLAVE_VOID_DESC
-'''Erhöht [[metertype METER_TARGET_RESEARCH]] auf allen Planeten um 0,75 pro [[metertype METER_POPULATION]].
+'''Erhöht [[metertype METER_TARGET_RESEARCH]] auf allen Planeten um 0,15 pro [[metertype METER_POPULATION]].
 Weitere Instanzen dieses Gebäudes haben keinen zusätzlichen Effekt.
 
 Die Bevölkerung eines ganzen Planeten wird genetisch auf den Geist der Leere ausgerichtet und widmet sich ganz der Aufgabe, seine Weisheit dem Imperium mitzuteilen. Die Mitglieder der Enklave der Leere werden als Priester erachtet und als Vermittler höherer Weisheit. In allen wichtigen Angelegenheiten des Imperiums wird ihr Rat eingeholt. Botschafter der Enklave können auch ausgesandt werden, um bei Forschungsprojekten des Imperiums mitzuwirken.'''
@@ -6234,9 +6234,9 @@ Sonnenorbitgenerator
 
 BLD_SOL_ORB_GEN_DESC
 '''Erhöht [[metertype METER_TARGET_INDUSTRY]] auf via [[metertype METER_SUPPLY]] verbundenen Planeten proportional zur [[metertype METER_POPULATION]], abhängig von der Farbe des Sterns:
-* [[STAR_BLUE]] oder [[STAR_WHITE]] (x0,4)
-* [[STAR_YELLOW]] oder [[STAR_ORANGE]] (x0,2)
-* [[STAR_RED]] (x0,1)
+* [[STAR_BLUE]] oder [[STAR_WHITE]] (x0,15)
+* [[STAR_YELLOW]] oder [[STAR_ORANGE]] (x0,1)
+* [[STAR_RED]] (x0,05)
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]] Der höchste Bonus ist gültig.
 
 Ein elektrischer Generator in niedriger Umlaufbahn, welcher aus der Sonne, die er umkreist, Energie gewinnt. Da unterschiedliche Sterne unterschiedliche Mengen Energie abgeben, hängt die Effizienz des Generators vom Typ des Sterns ab. [[BUILDING_AVAILABLE_ON_OUTPOSTS]].'''
@@ -6300,7 +6300,7 @@ BLD_BLACK_HOLE_POW_GEN
 Schwarzes-Loch-Generator
 
 BLD_BLACK_HOLE_POW_GEN_DESC
-'''Erhöht auf allen via [[metertype METER_SUPPLY]] verbundenen Planeten mit Industriefokus [[metertype METER_TARGET_INDUSTRY]] um 1 per [[metertype METER_POPULATION]].
+'''Erhöht auf allen via [[metertype METER_SUPPLY]] verbundenen Planeten mit Industriefokus [[metertype METER_TARGET_INDUSTRY]] um 0.2 per [[metertype METER_POPULATION]].
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
 [[BUILDING_AVAILABLE_ON_OUTPOSTS]], setzt aber ein [[STAR_BLACK]] im System voraus.'''
