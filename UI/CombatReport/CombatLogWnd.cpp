@@ -257,10 +257,8 @@ namespace {
         AccordionPanel::CompleteConstruction();
         AccordionPanel::SetInteriorColor(ClientUI::CtrlColor());
 
-        m_expand_button->LeftPressedSignal.connect(
-            std::bind(&CombatLogAccordionPanel::ToggleExpansion, this));
-        this->ExpandCollapseSignal.connect(
-            std::bind(&CombatLogWnd::Impl::HandleWndChanged, &log));
+        m_expand_button->LeftPressedSignal.connect(boost::bind(&CombatLogAccordionPanel::ToggleExpansion, this));
+        this->ExpandCollapseSignal.connect(boost::bind(&CombatLogWnd::Impl::HandleWndChanged, &log));
 
         SetBorderMargin(BORDER_MARGIN);
 
@@ -336,10 +334,8 @@ namespace {
         AccordionPanel::CompleteConstruction();
         AccordionPanel::SetInteriorColor(ClientUI::CtrlColor());
 
-        m_expand_button->LeftPressedSignal.connect(
-            std::bind(&EmpireForcesAccordionPanel::ToggleExpansion, this));
-        this->ExpandCollapseSignal.connect(
-            std::bind(&CombatLogWnd::Impl::HandleWndChanged, &log));
+        m_expand_button->LeftPressedSignal.connect(boost::bind(&EmpireForcesAccordionPanel::ToggleExpansion, this));
+        this->ExpandCollapseSignal.connect(boost::bind(&CombatLogWnd::Impl::HandleWndChanged, &log));
 
         SetBorderMargin(BORDER_MARGIN);
 
@@ -434,15 +430,15 @@ namespace {
             // Register for signals that might bring the text into view
             if (const auto* log = FindParentOfType<CombatLogWnd>(&parent)) {
                 m_signals.push_back(log->WndChangedSignal.connect(
-                    std::bind(&LazyScrollerLinkText::HandleMaybeVisible, this)));
+                    boost::bind(&LazyScrollerLinkText::HandleMaybeVisible, this)));
             }
 
-            namespace ph = std::placeholders;
+            namespace ph = boost::placeholders;
 
             if (const auto* scroll_panel = FindParentOfType<GG::ScrollPanel>(&parent)) {
                 const auto* scroll = scroll_panel->GetScroll();
                 m_signals.push_back(scroll->ScrolledAndStoppedSignal.connect(
-                    std::bind(&LazyScrollerLinkText::HandleScrolledAndStopped,
+                    boost::bind(&LazyScrollerLinkText::HandleScrolledAndStopped,
                               this, ph::_1, ph::_2, ph::_3, ph::_4)));
             }
 
@@ -510,7 +506,7 @@ std::shared_ptr<LinkText> CombatLogWnd::Impl::DecorateLinkText(const std::string
     links->LinkClickedSignal.connect(m_wnd.LinkClickedSignal);
     links->LinkDoubleClickedSignal.connect(m_wnd.LinkDoubleClickedSignal);
     links->LinkRightClickedSignal.connect(m_wnd.LinkRightClickedSignal);
-    links->ChangedSignal.connect(std::bind(&CombatLogWnd::Impl::HandleWndChanged, this));
+    links->ChangedSignal.connect(boost::bind(&CombatLogWnd::Impl::HandleWndChanged, this));
 
     return links;
 }

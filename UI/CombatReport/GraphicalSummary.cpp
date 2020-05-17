@@ -645,8 +645,7 @@ private:
         {
             button = Wnd::Create<CUIButton>("-");
             parent_->AttachChild(button);
-            button->LeftClickedSignal.connect(
-                std::bind(&ToggleData::Toggle, this));
+            button->LeftClickedSignal.connect(boost::bind(&ToggleData::Toggle, this));
             SetValue(GetValue());
         }
     };
@@ -781,8 +780,7 @@ void GraphicalSummaryWnd::GenerateGraph() {
     }
     m_options_bar = GG::Wnd::Create<OptionsBar>(m_sizer);
     AttachChild(m_options_bar);
-    m_options_bar->ChangedSignal.connect(
-        std::bind(&GraphicalSummaryWnd::HandleButtonChanged, this));
+    m_options_bar->ChangedSignal.connect(boost::bind(&GraphicalSummaryWnd::HandleButtonChanged, this));
 
     MinSizeChangedSignal();
     DoLayout();

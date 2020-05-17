@@ -214,20 +214,14 @@ void FileDlg::CompleteConstruction()
     PopulateFilters();
     UpdateList();
 
-    namespace ph = std::placeholders;
+    namespace ph = boost::placeholders;
 
-    m_ok_button->LeftClickedSignal.connect(
-        std::bind(&FileDlg::OkClicked, this));
-    m_cancel_button->LeftClickedSignal.connect(
-        std::bind(&FileDlg::CancelClicked, this));
-    m_files_list->SelRowsChangedSignal.connect(
-        std::bind(&FileDlg::FileSetChanged, this, ph::_1));
-    m_files_list->DoubleClickedRowSignal.connect(
-        std::bind(&FileDlg::FileDoubleClicked, this, ph::_1, ph::_2, ph::_3));
-    m_files_edit->EditedSignal.connect(
-        std::bind(&FileDlg::FilesEditChanged, this, ph::_1));
-    m_filter_list->SelChangedSignal.connect(
-        std::bind(&FileDlg::FilterChanged, this, ph::_1));
+    m_ok_button->LeftClickedSignal.connect(boost::bind(&FileDlg::OkClicked, this));
+    m_cancel_button->LeftClickedSignal.connect(boost::bind(&FileDlg::CancelClicked, this));
+    m_files_list->SelRowsChangedSignal.connect(boost::bind(&FileDlg::FileSetChanged, this, ph::_1));
+    m_files_list->DoubleClickedRowSignal.connect(boost::bind(&FileDlg::FileDoubleClicked, this, ph::_1, ph::_2, ph::_3));
+    m_files_edit->EditedSignal.connect(boost::bind(&FileDlg::FilesEditChanged, this, ph::_1));
+    m_filter_list->SelChangedSignal.connect(boost::bind(&FileDlg::FilterChanged, this, ph::_1));
 
     if (!m_init_filename.empty()) {
         fs::path filename_path = fs::system_complete(fs::path(m_init_filename));

@@ -258,17 +258,17 @@ void IntroScreen::CompleteConstruction() {
     m_exit_game =     Wnd::Create<CUIButton>(UserString("INTRO_BTN_EXIT"));
 
     //connect signals and slots
-    m_continue->LeftClickedSignal.connect(      std::bind(&IntroScreen::OnContinue, this));
-    m_single_player->LeftClickedSignal.connect( std::bind(&IntroScreen::OnSinglePlayer, this));
-    m_quick_start->LeftClickedSignal.connect(   std::bind(&IntroScreen::OnQuickStart, this));
-    m_multi_player->LeftClickedSignal.connect(  std::bind(&IntroScreen::OnMultiPlayer, this));
-    m_load_game->LeftClickedSignal.connect(     std::bind(&IntroScreen::OnLoadGame, this));
-    m_options->LeftClickedSignal.connect(       std::bind(&IntroScreen::OnOptions, this));
-    m_pedia->LeftClickedSignal.connect(         std::bind(&IntroScreen::OnPedia, this));
-    m_about->LeftClickedSignal.connect(         std::bind(&IntroScreen::OnAbout, this));
-    m_website->LeftClickedSignal.connect(       std::bind(&IntroScreen::OnWebsite, this));
-    m_credits->LeftClickedSignal.connect(       std::bind(&IntroScreen::OnCredits, this));
-    m_exit_game->LeftClickedSignal.connect(     std::bind(&IntroScreen::OnExitGame, this));
+    m_continue->LeftClickedSignal.connect(      boost::bind(&IntroScreen::OnContinue, this));
+    m_single_player->LeftClickedSignal.connect( boost::bind(&IntroScreen::OnSinglePlayer, this));
+    m_quick_start->LeftClickedSignal.connect(   boost::bind(&IntroScreen::OnQuickStart, this));
+    m_multi_player->LeftClickedSignal.connect(  boost::bind(&IntroScreen::OnMultiPlayer, this));
+    m_load_game->LeftClickedSignal.connect(     boost::bind(&IntroScreen::OnLoadGame, this));
+    m_options->LeftClickedSignal.connect(       boost::bind(&IntroScreen::OnOptions, this));
+    m_pedia->LeftClickedSignal.connect(         boost::bind(&IntroScreen::OnPedia, this));
+    m_about->LeftClickedSignal.connect(         boost::bind(&IntroScreen::OnAbout, this));
+    m_website->LeftClickedSignal.connect(       boost::bind(&IntroScreen::OnWebsite, this));
+    m_credits->LeftClickedSignal.connect(       boost::bind(&IntroScreen::OnCredits, this));
+    m_exit_game->LeftClickedSignal.connect(     boost::bind(&IntroScreen::OnExitGame, this));
 
     auto button_list = {m_continue, m_single_player, m_quick_start, m_multi_player, m_load_game,
                         m_options, m_pedia, m_about, m_website, m_credits, std::shared_ptr<GG::Button>(), m_exit_game};
@@ -352,8 +352,7 @@ void IntroScreen::OnPedia() {
     enc_panel->SetIndex();
     enc_panel->ValidatePosition();
 
-    enc_panel->ClosingSignal.connect(
-        std::bind(&EncyclopediaDetailPanel::EndRun, enc_panel));
+    enc_panel->ClosingSignal.connect(boost::bind(&EncyclopediaDetailPanel::EndRun, enc_panel));
 
     enc_panel->Run();
 }

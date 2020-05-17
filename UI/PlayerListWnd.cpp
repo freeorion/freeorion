@@ -700,23 +700,23 @@ PlayerListWnd::PlayerListWnd(const std::string& config_name) :
 void PlayerListWnd::CompleteConstruction() {
     CUIWnd::CompleteConstruction();
 
-    namespace ph = std::placeholders;
+    namespace ph = boost::placeholders;
 
     m_player_list = GG::Wnd::Create<PlayerListBox>();
     m_player_list->SetHiliteColor(GG::CLR_ZERO);
     m_player_list->SetStyle(GG::LIST_NOSORT);
     m_player_list->SelRowsChangedSignal.connect(
-        std::bind(&PlayerListWnd::PlayerSelectionChanged, this, ph::_1));
+        boost::bind(&PlayerListWnd::PlayerSelectionChanged, this, ph::_1));
     m_player_list->DoubleClickedRowSignal.connect(
-        std::bind(&PlayerListWnd::PlayerDoubleClicked, this, ph::_1, ph::_2, ph::_3));
+        boost::bind(&PlayerListWnd::PlayerDoubleClicked, this, ph::_1, ph::_2, ph::_3));
     m_player_list->RightClickedRowSignal.connect(
-        std::bind(&PlayerListWnd::PlayerRightClicked, this, ph::_1, ph::_2, ph::_3));
+        boost::bind(&PlayerListWnd::PlayerRightClicked, this, ph::_1, ph::_2, ph::_3));
     AttachChild(m_player_list);
 
     Empires().DiplomaticStatusChangedSignal.connect(
-        std::bind(&PlayerListWnd::Update, this));
+        boost::bind(&PlayerListWnd::Update, this));
     Empires().DiplomaticMessageChangedSignal.connect(
-        std::bind(&PlayerListWnd::PlayerListWnd::HandleDiplomaticMessageChange, this, ph::_1, ph::_2));
+        boost::bind(&PlayerListWnd::PlayerListWnd::HandleDiplomaticMessageChange, this, ph::_1, ph::_2));
     DoLayout();
 
     Refresh();
@@ -915,7 +915,7 @@ namespace {
     {
         auto premade_message = DiplomacyMessage(message(client_empire_id, clicked_empire_id));
         auto &networking = HumanClientApp::GetApp()->Networking();
-        return std::bind(&ClientNetworking::SendMessage, &networking, premade_message);
+        return boost::bind(&ClientNetworking::SendMessage, &networking, premade_message);
     }
 
 }

@@ -443,12 +443,9 @@ void Spin<T>::SetEditTextFromValue()
 template <typename T>
 void Spin<T>::ConnectSignals()
 {
-    m_edit->FocusUpdateSignal.connect(
-        std::bind(&Spin::ValueUpdated, this, std::placeholders::_1));
-    m_up_button->LeftClickedSignal.connect(
-        std::bind(&Spin::IncrImpl, this, true));
-    m_down_button->LeftClickedSignal.connect(
-        std::bind(&Spin::DecrImpl, this, true));
+    m_edit->FocusUpdateSignal.connect(boost::bind(&Spin::ValueUpdated, this, boost::placeholders::_1));
+    m_up_button->LeftClickedSignal.connect(boost::bind(&Spin::IncrImpl, this, true));
+    m_down_button->LeftClickedSignal.connect(boost::bind(&Spin::DecrImpl, this, true));
 }
 
 template <typename T>
