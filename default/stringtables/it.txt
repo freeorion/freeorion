@@ -3053,7 +3053,7 @@ PRO_ROBOTIC_PROD
 Produzione Robotica
 
 PRO_ROBOTIC_PROD_DESC
-'''Incrementa l'obiettivo [[metertype METER_INDUSTRY]] su tutti i pianeti con focus industriale di 0.1 per popolazione.
+'''Incrementa l'obiettivo [[metertype METER_INDUSTRY]] su tutti i pianeti con focus industriale di 0.05 per popolazione.
 
 Gli Exobots, come diventano comunemente conosciuti, sono una meraviglia della forma unita alla funzione. Sono robot progettati per soddisfare quasi qualsiasi lavoro produttivo, in campi di ampia portata come l'elettronica per la costruzione su larga scala. Prodotti facilmente in massa, se ne trae maggior beneficio sulle colonie che danno la priorità all'industria. Ogni pieneta che si concentra principalmente sul quel settore riceve una squadra di Exobots, aumentando notevolmente la sua produzione industriale.
 
@@ -3069,7 +3069,7 @@ PRO_FUSION_GEN
 Generatore di Fusione
 
 PRO_FUSION_GEN_DESC
-'''Incrementa l'obiettivo [[metertype METER_INDUSTRY]] su tutti i pianeti con focus industriale di 0.2 per popolazione.
+'''Incrementa l'obiettivo [[metertype METER_INDUSTRY]] su tutti i pianeti con focus industriale di 0.05 per popolazione.
 
 Le centrali di fusione, pur essendo costose da produrre e mantenere, si ammortizzano facilmente sui mondi industrializzati con maggiori potenzialità. La dipendenza da centri nucleari a base di fissione a poco a poco diventerà una cosa del passato.
 
