@@ -125,6 +125,9 @@ POP_MOD_LIGHTSENSITIVE_STAR_MAP = {fo.starType.blue: -2, fo.starType.white: -1}
 # the percentage of normal population that a species with Gaseous tag has
 GASEOUS_POP_FACTOR = 0.50
 
+# the percentage of normal population that a species with MINDLESS_SPECIES tag has
+MINDLESS_POP_FACTOR = 0.50
+
 # </editor-fold>
 
 # <editor-fold desc="Detection Strengths">
