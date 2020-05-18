@@ -8,6 +8,7 @@ import re
 import subprocess
 import sys
 import textwrap
+import threading
 import time
 import urllib.parse
 import urllib.request
@@ -571,6 +572,10 @@ class EditServerHandler(BaseHTTPRequestHandler):
                 }});
             }}
 
+            window.addEventListener('unload', function() {{
+                navigator.sendBeacon('/shutdown');
+            }});
+
             document.addEventListener('DOMContentLoaded', function() {{
                 var el = document.getElementById('toggle-display-settings');
                 el.onclick = toggle_display_settings.bind(el);
@@ -645,6 +650,11 @@ class EditServerHandler(BaseHTTPRequestHandler):
             return self.POST_entry()
         if parsed_path.path == '/save':
             return self.POST_save()
+        if parsed_path.path == '/shutdown':
+            # The http.server.HttpServer states, that the shutdown function
+            # needs to be called outside of the thread, which processes the
+            # handler, to avoid deadlock.
+            threading.Thread(target=(lambda: self.server.shutdown())).start()
         else:
             self.send_response(404)
             self.end_headers()
