@@ -39,7 +39,7 @@ FieldType
                 WithinDistance distance = Source.Size condition = Source
             ]
             stackinggroup = "MOLECULAR_CLOUD_SHIELD_REDUCTION"
-            effects = SetMaxShield value = Value - (15 * (GameRule name = "RULE_SHIP_WEAPON_DAMAGE_FACTOR"))
+            effects = SetMaxShield value = Value - (15 * [[SHIP_SHIELD_FACTOR]])
 
         EffectsGroup    // after reaching a certain age, dissipate when small
             scope = Source
@@ -50,3 +50,5 @@ FieldType
             effects = Destroy
     ]
     graphic = "fields/molecular_cloud.png"
+
+#include "/scripting/common/misc.macros"
