@@ -1115,13 +1115,13 @@ RULE_SHIP_STRUCTURE_FACTOR
 Ship Structure Scaling
 
 RULE_SHIP_STRUCTURE_FACTOR_DESC
-Adjusts structure of ship hulls and armour parts
+Adjusts structure of ship hulls and armour parts. Adjusts structure growth, damage control and planetary shield as well
 
 RULE_SHIP_WEAPON_DAMAGE_FACTOR
 Ship Weapon Damage Scaling
 
 RULE_SHIP_WEAPON_DAMAGE_FACTOR_DESC
-Adjusts damage of ship main weapons
+Adjusts damage and shields of ship main weapons. Adjusts planetary defense as well
 
 RULE_FIGHTER_DAMAGE_FACTOR
 Fighter Damage Scaling
