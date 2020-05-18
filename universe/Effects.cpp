@@ -477,9 +477,8 @@ void SetMeter::Execute(ScriptingContext& context, const TargetSet& targets) cons
         // meter value does not depend on target, so handle with single ValueRef evaluation
         float val = m_value->Eval(context);
         for (auto& target : targets) {
-            Meter* m = target->GetMeter(m_meter);
-            if (!m) continue;
-            m->SetCurrent(val);
+            if (Meter* m = target->GetMeter(m_meter))
+                m->SetCurrent(val);
         }
         return;
 
@@ -492,23 +491,26 @@ void SetMeter::Execute(ScriptingContext& context, const TargetSet& targets) cons
             Effect::Execute(context, targets);
             return;
         }
-        // RHS should be a ConstantExpr
-        float increment = op->RHS()->Eval();
+
+        // LHS should be a reference to the target's meter's immediate value, but
+        // RHS should be target-invariant, so safe to evaluate once and use for
+        // all target objects
+        float increment = 0.0f;
         if (op->GetOpType() == ValueRef::PLUS) {
-            // do nothing to modify increment
+            increment = op->RHS()->Eval(context);
         } else if (op->GetOpType() == ValueRef::MINUS) {
-            increment = -increment;
+            increment = -op->RHS()->Eval(context);
         } else {
             ErrorLogger() << "SetMeter::Execute got invalid increment optype (not PLUS or MINUS). Reverting to standard execute.";
             Effect::Execute(context, targets);
             return;
         }
+
         //DebugLogger() << "simple increment: " << increment;
         // increment all target meters...
         for (auto& target : targets) {
-            Meter* m = target->GetMeter(m_meter);
-            if (!m) continue;
-            m->AddToCurrent(increment);
+            if (Meter* m = target->GetMeter(m_meter))
+                m->AddToCurrent(increment);
         }
         return;
     }
@@ -676,8 +678,7 @@ void SetShipPartMeter::Execute(ScriptingContext& context, const TargetSet& targe
             auto ship = std::dynamic_pointer_cast<Ship>(target);
             if (!ship)
                 continue;
-            Meter* m = ship->GetPartMeter(m_meter, part_name);
-            if (m)
+            if (Meter* m = ship->GetPartMeter(m_meter, part_name))
                 m->SetCurrent(val);
         }
         return;
@@ -691,17 +692,21 @@ void SetShipPartMeter::Execute(ScriptingContext& context, const TargetSet& targe
             Effect::Execute(context, targets);
             return;
         }
-        // RHS should be a ConstantExpr
-        float increment = op->RHS()->Eval();
+
+        // LHS should be a reference to the target's meter's immediate value, but
+        // RHS should be target-invariant, so safe to evaluate once and use for
+        // all target objects
+        float increment = 0.0f;
         if (op->GetOpType() == ValueRef::PLUS) {
-            // do nothing to modify increment
+            increment = op->RHS()->Eval(context);
         } else if (op->GetOpType() == ValueRef::MINUS) {
-            increment = -increment;
+            increment = -op->RHS()->Eval(context);
         } else {
             ErrorLogger() << "SetShipPartMeter::Execute got invalid increment optype (not PLUS or MINUS). Reverting to standard execute.";
             Effect::Execute(context, targets);
             return;
         }
+
         //DebugLogger() << "simple increment: " << increment;
         // increment all target meters...
         for (auto& target : targets) {
@@ -710,8 +715,7 @@ void SetShipPartMeter::Execute(ScriptingContext& context, const TargetSet& targe
             auto ship = std::dynamic_pointer_cast<Ship>(target);
             if (!ship)
                 continue;
-            Meter* m = ship->GetPartMeter(m_meter, part_name);
-            if (m)
+            if (Meter* m = ship->GetPartMeter(m_meter, part_name))
                 m->AddToCurrent(increment);
         }
         return;

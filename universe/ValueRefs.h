@@ -2003,8 +2003,10 @@ bool Operation<T>::SimpleIncrement() const
         return false;
     if (m_operands.size() < 2 || !m_operands[0] || !m_operands[1])
         return false;
-    if (!(m_operands[1]->ConstantExpr()))
+    // RHS must be the same value for all targets
+    if (!(m_operands[1]->TargetInvariant()))
         return false;
+    // LHS must be just the immediate value of what's being incremented
     const auto lhs = dynamic_cast<const Variable<T>*>(m_operands[0].get());
     if (!lhs)
         return false;
