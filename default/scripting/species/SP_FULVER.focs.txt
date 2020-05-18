@@ -36,6 +36,8 @@ Species
         [[GOOD_WEAPONS]]
         [[GREAT_FUEL]]
 
+        [[PRECOGNITIVE_DETECTION(2)]]
+
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
         [[AVERAGE_PLANETARY_DEFENSE]]
