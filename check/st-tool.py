@@ -503,6 +503,79 @@ class EditServerHandler(BaseHTTPRequestHandler):
                 width: 100%;
             }}
         </style>
+        <script type="text/javascript" src="/jquery.js"></script>
+        <script type="text/javascript" src="/jeditable.jquery.js"></script>
+        <script type="text/javascript">
+            function toggle_display_settings() {{
+                visible = $(this).data('visible') || false;
+
+                if(visible) {{
+                    $('#toggle-display-indicator').html('&#x25b6;');
+                    $(this).children('label').css('display', 'none');
+                }} else {{
+                    $('#toggle-display-indicator').html('&#x25bd;');
+                    $(this).children('label').css('display', 'block');
+                }}
+
+                $(this).data('visible', !visible);
+            }}
+
+            function toggle_entries_by_status(status) {{
+                checkbox = $('#toggle-' + status);
+                checkbox.prop('disabled', true);
+                visible = checkbox.data('visible') || false;
+
+                if(visible) {{
+                    setTimeout(function() {{
+                        $('.entry.status-' + status).show();
+                        $('#toggle-' + status)
+                            .prop('disabled', false);
+                    }});
+                }} else {{
+                    setTimeout(function() {{
+                        $('.entry.status-' + status).hide();
+                        $('#toggle-' + status)
+                            .prop('disabled', false);
+                    }});
+                }}
+
+                checkbox.data('visible', !visible);
+            }}
+
+            function save_entry(value, settings, response_handler) {{
+                $.post({{
+                    url: '/update',
+                    data: JSON.stringify({{"id": settings.id, "value": value}}),
+                    contenttype: 'application/json; charset=UTF-8',
+                    datatype: 'json',
+                    success: function(response) {{
+                        $('#' + response.id)
+                            .removeClass('status-recent status-stale status-untranslated')
+                            .addClass('status-'+response.status);
+                        response_handler($('<div />').text(value).html(), true);
+                    }}
+                }});
+            }}
+
+            $(document).ready(function() {{
+                $('#toggle-display-settings').click(toggle_display_settings.bind($('#display-settings')));
+                $('#toggle-recent').click(toggle_entries_by_status.bind($('#toggle-recent'), 'recent'));
+                $('#toggle-stale').click(toggle_entries_by_status.bind($('#toggle-stale'), 'stale'));
+                $('#toggle-untranslated').click(toggle_entries_by_status.bind($('#toggle-untranslated'), 'untranslated'));
+                $('.translation').each(function(idx, element) {{
+                    $(element).editable(save_entry, {{
+                        type: 'textarea',
+                        id: $(element).data('id'),
+                        submit: 'Save',
+                        cancel: 'Cancel',
+                        placeholder: '<i>untranslated</i>',
+                        cssclass: 'translator',
+                        width: '100%',
+                        rows: 5
+                    }});
+                }});
+            }});
+        </script>
     </head>
     <body>
         <h1>Translate stringtable for language &quot;{language}&quot;</h1>
@@ -522,79 +595,6 @@ class EditServerHandler(BaseHTTPRequestHandler):
             {entries}
         </table>
     </body>
-    <script type="text/javascript" src="/jquery.js"></script>
-    <script type="text/javascript" src="/jeditable.jquery.js"></script>
-    <script type="text/javascript">
-        function toggle_display_settings() {{
-            visible = $(this).data('visible') || false;
-
-            if(visible) {{
-                $('#toggle-display-indicator').html('&#x25b6;');
-                $(this).children('label').css('display', 'none');
-            }} else {{
-                $('#toggle-display-indicator').html('&#x25bd;');
-                $(this).children('label').css('display', 'block');
-            }}
-
-            $(this).data('visible', !visible);
-        }}
-
-        function toggle_entries_by_status(status) {{
-            checkbox = $('#toggle-' + status);
-            checkbox.prop('disabled', true);
-            visible = checkbox.data('visible') || false;
-
-            if(visible) {{
-                setTimeout(function() {{
-                    $('.entry.status-' + status).show();
-                    $('#toggle-' + status)
-                        .prop('disabled', false);
-                }});
-            }} else {{
-                setTimeout(function() {{
-                    $('.entry.status-' + status).hide();
-                    $('#toggle-' + status)
-                        .prop('disabled', false);
-                }});
-            }}
-
-            checkbox.data('visible', !visible);
-        }}
-
-        function save_entry(value, settings, response_handler) {{
-            $.post({{
-                url: '/update',
-                data: JSON.stringify({{"id": settings.id, "value": value}}),
-                contenttype: 'application/json; charset=UTF-8',
-                datatype: 'json',
-                success: function(response) {{
-                    $('#' + response.id)
-                        .removeClass('status-recent status-stale status-untranslated')
-                        .addClass('status-'+response.status);
-                    response_handler($('<div />').text(value).html(), true);
-                }}
-            }});
-        }}
-
-        $(document).ready(function() {{
-            $('#toggle-display-settings').click(toggle_display_settings.bind($('#display-settings')));
-            $('#toggle-recent').click(toggle_entries_by_status.bind($('#toggle-recent'), 'recent'));
-            $('#toggle-stale').click(toggle_entries_by_status.bind($('#toggle-stale'), 'stale'));
-            $('#toggle-untranslated').click(toggle_entries_by_status.bind($('#toggle-untranslated'), 'untranslated'));
-            $('.translation').each(function(idx, element) {{
-                $(element).editable(save_entry, {{
-                    type: 'textarea',
-                    id: $(element).data('id'),
-                    submit: 'Save',
-                    cancel: 'Cancel',
-                    placeholder: '<i>untranslated</i>',
-                    cssclass: 'translator',
-                    width: '100%',
-                    rows: 5
-                }});
-            }});
-        }});
-    </script>
 </html>
     '''
 
