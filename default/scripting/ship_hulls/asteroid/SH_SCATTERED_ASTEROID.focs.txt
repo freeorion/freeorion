@@ -71,7 +71,7 @@ Hull
                 ]
             ]
             stackinggroup = "FLAGSHIP_EFFECT_SCATTERED_ASTEROID"
-            effects = SetMaxShield value = Value + 3
+            effects = SetMaxShield value = Value + (3 * [[SHIP_SHIELD_FACTOR]])
 
         [[BAD_FUEL_EFFICIENCY]]
         [[ADD_HULL_FUEL_TO_MAX_FUEL_METER]]
@@ -89,3 +89,5 @@ Hull
 #include "../ship_hulls.macros"
 
 #include "/scripting/common/upkeep.macros"
+
+#include "/scripting/common/misc.macros"

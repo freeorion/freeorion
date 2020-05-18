@@ -30,8 +30,8 @@ BuildingType
         EffectsGroup
             scope = Object id = Source.PlanetID
             effects = [
-                SetMaxShield value = Value + 60000
-                SetMaxDefense value = Value + [[EXPERIMENTOR_SPAWN_START_TURN]]
+                SetMaxShield value = Value + (60000 * [[PLANET_SHIELD_FACTOR]] )
+                SetMaxDefense value = Value + ( [[EXPERIMENTOR_SPAWN_START_TURN]] * [[PLANET_DEFENSE_FACTOR]] )
                 SetMaxTroops value = Value + 300
                 SetDetection value = Value + 100
             ]
@@ -43,8 +43,8 @@ BuildingType
             ]
             effects = [
                 // Regeneration
-                SetDefense value = Value + 10
-                SetShield value = Value + 50
+                SetDefense value = Value + (10 * [[PLANET_DEFENSE_FACTOR]] )
+                SetShield value = Value + (50 * [[PLANET_SHIELD_FACTOR]] )
             ]
 
         EffectsGroup
@@ -262,3 +262,5 @@ EXPERIMENTOR_ADD_STARLANE
                                         // CanAddStarlanesTo condition = And [ System Object id = Source.SystemID ] // parses but does not appear to be accepting any candidates
                                     ]
 '''
+
+#include "/scripting/common/misc.macros"

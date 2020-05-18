@@ -47,11 +47,11 @@ namespace {
     }
 
     // create effectsgroup that increases the value of the part meter
-    // of type \a meter_type for part name \a part_name by the fixed
-    // amount \a increase
+    // of type \a meter_type for part name \a part_name
+    // by the result of evalulating \a increase_vr
     std::shared_ptr<Effect::EffectsGroup>
     IncreaseMeter(MeterType meter_type, const std::string& part_name,
-                  float increase, bool allow_stacking = true)
+                  std::unique_ptr<ValueRef::ValueRef<double>>&& increase_vr, bool allow_stacking = true)
     {
         typedef std::vector<std::unique_ptr<Effect::Effect>> Effects;
         auto scope = std::make_unique<Condition::Source>();
@@ -61,7 +61,7 @@ namespace {
             ValueRef::PLUS,
             std::make_unique<ValueRef::Variable<double>>(
                 ValueRef::EFFECT_TARGET_VALUE_REFERENCE, std::vector<std::string>()),
-            std::make_unique<ValueRef::Constant<double>>(increase)
+            std::move(increase_vr)
         );
 
         auto part_name_vr =
@@ -82,7 +82,7 @@ namespace {
     // by the product of \a base_increase and the value of the game
     // rule of type double with the name \a scaling_factor_rule_name
     std::shared_ptr<Effect::EffectsGroup>
-    IncreaseMeter(MeterType meter_type, float base_increase,
+    IncreaseMeterRuleScaled(MeterType meter_type, float base_increase,
                   const std::string& scaling_factor_rule_name)
     {
         // if no rule specified, revert to fixed constant increase
@@ -99,6 +99,41 @@ namespace {
         );
 
         return IncreaseMeter(meter_type, std::move(increase_vr));
+    }
+
+    // create effectsgroup that increases the value of the part meter
+    // of type \a meter_type for part name \a part_name by the fixed
+    // amount \a fixed_increase
+    std::shared_ptr<Effect::EffectsGroup>
+    IncreaseMeter(MeterType meter_type, const std::string& part_name,
+                  float fixed_increase, bool allow_stacking = true)
+    {
+        auto increase_vr = std::make_unique<ValueRef::Constant<double>>(fixed_increase);
+        return IncreaseMeter(meter_type, part_name, std::move(increase_vr), allow_stacking);
+    }
+
+    // create effectsgroup that increases the value of the part meter
+    // of type \a meter_type for part name \a part_name by the fixed
+    // amount \a base_increase and the value of the game
+    // rule of type double with the name \a scaling_factor_rule_name
+    std::shared_ptr<Effect::EffectsGroup>
+    IncreaseMeterRuleScaled(MeterType meter_type, const std::string& part_name,
+                  float base_increase, const std::string& scaling_factor_rule_name, bool allow_stacking = true)
+    {
+        // if no rule specified, revert to fixed constant increase
+        if (scaling_factor_rule_name.empty())
+            return IncreaseMeter(meter_type, part_name, base_increase, allow_stacking);
+
+        auto increase_vr = std::make_unique<ValueRef::Operation<double>>(
+            ValueRef::TIMES,
+            std::make_unique<ValueRef::Constant<double>>(base_increase),
+            std::make_unique<ValueRef::ComplexVariable<double>>(
+                "GameRule", nullptr, nullptr, nullptr,
+                std::make_unique<ValueRef::Constant<std::string>>(scaling_factor_rule_name)
+            )
+        );
+
+        return IncreaseMeter(meter_type, part_name, std::move(increase_vr), allow_stacking);
     }
 }
 
@@ -158,45 +193,49 @@ void ShipPart::Init(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects
         switch (m_class) {
         case PC_COLONY:
         case PC_TROOPS:
-            m_effects.push_back(IncreaseMeter(METER_CAPACITY,       m_name, m_capacity, false));
+            m_effects.push_back(IncreaseMeter(METER_CAPACITY,                     m_name, m_capacity, false));
             break;
         case PC_FIGHTER_HANGAR: {   // capacity indicates how many fighters are stored in this type of part (combined for all copies of the part)
-            m_effects.push_back(IncreaseMeter(METER_MAX_CAPACITY,       m_name, m_capacity, true));         // stacking capacities allowed for this part, so each part contributes to the total capacity
-            m_effects.push_back(IncreaseMeter(METER_MAX_SECONDARY_STAT, m_name, m_secondary_stat, false));  // stacking damage not allowed, as damage per shot should be the same regardless of number of shots
+            m_effects.push_back(IncreaseMeter(METER_MAX_CAPACITY,                 m_name, m_capacity, true));         // stacking capacities allowed for this part, so each part contributes to the total capacity
+            m_effects.push_back(IncreaseMeterRuleScaled(METER_MAX_SECONDARY_STAT, m_name, m_secondary_stat, "RULE_FIGHTER_DAMAGE_FACTOR",     false));  // stacking damage not allowed, as damage per shot should be the same regardless of number of shots
             break;
         }
-        case PC_FIGHTER_BAY:        // capacity indicates how many fighters each instance of the part can launch per combat bout...
+        case PC_FIGHTER_BAY: {      // capacity indicates how many fighters each instance of the part can launch per combat bout...
+            m_effects.push_back(IncreaseMeter(METER_MAX_CAPACITY,                 m_name, m_capacity, false));
+            m_effects.push_back(IncreaseMeter(METER_MAX_SECONDARY_STAT,           m_name, m_secondary_stat, false));
+            break;
+        }
         case PC_DIRECT_WEAPON: {    // capacity indicates weapon damage per shot
-            m_effects.push_back(IncreaseMeter(METER_MAX_CAPACITY,       m_name, m_capacity, false));
-            m_effects.push_back(IncreaseMeter(METER_MAX_SECONDARY_STAT, m_name, m_secondary_stat, false));
+            m_effects.push_back(IncreaseMeterRuleScaled(METER_MAX_CAPACITY,       m_name, m_capacity,       "RULE_SHIP_WEAPON_DAMAGE_FACTOR", false));
+            m_effects.push_back(IncreaseMeter(METER_MAX_SECONDARY_STAT,           m_name, m_secondary_stat, false));
             break;
         }
         case PC_SHIELD:
-            m_effects.push_back(IncreaseMeter(METER_MAX_SHIELD,     m_capacity));
+            m_effects.push_back(IncreaseMeterRuleScaled(METER_MAX_SHIELD,    m_capacity,     "RULE_SHIP_WEAPON_DAMAGE_FACTOR"));
             break;
         case PC_DETECTION:
-            m_effects.push_back(IncreaseMeter(METER_DETECTION,      m_capacity));
+            m_effects.push_back(IncreaseMeter(METER_DETECTION,               m_capacity));
             break;
         case PC_STEALTH:
-            m_effects.push_back(IncreaseMeter(METER_STEALTH,        m_capacity));
+            m_effects.push_back(IncreaseMeter(METER_STEALTH,                 m_capacity));
             break;
         case PC_FUEL:
-            m_effects.push_back(IncreaseMeter(METER_MAX_FUEL,       m_capacity));
+            m_effects.push_back(IncreaseMeter(METER_MAX_FUEL,                m_capacity));
             break;
         case PC_ARMOUR:
-            m_effects.push_back(IncreaseMeter(METER_MAX_STRUCTURE,  m_capacity,     "RULE_SHIP_STRUCTURE_FACTOR"));
+            m_effects.push_back(IncreaseMeterRuleScaled(METER_MAX_STRUCTURE, m_capacity,     "RULE_SHIP_STRUCTURE_FACTOR"));
             break;
         case PC_SPEED:
-            m_effects.push_back(IncreaseMeter(METER_SPEED,          m_capacity,     "RULE_SHIP_SPEED_FACTOR"));
+            m_effects.push_back(IncreaseMeterRuleScaled(METER_SPEED,         m_capacity,     "RULE_SHIP_SPEED_FACTOR"));
             break;
         case PC_RESEARCH:
-            m_effects.push_back(IncreaseMeter(METER_TARGET_RESEARCH,m_capacity));
+            m_effects.push_back(IncreaseMeter(METER_TARGET_RESEARCH,         m_capacity));
             break;
         case PC_INDUSTRY:
-            m_effects.push_back(IncreaseMeter(METER_TARGET_INDUSTRY,m_capacity));
+            m_effects.push_back(IncreaseMeter(METER_TARGET_INDUSTRY,         m_capacity));
             break;
         case PC_TRADE:
-            m_effects.push_back(IncreaseMeter(METER_TARGET_TRADE,   m_capacity));
+            m_effects.push_back(IncreaseMeter(METER_TARGET_TRADE,            m_capacity));
             break;
         default:
             break;
@@ -225,6 +264,10 @@ float ShipPart::Capacity() const {
     case PC_ARMOUR:
         return m_capacity * GetGameRules().Get<double>("RULE_SHIP_STRUCTURE_FACTOR");
         break;
+    case PC_DIRECT_WEAPON:
+    case PC_SHIELD:
+        return m_capacity * GetGameRules().Get<double>("RULE_SHIP_WEAPON_DAMAGE_FACTOR");
+        break;
     case PC_SPEED:
         return m_capacity * GetGameRules().Get<double>("RULE_SHIP_SPEED_FACTOR");
         break;
@@ -233,8 +276,15 @@ float ShipPart::Capacity() const {
     }
 }
 
-float ShipPart::SecondaryStat() const
-{ return m_secondary_stat; }
+float ShipPart::SecondaryStat() const {
+    switch (m_class) {
+    case PC_FIGHTER_HANGAR:
+        return m_capacity * GetGameRules().Get<double>("RULE_FIGHTER_DAMAGE_FACTOR");
+        break;
+    default:
+        return m_secondary_stat;
+    }
+}
 
 std::string ShipPart::CapacityDescription() const {
     std::string desc_string;

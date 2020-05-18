@@ -110,7 +110,7 @@ EG_SYSTEM_MINES
                     parameters = [
                         tag = "empire" data = Target.Owner
                         tag = "fleet" data = Target.ID
-                        tag = "rawtext" data = "@1@"
+                        tag = "rawtext" data = @1@
                         tag = "system" data = Target.SystemID
                     ]
                     empire = Source.Owner
@@ -135,7 +135,7 @@ EG_SYSTEM_MINES
                     parameters = [
                         tag = "ship" data = Target.ID
                         tag = "shipdesign" data = Target.DesignID
-                        tag = "rawtext" data = "@1@"
+                        tag = "rawtext" data = @1@
                         tag = "system" data = Target.SystemID
                     ]
                     empire = Source.Owner
@@ -230,7 +230,7 @@ EG_SYSTEM_MINES
                     parameters = [
                         tag = "empire" data = Target.Owner
                         tag = "fleet" data = Target.ID
-                        tag = "rawtext" data = "@1@"
+                        tag = "rawtext" data = @1@
                         tag = "system" data = Target.SystemID
                     ]
                     empire = Target.Owner

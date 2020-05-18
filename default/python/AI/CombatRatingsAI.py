@@ -299,11 +299,24 @@ class ShipCombatStats:
 
     def estimate_fighter_damage(self):
         capacity, launch_rate, fighter_damage = self.get_fighter_stats()
-        launched_1st_bout = min(capacity, launch_rate)
-        launched_2nd_bout = min(max(capacity - launch_rate, 0), launch_rate)
-        survival_rate = .2  # chance of a fighter launched in bout 1 to live in turn 3 TODO Actual estimation
-        total_fighter_damage = fighter_damage * (launched_1st_bout * (1 + survival_rate) + launched_2nd_bout)
-        return total_fighter_damage / 3
+        if launch_rate == 0:
+            return 0
+        full_launch_bouts = capacity // launch_rate
+        survival_rate = 0.2  # TODO estimate chance of a fighter not to be shot down in a bout
+        flying_fighters = 0
+        total_fighter_damage = 0
+        # Cut that values down to a single turn (four bouts means max three launch bouts)
+        num_bouts = fo.getGameRules().getInt("RULE_NUM_COMBAT_ROUNDS")
+        for firing_bout in range(num_bouts - 1):
+            if firing_bout < full_launch_bouts:
+                flying_fighters += (flying_fighters * survival_rate) + launch_rate
+            elif firing_bout == full_launch_bouts:
+                # now handle a bout with lower capacity launch
+                flying_fighters += (flying_fighters * survival_rate) + (capacity % launch_rate)
+            else:
+                flying_fighters += (flying_fighters * survival_rate)
+            total_fighter_damage += fighter_damage * flying_fighters
+        return total_fighter_damage / num_bouts
 
     def get_rating_vs_planets(self):
         """Heuristic to estimate combat strength against planets"""

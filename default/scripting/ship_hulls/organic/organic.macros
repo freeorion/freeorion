@@ -3,7 +3,7 @@ LIVING_HULL_EFFECTS_GROUPS
 '''EffectsGroup
     scope = Source
     effects = [
-        SetStructure value = Value + 2
+        SetStructure value = Value + (2 * [[SHIP_STRUCTURE_FACTOR]])
         SetDetection value = Value + 50
     ]
 
@@ -28,3 +28,5 @@ LIVING_HULL_BASE_FUEL_REGEN
 '''
 
 #include "/scripting/common/priorities.macros"
+
+#include "/scripting/common/misc.macros"

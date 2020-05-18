@@ -21,6 +21,8 @@ Tech
                 ]
                 Structure high = LocalCandidate.MaxStructure - 0.001
             ]
-            effects = SetStructure value = Value + 1
+            effects = SetStructure value = Value + [[SHIP_STRUCTURE_FACTOR]]
 
 #include "/scripting/common/base_prod.macros"
+
+#include "/scripting/common/misc.macros"

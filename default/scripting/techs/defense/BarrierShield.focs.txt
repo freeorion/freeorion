@@ -15,7 +15,7 @@ Tech
             ]
             priority = [[DEFAULT_PRIORITY]]
             effects =
-                SetMaxShield value = Value + 30 accountinglabel = "DEF_PLAN_BARRIER_SHLD_1"
+                SetMaxShield value = Value + ( 30 * [[PLANET_SHIELD_FACTOR]] ) accountinglabel = "DEF_PLAN_BARRIER_SHLD_1"
 
         EffectsGroup
             scope = And [
@@ -24,7 +24,7 @@ Tech
                 (LocalCandidate.LastTurnAttackedByShip < CurrentTurn - 1)
             ]
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
-            effects = SetShield value = Value + max(min(1.0, Value), 0.25*Target.Construction)
+            effects = SetShield value = Value + max(min([[PLANET_SHIELD_FACTOR]], Value), 0.25*Target.Construction*[[PLANET_SHIELD_FACTOR]])
     ]
 
     graphic = "icons/tech/planetary_barrier_shield.png"
@@ -46,7 +46,7 @@ Tech
                 (LocalCandidate.LastTurnAttackedByShip < CurrentTurn - 1)
             ]
             priority = [[DEFAULT_PRIORITY]]
-            effects = SetMaxShield value = Value + 60 accountinglabel = "DEF_PLAN_BARRIER_SHLD_2"
+            effects = SetMaxShield value = Value + ( 60 * [[PLANET_SHIELD_FACTOR]] ) accountinglabel = "DEF_PLAN_BARRIER_SHLD_2"
 
         EffectsGroup
             scope = And [
@@ -55,7 +55,7 @@ Tech
                 (LocalCandidate.LastTurnAttackedByShip < CurrentTurn - 1)
             ]
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
-            effects = SetShield value = Value + max(min(3.0, Value), 0.75*Target.Construction)
+            effects = SetShield value = Value + max(min(3.0*[[PLANET_SHIELD_FACTOR]], Value), 0.75*Target.Construction*[[PLANET_SHIELD_FACTOR]])
     ]
 
     graphic = "icons/tech/planetary_barrier_shield.png"
@@ -77,7 +77,7 @@ Tech
                 (LocalCandidate.LastTurnAttackedByShip < CurrentTurn - 1)
             ]
             priority = [[DEFAULT_PRIORITY]]
-            effects = SetMaxShield value = Value + 90 accountinglabel = "DEF_PLAN_BARRIER_SHLD_3"
+            effects = SetMaxShield value = Value + ( 90 * [[PLANET_SHIELD_FACTOR]] ) accountinglabel = "DEF_PLAN_BARRIER_SHLD_3"
 
         EffectsGroup
             scope = And [
@@ -86,7 +86,7 @@ Tech
                 (LocalCandidate.LastTurnAttackedByShip < CurrentTurn - 1)
             ]
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
-            effects = SetShield value = Value + max(min(5.0, Value), 1.0*Target.Construction)
+            effects = SetShield value = Value + max(min(5.0*[[PLANET_SHIELD_FACTOR]], Value), 1.0*Target.Construction*[[PLANET_SHIELD_FACTOR]])
     ]
     
     graphic = "icons/tech/planetary_barrier_shield.png"
@@ -108,7 +108,7 @@ Tech
                 (LocalCandidate.LastTurnAttackedByShip < CurrentTurn - 1)
             ]
             priority = [[DEFAULT_PRIORITY]]
-            effects = SetMaxShield value = Value + 150 accountinglabel = "DEF_PLAN_BARRIER_SHLD_4"
+            effects = SetMaxShield value = Value + ( 150 * [[PLANET_SHIELD_FACTOR]] ) accountinglabel = "DEF_PLAN_BARRIER_SHLD_4"
 
         EffectsGroup
             scope = And [
@@ -117,7 +117,7 @@ Tech
                 (LocalCandidate.LastTurnAttackedByShip < CurrentTurn - 1)
             ]
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
-            effects = SetShield value = Value + max(min(9.0, Value), 1.5*Target.Construction)
+            effects = SetShield value = Value + max(min(9.0*[[PLANET_SHIELD_FACTOR]], Value), 1.5*Target.Construction*[[PLANET_SHIELD_FACTOR]])
     ]
     
     graphic = "icons/tech/planetary_barrier_shield.png"
@@ -138,7 +138,7 @@ Tech
                 OwnedBy empire = Source.Owner
             ]
             priority = [[DEFAULT_PRIORITY]]
-            effects = SetMaxShield value = Value + 150 accountinglabel = "DEF_PLAN_BARRIER_SHLD_5"
+            effects = SetMaxShield value = Value + ( 150 * [[PLANET_SHIELD_FACTOR]] ) accountinglabel = "DEF_PLAN_BARRIER_SHLD_5"
 
         EffectsGroup
             scope = And [
@@ -147,7 +147,7 @@ Tech
                 (LocalCandidate.LastTurnAttackedByShip < CurrentTurn - 1)
             ]
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
-            effects = SetShield value = Value + max(min(14.0, Value), 2.5*Target.Construction)
+            effects = SetShield value = Value + max(min(14.0*[[PLANET_SHIELD_FACTOR]], Value), 2.5*Target.Construction*[[PLANET_SHIELD_FACTOR]])
     ]
     
     graphic = "icons/tech/planetary_barrier_shield.png"
@@ -155,3 +155,4 @@ Tech
 #include "/scripting/common/base_prod.macros"
 
 #include "/scripting/common/priorities.macros"
+#include "/scripting/common/misc.macros"
