@@ -10,7 +10,6 @@ Tech
         "LRN_NASCENT_AI"
         "GRO_NANOTECH_MED"
     ]
-    prerequisites = "LRN_NASCENT_AI"
     effectsgroups = [
         EffectsGroup
             scope = And [
