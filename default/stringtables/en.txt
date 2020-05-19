@@ -10992,15 +10992,23 @@ LRN_PSIONICS_DESC
 
 Through deep introspection or artificial enhancement, the brain may develop abilities to directly interact with the universe around it, bypassing the limitations of a physical body. Powers such as telepathy, empathy, clairvoyance, prescience, psychokinesis and psychoenergetics replace or surpass mundane biological or technological alternatives. Applications of these powers, including mind control, personality alteration and possession have profound implications for the relationship between talented and untalented beings.'''
 
-LRN_ARTIF_MINDS
+LRN_NASCENT_AI
 Nascent Artificial Intelligence
 
-LRN_ARTIF_MINDS_DESC
-'''Increases [[metertype METER_TARGET_RESEARCH]] on all planets by 2.
+LRN_NASCENT_AI_DESC
+'''Increases [[metertype METER_TARGET_RESEARCH]] on all planets by 1.
 
 While traditional computers have nearly unfathomable intelligence and computational abilities, they lack the essential qualities of self-awareness, consciousness or sentience. While these traits remain elusive, reasonable facsimiles may be produced. These investigations open new avenues of research into cognitive sciences and novel metaparadigms.
 
 Nascent AIs can input all data discovered by active researchers into a single automatic data processing network, data can be analyzed and new data obtained by an entirely automated research facility. Each planet can contain such structures regardless of the population's occupations, giving a bonus to research on all worlds.'''
+
+LRN_ARTIF_MINDS
+Artificial Minds
+
+LRN_ARTIF_MINDS_DESC
+'''Increases [[metertype METER_TARGET_RESEARCH]] on all planets by 3.
+
+Artificial minds are the epitome of the research on cognitive sciences. These are not facsimiles of self-awareness, consciousness or sentience, but the true attainment of such qualities within an artificial being. This sentient devices can expand on their own the limits of science and research, identifying by themselves new ways of data processing and deduction of knowledge. Each planet can contain such structures regardless of the population's occupations, giving a bonus to research on all worlds.'''
 
 LRN_XENOARCH
 Xenoarchaeology
@@ -11298,15 +11306,23 @@ PRO_ORBITAL_GEN_DESC
 
 Low orbit of planetary bodies provides numerous benefits for power generation compared to planetary surfaces. Direct exposure to nearby solar radiation without atmospheric attenuation, and the orders of magnitude larger structures that may be assembled in microgravity to collect it are significant advantages. The resulting power may be used in orbit, or may be beamed to the planet to support surface industry. As well, new mechanisms of energy conversion become available in orbit, including planetary magnetic field coupling, orbital momentum exchange, and frictional heating with planetary atmospheres, which are uniquely beneficial for specialized applications.'''
 
-PRO_SENTIENT_AUTOMATION
+PRO_ADAPTIVE_AUTOMATION
 Adaptive Automation
 
-PRO_SENTIENT_AUTOMATION_DESC
-'''Increases [[metertype METER_TARGET_INDUSTRY]] on all planets by 5.
+PRO_ADAPTIVE_AUTOMATION_DESC
+'''Increases [[metertype METER_TARGET_INDUSTRY]] on all planets by 2.
 
 By producing automated factories that operate without direct supervision, it is possible to increase industrial output in an entirely automated facility. These factories can be built and maintained on any planet, regardless of focus, providing a bonus to industry on all worlds.
 
 As equipment becomes increasingly automated, it becomes capable of fully replicating and maintaining itself without outside support, other than its required raw materials and a requested, or suggested, final product to produce. When controlled by an artificial mind, the entire system can learn, plan, react, and adapt autonomously, and can do so without the cumbersome inefficiencies traditionally required to house and employ workers.'''
+
+PRO_SENTIENT_AUTOMATION
+Adaptive Automation
+
+PRO_SENTIENT_AUTOMATION_DESC
+'''Increases [[metertype METER_TARGET_INDUSTRY]] on all planets by 6.
+
+The natural evolution of automated factories is achieved by confering to the artificial minds that control such facilities the ability to deduce and decide on their own the best course of action to achieve the goals of their owners, even before they can think about it. This improvement greatly increase the performance of the autonomous production facilities on all worlds.'''
 
 PRO_NDIM_ASSMB
 N-Dimensional Assembly
@@ -13135,7 +13151,7 @@ BLD_GAS_GIANT_GEN
 Gas Giant Generator
 
 BLD_GAS_GIANT_GEN_DESC
-'''This building can only be constructed at a [[PT_GASGIANT]] and gives a +10 [[metertype METER_INDUSTRY]] bonus to planets with the Industry focus in the same system. If the [[BLD_GAS_GIANT_GEN]] is built on an inhabited gas giant it gives only a +5 [[metertype METER_INDUSTRY]] bonus.
+'''This building can only be constructed at a [[PT_GASGIANT]] and gives a +5 [[metertype METER_INDUSTRY]] bonus to planets with the Industry focus in the same system. If the [[BLD_GAS_GIANT_GEN]] is built on an inhabited gas giant it gives only a +3 [[metertype METER_INDUSTRY]] bonus.
 Multiple copies in the same system do not stack.
 
 A power generator designed to harvest the energy of a [[PT_GASGIANT]].'''

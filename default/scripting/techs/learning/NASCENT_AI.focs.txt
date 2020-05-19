@@ -1,16 +1,12 @@
 Tech
-    name = "LRN_ARTIF_MINDS"
-    description = "LRN_ARTIF_MINDS_DESC"
+    name = "LRN_NASCENT_AI"
+    description = "LRN_NASCENT_AI_DESC"
     short_description = "RESEARCH_SHORT_DESC"
     category = "LEARNING_CATEGORY"
-    researchcost = 240 * [[TECH_COST_MULTIPLIER]]
-    researchturns = 6
+    researchcost = 24 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 4
     tags = [ "PEDIA_LEARNING_CATEGORY" ]
-    prerequisites = [
-        "LRN_NASCENT_AI"
-        "GRO_NANOTECH_MED"
-    ]
-    prerequisites = "LRN_NASCENT_AI"
+    prerequisites = "LRN_ALGO_ELEGANCE"
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -19,7 +15,7 @@ Tech
                 TargetPopulation low = 0.0001
             ]
             priority = [[VERY_LATE_PRIORITY]]
-            effects = SetTargetResearch value = Value + 15 * [[RESEARCH_PER_POP]]
+            effects = SetTargetResearch value = Value + 5 * [[RESEARCH_PER_POP]]
     ]
     graphic = "icons/tech/basic_autolabs.png"
 

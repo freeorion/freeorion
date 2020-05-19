@@ -8,7 +8,7 @@ Tech
     tags = [ "PEDIA_PRODUCTION_CATEGORY" ]
     prerequisites = [
         "PRO_GENERIC_SUPPLIES"
-        "PRO_SENTIENT_AUTOMATION"
+        "PRO_ADAPTIVE_AUTOMATION"
         "LRN_GRAVITONICS"
     ]
     unlock = Item type = Building name = "BLD_STOCKPILING_CENTER"

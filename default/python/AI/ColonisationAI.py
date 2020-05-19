@@ -1027,7 +1027,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None, empire_rese
                 ind_mult += ind_tech_map_after_species_mod[tech]
 
         max_ind_factor = 0
-        if tech_is_complete("PRO_SENTIENT_AUTOMATION"):
+        if tech_is_complete("PRO_ADAPTIVE_AUTOMATION"):
             fixed_ind += discount_multiplier * 5
         if FocusType.FOCUS_INDUSTRY in species.foci:
             if 'TIDAL_LOCK_SPECIAL' in planet.specials:

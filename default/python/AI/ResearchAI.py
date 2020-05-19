@@ -168,7 +168,7 @@ def get_max_stealth_species():
 
 def get_initial_research_target():
     # TODO: consider cases where may want lesser target
-    return Dep.ART_MINDS
+    return Dep.ART_MINDS_1
 
 
 def get_ship_tech_usefulness(tech, ship_designer):
@@ -858,8 +858,8 @@ def generate_classic_research_orders():
     if False and not enemies_sighted:  # curently disabled
         # params = [ (tech, gate, target_slot, add_tech_list), ]
         params = [("GRO_XENO_GENETICS", "PRO_EXOBOTS", "PRO_EXOBOTS", ["GRO_GENETIC_MED", "GRO_XENO_GENETICS"]),
-                  ("PRO_EXOBOTS", "PRO_SENTIENT_AUTOMATION", "PRO_SENTIENT_AUTOMATION", ["PRO_EXOBOTS"]),
-                  ("PRO_SENTIENT_AUTOMATION", "PRO_NANOTECH_PROD", "PRO_NANOTECH_PROD", ["PRO_SENTIENT_AUTOMATION"]),
+                  ("PRO_EXOBOTS", "PRO_ADAPTIVE_AUTOMATION", "PRO_ADAPTIVE_AUTOMATION", ["PRO_EXOBOTS"]),
+                  ("PRO_ADAPTIVE_AUTOMATION", "PRO_NANOTECH_PROD", "PRO_NANOTECH_PROD", ["PRO_ADAPTIVE_AUTOMATION"]),
                   ("PRO_INDUSTRY_CENTER_I", "GRO_SYMBIOTIC_BIO", "GRO_SYMBIOTIC_BIO", ["PRO_ROBOTIC_PROD", "PRO_FUSION_GEN", "PRO_INDUSTRY_CENTER_I"]),
                   ("GRO_SYMBIOTIC_BIO", "SHP_ORG_HULL", "SHP_ZORTRIUM_PLATE", ["GRO_SYMBIOTIC_BIO"]),
                   ]

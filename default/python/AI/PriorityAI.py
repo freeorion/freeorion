@@ -112,7 +112,7 @@ def _calculate_research_priority():
     got_mgrav_prod = tech_is_complete(mgrav_prod_tech)
     # got_solar_gen = tech_is_complete(AIDependencies.PRO_SOL_ORB_GEN)
 
-    milestone_techs = ["PRO_SENTIENT_AUTOMATION", "LRN_DISTRIB_THOUGHT", "LRN_QUANT_NET", "SHP_WEAPON_2_4", "SHP_WEAPON_3_2", "SHP_WEAPON_4_2"]
+    milestone_techs = ["PRO_ADAPTIVE_AUTOMATION", "LRN_DISTRIB_THOUGHT", "LRN_QUANT_NET", "SHP_WEAPON_2_4", "SHP_WEAPON_3_2", "SHP_WEAPON_4_2"]
     milestones_done = [mstone for mstone in milestone_techs if tech_is_complete(mstone)]
     debug("Research Milestones accomplished at turn %d: %s" % (current_turn, milestones_done))
 
@@ -164,7 +164,7 @@ def _calculate_research_priority():
 
     if ((tech_is_complete("SHP_WEAPON_2_4") or
          tech_is_complete("SHP_WEAPON_4_1")) and
-            tech_is_complete(AIDependencies.PROD_AUTO_NAME)):
+            tech_is_complete(AIDependencies.PROD_AUTO_1_NAME)):
         # industry_factor = [ [0.25, 0.2], [0.3, 0.25], [0.3, 0.25] ][style_index ]
         # researchPriority = min(researchPriority, industry_factor[got_solar_gen]*industryPriority)
         research_priority *= 0.9

@@ -23,7 +23,7 @@ BuildingType
             activation = ContainedBy Population high = 0
             stackinggroup = "GAS_GIANT_GEN_STACK"
             priority = [[VERY_LATE_PRIORITY]]
-            effects = SetTargetIndustry value = Value + 10
+            effects = SetTargetIndustry value = Value + 25 * [[INDUSTRY_PER_POP]]
 
         EffectsGroup
             scope = And [
@@ -34,10 +34,9 @@ BuildingType
                 OwnedBy empire = Source.Owner
             ]
             activation = ContainedBy Not Population high = 0
-            // unpopulated gas giant generator planet bonus applies first
             stackinggroup = "GAS_GIANT_GEN_STACK"
             priority = [[VERY_LATE_PRIORITY]]
-            effects = SetTargetIndustry value = Value + 5
+            effects = SetTargetIndustry value = Value + 15 * [[INDUSTRY_PER_POP]]
 
         EffectsGroup
             scope = Source

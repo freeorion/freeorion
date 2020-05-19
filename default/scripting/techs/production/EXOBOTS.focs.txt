@@ -6,7 +6,7 @@ Tech
     researchcost = 50 * [[TECH_COST_MULTIPLIER]]
     researchturns = 5
     tags = [ "PEDIA_PRODUCTION_CATEGORY" ]
-    prerequisites = "PRO_SENTIENT_AUTOMATION"
+    prerequisites = "PRO_ADAPTIVE_AUTOMATION"
     unlock = Item type = Building name = "BLD_COL_EXOBOT"
 
     graphic = "icons/species/robotic-01.png"
