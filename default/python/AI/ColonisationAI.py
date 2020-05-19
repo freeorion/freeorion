@@ -1011,6 +1011,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None, empire_rese
                 mining_bonus += 1
 
         has_blackhole = len(claimed_stars.get(fo.starType.blackHole, [])) > 0
+        ind_tech_map_flat = AIDependencies.INDUSTRY_EFFECTS_FLAT_NOT_MODIFIED_BY_SPECIES
         ind_tech_map_before_species_mod = AIDependencies.INDUSTRY_EFFECTS_PER_POP_MODIFIED_BY_SPECIES
         ind_tech_map_after_species_mod = AIDependencies.INDUSTRY_EFFECTS_PER_POP_NOT_MODIFIED_BY_SPECIES
 
@@ -1027,8 +1028,10 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None, empire_rese
                 ind_mult += ind_tech_map_after_species_mod[tech]
 
         max_ind_factor = 0
-        if tech_is_complete("PRO_ADAPTIVE_AUTOMATION"):
-            fixed_ind += discount_multiplier * 5
+        for tech in ind_tech_map_flat:
+            if tech_is_complete(tech):
+                fixed_ind += discount_multiplier * ind_tech_map_flat[tech]
+
         if FocusType.FOCUS_INDUSTRY in species.foci:
             if 'TIDAL_LOCK_SPECIAL' in planet.specials:
                 ind_mult += 1

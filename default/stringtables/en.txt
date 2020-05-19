@@ -11317,7 +11317,7 @@ By producing automated factories that operate without direct supervision, it is 
 As equipment becomes increasingly automated, it becomes capable of fully replicating and maintaining itself without outside support, other than its required raw materials and a requested, or suggested, final product to produce. When controlled by an artificial mind, the entire system can learn, plan, react, and adapt autonomously, and can do so without the cumbersome inefficiencies traditionally required to house and employ workers.'''
 
 PRO_SENTIENT_AUTOMATION
-Adaptive Automation
+Sentient Automation
 
 PRO_SENTIENT_AUTOMATION_DESC
 '''Increases [[metertype METER_TARGET_INDUSTRY]] on all planets by 6.
