@@ -4,7 +4,7 @@ from stub_generator import generate_stub
 
 def inspect_universe_generation_interface(*args, **kwargs):
     import freeorion as fo
-    tech = fo.getTech('LRN_ARTIF_MINDS')
+    tech = fo.getTech('LRN_NASCENT_AI')
     universe = fo.get_universe()
     empire = fo.get_empire(1)
     rules = fo.getGameRules()
