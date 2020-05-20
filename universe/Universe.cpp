@@ -914,7 +914,7 @@ namespace {
         EffectsCauseType                            effect_cause_type,
         const std::string&                          specific_cause_name,
         const std::unordered_set<int>&              candidate_object_ids,   // TODO: Can this be removed along with scope is source test?
-        Condition::ObjectSet&                       candidate_objects_in,   // may be empty: indicates to test for full universe of objects
+        Effect::TargetSet&                          candidate_objects_in,   // may be empty: indicates to test for full universe of objects
         Effect::SourcesEffectsTargetsAndCausesVec&  source_effects_targets_causes_out,
         int n)
     {
@@ -953,29 +953,30 @@ namespace {
                     {}, // empty Effect::TargetSet
                     Effect::EffectCause{effect_cause_type, specific_cause_name, effects_group->AccountingLabel()}});
 
-            // extract output Effect::TargetSet and alias to receive condition matches
+            // extract output Effect::TargetSet
             Effect::TargetSet& matched_targets{source_effects_targets_causes_out.back().second.target_set};
-            Condition::ObjectSet& matches = reinterpret_cast<Condition::ObjectSet&>(matched_targets);
 
             // move scope condition matches into output matches
             if (candidate_objects_in.empty()) {
                 // condition default candidates will be tested
-                scope->Eval(source_context, matches);
+                scope->Eval(source_context, matched_targets);
 
             } else if (scope_is_just_source) {
-                // special case for condition that is just source when a set of candidates is specified: only need to put the source in if it is in the candidates
+                // special case for condition that is just Source when a set of
+                // candidates is specified: only need to put the source in if
+                // it is in the candidates
                 if (candidate_object_ids.count(source->ID()))
-                    matches.push_back(source);
+                    matched_targets.push_back(std::const_pointer_cast<UniverseObject>(source));
 
             } else {
                 // input candidates will all be tested
-                scope->Eval(source_context, matches, candidate_objects_in);
+                scope->Eval(source_context, matched_targets, candidate_objects_in);
             }
 
             TraceLogger(effects) << "Scope Results " << n << "  source: " << source->ID()
                                  << "  matches: " << [&]() {
                 std::stringstream ss;
-                for (auto& obj : matches)
+                for (auto& obj : matched_targets)
                     ss << obj->ID() << ", ";
                 return ss.str();
             }();
@@ -1072,9 +1073,19 @@ namespace {
 
 
         // TODO: is it faster to index by scope and activation condition or scope and filtered sources set?
-        std::vector<std::tuple<Condition::Condition*, Condition::ObjectSet,
-                               Effect::SourcesEffectsTargetsAndCausesVec*>> already_dispatched_scope_condition_ptrs;
+        std::vector<std::tuple<Condition::Condition*,
+                               Condition::ObjectSet,
+                               Effect::SourcesEffectsTargetsAndCausesVec*>>
+            already_dispatched_scope_condition_ptrs;
         already_evaluated_activation_condition_idx.reserve(effects_groups.size());
+
+
+        // duplicate input ObjectSet potential_targets as local TargetSet
+        // that can be passed to StoreTargetsAndCausesOfEffectsGroup
+        Effect::TargetSet potential_targets_copy;
+        potential_targets_copy.reserve(potential_targets.size());
+        for (const auto& obj : potential_targets)
+            potential_targets_copy.emplace_back(std::const_pointer_cast<UniverseObject>(obj));
 
 
         // evaluate scope conditions for source objects that are active
@@ -1106,7 +1117,8 @@ namespace {
                         // record pointer to previously-dispatched result struct
                         // that will contain the results to copy later, after
                         // all dispatched condition evauations have resolved
-                        source_effects_targets_causes_reorder_buffer_out.back().second = std::get<2>(cond_sources_ptr);
+                        source_effects_targets_causes_reorder_buffer_out.back().second =
+                            std::get<2>(cond_sources_ptr);
 
                         // allocate result structs that contain empty
                         // Effect::TargetSets that will be filled later
@@ -1165,14 +1177,14 @@ namespace {
                     effect_cause_type,
                     specific_cause_name,
                     &potential_target_ids,
-                    local_potential_targets{potential_targets},
+                    potential_targets_copy, // by value, not reference, so each dispatched call has independent input TargetSet
                     &source_effects_targets_causes_vec_out = source_effects_targets_causes_reorder_buffer_out.back().first,
                     n
                 ]() mutable
             {
                 StoreTargetsAndCausesOfEffectsGroup(object_map, effects_group, active_source_objects,
                                                     effect_cause_type, specific_cause_name,
-                                                    potential_target_ids, local_potential_targets,
+                                                    potential_target_ids, potential_targets_copy,
                                                     source_effects_targets_causes_vec_out, n);
             });
         }

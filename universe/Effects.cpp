@@ -3672,26 +3672,22 @@ void Conditional::Execute(ScriptingContext& context, const TargetSet& targets) c
         return;
 
     // apply sub-condition to target set to pick which to act on with which of sub-effects
-    const Condition::ObjectSet& potential_target_objects =
-        *reinterpret_cast<const Condition::ObjectSet*>(&targets);
-
-    Condition::ObjectSet matches = potential_target_objects;
-    Condition::ObjectSet non_matches;
+    TargetSet matches{targets.begin(), targets.end()};
+    TargetSet non_matches;
+    non_matches.reserve(matches.size());
     if (m_target_condition)
         m_target_condition->Eval(context, matches, non_matches, Condition::MATCHES);
 
     if (!matches.empty() && !m_true_effects.empty()) {
-        TargetSet& match_targets = *reinterpret_cast<TargetSet*>(&matches);
         for (auto& effect : m_true_effects) {
             if (effect)
-                effect->Execute(context, match_targets);
+                effect->Execute(context, matches);
         }
     }
     if (!non_matches.empty() && !m_false_effects.empty()) {
-        TargetSet& non_match_targets = *reinterpret_cast<TargetSet*>(&non_matches);
         for (auto& effect : m_false_effects) {
             if (effect)
-                effect->Execute(context, non_match_targets);
+                effect->Execute(context, non_matches);
         }
     }
 }
@@ -3708,10 +3704,9 @@ void Conditional::Execute(ScriptingContext& context,
     TraceLogger(effects) << "\n\nExecute Conditional effect: \n" << Dump();
 
     // apply sub-condition to target set to pick which to act on with which of sub-effects
-    const Condition::ObjectSet& potential_target_objects =
-        *reinterpret_cast<const Condition::ObjectSet*>(&targets);
-    Condition::ObjectSet matches = potential_target_objects;
-    Condition::ObjectSet non_matches;
+    TargetSet matches{targets.begin(), targets.end()};
+    TargetSet non_matches;
+    non_matches.reserve(matches.size());
 
     if (m_target_condition) {
         if (!m_target_condition->TargetInvariant())
@@ -3723,9 +3718,8 @@ void Conditional::Execute(ScriptingContext& context,
 
     // execute true and false effects to target matches and non-matches respectively
     if (!matches.empty() && !m_true_effects.empty()) {
-        TargetSet& match_targets = *reinterpret_cast<TargetSet*>(&matches);
         for (const auto& effect : m_true_effects) {
-            effect->Execute(context, match_targets, accounting_map,
+            effect->Execute(context, matches, accounting_map,
                             effect_cause,
                             only_meter_effects, only_appearance_effects,
                             include_empire_meter_effects,
@@ -3733,9 +3727,8 @@ void Conditional::Execute(ScriptingContext& context,
         }
     }
     if (!non_matches.empty() && !m_false_effects.empty()) {
-        TargetSet& non_match_targets = *reinterpret_cast<TargetSet*>(&non_matches);
         for (const auto& effect : m_false_effects) {
-            effect->Execute(context, non_match_targets, accounting_map,
+            effect->Execute(context, non_matches, accounting_map,
                             effect_cause,
                             only_meter_effects, only_appearance_effects,
                             include_empire_meter_effects,
