@@ -1879,7 +1879,7 @@ Type::Type(std::unique_ptr<ValueRef::ValueRef<UniverseObjectType>>&& type) :
 }
 
 Type::Type(UniverseObjectType type) :
-    Type(std::move(std::make_unique<ValueRef::Constant<UniverseObjectType>>(type)))
+    Type(std::make_unique<ValueRef::Constant<UniverseObjectType>>(type))
 {}
 
 bool Type::operator==(const Condition& rhs) const {
@@ -2220,15 +2220,21 @@ unsigned int Building::GetCheckSum() const {
 // HasSpecial                                            //
 ///////////////////////////////////////////////////////////
 HasSpecial::HasSpecial() :
-    HasSpecial(nullptr, std::unique_ptr<ValueRef::ValueRef<int>>{}, std::unique_ptr<ValueRef::ValueRef<int>>{})
+    HasSpecial(nullptr,
+               std::unique_ptr<ValueRef::ValueRef<int>>{},
+               std::unique_ptr<ValueRef::ValueRef<int>>{})
 {}
 
 HasSpecial::HasSpecial(const std::string& name) :
-    HasSpecial(std::move(std::make_unique<ValueRef::Constant<std::string>>(name)), std::unique_ptr<ValueRef::ValueRef<int>>{}, std::unique_ptr<ValueRef::ValueRef<int>>{})
+    HasSpecial(std::make_unique<ValueRef::Constant<std::string>>(name),
+               std::unique_ptr<ValueRef::ValueRef<int>>{},
+               std::unique_ptr<ValueRef::ValueRef<int>>{})
 {}
 
 HasSpecial::HasSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
-    HasSpecial(std::move(name), std::unique_ptr<ValueRef::ValueRef<int>>{}, std::unique_ptr<ValueRef::ValueRef<int>>{})
+    HasSpecial(std::move(name),
+               std::unique_ptr<ValueRef::ValueRef<int>>{},
+               std::unique_ptr<ValueRef::ValueRef<int>>{})
 {}
 
 HasSpecial::HasSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
@@ -2467,7 +2473,7 @@ HasTag::HasTag() :
 {}
 
 HasTag::HasTag(const std::string& name) :
-    HasTag(std::move(std::make_unique<ValueRef::Constant<std::string>>(name)))
+    HasTag(std::make_unique<ValueRef::Constant<std::string>>(name))
 {}
 
 HasTag::HasTag(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
@@ -6720,10 +6726,11 @@ OwnerHasBuildingTypeAvailable::OwnerHasBuildingTypeAvailable(
 }
 
 OwnerHasBuildingTypeAvailable::OwnerHasBuildingTypeAvailable(const std::string& name) :
-    OwnerHasBuildingTypeAvailable(nullptr, std::move(std::make_unique<ValueRef::Constant<std::string>>(name)))
+    OwnerHasBuildingTypeAvailable(nullptr, std::make_unique<ValueRef::Constant<std::string>>(name))
 {}
 
-OwnerHasBuildingTypeAvailable::OwnerHasBuildingTypeAvailable(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
+OwnerHasBuildingTypeAvailable::OwnerHasBuildingTypeAvailable(
+    std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
     OwnerHasBuildingTypeAvailable(nullptr, std::move(name))
 {}
 
@@ -6860,7 +6867,7 @@ OwnerHasShipDesignAvailable::OwnerHasShipDesignAvailable(
 }
 
 OwnerHasShipDesignAvailable::OwnerHasShipDesignAvailable(int design_id) :
-    OwnerHasShipDesignAvailable(nullptr, std::move(std::make_unique<ValueRef::Constant<int>>(design_id)))
+    OwnerHasShipDesignAvailable(nullptr, std::make_unique<ValueRef::Constant<int>>(design_id))
 {}
 
 OwnerHasShipDesignAvailable::OwnerHasShipDesignAvailable(std::unique_ptr<ValueRef::ValueRef<int>>&& design_id) :
@@ -7005,7 +7012,7 @@ OwnerHasShipPartAvailable::OwnerHasShipPartAvailable(
 }
 
 OwnerHasShipPartAvailable::OwnerHasShipPartAvailable(const std::string& name) :
-    OwnerHasShipPartAvailable(nullptr, std::move(std::make_unique<ValueRef::Constant<std::string>>(name)))
+    OwnerHasShipPartAvailable(nullptr, std::make_unique<ValueRef::Constant<std::string>>(name))
 {}
 
 OwnerHasShipPartAvailable::OwnerHasShipPartAvailable(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
@@ -9776,7 +9783,7 @@ void Or::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_contex
     }
 
     if (parent_context.source && m_operands.size() == 2) {
-        if (auto* src_condition = dynamic_cast<const Source*>(m_operands[0].get())) {
+        if (/*auto* src_condition =*/ dynamic_cast<const Source*>(m_operands[0].get())) {
             // special case when first of two subconditions is just Source:
             // get the default candidates of the second and add the source if
             // it is not already present.

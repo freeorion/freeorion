@@ -538,9 +538,8 @@ namespace {
         }
 
         std::shared_ptr<EmpireColorSelector> m_color_selector;
-        int                                  m_empire_id;
         const SaveGameEmpireData&            m_save_game_empire_data;
-        bool                                 m_initial_disabled;
+        bool                                 m_initial_disabled = false;
     };
 
     // Row for indicating that an AI client should be added to the game

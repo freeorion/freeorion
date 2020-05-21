@@ -201,9 +201,9 @@ namespace {
         void ItemQuantityChanged(int quant, int blocksize);
         void ItemBlocksizeChanged(int quant, int blocksize);
 
-        static GG::Y    DefaultHeight();
+        static GG::Y DefaultHeight();
 
-        mutable boost::signals2::signal<void(int,int)>    PanelUpdateQuantSignal;
+        mutable boost::signals2::signal<void(int,int)> PanelUpdateQuantSignal;
 
     private:
         void Draw(GG::Clr clr, bool fill);
@@ -218,12 +218,12 @@ namespace {
         std::shared_ptr<MultiTurnProgressBar>   m_progress_bar;
         std::shared_ptr<QuantitySelector>       m_quantity_selector;
         std::shared_ptr<QuantitySelector>       m_block_size_selector;
-        bool                                    m_in_progress;
-        int                                     m_total_turns;
-        double                                  m_turn_spending;
-        double                                  m_total_cost;
-        double                                  m_completed_progress;
-        bool                                    m_order_issuing_enabled;
+        bool                                    m_in_progress = false;
+        int                                     m_total_turns = 0;
+        double                                  m_turn_spending = 0.0;
+        double                                  m_total_cost = 0.0;
+        double                                  m_completed_progress = 0.0;
+        bool                                    m_order_issuing_enabled = true;
     };
 
     /////////////////////////////
@@ -401,9 +401,9 @@ namespace {
     //////////////////////////////////////////////////
     // QueueProductionItemPanel implementation
     //////////////////////////////////////////////////
-    QueueProductionItemPanel::QueueProductionItemPanel(GG::X x, GG::Y y, GG::X w, const ProductionQueue::Element& build,
-                                                       double turn_spending, double total_cost, int turns, int number,
-                                                       double completed_progress) :
+    QueueProductionItemPanel::QueueProductionItemPanel(
+        GG::X x, GG::Y y, GG::X w, const ProductionQueue::Element& build,
+        double turn_spending, double total_cost, int turns, int number, double completed_progress) :
         GG::Control(x, y, w, DefaultHeight(), GG::NO_WND_FLAGS),
         elem(build),
         m_in_progress(build.allocated_pp || build.turns_left_to_next_item == 1),
@@ -615,10 +615,10 @@ namespace {
     }
 
     void QueueProductionItemPanel::ItemQuantityChanged(int quant, int blocksize)
-    { PanelUpdateQuantSignal(quant,elem.blocksize); }
+    { if (m_order_issuing_enabled) PanelUpdateQuantSignal(quant, elem.blocksize); }
 
-    void QueueProductionItemPanel::ItemBlocksizeChanged(int quant, int blocksize) // made separate funcion in case wna to do extra checking
-    { PanelUpdateQuantSignal(elem.remaining, blocksize); }
+    void QueueProductionItemPanel::ItemBlocksizeChanged(int quant, int blocksize)
+    { if (m_order_issuing_enabled) PanelUpdateQuantSignal(elem.remaining, blocksize); }
 
     void QueueProductionItemPanel::Render() {
         GG::Clr fill = m_in_progress

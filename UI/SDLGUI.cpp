@@ -348,7 +348,7 @@ void SDLGUI::GLInit() {
     float far = 10.0f;
     float cotangent = std::cos(radians) / std::sin(radians);
 
-    float projection[4][4] = { 0.0f };
+    float projection[4][4] = {};
     projection[0][0] = cotangent / ratio;
     projection[1][1] = cotangent;
     projection[2][2] = -((far + near) / (far - near));
