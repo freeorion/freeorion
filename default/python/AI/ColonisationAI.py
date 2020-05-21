@@ -981,7 +981,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None, empire_rese
                             gg_factor = max(gg_factor, character.secondary_valuation_factor_for_invasion_targets())
         if asteroid_factor > 0.0:
             if tech_is_complete("PRO_MICROGRAV_MAN") or "PRO_MICROGRAV_MAN" in empire_research_list[:10]:
-                flat_industry += 5 * asteroid_factor  # will go into detailed industry projection
+                flat_industry += 2 * asteroid_factor  # will go into detailed industry projection
                 detail.append("Asteroid mining ~ %.1f" % (5 * asteroid_factor * discount_multiplier))
             if tech_is_complete("SHP_ASTEROID_HULLS") or "SHP_ASTEROID_HULLS" in empire_research_list[:11]:
                 if species and species.canProduceShips:
