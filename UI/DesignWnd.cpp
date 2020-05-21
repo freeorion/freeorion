@@ -3980,7 +3980,7 @@ public:
     void ReplaceDesign();
 
     void ToggleDescriptionEditor();
-  
+
     void HighlightSlotType(std::vector<ShipSlotType>& slot_types);   //!< renders slots of the indicated types differently, perhaps to indicate that that those slots can be drop targets for a particular part?
 
     /** Track changes in base type. */
@@ -4047,7 +4047,7 @@ private:
     //! adding the part is possible
     std::pair<int, int> FindSlotForPartWithSwapping(const ShipPart* part);
 
-    const ShipHull*                             m_hull;
+    const ShipHull*                             m_hull = nullptr;
     std::vector<std::shared_ptr<SlotControl>>   m_slots;
     boost::optional<int>                        m_replaced_design_id = boost::none;     // The design id if this design is replacable
     boost::optional<boost::uuids::uuid>         m_replaced_design_uuid = boost::none;   // The design uuid if this design is replacable
