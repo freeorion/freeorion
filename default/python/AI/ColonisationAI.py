@@ -88,6 +88,12 @@ def calc_max_pop(planet, species, detail):
     else:
         gaseous_adjustment = 1.0
 
+    if planet.type != fo.planetType.asteroid and "MINDLESS_SPECIES" in tag_list:
+        mindless_adjustment = AIDependencies.MINDLESS_POP_FACTOR
+        detail.append("MINDLESS adjustment: %.2f" % mindless_adjustment)
+    else:
+        mindless_adjustment = 1.0
+
     planet_specials = set(planet.specials)
 
     base_pop_modified_by_species = 0
@@ -166,8 +172,9 @@ def calc_max_pop(planet, species, detail):
     def max_pop_size():
         species_effect = (pop_tag_mod - 1) * abs(base_pop_modified_by_species)
         gaseous_effect = (gaseous_adjustment - 1) * abs(base_pop_modified_by_species)
+        mindless_effect = (mindless_adjustment - 1) * abs(base_pop_modified_by_species)
         base_pop = (base_pop_not_modified_by_species + base_pop_modified_by_species
-                    + species_effect + gaseous_effect)
+                    + species_effect + gaseous_effect + mindless_effect)
         return planet_size * base_pop + pop_const_mod
 
     target_pop = max_pop_size()
