@@ -309,12 +309,12 @@ class ShipCombatStats:
         num_bouts = fo.getGameRules().getInt("RULE_NUM_COMBAT_ROUNDS")
         for firing_bout in range(num_bouts - 1):
             if firing_bout < full_launch_bouts:
-                flying_fighters += (flying_fighters * survival_rate) + launch_rate
+                flying_fighters = (flying_fighters * survival_rate) + launch_rate
             elif firing_bout == full_launch_bouts:
                 # now handle a bout with lower capacity launch
-                flying_fighters += (flying_fighters * survival_rate) + (capacity % launch_rate)
+                flying_fighters = (flying_fighters * survival_rate) + (capacity % launch_rate)
             else:
-                flying_fighters += (flying_fighters * survival_rate)
+                flying_fighters = (flying_fighters * survival_rate)
             total_fighter_damage += fighter_damage * flying_fighters
         return total_fighter_damage / num_bouts
 
