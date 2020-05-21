@@ -88,7 +88,7 @@ def calc_max_pop(planet, species, detail):
     else:
         gaseous_adjustment = 1.0
 
-    if planet.type != fo.planetType.asteroid and "MINDLESS_SPECIES" in tag_list:
+    if planet.type != fo.planetType.asteroids and "MINDLESS_SPECIES" in tag_list:
         mindless_adjustment = AIDependencies.MINDLESS_POP_FACTOR
         detail.append("MINDLESS adjustment: %.2f" % mindless_adjustment)
     else:
