@@ -456,6 +456,7 @@ void PlayerConnection::HandleMessageHeaderRead(boost::system::error_code error,
         if (bytes_transferred == Message::HeaderBufferSize) {
             BufferToHeader(m_incoming_header_buffer, m_incoming_message);
             auto msg_size = m_incoming_header_buffer[Message::Parts::SIZE];
+            TraceLogger(network) << "Server Handling Message maybe allocating buffer of size: " << msg_size;
             if (GetOptionsDB().Get<int>("network.server.client-message-size.max") > 0 &&
                 msg_size > GetOptionsDB().Get<int>("network.server.client-message-size.max"))
             {
@@ -466,7 +467,17 @@ void PlayerConnection::HandleMessageHeaderRead(boost::system::error_code error,
                 m_socket.close();
                 return;
             }
-            m_incoming_message.Resize(m_incoming_header_buffer[Message::Parts::SIZE]);
+            try {
+                m_incoming_message.Resize(msg_size);
+            } catch (const std::exception& e) {
+                ErrorLogger(network) << "PlayerConnection::HandleMessageHeaderRead(): "
+                                     << "caught exception resizing message buffer to size "
+                                     << msg_size << " : " << e.what();
+                boost::system::error_code error;
+                m_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, error);
+                m_socket.close();
+                return;
+            }
             boost::asio::async_read(
                 m_socket,
                 boost::asio::buffer(m_incoming_message.Data(), m_incoming_message.Size()),
