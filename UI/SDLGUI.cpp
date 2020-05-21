@@ -11,8 +11,7 @@
 using namespace GG;
 
 namespace {
-    Flags<ModKey> GetSDLModKeys()
-    {
+    Flags<ModKey> GetSDLModKeys() {
         Flags<ModKey> retval;
         Uint32 sdl_keys = SDL_GetModState();
         if (sdl_keys & KMOD_LSHIFT) retval |= MOD_KEY_LSHIFT;
@@ -186,7 +185,8 @@ private:
 };
 
 // member functions
-SDLGUI::SDLGUI(int w/* = 1024*/, int h/* = 768*/, bool calc_FPS/* = false*/, const std::string& app_name/* = "GG"*/,
+SDLGUI::SDLGUI(int w/* = 1024*/, int h/* = 768*/, bool calc_FPS/* = false*/,
+               const std::string& app_name/* = "GG"*/,
                int x, int y, bool fullscreen, bool fake_mode_change) :
     GUI(app_name),
     m_app_width(w),
@@ -270,14 +270,12 @@ bool SDLGUI::SetClipboardText(const std::string& text)
 SDLGUI* SDLGUI::GetGUI()
 { return dynamic_cast<SDLGUI*>(GUI::GetGUI()); }
 
-void SDLGUI::SetAppSize(const Pt& size)
-{
+void SDLGUI::SetAppSize(const Pt& size) {
     m_app_width = size.x;
     m_app_height = size.y;
 }
 
-void SDLGUI::SDLInit()
-{
+void SDLGUI::SDLInit() {
     SDLMinimalInit();
 
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
@@ -330,8 +328,7 @@ void SDLGUI::SDLInit()
     SDL_EnableScreenSaver();
 }
 
-void SDLGUI::GLInit()
-{
+void SDLGUI::GLInit() {
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
     glEnable(GL_DEPTH_TEST);
@@ -362,8 +359,7 @@ void SDLGUI::GLInit()
     glMultMatrixf(&projection[0][0]);
 }
 
-void SDLGUI::HandleSystemEvents()
-{
+void SDLGUI::HandleSystemEvents() {
     // handle events
     SDL_Event event;
     while (0 < SDL_PollEvent(&event)) {
@@ -475,8 +471,7 @@ void SDLGUI::HandleSystemEvents()
     }
 }
 
-void SDLGUI::HandleNonGGEvent(const SDL_Event& event)
-{
+void SDLGUI::HandleNonGGEvent(const SDL_Event& event) {
     switch (event.type) {
     case SDL_QUIT:
         AppQuittingSignal();
@@ -484,8 +479,7 @@ void SDLGUI::HandleNonGGEvent(const SDL_Event& event)
     }
 }
 
-void SDLGUI::RenderBegin()
-{
+void SDLGUI::RenderBegin() {
     if (m_fake_mode_change && m_fullscreen) {
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_framebuffer->OpenGLId());
     }
@@ -493,8 +487,7 @@ void SDLGUI::RenderBegin()
     glViewport(0, 0, Value(m_app_width), Value(m_app_height));
 }
 
-void SDLGUI::RenderEnd()
-{
+void SDLGUI::RenderEnd() {
     if (m_fake_mode_change && m_fullscreen) {
         // Return to rendering on the real screen
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
@@ -524,8 +517,7 @@ void SDLGUI::RenderEnd()
     SDL_GL_SwapWindow(m_window);
 }
 
-void SDLGUI::FinalCleanup()
-{
+void SDLGUI::FinalCleanup() {
     if (m_gl_context){
         SDL_GL_DeleteContext(m_gl_context);
         m_gl_context = nullptr;
@@ -537,8 +529,7 @@ void SDLGUI::FinalCleanup()
     }
 }
 
-void SDLGUI::SDLQuit()
-{
+void SDLGUI::SDLQuit() {
     // Ensure that the dektop resolution is restored on linux
     // By returning to windowed mode before exit.
     SetVideoMode(m_app_width, m_app_height, false, false);
@@ -546,8 +537,7 @@ void SDLGUI::SDLQuit()
     SDL_Quit();
 }
 
-void SDLGUI::Run()
-{
+void SDLGUI::Run() {
     try {
         Initialize();
         RunModal(nullptr, m_done);
@@ -563,12 +553,10 @@ void SDLGUI::Run()
 
 bool SDLGUI::AppHasMouseFocus() const {
     auto window_flags = SDL_GetWindowFlags(m_window);
-
     return window_flags & SDL_WINDOW_MOUSE_FOCUS;
 }
 
-std::vector<std::string> SDLGUI::GetSupportedResolutions() const
-{
+std::vector<std::string> SDLGUI::GetSupportedResolutions() const {
     std::vector<std::string> mode_vec;
 
     SDLMinimalInit();
@@ -592,8 +580,7 @@ std::vector<std::string> SDLGUI::GetSupportedResolutions() const
     return mode_vec;
 }
 
-void SDLGUI::SDLMinimalInit()
-{
+void SDLGUI::SDLMinimalInit() {
     if (!SDL_WasInit(SDL_INIT_VIDEO)) {
         if (SDL_Init(SDL_INIT_VIDEO) < 0) {
             std::cerr << "SDL initialization failed: " << SDL_GetError() << std::endl;
@@ -605,8 +592,7 @@ void SDLGUI::SDLMinimalInit()
 Pt SDLGUI::GetDefaultResolution(int display_id) const
 { return GetDefaultResolutionStatic(display_id); }
 
-Pt SDLGUI::GetDefaultResolutionStatic(int display_id)
-{
+Pt SDLGUI::GetDefaultResolutionStatic(int display_id) {
     SDLMinimalInit();
 
     if (display_id >= 0 && display_id < SDL_GetNumVideoDisplays()) {
@@ -619,8 +605,7 @@ Pt SDLGUI::GetDefaultResolutionStatic(int display_id)
     }
 }
 
-int SDLGUI::NumVideoDisplaysStatic()
-{
+int SDLGUI::NumVideoDisplaysStatic() {
     SDLMinimalInit();
     return SDL_GetNumVideoDisplays();
 }
@@ -644,8 +629,7 @@ int SDLGUI::MaximumPossibleWidth()
 int SDLGUI::MaximumPossibleHeight()
 { return MaximumPossibleDimension(false); }
 
-void SDLGUI::RelayTextInput(const SDL_TextInputEvent& text, GG::Pt mouse_pos)
-{
+void SDLGUI::RelayTextInput(const SDL_TextInputEvent& text, GG::Pt mouse_pos) {
     const char *current = text.text;
     const char *last = current;
     // text is zero terminated, find the end
@@ -660,8 +644,7 @@ void SDLGUI::RelayTextInput(const SDL_TextInputEvent& text, GG::Pt mouse_pos)
     }
 }
 
-void SDLGUI::ResetFramebuffer()
-{
+void SDLGUI::ResetFramebuffer() {
     m_framebuffer.reset();
     if (m_fake_mode_change && m_fullscreen) {
         try {
@@ -676,8 +659,7 @@ void SDLGUI::ResetFramebuffer()
 void SDLGUI::Enter2DMode()
 { Enter2DModeImpl(Value(AppWidth()), Value(AppHeight())); }
 
-void SDLGUI::Exit2DMode()
-{
+void SDLGUI::Exit2DMode() {
     glMatrixMode(GL_MODELVIEW);
     glPopMatrix();
 
