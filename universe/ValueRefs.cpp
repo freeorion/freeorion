@@ -643,7 +643,7 @@ PlanetType Variable<PlanetType>::Eval(const ScriptingContext& context) const
     else if (property_name == "NextCloserToOriginalPlanetType")
         planet_property = &Planet::NextCloserToOriginalPlanetType;
     else if (property_name == "NextBetterPlanetType")
-        planet_property = std::bind(&Planet::NextBetterPlanetTypeForSpecies, std::placeholders::_1, "");
+        planet_property = boost::bind(&Planet::NextBetterPlanetTypeForSpecies, boost::placeholders::_1, "");
     else if (property_name == "ClockwiseNextPlanetType")
         planet_property = &Planet::ClockwiseNextPlanetType;
     else if (property_name == "CounterClockwiseNextPlanetType")

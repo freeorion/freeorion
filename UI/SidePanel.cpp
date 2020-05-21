@@ -1996,7 +1996,7 @@ void SidePanel::PlanetPanel::Refresh() {
     // which should be connected to SidePanel::PlanetPanel::DoLayout
 
     m_planet_connection = planet->StateChangedSignal.connect(
-        std::bind(&SidePanel::PlanetPanel::Refresh, this), boost::signals2::at_front);
+        boost::bind(&SidePanel::PlanetPanel::Refresh, this), boost::signals2::at_front);
 }
 
 void SidePanel::PlanetPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -2507,10 +2507,10 @@ SidePanel::PlanetPanelContainer::PlanetPanelContainer() :
     SetName("PlanetPanelContainer");
     SetChildClippingMode(ClipToClient);
 
-    namespace ph = std::placeholders;
+    namespace ph = boost::placeholders;
 
     m_vscroll->ScrolledSignal.connect(
-        std::bind(&SidePanel::PlanetPanelContainer::VScroll, this, ph::_1, ph::_2, ph::_3, ph::_4));
+        boost::bind(&SidePanel::PlanetPanelContainer::VScroll, this, ph::_1, ph::_2, ph::_3, ph::_4));
     RequirePreRender();
 }
 
@@ -2608,7 +2608,7 @@ void SidePanel::PlanetPanelContainer::SetPlanets(const std::vector<int>& planet_
         m_planet_panels.back()->BuildingRightClickedSignal.connect(
             BuildingRightClickedSignal);
         m_planet_panels.back()->ResizedSignal.connect(
-            std::bind(&SidePanel::PlanetPanelContainer::RequirePreRender, this));
+            boost::bind(&SidePanel::PlanetPanelContainer::RequirePreRender, this));
         m_planet_panels.back()->OrderButtonChangedSignal.connect(
             [this](int excluded_planet_id) {
                 RefreshAllPlanetPanels(excluded_planet_id, true);

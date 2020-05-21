@@ -418,24 +418,24 @@ ResearchWnd::ResearchWnd(GG::X w, GG::Y h, bool initially_hidden /*= true*/) :
     m_queue_wnd = GG::Wnd::Create<ResearchQueueWnd>(GG::X0, GG::Y(100), queue_width, GG::Y(ClientSize().y - 100));
     m_tech_tree_wnd = GG::Wnd::Create<TechTreeWnd>(tech_tree_wnd_size.x, tech_tree_wnd_size.y, initially_hidden);
 
-    using std::placeholders::_1;
-    using std::placeholders::_2;
-    using std::placeholders::_3;
+    using boost::placeholders::_1;
+    using boost::placeholders::_2;
+    using boost::placeholders::_3;
 
     m_queue_wnd->GetQueueListBox()->MovedRowSignal.connect(
-        std::bind(&ResearchWnd::QueueItemMoved, this, _1, _2));
+        boost::bind(&ResearchWnd::QueueItemMoved, this, _1, _2));
     m_queue_wnd->GetQueueListBox()->QueueItemDeletedSignal.connect(
-        std::bind(&ResearchWnd::DeleteQueueItem, this, _1));
+        boost::bind(&ResearchWnd::DeleteQueueItem, this, _1));
     m_queue_wnd->GetQueueListBox()->LeftClickedRowSignal.connect(
-        std::bind(&ResearchWnd::QueueItemClickedSlot, this, _1, _2, _3));
+        boost::bind(&ResearchWnd::QueueItemClickedSlot, this, _1, _2, _3));
     m_queue_wnd->GetQueueListBox()->DoubleClickedRowSignal.connect(
-        std::bind(&ResearchWnd::QueueItemDoubleClickedSlot, this, _1, _2, _3));
+        boost::bind(&ResearchWnd::QueueItemDoubleClickedSlot, this, _1, _2, _3));
     m_queue_wnd->GetQueueListBox()->ShowPediaSignal.connect(
-        std::bind(&ResearchWnd::ShowPedia, this));
+        boost::bind(&ResearchWnd::ShowPedia, this));
     m_queue_wnd->GetQueueListBox()->QueueItemPausedSignal.connect(
-        std::bind(&ResearchWnd::QueueItemPaused, this, _1, _2));
+        boost::bind(&ResearchWnd::QueueItemPaused, this, _1, _2));
     m_tech_tree_wnd->AddTechsToQueueSignal.connect(
-        std::bind(&ResearchWnd::AddTechsToQueueSlot, this, _1, _2));
+        boost::bind(&ResearchWnd::AddTechsToQueueSlot, this, _1, _2));
 }
 
 void ResearchWnd::CompleteConstruction() {
@@ -493,7 +493,7 @@ void ResearchWnd::Refresh() {
 
     if (Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID()))
         m_empire_connection = empire->GetResearchQueue().ResearchQueueChangedSignal.connect(
-                                std::bind(&ResearchWnd::ResearchQueueChangedSlot, this));
+                                boost::bind(&ResearchWnd::ResearchQueueChangedSlot, this));
     Update();
 }
 

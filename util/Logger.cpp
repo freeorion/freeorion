@@ -357,7 +357,7 @@ void InitLoggingSystem(const std::string& log_file, const std::string& _unnamed_
     );
 
     // Create the frontend for formatting default records.
-    ApplyConfigurationToFileSinkFrontEnd("", std::bind(ConfigureFileSinkFrontEnd, std::placeholders::_1, ""));
+    ApplyConfigurationToFileSinkFrontEnd("", boost::bind(ConfigureFileSinkFrontEnd, boost::placeholders::_1, ""));
 
     // Add global attributes to all records
     logging::core::get()->add_global_attribute("TimeStamp", attr::local_clock());
@@ -427,7 +427,8 @@ void ConfigureLogger(NamedThreadedLogger& logger, const std::string& name) {
     if (name.empty())
         return;
 
-    ApplyConfigurationToFileSinkFrontEnd(name, std::bind(ConfigureFileSinkFrontEnd, std::placeholders::_1, name));
+    ApplyConfigurationToFileSinkFrontEnd(
+        name, boost::bind(ConfigureFileSinkFrontEnd, boost::placeholders::_1, name));
 
     // Store as static to initialize once.
     static bool dummy = InitializeLoggerCreatedSignal();

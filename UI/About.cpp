@@ -56,12 +56,9 @@ void About::CompleteConstruction() {
     // that changes the settings directory, the copyright notice should be unchanged
     m_license_str = ReadFile(GetRootDataDir() / "default" / "COPYING").value_or("");
 
-    m_done->LeftClickedSignal.connect(
-        std::bind(&GG::Wnd::EndRun, this));
-    m_license->LeftClickedSignal.connect(
-        std::bind(&About::ShowLicense, this));
-    m_vision->LeftClickedSignal.connect(
-        std::bind(&About::ShowVision, this));
+    m_done->LeftClickedSignal.connect(boost::bind(&GG::Wnd::EndRun, this));
+    m_license->LeftClickedSignal.connect(boost::bind(&About::ShowLicense, this));
+    m_vision->LeftClickedSignal.connect(boost::bind(&About::ShowVision, this));
 }
 
 void About::KeyPress(GG::Key key, std::uint32_t key_code_point,

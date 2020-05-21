@@ -78,9 +78,9 @@ ServerApp::ServerApp() :
     IApp(),
     m_signals(m_io_context, SIGINT, SIGTERM),
     m_networking(m_io_context,
-                 std::bind(&ServerApp::HandleNonPlayerMessage, this, std::placeholders::_1, std::placeholders::_2),
-                 std::bind(&ServerApp::HandleMessage, this, std::placeholders::_1, std::placeholders::_2),
-                 std::bind(&ServerApp::PlayerDisconnected, this, std::placeholders::_1)),
+                 boost::bind(&ServerApp::HandleNonPlayerMessage, this, boost::placeholders::_1, boost::placeholders::_2),
+                 boost::bind(&ServerApp::HandleMessage, this, boost::placeholders::_1, boost::placeholders::_2),
+                 boost::bind(&ServerApp::PlayerDisconnected, this, boost::placeholders::_1)),
     m_fsm(new ServerFSM(*this)),
     m_chat_history(1000)
 {
@@ -118,14 +118,14 @@ ServerApp::ServerApp() :
 
     m_fsm->initiate();
 
-    namespace ph = std::placeholders;
+    namespace ph = boost::placeholders;
 
     Empires().DiplomaticStatusChangedSignal.connect(
-        std::bind(&ServerApp::HandleDiplomaticStatusChange, this, ph::_1, ph::_2));
+        boost::bind(&ServerApp::HandleDiplomaticStatusChange, this, ph::_1, ph::_2));
     Empires().DiplomaticMessageChangedSignal.connect(
-        std::bind(&ServerApp::HandleDiplomaticMessageChange,this, ph::_1, ph::_2));
+        boost::bind(&ServerApp::HandleDiplomaticMessageChange,this, ph::_1, ph::_2));
 
-    m_signals.async_wait(std::bind(&ServerApp::SignalHandler, this, ph::_1, ph::_2));
+    m_signals.async_wait(boost::bind(&ServerApp::SignalHandler, this, ph::_1, ph::_2));
 }
 
 ServerApp::~ServerApp() {

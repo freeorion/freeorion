@@ -301,9 +301,9 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
     EnableFPS();
     UpdateFPSLimit();
     GetOptionsDB().OptionChangedSignal("video.fps.shown").connect(
-        std::bind(&HumanClientApp::UpdateFPSLimit, this));
+        boost::bind(&HumanClientApp::UpdateFPSLimit, this));
     GetOptionsDB().OptionChangedSignal("video.fps.max").connect(
-        std::bind(&HumanClientApp::UpdateFPSLimit, this));
+        boost::bind(&HumanClientApp::UpdateFPSLimit, this));
 
     std::shared_ptr<GG::BrowseInfoWnd> default_browse_info_wnd(
         GG::Wnd::Create<GG::TextBoxBrowseInfoWnd>(
@@ -322,11 +322,11 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
                                 GetOptionsDB().Get<int>("ui.input.mouse.button.repeat.interval"));
     EnableModalAcceleratorSignals(true);
 
-    namespace ph = std::placeholders;
+    namespace ph = boost::placeholders;
 
-    WindowResizedSignal.connect(boost::bind(&HumanClientApp::HandleWindowResize,this, _1, _2));
-    FocusChangedSignal.connect( boost::bind(&HumanClientApp::HandleFocusChange, this, _1));
-    WindowMovedSignal.connect(  boost::bind(&HumanClientApp::HandleWindowMove,  this, _1, _2));
+    WindowResizedSignal.connect(boost::bind(&HumanClientApp::HandleWindowResize,this, ph::_1, ph::_2));
+    FocusChangedSignal.connect( boost::bind(&HumanClientApp::HandleFocusChange, this, ph::_1));
+    WindowMovedSignal.connect(  boost::bind(&HumanClientApp::HandleWindowMove,  this, ph::_1, ph::_2));
     WindowClosingSignal.connect(boost::bind(&HumanClientApp::HandleAppQuitting, this));
     AppQuittingSignal.connect(  boost::bind(&HumanClientApp::HandleAppQuitting, this));
 
@@ -355,18 +355,18 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
     // Start parsing content
     StartBackgroundParsing();
     GetOptionsDB().OptionChangedSignal("resource.path").connect(
-        std::bind(&HumanClientApp::HandleResoureDirChange, this));
+        boost::bind(&HumanClientApp::HandleResoureDirChange, this));
 }
 
 void HumanClientApp::ConnectKeyboardAcceleratorSignals() {
     // Add global hotkeys
     HotkeyManager *hkm = HotkeyManager::GetManager();
 
-    hkm->Connect(std::bind(&HumanClientApp::HandleHotkeyExitApp, this),          "exit",
+    hkm->Connect(boost::bind(&HumanClientApp::HandleHotkeyExitApp, this), "exit",
                  NoModalWndsOpenCondition);
-    hkm->Connect(std::bind(&HumanClientApp::HandleHotkeyResetGame, this),        "quit",
+    hkm->Connect(boost::bind(&HumanClientApp::HandleHotkeyResetGame, this), "quit",
                  NoModalWndsOpenCondition);
-    hkm->Connect(std::bind(&HumanClientApp::ToggleFullscreen, this), "video.fullscreen",
+    hkm->Connect(boost::bind(&HumanClientApp::ToggleFullscreen, this), "video.fullscreen",
                  NoModalWndsOpenCondition);
 
     hkm->RebuildShortcuts();
@@ -1490,10 +1490,10 @@ void HumanClientApp::ResetOrExitApp(bool reset, bool skip_savegame, int exit_cod
     // Create an action to reset to intro or quit the app as appropriate.
     std::function<void()> after_server_shutdown_action;
     if (reset)
-        after_server_shutdown_action = std::bind(&HumanClientApp::ResetClientData, this, false);
+        after_server_shutdown_action = boost::bind(&HumanClientApp::ResetClientData, this, false);
     else
         // This throws to exit the GUI
-        after_server_shutdown_action = std::bind(&HumanClientApp::ExitSDL, this, exit_code);
+        after_server_shutdown_action = boost::bind(&HumanClientApp::ExitSDL, this, exit_code);
 
     m_fsm->process_event(StartQuittingGame(m_server_process, std::move(after_server_shutdown_action)));
 

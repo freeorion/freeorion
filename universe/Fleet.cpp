@@ -68,7 +68,7 @@ namespace {
         // system containing a fleet, b) the starlane on which a fleet is travelling
         // and c) both systems terminating a starlane on which a fleet is travelling.
         auto end_it = std::find_if(full_route.begin(), visible_end_it,
-                                   std::bind(&SystemHasNoVisibleStarlanes, std::placeholders::_1, empire_id));
+                                   boost::bind(&SystemHasNoVisibleStarlanes, boost::placeholders::_1, empire_id));
 
         std::list<int> truncated_route;
         std::copy(full_route.begin(), end_it, std::back_inserter(truncated_route));

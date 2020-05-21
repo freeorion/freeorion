@@ -723,17 +723,17 @@ void BuildDesignatorWnd::BuildSelector::CompleteConstruction() {
         UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>()));
     AttachChild(m_availability_buttons.back());
 
-    namespace ph = std::placeholders;
+    namespace ph = boost::placeholders;
 
     // selectable list of buildable items
     AttachChild(m_buildable_items);
     m_buildable_items->LeftClickedRowSignal.connect(
-        std::bind(&BuildDesignatorWnd::BuildSelector::BuildItemLeftClicked, this, ph::_1, ph::_2, ph::_3));
+        boost::bind(&BuildDesignatorWnd::BuildSelector::BuildItemLeftClicked, this, ph::_1, ph::_2, ph::_3));
     m_buildable_items->DoubleClickedRowSignal.connect(
         [this](GG::ListBox::iterator it, const GG::Pt&, const GG::Flags<GG::ModKey>& modkeys)
         { this->AddBuildItemToQueue(it, modkeys & GG::MOD_KEY_CTRL); });
     m_buildable_items->RightClickedRowSignal.connect(
-        std::bind(&BuildDesignatorWnd::BuildSelector::BuildItemRightClicked, this, ph::_1, ph::_2, ph::_3));
+        boost::bind(&BuildDesignatorWnd::BuildSelector::BuildItemRightClicked, this, ph::_1, ph::_2, ph::_3));
 
     //auto header = GG::Wnd::Create<GG::ListBox::Row>();
     //std::shared_ptr<GG::Font> font = ClientUI::GetFont();
@@ -813,7 +813,7 @@ void BuildDesignatorWnd::BuildSelector::SetEmpireID(int empire_id/* = ALL_EMPIRE
         m_empire_ship_designs_changed_signal.disconnect();
         if (const Empire* empire = GetEmpire(m_empire_id))
             m_empire_ship_designs_changed_signal = empire->ShipDesignsChangedSignal.connect(
-                                                    std::bind(&BuildDesignatorWnd::BuildSelector::Refresh, this),
+                                                    boost::bind(&BuildDesignatorWnd::BuildSelector::Refresh, this),
                                                     boost::signals2::at_front);
     }
 }
@@ -828,7 +828,7 @@ void BuildDesignatorWnd::BuildSelector::Refresh() {
     m_empire_ship_designs_changed_signal.disconnect();
     if (const Empire* empire = GetEmpire(m_empire_id))
         m_empire_ship_designs_changed_signal = empire->ShipDesignsChangedSignal.connect(
-            std::bind(&BuildDesignatorWnd::BuildSelector::Refresh, this),
+            boost::bind(&BuildDesignatorWnd::BuildSelector::Refresh, this),
             boost::signals2::at_front);
     PopulateList();
 }
@@ -1162,50 +1162,49 @@ void BuildDesignatorWnd::CompleteConstruction() {
     m_enc_detail_panel = GG::Wnd::Create<EncyclopediaDetailPanel>(
         GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE | PINABLE, PROD_PEDIA_WND_NAME);
     // Wnd is manually closed by user
-    m_enc_detail_panel->ClosingSignal.connect(
-        std::bind(&BuildDesignatorWnd::HidePedia, this));
+    m_enc_detail_panel->ClosingSignal.connect(boost::bind(&BuildDesignatorWnd::HidePedia, this));
 
     m_side_panel = GG::Wnd::Create<SidePanel>(PROD_SIDEPANEL_WND_NAME);
     m_build_selector = GG::Wnd::Create<BuildSelector>(PROD_SELECTOR_WND_NAME);
     InitializeWindows();
     HumanClientApp::GetApp()->RepositionWindowsSignal.connect(
-        std::bind(&BuildDesignatorWnd::InitializeWindows, this));
+        boost::bind(&BuildDesignatorWnd::InitializeWindows, this));
 
     m_side_panel->EnableSelection();
 
-    namespace ph = std::placeholders;
+    namespace ph = boost::placeholders;
 
     m_build_selector->DisplayBuildingTypeSignal.connect(
-        std::bind(static_cast<void (EncyclopediaDetailPanel::*)(const BuildingType*)>(
+        boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const BuildingType*)>(
             &EncyclopediaDetailPanel::SetItem), m_enc_detail_panel, ph::_1));
     m_build_selector->DisplayShipDesignSignal.connect(
-        std::bind(static_cast<void (EncyclopediaDetailPanel::*)(const ShipDesign*)>(
+        boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const ShipDesign*)>(
             &EncyclopediaDetailPanel::SetItem), m_enc_detail_panel, ph::_1));
     m_build_selector->DisplayStockpileProjectSignal.connect(
-        std::bind(static_cast<void (EncyclopediaDetailPanel::*)(const std::string&)>(
+        boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const std::string&)>(
             &EncyclopediaDetailPanel::SetEncyclopediaArticle), m_enc_detail_panel, "PROJECT_BT_STOCKPILE"));
 
     m_build_selector->ShowPediaSignal.connect(
-        std::bind(&BuildDesignatorWnd::ShowPedia, this));
+        boost::bind(&BuildDesignatorWnd::ShowPedia, this));
     m_build_selector->RequestBuildItemSignal.connect(
-        std::bind(&BuildDesignatorWnd::BuildItemRequested, this, ph::_1, ph::_2, ph::_3));
+        boost::bind(&BuildDesignatorWnd::BuildItemRequested, this, ph::_1, ph::_2, ph::_3));
 
     SidePanel::PlanetSelectedSignal.connect(PlanetSelectedSignal);
     SidePanel::SystemSelectedSignal.connect(SystemSelectedSignal);
 
     // connect build type button clicks to update display
     m_build_selector->m_build_type_buttons[BT_BUILDING]->CheckedSignal.connect(
-        std::bind(&BuildDesignatorWnd::ToggleType, this, BT_BUILDING, true));
+        boost::bind(&BuildDesignatorWnd::ToggleType, this, BT_BUILDING, true));
     m_build_selector->m_build_type_buttons[BT_SHIP]->CheckedSignal.connect(
-        std::bind(&BuildDesignatorWnd::ToggleType, this, BT_SHIP, true));
+        boost::bind(&BuildDesignatorWnd::ToggleType, this, BT_SHIP, true));
 
     // connect availability button clicks to update display
     // available items
     m_build_selector->m_availability_buttons.at(0)->CheckedSignal.connect(
-        std::bind(&BuildDesignatorWnd::ToggleAvailabilitly, this, true, true));
+        boost::bind(&BuildDesignatorWnd::ToggleAvailabilitly, this, true, true));
     // UNavailable items
     m_build_selector->m_availability_buttons.at(1)->CheckedSignal.connect(
-        std::bind(&BuildDesignatorWnd::ToggleAvailabilitly, this, false, true));
+        boost::bind(&BuildDesignatorWnd::ToggleAvailabilitly, this, false, true));
 
     AttachChild(m_enc_detail_panel);
     AttachChild(m_build_selector);

@@ -593,7 +593,7 @@ namespace {
                                   PredicateType pred)
     {
         GetOptionsDB().OptionChangedSignal(option_name).connect(
-            std::bind(&ConditionalForward<OptionType, PredicateType>,
+            boost::bind(&ConditionalForward<OptionType, PredicateType>,
                         option_name, slot, ref_val, pred));
     }
 }
@@ -615,15 +615,15 @@ ClientUI::ClientUI() :
     InitializeWindows();
 
     GetOptionsDB().OptionChangedSignal("video.fullscreen.width").connect(
-        std::bind(&ClientUI::HandleSizeChange, this, true));
+        boost::bind(&ClientUI::HandleSizeChange, this, true));
     GetOptionsDB().OptionChangedSignal("video.fullscreen.height").connect(
-        std::bind(&ClientUI::HandleSizeChange, this, true));
+        boost::bind(&ClientUI::HandleSizeChange, this, true));
     GetOptionsDB().OptionChangedSignal("video.windowed.width").connect(
-        std::bind(&ClientUI::HandleSizeChange, this, false));
+        boost::bind(&ClientUI::HandleSizeChange, this, false));
     GetOptionsDB().OptionChangedSignal("video.windowed.height").connect(
-        std::bind(&ClientUI::HandleSizeChange, this, false));
+        boost::bind(&ClientUI::HandleSizeChange, this, false));
     HumanClientApp::GetApp()->RepositionWindowsSignal.connect(
-        std::bind(&ClientUI::InitializeWindows, this));
+        boost::bind(&ClientUI::InitializeWindows, this));
     HumanClientApp::GetApp()->RepositionWindowsSignal.connect(
         &CUIWnd::InvalidateUnusedOptions,
         boost::signals2::at_front);
@@ -631,7 +631,7 @@ ClientUI::ClientUI() :
     // Connected at front to make sure CUIWnd::LoadOptions() doesn't overwrite
     // the values we're checking here...
     HumanClientApp::GetApp()->FullscreenSwitchSignal.connect(
-        std::bind(&ClientUI::HandleFullscreenSwitch, this),
+        boost::bind(&ClientUI::HandleFullscreenSwitch, this),
         boost::signals2::at_front);
 
     ConditionalConnectOption("ui.reposition.auto.enabled",

@@ -131,22 +131,22 @@ void ServerConnectWnd::CompleteConstruction() {
 
     ResetDefaultPosition();
 
-    using std::placeholders::_1;
+    using boost::placeholders::_1;
 
     m_host_or_join_radio_group->ButtonChangedSignal.connect(
-        std::bind(&ServerConnectWnd::EnableDisableControls, this));
+        boost::bind(&ServerConnectWnd::EnableDisableControls, this));
     m_servers_lb->SelRowsChangedSignal.connect(
-        std::bind(&ServerConnectWnd::ServerSelected, this, _1));
+        boost::bind(&ServerConnectWnd::ServerSelected, this, _1));
     m_find_LAN_servers_bn->LeftClickedSignal.connect(
-        std::bind(&ServerConnectWnd::PopulateServerList, this));
+        boost::bind(&ServerConnectWnd::PopulateServerList, this));
     m_IP_address_edit->EditedSignal.connect(
-        std::bind(&ServerConnectWnd::IPAddressEdited, this, _1));
+        boost::bind(&ServerConnectWnd::IPAddressEdited, this, _1));
     m_player_name_edit->EditedSignal.connect(
-        std::bind(&ServerConnectWnd::EnableDisableControls, this));
+        boost::bind(&ServerConnectWnd::EnableDisableControls, this));
     m_ok_bn->LeftClickedSignal.connect(
-        std::bind(&ServerConnectWnd::OkClicked, this));
+        boost::bind(&ServerConnectWnd::OkClicked, this));
     m_cancel_bn->LeftClickedSignal.connect(
-        std::bind(&ServerConnectWnd::CancelClicked, this));
+        boost::bind(&ServerConnectWnd::CancelClicked, this));
 
     m_client_type_list->Insert(GG::Wnd::Create<ClientTypeRow>(Networking::CLIENT_TYPE_HUMAN_PLAYER));
     m_client_type_list->Insert(GG::Wnd::Create<ClientTypeRow>(Networking::CLIENT_TYPE_HUMAN_MODERATOR));

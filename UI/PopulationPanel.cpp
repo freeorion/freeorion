@@ -36,7 +36,7 @@ void PopulationPanel::CompleteConstruction() {
     SetName("PopulationPanel");
 
     m_expand_button->LeftPressedSignal.connect(
-        std::bind(&PopulationPanel::ExpandCollapseButtonPressed, this));
+        boost::bind(&PopulationPanel::ExpandCollapseButtonPressed, this));
 
     auto pop = Objects().get<PopCenter>(m_popcenter_id);
     if (!pop) {

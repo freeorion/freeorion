@@ -61,16 +61,16 @@ void QueueListBox::CompleteConstruction() {
 
     ShowPromptSlot();
 
-    namespace ph = std::placeholders;
+    namespace ph = boost::placeholders;
 
     BeforeInsertRowSignal.connect(
-        std::bind(&QueueListBox::EnsurePromptHiddenSlot, this, ph::_1));
+        boost::bind(&QueueListBox::EnsurePromptHiddenSlot, this, ph::_1));
     AfterEraseRowSignal.connect(
-        std::bind(&QueueListBox::ShowPromptConditionallySlot, this, ph::_1));
+        boost::bind(&QueueListBox::ShowPromptConditionallySlot, this, ph::_1));
     ClearedRowsSignal.connect(
-        std::bind(&QueueListBox::ShowPromptSlot, this));
+        boost::bind(&QueueListBox::ShowPromptSlot, this));
     GG::ListBox::RightClickedRowSignal.connect(
-        std::bind(&QueueListBox::ItemRightClicked, this, ph::_1, ph::_2, ph::_3));
+        boost::bind(&QueueListBox::ItemRightClicked, this, ph::_1, ph::_2, ph::_3));
 }
 
 GG::X QueueListBox::RowWidth() const

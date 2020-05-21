@@ -1903,11 +1903,10 @@ ListBox::iterator ListBox::Insert(std::shared_ptr<Row> row, iterator it, bool dr
     }
 
     row->Hide();
-
     row->Resize(Pt(std::max(ClientWidth(), X(1)), row->Height()));
-
-    row->RightClickedSignal.connect(std::bind(&ListBox::HandleRowRightClicked, this,
-                                              std::placeholders::_1, std::placeholders::_2));
+    row->RightClickedSignal.connect(
+        boost::bind(&ListBox::HandleRowRightClicked, this,
+                    boost::placeholders::_1, boost::placeholders::_2));
 
     AfterInsertRowSignal(it);
     if (dropped)
@@ -2055,12 +2054,12 @@ ListBox::Row& ListBox::ColHeaders()
 
 void ListBox::ConnectSignals()
 {
-    namespace ph = std::placeholders;
+    namespace ph = boost::placeholders;
 
     if (m_vscroll)
-        m_vscroll->ScrolledSignal.connect(std::bind(&ListBox::VScrolled, this, ph::_1, ph::_2, ph::_3, ph::_4));
+        m_vscroll->ScrolledSignal.connect(boost::bind(&ListBox::VScrolled, this, ph::_1, ph::_2, ph::_3, ph::_4));
     if (m_hscroll)
-        m_hscroll->ScrolledSignal.connect(std::bind(&ListBox::HScrolled, this, ph::_1, ph::_2, ph::_3, ph::_4));
+        m_hscroll->ScrolledSignal.connect(boost::bind(&ListBox::HScrolled, this, ph::_1, ph::_2, ph::_3, ph::_4));
 }
 
 void ListBox::ValidateStyle()
@@ -2180,10 +2179,10 @@ std::pair<bool, bool> ListBox::AddOrRemoveScrolls(
         m_vscroll->MoveTo(Pt(cl_sz.x - SCROLL_WIDTH, Y0));
         m_vscroll->Resize(Pt(X(SCROLL_WIDTH), cl_sz.y - (horizontal_needed ? SCROLL_WIDTH : 0)));
 
-        namespace ph = std::placeholders;
+        namespace ph = boost::placeholders;
 
         AttachChild(m_vscroll);
-        m_vscroll->ScrolledSignal.connect(std::bind(&ListBox::VScrolled, this, ph::_1, ph::_2, ph::_3, ph::_4));
+        m_vscroll->ScrolledSignal.connect(boost::bind(&ListBox::VScrolled, this, ph::_1, ph::_2, ph::_3, ph::_4));
     }
 
     if (vertical_needed) {
@@ -2230,10 +2229,10 @@ std::pair<bool, bool> ListBox::AddOrRemoveScrolls(
         m_hscroll->MoveTo(Pt(X0, cl_sz.y - SCROLL_WIDTH));
         m_hscroll->Resize(Pt(cl_sz.x - (vertical_needed ? SCROLL_WIDTH : 0), Y(SCROLL_WIDTH)));
 
-        namespace ph = std::placeholders;
+        namespace ph = boost::placeholders;
 
         AttachChild(m_hscroll);
-        m_hscroll->ScrolledSignal.connect(std::bind(&ListBox::HScrolled, this, ph::_1, ph::_2, ph::_3, ph::_4));
+        m_hscroll->ScrolledSignal.connect(boost::bind(&ListBox::HScrolled, this, ph::_1, ph::_2, ph::_3, ph::_4));
     }
 
     if (horizontal_needed) {

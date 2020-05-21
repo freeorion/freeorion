@@ -816,7 +816,7 @@ private:
         }
 
         m_class_drop->SelChangedSignal.connect(
-            std::bind(&ConditionWidget::ConditionClassSelected, this, std::placeholders::_1));
+            boost::bind(&ConditionWidget::ConditionClassSelected, this, boost::placeholders::_1));
 
         if (select_row_it != m_class_drop->end())
             m_class_drop->Select(select_row_it);
@@ -1158,7 +1158,7 @@ void FilterDialog::CompleteConstruction() {
         label->Resize(GG::Pt(button_width, label->MinUsableSize().y));
         m_filters_layout->Add(label, vis_row, 0, GG::ALIGN_CENTER);
         label->LeftClickedSignal.connect(
-            std::bind(&FilterDialog::UpdateVisFilterFromVisibilityButton, this, visibility));
+            boost::bind(&FilterDialog::UpdateVisFilterFromVisibilityButton, this, visibility));
 
         ++vis_row;
     }
@@ -1179,7 +1179,7 @@ void FilterDialog::CompleteConstruction() {
         label = Wnd::Create<CUIButton>(" " + UserString(boost::lexical_cast<std::string>(uot)) + " ");
         m_filters_layout->Add(label, 0, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
         label->LeftClickedSignal.connect(
-            std::bind(&FilterDialog::UpdateVisFiltersFromObjectTypeButton, this, uot));
+            boost::bind(&FilterDialog::UpdateVisFiltersFromObjectTypeButton, this, uot));
 
         int row = 1;
 
@@ -1189,7 +1189,7 @@ void FilterDialog::CompleteConstruction() {
             button->SetCheck(vis_display.count(visibility));
             m_filters_layout->Add(button, row, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
             button->CheckedSignal.connect(
-                std::bind(&FilterDialog::UpdateVisFiltersFromStateButtons, this, std::placeholders::_1));
+                boost::bind(&FilterDialog::UpdateVisFiltersFromStateButtons, this, boost::placeholders::_1));
             m_filter_buttons[uot][visibility] = button;
 
             ++row;
@@ -1208,10 +1208,8 @@ void FilterDialog::CompleteConstruction() {
     AttachChild(m_cancel_button);
     AttachChild(m_apply_button);
 
-    m_cancel_button->LeftClickedSignal.connect(
-        std::bind(&FilterDialog::CancelClicked, this));
-    m_apply_button->LeftClickedSignal.connect(
-        std::bind(&FilterDialog::AcceptClicked, this));
+    m_cancel_button->LeftClickedSignal.connect(boost::bind(&FilterDialog::CancelClicked, this));
+    m_apply_button->LeftClickedSignal.connect(boost::bind(&FilterDialog::AcceptClicked, this));
 
     ResetDefaultPosition();
 
@@ -1388,7 +1386,7 @@ public:
         auto rcobj = std::dynamic_pointer_cast<const ResourceCenter>(obj);
         if (rcobj)
             rcobj->ResourceCenterChangedSignal.connect(
-                std::bind(&ObjectPanel::ResourceCenterChanged, this));
+                boost::bind(&ObjectPanel::ResourceCenterChanged, this));
 
         RequirePreRender();
     }
@@ -1520,7 +1518,7 @@ private:
 
             AttachChild(m_expand_button);
             m_expand_button->LeftPressedSignal.connect(
-                std::bind(&ObjectPanel::ExpandCollapseButtonPressed, this));
+                boost::bind(&ObjectPanel::ExpandCollapseButtonPressed, this));
         } else {
             m_dot = GG::Wnd::Create<GG::StaticGraphic>(ClientUI::GetTexture(
                 ClientUI::ArtDir() / "icons" / "dot.png", true), style);
@@ -1606,7 +1604,7 @@ public:
             !m_contained_object_panels.empty(), m_indent_init);
         push_back(m_panel);
         m_panel->ExpandCollapseSignal.connect(
-            std::bind(&ObjectRow::ExpandCollapseClicked, this));
+            boost::bind(&ObjectRow::ExpandCollapseClicked, this));
 
         GG::Pt border(GG::X(2 * GetLayout()->BorderMargin()),
                       GG::Y(2 * GetLayout()->BorderMargin()));
@@ -1695,7 +1693,7 @@ public:
                 [this, i](){ this->ColumnButtonLeftClickSignal(i - 1); });
             if (i > 0)
                 controls[i]->RightClickedSignal.connect(
-                    std::bind(&ObjectHeaderPanel::ButtonRightClicked, this, i-1));
+                    boost::bind(&ObjectHeaderPanel::ButtonRightClicked, this, i-1));
         }
 
         DoLayout();
@@ -2273,10 +2271,11 @@ private:
         this->Insert(object_row);
         object_row->Resize(row_size);
         object_row->ExpandCollapseSignal.connect(
-            std::bind(&ObjectListBox::ObjectExpandCollapseClicked, this, std::placeholders::_1), boost::signals2::at_front);
+            boost::bind(&ObjectListBox::ObjectExpandCollapseClicked, this, boost::placeholders::_1),
+            boost::signals2::at_front);
         m_object_change_connections[obj->ID()].disconnect();
         m_object_change_connections[obj->ID()] = obj->StateChangedSignal.connect(
-            std::bind(&ObjectListBox::ObjectStateChanged, this, obj->ID()), boost::signals2::at_front);
+            boost::bind(&ObjectListBox::ObjectStateChanged, this, obj->ID()), boost::signals2::at_front);
     }
 
     // Removes row of indicated object, and all contained rows, recursively.
@@ -2393,26 +2392,25 @@ void ObjectListWnd::CompleteConstruction() {
     m_list_box->SetHiliteColor(GG::CLR_ZERO);
     m_list_box->SetStyle(GG::LIST_NOSORT);
 
-    namespace ph = std::placeholders;
+    namespace ph = boost::placeholders;
 
     m_list_box->SelRowsChangedSignal.connect(
-        std::bind(&ObjectListWnd::ObjectSelectionChanged, this, ph::_1));
+        boost::bind(&ObjectListWnd::ObjectSelectionChanged, this, ph::_1));
     m_list_box->DoubleClickedRowSignal.connect(
-        std::bind(&ObjectListWnd::ObjectDoubleClicked, this, ph::_1, ph::_2, ph::_3));
+        boost::bind(&ObjectListWnd::ObjectDoubleClicked, this, ph::_1, ph::_2, ph::_3));
     m_list_box->RightClickedRowSignal.connect(
-        std::bind(&ObjectListWnd::ObjectRightClicked, this, ph::_1, ph::_2, ph::_3));
+        boost::bind(&ObjectListWnd::ObjectRightClicked, this, ph::_1, ph::_2, ph::_3));
     m_list_box->ExpandCollapseSignal.connect(
-        std::bind(&ObjectListWnd::DoLayout, this));
+        boost::bind(&ObjectListWnd::DoLayout, this));
     AttachChild(m_list_box);
 
     m_filter_button = Wnd::Create<CUIButton>(UserString("FILTERS"));
-    m_filter_button->LeftClickedSignal.connect(
-        std::bind(&ObjectListWnd::FilterClicked, this));
+    m_filter_button->LeftClickedSignal.connect(boost::bind(&ObjectListWnd::FilterClicked, this));
     AttachChild(m_filter_button);
 
     m_collapse_button = Wnd::Create<CUIButton>(UserString("COLLAPSE_ALL"));
     m_collapse_button->LeftClickedSignal.connect(
-        std::bind(&ObjectListWnd::CollapseExpandClicked, this));
+        boost::bind(&ObjectListWnd::CollapseExpandClicked, this));
     AttachChild(m_collapse_button);
 
     CUIWnd::CompleteConstruction();

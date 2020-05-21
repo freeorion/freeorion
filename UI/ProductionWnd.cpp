@@ -149,7 +149,7 @@ namespace {
             }
 
             this->SelChangedSignal.connect(
-                std::bind(&QuantitySelector::SelectionChanged, this, std::placeholders::_1));
+                boost::bind(&QuantitySelector::SelectionChanged, this, boost::placeholders::_1));
         }
 
         void SelectionChanged(GG::DropDownList::iterator it) {
@@ -355,10 +355,10 @@ namespace {
             SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
             SetBrowseInfoWnd(ProductionItemBrowseWnd(elem));
 
-            namespace ph = std::placeholders;
+            namespace ph = boost::placeholders;
 
             panel->PanelUpdateQuantSignal.connect(
-                std::bind(&QueueRow::RowQuantChanged, this, ph::_1, ph::_2));
+                boost::bind(&QueueRow::RowQuantChanged, this, ph::_1, ph::_2));
 
             RequirePreRender();
         }
@@ -537,14 +537,14 @@ namespace {
         AttachChild(m_turns_remaining_until_next_complete_text);
         AttachChild(m_progress_bar);
 
-        namespace ph = std::placeholders;
+        namespace ph = boost::placeholders;
 
         if (m_quantity_selector)
             m_quantity_selector->QuantChangedSignal.connect(
-                std::bind(&QueueProductionItemPanel::ItemQuantityChanged, this, ph::_1, ph::_2));
+                boost::bind(&QueueProductionItemPanel::ItemQuantityChanged, this, ph::_1, ph::_2));
         if (m_block_size_selector)
             m_block_size_selector->QuantChangedSignal.connect(
-                std::bind(&QueueProductionItemPanel::ItemBlocksizeChanged, this, ph::_1, ph::_2));
+                boost::bind(&QueueProductionItemPanel::ItemBlocksizeChanged, this, ph::_1, ph::_2));
 
         RequirePreRender();
     }
@@ -848,37 +848,37 @@ void ProductionWnd::CompleteConstruction() {
 
     SetChildClippingMode(ClipToClient);
 
-    using std::placeholders::_1;
-    using std::placeholders::_2;
-    using std::placeholders::_3;
-    using std::placeholders::_4;
+    using boost::placeholders::_1;
+    using boost::placeholders::_2;
+    using boost::placeholders::_3;
+    using boost::placeholders::_4;
 
     m_build_designator_wnd->AddBuildToQueueSignal.connect(
-        std::bind(&ProductionWnd::AddBuildToQueueSlot, this, _1, _2, _3, _4));
+        boost::bind(&ProductionWnd::AddBuildToQueueSlot, this, _1, _2, _3, _4));
     m_build_designator_wnd->BuildQuantityChangedSignal.connect(
-        std::bind(&ProductionWnd::ChangeBuildQuantitySlot, this, _1, _2));
+        boost::bind(&ProductionWnd::ChangeBuildQuantitySlot, this, _1, _2));
     m_build_designator_wnd->SystemSelectedSignal.connect(
         SystemSelectedSignal);
     m_queue_wnd->GetQueueListBox()->MovedRowSignal.connect(
-        std::bind(&ProductionWnd::QueueItemMoved, this, _1, _2));
+        boost::bind(&ProductionWnd::QueueItemMoved, this, _1, _2));
     m_queue_wnd->GetQueueListBox()->QueueItemDeletedSignal.connect(
-        std::bind(&ProductionWnd::DeleteQueueItem, this, _1));
+        boost::bind(&ProductionWnd::DeleteQueueItem, this, _1));
     m_queue_wnd->GetQueueListBox()->LeftClickedRowSignal.connect(
-        std::bind(&ProductionWnd::QueueItemClickedSlot, this, _1, _2, _3));
+        boost::bind(&ProductionWnd::QueueItemClickedSlot, this, _1, _2, _3));
     m_queue_wnd->GetQueueListBox()->DoubleClickedRowSignal.connect(
-        std::bind(&ProductionWnd::QueueItemDoubleClickedSlot, this, _1, _2, _3));
+        boost::bind(&ProductionWnd::QueueItemDoubleClickedSlot, this, _1, _2, _3));
     m_queue_wnd->GetQueueListBox()->QueueItemRalliedToSignal.connect(
-        std::bind(&ProductionWnd::QueueItemRallied, this, _1, _2));
+        boost::bind(&ProductionWnd::QueueItemRallied, this, _1, _2));
     m_queue_wnd->GetQueueListBox()->QueueItemDupedSignal.connect(
-        std::bind(&ProductionWnd::QueueItemDuped, this, _1));
+        boost::bind(&ProductionWnd::QueueItemDuped, this, _1));
     m_queue_wnd->GetQueueListBox()->QueueItemSplitSignal.connect(
-        std::bind(&ProductionWnd::QueueItemSplit, this, _1));
+        boost::bind(&ProductionWnd::QueueItemSplit, this, _1));
     m_queue_wnd->GetQueueListBox()->ShowPediaSignal.connect(
-        std::bind(&ProductionWnd::ShowPedia, this));
+        boost::bind(&ProductionWnd::ShowPedia, this));
     m_queue_wnd->GetQueueListBox()->QueueItemPausedSignal.connect(
-        std::bind(&ProductionWnd::QueueItemPaused, this, _1, _2));
+        boost::bind(&ProductionWnd::QueueItemPaused, this, _1, _2));
     m_queue_wnd->GetQueueListBox()->QueueItemUseImperialPPSignal.connect(
-        std::bind(&ProductionWnd::QueueItemUseImperialPP, this, _1, _2));
+        boost::bind(&ProductionWnd::QueueItemUseImperialPP, this, _1, _2));
 
     AttachChild(m_production_info_panel);
     AttachChild(m_queue_wnd);
@@ -1071,13 +1071,13 @@ void ProductionWnd::UpdateQueue() {
     if (!empire)
         return;
 
-    namespace ph = std::placeholders;
+    namespace ph = boost::placeholders;
 
     int i = 0;
     for (const ProductionQueue::Element& elem : empire->GetProductionQueue()) {
         auto row = GG::Wnd::Create<QueueRow>(queue_lb->RowWidth(), elem, i);
         row->RowQuantChangedSignal.connect(
-            std::bind(&ProductionWnd::ChangeBuildQuantityBlockSlot, this, ph::_1, ph::_2, ph::_3));
+            boost::bind(&ProductionWnd::ChangeBuildQuantityBlockSlot, this, ph::_1, ph::_2, ph::_3));
         queue_lb->Insert(row);
         ++i;
     }

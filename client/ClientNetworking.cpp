@@ -94,7 +94,7 @@ namespace {
 #else
                 m_timer.expires_from_now(std::chrono::seconds(2));
 #endif
-                m_timer.async_wait(std::bind(&ServerDiscoverer::CloseSocket, this));
+                m_timer.async_wait(boost::bind(&ServerDiscoverer::CloseSocket, this));
                 m_io_context->run();
                 m_io_context->reset();
                 if (m_receive_successful) {
@@ -401,7 +401,7 @@ bool ClientNetworking::Impl::ConnectToServer(
                                          << std::chrono::duration_cast<std::chrono::milliseconds>(connection_time).count() << " ms.";
 
                     DebugLogger(network) << "ConnectToServer() : starting networking thread";
-                    boost::thread(std::bind(&ClientNetworking::Impl::NetworkingThread, this, self->shared_from_this()));
+                    boost::thread(boost::bind(&ClientNetworking::Impl::NetworkingThread, this, self->shared_from_this()));
                     break;
                 } else {
                     TraceLogger(network) << "Failed to connect to host_name: " << it->host_name()
@@ -455,7 +455,7 @@ void ClientNetworking::Impl::DisconnectFromServer() {
     }
 
     if (is_open)
-        m_io_context.post(std::bind(&ClientNetworking::Impl::DisconnectFromServerImpl, this));
+        m_io_context.post(boost::bind(&ClientNetworking::Impl::DisconnectFromServerImpl, this));
 }
 
 void ClientNetworking::Impl::SetPlayerID(int player_id) {
@@ -475,7 +475,7 @@ void ClientNetworking::Impl::SendMessage(const Message& message) {
         return;
     }
     TraceLogger(network) << "ClientNetworking::SendMessage() : sending message " << message;
-    m_io_context.post(std::bind(&ClientNetworking::Impl::SendMessageImpl, this, message));
+    m_io_context.post(boost::bind(&ClientNetworking::Impl::SendMessageImpl, this, message));
 }
 
 boost::optional<Message> ClientNetworking::Impl::GetMessage() {
