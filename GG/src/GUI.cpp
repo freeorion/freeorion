@@ -168,41 +168,42 @@ struct GG::GUIImpl
 
     void GouvernFPS();
 
-    std::string  m_app_name;              // the user-defined name of the apllication
+    std::string  m_app_name;            // the user-defined name of the apllication
 
-    ZList        m_zlist;                 // object that keeps the GUI windows in the correct depth ordering
-    std::weak_ptr<Wnd>         m_focus_wnd;             // GUI window that currently has the input focus (this is the base level focus window, used when no modal windows are active)
+    ZList               m_zlist;        // object that keeps the GUI windows in the correct depth ordering
+    std::weak_ptr<Wnd>  m_focus_wnd;    // GUI window that currently has the input focus (this is the base level focus window, used when no modal windows are active)
+
     std::list<std::pair<std::shared_ptr<Wnd>, std::weak_ptr<Wnd>>>
-                 m_modal_wnds;            // modal GUI windows, and the window with focus for that modality (only the one in back is active, simulating a stack but allowing traversal of the list)
-    bool         m_allow_modal_accelerator_signals = false; // iff true: keyboard accelerator signals will be output while modal window(s) is open
+                        m_modal_wnds;                               // modal GUI windows, and the window with focus for that modality (only the one in back is active, simulating a stack but allowing traversal of the list)
+    bool                m_allow_modal_accelerator_signals = false;  // iff true: keyboard accelerator signals will be output while modal window(s) is open
 
     bool         m_mouse_button_state[3] = {false, false, false};   // the up/down states of the three buttons on the mouse are kept here
-    Pt           m_mouse_pos;             // absolute position of mouse, based on last MOUSEMOVE event
-    Pt           m_mouse_rel;             // relative position of mouse, based on last MOUSEMOVE event
-    Flags<ModKey>m_mod_keys;              // currently-depressed modifier keys, based on last KEYPRESS event
+    Pt           m_mouse_pos;           // absolute position of mouse, based on last MOUSEMOVE event
+    Pt           m_mouse_rel;           // relative position of mouse, based on last MOUSEMOVE event
+    Flags<ModKey>m_mod_keys;            // currently-depressed modifier keys, based on last KEYPRESS event
 
-    int          m_key_press_repeat_delay;          // see note above GUI class definition
-    int          m_key_press_repeat_interval;
-    int          m_last_key_press_repeat_time;      // last time of a simulated key press message
+    int          m_key_press_repeat_delay = 1;      // see note above GUI class definition
+    int          m_key_press_repeat_interval = 1;
+    int          m_last_key_press_repeat_time = 1;  // last time of a simulated key press message
 
     std::pair<Key, std::uint32_t> m_last_pressed_key_code_point;
 
-    int          m_prev_key_press_time;             // the time of the most recent key press
+    int          m_prev_key_press_time = 0;         // the time of the most recent key press
 
-    int          m_mouse_button_down_repeat_delay;      // see note above GUI class definition
-    int          m_mouse_button_down_repeat_interval;
-    int          m_last_mouse_button_down_repeat_time;  // last time of a simulated button-down message
+    int          m_mouse_button_down_repeat_delay = 0;      // see note above GUI class definition
+    int          m_mouse_button_down_repeat_interval = 0;
+    int          m_last_mouse_button_down_repeat_time= 0;   // last time of a simulated button-down message
 
-    int          m_double_click_interval; // the maximum interval allowed between clicks that is still considered a double-click, in ms
-    int          m_min_drag_time;         // the minimum amount of time that a drag must be in progress before it is considered a drag, in ms
-    int          m_min_drag_distance;     // the minimum distance that a drag must cover before it is considered a drag
+    int          m_double_click_interval = 0;   // the maximum interval allowed between clicks that is still considered a double-click, in ms
+    int          m_min_drag_time = 0;           // the minimum amount of time that a drag must be in progress before it is considered a drag, in ms
+    int          m_min_drag_distance = 0;       // the minimum distance that a drag must cover before it is considered a drag
 
-    int                 m_prev_mouse_button_press_time; // the time of the most recent mouse button press
-    Pt                  m_prev_mouse_button_press_pos;  // the location of the most recent mouse button press
-    std::weak_ptr<Wnd>  m_prev_wnd_under_cursor; // GUI window most recently under the input cursor; may be 0
-    int                 m_prev_wnd_under_cursor_time; // the time at which prev_wnd_under_cursor was initially set to its current value
-    std::weak_ptr<Wnd>  m_curr_wnd_under_cursor; // GUI window currently under the input cursor; may be 0
-    std::weak_ptr<Wnd>  m_drag_wnds[3];          // GUI window currently being clicked or dragged by each mouse button
+    int                 m_prev_mouse_button_press_time = 0; // the time of the most recent mouse button press
+    Pt                  m_prev_mouse_button_press_pos;      // the location of the most recent mouse button press
+    std::weak_ptr<Wnd>  m_prev_wnd_under_cursor;            // GUI window most recently under the input cursor; may be 0
+    int                 m_prev_wnd_under_cursor_time = 0;   // the time at which prev_wnd_under_cursor was initially set to its current value
+    std::weak_ptr<Wnd>  m_curr_wnd_under_cursor;            // GUI window currently under the input cursor; may be 0
+    std::weak_ptr<Wnd>  m_drag_wnds[3];                     // GUI window currently being clicked or dragged by each mouse button
     Pt                  m_prev_wnd_drag_position;           // the upper-left corner of the dragged window when the last *Drag message was generated
     Pt                  m_wnd_drag_offset;                  // the offset from the upper left corner of the dragged window to the cursor for the current drag
     bool                m_curr_drag_wnd_dragged = false;    // true iff the currently-pressed window (m_drag_wnds[N]) has actually been dragged some distance (in which case releasing the mouse button is not a click). note that a dragged wnd is one being continuously repositioned by the dragging, and not a wnd being drag-dropped.
@@ -214,8 +215,8 @@ struct GG::GUIImpl
     /** The current browse info window, if any. */
     std::shared_ptr<BrowseInfoWnd> m_browse_info_wnd;
 
-    int                 m_browse_info_mode;      // the current browse info mode (only valid if browse_info_wnd is non-null)
-    Wnd*                m_browse_target;         // the current browse info target
+    int                 m_browse_info_mode = 0;      // the current browse info mode (only valid if browse_info_wnd is non-null)
+    Wnd*                m_browse_target = nullptr;   // the current browse info target
 
     std::weak_ptr<Wnd>  m_drag_drop_originating_wnd; // the window that originally owned the Wnds in drag_drop_wnds
 
@@ -225,22 +226,19 @@ struct GG::GUIImpl
     /** Tracks whether Wnd is acceptable for dropping on the current target Wnd.*/
     std::map<const Wnd*, bool> m_drag_drop_wnds_acceptable;
 
-    std::set<std::pair<Key, Flags<ModKey>>>
-                 m_accelerators;          // the keyboard accelerators
+    std::set<std::pair<Key, Flags<ModKey>>> m_accelerators; // the keyboard accelerators
 
     /** The signals emitted by the keyboard accelerators. */
     std::map<std::pair<Key, Flags<ModKey>>, std::shared_ptr<GUI::AcceleratorSignalType>> m_accelerator_sigs;
 
-    bool         m_mouse_lr_swap = false; // treat left and right mouse events as each other
+    bool  m_mouse_lr_swap = false; // treat left and right mouse events as each other
 
-    bool         m_rendering_drag_drop_wnds = false;
+    bool  m_rendering_drag_drop_wnds = false;
 
     //! The most recent calculation of the frames per second rendering speed (-1.0 if calcs are disabled)
-    double       m_FPS;
-    //! true iff FPS calcs are to be done
-    bool         m_calc_FPS = false;
-    //! The maximum allowed frames per second rendering speed
-    double       m_max_FPS;
+    double m_FPS = 0.0;         //! true iff FPS calcs are to be done
+    bool m_calc_FPS = false;    //! true iff FPS calcs are to be done
+    double m_max_FPS = 60.0;    //! The maximum allowed frames per second rendering speed
     //! The last time an FPS calculation was done.
     std::chrono::high_resolution_clock::time_point m_last_FPS_time;
     //! The time of the last frame rendered.
@@ -248,10 +246,10 @@ struct GG::GUIImpl
     //! The number of frames rendered since \a m_last_frame_time.
     std::size_t  m_frames;
 
-    Wnd*         m_double_click_wnd;      // GUI window most recently clicked
-    unsigned int m_double_click_button;   // the index of the mouse button used in the last click
-    int          m_double_click_start_time;// the time from which we started measuring double_click_time, in ms
-    int          m_double_click_time;     // time elapsed since last click, in ms
+    Wnd*         m_double_click_wnd = nullptr;  // GUI window most recently clicked
+    unsigned int m_double_click_button = 0;     // the index of the mouse button used in the last click
+    int          m_double_click_start_time = 0; // the time from which we started measuring double_click_time, in ms
+    int          m_double_click_time = 0;       // time elapsed since last click, in ms
 
     std::shared_ptr<StyleFactory>   m_style_factory;
     bool                            m_render_cursor = false;
@@ -263,11 +261,9 @@ struct GG::GUIImpl
     std::string m_save_as_png_filename;
 
     std::string m_clipboard_text;
-
 };
 
 GUIImpl::GUIImpl() :
-    m_focus_wnd(),
     m_allow_modal_accelerator_signals(false),
     m_mouse_pos(X(-1000), Y(-1000)),
     m_mouse_rel(X(0), Y(0)),
@@ -874,7 +870,7 @@ void GUIImpl::GouvernFPS()
 
 
 // static member(s)
-GUI*                       GUI::s_gui = nullptr;
+GUI* GUI::s_gui = nullptr;
 
 // member functions
 GUI::GUI(const std::string& app_name) :

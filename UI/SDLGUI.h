@@ -124,7 +124,7 @@ protected:
     /** Cleans up SDL and (if used) FE. */
     void SDLQuit();
 
-    void            ResetFramebuffer(); ///< Resizes or deletes the framebuffer for fake fullscreen.
+    void ResetFramebuffer(); ///< Resizes or deletes the framebuffer for fake fullscreen.
 
     /** Given is_width = true (false) it returns the largest possible window
         width (height) if all displays are aligned horizontally (vertically).
@@ -132,21 +132,21 @@ protected:
     static int MaximumPossibleDimension(bool is_width = true);
 
 private:
-    void            RelayTextInput (const SDL_TextInputEvent& text, GG::Pt mouse_pos);
+    void RelayTextInput (const SDL_TextInputEvent& text, GG::Pt mouse_pos);
     /** Bare minimum SDL video initialization to allow queries to display sizes etc.
         If called during static initialization, it will cause OSX to crash on exit. */
-    static void     SDLMinimalInit();
+    static void SDLMinimalInit();
 
-    GG::X     m_app_width;      ///< application width and height (defaults to 1024 x 768)
-    GG::Y     m_app_height;
-    GG::X     m_initial_x; ///< The initial position of the application window
-    GG::Y     m_initial_y;
-    bool      m_fullscreen;
-    bool      m_fake_mode_change;
-    int       m_display_id;
-    SDL_Window*     m_window; ///< The sdl window
-    SDL_GLContext   m_gl_context; //< The OpenGL context
-    bool            m_done; //< Set true true when we should exit.
+    GG::X           m_app_width{1024};      ///< application width and height (defaults to 1024 x 768)
+    GG::Y           m_app_height{768};
+    GG::X           m_initial_x{0};         ///< The initial position of the application window
+    GG::Y           m_initial_y{0};
+    bool            m_fullscreen = false;
+    bool            m_fake_mode_change = false;
+    int             m_display_id = 0;
+    SDL_Window*     m_window = nullptr;     ///< The sdl window
+    SDL_GLContext   m_gl_context = nullptr; ///< The OpenGL context
+    bool            m_done = false;         ///< Set true true when we should exit.
 
     /** Virtual screen for fake fullscreen.  Equals nullptr ifi
         m_fake_mode_change == false. */

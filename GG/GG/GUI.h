@@ -448,27 +448,27 @@ protected:
     //@}
 
     /** \name Mutators */ ///@{
-    void           ProcessBrowseInfo();    ///< determines the current browse info mode, if any
+    void            ProcessBrowseInfo();    ///< determines the current browse info mode, if any
     /** Allow all windows in the z-list to update data before rendering. */
-    virtual void   PreRender();
-    virtual void   RenderBegin() = 0;      ///< clears the backbuffer, etc.
-    virtual void   Render();               ///< renders the windows in the z-list
-    virtual void   RenderEnd() = 0;        ///< swaps buffers, etc.
+    virtual void    PreRender();
+    virtual void    RenderBegin() = 0;      ///< clears the backbuffer, etc.
+    virtual void    Render();               ///< renders the windows in the z-list
+    virtual void    RenderEnd() = 0;        ///< swaps buffers, etc.
     //@}
 
     /** Determine if the app has the mouse focus. */
-    virtual bool AppHasMouseFocus() const { return true; };
+    virtual bool    AppHasMouseFocus() const { return true; };
 
 private:
-    bool           ProcessBrowseInfoImpl(Wnd* wnd);
-    std::shared_ptr<Wnd>           ModalWindow() const;    // returns the current modal window, if any
+    bool                 ProcessBrowseInfoImpl(Wnd* wnd);
+    std::shared_ptr<Wnd> ModalWindow() const;   ///< returns the current modal window, if any
 
     // Returns the window under \a pt, sending Mouse{Enter|Leave} or
     // DragDrop{Enter|Leave} as appropriate
-    std::shared_ptr<Wnd>           CheckedGetWindowUnder(const Pt& pt, Flags<ModKey> mod_keys);
+    std::shared_ptr<Wnd> CheckedGetWindowUnder(const Pt& pt, Flags<ModKey> mod_keys);
 
-    static GUI*                       s_gui;
-    std::unique_ptr<GUIImpl>          m_impl;
+    static GUI*              s_gui;
+    std::unique_ptr<GUIImpl> m_impl;
 
     friend struct GUIImpl;
 };
