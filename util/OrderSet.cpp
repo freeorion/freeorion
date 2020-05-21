@@ -42,16 +42,13 @@ void OrderSet::ApplyOrders() {
 }
 
 bool OrderSet::RescindOrder(int order) {
-    bool retval = false;
     auto it = m_orders.find(order);
-    if (it != m_orders.end()) {
-        if (it->second->Undo()) {
-            m_orders.erase(it);
-            m_last_deleted_orders.insert(it->first);
-            retval = true;
-        }
+    if (it != m_orders.end() && it->second->Undo()) {
+        m_last_deleted_orders.insert(it->first);
+        m_orders.erase(it);  // Invalidates `it`
+        return true;
     }
-    return retval;
+    return false;
 }
 
 void OrderSet::Reset() {
