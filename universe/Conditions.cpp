@@ -436,11 +436,11 @@ void Number::Eval(const ScriptingContext& parent_context,
         // number of matches was within the requested range.
         if (search_domain == MATCHES && !in_range) {
             // move all objects from matches to non_matches
-            non_matches.insert(non_matches.end(), matches.begin(), matches.end());
+            std::move(matches.begin(), matches.end(), std::back_inserter(non_matches));
             matches.clear();
         } else if (search_domain == NON_MATCHES && in_range) {
             // move all objects from non_matches to matches
-            matches.insert(matches.end(), non_matches.begin(), non_matches.end());
+            std::move(non_matches.begin(), non_matches.end(), std::back_inserter(matches));
             non_matches.clear();
         }
     }
@@ -532,14 +532,14 @@ void Turn::Eval(const ScriptingContext& parent_context,
 
         // transfer objects to or from candidate set, according to whether the
         // current turn was within the requested range.
-        if (match && search_domain == NON_MATCHES) {
-            // move all objects from non_matches to matches
-            matches.insert(matches.end(), non_matches.begin(), non_matches.end());
-            non_matches.clear();
-        } else if (!match && search_domain == MATCHES) {
+        if (search_domain == MATCHES && !match) {
             // move all objects from matches to non_matches
-            non_matches.insert(non_matches.end(), matches.begin(), matches.end());
+            std::move(matches.begin(), matches.end(), std::back_inserter(non_matches));
             matches.clear();
+        } else if (search_domain == NON_MATCHES && match) {
+            // move all objects from non_matches to matches
+            std::move(non_matches.begin(), non_matches.end(), std::back_inserter(matches));
+            non_matches.clear();
         }
     } else {
         // re-evaluate allowed turn range for each candidate object
@@ -871,8 +871,12 @@ void SortedNumberOf::Eval(const ScriptingContext& parent_context,
     // assemble single set of subcondition matching objects
     ObjectSet all_subcondition_matches;
     all_subcondition_matches.reserve(subcondition_matching_matches.size() + subcondition_matching_non_matches.size());
-    all_subcondition_matches.insert(all_subcondition_matches.end(), subcondition_matching_matches.begin(), subcondition_matching_matches.end());
-    all_subcondition_matches.insert(all_subcondition_matches.end(), subcondition_matching_non_matches.begin(), subcondition_matching_non_matches.end());
+    all_subcondition_matches.insert(all_subcondition_matches.end(),
+                                    subcondition_matching_matches.begin(),
+                                    subcondition_matching_matches.end());
+    all_subcondition_matches.insert(all_subcondition_matches.end(),
+                                    subcondition_matching_non_matches.begin(),
+                                    subcondition_matching_non_matches.end());
 
     // how many subcondition matches to select as matches to this condition
     int number = m_number->Eval(local_context);
@@ -882,7 +886,8 @@ void SortedNumberOf::Eval(const ScriptingContext& parent_context,
     // matches, or those left in matches while the rest are moved into non_matches
     ObjectSet matched_objects;
     matched_objects.reserve(number);
-    TransferSortedObjects(number, m_sort_key.get(), parent_context, m_sorting_method, all_subcondition_matches, matched_objects);
+    TransferSortedObjects(number, m_sort_key.get(), parent_context, m_sorting_method,
+                          all_subcondition_matches, matched_objects);
 
     // put objects back into matches and non_target sets as output...
 
@@ -1054,7 +1059,7 @@ void All::Eval(const ScriptingContext& parent_context,
 {
     if (search_domain == NON_MATCHES) {
         // move all objects from non_matches to matches
-        matches.insert(matches.end(), non_matches.begin(), non_matches.end());
+        std::move(non_matches.begin(), non_matches.end(), std::back_inserter(matches));
         non_matches.clear();
     }
     // if search_comain is MATCHES, do nothing: all objects in matches set
@@ -1099,7 +1104,7 @@ void None::Eval(const ScriptingContext& parent_context,
 {
     if (search_domain == MATCHES) {
         // move all objects from matches to non_matches
-        non_matches.insert(non_matches.end(), matches.begin(), matches.end());
+        std::move(matches.begin(), matches.end(), std::back_inserter(non_matches));
         matches.clear();
     }
     // if search domain is non_matches, no need to do anything since none of them match None.
@@ -4184,10 +4189,10 @@ void Species::Eval(const ScriptingContext& parent_context,
     if (simple_eval_safe) {
         // evaluate names once, and use to check all candidate objects
         std::vector<std::string> names;
+        names.reserve(m_names.size());
         // get all names from valuerefs
-        for (auto& name : m_names) {
-            names.push_back(name->Eval(parent_context));
-        }
+        for (auto& name : m_names)
+            names.emplace_back(name->Eval(parent_context));
         EvalImpl(matches, non_matches, search_domain, SpeciesSimpleMatch(names, parent_context.ContextObjects()));
     } else {
         // re-evaluate allowed building types range for each candidate object
@@ -4473,7 +4478,7 @@ void Enqueued::Eval(const ScriptingContext& parent_context,
 
         // need to test each candidate separately using EvalImpl and EnqueuedSimpleMatch
         // because the test checks that something is enqueued at the candidate location
-        EvalImpl(matches, non_matches, search_domain, EnqueuedSimpleMatch(m_build_type, name, design_id, 
+        EvalImpl(matches, non_matches, search_domain, EnqueuedSimpleMatch(m_build_type, name, design_id,
                                                                           empire_id, low, high));
     } else {
         // re-evaluate allowed building types range for each candidate object
@@ -6268,14 +6273,14 @@ void EmpireMeterValue::Eval(const ScriptingContext& parent_context,
 
         // transfer objects to or from candidate set, according to whether the
         // specified empire meter was in the requested range
-        if (match && search_domain == NON_MATCHES) {
-            // move all objects from non_matches to matches
-            matches.insert(matches.end(), non_matches.begin(), non_matches.end());
-            non_matches.clear();
-        } else if (!match && search_domain == MATCHES) {
+        if (search_domain == MATCHES && !match) {
             // move all objects from matches to non_matches
-            non_matches.insert(non_matches.end(), matches.begin(), matches.end());
+            std::move(matches.begin(), matches.end(), std::back_inserter(non_matches));
             matches.clear();
+        } else if (search_domain == NON_MATCHES && match) {
+            // move all objects from non_matches to matches
+            std::move(non_matches.begin(), non_matches.end(), std::back_inserter(matches));
+            non_matches.clear();
         }
 
     } else {
@@ -6438,14 +6443,14 @@ void EmpireStockpileValue::Eval(const ScriptingContext& parent_context,
 
         // transfer objects to or from candidate set, according to whether the
         // specified empire meter was in the requested range
-        if (match && search_domain == NON_MATCHES) {
-            // move all objects from non_matches to matches
-            matches.insert(matches.end(), non_matches.begin(), non_matches.end());
-            non_matches.clear();
-        } else if (!match && search_domain == MATCHES) {
+        if (search_domain == MATCHES && !match) {
             // move all objects from matches to non_matches
-            non_matches.insert(non_matches.end(), matches.begin(), matches.end());
+            std::move(matches.begin(), matches.end(), std::back_inserter(non_matches));
             matches.clear();
+        } else if (search_domain == NON_MATCHES && match) {
+            // move all objects from non_matches to matches
+            std::move(non_matches.begin(), non_matches.end(), std::back_inserter(matches));
+            non_matches.clear();
         }
 
     } else {
@@ -8894,15 +8899,16 @@ void ValueTest::Eval(const ScriptingContext& parent_context,
 
     if (simple_eval_safe) {
         // evaluate value and range limits once, use to match all candidates
-        bool passed = Match(parent_context);
+        bool match = Match(parent_context);
 
         // transfer objects to or from candidate set, according to whether the value comparisons were true
-        if (search_domain == MATCHES && !passed) {
-            non_matches.insert(non_matches.end(), matches.begin(), matches.end());
+        if (search_domain == MATCHES && !match) {
+            // move all objects from matches to non_matches
+            std::move(matches.begin(), matches.end(), std::back_inserter(non_matches));
             matches.clear();
-        }
-        if (search_domain == NON_MATCHES && passed) {
-            matches.insert(matches.end(), non_matches.begin(), non_matches.end());
+        } else if (search_domain == NON_MATCHES && match) {
+            // move all objects from non_matches to matches
+            std::move(non_matches.begin(), non_matches.end(), std::back_inserter(matches));
             non_matches.clear();
         }
 
@@ -9201,7 +9207,8 @@ void Location::Eval(const ScriptingContext& parent_context,
             // was defined as Location or if there is no location
             // condition, match nothing
             if (search_domain == MATCHES) {
-                non_matches.insert(non_matches.end(), matches.begin(), matches.end());
+                // move all objects from matches to non_matches
+                std::move(matches.begin(), matches.end(), std::back_inserter(non_matches));
                 matches.clear();
             }
         }
