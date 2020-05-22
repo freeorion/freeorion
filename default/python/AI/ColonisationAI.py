@@ -581,7 +581,8 @@ def get_defense_value(species_name):
 
 
 def _base_asteroid_mining_val():
-    return 5 if tech_is_complete("PRO_MICROGRAV_MAN") else 3
+    """returns an estimation for the industry value of an asteroid belt for a colony in the system"""
+    return 2 if tech_is_complete("PRO_MICROGRAV_MAN") else 1
 
 
 def evaluate_planet(planet_id, mission_type, spec_name, detail=None, empire_research_list=None):
