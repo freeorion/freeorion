@@ -50,6 +50,7 @@ namespace {
         condition_non_targets.reserve(condition_non_targets.size() + objects.ExistingObjects().size());
         for (const auto& obj : objects.ExistingObjects())
             condition_non_targets.emplace_back(obj.second);
+        // in my tests, this range for loop with emplace_back was about 5% faster than std::transform with std::back_inserter and a lambda returning the .second of the map entries
     }
 
     void AddBuildingSet(const ObjectMap& objects, Condition::ObjectSet& condition_non_targets) {
@@ -243,7 +244,7 @@ struct Condition::MatchHelper {
     bool operator()(std::shared_ptr<const UniverseObject> candidate) const
     { return m_this->Match(ScriptingContext(m_parent_context, candidate)); }
 
-    const Condition* m_this;
+    const Condition* m_this = nullptr;
     const ScriptingContext& m_parent_context;
 };
 
