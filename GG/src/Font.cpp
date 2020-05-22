@@ -327,20 +327,18 @@ namespace {
 ///////////////////////////////////////
 // class GG::Font::Substring
 ///////////////////////////////////////
-const std::string Font::Substring::EMPTY_STRING;
+namespace {
+    const std::string EMPTY_STRING;
+}
 
 Font::Substring::Substring() :
-    str(&EMPTY_STRING),
-    first(0),
-    second(0)
+    str(&EMPTY_STRING)
 {}
 
 Font::Substring::Substring(const std::string& str_,
                            std::string::const_iterator first_,
                            std::string::const_iterator second_) :
-    str(&str_),
-    first(0),
-    second(0)
+    str(&str_)
 {
     assert(str->begin() <= first_);
     assert(first_ <= second_);
@@ -350,9 +348,7 @@ Font::Substring::Substring(const std::string& str_,
 }
 
 Font::Substring::Substring(const std::string& str_, const IterPair& pair) :
-    str(&str_),
-    first(0),
-    second(0)
+    str(&str_)
 {
     assert(str->begin() <= pair.first);
     assert(pair.first <= pair.second);

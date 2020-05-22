@@ -185,11 +185,9 @@ public:
         Substring& operator+=(const IterPair& rhs);
 
     private:
-        const std::string* str;
-        std::ptrdiff_t first;
-        std::ptrdiff_t second;
-
-        static const std::string EMPTY_STRING;
+        const std::string* str = nullptr;
+        std::ptrdiff_t first{0};
+        std::ptrdiff_t second{0};
     };
 
     /** \brief Used to encapsulate a token-like piece of text to be rendered
@@ -267,7 +265,7 @@ public:
         TextElement();
 
     private:
-        mutable X cached_width;
+        mutable X cached_width{0};
     };
 
     /** \brief TextAndElementsAssembler is used to assemble a matched pair of text and a vector of
@@ -446,7 +444,6 @@ public:
         std::unique_ptr<GLRGBAColorBuffer> underline_colors;
 
         RenderCache();
-
         ~RenderCache();
     };
 
