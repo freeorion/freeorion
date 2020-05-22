@@ -110,20 +110,19 @@ namespace {
     void EvalImpl(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
                   Condition::SearchDomain search_domain, const Pred& pred)
     {
-        auto& from_set = search_domain == Condition::MATCHES ? matches : non_matches;
-        auto& to_set = search_domain == Condition::MATCHES ? non_matches : matches;
-        for (auto it = from_set.begin(); it != from_set.end(); ) {
-            bool match = pred(*it);
-            if ((search_domain == Condition::MATCHES && !match) ||
-                (search_domain == Condition::NON_MATCHES && match))
-            {
-                to_set.push_back(*it);
-                *it = from_set.back();
-                from_set.pop_back();
-            } else {
-                ++it;
-            }
-        }
+        bool domain_matches = search_domain == Condition::MATCHES;
+        auto& from_set = domain_matches ? matches : non_matches;
+        auto& to_set = domain_matches ? non_matches : matches;
+
+        // move objects into to_set (resets moved-from pointers)
+        std::copy_if(std::make_move_iterator(from_set.begin()),
+                     std::make_move_iterator(from_set.end()),
+                     std::back_inserter(to_set),
+                     [pred, domain_matches](const auto& o) { return pred(o) != domain_matches; });
+
+        // erase the reset-pointer entries in from_set
+        from_set.erase(std::remove_if(from_set.begin(), from_set.end(), [](const auto& o) { return !o; }),
+                       from_set.end());
     }
 
     std::vector<Condition::Condition*> FlattenAndNestedConditions(
