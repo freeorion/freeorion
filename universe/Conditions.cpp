@@ -9895,11 +9895,13 @@ unsigned int Not::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // OrderedAlternativesOf
 ///////////////////////////////////////////////////////////
-void FCMoveContent(ObjectSet& from_set, ObjectSet& to_set) {
-    to_set.insert(to_set.end(),
-                  std::make_move_iterator(from_set.begin()),
-                  std::make_move_iterator(from_set.end()));
-    from_set.clear();
+namespace {
+    void FCMoveContent(ObjectSet& from_set, ObjectSet& to_set) {
+        to_set.insert(to_set.end(),
+                      std::make_move_iterator(from_set.begin()),
+                      std::make_move_iterator(from_set.end()));
+        from_set.clear();
+    }
 }
 
 OrderedAlternativesOf::OrderedAlternativesOf(
