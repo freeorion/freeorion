@@ -156,16 +156,15 @@ bool Ship::HostileToEmpire(int empire_id) const
 }
 
 std::set<std::string> Ship::Tags() const {
-    std::set<std::string> retval;
-
     const ShipDesign* design = GetShipDesign(m_design_id);
     if (!design)
-        return retval;
+        return {};
 
     const ShipHull* hull = ::GetShipHull(design->Hull());
     if (!hull)
-        return retval;
-    retval.insert(hull->Tags().begin(), hull->Tags().end());
+        return {};
+
+    std::set<std::string> retval{hull->Tags().begin(), hull->Tags().end()};
 
     const std::vector<std::string>& parts = design->Parts();
     if (parts.empty())

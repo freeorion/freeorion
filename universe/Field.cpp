@@ -71,7 +71,7 @@ void Field::Copy(std::shared_ptr<const UniverseObject> copied_object, int empire
 std::set<std::string> Field::Tags() const {
     const FieldType* type = GetFieldType(m_type_name);
     if (!type)
-        return std::set<std::string>();
+        return {};
     return type->Tags();
 }
 

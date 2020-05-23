@@ -161,7 +161,7 @@ bool Planet::HostileToEmpire(int empire_id) const
 std::set<std::string> Planet::Tags() const {
     const Species* species = GetSpecies(SpeciesName());
     if (!species)
-        return std::set<std::string>();
+        return {};
     return species->Tags();
 }
 
