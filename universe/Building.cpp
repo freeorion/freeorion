@@ -74,15 +74,13 @@ bool Building::HostileToEmpire(int empire_id) const {
 }
 
 std::set<std::string> Building::Tags() const {
-    const BuildingType* type = ::GetBuildingType(m_building_type);
-    if (!type)
-        return std::set<std::string>();
-    return type->Tags();
+    if (const BuildingType* type = ::GetBuildingType(m_building_type))
+        return type->Tags();
+    return {};
 }
 
 bool Building::HasTag(const std::string& name) const {
     const BuildingType* type = GetBuildingType(m_building_type);
-
     return type && type->Tags().count(name);
 }
 
