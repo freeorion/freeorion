@@ -8,6 +8,7 @@
 #include "../network/Message.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
+#include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 #include "../universe/Ship.h"
 #include "../universe/Planet.h"

@@ -15,6 +15,7 @@
 #include "../util/OptionsDB.h"
 #include "../util/ScopedTimer.h"
 #include "../util/Directories.h"
+#include "../util/MultiplayerCommon.h"
 #include "../Empire/Empire.h"
 #include "../client/human/HumanClientApp.h"
 #include "../universe/ConditionAll.h"

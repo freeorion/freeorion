@@ -1,16 +1,17 @@
 #ifndef _GalaxySetupWnd_h_
 #define _GalaxySetupWnd_h_
 
+
 #include <GG/GGFwd.h>
 #include <GG/ListBox.h>
-
-#include "../universe/Universe.h"
 #include "ClientUI.h"
 #include "CUIWnd.h"
+#include "../universe/Universe.h"
+#include "../util/GalaxySetupData.h"
+
 
 class EmpireColorSelector;
 class SpeciesSelector;
-struct GalaxySetupData;
 class CUIEdit;
 
 /** Displays game rules options */

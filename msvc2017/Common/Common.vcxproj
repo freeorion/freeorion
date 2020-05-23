@@ -241,6 +241,7 @@
     <ClInclude Include="..\..\util\AppInterface.h" />
     <ClInclude Include="..\..\util\CheckSums.h" />
     <ClInclude Include="..\..\util\Directories.h" />
+    <ClInclude Include="..\..\util\GalaxySetupData.h" />
     <ClInclude Include="..\..\util\ModeratorAction.h" />
     <ClInclude Include="..\..\util\MultiplayerCommon.h" />
     <ClInclude Include="..\..\util\GameRules.h" />
@@ -285,7 +286,7 @@
     <ClCompile Include="..\..\universe\Fighter.cpp" />
     <ClCompile Include="..\..\universe\ValueRefs.cpp" />
     <ClCompile Include="..\..\util\CheckSums.cpp" />
-    <ClCompile Include="..\..\util\EnumText.cpp" />
+    <ClCompile Include="..\..\util\GalaxySetupData.cpp" />
     <ClCompile Include="..\..\util\SaveGamePreviewUtils.cpp" />
     <ClCompile Include="..\..\util\ScopedTimer.cpp" />
     <ClCompile Include="..\..\util\StringTable.cpp" />

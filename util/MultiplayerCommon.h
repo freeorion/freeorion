@@ -1,81 +1,27 @@
 #ifndef _MultiplayerCommon_h_
 #define _MultiplayerCommon_h_
 
-#include "../universe/EnumsFwd.h"
-#include "../network/Networking.h"
-#include "Export.h"
-#include "OptionsDB.h"
-#include "OrderSet.h"
-#include "Pending.h"
-
-#include <GG/Clr.h>
-#include <GG/ClrConstants.h>
-
 #include <list>
+#include <map>
 #include <set>
 #include <vector>
-#include <map>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
+#include <boost/serialization/access.hpp>
+#include <GG/Clr.h>
+#include <GG/ClrConstants.h>
+#include "Export.h"
+#include "GalaxySetupData.h"
+#include "OptionsDB.h"
+#include "Pending.h"
+#include "Serialize.h"
+#include "../network/Networking.h"
+#include "../universe/EnumsFwd.h"
 
 
 FO_COMMON_API extern const std::string MP_SAVE_FILE_EXTENSION;
 FO_COMMON_API extern const std::string SP_SAVE_FILE_EXTENSION;
 FO_COMMON_API extern const int ALL_EMPIRES;
 FO_COMMON_API extern const int INVALID_GAME_TURN;
-
-
-/** The data that represent the galaxy setup for a new game. */
-struct FO_COMMON_API GalaxySetupData {
-    /** \name Structors */ //@{
-    GalaxySetupData();
-    GalaxySetupData(const GalaxySetupData&) = default;
-    GalaxySetupData(GalaxySetupData&& base);
-    //@}
-
-    /** \name Accessors */ //@{
-    const std::string&  GetSeed() const;
-    int                 GetSize() const;
-    Shape               GetShape() const;
-    GalaxySetupOption   GetAge() const;
-    GalaxySetupOption   GetStarlaneFreq() const;
-    GalaxySetupOption   GetPlanetDensity() const;
-    GalaxySetupOption   GetSpecialsFreq() const;
-    GalaxySetupOption   GetMonsterFreq() const;
-    GalaxySetupOption   GetNativeFreq() const;
-    Aggression          GetAggression() const;
-    const std::map<std::string, std::string>&
-                        GetGameRules() const;
-    const std::string&  GetGameUID() const;
-    //@}
-
-    /** \name Mutators */ //@{
-    void                SetSeed(const std::string& seed);
-    void                SetGameUID(const std::string& game_uid);
-    //@}
-
-    GalaxySetupData& operator=(const GalaxySetupData&) = default;
-
-    std::string         seed;
-    int                 size;
-    Shape               shape;
-    GalaxySetupOption   age;
-    GalaxySetupOption   starlane_freq;
-    GalaxySetupOption   planet_density;
-    GalaxySetupOption   specials_freq;
-    GalaxySetupOption   monster_freq;
-    GalaxySetupOption   native_freq;
-    Aggression          ai_aggr;
-    std::map<std::string, std::string>
-                        game_rules;
-    std::string         game_uid;
-
-    /** HACK! This must be set to the encoding empire's id when serializing a
-      * GalaxySetupData, so that only the relevant parts of the galaxy data are
-      * serialized.  The use of this local field is done just so I don't
-      * have to rewrite any custom boost::serialization classes that implement
-      * empire-dependent visibility. */
-    int                 encoding_empire; ///< used during serialization to globally set what empire knowledge to use
-};
 
 
 /** Contains the UI data that must be saved in save game files in order to

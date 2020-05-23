@@ -17,6 +17,7 @@
 #include "../universe/BuildingType.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
+#include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 
 #include <GG/GUI.h>

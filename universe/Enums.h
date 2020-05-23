@@ -131,45 +131,6 @@ GG_ENUM(MeterType,
     NUM_METER_TYPES
 )
 
-/** types of universe shapes during galaxy generation */
-GG_ENUM(Shape,
-    INVALID_SHAPE = -1,
-    SPIRAL_2,       ///< a two-armed spiral galaxy
-    SPIRAL_3,       ///< a three-armed spiral galaxy
-    SPIRAL_4,       ///< a four-armed spiral galaxy
-    CLUSTER,        ///< a cluster galaxy
-    ELLIPTICAL,     ///< an elliptical galaxy
-    DISC,           ///< a disc shaped galaxy
-    BOX,            ///< a rectangular shaped galaxy
-    IRREGULAR,      ///< an irregular galaxy
-    RING,           ///< a ring galaxy
-    RANDOM,         ///< a random one of the other shapes
-    GALAXY_SHAPES   ///< the number of shapes in this enum (leave this last)
-)
-
-/** levels of AI Aggression during galaxy generation */
-GG_ENUM(Aggression,
-    INVALID_AGGRESSION = -1,
-    BEGINNER,
-    TURTLE,         ///< Very Defensive
-    CAUTIOUS,       ///< Somewhat Defensive
-    TYPICAL,        ///< Typical
-    AGGRESSIVE,     ///< Aggressive
-    MANIACAL,       ///< Very Aggressive
-    NUM_AI_AGGRESSION_LEVELS
-)
-
-/** General-use option for galaxy setup picks with "more" or "less" options. */
-GG_ENUM(GalaxySetupOption,
-    INVALID_GALAXY_SETUP_OPTION = -1,
-    GALAXY_SETUP_NONE,
-    GALAXY_SETUP_LOW,
-    GALAXY_SETUP_MEDIUM,
-    GALAXY_SETUP_HIGH,
-    GALAXY_SETUP_RANDOM,
-    NUM_GALAXY_SETUP_OPTIONS
-)
-
 /** types of diplomatic empire affiliations to another empire*/
 GG_ENUM(EmpireAffiliationType,
     INVALID_EMPIRE_AFFIL_TYPE = -1,

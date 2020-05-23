@@ -1,6 +1,7 @@
 #include "ClientApp.h"
 
 #include "../util/Logger.h"
+#include "../util/MultiplayerCommon.h"
 #include "../universe/UniverseObject.h"
 #include "../universe/System.h"
 #include "../Empire/Empire.h"

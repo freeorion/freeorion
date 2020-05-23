@@ -59,6 +59,7 @@
 #include "../util/i18n.h"
 #include "../util/Logger.h"
 #include "../util/ModeratorAction.h"
+#include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 #include "../util/Order.h"
 #include "../util/Random.h"

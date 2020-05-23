@@ -181,6 +181,9 @@
     <ClInclude Include="..\..\util\i18n.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\util\GalaxySetupData.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\util\Logger.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
@@ -484,7 +487,7 @@
     <ClCompile Include="..\..\network\Message.cpp">
       <Filter>Source Files\network</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\util\EnumText.cpp">
+    <ClCompile Include="..\..\util\GalaxySetupData.cpp">
       <Filter>Source Files\util</Filter>
     </ClCompile>
     <ClCompile Include="..\..\util\SaveGamePreviewUtils.cpp">

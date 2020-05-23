@@ -1,13 +1,15 @@
 #ifndef _ClientApp_h_
 #define _ClientApp_h_
 
+
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Supply.h"
 #include "../network/Message.h"
 #include "../universe/Universe.h"
 #include "../util/OrderSet.h"
 #include "../util/AppInterface.h"
-#include "../util/MultiplayerCommon.h"
+#include "../util/GalaxySetupData.h"
+
 
 class ClientNetworking;
 

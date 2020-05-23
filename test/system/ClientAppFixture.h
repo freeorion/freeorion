@@ -2,6 +2,7 @@
 #define _ClientAppFixture_h_
 
 #include "client/ClientApp.h"
+#include "util/MultiplayerCommon.h"
 
 class ClientAppFixture : public ClientApp {
 public:
