@@ -588,7 +588,8 @@ def get_defense_value(species_name):
 
 
 def _base_asteroid_mining_val():
-    return 5 if tech_is_complete("PRO_MICROGRAV_MAN") else 3
+    """returns an estimation for the industry value of an asteroid belt for a colony in the system"""
+    return 2 if tech_is_complete("PRO_MICROGRAV_MAN") else 1
 
 
 def evaluate_planet(planet_id, mission_type, spec_name, detail=None, empire_research_list=None):
@@ -988,7 +989,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None, empire_rese
                             gg_factor = max(gg_factor, character.secondary_valuation_factor_for_invasion_targets())
         if asteroid_factor > 0.0:
             if tech_is_complete("PRO_MICROGRAV_MAN") or "PRO_MICROGRAV_MAN" in empire_research_list[:10]:
-                flat_industry += 5 * asteroid_factor  # will go into detailed industry projection
+                flat_industry += 2 * asteroid_factor  # will go into detailed industry projection
                 detail.append("Asteroid mining ~ %.1f" % (5 * asteroid_factor * discount_multiplier))
             if tech_is_complete("SHP_ASTEROID_HULLS") or "SHP_ASTEROID_HULLS" in empire_research_list[:11]:
                 if species and species.canProduceShips:
@@ -1018,6 +1019,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None, empire_rese
                 mining_bonus += 1
 
         has_blackhole = len(claimed_stars.get(fo.starType.blackHole, [])) > 0
+        ind_tech_map_flat = AIDependencies.INDUSTRY_EFFECTS_FLAT_NOT_MODIFIED_BY_SPECIES
         ind_tech_map_before_species_mod = AIDependencies.INDUSTRY_EFFECTS_PER_POP_MODIFIED_BY_SPECIES
         ind_tech_map_after_species_mod = AIDependencies.INDUSTRY_EFFECTS_PER_POP_NOT_MODIFIED_BY_SPECIES
 
@@ -1034,8 +1036,10 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None, empire_rese
                 ind_mult += ind_tech_map_after_species_mod[tech]
 
         max_ind_factor = 0
-        if tech_is_complete("PRO_SENTIENT_AUTOMATION"):
-            fixed_ind += discount_multiplier * 5
+        for tech in ind_tech_map_flat:
+            if tech_is_complete(tech):
+                fixed_ind += discount_multiplier * ind_tech_map_flat[tech]
+
         if FocusType.FOCUS_INDUSTRY in species.foci:
             if 'TIDAL_LOCK_SPECIAL' in planet.specials:
                 ind_mult += 1

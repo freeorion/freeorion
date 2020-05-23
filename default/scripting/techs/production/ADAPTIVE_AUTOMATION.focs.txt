@@ -1,14 +1,14 @@
 Tech
-    name = "PRO_SENTIENT_AUTOMATION"
-    description = "PRO_SENTIENT_AUTOMATION_DESC"
+    name = "PRO_ADAPTIVE_AUTOMATION"
+    description = "PRO_ADAPTIVE_AUTOMATION_DESC"
     short_description = "INDUSTRY_SHORT_DESC"
     category = "PRODUCTION_CATEGORY"
-    researchcost = 640 * [[TECH_COST_MULTIPLIER]]
-    researchturns = 8
+    researchcost = 100 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 5
     tags = [ "PEDIA_PRODUCTION_CATEGORY" ]
     prerequisites = [
-        "LRN_PSIONICS"
-        "PRO_ADAPTIVE_AUTOMATION"
+        "LRN_ALGO_ELEGANCE"
+        "PRO_NANOTECH_PROD"
     ]
     effectsgroups = [
         EffectsGroup
@@ -18,7 +18,7 @@ Tech
                 TargetPopulation low = 0.0001
             ]
             priority = [[VERY_LATE_PRIORITY]]
-            effects = SetTargetIndustry value = Value + 30 * [[INDUSTRY_PER_POP]]
+            effects = SetTargetIndustry value = Value + 10 * [[INDUSTRY_PER_POP]]
     ]
     graphic = "icons/tech/basic_autofactories.png"
 

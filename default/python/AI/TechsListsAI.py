@@ -6,6 +6,7 @@ researched next.
 from logging import warning, debug
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
+import AIDependencies as Dep
 
 
 def unusable_techs():
@@ -110,7 +111,7 @@ class TechGroup1(TechGroup):
             "GRO_PLANET_ECOL",
             "LRN_ALGO_ELEGANCE",
             "GRO_SUBTER_HAB",
-            "LRN_ARTIF_MINDS",
+            Dep.LRN_ARTIF_MINDS_1,
             "PRO_ROBOTIC_PROD",
         ])
         self.weapon.extend([
@@ -176,7 +177,6 @@ class TechGroup1SparseA(TechGroup1):
             self.weapon,
             self.weapon,
             self.weapon,
-
             "SHP_SPACE_FLUX_DRIVE",
             self.weapon,
         )
@@ -193,7 +193,7 @@ class TechGroup1SparseB(TechGroup1):
             "SHP_ZORTRIUM_PLATE",
             self.weapon,
             "PRO_NANOTECH_PROD",
-            "PRO_SENTIENT_AUTOMATION",
+            Dep.PRO_AUTO_1,
             "PRO_EXOBOTS",
             "CON_ORBITAL_CON",  # not a economy tech in the strictest sense but bonus supply often equals more planets
             "GRO_GENETIC_MED",
@@ -224,7 +224,7 @@ class TechGroup1SparseC(TechGroup1):
             "SHP_ORG_HULL",
             "SHP_MULTICELL_CAST",
             "PRO_NANOTECH_PROD",
-            "PRO_SENTIENT_AUTOMATION",
+            Dep.PRO_AUTO_1,
             self.weapon,
             "CON_ORBITAL_CON",  # not a economy tech in the strictest sense but bonus supply often equals more planets
             "GRO_GENETIC_MED",
@@ -252,13 +252,12 @@ class TechGroup2(TechGroup):
         super(TechGroup2, self).__init__()
         self.economy.extend([
             "PRO_FUSION_GEN",
-            "PRO_SENTIENT_AUTOMATION",
+            Dep.PRO_AUTO_1,
             "PRO_EXOBOTS",
             "GRO_SYMBIOTIC_BIO",
             "CON_ORBITAL_CON",  # not a economy tech in the strictest sense but bonus supply often equals more planets
             # "PRO_MICROGRAV_MAN",  # handled by fast-forwarding when we have asteroids
             # "PRO_ORBITAL_GEN",    # handled by fast-forwarding when we have a GG
-
         ])
         self.armor.extend([
             "SHP_ZORTRIUM_PLATE",
@@ -346,6 +345,7 @@ class TechGroup2SparseA(TechGroup2):
             self.economy,
             self.economy,
             self.economy,
+            Dep.LRN_ARTIF_MINDS_1,
             self.defense,
             self.defense,
             self.weapon,
@@ -369,6 +369,7 @@ class TechGroup2SparseB(TechGroup2):
             self.economy,
             self.economy,
             self.economy,
+            Dep.LRN_ARTIF_MINDS_1,
             self.defense,
             self.weapon,
             self.weapon,
@@ -394,8 +395,10 @@ class TechGroup3(TechGroup):
             "GRO_GENETIC_ENG",
             "GRO_GENETIC_MED",
             "GRO_XENO_GENETICS",
+            Dep.LRN_ARTIF_MINDS_2,
             "LRN_QUANT_NET",
             "PRO_SOL_ORB_GEN",
+            Dep.PRO_AUTO_2,
             "PRO_INDUSTRY_CENTER_II",
             "GRO_XENO_HYBRIDS",
             "CON_ORBITAL_HAB",
@@ -450,6 +453,7 @@ class TechGroup3A(TechGroup3):
             self.economy,
             self.economy,
             self.economy,
+            self.economy,
             self.defense,
             self.misc,
             self.defense,
@@ -459,6 +463,7 @@ class TechGroup3A(TechGroup3):
             self.economy,
             self.misc,
             self.hull,
+            self.economy,
             self.hull,
             self.misc,
             self.economy,
@@ -505,6 +510,7 @@ class TechGroup3B(TechGroup3):
             self.defense,
             self.economy,
             self.weapon,
+            self.economy,
             self.misc,
             self.misc,
             self.economy,
@@ -512,6 +518,7 @@ class TechGroup3B(TechGroup3):
             self.weapon,
             self.weapon,
             self.hull,
+            self.economy,
             self.hull,
             self.misc,
             self.economy,
@@ -552,7 +559,9 @@ class TechGroup3Sparse(TechGroup3):
             self.weapon,
             self.weapon,
             self.defense,
+            self.economy,
             self.defense,
+            self.economy,
             self.weapon,
             self.misc,
             self.misc,
@@ -697,13 +706,13 @@ def sparse_galaxy_techs(index):
         result += TechGroup4().get_techs()
         result += TechGroup5().get_techs()  #
     elif index == 1:
-        result = TechGroup1b().get_techs()  # early _lrn_artif_minds
+        result = TechGroup1b().get_techs()  # early lrn_nascent_ai
         result += TechGroup2B().get_techs()  # prioritizes growth & defense over weapons
         result += TechGroup3B().get_techs()
         result += TechGroup4().get_techs()
         result += TechGroup5().get_techs()  #
     elif index == 2:
-        result = TechGroup1SparseA().get_techs()  # early _lrn_artif_minds
+        result = TechGroup1SparseA().get_techs()  # early lrn_nascent_ai
         result += TechGroup2SparseA().get_techs()  # prioritizes growth & defense over weapons
         result += TechGroup3Sparse().get_techs()
         result += TechGroup4().get_techs()
@@ -715,7 +724,7 @@ def sparse_galaxy_techs(index):
         result += TechGroup4().get_techs()
         result += TechGroup5().get_techs()  #
     elif index == 4:
-        result = TechGroup1SparseC().get_techs()  # early pro_sent_auto
+        result = TechGroup1SparseC().get_techs()  # early pro_adaptive_auto
         result += TechGroup2SparseB().get_techs()
         result += TechGroup3B().get_techs()  # faster plasma weaps
         result += TechGroup4().get_techs()
@@ -818,7 +827,7 @@ def primary_meta_techs(index=0):
 # "GRO_XENO_GENETICS",
 # "GRO_XENO_HYBRIDS",
 # "LRN_ALGO_ELEGANCE",
-# "LRN_ARTIF_MINDS",
+# "LRN_ARTIF_MINDS", Dep.LRN_ARTIF_MINDS_2
 # "LRN_ART_BLACK_HOLE",
 # "LRN_DISTRIB_THOUGHT",
 # "LRN_ENCLAVE_VOID",
@@ -827,6 +836,7 @@ def primary_meta_techs(index=0):
 # "LRN_GATEWAY_VOID",
 # "LRN_GRAVITONICS",
 # "LRN_MIND_VOID",
+# "LRN_NASCENT_AI", Dep.LRN_ARTIF_MINDS_1
 # "LRN_NDIM_SUBSPACE",
 # "LRN_OBSERVATORY_I",
 # "LRN_PHYS_BRAIN",
@@ -840,6 +850,7 @@ def primary_meta_techs(index=0):
 # "LRN_TRANSLING_THT",
 # "LRN_UNIF_CONC",
 # "LRN_XENOARCH",
+# "PRO_ADAPTIVE_AUTOMATION", Dep.PRO_AUTO_1
 # "PRO_EXOBOTS",
 # "PRO_FUSION_GEN",
 # "PRO_INDUSTRY_CENTER_I",
@@ -851,7 +862,7 @@ def primary_meta_techs(index=0):
 # "PRO_NEUTRONIUM_EXTRACTION",
 # "PRO_ORBITAL_GEN",
 # "PRO_ROBOTIC_PROD",
-# "PRO_SENTIENT_AUTOMATION",
+# "PRO_SENTIENT_AUTOMATION", Dep.PRO_AUTO_2
 # "PRO_SINGULAR_GEN",
 # "PRO_SOL_ORB_GEN",
 # "PRO_ZERO_GEN",
