@@ -224,6 +224,8 @@ public:
                                                             const std::string& desired_tech,
                                                             int empire_id);
 
+    size_t                          size() const;
+
     /** iterator to the first tech */
     iterator                        begin() const;
 

@@ -381,6 +381,9 @@ const Tech* TechManager::CheapestNextTechTowards(const std::set<std::string>& kn
                                                  int empire_id)
 { return Cheapest(NextTechsTowards(known_techs, desired_tech, empire_id), empire_id); }
 
+size_t TechManager::size() const
+{ return m_techs.size(); }
+
 TechManager::iterator TechManager::begin() const {
     CheckPendingTechs();
     return m_techs.get<NameIndex>().begin();
