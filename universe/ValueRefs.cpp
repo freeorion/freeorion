@@ -1113,16 +1113,12 @@ std::vector<std::string> Variable<std::vector<std::string>>::Eval(
     }
 
     if (property_name == "Tags") {
-        std::vector<std::string> retval;
-        for (auto tag : object->Tags())
-            retval.push_back(tag);
-        return retval;
+        auto tags = object->Tags();
+        return {tags.begin(), tags.end()};
     }
     else if (property_name == "Specials") {
-        std::vector<std::string> retval;
-        for (auto spec : object->Specials())
-            retval.push_back(spec.first);
-        return retval;
+        auto obj_special_names_range = object->Specials() | boost::adaptors::map_keys;
+        return {obj_special_names_range.begin(), obj_special_names_range.end()};
     }
     else if (property_name == "AvailableFoci") {
         if (auto planet = std::dynamic_pointer_cast<const Planet>(object))
@@ -2034,25 +2030,22 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
 
 namespace {
     std::vector<std::string> TechsResearchedByEmpire(int empire_id) {
-        std::vector<std::string> retval;
         const Empire* empire = GetEmpire(empire_id);
-        if (!empire)
-            return retval;
-        for (const auto& tech : GetTechManager()) {
-            if (empire->TechResearched(tech->Name()))
-                retval.push_back(tech->Name());
-        }
-        return retval;
+        if (!empire) return {};
+
+        auto researched_techs_range = empire->ResearchedTechs() | boost::adaptors::map_keys;
+        return {researched_techs_range.begin(), researched_techs_range.end()};
     }
 
     std::vector<std::string> TechsResearchableByEmpire(int empire_id) {
-        std::vector<std::string> retval;
         const Empire* empire = GetEmpire(empire_id);
-        if (!empire)
-            return retval;
+        if (!empire) return {};
+
+        std::vector<std::string> retval;
+        retval.reserve(GetTechManager().size());
         for (const auto& tech : GetTechManager()) {
-            if (empire->ResearchableTech(tech->Name()))
-                retval.push_back(tech->Name());
+            if (tech && empire->ResearchableTech(tech->Name()))
+                retval.emplace_back(tech->Name());
         }
         return retval;
     }
