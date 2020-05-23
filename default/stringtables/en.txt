@@ -8431,7 +8431,7 @@ SP_EXOBOT
 Exobot
 
 SP_EXOBOT_GAMEPLAY_DESC
-'''Semi-autonomous robots, designed for industry on [[PT_BARREN]], [[PT_RADIATED]], and [[PT_INFERNO]] planets.
+'''Semi-autonomous robots, built adapted to work on planets of any kind of environment.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
 '''
 
@@ -11272,9 +11272,9 @@ Robotic Production
 PRO_ROBOTIC_PROD_DESC
 '''Increases [[metertype METER_TARGET_INDUSTRY]] on all planets with the Industry focus by 0.05 per [[metertype METER_POPULATION]].
 
-Exobots, as they become commonly known, are a marvel of form meets function. They are robots designed to fulfill nearly any manufacturing job, in fields as wide ranging as electronics to large-scale construction. Easily mass produced, they serve best on colonies that place a high priority on industry. Every world focused primarily on industry receives a team of Exobots, greatly increasing industrial production.
+Robots designed to fulfill nearly any job, in fields as wide ranging as electronics to large-scale construction, improve the performance of the worlds focused primarily on industry.
 
-Although high level initial design and initial facility setup still require active supervision, the elimination of operators from the actual production process eliminates many bottlenecks. Robots work continuously, without perpetual demands for greater economic compensation. Robots have much greater tolerance for hazardous environmental conditions in the factory, and do not require additional habitable space off-site. Robots perform their assigned tasks flawlessly, or at least as well as they are instructed.'''
+Although high level design and initial facility setup still require active supervision, the elimination of operators from the actual production process eliminates many bottlenecks. Robots work continuously and have much greater tolerance for hazardous environmental conditions in the factory, and do not require additional habitable space off-site. Robots perform their assigned tasks flawlessly, or at least as well as they are instructed.'''
 
 PRO_EXOBOTS
 Exobots
