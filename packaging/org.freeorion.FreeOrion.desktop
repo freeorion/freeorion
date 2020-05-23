@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Name=FreeOrion
+GenericName=Turn-based space strategy game
+Comment=Turn-based space empire and galactic conquest (4X) computer game (client)
+Exec=freeorion
+TryExec=freeorion
+Icon=freeorion
+StartupNotify=false
+Terminal=false
+Type=Application
+Categories=Game;StrategyGame;
+Keywords=space;strategy;empire;galaxy;turn-based;aliens;species;planets;fleet;research;resources;

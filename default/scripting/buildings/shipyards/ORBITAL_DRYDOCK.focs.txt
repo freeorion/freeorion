@@ -34,12 +34,9 @@ BuildingType
                 ]
                 Structure high = LocalCandidate.MaxStructure - 0.001
             ]
-            activation = And [
-                Source
-                ContainedBy And [
-                    [[PLANET_OWNED_DRYDOCK_HIGHEST_HAPPINESS]]
-                    Population high = 0
-                ]
+            activation = ContainedBy And [
+                [[PLANET_OWNED_DRYDOCK_HIGHEST_HAPPINESS]]
+                Population high = 0
             ]
             stackinggroup = "SHIP_REPAIR"
             priority = 75

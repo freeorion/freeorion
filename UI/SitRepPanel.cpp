@@ -12,7 +12,6 @@
 #include "../util/SitRepEntry.h"
 #include "../universe/ShipDesign.h"
 
-#include <GG/DrawUtil.h>
 #include <GG/Layout.h>
 
 #include <boost/lexical_cast.hpp>
@@ -249,14 +248,13 @@ namespace {
             m_link_text->SetDecorator(TextLinker::BROWSE_PATH_TAG, new PathTypeDecorator());
             AttachChild(m_link_text);
 
-            m_link_text->LinkClickedSignal.connect(
-                &HandleLinkClick);
-            m_link_text->LinkDoubleClickedSignal.connect(
-                &HandleLinkClick);
-            m_link_text->LinkRightClickedSignal.connect(
-                &HandleLinkClick);
+            namespace ph = boost::placeholders;
+
+            m_link_text->LinkClickedSignal.connect(&HandleLinkClick);
+            m_link_text->LinkDoubleClickedSignal.connect(&HandleLinkClick);
+            m_link_text->LinkRightClickedSignal.connect(&HandleLinkClick);
             m_link_text->RightClickedSignal.connect(
-                boost::bind(&SitRepDataPanel::RClick, this, _1, _2));
+                boost::bind(&SitRepDataPanel::RClick, this, ph::_1, ph::_2));
 
             DoLayout(UpperLeft(), Width());
         }
@@ -309,8 +307,8 @@ namespace {
         }
 
         const SitRepEntry&                  m_sitrep_entry;
-        std::shared_ptr<GG::StaticGraphic>  m_icon = nullptr;
-        std::shared_ptr<SitRepLinkText>     m_link_text = nullptr;
+        std::shared_ptr<GG::StaticGraphic>  m_icon;
+        std::shared_ptr<SitRepLinkText>     m_link_text;
     };
 
     ////////////////////////////////////////////////
@@ -320,7 +318,7 @@ namespace {
     class SitRepRow : public GG::ListBox::Row {
     public:
         SitRepRow(GG::X w, GG::Y h, const SitRepEntry& sitrep) :
-            GG::ListBox::Row(w, h, ""),
+            GG::ListBox::Row(w, h),
             m_sitrep(sitrep)
         {
             SetName("SitRepRow");
@@ -359,14 +357,15 @@ namespace {
                                                        ClientWidth() - GG::X(2 * GetLayout()->BorderMargin()),
                                                        ClientHeight() - GG::Y(2 * GetLayout()->BorderMargin()), m_sitrep);
             push_back(m_panel);
+            namespace ph = boost::placeholders;
             m_panel->RightClickedSignal.connect(
-                boost::bind(&SitRepRow::RClick, this, _1, _2));
+                boost::bind(&SitRepRow::RClick, this, ph::_1, ph::_2));
         }
 
         const SitRepEntry& GetSitRepEntry() const { return m_panel->GetSitRepEntry(); }
 
     private:
-        std::shared_ptr<SitRepDataPanel>    m_panel = nullptr;
+        std::shared_ptr<SitRepDataPanel>    m_panel;
         const SitRepEntry                   m_sitrep;
     };
 }
@@ -399,18 +398,16 @@ void SitRepPanel::CompleteConstruction() {
     m_filter_button = Wnd::Create<CUIButton>(UserString("FILTERS"));
     AttachChild(m_filter_button);
 
-    m_prev_turn_button->LeftClickedSignal.connect(
-        boost::bind(&SitRepPanel::PrevClicked, this));
-    m_next_turn_button->LeftClickedSignal.connect(
-        boost::bind(&SitRepPanel::NextClicked, this));
-    m_last_turn_button->LeftClickedSignal.connect(
-        boost::bind(&SitRepPanel::LastClicked, this));
-    m_filter_button->LeftClickedSignal.connect(
-        boost::bind(&SitRepPanel::FilterClicked, this));
-    m_sitreps_lb->DoubleClickedRowSignal.connect(
-        boost::bind(&SitRepPanel::IgnoreSitRep, this, _1, _2, _3));
-    m_sitreps_lb->RightClickedRowSignal.connect(
-        boost::bind(&SitRepPanel::DismissalMenu, this, _1, _2, _3));
+    using boost::placeholders::_1;
+    using boost::placeholders::_2;
+    using boost::placeholders::_3;
+
+    m_prev_turn_button->LeftClickedSignal.connect(boost::bind(&SitRepPanel::PrevClicked, this));
+    m_next_turn_button->LeftClickedSignal.connect(boost::bind(&SitRepPanel::NextClicked, this));
+    m_last_turn_button->LeftClickedSignal.connect(boost::bind(&SitRepPanel::LastClicked, this));
+    m_filter_button->LeftClickedSignal.connect(boost::bind(&SitRepPanel::FilterClicked, this));
+    m_sitreps_lb->DoubleClickedRowSignal.connect(boost::bind(&SitRepPanel::IgnoreSitRep, this, _1, _2, _3));
+    m_sitreps_lb->RightClickedRowSignal.connect(boost::bind(&SitRepPanel::DismissalMenu, this, _1, _2, _3));
 
     CUIWnd::CompleteConstruction();
 
@@ -529,10 +526,11 @@ int SitRepPanel::GetNextNonEmptySitrepsTurn(std::map<int, std::list<SitRepEntry>
     if (turns.size() == 0)
         return INVALID_GAME_TURN;
 
+    using boost::placeholders::_1;
+
     // Only one turn with visible sitreps
     if (turns.size() == 1) {
-        turns.begin()->second.remove_if(std::bind(&SitRepPanel::IsSitRepInvalid,
-                                                  this, std::placeholders::_1));
+        turns.begin()->second.remove_if(boost::bind(&SitRepPanel::IsSitRepInvalid, this, _1));
         // With no valid sitreps
         if (turns.begin()->second.empty()) {
             turns.clear();
@@ -556,8 +554,7 @@ int SitRepPanel::GetNextNonEmptySitrepsTurn(std::map<int, std::list<SitRepEntry>
     int step = forward ? 1 : -1;
 
     while (it != turns.end()) {
-        it->second.remove_if(std::bind(&SitRepPanel::IsSitRepInvalid,
-                                       this, std::placeholders::_1));
+        it->second.remove_if(boost::bind(&SitRepPanel::IsSitRepInvalid, this, _1));
 
         // If any valid sitreps, then exit
         if (!it->second.empty())
@@ -589,8 +586,10 @@ void SitRepPanel::NextClicked() {
     ShowSitRepsForTurn(GetNextNonEmptySitrepsTurn(turns, m_showing_turn, true));
 }
 
-void SitRepPanel::LastClicked()
-{ ShowSitRepsForTurn(CurrentTurn()); }
+void SitRepPanel::LastClicked() {
+    auto turns = GetUnvalidatedSitRepsSortedByTurn(HumanClientApp::GetApp()->EmpireID());
+    ShowSitRepsForTurn(GetNextNonEmptySitrepsTurn(turns, CurrentTurn(), false));    // search backwards from current turn for a non-empty sitrep turn
+}
 
 void SitRepPanel::FilterClicked() {
     std::map<int, std::string> menu_index_templates;
@@ -854,7 +853,7 @@ void SitRepPanel::SetHiddenSitRepTemplates(const std::set<std::string>& template
 int SitRepPanel::NumVisibleSitrepsThisTurn() const {
     auto turns = GetUnvalidatedSitRepsSortedByTurn(HumanClientApp::GetApp()->EmpireID());
     auto& turn = turns[CurrentTurn()];
-    turn.remove_if(std::bind(&SitRepPanel::IsSitRepInvalid, this, std::placeholders::_1));
+    turn.remove_if(boost::bind(&SitRepPanel::IsSitRepInvalid, this, boost::placeholders::_1));
     return turn.size();
 }
 

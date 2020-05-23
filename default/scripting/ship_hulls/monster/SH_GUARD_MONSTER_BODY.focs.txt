@@ -3,6 +3,7 @@ Hull
     description = "SH_GUARD_MONSTER_BODY_DESC"
     speed = 0
     fuel = 0
+    NoDefaultFuelEffect
     stealth = 5
     structure = 35
     slots = [
@@ -22,7 +23,6 @@ Hull
         [[UNOWNED_OWNED_VISION_BONUS(MODERATE,40,30)]]
         EffectsGroup
             scope = Source
-            activation = Source
             effects = [
                 SetMaxDamage partname = "SR_WEAPON_0_1" value = Value + 1
                 SetMaxDamage partname = "SR_WEAPON_4_1" value = Value + 5

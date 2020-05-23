@@ -13,7 +13,7 @@ from AIDependencies import INVALID_ID
 from aistate_interface import get_aistate
 from CombatRatingsAI import combine_ratings, combine_ratings_list, rating_difference
 from EnumsAI import MissionType
-from freeorion_tools import cache_by_turn
+from freeorion_tools import cache_by_turn_persistent
 from target import TargetSystem
 from turn_state import state
 
@@ -153,7 +153,7 @@ def avail_mil_needing_repair(mil_fleet_ids, split_ships=False, on_mission=False,
 
 
 # TODO Move relevant initialization code from get_military_fleets into this class
-class AllocationHelper(object):
+class AllocationHelper:
 
     def __init__(self, already_assigned_rating, already_assigned_rating_vs_planets, available_rating, try_reset):
         """
@@ -194,7 +194,7 @@ class AllocationHelper(object):
             self._remaining_rating = rating_difference(self._remaining_rating, min_rating)
 
 
-class Allocator(object):
+class Allocator:
     """
     Base class for Military allocation for a single system.
 
@@ -705,7 +705,7 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
         else:
             try:
                 capital_sys_id = next(iter(aistate.fleetStatus.items()))[1]['sysID']
-            except:
+            except:  # noqa: E722
                 pass
 
     num_targets = max(10, PriorityAI.allotted_outpost_targets)
@@ -715,7 +715,7 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
                            if pscore > InvasionAI.MIN_INVASION_SCORE] +
                           [pid for pid, (pscore, spec) in list(aistate.colonisablePlanetIDs.items())[:num_targets]
                            if pscore > InvasionAI.MIN_INVASION_SCORE])
-    top_target_planets.extend(aistate.qualifyingTroopBaseTargets.keys())  # pylint: disable=dict-keys-not-iterating; # PY_3_MIGRATION
+    top_target_planets.extend(aistate.qualifyingTroopBaseTargets.keys())
 
     base_col_target_systems = PlanetUtilsAI.get_systems(top_target_planets)
     top_target_systems = []
@@ -971,7 +971,7 @@ def assign_military_fleets_to_systems(use_fleet_id_list=None, allocations=None, 
                 fleet_mission.generate_fleet_orders()
 
 
-@cache_by_turn
+@cache_by_turn_persistent
 def get_tot_mil_rating():
     """
     Give an assessment of total military rating considering all fleets as if distributed to separate systems.
@@ -983,7 +983,7 @@ def get_tot_mil_rating():
                for fleet_id in FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.MILITARY))
 
 
-@cache_by_turn
+@cache_by_turn_persistent
 def get_concentrated_tot_mil_rating():
     """
     Give an assessment of total military rating as if all fleets were merged into a single mega-fleet.
@@ -995,7 +995,7 @@ def get_concentrated_tot_mil_rating():
                                                  FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.MILITARY)])
 
 
-@cache_by_turn
+@cache_by_turn_persistent
 def get_num_military_ships():
     fleet_status = get_aistate().fleetStatus
     return sum(fleet_status.get(fid, {}).get('nships', 0)

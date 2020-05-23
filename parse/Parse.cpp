@@ -6,7 +6,7 @@
 #include "EnumParser.h"
 #include "ValueRefParser.h"
 
-#include "../universe/Tech.h"
+#include "../universe/UnlockableItem.h"
 #include "../util/Logger.h"
 #include "../util/Directories.h"
 
@@ -23,7 +23,7 @@
 namespace std {
     inline ostream& operator<<(ostream& os, const std::vector<Effect::Effect*>&) { return os; }
     inline ostream& operator<<(ostream& os, const GG::Clr&) { return os; }
-    inline ostream& operator<<(ostream& os, const ItemSpec&) { return os; }
+    inline ostream& operator<<(ostream& os, const UnlockableItem&) { return os; }
 }
 #endif
 
@@ -214,40 +214,6 @@ namespace parse {
 
         // no problems?
         return true;
-    }
-
-    /**  \brief Return a vector of absolute paths to script files in the given path
-     * 
-     * @param[in] path relative or absolute directory (searched recursively)
-     * @return Any *.focs.txt files in path or 'GetResourceDir() / path'.
-     */
-    std::vector<boost::filesystem::path> ListScripts(const boost::filesystem::path& path, bool allow_permissive) {
-        std::vector<boost::filesystem::path> scripts;
-
-        try {
-            const auto& files = ListDir(path);
-            for (const auto& file : files) {
-                std::string fn_ext = file.extension().string();
-                std::string fn_stem_ext = file.stem().extension().string();
-                if (fn_ext == ".txt" && fn_stem_ext == ".focs") {
-                    scripts.push_back(file);
-                } else {
-                    TraceLogger() << "Parse: Skipping file " << file.string()
-                                  << " due to extension (" << fn_stem_ext << fn_ext << ")";
-                }
-            }
-
-            // If in permissive mode and no scripts are found allow all files to be scripts.
-            if (allow_permissive && scripts.empty() && !files.empty()) {
-                WarnLogger() << PathToString(path) << " does not contain scripts with the expected suffix .focs.txt. "
-                             << " Trying a more permissive mode and ignoring file suffix.";
-                scripts = files;
-            }
-        } catch (const boost::filesystem::filesystem_error& ec) {
-            ErrorLogger() << "Error accessing file " << ec.path1() << " (" << ec.what() << ")";
-        }
-
-        return scripts;
     }
 
     const sregex FILENAME_TEXT = -+_;   // any character, one or more times, not greedy
@@ -487,11 +453,8 @@ namespace parse {
 #endif
     }
 
-    item_spec_grammar::item_spec_grammar(
-        const parse::lexer& tok,
-        Labeller& label
-    ) :
-        item_spec_grammar::base_type(start, "item_spec_grammar"),
+    unlockable_item_grammar::unlockable_item_grammar(const parse::lexer& tok, Labeller& label) :
+        unlockable_item_grammar::base_type(start, "unlockable_item_grammar"),
         unlockable_item_type_enum(tok)
     {
         namespace phoenix = boost::phoenix;
@@ -508,10 +471,10 @@ namespace parse {
             =  ( omit_[tok.Item_]
             >    label(tok.Type_) > unlockable_item_type_enum
             >    label(tok.Name_) > tok.string
-               ) [ _val = construct<ItemSpec>(_1, _2) ]
+               ) [ _val = construct<UnlockableItem>(_1, _2) ]
             ;
 
-        start.name("ItemSpec");
+        start.name("UnlockableItem");
 
 #if DEBUG_PARSERS
         debug(start);
@@ -519,67 +482,64 @@ namespace parse {
     }
 
 
-        /** \brief Load and parse script file(s) from given path
-         * 
-         * @param[in] path absolute path to a regular file
-         * @param[in] l lexer instance to use
-         * @param[out] filename filename of the given path
-         * @param[out] file_contents parsed contents of file(s)
-         * @param[out] first content iterator
-         * @param[out] it lexer iterator
-         */
-        void parse_file_common(const boost::filesystem::path& path, const parse::lexer& lexer,
-                               std::string& filename, std::string& file_contents,
-                               parse::text_iterator& first, parse::text_iterator& last, parse::token_iterator& it)
-        {
-            filename = path.string();
+    /** \brief Load and parse script file(s) from given path
+        * 
+        * @param[in] path absolute path to a regular file
+        * @param[in] l lexer instance to use
+        * @param[out] filename filename of the given path
+        * @param[out] file_contents parsed contents of file(s)
+        * @param[out] first content iterator
+        * @param[out] it lexer iterator
+        */
+    void parse_file_common(const boost::filesystem::path& path, const parse::lexer& lexer,
+                            std::string& filename, std::string& file_contents,
+                            parse::text_iterator& first, parse::text_iterator& last, parse::token_iterator& it)
+    {
+        filename = path.string();
 
-            bool read_success = read_file(path, file_contents);
-            if (!read_success) {
-                ErrorLogger() << "Unable to open data file " << filename;
-                return;
-            }
-
-            // add newline at end to avoid errors when one is left out, but is expected by parsers
-            file_contents += "\n";
-
-            file_substitution(file_contents, path.parent_path());
-            macro_substitution(file_contents);
-
-            first = file_contents.begin();
-            last = file_contents.end();
-
-            it = lexer.begin(first, last);
+        bool read_success = read_file(path, file_contents);
+        if (!read_success) {
+            ErrorLogger() << "Unable to open data file " << filename;
+            return;
         }
 
+        // add newline at end to avoid errors when one is left out, but is expected by parsers
+        file_contents += "\n";
 
-        bool parse_file_end_of_file_warnings(const boost::filesystem::path& path,
-                                             bool parser_success,
-                                             std::string& file_contents,
-                                             text_iterator& first,
-                                             text_iterator& last)
-        {
-            if (!parser_success)
-                WarnLogger() << "A parser failed while parsing " << path;
+        file_substitution(file_contents, path.parent_path());
+        macro_substitution(file_contents);
 
-            auto length_of_unparsed_file = std::distance(first, last);
-            bool parse_length_good = ((length_of_unparsed_file == 0)
-                                      || (length_of_unparsed_file == 1 && *first == '\n'));
+        first = file_contents.begin();
+        last = file_contents.end();
 
-            if (!parse_length_good
-                && length_of_unparsed_file > 0
-                && static_cast<std::string::size_type>(length_of_unparsed_file) <= file_contents.size())
-            {
-                auto unparsed_section = file_contents.substr(file_contents.size() - std::abs(length_of_unparsed_file));
-                std::copy(first, last, std::back_inserter(unparsed_section));
-                WarnLogger() << "File \"" << path << "\" was incompletely parsed. " << std::endl
-                             << "Unparsed section of file, " << length_of_unparsed_file <<" characters:" << std::endl
-                             << unparsed_section;
-            }
-
-            return parser_success && parse_length_good;
-
-        }
-
+        it = lexer.begin(first, last);
     }
-}
+
+
+    bool parse_file_end_of_file_warnings(const boost::filesystem::path& path,
+                                            bool parser_success,
+                                            std::string& file_contents,
+                                            text_iterator& first,
+                                            text_iterator& last)
+    {
+        if (!parser_success)
+            WarnLogger() << "A parser failed while parsing " << path;
+
+        auto length_of_unparsed_file = std::distance(first, last);
+        bool parse_length_good = ((length_of_unparsed_file == 0)
+                                    || (length_of_unparsed_file == 1 && *first == '\n'));
+
+        if (!parse_length_good
+            && length_of_unparsed_file > 0
+            && static_cast<std::string::size_type>(length_of_unparsed_file) <= file_contents.size())
+        {
+            auto unparsed_section = file_contents.substr(file_contents.size() - std::abs(length_of_unparsed_file));
+            std::copy(first, last, std::back_inserter(unparsed_section));
+            WarnLogger() << "File \"" << path << "\" was incompletely parsed. " << std::endl
+                            << "Unparsed section of file, " << length_of_unparsed_file <<" characters:" << std::endl
+                            << unparsed_section;
+        }
+
+        return parser_success && parse_length_good;
+    }
+}}

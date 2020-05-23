@@ -12,7 +12,6 @@
 #include "../util/Directories.h"
 #include "../util/Logger.h"
 
-#include <GG/DrawUtil.h>
 #include <GG/GUI.h>
 
 #include <limits>
@@ -46,8 +45,7 @@ CUI_MinRestoreButton::CUI_MinRestoreButton() :
     GG::Button("", nullptr, ClientUI::WndInnerBorderColor()),
     m_mode(Mode::MINIMIZE)
 {
-    LeftClickedSignal.connect(
-        boost::bind(&CUI_MinRestoreButton::Toggle, this));
+    LeftClickedSignal.connect(boost::bind(&CUI_MinRestoreButton::Toggle, this));
 }
 
 void CUI_MinRestoreButton::Render() {
@@ -143,10 +141,10 @@ const GG::X CUIWnd::BORDER_LEFT(5);
 const GG::X CUIWnd::BORDER_RIGHT(5);
 const GG::Y CUIWnd::BORDER_BOTTOM(5);
 const int CUIWnd::OUTER_EDGE_ANGLE_OFFSET = 8;
-const int CUIWnd::INNER_BORDER_ANGLE_OFFSET = 11;
-const int CUIWnd::TITLE_OFFSET = 3;
-const int CUIWnd::RESIZE_HASHMARK1_OFFSET = 7;
-const int CUIWnd::RESIZE_HASHMARK2_OFFSET = 3;
+const int CUIWnd::INNER_BORDER_ANGLE_OFFSET = 15;
+const int CUIWnd::TITLE_OFFSET = 2;
+const int CUIWnd::RESIZE_HASHMARK1_OFFSET = 9;
+const int CUIWnd::RESIZE_HASHMARK2_OFFSET = 4;
 
 CUIWnd::CUIWnd(const std::string& wnd_name,
                GG::X x, GG::Y y,
@@ -319,12 +317,14 @@ void CUIWnd::Render() {
 
     } else {
         bool flashing = m_flashing && static_cast<int>(GG::GUI::GetGUI()->Ticks()) % (m_flash_duration * 2) > m_flash_duration;
+        auto focus_wnd = GG::GUI::GetGUI()->FocusWnd();
+        bool highlight = (focus_wnd.get() == this || this->IsAncestorOf(focus_wnd));
 
-        flashing ? glColor(GG::LightColor(ClientUI::WndColor())) : glColor(ClientUI::WndColor());
+        flashing ? glColor(GG::LightenClr(ClientUI::WndColor())) : glColor(ClientUI::WndColor());
         glDrawArrays(GL_TRIANGLE_FAN,   m_buffer_indices[1].first, m_buffer_indices[1].second);
-        flashing ? glColor(GG::LightColor(ClientUI::WndOuterBorderColor())) : glColor(ClientUI::WndOuterBorderColor());
+        flashing || highlight ? glColor(GG::LightenClr(ClientUI::WndOuterBorderColor())) : glColor(ClientUI::WndOuterBorderColor());
         glDrawArrays(GL_LINE_LOOP,      m_buffer_indices[1].first, m_buffer_indices[1].second);
-        flashing ? glColor(GG::LightColor(ClientUI::WndInnerBorderColor())) : glColor(ClientUI::WndInnerBorderColor());
+        flashing ? glColor(GG::LightenClr(ClientUI::WndInnerBorderColor())) : glColor(ClientUI::WndInnerBorderColor());
         glDrawArrays(GL_LINE_LOOP,      m_buffer_indices[2].first, m_buffer_indices[2].second);
 
         if (m_resizable) {
@@ -461,8 +461,7 @@ void CUIWnd::InitButtons() {
         m_close_button->LeftClickedSignal.connect(-1,
             &PlayCloseSound);
         m_close_button->Resize(GG::Pt(GG::X(ClientUI::TitlePts()), GG::Y(ClientUI::TitlePts())));
-        m_close_button->LeftClickedSignal.connect(
-            boost::bind(&CUIWnd::CloseClicked, this));
+        m_close_button->LeftClickedSignal.connect(boost::bind(&CUIWnd::CloseClicked, this));
         AttachChild(m_close_button);
         m_close_button->NonClientChild(true);
     }
@@ -471,8 +470,7 @@ void CUIWnd::InitButtons() {
     if (m_minimizable) {
         m_minimize_button = Wnd::Create<CUI_MinRestoreButton>();
         m_minimize_button->Resize(GG::Pt(GG::X(ClientUI::TitlePts()), GG::Y(ClientUI::TitlePts())));
-        m_minimize_button->LeftClickedSignal.connect(
-            boost::bind(&CUIWnd::MinimizeClicked, this));
+        m_minimize_button->LeftClickedSignal.connect(boost::bind(&CUIWnd::MinimizeClicked, this));
         AttachChild(m_minimize_button);
         m_minimize_button->NonClientChild(true);
     }
@@ -481,8 +479,7 @@ void CUIWnd::InitButtons() {
     if (m_pinable) {
         m_pin_button = Wnd::Create<CUI_PinButton>();
         m_pin_button->Resize(GG::Pt(GG::X(ClientUI::TitlePts()), GG::Y(ClientUI::TitlePts())));
-        m_pin_button->LeftClickedSignal.connect(
-            boost::bind(&CUIWnd::PinClicked, this));
+        m_pin_button->LeftClickedSignal.connect(boost::bind(&CUIWnd::PinClicked, this));
         AttachChild(m_pin_button);
         m_pin_button->NonClientChild(true);
     }
@@ -498,7 +495,7 @@ GG::X CUIWnd::LeftBorder() const
 { return BORDER_LEFT; }
 
 GG::Y CUIWnd::TopBorder() const
-{ return GG::Y(ClientUI::TitlePts()*3/2); }
+{ return GG::Y(ClientUI::TitlePts() + TITLE_OFFSET*4); }
 
 GG::X CUIWnd::RightBorder() const
 { return BORDER_RIGHT; }
@@ -726,10 +723,10 @@ void CUIWnd::SaveOptions() const {
     std::string window_mode = db.Get<bool>("video.fullscreen.enabled") ?
                               ".fullscreen" : ".windowed";
 
-    db.Set<int>(option_prefix + window_mode + ".left",     Value(RelativeUpperLeft().x));
-    db.Set<int>(option_prefix + window_mode + ".top",      Value(RelativeUpperLeft().y));
-    db.Set<int>(option_prefix + window_mode + ".width",         Value(size.x));
-    db.Set<int>(option_prefix + window_mode + ".height",        Value(size.y));
+    db.Set<int>(option_prefix + window_mode + ".left",      Value(RelativeUpperLeft().x));
+    db.Set<int>(option_prefix + window_mode + ".top",       Value(RelativeUpperLeft().y));
+    db.Set<int>(option_prefix + window_mode + ".width",     Value(size.x));
+    db.Set<int>(option_prefix + window_mode + ".height",    Value(size.y));
 
     if (!Modal()) {
         db.Set<bool>(option_prefix + ".visible", Visible());
@@ -958,10 +955,8 @@ void CUIEditWnd::CompleteConstruction() {
     AttachChild(m_ok_bn);
     AttachChild(m_cancel_bn);
 
-    m_ok_bn->LeftClickedSignal.connect(
-        boost::bind(&CUIEditWnd::OkClicked, this));
-    m_cancel_bn->LeftClickedSignal.connect(
-        boost::bind(&CUIWnd::CloseClicked, static_cast<CUIWnd*>(this)));
+    m_ok_bn->LeftClickedSignal.connect(boost::bind(&CUIEditWnd::OkClicked, this));
+    m_cancel_bn->LeftClickedSignal.connect(boost::bind(&CUIWnd::CloseClicked, static_cast<CUIWnd*>(this)));
 
     m_edit->SelectAll();
 }

@@ -15,7 +15,6 @@
 
 #include <GG/Button.h>
 #include <GG/Clr.h>
-#include <GG/DrawUtil.h>
 #include <GG/dialogs/ThreeButtonDlg.h>
 
 #include <boost/filesystem/operations.hpp>
@@ -48,21 +47,15 @@ void InGameMenu::CompleteConstruction() {
     AttachChild(m_resign_btn);
     AttachChild(m_done_btn);
 
-    m_save_btn->LeftClickedSignal.connect(
-        boost::bind(&InGameMenu::Save, this));
+    m_save_btn->LeftClickedSignal.connect(boost::bind(&InGameMenu::Save, this));
     if (HumanClientApp::GetApp()->SinglePlayerGame()) {
-        m_load_or_concede_btn->LeftClickedSignal.connect(
-            boost::bind(&InGameMenu::Load, this));
+        m_load_or_concede_btn->LeftClickedSignal.connect(boost::bind(&InGameMenu::Load, this));
     } else {
-        m_load_or_concede_btn->LeftClickedSignal.connect(
-            boost::bind(&InGameMenu::Concede, this));
+        m_load_or_concede_btn->LeftClickedSignal.connect(boost::bind(&InGameMenu::Concede, this));
     }
-    m_options_btn->LeftClickedSignal.connect(
-        boost::bind(&InGameMenu::Options, this));
-    m_resign_btn->LeftClickedSignal.connect(
-        boost::bind(&InGameMenu::Resign, this));
-    m_done_btn->LeftClickedSignal.connect(
-        boost::bind(&InGameMenu::Done, this));
+    m_options_btn->LeftClickedSignal.connect(boost::bind(&InGameMenu::Options, this));
+    m_resign_btn->LeftClickedSignal.connect(boost::bind(&InGameMenu::Resign, this));
+    m_done_btn->LeftClickedSignal.connect(boost::bind(&InGameMenu::Done, this));
 
     if (!HumanClientApp::GetApp()->CanSaveNow()) {
         m_save_btn->Disable();

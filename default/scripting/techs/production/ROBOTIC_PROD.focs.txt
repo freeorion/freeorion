@@ -14,7 +14,7 @@ Tech
                 Focus type = "FOCUS_INDUSTRY"
             ]
             priority = [[LATE_PRIORITY]]
-            effects = SetTargetIndustry value = Value + Target.Population * 0.5 * [[INDUSTRY_PER_POP]]
+            effects = SetTargetIndustry value = Value + Target.Population * 0.25 * [[INDUSTRY_PER_POP]]
         ]
     graphic = "icons/tech/robotic_production.png"
 

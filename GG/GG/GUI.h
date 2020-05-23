@@ -1,5 +1,5 @@
 // -*- C++ -*-
-/* GG is a GUI for SDL and OpenGL.
+/* GG is a GUI for OpenGL.
    Copyright (C) 2003-2008 T. Zachary Laine
 
    This library is free software; you can redistribute it and/or
@@ -46,8 +46,6 @@ namespace GG {
 
 class Cursor;
 class Wnd;
-class EventPumpBase;
-class ModalEventPump;
 class StyleFactory;
 class Texture;
 class Timer;
@@ -80,13 +78,11 @@ std::shared_ptr<T> LockAndResetIfExpired(std::weak_ptr<T>& ptr) {
 
     <p>The user is required to provide several functions.  The most vital
     functions the user is required to provide are: Enter2DMode(),
-    Exit2DMode(), DeltaT(), PollAndRender() [virtual private], and Run()
-    [virtual private].  Without these, GUI is pretty useless.  In addition,
-    HandleEvent() must be driven from PollAndRender().  The code driving
-    HandleEvent() must interact with the hardware and/or operating system, and
-    supply the appropriate EventType's, key presses, and mouse position info
-    to HandleEvent().  It is the author's recommendation that the user use the
-    provided SDL driver to do this.
+    Exit2DMode() and Run()[virtual private].  Without these, GUI is pretty
+    useless.  In addition, HandleEvent() must be driven from Run().  The
+    code driving HandleEvent() must interact with the hardware and/or operating
+    system, and supply the appropriate EventType's, key presses, and mouse
+    position info to HandleEvent().
 
     <p>Keyboard accelerators may be defined, as mentioned above.  Each defined
     accelerator has its own signal which is emitted each time the accelerator
@@ -130,7 +126,7 @@ private:
     struct OrCombiner
     {
         typedef bool result_type; 
-        template<class InIt> bool operator()(InIt first, InIt last) const;
+        template <typename InIt> bool operator()(InIt first, InIt last) const;
     };
 
 public:
@@ -143,7 +139,7 @@ public:
 
     /// These are the only events absolutely necessary for GG to function
     /// properly
-    enum EventType {
+    enum EventType : int {
         IDLE,        ///< nothing has changed since the last message, but the GUI might want to update some things anyway
         KEYPRESS,    ///< a down key press or key repeat, with or without modifiers like Alt, Ctrl, Meta, etc.
         KEYRELEASE,  ///< a key release, with or without modifiers like Alt, Ctrl, Meta, etc.
@@ -172,12 +168,11 @@ public:
 
     /** \name Accessors */ ///@{
     const std::string&          AppName() const;                    ///< returns the user-defined name of the application
-    std::shared_ptr<Wnd>                        FocusWnd() const;                   ///< returns the GG::Wnd that currently has the input focus
+    std::shared_ptr<Wnd>        FocusWnd() const;                   ///< returns the GG::Wnd that currently has the input focus
     bool                        FocusWndAcceptsTypingInput() const; ///< returns true iff the current focus GG::Wnd accepts typing input
-    std::shared_ptr<Wnd>                        PrevFocusInteractiveWnd() const;    ///< returns the previous Wnd to the current FocusWnd. Cycles through INTERACTIVE Wnds, in order determined by parent-child relationships
-    std::shared_ptr<Wnd>                        NextFocusInteractiveWnd() const;    ///< returns the next Wnd to the current FocusWnd.
-    std::shared_ptr<Wnd>                        GetWindowUnder(const Pt& pt) const; ///< returns the GG::Wnd under the point pt
-    unsigned int                DeltaT() const;                     ///< returns ms since last frame was rendered
+    std::shared_ptr<Wnd>        PrevFocusInteractiveWnd() const;    ///< returns the previous Wnd to the current FocusWnd. Cycles through INTERACTIVE Wnds, in order determined by parent-child relationships
+    std::shared_ptr<Wnd>        NextFocusInteractiveWnd() const;    ///< returns the next Wnd to the current FocusWnd.
+    std::shared_ptr<Wnd>        GetWindowUnder(const Pt& pt) const; ///< returns the GG::Wnd under the point pt
     virtual unsigned int        Ticks() const = 0;                  ///< returns milliseconds since the app started running
     bool                        RenderingDragDropWnds() const;      ///< returns true iff drag-and-drop Wnds are currently being rendered
     bool                        FPSEnabled() const;                 ///< returns true iff FPS calulations are turned on
@@ -201,7 +196,6 @@ public:
     Pt                          MouseMovement() const;              ///< returns the relative position of mouse, based on the last mouse motion event
     Flags<ModKey>               ModKeys() const;                    ///< returns the set of modifier keys that are currently depressed, based on the last event
     bool                        MouseLRSwapped() const;             ///< returns true if the left and right mouse button press events are set to be swapped before event handling. This is to facilitate left-handed mouse users semi-automatically.
-    const std::map<Key, Key>&   KeyMap() const;                     ///< returns the the key remappings set, which causes the GUI to respond to one Key press as though a different Key were pressed.
     virtual std::string         ClipboardText() const;              ///< returns text stored in a clipboard
 
     /** Returns the (begin, end) indices of the code points of all the
@@ -232,28 +226,30 @@ public:
     AcceleratorSignalType&                  AcceleratorSignal(Key key, Flags<ModKey> mod_keys = MOD_KEY_NONE) const;
 
     /** Returns true iff keyboard accelerator signals fire while modal windows are open. */
-    bool ModalAcceleratorSignalsEnabled() const;
+    bool                                    ModalAcceleratorSignalsEnabled() const;
 
     /** Returns true iff any modal Wnds are open. */
-    bool ModalWndsOpen() const;
+    bool                                    ModalWndsOpen() const;
 
     /** Saves \a wnd to file \a filename during the next render cycle.  If \a
         wnd is not rendered during the render cycle, or PNG support is not
         enabled, this is a no-op. */
-    void SaveWndAsPNG(const Wnd* wnd, const std::string& filename) const;
+    void                                    SaveWndAsPNG(const Wnd* wnd, const std::string& filename) const;
     //@}
 
     /** \name Mutators */ ///@{
-    void            operator()();                 ///< external interface to Run()
+    //! Executes main event handler/render loop
+    virtual void    Run() = 0;
+
     virtual void    ExitApp(int code = 0) = 0;           ///< does basic clean-up, then calls exit(); callable from anywhere in user code via GetGUI()
 
     /** Handles all waiting system events (from SDL, DirectInput, etc.).  This
-        function should only be called from custom EventPump event
+        function should only be called from custom RunModal event
         handlers. */
     virtual void    HandleSystemEvents() = 0;
 
     /** Event handler for GG events. */
-    void HandleGGEvent(EventType event, Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys, const Pt& pos, const Pt& rel, const std::string* text = nullptr);
+    void            HandleGGEvent(EventType event, Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys, const Pt& pos, const Pt& rel, const std::string* text = nullptr);
 
     void            ClearEventState();
 
@@ -269,13 +265,10 @@ public:
     /** Adds \p wnd onto the modal windows "stack".  Modal windows are owned by the GUI as a
         top-level window. */
     void            RegisterModal(std::shared_ptr<Wnd> wnd);
+    void            RunModal(std::shared_ptr<Wnd> wnd, bool& done);
     void            Remove(const std::shared_ptr<Wnd>& wnd);               ///< removes \a wnd from the z-list.  Removing a null pointer or removing the same window multiple times is a no-op.
     void            MoveUp(const std::shared_ptr<Wnd>& wnd);               ///< moves \a wnd to the top of the z-list
     void            MoveDown(const std::shared_ptr<Wnd>& wnd);             ///< moves \a wnd to the bottom of the z-list
-
-    /** Creates a new ModalEventPump that will terminate when \a done is set to
-        true. */
-    virtual std::shared_ptr<ModalEventPump> CreateModalEventPump(bool& done);
 
     /** Adds \a wnd to the set of current drag-and-drop Wnds, to be rendered
         \a offset pixels from the cursor position. \a originating_wnd
@@ -322,9 +315,6 @@ public:
     /** Sets whether to swap left and right mouse button events. */
     void           SetMouseLRSwapped(bool swapped = true);
 
-    /** Sets which Key presses are substitued for actual key presses before event handling. */
-    void           SetKeyMap(const std::map<Key, Key>& key_map);
-
     /** Returns a shared_ptr to the desired font, supporting all printable
         ASCII characters. */
     std::shared_ptr<Font> GetFont(const std::string& font_filename, unsigned int pts);
@@ -336,14 +326,14 @@ public:
 
     /** Returns a shared_ptr to the desired font, supporting all the
         characters in the UnicodeCharsets in the range [first, last). */
-    template <class CharSetIter>
+    template <typename CharSetIter>
     std::shared_ptr<Font> GetFont(const std::string& font_filename, unsigned int pts,
                                   CharSetIter first, CharSetIter last);
 
     /** Returns a shared_ptr to the desired font, supporting all the
         characters in the UnicodeCharsets in the range [first, last), from the
         in-memory contents \a file_contents. */
-    template <class CharSetIter>
+    template <typename CharSetIter>
     std::shared_ptr<Font> GetFont(const std::string& font_filename, unsigned int pts,
                                   const std::vector<unsigned char>& file_contents,
                                   CharSetIter first, CharSetIter last);
@@ -458,36 +448,28 @@ protected:
     //@}
 
     /** \name Mutators */ ///@{
-    void           ProcessBrowseInfo();    ///< determines the current browse info mode, if any
+    void            ProcessBrowseInfo();    ///< determines the current browse info mode, if any
     /** Allow all windows in the z-list to update data before rendering. */
-    virtual void   PreRender();
-    virtual void   RenderBegin() = 0;      ///< clears the backbuffer, etc.
-    virtual void   Render();               ///< renders the windows in the z-list
-    virtual void   RenderEnd() = 0;        ///< swaps buffers, etc.
-
-    // EventPumpBase interface
-    void SetFPS(double FPS);               ///< sets the FPS value based on the most recent calculation
-    void SetDeltaT(unsigned int delta_t);  ///< sets the time between the most recent frame and the one before it, in ms
-
+    virtual void    PreRender();
+    virtual void    RenderBegin() = 0;      ///< clears the backbuffer, etc.
+    virtual void    Render();               ///< renders the windows in the z-list
+    virtual void    RenderEnd() = 0;        ///< swaps buffers, etc.
     //@}
 
-    virtual void   Run() = 0;              ///< initializes GUI state, then executes main event handler/render loop (PollAndRender())
-
     /** Determine if the app has the mouse focus. */
-    virtual bool AppHasMouseFocus() const { return true; };
+    virtual bool    AppHasMouseFocus() const { return true; };
 
 private:
-    bool           ProcessBrowseInfoImpl(Wnd* wnd);
-    std::shared_ptr<Wnd>           ModalWindow() const;    // returns the current modal window, if any
+    bool                 ProcessBrowseInfoImpl(Wnd* wnd);
+    std::shared_ptr<Wnd> ModalWindow() const;   ///< returns the current modal window, if any
 
     // Returns the window under \a pt, sending Mouse{Enter|Leave} or
     // DragDrop{Enter|Leave} as appropriate
-    std::shared_ptr<Wnd>           CheckedGetWindowUnder(const Pt& pt, Flags<ModKey> mod_keys);
+    std::shared_ptr<Wnd> CheckedGetWindowUnder(const Pt& pt, Flags<ModKey> mod_keys);
 
-    static GUI*                       s_gui;
-    std::unique_ptr<GUIImpl>          m_impl;
+    static GUI*              s_gui;
+    std::unique_ptr<GUIImpl> m_impl;
 
-    friend class EventPumpBase; ///< allows EventPumpBase types to drive GUI
     friend struct GUIImpl;
 };
 
@@ -505,7 +487,7 @@ GG_API Flags<ModKey> MassagedAccelModKeys(Flags<ModKey> mod_keys);
 
 
 // template implementations
-template<class InIt> 
+template <typename InIt>
 bool GUI::OrCombiner::operator()(InIt first, InIt last) const
 {
     bool retval = false;
@@ -514,12 +496,12 @@ bool GUI::OrCombiner::operator()(InIt first, InIt last) const
     return retval;
 }
 
-template <class CharSetIter>
+template <typename CharSetIter>
 std::shared_ptr<Font> GUI::GetFont(const std::string& font_filename, unsigned int pts,
                                    CharSetIter first, CharSetIter last)
 { return GetFontManager().GetFont(font_filename, pts, first, last); }
 
-template <class CharSetIter>
+template <typename CharSetIter>
 std::shared_ptr<Font> GUI::GetFont(const std::string& font_filename, unsigned int pts,
                                    const std::vector<unsigned char>& file_contents,
                                    CharSetIter first, CharSetIter last)

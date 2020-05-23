@@ -23,16 +23,14 @@
 #include "../network/Message.h"
 #include "../Empire/Empire.h"
 
-#include <GG/DrawUtil.h>
 #include <GG/Enum.h>
 #include <GG/GUI.h>
 #include <GG/Layout.h>
 #include <GG/StaticGraphic.h>
 
 #include <boost/cast.hpp>
-#include <boost/unordered_map.hpp>
-#include <tuple>
 
+#include <tuple>
 #include <unordered_set>
 
 
@@ -109,9 +107,8 @@ namespace {
 
             // name of final destination
             std::string dest_name = dest_sys->ApparentName(client_empire_id);
-            if (GetOptionsDB().Get<bool>("ui.name.id.shown")) {
-                dest_name = dest_name + " (" + std::to_string(dest_sys->ID()) + ")";
-            }
+            if (GetOptionsDB().Get<bool>("ui.name.id.shown"))
+                dest_name += " (" + std::to_string(dest_sys->ID()) + ")";
 
             // next system on path
             std::string next_eta_text;
@@ -389,7 +386,7 @@ FleetWnd* FleetUIManager::ActiveFleetWnd() const
 { return GG::LockAndResetIfExpired(m_active_fleet_wnd).get(); }
 
 std::shared_ptr<FleetWnd> FleetUIManager::WndForFleetID(int fleet_id) const {
-    std::shared_ptr<FleetWnd> retval = nullptr;
+    std::shared_ptr<FleetWnd> retval;
     GG::ProcessThenRemoveExpiredPtrs(
         m_fleet_wnds,
         [&retval, fleet_id](std::shared_ptr<FleetWnd>& wnd)
@@ -404,7 +401,7 @@ std::shared_ptr<FleetWnd> FleetUIManager::WndForFleetIDs(const std::vector<int>&
     std::unordered_set<int> fleet_ids;
     for (const auto id : fleet_ids_)
         fleet_ids.insert(id);
-    std::shared_ptr<FleetWnd> retval = nullptr;
+    std::shared_ptr<FleetWnd> retval;
     GG::ProcessThenRemoveExpiredPtrs(
         m_fleet_wnds,
         [&retval, fleet_ids](std::shared_ptr<FleetWnd>& wnd)
@@ -450,15 +447,13 @@ std::shared_ptr<FleetWnd> FleetUIManager::NewFleetWnd(
                                             allowed_bounding_box_leeway,
                                             selected_fleet_id, flags, config_name);
 
+    using boost::placeholders::_1;
+
     m_fleet_wnds.insert(std::weak_ptr<FleetWnd>(retval));
-    retval->ClosingSignal.connect(
-        boost::bind(&FleetUIManager::FleetWndClosing, this, _1));
-    retval->ClickedSignal.connect(
-        boost::bind(&FleetUIManager::FleetWndClicked, this, _1));
-    retval->FleetRightClickedSignal.connect(
-        FleetRightClickedSignal);
-    retval->ShipRightClickedSignal.connect(
-        ShipRightClickedSignal);
+    retval->ClosingSignal.connect(boost::bind(&FleetUIManager::FleetWndClosing, this, _1));
+    retval->ClickedSignal.connect(boost::bind(&FleetUIManager::FleetWndClicked, this, _1));
+    retval->FleetRightClickedSignal.connect(FleetRightClickedSignal);
+    retval->ShipRightClickedSignal.connect(ShipRightClickedSignal);
 
     GG::GUI::GetGUI()->Register(retval);
 
@@ -648,12 +643,12 @@ namespace {
         bool                                m_initialized = false;
         bool                                m_needs_refresh = true;
         int                                 m_ship_id = INVALID_OBJECT_ID;
-        std::shared_ptr<GG::StaticGraphic>  m_ship_icon = nullptr;
+        std::shared_ptr<GG::StaticGraphic>  m_ship_icon;
         std::vector<std::shared_ptr<GG::StaticGraphic>>
                                             m_ship_icon_overlays;   /// An overlays for orders like scrap, colonize, invade, bombard destroy etc.
-        std::shared_ptr<ScanlineControl>    m_scanline_control = nullptr;
-        std::shared_ptr<GG::Label>          m_ship_name_text = nullptr;
-        std::shared_ptr<GG::Label>          m_design_name_text = nullptr;
+        std::shared_ptr<ScanlineControl>    m_scanline_control;
+        std::shared_ptr<GG::Label>          m_ship_name_text;
+        std::shared_ptr<GG::Label>          m_design_name_text;
         std::vector<std::pair<MeterType, std::shared_ptr<StatisticIcon>>>
                                             m_stat_icons;           /// statistic icons and associated meter types
         bool                                m_selected = false;
@@ -884,9 +879,9 @@ namespace {
             else if (stat_name == METER_POPULATION)
                 return ship->ColonyCapacity();
             else if (ship->UniverseObject::GetMeter(stat_name))
-                return ship->InitialMeterValue(stat_name);
+                return ship->GetMeter(stat_name)->Initial();
 
-            ErrorLogger() << "ShipDataPanel::StatValue couldn't get stat of name: " << boost::lexical_cast<std::string>(stat_name);
+            ErrorLogger() << "ShipDataPanel::StatValue couldn't get stat of name: " << stat_name;
         }
         return 0.0;
     }
@@ -962,11 +957,11 @@ namespace {
             meters_icons.push_back({METER_TROOPS,         TroopIcon()});
         if (ship->CanColonize())
             meters_icons.push_back({METER_POPULATION,     ColonyIcon()});
-        if (ship->InitialMeterValue(METER_INDUSTRY) > 0.0f)
+        if (ship->GetMeter(METER_INDUSTRY)->Initial() > 0.0f)
             meters_icons.push_back({METER_INDUSTRY,       IndustryIcon()});
-        if (ship->InitialMeterValue(METER_RESEARCH) > 0.0f)
+        if (ship->GetMeter(METER_RESEARCH)->Initial() > 0.0f)
             meters_icons.push_back({METER_RESEARCH,       ResearchIcon()});
-        if (ship->InitialMeterValue(METER_TRADE) > 0.0f)
+        if (ship->GetMeter(METER_TRADE)->Initial() > 0.0f)
             meters_icons.push_back({METER_TRADE,          TradeIcon()});
 
         for (auto& meter : {METER_SHIELD, METER_FUEL, METER_DETECTION,
@@ -1010,7 +1005,7 @@ namespace {
     class ShipRow : public GG::ListBox::Row {
     public:
         ShipRow(GG::X w, GG::Y h, int ship_id) :
-            GG::ListBox::Row(w, h, ""),
+            GG::ListBox::Row(w, h),
             m_ship_id(ship_id)
         {
             SetName("ShipRow");
@@ -1036,7 +1031,7 @@ namespace {
 
     private:
         int                             m_ship_id = INVALID_OBJECT_ID;
-        std::shared_ptr<ShipDataPanel>  m_panel = nullptr;
+        std::shared_ptr<ShipDataPanel>  m_panel;
     };
 }
 
@@ -1103,12 +1098,12 @@ private:
     boost::signals2::connection                     m_fleet_connection;
     std::vector<boost::signals2::connection>        m_ship_connections;
 
-    std::shared_ptr<GG::Control>                    m_fleet_icon = nullptr;
-    std::shared_ptr<GG::Label>                      m_fleet_name_text = nullptr;
-    std::shared_ptr<GG::Label>                      m_fleet_destination_text = nullptr;
-    std::shared_ptr<GG::Button>                     m_aggression_toggle = nullptr;
+    std::shared_ptr<GG::Control>                    m_fleet_icon;
+    std::shared_ptr<GG::Label>                      m_fleet_name_text;
+    std::shared_ptr<GG::Label>                      m_fleet_destination_text;
+    std::shared_ptr<GG::Button>                     m_aggression_toggle;
     std::vector<std::shared_ptr<GG::StaticGraphic>> m_fleet_icon_overlays;
-    std::shared_ptr<ScanlineControl>                m_scanline_control = nullptr;
+    std::shared_ptr<ScanlineControl>                m_scanline_control;
 
     std::vector<std::pair<MeterType, std::shared_ptr<StatisticIcon>>> m_stat_icons; // statistic icons and associated meter types
 
@@ -1539,10 +1534,10 @@ void FleetDataPanel::SetStatIconValues() {
             fighters_tally += ship->FighterCount();
             troops_tally += ship->TroopCapacity();
             colony_tally += ship->ColonyCapacity();
-            structure_tally += ship->InitialMeterValue(METER_STRUCTURE);
-            shield_tally += ship->InitialMeterValue(METER_SHIELD);
-            fuels.push_back(ship->InitialMeterValue(METER_FUEL));
-            speeds.push_back(ship->InitialMeterValue(METER_SPEED));
+            structure_tally += ship->GetMeter(METER_STRUCTURE)->Initial();
+            shield_tally += ship->GetMeter(METER_SHIELD)->Initial();
+            fuels.push_back(ship->GetMeter(METER_FUEL)->Initial());
+            speeds.push_back(ship->GetMeter(METER_SPEED)->Initial());
         }
     }
     if (!fuels.empty())
@@ -1798,9 +1793,11 @@ namespace {
     class FleetRow : public GG::ListBox::Row {
     public:
         FleetRow(int fleet_id, GG::X w, GG::Y h) :
-            GG::ListBox::Row(w, h, Objects().get<Fleet>(fleet_id) ? FLEET_DROP_TYPE_STRING : ""),
+            GG::ListBox::Row(w, h),
             m_fleet_id(fleet_id)
         {
+            if (Objects().get<Fleet>(fleet_id))
+                SetDragDropDataType(FLEET_DROP_TYPE_STRING);
             SetName("FleetRow");
             SetChildClippingMode(ClipToClient);
         }
@@ -1822,7 +1819,7 @@ namespace {
 
     private:
         int                             m_fleet_id = INVALID_OBJECT_ID;
-        std::shared_ptr<FleetDataPanel> m_panel = nullptr;
+        std::shared_ptr<FleetDataPanel> m_panel;
     };
 }
 
@@ -2392,7 +2389,7 @@ private:
     int                             m_fleet_id = INVALID_OBJECT_ID;
     bool                            m_order_issuing_enabled = false;
     boost::signals2::connection     m_fleet_connection;
-    std::shared_ptr<ShipsListBox>   m_ships_lb = nullptr;
+    std::shared_ptr<ShipsListBox>   m_ships_lb;
 };
 
 FleetDetailPanel::FleetDetailPanel(GG::X w, GG::Y h, int fleet_id, bool order_issuing_enabled,
@@ -2787,17 +2784,19 @@ void FleetWnd::CompleteConstruction() {
         AttachChild(icon);
     }
 
+    namespace ph = boost::placeholders;
+
     // create fleet list box
     m_fleets_lb = GG::Wnd::Create<FleetsListBox>(m_order_issuing_enabled);
     m_fleets_lb->SetHiliteColor(GG::CLR_ZERO);
     m_fleets_lb->SelRowsChangedSignal.connect(
-        boost::bind(&FleetWnd::FleetSelectionChanged, this, _1));
+        boost::bind(&FleetWnd::FleetSelectionChanged, this, ph::_1));
     m_fleets_lb->LeftClickedRowSignal.connect(
-        boost::bind(&FleetWnd::FleetLeftClicked, this, _1, _2, _3));
+        boost::bind(&FleetWnd::FleetLeftClicked, this, ph::_1, ph::_2, ph::_3));
     m_fleets_lb->RightClickedRowSignal.connect(
-        boost::bind(&FleetWnd::FleetRightClicked, this, _1, _2, _3));
+        boost::bind(&FleetWnd::FleetRightClicked, this, ph::_1, ph::_2, ph::_3));
     m_fleets_lb->DoubleClickedRowSignal.connect(
-        boost::bind(&FleetWnd::FleetDoubleClicked, this, _1, _2, _3));
+        boost::bind(&FleetWnd::FleetDoubleClicked, this, ph::_1, ph::_2, ph::_3));
     AttachChild(m_fleets_lb);
     m_fleets_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_BROWSEUPDATES);
     m_fleets_lb->AllowDropType(SHIP_DROP_TYPE_STRING);
@@ -2805,7 +2804,7 @@ void FleetWnd::CompleteConstruction() {
 
     // create fleet detail panel
     m_fleet_detail_panel->SelectedShipsChangedSignal.connect(
-        boost::bind(&FleetWnd::ShipSelectionChanged, this, _1));
+        boost::bind(&FleetWnd::ShipSelectionChanged, this, ph::_1));
     m_fleet_detail_panel->ShipRightClickedSignal.connect(
         ShipRightClickedSignal);
     AttachChild(m_fleet_detail_panel);
@@ -2885,8 +2884,8 @@ void FleetWnd::SetStatIconValues() {
                 ship_count++;
                 damage_tally += ship->TotalWeaponsDamage(0.0f, false);
                 fighters_tally += ship->FighterCount();
-                structure_tally += ship->InitialMeterValue(METER_STRUCTURE);
-                shield_tally += ship->InitialMeterValue(METER_SHIELD);
+                structure_tally += ship->GetMeter(METER_STRUCTURE)->Initial();
+                shield_tally += ship->GetMeter(METER_SHIELD)->Initial();
                 troop_tally += ship->TroopCapacity();
                 colony_tally += ship->ColonyCapacity();
             }
@@ -3394,10 +3393,10 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
             continue;
 
         // find damaged ships
-        if (ship->InitialMeterValue(METER_STRUCTURE) < ship->InitialMeterValue(METER_MAX_STRUCTURE))
+        if (ship->GetMeter(METER_STRUCTURE)->Initial() < ship->GetMeter(METER_MAX_STRUCTURE)->Initial())
             damaged_ship_ids.push_back(ship->ID());
         // find ships with no remaining fuel
-        if (ship->InitialMeterValue(METER_FUEL) < 1)
+        if (ship->GetMeter(METER_FUEL)->Initial() < 1.0f)
             unfueled_ship_ids.push_back(ship->ID());
         // find ships that can carry fighters but dont have a full complement of them
         if (ship->HasFighters() && ship->FighterCount() < ship->FighterMax())

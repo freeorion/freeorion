@@ -27,27 +27,27 @@ typedef boost::archive::xml_oarchive freeorion_xml_oarchive;
 //!     transmit longs across machines with different bit-size architectures.
 
 //! Serialize @p universe to output archive @p oa.
-template <class Archive>
+template <typename Archive>
 FO_COMMON_API void Serialize(Archive& oa, const Universe& universe);
 
 //! Serialize @p object_map to output archive @p oa.
-template <class Archive>
+template <typename Archive>
 void Serialize(Archive& oa, const std::map<int, std::shared_ptr<UniverseObject>>& objects);
 
 //! Serialize @p order_set to output archive @p oa.
-template <class Archive>
+template <typename Archive>
 void Serialize(Archive& oa, const OrderSet& order_set);
 
 //! Deserialize @p universe from input archive @p ia.
-template <class Archive>
+template <typename Archive>
 FO_COMMON_API void Deserialize(Archive& ia, Universe& universe);
 
 //! Deserialize @p object_map from input archive @p ia.
-template <class Archive>
+template <typename Archive>
 void Deserialize(Archive& ia, std::map<int, std::shared_ptr<UniverseObject>>& objects);
 
 //! Deserialize @p order_set from input archive @p ia.
-template <class Archive>
+template <typename Archive>
 void Deserialize(Archive& ia, OrderSet& order_set);
 
 #endif // _Serialize_h_

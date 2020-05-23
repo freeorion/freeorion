@@ -11,7 +11,6 @@
 #include "../../combat/CombatLogManager.h"
 
 #include <GG/ClrConstants.h>
-#include <GG/DrawUtil.h>
 #include <GG/Layout.h>
 
 #include <boost/format.hpp>
@@ -347,7 +346,6 @@ public:
     SideBar(const CombatSummary& combat_summary, const BarSizer& sizer):
         GG::Wnd(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::INTERACTIVE),
         m_side_summary(combat_summary),
-        m_x_axis_label(nullptr),
         m_sizer(sizer)
     {}
 
@@ -608,9 +606,6 @@ private:
     std::vector<std::shared_ptr<ToggleData>>    m_toggles;
 
     struct ToggleData : public boost::signals2::trackable {
-        typedef bool (BarSizer::*ToggleGetter)() const;
-        typedef void (BarSizer::*ToggleSetter)(bool value);
-
         std::string label_true;
         std::string label_false;
         std::string tip_true;
@@ -646,13 +641,11 @@ private:
             tip_false(tip_false_),
             option_key(option_key_),
             sizer(sizer_),
-            parent(std::forward<std::shared_ptr<OptionsBar>>(parent_)),
-            button(nullptr)
+            parent(std::forward<std::shared_ptr<OptionsBar>>(parent_))
         {
             button = Wnd::Create<CUIButton>("-");
             parent_->AttachChild(button);
-            button->LeftClickedSignal.connect(
-                boost::bind(&ToggleData::Toggle, this));
+            button->LeftClickedSignal.connect(boost::bind(&ToggleData::Toggle, this));
             SetValue(GetValue());
         }
     };
@@ -660,9 +653,7 @@ private:
 
 
 GraphicalSummaryWnd::GraphicalSummaryWnd() :
-    GG::Wnd(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::NO_WND_FLAGS),
-    m_sizer(nullptr),
-    m_options_bar(nullptr)
+    GG::Wnd(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::NO_WND_FLAGS)
 {}
 
 GraphicalSummaryWnd::~GraphicalSummaryWnd()
@@ -789,8 +780,7 @@ void GraphicalSummaryWnd::GenerateGraph() {
     }
     m_options_bar = GG::Wnd::Create<OptionsBar>(m_sizer);
     AttachChild(m_options_bar);
-    m_options_bar->ChangedSignal.connect(
-        boost::bind(&GraphicalSummaryWnd::HandleButtonChanged, this));
+    m_options_bar->ChangedSignal.connect(boost::bind(&GraphicalSummaryWnd::HandleButtonChanged, this));
 
     MinSizeChangedSignal();
     DoLayout();

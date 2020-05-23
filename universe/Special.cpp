@@ -158,9 +158,7 @@ float Special::InitialCapacity(int object_id) const {
     if (!obj)
         return 0.0f;
 
-    ScriptingContext context(obj);
-
-    return m_initial_capacity->Eval(context);
+    return m_initial_capacity->Eval(ScriptingContext(obj));
 }
 
 unsigned int Special::GetCheckSum() const {

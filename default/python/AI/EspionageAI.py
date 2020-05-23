@@ -1,10 +1,10 @@
-from logging import error, warn
+from logging import error, warning
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import AIDependencies
-from AIDependencies import ALL_EMPIRES
+from AIDependencies import ALL_EMPIRES, Tags
 from EnumsAI import EmpireMeters
-from freeorion_tools import cache_by_session_with_turnwise_update
+from freeorion_tools import cache_for_current_turn, get_species_tag_grade
 
 
 def default_empire_detection_strength():
@@ -13,7 +13,7 @@ def default_empire_detection_strength():
             else AIDependencies.DETECTION_TECH_STRENGTHS["SPY_DETECT_2"])
 
 
-@cache_by_session_with_turnwise_update
+@cache_for_current_turn
 def get_empire_detection(empire_id):
     """
     Returns the detection strength for the provided empire ID.
@@ -30,7 +30,7 @@ def get_empire_detection(empire_id):
     if empire:
         return empire.getMeter(EmpireMeters.DETECTION_STRENGTH).initial
     else:
-        warn("AI failed to retrieve empire ID %d, in game with %d empires." % (empire_id, len(fo.allEmpireIDs())))
+        warning("AI failed to retrieve empire ID %d, in game with %d empires." % (empire_id, len(fo.allEmpireIDs())))
         return default_empire_detection_strength()
 
 
@@ -91,15 +91,6 @@ def colony_detectable_by_empire(planet_id, species_name=None, empire=ALL_EMPIRES
     if empire == fo.empireID() and planet.ownedBy(empire):
         return True
 
-    species = fo.getSpecies(species_name)
-    if species:
-        species_tags = species.tags
-    elif species_name == "":
-        species_tags = []
-    else:
-        error("Couldn't retrieve species named '%s'." % species_name)
-        return default_result
-
     # could just check stealth meter, but this approach might allow us to plan ahead a bit even if the planet
     # is temporarily stealth boosted by temporary effects like ion storm
     planet_stealth = AIDependencies.BASE_PLANET_STEALTH
@@ -110,9 +101,9 @@ def colony_detectable_by_empire(planet_id, species_name=None, empire=ALL_EMPIRES
     # if the planet already has an existing stealth special, then the most common situation is that it would be
     # overlapping with or superseded by the future_stealth_bonus, not additive with it.
     planet_stealth = max(planet_stealth, AIDependencies.BASE_PLANET_STEALTH + future_stealth_bonus)
-
-    total_stealth = planet_stealth + sum([AIDependencies.STEALTH_STRENGTHS_BY_SPECIES_TAG.get(tag, 0)
-                                          for tag in species_tags])
+    species_stealth_mod = AIDependencies.STEALTH_STRENGTHS_BY_SPECIES_TAG.get(
+        get_species_tag_grade(species_name, Tags.STEALTH), 0)
+    total_stealth = planet_stealth + species_stealth_mod
     if isinstance(empire, int):
         empire_detection = get_empire_detection(empire)
     else:

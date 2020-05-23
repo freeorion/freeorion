@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 
 from __future__ import print_function
 
@@ -21,7 +21,7 @@ required_boost_libraries = [
     "boost_locale",
     "boost_log",
     "boost_log_setup",
-    "boost_python",
+    "boost_python%d%d" % (sys.version_info.major, sys.version_info.minor),
     "boost_regex",
     "boost_serialization",
     "boost_signals",
@@ -60,7 +60,7 @@ class Generator(object):
         try:
             with open(self.infile) as template_file:
                 template = Template(template_file.read())
-        except:
+        except IOError:
             print("WARNING: Can't access %s, %s not updated!" % (self.infile, self.outfile))
             return
 
@@ -72,7 +72,7 @@ class Generator(object):
 class NsisInstScriptGenerator(Generator):
     def compile_dll_list(self):
         all_dll_files = glob("*.dll")
-        accepted_dll_files = set(["GiGi.dll", "GiGiSDL.dll"])
+        accepted_dll_files = set(["GiGi.dll"])
         for dll_file in all_dll_files:
             if dll_file.startswith("boost_"):
                 if dll_file.partition(".")[0] in required_boost_libraries:
@@ -90,7 +90,9 @@ class NsisInstScriptGenerator(Generator):
                 FreeOrion_BUILD_NO=build_no,
                 FreeOrion_BUILDSYS=build_sys,
                 FreeOrion_DLL_LIST_INSTALL="\n  ".join(['File "..\\' + fname + '"' for fname in dll_files]),
-                FreeOrion_DLL_LIST_UNINSTALL="\n  ".join(['Delete "$INSTDIR\\' + fname + '"' for fname in dll_files]))
+                FreeOrion_DLL_LIST_UNINSTALL="\n  ".join(['Delete "$INSTDIR\\' + fname + '"' for fname in dll_files]),
+                FreeOrion_PYTHON_VERSION="%d%d" % (sys.version_info.major, sys.version_info.minor))
+
         else:
             print("WARNING: no dll files for installer package found")
             return template.substitute(
@@ -99,7 +101,8 @@ class NsisInstScriptGenerator(Generator):
                 FreeOrion_BUILD_NO=build_no,
                 FreeOrion_BUILDSYS=build_sys,
                 FreeOrion_DLL_LIST_INSTALL="",
-                FreeOrion_DLL_LIST_UNINSTALL="")
+                FreeOrion_DLL_LIST_UNINSTALL="",
+                FreeOrion_PYTHON_VERSION="")
 
 
 if 3 != len(sys.argv):
@@ -115,10 +118,10 @@ generators = [
     Generator('util/Version.cpp.in', 'util/Version.cpp')
 ]
 if system() == 'Windows':
-    generators.append(NsisInstScriptGenerator('Installer/FreeOrion_Install_Script.nsi.in',
-                                              'Installer/FreeOrion_Install_Script.nsi'))
+    generators.append(NsisInstScriptGenerator('packaging/windows_installer.nsi.in',
+                                              'packaging/windows_installer.nsi'))
 if system() == 'Darwin':
-    generators.append(Generator('Xcode/Info.plist.in', 'Xcode/Info.plist'))
+    generators.append(Generator('packaging/Info.plist.in', 'packaging/Info.plist'))
 
 version = "0.4.9+"
 branch = ""
@@ -133,7 +136,7 @@ try:
     commit = check_output(["git", "show", "-s", "--format=%h", "--abbrev=7", "HEAD"], universal_newlines=True).strip()
     timestamp = float(check_output(["git", "show", "-s", "--format=%ct", "HEAD"], universal_newlines=True).strip())
     build_no = ".".join([datetime.utcfromtimestamp(timestamp).strftime("%Y-%m-%d"), commit])
-except:
+except IOError:
     print("WARNING: git not installed or not setup correctly")
 
 for generator in generators:

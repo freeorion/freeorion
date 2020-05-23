@@ -3,6 +3,7 @@ Hull
     description = "SH_SNOWFLAKE_2_BODY_DESC"
     speed = 60
     fuel = 5
+    NoDefaultFuelEffect
     stealth = 5
     structure = 60
     slots = [
@@ -19,6 +20,7 @@ Hull
     effectsgroups = [
         [[MONSTER_MOVE_ALWAYS]]
         [[INFINITE_FUEL]]
+        [[ADD_HULL_FUEL_TO_MAX_FUEL_METER]]
         [[MONSTER_SHIELD_REGENERATION]]
 
         EffectsGroup
@@ -30,7 +32,7 @@ Hull
                 ]
             ]
             activation = And [
-                Turn low = max(60, Source.LastTurnActiveInBattle + 1)
+                Turn low = max(60, LocalCandidate.LastTurnActiveInBattle + 1)
                 Random probability = Source.Age*0.01 - 0.1
             ]
             effects = [
@@ -49,7 +51,6 @@ Hull
         
         EffectsGroup
             scope = Source
-            activation = Source
             effects = [
                 SetMaxCapacity partname = "SR_ICE_BEAM" value = Value + min(Source.Age*0.15, 4)
                 SetCapacity partname = "SR_ICE_BEAM" value = Value + min(Source.Age*0.15, 4)

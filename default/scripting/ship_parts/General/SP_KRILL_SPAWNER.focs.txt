@@ -38,9 +38,9 @@ Part
         EffectsGroup
             scope = Source
             activation = And [
-                            Not DesignHasPartClass Low=1 High=999 Class=Stealth
-                            Not Armed
-                        ]
+                Not DesignHasPartClass Low=1 High=999 Class=Stealth
+                Not Armed
+            ]
             effects = SetStealth value = Value + 40
     ]
 

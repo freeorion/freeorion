@@ -7,9 +7,11 @@ target_sources(freeorionca
     PUBLIC
         ${CMAKE_CURRENT_LIST_DIR}/ClientApp.h
         ${CMAKE_CURRENT_LIST_DIR}/ClientFSMEvents.h
+        ${CMAKE_CURRENT_LIST_DIR}/ClientNetworking.h
     PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/ClientApp.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ClientFSMEvents.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ClientNetworking.cpp
 )
 
 if(NOT BUILD_HEADLESS)
@@ -17,8 +19,10 @@ if(NOT BUILD_HEADLESS)
         PUBLIC
             ${CMAKE_CURRENT_LIST_DIR}/ClientApp.h
             ${CMAKE_CURRENT_LIST_DIR}/ClientFSMEvents.h
+            ${CMAKE_CURRENT_LIST_DIR}/ClientNetworking.h
         PRIVATE
             ${CMAKE_CURRENT_LIST_DIR}/ClientApp.cpp
             ${CMAKE_CURRENT_LIST_DIR}/ClientFSMEvents.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/ClientNetworking.cpp
     )
 endif()

@@ -13,11 +13,10 @@
 #include "../util/i18n.h"
 #include "../util/Order.h"
 #include "../util/ScopedTimer.h"
-#include "../universe/Building.h"
+#include "../universe/BuildingType.h"
 #include "../universe/ShipDesign.h"
 #include "../universe/Enums.h"
 
-#include <GG/DrawUtil.h>
 #include <GG/Layout.h>
 #include <GG/StaticGraphic.h>
 
@@ -49,7 +48,7 @@ namespace {
                    GG::Y h, bool inProgress, bool amBlockType) :
             Control(GG::X0, GG::Y0, nwidth, h, GG::NO_WND_FLAGS)
         {
-            GG::Clr txtClr = inProgress ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor()) : ClientUI::ResearchableTechTextAndBorderColor();
+            GG::Clr txtClr = inProgress ? GG::LightenClr(ClientUI::ResearchableTechTextAndBorderColor()) : ClientUI::ResearchableTechTextAndBorderColor();
             std::string nameText;
             if (amBlockType)
                 nameText = boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_MULTIPLES")) % quantity);
@@ -122,9 +121,9 @@ namespace {
 
             DisableDropArrow();
             SetStyle(GG::LIST_LEFT | GG::LIST_NOSORT);
-            SetColor(inProgress ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor())
+            SetColor(inProgress ? GG::LightenClr(ClientUI::ResearchableTechTextAndBorderColor())
                                 : ClientUI::ResearchableTechTextAndBorderColor());
-            SetInteriorColor(inProgress ? GG::LightColor(ClientUI::ResearchableTechFillColor())
+            SetInteriorColor(inProgress ? GG::LightenClr(ClientUI::ResearchableTechFillColor())
                                         : ClientUI::ResearchableTechFillColor());
             SetNumCols(1);
 
@@ -150,7 +149,7 @@ namespace {
             }
 
             this->SelChangedSignal.connect(
-                boost::bind(&QuantitySelector::SelectionChanged, this, _1));
+                boost::bind(&QuantitySelector::SelectionChanged, this, boost::placeholders::_1));
         }
 
         void SelectionChanged(GG::DropDownList::iterator it) {
@@ -202,9 +201,9 @@ namespace {
         void ItemQuantityChanged(int quant, int blocksize);
         void ItemBlocksizeChanged(int quant, int blocksize);
 
-        static GG::Y    DefaultHeight();
+        static GG::Y DefaultHeight();
 
-        mutable boost::signals2::signal<void(int,int)>    PanelUpdateQuantSignal;
+        mutable boost::signals2::signal<void(int,int)> PanelUpdateQuantSignal;
 
     private:
         void Draw(GG::Clr clr, bool fill);
@@ -219,12 +218,12 @@ namespace {
         std::shared_ptr<MultiTurnProgressBar>   m_progress_bar;
         std::shared_ptr<QuantitySelector>       m_quantity_selector;
         std::shared_ptr<QuantitySelector>       m_block_size_selector;
-        bool                                    m_in_progress;
-        int                                     m_total_turns;
-        double                                  m_turn_spending;
-        double                                  m_total_cost;
-        double                                  m_completed_progress;
-        bool                                    m_order_issuing_enabled;
+        bool                                    m_in_progress = false;
+        int                                     m_total_turns = 0;
+        double                                  m_turn_spending = 0.0;
+        double                                  m_total_cost = 0.0;
+        double                                  m_completed_progress = 0.0;
+        bool                                    m_order_issuing_enabled = true;
     };
 
     /////////////////////////////
@@ -331,12 +330,11 @@ namespace {
 
     struct QueueRow : GG::ListBox::Row {
         QueueRow(GG::X w, const ProductionQueue::Element& elem_, int queue_index_) :
-            GG::ListBox::Row(w, QueueProductionItemPanel::DefaultHeight(),
-                             BuildDesignatorWnd::PRODUCTION_ITEM_DROP_TYPE),
-            panel(nullptr),
+            GG::ListBox::Row(w, QueueProductionItemPanel::DefaultHeight()),
             queue_index(queue_index_),
             elem(elem_)
         {
+            SetDragDropDataType(BuildDesignatorWnd::PRODUCTION_ITEM_DROP_TYPE);
             const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
             float total_cost(1.0f);
             int minimum_turns(1);
@@ -357,8 +355,10 @@ namespace {
             SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
             SetBrowseInfoWnd(ProductionItemBrowseWnd(elem));
 
+            namespace ph = boost::placeholders;
+
             panel->PanelUpdateQuantSignal.connect(
-                boost::bind(&QueueRow::RowQuantChanged, this, _1, _2));
+                boost::bind(&QueueRow::RowQuantChanged, this, ph::_1, ph::_2));
 
             RequirePreRender();
         }
@@ -401,19 +401,11 @@ namespace {
     //////////////////////////////////////////////////
     // QueueProductionItemPanel implementation
     //////////////////////////////////////////////////
-    QueueProductionItemPanel::QueueProductionItemPanel(GG::X x, GG::Y y, GG::X w, const ProductionQueue::Element& build,
-                                                       double turn_spending, double total_cost, int turns, int number,
-                                                       double completed_progress) :
+    QueueProductionItemPanel::QueueProductionItemPanel(
+        GG::X x, GG::Y y, GG::X w, const ProductionQueue::Element& build,
+        double turn_spending, double total_cost, int turns, int number, double completed_progress) :
         GG::Control(x, y, w, DefaultHeight(), GG::NO_WND_FLAGS),
         elem(build),
-        m_name_text(nullptr),
-        m_location_text(nullptr),
-        m_PPs_and_turns_text(nullptr),
-        m_turns_remaining_until_next_complete_text(nullptr),
-        m_icon(nullptr),
-        m_progress_bar(nullptr),
-        m_quantity_selector(nullptr),
-        m_block_size_selector(nullptr),
         m_in_progress(build.allocated_pp || build.turns_left_to_next_item == 1),
         m_total_turns(turns),
         m_turn_spending(turn_spending),
@@ -426,7 +418,7 @@ namespace {
         SetChildClippingMode(ClipToClient);
 
         GG::Clr clr = m_in_progress
-            ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor())
+            ? GG::LightenClr(ClientUI::ResearchableTechTextAndBorderColor())
             : ClientUI::ResearchableTechTextAndBorderColor();
 
         // get graphic and player-visible name text for item
@@ -490,7 +482,7 @@ namespace {
         const Empire* this_client_empire = GetEmpire(client_empire_id);
         if (this_client_empire && (system_selected || rally_dest_selected)) {
             auto empire_color = this_client_empire->Color();
-            auto rally_color = GG::DarkColor(GG::Clr(255 - empire_color.r, 255 - empire_color.g, 255 - empire_color.b, empire_color.a));
+            auto rally_color = GG::DarkenClr(GG::InvertClr(empire_color));
             auto location_color = system_selected ? empire_color : rally_color;
             m_location_text = GG::Wnd::Create<GG::TextControl>(GG::X0, GG::Y0, GG::X1, GG::Y1, "<s>" + location_text + "</s>",
                                                   ClientUI::GetBoldFont(), location_color, GG::FORMAT_TOP | GG::FORMAT_RIGHT);
@@ -508,12 +500,12 @@ namespace {
 
         GG::Clr outline_color = ClientUI::ResearchableTechFillColor();
         if (m_in_progress)
-            outline_color = GG::LightColor(outline_color);
+            outline_color = GG::LightenClr(outline_color);
 
         m_progress_bar = GG::Wnd::Create<MultiTurnProgressBar>(m_total_turns,
                                                                perc_complete,
                                                                next_progress,
-                                                               GG::LightColor(ClientUI::TechWndProgressBarBackgroundColor()),
+                                                               GG::LightenClr(ClientUI::TechWndProgressBarBackgroundColor()),
                                                                ClientUI::TechWndProgressBarColor(),
                                                                outline_color);
 
@@ -544,12 +536,15 @@ namespace {
         AttachChild(m_PPs_and_turns_text);
         AttachChild(m_turns_remaining_until_next_complete_text);
         AttachChild(m_progress_bar);
+
+        namespace ph = boost::placeholders;
+
         if (m_quantity_selector)
             m_quantity_selector->QuantChangedSignal.connect(
-                boost::bind(&QueueProductionItemPanel::ItemQuantityChanged, this, _1, _2));
+                boost::bind(&QueueProductionItemPanel::ItemQuantityChanged, this, ph::_1, ph::_2));
         if (m_block_size_selector)
             m_block_size_selector->QuantChangedSignal.connect(
-                boost::bind(&QueueProductionItemPanel::ItemBlocksizeChanged, this, _1, _2));
+                boost::bind(&QueueProductionItemPanel::ItemBlocksizeChanged, this, ph::_1, ph::_2));
 
         RequirePreRender();
     }
@@ -620,17 +615,17 @@ namespace {
     }
 
     void QueueProductionItemPanel::ItemQuantityChanged(int quant, int blocksize)
-    { PanelUpdateQuantSignal(quant,elem.blocksize); }
+    { if (m_order_issuing_enabled) PanelUpdateQuantSignal(quant, elem.blocksize); }
 
-    void QueueProductionItemPanel::ItemBlocksizeChanged(int quant, int blocksize) // made separate funcion in case wna to do extra checking
-    { PanelUpdateQuantSignal(elem.remaining, blocksize); }
+    void QueueProductionItemPanel::ItemBlocksizeChanged(int quant, int blocksize)
+    { if (m_order_issuing_enabled) PanelUpdateQuantSignal(elem.remaining, blocksize); }
 
     void QueueProductionItemPanel::Render() {
         GG::Clr fill = m_in_progress
-            ? GG::LightColor(ClientUI::ResearchableTechFillColor())
+            ? GG::LightenClr(ClientUI::ResearchableTechFillColor())
             : ClientUI::ResearchableTechFillColor();
         GG::Clr text_and_border = m_in_progress
-            ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor())
+            ? GG::LightenClr(ClientUI::ResearchableTechTextAndBorderColor())
             : ClientUI::ResearchableTechTextAndBorderColor();
 
         glDisable(GL_TEXTURE_2D);
@@ -781,8 +776,7 @@ public:
     /** \name Structors */ //@{
     ProductionQueueWnd(GG::X x, GG::Y y, GG::X w, GG::Y h) :
         CUIWnd("", x, y, w, h, GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP | PINABLE,
-               "production.queue"),
-        m_queue_lb(nullptr)
+               "production.queue")
     {}
 
     void CompleteConstruction() override {
@@ -833,9 +827,6 @@ private:
 //////////////////////////////////////////////////
 ProductionWnd::ProductionWnd(GG::X w, GG::Y h) :
     GG::Wnd(GG::X0, GG::Y0, w, h, GG::INTERACTIVE | GG::ONTOP),
-    m_production_info_panel(nullptr),
-    m_queue_wnd(nullptr),
-    m_build_designator_wnd(nullptr),
     m_order_issuing_enabled(false),
     m_empire_shown_id(ALL_EMPIRES)
 {}
@@ -856,6 +847,11 @@ void ProductionWnd::CompleteConstruction() {
     m_build_designator_wnd = GG::Wnd::Create<BuildDesignatorWnd>(ClientSize().x, ClientSize().y);
 
     SetChildClippingMode(ClipToClient);
+
+    using boost::placeholders::_1;
+    using boost::placeholders::_2;
+    using boost::placeholders::_3;
+    using boost::placeholders::_4;
 
     m_build_designator_wnd->AddBuildToQueueSignal.connect(
         boost::bind(&ProductionWnd::AddBuildToQueueSlot, this, _1, _2, _3, _4));
@@ -977,8 +973,8 @@ void ProductionWnd::ShowPlanetInEncyclopedia(int planet_id)
 void ProductionWnd::ShowTechInEncyclopedia(const std::string& tech_name)
 { m_build_designator_wnd->ShowTechInEncyclopedia(tech_name); }
 
-void ProductionWnd::ShowPartTypeInEncyclopedia(const std::string& part_type_name)
-{ m_build_designator_wnd->ShowPartTypeInEncyclopedia(part_type_name); }
+void ProductionWnd::ShowShipPartInEncyclopedia(const std::string& part_name)
+{ m_build_designator_wnd->ShowShipPartInEncyclopedia(part_name); }
 
 void ProductionWnd::ShowSpeciesInEncyclopedia(const std::string& species_name)
 { m_build_designator_wnd->ShowSpeciesInEncyclopedia(species_name); }
@@ -1032,15 +1028,18 @@ void ProductionWnd::QueueItemMoved(const GG::ListBox::iterator& row_it, const GG
         return;
 
     // This precorrects the position for a factor in Empire::MoveProductionWithinQueue
-    int position = std::distance(m_queue_wnd->GetQueueListBox()->begin(), row_it);
+    int new_position = std::distance(m_queue_wnd->GetQueueListBox()->begin(), row_it);
     int original_position = std::distance(m_queue_wnd->GetQueueListBox()->begin(), original_position_it);
-    auto direction = original_position < position;
-    int corrected_position = position + (direction ? 1 : 0);
+    auto direction = original_position < new_position;
+    int corrected_new_position = new_position + (direction ? 1 : 0);
 
-    HumanClientApp::GetApp()->Orders().IssueOrder(
-        std::make_shared<ProductionQueueOrder>(client_empire_id,
-                                               original_position,
-                                               corrected_position));
+    auto queue_it = empire->GetProductionQueue().find(original_position);
+
+    if (queue_it != empire->GetProductionQueue().end())
+        HumanClientApp::GetApp()->Orders().IssueOrder(
+            std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::MOVE_ITEM_TO_INDEX,
+                                                   client_empire_id, queue_it->uuid,
+                                                   corrected_new_position));
     empire->UpdateProductionQueue();
 }
 
@@ -1072,11 +1071,13 @@ void ProductionWnd::UpdateQueue() {
     if (!empire)
         return;
 
+    namespace ph = boost::placeholders;
+
     int i = 0;
     for (const ProductionQueue::Element& elem : empire->GetProductionQueue()) {
         auto row = GG::Wnd::Create<QueueRow>(queue_lb->RowWidth(), elem, i);
         row->RowQuantChangedSignal.connect(
-            boost::bind(&ProductionWnd::ChangeBuildQuantityBlockSlot, this, _1, _2, _3));
+            boost::bind(&ProductionWnd::ChangeBuildQuantityBlockSlot, this, ph::_1, ph::_2, ph::_3));
         queue_lb->Insert(row);
         ++i;
     }
@@ -1176,7 +1177,8 @@ void ProductionWnd::AddBuildToQueueSlot(const ProductionQueue::ProductionItem& i
         return;
 
     HumanClientApp::GetApp()->Orders().IssueOrder(
-        std::make_shared<ProductionQueueOrder>(client_empire_id, item, number, location, pos));
+        std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::PLACE_IN_QUEUE,
+                                               client_empire_id, item, number, location, pos));
 
     empire->UpdateProductionQueue();
     m_build_designator_wnd->CenterOnBuild(pos >= 0 ? pos : m_queue_wnd->GetQueueListBox()->NumRows() - 1);
@@ -1190,8 +1192,13 @@ void ProductionWnd::ChangeBuildQuantitySlot(int queue_idx, int quantity) {
     if (!empire)
         return;
 
-    HumanClientApp::GetApp()->Orders().IssueOrder(
-        std::make_shared<ProductionQueueOrder>(client_empire_id, queue_idx, quantity, true));
+    auto queue_it = empire->GetProductionQueue().find(queue_idx);
+
+    if (queue_it != empire->GetProductionQueue().end())
+        HumanClientApp::GetApp()->Orders().IssueOrder(
+            std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::SET_QUANTITY,
+                                                   client_empire_id, queue_it->uuid,
+                                                   quantity));
 
     empire->UpdateProductionQueue();
 }
@@ -1204,8 +1211,13 @@ void ProductionWnd::ChangeBuildQuantityBlockSlot(int queue_idx, int quantity, in
     if (!empire)
         return;
 
-    HumanClientApp::GetApp()->Orders().IssueOrder(
-        std::make_shared<ProductionQueueOrder>(client_empire_id, queue_idx, quantity, blocksize));
+    auto queue_it = empire->GetProductionQueue().find(queue_idx);
+
+    if (queue_it != empire->GetProductionQueue().end())
+        HumanClientApp::GetApp()->Orders().IssueOrder(
+            std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::SET_QUANTITY_AND_BLOCK_SIZE,
+                                                   client_empire_id, queue_it->uuid,
+                                                   quantity, blocksize));
 
     empire->UpdateProductionQueue();
 }
@@ -1218,8 +1230,13 @@ void ProductionWnd::DeleteQueueItem(GG::ListBox::iterator it) {
     if (!empire)
         return;
 
-    HumanClientApp::GetApp()->Orders().IssueOrder(
-        std::make_shared<ProductionQueueOrder>(client_empire_id, std::distance(m_queue_wnd->GetQueueListBox()->begin(), it)));
+    auto idx = std::distance(m_queue_wnd->GetQueueListBox()->begin(), it);
+    auto queue_it = empire->GetProductionQueue().find(idx);
+
+    if (queue_it != empire->GetProductionQueue().end())
+        HumanClientApp::GetApp()->Orders().IssueOrder(
+            std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::REMOVE_FROM_QUEUE,
+                                                   client_empire_id, queue_it->uuid));
 
     empire->UpdateProductionQueue();
 }
@@ -1234,9 +1251,8 @@ void ProductionWnd::QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt&
 }
 
 void ProductionWnd::QueueItemDoubleClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
-    if (m_queue_wnd->GetQueueListBox()->DisplayingValidQueueItems()) {
+    if (m_queue_wnd->GetQueueListBox()->DisplayingValidQueueItems())
         m_build_designator_wnd->CenterOnBuild(std::distance(m_queue_wnd->GetQueueListBox()->begin(), it), true);
-    }
 }
 
 void ProductionWnd::QueueItemRallied(GG::ListBox::iterator it, int object_id) {
@@ -1255,9 +1271,14 @@ void ProductionWnd::QueueItemRallied(GG::ListBox::iterator it, int object_id) {
     if (rally_point_id == INVALID_OBJECT_ID)
         return;
 
-    HumanClientApp::GetApp()->Orders().IssueOrder(
-        std::make_shared<ProductionQueueOrder>(client_empire_id, std::distance(m_queue_wnd->GetQueueListBox()->begin(), it),
-                                               rally_point_id, false, false));
+    auto idx = std::distance(m_queue_wnd->GetQueueListBox()->begin(), it);
+    auto queue_it = empire->GetProductionQueue().find(idx);
+
+    if (queue_it != empire->GetProductionQueue().end())
+        HumanClientApp::GetApp()->Orders().IssueOrder(
+            std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::SET_RALLY_POINT,
+                                                   client_empire_id, queue_it->uuid,
+                                                   rally_point_id));
 
     empire->UpdateProductionQueue();
 }
@@ -1270,9 +1291,13 @@ void ProductionWnd::QueueItemPaused(GG::ListBox::iterator it, bool pause) {
     if (!empire)
         return;
 
-    HumanClientApp::GetApp()->Orders().IssueOrder(
-        std::make_shared<ProductionQueueOrder>(client_empire_id, std::distance(m_queue_wnd->GetQueueListBox()->begin(), it),
-                                               pause, -1.0f));
+    auto idx = std::distance(m_queue_wnd->GetQueueListBox()->begin(), it);
+    auto queue_it = empire->GetProductionQueue().find(idx);
+    auto action = pause ? ProductionQueueOrder::PAUSE_PRODUCTION : ProductionQueueOrder::RESUME_PRODUCTION;
+
+    if (queue_it != empire->GetProductionQueue().end())
+        HumanClientApp::GetApp()->Orders().IssueOrder(
+            std::make_shared<ProductionQueueOrder>(action, client_empire_id, queue_it->uuid));
 
     empire->UpdateProductionQueue();
 }
@@ -1285,9 +1310,13 @@ void ProductionWnd::QueueItemDuped(GG::ListBox::iterator it) {
     if (!empire)
         return;
 
-    HumanClientApp::GetApp()->Orders().IssueOrder(
-        std::make_shared<ProductionQueueOrder>(client_empire_id, std::distance(m_queue_wnd->GetQueueListBox()->begin(), it),
-                                               -1.0f, -1.0f));
+    auto idx = std::distance(m_queue_wnd->GetQueueListBox()->begin(), it);
+    auto queue_it = empire->GetProductionQueue().find(idx);
+
+    if (queue_it != empire->GetProductionQueue().end())
+        HumanClientApp::GetApp()->Orders().IssueOrder(
+            std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::DUPLICATE_ITEM,
+                                                   client_empire_id, queue_it->uuid));
 
     empire->UpdateProductionQueue();
 }
@@ -1300,9 +1329,13 @@ void ProductionWnd::QueueItemSplit(GG::ListBox::iterator it) {
     if (!empire)
         return;
 
-    HumanClientApp::GetApp()->Orders().IssueOrder(
-        std::make_shared<ProductionQueueOrder>(client_empire_id, std::distance(m_queue_wnd->GetQueueListBox()->begin(), it),
-                                               -1.0f));
+    auto idx = std::distance(m_queue_wnd->GetQueueListBox()->begin(), it);
+    auto queue_it = empire->GetProductionQueue().find(idx);
+
+    if (queue_it != empire->GetProductionQueue().end())
+        HumanClientApp::GetApp()->Orders().IssueOrder(
+            std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::SPLIT_INCOMPLETE,
+                                                   client_empire_id, queue_it->uuid));
 
     empire->UpdateProductionQueue();
 }
@@ -1315,9 +1348,13 @@ void ProductionWnd::QueueItemUseImperialPP(GG::ListBox::iterator it, bool allow)
     if (!empire)
         return;
 
-    HumanClientApp::GetApp()->Orders().IssueOrder(
-        OrderPtr(new ProductionQueueOrder(client_empire_id, std::distance(m_queue_wnd->GetQueueListBox()->begin(), it),
-                                          allow, -1.0f, -1.0f)));
+    auto idx = std::distance(m_queue_wnd->GetQueueListBox()->begin(), it);
+    auto queue_it = empire->GetProductionQueue().find(idx);
+    auto action = allow ? ProductionQueueOrder::ALLOW_STOCKPILE_USE : ProductionQueueOrder::DISALLOW_STOCKPILE_USE;
+
+    if (queue_it != empire->GetProductionQueue().end())
+        HumanClientApp::GetApp()->Orders().IssueOrder(
+            OrderPtr(new ProductionQueueOrder(action, client_empire_id, queue_it->uuid)));
 
     empire->UpdateProductionQueue();
 }

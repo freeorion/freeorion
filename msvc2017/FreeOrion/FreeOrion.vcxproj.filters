@@ -31,9 +31,6 @@
     <Filter Include="Header Files\network">
       <UniqueIdentifier>{683283a4-a27f-4105-8437-c3d102745e9f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\network">
-      <UniqueIdentifier>{b9e15fb8-5458-4bcb-92dc-09ba4b65cfae}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\UI">
       <UniqueIdentifier>{f9dda62a-26fb-45a2-a8dc-c2fe4f1434c8}</UniqueIdentifier>
     </Filter>
@@ -61,6 +58,9 @@
       <Filter>Header Files\client</Filter>
     </ClInclude>
     <ClInclude Include="..\..\client\ClientFSMEvents.h">
+      <Filter>Header Files\client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\client\ClientNetworking.h">
       <Filter>Header Files\client</Filter>
     </ClInclude>
     <ClInclude Include="..\..\client\human\HumanClientFSM.h">
@@ -91,9 +91,6 @@
       <Filter>Header Files\Empire</Filter>
     </ClInclude>
     <ClInclude Include="..\..\network\Networking.h">
-      <Filter>Header Files\network</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\network\ClientNetworking.h">
       <Filter>Header Files\network</Filter>
     </ClInclude>
     <ClInclude Include="..\..\network\Message.h">
@@ -205,6 +202,9 @@
       <Filter>Header Files\UI</Filter>
     </ClInclude>
     <ClInclude Include="..\..\UI\ResourcePanel.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\SDLGUI.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
     <ClInclude Include="..\..\UI\ServerConnectWnd.h">
@@ -372,6 +372,9 @@
     <ClInclude Include="..\..\universe\Field.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\universe\FieldType.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\UI\ModeratorActionsWnd.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
@@ -408,7 +411,7 @@
     <ClInclude Include="StdAfx.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\FreeOrion.ico">
+    <None Include="..\..\client\human\FreeOrion.ico">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
@@ -419,6 +422,9 @@
     <ClCompile Include="..\..\client\ClientApp.cpp">
       <Filter>Source Files\client</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\client\ClientNetworking.cpp">
+      <Filter>Source Files\client</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\client\human\HumanClientApp.cpp">
       <Filter>Source Files\client\human</Filter>
     </ClCompile>
@@ -427,9 +433,6 @@
     </ClCompile>
     <ClCompile Include="..\..\client\human\HumanClientFSM.cpp">
       <Filter>Source Files\client\human</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\network\ClientNetworking.cpp">
-      <Filter>Source Files\network</Filter>
     </ClCompile>
     <ClCompile Include="..\..\UI\ShaderProgram.cpp">
       <Filter>Source Files\UI</Filter>
@@ -543,6 +546,9 @@
       <Filter>Source Files\UI</Filter>
     </ClCompile>
     <ClCompile Include="..\..\UI\ResourcePanel.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\SDLGUI.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
     <ClCompile Include="..\..\UI\ServerConnectWnd.cpp">

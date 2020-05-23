@@ -9,6 +9,7 @@
 #include <boost/filesystem/fstream.hpp>
 #include <boost/signals2/signal.hpp>
 
+#include <functional>
 #include <map>
 #include <unordered_set>
 
@@ -20,7 +21,9 @@ class XMLElement;
 /////////////////////////////////////////////
 // Free Functions
 /////////////////////////////////////////////
-typedef void (*OptionsDBFn)(OptionsDB&); ///< the function signature for functions that add Options to the OptionsDB (void (OptionsDB&))
+
+//! The function signature for functions that add Options to the OptionsDB (void (OptionsDB&))
+typedef std::function<void (OptionsDB&)> OptionsDBFn;
 
 /** adds \a function to a vector of pointers to functions that add Options to
   * the OptionsDB.  This function returns a boolean so that it can be used to
@@ -115,9 +118,8 @@ public:
     bool OptionExists(const std::string& name) const
     { return m_options.count(name) && m_options.at(name).recognized; }
 
-    /** write back the optionDB's state to the XML config file
-        if it has changed since it was last saved. */
-    void Commit();
+    /** write the optionDB's non-default state to the XML config file. */
+    bool Commit(bool only_if_dirty = true, bool only_non_default = true);
 
     /** Write any options that are not at default value to persistent config, replacing any existing file
      *
@@ -133,7 +135,7 @@ public:
     /** returns the value of option \a name. Note that the exact type of item
       * stored in the option \a name must be known in advance.  This means that
       * Get() must be called as Get<int>("foo"), etc. */
-    template <class T>
+    template <typename T>
     T Get(const std::string& name) const
     {
         auto it = m_options.find(name);
@@ -155,7 +157,7 @@ public:
     /** returns the default value of option \a name. Note that the exact type
       * of item stored in the option \a name must be known in advance.  This
       * means that GetDefault() must be called as Get<int>("foo"), etc. */
-    template <class T>
+    template <typename T>
     T GetDefault(const std::string& name) const
     {
         auto it = m_options.find(name);
@@ -201,7 +203,7 @@ public:
      * @param[in] non_default_only Do not include options which are set to their
      *      default value, is unrecognized, or is "version.string"
      */
-    void GetXML(XMLDoc& doc, bool non_default_only = false) const;
+    void GetXML(XMLDoc& doc, bool non_default_only = false, bool include_version = true) const;
 
     /** find all registered Options that begin with \a prefix and store them in
       * \a ret. If \p allow_unrecognized then include unrecognized options. */
@@ -214,7 +216,7 @@ public:
     mutable OptionRemovedSignalType OptionRemovedSignal; ///< the change removed signal object for this DB
 
     /** adds an Option, optionally with a custom validator */
-    template <class T>
+    template <typename T>
     void Add(const std::string& name, const std::string& description, T default_value,
              const ValidatorBase& validator = Validator<T>(), bool storable = true,
              const std::string& section = std::string())
@@ -244,7 +246,7 @@ public:
 
     /** adds an Option with an alternative one-character shortened name,
       * optionally with a custom validator */
-    template <class T>
+    template <typename T>
     void Add(char short_name, const std::string& name, const std::string& description, T default_value,
              const ValidatorBase& validator = Validator<T>(), bool storable = true,
              const std::string& section = std::string())
@@ -327,7 +329,7 @@ public:
     void RemoveUnrecognized(const std::string& prefix = "");
 
     /** sets the value of option \a name to \a value */
-    template <class T>
+    template <typename T>
     void Set(const std::string& name, const T& value)
     {
         auto it = m_options.find(name);
@@ -337,7 +339,7 @@ public:
     }
 
     /** Set the default value of option @p name to @p value */
-    template <class T>
+    template <typename T>
     void SetDefault(const std::string& name, const T& value) {
         std::map<std::string, Option>::iterator it = m_options.find(name);
         if (!OptionExists(it))
@@ -380,7 +382,7 @@ public:
         bool            ValueIsDefault() const;
 
         std::string     name;           ///< the name of the option
-        char            short_name;     ///< the one character abbreviation of the option
+        char            short_name{0};  ///< the one character abbreviation of the option
         boost::any      value;          ///< the value of the option
         boost::any      default_value;  ///< the default value of the option
         std::string     description;    ///< a desription of the option
@@ -390,9 +392,9 @@ public:
             boolean conversions are done for them. */
         std::shared_ptr<const ValidatorBase> validator;
 
-        bool            storable;       ///< whether this option can be stored in an XML config file for use across multiple runs
-        bool            flag;
-        bool            recognized;     ///< whether this option has been registered before being specified via an XML input, unrecognized options can't be parsed (don't know their type) but are stored in case they are later registered with Add()
+        bool            storable = false;   ///< whether this option can be stored in an XML config file for use across multiple runs
+        bool            flag = false;
+        bool            recognized = false; ///< whether this option has been registered before being specified via an XML input, unrecognized options can't be parsed (don't know their type) but are stored in case they are later registered with Add()
 
         mutable std::shared_ptr<boost::signals2::signal<void ()>> option_changed_sig_ptr;
 

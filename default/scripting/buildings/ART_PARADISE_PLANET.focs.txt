@@ -20,7 +20,6 @@ BuildingType
                 Object id = Source.PlanetID
                 Planet
             ]
-            activation = Source
             effects = [
                 SetPlanetType type = Barren
                 AddSpecial name = "GAIA_SPECIAL"
@@ -34,7 +33,6 @@ BuildingType
 
         EffectsGroup
             scope = Source
-            activation = Source
             effects = Destroy
     ]
     icon = "icons/building/paradise_planet.png"

@@ -15,7 +15,6 @@
 
 #include <boost/filesystem/fstream.hpp>
 
-#include <GG/DrawUtil.h>
 #include <GG/StaticGraphic.h>
 #include <GG/Layout.h>
 #include <GG/TabWnd.h>
@@ -78,13 +77,12 @@ namespace {
     class RuleListRow : public GG::ListBox::Row {
     public:
         RuleListRow(GG::X w, GG::Y h, std::shared_ptr<RowContentsWnd> contents) :
-            GG::ListBox::Row(w, h, ""),
+            GG::ListBox::Row(w, h),
             m_contents(std::forward<std::shared_ptr<RowContentsWnd>>(contents))
         {}
 
         RuleListRow(GG::X w, GG::Y h, std::shared_ptr<Wnd> contents, int indentation = 0) :
-            GG::ListBox::Row(w, h, ""),
-            m_contents(nullptr)
+            GG::ListBox::Row(w, h)
         {
             if (contents)
                 m_contents = GG::Wnd::Create<RowContentsWnd>(w, h, std::forward<std::shared_ptr<GG::Wnd>>(contents), indentation);
@@ -395,8 +393,10 @@ namespace {
     // row type used in the SpeciesSelector
     struct UserStringRow : public GG::ListBox::Row {
         UserStringRow(const std::string& key, GG::X w, GG::Y h) :
-            GG::ListBox::Row(w, h, "", GG::ALIGN_VCENTER, 0)
+            GG::ListBox::Row(w, h)
         {
+            SetMargin(0);
+            SetRowAlignment(GG::ALIGN_VCENTER);
             GG::Wnd::SetName(key);
         }
 
@@ -555,6 +555,7 @@ void GalaxySetupPanel::CompleteConstruction() {
     } else {
         m_seed_edit = GG::Wnd::Create<CUIEdit>(m_seed);
     }
+    m_seed_edit->DisallowChars("<>/\\[]'`?{}, ");
 
     boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
 
@@ -654,31 +655,21 @@ void GalaxySetupPanel::CompleteConstruction() {
     TraceLogger() << "GalaxySetupPanel::CompleteConstruction layout";
     DoLayout();
 
+    using boost::placeholders::_1;
+
     TraceLogger() << "GalaxySetupPanel::CompleteConstruction connecting signals and loading textures";
-    m_random->LeftClickedSignal.connect(
-        boost::bind(&GalaxySetupPanel::RandomClicked, this));
-    m_seed_edit->FocusUpdateSignal.connect(
-        boost::bind(&GalaxySetupPanel::SetSeed, this, _1, false));
-    m_stars_spin->ValueChangedSignal.connect(
-        boost::bind(&GalaxySetupPanel::SettingChanged, this));
-    m_galaxy_shapes_list->SelChangedSignal.connect(
-        boost::bind(&GalaxySetupPanel::SettingChanged, this));
-    m_galaxy_ages_list->SelChangedSignal.connect(
-        boost::bind(&GalaxySetupPanel::SettingChanged, this));
-    m_starlane_freq_list->SelChangedSignal.connect(
-        boost::bind(&GalaxySetupPanel::SettingChanged, this));
-    m_planet_density_list->SelChangedSignal.connect(
-        boost::bind(&GalaxySetupPanel::SettingChanged, this));
-    m_specials_freq_list->SelChangedSignal.connect(
-        boost::bind(&GalaxySetupPanel::SettingChanged, this));
-    m_monster_freq_list->SelChangedSignal.connect(
-        boost::bind(&GalaxySetupPanel::SettingChanged, this));
-    m_native_freq_list->SelChangedSignal.connect(
-        boost::bind(&GalaxySetupPanel::SettingChanged, this));
-    m_ai_aggression_list->SelChangedSignal.connect(
-        boost::bind(&GalaxySetupPanel::SettingChanged, this));
-    m_galaxy_shapes_list->SelChangedSignal.connect(
-        boost::bind(&GalaxySetupPanel::ShapeChanged, this, _1));
+    m_random->LeftClickedSignal.connect(            boost::bind(&GalaxySetupPanel::RandomClicked, this));
+    m_seed_edit->FocusUpdateSignal.connect(         boost::bind(&GalaxySetupPanel::SetSeed, this, _1, false));
+    m_stars_spin->ValueChangedSignal.connect(       boost::bind(&GalaxySetupPanel::SettingChanged, this));
+    m_galaxy_shapes_list->SelChangedSignal.connect( boost::bind(&GalaxySetupPanel::SettingChanged, this));
+    m_galaxy_ages_list->SelChangedSignal.connect(   boost::bind(&GalaxySetupPanel::SettingChanged, this));
+    m_starlane_freq_list->SelChangedSignal.connect( boost::bind(&GalaxySetupPanel::SettingChanged, this));
+    m_planet_density_list->SelChangedSignal.connect(boost::bind(&GalaxySetupPanel::SettingChanged, this));
+    m_specials_freq_list->SelChangedSignal.connect( boost::bind(&GalaxySetupPanel::SettingChanged, this));
+    m_monster_freq_list->SelChangedSignal.connect(  boost::bind(&GalaxySetupPanel::SettingChanged, this));
+    m_native_freq_list->SelChangedSignal.connect(   boost::bind(&GalaxySetupPanel::SettingChanged, this));
+    m_ai_aggression_list->SelChangedSignal.connect( boost::bind(&GalaxySetupPanel::SettingChanged, this));
+    m_galaxy_shapes_list->SelChangedSignal.connect( boost::bind(&GalaxySetupPanel::ShapeChanged, this, _1));
 
     // create and load textures
     m_textures.clear();
@@ -1054,6 +1045,8 @@ void GalaxySetupWnd::CompleteConstruction() {
     ResetDefaultPosition();
     DoLayout();
     SaveDefaultedOptions();
+
+    using boost::placeholders::_1;
 
     m_galaxy_setup_panel->ImageChangedSignal.connect(boost::bind(&GalaxySetupWnd::PreviewImageChanged,  this, _1));
     m_player_name_edit->EditedSignal.connect(        boost::bind(&GalaxySetupWnd::PlayerNameChanged,    this, _1));

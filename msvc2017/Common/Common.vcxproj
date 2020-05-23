@@ -5,23 +5,33 @@
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Release-XP|Win32">
-      <Configuration>Release-XP</Configuration>
-      <Platform>Win32</Platform>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{BEDF460A-EAE9-4E20-AFB2-2C8434051150}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Common</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
@@ -34,12 +44,12 @@
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-XP|Win32'" Label="Configuration">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v140_xp</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -60,15 +70,31 @@
     <CustomBuildBeforeTargets>
     </CustomBuildBeforeTargets>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-XP|Win32'">
-    <OutDir>../../</OutDir>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <CustomBuildBeforeTargets />
+    <OutDir>../../</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <CustomBuildBeforeTargets>
     </CustomBuildBeforeTargets>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <CustomBuildBeforeTargets />
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeaderFile>StdAfx.h</PrecompiledHeaderFile>
+      <ForcedIncludeFiles>StdAfx.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <Optimization>Disabled</Optimization>
@@ -88,7 +114,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_USRDLL;FREEORION_WIN32;_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../../include/;../../GG/;../../;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../include/;../../GG/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <PrecompiledHeaderFile>StdAfx.h</PrecompiledHeaderFile>
@@ -102,14 +128,14 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release-XP|Win32'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_USRDLL;FREEORION_WIN32;_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../../include/;../../GG/;../../;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../include/;../../GG/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <PrecompiledHeaderFile>StdAfx.h</PrecompiledHeaderFile>
@@ -126,26 +152,31 @@
   <ItemGroup>
     <None Include="..\..\cmake\make_versioncpp.py">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release-XP|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </None>
     <None Include="..\..\util\Serialize.ipp">
       <FileType>Document</FileType>
     </None>
     <CustomBuild Include="..\..\util\Version.cpp.in">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(SolutionDir)..\python.exe" "$(SolutionDir)..\cmake\make_versioncpp.py" "$(SolutionDir).." "MSVC 2017"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release-XP|Win32'">"$(SolutionDir)..\python.exe" "$(SolutionDir)..\cmake\make_versioncpp.py" "$(SolutionDir).." "MSVC 2017"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(SolutionDir)..\python3.5.exe" "$(SolutionDir)..\cmake\make_versioncpp.py" "$(SolutionDir).." "MSVC 2017"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(SolutionDir)..\python3.5.exe" "$(SolutionDir)..\cmake\make_versioncpp.py" "$(SolutionDir).." "MSVC 2017"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)..\util\Version.cpp;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release-XP|Win32'">$(SolutionDir)..\util\Version.cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)..\util\Version.cpp;%(Outputs)</Outputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)..\.git;%(AdditionalInputs)</AdditionalInputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release-XP|Win32'">$(SolutionDir)..\.git;%(AdditionalInputs)</AdditionalInputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(SolutionDir)..\python.exe" "$(SolutionDir)..\cmake\make_versioncpp.py" "$(SolutionDir).." "MSVC 2017 Debug"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)..\.git;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(SolutionDir)..\python3.5.exe" "$(SolutionDir)..\cmake\make_versioncpp.py" "$(SolutionDir).." "MSVC 2017 Debug"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(SolutionDir)..\python3.5.exe" "$(SolutionDir)..\cmake\make_versioncpp.py" "$(SolutionDir).." "MSVC 2017 Debug"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)..\util\Version.cpp;%(Outputs)</Outputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)..\.svn;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)..\util\Version.cpp;%(Outputs)</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)..\.git;%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)..\.git;%(AdditionalInputs)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Configuring Version.cpp</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Configuring Version.cpp</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Configuring Version.cpp</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release-XP|Win32'">Configuring Version.cpp</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Configuring Version.cpp</Message>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
@@ -165,16 +196,22 @@
     <ClInclude Include="..\..\network\MessageQueue.h" />
     <ClInclude Include="..\..\network\Networking.h" />
     <ClInclude Include="..\..\universe\Building.h" />
+    <ClInclude Include="..\..\universe\BuildingType.h" />
+    <ClInclude Include="..\..\universe\CommonParams.h" />
     <ClInclude Include="..\..\universe\Condition.h" />
+    <ClInclude Include="..\..\universe\ConditionAll.h" />
     <ClInclude Include="..\..\universe\Conditions.h" />
+    <ClInclude Include="..\..\universe\ConditionSource.h" />
     <ClInclude Include="..\..\universe\Effects.h" />
     <ClInclude Include="..\..\universe\Effect.h" />
     <ClInclude Include="..\..\universe\Encyclopedia.h" />
     <ClInclude Include="..\..\universe\Enums.h" />
     <ClInclude Include="..\..\universe\EnumsFwd.h" />
     <ClInclude Include="..\..\universe\Field.h" />
+    <ClInclude Include="..\..\universe\FieldType.h" />
     <ClInclude Include="..\..\universe\Fighter.h" />
     <ClInclude Include="..\..\universe\Fleet.h" />
+    <ClInclude Include="..\..\universe\FleetPlan.h" />
     <ClInclude Include="..\..\universe\IDAllocator.h" />
     <ClInclude Include="..\..\universe\ScriptingContext.h" />
     <ClInclude Include="..\..\universe\ValueRef.h" />
@@ -187,11 +224,14 @@
     <ClInclude Include="..\..\universe\ResourceCenter.h" />
     <ClInclude Include="..\..\universe\Ship.h" />
     <ClInclude Include="..\..\universe\ShipDesign.h" />
+    <ClInclude Include="..\..\universe\ShipHull.h" />
+    <ClInclude Include="..\..\universe\ShipPart.h" />
     <ClInclude Include="..\..\universe\Special.h" />
     <ClInclude Include="..\..\universe\Species.h" />
     <ClInclude Include="..\..\universe\System.h" />
     <ClInclude Include="..\..\universe\Tech.h" />
     <ClInclude Include="..\..\universe\Universe.h" />
+    <ClInclude Include="..\..\universe\UnlockableItem.h" />
     <ClInclude Include="..\..\universe\Pathfinder.h" />
     <ClInclude Include="..\..\universe\UniverseObject.h" />
     <ClInclude Include="..\..\universe\ValueRefs.h" />
@@ -245,11 +285,14 @@
     <ClCompile Include="..\..\util\ScopedTimer.cpp" />
     <ClCompile Include="..\..\util\StringTable.cpp" />
     <ClCompile Include="..\..\universe\Building.cpp" />
+    <ClCompile Include="..\..\universe\BuildingType.cpp" />
     <ClCompile Include="..\..\universe\Effect.cpp" />
     <ClCompile Include="..\..\universe\Encyclopedia.cpp" />
     <ClCompile Include="..\..\universe\Enums.cpp" />
     <ClCompile Include="..\..\universe\Field.cpp" />
+    <ClCompile Include="..\..\universe\FieldType.cpp" />
     <ClCompile Include="..\..\universe\Fleet.cpp" />
+    <ClCompile Include="..\..\universe\FleetPlan.cpp" />
     <ClCompile Include="..\..\universe\IDAllocator.cpp" />
     <ClCompile Include="..\..\universe\Meter.cpp" />
     <ClCompile Include="..\..\universe\ObjectMap.cpp" />
@@ -259,11 +302,14 @@
     <ClCompile Include="..\..\universe\ResourceCenter.cpp" />
     <ClCompile Include="..\..\universe\Ship.cpp" />
     <ClCompile Include="..\..\universe\ShipDesign.cpp" />
+    <ClCompile Include="..\..\universe\ShipHull.cpp" />
+    <ClCompile Include="..\..\universe\ShipPart.cpp" />
     <ClCompile Include="..\..\universe\Special.cpp" />
     <ClCompile Include="..\..\universe\Species.cpp" />
     <ClCompile Include="..\..\universe\System.cpp" />
     <ClCompile Include="..\..\universe\Tech.cpp" />
     <ClCompile Include="..\..\universe\Universe.cpp" />
+    <ClCompile Include="..\..\universe\UnlockableItem.cpp" />
     <ClCompile Include="..\..\universe\Pathfinder.cpp" />
     <ClCompile Include="..\..\universe\UniverseObject.cpp" />
     <ClCompile Include="..\..\util\AppInterface.cpp" />
@@ -289,8 +335,9 @@
     <ClCompile Include="..\..\util\Version.cpp" />
     <ClCompile Include="StdAfx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release-XP|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

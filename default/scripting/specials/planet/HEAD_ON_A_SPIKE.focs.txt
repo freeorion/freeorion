@@ -5,7 +5,6 @@ Special
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Source
             effects = [
                 SetMaxDefense value = Value + 1
                 SetMaxShield value = Value + 1
@@ -20,12 +19,14 @@ Special
             ]
             stackinggroup = "HEAD_ON_A_SPIKE_SPECIAL_EFFECT"
             effects = [
-                SetMaxShield value = Value - 1
-                SetMaxStructure value = Value - 1 
-                SetMaxDamage partname = "SR_WEAPON_1_1" value = Value - 1
-                SetMaxDamage partname = "SR_WEAPON_2_1" value = Value - 1
-                SetMaxDamage partname = "SR_WEAPON_3_1" value = Value - 1
-                SetMaxDamage partname = "SR_WEAPON_4_1" value = Value - 1
+                SetMaxShield value = Value - (1 * [[SHIP_SHIELD_FACTOR]])
+                SetMaxStructure value = Value - (1 * [[SHIP_STRUCTURE_FACTOR]])
+                SetMaxDamage partname = "SR_WEAPON_1_1" value = Value - (1 * [[SHIP_WEAPON_DAMAGE_FACTOR]])
+                SetMaxDamage partname = "SR_WEAPON_2_1" value = Value - (1 * [[SHIP_WEAPON_DAMAGE_FACTOR]])
+                SetMaxDamage partname = "SR_WEAPON_3_1" value = Value - (1 * [[SHIP_WEAPON_DAMAGE_FACTOR]])
+                SetMaxDamage partname = "SR_WEAPON_4_1" value = Value - (1 * [[SHIP_WEAPON_DAMAGE_FACTOR]])
             ]
     ]
     graphic = "icons/sitrep/empire_eliminated.png"
+
+#include "/scripting/common/misc.macros"

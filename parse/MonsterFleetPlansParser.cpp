@@ -6,12 +6,10 @@
 
 #include "../universe/Condition.h"
 #include "../universe/Universe.h"
-#include "../universe/UniverseGenerator.h"
+#include "../universe/FleetPlan.h"
 #include "../util/Directories.h"
 
 #include <boost/spirit/include/phoenix.hpp>
-//TODO: replace with std::make_unique when transitioning to C++14
-#include <boost/smart_ptr/make_unique.hpp>
 
 #define DEBUG_PARSERS 0
 
@@ -32,7 +30,7 @@ namespace {
         bool& pass)
     {
         plans.push_back(
-            boost::make_unique<MonsterFleetPlan>(
+            std::make_unique<MonsterFleetPlan>(
                 fleet_name, ship_design_names,
                 (spawn_rate ? *spawn_rate : 1.0),
                 (spawn_limit ? *spawn_limit : 9999),

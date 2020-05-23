@@ -24,14 +24,14 @@ Special
                 Species
             ]
             effects = [
-                SetMaxShield value = Value + 100
-                SetMaxDefense value = Value + 30
+                SetMaxShield value = Value + ( 100 * [[PLANET_SHIELD_FACTOR]] )
+                SetMaxDefense value = Value + ( 30 * [[PLANET_DEFENSE_FACTOR]] )
                 SetMaxTroops value = Value + 30
                 SetDetection value = Value + 30
 
                 //Regeneration
-                SetShield value = Value + min(5.0, max(Value, 0.25*Target.Construction))
-                SetDefense value = Value + 1
+                SetShield value = Value + ( min(5.0, max(Value, 0.25*Target.Construction)) * [[PLANET_SHIELD_FACTOR]] )
+                SetDefense value = Value + ( 1 * [[PLANET_DEFENSE_FACTOR]] )
             ]
         [[EG_SYSTEM_MINES(3,70,SOURCE)]] //Priority deliberately not a macro
 
@@ -70,3 +70,4 @@ Special
 #include "/scripting/techs/defense/mines.macros"
 
 #include "/scripting/common/priorities.macros"
+#include "/scripting/common/misc.macros"

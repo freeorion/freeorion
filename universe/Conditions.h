@@ -4,11 +4,12 @@
 
 #include "EnumsFwd.h"
 #include "Condition.h"
+#include "ConditionSource.h"
+#include "ConditionAll.h"
 
 #include "../util/Export.h"
 #include "../util/CheckSums.h"
 
-#include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
 
 #include <memory>
@@ -81,9 +82,6 @@ struct FO_COMMON_API Number final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -97,7 +95,7 @@ private:
     std::unique_ptr<Condition> m_condition;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -109,9 +107,6 @@ struct FO_COMMON_API Turn final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -124,7 +119,7 @@ private:
     std::unique_ptr<ValueRef::ValueRef<int>> m_high;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -153,9 +148,6 @@ struct FO_COMMON_API SortedNumberOf final : public Condition {
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -164,44 +156,18 @@ struct FO_COMMON_API SortedNumberOf final : public Condition {
 private:
     std::unique_ptr<ValueRef::ValueRef<int>> m_number;
     std::unique_ptr<ValueRef::ValueRef<double>> m_sort_key;
-    SortingMethod m_sorting_method = SORT_RANDOM;
+    SortingMethod m_sorting_method;
     std::unique_ptr<Condition> m_condition;
 
     friend class boost::serialization::access;
-    template <class Archive>
-    void serialize(Archive& ar, const unsigned int version);
-};
-
-/** Matches all objects. */
-struct FO_COMMON_API All final : public Condition {
-    All() : Condition() {}
-
-    bool operator==(const Condition& rhs) const override;
-    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    std::string Description(bool negated = false) const override;
-    std::string Dump(unsigned short ntabs = 0) const override;
-    bool RootCandidateInvariant() const override
-    { return true; }
-    bool TargetInvariant() const override
-    { return true; }
-    bool SourceInvariant() const override
-    { return true; }
-    void SetTopLevelContent(const std::string& content_name) override
-    {}
-    unsigned int GetCheckSum() const override;
-
-private:
-    friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches no objects. Currently only has an experimental use for efficient immediate rejection as the top-line condition.
  *  Essentially the entire point of this Condition is to provide the specialized GetDefaultInitialCandidateObjects() */
 struct FO_COMMON_API None final : public Condition {
-    None() : Condition() {}
-
+    None();
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
@@ -210,19 +176,13 @@ struct FO_COMMON_API None final : public Condition {
     { /* efficient rejection of everything. */ }
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
-    bool RootCandidateInvariant() const override
-    { return true; }
-    bool TargetInvariant() const override
-    { return true; }
-    bool SourceInvariant() const override
-    { return true; }
     void SetTopLevelContent(const std::string& content_name) override
     {}
     unsigned int GetCheckSum() const override;
 
 private:
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -237,9 +197,6 @@ struct FO_COMMON_API EmpireAffiliation final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -252,32 +209,7 @@ private:
     EmpireAffiliationType m_affiliation;
 
     friend class boost::serialization::access;
-    template <class Archive>
-    void serialize(Archive& ar, const unsigned int version);
-};
-
-/** Matches the source object only. */
-struct FO_COMMON_API Source final : public Condition {
-    Source() : Condition() {}
-
-    bool operator==(const Condition& rhs) const override;
-    void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                           ObjectSet& condition_non_targets) const override;
-    bool RootCandidateInvariant() const override
-    { return true; }
-    bool TargetInvariant() const override
-    { return true; }
-    std::string Description(bool negated = false) const override;
-    std::string Dump(unsigned short ntabs = 0) const override;
-    void SetTopLevelContent(const std::string& content_name) override
-    {}
-    unsigned int GetCheckSum() const override;
-
-private:
-    bool Match(const ScriptingContext& local_context) const override;
-
-    friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -286,17 +218,10 @@ private:
   * whole compound condition, rather than an object just being matched in a
   * subcondition in order to evaluate the outer condition. */
 struct FO_COMMON_API RootCandidate final : public Condition {
-    RootCandidate() : Condition() {}
-
+    RootCandidate();
     bool operator==(const Condition& rhs) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    bool RootCandidateInvariant() const override
-    { return false; }
-    bool TargetInvariant() const override
-    { return true; }
-    bool SourceInvariant() const override
-    { return true; }
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override
@@ -307,7 +232,7 @@ private:
     bool Match(const ScriptingContext& local_context) const override;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -316,17 +241,10 @@ private:
 
 /** Matches the target of an effect being executed. */
 struct FO_COMMON_API Target final : public Condition {
-    Target() : Condition() {}
-
+    Target();
     bool operator==(const Condition& rhs) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    bool RootCandidateInvariant() const override
-    { return true; }
-    bool TargetInvariant() const override
-    { return false; }
-    bool SourceInvariant() const override
-    { return true; }
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override
@@ -337,7 +255,7 @@ private:
     bool Match(const ScriptingContext& local_context) const override;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -353,9 +271,6 @@ struct FO_COMMON_API Homeworld final : public Condition {
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -367,23 +282,16 @@ private:
     std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>> m_names;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches planets that are an empire's capital. */
 struct FO_COMMON_API Capital final : public Condition {
-    Capital() : Condition() {}
-
+    Capital();
     bool operator==(const Condition& rhs) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    bool RootCandidateInvariant() const override
-    { return true; }
-    bool TargetInvariant() const override
-    { return true; }
-    bool SourceInvariant() const override
-    { return true; }
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override
@@ -394,23 +302,16 @@ private:
     bool Match(const ScriptingContext& local_context) const override;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches space monsters. */
 struct FO_COMMON_API Monster final : public Condition {
-    Monster() : Condition() {}
-
+    Monster();
     bool operator==(const Condition& rhs) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    bool RootCandidateInvariant() const override
-    { return true; }
-    bool TargetInvariant() const override
-    { return true; }
-    bool SourceInvariant() const override
-    { return true; }
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override
@@ -421,21 +322,14 @@ private:
     bool Match(const ScriptingContext& local_context) const override;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches armed ships and monsters. */
 struct FO_COMMON_API Armed final : public Condition {
-    Armed() : Condition() {}
-
+    Armed();
     bool operator==(const Condition& rhs) const override;
-    bool RootCandidateInvariant() const override
-    { return true; }
-    bool TargetInvariant() const override
-    { return true; }
-    bool SourceInvariant() const override
-    { return true; }
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override
@@ -446,7 +340,7 @@ private:
     bool Match(const ScriptingContext& local_context) const override;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -460,9 +354,6 @@ struct FO_COMMON_API Type final : public Condition {
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -474,7 +365,7 @@ private:
     std::unique_ptr<ValueRef::ValueRef<UniverseObjectType>> m_type;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -488,9 +379,6 @@ struct FO_COMMON_API Building final : public Condition {
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -502,7 +390,7 @@ private:
     std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>> m_names;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -522,9 +410,6 @@ struct FO_COMMON_API HasSpecial final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -533,14 +418,14 @@ struct FO_COMMON_API HasSpecial final : public Condition {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::unique_ptr<ValueRef::ValueRef<std::string>> m_name;
-    std::unique_ptr<ValueRef::ValueRef<double>> m_capacity_low;
-    std::unique_ptr<ValueRef::ValueRef<double>> m_capacity_high;
-    std::unique_ptr<ValueRef::ValueRef<int>> m_since_turn_low;
-    std::unique_ptr<ValueRef::ValueRef<int>> m_since_turn_high;
+    std::unique_ptr<ValueRef::ValueRef<std::string>>    m_name;
+    std::unique_ptr<ValueRef::ValueRef<double>>         m_capacity_low;
+    std::unique_ptr<ValueRef::ValueRef<double>>         m_capacity_high;
+    std::unique_ptr<ValueRef::ValueRef<int>>            m_since_turn_low;
+    std::unique_ptr<ValueRef::ValueRef<int>>            m_since_turn_high;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -553,9 +438,6 @@ struct FO_COMMON_API HasTag final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -567,7 +449,7 @@ private:
     std::unique_ptr<ValueRef::ValueRef<std::string>> m_name;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -579,9 +461,6 @@ struct FO_COMMON_API CreatedOnTurn final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -594,7 +473,7 @@ private:
     std::unique_ptr<ValueRef::ValueRef<int>> m_high;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -602,19 +481,12 @@ private:
   * \a condition.  Container objects are Systems, Planets (which contain
   * Buildings), and Fleets (which contain Ships). */
 struct FO_COMMON_API Contains final : public Condition {
-    Contains(std::unique_ptr<Condition>&& condition) :
-        Condition(),
-        m_condition(std::move(condition))
-    {}
-
+    Contains(std::unique_ptr<Condition>&& condition);
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -626,7 +498,7 @@ private:
     std::unique_ptr<Condition> m_condition;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -634,19 +506,12 @@ private:
   * \a condition.  Container objects are Systems, Planets (which contain
   * Buildings), and Fleets (which contain Ships). */
 struct FO_COMMON_API ContainedBy final : public Condition {
-    ContainedBy(std::unique_ptr<Condition>&& condition) :
-        Condition(),
-        m_condition(std::move(condition))
-    {}
-
+    ContainedBy(std::unique_ptr<Condition>&& condition);
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -658,22 +523,21 @@ private:
     std::unique_ptr<Condition> m_condition;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Matches all objects that are in the system with the indicated \a system_id */
-struct FO_COMMON_API InSystem final : public Condition {
-    InSystem(std::unique_ptr<ValueRef::ValueRef<int>>&& system_id);
+/** Matches all objects that are in the system with the indicated \a system_id
+  * or that are that system. If \a system_id is INVALID_OBJECT_ID then matches
+  * all objects in any system*/
+struct FO_COMMON_API InOrIsSystem final : public Condition {
+    InOrIsSystem(std::unique_ptr<ValueRef::ValueRef<int>>&& system_id);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -685,7 +549,33 @@ private:
     std::unique_ptr<ValueRef::ValueRef<int>> m_system_id;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/** Matches all objects that are on the planet with the indicated \a planet_id
+  * or that are that planet. If \a planet_id is INVALID_OBJECT_ID then matches
+  * all objects on any planet */
+struct FO_COMMON_API OnPlanet final : public Condition {
+    OnPlanet(std::unique_ptr<ValueRef::ValueRef<int>>&& planet_id);
+
+    bool operator==(const Condition& rhs) const override;
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+    void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                           ObjectSet& condition_non_targets) const override;
+    std::string Description(bool negated = false) const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
+    void SetTopLevelContent(const std::string& content_name) override;
+    unsigned int GetCheckSum() const override;
+
+private:
+    bool Match(const ScriptingContext& local_context) const override;
+
+    std::unique_ptr<ValueRef::ValueRef<int>> m_planet_id;
+
+    friend class boost::serialization::access;
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -698,9 +588,6 @@ struct FO_COMMON_API ObjectID final : public Condition {
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -712,7 +599,7 @@ private:
     std::unique_ptr<ValueRef::ValueRef<int>> m_object_id;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -727,9 +614,6 @@ struct FO_COMMON_API PlanetType final : public Condition {
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -741,7 +625,7 @@ private:
     std::vector<std::unique_ptr<ValueRef::ValueRef<::PlanetType>>> m_types;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -756,9 +640,6 @@ struct FO_COMMON_API PlanetSize final : public Condition {
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -770,7 +651,7 @@ private:
     std::vector<std::unique_ptr<ValueRef::ValueRef<::PlanetSize>>> m_sizes;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -786,9 +667,6 @@ struct FO_COMMON_API PlanetEnvironment final : public Condition {
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -801,7 +679,7 @@ private:
     std::unique_ptr<ValueRef::ValueRef<std::string>> m_species_name;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -817,9 +695,6 @@ struct FO_COMMON_API Species final : public Condition {
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -831,7 +706,7 @@ private:
     std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>> m_names;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -854,9 +729,6 @@ struct FO_COMMON_API Enqueued final : public Condition {
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -866,14 +738,14 @@ private:
     bool Match(const ScriptingContext& local_context) const override;
 
     BuildType m_build_type;
-    std::unique_ptr<ValueRef::ValueRef<std::string>> m_name;
-    std::unique_ptr<ValueRef::ValueRef<int>> m_design_id;
-    std::unique_ptr<ValueRef::ValueRef<int>> m_empire_id;
-    std::unique_ptr<ValueRef::ValueRef<int>> m_low;
-    std::unique_ptr<ValueRef::ValueRef<int>> m_high;
+    std::unique_ptr<ValueRef::ValueRef<std::string>>    m_name;
+    std::unique_ptr<ValueRef::ValueRef<int>>            m_design_id;
+    std::unique_ptr<ValueRef::ValueRef<int>>            m_empire_id;
+    std::unique_ptr<ValueRef::ValueRef<int>>            m_low;
+    std::unique_ptr<ValueRef::ValueRef<int>>            m_high;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -884,9 +756,6 @@ struct FO_COMMON_API FocusType final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
@@ -900,7 +769,7 @@ private:
     std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>> m_names;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -912,9 +781,6 @@ struct FO_COMMON_API StarType final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -926,7 +792,7 @@ private:
     std::vector<std::unique_ptr<ValueRef::ValueRef<::StarType>>> m_types;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -939,9 +805,6 @@ struct FO_COMMON_API DesignHasHull final : public Condition {
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -953,7 +816,7 @@ private:
     std::unique_ptr<ValueRef::ValueRef<std::string>> m_name;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -969,9 +832,6 @@ struct FO_COMMON_API DesignHasPart final : public Condition {
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -985,7 +845,7 @@ private:
     std::unique_ptr<ValueRef::ValueRef<std::string>> m_name;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -1001,9 +861,6 @@ struct FO_COMMON_API DesignHasPartClass final : public Condition {
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1017,7 +874,7 @@ private:
     ShipPartClass m_class;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -1025,14 +882,10 @@ private:
   * \a name */
 struct FO_COMMON_API PredefinedShipDesign final : public Condition {
     explicit PredefinedShipDesign(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
-    explicit PredefinedShipDesign(ValueRef::ValueRef<std::string>* name);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1044,7 +897,7 @@ private:
     std::unique_ptr<ValueRef::ValueRef<std::string>> m_name;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -1055,9 +908,6 @@ struct FO_COMMON_API NumberedShipDesign final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1069,7 +919,7 @@ private:
     std::unique_ptr<ValueRef::ValueRef<int>> m_design_id;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -1080,9 +930,6 @@ struct FO_COMMON_API ProducedByEmpire final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1094,7 +941,7 @@ private:
     std::unique_ptr<ValueRef::ValueRef<int>> m_empire_id;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -1105,9 +952,6 @@ struct FO_COMMON_API Chance final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1119,7 +963,7 @@ private:
     std::unique_ptr<ValueRef::ValueRef<double>> m_chance;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -1133,9 +977,6 @@ struct FO_COMMON_API MeterValue final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1149,7 +990,7 @@ private:
     std::unique_ptr<ValueRef::ValueRef<double>> m_high;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -1164,9 +1005,6 @@ struct FO_COMMON_API ShipPartMeterValue final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1195,9 +1033,6 @@ struct FO_COMMON_API EmpireMeterValue final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1226,9 +1061,6 @@ struct FO_COMMON_API EmpireStockpileValue final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1243,7 +1075,7 @@ private:
     std::unique_ptr<ValueRef::ValueRef<double>> m_high;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -1256,9 +1088,6 @@ struct FO_COMMON_API OwnerHasTech final : public Condition {
     bool            operator==(const Condition& rhs) const override;
     void            Eval(const ScriptingContext& parent_context, ObjectSet& matches,
                          ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool            RootCandidateInvariant() const override;
-    bool            TargetInvariant() const override;
-    bool            SourceInvariant() const override;
     std::string     Description(bool negated = false) const override;
     std::string     Dump(unsigned short ntabs = 0) const override;
     void            SetTopLevelContent(const std::string& content_name) override;
@@ -1271,7 +1100,7 @@ private:
     std::unique_ptr<ValueRef::ValueRef<int>>         m_empire_id;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -1285,9 +1114,6 @@ struct FO_COMMON_API OwnerHasBuildingTypeAvailable final : public Condition {
     bool            operator==(const Condition& rhs) const override;
     void            Eval(const ScriptingContext& parent_context, ObjectSet& matches,
                          ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool            RootCandidateInvariant() const override;
-    bool            TargetInvariant() const override;
-    bool            SourceInvariant() const override;
     std::string     Description(bool negated = false) const override;
     std::string     Dump(unsigned short ntabs = 0) const override;
     void            SetTopLevelContent(const std::string& content_name) override;
@@ -1300,7 +1126,7 @@ private:
     std::unique_ptr<ValueRef::ValueRef<int>>         m_empire_id;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -1314,9 +1140,6 @@ struct FO_COMMON_API OwnerHasShipDesignAvailable final : public Condition {
     bool            operator==(const Condition& rhs) const override;
     void            Eval(const ScriptingContext& parent_context, ObjectSet& matches,
                          ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool            RootCandidateInvariant() const override;
-    bool            TargetInvariant() const override;
-    bool            SourceInvariant() const override;
     std::string     Description(bool negated = false) const override;
     std::string     Dump(unsigned short ntabs = 0) const override;
     void            SetTopLevelContent(const std::string& content_name) override;
@@ -1329,7 +1152,7 @@ private:
     std::unique_ptr<ValueRef::ValueRef<int>> m_empire_id;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -1343,9 +1166,6 @@ struct FO_COMMON_API OwnerHasShipPartAvailable final : public Condition {
     bool            operator==(const Condition& rhs) const override;
     void            Eval(const ScriptingContext& parent_context, ObjectSet& matches,
                          ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool            RootCandidateInvariant() const override;
-    bool            TargetInvariant() const override;
-    bool            SourceInvariant() const override;
     std::string     Description(bool negated = false) const override;
     std::string     Dump(unsigned short ntabs = 0) const override;
     void            SetTopLevelContent(const std::string& content_name) override;
@@ -1358,7 +1178,7 @@ private:
     std::unique_ptr<ValueRef::ValueRef<int>>         m_empire_id;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -1369,9 +1189,6 @@ struct FO_COMMON_API VisibleToEmpire final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1383,7 +1200,7 @@ private:
     std::unique_ptr<ValueRef::ValueRef<int>> m_empire_id;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -1398,9 +1215,6 @@ struct FO_COMMON_API WithinDistance final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1413,7 +1227,7 @@ private:
     std::unique_ptr<Condition> m_condition;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -1428,9 +1242,6 @@ struct FO_COMMON_API WithinStarlaneJumps final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1443,7 +1254,7 @@ private:
     std::unique_ptr<Condition> m_condition;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -1454,17 +1265,11 @@ private:
   * any other lanes, pass too close to another system, or be too close in angle
   * to an existing lane. */
 struct FO_COMMON_API CanAddStarlaneConnection : Condition {
-    explicit CanAddStarlaneConnection(std::unique_ptr<Condition>&& condition) :
-        Condition(),
-        m_condition(std::move(condition))
-    {}
+    explicit CanAddStarlaneConnection(std::unique_ptr<Condition>&& condition);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1476,7 +1281,7 @@ private:
     std::unique_ptr<Condition> m_condition;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -1488,9 +1293,6 @@ struct FO_COMMON_API ExploredByEmpire final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1502,22 +1304,16 @@ private:
     std::unique_ptr<ValueRef::ValueRef<int>> m_empire_id;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches objects that are moving. ... What does that mean?  Departing this
   * turn, or were located somewhere else last turn...? */
 struct FO_COMMON_API Stationary final : public Condition {
-    explicit Stationary() : Condition() {}
+    explicit Stationary();
 
     bool operator==(const Condition& rhs) const override;
-    bool RootCandidateInvariant() const override
-    { return true; }
-    bool TargetInvariant() const override
-    { return true; }
-    bool SourceInvariant() const override
-    { return true; }
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override
@@ -1528,28 +1324,16 @@ private:
     bool Match(const ScriptingContext& local_context) const override;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches objects that are aggressive fleets or are in aggressive fleets. */
 struct FO_COMMON_API Aggressive final : public Condition {
-    explicit Aggressive() :
-        Condition(),
-        m_aggressive(true)
-    {}
-    explicit Aggressive(bool aggressive) :
-        Condition(),
-        m_aggressive(aggressive)
-    {}
+    explicit Aggressive();
+    explicit Aggressive(bool aggressive);
 
     bool operator==(const Condition& rhs) const override;
-    bool RootCandidateInvariant() const override
-    { return true; }
-    bool TargetInvariant() const override
-    { return true; }
-    bool SourceInvariant() const override
-    { return true; }
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override
@@ -1564,7 +1348,7 @@ private:
     bool m_aggressive;   // false to match passive ships/fleets
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -1576,9 +1360,6 @@ struct FO_COMMON_API FleetSupplyableByEmpire final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1590,7 +1371,7 @@ private:
     std::unique_ptr<ValueRef::ValueRef<int>> m_empire_id;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -1604,9 +1385,6 @@ struct FO_COMMON_API ResourceSupplyConnectedByEmpire final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1619,21 +1397,15 @@ private:
     std::unique_ptr<Condition> m_condition;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches objects whose species has the ability to found new colonies. */
 struct FO_COMMON_API CanColonize final : public Condition {
-    explicit CanColonize() : Condition() {}
+    explicit CanColonize();
 
     bool operator==(const Condition& rhs) const override;
-    bool RootCandidateInvariant() const override
-    { return true; }
-    bool TargetInvariant() const override
-    { return true; }
-    bool SourceInvariant() const override
-    { return true; }
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override
@@ -1644,21 +1416,15 @@ private:
     bool Match(const ScriptingContext& local_context) const override;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches objects whose species has the ability to produce ships. */
 struct FO_COMMON_API CanProduceShips final : public Condition {
-    CanProduceShips() : Condition() {}
+    CanProduceShips();
 
     bool operator==(const Condition& rhs) const override;
-    bool RootCandidateInvariant() const override
-    { return true; }
-    bool TargetInvariant() const override
-    { return true; }
-    bool SourceInvariant() const override
-    { return true; }
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override
@@ -1669,7 +1435,7 @@ private:
     bool Match(const ScriptingContext& local_context) const override;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -1681,9 +1447,6 @@ struct FO_COMMON_API OrderedBombarded final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     virtual void SetTopLevelContent(const std::string& content_name) override;
@@ -1695,7 +1458,7 @@ private:
     std::unique_ptr<Condition> m_by_object_condition;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -1723,9 +1486,6 @@ struct FO_COMMON_API ValueTest final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1748,7 +1508,7 @@ private:
     ComparisonType m_compare_type2 = INVALID_COMPARISON;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -1763,9 +1523,6 @@ public:
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1779,7 +1536,7 @@ private:
     ContentType m_content_type;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -1793,9 +1550,6 @@ public:
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1808,10 +1562,9 @@ private:
     ContentType m_content_type;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
-
 
 /** Matches all objects that match every Condition in \a operands. */
 struct FO_COMMON_API And final : public Condition {
@@ -1826,9 +1579,6 @@ struct FO_COMMON_API And final : public Condition {
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1839,7 +1589,7 @@ private:
     std::vector<std::unique_ptr<Condition>> m_operands;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -1854,9 +1604,8 @@ struct FO_COMMON_API Or final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
+    void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                           ObjectSet& condition_non_targets) const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     virtual void SetTopLevelContent(const std::string& content_name) override;
@@ -1866,7 +1615,7 @@ private:
     std::vector<std::unique_ptr<Condition>> m_operands;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -1877,9 +1626,6 @@ struct FO_COMMON_API Not final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1889,7 +1635,7 @@ private:
     std::unique_ptr<Condition> m_operand;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -1903,9 +1649,6 @@ struct FO_COMMON_API OrderedAlternativesOf final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1916,25 +1659,18 @@ private:
     std::vector<std::unique_ptr<Condition>> m_operands;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches whatever its subcondition matches, but has a customized description
   * string that is returned by Description() by looking up in the stringtable. */
 struct FO_COMMON_API Described final : public Condition {
-    Described(std::unique_ptr<Condition>&& condition, const std::string& desc_stringtable_key) :
-        Condition(),
-            m_condition(std::move(condition)),
-        m_desc_stringtable_key(desc_stringtable_key)
-    {}
+    Described(std::unique_ptr<Condition>&& condition, const std::string& desc_stringtable_key);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    bool RootCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override
     { return m_condition ? m_condition->Dump(ntabs) : ""; }
@@ -1946,16 +1682,20 @@ private:
     std::string m_desc_stringtable_key;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
 // template implementations
-template <class Archive>
+template <typename Archive>
 void Condition::serialize(Archive& ar, const unsigned int version)
-{}
+{
+    ar  & BOOST_SERIALIZATION_NVP(m_root_candidate_invariant)
+        & BOOST_SERIALIZATION_NVP(m_target_invariant)
+        & BOOST_SERIALIZATION_NVP(m_source_invariant);
+}
 
-template <class Archive>
+template <typename Archive>
 void Number::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
@@ -1964,7 +1704,7 @@ void Number::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_condition);
 }
 
-template <class Archive>
+template <typename Archive>
 void Turn::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
@@ -1972,7 +1712,7 @@ void Turn::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_high);
 }
 
-template <class Archive>
+template <typename Archive>
 void SortedNumberOf::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
@@ -1982,15 +1722,15 @@ void SortedNumberOf::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_condition);
 }
 
-template <class Archive>
+template <typename Archive>
 void All::serialize(Archive& ar, const unsigned int version)
 { ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition); }
 
-template <class Archive>
+template <typename Archive>
 void None::serialize(Archive& ar, const unsigned int version)
 { ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition); }
 
-template <class Archive>
+template <typename Archive>
 void EmpireAffiliation::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
@@ -1998,52 +1738,52 @@ void EmpireAffiliation::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_affiliation);
 }
 
-template <class Archive>
+template <typename Archive>
 void Source::serialize(Archive& ar, const unsigned int version)
 { ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition); }
 
-template <class Archive>
+template <typename Archive>
 void RootCandidate::serialize(Archive& ar, const unsigned int version)
 { ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition); }
 
-template <class Archive>
+template <typename Archive>
 void Target::serialize(Archive& ar, const unsigned int version)
 { ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition); }
 
-template <class Archive>
+template <typename Archive>
 void Homeworld::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_names);
 }
 
-template <class Archive>
+template <typename Archive>
 void Capital::serialize(Archive& ar, const unsigned int version)
 { ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition); }
 
-template <class Archive>
+template <typename Archive>
 void Monster::serialize(Archive& ar, const unsigned int version)
 { ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition); }
 
-template <class Archive>
+template <typename Archive>
 void Armed::serialize(Archive& ar, const unsigned int version)
 { ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition); }
 
-template <class Archive>
+template <typename Archive>
 void Type::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_type);
 }
 
-template <class Archive>
+template <typename Archive>
 void Building::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_names);
 }
 
-template <class Archive>
+template <typename Archive>
 void HasSpecial::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
@@ -2054,14 +1794,14 @@ void HasSpecial::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_since_turn_high);
 }
 
-template <class Archive>
+template <typename Archive>
 void HasTag::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_name);
 }
 
-template <class Archive>
+template <typename Archive>
 void CreatedOnTurn::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
@@ -2069,49 +1809,56 @@ void CreatedOnTurn::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_high);
 }
 
-template <class Archive>
+template <typename Archive>
 void Contains::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_condition);
 }
 
-template <class Archive>
+template <typename Archive>
 void ContainedBy::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_condition);
 }
 
-template <class Archive>
-void InSystem::serialize(Archive& ar, const unsigned int version)
+template <typename Archive>
+void InOrIsSystem::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_system_id);
 }
 
-template <class Archive>
+template <typename Archive>
+void OnPlanet::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
+        & BOOST_SERIALIZATION_NVP(m_planet_id);
+}
+
+template <typename Archive>
 void ObjectID::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_object_id);
 }
 
-template <class Archive>
+template <typename Archive>
 void PlanetType::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_types);
 }
 
-template <class Archive>
+template <typename Archive>
 void PlanetSize::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_sizes);
 }
 
-template <class Archive>
+template <typename Archive>
 void PlanetEnvironment::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
@@ -2119,14 +1866,14 @@ void PlanetEnvironment::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_species_name);
 }
 
-template <class Archive>
+template <typename Archive>
 void Species::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_names);
 }
 
-template <class Archive>
+template <typename Archive>
 void Enqueued::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
@@ -2138,28 +1885,28 @@ void Enqueued::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_high);
 }
 
-template <class Archive>
+template <typename Archive>
 void FocusType::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_names);
 }
 
-template <class Archive>
+template <typename Archive>
 void StarType::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_types);
 }
 
-template <class Archive>
+template <typename Archive>
 void DesignHasHull::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_name);
 }
 
-template <class Archive>
+template <typename Archive>
 void DesignHasPart::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
@@ -2168,7 +1915,7 @@ void DesignHasPart::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_name);
 }
 
-template <class Archive>
+template <typename Archive>
 void DesignHasPartClass::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
@@ -2177,35 +1924,35 @@ void DesignHasPartClass::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_class);
 }
 
-template <class Archive>
+template <typename Archive>
 void PredefinedShipDesign::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_name);
 }
 
-template <class Archive>
+template <typename Archive>
 void NumberedShipDesign::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_design_id);
 }
 
-template <class Archive>
+template <typename Archive>
 void ProducedByEmpire::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_empire_id);
 }
 
-template <class Archive>
+template <typename Archive>
 void Chance::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_chance);
 }
 
-template <class Archive>
+template <typename Archive>
 void MeterValue::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
@@ -2214,7 +1961,7 @@ void MeterValue::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_high);
 }
 
-template <class Archive>
+template <typename Archive>
 void EmpireStockpileValue::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
@@ -2223,7 +1970,7 @@ void EmpireStockpileValue::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_empire_id);
 }
 
-template <class Archive>
+template <typename Archive>
 void OwnerHasTech::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
@@ -2231,7 +1978,7 @@ void OwnerHasTech::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_empire_id);
 }
 
-template <class Archive>
+template <typename Archive>
 void OwnerHasBuildingTypeAvailable::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
@@ -2239,7 +1986,7 @@ void OwnerHasBuildingTypeAvailable::serialize(Archive& ar, const unsigned int ve
         & BOOST_SERIALIZATION_NVP(m_empire_id);
 }
 
-template <class Archive>
+template <typename Archive>
 void OwnerHasShipDesignAvailable::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
@@ -2247,7 +1994,7 @@ void OwnerHasShipDesignAvailable::serialize(Archive& ar, const unsigned int vers
         & BOOST_SERIALIZATION_NVP(m_empire_id);
 }
 
-template <class Archive>
+template <typename Archive>
 void OwnerHasShipPartAvailable::serialize(Archive& ar,
                                           const unsigned int version)
 {
@@ -2256,14 +2003,14 @@ void OwnerHasShipPartAvailable::serialize(Archive& ar,
         & BOOST_SERIALIZATION_NVP(m_empire_id);
 }
 
-template <class Archive>
+template <typename Archive>
 void VisibleToEmpire::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_empire_id);
 }
 
-template <class Archive>
+template <typename Archive>
 void WithinDistance::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
@@ -2271,7 +2018,7 @@ void WithinDistance::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_condition);
 }
 
-template <class Archive>
+template <typename Archive>
 void WithinStarlaneJumps::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
@@ -2279,41 +2026,41 @@ void WithinStarlaneJumps::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_condition);
 }
 
-template <class Archive>
+template <typename Archive>
 void CanAddStarlaneConnection::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_condition);
 }
 
-template <class Archive>
+template <typename Archive>
 void ExploredByEmpire::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_empire_id);
 }
 
-template <class Archive>
+template <typename Archive>
 void Stationary::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition);
 }
 
-template <class Archive>
+template <typename Archive>
 void Aggressive::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_aggressive);
 }
 
-template <class Archive>
+template <typename Archive>
 void FleetSupplyableByEmpire::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_empire_id);
 }
 
-template <class Archive>
+template <typename Archive>
 void ResourceSupplyConnectedByEmpire::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
@@ -2321,26 +2068,26 @@ void ResourceSupplyConnectedByEmpire::serialize(Archive& ar, const unsigned int 
         & BOOST_SERIALIZATION_NVP(m_condition);
 }
 
-template <class Archive>
+template <typename Archive>
 void CanColonize::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition);
 }
 
-template <class Archive>
+template <typename Archive>
 void CanProduceShips::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition);
 }
 
-template <class Archive>
+template <typename Archive>
 void OrderedBombarded::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_by_object_condition);
 }
 
-template <class Archive>
+template <typename Archive>
 void ValueTest::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
@@ -2357,7 +2104,7 @@ void ValueTest::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_compare_type2);
 }
 
-template <class Archive>
+template <typename Archive>
 void Location::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
@@ -2366,7 +2113,7 @@ void Location::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_content_type);
 }
 
-template <class Archive>
+template <typename Archive>
 void CombatTarget::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
@@ -2374,35 +2121,35 @@ void CombatTarget::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_content_type);
 }
 
-template <class Archive>
+template <typename Archive>
 void And::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_operands);
 }
 
-template <class Archive>
+template <typename Archive>
 void Or::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_operands);
 }
 
-template <class Archive>
+template <typename Archive>
 void Not::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_operand);
 }
 
-template <class Archive>
+template <typename Archive>
 void OrderedAlternativesOf::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
         & BOOST_SERIALIZATION_NVP(m_operands);
 }
 
-template <class Archive>
+template <typename Archive>
 void Described::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)

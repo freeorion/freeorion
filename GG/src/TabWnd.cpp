@@ -1,4 +1,4 @@
-/* GG is a GUI for SDL and OpenGL.
+/* GG is a GUI for OpenGL.
    Copyright (C) 2003-2008 T. Zachary Laine
 
    This library is free software; you can redistribute it and/or
@@ -24,7 +24,6 @@
 
 #include <GG/TabWnd.h>
 
-#include <GG/DrawUtil.h>
 #include <GG/Layout.h>
 #include <GG/StyleFactory.h>
 #include <GG/WndEvent.h>
@@ -174,7 +173,7 @@ void TabWnd::CompleteConstruction()
     layout->Add(m_overlay, 1, 0);
     SetLayout(layout);
     m_tab_bar->TabChangedSignal.connect(
-        boost::bind(&TabWnd::TabChanged, this, _1, true));
+        boost::bind(&TabWnd::TabChanged, this, boost::placeholders::_1, true));
 
     if (INSTRUMENT_ALL_SIGNALS)
         TabChangedSignal.connect(TabChangedEcho("TabWnd::TabChangedSignal"));
@@ -261,13 +260,9 @@ const X TabBar::BUTTON_WIDTH(10);
 TabBar::TabBar(const std::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/,
                Flags<WndFlag> flags/* = INTERACTIVE*/) :
     Control(X0, Y0, X1, TabHeightFromFont(font), flags),
-    m_tabs(nullptr),
     m_font(font),
-    m_left_button(nullptr),
-    m_right_button(nullptr),
     m_left_right_button_layout(Wnd::Create<Layout>(X0, Y0, X1, TabHeightFromFont(font), 1, 3)),
-    m_text_color(text_color),
-    m_first_tab_shown(0)
+    m_text_color(text_color)
 {
     SetColor(color);
 }
@@ -299,12 +294,9 @@ void TabBar::CompleteConstruction()
     AttachChild(m_tabs);
     AttachChild(m_left_right_button_layout);
 
-    m_tabs->ButtonChangedSignal.connect(
-        boost::bind(&TabBar::TabChanged, this, _1, true));
-    m_left_button->LeftPressedSignal.connect(
-        boost::bind(&TabBar::LeftClicked, this));
-    m_right_button->LeftPressedSignal.connect(
-        boost::bind(&TabBar::RightClicked, this));
+    m_tabs->ButtonChangedSignal.connect(boost::bind(&TabBar::TabChanged, this, boost::placeholders::_1, true));
+    m_left_button->LeftPressedSignal.connect(boost::bind(&TabBar::LeftClicked, this));
+    m_right_button->LeftPressedSignal.connect(boost::bind(&TabBar::RightClicked, this));
 
     if (INSTRUMENT_ALL_SIGNALS)
         TabChangedSignal.connect(TabChangedEcho("TabBar::TabChangedSignal"));

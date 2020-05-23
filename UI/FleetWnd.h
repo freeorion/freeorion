@@ -185,9 +185,9 @@ private:
     bool            m_order_issuing_enabled = false;
     bool            m_needs_refresh = false;
 
-    std::shared_ptr<FleetsListBox>      m_fleets_lb = nullptr;
-    std::shared_ptr<FleetDataPanel>     m_new_fleet_drop_target = nullptr;
-    std::shared_ptr<FleetDetailPanel>   m_fleet_detail_panel = nullptr;
+    std::shared_ptr<FleetsListBox>      m_fleets_lb;
+    std::shared_ptr<FleetDataPanel>     m_new_fleet_drop_target;
+    std::shared_ptr<FleetDetailPanel>   m_fleet_detail_panel;
 
     std::vector<std::pair<MeterType, std::shared_ptr<StatisticIcon>>> m_stat_icons; /// statistic icons and associated meter types for multi-fleet aggregate
 

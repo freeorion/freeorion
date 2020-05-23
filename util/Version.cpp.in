@@ -1,4 +1,4 @@
-#include "util/Version.h"
+#include "Version.h"
 
 //! @file
 //!     Implement a free function to access the application version.

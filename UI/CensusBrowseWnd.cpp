@@ -32,9 +32,6 @@ class CensusRowPanel : public GG::Control {
 public:
     CensusRowPanel(GG::X w, GG::Y h, const std::string& name, double census_val, bool show_icon) :
         GG::Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
-        m_icon(nullptr),
-        m_name(nullptr),
-        m_census_val(nullptr),
         m_show_icon(show_icon)
     {
         if (m_show_icon)
@@ -170,7 +167,8 @@ void CensusBrowseWnd::CompleteConstruction() {
 
     // add species rows
     for (auto it = counts_species.rbegin(); it != counts_species.rend(); ++it) {
-        auto row = GG::Wnd::Create<GG::ListBox::Row>(m_list->Width(), ROW_HEIGHT, "Census Species Row");
+        auto row = GG::Wnd::Create<GG::ListBox::Row>(m_list->Width(), ROW_HEIGHT);
+        row->SetDragDropDataType("Census Species Row");
         row->push_back(GG::Wnd::Create<CensusRowPanel>(m_list->Width(), ROW_HEIGHT, it->second, it->first, true));
         m_list->Insert(row);
         row->Resize(GG::Pt(m_list->Width(), ROW_HEIGHT));
@@ -204,7 +202,8 @@ void CensusBrowseWnd::CompleteConstruction() {
         //DebugLogger() << "Census checking for tag '"<< tag_ord <<"'";
         auto it2 = m_tag_counts.find(tag_ord);
         if (it2 != m_tag_counts.end()) {
-            auto row = GG::Wnd::Create<GG::ListBox::Row>(m_list->Width(), ROW_HEIGHT, "Census Characteristics Row");
+            auto row = GG::Wnd::Create<GG::ListBox::Row>(m_list->Width(), ROW_HEIGHT);
+            row->SetDragDropDataType("Census Characteristics Row");
             row->push_back(GG::Wnd::Create<CensusRowPanel>(m_tags_list->Width(), ROW_HEIGHT, it2->first, it2->second, false));
             m_tags_list->Insert(row);
             row->Resize(GG::Pt(m_list->Width(), ROW_HEIGHT));

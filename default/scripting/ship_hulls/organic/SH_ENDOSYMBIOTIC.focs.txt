@@ -3,6 +3,7 @@ Hull
     description = "SH_ENDOSYMBIOTIC_DESC"
     speed = 100
     fuel = 2
+    NoDefaultFuelEffect
     stealth = 25
     structure = 5
     slots = [
@@ -39,11 +40,11 @@ Hull
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Source
             accountinglabel = "ORGANIC_GROWTH"
-            effects = SetMaxStructure value = Value + min(Source.Age*0.5, 15)
+            effects = SetMaxStructure value = Value + ( min(Source.Age*0.5, 15)  * [[SHIP_STRUCTURE_FACTOR]] )
 
         [[GOOD_FUEL_EFFICIENCY]]
+        [[ADD_HULL_FUEL_TO_MAX_FUEL_METER]]
         [[LIVING_HULL_EFFECTS_GROUPS]]
         [[SCAVANGE_FUEL_UNOWNED]]
         [[UNOWNED_GOOD_VISION]]
@@ -57,3 +58,5 @@ Hull
 #include "../ship_hulls.macros"
 
 #include "/scripting/common/upkeep.macros"
+
+#include "/scripting/common/misc.macros"

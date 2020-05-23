@@ -55,14 +55,6 @@ std::string PopCenter::Dump(unsigned short ntabs) const {
     return os.str();
 }
 
-float PopCenter::CurrentMeterValue(MeterType type) const {
-    const Meter* meter = GetMeter(type);
-    if (!meter) {
-        throw std::invalid_argument("PopCenter::CurrentMeterValue was passed a MeterType that this PopCenter does not have: " + boost::lexical_cast<std::string>(type));
-    }
-    return meter->Current();
-}
-
 void PopCenter::PopCenterResetTargetMaxUnpairedMeters() {
     GetMeter(METER_TARGET_POPULATION)->ResetCurrent();
     GetMeter(METER_TARGET_HAPPINESS)->ResetCurrent();
@@ -76,7 +68,7 @@ void PopCenter::PopCenterPopGrowthProductionResearchPhase() {
 
     // Should be run after meter update but before a backpropagation, so check current, not initial, meter values
 
-    if (CurrentMeterValue(METER_POPULATION) < MINIMUM_POP_CENTER_POPULATION) {
+    if (GetMeter(METER_POPULATION)->Current() < MINIMUM_POP_CENTER_POPULATION) {
         // if population falls below threshold, kill off the remainder
         Depopulate();
     }
@@ -99,9 +91,7 @@ void PopCenter::Depopulate() {
 }
 
 void PopCenter::SetSpecies(const std::string& species_name) {
-    if (!species_name.empty() && !GetSpecies(species_name)) {
-        ErrorLogger() << "PopCenter::SetSpecies couldn't get species with name "
-                      << species_name;
-    }
+    if (!species_name.empty() && !GetSpecies(species_name))
+        ErrorLogger() << "PopCenter::SetSpecies couldn't get species with name " << species_name;
     m_species_name = species_name;
 }

@@ -34,7 +34,6 @@
 #include "../util/ScopedTimer.h"
 #include "../client/human/HumanClientApp.h"
 
-#include <GG/DrawUtil.h>
 #include <GG/DynamicGraphic.h>
 #include <GG/GUI.h>
 #include <GG/Layout.h>
@@ -45,6 +44,8 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/format.hpp>
 #include <boost/filesystem/fstream.hpp>
+#include <boost/range/irange.hpp>
+#include <cmath>
 
 class RotatingPlanetControl;
 
@@ -218,13 +219,43 @@ namespace {
         return retval;
     }
 
-    void        RenderSphere(double r, const GG::Clr& ambient, const GG::Clr& diffuse,
-                             const GG::Clr& spec, double shine,
-                             std::shared_ptr<GG::Texture> texture)
+    void RenderSphere(
+        double radius, const GG::Clr& ambient, const GG::Clr& diffuse,
+        const GG::Clr& spec, double shine,
+        std::shared_ptr<GG::Texture> texture)
     {
-        static GLUquadric* quad = gluNewQuadric();
-        if (!quad)
-            return;
+        struct PolarCoordinate {
+            GLfloat sin;
+            GLfloat cos;
+        };
+
+        static bool usphere_initialized = false;
+        static std::array<PolarCoordinate, 30 + 1> azimuth;
+        static std::array<PolarCoordinate, 30 + 1> elevation;
+
+        if (!usphere_initialized)
+        {
+            // calculate azimuth on unit sphere along equator
+            for (auto longitude : boost::irange<size_t>(0, azimuth.size())) {
+                float phi = 2 * M_PI * longitude / (azimuth.size() - 1);
+                azimuth[longitude] = {std::sin(phi), std::cos(phi)};
+            }
+
+            // Make sure equator is a closed circle
+            azimuth.back() = azimuth[0];
+
+            // calculate elevation on unit sphere along meridian
+            for (auto latitude : boost::irange<size_t>(0, elevation.size())) {
+                float theta = M_PI * latitude / (elevation.size() - 1);
+                elevation[latitude] = {std::sin(theta), std::cos(theta)};
+            }
+
+            // Make sure sphere poles collapse at true zero
+            elevation.front() = {0.0f, 1.0f};
+            elevation.back() = {0.0f, -1.0f};
+
+            usphere_initialized = true;
+        }
 
         if (texture) {
             glBindTexture(GL_TEXTURE_2D, texture->OpenGLId());
@@ -244,14 +275,20 @@ namespace {
         GLfloat diffuse_v[] = {diffuse.r / 255.0f, diffuse.g / 255.0f, diffuse.b / 255.0f, diffuse.a / 255.0f};
         glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse_v);
 
-        gluQuadricTexture(quad,     texture ? GL_TRUE : GL_FALSE);
-        gluQuadricNormals(quad,     GLU_SMOOTH);
-        gluQuadricOrientation(quad, GLU_OUTSIDE);
-        gluQuadricDrawStyle(quad,   GLU_FILL);
-
         glColor(GG::CLR_WHITE);
+        for (auto latitude : boost::irange<size_t>(0, elevation.size() - 1)) {
+            glBegin(GL_QUAD_STRIP);
+            for (auto longitude : boost::irange<size_t>(0, azimuth.size())) {
+                glNormal3f(azimuth[longitude].sin * elevation[latitude+1].sin         , azimuth[longitude].cos * elevation[latitude+1].sin         , elevation[latitude+1].cos);
+                glTexCoord2f(1 - (float) longitude / (azimuth.size() - 1), 1 - (float) (latitude+1) / (elevation.size() - 1));
+                glVertex3f(azimuth[longitude].sin * elevation[latitude+1].sin * radius, azimuth[longitude].cos * elevation[latitude+1].sin * radius, elevation[latitude+1].cos * radius);
 
-        gluSphere(quad, r, 30, 30);
+                glNormal3f(azimuth[longitude].sin * elevation[latitude].sin         , azimuth[longitude].cos * elevation[latitude].sin         , elevation[latitude].cos);
+                glTexCoord2f(1 - (float) longitude / (azimuth.size() - 1), 1 - (float) latitude / (elevation.size() - 1));
+                glVertex3f(azimuth[longitude].sin * elevation[latitude].sin * radius, azimuth[longitude].cos * elevation[latitude].sin * radius, elevation[latitude].cos * radius);
+            }
+            glEnd();
+        }
     }
 
     GLfloat*    GetLightPosition() {
@@ -750,9 +787,10 @@ namespace {
     class SystemRow : public GG::ListBox::Row {
     public:
         SystemRow(int system_id, GG::Y h) :
-            GG::ListBox::Row(GG::X1, h, "SystemRow"),
+            GG::ListBox::Row(GG::X1, h),
             m_system_id(system_id)
         {
+            SetDragDropDataType("SystemRow");
             SetName("SystemRow");
             RequirePreRender();
         }
@@ -885,23 +923,9 @@ namespace {
 SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) :
     GG::Control(GG::X0, GG::Y0, w, GG::Y1, GG::INTERACTIVE),
     m_planet_id(planet_id),
-    m_planet_name(nullptr),
-    m_env_size(nullptr),
-    m_colonize_button(nullptr),
-    m_invade_button(nullptr),
-    m_bombard_button(nullptr),
-    m_planet_graphic(nullptr),
-    m_planet_status_graphic(nullptr),
-    m_rotating_planet_graphic(nullptr),
     m_selected(false),
     m_order_issuing_enabled(true),
     m_empire_colour(GG::CLR_ZERO),
-    m_focus_drop(nullptr),
-    m_population_panel(nullptr),
-    m_resource_panel(nullptr),
-    m_military_panel(nullptr),
-    m_buildings_panel(nullptr),
-    m_specials_panel(nullptr),
     m_star_type(star_type)
 {}
 
@@ -953,6 +977,7 @@ void SidePanel::PlanetPanel::CompleteConstruction() {
     m_planet_name->Resize(m_planet_name->MinUsableSize());
     AttachChild(m_planet_name);
 
+    using boost::placeholders::_1;
 
     // focus-selection droplist
     m_focus_drop = GG::Wnd::Create<CUIDropDownList>(6);
@@ -1309,7 +1334,7 @@ int AutomaticallyChosenColonyShip(int target_planet_id) {
     if (!system)
         return INVALID_OBJECT_ID;
     // is planet a valid colonization target?
-    if (target_planet->InitialMeterValue(METER_POPULATION) > 0.0 ||
+    if (target_planet->GetMeter(METER_POPULATION)->Initial() > 0.0f ||
         (!target_planet->Unowned() && !target_planet->OwnedBy(empire_id)))
     { return INVALID_OBJECT_ID; }
 
@@ -1381,7 +1406,7 @@ int AutomaticallyChosenColonyShip(int target_planet_id) {
 
                         // temporary meter update with currently set species
                         GetUniverse().UpdateMeterEstimates(target_planet_id);
-                        planet_capacity = target_planet->CurrentMeterValue(METER_TARGET_POPULATION);    // want value after meter update, so check current, not initial value
+                        planet_capacity = target_planet->GetMeter(METER_TARGET_POPULATION)->Current();  // want value after meter update, so check current, not initial value
                     }
                     species_colony_projections[spec_pair] = planet_capacity;
                 }
@@ -1427,7 +1452,7 @@ std::set<std::shared_ptr<const Ship>> AutomaticallyChosenInvasionShips(int targe
 
 
     // get "just enough" ships that can invade and that are free to do so
-    double defending_troops = target_planet->InitialMeterValue(METER_TROOPS);
+    double defending_troops = target_planet->GetMeter(METER_TROOPS)->Initial();
 
     double invasion_troops = 0;
     for (auto& ship : Objects().all<Ship>()) {
@@ -1598,13 +1623,13 @@ void SidePanel::PlanetPanel::Refresh() {
     // calculate truth tables for planet colonization and invasion
     bool has_owner =        !planet->Unowned();
     bool mine =             planet->OwnedBy(client_empire_id);
-    bool populated =        planet->InitialMeterValue(METER_POPULATION) > 0.0f;
+    bool populated =        planet->GetMeter(METER_POPULATION)->Initial() > 0.0f;
     bool habitable =        planet_env_for_colony_species >= PE_HOSTILE && planet_env_for_colony_species <= PE_GOOD;
     bool visible =          GetUniverse().GetObjectVisibilityByEmpire(m_planet_id, client_empire_id) >= VIS_PARTIAL_VISIBILITY;
-    bool shielded =         planet->InitialMeterValue(METER_SHIELD) > 0.0f;
-    bool has_defenses =     planet->InitialMeterValue(METER_MAX_SHIELD) > 0.0f ||
-                            planet->InitialMeterValue(METER_MAX_DEFENSE) > 0.0f ||
-                            planet->InitialMeterValue(METER_MAX_TROOPS) > 0.0f;
+    bool shielded =         planet->GetMeter(METER_SHIELD)->Initial() > 0.0f;
+    bool has_defenses =     planet->GetMeter(METER_MAX_SHIELD)->Initial() > 0.0f ||
+                            planet->GetMeter(METER_MAX_DEFENSE)->Initial() > 0.0f ||
+                            planet->GetMeter(METER_MAX_TROOPS)->Initial() > 0.0f;
     bool being_colonized =  planet->IsAboutToBeColonized();
     bool outpostable =                   !populated && (  !has_owner /*&& !shielded*/         ) && visible && !being_colonized;
     bool colonizable =      habitable && !populated && ( (!has_owner /*&& !shielded*/) || mine) && visible && !being_colonized;
@@ -1701,7 +1726,7 @@ void SidePanel::PlanetPanel::Refresh() {
 
             // temporary meter updates for curently set species
             GetUniverse().UpdateMeterEstimates(m_planet_id);
-            planet_capacity = ((planet_env_for_colony_species == PE_UNINHABITABLE) ? 0 : planet->CurrentMeterValue(METER_TARGET_POPULATION));   // want target pop after meter update, so check current value of meter
+            planet_capacity = ((planet_env_for_colony_species == PE_UNINHABITABLE) ? 0.0 : planet->GetMeter(METER_TARGET_POPULATION)->Current());   // want target pop after meter update, so check current value of meter
             planet->SetOwner(orig_owner);
             planet->SetSpecies(orig_species);
             planet->GetMeter(METER_TARGET_POPULATION)->Set(orig_initial_target_pop, orig_initial_target_pop);
@@ -1750,7 +1775,7 @@ void SidePanel::PlanetPanel::Refresh() {
         // rounding up, as it's better to slightly overestimate defending troops than
         // underestimate, since one needs to drop more droops than there are defenders
         // to capture a planet
-        float defending_troops = planet->InitialMeterValue(METER_TROOPS);
+        float defending_troops = planet->GetMeter(METER_TROOPS)->Initial();
         float log10_df = floor(std::log10(defending_troops));
         float rounding_adjustment = std::pow(10.0f, log10_df - 2.0f);
         defending_troops += rounding_adjustment;
@@ -1798,7 +1823,8 @@ void SidePanel::PlanetPanel::Refresh() {
                 ClientUI::ArtDir() / planet->FocusIcon(focus_name), true);
             auto graphic = GG::Wnd::Create<GG::StaticGraphic>(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
             graphic->Resize(GG::Pt(MeterIconSize().x*3/2, MeterIconSize().y*3/2));
-            auto row = GG::Wnd::Create<GG::DropDownList::Row>(graphic->Width(), graphic->Height(), "FOCUS");
+            auto row = GG::Wnd::Create<GG::DropDownList::Row>(graphic->Width(), graphic->Height());
+            row->SetDragDropDataType("FOCUS");
 
             row->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
             row->SetBrowseText(
@@ -1902,7 +1928,7 @@ void SidePanel::PlanetPanel::Refresh() {
         Visibility visibility = GetUniverse().GetObjectVisibilityByEmpire(m_planet_id, client_empire_id);
         auto visibility_turn_map = GetUniverse().GetObjectVisibilityTurnMapByEmpire(m_planet_id, client_empire_id);
         float client_empire_detection_strength = client_empire->GetMeter("METER_DETECTION_STRENGTH")->Current();
-        float apparent_stealth = planet->InitialMeterValue(METER_STEALTH);
+        float apparent_stealth = planet->GetMeter(METER_STEALTH)->Initial();
 
         std::string visibility_info;
         std::string detection_info;
@@ -2297,7 +2323,7 @@ void SidePanel::PlanetPanel::ClickColonize() {
     // been ordered
 
     auto planet = Objects().get<Planet>(m_planet_id);
-    if (!planet || planet->InitialMeterValue(METER_POPULATION) != 0.0 || !m_order_issuing_enabled)
+    if (!planet || planet->GetMeter(METER_POPULATION)->Initial() != 0.0 || !m_order_issuing_enabled)
         return;
 
     int empire_id = HumanClientApp::GetApp()->EmpireID();
@@ -2341,7 +2367,7 @@ void SidePanel::PlanetPanel::ClickInvade() {
     auto planet = Objects().get<Planet>(m_planet_id);
     if (!planet ||
         !m_order_issuing_enabled ||
-        (planet->InitialMeterValue(METER_POPULATION) <= 0.0 && planet->Unowned()))
+        (planet->GetMeter(METER_POPULATION)->Initial() <= 0.0 && planet->Unowned()))
     { return; }
 
     int empire_id = HumanClientApp::GetApp()->EmpireID();
@@ -2386,7 +2412,7 @@ void SidePanel::PlanetPanel::ClickBombard() {
     auto planet = Objects().get<Planet>(m_planet_id);
     if (!planet ||
         !m_order_issuing_enabled ||
-        (planet->InitialMeterValue(METER_POPULATION) <= 0.0 && planet->Unowned()))
+        (planet->GetMeter(METER_POPULATION)->Initial() <= 0.0 && planet->Unowned()))
     { return; }
 
     int empire_id = HumanClientApp::GetApp()->EmpireID();
@@ -2480,8 +2506,11 @@ SidePanel::PlanetPanelContainer::PlanetPanelContainer() :
 {
     SetName("PlanetPanelContainer");
     SetChildClippingMode(ClipToClient);
+
+    namespace ph = boost::placeholders;
+
     m_vscroll->ScrolledSignal.connect(
-        boost::bind(&SidePanel::PlanetPanelContainer::VScroll, this, _1, _2, _3, _4));
+        boost::bind(&SidePanel::PlanetPanelContainer::VScroll, this, ph::_1, ph::_2, ph::_3, ph::_4));
     RequirePreRender();
 }
 
@@ -2864,7 +2893,7 @@ namespace {
                 label->Resize(GG::Pt(LabelWidth(), row_height));
                 AttachChild(label);
 
-                const auto meter_value = planet->InitialMeterValue(m_meter_type);
+                const auto meter_value = planet->GetMeter(m_meter_type)->Initial();
                 if (m_meter_type == METER_SUPPLY) {
                     total_meter_value = std::max(total_meter_value, meter_value);
                 } else {
@@ -2954,6 +2983,8 @@ void SidePanel::CompleteConstruction() {
 
     m_system_resource_summary = GG::Wnd::Create<MultiIconValueIndicator>(Width() - EDGE_PAD*2);
     AttachChild(m_system_resource_summary);
+
+    using boost::placeholders::_1;
 
     m_system_name->DropDownOpenedSignal.connect(
         boost::bind(&SidePanel::SystemNameDropListOpenedSlot, this, _1));
@@ -3182,7 +3213,7 @@ void SidePanel::RefreshSystemNames() {
     //    return;
 
     // Repopulate the system with all of the names of known systems, if it is closed.
-    // If it is open do not change the system names because it runs in a seperate ModalEventPump
+    // If it is open do not change the system names because it runs in a seperate modal
     // from the main UI.
     if (m_system_name->Dropped())
         return;

@@ -46,7 +46,6 @@ Special
 
         EffectsGroup
             scope = Source
-            activation = Source
             effects = SetTargetConstruction value = Value - 20
     ]
     graphic = "icons/specials_huge/philospher-planet.png"

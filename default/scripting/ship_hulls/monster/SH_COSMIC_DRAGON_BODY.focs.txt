@@ -3,6 +3,7 @@ Hull
     description = "SH_COSMIC_DRAGON_BODY_DESC"
     speed = 25
     fuel = 100
+    NoDefaultFuelEffect
     stealth = 5
     structure = 50000
     slots = [
@@ -20,6 +21,7 @@ Hull
         [[HUNT_PLANETS]]
         [[MONSTER_MOVE_ALWAYS]]
         [[INFINITE_FUEL]]
+        [[ADD_HULL_FUEL_TO_MAX_FUEL_METER]]
         [[MONSTER_SHIELD_REGENERATION]]
 
         EffectsGroup

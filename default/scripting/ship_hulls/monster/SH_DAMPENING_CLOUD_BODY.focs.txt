@@ -3,6 +3,7 @@ Hull
     description = "SH_DAMPENING_CLOUD_BODY_DESC"
     speed = 20
     fuel = 1
+    NoDefaultFuelEffect
     stealth = 45
     structure = 5000
     slots = [
@@ -15,6 +16,7 @@ Hull
     location = All
     effectsgroups = [
         [[INFINITE_FUEL]]
+        [[ADD_HULL_FUEL_TO_MAX_FUEL_METER]]
         [[MONSTER_SHIELD_REGENERATION]]
         [[MONSTER_MOVE_PRE]]0.10[[MONSTER_MOVE_POST_NOT_OWNED]]
         EffectsGroup

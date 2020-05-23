@@ -19,7 +19,7 @@ Tech
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
             effects = If
                 condition = (Value(LocalCandidate.Industry) <= Value(LocalCandidate.TargetIndustry))
-                effects = SetIndustry value = min(Value + 2, Value(Target.TargetIndustry))
+                effects = SetIndustry value = min(Value + (2 * ( Statistic If condition = (Target.Happiness > 4) ) ), Value(Target.TargetIndustry))
                 else = SetIndustry value = max(Value - 4, Value(Target.TargetIndustry))
 
         EffectsGroup
@@ -30,7 +30,7 @@ Tech
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
             effects = If
                 condition = (Value(LocalCandidate.Research) <= Value(LocalCandidate.TargetResearch))
-                effects = SetResearch value = min(Value + 2, Value(Target.TargetResearch))
+                effects = SetResearch value = min(Value + (2 * ( Statistic If condition = (Target.Happiness > 4) ) ), Value(Target.TargetResearch))
                 else = SetResearch value = max(Value - 4, Value(Target.TargetResearch))
             
         EffectsGroup

@@ -1,5 +1,5 @@
 // -*- C++ -*-
-/* GG is a GUI for SDL and OpenGL.
+/* GG is a GUI for OpenGL.
    Copyright (C) 2003-2008 T. Zachary Laine
 
    This library is free software; you can redistribute it and/or
@@ -164,7 +164,8 @@ public:
         it cannot perform a requested cast, though >> will return a
         default-constructed T if one cannot be deduced from the control's
         text. */
-    template <class T> void operator>>(T& t) const;
+    template <typename T>
+    void operator>>(T& t) const;
 
     /** Returns the value of the control's text, interpreted as an object of
         type T.  If the control's text can be interpreted as an object of type
@@ -178,7 +179,8 @@ public:
         is handy for validating data in a dialog box; Otherwise, using
         operator>>(), you may get the default value, even though the text in
         the control may not be the default value at all, but garbage. */
-    template <class T> T GetValue() const;
+    template <typename T>
+    T GetValue() const;
 
     /** Returns the control's text; allows TextControl's to be used as
         std::string's. */
@@ -277,7 +279,7 @@ public:
         type is void, so multiple << operations cannot be strung together.
         \throw boost::bad_lexical_cast boost::lexical_cast throws
         boost::bad_lexical_cast when it is confused.*/
-    template <class T>
+    template <typename T>
     void operator<<(T t);
 
     void  operator+=(const std::string& s); ///< Appends \a s to text.
@@ -332,21 +334,21 @@ private:
         m_text_elements changes.*/
     void RecomputeLineData();
 
-    std::string                 m_text;
-    Flags<TextFormat>           m_format;      ///< the formatting used to display the text (vertical and horizontal alignment, etc.)
-    Clr                         m_text_color;  ///< the color of the text itself (may differ from GG::Control::m_color)
-    bool                        m_clip_text;
-    bool                        m_set_min_size;
+    std::string                                     m_text;
+    Flags<TextFormat>                               m_format;      ///< the formatting used to display the text (vertical and horizontal alignment, etc.)
+    Clr                                             m_text_color;  ///< the color of the text itself (may differ from GG::Control::m_color)
+    bool                                            m_clip_text = false;
+    bool                                            m_set_min_size = false;
     std::vector<std::shared_ptr<Font::TextElement>> m_text_elements;
-    std::vector<Font::LineData> m_line_data;
-    CPSize                      m_code_points;
-    std::shared_ptr<Font> m_font;
-    Pt                          m_text_ul;     ///< stored relative to the control's UpperLeft()
-    Pt                          m_text_lr;     ///< stored relative to the control's UpperLeft()
-    std::unique_ptr<Font::RenderCache> m_render_cache;///< Cache much of text rendering.
+    std::vector<Font::LineData>                     m_line_data;
+    CPSize                                          m_code_points{0};
+    std::shared_ptr<Font>                           m_font;
+    Pt                                              m_text_ul;     ///< stored relative to the control's UpperLeft()
+    Pt                                              m_text_lr;     ///< stored relative to the control's UpperLeft()
+    std::unique_ptr<Font::RenderCache>              m_render_cache;///< Cache much of text rendering.
 
-    mutable X                   m_cached_minusable_size_width;
-    mutable Pt                  m_cached_minusable_size;
+    mutable X                                       m_cached_minusable_size_width{X0};
+    mutable Pt                                      m_cached_minusable_size;
 };
 
 typedef TextControl Label;
@@ -354,7 +356,7 @@ typedef TextControl Label;
 } // namespace GG
 
 // template implementations
-template <class T>
+template <typename T>
 void GG::TextControl::operator>>(T& t) const
 {
     try {
@@ -364,11 +366,11 @@ void GG::TextControl::operator>>(T& t) const
     }
 }
 
-template <class T>
+template <typename T>
 T GG::TextControl::GetValue() const
 { return boost::lexical_cast<T, std::string>(m_text); }
 
-template <class T>
+template <typename T>
 void GG::TextControl::operator<<(T t)
 { SetText(boost::lexical_cast<std::string>(t)); }
 

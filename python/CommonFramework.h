@@ -37,6 +37,7 @@ public:
     bool IsPythonRunning();
 
     bool         Initialize();                         // initializes and runs the Python interpreter, prepares the Python environment
+    virtual bool InitImports() = 0;                    // initializes Python imports, must be implemented by derived classes
     virtual bool InitModules() = 0;                    // initializes Python modules, must be implemented by derived classes
     void         SetCurrentDir(const std::string dir); // sets Python current work directory or throws error_already_set
     void         AddToSysPath(const std::string dir);  // adds directory to Python sys.path or throws error_already_set
@@ -52,11 +53,11 @@ private:
 
     // some helper objects needed to initialize and run the Python interface
 #if defined(FREEORION_MACOSX) || defined(FREEORION_WIN32)
-    char                    m_home_dir[1024];
-    char                    m_program_name[1024];
+    wchar_t*                m_home_dir = nullptr;
+    wchar_t*                m_program_name = nullptr;
 #endif
-    boost::optional<boost::python::dict> m_namespace; // stores main namespace in optional to be finalized before Python interpreter
-    boost::python::object*  m_python_module_error;  // used to track if and which Python module contains the "error_report" function ErrorReport should call
+    boost::optional<boost::python::dict> m_namespace;           // stores main namespace in optional to be finalized before Python interpreter
+    boost::python::object*  m_python_module_error = nullptr;    // used to track if and which Python module contains the "error_report" function ErrorReport should call
 };
 
 // returns root folder containing all the Python scripts

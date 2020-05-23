@@ -65,7 +65,7 @@ private:
     ResourceType                    m_type;                                             ///< what kind of resource does this pool hold?
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -73,7 +73,7 @@ private:
 BOOST_CLASS_VERSION(ResourcePool, 1)
 
 // template implementations
-template <class Archive>
+template <typename Archive>
 void ResourcePool::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_type)

@@ -24,8 +24,8 @@ Tech
             ]
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
             effects = [
-                SetShield value = min(Value + 1, Value(Target.MaxShield))
-                SetDefense value = min(Value + 1, Value(Target.MaxDefense))
+                SetShield value = min(Value + [[PLANET_SHIELD_FACTOR]], Value(Target.MaxShield))
+                SetDefense value = min(Value + [[PLANET_DEFENSE_FACTOR]], Value(Target.MaxDefense))
                 SetTroops value = min(Value + 1, Value(Target.MaxTroops))
             ]
     ]
@@ -53,7 +53,7 @@ Tech
     tags = [ "PEDIA_DEFENSE_CATEGORY" ]
     prerequisites = "DEF_DEFENSE_NET_1"
     effectsgroups = [
-        [[EG_SYSTEM_MINES(2,75,EMPIRE)]] 
+        [[EG_SYSTEM_MINES(2 * [[SYSTEM_MINES_DAMAGE_FACTOR]],75,EMPIRE)]]
     ] //Priority deliberately not a macro and before all priority macros
     graphic = "icons/tech/system_defense_mines.png"
 
@@ -67,7 +67,7 @@ Tech
     tags = [ "PEDIA_DEFENSE_CATEGORY" ]
     prerequisites = "DEF_SYST_DEF_MINE_1"
     effectsgroups = [
-        [[EG_SYSTEM_MINES(6,65,EMPIRE)]]
+        [[EG_SYSTEM_MINES(6 * [[SYSTEM_MINES_DAMAGE_FACTOR]],65,EMPIRE)]]
     ]
     graphic = "icons/tech/system_defense_mines.png"
 
@@ -81,10 +81,11 @@ Tech
     tags = [ "PEDIA_DEFENSE_CATEGORY" ]
     prerequisites = "DEF_SYST_DEF_MINE_2"
     effectsgroups = [
-        [[EG_SYSTEM_MINES(14,60,EMPIRE)]]
+        [[EG_SYSTEM_MINES(14 * [[SYSTEM_MINES_DAMAGE_FACTOR]],60,EMPIRE)]]
     ]
     graphic = "icons/tech/system_defense_mines.png"
 
 #include "mines.macros"
 #include "/scripting/common/priorities.macros"
 #include "/scripting/common/base_prod.macros"
+#include "/scripting/common/misc.macros"

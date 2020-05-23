@@ -1,6 +1,6 @@
 from heapq import heappush, heappop
 from collections import namedtuple
-from logging import warn, error
+from logging import warning, error
 
 from aistate_interface import get_aistate
 import freeOrionAIInterface as fo
@@ -9,7 +9,7 @@ import PlanetUtilsAI
 from AIDependencies import INVALID_ID
 from EnumsAI import MissionType
 from turn_state import state
-from freeorion_tools import cache_by_session_with_turnwise_update, chat_human, get_partial_visibility_turn
+from freeorion_tools import cache_for_current_turn, chat_human, get_partial_visibility_turn
 
 _DEBUG_CHAT = False
 _ACCEPTABLE_DETOUR_LENGTH = 2000
@@ -17,7 +17,7 @@ path_information = namedtuple('path_information', ['distance', 'fuel', 'path'])
 
 
 # cache this so that boost python does not need to make a new copy every time this info is needed in a turn.
-@cache_by_session_with_turnwise_update
+@cache_for_current_turn
 def _get_unobstructed_systems():
     return fo.getEmpire().supplyUnobstructedSystems
 
@@ -188,7 +188,7 @@ def find_path_with_resupply_generic(start, target, start_fuel, max_fuel, system_
     empire_id = fo.empireID()
 
     if start == INVALID_ID or target == INVALID_ID:
-        warn("Requested path between invalid systems.")
+        warning("Requested path between invalid systems.")
         return None
 
     # make sure the minimum fuel at target is realistic
@@ -203,7 +203,7 @@ def find_path_with_resupply_generic(start, target, start_fuel, max_fuel, system_
     # make sure the target is connected to the start system
     shortest_possible_path_distance = universe.shortestPathDistance(start, target)
     if shortest_possible_path_distance == -1:
-        warn("Requested path between disconnected systems, doing nothing.")
+        warning("Requested path between disconnected systems, doing nothing.")
         return None
 
     if may_travel_system_func is None:

@@ -1,6 +1,7 @@
 Part
     name = "FU_BASIC_TANK"
     description = "FU_BASIC_TANK_DESC"
+    exclusions = "SH_COLONY_BASE"
     class = Fuel
     capacity = 0.5
     mountableSlotTypes = Internal

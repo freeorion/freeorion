@@ -51,10 +51,7 @@ BuildingType
                 Not Object id = Source.ID
                 Species name = Source.Planet.Species
             ]
-            activation = And [
-                Source
-                Random probability = 0.3
-            ]
+            activation = Random probability = 0.3
             effects = [
                 GenerateSitRepMessage
                     message = "EFFECT_INTERSPECIES_ACADEMY_DESTROY"
@@ -76,7 +73,6 @@ BuildingType
                 OwnedBy empire = Source.Owner
                 Species
             ]
-            activation = Source
             accountinglabel = "INTERSPECIES_ACADEMY_LABEL"
             priority = [[LATE_PRIORITY]]
             effects = SetMaxStockpile value = Value + 10
@@ -88,7 +84,6 @@ BuildingType
                 OwnedBy empire = Source.Owner
                 Species
             ]
-            activation = Source
             accountinglabel = "INTERSPECIES_ACADEMY_LABEL"
             priority = [[LATE_PRIORITY]]
             effects = SetTargetResearch value = Value + 5

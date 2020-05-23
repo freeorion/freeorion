@@ -3,6 +3,7 @@ Hull
     description = "SH_NEBULOUS_BODY"
     speed = 100
     fuel = 1
+    NoDefaultFuelEffect
     stealth = 75
     structure = 5000
     slots = [
@@ -16,6 +17,7 @@ Hull
     location = All
     effectsgroups = [
         [[INFINITE_FUEL]]
+        [[ADD_HULL_FUEL_TO_MAX_FUEL_METER]]
         [[MONSTER_SHIELD_REGENERATION]]
 
         [[MONSTER_MOVE_PRE]]1[[MONSTER_MOVE_POST]]

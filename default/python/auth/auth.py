@@ -1,4 +1,4 @@
-from logging import warn, info
+from logging import warning, info
 
 from common.configure_logging import redirect_logging_to_freeorion_logger
 
@@ -29,11 +29,11 @@ class AuthProvider:
                         first_line = False
                         self.default_roles = self.__parse_roles(line.strip())
                     else:
-                        l = line.rsplit(':', 2)
-                        self.logins[l[0]] = (l[2].strip(), self.__parse_roles(l[1].strip()))
+                        login, roles, password = line.rsplit(':', 2)
+                        self.logins[login] = (password.strip(), self.__parse_roles(roles.strip()))
         except IOError:
             exctype, value = sys.exc_info()[:2]
-            warn("Cann't read auth file %s: %s %s" % (fo.get_user_config_dir() + "/auth.txt", exctype, value))
+            warning("Cann't read auth file %s: %s %s" % (fo.get_user_config_dir() + "/auth.txt", exctype, value))
             self.default_roles = [
                 fo.roleType.clientTypeModerator, fo.roleType.clientTypePlayer,
                 fo.roleType.clientTypeObserver, fo.roleType.galaxySetup
@@ -45,7 +45,7 @@ class AuthProvider:
         for c in roles_str:
             r = self.roles_symbols.get(c)
             if r is None:
-                warn("unknown role symbol '%c'" % c)
+                warning("unknown role symbol '%c'" % c)
             else:
                 roles.append(r)
         return roles

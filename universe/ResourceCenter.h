@@ -32,11 +32,9 @@ public:
     int                             TurnsSinceFocusChange() const;                  ///< number of turns since focus was last changed.
     virtual std::vector<std::string>AvailableFoci() const;                          ///< focus settings available to this ResourceCenter
     virtual const std::string&      FocusIcon(const std::string& focus_name) const; ///< icon representing focus with name \a focus_name for this ResourceCenter
+    std::string                     Dump(unsigned short ntabs = 0) const;
 
-    std::string     Dump(unsigned short ntabs = 0) const;
-
-    virtual float   InitialMeterValue(MeterType type) const = 0;            ///< implementation should return the initial value of the specified meter \a type
-    virtual float   CurrentMeterValue(MeterType type) const = 0;            ///< implementation should return the current value of the specified meter \a type
+    virtual const Meter*            GetMeter(MeterType type) const = 0;             ///< implementation should return the requested Meter, or 0 if no such Meter of that type is found in this object
 
     /** the state changed signal object for this ResourceCenter */
     mutable boost::signals2::signal<void ()> ResourceCenterChangedSignal;
@@ -49,6 +47,8 @@ public:
     void SetFocus(const std::string& focus);
     void ClearFocus();
     void UpdateFocusHistory();
+
+    virtual Meter* GetMeter(MeterType type) = 0;    ///< implementation should return the requested Meter, or 0 if no such Meter of that type is found in this object
 
     /** Resets the meters, etc. This should be called when a ResourceCenter is
         wiped out due to starvation, etc. */
@@ -67,19 +67,16 @@ private:
     std::string m_focus_turn_initial;
     int         m_last_turn_focus_changed_turn_initial;
 
-    virtual Visibility      GetVisibility(int empire_id) const = 0;         ///< implementation should return the visibility of this ResourceCenter for the empire with the specified \a empire_id
-    virtual const Meter*    GetMeter(MeterType type) const = 0;             ///< implementation should return the requested Meter, or 0 if no such Meter of that type is found in this object
-    virtual Meter*          GetMeter(MeterType type) = 0;                   ///< implementation should return the requested Meter, or 0 if no such Meter of that type is found in this object
-
-    virtual void            AddMeter(MeterType meter_type) = 0;             ///< implementation should add a meter to the object so that it can be accessed with the GetMeter() functions
+    virtual Visibility  GetVisibility(int empire_id) const = 0;         ///< implementation should return the visibility of this ResourceCenter for the empire with the specified \a empire_id
+    virtual void        AddMeter(MeterType meter_type) = 0;             ///< implementation should add a meter to the object so that it can be accessed with the GetMeter() functions
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
 // template implementations
-template <class Archive>
+template <typename Archive>
 void ResourceCenter::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_focus)

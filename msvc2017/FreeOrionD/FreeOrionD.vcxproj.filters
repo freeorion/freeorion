@@ -27,9 +27,6 @@
     <Filter Include="Header Files\util">
       <UniqueIdentifier>{d2f5dbff-1284-42b2-967e-0b1e7e4070ca}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\network">
-      <UniqueIdentifier>{88999d0a-94bc-43cc-a21c-ce4ef5fd65a4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\server">
       <UniqueIdentifier>{b7b96e1d-6ba0-4b2d-bb2b-9dd040fd6854}</UniqueIdentifier>
     </Filter>
@@ -81,9 +78,6 @@
       <Filter>Header Files\network</Filter>
     </ClInclude>
     <ClInclude Include="..\..\network\Networking.h">
-      <Filter>Header Files\network</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\network\ServerNetworking.h">
       <Filter>Header Files\network</Filter>
     </ClInclude>
     <ClInclude Include="..\..\universe\Building.h">
@@ -152,10 +146,22 @@
     <ClInclude Include="..\..\server\ServerApp.h">
       <Filter>Header Files\server</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\server\ServerFramework.h">
+      <Filter>Header Files\server</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\server\ServerFSM.h">
       <Filter>Header Files\server</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\server\ServerNetworking.h">
+      <Filter>Header Files\server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\server\ServerWrapper.h">
+      <Filter>Header Files\server</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\server\SaveLoad.h">
+      <Filter>Header Files\server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\server\UniverseGenerator.h">
       <Filter>Header Files\server</Filter>
     </ClInclude>
     <ClInclude Include="..\..\util\binreloc.h">
@@ -215,17 +221,8 @@
     <ClInclude Include="..\..\universe\Effect.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\universe\UniverseGenerator.h">
-      <Filter>Header Files\universe</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\util\AppInterface.h">
       <Filter>Header Files\util</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\python\server\ServerFramework.h">
-      <Filter>Header Files\python\server</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\python\server\ServerWrapper.h">
-      <Filter>Header Files\python\server</Filter>
     </ClInclude>
     <ClInclude Include="..\..\python\CommonFramework.h">
       <Filter>Header Files\python</Filter>
@@ -236,9 +233,6 @@
     <ClInclude Include="StdAfx.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\network\ServerNetworking.cpp">
-      <Filter>Source Files\network</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\server\ServerFSM.cpp">
       <Filter>Source Files\server</Filter>
     </ClCompile>
@@ -246,6 +240,18 @@
       <Filter>Source Files\server</Filter>
     </ClCompile>
     <ClCompile Include="..\..\server\ServerApp.cpp">
+      <Filter>Source Files\server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\server\ServerFramework.cpp">
+      <Filter>Source Files\server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\server\ServerNetworking.cpp">
+      <Filter>Source Files\server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\server\ServerWrapper.cpp">
+      <Filter>Source Files\server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\server\UniverseGenerator.cpp">
       <Filter>Source Files\server</Filter>
     </ClCompile>
     <ClCompile Include="..\..\server\dmain.cpp">
@@ -256,15 +262,6 @@
     </ClCompile>
     <ClCompile Include="..\..\combat\CombatSystem.cpp">
       <Filter>Source Files\combat</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\universe\UniverseGenerator.cpp">
-      <Filter>Source Files\universe</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\python\server\ServerFramework.cpp">
-      <Filter>Source Files\python\server</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\python\server\ServerWrapper.cpp">
-      <Filter>Source Files\python\server</Filter>
     </ClCompile>
     <ClCompile Include="..\..\python\CommonFramework.cpp">
       <Filter>Source Files\python</Filter>

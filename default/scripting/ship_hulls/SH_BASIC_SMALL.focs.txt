@@ -3,6 +3,7 @@ Hull
     description = "SH_BASIC_SMALL_DESC"
     speed = 75
     fuel = 8
+    NoDefaultFuelEffect
     stealth = 5
     structure = 5
     slots = [
@@ -17,6 +18,7 @@ Hull
     ]
     effectsgroups = [
         [[GREAT_FUEL_EFFICIENCY]]
+        [[ADD_HULL_FUEL_TO_MAX_FUEL_METER]]
         [[AVERAGE_BASE_FUEL_REGEN]]
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]

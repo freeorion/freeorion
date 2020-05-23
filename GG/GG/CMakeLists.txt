@@ -1,4 +1,4 @@
-# GG is a GUI for SDL and OpenGL.
+# GG is a GUI for OpenGL.
 #
 # Copyright (C) 2017 Marcel Metz
 #
@@ -26,10 +26,6 @@
 add_subdirectory(dialogs)
 add_subdirectory(RichText)
 
-if(BUILD_SDL_DRIVER)
-    add_subdirectory(SDL)
-endif()
-
 target_sources(GiGi
     PUBLIC
         ${CMAKE_CURRENT_LIST_DIR}/AlignmentFlags.h
@@ -47,7 +43,6 @@ target_sources(GiGi
         ${CMAKE_CURRENT_LIST_DIR}/DynamicGraphic.h
         ${CMAKE_CURRENT_LIST_DIR}/Edit.h
         ${CMAKE_CURRENT_LIST_DIR}/Enum.h
-        ${CMAKE_CURRENT_LIST_DIR}/EventPump.h
         ${CMAKE_CURRENT_LIST_DIR}/Exception.h
         ${CMAKE_CURRENT_LIST_DIR}/Export.h
         ${CMAKE_CURRENT_LIST_DIR}/Flags.h

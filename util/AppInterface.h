@@ -112,8 +112,11 @@ inline std::shared_ptr<const Pathfinder> GetPathfinder()
 { return IApp::GetApp()->GetUniverse().GetPathfinder(); }
 
 /** Accessor for all (on server) or all known (on client) objects ObjectMap */
-inline ObjectMap& Objects()
-{ return IApp::GetApp()->GetUniverse().Objects(); }
+inline ObjectMap& Objects() {
+    static ObjectMap empty_objects;
+    auto app = IApp::GetApp();
+    return app ? app->GetUniverse().Objects() : empty_objects;
+}
 
 /** Accessor for known objects of specified empire. */
 inline ObjectMap& EmpireKnownObjects(int empire_id)

@@ -20,7 +20,6 @@
 #include "../util/OptionsDB.h"
 #include "../Empire/Empire.h"
 
-#include <GG/DrawUtil.h>
 #include <GG/StaticGraphic.h>
 #include <GG/utf8/checked.h>
 #include <GG/utf8/core.h>
@@ -166,7 +165,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size,
 
         // is planet populated by neutral species
         if (!has_neutrals) {
-            if (planet->Unowned() && !planet->SpeciesName().empty() && planet->InitialMeterValue(METER_POPULATION) > 0.0f)
+            if (planet->Unowned() && !planet->SpeciesName().empty() && planet->GetMeter(METER_POPULATION)->Initial() > 0.0f)
                 has_neutrals = true;
         }
 
@@ -246,14 +245,7 @@ void OwnerColoredSystemName::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 SystemIcon::SystemIcon(GG::X x, GG::Y y, GG::X w, int system_id) :
     GG::Control(x, y, w, GG::Y(Value(w)), GG::INTERACTIVE),
     m_system_id(system_id),
-    m_tiny_graphic(nullptr),
-    m_selection_indicator(nullptr),
-    m_tiny_selection_indicator(nullptr),
-    m_mouseover_indicator(nullptr),
-    m_mouseover_unexplored_indicator(nullptr),
-    m_tiny_mouseover_indicator(nullptr),
     m_selected(false),
-    m_colored_name(nullptr),
     m_showing_name(false)
 {}
 

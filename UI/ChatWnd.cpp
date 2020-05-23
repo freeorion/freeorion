@@ -3,10 +3,10 @@
 #include "CUIControls.h"
 #include "PlayerListWnd.h"
 #include "../client/human/HumanClientApp.h"
+#include "../client/ClientNetworking.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 #include "../network/Message.h"
-#include "../network/ClientNetworking.h"
 #include "../universe/Universe.h"
 #include "../universe/Ship.h"
 #include "../universe/ShipDesign.h"
@@ -14,7 +14,7 @@
 #include "../universe/Special.h"
 #include "../universe/Species.h"
 #include "../universe/Tech.h"
-#include "../universe/Building.h"
+#include "../universe/BuildingType.h"
 #include "../util/Directories.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
@@ -141,12 +141,12 @@ void MessageWndEdit::FindGameWords() {
     }
     // add system names
     for (auto& system : GetUniverse().Objects().all<System>()) {
-        if (system->Name() != "")
+        if (!system->Name().empty())
             m_game_words.insert(system->Name());
     }
      // add ship names
     for (auto& ship : GetUniverse().Objects().all<Ship>()) {
-        if (ship->Name() != "")
+        if (!ship->Name().empty())
             m_game_words.insert(ship->Name());
     }
      // add ship design names
@@ -157,22 +157,22 @@ void MessageWndEdit::FindGameWords() {
     }
      // add specials names
     for (const std::string& special_name : SpecialNames()) {
-        if (special_name != "")
+        if (!special_name.empty())
             m_game_words.insert(UserString(special_name));
     }
      // add species names
     for (const auto& entry : GetSpeciesManager()) {
-        if (entry.second->Name() != "")
+        if (!entry.second->Name().empty())
             m_game_words.insert(UserString(entry.second->Name()));
     }
      // add techs names
     for (const std::string& tech_name : GetTechManager().TechNames()) {
-        if (tech_name != "")
+        if (!tech_name.empty())
             m_game_words.insert(UserString(tech_name));
     }
     // add building type names
     for (const auto& entry : GetBuildingTypeManager()) {
-        if (entry.second->Name() != "")
+        if (!entry.second->Name().empty())
             m_game_words.insert(UserString(entry.second->Name()));
     }
     // add ship hulls
@@ -183,7 +183,7 @@ void MessageWndEdit::FindGameWords() {
     // add ship parts
     for (const auto& design : GetPredefinedShipDesignManager().GetOrderedShipDesigns()) {
         for (const std::string& part_name : design->Parts()) {
-            if (part_name != "")
+            if (!part_name.empty())
                 m_game_words.insert(UserString(part_name));
         }
     }
@@ -194,13 +194,13 @@ bool MessageWndEdit::AutoComplete() {
 
     // Check for repeated tab
     // if current line is same as the last read line
-    if (m_last_line_read != "" && boost::equals(full_line, m_last_line_read)) {
+    if (!m_last_line_read.empty() && boost::equals(full_line, m_last_line_read)) {
         if (m_repeated_tab_count >= m_auto_complete_choices.size())
             m_repeated_tab_count = 0;
 
-        std::string next_word = m_auto_complete_choices.at(m_repeated_tab_count);
+        const std::string& next_word = m_auto_complete_choices.at(m_repeated_tab_count);
 
-        if (next_word != "") {
+        if (!next_word.empty()) {
             // Remove the old choice from the line
             // and replace it with the next choice
             full_line = full_line.substr(0, full_line.size() - (m_last_game_word.size() + 1));
@@ -294,11 +294,7 @@ bool MessageWndEdit::CompleteWord(const std::set<std::string>& names, const std:
 ////////////////////
 MessageWnd::MessageWnd(GG::Flags<GG::WndFlag> flags, const std::string& config_name) :
     CUIWnd(UserString("MESSAGES_PANEL_TITLE"), flags, config_name),
-    m_display(nullptr),
-    m_edit(nullptr),
-    m_display_show_time(0),
-    m_history(),
-    m_history_position()
+    m_display_show_time(0)
 {}
 
 void MessageWnd::CompleteConstruction() {
@@ -312,21 +308,18 @@ void MessageWnd::CompleteConstruction() {
     m_edit = GG::Wnd::Create<MessageWndEdit>();
     AttachChild(m_edit);
 
-    m_edit->TextEnteredSignal.connect(
-        boost::bind(&MessageWnd::MessageEntered, this));
-    m_edit->UpPressedSignal.connect(
-        boost::bind(&MessageWnd::MessageHistoryUpRequested, this));
-    m_edit->DownPressedSignal.connect(
-        boost::bind(&MessageWnd::MessageHistoryDownRequested, this));
-    m_edit->GainingFocusSignal.connect(
-        TypingSignal);
-    m_edit->LosingFocusSignal.connect(
-        DoneTypingSignal);
+    m_edit->TextEnteredSignal.connect(boost::bind(&MessageWnd::MessageEntered, this));
+    m_edit->UpPressedSignal.connect(boost::bind(&MessageWnd::MessageHistoryUpRequested, this));
+    m_edit->DownPressedSignal.connect(boost::bind(&MessageWnd::MessageHistoryDownRequested, this));
+    m_edit->GainingFocusSignal.connect(TypingSignal);
+    m_edit->LosingFocusSignal.connect(DoneTypingSignal);
 
     m_history.push_front("");
 
+    namespace ph = boost::placeholders;
+
     Empires().DiplomaticStatusChangedSignal.connect(
-        boost::bind(&MessageWnd::HandleDiplomaticStatusChange, this, _1, _2));
+        boost::bind(&MessageWnd::HandleDiplomaticStatusChange, this, ph::_1, ph::_2));
 
     DoLayout();
     SaveDefaultedOptions();

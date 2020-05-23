@@ -22,6 +22,7 @@ namespace parse { namespace detail {
         condition_parser_rule               design_has_part;
         condition_parser_rule               design_has_part_class;
         condition_parser_rule               in_system;
+        condition_parser_rule               on_planet;
         condition_parser_rule               start;
     };
 

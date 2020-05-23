@@ -3,6 +3,7 @@ Hull
     description = "SH_SNOWFLAKE_1_BODY_DESC"
     speed = 55
     fuel = 5
+    NoDefaultFuelEffect
     stealth = 15
     structure = 25
     slots = [
@@ -44,6 +45,7 @@ Hull
 
         [[MONSTER_MOVE_ALWAYS]]
         [[INFINITE_FUEL]]
+        [[ADD_HULL_FUEL_TO_MAX_FUEL_METER]]
         [[MONSTER_SHIELD_REGENERATION]]
 
         EffectsGroup
@@ -55,7 +57,7 @@ Hull
                 ]
             ]
             activation = And [
-                Turn low = max(30, Source.LastTurnActiveInBattle + 1)
+                Turn low = max(30, LocalCandidate.LastTurnActiveInBattle + 1)
                 Random probability = Source.Age*0.01 - 0.1
             ]
             accountinglabel = "SNOWFLAKE_GROWTH_LABEL"

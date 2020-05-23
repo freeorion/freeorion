@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 """This module defines the decoding for the FreeOrion AI savegames.
 
 The decoder is subclassed from the standard library json decoder and
@@ -12,51 +11,42 @@ When classes are loaded, their __setstate__ method will be invoked if available 
 the __dict__ content will be set directly. It is the responsiblity of the trusted classes
 to provide a __setstate__ method to verify and possibly sanitize the content of the passed state.
 """
+import binascii
 import json
+from typing import Union
 
 import EnumsAI
-from common import six
+from AIstate import AIstate
 from freeorion_tools import profile
-from logging import debug
 
 from ._definitions import (ENUM_PREFIX, FALSE, FLOAT_PREFIX, INT_PREFIX, InvalidSaveGameException, NONE, PLACEHOLDER,
                            SET_PREFIX, TRUE, TUPLE_PREFIX, trusted_classes, )
 
 
-@profile
-def load_savegame_string(string):
+class SaveDecompressException(Exception):
     """
-    :rtype: AIstate
+    Exception class for troubles with decompressing save game string.
+    """
+    pass
+
+
+@profile
+def load_savegame_string(string: Union[str, bytes]) -> AIstate:
+    """
+    :raises: SaveDecompressException, InvalidSaveGameException
     """
     import base64
     import zlib
 
-    new_string = string
     try:
         new_string = base64.b64decode(string)
-    except TypeError as e:
-        # The base64 module docs only mention a TypeError exception, for wrong padding
-        # Older save files won't be base64 encoded, but seemingly that doesn't trigger
-        # an exception here;
-        debug("When trying to base64 decode savestate got exception: %s" % e)
+    except (binascii.Error, ValueError, TypeError) as e:
+        raise SaveDecompressException("Fail to decode base64 savestate %s" % e) from e
     try:
         new_string = zlib.decompress(new_string)
-    except zlib.error:
-        pass  # probably an uncompressed (or wrongly base64 decompressed) string
-    try:
-        decoded_state = decode(new_string)
-        debug("Decoded a zlib-compressed and apparently base64-encoded save-state string.")
-        return decoded_state
-    except (InvalidSaveGameException, ValueError, TypeError) as e:
-        debug("Base64/zlib decoding path for savestate failed: %s" % e)
-
-    try:
-        string = zlib.decompress(string)
-        debug("zlib-decompressed a non-base64-encoded save-state string.")
-    except zlib.error:
-        # probably an uncompressed string
-        debug("Will try decoding savestate string without base64 or zlib compression.")
-    return decode(string)
+    except zlib.error as e:
+        raise SaveDecompressException("Fail to decompress savestate %s" % e) from e
+    return decode(new_string.decode('utf-8'))
 
 
 def decode(obj):
@@ -124,12 +114,6 @@ class _FreeOrionAISaveGameDecoder(json.JSONDecoder):
         # for standard containers, interpret each element
         if isinstance(x, list):
             return list(self.__interpret(element) for element in x)
-
-        if six.PY2:
-            # encode a unicode str(six.text_type)
-            # according to systems standard encoding
-            if isinstance(x, six.text_type):
-                x = x.encode('utf-8')
 
         # if it is a string, check if it encodes another data type
         if isinstance(x, str):

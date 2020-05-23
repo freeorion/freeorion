@@ -3,6 +3,7 @@ Hull
     description = "SH_WHITE_KRAKEN_BODY_DESC"
     speed = 55
     fuel = 10
+    NoDefaultFuelEffect
     stealth = 25
     structure = 530
     slots = [
@@ -20,6 +21,7 @@ Hull
     effectsgroups = [
         [[GOOD_VISION]]
         [[INFINITE_FUEL]]
+        [[ADD_HULL_FUEL_TO_MAX_FUEL_METER]]
         [[MONSTER_SHIELD_REGENERATION]]
     ]
     icon = ""

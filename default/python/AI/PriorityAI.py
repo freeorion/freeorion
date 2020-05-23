@@ -154,7 +154,7 @@ def _calculate_research_priority():
             research_priority = len(research_queue) * 0.01 * industry_priority  # barely not done with research
         elif len(research_queue) < 10 and research_queue[-1].allocation > 0:
             research_priority = (4 + 2 * len(research_queue)) * 0.01 * industry_priority  # almost done with research
-        elif len(research_queue) < 20 and research_queue[int(len(research_queue) / 2)].allocation > 0:
+        elif len(research_queue) < 20 and research_queue[int(len(research_queue) // 2)].allocation > 0:
             research_priority *= 0.7  # closing in on end of research
     if industry_surge:
         if galaxy_is_sparse and not any(enemies_sighted):
@@ -407,7 +407,7 @@ def _calculate_invasion_priority():
 
 
 def allotted_invasion_targets():
-    return 1 + int(fo.currentTurn() / 25)
+    return 1 + int(fo.currentTurn() // 25)
 
 
 def _calculate_military_priority():

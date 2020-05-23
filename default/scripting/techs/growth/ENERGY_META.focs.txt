@@ -26,7 +26,7 @@ Tech
             ]
             stackinggroup = "DEFENSE_NET_STACK_GM"
             priority = [[LATE_PRIORITY]]
-            effects = SetMaxDefense value = Value + 10 accountinglabel = "GRO_ENERGY_META"
+            effects = SetMaxDefense value = Value + ( 10 * [[PLANET_DEFENSE_FACTOR]] ) accountinglabel = "GRO_ENERGY_META"
 
         EffectsGroup
             scope = And [
@@ -35,7 +35,7 @@ Tech
             ]
             stackinggroup = "PLANET_SHIELDS_STACK_GEM"
             priority = [[LATE_PRIORITY]]
-            effects = SetMaxShield value = Value + 50 accountinglabel = "GRO_ENERGY_META"
+            effects = SetMaxShield value = Value + ( 50 * [[PLANET_SHIELD_FACTOR]] ) accountinglabel = "GRO_ENERGY_META"
 
         EffectsGroup
             scope = And [
@@ -45,7 +45,7 @@ Tech
 
             ]
             priority = [[EARLY_PRIORITY]]
-            effects = SetTargetIndustry value = Value + Target.Population * 1.0 * [[INDUSTRY_PER_POP]]
+            effects = SetTargetIndustry value = Value + Target.Population * 0.5 * [[INDUSTRY_PER_POP]]
 
         EffectsGroup
             scope = And [
@@ -55,9 +55,10 @@ Tech
 
             ]
             priority = [[EARLY_PRIORITY]]
-            effects = SetTargetResearch value = Value  + Target.Population * 2.5 * [[RESEARCH_PER_POP]]
+            effects = SetTargetResearch value = Value  + Target.Population * 1.0 * [[RESEARCH_PER_POP]]
     ]
     graphic = "icons/tech/pure-energy_metabolism.png"
 
 #include "/scripting/common/base_prod.macros"
 #include "/scripting/common/priorities.macros"
+#include "/scripting/common/misc.macros"

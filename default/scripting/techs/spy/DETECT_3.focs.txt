@@ -17,7 +17,7 @@ Tech
             activation = And [
                 Not OwnerHasTech name = "SPY_DETECT_4"
                 Not OwnerHasTech name = "SPY_DETECT_5"
-                ]
+            ]
             effects = SetDetection value = Value + 150
 
         EffectsGroup
@@ -25,7 +25,7 @@ Tech
             activation = And [
                 Not OwnerHasTech name = "SPY_DETECT_4"
                 Not OwnerHasTech name = "SPY_DETECT_5"
-                ]
+            ]
             effects = SetEmpireMeter empire = Source.Owner meter = "METER_DETECTION_STRENGTH" value = Value + 50
     ]
 

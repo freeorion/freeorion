@@ -3,6 +3,7 @@ Hull
     description = "SH_BLOATED_JUGGERNAUT_BODY_DESC"
     speed = 160
     fuel = 100
+    NoDefaultFuelEffect
     stealth = 15
     structure = 7000
     slots = [
@@ -24,6 +25,7 @@ Hull
         [[MONSTER_MOVE_ALWAYS]]
         [[EXCELLENT_VISION]]
         [[INFINITE_FUEL]]
+        [[ADD_HULL_FUEL_TO_MAX_FUEL_METER]]
         [[MONSTER_SHIELD_REGENERATION]]
     ]
     icon = ""

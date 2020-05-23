@@ -3,6 +3,7 @@ Hull
     description = "SH_JUGGERNAUT_1_BODY_DESC"
     speed = 30
     fuel = 3
+    NoDefaultFuelEffect
     stealth = 5
     structure = 30
     slots = [
@@ -43,6 +44,7 @@ Hull
 
         [[MONSTER_MOVE_ALWAYS]]
         [[INFINITE_FUEL]]
+        [[ADD_HULL_FUEL_TO_MAX_FUEL_METER]]
         [[MONSTER_SHIELD_REGENERATION]]
 
         EffectsGroup
@@ -54,8 +56,8 @@ Hull
                 ]
             ]
             activation = And [
-                Turn low = max(30, Source.LastTurnActiveInBattle + 1)
-                Random probability = Source.Age*0.01 - 0.1
+                Turn low = max(30, LocalCandidate.LastTurnActiveInBattle + 1)
+                Random probability = LocalCandidate.Age*0.01 - 0.1
             ]
             effects = [
                 CreateShip designname = "SM_JUGGERNAUT_2" empire = Source.Owner

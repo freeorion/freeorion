@@ -1,5 +1,5 @@
 import math
-from logging import debug, info, warn
+from logging import debug, info, warning
 
 import freeOrionAIInterface as fo
 
@@ -13,10 +13,10 @@ import FleetUtilsAI
 import MilitaryAI
 import PlanetUtilsAI
 import ProductionAI
-from AIDependencies import INVALID_ID
+from AIDependencies import INVALID_ID, Tags
 from EnumsAI import MissionType, PriorityType
 from common.print_utils import Table, Text, Float
-from freeorion_tools import tech_is_complete, AITimer, get_partial_visibility_turn
+from freeorion_tools import tech_is_complete, AITimer, get_partial_visibility_turn, get_species_tag_grade
 from target import TargetPlanet, TargetSystem
 from turn_state import state
 
@@ -125,7 +125,7 @@ def get_invasion_fleets():
                 troops_per_ship = best_base_trooper_here.troopCapacity
                 if not troops_per_ship:
                     continue
-                species_troop_grade = CombatRatingsAI.get_species_troops_grade(planet2.speciesName)
+                species_troop_grade = get_species_tag_grade(planet2.speciesName, Tags.ATTACKTROOPS)
                 troops_per_ship = CombatRatingsAI.weight_attack_troops(troops_per_ship, species_troop_grade)
                 if troops_per_ship > best_trooper_count:
                     best_base_planet = pid2
@@ -136,7 +136,7 @@ def get_invasion_fleets():
         # Pass 2: for each target previously identified for base troopers, check that still qualifies and
         # check how many base troopers would be needed; if reasonable then queue up the troops and record this in
         # get_aistate().qualifyingTroopBaseTargets
-        for pid in aistate.qualifyingTroopBaseTargets.keys():
+        for pid in list(aistate.qualifyingTroopBaseTargets.keys()):
             planet = universe.getPlanet(pid)
             if planet and planet.owner == empire_id:
                 del aistate.qualifyingTroopBaseTargets[pid]
@@ -168,21 +168,21 @@ def get_invasion_fleets():
             best_base_trooper_here = ProductionAI.get_best_ship_info(PriorityType.PRODUCTION_ORBITAL_INVASION, loc)[1]
             loc_planet = universe.getPlanet(loc)
             if best_base_trooper_here is None:  # shouldn't be possible at this point, but just to be safe
-                warn("Could not find a suitable orbital invasion design at %s" % loc_planet)
+                warning("Could not find a suitable orbital invasion design at %s" % loc_planet)
                 continue
             # TODO: have TroopShipDesigner give the expected number of troops including species effects directly
             troops_per_ship = best_base_trooper_here.troopCapacity
-            species_troop_grade = CombatRatingsAI.get_species_troops_grade(loc_planet.speciesName)
+            species_troop_grade = get_species_tag_grade(loc_planet.speciesName, Tags.ATTACKTROOPS)
             troops_per_ship = CombatRatingsAI.weight_attack_troops(troops_per_ship, species_troop_grade)
             if not troops_per_ship:
-                warn("The best orbital invasion design at %s seems not to have any troop capacity." % loc_planet)
+                warning("The best orbital invasion design at %s seems not to have any troop capacity." % loc_planet)
                 continue
             _, col_design, build_choices = ProductionAI.get_best_ship_info(PriorityType.PRODUCTION_ORBITAL_INVASION,
                                                                            loc)
             if not col_design:
                 continue
             if loc not in build_choices:
-                warn('Best troop design %s can not be produced at planet with id: %s\d' % (col_design, build_choices))
+                warning('Best troop design %s can not be produced at planet with id: %s' % (col_design, build_choices))
                 continue
             n_bases = math.ceil((planet_troops + 1) / troops_per_ship)  # TODO: reconsider this +1 safety factor
             # TODO: evaluate cost and time-to-build of best base trooper here versus cost and time-to-build-and-travel
@@ -341,13 +341,16 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
     # get a baseline evaluation of the planet as determined by ColonisationAI
     species_name = planet.speciesName
     species = fo.getSpecies(species_name)
+    empire_research_list = tuple(element.tech for element in fo.getEmpire().researchQueue)
     if not species or AIDependencies.TAG_DESTROYED_ON_CONQUEST in species.tags:
         # this call iterates over this Empire's available species with which it could colonize after an invasion
         planet_eval = ColonisationAI.assign_colonisation_values([planet_id], MissionType.INVASION, None, detail)
         colony_base_value = max(0.75 * planet_eval.get(planet_id, [0])[0],
-                                ColonisationAI.evaluate_planet(planet_id, MissionType.OUTPOST, None, detail))
+                                ColonisationAI.evaluate_planet(
+                                    planet_id, MissionType.OUTPOST, None, detail, empire_research_list))
     else:
-        colony_base_value = ColonisationAI.evaluate_planet(planet_id, MissionType.INVASION, species_name, detail)
+        colony_base_value = ColonisationAI.evaluate_planet(
+            planet_id, MissionType.INVASION, species_name, detail, empire_research_list)
 
     # Add extra score for all buildings on the planet
     building_values = {"BLD_IMPERIAL_PALACE": 1000,
@@ -470,8 +473,8 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
         design = fo.getShipDesign(design_id)
         cost_per_ship = design.productionCost(empire_id, loc)
         build_time = design.productionTime(empire_id, loc)
-        troops_per_ship = CombatRatingsAI.weight_attack_troops(design.troopCapacity,
-                                                               CombatRatingsAI.get_species_troops_grade(species_here))
+        troops_per_ship = CombatRatingsAI.weight_attack_troops(
+            design.troopCapacity, get_species_tag_grade(species_here, Tags.ATTACKTROOPS))
         planned_troops = troops if system_secured else min(troops + troop_regen*(max_jumps + build_time), max_troops)
         planned_troops += .01  # we must attack with more troops than there are defenders
         ships_needed = math.ceil((planned_troops+_TROOPS_SAFETY_MARGIN) / float(troops_per_ship))

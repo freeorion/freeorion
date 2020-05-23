@@ -7,17 +7,16 @@
 #include "../util/Logger.h"
 #include "CombatEvents.h"
 
-#include <boost/unordered_map.hpp>
 
 namespace {
     static float MaxHealth(const UniverseObject& object) {
         if (object.ObjectType() == OBJ_SHIP) {
-            return object.CurrentMeterValue(METER_MAX_STRUCTURE);
+            return object.GetMeter(METER_MAX_STRUCTURE)->Current();
 
         } else if ( object.ObjectType() == OBJ_PLANET ) {
             const Meter* defense = object.GetMeter(METER_MAX_DEFENSE);
             const Meter* shield = object.GetMeter(METER_MAX_SHIELD);
-            const Meter* construction = object.UniverseObject::GetMeter(METER_TARGET_CONSTRUCTION);
+            const Meter* construction = object.GetMeter(METER_TARGET_CONSTRUCTION);
 
             float ret = 0.0f;
             if (defense)
@@ -34,12 +33,12 @@ namespace {
 
     static float CurrentHealth(const UniverseObject& object) {
         if (object.ObjectType() == OBJ_SHIP) {
-            return object.CurrentMeterValue(METER_STRUCTURE);
+            return object.GetMeter(METER_STRUCTURE)->Current();
 
         } else if (object.ObjectType() == OBJ_PLANET) {
             const Meter* defense = object.GetMeter(METER_DEFENSE);
             const Meter* shield = object.GetMeter(METER_SHIELD);
-            const Meter* construction = object.UniverseObject::GetMeter(METER_CONSTRUCTION);
+            const Meter* construction = object.GetMeter(METER_CONSTRUCTION);
 
             float ret = 0.0f;
             if (defense)
@@ -84,21 +83,20 @@ CombatLog::CombatLog(const CombatInfo& combat_info) :
 {
     // compile all remaining and destroyed objects' ids
     object_ids = combat_info.destroyed_object_ids;
-    for (const auto& obj : combat_info.objects.all())
-    {
+    for (const auto& obj : combat_info.objects.all()) {
         object_ids.insert(obj->ID());
         participant_states[obj->ID()] = CombatParticipantState(*obj);
     }
 }
 
-template <class Archive>
+template <typename Archive>
 void CombatParticipantState::serialize(Archive& ar, const unsigned int version)
 {
     ar & BOOST_SERIALIZATION_NVP(current_health)
        & BOOST_SERIALIZATION_NVP(max_health);
 }
 
-template <class Archive>
+template <typename Archive>
 void CombatLog::serialize(Archive& ar, const unsigned int version)
 {
     // CombatEvents are serialized only through
@@ -151,7 +149,7 @@ class CombatLogManager::Impl {
 
       /** \name Accessors */ //@{
     /** Return the requested combat log or boost::none.*/
-    boost::optional<const CombatLog&>  GetLog(int log_id) const;
+    boost::optional<const CombatLog&> GetLog(int log_id) const;
 
     /** Return the ids of all incomplete logs or none.*/
     boost::optional<std::vector<int>> IncompleteLogIDs() const;
@@ -165,7 +163,7 @@ class CombatLogManager::Impl {
 
     /** Serialize log headers so that the receiving LogManager can then request
         complete logs in the background.*/
-    template <class Archive>
+    template <typename Archive>
     void SerializeIncompleteLogs(Archive& ar, const unsigned int version);
     //@}
 
@@ -173,18 +171,16 @@ class CombatLogManager::Impl {
     void SetLog(int log_id, const CombatLog& log);
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 
     private:
-    boost::unordered_map<int, CombatLog> m_logs;
-    /** Set of logs ids that do not have bodies and need to be fetched from the server. */
-    std::set<int>                        m_incomplete_logs;
-    int                                  m_latest_log_id;
+    std::unordered_map<int, CombatLog>  m_logs;
+    std::set<int>                       m_incomplete_logs;  // Set of logs ids that do not have bodies and need to be fetched from the server
+    int                                 m_latest_log_id;
 };
 
 CombatLogManager::Impl::Impl() :
-    m_logs(),
     m_latest_log_id(-1)
 {}
 
@@ -249,7 +245,7 @@ boost::optional<std::vector<int>> CombatLogManager::Impl::IncompleteLogIDs() con
     return ids;
 }
 
-template <class Archive>
+template <typename Archive>
 void CombatLogManager::Impl::SerializeIncompleteLogs(Archive& ar, const unsigned int version)
 {
     int old_latest_log_id = m_latest_log_id;
@@ -262,7 +258,7 @@ void CombatLogManager::Impl::SerializeIncompleteLogs(Archive& ar, const unsigned
             m_incomplete_logs.insert(old_latest_log_id);
 }
 
-template <class Archive>
+template <typename Archive>
 void CombatLogManager::Impl::serialize(Archive& ar, const unsigned int version)
 {
     std::map<int, CombatLog> logs;
@@ -309,7 +305,7 @@ CombatLogManager& CombatLogManager::GetCombatLogManager() {
     return manager;
 }
 
-template <class Archive>
+template <typename Archive>
 void CombatLogManager::SerializeIncompleteLogs(Archive& ar, const unsigned int version)
 { m_impl->SerializeIncompleteLogs(ar, version); }
 
@@ -325,7 +321,7 @@ void CombatLogManager::SerializeIncompleteLogs<freeorion_xml_oarchive>(freeorion
 template
 void CombatLogManager::SerializeIncompleteLogs<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, const unsigned int version);
 
-template <class Archive>
+template <typename Archive>
 void CombatLogManager::serialize(Archive& ar, const unsigned int version)
 { m_impl->serialize(ar, version); }
 

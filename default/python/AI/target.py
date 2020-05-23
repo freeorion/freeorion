@@ -1,10 +1,10 @@
-from logging import warn
+from logging import warning
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 from AIDependencies import INVALID_ID
 
 
-class Target(object):
+class Target:
     """
     Stores information about AI target - its id and type.
     :type id: int
@@ -14,7 +14,7 @@ class Target(object):
     def __init__(self, target_id):
         self.id = target_id
         if not self:
-            warn("Target is invalid %s" % self)
+            warning("Target is invalid %s" % self)
 
     def __eq__(self, other):
         return type(self) == type(other) and self.id == other.id

@@ -3,6 +3,7 @@ Hull
     description = "SH_TREE_BODY_DESC"
     speed = 0
     fuel = 0
+    NoDefaultFuelEffect
     stealth = 5
     structure = 5
     slots = Slot type = External position = (0.30, 0.15)

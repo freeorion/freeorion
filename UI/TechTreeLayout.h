@@ -1,19 +1,18 @@
 #ifndef _TechTreeLayout_h_
 #define _TechTreeLayout_h_
+
 #include <map>
-#include <list>
 #include <string>
 #include <vector>
 
 #include <GG/PtRect.h>
-#include "../universe/Tech.h"
 
 
 /**
  * This class stores internal information for layouting the tech graph.
  * The whole space is organized in a table.
  * Every tech is assign a tech level, or depth, which is the maximum distance it is from start techs.
- * Every tech level (m_depth) is one column.
+ * Every tech level (depth) is one column.
  * The first column has depth 1 techs, 2nd column has depth 2 tech, etc.
  * An initial column is filled with techs grouped by category (may be middle or first, or ? column)
  * Nodes in adjacent columns are placed near the average of children or parent nodes in adjacent columns
@@ -61,108 +60,162 @@
 class TechTreeLayout {
 public:
     class Node;
+
     class Edge;
+
     class Column;
-    TechTreeLayout();
+
     ~TechTreeLayout();
-    void                        AddNode(const std::string& tech, GG::X width, GG::Y height);
-    const Node*                 GetNode(const std::string & name) const;
-    void                        AddEdge(const std::string & parent, const std::string & child);
-    const GG::X                 GetWidth() const;
-    const GG::Y                 GetHeight() const;
-    double                      GetWidth(const std::string & name ) const;
-    double                      GetHeight(const std::string & name ) const;
-    void                        Clear();
-    void                        DoLayout( double column_width, double row_height, double x_margin);
-    const std::vector<Edge*>&   GetOutEdges(const std::string & name) const;
-    void                        Debug() const;
+
+    void AddNode(std::string const & tech, GG::X width, GG::Y height);
+
+    auto GetNode(std::string const & name) const -> Node const *;
+
+    auto GetWidth(std::string const & name) const -> double;
+
+    auto GetHeight(std::string const & name) const;
+
+    void AddEdge(std::string const & parent, std::string const & child);
+
+    auto GetOutEdges(std::string const & name) const -> std::vector<Edge*> const &;
+
+    auto GetWidth() const -> GG::X const;
+
+    auto GetHeight() const -> GG::Y const;
+
+    void Clear();
+
+    void DoLayout( double column_width, double row_height, double x_margin);
+
+    void Debug() const;
+
 private:
-    double                          m_width; //width of the complete graph
-    double                          m_height; //height of the complete graph
-    int                             m_row_count;
-    int                             m_column_count;
-    std::map< std::string, Node*>   m_node_map; //map name->node for external access by name
-    std::vector<Node*>              m_nodes; // list of nodes for sorting
+    //! width of the complete graph
+    double m_width = 0;
+
+    //! height of the complete graph
+    double m_height = 0;
+
+    int m_row_count = 0;
+
+    int m_column_count = 0;
+
+    //! map name->node for external access by name
+    std::map<std::string, Node*> m_node_map;
+
+    //! list of nodes for sorting
+    std::vector<Node*> m_nodes;
 };
+
 
 class TechTreeLayout::Edge {
 public:
-    Edge(const std::string& from, const std::string& to);
-    ~Edge();
-    const std::string&  GetTechFrom() const;
-    const std::string&  GetTechTo() const;
-    void                ReadPoints(std::vector<std::pair<double,double>> & points) const;
-    void                AddPoint(double x, double y);
-    void                Debug() const;
+    Edge(std::string const & from, std::string const & to);
+
+    auto GetTechFrom() const -> std::string const &;
+
+    auto GetTechTo() const -> std::string const &;
+
+    void ReadPoints(std::vector<std::pair<double,double>> & points) const;
+
+    void AddPoint(double x, double y);
+
+    void Debug() const;
+
 private:
-    std::vector<std::pair<double, double>>  m_points;   // point list of connection
-    std::string                             m_from;     //source tech
-    std::string                             m_to;       //destination tech
+    //! point list of connection
+    std::vector<std::pair<double, double>> m_points;
+
+    //! source tech
+    std::string m_from;
+
+    //! destination tech
+    std::string m_to;
 };
+
 
 class TechTreeLayout::Node {
     friend class TechTreeLayout;
+
     friend class Column;
+
 public:
-    Node(const std::string& tech, GG::X width, GG::Y height);
+    Node(std::string const & tech, GG::X width, GG::Y height);
+
     ~Node();
 
-    const GG::X                 GetX() const;
-    const GG::Y                 GetY() const;
-    int                         GetDepth() const;
-    const std::string&          GetTech() const;
-    const std::vector<Edge*>&   GetOutEdges() const;
-    int                         GetNumberOfChildren() const;
-    int                         GetNumberOfParents() const;
-    void                        Debug() const;
-    bool                        IsFinalNode() const;
-    bool                        IsStartNode() const;
-    int                         GetWeight() const { return m_weight; };
+    auto GetX() const -> GG::X const;
 
-    bool operator<(const Node& y) const;
+    auto GetY() const -> GG::Y const;
+
+    void Debug() const;
+
+    auto operator<(Node const & y) const -> bool;
 
 private:
     Node(Node* parent, Node* child, std::vector<Node*>& nodes);
 
-    bool    Wobble(Column & column);
-    bool    IsPlaceHolder() const;
-    void    AddChild(Node* node);
-    void    SetDepthRecursive(int depth);
-    double  CalculateFamilyDistance(int row);
-    void    CreatePlaceHolder(std::vector<Node*>& nodes);
-    void    DoLayout(std::vector<Column> & row_index, bool cat);
-    void    CalculateCoordinate(double column_width, double row_height);
-    void    CreateEdges(double x_margin, double column_width, double row_height);
+    auto Wobble(Column & column) -> bool;
 
-    int                 m_depth = -1;   // depth 1 available at beginning 2 one requisite etc
-    int                 m_row = -1;     // layout row, every node is organized in a straight tabelle system
-    std::string         m_tech;         // name
-    double              m_x = 0.0;      // left border
-    double              m_y = 0.0;      // top border
-    double              m_width;        // width
-    double              m_height;       // height
-    bool                m_place_holder; // is place holder
-    int                 m_children_rows = 0; // height in cells for layouting
-    std::vector<Node*>  m_parents;      // parents
-    std::vector<Node*>  m_children;     // children
-    Node*               m_primary_child = nullptr; // primary child for layout
-    std::vector<Edge*>  m_out_edges;    // outgoing edges
-    const int           m_weight;       // height in rows
+    void AddChild(Node* node);
 
+    void SetDepthRecursive(int depth);
+
+    auto CalculateFamilyDistance(int row) -> double;
+
+    void CreatePlaceHolder(std::vector<Node*>& nodes);
+
+    void DoLayout(std::vector<Column> & row_index, bool cat);
+
+    void CalculateCoordinate(double column_width, double row_height);
+
+    void CreateEdges(double x_margin, double column_width, double row_height);
+
+    std::vector<Node*> parents;
+
+    std::vector<Node*> children;
+
+    //! depth 1 available at beginning 2 one requisite etc
+    int depth = -1;
+
+    //! layout row, every node is organized in a straight tabelle system
+    int row = -1;
+
+    //! height in rows
+    const int weight;
+
+    std::string tech_name;
+
+    bool place_holder;
+
+    // primary child for layout
+    Node* primary_child = nullptr;
+
+    std::vector<Edge*> outgoing_edges;
+
+    //! left border
+    double m_x = 0.0;
+
+    //! top border
+    double m_y = 0.0;
+
+    //! width
+    double m_width;
+
+    //! height
+    double m_height;
 };
+
 
 class TechTreeLayout::Column {
 public:
-    Column();
-    bool            Fit(int index, TechTreeLayout::Node* node);
-    bool            PlaceClosestFreeIndex(int index, TechTreeLayout::Node* node);
-    int             ClosestFreeIndex(int index, TechTreeLayout::Node* node);
-    bool            Place(int index, TechTreeLayout::Node* node);
-    bool            Move(int to, TechTreeLayout::Node* node);
-    Node*           Seek(Node* m, int direction);
-    bool            Swap(Node* m, Node* n);
-    unsigned int    Size();
-private:
-    std::vector<TechTreeLayout::Node*> m_column;
+    auto Fit(int index, TechTreeLayout::Node* node) -> bool;
+
+    auto ClosestFreeIndex(int index, TechTreeLayout::Node* node) -> int;
+
+    auto Place(int index, TechTreeLayout::Node* node) -> bool;
+
+    std::vector<TechTreeLayout::Node*> column;
 };
+
 #endif

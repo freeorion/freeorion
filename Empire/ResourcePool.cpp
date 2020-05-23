@@ -33,7 +33,7 @@ float ResourcePool::TotalOutput() const {
 }
 
 std::map<std::set<int>, float> ResourcePool::Output() const { return m_connected_object_groups_resource_output; }
-    
+
 float ResourcePool::GroupOutput(int object_id) const {
     // find group containing specified object
     for (const auto& entry : m_connected_object_groups_resource_output) {
@@ -42,7 +42,7 @@ float ResourcePool::GroupOutput(int object_id) const {
     }
 
     // default return case:
-    DebugLogger() << "ResourcePool::GroupOutput passed unknown object id: " << object_id;
+    //DebugLogger() << "ResourcePool::GroupOutput passed unknown object id: " << object_id;
     return 0.0f;
 }
 
@@ -79,7 +79,7 @@ std::map<std::set<int>, float> ResourcePool::Available() const {
 }
 
 float ResourcePool::GroupAvailable(int object_id) const {
-    DebugLogger() << "ResourcePool::GroupAvailable(" << object_id << ")";
+    TraceLogger() << "ResourcePool::GroupAvailable(" << object_id << ")";
     // available is production in this group
     return GroupOutput(object_id);
 }
@@ -103,7 +103,7 @@ void ResourcePool::SetStockpile(float d)
 { m_stockpile = d; }
 
 void ResourcePool::Update() {
-    //DebugLogger() << "ResourcePool::Update for type " << boost::lexical_cast<std::string>(m_type);
+    //DebugLogger() << "ResourcePool::Update for type " << m_type;
     // sum production from all ResourceCenters in each group, for resource point type appropriate for this pool
     MeterType meter_type = ResourceToMeter(m_type);
     MeterType target_meter_type = ResourceToTargetMeter(m_type);
@@ -148,11 +148,12 @@ void ResourcePool::Update() {
         if (object_system_group.empty()) {
             object_system_group.insert(object_id);  // just use this already-available set to store the object id, even though it is not likely actually a system
 
-            float obj_output = obj->GetMeter(meter_type) ? obj->CurrentMeterValue(meter_type) : 0.0f;
-            m_connected_object_groups_resource_output[object_system_group] = obj_output;
+            const auto* mmt = obj->GetMeter(meter_type);
+            m_connected_object_groups_resource_output[object_system_group] = mmt ? mmt->Current() : 0.0f;
 
-            float obj_target_output = obj->GetMeter(target_meter_type) ? obj->CurrentMeterValue(target_meter_type) : 0.0f;
-            m_connected_object_groups_resource_target_output[object_system_group] = obj_target_output;
+            const auto* mtmt = obj->GetMeter(target_meter_type);
+            m_connected_object_groups_resource_target_output[object_system_group] = mtmt ? mtmt->Current() : 0.0f;
+
             continue;
         }
 
@@ -169,10 +170,10 @@ void ResourcePool::Update() {
         float total_group_output = 0.0f;
         float total_group_target_output = 0.0f;
         for (auto& obj : object_group) {
-            if (obj->GetMeter(meter_type))
-                total_group_output += obj->CurrentMeterValue(meter_type);
-            if (obj->GetMeter(target_meter_type))
-                total_group_target_output += obj->CurrentMeterValue(target_meter_type);
+            if (const auto* m = obj->GetMeter(meter_type))
+                total_group_output += m->Current();
+            if (const auto* m = obj->GetMeter(target_meter_type))
+                total_group_target_output += m->Current();
             object_group_ids.insert(obj->ID());
         }
         m_connected_object_groups_resource_output[object_group_ids] = total_group_output;

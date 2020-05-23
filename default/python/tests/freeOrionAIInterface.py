@@ -258,6 +258,16 @@ class roleType(object):
     galaxySetup = 4
 
 
+class GameRules(object):
+    """GameRules stub"""
+
+    def getDouble(self, string):
+        return 1.0
+
+    def getInt(self, string):
+        return 1
+
+
 def userString(x):
     """userString mock"""
     return "UserString %s" % x
@@ -266,3 +276,8 @@ def userString(x):
 def userStringList(x):
     """userStringList mock"""
     return "UserStringList %s" % x
+
+
+def getGameRules():
+    """getGameRules mock"""
+    return GameRules()

@@ -37,7 +37,6 @@ BuildingType
                 Object id = Source.PlanetID
                 Planet
             ]
-            activation = Source
             accountinglabel = "BLD_STOCKPILING_CENTER_LABEL"
             effects = [
                 SetMaxStockpile value = Value + (0.1 * Statistic Sum value = LocalCandidate.Industry condition = And [

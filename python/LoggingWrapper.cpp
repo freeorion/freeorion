@@ -2,11 +2,8 @@
 
 #include "../util/Logger.h"
 
-#include <boost/log/expressions.hpp>
-#include <boost/log/support/date_time.hpp>
+#include <boost/log/utility/manipulators/add_value.hpp>
 #include <boost/python.hpp>
-
-namespace expr = boost::log::expressions;
 
 namespace {
     // Expose interface for redirecting standard output and error to FreeOrion
@@ -47,126 +44,29 @@ namespace {
         }
     }
 
-    void ConfigurePythonFileSinkFrontEnd(LoggerTextFileSinkFrontend& sink_frontend, const std::string& channel_name) {
-        // Create the format
-        sink_frontend.set_formatter(
-            expr::stream
-            << expr::format_date_time<boost::posix_time::ptime>("TimeStamp", "%H:%M:%S.%f")
-            << " {" << thread_id << "}"
-            << " [" << log_severity << "] "
-            << expr::message
-        );
+    DeclareThreadSafeLogger(python);
 
-        // Set a filter to only format this channel
-        sink_frontend.set_filter(log_channel == channel_name);
-    }
-
-    // Setup file sink, formatting, and \p name channel filter for \p logger.
-    void ConfigurePythonLogger(NamedThreadedLogger& logger, const std::string& name) {
-        if (name.empty())
-            return;
-
-        SetLoggerThreshold(name, default_log_level_threshold);
-
-        ApplyConfigurationToFileSinkFrontEnd(
-            name,
-            std::bind(ConfigurePythonFileSinkFrontEnd, std::placeholders::_1, name));
-
-        LoggerCreatedSignal(name);
-    }
-
-    // Place in source file to create the previously defined global logger \p name
-#define DeclareThreadSafePythonLogger(name)                       \
-    BOOST_LOG_INLINE_GLOBAL_LOGGER_INIT(                          \
-        FO_GLOBAL_LOGGER_NAME(name), NamedThreadedLogger)         \
-    {                                                             \
-        auto lg = NamedThreadedLogger(                            \
-            (boost::log::keywords::severity = LogLevel::debug),   \
-            (boost::log::keywords::channel = #name));             \
-        ConfigurePythonLogger(lg, #name);                         \
-        return lg;                                                \
-    }
-
-    DeclareThreadSafePythonLogger(python);
-
-    // Assemble a python message that is the same as the C++ message format.
-    void PythonLogger(const std::string& msg,
-                      const LogLevel log_level,
-                      const std::string& python_logger,
-                      const std::string& filename,
-                      // const std::string& function_name,
-                      const std::string& lineno)
-    {
-        // Assembling the log in the stream input to the logger means that the
-        // string assembly is gated by the log level.  logs are not assembled
-        // if that log level is disabled.
-        switch (log_level) {
-        case LogLevel::trace:
-            TraceLogger(python) << python_logger << " : " << filename << ":" /*<< function_name << ":"*/ << lineno << " : " << msg;
-            break;
-        case LogLevel::debug:
-            DebugLogger(python) << python_logger << " : " << filename << ":" /*<< function_name << ":"*/ << lineno << " : " << msg;
-            break;
-        case LogLevel::info:
-            InfoLogger(python)  << python_logger << " : " << filename << ":" /*<< function_name << ":"*/ << lineno << " : " << msg;
-            break;
-        case LogLevel::warn:
-            WarnLogger(python)  << python_logger << " : " << filename << ":" /*<< function_name << ":"*/ << lineno << " : " << msg;
-            break;
-        case LogLevel::error:
-            ErrorLogger(python) << python_logger << " : " << filename << ":" /*<< function_name << ":"*/ << lineno << " : " << msg;
-            break;
-        }
-    }
-
-    void PythonLoggerWrapper(const LogLevel log_level, const std::string& msg,
-                             const std::string& logger_name, const std::string& filename,
-                             /*const std::string& function_name,*/ const std::string& lineno)
+    template<LogLevel log_level>
+    void PythonLoggerWrapper(const std::string& msg, const std::string& filename,
+                             const int lineno)
     {
         static std::stringstream log_stream("");
-        send_to_log(log_stream, msg,
-                    std::bind(&PythonLogger, std::placeholders::_1,
-                              log_level, logger_name, filename, /*function_name,*/ lineno));
-    }
-
-
-    // debug/stdout logger
-    void PythonLoggerDebug(const std::string& msg, const std::string& logger_name,
-                           const std::string& filename, const std::string& function_name, const std::string& lineno)
-    {
-        PythonLoggerWrapper(LogLevel::debug, msg, logger_name, filename, /*function_name,*/ lineno);
-    }
-
-
-    // info logger
-    void PythonLoggerInfo(const std::string& msg, const std::string& logger_name,
-                          const std::string& filename, const std::string& function_name, const std::string& lineno)
-    {
-        PythonLoggerWrapper(LogLevel::info, msg, logger_name, filename, /*function_name,*/ lineno);
-    }
-
-    // warn logger
-    void PythonLoggerWarn(const std::string& msg, const std::string& logger_name,
-                          const std::string& filename, const std::string& function_name, const std::string& lineno)
-    {
-        PythonLoggerWrapper(LogLevel::warn, msg, logger_name, filename, /*function_name,*/ lineno);
-    }
-
-    // error logger
-    void PythonLoggerError(const std::string& msg, const std::string& logger_name,
-                           const std::string& filename, const std::string& function_name, const std::string& lineno)
-    {
-        PythonLoggerWrapper(LogLevel::error, msg, logger_name, filename, /*function_name,*/ lineno);
+        auto logger_func = [&](const std::string& arg) {
+            FO_LOGGER(log_level, python) << boost::log::add_value("SrcFilename", filename)
+                                         << boost::log::add_value("SrcLinenum", lineno)
+                                         << arg;
+        };
+        send_to_log(log_stream, msg, logger_func);
     }
 }
 
 namespace FreeOrionPython {
     using boost::python::def;
     void WrapLogger() {
-        def("debug", PythonLoggerDebug);
-        def("info", PythonLoggerInfo);
-        def("warn", PythonLoggerWarn);
-        def("error", PythonLoggerError);
-        def("fatal", PythonLoggerError);
+        def("debug", PythonLoggerWrapper<LogLevel::debug>);
+        def("info", PythonLoggerWrapper<LogLevel::info>);
+        def("warn", PythonLoggerWrapper<LogLevel::warn>);
+        def("error", PythonLoggerWrapper<LogLevel::error>);
+        def("fatal", PythonLoggerWrapper<LogLevel::error>);
     }
 }

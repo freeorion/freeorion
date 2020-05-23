@@ -18,42 +18,33 @@ BuildingType
 
         EffectsGroup
             scope = Or [
+                Object id = Source.SystemID
                 And [
-                    Object id = Source.SystemID
-                    System
-                ]
-                And [
-                    Planet
                     InSystem id = Source.SystemID
+                    Planet
                     Not Source
                 ]
             ]
             effects = SetStealth value = Value + 40
 
         EffectsGroup
-            scope = And [
-                    Object id = Source.PlanetID
-                    Planet
-            ]
+            scope = Object id = Source.PlanetID
             effects = [
-                SetMaxShield value = Value + 60000
-                SetMaxDefense value = Value + [[EXPERIMENTOR_SPAWN_START_TURN]]
+                SetMaxShield value = Value + (60000 * [[PLANET_SHIELD_FACTOR]] )
+                SetMaxDefense value = Value + ( [[EXPERIMENTOR_SPAWN_START_TURN]] * [[PLANET_DEFENSE_FACTOR]] )
                 SetMaxTroops value = Value + 300
                 SetDetection value = Value + 100
             ]
         EffectsGroup
-            scope = And [
-                    Object id = Source.PlanetID
-                    Planet
-            ]
+            scope = Object id = Source.PlanetID
             activation = Or [
                // Turn high = [[EXPERIMENTOR_SPAWN_START_TURN]]
                 Not ContainedBy Contains And [ Ship OwnedBy affiliation = AnyEmpire ]
             ]
             effects = [
                 // Regeneration
-                SetDefense value = Value + 10
-                SetShield value = Value + 50
+                SetDefense value = Value + (10 * [[PLANET_DEFENSE_FACTOR]] )
+                SetShield value = Value + (50 * [[PLANET_SHIELD_FACTOR]] )
             ]
 
         EffectsGroup
@@ -271,3 +262,5 @@ EXPERIMENTOR_ADD_STARLANE
                                         // CanAddStarlanesTo condition = And [ System Object id = Source.SystemID ] // parses but does not appear to be accepting any candidates
                                     ]
 '''
+
+#include "/scripting/common/misc.macros"

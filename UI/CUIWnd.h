@@ -83,20 +83,16 @@ public:
       * causes the window to save its position and other properties to the
       * OptionsDB under that name, if no other windows are currently using that
       * name. */
-    CUIWnd(const std::string& wnd_name,
-           GG::X x, GG::Y y, GG::X w, GG::Y h,
+    CUIWnd(const std::string& wnd_name, GG::X x, GG::Y y, GG::X w, GG::Y h,
            GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE,
-           const std::string& config_name = "",
-           bool visible = true);
+           const std::string& config_name = "", bool visible = true);
 
     /** Constructs a CUI window without specifying the initial (default)
       * position, either call InitSizeMove() if the window is positioned by
       * something else or override CalculatePosition() then call
       * ResetDefaultPosition() for windows that position themselves. */
-    CUIWnd(const std::string& wnd_name,
-           GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE,
-           const std::string& config_name = "",
-           bool visible = true);
+    CUIWnd(const std::string& wnd_name, GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE,
+           const std::string& config_name = "", bool visible = true);
 
     void CompleteConstruction() override;
     /** Virtual destructor. */
@@ -104,54 +100,40 @@ public:
     //@}
 
     //! \name Accessors //@{
-    bool            Minimized() const {return m_minimized;} //!< returns true if window is minimized
-
-    GG::Pt ClientUpperLeft() const override;
-
-    GG::Pt ClientLowerRight() const override;
-
-    bool InWindow(const GG::Pt& pt) const override;
-
-    GG::X           LeftBorder() const;                 //!< the distance on the left side between the outer edge of the window and the inner border
-    GG::Y           TopBorder() const;                  //!< the distance at the top between the outer edge of the window and the inner border
-    GG::X           RightBorder() const;                //!< the distance on the right side between the outer edge of the window and the inner border
-    GG::Y           BottomBorder() const;               //!< the distance at the bottom between the outer edge of the window and the inner border
+    bool    Minimized() const {return m_minimized;} //!< returns true if window is minimized
+    GG::Pt  ClientUpperLeft() const override;
+    GG::Pt  ClientLowerRight() const override;
+    bool    InWindow(const GG::Pt& pt) const override;
+    GG::X   LeftBorder() const;                 //!< the distance on the left side between the outer edge of the window and the inner border
+    GG::Y   TopBorder() const;                  //!< the distance at the top between the outer edge of the window and the inner border
+    GG::X   RightBorder() const;                //!< the distance on the right side between the outer edge of the window and the inner border
+    GG::Y   BottomBorder() const;               //!< the distance at the bottom between the outer edge of the window and the inner border
     //@}
 
     //! \name Mutators //@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
-
     void Render() override;
-
     void LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-
     void LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys) override;
-
     void LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
 
     void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override
     { return LButtonUp(pt, mod_keys); }
 
     void MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-
     void MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-
     void MouseLeave() override;
-
     void Hide() override;
-
     void Show() override;
 
     void Flash() { m_flashing = true; };
-
     void StopFlash() { m_flashing = false; };
-
     void SetFlashDuration(int ms) { m_flash_duration = ms; }
 
-    void            ToggleMinimized() { MinimizeClicked(); }
-    void            Close()           { CloseClicked(); }
-    void            ValidatePosition();                                 //!< calls SizeMove() to trigger position-checking and position the window entirely within the parent window/app window
-    void            InitSizeMove(const GG::Pt& ul, const GG::Pt& lr);   //!< sets default positions and if default positions were set beforehand, calls SizeMove()
+    void ToggleMinimized() { MinimizeClicked(); }
+    void Close()           { CloseClicked(); }
+    void ValidatePosition();                                 //!< calls SizeMove() to trigger position-checking and position the window entirely within the parent window/app window
+    void InitSizeMove(const GG::Pt& ul, const GG::Pt& lr);   //!< sets default positions and if default positions were set beforehand, calls SizeMove()
     //@}
 
     //! \name Mutators //@{
@@ -166,12 +148,12 @@ public:
 
 protected:
     //! \name Accessors //@{
-    virtual GG::Pt  MinimizedSize() const;              //!< the size of a minimized CUIWnd
-    int             InnerBorderAngleOffset() const;     //!< the distance from where the lower right corner of the inner border should be to where the angled portion of the inner border meets the right and bottom lines of the border
-    bool            InResizeTab(const GG::Pt& pt) const;//!< returns true iff the specified \a pt is in the region where dragging will resize this Wnd
-    void            SaveOptions() const;                //!< saves options for this window to the OptionsDB if config_name was specified in the constructor
+    virtual GG::Pt          MinimizedSize() const;              //!< the size of a minimized CUIWnd
+    int                     InnerBorderAngleOffset() const;     //!< the distance from where the lower right corner of the inner border should be to where the angled portion of the inner border meets the right and bottom lines of the border
+    bool                    InResizeTab(const GG::Pt& pt) const;//!< returns true iff the specified \a pt is in the region where dragging will resize this Wnd
+    void                    SaveOptions() const;                //!< saves options for this window to the OptionsDB if config_name was specified in the constructor
 
-    virtual GG::Rect    CalculatePosition() const;      //!< override this if a class determines its own position/size and return the calculated values, called by ResetDefaultPosition()
+    virtual GG::Rect        CalculatePosition() const;          //!< override this if a class determines its own position/size and return the calculated values, called by ResetDefaultPosition()
     //@}
 
     //! \name Statics //@{
@@ -203,11 +185,11 @@ protected:
     void            SaveDefaultedOptions();
     //@}
 
-    bool                    m_resizable;            //!< true if the window is able to be resized
-    bool                    m_closable;             //!< true if the window is able to be closed with a button press
-    bool                    m_minimizable;          //!< true if the window is able to be minimized
+    bool                    m_resizable = false;    //!< true if the window is able to be resized
+    bool                    m_closable = false;     //!< true if the window is able to be closed with a button press
+    bool                    m_minimizable = false;  //!< true if the window is able to be minimized
     bool                    m_minimized = false;    //!< true if the window is currently minimized
-    bool                    m_pinable;              //!< true if the window is able to be pinned
+    bool                    m_pinable = false;      //!< true if the window is able to be pinned
     bool                    m_pinned = false;       //!< true if the window is currently pinned
     bool                    m_flashing = false;     //!< true if the window is currently flashing
 
@@ -221,9 +203,9 @@ protected:
     bool                    m_config_save = true;   //!< true if SaveOptions() is currently allowed to write to the OptionsDB
     const std::string       m_config_name;          //!< the name that this window will use to save its properties to the OptionsDB, the default empty string means "do not save"
 
-    std::shared_ptr<GG::Button>             m_close_button = nullptr;     //!< the close button
-    std::shared_ptr<CUI_MinRestoreButton>   m_minimize_button = nullptr;  //!< the minimize/restore button
-    std::shared_ptr<CUI_PinButton>          m_pin_button = nullptr;       //!< the pin button
+    std::shared_ptr<GG::Button>             m_close_button;     //!< the close button
+    std::shared_ptr<CUI_MinRestoreButton>   m_minimize_button;  //!< the minimize/restore button
+    std::shared_ptr<CUI_PinButton>          m_pin_button;       //!< the pin button
 
     std::unordered_set<std::string> m_defaulted_options;
 
@@ -250,9 +232,7 @@ class CUIEditWnd : public CUIWnd {
 public:
     CUIEditWnd(GG::X w, const std::string& prompt_text, const std::string& edit_text, GG::Flags<GG::WndFlag> flags = GG::MODAL);
     void CompleteConstruction() override;
-
     void ModalInit() override;
-
     void KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
 
     const std::string& Result() const;

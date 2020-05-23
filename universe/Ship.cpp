@@ -8,6 +8,8 @@
 #include "Fleet.h"
 #include "Predicates.h"
 #include "ShipDesign.h"
+#include "ShipPart.h"
+#include "ShipHull.h"
 #include "Species.h"
 #include "Universe.h"
 #include "Enums.h"
@@ -58,7 +60,7 @@ Ship::Ship(int empire_id, int design_id, const std::string& species_name,
     const std::vector<std::string>& part_names = Design()->Parts();
     for (const std::string& part_name : part_names) {
         if (!part_name.empty()) {
-            const PartType* part = GetPartType(part_name);
+            const ShipPart* part = GetShipPart(part_name);
             if (!part) {
                 ErrorLogger() << "Ship::Ship couldn't get part with name " << part_name;
                 continue;
@@ -160,7 +162,7 @@ std::set<std::string> Ship::Tags() const {
     if (!design)
         return retval;
 
-    const HullType* hull = ::GetHullType(design->Hull());
+    const ShipHull* hull = ::GetShipHull(design->Hull());
     if (!hull)
         return retval;
     retval.insert(hull->Tags().begin(), hull->Tags().end());
@@ -170,7 +172,7 @@ std::set<std::string> Ship::Tags() const {
         return retval;
 
     for (const std::string& part_name : parts) {
-        if (const PartType* part = GetPartType(part_name)) {
+        if (const ShipPart* part = GetShipPart(part_name)) {
             retval.insert(part->Tags().begin(), part->Tags().end());
         }
     }
@@ -182,13 +184,13 @@ bool Ship::HasTag(const std::string& name) const {
     const ShipDesign* design = GetShipDesign(m_design_id);
     if (design) {
         // check hull for tag
-        const HullType* hull = ::GetHullType(design->Hull());
+        const ShipHull* hull = ::GetShipHull(design->Hull());
         if (hull && hull->Tags().count(name))
             return true;
 
         // check parts for tag
         for (const std::string& part_name : design->Parts()) {
-            const PartType* part = GetPartType(part_name);
+            const ShipPart* part = GetShipPart(part_name);
             if (part && part->Tags().count(name))
                 return true;
         }
@@ -278,7 +280,7 @@ bool Ship::CanBombard() const {
 }
 
 float Ship::Speed() const
-{ return InitialMeterValue(METER_SPEED); }
+{ return GetMeter(METER_SPEED)->Initial(); }
 
 float Ship::ColonyCapacity() const {
     float retval = 0.0f;
@@ -290,10 +292,10 @@ float Ship::ColonyCapacity() const {
     for (const std::string& part_name : design->Parts()) {
         if (part_name.empty())
             continue;
-        const PartType* part_type = GetPartType(part_name);
-        if (!part_type)
+        const ShipPart* part = GetShipPart(part_name);
+        if (!part)
             continue;
-        ShipPartClass part_class = part_type->Class();
+        ShipPartClass part_class = part->Class();
         if (part_class != PC_COLONY)
             continue;
         // add capacity for all instances of colony parts to accumulator
@@ -313,10 +315,10 @@ float Ship::TroopCapacity() const {
     for (const std::string& part_name : design->Parts()) {
         if (part_name.empty())
             continue;
-        const PartType* part_type = GetPartType(part_name);
-        if (!part_type)
+        const ShipPart* part = GetShipPart(part_name);
+        if (!part)
             continue;
-        ShipPartClass part_class = part_type->Class();
+        ShipPartClass part_class = part->Class();
         if (part_class != PC_TROOPS)
             continue;
         // add capacity for all instances of colony parts to accumulator
@@ -398,10 +400,10 @@ float Ship::SumCurrentPartMeterValuesForPartClass(MeterType type, ShipPartClass 
         const std::string& part_name = part_meter.first.second;
         if (part_counts[part_name] < 1)
             continue;
-        const PartType* part_type = GetPartType(part_name);
-        if (!part_type)
+        const ShipPart* part = GetShipPart(part_name);
+        if (!part)
             continue;
-        if (part_class == part_type->Class())
+        if (part_class == part->Class())
             retval += part_meter.second.Current() * part_counts[part_name];
     }
 
@@ -413,8 +415,8 @@ float Ship::FighterCount() const {
     for (const auto& entry : m_part_meters) {
         if (entry.first.first != METER_CAPACITY)
             continue;
-        const PartType* part_type = GetPartType(entry.first.second);
-        if (!part_type || part_type->Class() != PC_FIGHTER_HANGAR)
+        const ShipPart* part = GetShipPart(entry.first.second);
+        if (!part || part->Class() != PC_FIGHTER_HANGAR)
             continue;
         retval += entry.second.Current();
     }
@@ -428,8 +430,8 @@ float Ship::FighterMax() const {
         //std::map<std::pair<MeterType, std::string>, Meter>
         if (entry.first.first != METER_MAX_CAPACITY)
             continue;
-        const PartType* part_type = GetPartType(entry.first.second);
-        if (!part_type || part_type->Class() != PC_FIGHTER_HANGAR)
+        const ShipPart* part = GetShipPart(entry.first.second);
+        if (!part || part->Class() != PC_FIGHTER_HANGAR)
             continue;
         retval += entry.second.Current();
     }
@@ -467,7 +469,7 @@ namespace {
 
         // for each weapon part, get its damage meter value
         for (const std::string& part_name : parts) {
-            const PartType* part = GetPartType(part_name);
+            const ShipPart* part = GetShipPart(part_name);
             if (!part)
                 continue;
             ShipPartClass part_class = part->Class();

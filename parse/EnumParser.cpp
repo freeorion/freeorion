@@ -1,7 +1,11 @@
 #include "EnumParser.h"
 
 #include "../universe/Enums.h"
+#include "../universe/ShipPart.h"
+#include "../universe/UnlockableItem.h"
 
+#include <boost/phoenix/object/dynamic_cast.hpp>
+#include <boost/phoenix/operator/self.hpp>
 
 namespace qi = boost::spirit::qi;
 

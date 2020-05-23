@@ -19,22 +19,24 @@
 #include "../util/i18n.h"
 #include "../util/OptionsDB.h"
 #include "../universe/Building.h"
+#include "../universe/BuildingType.h"
 #include "../universe/Fleet.h"
 #include "../universe/Planet.h"
 #include "../universe/System.h"
 #include "../universe/Ship.h"
 #include "../universe/ShipDesign.h"
+#include "../universe/ShipPart.h"
+#include "../universe/ShipHull.h"
 #include "../universe/Tech.h"
 #include "../universe/Special.h"
 #include "../universe/Species.h"
-#include "../universe/Field.h"
+#include "../universe/FieldType.h"
 #include "../universe/Enums.h"
 #include "../combat/CombatLogManager.h"
 #include "../client/human/HumanClientApp.h"
 
 #include <GG/Clr.h>
 #include <GG/dialogs/ThreeButtonDlg.h>
-#include <GG/DrawUtil.h>
 #include <GG/GUI.h>
 #include <GG/RichText/ImageBlock.h>
 #include <GG/UnicodeCharsets.h>
@@ -228,7 +230,7 @@ std::shared_ptr<GG::Texture> ClientUI::MeterIcon(MeterType meter_type) {
     case METER_SPEED:
         icon_filename = "speed.png";        break;
     default:
-        break;
+        return ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "missing.png", true); break;
     }
     return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / icon_filename, true);
 }
@@ -293,7 +295,7 @@ std::shared_ptr<GG::Texture> ClientUI::FieldTexture(const std::string& field_typ
 }
 
 std::shared_ptr<GG::Texture> ClientUI::PartIcon(const std::string& part_name) {
-    const PartType* part = GetPartType(part_name);
+    const ShipPart* part = GetShipPart(part_name);
     std::string texture_name;
     if (part)
         texture_name = part->Icon();
@@ -303,7 +305,7 @@ std::shared_ptr<GG::Texture> ClientUI::PartIcon(const std::string& part_name) {
 }
 
 std::shared_ptr<GG::Texture> ClientUI::HullTexture(const std::string& hull_name) {
-    const HullType* hull = GetHullType(hull_name);
+    const ShipHull* hull = GetShipHull(hull_name);
     std::string texture_name;
     if (hull) {
         texture_name = hull->Graphic();
@@ -316,7 +318,7 @@ std::shared_ptr<GG::Texture> ClientUI::HullTexture(const std::string& hull_name)
 }
 
 std::shared_ptr<GG::Texture> ClientUI::HullIcon(const std::string& hull_name) {
-    const HullType* hull = GetHullType(hull_name);
+    const ShipHull* hull = GetShipHull(hull_name);
     std::string texture_name;
     if (hull) {
         texture_name = hull->Icon();
@@ -574,7 +576,7 @@ namespace {
     const std::string MESSAGE_WND_NAME = "map.messages";
     const std::string PLAYER_LIST_WND_NAME = "map.empires";
 
-    template <class OptionType, class PredicateType>
+    template <typename OptionType, typename PredicateType>
     void ConditionalForward(const std::string& option_name,
                             const OptionsDB::OptionChangedSignalType::slot_type& slot,
                             OptionType ref_val,
@@ -584,7 +586,7 @@ namespace {
             slot();
     }
 
-    template <class OptionType, class PredicateType>
+    template <typename OptionType, typename PredicateType>
     void ConditionalConnectOption(const std::string& option_name,
                                   const OptionsDB::OptionChangedSignalType::slot_type& slot,
                                   OptionType ref_val,
@@ -876,11 +878,11 @@ bool ClientUI::ZoomToContent(const std::string& name, bool reverse_lookup/* = fa
             if (boost::iequals(name, UserString(special_name)))
                 return ZoomToSpecial(special_name);
 
-        for (const auto& entry : GetHullTypeManager())
+        for (const auto& entry : GetShipHullManager())
             if (boost::iequals(name, UserString(entry.first)))
                 return ZoomToShipHull(entry.first);
 
-        for (const auto& entry : GetPartTypeManager())
+        for (const auto& entry : GetShipPartManager())
             if (boost::iequals(name, UserString(entry.first)))
                 return ZoomToShipPart(entry.first);
 
@@ -923,16 +925,16 @@ bool ClientUI::ZoomToSpecial(const std::string& special_name) {
 }
 
 bool ClientUI::ZoomToShipHull(const std::string& hull_name) {
-    if (!GetHullType(hull_name))
+    if (!GetShipHull(hull_name))
         return false;
-    GetMapWnd()->ShowHullType(hull_name);
+    GetMapWnd()->ShowShipHull(hull_name);
     return true;
 }
 
 bool ClientUI::ZoomToShipPart(const std::string& part_name) {
-    if (!GetPartType(part_name))
+    if (!GetShipPart(part_name))
         return false;
-    GetMapWnd()->ShowPartType(part_name);
+    GetMapWnd()->ShowShipPart(part_name);
     return true;
 }
 

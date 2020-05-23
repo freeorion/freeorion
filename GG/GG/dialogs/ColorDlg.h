@@ -1,5 +1,5 @@
 // -*- C++ -*-
-/* GG is a GUI for SDL and OpenGL.
+/* GG is a GUI for OpenGL.
    Copyright (C) 2003-2008 T. Zachary Laine
 
    This library is free software; you can redistribute it and/or
@@ -36,7 +36,7 @@
 namespace GG {
 
 class Font;
-template <class T>
+template <typename T>
 class Slider;
 
 /** \brief Contains the necessary data to represent a color in HSV space, with

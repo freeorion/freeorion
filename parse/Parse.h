@@ -17,15 +17,15 @@
 class BuildingType;
 class FieldType;
 class FleetPlan;
-class HullType;
+class ShipHull;
 class MonsterFleetPlan;
-class PartType;
+class ShipPart;
 struct ParsedShipDesign;
 class Special;
 class Species;
 struct EncyclopediaArticle;
 class GameRules;
-struct ItemSpec;
+struct UnlockableItem;
 
 namespace ValueRef {
     template <typename T>
@@ -51,10 +51,10 @@ namespace parse {
     template <typename T>
     FO_PARSE_API T techs(const boost::filesystem::path& path);
 
-    FO_PARSE_API std::vector<ItemSpec> items(const boost::filesystem::path& path);
-    FO_PARSE_API std::vector<ItemSpec> starting_buildings(const boost::filesystem::path& path);
-    FO_PARSE_API std::map<std::string, std::unique_ptr<PartType>> ship_parts(const boost::filesystem::path& path);
-    FO_PARSE_API std::map<std::string, std::unique_ptr<HullType>> ship_hulls(const boost::filesystem::path& path);
+    FO_PARSE_API std::vector<UnlockableItem> items(const boost::filesystem::path& path);
+    FO_PARSE_API std::vector<UnlockableItem> starting_buildings(const boost::filesystem::path& path);
+    FO_PARSE_API std::map<std::string, std::unique_ptr<ShipPart>> ship_parts(const boost::filesystem::path& path);
+    FO_PARSE_API std::map<std::string, std::unique_ptr<ShipHull>> ship_hulls(const boost::filesystem::path& path);
 
     /** Parse all ship designs in directory \p path, store them with their filename in \p
         design_and_path. If a file exists called ShipDesignOrdering.focs.txt, parse it and
@@ -69,13 +69,8 @@ namespace parse {
     FO_PARSE_API std::vector<std::unique_ptr<MonsterFleetPlan>> monster_fleet_plans(const boost::filesystem::path& path);
     FO_PARSE_API std::map<std::string, std::unique_ptr<ValueRef::ValueRef<double>>> statistics(const boost::filesystem::path& path);
     FO_PARSE_API std::map<std::string, std::vector<EncyclopediaArticle>> encyclopedia_articles(const boost::filesystem::path& path);
-    FO_PARSE_API std::map<std::string, std::map<int, int>> keymaps(const boost::filesystem::path& path);
     FO_PARSE_API GameRules game_rules(const boost::filesystem::path& path);
     FO_PARSE_API bool read_file(const boost::filesystem::path& path, std::string& file_contents);
-
-    /** Find all FOCS scripts (files with .focs.txt suffix) in \p path.  If \p allow_permissive =
-        true then if \p path is not empty and there are no .focs.txt files allow all files to qualify.*/
-    FO_PARSE_API std::vector<boost::filesystem::path> ListScripts(const boost::filesystem::path& path, bool permissive = false);
 
     FO_PARSE_API void file_substitution(std::string& text, const boost::filesystem::path& file_search_path);
     FO_PARSE_API void process_include_substitutions(std::string& text,

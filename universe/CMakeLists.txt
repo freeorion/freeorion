@@ -1,15 +1,21 @@
 target_sources(freeorioncommon
     PUBLIC
         ${CMAKE_CURRENT_LIST_DIR}/Building.h
+        ${CMAKE_CURRENT_LIST_DIR}/BuildingType.h
+        ${CMAKE_CURRENT_LIST_DIR}/CommonParams.h
         ${CMAKE_CURRENT_LIST_DIR}/Condition.h
+        ${CMAKE_CURRENT_LIST_DIR}/ConditionAll.h
+        ${CMAKE_CURRENT_LIST_DIR}/ConditionSource.h
         ${CMAKE_CURRENT_LIST_DIR}/Conditions.h
         ${CMAKE_CURRENT_LIST_DIR}/Effect.h
         ${CMAKE_CURRENT_LIST_DIR}/Effects.h
         ${CMAKE_CURRENT_LIST_DIR}/Encyclopedia.h
         ${CMAKE_CURRENT_LIST_DIR}/Enums.h
         ${CMAKE_CURRENT_LIST_DIR}/Field.h
+        ${CMAKE_CURRENT_LIST_DIR}/FieldType.h
         ${CMAKE_CURRENT_LIST_DIR}/Fighter.h
         ${CMAKE_CURRENT_LIST_DIR}/Fleet.h
+        ${CMAKE_CURRENT_LIST_DIR}/FleetPlan.h
         ${CMAKE_CURRENT_LIST_DIR}/IDAllocator.h
         ${CMAKE_CURRENT_LIST_DIR}/Meter.h
         ${CMAKE_CURRENT_LIST_DIR}/ObjectMap.h
@@ -18,27 +24,33 @@ target_sources(freeorioncommon
         ${CMAKE_CURRENT_LIST_DIR}/Predicates.h
         ${CMAKE_CURRENT_LIST_DIR}/ResourceCenter.h
         ${CMAKE_CURRENT_LIST_DIR}/ScriptingContext.h
-        ${CMAKE_CURRENT_LIST_DIR}/ShipDesign.h
         ${CMAKE_CURRENT_LIST_DIR}/Ship.h
+        ${CMAKE_CURRENT_LIST_DIR}/ShipDesign.h
+        ${CMAKE_CURRENT_LIST_DIR}/ShipHull.h
+        ${CMAKE_CURRENT_LIST_DIR}/ShipPart.h
         ${CMAKE_CURRENT_LIST_DIR}/Special.h
         ${CMAKE_CURRENT_LIST_DIR}/Species.h
         ${CMAKE_CURRENT_LIST_DIR}/System.h
         ${CMAKE_CURRENT_LIST_DIR}/Tech.h
         ${CMAKE_CURRENT_LIST_DIR}/Universe.h
+        ${CMAKE_CURRENT_LIST_DIR}/UnlockableItem.h
         ${CMAKE_CURRENT_LIST_DIR}/Pathfinder.h
         ${CMAKE_CURRENT_LIST_DIR}/UniverseObject.h
         ${CMAKE_CURRENT_LIST_DIR}/ValueRef.h
         ${CMAKE_CURRENT_LIST_DIR}/ValueRefs.h
     PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/Building.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/BuildingType.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Conditions.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Effect.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Effects.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Encyclopedia.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Enums.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Field.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/FieldType.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Fighter.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Fleet.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/FleetPlan.cpp
         ${CMAKE_CURRENT_LIST_DIR}/IDAllocator.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Meter.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ObjectMap.cpp
@@ -48,19 +60,15 @@ target_sources(freeorioncommon
         ${CMAKE_CURRENT_LIST_DIR}/ResourceCenter.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Ship.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ShipDesign.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ShipHull.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ShipPart.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Special.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Species.cpp
         ${CMAKE_CURRENT_LIST_DIR}/System.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Tech.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Universe.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/UnlockableItem.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Pathfinder.cpp
         ${CMAKE_CURRENT_LIST_DIR}/UniverseObject.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ValueRefs.cpp
-)
-
-target_sources(freeoriond
-    PUBLIC
-        ${CMAKE_CURRENT_LIST_DIR}/UniverseGenerator.h
-    PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}/UniverseGenerator.cpp
 )

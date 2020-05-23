@@ -37,7 +37,6 @@ Part
 
         EffectsGroup
             scope = HasSpecial name = "CLOUD_COVER_MASTER_SPECIAL"
-            activation = Source
             effects = [
                 RemoveSpecial name = "CLOUD_COVER_MASTER_SPECIAL"
                 AddSpecial name = "VOLCANIC_ASH_MASTER_SPECIAL"

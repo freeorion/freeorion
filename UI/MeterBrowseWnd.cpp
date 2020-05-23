@@ -1,7 +1,5 @@
 #include "MeterBrowseWnd.h"
 
-#include <GG/DrawUtil.h>
-
 #include "../util/i18n.h"
 #include "../util/Logger.h"
 #include "../util/GameRules.h"
@@ -11,6 +9,7 @@
 #include "../universe/PopCenter.h"
 #include "../universe/Ship.h"
 #include "../universe/ShipDesign.h"
+#include "../universe/ShipPart.h"
 #include "../universe/UniverseObject.h"
 #include "../universe/Enums.h"
 #include "../Empire/Empire.h"
@@ -524,7 +523,7 @@ void ShipDamageBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
 
     // for each weapon part, get its damage meter value
     for (const std::string& part_name : design->Parts()) {
-        const PartType* part = GetPartType(part_name);
+        const ShipPart* part = GetShipPart(part_name);
         if (!part)
             continue;
         ShipPartClass part_class = part->Class();
@@ -562,7 +561,7 @@ namespace {
          * @param [in] base_value optional; If greater than 0.0f: the value label is formatted to "value of base_value"
          */
         ShipFightersBrowseRow(const std::string& label, int qty, double value, double base_value = 0.0f) :
-            GG::ListBox::Row(FighterBrowseListWidth(), MeterBrowseRowHeight(), "")
+            GG::ListBox::Row(FighterBrowseListWidth(), MeterBrowseRowHeight())
         {
             const GG::Clr QTY_COLOR = GG::CLR_GRAY;
 
@@ -609,8 +608,6 @@ namespace {
 
 ShipFightersBrowseWnd::ShipFightersBrowseWnd(int object_id, MeterType primary_meter_type, bool show_all_bouts /* = false*/) :
     MeterBrowseWnd(object_id, primary_meter_type),
-    m_bay_list(nullptr),
-    m_hangar_list(nullptr),
     m_show_all_bouts(show_all_bouts)
 {}
 
@@ -782,7 +779,7 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
 
     // populate values from hangars and bays
     for (std::string part_name : parts) {
-        const PartType* part = GetPartType(part_name);
+        const ShipPart* part = GetShipPart(part_name);
         if (!part)
             continue;
         ShipPartClass part_class = part->Class();

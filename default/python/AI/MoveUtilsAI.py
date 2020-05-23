@@ -1,4 +1,4 @@
-from logging import warn, debug
+from logging import warning, debug
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 from aistate_interface import get_aistate
@@ -34,7 +34,7 @@ def create_move_orders_to_system(fleet, target):
     system_targets = can_travel_to_system(fleet.id, starting_system, target, ensure_return=ensure_return)
     result = [fleet_orders.OrderMove(fleet, system) for system in system_targets]
     if not result and starting_system.id != target.id:
-        warn("fleet %s can't travel to system %s" % (fleet.id, target))
+        warning("fleet %s can't travel to system %s" % (fleet.id, target))
     return result
 
 
@@ -111,11 +111,11 @@ def get_best_drydock_system_id(start_system_id, fleet_id):
     :rtype: int
     """
     if start_system_id == INVALID_ID:
-        warn("get_best_drydock_system_id passed bad system id.")
+        warning("get_best_drydock_system_id passed bad system id.")
         return None
 
     if fleet_id == INVALID_ID:
-        warn("get_best_drydock_system_id passed bad fleet id.")
+        warning("get_best_drydock_system_id passed bad fleet id.")
         return None
 
     universe = fo.getUniverse()
@@ -123,7 +123,7 @@ def get_best_drydock_system_id(start_system_id, fleet_id):
     drydock_system_ids = set()
     for sys_id, pids in state.get_empire_drydocks().items():
         if sys_id == INVALID_ID:
-            warn("get_best_drydock_system_id passed bad drydock sys_id.")
+            warning("get_best_drydock_system_id passed bad drydock sys_id.")
             continue
         for pid in pids:
             planet = universe.getPlanet(pid)

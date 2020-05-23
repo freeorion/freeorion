@@ -103,7 +103,7 @@ BuildingType
             accountinglabel = "BLD_IMPERIAL_PALACE"
             priority = [[VERY_EARLY_PRIORITY]]
             effects = [
-                SetMaxDefense value = Value + 5
+                SetMaxDefense value = Value + ( 5 * [[PLANET_DEFENSE_FACTOR]] )
                 SetMaxTroops value = Value + 6
             ]
     ]
@@ -111,3 +111,4 @@ BuildingType
 
 #include "/scripting/common/priorities.macros"
 #include "/scripting/common/base_prod.macros"
+#include "/scripting/common/misc.macros"

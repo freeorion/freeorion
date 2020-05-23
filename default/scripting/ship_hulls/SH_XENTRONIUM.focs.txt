@@ -3,6 +3,7 @@ Hull
     description = "SH_XENTRONIUM_DESC"
     speed = 70
     fuel = 3
+    NoDefaultFuelEffect
     stealth = 5
     structure = 50
     slots = [
@@ -14,12 +15,14 @@ Hull
     ]
     buildCost = 50 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_HULL_COST_MULTIPLIER]]
     buildTime = 5
-    tags = [ "SHINY" "EXOTIC" ]
+    tags = [ "SHINY" "EXOTIC" "GOOD_FUEL_EFFICIENCY" ]
     location = Contains And [
         Building name = "BLD_SHIPYARD_BASE"
         OwnedBy empire = Source.Owner
     ]
     effectsgroups = [
+        [[GOOD_FUEL_EFFICIENCY]]
+        [[ADD_HULL_FUEL_TO_MAX_FUEL_METER]]
         [[AVERAGE_BASE_FUEL_REGEN]]
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]

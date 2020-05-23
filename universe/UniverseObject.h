@@ -3,6 +3,7 @@
 
 
 #include "EnumsFwd.h"
+#include "Meter.h"
 #include "../util/Export.h"
 #include "../util/blocking_combiner.h"
 
@@ -10,12 +11,14 @@
 #include <boost/python/detail/destroy.hpp>
 #include <boost/signals2/signal.hpp>
 #include <boost/signals2/optional_last_value.hpp>
+#include <boost/container/flat_map.hpp>
 
 #include <set>
 #include <string>
 #include <vector>
 
-class Meter;
+using boost::container::flat_map;
+
 class System;
 class SitRepEntry;
 struct UniverseObjectVisitor;
@@ -46,12 +49,15 @@ FO_COMMON_API extern const int TEMPORARY_OBJECT_ID;
   * that is being displayed has changed.*/
 class FO_COMMON_API UniverseObject : virtual public std::enable_shared_from_this<UniverseObject> {
 public:
+    //typedef flat_map<MeterType, Meter, std::less<MeterType>, std::vector<std::pair<MeterType, Meter>>> MeterMap;
+    typedef flat_map<MeterType, Meter, std::less<MeterType>> MeterMap;
+
     /** \name Signal Types */ //@{
     typedef boost::signals2::signal<void (), blocking_combiner<boost::signals2::optional_last_value<void>>> StateChangedSignalType;
     //@}
 
     /** \name Slot Types */ //@{
-    typedef StateChangedSignalType::slot_type               StateChangedSlotType;
+    typedef StateChangedSignalType::slot_type StateChangedSlotType;
     //@}
 
     /** \name Accessors */ //@{
@@ -102,10 +108,8 @@ public:
 
     std::set<int>               VisibleContainedObjectIDs(int empire_id) const; ///< returns the subset of contained object IDs that is visible to empire with id \a empire_id
 
-    const std::map<MeterType, Meter>&   Meters() const { return m_meters; }     ///< returns this UniverseObject's meters
+    const MeterMap&             Meters() const { return m_meters; }             ///< returns this UniverseObject's meters
     const Meter*                GetMeter(MeterType type) const;                 ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
-    float                       CurrentMeterValue(MeterType type) const;        ///< returns current value of the specified meter \a type
-    float                       InitialMeterValue(MeterType type) const;        ///< returns this turn's initial value for the specified meter \a type
 
     Visibility                  GetVisibility(int empire_id) const; ///< returns the visibility status of this universe object relative to the input empire.
 
@@ -143,9 +147,7 @@ public:
     /** moves this object to map coordinates (x, y). */
     void            MoveTo(double x, double y);
 
-
-    std::map<MeterType, Meter>&
-                    Meters() { return m_meters; }           ///< returns this UniverseObject's meters
+    MeterMap&       Meters() { return m_meters; }           ///< returns this UniverseObject's meters
     Meter*          GetMeter(MeterType type);               ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
 
     /** Sets all this UniverseObject's meters' initial values equal to their
@@ -198,7 +200,7 @@ protected:
     UniverseObject();
     UniverseObject(const std::string name, double x, double y);
 
-    template <class T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
+    template <typename T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
 
 public:
     virtual ~UniverseObject();
@@ -222,7 +224,7 @@ protected:
     std::string             m_name;
 
 private:
-    std::map<MeterType, Meter>  CensoredMeters(Visibility vis) const;   ///< returns set of meters of this object that are censored based on the specified Visibility \a vis
+    MeterMap                CensoredMeters(Visibility vis) const;   ///< returns set of meters of this object that are censored based on the specified Visibility \a vis
 
     int                                             m_id = INVALID_OBJECT_ID;
     double                                          m_x;
@@ -230,11 +232,11 @@ private:
     int                                             m_owner_empire_id = ALL_EMPIRES;
     int                                             m_system_id = INVALID_OBJECT_ID;
     std::map<std::string, std::pair<int, float>>    m_specials; // map from special name to pair of (turn added, capacity)
-    std::map<MeterType, Meter>                      m_meters;
+    MeterMap                                        m_meters;
     int                                             m_created_on_turn = INVALID_GAME_TURN;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 

@@ -2,10 +2,10 @@
 
 #include "CUIControls.h"
 #include "../client/human/HumanClientApp.h"
+#include "../client/ClientNetworking.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 #include "../network/Message.h"
-#include "../network/ClientNetworking.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
@@ -13,8 +13,6 @@
 #include "../universe/Planet.h"
 #include "../universe/System.h"
 #include "../universe/Enums.h"
-
-#include <GG/DrawUtil.h>
 
 #include <algorithm>
 
@@ -106,9 +104,7 @@ namespace {
         DiplomaticStatusIndicator(GG::X w, GG::Y h, int empire_id, DiplomaticStatus diplo_status) :
             Control(GG::X0, GG::Y0, w, h, GG::INTERACTIVE),
             m_empire_id(empire_id),
-            m_empire_ids(),
-            m_diplo_status(diplo_status),
-            m_icon(nullptr)
+            m_diplo_status(diplo_status)
         {}
 
         void CompleteConstruction() override {
@@ -232,21 +228,8 @@ namespace {
             Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
             m_player_id(player_id),
             m_empire_id(empire_id),
-            //m_player_name_text(nullptr),
-            m_empire_name_text(nullptr),
-            m_empire_ship_text(nullptr),
-            m_empire_planet_text(nullptr),
-            m_empire_production_text(nullptr),
-            m_empire_research_text(nullptr),
-            m_empire_detection_text(nullptr),
-            m_war_indicator(nullptr),
-            m_peace_indicator(nullptr),
-            m_allied_indicator(nullptr),
             m_diplo_status(INVALID_DIPLOMATIC_STATUS),
-            m_player_type(Networking::INVALID_CLIENT_TYPE),
-            m_host(false),
-            m_win_status(NEITHER),
-            m_selected(false)
+            m_player_type(Networking::INVALID_CLIENT_TYPE)
         {}
 
         void CompleteConstruction() override {
@@ -366,7 +349,7 @@ namespace {
             }
         }
 
-        void            Select(bool b)
+        void Select(bool b)
         { m_selected = b; }
 
         void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
@@ -376,7 +359,7 @@ namespace {
                 DoLayout();
         }
 
-        void            Update() {
+        void Update() {
             const ClientApp* app = ClientApp::GetApp();
             if (!app) {
                 ErrorLogger() << "PlayerDataPanel::Update couldn't get client app!";
@@ -447,8 +430,8 @@ namespace {
                 if (empire) {
                     if (planet->Owner() == empire->EmpireID()) {
                         empires_planet_count      += 1;
-                        empires_production_points += planet->InitialMeterValue(METER_INDUSTRY);
-                        empires_research_points   += planet->InitialMeterValue(METER_RESEARCH);
+                        empires_production_points += planet->GetMeter(METER_INDUSTRY)->Initial();
+                        empires_research_points   += planet->GetMeter(METER_RESEARCH)->Initial();
                     }
                 }
             }
@@ -496,9 +479,9 @@ namespace {
             m_allied_indicator->Update();
         }
     private:
-        int             IconSize() const   { return Value(Height()) - 2; }
+        int IconSize() const   { return Value(Height()) - 2; }
 
-        void            DoLayout() {
+        void DoLayout() {
             const GG::X PLAYER_NAME_WIDTH(ClientUI::Pts()       * 10);
             const GG::X EMPIRE_NAME_WIDTH(ClientUI::Pts()       * 10);
             const GG::X EMPIRE_SHIP_WIDTH(ClientUI::Pts()       * 16/5);
@@ -579,19 +562,19 @@ namespace {
 
         }
 
-        int                     m_player_id;
-        int                     m_empire_id;
-        //std::shared_ptr<GG::Label>               m_player_name_text;
-        std::shared_ptr<GG::Label>                 m_empire_name_text;
-        std::shared_ptr<GG::Label>                 m_empire_ship_text;
-        std::shared_ptr<GG::Label>                 m_empire_planet_text;
-        std::shared_ptr<GG::Label>                 m_empire_production_text;
-        std::shared_ptr<GG::Label>                 m_empire_research_text;
-        std::shared_ptr<GG::Label>                 m_empire_detection_text;
+        int                                         m_player_id;
+        int                                         m_empire_id;
+        //std::shared_ptr<GG::Label>                  m_player_name_text;
+        std::shared_ptr<GG::Label>                  m_empire_name_text;
+        std::shared_ptr<GG::Label>                  m_empire_ship_text;
+        std::shared_ptr<GG::Label>                  m_empire_planet_text;
+        std::shared_ptr<GG::Label>                  m_empire_production_text;
+        std::shared_ptr<GG::Label>                  m_empire_research_text;
+        std::shared_ptr<GG::Label>                  m_empire_detection_text;
 
-        std::shared_ptr<DiplomaticStatusIndicator> m_war_indicator;
-        std::shared_ptr<DiplomaticStatusIndicator> m_peace_indicator;
-        std::shared_ptr<DiplomaticStatusIndicator> m_allied_indicator;
+        std::shared_ptr<DiplomaticStatusIndicator>  m_war_indicator;
+        std::shared_ptr<DiplomaticStatusIndicator>  m_peace_indicator;
+        std::shared_ptr<DiplomaticStatusIndicator>  m_allied_indicator;
 
         GG::Pt                  m_diplo_status_icon_ul;
         GG::Pt                  m_diplo_msg_ul;
@@ -607,14 +590,14 @@ namespace {
 
         DiplomaticStatus        m_diplo_status;
         Networking::ClientType  m_player_type;
-        bool                    m_host;
+        bool                    m_host = false;
         enum {
             WON,
             LOST,
             NEITHER
-        }                       m_win_status;
+        }                       m_win_status = NEITHER;
 
-        bool                    m_selected;
+        bool                    m_selected = false;
     };
 
 
@@ -624,11 +607,13 @@ namespace {
     class PlayerRow : public GG::ListBox::Row {
     public:
         PlayerRow(GG::X w, GG::Y h, int player_id, int empire_id) :
-            GG::ListBox::Row(w, h, "", GG::ALIGN_NONE, 0),
+            GG::ListBox::Row(w, h),
             m_player_id(player_id),
             m_empire_id(empire_id),
             m_panel(nullptr)
         {
+            SetMargin(0);
+            SetRowAlignment(GG::ALIGN_NONE);
             SetName("PlayerRow");
             SetChildClippingMode(ClipToClient);
         }
@@ -695,10 +680,10 @@ public:
         }
     }
 
-    GG::Pt          ListRowSize() const
+    GG::Pt ListRowSize() const
     { return GG::Pt(Width() - ClientUI::ScrollWidth() - 5, ListRowHeight()); }
 
-    static GG::Y    ListRowHeight()
+    static GG::Y ListRowHeight()
     { return GG::Y(ClientUI::Pts() * 3/2); }
 };
 
@@ -709,28 +694,29 @@ public:
 PlayerListWnd::PlayerListWnd(const std::string& config_name) :
     CUIWnd(UserString("PLAYERS_LIST_PANEL_TITLE"),
            GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | GG::RESIZABLE | CLOSABLE | PINABLE,
-           config_name),
-    m_player_list(nullptr)
+           config_name)
 {}
 
 void PlayerListWnd::CompleteConstruction() {
     CUIWnd::CompleteConstruction();
 
+    namespace ph = boost::placeholders;
+
     m_player_list = GG::Wnd::Create<PlayerListBox>();
     m_player_list->SetHiliteColor(GG::CLR_ZERO);
     m_player_list->SetStyle(GG::LIST_NOSORT);
     m_player_list->SelRowsChangedSignal.connect(
-        boost::bind(&PlayerListWnd::PlayerSelectionChanged, this, _1));
+        boost::bind(&PlayerListWnd::PlayerSelectionChanged, this, ph::_1));
     m_player_list->DoubleClickedRowSignal.connect(
-        boost::bind(&PlayerListWnd::PlayerDoubleClicked, this, _1, _2, _3));
+        boost::bind(&PlayerListWnd::PlayerDoubleClicked, this, ph::_1, ph::_2, ph::_3));
     m_player_list->RightClickedRowSignal.connect(
-        boost::bind(&PlayerListWnd::PlayerRightClicked, this, _1, _2, _3));
+        boost::bind(&PlayerListWnd::PlayerRightClicked, this, ph::_1, ph::_2, ph::_3));
     AttachChild(m_player_list);
 
     Empires().DiplomaticStatusChangedSignal.connect(
         boost::bind(&PlayerListWnd::Update, this));
     Empires().DiplomaticMessageChangedSignal.connect(
-        boost::bind(&PlayerListWnd::PlayerListWnd::HandleDiplomaticMessageChange, this, _1, _2));
+        boost::bind(&PlayerListWnd::PlayerListWnd::HandleDiplomaticMessageChange, this, ph::_1, ph::_2));
     DoLayout();
 
     Refresh();
@@ -929,7 +915,7 @@ namespace {
     {
         auto premade_message = DiplomacyMessage(message(client_empire_id, clicked_empire_id));
         auto &networking = HumanClientApp::GetApp()->Networking();
-        return std::bind(&ClientNetworking::SendMessage, &networking, premade_message);
+        return boost::bind(&ClientNetworking::SendMessage, &networking, premade_message);
     }
 
 }

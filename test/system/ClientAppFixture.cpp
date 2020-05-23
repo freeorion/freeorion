@@ -1,7 +1,7 @@
 #include "ClientAppFixture.h"
 
 #include "combat/CombatLogManager.h"
-#include "network/ClientNetworking.h"
+#include "client/ClientNetworking.h"
 #include "universe/Species.h"
 #include "util/Directories.h"
 #include "util/GameRules.h"
@@ -142,8 +142,7 @@ bool ClientAppFixture::HandleMessage(Message& msg) {
         bool result = VerifyCheckSum(msg);
         if (!result)
             ErrorLogger() << "Wrong checksum";
-        //return result;
-        return true;
+        return result;
     }
     case Message::SET_AUTH_ROLES:
         ExtractSetAuthorizationRolesMessage(msg, m_networking->AuthorizationRoles());

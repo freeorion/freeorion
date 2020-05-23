@@ -4,7 +4,7 @@ BAD_STEALTH
             scope = Or [
                 Source
                 And [
-                    ContainedBy Source
+                    OnPlanet id = Source.ID
                     Not HasTag name = "ORBITAL"
                 ]
             ]
@@ -19,7 +19,7 @@ GOOD_STEALTH
             scope = Or [
                 Source
                 And [
-                    ContainedBy Source
+                    OnPlanet id = Source.ID
                     Not HasTag name = "ORBITAL"
                 ]
             ]
@@ -34,7 +34,7 @@ GREAT_STEALTH
             scope = Or [
                 Source
                 And [
-                    ContainedBy Source
+                    OnPlanet id = Source.ID
                     Not HasTag name = "ORBITAL"
                 ]
             ]
@@ -49,7 +49,7 @@ ULTIMATE_STEALTH
             scope = Or [
                 Source
                 And [
-                    ContainedBy Source
+                    OnPlanet id = Source.ID
                     Not HasTag name = "ORBITAL"
                 ]
             ]

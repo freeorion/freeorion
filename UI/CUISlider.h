@@ -6,7 +6,7 @@
 #include <GG/Slider.h>
 
 /** a FreeOrion Slider control */
-template <class T>
+template <typename T>
 class CUISlider : public GG::Slider<T>
 {
 public:

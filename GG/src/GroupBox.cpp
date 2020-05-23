@@ -1,4 +1,4 @@
-/* GG is a GUI for SDL and OpenGL.
+/* GG is a GUI for OpenGL.
    Copyright (C) 2003-2008 T. Zachary Laine
 
    This library is free software; you can redistribute it and/or
@@ -44,9 +44,7 @@ namespace {
 const int GroupBox::FRAME_THICK = 2;
 const int GroupBox::PIXEL_MARGIN = 4;
 
-GroupBox::GroupBox() :
-    m_label(nullptr),
-    m_set_client_corners_equal_to_box_corners(false)
+GroupBox::GroupBox()
 {}
 
 GroupBox::GroupBox(X x, Y y, X w, Y h, const std::string& label, const std::shared_ptr<Font>& font,
@@ -56,8 +54,7 @@ GroupBox::GroupBox(X x, Y y, X w, Y h, const std::string& label, const std::shar
     m_text_color(text_color),
     m_int_color(interior),
     m_font(font),
-    m_label(label.empty() ? nullptr : GUI::GetGUI()->GetStyleFactory()->NewTextControl(label, m_font, m_text_color, FORMAT_LEFT | FORMAT_TOP)),
-    m_set_client_corners_equal_to_box_corners(false)
+    m_label(label.empty() ? nullptr : GUI::GetGUI()->GetStyleFactory()->NewTextControl(label, m_font, m_text_color, FORMAT_LEFT | FORMAT_TOP))
 {}
 
 void GroupBox::CompleteConstruction()
@@ -90,8 +87,8 @@ void GroupBox::Render()
 {
     Pt ul = UpperLeft(), lr = LowerRight() - Pt(X1, Y1);
     ul.y += TopOfFrame(m_label != nullptr, m_font);
-    Clr light = LightColor(m_color);
-    Clr dark = DarkColor(m_color);
+    Clr light = LightenClr(m_color);
+    Clr dark = DarkenClr(m_color);
     const int GAP_FROM_TEXT = 2;
     int vertices[24] = {
         Value(ul.x) + FRAME_THICK + PIXEL_MARGIN - GAP_FROM_TEXT, Value(ul.y),

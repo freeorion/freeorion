@@ -1,8 +1,10 @@
 #include "ProductionQueue.h"
 
 #include "Empire.h"
-#include "../universe/Building.h"
+#include "../universe/BuildingType.h"
 #include "../universe/Condition.h"
+#include "../universe/ShipHull.h"
+#include "../universe/ShipPart.h"
 #include "../universe/ShipDesign.h"
 #include "../universe/ValueRef.h"
 #include "../util/AppInterface.h"
@@ -12,10 +14,11 @@
 
 #include <boost/range/numeric.hpp>
 #include <boost/range/adaptor/map.hpp>
+#include <boost/uuid/uuid_io.hpp>
 
 
 namespace {
-    const float EPSILON = 0.01f;
+    const float EPSILON = 0.001f;
 
     void AddRules(GameRules& rules) {
         // limits amount of PP per turn that can be imported into the stockpile
@@ -84,8 +87,8 @@ namespace {
         float additional_pp_to_complete_item = item_cost - element_accumulated_PP;  // additional PP, beyond already-accumulated PP, to produce the current item of this element
         float basic_element_per_turn_limit = item_cost / build_turns;
         // the extra constraints on frontload and topping up amounts ensure that won't let complete in less than build_turns (so long as costs do not decrease)
-        float frontload = (1.0 + frontload_limit_factor/std::max(build_turns-1,1)) *
-            basic_element_per_turn_limit  - 2 * EPSILON;
+        float frontload = (1.0f + frontload_limit_factor/std::max(build_turns-1,1)) *
+            basic_element_per_turn_limit - 2.0f * EPSILON;
         float topping_up_limit = basic_element_per_turn_limit +
             std::min(topping_up_limit_factor * item_cost, basic_element_per_turn_limit - 2 * EPSILON);
         float topping_up = (additional_pp_to_complete_item < topping_up_limit) ?
@@ -199,8 +202,8 @@ namespace {
             // get resource sharing group and amount of resource available to build this item
             const auto& group = queue_element_resource_sharing_object_groups[i];
             auto available_pp_it = available_pp.find(group);
-            float& group_pp_available = (available_pp_it != available_pp.end()) ? 
-                        available_pp_it->second : dummy_pp_source;
+            float& group_pp_available = (available_pp_it != available_pp.end()) ?
+                                        available_pp_it->second : dummy_pp_source;
 
             if ((group_pp_available <= 0) &&
                 (available_stockpile <= 0 || !queue_element.allowed_imperial_stockpile_use))
@@ -366,11 +369,10 @@ bool ProductionQueue::ProductionItem::EnqueueConditionPassedAt(int location_id) 
     case BT_BUILDING: {
         if (const BuildingType* bt = GetBuildingType(name)) {
             auto location_obj = Objects().get(location_id);
-            const Condition::Condition* c = bt->EnqueueLocation();
+            auto c = bt->EnqueueLocation();
             if (!c)
                 return true;
-            ScriptingContext context(location_obj);
-            return c->Eval(context, location_obj);
+            return c->Eval(ScriptingContext(location_obj), location_obj);
         }
         return true;
         break;
@@ -431,8 +433,8 @@ ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id) c
             auto location_obj = Objects().get(location_id);
             ScriptingContext context(location_obj);
 
-            if (const HullType* ht = GetHullType(sd->Hull())) {
-                for (const auto& psc : ht->ProductionSpecialConsumption()) {
+            if (const ShipHull* ship_hull = GetShipHull(sd->Hull())) {
+                for (const auto& psc : ship_hull->ProductionSpecialConsumption()) {
                     if (!psc.second.first)
                         continue;
                     retval[psc.first][location_id] += psc.second.first->Eval(context);
@@ -440,10 +442,10 @@ ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id) c
             }
 
             for (const std::string& part_name : sd->Parts()) {
-                const PartType* pt = GetPartType(part_name);
-                if (!pt)
+                const ShipPart* part = GetShipPart(part_name);
+                if (!part)
                     continue;
-                for (const auto& psc : pt->ProductionSpecialConsumption()) {
+                for (const auto& psc : part->ProductionSpecialConsumption()) {
                     if (!psc.second.first)
                         continue;
                     retval[psc.first][location_id] += psc.second.first->Eval(context);
@@ -462,8 +464,7 @@ ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id) c
 }
 
 std::map<MeterType, std::map<int, float>>
-ProductionQueue::ProductionItem::CompletionMeterConsumption(int location_id) const
-{
+ProductionQueue::ProductionItem::CompletionMeterConsumption(int location_id) const {
     std::map<MeterType, std::map<int, float>> retval;
 
     switch (build_type) {
@@ -485,8 +486,8 @@ ProductionQueue::ProductionItem::CompletionMeterConsumption(int location_id) con
             auto obj = Objects().get(location_id);
             ScriptingContext context(obj);
 
-            if (const HullType* ht = GetHullType(sd->Hull())) {
-                for (const auto& pmc : ht->ProductionMeterConsumption()) {
+            if (const ShipHull* ship_hull = GetShipHull(sd->Hull())) {
+                for (const auto& pmc : ship_hull->ProductionMeterConsumption()) {
                     if (!pmc.second.first)
                         continue;
                     retval[pmc.first][location_id] += pmc.second.first->Eval(context);
@@ -494,7 +495,7 @@ ProductionQueue::ProductionItem::CompletionMeterConsumption(int location_id) con
             }
 
             for (const std::string& part_name : sd->Parts()) {
-                const PartType* pt = GetPartType(part_name);
+                const ShipPart* pt = GetShipPart(part_name);
                 if (!pt)
                     continue;
                 for (const auto& pmc : pt->ProductionMeterConsumption()) {
@@ -516,11 +517,11 @@ ProductionQueue::ProductionItem::CompletionMeterConsumption(int location_id) con
 }
 
 std::string ProductionQueue::ProductionItem::Dump() const {
-    std::string retval = "ProductionItem: " + boost::lexical_cast<std::string>(build_type) + " ";
+    std::string retval = "ProductionItem: " + boost::lexical_cast<std::string>(build_type);
     if (!name.empty())
-        retval += "name: " + name;
+        retval += " name: " + name;
     if (design_id != INVALID_DESIGN_ID)
-        retval += "id: " + std::to_string(design_id);
+        retval += " id: " + std::to_string(design_id);
     return retval;
 }
 
@@ -528,10 +529,12 @@ std::string ProductionQueue::ProductionItem::Dump() const {
 //////////////////////////////
 // ProductionQueue::Element //
 //////////////////////////////
-ProductionQueue::Element::Element()
+ProductionQueue::Element::Element() :
+     uuid(boost::uuids::nil_generator()())
 {}
 
-ProductionQueue::Element::Element(ProductionItem item_, int empire_id_, int ordered_,
+ProductionQueue::Element::Element(ProductionItem item_, int empire_id_,
+                                  boost::uuids::uuid uuid_, int ordered_,
                                   int remaining_, int blocksize_, int location_, bool paused_,
                                   bool allowed_imperial_stockpile_use_) :
     item(item_),
@@ -542,10 +545,12 @@ ProductionQueue::Element::Element(ProductionItem item_, int empire_id_, int orde
     location(location_),
     blocksize_memory(blocksize_),
     paused(paused_),
-    allowed_imperial_stockpile_use(allowed_imperial_stockpile_use_)
+    allowed_imperial_stockpile_use(allowed_imperial_stockpile_use_),
+    uuid(uuid_)
 {}
 
-ProductionQueue::Element::Element(BuildType build_type, std::string name, int empire_id_, int ordered_,
+ProductionQueue::Element::Element(BuildType build_type, std::string name, int empire_id_,
+                                  boost::uuids::uuid uuid_, int ordered_,
                                   int remaining_, int blocksize_, int location_, bool paused_,
                                   bool allowed_imperial_stockpile_use_) :
     item(build_type, name),
@@ -556,10 +561,12 @@ ProductionQueue::Element::Element(BuildType build_type, std::string name, int em
     location(location_),
     blocksize_memory(blocksize_),
     paused(paused_),
-    allowed_imperial_stockpile_use(allowed_imperial_stockpile_use_)
+    allowed_imperial_stockpile_use(allowed_imperial_stockpile_use_),
+    uuid(uuid_)
 {}
 
-ProductionQueue::Element::Element(BuildType build_type, int design_id, int empire_id_, int ordered_,
+ProductionQueue::Element::Element(BuildType build_type, int design_id, int empire_id_,
+                                  boost::uuids::uuid uuid_, int ordered_,
                                   int remaining_, int blocksize_, int location_, bool paused_,
                                   bool allowed_imperial_stockpile_use_) :
     item(build_type, design_id),
@@ -570,13 +577,14 @@ ProductionQueue::Element::Element(BuildType build_type, int design_id, int empir
     location(location_),
     blocksize_memory(blocksize_),
     paused(paused_),
-    allowed_imperial_stockpile_use(allowed_imperial_stockpile_use_)
+    allowed_imperial_stockpile_use(allowed_imperial_stockpile_use_),
+    uuid(uuid_)
 {}
 
 std::string ProductionQueue::Element::Dump() const {
     std::string retval = "ProductionQueue::Element (" + item.Dump() + ") (" +
         std::to_string(blocksize) + ") x" + std::to_string(ordered) + " ";
-    retval += " (remaining: " + std::to_string(remaining) + ") ";
+    retval += " (remaining: " + std::to_string(remaining) + ")  uuid: " + boost::uuids::to_string(uuid);
     return retval;
 }
 
@@ -585,9 +593,6 @@ std::string ProductionQueue::Element::Dump() const {
 // ProductionQueue //
 /////////////////////
 ProductionQueue::ProductionQueue(int empire_id) :
-    m_projects_in_progress(0),
-    m_expected_new_stockpile_amount(0),
-    m_expected_project_transfer_to_stockpile(0),
     m_empire_id(empire_id)
 {}
 
@@ -690,6 +695,22 @@ const ProductionQueue::Element& ProductionQueue::operator[](int i) const {
     if (i < 0 || i >= static_cast<int>(m_queue.size()))
         throw std::out_of_range("Tried to access ProductionQueue element out of bounds");
     return m_queue[i];
+}
+
+ProductionQueue::const_iterator ProductionQueue::find(boost::uuids::uuid uuid) const {
+    if (uuid == boost::uuids::nil_generator()())
+        return m_queue.end();
+    for (auto it = m_queue.begin(); it != m_queue.end(); ++it)
+        if (it->uuid == uuid)
+            return it;
+    return m_queue.end();
+}
+
+int ProductionQueue::IndexOfUUID(boost::uuids::uuid uuid) const {
+    auto it = find(uuid);
+    if (it == end())
+        return -1;
+    return std::distance(begin(), it);
 }
 
 void ProductionQueue::Update() {

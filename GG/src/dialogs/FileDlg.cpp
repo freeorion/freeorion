@@ -1,4 +1,4 @@
-/* GG is a GUI for SDL and OpenGL.
+/* GG is a GUI for OpenGL.
    Copyright (C) 2003-2008 T. Zachary Laine
 
    This library is free software; you can redistribute it and/or
@@ -155,19 +155,8 @@ FileDlg::FileDlg(const std::string& directory, const std::string& filename, bool
     m_text_color(text_color),
     m_font(font),
     m_save(save),
-    m_select_directories(false),
-    m_append_missing_save_extension(false),
-    m_in_win32_drive_selection(false),
     m_save_str(GetStyleFactory()->Translate("Save")),
     m_open_str(GetStyleFactory()->Translate("Open")),
-    m_curr_dir_text(nullptr),
-    m_files_list(nullptr),
-    m_files_edit(nullptr),
-    m_filter_list(nullptr),
-    m_ok_button(nullptr),
-    m_cancel_button(nullptr),
-    m_files_label(nullptr),
-    m_file_types_label(nullptr),
     m_init_directory(directory),
     m_init_filename(filename)
 {
@@ -225,18 +214,14 @@ void FileDlg::CompleteConstruction()
     PopulateFilters();
     UpdateList();
 
-    m_ok_button->LeftClickedSignal.connect(
-        boost::bind(&FileDlg::OkClicked, this));
-    m_cancel_button->LeftClickedSignal.connect(
-        boost::bind(&FileDlg::CancelClicked, this));
-    m_files_list->SelRowsChangedSignal.connect(
-        boost::bind(&FileDlg::FileSetChanged, this, _1));
-    m_files_list->DoubleClickedRowSignal.connect(
-        boost::bind(&FileDlg::FileDoubleClicked, this, _1, _2, _3));
-    m_files_edit->EditedSignal.connect(
-        boost::bind(&FileDlg::FilesEditChanged, this, _1));
-    m_filter_list->SelChangedSignal.connect(
-        boost::bind(&FileDlg::FilterChanged, this, _1));
+    namespace ph = boost::placeholders;
+
+    m_ok_button->LeftClickedSignal.connect(boost::bind(&FileDlg::OkClicked, this));
+    m_cancel_button->LeftClickedSignal.connect(boost::bind(&FileDlg::CancelClicked, this));
+    m_files_list->SelRowsChangedSignal.connect(boost::bind(&FileDlg::FileSetChanged, this, ph::_1));
+    m_files_list->DoubleClickedRowSignal.connect(boost::bind(&FileDlg::FileDoubleClicked, this, ph::_1, ph::_2, ph::_3));
+    m_files_edit->EditedSignal.connect(boost::bind(&FileDlg::FilesEditChanged, this, ph::_1));
+    m_filter_list->SelChangedSignal.connect(boost::bind(&FileDlg::FilterChanged, this, ph::_1));
 
     if (!m_init_filename.empty()) {
         fs::path filename_path = fs::system_complete(fs::path(m_init_filename));

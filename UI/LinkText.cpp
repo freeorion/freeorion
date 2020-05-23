@@ -11,7 +11,6 @@
 #include "../util/Directories.h"
 #include "../universe/Enums.h"
 
-#include <GG/DrawUtil.h>
 #include <GG/WndEvent.h>
 #include <GG/GUI.h>
 #include <boost/xpressive/xpressive.hpp>

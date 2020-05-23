@@ -2,11 +2,14 @@
 
 #include "../parse/Parse.h"
 #include "../Empire/EmpireManager.h"
-#include "../universe/Building.h"
+#include "../universe/BuildingType.h"
 #include "../universe/Encyclopedia.h"
-#include "../universe/Field.h"
+#include "../universe/FieldType.h"
 #include "../universe/Special.h"
 #include "../universe/Species.h"
+#include "../universe/ShipDesign.h"
+#include "../universe/ShipPart.h"
+#include "../universe/ShipHull.h"
 #include "../universe/Tech.h"
 #include "../util/Directories.h"
 #include "../util/GameRules.h"
@@ -48,21 +51,71 @@ int IApp::MAX_AI_PLAYERS() {
 }
 
 void IApp::StartBackgroundParsing() {
+    namespace fs = boost::filesystem;
+
     const auto& rdir = GetResourceDir();
+    if (!fs::exists(rdir) || !fs::is_directory(rdir)) {
+        ErrorLogger() << "Background parse given non-existant resources directory!";
+        return;
+    }
 
-    GetBuildingTypeManager().SetBuildingTypes(Pending::StartParsing(parse::buildings, rdir / "scripting/buildings"));
-    GetEncyclopedia().SetArticles(Pending::StartParsing(parse::encyclopedia_articles, rdir / "scripting/encyclopedia"));
-    GetFieldTypeManager().SetFieldTypes(Pending::StartParsing(parse::fields, rdir / "scripting/fields"));
-    GetSpecialsManager().SetSpecialsTypes(Pending::StartParsing(parse::specials, rdir / "scripting/specials"));
-    GetSpeciesManager().SetSpeciesTypes(Pending::StartParsing(parse::species, rdir / "scripting/species"));
-    GetPartTypeManager().SetPartTypes(Pending::StartParsing(parse::ship_parts, rdir / "scripting/ship_parts"));
-    GetHullTypeManager().SetHullTypes(Pending::StartParsing(parse::ship_hulls, rdir / "scripting/ship_hulls"));
-    GetPredefinedShipDesignManager().SetShipDesignTypes(
-        Pending::StartParsing(parse::ship_designs, rdir / "scripting/ship_designs"));
-    GetPredefinedShipDesignManager().SetMonsterDesignTypes(
-        Pending::StartParsing(parse::ship_designs, rdir / "scripting/monster_designs"));
-    GetGameRules().Add(Pending::StartParsing(parse::game_rules, rdir / "scripting/game_rules.focs.txt"));
-    GetTechManager().SetTechs(Pending::StartParsing(parse::techs<TechManager::TechParseTuple>, rdir / "scripting/techs"));
+    if (fs::exists(rdir / "scripting/buildings"))
+        GetBuildingTypeManager().SetBuildingTypes(Pending::StartParsing(parse::buildings, rdir / "scripting/buildings"));
+    else
+        ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/buildings").string();
 
-    InitEmpireColors(rdir / "empire_colors.xml");
+    if (fs::exists(rdir / "scripting/encyclopedia"))
+        GetEncyclopedia().SetArticles(Pending::StartParsing(parse::encyclopedia_articles, rdir / "scripting/encyclopedia"));
+    else
+        ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/encyclopedia").string();
+
+    if (fs::exists(rdir / "scripting/fields"))
+        GetFieldTypeManager().SetFieldTypes(Pending::StartParsing(parse::fields, rdir / "scripting/fields"));
+    else
+        ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/fields").string();
+
+    if (fs::exists(rdir / "scripting/specials"))
+        GetSpecialsManager().SetSpecialsTypes(Pending::StartParsing(parse::specials, rdir / "scripting/specials"));
+    else
+        ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/specials").string();
+
+    if (fs::exists(rdir / "scripting/species"))
+        GetSpeciesManager().SetSpeciesTypes(Pending::StartParsing(parse::species, rdir / "scripting/species"));
+    else
+        ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/species").string();
+
+    if (fs::exists(rdir / "scripting/ship_parts"))
+        GetShipPartManager().SetShipParts(Pending::StartParsing(parse::ship_parts, rdir / "scripting/ship_parts"));
+    else
+        ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/ship_parts").string();
+
+    if (fs::exists(rdir / "scripting/ship_hulls"))
+        GetShipHullManager().SetShipHulls(Pending::StartParsing(parse::ship_hulls, rdir / "scripting/ship_hulls"));
+    else
+        ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/ship_hulls").string();
+
+    if (fs::exists(rdir / "scripting/ship_designs"))
+        GetPredefinedShipDesignManager().SetShipDesignTypes(Pending::StartParsing(parse::ship_designs, rdir / "scripting/ship_designs"));
+    else
+        ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/ship_designs").string();
+
+    if (fs::exists(rdir / "scripting/monster_designs"))
+        GetPredefinedShipDesignManager().SetMonsterDesignTypes(Pending::StartParsing(parse::ship_designs, rdir / "scripting/monster_designs"));
+    else
+        ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/monster_designs").string();
+
+    if (fs::exists(rdir / "scripting/game_rules.focs.txt"))
+        GetGameRules().Add(Pending::StartParsing(parse::game_rules, rdir / "scripting/game_rules.focs.txt"));
+    else
+        ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/game_rules.focs.txt").string();
+
+    if (fs::exists(rdir / "scripting/techs"))
+        GetTechManager().SetTechs(Pending::StartParsing(parse::techs<TechManager::TechParseTuple>, rdir / "scripting/techs"));
+    else
+        ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/techs").string();
+
+    if (fs::exists(rdir / "empire_colors.xml"))
+        InitEmpireColors(rdir / "empire_colors.xml");
+    else
+        ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "empire_colors.xml").string();
 }

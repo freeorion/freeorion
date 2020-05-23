@@ -172,7 +172,7 @@ namespace parse { namespace detail {
         template <typename U>
         friend class MovableEnvelope;
 
-        mutable std::unique_ptr<T> obj = nullptr;
+        mutable std::unique_ptr<T> obj;
 
         mutable T* original_obj = nullptr;
     };
@@ -227,7 +227,7 @@ namespace parse { namespace detail {
         std::map<K, std::unique_ptr<V>> retval;
         for (auto&& name_and_value : in)
             retval.insert(std::make_pair(name_and_value.first, name_and_value.second.OpenEnvelope(pass)));
-        return std::move(retval);
+        return retval;
     }
 
 

@@ -1,4 +1,4 @@
-# GG is a GUI for SDL and OpenGL.
+# GG is a GUI for OpenGL.
 #
 # Copyright (C) 2017 Marcel Metz
 #
@@ -23,5 +23,4 @@
 # Zach Laine
 # whatwasthataddress@gmail.com
 
-add_subdirectory(acceptance)
 add_subdirectory(unit)

@@ -29,25 +29,13 @@ BOOST_PYTHON_MODULE(freeorion_logger) {
     FreeOrionPython::WrapLogger();
 }
 
-PythonBase::PythonBase() :
-#if defined(FREEORION_MACOSX)
-    m_home_dir(""),
-    m_program_name(""),
-#endif
-    m_python_module_error(nullptr)
-{
-#if defined(FREEORION_WIN32)
-    m_home_dir[0] = '\0';
-    m_program_name[0] = '\0';
-#endif
-}
+PythonBase::PythonBase()
+{}
 
-PythonBase::~PythonBase() {
-    Finalize();
-}
+PythonBase::~PythonBase()
+{ Finalize(); }
 
-bool PythonBase::Initialize()
-{
+bool PythonBase::Initialize() {
     DebugLogger() << "Initializing FreeOrion Python interface";
 
     try {
@@ -57,13 +45,22 @@ bool PythonBase::Initialize()
         // provided by the system). These API calls have been added in an attempt to
         // solve the problems. Not sure if they are really required, but better save
         // than sorry... ;)
-        strcpy(m_home_dir, GetPythonHome().string().c_str());
+        m_home_dir = Py_DecodeLocale(GetPythonHome().string().c_str(), nullptr);
         Py_SetPythonHome(m_home_dir);
         DebugLogger() << "Python home set to " << Py_GetPythonHome();
-        strcpy(m_program_name, (GetPythonHome() / "Python").string().c_str());
+        m_program_name = Py_DecodeLocale((GetPythonHome() / "Python").string().c_str(), nullptr);
         Py_SetProgramName(m_program_name);
         DebugLogger() << "Python program name set to " << Py_GetProgramFullPath();
 #endif
+        // allow the "freeorion_logger" C++ module to be imported within Python code
+        if (PyImport_AppendInittab("freeorion_logger", &PyInit_freeorion_logger) == -1) {
+            ErrorLogger() << "Unable to initialize freeorion_logger import";
+            return false;
+        }
+        if (!InitImports()) {
+            ErrorLogger() << "Unable to initialize imports";
+            return false;
+        }
         // initializes Python interpreter, allowing Python functions to be called from C++
         Py_Initialize();
         DebugLogger() << "Python initialized";
@@ -78,8 +75,8 @@ bool PythonBase::Initialize()
 
     DebugLogger() << "Initializing C++ interfaces for Python";
 
-    m_system_exit = import("exceptions").attr("SystemExit");
     try {
+        m_system_exit = import("builtins").attr("SystemExit");
         // get main namespace, needed to run other interpreted code
         object py_main = import("__main__");
         dict py_namespace = extract<dict>(py_main.attr("__dict__"));
@@ -87,16 +84,12 @@ bool PythonBase::Initialize()
 
         // add the directory containing common Python modules used by all Python scripts to Python sys.path
         AddToSysPath(GetPythonCommonDir());
-    } catch (...) {
+    } catch (const error_already_set& err) {
+        HandleErrorAlreadySet();
         ErrorLogger() << "Unable to initialize FreeOrion Python namespace and set path";
         return false;
-    }
-
-    // allow the "freeorion_logger" C++ module to be imported within Python code
-    try {
-        initfreeorion_logger();
     } catch (...) {
-        ErrorLogger() << "Unable to initialize FreeOrion Python logging module";
+        ErrorLogger() << "Unable to initialize FreeOrion Python namespace and set path";
         return false;
     }
 
@@ -109,6 +102,7 @@ bool PythonBase::Initialize()
         }
     } catch (const error_already_set& err) {
         HandleErrorAlreadySet();
+        ErrorLogger() << "Unable to initialize FreeOrion Python modules (exception caught)";
         return false;
     } catch (...) {
         ErrorLogger() << "Unable to initialize FreeOrion Python modules (exception caught)";
@@ -138,8 +132,11 @@ void PythonBase::HandleErrorAlreadySet() {
 
     PyObject *extype, *value, *traceback;
     PyErr_Fetch(&extype, &value, &traceback);
-    if (extype == nullptr)
+    PyErr_NormalizeException(&extype, &value, &traceback);
+    if (extype == nullptr) {
+        ErrorLogger() << "Missing python exception type";
         return;
+    }
 
     object o_extype(handle<>(borrowed(extype)));
     object o_value(handle<>(borrowed(value)));
@@ -165,8 +162,22 @@ void PythonBase::Finalize() {
             (*m_python_module_error) = object();
             m_python_module_error = nullptr;
         }
-
-        Py_Finalize();
+        try {
+            Py_Finalize();
+#if defined(FREEORION_MACOSX) || defined(FREEORION_WIN32)
+            if (m_home_dir != nullptr) {
+                PyMem_RawFree(m_home_dir);
+                m_home_dir = nullptr;
+            }
+            if (m_program_name != nullptr) {
+                PyMem_RawFree(m_program_name);
+                m_program_name = nullptr;
+            }
+#endif
+        } catch (const std::exception& e) {
+            ErrorLogger() << "Caught exception when cleaning up FreeOrion Python interface: " << e.what();
+            return;
+        }
         DebugLogger() << "Cleaned up FreeOrion Python interface";
     }
 }
@@ -178,7 +189,7 @@ void PythonBase::SetCurrentDir(const std::string dir) {
     }
     std::string script = "import os\n"
     "os.chdir(r'" + dir + "')\n"
-    "print 'Python current directory set to', os.getcwd()";
+    "print ('Python current directory set to', os.getcwd())";
     exec(script.c_str(), *m_namespace, *m_namespace);
 }
 

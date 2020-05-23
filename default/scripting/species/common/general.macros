@@ -5,12 +5,12 @@ STANDARD_METER_GROWTH
             scope = Source
             activation = And [
                 Planet
-                (Source.LastTurnConquered < CurrentTurn)
+                (LocalCandidate.LastTurnConquered < CurrentTurn)
             ]
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
             effects = [
-                SetResearch value = Value + min(max(Value(Target.TargetResearch) - Value, -1), 1)
-                SetIndustry value = Value + min(max(Value(Target.TargetIndustry) - Value, -1), 1)
+                SetResearch value = Value + min(max(Value(Target.TargetResearch) - Value, -1), min(1, Value(Target.Happiness) - 4))
+                SetIndustry value = Value + min(max(Value(Target.TargetIndustry) - Value, -1), min(1, Value(Target.Happiness) - 4))
             ]
 
         // removes residual production from a dead planet
@@ -42,8 +42,8 @@ STANDARD_CONSTRUCTION
             scope = Source
             activation = And [
                 Planet
-                (Source.LastTurnConquered < CurrentTurn)
-                (Source.LastTurnAttackedByShip  < CurrentTurn)
+                (LocalCandidate.LastTurnConquered < CurrentTurn)
+                (LocalCandidate.LastTurnAttackedByShip  < CurrentTurn)
             ]
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
             effects = SetConstruction value = Value + min(max(Value(Target.TargetConstruction) - Value, -1), 1)
@@ -63,7 +63,7 @@ FOCUS_CHANGE_PENALTY
             activation = And [
                 Planet
                 Not Focus type = "FOCUS_INDUSTRY"
-                (0 == Source.TurnsSinceFocusChange)
+                (0 == LocalCandidate.TurnsSinceFocusChange)
             ]
             priority = [[FOCUS_CHANGE_PENALTY_PRIORITY]]
             effects = SetIndustry value = Value - max(0, min(1 - Target.TurnsSinceFocusChange, Value - Value(Target.TargetIndustry)))
@@ -73,7 +73,7 @@ FOCUS_CHANGE_PENALTY
             activation = And [
                 Planet
                 Not Focus type = "FOCUS_RESEARCH"
-                (0 == Source.TurnsSinceFocusChange)
+                (0 == LocalCandidate.TurnsSinceFocusChange)
             ]
             priority = [[FOCUS_CHANGE_PENALTY_PRIORITY]]
             effects = SetResearch value = Value - max(0, min(1 - Target.TurnsSinceFocusChange, Value - Value(Target.TargetResearch)))
@@ -85,7 +85,7 @@ FOCUS_CHANGE_PENALTY
             activation = And [
                 Planet
                 Not Focus type = "FOCUS_STOCKPILE"
-                (0 == Source.TurnsSinceFocusChange)
+                (0 == LocalCandidate.TurnsSinceFocusChange)
             ]
             priority = [[FOCUS_CHANGE_PENALTY_PRIORITY]]
             effects = SetStockpile value = Value - max(0, min(1 - Target.TurnsSinceFocusChange, Value - Value(Target.MaxStockpile)))

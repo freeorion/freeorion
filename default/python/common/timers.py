@@ -1,10 +1,7 @@
-from __future__ import print_function
-from __future__ import division
-
 from time import time
 
 
-class Timer(object):
+class Timer:
     def __init__(self, timer_name):
         """
         Creates timer. Timer name is name that will be in logs.

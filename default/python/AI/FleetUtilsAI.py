@@ -1,5 +1,5 @@
 import math
-from logging import error, warn, debug
+from logging import error, warning, debug
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 
@@ -10,7 +10,7 @@ from AIDependencies import INVALID_ID
 from aistate_interface import get_aistate
 from freeorion_tools import assertion_fails
 from EnumsAI import MissionType, ShipRoleType
-from ShipDesignAI import get_part_type
+from ShipDesignAI import get_ship_part
 from target import TargetPlanet, TargetFleet, TargetSystem
 
 
@@ -25,6 +25,10 @@ def stats_meet_reqs(stats, requirements):
     :rtype: bool
     """
     for key in requirements:
+        if key not in stats:  # skip requirements not related to stats
+            if key != "target_system":  # expected not to be in stats
+                warning("Requirement %s not in stats", key)
+            continue
         if stats.get(key, 0) < requirements[key]:
             return False
     return True
@@ -132,7 +136,7 @@ def get_fleets_for_mission(target_stats, min_stats, cur_stats, starting_system,
                     not MoveUtilsAI.can_travel_to_system(fleet_id, this_system_obj,
                                                          target_stats['target_system'],
                                                          ensure_return=ensure_return)):
-                    continue
+                continue
 
             # check species for colonization missions
             if species:
@@ -244,7 +248,7 @@ def split_ship_from_fleet(fleet_id, ship_id):
         aistate = get_aistate()
         new_fleet = universe.getFleet(new_fleet_id)
         if not new_fleet:
-            warn("Newly split fleet %d not available from universe" % new_fleet_id)
+            warning("Newly split fleet %d not available from universe" % new_fleet_id)
         debug("Successfully split ship %d from fleet %d into new fleet %d",
               ship_id, fleet_id, new_fleet_id)
         fo.issueRenameOrder(new_fleet_id, "Fleet %4d" % new_fleet_id)  # to ease review of debugging logs
@@ -257,10 +261,10 @@ def split_ship_from_fleet(fleet_id, ship_id):
         sys_status['myFleetsAccessible'].append(new_fleet_id)
     else:
         if fleet.systemID == INVALID_ID:
-            warn("Tried to split ship id (%d) from fleet %d when fleet is in starlane" % (
+            warning("Tried to split ship id (%d) from fleet %d when fleet is in starlane" % (
                 ship_id, fleet_id))
         else:
-            warn("Got no fleet ID back after trying to split ship id (%d) from fleet %d" % (
+            warning("Got no fleet ID back after trying to split ship id (%d) from fleet %d" % (
                 ship_id, fleet_id))
     return new_fleet_id
 
@@ -425,7 +429,7 @@ def assess_fleet_role(fleet_id):
 
 
 def assess_ship_design_role(design):
-    parts = [get_part_type(partname) for partname in design.parts if partname and get_part_type(partname)]
+    parts = [get_ship_part(partname) for partname in design.parts if partname and get_ship_part(partname)]
 
     if any(p.partClass == fo.shipPartClass.colony and p.capacity == 0 for p in parts):
         if design.speed > 0:
@@ -456,7 +460,7 @@ def assess_ship_design_role(design):
     if any(p.partClass == fo.shipPartClass.detection for p in parts):
         return ShipRoleType.CIVILIAN_EXPLORATION
     else:   # if no suitable role found, use as (bad) scout as it still has inherent detection
-        warn("Defaulting ship role to 'exploration' for ship with parts: %s", design.parts)
+        warning("Defaulting ship role to 'exploration' for ship with parts: %s", design.parts)
         return ShipRoleType.CIVILIAN_EXPLORATION
 
 
@@ -559,7 +563,7 @@ def generate_fleet_orders_for_fleet_missions():
     for orb_defence_fleet_mission in orb_defense_fleet_missions:
         debug("    %s" % orb_defence_fleet_mission)
 
-    fleet_missions = aistate.get_all_fleet_missions()
+    fleet_missions = list(aistate.get_all_fleet_missions())
     destroyed_objects = fo.getUniverse().destroyedObjectIDs(fo.empireID())
 
     # merge fleets where appropriate before generating fleet orders.
@@ -582,7 +586,7 @@ def issue_fleet_orders_for_fleet_missions():
     debug('')
     universe = fo.getUniverse()
     aistate = get_aistate()
-    fleet_missions = aistate.get_all_fleet_missions()
+    fleet_missions = list(aistate.get_all_fleet_missions())
     thisround = 0
     while thisround < 3:
         thisround += 1
@@ -626,7 +630,7 @@ def get_fighter_capacity_of_fleet(fleet_id):
         design = ship and ship.design
         design_parts = design.parts if design and design.hasFighters else []
         for partname in design_parts:
-            part = get_part_type(partname)
+            part = get_ship_part(partname)
             if part and part.partClass == fo.shipPartClass.fighterHangar:
                 cur_capacity += ship.currentPartMeterValue(fo.meterType.capacity, partname)
                 max_capacity += ship.currentPartMeterValue(fo.meterType.maxCapacity, partname)

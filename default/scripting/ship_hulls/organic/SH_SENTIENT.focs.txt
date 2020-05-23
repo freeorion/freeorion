@@ -3,6 +3,7 @@ Hull
     description = "SH_SENTIENT_DESC"
     speed = 100
     fuel = 1
+    NoDefaultFuelEffect
     stealth = 25
     structure = 12
     slots = [
@@ -49,7 +50,6 @@ Hull
                     OwnedBy affiliation = AllyOf empire = Source.Owner
                 ]
             ]
-            activation = Source
             stackinggroup = "FLAGSHIP_EFFECT_SENTIENT"
             effects = [
                 SetStealth value = Value + 20
@@ -58,11 +58,11 @@ Hull
 
         EffectsGroup
             scope = Source
-            activation = Source
             accountinglabel = "ORGANIC_GROWTH"
-            effects = SetMaxStructure value = Value + min(Source.Age*1, 45)
+            effects = SetMaxStructure value = Value + ( min(Source.Age*1, 45) * [[SHIP_STRUCTURE_FACTOR]] )
 
         [[AVERAGE_FUEL_EFFICIENCY]]
+        [[ADD_HULL_FUEL_TO_MAX_FUEL_METER]]
         [[LIVING_HULL_EFFECTS_GROUPS]]
         [[SCAVANGE_FUEL_UNOWNED]]
         [[UNOWNED_GOOD_VISION]]
@@ -76,3 +76,5 @@ Hull
 #include "../ship_hulls.macros"
 
 #include "/scripting/common/upkeep.macros"
+
+#include "/scripting/common/misc.macros"

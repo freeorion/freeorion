@@ -134,7 +134,13 @@ namespace parse { namespace detail {
         in_system
             =   (   omit_[tok.InSystem_]
                     >  -(label(tok.ID_)  > int_rules.expr)
-                ) [ _val = construct_movable_(new_<Condition::InSystem>(deconstruct_movable_(_1, _pass))) ]
+                ) [ _val = construct_movable_(new_<Condition::InOrIsSystem>(deconstruct_movable_(_1, _pass))) ]
+            ;
+
+        on_planet
+            =   (   omit_[tok.OnPlanet_]
+                    >  -(label(tok.ID_)  > int_rules.expr)
+                ) [ _val = construct_movable_(new_<Condition::OnPlanet>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         start
@@ -143,6 +149,7 @@ namespace parse { namespace detail {
             |    design_has_part
             |    design_has_part_class
             |    in_system
+            |    on_planet
             ;
 
         has_special_since_turn.name("HasSpecialSinceTurn");
@@ -150,6 +157,7 @@ namespace parse { namespace detail {
         design_has_part.name("DesignHasPart");
         design_has_part_class.name("DesignHasPartClass");
         in_system.name("InSystem");
+        on_planet.name("OnPlanet");
 
 #if DEBUG_CONDITION_PARSERS
         debug(has_special_since_turn);
@@ -157,6 +165,7 @@ namespace parse { namespace detail {
         debug(design_has_part);
         debug(design_has_part_class);
         debug(in_system);
+        debug(on_planet);
 #endif
     }
 

@@ -1,8 +1,10 @@
 Part
     name = "FU_ZERO_FUEL"
     description = "FU_ZERO_FUEL_DESC"
+    exclusions = "SH_COLONY_BASE"
     class = Fuel
     capacity = 0
+    NoDefaultCapacityEffect
     mountableSlotTypes = Core
     buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 5
@@ -11,7 +13,6 @@ Part
     effectsgroups =
         EffectsGroup
             scope = Source
-            activation = Source
             effects = SetFuel value = Target.MaxFuel
     icon = "icons/ship_parts/zero-point-generator.png"
 

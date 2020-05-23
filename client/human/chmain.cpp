@@ -213,7 +213,7 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
         // did the player request generation of config.xml, saving the default (or current) options to disk?
         if (GetOptionsDB().Get<bool>("generate-config-xml")) {
             try {
-                GetOptionsDB().Commit();
+                GetOptionsDB().Commit(false);
             } catch (...) {
                 std::cerr << UserString("UNABLE_TO_WRITE_CONFIG_XML") << std::endl;
             }
@@ -297,8 +297,7 @@ int mainSetupAndRun() {
         }
 
         // run rendering loop
-        app();  // calls GUI::operator() which calls SDLGUI::Run() which starts rendering loop
-
+        app.Run();
 #ifndef FREEORION_CHMAIN_KEEP_STACKTRACE
     } catch (const std::invalid_argument& e) {
         ErrorLogger() << "main() caught exception(std::invalid_argument): " << e.what();

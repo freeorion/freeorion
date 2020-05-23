@@ -1,6 +1,7 @@
 #include "AIClientApp.h"
 
-#include "../../python/AI/AIFramework.h"
+#include "AIFramework.h"
+#include "../ClientNetworking.h"
 #include "../../util/Logger.h"
 #include "../../util/LoggerWithOptionsDB.h"
 #include "../../util/OptionsDB.h"
@@ -9,7 +10,6 @@
 #include "../../util/i18n.h"
 #include "../util/AppInterface.h"
 #include "../../network/Message.h"
-#include "../../network/ClientNetworking.h"
 #include "../util/Random.h"
 #include "../util/Version.h"
 
@@ -114,9 +114,6 @@ AIClientApp::~AIClientApp() {
     DebugLogger() << "AIClientApp exited cleanly for ai client " << PlayerName();
 }
 
-void AIClientApp::operator()()
-{ Run(); }
-
 void AIClientApp::ExitApp(int code) {
     DebugLogger() << "Initiating Exit (code " << code << " - " << (code ? "error" : "normal") << " termination)";
     if (code)
@@ -130,7 +127,7 @@ int AIClientApp::EffectsProcessingThreads() const
 AIClientApp* AIClientApp::GetApp()
 { return static_cast<AIClientApp*>(s_app); }
 
-const AIBase* AIClientApp::GetAI()
+const PythonAI* AIClientApp::GetAI()
 { return m_AI.get(); }
 
 void AIClientApp::Run() {
@@ -401,7 +398,11 @@ void AIClientApp::HandleMessage(const Message& msg) {
 
     case Message::CHECKSUM: {
         TraceLogger() << "(AIClientApp) CheckSum.";
-        VerifyCheckSum(msg);
+        bool result = VerifyCheckSum(msg);
+        if (!result) {
+            ErrorLogger() << "Wrong checksum";
+            throw std::runtime_error("AI got incorrect checksum.");
+        }
         break;
     }
 

@@ -13,7 +13,6 @@
 #include "../util/ScopedTimer.h"
 #include "../client/human/HumanClientApp.h"
 
-#include <GG/DrawUtil.h>
 #include <GG/Layout.h>
 #include <GG/StaticGraphic.h>
 
@@ -68,10 +67,10 @@ namespace {
     //////////////////////////////////////////////////
     struct QueueRow : GG::ListBox::Row {
         QueueRow(GG::X w, const ResearchQueue::Element& queue_element) :
-            GG::ListBox::Row(w, QueueTechPanel::DefaultHeight(), "RESEARCH_QUEUE_ROW"),
-            elem(queue_element),
-            panel(nullptr)
+            GG::ListBox::Row(w, QueueTechPanel::DefaultHeight()),
+            elem(queue_element)
         {
+            SetDragDropDataType("RESEARCH_QUEUE_ROW");
             RequirePreRender();
             Resize(GG::Pt(w, QueueTechPanel::DefaultHeight()));
         }
@@ -153,7 +152,7 @@ namespace {
             m_total_turns = tech->ResearchTime(m_empire_id);
 
         GG::Clr clr = m_in_progress
-                        ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor())
+                        ? GG::LightenClr(ClientUI::ResearchableTechTextAndBorderColor())
                         : ClientUI::ResearchableTechTextAndBorderColor();
 
         GG::Y top(MARGIN);
@@ -184,12 +183,12 @@ namespace {
         }
         GG::Clr outline_color = ClientUI::ResearchableTechFillColor();
         if (m_in_progress)
-            outline_color = GG::LightColor(outline_color);
+            outline_color = GG::LightenClr(outline_color);
 
         m_progress_bar = GG::Wnd::Create<MultiTurnProgressBar>(total_time,
                                                                perc_complete,
                                                                next_progress,
-                                                               GG::LightColor(ClientUI::TechWndProgressBarBackgroundColor()),
+                                                               GG::LightenClr(ClientUI::TechWndProgressBarBackgroundColor()),
                                                                ClientUI::TechWndProgressBarColor(),
                                                                outline_color);
 
@@ -232,8 +231,8 @@ namespace {
     }
 
     void QueueTechPanel::Render() {
-        GG::Clr fill = m_in_progress ? GG::LightColor(ClientUI::ResearchableTechFillColor()) : ClientUI::ResearchableTechFillColor();
-        GG::Clr text_and_border = m_in_progress ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor()) : ClientUI::ResearchableTechTextAndBorderColor();
+        GG::Clr fill = m_in_progress ? GG::LightenClr(ClientUI::ResearchableTechFillColor()) : ClientUI::ResearchableTechFillColor();
+        GG::Clr text_and_border = m_in_progress ? GG::LightenClr(ClientUI::ResearchableTechTextAndBorderColor()) : ClientUI::ResearchableTechTextAndBorderColor();
 
         glDisable(GL_TEXTURE_2D);
         Draw(fill, true);
@@ -354,8 +353,7 @@ public:
     /** \name Structors */ //@{
     ResearchQueueWnd(GG::X x, GG::Y y, GG::X w, GG::Y h) :
         CUIWnd("", x, y, w, h, GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP | PINABLE,
-               "research.queue"),
-        m_queue_lb(nullptr)
+               "research.queue")
     {}
 
     void CompleteConstruction() override {
@@ -408,9 +406,6 @@ private:
 //////////////////////////////////////////////////
 ResearchWnd::ResearchWnd(GG::X w, GG::Y h, bool initially_hidden /*= true*/) :
     GG::Wnd(GG::X0, GG::Y0, w, h, GG::INTERACTIVE | GG::ONTOP),
-    m_research_info_panel(nullptr),
-    m_queue_wnd(nullptr),
-    m_tech_tree_wnd(nullptr),
     m_enabled(false),
     m_empire_shown_id(ALL_EMPIRES)
 {
@@ -422,6 +417,10 @@ ResearchWnd::ResearchWnd(GG::X w, GG::Y h, bool initially_hidden /*= true*/) :
         GG::X0, GG::Y0, GG::X(queue_width), GG::Y(100), "research.info");
     m_queue_wnd = GG::Wnd::Create<ResearchQueueWnd>(GG::X0, GG::Y(100), queue_width, GG::Y(ClientSize().y - 100));
     m_tech_tree_wnd = GG::Wnd::Create<TechTreeWnd>(tech_tree_wnd_size.x, tech_tree_wnd_size.y, initially_hidden);
+
+    using boost::placeholders::_1;
+    using boost::placeholders::_2;
+    using boost::placeholders::_3;
 
     m_queue_wnd->GetQueueListBox()->MovedRowSignal.connect(
         boost::bind(&ResearchWnd::QueueItemMoved, this, _1, _2));

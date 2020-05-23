@@ -1,4 +1,3 @@
-from __future__ import print_function
 import sys
 from collections import defaultdict
 from math import acos, ceil, cos, floor, pi, sin, sqrt
@@ -10,8 +9,11 @@ import universe_tables
 import util
 
 
-class AdjacencyGrid(object):
+class AdjacencyGrid:
     def __init__(self, universe_width):
+        """
+        :param float universe_width:
+        """
         assert universe_tables.MIN_SYSTEM_SEPARATION < universe_tables.MAX_STARLANE_LENGTH
         self.min_dist = universe_tables.MIN_SYSTEM_SEPARATION
         self.max_dist = universe_tables.MAX_STARLANE_LENGTH
@@ -87,7 +89,7 @@ class AdjacencyGrid(object):
                    for p2 in self.grid[p2_cell])
 
 
-class DSet(object):
+class DSet:
     """
     A set of pos that is disjoint (not connected) to other sets.
 
@@ -116,7 +118,7 @@ class DSet(object):
         self.rank += 1
 
 
-class DisjointSets(object):
+class DisjointSets:
     """
     A set of disjoint sets.
 
@@ -207,7 +209,7 @@ class DisjointSets(object):
         return list(ret.values())
 
 
-class Clusterer(object):
+class Clusterer:
     """
     Computes all clusters of positions separated by more than MAX_STARLANE_LENGTH
 
@@ -520,6 +522,10 @@ def disc_galaxy_calc_positions(positions, adjacency_grid, size, width):
 def cluster_galaxy_calc_positions(positions, adjacency_grid, size, width):
     """
     Calculate positions for the cluster galaxy shape.
+    :type positions: list
+    :type adjacency_grid: AdjacencyGrid
+    :type size: int
+    :type width: float
     """
     if size < 1:
         print("Cluster galaxy requested for less than 1 star", file=sys.stderr)
@@ -640,6 +646,8 @@ def ring_galaxy_calc_positions(positions, adjacency_grid, size, width):
 def box_galaxy_calc_positions(positions, adjacency_grid, size, width):
     """
     Calculate positions for the box galaxy shape.
+
+    :param float width:
     """
     for i in range(size):
         attempts = 100

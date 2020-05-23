@@ -29,7 +29,6 @@ BuildingType
 
         EffectsGroup
             scope = Source
-            activation = Source
             effects = Destroy
     ]
     icon = "icons/building/blackhole.png"

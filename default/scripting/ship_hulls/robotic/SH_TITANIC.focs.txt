@@ -3,6 +3,7 @@ Hull
     description = "SH_TITANIC_DESC"
     speed = 80
     fuel = 1.2
+    NoDefaultFuelEffect
     stealth = -35
     structure = 160
     slots = [
@@ -48,6 +49,7 @@ Hull
     ]
     effectsgroups = [
         [[BAD_FUEL_EFFICIENCY]]
+        [[ADD_HULL_FUEL_TO_MAX_FUEL_METER]]
         [[AVERAGE_BASE_FUEL_REGEN]]
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]

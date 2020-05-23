@@ -3,6 +3,7 @@ Hull
     description = "SH_SNOWFLAKE_3_BODY_DESC"
     speed = 65
     fuel = 5
+    NoDefaultFuelEffect
     stealth = 5
     structure = 120
     slots = [
@@ -19,10 +20,10 @@ Hull
     effectsgroups = [
         [[MONSTER_MOVE_ALWAYS]]
         [[INFINITE_FUEL]]
+        [[ADD_HULL_FUEL_TO_MAX_FUEL_METER]]
         [[MONSTER_SHIELD_REGENERATION]]
         EffectsGroup
             scope = Source
-            activation = Source
             effects = [
                 SetMaxCapacity partname = "SR_ICE_BEAM" value = Value + min(Source.Age*0.3, 18)
                 SetCapacity partname = "SR_ICE_BEAM" value = Value + min(Source.Age*0.3, 18)

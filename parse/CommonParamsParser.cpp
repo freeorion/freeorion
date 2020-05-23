@@ -9,23 +9,22 @@
 #include "EffectParser.h"
 #include "ValueRefParser.h"
 
-#include "../universe/Conditions.h"
+#include "../universe/ConditionAll.h"
 #include "../universe/Effect.h"
 #include "../universe/ValueRefs.h"
 
 #include <boost/spirit/include/phoenix.hpp>
-//TODO: replace with std::make_unique when transitioning to C++14
-#include <boost/smart_ptr/make_unique.hpp>
+
 
 namespace phoenix = boost::phoenix;
 
 namespace parse { namespace detail {
     /** Open parsed envelopes of consumption pairs. Return a map of unique_ptr. */
     template <typename T>
-    CommonParams::ConsumptionMap<T> OpenConsumptionEnvelopes(
+    ConsumptionMap<T> OpenConsumptionEnvelopes(
         const common_params_rules::ConsumptionMapPackaged<T>& in, bool& pass)
     {
-        CommonParams::ConsumptionMap<T> retval;
+        ConsumptionMap<T> retval;
         for (auto&& name_and_values : in)
             retval[name_and_values.first] = {
                 name_and_values.second.first.OpenEnvelope(pass),
@@ -140,7 +139,7 @@ namespace parse { namespace detail {
         consumable_special
             =   tok.Special_
             > (
-                label(tok.Name_)        > tok.string
+                label(tok.Name_)            > tok.string
                 >   label(tok.Consumption_) > double_rules.expr
                 > -(label(tok.Condition_)   > condition_parser )
             )

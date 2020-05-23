@@ -3,6 +3,7 @@ Hull
     description = "SH_NANOROBOTIC_DESC"
     speed = 80
     fuel = 1.5
+    NoDefaultFuelEffect
     stealth = 5
     structure = 30
     slots = [
@@ -49,6 +50,7 @@ Hull
             effects = SetStructure value = Value + Value
 
         [[AVERAGE_FUEL_EFFICIENCY]]
+        [[ADD_HULL_FUEL_TO_MAX_FUEL_METER]]
         [[AVERAGE_BASE_FUEL_REGEN]]
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]

@@ -22,14 +22,12 @@ SCAVANGE_FUEL_UNOWNED
 REGULAR_HULL_DETECTION
 '''EffectsGroup
         scope = Source
-        activation = Source
         effects = SetDetection value = Value + 25
 '''
 
 WEAK_VISION
 '''EffectsGroup
         scope = Source
-        activation = Source
         accountinglabel = "WEAK_VISION_LABEL"
         effects = SetDetection value = Value + 10
 '''
@@ -37,7 +35,6 @@ WEAK_VISION
 MODERATE_VISION
 '''EffectsGroup
         scope = Source
-        activation = Source
         accountinglabel = "MODERATE_VISION_LABEL"
         effects = SetDetection value = Value + 30
 '''
@@ -45,7 +42,6 @@ MODERATE_VISION
 GOOD_VISION
 '''EffectsGroup
         scope = Source
-        activation = Source
         accountinglabel = "GOOD_VISION_LABEL"
         effects = SetDetection value = Value + 50
 '''
@@ -53,7 +49,6 @@ GOOD_VISION
 EXCELLENT_VISION
 '''EffectsGroup
         scope = Source
-        activation = Source
         accountinglabel = "EXCELLENT_VISION_LABEL"
         effects = SetDetection value = Value + 150
 '''
@@ -65,19 +60,13 @@ EXCELLENT_VISION
 UNOWNED_OWNED_VISION_BONUS
 '''EffectsGroup
         scope = Source
-        activation = And [
-            Source
-            Unowned
-        ]
+        activation = Unowned
         stackinggroup = "@1@_VISION_BONUS"
         accountinglabel = "@1@_VISION_LABEL"
         effects = SetDetection value = Value + @2@
 EffectsGroup
         scope = Source
-        activation = And [
-            Source
-            Not Unowned
-        ]
+        activation = Not Unowned
         stackinggroup = "@1@_VISION_BONUS"
         accountinglabel = "@1@_VISION_LABEL"
         effects = SetDetection value = Value + @3@
@@ -86,10 +75,7 @@ EffectsGroup
 UNOWNED_GOOD_VISION
 '''EffectsGroup
         scope = Source
-        activation = And [
-            Source
-            Unowned
-        ]
+        activation = Unowned
         accountinglabel = "GOOD_VISION_LABEL"
         effects = SetDetection value = Value + 50
 '''
@@ -136,7 +122,8 @@ REFUEL_MESSAGE
             Species name = "SP_SLY"
             ContainedBy condition = And [
                 Object id = Source.SystemID
-                Contains condition = And [ Planet type = GasGiant
+                Contains condition = And [
+                    Planet type = GasGiant
                     Not OwnedBy affiliation = EnemyOf empire = Source.Owner
             ] ] ] )
          >= 1
@@ -160,7 +147,7 @@ AVERAGE_BASE_FUEL_REGEN
     description = "AVERAGE_BASE_FUEL_REGEN_DESC"
     scope = Source
     activation = And [
-        Turn low = Source.ArrivedOnTurn + 1
+        Turn low = LocalCandidate.ArrivedOnTurn + 1
         Stationary
         (Source.Fuel < Source.MaxFuel)
     ]
@@ -197,7 +184,7 @@ HULL_FUEL_EFFICIENCY_EFFECTSGROUP
             ]
             accountinglabel = "@1@_FUEL_EFFICIENCY_LABEL"
             priority = [[VERY_LATE_PRIORITY]]
-            effects = SetMaxFuel value = ((Value - HullFuel name = ThisHull) * @2@ + HullFuel name = ThisHull ) * Statistic If Condition = And [ Source HasTag name = "@1@_FUEL_EFFICIENCY" ]
+            effects = SetMaxFuel value = Value * @2@  * Statistic If Condition = And [ Source HasTag name = "@1@_FUEL_EFFICIENCY" ]
 
      // If a ship has less than one maximum fuel it will never be able to travel out of supply so refueling does not make sense.
      // In order to communicate that and to prevent wrong refuel sitreps, we set the maximum fuel for that case to zero
@@ -213,5 +200,17 @@ HULL_FUEL_EFFICIENCY_EFFECTSGROUP
             priority = [[METER_OVERRIDE_PRIORITY]]
             effects = If condition = (Value(Source.MaxFuel) < 1) effects = SetMaxFuel value = 0
 '''
+
+// This adds the hull's base fuel to the max fuel meter after applying the fuel efficiency multiplier.
+// Note the use of the default accountinglabel.
+ADD_HULL_FUEL_TO_MAX_FUEL_METER
+'''EffectsGroup
+            scope = Source
+            accountinglabel = "TT_SHIP_HULL"
+            priority = [[VERY_VERY_LATE_PRIORITY]]
+            effects = SetMaxFuel value = ( Value + HullFuel name = Source.Hull )
+'''
+
+
 
 #include "/scripting/common/priorities.macros"

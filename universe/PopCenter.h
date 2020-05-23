@@ -32,14 +32,14 @@ public:
     /** \name Accessors */ //@ {
     const std::string&  SpeciesName() const {return m_species_name;}        ///< returns the name of the species that populates this planet
     std::string         Dump(unsigned short ntabs = 0) const;
-    virtual float       InitialMeterValue(MeterType type) const = 0;        ///< implementation should return the initial value of the specified meter \a type
-    virtual float       CurrentMeterValue(MeterType type) const = 0;        ///< implementation should current value of the specified meter \a type
+    virtual Meter*      GetMeter(MeterType type) = 0;                       ///< implementation should return the requested Meter, or 0 if no such Meter of that type is found in this object
+    virtual const Meter*GetMeter(MeterType type) const = 0;                 ///< implementation should return the requested Meter, or 0 if no such Meter of that type is found in this object
     //@}
 
     /** \name Mutators */ //@ {
     void                Copy(std::shared_ptr<const PopCenter> copied_object, Visibility vis);
     void                Copy(std::shared_ptr<const PopCenter> copied_object);
-    void                SetSpecies(const std::string& species_name);        ///< sets the species of the population to \a species_name
+    virtual void        SetSpecies(const std::string& species_name);        ///< sets the species of the population to \a species_name
     virtual void        Reset();                                            ///< sets all meters to 0, clears race name
     virtual void        Depopulate();                                       ///< removes population
     //@}
@@ -51,19 +51,17 @@ protected:
     void PopCenterPopGrowthProductionResearchPhase();
 
 private:
-    virtual Meter*          GetMeter(MeterType type) = 0;       ///< implementation should return the requested Meter, or 0 if no such Meter of that type is found in this object
-    virtual const Meter*    GetMeter(MeterType type) const = 0; ///< implementation should return the requested Meter, or 0 if no such Meter of that type is found in this object
     virtual void            AddMeter(MeterType meter_type) = 0; ///< implementation should add a meter to the object so that it can be accessed with the GetMeter() functions
 
     std::string m_species_name = "";                            ///< the name of the species that occupies this planet
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
 // template implementations
-template <class Archive>
+template <typename Archive>
 void PopCenter::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_species_name);

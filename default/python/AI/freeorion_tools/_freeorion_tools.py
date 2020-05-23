@@ -1,5 +1,7 @@
 # This Python file uses the following encoding: utf-8
-from common import six
+from collections.abc import Mapping
+from io import StringIO
+
 import cProfile
 import logging
 import pstats
@@ -7,6 +9,7 @@ import re
 import traceback
 from functools import wraps
 from logging import debug, error
+from aistate_interface import get_aistate
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 
@@ -18,6 +21,16 @@ WHITE = '<rgba 255 255 255 255>%s</rgba>'
 def dict_from_map(thismap):
     """Convert C++ map to python dict."""
     return {el.key(): el.data() for el in thismap}
+
+
+def dict_from_map_recursive(thismap):
+    retval = {}
+    try:
+        for el in thismap:
+            retval[el.key()] = dict_from_map_recursive(el.data())
+        return retval
+    except Exception:
+        return dict_from_map(thismap)
 
 
 def get_ai_tag_grade(tag_list, tag_type):
@@ -110,7 +123,7 @@ class ConsoleLogHandler(logging.Handler):
         except (KeyboardInterrupt, SystemExit):
             raise
         # Hide errors from within the ConsoleLogHandler
-        except:
+        except:  # noqa: E722
             self.handleError(record)
 
 
@@ -143,10 +156,12 @@ def chat_human(message):
     debug("Chat Message to human: %s", remove_tags(message))
 
 
-def cache_by_session(func):
+def cache_for_session(func):
     """
-    Cache a function value by session.
+    Cache a function value for current session.
+
     Wraps only functions with hashable arguments.
+    Use this only if the called function return value is constant throughout the game.
     """
     _cache = {}
 
@@ -162,9 +177,11 @@ def cache_by_session(func):
     return wrapper
 
 
-def cache_by_session_with_turnwise_update(func):
+def cache_for_current_turn(func):
     """
-    Cache a function value during session, updated each turn.
+    Cache a function value updated each turn.
+
+    The cache is non-persistent through loading a game.
     Wraps only functions with hashable arguments.
     """
     _cache = {}
@@ -182,15 +199,15 @@ def cache_by_session_with_turnwise_update(func):
     return wrapper
 
 
-def cache_by_turn(func):
+def cache_by_turn_persistent(func):
     """
-    Cache a function value by turn, stored in foAIstate so also provides a history that may be analysed. The cache
-    is keyed by the original function name.  Wraps only functions without arguments.
-    Cache result is stored in savegame, will crash with picle error if result contains any boost object.
-    """
-    # avoid circular import
-    from aistate_interface import get_aistate
+    Cache a function value by turn, persistent through loading a game.
 
+    It will also provides a history that may be analysed.
+    The cache is keyed by the original function name. It only wraps functions without arguments.
+
+    As the result is stored in AIstate, its type must be trusted by the savegame_codec module.
+    """
     @wraps(func)
     def wrapper():
         if get_aistate() is None:
@@ -212,7 +229,7 @@ def tuple_to_dict(tup):
     except TypeError:
         try:
             return {k: v for k, v in [tup]}
-        except:
+        except:  # noqa: E722
             error("Can't convert tuple_list to dict: %s", tup)
             return {}
 
@@ -225,7 +242,7 @@ def profile(func):
         pr.enable()
         retval = func(*args, **kwargs)
         pr.disable()
-        s = six.StringIO()
+        s = StringIO()
         sortby = 'cumulative'
         ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
         ps.print_stats()
@@ -235,6 +252,7 @@ def profile(func):
     return wrapper
 
 
+@cache_for_current_turn
 def get_partial_visibility_turn(obj_id):
     """Return the last turn an object had at least partial visibility.
 
@@ -246,7 +264,7 @@ def get_partial_visibility_turn(obj_id):
     return visibility_turns_map.get(fo.visibility.partial, -9999)
 
 
-class ReadOnlyDict(six.moves.collections_abc.Mapping):
+class ReadOnlyDict(Mapping):
     """A dict that offers only read access.
 
      Note that if the values of the ReadOnlyDict are mutable,
@@ -266,6 +284,11 @@ class ReadOnlyDict(six.moves.collections_abc.Mapping):
           print k, v
       my_dict[5] = 4  # throws TypeError
       del my_dict[1]  # throws TypeError
+
+      Implementation note:
+
+     The checks that values are hashable is the main difference from the built-in types.MappingProxyType.
+     MappingProxyType has slightly different signature and cannot be inherited.
      """
 
     def __init__(self, *args, **kwargs):
@@ -300,7 +323,7 @@ def dump_universe():
         fo.getUniverse().dump()  # goes to debug logger
 
 
-class LogLevelSwitcher(object):
+class LogLevelSwitcher:
     """A context manager class which controls the log level within its scope.
 
     Example usage:
@@ -372,3 +395,14 @@ def assertion_fails(cond, msg="", logger=logging.error):
     logger("%s Traceback (most recent call last): %s", header,
            ''.join(traceback.format_list(stack)))
     return True
+
+
+@cache_for_session
+def get_species_tag_grade(species_name, tag_type):
+    if not species_name:
+        return ""
+    species = fo.getSpecies(species_name)
+    if assertion_fails(species is not None):
+        return ""
+
+    return get_ai_tag_grade(species.tags, tag_type)

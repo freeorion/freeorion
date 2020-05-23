@@ -1,7 +1,6 @@
 #include "MultiplayerLobbyWnd.h"
 
 #include <GG/Button.h>
-#include <GG/DrawUtil.h>
 #include <GG/Layout.h>
 #include <GG/StaticGraphic.h>
 
@@ -9,7 +8,7 @@
 #include "../util/Logger.h"
 #include "../util/Serialize.h"
 #include "../network/Message.h"
-#include "../network/ClientNetworking.h"
+#include "../client/ClientNetworking.h"
 #include "../client/human/HumanClientApp.h"
 #include "Hotkeys.h"
 #include "Sound.h"
@@ -49,12 +48,12 @@ namespace {
     // players or the host.
     struct PlayerRow : GG::ListBox::Row {
         PlayerRow() :
-            GG::ListBox::Row(GG::X(90), PlayerRowHeight(), ""),
+            GG::ListBox::Row(GG::X(90), PlayerRowHeight()),
             m_player_data(),
             m_player_id(Networking::INVALID_PLAYER_ID)
         {}
         PlayerRow(const PlayerSetupData& player_data, int player_id) :
-            GG::ListBox::Row(GG::X(90), PlayerRowHeight(), ""),
+            GG::ListBox::Row(GG::X(90), PlayerRowHeight()),
             m_player_data(player_data),
             m_player_id(player_id)
         {}
@@ -85,9 +84,10 @@ namespace {
             {}
 
             TypeRow(GG::X w, GG::Y h, Networking::ClientType type_, bool show_add_drop = false) :
-                GG::DropDownList::Row(w, h, "PlayerTypeSelectorRow"),
+                GG::DropDownList::Row(w, h),
                 type(type_)
             {
+                SetDragDropDataType("PlayerTypeSelectorRow");
                 switch (type) {
                 case Networking::CLIENT_TYPE_AI_PLAYER:
                     if (show_add_drop)
@@ -209,7 +209,7 @@ namespace {
             }
 
             SelChangedSignal.connect(
-                boost::bind(&TypeSelector::SelectionChanged, this, _1));
+                boost::bind(&TypeSelector::SelectionChanged, this, boost::placeholders::_1));
         }
 
         void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
@@ -249,8 +249,11 @@ namespace {
         void CompleteConstruction() override {
             PlayerRow::CompleteConstruction();
 
+            using boost::placeholders::_1;
+
             // human / AI / observer indicator / selector
-            auto type_drop = GG::Wnd::Create<TypeSelector>(GG::X(90), PlayerRowHeight(), m_player_data.m_client_type, m_initial_disabled);
+            auto type_drop = GG::Wnd::Create<TypeSelector>(
+                GG::X(90), PlayerRowHeight(), m_player_data.m_client_type, m_initial_disabled);
             push_back(type_drop);
             if (m_initial_disabled)
                 type_drop->Disable();
@@ -359,14 +362,13 @@ namespace {
             DataChangedSignal();
         }
 
-        bool                                     m_initial_disabled;
+        bool m_initial_disabled;
     };
 
     // Row for player info when loading a game
     struct LoadGamePlayerRow : PlayerRow {
         LoadGamePlayerRow(const PlayerSetupData& player_data, int player_id, const std::map<int, SaveGameEmpireData>& save_game_empire_data, bool disabled, bool in_game) :
             PlayerRow(player_data, player_id),
-            m_empire_list(nullptr),
             m_save_game_empire_data(save_game_empire_data),
             m_initial_disabled(disabled),
             m_in_game(in_game)
@@ -374,6 +376,8 @@ namespace {
 
         void CompleteConstruction() override {
             PlayerRow::CompleteConstruction();
+
+            using boost::placeholders::_1;
 
             // human / AI / observer indicator / selector
             auto type_drop = GG::Wnd::Create<TypeSelector>(GG::X(90), PlayerRowHeight(), m_player_data.m_client_type, m_initial_disabled);
@@ -503,10 +507,11 @@ namespace {
         void CompleteConstruction() override {
             PlayerRow::CompleteConstruction();
 
-            auto type_drop = GG::Wnd::Create<TypeSelector>(GG::X(90), PlayerRowHeight(), Networking::INVALID_CLIENT_TYPE, m_initial_disabled);
+            auto type_drop = GG::Wnd::Create<TypeSelector>(
+                GG::X(90), PlayerRowHeight(), Networking::INVALID_CLIENT_TYPE, m_initial_disabled);
             push_back(type_drop);
             type_drop->TypeChangedSignal.connect(
-                boost::bind(&LoadGameEmpireRow::PlayerTypeChanged, this, _1));
+                boost::bind(&LoadGameEmpireRow::PlayerTypeChanged, this, boost::placeholders::_1));
             // player name text
             push_back(GG::Wnd::Create<CUILabel>(""));
             // empire name
@@ -533,9 +538,8 @@ namespace {
         }
 
         std::shared_ptr<EmpireColorSelector> m_color_selector;
-        int                                  m_empire_id;
         const SaveGameEmpireData&            m_save_game_empire_data;
-        bool                                 m_initial_disabled;
+        bool                                 m_initial_disabled = false;
     };
 
     // Row for indicating that an AI client should be added to the game
@@ -547,10 +551,11 @@ namespace {
         void CompleteConstruction() override {
             PlayerRow::CompleteConstruction();
 
-            auto type_drop = GG::Wnd::Create<TypeSelector>(GG::X(90), PlayerRowHeight(), Networking::INVALID_CLIENT_TYPE, false);
+            auto type_drop = GG::Wnd::Create<TypeSelector>(
+                GG::X(90), PlayerRowHeight(), Networking::INVALID_CLIENT_TYPE, false);
             push_back(type_drop);
             type_drop->TypeChangedSignal.connect(
-                boost::bind(&EmptyPlayerRow::PlayerTypeChanged, this, _1));
+                boost::bind(&EmptyPlayerRow::PlayerTypeChanged, this, boost::placeholders::_1));
             // extra entries to make layout consistent
             push_back(GG::Wnd::Create<CUILabel>(""));
             push_back(GG::Wnd::Create<CUILabel>(""));
@@ -596,18 +601,7 @@ namespace {
 
 MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
     CUIWnd(UserString("MPLOBBY_WINDOW_TITLE"),
-           GG::ONTOP | GG::INTERACTIVE | GG::RESIZABLE),
-    m_chat_wnd(nullptr),
-    m_any_can_edit(nullptr),
-    m_new_load_game_buttons(nullptr),
-    m_galaxy_setup_panel(nullptr),
-    m_browse_saves_btn(nullptr),
-    m_preview_image(nullptr),
-    m_players_lb(nullptr),
-    m_players_lb_headers(nullptr),
-    m_ready_bn(nullptr),
-    m_cancel_bn(nullptr),
-    m_start_conditions_text(nullptr)
+           GG::ONTOP | GG::INTERACTIVE | GG::RESIZABLE)
 {}
 
 void MultiPlayerLobbyWnd::CompleteConstruction() {
@@ -683,20 +677,15 @@ void MultiPlayerLobbyWnd::CompleteConstruction() {
     m_save_file_text->Disable();
     m_browse_saves_btn->Disable();
 
-    m_any_can_edit->CheckedSignal.connect(
-        boost::bind(&MultiPlayerLobbyWnd::AnyCanEdit, this, _1));
-    m_new_load_game_buttons->ButtonChangedSignal.connect(
-        boost::bind(&MultiPlayerLobbyWnd::NewLoadClicked, this, _1));
-    m_galaxy_setup_panel->SettingsChangedSignal.connect(
-        boost::bind(&MultiPlayerLobbyWnd::GalaxySetupPanelChanged, this));
-    m_browse_saves_btn->LeftClickedSignal.connect(
-        boost::bind(&MultiPlayerLobbyWnd::SaveGameBrowse, this));
-    m_ready_bn->LeftClickedSignal.connect(
-        boost::bind(&MultiPlayerLobbyWnd::ReadyClicked, this));
-    m_galaxy_setup_panel->ImageChangedSignal.connect(
-        boost::bind(&MultiPlayerLobbyWnd::PreviewImageChanged, this, _1));
-    m_cancel_bn->LeftClickedSignal.connect(
-        boost::bind(&MultiPlayerLobbyWnd::CancelClicked, this));
+    using boost::placeholders::_1;
+
+    m_any_can_edit->CheckedSignal.connect(boost::bind(&MultiPlayerLobbyWnd::AnyCanEdit, this, _1));
+    m_new_load_game_buttons->ButtonChangedSignal.connect(boost::bind(&MultiPlayerLobbyWnd::NewLoadClicked, this, _1));
+    m_galaxy_setup_panel->SettingsChangedSignal.connect(boost::bind(&MultiPlayerLobbyWnd::GalaxySetupPanelChanged, this));
+    m_browse_saves_btn->LeftClickedSignal.connect(boost::bind(&MultiPlayerLobbyWnd::SaveGameBrowse, this));
+    m_ready_bn->LeftClickedSignal.connect(boost::bind(&MultiPlayerLobbyWnd::ReadyClicked, this));
+    m_galaxy_setup_panel->ImageChangedSignal.connect(boost::bind(&MultiPlayerLobbyWnd::PreviewImageChanged, this, _1));
+    m_cancel_bn->LeftClickedSignal.connect(boost::bind(&MultiPlayerLobbyWnd::CancelClicked, this));
 
     TraceLogger() << "MultiPlayerLobbyWnd::CompleteConstruction finishing...";
     CUIWnd::CompleteConstruction();
@@ -706,7 +695,7 @@ void MultiPlayerLobbyWnd::CompleteConstruction() {
 }
 
 MultiPlayerLobbyWnd::PlayerLabelRow::PlayerLabelRow(GG::X width /* = GG::X(580)*/) :
-    GG::ListBox::Row(width, PlayerRowHeight(), "")
+    GG::ListBox::Row(width, PlayerRowHeight())
 {}
 
 void MultiPlayerLobbyWnd::PlayerLabelRow::CompleteConstruction() {

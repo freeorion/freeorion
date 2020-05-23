@@ -2,8 +2,8 @@
 
 #include "../util/i18n.h"
 #include "../util/Logger.h"
+#include "../util/AppInterface.h"
 #include "../Empire/EmpireManager.h"
-#include "Meter.h"
 #include "System.h"
 #include "Special.h"
 #include "Pathfinder.h"
@@ -173,7 +173,7 @@ std::string UniverseObject::Dump(unsigned short ntabs) const {
 
     std::stringstream os;
 
-    os << boost::lexical_cast<std::string>(this->ObjectType()) << " "
+    os << this->ObjectType() << " "
        << this->ID() << ": "
        << this->Name();
     if (system) {
@@ -247,22 +247,6 @@ const Meter* UniverseObject::GetMeter(MeterType type) const {
     return nullptr;
 }
 
-float UniverseObject::CurrentMeterValue(MeterType type) const {
-    auto it = m_meters.find(type);
-    if (it == m_meters.end())
-        throw std::invalid_argument("UniverseObject::CurrentMeterValue was passed a MeterType that this UniverseObject does not have: " + boost::lexical_cast<std::string>(type));
-
-    return it->second.Current();
-}
-
-float UniverseObject::InitialMeterValue(MeterType type) const {
-    auto it = m_meters.find(type);
-    if (it == m_meters.end())
-        throw std::invalid_argument("UniverseObject::InitialMeterValue was passed a MeterType that this UniverseObject does not have: " + boost::lexical_cast<std::string>(type));
-
-    return it->second.Initial();
-}
-
 void UniverseObject::AddMeter(MeterType meter_type) {
     if (INVALID_METER_TYPE == meter_type)
         ErrorLogger() << "UniverseObject::AddMeter asked to add invalid meter type!";
@@ -330,9 +314,8 @@ Meter* UniverseObject::GetMeter(MeterType type) {
 }
 
 void UniverseObject::BackPropagateMeters() {
-    for (MeterType i = MeterType(0); i != NUM_METER_TYPES; i = MeterType(i + 1))
-        if (Meter* meter = this->GetMeter(i))
-            meter->BackPropagate();
+    for (auto& m : m_meters)
+        m.second.BackPropagate();
 }
 
 void UniverseObject::SetOwner(int id) {
@@ -366,32 +349,35 @@ void UniverseObject::SetSpecialCapacity(const std::string& name, float capacity)
 void UniverseObject::RemoveSpecial(const std::string& name)
 { m_specials.erase(name); }
 
-std::map<MeterType, Meter> UniverseObject::CensoredMeters(Visibility vis) const {
-    std::map<MeterType, Meter> retval;
+UniverseObject::MeterMap UniverseObject::CensoredMeters(Visibility vis) const {
+    MeterMap retval;
     if (vis >= VIS_PARTIAL_VISIBILITY) {
         retval = m_meters;
     } else if (vis == VIS_BASIC_VISIBILITY && m_meters.count(METER_STEALTH))
-        retval[METER_STEALTH] = Meter(Meter::LARGE_VALUE, Meter::LARGE_VALUE);
+        retval.emplace(std::make_pair(METER_STEALTH, Meter{Meter::LARGE_VALUE, Meter::LARGE_VALUE}));
     return retval;
 }
 
 void UniverseObject::ResetTargetMaxUnpairedMeters() {
-    if (Meter* meter = GetMeter(METER_STEALTH))
-        meter->ResetCurrent();
+    auto it = m_meters.find(METER_STEALTH);
+    if (it != m_meters.end())
+        it->second.ResetCurrent();
 }
 
 void UniverseObject::ResetPairedActiveMeters() {
     // iterate over paired active meters (those that have an associated max or
     // target meter.  if another paired meter type is added to Enums.h, it
     // should be added here as well.
-    for (MeterType meter_type = MeterType(METER_POPULATION);
-         meter_type <= MeterType(METER_TROOPS);
-         meter_type = MeterType(meter_type + 1))
-    {
-        if (Meter* meter = GetMeter(meter_type))
-            meter->SetCurrent(meter->Initial());
+    for (auto& m : m_meters) {
+        if (m.first > METER_TROOPS)
+            break;
+        if (m.first >= METER_POPULATION)
+            m.second.SetCurrent(m.second.Initial());
     }
 }
 
-void UniverseObject::ClampMeters()
-{ GetMeter(METER_STEALTH)->ClampCurrentToRange(); }
+void UniverseObject::ClampMeters() {
+    auto it = m_meters.find(METER_STEALTH);
+    if (it != m_meters.end())
+        it->second.ClampCurrentToRange();
+}

@@ -31,7 +31,7 @@ private:
     std::string m_label;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
@@ -60,6 +60,9 @@ SitRepEntry               CreatePlanetDepopulatedSitRep(int planet_id);
 FO_COMMON_API SitRepEntry CreatePlanetColonizedSitRep(int planet_id, const std::string& species);
 FO_COMMON_API SitRepEntry CreatePlanetOutpostedSitRep(int planet_id);
 
+FO_COMMON_API SitRepEntry CreatePlanetGiftedSitRep(int planet_id, int empire_id);
+FO_COMMON_API SitRepEntry CreateFleetGiftedSitRep(int fleet_id, int empire_id);
+
 FO_COMMON_API SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, int recipient_empire_id);
 SitRepEntry               CreateEmpireEliminatedSitRep(int empire_id);
 SitRepEntry               CreateVictorySitRep(const std::string& reason_string, int empire_id);
@@ -67,7 +70,7 @@ FO_COMMON_API SitRepEntry CreateSitRep(const std::string& template_string, int t
                                        const std::vector<std::pair<std::string, std::string>>& parameters, const std::string label = "", bool stringtable_lookup = true);
 //! @}
 
-template <class Archive>
+template <typename Archive>
 void SitRepEntry::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(VarText)

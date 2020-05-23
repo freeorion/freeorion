@@ -6,8 +6,7 @@
     \section design_purpose Purpose 
     GG is designed to achieve several goals:
     - Platform-independence: GG should be buildable on any platform that supports OpenGL
-    - Driver-independence: GG should be a standalone GUI framework that does not require any particular application framework;
-    though a SDL driver are supplied, GG should be usable with any driver code the user wishes to supply
+    - Driver-independence: GG should be a standalone GUI framework that does not require any particular application framework
     - Easy extensibility: new controls and GUI behavior should be easy to incorporate
     - Complete graphical control for the user/designer: the user should not be limited by the author's lack of artistic skill!
     - Independence of UI elements from the source code: GG UI elements should be configurable as text files, so that UI design 
@@ -48,9 +47,7 @@
     GG supplies a render loop in the form of GUI::Run().  For many
     applications, this default render loop is sufficient.  However, for users
     who are integrating GG with an existing application that already has its
-    own render loop, there is another way.  See the GG::EventPump
-    documentation for info on how you can update GG's GUI once per frame from
-    your application's render loop.
+    own render loop, there is another way.  See the GG::GUI::RunModal.
 
     \section arch_UI_overview UI Overview
     \subsection arch_input_events Input Events
@@ -101,24 +98,23 @@
     (position and button depression), setting mouse delay repeat (see GG::GUI
     for a description of this), entering and exiting from an orthographic
     projection (2D) rendering mode.  Most of these services must be provided
-    by the user when subclassing from GG::GUI; if SDLGUI is used, these
-    services are already implemented.
+    by the user when subclassing from GG::GUI.
 
     <p>
 
     GG::GUI does a variety of things for the user, some of which are not
     strictly necessary for the core GUI functionality.  GG::GUI provides
-    limited timing info via FPS() and DeltaT().  These are provided to
-    indicate how fast the GUI is rendering, and how long it has been since the
-    last frame was rendered.  There is also a font manager, an
-    application-wide font "pool", from which the user can request fonts.  The
-    font pool loads and stores the fonts as needed by the application, and
-    multiple requests for the same font at the same size will result in the
-    creation of only one font object.  A texture manager exists which does a
-    similar job with textures.  If the user wants to programmatically create
-    textures, she can also add them to the texture pool, provide a name, and
-    request that texture as many times as needed.  OpenGL texture objects are
-    used as the underlying texture rendering method.  */
+    limited timing info via FPS(). These are provided to indicate how fast the
+    GUI is rendering, and how long it has been since the last frame was
+    rendered.  There is also a font manager, an application-wide font "pool",
+    from which the user can request fonts.  The font pool loads and stores the
+    fonts as needed by the application, and multiple requests for the same font
+    at the same size will result in the creation of only one font object.  A
+    texture manager exists which does a similar job with textures.  If the user
+    wants to programmatically create textures, she can also add them to the
+    texture pool, provide a name, and request that texture as many times as
+    needed.  OpenGL texture objects are used as the underlying texture
+    rendering method.  */
 
 /** \page sigs_n_slots Signals and Slots
     \section sigs_n_slots_definition Sig-who? Slo-what?
@@ -221,9 +217,9 @@
     \section text_handling_user_input User Input
 
     Unicode characters can be input by the user, as long as the input driver
-    handles Unicode input.  The SDL reference driver does.  GG will convert
-    any Unicode input to a multibyte UTF-8 sequence before adding it to a
-    user-editable string (e.g. as in a GG::Edit).
+    handles Unicode input.  GG will convert any Unicode input to a multibyte
+    UTF-8 sequence before adding it to a user-editable string (e.g. as in a
+    GG::Edit).
 
 */
 
@@ -277,9 +273,6 @@
     At least one of:
     - libpng - http://www.libpng.org/pub/png/libpng.html
     - libtiff - http://www.libtiff.org
-
-    Optional libraries for input drivers:
-    - SDL >= 1.2 - http://www.libsdl.org
 
     GG's documentation relies on Doxygen
     (http://www.stack.nl/~dimitri/doxygen). If you have Doxygen installed in a
@@ -458,11 +451,6 @@
     which arbitrarily many slots can be connected.  \see The GG::GUI
     description.
 
-    \section tour_user_input_drivers User Input Drivers
-
-    A <a href="http://libsdl.org">SDL</a> input driver is currently available
-    for use with GG.
-
     \section tour_timers Timers
 
     Timers are available to which slots can be connected.  A timer fires its
@@ -471,16 +459,6 @@
     GG's normal processing loop, so if the application is cycling slowly (due
     to heavy processing, etc.), timers can fire arbitrarily less frequently
     than desired.
-
-    \section tour_event_pumps Event Pumps
-
-    GG abstracts out the inner loop that processes events and renders frames
-    into a class called GG::EventPump.  Most users will never need to use
-    event pumps, but those users writing a new input driver will.  Note that
-    if you are integrating GG with an existing application that has its own
-    render loop, you will almost certainly need to use GG::EventPump.  See the
-    GG::EventPump documnentation for details.
-
 */
 
 /** \mainpage GG Documentation Overviews

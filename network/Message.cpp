@@ -179,7 +179,7 @@ Message GameStartMessage(bool single_player_game, int empire_id,
                          const Universe& universe, const SpeciesManager& species,
                          CombatLogManager& combat_logs, const SupplyManager& supply,
                          const std::map<int, PlayerInfo>& players,
-                         const GalaxySetupData& galaxy_setup_data,
+                         GalaxySetupData galaxy_setup_data,
                          bool use_binary_serialization)
 {
     std::ostringstream os;
@@ -198,6 +198,7 @@ Message GameStartMessage(bool single_player_game, int empire_id,
             bool loaded_game_data = false;
             oa << BOOST_SERIALIZATION_NVP(players)
                << BOOST_SERIALIZATION_NVP(loaded_game_data);
+            galaxy_setup_data.m_encoding_empire = empire_id;
             oa << BOOST_SERIALIZATION_NVP(galaxy_setup_data);
         } else {
             freeorion_xml_oarchive oa(os);
@@ -213,6 +214,7 @@ Message GameStartMessage(bool single_player_game, int empire_id,
             bool loaded_game_data = false;
             oa << BOOST_SERIALIZATION_NVP(players)
                << BOOST_SERIALIZATION_NVP(loaded_game_data);
+            galaxy_setup_data.m_encoding_empire = empire_id;
             oa << BOOST_SERIALIZATION_NVP(galaxy_setup_data);
         }
     }
@@ -225,7 +227,7 @@ Message GameStartMessage(bool single_player_game, int empire_id,
                          CombatLogManager& combat_logs, const SupplyManager& supply,
                          const std::map<int, PlayerInfo>& players,
                          const OrderSet& orders, const SaveGameUIData* ui_data,
-                         const GalaxySetupData& galaxy_setup_data,
+                         GalaxySetupData galaxy_setup_data,
                          bool use_binary_serialization)
 {
     std::ostringstream os;
@@ -251,6 +253,7 @@ Message GameStartMessage(bool single_player_game, int empire_id,
                 oa << boost::serialization::make_nvp("ui_data", *ui_data);
             bool save_state_string_available = false;
             oa << BOOST_SERIALIZATION_NVP(save_state_string_available);
+            galaxy_setup_data.m_encoding_empire = empire_id;
             oa << BOOST_SERIALIZATION_NVP(galaxy_setup_data);
         } else {
             freeorion_xml_oarchive oa(os);
@@ -269,10 +272,18 @@ Message GameStartMessage(bool single_player_game, int empire_id,
             Serialize(oa, orders);
             bool ui_data_available = (ui_data != nullptr);
             oa << BOOST_SERIALIZATION_NVP(ui_data_available);
-            if (ui_data_available)
-                oa << boost::serialization::make_nvp("ui_data", *ui_data);
+            if (ui_data_available) {
+                if (ui_data) {
+                    oa << boost::serialization::make_nvp("ui_data", *ui_data);
+                } else {
+                    ErrorLogger() << "GameStartMessage expected UI data but it was nullptr";
+                    SaveGameUIData temp_UI_data;
+                    oa << boost::serialization::make_nvp("ui_data", temp_UI_data);
+                }
+            }
             bool save_state_string_available = false;
             oa << BOOST_SERIALIZATION_NVP(save_state_string_available);
+            galaxy_setup_data.m_encoding_empire = empire_id;
             oa << BOOST_SERIALIZATION_NVP(galaxy_setup_data);
         }
     }
@@ -285,7 +296,7 @@ Message GameStartMessage(bool single_player_game, int empire_id,
                          CombatLogManager& combat_logs, const SupplyManager& supply,
                          const std::map<int, PlayerInfo>& players,
                          const OrderSet& orders, const std::string* save_state_string,
-                         const GalaxySetupData& galaxy_setup_data,
+                         GalaxySetupData galaxy_setup_data,
                          bool use_binary_serialization)
 {
     std::ostringstream os;
@@ -311,6 +322,7 @@ Message GameStartMessage(bool single_player_game, int empire_id,
             oa << BOOST_SERIALIZATION_NVP(save_state_string_available);
             if (save_state_string_available)
                 oa << boost::serialization::make_nvp("save_state_string", *save_state_string);
+            galaxy_setup_data.m_encoding_empire = empire_id;
             oa << BOOST_SERIALIZATION_NVP(galaxy_setup_data);
         } else {
             freeorion_xml_oarchive oa(os);
@@ -331,8 +343,16 @@ Message GameStartMessage(bool single_player_game, int empire_id,
             oa << BOOST_SERIALIZATION_NVP(ui_data_available);
             bool save_state_string_available = (save_state_string != nullptr);
             oa << BOOST_SERIALIZATION_NVP(save_state_string_available);
-            if (save_state_string_available)
-                oa << boost::serialization::make_nvp("save_state_string", *save_state_string);
+            if (save_state_string_available) {
+                if (save_state_string) {
+                    oa << boost::serialization::make_nvp("save_state_string", *save_state_string);
+                } else {
+                    ErrorLogger() << "GameStartMessage expectes save_state_string but it was nullptr";
+                    std::string temp_sss;
+                    oa << boost::serialization::make_nvp("save_state_string", temp_sss);
+                }
+            }
+            galaxy_setup_data.m_encoding_empire = empire_id;
             oa << BOOST_SERIALIZATION_NVP(galaxy_setup_data);
         }
     }
@@ -553,12 +573,19 @@ Message RequestCombatLogsMessage(const std::vector<int>& ids) {
     return Message(Message::REQUEST_COMBAT_LOGS, os.str());
 }
 
-Message DispatchCombatLogsMessage(const std::vector<std::pair<int, const CombatLog>>& logs) {
+Message DispatchCombatLogsMessage(const std::vector<std::pair<int, const CombatLog>>& logs,
+                                  bool use_binary_serialization)
+{
     std::ostringstream os;
     {
-        freeorion_xml_oarchive oa(os);
         try {
-            oa << BOOST_SERIALIZATION_NVP(logs);
+            if (use_binary_serialization) {
+                freeorion_bin_oarchive oa(os);
+                oa << BOOST_SERIALIZATION_NVP(logs);
+            } else {
+                freeorion_xml_oarchive oa(os);
+                oa << BOOST_SERIALIZATION_NVP(logs);
+            }
         } catch (const std::exception& e) {
             ErrorLogger() << "Caught exception serializing combat logs: " << e.what();
         }
@@ -1233,16 +1260,32 @@ FO_COMMON_API void ExtractDispatchCombatLogsMessageData(
     const Message& msg, std::vector<std::pair<int, CombatLog>>& logs)
 {
     try {
-        std::istringstream is(msg.Text());
-        freeorion_xml_iarchive ia(is);
-        ia >> BOOST_SERIALIZATION_NVP(logs);
+        bool try_xml = false;
+        if (std::strncmp(msg.Data(), "<?xml", 5)) {
+            try {
+                // first attempt binary deserialization
+                std::istringstream is(msg.Text());
+                freeorion_bin_iarchive ia(is);
+                ia >> BOOST_SERIALIZATION_NVP(logs);
+            } catch (...) {
+                try_xml = true;
+            }
+        } else {
+            try_xml = true;
+        }
+        if (try_xml) {
+            // try again with more-portable XML deserialization
+            std::istringstream is(msg.Text());
+            freeorion_xml_iarchive ia(is);
+            ia >> BOOST_SERIALIZATION_NVP(logs);
+        }
+
     } catch(const std::exception& err) {
         ErrorLogger() << "ExtractDispatchCombatLogMessageData(const Message& msg, std::vector<std::pair<int, const CombatLog&>>& logs) failed!  Message:\n"
                       << msg.Text() << "\n"
                       << "Error: " << err.what();
         throw err;
     }
-
 }
 
 FO_COMMON_API void ExtractLoggerConfigMessageData(

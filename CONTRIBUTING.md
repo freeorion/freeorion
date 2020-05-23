@@ -1,11 +1,13 @@
-# How to contribute to FreeOrion
+Contributing to FreeOrion
+=========================
 
 As an open source project, FreeOrion both relies on contributions from long time
 developers and one time contributors.  This guide should help you to create
 contributions that can be easily integrated into the FreeOrion project.
 
 
-## I found an error in the game or I want to file a bug report
+I found an error in the game or I want to file a bug report
+-----------------------------------------------------------
 
 So you stumbled on a reproducible error in FreeOrion?  You can report it in
 [FreeOrion Issues].  Please check before reporting the error if
@@ -19,7 +21,8 @@ Follow up may take some time, however, depending on when someone has time to
 review the submission.
 
 
-## I want to contribute code
+I want to contribute code
+-------------------------
 
 We gladly accept useful additions to the project code and scripts.  However, before
 you start developing something, please inform the developers about your endeavours
@@ -28,10 +31,10 @@ that you're working on the bug.  If you want to implement a new feature, get in
 touch with the developers via the [FreeOrion Forum] to check if the feature complies
 with our idea of the game.
 
-To start contributing, first clone [FreeOrion Git] repository.  After that, create
-a branch with a concise name; if the branch implements an issue call it
-`fix-<Issue Number>`.  To publish your contribution, create a [Pull Request] and
-wait for feedback from the developers.
+To start contributing, first clone [FreeOrion Git] repository by following the
+[Build Instructions](BUILD.md).  After that, create a branch with a concise name;
+if the branch implements an issue call it `fix-<Issue Number>`.  To publish your
+contribution, create a [Pull Request] and wait for feedback from the developers.
 
 By submitting a pull request, you agree to license its contents under the applicable
 [FreeOrion license(s)].
@@ -56,7 +59,8 @@ To ensure your PR won't be rejected, please make sure that:
 To build FreeOrion please refer to the [Build Instructions](BUILD.md).
 
 
-## Further documentation
+Further documentation
+---------------------
 
 There are further specialized documents available that should be considered
 when working within the FreeOrion project.  Those are:

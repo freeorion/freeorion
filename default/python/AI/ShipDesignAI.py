@@ -45,16 +45,17 @@ global variables:
 import copy
 import math
 from collections import Counter, defaultdict
-from logging import debug, error, info, warn
+from logging import debug, error, info, warning
+from typing import Iterable
 
 import freeOrionAIInterface as fo
 
 import AIDependencies
 import CombatRatingsAI
 import FleetUtilsAI
-from AIDependencies import INVALID_ID
+from AIDependencies import INVALID_ID, Tags
 from aistate_interface import get_aistate
-from freeorion_tools import UserString, get_ai_tag_grade, tech_is_complete
+from freeorion_tools import UserString, get_species_tag_grade, tech_is_complete, assertion_fails, cache_for_session
 from turn_state import state
 
 # Define meta classes for the ship parts  TODO storing as set may not be needed anymore
@@ -72,14 +73,6 @@ FIGHTER_BAY = frozenset({fo.shipPartClass.fighterBay})
 FIGHTER_HANGAR = frozenset({fo.shipPartClass.fighterHangar})
 ALL_META_CLASSES = frozenset({WEAPONS, ARMOUR, DETECTION, FUEL, STEALTH, SHIELDS,
                               COLONISATION, ENGINES, TROOPS, GENERAL})
-
-# Prefixes for the test ship designs
-TESTDESIGN_NAME_BASE = "AI_TESTDESIGN"
-TESTDESIGN_NAME_HULL = TESTDESIGN_NAME_BASE + "_HULL"
-TESTDESIGN_NAME_PART = TESTDESIGN_NAME_BASE + "_PART"
-
-# Hardcoded preferred hullname for testdesigns, should be a hull without conditions but with maximum different slottypes
-TESTDESIGN_PREFERRED_HULL = "SH_BASIC_MEDIUM"
 
 MISSING_REQUIREMENT_MULTIPLIER = -1000
 INVALID_DESIGN_RATING = -999  # this needs to be negative but greater than MISSING_REQUIREMENT_MULTIPLIER
@@ -105,18 +98,16 @@ def _get_capacity(x):
     return x.capacity
 
 
-class ShipDesignCache(object):
+class ShipDesignCache:
     """This class handles the caching of information used to assess and build shipdesigns in this module.
 
     Important methods:
     update_for_new_turn(self): Updates the cache for the current turn, to be called once at the beginning of each turn.
 
     Important members:
-    testhulls:                 # set of all hullnames used for testdesigns
     design_id_by_name          # {"designname": designid}
     part_by_partname           # {"partname": part object}
     map_reference_design_name  # {"reference_designname": "ingame_designname"}, cf. _build_reference_name()
-    strictly_worse_parts       # strictly worse parts: {"part": ["worsePart1", "worsePart2"]}
     hulls_for_planets          # buildable hulls per planet {planetID: ["buildableHull1", "buildableHull2", ...]}
     parts_for_planets          # buildable parts per planet and slot: {planetID: {slottype1: ["part1", "part2"]}}
     best_designs               # {shipclass: {reqTup: {species: {available_parts: {hull: (rating, best_parts)}}}}}
@@ -124,17 +115,15 @@ class ShipDesignCache(object):
     production_time            # {planetID: {"partname1": local_production_time, "hullname1": local_production_time}}
 
     Debug methods:
-    print_CACHENAME(self), e.g. print_testhulls: prints content of the cache in some nicer format
+    print_CACHENAME(self), e.g. print_hulls_for_planets: prints content of the cache in some nicer format
     print_all(self): calls all the printing functions
     """
 
     def __init__(self):
         """Cache is empty on creation"""
-        self.testhulls = set()
         self.design_id_by_name = {}
         self.part_by_partname = {}
         self.map_reference_design_name = {}
-        self.strictly_worse_parts = {}
         self.hulls_for_planets = {}
         self.parts_for_planets = {}
         self.best_designs = {}
@@ -153,11 +142,7 @@ class ShipDesignCache(object):
             self._build_cache_after_load()
         self._check_cache_for_consistency()
         self.update_cost_cache()
-        self._update_buildable_items_this_turn(verbose=False)
-
-    def print_testhulls(self):
-        """Print the testhulls cache."""
-        debug("Testhull cache: %s" % self.testhulls)
+        self._update_buildable_items_this_turn()
 
     def print_design_id_by_name(self):
         """Print the design_id_by_name cache."""
@@ -166,12 +151,6 @@ class ShipDesignCache(object):
     def print_part_by_partname(self):
         """Print the part_by_partname cache."""
         debug("Parts cached by name: %s" % self.part_by_partname)
-
-    def print_strictly_worse_parts(self):
-        """Print the strictly_worse_parts cache."""
-        debug("List of strictly worse parts (ignoring slots):")
-        for part in self.strictly_worse_parts:
-            debug("  %s: %s" % (part, self.strictly_worse_parts[part]))
 
     def print_map_reference_design_name(self):
         """Print the ingame, reference name map of shipdesigns."""
@@ -269,10 +248,8 @@ class ShipDesignCache(object):
     def print_all(self):
         """Print the entire ship design cache."""
         debug("Printing the ShipDesignAI cache...")
-        self.print_testhulls()
         self.print_design_id_by_name()
         self.print_part_by_partname()
-        self.print_strictly_worse_parts()
         self.print_map_reference_design_name()
         self.print_hulls_for_planets()
         self.print_parts_for_planets()
@@ -313,12 +290,12 @@ class ShipDesignCache(object):
             hulls_to_update -= cached_items
 
         for partname in parts_to_update:
-            part = get_part_type(partname)
+            part = get_ship_part(partname)
             for pid in pids:
                 self.production_cost.setdefault(pid, {})[partname] = part.productionCost(empire_id, pid, INVALID_ID)
                 self.production_time.setdefault(pid, {})[partname] = part.productionTime(empire_id, pid, INVALID_ID)
         for hullname in hulls_to_update:
-            hull = fo.getHullType(hullname)
+            hull = fo.getShipHull(hullname)
             for pid in pids:
                 self.production_cost.setdefault(pid, {})[hullname] = hull.productionCost(empire_id, pid, INVALID_ID)
                 self.production_time.setdefault(pid, {})[hullname] = hull.productionTime(empire_id, pid, INVALID_ID)
@@ -332,11 +309,9 @@ class ShipDesignCache(object):
         - design_id_by_name
         """
         if self.map_reference_design_name or self.design_id_by_name:
-            warn("ShipDesignAI.Cache._build_cache_after_load() called but cache is not empty.")
+            warning("ShipDesignAI.Cache._build_cache_after_load() called but cache is not empty.")
         for design_id in fo.getEmpire().allShipDesigns:
             design = fo.getShipDesign(design_id)
-            if TESTDESIGN_NAME_BASE in design.name:
-                continue
             reference_name = _build_reference_name(design.hull, design.parts)
             self.map_reference_design_name[reference_name] = design.name
             self.design_id_by_name[design.name] = design_id
@@ -352,7 +327,7 @@ class ShipDesignCache(object):
             for partname in self.part_by_partname:
                 cached_name = self.part_by_partname[partname].name
                 if cached_name != partname:
-                    self.part_by_partname[partname] = fo.getPartType(partname)
+                    self.part_by_partname[partname] = fo.getShipPart(partname)
                     error("Part cache corrupted. Expected: %s, got: %s. Cache was repaired." % (partname, cached_name))
         except Exception as e:
             self.part_by_partname.clear()
@@ -368,7 +343,7 @@ class ShipDesignCache(object):
             try:
                 cached_name = fo.getShipDesign(self.design_id_by_name[designname]).name
                 if cached_name != designname:
-                    warn("ShipID cache corrupted. Expected: %s, got: %s." % (designname, cached_name))
+                    warning("ShipID cache corrupted. Expected: %s, got: %s." % (designname, cached_name))
                     design_id = next(iter([shipDesignID for shipDesignID in fo.getEmpire().allShipDesigns
                                           if designname == fo.getShipDesign(shipDesignID).name]), None)
                     if design_id is not None:
@@ -376,7 +351,7 @@ class ShipDesignCache(object):
                     else:
                         corrupted.append(designname)
             except AttributeError:
-                warn("ShipID cache corrupted. Could not get cached shipdesign. Repairing Cache.", exc_info=True)
+                warning("ShipID cache corrupted. Could not get cached shipdesign. Repairing Cache.", exc_info=True)
                 design_id = next(iter([shipDesignID for shipDesignID in fo.getEmpire().allShipDesigns
                                       if designname == fo.getShipDesign(shipDesignID).name]), None)
                 if design_id is not None:
@@ -390,227 +365,38 @@ class ShipDesignCache(object):
             if bad_ref is not None:
                 del self.map_reference_design_name[bad_ref]
 
-    def _update_buildable_items_this_turn(self, verbose=False):
-        """Calculate which parts and hulls can be built on each planet this turn.
-
-        :param verbose: toggles detailed debugging output.
-        :type verbose: bool
-        """
-        # TODO: Refactor this function
-        # The AI currently has no way of checking building requirements of individual parts and hulls directly.
-        # It can only check if we can build a design. Therefore, we use specific testdesigns to check if we can
-        # build a hull or part.
-        # The building requirements are constant so calculate this only once at the beginning of each turn.
-        #
-        # Code structure:
-        #   1. Update hull test designs
-        #   2. Get a list of buildable ship hulls for each planet
-        #   3. Update ship part test designs
-        #   4. Cache the list of buildable ship parts for each planet
-        #
+    def _update_buildable_items_this_turn(self):
+        """Calculate which parts and hulls can be built on each planet this turn."""
         self.hulls_for_planets.clear()
         self.parts_for_planets.clear()
-        inhabited_planets = state.get_inhabited_planets()
-        if not inhabited_planets:
-            debug("No inhabited planets found. The design process was aborted.")
-            return
-        get_shipdesign = fo.getShipDesign
-        get_hulltype = fo.getHullType
         empire = fo.getEmpire()
-        empire_id = empire.empireID
-        universe = fo.getUniverse()
-        available_hulls = list(empire.availableShipHulls)   # copy so we can sort it locally
-        # Later on in the code, we need to find suitable testhulls, i.e. buildable hulls for all slottypes.
-        # To reduce the number of lookups, move the hardcoded TESTDESIGN_PREFERED_HULL to the front of the list.
-        # This hull should be buildable on each planet and also cover the most common slottypes.
-        try:
-            idx = available_hulls.index(TESTDESIGN_PREFERRED_HULL)
-            available_hulls[0], available_hulls[idx] = available_hulls[idx], available_hulls[0]
-        except ValueError:
-            warn("Tried to use '%s' as testhull but not in available_hulls." % TESTDESIGN_PREFERRED_HULL)
-            warn("Please update ShipDesignAI.py according to the new content.")
-        testdesign_names = [get_shipdesign(design_id).name for design_id in empire.allShipDesigns
-                            if get_shipdesign(design_id).name.startswith(TESTDESIGN_NAME_BASE)]
-        testdesign_names_hull = [name for name in testdesign_names if name.startswith(TESTDESIGN_NAME_HULL)]
-        testdesign_names_part = [name for name in testdesign_names if name.startswith(TESTDESIGN_NAME_PART)]
-        available_slot_types = {slottype for slotlist in [get_hulltype(hull).slots for hull in available_hulls]
-                                for slottype in slotlist}
-        new_parts = [get_part_type(part) for part in empire.availableShipParts
-                     if part not in self.strictly_worse_parts]
-        pid = next(iter(self.production_cost.keys()))  # as only location invariant parts are considered, use arbitrary planet.
-        for new_part in new_parts:
-            self.strictly_worse_parts[new_part.name] = []
-            if new_part.partClass in WEAPONS:
-                continue  # TODO:  Update cache-functionality to handle tech upgrades
-            if not new_part.costTimeLocationInvariant:
-                debug("new part %s not location invariant!" % new_part.name)
-                continue
-            for part_class in ALL_META_CLASSES:
-                if new_part.partClass in part_class:
-                    for old_part in [get_part_type(part) for part in self.strictly_worse_parts
-                                     if part != new_part.name]:
-                        if not old_part.costTimeLocationInvariant:
-                            debug("old part %s not location invariant!" % old_part.name)
-                            continue
-                        if old_part.partClass in part_class:
-                            if new_part.capacity >= old_part.capacity:
-                                a = new_part
-                                b = old_part
-                            else:
-                                a = old_part
-                                b = new_part
-                            if (self.production_cost[pid][a.name] <= self.production_cost[pid][b.name]
-                                    and {x for x in a.mountableSlotTypes} >= {x for x in b.mountableSlotTypes}
-                                    and self.production_time[pid][a.name] <= self.production_time[pid][b.name]):
-                                self.strictly_worse_parts[a.name].append(b.name)
-                                debug("Part %s is strictly worse than part %s" % (b.name, a.name))
-                    break
-        available_parts = sorted(self.strictly_worse_parts.keys(),
-                                 key=lambda item: get_part_type(item).capacity, reverse=True)
+        all_hulls = list(empire.availableShipHulls)
+        all_parts = list(empire.availableShipParts)
 
-        # in case of a load, we need to rebuild our Cache.
-        if not self.testhulls:
-            debug("Testhull cache not found. This may happen only at first turn after game start or load.")
-            for hullname in available_hulls:
-                des = [des_ for des_ in testdesign_names_part if des_.endswith(hullname)]
-                if des:
-                    self.testhulls.add(hullname)
-            if verbose:
-                debug("Rebuilt Cache. The following hulls are used in testdesigns for parts: %s" % self.testhulls)
-
-        # 1. Update hull test designs
-        debug("Updating Testdesigns for hulls...")
-        if verbose:
-            debug("Available Hulls: %s" % available_hulls)
-            debug("Existing Designs (prefix: %s): %s" % (
-                TESTDESIGN_NAME_HULL, [x.replace(TESTDESIGN_NAME_HULL, "") for x in testdesign_names_hull]))
-        for hull in [get_hulltype(hullname) for hullname in available_hulls
-                     if "%s_%s" % (TESTDESIGN_NAME_HULL, hullname) not in testdesign_names_hull]:
-            partlist = len(hull.slots) * [""]
-            testdesign_name = "%s_%s" % (TESTDESIGN_NAME_HULL, hull.name)
-            _create_ship_design(testdesign_name, hull.name, partlist,
-                                description="TESTPURPOSE ONLY", verbose=verbose)
-
-        # 2. Cache the list of buildable ship hulls for each planet
-        debug("Caching buildable hulls per planet...")
-        testname = "%s_%s" % (TESTDESIGN_NAME_HULL, "%s")
-        for pid in inhabited_planets:
-            self.hulls_for_planets[pid] = []
-        for hullname in available_hulls:
-            testdesign = _get_design_by_name(testname % hullname)
-            if testdesign:
-                for pid in inhabited_planets:
-                    if _can_build(testdesign, empire_id, pid):
-                        self.hulls_for_planets[pid].append(hullname)
-            else:
-                warn("Missing testdesign for hull %s!" % hullname)
-
-        # 3. Update ship part test designs
-        #     Because there are different slottypes, we need to find a hull that can host said slot.
-        #     However, not every planet can build every hull. Thus, for each inhabited planet:
-        #       I. Check which parts do not have a testdesign yet with a hull we can build on this planet
-        #       II. If there are parts, find out which slots we need
-        #       III. For each slot type, try to find a hull we can build on this planet
-        #            and use this hull for all the parts hostable in this type.
-        debug("Updating test designs for ship parts...")
-        if verbose:
-            debug("Available parts: %s" % available_parts)
-            debug("Existing Designs (prefix: %s): %s" % (
-                TESTDESIGN_NAME_PART, [x.replace(TESTDESIGN_NAME_PART, "") for x in testdesign_names_part]))
-        for pid in inhabited_planets:
-            planetname = universe.getPlanet(pid).name
-            local_hulls = self.hulls_for_planets[pid]
-            needs_update = [get_part_type(partname) for partname in available_parts
-                            if not any(["%s_%s_%s" % (TESTDESIGN_NAME_PART, partname, hullname) in testdesign_names_part
-                                       for hullname in local_hulls])]
-            if not needs_update:
-                if verbose:
-                    debug("Planet %s: Test designs are up to date" % planetname)
-                continue
-            if verbose:
-                debug("Planet %s: The following parts appear to need a new design: %s" % (
-                    planetname, [part.name for part in needs_update]))
-            for slot in available_slot_types:
-                testhull = next((hullname for hullname in local_hulls if slot in get_hulltype(hullname).slots), None)
-                if testhull is None:
-                    if verbose:
-                        debug("Failure: Could not find a hull with slots of type '%s' for this planet" % slot.name)
+        for pid in state.get_inhabited_planets():
+            for hull_name in all_hulls:
+                hull = fo.getShipHull(hull_name)
+                if assertion_fails(hull is not None):
                     continue
-                else:
-                    if verbose:
-                        debug("Using hull %s for slots of type '%s'" % (testhull, slot.name))
-                    self.testhulls.add(testhull)
-                slotlist = [s for s in get_hulltype(testhull).slots]
-                slot_index = slotlist.index(slot)
-                num_slots = len(slotlist)
-                for part in [part_ for part_ in needs_update if slot in part_.mountableSlotTypes]:
-                    partlist = num_slots * [""]
-                    partlist[slot_index] = part.name
-                    testdesign_name = "%s_%s_%s" % (TESTDESIGN_NAME_PART, part.name, testhull)
-                    res = _create_ship_design(testdesign_name, testhull, partlist,
-                                              description="TESTPURPOSE ONLY", verbose=verbose)
-                    if res:
-                        testdesign_names_part.append(testdesign_name)
-                    else:
-                        continue
-                    needs_update.remove(part)  # We only need one design per part, not for every possible slot
 
-        #  later on in the code, we will have to check multiple times if the test hulls are in
-        #  the list of buildable hulls for the planet. As the ordering is preserved, move the
-        #  testhulls to the front of the availableHull list to save some time in the checks.
-        for i, s in enumerate(self.testhulls):
-            try:
-                idx = available_hulls.index(s)
-                if i != idx:
-                    available_hulls[i], available_hulls[idx] = available_hulls[idx], available_hulls[i]
-            except ValueError:
-                error("hull in testhull cache not in available_hulls even though it is supposed to be a proper subset.",
-                      exc_info=True)
+                if hull.productionLocation(pid):
+                    self.hulls_for_planets.setdefault(pid, []).append(hull_name)
 
-        # 4. Cache the list of buildable ship parts for each planet
-        debug("Caching buildable ship parts per planet...")
-        for pid in inhabited_planets:
-            local_testhulls = [hull for hull in self.testhulls
-                               if hull in self.hulls_for_planets[pid]]
-            this_planet = universe.getPlanet(pid)
-            if verbose:
-                debug("Testhulls for %s are %s" % (this_planet, local_testhulls))
-            self.parts_for_planets[pid] = {}
-            local_ignore = set()
-            local_cache = self.parts_for_planets[pid]
-            for slot in available_slot_types:
-                local_cache[slot] = []
-            for partname in available_parts:
-                if partname in local_ignore:
+            for part_name in all_parts:
+                ship_part = get_ship_part(part_name)
+                if assertion_fails(ship_part is not None):
                     continue
-                part_slottypes = get_part_type(partname).mountableSlotTypes
-                ship_design = None
-                for hullname in local_testhulls:
-                    if not any((slot in get_hulltype(hullname).slots for slot in part_slottypes)):
-                        continue
-                    ship_design = _get_design_by_name("%s_%s_%s" % (TESTDESIGN_NAME_PART, partname, hullname))
-                    if ship_design:
-                        if _can_build(ship_design, empire_id, pid):
-                            for slot in part_slottypes:
-                                local_cache.setdefault(slot, []).append(partname)
-                                local_ignore.update(self.strictly_worse_parts[partname])
-                        break
-                if verbose and not ship_design:
-                    planetname = universe.getPlanet(pid).name
-                    debug("Failure: Couldn't find a testdesign for part %s on planet %s." % (partname, planetname))
-            # make sure we do not edit the list later on this turn => tuple: immutable
-            # This also allows to shallowcopy the cache.
-            for slot in local_cache:
-                local_cache[slot] = tuple(local_cache[slot])
 
-            if verbose:
-                debug("Parts for Planet: %s: " % universe.getPlanet(pid).name, self.parts_for_planets[pid])
+                slot_types = ship_part.mountableSlotTypes
+                if ship_part.productionLocation(pid):
+                    for slot_type in slot_types:
+                        self.parts_for_planets.setdefault(pid, {}).setdefault(slot_type, []).append(part_name)
 
 
 Cache = ShipDesignCache()
 
 
-class AdditionalSpecifications(object):
+class AdditionalSpecifications:
     """This class is a container for all kind of additional information
     and requirements we may want to use when assessing ship designs.
 
@@ -658,7 +444,7 @@ class AdditionalSpecifications(object):
             for dmg, count in enemy_attack_stats.items():
                 d += dmg*count
                 n += count
-            self.avg_enemy_weapon_strength = d/n
+            self.avg_enemy_weapon_strength = d // n  # TODO check if we need floor division here
 
     def convert_to_tuple(self):
         """Create a tuple of this class' attributes (e.g. to use as key in dict).
@@ -670,7 +456,7 @@ class AdditionalSpecifications(object):
                 "enemyMineDmg: %s" % self.enemy_mine_dmg)
 
 
-class DesignStats(object):
+class DesignStats:
 
     def __init__(self):
         self.attacks = {}  # {damage: shots_per_round}
@@ -696,14 +482,20 @@ class DesignStats(object):
         self.fighter_capacity = 0
         self.fighter_launch_rate = 0
         self.fighter_damage = 0
+        self.flak_shots = 0
+        self.has_interceptors = False
+        self.damage_vs_planets = 0
+        self.has_bomber = False
 
     def convert_to_combat_stats(self):
         """Return a tuple as expected by CombatRatingsAI"""
         return (self.attacks, self.structure, self.shields,
-                self.fighter_capacity, self.fighter_launch_rate, self.fighter_damage)
+                self.fighter_capacity, self.fighter_launch_rate, self.fighter_damage,
+                self.flak_shots, self.has_interceptors,
+                self.damage_vs_planets, self.has_bomber)
 
 
-class ShipDesigner(object):
+class ShipDesigner:
     """This class and its subclasses implement the building of a ship design and its rating.
      Specialised Designs with their own rating system or optimizing algorithms should inherit from this class.
 
@@ -745,7 +537,7 @@ class ShipDesigner(object):
         self.partnames = []         # list of partnames (string)
         self.parts = []             # list of actual part objects
         self.design_stats = DesignStats()
-        self.production_cost = 9999
+        self.production_cost = 9999.0
         self.production_time = 1
         self.pid = INVALID_ID               # planetID for checks on production cost if not LocationInvariant.
         self.additional_specifications = AdditionalSpecifications()
@@ -819,7 +611,7 @@ class ShipDesigner(object):
         :param hullname:
         :type hullname: str
         """
-        self.hull = fo.getHullType(hullname)
+        self.hull = fo.getShipHull(hullname)
 
     def update_parts(self, partname_list):
         """Set both partnames and parts attributes.
@@ -827,7 +619,7 @@ class ShipDesigner(object):
         :param partname_list: contains partnames as strings
         :type partname_list: list"""
         self.partnames = partname_list
-        self.parts = [get_part_type(part) for part in partname_list if part]
+        self.parts = [get_ship_part(part) for part in partname_list if part]
 
     def update_species(self, species):
         """Set the piloting species.
@@ -848,7 +640,7 @@ class ShipDesigner(object):
         self._set_stats_to_default()
 
         if not self.hull:
-            warn("Tried to update stats of design without hull. Reset values to default.")
+            warning("Tried to update stats of design without hull. Reset values to default.")
             return
 
         local_cost_cache = Cache.production_cost[self.pid]
@@ -896,7 +688,13 @@ class ShipDesigner(object):
                 self.design_stats.structure += capacity
             elif partclass in WEAPONS:
                 shots = self._calculate_weapon_shots(part)
-                self.design_stats.attacks[capacity] = self.design_stats.attacks.get(capacity, 0) + shots
+                allowed_targets = CombatRatingsAI.get_allowed_targets(part.name)
+                if allowed_targets & AIDependencies.CombatTarget.SHIP:
+                    self.design_stats.attacks[capacity] = self.design_stats.attacks.get(capacity, 0) + shots
+                if allowed_targets & AIDependencies.CombatTarget.FIGHTER:
+                    self.design_stats.flak_shots += shots
+                if allowed_targets & AIDependencies.CombatTarget.PLANET:
+                    self.design_stats.damage_vs_planets += capacity*shots
             elif partclass in SHIELDS:
                 shield_counter += 1
                 if shield_counter == 1:
@@ -920,9 +718,17 @@ class ShipDesigner(object):
                     self.design_stats.fighter_capacity = 0
                     self.design_stats.fighter_damage = 0
                     self.design_stats.fighter_launch_rate = 0
+                    self.design_stats.has_interceptors = False
+                    self.design_stats.has_bomber = False
                 else:
+                    allowed_targets = CombatRatingsAI.get_allowed_targets(part.name)
                     self.design_stats.fighter_capacity += self._calculate_hangar_capacity(part)
-                    self.design_stats.fighter_damage = self._calculate_hangar_damage(part)
+                    if allowed_targets & AIDependencies.CombatTarget.SHIP:
+                        self.design_stats.fighter_damage = self._calculate_hangar_damage(part)
+                    if allowed_targets & AIDependencies.CombatTarget.FIGHTER:
+                        self.design_stats.has_interceptors = True
+                    if allowed_targets & AIDependencies.CombatTarget.PLANET:
+                        self.design_stats.has_bomber = True
 
         if len(bay_parts) > 0:
             hangar_part_name = None
@@ -933,10 +739,10 @@ class ShipDesigner(object):
         self._apply_hardcoded_effects(ignore_species)
 
         if self.species and not ignore_species:
-            shields_grade = CombatRatingsAI.get_species_shield_grade(self.species)
+            shields_grade = get_species_tag_grade(self.species, Tags.SHIELDS)
             self.design_stats.shields = CombatRatingsAI.weight_shields(self.design_stats.shields, shields_grade)
             if self.design_stats.troops:
-                troops_grade = CombatRatingsAI.get_species_troops_grade(self.species)
+                troops_grade = get_species_tag_grade(self.species, Tags.ATTACKTROOPS)
                 self.design_stats.troops = CombatRatingsAI.weight_attack_troops(self.design_stats.troops, troops_grade)
 
     def _apply_hardcoded_effects(self, ignore_species=False):
@@ -963,7 +769,7 @@ class ShipDesigner(object):
             elif dependency == AIDependencies.FUEL:
                 dep_val = self.design_stats.fuel
             else:
-                warn("Can't parse dependent token:" + str(tup))
+                warning("Can't parse dependent token:" + str(tup))
             return dep_val * value
 
         def parse_tokens(tokendict, is_hull=False):
@@ -1006,7 +812,7 @@ class ShipDesigner(object):
                 elif token == AIDependencies.STRUCTURE:
                     self.design_stats.structure += value
                 else:
-                    warn("Failed to parse token: %s" % token)
+                    warning("Failed to parse token: %s" % token)
             # if the hull has no special detection specified, then it has base detection.
             if is_hull and AIDependencies.DETECTION not in tokendict:
                 self.design_stats.detection += AIDependencies.BASE_DETECTION
@@ -1084,7 +890,7 @@ class ShipDesigner(object):
             Cache.map_reference_design_name[reference_name] = design_name
             return new_design.id
         else:
-            warn("Tried to get just created design %s but got None" % design_name)
+            warning("Tried to get just created design %s but got None" % design_name)
             return None
 
     def _class_specific_filter(self, partname_dict):
@@ -1127,7 +933,7 @@ class ShipDesigner(object):
 
         additional_part_dict = {}
         for partname in additional_parts:
-            for slot in get_part_type(partname).mountableSlotTypes:
+            for slot in get_ship_part(partname).mountableSlotTypes:
                 additional_part_dict.setdefault(slot, []).append(partname)
 
         # TODO: Rework caching to only cache raw stats of designs, then evaluate them
@@ -1140,17 +946,27 @@ class ShipDesigner(object):
 
         if verbose:
             debug("Trying to find optimum designs for shiptype class %s" % self.__class__.__name__)
+
+        relevant_techs = []
+
+        def extend_completed_techs(techs: Iterable):
+            relevant_techs.extend(_tech for _tech in techs if tech_is_complete(_tech))
+
+        if WEAPONS & self.useful_part_classes:
+            extend_completed_techs(AIDependencies.WEAPON_UPGRADE_TECHS)
+        if FIGHTER_HANGAR & self.useful_part_classes:
+            extend_completed_techs(AIDependencies.FIGHTER_UPGRADE_TECHS)
+        if FUEL & self.useful_part_classes:
+            extend_completed_techs(AIDependencies.FUEL_UPGRADE_TECHS)
+        extend_completed_techs(AIDependencies.TECH_EFFECTS)
+
+        relevant_techs = tuple(set(relevant_techs))
+        design_cache_tech = design_cache_reqs.setdefault(relevant_techs, {})
+
         for pid in planets:
             planet = universe.getPlanet(pid)
             self.pid = pid
             self.update_species(planet.speciesName)
-
-            relevant_techs = []
-            if WEAPONS & self.useful_part_classes:
-                relevant_techs = [tech for tech in AIDependencies.WEAPON_UPGRADE_TECHS if tech_is_complete(tech)]
-            relevant_techs += [tech for tech in AIDependencies.TECH_EFFECTS if tech_is_complete(tech)]
-            relevant_techs = tuple(relevant_techs)
-            design_cache_tech = design_cache_reqs.setdefault(relevant_techs, {})
 
             # The piloting species is only important if its modifiers are of any use to the design
             # Therefore, consider only those treats that are actually useful. Note that the
@@ -1158,13 +974,13 @@ class ShipDesigner(object):
             # The same is true for the canProduceShips trait which simply means no hull can be built.
             relevant_grades = []
             if WEAPONS & self.useful_part_classes:
-                weapons_grade = CombatRatingsAI.get_pilot_weapons_grade(self.species)
+                weapons_grade = get_species_tag_grade(self.species, Tags.WEAPONS)
                 relevant_grades.append("WEAPON: %s" % weapons_grade)
             if SHIELDS & self.useful_part_classes:
-                shields_grade = CombatRatingsAI.get_species_shield_grade(self.species)
+                shields_grade = get_species_tag_grade(self.species, Tags.SHIELDS)
                 relevant_grades.append("SHIELDS: %s" % shields_grade)
             if TROOPS & self.useful_part_classes:
-                troops_grade = CombatRatingsAI.get_species_troops_grade(self.species)
+                troops_grade = get_species_tag_grade(self.species, Tags.ATTACKTROOPS)
                 relevant_grades.append("TROOPS: %s" % troops_grade)
             species_tuple = tuple(relevant_grades)
             design_cache_species = design_cache_tech.setdefault(species_tuple, {})
@@ -1188,6 +1004,12 @@ class ShipDesigner(object):
             best_hull = None
             best_parts = None
             for hullname in available_hulls:
+                # TODO: Expose FOCS Exclusions and replace manually maintained AIDependencies dict
+                hull_excluded_part_classes = AIDependencies.HULL_EXCLUDED_SHIP_PART_CLASSES.get(hullname, [])
+                available_parts_in_hull = {
+                    slot: [part_name for part_name in available_parts[slot]
+                           if get_ship_part(part_name).partClass not in hull_excluded_part_classes]
+                    for slot in available_parts}
                 if hullname in design_cache_parts:
                     cache = design_cache_parts[hullname]
                     best_hull_rating = cache[0]
@@ -1197,7 +1019,7 @@ class ShipDesigner(object):
                             hullname, best_hull_rating, current_parts))
                 else:
                     self.update_hull(hullname)
-                    best_hull_rating, current_parts = self._filling_algorithm(available_parts)
+                    best_hull_rating, current_parts = self._filling_algorithm(available_parts_in_hull)
                     design_cache_parts.update({hullname: (best_hull_rating, current_parts)})
                     if verbose:
                         debug("Best rating for hull %s: %f %s" % (hullname, best_hull_rating, current_parts))
@@ -1251,10 +1073,10 @@ class ShipDesigner(object):
             slottype: list(
                 zip(
                     partname_dict[slottype],
-                    (get_part_type(x) for x in partname_dict[slottype])
+                    (get_ship_part(x) for x in partname_dict[slottype])
                 )
             ) for slottype in partname_dict
-        }  # {slottype: [(partname, parttype_object)]}
+        }  # {slottype: [(partname, shippart_object)]}
 
         for slottype in part_dict:
             part_dict[slottype] = [tup for tup in part_dict[slottype] if tup[1].partClass in self.useful_part_classes]
@@ -1437,7 +1259,7 @@ class ShipDesigner(object):
 
         :return: summed up damage vs shielded enemy
         """
-        total_dmg = 0
+        total_dmg = 0.0
         for dmg, count in self.design_stats.attacks.items():
             total_dmg += max(0, dmg - self.additional_specifications.enemy_shields) * count
         return total_dmg
@@ -1447,7 +1269,7 @@ class ShipDesigner(object):
 
         :return: Total damage of the design (against no shields)
         """
-        total_dmg = 0
+        total_dmg = 0.0
         for dmg, count in self.design_stats.attacks.items():
             total_dmg += dmg * count
         return total_dmg
@@ -1513,14 +1335,6 @@ class ShipDesigner(object):
         else:
             return self.production_cost / FleetUtilsAI.get_fleet_upkeep()  # base cost
 
-    def _shield_factor(self):
-        """Calculate the effective factor by which structure is increased by shields.
-
-        :rtype: float
-        """
-        enemy_dmg = self.additional_specifications.max_enemy_weapon_strength
-        return max(enemy_dmg / max(0.01, enemy_dmg - self.design_stats.shields), 1)
-
     def _effective_fuel(self):
         """Return the number of turns the ship can move without refueling.
 
@@ -1536,14 +1350,6 @@ class ShipDesigner(object):
         """
         return min(self.additional_specifications.expected_turns_till_fight * self.design_stats.organic_growth,
                    self.design_stats.maximum_organic_growth)
-
-    def _remaining_growth(self):
-        """Get growth potential after _expected_organic_growth() took place.
-
-        :return: Remaining growth after _expected_organic_growth()
-        :rtype: float
-        """
-        return self.design_stats.maximum_organic_growth - self._expected_organic_growth()
 
     def _effective_mine_damage(self):
         """Return enemy mine damage corrected by self-repair-rate.
@@ -1576,7 +1382,7 @@ class ShipDesigner(object):
         tech_bonus = _get_tech_bonus(AIDependencies.WEAPON_UPGRADE_DICT, weapon_name)
         # species modifiers
         if not ignore_species:
-            weapons_grade = CombatRatingsAI.get_pilot_weapons_grade(self.species)
+            weapons_grade = get_species_tag_grade(self.species, Tags.WEAPONS)
             species_modifier = AIDependencies.PILOT_DAMAGE_MODIFIER_DICT.get(weapons_grade, {}).get(weapon_name, 0)
         else:
             species_modifier = 0
@@ -1586,12 +1392,12 @@ class ShipDesigner(object):
         weapon_name = weapon_part.name
         base = weapon_part.secondaryStat
         if not base:
-            warn("Queried weapon %s for number of shots but didn't return any." % weapon_name)
+            warning("Queried weapon %s for number of shots but didn't return any." % weapon_name)
             base = 1
         tech_bonus = _get_tech_bonus(AIDependencies.WEAPON_ROF_UPGRADE_DICT, weapon_name)
         # species modifier
         if not ignore_species:
-            weapons_grade = CombatRatingsAI.get_pilot_weapons_grade(self.species)
+            weapons_grade = get_species_tag_grade(self.species, Tags.WEAPONS)
             species_modifier = AIDependencies.PILOT_ROF_MODIFIER_DICT.get(weapons_grade, {}).get(weapon_name, 0)
         else:
             species_modifier = 0
@@ -1599,10 +1405,13 @@ class ShipDesigner(object):
 
     def _calculate_fighter_launch_rate(self, bay_parts, hangar_part_name):
         launch_rate = 0
-        bays_bonus = AIDependencies.HANGAR_LAUNCH_CAPACITY_MODIFIER_DICT.get(hangar_part_name, {})
+        bay_launch_capacity_modifier_dict = {}
+        if hangar_part_name:
+            bay_launch_capacity_modifier_dict = AIDependencies.HANGAR_LAUNCH_CAPACITY_MODIFIER_DICT.get(hangar_part_name, {})
         for bay_part in bay_parts:
             launch_rate += bay_part.capacity
-            launch_rate += bays_bonus.get(bay_part.name, 0)
+            if bay_launch_capacity_modifier_dict:
+                launch_rate += _get_tech_bonus(bay_launch_capacity_modifier_dict, bay_part.name)
         return launch_rate
 
     def _calculate_hangar_damage(self, hangar_part, ignore_species=False):
@@ -1611,9 +1420,9 @@ class ShipDesigner(object):
         tech_bonus = _get_tech_bonus(AIDependencies.FIGHTER_DAMAGE_UPGRADE_DICT, hangar_name)
         # species modifier
         if not ignore_species:
-            weapons_grade = CombatRatingsAI.get_pilot_weapons_grade(self.species)
-            species_modifier = AIDependencies.PILOT_FIGHTERDAMAGE_MODIFIER_DICT.get(weapons_grade,
-                                                                                    {}).get(hangar_name, 0)
+            weapons_grade = get_species_tag_grade(self.species, Tags.WEAPONS)
+            species_modifier = AIDependencies.PILOT_FIGHTERDAMAGE_MODIFIER_DICT.get(
+                weapons_grade, {}).get(hangar_name, 0)
         else:
             species_modifier = 0
         return base + species_modifier + tech_bonus
@@ -1624,9 +1433,9 @@ class ShipDesigner(object):
         tech_bonus = _get_tech_bonus(AIDependencies.FIGHTER_CAPACITY_UPGRADE_DICT, hangar_name)
         # species modifier
         if not ignore_species:
-            weapons_grade = CombatRatingsAI.get_pilot_weapons_grade(self.species)
-            species_modifier = AIDependencies.PILOT_FIGHTER_CAPACITY_MODIFIER_DICT.get(weapons_grade,
-                                                                                       {}).get(hangar_name, 0)
+            weapons_grade = get_species_tag_grade(self.species, Tags.WEAPONS)
+            species_modifier = AIDependencies.PILOT_FIGHTER_CAPACITY_MODIFIER_DICT.get(
+                weapons_grade, {}).get(hangar_name, 0)
         else:
             species_modifier = 0
         return base + species_modifier + tech_bonus
@@ -1650,11 +1459,6 @@ class MilitaryShipDesignerBaseClass(ShipDesigner):
         # To account for this, we need to maximize rating/cost_squared not rating/cost as usual.
         exponent = get_aistate().character.warship_adjusted_production_cost_exponent()
         return super(MilitaryShipDesignerBaseClass, self)._adjusted_production_cost()**exponent
-
-    def _effective_structure(self):
-        effective_structure = self.design_stats.structure + self._expected_organic_growth() + self._remaining_growth() / 5
-        effective_structure *= self._shield_factor()
-        return effective_structure
 
     def _speed_factor(self):
         return 1 + 0.005*(self.design_stats.speed - 85)
@@ -1717,7 +1521,7 @@ class WarShipDesigner(MilitaryShipDesignerBaseClass):
         # As this is a simple rational function in n, the maximizing problem can be solved analytically.
         # The analytical solution (after rounding to the nearest integer)is a good starting guess for our best design.
         ret_val = (len(available_parts) + 1) * [0]
-        parts = [get_part_type(part) for part in available_parts]
+        parts = [get_ship_part(part) for part in available_parts]
         weapons = [part for part in parts if part.partClass in WEAPONS]
         armours = [part for part in parts if part.partClass in ARMOUR]
         if weapons:
@@ -1729,7 +1533,7 @@ class WarShipDesigner(MilitaryShipDesignerBaseClass):
                 armour_part = max(armours, key=_get_capacity)
                 armour = armour_part.name
                 idxarmour = available_parts.index(armour)
-                a = get_part_type(armour).capacity
+                a = get_ship_part(armour).capacity
                 ca = Cache.production_cost[self.pid].get(armour, armour_part.productionCost(fo.empireID(), self.pid, INVALID_ID))
                 s = num_slots
                 h = self.hull.structure
@@ -1807,7 +1611,7 @@ class CarrierShipDesigner(MilitaryShipDesignerBaseClass):
         hangar_parts = set()
         for partlist in available_parts.values():
             for partname in partlist:
-                part = get_part_type(partname)
+                part = get_ship_part(partname)
                 if part.partClass == fo.shipPartClass.fighterHangar:
                     hangar_parts.add(partname)
         if verbose:
@@ -1860,7 +1664,7 @@ class TroopShipDesignerBaseClass(ShipDesigner):
 
     def _starting_guess(self, available_parts, num_slots):
         # fill completely with biggest troop pods. If none are available for this slot type, leave empty.
-        troop_pods = [get_part_type(part) for part in available_parts if get_part_type(part).partClass in TROOPS]
+        troop_pods = [get_ship_part(part) for part in available_parts if get_ship_part(part).partClass in TROOPS]
         ret_val = (len(available_parts)+1)*[0]
         if troop_pods:
             biggest_troop_pod = max(troop_pods, key=_get_capacity).name
@@ -1868,7 +1672,7 @@ class TroopShipDesignerBaseClass(ShipDesigner):
                 idx = available_parts.index(biggest_troop_pod)
             except ValueError:
                 idx = len(available_parts)
-                warn("Found no valid troop pod.", exc_info=True)
+                warning("Found no valid troop pod.", exc_info=True)
         else:
             idx = len(available_parts)
         ret_val[idx] = num_slots
@@ -1877,7 +1681,7 @@ class TroopShipDesignerBaseClass(ShipDesigner):
     def _class_specific_filter(self, partname_dict):
         for slot in partname_dict:
             remaining_parts = [part for part in partname_dict[slot] if
-                               get_part_type(part).partClass in TROOPS.union(ARMOUR)]
+                               get_ship_part(part).partClass in TROOPS.union(ARMOUR)]
             partname_dict[slot] = remaining_parts
 
 
@@ -1950,7 +1754,7 @@ class ColonisationShipDesignerBaseClass(ShipDesigner):
         ret_val = (len(available_parts)+1)*[0]
         if num_slots == 0:
             return ret_val
-        parts = [get_part_type(part) for part in available_parts]
+        parts = [get_ship_part(part) for part in available_parts]
         colo_parts = [part for part in parts if part.partClass in COLONISATION and part.capacity > 0]
         if colo_parts:
             colo_part = max(colo_parts, key=lambda x: x.capacity)
@@ -1964,7 +1768,7 @@ class ColonisationShipDesignerBaseClass(ShipDesigner):
     def _class_specific_filter(self, partname_dict):
         # remove outpost pods
         for slot in partname_dict:
-            parts = [get_part_type(part) for part in partname_dict[slot]]
+            parts = [get_ship_part(part) for part in partname_dict[slot]]
             for part in parts:
                 if part.partClass in COLONISATION and part.capacity == 0:
                     partname_dict[slot].remove(part.name)
@@ -2036,7 +1840,7 @@ class OutpostShipDesignerBaseClass(ShipDesigner):
     def _class_specific_filter(self, partname_dict):
         # filter all colo pods
         for slot in partname_dict:
-            parts = [get_part_type(part) for part in partname_dict[slot]]
+            parts = [get_ship_part(part) for part in partname_dict[slot]]
             for part in parts:
                 if part.partClass in COLONISATION and part.capacity != 0:
                     partname_dict[slot].remove(part.name)
@@ -2046,7 +1850,7 @@ class OutpostShipDesignerBaseClass(ShipDesigner):
         ret_val = (len(available_parts)+1)*[0]
         if num_slots == 0:
             return ret_val
-        parts = [get_part_type(part) for part in available_parts]
+        parts = [get_ship_part(part) for part in available_parts]
         colo_parts = [part for part in parts if part.partClass in COLONISATION and part.capacity == 0]
         if colo_parts:
             colo_part = colo_parts[0]
@@ -2174,7 +1978,7 @@ class KrillSpawnerShipDesigner(ShipDesigner):
         structure_factor = (1 + self.design_stats.structure - self._minimum_structure())**0.03  # nice to have but not too important
         fuel_factor = self._effective_fuel()
         speed_factor = 1 + (self.design_stats.speed - self._minimum_speed())**0.1
-        stealth_factor = 1 + (self.design_stats.stealth + self.design_stats.asteroid_stealth / 2)  # TODO: Adjust for enemy detection strength
+        stealth_factor = 1 + (self.design_stats.stealth + self.design_stats.asteroid_stealth // 2)  # TODO: Adjust for enemy detection strength
         detection_factor = self.design_stats.detection**1.5
         return (structure_factor * fuel_factor * speed_factor *
                 stealth_factor * detection_factor / self.production_cost)
@@ -2234,9 +2038,9 @@ def _create_ship_design(design_name, hull_name, part_names, model="fighter",
             if verbose:
                 debug("Success: Design %s stored in design_by_name_cache" % design_name)
         else:
-            warn("Tried to get just created design %s but got None" % design_name)
+            warning("Tried to get just created design %s but got None" % design_name)
     else:
-        warn("Tried to add design %s but returned %s, expected 1" % (design_name, res))
+        warning("Tried to add design %s but returned %s, expected 1" % (design_name, res))
 
     return res
 
@@ -2294,26 +2098,20 @@ def _get_design_by_name(design_name, update_invalid=False, looking_for_new_desig
     return design
 
 
-def get_part_type(partname):
-    """Return the partType object (fo.getPartType(partname)) of the given partname.
+@cache_for_session
+def get_ship_part(part_name: str):
+    """Return the shipPart object (fo.getShipPart(part_name)) of the given part_name.
 
     As the function in late game may be called some thousand times, the results are cached.
-
-    :type partname: str
-    :rtype: fo.partType
     """
-    if not partname:
+    if not part_name:
         return None
-    if partname in Cache.part_by_partname:
-        return Cache.part_by_partname[partname]
-    else:
-        parttype = fo.getPartType(partname)
-        if parttype:
-            Cache.part_by_partname[partname] = parttype
-            return Cache.part_by_partname[partname]
-        else:
-            warn("Could not find part %s" % partname)
-            return None
+
+    part_type = fo.getShipPart(part_name)
+    if not part_type:
+        warning("Could not find part %s" % part_name)
+
+    return part_type
 
 
 def _build_reference_name(hullname, partlist):
@@ -2375,8 +2173,8 @@ def recursive_dict_diff(dict_new, dict_old, dict_diff, diff_level_threshold=0):
             if this_diff_level > NO_DIFF and min_diff_level > diff_level_threshold:
                 del dict_diff[key]
         elif key not in dict_old or value != dict_old[key]:
-                dict_diff[key] = copy.deepcopy(value)
-                min_diff_level = 0
+            dict_diff[key] = copy.deepcopy(value)
+            min_diff_level = 0
     return min_diff_level
 
 
@@ -2388,7 +2186,7 @@ def _get_tech_bonus(upgrade_dict, part_name):
             _raised_warnings.add(part_name)
             error(("WARNING: Encountered unknown part (%s): "
                    "The AI can play on but its damage estimates may be incorrect leading to worse decision-making. "
-                   "Please update AIDependencies.py") % part_name, exc_info=True)
+                   "Please update AIDependencies.py - %s") % (part_name, upgrade_dict), exc_info=True)
         return 0
     total_tech_bonus = 0
     for tech, bonus in upgrades:
@@ -2398,7 +2196,5 @@ def _get_tech_bonus(upgrade_dict, part_name):
 
 
 def _get_species_fuel_bonus(species_name):
-    if not species_name:
-        return 0
-    species_tags = fo.getSpecies(species_name).tags
-    return AIDependencies.SPECIES_FUEL_MODIFIER.get(get_ai_tag_grade(species_tags, "FUEL"), 0)
+    return AIDependencies.SPECIES_FUEL_MODIFIER.get(
+        get_species_tag_grade(species_name, Tags.FUEL), 0)

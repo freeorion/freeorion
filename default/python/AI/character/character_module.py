@@ -42,8 +42,6 @@ assigned some additional mandatory trait(s).  For example the Trith and
 a mandatory Genocidal trait.  Perhaps add a probabilty distribution of
 trait components to the FOCS description of a playable species.
 """
-
-
 # Some ideas for future trait modules are:
 # TODO: challenge/difficulty -- to replace the difficulty related portions
 #                                of aggression.
@@ -87,14 +85,12 @@ import abc
 from collections import Counter
 import math
 import random
-from logging import warn, debug
+from logging import warning, debug
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
-from common import six
 
 
-@six.add_metaclass(abc.ABCMeta)
-class Trait(object):
+class Trait(metaclass=abc.ABCMeta):
     """An abstract class representing a type of trait of the AI.
 
     Traits give the AI personality along some dimension.
@@ -575,6 +571,16 @@ def _make_single_function_combiner(funcnamei, f_combo):
     return func
 
 
+def _maxmin_not_none(f_combo):
+    """Make a combiner that collects not None items and applies min or max"""
+    def func(llin):
+        ll = [x for x in llin if x is not None]
+        if not ll:
+            return 0
+        return f_combo(ll)
+    return func
+
+
 # Create combiners for traits that all must be true
 for funcname in ["may_explore_system", "may_surge_industry", "may_maximize_research", "may_invade",
                  "may-invade_with_bases", "may_build_building", "may_produce_troops",
@@ -587,11 +593,11 @@ for funcname in ["may_explore_system", "may_surge_industry", "may_maximize_resea
 # Create combiners for traits that take min result
 for funcname in ["max_number_colonies", "invasion_priority_scaling",
                  "military_priority_scaling", "max_defense_portion"]:
-    setattr(Character, funcname, _make_single_function_combiner(funcname, min))
+    setattr(Character, funcname, _make_single_function_combiner(funcname, _maxmin_not_none(min)))
 
 # Create combiners for traits that take max result
 for funcname in ["target_number_of_orbitals", "military_safety_factor", "get_research_index"]:
-    setattr(Character, funcname, _make_single_function_combiner(funcname, max))
+    setattr(Character, funcname, _make_single_function_combiner(funcname, _maxmin_not_none(max)))
 
 # Create combiners for traits that take any result
 for funcname in ["check_orbital_production"]:
@@ -615,7 +621,7 @@ def geometric_mean_not_none(llin):
     ll_not_none = [x for x in llin if x is not None]
     ll = [x for x in ll_not_none if x > 0]
     if len(ll_not_none) != len(ll):
-        warn("Calculating the geometric mean of %s contains negative numbers which will be ignored." % ll_not_none)
+        warning("Calculating the geometric mean of %s contains negative numbers which will be ignored." % ll_not_none)
     if not ll:
         return 1
     return math.exp(sum(map(math.log, ll)) / float(len(ll)))

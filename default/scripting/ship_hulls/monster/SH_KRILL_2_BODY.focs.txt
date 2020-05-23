@@ -3,6 +3,7 @@ Hull
     description = "SH_KRILL_2_BODY_DESC"
     speed = 30
     fuel = 6
+    NoDefaultFuelEffect
     stealth = 15
     structure = 40
     slots = [
@@ -26,7 +27,7 @@ Hull
                 ]
             ]
             activation = And [
-                Turn low = max(60, Source.LastTurnActiveInBattle + 1)
+                Turn low = max(60, LocalCandidate.LastTurnActiveInBattle + 1)
                 InSystem
             ]
             stackinggroup = "KRILL_2_ACTION_STACK"
@@ -56,7 +57,7 @@ Hull
                 ]
             ]
             activation = And [
-                Turn low = max(60, Source.LastTurnActiveInBattle + 1)
+                Turn low = max(60, LocalCandidate.LastTurnActiveInBattle + 1)
                 InSystem
             ]
            effects = Destroy
@@ -70,7 +71,7 @@ Hull
                 ]
             ]
             activation = And [
-                Turn low = max(60, Source.LastTurnActiveInBattle + 1)
+                Turn low = max(60, LocalCandidate.LastTurnActiveInBattle + 1)
                 Random probability = 0.15
                 InSystem
             ]
@@ -90,6 +91,7 @@ Hull
 
         [[MONSTER_MOVE_ALWAYS]]
         [[INFINITE_FUEL]]
+        [[ADD_HULL_FUEL_TO_MAX_FUEL_METER]]
         [[MODERATE_VISION]]
         [[MONSTER_SHIELD_REGENERATION]]
 

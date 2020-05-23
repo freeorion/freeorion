@@ -2,11 +2,11 @@
 
 #include "SaveLoad.h"
 #include "ServerApp.h"
+#include "ServerNetworking.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 #include "../universe/System.h"
 #include "../universe/Species.h"
-#include "../network/ServerNetworking.h"
 #include "../network/Message.h"
 #include "../util/Directories.h"
 #include "../util/GameRules.h"
@@ -25,8 +25,6 @@
 #include <boost/functional/hash.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/uuid/nil_generator.hpp>
-//TODO: replace with std::make_unique when transitioning to C++14
-#include <boost/smart_ptr/make_unique.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 #include <GG/ClrConstants.h>
@@ -2519,7 +2517,7 @@ PlayingGame::PlayingGame(my_context c) :
         }
     }
 
-    if (GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval") > 0) {
+    if (GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval") > 0 && !Server().IsHaveWinner()) {
         // Set turn advance after time interval
         m_turn_timeout.expires_from_now(boost::posix_time::seconds(GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval")));
         m_turn_timeout.async_wait(boost::bind(&PlayingGame::TurnTimedoutHandler,
@@ -2712,23 +2710,13 @@ void PlayingGame::EstablishPlayer(const PlayerConnectionPtr& player_connection,
                 // previous connection was dropped
                 // set empire link to new connection by name
                 // send playing game
-                int empire_id = server.AddPlayerIntoGame(player_connection, ALL_EMPIRES);
-                if (empire_id != ALL_EMPIRES) {
-                    // notify other player that this empire revoked orders
-                    for (auto player_it = server.m_networking.established_begin();
-                         player_it != server.m_networking.established_end(); ++player_it)
-                    {
-                        PlayerConnectionPtr player_ctn = *player_it;
-                        player_ctn->SendMessage(PlayerStatusMessage(Message::PLAYING_TURN,
-                                                                    empire_id));
-                    }
-                }
+                server.AddPlayerIntoGame(player_connection, ALL_EMPIRES);
             }
             // In both cases update ingame lobby
             fsm.UpdateIngameLobby();
 
             // send timeout data
-            if (GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval") > 0) {
+            if (GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval") > 0 && !Server().IsHaveWinner()) {
                 auto remaining = m_turn_timeout.expires_from_now();
                 player_connection->SendMessage(TurnTimeoutMessage(remaining.total_seconds()));
             } else {
@@ -2892,14 +2880,6 @@ sc::result PlayingGame::react(const LobbyUpdate& msg) {
         if (player.first == sender->PlayerID() && player.second.m_save_game_empire_id != ALL_EMPIRES) {
             int empire_id = server.AddPlayerIntoGame(sender, player.second.m_save_game_empire_id);
             if (empire_id != ALL_EMPIRES) {
-                // notify other player that this empire revoked orders
-                for (auto player_it = server.m_networking.established_begin();
-                    player_it != server.m_networking.established_end(); ++player_it)
-                {
-                    PlayerConnectionPtr player_ctn = *player_it;
-                    player_ctn->SendMessage(PlayerStatusMessage(Message::PLAYING_TURN,
-                                                                empire_id));
-                }
                 context<ServerFSM>().UpdateIngameLobby();
                 return discard_event();
             }
@@ -2922,7 +2902,8 @@ void PlayingGame::TurnTimedoutHandler(const boost::system::error_code& error) {
     }
 
     if (GetOptionsDB().Get<bool>("network.server.turn-timeout.fixed-interval") &&
-        GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval") > 0)
+        GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval") > 0 &&
+        !Server().IsHaveWinner())
     {
         auto turn_expired_time = m_turn_timeout.expires_at();
         turn_expired_time += boost::posix_time::seconds(GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval"));
@@ -2961,7 +2942,7 @@ WaitingForTurnEnd::WaitingForTurnEnd(my_context c) :
     // reset turn timer if there no fixed interval
     if (!GetOptionsDB().Get<bool>("network.server.turn-timeout.fixed-interval")) {
         playing_game.m_turn_timeout.cancel();
-        if (GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval") > 0) {
+        if (GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval") > 0 && !Server().IsHaveWinner()) {
             playing_game.m_turn_timeout.expires_from_now(boost::posix_time::seconds(GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval")));
             playing_game.m_turn_timeout.async_wait(boost::bind(&PlayingGame::TurnTimedoutHandler,
                                                                &playing_game,
@@ -2969,7 +2950,7 @@ WaitingForTurnEnd::WaitingForTurnEnd(my_context c) :
         }
     }
 
-    if (GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval") > 0) {
+    if (GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval") > 0 && !Server().IsHaveWinner()) {
         auto remaining = playing_game.m_turn_timeout.expires_from_now();
         Server().Networking().SendMessageAll(TurnTimeoutMessage(remaining.total_seconds()));
     } else {
@@ -3075,7 +3056,7 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
         DebugLogger(FSM) << "WaitingForTurnEnd.TurnOrders : Received orders from player " << player_id
                          << " for empire " << empire_id << " count of " << order_set->size();
 
-        server.SetEmpireSaveGameData(empire_id, boost::make_unique<PlayerSaveGameData>(sender->PlayerName(), empire_id,
+        server.SetEmpireSaveGameData(empire_id, std::make_unique<PlayerSaveGameData>(sender->PlayerName(), empire_id,
                                      order_set, ui_data, save_state_string,
                                      client_type));
         empire->SetReady(true);
@@ -3328,15 +3309,13 @@ void WaitingForTurnEnd::SaveTimedoutHandler(const boost::system::error_code& err
 ProcessingTurn::ProcessingTurn(my_context c) :
     my_base(c),
     m_start(std::chrono::high_resolution_clock::now())
-{
+{ TraceLogger(FSM) << "(ServerFSM) ProcessingTurn"; }
+
+ProcessingTurn::~ProcessingTurn() {
     auto duration = std::chrono::high_resolution_clock::now() - m_start;
     DebugLogger(FSM) << "ProcessingTurn time: " << std::chrono::duration_cast<std::chrono::seconds>(duration).count() << " s";
-
-    TraceLogger(FSM) << "(ServerFSM) ProcessingTurn";
+    TraceLogger(FSM) << "(ServerFSM) ~ProcessingTurn";
 }
-
-ProcessingTurn::~ProcessingTurn()
-{ TraceLogger(FSM) << "(ServerFSM) ~ProcessingTurn"; }
 
 sc::result ProcessingTurn::react(const ProcessTurn& u) {
     TraceLogger(FSM) << "(ServerFSM) ProcessingTurn.ProcessTurn";

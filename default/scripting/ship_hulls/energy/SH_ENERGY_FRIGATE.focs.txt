@@ -3,6 +3,7 @@ Hull
     description = "SH_ENERGY_FRIGATE_DESC"
     speed = 120
     fuel = 4
+    NoDefaultFuelEffect
     stealth = 5
     structure = 15
     slots = [
@@ -29,6 +30,7 @@ Hull
     ]
     effectsgroups = [
         [[GOOD_FUEL_EFFICIENCY]]
+        [[ADD_HULL_FUEL_TO_MAX_FUEL_METER]]
         [[AVERAGE_BASE_FUEL_REGEN]]
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]

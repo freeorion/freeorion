@@ -12,8 +12,8 @@
 
 class Planet;
 class Tech;
-class PartType;
-class HullType;
+class ShipPart;
+class ShipHull;
 class BuildingType;
 class Special;
 class Species;
@@ -24,8 +24,9 @@ class ShipDesign;
 class GraphControl;
 
 
-/** UI class that displays in-game encyclopedic information about game
-  * content.  Tech, PartType, HullType, BuildingType, ShipDesign, etc. */
+//! UI class that displays in-game encyclopedic information about game content.
+//!
+//! Tech, ShipPart, ShipHull, BuildingType, ShipDesign, etc.
 class EncyclopediaDetailPanel : public CUIWnd {
 public:
     //! \name Structors //!@{
@@ -55,10 +56,10 @@ public:
     void SetItem(std::shared_ptr<const Planet> planet);
     void SetTech(const std::string& tech_name);
     void SetItem(const Tech* tech);
-    void SetPartType(const std::string& part_name);
-    void SetItem(const PartType* part);
-    void SetHullType(const std::string& hull_name);
-    void SetItem(const HullType* hull_type);
+    void SetShipPart(const std::string& part_name);
+    void SetItem(const ShipPart* part);
+    void SetShipHull(const std::string& hull_name);
+    void SetItem(const ShipHull* ship_hull);
     void SetBuildingType(const std::string& building_name);
     void SetItem(const BuildingType* building_type);
     void SetSpecial(const std::string& special_name);
@@ -113,18 +114,18 @@ private:
 
     std::weak_ptr<const ShipDesign> m_incomplete_design;
 
-    std::shared_ptr<GG::Label>          m_name_text = nullptr;              // name
-    std::shared_ptr<GG::Label>          m_cost_text = nullptr;              // cost and time to build or research
-    std::shared_ptr<GG::Label>          m_summary_text = nullptr;           // general purpose item
-    std::shared_ptr<GG::RichText>       m_description_rich_text = nullptr;  // detailed and lengthy description
-    std::shared_ptr<GG::ScrollPanel>    m_scroll_panel = nullptr;           // scroller for m_description_rich_text
-    std::shared_ptr<GG::StaticGraphic>  m_icon = nullptr;
-    std::shared_ptr<GG::Button>         m_index_button = nullptr;
-    std::shared_ptr<GG::Button>         m_back_button = nullptr;
-    std::shared_ptr<GG::Button>         m_next_button = nullptr;
-    std::shared_ptr<GG::Edit>           m_search_edit = nullptr;            // box to type to search
-    std::shared_ptr<GraphControl>       m_graph = nullptr;
-    bool                                m_needs_refresh = false;            // Indicates that data is stale.
+    std::shared_ptr<GG::Label>          m_name_text;            // name
+    std::shared_ptr<GG::Label>          m_cost_text;            // cost and time to build or research
+    std::shared_ptr<GG::Label>          m_summary_text;         // general purpose item
+    std::shared_ptr<GG::RichText>       m_description_rich_text;// detailed and lengthy description
+    std::shared_ptr<GG::ScrollPanel>    m_scroll_panel;         // scroller for m_description_rich_text
+    std::shared_ptr<GG::StaticGraphic>  m_icon;
+    std::shared_ptr<GG::Button>         m_index_button;
+    std::shared_ptr<GG::Button>         m_back_button;
+    std::shared_ptr<GG::Button>         m_next_button;
+    std::shared_ptr<GG::Edit>           m_search_edit;          // box to type to search
+    std::shared_ptr<GraphControl>       m_graph;
+    bool                                m_needs_refresh = false;// Indicates that data is stale.
 };
 
 

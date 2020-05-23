@@ -3,10 +3,10 @@
 
 #include "../ClientApp.h"
 #include "../../util/Process.h"
+#include "../../UI/SDLGUI.h"
 #include "../../UI/ClientUI.h"
 #include "../../util/OptionsDB.h"
 
-#include <GG/SDL/SDLGUI.h>
 
 #include <memory>
 #include <queue>
@@ -19,7 +19,7 @@ struct PreviewInformation;
 /** the application framework class for the human player FreeOrion client. */
 class HumanClientApp :
     public ClientApp,
-    public GG::SDLGUI
+    public SDLGUI
 {
 public:
     typedef boost::signals2::signal<void (bool)> FullscreenSwitchSignalType;

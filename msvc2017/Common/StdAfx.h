@@ -79,7 +79,6 @@
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/shared_mutex.hpp>
 #include <boost/type_traits/remove_const.hpp>
-#include <boost/unordered_map.hpp>
 #include <boost/uuid/nil_generator.hpp>
 #include <boost/uuid/uuid.hpp>
 #include <boost/variant.hpp>
@@ -88,7 +87,6 @@
 // includes from .cpp
 #include <sstream>
 
-#include <boost/smart_ptr/make_unique.hpp>
 
 #ifdef _MSC_VER
 // Note: This is a workaround for Visual C++ non-conformant pre-processor

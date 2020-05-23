@@ -3,14 +3,15 @@
 #include "ParseImpl.h"
 
 #include "../universe/ShipDesign.h"
+#include "../util/Directories.h"
 
 #include <boost/spirit/include/phoenix.hpp>
 #include <boost/phoenix/function/adapt_function.hpp>
 #include <boost/uuid/nil_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/optional/optional.hpp>
-//TODO: replace with std::make_unique when transitioning to C++14
-#include <boost/smart_ptr/make_unique.hpp>
+#include <boost/lexical_cast.hpp>
+
 
 FO_COMMON_API extern const int ALL_EMPIRES;
 
@@ -31,7 +32,7 @@ namespace {
                             const std::string& icon, const std::string& model,
                             bool name_desc_in_stringtable, const boost::uuids::uuid& uuid)
     {
-        auto design = boost::make_unique<ParsedShipDesign>(
+        auto design = std::make_unique<ParsedShipDesign>(
             name, description, 0, ALL_EMPIRES, hull, parts, icon, model,
             name_desc_in_stringtable, false, uuid);
 
@@ -228,11 +229,7 @@ namespace parse {
 
         boost::filesystem::path manifest_file;
 
-        // Allow files with any suffix in order to convert legacy ParsedShipDesign files.
-        bool permissive_mode = true;
-        const auto& scripts = ListScripts(path, permissive_mode);
-
-        for (const auto& file : scripts) {
+        for (const auto& file : ListDir(path, IsFOCScript)) {
             TraceLogger() << "Parse ship design file " << file.filename();
             if (file.filename() == "ShipDesignOrdering.focs.txt" ) {
                 manifest_file = file;

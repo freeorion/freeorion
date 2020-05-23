@@ -4046,6 +4046,9 @@ static int stbi__create_png_image_raw(stbi__png *a, stbi_uc *raw, stbi__uint32 r
          prior += 1;
       }
 
+      #pragma GCC diagnostic push
+      #pragma GCC diagnostic ignored "-Wmisleading-indentation"
+
       // this is a little gross, so that we don't switch per-pixel or per-component
       if (depth < 8 || img_n == out_n) {
          int nk = (width - 1)*img_n;
@@ -4081,6 +4084,8 @@ static int stbi__create_png_image_raw(stbi__png *a, stbi_uc *raw, stbi__uint32 r
          }
          #undef CASE
       }
+
+      #pragma GCC diagnostic pop
    }
 
    // we make a separate pass to expand bits to pixels; for performance,

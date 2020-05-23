@@ -84,9 +84,12 @@ EG_DEFENSE_NET
     ]
     stackinggroup = "DEFENSE_NET_STACK_@2@"
     priority = [[DEFAULT_PRIORITY]]
-    effects = SetMaxDefense value = Value + @1@ accountinglabel = "DEF_DEFENSE_NET_@2@"
+    effects = SetMaxDefense value = Value + ( @1@ * [[PLANET_DEFENSE_FACTOR]] ) accountinglabel = "DEF_DEFENSE_NET_@2@"
 '''
 
 #include "/scripting/common/base_prod.macros"
 
 #include "/scripting/common/priorities.macros"
+
+#include "/scripting/common/misc.macros"
+

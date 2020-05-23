@@ -1,11 +1,10 @@
 #include "OptionsDB.h"
 
+#include "Directories.h"
 #include "i18n.h"
 #include "Logger.h"
 #include "OptionValidators.h"
 #include "XMLDoc.h"
-
-#include "util/Directories.h"
 
 #include <iostream>
 #include <iomanip>
@@ -173,20 +172,22 @@ OptionsDB::OptionsDB() : m_dirty(false) {
     s_options_db = this;
 }
 
-void OptionsDB::Commit() {
-    if (!m_dirty)
-        return;
+bool OptionsDB::Commit(bool only_if_dirty, bool only_non_default) {
+    if (only_if_dirty && !m_dirty)
+        return true;
     boost::filesystem::ofstream ofs(GetConfigPath());
     if (ofs) {
         XMLDoc doc;
-        GetOptionsDB().GetXML(doc);
+        GetOptionsDB().GetXML(doc, only_non_default, true);
         doc.WriteDoc(ofs);
         m_dirty = false;
+        return true;
     } else {
         std::cerr << UserString("UNABLE_TO_WRITE_CONFIG_XML") << std::endl;
         std::cerr << PathToString(GetConfigPath()) << std::endl;
         ErrorLogger() << UserString("UNABLE_TO_WRITE_CONFIG_XML");
         ErrorLogger() << PathToString(GetConfigPath());
+        return false;
     }
 }
 
@@ -194,7 +195,7 @@ bool OptionsDB::CommitPersistent() {
     bool retval = false;
     auto config_file = GetPersistentConfigPath();
     XMLDoc doc;
-    GetOptionsDB().GetXML(doc, true);
+    GetOptionsDB().GetXML(doc, true, false);   // only output non-default options
     try {
         // Remove any previously existing file
         boost::filesystem::remove(config_file);
@@ -526,7 +527,7 @@ void OptionsDB::GetUsage(std::ostream& os, const std::string& command_line, bool
     OverrideAllLoggersThresholds(boost::none);
 }
 
-void OptionsDB::GetXML(XMLDoc& doc, bool non_default_only) const {
+void OptionsDB::GetXML(XMLDoc& doc, bool non_default_only, bool include_version) const {
     doc = XMLDoc();
 
     std::vector<XMLElement*> elem_stack;
@@ -536,29 +537,41 @@ void OptionsDB::GetXML(XMLDoc& doc, bool non_default_only) const {
         if (!option.second.storable)
             continue;
 
+        if (!option.second.recognized)
+            continue;
+
         std::string::size_type last_dot = option.first.find_last_of('.');
         std::string section_name = last_dot == std::string::npos ? "" : option.first.substr(0, last_dot);
         std::string name = option.first.substr(last_dot == std::string::npos ? 0 : last_dot + 1);
 
-        if (non_default_only) {
-            bool is_default_nonflag = !option.second.flag;
-            if (is_default_nonflag)
-                is_default_nonflag = IsDefaultValue(m_options.find(option.first));
+        // "version.gl.check.done" is automatically set to true after other logic is performed
+        if (option.first == "version.gl.check.done")
+            continue;
 
-            // Skip unwanted config options
-            // Storing "version.string" in persistent config would render all config options invalid after a new build
-            // "version.gl.check.done" is automatically set to true after other logic is performed
-            // BUG Some windows may be shown as a child of an other window, but not initially visible.
-            //   The OptionDB default of "*.visible" in these cases may be false, but setting the option to false
-            //   in a config file may prevent such windows from showing when requested.
-            if (option.first == "version.string" || option.first == "version.gl.check.done" || name == "visible" ||
-                !option.second.recognized || (is_default_nonflag))
-            { continue; }
+        // Skip unwanted config options
+        // BUG Some windows may be shown as a child of an other window, but not initially visible.
+        //   The OptionDB default of "*.visible" in these cases may be false, but setting the option to false
+        //   in a config file may prevent such windows from showing when requested.
+        if (name == "visible")
+            continue;
+
+        // Storing "version.string" in persistent config would render all config options invalid after a new build
+        if (!include_version && option.first == "version.string")
+            continue;
+
+        // do want to store version string if requested, regardless of whether
+        // it is default. for other strings, if storing non-default only,
+        // check if option is default and if it is, skip it.
+        if (non_default_only && option.first != "version.string") {
+            bool is_default_nonflag = !option.second.flag && IsDefaultValue(m_options.find(option.first));
+            if (is_default_nonflag)
+                continue;
 
             // Default value of flag options will throw bad_any_cast, fortunately they always default to false
             if (option.second.flag && !boost::any_cast<bool>(option.second.value))
                 continue;
         }
+
 
         while (1 < elem_stack.size()) {
             std::string prev_section = PreviousSectionName(elem_stack);
@@ -636,12 +649,17 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
 
     for (unsigned int i = 1; i < args.size(); ++i) {
         std::string current_token(args[i]);
+
         if (current_token.find("--") == 0) {
             std::string option_name = current_token.substr(2);
 
+            if (option_name.empty())
+                throw std::runtime_error("A \'--\' was given with no option name.");
+
             auto it = m_options.find(option_name);
 
-            if (it == m_options.end() || !it->second.recognized) { // unrecognized option: may be registered later on so we'll store it for now
+            if (it == m_options.end() || !it->second.recognized) {
+                // unrecognized option: may be registered later on so we'll store it for now
                 // Check for more parameters (if this is the last one, assume that it is a flag).
                 std::string value_str("-");
                 if (i + 1 < static_cast<unsigned int>(args.size())) {
@@ -661,7 +679,9 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
                 }
 
                 WarnLogger() << "Option \"" << option_name << "\", was specified on the command line but was not recognized.  It may not be registered yet or could be a typo.";
+
             } else {
+                // recognized option
                 Option& option = it->second;
                 if (option.value.empty())
                     throw std::runtime_error("The value member of option \"--" + option.name + "\" is undefined.");
@@ -678,7 +698,7 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
                         StripQuotation(value_str);
                         // ensure parameter is actually a parameter, and not the next option name (which would indicate
                         // that the option was specified without a parameter value, as if it was a flag)
-                        if (value_str.at(0) == '-')
+                        if (!value_str.empty() && value_str.at(0) == '-')
                             throw std::runtime_error("the option \"" + option.name +
                                                      "\" was followed by the parameter \"" + value_str +
                                                      "\", which appears to be an option flag, not a parameter value, because it begins with a \"-\" character.");
@@ -696,39 +716,39 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
 #ifdef FREEORION_MACOSX
                 && current_token.find("-psn") != 0 // Mac OS X passes a process serial number to all applications using Carbon or Cocoa, it should be ignored here
 #endif
-            ) {
+            )
+        {
             std::string single_char_options = current_token.substr(1);
 
-            if (single_char_options.size() == 0) {
+            if (single_char_options.empty())
                 throw std::runtime_error("A \'-\' was given with no options.");
-            } else {
-                for (unsigned int j = 0; j < single_char_options.size(); ++j) {
-                    auto short_name_it = Option::short_names.find(single_char_options[j]);
 
-                    if (short_name_it == Option::short_names.end())
-                        throw std::runtime_error(std::string("Unknown option \"-") + single_char_options[j] + "\" was given.");
+            for (unsigned int j = 0; j < single_char_options.size(); ++j) {
+                auto short_name_it = Option::short_names.find(single_char_options[j]);
 
-                    auto name_it = m_options.find(short_name_it->second);
+                if (short_name_it == Option::short_names.end())
+                    throw std::runtime_error(std::string("Unknown option \"-") + single_char_options[j] + "\" was given.");
 
-                    if (name_it == m_options.end())
-                        throw std::runtime_error("Option \"--" + short_name_it->second + "\", abbreviated as \"-" + short_name_it->first + "\", could not be found.");
+                auto name_it = m_options.find(short_name_it->second);
 
-                    Option& option = name_it->second;
-                    if (option.value.empty())
-                        throw std::runtime_error("The value member of option \"--" + option.name + "\" is undefined.");
+                if (name_it == m_options.end())
+                    throw std::runtime_error("Option \"--" + short_name_it->second + "\", abbreviated as \"-" + short_name_it->first + "\", could not be found.");
 
-                    if (!option.flag) {
-                        if (j < single_char_options.size() - 1) {
-                            throw std::runtime_error(std::string("Option \"-") + single_char_options[j] + "\" was given with no parameter.");
-                        } else {
-                            if (i + 1 >= static_cast<unsigned int>(args.size()))
-                                m_dirty |= option.SetFromString("");
-                            else
-                                m_dirty |= option.SetFromString(args[++i]);
-                        }
+                Option& option = name_it->second;
+                if (option.value.empty())
+                    throw std::runtime_error("The value member of option \"--" + option.name + "\" is undefined.");
+
+                if (!option.flag) {
+                    if (j < single_char_options.size() - 1) {
+                        throw std::runtime_error(std::string("Option \"-") + single_char_options[j] + "\" was given with no parameter.");
                     } else {
-                        option.value = true;
+                        if (i + 1 >= static_cast<unsigned int>(args.size()))
+                            m_dirty |= option.SetFromString("");
+                        else
+                            m_dirty |= option.SetFromString(args[++i]);
                     }
+                } else {
+                    option.value = true;
                 }
             }
         }
@@ -761,11 +781,12 @@ void OptionsDB::SetFromXML(const XMLDoc& doc) {
 
 void OptionsDB::SetFromXMLRecursive(const XMLElement& elem, const std::string& section_name) {
     std::string option_name = section_name + (section_name.empty() ? "" : ".") + elem.Tag();
+    if (option_name == "version.string")
+        return;
 
     if (!elem.children.empty()) {
         for (const XMLElement& child : elem.children)
             SetFromXMLRecursive(child, option_name);
-
     }
 
     auto it = m_options.find(option_name);
@@ -837,7 +858,6 @@ std::vector<std::string> OptionsDB::Get<std::vector<std::string>>(const std::str
         }
     }
 }
-
 
 std::string ListToString(const std::vector<std::string>& input_list) {
     // list input strings in comma-separated-value format

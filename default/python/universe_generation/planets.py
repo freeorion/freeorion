@@ -66,7 +66,7 @@ def calc_planet_size(star_type, orbit, planet_density, galaxy_shape):
             if max_roll < roll:
                 max_roll = roll
                 planet_size = size
-    except:
+    except:  # noqa: E722
         # in case of an error play it safe and set planet size to invalid
         planet_size = fo.planetSize.unknown
         util.report_error("Python calc_planet_size: Pick planet size failed" + str(sys.exc_info()[1]))

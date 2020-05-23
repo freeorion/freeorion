@@ -1,5 +1,5 @@
 // -*- C++ -*-
-/* GG is a GUI for SDL and OpenGL.
+/* GG is a GUI for OpenGL.
    Copyright (C) 2003-2008 T. Zachary Laine
 
    This library is free software; you can redistribute it and/or
@@ -157,14 +157,14 @@ private:
     Clr              m_text_color;
     std::shared_ptr<Font> m_font;
 
-    bool             m_save;
+    bool             m_save = false;
     std::vector<std::pair<std::string, std::string>>
                      m_file_filters;
     std::set<std::string>
                      m_result;
-    bool             m_select_directories;
-    bool             m_append_missing_save_extension;
-    bool             m_in_win32_drive_selection;
+    bool             m_select_directories = false;;
+    bool             m_append_missing_save_extension = false;;
+    bool             m_in_win32_drive_selection = false;;
 
     std::string      m_save_str;
     std::string      m_open_str;

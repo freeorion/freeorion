@@ -14,7 +14,7 @@
 #include "../util/OptionsDB.h"
 #include "../util/Directories.h"
 #include "../client/human/HumanClientApp.h"
-#include "../network/ClientNetworking.h"
+#include "../client/ClientNetworking.h"
 #include "ClientUI.h"
 #include "CUIControls.h"
 #include "Sound.h"
@@ -74,17 +74,7 @@ namespace {
 
 ServerConnectWnd::ServerConnectWnd() :
     CUIWnd(UserString("SCONNECT_WINDOW_TITLE"),
-           GG::INTERACTIVE | GG::MODAL),
-    m_host_or_join_radio_group(nullptr),
-    m_client_type_list(nullptr),
-    m_LAN_game_label(nullptr),
-    m_servers_lb(nullptr),
-    m_find_LAN_servers_bn(nullptr),
-    m_internet_game_label(nullptr),
-    m_IP_address_edit(nullptr),
-    m_player_name_edit(nullptr),
-    m_ok_bn(nullptr),
-    m_cancel_bn(nullptr)
+           GG::INTERACTIVE | GG::MODAL)
 {}
 
 void ServerConnectWnd::CompleteConstruction() {
@@ -140,6 +130,8 @@ void ServerConnectWnd::CompleteConstruction() {
     SetLayout(layout);
 
     ResetDefaultPosition();
+
+    using boost::placeholders::_1;
 
     m_host_or_join_radio_group->ButtonChangedSignal.connect(
         boost::bind(&ServerConnectWnd::EnableDisableControls, this));

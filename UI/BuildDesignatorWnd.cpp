@@ -16,28 +16,73 @@
 #include "../universe/UniverseObject.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
-#include "../universe/Building.h"
+#include "../universe/BuildingType.h"
 #include "../universe/ShipDesign.h"
+#include "../universe/ShipHull.h"
+#include "../universe/ShipPart.h"
 #include "../universe/Conditions.h"
 #include "../universe/Enums.h"
 #include "../universe/ValueRef.h"
 #include "../client/human/HumanClientApp.h"
 
-#include <GG/DrawUtil.h>
 #include <GG/Layout.h>
 #include <GG/StaticGraphic.h>
 
 #include <iterator>
-
 
 namespace {
     const std::string PROD_PEDIA_WND_NAME = "production.pedia";
     const std::string PROD_SELECTOR_WND_NAME = "production.selector";
     const std::string PROD_SIDEPANEL_WND_NAME = "production.sidepanel";
 
-    void    AddOptions(OptionsDB& db)
+    void AddOptions(OptionsDB& db)
     { db.Add("ui." + PROD_PEDIA_WND_NAME + ".hidden.enabled", UserStringNop("OPTIONS_DB_PRODUCTION_PEDIA_HIDDEN"), false); }
     bool temp_bool = RegisterOptions(&AddOptions);
+
+    const int MAX_PRODUCTION_TURNS = 200;
+    const float EPSILON = 0.001f;
+
+    int ProductionTurns(float total_cost, int minimum_production_time, float local_pp_output,
+                        float stockpile, float stockpile_limit_per_turn)
+    {
+        float max_allocation_per_turn = total_cost / minimum_production_time;
+        //std::cout << "\nProductionTurnsprod max per turn: " << max_allocation_per_turn << "  total cost: " << total_cost
+        //          << "  min time: " << minimum_production_time << "  local pp: " << local_pp_output << "  stockpile: " << stockpile << std::endl;
+
+        // allocate production each turn, limited by total stockpile, stockpile per turn limit, and connected industry output
+        int prod_time_here = 0;
+        float total_allocated = 0.0f;
+        for (; prod_time_here < MAX_PRODUCTION_TURNS && total_allocated < total_cost - EPSILON;) {
+            float avail_stockpile = std::min(stockpile, stockpile_limit_per_turn);
+            float industry_output_used = local_pp_output;
+            float stockpile_used = 0.0f;
+
+            if (local_pp_output >= max_allocation_per_turn) {
+                industry_output_used = max_allocation_per_turn;
+
+            } else if (local_pp_output + avail_stockpile >= max_allocation_per_turn) {
+                industry_output_used = local_pp_output;
+                stockpile_used = max_allocation_per_turn - local_pp_output;
+
+            } else if (local_pp_output + avail_stockpile > 0.0f) {
+                industry_output_used = local_pp_output;
+                stockpile_used = avail_stockpile;
+
+            } else {
+                // no progress possible
+                break;
+            }
+
+            stockpile -= stockpile_used;
+            total_allocated += stockpile_used + industry_output_used;
+            prod_time_here++;
+            //std::cout << "prod time here: " << prod_time_here << ": stockpile used: " << stockpile_used
+            //          << "   industry used: " << industry_output_used << "  total cost: " << total_cost << std::endl;
+        }
+
+        return std::max(minimum_production_time, prod_time_here);
+    }
+
 
     //////////////////////////////////
     // ProductionItemPanel
@@ -76,7 +121,7 @@ namespace {
 
             const GG::X ICON_WIDTH(Value(ClientHeight()));
             const GG::X ITEM_NAME_WIDTH(ClientUI::Pts() * 16);
-            const GG::X COST_WIDTH(ClientUI::Pts() * 4);
+            //const GG::X COST_WIDTH(ClientUI::Pts() * 4);
             const GG::X TIME_WIDTH(ClientUI::Pts() * 3);
             const GG::X DESC_WIDTH(ClientUI::Pts() * 18);
 
@@ -87,8 +132,8 @@ namespace {
             left += ICON_WIDTH + GG::X(3);
             m_name->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(left + ITEM_NAME_WIDTH, bottom));
             left += ITEM_NAME_WIDTH;
-            m_cost->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(left + COST_WIDTH, bottom));
-            left += COST_WIDTH;
+            //m_cost->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(left + COST_WIDTH, bottom));
+            //left += COST_WIDTH;
             m_time->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(left + TIME_WIDTH, bottom));
             left += TIME_WIDTH;
             m_desc->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(left + DESC_WIDTH, bottom));
@@ -101,11 +146,11 @@ namespace {
 
             const Empire* empire = GetEmpire(m_empire_id);
 
-            std::shared_ptr<GG::Texture>            texture;
-            std::string                             name_text;
-            std::string                             cost_text;
-            std::string                             time_text;
-            std::string                             desc_text;
+            std::shared_ptr<GG::Texture>        texture;
+            std::string                         name_text;
+            //std::string                         cost_text;
+            std::string                         time_text;
+            std::string                         desc_text;
             std::vector<Condition::Condition*>  location_conditions;
 
             switch (m_item.build_type) {
@@ -134,22 +179,43 @@ namespace {
                 texture = ClientUI::GetTexture("");
             }
 
+            float local_pp_output = 0.0f;
+            float stockpile = 0.0f;
+            float stockpile_limit_per_turn = 0.0f;
+
             // cost / turn, and minimum production turns
             if (empire) {
+                // from industry output
+                local_pp_output = empire->GetResourcePool(RE_INDUSTRY)->GroupAvailable(m_location_id);
+
+                // from stockpile
+                stockpile = empire->GetResourcePool(RE_INDUSTRY)->Stockpile();
+                stockpile_limit_per_turn = empire->GetProductionQueue().StockpileCapacity();
+
                 std::pair<double, int> cost_time = empire->ProductionCostAndTime(m_item, m_location_id);
-                cost_text = DoubleToString(cost_time.first, 3, false);
-                time_text = std::to_string(cost_time.second);
+                //cost_text = DoubleToString(cost_time.first, 3, false);
+
+                float total_cost = static_cast<float>(cost_time.first);
+                int minimum_production_time = cost_time.second;
+
+                int production_time = ProductionTurns(total_cost, minimum_production_time, local_pp_output,
+                                                      stockpile, stockpile_limit_per_turn);
+
+                if (production_time >= MAX_PRODUCTION_TURNS)
+                    time_text = std::to_string(MAX_PRODUCTION_TURNS) + "+";
+                else
+                    time_text = std::to_string(production_time);
             }
 
             m_icon = GG::Wnd::Create<GG::StaticGraphic>(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
             m_name = GG::Wnd::Create<CUILabel>(name_text, GG::FORMAT_LEFT);
-            m_cost = GG::Wnd::Create<CUILabel>(cost_text);
+            //m_cost = GG::Wnd::Create<CUILabel>(cost_text);
             m_time = GG::Wnd::Create<CUILabel>(time_text);
             m_desc = GG::Wnd::Create<CUILabel>(desc_text, GG::FORMAT_LEFT);
 
             AttachChild(m_icon);
             AttachChild(m_name);
-            AttachChild(m_cost);
+            //AttachChild(m_cost);
             AttachChild(m_time);
             AttachChild(m_desc);
 
@@ -160,11 +226,11 @@ namespace {
         const ProductionQueue::ProductionItem   m_item;
         int                                     m_empire_id = ALL_EMPIRES;
         int                                     m_location_id = INVALID_OBJECT_ID;
-        std::shared_ptr<GG::StaticGraphic>      m_icon = nullptr;
-        std::shared_ptr<GG::Label>              m_name = nullptr;
-        std::shared_ptr<GG::Label>              m_cost = nullptr;
-        std::shared_ptr<GG::Label>              m_time = nullptr;
-        std::shared_ptr<GG::Label>              m_desc = nullptr;
+        std::shared_ptr<GG::StaticGraphic>      m_icon;
+        std::shared_ptr<GG::Label>              m_name;
+        //std::shared_ptr<GG::Label>              m_cost;
+        std::shared_ptr<GG::Label>              m_time;
+        std::shared_ptr<GG::Label>              m_desc;
     };
 
     std::shared_ptr<const UniverseObject> GetSourceObjectForEmpire(int empire_id) {
@@ -220,11 +286,11 @@ namespace {
                 can_colonize_cond.reset(new Condition::CanColonize());
                 location_conditions.push_back(can_colonize_cond.get());
             }
-            if (const HullType* hull_type = ship_design->GetHull())
-                location_conditions.push_back(const_cast<Condition::Condition*>(hull_type->Location()));
+            if (const ShipHull* ship_hull = GetShipHull(ship_design->Hull()))
+                location_conditions.push_back(const_cast<Condition::Condition*>(ship_hull->Location()));
             for (const std::string& part_name : ship_design->Parts()) {
-                if (const PartType* part_type = GetPartType(part_name))
-                    location_conditions.push_back(const_cast<Condition::Condition*>(part_type->Location()));
+                if (const ShipPart* part = GetShipPart(part_name))
+                    location_conditions.push_back(const_cast<Condition::Condition*>(part->Location()));
             }
         }
         auto source = GetSourceObjectForEmpire(empire_id);
@@ -238,22 +304,84 @@ namespace {
     std::shared_ptr<GG::BrowseInfoWnd> ProductionItemRowBrowseWnd(const ProductionQueue::ProductionItem& item,
                                                                   int candidate_object_id, int empire_id)
     {
+        // get available PP for empire at candidate location
+        float local_pp_output = 0.0f;
+        float stockpile = 0.0f;
+        float stockpile_limit_per_turn = 0.0f;
+        if (const auto* empire = GetEmpire(empire_id)) {
+            // from industry output
+            local_pp_output = empire->GetResourcePool(RE_INDUSTRY)->GroupAvailable(candidate_object_id);
+
+            // from stockpile
+            stockpile = empire->GetResourcePool(RE_INDUSTRY)->Stockpile();
+            stockpile_limit_per_turn = empire->GetProductionQueue().StockpileCapacity();
+        }
+
+        auto obj = Objects().get(candidate_object_id);
+        std::string candidate_name = obj ? obj->Name() : "";
+        if (GetOptionsDB().Get<bool>("ui.name.id.shown"))
+            candidate_name += " (" + std::to_string(candidate_object_id) + ")";
+
         // production item is a building
         if (item.build_type == BT_BUILDING) {
             const BuildingType* building_type = GetBuildingType(item.name);
             if (!building_type)
                 return nullptr;
 
-            // create title, description, production time and cost
             const std::string& title = UserString(item.name);
-            std::string main_text = UserString(building_type->Description());
-            float total_cost = building_type->ProductionCost(empire_id, candidate_object_id);
-            int production_time = building_type->ProductionTime(empire_id, candidate_object_id);
+            std::string main_text;
 
-            main_text += "\n\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_COST")) %
-                                                 DoubleToString(total_cost, 3, false));
-            main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME")) %
-                                               std::to_string(production_time));
+
+
+            if (obj || building_type->ProductionCostTimeLocationInvariant()) {
+                // if location object is available, or cost and time are invariation to location, can safely evaluate cost and time
+                float total_cost = building_type->ProductionCost(empire_id, candidate_object_id);
+                int minimum_production_time = std::max(1, building_type->ProductionTime(empire_id, candidate_object_id));
+
+                if (obj) {
+                    // if location object is available, can evaluate production time at that location
+                    int prod_time_here = ProductionTurns(total_cost, minimum_production_time, local_pp_output,
+                                                         stockpile, stockpile_limit_per_turn);
+
+                    if (prod_time_here < MAX_PRODUCTION_TURNS) {
+                        main_text += boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME")) %
+                                                    std::to_string(prod_time_here) % candidate_name);
+                    } else {
+                        main_text += boost::io::str(FlexibleFormat(UserString("NO_PRODUCTION_HERE_CANT_PRODUCE")) %
+                                                    candidate_name);
+                    }
+                }
+
+                main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME_MINIMUM")) %
+                                                   std::to_string(minimum_production_time));
+                main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_COST")) %
+                                                   DoubleToString(total_cost, 3, false));
+
+            } else {
+                // no location object, but have location-dependent cost or time
+
+                int minimum_production_time = std::max(1, building_type->ProductionTime(empire_id, candidate_object_id));
+                // 9999 is arbitrary large time returned for evaluation failure due to lack of location object but object-dependent time
+                if (minimum_production_time >= 9999) {
+                    main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME_MINIMUM")) %
+                                                       UserString("PRODUCTION_WND_TOOLTIP_LOCATION_DEPENDENT"));
+                } else {
+                    main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME_MINIMUM")) %
+                                                       std::to_string(minimum_production_time));
+                }
+
+                float total_cost = building_type->ProductionCost(empire_id, candidate_object_id);
+                // 999999.9f is arbitrary large cost returned for evaluation failure due to lack of location object but object-dependnet cost
+                if (total_cost >= 999999.9f) {
+                    main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_COST")) %
+                                                       UserString("PRODUCTION_WND_TOOLTIP_LOCATION_DEPENDENT"));
+                } else {
+                    main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_COST")) %
+                                                       DoubleToString(total_cost, 3, false));
+                }
+            }
+
+            main_text += "\n\n" + UserString(building_type->Description());
 
             // show build conditions
             const std::string& enqueue_and_location_condition_failed_text =
@@ -278,14 +406,58 @@ namespace {
 
             // create title, description, production time and cost, hull type
             const std::string& title = design->Name(true);
-            std::string main_text = design->Description(true);
-            float total_cost = design->ProductionCost(empire_id, candidate_object_id);
-            int production_time = design->ProductionTime(empire_id, candidate_object_id);
+            std::string main_text;
 
-            main_text += "\n\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_COST")) %
-                                                 DoubleToString(total_cost, 3, false));
-            main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME")) %
-                                               std::to_string(production_time));
+            if (obj || design->ProductionCostTimeLocationInvariant()) {
+                // if location object is available, or cost and time are invariation to location, can safely evaluate cost and time
+                float total_cost = design->ProductionCost(empire_id, candidate_object_id);
+                int minimum_production_time = std::max(1, design->ProductionTime(empire_id, candidate_object_id));
+
+                if (obj) {
+                    // if location object is available, can evaluate production time at that location
+                    int prod_time_here = ProductionTurns(total_cost, minimum_production_time, local_pp_output,
+                                                         stockpile, stockpile_limit_per_turn);
+
+                    if (prod_time_here < MAX_PRODUCTION_TURNS) {
+                        main_text += boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME")) %
+                                                    std::to_string(prod_time_here) % candidate_name);
+                    } else {
+                        main_text += boost::io::str(FlexibleFormat(UserString("NO_PRODUCTION_HERE_CANT_PRODUCE")) %
+                                                    candidate_name);
+                    }
+                }
+
+                main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME_MINIMUM")) %
+                                                   std::to_string(minimum_production_time));
+                main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_COST")) %
+                                                   DoubleToString(total_cost, 3, false));
+
+            } else {
+                // no location object, but have location-dependent cost or time
+
+                int minimum_production_time = std::max(1, design->ProductionTime(empire_id, candidate_object_id));
+                // 9999 is arbitrary large time returned for evaluation failure due to lack of location object but object-dependent time
+                if (minimum_production_time >= 9999) {
+                    main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME_MINIMUM")) %
+                                                       UserString("PRODUCTION_WND_TOOLTIP_LOCATION_DEPENDENT"));
+                } else {
+                    main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME_MINIMUM")) %
+                                                       std::to_string(minimum_production_time));
+                }
+
+                float total_cost = design->ProductionCost(empire_id, candidate_object_id);
+                // 999999.9f is arbitrary large cost returned for evaluation failure due to lack of location object but object-dependnet cost
+                if (total_cost >= 999999.9f) {
+                    main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_COST")) %
+                                                       UserString("PRODUCTION_WND_TOOLTIP_LOCATION_DEPENDENT"));
+                } else {
+                    main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_COST")) %
+                                                       DoubleToString(total_cost, 3, false));
+                }
+            }
+
+            main_text += "\n\n" + design->Description(true);
+
             main_text += "\n\n" + UserString("ENC_SHIP_HULL") + ": " + UserString(design->Hull());
 
             // load ship parts, stack ship parts that are used multiple times
@@ -331,13 +503,6 @@ namespace {
             // create title, description, production time and cost
             const std::string& title = UserString(item.name);
             std::string main_text = UserString("PROJECT_BT_STOCKPILE_DESC");
-            float total_cost = 1.0;
-            int production_time = 1;
-
-            main_text += "\n\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_COST")) %
-                                                 DoubleToString(total_cost, 3, false));
-            main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME")) %
-                                               std::to_string(production_time));
 
             // do not show build conditions - always buildable
 
@@ -359,11 +524,12 @@ namespace {
     public:
         ProductionItemRow(GG::X w, GG::Y h, const ProductionQueue::ProductionItem& item,
                           int empire_id, int location_id) :
-            GG::ListBox::Row(w, h, "", GG::ALIGN_NONE, 0),
-            m_item(item),
-            m_panel(nullptr)
+            GG::ListBox::Row(w, h),
+            m_item(item)
         {
             SetName("ProductionItemRow");
+            SetMargin(0);
+            SetRowAlignment(GG::ALIGN_NONE);
             SetChildClippingMode(ClipToClient);
 
             if (m_item.build_type == BT_SHIP) {
@@ -557,15 +723,17 @@ void BuildDesignatorWnd::BuildSelector::CompleteConstruction() {
         UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>()));
     AttachChild(m_availability_buttons.back());
 
+    namespace ph = boost::placeholders;
+
     // selectable list of buildable items
     AttachChild(m_buildable_items);
     m_buildable_items->LeftClickedRowSignal.connect(
-        boost::bind(&BuildDesignatorWnd::BuildSelector::BuildItemLeftClicked, this, _1, _2, _3));
+        boost::bind(&BuildDesignatorWnd::BuildSelector::BuildItemLeftClicked, this, ph::_1, ph::_2, ph::_3));
     m_buildable_items->DoubleClickedRowSignal.connect(
         [this](GG::ListBox::iterator it, const GG::Pt&, const GG::Flags<GG::ModKey>& modkeys)
         { this->AddBuildItemToQueue(it, modkeys & GG::MOD_KEY_CTRL); });
     m_buildable_items->RightClickedRowSignal.connect(
-        boost::bind(&BuildDesignatorWnd::BuildSelector::BuildItemRightClicked, this, _1, _2, _3));
+        boost::bind(&BuildDesignatorWnd::BuildSelector::BuildItemRightClicked, this, ph::_1, ph::_2, ph::_3));
 
     //auto header = GG::Wnd::Create<GG::ListBox::Row>();
     //std::shared_ptr<GG::Font> font = ClientUI::GetFont();
@@ -660,8 +828,8 @@ void BuildDesignatorWnd::BuildSelector::Refresh() {
     m_empire_ship_designs_changed_signal.disconnect();
     if (const Empire* empire = GetEmpire(m_empire_id))
         m_empire_ship_designs_changed_signal = empire->ShipDesignsChangedSignal.connect(
-                                                boost::bind(&BuildDesignatorWnd::BuildSelector::Refresh, this),
-                                                boost::signals2::at_front);
+            boost::bind(&BuildDesignatorWnd::BuildSelector::Refresh, this),
+            boost::signals2::at_front);
     PopulateList();
 }
 
@@ -985,10 +1153,7 @@ void BuildDesignatorWnd::BuildSelector::BuildItemRightClicked(GG::ListBox::itera
 const std::string BuildDesignatorWnd::PRODUCTION_ITEM_DROP_TYPE = "Production Item";
 
 BuildDesignatorWnd::BuildDesignatorWnd(GG::X w, GG::Y h) :
-    Wnd(GG::X0, GG::Y0, w, h, GG::INTERACTIVE | GG::ONTOP),
-    m_enc_detail_panel(nullptr),
-    m_build_selector(nullptr),
-    m_side_panel(nullptr)
+    Wnd(GG::X0, GG::Y0, w, h, GG::INTERACTIVE | GG::ONTOP)
 {}
 
 void BuildDesignatorWnd::CompleteConstruction() {
@@ -997,8 +1162,7 @@ void BuildDesignatorWnd::CompleteConstruction() {
     m_enc_detail_panel = GG::Wnd::Create<EncyclopediaDetailPanel>(
         GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE | PINABLE, PROD_PEDIA_WND_NAME);
     // Wnd is manually closed by user
-    m_enc_detail_panel->ClosingSignal.connect(
-        boost::bind(&BuildDesignatorWnd::HidePedia, this));
+    m_enc_detail_panel->ClosingSignal.connect(boost::bind(&BuildDesignatorWnd::HidePedia, this));
 
     m_side_panel = GG::Wnd::Create<SidePanel>(PROD_SIDEPANEL_WND_NAME);
     m_build_selector = GG::Wnd::Create<BuildSelector>(PROD_SELECTOR_WND_NAME);
@@ -1008,12 +1172,14 @@ void BuildDesignatorWnd::CompleteConstruction() {
 
     m_side_panel->EnableSelection();
 
+    namespace ph = boost::placeholders;
+
     m_build_selector->DisplayBuildingTypeSignal.connect(
         boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const BuildingType*)>(
-            &EncyclopediaDetailPanel::SetItem), m_enc_detail_panel, _1));
+            &EncyclopediaDetailPanel::SetItem), m_enc_detail_panel, ph::_1));
     m_build_selector->DisplayShipDesignSignal.connect(
         boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const ShipDesign*)>(
-            &EncyclopediaDetailPanel::SetItem), m_enc_detail_panel, _1));
+            &EncyclopediaDetailPanel::SetItem), m_enc_detail_panel, ph::_1));
     m_build_selector->DisplayStockpileProjectSignal.connect(
         boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const std::string&)>(
             &EncyclopediaDetailPanel::SetEncyclopediaArticle), m_enc_detail_panel, "PROJECT_BT_STOCKPILE"));
@@ -1021,7 +1187,7 @@ void BuildDesignatorWnd::CompleteConstruction() {
     m_build_selector->ShowPediaSignal.connect(
         boost::bind(&BuildDesignatorWnd::ShowPedia, this));
     m_build_selector->RequestBuildItemSignal.connect(
-        boost::bind(&BuildDesignatorWnd::BuildItemRequested, this, _1, _2, _3));
+        boost::bind(&BuildDesignatorWnd::BuildItemRequested, this, ph::_1, ph::_2, ph::_3));
 
     SidePanel::PlanetSelectedSignal.connect(PlanetSelectedSignal);
     SidePanel::SystemSelectedSignal.connect(SystemSelectedSignal);
@@ -1203,7 +1369,7 @@ void BuildDesignatorWnd::ShowType(BuildType type, bool refresh_list) {
     } else if (type == BT_STOCKPILE) {
         m_build_selector->ShowType(type, refresh_list);
     } else {
-        ErrorLogger() << "BuildDesignatorWnd::ShowType(" << boost::lexical_cast<std::string>(type) << ")";
+        ErrorLogger() << "BuildDesignatorWnd::ShowType(" << type << ")";
         throw std::invalid_argument("BuildDesignatorWnd::ShowType was passed an invalid BuildType");
     }
 }
@@ -1215,7 +1381,7 @@ void BuildDesignatorWnd::ShowAllTypes(bool refresh_list) {
 }
 
 void BuildDesignatorWnd::HideType(BuildType type, bool refresh_list) {
-    DebugLogger() << "BuildDesignatorWnd::HideType(" << boost::lexical_cast<std::string>(type) << ")";
+    DebugLogger() << "BuildDesignatorWnd::HideType(" << type << ")";
     if (type == BT_BUILDING || type == BT_SHIP) {
         m_build_selector->HideType(type, refresh_list);
         m_build_selector->m_build_type_buttons[type]->SetCheck(false);
@@ -1295,8 +1461,8 @@ void BuildDesignatorWnd::ShowPlanetInEncyclopedia(int planet_id)
 void BuildDesignatorWnd::ShowTechInEncyclopedia(const std::string& tech_name)
 { m_enc_detail_panel->SetTech(tech_name); }
 
-void BuildDesignatorWnd::ShowPartTypeInEncyclopedia(const std::string& part_type_name)
-{ m_enc_detail_panel->SetPartType(part_type_name); }
+void BuildDesignatorWnd::ShowShipPartInEncyclopedia(const std::string& part_name)
+{ m_enc_detail_panel->SetShipPart(part_name); }
 
 void BuildDesignatorWnd::ShowSpeciesInEncyclopedia(const std::string& species_name)
 { m_enc_detail_panel->SetSpecies(species_name); }
@@ -1397,7 +1563,7 @@ void BuildDesignatorWnd::SelectDefaultPlanet() {
         if (!m_side_panel->PlanetSelectable(planet_id))
             continue;
 
-        double planet_pop = planet->InitialMeterValue(METER_POPULATION);
+        double planet_pop = planet->GetMeter(METER_POPULATION)->Initial();
         if (planet_pop > best_planet_pop) {
             // found new planet to pick
             //found_planet = true;

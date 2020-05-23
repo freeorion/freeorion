@@ -34,7 +34,7 @@ namespace {
    globaldir: FreeOrion.app/Contents/Resources
    bindir:  FreeOrion.app/Contents/Executables
    configpath: ~/Library/FreeOrion/config.xml
-   pythonhome: FreeOrion.app/Contents/Frameworks/Python.framework/Versions/Current
+   pythonhome: FreeOrion.app/Contents/Frameworks/Python.framework/Versions/{PythonMajor}.{PythonMinor}
 */
 namespace {
     fs::path   s_user_dir;
@@ -88,7 +88,7 @@ void InitDirs(const std::string& argv0) {
     s_user_dir      =   fs::path(getenv("HOME")) / "Library" / "Application Support" / "FreeOrion";
     s_bin_dir       =   app_path / "Executables";
     s_config_path   =   s_user_dir / "config.xml";
-    s_python_home   =   app_path / "Frameworks" / "Python.framework" / "Versions" / "Current";
+    s_python_home   =   app_path / "Frameworks" / "Python.framework" / "Versions" / FREEORION_PYTHON_VERSION;
 
     fs::path p = s_user_dir;
     if (!exists(p))
@@ -550,15 +550,15 @@ std::string FilenameTimestamp() {
     return retval;
 }
 
-/**  \brief Return a vector of absolute paths to files in the given path
- *
- * @param[in] path relative or absolute directory (searched recursively)
- * @return Any regular files in
- * @return  if absolute directory: path
- * @return  if relative directory: GetResourceDir() / path
-*/
-std::vector<fs::path> ListDir(const fs::path& path) {
+bool IsFOCScript(const boost::filesystem::path& path)
+{ return fs::is_regular_file(path) && ".txt" == path.extension() && path.stem().extension() == ".focs"; }
+
+std::vector<fs::path> ListDir(const fs::path& path, std::function<bool (const fs::path&)> predicate) {
     std::vector<fs::path> retval;
+
+    if (!predicate)
+        predicate = static_cast<bool (*)(const fs::path&)>(fs::is_regular_file);
+
     bool is_rel = path.is_relative();
     if (!is_rel && (fs::is_empty(path) || !fs::is_directory(path))) {
         DebugLogger() << "ListDir: File " << PathToString(path) << " was not included as it is empty or not a directoy";
@@ -568,16 +568,15 @@ std::vector<fs::path> ListDir(const fs::path& path) {
         for (fs::recursive_directory_iterator dir_it(default_path);
              dir_it != fs::recursive_directory_iterator(); ++dir_it)
         {
-            if (fs::is_regular_file(dir_it->status())) {
+            if (predicate(dir_it->path()))
                 retval.push_back(dir_it->path());
-            } else if (!fs::is_directory(dir_it->status())) {
-                TraceLogger() << "Parse: Unknown file not included: " << PathToString(dir_it->path());
-            }
+            else
+                TraceLogger() << "ListDir: Discarding non-matching path: " << PathToString(dir_it->path());
         }
     }
 
     if (retval.empty()) {
-        DebugLogger() << "ListDir: No files found for " << path.string();
+        DebugLogger() << "ListDir: No paths found for " << path.string();
     }
 
     return retval;
@@ -674,45 +673,4 @@ bool IsExistingFile(const fs::path& path) {
     }
 
     return false;
-}
-
-std::vector<fs::path> PathsInDir(const boost::filesystem::path& abs_dir_path,
-                                 std::function<bool (const fs::path&)> pred,
-                                 bool recursive_search)
-{
-    std::vector<fs::path> retval;
-    if (abs_dir_path.is_relative()) {
-        ErrorLogger() << "Passed relative path for fileysstem operation " << PathToString(abs_dir_path);
-        return retval;
-    }
-
-    try {
-        auto dir_stat = fs::status(abs_dir_path);
-        if (!fs::exists(dir_stat) || !fs::is_directory(dir_stat)) {
-            ErrorLogger() << "Path is not an existing directory " << PathToString(abs_dir_path);
-            return retval;
-        }
-
-        if (recursive_search) {
-            using dir_it_type = boost::filesystem::recursive_directory_iterator;
-            for (dir_it_type node_it(abs_dir_path); node_it != dir_it_type(); ++node_it) {
-                auto obj_path = node_it->path();
-                if (pred(obj_path))
-                    retval.push_back(obj_path);
-            }
-        } else {
-            using dir_it_type = boost::filesystem::directory_iterator;
-            for (dir_it_type node_it(abs_dir_path); node_it != dir_it_type(); ++node_it) {
-                auto obj_path = node_it->path();
-                if (pred(obj_path))
-                    retval.push_back(obj_path);
-            }
-        }
-    } catch(const fs::filesystem_error& ec) {
-        ErrorLogger() << "Filesystem error during directory traversal " << PathToString(abs_dir_path)
-                      << " : " << ec.what();
-        return {};
-    }
-
-    return retval;
 }

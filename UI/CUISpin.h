@@ -18,7 +18,7 @@ namespace detail {
 
 
 /** a FreeOrion Spin control */
-template <class T>
+template <typename T>
 class CUISpin : public GG::Spin<T>
 {
 public:
@@ -51,7 +51,7 @@ public:
     //@}
 };
 
-template <class T>
+template <typename T>
 void CUISpin<T>::SetEditTextFromValue()
 { GG::Spin<T>::SetEditTextFromValue(); }
 

@@ -73,8 +73,6 @@ namespace {
             boost::iostreams::seek(ifs, 0, std::ios_base::beg);
             // binary deserialization iff document is not xml
             if (xml5 != xxx5) {
-                ScopedTimer timer("LoadSaveGamePreviewData (binary): " + path.string(), true);
-
                 // first attempt binary deserialziation
                 freeorion_bin_iarchive ia(ifs);
 
@@ -82,7 +80,6 @@ namespace {
                 ia >> BOOST_SERIALIZATION_NVP(galaxy_setup_data);
 
             } else {
-                DebugLogger() << "Deserializing XML data";
                 freeorion_xml_iarchive ia(ifs);
                 ia >> BOOST_SERIALIZATION_NVP(save_preview_data);
 
@@ -128,7 +125,7 @@ bool SaveGamePreviewData::Valid() const
 void SaveGamePreviewData::SetBinary(bool bin)
 { description = bin ? BIN_SAVE_FILE_DESCRIPTION : XML_SAVE_FILE_DESCRIPTION; }
 
-template<class Archive>
+template <typename Archive>
 void SaveGamePreviewData::serialize(Archive& ar, unsigned int version)
 {
     if (version >= 2) {
@@ -163,7 +160,7 @@ template void SaveGamePreviewData::serialize<freeorion_xml_oarchive>(freeorion_x
 template void SaveGamePreviewData::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, unsigned int);
 
 
-template<class Archive>
+template <typename Archive>
 void FullPreview::serialize(Archive& ar, unsigned int version)
 {
     ar & BOOST_SERIALIZATION_NVP(filename)

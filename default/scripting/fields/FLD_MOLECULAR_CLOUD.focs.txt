@@ -22,12 +22,12 @@ FieldType
 
         EffectsGroup    // shrink size when old
             scope = Source
-            activation = (Source.Age >= max((UniverseWidth ^ 1.1) / 50, 30))
+            activation = (LocalCandidate.Age >= max((UniverseWidth ^ 1.1) / 50, 30))
             effects = SetSize value = Value - min(max(Value * RandomNumber(0.05, 0.1), 1.0), 5.0)
 /*
         EffectsGroup    // after reaching a certain age, shrink size a bit each turn when near systems
             scope = Source
-            activation = (Source.Age >= 10)
+            activation = (LocalCandidate.Age >= 10)
             effects = SetSize value = Value - 0.1 * (Count condition = And [
                 System
                 WithinDistance distance = 80 condition = Source
@@ -39,14 +39,16 @@ FieldType
                 WithinDistance distance = Source.Size * 0.9 condition = Source
             ]
             stackinggroup = "MOLECULAR_CLOUD_SHIELD_REDUCTION"
-            effects = SetMaxShield value = Value - 15
+            effects = SetMaxShield value = Value - (15 * [[SHIP_SHIELD_FACTOR]])
 
         EffectsGroup    // after reaching a certain age, dissipate when small
             scope = Source
             activation = And [
-                (Source.Age >= 10)
+                (LocalCandidate.Age >= 10)
                 Size high = 10
             ]
             effects = Destroy
     ]
     graphic = "fields/molecular_cloud.png"
+
+#include "/scripting/common/misc.macros"

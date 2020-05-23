@@ -36,7 +36,7 @@ private:
     bool        m_destroyed = false;                    // was attacked by anything -> destroyed
     int         m_launched_from_id = INVALID_OBJECT_ID; // from what object (ship?) was this fighter launched
     std::string m_species_name;
-    const ::Condition::Condition* m_combat_targets;
+    const ::Condition::Condition* m_combat_targets = nullptr;
 };
 
 #endif // _Fighter_h_

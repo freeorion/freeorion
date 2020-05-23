@@ -3,6 +3,7 @@ Hull
     description = "SH_COMPRESSED_ENERGY_DESC"
     speed = 120
     fuel = 5
+    NoDefaultFuelEffect
     stealth = 45
     structure = 10
     slots = Slot type = External position = (0.65, 0.40)
@@ -23,6 +24,7 @@ Hull
     ]
     effectsgroups = [
         [[GOOD_FUEL_EFFICIENCY]]
+        [[ADD_HULL_FUEL_TO_MAX_FUEL_METER]]
         [[AVERAGE_BASE_FUEL_REGEN]]
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]

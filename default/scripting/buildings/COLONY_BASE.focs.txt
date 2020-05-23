@@ -13,12 +13,10 @@ BuildingType
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Source
             effects = CreateShip designname = "SD_COLONY_BASE" empire = Source.Owner species = Source.Planet.Species
 
         EffectsGroup
             scope = Source
-            activation = Source
             effects = Destroy
     ]
     icon = "icons/ship_hulls/colony_base_hull_small.png"

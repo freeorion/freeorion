@@ -14,16 +14,18 @@
 #include "../universe/Field.h"
 #include "../universe/Universe.h"
 #include "ScopedTimer.h"
-
+#include "AppInterface.h"
 #include "OptionsDB.h"
 
 #include <boost/lexical_cast.hpp>
 #include <boost/uuid/nil_generator.hpp>
 
+BOOST_CLASS_EXPORT(UniverseObject)
+BOOST_CLASS_VERSION(UniverseObject, 2)
 BOOST_CLASS_EXPORT(System)
 BOOST_CLASS_EXPORT(Field)
 BOOST_CLASS_EXPORT(Planet)
-BOOST_CLASS_VERSION(Planet, 1)
+BOOST_CLASS_VERSION(Planet, 2)
 BOOST_CLASS_EXPORT(Building)
 BOOST_CLASS_EXPORT(Fleet)
 BOOST_CLASS_VERSION(Fleet, 3)
@@ -34,19 +36,17 @@ BOOST_CLASS_VERSION(ShipDesign, 2)
 BOOST_CLASS_EXPORT(Universe)
 BOOST_CLASS_VERSION(Universe, 1)
 
-template <class Archive>
+template <typename Archive>
 void ObjectMap::serialize(Archive& ar, const unsigned int version)
 {
     ar & BOOST_SERIALIZATION_NVP(m_objects);
 
-    // If loading from the archive, propagate the changes to the specialized
-    // maps.
-    if (Archive::is_loading::value) {
+    // If loading from the archive, propagate the changes to the specialized maps.
+    if (Archive::is_loading::value)
         CopyObjectsToSpecializedMaps();
-    }
 }
 
-template <class Archive>
+template <typename Archive>
 void Universe::serialize(Archive& ar, const unsigned int version)
 {
     ObjectMap                       objects;
@@ -62,7 +62,7 @@ void Universe::serialize(Archive& ar, const unsigned int version)
 
     std::string serializing_label = (Archive::is_loading::value ? "deserializing" : "serializing");
 
-    SectionedScopedTimer timer("Universe::serialize");
+    SectionedScopedTimer timer("Universe " + serializing_label);
 
     if (Archive::is_saving::value) {
         DebugLogger() << "Universe::serialize : Getting gamestate data";
@@ -87,7 +87,7 @@ void Universe::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_NVP(m_universe_width);
     DebugLogger() << "Universe::serialize : " << serializing_label << " universe width: " << m_universe_width;
 
-    timer.EnterSection("serialize designs");
+    timer.EnterSection("designs");
     ar  & BOOST_SERIALIZATION_NVP(ship_designs);
     if (Archive::is_loading::value)
         m_ship_designs.swap(ship_designs);
@@ -95,7 +95,7 @@ void Universe::serialize(Archive& ar, const unsigned int version)
 
     ar  & BOOST_SERIALIZATION_NVP(m_empire_known_ship_design_ids);
 
-    timer.EnterSection("serialize vis / known");
+    timer.EnterSection("vis / known");
     ar  & BOOST_SERIALIZATION_NVP(empire_object_visibility);
     ar  & BOOST_SERIALIZATION_NVP(empire_object_visibility_turns);
     //ar  & BOOST_SERIALIZATION_NVP(effect_specified_visibilities);
@@ -118,14 +118,14 @@ void Universe::serialize(Archive& ar, const unsigned int version)
         timer.EnterSection("");
     }
 
-    timer.EnterSection("serialize objects");
+    timer.EnterSection("objects");
     ar  & BOOST_SERIALIZATION_NVP(objects);
     DebugLogger() << "Universe::serialize : " << serializing_label << " " << objects.size() << " objects";
     if (Archive::is_loading::value) {
         m_objects.swap(objects);
     }
 
-    timer.EnterSection("serialize destroyed ids");
+    timer.EnterSection("destroyed ids");
     ar  & BOOST_SERIALIZATION_NVP(destroyed_object_ids);
     DebugLogger() << "Universe::serialize : " << serializing_label << " " << destroyed_object_ids.size() << " destroyed object ids";
     if (Archive::is_loading::value) {
@@ -133,14 +133,14 @@ void Universe::serialize(Archive& ar, const unsigned int version)
         m_objects.UpdateCurrentDestroyedObjects(m_destroyed_object_ids);
     }
 
-    timer.EnterSection("serialize latest known objects");
+    timer.EnterSection("latest known objects");
     ar  & BOOST_SERIALIZATION_NVP(empire_latest_known_objects);
     DebugLogger() << "Universe::serialize : " << serializing_label << " empire known objects for " << empire_latest_known_objects.size() << " empires";
     if (Archive::is_loading::value) {
         m_empire_latest_known_objects.swap(empire_latest_known_objects);
     }
 
-    timer.EnterSection("serialize id allocator");
+    timer.EnterSection("id allocator");
     if (version >= 1) {
         DebugLogger() << "Universe::serialize : " << serializing_label << " id allocator version = " << version;
         m_object_id_allocator->SerializeForEmpire(ar, version, m_encoding_empire);
@@ -166,8 +166,8 @@ void Universe::serialize(Archive& ar, const unsigned int version)
         }
     }
 
-    timer.EnterSection("serialize stats");
-    if (Archive::is_saving::value && (!GetOptionsDB().Get<bool>("network.server.publish-statistics")) && m_encoding_empire != ALL_EMPIRES) {
+    timer.EnterSection("stats");
+    if (Archive::is_saving::value && m_encoding_empire != ALL_EMPIRES && (!GetOptionsDB().Get<bool>("network.server.publish-statistics"))) {
         std::map<std::string, std::map<int, std::map<int, double>>> dummy_stat_records;
         ar  & boost::serialization::make_nvp("m_stat_records", dummy_stat_records);
     } else {
@@ -175,8 +175,6 @@ void Universe::serialize(Archive& ar, const unsigned int version)
         DebugLogger() << "Universe::serialize : " << serializing_label << " " << m_stat_records.size() << " types of statistic";
     }
     timer.EnterSection("");
-
-    DebugLogger() << "Universe::serialize : " << serializing_label << " done";
 
     if (Archive::is_saving::value) {
         DebugLogger() << "Universe::serialize : Cleaning up temporary data";
@@ -196,10 +194,10 @@ void Universe::serialize(Archive& ar, const unsigned int version)
                 elko.second.UpdateCurrentDestroyedObjects(destroyed_ids_it->second);
         }
     }
-    DebugLogger() << "Universe::serialize done";
+    DebugLogger() << "Universe " << serializing_label << " done";
 }
 
-template <class Archive>
+template <typename Archive>
 void UniverseObject::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_id)
@@ -208,12 +206,24 @@ void UniverseObject::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_y)
         & BOOST_SERIALIZATION_NVP(m_owner_empire_id)
         & BOOST_SERIALIZATION_NVP(m_system_id)
-        & BOOST_SERIALIZATION_NVP(m_specials)
-        & BOOST_SERIALIZATION_NVP(m_meters)
-        & BOOST_SERIALIZATION_NVP(m_created_on_turn);
+        & BOOST_SERIALIZATION_NVP(m_specials);
+    if (version < 2) {
+        std::map<MeterType, Meter> meter_map;
+        ar  & boost::serialization::make_nvp("m_meters", meter_map);
+        m_meters.reserve(meter_map.size());
+        m_meters.insert(meter_map.begin(), meter_map.end());
+    } else {
+        ar  & BOOST_SERIALIZATION_NVP(m_meters);
+
+        // loading the internal vector, like so, was no faster than loading the map
+        //auto meters{m_meters.extract_sequence()};
+        //ar  & BOOST_SERIALIZATION_NVP(meters);
+        //m_meters.adopt_sequence(std::move(meters));
+    }
+    ar  & BOOST_SERIALIZATION_NVP(m_created_on_turn);
 }
 
-template <class Archive>
+template <typename Archive>
 void System::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
@@ -229,14 +239,14 @@ void System::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_last_turn_battle_here);
 }
 
-template <class Archive>
+template <typename Archive>
 void Field::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
         & BOOST_SERIALIZATION_NVP(m_type_name);
 }
 
-template <class Archive>
+template <typename Archive>
 void Planet::serialize(Archive& ar, const unsigned int version)
 {
    ar   & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
@@ -250,6 +260,14 @@ void Planet::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_rotational_period)
         & BOOST_SERIALIZATION_NVP(m_axial_tilt)
         & BOOST_SERIALIZATION_NVP(m_buildings);
+    if (version < 2) {
+        // if deserializing an old save, default to standard default never-colonized turn
+        m_turn_last_colonized = INVALID_GAME_TURN;
+        if (!SpeciesName().empty()) // but if a planet has a species, it must have been colonized, so default to the previous turn
+            m_turn_last_colonized = CurrentTurn() - 1;
+    } else {
+        ar   & BOOST_SERIALIZATION_NVP(m_turn_last_colonized);
+    }
     if (version < 1) {
         bool dummy = false;
         ar   & boost::serialization::make_nvp("m_just_conquered", dummy);
@@ -263,7 +281,7 @@ void Planet::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_last_turn_attacked_by_ship);
 }
 
-template <class Archive>
+template <typename Archive>
 void Building::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
@@ -273,7 +291,7 @@ void Building::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_produced_by_empire_id);
 }
 
-template <class Archive>
+template <typename Archive>
 void Fleet::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
@@ -291,7 +309,7 @@ void Fleet::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_arrival_starlane);
 }
 
-template <class Archive>
+template <typename Archive>
 void Ship::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
@@ -313,7 +331,7 @@ void Ship::serialize(Archive& ar, const unsigned int version)
     }
 }
 
-template <class Archive>
+template <typename Archive>
 void ShipDesign::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_id)
@@ -366,7 +384,7 @@ void SpeciesManager::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& a
 template
 void SpeciesManager::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, const unsigned int version);
 
-template <class Archive>
+template <typename Archive>
 void SpeciesManager::serialize(Archive& ar, const unsigned int version)
 {
     // Don't need to send all the data about species, as this is derived from
@@ -393,8 +411,7 @@ void SpeciesManager::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(empire_opinions)
         & BOOST_SERIALIZATION_NVP(other_species_opinions)
         & BOOST_SERIALIZATION_NVP(species_object_populations)
-        & BOOST_SERIALIZATION_NVP(species_ships_destroyed)
-    ;
+        & BOOST_SERIALIZATION_NVP(species_ships_destroyed);
 
     if (Archive::is_loading::value) {
         SetSpeciesHomeworlds(species_homeworlds);
@@ -417,26 +434,73 @@ void System::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ar, const
 template
 void System::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, const unsigned int version);
 
-template <class Archive>
+template <typename Archive>
 void Serialize(Archive& oa, const Universe& universe)
 { oa << BOOST_SERIALIZATION_NVP(universe); }
 template FO_COMMON_API void Serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& oa, const Universe& universe);
 template FO_COMMON_API void Serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& oa, const Universe& universe);
 
-template <class Archive>
+template <typename Archive>
 void Serialize(Archive& oa, const std::map<int, std::shared_ptr<UniverseObject>>& objects)
 { oa << BOOST_SERIALIZATION_NVP(objects); }
 template void Serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& oa, const std::map<int, std::shared_ptr<UniverseObject>>& objects);
 template void Serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& oa, const std::map<int, std::shared_ptr<UniverseObject>>& objects);
 
-template <class Archive>
+template <typename Archive>
 void Deserialize(Archive& ia, Universe& universe)
 { ia >> BOOST_SERIALIZATION_NVP(universe); }
 template FO_COMMON_API void Deserialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ia, Universe& universe);
 template FO_COMMON_API void Deserialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ia, Universe& universe);
 
-template <class Archive>
+template <typename Archive>
 void Deserialize(Archive& ia, std::map<int, std::shared_ptr<UniverseObject>>& objects)
 { ia >> BOOST_SERIALIZATION_NVP(objects); }
 template void Deserialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ia, std::map<int, std::shared_ptr<UniverseObject>>& objects);
 template void Deserialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ia, std::map<int, std::shared_ptr<UniverseObject>>& objects);
+
+namespace boost {
+namespace serialization {
+    template<class Archive, class Key, class Value>
+    void save(Archive& ar, const flat_map<Key, Value>& m, const unsigned int)
+    { stl::save_collection<Archive, flat_map<Key, Value>>(ar, m); }
+
+    template<class Archive, class Key, class Value>
+    void load(Archive& ar, flat_map<Key, Value>& m, const unsigned int)
+    { load_map_collection(ar, m); }
+
+    template<class Archive, class Key, class Value>
+    void serialize(Archive& ar, flat_map<Key, Value>& m, const unsigned int file_version)
+    { split_free(ar, m, file_version); }
+
+
+    // Note: I tried loading the internal vector of a flat_map instead of
+    //       loading it as a map and constructing elements on the stack.
+    //       The result was similar or slightly slower than the stack loader.
+    //
+    //template<class Archive, class U, class Allocator>
+    //inline void save(Archive& ar, const container::vector<U, Allocator>& t,
+    //                 const unsigned int file_version)
+    //{ stl::save_collection(ar, t); }
+
+    //template<class Archive, class U, class Allocator>
+    //inline void load(Archive& ar, container::vector<U, Allocator>& t,
+    //                 const unsigned int file_version)
+    //{
+    //    item_version_type item_version(0);
+    //    collection_size_type count;
+    //    ar >> BOOST_SERIALIZATION_NVP(count);
+    //    ar >> BOOST_SERIALIZATION_NVP(item_version);
+    //    t.resize(count);
+
+    //    using Container = container::vector<U, Allocator>;
+    //    typedef typename Container::value_type type;
+
+    //    for (auto& s : t)
+    //        ar >> make_nvp("item", s);
+    //}
+
+    //template<class Archive, class U, class Allocator>
+    //inline void serialize(Archive& ar, container::vector<U, Allocator>& t,
+    //                      const unsigned int file_version)
+    //{ split_free(ar, t, file_version); }
+}}

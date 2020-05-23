@@ -17,25 +17,23 @@
 #include "../util/Directories.h"
 #include "../Empire/Empire.h"
 #include "../client/human/HumanClientApp.h"
-#include "../universe/Conditions.h"
+#include "../universe/ConditionAll.h"
 #include "../universe/UniverseObject.h"
 #include "../universe/ShipDesign.h"
+#include "../universe/ShipPart.h"
+#include "../universe/ShipHull.h"
 #include "../universe/Enums.h"
 
-#include <GG/DrawUtil.h>
 #include <GG/StaticGraphic.h>
 #include <GG/TabWnd.h>
 
 #include <boost/cast.hpp>
-#include <boost/function.hpp>
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/uuid/random_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/uuid/random_generator.hpp>
-//TODO: replace with std::make_unique when transitioning to C++14
-#include <boost/smart_ptr/make_unique.hpp>
 
 #include <algorithm>
 #include <iterator>
@@ -85,9 +83,10 @@ namespace {
             return ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "missing.png", true);
     }
 
-    /** Returns background texture with which to render a PartControl, depending on the
-      * types of slot that the indicated \a part can be put into. */
-    std::shared_ptr<GG::Texture> PartBackgroundTexture(const PartType* part) {
+    //! Returns background texture with which to render a PartControl,
+    //! depending on the types of slot that the indicated @a part can be put
+    //! into.
+    std::shared_ptr<GG::Texture> PartBackgroundTexture(const ShipPart* part) {
         if (part) {
             bool ex = part->CanMountInSlotType(SL_EXTERNAL);
             bool in = part->CanMountInSlotType(SL_INTERNAL);
@@ -105,10 +104,10 @@ namespace {
         return ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "missing.png", true);
     }
 
-    float GetMainStat(const PartType* part_type)  {
-        if (!part_type)
+    float GetMainStat(const ShipPart* part)  {
+        if (!part)
             return 0.0f;
-        switch (part_type->Class()) {
+        switch (part->Class()) {
             case PC_DIRECT_WEAPON:
             case PC_FIGHTER_BAY:
             case PC_FIGHTER_HANGAR:
@@ -123,7 +122,7 @@ namespace {
             case PC_RESEARCH:
             case PC_INDUSTRY:
             case PC_TRADE:
-                return part_type->Capacity();
+                return part->Capacity();
                 break;
             case PC_GENERAL:
             case PC_BOMBARD:
@@ -133,8 +132,7 @@ namespace {
         }
     }
 
-    typedef std::map<std::pair<ShipPartClass, ShipSlotType>,
-                     std::vector<const PartType*>>              PartGroupsType;
+    typedef std::map<std::pair<ShipPartClass, ShipSlotType>, std::vector<const ShipPart*>> PartGroupsType;
 
     const std::string DESIGN_FILENAME_PREFIX = "ShipDesign-";
     const std::string DESIGN_FILENAME_EXTENSION = ".focs.txt";
@@ -582,7 +580,7 @@ namespace {
 
         } else {
             // Add the new saved design.
-            std::unique_ptr<ShipDesign> design_copy{boost::make_unique<ShipDesign>(design)};
+            std::unique_ptr<ShipDesign> design_copy{std::make_unique<ShipDesign>(design)};
 
             const auto save_path = CreateSaveFileNameForDesign(design);
 
@@ -1103,8 +1101,8 @@ namespace {
 //////////////////////////////////////////////////
 
 ShipDesignManager::ShipDesignManager() :
-    m_displayed_designs(boost::make_unique<DisplayedShipDesignManager>()),
-    m_saved_designs(boost::make_unique<SavedDesignsManager>())
+    m_displayed_designs(std::make_unique<DisplayedShipDesignManager>()),
+    m_saved_designs(std::make_unique<SavedDesignsManager>())
 {}
 
 ShipDesignManager::~ShipDesignManager()
@@ -1119,10 +1117,10 @@ void ShipDesignManager::StartGame(int empire_id, bool is_new_game) {
 
     DebugLogger() << "ShipDesignManager initializing. New game " << is_new_game;
 
-    m_displayed_designs = boost::make_unique<DisplayedShipDesignManager>();
+    m_displayed_designs = std::make_unique<DisplayedShipDesignManager>();
     auto displayed_designs = dynamic_cast<DisplayedShipDesignManager*>(m_displayed_designs.get());
 
-    m_saved_designs = boost::make_unique<SavedDesignsManager>();
+    m_saved_designs = std::make_unique<SavedDesignsManager>();
     auto saved_designs = dynamic_cast<SavedDesignsManager*>(m_saved_designs.get());
     saved_designs->StartParsingDesignsFromFileSystem(is_new_game);
 
@@ -1130,12 +1128,12 @@ void ShipDesignManager::StartGame(int empire_id, bool is_new_game) {
     if (!is_new_game)
         return;
 
-    // Initialize the hull ordering from the HullTypeManager
-    for (const auto& name_and_type : GetHullTypeManager()) {
+    // Initialize the hull ordering from the ShipHullManager
+    for (const auto& name_and_type : GetShipHullManager()) {
         const auto& hull_name = name_and_type.first;
-        const auto& hull_type =  name_and_type.second;
+        const auto& ship_hull =  name_and_type.second;
 
-        if (!hull_type || !hull_type->Producible())
+        if (!ship_hull || !ship_hull->Producible())
             continue;
         displayed_designs->InsertHullBefore(hull_name);
     }
@@ -1184,7 +1182,7 @@ ShipDesignManager::Designs* ShipDesignManager::DisplayedDesigns() {
     if (retval == nullptr) {
         ErrorLogger() << "ShipDesignManager m_displayed_designs was not correctly initialized "
                       << "with ShipDesignManager::GameStart().";
-        m_displayed_designs = boost::make_unique<DisplayedShipDesignManager>();
+        m_displayed_designs = std::make_unique<DisplayedShipDesignManager>();
         return m_displayed_designs.get();
     }
     return retval;
@@ -1195,7 +1193,7 @@ ShipDesignManager::Designs* ShipDesignManager::SavedDesigns() {
     if (retval == nullptr) {
         ErrorLogger() << "ShipDesignManager m_saved_designs was not correctly initialized "
                       << "with ShipDesignManager::GameStart().";
-        m_saved_designs = boost::make_unique<SavedDesignsManager>();
+        m_saved_designs = std::make_unique<SavedDesignsManager>();
         return m_saved_designs.get();
     }
     return retval;
@@ -1210,12 +1208,12 @@ ShipDesignManager::Designs* ShipDesignManager::SavedDesigns() {
 class PartControl : public GG::Control {
 public:
     /** \name Structors */ //@{
-    PartControl(const PartType* part);
+    PartControl(const ShipPart* part);
     //@}
     void CompleteConstruction() override;
 
     /** \name Accessors */ //@{
-    const PartType*     Part() const { return m_part; }
+    const ShipPart*     Part() const { return m_part; }
     const std::string&  PartName() const { return m_part ? m_part->Name() : EMPTY_STRING; }
     //@}
 
@@ -1227,17 +1225,17 @@ public:
     void SetAvailability(const AvailabilityManager::DisplayedAvailabilies& type);
     //@}
 
-    mutable boost::signals2::signal<void (const PartType*, GG::Flags<GG::ModKey>)> ClickedSignal;
-    mutable boost::signals2::signal<void (const PartType*, const GG::Pt& pt)> RightClickedSignal;
-    mutable boost::signals2::signal<void (const PartType*)> DoubleClickedSignal;
+    mutable boost::signals2::signal<void (const ShipPart*, GG::Flags<GG::ModKey>)> ClickedSignal;
+    mutable boost::signals2::signal<void (const ShipPart*, const GG::Pt& pt)> RightClickedSignal;
+    mutable boost::signals2::signal<void (const ShipPart*)> DoubleClickedSignal;
 
 private:
     std::shared_ptr<GG::StaticGraphic>  m_icon = nullptr;
     std::shared_ptr<GG::StaticGraphic>  m_background = nullptr;
-    const PartType*                     m_part = nullptr;
+    const ShipPart*                     m_part = nullptr;
 };
 
-PartControl::PartControl(const PartType* part) :
+PartControl::PartControl(const ShipPart* part) :
     GG::Control(GG::X0, GG::Y0, SLOT_CONTROL_WIDTH, SLOT_CONTROL_HEIGHT, GG::INTERACTIVE),
     m_part(part)
 {}
@@ -1332,9 +1330,9 @@ public:
     void HideSuperfluousParts(bool refresh_list = true);
     //@}
 
-    mutable boost::signals2::signal<void (const PartType*, GG::Flags<GG::ModKey>)>  PartTypeClickedSignal;
-    mutable boost::signals2::signal<void (const PartType*)>                         PartTypeDoubleClickedSignal;
-    mutable boost::signals2::signal<void (const PartType*, const GG::Pt& pt)>       PartTypeRightClickedSignal;
+    mutable boost::signals2::signal<void (const ShipPart*, GG::Flags<GG::ModKey>)>  ShipPartClickedSignal;
+    mutable boost::signals2::signal<void (const ShipPart*)>                         ShipPartDoubleClickedSignal;
+    mutable boost::signals2::signal<void (const ShipPart*, const GG::Pt& pt)>       ShipPartRightClickedSignal;
     mutable boost::signals2::signal<void (const std::string&)>                      ClearPartSignal;
 
 protected:
@@ -1343,7 +1341,7 @@ protected:
 
 private:
     PartGroupsType GroupAvailableDisplayableParts(const Empire* empire) const;
-    void CullSuperfluousParts(std::vector<const PartType*>& this_group,
+    void CullSuperfluousParts(std::vector<const ShipPart*>& this_group,
                               ShipPartClass part_class, int empire_id, int loc_id) const;
 
     std::set<ShipPartClass>     m_part_classes_shown;   // which part classes should be shown
@@ -1353,7 +1351,7 @@ private:
 };
 
 PartsListBox::PartsListBoxRow::PartsListBoxRow(GG::X w, GG::Y h, const AvailabilityManager& availabilities_state) :
-    CUIListBox::Row(w, h, ""),    // drag_drop_data_type = "" implies not draggable row
+    CUIListBox::Row(w, h),
     m_availabilities_state(availabilities_state)
 {}
 
@@ -1382,23 +1380,23 @@ void PartsListBox::PartsListBoxRow::ChildrenDraggedAway(const std::vector<GG::Wn
     if (!part_control)
         return;
 
-    const auto part_type = part_control->Part();
-    if (!part_type)
+    const auto part = part_control->Part();
+    if (!part)
         return;
 
-    auto new_part_control = GG::Wnd::Create<PartControl>(part_type);
+    auto new_part_control = GG::Wnd::Create<PartControl>(part);
     const auto parent = dynamic_cast<const PartsListBox*>(Parent().get());
     if (parent) {
         new_part_control->ClickedSignal.connect(
-            parent->PartTypeClickedSignal);
+            parent->ShipPartClickedSignal);
         new_part_control->DoubleClickedSignal.connect(
-            parent->PartTypeDoubleClickedSignal);
+            parent->ShipPartDoubleClickedSignal);
         new_part_control->RightClickedSignal.connect(
-            parent->PartTypeRightClickedSignal);
+            parent->ShipPartRightClickedSignal);
     }
 
     // set availability shown
-    auto shown = m_availabilities_state.DisplayedPartAvailability(part_type->Name());
+    auto shown = m_availabilities_state.DisplayedPartAvailability(part->Name());
     if (shown)
         new_part_control->SetAvailability(*shown);
 
@@ -1448,18 +1446,18 @@ void PartsListBox::AcceptDrops(const GG::Pt& pt,
         return;
 
     auto* control = boost::polymorphic_downcast<const PartControl*>(wnds.begin()->get());
-    auto* part_type = control ? control->Part() : nullptr;
-    if (!part_type)
+    auto* part = control ? control->Part() : nullptr;
+    if (!part)
         return;
 
-    ClearPartSignal(part_type->Name());
+    ClearPartSignal(part->Name());
 }
 
 PartGroupsType PartsListBox::GroupAvailableDisplayableParts(const Empire* empire) const {
     PartGroupsType part_groups;
 
     // loop through all possible parts
-    for (const auto& entry : GetPartTypeManager()) {
+    for (const auto& entry : GetShipPartManager()) {
         const auto& part = entry.second;
         if (!part->Producible())
             continue;
@@ -1499,7 +1497,7 @@ namespace {
         return false;
     }
 
-    bool PartALocationSubsumesPartB(const PartType* check_part, const PartType* ref_part) {
+    bool PartALocationSubsumesPartB(const ShipPart* check_part, const ShipPart* ref_part) {
         static std::map<std::pair<std::string, std::string>, bool> part_loc_comparison_map;
 
         auto part_pair = std::make_pair(check_part->Name(), ref_part->Name());
@@ -1524,7 +1522,7 @@ namespace {
     }
 }
 
-void PartsListBox::CullSuperfluousParts(std::vector<const PartType*>& this_group,
+void PartsListBox::CullSuperfluousParts(std::vector<const ShipPart*>& this_group,
                                         ShipPartClass part_class, int empire_id,
                                         int loc_id) const
 {
@@ -1570,8 +1568,8 @@ void PartsListBox::CullSuperfluousParts(std::vector<const PartType*>& this_group
     for (auto part_it = this_group.begin();
          part_it != this_group.end(); ++part_it)
     {
-        const PartType* checkPart = *part_it;
-        for (const PartType* ref_part : this_group) {
+        const ShipPart* checkPart = *part_it;
+        for (const ShipPart* ref_part : this_group) {
             float cap_check = GetMainStat(checkPart);
             float cap_ref = GetMainStat(ref_part);
             if ((cap_check < 0.0f) || (cap_ref < 0.0f))
@@ -1658,10 +1656,10 @@ void PartsListBox::Populate() {
     // now sort the parts within each group according to main stat, via weak
     // sorting in a multimap also, if a part was in multiple groups due to being
     // compatible with multiple slot types, ensure it is only displayed once
-    std::set<const PartType*> already_added;
+    std::set<const ShipPart*> already_added;
     for (auto& part_group : part_groups) {
-        std::multimap<double, const PartType*> sorted_group;
-        for (const PartType* part : part_group.second) {
+        std::multimap<double, const ShipPart*> sorted_group;
+        for (const ShipPart* part : part_group.second) {
             if (already_added.count(part))
                 continue;
             already_added.insert(part);
@@ -1670,7 +1668,7 @@ void PartsListBox::Populate() {
 
         // take the sorted parts and make UI elements (technically rows) for the PartsListBox
         for (auto& group : sorted_group) {
-            const PartType* part = group.second;
+            const ShipPart* part = group.second;
             // check if current row is full, and make a new row if necessary
             if (cur_col >= NUM_COLUMNS) {
                 if (cur_row)
@@ -1685,11 +1683,11 @@ void PartsListBox::Populate() {
             // make new part control and add to row
             auto control = GG::Wnd::Create<PartControl>(part);
             control->ClickedSignal.connect(
-                PartsListBox::PartTypeClickedSignal);
+                PartsListBox::ShipPartClickedSignal);
             control->DoubleClickedSignal.connect(
-                PartsListBox::PartTypeDoubleClickedSignal);
+                PartsListBox::ShipPartDoubleClickedSignal);
             control->RightClickedSignal.connect(
-                PartsListBox::PartTypeRightClickedSignal);
+                PartsListBox::ShipPartRightClickedSignal);
 
             auto shown = m_availabilities_state.DisplayedPartAvailability(part->Name());
             if (shown)
@@ -1791,9 +1789,9 @@ public:
     void Populate();
     //@}
 
-    mutable boost::signals2::signal<void (const PartType*, GG::Flags<GG::ModKey>)> PartTypeClickedSignal;
-    mutable boost::signals2::signal<void (const PartType*)> PartTypeDoubleClickedSignal;
-    mutable boost::signals2::signal<void (const PartType*, const GG::Pt& pt)> PartTypeRightClickedSignal;
+    mutable boost::signals2::signal<void (const ShipPart*, GG::Flags<GG::ModKey>)> ShipPartClickedSignal;
+    mutable boost::signals2::signal<void (const ShipPart*)> ShipPartDoubleClickedSignal;
+    mutable boost::signals2::signal<void (const ShipPart*, const GG::Pt& pt)> ShipPartRightClickedSignal;
     mutable boost::signals2::signal<void ()> PartObsolescenceChangedSignal;
     mutable boost::signals2::signal<void (const std::string&)> ClearPartSignal;
 
@@ -1801,8 +1799,8 @@ private:
     void DoLayout();
 
     /** A part type click with ctrl obsoletes part. */
-    void HandlePartTypeClicked(const PartType*, GG::Flags<GG::ModKey>);
-    void HandlePartTypeRightClicked(const PartType*, const GG::Pt& pt);
+    void HandleShipPartClicked(const ShipPart*, GG::Flags<GG::ModKey>);
+    void HandleShipPartRightClicked(const ShipPart*, const GG::Pt& pt);
 
     std::shared_ptr<PartsListBox>                               m_parts_list = nullptr;
     std::map<ShipPartClass, std::shared_ptr<CUIStateButton>>    m_class_buttons;
@@ -1827,17 +1825,19 @@ void DesignWnd::PartPalette::CompleteConstruction() {
     //TempUISoundDisabler sound_disabler;     // should be redundant with disabler in DesignWnd::DesignWnd.  uncomment if this is not the case
     SetChildClippingMode(ClipToClient);
 
+    namespace ph = boost::placeholders;
+
     m_parts_list = GG::Wnd::Create<PartsListBox>(m_availabilities_state);
     AttachChild(m_parts_list);
-    m_parts_list->PartTypeClickedSignal.connect(
-        boost::bind(&DesignWnd::PartPalette::HandlePartTypeClicked, this, _1, _2));
-    m_parts_list->PartTypeDoubleClickedSignal.connect(
-        PartTypeDoubleClickedSignal);
-    m_parts_list->PartTypeRightClickedSignal.connect(
-        boost::bind(&DesignWnd::PartPalette::HandlePartTypeRightClicked, this, _1, _2));
+    m_parts_list->ShipPartClickedSignal.connect(
+        boost::bind(&DesignWnd::PartPalette::HandleShipPartClicked, this, ph::_1, ph::_2));
+    m_parts_list->ShipPartDoubleClickedSignal.connect(
+        ShipPartDoubleClickedSignal);
+    m_parts_list->ShipPartRightClickedSignal.connect(
+        boost::bind(&DesignWnd::PartPalette::HandleShipPartRightClicked, this, ph::_1, ph::_2));
     m_parts_list->ClearPartSignal.connect(ClearPartSignal);
 
-    const PartTypeManager& part_manager = GetPartTypeManager();
+    const ShipPartManager& part_manager = GetShipPartManager();
 
     // class buttons
     for (ShipPartClass part_class = ShipPartClass(0); part_class != NUM_SHIP_PART_CLASSES; part_class = ShipPartClass(part_class + 1)) {
@@ -2002,24 +2002,24 @@ void DesignWnd::PartPalette::DoLayout() {
     place_avail_button_adjacent(m_unavailable_button.get());
 }
 
-void DesignWnd::PartPalette::HandlePartTypeClicked(const PartType* part_type, GG::Flags<GG::ModKey> modkeys) {
+void DesignWnd::PartPalette::HandleShipPartClicked(const ShipPart* part, GG::Flags<GG::ModKey> modkeys) {
     // Toggle obsolete for a control click.
     if (modkeys & GG::MOD_KEY_CTRL) {
         auto& manager = GetDisplayedDesignsManager();
-        const auto obsolete = manager.IsPartObsolete(part_type->Name());
-        manager.SetPartObsolete(part_type->Name(), !obsolete);
+        const auto obsolete = manager.IsPartObsolete(part->Name());
+        manager.SetPartObsolete(part->Name(), !obsolete);
 
         PartObsolescenceChangedSignal();
         Populate();
     }
     else
-        PartTypeClickedSignal(part_type, modkeys);
+        ShipPartClickedSignal(part, modkeys);
 }
 
-void DesignWnd::PartPalette::HandlePartTypeRightClicked(const PartType* part_type, const GG::Pt& pt) {
+void DesignWnd::PartPalette::HandleShipPartRightClicked(const ShipPart* part, const GG::Pt& pt) {
     // Context menu actions
     auto& manager = GetDisplayedDesignsManager();
-    const auto& part_name = part_type->Name();
+    const auto& part_name = part->Name();
     auto is_obsolete = manager.IsPartObsolete(part_name);
     auto toggle_obsolete_design_action = [&manager, &part_name, is_obsolete, this]() {
         manager.SetPartObsolete(part_name, !is_obsolete);
@@ -2040,7 +2040,7 @@ void DesignWnd::PartPalette::HandlePartTypeRightClicked(const PartType* part_typ
 
     popup->Run();
 
-    PartTypeRightClickedSignal(part_type, pt);
+    ShipPartRightClickedSignal(part, pt);
 }
 
 void DesignWnd::PartPalette::ShowClass(ShipPartClass part_class, bool refresh_list) {
@@ -2178,7 +2178,7 @@ public:
     mutable boost::signals2::signal<void (const boost::uuids::uuid&)>  SavedDesignSelectedSignal;
 
     mutable boost::signals2::signal<void (const ShipDesign*)>   DesignClickedSignal;
-    mutable boost::signals2::signal<void (const HullType*)>     HullClickedSignal;
+    mutable boost::signals2::signal<void (const ShipHull*)>     HullClickedSignal;
     mutable boost::signals2::signal<void (const ShipDesign*)>   DesignRightClickedSignal;
 
     class HullAndNamePanel : public GG::Control {
@@ -2310,8 +2310,9 @@ void BasesListBox::HullAndNamePanel::SetDisplayName(const std::string& name) {
 }
 
 BasesListBox::BasesListBoxRow::BasesListBoxRow(GG::X w, GG::Y h, const std::string& hull, const std::string& name) :
-    CUIListBox::Row(w, h, BASES_LIST_BOX_DROP_TYPE)
+    CUIListBox::Row(w, h)
 {
+    SetDragDropDataType(BASES_LIST_BOX_DROP_TYPE);
     if (hull.empty()) {
         ErrorLogger() << "No hull name provided for ship row display.";
         return;
@@ -2405,12 +2406,11 @@ void BasesListBox::CompleteConstruction() {
     InitRowSizes();
     SetStyle(GG::LIST_NOSEL | GG::LIST_NOSORT);
 
-    DoubleClickedRowSignal.connect(
-        boost::bind(&BasesListBox::BaseDoubleClicked, this, _1, _2, _3));
-    LeftClickedRowSignal.connect(
-        boost::bind(&BasesListBox::BaseLeftClicked, this, _1, _2, _3));
-    MovedRowSignal.connect(
-        boost::bind(&BasesListBox::QueueItemMoved, this, _1, _2));
+    namespace ph = boost::placeholders;
+
+    DoubleClickedRowSignal.connect(boost::bind(&BasesListBox::BaseDoubleClicked, this, ph::_1, ph::_2, ph::_3));
+    LeftClickedRowSignal.connect(boost::bind(&BasesListBox::BaseLeftClicked, this, ph::_1, ph::_2, ph::_3));
+    MovedRowSignal.connect(boost::bind(&BasesListBox::QueueItemMoved, this, ph::_1, ph::_2));
 
     EnableOrderIssuing(false);
 }
@@ -2464,7 +2464,7 @@ void BasesListBox::SetEmpireShown(int empire_id, bool refresh_list) {
     // connect signal to update this list if the empire's designs change
     if (const Empire* empire = GetEmpire(m_empire_id_shown))
         m_empire_designs_changed_signal = empire->ShipDesignsChangedSignal.connect(
-                                            boost::bind(&BasesListBox::Populate, this));
+            boost::bind(&BasesListBox::Populate, this));
 
     if (refresh_list)
         Populate();
@@ -2619,9 +2619,9 @@ void EmptyHullsListBox::PopulateCore() {
     const auto& manager = GetDisplayedDesignsManager();
 
     auto hulls = manager.OrderedHulls();
-    if (hulls.size() < GetHullTypeManager().size()) {
+    if (hulls.size() < GetShipHullManager().size()) {
         ErrorLogger() << "EmptyHulls::PopulateCoreordered has fewer than expected entries...";
-        for (auto& hull : GetHullTypeManager()) {
+        for (auto& hull : GetShipHullManager()) {
             auto it = std::find(hulls.begin(), hulls.end(), hull.first);
             if (it == hulls.end())
                 hulls.push_back(hull.first);    // O(N^2) in loop, but I don't care...
@@ -2629,9 +2629,9 @@ void EmptyHullsListBox::PopulateCore() {
     }
 
     for (const auto& hull_name : hulls) {
-        const auto& hull_type =  GetHullTypeManager().GetHullType(hull_name);
+        const auto& ship_hull =  GetShipHullManager().GetShipHull(hull_name);
 
-        if (!hull_type || !hull_type->Producible())
+        if (!ship_hull || !ship_hull->Producible())
             continue;
 
         auto shown = AvailabilityState().DisplayedHullAvailability(hull_name);
@@ -2925,7 +2925,7 @@ void EmptyHullsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& 
     if (!hull_parts_row)
         return;
     const std::string& hull_name = hull_parts_row->Hull();
-    const HullType* hull_type = GetHullType(hull_name);
+    const ShipHull* ship_hull = GetShipHull(hull_name);
     const std::vector<std::string>& parts = hull_parts_row->Parts();
 
     if (modkeys & GG::MOD_KEY_CTRL) {
@@ -2935,8 +2935,8 @@ void EmptyHullsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& 
         manager.SetHullObsolete(hull_name, !is_obsolete);
         Populate();
     }
-    else if (hull_type && parts.empty())
-        HullClickedSignal(hull_type);
+    else if (ship_hull && parts.empty())
+        HullClickedSignal(ship_hull);
 }
 
 void CompletedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt,
@@ -3355,7 +3355,7 @@ public:
                                                                         DesignComponentsSelectedSignal;
     mutable boost::signals2::signal<void (const boost::uuids::uuid&)>   SavedDesignSelectedSignal;
     mutable boost::signals2::signal<void (const ShipDesign*)>           DesignClickedSignal;
-    mutable boost::signals2::signal<void (const HullType*)>             HullClickedSignal;
+    mutable boost::signals2::signal<void (const ShipHull*)>             HullClickedSignal;
 
     enum class BaseSelectorTab : std::size_t {Hull, Current, Saved, Monster, All};
     mutable boost::signals2::signal<void (const BaseSelectorTab)>       TabChangedSignal;
@@ -3363,12 +3363,12 @@ public:
 private:
     void DoLayout();
 
-    std::shared_ptr<GG::TabWnd>                 m_tabs = nullptr;
-    std::shared_ptr<EmptyHullsListBox>          m_hulls_list = nullptr;         // empty hulls on which a new design can be based
-    std::shared_ptr<CompletedDesignsListBox>    m_designs_list= nullptr;        // designs this empire has created or learned how to make
-    std::shared_ptr<SavedDesignsListBox>        m_saved_designs_list = nullptr; // designs saved to files
-    std::shared_ptr<MonstersListBox>            m_monsters_list = nullptr;      // monster designs
-    std::shared_ptr<AllDesignsListBox>          m_all_list = nullptr;           // all designs known to empire
+    std::shared_ptr<GG::TabWnd>                 m_tabs;
+    std::shared_ptr<EmptyHullsListBox>          m_hulls_list;           // empty hulls on which a new design can be based
+    std::shared_ptr<CompletedDesignsListBox>    m_designs_list;         // designs this empire has created or learned how to make
+    std::shared_ptr<SavedDesignsListBox>        m_saved_designs_list;   // designs saved to files
+    std::shared_ptr<MonstersListBox>            m_monsters_list;        // monster designs
+    std::shared_ptr<AllDesignsListBox>          m_all_list;             // all designs known to empire
 
     // Holds the state of the availabilities filter.
     AvailabilityManager                         m_availabilities_state{false, true, false};
@@ -3571,7 +3571,7 @@ public:
     ShipSlotType    SlotType() const;
     double          XPositionFraction() const;
     double          YPositionFraction() const;
-    const PartType* GetPart() const;
+    const ShipPart* GetPart() const;
     //@}
 
     /** \name Mutators */ //@{
@@ -3587,16 +3587,20 @@ public:
     void Render() override;
     void Highlight(bool actually = true);
 
-    void SetPart(const std::string& part_name);         //!< used to programmatically set the PartControl in this slot.  Does not emit signal
-    void SetPart(const PartType* part_type = nullptr);  //!< used to programmatically set the PartControl in this slot.  Does not emit signal
+    //! Used to programmatically set the ShipPart in this slot.
+    //! Does not emit signal.
+    void SetPart(const std::string& part_name);
+    //! Used to programmatically set the ShipPart in this slot.
+    //! Does not emit signal.
+    void SetPart(const ShipPart* part = nullptr);
     //@}
 
     /** emitted when the contents of a slot are altered by the dragging
       * a PartControl in or out of the slot.  signal should be caught and the
       * slot contents set using SetPart accordingly */
-    mutable boost::signals2::signal<void (const PartType*, bool)> SlotContentsAlteredSignal;
+    mutable boost::signals2::signal<void (const ShipPart*, bool)> SlotContentsAlteredSignal;
 
-    mutable boost::signals2::signal<void (const PartType*, GG::Flags<GG::ModKey>)> PartTypeClickedSignal;
+    mutable boost::signals2::signal<void (const ShipPart*, GG::Flags<GG::ModKey>)> ShipPartClickedSignal;
 
 protected:
     bool EventFilter(GG::Wnd* w, const GG::WndEvent& event) override;
@@ -3608,8 +3612,8 @@ private:
     ShipSlotType                        m_slot_type = INVALID_SHIP_SLOT_TYPE;
     double                              m_x_position_fraction = 0.4;    //!< position on hull image where slot should be shown, as a fraction of that image's size
     double                              m_y_position_fraction = 0.4;
-    std::shared_ptr<PartControl>        m_part_control = nullptr;
-    std::shared_ptr<GG::StaticGraphic>  m_background = nullptr;
+    std::shared_ptr<PartControl>        m_part_control;
+    std::shared_ptr<GG::StaticGraphic>  m_background;
 };
 
 SlotControl::SlotControl() :
@@ -3681,9 +3685,9 @@ void SlotControl::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter
         if (it->first->DragDropDataType() != PART_CONTROL_DROP_TYPE_STRING)
             continue;
         const auto part_control = boost::polymorphic_downcast<const PartControl* const>(it->first);
-        const PartType* part_type = part_control->Part();
-        if (part_type &&
-            part_type->CanMountInSlotType(m_slot_type) &&
+        const ShipPart* part = part_control->Part();
+        if (part &&
+            part->CanMountInSlotType(m_slot_type) &&
             part_control != m_part_control.get())
         {
             it->second = true;
@@ -3701,7 +3705,7 @@ double SlotControl::XPositionFraction() const
 double SlotControl::YPositionFraction() const
 { return m_y_position_fraction; }
 
-const PartType* SlotControl::GetPart() const {
+const ShipPart* SlotControl::GetPart() const {
     if (m_part_control)
         return m_part_control->Part();
     else
@@ -3742,10 +3746,10 @@ void SlotControl::AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::
 
     const auto wnd = *(wnds.begin());
     const PartControl* control = boost::polymorphic_downcast<const PartControl*>(wnd.get());
-    const PartType* part_type = control ? control->Part() : nullptr;
+    const ShipPart* part = control ? control->Part() : nullptr;
 
-    if (part_type)
-        SlotContentsAlteredSignal(part_type, (mod_keys & GG::MOD_KEY_CTRL));
+    if (part)
+        SlotContentsAlteredSignal(part, (mod_keys & GG::MOD_KEY_CTRL));
 }
 
 void SlotControl::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds,
@@ -3790,26 +3794,26 @@ void SlotControl::Highlight(bool actually)
 { m_highlighted = actually; }
 
 void SlotControl::SetPart(const std::string& part_name)
-{ SetPart(GetPartType(part_name)); }
+{ SetPart(GetShipPart(part_name)); }
 
-void SlotControl::SetPart(const PartType* part_type) {
+void SlotControl::SetPart(const ShipPart* part) {
     // remove existing part control, if any
     DetachChildAndReset(m_part_control);
 
-    if (!part_type)
+    if (!part)
         return;
 
-    // create new part control for passed in part_type
-    m_part_control = GG::Wnd::Create<PartControl>(part_type);
+    // create new part control for passed in part
+    m_part_control = GG::Wnd::Create<PartControl>(part);
     AttachChild(m_part_control);
     m_part_control->InstallEventFilter(shared_from_this());
 
     // single click shows encyclopedia data
-    m_part_control->ClickedSignal.connect(PartTypeClickedSignal);
+    m_part_control->ClickedSignal.connect(ShipPartClickedSignal);
 
     // double click clears slot
     m_part_control->DoubleClickedSignal.connect(
-        [this](const PartType*){ this->SlotContentsAlteredSignal(nullptr, false); });
+        [this](const ShipPart*){ this->SlotContentsAlteredSignal(nullptr, false); });
     SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
 
     // set part occupying slot's tool tip to say slot type
@@ -3822,9 +3826,9 @@ void SlotControl::SetPart(const PartType* part_type) {
         title_text = UserString("SL_CORE");
 
     m_part_control->SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
-        ClientUI::PartIcon(part_type->Name()),
-        UserString(part_type->Name()) + " (" + title_text + ")",
-        UserString(part_type->Description())
+        ClientUI::PartIcon(part->Name()),
+        UserString(part->Name()) + " (" + title_text + ")",
+        UserString(part->Description())
     ));
 }
 
@@ -3921,19 +3925,28 @@ public:
 
     void Sanitize();
 
-    void SetPart(const std::string& part_name, unsigned int slot);   //!< puts specified part in specified slot.  does nothing if slot is out of range of available slots for current hull
-    /** Sets the part in \p slot to \p part and emits and signal if requested.  Changes
-        all similar parts if \p change_all_similar_parts. */
-    void SetPart(const PartType* part, unsigned int slot, bool emit_signal = false, bool change_all_similar_parts = false);
-    void SetParts(const std::vector<std::string>& parts);            //!< puts specified parts in slots.  attempts to put each part into the slot corresponding to its place in the passed vector.  if a part cannot be placed, it is ignored.  more parts than there are slots available are ignored, and slots for which there are insufficient parts in the passed vector are unmodified
+    //! Puts specified part in specified slot.  Does nothing if slot is out of
+    //! range of available slots for current hull
+    void SetPart(const std::string& part_name, unsigned int slot);
 
-    /** Attempts to add the specified part to the design, if possible.  will
-      * first attempt to add part to an empty slot of the appropriate type, and
-      * if no appropriate slots are available, may or may not move other parts
-      * around within the design to open up a compatible slot in which to add
-      * this part (and then add it).  may also do nothing. */
-    void AddPart(const PartType* part);
-    bool CanPartBeAdded(const PartType* part);
+    //! Sets the part in @p slot to @p part and emits and signal if requested.
+    //! Changes all similar parts if @p change_all_similar_parts.
+    void SetPart(const ShipPart* part, unsigned int slot, bool emit_signal = false, bool change_all_similar_parts = false);
+
+    //! Puts specified parts in slots.  Attempts to put each part into the slot
+    //! corresponding to its place in the passed vector.  If a part cannot be
+    //! placed, it is ignored.  More parts than there are slots available are
+    //! ignored, and slots for which there are insufficient parts in the passed
+    //! vector are unmodified.
+    void SetParts(const std::vector<std::string>& parts);
+
+    //! Attempts to add the specified part to the design, if possible.  Will
+    //! first attempt to add part to an empty slot of the appropriate type, and
+    //! if no appropriate slots are available, may or may not move other parts
+    //! around within the design to open up a compatible slot in which to add
+    //! this part (and then add it).  May also do nothing.
+    void AddPart(const ShipPart* part);
+    bool CanPartBeAdded(const ShipPart* part);
 
     void ClearParts();                                               //!< removes all parts from design.  hull is not altered
     /** Remove parts called \p part_name*/
@@ -3943,7 +3956,7 @@ public:
         appropriate SlotControls.  If \p signal is false do not emit the the
         DesignChangedSignal(). */
     void SetHull(const std::string& hull_name, bool signal = true);
-    void SetHull(const HullType* hull, bool signal = true);
+    void SetHull(const ShipHull* hull, bool signal = true);
     void SetDesign(const ShipDesign* ship_design);                   //!< sets the displayed design by setting the appropriate hull and parts
     void SetDesign(int design_id);                                   //!< sets the displayed design by setting the appropriate hull and parts
     /** SetDesign to the design with \p uuid from the SavedDesignManager. */
@@ -3967,7 +3980,7 @@ public:
     void ReplaceDesign();
 
     void ToggleDescriptionEditor();
-  
+
     void HighlightSlotType(std::vector<ShipSlotType>& slot_types);   //!< renders slots of the indicated types differently, perhaps to indicate that that those slots can be drop targets for a particular part?
 
     /** Track changes in base type. */
@@ -3981,11 +3994,11 @@ public:
     /** emitted when the design name is changed */
     mutable boost::signals2::signal<void ()>                DesignNameChangedSignal;
 
-    /** propagates signals from contained SlotControls that signal that a part
-      * has been clicked */
-    mutable boost::signals2::signal<void (const PartType*, GG::Flags<GG::ModKey>)> PartTypeClickedSignal;
+    //! Propagates signals from contained SlotControls that signal that a part
+    //! has been clicked.
+    mutable boost::signals2::signal<void (const ShipPart*, GG::Flags<GG::ModKey>)> ShipPartClickedSignal;
 
-    mutable boost::signals2::signal<void (const HullType*)> HullTypeClickedSignal;
+    mutable boost::signals2::signal<void (const ShipHull*)> ShipHullClickedSignal;
 
     /** emitted when the user clicks the m_replace_button to replace the currently selected
       * design with the new design in the player's empire */
@@ -4010,18 +4023,31 @@ private:
     void            RefreshIncompleteDesign() const;
     std::string     GetCleanDesignDump(const ShipDesign* ship_design);  //!< similar to ship design dump but without 'lookup_strings', icon and model entries
 
-    bool            AddPartEmptySlot(const PartType* part, int slot_number);                            //!< Adds part to slot number
-    bool            AddPartWithSwapping(const PartType* part, std::pair<int, int> swap_and_empty_slot); //!< Swaps part in slot # pair.first to slot # pair.second, adds given part to slot # pair.first
-    int             FindEmptySlotForPart(const PartType* part);                                         //!< Determines if a part can be added to any empty slot, returns the slot index if possible, otherwise -1
+    //! Adds part to slot number
+    bool AddPartEmptySlot(const ShipPart* part, int slot_number);
 
-    void            DesignNameEditedSlot(const std::string& new_name);  //!< triggered when m_design_name's AfterTextChangedSignal fires. Used for basic name validation.
+    //! Swaps part in slot # pair.first to slot # pair.second, adds given part
+    //! to slot # pair.first
+    bool AddPartWithSwapping(const ShipPart* part, std::pair<int, int> swap_and_empty_slot);
 
-    std::pair<int, int> FindSlotForPartWithSwapping(const PartType* part);                              //!< Determines if a part can be added to a slot with swapping, returns a pair containing the slot to swap and an empty slot, otherwise a pair with -1
-                                                                                                        //!< This function only tries to find a way to add the given part by swapping a part already in a slot to an empty slot
-                                                                                                        //!< If theres an open slot that the given part could go into but all of the occupied slots contain parts that can't swap into the open slot
-                                                                                                        //!< This function will indicate that it could not add the part, even though adding the part is possible
+    //! Determines if a part can be added to any empty slot, returns the slot
+    //! index if possible, otherwise -1
+    int FindEmptySlotForPart(const ShipPart* part);
 
-    const HullType*                             m_hull = nullptr;
+    void DesignNameEditedSlot(const std::string& new_name);  //!< triggered when m_design_name's AfterTextChangedSignal fires. Used for basic name validation.
+
+    //! Determines if a part can be added to a slot with swapping, returns
+    //! a pair containing the slot to swap and an empty slot, otherwise a pair
+    //! with -1.
+    //! This function only tries to find a way to add the given part by
+    //! swapping a part already in a slot to an empty slot.
+    //! If theres an open slot that the given part could go into but all of the
+    //! occupied slots contain parts that can't swap into the open slot
+    //! This function will indicate that it could not add the part, even though
+    //! adding the part is possible
+    std::pair<int, int> FindSlotForPartWithSwapping(const ShipPart* part);
+
+    const ShipHull*                             m_hull = nullptr;
     std::vector<std::shared_ptr<SlotControl>>   m_slots;
     boost::optional<int>                        m_replaced_design_id = boost::none;     // The design id if this design is replacable
     boost::optional<boost::uuids::uuid>         m_replaced_design_uuid = boost::none;   // The design uuid if this design is replacable
@@ -4030,16 +4056,16 @@ private:
     /// This tracks the last relevant selected tab in the base selector
     DesignWnd::BaseSelector::BaseSelectorTab    m_type_to_create = DesignWnd::BaseSelector::BaseSelectorTab::Current;
 
-    mutable std::shared_ptr<ShipDesign>         m_incomplete_design = nullptr;
+    mutable std::shared_ptr<ShipDesign>         m_incomplete_design;
 
-    std::shared_ptr<GG::StaticGraphic>          m_background_image = nullptr;
-    std::shared_ptr<GG::Label>                  m_design_name_label = nullptr;
-    std::shared_ptr<GG::Edit>                   m_design_name = nullptr;
-    std::shared_ptr<GG::StateButton>            m_design_description_toggle = nullptr;
-    std::shared_ptr<GG::MultiEdit>              m_design_description_edit = nullptr;
-    std::shared_ptr<GG::Button>                 m_replace_button = nullptr;
-    std::shared_ptr<GG::Button>                 m_confirm_button = nullptr;
-    std::shared_ptr<GG::Button>                 m_clear_button = nullptr;
+    std::shared_ptr<GG::StaticGraphic>          m_background_image;
+    std::shared_ptr<GG::Label>                  m_design_name_label;
+    std::shared_ptr<GG::Edit>                   m_design_name;
+    std::shared_ptr<GG::StateButton>            m_design_description_toggle;
+    std::shared_ptr<GG::MultiEdit>              m_design_description_edit;
+    std::shared_ptr<GG::Button>                 m_replace_button;
+    std::shared_ptr<GG::Button>                 m_confirm_button;
+    std::shared_ptr<GG::Button>                 m_clear_button;
     bool                                        m_disabled_by_name = false; // if the design confirm button is currently disabled due to empty name
     bool                                        m_disabled_by_part_conflict = false;
 
@@ -4075,13 +4101,13 @@ void DesignWnd::MainPanel::CompleteConstruction() {
     AttachChild(m_confirm_button);
     AttachChild(m_clear_button);
 
-    m_clear_button->LeftClickedSignal.connect(
-        boost::bind(&DesignWnd::MainPanel::ClearParts, this));
+    m_clear_button->LeftClickedSignal.connect(boost::bind(&DesignWnd::MainPanel::ClearParts, this));
     m_design_name->EditedSignal.connect(
-        boost::bind(&DesignWnd::MainPanel::DesignNameEditedSlot, this, _1));
+        boost::bind(&DesignWnd::MainPanel::DesignNameEditedSlot, this, boost::placeholders::_1));
     m_replace_button->LeftClickedSignal.connect(DesignReplacedSignal);
     m_confirm_button->LeftClickedSignal.connect(DesignConfirmedSignal);
-    m_design_description_toggle->CheckedSignal.connect(boost::bind(&DesignWnd::MainPanel::ToggleDescriptionEditor,this));
+    m_design_description_toggle->CheckedSignal.connect(
+        boost::bind(&DesignWnd::MainPanel::ToggleDescriptionEditor, this));
     DesignChangedSignal.connect(boost::bind(&DesignWnd::MainPanel::DesignChanged, this));
     DesignReplacedSignal.connect(boost::bind(&DesignWnd::MainPanel::ReplaceDesign, this));
     DesignConfirmedSignal.connect(boost::bind(&DesignWnd::MainPanel::AddDesign, this));
@@ -4119,9 +4145,9 @@ boost::optional<const ShipDesign*> DesignWnd::MainPanel::EditingCurrentDesign() 
 const std::vector<std::string> DesignWnd::MainPanel::Parts() const {
     std::vector<std::string> retval;
     for (const auto& slot : m_slots) {
-        const PartType* part_type = slot->GetPart();
-        if (part_type)
-            retval.push_back(part_type->Name());
+        const ShipPart* part = slot->GetPart();
+        if (part)
+            retval.push_back(part->Name());
         else
             retval.push_back("");
     }
@@ -4204,7 +4230,7 @@ boost::optional<const ShipDesign*> DesignWnd::MainPanel::CurrentDesignIsRegister
 
 void DesignWnd::MainPanel::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     if (m_hull)
-        HullTypeClickedSignal(m_hull);
+        ShipHullClickedSignal(m_hull);
     CUIWnd::LClick(pt, mod_keys);
 }
 
@@ -4222,9 +4248,9 @@ void DesignWnd::MainPanel::Sanitize() {
 }
 
 void DesignWnd::MainPanel::SetPart(const std::string& part_name, unsigned int slot)
-{ SetPart(GetPartType(part_name), slot); }
+{ SetPart(GetShipPart(part_name), slot); }
 
-void DesignWnd::MainPanel::SetPart(const PartType* part, unsigned int slot,
+void DesignWnd::MainPanel::SetPart(const ShipPart* part, unsigned int slot,
                                    bool emit_signal /* = false */,
                                    bool change_all_similar_parts /*= false*/)
 {
@@ -4269,7 +4295,7 @@ void DesignWnd::MainPanel::SetParts(const std::vector<std::string>& parts) {
     DesignChangedSignal();
 }
 
-void DesignWnd::MainPanel::AddPart(const PartType* part) {
+void DesignWnd::MainPanel::AddPart(const ShipPart* part) {
     if (AddPartEmptySlot(part, FindEmptySlotForPart(part)))
         return;
 
@@ -4278,12 +4304,12 @@ void DesignWnd::MainPanel::AddPart(const PartType* part) {
                       << ") couldn't find a slot for the part";
 }
 
-bool DesignWnd::MainPanel::CanPartBeAdded(const PartType* part) {
+bool DesignWnd::MainPanel::CanPartBeAdded(const ShipPart* part) {
     std::pair<int, int> swap_result = FindSlotForPartWithSwapping(part);
     return (FindEmptySlotForPart(part) >= 0 || (swap_result.first >= 0 && swap_result.second >= 0));
 }
 
-bool DesignWnd::MainPanel::AddPartEmptySlot(const PartType* part, int slot_number) {
+bool DesignWnd::MainPanel::AddPartEmptySlot(const ShipPart* part, int slot_number) {
     if (!part || slot_number < 0)
         return false;
     SetPart(part, slot_number);
@@ -4291,7 +4317,7 @@ bool DesignWnd::MainPanel::AddPartEmptySlot(const PartType* part, int slot_numbe
     return true;
 }
 
-bool DesignWnd::MainPanel::AddPartWithSwapping(const PartType* part,
+bool DesignWnd::MainPanel::AddPartWithSwapping(const ShipPart* part,
                                                std::pair<int, int> swap_and_empty_slot)
 {
     if (!part || swap_and_empty_slot.first < 0 || swap_and_empty_slot.second < 0)
@@ -4304,7 +4330,7 @@ bool DesignWnd::MainPanel::AddPartWithSwapping(const PartType* part,
     return true;
 }
 
-int DesignWnd::MainPanel::FindEmptySlotForPart(const PartType* part) {
+int DesignWnd::MainPanel::FindEmptySlotForPart(const ShipPart* part) {
     int result = -1;
     if (!part)
         return result;
@@ -4313,19 +4339,19 @@ int DesignWnd::MainPanel::FindEmptySlotForPart(const PartType* part) {
         // give up if part is a hangar and there is already a hangar of another type
         std::string already_seen_hangar_name;
         for (const auto& slot : m_slots) {
-            const PartType* part_type = slot->GetPart();
-            if (!part_type || part_type->Class() != PC_FIGHTER_HANGAR)
+            const ShipPart* part = slot->GetPart();
+            if (!part || part->Class() != PC_FIGHTER_HANGAR)
                 continue;
-            if (part_type->Name() != part->Name())
+            if (part->Name() != part->Name())
                 return result;
         }
     }
 
     for (unsigned int i = 0; i < m_slots.size(); ++i) {             // scan through slots to find one that can mount part
         const ShipSlotType slot_type = m_slots[i]->SlotType();
-        const PartType* part_type = m_slots[i]->GetPart();          // check if this slot is empty
+        const ShipPart* slotted_part = m_slots[i]->GetPart();
 
-        if (!part_type && part->CanMountInSlotType(slot_type)) {    // ... and if the part can mount here
+        if (!slotted_part && part->CanMountInSlotType(slot_type)) {
             result = i;
             return result;
         }
@@ -4337,7 +4363,7 @@ void DesignWnd::MainPanel::DesignNameEditedSlot(const std::string& new_name) {
     DesignNameChanged();  // Check whether the confirmation button should be enabled or disabled each time the name changes.
 }
 
-std::pair<int, int> DesignWnd::MainPanel::FindSlotForPartWithSwapping(const PartType* part) {
+std::pair<int, int> DesignWnd::MainPanel::FindSlotForPartWithSwapping(const ShipPart* part) {
     // result.first = swap_slot, result.second = empty_slot
     // if any of the pair == -1, no swap!
 
@@ -4347,7 +4373,7 @@ std::pair<int, int> DesignWnd::MainPanel::FindSlotForPartWithSwapping(const Part
     // check if adding the part would cause the design to have multiple different types of hangar (which is not allowed)
     if (part->Class() == PC_FIGHTER_HANGAR) {
         for (const auto& slot : m_slots) {
-            const PartType* existing_part = slot->GetPart();
+            const ShipPart* existing_part = slot->GetPart();
             if (!existing_part || existing_part->Class() != PC_FIGHTER_HANGAR)
                 continue;
             if (existing_part->Name() != part->Name())
@@ -4396,7 +4422,7 @@ void DesignWnd::MainPanel::ClearParts() {
 void DesignWnd::MainPanel::ClearPart(const std::string& part_name) {
     bool changed = false;
     for (const auto& slot : m_slots) {
-        const PartType* existing_part = slot->GetPart();
+        const ShipPart* existing_part = slot->GetPart();
         if (!existing_part)
             continue;
         if (existing_part->Name() != part_name)
@@ -4410,9 +4436,9 @@ void DesignWnd::MainPanel::ClearPart(const std::string& part_name) {
 }
 
 void DesignWnd::MainPanel::SetHull(const std::string& hull_name, bool signal)
-{ SetHull(GetHullType(hull_name), signal); }
+{ SetHull(GetShipHull(hull_name), signal); }
 
-void DesignWnd::MainPanel::SetHull(const HullType* hull, bool signal) {
+void DesignWnd::MainPanel::SetHull(const ShipHull* hull, bool signal) {
     m_hull = hull;
     DetachChild(m_background_image);
     m_background_image = nullptr;
@@ -4450,7 +4476,7 @@ void DesignWnd::MainPanel::SetDesign(const ShipDesign* ship_design) {
     m_design_description_edit->SetText(ship_design->Description());
 
     bool suppress_design_changed_signal = true;
-    SetHull(ship_design->GetHull(), !suppress_design_changed_signal);
+    SetHull(ship_design->Hull(), !suppress_design_changed_signal);
 
     SetParts(ship_design->Parts());
     DesignChangedSignal();
@@ -4512,20 +4538,22 @@ void DesignWnd::MainPanel::Populate() {
     if (!m_hull)
         return;
 
-    const std::vector<HullType::Slot>& hull_slots = m_hull->Slots();
+    const std::vector<ShipHull::Slot>& hull_slots = m_hull->Slots();
 
-    for (auto i = 0; i != hull_slots.size(); ++i) {
-        const HullType::Slot& slot = hull_slots[i];
+    for (size_t i = 0; i != hull_slots.size(); ++i) {
+        const ShipHull::Slot& slot = hull_slots[i];
         auto slot_control = GG::Wnd::Create<SlotControl>(slot.x, slot.y, slot.type);
         m_slots.push_back(slot_control);
         AttachChild(slot_control);
 
+        namespace ph = boost::placeholders;
+
         slot_control->SlotContentsAlteredSignal.connect(
             boost::bind(static_cast<void (DesignWnd::MainPanel::*)(
-                const PartType*, unsigned int, bool, bool)>(&DesignWnd::MainPanel::SetPart),
-                    this, _1, i, true, _2));
-        slot_control->PartTypeClickedSignal.connect(
-            PartTypeClickedSignal);
+                const ShipPart*, unsigned int, bool, bool)>(&DesignWnd::MainPanel::SetPart),
+                    this, ph::_1, i, true, ph::_2));
+        slot_control->ShipPartClickedSignal.connect(
+            ShipPartClickedSignal);
     }
 }
 
@@ -4650,10 +4678,10 @@ void DesignWnd::MainPanel::DesignChanged() {
         for (const std::string& part_name : Parts()) {
             if (m_disabled_by_part_conflict)
                 break;
-            const PartType* part_type = GetPartType(part_name);
-            if (!part_type)
+            const ShipPart* part = GetShipPart(part_name);
+            if (!part)
                 continue;
-            for (const std::string& excluded_part : part_type->Exclusions()) {
+            for (const std::string& excluded_part : part->Exclusions()) {
                 if (already_seen_component_names.count(excluded_part)) {
                     m_disabled_by_part_conflict = true;
                     problematic_components.first = part_name;
@@ -4888,7 +4916,7 @@ std::pair<int, boost::uuids::uuid> DesignWnd::MainPanel::AddDesign() {
         const auto description = DesignDescription();
 
         std::string icon = "ship_hulls/generic_hull.png";
-        if (const HullType* hull = GetHullType(hull_name))
+        if (const ShipHull* hull = GetShipHull(hull_name))
             icon = hull->Icon();
 
         auto new_uuid = boost::uuids::random_generator()();
@@ -5016,23 +5044,28 @@ void DesignWnd::CompleteConstruction() {
 
     AttachChild(m_detail_panel);
 
+    using boost::placeholders::_1;
+    using boost::placeholders::_2;
+
     AttachChild(m_main_panel);
-    m_main_panel->PartTypeClickedSignal.connect(
-        boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const PartType*)>(&EncyclopediaDetailPanel::SetItem), m_detail_panel, _1));
-    m_main_panel->HullTypeClickedSignal.connect(
-        boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const HullType*)>(&EncyclopediaDetailPanel::SetItem), m_detail_panel, _1));
-    m_main_panel->DesignChangedSignal.connect(
-        boost::bind(&DesignWnd::DesignChanged, this));
-    m_main_panel->DesignNameChangedSignal.connect(
-        boost::bind(&DesignWnd::DesignNameChanged, this));
+    m_main_panel->ShipPartClickedSignal.connect(
+        boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const ShipPart*)>(
+            &EncyclopediaDetailPanel::SetItem), m_detail_panel, _1));
+    m_main_panel->ShipHullClickedSignal.connect(
+        boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const ShipHull*)>(
+            &EncyclopediaDetailPanel::SetItem), m_detail_panel, _1));
+    m_main_panel->DesignChangedSignal.connect(boost::bind(&DesignWnd::DesignChanged, this));
+    m_main_panel->DesignNameChangedSignal.connect(boost::bind(&DesignWnd::DesignNameChanged, this));
     m_main_panel->CompleteDesignClickedSignal.connect(
-        boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(int)>(&EncyclopediaDetailPanel::SetDesign), m_detail_panel, _1));
+        boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(int)>(
+            &EncyclopediaDetailPanel::SetDesign), m_detail_panel, _1));
     //m_main_panel->Sanitize();
 
     AttachChild(m_part_palette);
-    m_part_palette->PartTypeClickedSignal.connect(
-        boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const PartType*)>(&EncyclopediaDetailPanel::SetItem), m_detail_panel, _1));
-    m_part_palette->PartTypeDoubleClickedSignal.connect(
+    m_part_palette->ShipPartClickedSignal.connect(
+        boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const ShipPart*)>(
+            &EncyclopediaDetailPanel::SetItem), m_detail_panel, _1));
+    m_part_palette->ShipPartDoubleClickedSignal.connect(
         boost::bind(&DesignWnd::MainPanel::AddPart, m_main_panel, _1));
     m_part_palette->ClearPartSignal.connect(
         boost::bind(&DesignWnd::MainPanel::ClearPart, m_main_panel, _1));
@@ -5044,15 +5077,20 @@ void DesignWnd::CompleteConstruction() {
     m_base_selector->DesignUpdatedSignal.connect(
         boost::bind(static_cast<void (MainPanel::*)()>(&MainPanel::DesignChanged), m_main_panel));
     m_base_selector->DesignComponentsSelectedSignal.connect(
-        boost::bind(&MainPanel::SetDesignComponents, m_main_panel, _1, _2));
+        boost::bind(static_cast<void (MainPanel::*)(const std::string& hull, const std::vector<std::string>& parts)>(
+            &MainPanel::SetDesignComponents), m_main_panel, _1, _2));
     m_base_selector->SavedDesignSelectedSignal.connect(
-        boost::bind(static_cast<void (MainPanel::*)(const boost::uuids::uuid&)>(&MainPanel::SetDesign), m_main_panel, _1));
+        boost::bind(static_cast<void (MainPanel::*)(const boost::uuids::uuid&)>(
+            &MainPanel::SetDesign), m_main_panel, _1));
 
     m_base_selector->DesignClickedSignal.connect(
-        boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const ShipDesign*)>(&EncyclopediaDetailPanel::SetItem), m_detail_panel, _1));
+        boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const ShipDesign*)>(
+            &EncyclopediaDetailPanel::SetItem), m_detail_panel, _1));
     m_base_selector->HullClickedSignal.connect(
-        boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const HullType*)>(&EncyclopediaDetailPanel::SetItem), m_detail_panel, _1));
-    m_base_selector->TabChangedSignal.connect(boost::bind(&MainPanel::HandleBaseTypeChange, m_main_panel, _1));
+        boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const ShipHull*)>(
+            &EncyclopediaDetailPanel::SetItem), m_detail_panel, _1));
+    m_base_selector->TabChangedSignal.connect(boost::bind(
+        &MainPanel::HandleBaseTypeChange, m_main_panel, _1));
 
     // Connect signals to re-populate when part obsolescence changes
     m_part_palette->PartObsolescenceChangedSignal.connect(
@@ -5105,11 +5143,11 @@ void DesignWnd::InitializeWindows() {
     m_base_selector->InitSizeMove(selector_ul,  selector_ul + selector_wh);
 }
 
-void DesignWnd::ShowPartTypeInEncyclopedia(const std::string& part_type)
-{ m_detail_panel->SetPartType(part_type); }
+void DesignWnd::ShowShipPartInEncyclopedia(const std::string& part)
+{ m_detail_panel->SetShipPart(part); }
 
-void DesignWnd::ShowHullTypeInEncyclopedia(const std::string& hull_type)
-{ m_detail_panel->SetHullType(hull_type); }
+void DesignWnd::ShowShipHullInEncyclopedia(const std::string& ship_hull)
+{ m_detail_panel->SetShipHull(ship_hull); }
 
 void DesignWnd::ShowShipDesignInEncyclopedia(int design_id)
 { m_detail_panel->SetDesign(design_id); }

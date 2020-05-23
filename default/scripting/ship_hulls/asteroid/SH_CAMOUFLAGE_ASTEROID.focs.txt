@@ -3,6 +3,7 @@ Hull
     description = "SH_CAMOUFLAGE_ASTEROID_DESC"
     speed = 60
     fuel = 2
+    NoDefaultFuelEffect
     stealth = 25
     structure = 40
     slots = [
@@ -38,6 +39,7 @@ Hull
             effects = SetStealth value = Value + 40
 
         [[AVERAGE_FUEL_EFFICIENCY]]
+        [[ADD_HULL_FUEL_TO_MAX_FUEL_METER]]
         [[AVERAGE_BASE_FUEL_REGEN]]
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]

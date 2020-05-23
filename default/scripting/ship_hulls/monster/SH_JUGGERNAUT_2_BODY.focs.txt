@@ -3,6 +3,7 @@ Hull
     description = "SH_JUGGERNAUT_2_BODY_DESC"
     speed = 25
     fuel = 2
+    NoDefaultFuelEffect
     stealth = 5
     structure = 200
     slots = [
@@ -19,6 +20,7 @@ Hull
     effectsgroups = [
         [[MONSTER_MOVE_ALWAYS]]
         [[INFINITE_FUEL]]
+        [[ADD_HULL_FUEL_TO_MAX_FUEL_METER]]
         [[MONSTER_SHIELD_REGENERATION]]
 
         EffectsGroup
@@ -49,7 +51,6 @@ Hull
         
          EffectsGroup
             scope = Source
-            activation = Source
             effects = [
                 SetMaxCapacity partname = "SR_JAWS" value = Value + min(Source.Age*0.1, 8)
                 SetCapacity partname = "SR_JAWS" value = Value + min(Source.Age*0.1, 8)

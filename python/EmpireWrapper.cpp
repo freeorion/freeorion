@@ -4,6 +4,7 @@
 #include "../Empire/Diplomacy.h"
 #include "../universe/Predicates.h"
 #include "../universe/UniverseObject.h"
+#include "../universe/UnlockableItem.h"
 #include "../universe/Planet.h"
 #include "../universe/Tech.h"
 #include "../universe/Enums.h"
@@ -14,7 +15,6 @@
 
 #include <GG/Clr.h>
 
-#include <boost/function.hpp>
 #include <boost/mpl/vector.hpp>
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/map_indexing_suite.hpp>
@@ -43,12 +43,15 @@ namespace {
     { return GetTechManager().RecursivePrereqs(tech.Name(), empire_id); }
     auto TechRecursivePrereqsFunc = TechRecursivePrereqs;
 
-    // Concatenate functions to create one that takes two parameters.  The first parameter is a ResearchQueue*, which
-    // is passed directly to ResearchQueue::InQueue as the this pointer.  The second parameter is a
-    // ResearchQueue::Element which is passed into TechFromResearchQueueElement, which returns a Tech*, which is
-    // passed into ResearchQueue::InQueue as the second parameter.
+    // Concatenate functions to create one that takes two parameters.  The first
+    // parameter is a ResearchQueue*, which is passed directly to
+    // ResearchQueue::InQueue as the this pointer.  The second parameter is a
+    // ResearchQueue::Element which is passed into TechFromResearchQueueElement,
+    // which returns a Tech*, which is passed into ResearchQueue::InQueue as the
+    // second parameter.
     auto InQueueFromResearchQueueElementFunc =
-        boost::bind(&ResearchQueue::InQueue, _1, boost::bind(TechFromResearchQueueElement, _2));
+        boost::bind(&ResearchQueue::InQueue, boost::placeholders::_1,
+                    boost::bind(TechFromResearchQueueElement, boost::placeholders::_2));
 
     // ProductionQueue::Element contains a ProductionItem which contains details of the item on the queue.  Need helper
     // functions to get the details about the item in the Element without adding extra pointless exposed classes to
@@ -73,7 +76,7 @@ namespace {
 
     const Meter* (Empire::*EmpireGetMeter)(const std::string&) const = &Empire::GetMeter;
 
-    template<class T1, class T2>
+    template<typename T1, typename T2>
     struct PairToTupleConverter {
         static PyObject* convert(const std::pair<T1, T2>& pair) {
             return boost::python::incref(boost::python::make_tuple(pair.first, pair.second).ptr());
@@ -239,6 +242,9 @@ namespace FreeOrionPython {
     using boost::python::return_by_value;
     using boost::python::return_internal_reference;
 
+    using boost::placeholders::_1;
+    using boost::placeholders::_2;
+
     /**
      * CallPolicies:
      *
@@ -266,8 +272,8 @@ namespace FreeOrionPython {
         class_<std::vector<IntPair>>("IntPairVec")
             .def(boost::python::vector_indexing_suite<std::vector<IntPair>, true>())
         ;
-        class_<std::vector<ItemSpec>>("ItemSpecVec")
-            .def(boost::python::vector_indexing_suite<std::vector<ItemSpec>, true>())
+        class_<std::vector<UnlockableItem>>("UnlockableItemVec")
+            .def(boost::python::vector_indexing_suite<std::vector<UnlockableItem>, true>())
         ;
         boost::python::to_python_converter<FloatIntPair, FloatIntPairConverter>();
 
@@ -479,9 +485,9 @@ namespace FreeOrionPython {
         boost::python::setattr(techsInCategoryFunc, "__doc__", boost::python::str("Returns the names of all techs (StringVec) in the indicated tech category name (string)."));
         def("techsInCategory", techsInCategoryFunc);
 
-        class_<ItemSpec>("ItemSpec", init<UnlockableItemType, const std::string&>())
-            .add_property("type",               &ItemSpec::type)
-            .add_property("name",               &ItemSpec::name)
+        class_<UnlockableItem>("UnlockableItem", init<UnlockableItemType, const std::string&>())
+            .add_property("type",               &UnlockableItem::type)
+            .add_property("name",               &UnlockableItem::name)
         ;
 
         ///////////////////

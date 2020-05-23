@@ -1,0 +1,54 @@
+os: Visual Studio 2017
+
+version: ci-{build}
+
+environment:
+  matrix:
+    - BUILD_SYSTEM: CMAKE
+    - BUILD_SYSTEM: MSVC
+
+matrix:
+  allow_failures:
+    - BUILD_SYSTEM: CMAKE
+
+init:
+  - git config --global core.eol native
+  - git config --global core.autocrlf true
+
+clone_depth: 50
+
+skip_commits:
+  files:
+      - default/
+      - '**/*.md'
+      - '**/*.xml'
+      - '**/COPYING'
+  message: /.*\[(skip appveyor)|(appveyor skip)\].*/
+
+install:
+  - cd ..
+  - ps: Start-FileDownload https://github.com/freeorion/freeorion-sdk/releases/download/v11/FreeOrionSDK_11_MSVC-v141-Win32.zip -FileName FreeOrionSDK.zip
+  - unzip -q FreeOrionSDK.zip
+  - cp bin/* freeorion/
+  - cd freeorion
+
+before_build:
+  - if "%BUILD_SYSTEM%" == "MSVC" (
+      cd msvc2017
+    )
+  - if "%BUILD_SYSTEM%" == "CMAKE" (
+      mkdir build
+    )
+
+build_script:
+  - if "%BUILD_SYSTEM%" == "MSVC" (
+      msbuild FreeOrion.sln /maxcpucount /property:BuildInParallel=true /property:CL_MPCount=2 /property:PlatformToolset=v141 /property:Configuration=Release /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll" /verbosity:minimal
+    )
+  - if "%BUILD_SYSTEM%" == "CMAKE" (
+      pushd build &&
+      cmake -G "Visual Studio 15 2017" -T v141 -A Win32 -DBUILD_TESTING=On .. &&
+      cmake --build . --config "Release" -- /maxcpucount /property:BuildInParallel=true /property:CL_MPCount=2 /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll" /verbosity:minimal &&
+      popd
+    )
+
+test: off

@@ -2,6 +2,7 @@
 
 #include "Effect.h"
 #include "UniverseObject.h"
+#include "UnlockableItem.h"
 #include "ObjectMap.h"
 #include "../util/OptionsDB.h"
 #include "../util/Logger.h"
@@ -78,12 +79,6 @@ namespace {
 }
 
 namespace CheckSums {
-    void CheckSumCombine(unsigned int& sum, const ItemSpec& item) {
-        TraceLogger() << "CheckSumCombine(Slot): " << typeid(item).name();
-        CheckSumCombine(sum, item.type);
-        CheckSumCombine(sum, item.name);
-    }
-
     void CheckSumCombine(unsigned int& sum, const TechCategory& cat) {
         TraceLogger() << "CheckSumCombine(Slot): " << typeid(cat).name();
         CheckSumCombine(sum, cat.name);
@@ -133,7 +128,7 @@ Tech::Tech(const std::string& name, const std::string& description, const std::s
            bool researchable,
            const std::set<std::string>& tags,
            const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects,
-           const std::set<std::string>& prerequisites, const std::vector<ItemSpec>& unlocked_items,
+           const std::set<std::string>& prerequisites, const std::vector<UnlockableItem>& unlocked_items,
            const std::string& graphic) :
     m_name(name),
     m_description(description),
@@ -155,7 +150,7 @@ Tech::Tech(const std::string& name, const std::string& description, const std::s
 
 Tech::Tech(TechInfo& tech_info,
            std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
-           const std::set<std::string>& prerequisites, const std::vector<ItemSpec>& unlocked_items,
+           const std::set<std::string>& prerequisites, const std::vector<UnlockableItem>& unlocked_items,
            const std::string& graphic) :
     m_name(tech_info.name),
     m_description(tech_info.description),
@@ -216,7 +211,7 @@ std::string Tech::Dump(unsigned short ntabs) const {
         retval += m_unlocked_items[0].Dump();
     } else {
         retval += "[\n";
-        for (const ItemSpec& unlocked_item : m_unlocked_items)
+        for (const UnlockableItem& unlocked_item : m_unlocked_items)
             retval += DumpIndent(ntabs+2) + unlocked_item.Dump();
         retval += DumpIndent(ntabs+1) + "]\n";
     }
@@ -236,7 +231,7 @@ std::string Tech::Dump(unsigned short ntabs) const {
 }
 
 float Tech::ResearchCost(int empire_id) const {
-    const auto arbitrary_large_number = 999999.9f;
+    const auto ARBITRARY_LARGE_COST = 999999.9f;
 
     if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_TECH_RESEARCH") || !m_research_cost) {
         return 1.0;
@@ -248,15 +243,17 @@ float Tech::ResearchCost(int empire_id) const {
         return m_research_cost->Eval();
 
     } else if (empire_id == ALL_EMPIRES) {
-        return arbitrary_large_number;
+        return ARBITRARY_LARGE_COST;
 
     } else {
-        std::shared_ptr<const UniverseObject> source = Empires().GetSource(empire_id);
-        if (!source && !m_research_cost->SourceInvariant())
-            return arbitrary_large_number;
+        if (m_research_cost->SourceInvariant())
+            return m_research_cost->Eval();
 
-        ScriptingContext context(source);
-        return m_research_cost->Eval(context);
+        auto source = Empires().GetSource(empire_id);
+        if (!source)
+            return ARBITRARY_LARGE_COST;
+
+        return m_research_cost->Eval(ScriptingContext(source));
     }
 }
 
@@ -264,7 +261,7 @@ float Tech::PerTurnCost(int empire_id) const
 { return ResearchCost(empire_id) / std::max(1, ResearchTime(empire_id)); }
 
 int Tech::ResearchTime(int empire_id) const {
-    const auto arbitrary_large_number = 9999;
+    const auto ARBITRARY_LARGE_TURNS = 9999;
 
     if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_TECH_RESEARCH") || !m_research_turns) {
         return 1;
@@ -276,16 +273,14 @@ int Tech::ResearchTime(int empire_id) const {
             return m_research_turns->Eval();
 
     } else if (empire_id == ALL_EMPIRES) {
-        return arbitrary_large_number;
+        return ARBITRARY_LARGE_TURNS;
 
     } else {
-        std::shared_ptr<const UniverseObject> source = Empires().GetSource(empire_id);
+        auto source = Empires().GetSource(empire_id);
         if (!source && !m_research_turns->SourceInvariant())
-            return arbitrary_large_number;
+            return ARBITRARY_LARGE_TURNS;
 
-        ScriptingContext context(source);
-
-        return m_research_turns->Eval(context);
+        return m_research_turns->Eval(ScriptingContext(source));
     }
 }
 
@@ -309,35 +304,6 @@ unsigned int Tech::GetCheckSum() const {
     return retval;
 }
 
-///////////////////////////////////////////////////////////
-// ItemSpec                                              //
-///////////////////////////////////////////////////////////
-ItemSpec::ItemSpec() :
-    type(INVALID_UNLOCKABLE_ITEM_TYPE),
-    name()
-{}
-
-std::string ItemSpec::Dump(unsigned short ntabs) const {
-    std::string retval = "Item type = ";
-    switch (type) {
-    case UIT_BUILDING:      retval += "Building";   break;
-    case UIT_SHIP_PART:     retval += "ShipPart";   break;
-    case UIT_SHIP_HULL:     retval += "ShipHull";   break;
-    case UIT_SHIP_DESIGN:   retval += "ShipDesign"; break;
-    case UIT_TECH:          retval += "Tech"    ;   break;
-    default:                retval += "?"       ;   break;
-    }
-    retval += " name = \"" + name + "\"\n";
-    return retval;
-}
-
-bool operator==(const ItemSpec& lhs, const ItemSpec& rhs) {
-    return lhs.type == rhs.type &&
-    lhs.name == rhs.name;
-}
-
-bool operator!=(const ItemSpec& lhs, const ItemSpec& rhs)
-{ return !(lhs == rhs); }
 
 ///////////////////////////////////////////////////////////
 // TechManager                                           //

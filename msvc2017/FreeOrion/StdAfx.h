@@ -79,7 +79,6 @@
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/shared_mutex.hpp>
 #include <boost/type_traits/remove_const.hpp>
-#include <boost/unordered_map.hpp>
 #include <boost/uuid/nil_generator.hpp>
 #include <boost/uuid/uuid.hpp>
 #include <boost/variant.hpp>
@@ -98,11 +97,9 @@
 #include <GL/glew.h>
 
 #include <boost/algorithm/string/trim.hpp>
-#include <boost/function.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/mpl/assert.hpp>
 #include <boost/signals2/trackable.hpp>
-#include <boost/static_assert.hpp>
 #include <boost/type_traits/is_integral.hpp>
 #include <boost/utility/enable_if.hpp>
 

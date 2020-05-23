@@ -15,7 +15,6 @@
 #include <GG/Button.h>
 #include <GG/Clr.h>
 #include <GG/dialogs/ThreeButtonDlg.h>
-#include <GG/DrawUtil.h>
 #include <GG/utf8/checked.h>
 
 #include <boost/filesystem/path.hpp>
@@ -657,8 +656,7 @@ void SaveFileDialog::Init() {
 
         auto delete_btn = Wnd::Create<CUIButton>(UserString("DELETE"));
         m_layout->Add(delete_btn, 2, 3);
-        delete_btn->LeftClickedSignal.connect(
-            boost::bind(&SaveFileDialog::AskDelete, this));
+        delete_btn->LeftClickedSignal.connect(boost::bind(&SaveFileDialog::AskDelete, this));
 
         m_layout->SetMinimumRowHeight(2, delete_btn->MinUsableSize().y + GG::Y(Value(SAVE_FILE_BUTTON_MARGIN)));
         m_layout->SetMinimumColumnWidth(2, m_confirm_btn->MinUsableSize().x + 2*SAVE_FILE_BUTTON_MARGIN);
@@ -710,18 +708,16 @@ void SaveFileDialog::Init() {
 
     SetLayout(m_layout);
 
-    m_confirm_btn->LeftClickedSignal.connect(
-        boost::bind(&SaveFileDialog::Confirm, this));
-    cancel_btn->LeftClickedSignal.connect(
-        boost::bind(&SaveFileDialog::Cancel, this));
-    m_file_list->SelRowsChangedSignal.connect(
-        boost::bind(&SaveFileDialog::SelectionChanged, this, _1));
-    m_file_list->DoubleClickedRowSignal.connect(
-        boost::bind(&SaveFileDialog::DoubleClickRow, this, _1, _2, _3));
-    m_name_edit->EditedSignal.connect(
-        boost::bind(&SaveFileDialog::FileNameEdited, this, _1));
-    m_current_dir_edit->EditedSignal.connect(
-        boost::bind(&SaveFileDialog::DirectoryEdited, this, _1));
+    using boost::placeholders::_1;
+    using boost::placeholders::_2;
+    using boost::placeholders::_3;
+
+    m_confirm_btn->LeftClickedSignal.connect(boost::bind(&SaveFileDialog::Confirm, this));
+    cancel_btn->LeftClickedSignal.connect(boost::bind(&SaveFileDialog::Cancel, this));
+    m_file_list->SelRowsChangedSignal.connect(boost::bind(&SaveFileDialog::SelectionChanged, this, _1));
+    m_file_list->DoubleClickedRowSignal.connect(boost::bind(&SaveFileDialog::DoubleClickRow, this, _1, _2, _3));
+    m_name_edit->EditedSignal.connect(boost::bind(&SaveFileDialog::FileNameEdited, this, _1));
+    m_current_dir_edit->EditedSignal.connect(boost::bind(&SaveFileDialog::DirectoryEdited, this, _1));
 
     if (!m_load_only) {
         m_name_edit->SetText(std::string("save-") + FilenameTimestamp() + m_extension);

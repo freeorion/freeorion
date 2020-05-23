@@ -2,10 +2,18 @@ target_sources(freeoriond
     PUBLIC
         ${CMAKE_CURRENT_LIST_DIR}/SaveLoad.h
         ${CMAKE_CURRENT_LIST_DIR}/ServerApp.h
+        ${CMAKE_CURRENT_LIST_DIR}/ServerFramework.h
         ${CMAKE_CURRENT_LIST_DIR}/ServerFSM.h
+        ${CMAKE_CURRENT_LIST_DIR}/ServerNetworking.h
+        ${CMAKE_CURRENT_LIST_DIR}/ServerWrapper.h
+        ${CMAKE_CURRENT_LIST_DIR}/UniverseGenerator.h
     PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/dmain.cpp
         ${CMAKE_CURRENT_LIST_DIR}/SaveLoad.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ServerApp.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ServerFramework.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ServerFSM.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ServerNetworking.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ServerWrapper.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/UniverseGenerator.cpp
 )

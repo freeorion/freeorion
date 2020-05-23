@@ -3,7 +3,7 @@ The TechsListAI module provides functions that describes dependencies between
 various technologies to help the AI decide which technologies should be
 researched next.
 """
-from logging import warn, debug
+from logging import warning, debug
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 
@@ -26,7 +26,7 @@ def defense_techs_1():
     ]
 
 
-class TechGroup(object):
+class TechGroup:
     """ Base class for Tech groups.
 
     A TechGroup consists of some techs which need to be researched before progressing to the next TechGroup.
@@ -82,12 +82,12 @@ class TechGroup(object):
                     # Do not display error message as those should be shown only once per game session
                     # by the initial test_tech_integrity() call.
                     msg = "Try to enqueue tech from empty list"
-                    warn(msg)
+                    warning(msg)
                     self._errors.append(msg)
                     continue
             if tech_name in self._tech_queue:
                 msg = "Tech is already in queue: %s" % tech_name
-                warn(msg)
+                warning(msg)
                 self._errors.append(msg)
             else:
                 self._tech_queue.append(tech_name)
@@ -114,6 +114,7 @@ class TechGroup1(TechGroup):
             "PRO_ROBOTIC_PROD",
         ])
         self.weapon.extend([
+            "SHP_WEAPON_ARC_DISRUPTOR_1",
             "SHP_WEAPON_1_2",
             "SHP_WEAPON_1_3",
             "SHP_FIGHTERS_1",
@@ -127,7 +128,7 @@ class TechGroup1(TechGroup):
             "SHP_MIL_ROBO_CONT",
             "SHP_ORG_HULL",
         ])
-        # always start with the same first 8 techs; leaves 1 econ, 3 weap, 2 hull
+        # always start with the same first 8 techs; leaves 1 econ, 4 weap, 2 hull
         self.enqueue(
             self.economy,
             self.economy,
@@ -147,6 +148,7 @@ class TechGroup1a(TechGroup1):
             self.weapon,
             self.weapon,
             self.weapon,
+            self.weapon,
             self.economy,
             self.hull,
         )
@@ -159,6 +161,7 @@ class TechGroup1b(TechGroup1):
             self.weapon,
             self.hull,
             self.economy,
+            self.weapon,
             self.weapon,
             self.weapon,
         )
@@ -174,7 +177,8 @@ class TechGroup1SparseA(TechGroup1):
             self.weapon,
             self.weapon,
 
-            "SHP_SPACE_FLUX_DRIVE"
+            "SHP_SPACE_FLUX_DRIVE",
+            self.weapon,
         )
 
 
@@ -673,10 +677,10 @@ def test_tech_integrity():
         techs = this_group.get_techs()
         for tech in techs:
             if not fo.getTech(tech):
-                warn("In %s: Tech %s seems not to exist!" % (group.__name__, tech))
+                warning("In %s: Tech %s seems not to exist!" % (group.__name__, tech))
                 error_occured = True
         for err in this_group.get_errors():
-            warn(err, exc_info=True)
+            warning(err, exc_info=True)
             error_occured = True
         if not error_occured:
             debug("Seems to be OK!")

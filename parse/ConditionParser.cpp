@@ -9,9 +9,6 @@
 #include "ConditionParser7.h"
 
 
-//TODO: replace with std::make_unique when transitioning to C++14
-#include <boost/smart_ptr/make_unique.hpp>
-
 namespace parse {
     struct conditions_parser_grammar::Impl {
         Impl(conditions_parser_grammar& conditions_parser_grammar,
@@ -43,7 +40,7 @@ namespace parse {
         detail::Labeller& label
     ) :
         conditions_parser_grammar::base_type(start, "conditions_parser_grammar"),
-        m_impl(boost::make_unique<conditions_parser_grammar::Impl>(*this, tok, label))
+        m_impl(std::make_unique<conditions_parser_grammar::Impl>(*this, tok, label))
     {
         start
             = m_impl->condition_parser_1

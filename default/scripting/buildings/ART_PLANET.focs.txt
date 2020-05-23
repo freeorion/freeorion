@@ -19,7 +19,6 @@ BuildingType
                 Object id = Source.PlanetID
                 Planet
             ]
-            activation = Source
             effects = [
                 SetPlanetType type = Barren
                 GenerateSitRepMessage
@@ -32,7 +31,6 @@ BuildingType
 
         EffectsGroup
             scope = Source
-            activation = Source
             effects = Destroy
     ]
     icon = "icons/specials_huge/tidal_lock.png"

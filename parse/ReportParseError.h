@@ -45,7 +45,7 @@ namespace parse {
             send_error_string(error_string);
         }
 
-        static boost::function<void (const std::string&)> send_error_string;
+        static std::function<void (const std::string&)> send_error_string;
 
     private:
         std::pair<text_iterator, unsigned int> line_start_and_line_number(

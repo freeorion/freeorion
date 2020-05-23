@@ -1,5 +1,5 @@
 from common.listeners import register_post_handler
-from stub_generator import inspect
+from stub_generator import generate_stub
 
 
 def inspect_universe_generation_interface(*args, **kwargs):
@@ -8,23 +8,22 @@ def inspect_universe_generation_interface(*args, **kwargs):
     universe = fo.get_universe()
     empire = fo.get_empire(1)
     rules = fo.getGameRules()
-    hull_type = fo.getHullType('SH_XENTRONIUM')
+    ship_hull = fo.getShipHull('SH_XENTRONIUM')
     species = fo.getSpecies('SP_ABADDONI')
-    inspect(
+    generate_stub(
         fo,
         instances=[
             fo.getFieldType('FLD_ION_STORM'),
             fo.getBuildingType('BLD_SHIPYARD_BASE'),
-            hull_type,
-            hull_type.slots,
-            fo.getPartType('SR_WEAPON_1_1'),
+            ship_hull,
+            ship_hull.slots,
+            fo.getShipPart('SR_WEAPON_1_1'),
             fo.getSpecial('MODERATE_TECH_NATIVES_SPECIAL'),
             species,
             fo.diplomaticMessage(1, 2, fo.diplomaticMessageType.acceptPeaceProposal),
             rules,
             tech,
             tech.unlockedItems,
-            rules.getRulesAsStrings,
             universe,
             universe.effectAccounting,
             universe.buildingIDs,
@@ -33,6 +32,7 @@ def inspect_universe_generation_interface(*args, **kwargs):
             empire.colour,
             empire.productionQueue,
             empire.researchQueue,
+
         ],
         classes_to_ignore=(
             'IntBoolMap', 'IntDblMap', 'IntFltMap', 'IntIntMap', 'IntPairVec', 'IntSetSet',
@@ -41,6 +41,7 @@ def inspect_universe_generation_interface(*args, **kwargs):
             'AccountingInfoVec', 'IntSet', 'StringSet', 'StringVec',
         ),
         path=".",
+        dump=False,
     )
 
 

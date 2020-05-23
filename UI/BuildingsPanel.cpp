@@ -1,7 +1,6 @@
 #include "BuildingsPanel.h"
 
 #include <GG/Button.h>
-#include <GG/DrawUtil.h>
 #include <GG/StaticGraphic.h>
 
 #include "../util/i18n.h"
@@ -9,6 +8,7 @@
 #include "../util/OptionsDB.h"
 #include "../util/Order.h"
 #include "../universe/Building.h"
+#include "../universe/BuildingType.h"
 #include "../universe/Effect.h"
 #include "../universe/Planet.h"
 #include "../universe/Enums.h"
@@ -284,9 +284,9 @@ BuildingIndicator::BuildingIndicator(GG::X w, const std::string& building_type,
     m_progress_bar = GG::Wnd::Create<MultiTurnProgressBar>(total_turns,
                                                            turns_completed,
                                                            next_progress,
-                                                           GG::LightColor(ClientUI::TechWndProgressBarBackgroundColor()),
+                                                           GG::LightenClr(ClientUI::TechWndProgressBarBackgroundColor()),
                                                            ClientUI::TechWndProgressBarColor(),
-                                                           GG::LightColor(ClientUI::ResearchableTechFillColor()));
+                                                           GG::LightenClr(ClientUI::ResearchableTechFillColor()));
 
 }
 
@@ -410,8 +410,9 @@ void BuildingIndicator::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
         return;
     }
 
-    auto scrap_building_action = [this, empire_id]() {
-        HumanClientApp::GetApp()->Orders().IssueOrder(std::make_shared<ScrapOrder>(empire_id, m_building_id));};
+    auto scrap_building_action = [this, empire_id]()
+    { HumanClientApp::GetApp()->Orders().IssueOrder(std::make_shared<ScrapOrder>(empire_id, m_building_id)); };
+
     auto un_scrap_building_action = [building]() {
         // find order to scrap this building, and recind it
         auto pending_scrap_orders = PendingScrapOrders();

@@ -6,7 +6,7 @@
 #include "../../universe/Species.h"
 #include "../../universe/Universe.h"
 #include "../../network/Networking.h"
-#include "../../network/ClientNetworking.h"
+#include "../ClientNetworking.h"
 #include "../../util/i18n.h"
 #include "../util/GameRules.h"
 #include "../../util/OptionsDB.h"
@@ -19,6 +19,7 @@
 
 #include <boost/format.hpp>
 #include <boost/uuid/uuid_io.hpp>
+#include <boost/uuid/nil_generator.hpp>
 #include <thread>
 
 /** \page statechart_notes Notes on Boost Statechart transitions
@@ -58,7 +59,7 @@
 
     Two constructions that may cause problems are:
 
-        - MessageBox blocks execution locally and starts an EventPump that handles events that may
+        - MessageBox blocks execution locally and starts an modal loop that handles events that may
           transit<> to a new state which makes a local transition lexically after the MessageBox
           potentially fatal.
 
@@ -243,7 +244,9 @@ boost::statechart::result WaitingForSPHostAck::react(const StartQuittingGame& e)
 
 boost::statechart::result WaitingForSPHostAck::react(const CheckSum& e) {
     TraceLogger(FSM) << "(HumanClientFSM) CheckSum.";
-    Client().VerifyCheckSum(e.m_message);
+    bool result = Client().VerifyCheckSum(e.m_message);
+    if (!result)
+        ClientUI::MessageBox(UserString("ERROR_CHECKSUM_MISMATCH"), true);
     return discard_event();
 }
 
@@ -320,7 +323,9 @@ boost::statechart::result WaitingForMPHostAck::react(const StartQuittingGame& e)
 
 boost::statechart::result WaitingForMPHostAck::react(const CheckSum& e) {
     TraceLogger(FSM) << "(HumanClientFSM) CheckSum.";
-    Client().VerifyCheckSum(e.m_message);
+    bool result = Client().VerifyCheckSum(e.m_message);
+    if (!result)
+        ClientUI::MessageBox(UserString("ERROR_CHECKSUM_MISMATCH"), true);
     return discard_event();
 }
 
@@ -346,8 +351,10 @@ boost::statechart::result WaitingForMPJoinAck::react(const JoinGame& msg) {
         if (!cookie.is_nil()) {
             try {
                 std::string cookie_option = HumanClientApp::EncodeServerAddressOption(Client().Networking().Destination());
-                GetOptionsDB().Remove(cookie_option + ".cookie");
-                GetOptionsDB().Add(cookie_option + ".cookie", "OPTIONS_DB_SERVER_COOKIE", boost::uuids::to_string(cookie));
+                if (!GetOptionsDB().OptionExists(cookie_option + ".cookie")) {
+                    GetOptionsDB().Add(cookie_option + ".cookie", "OPTIONS_DB_SERVER_COOKIE", boost::uuids::to_string(boost::uuids::nil_uuid()));
+                }
+                GetOptionsDB().Set(cookie_option + ".cookie", boost::uuids::to_string(cookie));
                 GetOptionsDB().Commit();
             } catch(const std::exception& err) {
                 WarnLogger() << "Cann't save cookie for server " << Client().Networking().Destination() << ": "
@@ -566,7 +573,9 @@ boost::statechart::result MPLobby::react(const StartQuittingGame& e) {
 
 boost::statechart::result MPLobby::react(const CheckSum& e) {
     TraceLogger(FSM) << "(HumanClientFSM) CheckSum.";
-    Client().VerifyCheckSum(e.m_message);
+    bool result = Client().VerifyCheckSum(e.m_message);
+    if (!result)
+        ClientUI::MessageBox(UserString("ERROR_CHECKSUM_MISMATCH"), true);
     return discard_event();
 }
 
@@ -855,12 +864,16 @@ boost::statechart::result WaitingForGameStart::react(const GameStart& msg) {
     int current_turn = INVALID_GAME_TURN;
     Client().Orders().Reset();
 
-    ExtractGameStartMessageData(msg.m_message,       single_player_game,             empire_id,
-                                current_turn,        Empires(),                      GetUniverse(),
-                                GetSpeciesManager(), GetCombatLogManager(),          GetSupplyManager(),
-                                Client().Players(),  Client().Orders(),              loaded_game_data,
-                                ui_data_available,   ui_data,                        save_state_string_available,
-                                save_state_string,   Client().GetGalaxySetupData());
+    try {
+        ExtractGameStartMessageData(msg.m_message,       single_player_game,             empire_id,
+                                    current_turn,        Empires(),                      GetUniverse(),
+                                    GetSpeciesManager(), GetCombatLogManager(),          GetSupplyManager(),
+                                    Client().Players(),  Client().Orders(),              loaded_game_data,
+                                    ui_data_available,   ui_data,                        save_state_string_available,
+                                    save_state_string,   Client().GetGalaxySetupData());
+    } catch (...) {
+        return transit<IntroMenu>();
+    }
 
     DebugLogger(FSM) << "Extracted GameStart message for turn: " << current_turn << " with empire: " << empire_id;
 

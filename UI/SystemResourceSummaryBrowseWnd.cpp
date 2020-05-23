@@ -94,9 +94,6 @@ SystemResourceSummaryBrowseWnd::SystemResourceSummaryBrowseWnd(ResourceType reso
     m_resource_type(resource_type),
     m_system_id(system_id),
     m_empire_id(empire_id),
-    m_production_label(nullptr),
-    m_allocation_label(nullptr),
-    m_import_export_label(nullptr),
     row_height(1),
     production_label_top(0),
     allocation_label_top(0),
@@ -199,7 +196,7 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
         if (!rc) continue;
 
         std::string name = obj->Name();
-        double production = rc->InitialMeterValue(ResourceToMeter(m_resource_type));
+        double production = rc->GetMeter(ResourceToMeter(m_resource_type))->Initial();
         m_production += production;
 
         std::string amount_text = DoubleToString(production, 3, false);
@@ -294,7 +291,7 @@ void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
         // don't add summary entries for objects that consume no resource.  (otherwise there would be a loooong pointless list of 0's
         if (allocation <= 0.0) {
             if (allocation < 0.0)
-                ErrorLogger() << "object " << obj->Name() << " is reported having negative " << boost::lexical_cast<std::string>(m_resource_type) << " consumption";
+                ErrorLogger() << "object " << obj->Name() << " is reported having negative " << m_resource_type << " consumption";
             continue;
         }
 

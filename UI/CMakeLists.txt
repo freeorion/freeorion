@@ -50,6 +50,7 @@ target_sources(freeorion
         ${CMAKE_CURRENT_LIST_DIR}/ResourceBrowseWnd.h
         ${CMAKE_CURRENT_LIST_DIR}/ResourcePanel.h
         ${CMAKE_CURRENT_LIST_DIR}/SaveFileDialog.h
+        ${CMAKE_CURRENT_LIST_DIR}/SDLGUI.h
         ${CMAKE_CURRENT_LIST_DIR}/ServerConnectWnd.h
         ${CMAKE_CURRENT_LIST_DIR}/ShaderProgram.h
         ${CMAKE_CURRENT_LIST_DIR}/SidePanel.h
@@ -109,6 +110,7 @@ target_sources(freeorion
         ${CMAKE_CURRENT_LIST_DIR}/ResourceBrowseWnd.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ResourcePanel.cpp
         ${CMAKE_CURRENT_LIST_DIR}/SaveFileDialog.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/SDLGUI.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ServerConnectWnd.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ShaderProgram.cpp
         ${CMAKE_CURRENT_LIST_DIR}/SidePanel.cpp

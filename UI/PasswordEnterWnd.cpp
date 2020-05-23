@@ -3,7 +3,7 @@
 #include <GG/GUI.h>
 
 #include "../util/i18n.h"
-#include "../network/ClientNetworking.h"
+#include "../client/ClientNetworking.h"
 #include "../client/human/HumanClientApp.h"
 
 namespace {
@@ -14,11 +14,7 @@ namespace {
 PasswordEnterWnd::PasswordEnterWnd() :
     CUIWnd(UserString("AUTHENTICATION_WINDOW_TITLE"), GG::X(80), GG::Y(130),
            WINDOW_WIDTH, WINDOW_HEIGHT,
-           GG::INTERACTIVE | GG::DRAGABLE | GG::MODAL),
-    m_player_name_edit(nullptr),
-    m_password_edit(nullptr),
-    m_ok_bn(nullptr),
-    m_cancel_bn(nullptr)
+           GG::INTERACTIVE | GG::DRAGABLE | GG::MODAL)
 {}
 
 void PasswordEnterWnd::CompleteConstruction() {
@@ -56,10 +52,8 @@ void PasswordEnterWnd::CompleteConstruction() {
 
     ResetDefaultPosition();
 
-    m_ok_bn->LeftClickedSignal.connect(
-        boost::bind(&PasswordEnterWnd::OkClicked, this));
-    m_cancel_bn->LeftClickedSignal.connect(
-        boost::bind(&PasswordEnterWnd::CancelClicked, this));
+    m_ok_bn->LeftClickedSignal.connect(boost::bind(&PasswordEnterWnd::OkClicked, this));
+    m_cancel_bn->LeftClickedSignal.connect(boost::bind(&PasswordEnterWnd::CancelClicked, this));
 }
 
 GG::Rect PasswordEnterWnd::CalculatePosition() const {

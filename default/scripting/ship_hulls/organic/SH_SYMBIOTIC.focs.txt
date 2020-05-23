@@ -3,6 +3,7 @@ Hull
     description = "SH_SYMBIOTIC_DESC"
     speed = 100
     fuel = 2
+    NoDefaultFuelEffect
     stealth = 15
     structure = 10
     slots = [
@@ -32,11 +33,11 @@ Hull
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Source
             accountinglabel = "ORGANIC_GROWTH"
             effects = SetMaxStructure value = Value + min(Source.Age*0.2, 10)
 
         [[GOOD_FUEL_EFFICIENCY]]
+        [[ADD_HULL_FUEL_TO_MAX_FUEL_METER]]
         [[LIVING_HULL_EFFECTS_GROUPS]]
         [[SCAVANGE_FUEL_UNOWNED]]
         [[UNOWNED_GOOD_VISION]]

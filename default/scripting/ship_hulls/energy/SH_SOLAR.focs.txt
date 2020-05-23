@@ -3,6 +3,7 @@ Hull
     description = "SH_SOLAR_DESC"
     speed = 120
     fuel = 1.5
+    NoDefaultFuelEffect
     stealth = -55
     structure = 100
     slots = [
@@ -69,10 +70,7 @@ Hull
                     OwnedBy affiliation = AllyOf empire = Source.Owner
                 ]
             ]
-            activation = And [
-                Source
-                InSystem
-            ]
+            activation = InSystem
             effects = SetFuel value = Target.MaxFuel
 
         EffectsGroup
@@ -84,11 +82,11 @@ Hull
                     OwnedBy affiliation = AllyOf empire = Source.Owner
                 ]
             ]
-            activation = Source
             stackinggroup = "FLAGSHIP_EFFECT_SOLAR"
             effects = SetStealth value = Value - 100
 
         [[BAD_FUEL_EFFICIENCY]]
+        [[ADD_HULL_FUEL_TO_MAX_FUEL_METER]]
         [[AVERAGE_BASE_FUEL_REGEN]]
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]

@@ -6,10 +6,9 @@
 #include "LoggerWithOptionsDB.h"
 #include "OptionsDB.h"
 #include "Random.h"
-#include "../universe/Fleet.h"
-#include "../universe/Planet.h"
-#include "../universe/System.h"
+#include "AppInterface.h"
 #include "../universe/Enums.h"
+
 
 #if defined(_MSC_VER) && defined(int64_t)
 #undef int64_t
@@ -30,7 +29,7 @@ namespace {
                             OrValidator<std::string>(LogLevelValidator(), DiscreteValidator<std::string>("")),  false);
         db.Add<std::string>("log-file",                     UserStringNop("OPTIONS_DB_LOG_FILE"),               "",
                             Validator<std::string>(),                                                           false);
-        // Default stringtable filename is deferred to i18n.cpp::InitStringtableFileName to determine if user specified
+        // Default stringtable filename is deferred to i18n.cpp::InitStringtableFileName
         db.Add<std::string>("resource.stringtable.path",    UserStringNop("OPTIONS_DB_STRINGTABLE_FILENAME"),   "");
         db.Add("save.format.binary.enabled",                UserStringNop("OPTIONS_DB_BINARY_SERIALIZATION"),   false);
         db.Add("save.format.xml.zlib.enabled",              UserStringNop("OPTIONS_DB_XML_ZLIB_SERIALIZATION"), true);
@@ -109,7 +108,6 @@ namespace {
 }
 
 GalaxySetupData::GalaxySetupData() :
-    m_seed(),
     m_size(100),
     m_shape(SPIRAL_2),
     m_age(GALAXY_SETUP_MEDIUM),
@@ -118,7 +116,8 @@ GalaxySetupData::GalaxySetupData() :
     m_specials_freq(GALAXY_SETUP_MEDIUM),
     m_monster_freq(GALAXY_SETUP_MEDIUM),
     m_native_freq(GALAXY_SETUP_MEDIUM),
-    m_ai_aggr(MANIACAL)
+    m_ai_aggr(MANIACAL),
+    m_encoding_empire(ALL_EMPIRES)
 {}
 
 GalaxySetupData::GalaxySetupData(GalaxySetupData&& base) :
@@ -133,7 +132,8 @@ GalaxySetupData::GalaxySetupData(GalaxySetupData&& base) :
     m_native_freq(base.m_native_freq),
     m_ai_aggr(base.m_ai_aggr),
     m_game_rules(std::move(base.m_game_rules)),
-    m_game_uid(std::move(base.m_game_uid))
+    m_game_uid(std::move(base.m_game_uid)),
+    m_encoding_empire(base.m_encoding_empire)
 { SetSeed(m_seed); }
 
 const std::string& GalaxySetupData::GetSeed() const

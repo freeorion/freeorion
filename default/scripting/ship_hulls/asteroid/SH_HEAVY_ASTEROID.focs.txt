@@ -3,6 +3,7 @@ Hull
     description = "SH_HEAVY_ASTEROID_DESC"
     speed = 60
     fuel = 1.2
+    NoDefaultFuelEffect
     stealth = 5
     structure = 50
     slots = [
@@ -33,6 +34,7 @@ Hull
     ]
     effectsgroups = [
         [[BAD_FUEL_EFFICIENCY]]
+        [[ADD_HULL_FUEL_TO_MAX_FUEL_METER]]
         [[AVERAGE_BASE_FUEL_REGEN]]
         [[ASTEROID_FIELD_STEALTH_BONUS]]
         [[REGULAR_HULL_DETECTION]]

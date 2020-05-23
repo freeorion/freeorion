@@ -3,8 +3,6 @@
 
 #include "UniverseObject.h"
 
-#include <boost/unordered_map.hpp>
-
 #include <vector>
 #include <map>
 #include <set>

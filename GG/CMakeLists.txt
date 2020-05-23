@@ -1,4 +1,4 @@
-# GG is a GUI for SDL and OpenGL.
+# GG is a GUI for OpenGL.
 #
 # Copyright (C) 2009-2011 T. Zach Laine
 #
@@ -25,10 +25,6 @@
 
 cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 
-if(POLICY CMP0044)
-    cmake_policy(SET CMP0044 OLD)
-endif()
-
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_HOME_DIRECTORY}/cmake)
 
 
@@ -44,16 +40,16 @@ include(UseCodeCoverage)
 include(Util)
 
 set(GIGI_VERSION 0.8.0)
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 option(ENABLE_PNG_TEXTURES "Enable PNG texture support." ON)
 option(ENABLE_TIFF_TEXTURES "Enable TIFF texture support." OFF)
-option(BUILD_SDL_DRIVER "Builds GG SDL support (the GiGiSDL library)." ON)
 option(BUILD_DOCUMENTATION "Builds HTML documentation." OFF)
 option(BUILD_TESTING "Build the testing tree." OFF)
 option(BUILD_DEVEL_PACKAGE "Install development files." ON)
+option(BUILD_HEADLESS "Headless components: server and AI." OFF)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
@@ -82,31 +78,25 @@ set(MINIMUM_BOOST_VERSION 1.58.0)
 
 find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS filesystem regex system REQUIRED)
 
-find_package(OpenGL REQUIRED)
-find_package(GLEW REQUIRED)
-find_package(Freetype REQUIRED)
+if(NOT BUILD_HEADLESS)
+    find_package(OpenGL REQUIRED)
+    find_package(GLEW REQUIRED)
+    find_package(Freetype REQUIRED)
 
-if(NOT OPENGL_GLU_FOUND)
-    message(FATAL_ERROR "OpenGL GLU library not found.")
+    if(ENABLE_PNG_TEXTURES)
+        find_package(PNG REQUIRED)
+        set(int_have_png 1)
+    else()
+        set(int_have_png 0)
+    endif()
+    
+    if(ENABLE_TIFF_TEXTURES)
+        find_package(TIFF REQUIRED)
+        set(int_have_tiff 1)
+    else()
+        set(int_have_tiff 0)
+    endif()
 endif()
-
-if(ENABLE_PNG_TEXTURES)
-    find_package(PNG REQUIRED)
-    set(int_have_png 1)
-else()
-    set(int_have_png 0)
-endif()
-
-if(ENABLE_TIFF_TEXTURES)
-    find_package(TIFF REQUIRED)
-    set(int_have_tiff 1)
-else()
-    set(int_have_tiff 0)
-endif()
-set(SDL_NO_MAIN true)
-
-find_package(SDL REQUIRED)
-
 
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
@@ -140,78 +130,62 @@ target_compile_definitions(GiGi
 )
 
 target_include_directories(GiGi
-    INTERFACE
-        ${OPENGL_INCLUDE_DIR}
-    PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-    PRIVATE
-        ${FREETYPE_INCLUDE_DIRS}
-)
-
-target_link_libraries(GiGi
-    PUBLIC
-        GLEW::GLEW
-        Boost::boost
-        Boost::disable_autolinking
-        Boost::dynamic_linking
-        Boost::filesystem
-        ${OPENGL_gl_LIBRARY}
-        ${OPENGL_glu_LIBRARY}
-    PRIVATE
-        Boost::regex
-        ${FREETYPE_LIBRARIES}
-)
-
-if(TARGET PNG::PNG)
-    target_link_libraries(GiGi PRIVATE PNG::PNG)
-endif()
-
-if(TARGET TIFF::TIFF)
-    target_link_libraries(GiGi PRIVATE TIFF::TIFF)
-endif()
-
-
-add_library(GiGiSDL "")
-
-add_library(GiGi::GiGiSDL ALIAS GiGiSDL)
-
-target_include_directories(GiGiSDL SYSTEM
-    INTERFACE
-        ${SDL_INCLUDE_DIR}
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
 )
 
-target_link_libraries(GiGiSDL
-    PUBLIC
-        GiGi::GiGi
-        ${SDL_LIBRARIES}
-    PRIVATE
-        Boost::boost
-        Boost::disable_autolinking
-        Boost::dynamic_linking
-)
+set_target_properties(GiGi PROPERTIES LINKER_LANGUAGE CXX)
 
+if(NOT BUILD_HEADLESS)
+    target_include_directories(GiGi
+        INTERFACE
+            ${OPENGL_INCLUDE_DIR}
+        PRIVATE
+            ${FREETYPE_INCLUDE_DIRS}
+    )
 
-##
-## Recurse into sources.
-##
+    target_link_libraries(GiGi
+        PUBLIC
+            GLEW::GLEW
+            Boost::boost
+            Boost::disable_autolinking
+            Boost::dynamic_linking
+            Boost::filesystem
+            ${OPENGL_gl_LIBRARY}
+        PRIVATE
+            Boost::regex
+            ${FREETYPE_LIBRARIES}
+    )
 
-add_subdirectory(GG)
-add_subdirectory(src)
-
-if(BUILD_TESTING)
-    enable_testing()
-    enable_coverage()
-
-    if(NOT TARGET unittest)
-        add_custom_target(unittest
-            COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
-            COMMENT "Run tests for ${CMAKE_PROJECT_NAME}"
-        )
+    if(TARGET PNG::PNG)
+        target_link_libraries(GiGi PRIVATE PNG::PNG)
     endif()
 
-    add_subdirectory(test)
+    if(TARGET TIFF::TIFF)
+        target_link_libraries(GiGi PRIVATE TIFF::TIFF)
+    endif()
+
+
+    ##
+    ## Recurse into sources.
+    ##
+
+    add_subdirectory(GG)
+    add_subdirectory(src)
+
+    if(BUILD_TESTING)
+        enable_testing()
+        enable_coverage()
+
+        if(NOT TARGET unittest)
+            add_custom_target(unittest
+                COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
+                COMMENT "Run tests for ${CMAKE_PROJECT_NAME}"
+            )
+        endif()
+
+        add_subdirectory(test)
+    endif()
 endif()
 
 if(BUILD_DOCUMENTATION)
@@ -231,7 +205,7 @@ if(BUILD_DEVEL_PACKAGE)
     )
 endif()
 
-if(UNIX AND NOT APPLE)
+if(UNIX AND NOT APPLE AND NOT BUILD_HEADLESS)
     install(
         TARGETS GiGi
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -243,7 +217,7 @@ if(UNIX AND NOT APPLE)
     )
 endif()
 
-if(UNIX AND BUILD_DEVEL_PACKAGE)
+if(UNIX AND BUILD_DEVEL_PACKAGE AND NOT BUILD_HEADLESS)
     get_pkg_config_libs(pkg_config_libs ${GiGi_LINK_LIBS})
 
     configure_file(
@@ -255,36 +229,6 @@ if(UNIX AND BUILD_DEVEL_PACKAGE)
     install(
         FILES ${CMAKE_BINARY_DIR}/GiGi.pc
         DESTINATION  ${CMAKE_INSTALL_LIBDIR}/pkgconfig
-        COMPONENT COMPONENT_GIGI_DEVEL
-        OPTIONAL
-    )
-endif()
-
-
-if(UNIX AND NOT APPLE)
-    install(
-        TARGETS GiGiSDL
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        COMPONENT COMPONENT_GIGISDL
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-        COMPONENT COMPONENT_GIGISDL
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        COMPONENT COMPONENT_GIGISDL_DEVEL
-    )
-endif()
-
-if(UNIX AND BUILD_DEVEL_PACKAGE)
-    get_pkg_config_libs(pkg_config_libs ${GiGiSDL_LINK_LIBS})
-
-    configure_file(
-        ${CMAKE_CURRENT_SOURCE_DIR}/cmake/GiGiSDL.pc.in
-        ${CMAKE_BINARY_DIR}/GiGiSDL.pc
-        @ONLY
-    )
-
-    install(
-        FILES ${CMAKE_BINARY_DIR}/GiGiSDL.pc
-        DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
         COMPONENT COMPONENT_GIGI_DEVEL
         OPTIONAL
     )
@@ -308,36 +252,20 @@ set(CPACK_RPM_PACKAGE_REQUIRES)
 list(APPEND CPACK_RPM_PACKAGE_REQUIRES Mesa freetype2)
 list(APPEND CPACK_RPM_PACKAGE_REQUIRES gigi=${GIGI_VERSION})
 
-if(BUILD_SDL_DRIVER)
-    list(APPEND CPACK_RPM_PACKAGE_REQUIRES SDL>=1.2)
-endif()
-
 if(BUILD_DEVEL_PACKAGE)
     list(APPEND CPACK_RPM_PACKAGE_REQUIRES boost-devel>=1.44.0 Mesa-devel freetype2-devel)
     list(APPEND CPACK_RPM_PACKAGE_REQUIRES gigi-devel=${GIGI_VERSION})
 endif()
 
-if(BUILD_DEVEL_PACKAGE AND BUILD_SDL_DRIVER)
-    list(APPEND CPACK_RPM_PACKAGE_REQUIRES SDL-devel>=1.2)
-endif()
-
 # Deb-specific settings
 set(CPACK_DEBIAN_PACKAGE_SECTION libs)
 
-set(CPACK_DEBIAN_PACKAGE_DEPENDS "libgl1-mesa-glx | libgl1, libglu1-mesa | libglu, libfreetype6")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "libgl1-mesa-glx | libgl1, libfreetype6")
 set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, gigi (= ${GIGI_VERSION})")
 
-if(BUILD_SDL_DRIVER)
-    set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, libsdl1.2debian (>= 1.2)")
-endif()
-
 if(BUILD_DEVEL_PACKAGE)
-    set(CPACK_DEBIAN_PACKAGE_DEPENDS "boost-devel (>= 1.44.0), libgl1-mesa-dev | libgl-dev, libglu1-mesa-dev | libglu-dev, libfreetype6-dev")
+    set(CPACK_DEBIAN_PACKAGE_DEPENDS "boost-devel (>= 1.44.0), libgl1-mesa-dev | libgl-dev, libfreetype6-dev")
     set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, gigi-dev (= ${GIGI_VERSION})")
-endif()
-
-if(BUILD_DEVEL_PACKAGE AND BUILD_SDL_DRIVER)
-    set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, libsdl1.2-dev (>= 1.2)")
 endif()
 
 if(UNIX)
@@ -369,27 +297,11 @@ cpack_add_component(
 )
 
 cpack_add_component(
-    COMPONENT_GIGISDL
-    DISPLAY_NAME GiGiSDL
-    DESCRIPTION "An SDL input driver (http://www.libsdl.org)."
-    GROUP COMPONENT_GROUP_RUNTIME
-    DEPENDS COMPONENT_GIGI
-)
-
-cpack_add_component(
     COMPONENT_GIGI_DEVEL
     DISPLAY_NAME "GiGi"
     DESCRIPTION "The files necessary to do development with GiGi."
     GROUP COMPONENT_GROUP_DEVEL
     DEPENDS COMPONENT_GIGI
-)
-
-cpack_add_component(
-    COMPONENT_GIGISDL_DEVEL
-    DISPLAY_NAME "GiGiSDL"
-    DESCRIPTION "The files necessary to do development with GiGiSDL."
-    GROUP COMPONENT_GROUP_DEVEL
-    DEPENDS COMPONENT_GIGI_DEVEL COMPONENT_GIGISDL
 )
 
 cpack_add_component_group(

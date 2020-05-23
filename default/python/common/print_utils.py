@@ -1,14 +1,11 @@
-from __future__ import print_function
-from __future__ import division
-
 """
 Print utils.
 
 For test proposes this module is not import any freeorion runtime libraries.
 If you improve it somehow, add usage example to __main__ section.
 """
+from itertools import zip_longest
 
-from common import six
 from math import ceil
 
 
@@ -29,7 +26,7 @@ def print_in_columns(items, columns=2, printer=print):
     :return None:
     """
     row_count = int(ceil((len(items) / columns)))
-    text_columns = list(six.moves.zip_longest(*[iter(items)] * row_count, fillvalue=''))
+    text_columns = list(zip_longest(*[iter(items)] * row_count, fillvalue=''))
     column_widths = (max(len(x) for x in word) for word in text_columns)
     template = '   '.join('%%-%ss' % w for w in column_widths)
 
@@ -37,7 +34,7 @@ def print_in_columns(items, columns=2, printer=print):
         printer(template % row)
 
 
-class Base(object):
+class Base:
     header_fmt = ''
     fmt = None
 
@@ -83,19 +80,6 @@ class Text(Base):
     def __init__(self, name, description=None, align='<'):
         super(Text, self).__init__(name, align=align, description=description)
 
-    def to_unicode(self, val):
-        # If it is python2 unicode or python3 str return immediately
-        if isinstance(val, six.text_type):
-            return self.fmt.format(val, **self.kwargs)
-
-        # If it is not a string convert to string
-        if not isinstance(val, six.string_types):
-            val = str(val)
-
-        if six.PY2:
-            val = val.decode('utf-8')
-        return self.fmt.format(val, **self.kwargs)
-
 
 class Float(Base):
     fmt = u'{: .{precession}f}'
@@ -113,7 +97,7 @@ class Bool(Base):
         super(Bool, self).__init__(name, description=description)
 
     def to_unicode(self, val):
-        return self.no_yes[val].decode('utf-8')
+        return self.no_yes[val]
 
 
 class Sequence(Text):
@@ -124,7 +108,7 @@ class Sequence(Text):
         return self.fmt.format(', '.join(vals), **self.kwargs)
 
 
-class Table(object):
+class Table:
 
     def __init__(self, headers, vertical_sep='|', header_sep='=', bottom_sep='-', table_name=None):
         """
@@ -168,16 +152,13 @@ class Table(object):
     def get_table(self):
         columns = [[len(y) for y in x] for x in zip(*self.__rows)]
         # join size of headers and columns, since columns can be empty
-        header_and_columns = [[h] + x for h, x in six.moves.zip_longest([len(x.name) for x in self.__headers], columns, fillvalue=[])]
+        header_and_columns = [[h] + x for h, x in zip_longest([len(x.name) for x in self.__headers], columns, fillvalue=[])]
         column_widths = [max(x) for x in header_and_columns]
 
         result = []
 
         if self.__table_name:
-            if six.PY2:
-                result.append(self.__table_name.decode('utf-8'))
-            else:
-                result.append(self.__table_name)
+            result.append(self.__table_name)
 
         result.append(self.__get_row_separator(self.__header_sep, column_widths))
         inner_separator = ' %s ' % self.__vertical_sep
@@ -204,7 +185,5 @@ class Table(object):
             name_width = max(len(x.name) for x in legend)
             for header in legend:
                 result.append(('*%-*s %s' % (name_width, header.name[:-1], header.description)))
-        if six.PY2:
-            return '\n'.join(x.encode('utf-8') for x in result)
-        else:
-            return '\n'.join(result)
+
+        return '\n'.join(result)

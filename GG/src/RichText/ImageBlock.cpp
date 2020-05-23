@@ -1,4 +1,4 @@
-/* GG is a GUI for SDL and OpenGL.
+/* GG is a GUI for OpenGL.
 
    Copyright (C) 2015 Mitten-O
 
@@ -42,8 +42,7 @@ namespace GG {
 
     ImageBlock::ImageBlock(const fs::path& path, X x, Y y, X w,
                            GG::Flags<GG::WndFlag> flags) :
-        BlockControl(x, y, w, flags),
-        m_graphic(nullptr)
+        BlockControl(x, y, w, flags)
     {
         try {
             auto texture = GetTextureManager().GetTexture(path);

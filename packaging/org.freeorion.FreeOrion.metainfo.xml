@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>org.freeorion.FreeOrion</id>
+  <name>FreeOrion</name>
+  <summary>Turn-based space empire and galactic conquest (4X) computer game</summary>
+  <developer_name>FreeOrion Project</developer_name>
+  <description>
+    <p>FreeOrion is a free, Open Source, turn-based space empire and galactic conquest computer game.</p>
+    <p>FreeOrion is inspired by the tradition of the Master of Orion games, but does not try to be a clone or remake of that series or any other game.  It builds on the classic 4X (eXplore, eXpand, eXploit and eXterminate) model.</p>
+  </description>
+  <categories>
+    <category>Game</category>
+    <category>StrategyGame</category>
+  </categories>
+  <metadata_license>CC-BY-SA-3.0</metadata_license>
+  <project_license>GPL-2.0 AND CC-BY-SA-3.0</project_license>
+  <launchable type="desktop-id">org.freeorion.FreeOrion.desktop</launchable>
+  <url type="bugtracker">https://github.com/freeorion/freeorion/issues</url>
+  <url type="donation">http://www.freeorion.org/index.php/Donations</url>
+  <url type="faq">http://www.freeorion.org/index.php/FAQ</url>
+  <url type="help">http://www.freeorion.org/forum/viewforum.php?f=25</url>
+  <url type="homepage">http://www.freeorion.org</url>
+  <screenshots>
+    <screenshot type="default">
+      <caption>Galaxy map with system statistics</caption>
+      <image width="1600" height="900" type="source">https://www.freeorion.org/screenshots/FreeOrion_GalaxyMapSystemPlanetsFleets.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>Galaxy map with combat report</caption>
+      <image width="1600" height="900" type="source">https://www.freeorion.org/screenshots/FreeOrion_GalaxyMapCombatGraph.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>Empirial production queue</caption>
+      <image width="1600" height="900" type="source">https://www.freeorion.org/screenshots/FreeOrion_ProductionScreen.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>Empirial research tree</caption>
+      <image width="1600" height="900" type="source">https://www.freeorion.org/screenshots/FreeOrion_ResearchScreen.png</image>
+    </screenshot>
+  </screenshots>
+</component>

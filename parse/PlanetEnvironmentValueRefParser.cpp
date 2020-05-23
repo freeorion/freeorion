@@ -4,7 +4,6 @@
 #include "EnumValueRefRules.h"
 
 #include "../universe/Enums.h"
-#include "../universe/ValueRefs.h"
 
 namespace parse { namespace detail {
     planet_environment_parser_rules::planet_environment_parser_rules(

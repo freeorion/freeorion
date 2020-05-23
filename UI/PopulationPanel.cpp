@@ -48,17 +48,17 @@ void PopulationPanel::CompleteConstruction() {
     m_meter_stats.push_back({
         METER_POPULATION,
         GG::Wnd::Create<StatisticIcon>(ClientUI::SpeciesIcon(pop->SpeciesName()),
-                                       pop->InitialMeterValue(METER_POPULATION), 3, false,
+                                       pop->GetMeter(METER_POPULATION)->Initial(), 3, false,
                                        MeterIconSize().x, MeterIconSize().y)});
     m_meter_stats.push_back({
         METER_HAPPINESS,
         GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(METER_HAPPINESS),
-                                       pop->InitialMeterValue(METER_HAPPINESS), 3, false,
+                                       pop->GetMeter(METER_HAPPINESS)->Initial(), 3, false,
                                        MeterIconSize().x, MeterIconSize().y)});
     m_meter_stats.push_back({
         METER_CONSTRUCTION,
         GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(METER_CONSTRUCTION),
-                                       pop->InitialMeterValue(METER_CONSTRUCTION), 3, false,
+                                       pop->GetMeter(METER_CONSTRUCTION)->Initial(), 3, false,
                                        MeterIconSize().x, MeterIconSize().y)});
 
     // meter and production indicators
@@ -136,7 +136,7 @@ void PopulationPanel::Update() {
 
     // tooltips
     for (auto& meter_stat : m_meter_stats) {
-        meter_stat.second->SetValue(pop->InitialMeterValue(meter_stat.first));
+        meter_stat.second->SetValue(pop->GetMeter(meter_stat.first)->Initial());
 
         auto browse_wnd = GG::Wnd::Create<MeterBrowseWnd>(m_popcenter_id, meter_stat.first, AssociatedMeterType(meter_stat.first));
         meter_stat.second->SetBrowseInfoWnd(browse_wnd);

@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 """
 This module extend freeOrionAIInterface from python side.
 Check that you have import of this module from FreeOrionAI.py
@@ -41,12 +40,13 @@ don't commit logger wrapped function to repo.
 """
 import inspect
 import os
-from common import six
+from itertools import zip_longest
+
 from functools import wraps
 from logging import debug
 
 import freeOrionAIInterface as fo
-from ._freeorion_tools import dict_from_map
+from ._freeorion_tools import dict_from_map, dict_from_map_recursive
 
 
 PLANET = 'P'
@@ -63,6 +63,14 @@ def to_dict(method):
     return wrapper
 
 
+def to_dict_recursive(method):
+    @wraps(method)
+    def wrapper(*args):
+        return dict_from_map_recursive(method(*args))
+
+    return wrapper
+
+
 def to_str(prefix, id, name):
     return '{}_{}<{}>'.format(prefix, id, name)
 
@@ -71,6 +79,7 @@ def patch_interface():
     fo.universe.getVisibilityTurnsMap = to_dict(fo.universe.getVisibilityTurnsMap)
     fo.empire.supplyProjections = to_dict(fo.empire.supplyProjections)
     fo.GameRules.getRulesAsStrings = to_dict(fo.GameRules.getRulesAsStrings)
+    fo.universe.statRecords = to_dict_recursive(fo.universe.statRecords)
 
     fo.to_str = to_str
 
@@ -127,7 +136,7 @@ def logger(callable_object, argument_wrappers=None):
     :return:
     """
     def inner(*args, **kwargs):
-        arguments = [str(wrapper(arg) if wrapper else arg) for arg, wrapper in six.moves.zip_longest(args, argument_wrappers)]
+        arguments = [str(wrapper(arg) if wrapper else arg) for arg, wrapper in zip_longest(args, argument_wrappers)]
         arguments.extend('%s=%s' % item for item in kwargs.items())
         res = callable_object(*args, **kwargs)
         frame = inspect.currentframe().f_back

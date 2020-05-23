@@ -19,7 +19,6 @@ Special
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Source
             accountinglabel = "WORLDTREE_LABEL"
             priority = [[LATE_PRIORITY]]
             effects = [

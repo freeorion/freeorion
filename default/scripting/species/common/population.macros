@@ -13,7 +13,7 @@ BASIC_POPULATION
             scope = Source
             activation = And [
                 Planet
-                (Source.LastTurnConquered < CurrentTurn)
+                (LocalCandidate.LastTurnConquered < CurrentTurn)
             ]
             priority = [[EARLY_FIRST_NATURAL_POPULATION_PRIORITY]]
             effects = SetPopulation value =
@@ -235,7 +235,7 @@ LIFECYCLE_MANIP_POPULATION_EFFECTS
             ]
             activation = And [
                 Not OwnerHasTech name = "GRO_LIFECYCLE_MAN"
-                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+                Turn low = LocalCandidate.CreationTurn + 1 high = LocalCandidate.CreationTurn + 1
             ]
             effects = [
                 SetSpecies name = @1@
@@ -249,7 +249,7 @@ LIFECYCLE_MANIP_POPULATION_EFFECTS
             ]
             activation = And [
                 OwnerHasTech name = "GRO_LIFECYCLE_MAN"
-                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+                Turn low = LocalCandidate.CreationTurn + 1 high = LocalCandidate.CreationTurn + 1
             ]
             effects = [
                 SetSpecies name = @1@

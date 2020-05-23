@@ -1,6 +1,6 @@
 import copy
 from collections import Counter, OrderedDict as odict
-from logging import error, info, warn, debug
+from logging import error, info, warning, debug
 from operator import itemgetter
 from time import time
 
@@ -72,6 +72,10 @@ def convert_to_version(state, version):
     if version == 5:
         state['last_turn_played'] = 0
 
+    if version == 6:
+        # Anti-fighter and anti-planet stats were added to CombatRatingAI
+        state['_AIstate__empire_standard_enemy'] = state['_AIstate__empire_standard_enemy'] + (0, False) + (0, False)
+
     #   state["some_new_member"] = some_default_value
     #   del state["some_removed_member"]
     #   state["list_changed_to_set"] = set(state["list_changed_to_set"])
@@ -80,7 +84,7 @@ def convert_to_version(state, version):
     state["version"] = version
 
 
-class AIstate(object):
+class AIstate:
     """Stores AI game state.
 
     IMPORTANT:
@@ -99,7 +103,7 @@ class AIstate(object):
     via boost. If desiring to store a reference to a UniverseObject store its
     object id instead; for enum values store their int conversion value.
     """
-    version = 5
+    version = 6
 
     def __init__(self, aggression):
         # Do not allow to create AIstate instances with an invalid version number.
@@ -719,7 +723,7 @@ class AIstate(object):
 
     def get_all_fleet_missions(self):
         """Returns all AIFleetMissions."""
-        return self.__aiMissionsByFleetID.values()  # pylint: disable=dict-values-not-iterating; # PY_3_MIGRATION
+        return self.__aiMissionsByFleetID.values()
 
     def get_fleet_missions_map(self):
         return self.__aiMissionsByFleetID
@@ -735,7 +739,7 @@ class AIstate(object):
     def __add_fleet_mission(self, fleet_id):
         """Add a new dummy AIFleetMission for the passed fleet_id if it has no mission yet."""
         if self.get_fleet_mission(fleet_id) is not None:
-            warn("Tried to add a new fleet mission for fleet that already had a mission.")
+            warning("Tried to add a new fleet mission for fleet that already had a mission.")
             return
         self.__aiMissionsByFleetID[fleet_id] = AIFleetMission.AIFleetMission(fleet_id)
 
@@ -969,7 +973,7 @@ class AIstate(object):
         for fleet_id in fleets_to_split:
             fleet = universe.getFleet(fleet_id)
             if not fleet:
-                warn("Trying to split fleet %d but seemingly does not exist" % fleet_id)
+                warning("Trying to split fleet %d but seemingly does not exist" % fleet_id)
                 continue
             fleet_len = len(fleet.shipIDs)
             if fleet_len == 1:
@@ -985,7 +989,7 @@ class AIstate(object):
         universe = fo.getUniverse()
         empire_id = fo.empireID()
         for dct in [self.qualifyingTroopBaseTargets]:
-            for pid in dct.keys():
+            for pid in list(dct.keys()):
                 planet = universe.getPlanet(pid)
                 if planet and planet.ownedBy(empire_id):
                     del dct[pid]

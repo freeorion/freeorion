@@ -11,12 +11,12 @@
 #include "CommonParamsParser.h"
 
 #include "../universe/Condition.h"
-#include "../universe/ShipDesign.h"
+#include "../universe/ShipPart.h"
 #include "../universe/ValueRef.h"
+#include "../util/Directories.h"
 
 #include <boost/spirit/include/phoenix.hpp>
-//TODO: replace with std::make_unique when transitioning to C++14
-#include <boost/smart_ptr/make_unique.hpp>
+
 
 #define DEBUG_PARSERS 0
 
@@ -24,8 +24,8 @@
 namespace std {
     inline ostream& operator<<(ostream& os, const std::vector<ShipSlotType>&) { return os; }
     inline ostream& operator<<(ostream& os, const parse::effects_group_payload&) { return os; }
-    inline ostream& operator<<(ostream& os, const std::map<std::string, std::unique_ptr<PartType>>&) { return os; }
-    inline ostream& operator<<(ostream& os, const std::pair<const std::string, std::unique_ptr<PartType>>&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::map<std::string, std::unique_ptr<ShipPart>>&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::pair<const std::string, std::unique_ptr<ShipPart>>&) { return os; }
 }
 #endif
 
@@ -42,7 +42,7 @@ namespace parse {
 namespace {
     const boost::phoenix::function<parse::detail::is_unique> is_unique_;
 
-    void insert_parttype(std::map<std::string, std::unique_ptr<PartType>>& part_types,
+    void insert_shippart(std::map<std::string, std::unique_ptr<ShipPart>>& ship_parts,
                          ShipPartClass part_class,
                          const parse::detail::OptCap_OptStat2_OptMoveableTargets capacity_and_stat2_and_targets,
                          const parse::detail::MovableEnvelope<CommonParams>& common_params,
@@ -57,7 +57,7 @@ namespace {
         std::tie(capacity, stat2, combat_targets) = capacity_and_stat2_and_targets;
 
 
-        auto part_type = boost::make_unique<PartType>(
+        auto ship_part = std::make_unique<ShipPart>(
             part_class,
             (capacity ? *capacity : 0.0),
             (stat2 ? *stat2 : 1.0),
@@ -67,12 +67,12 @@ namespace {
             !no_default_capacity_effect,
             (combat_targets ? (*combat_targets).OpenEnvelope(pass) : nullptr));
 
-        part_types.insert(std::make_pair(part_type->Name(), std::move(part_type)));
+        ship_parts.insert(std::make_pair(ship_part->Name(), std::move(ship_part)));
     }
 
-    BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_parttype_, insert_parttype, 9)
+    BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_shippart_, insert_shippart, 9)
 
-    using start_rule_payload = std::map<std::string, std::unique_ptr<PartType>>;
+    using start_rule_payload = std::map<std::string, std::unique_ptr<ShipPart>>;
     using start_rule_signature = void(start_rule_payload&);
 
     struct grammar : public parse::detail::grammar<start_rule_signature> {
@@ -108,7 +108,7 @@ namespace {
             qi::_r1_type _r1;
             qi::matches_type matches_;
 
-            part_type
+            ship_part
                 = ( tok.Part_                                       // _1
                 >   common_rules.more_common                        // _2
                 >   label(tok.Class_)       > ship_part_class_enum  // _3
@@ -124,25 +124,25 @@ namespace {
                 >   common_rules.common                                 // _9
                 >   label(tok.Icon_)        > tok.string                // _10
                   ) [ _pass = is_unique_(_r1, _1, phoenix::bind(&MoreCommonParams::name, _2)),
-                      insert_parttype_(_r1, _3,
+                      insert_shippart_(_r1, _3,
                                        construct<parse::detail::OptCap_OptStat2_OptMoveableTargets>(_4, _5, _7)
                                        , _9, _2, _8, _10, _6, _pass) ]
                 ;
 
             start
-                =   +part_type(_r1)
+                =   +ship_part(_r1)
                 ;
 
-            part_type.name("Part");
+            ship_part.name("Part");
 
 #if DEBUG_PARSERS
-            debug(part_type);
+            debug(ship_part);
 #endif
 
             qi::on_error<qi::fail>(start, parse::report_error(filename, first, last, _1, _2, _3, _4));
         }
 
-        using  part_type_rule = parse::detail::rule<void (start_rule_payload&)>;
+        using  ship_part_rule = parse::detail::rule<void (start_rule_payload&)>;
         using start_rule = parse::detail::rule<start_rule_signature>;
 
         parse::detail::Labeller                 label;
@@ -155,7 +155,7 @@ namespace {
         parse::detail::double_grammar           double_rule;
         parse::detail::single_or_bracketed_repeat<parse::ship_slot_enum_grammar>
                                                 one_or_more_slots;
-        part_type_rule                          part_type;
+        ship_part_rule                          ship_part;
         start_rule                              start;
     };
 }
@@ -165,9 +165,8 @@ namespace parse {
         const lexer lexer;
         start_rule_payload parts;
 
-        for (const auto& file : ListScripts(path)) {
+        for (const auto& file : ListDir(path, IsFOCScript))
             /*auto success =*/ detail::parse_file<grammar, start_rule_payload>(lexer, file, parts);
-        }
 
         return parts;
     }

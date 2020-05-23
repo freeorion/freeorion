@@ -1,5 +1,5 @@
 // -*- C++ -*-
-/* GG is a GUI for SDL and OpenGL.
+/* GG is a GUI for OpenGL.
    Copyright (C) 2015 Marcel Metz
 
    This library is free software; you can redistribute it and/or
@@ -45,7 +45,7 @@ namespace GG {
 
     typedef TextControl Label;
 
-    template <class T>
+    template <typename T>
     class Spin;
 }
 

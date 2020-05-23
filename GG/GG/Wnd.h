@@ -1,5 +1,5 @@
 // -*- C++ -*-
-/* GG is a GUI for SDL and OpenGL.
+/* GG is a GUI for OpenGL.
    Copyright (C) 2003-2008 T. Zachary Laine
 
    This library is free software; you can redistribute it and/or
@@ -150,7 +150,7 @@ extern GG_API const WndFlag NO_WND_FLAGS;
     local execution of the GUI's event pump.  Execution of the code that calls
     Run() is effectively halted until Run() returns.  Derived classes that
     wish to use modal execution should set m_done = true to escape from the
-    modal execution loop.  EventPump has more information about processing
+    modal execution loop.  GUI::RunModal has more information about processing
     during modal dialog execution.
 
     <br>Note that OnTop() and Modal() flags only apply to top-level
@@ -298,7 +298,7 @@ public:
     {
         /** The time the cursor must linger over the Wnd before this mode
             becomes active, in ms. */
-        unsigned int time;
+        unsigned int time = 0;
 
         /** The BrowseInfoWnd used to display the browse info for this
             mode. */
@@ -312,7 +312,7 @@ public:
     typedef std::map<const Wnd*, bool>::iterator DropsAcceptableIter;
 
     /** The modes of child clipping. */
-    enum ChildClippingMode {
+    enum ChildClippingMode : int {
         /** No child clipping is performed. */
         DontClip,
 
@@ -495,6 +495,9 @@ public:
 
     /** Returns the window's parent (may be null). */
     std::shared_ptr<Wnd> Parent() const;
+
+    /** Returns true iff \a wnd is an ancestor (indirect parent) of this wnd. */
+    bool IsAncestorOf(const std::shared_ptr<Wnd>& wnd) const;
 
     /** Returns the earliest ancestor window (may be null). */
     std::shared_ptr<Wnd> RootParent() const;
@@ -792,7 +795,7 @@ protected:
     /** The states a Wnd may be in, with respect to drag-and-drop operations.
         Wnds may wish to consider the current state when rendering to provide
         visual feedback to the user. */
-    enum DragDropRenderingState {
+    enum DragDropRenderingState : int {
         /** No drag-and-drop is taking place at all with this Wnd. */
         NOT_DRAGGED,
 

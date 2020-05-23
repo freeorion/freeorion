@@ -3,7 +3,6 @@
 #include "../util/i18n.h"
 #include "../util/Logger.h"
 
-#include <GG/DrawUtil.h>
 #include <GG/WndEvent.h>
 
 #include <boost/cast.hpp>
@@ -12,7 +11,7 @@
 // PromptRow
 ////////////////////////////////////////////////////////////
 PromptRow::PromptRow(GG::X w, const std::string& prompt) :
-    GG::ListBox::Row(w, GG::Y(20), ""),
+    GG::ListBox::Row(w, GG::Y(20)),
     m_prompt(
         GG::Wnd::Create<CUILabel>(
             prompt,
@@ -24,7 +23,7 @@ void PromptRow::CompleteConstruction() {
 
     m_prompt->MoveTo(GG::Pt(GG::X(2), GG::Y(2)));
     m_prompt->Resize(GG::Pt(Width() - 10, Height()));
-    m_prompt->SetTextColor(GG::LightColor(ClientUI::TextColor()));
+    m_prompt->SetTextColor(GG::LightenClr(ClientUI::TextColor()));
     m_prompt->ClipText(true);
     Resize(GG::Pt(Width(), m_prompt->Height()));
     push_back(m_prompt);
@@ -62,14 +61,16 @@ void QueueListBox::CompleteConstruction() {
 
     ShowPromptSlot();
 
+    namespace ph = boost::placeholders;
+
     BeforeInsertRowSignal.connect(
-        boost::bind(&QueueListBox::EnsurePromptHiddenSlot, this, _1));
+        boost::bind(&QueueListBox::EnsurePromptHiddenSlot, this, ph::_1));
     AfterEraseRowSignal.connect(
-        boost::bind(&QueueListBox::ShowPromptConditionallySlot, this, _1));
+        boost::bind(&QueueListBox::ShowPromptConditionallySlot, this, ph::_1));
     ClearedRowsSignal.connect(
         boost::bind(&QueueListBox::ShowPromptSlot, this));
     GG::ListBox::RightClickedRowSignal.connect(
-        boost::bind(&QueueListBox::ItemRightClicked, this, _1, _2, _3));
+        boost::bind(&QueueListBox::ItemRightClicked, this, ph::_1, ph::_2, ph::_3));
 }
 
 GG::X QueueListBox::RowWidth() const

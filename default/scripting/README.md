@@ -52,8 +52,6 @@ loaded from here unless included elsewhere.
 * species/  -  All in-game species definitions.  **The *SP_HUMAN* definition
 is required.**
 * techs/  -  All in-game technology definitions and categories.
-* keymaps.inf  -  TBD - Keymap definitions.  **This file and at least one entry
-are required.**
 * monster_fleets.inf  -  Fleet definitions for space monsters
 (spawn rate/quantity/limitations).  **This file and at least one entry are
 required.**

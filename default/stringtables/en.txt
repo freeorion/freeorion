@@ -8,7 +8,7 @@
 # make any stringtable keys beginning with "FUNCTIONAL_".
 # New Sitreps priorities should be added to
 # `default/customizations/common_user_customizations.txt`.
-
+#
 # semi-randomly collected characters to force font code page loading
 # 肛門オーガズム
 # åřžßąłżęЗыдШит
@@ -1073,6 +1073,10 @@ Cannot concede from a game with only one human player.
 ERROR_INCOMPATIBLE_VERSION
 Server cannot properly read messages from your client, most likely due to incompatible game versions.
 
+ERROR_CHECKSUM_MISMATCH
+Content checksum on the server and the client differs.
+
+
 ##
 ## Game Rules
 ##
@@ -1135,7 +1139,19 @@ RULE_SHIP_STRUCTURE_FACTOR
 Ship Structure Scaling
 
 RULE_SHIP_STRUCTURE_FACTOR_DESC
-Adjusts structure of ship hulls and armour parts
+Adjusts structure of ship hulls and armour parts. Adjusts structure growth, damage control and planetary shield as well
+
+RULE_SHIP_WEAPON_DAMAGE_FACTOR
+Ship Weapon Damage Scaling
+
+RULE_SHIP_WEAPON_DAMAGE_FACTOR_DESC
+Adjusts damage and shields of ship main weapons. Adjusts planetary defense as well
+
+RULE_FIGHTER_DAMAGE_FACTOR
+Fighter Damage Scaling
+
+RULE_FIGHTER_DAMAGE_FACTOR_DESC
+Adjusts damage of fighters
 
 RULE_SHIP_HULL_COST_FACTOR
 Hull Cost Scaling
@@ -1275,24 +1291,25 @@ All Allowed
 RULE_DIPLOMACY_FORBIDDEN_FOR_ALL
 All Forbidden
 
+
 ##
 ## Command-line and options database entries
 ##
 
 COMMAND_LINE_NOT_FOUND
-'''No options or sections found matching'''
+No options or sections found matching
 
 COMMAND_LINE_USAGE
-'''Usage: -h | --help [group name | option name]'''
+Usage: -h | --help [group name | option name]
 
 COMMAND_LINE_DEFAULT
-'''Default'''
+Default
 
 COMMAND_LINE_SECTIONS
-'''Option Groups'''
+Option Groups
 
 COMMAND_LINE_OPTIONS
-'''Options'''
+Options
 
 OPTIONS_DB_HELP
 '''Print this help message.
@@ -1453,17 +1470,23 @@ Count of minutes after the cookie record will be considered expired.
 OPTIONS_DB_PUBLISH_STATISTICS
 Enable sending empire staticstics to the player.
 
+OPTIONS_DB_PUBLISH_SEED
+Enable sending galaxy seed to the player.
+
 OPTIONS_DB_FIRST_TURN_TIME
 Absolute time point in format "2019-01-20 11:59:59" in UTC. If empty, first turn advance will happen after expiring interval. Requires fixed interval to be enabled.
 
 OPTIONS_DB_TIMEOUT_INTERVAL
-Maximum interval in seconds between turn advances. If 0, turn advances by timeout are disabled, and turns will only advance once all players have ended their turn.
+Maximum interval in seconds between turn automatic advances. If 0, turn advances by timeout are disabled, and turns will only advance once all players have ended their turn. Automatic turn advance is also disabled after any player has won the game.
 
 OPTIONS_DB_TIMEOUT_FIXED_INTERVAL
 Turns advance after fixed intervals, regardless of when and whether players have submitted turn orders.
 
 OPTIONS_DB_CLIENT_MESSAGE_SIZE_MAX
 Limit of client message size in bytes.
+
+OPTIONS_DB_DROP_EMPIRE_READY
+Drop empire's readiness on joining to the playing game.
 
 OPTIONS_DB_UI_MAIN_MENU_X
 Position of the center of the intro screen main menu, as a portion of the application's total width.
@@ -1685,7 +1708,7 @@ OPTIONS_DB_UI_PLANET_STATUS_CONQUERED
 %1% has just been conquered. Happiness will probably be reduced.
 
 OPTIONS_DB_UI_PLANET_STATUS_UNHAPPY
-The population on %1% is very unhappy. It can not be used as a source for settlers.
+The population on %1% is very unhappy. Neither [[metertype METER_INDUSTRY]] nor [[metertype METER_RESEARCH]] will increase. It can not be used as a source for settlers.
 
 OPTIONS_DB_UI_PLANET_STATUS_NO_SUPPLY
 %1% has been cut off from supply. Industry generated on this planet can only be used here.
@@ -1751,7 +1774,7 @@ OPTIONS_DB_UI_TOOLTIP_LONG_DELAY
 Sets UI tooltip pop-up delay for alternate pop-ups, in ms.
 
 OPTIONS_DB_UI_ENC_SEARCH_ARTICLE
-When searching the pedia, check for matches in article contents.
+When searching the pedia, check for matches in article contents. Search will be slower, but may find more matches.
 
 # Section title for options window logging
 OPTIONS_DB_UI_LOGGER_THRESHOLDS
@@ -1823,7 +1846,7 @@ OPTIONS_DB_GAMESETUP_SEED
 Galaxies generated with the same settings and the same seed will be identical.'''
 
 OPTIONS_DB_GAMESETUP_UID
-'''The game UID for new games. Server-only option can be used for predictable game name on hostless servers.'''
+The game UID for new games. Server-only option can be used for predictable game name on hostless servers.
 
 OPTIONS_DB_GAMESETUP_STARS
 '''The approximate number of systems in the galaxy to be generated.
@@ -2412,6 +2435,7 @@ PLAYER_ENTERED_GAME
 PLAYER_LEFT_GAME
 %1% left game
 
+
 ##
 ## Galaxy Setup Screen
 ##
@@ -2595,7 +2619,7 @@ GAME_MENU_LOAD
 Load Game
 
 GAME_MENU_RESIGN
-Resign
+Exit to Menu
 
 GAME_MENU_CONCEDE
 Concede
@@ -2607,7 +2631,13 @@ BUTTON_DISABLED
 Button Disabled
 
 SAVE_DISABLED_BROWSE_TEXT
-The Save Game button is disabled, either because this is a multiplayer game in which this client is neither Host nor Moderator, or because at the time this menu was opened at least one of the AIs had not yet finished submitting its moves for the turn (indicated by a green triangle status icon just to the left of its player-type icon in the Empires window).
+'''The Save Game button is disabled. This may be be because:
+
+-This is a multiplayer game in which this client is neither Host nor Moderator.
+
+-When this menu was opened at least one of the AIs had not yet finished submitting its moves for the turn (indicated by a green triangle status icon just to the left of its player-type icon in the Empires window).
+
+-Another save is ongoing.'''
 
 GAME_MENU_REALLY_CONCEDE
 Confirm conceding? This empire will be removed from the game.
@@ -2712,6 +2742,9 @@ Really overwrite %1%?
 OPTIONS_TITLE
 Options
 
+OPTIONS_PEDIA_SEARCH_ARTICLE_TEXT
+Search Pedia Article Text
+
 OPTIONS_MULTIPLE_FLEET_WNDS
 Multiple fleet windows
 
@@ -2747,6 +2780,9 @@ Font Sizes
 
 OPTIONS_FONT_TEXT
 Text
+
+OPTIONS_FONT_BOLD_TEXT
+Bold text
 
 OPTIONS_FONT_TITLE
 Window titles
@@ -3206,8 +3242,11 @@ Create Persistent Config (Advanced Feature)
 
 OPTIONS_CREATE_PERSISTENT_CONFIG_TOOLTIP_DESC
 '''Saves the current config settings as persistent default settings.
+
 Such settings take priority over any settings in config.xml, but not the command line.
+
 Only stores settings that have been modified from default values.
+
 Any existing persistent config file is overwritten.
 
 Settings may not always be valid across versions.
@@ -3220,6 +3259,23 @@ Successfully (re)created persistent_config.xml
 
 OPTIONS_CREATE_PERSISTENT_CONFIG_FAILURE
 Unable to create persistent_config.xml, check log file for details.
+
+OPTIONS_CREATE_ALL_CONFIG_SUCCESS
+Successfully wrote config.xml
+
+OPTIONS_CREATE_ALL_CONFIG_FAILURE
+Unable to write config.xml, check log file for details.
+
+OPTIONS_WRITE_ALL_CONFIG
+Write Complete Config File
+
+OPTIONS_CREATE_ALL_CONFIG_TOOLTIP_TITLE
+Create Full Config (Intermediate Feature)
+
+OPTIONS_CREATE_ALL_CONFIG_TOOLTIP_DESC
+'''Saves the current config settings in config.xml including all settings, even if not modified from their defaults.
+
+The existing options.xml is overwitten, but may be regenerated (with just non-default options) if another option is changed, including by repositioning some game windows or within the options window.'''
 
 
 ##
@@ -3603,6 +3659,7 @@ Add Building to Top of Queue
 
 MENUITEM_ENQUEUE_BUILDING
 Add Building to Queue
+
 
 ##
 ## Side panel/Resources panel
@@ -4486,7 +4543,6 @@ Move to Top
 MOVE_DOWN_LIST_ITEM
 Move to Bottom
 
-
 SPLIT_INCOMPLETE
 Separate Current Repetition
 
@@ -4496,8 +4552,17 @@ Duplicate
 PRODUCTION_WND_TOOLTIP_PROD_COST
 Production cost: %1%
 
+PRODUCTION_WND_TOOLTIP_PROD_TIME_MINIMUM
+Minimum production turns: %1%
+
+PRODUCTION_WND_TOOLTIP_LOCATION_DEPENDENT
+Depends on location
+
 PRODUCTION_WND_TOOLTIP_PROD_TIME
-Production time: %1%
+Fully-funded production turns at %2%: %1%
+
+NO_PRODUCTION_HERE_CANT_PRODUCE
+Insufficient production at %1%
 
 PRODUCTION_WND_TOOLTIP_PARTS
 Ship Parts
@@ -4777,7 +4842,7 @@ Statistics Test 3
 
 # %1% name of the species.
 ENC_SPECIES_PLANET_TYPE_SUITABILITY_COLUMN1
-'''%1%:'''
+%1%:
 
 # %1% content of ENC_SPECIES_PLANET_TYPE_SUITABILITY_COLUMN1 expanded to match
 #     column width.
@@ -4806,6 +4871,30 @@ Suitability is determined by distance from the preferred type of [[encyclopedia 
 # types of things that can be shown in encyclopedia
 ENC_GRAPH
 [Game - Graphs]
+
+USE_LINEAR_SCALE
+Linear Scale
+
+USE_LOG_SCALE
+Logarithmic Scale
+
+SHOW_SCALE
+Show Scale
+
+HIDE_SCALE
+Hide Scale
+
+SHOW_LINES
+Plot Lines
+
+SHOW_POINTS
+Plot Points
+
+SCALE_TO_ZERO
+Scale to Zero
+
+SCALE_FREE
+Scale Free
 
 ENC_GALAXY_SETUP
 [Game - Galaxy]
@@ -5474,10 +5563,8 @@ Management
 
 
 ##
-## Encyclopedia subcategories
+## Encyclopedia articles in Guides category
 ##
-
-# In Guides category
 
 INTERFACE_TITLE
 *Interface*
@@ -5485,7 +5572,10 @@ INTERFACE_TITLE
 INTERFACE_TEXT
 Non-exhaustive list of FreeOrion Interface features:
 
-# In Game Concepts category
+
+##
+## Encyclopedia articles in Game Concepts category
+##
 
 DIPLOMACY_TITLE
 Diplomacy
@@ -5687,7 +5777,7 @@ METER_HAPPINESS_VALUE_LABEL
 Happiness
 
 METER_HAPPINESS_VALUE_DESC
-'''The Happiness of a colony's population starts out low after initial colonization or after invasion, and may also be affected by other factors. A minimum Happiness of 5 is necessary for a colony to act as a source of settlers for colonizing other planets.
+'''The Happiness of a colony's population starts out between 1 and 5 after initial colonization depending on how suitable the planet's [[encyclopedia ENVIRONMENT_TITLE]] is for that species. Happiness is reduced to 0 after invasion and may also be affected by other factors. A minimum Happiness of 5 is necessary for a colony to act as a source of settlers for colonizing other planets. Also [[metertype METER_INDUSTRY]] and [[metertype METER_RESEARCH]] only start growing if Happiness is at least 5.
 
 The Target Happiness is the stable Happiness level a planet's population will approach, given the current factors influencing the planetary Happiness. Its value is connected to [[encyclopedia ENC_BUILDING_TYPE]]s built on the planet, [[encyclopedia ENC_TECH]] researched by the empire, [[encyclopedia ENC_SPECIAL]]s linked to the planet, and various other game effects. If these factors change, then the Target Happiness value is likely to shift.'''
 
@@ -5767,7 +5857,11 @@ Troops
 METER_TROOPS_VALUE_DESC
 '''The term Troops combines all kinds of military forces capable of operating on a planet's surface.
 
-The Troop meter on a planet represents the power of the defending ground forces. The invading force must send a more powerful force (i.e. a higher cumulative number) to conquer a planet. Ships must be built with special parts for carrying troops, and such troops cannot invade if the defending planet has active [[metertype METER_SHIELD]].'''
+The Troop meter on a planet represents the power of the defending ground forces. The invading force must send a more powerful force (i.e. a higher cumulative number) to conquer a planet.
+
+Ships must be built with [[encyclopedia PC_TROOPS]] parts for carrying troops to use for invasion.
+
+Ships cannot invade a planets if it has active [[metertype METER_SHIELD]].'''
 
 METER_REBEL_TROOPS_VALUE_LABEL
 Rebel Troops
@@ -5839,7 +5933,7 @@ OUTPOSTS_TITLE
 Outpost
 
 OUTPOSTS_TEXT
-Outposts are unmanned stations, which can be founded in places too hostile for a colony to survive. They have no [[metertype METER_POPULATION]], and normally produce no resources. But they create [[metertype METER_SUPPLY]] (with the right tech) and provide vision. Colonies can be founded on planets that already have an Outpost. Building an Outpost requires a ship with an [[shippart CO_OUTPOST_POD]]. Outposts are also formed when the Population of a colony drops to zero for any reason.
+Outposts are unmanned stations, which can be founded in places too hostile for a colony to survive. They have no [[metertype METER_POPULATION]], and normally produce no resources. But they create [[metertype METER_SUPPLY]] (with the right tech) and provide fuel and vision. Colonies can be founded on planets that already have an Outpost. Building an Outpost requires a ship with an [[shippart CO_OUTPOST_POD]]. Outposts are also formed when the Population of a colony drops to zero for any reason.
 
 HOMEWORLDS_TITLE
 Homeworld
@@ -6154,7 +6248,7 @@ QUICK_START_GUIDE_TITLE
 **Quick Start Guide**
 
 QUICK_START_GUIDE_TEXT
-'''This is a brief introduction to FreeOrion gameplay. This guide was just born recently, and is currently quite tiny but growing rapidly. A somewhat less brief Quick Play Guide is available at freeorion.org (current URL: <url  http://freeorion.org/index.php/V0.4_Quick_Play_Guide>freeorion.org/index.php/V0.4_Quick_Play_Guide</url> ).
+'''This is a brief introduction to FreeOrion gameplay. A somewhat less brief Quick Play Guide is available at freeorion.org (current URL: <url  http://freeorion.org/index.php/V0.4_Quick_Play_Guide>freeorion.org/index.php/V0.4_Quick_Play_Guide</url> ).
 
 [[DETAILED_PEDIA_REFERENCE]]
 Important sections include [[encyclopedia CATEGORY_GAME_CONCEPTS]], [[encyclopedia CATEGORY_GUIDES]], and the [[encyclopedia ENC_METER_TYPE]] list.
@@ -6342,6 +6436,7 @@ MESSAGES_WHISPER
 MESSAGES_INVALID
 Invalid player or no message entered.
 
+
 ##
 ## Players list
 ##
@@ -6488,6 +6583,9 @@ Last Turn In Battle
 LAST_TURN_RESUPPLIED
 Last Turn Resupplied
 
+LAST_TURN_COLONIZED
+Last Turn Colonized
+
 LAST_TURN_CONQUERED
 Last Turn Conquered
 
@@ -6621,6 +6719,7 @@ Any
 ## Situation report
 ##
 ## Format: Ideally always start with Location: with ship/fleet names near the end.
+##
 
 SITREP_PANEL_TITLE
 Situation Report - Initial turn
@@ -6882,6 +6981,18 @@ On %planet%: A new %species% colony has been established.
 SITREP_NEW_COLONY_ESTABLISHED_LABEL
 New Colony Established
 
+SITREP_FLEET_GIFTED
+%fleet% was gifted by %empire%
+
+SITREP_FLEET_GIFTED_LABEL
+Fleet Gifted
+
+SITREP_PLANET_GIFTED
+%planet% was gifted by %empire%
+
+SITREP_PLANET_GIFTED_LABEL
+Planet Gifted
+
 SITREP_FLEET_ARRIVED_AT_DESTINATION
 At %system%: %fleet% (%rawtext% ships) has arrived.
 
@@ -6925,7 +7036,7 @@ SITREP_FOREIGN_FLEET_ARRIVED_AT_DESTINATION_LABEL
 Foreign Fleet Arrived
 
 SITREP_POP_THRESHOLD
-On %planet%: The colony has reached sufficient size and [[metertype METER_HAPPINESS]] to be a settler source for colonizing other planets.
+On %planet%: The colony has reached sufficient size and [[metertype METER_HAPPINESS]] to be a settler source for colonizing other planets. Also [[metertype METER_INDUSTRY]] and [[metertype METER_RESEARCH]] may start growing.
 
 SITREP_POP_THRESHOLD_LABEL
 Colonizing Threshold
@@ -7283,6 +7394,7 @@ Victory
 
 SITREP_EMPIRE_ELIMINATED
 The %empire% has been defeated!
+
 SITREP_EMPIRE_ELIMINATED_LABEL
 Empire Eliminated
 
@@ -7390,7 +7502,7 @@ BEGINNER_HINT_14
 14: Research [[metertype METER_SUPPLY]] improvements, like the [[tech CON_ORBITAL_CON]], to increase the distance from your systems that your supply lines reach.
 
 BEGINNER_HINT_15
-15: Most species start out with a [[metertype METER_HAPPINESS]] of 1 when you capture their planet, and this will normally increase by 1 per turn. Look out for [[encyclopedia XENOPHOBIC_SPECIES_TITLE]] species though! They don't like being near other species and this will effect the happiness and other values of both them and the other nearby species.
+15: Most species start out with a [[metertype METER_HAPPINESS]] of 0 when you capture their planet, and this will normally increase by 1 per turn. Look out for [[encyclopedia XENOPHOBIC_SPECIES_TITLE]] species though! They don't like being near other species and this will effect the happiness and other values of both them and the other nearby species.
 
 BEGINNER_HINT_16
 16: You may want to hold off on researching [[tech LRN_PSIONICS]] until your empire includes a species with [[encyclopedia TELEPATHIC_TITLE]].
@@ -7454,7 +7566,10 @@ Opinions of Empires:
 OPINIONS_OF_OTHER_SPECIES
 Opinions of Other Species:
 
-# Species Pedia Categories
+
+##
+## Encyclopedia articles in Species Types category
+##
 
 LITHIC_SPECIES_CLASS
 Lithic
@@ -7492,7 +7607,10 @@ Gaseous
 GASEOUS_SPECIES_CLASS_DESC
 List of [[encyclopedia GASEOUS_SPECIES_TITLE]] species:
 
-# Species Pedia Articles
+
+##
+## Encyclopedia articles in Species category
+##
 
 SP_HUMAN
 Human
@@ -7730,6 +7848,7 @@ The Sly are very long-lived and keep the songs alive in which the whole cultural
 
 SP_LEMBALALAM
 Lembala'Lam
+
 SP_LEMBALALAM_GAMEPLAY_DESC
 '''Egocentric, degenerated ancient reptiles that no longer reproduce.
 Prefer [[PT_DESERT]] Planets.
@@ -7994,7 +8113,7 @@ Prefer [[PT_BARREN]] planets.
 '''
 
 SP_TRENCHERS_DESC
-'''<img src="species/trenchers.png"></img>'''
+<img src="species/trenchers.png"></img>
 
 SP_RAAAGH
 Raaagh
@@ -8346,6 +8465,7 @@ SP_EXOBOT_DESC
 
 SP_ANCIENT_GUARDIANS
 Ancient Guardians
+
 SP_ANCIENT_GUARDIANS_GAMEPLAY_DESC
 '''Guardian Robots constructed by a Precursor civilization aeons ago
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
@@ -8536,7 +8656,7 @@ COMPUTRONIUM_SPECIAL
 Computronium Moon
 
 COMPUTRONIUM_SPECIAL_DESC
-'''When a planet with a Computronium Moon is focused on [[metertype METER_RESEARCH]], all research focused planets in the empire gain 0.2 [[metertype METER_TARGET_RESEARCH]] per [[metertype METER_POPULATION]].
+'''When a planet with a Computronium Moon is focused on [[metertype METER_RESEARCH]], all research focused planets in the empire gain 0.1 [[metertype METER_TARGET_RESEARCH]] per [[metertype METER_POPULATION]].
 
 Left by some vanished civilization, the entire moon - from surface to core - is a computing device of awesome power. It can complete the most complicated simulations and equations faster than they can be entered.'''
 
@@ -8544,7 +8664,7 @@ HONEYCOMB_SPECIAL
 Honeycomb
 
 HONEYCOMB_SPECIAL_DESC
-'''When a planet with a Honeycomb is focused on [[metertype METER_INDUSTRY]], all industry focused [[metertype METER_SUPPLY]] connected planets gain 0.5 [[metertype METER_TARGET_INDUSTRY]] per [[metertype METER_POPULATION]].
+'''When a planet with a Honeycomb is focused on [[metertype METER_INDUSTRY]], all industry focused [[metertype METER_SUPPLY]] connected planets gain 0.2 [[metertype METER_TARGET_INDUSTRY]] per [[metertype METER_POPULATION]].
 
 The Honeycomb is a planet that was prepared as a stash by the Builders in ancient times. Almost all other planets in surrounding systems were stripped of valuable materials and then dismantled. The materials were sorted and stored separately in gigantic tubes embedded into the planets crust. The sprectrum ranges from rare and valuable elementals to hard to produce molecules and a vast array of energy sources. What the Builders wanted to create with this treasure or why they didn't use it in the end, is unclear.'''
 
@@ -9341,7 +9461,10 @@ PC_TROOPS_DESC
 '''Troop parts increase the [[metertype METER_TROOPS]] on-board, which can be used to invade enemy planets.
 
 To successfully invade a planet, the total number of [[metertype METER_TROOPS]] from all invading ships must exceed the total defending (ties are awarded to the defender).
-An invading ship is destroyed as part of the landing operation (any additional parts on the ship are lost as well).'''
+
+When invading a planet, the troop ships selected in the fleet window will be used for the invasion. If no troop ships are selected, troop ships will be automatically selected from the available ships and based on the number of defending troops.
+
+An invading ship is destroyed as part of the landing operation. All parts on the ship are lost with the ship.'''
 
 # Ship part classes
 PC_DETECTION
@@ -9488,7 +9611,10 @@ PATH_SAVE
 PATH_TEMP
 ''''''
 
-# Ship hull categories
+
+##
+## Ship hull categories
+##
 
 HULL_LINE_GENERIC
 Hull Line: Generic
@@ -10430,7 +10556,7 @@ DESC_AND_BEFORE_OPERANDS
 ''' ['''
 
 DESC_AND_BETWEEN_OPERANDS
-''', and'''
+, and
 
 DESC_AND_AFTER_OPERANDS
 ''' ]'''
@@ -10445,30 +10571,28 @@ DESC_AND_AFTER_SINGLE_OPERAND
 # We actually describe the the logically equivalent expression ( (not A) or (not B) or (not C) )
 # Note: the operands (not A), (not B).. are handled in the descriptions of A, B.. respectively
 DESC_NOT_AND_BEFORE_OPERANDS
-'''[[DESC_NOT_OR_BEFORE_OPERANDS]]'''
+[[DESC_NOT_OR_BEFORE_OPERANDS]]
 
 DESC_NOT_AND_BETWEEN_OPERANDS
-'''[[DESC_NOT_OR_BETWEEN_OPERANDS]]'''
+[[DESC_NOT_OR_BETWEEN_OPERANDS]]
 
 DESC_NOT_AND_AFTER_OPERANDS
-'''[[DESC_NOT_OR_AFTER_OPERANDS]]'''
-
+[[DESC_NOT_OR_AFTER_OPERANDS]]
 
 # Description for 'not ( AND [ A ] )' expressions
 # Actually instead we describe 'OR [ not A ]' and leave the description of negation to A
 DESC_NOT_AND_BEFORE_SINGLE_OPERAND
-'''[[DESC_OR_BEFORE_SINGLE_OPERAND]]'''
+[[DESC_OR_BEFORE_SINGLE_OPERAND]]
 
 DESC_NOT_AND_AFTER_SINGLE_OPERAND
-'''[[DESC_OR_AFTER_SINGLE_OPERAND]]'''
-
+[[DESC_OR_AFTER_SINGLE_OPERAND]]
 
 # OR Descriptions: for expressions of the form ( A or B or C )
 DESC_OR_BEFORE_OPERANDS
 ''' (either'''
 
 DESC_OR_BETWEEN_OPERANDS
-''', or'''
+, or
 
 DESC_OR_AFTER_OPERANDS
 ''' )'''
@@ -10479,62 +10603,58 @@ DESC_OR_BEFORE_SINGLE_OPERAND
 DESC_OR_AFTER_SINGLE_OPERAND
 ''''''
 
-
 # NOT OR Descriptions; for expressions of the form 'NOT OR [ A B C ]'
 # We actually describe the logically equivalent expression 'AND [ (NOT A) (NOT B) (NOT C) ]'
 # Note: (NOT A), (NOT B).. are handled in the descriptions of A, B.. respectively
 DESC_NOT_OR_BEFORE_OPERANDS
-'''[[DESC_AND_BEFORE_OPERANDS]]'''
+[[DESC_AND_BEFORE_OPERANDS]]
 
 DESC_NOT_OR_BETWEEN_OPERANDS
-'''[[DESC_AND_BETWEEN_OPERANDS]]'''
+[[DESC_AND_BETWEEN_OPERANDS]]
 
 DESC_NOT_OR_AFTER_OPERANDS
-'''[[DESC_AND_AFTER_OPERANDS]]'''
+[[DESC_AND_AFTER_OPERANDS]]
 
 # for expressions of the form 'NOT OR [ A ]' we describe instead 'AND [ NOT A ]'
 # Note: (NOT A) is handled in the description of A
 DESC_NOT_OR_BEFORE_SINGLE_OPERAND
-'''[[DESC_AND_BEFORE_SINGLE_OPERAND]]'''
+[[DESC_AND_BEFORE_SINGLE_OPERAND]]
 
 DESC_NOT_OR_AFTER_SINGLE_OPERAND
-'''[[DESC_AND_AFTER_SINGLE_OPERAND]]'''
-
-
+[[DESC_AND_AFTER_SINGLE_OPERAND]]
 
 # OrderedAlternativesOf Descriptions for expressions 'OrderedAlternativesOf [ A B C ]'
 DESC_ORDERED_ALTERNATIVES_BEFORE_OPERANDS
-'''that matches the first matching condition {'''
+that matches the first matching condition {
 
 DESC_ORDERED_ALTERNATIVES_BETWEEN_OPERANDS
-''', else'''
+, else
 
 DESC_ORDERED_ALTERNATIVES_AFTER_OPERANDS
 ''' }'''
 
 DESC_ORDERED_ALTERNATIVES_BEFORE_SINGLE_OPERAND
-'''{'''
+{
 
 DESC_ORDERED_ALTERNATIVES_AFTER_SINGLE_OPERAND
-'''(iff it also has non-matches)}'''
+(iff it also has non-matches)}
 
 # Expressions like  'NOT OrderedAlternativesOf [ A B C ]'
 # Note: returned matches rely on (NOT A), (NOT B).. and are handled in the descriptions of A, B.. respectively
 DESC_NOT_ORDERED_ALTERNATIVES_BEFORE_OPERANDS
-'''that matches the first matching conditions' non-matching candidates: {'''
+that matches the first matching conditions' non-matching candidates: {
 
 DESC_NOT_ORDERED_ALTERNATIVES_BETWEEN_OPERANDS
-''', else'''
+, else
 
 DESC_NOT_ORDERED_ALTERNATIVES_AFTER_OPERANDS
 ''' }'''
 
 DESC_NOT_ORDERED_ALTERNATIVES_BEFORE_SINGLE_OPERAND
-'''{'''
+{
 
 DESC_NOT_ORDERED_ALTERNATIVES_AFTER_SINGLE_OPERAND
-'''(iff it also has non-matches)}'''
-
+(iff it also has non-matches)}
 
 # %1% textual description of the lower turn limit.
 # %2% textual description of the upper turn limit.
@@ -10630,11 +10750,11 @@ DESC_CONTAINED_BY
 DESC_CONTAINED_BY_NOT
 ''' that is not contained by an object%1%'''
 
-# %1% FIXME
+# %1% text description of what system's ID the candidate object should be in
 DESC_IN_SYSTEM
 ''' that is in the system with id %1%'''
 
-# %1% FIXME
+# %1% text description of what system's ID the candidate object should not be in
 DESC_IN_SYSTEM_NOT
 ''' that is not in the system with id %1%'''
 
@@ -10643,6 +10763,20 @@ DESC_IN_SYSTEM_SIMPLE
 
 DESC_IN_SYSTEM_SIMPLE_NOT
 ''' that is not in a system'''
+
+# %1% text description of what planet's ID the candidate object should be on
+DESC_ON_PLANET
+''' that is on the planet with id %1%'''
+
+# %1% text description of what planet's ID the candidate object should not be on
+DESC_ON_PLANET_NOT
+''' that is not on the planet with id %1%'''
+
+DESC_ON_PLANET_SIMPLE
+''' that is on a planet'''
+
+DESC_ON_PLANET_SIMPLE_NOT
+''' that is not on a planet'''
 
 # %1% FIXME
 DESC_OBJECT_ID
@@ -10862,7 +10996,7 @@ LRN_ALGO_ELEGANCE
 Algorithmic Elegance
 
 LRN_ALGO_ELEGANCE_DESC
-'''Increases [[metertype METER_TARGET_RESEARCH]] on all Research focused planets by 0.1 per [[metertype METER_POPULATION]].
+'''Increases [[metertype METER_TARGET_RESEARCH]] on all Research focused planets by 0.05 per [[metertype METER_POPULATION]].
 
 With greater and greater difficulty of data analysis problems, traditional measures of algorithm performance become less useful due to the limitations of irreducible complexity. At this stage, other measures of algorithm form and function become significant; aesthetically and metaphorically, the elegance of the solution must be optimized.'''
 
@@ -10955,7 +11089,7 @@ LRN_QUANT_NET
 Quantum Networking
 
 LRN_QUANT_NET_DESC
-'''Increases [[metertype METER_TARGET_RESEARCH]] on all planets with the Research focus by 0.5 per [[metertype METER_POPULATION]].
+'''Increases [[metertype METER_TARGET_RESEARCH]] on all planets with the Research focus by 0.1 per [[metertype METER_POPULATION]].
 
 A massive, empire-wide data network able to transfer information instantaneously between any two places, rather than via the lengthy and indirect path of starlanes. This advancement greatly facilitates research throughout the empire.
 
@@ -11071,7 +11205,7 @@ GRO_ENERGY_META
 Pure-Energy Metabolism
 
 GRO_ENERGY_META_DESC
-'''Increases max [[metertype METER_FUEL]] on all ships by 1 (before scaling by [[encyclopedia FUEL_EFFICIENCY_TITLE]]), max [[metertype METER_DEFENSE]] on all planets by 5, max [[metertype METER_SHIELD]] on all planets by 5, [[metertype METER_TARGET_INDUSTRY]] on all planets with the Industry focus by 0.2 per [[metertype METER_POPULATION]], and [[metertype METER_TARGET_RESEARCH]] on all planets with the Research focus by 0.5 per [[metertype METER_POPULATION]].
+'''Increases max [[metertype METER_FUEL]] on all ships by 1 (before scaling by [[encyclopedia FUEL_EFFICIENCY_TITLE]]), max [[metertype METER_DEFENSE]] on all planets by 5, max [[metertype METER_SHIELD]] on all planets by 5, [[metertype METER_TARGET_INDUSTRY]] on all planets with the Industry focus by 0.1 per [[metertype METER_POPULATION]], and [[metertype METER_TARGET_RESEARCH]] on all planets with the Research focus by 0.2 per [[metertype METER_POPULATION]].
 
 While transforming an entire population into beings of pure energy would be impractical, certain tasks are better suited to individuals able to manifest themselves non-corporeally. Ship's crews for example, would no longer have to waste space with crew quarters or rations storage. Beings with greater energy channeling abilities would be able to enhance planetary shields and defense, and resource production would be generally enhanced.
 
@@ -11126,7 +11260,7 @@ Decoupling workforce and the means of production helps to produce just in time a
 This is an upgrade technology for the imperial stockpile. The [[metertype METER_STOCKPILE]] is increased by 6 plus an additional 0.02 per [[metertype METER_POPULATION]].
 These improvements are cumulative with those provided by [[tech PRO_PREDICTIVE_STOCKPILING]], [[tech PRO_GENERIC_SUPPLIES]] and [[tech PRO_VOID_PREDICTION]].
 
-This also unlocks the [[building BLD_STOCKPILING_CENTER]] which additionally increases the [[metertype METER_STOCKPILE]] by 0.1 per [[metertype METER_INDUSTRY]].'''
+This also unlocks the [[buildingtype BLD_STOCKPILING_CENTER]] which additionally increases the [[metertype METER_STOCKPILE]] by 0.1 per [[metertype METER_INDUSTRY]].'''
 
 PRO_VOID_PREDICTION
 Void Prediction
@@ -11152,7 +11286,7 @@ PRO_ROBOTIC_PROD
 Robotic Production
 
 PRO_ROBOTIC_PROD_DESC
-'''Increases [[metertype METER_TARGET_INDUSTRY]] on all planets with the Industry focus by 0.1 per [[metertype METER_POPULATION]].
+'''Increases [[metertype METER_TARGET_INDUSTRY]] on all planets with the Industry focus by 0.05 per [[metertype METER_POPULATION]].
 
 Exobots, as they become commonly known, are a marvel of form meets function. They are robots designed to fulfill nearly any manufacturing job, in fields as wide ranging as electronics to large-scale construction. Easily mass produced, they serve best on colonies that place a high priority on industry. Every world focused primarily on industry receives a team of Exobots, greatly increasing industrial production.
 
@@ -11160,6 +11294,7 @@ Although high level initial design and initial facility setup still require acti
 
 PRO_EXOBOTS
 Exobots
+
 PRO_EXOBOTS_DESC
 Allows the construction of [[species SP_EXOBOT]] colonies optimized for industry on [[PE_HOSTILE]] planets.
 
@@ -11167,7 +11302,7 @@ PRO_FUSION_GEN
 Fusion Generation
 
 PRO_FUSION_GEN_DESC
-'''Increases [[metertype METER_TARGET_INDUSTRY]] on planets with the Industry focus by 0.2 per [[metertype METER_POPULATION]].
+'''Increases [[metertype METER_TARGET_INDUSTRY]] on planets with the Industry focus by 0.05 per [[metertype METER_POPULATION]].
 
 Fusion plants, while expensive to produce and maintain, easily pay for themselves on industrialized worlds with ever increasing power demands. Reliance on old fission based nuclear plants will gradually become a thing of the past.
 
@@ -11229,6 +11364,12 @@ Neutronium Extraction
 PRO_NEUTRONIUM_EXTRACTION_DESC
 The core of a [[STAR_NEUTRON]] star consists of degenerate neutron matter, compressed by gravity to a density far greater than the heaviest normal matter. This exotic material has numerous applications once extracted from the star, allowing production of otherwise impossible structures and ship parts.
 
+CON_OUTPOST
+Outposts
+
+CON_OUTPOST_DESC
+The technology necessary for establishing [[encyclopedia OUTPOSTS_TITLE]] on planets and asteroid belts.
+
 CON_ARCH_PSYCH
 Architectural Psychology
 
@@ -11259,7 +11400,7 @@ CON_FRC_ENRG_STRC
 Force-Energy Structures
 
 CON_FRC_ENRG_STRC_DESC
-'''Increases the growth of resource and infrastructure meters below target value to 3 per turn, and the decay of resource meters above target value to 5 per turn.
+'''Increases the growth of resource and infrastructure meters below target value to 3 per turn, and the decay of resource meters above target value to 5 per turn. [[metertype METER_INDUSTRY]] and [[metertype METER_RESEARCH]] grow only if [[metertype METER_HAPPINESS]] is at least 5.
 
 The flexibility and versatility of force-energy structures permits a colonies buildings to be more easily re-tooled to suit new purposes, increasing the rate at which focus changes can take effect.
 
@@ -11488,11 +11629,13 @@ A hull constructed from pure energy, while far more versatile than a solid hull,
 
 SHP_KRILL_SPAWN
 Krill Spawner
+
 SHP_KRILL_SPAWN_DESC
 Unlocks the [[shippart SP_KRILL_SPAWNER]] ship part, which causes wild space krill to appear in systems with asteroid belts.
 
 SPY_ROOT_DECEPTION
 Deception
+
 SPY_ROOT_DECEPTION_DESC
 The art of deception is not natural to every species, but the ability to hide the truth can be most useful.
 
@@ -11721,10 +11864,10 @@ Stellar Tomography
 
 LRN_STELLAR_TOMOGRAPHY_DESC
 '''Increases [[metertype METER_TARGET_RESEARCH]] on planets with the Research focus, per [[metertype METER_POPULATION]] and depending on the star type:
-* [[STAR_BLACK]] (x1)
-* [[STAR_NEUTRON]] (x0.75)
-* [[STAR_BLUE]] or [[STAR_WHITE]] (x0.5)
-* [[STAR_YELLOW]], [[STAR_ORANGE]] or [[STAR_RED]] (x0.2)
+* [[STAR_BLACK]] (x0.2)
+* [[STAR_NEUTRON]] (x0.15)
+* [[STAR_BLUE]] or [[STAR_WHITE]] (x0.1)
+* [[STAR_YELLOW]], [[STAR_ORANGE]] or [[STAR_RED]] (x0.05)
 
 A network of specialized satellites can use tomographic methods to reconstruct the activities occurring deep within a star. These otherwise costly-to-produce conditions are ideal for a variety of research endeavors, with larger benefits for more exotic star types.'''
 
@@ -11952,7 +12095,11 @@ Bombardment
 SHP_BOMBARD_DESC
 Allows development of planetary bombardment weapons.
 
-##Fighter explanation, needs improving and a Pedia article writing
+
+##
+## Fighter explanation, needs improving and a Pedia article writing
+##
+
 SHP_FIGHTERS_1
 Fighters and Launch Bays
 
@@ -11961,25 +12108,28 @@ SHP_FIGHTERS_1_DESC
 
 A [[encyclopedia PC_FIGHTER_BAY]] can launch a number of fighters in each combat round. These fighters will then be both valid targets and able to attack ships and other fighters in subsequent combat rounds, but a single hit from any source will destroy a fighter. Unlike [[encyclopedia DAMAGE_TITLE]] inflicted by regular weapons, fighter damage ignores [[metertype METER_SHIELD]] on warships (they fire from within the shields).
 
+Piloting traits affect [[FT_HANGAR_2]], [[FT_HANGAR_3]], and [[FT_HANGAR_4]] fighters in the same way: bad piloting reduces damage by 1 per fighter; good piloting increases damage by 1, great piloting by 2, and ultimate piloting by 3 per fighter shot.
+Piloting traits do not affect [[FT_HANGAR_1]] fighters.
+
 At the end of combat, carriers will collect any fighters that have survived. If a carrier is in [[metertype METER_SUPPLY]] immediately after movement is resolved, it will refill hangars to maximum.'''
 
 SHP_FIGHTERS_2
 Laser Fighters
 
 SHP_FIGHTERS_2_DESC
-Upgrades the fighters of all carriers within [[metertype METER_SUPPLY]] to have laser weaponry. [[encyclopedia DAMAGE_TITLE]] from fighters in a [[shippart FT_HANGAR_1]] is increased by 1, [[shippart FT_HANGAR_2]] is increased by 2 and [[shippart FT_HANGAR_3]] by 3.
+Upgrades the fighters of all carriers within [[metertype METER_SUPPLY]] to have laser weaponry. [[encyclopedia DAMAGE_TITLE]] from fighters in a [[shippart FT_HANGAR_2]] is increased by 2, [[shippart FT_HANGAR_3]] by 3, and [[shippart FT_HANGAR_4]] by 6. For [[shippart FT_HANGAR_1]] fighters the capacity as well as the launch rate of the [[shippart FT_BAY_1]] is increased by 1.
 
 SHP_FIGHTERS_3
 Plasma Fighters
 
 SHP_FIGHTERS_3_DESC
-Upgrades the fighters of all carriers within [[metertype METER_SUPPLY]] to have plasma weaponry. [[encyclopedia DAMAGE_TITLE]] from fighters in a [[shippart FT_HANGAR_1]] is increased by 1, [[shippart FT_HANGAR_2]] is increased by 3 and [[shippart FT_HANGAR_3]] by 4.
+Upgrades the fighters of all carriers within [[metertype METER_SUPPLY]] to have plasma weaponry. [[encyclopedia DAMAGE_TITLE]] from fighters in a [[shippart FT_HANGAR_2]] is increased by 2, [[shippart FT_HANGAR_3]] by 3, and [[shippart FT_HANGAR_4]] by 6. For [[shippart FT_HANGAR_1]] fighters the capacity as well as the launch rate of the [[shippart FT_BAY_1]] is increased by 1.
 
 SHP_FIGHTERS_4
 Death Ray Fighters
 
 SHP_FIGHTERS_4_DESC
-Upgrades the fighters of all carriers within [[metertype METER_SUPPLY]] to have death ray weaponry. [[encyclopedia DAMAGE_TITLE]] from fighters in a [[shippart FT_HANGAR_1]] is increased by 1, [[shippart FT_HANGAR_2]] is increased by 5 and [[shippart FT_HANGAR_3]] by 7.
+Upgrades the fighters of all carriers within [[metertype METER_SUPPLY]] to have death ray weaponry. [[encyclopedia DAMAGE_TITLE]] from fighters in a [[shippart FT_HANGAR_2]] is increased by 2, [[shippart FT_HANGAR_3]] by 3, and [[shippart FT_HANGAR_4]] by 6. For [[shippart FT_HANGAR_1]] fighters the capacity as well as the launch rate of the [[shippart FT_BAY_1]] is increased by 1.
 
 SHP_WEAPON_1_2
 Mass Driver 2
@@ -12070,6 +12220,24 @@ Death Ray 4
 
 SHP_WEAPON_4_4_DESC
 Upgrades [[shippart SR_WEAPON_4_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 30.
+
+SHP_WEAPON_ARC_DISRUPTOR_1
+Arc Disruptors
+
+SHP_WEAPON_ARC_DISRUPTOR_1_DESC
+Unlocks the [[shippart SR_ARC_DISRUPTOR]], an automated weapon system doing low damage to multiple targets. The base weapon part has shot damage 2.
+
+SHP_WEAPON_ARC_DISRUPTOR_2
+Arc Disruptor 2
+
+SHP_WEAPON_ARC_DISRUPTOR_2_DESC
+Upgrades [[shippart SR_ARC_DISRUPTOR]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 4.
+
+SHP_WEAPON_ARC_DISRUPTOR_3
+Arc Disruptor 3
+
+SHP_WEAPON_ARC_DISRUPTOR_3_DESC
+Upgrades [[shippart SR_ARC_DISRUPTOR]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 7.
 
 SHP_ION_CANNON
 Ion Cannon
@@ -12695,7 +12863,7 @@ BLD_INDUSTRY_CENTER
 Industrial Center
 
 BLD_INDUSTRY_CENTER_DESC
-'''Initially provides a bonus to [[metertype METER_TARGET_INDUSTRY]] on all [[metertype METER_SUPPLY]] line connected planets with Industry focus by 0.2 per [[metertype METER_POPULATION]].
+'''Initially provides a bonus to [[metertype METER_TARGET_INDUSTRY]] on all [[metertype METER_SUPPLY]] line connected planets with Industry focus by 0.05 per [[metertype METER_POPULATION]].
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
 [[tech PRO_INDUSTRY_CENTER_II]] refinement doubles the bonus.
@@ -12763,7 +12931,7 @@ BLD_COLLECTIVE_NET
 Collective Thought Network
 
 BLD_COLLECTIVE_NET_DESC
-'''Increases [[metertype METER_TARGET_INDUSTRY]] on planets with the Industry focus by 0.5 per [[metertype METER_POPULATION]], and [[metertype METER_TARGET_RESEARCH]] on Planets with the Research focus by 0.5 per [[metertype METER_POPULATION]]. Starlane travel within 200 uu will disrupt this building's effectiveness and eliminate these bonuses.
+'''Increases [[metertype METER_TARGET_INDUSTRY]] on planets with the Industry focus by 0.1 per [[metertype METER_POPULATION]], and [[metertype METER_TARGET_RESEARCH]] on Planets with the Research focus by 0.1 per [[metertype METER_POPULATION]]. Starlane travel within 200 uu will disrupt this building's effectiveness and eliminate these bonuses.
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
 By transferring the mind into cyberspace, thousands of minds can act as one, solving problems and making breakthroughs that no single mind could.'''
@@ -12780,7 +12948,7 @@ BLD_ENCLAVE_VOID
 Enclave of the Void
 
 BLD_ENCLAVE_VOID_DESC
-'''Increases [[metertype METER_TARGET_RESEARCH]] on all planets with the Research focus by 0.75 per [[metertype METER_POPULATION]].
+'''Increases [[metertype METER_TARGET_RESEARCH]] on all planets with the Research focus by 0.15 per [[metertype METER_POPULATION]].
 Multiple copies do not stack.
 
 The population of an entire planet is genetically attuned to the Void Mind and dedicated to channeling its wisdom to the empire. The denizens of the Void Enclave are regarded as priests, channels of higher thinking and wisdom. In all matters of importance to the empire, their advice is sought after. Emissaries from the Enclave can even be sent to assist in the empire's research projects.'''
@@ -12801,7 +12969,7 @@ BLD_HYPER_DAM
 Hyperspatial Dam
 
 BLD_HYPER_DAM_DESC
-'''For planets not connected to a [[buildingtype BLD_BLACK_HOLE_POW_GEN]], increases [[metertype METER_TARGET_INDUSTRY]] on [[metertype METER_SUPPLY]] line connected planets with the Industry focus by 1 per [[metertype METER_POPULATION]], but decreases [[metertype METER_TARGET_POPULATION]] on such planets by planet size: ([[SZ_TINY]] -1) ([[SZ_SMALL]] -2) ([[SZ_MEDIUM]] -3) ([[SZ_LARGE]] -4) ([[SZ_HUGE]] -5).
+'''For planets not connected to a [[buildingtype BLD_BLACK_HOLE_POW_GEN]], increases [[metertype METER_TARGET_INDUSTRY]] on [[metertype METER_SUPPLY]] line connected planets with the Industry focus by 0.2 per [[metertype METER_POPULATION]], but decreases [[metertype METER_TARGET_POPULATION]] on such planets by planet size: ([[SZ_TINY]] -1) ([[SZ_SMALL]] -2) ([[SZ_MEDIUM]] -3) ([[SZ_LARGE]] -4) ([[SZ_HUGE]] -5).
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
 A tear in the fabric of the universe, safely controlled and harnessed. Each planet may construct its own hyperspatial dams, but a single control center is required to ensure that the space-time continuum is not torn apart by the stresses. Additionally, all planets who use hyperspatial dams experience health problems, unless they are orbiting a [[STAR_BLACK]].
@@ -12819,9 +12987,9 @@ Solar Orbital Generator
 
 BLD_SOL_ORB_GEN_DESC
 '''Increases [[metertype METER_TARGET_INDUSTRY]] on [[metertype METER_SUPPLY]] line connected planets, per [[metertype METER_POPULATION]] and depending on the star type:
-* [[STAR_BLUE]] or [[STAR_WHITE]] (x0.4)
-* [[STAR_YELLOW]] or [[STAR_ORANGE]] (x0.2)
-* [[STAR_RED]] (x0.1)
+* [[STAR_BLUE]] or [[STAR_WHITE]] (x0.15)
+* [[STAR_YELLOW]] or [[STAR_ORANGE]] (x0.1)
+* [[STAR_RED]] (x0.05)
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]] The best bonus applies.
 
 A power generator in low solar orbit designed to tap directly into the star's energy. Since different star types produce different amounts of energy, the system-wide industry bonus is dependent on star type. [[BUILDING_AVAILABLE_ON_OUTPOSTS]].'''
@@ -12902,7 +13070,7 @@ BLD_BLACK_HOLE_POW_GEN
 Black Hole Power Generator
 
 BLD_BLACK_HOLE_POW_GEN_DESC
-'''Increases [[metertype METER_TARGET_INDUSTRY]] on all [[metertype METER_SUPPLY]] line connected planets with the Industry focus by 1 per [[metertype METER_POPULATION]].
+'''Increases [[metertype METER_TARGET_INDUSTRY]] on all [[metertype METER_SUPPLY]] line connected planets with the Industry focus by 0.2 per [[metertype METER_POPULATION]].
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
 [[BUILDING_AVAILABLE_ON_OUTPOSTS]], but must be in a [[STAR_BLACK]] system.'''
@@ -13237,12 +13405,16 @@ BLD_COL_SUPER_TEST_DESC
 
 # %1% hull base starlane speed.
 # %2% hull base fuel capacity.
-# %3% hull base starlane speed.
+# %3% hull base stealth.
 # %4% hull base structure value.
+# %5% hull slots listing
 HULL_DESC
 '''[[metertype METER_SPEED]]: %1%
 [[metertype METER_FUEL]]: %2%
-[[metertype METER_STRUCTURE]]: %4%'''
+[[metertype METER_STEALTH]]: %3%
+[[metertype METER_STRUCTURE]]: %4%
+
+%5%'''
 
 # %1% ship part capacity (fuel, troops, colonists, fighters).
 PART_DESC_CAPACITY
@@ -13287,7 +13459,7 @@ FT_BAY_1
 Launch Bay
 
 FT_BAY_1_DESC
-Launch system for fighters.
+Launch system for fighters. Launches [[FT_HANGAR_1_FIGHTER]] faster: Can launch all fighters in a single [[shippart FT_HANGAR_1]].
 
 FT_HANGAR_0
 Decoy Hangar
@@ -13305,16 +13477,16 @@ FT_HANGAR_1_FIGHTER
 Interceptor
 
 FT_HANGAR_1_DESC
-Storage system for minimally armed fighters.
+Storage system for minimally armed fighters. Can attack enemy fighters only. Launches faster: A [[shippart FT_BAY_1]] can launch all fighters in a single [[shippart FT_HANGAR_1]].
 
 FT_HANGAR_2
-Fighter Hangar
+Strike Fighter Hangar
 
 FT_HANGAR_2_FIGHTER
-Fighter
+Strike Fighter
 
 FT_HANGAR_2_DESC
-Storage system for lightly armed fighters.
+Storage system for lightly armed fighters. Can attack enemy ships and fighters.
 
 FT_HANGAR_3
 Bomber Hangar
@@ -13323,7 +13495,7 @@ FT_HANGAR_3_FIGHTER
 Bomber
 
 FT_HANGAR_3_DESC
-Storage system for moderately armed fighters.
+Storage system for moderately armed fighters. Can attack enemy ships only.
 
 FT_HANGAR_4
 Heavy-Bomber Hangar
@@ -13332,7 +13504,7 @@ FT_HANGAR_4_FIGHTER
 Heavy-Bomber
 
 FT_HANGAR_4_DESC
-Storage system for heavily armed fighters.
+Storage system for heavily armed fighters. Can attack enemy ships and planets.
 
 FT_HANGAR_KRILL
 Krill Swarm
@@ -13358,7 +13530,7 @@ SR_WEAPON_1_1
 Mass Driver
 
 SR_WEAPON_1_1_DESC
-'''The Mass Driver, a basic weapon.
+'''The Mass Driver, a basic weapon. Attacks ships and planets.
 
 Upgrading the weapon technology will increase the shot damage.
 
@@ -13368,7 +13540,7 @@ SR_WEAPON_2_1
 Laser Weapon
 
 SR_WEAPON_2_1_DESC
-'''The Laser, a more powerful ship's weapon than the Mass Driver.
+'''The Laser, a more powerful ship's weapon than the Mass Driver. Attacks ships and planets.
 
 Upgrading the weapon technology will increase the shot damage.
 
@@ -13378,7 +13550,7 @@ SR_WEAPON_3_1
 Plasma Cannons
 
 SR_WEAPON_3_1_DESC
-'''The Plasma Cannon, a more powerful ship's weapon than the Laser.
+'''The Plasma Cannon, a more powerful ship's weapon than the Laser. Attacks ships and planets.
 
 Upgrading the weapon technology will increase the shot damage.
 
@@ -13388,17 +13560,29 @@ SR_WEAPON_4_1
 Death Ray
 
 SR_WEAPON_4_1_DESC
-'''The Death Ray, a more powerful ship's weapon than the Plasma Cannon.
+'''The Death Ray, a more powerful ship's weapon than the Plasma Cannon. Attacks ships and planets.
 
 Upgrading the weapon technology will increase the shot damage.
 
 The weapon's [[encyclopedia DAMAGE_TITLE]] is a combination of the shot damage and any active modifiers. Each death ray on a ship built by a species with the piloting trait will do an additional 5 damage per piloting level (-5 for Bad Pilots).'''
 
+SR_ARC_DISRUPTOR
+Arc Disruptor
+
+SR_ARC_DISRUPTOR_DESC
+'''The Arc Disruptor, a multi-shot ship weapon which has good long-term upgrade research options.
+
+Charged polaron capacitors generate a molecular disruption flux wave that arcs through space hitting several ships before dispersing. The disruption flux can be substantially deflected around ship shields.
+
+Upgrading the weapon technology will increase the shot damage.
+
+The weapon's [[encyclopedia DAMAGE_TITLE]] is a combination of the shot damage and any active modifiers. Piloting trait does not affect damage.'''
+
 SR_SPINAL_ANTIMATTER
 Spinal Antimatter Cannon
 
 SR_SPINAL_ANTIMATTER_DESC
-A huge spinal mount mass driver firing heavy projectiles made of antimatter.
+A huge spinal mount mass driver firing heavy projectiles made of antimatter. Attacks ships and planets.
 
 SR_JAWS
 Jaws
@@ -14549,17 +14733,16 @@ BLD_COL_PART_3
 owned by the empire, and will increase the farther away it is; the increase will be reduced by researching techs that enable faster colony ships such as engine parts and faster hulls
 
 
-# Macro keys formatting for ship designs, hulls or parts:
-# BLD_SHIPYARD_TYPE1_TYPE2_REQUIRED (required building type(s) owned by
-#                                    empire only in the same system)
-# ANY_SYSTEM (building owned in any system by empire or ally)
-# Any other key formatting is self-explanatory (e.g. LIVING_HULL_AUTO_REGEN)
-
 ##
 ## Ship design/hull macros
 ##
-
-# Keys used in Predefined Ship Designs and Ship Hulls sections
+## Macro keys formatting for ship designs, hulls or parts:
+## BLD_SHIPYARD_TYPE1_TYPE2_REQUIRED (required building type(s) owned by
+##                                    empire only in the same system)
+## ANY_SYSTEM (building owned in any system by empire or ally)
+## Any other key formatting is self-explanatory (e.g. LIVING_HULL_AUTO_REGEN)
+## Keys used in Predefined Ship Designs and Ship Hulls sections
+##
 
 BLD_SHIPYARD_BASE_REQUIRED
 Can only be built at a location with a [[buildingtype BLD_SHIPYARD_BASE]].
@@ -14603,7 +14786,10 @@ Can only be built at a location with a [[buildingtype BLD_SHIPYARD_BASE]], an [[
 BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_XENO_FAC_ORG_CELL_GRO_CHAMB_REQUIRED
 Can only be built at a location with a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], a [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] and a [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]].
 
-# Other than Requirements
+
+##
+## Other than Requirements
+##
 
 SHIPDESIGN_DETECTION_RESEARCH_TIPS
 Further [[metertype METER_RESEARCH]] aimed at improving [[metertype METER_DETECTION]] would allow for better designs.
@@ -14630,8 +14816,8 @@ SHIPDESIGN_PLANET_INVASION
 ##
 ## Ship part/tech application macros
 ##
-
-# Keys used in Ship Parts and Technology Application sections
+## Keys used in Ship Parts and Technology Application sections
+##
 
 BLD_SHIPYARD_ORG_XENO_FAC_ORG_CELL_GRO_CHAMB_REQUIRED_ANY_SYSTEM
 This part can only be built if there is a [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] and a [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] somewhere in the empire or an ally's empire.
@@ -15357,16 +15543,16 @@ FUEL_EFFICIENCY_DESC
 [[FUEL_EFFICIENCY_TITLE]]
 
 BAD_FUEL_EFFICIENCY_LABEL
-Hull <i>%2%</i> [[encyclopedia FUEL_EFFICIENCY_TITLE]] 60%%
+Hull <i>%2%</i> -40%% [[encyclopedia FUEL_EFFICIENCY_TITLE]]
 
 AVERAGE_FUEL_EFFICIENCY_LABEL
-Hull <i>%2%</i> [[encyclopedia FUEL_EFFICIENCY_TITLE]] 100%%
+Hull <i>%2%</i> +0%% [[encyclopedia FUEL_EFFICIENCY_TITLE]]
 
 GOOD_FUEL_EFFICIENCY_LABEL
-Hull <i>%2%</i> [[encyclopedia FUEL_EFFICIENCY_TITLE]] 200%%
+Hull <i>%2%</i> +100%% [[encyclopedia FUEL_EFFICIENCY_TITLE]]
 
 GREAT_FUEL_EFFICIENCY_LABEL
-Hull <i>%2%</i> [[encyclopedia FUEL_EFFICIENCY_TITLE]] 400%%
+Hull <i>%2%</i> +300%% [[encyclopedia FUEL_EFFICIENCY_TITLE]]
 
 HULL_DESC_BAD_FUEL_EFFICIENCY
 [[encyclopedia FUEL_EFFICIENCY_TITLE]]: 60%
@@ -15548,7 +15734,6 @@ Krill Spawner
 ##
 ## AI diplomacy strings and lists
 ##
-
 
 # Newline separated list of polite alliance proposal acknowlegements.
 AI_ALLIANCE_PROPOSAL_ACKNOWLEDGEMENTS_MILD_LIST

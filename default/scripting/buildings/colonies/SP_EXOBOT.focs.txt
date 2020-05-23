@@ -25,7 +25,7 @@ BuildingType
     ]
     effectsgroups = [
         [[LIFECYCLE_MANIP_POPULATION_EFFECTS("SP_EXOBOT")]]
-        
+
         EffectsGroup
             scope = And [
                 Object id = Source.PlanetID
@@ -43,7 +43,7 @@ BuildingType
                     ]
                     empire = Source.Owner
             ]
-            
+
         EffectsGroup
             scope = Source
             activation = Turn low = Source.CreationTurn + 2

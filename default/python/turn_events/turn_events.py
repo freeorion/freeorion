@@ -1,4 +1,3 @@
-from __future__ import print_function
 from common.configure_logging import redirect_logging_to_freeorion_logger
 
 # Logging is redirected before other imports so that import errors appear in log files.

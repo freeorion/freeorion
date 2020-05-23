@@ -12,6 +12,7 @@
 #include <GG/Texture.h>
 
 #include <vector>
+class Ship;
 
 class CUIDropDownList;
 class MultiIconValueIndicator;
@@ -137,16 +138,16 @@ private:
     static void FleetsRemoved(const std::vector<std::shared_ptr<Fleet>>& fleets);
 
     class SystemNameDropDownList;
-    std::shared_ptr<SystemNameDropDownList>     m_system_name = nullptr;
-    std::shared_ptr<GG::TextControl>            m_star_type_text = nullptr;
-    std::shared_ptr<GG::Button>                 m_button_prev = nullptr;
-    std::shared_ptr<GG::Button>                 m_button_next = nullptr;
-    std::shared_ptr<GG::DynamicGraphic>         m_star_graphic = nullptr;
+    std::shared_ptr<SystemNameDropDownList>     m_system_name;
+    std::shared_ptr<GG::TextControl>            m_star_type_text;
+    std::shared_ptr<GG::Button>                 m_button_prev;
+    std::shared_ptr<GG::Button>                 m_button_next;
+    std::shared_ptr<GG::DynamicGraphic>         m_star_graphic;
 
     std::vector<GG::SubTexture> m_fleet_icons;
 
-    std::shared_ptr<PlanetPanelContainer>       m_planet_panel_container = nullptr;
-    std::shared_ptr<MultiIconValueIndicator>    m_system_resource_summary = nullptr;
+    std::shared_ptr<PlanetPanelContainer>       m_planet_panel_container;
+    std::shared_ptr<MultiIconValueIndicator>    m_system_resource_summary;
 
     bool                        m_selection_enabled = false;
 

@@ -15,14 +15,20 @@
 #include "../universe/Universe.h"
 #include "../universe/Tech.h"
 #include "../universe/Building.h"
+#include "../universe/BuildingType.h"
 #include "../universe/Planet.h"
 #include "../universe/System.h"
 #include "../universe/Ship.h"
+#include "../universe/ShipDesign.h"
+#include "../universe/ShipHull.h"
+#include "../universe/ShipPart.h"
 #include "../universe/Fleet.h"
 #include "../universe/Special.h"
 #include "../universe/Species.h"
 #include "../universe/Field.h"
+#include "../universe/FieldType.h"
 #include "../universe/Predicates.h"
+#include "../universe/UnlockableItem.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 #include "../util/EnumText.h"
@@ -36,7 +42,6 @@
 #include "../client/human/HumanClientApp.h"
 #include "../combat/CombatLogManager.h"
 
-#include <GG/DrawUtil.h>
 #include <GG/GUI.h>
 #include <GG/RichText/RichText.h>
 #include <GG/ScrollPanel.h>
@@ -53,8 +58,6 @@ FO_COMMON_API extern const int INVALID_DESIGN_ID;
 using boost::io::str;
 
 namespace {
-    const GG::X TEXT_MARGIN_X(3);
-    const GG::Y TEXT_MARGIN_Y(0);
     const int DESCRIPTION_PADDING(3);
 
     void AddOptions(OptionsDB& db) {
@@ -146,29 +149,13 @@ namespace {
         return dir_names;
     }
 
-    /** Find Encyclopedia article with given name
-     * @param[in] name name entry of the article
-     */
-    const EncyclopediaArticle& GetPediaArticle(const std::string& name) {
-        const auto& articles = GetEncyclopedia().Articles();
-        for (const auto& entry : articles) {
-            for (const EncyclopediaArticle& article : entry.second) {
-                if (article.name == name) {
-                    return article;
-                }
-            }
-        }
-        return GetEncyclopedia().empty_article;
-    }
-
-    /** Returns map from (Human-readable and thus sorted article category) to
+    /** Returns map from (Human-readable and thus sorted article name) to
         pair of (article link tag text, stringtable key for article category or
         subcategorization of it). Category is something like "ENC_TECH" and
-        subcategorization is something like a tech category. */
-    void GetSortedPediaDirEntires(const std::string& dir_name,
-                                  std::multimap<std::string,
-                                                std::pair<std::string,
-                                                          std::string>>& sorted_entries_list)
+        subcategorization is something like a tech category (eg. growth). */
+    void GetSortedPediaDirEntires(
+        const std::string& dir_name,
+        std::multimap<std::string, std::pair<std::string, std::string>>& sorted_entries_list)
     {
         ScopedTimer subdir_timer("GetSortedPediaDirEntires(" + dir_name + ")",
                                  true, std::chrono::milliseconds(20));
@@ -195,7 +182,7 @@ namespace {
 
             for (const auto& entry : encyclopedia.Articles()) {
                 // Do not add sub-categories
-                const EncyclopediaArticle& article = GetPediaArticle(entry.first);
+                const EncyclopediaArticle& article = encyclopedia.GetArticleByKey(entry.first);
                 // No article found or specifically a top-level category
                 if (!article.category.empty() && article.category != "ENC_INDEX")
                     continue;
@@ -207,7 +194,7 @@ namespace {
 
         }
         else if (dir_name == "ENC_SHIP_PART") {
-            for (const auto& entry : GetPartTypeManager()) {
+            for (const auto& entry : GetShipPartManager()) {
                 std::string custom_category = DetermineCustomCategory(entry.second->Tags());
                 if (custom_category.empty()) {
                     sorted_entries_list.insert({UserString(entry.first),
@@ -218,7 +205,7 @@ namespace {
 
         }
         else if (dir_name == "ENC_SHIP_HULL") {
-            for (const auto& entry : GetHullTypeManager()) {
+            for (const auto& entry : GetShipHullManager()) {
                 std::string custom_category = DetermineCustomCategory(entry.second->Tags());
                 if (custom_category.empty()) {
                     sorted_entries_list.insert({UserString(entry.first),
@@ -495,13 +482,13 @@ namespace {
             std::map<std::string, std::pair<std::string, std::string>> dir_entries;
 
             // part types
-            for (const auto& entry : GetPartTypeManager())
+            for (const auto& entry : GetShipPartManager())
                 if (DetermineCustomCategory(entry.second->Tags()) == dir_name)
                     dir_entries[UserString(entry.first)] =
                         std::make_pair(VarText::SHIP_PART_TAG, entry.first);
 
             // hull types
-            for (const auto& entry : GetHullTypeManager())
+            for (const auto& entry : GetShipHullManager())
                 if (DetermineCustomCategory(entry.second->Tags()) == dir_name)
                     dir_entries[UserString(entry.first)] =
                         std::make_pair(VarText::SHIP_HULL_TAG, entry.first);
@@ -530,7 +517,7 @@ namespace {
                     dir_entries[UserString(entry.first)] =
                         std::make_pair(VarText::FIELD_TYPE_TAG, entry.first);
 
-            // Add sorted entries
+            // Add sorted entries, keyed by human-readable article name, containing (tag, article stringtable key)
             for (const auto& entry : dir_entries) {
                 sorted_entries_list.insert({entry.first,
                                             {LinkTaggedText(entry.second.first, entry.second.second) + "\n",
@@ -559,7 +546,7 @@ namespace {
         std::multimap<std::string, std::pair<std::string, std::string>> sorted_entries_list;
         GetSortedPediaDirEntires(dir_name, sorted_entries_list);
 
-        // add sorted entries to page text
+        // add sorted entries linktext representation to page text
         for (const auto& entry : sorted_entries_list)
         { retval += entry.second.first; }
 
@@ -634,12 +621,9 @@ void EncyclopediaDetailPanel::CompleteConstruction() {
     m_back_button->Disable();
     m_next_button->Disable();
 
-    m_index_button->LeftClickedSignal.connect(
-        boost::bind(&EncyclopediaDetailPanel::OnIndex, this));
-    m_back_button->LeftClickedSignal.connect(
-        boost::bind(&EncyclopediaDetailPanel::OnBack, this));
-    m_next_button->LeftClickedSignal.connect(
-        boost::bind(&EncyclopediaDetailPanel::OnNext, this));
+    m_index_button->LeftClickedSignal.connect(boost::bind(&EncyclopediaDetailPanel::OnIndex, this));
+    m_back_button->LeftClickedSignal.connect(boost::bind(&EncyclopediaDetailPanel::OnBack, this));
+    m_next_button->LeftClickedSignal.connect(boost::bind(&EncyclopediaDetailPanel::OnNext, this));
 
     m_description_rich_text = GG::Wnd::Create<GG::RichText>(
         GG::X(0), GG::Y(0), ClientWidth(), ClientHeight(), "",
@@ -649,17 +633,19 @@ void EncyclopediaDetailPanel::CompleteConstruction() {
     m_scroll_panel = GG::Wnd::Create<GG::ScrollPanel>(GG::X(0), GG::Y(0), ClientWidth(),
                                                       ClientHeight(), m_description_rich_text);
 
+    namespace ph = boost::placeholders;
+
     // Copy default block factory.
     std::shared_ptr<GG::RichText::BLOCK_FACTORY_MAP>
         factory_map(new GG::RichText::BLOCK_FACTORY_MAP(*GG::RichText::DefaultBlockFactoryMap()));
     auto factory = new CUILinkTextBlock::Factory();
     // Wire this factory to produce links that talk to us.
     factory->LinkClickedSignal.connect(
-        boost::bind(&EncyclopediaDetailPanel::HandleLinkClick, this, _1, _2));
+        boost::bind(&EncyclopediaDetailPanel::HandleLinkClick, this, ph::_1, ph::_2));
     factory->LinkDoubleClickedSignal.connect(
-        boost::bind(&EncyclopediaDetailPanel::HandleLinkDoubleClick, this, _1, _2));
+        boost::bind(&EncyclopediaDetailPanel::HandleLinkDoubleClick, this, ph::_1, ph::_2));
     factory->LinkRightClickedSignal.connect(
-        boost::bind(&EncyclopediaDetailPanel::HandleLinkDoubleClick, this, _1, _2));
+        boost::bind(&EncyclopediaDetailPanel::HandleLinkDoubleClick, this, ph::_1, ph::_2));
     (*factory_map)[GG::RichText::PLAINTEXT_TAG] =
         std::shared_ptr<GG::RichText::IBlockControlFactory>(factory);
     m_description_rich_text->SetBlockFactoryMap(factory_map);
@@ -673,8 +659,7 @@ void EncyclopediaDetailPanel::CompleteConstruction() {
 
     auto search_edit = GG::Wnd::Create<SearchEdit>();
     m_search_edit = search_edit;
-    search_edit->TextEnteredSignal.connect(
-        boost::bind(&EncyclopediaDetailPanel::HandleSearchTextEntered, this));
+    search_edit->TextEnteredSignal.connect(boost::bind(&EncyclopediaDetailPanel::HandleSearchTextEntered, this));
 
     AttachChild(m_search_edit);
     AttachChild(m_graph);
@@ -697,40 +682,69 @@ void EncyclopediaDetailPanel::CompleteConstruction() {
 EncyclopediaDetailPanel::~EncyclopediaDetailPanel()
 {}
 
+namespace {
+    const int BTN_WIDTH = 36;
+    const int PAD = 2;
+
+    int IconSize() {
+        const int NAME_PTS = ClientUI::TitlePts();
+        const int COST_PTS = ClientUI::Pts();
+        const int SUMMARY_PTS = ClientUI::Pts()*4/3;
+        return 12 + NAME_PTS + COST_PTS + SUMMARY_PTS;
+    }
+}
+
 void EncyclopediaDetailPanel::DoLayout() {
-    const int PTS = ClientUI::Pts();
-    const int NAME_PTS = PTS*3/2;
-    const int COST_PTS = PTS;
-    const int SUMMARY_PTS = PTS*4/3;
+    const int NAME_PTS = ClientUI::TitlePts();
+    const int COST_PTS = ClientUI::Pts();
+    const int SUMMARY_PTS = ClientUI::Pts()*4/3;
 
-    const int ICON_SIZE = 12 + NAME_PTS + COST_PTS + SUMMARY_PTS;
-
-    const int BTN_WIDTH = 24;
-    const int Y_OFFSET = 22;
+    const int ICON_SIZE = IconSize();
 
     SectionedScopedTimer timer("EncyclopediaDetailPanel::DoLayout");
 
     // name
-    GG::Pt ul = GG::Pt(GG::X(6), GG::Y(Y_OFFSET));
-    GG::Pt lr = ul + GG::Pt(Width() - 1, GG::Y(NAME_PTS + 4));
+    GG::Pt ul = GG::Pt(BORDER_LEFT, CUIWnd::TopBorder() + PAD);
+    GG::Pt lr = ul + GG::Pt(Width(), GG::Y(NAME_PTS + 2*PAD));
     m_name_text->SetTextFormat(GG::FORMAT_LEFT);
     m_name_text->SizeMove(ul, lr);
 
     // cost / turns
-    ul += GG::Pt(GG::X0, m_name_text->Height());
-    lr = ul + GG::Pt(Width(), GG::Y(COST_PTS + 4));
+    ul += GG::Pt(GG::X0, m_name_text->Height() + PAD);
+    lr = ul + GG::Pt(Width(), GG::Y(COST_PTS + 2*PAD));
     m_cost_text->SetTextFormat(GG::FORMAT_LEFT);
     m_cost_text->SizeMove(ul, lr);
 
     // one line summary
     ul += GG::Pt(GG::X0, m_cost_text->Height());
-    lr = ul + GG::Pt(Width(), GG::Y(SUMMARY_PTS + 4));
+    lr = ul + GG::Pt(Width(), GG::Y(SUMMARY_PTS + 2*PAD));
     m_summary_text->SetTextFormat(GG::FORMAT_LEFT);
     m_summary_text->SizeMove(ul, lr);
 
+
+    // "back" button
+    ul = GG::Pt{BORDER_LEFT, ICON_SIZE + CUIWnd::TopBorder() + PAD*2};
+    lr = ul + GG::Pt{GG::X{BTN_WIDTH}, GG::Y{BTN_WIDTH}};
+    m_back_button->SizeMove(ul, lr);
+    ul += GG::Pt{GG::X{BTN_WIDTH}, GG::Y0};
+
+    // "up" button
+    lr = ul + GG::Pt{GG::X{BTN_WIDTH}, GG::Y{BTN_WIDTH}};
+    m_index_button->SizeMove(ul, lr);
+    ul += GG::Pt{GG::X{BTN_WIDTH}, GG::Y0};
+
+    // "next" button
+    lr = ul + GG::Pt{GG::X{BTN_WIDTH}, GG::Y{BTN_WIDTH}};
+    m_next_button->SizeMove(ul, lr);
+    ul += GG::Pt{GG::X{BTN_WIDTH}, GG::Y0};
+
+    // search edit box
+    lr = GG::Pt{ClientWidth(), ul.y + GG::Y{BTN_WIDTH}};
+    m_search_edit->SizeMove(ul, lr);
+
     // main verbose description (fluff, effects, unlocks, ...)
-    ul = GG::Pt(BORDER_LEFT, ICON_SIZE + BORDER_BOTTOM + TEXT_MARGIN_Y + Y_OFFSET + 1);
-    lr = GG::Pt(Width() - BORDER_RIGHT, Height() - BORDER_BOTTOM*3 - PTS - 4);
+    ul = GG::Pt{BORDER_LEFT, lr.y + PAD*3};
+    lr = ClientSize() - GG::Pt{GG::X0, GG::Y{CUIWnd::INNER_BORDER_ANGLE_OFFSET}};
     timer.EnterSection("m_scroll_panel->SizeMove");
     m_scroll_panel->SizeMove(ul, lr);
     timer.EnterSection("");
@@ -738,30 +752,9 @@ void EncyclopediaDetailPanel::DoLayout() {
     // graph
     m_graph->SizeMove(ul + GG::Pt(GG::X1, GG::Y1), lr - GG::Pt(GG::X1, GG::Y1));
 
-    // "back" button
-    ul = GG::Pt(Width() - BORDER_RIGHT*3 - BTN_WIDTH * 3 - 8,   Height() - BORDER_BOTTOM*2 - PTS);
-    lr = GG::Pt(Width() - BORDER_RIGHT*3 - BTN_WIDTH * 2 - 8,   Height() - BORDER_BOTTOM*2);
-    m_back_button->SizeMove(ul, lr);
-
-    // "up" button
-    ul = GG::Pt(Width() - BORDER_RIGHT*3 - BTN_WIDTH * 2 - 4,   Height() - BORDER_BOTTOM*3 - PTS);
-    lr = GG::Pt(Width() - BORDER_RIGHT*3 - BTN_WIDTH - 4,       Height() - BORDER_BOTTOM*3);
-    m_index_button->SizeMove(ul, lr);
-
-    // "next" button
-    ul = GG::Pt(Width() - BORDER_RIGHT*3 - BTN_WIDTH,           Height() - BORDER_BOTTOM*2 - PTS);
-    lr = GG::Pt(Width() - BORDER_RIGHT*3,                       Height() - BORDER_BOTTOM*2);
-    m_next_button->SizeMove(ul, lr);
-
-    // search edit box
-    ul = GG::Pt(BORDER_LEFT + 2,                                Height() - BORDER_BOTTOM*3 - PTS - 3);
-    lr = GG::Pt(Width() - BORDER_RIGHT*3 - BTN_WIDTH * 3 - 12,  Height() - BORDER_BOTTOM - 3);
-    m_search_edit->SizeMove(ul, lr);
-
-
     // icon
     if (m_icon) {
-        lr = GG::Pt(Width() - BORDER_RIGHT, GG::Y(ICON_SIZE + 1 + Y_OFFSET));
+        lr = GG::Pt(Width() - BORDER_RIGHT, GG::Y(ICON_SIZE + CUIWnd::TopBorder()));
         ul = lr - GG::Pt(GG::X(ICON_SIZE), GG::Y(ICON_SIZE));
         m_icon->SizeMove(ul, lr);
     }
@@ -821,12 +814,10 @@ void EncyclopediaDetailPanel::InitBuffers() {
     m_buffer_indices.resize(5);
     std::size_t previous_buffer_size = m_vertex_buffer.size();
 
-    const int Y_OFFSET = 22;
-
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
     const GG::Y ICON_SIZE = m_summary_text->Bottom() - m_name_text->Top();
-    GG::Pt cl_ul = ul + GG::Pt(BORDER_LEFT, ICON_SIZE + BORDER_BOTTOM + Y_OFFSET); // BORDER_BOTTOM is the size of the border at the bottom of a standard CUIWnd
+    GG::Pt cl_ul = ul + GG::Pt(BORDER_LEFT, ICON_SIZE + CUIWnd::TopBorder() + BTN_WIDTH + PAD*3);
     GG::Pt cl_lr = lr - GG::Pt(BORDER_RIGHT, BORDER_BOTTOM);
 
 
@@ -883,8 +874,10 @@ void EncyclopediaDetailPanel::InitBuffers() {
     previous_buffer_size = m_vertex_buffer.size();
 
     // title underline
-    m_vertex_buffer.store(Value(cl_lr.x) + 2.0f,    Value(cl_ul.y - ICON_SIZE) - 7.0f);
-    m_vertex_buffer.store(Value(cl_ul.x) - 2.0f,    Value(cl_ul.y - ICON_SIZE) - 7.0f);
+    GG::Pt underline_ul{UpperLeft() + GG::Pt{BORDER_LEFT, CUIWnd::TopBorder() - 2}};
+    GG::Pt underline_lr{underline_ul + GG::Pt{Width() - BORDER_RIGHT*3, GG::Y0}};
+    m_vertex_buffer.store(Value(underline_ul.x),    Value(underline_ul.y));
+    m_vertex_buffer.store(Value(underline_lr.x),    Value(underline_lr.y));
     m_buffer_indices[4].first = previous_buffer_size;
     m_buffer_indices[4].second = m_vertex_buffer.size() - previous_buffer_size;
     //previous_buffer_size = m_vertex_buffer.size();
@@ -932,9 +925,9 @@ void EncyclopediaDetailPanel::HandleLinkClick(const std::string& link_type, cons
         } else if (link_type == VarText::SPECIAL_TAG) {
             this->SetSpecial(data);
         } else if (link_type == VarText::SHIP_HULL_TAG) {
-            this->SetHullType(data);
+            this->SetShipHull(data);
         } else if (link_type == VarText::SHIP_PART_TAG) {
-            this->SetPartType(data);
+            this->SetShipPart(data);
         } else if (link_type == VarText::SPECIES_TAG) {
             this->SetSpecies(data);
         } else if (link_type == TextLinker::ENCYCLOPEDIA_TAG) {
@@ -998,160 +991,47 @@ void EncyclopediaDetailPanel::HandleLinkDoubleClick(const std::string& link_type
 }
 
 namespace {
-    std::unordered_map<std::string, std::pair<std::string, std::string>>
+    /** Recursively searches pedia directory \a dir_name for articles and
+      * sub-directories. Returns a map from
+      * (category_str_key, dir_name) to (readable_article_name, link_text) */
+    std::map<std::pair<std::string, std::string>, std::pair<std::string, std::string>>
         GetSubDirs(const std::string& dir_name, int depth = 0)
     {
         ScopedTimer subdir_timer("GetSubDirs(" + dir_name + ", " + std::to_string(depth) + ")",
                                  true, std::chrono::milliseconds(500));
 
         depth++;
-        std::unordered_map<std::string, std::pair<std::string, std::string>> retval;
+        std::map<std::pair<std::string, std::string>, std::pair<std::string, std::string>> retval;
         // safety check to pre-empt potential infinite loop
         if (depth > 50) {
-            WarnLogger() << "Exceeded recursive limit with lookup for pedia"
-                         << " category " << dir_name;
+            WarnLogger() << "Exceeded recursive limit with lookup for pedia category " << dir_name;
             return retval;
         }
 
 
-        std::unordered_map<std::string, std::pair<std::string, std::string>> sub_dirs;
+        // map from (human readable article name) to (article-link-tag-text, article name stringtable key)
         std::multimap<std::string, std::pair<std::string, std::string>> sorted_entries;
         GetSortedPediaDirEntires(dir_name, sorted_entries);
-        for (auto& entry : sorted_entries) {
-            // explicitly exclude textures
-            if (entry.second.second == "ENC_TEXTURES")
-                continue;
-            sub_dirs.emplace(entry.second.second,
-                             std::make_pair(entry.first, entry.second.first));
-        }
 
-        // Add each article for this directory
-        for (auto& article : sub_dirs) {
-            if (article.first == dir_name)
+
+        for (auto& entry : sorted_entries) {
+            const std::string& readable_article_name = entry.first;
+            const std::string& link_text = entry.second.first;
+            const std::string& category_str_key = entry.second.second;
+
+            // explicitly exclude textures and input directory itself
+            if (category_str_key == "ENC_TEXTURES" || category_str_key == dir_name)
                 continue;
-            // If a sub-category, add this article and any nested categories
-            for (const auto& sub_article : GetSubDirs(article.first, depth))
-                retval.emplace(sub_article);
-            retval.emplace(article);
+            retval.emplace(std::make_pair(category_str_key, dir_name), std::make_pair(readable_article_name, link_text));
+            DebugLogger() << "GetSubDirs(" << dir_name << ") storing " << category_str_key << ": " << readable_article_name;
+
+            // recurse into any sub-sub-directories
+            for (auto sub_sub_dir : GetSubDirs(category_str_key, depth))
+                retval.emplace(sub_sub_dir);
         }
 
         return retval;
     }
-}
-
-void EncyclopediaDetailPanel::HandleSearchTextEntered() {
-    // search lists of articles for typed text
-    const std::string& search_text = m_search_edit->Text();
-    if (search_text.empty())
-        return;
-
-    // assemble link text to all pedia entries, indexed by name
-    std::unordered_map<std::string, std::pair<std::string, std::string>>
-        all_pedia_entries_list;
-
-    for (auto&& subdir_name : GetSubDirs("ENC_INDEX"))
-        all_pedia_entries_list.emplace(subdir_name);
-
-    // find distinct words in search text
-    std::set<std::string> words_in_search_text;
-    for (const auto& word_range : GG::GUI::GetGUI()->FindWordsStringIndices(search_text)) {
-        if (word_range.first == word_range.second)
-            continue;
-        std::string word(search_text.begin() + Value(word_range.first), search_text.begin() + Value(word_range.second));
-        if (word.empty())
-            continue;
-        words_in_search_text.insert(word);
-    }
-
-
-    ////
-    // search through all articles for full or partial matches to search query
-    ///
-
-
-    std::multimap<std::string, std::string> exact_match_report;
-    std::multimap<std::string, std::string> word_match_report;
-    std::multimap<std::string, std::string> partial_match_report;
-    std::multimap<std::string, std::string> article_match_report;
-
-    bool search_desc = GetOptionsDB().Get<bool>("ui.pedia.search.articles.enabled");
-
-    for (const auto& entry : all_pedia_entries_list) {
-        // search for exact title matches
-        if (boost::iequals(entry.second.first, search_text)) {
-            exact_match_report.emplace(entry.second);
-            continue;
-        }
-
-        bool listed = false;
-        // search for full word matches in titles
-        for (const std::string& word : words_in_search_text) {
-            if (GG::GUI::GetGUI()->ContainsWord(entry.second.first, word)) {
-                word_match_report.emplace(entry.second);
-                listed = true;
-                break;
-            }
-        }
-        if (listed)
-            continue;
-
-        // search for partial word matches: searched-for words that appear
-        // in the title text, not necessarily as a complete word
-        for (const std::string& word : words_in_search_text) {
-            // reject searches in text for words less than 3 characters
-            if (word.size() < 3)
-                continue;
-            if (boost::icontains(entry.second.first, word)) {
-                partial_match_report.emplace(entry.second);
-                listed = true;
-                break;
-            }
-        }
-        if (listed || !search_desc)
-            continue;
-
-        // search for matches within article text
-        EncyclopediaArticle article_entry = GetPediaArticle(entry.first);
-        if (article_entry.description.empty()) {
-            // NOTE Articles generated through GetRefreshDetailPanelInfo
-            // will not be found, as no article currently exists.
-            TraceLogger() << "No description found: " << entry.first;
-            continue;
-        }
-        if (boost::icontains(UserString(article_entry.description), search_text))
-            article_match_report.emplace(entry.second);
-    }
-
-    // compile list of articles into some dynamically generated search report text
-    std::string match_report = "";
-    if (!exact_match_report.empty()) {
-        match_report += "\n" + UserString("ENC_SEARCH_EXACT_MATCHES") + "\n\n";
-        for (auto&& match : exact_match_report)
-            match_report += match.second;
-    }
-
-    if (!word_match_report.empty()) {
-        match_report += "\n" + UserString("ENC_SEARCH_WORD_MATCHES") + "\n\n";
-        for (auto&& match : word_match_report)
-            match_report += match.second;
-    }
-
-    if (!partial_match_report.empty()) {
-        match_report += "\n" + UserString("ENC_SEARCH_PARTIAL_MATCHES") + "\n\n";
-        for (auto&& match : partial_match_report)
-            match_report += match.second;
-    }
-
-    if (!article_match_report.empty()) {
-        match_report += "\n" + UserString("ENC_SEARCH_ARTICLE_MATCHES") + "\n\n";
-        for (auto&& match : article_match_report)
-            match_report += match.second;
-    }
-
-    if (match_report.empty())
-        match_report = UserString("ENC_SEARCH_NOTHING_FOUND");
-
-    AddItem(TEXT_SEARCH_RESULTS, match_report);
 }
 
 namespace {
@@ -1177,7 +1057,7 @@ namespace {
         return location ? location->ID() : INVALID_OBJECT_ID;
     }
 
-    std::vector<std::string> TechsThatUnlockItem(const ItemSpec& item) {
+    std::vector<std::string> TechsThatUnlockItem(const UnlockableItem& item) {
         std::vector<std::string> retval;
 
         for (const auto& tech : GetTechManager()) {
@@ -1185,7 +1065,7 @@ namespace {
             const std::string& tech_name = tech->Name();
 
             bool found_item = false;
-            for (const ItemSpec& unlocked_item : tech->UnlockedItems()) {
+            for (const UnlockableItem& unlocked_item : tech->UnlockedItems()) {
                 if (unlocked_item == item) {
                     found_item = true;
                     break;
@@ -1300,7 +1180,7 @@ namespace {
                                             std::string& specific_type, std::string& detailed_description,
                                             GG::Clr& color)
     {
-        const PartType* part = GetPartType(item_name);
+        const ShipPart* part = GetShipPart(item_name);
         if (!part) {
             ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't find part with name " << item_name;
             return;
@@ -1333,9 +1213,9 @@ namespace {
         if (!exclusions.empty()) {
             detailed_description += "\n\n" + UserString("ENC_SHIP_EXCLUSIONS");
             for (const auto& exclusion : exclusions) {
-                if (GetPartType(exclusion)) {
+                if (GetShipPart(exclusion)) {
                     detailed_description += LinkTaggedText(VarText::SHIP_PART_TAG, exclusion) + "  ";
-                } else if (GetHullType(exclusion)) {
+                } else if (GetShipHull(exclusion)) {
                     detailed_description += LinkTaggedText(VarText::SHIP_HULL_TAG, exclusion) + "  ";
                 } else {
                     // unknown exclusion...?
@@ -1343,7 +1223,7 @@ namespace {
             }
         }
 
-        auto unlocked_by_techs = TechsThatUnlockItem(ItemSpec(UIT_SHIP_PART, item_name));
+        auto unlocked_by_techs = TechsThatUnlockItem(UnlockableItem(UIT_SHIP_PART, item_name));
         if (!unlocked_by_techs.empty()) {
             detailed_description += "\n\n" + UserString("ENC_UNLOCKED_BY");
             for (const auto& tech_name : unlocked_by_techs)
@@ -1366,7 +1246,7 @@ namespace {
                                             std::string& specific_type, std::string& detailed_description,
                                             GG::Clr& color)
     {
-        const HullType* hull = GetHullType(item_name);
+        const ShipHull* hull = GetShipHull(item_name);
         if (!hull) {
             ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't find hull with name " << item_name;
             return;
@@ -1382,11 +1262,15 @@ namespace {
         cost_units = UserString("ENC_PP");
         general_type = UserString("ENC_SHIP_HULL");
 
+        std::string slots_list;
+        for (auto slot_type : {SL_EXTERNAL, SL_INTERNAL, SL_CORE})
+            slots_list += UserString(boost::lexical_cast<std::string>((slot_type))) + ": " + std::to_string(hull->NumSlots(slot_type)) + "\n";
         detailed_description += UserString(hull->Description()) + "\n\n" + str(FlexibleFormat(UserString("HULL_DESC"))
             % hull->Speed()
             % hull->Fuel()
-            % hull->Speed()
-            % hull->Structure());
+            % hull->Stealth()
+            % hull->Structure()
+            % slots_list);
 
         static std::vector<std::string> hull_tags_to_describe = UserStringList("FUNCTIONAL_HULL_DESC_TAGS_LIST");
         for (const std::string tag : hull_tags_to_describe) {
@@ -1403,9 +1287,9 @@ namespace {
         if (!exclusions.empty()) {
             detailed_description += "\n\n" + UserString("ENC_SHIP_EXCLUSIONS");
             for (const std::string& exclusion : exclusions) {
-                if (GetPartType(exclusion)) {
+                if (GetShipPart(exclusion)) {
                     detailed_description += LinkTaggedText(VarText::SHIP_PART_TAG, exclusion) + "  ";
-                } else if (GetHullType(exclusion)) {
+                } else if (GetShipHull(exclusion)) {
                     detailed_description += LinkTaggedText(VarText::SHIP_HULL_TAG, exclusion) + "  ";
                 } else {
                     // unknown exclusion...?
@@ -1413,7 +1297,7 @@ namespace {
             }
         }
 
-        auto unlocked_by_techs = TechsThatUnlockItem(ItemSpec(UIT_SHIP_HULL, item_name));
+        auto unlocked_by_techs = TechsThatUnlockItem(UnlockableItem(UIT_SHIP_HULL, item_name));
         if (!unlocked_by_techs.empty()) {
             detailed_description += "\n\n" + UserString("ENC_UNLOCKED_BY");
             for (const auto& tech_name : unlocked_by_techs)
@@ -1471,7 +1355,7 @@ namespace {
         }
 
         if (!unlocked_items.empty()) {
-            for (const ItemSpec& item : unlocked_items) {
+            for (const UnlockableItem& item : unlocked_items) {
                 std::string TAG;
                 switch (item.type) {
                 case UIT_BUILDING:      TAG = VarText::BUILDING_TYPE_TAG;       break;
@@ -1568,7 +1452,7 @@ namespace {
                 detailed_description += "\n\nEffects:\n" + Dump(building_type->Effects());
         }
 
-        auto unlocked_by_techs = TechsThatUnlockItem(ItemSpec(UIT_BUILDING, item_name));
+        auto unlocked_by_techs = TechsThatUnlockItem(UnlockableItem(UIT_BUILDING, item_name));
         if (!unlocked_by_techs.empty()) {
             detailed_description += "\n\n" + UserString("ENC_UNLOCKED_BY");
             for (const std::string& tech_name : unlocked_by_techs)
@@ -2220,8 +2104,8 @@ namespace {
         // meter values for display
 
         auto& species = ship->SpeciesName().empty() ? "Generic" : UserString(ship->SpeciesName());
-        float structure = ship->CurrentMeterValue(METER_MAX_STRUCTURE);
-        float shield = ship->CurrentMeterValue(METER_MAX_SHIELD);
+        float structure = ship->GetMeter(METER_MAX_STRUCTURE)->Current();
+        float shield = ship->GetMeter(METER_MAX_SHIELD)->Current();
         float attack = ship->TotalWeaponsDamage();
         float strength = std::pow(attack * structure, 0.6f);
         float typical_shot = *std::max_element(enemy_shots.begin(), enemy_shots.end());
@@ -2232,10 +2116,10 @@ namespace {
             % ship->SumCurrentPartMeterValuesForPartClass(METER_MAX_SECONDARY_STAT, PC_DIRECT_WEAPON)
             % structure
             % shield
-            % ship->CurrentMeterValue(METER_DETECTION)
-            % ship->CurrentMeterValue(METER_STEALTH)
-            % ship->CurrentMeterValue(METER_SPEED)
-            % ship->CurrentMeterValue(METER_MAX_FUEL)
+            % ship->GetMeter(METER_DETECTION)->Current()
+            % ship->GetMeter(METER_STEALTH)->Current()
+            % ship->GetMeter(METER_SPEED)->Current()
+            % ship->GetMeter(METER_MAX_FUEL)->Current()
             % ship->SumCurrentPartMeterValuesForPartClass(METER_CAPACITY, PC_COLONY)
             % ship->SumCurrentPartMeterValuesForPartClass(METER_CAPACITY, PC_TROOPS)
             % ship->FighterMax()
@@ -2320,7 +2204,7 @@ namespace {
                 if (!this_ship->SpeciesName().empty())
                     additional_species.insert(this_ship->SpeciesName());
                 if (!this_ship->OwnedBy(client_empire_id)) {
-                    enemy_DR = this_ship->InitialMeterValue(METER_MAX_SHIELD);
+                    enemy_DR = this_ship->GetMeter(METER_MAX_SHIELD)->Initial();
                     DebugLogger() << "Using selected ship for enemy values, DR: " << enemy_DR;
                     enemy_shots.clear();
                     auto this_damage = this_ship->AllWeaponsMaxDamage();
@@ -2435,8 +2319,11 @@ namespace {
         if (selected_ship != INVALID_OBJECT_ID) {
             chosen_ships.insert(selected_ship);
             if (const auto this_ship = Objects().get<Ship>(selected_ship)) {
-                if (!additional_species.empty() && ((this_ship->InitialMeterValue(METER_MAX_SHIELD) > 0) || !this_ship->OwnedBy(client_empire_id))) {
-                    enemy_DR = this_ship->InitialMeterValue(METER_MAX_SHIELD);
+                if (!additional_species.empty() && (
+                        (this_ship->GetMeter(METER_MAX_SHIELD)->Initial() > 0) ||
+                         !this_ship->OwnedBy(client_empire_id)))
+                {
+                    enemy_DR = this_ship->GetMeter(METER_MAX_SHIELD)->Initial();
                     DebugLogger() << "Using selected ship for enemy values, DR: " << enemy_DR;
                     enemy_shots.clear();
                     auto this_damage = this_ship->AllWeaponsMaxDamage();
@@ -2607,7 +2494,7 @@ namespace {
                 planet_environment = species->GetPlanetEnvironment(planet.Type());
 
             float planet_capacity = ((planet_environment == PE_UNINHABITABLE) ?
-                                     0.0f : planet.CurrentMeterValue(METER_TARGET_POPULATION)); // want value after temporary meter update, so get current, not initial value of meter
+                                     0.0f : planet.GetMeter(METER_TARGET_POPULATION)->Current()); // want value after temporary meter update, so get current, not initial value of meter
 
             retval.insert({planet_capacity, {species_name, planet_environment}});
         }
@@ -2701,13 +2588,16 @@ namespace {
         boost::algorithm::to_lower(planet_type_str);
 
         if (!filenames_by_type.count(planet_type)) {
-            auto pe_type_func = [planet_type_str](const boost::filesystem::path& path) {
-                return IsExistingFile(path) && boost::algorithm::starts_with(path.filename().string(), planet_type_str);
+            auto pe_path = ClientUI::ArtDir() / "encyclopedia" / "planet_environments";
+
+            auto pe_type_func = [planet_type_str, pe_path](const boost::filesystem::path& path) {
+                return IsExistingFile(path)
+                    && (pe_path == path.parent_path())
+                    && boost::algorithm::starts_with(path.filename().string(), planet_type_str);
             };
 
-            auto pe_path = ClientUI::ArtDir() / "encyclopedia/planet_environments";
             // retain only the filenames of each path
-            for (const auto& file_path : PathsInDir(pe_path, pe_type_func, false))
+            for (const auto& file_path : ListDir(pe_path, pe_type_func))
                 filenames_by_type[planet_type].emplace_back(PathToString(file_path.filename()));
         }
 
@@ -2721,7 +2611,7 @@ namespace {
                                           std::shared_ptr<GG::Texture>& other_texture, int& turns,
                                           float& cost, std::string& cost_units, std::string& general_type,
                                           std::string& specific_type, std::string& detailed_description,
-                                          GG::Clr& color, GG::X width)
+                                          GG::Clr& color)
     {
         general_type = UserString("SP_PLANET_SUITABILITY");
 
@@ -2811,8 +2701,7 @@ namespace {
                                             std::shared_ptr<GG::Texture>& other_texture, int& turns,
                                             float& cost, std::string& cost_units, std::string& general_type,
                                             std::string& specific_type, std::string& detailed_description,
-                                            GG::Clr& color, std::weak_ptr<const ShipDesign>& incomplete_design,
-                                            GG::X width)
+                                            GG::Clr& color, std::weak_ptr<const ShipDesign>& incomplete_design)
     {
         if (item_type == TextLinker::ENCYCLOPEDIA_TAG) {
             RefreshDetailPanelPediaTag(         item_type, item_name,
@@ -2877,9 +2766,9 @@ namespace {
                                                 incomplete_design);
         }
         else if (item_type == UNIVERSE_OBJECT         || item_type == "ENC_BUILDING"  ||
-                   item_type == "ENC_FIELD"             || item_type == "ENC_FLEET"     ||
-                   item_type == "ENC_PLANET"            || item_type == "ENC_SHIP"      ||
-                   item_type == "ENC_SYSTEM")
+                 item_type == "ENC_FIELD"             || item_type == "ENC_FLEET"     ||
+                 item_type == "ENC_PLANET"            || item_type == "ENC_SHIP"      ||
+                 item_type == "ENC_SYSTEM")
         {
             RefreshDetailPanelObjectTag(        item_type, item_name,
                                                 name, texture, other_texture, turns, cost, cost_units,
@@ -2888,7 +2777,7 @@ namespace {
         else if (item_type == PLANET_SUITABILITY_REPORT) {
             RefreshDetailPanelSuitabilityTag(   item_type, item_name,
                                                 name, texture, other_texture, turns, cost, cost_units,
-                                                general_type, specific_type, detailed_description, color, width);
+                                                general_type, specific_type, detailed_description, color);
         }
         else if (item_type == TEXT_SEARCH_RESULTS) {
             RefreshDetailPanelSearchResultsTag( item_type, item_name,
@@ -2899,6 +2788,140 @@ namespace {
             // should be handled externally...
         }
     }
+}
+
+void EncyclopediaDetailPanel::HandleSearchTextEntered() {
+    // search lists of articles for typed text
+    const std::string& search_text = m_search_edit->Text();
+    if (search_text.empty())
+        return;
+
+    // find distinct words in search text
+    std::set<std::string> words_in_search_text;
+    for (const auto& word_range : GG::GUI::GetGUI()->FindWordsStringIndices(search_text)) {
+        if (word_range.first == word_range.second)
+            continue;
+        std::string word(search_text.begin() + Value(word_range.first), search_text.begin() + Value(word_range.second));
+        if (word.empty())
+            continue;
+        words_in_search_text.insert(word);
+    }
+
+    if (words_in_search_text.empty())
+        return;
+
+
+    ////
+    // search through all articles for full or partial matches to search query
+    ///
+
+    std::multimap<std::string, std::string> exact_match_report;
+    std::multimap<std::string, std::string> word_match_report;
+    std::multimap<std::string, std::string> partial_match_report;
+    std::multimap<std::string, std::string> article_match_report;
+
+    bool search_desc = GetOptionsDB().Get<bool>("ui.pedia.search.articles.enabled");
+
+    // assemble link text to all pedia entries, indexed by name
+    auto articles_from_index_subdirs = GetSubDirs("ENC_INDEX");
+    for (const auto& entry : articles_from_index_subdirs) {
+        const auto& article_key = entry.first.first;
+        const auto& article_category = entry.first.second;
+        const auto& article_name_link = entry.second;
+        const auto& article_name = entry.second.first;
+
+        // search for exact title matches
+        if (boost::iequals(article_name, search_text)) {
+            exact_match_report.emplace(article_name_link);
+            continue;
+        }
+
+        bool listed = false;
+        // search for full word matches in titles
+        for (const std::string& word : words_in_search_text) {
+            if (GG::GUI::GetGUI()->ContainsWord(article_name, word)) {
+                word_match_report.emplace(article_name_link);
+                listed = true;
+                break;
+            }
+        }
+        if (listed)
+            continue;
+
+        // search for partial word matches: searched-for words that appear
+        // in the title text, not necessarily as a complete word
+        for (const std::string& word : words_in_search_text) {
+            // reject searches in text for words less than 3 characters
+            if (word.size() < 3)
+                continue;
+            if (boost::icontains(article_name, word)) {
+                partial_match_report.emplace(article_name_link);
+                listed = true;
+                break;
+            }
+        }
+        if (listed || !search_desc)
+            continue;
+
+        // search for matches within article text
+        const auto& article_entry = GetEncyclopedia().GetArticleByCategoryAndKey(article_category, article_key);
+        if (!article_entry.description.empty()) {
+            // article present in pedia directly
+            if (boost::icontains(UserString(article_entry.description), search_text))
+                article_match_report.emplace(article_name_link);
+
+        } else {
+            // article not in pedia. may be generated by GetRefreshDetailPanelInfo
+
+            // most of this disregarded in this case, but needs to be passed in...
+            std::shared_ptr<GG::Texture> dummy1, dummy2;
+            int dummyA;
+            float dummyB;
+            std::string dummy3, dummy4, dummy5, dummy6;
+            std::string detailed_description;
+            GG::Clr dummyC;
+            std::weak_ptr<const ShipDesign> dummyD;
+
+            GetRefreshDetailPanelInfo(article_category, article_key,
+                                      dummy3, dummy1, dummy2, dummyA, dummyB, dummy4,
+                                      dummy5, dummy6, detailed_description, dummyC,
+                                      dummyD);
+
+            if (boost::icontains(detailed_description, search_text))
+                article_match_report.emplace(article_name_link);
+        }
+    }
+
+    // compile list of articles into some dynamically generated search report text
+    std::string match_report = "";
+    if (!exact_match_report.empty()) {
+        match_report += "\n" + UserString("ENC_SEARCH_EXACT_MATCHES") + "\n\n";
+        for (auto&& match : exact_match_report)
+            match_report += match.second;
+    }
+
+    if (!word_match_report.empty()) {
+        match_report += "\n" + UserString("ENC_SEARCH_WORD_MATCHES") + "\n\n";
+        for (auto&& match : word_match_report)
+            match_report += match.second;
+    }
+
+    if (!partial_match_report.empty()) {
+        match_report += "\n" + UserString("ENC_SEARCH_PARTIAL_MATCHES") + "\n\n";
+        for (auto&& match : partial_match_report)
+            match_report += match.second;
+    }
+
+    if (!article_match_report.empty()) {
+        match_report += "\n" + UserString("ENC_SEARCH_ARTICLE_MATCHES") + "\n\n";
+        for (auto&& match : article_match_report)
+            match_report += match.second;
+    }
+
+    if (match_report.empty())
+        match_report = UserString("ENC_SEARCH_NOTHING_FOUND");
+
+    AddItem(TEXT_SEARCH_RESULTS, match_report);
 }
 
 void EncyclopediaDetailPanel::Refresh() {
@@ -2948,7 +2971,7 @@ void EncyclopediaDetailPanel::RefreshImpl() {
     GetRefreshDetailPanelInfo(m_items_it->first, m_items_it->second,
                               name, texture, other_texture, turns, cost, cost_units,
                               general_type, specific_type, detailed_description, color,
-                              m_incomplete_design, ClientWidth());
+                              m_incomplete_design);
 
     if (m_items_it->first == TextLinker::GRAPH_TAG) {
         const std::string& graph_id = m_items_it->second;
@@ -3097,13 +3120,13 @@ void EncyclopediaDetailPanel::SetTech(const std::string& tech_name) {
     AddItem("ENC_TECH", tech_name);
 }
 
-void EncyclopediaDetailPanel::SetPartType(const std::string& part_name) {
+void EncyclopediaDetailPanel::SetShipPart(const std::string& part_name) {
     if (m_items_it != m_items.end() && part_name == m_items_it->second)
         return;
     AddItem("ENC_SHIP_PART", part_name);
 }
 
-void EncyclopediaDetailPanel::SetHullType(const std::string& hull_name) {
+void EncyclopediaDetailPanel::SetShipHull(const std::string& hull_name) {
     if (m_items_it != m_items.end() && hull_name == m_items_it->second)
         return;
     AddItem("ENC_SHIP_HULL", hull_name);
@@ -3219,11 +3242,11 @@ void EncyclopediaDetailPanel::SetItem(std::shared_ptr<const Planet> planet)
 void EncyclopediaDetailPanel::SetItem(const Tech* tech)
 { SetTech(tech ? tech->Name() : EMPTY_STRING); }
 
-void EncyclopediaDetailPanel::SetItem(const PartType* part)
-{ SetPartType(part ? part->Name() : EMPTY_STRING); }
+void EncyclopediaDetailPanel::SetItem(const ShipPart* part)
+{ SetShipPart(part ? part->Name() : EMPTY_STRING); }
 
-void EncyclopediaDetailPanel::SetItem(const HullType* hull_type)
-{ SetHullType(hull_type ? hull_type->Name() : EMPTY_STRING); }
+void EncyclopediaDetailPanel::SetItem(const ShipHull* ship_hull)
+{ SetShipHull(ship_hull ? ship_hull->Name() : EMPTY_STRING); }
 
 void EncyclopediaDetailPanel::SetItem(const BuildingType* building_type)
 { SetBuildingType(building_type ? building_type->Name() : EMPTY_STRING); }

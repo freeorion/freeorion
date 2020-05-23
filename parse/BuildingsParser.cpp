@@ -6,13 +6,12 @@
 #include "ValueRefParser.h"
 #include "CommonParamsParser.h"
 
-#include "../universe/Building.h"
+#include "../universe/BuildingType.h"
 #include "../universe/Enums.h"
 #include "../universe/Condition.h"
 #include "../universe/ValueRef.h"
+#include "../util/Directories.h"
 
-//TODO: replace with std::make_unique when transitioning to C++14
-#include <boost/smart_ptr/make_unique.hpp>
 
 #define DEBUG_PARSERS 0
 
@@ -35,7 +34,7 @@ namespace {
                          const std::string& icon,
                          bool& pass)
     {
-        auto building_type = boost::make_unique<BuildingType>(
+        auto building_type = std::make_unique<BuildingType>(
             name, description, *common_params.OpenEnvelope(pass), capture_result, icon);
 
         building_types.insert(std::make_pair(building_type->Name(), std::move(building_type)));
@@ -122,9 +121,9 @@ namespace parse {
     start_rule_payload buildings(const boost::filesystem::path& path) {
         const lexer lexer;
         start_rule_payload building_types;
-        for (const boost::filesystem::path& file : ListScripts(path)) {
+
+        for (const auto& file : ListDir(path, IsFOCScript))
             /*auto success =*/ detail::parse_file<grammar, start_rule_payload>(lexer, file, building_types);
-        }
 
         return building_types;
     }

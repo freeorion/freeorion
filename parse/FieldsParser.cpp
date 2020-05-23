@@ -4,11 +4,10 @@
 #include "EffectParser.h"
 
 #include "../universe/Effect.h"
-#include "../universe/Field.h"
+#include "../universe/FieldType.h"
+#include "../util/Directories.h"
 
 #include <boost/spirit/include/phoenix.hpp>
-//TODO: replace with std::make_unique when transitioning to C++14
-#include <boost/smart_ptr/make_unique.hpp>
 
 
 #define DEBUG_PARSERS 0
@@ -31,7 +30,7 @@ namespace {
                           const std::string& graphic,
                           bool& pass)
     {
-        auto fieldtype_ptr = boost::make_unique<FieldType>(
+        auto fieldtype_ptr = std::make_unique<FieldType>(
             name, description, stealth, tags,
             (effects ? OpenEnvelopes(*effects, pass) : std::vector<std::unique_ptr<Effect::EffectsGroup>>()),
             graphic);
@@ -116,9 +115,8 @@ namespace parse {
         const lexer lexer;
         start_rule_payload field_types;
 
-        for (const boost::filesystem::path& file : ListScripts(path)) {
+        for (const auto& file : ListDir(path, IsFOCScript))
             /*auto success =*/ detail::parse_file<grammar, start_rule_payload>(lexer, file, field_types);
-        }
 
         return field_types;
     }

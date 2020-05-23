@@ -4,12 +4,12 @@ Part
     class = Shield
     capacity = 0
     mountableSlotTypes = [Internal]
-    buildcost = 70 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 4
     tags = [ "PEDIA_PC_SHIELD" ]
     location = And [
         OwnedBy empire = Source.Owner
-        /// @content_tag{ROBOTIC} Allows a location to produce this PartType
+        /// @content_tag{ROBOTIC} Allows a location to produce this ShipPart
         HasTag name = "ROBOTIC"
     ]
     effectsgroups =
@@ -19,13 +19,13 @@ Part
             scope = And [
                 Source
                 HasTag name = "ROBOTIC"
-                /// @content_tag{ROBOTIC_HULL} Combined with ROBOTIC tag, allows shield increase from this PartType
+                /// @content_tag{ROBOTIC_HULL} Combined with ROBOTIC tag, allows shield increase from this ShipPart
                 HasTag name = "ROBOTIC_HULL"
             ]
             activation = ([[ROBOTIC_SHIELD_EFFECT]] >= [[BEST_SHIELD_EFFECT]])
             stackinggroup = "ROBOTIC_SHIELD_PART_STACK"
             accountinglabel = "ROBOTIC_INTERFACE_EFFECT"
-            effects = SetMaxShield value = Value - [[BEST_SHIELD_EFFECT]] + [[ROBOTIC_SHIELD_EFFECT]]
+            effects = SetMaxShield value = Value - [[BEST_SHIELD_EFFECT]] + ( [[ROBOTIC_SHIELD_EFFECT]] * [[SHIP_SHIELD_FACTOR]] )
     icon = "icons/ship_parts/robotic-interface-shields.png"
 
 
@@ -69,3 +69,5 @@ max(max(max(max(
 '''
 
 #include "/scripting/common/upkeep.macros"
+
+#include "/scripting/common/misc.macros"

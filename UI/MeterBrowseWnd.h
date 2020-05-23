@@ -31,14 +31,14 @@ protected:
     MeterType                   m_secondary_meter_type;
     int                         m_object_id;
 
-    std::shared_ptr<GG::Label>  m_summary_title = nullptr;
-    std::shared_ptr<GG::Label>  m_current_label = nullptr;
-    std::shared_ptr<GG::Label>  m_current_value = nullptr;
-    std::shared_ptr<GG::Label>  m_next_turn_label = nullptr;
-    std::shared_ptr<GG::Label>  m_next_turn_value = nullptr;
-    std::shared_ptr<GG::Label>  m_change_label = nullptr;
-    std::shared_ptr<GG::Label>  m_change_value = nullptr;
-    std::shared_ptr<GG::Label>  m_meter_title = nullptr;
+    std::shared_ptr<GG::Label>  m_summary_title;
+    std::shared_ptr<GG::Label>  m_current_label;
+    std::shared_ptr<GG::Label>  m_current_value;
+    std::shared_ptr<GG::Label>  m_next_turn_label;
+    std::shared_ptr<GG::Label>  m_next_turn_value;
+    std::shared_ptr<GG::Label>  m_change_label;
+    std::shared_ptr<GG::Label>  m_change_value;
+    std::shared_ptr<GG::Label>  m_meter_title;
 
     std::vector<std::pair<std::shared_ptr<GG::Label>, std::shared_ptr<GG::Label>>>
                                 m_effect_labels_and_values;

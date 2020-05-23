@@ -1,4 +1,4 @@
-/* GG is a GUI for SDL and OpenGL.
+/* GG is a GUI for OpenGL.
    Copyright (C) 2003-2008 T. Zachary Laine
 
    This library is free software; you can redistribute it and/or
@@ -44,13 +44,7 @@ TextControl::TextControl(X x, Y y, X w, Y h, const std::string& str,
     Control(x, y, w, h, flags),
     m_format(format),
     m_text_color(color),
-    m_clip_text(false),
-    m_set_min_size(false),
-    m_code_points(0),
-    m_font(font),
-    m_render_cache(nullptr),
-    m_cached_minusable_size_width(X0),
-    m_cached_minusable_size(Pt())
+    m_font(font)
 {
     ValidateFormat();
     SetText(str);
@@ -62,17 +56,9 @@ TextControl::TextControl(X x, Y y, X w, Y h, const std::string& str,
                          Clr color /*= CLR_BLACK*/, Flags<TextFormat> format /*= FORMAT_NONE*/,
                          Flags<WndFlag> flags /*= NO_WND_FLAGS*/) :
     Control(x, y, w, h, flags),
-    m_text(),
     m_format(format),
     m_text_color(color),
-    m_clip_text(false),
-    m_set_min_size(false),
-    m_text_elements(),
-    m_code_points(0),
-    m_font(font),
-    m_render_cache(nullptr),
-    m_cached_minusable_size_width(X0),
-    m_cached_minusable_size(Pt())
+    m_font(font)
 {
     ValidateFormat();
     SetText(str, text_elements);
@@ -88,7 +74,6 @@ TextControl::TextControl(const TextControl& that) :
     m_text_elements(that.m_text_elements),
     m_code_points(that.m_code_points),
     m_font(that.m_font),
-    m_render_cache(nullptr),
     m_cached_minusable_size_width(that.m_cached_minusable_size_width),
     m_cached_minusable_size(that.m_cached_minusable_size)
 {
@@ -154,7 +139,7 @@ std::string TextControl::Text(CPSize from, CPSize to) const
     CPSize low = std::max(CP0, std::min(from, to));
     CPSize high = std::min(Length(), std::max(from, to));
 
-    //std::cout << "low: " << low << "  high: " << high << std::endl << std::flush;
+    //std::cout << "low: " << low << "  high: " << high << std::endl;
 
     auto low_pos = LinePositionOf(low, m_line_data);
     auto high_pos = LinePositionOf(high, m_line_data);
@@ -166,9 +151,9 @@ std::string TextControl::Text(CPSize from, CPSize to) const
     auto high_it = m_text.begin() + Value(high_string_idx);
 
     try {
-        //std::cout << "dist begin to low: " << std::distance(m_text.begin(), low_it) << std::endl << std::flush;
-        //std::cout << "dist low to high: " << std::distance(low_it, high_it) << std::endl << std::flush;
-        //std::cout << "dist high to end: " << std::distance(high_it, m_text.end()) << std::endl << std::flush;
+        //std::cout << "dist begin to low: " << std::distance(m_text.begin(), low_it) << std::endl;
+        //std::cout << "dist low to high: " << std::distance(low_it, high_it) << std::endl;
+        //std::cout << "dist high to end: " << std::distance(high_it, m_text.end()) << std::endl;
 
         return std::string(low_it, high_it);
     } catch (...) {

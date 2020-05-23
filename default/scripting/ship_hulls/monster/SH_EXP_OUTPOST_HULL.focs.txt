@@ -3,6 +3,7 @@ Hull
     description = "SH_EXP_OUTPOST_HULL_DESC"
     speed = 0
     fuel = 1
+    NoDefaultFuelEffect
     stealth = 55
     structure = 1700
     slots = [
@@ -36,23 +37,23 @@ Hull
                 InSystem id = Source.SystemID
             ]   
             effects = [
-                SetShield value = Value - 15
-                SetDamage partname = "SR_WEAPON_1_1" value = Value - 1
-                SetDamage partname = "SR_WEAPON_1_2" value = Value - 2
-                SetDamage partname = "SR_WEAPON_1_3" value = Value - 2
-                SetDamage partname = "SR_WEAPON_1_4" value = Value - 3
-                SetDamage partname = "SR_WEAPON_2_1" value = Value - 3
-                SetDamage partname = "SR_WEAPON_2_2" value = Value - 3
-                SetDamage partname = "SR_WEAPON_2_3" value = Value - 3
-                SetDamage partname = "SR_WEAPON_2_4" value = Value - 4
-                SetDamage partname = "SR_WEAPON_3_1" value = Value - 4
-                SetDamage partname = "SR_WEAPON_3_2" value = Value - 4
-                SetDamage partname = "SR_WEAPON_3_3" value = Value - 5
-                SetDamage partname = "SR_WEAPON_3_4" value = Value - 6
-                SetDamage partname = "SR_WEAPON_4_1" value = Value - 5
-                SetDamage partname = "SR_WEAPON_4_2" value = Value - 6
-                SetDamage partname = "SR_WEAPON_4_3" value = Value - 8
-                SetDamage partname = "SR_WEAPON_4_4" value = Value - 10
+                SetShield value = Value - (15 * [[SHIP_SHIELD_FACTOR]] )
+                SetDamage partname = "SR_WEAPON_1_1" value = Value - (1 * [[SHIP_WEAPON_DAMAGE_FACTOR]] )
+                SetDamage partname = "SR_WEAPON_1_2" value = Value - (2 * [[SHIP_WEAPON_DAMAGE_FACTOR]] )
+                SetDamage partname = "SR_WEAPON_1_3" value = Value - (2 * [[SHIP_WEAPON_DAMAGE_FACTOR]] )
+                SetDamage partname = "SR_WEAPON_1_4" value = Value - (3 * [[SHIP_WEAPON_DAMAGE_FACTOR]] )
+                SetDamage partname = "SR_WEAPON_2_1" value = Value - (3 * [[SHIP_WEAPON_DAMAGE_FACTOR]] )
+                SetDamage partname = "SR_WEAPON_2_2" value = Value - (3 * [[SHIP_WEAPON_DAMAGE_FACTOR]] )
+                SetDamage partname = "SR_WEAPON_2_3" value = Value - (3 * [[SHIP_WEAPON_DAMAGE_FACTOR]] )
+                SetDamage partname = "SR_WEAPON_2_4" value = Value - (4 * [[SHIP_WEAPON_DAMAGE_FACTOR]] )
+                SetDamage partname = "SR_WEAPON_3_1" value = Value - (4 * [[SHIP_WEAPON_DAMAGE_FACTOR]] )
+                SetDamage partname = "SR_WEAPON_3_2" value = Value - (4 * [[SHIP_WEAPON_DAMAGE_FACTOR]] )
+                SetDamage partname = "SR_WEAPON_3_3" value = Value - (5 * [[SHIP_WEAPON_DAMAGE_FACTOR]] )
+                SetDamage partname = "SR_WEAPON_3_4" value = Value - (6 * [[SHIP_WEAPON_DAMAGE_FACTOR]] )
+                SetDamage partname = "SR_WEAPON_4_1" value = Value - (5 * [[SHIP_WEAPON_DAMAGE_FACTOR]] )
+                SetDamage partname = "SR_WEAPON_4_2" value = Value - (6 * [[SHIP_WEAPON_DAMAGE_FACTOR]] )
+                SetDamage partname = "SR_WEAPON_4_3" value = Value - (8 * [[SHIP_WEAPON_DAMAGE_FACTOR]] )
+                SetDamage partname = "SR_WEAPON_4_4" value = Value - (10 * [[SHIP_WEAPON_DAMAGE_FACTOR]] )
             ]
     ]
     icon = ""
@@ -61,3 +62,4 @@ Hull
 #include "monster.macros"
 
 #include "../ship_hulls.macros"
+#include "/scripting/common/misc.macros"

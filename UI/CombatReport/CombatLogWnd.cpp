@@ -134,8 +134,8 @@ namespace {
     { return object->ObjectType() == UniverseObjectType::OBJ_SHIP; }
 
     bool HasPopulation(std::shared_ptr<UniverseObject> object) {
-        return object->GetMeter(METER_POPULATION) &&
-               object->InitialMeterValue(METER_POPULATION) > 0.0f;
+        const auto* m = object->GetMeter(METER_POPULATION);
+        return m && m->Initial() > 0.0f;
     }
 
     std::string EmpireIdToText(int empire_id) {
@@ -257,10 +257,8 @@ namespace {
         AccordionPanel::CompleteConstruction();
         AccordionPanel::SetInteriorColor(ClientUI::CtrlColor());
 
-        m_expand_button->LeftPressedSignal.connect(
-            boost::bind(&CombatLogAccordionPanel::ToggleExpansion, this));
-        this->ExpandCollapseSignal.connect(
-            boost::bind(&CombatLogWnd::Impl::HandleWndChanged, &log));
+        m_expand_button->LeftPressedSignal.connect(boost::bind(&CombatLogAccordionPanel::ToggleExpansion, this));
+        this->ExpandCollapseSignal.connect(boost::bind(&CombatLogWnd::Impl::HandleWndChanged, &log));
 
         SetBorderMargin(BORDER_MARGIN);
 
@@ -336,10 +334,8 @@ namespace {
         AccordionPanel::CompleteConstruction();
         AccordionPanel::SetInteriorColor(ClientUI::CtrlColor());
 
-        m_expand_button->LeftPressedSignal.connect(
-            boost::bind(&EmpireForcesAccordionPanel::ToggleExpansion, this));
-        this->ExpandCollapseSignal.connect(
-            boost::bind(&CombatLogWnd::Impl::HandleWndChanged, &log));
+        m_expand_button->LeftPressedSignal.connect(boost::bind(&EmpireForcesAccordionPanel::ToggleExpansion, this));
+        this->ExpandCollapseSignal.connect(boost::bind(&CombatLogWnd::Impl::HandleWndChanged, &log));
 
         SetBorderMargin(BORDER_MARGIN);
 
@@ -437,11 +433,13 @@ namespace {
                     boost::bind(&LazyScrollerLinkText::HandleMaybeVisible, this)));
             }
 
+            namespace ph = boost::placeholders;
+
             if (const auto* scroll_panel = FindParentOfType<GG::ScrollPanel>(&parent)) {
                 const auto* scroll = scroll_panel->GetScroll();
                 m_signals.push_back(scroll->ScrolledAndStoppedSignal.connect(
                     boost::bind(&LazyScrollerLinkText::HandleScrolledAndStopped,
-                                this, _1, _2, _3, _4)));
+                              this, ph::_1, ph::_2, ph::_3, ph::_4)));
             }
 
             // Parent doesn't contain any of the expected parents so just

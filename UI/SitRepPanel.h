@@ -54,12 +54,12 @@ private:
     int GetNextNonEmptySitrepsTurn(std::map<int, std::list<SitRepEntry>>& turns,
                                    int turn, bool forward) const;
 
-    std::shared_ptr<GG::ListBox>    m_sitreps_lb = nullptr;
-    std::shared_ptr<GG::Button>     m_prev_turn_button = nullptr;
-    std::shared_ptr<GG::Button>     m_next_turn_button = nullptr;
-    std::shared_ptr<GG::Button>     m_last_turn_button = nullptr;
-    std::shared_ptr<GG::Button>     m_filter_button = nullptr;
-    int                             m_showing_turn;
+    std::shared_ptr<GG::ListBox>    m_sitreps_lb;
+    std::shared_ptr<GG::Button>     m_prev_turn_button;
+    std::shared_ptr<GG::Button>     m_next_turn_button;
+    std::shared_ptr<GG::Button>     m_last_turn_button;
+    std::shared_ptr<GG::Button>     m_filter_button;
+    int                             m_showing_turn = 0;
     std::set<std::string>           m_hidden_sitrep_templates;
 };
 

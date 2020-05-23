@@ -3,8 +3,10 @@ Hull
     description = "SH_COLONY_BASE_DESC"
     speed = 0
     fuel = 0
+    NoDefaultFuelEffect
     stealth = 5
-    structure = 3
+    structure = 2
+    NoDefaultStructureEffect
     slots = [
         Slot type = Internal position = (0.38, 0.50)
         Slot type = Internal position = (0.50, 0.50)
@@ -14,11 +16,23 @@ Hull
     buildTime = 3
     tags = [ "PEDIA_HULL_LINE_GENERIC" ]
     location = OwnedBy empire = Source.Owner
-    effectsgroups =
+    effectsgroups = [
         [[REGULAR_HULL_DETECTION]]
+
+        // There are weapons designed to kill a base hull with a single shot (Arc Disruptor)
+        // Also mines should be able to down base hull
+        // So we scale the base hull with the lower of those scaling factors
+        EffectsGroup
+            scope = Source
+            activation = Source
+            priority = 0  // DefaultStructureEffect priority is zero
+            effects = SetMaxStructure value = 2 * min([[SHIP_WEAPON_DAMAGE_FACTOR]], [[SHIP_STRUCTURE_FACTOR]])
+    ]
     icon = "icons/ship_hulls/colony_base_hull_small.png"
     graphic = "hulls_design/colony_base_hull.png"
 
 #include "ship_hulls.macros"
 
 #include "/scripting/common/upkeep.macros"
+
+#include "/scripting/common/misc.macros"

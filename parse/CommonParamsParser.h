@@ -8,7 +8,7 @@
 #include "EnumParser.h"
 #include "MovableEnvelope.h"
 #include "../universe/EnumsFwd.h"
-#include "../universe/ShipDesign.h"
+#include "../universe/CommonParams.h"
 
 #include <boost/spirit/include/qi.hpp>
 

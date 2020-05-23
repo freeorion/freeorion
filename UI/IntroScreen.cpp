@@ -17,9 +17,9 @@
 #include "../util/XMLDoc.h"
 
 #include <GG/GUI.h>
-#include <GG/DrawUtil.h>
 #include <GG/StaticGraphic.h>
 #include <GG/Texture.h>
+#include <GG/Layout.h>
 
 #include <boost/filesystem/fstream.hpp>
 
@@ -64,16 +64,16 @@ public:
     }
 
 private:
-    void            DrawCredits(GG::X x1, GG::Y y1, GG::X x2, GG::Y y2, int transparency);
-    void            OnExit();
+    void DrawCredits(GG::X x1, GG::Y y1, GG::X x2, GG::Y y2, int transparency);
+    void OnExit();
 
     XMLElement                  m_credits;
     int                         m_cx, m_cy, m_cw, m_ch, m_co;
     int                         m_start_time;
     int                         m_scroll_offset = 0;
-    int                         m_render;
-    int                         m_display_list_id;
-    int                         m_credits_height;
+    int                         m_render = true;
+    int                         m_display_list_id = 0;
+    int                         m_credits_height = 0;
     std::shared_ptr<GG::Font>   m_font;
 };
 
@@ -85,10 +85,7 @@ CreditsWnd::CreditsWnd(GG::X x, GG::Y y, GG::X w, GG::Y h, const XMLElement &cre
     m_cw(cw),
     m_ch(ch),
     m_co(co),
-    m_start_time(GG::GUI::GetGUI()->Ticks()),
-    m_render(true),
-    m_display_list_id(0),
-    m_credits_height(0)
+    m_start_time(GG::GUI::GetGUI()->Ticks())
 {
     m_font = ClientUI::GetFont(static_cast<int>(ClientUI::Pts()*1.3));
 
@@ -233,7 +230,7 @@ void IntroScreen::CompleteConstruction() {
     GG::Wnd::CompleteConstruction();
 
     m_menu = GG::Wnd::Create<CUIWnd>(UserString("INTRO_WINDOW_TITLE"), GG::X1, GG::Y1,
-                                  MAIN_MENU_WIDTH, MAIN_MENU_HEIGHT, GG::ONTOP | GG::INTERACTIVE);
+                                     MAIN_MENU_WIDTH, MAIN_MENU_HEIGHT, GG::ONTOP | GG::INTERACTIVE);
 
     m_splash = GG::Wnd::Create<GG::StaticGraphic>(ClientUI::GetTexture(ClientUI::ArtDir() / "splash.png"), GG::GRAPHIC_FITGRAPHIC, GG::INTERACTIVE);
 
@@ -261,28 +258,58 @@ void IntroScreen::CompleteConstruction() {
     m_exit_game =     Wnd::Create<CUIButton>(UserString("INTRO_BTN_EXIT"));
 
     //connect signals and slots
-    m_continue->LeftClickedSignal.connect(
-        boost::bind(&IntroScreen::OnContinue, this));
-    m_single_player->LeftClickedSignal.connect(
-        boost::bind(&IntroScreen::OnSinglePlayer, this));
-    m_quick_start->LeftClickedSignal.connect(
-        boost::bind(&IntroScreen::OnQuickStart, this));
-    m_multi_player->LeftClickedSignal.connect(
-        boost::bind(&IntroScreen::OnMultiPlayer, this));
-    m_load_game->LeftClickedSignal.connect(
-        boost::bind(&IntroScreen::OnLoadGame, this));
-    m_options->LeftClickedSignal.connect(
-        boost::bind(&IntroScreen::OnOptions, this));
-    m_pedia->LeftClickedSignal.connect(
-        boost::bind(&IntroScreen::OnPedia, this));
-    m_about->LeftClickedSignal.connect(
-        boost::bind(&IntroScreen::OnAbout, this));
-    m_website->LeftClickedSignal.connect(
-        boost::bind(&IntroScreen::OnWebsite, this));
-    m_credits->LeftClickedSignal.connect(
-        boost::bind(&IntroScreen::OnCredits, this));
-    m_exit_game->LeftClickedSignal.connect(
-        boost::bind(&IntroScreen::OnExitGame, this));
+    m_continue->LeftClickedSignal.connect(      boost::bind(&IntroScreen::OnContinue, this));
+    m_single_player->LeftClickedSignal.connect( boost::bind(&IntroScreen::OnSinglePlayer, this));
+    m_quick_start->LeftClickedSignal.connect(   boost::bind(&IntroScreen::OnQuickStart, this));
+    m_multi_player->LeftClickedSignal.connect(  boost::bind(&IntroScreen::OnMultiPlayer, this));
+    m_load_game->LeftClickedSignal.connect(     boost::bind(&IntroScreen::OnLoadGame, this));
+    m_options->LeftClickedSignal.connect(       boost::bind(&IntroScreen::OnOptions, this));
+    m_pedia->LeftClickedSignal.connect(         boost::bind(&IntroScreen::OnPedia, this));
+    m_about->LeftClickedSignal.connect(         boost::bind(&IntroScreen::OnAbout, this));
+    m_website->LeftClickedSignal.connect(       boost::bind(&IntroScreen::OnWebsite, this));
+    m_credits->LeftClickedSignal.connect(       boost::bind(&IntroScreen::OnCredits, this));
+    m_exit_game->LeftClickedSignal.connect(     boost::bind(&IntroScreen::OnExitGame, this));
+
+    auto button_list = {m_continue, m_single_player, m_quick_start, m_multi_player, m_load_game,
+                        m_options, m_pedia, m_about, m_website, m_credits, std::shared_ptr<GG::Button>(), m_exit_game};
+    GG::X needed_width = GG::X1;
+    GG::Y needed_height = GG::Y1;
+    for (auto& b : button_list) {
+        if (!b)
+            continue;
+        needed_width = std::max(needed_width, b->MinUsableSize().x);
+        needed_height = std::max(needed_height, b->MinUsableSize().y);
+    }
+    int PAD = Value(needed_width) / 16;
+    bool have_load = HumanClientApp::GetApp()->IsLoadGameAvailable();
+
+    //Layout(X x, Y y, X w, Y h, std::size_t rows, std::size_t columns,
+    //       unsigned int border_margin = 0, unsigned int cell_margin = INVALID_CELL_MARGIN);
+    auto layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0, GG::X1, GG::Y1, 12, 1, PAD);
+    layout->SetMinimumColumnWidth(0, needed_width + PAD*2);
+    std::size_t row_idx = 0;
+    for (auto& b : button_list) {
+        if (!b) {   // empty row to separate exit from other buttons
+            layout->SetMinimumRowHeight(row_idx, needed_height);
+
+        } else if (b == m_continue || b == m_load_game) {
+            if (have_load) {            // standard spacing when buttons shown
+                b->Resize(GG::Pt(needed_width + PAD, needed_height));
+                layout->SetMinimumRowHeight(row_idx, needed_height + PAD);
+                layout->Add(b, row_idx, 0, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+            } else if (row_idx > 0) {   // smaller gap for hidden buttons, except don't need extra gap if at top
+                layout->SetMinimumRowHeight(row_idx, GG::Y(PAD));
+            }
+
+        } else {    // standard spacing for most buttons
+            b->Resize(GG::Pt(needed_width + PAD, needed_height));
+            layout->SetMinimumRowHeight(row_idx, needed_height + PAD);
+            layout->Add(b, row_idx, 0, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+        }
+
+        row_idx++;
+    }
+    m_menu->SetLayout(layout);
 
     RequirePreRender();
 }
@@ -325,8 +352,7 @@ void IntroScreen::OnPedia() {
     enc_panel->SetIndex();
     enc_panel->ValidatePosition();
 
-    enc_panel->ClosingSignal.connect(
-        boost::bind(&EncyclopediaDetailPanel::EndRun, enc_panel));
+    enc_panel->ClosingSignal.connect(boost::bind(&EncyclopediaDetailPanel::EndRun, enc_panel));
 
     enc_panel->Run();
 }
@@ -397,84 +423,15 @@ void IntroScreen::PreRender() {
     m_logo->Resize(GG::Pt(this->Width(), this->Height() / 10));
     m_version->MoveTo(GG::Pt(this->Width() - m_version->Width(), this->Height() - m_version->Height()));
 
-    //size calculation consts and variables
-    const GG::X MIN_BUTTON_WIDTH(160);
-    const GG::Y MIN_BUTTON_HEIGHT(40);
-    GG::X button_width(0);              //width of the buttons
-    GG::Y button_cell_height(0);        //height of the buttons
-    const GG::X H_MAINMENU_MARGIN(40);  //horizontal empty space
-    const GG::Y V_MAINMENU_MARGIN(40);  //vertical empty space
-    GG::X mainmenu_width(0);            //width of the mainmenu
-    GG::Y mainmenu_height(0);           //height of the mainmenu
-
-    //calculate necessary button width
-    button_width = std::max(button_width, m_continue->MinUsableSize().x);
-    button_width = std::max(button_width, m_single_player->MinUsableSize().x);
-    button_width = std::max(button_width, m_quick_start->MinUsableSize().x);
-    button_width = std::max(button_width, m_multi_player->MinUsableSize().x);
-    button_width = std::max(button_width, m_load_game->MinUsableSize().x);
-    button_width = std::max(button_width, m_options->MinUsableSize().x);
-    button_width = std::max(button_width, m_pedia->MinUsableSize().x);
-    button_width = std::max(button_width, m_about->MinUsableSize().x);
-    button_width = std::max(button_width, m_website->MinUsableSize().x);
-    button_width = std::max(button_width, m_credits->MinUsableSize().x);
-    button_width = std::max(button_width, m_exit_game->MinUsableSize().x);
-    button_width = std::max(MIN_BUTTON_WIDTH, button_width);
-
-    //calculate  necessary button height
-    button_cell_height = std::max(MIN_BUTTON_HEIGHT, m_exit_game->MinUsableSize().y);
-    // calculate window width and height
-    mainmenu_width  =         button_width  + H_MAINMENU_MARGIN;
-    mainmenu_height = 1.75 * button_cell_height + V_MAINMENU_MARGIN; // 1.75 for the exit button
-
-    // place buttons
-    GG::Pt button_ul(GG::X(15), GG::Y(12));
-    GG::Pt button_lr(button_width, m_exit_game->MinUsableSize().y);
-
-    button_lr += button_ul;
-
-    const auto place_button =
-        [&button_ul, &button_lr, &button_cell_height, &mainmenu_height]
-        (CUIWnd* menu, std::shared_ptr<GG::Button> button)
-        {
-            button->SizeMove(button_ul, button_lr);
-            menu->AttachChild(std::move(button));
-            button_ul.y += GG::Y(button_cell_height);
-            button_lr.y += GG::Y(button_cell_height);
-            mainmenu_height += button_cell_height;
-        };
-
-    const auto unplace_button = [](CUIWnd* menu, const std::shared_ptr<GG::Button>& button) {
-        menu->DetachChild(button);
-    };
-
-    if (HumanClientApp::GetApp()->IsLoadGameAvailable())
-        place_button(m_menu.get(), m_continue);
-    else
-        unplace_button(m_menu.get(), m_continue);
-    place_button(m_menu.get(), m_single_player);
-    place_button(m_menu.get(), m_quick_start);
-    place_button(m_menu.get(), m_multi_player);
-    if (HumanClientApp::GetApp()->IsLoadGameAvailable())
-        place_button(m_menu.get(), m_load_game);
-    else
-        unplace_button(m_menu.get(), m_load_game);
-    place_button(m_menu.get(), m_options);
-    place_button(m_menu.get(), m_pedia);
-    place_button(m_menu.get(), m_about);
-    place_button(m_menu.get(), m_website);
-    place_button(m_menu.get(), m_credits);
-
-    button_ul.y += GG::Y(button_cell_height) * 0.75;
-    button_lr.y += GG::Y(button_cell_height) * 0.75;
-    m_menu->AttachChild(m_exit_game);
-    m_exit_game->SizeMove(button_ul, button_lr);
+    auto layout = m_menu->GetLayout();
+    if (!layout)
+        return;
 
     // position menu window
-    GG::Pt ul(Width()  * GetOptionsDB().Get<double>("ui.intro.menu.center.x") - mainmenu_width/2,
-              Height() * GetOptionsDB().Get<double>("ui.intro.menu.center.y") - mainmenu_height/2);
-    GG::Pt lr(Width()  * GetOptionsDB().Get<double>("ui.intro.menu.center.x") + mainmenu_width/2,
-              Height() * GetOptionsDB().Get<double>("ui.intro.menu.center.y") + mainmenu_height/2);
+    GG::Pt ul(Width()  * GetOptionsDB().Get<double>("ui.intro.menu.center.x") - layout->MinUsableSize().x / 2,
+              Height() * GetOptionsDB().Get<double>("ui.intro.menu.center.y") - layout->MinUsableSize().y / 2);
+    GG::Pt lr(Width()  * GetOptionsDB().Get<double>("ui.intro.menu.center.x") + layout->MinUsableSize().x / 2,
+              Height() * GetOptionsDB().Get<double>("ui.intro.menu.center.y") + layout->MinUsableSize().y / 2);
 
     m_menu->InitSizeMove(ul, lr);
 }

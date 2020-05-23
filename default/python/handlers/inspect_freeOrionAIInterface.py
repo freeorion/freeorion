@@ -1,5 +1,5 @@
 from common.listeners import register_pre_handler
-from stub_generator import inspect
+from stub_generator import generate_stub
 
 
 def inspect_ai_interface():
@@ -19,7 +19,7 @@ def inspect_ai_interface():
     tech_spec = list(tech.unlockedItems)[0]
 
     part_id = list(empire.availableShipParts)[0]
-    part_type = fo.getPartType(part_id)
+    ship_part = fo.getShipPart(part_id)
 
     prod_queue = empire.productionQueue
     fo.issueEnqueueShipProductionOrder(list(empire.availableShipDesigns)[0], capital_id)
@@ -38,7 +38,7 @@ def inspect_ai_interface():
 
     meter = planet.getMeter(fo.meterType.population)
 
-    inspect(
+    generate_stub(
         fo,
         instances=[
             meter,
@@ -56,14 +56,14 @@ def inspect_ai_interface():
             fo.getFieldType('FLD_ION_STORM'),
             fo.getBuildingType('BLD_SHIPYARD_BASE'),
             fo.getGalaxySetupData(),
-            fo.getHullType('SH_XENTRONIUM'),
-            fo.getPartType('SR_WEAPON_1_1'),
+            fo.getShipHull('SH_XENTRONIUM'),
+            fo.getShipPart('SR_WEAPON_1_1'),
             fo.getSpecial('MODERATE_TECH_NATIVES_SPECIAL'),
             fo.getSpecies('SP_ABADDONI'),
             fo.getTech('SHP_WEAPON_4_1'),
             fo.diplomaticMessage(1, 2, fo.diplomaticMessageType.acceptPeaceProposal),
             fleets_int_vector,
-            part_type,
+            ship_part,
             prod_queue,
             prod_queue.allocatedPP,
             prod_queue[0],
@@ -74,12 +74,13 @@ def inspect_ai_interface():
         ],
         classes_to_ignore=(
             'IntSet', 'StringSet', 'IntIntMap', 'ShipSlotVec', 'VisibilityIntMap', 'IntDblMap',
-            'IntBoolMap', 'ItemSpecVec', 'PairIntInt_IntMap', 'IntSetSet', 'StringVec',
+            'IntBoolMap', 'UnlockableItemVec', 'PairIntInt_IntMap', 'IntSetSet', 'StringVec',
             'IntPairVec', 'IntFltMap', 'MeterTypeStringPair', 'MeterTypeMeterMap', 'universeObject',
             # this item cannot be get from generate orders
             'diplomaticStatusUpdate',
         ),
-        path='AI'
+        path='AI',
+        dump=False
     )
     exit(1)  # exit game to main menu no need to play anymore.
 

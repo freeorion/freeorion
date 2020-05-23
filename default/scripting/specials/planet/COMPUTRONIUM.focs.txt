@@ -29,10 +29,9 @@ Special
             activation = Focus type = "FOCUS_RESEARCH"
             stackinggroup = "COMPUTRONIUM_STACK"
             priority = [[LATE_PRIORITY]]
-            effects = SetTargetResearch value = Value + Target.Population * 1 * [[RESEARCH_PER_POP]]
+            effects = SetTargetResearch value = Value + Target.Population * 0.25 * [[RESEARCH_PER_POP]]
 
-        [[CHANCE_OF_GUARD_1]]
-
+        [[CHANCE_OF_GUARD_2]]
     ]
     graphic = "icons/specials_huge/computronium.png"
 

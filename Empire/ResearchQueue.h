@@ -33,7 +33,7 @@ struct FO_COMMON_API ResearchQueue {
         bool        paused = false;
     private:
         friend class boost::serialization::access;
-        template <class Archive>
+        template <typename Archive>
         void serialize(Archive& ar, const unsigned int version);
     };
 
@@ -99,7 +99,7 @@ private:
     int         m_empire_id = ALL_EMPIRES;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 

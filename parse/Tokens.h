@@ -57,11 +57,13 @@
     (ClockwiseNextPlanetType)                   \
     (Colony)                                    \
     (Colour)                                    \
+    (CombatBout)                                \
     (CombatTargets)                             \
     (Condition)                                 \
     (Construction)                              \
     (Consumption)                               \
     (ContainedBy)                               \
+    (ContainerID)                               \
     (Contains)                                  \
     (Core)                                      \
     (Cos)                                       \
@@ -180,7 +182,6 @@
     (HullSpeed)                                 \
     (HullStealth)                               \
     (HullStructure)                             \
-    (HullType)                                  \
     (Human)                                     \
     (Icon)                                      \
     (ID)                                        \
@@ -194,9 +195,7 @@
     (Invisible)                                 \
     (Item)                                      \
     (Jumps)                                     \
-    (JumpsBetween)                              \
-    (Keymap)                                    \
-    (Keys)
+    (JumpsBetween)
 
 #define TOKEN_SEQ_6                             \
     (Label)                                     \
@@ -204,6 +203,7 @@
     (LastTurnActiveInBattle)                    \
     (LastTurnAttackedByShip)                    \
     (LastTurnBattleHere)                        \
+    (LastTurnColonized)                         \
     (LastTurnConquered)                         \
     (LastTurnResupplied)                        \
     (LaunchedFrom)                              \
@@ -263,6 +263,10 @@
     (NextTurnPopGrowth)                         \
     (NextYoungerStarType)                       \
     (NoDefaultCapacityEffect)                   \
+    (NoDefaultFuelEffect)                       \
+    (NoDefaultSpeedEffect)                      \
+    (NoDefaultStealthEffect)                    \
+    (NoDefaultStructureEffect)                  \
     (None)                                      \
     (NoOp)                                      \
     (NoStar)                                    \
@@ -280,6 +284,7 @@
     (Off)                                       \
     (On)                                        \
     (OneOf)                                     \
+    (OnPlanet)                                  \
     (Opinion)                                   \
     (Or)                                        \
     (Orange)                                    \
@@ -304,7 +309,6 @@
     (Parts)                                     \
     (PartOfClassInShipDesign)                   \
     (PartsInShipDesign)                         \
-    (PartType)                                  \
     (Passive)                                   \
     (PeaceWith)                                 \
     (Planet)                                    \

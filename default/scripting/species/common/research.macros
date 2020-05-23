@@ -31,7 +31,6 @@ BAD_RESEARCH
             description = "BAD_RESEARCH_DESC"
             scope = Source
             activation = And [
-                Source
                 Planet
                 Focus type = "FOCUS_RESEARCH"
             ]
@@ -51,7 +50,6 @@ GOOD_RESEARCH
             description = "GOOD_RESEARCH_DESC"
             scope = Source
             activation = And [
-                Source
                 Planet
                 Focus type = "FOCUS_RESEARCH"
             ]
@@ -67,7 +65,6 @@ GREAT_RESEARCH
             description = "GREAT_RESEARCH_DESC"
             scope = Source
             activation = And [
-                Source
                 Planet
                 Focus type = "FOCUS_RESEARCH"
             ]
@@ -83,7 +80,6 @@ ULTIMATE_RESEARCH
             description = "ULTIMATE_RESEARCH_DESC"
             scope = Source
             activation = And [
-                Source
                 Planet
                 Focus type = "FOCUS_RESEARCH"
             ]

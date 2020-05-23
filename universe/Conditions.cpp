@@ -3,13 +3,18 @@
 #include "../util/Logger.h"
 #include "../util/Random.h"
 #include "../util/i18n.h"
+#include "../util/ScopedTimer.h"
 #include "UniverseObject.h"
 #include "Pathfinder.h"
 #include "Universe.h"
 #include "Building.h"
+#include "BuildingType.h"
 #include "Fighter.h"
 #include "Fleet.h"
 #include "Ship.h"
+#include "ShipDesign.h"
+#include "ShipPart.h"
+#include "ShipHull.h"
 #include "ObjectMap.h"
 #include "Planet.h"
 #include "System.h"
@@ -22,13 +27,11 @@
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Supply.h"
 
+#include <boost/algorithm/cxx11/all_of.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
-#include <boost/bind.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/st_connected.hpp>
 
-//TODO: replace with std::make_unique when transitioning to C++14
-#include <boost/smart_ptr/make_unique.hpp>
 
 using boost::io::str;
 
@@ -41,67 +44,69 @@ namespace {
 
     DeclareThreadSafeLogger(conditions);
 
-    void AddAllObjectsSet(Condition::ObjectSet& condition_non_targets) {
-        condition_non_targets.reserve(condition_non_targets.size() + Objects().ExistingObjects().size());
-        std::transform(Objects().ExistingObjects().begin(), Objects().ExistingObjects().end(),
+    using boost::placeholders::_1;
+
+    void AddAllObjectsSet(const ObjectMap& objects, Condition::ObjectSet& condition_non_targets) {
+        condition_non_targets.reserve(condition_non_targets.size() + objects.ExistingObjects().size());
+        std::transform(objects.ExistingObjects().begin(), objects.ExistingObjects().end(),
                        std::back_inserter(condition_non_targets),
-                       boost::bind(&std::map<int, std::shared_ptr<UniverseObject>>::value_type::second, _1));
+                       boost::bind(&std::map<int, std::shared_ptr<const UniverseObject>>::value_type::second, _1));
     }
 
-    void AddBuildingSet(Condition::ObjectSet& condition_non_targets) {
-        condition_non_targets.reserve(condition_non_targets.size() + Objects().ExistingBuildings().size());
-        std::transform(Objects().ExistingBuildings().begin(), Objects().ExistingBuildings().end(),
+    void AddBuildingSet(const ObjectMap& objects, Condition::ObjectSet& condition_non_targets) {
+        condition_non_targets.reserve(condition_non_targets.size() + objects.ExistingBuildings().size());
+        std::transform(objects.ExistingBuildings().begin(), objects.ExistingBuildings().end(),
                        std::back_inserter(condition_non_targets),
-                       boost::bind(&std::map<int, std::shared_ptr<UniverseObject>>::value_type::second, _1));
+                       boost::bind(&std::map<int, std::shared_ptr<const UniverseObject>>::value_type::second, _1));
     }
 
-    void AddFieldSet(Condition::ObjectSet& condition_non_targets) {
-        condition_non_targets.reserve(condition_non_targets.size() + Objects().ExistingFields().size());
-        std::transform(Objects().ExistingFields().begin(), Objects().ExistingFields().end(),
+    void AddFieldSet(const ObjectMap& objects, Condition::ObjectSet& condition_non_targets) {
+        condition_non_targets.reserve(condition_non_targets.size() + objects.ExistingFields().size());
+        std::transform(objects.ExistingFields().begin(), objects.ExistingFields().end(),
                        std::back_inserter(condition_non_targets),
-                       boost::bind(&std::map<int, std::shared_ptr<UniverseObject>>::value_type::second, _1));
+                       boost::bind(&std::map<int, std::shared_ptr<const UniverseObject>>::value_type::second, _1));
     }
 
-    void AddFleetSet(Condition::ObjectSet& condition_non_targets) {
-        condition_non_targets.reserve(condition_non_targets.size() + Objects().ExistingFleets().size());
-        std::transform(Objects().ExistingFleets().begin(), Objects().ExistingFleets().end(),
+    void AddFleetSet(const ObjectMap& objects, Condition::ObjectSet& condition_non_targets) {
+        condition_non_targets.reserve(condition_non_targets.size() + objects.ExistingFleets().size());
+        std::transform(objects.ExistingFleets().begin(), objects.ExistingFleets().end(),
                        std::back_inserter(condition_non_targets),
-                       boost::bind(&std::map<int, std::shared_ptr<UniverseObject>>::value_type::second,_1));
+                       boost::bind(&std::map<int, std::shared_ptr<const UniverseObject>>::value_type::second, _1));
     }
 
-    void AddPlanetSet(Condition::ObjectSet& condition_non_targets) {
-        condition_non_targets.reserve(condition_non_targets.size() + Objects().ExistingPlanets().size());
-        std::transform(Objects().ExistingPlanets().begin(), Objects().ExistingPlanets().end(),
+    void AddPlanetSet(const ObjectMap& objects, Condition::ObjectSet& condition_non_targets) {
+        condition_non_targets.reserve(condition_non_targets.size() + objects.ExistingPlanets().size());
+        std::transform(objects.ExistingPlanets().begin(), objects.ExistingPlanets().end(),
                        std::back_inserter(condition_non_targets),
-                       boost::bind(&std::map<int, std::shared_ptr<UniverseObject>>::value_type::second,_1));
+                       boost::bind(&std::map<int, std::shared_ptr<const UniverseObject>>::value_type::second, _1));
     }
 
-    void AddPopCenterSet(Condition::ObjectSet& condition_non_targets) {
-        condition_non_targets.reserve(condition_non_targets.size() + Objects().ExistingPopCenters().size());
-        std::transform(Objects().ExistingPopCenters().begin(), Objects().ExistingPopCenters().end(),
+    void AddPopCenterSet(const ObjectMap& objects, Condition::ObjectSet& condition_non_targets) {
+        condition_non_targets.reserve(condition_non_targets.size() + objects.ExistingPopCenters().size());
+        std::transform(objects.ExistingPopCenters().begin(), objects.ExistingPopCenters().end(),
                        std::back_inserter(condition_non_targets),
-                       boost::bind(&std::map<int, std::shared_ptr<UniverseObject>>::value_type::second,_1));
+                       boost::bind(&std::map<int, std::shared_ptr<const UniverseObject>>::value_type::second, _1));
     }
 
-    void AddResCenterSet(Condition::ObjectSet& condition_non_targets) {
-        condition_non_targets.reserve(condition_non_targets.size() + Objects().ExistingResourceCenters().size());
-        std::transform(Objects().ExistingResourceCenters().begin(), Objects().ExistingResourceCenters().end(),
+    void AddResCenterSet(const ObjectMap& objects, Condition::ObjectSet& condition_non_targets) {
+        condition_non_targets.reserve(condition_non_targets.size() + objects.ExistingResourceCenters().size());
+        std::transform(objects.ExistingResourceCenters().begin(), objects.ExistingResourceCenters().end(),
                        std::back_inserter(condition_non_targets),
-                       boost::bind(&std::map<int, std::shared_ptr<UniverseObject>>::value_type::second,_1));
+                       boost::bind(&std::map<int, std::shared_ptr<const UniverseObject>>::value_type::second, _1));
     }
 
-    void AddShipSet(Condition::ObjectSet& condition_non_targets) {
-        condition_non_targets.reserve(condition_non_targets.size() + Objects().ExistingShips().size());
-        std::transform(Objects().ExistingShips().begin(), Objects().ExistingShips().end(),
+    void AddShipSet(const ObjectMap& objects, Condition::ObjectSet& condition_non_targets) {
+        condition_non_targets.reserve(condition_non_targets.size() + objects.ExistingShips().size());
+        std::transform(objects.ExistingShips().begin(), objects.ExistingShips().end(),
                        std::back_inserter(condition_non_targets),
-                       boost::bind(&std::map<int, std::shared_ptr<UniverseObject>>::value_type::second,_1));
+                       boost::bind(&std::map<int, std::shared_ptr<const UniverseObject>>::value_type::second, _1));
     }
 
-    void AddSystemSet(Condition::ObjectSet& condition_non_targets) {
-        condition_non_targets.reserve(condition_non_targets.size() + Objects().ExistingSystems().size());
-        std::transform(Objects().ExistingSystems().begin(), Objects().ExistingSystems().end(),
+    void AddSystemSet(const ObjectMap& objects, Condition::ObjectSet& condition_non_targets) {
+        condition_non_targets.reserve(condition_non_targets.size() + objects.ExistingSystems().size());
+        std::transform(objects.ExistingSystems().begin(), objects.ExistingSystems().end(),
                        std::back_inserter(condition_non_targets),
-                       boost::bind(&std::map<int, std::shared_ptr<UniverseObject>>::value_type::second,_1));
+                       boost::bind(&std::map<int, std::shared_ptr<const UniverseObject>>::value_type::second, _1));
     }
 
     /** Used by 4-parameter Condition::Eval function, and some of its
@@ -109,7 +114,7 @@ namespace {
       * \a pred to each object, to test if it should remain in its current set
       * or be transferred from the \a search_domain specified set into the
       * other. */
-    template <class Pred>
+    template <typename Pred>
     void EvalImpl(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
                   Condition::SearchDomain search_domain, const Pred& pred)
     {
@@ -178,11 +183,10 @@ std::string ConditionFailedDescription(const std::vector<Condition*>& conditions
     if (conditions.empty())
         return UserString("NONE");
 
-    ScriptingContext parent_context(source_object);
     std::string retval;
 
     // test candidate against all input conditions, and store descriptions of each
-    for (const auto& result : ConditionDescriptionAndTest(conditions, parent_context, candidate_object)) {
+    for (const auto& result : ConditionDescriptionAndTest(conditions, ScriptingContext(source_object), candidate_object)) {
             if (!result.second)
                  retval += UserString("FAILED") + " <rgba 255 0 0 255>" + result.first +"</rgba>\n";
     }
@@ -200,10 +204,9 @@ std::string ConditionDescription(const std::vector<Condition*>& conditions,
     if (conditions.empty())
         return UserString("NONE");
 
-    ScriptingContext parent_context(source_object);
     // test candidate against all input conditions, and store descriptions of each
     auto condition_description_and_test_results =
-        ConditionDescriptionAndTest(conditions, parent_context, candidate_object);
+        ConditionDescriptionAndTest(conditions, ScriptingContext(source_object), candidate_object);
     bool all_conditions_match_candidate = true, at_least_one_condition_matches_candidate = false;
     for (const auto& result : condition_description_and_test_results) {
         all_conditions_match_candidate = all_conditions_match_candidate && result.second;
@@ -271,6 +274,16 @@ void Condition::Eval(const ScriptingContext& parent_context,
 { EvalImpl(matches, non_matches, search_domain, MatchHelper(this, parent_context)); }
 
 void Condition::Eval(const ScriptingContext& parent_context,
+                     Effect::TargetSet& matches, Effect::TargetSet& non_matches,
+                     SearchDomain search_domain/* = NON_MATCHES*/) const
+{
+    // reinterpret sets of mutable objects as sets of non-mutable objects.
+    auto& matches_as_objectset = reinterpret_cast<ObjectSet&>(matches);
+    auto& non_matches_as_objectset = reinterpret_cast<ObjectSet&>(non_matches);
+    this->Eval(parent_context, matches_as_objectset, non_matches_as_objectset, search_domain);
+}
+
+void Condition::Eval(const ScriptingContext& parent_context,
                      ObjectSet& matches) const
 {
     matches.clear();
@@ -281,6 +294,14 @@ void Condition::Eval(const ScriptingContext& parent_context,
 
     matches.reserve(condition_initial_candidates.size());
     Eval(parent_context, matches, condition_initial_candidates);
+}
+
+void Condition::Eval(const ScriptingContext& parent_context,
+                     Effect::TargetSet& matches) const
+{
+    // reinterpret sets of mutable objects as sets of non-mutable objects.
+    auto& matches_as_objectset = reinterpret_cast<ObjectSet&>(matches);
+    this->Eval(parent_context, matches_as_objectset);
 }
 
 bool Condition::Eval(const ScriptingContext& parent_context,
@@ -305,7 +326,7 @@ bool Condition::Eval(std::shared_ptr<const UniverseObject> candidate) const {
 
 void Condition::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                                   ObjectSet& condition_non_targets) const
-{ AddAllObjectsSet(condition_non_targets); }
+{ AddAllObjectsSet(parent_context.ContextObjects(), condition_non_targets); }
 
 std::string Condition::Description(bool negated/* = false*/) const
 { return ""; }
@@ -325,7 +346,18 @@ Number::Number(std::unique_ptr<ValueRef::ValueRef<int>>&& low,
     m_low(std::move(low)),
     m_high(std::move(high)),
     m_condition(std::move(condition))
-{}
+{
+    auto operands = {m_low.get(), m_high.get()};
+    m_root_candidate_invariant =
+        m_condition->RootCandidateInvariant() &&
+        boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
+    m_target_invariant =
+        m_condition->TargetInvariant() &&
+        boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
+    m_source_invariant =
+        m_condition->SourceInvariant() &&
+        boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
+}
 
 bool Number::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -423,24 +455,6 @@ void Number::Eval(const ScriptingContext& parent_context,
     }
 }
 
-bool Number::RootCandidateInvariant() const {
-    return (!m_low || m_low->RootCandidateInvariant()) &&
-           (!m_high || m_high->RootCandidateInvariant()) &&
-           m_condition->RootCandidateInvariant();
-}
-
-bool Number::TargetInvariant() const {
-    return (!m_low || m_low->TargetInvariant()) &&
-           (!m_high || m_high->TargetInvariant()) &&
-           m_condition->TargetInvariant();
-}
-
-bool Number::SourceInvariant() const {
-    return (!m_low || m_low->SourceInvariant()) &&
-           (!m_high || m_high->SourceInvariant()) &&
-           m_condition->SourceInvariant();
-}
-
 bool Number::Match(const ScriptingContext& local_context) const {
     // get acceptable range of subcondition matches for candidate
     int low = (m_low ? std::max(0, m_low->Eval(local_context)) : 0);
@@ -484,7 +498,12 @@ Turn::Turn(std::unique_ptr<ValueRef::ValueRef<int>>&& low,
            std::unique_ptr<ValueRef::ValueRef<int>>&& high) :
     m_low(std::move(low)),
     m_high(std::move(high))
-{}
+{
+    auto operands = {m_low.get(), m_high.get()};
+    m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
+    m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
+    m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
+}
 
 bool Turn::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -536,15 +555,6 @@ void Turn::Eval(const ScriptingContext& parent_context,
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
 }
-
-bool Turn::RootCandidateInvariant() const
-{ return (!m_low || m_low->RootCandidateInvariant()) && (!m_high || m_high->RootCandidateInvariant()); }
-
-bool Turn::TargetInvariant() const
-{ return (!m_low || m_low->TargetInvariant()) && (!m_high || m_high->TargetInvariant()); }
-
-bool Turn::SourceInvariant() const
-{ return (!m_low || m_low->SourceInvariant()) && (!m_high || m_high->SourceInvariant()); }
 
 std::string Turn::Description(bool negated/* = false*/) const {
     std::string low_str;
@@ -628,8 +638,7 @@ unsigned int Turn::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 SortedNumberOf::SortedNumberOf(std::unique_ptr<ValueRef::ValueRef<int>>&& number,
                                std::unique_ptr<Condition>&& condition) :
-    m_number(std::move(number)),
-    m_condition(std::move(condition))
+    SortedNumberOf(std::move(number), nullptr, SORT_RANDOM, std::move(condition))
 {}
 
 SortedNumberOf::SortedNumberOf(std::unique_ptr<ValueRef::ValueRef<int>>&& number,
@@ -640,7 +649,21 @@ SortedNumberOf::SortedNumberOf(std::unique_ptr<ValueRef::ValueRef<int>>&& number
     m_sort_key(std::move(sort_key_ref)),
     m_sorting_method(sorting_method),
     m_condition(std::move(condition))
-{}
+{
+    m_root_candidate_invariant =
+        (!m_number || m_number->RootCandidateInvariant()) &&
+        (!m_sort_key || m_sort_key->RootCandidateInvariant()) &&
+        (!m_condition || m_condition->RootCandidateInvariant());
+    m_target_invariant =
+        (!m_number || m_number->TargetInvariant()) &&
+        (!m_sort_key || m_sort_key->TargetInvariant()) &&
+        (!m_condition || m_condition->TargetInvariant());
+    m_source_invariant =
+        (!m_number || m_number->SourceInvariant()) &&
+        (!m_sort_key || m_sort_key->SourceInvariant()) &&
+        (!m_condition || m_condition->SourceInvariant());
+
+}
 
 bool SortedNumberOf::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -922,21 +945,6 @@ void SortedNumberOf::Eval(const ScriptingContext& parent_context,
     }
 }
 
-bool SortedNumberOf::RootCandidateInvariant() const
-{ return ((!m_number || m_number->SourceInvariant()) &&
-          (!m_sort_key || m_sort_key->SourceInvariant()) &&
-          (!m_condition || m_condition->SourceInvariant())); }
-
-bool SortedNumberOf::TargetInvariant() const
-{ return ((!m_number || m_number->SourceInvariant()) &&
-          (!m_sort_key || m_sort_key->SourceInvariant()) &&
-          (!m_condition || m_condition->SourceInvariant())); }
-
-bool SortedNumberOf::SourceInvariant() const
-{ return ((!m_number || m_number->SourceInvariant()) &&
-          (!m_sort_key || m_sort_key->SourceInvariant()) &&
-          (!m_condition || m_condition->SourceInvariant())); }
-
 std::string SortedNumberOf::Description(bool negated/* = false*/) const {
     std::string number_str = m_number->ConstantExpr() ? m_number->Dump() : m_number->Description();
 
@@ -1041,6 +1049,14 @@ unsigned int SortedNumberOf::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // All                                                   //
 ///////////////////////////////////////////////////////////
+All::All() :
+    Condition()
+{
+    m_root_candidate_invariant = true;
+    m_target_invariant = true;
+    m_source_invariant = true;
+}
+
 void All::Eval(const ScriptingContext& parent_context,
                           ObjectSet& matches, ObjectSet& non_matches,
                           SearchDomain search_domain/* = NON_MATCHES*/) const
@@ -1078,6 +1094,14 @@ unsigned int All::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // None                                                  //
 ///////////////////////////////////////////////////////////
+None::None() :
+    Condition()
+{
+    m_root_candidate_invariant = true;
+    m_target_invariant = true;
+    m_source_invariant = true;
+}
+
 void None::Eval(const ScriptingContext& parent_context,
                 ObjectSet& matches, ObjectSet& non_matches,
                 SearchDomain search_domain/* = NON_MATCHES*/) const
@@ -1118,16 +1142,18 @@ EmpireAffiliation::EmpireAffiliation(std::unique_ptr<ValueRef::ValueRef<int>>&& 
                                      EmpireAffiliationType affiliation) :
     m_empire_id(std::move(empire_id)),
     m_affiliation(affiliation)
-{}
+{
+    m_root_candidate_invariant = !m_empire_id || m_empire_id->RootCandidateInvariant();
+    m_target_invariant = !m_empire_id || m_empire_id->TargetInvariant();
+    m_source_invariant = !m_empire_id || m_empire_id->SourceInvariant();
+}
 
 EmpireAffiliation::EmpireAffiliation(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id) :
-    m_empire_id(std::move(empire_id)),
-    m_affiliation(AFFIL_SELF)
+    EmpireAffiliation(std::move(empire_id), AFFIL_SELF)
 {}
 
 EmpireAffiliation::EmpireAffiliation(EmpireAffiliationType affiliation) :
-    m_empire_id(nullptr),
-    m_affiliation(affiliation)
+    EmpireAffiliation(nullptr, affiliation)
 {}
 
 bool EmpireAffiliation::operator==(const Condition& rhs) const {
@@ -1243,15 +1269,6 @@ void EmpireAffiliation::Eval(const ScriptingContext& parent_context,
     }
 }
 
-bool EmpireAffiliation::RootCandidateInvariant() const
-{ return m_empire_id ? m_empire_id->RootCandidateInvariant() : true; }
-
-bool EmpireAffiliation::TargetInvariant() const
-{ return m_empire_id ? m_empire_id->TargetInvariant() : true; }
-
-bool EmpireAffiliation::SourceInvariant() const
-{ return m_empire_id ? m_empire_id->SourceInvariant() : true; }
-
 std::string EmpireAffiliation::Description(bool negated/* = false*/) const {
     std::string empire_str;
     if (m_empire_id) {
@@ -1358,6 +1375,14 @@ unsigned int EmpireAffiliation::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // Source                                                //
 ///////////////////////////////////////////////////////////
+Source::Source() :
+    Condition()
+{
+    m_root_candidate_invariant = true;
+    m_target_invariant = true;
+    m_source_invariant = false;
+}
+
 bool Source::operator==(const Condition& rhs) const
 { return Condition::operator==(rhs); }
 
@@ -1395,6 +1420,14 @@ unsigned int Source::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // RootCandidate                                         //
 ///////////////////////////////////////////////////////////
+RootCandidate::RootCandidate() :
+    Condition()
+{
+    m_root_candidate_invariant = false;
+    m_target_invariant = true;
+    m_source_invariant = true;
+}
+
 bool RootCandidate::operator==(const Condition& rhs) const
 { return Condition::operator==(rhs); }
 
@@ -1420,7 +1453,6 @@ void RootCandidate::GetDefaultInitialCandidateObjects(const ScriptingContext& pa
         condition_non_targets.push_back(parent_context.condition_root_candidate);
 }
 
-
 unsigned int RootCandidate::GetCheckSum() const {
     unsigned int retval{0};
 
@@ -1433,6 +1465,14 @@ unsigned int RootCandidate::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // Target                                                //
 ///////////////////////////////////////////////////////////
+Target::Target() :
+    Condition()
+{
+    m_root_candidate_invariant = true;
+    m_target_invariant = false;
+    m_source_invariant = true;
+}
+
 bool Target::operator==(const Condition& rhs) const
 { return Condition::operator==(rhs); }
 
@@ -1478,7 +1518,11 @@ Homeworld::Homeworld() :
 Homeworld::Homeworld(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names) :
     Condition(),
     m_names(std::move(names))
-{}
+{
+    m_root_candidate_invariant = boost::algorithm::all_of(m_names, [](auto& e){ return e->RootCandidateInvariant(); });
+    m_target_invariant = boost::algorithm::all_of(m_names, [](auto& e){ return e->TargetInvariant(); });
+    m_source_invariant = boost::algorithm::all_of(m_names, [](auto& e){ return e->SourceInvariant(); });
+}
 
 bool Homeworld::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -1499,8 +1543,9 @@ bool Homeworld::operator==(const Condition& rhs) const {
 
 namespace {
     struct HomeworldSimpleMatch {
-        HomeworldSimpleMatch(const std::vector<std::string>& names) :
-            m_names(names)
+        HomeworldSimpleMatch(const std::vector<std::string>& names, const ObjectMap& objects) :
+            m_names(names),
+            m_objects(objects)
         {}
 
         bool operator()(std::shared_ptr<const UniverseObject> candidate) const {
@@ -1510,9 +1555,8 @@ namespace {
             // is it a planet or a building on a planet?
             auto planet = std::dynamic_pointer_cast<const Planet>(candidate);
             std::shared_ptr<const ::Building> building;
-            if (!planet && (building = std::dynamic_pointer_cast<const ::Building>(candidate))) {
-                planet = Objects().get<Planet>(building->PlanetID());
-            }
+            if (!planet && (building = std::dynamic_pointer_cast<const ::Building>(candidate)))
+                planet = m_objects.get<Planet>(building->PlanetID());
             if (!planet)
                 return false;
 
@@ -1544,6 +1588,7 @@ namespace {
         }
 
         const std::vector<std::string>& m_names;
+        const ObjectMap& m_objects;
     };
 }
 
@@ -1564,39 +1609,15 @@ void Homeworld::Eval(const ScriptingContext& parent_context,
     if (simple_eval_safe) {
         // evaluate names once, and use to check all candidate objects
         std::vector<std::string> names;
+        names.reserve(m_names.size());
         // get all names from valuerefs
-        for (auto& name : m_names) {
+        for (auto& name : m_names)
             names.push_back(name->Eval(parent_context));
-        }
-        EvalImpl(matches, non_matches, search_domain, HomeworldSimpleMatch(names));
+        EvalImpl(matches, non_matches, search_domain, HomeworldSimpleMatch(names, parent_context.ContextObjects()));
     } else {
         // re-evaluate allowed names for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
-}
-
-bool Homeworld::RootCandidateInvariant() const {
-    for (auto& name : m_names) {
-        if (!name->RootCandidateInvariant())
-            return false;
-    }
-    return true;
-}
-
-bool Homeworld::TargetInvariant() const {
-    for (auto& name : m_names) {
-        if (!name->TargetInvariant())
-            return false;
-    }
-    return true;
-}
-
-bool Homeworld::SourceInvariant() const {
-    for (auto& name : m_names) {
-        if (!name->SourceInvariant())
-            return false;
-    }
-    return true;
 }
 
 std::string Homeworld::Description(bool negated/* = false*/) const {
@@ -1643,9 +1664,8 @@ bool Homeworld::Match(const ScriptingContext& local_context) const {
     // is it a planet or a building on a planet?
     auto planet = std::dynamic_pointer_cast<const Planet>(candidate);
     std::shared_ptr<const ::Building> building;
-    if (!planet && (building = std::dynamic_pointer_cast<const ::Building>(candidate))) {
-        planet = Objects().get<Planet>(building->PlanetID());
-    }
+    if (!planet && (building = std::dynamic_pointer_cast<const ::Building>(candidate)))
+        planet = local_context.ContextObjects().get<Planet>(building->PlanetID());
     if (!planet)
         return false;
 
@@ -1679,7 +1699,7 @@ bool Homeworld::Match(const ScriptingContext& local_context) const {
 
 void Homeworld::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                                   ObjectSet& condition_non_targets) const
-{ AddPlanetSet(condition_non_targets); }
+{ AddPlanetSet(parent_context.ContextObjects(), condition_non_targets); }
 
 void Homeworld::SetTopLevelContent(const std::string& content_name) {
     for (auto& name : m_names) {
@@ -1701,6 +1721,14 @@ unsigned int Homeworld::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // Capital                                               //
 ///////////////////////////////////////////////////////////
+Capital::Capital() :
+    Condition()
+{
+    m_root_candidate_invariant = true;
+    m_target_invariant = true;
+    m_source_invariant = true;
+}
+
 bool Capital::operator==(const Condition& rhs) const
 { return Condition::operator==(rhs); }
 
@@ -1731,7 +1759,7 @@ bool Capital::Match(const ScriptingContext& local_context) const {
 
 void Capital::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                                 ObjectSet& condition_non_targets) const
-{ AddPlanetSet(condition_non_targets); }
+{ AddPlanetSet(parent_context.ContextObjects(), condition_non_targets); }
 
 unsigned int Capital::GetCheckSum() const {
     unsigned int retval{0};
@@ -1745,6 +1773,14 @@ unsigned int Capital::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // Monster                                               //
 ///////////////////////////////////////////////////////////
+Monster::Monster() :
+    Condition()
+{
+    m_root_candidate_invariant = true;
+    m_target_invariant = true;
+    m_source_invariant = true;
+}
+
 bool Monster::operator==(const Condition& rhs) const
 { return Condition::operator==(rhs); }
 
@@ -1773,7 +1809,7 @@ bool Monster::Match(const ScriptingContext& local_context) const {
 
 void Monster::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                                 ObjectSet& condition_non_targets) const
-{ AddShipSet(condition_non_targets); }
+{ AddShipSet(parent_context.ContextObjects(), condition_non_targets); }
 
 unsigned int Monster::GetCheckSum() const {
     unsigned int retval{0};
@@ -1787,6 +1823,14 @@ unsigned int Monster::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // Armed                                                 //
 ///////////////////////////////////////////////////////////
+Armed::Armed() :
+    Condition()
+{
+    m_root_candidate_invariant = true;
+    m_target_invariant = true;
+    m_source_invariant = true;
+}
+
 bool Armed::operator==(const Condition& rhs) const
 { return Condition::operator==(rhs); }
 
@@ -1828,11 +1872,14 @@ unsigned int Armed::GetCheckSum() const {
 Type::Type(std::unique_ptr<ValueRef::ValueRef<UniverseObjectType>>&& type) :
     Condition(),
     m_type(std::move(type))
-{}
+{
+    m_root_candidate_invariant = m_type->RootCandidateInvariant();
+    m_target_invariant = m_type->TargetInvariant();
+    m_source_invariant = m_type->SourceInvariant();
+}
 
 Type::Type(UniverseObjectType type) :
-    Condition(),
-    m_type(boost::make_unique<ValueRef::Constant<UniverseObjectType>>(type))
+    Type(std::make_unique<ValueRef::Constant<UniverseObjectType>>(type))
 {}
 
 bool Type::operator==(const Condition& rhs) const {
@@ -1900,15 +1947,6 @@ void Type::Eval(const ScriptingContext& parent_context,
     }
 }
 
-bool Type::RootCandidateInvariant() const
-{ return m_type->RootCandidateInvariant(); }
-
-bool Type::TargetInvariant() const
-{ return m_type->TargetInvariant(); }
-
-bool Type::SourceInvariant() const
-{ return m_type->SourceInvariant(); }
-
 std::string Type::Description(bool negated/* = false*/) const {
     std::string value_str = m_type->ConstantExpr() ?
                                 UserString(boost::lexical_cast<std::string>(m_type->Eval())) :
@@ -1960,28 +1998,28 @@ void Type::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_cont
         //std::vector<std::shared_ptr<const T>> this_base;
         switch (m_type->Eval()) {
             case OBJ_BUILDING:
-                AddBuildingSet(condition_non_targets);
+                AddBuildingSet(parent_context.ContextObjects(), condition_non_targets);
                 break;
             case OBJ_FIELD:
-                AddFieldSet(condition_non_targets);
+                AddFieldSet(parent_context.ContextObjects(), condition_non_targets);
                 break;
             case OBJ_FLEET:
-                AddFleetSet(condition_non_targets);
+                AddFleetSet(parent_context.ContextObjects(), condition_non_targets);
                 break;
             case OBJ_PLANET:
-                AddPlanetSet(condition_non_targets);
+                AddPlanetSet(parent_context.ContextObjects(), condition_non_targets);
                 break;
             case OBJ_POP_CENTER:
-                AddPopCenterSet(condition_non_targets);
+                AddPopCenterSet(parent_context.ContextObjects(), condition_non_targets);
                 break;
             case OBJ_PROD_CENTER:
-                AddResCenterSet(condition_non_targets);
+                AddResCenterSet(parent_context.ContextObjects(), condition_non_targets);
                 break;
             case OBJ_SHIP:
-                AddShipSet(condition_non_targets);
+                AddShipSet(parent_context.ContextObjects(), condition_non_targets);
                 break;
             case OBJ_SYSTEM:
-                AddSystemSet(condition_non_targets);
+                AddSystemSet(parent_context.ContextObjects(), condition_non_targets);
                 break;
             case OBJ_FIGHTER:   // shouldn't exist outside of combat as a separate object
             default: 
@@ -1990,10 +2028,10 @@ void Type::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_cont
         }
     }
     if (found_type) {
-        //if (int(condition_non_targets.size()) < Objects().size()) {
+        //if (int(condition_non_targets.size()) < parent_context.ContextObjects().size()) {
         //    DebugLogger() << "Type::GetBaseNonMatches will provide " << condition_non_targets.size()
         //                  << " objects of type " << GetType()->Eval() << " rather than "
-        //                  << Objects().size() << " total objects";
+        //                  << parent_context.ContextObjects().size() << " total objects";
         //}
     } else {
         Condition::GetDefaultInitialCandidateObjects(parent_context, condition_non_targets);
@@ -2021,7 +2059,11 @@ unsigned int Type::GetCheckSum() const {
 Building::Building(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names) :
     Condition(),
     m_names(std::move(names))
-{}
+{
+    m_root_candidate_invariant = boost::algorithm::all_of(m_names, [](auto& e){ return e->RootCandidateInvariant(); });
+    m_target_invariant = boost::algorithm::all_of(m_names, [](auto& e){ return e->TargetInvariant(); });
+    m_source_invariant = boost::algorithm::all_of(m_names, [](auto& e){ return e->SourceInvariant(); });
+}
 
 bool Building::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -2095,30 +2137,6 @@ void Building::Eval(const ScriptingContext& parent_context,
     }
 }
 
-bool Building::RootCandidateInvariant() const {
-    for (auto& name : m_names) {
-        if (!name->RootCandidateInvariant())
-            return false;
-    }
-    return true;
-}
-
-bool Building::TargetInvariant() const {
-    for (auto& name : m_names) {
-        if (!name->TargetInvariant())
-            return false;
-    }
-    return true;
-}
-
-bool Building::SourceInvariant() const {
-    for (auto& name : m_names) {
-        if (!name->SourceInvariant())
-            return false;
-    }
-    return true;
-}
-
 std::string Building::Description(bool negated/* = false*/) const {
     std::string values_str;
     for (unsigned int i = 0; i < m_names.size(); ++i) {
@@ -2155,7 +2173,7 @@ std::string Building::Dump(unsigned short ntabs) const {
 
 void Building::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                                  ObjectSet& condition_non_targets) const
-{ AddBuildingSet(condition_non_targets); }
+{ AddBuildingSet(parent_context.ContextObjects(), condition_non_targets); }
 
 bool Building::Match(const ScriptingContext& local_context) const {
     auto candidate = local_context.condition_local_candidate;
@@ -2202,21 +2220,21 @@ unsigned int Building::GetCheckSum() const {
 // HasSpecial                                            //
 ///////////////////////////////////////////////////////////
 HasSpecial::HasSpecial() :
-    Condition(),
-    m_name(nullptr),
-    m_capacity_low(nullptr),
-    m_capacity_high(nullptr),
-    m_since_turn_low(),
-    m_since_turn_high()
+    HasSpecial(nullptr,
+               std::unique_ptr<ValueRef::ValueRef<int>>{},
+               std::unique_ptr<ValueRef::ValueRef<int>>{})
+{}
+
+HasSpecial::HasSpecial(const std::string& name) :
+    HasSpecial(std::make_unique<ValueRef::Constant<std::string>>(name),
+               std::unique_ptr<ValueRef::ValueRef<int>>{},
+               std::unique_ptr<ValueRef::ValueRef<int>>{})
 {}
 
 HasSpecial::HasSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
-    Condition(),
-    m_name(std::move(name)),
-    m_capacity_low(nullptr),
-    m_capacity_high(nullptr),
-    m_since_turn_low(),
-    m_since_turn_high()
+    HasSpecial(std::move(name),
+               std::unique_ptr<ValueRef::ValueRef<int>>{},
+               std::unique_ptr<ValueRef::ValueRef<int>>{})
 {}
 
 HasSpecial::HasSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
@@ -2224,11 +2242,20 @@ HasSpecial::HasSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
                        std::unique_ptr<ValueRef::ValueRef<int>>&& since_turn_high) :
     Condition(),
     m_name(std::move(name)),
-    m_capacity_low(nullptr),
-    m_capacity_high(nullptr),
     m_since_turn_low(std::move(since_turn_low)),
     m_since_turn_high(std::move(since_turn_high))
-{}
+{
+    auto operands = {m_since_turn_low.get(), m_since_turn_high.get()};
+    m_root_candidate_invariant =
+        (!m_name || m_name->RootCandidateInvariant()) &&
+        boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
+    m_target_invariant =
+        (!m_name || m_name->TargetInvariant()) &&
+        boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
+    m_source_invariant =
+        (!m_name || m_name->SourceInvariant()) &&
+        boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
+}
 
 HasSpecial::HasSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
                        std::unique_ptr<ValueRef::ValueRef<double>>&& capacity_low,
@@ -2236,20 +2263,19 @@ HasSpecial::HasSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
     Condition(),
     m_name(std::move(name)),
     m_capacity_low(std::move(capacity_low)),
-    m_capacity_high(std::move(capacity_high)),
-    m_since_turn_low(nullptr),
-    m_since_turn_high(nullptr)
-{}
-
-HasSpecial::HasSpecial(const std::string& name) :
-    Condition(),
-    // TODO: Use std::make_unique when adopting C++14
-    m_name(new ValueRef::Constant<std::string>(name)),
-    m_capacity_low(nullptr),
-    m_capacity_high(nullptr),
-    m_since_turn_low(nullptr),
-    m_since_turn_high(nullptr)
-{}
+    m_capacity_high(std::move(capacity_high))
+{
+    auto operands = {m_capacity_low.get(), m_capacity_high.get()};
+    m_root_candidate_invariant =
+        (!m_name || m_name->RootCandidateInvariant()) &&
+        boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
+    m_target_invariant =
+        (!m_name || m_name->TargetInvariant()) &&
+        boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
+    m_source_invariant =
+        (!m_name || m_name->SourceInvariant()) &&
+        boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
+}
 
 bool HasSpecial::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -2328,27 +2354,6 @@ void HasSpecial::Eval(const ScriptingContext& parent_context,
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
 }
-
-bool HasSpecial::RootCandidateInvariant() const
-{ return ((!m_name || m_name->RootCandidateInvariant()) &&
-          (!m_capacity_low || m_capacity_low->RootCandidateInvariant()) &&
-          (!m_capacity_high || m_capacity_high->RootCandidateInvariant()) &&
-          (!m_since_turn_low || m_since_turn_low->RootCandidateInvariant()) &&
-          (!m_since_turn_high || m_since_turn_high->RootCandidateInvariant())); }
-
-bool HasSpecial::TargetInvariant() const
-{ return ((!m_name || m_name->TargetInvariant()) &&
-          (!m_capacity_low || m_capacity_low->TargetInvariant()) &&
-          (!m_capacity_high || m_capacity_high->TargetInvariant()) &&
-          (!m_since_turn_low || m_since_turn_low->TargetInvariant()) &&
-          (!m_since_turn_high || m_since_turn_high->TargetInvariant())); }
-
-bool HasSpecial::SourceInvariant() const
-{ return ((!m_name || m_name->SourceInvariant()) &&
-          (!m_capacity_low || m_capacity_low->SourceInvariant()) &&
-          (!m_capacity_high || m_capacity_high->SourceInvariant()) &&
-          (!m_since_turn_low || m_since_turn_low->SourceInvariant()) &&
-          (!m_since_turn_high || m_since_turn_high->SourceInvariant())); }
 
 std::string HasSpecial::Description(bool negated/* = false*/) const {
     std::string name_str;
@@ -2464,20 +2469,21 @@ unsigned int HasSpecial::GetCheckSum() const {
 // HasTag                                                //
 ///////////////////////////////////////////////////////////
 HasTag::HasTag() :
-    Condition(),
-    m_name()
+    HasTag(std::unique_ptr<ValueRef::ValueRef<std::string>>{})
 {}
 
 HasTag::HasTag(const std::string& name) :
-    Condition(),
-    // TODO: Use std::make_unique when adopting C++14
-    m_name(new ValueRef::Constant<std::string>(name))
+    HasTag(std::make_unique<ValueRef::Constant<std::string>>(name))
 {}
 
 HasTag::HasTag(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
     Condition(),
     m_name(std::move(name))
-{}
+{
+    m_root_candidate_invariant = !m_name || m_name->RootCandidateInvariant();
+    m_target_invariant = !m_name || m_name->TargetInvariant();
+    m_source_invariant = !m_name || m_name->SourceInvariant();
+}
 
 bool HasTag::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -2539,15 +2545,6 @@ void HasTag::Eval(const ScriptingContext& parent_context,
     }
 }
 
-bool HasTag::RootCandidateInvariant() const
-{ return !m_name || m_name->RootCandidateInvariant(); }
-
-bool HasTag::TargetInvariant() const
-{ return !m_name || m_name->TargetInvariant(); }
-
-bool HasTag::SourceInvariant() const
-{ return !m_name || m_name->SourceInvariant(); }
-
 std::string HasTag::Description(bool negated/* = false*/) const {
     std::string name_str;
     if (m_name) {
@@ -2606,7 +2603,12 @@ CreatedOnTurn::CreatedOnTurn(std::unique_ptr<ValueRef::ValueRef<int>>&& low,
     Condition(),
     m_low(std::move(low)),
     m_high(std::move(high))
-{}
+{
+    auto operands = {m_low.get(), m_high.get()};
+    m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
+    m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
+    m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
+}
 
 bool CreatedOnTurn::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -2657,15 +2659,6 @@ void CreatedOnTurn::Eval(const ScriptingContext& parent_context,
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
 }
-
-bool CreatedOnTurn::RootCandidateInvariant() const
-{ return ((!m_low || m_low->RootCandidateInvariant()) && (!m_high || m_high->RootCandidateInvariant())); }
-
-bool CreatedOnTurn::TargetInvariant() const
-{ return ((!m_low || m_low->TargetInvariant()) && (!m_high || m_high->TargetInvariant())); }
-
-bool CreatedOnTurn::SourceInvariant() const
-{ return ((!m_low || m_low->SourceInvariant()) && (!m_high || m_high->SourceInvariant())); }
 
 std::string CreatedOnTurn::Description(bool negated/* = false*/) const {
     std::string low_str = (m_low ? (m_low->ConstantExpr() ?
@@ -2725,6 +2718,15 @@ unsigned int CreatedOnTurn::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // Contains                                              //
 ///////////////////////////////////////////////////////////
+Contains::Contains(std::unique_ptr<Condition>&& condition) :
+    Condition(),
+    m_condition(std::move(condition))
+{
+    m_root_candidate_invariant = m_condition->RootCandidateInvariant();
+    m_target_invariant = m_condition->TargetInvariant();
+    m_source_invariant = m_condition->SourceInvariant();
+}
+
 bool Contains::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;
@@ -2824,7 +2826,7 @@ void Contains::Eval(const ScriptingContext& parent_context,
         ScriptingContext local_context(parent_context, search_domain == MATCHES ? *matches.begin() : *non_matches.begin());
 
         // initialize subcondition candidates from local candidate's contents
-        const ObjectMap& objects = Objects();
+        const ObjectMap& objects = parent_context.ContextObjects();
         ObjectSet subcondition_matches = objects.find(local_context.condition_local_candidate->ContainedObjectIDs());
 
         // apply subcondition to candidates
@@ -2857,15 +2859,6 @@ void Contains::Eval(const ScriptingContext& parent_context,
     }
 }
 
-bool Contains::RootCandidateInvariant() const
-{ return m_condition->RootCandidateInvariant(); }
-
-bool Contains::TargetInvariant() const
-{ return m_condition->TargetInvariant(); }
-
-bool Contains::SourceInvariant() const
-{ return m_condition->SourceInvariant(); }
-
 std::string Contains::Description(bool negated/* = false*/) const {
     return str(FlexibleFormat((!negated)
         ? UserString("DESC_CONTAINS")
@@ -2883,9 +2876,9 @@ void Contains::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_
                                                  ObjectSet& condition_non_targets) const
 {
     // objects that can contain other objects: systems, fleets, planets
-    AddSystemSet(condition_non_targets);
-    AddFleetSet(condition_non_targets);
-    AddPlanetSet(condition_non_targets);
+    AddSystemSet(parent_context.ContextObjects(), condition_non_targets);
+    AddFleetSet(parent_context.ContextObjects(), condition_non_targets);
+    AddPlanetSet(parent_context.ContextObjects(), condition_non_targets);
 }
 
 bool Contains::Match(const ScriptingContext& local_context) const {
@@ -2925,6 +2918,15 @@ unsigned int Contains::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // ContainedBy                                           //
 ///////////////////////////////////////////////////////////
+ContainedBy::ContainedBy(std::unique_ptr<Condition>&& condition) :
+    Condition(),
+    m_condition(std::move(condition))
+{
+    m_root_candidate_invariant = m_condition->RootCandidateInvariant();
+    m_target_invariant = m_condition->TargetInvariant();
+    m_source_invariant = m_condition->SourceInvariant();
+}
+
 bool ContainedBy::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;
@@ -3032,7 +3034,7 @@ void ContainedBy::Eval(const ScriptingContext& parent_context,
         ScriptingContext local_context(parent_context, search_domain == MATCHES ? *matches.begin() : *non_matches.begin());
 
         // initialize subcondition candidates from local candidate's containers
-        const ObjectMap& objects = Objects();
+        const ObjectMap& objects = parent_context.ContextObjects();
         std::set<int> container_object_ids;
         if (local_context.condition_local_candidate->ContainerObjectID() != INVALID_OBJECT_ID)
             container_object_ids.insert(local_context.condition_local_candidate->ContainerObjectID());
@@ -3071,15 +3073,6 @@ void ContainedBy::Eval(const ScriptingContext& parent_context,
     }
 }
 
-bool ContainedBy::RootCandidateInvariant() const
-{ return m_condition->RootCandidateInvariant(); }
-
-bool ContainedBy::TargetInvariant() const
-{ return m_condition->TargetInvariant(); }
-
-bool ContainedBy::SourceInvariant() const
-{ return m_condition->SourceInvariant(); }
-
 std::string ContainedBy::Description(bool negated/* = false*/) const {
     return str(FlexibleFormat((!negated)
         ? UserString("DESC_CONTAINED_BY")
@@ -3097,10 +3090,10 @@ void ContainedBy::GetDefaultInitialCandidateObjects(const ScriptingContext& pare
                                                     ObjectSet& condition_non_targets) const
 {
     // objects that can be contained by other objects: fleets, planets, ships, buildings
-    AddFleetSet(condition_non_targets);
-    AddPlanetSet(condition_non_targets);
-    AddShipSet(condition_non_targets);
-    AddBuildingSet(condition_non_targets);
+    AddFleetSet(parent_context.ContextObjects(), condition_non_targets);
+    AddPlanetSet(parent_context.ContextObjects(), condition_non_targets);
+    AddShipSet(parent_context.ContextObjects(), condition_non_targets);
+    AddBuildingSet(parent_context.ContextObjects(), condition_non_targets);
 }
 
 bool ContainedBy::Match(const ScriptingContext& local_context) const {
@@ -3117,7 +3110,7 @@ bool ContainedBy::Match(const ScriptingContext& local_context) const {
     if (candidate->ContainerObjectID() != INVALID_OBJECT_ID && candidate->ContainerObjectID() != candidate->SystemID())
         containers.insert(candidate->ContainerObjectID());
 
-    ObjectSet container_objects = Objects().find<const UniverseObject>(containers);
+    ObjectSet container_objects = local_context.ContextObjects().find<const UniverseObject>(containers);
     if (container_objects.empty())
         return false;
 
@@ -3142,20 +3135,24 @@ unsigned int ContainedBy::GetCheckSum() const {
 }
 
 ///////////////////////////////////////////////////////////
-// InSystem                                              //
+// InOrIsSystem                                          //
 ///////////////////////////////////////////////////////////
-InSystem::InSystem(std::unique_ptr<ValueRef::ValueRef<int>>&& system_id) :
+InOrIsSystem::InOrIsSystem(std::unique_ptr<ValueRef::ValueRef<int>>&& system_id) :
     Condition(),
     m_system_id(std::move(system_id))
-{}
+{
+    m_root_candidate_invariant = !m_system_id || m_system_id->RootCandidateInvariant();
+    m_target_invariant = !m_system_id || m_system_id->TargetInvariant();
+    m_source_invariant = !m_system_id || m_system_id->SourceInvariant();
+}
 
-bool InSystem::operator==(const Condition& rhs) const {
+bool InOrIsSystem::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;
     if (typeid(*this) != typeid(rhs))
         return false;
 
-    const InSystem& rhs_ = static_cast<const InSystem&>(rhs);
+    const InOrIsSystem& rhs_ = static_cast<const InOrIsSystem&>(rhs);
 
     CHECK_COND_VREF_MEMBER(m_system_id)
 
@@ -3172,24 +3169,24 @@ namespace {
             if (!candidate)
                 return false;
             if (m_system_id == INVALID_OBJECT_ID)
-                return candidate->SystemID() != INVALID_OBJECT_ID;  // match objects in any system
+                return candidate->SystemID() != INVALID_OBJECT_ID;  // match objects in any system (including any system itself)
             else
-                return candidate->SystemID() == m_system_id;        // match objects in specified system
+                return candidate->SystemID() == m_system_id;        // match objects in specified system (including that system itself)
         }
 
         int m_system_id;
     };
 }
 
-void InSystem::Eval(const ScriptingContext& parent_context,
-                    ObjectSet& matches, ObjectSet& non_matches,
-                    SearchDomain search_domain/* = NON_MATCHES*/) const
+void InOrIsSystem::Eval(const ScriptingContext& parent_context,
+                        ObjectSet& matches, ObjectSet& non_matches,
+                        SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = !m_system_id || m_system_id->ConstantExpr() ||
                             (m_system_id->LocalCandidateInvariant() &&
                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
-        // evaluate empire id once, and use to check all candidate objects
+        // evaluate system id once, and use to check all candidate objects
         int system_id = (m_system_id ? m_system_id->Eval(parent_context) : INVALID_OBJECT_ID);
         EvalImpl(matches, non_matches, search_domain, InSystemSimpleMatch(system_id));
     } else {
@@ -3198,16 +3195,7 @@ void InSystem::Eval(const ScriptingContext& parent_context,
     }
 }
 
-bool InSystem::RootCandidateInvariant() const
-{ return !m_system_id || m_system_id->RootCandidateInvariant(); }
-
-bool InSystem::TargetInvariant() const
-{ return !m_system_id || m_system_id->TargetInvariant(); }
-
-bool InSystem::SourceInvariant() const
-{ return !m_system_id || m_system_id->SourceInvariant(); }
-
-std::string InSystem::Description(bool negated/* = false*/) const {
+std::string InOrIsSystem::Description(bool negated/* = false*/) const {
     std::string system_str;
     int system_id = INVALID_OBJECT_ID;
     if (m_system_id && m_system_id->ConstantExpr())
@@ -3230,7 +3218,7 @@ std::string InSystem::Description(bool negated/* = false*/) const {
     return str(FlexibleFormat(description_str) % system_str);
 }
 
-std::string InSystem::Dump(unsigned short ntabs) const {
+std::string InOrIsSystem::Dump(unsigned short ntabs) const {
     std::string retval = DumpIndent(ntabs) + "InSystem";
     if (m_system_id)
         retval += " id = " + m_system_id->Dump(ntabs);
@@ -3238,12 +3226,12 @@ std::string InSystem::Dump(unsigned short ntabs) const {
     return retval;
 }
 
-void InSystem::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                 ObjectSet& condition_non_targets) const
+void InOrIsSystem::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                                     ObjectSet& condition_non_targets) const
 {
     if (!m_system_id) {
         // can match objects in any system, or any system
-        AddAllObjectsSet(condition_non_targets);
+        AddAllObjectsSet(parent_context.ContextObjects(), condition_non_targets);
         return;
     }
 
@@ -3253,19 +3241,18 @@ void InSystem::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_
 
     if (!simple_eval_safe) {
         // almost anything can be in a system, and can also match the system itself
-        AddAllObjectsSet(condition_non_targets);
+        AddAllObjectsSet(parent_context.ContextObjects(), condition_non_targets);
         return;
     }
 
     // simple case of a single specified system id; can add just objects in that system
     int system_id = m_system_id->Eval(parent_context);
-    auto system = Objects().get<System>(system_id);
+    auto system = parent_context.ContextObjects().get<System>(system_id);
     if (!system)
         return;
 
-    const ObjectMap& obj_map = Objects();
     const std::set<int>& system_object_ids = system->ObjectIDs();
-    auto sys_objs = obj_map.find(system_object_ids);
+    auto sys_objs = parent_context.ContextObjects().find(system_object_ids);
 
     // insert all objects that have the specified system id
     condition_non_targets.reserve(sys_objs.size() + 1);
@@ -3274,28 +3261,178 @@ void InSystem::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_
     condition_non_targets.push_back(system);
 }
 
-bool InSystem::Match(const ScriptingContext& local_context) const {
+bool InOrIsSystem::Match(const ScriptingContext& local_context) const {
     auto candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "InSystem::Match passed no candidate object";
+        ErrorLogger() << "InOrIsSystem::Match passed no candidate object";
         return false;
     }
     int system_id = (m_system_id ? m_system_id->Eval(local_context) : INVALID_OBJECT_ID);
     return InSystemSimpleMatch(system_id)(candidate);
 }
 
-void InSystem::SetTopLevelContent(const std::string& content_name) {
+void InOrIsSystem::SetTopLevelContent(const std::string& content_name) {
     if (m_system_id)
         m_system_id->SetTopLevelContent(content_name);
 }
 
-unsigned int InSystem::GetCheckSum() const {
+unsigned int InOrIsSystem::GetCheckSum() const {
     unsigned int retval{0};
 
-    CheckSums::CheckSumCombine(retval, "Condition::InSystem");
+    CheckSums::CheckSumCombine(retval, "Condition::InOrIsSystem");
     CheckSums::CheckSumCombine(retval, m_system_id);
 
-    TraceLogger() << "GetCheckSum(InSystem): retval: " << retval;
+    TraceLogger() << "GetCheckSum(InOrIsSystem): retval: " << retval;
+    return retval;
+}
+
+///////////////////////////////////////////////////////////
+// OnPlanet                                              //
+///////////////////////////////////////////////////////////
+OnPlanet::OnPlanet(std::unique_ptr<ValueRef::ValueRef<int>>&& planet_id) :
+    Condition(),
+    m_planet_id(std::move(planet_id))
+{
+    m_root_candidate_invariant = !m_planet_id || m_planet_id->RootCandidateInvariant();
+    m_target_invariant = !m_planet_id || m_planet_id->TargetInvariant();
+    m_source_invariant = !m_planet_id || m_planet_id->SourceInvariant();
+}
+
+bool OnPlanet::operator==(const Condition& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const OnPlanet& rhs_ = static_cast<const OnPlanet&>(rhs);
+
+    CHECK_COND_VREF_MEMBER(m_planet_id)
+
+    return true;
+}
+
+namespace {
+    struct OnPlanetSimpleMatch {
+        OnPlanetSimpleMatch(int planet_id) :
+            m_planet_id(planet_id)
+        {}
+
+        bool operator()(std::shared_ptr<const UniverseObject> candidate) const {
+            if (!candidate)
+                return false;
+            auto building = std::dynamic_pointer_cast<const ::Building>(candidate);
+            if (!building)
+                return false;
+
+            if (m_planet_id == INVALID_OBJECT_ID)
+                return building->PlanetID() != INVALID_OBJECT_ID;  // match objects on any planet
+            else
+                return building->PlanetID() == m_planet_id;        // match objects on specified planet
+        }
+
+        int m_planet_id;
+    };
+}
+
+void OnPlanet::Eval(const ScriptingContext& parent_context,
+                    ObjectSet& matches, ObjectSet& non_matches,
+                    SearchDomain search_domain/* = NON_MATCHES*/) const
+{
+    bool simple_eval_safe = !m_planet_id || m_planet_id->ConstantExpr() ||
+                            (m_planet_id->LocalCandidateInvariant() &&
+                            (parent_context.condition_root_candidate || RootCandidateInvariant()));
+    if (simple_eval_safe) {
+        // evaluate planet id once, and use to check all candidate objects
+        int planet_id = (m_planet_id ? m_planet_id->Eval(parent_context) : INVALID_OBJECT_ID);
+        EvalImpl(matches, non_matches, search_domain, OnPlanetSimpleMatch(planet_id));
+    } else {
+        // re-evaluate empire id for each candidate object
+        Condition::Eval(parent_context, matches, non_matches, search_domain);
+    }
+}
+
+std::string OnPlanet::Description(bool negated/* = false*/) const {
+    std::string planet_str;
+    int planet_id = INVALID_OBJECT_ID;
+    if (m_planet_id && m_planet_id->ConstantExpr())
+        planet_id = m_planet_id->Eval();
+    if (auto planet = Objects().get<Planet>(planet_id))
+        planet_str = planet->Name();
+    else if (m_planet_id)
+        planet_str = m_planet_id->Description();
+
+    std::string description_str;
+    if (!planet_str.empty())
+        description_str = (!negated)
+            ? UserString("DESC_ON_PLANET")
+            : UserString("DESC_ON_PLANET_NOT");
+    else
+        description_str = (!negated)
+            ? UserString("DESC_ON_PLANET_SIMPLE")
+            : UserString("DESC_ON_PLANET_SIMPLE_NOT");
+
+    return str(FlexibleFormat(description_str) % planet_str);
+}
+
+std::string OnPlanet::Dump(unsigned short ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "OnPlanet";
+    if (m_planet_id)
+        retval += " id = " + m_planet_id->Dump(ntabs);
+    retval += "\n";
+    return retval;
+}
+
+void OnPlanet::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                                 ObjectSet& condition_non_targets) const
+{
+    if (!m_planet_id) {
+        // only buildings can be on planets
+        AddBuildingSet(parent_context.ContextObjects(), condition_non_targets);
+        return;
+    }
+
+    bool simple_eval_safe = m_planet_id->ConstantExpr() ||
+                            (m_planet_id->LocalCandidateInvariant() &&
+                            (parent_context.condition_root_candidate || RootCandidateInvariant()));
+
+    if (!simple_eval_safe) {
+        // only buildings can be on planets
+        AddBuildingSet(parent_context.ContextObjects(), condition_non_targets);
+        return;
+    }
+
+    // simple case of a single specified system id; can add just objects in that system
+    int planet_id = m_planet_id->Eval(parent_context);
+    auto planet = parent_context.ContextObjects().get<Planet>(planet_id);
+    if (!planet)
+        return;
+
+    // insert all objects that have the specified planet id
+    condition_non_targets = parent_context.ContextObjects().find(planet->BuildingIDs());
+}
+
+bool OnPlanet::Match(const ScriptingContext& local_context) const {
+    auto candidate = local_context.condition_local_candidate;
+    if (!candidate) {
+        ErrorLogger() << "OnPlanet::Match passed no candidate object";
+        return false;
+    }
+    int planet_id = (m_planet_id ? m_planet_id->Eval(local_context) : INVALID_OBJECT_ID);
+    return OnPlanetSimpleMatch(planet_id)(candidate);
+}
+
+void OnPlanet::SetTopLevelContent(const std::string& content_name) {
+    if (m_planet_id)
+        m_planet_id->SetTopLevelContent(content_name);
+}
+
+unsigned int OnPlanet::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::OnPlanet");
+    CheckSums::CheckSumCombine(retval, m_planet_id);
+
+    TraceLogger() << "GetCheckSum(OnPlanet): retval: " << retval;
     return retval;
 }
 
@@ -3305,7 +3442,11 @@ unsigned int InSystem::GetCheckSum() const {
 ObjectID::ObjectID(std::unique_ptr<ValueRef::ValueRef<int>>&& object_id) :
     Condition(),
     m_object_id(std::move(object_id))
-{}
+{
+    m_root_candidate_invariant = !m_object_id || m_object_id->RootCandidateInvariant();
+    m_target_invariant = !m_object_id || m_object_id->TargetInvariant();
+    m_source_invariant = !m_object_id || m_object_id->SourceInvariant();
+}
 
 bool ObjectID::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -3353,15 +3494,6 @@ void ObjectID::Eval(const ScriptingContext& parent_context,
     }
 }
 
-bool ObjectID::RootCandidateInvariant() const
-{ return !m_object_id || m_object_id->RootCandidateInvariant(); }
-
-bool ObjectID::TargetInvariant() const
-{ return !m_object_id || m_object_id->TargetInvariant(); }
-
-bool ObjectID::SourceInvariant() const
-{ return !m_object_id || m_object_id->SourceInvariant(); }
-
 std::string ObjectID::Description(bool negated/* = false*/) const {
     std::string object_str;
     int object_id = INVALID_OBJECT_ID;
@@ -3394,18 +3526,16 @@ void ObjectID::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_
                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
 
     if (!simple_eval_safe) {
-        AddAllObjectsSet(condition_non_targets);
+        AddAllObjectsSet(parent_context.ContextObjects(), condition_non_targets);
         return;
     }
 
     // simple case of a single specified id; can add just that object
-    std::shared_ptr<const UniverseObject> no_object;
-    int object_id = m_object_id->Eval(ScriptingContext(parent_context, no_object));
+    int object_id = m_object_id->Eval(parent_context);
     if (object_id == INVALID_OBJECT_ID)
         return;
 
-    auto obj = Objects().ExistingObject(object_id);
-    if (obj)
+    if (auto obj = parent_context.ContextObjects().ExistingObject(object_id))
         condition_non_targets.push_back(obj);
 }
 
@@ -3440,7 +3570,11 @@ unsigned int ObjectID::GetCheckSum() const {
 PlanetType::PlanetType(std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetType>>>&& types) :
     Condition(),
     m_types(std::move(types))
-{}
+{
+    m_root_candidate_invariant = boost::algorithm::all_of(m_types, [](auto& e){ return e->RootCandidateInvariant(); });
+    m_target_invariant = boost::algorithm::all_of(m_types, [](auto& e){ return e->TargetInvariant(); });
+    m_source_invariant = boost::algorithm::all_of(m_types, [](auto& e){ return e->SourceInvariant(); });
+}
 
 bool PlanetType::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -3461,8 +3595,9 @@ bool PlanetType::operator==(const Condition& rhs) const {
 
 namespace {
     struct PlanetTypeSimpleMatch {
-        PlanetTypeSimpleMatch(const std::vector< ::PlanetType>& types) :
-            m_types(types)
+        PlanetTypeSimpleMatch(const std::vector< ::PlanetType>& types, const ObjectMap& objects) :
+            m_types(types),
+            m_objects(objects)
         {}
 
         bool operator()(std::shared_ptr<const UniverseObject> candidate) const {
@@ -3472,9 +3607,8 @@ namespace {
             // is it a planet or on a planet?
             auto planet = std::dynamic_pointer_cast<const Planet>(candidate);
             std::shared_ptr<const ::Building> building;
-            if (!planet && (building = std::dynamic_pointer_cast<const ::Building>(candidate))) {
-                planet = Objects().get<Planet>(building->PlanetID());
-            }
+            if (!planet && (building = std::dynamic_pointer_cast<const ::Building>(candidate)))
+                planet = m_objects.get<Planet>(building->PlanetID());
             if (planet) {
                 // is it one of the specified building types?
                 return std::count(m_types.begin(), m_types.end(), planet->Type());
@@ -3484,12 +3618,13 @@ namespace {
         }
 
         const std::vector< ::PlanetType>& m_types;
+        const ObjectMap& m_objects;
     };
 }
 
 void PlanetType::Eval(const ScriptingContext& parent_context,
-                                 ObjectSet& matches, ObjectSet& non_matches,
-                                 SearchDomain search_domain/* = NON_MATCHES*/) const
+                      ObjectSet& matches, ObjectSet& non_matches,
+                      SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
@@ -3508,35 +3643,11 @@ void PlanetType::Eval(const ScriptingContext& parent_context,
         for (auto& type : m_types) {
             types.push_back(type->Eval(parent_context));
         }
-        EvalImpl(matches, non_matches, search_domain, PlanetTypeSimpleMatch(types));
+        EvalImpl(matches, non_matches, search_domain, PlanetTypeSimpleMatch(types, parent_context.ContextObjects()));
     } else {
         // re-evaluate contained objects for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
-}
-
-bool PlanetType::RootCandidateInvariant() const {
-    for (auto& type : m_types) {
-        if (!type->RootCandidateInvariant())
-            return false;
-    }
-    return true;
-}
-
-bool PlanetType::TargetInvariant() const {
-    for (auto& type : m_types) {
-        if (!type->TargetInvariant())
-            return false;
-    }
-    return true;
-}
-
-bool PlanetType::SourceInvariant() const {
-    for (auto& type : m_types) {
-        if (!type->SourceInvariant())
-            return false;
-    }
-    return true;
 }
 
 std::string PlanetType::Description(bool negated/* = false*/) const {
@@ -3576,8 +3687,8 @@ std::string PlanetType::Dump(unsigned short ntabs) const {
 void PlanetType::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                                    ObjectSet& condition_non_targets) const
 {
-    AddPlanetSet(condition_non_targets);
-    AddBuildingSet(condition_non_targets);
+    AddPlanetSet(parent_context.ContextObjects(), condition_non_targets);
+    AddBuildingSet(parent_context.ContextObjects(), condition_non_targets);
 }
 
 bool PlanetType::Match(const ScriptingContext& local_context) const {
@@ -3589,12 +3700,12 @@ bool PlanetType::Match(const ScriptingContext& local_context) const {
 
     auto planet = std::dynamic_pointer_cast<const Planet>(candidate);
     std::shared_ptr<const ::Building> building;
-    if (!planet && (building = std::dynamic_pointer_cast<const ::Building>(candidate))) {
-        planet = Objects().get<Planet>(building->PlanetID());
-    }
+    if (!planet && (building = std::dynamic_pointer_cast<const ::Building>(candidate)))
+        planet = local_context.ContextObjects().get<Planet>(building->PlanetID());
+
     if (planet) {
         for (auto& type : m_types) {
-            if (type->Eval(ScriptingContext(local_context)) == planet->Type())
+            if (type->Eval(local_context) == planet->Type())
                 return true;
         }
     }
@@ -3624,7 +3735,11 @@ unsigned int PlanetType::GetCheckSum() const {
 PlanetSize::PlanetSize(std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetSize>>>&& sizes) :
     Condition(),
     m_sizes(std::move(sizes))
-{}
+{
+    m_root_candidate_invariant = boost::algorithm::all_of(m_sizes, [](auto& e){ return e->RootCandidateInvariant(); });
+    m_target_invariant = boost::algorithm::all_of(m_sizes, [](auto& e){ return e->TargetInvariant(); });
+    m_source_invariant = boost::algorithm::all_of(m_sizes, [](auto& e){ return e->SourceInvariant(); });
+}
 
 bool PlanetSize::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -3645,8 +3760,9 @@ bool PlanetSize::operator==(const Condition& rhs) const {
 
 namespace {
     struct PlanetSizeSimpleMatch {
-        PlanetSizeSimpleMatch(const std::vector< ::PlanetSize>& sizes) :
-            m_sizes(sizes)
+        PlanetSizeSimpleMatch(const std::vector< ::PlanetSize>& sizes, const ObjectMap& objects) :
+            m_sizes(sizes),
+            m_objects(objects)
         {}
 
         bool operator()(std::shared_ptr<const UniverseObject> candidate) const {
@@ -3656,9 +3772,8 @@ namespace {
             // is it a planet or on a planet? TODO: This concept should be generalized and factored out.
             auto planet = std::dynamic_pointer_cast<const Planet>(candidate);
             std::shared_ptr<const ::Building> building;
-            if (!planet && (building = std::dynamic_pointer_cast<const ::Building>(candidate))) {
-                planet = Objects().get<Planet>(building->PlanetID());
-            }
+            if (!planet && (building = std::dynamic_pointer_cast<const ::Building>(candidate)))
+                planet = m_objects.get<Planet>(building->PlanetID());
             if (planet) {
                 // is it one of the specified building types?
                 for (auto size : m_sizes) {
@@ -3671,6 +3786,7 @@ namespace {
         }
 
         const std::vector< ::PlanetSize>& m_sizes;
+        const ObjectMap& m_objects;
     };
 }
 
@@ -3695,35 +3811,11 @@ void PlanetSize::Eval(const ScriptingContext& parent_context,
         for (auto& size : m_sizes) {
             sizes.push_back(size->Eval(parent_context));
         }
-        EvalImpl(matches, non_matches, search_domain, PlanetSizeSimpleMatch(sizes));
+        EvalImpl(matches, non_matches, search_domain, PlanetSizeSimpleMatch(sizes, parent_context.ContextObjects()));
     } else {
         // re-evaluate contained objects for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
-}
-
-bool PlanetSize::RootCandidateInvariant() const {
-    for (auto& size : m_sizes) {
-        if (!size->RootCandidateInvariant())
-            return false;
-    }
-    return true;
-}
-
-bool PlanetSize::TargetInvariant() const {
-    for (auto& size : m_sizes) {
-        if (!size->TargetInvariant())
-            return false;
-    }
-    return true;
-}
-
-bool PlanetSize::SourceInvariant() const {
-    for (auto& size : m_sizes) {
-        if (!size->SourceInvariant())
-            return false;
-    }
-    return true;
 }
 
 std::string PlanetSize::Description(bool negated/* = false*/) const {
@@ -3763,8 +3855,8 @@ std::string PlanetSize::Dump(unsigned short ntabs) const {
 void PlanetSize::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                                    ObjectSet& condition_non_targets) const
 {
-    AddPlanetSet(condition_non_targets);
-    AddBuildingSet(condition_non_targets);
+    AddPlanetSet(parent_context.ContextObjects(), condition_non_targets);
+    AddBuildingSet(parent_context.ContextObjects(), condition_non_targets);
 }
 
 bool PlanetSize::Match(const ScriptingContext& local_context) const {
@@ -3776,9 +3868,9 @@ bool PlanetSize::Match(const ScriptingContext& local_context) const {
 
     auto planet = std::dynamic_pointer_cast<const Planet>(candidate);
     std::shared_ptr<const ::Building> building;
-    if (!planet && (building = std::dynamic_pointer_cast<const ::Building>(candidate))) {
-        planet = Objects().get<Planet>(building->PlanetID());
-    }
+    if (!planet && (building = std::dynamic_pointer_cast<const ::Building>(candidate)))
+        planet = local_context.ContextObjects().get<Planet>(building->PlanetID());
+
     if (planet) {
         for (auto& size : m_sizes) {
             if (size->Eval(local_context) == planet->Size())
@@ -3813,7 +3905,17 @@ PlanetEnvironment::PlanetEnvironment(std::vector<std::unique_ptr<ValueRef::Value
     Condition(),
     m_environments(std::move(environments)),
     m_species_name(std::move(species_name_ref))
-{}
+{
+    m_root_candidate_invariant =
+        (!m_species_name || m_species_name->RootCandidateInvariant()) &&
+        boost::algorithm::all_of(m_environments, [](auto& e){ return !e || e->RootCandidateInvariant(); });
+    m_target_invariant =
+        (!m_species_name || m_species_name->TargetInvariant()) &&
+        boost::algorithm::all_of(m_environments, [](auto& e){ return !e || e->TargetInvariant(); });
+    m_source_invariant =
+        (!m_species_name || m_species_name->SourceInvariant()) &&
+        boost::algorithm::all_of(m_environments, [](auto& e){ return !e || e->SourceInvariant(); });
+}
 
 bool PlanetEnvironment::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -3837,9 +3939,11 @@ bool PlanetEnvironment::operator==(const Condition& rhs) const {
 namespace {
     struct PlanetEnvironmentSimpleMatch {
         PlanetEnvironmentSimpleMatch(const std::vector< ::PlanetEnvironment>& environments,
+                                     const ObjectMap& objects,
                                      const std::string& species = "") :
             m_environments(environments),
-            m_species(species)
+            m_species(species),
+            m_objects(objects)
         {}
 
         bool operator()(std::shared_ptr<const UniverseObject> candidate) const {
@@ -3849,9 +3953,8 @@ namespace {
             // is it a planet or on a planet? TODO: factor out
             auto planet = std::dynamic_pointer_cast<const Planet>(candidate);
             std::shared_ptr<const ::Building> building;
-            if (!planet && (building = std::dynamic_pointer_cast<const ::Building>(candidate))) {
-                planet = Objects().get<Planet>(building->PlanetID());
-            }
+            if (!planet && (building = std::dynamic_pointer_cast<const ::Building>(candidate)))
+                planet = m_objects.get<Planet>(building->PlanetID());
             if (planet) {
                 // is it one of the specified building types?
                 for (auto environment : m_environments) {
@@ -3865,6 +3968,7 @@ namespace {
 
         const std::vector< ::PlanetEnvironment>&    m_environments;
         const std::string&                          m_species;
+        const ObjectMap&                            m_objects;
     };
 }
 
@@ -3893,41 +3997,11 @@ void PlanetEnvironment::Eval(const ScriptingContext& parent_context,
         std::string species_name;
         if (m_species_name)
             species_name = m_species_name->Eval(parent_context);
-        EvalImpl(matches, non_matches, search_domain, PlanetEnvironmentSimpleMatch(environments, species_name));
+        EvalImpl(matches, non_matches, search_domain, PlanetEnvironmentSimpleMatch(environments, parent_context.ContextObjects(), species_name));
     } else {
         // re-evaluate contained objects for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
-}
-
-bool PlanetEnvironment::RootCandidateInvariant() const {
-    if (m_species_name && !m_species_name->RootCandidateInvariant())
-        return false;
-    for (auto& environment : m_environments) {
-        if (!environment->RootCandidateInvariant())
-            return false;
-    }
-    return true;
-}
-
-bool PlanetEnvironment::TargetInvariant() const {
-    if (m_species_name && !m_species_name->TargetInvariant())
-        return false;
-    for (auto& environment : m_environments) {
-        if (!environment->TargetInvariant())
-            return false;
-    }
-    return true;
-}
-
-bool PlanetEnvironment::SourceInvariant() const {
-    if (m_species_name && !m_species_name->SourceInvariant())
-        return false;
-    for (auto& environment : m_environments) {
-        if (!environment->SourceInvariant())
-            return false;
-    }
-    return true;
 }
 
 std::string PlanetEnvironment::Description(bool negated/* = false*/) const {
@@ -3979,8 +4053,8 @@ std::string PlanetEnvironment::Dump(unsigned short ntabs) const {
 void PlanetEnvironment::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                                           ObjectSet& condition_non_targets) const
 {
-    AddPlanetSet(condition_non_targets);
-    AddBuildingSet(condition_non_targets);
+    AddPlanetSet(parent_context.ContextObjects(), condition_non_targets);
+    AddBuildingSet(parent_context.ContextObjects(), condition_non_targets);
 }
 
 bool PlanetEnvironment::Match(const ScriptingContext& local_context) const {
@@ -3993,9 +4067,8 @@ bool PlanetEnvironment::Match(const ScriptingContext& local_context) const {
     // is it a planet or on a planet? TODO: factor out
     auto planet = std::dynamic_pointer_cast<const Planet>(candidate);
     std::shared_ptr<const ::Building> building;
-    if (!planet && (building = std::dynamic_pointer_cast<const ::Building>(candidate))) {
-        planet = Objects().get<Planet>(building->PlanetID());
-    }
+    if (!planet && (building = std::dynamic_pointer_cast<const ::Building>(candidate)))
+        planet = local_context.ContextObjects().get<Planet>(building->PlanetID());
     if (!planet)
         return false;
 
@@ -4037,11 +4110,14 @@ unsigned int PlanetEnvironment::GetCheckSum() const {
 Species::Species(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names) :
     Condition(),
     m_names(std::move(names))
-{}
+{
+    m_root_candidate_invariant = boost::algorithm::all_of(m_names, [](auto& e){ return e->RootCandidateInvariant(); });
+    m_target_invariant = boost::algorithm::all_of(m_names, [](auto& e){ return e->TargetInvariant(); });
+    m_source_invariant = boost::algorithm::all_of(m_names, [](auto& e){ return e->SourceInvariant(); });
+}
 
 Species::Species() :
-    Condition(),
-    m_names()
+    Species(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>{})
 {}
 
 bool Species::operator==(const Condition& rhs) const {
@@ -4063,8 +4139,9 @@ bool Species::operator==(const Condition& rhs) const {
 
 namespace {
     struct SpeciesSimpleMatch {
-        SpeciesSimpleMatch(const std::vector<std::string>& names) :
-            m_names(names)
+        SpeciesSimpleMatch(const std::vector<std::string>& names, const ObjectMap& objects) :
+            m_names(names),
+            m_objects(objects)
         {}
 
         bool operator()(std::shared_ptr<const UniverseObject> candidate) const {
@@ -4085,7 +4162,7 @@ namespace {
             }
             // is it a building on a planet?
             if (auto building = std::dynamic_pointer_cast<const ::Building>(candidate)) {
-                auto planet = Objects().get<Planet>(building->PlanetID());
+                auto planet = m_objects.get<Planet>(building->PlanetID());
                 const std::string& species_name = planet->SpeciesName();
                 // if the planet (which IS a popcenter) has a species and that species is one of those specified...
                 return !species_name.empty() && (m_names.empty() || std::count(m_names.begin(), m_names.end(), species_name));
@@ -4095,6 +4172,7 @@ namespace {
         }
 
         const std::vector<std::string>& m_names;
+        const ObjectMap& m_objects;
     };
 }
 
@@ -4119,35 +4197,11 @@ void Species::Eval(const ScriptingContext& parent_context,
         for (auto& name : m_names) {
             names.push_back(name->Eval(parent_context));
         }
-        EvalImpl(matches, non_matches, search_domain, SpeciesSimpleMatch(names));
+        EvalImpl(matches, non_matches, search_domain, SpeciesSimpleMatch(names, parent_context.ContextObjects()));
     } else {
         // re-evaluate allowed building types range for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
-}
-
-bool Species::RootCandidateInvariant() const {
-    for (auto& name : m_names) {
-        if (!name->RootCandidateInvariant())
-            return false;
-    }
-    return true;
-}
-
-bool Species::TargetInvariant() const {
-    for (auto& name : m_names) {
-        if (!name->TargetInvariant())
-            return false;
-    }
-    return true;
-}
-
-bool Species::SourceInvariant() const {
-    for (auto& name : m_names) {
-        if (!name->SourceInvariant())
-            return false;
-    }
-    return true;
 }
 
 std::string Species::Description(bool negated/* = false*/) const {
@@ -4191,9 +4245,9 @@ std::string Species::Dump(unsigned short ntabs) const {
 void Species::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                                 ObjectSet& condition_non_targets) const
 {
-    AddPlanetSet(condition_non_targets);
-    AddBuildingSet(condition_non_targets);
-    AddShipSet(condition_non_targets);
+    AddPlanetSet(parent_context.ContextObjects(), condition_non_targets);
+    AddBuildingSet(parent_context.ContextObjects(), condition_non_targets);
+    AddShipSet(parent_context.ContextObjects(), condition_non_targets);
 }
 
 bool Species::Match(const ScriptingContext& local_context) const {
@@ -4206,9 +4260,8 @@ bool Species::Match(const ScriptingContext& local_context) const {
     // is it a planet or a building on a planet? TODO: factor out
     auto planet = std::dynamic_pointer_cast<const Planet>(candidate);
     std::shared_ptr<const ::Building> building;
-    if (!planet && (building = std::dynamic_pointer_cast<const ::Building>(candidate))) {
-        planet = Objects().get<Planet>(building->PlanetID());
-    }
+    if (!planet && (building = std::dynamic_pointer_cast<const ::Building>(candidate)))
+        planet = local_context.ContextObjects().get<Planet>(building->PlanetID());
     if (planet) {
         if (m_names.empty()) {
             return !planet->SpeciesName().empty();  // match any species name
@@ -4262,21 +4315,19 @@ Enqueued::Enqueued(std::unique_ptr<ValueRef::ValueRef<int>>&& design_id,
                    std::unique_ptr<ValueRef::ValueRef<int>>&& high) :
     Condition(),
     m_build_type(BT_SHIP),
-    m_name(),
     m_design_id(std::move(design_id)),
     m_empire_id(std::move(empire_id)),
     m_low(std::move(low)),
     m_high(std::move(high))
-{}
+{
+    auto operands = {m_design_id.get(), m_empire_id.get(), m_low.get(), m_high.get()};
+    m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
+    m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
+    m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
+}
 
 Enqueued::Enqueued() :
-    Condition(),
-    m_build_type(BT_NOT_BUILDING),
-    m_name(),
-    m_design_id(nullptr),
-    m_empire_id(nullptr),
-    m_low(nullptr),
-    m_high(nullptr)
+    Enqueued(BT_NOT_BUILDING, nullptr, nullptr, nullptr)
 {}
 
 Enqueued::Enqueued(BuildType build_type,
@@ -4287,11 +4338,21 @@ Enqueued::Enqueued(BuildType build_type,
     Condition(),
     m_build_type(build_type),
     m_name(std::move(name)),
-    m_design_id(nullptr),
     m_empire_id(std::move(empire_id)),
     m_low(std::move(low)),
     m_high(std::move(high))
-{}
+{
+    auto operands = {m_empire_id.get(), m_low.get(), m_high.get()};
+    m_root_candidate_invariant =
+        (!m_name || m_name->RootCandidateInvariant()) &&
+        boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
+    m_target_invariant =
+        (!m_name || m_name->TargetInvariant()) &&
+        boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
+    m_source_invariant =
+        (!m_name || m_name->SourceInvariant()) &&
+        boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
+}
 
 bool Enqueued::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -4420,43 +4481,13 @@ void Enqueued::Eval(const ScriptingContext& parent_context,
             low = 1;
 
         // need to test each candidate separately using EvalImpl and EnqueuedSimpleMatch
-        // because the test check that something is enqueued at the candidate location
+        // because the test checks that something is enqueued at the candidate location
         EvalImpl(matches, non_matches, search_domain, EnqueuedSimpleMatch(m_build_type, name, design_id, 
                                                                           empire_id, low, high));
     } else {
         // re-evaluate allowed building types range for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
-}
-
-bool Enqueued::RootCandidateInvariant() const {
-    if ((m_name &&      !m_name->RootCandidateInvariant()) ||
-        (m_design_id && !m_design_id->RootCandidateInvariant()) ||
-        (m_empire_id && !m_empire_id->RootCandidateInvariant()) ||
-        (m_low &&       !m_low->RootCandidateInvariant()) ||
-        (m_high &&      !m_high->RootCandidateInvariant()))
-    { return false; }
-    return true;
-}
-
-bool Enqueued::TargetInvariant() const {
-    if ((m_name &&      !m_name->TargetInvariant()) ||
-        (m_design_id && !m_design_id->TargetInvariant()) ||
-        (m_empire_id && !m_empire_id->TargetInvariant()) ||
-        (m_low &&       !m_low->TargetInvariant()) ||
-        (m_high &&      !m_high->TargetInvariant()))
-    { return false; }
-    return true;
-}
-
-bool Enqueued::SourceInvariant() const {
-    if ((m_name &&      !m_name->SourceInvariant()) ||
-        (m_design_id && !m_design_id->SourceInvariant()) ||
-        (m_empire_id && !m_empire_id->SourceInvariant()) ||
-        (m_low &&       !m_low->SourceInvariant()) ||
-        (m_high &&      !m_high->SourceInvariant()))
-    { return false; }
-    return true;
 }
 
 std::string Enqueued::Description(bool negated/* = false*/) const {
@@ -4555,7 +4586,7 @@ bool Enqueued::Match(const ScriptingContext& local_context) const {
 void Enqueued::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                                  ObjectSet& condition_non_targets) const
 {
-    AddPlanetSet(condition_non_targets);
+    AddPlanetSet(parent_context.ContextObjects(), condition_non_targets);
 }
 
 void Enqueued::SetTopLevelContent(const std::string& content_name) {
@@ -4591,7 +4622,11 @@ unsigned int Enqueued::GetCheckSum() const {
 FocusType::FocusType(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names) :
     Condition(),
     m_names(std::move(names))
-{}
+{
+    m_root_candidate_invariant = boost::algorithm::all_of(m_names, [](auto& e){ return e->RootCandidateInvariant(); });
+    m_target_invariant = boost::algorithm::all_of(m_names, [](auto& e){ return e->TargetInvariant(); });
+    m_source_invariant = boost::algorithm::all_of(m_names, [](auto& e){ return e->SourceInvariant(); });
+}
 
 bool FocusType::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -4612,8 +4647,9 @@ bool FocusType::operator==(const Condition& rhs) const {
 
 namespace {
     struct FocusTypeSimpleMatch {
-        FocusTypeSimpleMatch(const std::vector<std::string>& names) :
-            m_names(names)
+        FocusTypeSimpleMatch(const std::vector<std::string>& names, const ObjectMap& objects) :
+            m_names(names),
+            m_objects(objects)
         {}
 
         bool operator()(std::shared_ptr<const UniverseObject> candidate) const {
@@ -4624,7 +4660,7 @@ namespace {
             auto res_center = std::dynamic_pointer_cast<const ResourceCenter>(candidate);
             std::shared_ptr<const ::Building> building;
             if (!res_center && (building = std::dynamic_pointer_cast<const ::Building>(candidate))) {
-                if (auto planet = Objects().get<Planet>(building->PlanetID()))
+                if (auto planet = m_objects.get<Planet>(building->PlanetID()))
                     res_center = std::dynamic_pointer_cast<const ResourceCenter>(planet);
             }
             if (res_center) {
@@ -4636,6 +4672,7 @@ namespace {
         }
 
         const std::vector<std::string>& m_names;
+        const ObjectMap& m_objects;
     };
 }
 
@@ -4660,35 +4697,11 @@ void FocusType::Eval(const ScriptingContext& parent_context,
         for (auto& name : m_names) {
             names.push_back(name->Eval(parent_context));
         }
-        EvalImpl(matches, non_matches, search_domain, FocusTypeSimpleMatch(names));
+        EvalImpl(matches, non_matches, search_domain, FocusTypeSimpleMatch(names, parent_context.ContextObjects()));
     } else {
         // re-evaluate allowed building types range for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
-}
-
-bool FocusType::RootCandidateInvariant() const {
-    for (auto& name : m_names) {
-        if (!name->RootCandidateInvariant())
-            return false;
-    }
-    return true;
-}
-
-bool FocusType::TargetInvariant() const {
-    for (auto& name : m_names) {
-        if (!name->TargetInvariant())
-            return false;
-    }
-    return true;
-}
-
-bool FocusType::SourceInvariant() const {
-    for (auto& name : m_names) {
-        if (!name->SourceInvariant())
-            return false;
-    }
-    return true;
 }
 
 std::string FocusType::Description(bool negated/* = false*/) const {
@@ -4736,7 +4749,7 @@ bool FocusType::Match(const ScriptingContext& local_context) const {
     auto res_center = std::dynamic_pointer_cast<const ResourceCenter>(candidate);
     std::shared_ptr<const ::Building> building;
     if (!res_center && (building = std::dynamic_pointer_cast<const ::Building>(candidate))) {
-        if (auto planet = Objects().get<Planet>(building->PlanetID()))
+        if (auto planet = local_context.ContextObjects().get<Planet>(building->PlanetID()))
             res_center = std::dynamic_pointer_cast<const ResourceCenter>(planet);
     }
     if (res_center) {
@@ -4751,8 +4764,8 @@ bool FocusType::Match(const ScriptingContext& local_context) const {
 void FocusType::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                                   ObjectSet& condition_non_targets) const
 {
-    AddPlanetSet(condition_non_targets);
-    AddBuildingSet(condition_non_targets);
+    AddPlanetSet(parent_context.ContextObjects(), condition_non_targets);
+    AddBuildingSet(parent_context.ContextObjects(), condition_non_targets);
 }
 
 void FocusType::SetTopLevelContent(const std::string& content_name) {
@@ -4778,7 +4791,11 @@ unsigned int FocusType::GetCheckSum() const {
 StarType::StarType(std::vector<std::unique_ptr<ValueRef::ValueRef< ::StarType>>>&& types) :
     Condition(),
     m_types(std::move(types))
-{}
+{
+    m_root_candidate_invariant = boost::algorithm::all_of(m_types, [](auto& e){ return e->RootCandidateInvariant(); });
+    m_target_invariant = boost::algorithm::all_of(m_types, [](auto& e){ return e->TargetInvariant(); });
+    m_source_invariant = boost::algorithm::all_of(m_types, [](auto& e){ return e->SourceInvariant(); });
+}
 
 bool StarType::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -4799,15 +4816,16 @@ bool StarType::operator==(const Condition& rhs) const {
 
 namespace {
     struct StarTypeSimpleMatch {
-        StarTypeSimpleMatch(const std::vector< ::StarType>& types) :
-            m_types(types)
+        StarTypeSimpleMatch(const std::vector< ::StarType>& types, const ObjectMap& objects) :
+            m_types(types),
+            m_objects(objects)
         {}
 
         bool operator()(std::shared_ptr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
 
-            std::shared_ptr<const System> system = Objects().get<System>(candidate->SystemID());
+            std::shared_ptr<const System> system = m_objects.get<System>(candidate->SystemID());
             if (system || (system = std::dynamic_pointer_cast<const System>(candidate)))
                 return !m_types.empty() && std::count(m_types.begin(), m_types.end(), system->GetStarType());
 
@@ -4815,6 +4833,7 @@ namespace {
         }
 
         const std::vector< ::StarType>& m_types;
+        const ObjectMap& m_objects;
     };
 }
 
@@ -4839,35 +4858,11 @@ void StarType::Eval(const ScriptingContext& parent_context,
         for (auto& type : m_types) {
             types.push_back(type->Eval(parent_context));
         }
-        EvalImpl(matches, non_matches, search_domain, StarTypeSimpleMatch(types));
+        EvalImpl(matches, non_matches, search_domain, StarTypeSimpleMatch(types, parent_context.ContextObjects()));
     } else {
         // re-evaluate contained objects for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
-}
-
-bool StarType::RootCandidateInvariant() const {
-    for (auto& type : m_types) {
-        if (!type->RootCandidateInvariant())
-            return false;
-    }
-    return true;
-}
-
-bool StarType::TargetInvariant() const {
-    for (auto& type : m_types) {
-        if (!type->TargetInvariant())
-            return false;
-    }
-    return true;
-}
-
-bool StarType::SourceInvariant() const {
-    for (auto& type : m_types) {
-        if (!type->SourceInvariant())
-            return false;
-    }
-    return true;
 }
 
 std::string StarType::Description(bool negated/* = false*/) const {
@@ -4911,7 +4906,7 @@ bool StarType::Match(const ScriptingContext& local_context) const {
         return false;
     }
 
-    std::shared_ptr<const System> system = Objects().get<System>(candidate->SystemID());
+    std::shared_ptr<const System> system = local_context.ContextObjects().get<System>(candidate->SystemID());
     if (system || (system = std::dynamic_pointer_cast<const System>(candidate))) {
         for (auto& type : m_types) {
             if (type->Eval(local_context) == system->GetStarType())
@@ -4944,7 +4939,11 @@ unsigned int StarType::GetCheckSum() const {
 DesignHasHull::DesignHasHull(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
     Condition(),
     m_name(std::move(name))
-{}
+{
+    m_root_candidate_invariant = !m_name || m_name->RootCandidateInvariant();
+    m_target_invariant = !m_name || m_name->TargetInvariant();
+    m_source_invariant = !m_name || m_name->SourceInvariant();
+}
 
 bool DesignHasHull::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -5004,15 +5003,6 @@ void DesignHasHull::Eval(const ScriptingContext& parent_context,
     }
 }
 
-bool DesignHasHull::RootCandidateInvariant() const
-{ return (!m_name || m_name->RootCandidateInvariant()); }
-
-bool DesignHasHull::TargetInvariant() const
-{ return (!m_name || m_name->TargetInvariant()); }
-
-bool DesignHasHull::SourceInvariant() const
-{ return (!m_name || m_name->SourceInvariant()); }
-
 std::string DesignHasHull::Description(bool negated/* = false*/) const {
     std::string name_str;
     if (m_name) {
@@ -5049,7 +5039,7 @@ bool DesignHasHull::Match(const ScriptingContext& local_context) const {
 void DesignHasHull::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                                       ObjectSet& condition_non_targets) const
 {
-    AddShipSet(condition_non_targets);
+    AddShipSet(parent_context.ContextObjects(), condition_non_targets);
 }
 
 void DesignHasHull::SetTopLevelContent(const std::string& content_name) {
@@ -5077,7 +5067,18 @@ DesignHasPart::DesignHasPart(std::unique_ptr<ValueRef::ValueRef<std::string>>&& 
     m_low(std::move(low)),
     m_high(std::move(high)),
     m_name(std::move(name))
-{}
+{
+    auto operands = {m_low.get(), m_high.get()};
+    m_root_candidate_invariant =
+        (!m_name || m_name->RootCandidateInvariant()) &&
+        boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
+    m_target_invariant =
+        (!m_name || m_name->TargetInvariant()) &&
+        boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
+    m_source_invariant =
+        (!m_name || m_name->SourceInvariant()) &&
+        boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
+}
 
 bool DesignHasPart::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -5096,10 +5097,11 @@ bool DesignHasPart::operator==(const Condition& rhs) const {
 
 namespace {
     struct DesignHasPartSimpleMatch {
-        DesignHasPartSimpleMatch(int low, int high, const std::string& name) :
+        DesignHasPartSimpleMatch(int low, int high, const std::string& name, const ObjectMap& objects) :
             m_low(low),
             m_high(high),
-            m_name(name)
+            m_name(name),
+            m_objects(objects)
         {}
 
         bool operator()(std::shared_ptr<const UniverseObject> candidate) const {
@@ -5109,7 +5111,7 @@ namespace {
             std::shared_ptr<const Ship> ship = nullptr;
             if (auto fighter = std::dynamic_pointer_cast<const ::Fighter>(candidate)) {
                 // it is a fighter
-                ship = Objects().get<Ship>(fighter->LaunchedFrom());
+                ship = m_objects.get<Ship>(fighter->LaunchedFrom());
             } else {
                 ship = std::dynamic_pointer_cast<const ::Ship>(candidate);
             }
@@ -5136,6 +5138,7 @@ namespace {
         int                 m_low;
         int                 m_high;
         const std::string&  m_name;
+        const ObjectMap&    m_objects;
     };
 }
 
@@ -5155,27 +5158,12 @@ void DesignHasPart::Eval(const ScriptingContext& parent_context,
 
         // need to test each candidate separately using EvalImpl and because the
         // design of the candidate object is tested
-        EvalImpl(matches, non_matches, search_domain, DesignHasPartSimpleMatch(low, high, name));
+        EvalImpl(matches, non_matches, search_domain, DesignHasPartSimpleMatch(low, high, name, parent_context.ContextObjects()));
     } else {
         // re-evaluate allowed turn range for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
 }
-
-bool DesignHasPart::RootCandidateInvariant() const
-{   return (!m_low || m_low->RootCandidateInvariant()) &&
-           (!m_high || m_high->RootCandidateInvariant()) &&
-           (!m_name || m_name->RootCandidateInvariant()); }
-
-bool DesignHasPart::TargetInvariant() const
-{   return (!m_low || m_low->TargetInvariant()) &&
-           (!m_high || m_high->TargetInvariant()) &&
-           (!m_name || m_name->TargetInvariant()); }
-
-bool DesignHasPart::SourceInvariant() const
-{   return (!m_low || m_low->SourceInvariant()) &&
-           (!m_high || m_high->SourceInvariant()) &&
-           (!m_name || m_name->SourceInvariant()); }
 
 std::string DesignHasPart::Description(bool negated/* = false*/) const {
     std::string low_str = "1";
@@ -5227,13 +5215,13 @@ bool DesignHasPart::Match(const ScriptingContext& local_context) const {
     int high = (m_high ? std::min(m_high->Eval(local_context), IMPOSSIBLY_LARGE_TURN) : IMPOSSIBLY_LARGE_TURN);
     std::string name = (m_name ? m_name->Eval(local_context) : "");
 
-    return DesignHasPartSimpleMatch(low, high, name)(candidate);
+    return DesignHasPartSimpleMatch(low, high, name, local_context.ContextObjects())(candidate);
 }
 
 void DesignHasPart::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                                       ObjectSet& condition_non_targets) const
 {
-    AddShipSet(condition_non_targets);
+    AddShipSet(parent_context.ContextObjects(), condition_non_targets);
 }
 
 void DesignHasPart::SetTopLevelContent(const std::string& content_name) {
@@ -5267,7 +5255,12 @@ DesignHasPartClass::DesignHasPartClass(ShipPartClass part_class,
     m_low(std::move(low)),
     m_high(std::move(high)),
     m_class(std::move(part_class))
-{}
+{
+    auto operands = {m_low.get(), m_high.get()};
+    m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
+    m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
+    m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
+}
 
 bool DesignHasPartClass::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -5310,8 +5303,8 @@ namespace {
 
             int count = 0;
             for (const std::string& name : design->Parts()) {
-                if (const PartType* part_type = GetPartType(name)) {
-                    if (part_type->Class() == m_part_class)
+                if (const ShipPart* ship_part = GetShipPart(name)) {
+                    if (ship_part->Class() == m_part_class)
                         ++count;
                 }
             }
@@ -5344,15 +5337,6 @@ void DesignHasPartClass::Eval(const ScriptingContext& parent_context,
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
 }
-
-bool DesignHasPartClass::RootCandidateInvariant() const
-{ return (!m_low || m_low->RootCandidateInvariant()) && (!m_high || m_high->RootCandidateInvariant()); }
-
-bool DesignHasPartClass::TargetInvariant() const
-{ return (!m_low || m_low->TargetInvariant()) && (!m_high || m_high->TargetInvariant()); }
-
-bool DesignHasPartClass::SourceInvariant() const
-{ return (!m_low || m_low->SourceInvariant()) && (!m_high || m_high->SourceInvariant()); }
 
 std::string DesignHasPartClass::Description(bool negated/* = false*/) const {
     std::string low_str = "1";
@@ -5402,7 +5386,7 @@ bool DesignHasPartClass::Match(const ScriptingContext& local_context) const {
 void DesignHasPartClass::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                                            ObjectSet& condition_non_targets) const
 {
-    AddShipSet(condition_non_targets);
+    AddShipSet(parent_context.ContextObjects(), condition_non_targets);
 }
 
 void DesignHasPartClass::SetTopLevelContent(const std::string& content_name) {
@@ -5430,12 +5414,11 @@ unsigned int DesignHasPartClass::GetCheckSum() const {
 PredefinedShipDesign::PredefinedShipDesign(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
     Condition(),
     m_name(std::move(name))
-{}
-
-PredefinedShipDesign::PredefinedShipDesign(ValueRef::ValueRef<std::string>* name) :
-    Condition(),
-    m_name(name)
-{}
+{
+    m_root_candidate_invariant = !m_name || m_name->RootCandidateInvariant();
+    m_target_invariant = !m_name || m_name->TargetInvariant();
+    m_source_invariant = !m_name || m_name->SourceInvariant();
+}
 
 bool PredefinedShipDesign::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -5508,15 +5491,6 @@ void PredefinedShipDesign::Eval(const ScriptingContext& parent_context,
     }
 }
 
-bool PredefinedShipDesign::RootCandidateInvariant() const
-{ return !m_name || m_name->RootCandidateInvariant(); }
-
-bool PredefinedShipDesign::TargetInvariant() const
-{ return !m_name || m_name->TargetInvariant(); }
-
-bool PredefinedShipDesign::SourceInvariant() const
-{ return !m_name || m_name->SourceInvariant(); }
-
 std::string PredefinedShipDesign::Description(bool negated/* = false*/) const {
     std::string name_str;
     if (m_name) {
@@ -5573,7 +5547,11 @@ unsigned int PredefinedShipDesign::GetCheckSum() const {
 NumberedShipDesign::NumberedShipDesign(std::unique_ptr<ValueRef::ValueRef<int>>&& design_id) :
     Condition(),
     m_design_id(std::move(design_id))
-{}
+{
+    m_root_candidate_invariant = !m_design_id || m_design_id->RootCandidateInvariant();
+    m_target_invariant = !m_design_id || m_design_id->TargetInvariant();
+    m_source_invariant = !m_design_id || m_design_id->SourceInvariant();
+}
 
 bool NumberedShipDesign::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -5628,15 +5606,6 @@ void NumberedShipDesign::Eval(const ScriptingContext& parent_context,
     }
 }
 
-bool NumberedShipDesign::RootCandidateInvariant() const
-{ return !m_design_id || m_design_id->RootCandidateInvariant(); }
-
-bool NumberedShipDesign::TargetInvariant() const
-{ return !m_design_id || m_design_id->TargetInvariant(); }
-
-bool NumberedShipDesign::SourceInvariant() const
-{ return !m_design_id || m_design_id->SourceInvariant(); }
-
 std::string NumberedShipDesign::Description(bool negated/* = false*/) const {
     std::string id_str = m_design_id->ConstantExpr() ?
                             std::to_string(m_design_id->Eval()) :
@@ -5681,7 +5650,11 @@ unsigned int NumberedShipDesign::GetCheckSum() const {
 ProducedByEmpire::ProducedByEmpire(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id) :
     Condition(),
     m_empire_id(std::move(empire_id))
-{}
+{
+    m_root_candidate_invariant = !m_empire_id || m_empire_id->RootCandidateInvariant();
+    m_target_invariant = !m_empire_id || m_empire_id->TargetInvariant();
+    m_source_invariant = !m_empire_id || m_empire_id->SourceInvariant();
+}
 
 bool ProducedByEmpire::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -5733,15 +5706,6 @@ void ProducedByEmpire::Eval(const ScriptingContext& parent_context,
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
 }
-
-bool ProducedByEmpire::RootCandidateInvariant() const
-{ return !m_empire_id || m_empire_id->RootCandidateInvariant(); }
-
-bool ProducedByEmpire::TargetInvariant() const
-{ return !m_empire_id || m_empire_id->TargetInvariant(); }
-
-bool ProducedByEmpire::SourceInvariant() const
-{ return !m_empire_id || m_empire_id->SourceInvariant(); }
 
 std::string ProducedByEmpire::Description(bool negated/* = false*/) const {
     std::string empire_str;
@@ -5795,7 +5759,11 @@ unsigned int ProducedByEmpire::GetCheckSum() const {
 Chance::Chance(std::unique_ptr<ValueRef::ValueRef<double>>&& chance) :
     Condition(),
     m_chance(std::move(chance))
-{}
+{
+    m_root_candidate_invariant = !m_chance || m_chance->RootCandidateInvariant();
+    m_target_invariant = !m_chance || m_chance->TargetInvariant();
+    m_source_invariant = !m_chance || m_chance->SourceInvariant();
+}
 
 bool Chance::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -5840,15 +5808,6 @@ void Chance::Eval(const ScriptingContext& parent_context,
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
 }
-
-bool Chance::RootCandidateInvariant() const
-{ return !m_chance || m_chance->RootCandidateInvariant(); }
-
-bool Chance::TargetInvariant() const
-{ return !m_chance || m_chance->TargetInvariant(); }
-
-bool Chance::SourceInvariant() const
-{ return !m_chance || m_chance->SourceInvariant(); }
 
 std::string Chance::Description(bool negated/* = false*/) const {
     if (m_chance->ConstantExpr()) {
@@ -5897,7 +5856,12 @@ MeterValue::MeterValue(MeterType meter,
     m_meter(meter),
     m_low(std::move(low)),
     m_high(std::move(high))
-{}
+{
+    auto operands = {m_low.get(), m_high.get()};
+    m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
+    m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
+    m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
+}
 
 bool MeterValue::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -6002,15 +5966,6 @@ void MeterValue::Eval(const ScriptingContext& parent_context,
     }
 }
 
-bool MeterValue::RootCandidateInvariant() const
-{ return (!m_low || m_low->RootCandidateInvariant()) && (!m_high || m_high->RootCandidateInvariant()); }
-
-bool MeterValue::TargetInvariant() const
-{ return (!m_low || m_low->TargetInvariant()) && (!m_high || m_high->TargetInvariant()); }
-
-bool MeterValue::SourceInvariant() const
-{ return (!m_low || m_low->SourceInvariant()) && (!m_high || m_high->SourceInvariant()); }
-
 std::string MeterValue::Description(bool negated/* = false*/) const {
     std::string low_str = (m_low ? (m_low->ConstantExpr() ?
                                     std::to_string(m_low->Eval()) :
@@ -6096,7 +6051,18 @@ ShipPartMeterValue::ShipPartMeterValue(std::unique_ptr<ValueRef::ValueRef<std::s
     m_meter(meter),
     m_low(std::move(low)),
     m_high(std::move(high))
-{}
+{
+    auto operands = {m_low.get(), m_high.get()};
+    m_root_candidate_invariant =
+        (!m_part_name || m_part_name->RootCandidateInvariant()) &&
+        boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
+    m_target_invariant =
+        (!m_part_name || m_part_name->TargetInvariant()) &&
+        boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
+    m_source_invariant =
+        (!m_part_name || m_part_name->SourceInvariant()) &&
+        boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
+}
 
 bool ShipPartMeterValue::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -6164,24 +6130,6 @@ void ShipPartMeterValue::Eval(const ScriptingContext& parent_context,
         // re-evaluate allowed turn range for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
-}
-
-bool ShipPartMeterValue::RootCandidateInvariant() const {
-    return ((!m_part_name || m_part_name->RootCandidateInvariant()) &&
-            (!m_low || m_low->RootCandidateInvariant()) &&
-            (!m_high || m_high->RootCandidateInvariant()));
-}
-
-bool ShipPartMeterValue::TargetInvariant() const {
-    return ((!m_part_name || m_part_name->TargetInvariant()) &&
-            (!m_low || m_low->TargetInvariant()) &&
-            (!m_high || m_high->TargetInvariant()));
-}
-
-bool ShipPartMeterValue::SourceInvariant() const {
-    return ((!m_part_name || m_part_name->SourceInvariant()) &&
-            (!m_low || m_low->SourceInvariant()) &&
-            (!m_high || m_high->SourceInvariant()));
 }
 
 std::string ShipPartMeterValue::Description(bool negated/* = false*/) const {
@@ -6266,10 +6214,7 @@ unsigned int ShipPartMeterValue::GetCheckSum() const {
 EmpireMeterValue::EmpireMeterValue(const std::string& meter,
                                    std::unique_ptr<ValueRef::ValueRef<double>>&& low,
                                    std::unique_ptr<ValueRef::ValueRef<double>>&& high) :
-    Condition(),
-    m_meter(meter),
-    m_low(std::move(low)),
-    m_high(std::move(high))
+    EmpireMeterValue(nullptr, meter, std::move(low), std::move(high))
 {}
 
 EmpireMeterValue::EmpireMeterValue(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
@@ -6281,7 +6226,18 @@ EmpireMeterValue::EmpireMeterValue(std::unique_ptr<ValueRef::ValueRef<int>>&& em
     m_meter(meter),
     m_low(std::move(low)),
     m_high(std::move(high))
-{}
+{
+    auto operands = {m_low.get(), m_high.get()};
+    m_root_candidate_invariant =
+        (!m_empire_id || m_empire_id->RootCandidateInvariant()) &&
+        boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
+    m_target_invariant =
+        (!m_empire_id || m_empire_id->TargetInvariant()) &&
+        boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
+    m_source_invariant =
+        (!m_empire_id || m_empire_id->SourceInvariant()) &&
+        boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
+}
 
 bool EmpireMeterValue::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -6335,24 +6291,6 @@ void EmpireMeterValue::Eval(const ScriptingContext& parent_context,
         // re-evaluate allowed turn range for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
-}
-
-bool EmpireMeterValue::RootCandidateInvariant() const {
-    return (!m_empire_id || m_empire_id->RootCandidateInvariant()) &&
-           (!m_low || m_low->RootCandidateInvariant()) &&
-           (!m_high || m_high->RootCandidateInvariant());
-}
-
-bool EmpireMeterValue::TargetInvariant() const {
-    return (!m_empire_id || m_empire_id->TargetInvariant()) &&
-           (!m_low || m_low->TargetInvariant()) &&
-           (!m_high || m_high->TargetInvariant());
-}
-
-bool EmpireMeterValue::SourceInvariant() const {
-    return (!m_empire_id || m_empire_id->SourceInvariant()) &&
-           (!m_low || m_low->SourceInvariant()) &&
-           (!m_high || m_high->SourceInvariant());
 }
 
 std::string EmpireMeterValue::Description(bool negated/* = false*/) const {
@@ -6467,7 +6405,12 @@ EmpireStockpileValue::EmpireStockpileValue(ResourceType stockpile,
     m_stockpile(stockpile),
     m_low(std::move(low)),
     m_high(std::move(high))
-{}
+{
+    auto operands = {m_low.get(), m_high.get()};
+    m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
+    m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
+    m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
+}
 
 bool EmpireStockpileValue::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -6486,45 +6429,6 @@ bool EmpireStockpileValue::operator==(const Condition& rhs) const {
     return true;
 }
 
-namespace {
-    struct EmpireStockpileValueSimpleMatch {
-        EmpireStockpileValueSimpleMatch(int empire_id, float low, float high, ResourceType stockpile) :
-            m_empire_id(empire_id),
-            m_low(low),
-            m_high(high),
-            m_stockpile(stockpile)
-        {}
-
-        bool operator()(std::shared_ptr<const UniverseObject> candidate) const {
-            if (!candidate)
-                return false;
-
-            int actual_empire_id = m_empire_id;
-            if (m_empire_id == ALL_EMPIRES) {
-                if (candidate->Unowned())
-                    return false;
-                actual_empire_id = candidate->Owner();
-            }
-
-            const Empire* empire = GetEmpire(actual_empire_id);
-            if (!empire)
-                return false;
-
-            try {
-                float amount = empire->ResourceStockpile(m_stockpile);
-                return (m_low <= amount && amount <= m_high);
-            } catch (...) {
-                return false;
-            }
-        }
-
-        int         m_empire_id;
-        float       m_low;
-        float       m_high;
-        ResourceType m_stockpile;
-    };
-}
-
 void EmpireStockpileValue::Eval(const ScriptingContext& parent_context,
                                 ObjectSet& matches, ObjectSet& non_matches,
                                 SearchDomain search_domain/* = NON_MATCHES*/) const
@@ -6535,11 +6439,24 @@ void EmpireStockpileValue::Eval(const ScriptingContext& parent_context,
                              (!m_high || m_high->LocalCandidateInvariant()) &&
                              (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
-        // evaluate number limits once, use to match all candidates
-        int empire_id = m_empire_id->Eval(parent_context);   // check above should ensure m_empire_id is non-null
-        float low = (m_low ? m_low->Eval(parent_context) : -Meter::LARGE_VALUE);
-        float high = (m_high ? m_high->Eval(parent_context) : Meter::LARGE_VALUE);
-        EvalImpl(matches, non_matches, search_domain, EmpireStockpileValueSimpleMatch(empire_id, low, high, m_stockpile));
+        // If m_empire_id is specified (not null), and all parameters are
+        // local-candidate-invariant, then matching for this condition doesn't
+        // need to check each candidate object separately for matching, so
+        // don't need to use EvalImpl and can instead do a simpler transfer
+        bool match = Match(parent_context);
+
+        // transfer objects to or from candidate set, according to whether the
+        // specified empire meter was in the requested range
+        if (match && search_domain == NON_MATCHES) {
+            // move all objects from non_matches to matches
+            matches.insert(matches.end(), non_matches.begin(), non_matches.end());
+            non_matches.clear();
+        } else if (!match && search_domain == MATCHES) {
+            // move all objects from matches to non_matches
+            non_matches.insert(non_matches.end(), matches.begin(), matches.end());
+            matches.clear();
+        }
+
     } else {
         // re-evaluate all parameters for each candidate object.
         // could optimize further by only re-evaluating the local-candidate
@@ -6547,15 +6464,6 @@ void EmpireStockpileValue::Eval(const ScriptingContext& parent_context,
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
 }
-
-bool EmpireStockpileValue::RootCandidateInvariant() const
-{ return (m_low->RootCandidateInvariant() && m_high->RootCandidateInvariant()); }
-
-bool EmpireStockpileValue::TargetInvariant() const
-{ return (m_low->TargetInvariant() && m_high->TargetInvariant()); }
-
-bool EmpireStockpileValue::SourceInvariant() const
-{ return (m_low->SourceInvariant() && m_high->SourceInvariant()); }
 
 std::string EmpireStockpileValue::Description(bool negated/* = false*/) const {
     std::string low_str = m_low->ConstantExpr() ?
@@ -6591,19 +6499,42 @@ std::string EmpireStockpileValue::Dump(unsigned short ntabs) const {
 }
 
 bool EmpireStockpileValue::Match(const ScriptingContext& local_context) const {
+    int empire_id = ALL_EMPIRES;
     auto candidate = local_context.condition_local_candidate;
-    if (!candidate) {
-        ErrorLogger() << "EmpireStockpileValue::Match passed no candidate object";
+    // if m_empire_id not set, default to candidate object's owner
+    if (!m_empire_id && !candidate) {
+        ErrorLogger() << "EmpireStockpileValue::Match passed no candidate object but expects one due to having no empire id valueref specified and thus wanting to use the local candidate's owner as the empire id";
+        return false;
+
+    } else if (m_empire_id && !candidate && !m_empire_id->LocalCandidateInvariant()) {
+        ErrorLogger() << "EmpireStockpileValue::Match passed no candidate object but but empire id valueref references the local candidate";
+        return false;
+
+    } else if (!m_empire_id && candidate) {
+        // default to candidate's owner if no empire id valueref is specified
+        empire_id = candidate->Owner();
+
+    } else if (m_empire_id) {
+        // either candidate exists or m_empire_id is local-candidate-invariant (or both)
+        empire_id = m_empire_id->Eval(local_context);
+
+    } else {
+        ErrorLogger() << "EmpireStockpileValue::Match reached unexpected default case for candidate and empire id valueref existance";
         return false;
     }
 
-    int empire_id = (m_empire_id ? m_empire_id->Eval(local_context) : candidate->Owner());
-    if (empire_id == ALL_EMPIRES)
-        return false;
-    float low = (m_low ? m_low->Eval(local_context) : -Meter::LARGE_VALUE);
-    float high = (m_high ? m_high->Eval(local_context) : Meter::LARGE_VALUE);
+    const Empire* empire = GetEmpire(empire_id);
+    if (!empire)
+         return false;
 
-    return EmpireStockpileValueSimpleMatch(empire_id, low, high, m_stockpile)(candidate);
+    try {
+        float low = (m_low ? m_low->Eval(local_context) : -Meter::LARGE_VALUE);
+        float high = (m_high ? m_high->Eval(local_context) : Meter::LARGE_VALUE);
+        float amount = empire->ResourceStockpile(m_stockpile);
+        return (low <= amount && amount <= high);
+    } catch (...) {
+        return false;
+    }
 }
 
 void EmpireStockpileValue::SetTopLevelContent(const std::string& content_name) {
@@ -6636,11 +6567,20 @@ OwnerHasTech::OwnerHasTech(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
     Condition(),
     m_name(std::move(name)),
     m_empire_id(std::move(empire_id))
-{}
+{
+    m_root_candidate_invariant =
+        (!m_empire_id || m_empire_id->RootCandidateInvariant()) &&
+        (!m_name || m_name->RootCandidateInvariant());
+    m_target_invariant =
+        (!m_empire_id || m_empire_id->TargetInvariant()) &&
+        (!m_name || m_name->TargetInvariant());
+    m_source_invariant =
+        (!m_empire_id || m_empire_id->SourceInvariant()) &&
+        (!m_name || m_name->SourceInvariant());
+}
 
 OwnerHasTech::OwnerHasTech(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
-    Condition(),
-    m_name(std::move(name))
+    OwnerHasTech(nullptr, std::move(name))
 {}
 
 bool OwnerHasTech::operator==(const Condition& rhs) const {
@@ -6708,21 +6648,6 @@ void OwnerHasTech::Eval(const ScriptingContext& parent_context,
     }
 }
 
-bool OwnerHasTech::RootCandidateInvariant() const {
-    return (!m_empire_id || m_empire_id->RootCandidateInvariant()) &&
-           (!m_name || m_name->RootCandidateInvariant());
-}
-
-bool OwnerHasTech::TargetInvariant() const {
-    return (!m_empire_id || m_empire_id->TargetInvariant()) &&
-           (!m_name || m_name->TargetInvariant());
-}
-
-bool OwnerHasTech::SourceInvariant() const {
-    return (!m_empire_id || m_empire_id->SourceInvariant()) &&
-           (!m_name || m_name->SourceInvariant());
-}
-
 std::string OwnerHasTech::Description(bool negated/* = false*/) const {
     std::string name_str;
     if (m_name) {
@@ -6788,19 +6713,25 @@ OwnerHasBuildingTypeAvailable::OwnerHasBuildingTypeAvailable(
     Condition(),
     m_name(std::move(name)),
     m_empire_id(std::move(empire_id))
-{}
+{
+    m_root_candidate_invariant =
+        (!m_empire_id || m_empire_id->RootCandidateInvariant()) &&
+        (!m_name || m_name->RootCandidateInvariant());
+    m_target_invariant =
+        (!m_empire_id || m_empire_id->TargetInvariant()) &&
+        (!m_name || m_name->TargetInvariant());
+    m_source_invariant =
+        (!m_empire_id || m_empire_id->SourceInvariant()) &&
+        (!m_name || m_name->SourceInvariant());
+}
 
 OwnerHasBuildingTypeAvailable::OwnerHasBuildingTypeAvailable(const std::string& name) :
-    Condition(),
-    // TODO: Use std::make_unique when adopting C++14
-    m_name(new ValueRef::Constant<std::string>(name)),
-    m_empire_id(nullptr)
+    OwnerHasBuildingTypeAvailable(nullptr, std::make_unique<ValueRef::Constant<std::string>>(name))
 {}
 
-OwnerHasBuildingTypeAvailable::OwnerHasBuildingTypeAvailable(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
-    Condition(),
-    m_name(std::move(name)),
-    m_empire_id(nullptr)
+OwnerHasBuildingTypeAvailable::OwnerHasBuildingTypeAvailable(
+    std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
+    OwnerHasBuildingTypeAvailable(nullptr, std::move(name))
 {}
 
 bool OwnerHasBuildingTypeAvailable::operator==(const Condition& rhs) const {
@@ -6868,21 +6799,6 @@ void OwnerHasBuildingTypeAvailable::Eval(const ScriptingContext& parent_context,
     }
 }
 
-bool OwnerHasBuildingTypeAvailable::RootCandidateInvariant() const {
-    return (!m_empire_id || m_empire_id->RootCandidateInvariant()) &&
-           (!m_name || m_name->RootCandidateInvariant());
-}
-
-bool OwnerHasBuildingTypeAvailable::TargetInvariant() const {
-    return (!m_empire_id || m_empire_id->TargetInvariant()) &&
-           (!m_name || m_name->TargetInvariant());
-}
-
-bool OwnerHasBuildingTypeAvailable::SourceInvariant() const {
-    return (!m_empire_id || m_empire_id->SourceInvariant()) &&
-           (!m_name || m_name->SourceInvariant());
-}
-
 std::string OwnerHasBuildingTypeAvailable::Description(bool negated/* = false*/) const {
     // used internally for a tooltip where context is apparent, so don't need
     // to name builing type here
@@ -6943,19 +6859,19 @@ OwnerHasShipDesignAvailable::OwnerHasShipDesignAvailable(
     Condition(),
     m_id(std::move(design_id)),
     m_empire_id(std::move(empire_id))
-{}
+{
+    auto operands = {m_id.get(), m_empire_id.get()};
+    m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
+    m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
+    m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
+}
 
 OwnerHasShipDesignAvailable::OwnerHasShipDesignAvailable(int design_id) :
-    Condition(),
-    // TODO: Use std::make_unique when adopting C++14
-    m_id(new ValueRef::Constant<int>(design_id)),
-    m_empire_id(nullptr)
+    OwnerHasShipDesignAvailable(nullptr, std::make_unique<ValueRef::Constant<int>>(design_id))
 {}
 
 OwnerHasShipDesignAvailable::OwnerHasShipDesignAvailable(std::unique_ptr<ValueRef::ValueRef<int>>&& design_id) :
-    Condition(),
-    m_id(std::move(design_id)),
-    m_empire_id(nullptr)
+    OwnerHasShipDesignAvailable(nullptr, std::move(design_id))
 {}
 
 bool OwnerHasShipDesignAvailable::operator==(const Condition& rhs) const {
@@ -7023,21 +6939,6 @@ void OwnerHasShipDesignAvailable::Eval(const ScriptingContext& parent_context,
     }
 }
 
-bool OwnerHasShipDesignAvailable::RootCandidateInvariant() const {
-    return (!m_empire_id || m_empire_id->RootCandidateInvariant()) &&
-           (!m_id || m_id->RootCandidateInvariant());
-}
-
-bool OwnerHasShipDesignAvailable::TargetInvariant() const {
-    return (!m_empire_id || m_empire_id->TargetInvariant()) &&
-           (!m_id || m_id->TargetInvariant());
-}
-
-bool OwnerHasShipDesignAvailable::SourceInvariant() const {
-    return (!m_empire_id || m_empire_id->SourceInvariant()) &&
-           (!m_id || m_id->SourceInvariant());
-}
-
 std::string OwnerHasShipDesignAvailable::Description(bool negated/* = false*/) const {
     // used internally for a tooltip where context is apparent, so don't need
     // to specify design here
@@ -7098,17 +6999,24 @@ OwnerHasShipPartAvailable::OwnerHasShipPartAvailable(
     Condition(),
     m_name(std::move(name)),
     m_empire_id(std::move(empire_id))
-{}
+{
+    m_root_candidate_invariant =
+        (!m_empire_id || m_empire_id->RootCandidateInvariant()) &&
+        (!m_name || m_name->RootCandidateInvariant());
+    m_target_invariant =
+        (!m_empire_id || m_empire_id->TargetInvariant()) &&
+        (!m_name || m_name->TargetInvariant());
+    m_source_invariant =
+        (!m_empire_id || m_empire_id->TargetInvariant()) &&
+        (!m_name || m_name->TargetInvariant());
+}
 
 OwnerHasShipPartAvailable::OwnerHasShipPartAvailable(const std::string& name) :
-    Condition(),
-    // TODO: Use std::make_unique when adopting C++14
-    m_name(new ValueRef::Constant<std::string>(name))
+    OwnerHasShipPartAvailable(nullptr, std::make_unique<ValueRef::Constant<std::string>>(name))
 {}
 
 OwnerHasShipPartAvailable::OwnerHasShipPartAvailable(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
-    Condition(),
-    m_name(std::move(name))
+    OwnerHasShipPartAvailable(nullptr, std::move(name))
 {}
 
 bool OwnerHasShipPartAvailable::operator==(const Condition& rhs) const {
@@ -7177,21 +7085,6 @@ void OwnerHasShipPartAvailable::Eval(const ScriptingContext& parent_context,
     }
 }
 
-bool OwnerHasShipPartAvailable::RootCandidateInvariant() const {
-    return (!m_empire_id || m_empire_id->RootCandidateInvariant()) &&
-           (!m_name || m_name->RootCandidateInvariant());
-}
-
-bool OwnerHasShipPartAvailable::TargetInvariant() const {
-    return (!m_empire_id || m_empire_id->TargetInvariant()) &&
-           (!m_name || m_name->TargetInvariant());
-}
-
-bool OwnerHasShipPartAvailable::SourceInvariant() const {
-    return (!m_empire_id || m_empire_id->TargetInvariant()) &&
-           (!m_name || m_name->TargetInvariant());
-}
-
 std::string OwnerHasShipPartAvailable::Description(bool negated/* = false*/) const {
     return (!negated)
         ? UserString("DESC_OWNER_HAS_SHIP_PART")
@@ -7247,7 +7140,11 @@ unsigned int OwnerHasShipPartAvailable::GetCheckSum() const {
 VisibleToEmpire::VisibleToEmpire(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id) :
     Condition(),
     m_empire_id(std::move(empire_id))
-{}
+{
+    m_root_candidate_invariant = !m_empire_id || m_empire_id->RootCandidateInvariant();
+    m_target_invariant = !m_empire_id || m_empire_id->TargetInvariant();
+    m_source_invariant = !m_empire_id || m_empire_id->SourceInvariant();
+}
 
 bool VisibleToEmpire::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -7307,21 +7204,12 @@ void VisibleToEmpire::Eval(const ScriptingContext& parent_context,
 
         // need to check visibility of each candidate object separately
         EvalImpl(matches, non_matches, search_domain,
-                 VisibleToEmpireSimpleMatch(empire_id, parent_context.empire_object_vis_map_override));
+                 VisibleToEmpireSimpleMatch(empire_id, parent_context.combat_info.empire_object_visibility));
     } else {
         // re-evaluate empire id for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
 }
-
-bool VisibleToEmpire::RootCandidateInvariant() const
-{ return !m_empire_id || m_empire_id->RootCandidateInvariant(); }
-
-bool VisibleToEmpire::TargetInvariant() const
-{ return !m_empire_id || m_empire_id->TargetInvariant(); }
-
-bool VisibleToEmpire::SourceInvariant() const
-{ return !m_empire_id || m_empire_id->SourceInvariant(); }
 
 std::string VisibleToEmpire::Description(bool negated/* = false*/) const {
     std::string empire_str;
@@ -7357,7 +7245,7 @@ bool VisibleToEmpire::Match(const ScriptingContext& local_context) const {
     }
 
     int empire_id = m_empire_id->Eval(local_context);
-    return VisibleToEmpireSimpleMatch(empire_id, local_context.empire_object_vis_map_override)(candidate);
+    return VisibleToEmpireSimpleMatch(empire_id, local_context.combat_info.empire_object_visibility)(candidate);
 }
 
 void VisibleToEmpire::SetTopLevelContent(const std::string& content_name) {
@@ -7383,7 +7271,17 @@ WithinDistance::WithinDistance(std::unique_ptr<ValueRef::ValueRef<double>>&& dis
     Condition(),
     m_distance(std::move(distance)),
     m_condition(std::move(condition))
-{}
+{
+    m_root_candidate_invariant =
+        m_distance->RootCandidateInvariant() &&
+        m_condition->RootCandidateInvariant();
+    m_target_invariant =
+        m_distance->TargetInvariant() &&
+        m_condition->TargetInvariant();
+    m_source_invariant =
+        m_distance->SourceInvariant() &&
+        m_condition->SourceInvariant();
+}
 
 bool WithinDistance::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -7450,15 +7348,6 @@ void WithinDistance::Eval(const ScriptingContext& parent_context,
     }
 }
 
-bool WithinDistance::RootCandidateInvariant() const
-{ return m_distance->RootCandidateInvariant() && m_condition->RootCandidateInvariant(); }
-
-bool WithinDistance::TargetInvariant() const
-{ return m_distance->TargetInvariant() && m_condition->TargetInvariant(); }
-
-bool WithinDistance::SourceInvariant() const
-{ return m_distance->SourceInvariant() && m_condition->SourceInvariant(); }
-
 std::string WithinDistance::Description(bool negated/* = false*/) const {
     std::string value_str = m_distance->ConstantExpr() ?
                                 std::to_string(m_distance->Eval()) :
@@ -7518,7 +7407,11 @@ WithinStarlaneJumps::WithinStarlaneJumps(std::unique_ptr<ValueRef::ValueRef<int>
     Condition(),
     m_jumps(std::move(jumps)),
     m_condition(std::move(condition))
-{}
+{
+    m_root_candidate_invariant = m_jumps->RootCandidateInvariant() && m_condition->RootCandidateInvariant();
+    m_target_invariant = m_jumps->TargetInvariant() && m_condition->TargetInvariant();
+    m_source_invariant = m_jumps->SourceInvariant() && m_condition->SourceInvariant();
+}
 
 bool WithinStarlaneJumps::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -7556,15 +7449,6 @@ void WithinStarlaneJumps::Eval(const ScriptingContext& parent_context,
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
 }
-
-bool WithinStarlaneJumps::RootCandidateInvariant() const
-{ return m_jumps->RootCandidateInvariant() && m_condition->RootCandidateInvariant(); }
-
-bool WithinStarlaneJumps::TargetInvariant() const
-{ return m_jumps->TargetInvariant() && m_condition->TargetInvariant(); }
-
-bool WithinStarlaneJumps::SourceInvariant() const
-{ return m_jumps->SourceInvariant() && m_condition->SourceInvariant(); }
 
 std::string WithinStarlaneJumps::Description(bool negated/* = false*/) const {
     std::string value_str = m_jumps->ConstantExpr() ? std::to_string(m_jumps->Eval()) : m_jumps->Description();
@@ -7629,6 +7513,15 @@ unsigned int WithinStarlaneJumps::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // CanAddStarlaneConnection                              //
 ///////////////////////////////////////////////////////////
+CanAddStarlaneConnection::CanAddStarlaneConnection(std::unique_ptr<Condition>&& condition) :
+    Condition(),
+    m_condition(std::move(condition))
+{
+    m_root_candidate_invariant = m_condition->RootCandidateInvariant();
+    m_target_invariant = m_condition->TargetInvariant();
+    m_source_invariant = m_condition->SourceInvariant();
+}
+
 bool CanAddStarlaneConnection::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;
@@ -7816,12 +7709,11 @@ namespace {
     }
 
     bool LaneCrossesExistingLane(std::shared_ptr<const System> lane_end_sys1,
-                                 std::shared_ptr<const System> lane_end_sys2)
+                                 std::shared_ptr<const System> lane_end_sys2,
+                                 const ObjectMap& objects)
     {
         if (!lane_end_sys1 || !lane_end_sys2 || lane_end_sys1 == lane_end_sys2)
             return true;
-
-        const ObjectMap& objects = Objects();
 
         // loop over all existing lanes in all systems, checking if a lane
         // beween the specified systems would cross any of the existing lanes
@@ -7833,7 +7725,7 @@ namespace {
 
             // check all existing lanes of currently-being-checked system
             for (const auto& lane : sys_existing_lanes) {
-                auto lane_end_sys3 = Objects().get<System>(lane.first);
+                auto lane_end_sys3 = objects.get<System>(lane.first);
                 if (!lane_end_sys3)
                     continue;
                 // don't need to check against existing lanes that include one
@@ -7853,17 +7745,15 @@ namespace {
     }
 
     bool LaneTooCloseToOtherSystem(std::shared_ptr<const System> lane_end_sys1,
-                                   std::shared_ptr<const System> lane_end_sys2)
+                                   std::shared_ptr<const System> lane_end_sys2,
+                                   const ObjectMap& objects)
     {
         if (!lane_end_sys1 || !lane_end_sys2 || lane_end_sys1 == lane_end_sys2)
             return true;
 
-        const ObjectMap& objects = Objects();
-        auto systems = objects.all<System>();
-
         // loop over all existing systems, checking if each is too close to a
         // lane between the specified lane endpoints
-        for (auto& system : systems) {
+        for (auto& system : objects.all<System>()) {
             if (system == lane_end_sys1 || system == lane_end_sys2)
                 continue;
 
@@ -7875,14 +7765,15 @@ namespace {
     }
 
     struct CanAddStarlaneConnectionSimpleMatch {
-        CanAddStarlaneConnectionSimpleMatch(const ObjectSet& destination_objects) :
-            m_destination_systems()
+        CanAddStarlaneConnectionSimpleMatch(const ObjectSet& destination_objects, const ObjectMap& objects) :
+            m_destination_systems(),
+            m_objects(objects)
         {
             // get (one of each of) set of systems that are or that contain any
             // destination objects
             std::set<std::shared_ptr<const System>> dest_systems;
             for (auto& obj : destination_objects) {
-                if (auto sys = Objects().get<System>(obj->SystemID()))
+                if (auto sys = m_objects.get<System>(obj->SystemID()))
                     dest_systems.insert(sys);
             }
             std::copy(dest_systems.begin(), dest_systems.end(), std::inserter(m_destination_systems, m_destination_systems.end()));
@@ -7895,7 +7786,7 @@ namespace {
             // get system from candidate
             auto candidate_sys = std::dynamic_pointer_cast<const System>(candidate);
             if (!candidate_sys)
-                candidate_sys = Objects().get<System>(candidate->SystemID());
+                candidate_sys = m_objects.get<System>(candidate->SystemID());
             if (!candidate_sys)
                 return false;
 
@@ -7917,7 +7808,7 @@ namespace {
             // present lanes of the candidate system
             //TraceLogger() << "... Checking lanes of candidate system: " << candidate->UniverseObject::Name() << std::endl;
             for (const auto& lane : candidate_sys->StarlanesWormholes()) {
-                auto candidate_existing_lane_end_sys = Objects().get<System>(lane.first);
+                auto candidate_existing_lane_end_sys = m_objects.get<System>(lane.first);
                 if (!candidate_existing_lane_end_sys)
                     continue;
 
@@ -7938,7 +7829,7 @@ namespace {
                 // check this destination system's existing lanes against a lane
                 // to the candidate system
                 for (const auto& dest_lane : dest_sys->StarlanesWormholes()) {
-                    auto dest_lane_end_sys = Objects().get<System>(dest_lane.first);
+                    auto dest_lane_end_sys = m_objects.get<System>(dest_lane.first);
                     if (!dest_lane_end_sys)
                         continue;
 
@@ -7974,7 +7865,7 @@ namespace {
             // system they are not connected to
             //TraceLogger() << "... Checking proposed lanes for proximity to other systems" <<std::endl;
             for (auto& dest_sys : m_destination_systems) {
-                if (LaneTooCloseToOtherSystem(candidate_sys, dest_sys)) {
+                if (LaneTooCloseToOtherSystem(candidate_sys, dest_sys, m_objects)) {
                     //TraceLogger() << " ... ... can't add lane from candidate: " << candidate_sys->Name() << " to " << dest_sys->Name() << " due to proximity to another system." << std::endl;
                     return false;
                 }
@@ -7984,7 +7875,7 @@ namespace {
             // check that there are no lanes already existing that cross the proposed lanes
             //TraceLogger() << "... Checking for potential lanes crossing existing lanes" << std::endl;
             for (auto& dest_sys : m_destination_systems) {
-                if (LaneCrossesExistingLane(candidate_sys, dest_sys)) {
+                if (LaneCrossesExistingLane(candidate_sys, dest_sys, m_objects)) {
                     //TraceLogger() << " ... ... can't add lane from candidate: " << candidate_sys->Name() << " to " << dest_sys->Name() << " due to crossing an existing lane." << std::endl;
                     return false;
                 }
@@ -7994,6 +7885,7 @@ namespace {
         }
 
         std::vector<std::shared_ptr<const System>> m_destination_systems;
+        const ObjectMap& m_objects;
     };
 }
 
@@ -8009,21 +7901,12 @@ void CanAddStarlaneConnection::Eval(const ScriptingContext& parent_context,
         ObjectSet subcondition_matches;
         m_condition->Eval(parent_context, subcondition_matches);
 
-        EvalImpl(matches, non_matches, search_domain, CanAddStarlaneConnectionSimpleMatch(subcondition_matches));
+        EvalImpl(matches, non_matches, search_domain, CanAddStarlaneConnectionSimpleMatch(subcondition_matches, parent_context.ContextObjects()));
     } else {
         // re-evaluate contained objects for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
 }
-
-bool CanAddStarlaneConnection::RootCandidateInvariant() const
-{ return m_condition->RootCandidateInvariant(); }
-
-bool CanAddStarlaneConnection::TargetInvariant() const
-{ return m_condition->TargetInvariant(); }
-
-bool CanAddStarlaneConnection::SourceInvariant() const
-{ return m_condition->SourceInvariant(); }
 
 std::string CanAddStarlaneConnection::Description(bool negated/* = false*/) const {
     return str(FlexibleFormat((!negated)
@@ -8048,7 +7931,7 @@ bool CanAddStarlaneConnection::Match(const ScriptingContext& local_context) cons
     ObjectSet subcondition_matches;
     m_condition->Eval(local_context, subcondition_matches);
 
-    return CanAddStarlaneConnectionSimpleMatch(subcondition_matches)(candidate);
+    return CanAddStarlaneConnectionSimpleMatch(subcondition_matches, local_context.ContextObjects())(candidate);
 }
 
 void CanAddStarlaneConnection::SetTopLevelContent(const std::string& content_name) {
@@ -8072,7 +7955,11 @@ unsigned int CanAddStarlaneConnection::GetCheckSum() const {
 ExploredByEmpire::ExploredByEmpire(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id) :
     Condition(),
     m_empire_id(std::move(empire_id))
-{}
+{
+    m_root_candidate_invariant = m_empire_id->RootCandidateInvariant();
+    m_target_invariant = m_empire_id->TargetInvariant();
+    m_source_invariant = m_empire_id->SourceInvariant();
+}
 
 bool ExploredByEmpire::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -8126,15 +8013,6 @@ void ExploredByEmpire::Eval(const ScriptingContext& parent_context,
     }
 }
 
-bool ExploredByEmpire::RootCandidateInvariant() const
-{ return m_empire_id->RootCandidateInvariant(); }
-
-bool ExploredByEmpire::TargetInvariant() const
-{ return m_empire_id->TargetInvariant(); }
-
-bool ExploredByEmpire::SourceInvariant() const
-{ return m_empire_id->SourceInvariant(); }
-
 std::string ExploredByEmpire::Description(bool negated/* = false*/) const {
     std::string empire_str;
     if (m_empire_id) {
@@ -8184,6 +8062,14 @@ unsigned int ExploredByEmpire::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // Stationary                                            //
 ///////////////////////////////////////////////////////////
+Stationary::Stationary() :
+    Condition()
+{
+    m_root_candidate_invariant = true;
+    m_target_invariant = true;
+    m_source_invariant = true;
+}
+
 bool Stationary::operator==(const Condition& rhs) const
 { return Condition::operator==(rhs); }
 
@@ -8209,7 +8095,7 @@ bool Stationary::Match(const ScriptingContext& local_context) const {
     auto fleet = std::dynamic_pointer_cast<const Fleet>(candidate);
     if (!fleet)
         if (auto ship = std::dynamic_pointer_cast<const Ship>(candidate))
-            fleet = Objects().get<Fleet>(ship->FleetID());
+            fleet = local_context.ContextObjects().get<Fleet>(ship->FleetID());
 
     if (fleet) {
         // if a fleet is available, it is "moving", or not stationary, if it's
@@ -8237,6 +8123,19 @@ unsigned int Stationary::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // Aggressive                                            //
 ///////////////////////////////////////////////////////////
+Aggressive::Aggressive() :
+    Aggressive(true)
+{}
+
+Aggressive::Aggressive(bool aggressive) :
+    Condition(),
+    m_aggressive(aggressive)
+{
+    m_root_candidate_invariant = true;
+    m_target_invariant = true;
+    m_source_invariant = true;
+}
+
 bool Aggressive::operator==(const Condition& rhs) const
 { return Condition::operator==(rhs); }
 
@@ -8267,7 +8166,7 @@ bool Aggressive::Match(const ScriptingContext& local_context) const {
     auto fleet = std::dynamic_pointer_cast<const Fleet>(candidate);
     if (!fleet)
         if (auto ship = std::dynamic_pointer_cast<const Ship>(candidate))
-            fleet = Objects().get<Fleet>(ship->FleetID());
+            fleet = local_context.ContextObjects().get<Fleet>(ship->FleetID());
 
     if (!fleet)
         return false;
@@ -8291,7 +8190,11 @@ unsigned int Aggressive::GetCheckSum() const {
 FleetSupplyableByEmpire::FleetSupplyableByEmpire(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id) :
     Condition(),
     m_empire_id(std::move(empire_id))
-{}
+{
+    m_root_candidate_invariant = m_empire_id->RootCandidateInvariant();
+    m_target_invariant = m_empire_id->TargetInvariant();
+    m_source_invariant = m_empire_id->SourceInvariant();
+}
 
 bool FleetSupplyableByEmpire::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -8348,15 +8251,6 @@ void FleetSupplyableByEmpire::Eval(const ScriptingContext& parent_context,
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
 }
-
-bool FleetSupplyableByEmpire::RootCandidateInvariant() const
-{ return m_empire_id->RootCandidateInvariant(); }
-
-bool FleetSupplyableByEmpire::TargetInvariant() const
-{ return m_empire_id->TargetInvariant(); }
-
-bool FleetSupplyableByEmpire::SourceInvariant() const
-{ return m_empire_id->SourceInvariant(); }
 
 std::string FleetSupplyableByEmpire::Description(bool negated/* = false*/) const {
     std::string empire_str;
@@ -8415,7 +8309,11 @@ ResourceSupplyConnectedByEmpire::ResourceSupplyConnectedByEmpire(
     Condition(),
     m_empire_id(std::move(empire_id)),
     m_condition(std::move(condition))
-{}
+{
+    m_root_candidate_invariant = m_empire_id->RootCandidateInvariant() && m_condition->RootCandidateInvariant();
+    m_target_invariant = m_empire_id->TargetInvariant() && m_condition->TargetInvariant();
+    m_source_invariant = m_empire_id->SourceInvariant() && m_condition->SourceInvariant();
+}
 
 bool ResourceSupplyConnectedByEmpire::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -8432,9 +8330,10 @@ bool ResourceSupplyConnectedByEmpire::operator==(const Condition& rhs) const {
 
 namespace {
     struct ResourceSupplySimpleMatch {
-        ResourceSupplySimpleMatch(int empire_id, const ObjectSet& from_objects) :
+        ResourceSupplySimpleMatch(int empire_id, const ObjectSet& from_objects, const ObjectMap& objects) :
             m_empire_id(empire_id),
-            m_from_objects(from_objects)
+            m_from_objects(from_objects),
+            m_objects(objects)
         {}
 
         bool operator()(std::shared_ptr<const UniverseObject> candidate) const {
@@ -8461,7 +8360,7 @@ namespace {
                 auto candidate_planet = std::dynamic_pointer_cast<const Planet>(candidate);
                 std::shared_ptr<const ::Building> building;
                 if (!candidate_planet && (building = std::dynamic_pointer_cast<const ::Building>(candidate)))
-                    candidate_planet = Objects().get<Planet>(building->PlanetID());
+                    candidate_planet = m_objects.get<Planet>(building->PlanetID());
                 if (candidate_planet) {
                     int candidate_planet_id = candidate_planet->ID();
                     // can only match if the from_object is (or is on) the same planet
@@ -8469,7 +8368,7 @@ namespace {
                         auto from_obj_planet = std::dynamic_pointer_cast<const Planet>(from_object);
                         std::shared_ptr<const ::Building> from_building;
                         if (!from_obj_planet && (from_building = std::dynamic_pointer_cast<const ::Building>(from_object)))
-                            from_obj_planet = Objects().get<Planet>(from_building->PlanetID());
+                            from_obj_planet = m_objects.get<Planet>(from_building->PlanetID());
                         if (from_obj_planet && from_obj_planet->ID() == candidate_planet_id)
                             return true;
                     }
@@ -8499,6 +8398,7 @@ namespace {
 
         int m_empire_id;
         const ObjectSet& m_from_objects;
+        const ObjectMap& m_objects;
     };
 }
 
@@ -8517,21 +8417,12 @@ void ResourceSupplyConnectedByEmpire::Eval(const ScriptingContext& parent_contex
         m_condition->Eval(parent_context, subcondition_matches);
         int empire_id = m_empire_id->Eval(parent_context);
 
-        EvalImpl(matches, non_matches, search_domain, ResourceSupplySimpleMatch(empire_id, subcondition_matches));
+        EvalImpl(matches, non_matches, search_domain, ResourceSupplySimpleMatch(empire_id, subcondition_matches, parent_context.ContextObjects()));
     } else {
         // re-evaluate empire id for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
 }
-
-bool ResourceSupplyConnectedByEmpire::RootCandidateInvariant() const
-{ return m_empire_id->RootCandidateInvariant() && m_condition->RootCandidateInvariant(); }
-
-bool ResourceSupplyConnectedByEmpire::TargetInvariant() const
-{ return m_empire_id->TargetInvariant() && m_condition->TargetInvariant(); }
-
-bool ResourceSupplyConnectedByEmpire::SourceInvariant() const
-{ return m_empire_id->SourceInvariant() && m_condition->SourceInvariant(); }
 
 bool ResourceSupplyConnectedByEmpire::Match(const ScriptingContext& local_context) const {
     auto candidate = local_context.condition_local_candidate;
@@ -8545,7 +8436,7 @@ bool ResourceSupplyConnectedByEmpire::Match(const ScriptingContext& local_contex
     m_condition->Eval(local_context, subcondition_matches);
     int empire_id = m_empire_id->Eval(local_context);
 
-    return ResourceSupplySimpleMatch(empire_id, subcondition_matches)(candidate);
+    return ResourceSupplySimpleMatch(empire_id, subcondition_matches, local_context.ContextObjects())(candidate);
 }
 
 std::string ResourceSupplyConnectedByEmpire::Description(bool negated/* = false*/) const {
@@ -8595,6 +8486,14 @@ unsigned int ResourceSupplyConnectedByEmpire::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // CanColonize                                           //
 ///////////////////////////////////////////////////////////
+CanColonize::CanColonize() :
+    Condition()
+{
+    m_root_candidate_invariant = true;
+    m_target_invariant = true;
+    m_source_invariant = true;
+}
+
 bool CanColonize::operator==(const Condition& rhs) const
 { return Condition::operator==(rhs); }
 
@@ -8630,7 +8529,7 @@ bool CanColonize::Match(const ScriptingContext& local_context) const {
             ErrorLogger() << "CanColonize couldn't cast supposedly building candidate";
             return false;
         }
-        auto planet = Objects().get<Planet>(building->PlanetID());
+        auto planet = local_context.ContextObjects().get<Planet>(building->PlanetID());
         if (!planet) {
             ErrorLogger() << "CanColonize couldn't get building's planet";
             return false;
@@ -8668,6 +8567,14 @@ unsigned int CanColonize::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // CanProduceShips                                       //
 ///////////////////////////////////////////////////////////
+CanProduceShips::CanProduceShips() :
+    Condition()
+{
+    m_root_candidate_invariant = true;
+    m_target_invariant = true;
+    m_source_invariant = true;
+}
+
 bool CanProduceShips::operator==(const Condition& rhs) const
 { return Condition::operator==(rhs); }
 
@@ -8703,7 +8610,7 @@ bool CanProduceShips::Match(const ScriptingContext& local_context) const {
             ErrorLogger() << "CanProduceShips couldn't cast supposedly building candidate";
             return false;
         }
-        auto planet = Objects().get<Planet>(building->PlanetID());
+        auto planet = local_context.ContextObjects().get<Planet>(building->PlanetID());
         if (!planet) {
             ErrorLogger() << "CanProduceShips couldn't get building's planet";
             return false;
@@ -8744,7 +8651,11 @@ unsigned int CanProduceShips::GetCheckSum() const {
 OrderedBombarded::OrderedBombarded(std::unique_ptr<Condition>&& by_object_condition) :
     Condition(),
     m_by_object_condition(std::move(by_object_condition))
-{}
+{
+    m_root_candidate_invariant = m_by_object_condition->RootCandidateInvariant();
+    m_target_invariant = m_by_object_condition->TargetInvariant();
+    m_source_invariant = m_by_object_condition->SourceInvariant();
+}
 
 bool OrderedBombarded::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -8810,15 +8721,6 @@ void OrderedBombarded::Eval(const ScriptingContext& parent_context,
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
 }
-
-bool OrderedBombarded::RootCandidateInvariant() const
-{ return m_by_object_condition->RootCandidateInvariant(); }
-
-bool OrderedBombarded::TargetInvariant() const
-{ return m_by_object_condition->TargetInvariant(); }
-
-bool OrderedBombarded::SourceInvariant() const
-{ return m_by_object_condition->SourceInvariant(); }
 
 std::string OrderedBombarded::Description(bool negated/* = false*/) const {
     std::string by_str;
@@ -8915,7 +8817,12 @@ ValueTest::ValueTest(std::unique_ptr<ValueRef::ValueRef<double>>&& value_ref1,
     m_value_ref3(std::move(value_ref3)),
     m_compare_type1(comp1),
     m_compare_type2(comp2)
-{}
+{
+    auto operands = {m_value_ref1.get(), m_value_ref2.get(), m_value_ref3.get()};
+    m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
+    m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
+    m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
+}
 
 ValueTest::ValueTest(std::unique_ptr<ValueRef::ValueRef<std::string>>&& value_ref1,
                      ComparisonType comp1,
@@ -8929,9 +8836,10 @@ ValueTest::ValueTest(std::unique_ptr<ValueRef::ValueRef<std::string>>&& value_re
     m_compare_type1(comp1),
     m_compare_type2(comp2)
 {
-    /*DebugLogger() << "String ValueTest(" << value_ref1->Dump(ntabs) << " "
-                                         << CompareTypeString(comp1) << " "
-                                         << value_ref2->Dump(ntabs) << ")";*/
+    auto operands = {m_string_value_ref1.get(), m_string_value_ref2.get(), m_string_value_ref3.get()};
+    m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
+    m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
+    m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
 }
 
 ValueTest::ValueTest(std::unique_ptr<ValueRef::ValueRef<int>>&& value_ref1,
@@ -8946,7 +8854,10 @@ ValueTest::ValueTest(std::unique_ptr<ValueRef::ValueRef<int>>&& value_ref1,
     m_compare_type1(comp1),
     m_compare_type2(comp2)
 {
-    //DebugLogger() << "ValueTest(double)";
+    auto operands = {m_int_value_ref1.get(), m_int_value_ref2.get(), m_int_value_ref3.get()};
+    m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
+    m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
+    m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
 }
 
 bool ValueTest::operator==(const Condition& rhs) const {
@@ -9004,47 +8915,10 @@ void ValueTest::Eval(const ScriptingContext& parent_context,
             non_matches.clear();
         }
 
-
     } else {
         // re-evaluate value and ranges for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
-}
-
-bool ValueTest::RootCandidateInvariant() const {
-    return (!m_value_ref1           || m_value_ref1->RootCandidateInvariant()) &&
-           (!m_value_ref2           || m_value_ref2->RootCandidateInvariant()) &&
-           (!m_value_ref3           || m_value_ref3->RootCandidateInvariant()) &&
-           (!m_string_value_ref1    || m_string_value_ref1->RootCandidateInvariant()) &&
-           (!m_string_value_ref2    || m_string_value_ref2->RootCandidateInvariant()) &&
-           (!m_string_value_ref3    || m_string_value_ref3->RootCandidateInvariant()) &&
-           (!m_int_value_ref1       || m_int_value_ref1->RootCandidateInvariant()) &&
-           (!m_int_value_ref2       || m_int_value_ref2->RootCandidateInvariant()) &&
-           (!m_int_value_ref3       || m_int_value_ref3->RootCandidateInvariant());
-}
-
-bool ValueTest::TargetInvariant() const {
-    return (!m_value_ref1           || m_value_ref1->TargetInvariant()) &&
-           (!m_value_ref2           || m_value_ref2->TargetInvariant()) &&
-           (!m_value_ref3           || m_value_ref3->TargetInvariant()) &&
-           (!m_string_value_ref1    || m_string_value_ref1->TargetInvariant()) &&
-           (!m_string_value_ref2    || m_string_value_ref2->TargetInvariant()) &&
-           (!m_string_value_ref3    || m_string_value_ref3->TargetInvariant()) &&
-           (!m_int_value_ref1       || m_int_value_ref1->TargetInvariant()) &&
-           (!m_int_value_ref2       || m_int_value_ref2->TargetInvariant()) &&
-           (!m_int_value_ref3       || m_int_value_ref3->TargetInvariant());
-}
-
-bool ValueTest::SourceInvariant() const {
-    return (!m_value_ref1           || m_value_ref1->SourceInvariant()) &&
-           (!m_value_ref2           || m_value_ref2->SourceInvariant()) &&
-           (!m_value_ref3           || m_value_ref3->SourceInvariant()) &&
-           (!m_string_value_ref1    || m_string_value_ref1->SourceInvariant()) &&
-           (!m_string_value_ref2    || m_string_value_ref2->SourceInvariant()) &&
-           (!m_string_value_ref3    || m_string_value_ref3->SourceInvariant()) &&
-           (!m_int_value_ref1       || m_int_value_ref1->SourceInvariant()) &&
-           (!m_int_value_ref2       || m_int_value_ref2->SourceInvariant()) &&
-           (!m_int_value_ref3       || m_int_value_ref3->SourceInvariant());
 }
 
 std::string ValueTest::Description(bool negated/* = false*/) const {
@@ -9237,12 +9111,12 @@ namespace {
             break;
         }
         case CONTENT_SHIP_HULL: {
-            if (auto h = GetHullType(name1))
+            if (auto h = GetShipHull(name1))
                 return h->Location();
             break;
         }
         case CONTENT_SHIP_PART: {
-            if (auto p = GetPartType(name1))
+            if (auto p = GetShipPart(name1))
                 return p->Location();
             break;
         }
@@ -9289,7 +9163,12 @@ Location::Location(ContentType content_type,
     m_name1(std::move(name1)),
     m_name2(std::move(name2)),
     m_content_type(content_type)
-{}
+{
+    auto operands = {m_name1.get(), m_name2.get()};
+    m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
+    m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
+    m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
+}
 
 bool Location::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -9340,21 +9219,6 @@ void Location::Eval(const ScriptingContext& parent_context,
         // re-evaluate value and ranges for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
-}
-
-bool Location::RootCandidateInvariant() const {
-    return (!m_name1    || m_name1->RootCandidateInvariant()) &&
-           (!m_name2    || m_name2->RootCandidateInvariant());
-}
-
-bool Location::TargetInvariant() const {
-    return (!m_name1    || m_name1->TargetInvariant()) &&
-           (!m_name2    || m_name2->TargetInvariant());
-}
-
-bool Location::SourceInvariant() const {
-    return (!m_name1    || m_name1->SourceInvariant()) &&
-           (!m_name2    || m_name2->SourceInvariant());
 }
 
 std::string Location::Description(bool negated/* = false*/) const {
@@ -9450,7 +9314,7 @@ namespace {
             break;
         }
         case CONTENT_SHIP_PART: {
-            if (auto p = GetPartType(name))
+            if (auto p = GetShipPart(name))
                 return p->CombatTargets();
             break;
         }
@@ -9470,7 +9334,11 @@ CombatTarget::CombatTarget(ContentType content_type,
     Condition(),
     m_name(std::move(name)),
     m_content_type(content_type)
-{}
+{
+    m_root_candidate_invariant = !m_name || m_name->RootCandidateInvariant();
+    m_target_invariant = !m_name|| m_name->TargetInvariant();
+    m_source_invariant = !m_name || m_name->SourceInvariant();
+}
 
 bool CombatTarget::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -9520,15 +9388,6 @@ void CombatTarget::Eval(const ScriptingContext& parent_context,
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
 }
-
-bool CombatTarget::RootCandidateInvariant() const
-{ return (!m_name || m_name->RootCandidateInvariant()); }
-
-bool CombatTarget::TargetInvariant() const
-{ return (!m_name|| m_name->TargetInvariant()); }
-
-bool CombatTarget::SourceInvariant() const
-{ return (!m_name || m_name->SourceInvariant()); }
 
 std::string CombatTarget::Description(bool negated/* = false*/) const {
     std::string name_str;
@@ -9602,7 +9461,11 @@ unsigned int CombatTarget::GetCheckSum() const {
 And::And(std::vector<std::unique_ptr<Condition>>&& operands) :
     Condition(),
     m_operands(std::move(operands))
-{}
+{
+    m_root_candidate_invariant = boost::algorithm::all_of(m_operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
+    m_target_invariant = boost::algorithm::all_of(m_operands, [](auto& e){ return !e || e->TargetInvariant(); });
+    m_source_invariant = boost::algorithm::all_of(m_operands, [](auto& e){ return !e || e->SourceInvariant(); });
+}
 
 And::And(std::unique_ptr<Condition>&& operand1, std::unique_ptr<Condition>&& operand2,
          std::unique_ptr<Condition>&& operand3, std::unique_ptr<Condition>&& operand4) :
@@ -9617,6 +9480,10 @@ And::And(std::unique_ptr<Condition>&& operand1, std::unique_ptr<Condition>&& ope
         m_operands.push_back(std::move(operand3));
     if (operand4)
         m_operands.push_back(std::move(operand4));
+
+    m_root_candidate_invariant = boost::algorithm::all_of(m_operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
+    m_target_invariant = boost::algorithm::all_of(m_operands, [](auto& e){ return !e || e->TargetInvariant(); });
+    m_source_invariant = boost::algorithm::all_of(m_operands, [](auto& e){ return !e || e->SourceInvariant(); });
 }
 
 bool And::operator==(const Condition& rhs) const {
@@ -9703,48 +9570,6 @@ void And::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
                             << " and non_matches (" << non_matches.size() << "): " << ObjList(non_matches);
 }
 
-bool And::RootCandidateInvariant() const {
-    if (m_root_candidate_invariant != UNKNOWN_INVARIANCE)
-        return m_root_candidate_invariant == INVARIANT;
-
-    for (auto& operand : m_operands) {
-        if (!operand->RootCandidateInvariant()) {
-            m_root_candidate_invariant = VARIANT;
-            return false;
-        }
-    }
-    m_root_candidate_invariant = INVARIANT;
-    return true;
-}
-
-bool And::TargetInvariant() const {
-    if (m_target_invariant != UNKNOWN_INVARIANCE)
-        return m_target_invariant == INVARIANT;
-
-    for (auto& operand : m_operands) {
-        if (!operand->TargetInvariant()) {
-            m_target_invariant = VARIANT;
-            return false;
-        }
-    }
-    m_target_invariant = INVARIANT;
-    return true;
-}
-
-bool And::SourceInvariant() const {
-    if (m_source_invariant != UNKNOWN_INVARIANCE)
-        return m_source_invariant == INVARIANT;
-
-    for (auto& operand : m_operands) {
-        if (!operand->SourceInvariant()) {
-            m_source_invariant = VARIANT;
-            return false;
-        }
-    }
-    m_source_invariant = INVARIANT;
-    return true;
-}
-
 std::string And::Description(bool negated/* = false*/) const {
     std::string values_str;
     if (m_operands.size() == 1) {
@@ -9821,7 +9646,11 @@ const std::vector<Condition*> And::Operands() const {
 Or::Or(std::vector<std::unique_ptr<Condition>>&& operands) :
     Condition(),
     m_operands(std::move(operands))
-{}
+{
+    m_root_candidate_invariant = boost::algorithm::all_of(m_operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
+    m_target_invariant = boost::algorithm::all_of(m_operands, [](auto& e){ return !e || e->TargetInvariant(); });
+    m_source_invariant = boost::algorithm::all_of(m_operands, [](auto& e){ return !e || e->SourceInvariant(); });
+}
 
 Or::Or(std::unique_ptr<Condition>&& operand1,
        std::unique_ptr<Condition>&& operand2,
@@ -9838,6 +9667,10 @@ Or::Or(std::unique_ptr<Condition>&& operand1,
         m_operands.push_back(std::move(operand3));
     if (operand4)
         m_operands.push_back(std::move(operand4));
+
+    m_root_candidate_invariant = boost::algorithm::all_of(m_operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
+    m_target_invariant = boost::algorithm::all_of(m_operands, [](auto& e){ return !e || e->TargetInvariant(); });
+    m_source_invariant = boost::algorithm::all_of(m_operands, [](auto& e){ return !e || e->SourceInvariant(); });
 }
 
 bool Or::operator==(const Condition& rhs) const {
@@ -9907,48 +9740,6 @@ void Or::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
     }
 }
 
-bool Or::RootCandidateInvariant() const {
-    if (m_root_candidate_invariant != UNKNOWN_INVARIANCE)
-        return m_root_candidate_invariant == INVARIANT;
-
-    for (auto& operand : m_operands) {
-        if (!operand->RootCandidateInvariant()) {
-            m_root_candidate_invariant = VARIANT;
-            return false;
-        }
-    }
-    m_root_candidate_invariant = INVARIANT;
-    return true;
-}
-
-bool Or::TargetInvariant() const {
-    if (m_target_invariant != UNKNOWN_INVARIANCE)
-        return m_target_invariant == INVARIANT;
-
-    for (auto& operand : m_operands) {
-        if (!operand->TargetInvariant()) {
-            m_target_invariant = VARIANT;
-            return false;
-        }
-    }
-    m_target_invariant = INVARIANT;
-    return true;
-}
-
-bool Or::SourceInvariant() const {
-    if (m_source_invariant != UNKNOWN_INVARIANCE)
-        return m_source_invariant == INVARIANT;
-
-    for (auto& operand : m_operands) {
-        if (!operand->SourceInvariant()) {
-            m_source_invariant = VARIANT;
-            return false;
-        }
-    }
-    m_source_invariant = INVARIANT;
-    return true;
-}
-
 std::string Or::Description(bool negated/* = false*/) const {
     std::string values_str;
     if (m_operands.size() == 1) {
@@ -9981,6 +9772,43 @@ std::string Or::Description(bool negated/* = false*/) const {
     return values_str;
 }
 
+void Or::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, ObjectSet& condition_non_targets) const {
+    if (m_operands.empty())
+        return;
+
+    if (m_operands.size() == 1) {
+        // get condition_non_targets from the single / only operand condition
+        m_operands[0]->GetDefaultInitialCandidateObjects(parent_context, condition_non_targets);
+        return;
+    }
+
+    if (parent_context.source && m_operands.size() == 2) {
+        if (/*auto* src_condition =*/ dynamic_cast<const Source*>(m_operands[0].get())) {
+            // special case when first of two subconditions is just Source:
+            // get the default candidates of the second and add the source if
+            // it is not already present.
+            // TODO: extend to other single-match conditions: RootCandidate, Target
+            // TODO: predetermine this situation to avoid repeat runtime dynamic-casts
+            // TODO: fancier deep inspection of m_operands to determine optimal
+            //       way to combine the default candidates...
+
+            m_operands[1]->GetDefaultInitialCandidateObjects(parent_context, condition_non_targets);
+            if (std::find(condition_non_targets.begin(), condition_non_targets.end(), parent_context.source) ==
+                condition_non_targets.end())
+            { condition_non_targets.push_back(parent_context.source); }
+            return;
+        }
+    }
+
+    // default / fallback
+    Condition::GetDefaultInitialCandidateObjects(parent_context, condition_non_targets);
+
+    // Also tried looping over all subconditions in m_operands and putting all
+    // of their initial candidates into an unordered_set (to remove duplicates)
+    // and then copying the result back into condition_non_targets but this was
+    // substantially slower for many Or conditions
+}
+
 std::string Or::Dump(unsigned short ntabs) const {
     std::string retval = DumpIndent(ntabs) + "Or [\n";
     for (auto& operand : m_operands)
@@ -10011,7 +9839,11 @@ unsigned int Or::GetCheckSum() const {
 Not::Not(std::unique_ptr<Condition>&& operand) :
     Condition(),
     m_operand(std::move(operand))
-{}
+{
+    m_root_candidate_invariant = m_operand->RootCandidateInvariant();
+    m_target_invariant = m_operand->TargetInvariant();
+    m_source_invariant = m_operand->SourceInvariant();
+}
 
 bool Not::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -10043,27 +9875,6 @@ void Not::Eval(const ScriptingContext& parent_context, ObjectSet& matches, Objec
         // condition, and move those to the non_matches set
         m_operand->Eval(parent_context, non_matches, matches, NON_MATCHES);
     }
-}
-
-bool Not::RootCandidateInvariant() const {
-    if (m_root_candidate_invariant != UNKNOWN_INVARIANCE)
-        return m_root_candidate_invariant == INVARIANT;
-    m_root_candidate_invariant = m_operand->RootCandidateInvariant() ? INVARIANT: VARIANT;
-    return m_root_candidate_invariant == INVARIANT;
-}
-
-bool Not::TargetInvariant() const {
-    if (m_target_invariant != UNKNOWN_INVARIANCE)
-        return m_target_invariant == INVARIANT;
-    m_target_invariant = m_operand->TargetInvariant() ? INVARIANT: VARIANT;
-    return m_target_invariant == INVARIANT;
-}
-
-bool Not::SourceInvariant() const {
-    if (m_source_invariant != UNKNOWN_INVARIANCE)
-        return m_source_invariant == INVARIANT;
-    m_source_invariant = m_operand->SourceInvariant() ? INVARIANT: VARIANT;
-    return m_source_invariant == INVARIANT;
 }
 
 std::string Not::Description(bool negated/* = false*/) const
@@ -10104,7 +9915,11 @@ OrderedAlternativesOf::OrderedAlternativesOf(
     std::vector<std::unique_ptr<Condition>>&& operands) :
     Condition(),
     m_operands(std::move(operands))
-{}
+{
+    m_root_candidate_invariant = boost::algorithm::all_of(m_operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
+    m_target_invariant = boost::algorithm::all_of(m_operands, [](auto& e){ return !e || e->TargetInvariant(); });
+    m_source_invariant = boost::algorithm::all_of(m_operands, [](auto& e){ return !e || e->SourceInvariant(); });
+}
 
 bool OrderedAlternativesOf::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -10221,48 +10036,6 @@ void OrderedAlternativesOf::Eval(const ScriptingContext& parent_context,
     }
 }
 
-bool OrderedAlternativesOf::RootCandidateInvariant() const {
-    if (m_root_candidate_invariant != UNKNOWN_INVARIANCE)
-        return m_root_candidate_invariant == INVARIANT;
-
-    for (auto& operand : m_operands) {
-        if (!operand->RootCandidateInvariant()) {
-            m_root_candidate_invariant = VARIANT;
-            return false;
-        }
-    }
-    m_root_candidate_invariant = INVARIANT;
-    return true;
-}
-
-bool OrderedAlternativesOf::TargetInvariant() const {
-    if (m_target_invariant != UNKNOWN_INVARIANCE)
-        return m_target_invariant == INVARIANT;
-
-    for (auto& operand : m_operands) {
-        if (!operand->TargetInvariant()) {
-            m_target_invariant = VARIANT;
-            return false;
-        }
-    }
-    m_target_invariant = INVARIANT;
-    return true;
-}
-
-bool OrderedAlternativesOf::SourceInvariant() const {
-    if (m_source_invariant != UNKNOWN_INVARIANCE)
-        return m_source_invariant == INVARIANT;
-
-    for (auto& operand : m_operands) {
-        if (!operand->SourceInvariant()) {
-            m_source_invariant = VARIANT;
-            return false;
-        }
-    }
-    m_source_invariant = INVARIANT;
-    return true;
-}
-
 std::string OrderedAlternativesOf::Description(bool negated/* = false*/) const {
     std::string values_str;
     if (m_operands.size() == 1) {
@@ -10329,6 +10102,16 @@ const std::vector<Condition*> OrderedAlternativesOf::Operands() const {
 ///////////////////////////////////////////////////////////
 // Described                                             //
 ///////////////////////////////////////////////////////////
+Described::Described(std::unique_ptr<Condition>&& condition, const std::string& desc_stringtable_key) :
+    Condition(),
+    m_condition(std::move(condition)),
+    m_desc_stringtable_key(desc_stringtable_key)
+{
+    m_root_candidate_invariant = !m_condition || m_condition->RootCandidateInvariant();
+    m_target_invariant = !m_condition || m_condition->TargetInvariant();
+    m_source_invariant = !m_condition || m_condition->SourceInvariant();
+}
+
 bool Described::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;
@@ -10362,15 +10145,6 @@ std::string Described::Description(bool negated/* = false*/) const {
         return m_condition->Description(negated);
     return "";
 }
-
-bool Described::RootCandidateInvariant() const
-{ return !m_condition || m_condition->RootCandidateInvariant(); }
-
-bool Described::TargetInvariant() const
-{ return !m_condition || m_condition->TargetInvariant(); }
-
-bool Described::SourceInvariant() const
-{ return !m_condition || m_condition->SourceInvariant(); }
 
 void Described::SetTopLevelContent(const std::string& content_name) {
     if (m_condition)

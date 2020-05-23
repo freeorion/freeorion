@@ -1,4 +1,4 @@
-/* GG is a GUI for SDL and OpenGL.
+/* GG is a GUI for OpenGL.
    Copyright (C) 2007 T. Zachary Laine
 
    This library is free software; you can redistribute it and/or

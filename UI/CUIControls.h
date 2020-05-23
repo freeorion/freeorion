@@ -17,8 +17,6 @@
 #include <GG/dialogs/FileDlg.h>
 #include <GG/GLClientAndServerBuffer.h>
 
-#include <boost/function.hpp>
-
 #include "LinkText.h"
 
 /** \file
@@ -82,14 +80,14 @@ protected:
 class SettableInWindowCUIButton : public CUIButton {
 public:
     /** \name Structors */ //@{
-    SettableInWindowCUIButton(const GG::SubTexture& unpressed, const GG::SubTexture& pressed, const GG::SubTexture& rollover, boost::function<bool(const SettableInWindowCUIButton*, const GG::Pt&)> in_window_function);
+    SettableInWindowCUIButton(const GG::SubTexture& unpressed, const GG::SubTexture& pressed, const GG::SubTexture& rollover, std::function<bool (const SettableInWindowCUIButton*, const GG::Pt&)> in_window_function);
     //@}
     /** \name Accessors */ //@{
     bool InWindow(const GG::Pt& pt) const override;
     //@}
 
 private:
-    boost::function<bool(const SettableInWindowCUIButton*, const GG::Pt&)>    m_in_window_func;
+    std::function<bool (const SettableInWindowCUIButton*, const GG::Pt&)>    m_in_window_func;
 };
 
 /** a FreeOrion triangular arrow button */
@@ -317,14 +315,20 @@ public:
     void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
     void KeyPress(GG::Key key, std::uint32_t key_code_point,
                   GG::Flags<GG::ModKey> mod_keys) override;
+    void AcceptPastedText(const std::string& text) override;
     void GainingFocus() override;
     void LosingFocus() override;
     void Render() override;
     virtual bool AutoComplete() { return false; };
+    void DisallowChars(const std::string& chars)
+    { m_disallowed_chars = chars; }
     //@}
 
     mutable boost::signals2::signal<void ()> GainingFocusSignal;
     mutable boost::signals2::signal<void ()> LosingFocusSignal;
+
+private:
+    std::string m_disallowed_chars;
 };
 
 /** a FreeOrion Edit control that replaces its displayed characters with a
@@ -489,8 +493,8 @@ private:
 
     /// The value, precision and sign of the statistic value
     std::vector<std::tuple<double, int, bool>> m_values;
-    std::shared_ptr<GG::StaticGraphic>         m_icon = nullptr;
-    std::shared_ptr<GG::Label>                 m_text = nullptr;
+    std::shared_ptr<GG::StaticGraphic>         m_icon;
+    std::shared_ptr<GG::Label>                 m_text;
 };
 
 class CUIToolBar : public GG::Control {

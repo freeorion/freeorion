@@ -122,7 +122,7 @@ void MultiIconValueIndicator::Update() {
             //DebugLogger() << "MultiIconValueIndicator::Update object:";
             //DebugLogger() << obj->Dump();
             auto type = m_meter_types[i].first;
-            double value = obj->InitialMeterValue(type);
+            double value = obj->GetMeter(type)->Initial();
             // Supply is a special case: the only thing that matters is the highest value.
             if (type == METER_SUPPLY)
                 total = std::max(total, value);

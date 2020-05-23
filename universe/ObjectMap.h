@@ -50,7 +50,7 @@ public:
 
     /** \name Accessors */ //@{
     /** Returns the number of objects of the specified class in this ObjectMap. */
-    template <class T=UniverseObject>
+    template <typename T = UniverseObject>
     std::size_t size() const;
 
     /** Returns true if this ObjectMap contains no objects */
@@ -59,46 +59,44 @@ public:
     /** Returns a pointer to the object of type T with ID number \a id.
       * Returns a null std::shared_ptr if none exists or the object with
       * ID \a id is not of type T. */
-    template <class T = UniverseObject>
+    template <typename T = UniverseObject>
     std::shared_ptr<const T> get(int id) const;
 
     /** Returns a pointer to the object of type T with ID number \a id.
       * Returns a null std::shared_ptr if none exists or the object with
       * ID \a id is not of type T. */
-    template <class T = UniverseObject>
+    template <typename T = UniverseObject>
     std::shared_ptr<T> get(int id);
 
     using id_range = boost::any_range<int, boost::forward_traversal_tag>;
 
     /** Returns a vector containing the objects with ids in \a object_ids that
       * are of type T */
-    template <class T = UniverseObject>
+    template <typename T = UniverseObject>
     std::vector<std::shared_ptr<const T>> find(const id_range& object_ids) const;
 
     /** Returns a vector containing the objects with ids in \a object_ids that
       * are of type T */
-    template <class T = UniverseObject>
+    template <typename T = UniverseObject>
     std::vector<std::shared_ptr<T>> find(const id_range& object_ids);
 
     /** Returns all the objects that match \a visitor */
-    template <class T = UniverseObject>
+    template <typename T = UniverseObject>
     std::vector<std::shared_ptr<const T>> find(const UniverseObjectVisitor& visitor) const;
 
     /** Returns all the objects that match \a visitor */
-    template <class T = UniverseObject>
+    template <typename T = UniverseObject>
     std::vector<std::shared_ptr<T>> find(const UniverseObjectVisitor& visitor);
 
     /** Returns all the objects of type T */
-    template <class T = UniverseObject>
-    boost::select_second_const_range<container_type<T>> all() const {
-        return Map<T>() | boost::adaptors::map_values;
-    }
+    template <typename T = UniverseObject>
+    boost::select_second_const_range<container_type<T>> all() const
+    { return Map<T>() | boost::adaptors::map_values; }
 
     /** Returns all the objects of type T */
-    template <class T = UniverseObject>
-    boost::select_second_mutable_range<container_type<T>> all() {
-        return Map<T>() | boost::adaptors::map_values;
-    }
+    template <typename T = UniverseObject>
+    boost::select_second_mutable_range<container_type<T>> all()
+    { return Map<T>() | boost::adaptors::map_values; }
 
     /** Returns the IDs of all objects not known to have been destroyed. */
     std::vector<int>        FindExistingObjectIDs() const;
@@ -109,26 +107,26 @@ public:
     std::string             Dump(unsigned short ntabs = 0) const;
 
     /**  */
-    std::shared_ptr<UniverseObject> ExistingObject(int id);
-    const container_type<UniverseObject>& ExistingObjects()
-    { return m_existing_objects; }
-    const container_type<UniverseObject>& ExistingResourceCenters()
-    { return m_existing_resource_centers; }
-    const container_type<UniverseObject>& ExistingPopCenters()
-    { return m_existing_pop_centers; }
-    const container_type<UniverseObject>& ExistingShips()
-    { return m_existing_ships; }
-    const container_type<UniverseObject>& ExistingFleets()
-    { return m_existing_fleets; }
-    const container_type<UniverseObject>& ExistingPlanets()
-    { return m_existing_planets; }
-    const container_type<UniverseObject>& ExistingSystems()
-    { return m_existing_systems; }
-    const container_type<UniverseObject>& ExistingBuildings()
-    { return m_existing_buildings; }
-    const container_type<UniverseObject>& ExistingFields()
-    { return m_existing_fields; }
+    std::shared_ptr<const UniverseObject> ExistingObject(int id) const;
 
+    const container_type<const UniverseObject>& ExistingObjects() const
+    { return m_existing_objects; }
+    const container_type<const UniverseObject>& ExistingResourceCenters() const
+    { return m_existing_resource_centers; }
+    const container_type<const UniverseObject>& ExistingPopCenters() const
+    { return m_existing_pop_centers; }
+    const container_type<const UniverseObject>& ExistingShips() const
+    { return m_existing_ships; }
+    const container_type<const UniverseObject>& ExistingFleets() const
+    { return m_existing_fleets; }
+    const container_type<const UniverseObject>& ExistingPlanets() const
+    { return m_existing_planets; }
+    const container_type<const UniverseObject>& ExistingSystems() const
+    { return m_existing_systems; }
+    const container_type<const UniverseObject>& ExistingBuildings() const
+    { return m_existing_buildings; }
+    const container_type<const UniverseObject>& ExistingFields() const
+    { return m_existing_fields; }
     //@}
 
     /** \name Mutators */ //@{
@@ -165,7 +163,7 @@ public:
     /** Adds object \a obj to the map under its ID, if it is a valid object.
       * If there already was an object in the map with the id \a id then
       * that object will be removed. */
-    template <class T>
+    template <typename T>
     void insert(std::shared_ptr<T> obj, int empire_id = ALL_EMPIRES);
 
     /** Removes object with id \a id from map, and returns that object, if
@@ -198,41 +196,41 @@ private:
 
     void CopyObjectsToSpecializedMaps();
 
-    template <class T>
+    template <typename T>
     const container_type<T>& Map() const;
 
-    template <class T>
+    template <typename T>
     container_type<T>& Map();
 
-    template <class T>
+    template <typename T>
     static void SwapMap(container_type<T>& map, ObjectMap& rhs);
 
-    container_type<UniverseObject> m_objects;
-    container_type<ResourceCenter> m_resource_centers;
-    container_type<PopCenter> m_pop_centers;
-    container_type<Ship> m_ships;
-    container_type<Fleet> m_fleets;
-    container_type<Planet> m_planets;
-    container_type<System> m_systems;
-    container_type<Building> m_buildings;
-    container_type<Field> m_fields;
+    container_type<UniverseObject>  m_objects;
+    container_type<ResourceCenter>  m_resource_centers;
+    container_type<PopCenter>       m_pop_centers;
+    container_type<Ship>            m_ships;
+    container_type<Fleet>           m_fleets;
+    container_type<Planet>          m_planets;
+    container_type<System>          m_systems;
+    container_type<Building>        m_buildings;
+    container_type<Field>           m_fields;
 
-    container_type<UniverseObject> m_existing_objects;
-    container_type<UniverseObject> m_existing_resource_centers;
-    container_type<UniverseObject> m_existing_pop_centers;
-    container_type<UniverseObject> m_existing_ships;
-    container_type<UniverseObject> m_existing_fleets;
-    container_type<UniverseObject> m_existing_planets;
-    container_type<UniverseObject> m_existing_systems;
-    container_type<UniverseObject> m_existing_buildings;
-    container_type<UniverseObject> m_existing_fields;
+    container_type<const UniverseObject>  m_existing_objects;
+    container_type<const UniverseObject>  m_existing_resource_centers;
+    container_type<const UniverseObject>  m_existing_pop_centers;
+    container_type<const UniverseObject>  m_existing_ships;
+    container_type<const UniverseObject>  m_existing_fleets;
+    container_type<const UniverseObject>  m_existing_planets;
+    container_type<const UniverseObject>  m_existing_systems;
+    container_type<const UniverseObject>  m_existing_buildings;
+    container_type<const UniverseObject>  m_existing_fields;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
-template <class T>
+template <typename T>
 std::shared_ptr<const T> ObjectMap::get(int id) const {
     auto it = Map<typename std::remove_const<T>::type>().find(id);
     return std::shared_ptr<const T>(
@@ -241,7 +239,7 @@ std::shared_ptr<const T> ObjectMap::get(int id) const {
             : nullptr);
 }
 
-template <class T>
+template <typename T>
 std::shared_ptr<T> ObjectMap::get(int id) {
     auto it = Map<typename std::remove_const<T>::type>().find(id);
     return std::shared_ptr<T>(
@@ -250,7 +248,7 @@ std::shared_ptr<T> ObjectMap::get(int id) {
             : nullptr);
 }
 
-template <class T>
+template <typename T>
 std::vector<std::shared_ptr<const T>> ObjectMap::find(const id_range& object_ids) const {
     std::vector<std::shared_ptr<const T>> retval;
     retval.reserve(boost::size(object_ids));
@@ -263,7 +261,7 @@ std::vector<std::shared_ptr<const T>> ObjectMap::find(const id_range& object_ids
     return retval;
 }
 
-template <class T>
+template <typename T>
 std::vector<std::shared_ptr<T>> ObjectMap::find(const id_range& object_ids) {
     std::vector<std::shared_ptr<T>> retval;
     retval.reserve(boost::size(object_ids));
@@ -276,7 +274,7 @@ std::vector<std::shared_ptr<T>> ObjectMap::find(const id_range& object_ids) {
     return retval;
 }
 
-template <class T>
+template <typename T>
 std::vector<std::shared_ptr<const T>> ObjectMap::find(const UniverseObjectVisitor& visitor) const {
     std::vector<std::shared_ptr<const T>> result;
     typedef typename std::remove_const<T>::type mutableT;
@@ -288,7 +286,7 @@ std::vector<std::shared_ptr<const T>> ObjectMap::find(const UniverseObjectVisito
     return result;
 }
 
-template <class T>
+template <typename T>
 std::vector<std::shared_ptr<T>> ObjectMap::find(const UniverseObjectVisitor& visitor) {
     std::vector<std::shared_ptr<T>> result;
     typedef typename std::remove_const<T>::type mutableT;
@@ -300,11 +298,11 @@ std::vector<std::shared_ptr<T>> ObjectMap::find(const UniverseObjectVisitor& vis
     return result;
 }
 
-template <class T>
+template <typename T>
 std::size_t ObjectMap::size() const
 { return Map<typename std::remove_const<T>::type>().size(); }
 
-template <class T>
+template <typename T>
 void ObjectMap::insert(std::shared_ptr<T> item, int empire_id /* = ALL_EMPIRES */) {
     if (!item)
         return;

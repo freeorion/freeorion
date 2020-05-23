@@ -1,6 +1,5 @@
 #include "IconTextBrowseWnd.h"
 
-#include <GG/DrawUtil.h>
 #include <GG/StaticGraphic.h>
 
 #include "ClientUI.h"
@@ -23,9 +22,6 @@ IconTextBrowseWnd::IconTextBrowseWnd(const std::shared_ptr<GG::Texture> texture,
                                      const std::string& title_text,
                                      const std::string& main_text) :
     GG::BrowseInfoWnd(GG::X0, GG::Y0, ICON_BROWSE_TEXT_WIDTH + ICON_BROWSE_ICON_WIDTH, GG::Y1),
-    m_icon(nullptr),
-    m_title_text_label(nullptr),
-    m_main_text_label(nullptr),
     m_texture(texture),
     m_title_text(title_text),
     m_main_text(main_text)

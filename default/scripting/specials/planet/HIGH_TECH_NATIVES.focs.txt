@@ -17,8 +17,8 @@ Special
             scope = Source
             activation = Unowned
             effects = [
-                SetMaxDefense value = Value + 30
-                SetMaxShield value = Value + 30
+                SetMaxDefense value = Value + ( 30 * [[PLANET_DEFENSE_FACTOR]] )
+                SetMaxShield value = Value + ( 30 * [[PLANET_SHIELD_FACTOR]] )
                 SetMaxTroops value = Value + 30
                 SetDetection value = Value + 60
             ]
@@ -45,3 +45,5 @@ Special
             effects = RemoveSpecial name = "HIGH_TECH_NATIVES_SPECIAL"
     ]
     graphic = "icons/tech/categories/learning.png"
+
+#include "/scripting/common/misc.macros"

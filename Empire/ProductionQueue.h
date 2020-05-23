@@ -11,6 +11,7 @@
 #include <string>
 #include <boost/serialization/access.hpp>
 #include <boost/signals2/signal.hpp>
+#include <boost/uuid/uuid.hpp>
 
 class ResourcePool;
 FO_COMMON_API extern const int INVALID_DESIGN_ID;
@@ -44,7 +45,7 @@ struct FO_COMMON_API ProductionQueue {
 
     private:
         friend class boost::serialization::access;
-        template <class Archive>
+        template <typename Archive>
         void serialize(Archive& ar, const unsigned int version);
     };
 
@@ -53,41 +54,45 @@ struct FO_COMMON_API ProductionQueue {
         Element();
 
         Element(ProductionItem item_, int empire_id_,
+                boost::uuids::uuid uuid_,
                 int ordered_, int remaining_, int blocksize_,
                 int location_, bool paused_ = false,
                 bool allowed_imperial_stockpile_use_ = true);
 
         Element(BuildType build_type, std::string name, int empire_id_,
+                boost::uuids::uuid uuid_,
                 int ordered_, int remaining_, int blocksize_,
                 int location_, bool paused_ = false,
                 bool allowed_imperial_stockpile_use_ = true);
 
         Element(BuildType build_type, int design_id, int empire_id_,
+                boost::uuids::uuid uuid_,
                 int ordered_, int remaining_, int blocksize_,
                 int location_, bool paused_ = false,
                 bool allowed_imperial_stockpile_use_ = true);
 
-        ProductionItem  item;
-        int             empire_id = ALL_EMPIRES;
-        int             ordered = 0;                ///< how many of item (blocks) to produce
-        int             blocksize = 1;              ///< size of block to produce (default=1)
-        int             remaining = 0;              ///< how many left to produce
-        int             location = INVALID_OBJECT_ID;///< the ID of the UniverseObject at which this item is being produced
-        float           allocated_pp = 0.0f;        ///< PP allocated to this ProductionQueue Element by Empire production update
-        float           progress = 0.0f;            ///< fraction of this item that is complete.
-        float           progress_memory = 0.0f;     ///< updated by server turn processing; aides in allowing blocksize changes to be undone in same turn w/o progress loss
-        int             blocksize_memory = 1;       ///< used along with progress_memory
-        int             turns_left_to_next_item = -1;
-        int             turns_left_to_completion = -1;
-        int             rally_point_id = INVALID_OBJECT_ID;
-        bool            paused = false;
-        bool            allowed_imperial_stockpile_use = true;
+        ProductionItem      item;
+        int                 empire_id = ALL_EMPIRES;
+        int                 ordered = 0;                ///< how many of item (blocks) to produce
+        int                 blocksize = 1;              ///< size of block to produce (default=1)
+        int                 remaining = 0;              ///< how many left to produce
+        int                 location = INVALID_OBJECT_ID;///< the ID of the UniverseObject at which this item is being produced
+        float               allocated_pp = 0.0f;        ///< PP allocated to this ProductionQueue Element by Empire production update
+        float               progress = 0.0f;            ///< fraction of this item that is complete.
+        float               progress_memory = 0.0f;     ///< updated by server turn processing; aides in allowing blocksize changes to be undone in same turn w/o progress loss
+        int                 blocksize_memory = 1;       ///< used along with progress_memory
+        int                 turns_left_to_next_item = -1;
+        int                 turns_left_to_completion = -1;
+        int                 rally_point_id = INVALID_OBJECT_ID;
+        bool                paused = false;
+        bool                allowed_imperial_stockpile_use = true;
+        boost::uuids::uuid  uuid;
 
         std::string Dump() const;
 
     private:
         friend class boost::serialization::access;
-        template <class Archive>
+        template <typename Archive>
         void serialize(Archive& ar, const unsigned int version);
     };
 
@@ -135,7 +140,6 @@ struct FO_COMMON_API ProductionQueue {
     /** Returns sets of object ids that have more available than allocated PP */
     std::set<std::set<int>> ObjectsWithWastedPP(const std::shared_ptr<ResourcePool>& industry_pool) const;
 
-
     // STL container-like interface
     bool            empty() const;
     unsigned int    size() const;
@@ -144,13 +148,16 @@ struct FO_COMMON_API ProductionQueue {
     const_iterator  find(int i) const;
     const Element&  operator[](int i) const;
 
+    const_iterator  find(boost::uuids::uuid uuid) const;
+    int             IndexOfUUID(boost::uuids::uuid uuid) const;
+
     /** \name Mutators */ //@{
     /** Recalculates the PPs spent on and number of turns left for each project in the queue.  Also
       * determines the number of projects in progress, and the industry consumed by projects
       * in each resource-sharing group of systems.  Does not actually "spend" the PP; a later call to
       * empire->CheckProductionProgress() will actually spend PP, remove items from queue and create them
       * in the universe. */
-    void Update();
+    void        Update();
 
     // STL container-like interface
     void        push_back(const Element& element);
@@ -178,7 +185,7 @@ private:
     int                             m_empire_id = ALL_EMPIRES;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 

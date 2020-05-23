@@ -9,7 +9,7 @@
 
 class FO_COMMON_API DiplomaticMessage {
 public:
-    enum DiplomaticMessageType {
+    enum DiplomaticMessageType : int {
         INVALID_DIPLOMATIC_MESSAGE_TYPE = -1,
         WAR_DECLARATION,
         PEACE_PROPOSAL,
@@ -36,7 +36,7 @@ private:
     DiplomaticMessageType   m_type;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 

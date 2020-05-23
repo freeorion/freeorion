@@ -16,7 +16,6 @@
 
 #include <GG/utf8/checked.h>
 #include <GG/dialogs/ColorDlg.h>
-#include <GG/DrawUtil.h>
 #include <GG/GUI.h>
 #include <GG/Layout.h>
 
@@ -203,7 +202,7 @@ void CUIButton::RenderUnpressed() {
 SettableInWindowCUIButton::SettableInWindowCUIButton(const GG::SubTexture& unpressed,
                                                      const GG::SubTexture& pressed,
                                                      const GG::SubTexture& rollover,
-                                                     boost::function<bool(const SettableInWindowCUIButton*, const GG::Pt&)> in_window_function) :
+                                                     std::function<bool (const SettableInWindowCUIButton*, const GG::Pt&)> in_window_function) :
     CUIButton(unpressed, pressed, rollover)
 { m_in_window_func = in_window_function; }
 
@@ -609,7 +608,7 @@ void CUITabBar::DistinguishCurrentTab(const std::vector<GG::StateButton*>& tab_b
         if (index == i)
             tab->SetTextColor(text_color);
         else
-            tab->SetTextColor(DarkColor(text_color));
+            tab->SetTextColor(DarkenClr(text_color));
     }
 }
 
@@ -795,6 +794,8 @@ void CUIDropDownList::Render() {
     GG::Pt ul = UpperLeft();
     GG::Clr lb_color = LB()->Color();
     GG::Clr border_color = Disabled() ? DisabledColor(lb_color) : lb_color;
+    if (GG::GUI::GetGUI()->FocusWnd().get() == this)
+        border_color = GG::LightenClr(border_color);
     GG::Clr interior_color = Disabled() ? DisabledColor(InteriorColor()) : InteriorColor();
 
     glPushMatrix();
@@ -940,6 +941,13 @@ void CUIEdit::KeyPress(GG::Key key, std::uint32_t key_code_point,
     }
 }
 
+void CUIEdit::AcceptPastedText(const std::string& text) {
+    std::string text_copy;
+    std::copy_if(text.begin(), text.end(), std::back_inserter(text_copy),
+                 [this](char c){ return m_disallowed_chars.find(c) == std::string::npos; });
+    GG::Edit::AcceptPastedText(text_copy);
+}
+
 void CUIEdit::GainingFocus() {
     GG::Edit::GainingFocus();
     GainingFocusSignal();
@@ -953,7 +961,10 @@ void CUIEdit::LosingFocus() {
 void CUIEdit::Render() {
     GG::Clr color = Color();
     GG::Clr border_color = Disabled() ? DisabledColor(color) : color;
+    if (GG::GUI::GetGUI()->FocusWnd().get() == this)
+        border_color = GG::LightenClr(border_color);
     GG::Clr int_color_to_use = Disabled() ? DisabledColor(InteriorColor()) : InteriorColor();
+
 
     GG::Pt ul = UpperLeft(), lr = LowerRight();
     //GG::Pt client_ul = ClientUpperLeft(), client_lr = ClientLowerRight();
@@ -1095,6 +1106,8 @@ void CUIMultiEdit::CompleteConstruction() {
 void CUIMultiEdit::Render() {
     GG::Clr color = Color();
     GG::Clr border_color =      Disabled()  ?   DisabledColor(color)            :   color;
+    if (GG::GUI::GetGUI()->FocusWnd().get() == this)
+        border_color = GG::LightenClr(border_color);
     GG::Clr int_color_to_use =  Disabled()  ?   DisabledColor(InteriorColor())  :   InteriorColor();
 
     GG::Pt ul = UpperLeft(), lr = LowerRight();
@@ -1273,7 +1286,7 @@ const GG::Y CUISimpleDropDownListRow::DEFAULT_ROW_HEIGHT(22);
 
 CUISimpleDropDownListRow::CUISimpleDropDownListRow(const std::string& row_text,
                                                    GG::Y row_height/* = DEFAULT_ROW_HEIGHT*/) :
-    GG::ListBox::Row(GG::X1, row_height, ""),
+    GG::ListBox::Row(GG::X1, row_height),
     m_row_label(GG::Wnd::Create<CUILabel>(row_text, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP))
 {}
 
@@ -1492,8 +1505,9 @@ namespace {
     // row type used in the SpeciesSelector
     struct SpeciesRow : public GG::ListBox::Row {
         SpeciesRow(const Species* species, GG::X w, GG::Y h) :
-            GG::ListBox::Row(w, h, "", GG::ALIGN_VCENTER, 0)
+            GG::ListBox::Row(w, h)
         {
+            SetMargin(0);
             if (!species)
                 return;
             const std::string& species_name = species->Name();
@@ -1504,8 +1518,9 @@ namespace {
 
         SpeciesRow(const std::string& species_name, const std::string& localized_name, const std::string& species_desc,
                    GG::X w, GG::Y h, std::shared_ptr<GG::Texture> species_icon) :
-            GG::ListBox::Row(w, h, "", GG::ALIGN_VCENTER, 0)
+            GG::ListBox::Row(w, h)
         {
+            SetMargin(0);
             GG::Wnd::SetName(species_name);
             Init(species_name, localized_name, species_desc, w, h, species_icon);
         };
@@ -1614,7 +1629,7 @@ namespace {
         };
 
         ColorRow(const GG::Clr& color, GG::Y h) :
-            GG::ListBox::Row(GG::X(Value(h)), h, ""),
+            GG::ListBox::Row(GG::X(Value(h)), h),
             m_color_square(GG::Wnd::Create<ColorSquare>(color, h))
         {}
 
@@ -2138,12 +2153,12 @@ void MultiTurnProgressBar::Render() {
         segment_verts.reserve(2 * m_num_segments);
         segment_colors.reserve(2 * m_num_segments);
 
-        GG::Clr current_colour(GG::DarkColor(m_clr_bar));
+        GG::Clr current_colour(GG::DarkenClr(m_clr_bar));
 
         for (int n = 1; n < m_num_segments; ++n) {
             GG::X separator_x(ul.x + Width() * n / m_num_segments);
             if (separator_x > comp_rect.lr.x)
-                current_colour = GG::LightColor(m_clr_bg);
+                current_colour = GG::LightenClr(m_clr_bg);
             segment_verts.store(separator_x, ul.y);
             segment_verts.store(separator_x, lr.y);
             segment_colors.store(current_colour);
@@ -2171,7 +2186,7 @@ void MultiTurnProgressBar::Render() {
         pred_verts.activate();
         glColor(m_clr_outline);
         glDrawArrays(GL_QUAD_STRIP, 0, 10);
-        glColor(GG::LightColor(m_clr_bar));
+        glColor(GG::LightenClr(m_clr_bar));
         glDrawArrays(GL_QUADS, 10, 4);
     }
 

@@ -1,4 +1,4 @@
-/* GG is a GUI for SDL and OpenGL.
+/* GG is a GUI for OpenGL.
    Copyright (C) 2003-2008 T. Zachary Laine
 
    This library is free software; you can redistribute it and/or
@@ -26,7 +26,6 @@
 
 #include <GG/GUI.h>
 #include <GG/Base.h>
-#include <GG/DrawUtil.h>
 #include <GG/StyleFactory.h>
 #include <GG/utf8/checked.h>
 #include <GG/GLClientAndServerBuffer.h>
@@ -50,8 +49,7 @@
 
 namespace GG { namespace detail {
 
-    FTFaceWrapper::FTFaceWrapper() :
-        m_face(nullptr)
+    FTFaceWrapper::FTFaceWrapper()
     {}
 
     FTFaceWrapper::~FTFaceWrapper()
@@ -79,7 +77,7 @@ namespace {
     const std::string ALIGN_RIGHT_TAG = "right";
     const std::string PRE_TAG = "pre";
 
-    template <class T>
+    template <typename T>
     T NextPowerOfTwo(T input)
     {
         T value(1);
@@ -210,13 +208,13 @@ namespace {
 
     struct FTLibraryWrapper
     {
-        FTLibraryWrapper() : m_library(nullptr)
+        FTLibraryWrapper()
         {
             if (!m_library && FT_Init_FreeType(&m_library)) // if no library exists and we can't create one...
                 throw FailedFTLibraryInit("Unable to initialize FreeType font library object");
         }
         ~FTLibraryWrapper() { FT_Done_FreeType(m_library); }
-        FT_Library m_library;
+        FT_Library m_library = nullptr;
     } g_library;
 
     struct PushSubmatchOntoStackP
@@ -499,11 +497,7 @@ namespace {
     public:
         CompiledRegex(const std::unordered_set<std::string>& known_tags,
                       bool strip_unpaired_tags) :
-            m_text(nullptr),
-            m_known_tags(&known_tags),
-            m_ignore_tags(false),
-            m_tag_stack(),
-            m_EVERYTHING()
+            m_known_tags(&known_tags)
         {
             // Synonyms for s1 thru s5 sub matches
             xpr::mark_tag tag_name_tag(1);
@@ -511,6 +505,8 @@ namespace {
             xpr::mark_tag close_bracket_tag(3);
             xpr::mark_tag whitespace_tag(4);
             xpr::mark_tag text_tag(5);
+
+            using boost::placeholders::_1;
 
             // The comments before each regex are intended to clarify the mapping from xpressive
             // notation to the more typical regex notation.  If you read xpressive or don't read
@@ -585,9 +581,9 @@ namespace {
             return retval;
         }
 
-        const std::string* m_text;
-        const std::unordered_set<std::string>* m_known_tags;
-        bool m_ignore_tags;
+        const std::string* m_text = nullptr;
+        const std::unordered_set<std::string>* m_known_tags = nullptr;
+        bool m_ignore_tags = false;
 
         // m_tag_stack is used to track XML opening/closing tags.
         std::stack<Font::Substring> m_tag_stack;
@@ -1446,7 +1442,7 @@ namespace DebugOutput {
             for (const auto& character : line_data[i].char_data) {
                 std::cout << text[Value(character.string_index)];
             }
-            std::cout << "\"" << std::endl;
+            std::cout << "\"\n";
             for (std::size_t j = 0; j < line_data[i].char_data.size(); ++j) {
                 for (auto& tag_elem : line_data[i].char_data[j].tags) {
                     if (tag_elem) {
@@ -1460,7 +1456,7 @@ namespace DebugOutput {
                             std::cout << "        \"" << param << "\"\n";
                         }
                         std::cout << "    tag_name=\"" << tag_elem->tag_name << "\"\n    close_tag="
-                                  << tag_elem->close_tag << std::endl;
+                                  << tag_elem->close_tag << "\n";
                     }
                 }
             }

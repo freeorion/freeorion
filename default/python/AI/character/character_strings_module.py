@@ -27,7 +27,7 @@ import character as character_package
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 
 
-class _CharacterTableFunction(object):
+class _CharacterTableFunction:
     """A table indexed by a particular trait of a Character that is used like a
     function.
 

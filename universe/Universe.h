@@ -30,7 +30,7 @@ class ShipDesign;
 class System;
 class Pathfinder;
 class IDAllocator;
-struct ItemSpec;
+struct UnlockableItem;
 class FleetPlan;
 class MonsterFleetPlan;
 
@@ -42,16 +42,17 @@ namespace Condition {
 
 namespace Effect {
     struct AccountingInfo;
-    struct TargetsAndCause;
-    struct SourcedEffectsGroup;
+    struct TargetsAndCause;     // struct TargetsAndCause { TargetSet target_set; EffectCause effect_cause; };
+    struct SourcedEffectsGroup; // struct SourcedEffectsGroup { int source_object_id; const EffectsGroup* effects_group; };
     class EffectsGroup;
     typedef std::vector<std::shared_ptr<UniverseObject>> TargetSet;
     typedef std::unordered_map<int, boost::container::flat_map<MeterType, std::vector<AccountingInfo>>> AccountingMap;
-    typedef std::vector<std::pair<SourcedEffectsGroup, TargetsAndCause>> TargetsCauses;
+    typedef std::vector<std::pair<SourcedEffectsGroup, TargetsAndCause>> SourcesEffectsTargetsAndCausesVec;
 }
 
 namespace ValueRef {
-    template <class T> struct ValueRef;
+    template <typename T>
+    struct ValueRef;
 }
 
 #if defined(_MSC_VER)
@@ -83,9 +84,9 @@ private:
     typedef std::map<int, std::set<int>>            ObjectKnowledgeMap;             ///< IDs of Empires which know information about an object (or deleted object); keyed by object id
 
     typedef const ValueRef::ValueRef<Visibility>*   VisValRef;
-    typedef std::vector<std::pair<int, VisValRef>>      SrcVisValRefVec;
-    typedef std::map<int, SrcVisValRefVec>              ObjSrcVisValRefVecMap;
-    typedef std::map<int, ObjSrcVisValRefVecMap>        EmpireObjectVisValueRefMap;
+    typedef std::vector<std::pair<int, VisValRef>>  SrcVisValRefVec;
+    typedef std::map<int, SrcVisValRefVec>          ObjSrcVisValRefVecMap;
+    typedef std::map<int, ObjSrcVisValRefVecMap>    EmpireObjectVisValueRefMap;
 
     /** Discrepancy between meter's value at start of turn, and the value that
       * this client calculate that the meter should have with the knowledge
@@ -401,15 +402,15 @@ public:
     }
     //@}
 
-    /** Set items unlocked before turn 1 from \p future.*/
-    void SetInitiallyUnlockedItems(Pending::Pending<std::vector<ItemSpec>>&& future);
-    /** Items unlocked before turn 1.*/
-    const std::vector<ItemSpec>& InitiallyUnlockedItems() const;
+    //! Set items unlocked before turn 1 from \p future.
+    void SetInitiallyUnlockedItems(Pending::Pending<std::vector<UnlockableItem>>&& future);
+    //! Items unlocked before turn 1.
+    const std::vector<UnlockableItem>& InitiallyUnlockedItems() const;
 
-    /** Set buildings unlocked before turn 1 from \p future.*/
-    void SetInitiallyUnlockedBuildings(Pending::Pending<std::vector<ItemSpec>>&& future);
-    /** Buildings unlocked before turn 1.*/
-    const std::vector<ItemSpec>& InitiallyUnlockedBuildings() const;
+    //! Set buildings unlocked before turn 1 from \p future.
+    void SetInitiallyUnlockedBuildings(Pending::Pending<std::vector<UnlockableItem>>&& future);
+    //! Buildings unlocked before turn 1.
+    const std::vector<UnlockableItem>& InitiallyUnlockedBuildings() const;
 
     /** Set fleets unlocked before turn 1 from \p future.*/
     void SetInitiallyUnlockedFleetPlans(Pending::Pending<std::vector<std::unique_ptr<FleetPlan>>>&& future);
@@ -462,16 +463,18 @@ private:
     /** Inserts object \p obj into the universe with the given \p id. */
     void InsertIDCore(std::shared_ptr<UniverseObject> obj, int id);
 
-    /** Clears \a targets_causes, and then populates with all
+    /** Clears \a source_effects_targets_causes, and then populates with all
       * EffectsGroups and their targets in the known universe. */
-    void GetEffectsAndTargets(Effect::TargetsCauses& targets_causes);
+    void GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsAndCausesVec>& source_effects_targets_causes,
+                              bool only_meter_effects = false) const;
 
-    /** Removes entries in \a targets_causes about effects groups acting
+    /** Removes entries in \a source_effects_targets_causes about effects groups acting
       * on objects in \a target_objects, and then repopulates for EffectsGroups
       * that act on at least one of the objects in \a target_objects. If
       * \a target_objects is empty then default target candidates will be used. */
-    void GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
-                              const std::vector<int>& target_objects);
+    void GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsAndCausesVec>& source_effects_targets_causes,
+                              const std::vector<int>& target_objects,
+                              bool only_meter_effects = false) const;
 
     void ResetObjectMeters(const std::vector<std::shared_ptr<UniverseObject>>& objects,
                            bool target_max_unpaired = true, bool active = true);
@@ -481,7 +484,7 @@ private:
       * executed.  This is useful on server or clients to update meter
       * values after the rest of effects (including non-meter effects) have
       * been executed. */
-    void ExecuteEffects(const Effect::TargetsCauses& targets_causes,
+    void ExecuteEffects(std::map<int, Effect::SourcesEffectsTargetsAndCausesVec>& source_effects_targets_causes,
                         bool update_effect_accounting,
                         bool only_meter_effects = false,
                         bool only_appearance_effects = false,
@@ -530,22 +533,22 @@ private:
     std::map<std::string, std::map<int, std::map<int, double>>>
                                     m_stat_records;                     ///< storage for statistics calculated for empires. Indexed by stat name (string), contains a map indexed by empire id, contains a map from turn number (int) to stat value (double).
 
-    /** @name Parsed items
-        Various unlocked items are kept as a Pending::Pending while being parsed and
-        then transfered.  They are mutable to allow processing in const accessors. */
-    ///@{
-    mutable boost::optional<Pending::Pending<std::vector<ItemSpec>>>                            m_pending_items = boost::none;
-    mutable boost::optional<Pending::Pending<std::vector<ItemSpec>>>                            m_pending_buildings = boost::none;
+    //! @name Parsed items
+    //! Various unlocked items are kept as a Pending::Pending while being parsed and
+    //! then transfered.  They are mutable to allow processing in const accessors.
+    //! @{
+    mutable boost::optional<Pending::Pending<std::vector<UnlockableItem>>>                      m_pending_items = boost::none;
+    mutable boost::optional<Pending::Pending<std::vector<UnlockableItem>>>                      m_pending_buildings = boost::none;
     mutable boost::optional<Pending::Pending<std::vector<std::unique_ptr<FleetPlan>>>>          m_pending_fleet_plans = boost::none;
     mutable boost::optional<Pending::Pending<std::vector<std::unique_ptr<MonsterFleetPlan>>>>   m_pending_monster_fleet_plans = boost::none;
     mutable boost::optional<Pending::Pending<EmpireStatsMap>>                                   m_pending_empire_stats = boost::none;
 
-    mutable std::vector<ItemSpec>                           m_unlocked_items;
-    mutable std::vector<ItemSpec>                           m_unlocked_buildings;
+    mutable std::vector<UnlockableItem>                     m_unlocked_items;
+    mutable std::vector<UnlockableItem>                     m_unlocked_buildings;
     mutable std::vector<std::unique_ptr<FleetPlan>>         m_unlocked_fleet_plans;
     mutable std::vector<std::unique_ptr<MonsterFleetPlan>>  m_monster_fleet_plans;
     mutable EmpireStatsMap                                  m_empire_stats;
-    ///@}
+    //! @}
 
     /** Fills \a designs_to_serialize with ShipDesigns known to the empire with
       * the ID \a encoding empire.  If encoding_empire is ALL_EMPIRES, then all
@@ -589,9 +592,10 @@ private:
     std::unique_ptr<IDAllocator> const m_design_id_allocator;
 
     friend class boost::serialization::access;
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
+
 
 /** Compute a checksum for each of the universe's content managers. Each value will be of the form
     ("BuildingManager", <checksum>) */

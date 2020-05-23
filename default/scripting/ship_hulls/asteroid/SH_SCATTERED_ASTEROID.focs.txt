@@ -3,6 +3,7 @@ Hull
     description = "SH_SCATTERED_ASTEROID_DESC"
     speed = 60
     fuel = 1.2
+    NoDefaultFuelEffect
     stealth = 5
     structure = 140
     slots = [
@@ -69,11 +70,11 @@ Hull
                     OwnedBy affiliation = AllyOf empire = Source.Owner
                 ]
             ]
-            activation = Source
             stackinggroup = "FLAGSHIP_EFFECT_SCATTERED_ASTEROID"
-            effects = SetMaxShield value = Value + 3
+            effects = SetMaxShield value = Value + (3 * [[SHIP_SHIELD_FACTOR]])
 
         [[BAD_FUEL_EFFICIENCY]]
+        [[ADD_HULL_FUEL_TO_MAX_FUEL_METER]]
         [[AVERAGE_BASE_FUEL_REGEN]]
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]
@@ -88,3 +89,5 @@ Hull
 #include "../ship_hulls.macros"
 
 #include "/scripting/common/upkeep.macros"
+
+#include "/scripting/common/misc.macros"

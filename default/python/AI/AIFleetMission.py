@@ -1,4 +1,4 @@
-from logging import debug, warn
+from logging import debug, warning
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 
@@ -49,7 +49,7 @@ MERGEABLE_MISSION_TYPES = (
 )
 
 
-class AIFleetMission(object):
+class AIFleetMission:
     """
     Stores information about AI mission. Every mission has fleetID and AI targets depending upon AI fleet mission type.
     :type orders: list[AIFleetOrder]
@@ -449,8 +449,8 @@ class AIFleetMission(object):
                     planet_partial_vis_turn = get_partial_visibility_turn(planet.id)
                     if (planet_partial_vis_turn == sys_partial_vis_turn and
                             not planet.initialMeterValue(fo.meterType.population)):
-                        warn("Fleet %d has tentatively completed its "
-                             "colonize mission but will wait to confirm population." % self.fleet.id)
+                        warning("Fleet %s has tentatively completed its "
+                                "colonize mission but will wait to confirm population.", self.fleet)
                         debug("    Order details are %s" % last_order)
                         debug("    Order is valid: %s; issued: %s; executed: %s" % (
                             last_order.is_valid(), last_order.order_issued, last_order.executed))

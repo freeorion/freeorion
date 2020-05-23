@@ -2,6 +2,7 @@
 
 #include "i18n.h"
 #include "Logger.h"
+#include "AppInterface.h"
 #include "../universe/Predicates.h"
 #include "../universe/Building.h"
 #include "../universe/Planet.h"
@@ -366,6 +367,28 @@ SitRepEntry CreatePlanetOutpostedSitRep(int planet_id) {
         "icons/sitrep/planet_colonized.png",
         UserStringNop("SITREP_PLANET_OUTPOSTED_LABEL"), true);
     sitrep.AddVariable(VarText::PLANET_ID_TAG,     std::to_string(planet_id));
+    return sitrep;
+}
+
+SitRepEntry CreatePlanetGiftedSitRep(int planet_id, int empire_id) {
+    SitRepEntry sitrep(
+        UserStringNop("SITREP_PLANET_GIFTED"),
+        CurrentTurn() + 1,
+        "icons/sitrep/gift.png",
+        UserStringNop("SITREP_PLANET_GIFTED_LABEL"), true);
+    sitrep.AddVariable(VarText::PLANET_ID_TAG,  std::to_string(planet_id));
+    sitrep.AddVariable(VarText::EMPIRE_ID_TAG,  std::to_string(empire_id));
+    return sitrep;
+}
+
+SitRepEntry CreateFleetGiftedSitRep(int fleet_id, int empire_id) {
+    SitRepEntry sitrep(
+        UserStringNop("SITREP_FLEET_GIFTED"),
+        CurrentTurn() + 1,
+        "icons/sitrep/gift.png",
+        UserStringNop("SITREP_FLEET_GIFTED_LABEL"), true);
+    sitrep.AddVariable(VarText::FLEET_ID_TAG,   std::to_string(fleet_id));
+    sitrep.AddVariable(VarText::EMPIRE_ID_TAG,  std::to_string(empire_id));
     return sitrep;
 }
 

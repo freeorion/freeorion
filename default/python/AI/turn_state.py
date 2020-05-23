@@ -1,6 +1,6 @@
 from collections import namedtuple
-from logging import warn, error
-from freeorion_tools import ReadOnlyDict
+from logging import warning, error
+from freeorion_tools import ReadOnlyDict, cache_for_current_turn
 
 import freeOrionAIInterface as fo
 
@@ -11,7 +11,7 @@ from EnumsAI import FocusType
 PlanetInfo = namedtuple('PlanetInfo', ['pid', 'species_name', 'owner', 'system_id'])
 
 
-class State(object):
+class State:
     """
     This class represent state for current turn.
     It contains variables that renewed each turn.
@@ -71,7 +71,7 @@ class State(object):
                 if AIDependencies.PANOPTICON_SPECIAL in planet.specials:
                     self.__have_panopticon = True
                 if population > 0 and AIDependencies.COMPUTRONIUM_SPECIAL in planet.specials:
-                        self.__have_computronium = True  # TODO: Check if species can set research focus
+                    self.__have_computronium = True  # TODO: Check if species can set research focus
 
                 if planet.focus == FocusType.FOCUS_INDUSTRY:
                     self.__num_industrialists += population
@@ -126,7 +126,7 @@ class State(object):
             # This is only expected to happen if a system has no path to any supplied system.
             # As the current code should not allow such queries, this is logged as warning.
             # If future code breaks this assumption, feel free to adjust logging.
-            warn("Queried supply value of a system not mapped in empire.supplyProjections(): %d" % sys_id)
+            warning("Queried supply value of a system not mapped in empire.supplyProjections(): %d" % sys_id)
             return -99  # pretend it is very far away from supply
         return retval
 
@@ -141,8 +141,8 @@ class State(object):
         :rtype: tuple[int]
         """
         if supply_tier > 0:
-            warn("The current implementation does not distinguish between positive supply levels. "
-                 "Interpreting the query as supply_tier=0 (indicating system in supply).")
+            warning("The current implementation does not distinguish between positive supply levels. "
+                    "Interpreting the query as supply_tier=0 (indicating system in supply).")
             supply_tier = 0
         return self.__systems_by_jumps_to_supply.get(supply_tier, tuple())
 
@@ -170,6 +170,7 @@ class State(object):
             return self.__empire_planets_by_system[include_outposts].get(sys_id, tuple())
         return self.__empire_planets_by_system[include_outposts]
 
+    @cache_for_current_turn
     def get_inhabited_planets(self):
         """
         Return frozenset of empire planet ids with species.
@@ -277,5 +278,6 @@ class State(object):
 
     def set_medium_pilot_rating(self, value):
         self.__medium_pilot_rating = value
+
 
 state = State()

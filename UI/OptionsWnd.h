@@ -36,10 +36,7 @@ private:
        sound options are changed.*/
     class SoundOptionsFeedback {
     public:
-        SoundOptionsFeedback() :
-            m_effects_button(nullptr),
-            m_music_button(nullptr)
-        {}
+        SoundOptionsFeedback() {}
 
         /** Stores a pointer to the sound effects check box.*/
         void SetEffectsButton(std::shared_ptr<GG::StateButton> button);

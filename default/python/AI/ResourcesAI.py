@@ -9,7 +9,7 @@ have their future focus decided.
 """
 # Note: The algorithm is not stable with respect to pid order.  i.e. Two empire with
 #       exactly the same colonies, but different pids may make different choices.
-from logging import info, warn, debug
+from logging import info, warning, debug
 from operator import itemgetter
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
@@ -35,7 +35,7 @@ _focus_names = {INDUSTRY: "Industry", RESEARCH: "Research", GROWTH: "Growth", PR
 RESEARCH_WEIGHTING = 2.3
 
 
-class PlanetFocusInfo(object):
+class PlanetFocusInfo:
     """ The current, possible and future foci and output of one planet."""
     def __init__(self, planet):
         self.planet = planet
@@ -49,7 +49,7 @@ class PlanetFocusInfo(object):
         self.future_focus = self.current_focus
 
 
-class PlanetFocusManager(object):
+class PlanetFocusManager:
     """PlanetFocusManager tracks all of the empire's planets, what their current and future focus will be."""
 
     def __init__(self):
@@ -64,7 +64,7 @@ class PlanetFocusManager(object):
         self.raw_planet_info = dict(self.all_planet_info)
         self.baked_planet_info = {}
 
-        for pid, pinfo in self.raw_planet_info.items():
+        for pid, pinfo in list(self.raw_planet_info.items()):
             if not pinfo.planet.availableFoci:
                 self.baked_planet_info[pid] = self.raw_planet_info.pop(pid)
 
@@ -140,7 +140,7 @@ class PlanetFocusManager(object):
             pinfo.possible_output[PROTECTION] = pinfo.possible_output[GROWTH]
 
 
-class Reporter(object):
+class Reporter:
     """Reporter contains some file scope functions to report"""
 
     def __init__(self, focus_manager):
@@ -298,7 +298,7 @@ class Reporter(object):
         debug("Empire Totals:\nPopulation: %5d \nProduction: %5d\nResearch: %5d\n",
               empire.population(), empire.productionPoints, empire.resourceProduction(fo.resourceType.research))
         for name, (cp, mp) in warnings.items():
-            warn("Population Warning! -- %s has unsustainable current pop %d -- target %d", name, cp, mp)
+            warning("Population Warning! -- %s has unsustainable current pop %d -- target %d", name, cp, mp)
 
 
 def weighted_sum_output(outputs):
@@ -409,7 +409,7 @@ def set_planet_growth_specials(focus_manager):
         # Find which metabolism is boosted by this special
         metabolism = AIDependencies.metabolismBoosts.get(special)
         if not metabolism:
-            warn("Entry in available growth special not mapped to a metabolism")
+            warning("Entry in available growth special not mapped to a metabolism")
             continue
 
         # Find the total population bonus we could get by using growth focus
@@ -467,7 +467,7 @@ def set_planet_growth_specials(focus_manager):
                 debug("  --> Using growth focus at %s" % planet)
                 break
         else:
-            warn("  --> Failed to set growth focus at all candidate locations.")
+            warning("  --> Failed to set growth focus at all candidate locations.")
 
 
 def set_planet_production_and_research_specials(focus_manager):
@@ -479,7 +479,7 @@ def set_planet_production_and_research_specials(focus_manager):
     # least threatened, no foci change penalty etc.
     universe = fo.getUniverse()
     already_have_comp_moon = False
-    for pid, pinfo in focus_manager.raw_planet_info.items():
+    for pid, pinfo in list(focus_manager.raw_planet_info.items()):
         planet = pinfo.planet
         if (AIDependencies.COMPUTRONIUM_SPECIAL in planet.specials and
                 RESEARCH in planet.availableFoci and not already_have_comp_moon):
@@ -504,15 +504,15 @@ def set_planet_production_and_research_specials(focus_manager):
                 continue
             else:
                 new_planet = universe.getPlanet(pid)
-                warn("Failed setting %s for Concentration Camp planet %s (%d)"
-                     " with species %s and current focus %s, but new planet copy shows %s" % (
-                        pinfo.future_focus, planet.name, pid, planet.speciesName, planet.focus, new_planet.focus))
+                warning("Failed setting %s for Concentration Camp planet %s (%d) "
+                        "with species %s and current focus %s, but new planet copy shows %s",
+                        pinfo.future_focus, planet.name, pid, planet.speciesName, planet.focus, new_planet.focus)
 
 
 def set_planet_protection_foci(focus_manager):
     """Assess and set protection foci"""
     universe = fo.getUniverse()
-    for pid, pinfo in focus_manager.raw_planet_info.items():
+    for pid, pinfo in list(focus_manager.raw_planet_info.items()):
         planet = pinfo.planet
         if PROTECTION in planet.availableFoci and assess_protection_focus(pinfo):
             current_focus = planet.focus
@@ -525,10 +525,10 @@ def set_planet_protection_foci(focus_manager):
                       ["set", "left"][current_focus == PROTECTION], planet.name, pid)
                 continue
             else:
-                newplanet = universe.getPlanet(pid)
-                warn("Failed setting %s for planet %s (%d) with species %s and current focus %s,"
-                     " but new planet copy shows %s" % (focus_manager.new_foci[pid], planet.name, pid,
-                                                        planet.speciesName, planet.focus, newplanet.focus))
+                new_planet = universe.getPlanet(pid)
+                warning("Failed setting %s for planet %s (%d) with species %s and current focus %s, "
+                        "but new planet copy shows %s",  focus_manager.new_foci[pid], planet.name, pid,
+                        planet.speciesName, planet.focus, new_planet.focus)
 
 
 def set_planet_industry_and_research_foci(focus_manager, priority_ratio):
@@ -557,7 +557,7 @@ def set_planet_industry_and_research_foci(focus_manager, priority_ratio):
         cumulative_rp += future_rp
 
     # tally max Industry
-    for pid, pinfo in focus_manager.raw_planet_info.items():
+    for pid, pinfo in list(focus_manager.raw_planet_info.items()):
         i_pp, i_rp = pinfo.possible_output[INDUSTRY]
         cumulative_pp += i_pp
         cumulative_rp += i_rp
@@ -571,7 +571,7 @@ def set_planet_industry_and_research_foci(focus_manager, priority_ratio):
 
     aistate = get_aistate()
     for adj_round in [1, 2, 3, 4]:
-        for pid, pinfo in focus_manager.raw_planet_info.items():
+        for pid, pinfo in list(focus_manager.raw_planet_info.items()):
             ii, tr = pinfo.possible_output[INDUSTRY]
             ri, rr = pinfo.possible_output[RESEARCH]
             ci, cr = pinfo.current_output
@@ -689,7 +689,7 @@ def set_planet_industry_and_research_foci(focus_manager, priority_ratio):
         target_pp -= (ii - ri)
 
     # Any planet still raw is set to industry
-    for pid in focus_manager.raw_planet_info.keys():
+    for pid in list(focus_manager.raw_planet_info.keys()):
         focus_manager.bake_future_focus(pid, INDUSTRY, False)
 
 

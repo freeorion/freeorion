@@ -97,11 +97,11 @@ private:
 
     static ScanlineRenderer s_scanline_shader;
 
-    std::shared_ptr<GG::StaticGraphic>          m_graphic = nullptr;
-    std::shared_ptr<GG::StaticGraphic>          m_scrap_indicator = nullptr; ///< shown to indicate building was ordered scrapped
-    std::shared_ptr<MultiTurnProgressBar>       m_progress_bar = nullptr;
-    int                         m_building_id;
-    bool                        m_order_issuing_enabled = true;
+    std::shared_ptr<GG::StaticGraphic>      m_graphic;
+    std::shared_ptr<GG::StaticGraphic>      m_scrap_indicator; ///< shown to indicate building was ordered scrapped
+    std::shared_ptr<MultiTurnProgressBar>   m_progress_bar;
+    int                                     m_building_id;
+    bool                                    m_order_issuing_enabled = true;
 };
 
 #endif

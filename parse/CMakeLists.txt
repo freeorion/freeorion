@@ -55,7 +55,6 @@ target_sources(freeorionparseobj
         ${CMAKE_CURRENT_LIST_DIR}/IntComplexValueRefParser.cpp
         ${CMAKE_CURRENT_LIST_DIR}/IntValueRefParser.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ItemsParser.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/KeymapParser.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Lexer.cpp
         ${CMAKE_CURRENT_LIST_DIR}/MonsterFleetPlansParser.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Parse.cpp

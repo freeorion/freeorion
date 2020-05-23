@@ -1,5 +1,3 @@
-from __future__ import print_function
-
 import random
 
 import freeorion as fo
@@ -10,7 +8,7 @@ from galaxy import DisjointSets
 from util import MapGenerationError, report_error
 
 
-class StarlaneAlteringMonsters(object):
+class StarlaneAlteringMonsters:
     def __init__(self, systems):
         self.systems = systems
         self.placed = set()
@@ -129,7 +127,7 @@ def generate_monsters(monster_freq, systems):
     # @content_tag{CAN_ALTER_STARLANES} universe_generator special handling
     # for fleets containing a hull design with this tag.
     fleet_can_alter_starlanes = {fp for fp in fleet_plans
-                                 if any([universe.getGenericShipDesign(design).hull_type.hasTag("CAN_ALTER_STARLANES")
+                                 if any([universe.getGenericShipDesign(design).ship_hull.hasTag("CAN_ALTER_STARLANES")
                                          for design in fp.ship_designs()])}
 
     # dump a list of all monster fleets meeting these conditions and their properties to the log

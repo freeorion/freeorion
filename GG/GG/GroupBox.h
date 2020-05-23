@@ -1,5 +1,5 @@
 // -*- C++ -*-
-/* GG is a GUI for SDL and OpenGL.
+/* GG is a GUI for OpenGL.
    Copyright (C) 2003-2008 T. Zachary Laine
 
    This library is free software; you can redistribute it and/or
@@ -89,12 +89,12 @@ protected:
     static const int PIXEL_MARGIN;
 
 private:
-    Clr                     m_color;      ///< Color of box frame
-    Clr                     m_text_color; ///< Color of label text
-    Clr                     m_int_color;  ///< Color of background inside box
-    std::shared_ptr<Font> m_font;
-    std::shared_ptr<TextControl>            m_label;
-    bool                    m_set_client_corners_equal_to_box_corners;
+    Clr                             m_color;      ///< Color of box frame
+    Clr                             m_text_color; ///< Color of label text
+    Clr                             m_int_color;  ///< Color of background inside box
+    std::shared_ptr<Font>           m_font;
+    std::shared_ptr<TextControl>    m_label;
+    bool                            m_set_client_corners_equal_to_box_corners = false;
 };
 
 } // namespace GG

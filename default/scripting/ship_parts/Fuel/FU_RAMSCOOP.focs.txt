@@ -1,8 +1,10 @@
 Part
     name = "FU_RAMSCOOP"
     description = "FU_RAMSCOOP_DESC"
+    exclusions = "SH_COLONY_BASE"
     class = Fuel
     capacity = 0
+    NoDefaultCapacityEffect
     mountableSlotTypes = External
     buildcost = 10 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 6

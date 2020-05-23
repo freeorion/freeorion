@@ -1,7 +1,9 @@
-# Build FreeOrion
+Building FreeOrion
+==================
 
 
-## Hardware and OS Requirements
+Hardware and OS Requirements
+----------------------------
 
 FreeOrion will compile on Windows 7 (or later), Mac OS X 10.10 (or later) and
 Linux operating systems. Other operating systems have reported to work, but
@@ -14,29 +16,28 @@ to compile ; 6 GiB RAM or more is recommended. To build FreeOrion, expect up to
 45 minutes on a Intel Core i5 system.
 
 
-## Required Software Dependencies
+Required Software Dependencies
+------------------------------
 
 FreeOrion depends on the following software to build:
 
-  * [Visual Studio] - 2015 for Windows Desktop Update 3 ; Windows only
+  * [Visual Studio] - 2017 for Windows Desktop ; Windows only
   * [Xcode] - 8.3 or later ; Mac OS X only
   * [CMake] - 3.4 (Mac OS X) ; 3.1 or later (Other non-Windows)
-  * A C++11 compliant compiler - Other Operating Systems
+  * A C++14 compliant compiler - Other Operating Systems
     * [GNU GCC] - 5.0 or later
     * [Clang] - 3.9 or later (4.0 or later on FreeBSD)
-  * [Python] - 2.7.*
+  * [Python] - 3.5.* or later
   * [Git]
 
 FreeOrion depends on the following libraries or APIs to run:
 
   * OpenGL - 2.1 or later ; usually provided by the graphic card driver or
     Operating System
-  * OpenGL Utilities (GLU) ; usually provided by the graphic card driver or
-    Operating System
   * OpenAL - It's recommended to use the [OpenAL Soft] implementation
   * [Boost] - 1.58 or later
   * [zlib]
-  * [libpython] - 2.7.*
+  * [libpython] - 3.5.* or later
   * [FreeType2]
   * [libpng]
   * [libogg]
@@ -44,12 +45,13 @@ FreeOrion depends on the following libraries or APIs to run:
   * [SDL2]
 
 
-## Obtaining FreeOrion Source Code and Software Dependencies
+Obtaining FreeOrion Source Code and Software Dependencies
+---------------------------------------------------------
 
-For Windows and Mac OS X a [FreeOrion Software Development Kit] is provided as
-download to compile FreeOrion from source. It contains the preconfigured and
--compiled build and runtime dependencies for the Visual Studio v140 toolchain on
-Windows and Mac OS X 10.9 SDK with Xcode 6.4 or later on Mac OS X.
+For Windows and Mac OS X a [Software Development Kit] is provided as download to
+compile FreeOrion from source. It contains the preconfigured and -compiled build
+and runtime dependencies for the Visual Studio v141 toolchain on Windows and
+Mac OS X 10.9 SDK with Xcode 6.4 or later on Mac OS X.
 
 For Linux or other Operating Systems the build and runtime dependencies should
 be installed by the preferred way for the respective OS (e.g. via Package
@@ -58,9 +60,9 @@ manager or compiling from source).
 Step by step procedure:
 
  * On Windows:
-   * Download the [FreeOrionSDK v10] from the FreeOrionSDK respository releases.
+   * Download the [FreeOrionSDK v11] from the FreeOrionSDK respository releases.
  * On Mac OS X:
-   * The [FreeOrionSDK v10] is downloaded automatically when CMake creates the
+   * The [FreeOrionSDK v11] is downloaded automatically when CMake creates the
      build environment.
  * Linux and other Operating Systems:
    * Install build and runtime dependencies by the preferred way for the
@@ -101,77 +103,100 @@ can be listet by invoking `git tag -l`, where releases are indicated by a
 leading `v` followed by the release version number.
 
 
-# Compiling FreeOrion
+Compiling FreeOrion
+-------------------
 
 FreeOrion uses CMake as build system on most platforms. On Windows a manually
 maintained Visual Studio Project is used for building.
 
-Step by step procedure:
 
- * Enter the _source directory_.
- * On Windows:
-   * Open `msvc2015\FreeOrion.sln` with Visual Studio.
-   * Compile the whole project by selecting the `Build` -> `Build Solution`
-     menu entry.
+### Windows (Visual Studio)
 
- * On Windows (cmake):
-   * Change into the `Freeorion` directory.
-   * Create a `build` directory, which will contain all compile FreeOrion
-     build artifacs.
-   * Change into the `build` directory on the command line.
-   * Execute cmake to generate Makefiles:
+To build FreeOrion open the `FreeOrion.sln` project solution within
+`_source directory_\msvc2017` with Visual Studio.  Now compile the whole
+project by selecting the `Build` -> `Build Solution` menu entry.
 
-     ```
-     cmake .. -G "Visual Studio 15 2017"
-     ```
-   * Compile the whole project by calling `MSBuild.exe -p:Configuration=Release FreeOrion.sln`
-     within the build directory. In case you want to utilize multiple CPU
-     cores, you can add the `-m` option to the command.
-   * Alternatively, you can compile the project by the Visual Studio GUI.
+After the build finished successfully the binaries can be found within
+the `freeorion-project/FreeOrion` directory.
 
 
- * On Mac OS X:
-   * Create a `build` directory, which will contain all compile FreeOrion
-     build artifacs.
-   * Change into the `build` directory on the command line.
-   * Execute cmake to generate a Xcode project file:
+### Windows (CMake; work in progress)
 
-     ```
-     cmake -GXcode ..
-     ```
-   * Open `FreeOrion.xcodeproj` with Xcode.
-   * Compile the whole project by selecting the `ALL_BUILD` scheme and
-     pressing 'Command' + 'B'.
+Create a `build` directory inside the _source_directory_ and change into
+this directory. It will contain all compile FreeOrion build artifacs.
 
- * On Linux and other Operating Systems
-   * Create a `build` directory, which will contain all compile FreeOrion
-     build artifacs.
-   * Change into the `build` directory on the command line.
-   * Execute cmake to generate Makefiles:
+Execute cmake to generate a Visual Studio solution:
 
-     ```
-     cmake ..
-     ```
-   * Compile the whole project by calling `make` within the build directory.
-     In case you want to utilize multiple CPU cores by running parallel compile
-     jobs check out the the [make jobs](`--jobs`) parameter of `make`.
-   * Create a symbolic link to the data directory inside the build directoy
-     by invoking:
+```
+cmake .. -G "Visual Studio 15 2017"
+```
 
-     ```
-     ln -s ../default .
-     ```
+After successfully creating the Makefiles build the whole project by
+calling:
 
+```
+MSBuild.exe -p:Configuration=Release FreeOrion.sln
+```
+
+In case you want to utilize multiple CPU cores by running parallel
+compile jobs, you can add the `-m` option to the command.
+
+Alternatively, you can build FreeOrion by opening the `FreeOrion.sln`
+project solution with Visual Studio.  Now compile the whole project
+by selecting the `Build` -> `Build Solution` menu entry.
 This will leave you with a build of FreeOrion executables.
 
- * `freeorion-project/FreeOrion` on Windows if you compile it with the 
-    standalone msvc project.
- * `freeorion-project/Freeorion/build/Release` on Windows if you compile it 
-    with CMake. To run the executable without creating the symbolic link, you
-    can first change the directory to `freeorion-project/Freeorion`, then run
-    `./build/Release/FreeOrion.exe`.
- * `freeorion-project/build/Release` on Mac OS X.
- * `freeorion-project/freeorion/build` on Linux and other Operating Systems.
+After the build finished successfully the binaries can be found within
+the `freeorion-project/Freeorion/build/Release` directory.
+
+To run the executable without creating the symbolic link, you can first
+change the directory to `freeorion-project/Freeorion`, then run
+`./build/Release/FreeOrion.exe`.
+
+
+### Mac OS X
+
+Create a `build` directory aside the _source_directory_ and change into
+this directory. It will contain all compile FreeOrion build artifacs.
+
+Execute `cmake` to generate a Xcode project file:
+
+```bash
+cmake -G Xcode ../freeorion
+```
+
+After successfully creating the Project file, open `FreeOrion.xcodeproj`
+with Xcode. Now compile the whole project by selecting the `ALL_BUILD`
+scheme and pressing 'Command' + 'B'.
+
+After the build finished successfully the binaries can be found within
+the `freeorion-project/build/Release` directory.
+
+
+### Linux and other Operating Systems
+
+Create a `build` directory aside the _source_directory_ and change into
+this directory. It will contain all compile FreeOrion build artifacs.
+
+Execute `cmake` to generate Makefiles:
+
+```bash
+cmake ../freeorion
+```
+
+After successfully creating the Makefiles build the whole project by
+calling:
+
+```bash
+make
+```
+
+In case you want to utilize multiple CPU cores by running parallel
+compile jobs check out the the [make jobs](`--jobs`) parameter of
+`make`.
+
+After the build finished successfully the binaries can be found within
+the `freeorion-project/build` directory.
 
 
 [Visual Studio]: https://www.visualstudio.com/de/vs/older-downloads/
@@ -190,7 +215,7 @@ This will leave you with a build of FreeOrion executables.
 [OpenAL Soft]: http://kcat.strangesoft.net/openal.html
 [libvorbis]: https://xiph.org/downloads/
 [SDL2]: https://www.libsdl.org/download-2.0.php
-[FreeOrionSDK]: https://github.com/freeorion/freeorion-sdk
-[FreeOrionSDK v10]: https://github.com/freeorion/freeorion-sdk/releases/tag/v10
+[Software Development Kit]: https://github.com/freeorion/freeorion-sdk
+[FreeOrionSDK v11]: https://github.com/freeorion/freeorion-sdk/releases/tag/v11
 [FreeOrion Releases]: https://github.com/freeorion/freeorion/releases
 [make jobs]: https://www.gnu.org/software/make/manual/html_node/Parallel.html

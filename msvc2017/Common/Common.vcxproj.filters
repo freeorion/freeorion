@@ -82,6 +82,9 @@
     <ClInclude Include="..\..\universe\Building.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\universe\BuildingType.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\universe\Conditions.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
@@ -98,6 +101,9 @@
       <Filter>Header Files\universe</Filter>
     </ClInclude>
     <ClInclude Include="..\..\universe\Fleet.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\FleetPlan.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
     <ClInclude Include="..\..\universe\IDAllocator.h">
@@ -130,6 +136,9 @@
     <ClInclude Include="..\..\universe\ShipDesign.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\universe\ShipPart.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\universe\Special.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
@@ -146,6 +155,9 @@
       <Filter>Header Files\universe</Filter>
     </ClInclude>
     <ClInclude Include="..\..\universe\UniverseObject.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\UnlockableItem.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
     <ClInclude Include="..\..\universe\ValueRefs.h">
@@ -217,6 +229,9 @@
     <ClInclude Include="..\..\universe\Field.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\universe\FieldType.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\util\ModeratorAction.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
@@ -258,6 +273,15 @@
       <Filter>Header Files\universe</Filter>
     </ClInclude>
     <ClInclude Include="..\..\universe\ScriptingContext.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\ConditionSource.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\ConditionAll.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\CommonParams.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
   </ItemGroup>
@@ -343,6 +367,9 @@
     <ClCompile Include="..\..\universe\Building.cpp">
       <Filter>Source Files\universe</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\universe\BuildingType.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\universe\Effect.cpp">
       <Filter>Source Files\universe</Filter>
     </ClCompile>
@@ -353,6 +380,9 @@
       <Filter>Source Files\universe</Filter>
     </ClCompile>
     <ClCompile Include="..\..\universe\Fleet.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\FleetPlan.cpp">
       <Filter>Source Files\universe</Filter>
     </ClCompile>
     <ClCompile Include="..\..\universe\IDAllocator.cpp">
@@ -382,6 +412,9 @@
     <ClCompile Include="..\..\universe\ShipDesign.cpp">
       <Filter>Source Files\universe</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\universe\ShipPart.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\universe\Special.cpp">
       <Filter>Source Files\universe</Filter>
     </ClCompile>
@@ -400,6 +433,9 @@
     <ClCompile Include="..\..\universe\UniverseObject.cpp">
       <Filter>Source Files\universe</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\universe\UnlockableItem.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\util\StringTable.cpp">
       <Filter>Source Files\util</Filter>
     </ClCompile>
@@ -407,6 +443,9 @@
       <Filter>Source Files\Empire</Filter>
     </ClCompile>
     <ClCompile Include="..\..\universe\Field.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\FieldType.cpp">
       <Filter>Source Files\universe</Filter>
     </ClCompile>
     <ClCompile Include="..\..\util\ModeratorAction.cpp">

@@ -1,4 +1,4 @@
-from logging import debug, error, warn
+from logging import debug, error, warning
 
 from EnumsAI import ShipRoleType, MissionType
 import EspionageAI
@@ -63,7 +63,7 @@ def trooper_move_reqs_met(main_fleet_mission, order, verbose):
     return True
 
 
-class AIFleetOrder(object):
+class AIFleetOrder:
     """Stores information about orders which can be executed."""
     TARGET_TYPE = None
     ORDER_NAME = ''
@@ -360,7 +360,7 @@ class OrderOutpost(AIFleetOrder):
             return True
         else:
             self.order_issued = False
-            warn("Order issuance failed: %s fleet: %s target: %s" % (self.ORDER_NAME, self.fleet, self.target))
+            warning("Order issuance failed: %s fleet: %s target: %s" % (self.ORDER_NAME, self.fleet, self.target))
             return False
 
 
@@ -385,7 +385,7 @@ class OrderColonize(AIFleetOrder):
             return True
         else:
             self.order_issued = False
-            warn("Order issuance failed: %s fleet: %s target: %s" % (self.ORDER_NAME, self.fleet, self.target))
+            warning("Order issuance failed: %s fleet: %s target: %s" % (self.ORDER_NAME, self.fleet, self.target))
             return False
 
     def is_valid(self):
@@ -409,7 +409,7 @@ class OrderColonize(AIFleetOrder):
         universe = fo.getUniverse()
         ship = universe.getShip(ship_id)
         if ship and not ship.canColonize:
-            warn("colonization fleet %d has no colony ship" % self.fleet.id)
+            warning("colonization fleet %d has no colony ship" % self.fleet.id)
         return ship is not None and self.fleet.get_object().systemID == self.target.get_system().id and ship.canColonize
 
 
@@ -497,7 +497,7 @@ class OrderInvade(AIFleetOrder):
                     shields = planet.currentMeterValue(fo.meterType.shield)
                     planet_stealth = planet.currentMeterValue(fo.meterType.stealth)
                     pop = planet.currentMeterValue(fo.meterType.population)
-                    warn("Invasion order failed!")
+                    warning("Invasion order failed!")
                     debug(" -- planet has %.1f stealth, shields %.1f, %.1f population and "
                           "is owned by empire %d" % (planet_stealth, shields, pop, planet.owner))
                     if 'needsEmergencyExploration' not in dir(aistate):

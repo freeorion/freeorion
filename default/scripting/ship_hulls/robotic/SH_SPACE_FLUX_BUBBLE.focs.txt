@@ -3,6 +3,7 @@ Hull
     description = "SH_SPACE_FLUX_BUBBLE_DESC"
     speed = 80
     fuel = 6
+    NoDefaultFuelEffect
     stealth = 15
     structure = 19
     slots = Slot type = Internal position = (0.50, 0.50)
@@ -33,6 +34,7 @@ Hull
             effects = SetStealth value = Value + 10 + (10 * Statistic If condition = OwnerHasTech name = "SPY_STEALTH_PART_1" ) + (10 * Statistic If condition = OwnerHasTech name = "SPY_STEALTH_PART_2" ) + (10 * Statistic If condition = OwnerHasTech name = "SPY_STEALTH_PART_3" ) + (10 * Statistic If condition = OwnerHasTech name = "SPY_STEALTH_4" )
 
         [[GREAT_FUEL_EFFICIENCY]]
+        [[ADD_HULL_FUEL_TO_MAX_FUEL_METER]]
         [[AVERAGE_BASE_FUEL_REGEN]]
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]

@@ -48,6 +48,12 @@ PROT_FOCUS_MULTIPLIER = 2.0
 TECH_COST_MULTIPLIER = 2.0
 FOCUS_CHANGE_PENALTY = 1
 
+SHIP_STRUCTURE_FACTOR = fo.getGameRules().getDouble("RULE_SHIP_STRUCTURE_FACTOR")
+SHIP_WEAPON_DAMAGE_FACTOR = fo.getGameRules().getDouble("RULE_SHIP_WEAPON_DAMAGE_FACTOR")
+FIGHTER_DAMAGE_FACTOR = fo.getGameRules().getDouble("RULE_FIGHTER_DAMAGE_FACTOR")
+PLANET_DEFENSE_FACTOR = SHIP_WEAPON_DAMAGE_FACTOR
+PLANET_SHIELD_FACTOR = SHIP_STRUCTURE_FACTOR
+
 # Colonization details
 COLONY_POD_COST = 120  # TODO Query directly from part
 OUTPOST_POD_COST = 50  # TODO Query directly from part
@@ -69,6 +75,18 @@ DRYDOCK_HAPPINESS_THRESHOLD = 5
 # Constants defined by the C++ game engine
 INVALID_ID = -1
 ALL_EMPIRES = -1
+
+
+class Tags:
+    POPULATION = "POPULATION"
+    INDUSTRY = "INDUSTRY"
+    WEAPONS = "WEAPONS"
+    RESEARCH = "RESEARCH"
+    SUPPLY = "SUPPLY"
+    ATTACKTROOPS = "ATTACKTROOPS"
+    STEALTH = "STEALTH"
+    SHIELDS = "SHIELDS"
+    FUEL = "FUEL"
 
 # </editor-fold>
 
@@ -113,6 +131,9 @@ POP_MOD_LIGHTSENSITIVE_STAR_MAP = {fo.starType.blue: -2, fo.starType.white: -1}
 # the percentage of normal population that a species with Gaseous tag has
 GASEOUS_POP_FACTOR = 0.50
 
+# the percentage of normal population that a species with MINDLESS_SPECIES tag has
+MINDLESS_POP_FACTOR = 0.50
+
 # </editor-fold>
 
 # <editor-fold desc="Detection Strengths">
@@ -143,11 +164,11 @@ STEALTH_SPECIAL_STRENGTHS = {
 BASE_PLANET_STEALTH = 5
 
 STEALTH_STRENGTHS_BY_SPECIES_TAG = {
-    "BAD_STEALTH": -PRIMARY_FOCS_STEALTH_LEVELS["LOW_STEALTH"],
-    "GOOD_STEALTH": PRIMARY_FOCS_STEALTH_LEVELS["LOW_STEALTH"],
-    "GREAT_STEALTH": PRIMARY_FOCS_STEALTH_LEVELS["MEDIUM_STEALTH"],
-    "ULTIMATE_STEALTH": PRIMARY_FOCS_STEALTH_LEVELS["HIGH_STEALTH"],
-    "INFINITE_STEALTH": 500,  # used by super testers
+    "BAD": -PRIMARY_FOCS_STEALTH_LEVELS["LOW_STEALTH"],
+    "GOOD": PRIMARY_FOCS_STEALTH_LEVELS["LOW_STEALTH"],
+    "GREAT": PRIMARY_FOCS_STEALTH_LEVELS["MEDIUM_STEALTH"],
+    "ULTIMATE": PRIMARY_FOCS_STEALTH_LEVELS["HIGH_STEALTH"],
+    "INFINITE": 500,  # used by super testers
 }
 # </editor-fold>
 
@@ -210,12 +231,12 @@ POP_PROPORTIONAL_MOD_SPECIALS = {
 # </editor-fold>
 
 # <editor-fold desc="Industry related specials">
-HONEYCOMB_IND_MULTIPLIER = 2.5
+HONEYCOMB_IND_MULTIPLIER = 1.0
 # </editor-fold>
 
 # <editor-fold desc="Research related specials">
 COMPUTRONIUM_SPECIAL = "COMPUTRONIUM_SPECIAL"
-COMPUTRONIUM_RES_MULTIPLIER = 1.0
+COMPUTRONIUM_RES_MULTIPLIER = 0.5
 
 ANCIENT_RUINS_SPECIAL = "ANCIENT_RUINS_SPECIAL"
 # </editor-fold>
@@ -281,6 +302,10 @@ SPY_STEALTH_2 = "SPY_STEALTH_2"
 
 EXOBOT_TECH_NAME = "PRO_EXOBOTS"
 
+SHP_WEAPON_ARC_DISRUPTOR_1 = "SHP_WEAPON_ARC_DISRUPTOR_1"
+SHP_WEAPON_ARC_DISRUPTOR_2 = "SHP_WEAPON_ARC_DISRUPTOR_2"
+SHP_WEAPON_ARC_DISRUPTOR_3 = "SHP_WEAPON_ARC_DISRUPTOR_3"
+
 # </editor-fold>
 
 
@@ -298,17 +323,17 @@ supply_range_techs = {
 # <editor-fold desc="Industry bossting techs">
 # Industry modifiers per population - [[EARLY_PRIORITY]]: Affected by species modifiers
 INDUSTRY_EFFECTS_PER_POP_MODIFIED_BY_SPECIES = {
-    "PRO_FUSION_GEN": 1.0,
-    "GRO_ENERGY_META": 1.0,
-    "PRO_INDUSTRY_CENTER_I": 1.0,
-    "PRO_INDUSTRY_CENTER_II": 1.0,
-    "PRO_INDUSTRY_CENTER_III": 1.0,
+    "PRO_FUSION_GEN": 0.25,
+    "GRO_ENERGY_META": 0.5,
+    "PRO_INDUSTRY_CENTER_I": 0.25,
+    "PRO_INDUSTRY_CENTER_II": 0.25,
+    "PRO_INDUSTRY_CENTER_III": 0.25,
 }
 # Industry modifiers per population - [[LATE_PRIORITY]] or later: Not affected by species modifiers
 INDUSTRY_EFFECTS_PER_POP_NOT_MODIFIED_BY_SPECIES = {
-    "PRO_ROBOTIC_PROD": 0.5,
-    "PRO_SOL_ORB_GEN": 2.0,  # TODO don't assume will build a gen at a blue/white star
-    PRO_SINGULAR_GEN: 5.0,
+    "PRO_ROBOTIC_PROD": 0.25,
+    "PRO_SOL_ORB_GEN": 0.75,  # TODO don't assume will build a gen at a blue/white star
+    PRO_SINGULAR_GEN: 1.0,
 }
 # </editor-fold>
 
@@ -347,19 +372,25 @@ FUEL_TANK_UPGRADE_DICT = {
     "FU_RAMSCOOP": (),
     "FU_ZERO_FUEL": (),
 }
+
+# DO NOT TOUCH THIS ENTRY BUT UPDATE FUEL_TANK_UPGRADE_DICT INSTEAD!
+FUEL_UPGRADE_TECHS = frozenset(tech_name for _dict in (FUEL_TANK_UPGRADE_DICT, )
+                               for tups in _dict.values() for (tech_name, _) in tups)
 # </editor-fold>
 
 # <editor-fold desc="Weapon techs">
 # TODO (Morlic): Consider using only 1 dict with (capacity, secondaryStat) tuple as entries
-WEAPON_UPGRADE_DICT = {
-    # "PARTNAME": tuple((tech_name, dmg_upgrade), (tech_name2, dmg_upgrade2), ...)
-    "SR_WEAPON_0_1": (),
-    "SR_WEAPON_1_1": tuple(("SHP_WEAPON_1_%d" % i, 1) for i in [2, 3, 4]),
-    "SR_WEAPON_2_1": tuple(("SHP_WEAPON_2_%d" % i, 2) for i in [2, 3, 4]),
-    "SR_WEAPON_3_1": tuple(("SHP_WEAPON_3_%d" % i, 3) for i in [2, 3, 4]),
-    "SR_WEAPON_4_1": tuple(("SHP_WEAPON_4_%d" % i, 5) for i in [2, 3, 4]),
-    "SR_SPINAL_ANTIMATTER": (),
-}
+WEAPON_UPGRADE_DICT = {part_name: tuple({tech_name: damage * SHIP_WEAPON_DAMAGE_FACTOR for tech_name, damage, in techs_damage.items()}.items()) for part_name, techs_damage in {
+    # Output "PARTNAME": tuple((tech_name, dmg_upgrade), (tech_name2, dmg_upgrade2), ...)
+    #  Input "PARTNAME": {tech_name: dmg_upgrade, tech_name2, dmg_upgrade2, ...}
+    "SR_WEAPON_0_1": {},
+    "SR_WEAPON_1_1": {"SHP_WEAPON_1_%d" % i: 1 for i in [2, 3, 4]},
+    "SR_WEAPON_2_1": {"SHP_WEAPON_2_%d" % i: 2 for i in [2, 3, 4]},
+    "SR_WEAPON_3_1": {"SHP_WEAPON_3_%d" % i: 3 for i in [2, 3, 4]},
+    "SR_WEAPON_4_1": {"SHP_WEAPON_4_%d" % i: 5 for i in [2, 3, 4]},
+    "SR_ARC_DISRUPTOR": {"SHP_WEAPON_ARC_DISRUPTOR_%d" % i: i for i in [2, 3]},
+    "SR_SPINAL_ANTIMATTER": {},
+}.items()}
 
 WEAPON_ROF_UPGRADE_DICT = {
     # "PARTNAME": tuple((tech_name, rof_upgrade), (tech_name2, rof_upgrade2), ...)
@@ -368,27 +399,32 @@ WEAPON_ROF_UPGRADE_DICT = {
     "SR_WEAPON_2_1": (),
     "SR_WEAPON_3_1": (),
     "SR_WEAPON_4_1": (),
+    "SR_ARC_DISRUPTOR": (),
     "SR_SPINAL_ANTIMATTER": (),
 }
 
-FIGHTER_DAMAGE_UPGRADE_DICT = {
-    # "PARTNAME": tuple((tech_name, dmg_upgrade), (tech_name2, dmg_upgrade2), ...)
-    "FT_HANGAR_1": (("SHP_FIGHTERS_2", 1), ("SHP_FIGHTERS_3", 1), ("SHP_FIGHTERS_4", 1)),
-    "FT_HANGAR_2": (("SHP_FIGHTERS_2", 2), ("SHP_FIGHTERS_3", 3), ("SHP_FIGHTERS_4", 5)),
-    "FT_HANGAR_3": (("SHP_FIGHTERS_2", 3), ("SHP_FIGHTERS_3", 4), ("SHP_FIGHTERS_4", 7)),
-    "FT_HANGAR_4": (),
-}
+FIGHTER_DAMAGE_UPGRADE_DICT = {part_name: tuple({tech_name: damage * FIGHTER_DAMAGE_FACTOR for tech_name, damage, in techs_damage.items()}.items()) for part_name, techs_damage in {
+    # Output "PARTNAME": tuple((tech_name, dmg_upgrade), (tech_name2, dmg_upgrade2), ...)
+    #  Input "PARTNAME": {tech_name: dmg_upgrade, tech_name2: dmg_upgrade2, ...}
+    "FT_HANGAR_1": {"SHP_FIGHTERS_2": 0, "SHP_FIGHTERS_3": 0, "SHP_FIGHTERS_4": 0},
+    "FT_HANGAR_2": {"SHP_FIGHTERS_2": 2, "SHP_FIGHTERS_3": 2, "SHP_FIGHTERS_4": 2},
+    "FT_HANGAR_3": {"SHP_FIGHTERS_2": 3, "SHP_FIGHTERS_3": 3, "SHP_FIGHTERS_4": 3},
+    "FT_HANGAR_4": {"SHP_FIGHTERS_2": 6, "SHP_FIGHTERS_3": 6, "SHP_FIGHTERS_4": 6},
+}.items()}
 
 FIGHTER_CAPACITY_UPGRADE_DICT = {
     # "PARTNAME": tuple((tech_name, capacity_upgrade), (tech_name2, capacity_upgrade2), ...)
-    "FT_HANGAR_1": (),
+    "FT_HANGAR_1": (("SHP_FIGHTERS_2", 1), ("SHP_FIGHTERS_3", 1), ("SHP_FIGHTERS_4", 1)),
     "FT_HANGAR_2": (),
     "FT_HANGAR_3": (),
     "FT_HANGAR_4": (),
 }
 
 # DO NOT TOUCH THIS ENTRY BUT UPDATE WEAPON_UPGRADE_DICT INSTEAD!
-WEAPON_UPGRADE_TECHS = [tech_name for tups in WEAPON_UPGRADE_DICT.values() for (tech_name, _) in tups]
+WEAPON_UPGRADE_TECHS = frozenset(tech_name for _dict in (WEAPON_UPGRADE_DICT, WEAPON_ROF_UPGRADE_DICT)
+                                 for tups in _dict.values() for (tech_name, _) in tups)
+FIGHTER_UPGRADE_TECHS = frozenset(tech_name for _dict in (FIGHTER_DAMAGE_UPGRADE_DICT, FIGHTER_CAPACITY_UPGRADE_DICT)
+                                  for tups in _dict.values() for (tech_name, _) in tups)
 # </editor-fold>
 
 # <editor-fold desc="Tech Groups for Automated Research Approach">
@@ -652,11 +688,12 @@ PILOT_ROF_MODIFIER_DICT = {
 
 PILOT_FIGHTERDAMAGE_MODIFIER_DICT = {
     # TRAIT:    {hangar_name: effect, hangar_name2: effect2,...}
+    # TODO FT_HANGAR_1 fighters are not able to attack ships so pilot damage modifier does not apply
     "NO":       {},
-    "BAD":      {"FT_HANGAR_1": -1, "FT_HANGAR_2": -2, "FT_HANGAR_3": -3, "FT_HANGAR_4": -4},
-    "GOOD":     {"FT_HANGAR_1":  1, "FT_HANGAR_2":  2, "FT_HANGAR_3":  3, "FT_HANGAR_4": 4},
-    "GREAT":    {"FT_HANGAR_1":  2, "FT_HANGAR_2":  4, "FT_HANGAR_3":  6, "FT_HANGAR_4": 8},
-    "ULTIMATE": {"FT_HANGAR_1":  3, "FT_HANGAR_2":  6, "FT_HANGAR_3":  9, "FT_HANGAR_4": 12},
+    "BAD":      {"FT_HANGAR_1":  0, "FT_HANGAR_2": -1, "FT_HANGAR_3": -1, "FT_HANGAR_4": -1},
+    "GOOD":     {"FT_HANGAR_1":  0, "FT_HANGAR_2":  1, "FT_HANGAR_3":  1, "FT_HANGAR_4": 1},
+    "GREAT":    {"FT_HANGAR_1":  0, "FT_HANGAR_2":  2, "FT_HANGAR_3":  2, "FT_HANGAR_4": 2},
+    "ULTIMATE": {"FT_HANGAR_1":  0, "FT_HANGAR_2":  3, "FT_HANGAR_3":  3, "FT_HANGAR_4": 3},
 }
 
 PILOT_FIGHTER_CAPACITY_MODIFIER_DICT = {
@@ -669,8 +706,8 @@ PILOT_FIGHTER_CAPACITY_MODIFIER_DICT = {
 }
 
 HANGAR_LAUNCH_CAPACITY_MODIFIER_DICT = {
-    # hangar_name: {bay_name: effect, bay_name2: effect, ...}
-    "FT_HANGAR_1": {"FT_BAY_1": 2},
+    # hangar_name: {bay_name: ((tech_name, effect), ...), bay_name2: ((tech_name, effect), ...}
+    "FT_HANGAR_1": {"FT_BAY_1": (("SHP_FIGHTERS_1", 1), ("SHP_FIGHTERS_2", 1), ("SHP_FIGHTERS_3", 1), ("SHP_FIGHTERS_4", 1))},
 }
 # </editor-fold>
 
@@ -751,6 +788,46 @@ SYSTEM_SHIP_FACILITIES = frozenset((
 # <editor-fold desc="Shipdesign/-parts">
 PART_KRILL_SPAWNER = "SP_KRILL_SPAWNER"
 
+
+HULL_EXCLUDED_SHIP_PART_CLASSES = {
+    "SH_COLONY_BASE": (fo.shipPartClass.fuel, fo.shipPartClass.speed)
+}
+
+
+# <editor-fold desc="Allowed Combat Targets">
+# TODO: Inherit from enum.Flag after switch to Python 3.6+
+class CombatTarget:
+    NONE = 0
+    SHIP = 1 << 0
+    PLANET = 1 << 1
+    FIGHTER = 1 << 2
+    ANY = SHIP | PLANET | FIGHTER
+
+    # map from weapon to allowed targets
+    PART_ALLOWED_TARGETS = {
+        "SR_WEAPON_0_1": FIGHTER,
+        "SR_WEAPON_1_1": SHIP | PLANET,
+        "SR_WEAPON_2_1": SHIP | PLANET,
+        "SR_WEAPON_3_1": SHIP | PLANET,
+        "SR_WEAPON_4_1": SHIP | PLANET,
+        "SR_SPINAL_ANTIMATTER": SHIP | PLANET,
+        "FT_HANGAR_0": NONE,
+        "FT_HANGAR_1": FIGHTER,
+        "FT_HANGAR_2": SHIP | FIGHTER,
+        "FT_HANGAR_3": SHIP,
+        "FT_HANGAR_4": SHIP | PLANET,
+        # monster weapons
+        "SR_ARC_DISRUPTOR": ANY,
+        "SR_ICE_BEAM": ANY,
+        "SR_JAWS": ANY,
+        "SR_PLASMA_DISCHARGE": ANY,
+        "SR_SPINES": ANY,
+        "SR_TENTACLE": ANY,
+        "FT_HANGAR_KRILL": SHIP | FIGHTER,
+    }
+# </editor-fold>
+
+
 # <editor-fold desc="Effect Scripting for Shipdesigns">
 # <editor-fold desc="Tokens">
 # known tokens the AI can handle
@@ -776,8 +853,8 @@ BASE_DETECTION = 25
 
 TECH_EFFECTS = {
     # "TECHNAME": { Token1: Value1, Token2: Value2, ...}
-    "SHP_REINFORCED_HULL": {STRUCTURE: 5},
-    "SHP_BASIC_DAM_CONT": {REPAIR_PER_TURN: 1},
+    "SHP_REINFORCED_HULL": {STRUCTURE: 5 * SHIP_STRUCTURE_FACTOR},
+    "SHP_BASIC_DAM_CONT": {REPAIR_PER_TURN: SHIP_STRUCTURE_FACTOR},
     "SHP_FLEET_REPAIR": {REPAIR_PER_TURN: (STRUCTURE, 0.1)},  # 10% of max structure
     "SHP_ADV_DAM_CONT": {REPAIR_PER_TURN: (STRUCTURE, 0.1)},  # 10% of max structure
     "SHP_INTSTEL_LOG": {SPEED: 20},  # technically not correct, but as approximation good enough...
@@ -804,7 +881,7 @@ HULL_EFFECTS = {
     # "HULLNAME": { Token1: Value1, Token2: Value2, ...}
     # Robotic line
     "SH_ROBOTIC": {
-        REPAIR_PER_TURN: 2,
+        REPAIR_PER_TURN: 2 * SHIP_STRUCTURE_FACTOR,
     },
     "SH_SPACE_FLUX_BUBBLE": {
         STEALTH_MODIFIER: -30,
@@ -839,15 +916,15 @@ HULL_EFFECTS = {
     },
     "SH_MINIASTEROID_SWARM": {
         ASTEROID_STEALTH: 20,
-        SHIELDS: 5,
+        SHIELDS: 5 * SHIP_WEAPON_DAMAGE_FACTOR,
     },
     "SH_SCATTERED_ASTEROID": {
         ASTEROID_STEALTH: 40,
-        SHIELDS: 3,
+        SHIELDS: 3 * SHIP_WEAPON_DAMAGE_FACTOR,
     },
     # Organic line
     "SH_ORGANIC": {
-        REPAIR_PER_TURN: 2,
+        REPAIR_PER_TURN: 2 * SHIP_STRUCTURE_FACTOR,
         FUEL_PER_TURN: 0.2,
         DETECTION: 10,
         ORGANIC_GROWTH: (0.2, 5),
@@ -857,19 +934,19 @@ HULL_EFFECTS = {
         ORGANIC_GROWTH: (0.5, 15),
     },
     "SH_SYMBIOTIC": {
-        REPAIR_PER_TURN: 2,
+        REPAIR_PER_TURN: 2 * SHIP_STRUCTURE_FACTOR,
         FUEL_PER_TURN: 0.2,
         DETECTION: 50,
         ORGANIC_GROWTH: (0.2, 10),
     },
     "SH_PROTOPLASMIC": {
-        REPAIR_PER_TURN: 2,
+        REPAIR_PER_TURN: 2 * SHIP_STRUCTURE_FACTOR,
         FUEL_PER_TURN: 0.2,
         DETECTION: 50,
         ORGANIC_GROWTH: (0.5, 25),
     },
     "SH_ENDOSYMBIOTIC": {
-        REPAIR_PER_TURN: 2,
+        REPAIR_PER_TURN: 2 * SHIP_STRUCTURE_FACTOR,
         FUEL_PER_TURN: 0.2,
         DETECTION: 50,
         ORGANIC_GROWTH: (0.5, 15),
@@ -885,7 +962,7 @@ HULL_EFFECTS = {
         ORGANIC_GROWTH: (0.5, 25),
     },
     "SH_SENTIENT": {
-        REPAIR_PER_TURN: 2,
+        REPAIR_PER_TURN: 2 * SHIP_STRUCTURE_FACTOR,
         FUEL_PER_TURN: 0.2,
         DETECTION: 70,
         ORGANIC_GROWTH: (1, 45),

@@ -67,7 +67,7 @@ std::string Hotkey::HotkeyToString(GG::Key key, GG::Flags<GG::ModKey> mod) {
         s << mod;
         s << "+";
     }
-    if (key > GG::GGK_UNKNOWN) {
+    if (key > GG::GGK_NONE) {
         s << key;
     }
     return s.str();
@@ -206,12 +206,6 @@ void Hotkey::ReadFromOptions(OptionsDB& db) {
         if (key_modkey_pair.first == GG::GGK_NONE)
             continue;
 
-        if (key_modkey_pair.first == GG::EnumMap<GG::Key>::BAD_VALUE) {
-            ErrorLogger() << "Hotkey::ReadFromOptions : Invalid key spec: '"
-                          << option_string << "' for hotkey " << hotkey.m_name;
-            continue;
-        }
-
         if (!IsTypingSafe(key_modkey_pair.first, key_modkey_pair.second)) {
             DebugLogger() << "Hotkey::ReadFromOptions : Typing-unsafe key spec: '"
                           << option_string << "' for hotkey " << hotkey.m_name;
@@ -255,11 +249,15 @@ Hotkey& Hotkey::PrivateNamedHotkey(const std::string& name) {
 }
 
 bool Hotkey::IsTypingSafe(GG::Key key, GG::Flags<GG::ModKey> mod) {
-    if (key >= GG::GGK_UP && key <= GG::GGK_PAGEDOWN)
+    if (GG::GGK_INSERT <= key && GG::GGK_PAGEUP >= key)
+        return false;
+    if (GG::GGK_END <= key && GG::GGK_UP >= key)
         return false;
     if (mod & (GG::MOD_KEY_CTRL | GG::MOD_KEY_ALT | GG::MOD_KEY_META))
         return true;
-    if (key >= GG::GGK_F1 && key <= GG::GGK_F15)
+    if (key >= GG::GGK_F1 && key <= GG::GGK_F12)
+        return true;
+    if (key >= GG::GGK_F13 && key <= GG::GGK_F24)
         return true;
     if (key == GG::GGK_TAB || key == GG::GGK_ESCAPE || key == GG::GGK_NONE)
         return true;

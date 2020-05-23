@@ -1,4 +1,4 @@
-/* GG is a GUI for SDL and OpenGL.
+/* GG is a GUI for OpenGL.
 
    Copyright (C) 2006, 2008-2009 T. Zachary Laine
 
@@ -83,7 +83,7 @@ void Timer::Connect(Wnd* wnd)
 {
     Disconnect(wnd);
     m_wnd_connections[wnd] = FiredSignal.connect(
-        boost::bind(&Wnd::TimerFiring, wnd, _1, _2));
+        boost::bind(&Wnd::TimerFiring, wnd, boost::placeholders::_1, boost::placeholders::_2));
 }
 
 void Timer::Disconnect(Wnd* wnd)

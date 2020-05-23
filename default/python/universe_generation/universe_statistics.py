@@ -1,4 +1,3 @@
-from __future__ import print_function
 import freeorion as fo
 from common.print_utils import Float, Sequence, Table, Text
 

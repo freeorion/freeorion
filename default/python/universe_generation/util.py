@@ -1,8 +1,9 @@
-from __future__ import print_function
 import math
 import random
 import sys
+import itertools
 from hashlib import md5
+from typing import Iterable, Iterator, Tuple
 
 error_list = []
 
@@ -42,6 +43,15 @@ def report_error(msg):
     """
     error_list.append(msg)
     print(msg, file=sys.stderr)
+
+
+def unique_product(first: Iterable[int], second: Iterable[int]) -> Iterator[Tuple[int, int]]:
+    """
+    Create all possible unique pairs for two iterables.
+    Both iterables should consist of comparable objects.
+    Pair is sorted in ascending order.
+    """
+    return filter(lambda x: x[0] < x[1], itertools.product(first, second))
 
 
 class MapGenerationError(RuntimeError):

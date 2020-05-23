@@ -3,6 +3,7 @@ Hull
     description = "SH_PSIONIC_SNOWFLAKE_BODY_DESC"
     speed = 300
     fuel = 100
+    NoDefaultFuelEffect
     stealth = 25
     structure = 1800
     slots = [
@@ -20,6 +21,7 @@ Hull
         [[HUNT_SHIPS]]
         [[MONSTER_MOVE_ALWAYS]]
         [[INFINITE_FUEL]]
+        [[ADD_HULL_FUEL_TO_MAX_FUEL_METER]]
         [[MONSTER_SHIELD_REGENERATION]]
         [[EXCELLENT_VISION]]
 

@@ -1,4 +1,4 @@
-/* GG is a GUI for SDL and OpenGL.
+/* GG is a GUI for OpenGL.
    Copyright (C) 2003-2008 T. Zachary Laine
 
    This library is free software; you can redistribute it and/or
@@ -84,7 +84,7 @@ namespace {
     class RowSorter // used to sort rows by a certain column (which may contain some empty cells)
     {
     public:
-        RowSorter(const boost::function<bool (const ListBox::Row&, const ListBox::Row&, std::size_t)>& cmp,
+        RowSorter(const std::function<bool (const ListBox::Row&, const ListBox::Row&, std::size_t)>& cmp,
                   std::size_t col, bool invert) :
             m_cmp(cmp),
             m_sort_col(col),
@@ -97,7 +97,7 @@ namespace {
         { return m_invert ? m_cmp(*r, *l, m_sort_col) : m_cmp(*l, *r, m_sort_col); }
 
     private:
-        boost::function<bool (const ListBox::Row&, const ListBox::Row&, std::size_t)> m_cmp;
+        std::function<bool (const ListBox::Row&, const ListBox::Row&, std::size_t)> m_cmp;
         std::size_t m_sort_col;
         bool m_invert;
     };
@@ -201,29 +201,14 @@ namespace {
 // GG::ListBox::Row
 ////////////////////////////////////////////////
 ListBox::Row::Row() :
-    Control(X0, Y0, ListBox::DEFAULT_ROW_WIDTH, ListBox::DEFAULT_ROW_HEIGHT),
-    m_cells(),
-    m_row_alignment(ALIGN_VCENTER),
-    m_col_alignments(),
-    m_col_widths(),
-    m_col_stretches(),
-    m_margin(ListBox::DEFAULT_MARGIN),
-    m_ignore_adjust_layout(false),
-    m_is_normalized(false)
+    Row(ListBox::DEFAULT_ROW_WIDTH, ListBox::DEFAULT_ROW_HEIGHT)
 {}
 
-ListBox::Row::Row(X w, Y h, const std::string& drag_drop_data_type,
-                  Alignment align/* = ALIGN_VCENTER*/, unsigned int margin/* = 2*/) : 
+ListBox::Row::Row(X w, Y h) :
     Control(X0, Y0, w, h),
-    m_cells(),
-    m_row_alignment(align),
-    m_col_alignments(),
-    m_col_widths(),
-    m_col_stretches(),
-    m_margin(margin),
-    m_ignore_adjust_layout(false),
-    m_is_normalized(false)
-{ SetDragDropDataType(drag_drop_data_type); }
+    m_row_alignment(ALIGN_VCENTER),
+    m_margin(ListBox::DEFAULT_MARGIN)
+{}
 
 void ListBox::Row::CompleteConstruction()
 { SetLayout(Wnd::Create<DeferredLayout>(X0, Y0, Width(), Height(), 1, 1, m_margin, m_margin)); }
@@ -501,9 +486,12 @@ void ListBox::Row::SetMargin(unsigned int margin)
         return;
 
     m_margin = margin;
-    auto&& layout = GetLayout();
-    layout->SetBorderMargin(margin);
-    layout->SetCellMargin(margin);
+    auto layout = GetLayout();
+    if (layout)
+    {
+        layout->SetBorderMargin(margin);
+        layout->SetCellMargin(margin);
+    }
 }
 
 void ListBox::Row::SetNormalized(bool normalized)
@@ -523,7 +511,6 @@ bool ListBox::RowPtrIteratorLess::operator()(const ListBox::iterator& lhs, const
 ////////////////////////////////////////////////
 // GG::ListBox
 ////////////////////////////////////////////////
-
 ListBox::ListBox(Clr color, Clr interior/* = CLR_ZERO*/) :
     Control(X0, Y0, X1, Y1, INTERACTIVE),
     m_caret(m_rows.end()),
@@ -1375,7 +1362,7 @@ void ListBox::SetSortCol(std::size_t n)
         Resort();
 }
 
-void ListBox::SetSortCmp(const boost::function<bool (const Row&, const Row&, std::size_t)>& sort_cmp)
+void ListBox::SetSortCmp(const std::function<bool (const Row&, const Row&, std::size_t)>& sort_cmp)
 {
     m_sort_cmp = sort_cmp;
     if (!(m_style & LIST_NOSORT))
@@ -1808,7 +1795,7 @@ bool ListBox::EventFilter(Wnd* w, const WndEvent& event)
     case WndEvent::DragDroppedOn:
         if (w == this)
             return false;
-        //std::cout << "ListBox::EventFilter of type: " << EventTypeName(event) << std::endl << std::flush;
+        //std::cout << "ListBox::EventFilter of type: " << EventTypeName(event) << std::endl;
         HandleEvent(event);
         break;
 
@@ -1916,10 +1903,10 @@ ListBox::iterator ListBox::Insert(std::shared_ptr<Row> row, iterator it, bool dr
     }
 
     row->Hide();
-
     row->Resize(Pt(std::max(ClientWidth(), X(1)), row->Height()));
-
-    row->RightClickedSignal.connect(boost::bind(&ListBox::HandleRowRightClicked, this, _1, _2));
+    row->RightClickedSignal.connect(
+        boost::bind(&ListBox::HandleRowRightClicked, this,
+                    boost::placeholders::_1, boost::placeholders::_2));
 
     AfterInsertRowSignal(it);
     if (dropped)
@@ -2067,10 +2054,12 @@ ListBox::Row& ListBox::ColHeaders()
 
 void ListBox::ConnectSignals()
 {
+    namespace ph = boost::placeholders;
+
     if (m_vscroll)
-        m_vscroll->ScrolledSignal.connect(boost::bind(&ListBox::VScrolled, this, _1, _2, _3, _4));
+        m_vscroll->ScrolledSignal.connect(boost::bind(&ListBox::VScrolled, this, ph::_1, ph::_2, ph::_3, ph::_4));
     if (m_hscroll)
-        m_hscroll->ScrolledSignal.connect(boost::bind(&ListBox::HScrolled, this, _1, _2, _3, _4));
+        m_hscroll->ScrolledSignal.connect(boost::bind(&ListBox::HScrolled, this, ph::_1, ph::_2, ph::_3, ph::_4));
 }
 
 void ListBox::ValidateStyle()
@@ -2190,8 +2179,10 @@ std::pair<bool, bool> ListBox::AddOrRemoveScrolls(
         m_vscroll->MoveTo(Pt(cl_sz.x - SCROLL_WIDTH, Y0));
         m_vscroll->Resize(Pt(X(SCROLL_WIDTH), cl_sz.y - (horizontal_needed ? SCROLL_WIDTH : 0)));
 
+        namespace ph = boost::placeholders;
+
         AttachChild(m_vscroll);
-        m_vscroll->ScrolledSignal.connect(boost::bind(&ListBox::VScrolled, this, _1, _2, _3, _4));
+        m_vscroll->ScrolledSignal.connect(boost::bind(&ListBox::VScrolled, this, ph::_1, ph::_2, ph::_3, ph::_4));
     }
 
     if (vertical_needed) {
@@ -2238,8 +2229,10 @@ std::pair<bool, bool> ListBox::AddOrRemoveScrolls(
         m_hscroll->MoveTo(Pt(X0, cl_sz.y - SCROLL_WIDTH));
         m_hscroll->Resize(Pt(cl_sz.x - (vertical_needed ? SCROLL_WIDTH : 0), Y(SCROLL_WIDTH)));
 
+        namespace ph = boost::placeholders;
+
         AttachChild(m_hscroll);
-        m_hscroll->ScrolledSignal.connect(boost::bind(&ListBox::HScrolled, this, _1, _2, _3, _4));
+        m_hscroll->ScrolledSignal.connect(boost::bind(&ListBox::HScrolled, this, ph::_1, ph::_2, ph::_3, ph::_4));
     }
 
     if (horizontal_needed) {

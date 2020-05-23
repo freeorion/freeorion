@@ -26,6 +26,8 @@ target_link_libraries(fo_unittest_parse
     Boost::unit_test_framework
 )
 
+target_dependencies_copy_to_build(fo_unittest_parse)
+
 add_coverage(fo_unittest_parse
     unittest
 )

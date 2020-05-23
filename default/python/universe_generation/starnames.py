@@ -1,4 +1,3 @@
-from __future__ import print_function
 import random
 
 import freeorion as fo
@@ -107,7 +106,7 @@ def name_group(group_list, group_name, star_type_assignments, planet_assignments
         name_list = [group_name + " " + modifier for modifier in modifiers]
     else:
         name_list = [modifier + " " + group_name for modifier in modifiers]
-    return zip(these_systems, name_list)  # pylint: disable=zip-builtin-not-iterating; # PY_3_MIGRATION
+    return zip(these_systems, name_list)
 
 
 def name_star_systems(system_list):
@@ -177,7 +176,7 @@ def name_star_systems(system_list):
     indiv_systems = []
 
     # remove groups with only one non-deep-system
-    for groupindex, group_list in star_groups.items():
+    for groupindex, group_list in list(star_groups.items()):
         max_can_transfer = len(potential_group_names) - len(star_groups) + len(individual_names) - len(indiv_systems)
         if max_can_transfer <= 0:
             break
@@ -221,7 +220,7 @@ def name_star_systems(system_list):
     random.shuffle(potential_group_names)
     random.shuffle(individual_names)
     random.shuffle(group_names)
-    num_for_indiv = min(max(len(potential_group_names) / 2, num_individual_stars + 1 - len(individual_names)),
+    num_for_indiv = min(max(len(potential_group_names) // 2, num_individual_stars + 1 - len(individual_names)),
                         len(potential_group_names))
     individual_names.extend(potential_group_names[:num_for_indiv])
     group_names.extend(potential_group_names[num_for_indiv:])
@@ -230,7 +229,7 @@ def name_star_systems(system_list):
     #     num_individual_stars, len(individual_names))
     indiv_name_sample = random.sample(individual_names, num_individual_stars)
     # indiv_name_assignments = zip([(pos.x, pos.y) for pos in position_list[:num_individual_stars]], indiv_name_sample)
-    star_name_map.update(zip(indiv_systems, indiv_name_sample))  # pylint: disable=zip-builtin-not-iterating; # PY_3_MIGRATION
+    star_name_map.update(zip(indiv_systems, indiv_name_sample))
     # print "sampling for %d group names from list of %d total group names"%(num_star_groups, len(group_names))
     if len(group_names) < num_star_groups:
         group_names.extend([names.random_name(6) for _ in range(num_star_groups - len(group_names))])

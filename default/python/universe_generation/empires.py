@@ -1,6 +1,3 @@
-from __future__ import print_function
-from __future__ import division
-
 import random
 
 import freeorion as fo
@@ -12,7 +9,7 @@ from options import (HS_ACCEPTABLE_PLANET_SIZES, HS_ACCEPTABLE_PLANET_TYPES, HS_
                      HS_MIN_PLANETS_IN_VICINITY_TOTAL, HS_MIN_SYSTEMS_IN_VICINITY, HS_VICINITY_RANGE)
 from planets import calc_planet_size, calc_planet_type, planet_sizes_real, planet_types_real
 from starsystems import pick_star_type, star_types_real
-from util import report_error
+from util import report_error, unique_product
 
 
 def get_empire_name_generator():
@@ -85,7 +82,7 @@ def min_planets_in_vicinity_limit(num_systems):
     return min(HS_MIN_PLANETS_IN_VICINITY_TOTAL, num_systems * HS_MIN_PLANETS_IN_VICINITY_PER_SYSTEM)
 
 
-class HomeSystemFinder(object):
+class HomeSystemFinder:
     """Finds a set of home systems with a least ''num_home_systems'' systems."""
     def __init__(self, _num_home_systems):
         # cache of sytem merits
@@ -187,7 +184,7 @@ class HomeSystemFinder(object):
 
                 # Quit successfully if the lowest merit system meets the minimum threshold
                 if merit >= min_planets_in_vicinity_limit(
-                        fo.systems_within_jumps_unordered(HS_VICINITY_RANGE, [system])):
+                        len(fo.systems_within_jumps_unordered(HS_VICINITY_RANGE, [system]))):
                     break
 
         return best_candidate
@@ -509,7 +506,7 @@ def setup_empire(empire, empire_name, home_system, starting_species, player_name
     # unlock starting techs, buildings, hulls, ship parts, etc.
     # use default content file
     print("Player", player_name, ": add unlocked items")
-    for item in fo.load_item_spec_list():
+    for item in fo.load_unlockable_item_list():
         fo.empire_unlock_item(empire, item.type, item.name)
 
     # add premade ship designs to empire
@@ -548,3 +545,43 @@ def setup_empire(empire, empire_name, home_system, starting_species, player_name
                              % (ship_design, fleet_plan.name()))
 
     return True
+
+
+def home_system_layout(home_systems, systems):
+    """
+    Home systems layout generation to place teams.
+    Returns map from home system to neighbor home systems.
+    """
+    # for each system found nearest home systems
+    # maybe multiple if home worlds placed on the same jump distnace
+    system_hs = {}
+    for system in systems:
+        nearest_hs = set()
+        nearest_dist = None
+        for hs in home_systems:
+            dist = fo.jump_distance(system, hs)
+            if nearest_dist is None or nearest_dist > dist:
+                nearest_dist = dist
+                nearest_hs = {hs}
+            elif nearest_dist == dist:
+                nearest_hs.add(hs)
+        system_hs[system] = nearest_hs
+
+    # homeworld is connected to the other
+    # if both are nearest for some system
+    # if each of them is nearest for systems on the starline ends
+    home_system_connections = {}
+    for system, connected_home_systems in system_hs.items():
+        if len(connected_home_systems) >= 2:
+            for hs1, hs2 in unique_product(connected_home_systems, connected_home_systems):
+                home_system_connections.setdefault(hs1, set()).add(hs2)
+                home_system_connections.setdefault(hs2, set()).add(hs1)
+
+    for system, connected_home_systems in system_hs.items():
+        adj_systems = fo.systems_within_jumps_unordered(1, [system])
+        for system2 in adj_systems:
+            connected_home_systems2 = system_hs.get(system2, set())
+            for hs1, hs2 in unique_product(connected_home_systems, connected_home_systems2):
+                home_system_connections.setdefault(hs1, set()).add(hs2)
+                home_system_connections.setdefault(hs2, set()).add(hs1)
+    return home_system_connections

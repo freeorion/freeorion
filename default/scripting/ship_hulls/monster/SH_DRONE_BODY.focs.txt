@@ -3,6 +3,7 @@ Hull
     description = "SH_DRONE_BODY_DESC"
     speed = 30
     fuel = 3
+    NoDefaultFuelEffect
     stealth = 5
     structure = 10
     slots = [
@@ -18,6 +19,7 @@ Hull
     effectsgroups = [
         [[MONSTER_MOVE_ALWAYS]]
         [[INFINITE_FUEL]]
+        [[ADD_HULL_FUEL_TO_MAX_FUEL_METER]]
         [[MODERATE_VISION]]
         [[MONSTER_SHIELD_REGENERATION]]
     ]

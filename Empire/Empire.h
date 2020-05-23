@@ -12,7 +12,10 @@
 
 #include <string>
 
-struct ItemSpec;
+struct UnlockableItem;
+class Building;
+class Planet;
+class Ship;
 class ShipDesign;
 class SitRepEntry;
 class ResourcePool;
@@ -186,32 +189,24 @@ public:
 
     /** Sets research progress of tech with \a name to \a progress. */
     void SetTechResearchProgress(const std::string& name, float progress);
+
     /** Adds the indicated build to the production queue, placing it before
       * position \a pos.  If \a pos < 0 or queue.size() <= pos, the build is
       * placed at the end of the queue. */
-    void PlaceProductionOnQueue(BuildType build_type, const std::string& name,
-                                int number, int blocksize, int location, int pos = -1);
-    /** Adds the indicated build to the production queue, placing it before
-      * position \a pos.  If \a pos < 0 or queue.size() <= pos, the build is
-      * placed at the end of the queue. */
-    void PlaceProductionOnQueue(BuildType build_type, int design_id, int number,
+    void PlaceProductionOnQueue(const ProductionQueue::ProductionItem& item,
+                                boost::uuids::uuid uuid, int number,
                                 int blocksize, int location, int pos = -1);
-    /** Adds the indicated build to the production queue, placing it before
-    * position \a pos.  If \a pos < 0 or queue.size() <= pos, the build is
-    * placed at the end of the queue.
-    * The second parameter is there for overloading resolution and gets ignored.
-    */
-    void PlaceProductionOnQueue(BuildType build_type, BuildType dummy, int number,
-                                int blocksize, int location, int pos = -1);
-    /** Adds the indicated build to the production queue, placing it before
-      * position \a pos.  If \a pos < 0 or queue.size() <= pos, the build is
-      * placed at the end of the queue. */
-    void PlaceProductionOnQueue(const ProductionQueue::ProductionItem& item, int number,
-                                int blocksize, int location, int pos = -1);
+
+    /** Adds a copy of the production item at position \a index below it in
+      * the queue, with one less quantity. Sets the quantity of the production
+      * item at position \a index to 1, retaining its incomplete progress. */
+    void SplitIncompleteProductionItem(int index, boost::uuids::uuid uuid);
+    /** Adds a copy of the production item at position \a index below it in
+      * the queue, with no progress. */
+    void DuplicateProductionItem(int index, boost::uuids::uuid uuid);
+
     void SetProductionQuantity(int index, int quantity);     ///< Changes the remaining number to produce for queue item \a index to \a quantity
     void SetProductionQuantityAndBlocksize(int index, int quantity, int blocksize);   ///< Changes the remaining number and blocksize to produce for queue item \a index to \a quantity and \a blocksize
-    void SplitIncompleteProductionItem(int index);           ///< Adds a copy of the production item at position \a index below it in the queue, with one less quantity. Sets the quantity of the production item at position \a index to 1, retaining its incomplete progress.
-    void DuplicateProductionItem(int index);                 ///< Adds a copy of the production item at position \a index below it in the queue, with no progress.
     void SetProductionRallyPoint(int index, int rally_point_id = INVALID_OBJECT_ID);  ///< Sets the rally point for ships produced by this produce, to which they are automatically ordered to move after they are produced.
     void MoveProductionWithinQueue(int index, int new_index);///< Moves \a tech from the production queue, if it is in the production queue already.
     void RemoveProductionFromQueue(int index);               ///< Removes the produce at position \a index in the production queue, if such an index exists.
@@ -221,10 +216,19 @@ public:
 
     void AddNewlyResearchedTechToGrantAtStartOfNextTurn(const std::string& name);    ///< Inserts the given Tech into the Empire's list of innovations. Call ApplyAddedTech to make it effective.
     void ApplyNewTechs();                            ///< Moves all Techs from the Empire's list of innovations into the Empire's list of available technologies.
-    void UnlockItem(const ItemSpec& item);           ///< Adds a given producible item (Building, Ship Hull, Ship part) to the list of available items.
+
+    //! Adds a given producible item (Building, Ship Hull, Ship part) to the
+    //! list of available items.
+    void UnlockItem(const UnlockableItem& item);
+
     void AddBuildingType(const std::string& name);   ///< Inserts the given BuildingType into the Empire's list of available BuldingTypes.
-    void AddPartType(const std::string& name);       ///< Inserts the given ship PartType into the Empire's list of available BuldingTypes.
-    void AddHullType(const std::string& name);       ///< Inserts the given ship HullType into the Empire's list of available BuldingTypes.
+    //! Inserts the given ShipPart into the Empire's list of available ShipPart%s.
+    void AddShipPart(const std::string& name);
+
+    //! Inserts the given ship ShipHull into the Empire's list of available
+    //! ShipHull%s.
+    void AddShipHull(const std::string& name);
+
     void AddExploredSystem(int ID);                  ///< Inserts the given ID into the Empire's list of explored systems.
 
     /** inserts given design id into the empire's set of designs in front of next design */
@@ -247,10 +251,18 @@ public:
     void ClearSitRep();                              ///< Clears all sitrep entries
 
     void RemoveTech(const std::string& name);        ///< Removes the given Tech from the empire's list
-    void LockItem(const ItemSpec& item);             ///< Removes a given producible item (Building, Ship Hull, Ship Part) from the list of available items.
+
+    //! Removes a given producible item (Building, Ship Hull, Ship Part) from
+    //! the list of available items.
+    void LockItem(const UnlockableItem& item);
+
     void RemoveBuildingType(const std::string& name);///< Removes the given BuildingType from the empire's list
-    void RemovePartType(const std::string& name);    ///< Removes the given PartType from the empire's list
-    void RemoveHullType(const std::string& name);    ///< Removes the given HullType from the empire's list
+    //! Removes the given ShipPart from the empire's list
+    void RemoveShipPart(const std::string& name);
+
+    //! Removes the given ShipHull from the empire's list
+    void RemoveShipHull(const std::string& name);
+
     void RemoveShipDesign(int ship_design_id);       ///< Removes the ShipDesign with the given id from the empire's set
 
     /** Calculates ranges that systems can send fleet and resource supplies,
@@ -333,40 +345,82 @@ public:
 
     void SetAuthenticated(bool authenticated = true);
 
+    void RecordShipShotDown(const Ship& ship);
+    void RecordShipLost(const Ship& ship);
+    void RecordShipScrapped(const Ship& ship);
+    void RecordBuildingScrapped(const Building& building);
+    void RecordPlanetInvaded(const Planet& planet);
+    void RecordPlanetDepopulated(const Planet& planet);
+
     int TotalShipsOwned() const;
     int TotalShipPartsOwned() const;    ///< Total number of parts for all owned ships in this empire
     int TotalBuildingsOwned() const;
 
-    std::map<std::string, int>&     SpeciesShipsOwned()     { return m_species_ships_owned; }
-    std::map<int, int>&             ShipDesignsOwned()      { return m_ship_designs_owned; }
-    std::map<std::string, int>&     ShipPartTypesOwned()    { return m_ship_part_types_owned; }
-    std::map<ShipPartClass, int>&   ShipPartClassOwned()    { return m_ship_part_class_owned; }
-    std::map<std::string, int>&     SpeciesColoniesOwned()  { return m_species_colonies_owned; }
-    int&                            OutpostsOwned()         { return m_outposts_owned; }
-    std::map<std::string, int>&     BuildingTypesOwned()    { return m_building_types_owned; }
+    auto SpeciesShipsOwned() const -> const std::map<std::string, int>&
+    { return m_species_ships_owned; }
 
-    std::map<int, int>&         EmpireShipsDestroyed()  { return m_empire_ships_destroyed; }
-    std::map<int, int>&         ShipDesignsDestroyed()  { return m_ship_designs_destroyed; }
-    std::map<std::string, int>& SpeciesShipsDestroyed() { return m_species_ships_destroyed; }
+    auto ShipDesignsOwned() const -> const std::map<int, int>&
+    { return m_ship_designs_owned; }
 
-    std::map<std::string, int>& SpeciesPlanetsInvaded() { return m_species_planets_invaded; }
+    auto ShipPartsOwned() const -> const std::map<std::string, int>&
+    { return m_ship_parts_owned; }
 
-    std::map<int, int>&         ShipDesignsInProduction() { return m_ship_designs_in_production; }
+    auto ShipPartClassOwned() const -> const std::map<ShipPartClass, int>&
+    { return m_ship_part_class_owned; }
 
-    std::map<std::string, int>& SpeciesShipsProduced()  { return m_species_ships_produced; }
-    std::map<int, int>&         ShipDesignsProduced()   { return m_ship_designs_produced; }
+    auto SpeciesColoniesOwned() const -> const std::map<std::string, int>&
+    { return m_species_colonies_owned; }
 
-    std::map<std::string, int>& SpeciesShipsLost()      { return m_species_ships_lost; }
-    std::map<int, int>&         ShipDesignsLost()       { return m_ship_designs_lost; }
+    auto OutpostsOwned() const -> int
+    { return m_outposts_owned; }
 
-    std::map<std::string, int>& SpeciesShipsScrapped()  { return m_species_ships_scrapped; }
-    std::map<int, int>&         ShipDesignsScrapped()   { return m_ship_designs_scrapped; }
+    auto BuildingTypesOwned() const -> const std::map<std::string, int>&
+    { return m_building_types_owned; }
 
-    std::map<std::string, int>& SpeciesPlanetsDepoped() { return m_species_planets_depoped; }
-    std::map<std::string, int>& SpeciesPlanetsBombed()  { return m_species_planets_bombed; }
+    auto EmpireShipsDestroyed() const -> const std::map<int, int>&
+    { return m_empire_ships_destroyed; }
 
-    std::map<std::string, int>& BuildingTypesProduced() { return m_building_types_produced; }
-    std::map<std::string, int>& BuildingTypesScrapped() { return m_building_types_scrapped; }
+    auto ShipDesignsDestroyed() const -> const std::map<int, int>&
+    { return m_ship_designs_destroyed; }
+
+    auto SpeciesShipsDestroyed() const -> const std::map<std::string, int>&
+    { return m_species_ships_destroyed; }
+
+    auto SpeciesPlanetsInvaded() const -> const std::map<std::string, int>&
+    { return m_species_planets_invaded; }
+
+    auto ShipDesignsInProduction() const -> const std::map<int, int>&
+    { return m_ship_designs_in_production; }
+
+    auto SpeciesShipsProduced() const -> const std::map<std::string, int>&
+    { return m_species_ships_produced; }
+
+    auto ShipDesignsProduced() const -> const std::map<int, int>&
+    { return m_ship_designs_produced; }
+
+    auto SpeciesShipsLost() const -> const std::map<std::string, int>&
+    { return m_species_ships_lost; }
+
+    auto ShipDesignsLost() const -> const std::map<int, int>&
+    { return m_ship_designs_lost; }
+
+    auto SpeciesShipsScrapped() const -> const std::map<std::string, int>&
+    { return m_species_ships_scrapped; }
+
+    auto ShipDesignsScrapped() const -> const std::map<int, int>&
+    { return m_ship_designs_scrapped; }
+
+    auto SpeciesPlanetsDepoped() const -> const std::map<std::string, int>&
+    { return m_species_planets_depoped; }
+
+    auto SpeciesPlanetsBombed() const -> const std::map<std::string, int>&
+    { return m_species_planets_bombed; }
+
+    auto BuildingTypesProduced() const -> const std::map<std::string, int>&
+    { return m_building_types_produced; }
+
+    auto BuildingTypesScrapped() const -> const std::map<std::string, int>&
+    { return m_building_types_scrapped; }
     //@}
 
     /** Processes Builditems on queues of empires other than the indicated
@@ -407,8 +461,12 @@ private:
     ProductionQueue                 m_production_queue;         ///< the queue of items being or waiting to be built
 
     std::set<std::string>           m_available_building_types; ///< list of acquired BuildingType.  These are string names referencing BuildingType objects
-    std::set<std::string>           m_available_part_types;     ///< list of acquired ship PartType.  These are string names referencing PartType objects
-    std::set<std::string>           m_available_hull_types;     ///< list of acquired ship HullType.  These are string names referencing HullType objects
+    //! List of acquired ShipPart referenced by name.
+    std::set<std::string>           m_available_ship_parts;
+
+    //! List of acquired ship ShipHull referenced by name.
+    std::set<std::string>           m_available_ship_hulls;
+
     std::set<int>                   m_explored_systems;         ///< systems explored by this empire
     std::set<int>                   m_known_ship_designs;       ///< ids of ship designs in the universe that this empire knows about
 
@@ -422,7 +480,10 @@ private:
 
     std::map<std::string, int>      m_species_ships_owned;      ///< how many ships of each species does this empire currently own?
     std::map<int, int>              m_ship_designs_owned;       ///< how many ships of each design does this empire currently own?
-    std::map<std::string, int>      m_ship_part_types_owned;    ///< how many ship parts are currently owned, indexed by PartType
+
+    //! How many ShipPart%s are currently owned, indexed by ShipPart
+    std::map<std::string, int>      m_ship_parts_owned;
+
     std::map<ShipPartClass, int>    m_ship_part_class_owned;    ///< how many ship parts are currently owned, indexed by ShipPartClass
     std::map<std::string, int>      m_species_colonies_owned;   ///< how many colonies of each species does this empire currently own?
     int                             m_outposts_owned = 0;       ///< how many uncolonized outposts does this empire currently own?
@@ -453,11 +514,11 @@ private:
     std::set<int>                   m_supply_unobstructed_systems;  ///< ids of system that don't block supply from flowing
     std::map<int, std::set<int>>    m_preserved_system_exit_lanes;  ///< for each system known to this empire, the set of exit lanes preserved for fleet travel even if otherwise blockaded
     std::map<int, std::set<int>>    m_pending_system_exit_lanes;    ///< pending updates to m_preserved_system_exit_lanes
-    bool                            m_ready;                        ///< readiness status of empire
+    bool                            m_ready = false;                ///< readiness status of empire
 
     friend class boost::serialization::access;
     Empire();
-    template <class Archive>
+    template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 

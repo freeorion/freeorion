@@ -6,6 +6,7 @@ Part
         "FU_N_DIMENSIONAL_ENGINE_MATRIX"
         "FU_SINGULARITY_ENGINE_CORE"
         "FU_TRANSPATIAL_DRIVE"
+        "SH_COLONY_BASE"
     ]
     class = Speed
     capacity = 80
