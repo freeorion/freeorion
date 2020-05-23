@@ -206,7 +206,7 @@ const std::vector<FleetPlan*> Universe::InitiallyUnlockedFleetPlans() const {
     Pending::SwapPending(m_pending_fleet_plans, m_unlocked_fleet_plans);
     std::vector<FleetPlan*> retval;
     for (const auto& plan : m_unlocked_fleet_plans)
-        retval.push_back(plan.get());
+        retval.emplace_back(plan.get());
     return retval;
 }
 
@@ -217,7 +217,7 @@ const std::vector<MonsterFleetPlan*> Universe::MonsterFleetPlans() const {
     Pending::SwapPending(m_pending_monster_fleet_plans, m_monster_fleet_plans);
     std::vector<MonsterFleetPlan*> retval;
     for (const auto& plan : m_monster_fleet_plans)
-        retval.push_back(plan.get());
+        retval.emplace_back(plan.get());
     return retval;
 }
 
@@ -965,7 +965,7 @@ namespace {
                 // candidates is specified: only need to put the source in if
                 // it is in the candidates
                 if (candidate_object_ids.count(source->ID()))
-                    matched_targets.push_back(std::const_pointer_cast<UniverseObject>(source));
+                    matched_targets.emplace_back(std::const_pointer_cast<UniverseObject>(source));
 
             } else {
                 // input candidates will all be tested
@@ -1051,7 +1051,7 @@ namespace {
                     for (auto& obj : source_objects) {
                         source_context.source = obj;
                         if (effects_group->Activation()->Eval(source_context, obj))
-                            active_sources[i].push_back(obj);
+                            active_sources[i].emplace_back(obj);
                     }
                 }
 
@@ -1245,7 +1245,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
             ErrorLogger() << "GetEffectsAndTargets couldn't get Species " << species_name;
             continue;
         }
-        species_objects[species_name].push_back(planet);
+        species_objects[species_name].emplace_back(planet);
     }
     // find each species ships in single pass, maintaining object map order per-species
     for (auto& ship : m_objects.all<Ship>()) {
@@ -1259,7 +1259,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
             ErrorLogger() << "GetEffectsAndTargets couldn't get Species " << species_name;
             continue;
         }
-        species_objects[species_name].push_back(ship);
+        species_objects[species_name].emplace_back(ship);
     }
     // allocate storage for target sets and dispatch condition evaluations
     for (const auto& entry : GetSpeciesManager()) {
@@ -1297,7 +1297,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
                 ErrorLogger() << "GetEffectsAndTargets couldn't get Special " << special_name;
                 continue;
             }
-            specials_objects[special_name].push_back(obj);
+            specials_objects[special_name].emplace_back(obj);
         }
     }
     // dispatch condition evaluations
@@ -1366,7 +1366,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
             continue;
         }
 
-        buildings_by_type[building_type_name].push_back(building);
+        buildings_by_type[building_type_name].emplace_back(building);
     }
     // dispatch condition evaluations
     for (const auto& entry : GetBuildingTypeManager()) {
@@ -1409,7 +1409,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
             ErrorLogger() << "GetEffectsAndTargets couldn't get ShipHull";
             continue;
         }
-        ships_by_ship_hull[ship_hull->Name()].push_back(ship);
+        ships_by_ship_hull[ship_hull->Name()].emplace_back(ship);
 
         for (const std::string& part : ship_design->Parts()) {
             if (part.empty())
@@ -1419,7 +1419,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
                 ErrorLogger() << "GetEffectsAndTargets couldn't get ShipPart";
                 continue;
             }
-            ships_by_ship_part[part].push_back(ship);
+            ships_by_ship_part[part].emplace_back(ship);
         }
     }
 
@@ -1478,7 +1478,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
             continue;
         }
 
-        fields_by_type[field_type_name].push_back(field);
+        fields_by_type[field_type_name].emplace_back(field);
     }
 
     // dispatch field condition evaluations
@@ -1521,7 +1521,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
                 // create entry in output with empty TargetSet
                 auto& result{job_results.first[i]};
                 int priority = result.first.effects_group->Priority();
-                source_effects_targets_causes[priority].push_back(result);
+                source_effects_targets_causes[priority].emplace_back(result);
 
                 // overwrite empty placeholder TargetSet with contents of
                 // pointed-to earlier entry
@@ -1534,7 +1534,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
             // scope/activation being evaluatied with a set of source objects
             for (const auto& result : job_results.first) {
                 int priority = result.first.effects_group->Priority();
-                source_effects_targets_causes[priority].push_back(result);
+                source_effects_targets_causes[priority].emplace_back(result);
             }
         }
     }
@@ -1677,7 +1677,7 @@ void Universe::SetEffectDerivedVisibility(int empire_id, int object_id, int sour
         return;
     if (!vis)
         return;
-    m_effect_specified_empire_object_visibilities[empire_id][object_id].push_back({source_id, vis});
+    m_effect_specified_empire_object_visibilities[empire_id][object_id].emplace_back(source_id, vis);
 }
 
 void Universe::ApplyEffectDerivedVisibilities() {
@@ -1907,7 +1907,7 @@ namespace {
             // low enough stealth (0 or below the empire's detection strength)
             for (const auto& empire_entry : empire_detection_strengths) {
                 if (object_stealth <= empire_entry.second || object_stealth == 0.0f || obj->OwnedBy(empire_entry.first))
-                    retval[empire_entry.first][object_pos].push_back(obj->ID());
+                    retval[empire_entry.first][object_pos].emplace_back(obj->ID());
             }
         }
         return retval;
@@ -2767,7 +2767,7 @@ std::set<int> Universe::RecursiveDestroy(int object_id) {
             if (fleet->SystemID() == INVALID_OBJECT_ID && (
                 fleet->NextSystemID() == this_sys_id ||
                 fleet->PreviousSystemID() == this_sys_id))
-            { fleets_to_destroy.push_back(fleet); }
+            { fleets_to_destroy.emplace_back(fleet); }
         }
         for (auto& fleet : fleets_to_destroy)
             RecursiveDestroy(fleet->ID());
@@ -2828,7 +2828,7 @@ void Universe::EffectDestroy(int object_id, int source_object_id) {
 void Universe::InitializeSystemGraph(int for_empire_id) {
     std::vector<int> system_ids;
     for (const auto& system : ::EmpireKnownObjects(for_empire_id).all<System>()) {
-        system_ids.push_back(system->ID());
+        system_ids.emplace_back(system->ID());
     }
 
     m_pathfinder->InitializeSystemGraph(system_ids, for_empire_id);
