@@ -1,5 +1,5 @@
-#ifndef _Predicates_h_
-#define _Predicates_h_
+#ifndef _UniverseObjectVisitors_h_
+#define _UniverseObjectVisitors_h_
 
 
 #include "UniverseObjectVisitor.h"
@@ -73,4 +73,4 @@ struct FO_COMMON_API HostileVisitor : UniverseObjectVisitor
     const int owning_empire_id;
 };
 
-#endif // _Predicates_h_
+#endif // _UniverseObjectVisitors_h_
