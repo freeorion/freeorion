@@ -6,7 +6,7 @@ FieldType
         EffectsGroup    // shrink slowly when in no-star system
             scope = Source
             activation = And [
-                Size low = 2 high = 180
+                Size low = 2 high = 120
                 Star type = NoStar
             ]
             effects =
@@ -15,7 +15,7 @@ FieldType
         EffectsGroup    // shrink slowly when in no-star system
             scope = Source
             activation = And [
-                Size low = 180
+                Size low = 120
                 Star type = NoStar
             ]
             effects =
@@ -35,7 +35,7 @@ FieldType
                 GenerateSitRepMessage
                     message = "EFFECT_NEBULA"
                     label = "EFFECT_NEBULA_LABEL"
-                    icon = "nebulae/nebula12.png"
+                    icon = "icons/buttons/addstar.png"
                     parameters = [
                         tag = "system" data = Source.SystemID
                         ]
@@ -43,6 +43,18 @@ FieldType
                 ]
 
         [[CREATE_PLANETS]]
+
+        EffectsGroup    // make ships slower, reduce detection, increase stealth
+            scope = And [
+                Ship
+                WithinDistance distance = Source.Size * 0.9 condition = Source
+            ]
+            stackinggroup = "NEBULA_SHIP_EFFECTS"
+            effects = [
+                SetSpeed value = Value - 20
+                SetStealth value = Value + 20
+                SetDetection value = Value - 20
+            ]
 
         EffectsGroup    // dissipate when small
             scope = Source
