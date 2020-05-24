@@ -8,7 +8,6 @@
 #include <unordered_map>
 #include <vector>
 #include <boost/container/flat_map.hpp>
-#include <boost/serialization/access.hpp>
 #include "EnumsFwd.h"
 #include "../util/Export.h"
 
@@ -101,11 +100,6 @@ namespace Effect {
 
         virtual void            SetTopLevelContent(const std::string& content_name) = 0;
         virtual unsigned int    GetCheckSum() const;
-
-    private:
-        friend class boost::serialization::access;
-        template <typename Archive>
-        void serialize(Archive& ar, const unsigned int version);
     };
 
     /** Accounting information about what the causes are and changes produced
@@ -180,11 +174,6 @@ namespace Effect {
         int                                     m_priority; // constructor sets this, so don't need a default value here
         std::string                             m_description;
         std::string                             m_content_name;
-
-    private:
-        friend class boost::serialization::access;
-        template <typename Archive>
-        void serialize(Archive& ar, const unsigned int version);
     };
 
     /** Returns a single string which `Dump`s a vector of EffectsGroups. */

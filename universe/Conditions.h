@@ -5,7 +5,6 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include <boost/serialization/nvp.hpp>
 #include "ConditionAll.h"
 #include "ConditionSource.h"
 #include "Condition.h"
@@ -90,10 +89,6 @@ private:
     std::unique_ptr<ValueRef::ValueRef<int>> m_low;
     std::unique_ptr<ValueRef::ValueRef<int>> m_high;
     std::unique_ptr<Condition> m_condition;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all objects if the current game turn is >= \a low and < \a high. */
@@ -114,10 +109,6 @@ private:
 
     std::unique_ptr<ValueRef::ValueRef<int>> m_low;
     std::unique_ptr<ValueRef::ValueRef<int>> m_high;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches a specified \a number of objects that match Condition \a condition
@@ -155,10 +146,6 @@ private:
     std::unique_ptr<ValueRef::ValueRef<double>> m_sort_key;
     SortingMethod m_sorting_method;
     std::unique_ptr<Condition> m_condition;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches no objects. Currently only has an experimental use for efficient immediate rejection as the top-line condition.
@@ -176,11 +163,6 @@ struct FO_COMMON_API None final : public Condition {
     void SetTopLevelContent(const std::string& content_name) override
     {}
     unsigned int GetCheckSum() const override;
-
-private:
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all objects that are owned (if \a exclusive == false) or only owned
@@ -204,10 +186,6 @@ private:
 
     std::unique_ptr<ValueRef::ValueRef<int>> m_empire_id;
     EmpireAffiliationType m_affiliation;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches the root candidate object in a condition tree.  This is useful
@@ -227,10 +205,6 @@ struct FO_COMMON_API RootCandidate final : public Condition {
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** There is no LocalCandidate condition. To match any local candidate object,
@@ -250,10 +224,6 @@ struct FO_COMMON_API Target final : public Condition {
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches planets that are a homeworld for any of the species specified in
@@ -277,10 +247,6 @@ private:
     bool Match(const ScriptingContext& local_context) const override;
 
     std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>> m_names;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches planets that are an empire's capital. */
@@ -297,10 +263,6 @@ struct FO_COMMON_API Capital final : public Condition {
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches space monsters. */
@@ -317,10 +279,6 @@ struct FO_COMMON_API Monster final : public Condition {
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches armed ships and monsters. */
@@ -335,10 +293,6 @@ struct FO_COMMON_API Armed final : public Condition {
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all objects that are of UniverseObjectType \a type. */
@@ -360,10 +314,6 @@ private:
     bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRef<UniverseObjectType>> m_type;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all Building objects that are one of the building types specified
@@ -385,10 +335,6 @@ private:
     bool Match(const ScriptingContext& local_context) const override;
 
     std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>> m_names;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all objects that have an attached Special named \a name. */
@@ -419,10 +365,6 @@ private:
     std::unique_ptr<ValueRef::ValueRef<double>>         m_capacity_high;
     std::unique_ptr<ValueRef::ValueRef<int>>            m_since_turn_low;
     std::unique_ptr<ValueRef::ValueRef<int>>            m_since_turn_high;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all objects that have the tag \a tag. */
@@ -443,10 +385,6 @@ private:
     bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRef<std::string>> m_name;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all objects that were created on turns within the specified range. */
@@ -467,10 +405,6 @@ private:
 
     std::unique_ptr<ValueRef::ValueRef<int>> m_low;
     std::unique_ptr<ValueRef::ValueRef<int>> m_high;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all objects that contain an object that matches Condition
@@ -492,10 +426,6 @@ private:
     bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<Condition> m_condition;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all objects that are contained by an object that matches Condition
@@ -517,10 +447,6 @@ private:
     bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<Condition> m_condition;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all objects that are in the system with the indicated \a system_id
@@ -543,10 +469,6 @@ private:
     bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRef<int>> m_system_id;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all objects that are on the planet with the indicated \a planet_id
@@ -569,10 +491,6 @@ private:
     bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRef<int>> m_planet_id;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches the object with the id \a object_id */
@@ -593,10 +511,6 @@ private:
     bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRef<int>> m_object_id;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all Planet objects that have one of the PlanetTypes in \a types.
@@ -619,10 +533,6 @@ private:
     bool Match(const ScriptingContext& local_context) const override;
 
     std::vector<std::unique_ptr<ValueRef::ValueRef<::PlanetType>>> m_types;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all Planet objects that have one of the PlanetSizes in \a sizes.
@@ -645,10 +555,6 @@ private:
     bool Match(const ScriptingContext& local_context) const override;
 
     std::vector<std::unique_ptr<ValueRef::ValueRef<::PlanetSize>>> m_sizes;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all Planet objects that have one of the PlanetEnvironments in
@@ -673,10 +579,6 @@ private:
 
     std::vector<std::unique_ptr<ValueRef::ValueRef<::PlanetEnvironment>>> m_environments;
     std::unique_ptr<ValueRef::ValueRef<std::string>> m_species_name;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all planets or ships that have one of the species in \a species.
@@ -700,10 +602,6 @@ private:
     bool Match(const ScriptingContext& local_context) const override;
 
     std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>> m_names;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches planets where the indicated number of the indicated building type
@@ -739,10 +637,6 @@ private:
     std::unique_ptr<ValueRef::ValueRef<int>>            m_empire_id;
     std::unique_ptr<ValueRef::ValueRef<int>>            m_low;
     std::unique_ptr<ValueRef::ValueRef<int>>            m_high;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all ProdCenter objects that have one of the FocusTypes in \a foci. */
@@ -763,10 +657,6 @@ private:
     bool Match(const ScriptingContext& local_context) const override;
 
     std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>> m_names;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all System objects that have one of the StarTypes in \a types.  Note that all objects
@@ -786,10 +676,6 @@ private:
     bool Match(const ScriptingContext& local_context) const override;
 
     std::vector<std::unique_ptr<ValueRef::ValueRef<::StarType>>> m_types;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all ships whose ShipDesign has the hull specified by \a name. */
@@ -810,10 +696,6 @@ private:
     bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRef<std::string>> m_name;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all ships whose ShipDesign has >= \a low and < \a high of the ship
@@ -839,10 +721,6 @@ private:
     std::unique_ptr<ValueRef::ValueRef<int>> m_low;
     std::unique_ptr<ValueRef::ValueRef<int>> m_high;
     std::unique_ptr<ValueRef::ValueRef<std::string>> m_name;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches ships whose ShipDesign has >= \a low and < \a high of ship parts of
@@ -868,10 +746,6 @@ private:
     std::unique_ptr<ValueRef::ValueRef<int>> m_low;
     std::unique_ptr<ValueRef::ValueRef<int>> m_high;
     ShipPartClass m_class;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches ships who ShipDesign is a predefined shipdesign with the name
@@ -891,10 +765,6 @@ private:
     bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRef<std::string>> m_name;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches ships whose design id \a id. */
@@ -913,10 +783,6 @@ private:
     bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRef<int>> m_design_id;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches ships or buildings produced by the empire with id \a empire_id.*/
@@ -935,10 +801,6 @@ private:
     bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRef<int>> m_empire_id;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches a given object with a linearly distributed probability of \a chance. */
@@ -957,10 +819,6 @@ private:
     bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRef<double>> m_chance;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all objects that have a meter of type \a meter, and whose current
@@ -984,10 +842,6 @@ private:
     MeterType m_meter;
     std::unique_ptr<ValueRef::ValueRef<double>> m_low;
     std::unique_ptr<ValueRef::ValueRef<double>> m_high;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches ships that have a ship part meter of type \a meter for part \a part
@@ -1069,10 +923,6 @@ private:
     ResourceType                                m_stockpile;
     std::unique_ptr<ValueRef::ValueRef<double>> m_low;
     std::unique_ptr<ValueRef::ValueRef<double>> m_high;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all objects if the empire with id \a empire_id has adopted the
@@ -1099,10 +949,6 @@ private:
 
     std::unique_ptr<ValueRef::ValueRef<std::string>>    m_name;
     std::unique_ptr<ValueRef::ValueRef<int>>            m_empire_id;
-
-    friend class boost::serialization::access;
-    template <class Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all objects whose owner who has tech \a name. */
@@ -1124,10 +970,6 @@ private:
 
     std::unique_ptr<ValueRef::ValueRef<std::string>> m_name;
     std::unique_ptr<ValueRef::ValueRef<int>>         m_empire_id;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all objects whose owner who has the building type \a name available. */
@@ -1150,10 +992,6 @@ private:
 
     std::unique_ptr<ValueRef::ValueRef<std::string>> m_name;
     std::unique_ptr<ValueRef::ValueRef<int>>         m_empire_id;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all objects whose owner who has the ship design \a id available. */
@@ -1176,10 +1014,6 @@ private:
 
     std::unique_ptr<ValueRef::ValueRef<int>> m_id;
     std::unique_ptr<ValueRef::ValueRef<int>> m_empire_id;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all objects whose owner who has the ship part @a name available. */
@@ -1202,10 +1036,6 @@ private:
 
     std::unique_ptr<ValueRef::ValueRef<std::string>> m_name;
     std::unique_ptr<ValueRef::ValueRef<int>>         m_empire_id;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all objects that are visible to the Empire with id \a empire_id */
@@ -1224,10 +1054,6 @@ private:
     bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRef<int>> m_empire_id;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all objects that are within \a distance units of at least one
@@ -1251,10 +1077,6 @@ private:
 
     std::unique_ptr<ValueRef::ValueRef<double>> m_distance;
     std::unique_ptr<Condition> m_condition;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all objects that are within \a jumps starlane jumps of at least one
@@ -1278,10 +1100,6 @@ private:
 
     std::unique_ptr<ValueRef::ValueRef<int>> m_jumps;
     std::unique_ptr<Condition> m_condition;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches objects that are in systems that could have starlanes added between
@@ -1305,10 +1123,6 @@ private:
     bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<Condition> m_condition;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches systems that have been explored by at least one Empire
@@ -1328,10 +1142,6 @@ private:
     bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRef<int>> m_empire_id;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches objects that are moving. ... What does that mean?  Departing this
@@ -1348,10 +1158,6 @@ struct FO_COMMON_API Stationary final : public Condition {
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches objects that are aggressive fleets or are in aggressive fleets. */
@@ -1372,10 +1178,6 @@ private:
     bool Match(const ScriptingContext& local_context) const override;
 
     bool m_aggressive;   // false to match passive ships/fleets
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches objects that are in systems that can be fleet supplied by the
@@ -1395,10 +1197,6 @@ private:
     bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRef<int>> m_empire_id;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches objects that are in systems that are connected by resource-sharing
@@ -1421,10 +1219,6 @@ private:
 
     std::unique_ptr<ValueRef::ValueRef<int>> m_empire_id;
     std::unique_ptr<Condition> m_condition;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches objects whose species has the ability to found new colonies. */
@@ -1440,10 +1234,6 @@ struct FO_COMMON_API CanColonize final : public Condition {
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches objects whose species has the ability to produce ships. */
@@ -1459,10 +1249,6 @@ struct FO_COMMON_API CanProduceShips final : public Condition {
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches the objects that have been targeted for bombardment by at least one
@@ -1482,10 +1268,6 @@ private:
     bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<Condition> m_by_object_condition;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all objects if the comparisons between values of ValueRefs meet the
@@ -1532,10 +1314,6 @@ private:
 
     ComparisonType m_compare_type1 = INVALID_COMPARISON;
     ComparisonType m_compare_type2 = INVALID_COMPARISON;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches objects that match the location condition of the specified
@@ -1560,10 +1338,6 @@ private:
     std::unique_ptr<ValueRef::ValueRef<std::string>> m_name1;
     std::unique_ptr<ValueRef::ValueRef<std::string>> m_name2;
     ContentType m_content_type;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches objects that match the combat targeting condition of the specified
@@ -1586,10 +1360,6 @@ private:
 
     std::unique_ptr<ValueRef::ValueRef<std::string>> m_name;
     ContentType m_content_type;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all objects that match every Condition in \a operands. */
@@ -1613,10 +1383,6 @@ struct FO_COMMON_API And final : public Condition {
 
 private:
     std::vector<std::unique_ptr<Condition>> m_operands;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all objects that match at least one Condition in \a operands. */
@@ -1639,10 +1405,6 @@ struct FO_COMMON_API Or final : public Condition {
 
 private:
     std::vector<std::unique_ptr<Condition>> m_operands;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all objects that do not match the Condition \a operand. */
@@ -1659,10 +1421,6 @@ struct FO_COMMON_API Not final : public Condition {
 
 private:
     std::unique_ptr<Condition> m_operand;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Tests conditions in \a operands in order, to find the first condition that 
@@ -1683,10 +1441,6 @@ struct FO_COMMON_API OrderedAlternativesOf final : public Condition {
 
 private:
     std::vector<std::unique_ptr<Condition>> m_operands;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches whatever its subcondition matches, but has a customized description
@@ -1706,491 +1460,8 @@ struct FO_COMMON_API Described final : public Condition {
 private:
     std::unique_ptr<Condition> m_condition;
     std::string m_desc_stringtable_key;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
-
-// template implementations
-template <typename Archive>
-void Condition::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_NVP(m_root_candidate_invariant)
-        & BOOST_SERIALIZATION_NVP(m_target_invariant)
-        & BOOST_SERIALIZATION_NVP(m_source_invariant);
-}
-
-template <typename Archive>
-void Number::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
-        & BOOST_SERIALIZATION_NVP(m_low)
-        & BOOST_SERIALIZATION_NVP(m_high)
-        & BOOST_SERIALIZATION_NVP(m_condition);
-}
-
-template <typename Archive>
-void Turn::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
-        & BOOST_SERIALIZATION_NVP(m_low)
-        & BOOST_SERIALIZATION_NVP(m_high);
-}
-
-template <typename Archive>
-void SortedNumberOf::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
-        & BOOST_SERIALIZATION_NVP(m_number)
-        & BOOST_SERIALIZATION_NVP(m_sort_key)
-        & BOOST_SERIALIZATION_NVP(m_sorting_method)
-        & BOOST_SERIALIZATION_NVP(m_condition);
-}
-
-template <typename Archive>
-void All::serialize(Archive& ar, const unsigned int version)
-{ ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition); }
-
-template <typename Archive>
-void None::serialize(Archive& ar, const unsigned int version)
-{ ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition); }
-
-template <typename Archive>
-void EmpireAffiliation::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
-        & BOOST_SERIALIZATION_NVP(m_empire_id)
-        & BOOST_SERIALIZATION_NVP(m_affiliation);
-}
-
-template <typename Archive>
-void Source::serialize(Archive& ar, const unsigned int version)
-{ ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition); }
-
-template <typename Archive>
-void RootCandidate::serialize(Archive& ar, const unsigned int version)
-{ ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition); }
-
-template <typename Archive>
-void Target::serialize(Archive& ar, const unsigned int version)
-{ ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition); }
-
-template <typename Archive>
-void Homeworld::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
-        & BOOST_SERIALIZATION_NVP(m_names);
-}
-
-template <typename Archive>
-void Capital::serialize(Archive& ar, const unsigned int version)
-{ ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition); }
-
-template <typename Archive>
-void Monster::serialize(Archive& ar, const unsigned int version)
-{ ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition); }
-
-template <typename Archive>
-void Armed::serialize(Archive& ar, const unsigned int version)
-{ ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition); }
-
-template <typename Archive>
-void Type::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
-        & BOOST_SERIALIZATION_NVP(m_type);
-}
-
-template <typename Archive>
-void Building::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
-        & BOOST_SERIALIZATION_NVP(m_names);
-}
-
-template <typename Archive>
-void HasSpecial::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
-        & BOOST_SERIALIZATION_NVP(m_name)
-        & BOOST_SERIALIZATION_NVP(m_capacity_low)
-        & BOOST_SERIALIZATION_NVP(m_capacity_high)
-        & BOOST_SERIALIZATION_NVP(m_since_turn_low)
-        & BOOST_SERIALIZATION_NVP(m_since_turn_high);
-}
-
-template <typename Archive>
-void HasTag::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
-        & BOOST_SERIALIZATION_NVP(m_name);
-}
-
-template <typename Archive>
-void CreatedOnTurn::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
-        & BOOST_SERIALIZATION_NVP(m_low)
-        & BOOST_SERIALIZATION_NVP(m_high);
-}
-
-template <typename Archive>
-void Contains::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
-        & BOOST_SERIALIZATION_NVP(m_condition);
-}
-
-template <typename Archive>
-void ContainedBy::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
-        & BOOST_SERIALIZATION_NVP(m_condition);
-}
-
-template <typename Archive>
-void InOrIsSystem::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
-        & BOOST_SERIALIZATION_NVP(m_system_id);
-}
-
-template <typename Archive>
-void OnPlanet::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
-        & BOOST_SERIALIZATION_NVP(m_planet_id);
-}
-
-template <typename Archive>
-void ObjectID::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
-        & BOOST_SERIALIZATION_NVP(m_object_id);
-}
-
-template <typename Archive>
-void PlanetType::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
-        & BOOST_SERIALIZATION_NVP(m_types);
-}
-
-template <typename Archive>
-void PlanetSize::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
-        & BOOST_SERIALIZATION_NVP(m_sizes);
-}
-
-template <typename Archive>
-void PlanetEnvironment::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
-        & BOOST_SERIALIZATION_NVP(m_environments)
-        & BOOST_SERIALIZATION_NVP(m_species_name);
-}
-
-template <typename Archive>
-void Species::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
-        & BOOST_SERIALIZATION_NVP(m_names);
-}
-
-template <typename Archive>
-void Enqueued::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
-        & BOOST_SERIALIZATION_NVP(m_build_type)
-        & BOOST_SERIALIZATION_NVP(m_name)
-        & BOOST_SERIALIZATION_NVP(m_design_id)
-        & BOOST_SERIALIZATION_NVP(m_empire_id)
-        & BOOST_SERIALIZATION_NVP(m_low)
-        & BOOST_SERIALIZATION_NVP(m_high);
-}
-
-template <typename Archive>
-void FocusType::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
-        & BOOST_SERIALIZATION_NVP(m_names);
-}
-
-template <typename Archive>
-void StarType::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
-        & BOOST_SERIALIZATION_NVP(m_types);
-}
-
-template <typename Archive>
-void DesignHasHull::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
-        & BOOST_SERIALIZATION_NVP(m_name);
-}
-
-template <typename Archive>
-void DesignHasPart::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
-        & BOOST_SERIALIZATION_NVP(m_low)
-        & BOOST_SERIALIZATION_NVP(m_high)
-        & BOOST_SERIALIZATION_NVP(m_name);
-}
-
-template <typename Archive>
-void DesignHasPartClass::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
-        & BOOST_SERIALIZATION_NVP(m_low)
-        & BOOST_SERIALIZATION_NVP(m_high)
-        & BOOST_SERIALIZATION_NVP(m_class);
-}
-
-template <typename Archive>
-void PredefinedShipDesign::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
-        & BOOST_SERIALIZATION_NVP(m_name);
-}
-
-template <typename Archive>
-void NumberedShipDesign::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
-        & BOOST_SERIALIZATION_NVP(m_design_id);
-}
-
-template <typename Archive>
-void ProducedByEmpire::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
-        & BOOST_SERIALIZATION_NVP(m_empire_id);
-}
-
-template <typename Archive>
-void Chance::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
-        & BOOST_SERIALIZATION_NVP(m_chance);
-}
-
-template <typename Archive>
-void MeterValue::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
-        & BOOST_SERIALIZATION_NVP(m_meter)
-        & BOOST_SERIALIZATION_NVP(m_low)
-        & BOOST_SERIALIZATION_NVP(m_high);
-}
-
-template <typename Archive>
-void EmpireStockpileValue::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
-        & BOOST_SERIALIZATION_NVP(m_empire_id)
-        & BOOST_SERIALIZATION_NVP(m_stockpile)
-        & BOOST_SERIALIZATION_NVP(m_low)
-        & BOOST_SERIALIZATION_NVP(m_high);
-}
-
-template <class Archive>
-void EmpireHasAdoptedPolicy::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
-        & BOOST_SERIALIZATION_NVP(m_name)
-        & BOOST_SERIALIZATION_NVP(m_empire_id);
-}
-
-template <typename Archive>
-void OwnerHasTech::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
-        & BOOST_SERIALIZATION_NVP(m_name)
-        & BOOST_SERIALIZATION_NVP(m_empire_id);
-}
-
-template <typename Archive>
-void OwnerHasBuildingTypeAvailable::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
-        & BOOST_SERIALIZATION_NVP(m_name)
-        & BOOST_SERIALIZATION_NVP(m_empire_id);
-}
-
-template <typename Archive>
-void OwnerHasShipDesignAvailable::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
-        & BOOST_SERIALIZATION_NVP(m_id)
-        & BOOST_SERIALIZATION_NVP(m_empire_id);
-}
-
-template <typename Archive>
-void OwnerHasShipPartAvailable::serialize(Archive& ar,
-                                          const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
-        & BOOST_SERIALIZATION_NVP(m_name)
-        & BOOST_SERIALIZATION_NVP(m_empire_id);
-}
-
-template <typename Archive>
-void VisibleToEmpire::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
-        & BOOST_SERIALIZATION_NVP(m_empire_id);
-}
-
-template <typename Archive>
-void WithinDistance::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
-        & BOOST_SERIALIZATION_NVP(m_distance)
-        & BOOST_SERIALIZATION_NVP(m_condition);
-}
-
-template <typename Archive>
-void WithinStarlaneJumps::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
-        & BOOST_SERIALIZATION_NVP(m_jumps)
-        & BOOST_SERIALIZATION_NVP(m_condition);
-}
-
-template <typename Archive>
-void CanAddStarlaneConnection::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
-        & BOOST_SERIALIZATION_NVP(m_condition);
-}
-
-template <typename Archive>
-void ExploredByEmpire::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
-        & BOOST_SERIALIZATION_NVP(m_empire_id);
-}
-
-template <typename Archive>
-void Stationary::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition);
-}
-
-template <typename Archive>
-void Aggressive::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
-        & BOOST_SERIALIZATION_NVP(m_aggressive);
-}
-
-template <typename Archive>
-void FleetSupplyableByEmpire::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
-        & BOOST_SERIALIZATION_NVP(m_empire_id);
-}
-
-template <typename Archive>
-void ResourceSupplyConnectedByEmpire::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
-        & BOOST_SERIALIZATION_NVP(m_empire_id)
-        & BOOST_SERIALIZATION_NVP(m_condition);
-}
-
-template <typename Archive>
-void CanColonize::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition);
-}
-
-template <typename Archive>
-void CanProduceShips::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition);
-}
-
-template <typename Archive>
-void OrderedBombarded::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
-        & BOOST_SERIALIZATION_NVP(m_by_object_condition);
-}
-
-template <typename Archive>
-void ValueTest::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
-        & BOOST_SERIALIZATION_NVP(m_value_ref1)
-        & BOOST_SERIALIZATION_NVP(m_value_ref2)
-        & BOOST_SERIALIZATION_NVP(m_value_ref3)
-        & BOOST_SERIALIZATION_NVP(m_string_value_ref1)
-        & BOOST_SERIALIZATION_NVP(m_string_value_ref2)
-        & BOOST_SERIALIZATION_NVP(m_string_value_ref3)
-        & BOOST_SERIALIZATION_NVP(m_int_value_ref1)
-        & BOOST_SERIALIZATION_NVP(m_int_value_ref2)
-        & BOOST_SERIALIZATION_NVP(m_int_value_ref3)
-        & BOOST_SERIALIZATION_NVP(m_compare_type1)
-        & BOOST_SERIALIZATION_NVP(m_compare_type2);
-}
-
-template <typename Archive>
-void Location::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
-        & BOOST_SERIALIZATION_NVP(m_name1)
-        & BOOST_SERIALIZATION_NVP(m_name2)
-        & BOOST_SERIALIZATION_NVP(m_content_type);
-}
-
-template <typename Archive>
-void CombatTarget::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
-        & BOOST_SERIALIZATION_NVP(m_name)
-        & BOOST_SERIALIZATION_NVP(m_content_type);
-}
-
-template <typename Archive>
-void And::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
-        & BOOST_SERIALIZATION_NVP(m_operands);
-}
-
-template <typename Archive>
-void Or::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
-        & BOOST_SERIALIZATION_NVP(m_operands);
-}
-
-template <typename Archive>
-void Not::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
-        & BOOST_SERIALIZATION_NVP(m_operand);
-}
-
-template <typename Archive>
-void OrderedAlternativesOf::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
-        & BOOST_SERIALIZATION_NVP(m_operands);
-}
-
-template <typename Archive>
-void Described::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
-        & BOOST_SERIALIZATION_NVP(m_condition)
-        & BOOST_SERIALIZATION_NVP(m_desc_stringtable_key);
-}
 } // namespace Condition
+
 
 #endif // _Conditions_h_

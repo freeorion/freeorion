@@ -65,10 +65,6 @@ struct FO_COMMON_API Constant final : public ValueRef<T>
 private:
     T           m_value;
     std::string m_top_level_content;    // in the special case that T is std::string and m_value is "CurrentContent", return this instead
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 enum ReferenceType : int {
@@ -124,11 +120,6 @@ protected:
     ReferenceType               m_ref_type = INVALID_REFERENCE_TYPE;
     std::vector<std::string>    m_property_name;
     bool                        m_return_immediate_value = false;
-
-private:
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** The variable statistic class.   The value returned by this node is
@@ -182,10 +173,6 @@ private:
     StatisticType                         m_stat_type;
     std::unique_ptr<Condition::Condition> m_sampling_condition;
     std::unique_ptr<ValueRef<T>>          m_value_ref;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** The complex variable ValueRef class. The value returned by this node
@@ -232,11 +219,6 @@ protected:
     std::unique_ptr<ValueRef<int>> m_int_ref3;
     std::unique_ptr<ValueRef<std::string>> m_string_ref1;
     std::unique_ptr<ValueRef<std::string>> m_string_ref2;
-
-private:
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** The variable static_cast class.  The value returned by this node is taken
@@ -272,10 +254,6 @@ struct FO_COMMON_API StaticCast final : public Variable<ToType>
 
 private:
     std::unique_ptr<ValueRef<FromType>> m_value_ref;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** The variable lexical_cast to string class.  The value returned by this node
@@ -303,10 +281,6 @@ struct FO_COMMON_API StringCast final : public Variable<std::string>
 
 private:
     std::unique_ptr<ValueRef<FromType>> m_value_ref;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Looks up a string ValueRef or vector of string ValueRefs, and returns
@@ -332,10 +306,6 @@ struct FO_COMMON_API UserStringLookup final : public Variable<std::string> {
 
 private:
     std::unique_ptr<ValueRef<FromType>> m_value_ref;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Returns the in-game name of the object / empire / etc. with a specified id. */
@@ -370,10 +340,6 @@ struct FO_COMMON_API NameLookup final : public Variable<std::string> {
 private:
     std::unique_ptr<ValueRef<int>> m_value_ref;
     LookupType m_lookup_type;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 enum OpType : int {
@@ -454,10 +420,6 @@ private:
     std::vector<std::unique_ptr<ValueRef<T>>>   m_operands;
     bool                                        m_constant_expr = false;
     T                                           m_cached_const_value = T();
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 FO_COMMON_API MeterType             NameToMeter(const std::string& name);
@@ -503,11 +465,6 @@ bool ValueRef<T>::operator==(const ValueRef<T>& rhs) const
         return false;
     return true;
 }
-
-template <typename T>
-template <typename Archive>
-void ValueRef<T>::serialize(Archive& ar, const unsigned int version)
-{}
 
 ///////////////////////////////////////////////////////////
 // Constant                                              //
@@ -595,14 +552,6 @@ FO_COMMON_API std::string Constant<std::string>::Dump(unsigned short ntabs) cons
 template <>
 FO_COMMON_API std::string Constant<std::string>::Eval(const ScriptingContext& context) const;
 
-template <typename T>
-template <typename Archive>
-void Constant<T>::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ValueRef)
-        & BOOST_SERIALIZATION_NVP(m_value)
-        & BOOST_SERIALIZATION_NVP(m_top_level_content);
-}
 
 ///////////////////////////////////////////////////////////
 // Variable                                              //
@@ -750,15 +699,6 @@ FO_COMMON_API std::string Variable<std::string>::Eval(const ScriptingContext& co
 template <>
 FO_COMMON_API std::vector<std::string> Variable<std::vector<std::string>>::Eval(const ScriptingContext& context) const;
 
-template <typename T>
-template <typename Archive>
-void Variable<T>::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ValueRef)
-        & BOOST_SERIALIZATION_NVP(m_ref_type)
-        & BOOST_SERIALIZATION_NVP(m_property_name)
-        & BOOST_SERIALIZATION_NVP(m_return_immediate_value);
-}
 
 ///////////////////////////////////////////////////////////
 // Statistic                                             //
@@ -1155,15 +1095,6 @@ T Statistic<T>::ReduceData(const std::map<std::shared_ptr<const UniverseObject>,
     }
 }
 
-template <typename T>
-template <typename Archive>
-void Statistic<T>::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Variable)
-        & BOOST_SERIALIZATION_NVP(m_stat_type)
-        & BOOST_SERIALIZATION_NVP(m_sampling_condition)
-        & BOOST_SERIALIZATION_NVP(m_value_ref);
-}
 
 ///////////////////////////////////////////////////////////
 // ComplexVariable                                       //
@@ -1425,17 +1356,6 @@ FO_COMMON_API std::string ComplexVariable<int>::Dump(unsigned short ntabs) const
 template <>
 FO_COMMON_API std::string ComplexVariable<std::string>::Dump(unsigned short ntabs) const;
 
-template <typename T>
-template <typename Archive>
-void ComplexVariable<T>::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Variable)
-        & BOOST_SERIALIZATION_NVP(m_int_ref1)
-        & BOOST_SERIALIZATION_NVP(m_int_ref2)
-        & BOOST_SERIALIZATION_NVP(m_int_ref3)
-        & BOOST_SERIALIZATION_NVP(m_string_ref1)
-        & BOOST_SERIALIZATION_NVP(m_string_ref2);
-}
 
 ///////////////////////////////////////////////////////////
 // StaticCast                                            //
@@ -1528,13 +1448,6 @@ unsigned int StaticCast<FromType, ToType>::GetCheckSum() const
     return retval;
 }
 
-template <typename FromType, typename ToType>
-template <typename Archive>
-void StaticCast<FromType, ToType>::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ValueRef)
-        & BOOST_SERIALIZATION_NVP(m_value_ref);
-}
 
 ///////////////////////////////////////////////////////////
 // StringCast                                            //
@@ -1639,13 +1552,6 @@ void StringCast<FromType>::SetTopLevelContent(const std::string& content_name) {
         m_value_ref->SetTopLevelContent(content_name);
 }
 
-template <typename FromType>
-template <typename Archive>
-void StringCast<FromType>::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ValueRef)
-        & BOOST_SERIALIZATION_NVP(m_value_ref);
-}
 
 ///////////////////////////////////////////////////////////
 // UserStringLookup                                      //
@@ -1756,24 +1662,6 @@ unsigned int UserStringLookup<FromType>::GetCheckSum() const
     return retval;
 }
 
-template <typename FromType>
-template <typename Archive>
-void UserStringLookup<FromType>::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ValueRef<std::string>)
-        & BOOST_SERIALIZATION_NVP(m_value_ref);
-}
-
-///////////////////////////////////////////////////////////
-// NameLookup                                            //
-///////////////////////////////////////////////////////////
-template <typename Archive>
-void NameLookup::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ValueRef<std::string>)
-        & BOOST_SERIALIZATION_NVP(m_value_ref)
-        & BOOST_SERIALIZATION_NVP(m_lookup_type);
-}
 
 ///////////////////////////////////////////////////////////
 // Operation                                             //
@@ -2315,16 +2203,6 @@ void Operation<T>::SetTopLevelContent(const std::string& content_name) {
     }
 }
 
-template <typename T>
-template <typename Archive>
-void Operation<T>::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ValueRef)
-        & BOOST_SERIALIZATION_NVP(m_op_type)
-        & BOOST_SERIALIZATION_NVP(m_operands)
-        & BOOST_SERIALIZATION_NVP(m_constant_expr)
-        & BOOST_SERIALIZATION_NVP(m_cached_const_value);
-}
 
 } // namespace ValueRef
 

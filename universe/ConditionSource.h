@@ -25,10 +25,6 @@ struct FO_COMMON_API Source final : public Condition {
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 } // namespace Condition
