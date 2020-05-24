@@ -25,6 +25,22 @@ BASIC_INDUSTRY
             effects = SetTargetIndustry value = Value * 2
 '''
 
+VERY_BAD_INDUSTRY
+'''[[BASIC_INDUSTRY]]
+
+        EffectsGroup
+            description = "VERY_BAD_INDUSTRY_DESC"
+            scope = Source
+            activation = And [
+                Planet
+                TargetIndustry low = 0
+                Focus type = "FOCUS_INDUSTRY"
+            ]
+            accountinglabel = "VERY_BAD_INDUSTRY_LABEL"
+            priority = [[DEFAULT_PRIORITY]]
+            effects = SetTargetIndustry value = Value*[[VERY_BAD_MULTIPLIER]]
+'''
+
 BAD_INDUSTRY
 '''[[BASIC_INDUSTRY]]
 

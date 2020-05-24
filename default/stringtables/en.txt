@@ -8431,7 +8431,7 @@ SP_EXOBOT
 Exobot
 
 SP_EXOBOT_GAMEPLAY_DESC
-'''Semi-autonomous robots, designed for industry on [[PT_BARREN]], [[PT_RADIATED]], and [[PT_INFERNO]] planets.
+'''Semi-autonomous robots, built adapted to work on planets of any kind of environment.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
 '''
 
@@ -11272,9 +11272,9 @@ Robotic Production
 PRO_ROBOTIC_PROD_DESC
 '''Increases [[metertype METER_TARGET_INDUSTRY]] on all planets with the Industry focus by 0.05 per [[metertype METER_POPULATION]].
 
-Exobots, as they become commonly known, are a marvel of form meets function. They are robots designed to fulfill nearly any manufacturing job, in fields as wide ranging as electronics to large-scale construction. Easily mass produced, they serve best on colonies that place a high priority on industry. Every world focused primarily on industry receives a team of Exobots, greatly increasing industrial production.
+Robots designed to fulfill nearly any job, in fields as wide ranging as electronics to large-scale construction, improve the performance of the worlds focused primarily on industry.
 
-Although high level initial design and initial facility setup still require active supervision, the elimination of operators from the actual production process eliminates many bottlenecks. Robots work continuously, without perpetual demands for greater economic compensation. Robots have much greater tolerance for hazardous environmental conditions in the factory, and do not require additional habitable space off-site. Robots perform their assigned tasks flawlessly, or at least as well as they are instructed.'''
+Although high level design and initial facility setup still require active supervision, the elimination of operators from the actual production process eliminates many bottlenecks. Robots work continuously and have much greater tolerance for hazardous environmental conditions in the factory, and do not require additional habitable space off-site. Robots perform their assigned tasks flawlessly, or at least as well as they are instructed.'''
 
 PRO_EXOBOTS
 Exobots
@@ -14919,6 +14919,9 @@ Planet <i>%1%</i> [[TT_SPECIAL]]
 NO_INDUSTRY_DESC
 −−−	No [[metertype METER_INDUSTRY]]
 
+VERY_BAD_INDUSTRY_DESC
+−−	Very bad [[metertype METER_INDUSTRY]]: 50%
+
 BAD_INDUSTRY_DESC
 −	Bad [[metertype METER_INDUSTRY]]: 75%
 
@@ -14936,6 +14939,9 @@ ULTIMATE_INDUSTRY_DESC
 
 NO_RESEARCH_DESC
 −−−	No [[metertype METER_RESEARCH]]
+
+VERY_BAD_RESEARCH_DESC
+−−	Very bad [[metertype METER_RESEARCH]]: 50%
 
 BAD_RESEARCH_DESC
 −	Bad [[metertype METER_RESEARCH]]: 75%
@@ -15215,6 +15221,11 @@ FOCUS_INDUSTRY_LABEL
 
 # %1% FIXME
 # %2% FIXME
+VERY_BAD_INDUSTRY_LABEL
+%2% Very Bad Industry
+
+# %1% FIXME
+# %2% FIXME
 BAD_INDUSTRY_LABEL
 %2% Bad Industry
 
@@ -15237,6 +15248,11 @@ ULTIMATE_INDUSTRY_LABEL
 # %2% FIXME
 FOCUS_RESEARCH_LABEL
 %2% Research Focus
+
+# %1% FIXME
+# %2% FIXME
+VERY_BAD_RESEARCH_LABEL
+%2% Very Bad Research
 
 # %1% FIXME
 # %2% FIXME
