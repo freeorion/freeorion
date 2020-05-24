@@ -289,18 +289,20 @@ namespace parse {
 
         boost::filesystem::path manifest_file;
 
+        ScopedTimer timer("Species Parsing", true);
+
         for (const auto& file : ListDir(path, IsFOCScript)) {
             if (file.filename() == "SpeciesCensusOrdering.focs.txt" ) {
                 manifest_file = file;
                 continue;
             }
 
-            /*auto success =*/ detail::parse_file<grammar, start_rule_payload::first_type>(lexer, file, species_);
+            detail::parse_file<grammar, start_rule_payload::first_type>(lexer, file, species_);
         }
 
         if (!manifest_file.empty()) {
             try {
-                /*auto success =*/ detail::parse_file<manifest_grammar, start_rule_payload::second_type>(
+                detail::parse_file<manifest_grammar, start_rule_payload::second_type>(
                     lexer, manifest_file, ordering);
 
             } catch (const std::runtime_error& e) {

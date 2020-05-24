@@ -240,10 +240,12 @@ namespace parse {
         g_categories_seen = &categories_seen;
         g_categories = &categories;
 
-        /*auto success =*/ detail::parse_file<grammar, TechManager::TechContainer>(lexer, path / "Categories.inf", techs_);
+        ScopedTimer timer("Techs Parsing", true);
+
+        detail::parse_file<grammar, TechManager::TechContainer>(lexer, path / "Categories.inf", techs_);
 
         for (const auto& file : ListDir(path, IsFOCScript))
-            /*auto success =*/ detail::parse_file<grammar, TechManager::TechContainer>(lexer, file, techs_);
+            detail::parse_file<grammar, TechManager::TechContainer>(lexer, file, techs_);
 
         return std::make_tuple(std::move(techs_), std::move(categories), categories_seen);
     }

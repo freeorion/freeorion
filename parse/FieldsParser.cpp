@@ -115,8 +115,10 @@ namespace parse {
         const lexer lexer;
         start_rule_payload field_types;
 
+        ScopedTimer timer("Fields Parsing", true);
+
         for (const auto& file : ListDir(path, IsFOCScript))
-            /*auto success =*/ detail::parse_file<grammar, start_rule_payload>(lexer, file, field_types);
+            detail::parse_file<grammar, start_rule_payload>(lexer, file, field_types);
 
         return field_types;
     }

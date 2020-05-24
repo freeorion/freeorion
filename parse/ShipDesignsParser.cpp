@@ -229,6 +229,8 @@ namespace parse {
 
         boost::filesystem::path manifest_file;
 
+        ScopedTimer timer("Ship Designs Parsing", true);
+
         for (const auto& file : ListDir(path, IsFOCScript)) {
             TraceLogger() << "Parse ship design file " << file.filename();
             if (file.filename() == "ShipDesignOrdering.focs.txt" ) {
