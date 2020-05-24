@@ -899,6 +899,12 @@ Accretion Disc
 FLD_ACCRETION_DISC_DESC
 An accretion disc is a structure (often a circumstellar disc) formed by diffused material in orbital motion around a massive central body. All planets in the affected system get a [[metertype METER_SUPPLY]] penalty of -1.
 
+FLD_METEOR_BLIZZARD
+Meteor Blizzard
+
+FLD_METEOR_BLIZZARD_DESC
+Mystical and mysterious appearance of meteors. Generates one [[metertype METER_RESEARCH]] per ship due to scientific examination of the phenomenom.
+
 
 ##
 ## Predefined starting fleets
