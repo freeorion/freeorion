@@ -8,7 +8,7 @@ FieldType
             scope = Source
             effects = [
                 SetSpeed value = 10
-                MoveTowards speed = Source.Speed/1.4 x = UniverseCentreX y = UniverseCentreY
+                MoveTowards speed = Source.Speed/2.8 x = UniverseCentreX y = UniverseCentreY
                 MoveInOrbit speed = Source.Speed/1.4 x = UniverseCentreX y = UniverseCentreY
             ]
 
@@ -36,7 +36,7 @@ FieldType
         EffectsGroup    // affect stealth / detection of objects in storm
             scope = And [
                 Not Field
-                WithinDistance distance = Source.Size condition = Source
+                WithinDistance distance = Source.Size * 0.9 condition = Source
             ]
             stackinggroup = "ION_STORM_STEALTH_DETECTION_REDUCTION"
             effects = [
