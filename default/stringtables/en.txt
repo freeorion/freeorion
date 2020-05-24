@@ -911,6 +911,12 @@ Meteor Blizzard
 FLD_METEOR_BLIZZARD_DESC
 Mystical and mysterious appearance of meteors. Generates one [[metertype METER_RESEARCH]] per ship due to scientific examination of the phenomenom.
 
+FLD_VOID_RIFT
+Void Rift
+
+FLD_VOID_RIFT_DESC
+Anomalous rift in space that reduces ship [[metertype METER_SPEED]] by 50%.
+
 
 ##
 ## Predefined starting fleets
