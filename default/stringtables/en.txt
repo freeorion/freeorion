@@ -873,7 +873,7 @@ FLD_NEBULA_1
 Nebula
 
 FLD_NEBULA_1_DESC
-Cloud of hydrogen gas that could coalesce to form a new star.
+Cloud of hydrogen gas that could coalesce to form a new star. Ship [[metertype METER_SPEED]] and [[metertype METER_DETECTION]] are reduced by 20, [[metertype METER_STEALTH]] is increased by 20.
 
 FLD_NEBULA_2
 [[FLD_NEBULA_1]]
