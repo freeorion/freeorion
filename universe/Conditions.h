@@ -399,7 +399,6 @@ struct FO_COMMON_API HasSpecial final : public Condition {
     explicit HasSpecial();
     explicit HasSpecial(const std::string& name);
     explicit HasSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
-    explicit HasSpecial(ValueRef::ValueRef<std::string>* name);
     HasSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
                std::unique_ptr<ValueRef::ValueRef<int>>&& since_turn_low,
                std::unique_ptr<ValueRef::ValueRef<int>>&& since_turn_high = nullptr);
