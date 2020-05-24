@@ -47,7 +47,7 @@ GameRule
     description = "RULE_ENABLE_SUPER_TESTER_DESC"
     category = "CONTENT"
     type = Toggle
-    default = On
+    default = Off
 
 GameRule
     name = "RULE_TEST_STRING"
