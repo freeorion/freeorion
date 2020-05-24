@@ -1,12 +1,12 @@
 #ifndef _Effects_h_
 #define _Effects_h_
 
-#include "Effect.h"
 
+#include <boost/optional/optional.hpp>
+#include <boost/serialization/nvp.hpp>
+#include "Effect.h"
 #include "../util/Export.h"
 
-#include <boost/serialization/nvp.hpp>
-#include <boost/optional/optional.hpp>
 
 namespace Condition {
     typedef std::vector<std::shared_ptr<const UniverseObject>> ObjectSet;

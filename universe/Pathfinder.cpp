@@ -1,17 +1,8 @@
 #include "Pathfinder.h"
 
-#include "../util/Logger.h"
-#include "../util/ScopedTimer.h"
-#include "../util/AppInterface.h"
-#include "../Empire/EmpireManager.h"
-#include "Field.h"
-#include "Fleet.h"
-#include "Ship.h"
-#include "System.h"
-#include "UniverseObject.h"
-#include "Universe.h"
-#include "Predicates.h"
-
+#include <algorithm>
+#include <limits>
+#include <stdexcept>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/breadth_first_search.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
@@ -19,10 +10,18 @@
 #include <boost/thread/locks.hpp>
 #include <boost/thread/shared_mutex.hpp>
 #include <boost/variant/variant.hpp>
+#include "Field.h"
+#include "Fleet.h"
+#include "Predicates.h"
+#include "Ship.h"
+#include "System.h"
+#include "UniverseObject.h"
+#include "Universe.h"
+#include "../Empire/EmpireManager.h"
+#include "../util/AppInterface.h"
+#include "../util/Logger.h"
+#include "../util/ScopedTimer.h"
 
-#include <algorithm>
-#include <stdexcept>
-#include <limits>
 
 namespace {
     const double    WORMHOLE_TRAVEL_DISTANCE = 0.1;         // the effective distance for ships travelling along a wormhole, for determining how much of their speed is consumed by the jump

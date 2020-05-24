@@ -1,9 +1,9 @@
 #include "Encyclopedia.h"
 
-#include "../util/i18n.h"
+#include "../util/CheckSums.h"
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
-#include "../util/CheckSums.h"
+#include "../util/i18n.h"
 
 
 Encyclopedia& GetEncyclopedia() {

@@ -2,20 +2,19 @@
 #define _UniverseObject_h_
 
 
-#include "EnumsFwd.h"
-#include "Meter.h"
-#include "../util/Export.h"
-#include "../util/blocking_combiner.h"
-
-#include <boost/serialization/access.hpp>
-#include <boost/python/detail/destroy.hpp>
-#include <boost/signals2/signal.hpp>
-#include <boost/signals2/optional_last_value.hpp>
-#include <boost/container/flat_map.hpp>
-
 #include <set>
 #include <string>
 #include <vector>
+#include <boost/container/flat_map.hpp>
+#include <boost/python/detail/destroy.hpp>
+#include <boost/serialization/access.hpp>
+#include <boost/signals2/optional_last_value.hpp>
+#include <boost/signals2/signal.hpp>
+#include "EnumsFwd.h"
+#include "Meter.h"
+#include "../util/blocking_combiner.h"
+#include "../util/Export.h"
+
 
 using boost::container::flat_map;
 

@@ -1,23 +1,23 @@
 #ifndef _ValueRefs_h_
 #define _ValueRefs_h_
 
-#include "ScriptingContext.h"
-#include "ValueRef.h"
-#include "Condition.h"
-#include "Universe.h"
-#include "../util/Export.h"
-#include "../util/i18n.h"
-#include "../util/Random.h"
-#include "../util/CheckSums.h"
-
-#include <boost/algorithm/string/case_conv.hpp>
-#include <boost/lexical_cast.hpp>
-#include <boost/format.hpp>
-#include <boost/serialization/nvp.hpp>
 
 #include <iterator>
 #include <map>
 #include <set>
+#include <boost/algorithm/string/case_conv.hpp>
+#include <boost/format.hpp>
+#include <boost/lexical_cast.hpp>
+#include <boost/serialization/nvp.hpp>
+#include "Condition.h"
+#include "ScriptingContext.h"
+#include "Universe.h"
+#include "ValueRef.h"
+#include "../util/CheckSums.h"
+#include "../util/Export.h"
+#include "../util/i18n.h"
+#include "../util/Random.h"
+
 
 namespace CheckSums {
     template <typename T>

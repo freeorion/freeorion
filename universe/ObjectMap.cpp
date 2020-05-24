@@ -1,16 +1,16 @@
 #include "ObjectMap.h"
 
-#include "Universe.h"
-#include "UniverseObject.h"
-#include "Ship.h"
+#include "Building.h"
+#include "Enums.h"
+#include "Field.h"
 #include "Fleet.h"
 #include "Planet.h"
+#include "Ship.h"
 #include "System.h"
-#include "Building.h"
-#include "Field.h"
-#include "Enums.h"
-#include "../util/Logger.h"
+#include "UniverseObject.h"
+#include "Universe.h"
 #include "../util/AppInterface.h"
+#include "../util/Logger.h"
 
 
 #define FOR_EACH_SPECIALIZED_MAP(f, ...)  { f(m_resource_centers, ##__VA_ARGS__);   \

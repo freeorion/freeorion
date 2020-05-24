@@ -2,6 +2,7 @@
 
 #include <cassert>
 
+
 namespace {
     const std::string EMPTY_STRING = "";
     const std::string PATH_BINARY_STR = "PATH_BINARY";

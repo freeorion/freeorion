@@ -1,8 +1,8 @@
 #ifndef _ShipPart_h_
 #define _ShipPart_h_
 
-#include <boost/serialization/nvp.hpp>
 
+#include <boost/serialization/nvp.hpp>
 #include <GG/Enum.h>
 #include "CommonParams.h"
 #include "../util/Pending.h"

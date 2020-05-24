@@ -2,19 +2,16 @@
 #define _Conditions_h_
 
 
-#include "EnumsFwd.h"
-#include "Condition.h"
-#include "ConditionSource.h"
-#include "ConditionAll.h"
-
-#include "../util/Export.h"
-#include "../util/CheckSums.h"
-
-#include <boost/serialization/nvp.hpp>
-
 #include <memory>
 #include <string>
 #include <vector>
+#include <boost/serialization/nvp.hpp>
+#include "ConditionAll.h"
+#include "ConditionSource.h"
+#include "Condition.h"
+#include "EnumsFwd.h"
+#include "../util/CheckSums.h"
+#include "../util/Export.h"
 
 
 namespace ValueRef {

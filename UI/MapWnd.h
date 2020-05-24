@@ -1,21 +1,18 @@
 #ifndef _MapWnd_h_
 #define _MapWnd_h_
 
-#include <GG/GGFwd.h>
-#include <GG/GLClientAndServerBuffer.h>
-
-#include "CUIWnd.h"
-#include "CUISlider.h"
-#include "../universe/EnumsFwd.h"
-#include "../universe/Fleet.h"
-#include "FleetButton.h"
-
-#include <boost/functional/hash.hpp>
-
 #include <chrono>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
+#include <boost/functional/hash.hpp>
+#include <GG/GGFwd.h>
+#include <GG/GLClientAndServerBuffer.h>
+#include "CUISlider.h"
+#include "CUIWnd.h"
+#include "FleetButton.h"
+#include "../universe/EnumsFwd.h"
+#include "../universe/Fleet.h"
 
 
 class FleetWnd;

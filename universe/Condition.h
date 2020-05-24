@@ -1,13 +1,13 @@
 #ifndef _Condition_h_
 #define _Condition_h_
 
-#include "../util/Export.h"
-
-#include <boost/serialization/access.hpp>
 
 #include <memory>
 #include <string>
 #include <vector>
+#include <boost/serialization/access.hpp>
+#include "../util/Export.h"
+
 
 class UniverseObject;
 struct ScriptingContext;

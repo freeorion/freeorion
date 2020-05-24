@@ -1,17 +1,17 @@
 #include "ResourceCenter.h"
 
-#include "../util/Directories.h"
-#include "../util/Logger.h"
-#include "../util/OptionsDB.h"
-#include "../util/AppInterface.h"
-#include "../Empire/Empire.h"
+#include <stdexcept>
+#include "Building.h"
+#include "Enums.h"
 #include "Fleet.h"
 #include "Planet.h"
 #include "System.h"
-#include "Building.h"
-#include "Enums.h"
+#include "../Empire/Empire.h"
+#include "../util/AppInterface.h"
+#include "../util/Directories.h"
+#include "../util/Logger.h"
+#include "../util/OptionsDB.h"
 
-#include <stdexcept>
 
 namespace {
     static const std::string EMPTY_STRING;

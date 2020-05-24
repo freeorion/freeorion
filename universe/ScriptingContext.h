@@ -1,12 +1,12 @@
 #ifndef _ScriptingContext_h_
 #define _ScriptingContext_h_
 
+
+#include <memory>
+#include <boost/any.hpp>
 #include "Universe.h"
 #include "../util/AppInterface.h"
 
-#include <boost/any.hpp>
-
-#include <memory>
 
 class UniverseObject;
 

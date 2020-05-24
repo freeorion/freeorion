@@ -1,8 +1,9 @@
 #ifndef _Building_h_
 #define _Building_h_
 
-#include "UniverseObject.h"
+
 #include "ObjectMap.h"
+#include "UniverseObject.h"
 #include "../util/Export.h"
 
 

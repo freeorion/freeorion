@@ -1,15 +1,14 @@
 #ifndef _Encyclopedia_h_
 #define _Encyclopedia_h_
 
+
+#include <map>
+#include <string>
+#include <vector>
+#include <boost/optional/optional.hpp>
+#include "../util/Export.h"
 #include "../util/Pending.h"
 
-#include <boost/optional/optional.hpp>
-
-#include <string>
-#include <map>
-#include <vector>
-
-#include "../util/Export.h"
 
 struct FO_COMMON_API EncyclopediaArticle {
     EncyclopediaArticle() = default;

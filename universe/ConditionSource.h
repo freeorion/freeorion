@@ -1,7 +1,9 @@
 #ifndef _ConditionSource_h_
 #define _ConditionSource_h_
 
+
 #include "Condition.h"
+
 
 /** this namespace holds Condition and its subclasses; these classes
   * represent predicates about UniverseObjects used by, for instance, the

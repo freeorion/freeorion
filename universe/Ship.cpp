@@ -1,22 +1,22 @@
 #include "Ship.h"
 
-#include "../util/i18n.h"
-#include "../util/Logger.h"
-#include "../util/Random.h"
-#include "../util/AppInterface.h"
-#include "../util/GameRules.h"
+#include <boost/lexical_cast.hpp>
+#include "Enums.h"
 #include "Fleet.h"
 #include "Predicates.h"
 #include "ShipDesign.h"
-#include "ShipPart.h"
 #include "ShipHull.h"
+#include "ShipPart.h"
 #include "Species.h"
 #include "Universe.h"
-#include "Enums.h"
-#include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
+#include "../Empire/Empire.h"
+#include "../util/AppInterface.h"
+#include "../util/GameRules.h"
+#include "../util/Logger.h"
+#include "../util/Random.h"
+#include "../util/i18n.h"
 
-#include <boost/lexical_cast.hpp>
 
 class Species;
 const Species* GetSpecies(const std::string& name);

@@ -1,13 +1,10 @@
 #ifndef _ENCYCLOPEDIA_DETAIL_PANEL_H_
 #define _ENCYCLOPEDIA_DETAIL_PANEL_H_
 
-
+#include <memory>
 #include <GG/GGFwd.h>
-
 #include "CUIWnd.h"
 #include "../universe/EnumsFwd.h"
-
-#include <memory>
 
 
 class Planet;

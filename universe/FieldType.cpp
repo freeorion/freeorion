@@ -4,8 +4,8 @@
 #include "ConditionSource.h"
 #include "Effects.h"
 #include "Enums.h"
-#include "ValueRefs.h"
 #include "UniverseObject.h"
+#include "ValueRefs.h"
 #include "../util/CheckSums.h"
 
 

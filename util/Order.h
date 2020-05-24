@@ -1,16 +1,15 @@
 #ifndef _Order_h_
 #define _Order_h_
 
-#include "../universe/EnumsFwd.h"
-#include "../Empire/Empire.h"
-#include "Export.h"
-
+#include <string>
+#include <vector>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
 #include <boost/uuid/uuid.hpp>
+#include "Export.h"
+#include "../Empire/Empire.h"
+#include "../universe/EnumsFwd.h"
 
-#include <string>
-#include <vector>
 
 class ShipDesign;
 

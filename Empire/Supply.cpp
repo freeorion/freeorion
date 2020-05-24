@@ -1,20 +1,20 @@
 #include "Supply.h"
 
-#include "EmpireManager.h"
+#include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/connected_components.hpp>
+#include <boost/graph/connected_components.hpp>
 #include "Empire.h"
+#include "EmpireManager.h"
+#include "../universe/Enums.h"
+#include "../universe/Fleet.h"
+#include "../universe/Planet.h"
+#include "../universe/Predicates.h"
+#include "../universe/System.h"
 #include "../universe/Universe.h"
 #include "../universe/UniverseObject.h"
-#include "../universe/System.h"
-#include "../universe/Planet.h"
-#include "../universe/Fleet.h"
-#include "../universe/Enums.h"
-#include "../universe/Predicates.h"
 #include "../util/AppInterface.h"
 #include "../util/Logger.h"
 
-#include <boost/graph/connected_components.hpp>
-#include <boost/graph/adjacency_list.hpp>
-#include <boost/graph/connected_components.hpp>
 
 namespace {
     DeclareThreadSafeLogger(supply);

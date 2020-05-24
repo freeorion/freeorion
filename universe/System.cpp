@@ -1,20 +1,19 @@
 #include "System.h"
 
-#include "Fleet.h"
-#include "Ship.h"
-#include "Planet.h"
 #include "Building.h"
-#include "Predicates.h"
-#include "Universe.h"
 #include "Enums.h"
-
-#include "../Empire/Empire.h"
+#include "Fleet.h"
+#include "Planet.h"
+#include "Predicates.h"
+#include "Ship.h"
+#include "Universe.h"
 #include "../Empire/EmpireManager.h"
-
-#include "../util/i18n.h"
+#include "../Empire/Empire.h"
+#include "../util/AppInterface.h"
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
-#include "../util/AppInterface.h"
+#include "../util/i18n.h"
+
 
 System::System() :
     m_star(INVALID_STAR_TYPE)

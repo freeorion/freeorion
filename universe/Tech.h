@@ -1,22 +1,21 @@
 #ifndef _Tech_h_
 #define _Tech_h_
 
+
+#include <map>
+#include <set>
+#include <string>
+#include <vector>
+#include <boost/algorithm/string/case_conv.hpp>
+#include <boost/multi_index/key_extractors.hpp>
+#include <boost/multi_index/ordered_index.hpp>
+#include <boost/multi_index_container.hpp>
+#include <boost/optional/optional.hpp>
+#include <GG/Clr.h>
 #include "EnumsFwd.h"
 #include "../util/Export.h"
 #include "../util/Pending.h"
 
-#include <boost/multi_index_container.hpp>
-#include <boost/multi_index/key_extractors.hpp>
-#include <boost/multi_index/ordered_index.hpp>
-#include <boost/algorithm/string/case_conv.hpp>
-#include <boost/optional/optional.hpp>
-
-#include <set>
-#include <string>
-#include <vector>
-#include <map>
-
-#include <GG/Clr.h>
 
 namespace Effect
 { class EffectsGroup; }

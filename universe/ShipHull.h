@@ -1,9 +1,9 @@
 #ifndef _ShipHull_h_
 #define _ShipHull_h_
 
+
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
-
 #include "CommonParams.h"
 #include "../util/Pending.h"
 

@@ -1,10 +1,11 @@
 #ifndef _Field_h_
 #define _Field_h_
 
-#include "UniverseObject.h"
 
+#include "UniverseObject.h"
 #include "../util/Export.h"
 #include "../util/Pending.h"
+
 
 namespace Effect {
     class EffectsGroup;

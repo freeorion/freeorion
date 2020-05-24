@@ -1,11 +1,12 @@
 #ifndef _ResourceCenter_h_
 #define _ResourceCenter_h_
 
-#include "EnumsFwd.h"
+
 #include <boost/signals2/signal.hpp>
 #include <boost/serialization/nvp.hpp>
-
+#include "EnumsFwd.h"
 #include "../util/Export.h"
+
 
 class Empire;
 class Meter;

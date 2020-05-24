@@ -1,12 +1,13 @@
 #ifndef _Pathfinder_h_
 #define _Pathfinder_h_
 
-#include "UniverseObject.h"
 
-#include <vector>
 #include <map>
 #include <set>
 #include <unordered_set>
+#include <vector>
+#include "UniverseObject.h"
+
 
 #ifdef FREEORION_WIN32
 // because the linker gets confused about Win32 API functions...

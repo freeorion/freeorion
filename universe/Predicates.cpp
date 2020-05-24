@@ -1,13 +1,14 @@
 #include "Predicates.h"
 
 #include "Building.h"
+#include "Field.h"
+#include "Fighter.h"
 #include "Fleet.h"
 #include "Planet.h"
 #include "Ship.h"
 #include "System.h"
-#include "Field.h"
-#include "Fighter.h"
 #include "UniverseObject.h"
+
 
 ////////////////////////////////////////////////
 // UniverseObjectVisitor
