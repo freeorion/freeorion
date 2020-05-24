@@ -86,15 +86,25 @@ enum ReferenceType : int {
 template <typename T>
 struct FO_COMMON_API Variable : public ValueRef<T>
 {
-    Variable(ReferenceType ref_type, std::string property_name,
+    template <typename S>
+    Variable(ReferenceType ref_type, S&& property_name,
              bool return_immediate_value = false);
+
     Variable(ReferenceType ref_type, const char* property_name,
              bool return_immediate_value = false);
-    explicit Variable(ReferenceType ref_type, std::vector<std::string> property_name = {},
+
+    explicit Variable(ReferenceType ref_type,
              bool return_immediate_value = false);
+
     Variable(ReferenceType ref_type,
-             const boost::optional<std::string>& container_name,
-             const std::string& property_name,
+             boost::optional<std::string>&& container_name,
+             std::string&& property_name,
+             bool return_immediate_value = false);
+
+    Variable(ReferenceType ref_type, std::vector<std::string>&& property_name,
+             bool return_immediate_value = false);
+
+    Variable(ReferenceType ref_type, const std::vector<std::string>& property_name,
              bool return_immediate_value = false);
 
     bool operator==(const ValueRef<T>& rhs) const override;
@@ -169,7 +179,7 @@ protected:
     T ReduceData(const std::map<std::shared_ptr<const UniverseObject>, T>& object_property_values) const;
 
 private:
-    StatisticType                             m_stat_type;
+    StatisticType                         m_stat_type;
     std::unique_ptr<Condition::Condition> m_sampling_condition;
     std::unique_ptr<ValueRef<T>>          m_value_ref;
 
@@ -183,7 +193,16 @@ private:
 template <typename T>
 struct FO_COMMON_API ComplexVariable final : public Variable<T>
 {
-    explicit ComplexVariable(const std::string& variable_name,
+    template<typename S>
+    explicit ComplexVariable(S&& variable_name,
+                             std::unique_ptr<ValueRef<int>>&& int_ref1 = nullptr,
+                             std::unique_ptr<ValueRef<int>>&& int_ref2 = nullptr,
+                             std::unique_ptr<ValueRef<int>>&& int_ref3 = nullptr,
+                             std::unique_ptr<ValueRef<std::string>>&& string_ref1 = nullptr,
+                             std::unique_ptr<ValueRef<std::string>>&& string_ref2 = nullptr,
+                             bool return_immediate_value = false);
+
+    explicit ComplexVariable(const char* variable_name,
                              std::unique_ptr<ValueRef<int>>&& int_ref1 = nullptr,
                              std::unique_ptr<ValueRef<int>>&& int_ref2 = nullptr,
                              std::unique_ptr<ValueRef<int>>&& int_ref3 = nullptr,
@@ -265,7 +284,7 @@ private:
 template <typename FromType>
 struct FO_COMMON_API StringCast final : public Variable<std::string>
 {
-    StringCast(std::unique_ptr<ValueRef<FromType>>&& value_ref);
+    explicit StringCast(std::unique_ptr<ValueRef<FromType>>&& value_ref);
 
     bool operator==(const ValueRef<std::string>& rhs) const override;
     std::string Eval(const ScriptingContext& context) const override;
@@ -495,7 +514,7 @@ void ValueRef<T>::serialize(Archive& ar, const unsigned int version)
 ///////////////////////////////////////////////////////////
 template <typename T>
 Constant<T>::Constant(T value) :
-    m_value(value)
+    m_value(std::move(value))
 {}
 
 template <typename T>
@@ -589,10 +608,24 @@ void Constant<T>::serialize(Archive& ar, const unsigned int version)
 // Variable                                              //
 ///////////////////////////////////////////////////////////
 template <typename T>
-Variable<T>::Variable(ReferenceType ref_type, std::vector<std::string> property_name,
+Variable<T>::Variable(ReferenceType ref_type, std::vector<std::string>&& property_name,
                       bool return_immediate_value) :
     m_ref_type(ref_type),
     m_property_name(std::move(property_name)),
+    m_return_immediate_value(return_immediate_value)
+{}
+
+template <typename T>
+Variable<T>::Variable(ReferenceType ref_type, const std::vector<std::string>& property_name,
+                      bool return_immediate_value) :
+    m_ref_type(ref_type),
+    m_property_name(property_name),
+    m_return_immediate_value(return_immediate_value)
+{}
+
+template <typename T>
+Variable<T>::Variable(ReferenceType ref_type, bool return_immediate_value) :
+    m_ref_type(ref_type),
     m_return_immediate_value(return_immediate_value)
 {}
 
@@ -605,7 +638,8 @@ Variable<T>::Variable(ReferenceType ref_type, const char* property_name,
 {}
 
 template <typename T>
-Variable<T>::Variable(ReferenceType ref_type, std::string property_name,
+template <typename S>
+Variable<T>::Variable(ReferenceType ref_type, S&& property_name,
                       bool return_immediate_value) :
     m_ref_type(ref_type),
     m_return_immediate_value(return_immediate_value)
@@ -613,17 +647,15 @@ Variable<T>::Variable(ReferenceType ref_type, std::string property_name,
 
 template <typename T>
 Variable<T>::Variable(ReferenceType ref_type,
-                      const boost::optional<std::string>& container_name,
-                      const std::string& property_name,
+                      boost::optional<std::string>&& container_name,
+                      std::string&& property_name,
                       bool return_immediate_value) :
     m_ref_type(ref_type),
-    m_property_name(),
     m_return_immediate_value(return_immediate_value)
 {
     if (container_name)
-        m_property_name.push_back(*container_name);
-
-    m_property_name.push_back(property_name);
+        m_property_name.emplace_back(std::move(*container_name));
+    m_property_name.emplace_back(std::move(property_name));
 }
 
 template <typename T>
@@ -734,7 +766,7 @@ void Variable<T>::serialize(Archive& ar, const unsigned int version)
 template <typename T>
 Statistic<T>::Statistic(std::unique_ptr<ValueRef<T>>&& value_ref, StatisticType stat_type,
                         std::unique_ptr<Condition::Condition>&& sampling_condition) :
-    Variable<T>(NON_OBJECT_REFERENCE, ""),
+    Variable<T>(NON_OBJECT_REFERENCE),
     m_stat_type(stat_type),
     m_sampling_condition(std::move(sampling_condition)),
     m_value_ref(std::move(value_ref))
@@ -1137,7 +1169,24 @@ void Statistic<T>::serialize(Archive& ar, const unsigned int version)
 // ComplexVariable                                       //
 ///////////////////////////////////////////////////////////
 template <typename T>
-ComplexVariable<T>::ComplexVariable(const std::string& variable_name,
+template <typename S>
+ComplexVariable<T>::ComplexVariable(S&& variable_name,
+                                    std::unique_ptr<ValueRef<int>>&& int_ref1,
+                                    std::unique_ptr<ValueRef<int>>&& int_ref2,
+                                    std::unique_ptr<ValueRef<int>>&& int_ref3,
+                                    std::unique_ptr<ValueRef<std::string>>&& string_ref1,
+                                    std::unique_ptr<ValueRef<std::string>>&& string_ref2,
+                                    bool return_immediate_value) :
+    Variable<T>(NON_OBJECT_REFERENCE, std::forward<S>(variable_name), return_immediate_value),
+    m_int_ref1(std::move(int_ref1)),
+    m_int_ref2(std::move(int_ref2)),
+    m_int_ref3(std::move(int_ref3)),
+    m_string_ref1(std::move(string_ref1)),
+    m_string_ref2(std::move(string_ref2))
+{}
+
+template <typename T>
+ComplexVariable<T>::ComplexVariable(const char* variable_name,
                                     std::unique_ptr<ValueRef<int>>&& int_ref1,
                                     std::unique_ptr<ValueRef<int>>&& int_ref2,
                                     std::unique_ptr<ValueRef<int>>&& int_ref3,
