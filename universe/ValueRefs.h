@@ -86,9 +86,11 @@ enum ReferenceType : int {
 template <typename T>
 struct FO_COMMON_API Variable : public ValueRef<T>
 {
-    explicit Variable(ReferenceType ref_type, const std::string& property_name = "",
-                      bool return_immediate_value = false);
-    Variable(ReferenceType ref_type, const std::vector<std::string>& property_name,
+    Variable(ReferenceType ref_type, std::string property_name,
+             bool return_immediate_value = false);
+    Variable(ReferenceType ref_type, const char* property_name,
+             bool return_immediate_value = false);
+    explicit Variable(ReferenceType ref_type, std::vector<std::string> property_name = {},
              bool return_immediate_value = false);
     Variable(ReferenceType ref_type,
              const boost::optional<std::string>& container_name,
@@ -439,11 +441,11 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-FO_COMMON_API MeterType     NameToMeter(const std::string& name);
-FO_COMMON_API std::string   MeterToName(MeterType meter);
-FO_COMMON_API std::string   ReconstructName(const std::vector<std::string>& property_name,
-                                            ReferenceType ref_type,
-                                            bool return_immediate_value = false);
+FO_COMMON_API MeterType             NameToMeter(const std::string& name);
+FO_COMMON_API const std::string&    MeterToName(MeterType meter);
+FO_COMMON_API std::string           ReconstructName(const std::vector<std::string>& property_name,
+                                                    ReferenceType ref_type,
+                                                    bool return_immediate_value = false);
 
 FO_COMMON_API std::string FormatedDescriptionPropertyNames(
     ReferenceType ref_type, const std::vector<std::string>& property_names,
@@ -587,22 +589,27 @@ void Constant<T>::serialize(Archive& ar, const unsigned int version)
 // Variable                                              //
 ///////////////////////////////////////////////////////////
 template <typename T>
-Variable<T>::Variable(ReferenceType ref_type, const std::vector<std::string>& property_name,
+Variable<T>::Variable(ReferenceType ref_type, std::vector<std::string> property_name,
                       bool return_immediate_value) :
     m_ref_type(ref_type),
-    m_property_name(property_name.begin(), property_name.end()),
+    m_property_name(std::move(property_name)),
     m_return_immediate_value(return_immediate_value)
 {}
 
 template <typename T>
-Variable<T>::Variable(ReferenceType ref_type, const std::string& property_name,
+Variable<T>::Variable(ReferenceType ref_type, const char* property_name,
                       bool return_immediate_value) :
     m_ref_type(ref_type),
-    m_property_name(),
+    m_property_name{1, property_name},
     m_return_immediate_value(return_immediate_value)
-{
-    m_property_name.push_back(property_name);
-}
+{}
+
+template <typename T>
+Variable<T>::Variable(ReferenceType ref_type, std::string property_name,
+                      bool return_immediate_value) :
+    m_ref_type(ref_type),
+    m_return_immediate_value(return_immediate_value)
+{ m_property_name.emplace_back(std::move(property_name)); }
 
 template <typename T>
 Variable<T>::Variable(ReferenceType ref_type,
@@ -1137,7 +1144,7 @@ ComplexVariable<T>::ComplexVariable(const std::string& variable_name,
                                     std::unique_ptr<ValueRef<std::string>>&& string_ref1,
                                     std::unique_ptr<ValueRef<std::string>>&& string_ref2,
                                     bool return_immediate_value) :
-    Variable<T>(NON_OBJECT_REFERENCE, std::vector<std::string>(1, variable_name), return_immediate_value),
+    Variable<T>(NON_OBJECT_REFERENCE, variable_name, return_immediate_value),
     m_int_ref1(std::move(int_ref1)),
     m_int_ref2(std::move(int_ref2)),
     m_int_ref3(std::move(int_ref3)),

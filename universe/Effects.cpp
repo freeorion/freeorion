@@ -769,7 +769,7 @@ unsigned int SetShipPartMeter::GetCheckSum() const {
 // SetEmpireMeter                                        //
 ///////////////////////////////////////////////////////////
 SetEmpireMeter::SetEmpireMeter(const std::string& meter, std::unique_ptr<ValueRef::ValueRef<double>>&& value) :
-    m_empire_id(std::make_unique<ValueRef::Variable<int>>(ValueRef::EFFECT_TARGET_REFERENCE, std::vector<std::string>(1, "Owner"))),
+    m_empire_id(std::make_unique<ValueRef::Variable<int>>(ValueRef::EFFECT_TARGET_REFERENCE, "Owner")),
     m_meter(meter),
     m_value(std::move(value))
 {}
@@ -875,7 +875,7 @@ unsigned int SetEmpireMeter::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 SetEmpireStockpile::SetEmpireStockpile(ResourceType stockpile,
                                        std::unique_ptr<ValueRef::ValueRef<double>>&& value) :
-    m_empire_id(std::make_unique<ValueRef::Variable<int>>(ValueRef::EFFECT_TARGET_REFERENCE, std::vector<std::string>(1, "Owner"))),
+    m_empire_id(std::make_unique<ValueRef::Variable<int>>(ValueRef::EFFECT_TARGET_REFERENCE, "Owner")),
     m_stockpile(stockpile),
     m_value(std::move(value))
 {}
@@ -936,7 +936,7 @@ unsigned int SetEmpireStockpile::GetCheckSum() const {
 // SetEmpireCapital                                      //
 ///////////////////////////////////////////////////////////
 SetEmpireCapital::SetEmpireCapital() :
-    m_empire_id(std::make_unique<ValueRef::Variable<int>>(ValueRef::EFFECT_TARGET_REFERENCE, std::vector<std::string>(1, "Owner")))
+    m_empire_id(std::make_unique<ValueRef::Variable<int>>(ValueRef::EFFECT_TARGET_REFERENCE, "Owner"))
 {}
 
 SetEmpireCapital::SetEmpireCapital(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id) :
@@ -3018,7 +3018,7 @@ SetEmpireTechProgress::SetEmpireTechProgress(std::unique_ptr<ValueRef::ValueRef<
     m_empire_id(
         empire_id
         ? std::move(empire_id)
-        : std::make_unique<ValueRef::Variable<int>>(ValueRef::EFFECT_TARGET_REFERENCE, std::vector<std::string>(1, "Owner")))
+        : std::make_unique<ValueRef::Variable<int>>(ValueRef::EFFECT_TARGET_REFERENCE, "Owner"))
 {}
 
 void SetEmpireTechProgress::Execute(ScriptingContext& context) const {
@@ -3087,7 +3087,7 @@ GiveEmpireTech::GiveEmpireTech(std::unique_ptr<ValueRef::ValueRef<std::string>>&
     m_empire_id(std::move(empire_id))
 {
     if (!m_empire_id)
-        m_empire_id.reset(new ValueRef::Variable<int>(ValueRef::EFFECT_TARGET_REFERENCE, std::vector<std::string>(1, "Owner")));
+        m_empire_id.reset(new ValueRef::Variable<int>(ValueRef::EFFECT_TARGET_REFERENCE, "Owner"));
 }
 
 void GiveEmpireTech::Execute(ScriptingContext& context) const {

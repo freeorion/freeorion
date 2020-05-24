@@ -246,6 +246,8 @@ namespace {
 
     // force early init to avoid threading issues later
     std::map<std::string, MeterType> dummy = GetMeterNameMap();
+
+    const std::string EMPTY_STRING;
 }
 
 namespace ValueRef {
@@ -257,12 +259,12 @@ MeterType NameToMeter(const std::string& name) {
     return retval;
 }
 
-std::string MeterToName(MeterType meter) {
+const std::string& MeterToName(MeterType meter) {
     for (const auto& entry : GetMeterNameMap()) {
         if (entry.second == meter)
             return entry.first;
     }
-    return "";
+    return EMPTY_STRING;
 }
 
 std::string ReconstructName(const std::vector<std::string>& property_name,
@@ -270,6 +272,7 @@ std::string ReconstructName(const std::vector<std::string>& property_name,
                             bool return_immediate_value)
 {
     std::string retval;
+    retval.reserve(64);
 
     if (return_immediate_value)
         retval += "Value(";
@@ -592,9 +595,9 @@ else                                                                   \
 template <>
 PlanetSize Variable<PlanetSize>::Eval(const ScriptingContext& context) const
 {
-    const std::string& property_name = m_property_name.empty() ? "" : m_property_name.back();
-
     IF_CURRENT_VALUE(PlanetSize)
+
+    const std::string& property_name = m_property_name.empty() ? "" : m_property_name.back();
 
     auto object = FollowReference(m_property_name.begin(), m_property_name.end(),
                                   m_ref_type, context);
@@ -626,9 +629,9 @@ PlanetSize Variable<PlanetSize>::Eval(const ScriptingContext& context) const
 template <>
 PlanetType Variable<PlanetType>::Eval(const ScriptingContext& context) const
 {
-    const std::string& property_name = m_property_name.empty() ? "" : m_property_name.back();
-
     IF_CURRENT_VALUE(PlanetType)
+
+    const std::string& property_name = m_property_name.empty() ? "" : m_property_name.back();
 
     auto object = FollowReference(m_property_name.begin(), m_property_name.end(),
                                   m_ref_type, context);
@@ -666,9 +669,9 @@ PlanetType Variable<PlanetType>::Eval(const ScriptingContext& context) const
 template <>
 PlanetEnvironment Variable<PlanetEnvironment>::Eval(const ScriptingContext& context) const
 {
-    const std::string& property_name = m_property_name.empty() ? "" : m_property_name.back();
-
     IF_CURRENT_VALUE(PlanetEnvironment)
+
+    const std::string& property_name = m_property_name.empty() ? "" : m_property_name.back();
 
     if (property_name == "PlanetEnvironment") {
         auto object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
@@ -690,9 +693,9 @@ PlanetEnvironment Variable<PlanetEnvironment>::Eval(const ScriptingContext& cont
 template <>
 UniverseObjectType Variable<UniverseObjectType>::Eval(const ScriptingContext& context) const
 {
-    const std::string& property_name = m_property_name.empty() ? "" : m_property_name.back();
-
     IF_CURRENT_VALUE(UniverseObjectType)
+
+    const std::string& property_name = m_property_name.empty() ? "" : m_property_name.back();
 
     if (property_name == "ObjectType") {
         auto object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
@@ -719,9 +722,9 @@ UniverseObjectType Variable<UniverseObjectType>::Eval(const ScriptingContext& co
 template <>
 StarType Variable<StarType>::Eval(const ScriptingContext& context) const
 {
-    const std::string& property_name = m_property_name.empty() ? "" : m_property_name.back();
-
     IF_CURRENT_VALUE(StarType)
+
+    const std::string& property_name = m_property_name.empty() ? "" : m_property_name.back();
 
     auto object = FollowReference(m_property_name.begin(), m_property_name.end(),
                                   m_ref_type, context);
@@ -767,9 +770,9 @@ Visibility Variable<Visibility>::Eval(const ScriptingContext& context) const
 template <>
 double Variable<double>::Eval(const ScriptingContext& context) const
 {
-    const std::string& property_name = m_property_name.empty() ? "" : m_property_name.back();
-
     IF_CURRENT_VALUE(float)
+
+    const std::string& property_name = m_property_name.empty() ? "" : m_property_name.back();
 
     if (m_ref_type == NON_OBJECT_REFERENCE) {
         if ((property_name == "UniverseCentreX") |
@@ -863,9 +866,9 @@ double Variable<double>::Eval(const ScriptingContext& context) const
 template <>
 int Variable<int>::Eval(const ScriptingContext& context) const
 {
-    const std::string& property_name = m_property_name.empty() ? "" : m_property_name.back();
-
     IF_CURRENT_VALUE(int)
+
+    const std::string& property_name = m_property_name.empty() ? "" : m_property_name.back();
 
     if (m_ref_type == NON_OBJECT_REFERENCE) {
         if (property_name == "CombatBout")
@@ -1093,9 +1096,9 @@ template <>
 std::vector<std::string> Variable<std::vector<std::string>>::Eval(
     const ScriptingContext& context) const
 {
-    const std::string& property_name = m_property_name.empty() ? "" : m_property_name.back();
-
     IF_CURRENT_VALUE(std::vector<std::string>)
+
+    const std::string& property_name = m_property_name.empty() ? "" : m_property_name.back();
 
     if (m_ref_type == NON_OBJECT_REFERENCE) {
         // add more non-object reference string vector functions here
@@ -1140,9 +1143,9 @@ std::vector<std::string> Variable<std::vector<std::string>>::Eval(
 template <>
 std::string Variable<std::string>::Eval(const ScriptingContext& context) const
 {
-    const std::string& property_name = m_property_name.empty() ? "" : m_property_name.back();
-
     IF_CURRENT_VALUE(std::string)
+
+    const std::string& property_name = m_property_name.empty() ? "" : m_property_name.back();
 
     if (m_ref_type == NON_OBJECT_REFERENCE) {
         if (property_name == "GalaxySeed")
