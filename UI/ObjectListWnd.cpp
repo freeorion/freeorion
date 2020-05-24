@@ -103,49 +103,39 @@ namespace {
         );
     }
 
-    std::unique_ptr<ValueRef::Variable<std::string>> StringValueRef(
-        const std::string& token)
-    {
+    std::unique_ptr<ValueRef::Variable<std::string>> StringValueRef(const char* token) {
         return std::make_unique<ValueRef::Variable<std::string>>(
             ValueRef::SOURCE_REFERENCE, token);
     }
 
-    std::unique_ptr<ValueRef::Variable<std::string>> UserStringValueRef(
-        const std::string& token)
-    {
+    std::unique_ptr<ValueRef::Variable<std::string>> UserStringValueRef(const char* token) {
         return std::make_unique<ValueRef::UserStringLookup<std::string>>(
             std::make_unique<ValueRef::Variable<std::string>>(
                 ValueRef::SOURCE_REFERENCE, token));
     }
 
-    std::unique_ptr<ValueRef::Variable<std::string>> UserStringVecValueRef(
-        const std::string& token)
-    {
+    std::unique_ptr<ValueRef::Variable<std::string>> UserStringVecValueRef(const char* token) {
         return std::make_unique<ValueRef::UserStringLookup<std::vector<std::string>>>(
             std::make_unique<ValueRef::Variable<std::vector<std::string>>>(
                 ValueRef::SOURCE_REFERENCE, token));
     }
 
     template <typename T>
-    std::unique_ptr<ValueRef::Variable<std::string>> StringCastedValueRef(
-        const std::string& token)
-    {
+    std::unique_ptr<ValueRef::Variable<std::string>> StringCastedValueRef(const char* token) {
         return std::make_unique<ValueRef::StringCast<T>>(
             std::make_unique<ValueRef::Variable<T>>(
                 ValueRef::SOURCE_REFERENCE, token));
     }
 
-    std::unique_ptr<ValueRef::Variable<std::string>> StringCastedImmediateValueRef(
-        const std::string& token)
-    {
+    std::unique_ptr<ValueRef::Variable<std::string>> StringCastedImmediateValueRef(std::string token) {
         return std::make_unique<ValueRef::StringCast<double>>(
             std::make_unique<ValueRef::Variable<double>>(
-                ValueRef::SOURCE_REFERENCE, token, true));
+                ValueRef::SOURCE_REFERENCE, std::move(token), true));
     }
 
     template <typename T>
     std::unique_ptr<ValueRef::Variable<std::string>> StringCastedComplexValueRef(
-        const std::string& token,
+        const char* token,
         std::unique_ptr<ValueRef::ValueRef<int>>&& int_ref1 = nullptr,
         std::unique_ptr<ValueRef::ValueRef<int>>&& int_ref2 = nullptr,
         std::unique_ptr<ValueRef::ValueRef<int>>&& int_ref3 = nullptr,
@@ -182,9 +172,7 @@ namespace {
             nullptr);   // TODO: try to get a valid production location for the owner empire?
     }
 
-    std::unique_ptr<ValueRef::ValueRef<std::string>> PlanetEnvForSpecies(
-        const std::string& species_name)
-    {
+    std::unique_ptr<ValueRef::ValueRef<std::string>> PlanetEnvForSpecies(const std::string& species_name) {
         return ObjectTypeFilteredRef<std::string>({OBJ_PLANET},
             std::make_unique<ValueRef::UserStringLookup<PlanetEnvironment>>(
                 std::make_unique<ValueRef::ComplexVariable<PlanetEnvironment>>(
@@ -196,36 +184,28 @@ namespace {
     }
 
     template <typename T>
-    std::unique_ptr<ValueRef::Variable<std::string>> UserStringCastedValueRef(
-        const std::string& token)
-    {
+    std::unique_ptr<ValueRef::Variable<std::string>> UserStringCastedValueRef(const char* token) {
         return std::make_unique<ValueRef::UserStringLookup<std::string>>(
             std::make_unique<ValueRef::StringCast<T>>(
                 std::make_unique<ValueRef::Variable<T>>(
                     ValueRef::SOURCE_REFERENCE, token)));
     }
 
-    std::unique_ptr<ValueRef::Variable<std::string>> ObjectNameValueRef(
-        const std::string& token)
-    {
+    std::unique_ptr<ValueRef::Variable<std::string>> ObjectNameValueRef(const char* token) {
         return std::make_unique<ValueRef::NameLookup>(
             std::make_unique<ValueRef::Variable<int>>(
                 ValueRef::SOURCE_REFERENCE, token),
             ValueRef::NameLookup::OBJECT_NAME);
     }
 
-    std::unique_ptr<ValueRef::Variable<std::string>> EmpireNameValueRef(
-        const std::string& token)
-    {
+    std::unique_ptr<ValueRef::Variable<std::string>> EmpireNameValueRef(const char* token) {
         return std::make_unique<ValueRef::NameLookup>(
             std::make_unique<ValueRef::Variable<int>>(
                 ValueRef::SOURCE_REFERENCE, token),
             ValueRef::NameLookup::EMPIRE_NAME);
     }
 
-    std::unique_ptr<ValueRef::Variable<std::string>> DesignNameValueRef(
-        const std::string& token)
-    {
+    std::unique_ptr<ValueRef::Variable<std::string>> DesignNameValueRef(const char* token) {
         return std::make_unique<ValueRef::NameLookup>(
             std::make_unique<ValueRef::Variable<int>>(
                 ValueRef::SOURCE_REFERENCE, token),
