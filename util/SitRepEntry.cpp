@@ -3,7 +3,6 @@
 #include "i18n.h"
 #include "Logger.h"
 #include "AppInterface.h"
-#include "../universe/Predicates.h"
 #include "../universe/Building.h"
 #include "../universe/Planet.h"
 #include "../universe/System.h"

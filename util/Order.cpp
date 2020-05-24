@@ -15,7 +15,6 @@
 #include "../universe/Fleet.h"
 #include "../universe/Pathfinder.h"
 #include "../universe/Planet.h"
-#include "../universe/Predicates.h"
 #include "../universe/ShipDesign.h"
 #include "../universe/Ship.h"
 #include "../universe/Species.h"

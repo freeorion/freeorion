@@ -36,6 +36,7 @@ target_sources(freeorioncommon
         ${CMAKE_CURRENT_LIST_DIR}/UnlockableItem.h
         ${CMAKE_CURRENT_LIST_DIR}/Pathfinder.h
         ${CMAKE_CURRENT_LIST_DIR}/UniverseObject.h
+        ${CMAKE_CURRENT_LIST_DIR}/UniverseObjectVisitor.h
         ${CMAKE_CURRENT_LIST_DIR}/ValueRef.h
         ${CMAKE_CURRENT_LIST_DIR}/ValueRefs.h
     PRIVATE
@@ -70,5 +71,6 @@ target_sources(freeorioncommon
         ${CMAKE_CURRENT_LIST_DIR}/UnlockableItem.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Pathfinder.cpp
         ${CMAKE_CURRENT_LIST_DIR}/UniverseObject.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/UniverseObjectVisitor.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ValueRefs.cpp
 )

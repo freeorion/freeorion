@@ -11,37 +11,6 @@
 
 
 ////////////////////////////////////////////////
-// UniverseObjectVisitor
-////////////////////////////////////////////////
-UniverseObjectVisitor::~UniverseObjectVisitor()
-{}
-
-std::shared_ptr<UniverseObject> UniverseObjectVisitor::Visit(std::shared_ptr<UniverseObject> obj) const
-{ return nullptr; }
-
-std::shared_ptr<UniverseObject> UniverseObjectVisitor::Visit(std::shared_ptr<Building> obj) const
-{ return Visit(std::static_pointer_cast<UniverseObject>(obj)); }
-
-std::shared_ptr<UniverseObject> UniverseObjectVisitor::Visit(std::shared_ptr<Fleet> obj) const
-{ return Visit(std::static_pointer_cast<UniverseObject>(obj)); }
-
-std::shared_ptr<UniverseObject> UniverseObjectVisitor::Visit(std::shared_ptr<Planet> obj) const
-{ return Visit(std::static_pointer_cast<UniverseObject>(obj)); }
-
-std::shared_ptr<UniverseObject> UniverseObjectVisitor::Visit(std::shared_ptr<Ship> obj) const
-{ return Visit(std::static_pointer_cast<UniverseObject>(obj)); }
-
-std::shared_ptr<UniverseObject> UniverseObjectVisitor::Visit(std::shared_ptr<System> obj) const
-{ return Visit(std::static_pointer_cast<UniverseObject>(obj)); }
-
-std::shared_ptr<UniverseObject> UniverseObjectVisitor::Visit(std::shared_ptr<Field> obj) const
-{ return Visit(std::static_pointer_cast<UniverseObject>(obj)); }
-
-std::shared_ptr<UniverseObject> UniverseObjectVisitor::Visit(std::shared_ptr<Fighter> obj) const
-{ return Visit(std::static_pointer_cast<UniverseObject>(obj)); }
-
-
-////////////////////////////////////////////////
 // StationaryFleetVisitor
 ////////////////////////////////////////////////
 StationaryFleetVisitor::~StationaryFleetVisitor()

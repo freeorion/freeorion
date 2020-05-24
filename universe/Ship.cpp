@@ -1,13 +1,12 @@
 #include "Ship.h"
 
-#include <boost/lexical_cast.hpp>
 #include "Enums.h"
 #include "Fleet.h"
-#include "Predicates.h"
 #include "ShipDesign.h"
 #include "ShipHull.h"
 #include "ShipPart.h"
 #include "Species.h"
+#include "UniverseObjectVisitor.h"
 #include "Universe.h"
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Empire.h"

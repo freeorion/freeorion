@@ -2,7 +2,7 @@
 
 #include "BuildingType.h"
 #include "Enums.h"
-#include "Predicates.h"
+#include "UniverseObjectVisitor.h"
 #include "Universe.h"
 #include "../Empire/EmpireManager.h"
 #include "../util/AppInterface.h"
