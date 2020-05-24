@@ -899,6 +899,12 @@ Accretion Disc
 FLD_ACCRETION_DISC_DESC
 An accretion disc is a structure (often a circumstellar disc) formed by diffused material in orbital motion around a massive central body. All planets in the affected system get a [[metertype METER_SUPPLY]] penalty of -1.
 
+FLD_NANITE_SWARM
+Nanite Swarm
+
+FLD_NANITE_SWARM_DESC
+A swarm of ancient robotic particles that attach themselves to ship hulls, repairing ship [[metertype METER_STRUCTURE]] by 5 per turn. Harvesting of particles creates one unit of [[metertype METER_INDUSTRY]] per turn.
+
 FLD_METEOR_BLIZZARD
 Meteor Blizzard
 
