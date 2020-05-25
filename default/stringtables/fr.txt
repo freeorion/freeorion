@@ -828,7 +828,7 @@ SM_DAMPENING_CLOUD
 Nuage Siphonnant
 
 SM_DAMPENING_CLOUD_DESC
-Un nuage cosmique de particules de haute énergie ayant développé une forme de sensibilité. Repoussé par les signatures énergétiques des colonies habitées, il est cependant irrésistiblement attiré par les réserves d'énergie potentielle, et dérobera le [[metertype METER_FUEL]] de tous les astronefs présents dans un système.
+Un nuage cosmique de particules de haute énergie ayant développé une forme de sentience. Repoussé par les signatures énergétiques des colonies habitées, il est cependant irrésistiblement attiré par les réserves d'énergie potentielle, et dérobera le [[metertype METER_FUEL]] de tous les astronefs présents dans un système.
 
 SM_ACIREMA_GUARD
 Astrogarde Acirema
@@ -1115,7 +1115,19 @@ RULE_SHIP_STRUCTURE_FACTOR
 Ajustement Résistance des Astronefs
 
 RULE_SHIP_STRUCTURE_FACTOR_DESC
-Définit les résistances des coques et blindages d'astronef
+Définit les résistances des coques et blindages d'astronef. Définit l'évolution de la résistance des équipements, le contrôle des dommages et s'applique également aux boucliers planétaires.
+
+RULE_SHIP_WEAPON_DAMAGE_FACTOR
+Ajustement Dommages des Armements d'astronefs
+
+RULE_SHIP_WEAPON_DAMAGE_FACTOR_DESC
+Définit les dommages et boucliers des armements principaux des astronefs. S'applique également à la défense planétaire.
+
+RULE_FIGHTER_DAMAGE_FACTOR
+Ajustement Dommages des Chasseurs
+
+RULE_FIGHTER_DAMAGE_FACTOR_DESC
+Définit les dommages des chasseurs
 
 RULE_SHIP_HULL_COST_FACTOR
 Ajustement Coût des Coques
@@ -7702,7 +7714,7 @@ Planète Natale: Foreveralone.
 Une planète abritant un vaste et profond océan. La rumeur veut que la création des Happybirthdays eût pour but originel de sonder la planète en vue d'une colonisation potentielle. La raison pour laquelle ils furent abandonnés reste un mystère, les théories à ce sujet divergeant grandement: leurs créateurs auraient décidé que la planète ne fût pas propice à la colonisation, ou bien ces derniers auraient été exterminés par une cause inconnue. Bien que ce vaste océan présente des particularités intéressantes ainsi que des formes de vie, rien de vraiment spécial n'indique ce qui aurait pu susciter un intérêt potentiel envers cette planète.
 
 Structure sociale: Codépendance.
-Un Happybirthday isolé a pour principal but de s'attacher psychologiquement au plus proche être sensible (de préférence étranger) et de déclarer leur amitié comme éternelle. Un seul objectif: soulager leur solitude en trouvant un autre être qui devienne leur ami, pour toujours...
+Un Happybirthday isolé a pour principal but de s'attacher psychologiquement au plus proche être sentient (de préférence étranger) et de déclarer leur amitié comme éternelle. Un seul objectif: soulager leur solitude en trouvant un autre être qui devienne leur ami, pour toujours...
 
 Le processus de colonisation est lent et l'industrie peu efficace, en raison du caractère dépressif de cette espèce, menant parfois à des auto-destructions de masse. Cependant, leur propension à ne pas avoir d'ennemis et la recherche obsessionnelle de toute forme d'amitié, font des Happybirthdays des êtres très ouverts aux échanges et au commerce.
 
@@ -7777,7 +7789,7 @@ Laenfa
 
 SP_LAENFA_GAMEPLAY_DESC
 '''<img src="species/preview/laenfa.png"></img>
-Vignes sensibles, télépathes, et insidieuses.
+Vignes sentientes, télépathes, et insidieuses.
 Préfèrent les Planètes [[PT_OCEAN]]s.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 '''
@@ -7917,7 +7929,7 @@ SP_CYNOS  # translated
 Cynos
 
 SP_CYNOS_GAMEPLAY_DESC
-'''Végétaux mobiles entretenus par une plante-mère géante non-sensible.
+'''Végétaux mobiles entretenus par une plante-mère géante non-sentiente.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
 '''
 
@@ -7948,7 +7960,7 @@ SP_PHINNERT_DESC
 Les Phinnerts sont des mammifères arboricoles d'une taille variant entre 1 et 2 mètres. Leurs longs bras peuvent atteindre une envergure d'environ 2 fois leur taille. Ils sont munis d'une membrane de peau rétractable de chaque côté du corps, s'étendant du poignet à la cheville, et qui permet un vol totalement fonctionnel à faible gravité. Leur vol très agile leur rend possible la chasse de créatures insectoïdes, qu'ils attrapent à l'aide d'un appendice nasal préhensile. Tout comme les chauves-souris, les Phinnerts utilisent l'écholocalisation, même si leur sens est bien moins développé.
 
 Structure sociale:
-La vie est bien plus courte pour les Phinnerts que pour la majorité des espèces sensibles, en raison des nombreux dangers d'un marais. Tous les Phinnerts sont considérés comme les membres d'une grande famille et les différends ne durent jamais très longtemps. Il n'y aucune autorité centrale, seulement une vague hiérarchie. Du fait de leur mortalité élevée, l'équilibre des forces chez les Phinnerts peut varier très rapidement. En compensation, leur société est très peu individualiste, et bien plus centrée sur le groupe.
+La vie est bien plus courte pour les Phinnerts que pour la majorité des espèces sentientes, en raison des nombreux dangers d'un marais. Tous les Phinnerts sont considérés comme les membres d'une grande famille et les différends ne durent jamais très longtemps. Il n'y aucune autorité centrale, seulement une vague hiérarchie. Du fait de leur mortalité élevée, l'équilibre des forces chez les Phinnerts peut varier très rapidement. En compensation, leur société est très peu individualiste, et bien plus centrée sur le groupe.
 
 Planète Natale:
 Leur planète possède une faible gravité et une atmosphère très épaisse. Sa composition géologique est unique du fait de la faible proportion de métaux lourds, mais de la bien plus forte présence d'autres éléments lourds, particulièrement les gaz nobles. De son activité tectonique très stable, résulte une croûte terrestre très plate, qui par conséquent est principalement recouverte d'eaux stagnantes et peu profondes. La totalité de leur monde s'apparente à une zone marécageuse géante.
@@ -7959,7 +7971,7 @@ SP_REPLICON  # translated
 Replicon
 
 SP_REPLICON_GAMEPLAY_DESC
-'''Robots auto-réplicants à peine sensibles.
+'''Robots auto-réplicants à peine sentients.
 Préfèrent les Planètes [[PT_RADIATED]]s.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
 '''
@@ -8038,14 +8050,14 @@ SP_SETINON  # translated
 Setinon
 
 SP_SETINON_GAMEPLAY_DESC
-'''Cellules microscopiques sensibles et individualistes.
+'''Cellules microscopiques sentientes et individualistes.
 Préfèrent les Planètes [[PT_SWAMP]]s.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 '''
 
 SP_SETINON_DESC
 '''Description:
-Les Setinon sont l'évolution génétique de cellules immunitaires protégeant les plus grands organismes des parasites et autres virus. Mesurant 1mm, ils sont constitués de multiples compartiments nucléiques. Les protéines et les acides aminés s'organisent en réseau neuronal semblable au système rachidien des organismes sensibles communément répandus. Les Setinon utilisent des constructions biologiques (nécessitant des milliers de spécimens Setinon) pour exécuter les tâches que leur taille microscopique devrait normalement rendre impossibles.
+Les Setinon sont l'évolution génétique de cellules immunitaires protégeant les plus grands organismes des parasites et autres virus. Mesurant 1mm, ils sont constitués de multiples compartiments nucléiques. Les protéines et les acides aminés s'organisent en réseau neuronal semblable au système rachidien des organismes sentients communément répandus. Les Setinon utilisent des constructions biologiques (nécessitant des milliers de spécimens Setinon) pour exécuter les tâches que leur taille microscopique devrait normalement rendre impossibles.
 
 Structure sociale:
 La société Setinon est fondée sur deux facteurs opposés: leur nature fortement individualiste et défensive, contrastant avec leur besoin vital de coopérer afin d'interagir avec le monde extérieur. Par conséquent, la société Setinon apparaît hautement complexe, basée sur plusieurs niveaux de pouvoir et de décision, en constante recherche d'équilibre.
@@ -8141,7 +8153,7 @@ SP_KOBUNTURA  # translated
 Kobuntura
 
 SP_KOBUNTURA_GAMEPLAY_DESC
-'''Formes sensibles de poussière magnétique, fascinées par la construction et l'infrastructure.
+'''Formes sentientes de poussière magnétique, fascinées par la construction et l'infrastructure.
 Préfèrent les Planètes [[PT_BARREN]]s.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]]
 '''
@@ -8165,7 +8177,7 @@ Préfèrent les Planètes [[PT_INFERNO]]s.
 '''
 
 SP_UGMORS_DESC
-'''Les Ugmors sont une forme d'écume magmatique utilisant les roches et les minéraux pour fabriquer des entités temporaires, chacune conçue pour accomplir des tâches spécifiques.
+'''Les Ugmors sont une race sentiente d'écume magmatique utilisant les roches et les minéraux pour fabriquer des entités temporaires, chacune conçue pour accomplir des tâches spécifiques.
 
 Structure sociale:
 Les Trappes de Larar sont le cœur biologique de l'espèce. Ces amas d'écume magmatique se trouvent sur la surface la plus chaude des mers de lave et en absorbe l'énergie. Lorsque suffisamment d'énergie est accumulée, ces masses de magma énergétiques commencent à rassembler des roches imposantes sur tout le pourtour des mers de lave, puis les imbriquent entre elles pour former un Ugmor. Les Ugmors furent à la base simplement conçus pour passer d'une mer de lave à l'autre, mais une société complexe s'est développée au fil du temps. Les Trappes de Larar ne peuvent pas être considérées comme un organisme intelligent, mais plutôt comme une mémoire centrale, lieu de convergence et d'activité de tous les Ugmors, pour lesquels réintégrer les Trappes de Larar est un privilège.
@@ -8228,7 +8240,7 @@ Les Abaddoni ont une forme ovoïde d'environ 0.8 mètres de diamètre, arborent 
 À l'extrémité de chacune de leurs 6 pattes ressemblant à celles de crustacés, se trouve une sorte de sac gonflable qui leur permet de s'accrocher par effet de ventouse à n'importe quelle surface, quelle que soit son inclinaison. Comme les Abaddoni se développent en milieu souterrain, ils ne possèdent pas d'organe de vision, se référant ainsi principalement à leur odorat, et dans une moindre proportion, à l'ouïe et au toucher pour se déplacer.
 
 Structure sociale:
-L'espèce entière des Abaddonni vit sous le joug d'une intelligence artificielle sensible appelée Mère. Cette IA fut créée par les Abaddoni comme une assistante gouvernementale, mais elle prit lentement le dessus sur ses créateurs. À présent, chaque nouveau-né Abaddoni se voit implanter un transmetteur dans le cerveau, pour que Mère puisse connaître les pensées de chacun de ses sujets et pouvoir contrôler leurs fonctions vitales au besoin. Il n'y aucun semblant de structure sociale chez les Abaddoni: ils sont tous semblables, c'est-à-dire esclaves.
+L'espèce entière des Abaddonni vit sous le joug d'une intelligence artificielle sentiente appelée Mère. Cette IA fut créée par les Abaddoni comme une assistante gouvernementale, mais elle prit lentement le dessus sur ses créateurs. À présent, chaque nouveau-né Abaddoni se voit implanter un transmetteur dans le cerveau, pour que Mère puisse connaître les pensées de chacun de ses sujets et pouvoir contrôler leurs fonctions vitales au besoin. Il n'y aucun semblant de structure sociale chez les Abaddoni: ils sont tous semblables, c'est-à-dire esclaves.
 <img src="species/abaddoni.png"></img>
 '''
 
@@ -8419,7 +8431,7 @@ SP_EXOBOT  # translated
 Exobot
 
 SP_EXOBOT_GAMEPLAY_DESC
-'''Robots semi-autonomes, conçus pour la production industrielle sur les Planètes [[PT_BARREN]]s, [[PT_RADIATED]]s et [[PT_INFERNO]]s.
+'''Robots semi-autonomes, conçus pour travailler sur les Planètes de tout type d'[[encyclopedia ENVIRONMENT_TITLE]].
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
 '''
 
@@ -9283,7 +9295,7 @@ ALIGN_MECHANIZATION
 Mécanisation
 
 ALIGN_MECHANIZATION_DESC
-Usage de sens artificiels et de l'automatisation
+Usage de la sentience artificielle et de l'automatisation
 
 # Empire affiliation types
 AFFIL_SELF
@@ -10980,15 +10992,23 @@ LRN_PSIONICS_DESC
 
 Via une introspection profonde ou une augmentation artificielle, le cerveau peut développer les capacités d'interagir directement avec l'univers qui l'entoure, en s'affranchissant des limitations physiques du corps. Des facultés cérébrales telles que la télépathie, l'empathie, la clairvoyance, la prescience, la psychokinésie et la psychoénergie peuvent remplacer ou dépasser les possibilités biologiques ou technologiques classiques. Les applications de ces pouvoirs, y compris le contrôle de l'esprit, la possession et la modification de personnalité, ont un fort impact sur la relation entre les êtres maîtrisant ces facultés et les autres.'''
 
-LRN_ARTIF_MINDS
+LRN_NASCENT_AI
 Intelligences Artificielles
 
+LRN_NASCENT_AI_DESC
+'''Augmente la [[metertype METER_TARGET_RESEARCH]] de 1 sur toutes les planètes.
+
+Alors que les ordinateurs traditionnels ont des capacités de calcul presque infinies, ils leur manquent cependant une qualité essentielle: la conscience. Bien que la définition complète du concept de conscience reste insaisissable, cette qualité peut être toutefois synthétisée et reproduite de manière plutôt convaincante. Ces recherches peuvent ouvrir de nouvelles voies en matière de sciences cognitives et de métaparadigmes.
+
+Des IA sont à même de compiler toutes les données découvertes par la Recherche en un seul réseau de traitement automatique, ces données pouvant être analysées afin d'en faire émerger de nouvelles, le tout via un centre de recherche entièrement automatisé. Chaque planète peut héberger de telles structures, indépendamment des activités de la population, procurant ainsi un bonus de Recherche dans tout l'empire.'''
+
+LRN_ARTIF_MINDS
+Consciences Artificielles
+
 LRN_ARTIF_MINDS_DESC
-'''Augmente la [[metertype METER_TARGET_RESEARCH]] de 2 sur toutes les planètes.
+'''Augmente la [[metertype METER_TARGET_RESEARCH]] de 3 sur toutes les planètes.
 
-Alors que les ordinateurs traditionnels ont des capacités de calcul presque infinies, ils leur manquent cependant une qualité essentielle: la conscience. Bien que la définition complète du concept de conscience reste insaisissable, cette qualité peut être toutefois synthétisée et modifiée de manière convaincante. Ces recherches ouvrent de nouvelles voies en matière de sciences cognitives et de métaparadigmes.
-
-Des IA sont à même de compiler toutes les données découvertes par la Recherche en un seul réseau de traitement automatique, ces données pouvant être analysées afin d'en faire émerger de nouvelles, le tout via un centre de recherche entièrement automatisé. Chaque planète peut héberger de telles structures, indépendamment des professions de la population, donnant ainsi un bonus de Recherche dans tout l'empire.'''
+Les consciences artificielles constituent la quête ultime des recherches en sciences cognitives. Elles dépassent le stade prédéfini des intelligences artificielles, pour atteindre celui de conscience de soi et de sentience au sein d'un être artificiel. Ces systèmes sentients peuvent élargir de leur proche chef les limites de la science et de la recherche, identifiant par eux-mêmes de nouvelles manières de traiter les données et d'en déduire de nouvelles connaissances. Chaque planète peut héberger de telles structures, indépendamment des activités de la population, procurant ainsi un bonus de Recherche dans tout l'empire.'''
 
 LRN_XENOARCH
 Xénoarchéologie
@@ -11160,10 +11180,10 @@ GRO_NANO_CYBERNET_DESC
 Après avoir utilisé les nanotechnologies pour corriger les défauts ou soigner les traumas, l'étape suivante consiste à améliorer ou remplacer les systèmes naturels biochimiques par des systèmes artificiels supérieurs. Plutôt que la simple repousse de membres perdus ou la réparation d'organes endommagés, ces améliorations permettent à l'envi la croissance rapide de nouveaux membres ou organes. Les systèmes biologiques archaïques, comme les muscles et les tendons, jusqu'aux organites et enzymes, peuvent aussi être remplacés, permettant ainsi une amélioration considérable de la force, de l'endurance et de la flexibilité.
 
 GRO_TRANSORG_SENT
-Sensibilité Trans-Organique
+Sentience Trans-Organique
 
 GRO_TRANSORG_SENT_DESC
-La sensibilité telle que nous la connaissons a toujours été inextricablement liée à la vie biologique. En comprenant la vraie nature et l'origine de la sensibilité elle-même, il deviendrait alors possible de créer des entités conscientes qui ne pourraient être cataloguées en tant que vie biologique telle que nous la connaissons.
+La sentience telle que nous la connaissons a toujours été inextricablement liée à la vie biologique. En comprenant la vraie nature et l'origine de la sentience elle-même, il deviendrait alors possible de créer des entités conscientes qui ne pourraient être cataloguées en tant que vie biologique telle que nous la connaissons.
 
 GRO_ENERGY_META
 Métabolisme d'Énergie Pure
@@ -11240,7 +11260,7 @@ PRO_MICROGRAV_MAN
 Production en Microgravité
 
 PRO_MICROGRAV_MAN_DESC
-'''Augmente la [[metertype METER_TARGET_INDUSTRY]] de 5 sur toutes les colonies en Focus Recherche situées dans des systèmes abritant des colonies ou avant-postes sur une Ceinture d'Astéroïdes. Plusieurs Ceintures d'Astéroïdes n'engendrent pas de bénéfices additionnels.
+'''Augmente la [[metertype METER_TARGET_INDUSTRY]] de 2 sur toutes les colonies en Focus Recherche situées dans des systèmes abritant des colonies ou avant-postes sur une Ceinture d'Astéroïdes. Plusieurs Ceintures d'Astéroïdes n'engendrent pas de bénéfices additionnels.
 
 L'extraction de ressources minières sur des planétoïdes implique de nombreux challenges mais aussi de réelles opportunités en comparaison d'une exploitation planétaire classique. Ne disposant pas de la masse nécessaire pour la liquéfaction et la différenciation, les astéroïdes permettent un accès bien plus aisé à certains éléments lourds, tandis que l'absence de gravité rend l'extraction en vue d'une utilisation directe dans l'espace bien plus efficace. Par contre, la taille généralement limitée des astéroïdes requiert des infrastructures d'extraction auto-suffisantes et d'une grande mobilité. Par conséquent, les défis relatifs à un environnement en microgravité doivent être surmontés, nécessitant une refonte totale des méthodes traditionnelles.
 
@@ -11252,9 +11272,9 @@ Production Robotisée
 PRO_ROBOTIC_PROD_DESC
 '''Augmente la [[metertype METER_TARGET_INDUSTRY]] de 0.05 par [[metertype METER_POPULATION]] sur toutes les planètes en Focus Industrie.
 
-Les Exobots, désignation sous laquelle ils sont communément connus, constituent l'aboutissement du design allié à la fonctionnalité. Robots conçus pour effectuer n'importe quelle tâche de production, de l'électronique microscopique à la construction à grande échelle, leur production de masse est aisée, tandis que leur utilisation reste la plus avantageuse dans les colonies assignant une haute priorité à l'industrie. Chaque monde privilégiant l'industrie se voit gratifiée d'une équipe d'Exobots, améliorant ainsi considérablement sa production industrielle.
+Robots conçus pour effectuer n'importe quelle tâche, de l'électronique microscopique à la construction à grande échelle, améliorant ainsi considérablement la performance des mondes privilégiant l'industrie.
 
-Bien qu'un haut niveau en conception et en configuration d'usine requiert toujours une supervision permanente, la suppression de la main d'œuvre classique des processus de production résout bon nombre de problèmes. Les robots peuvent travailler continuellement, sans demander ni compensation financière ni amélioration des conditions de travail. Les robots sont bien plus adaptés à des environnements industriels dangereux, et n'ont pas besoin d'un espace habitable hors-site. Ils exécutent parfaitement leurs tâches, toutefois plus ou moins bien selon la qualité des instructions.'''
+Bien qu'un haut niveau en conception et en configuration d'usine requiert toujours une supervision permanente, la suppression de la main d'œuvre classique des processus de production résout bon nombre de problèmes. Les robots peuvent travailler continuellement, sont bien plus adaptés à des environnements industriels dangereux, et n'ont pas besoin d'un espace habitable hors-site. Ils exécutent parfaitement leurs tâches, toutefois plus ou moins bien selon la qualité des instructions.'''
 
 PRO_EXOBOTS  # translated
 Exobots
@@ -11286,15 +11306,23 @@ PRO_ORBITAL_GEN_DESC
 
 L'orbite basse autour de corps planétaires présente de nombreux avantages pour la production d'énergie en comparaison des surfaces planétaires. L'exposition directe aux radiations solaires sans atténuation atmosphérique, ainsi que les structures imposantes pouvant être assemblées en condition de microgravité afin de collecter cette énergie, font partie de ces nombreux avantages. L'énergie résultante peut être utilisée en orbite, ou bien redirigée vers la surface pour alimenter l'industrie. D'autre part, de nouveaux mécanismes de conversion de l'énergie deviennent possibles en orbite, incluant le couplage du champ magnétique planétaire, l'échange du moment cinétique orbital, ainsi que la chaleur du frottement atmosphérique, chacun étant bénéfiques à la mise en œuvre d'applications spécialisées.'''
 
-PRO_SENTIENT_AUTOMATION
+PRO_ADAPTIVE_AUTOMATION
 Automates Adaptatifs
 
-PRO_SENTIENT_AUTOMATION_DESC
-'''Augmente la [[metertype METER_TARGET_INDUSTRY]] de 5 sur toutes les planètes.
+PRO_ADAPTIVE_AUTOMATION_DESC
+'''Augmente la [[metertype METER_TARGET_INDUSTRY]] de 2 sur toutes les planètes.
 
 En concevant des usines automatisées ne nécessitant aucune supervision directe, il devient alors possible d'accroître la production industrielle via un processus totalement autonome. Ces usines peuvent être construites et entretenues sur n'importe quelle planète, quel que soit son Focus, engendrant un bonus industriel dans tout l'empire.
 
-Alors que les équipements deviennent de plus en plus autonomes, ces derniers développent également la capacité de se répliquer et de se réparer sans aucune intervention externe, si ce n'est l'apport de matériaux bruts et, si exigées ou suggerées, les spécifications du produit final. Lorsqu'un esprit artificiel est aux commandes, le système entier peut apprendre, planifier, réagir et s'adapter de manière autonome, sans l'intervention généralement lente et peu efficace des ouvriers traditionnels.'''
+Alors que les équipements deviennent de plus en plus autonomes, ces derniers développent également la capacité de se répliquer et de se réparer sans aucune intervention externe, si ce n'est l'apport de matériaux bruts ainsi que le produit final, exigé ou suggeré, à concevoir. Lorsqu'un esprit artificiel est aux commandes, le système entier peut apprendre, planifier, réagir et s'adapter de manière autonome, sans l'intervention généralement lente et peu efficace des ouvriers traditionnels.'''
+
+PRO_SENTIENT_AUTOMATION
+Automates Conscients
+
+PRO_SENTIENT_AUTOMATION_DESC
+'''Augmente la [[metertype METER_TARGET_INDUSTRY]] de 6 sur toutes les planètes.
+
+L'évolution naturelle des usines automatisées s'accomplit en attribuant aux consciences artificielles qui dirigent de telles structures, le pouvoir de déduire et décider par elles-mêmes des meilleurs processus afin d'atteindre les buts de leurs propriétaires, avant même que ces derniers n'aient commencé à y réfléchir. Cette amélioration décisionnelle augmente grandement la performance des installations autonomes de production dans tout l'empire.'''
 
 PRO_NDIM_ASSMB
 Assemblage Multidimensionnel
@@ -11789,7 +11817,7 @@ GRO_GAIA_TRANS
 Transformation Gaia
 
 GRO_GAIA_TRANS_DESC
-En théorie, il est possible de prédire en totalité l'évolution écologique d'une planète via l'étude du réseau complet des interdépendances biologiques, à la fois sensibles et non-sensibles, au moyen de fractales et d'algorithmes. Mais en pratique, ceci ne peut être réalisé qu'à condition d'édifier un vaste réseau planétaire, exécutant un programme informatique analysant la biosphère entière d'une planète. Cet ordinateur deviendrait par la force des choses le système cérébral d'un nouveau type de vie - un organisme planétaire unique, constitué d'êtres intelligents œuvrant dans l'intérêt de cette entité supérieure, celle-ci agissant d'une manière réciproque.
+En théorie, il est possible de prédire en totalité l'évolution écologique d'une planète via l'étude du réseau complet des interdépendances biologiques, à la fois sentients et non-sentients, au moyen de fractales et d'algorithmes. Mais en pratique, ceci ne peut être réalisé qu'à condition d'édifier un vaste réseau planétaire, exécutant un programme informatique analysant la biosphère entière d'une planète. Cet ordinateur deviendrait par la force des choses le système cérébral d'un nouveau type de vie - un organisme planétaire unique, constitué d'êtres intelligents œuvrant dans l'intérêt de cette entité supérieure, celle-ci agissant d'une manière réciproque.
 
 GRO_GAIA_TRANS_SHORT_DESC
 Permet la Transformation Gaia
@@ -13123,7 +13151,7 @@ BLD_GAS_GIANT_GEN
 Convertisseur de Géante Gazeuse
 
 BLD_GAS_GIANT_GEN_DESC
-'''Cette structure ne peut être construite que sur une [[PT_GASGIANT]] et augmente de 10 la [[metertype METER_TARGET_INDUSTRY]] sur les planètes du même système réglées sur le Focus Industrie. Si le [[BLD_GAS_GIANT_GEN]] est construit sur une [[PT_GASGIANT]] inhabitée, le bonus de [[metertype METER_TARGET_INDUSTRY]] n'est que de 5.
+'''Cette structure ne peut être construite que sur une [[PT_GASGIANT]] et augmente de 5 la [[metertype METER_TARGET_INDUSTRY]] sur les planètes du même système réglées sur le Focus Industrie. Si le [[BLD_GAS_GIANT_GEN]] est construit sur une [[PT_GASGIANT]] inhabitée, le bonus de [[metertype METER_TARGET_INDUSTRY]] n'est que de 3.
 Les bonus de plusieurs exemplaires dans le même système ne s'additionnent pas.
 
 Un puissant générateur conçu pour puiser l'énergie des Géantes Gazeuses.'''
@@ -14891,6 +14919,9 @@ Planète <i>%1%</i> [[TT_SPECIAL]]
 NO_INDUSTRY_DESC
 −−−	Pas d'[[metertype METER_INDUSTRY]]
 
+VERY_BAD_INDUSTRY_DESC
+−−	Très Mauvais en [[metertype METER_INDUSTRY]]: 50%
+
 BAD_INDUSTRY_DESC
 −	Mauvais en [[metertype METER_INDUSTRY]] : 75%
 
@@ -14908,6 +14939,9 @@ ULTIMATE_INDUSTRY_DESC
 
 NO_RESEARCH_DESC
 −−−	Pas de [[metertype METER_RESEARCH]]
+
+VERY_BAD_RESEARCH_DESC
+−−	Très Mauvais en [[metertype METER_RESEARCH]]: 50%
 
 BAD_RESEARCH_DESC
 −	Mauvais en [[metertype METER_RESEARCH]] : 75%
@@ -15187,6 +15221,11 @@ FOCUS_INDUSTRY_LABEL
 
 # %1% FIXME
 # %2% FIXME
+VERY_BAD_INDUSTRY_LABEL
+%2% Très Mauvais en Industrie
+
+# %1% FIXME
+# %2% FIXME
 BAD_INDUSTRY_LABEL
 %2% Mauvais en Industrie
 
@@ -15209,6 +15248,11 @@ ULTIMATE_INDUSTRY_LABEL
 # %2% FIXME
 FOCUS_RESEARCH_LABEL
 %2% Focus Recherche
+
+# %1% FIXME
+# %2% FIXME
+VERY_BAD_RESEARCH_LABEL
+%2% Très Mauvais en Recherche
 
 # %1% FIXME
 # %2% FIXME
