@@ -18,8 +18,7 @@ namespace {
         auto vr =
             std::make_unique<ValueRef::Operation<double>>(
                 ValueRef::PLUS,
-                std::make_unique<ValueRef::Variable<double>>(
-                    ValueRef::EFFECT_TARGET_VALUE_REFERENCE, std::vector<std::string>()),
+                std::make_unique<ValueRef::Variable<double>>(ValueRef::EFFECT_TARGET_VALUE_REFERENCE),
                 std::make_unique<ValueRef::Constant<double>>(increase)
             );
         auto effects = Effects();
