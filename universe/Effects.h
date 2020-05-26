@@ -41,10 +41,9 @@ private:
   * done. */
 class FO_COMMON_API SetMeter final : public Effect {
 public:
-
     SetMeter(MeterType meter,
              std::unique_ptr<ValueRef::ValueRef<double>>&& value,
-             const boost::optional<std::string>& accounting_label = boost::none);
+             boost::optional<std::string> accounting_label = boost::none);
 
     void Execute(ScriptingContext& context) const override;
 
@@ -123,9 +122,9 @@ private:
   * does nothing. */
 class FO_COMMON_API SetEmpireMeter final : public Effect {
 public:
-    SetEmpireMeter(const std::string& meter, std::unique_ptr<ValueRef::ValueRef<double>>&& value);
+    SetEmpireMeter(std::string& meter, std::unique_ptr<ValueRef::ValueRef<double>>&& value);
 
-    SetEmpireMeter(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id, const std::string& meter,
+    SetEmpireMeter(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id, std::string& meter,
                    std::unique_ptr<ValueRef::ValueRef<double>>&& value);
 
     void Execute(ScriptingContext& context) const override;
@@ -415,9 +414,9 @@ private:
 class FO_COMMON_API CreateField final : public Effect {
 public:
     CreateField(std::unique_ptr<ValueRef::ValueRef<std::string>>&& field_type_name,
-                         std::unique_ptr<ValueRef::ValueRef<double>>&& size,
-                         std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
-                         std::vector<std::unique_ptr<Effect>>&& effects_to_apply_after);
+                std::unique_ptr<ValueRef::ValueRef<double>>&& size,
+                std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
+                std::vector<std::unique_ptr<Effect>>&& effects_to_apply_after);
 
     CreateField(std::unique_ptr<ValueRef::ValueRef<std::string>>&& field_type_name,
                 std::unique_ptr<ValueRef::ValueRef<double>>&& x,
@@ -499,7 +498,7 @@ private:
 /** Adds the Special with the name \a name to the target object. */
 class FO_COMMON_API AddSpecial final : public Effect {
 public:
-    explicit AddSpecial(const std::string& name, float capacity = 1.0f);
+    explicit AddSpecial(std::string& name, float capacity = 1.0f);
     explicit AddSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
                         std::unique_ptr<ValueRef::ValueRef<double>>&& capacity = nullptr);
 
@@ -523,7 +522,7 @@ private:
   * no effect if no such Special was already attached to the target object. */
 class FO_COMMON_API RemoveSpecial final : public Effect {
 public:
-    explicit RemoveSpecial(const std::string& name);
+    explicit RemoveSpecial(std::string& name);
     explicit RemoveSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
 
     void Execute(ScriptingContext& context) const override;
@@ -713,7 +712,7 @@ private:
   * target object has multiple owners, nothing is done. */
 class FO_COMMON_API Victory final : public Effect {
 public:
-    explicit Victory(const std::string& reason_string); // TODO: Make this a ValueRef<std::string>*
+    explicit Victory(std::string& reason_string); // TODO: Make this a ValueRef<std::string>*
 
     void            Execute(ScriptingContext& context) const override;
     std::string     Dump(unsigned short ntabs = 0) const override;
@@ -781,22 +780,22 @@ public:
     using MessageParams =  std::vector<std::pair<
         std::string, std::unique_ptr<ValueRef::ValueRef<std::string>>>>;
 
-    GenerateSitRepMessage(const std::string& message_string, const std::string& icon,
+    GenerateSitRepMessage(std::string& message_string, std::string& icon,
                           MessageParams&& message_parameters,
                           std::unique_ptr<ValueRef::ValueRef<int>>&& recipient_empire_id,
                           EmpireAffiliationType affiliation,
-                          const std::string label = "",
+                          std::string label = "",
                           bool stringtable_lookup = true);
-    GenerateSitRepMessage(const std::string& message_string, const std::string& icon,
+    GenerateSitRepMessage(std::string& message_string, std::string& icon,
                           MessageParams&& message_parameters,
                           EmpireAffiliationType affiliation,
                           std::unique_ptr<Condition::Condition>&& condition,
-                          const std::string label = "",
+                          std::string label = "",
                           bool stringtable_lookup = true);
-    GenerateSitRepMessage(const std::string& message_string, const std::string& icon,
+    GenerateSitRepMessage(std::string& message_string, std::string& icon,
                           MessageParams&& message_parameters,
                           EmpireAffiliationType affiliation,
-                          const std::string& label = "",
+                          std::string label = "",
                           bool stringtable_lookup = true);
 
     void                Execute(ScriptingContext& context) const override;
@@ -834,8 +833,8 @@ private:
 /** Applies an overlay texture to Systems. */
 class FO_COMMON_API SetOverlayTexture final : public Effect {
 public:
-    SetOverlayTexture(const std::string& texture, std::unique_ptr<ValueRef::ValueRef<double>>&& size);
-    SetOverlayTexture(const std::string& texture, ValueRef::ValueRef<double>* size);
+    SetOverlayTexture(std::string& texture, std::unique_ptr<ValueRef::ValueRef<double>>&& size);
+    SetOverlayTexture(std::string& texture, ValueRef::ValueRef<double>* size);
 
     void Execute(ScriptingContext& context) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
@@ -855,7 +854,7 @@ private:
 /** Applies a texture to Planets. */
 class FO_COMMON_API SetTexture final : public Effect {
 public:
-    explicit SetTexture(const std::string& texture);
+    explicit SetTexture(std::string& texture);
 
     void Execute(ScriptingContext& context) const override;
 

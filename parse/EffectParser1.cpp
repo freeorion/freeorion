@@ -15,11 +15,11 @@ namespace parse { namespace detail {
         std::vector<std::pair<std::string, MovableEnvelope<ValueRef::ValueRef<std::string>>>>;
 
     effect_payload construct_GenerateSitRepMessage1(
-        const std::string& message_string, const std::string& icon,
+        std::string& message_string, std::string& icon,
         const PassedMessageParams& message_parameters,
         const MovableEnvelope<ValueRef::ValueRef<int>>& recipient_empire_id,
         EmpireAffiliationType affiliation,
-        const std::string label,
+        std::string label,
         bool stringtable_lookup,
         bool& pass)
     {
@@ -37,11 +37,11 @@ namespace parse { namespace detail {
     }
 
     effect_payload construct_GenerateSitRepMessage2(
-        const std::string& message_string, const std::string& icon,
+        std::string& message_string, std::string& icon,
         const PassedMessageParams& message_parameters,
         EmpireAffiliationType affiliation,
         const parse::detail::condition_payload& condition,
-        const std::string label,
+        std::string label,
         bool stringtable_lookup,
         bool& pass)
     {
@@ -59,10 +59,10 @@ namespace parse { namespace detail {
     }
 
     effect_payload construct_GenerateSitRepMessage3(
-        const std::string& message_string, const std::string& icon,
+        std::string& message_string, std::string& icon,
         const PassedMessageParams& message_parameters,
         EmpireAffiliationType affiliation,
-        const std::string& label,
+        std::string label,
         bool stringtable_lookup,
         bool& pass)
     {

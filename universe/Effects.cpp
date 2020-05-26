@@ -395,11 +395,13 @@ unsigned int NoOp::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 SetMeter::SetMeter(MeterType meter,
                    std::unique_ptr<ValueRef::ValueRef<double>>&& value,
-                   const boost::optional<std::string>& accounting_label) :
+                   boost::optional<std::string> accounting_label) :
     m_meter(meter),
-    m_value(std::move(value)),
-    m_accounting_label(accounting_label ? *accounting_label : std::string())
-{}
+    m_value(std::move(value))
+{
+    if (accounting_label)
+        m_accounting_label = std::move(*accounting_label);
+}
 
 void SetMeter::Execute(ScriptingContext& context) const {
     if (!context.effect_target) return;
@@ -768,16 +770,16 @@ unsigned int SetShipPartMeter::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // SetEmpireMeter                                        //
 ///////////////////////////////////////////////////////////
-SetEmpireMeter::SetEmpireMeter(const std::string& meter, std::unique_ptr<ValueRef::ValueRef<double>>&& value) :
+SetEmpireMeter::SetEmpireMeter(std::string& meter, std::unique_ptr<ValueRef::ValueRef<double>>&& value) :
     m_empire_id(std::make_unique<ValueRef::Variable<int>>(ValueRef::EFFECT_TARGET_REFERENCE, "Owner")),
-    m_meter(meter),
+    m_meter(std::move(meter)),
     m_value(std::move(value))
 {}
 
-SetEmpireMeter::SetEmpireMeter(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id, const std::string& meter,
+SetEmpireMeter::SetEmpireMeter(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id, std::string& meter,
                                std::unique_ptr<ValueRef::ValueRef<double>>&& value) :
     m_empire_id(std::move(empire_id)),
-    m_meter(meter),
+    m_meter(std::move(meter)),
     m_value(std::move(value))
 {}
 
@@ -2002,8 +2004,8 @@ unsigned int Destroy::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // AddSpecial                                            //
 ///////////////////////////////////////////////////////////
-AddSpecial::AddSpecial(const std::string& name, float capacity) :
-    m_name(std::make_unique<ValueRef::Constant<std::string>>(name)),
+AddSpecial::AddSpecial(std::string& name, float capacity) :
+    m_name(std::make_unique<ValueRef::Constant<std::string>>(std::move(name))),
     m_capacity(std::make_unique<ValueRef::Constant<double>>(capacity))
 {}
 
@@ -2054,8 +2056,8 @@ unsigned int AddSpecial::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // RemoveSpecial                                         //
 ///////////////////////////////////////////////////////////
-RemoveSpecial::RemoveSpecial(const std::string& name) :
-    m_name(std::make_unique<ValueRef::Constant<std::string>>(name))
+RemoveSpecial::RemoveSpecial(std::string& name) :
+    m_name(std::make_unique<ValueRef::Constant<std::string>>(std::move(name)))
 {}
 
 RemoveSpecial::RemoveSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
@@ -2978,8 +2980,8 @@ unsigned int SetAggression::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // Victory                                               //
 ///////////////////////////////////////////////////////////
-Victory::Victory(const std::string& reason_string) :
-    m_reason_string(reason_string)
+Victory::Victory(std::string& reason_string) :
+    m_reason_string(std::move(reason_string))
 {}
 
 void Victory::Execute(ScriptingContext& context) const {
@@ -3144,48 +3146,48 @@ unsigned int GiveEmpireTech::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // GenerateSitRepMessage                                 //
 ///////////////////////////////////////////////////////////
-GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
-                                             const std::string& icon,
+GenerateSitRepMessage::GenerateSitRepMessage(std::string& message_string,
+                                             std::string& icon,
                                              MessageParams&& message_parameters,
                                              std::unique_ptr<ValueRef::ValueRef<int>>&& recipient_empire_id,
                                              EmpireAffiliationType affiliation,
-                                             const std::string label,
+                                             std::string label,
                                              bool stringtable_lookup) :
-    m_message_string(message_string),
-    m_icon(icon),
+    m_message_string(std::move(message_string)),
+    m_icon(std::move(icon)),
     m_message_parameters(std::move(message_parameters)),
     m_recipient_empire_id(std::move(recipient_empire_id)),
     m_affiliation(affiliation),
-    m_label(label),
+    m_label(std::move(label)),
     m_stringtable_lookup(stringtable_lookup)
 {}
 
-GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
-                                             const std::string& icon,
+GenerateSitRepMessage::GenerateSitRepMessage(std::string& message_string,
+                                             std::string& icon,
                                              MessageParams&& message_parameters,
                                              EmpireAffiliationType affiliation,
                                              std::unique_ptr<Condition::Condition>&& condition,
-                                             const std::string label,
+                                             std::string label,
                                              bool stringtable_lookup) :
-    m_message_string(message_string),
-    m_icon(icon),
+    m_message_string(std::move(message_string)),
+    m_icon(std::move(icon)),
     m_message_parameters(std::move(message_parameters)),
     m_condition(std::move(condition)),
     m_affiliation(affiliation),
-    m_label(label),
+    m_label(std::move(label)),
     m_stringtable_lookup(stringtable_lookup)
 {}
 
-GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string, const std::string& icon,
+GenerateSitRepMessage::GenerateSitRepMessage(std::string& message_string, std::string& icon,
                                              MessageParams&& message_parameters,
                                              EmpireAffiliationType affiliation,
-                                             const std::string& label,
+                                             std::string label,
                                              bool stringtable_lookup):
-    m_message_string(message_string),
-    m_icon(icon),
+    m_message_string(std::move(message_string)),
+    m_icon(std::move(icon)),
     m_message_parameters(std::move(message_parameters)),
     m_affiliation(affiliation),
-    m_label(label),
+    m_label(std::move(label)),
     m_stringtable_lookup(stringtable_lookup)
 {}
 
@@ -3394,14 +3396,14 @@ GenerateSitRepMessage::MessageParameters() const {
 ///////////////////////////////////////////////////////////
 // SetOverlayTexture                                     //
 ///////////////////////////////////////////////////////////
-SetOverlayTexture::SetOverlayTexture(const std::string& texture,
+SetOverlayTexture::SetOverlayTexture(std::string& texture,
                                      std::unique_ptr<ValueRef::ValueRef<double>>&& size) :
-    m_texture(texture),
+    m_texture(std::move(texture)),
     m_size(std::move(size))
 {}
 
-SetOverlayTexture::SetOverlayTexture(const std::string& texture, ValueRef::ValueRef<double>* size) :
-    m_texture(texture),
+SetOverlayTexture::SetOverlayTexture(std::string& texture, ValueRef::ValueRef<double>* size) :
+    m_texture(std::move(texture)),
     m_size(size)
 {}
 
@@ -3444,8 +3446,8 @@ unsigned int SetOverlayTexture::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // SetTexture                                            //
 ///////////////////////////////////////////////////////////
-SetTexture::SetTexture(const std::string& texture) :
-    m_texture(texture)
+SetTexture::SetTexture(std::string& texture) :
+    m_texture(std::move(texture))
 {}
 
 void SetTexture::Execute(ScriptingContext& context) const {
