@@ -240,6 +240,7 @@ find_package(Boost ${MINIMUM_BOOST_VERSION}
 find_package(Boost COMPONENTS python${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR} REQUIRED)
 set(Boost_PYTHON_SUFFIX "${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}")
 
+find_package(yaml-cpp REQUIRED)
 find_package(ZLIB REQUIRED)
 if(NOT BUILD_HEADLESS)
     set(SDL_NO_MAIN true)
@@ -608,6 +609,7 @@ if(NOT BUILD_HEADLESS)
     target_link_libraries(freeorion
         freeorioncommon
         freeorionparse
+        yaml-cpp
         GiGi::GiGi
         ${SDL_LIBRARIES}
         ${OPENGL_gl_LIBRARY}
