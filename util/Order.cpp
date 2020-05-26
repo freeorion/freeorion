@@ -767,10 +767,6 @@ bool BombardOrder::Check(int empire_id, int ship_id, int planet_id) {
         ErrorLogger() << "BombardOrder::ExecuteImpl got ship that isn't owned by the order-issuing empire";
         return false;
     }
-    if (ship->TotalWeaponsDamage() <= 0.0f) {   // this will test the current meter values. potential issue if some local change sets these to zero even though they will be nonzero on server when bombard is processed before effects application / meter update
-        ErrorLogger() << "IssueBombardOrder : ship can't attack / bombard";
-        return false;
-    }
 
     auto planet = Objects().get<Planet>(planet_id);
     if (!planet) {
