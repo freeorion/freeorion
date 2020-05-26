@@ -133,8 +133,8 @@ try:
         branch = ""
     else:
         branch += " "
-    commit = check_output(["git", "show", "-s", "--format=%h", "--abbrev=7", "HEAD"], universal_newlines=True).strip()
-    timestamp = float(check_output(["git", "show", "-s", "--format=%ct", "HEAD"], universal_newlines=True).strip())
+    commit = check_output(["git", "show", "--no-show-signature", "-s", "--format=%h", "--abbrev=7", "HEAD"], universal_newlines=True).strip()
+    timestamp = float(check_output(["git", "show", "--no-show-signature", "-s", "--format=%ct", "HEAD"], universal_newlines=True).strip())
     build_no = ".".join([datetime.utcfromtimestamp(timestamp).strftime("%Y-%m-%d"), commit])
 except IOError:
     print("WARNING: git not installed or not setup correctly")
