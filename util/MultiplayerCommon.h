@@ -253,10 +253,6 @@ struct PlayerInfo {
     Networking::ClientType  client_type = Networking::INVALID_CLIENT_TYPE;
     //! true iff this is the host player
     bool                    host = false;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 // Note: *::serialize() implemented in SerializeMultiplayerCommon.cpp.

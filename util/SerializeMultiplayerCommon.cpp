@@ -318,15 +318,17 @@ template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, ChatHis
 
 
 template <typename Archive>
-void PlayerInfo::serialize(Archive& ar, const unsigned int version)
+void serialize(Archive& ar, PlayerInfo& obj, unsigned int const version)
 {
-    ar  & BOOST_SERIALIZATION_NVP(name)
-        & BOOST_SERIALIZATION_NVP(empire_id)
-        & BOOST_SERIALIZATION_NVP(client_type)
-        & BOOST_SERIALIZATION_NVP(host);
+    using namespace boost::serialization;
+
+    ar  & make_nvp("name", obj.name)
+        & make_nvp("empire_id", obj.empire_id)
+        & make_nvp("client_type", obj.client_type)
+        & make_nvp("host", obj.host);
 }
 
-template void PlayerInfo::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
-template void PlayerInfo::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
-template void PlayerInfo::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
-template void PlayerInfo::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
+template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, PlayerInfo&, unsigned int const);
+template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, PlayerInfo&, unsigned int const);
+template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, PlayerInfo&, unsigned int const);
+template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, PlayerInfo&, unsigned int const);
