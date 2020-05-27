@@ -158,16 +158,10 @@ struct PlayerSetupData {
     bool                    m_player_ready = false;
     bool                    m_authenticated = false;
     int                     m_starting_team = Networking::NO_TEAM_ID;
-
-private:
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
+
 bool FO_COMMON_API operator==(const PlayerSetupData& lhs, const PlayerSetupData& rhs);
 bool operator!=(const PlayerSetupData& lhs, const PlayerSetupData& rhs);
-
-BOOST_CLASS_VERSION(PlayerSetupData, 2);
 
 /** The data needed to establish a new single player game.  If \a m_new_game
   * is true, a new game is to be started, using the remaining members besides
