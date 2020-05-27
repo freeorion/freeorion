@@ -65,6 +65,25 @@ extern template FO_COMMON_API void serialize<freeorion_xml_oarchive>(freeorion_x
 extern template FO_COMMON_API void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, ChatHistoryEntity&, unsigned int const);
 
 
+class CombatLogManager;
+
+template <typename Archive>
+void serialize(Archive&, CombatLogManager&, const unsigned int);
+
+extern template FO_COMMON_API void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, CombatLogManager&, const unsigned int);
+extern template FO_COMMON_API void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, CombatLogManager&, const unsigned int);
+extern template FO_COMMON_API void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, CombatLogManager&, const unsigned int);
+extern template FO_COMMON_API void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, CombatLogManager&, const unsigned int);
+
+template <typename Archive>
+void serializeIncompleteLogs(Archive&, CombatLogManager&, const unsigned int);
+
+extern template FO_COMMON_API void serializeIncompleteLogs<freeorion_bin_iarchive>(freeorion_bin_iarchive&, CombatLogManager&, const unsigned int);
+extern template FO_COMMON_API void serializeIncompleteLogs<freeorion_bin_oarchive>(freeorion_bin_oarchive&, CombatLogManager&, const unsigned int);
+extern template FO_COMMON_API void serializeIncompleteLogs<freeorion_xml_iarchive>(freeorion_xml_iarchive&, CombatLogManager&, const unsigned int);
+extern template FO_COMMON_API void serializeIncompleteLogs<freeorion_xml_oarchive>(freeorion_xml_oarchive&, CombatLogManager&, const unsigned int);
+
+
 struct GalaxySetupData;
 
 BOOST_CLASS_VERSION(GalaxySetupData, 3);
