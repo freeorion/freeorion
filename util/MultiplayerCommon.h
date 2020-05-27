@@ -5,8 +5,8 @@
 #include "../network/Networking.h"
 #include "Export.h"
 #include "OptionsDB.h"
+#include "OrderSet.h"
 #include "Pending.h"
-#include "Serialize.h"
 
 #include <GG/Clr.h>
 #include <GG/ClrConstants.h>
@@ -15,7 +15,6 @@
 #include <set>
 #include <vector>
 #include <map>
-#include <boost/serialization/access.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 
 
@@ -255,6 +254,5 @@ struct PlayerInfo {
     bool                    host = false;
 };
 
-// Note: *::serialize() implemented in SerializeMultiplayerCommon.cpp.
 
 #endif // _MultiplayerCommon_h_
