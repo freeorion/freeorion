@@ -104,14 +104,7 @@ struct FO_COMMON_API SaveGameEmpireData {
     bool        m_authenticated = false;
     bool        m_eliminated = false;
     bool        m_won = false;
-
-private:
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
-
-BOOST_CLASS_VERSION(SaveGameEmpireData, 2);
 
 /** Contains basic data about a player in a game. */
 struct FO_COMMON_API PlayerSaveHeaderData {

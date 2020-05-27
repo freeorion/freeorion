@@ -164,25 +164,27 @@ template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, SaveGam
 
 
 template <typename Archive>
-void SaveGameEmpireData::serialize(Archive& ar, const unsigned int version)
+void serialize(Archive& ar, SaveGameEmpireData& obj, unsigned int const version)
 {
-    ar  & BOOST_SERIALIZATION_NVP(m_empire_id)
-        & BOOST_SERIALIZATION_NVP(m_empire_name)
-        & BOOST_SERIALIZATION_NVP(m_player_name)
-        & BOOST_SERIALIZATION_NVP(m_color);
+    using namespace boost::serialization;
+
+    ar  & make_nvp("m_empire_id", obj.m_empire_id)
+        & make_nvp("m_empire_name", obj.m_empire_name)
+        & make_nvp("m_player_name", obj.m_player_name)
+        & make_nvp("m_color", obj.m_color);
     if (version >= 1) {
-        ar & BOOST_SERIALIZATION_NVP(m_authenticated);
+        ar & make_nvp("m_authenticated", obj.m_authenticated);
     }
     if (version >= 2) {
-        ar & BOOST_SERIALIZATION_NVP(m_eliminated);
-        ar & BOOST_SERIALIZATION_NVP(m_won);
+        ar & make_nvp("m_eliminated", obj.m_eliminated);
+        ar & make_nvp("m_won", obj.m_won);
     }
 }
 
-template void SaveGameEmpireData::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
-template void SaveGameEmpireData::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
-template void SaveGameEmpireData::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
-template void SaveGameEmpireData::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
+template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, SaveGameEmpireData&, unsigned int const);
+template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, SaveGameEmpireData&, unsigned int const);
+template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, SaveGameEmpireData&, unsigned int const);
+template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, SaveGameEmpireData&, unsigned int const);
 
 
 template <typename Archive>
