@@ -7,6 +7,7 @@
 #include <boost/iterator/filter_iterator.hpp>
 #include <boost/signals2/signal.hpp>
 #include <boost/functional/hash.hpp>
+#include <boost/optional.hpp>
 
 #include <functional>
 #include <memory>
@@ -322,7 +323,7 @@ private:
     static void AsyncErrorHandler(PlayerConnectionPtr self, boost::system::error_code handled_error, boost::system::error_code error);
 
     boost::asio::io_context&        m_service;
-    boost::asio::ip::tcp::socket    m_socket;
+    boost::optional<boost::asio::ip::tcp::socket> m_socket;
     Message::HeaderBuffer           m_incoming_header_buffer;
     Message                         m_incoming_message;
     Message::HeaderBuffer           m_outgoing_header;

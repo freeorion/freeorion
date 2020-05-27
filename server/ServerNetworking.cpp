@@ -167,7 +167,7 @@ PlayerConnection::PlayerConnection(boost::asio::io_context& io_context,
 
 PlayerConnection::~PlayerConnection() {
     boost::system::error_code error;
-    m_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, error);
+    m_socket->shutdown(boost::asio::ip::tcp::socket::shutdown_both, error);
     if (error && (m_ID != INVALID_PLAYER_ID)) {
         if (error == boost::asio::error::eof)
             TraceLogger(network) << "Player connection disconnected by EOF from client.";
@@ -188,7 +188,12 @@ PlayerConnection::~PlayerConnection() {
                                  << " for player id " << m_ID;
         }
     }
-    m_socket.close();
+
+    std::thread([socket{std::move(m_socket)}, id{m_ID}] () mutable {
+        TraceLogger(network) << "Asynchronously closing socket for player id " << id;
+        socket->close();
+        TraceLogger(network) << "Socket closed for player id " << id;
+    }).detach();
 }
 
 bool PlayerConnection::EstablishedPlayer() const
@@ -204,7 +209,7 @@ Networking::ClientType PlayerConnection::GetClientType() const
 { return m_client_type; }
 
 bool PlayerConnection::IsLocalConnection() const
-{ return (m_socket.remote_endpoint().address().is_loopback()); }
+{ return (m_socket->remote_endpoint().address().is_loopback()); }
 
 void PlayerConnection::Start()
 { AsyncReadMessage(); }
@@ -431,7 +436,7 @@ void PlayerConnection::HandleMessageHeaderRead(boost::system::error_code error,
             // probably just need more setup time
             std::this_thread::sleep_for(std::chrono::milliseconds(500));
             m_new_connection = false;
-            if (m_socket.is_open()) {
+            if (m_socket->is_open()) {
                 ErrorLogger(network) << "Spurious network error on startup of client. player id = "
                                      << m_ID << ".  Retrying read...";
                 AsyncReadMessage();
@@ -463,8 +468,8 @@ void PlayerConnection::HandleMessageHeaderRead(boost::system::error_code error,
                 ErrorLogger(network) << "PlayerConnection::HandleMessageHeaderRead(): "
                                      << "too big message " << msg_size << " bytes ";
                 boost::system::error_code error;
-                m_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, error);
-                m_socket.close();
+                m_socket->shutdown(boost::asio::ip::tcp::socket::shutdown_both, error);
+                m_socket->close();
                 return;
             }
             try {
@@ -474,12 +479,12 @@ void PlayerConnection::HandleMessageHeaderRead(boost::system::error_code error,
                                      << "caught exception resizing message buffer to size "
                                      << msg_size << " : " << e.what();
                 boost::system::error_code error;
-                m_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, error);
-                m_socket.close();
+                m_socket->shutdown(boost::asio::ip::tcp::socket::shutdown_both, error);
+                m_socket->close();
                 return;
             }
             boost::asio::async_read(
-                m_socket,
+                *m_socket,
                 boost::asio::buffer(m_incoming_message.Data(), m_incoming_message.Size()),
                 boost::bind(&PlayerConnection::HandleMessageBodyRead, shared_from_this(),
                             boost::asio::placeholders::error,
@@ -489,7 +494,7 @@ void PlayerConnection::HandleMessageHeaderRead(boost::system::error_code error,
 }
 
 void PlayerConnection::AsyncReadMessage() {
-    boost::asio::async_read(m_socket, boost::asio::buffer(m_incoming_header_buffer),
+    boost::asio::async_read(*m_socket, boost::asio::buffer(m_incoming_header_buffer),
                             boost::bind(&PlayerConnection::HandleMessageHeaderRead,
                                         shared_from_this(),
                                         boost::asio::placeholders::error,
@@ -516,7 +521,7 @@ void PlayerConnection::AsyncWriteMessage() {
     buffers.push_back(boost::asio::buffer(m_outgoing_header));
     buffers.push_back(boost::asio::buffer(m_outgoing_messages.front().Data(),
                                           m_outgoing_messages.front().Size()));
-    boost::asio::async_write(m_socket, buffers,
+    boost::asio::async_write(*m_socket, buffers,
                              boost::bind(&PlayerConnection::HandleMessageWrite, shared_from_this(),
                                          boost::asio::placeholders::error,
                                          boost::asio::placeholders::bytes_transferred));
@@ -823,7 +828,7 @@ void ServerNetworking::AcceptNextMessagingConnection() {
     next_connection->EventSignal.connect(
         boost::bind(&ServerNetworking::EnqueueEvent, this, _1));
     m_player_connection_acceptor.async_accept(
-        next_connection->m_socket,
+        *next_connection->m_socket,
         boost::bind(&ServerNetworking::AcceptPlayerMessagingConnection,
                     this,
                     next_connection,
