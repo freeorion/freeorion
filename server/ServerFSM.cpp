@@ -2743,7 +2743,14 @@ sc::result PlayingGame::react(const JoinGame& msg) {
     Networking::ClientType client_type;
     std::string client_version_string;
     boost::uuids::uuid cookie;
-    ExtractJoinGameMessageData(message, player_name, client_type, client_version_string, cookie);
+    try {
+        ExtractJoinGameMessageData(message, player_name, client_type, client_version_string, cookie);
+    } catch (const std::exception& e) {
+        ErrorLogger(FSM) << "PlayingGame::react(const JoinGame& msg): couldn't extract data from join game message";
+        player_connection->SendMessage(ErrorMessage(UserString("ERROR_INCOMPATIBLE_VERSION"), true));
+        server.Networking().Disconnect(player_connection);
+        return discard_event();
+    }
 
     Networking::AuthRoles roles;
     bool authenticated;
