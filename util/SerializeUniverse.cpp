@@ -22,8 +22,6 @@
 #include <boost/uuid/nil_generator.hpp>
 
 BOOST_CLASS_EXPORT(Field)
-BOOST_CLASS_EXPORT(ShipDesign)
-BOOST_CLASS_VERSION(ShipDesign, 2)
 BOOST_CLASS_EXPORT(Universe)
 BOOST_CLASS_VERSION(Universe, 1)
 
@@ -438,10 +436,16 @@ BOOST_CLASS_VERSION(Ship, 2)
 
 
 template <typename Archive>
-void ShipDesign::serialize(Archive& ar, const unsigned int version)
+void load_construct_data(Archive& ar, ShipDesign* obj, unsigned int const version)
+{ ::new(obj)ShipDesign(boost::none, "", "", INVALID_GAME_TURN, ALL_EMPIRES, "", {}, "", ""); }
+
+template <typename Archive>
+void serialize(Archive& ar, ShipDesign& obj, unsigned int const version)
 {
-    ar  & BOOST_SERIALIZATION_NVP(m_id)
-        & BOOST_SERIALIZATION_NVP(m_name);
+    using namespace boost::serialization;
+
+    ar  & make_nvp("m_id", obj.m_id)
+        & make_nvp("m_name", obj.m_name);
 
     TraceLogger() << "ship design serialize version: " << version << " : " << (Archive::is_saving::value ? "saving" : "loading");
 
@@ -450,36 +454,40 @@ void ShipDesign::serialize(Archive& ar, const unsigned int version)
         // the documentation.  This workaround instead serializes a string
         // representation.
         if (Archive::is_saving::value) {
-            auto string_uuid = boost::uuids::to_string(m_uuid);
-            ar & BOOST_SERIALIZATION_NVP(string_uuid);
+            auto string_uuid = boost::uuids::to_string(obj.m_uuid);
+            ar & make_nvp("string_uuid", string_uuid);
         } else {
             std::string string_uuid;
-            ar & BOOST_SERIALIZATION_NVP(string_uuid);
+            ar & make_nvp("string_uuid", string_uuid);
             try {
-                m_uuid = boost::lexical_cast<boost::uuids::uuid>(string_uuid);
+                obj.m_uuid = boost::lexical_cast<boost::uuids::uuid>(string_uuid);
             } catch (const boost::bad_lexical_cast&) {
-                m_uuid = boost::uuids::nil_generator()();
+                obj.m_uuid = boost::uuids::nil_generator()();
             }
         }
     } else if (Archive::is_loading::value) {
-        m_uuid = boost::uuids::nil_generator()();
+        obj.m_uuid = boost::uuids::nil_generator()();
     }
 
-    ar  & BOOST_SERIALIZATION_NVP(m_description)
-        & BOOST_SERIALIZATION_NVP(m_designed_on_turn);
+    ar  & make_nvp("m_description", obj.m_description)
+        & make_nvp("m_designed_on_turn", obj.m_designed_on_turn);
     if (version >= 2)
-        ar  & BOOST_SERIALIZATION_NVP(m_designed_by_empire);
-    ar  & BOOST_SERIALIZATION_NVP(m_hull)
-        & BOOST_SERIALIZATION_NVP(m_parts)
-        & BOOST_SERIALIZATION_NVP(m_is_monster)
-        & BOOST_SERIALIZATION_NVP(m_icon)
-        & BOOST_SERIALIZATION_NVP(m_3D_model)
-        & BOOST_SERIALIZATION_NVP(m_name_desc_in_stringtable);
+        ar  & make_nvp("m_designed_by_empire", obj.m_designed_by_empire);
+    ar  & make_nvp("m_hull", obj.m_hull)
+        & make_nvp("m_parts", obj.m_parts)
+        & make_nvp("m_is_monster", obj.m_is_monster)
+        & make_nvp("m_icon", obj.m_icon)
+        & make_nvp("m_3D_model", obj.m_3D_model)
+        & make_nvp("m_name_desc_in_stringtable", obj.m_name_desc_in_stringtable);
     if (Archive::is_loading::value) {
-        ForceValidDesignOrThrow(boost::none, true);
-        BuildStatCaches();
+        obj.ForceValidDesignOrThrow(boost::none, true);
+        obj.BuildStatCaches();
     }
 }
+
+BOOST_CLASS_EXPORT(ShipDesign)
+BOOST_CLASS_VERSION(ShipDesign, 2)
+
 
 template <typename Archive>
 void serialize(Archive& ar, SpeciesManager& sm, unsigned int const version)

@@ -4,7 +4,6 @@
 
 #include <boost/functional/hash.hpp>
 #include <boost/optional/optional.hpp>
-#include <boost/serialization/access.hpp>
 #include <boost/uuid/nil_generator.hpp>
 #include <boost/uuid/uuid.hpp>
 #include "EnumsFwd.h"
@@ -44,11 +43,6 @@ struct FO_COMMON_API ParsedShipDesign {
 };
 
 class FO_COMMON_API ShipDesign {
-public:
-private:
-    /** The ShipDesign() constructor constructs invalid designs and is only used by boost
-        serialization. */
-    ShipDesign();
 public:
     /** The public ShipDesign constructor will only construct valid ship
         designs, as long as the ShipHullManager has at least one hull.
@@ -233,9 +227,8 @@ private:
     std::map<ShipPartClass, int>    m_num_part_classes;
     bool    m_producible = false;
 
-    friend class boost::serialization::access;
     template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
+    friend void serialize(Archive&, ShipDesign&, unsigned int const);
 };
 
 ///< Returns true if the two designs have the same hull and parts.
