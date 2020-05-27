@@ -2,6 +2,7 @@
 #define _Field_h_
 
 
+#include <boost/serialization/access.hpp>
 #include "UniverseObject.h"
 #include "../util/Export.h"
 #include "../util/Pending.h"

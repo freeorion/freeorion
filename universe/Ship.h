@@ -2,6 +2,7 @@
 #define _Ship_h_
 
 
+#include <boost/serialization/access.hpp>
 #include "Meter.h"
 #include "UniverseObject.h"
 #include "../util/Export.h"

@@ -20,8 +20,6 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/uuid/nil_generator.hpp>
 
-BOOST_CLASS_EXPORT(UniverseObject)
-BOOST_CLASS_VERSION(UniverseObject, 2)
 BOOST_CLASS_EXPORT(System)
 BOOST_CLASS_EXPORT(Field)
 BOOST_CLASS_EXPORT(Planet)
@@ -221,30 +219,35 @@ void Universe::serialize(Archive& ar, const unsigned int version)
     DebugLogger() << "Universe " << serializing_label << " done";
 }
 
+BOOST_CLASS_EXPORT(UniverseObject)
+BOOST_CLASS_VERSION(UniverseObject, 2)
+
 template <typename Archive>
-void UniverseObject::serialize(Archive& ar, const unsigned int version)
+void serialize(Archive& ar, UniverseObject& o, unsigned int const version)
 {
-    ar  & BOOST_SERIALIZATION_NVP(m_id)
-        & BOOST_SERIALIZATION_NVP(m_name)
-        & BOOST_SERIALIZATION_NVP(m_x)
-        & BOOST_SERIALIZATION_NVP(m_y)
-        & BOOST_SERIALIZATION_NVP(m_owner_empire_id)
-        & BOOST_SERIALIZATION_NVP(m_system_id)
-        & BOOST_SERIALIZATION_NVP(m_specials);
+    using namespace boost::serialization;
+
+    ar  & make_nvp("m_id", o.m_id)
+        & make_nvp("m_name", o.m_name)
+        & make_nvp("m_x", o.m_x)
+        & make_nvp("m_y", o.m_y)
+        & make_nvp("m_owner_empire_id", o.m_owner_empire_id)
+        & make_nvp("m_system_id", o.m_system_id)
+        & make_nvp("m_specials", o.m_specials);
     if (version < 2) {
         std::map<MeterType, Meter> meter_map;
-        ar  & boost::serialization::make_nvp("m_meters", meter_map);
-        m_meters.reserve(meter_map.size());
-        m_meters.insert(meter_map.begin(), meter_map.end());
+        ar  & make_nvp("m_meters", meter_map);
+        o.m_meters.reserve(meter_map.size());
+        o.m_meters.insert(meter_map.begin(), meter_map.end());
     } else {
-        ar  & BOOST_SERIALIZATION_NVP(m_meters);
+        ar  & make_nvp("m_meters", o.m_meters);
 
         // loading the internal vector, like so, was no faster than loading the map
         //auto meters{m_meters.extract_sequence()};
-        //ar  & BOOST_SERIALIZATION_NVP(meters);
+        //ar  & make_nvp("meters", o.meters);
         //m_meters.adopt_sequence(std::move(meters));
     }
-    ar  & BOOST_SERIALIZATION_NVP(m_created_on_turn);
+    ar  & make_nvp("m_created_on_turn", o.m_created_on_turn);
 }
 
 template <typename Archive>
