@@ -307,10 +307,16 @@ template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, Syst
 
 
 template <typename Archive>
-void Field::serialize(Archive& ar, const unsigned int version)
+void load_construct_data(Archive& ar, Field* obj, unsigned int const version)
+{ ::new(obj)Field("", 0.0, 0.0, 0.0); }
+
+template <typename Archive>
+void serialize(Archive& ar, Field& obj, unsigned int const version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
-        & BOOST_SERIALIZATION_NVP(m_type_name);
+    using namespace boost::serialization;
+
+    ar  & make_nvp("UniverseObject", base_object<UniverseObject>(obj))
+        & make_nvp("m_type_name", obj.m_type_name);
 }
 
 
