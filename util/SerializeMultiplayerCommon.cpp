@@ -188,17 +188,19 @@ template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, SaveGam
 
 
 template <typename Archive>
-void PlayerSaveHeaderData::serialize(Archive& ar, const unsigned int version)
+void serialize(Archive& ar, PlayerSaveHeaderData& obj, unsigned int const version)
 {
-    ar  & BOOST_SERIALIZATION_NVP(m_name)
-        & BOOST_SERIALIZATION_NVP(m_empire_id)
-        & BOOST_SERIALIZATION_NVP(m_client_type);
+    using namespace boost::serialization;
+
+    ar  & make_nvp("m_name", obj.m_name)
+        & make_nvp("m_empire_id", obj.m_empire_id)
+        & make_nvp("m_client_type", obj.m_client_type);
 }
 
-template void PlayerSaveHeaderData::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
-template void PlayerSaveHeaderData::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
-template void PlayerSaveHeaderData::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
-template void PlayerSaveHeaderData::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
+template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, PlayerSaveHeaderData&, unsigned int const);
+template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, PlayerSaveHeaderData&, unsigned int const);
+template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, PlayerSaveHeaderData&, unsigned int const);
+template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, PlayerSaveHeaderData&, unsigned int const);
 
 
 template <typename Archive>

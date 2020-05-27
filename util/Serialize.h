@@ -65,6 +65,17 @@ extern template FO_COMMON_API void serialize<freeorion_xml_iarchive>(freeorion_x
 extern template FO_COMMON_API void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, GalaxySetupData&, unsigned int const);
 
 
+struct PlayerSaveHeaderData;
+
+template <typename Archive>
+void serialize(Archive&, PlayerSaveHeaderData&, unsigned int const);
+
+extern template FO_COMMON_API void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, PlayerSaveHeaderData&, unsigned int const);
+extern template FO_COMMON_API void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, PlayerSaveHeaderData&, unsigned int const);
+extern template FO_COMMON_API void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, PlayerSaveHeaderData&, unsigned int const);
+extern template FO_COMMON_API void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, PlayerSaveHeaderData&, unsigned int const);
+
+
 struct SaveGameEmpireData;
 
 BOOST_CLASS_VERSION(SaveGameEmpireData, 2);

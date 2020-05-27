@@ -111,11 +111,6 @@ struct FO_COMMON_API PlayerSaveHeaderData {
     std::string             m_name;
     int                     m_empire_id = ALL_EMPIRES;
     Networking::ClientType  m_client_type = Networking::INVALID_CLIENT_TYPE;
-
-private:
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Contains data that must be saved for a single player. */
