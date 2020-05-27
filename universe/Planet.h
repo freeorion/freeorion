@@ -2,6 +2,7 @@
 #define _Planet_h_
 
 
+#include <boost/serialization/access.hpp>
 #include "Meter.h"
 #include "PopCenter.h"
 #include "ResourceCenter.h"
