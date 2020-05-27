@@ -136,14 +136,7 @@ struct FO_COMMON_API PlayerSaveGameData : public PlayerSaveHeaderData {
     std::shared_ptr<OrderSet>       m_orders;
     std::shared_ptr<SaveGameUIData> m_ui_data;
     std::string                     m_save_state_string;
-
-private:
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
-
-BOOST_CLASS_VERSION(PlayerSaveGameData, 2);
 
 /** Data that must be retained by the server when saving and loading a
   * game that isn't player data or the universe */

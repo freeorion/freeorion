@@ -204,24 +204,26 @@ template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, PlayerS
 
 
 template <typename Archive>
-void PlayerSaveGameData::serialize(Archive& ar, const unsigned int version)
+void serialize(Archive& ar, PlayerSaveGameData& obj, unsigned int const version)
 {
-    ar  & BOOST_SERIALIZATION_NVP(m_name)
-        & BOOST_SERIALIZATION_NVP(m_empire_id)
-        & BOOST_SERIALIZATION_NVP(m_orders)
-        & BOOST_SERIALIZATION_NVP(m_ui_data)
-        & BOOST_SERIALIZATION_NVP(m_save_state_string)
-        & BOOST_SERIALIZATION_NVP(m_client_type);
+    using namespace boost::serialization;
+
+    ar  & make_nvp("m_name", obj.m_name)
+        & make_nvp("m_empire_id", obj.m_empire_id)
+        & make_nvp("m_orders", obj.m_orders)
+        & make_nvp("m_ui_data", obj.m_ui_data)
+        & make_nvp("m_save_state_string", obj.m_save_state_string)
+        & make_nvp("m_client_type", obj.m_client_type);
     if (version == 1) {
         bool ready{false};
-        ar & boost::serialization::make_nvp("m_ready", ready);
+        ar & make_nvp("m_ready", ready);
     }
 }
 
-template void PlayerSaveGameData::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
-template void PlayerSaveGameData::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
-template void PlayerSaveGameData::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
-template void PlayerSaveGameData::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
+template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, PlayerSaveGameData&, unsigned int const);
+template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, PlayerSaveGameData&, unsigned int const);
+template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, PlayerSaveGameData&, unsigned int const);
+template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, PlayerSaveGameData&, unsigned int const);
 
 
 template <typename Archive>
