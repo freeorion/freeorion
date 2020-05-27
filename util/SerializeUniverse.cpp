@@ -5,6 +5,7 @@
 
 #include "../universe/IDAllocator.h"
 #include "../universe/Building.h"
+#include "../universe/Enums.h"
 #include "../universe/Fleet.h"
 #include "../universe/Ship.h"
 #include "../universe/Planet.h"
@@ -20,7 +21,6 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/uuid/nil_generator.hpp>
 
-BOOST_CLASS_EXPORT(System)
 BOOST_CLASS_EXPORT(Field)
 BOOST_CLASS_EXPORT(Planet)
 BOOST_CLASS_VERSION(Planet, 2)
@@ -277,21 +277,36 @@ void serialize(Archive& ar, UniverseObject& o, unsigned int const version)
     ar  & make_nvp("m_created_on_turn", o.m_created_on_turn);
 }
 
+
 template <typename Archive>
-void System::serialize(Archive& ar, const unsigned int version)
+void load_construct_data(Archive& ar, System* obj, unsigned int const version)
+{ ::new(obj)System(INVALID_STAR_TYPE, "", 0.0, 0.0); }
+
+template <typename Archive>
+void serialize(Archive& ar, System& obj, unsigned int const version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
-        & BOOST_SERIALIZATION_NVP(m_star)
-        & BOOST_SERIALIZATION_NVP(m_orbits)
-        & BOOST_SERIALIZATION_NVP(m_objects)
-        & BOOST_SERIALIZATION_NVP(m_planets)
-        & BOOST_SERIALIZATION_NVP(m_buildings)
-        & BOOST_SERIALIZATION_NVP(m_fleets)
-        & BOOST_SERIALIZATION_NVP(m_ships)
-        & BOOST_SERIALIZATION_NVP(m_fields)
-        & BOOST_SERIALIZATION_NVP(m_starlanes_wormholes)
-        & BOOST_SERIALIZATION_NVP(m_last_turn_battle_here);
+    using namespace boost::serialization;
+
+    ar  & make_nvp("UniverseObject", base_object<UniverseObject>(obj))
+        & make_nvp("m_star", obj.m_star)
+        & make_nvp("m_orbits", obj.m_orbits)
+        & make_nvp("m_objects", obj.m_objects)
+        & make_nvp("m_planets", obj.m_planets)
+        & make_nvp("m_buildings", obj.m_buildings)
+        & make_nvp("m_fleets", obj.m_fleets)
+        & make_nvp("m_ships", obj.m_ships)
+        & make_nvp("m_fields", obj.m_fields)
+        & make_nvp("m_starlanes_wormholes", obj.m_starlanes_wormholes)
+        & make_nvp("m_last_turn_battle_here", obj.m_last_turn_battle_here);
 }
+
+BOOST_CLASS_EXPORT(System)
+
+template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& ar, System&, unsigned int const);
+template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& ar, System&, unsigned int const);
+template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ar, System&, unsigned int const);
+template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, System&, unsigned int const);
+
 
 template <typename Archive>
 void Field::serialize(Archive& ar, const unsigned int version)
@@ -478,18 +493,6 @@ template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, Species
 template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, SpeciesManager&, unsigned int const);
 template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, SpeciesManager&, unsigned int const);
 template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, SpeciesManager&, unsigned int const);
-
-// explicit template initialization of System::serialize needed to avoid bug with GCC 4.5.2.
-template
-void System::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& ar, const unsigned int version);
-template
-void System::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& ar, const unsigned int version);
-
-// explicit template initialization of System::serialize needed to avoid bug with GCC 4.5.2.
-template
-void System::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ar, const unsigned int version);
-template
-void System::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, const unsigned int version);
 
 template <typename Archive>
 void Serialize(Archive& oa, const Universe& universe)
