@@ -235,14 +235,7 @@ struct FO_COMMON_API MultiplayerLobbyData : public GalaxySetupData {
 
     std::string                                 m_start_lock_cause;
     bool                                        m_in_game; ///< In-game lobby
-
-private:
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
-
-BOOST_CLASS_VERSION(MultiplayerLobbyData, 2);
 
 /** The data structure stores information about latest chat massages. */
 struct FO_COMMON_API ChatHistoryEntity {

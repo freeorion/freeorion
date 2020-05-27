@@ -268,28 +268,30 @@ template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, PlayerS
 
 
 template <typename Archive>
-void MultiplayerLobbyData::serialize(Archive& ar, const unsigned int version)
+void serialize(Archive& ar, MultiplayerLobbyData& obj, unsigned int const version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(GalaxySetupData)
-        & BOOST_SERIALIZATION_NVP(m_new_game)
-        & BOOST_SERIALIZATION_NVP(m_players)
-        & BOOST_SERIALIZATION_NVP(m_save_game)
-        & BOOST_SERIALIZATION_NVP(m_save_game_empire_data)
-        & BOOST_SERIALIZATION_NVP(m_any_can_edit)
-        & BOOST_SERIALIZATION_NVP(m_start_locked)
-        & BOOST_SERIALIZATION_NVP(m_start_lock_cause);
+    using namespace boost::serialization;
+
+    ar  & make_nvp("GalaxySetupData", base_object<GalaxySetupData>(obj))
+        & make_nvp("m_new_game", obj.m_new_game)
+        & make_nvp("m_players", obj.m_players)
+        & make_nvp("m_save_game", obj.m_save_game)
+        & make_nvp("m_save_game_empire_data", obj.m_save_game_empire_data)
+        & make_nvp("m_any_can_edit", obj.m_any_can_edit)
+        & make_nvp("m_start_locked", obj.m_start_locked)
+        & make_nvp("m_start_lock_cause", obj.m_start_lock_cause);
     if (version >= 1) {
-        ar & BOOST_SERIALIZATION_NVP(m_save_game_current_turn);
+        ar & make_nvp("m_save_game_current_turn", obj.m_save_game_current_turn);
     }
     if (version >= 2) {
-        ar & BOOST_SERIALIZATION_NVP(m_in_game);
+        ar & make_nvp("m_in_game", obj.m_in_game);
     }
 }
 
-template void MultiplayerLobbyData::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
-template void MultiplayerLobbyData::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
-template void MultiplayerLobbyData::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
-template void MultiplayerLobbyData::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
+template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, MultiplayerLobbyData&, unsigned int const);
+template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, MultiplayerLobbyData&, unsigned int const);
+template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, MultiplayerLobbyData&, unsigned int const);
+template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, MultiplayerLobbyData&, unsigned int const);
 
 
 template <typename Archive>
