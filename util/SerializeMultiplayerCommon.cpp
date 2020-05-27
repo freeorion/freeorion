@@ -15,6 +15,22 @@
 
 
 template <typename Archive>
+void serialize(Archive& ar, FullPreview& fp, unsigned int const version)
+{
+    using namespace boost::serialization;
+
+    ar & make_nvp("filename", fp.filename)
+       & make_nvp("preview", fp.preview)
+       & make_nvp("galaxy", fp.galaxy);
+}
+
+template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, FullPreview&, unsigned int const);
+template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, FullPreview&, unsigned int const);
+template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, FullPreview&, unsigned int const);
+template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, FullPreview&, unsigned int const);
+
+
+template <typename Archive>
 void serialize(Archive& ar, GalaxySetupData& obj, unsigned int const version)
 {
     using namespace boost::serialization;

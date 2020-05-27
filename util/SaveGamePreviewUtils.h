@@ -58,10 +58,6 @@ struct FO_COMMON_API FullPreview {
     std::string         filename;
     SaveGamePreviewData preview;
     GalaxySetupData     galaxy;
-private:
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** The preview information the server sends to the client. */

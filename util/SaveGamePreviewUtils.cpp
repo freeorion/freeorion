@@ -160,20 +160,6 @@ template void SaveGamePreviewData::serialize<freeorion_xml_oarchive>(freeorion_x
 template void SaveGamePreviewData::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, unsigned int);
 
 
-template <typename Archive>
-void FullPreview::serialize(Archive& ar, unsigned int version)
-{
-    ar & BOOST_SERIALIZATION_NVP(filename)
-       & BOOST_SERIALIZATION_NVP(preview)
-       & BOOST_SERIALIZATION_NVP(galaxy);
-}
-
-template void FullPreview::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, unsigned int);
-template void FullPreview::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, unsigned int);
-template void FullPreview::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, unsigned int);
-template void FullPreview::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, unsigned int);
-
-
 bool SaveFileWithValidHeader(const boost::filesystem::path& path) {
     if (!fs::exists(path))
         return false;
