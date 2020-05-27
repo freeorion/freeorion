@@ -52,6 +52,19 @@ template <typename Archive>
 void Deserialize(Archive& ia, OrderSet& order_set);
 
 
+struct ChatHistoryEntity;
+
+BOOST_CLASS_VERSION(ChatHistoryEntity, 1);
+
+template <typename Archive>
+void serialize(Archive&, ChatHistoryEntity&, unsigned int const);
+
+extern template FO_COMMON_API void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, ChatHistoryEntity&, unsigned int const);
+extern template FO_COMMON_API void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, ChatHistoryEntity&, unsigned int const);
+extern template FO_COMMON_API void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, ChatHistoryEntity&, unsigned int const);
+extern template FO_COMMON_API void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, ChatHistoryEntity&, unsigned int const);
+
+
 struct GalaxySetupData;
 
 BOOST_CLASS_VERSION(GalaxySetupData, 3);

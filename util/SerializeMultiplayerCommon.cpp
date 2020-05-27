@@ -295,24 +295,26 @@ template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, Multipl
 
 
 template <typename Archive>
-void ChatHistoryEntity::serialize(Archive& ar, const unsigned int version)
+void serialize(Archive& ar, ChatHistoryEntity& obj, unsigned int const version)
 {
+    using namespace boost::serialization;
+
     if (version < 1) {
-        ar  & BOOST_SERIALIZATION_NVP(m_timestamp)
-            & BOOST_SERIALIZATION_NVP(m_player_name)
-            & BOOST_SERIALIZATION_NVP(m_text);
+        ar  & make_nvp("m_timestamp", obj.m_timestamp)
+            & make_nvp("m_player_name", obj.m_player_name)
+            & make_nvp("m_text", obj.m_text);
     } else {
-        ar  & BOOST_SERIALIZATION_NVP(m_text)
-            & BOOST_SERIALIZATION_NVP(m_player_name)
-            & BOOST_SERIALIZATION_NVP(m_text_color)
-            & BOOST_SERIALIZATION_NVP(m_timestamp);
+        ar  & make_nvp("m_text", obj.m_text)
+            & make_nvp("m_player_name", obj.m_player_name)
+            & make_nvp("m_text_color", obj.m_text_color)
+            & make_nvp("m_timestamp", obj.m_timestamp);
     }
 }
 
-template void ChatHistoryEntity::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
-template void ChatHistoryEntity::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
-template void ChatHistoryEntity::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
-template void ChatHistoryEntity::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
+template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, ChatHistoryEntity&, unsigned int const);
+template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, ChatHistoryEntity&, unsigned int const);
+template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, ChatHistoryEntity&, unsigned int const);
+template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, ChatHistoryEntity&, unsigned int const);
 
 
 template <typename Archive>
