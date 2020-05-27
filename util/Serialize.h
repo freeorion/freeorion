@@ -96,6 +96,17 @@ extern template FO_COMMON_API void serializeIncompleteLogs<freeorion_xml_iarchiv
 extern template FO_COMMON_API void serializeIncompleteLogs<freeorion_xml_oarchive>(freeorion_xml_oarchive&, CombatLogManager&, const unsigned int);
 
 
+class EmpireManager;
+
+template <typename Archive>
+void serialize(Archive&, EmpireManager&, unsigned int const);
+
+extern template FO_COMMON_API void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, EmpireManager&, unsigned int const);
+extern template FO_COMMON_API void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, EmpireManager&, unsigned int const);
+extern template FO_COMMON_API void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, EmpireManager&, unsigned int const);
+extern template FO_COMMON_API void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, EmpireManager&, unsigned int const);
+
+
 struct GalaxySetupData;
 
 BOOST_CLASS_VERSION(GalaxySetupData, 3);
