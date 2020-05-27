@@ -1,7 +1,59 @@
 #include "Serialize.h"
 
 #include "Serialize.ipp"
+#include "../combat/CombatEvents.h"
 #include "../combat/CombatLogManager.h"
+
+
+template <typename Archive>
+void serialize(Archive& ar, CombatParticipantState& obj, const unsigned int version)
+{
+    using namespace boost::serialization;
+
+    ar & make_nvp("current_health", obj.current_health)
+       & make_nvp("max_health", obj.max_health);
+}
+
+
+template <typename Archive>
+void serialize(Archive& ar, CombatLog& obj, const unsigned int version)
+{
+    using namespace boost::serialization;
+
+    // CombatEvents are serialized only through
+    // pointers to their base class.
+    // Therefore we need to manually register their types
+    // in the archive.
+    ar.template register_type<WeaponFireEvent>();
+    ar.template register_type<IncapacitationEvent>();
+    ar.template register_type<BoutBeginEvent>();
+    ar.template register_type<InitialStealthEvent>();
+    ar.template register_type<StealthChangeEvent>();
+    ar.template register_type<WeaponsPlatformEvent>();
+
+    ar  & make_nvp("turn", obj.turn)
+        & make_nvp("system_id", obj.system_id)
+        & make_nvp("empire_ids", obj.empire_ids)
+        & make_nvp("object_ids", obj.object_ids)
+        & make_nvp("damaged_object_ids", obj.damaged_object_ids)
+        & make_nvp("destroyed_object_ids", obj.destroyed_object_ids);
+
+    if (obj.combat_events.size() > 1)
+        TraceLogger() << "CombatLog::serialize turn " << obj.turn << "  combat at " << obj.system_id << "  combat events size: " << obj.combat_events.size();
+    try {
+        ar  & make_nvp("combat_events", obj.combat_events);
+    } catch (const std::exception& e) {
+        ErrorLogger() << "combat events serializing failed!: caught exception: " << e.what();
+    }
+
+    ar & make_nvp("participant_states", obj.participant_states);
+}
+
+
+template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, CombatLog&, const unsigned int);
+template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, CombatLog&, const unsigned int);
+template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, CombatLog&, const unsigned int);
+template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, CombatLog&, const unsigned int);
 
 template <typename Archive>
 void serialize(Archive& ar, CombatLogManager& obj, const unsigned int version)

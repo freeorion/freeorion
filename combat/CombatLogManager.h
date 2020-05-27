@@ -4,10 +4,8 @@
 #include "CombatSystem.h"
 
 #include "../util/Export.h"
-#include "../util/Serialize.h"
 
 #include <boost/optional/optional.hpp>
-#include <boost/serialization/nvp.hpp>
 
 #include <memory>
 
@@ -20,10 +18,6 @@ struct FO_COMMON_API CombatParticipantState {
 
     CombatParticipantState();
     CombatParticipantState(const UniverseObject& object);
-private:
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 struct FO_COMMON_API CombatLog {
@@ -38,13 +32,8 @@ struct FO_COMMON_API CombatLog {
     std::set<int>               destroyed_object_ids;
     std::vector<CombatEventPtr> combat_events;
     std::map<int, CombatParticipantState> participant_states;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
-BOOST_CLASS_VERSION(CombatLog, 1);
 
 /** Stores and retreives combat logs. */
 class FO_COMMON_API CombatLogManager {
