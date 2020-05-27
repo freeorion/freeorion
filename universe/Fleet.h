@@ -1,8 +1,6 @@
 #ifndef _Fleet_h_
 #define _Fleet_h_
 
-#include <boost/serialization/access.hpp>
-#include <boost/serialization/version.hpp>
 #include "ObjectMap.h"
 #include "UniverseObject.h"
 #include "../util/Export.h"
@@ -136,10 +134,7 @@ public:
     static const int ETA_OUT_OF_RANGE;                      ///< returned by ETA when fleet can't reach destination due to insufficient fuel capacity and lack of fleet resupply on route
 
 protected:
-    friend class Universe;
     friend class ObjectMap;
-
-    Fleet() {}
 
 public:
     Fleet(const std::string& name, double x, double y, int owner);      ///< general ctor taking name, position and owner id
@@ -177,9 +172,8 @@ private:
     bool                        m_arrived_this_turn = false;
     int                         m_arrival_starlane = INVALID_OBJECT_ID; // see comment for ArrivalStarlane()
 
-    friend class boost::serialization::access;
     template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
+    friend void serialize(Archive&, Fleet&, unsigned int const);
 };
 
 

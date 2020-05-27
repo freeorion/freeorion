@@ -22,8 +22,6 @@
 #include <boost/uuid/nil_generator.hpp>
 
 BOOST_CLASS_EXPORT(Field)
-BOOST_CLASS_EXPORT(Fleet)
-BOOST_CLASS_VERSION(Fleet, 3)
 BOOST_CLASS_EXPORT(ShipDesign)
 BOOST_CLASS_VERSION(ShipDesign, 2)
 BOOST_CLASS_EXPORT(Universe)
@@ -384,22 +382,31 @@ BOOST_CLASS_EXPORT(Building)
 
 
 template <typename Archive>
-void Fleet::serialize(Archive& ar, const unsigned int version)
+void load_construct_data(Archive& ar, Fleet* obj, unsigned int const version)
+{ ::new(obj)Fleet("", 0.0, 0.0, ALL_EMPIRES); }
+
+template <typename Archive>
+void serialize(Archive& ar, Fleet& obj, unsigned int const version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
-        & BOOST_SERIALIZATION_NVP(m_ships)
-        & BOOST_SERIALIZATION_NVP(m_prev_system)
-        & BOOST_SERIALIZATION_NVP(m_next_system)
-        & BOOST_SERIALIZATION_NVP(m_aggressive)
-        & BOOST_SERIALIZATION_NVP(m_ordered_given_to_empire_id)
-        & BOOST_SERIALIZATION_NVP(m_travel_route);
+    using namespace boost::serialization;
+
+    ar  & make_nvp("UniverseObject", base_object<UniverseObject>(obj))
+        & make_nvp("m_ships", obj.m_ships)
+        & make_nvp("m_prev_system", obj.m_prev_system)
+        & make_nvp("m_next_system", obj.m_next_system)
+        & make_nvp("m_aggressive", obj.m_aggressive)
+        & make_nvp("m_ordered_given_to_empire_id", obj.m_ordered_given_to_empire_id)
+        & make_nvp("m_travel_route", obj.m_travel_route);
     if (version < 3) {
         double dummy_travel_distance;
         ar & boost::serialization::make_nvp("m_travel_distance", dummy_travel_distance);
     }
-    ar  & BOOST_SERIALIZATION_NVP(m_arrived_this_turn)
-        & BOOST_SERIALIZATION_NVP(m_arrival_starlane);
+    ar  & make_nvp("m_arrived_this_turn", obj.m_arrived_this_turn)
+        & make_nvp("m_arrival_starlane", obj.m_arrival_starlane);
 }
+
+BOOST_CLASS_EXPORT(Fleet)
+BOOST_CLASS_VERSION(Fleet, 3)
 
 
 template <typename Archive>

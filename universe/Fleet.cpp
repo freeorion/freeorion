@@ -95,7 +95,7 @@ Fleet* Fleet::Clone(int empire_id) const {
     if (!(vis >= VIS_BASIC_VISIBILITY && vis <= VIS_FULL_VISIBILITY))
         return nullptr;
 
-    Fleet* retval = new Fleet();
+    Fleet* retval = new Fleet(m_name, X(), Y(), Owner());
     retval->Copy(shared_from_this(), empire_id);
     return retval;
 }
