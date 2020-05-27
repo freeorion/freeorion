@@ -1974,6 +1974,9 @@ Enable autosave when resigning or closing the game. In multiplayer hostless mode
 OPTIONS_DB_AUTOSAVE_HOSTLESS
 Enable autosave in hostless mode.
 
+OPTIONS_DB_AUTOSAVE_HOSTLESS_EACH_PLAYER
+Enable autosave in hostless mode every time a player submits issued orders. This will prevent the loss of issued orders in the event of a server crash.
+
 OPTIONS_DB_AUTOSAVE_INTERVAL
 Delay in seconds after the most recent turn start or autosave until the next autosave. Prevents losing player orders on server crash. 0 if disabled.
 
