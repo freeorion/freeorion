@@ -22,7 +22,6 @@
 #include <boost/uuid/nil_generator.hpp>
 
 BOOST_CLASS_EXPORT(Field)
-BOOST_CLASS_EXPORT(Building)
 BOOST_CLASS_EXPORT(Fleet)
 BOOST_CLASS_VERSION(Fleet, 3)
 BOOST_CLASS_EXPORT(ShipDesign)
@@ -366,14 +365,23 @@ BOOST_CLASS_VERSION(Planet, 2)
 
 
 template <typename Archive>
-void Building::serialize(Archive& ar, const unsigned int version)
+void load_construct_data(Archive& ar, Building* obj, unsigned int const version)
+{ ::new(obj)Building(ALL_EMPIRES, "", ALL_EMPIRES); }
+
+template <typename Archive>
+void serialize(Archive& ar, Building& obj, unsigned int const version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
-        & BOOST_SERIALIZATION_NVP(m_building_type)
-        & BOOST_SERIALIZATION_NVP(m_planet_id)
-        & BOOST_SERIALIZATION_NVP(m_ordered_scrapped)
-        & BOOST_SERIALIZATION_NVP(m_produced_by_empire_id);
+    using namespace boost::serialization;
+
+    ar  & make_nvp("UniverseObject", base_object<UniverseObject>(obj))
+        & make_nvp("m_building_type", obj.m_building_type)
+        & make_nvp("m_planet_id", obj.m_planet_id)
+        & make_nvp("m_ordered_scrapped", obj.m_ordered_scrapped)
+        & make_nvp("m_produced_by_empire_id", obj.m_produced_by_empire_id);
 }
+
+BOOST_CLASS_EXPORT(Building)
+
 
 template <typename Archive>
 void Fleet::serialize(Archive& ar, const unsigned int version)

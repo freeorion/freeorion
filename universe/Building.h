@@ -32,11 +32,6 @@ public:
     void SetOrderedScrapped(bool b = true);  ///< flags building for scrapping
     void ResetTargetMaxUnpairedMeters() override;
 
-protected:
-    friend class Universe;
-    Building() {}
-
-public:
     Building(int empire_id, const std::string& building_type,
              int produced_by_empire_id = ALL_EMPIRES);
 
@@ -56,9 +51,8 @@ private:
     bool        m_ordered_scrapped = false;
     int         m_produced_by_empire_id = ALL_EMPIRES;
 
-    friend class boost::serialization::access;
     template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
+    friend void serialize(Archive&, Building&, unsigned int const);
 };
 
 
