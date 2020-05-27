@@ -1233,12 +1233,6 @@ Escalado de coste de partes
 #*RULE_ENABLE_ALLIED_REPAIR_DESC
 #* <not translated 1970-01-01 01:00:00>
 
-#*RULE_SHOW_DETAILED_EMPIRES_DATA
-#* <not translated 1970-01-01 01:00:00>
-
-#*RULE_SHOW_DETAILED_EMPIRES_DATA_DESC
-#* <not translated 1970-01-01 01:00:00>
-
 #*RULE_DIPLOMACY
 #* <not translated 1970-01-01 01:00:00>
 

@@ -74,9 +74,6 @@ namespace {
 
         rules.Add<int>("RULE_CONCEDE_COLONIES_THRESHOLD", "RULE_CONCEDE_COLONIES_THRESHOLD_DESC",
                        "MULTIPLAYER", 1, true,  RangedValidator<int>(0, 9999));
-
-        rules.Add<bool>("RULE_SHOW_DETAILED_EMPIRES_DATA", "RULE_SHOW_DETAILED_EMPIRES_DATA_DESC",
-                       "MULTIPLAYER", true, true);
     }
     bool temp_bool2 = RegisterGameRules(&AddRules);
 }

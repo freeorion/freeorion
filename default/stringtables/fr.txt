@@ -1249,12 +1249,6 @@ Réparation en Cale Sèche et Spatiale pour astronefs alliés
 RULE_ENABLE_ALLIED_REPAIR_DESC
 Autorise la structure Cale Sèche Orbitale et la technologie Réparation Spatiale à réparer les astronefs des empires alliés.
 
-RULE_SHOW_DETAILED_EMPIRES_DATA
-Afficher les données détaillées des empires
-
-RULE_SHOW_DETAILED_EMPIRES_DATA_DESC
-Afficher la recherche et la production, les structures acquises, coques et équipements, de tous les empires.
-
 RULE_DIPLOMACY
 Interactions Diplomatie
 

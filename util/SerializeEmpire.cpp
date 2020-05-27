@@ -137,7 +137,8 @@ void Empire::serialize(Archive& ar, const unsigned int version)
 
     bool visible = GetUniverse().AllObjectsVisible() ||
         GetUniverse().EncodingEmpire() == ALL_EMPIRES ||
-        m_id == GetUniverse().EncodingEmpire();
+        m_id == GetUniverse().EncodingEmpire() ||
+        Empires().GetDiplomaticStatus(m_id, GetUniverse().EncodingEmpire()) == DIPLO_ALLIED;
 
     if (Archive::is_loading::value && version < 1) {
         // adapt set to map
@@ -146,26 +147,12 @@ void Empire::serialize(Archive& ar, const unsigned int version)
         m_techs.clear();
         for (auto& entry : temp_stringset)
             m_techs[entry] = BEFORE_FIRST_TURN;
-    } else if (Archive::is_saving::value && !visible && !GetGameRules().Get<bool>("RULE_SHOW_DETAILED_EMPIRES_DATA")) {
-        std::map<std::string, int> dummy_string_int_map;
-        // show other empire tech only if the current empire already knowns this tech without disclosure turn
-        // this allows to see effects if the empire learned appropriate tech
-        const Empire* encoding_empire = Empires().GetEmpire(GetUniverse().EncodingEmpire());
-        if (encoding_empire) {
-            for (const auto& tech : encoding_empire->m_techs) {
-                const auto it = m_techs.find(tech.first);
-                if (it != m_techs.end()) {
-                    dummy_string_int_map.emplace(tech.first, BEFORE_FIRST_TURN);
-                }
-            }
-        }
-        ar  & boost::serialization::make_nvp("m_techs", dummy_string_int_map);
     } else {
         ar  & BOOST_SERIALIZATION_NVP(m_techs);
     }
 
     ar  & BOOST_SERIALIZATION_NVP(m_meters);
-    if (Archive::is_saving::value && !visible && !GetGameRules().Get<bool>("RULE_SHOW_DETAILED_EMPIRES_DATA")) {
+    if (Archive::is_saving::value && !visible) {
         // don't send what other empires building and researching
         // and which building and ship parts are available to them
         ResearchQueue empty_research_queue(m_id);
@@ -180,8 +167,7 @@ void Empire::serialize(Archive& ar, const unsigned int version)
             & boost::serialization::make_nvp("m_available_hull_types", empty_string_set);
     } else {
         // processing all data on deserialization, saving to savegame,
-        // sending data to the current empire itself,
-        // or rule allows to see all data
+        // or sending data to the current empire itself
         ar  & BOOST_SERIALIZATION_NVP(m_research_queue)
             & BOOST_SERIALIZATION_NVP(m_research_progress)
             & BOOST_SERIALIZATION_NVP(m_production_queue)
