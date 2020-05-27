@@ -115,4 +115,15 @@ extern template FO_COMMON_API void serialize<freeorion_bin_iarchive>(freeorion_b
 extern template FO_COMMON_API void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, SaveGameUIData&, unsigned int const);
 
 
+struct ServerSaveGameData;
+
+template <typename Archive>
+void serialize(Archive&, ServerSaveGameData&, unsigned int const);
+
+extern template FO_COMMON_API void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, ServerSaveGameData&, unsigned int const);
+extern template FO_COMMON_API void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, ServerSaveGameData&, unsigned int const);
+extern template FO_COMMON_API void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, ServerSaveGameData&, unsigned int const);
+extern template FO_COMMON_API void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, ServerSaveGameData&, unsigned int const);
+
+
 #endif // _Serialize_h_

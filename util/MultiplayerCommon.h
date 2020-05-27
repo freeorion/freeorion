@@ -142,11 +142,6 @@ struct FO_COMMON_API PlayerSaveGameData : public PlayerSaveHeaderData {
   * game that isn't player data or the universe */
 struct FO_COMMON_API ServerSaveGameData {
     int m_current_turn = INVALID_GAME_TURN;
-
-private:
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** The data structure used to represent a single player's setup options for a

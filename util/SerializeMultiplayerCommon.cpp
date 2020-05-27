@@ -227,15 +227,15 @@ template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, PlayerS
 
 
 template <typename Archive>
-void ServerSaveGameData::serialize(Archive& ar, const unsigned int version)
+void serialize(Archive& ar, ServerSaveGameData& obj, unsigned int const version)
 {
-    ar  & BOOST_SERIALIZATION_NVP(m_current_turn);
+    ar  & boost::serialization::make_nvp("m_current_turn", obj.m_current_turn);
 }
 
-template void ServerSaveGameData::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
-template void ServerSaveGameData::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
-template void ServerSaveGameData::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
-template void ServerSaveGameData::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
+template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, ServerSaveGameData&, unsigned int const);
+template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, ServerSaveGameData&, unsigned int const);
+template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, ServerSaveGameData&, unsigned int const);
+template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, ServerSaveGameData&, unsigned int const);
 
 
 template <typename Archive>
