@@ -168,6 +168,19 @@ extern template FO_COMMON_API void serialize<freeorion_xml_oarchive>(freeorion_x
 extern template FO_COMMON_API void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, PlayerSaveHeaderData&, unsigned int const);
 
 
+struct SaveGamePreviewData;
+
+template<typename Archive>
+void serialize(Archive&, SaveGamePreviewData&, unsigned int const);
+
+BOOST_CLASS_VERSION(SaveGamePreviewData, 4);
+
+extern template FO_COMMON_API void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, SaveGamePreviewData&, unsigned int const);
+extern template FO_COMMON_API void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, SaveGamePreviewData&, unsigned int const);
+extern template FO_COMMON_API void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, SaveGamePreviewData&, unsigned int const);
+extern template FO_COMMON_API void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, SaveGamePreviewData&, unsigned int const);
+
+
 struct PlayerSetupData;
 
 BOOST_CLASS_VERSION(PlayerSetupData, 2);
