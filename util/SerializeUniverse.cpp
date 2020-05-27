@@ -79,13 +79,13 @@ template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, Resourc
 
 
 template <typename Archive>
-void ObjectMap::serialize(Archive& ar, const unsigned int version)
+void serialize(Archive& ar, ObjectMap& objmap, unsigned int const version)
 {
-    ar & BOOST_SERIALIZATION_NVP(m_objects);
+    ar & boost::serialization::make_nvp("m_objects", objmap.m_objects);
 
     // If loading from the archive, propagate the changes to the specialized maps.
     if (Archive::is_loading::value)
-        CopyObjectsToSpecializedMaps();
+        objmap.CopyObjectsToSpecializedMaps();
 }
 
 template <typename Archive>
