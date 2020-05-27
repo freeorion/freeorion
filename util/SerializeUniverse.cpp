@@ -375,17 +375,8 @@ void ShipDesign::serialize(Archive& ar, const unsigned int version)
     }
 }
 
-template
-void SpeciesManager::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& ar, const unsigned int version);
-template
-void SpeciesManager::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& ar, const unsigned int version);
-template
-void SpeciesManager::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ar, const unsigned int version);
-template
-void SpeciesManager::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, const unsigned int version);
-
 template <typename Archive>
-void SpeciesManager::serialize(Archive& ar, const unsigned int version)
+void serialize(Archive& ar, SpeciesManager& sm, unsigned int const version)
 {
     // Don't need to send all the data about species, as this is derived from
     // content data files in scripting/species that should be available to any
@@ -400,11 +391,11 @@ void SpeciesManager::serialize(Archive& ar, const unsigned int version)
     std::map<std::string, std::map<std::string, int>>   species_ships_destroyed;
 
     if (Archive::is_saving::value) {
-        species_homeworlds =        GetSpeciesHomeworldsMap(GetUniverse().EncodingEmpire());
-        empire_opinions =           GetSpeciesEmpireOpinionsMap(GetUniverse().EncodingEmpire());
-        other_species_opinions =    GetSpeciesSpeciesOpinionsMap(GetUniverse().EncodingEmpire());
-        species_object_populations =SpeciesObjectPopulations(GetUniverse().EncodingEmpire());
-        species_ships_destroyed =   SpeciesShipsDestroyed(GetUniverse().EncodingEmpire());
+        species_homeworlds = sm.GetSpeciesHomeworldsMap(GetUniverse().EncodingEmpire());
+        empire_opinions = sm.GetSpeciesEmpireOpinionsMap(GetUniverse().EncodingEmpire());
+        other_species_opinions = sm.GetSpeciesSpeciesOpinionsMap(GetUniverse().EncodingEmpire());
+        species_object_populations = sm.SpeciesObjectPopulations(GetUniverse().EncodingEmpire());
+        species_ships_destroyed = sm.SpeciesShipsDestroyed(GetUniverse().EncodingEmpire());
     }
 
     ar  & BOOST_SERIALIZATION_NVP(species_homeworlds)
@@ -414,13 +405,18 @@ void SpeciesManager::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(species_ships_destroyed);
 
     if (Archive::is_loading::value) {
-        SetSpeciesHomeworlds(species_homeworlds);
-        SetSpeciesEmpireOpinions(empire_opinions);
-        SetSpeciesSpeciesOpinions(other_species_opinions);
-        m_species_object_populations = std::move(species_object_populations);
-        m_species_species_ships_destroyed = std::move(species_ships_destroyed);
+        sm.SetSpeciesHomeworlds(species_homeworlds);
+        sm.SetSpeciesEmpireOpinions(empire_opinions);
+        sm.SetSpeciesSpeciesOpinions(other_species_opinions);
+        sm.m_species_object_populations = std::move(species_object_populations);
+        sm.m_species_species_ships_destroyed = std::move(species_ships_destroyed);
     }
 }
+
+template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, SpeciesManager&, unsigned int const);
+template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, SpeciesManager&, unsigned int const);
+template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, SpeciesManager&, unsigned int const);
+template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, SpeciesManager&, unsigned int const);
 
 // explicit template initialization of System::serialize needed to avoid bug with GCC 4.5.2.
 template
