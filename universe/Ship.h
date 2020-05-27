@@ -2,7 +2,6 @@
 #define _Ship_h_
 
 
-#include <boost/serialization/access.hpp>
 #include "Meter.h"
 #include "UniverseObject.h"
 #include "../util/Export.h"
@@ -107,12 +106,10 @@ public:
 
     virtual void    SetShipMetersToMax();
 
-protected:
     friend class Universe;
 
     Ship();
 
-public:
     /** Create a ship from an @p empire_id, @p design_id, @p species_name and
         @p production_by_empire_id. */
     Ship(int empire_id, int design_id, const std::string& species_name,
@@ -138,9 +135,8 @@ private:
     int             m_arrived_on_turn = INVALID_GAME_TURN;
     int             m_last_resupplied_on_turn = BEFORE_FIRST_TURN;
 
-    friend class boost::serialization::access;
     template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
+    friend void serialize(Archive&, Ship&, unsigned int const);
 };
 
 FO_COMMON_API std::string NewMonsterName();

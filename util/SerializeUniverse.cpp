@@ -27,8 +27,6 @@ BOOST_CLASS_VERSION(Planet, 2)
 BOOST_CLASS_EXPORT(Building)
 BOOST_CLASS_EXPORT(Fleet)
 BOOST_CLASS_VERSION(Fleet, 3)
-BOOST_CLASS_EXPORT(Ship)
-BOOST_CLASS_VERSION(Ship, 2)
 BOOST_CLASS_EXPORT(ShipDesign)
 BOOST_CLASS_VERSION(ShipDesign, 2)
 BOOST_CLASS_EXPORT(Universe)
@@ -365,27 +363,34 @@ void Fleet::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_arrival_starlane);
 }
 
+
 template <typename Archive>
-void Ship::serialize(Archive& ar, const unsigned int version)
+void serialize(Archive& ar, Ship& obj, unsigned int const version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
-        & BOOST_SERIALIZATION_NVP(m_design_id)
-        & BOOST_SERIALIZATION_NVP(m_fleet_id)
-        & BOOST_SERIALIZATION_NVP(m_ordered_scrapped)
-        & BOOST_SERIALIZATION_NVP(m_ordered_colonize_planet_id)
-        & BOOST_SERIALIZATION_NVP(m_ordered_invade_planet_id)
-        & BOOST_SERIALIZATION_NVP(m_ordered_bombard_planet_id)
-        & BOOST_SERIALIZATION_NVP(m_part_meters)
-        & BOOST_SERIALIZATION_NVP(m_species_name)
-        & BOOST_SERIALIZATION_NVP(m_produced_by_empire_id)
-        & BOOST_SERIALIZATION_NVP(m_arrived_on_turn);
+    using namespace boost::serialization;
+
+    ar  & make_nvp("UniverseObject", base_object<UniverseObject>(obj))
+        & make_nvp("m_design_id", obj.m_design_id)
+        & make_nvp("m_fleet_id", obj.m_fleet_id)
+        & make_nvp("m_ordered_scrapped", obj.m_ordered_scrapped)
+        & make_nvp("m_ordered_colonize_planet_id", obj.m_ordered_colonize_planet_id)
+        & make_nvp("m_ordered_invade_planet_id", obj.m_ordered_invade_planet_id)
+        & make_nvp("m_ordered_bombard_planet_id", obj.m_ordered_bombard_planet_id)
+        & make_nvp("m_part_meters", obj.m_part_meters)
+        & make_nvp("m_species_name", obj.m_species_name)
+        & make_nvp("m_produced_by_empire_id", obj.m_produced_by_empire_id)
+        & make_nvp("m_arrived_on_turn", obj.m_arrived_on_turn);
     if (version >= 1) {
-        ar  & BOOST_SERIALIZATION_NVP(m_last_turn_active_in_combat);
+        ar  & make_nvp("m_last_turn_active_in_combat", obj.m_last_turn_active_in_combat);
         if (version >= 2) {
-            ar  & BOOST_SERIALIZATION_NVP(m_last_resupplied_on_turn);
+            ar  & make_nvp("m_last_resupplied_on_turn", obj.m_last_resupplied_on_turn);
         }
     }
 }
+
+BOOST_CLASS_EXPORT(Ship)
+BOOST_CLASS_VERSION(Ship, 2)
+
 
 template <typename Archive>
 void ShipDesign::serialize(Archive& ar, const unsigned int version)
