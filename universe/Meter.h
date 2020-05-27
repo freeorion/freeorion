@@ -3,9 +3,6 @@
 
 
 #include <string>
-#include <boost/serialization/access.hpp>
-#include <boost/serialization/nvp.hpp>
-#include <boost/serialization/version.hpp>
 #include "../util/Export.h"
 
 
@@ -52,26 +49,9 @@ private:
     float m_current_value = DEFAULT_VALUE;
     float m_initial_value = DEFAULT_VALUE;
 
-    friend class boost::serialization::access;
     template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
+    friend void serialize(Archive&, Meter&, unsigned int const);
 };
-
-BOOST_CLASS_VERSION(Meter, 1)
-
-
-template <typename Archive>
-void Meter::serialize(Archive& ar, const unsigned int version)
-{
-    if (Archive::is_loading::value && version < 1) {
-        ar  & BOOST_SERIALIZATION_NVP(m_current_value)
-            & BOOST_SERIALIZATION_NVP(m_initial_value);
-    } else {
-        // use minimum size NVP label to reduce archive size bloat for very-often serialized meter values...
-        ar  & boost::serialization::make_nvp("c", m_current_value)
-            & boost::serialization::make_nvp("i", m_initial_value);
-    }
-}
 
 
 #endif

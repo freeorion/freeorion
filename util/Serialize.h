@@ -11,6 +11,7 @@
 
 #include "Export.h"
 
+class Meter;
 class OrderSet;
 class Universe;
 class UniverseObject;
@@ -118,6 +119,15 @@ extern template FO_COMMON_API void serialize<freeorion_bin_iarchive>(freeorion_b
 extern template FO_COMMON_API void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, GalaxySetupData&, unsigned int const);
 extern template FO_COMMON_API void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, GalaxySetupData&, unsigned int const);
 extern template FO_COMMON_API void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, GalaxySetupData&, unsigned int const);
+
+
+template <typename Archive>
+void serialize(Archive&, Meter&, unsigned int const);
+
+extern template FO_COMMON_API void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, Meter&, unsigned int const);
+extern template FO_COMMON_API void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, Meter&, unsigned int const);
+extern template FO_COMMON_API void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, Meter&, unsigned int const);
+extern template FO_COMMON_API void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, Meter&, unsigned int const);
 
 
 struct MultiplayerLobbyData;
