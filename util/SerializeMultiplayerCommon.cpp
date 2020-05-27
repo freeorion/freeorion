@@ -70,15 +70,17 @@ template void SinglePlayerSetupData::serialize<freeorion_xml_iarchive>(freeorion
 
 
 template <typename Archive>
-void SaveGameUIData::serialize(Archive& ar, const unsigned int version)
+void serialize(Archive& ar, SaveGameUIData& obj, unsigned int const version)
 {
+    using namespace boost::serialization;
+
     TraceLogger() << "SaveGameUIData::serialize " << (Archive::is_saving::value ? "saving" : "loading")
                   << " version " << version;
-    ar  & BOOST_SERIALIZATION_NVP(map_top)
-        & BOOST_SERIALIZATION_NVP(map_left)
-        & BOOST_SERIALIZATION_NVP(map_zoom_steps_in)
-        & BOOST_SERIALIZATION_NVP(fleets_exploring)
-        & BOOST_SERIALIZATION_NVP(obsolete_ui_event_count);
+    ar  & make_nvp("map_top", obj.map_top)
+        & make_nvp("map_left", obj.map_left)
+        & make_nvp("map_zoom_steps_in", obj.map_zoom_steps_in)
+        & make_nvp("fleets_exploring", obj.fleets_exploring)
+        & make_nvp("obsolete_ui_event_count", obj.obsolete_ui_event_count);
     TraceLogger() << "SaveGameUIData::serialize processed obsolete UI event count";
     if (Archive::is_saving::value || version >= 3) {
         // serializing / deserializing boost::optional can cause problem, so
@@ -90,7 +92,7 @@ void SaveGameUIData::serialize(Archive& ar, const unsigned int version)
 
         if (Archive::is_saving::value) {
             // populate temp containers
-            for (auto id_pair_pair : ordered_ship_design_ids_and_obsolete) {
+            for (auto id_pair_pair : obj.ordered_ship_design_ids_and_obsolete) {
                 ordered_ship_design_ids.push_back(id_pair_pair.first);
                 if (id_pair_pair.second)
                     ids_obsolete[id_pair_pair.first] = id_pair_pair.second.get();
@@ -108,33 +110,33 @@ void SaveGameUIData::serialize(Archive& ar, const unsigned int version)
             TraceLogger() << "SaveGameUIData::serialize design data from archive completed";
 
             // extract from temp containers into member storage with boost::optional
-            ordered_ship_design_ids_and_obsolete.clear();
+            obj.ordered_ship_design_ids_and_obsolete.clear();
             for (int id : ordered_ship_design_ids) {
                 auto it = ids_obsolete.find(id);
                 auto opt_p_i = it == ids_obsolete.end() ?
                     boost::optional<std::pair<bool, int>>() :
                     boost::optional<std::pair<bool, int>>(it->second);
-                ordered_ship_design_ids_and_obsolete.push_back(std::make_pair(id, opt_p_i));
+                obj.ordered_ship_design_ids_and_obsolete.push_back(std::make_pair(id, opt_p_i));
             }
             TraceLogger() << "SaveGameUIData::serialize design data extracted";
         }
     } else {    // is_loading with version < 3
         // (attempt to) directly deserialize / load design ordering and obsolescence
         try {
-            ar  & BOOST_SERIALIZATION_NVP(ordered_ship_design_ids_and_obsolete);
+            ar  & make_nvp("ordered_ship_design_ids_and_obsolete", obj.ordered_ship_design_ids_and_obsolete);
         } catch (...) {
             ErrorLogger() << "Deserializing ship design ids and obsoletes failed. Skipping hull order and obsoletion, and obsolete ship parts.";
             return;
         }
     }
-    ar  & BOOST_SERIALIZATION_NVP(ordered_ship_hull_and_obsolete);
+    ar  & make_nvp("ordered_ship_hull_and_obsolete", obj.ordered_ship_hull_and_obsolete);
     TraceLogger() << "SaveGameUIData::serialize ship hull processed";
     if (Archive::is_saving::value || version >= 4) {
         std::map<std::string, int> ordered_obsolete_ship_parts;
 
         if (Archive::is_saving::value) {
             // populate temp container
-            ordered_obsolete_ship_parts = std::map<std::string, int>(obsolete_ship_parts.begin(), obsolete_ship_parts.end());
+            ordered_obsolete_ship_parts = std::map<std::string, int>(obj.obsolete_ship_parts.begin(), obj.obsolete_ship_parts.end());
             // serialize into archive
             ar & BOOST_SERIALIZATION_NVP(ordered_obsolete_ship_parts);
         } else {
@@ -142,23 +144,23 @@ void SaveGameUIData::serialize(Archive& ar, const unsigned int version)
             ar & BOOST_SERIALIZATION_NVP(ordered_obsolete_ship_parts);
 
             // extract from temp container
-            obsolete_ship_parts = std::unordered_map<std::string, int>(ordered_obsolete_ship_parts.begin(), ordered_obsolete_ship_parts.end());
+            obj.obsolete_ship_parts = std::unordered_map<std::string, int>(ordered_obsolete_ship_parts.begin(), ordered_obsolete_ship_parts.end());
         }
     } else {    // is_loading with version < 4
         try {
-            ar  & BOOST_SERIALIZATION_NVP(obsolete_ship_parts);
+            ar  & make_nvp("obsolete_ship_parts", obj.obsolete_ship_parts);
         } catch (...) {
             ErrorLogger() << "Deserializing obsolete ship parts failed.";
         }
     }
-    TraceLogger() << "SaveGameUIData::serialize obsoleted ship parts processed " << obsolete_ship_parts.size()
-                  << " items. Bucket count " << obsolete_ship_parts.bucket_count();
+    TraceLogger() << "SaveGameUIData::serialize obsoleted ship parts processed " << obj.obsolete_ship_parts.size()
+                  << " items. Bucket count " << obj.obsolete_ship_parts.bucket_count();
 }
 
-template void SaveGameUIData::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
-template void SaveGameUIData::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
-template void SaveGameUIData::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
-template void SaveGameUIData::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
+template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, SaveGameUIData&, unsigned int const);
+template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, SaveGameUIData&, unsigned int const);
+template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, SaveGameUIData&, unsigned int const);
+template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, SaveGameUIData&, unsigned int const);
 
 
 template <typename Archive>

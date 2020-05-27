@@ -92,14 +92,7 @@ struct FO_COMMON_API SaveGameUIData {
     std::vector<std::pair<int, boost::optional<std::pair<bool, int>>>> ordered_ship_design_ids_and_obsolete;
     std::vector<std::pair<std::string, std::pair<bool, int>>> ordered_ship_hull_and_obsolete;
     std::unordered_map<std::string, int> obsolete_ship_parts;
-
-private:
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
-
-BOOST_CLASS_VERSION(SaveGameUIData, 4);
 
 
 /** The data for one empire necessary for game-setup during multiplayer loading. */
