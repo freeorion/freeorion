@@ -55,18 +55,20 @@ template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, GalaxyS
 
 
 template <typename Archive>
-void SinglePlayerSetupData::serialize(Archive& ar, const unsigned int version)
+void serialize(Archive& ar, SinglePlayerSetupData& obj, unsigned int const version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(GalaxySetupData)
-        & BOOST_SERIALIZATION_NVP(m_new_game)
-        & BOOST_SERIALIZATION_NVP(m_filename)
-        & BOOST_SERIALIZATION_NVP(m_players);
+    using namespace boost::serialization;
+
+    ar  & make_nvp("GalaxySetupData", base_object<GalaxySetupData>(obj))
+        & make_nvp("m_new_game", obj.m_new_game)
+        & make_nvp("m_filename", obj.m_filename)
+        & make_nvp("m_players", obj.m_players);
 }
 
-template void SinglePlayerSetupData::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
-template void SinglePlayerSetupData::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
-template void SinglePlayerSetupData::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
-template void SinglePlayerSetupData::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
+template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, SinglePlayerSetupData&, unsigned int const);
+template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, SinglePlayerSetupData&, unsigned int const);
+template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, SinglePlayerSetupData&, unsigned int const);
+template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, SinglePlayerSetupData&, unsigned int const);
 
 
 template <typename Archive>

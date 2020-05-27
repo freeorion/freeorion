@@ -179,11 +179,6 @@ struct SinglePlayerSetupData : public GalaxySetupData {
     bool                            m_new_game;
     std::string                     m_filename;
     std::vector<PlayerSetupData>    m_players;
-
-private:
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** The data structure that represents the state of the multiplayer lobby. */
