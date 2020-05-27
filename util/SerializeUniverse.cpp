@@ -59,6 +59,18 @@ template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, Meter&,
 
 
 template <typename Archive>
+void serialize(Archive& ar, PopCenter& p, unsigned int const version)
+{
+    ar  & boost::serialization::make_nvp("m_species_name", p.m_species_name);
+}
+
+template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, PopCenter&, unsigned int const);
+template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, PopCenter&, unsigned int const);
+template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, PopCenter&, unsigned int const);
+template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, PopCenter&, unsigned int const);
+
+
+template <typename Archive>
 void ObjectMap::serialize(Archive& ar, const unsigned int version)
 {
     ar & BOOST_SERIALIZATION_NVP(m_objects);
