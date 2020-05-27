@@ -22,8 +22,6 @@
 #include <boost/uuid/nil_generator.hpp>
 
 BOOST_CLASS_EXPORT(Field)
-BOOST_CLASS_EXPORT(Planet)
-BOOST_CLASS_VERSION(Planet, 2)
 BOOST_CLASS_EXPORT(Building)
 BOOST_CLASS_EXPORT(Fleet)
 BOOST_CLASS_VERSION(Fleet, 3)
@@ -315,40 +313,51 @@ void Field::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_type_name);
 }
 
+
 template <typename Archive>
-void Planet::serialize(Archive& ar, const unsigned int version)
+void load_construct_data(Archive& ar, Planet* obj, unsigned int const version)
+{ ::new(obj)Planet(PT_TERRAN, SZ_MEDIUM); }
+
+template <typename Archive>
+void serialize(Archive& ar, Planet& obj, unsigned int const version)
 {
-   ar   & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
-        & BOOST_SERIALIZATION_BASE_OBJECT_NVP(PopCenter)
-        & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ResourceCenter)
-        & BOOST_SERIALIZATION_NVP(m_type)
-        & BOOST_SERIALIZATION_NVP(m_original_type)
-        & BOOST_SERIALIZATION_NVP(m_size)
-        & BOOST_SERIALIZATION_NVP(m_orbital_period)
-        & BOOST_SERIALIZATION_NVP(m_initial_orbital_position)
-        & BOOST_SERIALIZATION_NVP(m_rotational_period)
-        & BOOST_SERIALIZATION_NVP(m_axial_tilt)
-        & BOOST_SERIALIZATION_NVP(m_buildings);
+    using namespace boost::serialization;
+
+    ar  & make_nvp("UniverseObject", base_object<UniverseObject>(obj))
+        & make_nvp("PopCenter", base_object<PopCenter>(obj))
+        & make_nvp("ResourceCenter", base_object<ResourceCenter>(obj))
+        & make_nvp("m_type", obj.m_type)
+        & make_nvp("m_original_type", obj.m_original_type)
+        & make_nvp("m_size", obj.m_size)
+        & make_nvp("m_orbital_period", obj.m_orbital_period)
+        & make_nvp("m_initial_orbital_position", obj.m_initial_orbital_position)
+        & make_nvp("m_rotational_period", obj.m_rotational_period)
+        & make_nvp("m_axial_tilt", obj.m_axial_tilt)
+        & make_nvp("m_buildings", obj.m_buildings);
     if (version < 2) {
         // if deserializing an old save, default to standard default never-colonized turn
-        m_turn_last_colonized = INVALID_GAME_TURN;
-        if (!SpeciesName().empty()) // but if a planet has a species, it must have been colonized, so default to the previous turn
-            m_turn_last_colonized = CurrentTurn() - 1;
+        obj.m_turn_last_colonized = INVALID_GAME_TURN;
+        if (!obj.SpeciesName().empty()) // but if a planet has a species, it must have been colonized, so default to the previous turn
+            obj.m_turn_last_colonized = CurrentTurn() - 1;
     } else {
-        ar   & BOOST_SERIALIZATION_NVP(m_turn_last_colonized);
+        ar   & make_nvp("m_turn_last_colonized", obj.m_turn_last_colonized);
     }
     if (version < 1) {
         bool dummy = false;
         ar   & boost::serialization::make_nvp("m_just_conquered", dummy);
     } else {
-        ar   & BOOST_SERIALIZATION_NVP(m_turn_last_conquered);
+        ar   & make_nvp("m_turn_last_conquered", obj.m_turn_last_conquered);
     }
-    ar  & BOOST_SERIALIZATION_NVP(m_is_about_to_be_colonized)
-        & BOOST_SERIALIZATION_NVP(m_is_about_to_be_invaded)
-        & BOOST_SERIALIZATION_NVP(m_is_about_to_be_bombarded)
-        & BOOST_SERIALIZATION_NVP(m_ordered_given_to_empire_id)
-        & BOOST_SERIALIZATION_NVP(m_last_turn_attacked_by_ship);
+    ar  & make_nvp("m_is_about_to_be_colonized", obj.m_is_about_to_be_colonized)
+        & make_nvp("m_is_about_to_be_invaded", obj.m_is_about_to_be_invaded)
+        & make_nvp("m_is_about_to_be_bombarded", obj.m_is_about_to_be_bombarded)
+        & make_nvp("m_ordered_given_to_empire_id", obj.m_ordered_given_to_empire_id)
+        & make_nvp("m_last_turn_attacked_by_ship", obj.m_last_turn_attacked_by_ship);
 }
+
+BOOST_CLASS_EXPORT(Planet)
+BOOST_CLASS_VERSION(Planet, 2)
+
 
 template <typename Archive>
 void Building::serialize(Archive& ar, const unsigned int version)
