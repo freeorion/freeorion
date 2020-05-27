@@ -72,13 +72,7 @@ struct FO_COMMON_API CombatEvent {
         It is from the perspective of the \p viewing_empire_id. Some events
         like BoutBegin are not associated with any faction.*/
     virtual boost::optional<int> PrincipalFaction(int viewing_empire_id) const;
-
-private:
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
-BOOST_CLASS_EXPORT_KEY(CombatEvent)
 
 #endif // COMBATEVENT_H

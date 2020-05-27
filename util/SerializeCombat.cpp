@@ -5,6 +5,281 @@
 #include "../combat/CombatLogManager.h"
 
 
+template<typename Archive>
+void serialize(Archive&, CombatEvent&, unsigned int const)
+{}
+
+BOOST_CLASS_EXPORT(CombatEvent)
+
+template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, CombatEvent&, const unsigned int);
+template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, CombatEvent&, const unsigned int);
+template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, CombatEvent&, const unsigned int);
+template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, CombatEvent&, const unsigned int);
+
+
+template <typename Archive>
+void serialize(Archive& ar, BoutBeginEvent& obj, unsigned int const version)
+{
+    using namespace boost::serialization;
+
+    ar & make_nvp("CombatEvent", base_object<CombatEvent>(obj));
+    ar & make_nvp("bout", obj.bout);
+}
+
+BOOST_CLASS_EXPORT(BoutBeginEvent)
+
+template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, BoutBeginEvent&, unsigned int const);
+template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, BoutBeginEvent&, unsigned int const);
+template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, BoutBeginEvent&, unsigned int const);
+template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, BoutBeginEvent&, unsigned int const);
+
+
+template <typename Archive>
+void serialize(Archive& ar, BoutEvent& obj, unsigned int const version)
+{
+    using namespace boost::serialization;
+
+    ar & make_nvp("CombatEvent", base_object<CombatEvent>(obj));
+    ar & make_nvp("bout", obj.bout)
+       & make_nvp("events", obj.events);
+}
+
+BOOST_CLASS_VERSION(BoutEvent, 4)
+BOOST_CLASS_EXPORT(BoutEvent)
+
+template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, BoutEvent&, unsigned int const);
+template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, BoutEvent&, unsigned int const);
+template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, BoutEvent&, unsigned int const);
+template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, BoutEvent&, unsigned int const);
+
+
+template <typename Archive>
+void serialize(Archive& ar, SimultaneousEvents& obj, unsigned int const version)
+{
+    using namespace boost::serialization;
+
+    ar & make_nvp("CombatEvent", base_object<CombatEvent>(obj));
+    ar & make_nvp("events", obj.events);
+}
+
+BOOST_CLASS_VERSION(SimultaneousEvents, 4)
+BOOST_CLASS_EXPORT(SimultaneousEvents)
+
+template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, SimultaneousEvents&, unsigned int const);
+template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, SimultaneousEvents&, unsigned int const);
+template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, SimultaneousEvents&, unsigned int const);
+template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, SimultaneousEvents&, unsigned int const);
+
+
+template <typename Archive>
+void serialize(Archive& ar, InitialStealthEvent& obj, unsigned int const version)
+{
+    using namespace boost::serialization;
+
+    ar & make_nvp("CombatEvent", base_object<CombatEvent>(obj));
+    ar & make_nvp("empire_to_object_visibility", obj.empire_to_object_visibility);
+}
+
+BOOST_CLASS_VERSION(InitialStealthEvent, 4)
+BOOST_CLASS_EXPORT(InitialStealthEvent)
+
+template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, InitialStealthEvent&, unsigned int const);
+template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, InitialStealthEvent&, unsigned int const);
+template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, InitialStealthEvent&, unsigned int const);
+template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, InitialStealthEvent&, unsigned int const);
+
+
+template <typename Archive>
+void serialize(Archive& ar, StealthChangeEvent& obj, unsigned int const version)
+{
+    using namespace boost::serialization;
+
+    ar & make_nvp("CombatEvent", base_object<CombatEvent>(obj));
+    ar & make_nvp("bout", obj.bout)
+       & make_nvp("events", obj.events);
+}
+
+BOOST_CLASS_VERSION(StealthChangeEvent, 4)
+BOOST_CLASS_EXPORT(StealthChangeEvent)
+
+template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, StealthChangeEvent&, unsigned int const);
+template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, StealthChangeEvent&, unsigned int const);
+template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, StealthChangeEvent&, unsigned int const);
+template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, StealthChangeEvent&, unsigned int const);
+
+
+template <typename Archive>
+void serialize(Archive& ar, StealthChangeEvent::StealthChangeEventDetail& obj, unsigned int const version)
+{
+    using namespace boost::serialization;
+
+    ar  & make_nvp("attacker_id", obj.attacker_id)
+        & make_nvp("target_id", obj.target_id)
+        & make_nvp("attacker_empire_id", obj.attacker_empire_id)
+        & make_nvp("target_empire_id", obj.target_empire_id)
+        & make_nvp("visibility", obj.visibility);
+}
+
+BOOST_CLASS_VERSION(StealthChangeEvent::StealthChangeEventDetail, 4)
+BOOST_CLASS_EXPORT(StealthChangeEvent::StealthChangeEventDetail)
+
+template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, StealthChangeEvent::StealthChangeEventDetail&, unsigned int const);
+template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, StealthChangeEvent::StealthChangeEventDetail&, unsigned int const);
+template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, StealthChangeEvent::StealthChangeEventDetail&, unsigned int const);
+template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, StealthChangeEvent::StealthChangeEventDetail&, unsigned int const);
+
+
+template <typename Archive>
+void serialize(Archive& ar, WeaponFireEvent& obj, unsigned int const version)
+{
+    using namespace boost::serialization;
+
+    ar & make_nvp("CombatEvent", base_object<CombatEvent>(obj));
+
+    if (version < 5) {
+        ar & make_nvp("bout", obj.bout)
+           & make_nvp("round", obj.round)
+           & make_nvp("attacker_id", obj.attacker_id)
+           & make_nvp("target_id", obj.target_id)
+           & make_nvp("weapon_name", obj.weapon_name)
+           & make_nvp("power", obj.power)
+           & make_nvp("shield", obj.shield)
+           & make_nvp("damage", obj.damage)
+           & make_nvp("target_owner_id", obj.target_owner_id)
+           & make_nvp("attacker_owner_id", obj.attacker_owner_id);
+    } else {
+        ar & make_nvp("b", obj.bout)
+           & make_nvp("r", obj.round)
+           & make_nvp("a", obj.attacker_id)
+           & make_nvp("t", obj.target_id)
+           & make_nvp("w", obj.weapon_name)
+           & make_nvp("p", obj.power)
+           & make_nvp("s", obj.shield)
+           & make_nvp("d", obj.damage)
+           & make_nvp("to", obj.target_owner_id)
+           & make_nvp("ao", obj.attacker_owner_id);
+    }
+}
+
+BOOST_CLASS_VERSION(WeaponFireEvent, 5)
+BOOST_CLASS_EXPORT(WeaponFireEvent)
+
+template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, WeaponFireEvent&, unsigned int const);
+template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, WeaponFireEvent&, unsigned int const);
+template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, WeaponFireEvent&, unsigned int const);
+template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, WeaponFireEvent&, unsigned int const);
+
+
+template <typename Archive>
+void serialize(Archive& ar, IncapacitationEvent& obj, unsigned int const version)
+{
+    using namespace boost::serialization;
+
+    ar & make_nvp("CombatEvent", base_object<CombatEvent>(obj));
+
+    if (version < 2) {
+        ar & make_nvp("bout", obj.bout)
+           & make_nvp("object_id", obj.object_id)
+           & make_nvp("object_owner_id", obj.object_owner_id);
+    } else {
+        ar & make_nvp("b", obj.bout)
+           & make_nvp("i", obj.object_id)
+           & make_nvp("o", obj.object_owner_id);
+    }
+}
+
+BOOST_CLASS_VERSION(IncapacitationEvent, 2)
+BOOST_CLASS_EXPORT(IncapacitationEvent)
+
+template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, IncapacitationEvent&, unsigned int const);
+template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, IncapacitationEvent&, unsigned int const);
+template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, IncapacitationEvent&, unsigned int const);
+template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, IncapacitationEvent&, unsigned int const);
+
+
+template <typename Archive>
+void serialize(Archive& ar, FightersAttackFightersEvent& obj, unsigned int const)
+{
+    using namespace boost::serialization;
+
+    ar & make_nvp("CombatEvent", base_object<CombatEvent>(obj));
+
+    ar & make_nvp("bout", obj.bout)
+       & make_nvp("events", obj.events);
+}
+
+BOOST_CLASS_VERSION(FightersAttackFightersEvent, 4)
+BOOST_CLASS_EXPORT(FightersAttackFightersEvent)
+
+template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, FightersAttackFightersEvent&, unsigned int const);
+template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, FightersAttackFightersEvent&, unsigned int const);
+template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, FightersAttackFightersEvent&, unsigned int const);
+template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, FightersAttackFightersEvent&, unsigned int const);
+
+
+template <typename Archive>
+void serialize (Archive& ar, FighterLaunchEvent& obj, unsigned int const version)
+{
+    using namespace boost::serialization;
+
+    ar & make_nvp("CombatEvent", base_object<CombatEvent>(obj));
+
+    ar & make_nvp("bout", obj.bout)
+       & make_nvp("fighter_owner_empire_id", obj.fighter_owner_empire_id)
+       & make_nvp("launched_from_id", obj.launched_from_id)
+       & make_nvp("number_launched", obj.number_launched);
+}
+
+BOOST_CLASS_EXPORT(FighterLaunchEvent)
+
+template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, FighterLaunchEvent&, unsigned int const);
+template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, FighterLaunchEvent&, unsigned int const);
+template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, FighterLaunchEvent&, unsigned int const);
+template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, FighterLaunchEvent&, unsigned int const);
+
+
+template <typename Archive>
+void serialize(Archive& ar, FightersDestroyedEvent& obj, unsigned int const version)
+{
+    using namespace boost::serialization;
+
+    ar & make_nvp("CombatEvent", base_object<CombatEvent>(obj));
+
+    ar & make_nvp("bout", obj.bout)
+       & make_nvp("events", obj.events);
+}
+
+BOOST_CLASS_VERSION(FightersDestroyedEvent, 4)
+BOOST_CLASS_EXPORT(FightersDestroyedEvent)
+
+template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, FightersDestroyedEvent&, unsigned int const);
+template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, FightersDestroyedEvent&, unsigned int const);
+template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, FightersDestroyedEvent&, unsigned int const);
+template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, FightersDestroyedEvent&, unsigned int const);
+
+
+template <typename Archive>
+void serialize(Archive& ar, WeaponsPlatformEvent& obj, unsigned int const version)
+{
+    using namespace boost::serialization;
+
+    ar & make_nvp("CombatEvent", base_object<CombatEvent>(obj));
+
+    ar & make_nvp("bout", obj.bout)
+       & make_nvp("attacker_id", obj.attacker_id)
+       & make_nvp("attacker_owner_id", obj.attacker_owner_id)
+       & make_nvp("events", obj.events);
+}
+
+BOOST_CLASS_VERSION(WeaponsPlatformEvent, 4)
+BOOST_CLASS_EXPORT(WeaponsPlatformEvent)
+
+template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, WeaponsPlatformEvent&, unsigned int const);
+template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, WeaponsPlatformEvent&, unsigned int const);
+template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, WeaponsPlatformEvent&, unsigned int const);
+template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, WeaponsPlatformEvent&, unsigned int const);
+
+
 template <typename Archive>
 void serialize(Archive& ar, CombatParticipantState& obj, const unsigned int version)
 {

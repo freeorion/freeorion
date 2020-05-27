@@ -7,8 +7,6 @@
 #include <set>
 
 #include <tuple>
-#include <boost/serialization/access.hpp>
-#include <boost/serialization/export.hpp>
 
 #include "../util/Export.h"
 #include "../universe/EnumsFwd.h"
@@ -31,11 +29,6 @@ struct FO_COMMON_API BoutBeginEvent : public CombatEvent {
     std::string CombatLogDescription(int viewing_empire_id) const override;
 
     int bout = 0;
-
-private:
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** BoutEvent describes all the events that happen in one bout of combat.
@@ -66,9 +59,8 @@ private:
 
     std::vector<CombatEventPtr> events;
 
-    friend class boost::serialization::access;
     template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
+    friend void serialize(Archive&, BoutEvent&, unsigned int const);
 };
 
 /** SimultaneousEvents describes a set of simultaneous events in one bout of combat.
@@ -94,9 +86,8 @@ struct FO_COMMON_API SimultaneousEvents : public CombatEvent {
 protected:
     std::vector<CombatEventPtr> events;
 
-    friend class boost::serialization::access;
     template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
+    friend void serialize(Archive&, SimultaneousEvents&, unsigned int const);
 };
 
 
@@ -125,9 +116,8 @@ struct FO_COMMON_API InitialStealthEvent : public CombatEvent {
 private:
     EmpireToObjectVisibilityMap empire_to_object_visibility;// filled by AutoresolveInfo::ReportInvisibleObjects
 
-    friend class boost::serialization::access;
     template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
+    friend void serialize(Archive&, InitialStealthEvent&, unsigned int const);
 };
 
 /**StealthChangeEvent describes changes in the visibility of objects during combat.
@@ -159,19 +149,14 @@ struct FO_COMMON_API StealthChangeEvent : public CombatEvent {
         int attacker_empire_id = ALL_EMPIRES;
         int target_empire_id = ALL_EMPIRES;
         Visibility visibility;
-
-        friend class boost::serialization::access;
-        template <typename Archive>
-        void serialize(Archive& ar, const unsigned int version);
     };
 
 private:
     int bout = 0;
     std::map<int, std::vector<StealthChangeEventDetailPtr>> events;
 
-    friend class boost::serialization::access;
     template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
+    friend void serialize(Archive&, StealthChangeEvent&, unsigned int const);
 };
 
 /// An event that describes a single attack by one object or fighter against
@@ -210,11 +195,6 @@ struct FO_COMMON_API WeaponFireEvent : public CombatEvent {
     float damage = 0.0f;
     int attacker_owner_id = ALL_EMPIRES;
     int target_owner_id = ALL_EMPIRES;
-
-private:
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /// Created when an object becomes unable to fight anymore,
@@ -229,11 +209,6 @@ struct FO_COMMON_API IncapacitationEvent : public CombatEvent {
     int bout = 0;
     int object_id = INVALID_OBJECT_ID;
     int object_owner_id = ALL_EMPIRES;
-
-private:
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 
@@ -251,9 +226,8 @@ private:
     // Store the number of each of the identical fighter combat events.
     std::map<std::pair<int, int>, unsigned int> events;
 
-    friend class boost::serialization::access;
     template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
+    friend void serialize(Archive&, FightersAttackFightersEvent&, unsigned int const);
 };
 
 /// Created when an fighter is launched
@@ -270,11 +244,6 @@ struct FO_COMMON_API FighterLaunchEvent : public CombatEvent {
     int fighter_owner_empire_id = ALL_EMPIRES;
     int launched_from_id = INVALID_OBJECT_ID;
     int number_launched = 0;
-
-private:
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** FightersDestroyedEvent aggregates all the fighters destroyed during one combat bout.*/
@@ -291,9 +260,8 @@ private:
     // Store the number of each of the identical fighter combat events.
     std::map<int, unsigned int> events;
 
-    friend class boost::serialization::access;
     template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
+    friend void serialize(Archive&, FightersDestroyedEvent&, unsigned int const);
 };
 
 /** WeaponsPlatformEvent describes a ship or planet with zero or more weapons firing its weapons in combat.
@@ -321,9 +289,9 @@ struct FO_COMMON_API WeaponsPlatformEvent : public CombatEvent {
 private:
     std::map<int, std::vector<WeaponFireEvent::WeaponFireEventPtr>> events;
 
-    friend class boost::serialization::access;
     template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
+    friend void serialize(Archive&, WeaponsPlatformEvent&, unsigned int const);
 };
+
 
 #endif // COMBATEVENT_H
