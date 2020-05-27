@@ -4,6 +4,7 @@
 #include "OptionsDB.h"
 #include "OrderSet.h"
 #include "Order.h"
+#include "SaveGamePreviewUtils.h"
 #include "../universe/System.h"
 
 #include "Serialize.ipp"
@@ -226,6 +227,22 @@ template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, PlayerS
 template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, PlayerSaveGameData&, unsigned int const);
 template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, PlayerSaveGameData&, unsigned int const);
 template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, PlayerSaveGameData&, unsigned int const);
+
+
+template<typename Archive>
+void serialize(Archive& ar, PreviewInformation& pi, unsigned int const version)
+{
+    using namespace boost::serialization;
+
+    ar & make_nvp("subdirectories", pi.subdirectories)
+       & make_nvp("folder", pi.folder)
+       & make_nvp("previews", pi.previews);
+}
+
+template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, PreviewInformation&, unsigned int const);
+template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, PreviewInformation&, unsigned int const);
+template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, PreviewInformation&, unsigned int const);
+template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, PreviewInformation&, unsigned int const);
 
 
 template <typename Archive>

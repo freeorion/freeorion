@@ -69,10 +69,6 @@ struct FO_COMMON_API PreviewInformation {
     std::vector<std::string>    subdirectories; /// A list of all subfolders of the save game directory, in the format /name1/child1/grandchild
     std::string                 folder;         /// The directory whose previews are being listed now
     std::vector<FullPreview>    previews;       /// The previews of the saves in this folder
-private:
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /// Attempts to load headers of a save file.

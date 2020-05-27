@@ -174,20 +174,6 @@ template void FullPreview::serialize<freeorion_xml_oarchive>(freeorion_xml_oarch
 template void FullPreview::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, unsigned int);
 
 
-template<typename Archive>
-void PreviewInformation::serialize(Archive& ar, const unsigned int version)
-{
-    ar & BOOST_SERIALIZATION_NVP(subdirectories)
-       & BOOST_SERIALIZATION_NVP(folder)
-       & BOOST_SERIALIZATION_NVP(previews);
-}
-
-template void PreviewInformation::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
-template void PreviewInformation::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
-template void PreviewInformation::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
-template void PreviewInformation::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
-
-
 bool SaveFileWithValidHeader(const boost::filesystem::path& path) {
     if (!fs::exists(path))
         return false;
