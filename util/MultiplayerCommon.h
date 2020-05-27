@@ -76,14 +76,7 @@ struct FO_COMMON_API GalaxySetupData {
       * have to rewrite any custom boost::serialization classes that implement
       * empire-dependent visibility. */
     int                 m_encoding_empire; ///< used during serialization to globally set what empire knowledge to use
-
-private:
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
-
-BOOST_CLASS_VERSION(GalaxySetupData, 3);
 
 
 /** Contains the UI data that must be saved in save game files in order to

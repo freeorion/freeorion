@@ -51,4 +51,18 @@ void Deserialize(Archive& ia, std::map<int, std::shared_ptr<UniverseObject>>& ob
 template <typename Archive>
 void Deserialize(Archive& ia, OrderSet& order_set);
 
+
+struct GalaxySetupData;
+
+BOOST_CLASS_VERSION(GalaxySetupData, 3);
+
+template <typename Archive>
+void serialize(Archive&, GalaxySetupData&, unsigned int const);
+
+extern template FO_COMMON_API void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, GalaxySetupData&, unsigned int const);
+extern template FO_COMMON_API void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, GalaxySetupData&, unsigned int const);
+extern template FO_COMMON_API void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, GalaxySetupData&, unsigned int const);
+extern template FO_COMMON_API void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, GalaxySetupData&, unsigned int const);
+
+
 #endif // _Serialize_h_

@@ -14,42 +14,44 @@
 
 
 template <typename Archive>
-void GalaxySetupData::serialize(Archive& ar, const unsigned int version)
+void serialize(Archive& ar, GalaxySetupData& obj, unsigned int const version)
 {
-    if (Archive::is_saving::value && m_encoding_empire != ALL_EMPIRES && (!GetOptionsDB().Get<bool>("network.server.publish-seed"))) {
+    using namespace boost::serialization;
+
+    if (Archive::is_saving::value && obj.m_encoding_empire != ALL_EMPIRES && (!GetOptionsDB().Get<bool>("network.server.publish-seed"))) {
         std::string dummy = "";
-        ar  & boost::serialization::make_nvp("m_seed", dummy);
+        ar  & make_nvp("m_seed", dummy);
     } else {
-        ar  & BOOST_SERIALIZATION_NVP(m_seed);
+        ar  & make_nvp("m_seed", obj.m_seed);
     }
 
-    ar  & BOOST_SERIALIZATION_NVP(m_size)
-        & BOOST_SERIALIZATION_NVP(m_shape)
-        & BOOST_SERIALIZATION_NVP(m_age)
-        & BOOST_SERIALIZATION_NVP(m_starlane_freq)
-        & BOOST_SERIALIZATION_NVP(m_planet_density)
-        & BOOST_SERIALIZATION_NVP(m_specials_freq)
-        & BOOST_SERIALIZATION_NVP(m_monster_freq)
-        & BOOST_SERIALIZATION_NVP(m_native_freq)
-        & BOOST_SERIALIZATION_NVP(m_ai_aggr);
+    ar  & make_nvp("m_size", obj.m_size)
+        & make_nvp("m_shape", obj.m_shape)
+        & make_nvp("m_age", obj.m_age)
+        & make_nvp("m_starlane_freq", obj.m_starlane_freq)
+        & make_nvp("m_planet_density", obj.m_planet_density)
+        & make_nvp("m_specials_freq", obj.m_specials_freq)
+        & make_nvp("m_monster_freq", obj.m_monster_freq)
+        & make_nvp("m_native_freq", obj.m_native_freq)
+        & make_nvp("m_ai_aggr", obj.m_ai_aggr);
 
     if (version >= 1) {
-        ar & BOOST_SERIALIZATION_NVP(m_game_rules);
+        ar & make_nvp("m_game_rules", obj.m_game_rules);
     }
 
     if (version >= 2) {
-        ar & BOOST_SERIALIZATION_NVP(m_game_uid);
+        ar & make_nvp("m_game_uid", obj.m_game_uid);
     } else {
         if (Archive::is_loading::value) {
-            m_game_uid = boost::uuids::to_string(boost::uuids::random_generator()());
+            obj.m_game_uid = boost::uuids::to_string(boost::uuids::random_generator()());
         }
     }
 }
 
-template void GalaxySetupData::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
-template void GalaxySetupData::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
-template void GalaxySetupData::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
-template void GalaxySetupData::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
+template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, GalaxySetupData&, unsigned int const);
+template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, GalaxySetupData&, unsigned int const);
+template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, GalaxySetupData&, unsigned int const);
+template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, GalaxySetupData&, unsigned int const);
 
 
 template <typename Archive>
