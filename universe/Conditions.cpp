@@ -6565,11 +6565,20 @@ EmpireHasAdoptedPolicy::EmpireHasAdoptedPolicy(std::unique_ptr<ValueRef::ValueRe
     Condition(),
     m_name(std::move(name)),
     m_empire_id(std::move(empire_id))
-{}
+{
+    m_root_candidate_invariant =
+        (!m_empire_id || m_empire_id->RootCandidateInvariant()) &&
+        (!m_name || m_name->RootCandidateInvariant());
+    m_target_invariant =
+        (!m_empire_id || m_empire_id->TargetInvariant()) &&
+        (!m_name || m_name->TargetInvariant());
+    m_source_invariant =
+        (!m_empire_id || m_empire_id->SourceInvariant()) &&
+        (!m_name || m_name->SourceInvariant());
+}
 
 EmpireHasAdoptedPolicy::EmpireHasAdoptedPolicy(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
-    Condition(),
-    m_name(std::move(name))
+    EmpireHasAdoptedPolicy(nullptr, std::move(name))
 {}
 
 EmpireHasAdoptedPolicy::~EmpireHasAdoptedPolicy()
@@ -6629,15 +6638,6 @@ void EmpireHasAdoptedPolicy::Eval(const ScriptingContext& parent_context,
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
 }
-
-bool EmpireHasAdoptedPolicy::RootCandidateInvariant() const
-{ return !m_name || m_name->RootCandidateInvariant(); }
-
-bool EmpireHasAdoptedPolicy::TargetInvariant() const
-{ return !m_name || m_name->TargetInvariant(); }
-
-bool EmpireHasAdoptedPolicy::SourceInvariant() const
-{ return !m_name || m_name->SourceInvariant(); }
 
 std::string EmpireHasAdoptedPolicy::Description(bool negated/* = false*/) const {
     std::string name_str;

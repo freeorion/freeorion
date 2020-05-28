@@ -6,10 +6,9 @@
 #include "../universe/Condition.h"
 #include "../universe/Effect.h"
 #include "../Empire/Government.h"
+#include "../util/Directories.h"
 
 #include <boost/spirit/include/phoenix.hpp>
-//TODO: replace with std::make_unique when transitioning to C++14
-#include <boost/smart_ptr/make_unique.hpp>
 
 #define DEBUG_PARSERS 0
 
@@ -52,7 +51,7 @@ namespace {
     };
 
     void insert_policy(PolicyManager::PoliciesTypeMap& policies, policy_pod policy_, bool& pass) {
-        auto policy_ptr = boost::make_unique<Policy>(
+        auto policy_ptr = std::make_unique<Policy>(
             policy_.name,
             policy_.description,
             policy_.short_description,
@@ -140,9 +139,8 @@ namespace parse {
         const lexer lexer;
         start_rule_payload policies_;
 
-        for (const boost::filesystem::path& file : ListScripts(path)) {
-            /*auto success =*/ detail::parse_file<grammar, start_rule_payload>(lexer, file, policies_);
-        }
+        for (const auto& file : ListDir(path, IsFOCScript))
+            detail::parse_file<grammar, start_rule_payload>(lexer, file, policies_);
 
         return policies_;
     }

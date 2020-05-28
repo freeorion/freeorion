@@ -6,6 +6,7 @@
 #include "../util/OptionsDB.h"
 #include "../util/Logger.h"
 #include "../util/AppInterface.h"
+#include "../util/GameRules.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/CheckSums.h"
 #include "../util/ScopedTimer.h"
@@ -30,7 +31,7 @@ namespace {
 ///////////////////////////////////////////////////////////
 Policy::Policy(const std::string& name, const std::string& description,
                const std::string& short_description, const std::string& category,
-               std::unique_ptr<ValueRef::ValueRefBase<double>>&& adoption_cost,
+               std::unique_ptr<ValueRef::ValueRef<double>>&& adoption_cost,
                std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
                const std::string& graphic) :
     m_name(name),
@@ -132,7 +133,7 @@ std::vector<std::string> PolicyManager::PolicyNames() const {
     CheckPendingPolicies();
     std::vector<std::string> retval;
     for (const auto& policy : m_policies)
-        retval.push_back(policy.first);
+        retval.emplace_back(policy.first);
     return retval;
 }
 
