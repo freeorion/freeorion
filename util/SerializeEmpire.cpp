@@ -137,8 +137,8 @@ void Empire::serialize(Archive& ar, const unsigned int version)
 
     bool visible = GetUniverse().AllObjectsVisible() ||
         GetUniverse().EncodingEmpire() == ALL_EMPIRES ||
-        m_id == GetUniverse().EncodingEmpire() ||
-        Empires().GetDiplomaticStatus(m_id, GetUniverse().EncodingEmpire()) == DIPLO_ALLIED;
+        m_id == GetUniverse().EncodingEmpire();
+    bool allied_visible = visible || Empires().GetDiplomaticStatus(m_id, GetUniverse().EncodingEmpire()) == DIPLO_ALLIED;
 
     if (Archive::is_loading::value && version < 1) {
         // adapt set to map
@@ -152,7 +152,7 @@ void Empire::serialize(Archive& ar, const unsigned int version)
     }
 
     ar  & BOOST_SERIALIZATION_NVP(m_meters);
-    if (Archive::is_saving::value && !visible) {
+    if (Archive::is_saving::value && !allied_visible) {
         // don't send what other empires building and researching
         // and which building and ship parts are available to them
         ResearchQueue empty_research_queue(m_id);
