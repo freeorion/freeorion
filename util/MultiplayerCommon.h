@@ -9,6 +9,7 @@
 #include "Serialize.h"
 
 #include <GG/Clr.h>
+#include <GG/ClrConstants.h>
 
 #include <list>
 #include <set>
@@ -184,31 +185,17 @@ private:
 /** The data structure used to represent a single player's setup options for a
   * multiplayer game (in the multiplayer lobby screen). */
 struct PlayerSetupData {
-    /** \name Structors */ //@{
-    PlayerSetupData() :
-        m_player_name(),
-        m_player_id(Networking::INVALID_PLAYER_ID),
-        m_empire_name(),
-        m_empire_color(GG::Clr(0, 0, 0, 0)),
-        m_starting_species_name(),
-        m_save_game_empire_id(ALL_EMPIRES),
-        m_client_type(Networking::INVALID_CLIENT_TYPE),
-        m_player_ready(false),
-        m_authenticated(false),
-        m_starting_team(Networking::NO_TEAM_ID)
-    {}
-    //@}
-
-    std::string             m_player_name;          ///< the player's name
-    int                     m_player_id;            ///< player id
-    std::string             m_empire_name;          ///< the name of the player's empire when starting a new game
-    GG::Clr                 m_empire_color;         ///< the color used to represent this player's empire when starting a new game
-    std::string             m_starting_species_name;///< name of the species with which the player starts when starting a new game
-    int                     m_save_game_empire_id;  ///< when loading a game, the ID of the empire that this player will control
-    Networking::ClientType  m_client_type;          ///< is this player an AI, human player or...?
-    bool                    m_player_ready;         ///< if player ready to play.
-    bool                    m_authenticated;        ///< if player was authenticated
-    int                     m_starting_team;        ///< team id or -1 if no team.
+    std::string             m_player_name;
+    int                     m_player_id = Networking::INVALID_PLAYER_ID;
+    std::string             m_empire_name;
+    GG::Clr                 m_empire_color = GG::CLR_ZERO;
+    std::string             m_starting_species_name;
+    //! When loading a game, the ID of the empire that this player will control
+    int                     m_save_game_empire_id = ALL_EMPIRES;
+    Networking::ClientType  m_client_type = Networking::INVALID_CLIENT_TYPE;
+    bool                    m_player_ready = false;
+    bool                    m_authenticated = false;
+    int                     m_starting_team = Networking::NO_TEAM_ID;
 
 private:
     friend class boost::serialization::access;
