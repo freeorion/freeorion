@@ -128,22 +128,9 @@ BOOST_CLASS_VERSION(SaveGameEmpireData, 2);
 
 /** Contains basic data about a player in a game. */
 struct FO_COMMON_API PlayerSaveHeaderData {
-    PlayerSaveHeaderData() :
-        m_name(),
-        m_empire_id(ALL_EMPIRES),
-        m_client_type(Networking::INVALID_CLIENT_TYPE)
-    {}
-
-    PlayerSaveHeaderData(const std::string& name, int empire_id,
-                         Networking::ClientType client_type) :
-        m_name(name),
-        m_empire_id(empire_id),
-        m_client_type(client_type)
-    {}
-
     std::string             m_name;
-    int                     m_empire_id;
-    Networking::ClientType  m_client_type;
+    int                     m_empire_id = ALL_EMPIRES;
+    Networking::ClientType  m_client_type = Networking::INVALID_CLIENT_TYPE;
 
 private:
     friend class boost::serialization::access;
@@ -165,7 +152,7 @@ struct FO_COMMON_API PlayerSaveGameData : public PlayerSaveHeaderData {
                        const std::shared_ptr<SaveGameUIData>& ui_data,
                        const std::string& save_state_string,
                        Networking::ClientType client_type) :
-        PlayerSaveHeaderData(name, empire_id, client_type),
+        PlayerSaveHeaderData{name, empire_id, client_type},
         m_orders(orders),
         m_ui_data(ui_data),
         m_save_state_string(save_state_string)
