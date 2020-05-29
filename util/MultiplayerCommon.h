@@ -110,36 +110,13 @@ BOOST_CLASS_VERSION(SaveGameUIData, 4);
 
 /** The data for one empire necessary for game-setup during multiplayer loading. */
 struct FO_COMMON_API SaveGameEmpireData {
-    /** \name Structors */ //@{
-    SaveGameEmpireData() :
-        m_empire_id(ALL_EMPIRES),
-        m_empire_name(),
-        m_player_name(),
-        m_color(),
-        m_authenticated(false),
-        m_eliminated(false),
-        m_won(false)
-    {}
-    SaveGameEmpireData(int empire_id, const std::string& empire_name,
-                       const std::string& player_name, const GG::Clr& colour,
-                       bool authenticated, bool eliminated, bool won) :
-        m_empire_id(empire_id),
-        m_empire_name(empire_name),
-        m_player_name(player_name),
-        m_color(colour),
-        m_authenticated(authenticated),
-        m_eliminated(eliminated),
-        m_won(won)
-    {}
-    //@}
-
-    int         m_empire_id;
+    int         m_empire_id = ALL_EMPIRES;
     std::string m_empire_name;
     std::string m_player_name;
     GG::Clr     m_color;
-    bool        m_authenticated;
-    bool        m_eliminated;
-    bool        m_won;
+    bool        m_authenticated = false;
+    bool        m_eliminated = false;
+    bool        m_won = false;
 
 private:
     friend class boost::serialization::access;
