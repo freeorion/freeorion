@@ -278,7 +278,6 @@
     <ClInclude Include="..\..\util\OrderSet.h" />
     <ClInclude Include="..\..\util\Process.h" />
     <ClInclude Include="..\..\util\Random.h" />
-    <ClInclude Include="..\..\util\Serialize.h" />
     <ClInclude Include="..\..\util\SitRepEntry.h" />
     <ClInclude Include="..\..\util\VarText.h" />
     <ClInclude Include="..\..\util\Version.h" />

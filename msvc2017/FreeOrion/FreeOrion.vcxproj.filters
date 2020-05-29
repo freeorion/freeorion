@@ -258,9 +258,6 @@
     <ClInclude Include="..\..\util\Random.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\util\Serialize.h">
-      <Filter>Header Files\util</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\util\SitRepEntry.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
