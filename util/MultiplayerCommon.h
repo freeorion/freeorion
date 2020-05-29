@@ -349,24 +349,12 @@ BOOST_CLASS_VERSION(ChatHistoryEntity, 1);
 
 /** Information about one player that other players are informed of.  Assembled by server and sent to players. */
 struct PlayerInfo {
-    PlayerInfo() :
-        name(""),
-        empire_id(ALL_EMPIRES),
-        client_type(Networking::INVALID_CLIENT_TYPE),
-        host(false)
-    {}
-    PlayerInfo(const std::string& player_name_, int empire_id_,
-               Networking::ClientType client_type_, bool host_) :
-        name(player_name_),
-        empire_id(empire_id_),
-        client_type(client_type_),
-        host(host_)
-    {}
-
-    std::string             name;           ///< name of this player (not the same as the empire name)
-    int                     empire_id;      ///< id of the player's empire
-    Networking::ClientType  client_type;    ///< is this a human player, AI player, or observer?
-    bool                    host;           ///< true iff this is the host player
+    //! Name of this player (not the same as the empire name)
+    std::string             name;
+    int                     empire_id = ALL_EMPIRES;
+    Networking::ClientType  client_type = Networking::INVALID_CLIENT_TYPE;
+    //! true iff this is the host player
+    bool                    host = false;
 
     friend class boost::serialization::access;
     template <typename Archive>
