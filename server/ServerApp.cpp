@@ -1031,11 +1031,7 @@ void ServerApp::PushChatMessage(const std::string& text,
                                 GG::Clr text_color,
                                 const boost::posix_time::ptime& timestamp)
 {
-    ChatHistoryEntity chat;
-    chat.m_timestamp = timestamp;
-    chat.m_player_name = player_name;
-    chat.m_text_color = text_color;
-    chat.m_text = text;
+    ChatHistoryEntity chat{timestamp, player_name, text, text_color};
     m_chat_history.push_back(chat);
 
     bool success = false;

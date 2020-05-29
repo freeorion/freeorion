@@ -295,11 +295,6 @@ BOOST_CLASS_VERSION(MultiplayerLobbyData, 2);
 
 /** The data structure stores information about latest chat massages. */
 struct FO_COMMON_API ChatHistoryEntity {
-    /** \name Structors */ //@{
-    ChatHistoryEntity()
-    {}
-    //@}
-
     boost::posix_time::ptime    m_timestamp;
     std::string                 m_player_name;
     std::string                 m_text;
