@@ -6,7 +6,6 @@
 #include "../../util/LoggerWithOptionsDB.h"
 #include "../../util/OptionsDB.h"
 #include "../../util/Directories.h"
-#include "../../util/Serialize.h"
 #include "../../util/i18n.h"
 #include "../util/AppInterface.h"
 #include "../../network/Message.h"

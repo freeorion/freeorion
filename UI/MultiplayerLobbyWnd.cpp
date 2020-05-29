@@ -6,7 +6,6 @@
 
 #include "../util/i18n.h"
 #include "../util/Logger.h"
-#include "../util/Serialize.h"
 #include "../network/Message.h"
 #include "../client/ClientNetworking.h"
 #include "../client/human/HumanClientApp.h"

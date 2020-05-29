@@ -1,7 +1,6 @@
 #include "ClientApp.h"
 
 #include "../util/Logger.h"
-#include "../util/Serialize.h"
 #include "../universe/UniverseObject.h"
 #include "../universe/System.h"
 #include "../Empire/Empire.h"
