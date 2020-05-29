@@ -391,7 +391,7 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
             {
                 // save game on exit
                 std::string save_filename = GetAutoSaveFileName(m_server.CurrentTurn());
-                ServerSaveGameData server_data(m_server.CurrentTurn());
+                ServerSaveGameData server_data{m_server.CurrentTurn()};
                 int bytes_written = 0;
                 // save game...
                 try {
@@ -2634,7 +2634,7 @@ sc::result PlayingGame::react(const ShutdownServer& msg) {
     {
         // save game on exit
         std::string save_filename = GetAutoSaveFileName(server.CurrentTurn());
-        ServerSaveGameData server_data(server.CurrentTurn());
+        ServerSaveGameData server_data{server.CurrentTurn()};
         int bytes_written = 0;
         // save game...
         try {
@@ -3278,7 +3278,7 @@ sc::result WaitingForTurnEnd::react(const SaveGameRequest& msg) {
 
     std::string save_filename = message.Text(); // store requested save file name in Base state context so that sibling state can retreive it
 
-    ServerSaveGameData server_data(server.m_current_turn);
+    ServerSaveGameData server_data{server.m_current_turn};
 
     // retreive requested save name from Base state, which should have been
     // set in WaitingForTurnEnd::react(const SaveGameRequest& msg)

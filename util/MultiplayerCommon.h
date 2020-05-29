@@ -186,15 +186,7 @@ BOOST_CLASS_VERSION(PlayerSaveGameData, 2);
 /** Data that must be retained by the server when saving and loading a
   * game that isn't player data or the universe */
 struct FO_COMMON_API ServerSaveGameData {
-    ServerSaveGameData() :
-        m_current_turn(INVALID_GAME_TURN)
-    {}
-
-    ServerSaveGameData(int current_turn) :
-        m_current_turn(current_turn)
-    {}
-
-    int m_current_turn;
+    int m_current_turn = INVALID_GAME_TURN;
 
 private:
     friend class boost::serialization::access;
