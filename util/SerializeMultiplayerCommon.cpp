@@ -170,16 +170,16 @@ void serialize(Archive& ar, SaveGameEmpireData& obj, unsigned int const version)
 {
     using namespace boost::serialization;
 
-    ar  & make_nvp("m_empire_id", obj.m_empire_id)
-        & make_nvp("m_empire_name", obj.m_empire_name)
-        & make_nvp("m_player_name", obj.m_player_name)
-        & make_nvp("m_color", obj.m_color);
+    ar  & make_nvp("m_empire_id", obj.empire_id)
+        & make_nvp("m_empire_name", obj.empire_name)
+        & make_nvp("m_player_name", obj.player_name)
+        & make_nvp("m_color", obj.color);
     if (version >= 1) {
-        ar & make_nvp("m_authenticated", obj.m_authenticated);
+        ar & make_nvp("m_authenticated", obj.authenticated);
     }
     if (version >= 2) {
-        ar & make_nvp("m_eliminated", obj.m_eliminated);
-        ar & make_nvp("m_won", obj.m_won);
+        ar & make_nvp("m_eliminated", obj.eliminated);
+        ar & make_nvp("m_won", obj.won);
     }
 }
 

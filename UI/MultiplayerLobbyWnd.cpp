@@ -400,11 +400,11 @@ namespace {
                  it != m_save_game_empire_data.end(); ++it)
             {
                 // don't allow to select eliminated empire
-                if (it->second.m_eliminated)
+                if (it->second.eliminated)
                     continue;
 
                 // insert row into droplist of empires for this player row
-                m_empire_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(it->second.m_empire_name));
+                m_empire_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(it->second.empire_name));
 
                 // attempt to choose a default empire to be selected in this
                 // player row. If this empire row matches this player data's
@@ -413,13 +413,13 @@ namespace {
                 // select the row
                 if ((it->first == m_player_data.save_game_empire_id) ||
                         (m_player_data.save_game_empire_id == ALL_EMPIRES &&
-                         it->second.m_player_name == m_player_data.player_name &&
+                         it->second.player_name == m_player_data.player_name &&
                          !m_in_game))
                 {
                     m_empire_list->Select(--m_empire_list->end());
-                    m_player_data.empire_name =           it->second.m_empire_name;
-                    m_player_data.empire_color =          it->second.m_color;
-                    m_player_data.save_game_empire_id =   it->second.m_empire_id;
+                    m_player_data.empire_name =           it->second.empire_name;
+                    m_player_data.empire_color =          it->second.color;
+                    m_player_data.save_game_empire_id =   it->second.empire_id;
                     save_game_empire_it = it;
                 }
             }
@@ -431,7 +431,7 @@ namespace {
             push_back(m_color_selector);
 
             // original empire player name from saved game
-            push_back(GG::Wnd::Create<CUILabel>(save_game_empire_it != m_save_game_empire_data.end() ? save_game_empire_it->second.m_player_name : ""));
+            push_back(GG::Wnd::Create<CUILabel>(save_game_empire_it != m_save_game_empire_data.end() ? save_game_empire_it->second.player_name : ""));
 
             m_color_selector->Disable();
 
@@ -477,14 +477,14 @@ namespace {
             }
             auto it = m_save_game_empire_data.begin();
             std::advance(it, m_empire_list->IteratorToIndex(selected_it));
-            m_player_data.empire_name =           it->second.m_empire_name;
-            m_player_data.empire_color =          it->second.m_color;
-            m_player_data.save_game_empire_id =   it->second.m_empire_id;
+            m_player_data.empire_name =           it->second.empire_name;
+            m_player_data.empire_color =          it->second.color;
+            m_player_data.save_game_empire_id =   it->second.empire_id;
             m_color_selector->SelectColor(m_player_data.empire_color);
 
             // set previous player name indication
             if (size() >= 5)
-                boost::polymorphic_downcast<GG::Label*>(at(4))->SetText(it->second.m_player_name);
+                boost::polymorphic_downcast<GG::Label*>(at(4))->SetText(it->second.player_name);
 
             DataChangedSignal();
         }
@@ -515,14 +515,14 @@ namespace {
             // player name text
             push_back(GG::Wnd::Create<CUILabel>(""));
             // empire name
-            push_back(GG::Wnd::Create<CUILabel>(m_save_game_empire_data.m_empire_name));
+            push_back(GG::Wnd::Create<CUILabel>(m_save_game_empire_data.empire_name));
             // empire colour selector (disabled, so acts as colour indicator)
             m_color_selector = GG::Wnd::Create<EmpireColorSelector>(PlayerFontHeight() + PlayerRowMargin());
-            m_color_selector->SelectColor(m_save_game_empire_data.m_color);
+            m_color_selector->SelectColor(m_save_game_empire_data.color);
             m_color_selector->Disable();
             push_back(m_color_selector);
             // original empire player name from saved game
-            push_back(GG::Wnd::Create<CUILabel>(m_save_game_empire_data.m_player_name));
+            push_back(GG::Wnd::Create<CUILabel>(m_save_game_empire_data.player_name));
             // ready state
             push_back(GG::Wnd::Create<CUILabel>(""));
             // host
@@ -531,9 +531,9 @@ namespace {
     private:
         void PlayerTypeChanged(Networking::ClientType type) {
             m_player_data.client_type = type;
-            m_player_data.empire_name =         m_save_game_empire_data.m_empire_name;
-            m_player_data.empire_color =        m_save_game_empire_data.m_color;
-            m_player_data.save_game_empire_id = m_save_game_empire_data.m_empire_id;
+            m_player_data.empire_name =         m_save_game_empire_data.empire_name;
+            m_player_data.empire_color =        m_save_game_empire_data.color;
+            m_player_data.save_game_empire_id = m_save_game_empire_data.empire_id;
             DataChangedSignal();
         }
 
@@ -1050,7 +1050,7 @@ bool MultiPlayerLobbyWnd::PopulatePlayerList() {
         for (const auto& save_game_empire_data : m_lobby_data.save_game_empire_data) {
             bool is_assigned = false;
             for (const auto& player : m_lobby_data.players) {
-                if (player.second.save_game_empire_id == save_game_empire_data.second.m_empire_id) {
+                if (player.second.save_game_empire_id == save_game_empire_data.second.empire_id) {
                     is_assigned = true;
                     break;
                 }

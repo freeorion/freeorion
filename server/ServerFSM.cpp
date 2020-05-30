@@ -208,7 +208,7 @@ namespace {
 
             if (colour_is_new) {
                 for (const auto& entry : sged) {
-                    const GG::Clr& player_colour = entry.second.m_color;
+                    const GG::Clr& player_colour = entry.second.color;
                     if (player_colour == possible_colour) {
                         colour_is_new = false;
                         break;
@@ -940,7 +940,7 @@ void MPLobby::ValidateClientLimits() {
     int non_eliminated_empires_count = 0;
     if (!m_lobby_data->new_game) {
         for (const auto& empire_data : m_lobby_data->save_game_empire_data) {
-            if (!empire_data.second.m_eliminated)
+            if (!empire_data.second.eliminated)
                 non_eliminated_empires_count ++;
         }
 
@@ -1492,13 +1492,13 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                         if (plr.second.save_game_empire_id != ALL_EMPIRES) {
                             const auto empire_it = m_lobby_data->save_game_empire_data.find(plr.second.save_game_empire_id);
                             if (empire_it != m_lobby_data->save_game_empire_data.end()) {
-                                if (empire_it->second.m_eliminated) {
-                                    WarnLogger(FSM) << "Trying to take over eliminated empire \"" << empire_it->second.m_empire_name << "\"";
+                                if (empire_it->second.eliminated) {
+                                    WarnLogger(FSM) << "Trying to take over eliminated empire \"" << empire_it->second.empire_name << "\"";
                                     incorrect_empire = true;
-                                } else if (empire_it->second.m_authenticated) {
-                                    if (empire_it->second.m_player_name != sender->PlayerName()) {
-                                        WarnLogger(FSM) << "Unauthorized access to protected empire \"" << empire_it->second.m_empire_name << "\"."
-                                                        << " Expected player \"" << empire_it->second.m_player_name << "\""
+                                } else if (empire_it->second.authenticated) {
+                                    if (empire_it->second.player_name != sender->PlayerName()) {
+                                        WarnLogger(FSM) << "Unauthorized access to protected empire \"" << empire_it->second.empire_name << "\"."
+                                                        << " Expected player \"" << empire_it->second.player_name << "\""
                                                         << " got \"" << sender->PlayerName() << "\"";
                                         incorrect_empire = true;
                                     }
@@ -1636,13 +1636,13 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                     if (j_player.second.save_game_empire_id != ALL_EMPIRES) {
                         const auto empire_it = m_lobby_data->save_game_empire_data.find(j_player.second.save_game_empire_id);
                         if (empire_it != m_lobby_data->save_game_empire_data.end()) {
-                            if (empire_it->second.m_eliminated) {
-                                WarnLogger(FSM) << "Trying to take over eliminated empire \"" << empire_it->second.m_empire_name << "\"";
+                            if (empire_it->second.eliminated) {
+                                WarnLogger(FSM) << "Trying to take over eliminated empire \"" << empire_it->second.empire_name << "\"";
                                 incorrect_empire = true;
-                            } else if (empire_it->second.m_authenticated) {
-                                if (empire_it->second.m_player_name != sender->PlayerName()) {
-                                    WarnLogger(FSM) << "Unauthorized access to protected empire \"" << empire_it->second.m_empire_name << "\"."
-                                                    << " Expected player \"" << empire_it->second.m_player_name << "\""
+                            } else if (empire_it->second.authenticated) {
+                                if (empire_it->second.player_name != sender->PlayerName()) {
+                                    WarnLogger(FSM) << "Unauthorized access to protected empire \"" << empire_it->second.empire_name << "\"."
+                                                    << " Expected player \"" << empire_it->second.player_name << "\""
                                                     << " got \"" << sender->PlayerName() << "\"";
                                     incorrect_empire = true;
                                 }
@@ -1725,8 +1725,8 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                 player_setup_data.player_name =   UserString("AI_PLAYER") + "_" + std::to_string(m_ai_next_index++);
                 player_setup_data.client_type =   Networking::CLIENT_TYPE_AI_PLAYER;
                 player_setup_data.save_game_empire_id = pshd.empire_id;
-                player_setup_data.empire_name =   empire_data_it->second.m_empire_name;
-                player_setup_data.empire_color =  empire_data_it->second.m_color;
+                player_setup_data.empire_name =   empire_data_it->second.empire_name;
+                player_setup_data.empire_color =  empire_data_it->second.color;
                 if (m_lobby_data->m_seed != "")
                     player_setup_data.starting_species_name = GetSpeciesManager().RandomPlayableSpeciesName();
                 else

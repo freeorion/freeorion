@@ -76,8 +76,8 @@ namespace {
             // Find the empire of the player, if it has one
             auto empire = empire_save_game_data.find(player->empire_id);
             if (empire != empire_save_game_data.end()) {
-                preview.main_player_empire_name = empire->second.m_empire_name;
-                preview.main_player_empire_colour = empire->second.m_color;
+                preview.main_player_empire_name = empire->second.empire_name;
+                preview.main_player_empire_colour = empire->second.color;
             }
         }
     }

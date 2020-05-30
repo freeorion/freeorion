@@ -96,13 +96,13 @@ struct FO_COMMON_API SaveGameUIData {
 
 /** The data for one empire necessary for game-setup during multiplayer loading. */
 struct FO_COMMON_API SaveGameEmpireData {
-    int         m_empire_id = ALL_EMPIRES;
-    std::string m_empire_name;
-    std::string m_player_name;
-    GG::Clr     m_color;
-    bool        m_authenticated = false;
-    bool        m_eliminated = false;
-    bool        m_won = false;
+    int         empire_id = ALL_EMPIRES;
+    std::string empire_name;
+    std::string player_name;
+    GG::Clr     color;
+    bool        authenticated = false;
+    bool        eliminated = false;
+    bool        won = false;
 };
 
 /** Contains basic data about a player in a game. */
