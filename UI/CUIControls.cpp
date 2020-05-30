@@ -2216,11 +2216,11 @@ void MultiTurnProgressBar::Render() {
 //////////////////////////////////////////////////
 // FPSIndicator
 //////////////////////////////////////////////////
-FPSIndicator::FPSIndicator(void) :
-    GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_NOWRAP, GG::ONTOP),
-    m_enabled(false),
-    m_displayed_FPS(0)
+FPSIndicator::FPSIndicator() :
+    GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, "",
+                    ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_NOWRAP, GG::ONTOP)
 {
+    SetResetMinSize(true);
     GetOptionsDB().OptionChangedSignal("video.fps.shown").connect(
         boost::bind(&FPSIndicator::UpdateEnabled, this));
     UpdateEnabled();
@@ -2230,9 +2230,8 @@ FPSIndicator::FPSIndicator(void) :
 void FPSIndicator::PreRender() {
     GG::Wnd::PreRender();
     m_displayed_FPS = static_cast<int>(GG::GUI::GetGUI()->FPS());
-    if (m_enabled) {
+    if (m_enabled)
         SetText(boost::io::str(FlexibleFormat(UserString("MAP_INDICATOR_FPS")) % m_displayed_FPS));
-    }
 }
 
 void FPSIndicator::Render() {
@@ -2249,8 +2248,11 @@ void FPSIndicator::Render() {
     }
 }
 
-void FPSIndicator::UpdateEnabled()
-{ m_enabled = GetOptionsDB().Get<bool>("video.fps.shown"); }
+void FPSIndicator::UpdateEnabled() {
+    m_enabled = GetOptionsDB().Get<bool>("video.fps.shown");
+    if (!m_enabled)
+        Clear();
+}
 
 
 //////////////////////////////////////////////////
