@@ -290,6 +290,13 @@ std::vector<std::string> Empire::AdoptedPolicies() const {
     return retval;
 }
 
+std::map<std::string, int> Empire::TurnsPoliciesAdopted() const {
+    std::map<std::string, int> retval;
+    for (const auto& entry : m_adopted_policies)
+        retval.emplace_hint(retval.end(), entry.first, entry.second.adoption_turn);
+    return retval;
+}
+
 const std::set<std::string>& Empire::AvailablePolicies() const
 { return m_available_policies; }
 

@@ -69,6 +69,7 @@ public:
 
     /** Returns the policies the empire has adopted and the categories
       * in which they were adopted. */
+    std::map<std::string, int>      TurnsPoliciesAdopted() const;
 
     /** Returns the set of policies / slots the empire has avaialble. */
     const std::set<std::string>&    AvailablePolicies() const;

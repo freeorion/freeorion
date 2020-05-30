@@ -1365,8 +1365,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
         policy_sources.emplace_back(Condition::ObjectSet{1U, source});
         const auto& source_objects = policy_sources.back();
 
-        for (const auto policy_entry : empire->AdoptedPolicyTurns()) {
-            const std::string& policy_name{policy_entry.first};
+        for (const auto& policy_name : empire->AdoptedPolicies()) {
             const Policy* policy = GetPolicy(policy_name);
             if (!policy) continue;
 

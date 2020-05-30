@@ -202,7 +202,7 @@ private:
 };
 
 PoliciesListBox::PoliciesListBoxRow::PoliciesListBoxRow(GG::X w, GG::Y h) :
-    CUIListBox::Row(w, h, "")   // drag_drop_data_type = "" implies not draggable row
+    CUIListBox::Row(w, h)
 {}
 
 void PoliciesListBox::PoliciesListBoxRow::ChildrenDraggedAway(
