@@ -4221,6 +4221,7 @@ Category
 TECH_WND_LIST_COLUMN_DESCRIPTION
 Description
 
+
 ##
 ## Government Wnd
 ##
@@ -4230,7 +4231,6 @@ Policy Unavailable
 
 POLICY_ADOPTABLE_COST
 Policy Adoptable for %1% IP
-
 
 
 ##
@@ -4773,7 +4773,6 @@ Neither the Saved Designs nor the Default Designs were added to the empire at ga
 # %1% File path of unwritable file
 ERROR_UNABLE_TO_WRITE_FILE
 Unable to write file:\n"%1%"
-
 
 
 ##
@@ -10892,12 +10891,14 @@ DESC_HAS_TAG
 DESC_HAS_TAG_NOT
 ''' that is not %1%'''
 
+
 ##
 ## Policy categories
 ##
 
 SOCIOLOGY_CATEGORY
 Sociology
+
 
 ##
 ## Imperial Policies
@@ -11189,7 +11190,7 @@ LRN_TRANSLING_THT
 Translinguistics
 
 LRN_TRANSLING_THT_DESC
-'''Lesser minds struggle with, or accept the confines of the language they have learned. Adequate minds reach and feel constrained by the concepts they are given ways to express. Truly great minds break free of the bounds of language, forming and analyzing thoughts that verge on the transcendental. But merely great minds are left isolated and futile, for without language to express thoughts, how can they share their insights?'''
+Lesser minds struggle with, or accept the confines of the language they have learned. Adequate minds reach and feel constrained by the concepts they are given ways to express. Truly great minds break free of the bounds of language, forming and analyzing thoughts that verge on the transcendental. But merely great minds are left isolated and futile, for without language to express thoughts, how can they share their insights?
 
 LRN_PSIONICS
 Psionics
