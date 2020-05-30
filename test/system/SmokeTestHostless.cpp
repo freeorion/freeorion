@@ -157,7 +157,7 @@ BOOST_AUTO_TEST_CASE(hostless_server) {
             for (unsigned int ai_i = 1; ai_i <= num_AIs; ++ai_i) {
                 PlayerSetupData ai_plr;
                 ai_plr.client_type = Networking::CLIENT_TYPE_AI_PLAYER;
-                m_lobby_data.m_players.push_back({Networking::INVALID_PLAYER_ID, ai_plr});
+                m_lobby_data.players.push_back({Networking::INVALID_PLAYER_ID, ai_plr});
                 // publish changes
                 UpdateLobby();
                 start_time = boost::posix_time::microsec_clock::local_time();
@@ -171,7 +171,7 @@ BOOST_AUTO_TEST_CASE(hostless_server) {
         BOOST_REQUIRE_EQUAL(GetLobbyAICount(), num_AIs);
 
         // get ready
-        for (auto& plr : m_lobby_data.m_players) {
+        for (auto& plr : m_lobby_data.players) {
             if (plr.first == PlayerID())
                 plr.second.player_ready = true;
         }

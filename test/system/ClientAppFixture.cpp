@@ -276,7 +276,7 @@ void ClientAppFixture::UpdateLobby() {
 
 unsigned int ClientAppFixture::GetLobbyAICount() const {
     unsigned int res = 0;
-    for (const auto& plr: m_lobby_data.m_players) {
+    for (const auto& plr: m_lobby_data.players) {
         if (plr.second.client_type == Networking::CLIENT_TYPE_AI_PLAYER)
             ++ res;
     }

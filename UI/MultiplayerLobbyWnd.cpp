@@ -786,7 +786,7 @@ void MultiPlayerLobbyWnd::ChatMessage(int player_id, const boost::posix_time::pt
     std::string player_name{UserString("PLAYER") + " " + std::to_string(player_id)};
     GG::Clr text_color{ClientUI::GetClientUI()->TextColor()};
     if (player_id != Networking::INVALID_PLAYER_ID) {
-        for (auto& entry : m_lobby_data.m_players) {
+        for (auto& entry : m_lobby_data.players) {
             if (entry.first != player_id || entry.first == Networking::INVALID_PLAYER_ID)
                 continue;
             player_name = entry.second.player_name;
@@ -825,12 +825,12 @@ namespace {
 }
 
 void MultiPlayerLobbyWnd::LobbyUpdate(const MultiplayerLobbyData& lobby_data) {
-    m_new_load_game_buttons->SetCheck(!lobby_data.m_new_game);
+    m_new_load_game_buttons->SetCheck(!lobby_data.new_game);
     m_galaxy_setup_panel->SetFromSetupData(lobby_data);
 
-    m_any_can_edit->SetCheck(lobby_data.m_any_can_edit);
+    m_any_can_edit->SetCheck(lobby_data.any_can_edit);
 
-    m_save_file_text->SetText(lobby_data.m_save_game);
+    m_save_file_text->SetText(lobby_data.save_game);
 
     m_lobby_data = lobby_data;
 
@@ -839,7 +839,7 @@ void MultiPlayerLobbyWnd::LobbyUpdate(const MultiplayerLobbyData& lobby_data) {
     if (send_update_back && HasAuthRole(Networking::ROLE_GALAXY_SETUP))
         SendUpdate();
 
-    LogPlayerSetupData(m_lobby_data.m_players);
+    LogPlayerSetupData(m_lobby_data.players);
 }
 
 void MultiPlayerLobbyWnd::Refresh() {
@@ -927,13 +927,13 @@ void MultiPlayerLobbyWnd::DoLayout() {
 void MultiPlayerLobbyWnd::NewLoadClicked(std::size_t idx) {
     switch (idx) {
     case std::size_t(0):
-        m_lobby_data.m_new_game = true;
+        m_lobby_data.new_game = true;
         m_galaxy_setup_panel->Disable(false);
         m_save_file_text->Disable();
         m_browse_saves_btn->Disable();
         break;
     case std::size_t(1):
-        m_lobby_data.m_new_game = false;
+        m_lobby_data.new_game = false;
         m_galaxy_setup_panel->Disable();
         m_save_file_text->Disable(false);
         m_browse_saves_btn->Disable(false);
@@ -951,8 +951,8 @@ void MultiPlayerLobbyWnd::GalaxySetupPanelChanged() {
 }
 
 void MultiPlayerLobbyWnd::SaveGameBrowse() {
-    m_lobby_data.m_save_game = HumanClientApp::GetApp()->SelectLoadFile();
-    m_lobby_data.m_save_game_empire_data.clear();
+    m_lobby_data.save_game = HumanClientApp::GetApp()->SelectLoadFile();
+    m_lobby_data.save_game_empire_data.clear();
     PopulatePlayerList();
     SendUpdate();
 }
@@ -969,22 +969,22 @@ void MultiPlayerLobbyWnd::PreviewImageChanged(std::shared_ptr<GG::Texture> new_i
 }
 
 void MultiPlayerLobbyWnd::PlayerDataChangedLocally() {
-    m_lobby_data.m_players.clear();
+    m_lobby_data.players.clear();
     for (auto& row : *m_players_lb) {
         const PlayerRow* player_row = dynamic_cast<const PlayerRow*>(row.get());
         if (const EmptyPlayerRow* empty_row = dynamic_cast<const EmptyPlayerRow*>(player_row)) {
             // empty rows that have been changed to Add AI need to be sent so the server knows to add an AI player.
             if (empty_row->m_player_data.client_type == Networking::CLIENT_TYPE_AI_PLAYER)
-                m_lobby_data.m_players.push_back({Networking::INVALID_PLAYER_ID, player_row->m_player_data});
+                m_lobby_data.players.push_back({Networking::INVALID_PLAYER_ID, player_row->m_player_data});
 
             // empty rows that are still showing no player don't need to be sent to the server.
 
         } else if (const LoadGameEmpireRow* empire_row = dynamic_cast<const LoadGameEmpireRow*>(player_row)) {
             if (empire_row->m_player_data.client_type == Networking::CLIENT_TYPE_AI_PLAYER)
-                m_lobby_data.m_players.push_back({Networking::INVALID_PLAYER_ID, empire_row->m_player_data});
+                m_lobby_data.players.push_back({Networking::INVALID_PLAYER_ID, empire_row->m_player_data});
         } else {
             // all other row types pass along data directly
-            m_lobby_data.m_players.push_back({player_row->m_player_id, player_row->m_player_data});
+            m_lobby_data.players.push_back({player_row->m_player_id, player_row->m_player_data});
         }
     }
 
@@ -1007,11 +1007,11 @@ bool MultiPlayerLobbyWnd::PopulatePlayerList() {
     bool is_other_ready = true;
 
     // repopulate list with rows built from current lobby data
-    for (std::pair<int, PlayerSetupData>& entry : m_lobby_data.m_players) {
+    for (std::pair<int, PlayerSetupData>& entry : m_lobby_data.players) {
         int data_player_id = entry.first;
         PlayerSetupData& psd = entry.second;
 
-        if (m_lobby_data.m_new_game) {
+        if (m_lobby_data.new_game) {
             bool immutable_row = !HasAuthRole(Networking::ROLE_HOST) && (data_player_id != HumanClientApp::GetApp()->PlayerID()) && !(psd.client_type == Networking::CLIENT_TYPE_AI_PLAYER && HasAuthRole(Networking::ROLE_GALAXY_SETUP));   // host can modify any player's row.  non-hosts can only modify their own row.  As of SVN 4026 this is not enforced on the server, but should be.
             auto row = GG::Wnd::Create<NewGamePlayerRow>(psd, data_player_id, immutable_row);
             m_players_lb->Insert(row);
@@ -1019,8 +1019,8 @@ bool MultiPlayerLobbyWnd::PopulatePlayerList() {
                 boost::bind(&MultiPlayerLobbyWnd::PlayerDataChangedLocally, this));
 
         } else {
-            bool immutable_row = (!HasAuthRole(Networking::ROLE_HOST) && (data_player_id != HumanClientApp::GetApp()->PlayerID()) && !(psd.client_type == Networking::CLIENT_TYPE_AI_PLAYER && HasAuthRole(Networking::ROLE_GALAXY_SETUP))) || m_lobby_data.m_save_game_empire_data.empty();
-            auto row = GG::Wnd::Create<LoadGamePlayerRow>(psd, data_player_id, m_lobby_data.m_save_game_empire_data, immutable_row, m_lobby_data.m_in_game);
+            bool immutable_row = (!HasAuthRole(Networking::ROLE_HOST) && (data_player_id != HumanClientApp::GetApp()->PlayerID()) && !(psd.client_type == Networking::CLIENT_TYPE_AI_PLAYER && HasAuthRole(Networking::ROLE_GALAXY_SETUP))) || m_lobby_data.save_game_empire_data.empty();
+            auto row = GG::Wnd::Create<LoadGamePlayerRow>(psd, data_player_id, m_lobby_data.save_game_empire_data, immutable_row, m_lobby_data.in_game);
             m_players_lb->Insert(row);
             row->DataChangedSignal.connect(
                 boost::bind(&MultiPlayerLobbyWnd::PlayerDataChangedLocally, this));
@@ -1046,10 +1046,10 @@ bool MultiPlayerLobbyWnd::PopulatePlayerList() {
     }
 
     // add rows for unassigned empires and adds "Add AI" to assign AI to empire
-    if (!m_lobby_data.m_new_game) {
-        for (const auto& save_game_empire_data : m_lobby_data.m_save_game_empire_data) {
+    if (!m_lobby_data.new_game) {
+        for (const auto& save_game_empire_data : m_lobby_data.save_game_empire_data) {
             bool is_assigned = false;
-            for (const auto& player : m_lobby_data.m_players) {
+            for (const auto& player : m_lobby_data.players) {
                 if (player.second.save_game_empire_id == save_game_empire_data.second.m_empire_id) {
                     is_assigned = true;
                     break;
@@ -1074,7 +1074,7 @@ bool MultiPlayerLobbyWnd::PopulatePlayerList() {
             boost::bind(&MultiPlayerLobbyWnd::PlayerDataChangedLocally, this));
     }
 
-    if (m_lobby_data.m_new_game) {
+    if (m_lobby_data.new_game) {
         m_players_lb_headers->SetText(4, UserString("MULTIPLAYER_PLAYER_LIST_STARTING_SPECIES"));
     } else {
         m_players_lb_headers->SetText(4, UserString("MULTIPLAYER_PLAYER_LIST_ORIGINAL_NAMES"));
@@ -1097,9 +1097,9 @@ bool MultiPlayerLobbyWnd::PopulatePlayerList() {
         m_ready_bn->SetText(UserString("READY_BN"));
 
     // set ready button state
-    if (m_lobby_data.m_start_locked) {
+    if (m_lobby_data.start_locked) {
         m_ready_bn->Disable(true);
-        m_start_conditions_text->SetText(UserString(m_lobby_data.m_start_lock_cause));
+        m_start_conditions_text->SetText(UserString(m_lobby_data.start_lock_cause));
     } else {
         m_ready_bn->Disable(false);
         m_start_conditions_text->SetText(UserString("MULTIPLAYER_GAME_START_CONDITIONS"));
@@ -1173,7 +1173,7 @@ bool MultiPlayerLobbyWnd::HasAuthRole(Networking::RoleType role) const
 { return ClientApp::GetApp()->Networking().HasAuthRole(role); }
 
 void MultiPlayerLobbyWnd::ReadyClicked() {
-    for (std::pair<int, PlayerSetupData>& entry : m_lobby_data.m_players) {
+    for (std::pair<int, PlayerSetupData>& entry : m_lobby_data.players) {
         if (entry.first == HumanClientApp::GetApp()->PlayerID()) {
             entry.second.player_ready = (! entry.second.player_ready);
         }
@@ -1189,7 +1189,7 @@ void MultiPlayerLobbyWnd::CancelClicked()
 
 void MultiPlayerLobbyWnd::AnyCanEdit(bool checked) {
     if (HasAuthRole(Networking::ROLE_HOST)) {
-        m_lobby_data.m_any_can_edit = m_any_can_edit->Checked();
+        m_lobby_data.any_can_edit = m_any_can_edit->Checked();
         SendUpdate();
     }
 }

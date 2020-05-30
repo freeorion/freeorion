@@ -184,56 +184,56 @@ struct SinglePlayerSetupData : public GalaxySetupData {
 struct FO_COMMON_API MultiplayerLobbyData : public GalaxySetupData {
     /** \name Structors */ //@{
     MultiplayerLobbyData() :
-        m_any_can_edit(false),
-        m_new_game(true),
-        m_start_locked(false),
-        m_players(),
-        m_save_game(),
-        m_save_game_empire_data(),
-        m_save_game_current_turn(0),
-        m_in_game(false)
+        any_can_edit(false),
+        new_game(true),
+        start_locked(false),
+        players(),
+        save_game(),
+        save_game_empire_data(),
+        save_game_current_turn(0),
+        in_game(false)
     {}
 
     MultiplayerLobbyData(const GalaxySetupData& base) :
         GalaxySetupData(base),
-        m_any_can_edit(false),
-        m_new_game(true),
-        m_start_locked(false),
-        m_players(),
-        m_save_game(),
-        m_save_game_empire_data(),
-        m_save_game_current_turn(0),
-        m_in_game(false)
+        any_can_edit(false),
+        new_game(true),
+        start_locked(false),
+        players(),
+        save_game(),
+        save_game_empire_data(),
+        save_game_current_turn(0),
+        in_game(false)
     {}
 
     MultiplayerLobbyData(GalaxySetupData&& base) :
         GalaxySetupData(std::move(base)),
-        m_any_can_edit(false),
-        m_new_game(true),
-        m_start_locked(false),
-        m_players(),
-        m_save_game(),
-        m_save_game_empire_data(),
-        m_save_game_current_turn(0),
-        m_in_game(false)
+        any_can_edit(false),
+        new_game(true),
+        start_locked(false),
+        players(),
+        save_game(),
+        save_game_empire_data(),
+        save_game_current_turn(0),
+        in_game(false)
     {}
     //@}
 
     std::string Dump() const;
 
-    bool                                        m_any_can_edit;
-    bool                                        m_new_game;
-    bool                                        m_start_locked;
+    bool                                        any_can_edit;
+    bool                                        new_game;
+    bool                                        start_locked;
     // TODO: Change from a list<(player_id, PlayerSetupData)> where
     // PlayerSetupData contain player_id to a vector of PlayerSetupData
-    std::list<std::pair<int, PlayerSetupData>>  m_players;              // <player_id, PlayerSetupData>
+    std::list<std::pair<int, PlayerSetupData>>  players;              // <player_id, PlayerSetupData>
 
-    std::string                                 m_save_game;            //< File name of a save file
-    std::map<int, SaveGameEmpireData>           m_save_game_empire_data;// indexed by empire_id
-    int                                         m_save_game_current_turn;
+    std::string                                 save_game;            //< File name of a save file
+    std::map<int, SaveGameEmpireData>           save_game_empire_data;// indexed by empire_id
+    int                                         save_game_current_turn;
 
-    std::string                                 m_start_lock_cause;
-    bool                                        m_in_game; ///< In-game lobby
+    std::string                                 start_lock_cause;
+    bool                                        in_game; ///< In-game lobby
 };
 
 /** The data structure stores information about latest chat massages. */

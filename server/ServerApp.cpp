@@ -553,7 +553,7 @@ void ServerApp::NewMPGameInit(const MultiplayerLobbyData& multiplayer_lobby_data
     // available (human) and names (for AI clients which didn't have an ID
     // before now because the lobby data was set up without connected/established
     // clients for the AIs.
-    const auto& player_setup_data = multiplayer_lobby_data.m_players;
+    const auto& player_setup_data = multiplayer_lobby_data.players;
     std::vector<PlayerSetupData> psds;
 
     for (const auto& entry : player_setup_data) {
@@ -1210,7 +1210,7 @@ void ServerApp::LoadMPGameInit(const MultiplayerLobbyData& lobby_data,
     // Need to determine which data in player_save_game_data should be assigned to which established player
     std::vector<std::pair<int, int>> player_id_to_save_game_data_index;
 
-    const auto& player_setup_data = lobby_data.m_players;
+    const auto& player_setup_data = lobby_data.players;
 
     // * Multiplayer lobby data has a map from player ID to PlayerSetupData.
     // * PlayerSetupData contains an empire ID that the player will be controlling.

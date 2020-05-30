@@ -230,7 +230,7 @@ bool operator!=(const PlayerSetupData& lhs, const PlayerSetupData& rhs)
 /////////////////////////////////////////////////////
 std::string MultiplayerLobbyData::Dump() const {
     std::stringstream stream;
-    for (const std::pair<int, PlayerSetupData>& psd : m_players) {
+    for (const std::pair<int, PlayerSetupData>& psd : players) {
         stream << psd.first << ": " << (psd.second.player_name.empty() ? "NO NAME" : psd.second.player_name) << "  ";
         if (psd.second.client_type == Networking::CLIENT_TYPE_AI_PLAYER)
             stream << "AI PLAYER";
