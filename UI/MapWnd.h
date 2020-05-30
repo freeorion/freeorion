@@ -252,22 +252,22 @@ private:
 
     class MapScaleLine;
 
-    void            InitializeWindows();
+    void InitializeWindows();
 
-    void            Zoom(int delta);                            //!< changes the zoom level of the main map by zoom step size to the power of \a delta (adds delta to the current zoom exponent)
-    void            Zoom(int delta, const GG::Pt& position);    //!< changes the zoom level of the main map by zoom step size to the power of \a delta (adds delta to the current zoom exponent) Keeps the screen position \a position in the same place after zooming
-    void            SetZoom(double steps_in, bool update_slide);//!< sets zoom level of the main map to zoom step size to the power of \a steps_in and updates zoom slider position if \a update_slide is true
-    void            SetZoom(double steps_in, bool update_slide, const GG::Pt& position);//!< sets zoom level of the main map to zoom step size to the power of \a steps_in and updates zoom slider position if \a update_slide is true. Keeps the screen position \a position in the same place after zooming
+    void Zoom(int delta);                            //!< changes the zoom level of the main map by zoom step size to the power of \a delta (adds delta to the current zoom exponent)
+    void Zoom(int delta, const GG::Pt& position);    //!< changes the zoom level of the main map by zoom step size to the power of \a delta (adds delta to the current zoom exponent) Keeps the screen position \a position in the same place after zooming
+    void SetZoom(double steps_in, bool update_slide);//!< sets zoom level of the main map to zoom step size to the power of \a steps_in and updates zoom slider position if \a update_slide is true
+    void SetZoom(double steps_in, bool update_slide, const GG::Pt& position);//!< sets zoom level of the main map to zoom step size to the power of \a steps_in and updates zoom slider position if \a update_slide is true. Keeps the screen position \a position in the same place after zooming
 
-    void            Pan(const GG::Pt& delta);                   //!< pans map
-    bool            PanX(GG::X x = GG::X(50));
-    bool            PanY(GG::Y y = GG::Y(50));
+    void Pan(const GG::Pt& delta);                   //!< pans map
+    bool PanX(GG::X x = GG::X(50));
+    bool PanY(GG::Y y = GG::Y(50));
 
     /** Mark all fleet buttons for a refresh. */
-    void            RefreshFleetButtons();
+    void RefreshFleetButtons();
     /** Removes old / existing and create new fleet buttons. Only called once
       * per render interval.*/
-    void            DeferredRefreshFleetButtons();
+    void DeferredRefreshFleetButtons();
 
     /** Use the vectors of fleet ids from \p fleets_map to create fleet buttons
       * in \p type_fleet_buttons and record the fleet buttons in

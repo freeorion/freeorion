@@ -453,33 +453,24 @@ public:
 
     /** \name Mutators */ //@{
     void PreRender() override;
-
     void Render() override
     {}
 
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
     void LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-
     void RButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-
     void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-
     void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-
     void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) override;
 
     void AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds, GG::Flags<GG::ModKey> mod_keys) override;
-
     void DragDropEnter(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
                        GG::Flags<GG::ModKey> mod_keys) override;
-
     void DragDropHere(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
                       GG::Flags<GG::ModKey> mod_keys) override;
-
     void CheckDrops(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
                     GG::Flags<GG::ModKey> mod_keys) override;
-
     void DragDropLeave() override;
 
     void SetValue(double value, size_t index = 0);  ///< sets displayed \a value with \a index
@@ -517,11 +508,11 @@ private:
 class SpeciesSelector : public CUIDropDownList {
 public:
     /** \name Structors */ //@{
-    SpeciesSelector(const std::string& preselect_species, GG::X w, GG::Y h);                          ///< populates with all species in SpeciesManager
+    SpeciesSelector(const std::string& preselect_species, GG::X w, GG::Y h);    ///< populates with all species in SpeciesManager
     //@}
 
     /** \name Accessors */ //@{
-    const std::string&          CurrentSpeciesName() const;     ///< returns the name of the species that is currently selected
+    const std::string& CurrentSpeciesName() const;  ///< returns the name of the species that is currently selected
     //@}
 
     mutable boost::signals2::signal<void (const std::string&)> SpeciesChangedSignal;
@@ -556,11 +547,8 @@ public:
 
     /** \name Mutators */ //@{
     void Render() override;
-
     void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-
     void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
     //@}
 
