@@ -188,13 +188,13 @@ public:
         will do when the layout is resized.  0.0 indicates that the row's size
         will not change unless all rows have 0.0 stretch as well.  Note that
         \a row is not range-checked. */
-    void SetRowStretch(std::size_t row, double stretch);
+    void SetRowStretch(std::size_t row, float stretch);
 
     /** Sets the amount of stretching, relative to other columns, that \a
         column will do when the layout is resized.  0.0 indicates that the
         column's size will not change unless all columns have 0.0 stretch as
         well.  Note that \a column is not range-checked. */
-    void SetColumnStretch(std::size_t column, double stretch);
+    void SetColumnStretch(std::size_t column, float stretch);
 
     /** Sets the minimum height of row \a row to \a height.  Note that \a row
         is not range-checked. */
@@ -257,11 +257,11 @@ private:
     {
         RowColParams();
 
-        double       stretch;
-        unsigned int min;
-        unsigned int effective_min;   ///< current effective minimum size of this row or column, based on min, layout margins, and layout cell contents
-        int          current_origin;  ///< current position of top or left side
-        unsigned int current_width;   ///< current extent in downward or rightward direction
+        float        stretch = 0.0f;
+        unsigned int min = 1;
+        unsigned int effective_min = 1; ///< current effective minimum size of this row or column, based on min, layout margins, and layout cell contents
+        int          current_origin = 1;///< current position of top or left side
+        unsigned int current_width = 1; ///< current extent in downward or rightward direction
     };
 
     struct GG_API WndPosition
@@ -280,22 +280,22 @@ private:
         Pt               original_size;
     };
 
-    double TotalStretch(const std::vector<RowColParams>& params_vec) const;
+    float  TotalStretch(const std::vector<RowColParams>& params_vec) const;
     X      TotalMinWidth() const;
     Y      TotalMinHeight() const;
     void   ValidateAlignment(Flags<Alignment>& alignment);
     void   ChildSizeOrMinSizeChanged();
 
     std::vector<std::vector<std::weak_ptr<Wnd>>>  m_cells;
-    unsigned int                    m_border_margin;
-    unsigned int                    m_cell_margin;
+    unsigned int                    m_border_margin = 1;
+    unsigned int                    m_cell_margin = 1;
     std::vector<RowColParams>       m_row_params;
     std::vector<RowColParams>       m_column_params;
     std::map<Wnd*, WndPosition>     m_wnd_positions;
     Pt                              m_min_usable_size;
-    bool                            m_ignore_child_resize;
-    bool                            m_stop_resize_recursion;
-    bool                            m_render_outline;
+    bool                            m_ignore_child_resize = false;
+    bool                            m_stop_resize_recursion = false;
+    bool                            m_render_outline = false;
     Clr                             m_outline_color;
 
     friend class Wnd;

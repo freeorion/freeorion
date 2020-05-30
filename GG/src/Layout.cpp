@@ -136,7 +136,7 @@ std::vector<std::vector<const Wnd*>> Layout::Cells() const
         for (std::size_t j = 0; j < m_cells[i].size(); ++j) {
             retval[i][j] = m_cells[i][j].lock().get();
         }
-    }    
+    }
     return retval;
 }
 
@@ -289,8 +289,8 @@ void Layout::DoLayout(Pt ul, Pt lr)
     }
 
     // determine final effective minimums, preserving stretch ratios
-    double greatest_min_over_stretch_ratio = 0.0;
-    double greatest_usable_min_over_stretch_ratio = 0.0;
+    float greatest_min_over_stretch_ratio = 0.0f;
+    float greatest_usable_min_over_stretch_ratio = 0.0f;
     bool is_zero_total_stretch = true;
     for (std::size_t i = 0; i < m_row_params.size(); ++i) {
         if (m_row_params[i].stretch) {
@@ -309,8 +309,8 @@ void Layout::DoLayout(Pt ul, Pt lr)
                 static_cast<unsigned int>(m_row_params[i].stretch * greatest_usable_min_over_stretch_ratio));
         }
     }
-    greatest_min_over_stretch_ratio = 0.0;
-    greatest_usable_min_over_stretch_ratio = 0.0;
+    greatest_min_over_stretch_ratio = 0.0f;
+    greatest_usable_min_over_stretch_ratio = 0.0f;
     is_zero_total_stretch = true;
     for (std::size_t i = 0; i < m_column_params.size(); ++i) {
         if (m_column_params[i].stretch) {
@@ -362,11 +362,11 @@ void Layout::DoLayout(Pt ul, Pt lr)
     }
 
     // determine row and column positions
-    double total_stretch = TotalStretch(m_row_params);
+    float total_stretch = TotalStretch(m_row_params);
     int total_stretch_space = Value(Size().y - MinSize().y);
-    double space_per_unit_stretch = total_stretch ? total_stretch_space / total_stretch : 0.0;
+    float space_per_unit_stretch = total_stretch ? total_stretch_space / total_stretch : 0.0f;
     bool larger_than_min = 0 < total_stretch_space;
-    double remainder = 0.0;
+    float remainder = 0.0f;
     int current_origin = m_border_margin;
     for (std::size_t i = 0; i < m_row_params.size(); ++i) {
         if (larger_than_min) {
@@ -632,14 +632,14 @@ void Layout::SetCellMargin(unsigned int margin)
     RedoLayout();
 }
 
-void Layout::SetRowStretch(std::size_t row, double stretch)
+void Layout::SetRowStretch(std::size_t row, float stretch)
 {
     assert(row < m_row_params.size());
     m_row_params[row].stretch = stretch;
     RedoLayout();
 }
 
-void Layout::SetColumnStretch(std::size_t column, double stretch)
+void Layout::SetColumnStretch(std::size_t column, float stretch)
 {
     assert(column < m_column_params.size());
     m_column_params[column].stretch = stretch;
@@ -675,12 +675,11 @@ void Layout::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_k
 void Layout::KeyRelease(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys)
 { ForwardEventToParent(); }
 
-double Layout::TotalStretch(const std::vector<RowColParams>& params_vec) const
+float Layout::TotalStretch(const std::vector<RowColParams>& params_vec) const
 {
-    double retval = 0.0;
-    for (const RowColParams& param : params_vec) {
+    float retval = 0.0f;
+    for (const RowColParams& param : params_vec)
         retval += param.stretch;
-    }
     return retval;
 }
 
