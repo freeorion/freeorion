@@ -1437,7 +1437,7 @@ namespace {
 
         detailed_description += UserString(policy->Description());
 
-        auto unlocked_by_techs = TechsThatUnlockItem(ItemSpec(UIT_POLICY, item_name));
+        auto unlocked_by_techs = TechsThatUnlockItem(UnlockableItem(UIT_POLICY, item_name));
         if (!unlocked_by_techs.empty()) {
             detailed_description += "\n\n" + UserString("ENC_UNLOCKED_BY");
             for (const auto& tech_name : unlocked_by_techs)
