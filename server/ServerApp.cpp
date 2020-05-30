@@ -856,13 +856,13 @@ void ServerApp::LoadSPGameInit(const std::vector<PlayerSaveGameData>& player_sav
     // assign all saved game data to a player ID
     for (int i = 0; i < static_cast<int>(player_save_game_data.size()); ++i) {
         const PlayerSaveGameData& psgd = player_save_game_data[i];
-        if (psgd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
+        if (psgd.client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
             // In a single player game, the host player is always the human player, so
             // this is just a matter of finding which entry in player_save_game_data was
             // a human player, and assigning that saved player data to the host player ID
             player_id_to_save_game_data_index.push_back({m_networking.HostPlayerID(), i});
 
-        } else if (psgd.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
+        } else if (psgd.client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
             // All saved AI player data, as determined from their client type, is
             // assigned to player IDs of established AI players
 
@@ -1105,7 +1105,7 @@ namespace {
         // find save game data vector index that has requested empire id
         for (int i = 0; i < static_cast<int>(player_save_game_data.size()); ++i) {
             const PlayerSaveGameData& psgd = player_save_game_data.at(i);
-            if (psgd.m_empire_id == empire_id)
+            if (psgd.empire_id == empire_id)
                 return i;
         }
         return -1;
@@ -1332,7 +1332,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
         int empire_id = ALL_EMPIRES;
         try {
             const PlayerSaveGameData& psgd = player_save_game_data.at(player_save_game_data_index);
-            empire_id = psgd.m_empire_id;               // can't use GetPlayerEmpireID here because m_player_empire_ids hasn't been set up yet.
+            empire_id = psgd.empire_id;               // can't use GetPlayerEmpireID here because m_player_empire_ids hasn't been set up yet.
             player_id_save_game_data[player_id] = psgd; // store by player ID for easier access later
         } catch (...) {
             ErrorLogger() << "ServerApp::LoadGameInit couldn't find save game data with index " << player_save_game_data_index;
@@ -1353,7 +1353,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
     }
 
     for (const auto& psgd : player_save_game_data) {
-        int empire_id = psgd.m_empire_id;
+        int empire_id = psgd.empire_id;
         // add empires to turn processing, and restore saved orders and UI data or save state data
         if (Empire* empire = GetEmpire(empire_id)) {
             if (!empire->Eliminated())
@@ -1394,7 +1394,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
 
         // get empire ID for player. safety check on it.
         int empire_id = PlayerEmpireID(player_id);
-        if (empire_id != psgd.m_empire_id) {
+        if (empire_id != psgd.empire_id) {
             ErrorLogger() << "LoadGameInit got inconsistent empire ids between player save game data and result of PlayerEmpireID";
         }
 

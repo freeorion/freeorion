@@ -95,8 +95,8 @@ namespace {
 
             // find which player was the human (and thus the host) in the saved game
             for (const PlayerSaveHeaderData& psgd : player_save_header_data) {
-                if (psgd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
-                    return psgd.m_name;
+                if (psgd.client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
+                    return psgd.name;
             }
         }
         return "";
@@ -770,13 +770,13 @@ sc::result Idle::react(const Hostless&) {
             // fill lobby data with AI to start them with server
             int ai_next_index = 1;
             for (const auto& psgd : player_save_game_data) {
-                if (psgd.m_client_type != Networking::CLIENT_TYPE_AI_PLAYER)
+                if (psgd.client_type != Networking::CLIENT_TYPE_AI_PLAYER)
                     continue;
                 PlayerSetupData player_setup_data;
                 player_setup_data.player_id =     Networking::INVALID_PLAYER_ID;
                 player_setup_data.player_name =   UserString("AI_PLAYER") + "_" + std::to_string(ai_next_index++);
                 player_setup_data.client_type =   Networking::CLIENT_TYPE_AI_PLAYER;
-                player_setup_data.save_game_empire_id = psgd.m_empire_id;
+                player_setup_data.save_game_empire_id = psgd.empire_id;
                 lobby_data->players.push_back({Networking::INVALID_PLAYER_ID, player_setup_data});
             }
         } catch (const std::exception& e) {
@@ -1713,9 +1713,9 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             // read all AI players from save game and add them into current lobby
             // with appropriate empire's data
             for (const auto& pshd : player_save_header_data) {
-                if (pshd.m_client_type != Networking::CLIENT_TYPE_AI_PLAYER)
+                if (pshd.client_type != Networking::CLIENT_TYPE_AI_PLAYER)
                     continue;
-                const auto& empire_data_it = m_lobby_data->save_game_empire_data.find(pshd.m_empire_id);
+                const auto& empire_data_it = m_lobby_data->save_game_empire_data.find(pshd.empire_id);
                 if (empire_data_it == m_lobby_data->save_game_empire_data.end())
                     continue;
 
@@ -1724,7 +1724,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                 // don't use original names to prevent collision with manually added AIs
                 player_setup_data.player_name =   UserString("AI_PLAYER") + "_" + std::to_string(m_ai_next_index++);
                 player_setup_data.client_type =   Networking::CLIENT_TYPE_AI_PLAYER;
-                player_setup_data.save_game_empire_id = pshd.m_empire_id;
+                player_setup_data.save_game_empire_id = pshd.empire_id;
                 player_setup_data.empire_name =   empire_data_it->second.m_empire_name;
                 player_setup_data.empire_color =  empire_data_it->second.m_color;
                 if (m_lobby_data->m_seed != "")
@@ -2029,16 +2029,16 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
 
         // add player setup data for each player in saved gamed
         for (const PlayerSaveHeaderData& psgd : player_save_header_data) {
-            if (psgd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER ||
-                psgd.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER)
+            if (psgd.client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER ||
+                psgd.client_type == Networking::CLIENT_TYPE_AI_PLAYER)
             {
                 PlayerSetupData psd;
-                psd.player_name =         psgd.m_name;
+                psd.player_name =         psgd.name;
                 //psd.empire_name // left default
                 //psd.empire_color // left default
                 //psd.starting_species_name // left default
-                psd.save_game_empire_id = psgd.m_empire_id;
-                psd.client_type =         psgd.m_client_type;
+                psd.save_game_empire_id = psgd.empire_id;
+                psd.client_type =         psgd.client_type;
 
                 if (psd.client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
                     psd.player_id = server.Networking().HostPlayerID();

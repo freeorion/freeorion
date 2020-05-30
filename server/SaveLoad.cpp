@@ -59,10 +59,10 @@ namespace {
             // If there are human players, the first of them should be the main player
             short humans = 0;
             for (const PlayerSaveGameData& psgd : player_save_game_data) {
-                if (psgd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
-                    if (player->m_client_type != Networking::CLIENT_TYPE_HUMAN_PLAYER &&
-                       player->m_client_type != Networking::CLIENT_TYPE_HUMAN_OBSERVER &&
-                       player->m_client_type != Networking::CLIENT_TYPE_HUMAN_MODERATOR)
+                if (psgd.client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
+                    if (player->client_type != Networking::CLIENT_TYPE_HUMAN_PLAYER &&
+                       player->client_type != Networking::CLIENT_TYPE_HUMAN_OBSERVER &&
+                       player->client_type != Networking::CLIENT_TYPE_HUMAN_MODERATOR)
                     {
                         player = &psgd;
                     }
@@ -70,11 +70,11 @@ namespace {
                 }
             }
 
-            preview.main_player_name = player->m_name;
+            preview.main_player_name = player->name;
             preview.number_of_human_players = humans;
 
             // Find the empire of the player, if it has one
-            auto empire = empire_save_game_data.find(player->m_empire_id);
+            auto empire = empire_save_game_data.find(player->empire_id);
             if (empire != empire_save_game_data.end()) {
                 preview.main_player_empire_name = empire->second.m_empire_name;
                 preview.main_player_empire_colour = empire->second.m_color;

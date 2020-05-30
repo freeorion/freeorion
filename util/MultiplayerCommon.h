@@ -107,9 +107,9 @@ struct FO_COMMON_API SaveGameEmpireData {
 
 /** Contains basic data about a player in a game. */
 struct FO_COMMON_API PlayerSaveHeaderData {
-    std::string             m_name;
-    int                     m_empire_id = ALL_EMPIRES;
-    Networking::ClientType  m_client_type = Networking::INVALID_CLIENT_TYPE;
+    std::string             name;
+    int                     empire_id = ALL_EMPIRES;
+    Networking::ClientType  client_type = Networking::INVALID_CLIENT_TYPE;
 };
 
 /** Contains data that must be saved for a single player. */

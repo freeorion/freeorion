@@ -194,9 +194,9 @@ void serialize(Archive& ar, PlayerSaveHeaderData& obj, unsigned int const versio
 {
     using namespace boost::serialization;
 
-    ar  & make_nvp("m_name", obj.m_name)
-        & make_nvp("m_empire_id", obj.m_empire_id)
-        & make_nvp("m_client_type", obj.m_client_type);
+    ar  & make_nvp("m_name", obj.name)
+        & make_nvp("m_empire_id", obj.empire_id)
+        & make_nvp("m_client_type", obj.client_type);
 }
 
 template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, PlayerSaveHeaderData&, unsigned int const);
