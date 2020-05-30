@@ -1297,7 +1297,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
 
 
     // restore server state info from save
-    m_current_turn = server_save_game_data->m_current_turn;
+    m_current_turn = server_save_game_data->current_turn;
 
     std::map<int, PlayerSaveGameData> player_id_save_game_data;
 

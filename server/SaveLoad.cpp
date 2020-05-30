@@ -42,7 +42,7 @@ namespace {
                                     SaveGamePreviewData& preview)
     {
         // First compile the non-player related data
-        preview.current_turn = server_save_game_data.m_current_turn;
+        preview.current_turn = server_save_game_data.current_turn;
         preview.number_of_empires = empire_save_game_data.size();
         preview.save_time = boost::posix_time::to_iso_extended_string(boost::posix_time::second_clock::local_time());
 
@@ -634,5 +634,5 @@ void LoadEmpireSaveGameData(const std::string& filename,
     galaxy_setup_data.m_game_rules = saved_galaxy_setup_data.m_game_rules;
     galaxy_setup_data.m_game_uid = saved_galaxy_setup_data.m_game_uid;
 
-    current_turn = saved_server_save_game_data.m_current_turn;
+    current_turn = saved_server_save_game_data.current_turn;
 }

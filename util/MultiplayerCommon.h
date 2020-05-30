@@ -140,7 +140,7 @@ struct FO_COMMON_API PlayerSaveGameData : public PlayerSaveHeaderData {
 /** Data that must be retained by the server when saving and loading a
   * game that isn't player data or the universe */
 struct FO_COMMON_API ServerSaveGameData {
-    int m_current_turn = INVALID_GAME_TURN;
+    int current_turn = INVALID_GAME_TURN;
 };
 
 /** The data structure used to represent a single player's setup options for a
