@@ -539,12 +539,12 @@ void ServerApp::NewSPGameInit(const SinglePlayerSetupData& single_player_setup_d
     // id == m_networking.HostPlayerID() should be the human player in
     // PlayerSetupData.  AI player connections are assigned one of the remaining
     // PlayerSetupData entries that is for an AI player.
-    const auto& player_setup_data = single_player_setup_data.m_players;
+    const auto& player_setup_data = single_player_setup_data.players;
     NewGameInitConcurrentWithJoiners(single_player_setup_data, player_setup_data);
 }
 
 bool ServerApp::VerifySPGameAIs(const SinglePlayerSetupData& single_player_setup_data) {
-    const auto& player_setup_data = single_player_setup_data.m_players;
+    const auto& player_setup_data = single_player_setup_data.players;
     return NewGameInitVerifyJoiners(player_setup_data);
 }
 

@@ -169,15 +169,15 @@ bool operator!=(const PlayerSetupData& lhs, const PlayerSetupData& rhs);
 struct SinglePlayerSetupData : public GalaxySetupData {
     /** \name Structors */ //@{
     SinglePlayerSetupData():
-        m_new_game(true),
-        m_filename(),
-        m_players()
+        new_game(true),
+        filename(),
+        players()
     {}
     //@}
 
-    bool                            m_new_game;
-    std::string                     m_filename;
-    std::vector<PlayerSetupData>    m_players;
+    bool                            new_game;
+    std::string                     filename;
+    std::vector<PlayerSetupData>    players;
 };
 
 /** The data structure that represents the state of the multiplayer lobby. */

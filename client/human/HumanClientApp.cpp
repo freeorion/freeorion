@@ -540,8 +540,8 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
     }
 
     SinglePlayerSetupData setup_data;
-    setup_data.m_new_game = true;
-    setup_data.m_filename.clear();  // not used for new game
+    setup_data.new_game = true;
+    setup_data.filename.clear();  // not used for new game
 
     // get values stored in options from previous time game was run or
     // from just having run GalaxySetupWnd
@@ -596,7 +596,7 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
     human_player_setup_data.client_type = Networking::CLIENT_TYPE_HUMAN_PLAYER;
 
     // add to setup data players
-    setup_data.m_players.push_back(human_player_setup_data);
+    setup_data.players.push_back(human_player_setup_data);
 
 
     // AI player setup data.  One entry for each requested AI
@@ -611,7 +611,7 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
         ai_setup_data.save_game_empire_id = ALL_EMPIRES;  // not used for new games
         ai_setup_data.client_type = Networking::CLIENT_TYPE_AI_PLAYER;
 
-        setup_data.m_players.push_back(ai_setup_data);
+        setup_data.players.push_back(ai_setup_data);
     }
 
 
@@ -795,8 +795,8 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
 
     SinglePlayerSetupData setup_data;
     // leving GalaxySetupData information default / blank : not used when loading a game
-    setup_data.m_new_game = false;
-    setup_data.m_filename = filename;
+    setup_data.new_game = false;
+    setup_data.filename = filename;
     // leving setup_data.m_players empty : not specified when loading a game, as server will generate from save file
 
 

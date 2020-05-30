@@ -60,9 +60,9 @@ void serialize(Archive& ar, SinglePlayerSetupData& obj, unsigned int const versi
     using namespace boost::serialization;
 
     ar  & make_nvp("GalaxySetupData", base_object<GalaxySetupData>(obj))
-        & make_nvp("m_new_game", obj.m_new_game)
-        & make_nvp("m_filename", obj.m_filename)
-        & make_nvp("m_players", obj.m_players);
+        & make_nvp("m_new_game", obj.new_game)
+        & make_nvp("m_filename", obj.filename)
+        & make_nvp("m_players", obj.players);
 }
 
 template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, SinglePlayerSetupData&, unsigned int const);

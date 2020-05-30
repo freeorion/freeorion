@@ -50,8 +50,8 @@ void ClientAppFixture::HostSPGame(unsigned int num_AIs) {
     auto game_rules = GetGameRules().GetRulesAsStrings();
 
     SinglePlayerSetupData setup_data;
-    setup_data.m_new_game = true;
-    setup_data.m_filename.clear();  // not used for new game
+    setup_data.new_game = true;
+    setup_data.filename.clear();  // not used for new game
 
     // GalaxySetupData
     setup_data.SetSeed("TestSeed1");
@@ -81,7 +81,7 @@ void ClientAppFixture::HostSPGame(unsigned int num_AIs) {
     human_player_setup_data.client_type = Networking::CLIENT_TYPE_HUMAN_PLAYER;
 
     // add to setup data players
-    setup_data.m_players.push_back(human_player_setup_data);
+    setup_data.players.push_back(human_player_setup_data);
 
     // AI player setup data.  One entry for each requested AI
 
@@ -95,7 +95,7 @@ void ClientAppFixture::HostSPGame(unsigned int num_AIs) {
         ai_setup_data.save_game_empire_id = ALL_EMPIRES;  // not used for new games
         ai_setup_data.client_type = Networking::CLIENT_TYPE_AI_PLAYER;
 
-        setup_data.m_players.push_back(ai_setup_data);
+        setup_data.players.push_back(ai_setup_data);
     }
 
     m_networking->SendMessage(HostSPGameMessage(setup_data));

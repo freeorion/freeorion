@@ -73,10 +73,10 @@ namespace {
     }
 
     std::string GetHostNameFromSinglePlayerSetupData(const SinglePlayerSetupData& single_player_setup_data) {
-        if (single_player_setup_data.m_new_game) {
+        if (single_player_setup_data.new_game) {
             // for new games, get host player's name from PlayerSetupData for the
             // (should be only) human player
-            for (const PlayerSetupData& psd : single_player_setup_data.m_players) {
+            for (const PlayerSetupData& psd : single_player_setup_data.players) {
                 // In a single player game, the host player is always the human player, so
                 // this is just a matter of finding which player setup data is for
                 // a human player, and assigning that setup data to the host player id
@@ -86,12 +86,12 @@ namespace {
 
         } else {
             // for loading saved games, get host / human player's name from save file
-            if (!single_player_setup_data.m_players.empty())
+            if (!single_player_setup_data.players.empty())
                 ErrorLogger(FSM) << "GetHostNameFromSinglePlayerSetupData got single player setup data to load a game, but also player setup data for a new game.  Ignoring player setup data";
 
 
             std::vector<PlayerSaveHeaderData> player_save_header_data;
-            LoadPlayerSaveHeaderData(single_player_setup_data.m_filename, player_save_header_data);
+            LoadPlayerSaveHeaderData(single_player_setup_data.filename, player_save_header_data);
 
             // find which player was the human (and thus the host) in the saved game
             for (const PlayerSaveHeaderData& psgd : player_save_header_data) {
@@ -1978,13 +1978,13 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
 
     context<ServerFSM>().m_single_player_setup_data.reset();
     ServerApp& server = Server();
-    std::vector<PlayerSetupData>& players = m_single_player_setup_data->m_players;
+    std::vector<PlayerSetupData>& players = m_single_player_setup_data->players;
 
     // Ensure all players have unique non-empty names   // TODO: the uniqueness part...
     unsigned int player_num = 1;
     int player_id = server.m_networking.NewPlayerID();
 
-    if (m_single_player_setup_data->m_new_game) {
+    if (m_single_player_setup_data->new_game) {
         // for new games, single player setup data contains full m_players
         // vector, so can just use the contents of that to create AI
         // clients
@@ -2020,7 +2020,7 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
 
         std::vector<PlayerSaveHeaderData> player_save_header_data;
         try {
-            LoadPlayerSaveHeaderData(m_single_player_setup_data->m_filename, player_save_header_data);
+            LoadPlayerSaveHeaderData(m_single_player_setup_data->filename, player_save_header_data);
         } catch (const std::exception& e) {
             SendMessageToHost(ErrorMessage(UserStringNop("UNABLE_TO_READ_SAVE_FILE"), true));
             post_event(LoadSaveFileFailed());
@@ -2066,7 +2066,7 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
     // Still check start conditions, which will abort the server after all
     // the expected players have joined if Python is (still) not initialized.
     if (server.m_python_server.IsPythonRunning()) {
-        if (m_single_player_setup_data->m_new_game) {
+        if (m_single_player_setup_data->new_game) {
             // For new SP game start inializaing while waiting for AI callbacks.
             DebugLogger(FSM) << "Initializing new SP game...";
             server.NewSPGameInit(*m_single_player_setup_data);
@@ -2160,15 +2160,15 @@ sc::result WaitingForSPGameJoiners::react(const CheckStartConditions& u) {
             return discard_event();
         }
 
-        if (m_single_player_setup_data->m_new_game) {
+        if (m_single_player_setup_data->new_game) {
             DebugLogger(FSM) << "Verify AIs SP game...";
             if (server.VerifySPGameAIs(*m_single_player_setup_data))
                 server.SendNewGameStartMessages();
 
         } else {
-            DebugLogger(FSM) << "Loading SP game save file: " << m_single_player_setup_data->m_filename;
+            DebugLogger(FSM) << "Loading SP game save file: " << m_single_player_setup_data->filename;
             try {
-                LoadGame(m_single_player_setup_data->m_filename,            *m_server_save_game_data,
+                LoadGame(m_single_player_setup_data->filename,              *m_server_save_game_data,
                          m_player_save_game_data,   GetUniverse(),          Empires(),
                          GetSpeciesManager(),       GetCombatLogManager(),  server.m_galaxy_setup_data);
 
