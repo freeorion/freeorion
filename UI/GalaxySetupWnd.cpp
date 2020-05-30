@@ -916,30 +916,30 @@ void GalaxySetupPanel::Disable(bool b/* = true*/) {
 }
 
 void GalaxySetupPanel::SetFromSetupData(const GalaxySetupData& setup_data) {
-    SetSeed(setup_data.m_seed, true);
-    m_stars_spin->SetValue(setup_data.m_size);
-    m_galaxy_shapes_list->Select(setup_data.m_shape);
+    SetSeed(setup_data.seed, true);
+    m_stars_spin->SetValue(setup_data.size);
+    m_galaxy_shapes_list->Select(setup_data.shape);
     ShapeChanged(m_galaxy_shapes_list->CurrentItem());
-    m_galaxy_ages_list->Select(setup_data.m_age - 1);
-    m_starlane_freq_list->Select(setup_data.m_starlane_freq - 1);
-    m_planet_density_list->Select(setup_data.m_planet_density - 1);
-    m_specials_freq_list->Select(setup_data.m_specials_freq);
-    m_monster_freq_list->Select(setup_data.m_monster_freq);
-    m_native_freq_list->Select(setup_data.m_native_freq);
-    m_ai_aggression_list->Select(setup_data.m_ai_aggr);
+    m_galaxy_ages_list->Select(setup_data.age - 1);
+    m_starlane_freq_list->Select(setup_data.starlane_freq - 1);
+    m_planet_density_list->Select(setup_data.planet_density - 1);
+    m_specials_freq_list->Select(setup_data.specials_freq);
+    m_monster_freq_list->Select(setup_data.monster_freq);
+    m_native_freq_list->Select(setup_data.native_freq);
+    m_ai_aggression_list->Select(setup_data.ai_aggr);
 }
 
 void GalaxySetupPanel::GetSetupData(GalaxySetupData& setup_data) const {
     setup_data.SetSeed(GetSeed());
-    setup_data.m_size =             Systems();
-    setup_data.m_shape =            GetShape();
-    setup_data.m_age =              GetAge();
-    setup_data.m_starlane_freq =    GetStarlaneFrequency();
-    setup_data.m_planet_density =   GetPlanetDensity();
-    setup_data.m_specials_freq =    GetSpecialsFrequency();
-    setup_data.m_monster_freq =     GetMonsterFrequency();
-    setup_data.m_native_freq =      GetNativeFrequency();
-    setup_data.m_ai_aggr =          GetAIAggression();
+    setup_data.size =             Systems();
+    setup_data.shape =            GetShape();
+    setup_data.age =              GetAge();
+    setup_data.starlane_freq =    GetStarlaneFrequency();
+    setup_data.planet_density =   GetPlanetDensity();
+    setup_data.specials_freq =    GetSpecialsFrequency();
+    setup_data.monster_freq =     GetMonsterFrequency();
+    setup_data.native_freq =      GetNativeFrequency();
+    setup_data.ai_aggr =          GetAIAggression();
 }
 
 void GalaxySetupPanel::SettingChanged() {

@@ -166,7 +166,7 @@ int SaveGame(const std::string& filename, const ServerSaveGameData& server_save_
         pos_before_writing = ofs.tellp();
 
         bool save_completed_as_xml = false;
-        galaxy_setup_data.m_encoding_empire = ALL_EMPIRES;
+        galaxy_setup_data.encoding_empire = ALL_EMPIRES;
 
         if (!use_binary) {
             if (use_zlib_for_zml) {
@@ -621,18 +621,18 @@ void LoadEmpireSaveGameData(const std::string& filename,
         ErrorLogger() << UserString("UNABLE_TO_READ_SAVE_FILE") << " LoadEmpireSaveGameData exception: " << ": " << e.what();
         throw e;
     }
-    galaxy_setup_data.m_seed = saved_galaxy_setup_data.m_seed;
-    galaxy_setup_data.m_size = saved_galaxy_setup_data.m_size;
-    galaxy_setup_data.m_shape = saved_galaxy_setup_data.m_shape;
-    galaxy_setup_data.m_age = saved_galaxy_setup_data.m_age;
-    galaxy_setup_data.m_starlane_freq = saved_galaxy_setup_data.m_starlane_freq;
-    galaxy_setup_data.m_planet_density = saved_galaxy_setup_data.m_planet_density;
-    galaxy_setup_data.m_specials_freq = saved_galaxy_setup_data.m_specials_freq;
-    galaxy_setup_data.m_monster_freq = saved_galaxy_setup_data.m_monster_freq;
-    galaxy_setup_data.m_native_freq = saved_galaxy_setup_data.m_native_freq;
-    galaxy_setup_data.m_ai_aggr = saved_galaxy_setup_data.m_ai_aggr;
-    galaxy_setup_data.m_game_rules = saved_galaxy_setup_data.m_game_rules;
-    galaxy_setup_data.m_game_uid = saved_galaxy_setup_data.m_game_uid;
+    galaxy_setup_data.seed = saved_galaxy_setup_data.seed;
+    galaxy_setup_data.size = saved_galaxy_setup_data.size;
+    galaxy_setup_data.shape = saved_galaxy_setup_data.shape;
+    galaxy_setup_data.age = saved_galaxy_setup_data.age;
+    galaxy_setup_data.starlane_freq = saved_galaxy_setup_data.starlane_freq;
+    galaxy_setup_data.planet_density = saved_galaxy_setup_data.planet_density;
+    galaxy_setup_data.specials_freq = saved_galaxy_setup_data.specials_freq;
+    galaxy_setup_data.monster_freq = saved_galaxy_setup_data.monster_freq;
+    galaxy_setup_data.native_freq = saved_galaxy_setup_data.native_freq;
+    galaxy_setup_data.ai_aggr = saved_galaxy_setup_data.ai_aggr;
+    galaxy_setup_data.game_rules = saved_galaxy_setup_data.game_rules;
+    galaxy_setup_data.game_uid = saved_galaxy_setup_data.game_uid;
 
     current_turn = saved_server_save_game_data.current_turn;
 }

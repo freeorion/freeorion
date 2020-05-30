@@ -106,94 +106,94 @@ namespace {
 }
 
 GalaxySetupData::GalaxySetupData() :
-    m_size(100),
-    m_shape(SPIRAL_2),
-    m_age(GALAXY_SETUP_MEDIUM),
-    m_starlane_freq(GALAXY_SETUP_MEDIUM),
-    m_planet_density(GALAXY_SETUP_MEDIUM),
-    m_specials_freq(GALAXY_SETUP_MEDIUM),
-    m_monster_freq(GALAXY_SETUP_MEDIUM),
-    m_native_freq(GALAXY_SETUP_MEDIUM),
-    m_ai_aggr(MANIACAL),
-    m_encoding_empire(ALL_EMPIRES)
+    size(100),
+    shape(SPIRAL_2),
+    age(GALAXY_SETUP_MEDIUM),
+    starlane_freq(GALAXY_SETUP_MEDIUM),
+    planet_density(GALAXY_SETUP_MEDIUM),
+    specials_freq(GALAXY_SETUP_MEDIUM),
+    monster_freq(GALAXY_SETUP_MEDIUM),
+    native_freq(GALAXY_SETUP_MEDIUM),
+    ai_aggr(MANIACAL),
+    encoding_empire(ALL_EMPIRES)
 {}
 
 GalaxySetupData::GalaxySetupData(GalaxySetupData&& base) :
-    m_seed(std::move(base.m_seed)),
-    m_size(base.m_size),
-    m_shape(base.m_shape),
-    m_age(base.m_age),
-    m_starlane_freq(base.m_starlane_freq),
-    m_planet_density(base.m_planet_density),
-    m_specials_freq(base.m_specials_freq),
-    m_monster_freq(base.m_monster_freq),
-    m_native_freq(base.m_native_freq),
-    m_ai_aggr(base.m_ai_aggr),
-    m_game_rules(std::move(base.m_game_rules)),
-    m_game_uid(std::move(base.m_game_uid)),
-    m_encoding_empire(base.m_encoding_empire)
-{ SetSeed(m_seed); }
+    seed(std::move(base.seed)),
+    size(base.size),
+    shape(base.shape),
+    age(base.age),
+    starlane_freq(base.starlane_freq),
+    planet_density(base.planet_density),
+    specials_freq(base.specials_freq),
+    monster_freq(base.monster_freq),
+    native_freq(base.native_freq),
+    ai_aggr(base.ai_aggr),
+    game_rules(std::move(base.game_rules)),
+    game_uid(std::move(base.game_uid)),
+    encoding_empire(base.encoding_empire)
+{ SetSeed(seed); }
 
 const std::string& GalaxySetupData::GetSeed() const
-{ return m_seed; }
+{ return seed; }
 
 int GalaxySetupData::GetSize() const
-{ return m_size; }
+{ return size; }
 
 Shape GalaxySetupData::GetShape() const {
-    if (m_shape != RANDOM)
-        return m_shape;
+    if (shape != RANDOM)
+        return shape;
     size_t num_shapes = static_cast<size_t>(GALAXY_SHAPES) - 1; // -1 so that RANDOM isn't counted
-    return static_cast<Shape>(GetIdx(num_shapes, m_seed + "shape"));
+    return static_cast<Shape>(GetIdx(num_shapes, seed + "shape"));
 }
 
 GalaxySetupOption GalaxySetupData::GetAge() const {
-    if (m_age != GALAXY_SETUP_RANDOM)
-        return m_age;
-    return static_cast<GalaxySetupOption>(GetIdx(3, m_seed + "age") + 1);       // need range 1-3 for age
+    if (age != GALAXY_SETUP_RANDOM)
+        return age;
+    return static_cast<GalaxySetupOption>(GetIdx(3, seed + "age") + 1);       // need range 1-3 for age
 }
 
 GalaxySetupOption GalaxySetupData::GetStarlaneFreq() const {
-    if (m_starlane_freq != GALAXY_SETUP_RANDOM)
-        return m_starlane_freq;
-    return static_cast<GalaxySetupOption>(GetIdx(3, m_seed + "lanes") + 1);     // need range 1-3 for starlane freq
+    if (starlane_freq != GALAXY_SETUP_RANDOM)
+        return starlane_freq;
+    return static_cast<GalaxySetupOption>(GetIdx(3, seed + "lanes") + 1);     // need range 1-3 for starlane freq
 }
 
 GalaxySetupOption GalaxySetupData::GetPlanetDensity() const {
-    if (m_planet_density != GALAXY_SETUP_RANDOM)
-        return m_planet_density;
-    return static_cast<GalaxySetupOption>(GetIdx(3, m_seed + "planets") + 1);   // need range 1-3 for planet density
+    if (planet_density != GALAXY_SETUP_RANDOM)
+        return planet_density;
+    return static_cast<GalaxySetupOption>(GetIdx(3, seed + "planets") + 1);   // need range 1-3 for planet density
 }
 
 GalaxySetupOption GalaxySetupData::GetSpecialsFreq() const {
-    if (m_specials_freq != GALAXY_SETUP_RANDOM)
-        return m_specials_freq;
-    return static_cast<GalaxySetupOption>(GetIdx(4, m_seed + "specials"));      // need range 0-3 for planet density
+    if (specials_freq != GALAXY_SETUP_RANDOM)
+        return specials_freq;
+    return static_cast<GalaxySetupOption>(GetIdx(4, seed + "specials"));      // need range 0-3 for planet density
 }
 
 GalaxySetupOption GalaxySetupData::GetMonsterFreq() const {
-    if (m_monster_freq != GALAXY_SETUP_RANDOM)
-        return m_monster_freq;
-    return static_cast<GalaxySetupOption>(GetIdx(4, m_seed + "monsters"));      // need range 0-3 for monster frequency
+    if (monster_freq != GALAXY_SETUP_RANDOM)
+        return monster_freq;
+    return static_cast<GalaxySetupOption>(GetIdx(4, seed + "monsters"));      // need range 0-3 for monster frequency
 }
 
 GalaxySetupOption GalaxySetupData::GetNativeFreq() const {
-    if (m_native_freq != GALAXY_SETUP_RANDOM)
-        return m_native_freq;
-    return static_cast<GalaxySetupOption>(GetIdx(4, m_seed + "natives"));       // need range 0-3 for native frequency
+    if (native_freq != GALAXY_SETUP_RANDOM)
+        return native_freq;
+    return static_cast<GalaxySetupOption>(GetIdx(4, seed + "natives"));       // need range 0-3 for native frequency
 }
 
 Aggression GalaxySetupData::GetAggression() const
-{ return m_ai_aggr; }
+{ return ai_aggr; }
 
 const std::map<std::string, std::string>& GalaxySetupData::GetGameRules() const
-{ return m_game_rules; }
+{ return game_rules; }
 
 const std::string& GalaxySetupData::GetGameUID() const
-{ return m_game_uid; }
+{ return game_uid; }
 
-void GalaxySetupData::SetSeed(const std::string& seed) {
-    std::string new_seed = seed;
+void GalaxySetupData::SetSeed(const std::string& seed_) {
+    std::string new_seed = seed_;
     if (new_seed.empty() || new_seed == "RANDOM") {
         ClockSeed();
         new_seed.clear();
@@ -201,11 +201,11 @@ void GalaxySetupData::SetSeed(const std::string& seed) {
             new_seed += alphanum[RandInt(0, (sizeof(alphanum) - 2))];
         DebugLogger() << "Set empty or requested random seed to " << new_seed;
     }
-    m_seed = std::move(new_seed);
+    seed = std::move(new_seed);
 }
 
-void GalaxySetupData::SetGameUID(const std::string& game_uid)
-{ m_game_uid = game_uid; }
+void GalaxySetupData::SetGameUID(const std::string& game_uid_)
+{ game_uid = game_uid_; }
 
 /////////////////////////////////////////////////////
 // PlayerSetupData

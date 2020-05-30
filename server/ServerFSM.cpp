@@ -740,7 +740,7 @@ sc::result Idle::react(const Hostless&) {
             player_setup_data.client_type =   Networking::CLIENT_TYPE_AI_PLAYER;
             player_setup_data.empire_name =   GenerateEmpireName(player_setup_data.player_name, lobby_data->players);
             player_setup_data.empire_color =  GetUnusedEmpireColour(lobby_data->players);
-            if (lobby_data->m_seed != "")
+            if (lobby_data->seed != "")
                 player_setup_data.starting_species_name = sm.RandomPlayableSpeciesName();
             else
                 player_setup_data.starting_species_name = sm.SequentialPlayableSpeciesName(ai_next_index);
@@ -756,15 +756,15 @@ sc::result Idle::react(const Hostless&) {
                      GetCombatLogManager(),     server.m_galaxy_setup_data);
             int seed = 0;
             try {
-                seed = boost::lexical_cast<unsigned int>(server.m_galaxy_setup_data.m_seed);
+                seed = boost::lexical_cast<unsigned int>(server.m_galaxy_setup_data.seed);
             } catch (...) {
                 try {
                     boost::hash<std::string> string_hash;
-                    std::size_t h = string_hash(server.m_galaxy_setup_data.m_seed);
+                    std::size_t h = string_hash(server.m_galaxy_setup_data.seed);
                     seed = static_cast<unsigned int>(h);
                 } catch (...) {}
             }
-            DebugLogger(FSM) << "Seeding with loaded galaxy seed: " << server.m_galaxy_setup_data.m_seed << "  interpreted as actual seed: " << seed;
+            DebugLogger(FSM) << "Seeding with loaded galaxy seed: " << server.m_galaxy_setup_data.seed << "  interpreted as actual seed: " << seed;
             Seed(seed);
 
             // fill lobby data with AI to start them with server
@@ -784,7 +784,7 @@ sc::result Idle::react(const Hostless&) {
         }
     }
 
-    lobby_data->m_game_rules = GetGameRules().GetRulesAsStrings();
+    lobby_data->game_rules = GetGameRules().GetRulesAsStrings();
 
     // copy locally stored data to common server fsm context so it can be
     // retreived in WaitingForMPGameJoiners
@@ -819,7 +819,7 @@ MPLobby::MPLobby(my_context c) :
     ServerApp& server = Server();
     server.InitializePython();
     server.LoadChatHistory();
-    m_lobby_data->m_game_rules = GetGameRules().GetRulesAsStrings();
+    m_lobby_data->game_rules = GetGameRules().GetRulesAsStrings();
     const SpeciesManager& sm = GetSpeciesManager();
     if (server.IsHostless()) {
         DebugLogger(FSM) << "(ServerFSM) MPLobby. Fill MPLobby data from the previous game.";
@@ -845,7 +845,7 @@ MPLobby::MPLobby(my_context c) :
                 player_setup_data.client_type =   player_connection->GetClientType();
                 player_setup_data.empire_name =   (player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER) ? player_connection->PlayerName() : GenerateEmpireName(player_setup_data.player_name, m_lobby_data->players);
                 player_setup_data.empire_color =  GetUnusedEmpireColour(m_lobby_data->players);
-                if (m_lobby_data->m_seed != "")
+                if (m_lobby_data->seed != "")
                     player_setup_data.starting_species_name = sm.RandomPlayableSpeciesName();
                 else
                     player_setup_data.starting_species_name = sm.SequentialPlayableSpeciesName(player_id);
@@ -860,7 +860,7 @@ MPLobby::MPLobby(my_context c) :
                     player_setup_data.client_type =   Networking::CLIENT_TYPE_AI_PLAYER;
                     player_setup_data.empire_name =   GenerateEmpireName(player_setup_data.player_name, m_lobby_data->players);
                     player_setup_data.empire_color =  GetUnusedEmpireColour(m_lobby_data->players);
-                    if (m_lobby_data->m_seed != "")
+                    if (m_lobby_data->seed != "")
                         player_setup_data.starting_species_name = sm.RandomPlayableSpeciesName();
                     else
                         player_setup_data.starting_species_name = sm.SequentialPlayableSpeciesName(m_ai_next_index);
@@ -887,7 +887,7 @@ MPLobby::MPLobby(my_context c) :
                 player_setup_data.client_type =   Networking::CLIENT_TYPE_AI_PLAYER;
                 player_setup_data.empire_name =   GenerateEmpireName(player_setup_data.player_name, m_lobby_data->players);
                 player_setup_data.empire_color =  GetUnusedEmpireColour(m_lobby_data->players);
-                if (!m_lobby_data->m_seed.empty())
+                if (!m_lobby_data->seed.empty())
                     player_setup_data.starting_species_name = sm.RandomPlayableSpeciesName();
                 else
                     player_setup_data.starting_species_name = sm.SequentialPlayableSpeciesName(m_ai_next_index);
@@ -1101,7 +1101,7 @@ void MPLobby::EstablishPlayer(const PlayerConnectionPtr& player_connection,
         player_setup_data.client_type =   client_type;
         player_setup_data.empire_name =   (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) ? player_name : GenerateEmpireName(player_name, m_lobby_data->players);
         player_setup_data.empire_color =  GetUnusedEmpireColour(m_lobby_data->players);
-        if (m_lobby_data->m_seed != "")
+        if (m_lobby_data->seed != "")
             player_setup_data.starting_species_name = sm.RandomPlayableSpeciesName();
         else
             player_setup_data.starting_species_name = sm.SequentialPlayableSpeciesName(player_id);
@@ -1319,7 +1319,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                 if (psd.empire_name.empty())
                     psd.empire_name = GenerateEmpireName(psd.player_name, incoming_lobby_data.players);
                 if (psd.starting_species_name.empty()) {
-                    if (m_lobby_data->m_seed != "")
+                    if (m_lobby_data->seed != "")
                         psd.starting_species_name = GetSpeciesManager().RandomPlayableSpeciesName();
                     else
                         psd.starting_species_name = GetSpeciesManager().SequentialPlayableSpeciesName(m_ai_next_index);
@@ -1402,18 +1402,18 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             player_setup_data_changed = (incoming_lobby_data.players != m_lobby_data->players);
 
             // check if galaxy setup data changed
-            has_important_changes = has_important_changes || (m_lobby_data->m_seed != incoming_lobby_data.m_seed) ||
-                (m_lobby_data->m_size != incoming_lobby_data.m_size) ||
-                (m_lobby_data->m_shape != incoming_lobby_data.m_shape) ||
-                (m_lobby_data->m_age != incoming_lobby_data.m_age) ||
-                (m_lobby_data->m_starlane_freq != incoming_lobby_data.m_starlane_freq) ||
-                (m_lobby_data->m_planet_density != incoming_lobby_data.m_planet_density) ||
-                (m_lobby_data->m_specials_freq != incoming_lobby_data.m_specials_freq) ||
-                (m_lobby_data->m_monster_freq != incoming_lobby_data.m_monster_freq) ||
-                (m_lobby_data->m_native_freq != incoming_lobby_data.m_native_freq) ||
-                (m_lobby_data->m_ai_aggr != incoming_lobby_data.m_ai_aggr) ||
+            has_important_changes = has_important_changes || (m_lobby_data->seed != incoming_lobby_data.seed) ||
+                (m_lobby_data->size != incoming_lobby_data.size) ||
+                (m_lobby_data->shape != incoming_lobby_data.shape) ||
+                (m_lobby_data->age != incoming_lobby_data.age) ||
+                (m_lobby_data->starlane_freq != incoming_lobby_data.starlane_freq) ||
+                (m_lobby_data->planet_density != incoming_lobby_data.planet_density) ||
+                (m_lobby_data->specials_freq != incoming_lobby_data.specials_freq) ||
+                (m_lobby_data->monster_freq != incoming_lobby_data.monster_freq) ||
+                (m_lobby_data->native_freq != incoming_lobby_data.native_freq) ||
+                (m_lobby_data->ai_aggr != incoming_lobby_data.ai_aggr) ||
                 (m_lobby_data->new_game != incoming_lobby_data.new_game) ||
-                (m_lobby_data->m_game_rules != incoming_lobby_data.m_game_rules);
+                (m_lobby_data->game_rules != incoming_lobby_data.game_rules);
 
             if (player_setup_data_changed) {
                 if (m_lobby_data->players.size() != incoming_lobby_data.players.size()) {
@@ -1437,24 +1437,24 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             }
 
             // GalaxySetupData
-            m_lobby_data->SetSeed(incoming_lobby_data.m_seed);
-            m_lobby_data->m_size           = incoming_lobby_data.m_size;
-            m_lobby_data->m_shape          = incoming_lobby_data.m_shape;
-            m_lobby_data->m_age            = incoming_lobby_data.m_age;
-            m_lobby_data->m_starlane_freq  = incoming_lobby_data.m_starlane_freq;
-            m_lobby_data->m_planet_density = incoming_lobby_data.m_planet_density;
-            m_lobby_data->m_specials_freq  = incoming_lobby_data.m_specials_freq;
-            m_lobby_data->m_monster_freq   = incoming_lobby_data.m_monster_freq;
-            m_lobby_data->m_native_freq    = incoming_lobby_data.m_native_freq;
-            m_lobby_data->m_ai_aggr        = incoming_lobby_data.m_ai_aggr;
+            m_lobby_data->SetSeed(incoming_lobby_data.seed);
+            m_lobby_data->size           = incoming_lobby_data.size;
+            m_lobby_data->shape          = incoming_lobby_data.shape;
+            m_lobby_data->age            = incoming_lobby_data.age;
+            m_lobby_data->starlane_freq  = incoming_lobby_data.starlane_freq;
+            m_lobby_data->planet_density = incoming_lobby_data.planet_density;
+            m_lobby_data->specials_freq  = incoming_lobby_data.specials_freq;
+            m_lobby_data->monster_freq   = incoming_lobby_data.monster_freq;
+            m_lobby_data->native_freq    = incoming_lobby_data.native_freq;
+            m_lobby_data->ai_aggr        = incoming_lobby_data.ai_aggr;
 
             // copy rules from incoming lobby data to server lobby data, only if those rules are
             // not locked by the server
-            for (const auto& incoming_rule : incoming_lobby_data.m_game_rules) {
+            for (const auto& incoming_rule : incoming_lobby_data.game_rules) {
                 if (GetOptionsDB().OptionExists("setup.rules.server-locked." + incoming_rule.first) &&
                     !GetOptionsDB().Get<bool>("setup.rules.server-locked." + incoming_rule.first))
                 {
-                    m_lobby_data->m_game_rules[incoming_rule.first] = incoming_rule.second;
+                    m_lobby_data->game_rules[incoming_rule.first] = incoming_rule.second;
                 }
             }
 
@@ -1727,7 +1727,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                 player_setup_data.save_game_empire_id = pshd.empire_id;
                 player_setup_data.empire_name =   empire_data_it->second.empire_name;
                 player_setup_data.empire_color =  empire_data_it->second.color;
-                if (m_lobby_data->m_seed != "")
+                if (m_lobby_data->seed != "")
                     player_setup_data.starting_species_name = GetSpeciesManager().RandomPlayableSpeciesName();
                 else
                     player_setup_data.starting_species_name = GetSpeciesManager().SequentialPlayableSpeciesName(m_ai_next_index);
@@ -1778,15 +1778,15 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                              GetCombatLogManager(),     server.m_galaxy_setup_data);
                     int seed = 0;
                     try {
-                        seed = boost::lexical_cast<unsigned int>(server.m_galaxy_setup_data.m_seed);
+                        seed = boost::lexical_cast<unsigned int>(server.m_galaxy_setup_data.seed);
                     } catch (...) {
                         try {
                             boost::hash<std::string> string_hash;
-                            std::size_t h = string_hash(server.m_galaxy_setup_data.m_seed);
+                            std::size_t h = string_hash(server.m_galaxy_setup_data.seed);
                             seed = static_cast<unsigned int>(h);
                         } catch (...) {}
                     }
-                    DebugLogger(FSM) << "Seeding with loaded galaxy seed: " << server.m_galaxy_setup_data.m_seed << "  interpreted as actual seed: " << seed;
+                    DebugLogger(FSM) << "Seeding with loaded galaxy seed: " << server.m_galaxy_setup_data.seed << "  interpreted as actual seed: " << seed;
                     Seed(seed);
 
                 } catch (...) {
@@ -1889,15 +1889,15 @@ sc::result MPLobby::react(const StartMPGame& msg) {
                          GetCombatLogManager(),     server.m_galaxy_setup_data);
                 int seed = 0;
                 try {
-                    seed = boost::lexical_cast<unsigned int>(server.m_galaxy_setup_data.m_seed);
+                    seed = boost::lexical_cast<unsigned int>(server.m_galaxy_setup_data.seed);
                 } catch (...) {
                     try {
                         boost::hash<std::string> string_hash;
-                        std::size_t h = string_hash(server.m_galaxy_setup_data.m_seed);
+                        std::size_t h = string_hash(server.m_galaxy_setup_data.seed);
                         seed = static_cast<unsigned int>(h);
                     } catch (...) {}
                 }
-                DebugLogger(FSM) << "Seeding with loaded galaxy seed: " << server.m_galaxy_setup_data.m_seed << "  interpreted as actual seed: " << seed;
+                DebugLogger(FSM) << "Seeding with loaded galaxy seed: " << server.m_galaxy_setup_data.seed << "  interpreted as actual seed: " << seed;
                 Seed(seed);
 
             } catch (...) {
@@ -2058,7 +2058,7 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
             m_expected_ai_names_and_ids.insert({player_data.player_name, player_data.player_id});
     }
 
-    server.CreateAIClients(players, m_single_player_setup_data->m_ai_aggr);    // also disconnects any currently-connected AI clients
+    server.CreateAIClients(players, m_single_player_setup_data->ai_aggr);    // also disconnects any currently-connected AI clients
 
     server.InitializePython();
 
@@ -2228,7 +2228,7 @@ WaitingForMPGameJoiners::WaitingForMPGameJoiners(my_context c) :
             m_expected_ai_player_names.insert(psd.second.player_name);
     }
 
-    server.CreateAIClients(player_setup_data, m_lobby_data->m_ai_aggr);
+    server.CreateAIClients(player_setup_data, m_lobby_data->ai_aggr);
 
     server.InitializePython();
 

@@ -99,17 +99,17 @@ ServerApp::ServerApp() :
     InfoLogger() << FreeOrionVersionString();
     LogDependencyVersions();
 
-    m_galaxy_setup_data.m_seed = GetOptionsDB().Get<std::string>("setup.seed");
-    m_galaxy_setup_data.m_size = GetOptionsDB().Get<int>("setup.star.count");
-    m_galaxy_setup_data.m_shape = GetOptionsDB().Get<Shape>("setup.galaxy.shape");
-    m_galaxy_setup_data.m_age = GetOptionsDB().Get<GalaxySetupOption>("setup.galaxy.age");
-    m_galaxy_setup_data.m_starlane_freq = GetOptionsDB().Get<GalaxySetupOption>("setup.starlane.frequency");
-    m_galaxy_setup_data.m_planet_density = GetOptionsDB().Get<GalaxySetupOption>("setup.planet.density");
-    m_galaxy_setup_data.m_specials_freq = GetOptionsDB().Get<GalaxySetupOption>("setup.specials.frequency");
-    m_galaxy_setup_data.m_monster_freq = GetOptionsDB().Get<GalaxySetupOption>("setup.monster.frequency");
-    m_galaxy_setup_data.m_native_freq = GetOptionsDB().Get<GalaxySetupOption>("setup.native.frequency");
-    m_galaxy_setup_data.m_ai_aggr = GetOptionsDB().Get<Aggression>("setup.ai.aggression");
-    m_galaxy_setup_data.m_game_uid = GetOptionsDB().Get<std::string>("setup.game.uid");
+    m_galaxy_setup_data.seed = GetOptionsDB().Get<std::string>("setup.seed");
+    m_galaxy_setup_data.size = GetOptionsDB().Get<int>("setup.star.count");
+    m_galaxy_setup_data.shape = GetOptionsDB().Get<Shape>("setup.galaxy.shape");
+    m_galaxy_setup_data.age = GetOptionsDB().Get<GalaxySetupOption>("setup.galaxy.age");
+    m_galaxy_setup_data.starlane_freq = GetOptionsDB().Get<GalaxySetupOption>("setup.starlane.frequency");
+    m_galaxy_setup_data.planet_density = GetOptionsDB().Get<GalaxySetupOption>("setup.planet.density");
+    m_galaxy_setup_data.specials_freq = GetOptionsDB().Get<GalaxySetupOption>("setup.specials.frequency");
+    m_galaxy_setup_data.monster_freq = GetOptionsDB().Get<GalaxySetupOption>("setup.monster.frequency");
+    m_galaxy_setup_data.native_freq = GetOptionsDB().Get<GalaxySetupOption>("setup.native.frequency");
+    m_galaxy_setup_data.ai_aggr = GetOptionsDB().Get<Aggression>("setup.ai.aggression");
+    m_galaxy_setup_data.game_uid = GetOptionsDB().Get<std::string>("setup.game.uid");
 
     // Start parsing content before FSM initialization
     // to have data initialized before autostart execution
@@ -1457,11 +1457,11 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
     // Initialize RNG with provided seed to get reproducible universes
     int seed = 0;
     try {
-        seed = boost::lexical_cast<unsigned int>(GetGalaxySetupData().m_seed);
+        seed = boost::lexical_cast<unsigned int>(GetGalaxySetupData().seed);
     } catch (...) {
         try {
             boost::hash<std::string> string_hash;
-            std::size_t h = string_hash(GetGalaxySetupData().m_seed);
+            std::size_t h = string_hash(GetGalaxySetupData().seed);
             seed = static_cast<unsigned int>(h);
         } catch (...) {}
     }
@@ -3439,7 +3439,7 @@ void ServerApp::PostCombatProcessTurns() {
     // execute all effects and update meters prior to production, research, etc.
     if (GetGameRules().Get<bool>("RULE_RESEED_PRNG_SERVER")) {
         static boost::hash<std::string> pcpt_string_hash;
-        Seed(static_cast<unsigned int>(CurrentTurn()) + pcpt_string_hash(m_galaxy_setup_data.m_seed));
+        Seed(static_cast<unsigned int>(CurrentTurn()) + pcpt_string_hash(m_galaxy_setup_data.seed));
     }
     m_universe.ApplyAllEffectsAndUpdateMeters(false);
 

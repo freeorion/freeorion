@@ -55,26 +55,26 @@ struct FO_COMMON_API GalaxySetupData {
 
     GalaxySetupData& operator=(const GalaxySetupData&) = default;
 
-    std::string         m_seed;
-    int                 m_size;
-    Shape               m_shape;
-    GalaxySetupOption   m_age;
-    GalaxySetupOption   m_starlane_freq;
-    GalaxySetupOption   m_planet_density;
-    GalaxySetupOption   m_specials_freq;
-    GalaxySetupOption   m_monster_freq;
-    GalaxySetupOption   m_native_freq;
-    Aggression          m_ai_aggr;
+    std::string         seed;
+    int                 size;
+    Shape               shape;
+    GalaxySetupOption   age;
+    GalaxySetupOption   starlane_freq;
+    GalaxySetupOption   planet_density;
+    GalaxySetupOption   specials_freq;
+    GalaxySetupOption   monster_freq;
+    GalaxySetupOption   native_freq;
+    Aggression          ai_aggr;
     std::map<std::string, std::string>
-                        m_game_rules;
-    std::string         m_game_uid;
+                        game_rules;
+    std::string         game_uid;
 
     /** HACK! This must be set to the encoding empire's id when serializing a
       * GalaxySetupData, so that only the relevant parts of the galaxy data are
       * serialized.  The use of this local field is done just so I don't
       * have to rewrite any custom boost::serialization classes that implement
       * empire-dependent visibility. */
-    int                 m_encoding_empire; ///< used during serialization to globally set what empire knowledge to use
+    int                 encoding_empire; ///< used during serialization to globally set what empire knowledge to use
 };
 
 

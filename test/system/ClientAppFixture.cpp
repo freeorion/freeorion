@@ -55,16 +55,16 @@ void ClientAppFixture::HostSPGame(unsigned int num_AIs) {
 
     // GalaxySetupData
     setup_data.SetSeed("TestSeed1");
-    setup_data.m_size =             100;
-    setup_data.m_shape =            Shape::SPIRAL_4;
-    setup_data.m_age =              GalaxySetupOption::GALAXY_SETUP_MEDIUM;
-    setup_data.m_starlane_freq =    GalaxySetupOption::GALAXY_SETUP_MEDIUM;
-    setup_data.m_planet_density =   GalaxySetupOption::GALAXY_SETUP_MEDIUM;
-    setup_data.m_specials_freq =    GalaxySetupOption::GALAXY_SETUP_MEDIUM;
-    setup_data.m_monster_freq =     GalaxySetupOption::GALAXY_SETUP_MEDIUM;
-    setup_data.m_native_freq =      GalaxySetupOption::GALAXY_SETUP_MEDIUM;
-    setup_data.m_ai_aggr =          Aggression::MANIACAL;
-    setup_data.m_game_rules =       game_rules;
+    setup_data.size =             100;
+    setup_data.shape =            Shape::SPIRAL_4;
+    setup_data.age =              GalaxySetupOption::GALAXY_SETUP_MEDIUM;
+    setup_data.starlane_freq =    GalaxySetupOption::GALAXY_SETUP_MEDIUM;
+    setup_data.planet_density =   GalaxySetupOption::GALAXY_SETUP_MEDIUM;
+    setup_data.specials_freq =    GalaxySetupOption::GALAXY_SETUP_MEDIUM;
+    setup_data.monster_freq =     GalaxySetupOption::GALAXY_SETUP_MEDIUM;
+    setup_data.native_freq =      GalaxySetupOption::GALAXY_SETUP_MEDIUM;
+    setup_data.ai_aggr =          Aggression::MANIACAL;
+    setup_data.game_rules =       game_rules;
 
     // SinglePlayerSetupData contains a map of PlayerSetupData, for
     // the human and AI players.  Need to compile this information

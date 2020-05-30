@@ -260,25 +260,25 @@ std::string ColumnInPreview(const FullPreview& full, const std::string& name, bo
     } else if (name == "file") {
         return full.filename;
     } else if (name == "galaxy_size") {
-        return std::to_string(full.galaxy.m_size);
+        return std::to_string(full.galaxy.size);
     } else if (name == "seed") {
-        return full.galaxy.m_seed;
+        return full.galaxy.seed;
     } else if (name == "galaxy_age") {
-        return TextForGalaxySetupSetting(full.galaxy.m_age);
+        return TextForGalaxySetupSetting(full.galaxy.age);
     } else if (name == "monster_freq") {
-        return TextForGalaxySetupSetting(full.galaxy.m_monster_freq);
+        return TextForGalaxySetupSetting(full.galaxy.monster_freq);
     } else if (name == "native_freq") {
-        return TextForGalaxySetupSetting(full.galaxy.m_native_freq);
+        return TextForGalaxySetupSetting(full.galaxy.native_freq);
     } else if (name == "planet_freq") {
-        return TextForGalaxySetupSetting(full.galaxy.m_planet_density);
+        return TextForGalaxySetupSetting(full.galaxy.planet_density);
     } else if (name == "specials_freq") {
-        return TextForGalaxySetupSetting(full.galaxy.m_specials_freq);
+        return TextForGalaxySetupSetting(full.galaxy.specials_freq);
     } else if (name == "starlane_freq") {
-        return TextForGalaxySetupSetting(full.galaxy.m_starlane_freq);
+        return TextForGalaxySetupSetting(full.galaxy.starlane_freq);
     } else if (name == "galaxy_shape") {
-        return TextForGalaxyShape(full.galaxy.m_shape);
+        return TextForGalaxyShape(full.galaxy.shape);
     } else if (name == "ai_aggression") {
-        return TextForAIAggression(full.galaxy.m_ai_aggr);
+        return TextForAIAggression(full.galaxy.ai_aggr);
     } else if (name == "number_of_empires") {
         return std::to_string(full.preview.number_of_empires);
     } else if (name == "number_of_humans") {

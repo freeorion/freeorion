@@ -548,16 +548,16 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
 
     // GalaxySetupData
     setup_data.SetSeed(GetOptionsDB().Get<std::string>("setup.seed"));
-    setup_data.m_size =             GetOptionsDB().Get<int>("setup.star.count");
-    setup_data.m_shape =            GetOptionsDB().Get<Shape>("setup.galaxy.shape");
-    setup_data.m_age =              GetOptionsDB().Get<GalaxySetupOption>("setup.galaxy.age");
-    setup_data.m_starlane_freq =    GetOptionsDB().Get<GalaxySetupOption>("setup.starlane.frequency");
-    setup_data.m_planet_density =   GetOptionsDB().Get<GalaxySetupOption>("setup.planet.density");
-    setup_data.m_specials_freq =    GetOptionsDB().Get<GalaxySetupOption>("setup.specials.frequency");
-    setup_data.m_monster_freq =     GetOptionsDB().Get<GalaxySetupOption>("setup.monster.frequency");
-    setup_data.m_native_freq =      GetOptionsDB().Get<GalaxySetupOption>("setup.native.frequency");
-    setup_data.m_ai_aggr =          GetOptionsDB().Get<Aggression>("setup.ai.aggression");
-    setup_data.m_game_rules =       game_rules;
+    setup_data.size =             GetOptionsDB().Get<int>("setup.star.count");
+    setup_data.shape =            GetOptionsDB().Get<Shape>("setup.galaxy.shape");
+    setup_data.age =              GetOptionsDB().Get<GalaxySetupOption>("setup.galaxy.age");
+    setup_data.starlane_freq =    GetOptionsDB().Get<GalaxySetupOption>("setup.starlane.frequency");
+    setup_data.planet_density =   GetOptionsDB().Get<GalaxySetupOption>("setup.planet.density");
+    setup_data.specials_freq =    GetOptionsDB().Get<GalaxySetupOption>("setup.specials.frequency");
+    setup_data.monster_freq =     GetOptionsDB().Get<GalaxySetupOption>("setup.monster.frequency");
+    setup_data.native_freq =      GetOptionsDB().Get<GalaxySetupOption>("setup.native.frequency");
+    setup_data.ai_aggr =          GetOptionsDB().Get<Aggression>("setup.ai.aggression");
+    setup_data.game_rules =       game_rules;
 
 
     // SinglePlayerSetupData contains a map of PlayerSetupData, for

@@ -18,32 +18,32 @@ void serialize(Archive& ar, GalaxySetupData& obj, unsigned int const version)
 {
     using namespace boost::serialization;
 
-    if (Archive::is_saving::value && obj.m_encoding_empire != ALL_EMPIRES && (!GetOptionsDB().Get<bool>("network.server.publish-seed"))) {
+    if (Archive::is_saving::value && obj.encoding_empire != ALL_EMPIRES && (!GetOptionsDB().Get<bool>("network.server.publish-seed"))) {
         std::string dummy = "";
         ar  & make_nvp("m_seed", dummy);
     } else {
-        ar  & make_nvp("m_seed", obj.m_seed);
+        ar  & make_nvp("m_seed", obj.seed);
     }
 
-    ar  & make_nvp("m_size", obj.m_size)
-        & make_nvp("m_shape", obj.m_shape)
-        & make_nvp("m_age", obj.m_age)
-        & make_nvp("m_starlane_freq", obj.m_starlane_freq)
-        & make_nvp("m_planet_density", obj.m_planet_density)
-        & make_nvp("m_specials_freq", obj.m_specials_freq)
-        & make_nvp("m_monster_freq", obj.m_monster_freq)
-        & make_nvp("m_native_freq", obj.m_native_freq)
-        & make_nvp("m_ai_aggr", obj.m_ai_aggr);
+    ar  & make_nvp("m_size", obj.size)
+        & make_nvp("m_shape", obj.shape)
+        & make_nvp("m_age", obj.age)
+        & make_nvp("m_starlane_freq", obj.starlane_freq)
+        & make_nvp("m_planet_density", obj.planet_density)
+        & make_nvp("m_specials_freq", obj.specials_freq)
+        & make_nvp("m_monster_freq", obj.monster_freq)
+        & make_nvp("m_native_freq", obj.native_freq)
+        & make_nvp("m_ai_aggr", obj.ai_aggr);
 
     if (version >= 1) {
-        ar & make_nvp("m_game_rules", obj.m_game_rules);
+        ar & make_nvp("m_game_rules", obj.game_rules);
     }
 
     if (version >= 2) {
-        ar & make_nvp("m_game_uid", obj.m_game_uid);
+        ar & make_nvp("m_game_uid", obj.game_uid);
     } else {
         if (Archive::is_loading::value) {
-            obj.m_game_uid = boost::uuids::to_string(boost::uuids::random_generator()());
+            obj.game_uid = boost::uuids::to_string(boost::uuids::random_generator()());
         }
     }
 }
