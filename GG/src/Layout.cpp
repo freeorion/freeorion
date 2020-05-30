@@ -646,6 +646,14 @@ void Layout::SetColumnStretch(std::size_t column, float stretch)
     RedoLayout();
 }
 
+void Layout::SetColumnStretches(std::vector<float> stretches)
+{
+    std::size_t num_cols{std::min(m_column_params.size(), stretches.size())};
+    for (std::size_t c_idx = 0; c_idx < num_cols; ++c_idx)
+        m_column_params[c_idx].stretch = stretches[c_idx];
+    RedoLayout();
+}
+
 void Layout::SetMinimumRowHeight(std::size_t row, Y height)
 {
     assert(row < m_row_params.size());
@@ -657,6 +665,14 @@ void Layout::SetMinimumColumnWidth(std::size_t column, X width)
 {
     assert(column < m_column_params.size());
     m_column_params[column].min = Value(width);
+    RedoLayout();
+}
+
+void Layout::SetMinimumColumnWidths(std::vector<X> widths)
+{
+    std::size_t num_cols{std::min(m_column_params.size(), widths.size())};
+    for (std::size_t c_idx = 0; c_idx < num_cols; ++c_idx)
+        m_column_params[c_idx].min = Value(widths[c_idx]);
     RedoLayout();
 }
 

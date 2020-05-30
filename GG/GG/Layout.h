@@ -196,6 +196,10 @@ public:
         well.  Note that \a column is not range-checked. */
     void SetColumnStretch(std::size_t column, float stretch);
 
+    /** Sets the amount of stretching for columns with matching indices as
+        \a stretches */
+    void SetColumnStretches(std::vector<float> stretches);
+
     /** Sets the minimum height of row \a row to \a height.  Note that \a row
         is not range-checked. */
     void SetMinimumRowHeight(std::size_t row, Y height);
@@ -203,6 +207,9 @@ public:
     /** Sets the minimum width of column \a column to \a width.  Note that \a
         column is not range-checked. */
     void SetMinimumColumnWidth(std::size_t column, X width);
+
+    /** Sets the minimum width of columns with matching indices as \a widthss. */
+    void SetMinimumColumnWidths(std::vector<X> widths);
 
     /** Set this to true if this layout should render an outline of itself;
         this is sometimes useful for debugging purposes */
