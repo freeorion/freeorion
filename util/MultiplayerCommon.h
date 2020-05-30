@@ -115,26 +115,23 @@ struct FO_COMMON_API PlayerSaveHeaderData {
 /** Contains data that must be saved for a single player. */
 struct FO_COMMON_API PlayerSaveGameData : public PlayerSaveHeaderData {
     PlayerSaveGameData() :
-        PlayerSaveHeaderData(),
-        m_orders(),
-        m_ui_data(),
-        m_save_state_string()
+        PlayerSaveHeaderData()
     {}
 
     PlayerSaveGameData(const std::string& name, int empire_id,
-                       const std::shared_ptr<OrderSet>& orders,
-                       const std::shared_ptr<SaveGameUIData>& ui_data,
-                       const std::string& save_state_string,
+                       const std::shared_ptr<OrderSet>& orders_,
+                       const std::shared_ptr<SaveGameUIData>& ui_data_,
+                       const std::string& save_state_string_,
                        Networking::ClientType client_type) :
         PlayerSaveHeaderData{name, empire_id, client_type},
-        m_orders(orders),
-        m_ui_data(ui_data),
-        m_save_state_string(save_state_string)
+        orders(orders_),
+        ui_data(ui_data_),
+        save_state_string(save_state_string_)
     {}
 
-    std::shared_ptr<OrderSet>       m_orders;
-    std::shared_ptr<SaveGameUIData> m_ui_data;
-    std::string                     m_save_state_string;
+    std::shared_ptr<OrderSet>       orders;
+    std::shared_ptr<SaveGameUIData> ui_data;
+    std::string                     save_state_string;
 };
 
 /** Data that must be retained by the server when saving and loading a

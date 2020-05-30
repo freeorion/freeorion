@@ -1388,8 +1388,8 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
         if (save_data_it != player_id_save_game_data.end()) {
             psgd = save_data_it->second;
         }
-        if (!psgd.m_orders) {
-            psgd.m_orders.reset(new OrderSet());    // need an empty order set pointed to for serialization in case no data is loaded but the game start message wants orders to send
+        if (!psgd.orders) {
+            psgd.orders.reset(new OrderSet());    // need an empty order set pointed to for serialization in case no data is loaded but the game start message wants orders to send
         }
 
         // get empire ID for player. safety check on it.
@@ -1406,15 +1406,15 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
         // restore saved orders.  these will be re-executed on client and
         // re-sent to the server (after possibly modification) by clients
         // when they end their turn
-        auto orders = psgd.m_orders;
+        auto orders = psgd.orders;
 
         bool use_binary_serialization = player_connection->IsBinarySerializationUsed();
 
         if (client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
             // get save state string
             const std::string* sss = nullptr;
-            if (!psgd.m_save_state_string.empty())
-                sss = &psgd.m_save_state_string;
+            if (!psgd.save_state_string.empty())
+                sss = &psgd.save_state_string;
 
             player_connection->SendMessage(GameStartMessage(m_single_player_game, empire_id,
                                                             m_current_turn, m_empires, m_universe,
@@ -1427,7 +1427,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
                                                             m_current_turn, m_empires, m_universe,
                                                             GetSpeciesManager(), GetCombatLogManager(),
                                                             GetSupplyManager(),  player_info_map, *orders,
-                                                            psgd.m_ui_data.get(), m_galaxy_setup_data,
+                                                            psgd.ui_data.get(), m_galaxy_setup_data,
                                                             use_binary_serialization));
 
         } else if (client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
@@ -1901,8 +1901,8 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, i
     empire->SetAuthenticated(player_connection->IsAuthenticated());
 
     const OrderSet dummy;
-    const OrderSet& orders = orders_it->second && orders_it->second->m_orders ? *(orders_it->second->m_orders) : dummy;
-    const SaveGameUIData* ui_data = orders_it->second ? orders_it->second->m_ui_data.get() : nullptr;
+    const OrderSet& orders = orders_it->second && orders_it->second->orders ? *(orders_it->second->orders) : dummy;
+    const SaveGameUIData* ui_data = orders_it->second ? orders_it->second->ui_data.get() : nullptr;
 
     if (GetOptionsDB().Get<bool>("network.server.drop-empire-ready")) {
         // drop ready status
@@ -2001,7 +2001,7 @@ void ServerApp::ClearEmpireTurnOrders() {
         if (order.second) {
             // reset only orders
             // left UI data and AI state intact
-            order.second->m_orders.reset();
+            order.second->orders.reset();
         }
     }
     for (auto& empire : Empires()) {
@@ -2015,13 +2015,13 @@ void ServerApp::SetEmpireSaveGameData(int empire_id, std::unique_ptr<PlayerSaveG
 void ServerApp::UpdatePartialOrders(int empire_id, const OrderSet& added, const std::set<int>& deleted) {
     const auto& psgd = m_turn_sequence[empire_id];
     if (psgd) {
-        if (psgd->m_orders) {
+        if (psgd->orders) {
             for (int id : deleted)
-                 psgd->m_orders->erase(id);
+                 psgd->orders->erase(id);
             for (auto it : added)
-                 psgd->m_orders->insert(it);
+                 psgd->orders->insert(it);
         } else {
-            psgd->m_orders = std::make_shared<OrderSet>(added);
+            psgd->orders = std::make_shared<OrderSet>(added);
         }
     }
 }
@@ -2051,7 +2051,7 @@ bool ServerApp::AllOrdersReceived() {
         } else if (!empire_orders.second) {
             DebugLogger() << " ... no orders from empire id: " << empire_orders.first;
             empire_orders_received = false;
-        } else if (!empire_orders.second->m_orders) {
+        } else if (!empire_orders.second->orders) {
             DebugLogger() << " ... no orders from empire id: " << empire_orders.first;
             empire_orders_received = false;
         } else {
@@ -3201,12 +3201,12 @@ void ServerApp::PreCombatProcessTurns() {
             DebugLogger() << "No SaveGameData for empire " << empire_orders.first;
             continue;
         }
-        if (!save_game_data->m_orders) {
+        if (!save_game_data->orders) {
             DebugLogger() << "No OrderSet for empire " << empire_orders.first;
             continue;
         }
         DebugLogger() << "<<= Executing Orders for empire " << empire_orders.first << " =>>";
-        for (const auto& id_and_order : *save_game_data->m_orders)
+        for (const auto& id_and_order : *save_game_data->orders)
             id_and_order.second->Execute();
     }
 
