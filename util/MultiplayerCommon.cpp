@@ -211,14 +211,14 @@ void GalaxySetupData::SetGameUID(const std::string& game_uid)
 // PlayerSetupData
 /////////////////////////////////////////////////////
 bool operator==(const PlayerSetupData& lhs, const PlayerSetupData& rhs) {
-    return  lhs.m_client_type == rhs.m_client_type &&
-            lhs.m_empire_color == rhs.m_empire_color &&
-            lhs.m_empire_name == rhs.m_empire_name &&
-            lhs.m_player_name == rhs.m_player_name &&
-            lhs.m_save_game_empire_id == rhs.m_save_game_empire_id &&
-            lhs.m_starting_species_name == rhs.m_starting_species_name &&
-            lhs.m_player_ready == rhs.m_player_ready &&
-            lhs.m_starting_team == rhs.m_starting_team;
+    return  lhs.client_type == rhs.client_type &&
+            lhs.empire_color == rhs.empire_color &&
+            lhs.empire_name == rhs.empire_name &&
+            lhs.player_name == rhs.player_name &&
+            lhs.save_game_empire_id == rhs.save_game_empire_id &&
+            lhs.starting_species_name == rhs.starting_species_name &&
+            lhs.player_ready == rhs.player_ready &&
+            lhs.starting_team == rhs.starting_team;
 }
 
 bool operator!=(const PlayerSetupData& lhs, const PlayerSetupData& rhs)
@@ -231,18 +231,18 @@ bool operator!=(const PlayerSetupData& lhs, const PlayerSetupData& rhs)
 std::string MultiplayerLobbyData::Dump() const {
     std::stringstream stream;
     for (const std::pair<int, PlayerSetupData>& psd : m_players) {
-        stream << psd.first << ": " << (psd.second.m_player_name.empty() ? "NO NAME" : psd.second.m_player_name) << "  ";
-        if (psd.second.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER)
+        stream << psd.first << ": " << (psd.second.player_name.empty() ? "NO NAME" : psd.second.player_name) << "  ";
+        if (psd.second.client_type == Networking::CLIENT_TYPE_AI_PLAYER)
             stream << "AI PLAYER";
-        else if (psd.second.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
+        else if (psd.second.client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
             stream << "HUMAN PLAYER";
-        else if (psd.second.m_client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER)
+        else if (psd.second.client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER)
             stream << "HUMAN OBSERVER";
-        else if (psd.second.m_client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
+        else if (psd.second.client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
             stream << "HUMAN MODERATOR";
         else
             stream << "UNKNOWN CLIENT TPYE";
-        stream << "  " << (psd.second.m_empire_name.empty() ? "NO EMPIRE NAME" : psd.second.m_empire_name) << std::endl;
+        stream << "  " << (psd.second.empire_name.empty() ? "NO EMPIRE NAME" : psd.second.empire_name) << std::endl;
     }
     return stream.str();
 }

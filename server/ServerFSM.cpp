@@ -80,8 +80,8 @@ namespace {
                 // In a single player game, the host player is always the human player, so
                 // this is just a matter of finding which player setup data is for
                 // a human player, and assigning that setup data to the host player id
-                if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
-                    return psd.m_player_name;
+                if (psd.client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
+                    return psd.player_name;
             }
 
         } else {
@@ -107,21 +107,21 @@ namespace {
         for (const std::pair<int, PlayerSetupData>& entry : psd) {
             std::stringstream ss;
             ss << std::to_string(entry.first) << " : "
-               << entry.second.m_player_name << ", ";
-            switch (entry.second.m_client_type) {
+               << entry.second.player_name << ", ";
+            switch (entry.second.client_type) {
             case Networking::CLIENT_TYPE_AI_PLAYER:         ss << "AI_PLAYER, ";    break;
             case Networking::CLIENT_TYPE_HUMAN_MODERATOR:   ss << "MODERATOR, ";    break;
             case Networking::CLIENT_TYPE_HUMAN_OBSERVER:    ss << "OBSERVER, ";     break;
             case Networking::CLIENT_TYPE_HUMAN_PLAYER:      ss << "PLAYER, "; break;
             default:                                        ss << "<invalid client type>, ";
             }
-            GG::Clr empire_color = entry.second.m_empire_color;
+            GG::Clr empire_color = entry.second.empire_color;
             ss << "(" << static_cast<unsigned int>(empire_color.r)
                << ", " << static_cast<unsigned int>(empire_color.g)
                << ", " << static_cast<unsigned int>(empire_color.b)
                << ", " << static_cast<unsigned int>(empire_color.a) << "), ";
-            ss << entry.second.m_starting_species_name;
-            if (entry.second.m_player_ready)
+            ss << entry.second.starting_species_name;
+            if (entry.second.player_ready)
                 ss << ", Ready";
             DebugLogger(FSM) << " ... " << ss.str();
         }
@@ -134,10 +134,10 @@ namespace {
         auto empire_names = UserStringList("EMPIRE_NAMES");
         std::set<std::string> valid_names(empire_names.begin(), empire_names.end());
         for (const auto& psd : players) {
-            auto name_it = valid_names.find(psd.second.m_empire_name);
+            auto name_it = valid_names.find(psd.second.empire_name);
             if (name_it != valid_names.end())
                 valid_names.erase(name_it);
-            name_it = valid_names.find(psd.second.m_player_name);
+            name_it = valid_names.find(psd.second.player_name);
             if (name_it != valid_names.end())
                 valid_names.erase(name_it);
         }
@@ -199,7 +199,7 @@ namespace {
             // check if any other player / empire is using this colour
             bool colour_is_new = true;
             for (const std::pair<int, PlayerSetupData>& entry : psd) {
-                const GG::Clr& player_colour = entry.second.m_empire_color;
+                const GG::Clr& player_colour = entry.second.empire_color;
                 if (player_colour == possible_colour) {
                     colour_is_new = false;
                     break;
@@ -436,17 +436,17 @@ void ServerFSM::UpdateIngameLobby() {
     {
         PlayerSetupData player_setup_data;
         int player_id = (*player_it)->PlayerID();
-        player_setup_data.m_player_id =   player_id;
-        player_setup_data.m_player_name = (*player_it)->PlayerName();
-        player_setup_data.m_client_type = (*player_it)->GetClientType();
+        player_setup_data.player_id =   player_id;
+        player_setup_data.player_name = (*player_it)->PlayerName();
+        player_setup_data.client_type = (*player_it)->GetClientType();
         if (const Empire* empire = GetEmpire(m_server.PlayerEmpireID(player_id))) {
-            player_setup_data.m_save_game_empire_id = empire->EmpireID();
-            player_setup_data.m_empire_name = empire->Name();
-            player_setup_data.m_empire_color = empire->Color();
+            player_setup_data.save_game_empire_id = empire->EmpireID();
+            player_setup_data.empire_name = empire->Name();
+            player_setup_data.empire_color = empire->Color();
         } else {
-            player_setup_data.m_empire_color = GG::Clr(255, 255, 255, 255);
+            player_setup_data.empire_color = GG::Clr(255, 255, 255, 255);
         }
-        player_setup_data.m_authenticated = (*player_it)->IsAuthenticated();
+        player_setup_data.authenticated = (*player_it)->IsAuthenticated();
         dummy_lobby_data.m_players.push_back({player_id, player_setup_data});
     }
     dummy_lobby_data.m_start_lock_cause = UserStringNop("SERVER_ALREADY_PLAYING_GAME");
@@ -721,11 +721,11 @@ sc::result Idle::react(const Hostless&) {
         std::list<PlayerSetupData> human_players = server.FillListPlayers();
 
         for (auto& player_setup_data : human_players) {
-            DebugLogger(FSM) << "Create player " << player_setup_data.m_player_name;
-            player_setup_data.m_player_id =     Networking::INVALID_PLAYER_ID;
-            player_setup_data.m_client_type =   Networking::CLIENT_TYPE_HUMAN_PLAYER;
-            player_setup_data.m_empire_color =  GetUnusedEmpireColour(lobby_data->m_players);
-            player_setup_data.m_authenticated = true;
+            DebugLogger(FSM) << "Create player " << player_setup_data.player_name;
+            player_setup_data.player_id =     Networking::INVALID_PLAYER_ID;
+            player_setup_data.client_type =   Networking::CLIENT_TYPE_HUMAN_PLAYER;
+            player_setup_data.empire_color =  GetUnusedEmpireColour(lobby_data->m_players);
+            player_setup_data.authenticated = true;
             lobby_data->m_players.push_back({Networking::INVALID_PLAYER_ID, player_setup_data});
         }
 
@@ -735,15 +735,15 @@ sc::result Idle::react(const Hostless&) {
         int ai_next_index = 1;
         while (ai_next_index <= ai_count && (ai_next_index <= max_ai || max_ai < 0)) {
             PlayerSetupData player_setup_data;
-            player_setup_data.m_player_id =     Networking::INVALID_PLAYER_ID;
-            player_setup_data.m_player_name =   UserString("AI_PLAYER") + "_" + std::to_string(ai_next_index++);
-            player_setup_data.m_client_type =   Networking::CLIENT_TYPE_AI_PLAYER;
-            player_setup_data.m_empire_name =   GenerateEmpireName(player_setup_data.m_player_name, lobby_data->m_players);
-            player_setup_data.m_empire_color =  GetUnusedEmpireColour(lobby_data->m_players);
+            player_setup_data.player_id =     Networking::INVALID_PLAYER_ID;
+            player_setup_data.player_name =   UserString("AI_PLAYER") + "_" + std::to_string(ai_next_index++);
+            player_setup_data.client_type =   Networking::CLIENT_TYPE_AI_PLAYER;
+            player_setup_data.empire_name =   GenerateEmpireName(player_setup_data.player_name, lobby_data->m_players);
+            player_setup_data.empire_color =  GetUnusedEmpireColour(lobby_data->m_players);
             if (lobby_data->m_seed != "")
-                player_setup_data.m_starting_species_name = sm.RandomPlayableSpeciesName();
+                player_setup_data.starting_species_name = sm.RandomPlayableSpeciesName();
             else
-                player_setup_data.m_starting_species_name = sm.SequentialPlayableSpeciesName(ai_next_index);
+                player_setup_data.starting_species_name = sm.SequentialPlayableSpeciesName(ai_next_index);
 
             lobby_data->m_players.push_back({Networking::INVALID_PLAYER_ID, player_setup_data});
         }
@@ -773,10 +773,10 @@ sc::result Idle::react(const Hostless&) {
                 if (psgd.m_client_type != Networking::CLIENT_TYPE_AI_PLAYER)
                     continue;
                 PlayerSetupData player_setup_data;
-                player_setup_data.m_player_id =     Networking::INVALID_PLAYER_ID;
-                player_setup_data.m_player_name =   UserString("AI_PLAYER") + "_" + std::to_string(ai_next_index++);
-                player_setup_data.m_client_type =   Networking::CLIENT_TYPE_AI_PLAYER;
-                player_setup_data.m_save_game_empire_id = psgd.m_empire_id;
+                player_setup_data.player_id =     Networking::INVALID_PLAYER_ID;
+                player_setup_data.player_name =   UserString("AI_PLAYER") + "_" + std::to_string(ai_next_index++);
+                player_setup_data.client_type =   Networking::CLIENT_TYPE_AI_PLAYER;
+                player_setup_data.save_game_empire_id = psgd.m_empire_id;
                 lobby_data->m_players.push_back({Networking::INVALID_PLAYER_ID, player_setup_data});
             }
         } catch (const std::exception& e) {
@@ -801,10 +801,10 @@ sc::result Idle::react(const Hostless&) {
 namespace {
     // return true if player has important changes.
     bool IsPlayerChanged(const PlayerSetupData& lhs, const PlayerSetupData& rhs) {
-        return (lhs.m_client_type != rhs.m_client_type) ||
-            (lhs.m_starting_species_name != rhs.m_starting_species_name) ||
-            (lhs.m_save_game_empire_id != rhs.m_save_game_empire_id) ||
-            (lhs.m_empire_color != rhs.m_empire_color);
+        return (lhs.client_type != rhs.client_type) ||
+            (lhs.starting_species_name != rhs.starting_species_name) ||
+            (lhs.save_game_empire_id != rhs.save_game_empire_id) ||
+            (lhs.empire_color != rhs.empire_color);
     }
 }
 
@@ -840,30 +840,30 @@ MPLobby::MPLobby(my_context c) :
             DebugLogger(FSM) << "(ServerFSM) MPLobby. Fill MPLobby player " << player_id;
             if (player_connection->GetClientType() != Networking::CLIENT_TYPE_AI_PLAYER) {
                 PlayerSetupData player_setup_data;
-                player_setup_data.m_player_id =     player_id;
-                player_setup_data.m_player_name =   player_connection->PlayerName();
-                player_setup_data.m_client_type =   player_connection->GetClientType();
-                player_setup_data.m_empire_name =   (player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER) ? player_connection->PlayerName() : GenerateEmpireName(player_setup_data.m_player_name, m_lobby_data->m_players);
-                player_setup_data.m_empire_color =  GetUnusedEmpireColour(m_lobby_data->m_players);
+                player_setup_data.player_id =     player_id;
+                player_setup_data.player_name =   player_connection->PlayerName();
+                player_setup_data.client_type =   player_connection->GetClientType();
+                player_setup_data.empire_name =   (player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER) ? player_connection->PlayerName() : GenerateEmpireName(player_setup_data.player_name, m_lobby_data->m_players);
+                player_setup_data.empire_color =  GetUnusedEmpireColour(m_lobby_data->m_players);
                 if (m_lobby_data->m_seed != "")
-                    player_setup_data.m_starting_species_name = sm.RandomPlayableSpeciesName();
+                    player_setup_data.starting_species_name = sm.RandomPlayableSpeciesName();
                 else
-                    player_setup_data.m_starting_species_name = sm.SequentialPlayableSpeciesName(player_id);
-                player_setup_data.m_authenticated = player_connection->IsAuthenticated();
+                    player_setup_data.starting_species_name = sm.SequentialPlayableSpeciesName(player_id);
+                player_setup_data.authenticated = player_connection->IsAuthenticated();
 
                 m_lobby_data->m_players.push_back({player_id, player_setup_data});
             } else if (player_connection->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER) {
                 if (m_ai_next_index <= max_ai || max_ai < 0) {
                     PlayerSetupData player_setup_data;
-                    player_setup_data.m_player_id =     Networking::INVALID_PLAYER_ID;
-                    player_setup_data.m_player_name =   UserString("AI_PLAYER") + "_" + std::to_string(m_ai_next_index++);
-                    player_setup_data.m_client_type =   Networking::CLIENT_TYPE_AI_PLAYER;
-                    player_setup_data.m_empire_name =   GenerateEmpireName(player_setup_data.m_player_name, m_lobby_data->m_players);
-                    player_setup_data.m_empire_color =  GetUnusedEmpireColour(m_lobby_data->m_players);
+                    player_setup_data.player_id =     Networking::INVALID_PLAYER_ID;
+                    player_setup_data.player_name =   UserString("AI_PLAYER") + "_" + std::to_string(m_ai_next_index++);
+                    player_setup_data.client_type =   Networking::CLIENT_TYPE_AI_PLAYER;
+                    player_setup_data.empire_name =   GenerateEmpireName(player_setup_data.player_name, m_lobby_data->m_players);
+                    player_setup_data.empire_color =  GetUnusedEmpireColour(m_lobby_data->m_players);
                     if (m_lobby_data->m_seed != "")
-                        player_setup_data.m_starting_species_name = sm.RandomPlayableSpeciesName();
+                        player_setup_data.starting_species_name = sm.RandomPlayableSpeciesName();
                     else
-                        player_setup_data.m_starting_species_name = sm.SequentialPlayableSpeciesName(m_ai_next_index);
+                        player_setup_data.starting_species_name = sm.SequentialPlayableSpeciesName(m_ai_next_index);
 
                     m_lobby_data->m_players.push_back({Networking::INVALID_PLAYER_ID, player_setup_data});
                 }
@@ -882,15 +882,15 @@ MPLobby::MPLobby(my_context c) :
             const int ai_count = GetOptionsDB().Get<int>("setup.ai.player.count");
             while (m_ai_next_index <= ai_count && (m_ai_next_index <= max_ai || max_ai < 0)) {
                 PlayerSetupData player_setup_data;
-                player_setup_data.m_player_id =     Networking::INVALID_PLAYER_ID;
-                player_setup_data.m_player_name =   UserString("AI_PLAYER") + "_" + std::to_string(m_ai_next_index++);
-                player_setup_data.m_client_type =   Networking::CLIENT_TYPE_AI_PLAYER;
-                player_setup_data.m_empire_name =   GenerateEmpireName(player_setup_data.m_player_name, m_lobby_data->m_players);
-                player_setup_data.m_empire_color =  GetUnusedEmpireColour(m_lobby_data->m_players);
+                player_setup_data.player_id =     Networking::INVALID_PLAYER_ID;
+                player_setup_data.player_name =   UserString("AI_PLAYER") + "_" + std::to_string(m_ai_next_index++);
+                player_setup_data.client_type =   Networking::CLIENT_TYPE_AI_PLAYER;
+                player_setup_data.empire_name =   GenerateEmpireName(player_setup_data.player_name, m_lobby_data->m_players);
+                player_setup_data.empire_color =  GetUnusedEmpireColour(m_lobby_data->m_players);
                 if (!m_lobby_data->m_seed.empty())
-                    player_setup_data.m_starting_species_name = sm.RandomPlayableSpeciesName();
+                    player_setup_data.starting_species_name = sm.RandomPlayableSpeciesName();
                 else
-                    player_setup_data.m_starting_species_name = sm.SequentialPlayableSpeciesName(m_ai_next_index);
+                    player_setup_data.starting_species_name = sm.SequentialPlayableSpeciesName(m_ai_next_index);
 
                 m_lobby_data->m_players.push_back({Networking::INVALID_PLAYER_ID, player_setup_data});
             }
@@ -908,13 +908,13 @@ MPLobby::MPLobby(my_context c) :
 
         PlayerSetupData& player_setup_data = m_lobby_data->m_players.begin()->second;
 
-        player_setup_data.m_player_name =           player_connection->PlayerName();
-        player_setup_data.m_empire_name =           (player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER) ? player_connection->PlayerName() : GenerateEmpireName(player_setup_data.m_player_name, m_lobby_data->m_players);
-        player_setup_data.m_empire_color =          EmpireColors().at(0);               // since the host is the first joined player, it can be assumed that no other player is using this colour (unlike subsequent join game message responses)
-        player_setup_data.m_starting_species_name = sm.RandomPlayableSpeciesName();
+        player_setup_data.player_name =           player_connection->PlayerName();
+        player_setup_data.empire_name =           (player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER) ? player_connection->PlayerName() : GenerateEmpireName(player_setup_data.player_name, m_lobby_data->m_players);
+        player_setup_data.empire_color =          EmpireColors().at(0);               // since the host is the first joined player, it can be assumed that no other player is using this colour (unlike subsequent join game message responses)
+        player_setup_data.starting_species_name = sm.RandomPlayableSpeciesName();
         // leaving save game empire id as default
-        player_setup_data.m_client_type =           player_connection->GetClientType();
-        player_setup_data.m_authenticated =         player_connection->IsAuthenticated();
+        player_setup_data.client_type =           player_connection->GetClientType();
+        player_setup_data.authenticated =         player_connection->IsAuthenticated();
 
         player_connection->SendMessage(ServerLobbyUpdateMessage(*m_lobby_data));
     }
@@ -927,9 +927,9 @@ void MPLobby::ValidateClientLimits() {
     int human_count = 0;
     int ai_count = 0;
     for (const auto& plr : m_lobby_data->m_players) {
-        if (plr.second.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
+        if (plr.second.client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
             human_count++;
-        else if (plr.second.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER)
+        else if (plr.second.client_type == Networking::CLIENT_TYPE_AI_PLAYER)
             ai_count++;
     }
 
@@ -1041,7 +1041,7 @@ sc::result MPLobby::react(const Disconnection& d) {
 
         // drop ready flag as player list changed
         for (auto& plrs : m_lobby_data->m_players) {
-            plrs.second.m_player_ready = false;
+            plrs.second.player_ready = false;
         }
 
         // add "player left game" message
@@ -1097,27 +1097,27 @@ void MPLobby::EstablishPlayer(const PlayerConnectionPtr& player_connection,
 
         // assign player info from defaults or from connection to lobby data players list
         PlayerSetupData player_setup_data;
-        player_setup_data.m_player_name =   player_name;
-        player_setup_data.m_client_type =   client_type;
-        player_setup_data.m_empire_name =   (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) ? player_name : GenerateEmpireName(player_name, m_lobby_data->m_players);
-        player_setup_data.m_empire_color =  GetUnusedEmpireColour(m_lobby_data->m_players);
+        player_setup_data.player_name =   player_name;
+        player_setup_data.client_type =   client_type;
+        player_setup_data.empire_name =   (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) ? player_name : GenerateEmpireName(player_name, m_lobby_data->m_players);
+        player_setup_data.empire_color =  GetUnusedEmpireColour(m_lobby_data->m_players);
         if (m_lobby_data->m_seed != "")
-            player_setup_data.m_starting_species_name = sm.RandomPlayableSpeciesName();
+            player_setup_data.starting_species_name = sm.RandomPlayableSpeciesName();
         else
-            player_setup_data.m_starting_species_name = sm.SequentialPlayableSpeciesName(player_id);
-        player_setup_data.m_authenticated =  player_connection->IsAuthenticated();
+            player_setup_data.starting_species_name = sm.SequentialPlayableSpeciesName(player_id);
+        player_setup_data.authenticated =  player_connection->IsAuthenticated();
 
         // after setting all details, push into lobby data
         m_lobby_data->m_players.push_back({player_id, player_setup_data});
 
         // drop ready player flag at new player
         for (std::pair<int, PlayerSetupData>& plr : m_lobby_data->m_players) {
-            if (plr.second.m_empire_name == player_name) {
+            if (plr.second.empire_name == player_name) {
                 // change empire name
-                plr.second.m_empire_name = (plr.second.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) ? plr.second.m_player_name : GenerateEmpireName(plr.second.m_player_name, m_lobby_data->m_players);
+                plr.second.empire_name = (plr.second.client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) ? plr.second.player_name : GenerateEmpireName(plr.second.player_name, m_lobby_data->m_players);
             }
 
-            plr.second.m_player_ready = false;
+            plr.second.player_ready = false;
         }
 
         ValidateClientLimits();
@@ -1190,7 +1190,7 @@ sc::result MPLobby::react(const JoinGame& msg) {
                 collision = true;
             } else {
                 for (auto& plr : m_lobby_data->m_players) {
-                    if (plr.second.m_empire_name == new_player_name) {
+                    if (plr.second.empire_name == new_player_name) {
                         collision = true;
                         break;
                     }
@@ -1295,43 +1295,43 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
         // remove empire / colours from observers
         for (auto& entry : incoming_lobby_data.m_players) {
             PlayerSetupData& psd = entry.second;
-            if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
-                psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
+            if (psd.client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
+                psd.client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
             {
-                psd.m_empire_color = GG::CLR_ZERO;
+                psd.empire_color = GG::CLR_ZERO;
                 // On OSX the following two lines must not be included.
                 // Clearing empire name and starting species name from
                 // PlayerSetupData causes a weird crash (bus error) deep
                 // in GG code on OSX in the Multiplayer Lobby when selecting
                 // Observer or Moderator as client type.
 #ifndef FREEORION_MACOSX
-                psd.m_empire_name.clear();
-                psd.m_starting_species_name.clear();
+                psd.empire_name.clear();
+                psd.starting_species_name.clear();
 #endif
-                psd.m_save_game_empire_id = ALL_EMPIRES;
+                psd.save_game_empire_id = ALL_EMPIRES;
 
-            } else if (psd.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
-                if (psd.m_empire_color == GG::CLR_ZERO)
-                    psd.m_empire_color = GetUnusedEmpireColour(incoming_lobby_data.m_players);
-                if (psd.m_player_name.empty())
+            } else if (psd.client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
+                if (psd.empire_color == GG::CLR_ZERO)
+                    psd.empire_color = GetUnusedEmpireColour(incoming_lobby_data.m_players);
+                if (psd.player_name.empty())
                     // ToDo: Should we translate player_name?
-                    psd.m_player_name = UserString("AI_PLAYER") + "_" + std::to_string(m_ai_next_index++);
-                if (psd.m_empire_name.empty())
-                    psd.m_empire_name = GenerateEmpireName(psd.m_player_name, incoming_lobby_data.m_players);
-                if (psd.m_starting_species_name.empty()) {
+                    psd.player_name = UserString("AI_PLAYER") + "_" + std::to_string(m_ai_next_index++);
+                if (psd.empire_name.empty())
+                    psd.empire_name = GenerateEmpireName(psd.player_name, incoming_lobby_data.m_players);
+                if (psd.starting_species_name.empty()) {
                     if (m_lobby_data->m_seed != "")
-                        psd.m_starting_species_name = GetSpeciesManager().RandomPlayableSpeciesName();
+                        psd.starting_species_name = GetSpeciesManager().RandomPlayableSpeciesName();
                     else
-                        psd.m_starting_species_name = GetSpeciesManager().SequentialPlayableSpeciesName(m_ai_next_index);
+                        psd.starting_species_name = GetSpeciesManager().SequentialPlayableSpeciesName(m_ai_next_index);
                 }
 
-            } else if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
-                if (psd.m_empire_color == GG::CLR_ZERO)
-                    psd.m_empire_color = GetUnusedEmpireColour(incoming_lobby_data.m_players);
-                if (psd.m_empire_name.empty())
-                    psd.m_empire_name = psd.m_player_name;
-                if (psd.m_starting_species_name.empty())
-                    psd.m_starting_species_name = GetSpeciesManager().RandomPlayableSpeciesName();
+            } else if (psd.client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
+                if (psd.empire_color == GG::CLR_ZERO)
+                    psd.empire_color = GetUnusedEmpireColour(incoming_lobby_data.m_players);
+                if (psd.empire_name.empty())
+                    psd.empire_name = psd.player_name;
+                if (psd.starting_species_name.empty())
+                    psd.starting_species_name = GetSpeciesManager().RandomPlayableSpeciesName();
             }
         }
 
@@ -1341,29 +1341,29 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
         std::set<std::string> psd_names;
         std::set<int> psd_ids;
         for (auto& player : incoming_lobby_data.m_players) {
-            if (psd_colors.count(player.second.m_empire_color) ||
-                psd_names.count(player.second.m_empire_name) ||
-                psd_names.count(player.second.m_player_name))
+            if (psd_colors.count(player.second.empire_color) ||
+                psd_names.count(player.second.empire_name) ||
+                psd_names.count(player.second.player_name))
             {
                 has_collision = true;
                 WarnLogger(FSM) << "Got color, empire's name or player's name collision for player "
-                                << player.second.m_player_name << "(" << player.first << ")";
+                                << player.second.player_name << "(" << player.first << ")";
                 break;
             } else {
-                psd_colors.emplace(player.second.m_empire_color);
-                psd_names.emplace(player.second.m_empire_name);
-                psd_names.emplace(player.second.m_player_name);
+                psd_colors.emplace(player.second.empire_color);
+                psd_names.emplace(player.second.empire_name);
+                psd_names.emplace(player.second.player_name);
             }
 
             if (player.first != Networking::INVALID_PLAYER_ID) {
                 const auto& player_it = server.Networking().GetPlayer(player.first);
                 if (player_it != server.Networking().established_end()) {
                     // check for roles and client types
-                    if ((player.second.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER &&
+                    if ((player.second.client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER &&
                         !(*player_it)->HasAuthRole(Networking::ROLE_CLIENT_TYPE_PLAYER)) ||
-                        (player.second.m_client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR &&
+                        (player.second.client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR &&
                         !(*player_it)->HasAuthRole(Networking::ROLE_CLIENT_TYPE_MODERATOR)) ||
-                        (player.second.m_client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER &&
+                        (player.second.client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER &&
                         !(*player_it)->HasAuthRole(Networking::ROLE_CLIENT_TYPE_OBSERVER)))
                     {
                         has_collision = true;
@@ -1371,7 +1371,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                         break;
                     }
                     // set correct authentication status
-                    player.second.m_authenticated = (*player_it)->IsAuthenticated();
+                    player.second.authenticated = (*player_it)->IsAuthenticated();
                 } else {
                     // player wasn't found
                     // don't allow "ghost" records
@@ -1393,7 +1393,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             player_setup_data_changed = true;
             for (auto& player : m_lobby_data->m_players) {
                 if (player.first == sender->PlayerID()) {
-                    player.second.m_player_ready = false;
+                    player.second.player_ready = false;
                     break;
                 }
             }
@@ -1470,7 +1470,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
 
             int ai_count = 0;
             for (const auto& plr : incoming_lobby_data.m_players) {
-                if (plr.second.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
+                if (plr.second.client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
                     ai_count++;
                 }
             }
@@ -1489,8 +1489,8 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                     for (const auto& plr : incoming_lobby_data.m_players) {
                         if (plr.first != sender->PlayerID())
                             continue;
-                        if (plr.second.m_save_game_empire_id != ALL_EMPIRES) {
-                            const auto empire_it = m_lobby_data->m_save_game_empire_data.find(plr.second.m_save_game_empire_id);
+                        if (plr.second.save_game_empire_id != ALL_EMPIRES) {
+                            const auto empire_it = m_lobby_data->m_save_game_empire_data.find(plr.second.save_game_empire_id);
                             if (empire_it != m_lobby_data->m_save_game_empire_data.end()) {
                                 if (empire_it->second.m_eliminated) {
                                     WarnLogger(FSM) << "Trying to take over eliminated empire \"" << empire_it->second.m_empire_name << "\"";
@@ -1504,7 +1504,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                                     }
                                 }
                             } else {
-                                WarnLogger(FSM) << "Unknown empire #" << plr.second.m_save_game_empire_id;
+                                WarnLogger(FSM) << "Unknown empire #" << plr.second.save_game_empire_id;
                                 incorrect_empire = true;
                             }
                         }
@@ -1555,7 +1555,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                 }
 
                 // get client type, and drop connections with invalid type, as that indicates a requested drop
-                auto client_type = player_setup_it->second.m_client_type;
+                auto client_type = player_setup_it->second.client_type;
 
                 if (client_type != Networking::INVALID_CLIENT_TYPE) {
                     // update player connection type for lobby change
@@ -1581,7 +1581,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             // each player connection.
             auto player_setup_it = m_lobby_data->m_players.begin();
             while (player_setup_it != m_lobby_data->m_players.end()) {
-                if (player_setup_it->second.m_client_type == Networking::INVALID_CLIENT_TYPE) {
+                if (player_setup_it->second.client_type == Networking::INVALID_CLIENT_TYPE) {
                     auto erase_it = player_setup_it;
                     ++player_setup_it;
                     m_lobby_data->m_players.erase(erase_it);
@@ -1611,30 +1611,30 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                     if (k_player.first == sender->PlayerID())
                         continue;
 
-                    psd_colors.emplace(k_player.second.m_empire_color);
-                    psd_names.emplace(k_player.second.m_empire_name);
-                    psd_names.emplace(k_player.second.m_player_name);
+                    psd_colors.emplace(k_player.second.empire_color);
+                    psd_names.emplace(k_player.second.empire_name);
+                    psd_names.emplace(k_player.second.player_name);
                 }
 
                 // if we have collision or unallowed client type
                 // unset ready flag and ignore changes
-                if (psd_colors.count(j_player.second.m_empire_color) ||
-                    psd_names.count(j_player.second.m_empire_name) ||
-                    psd_names.count(j_player.second.m_player_name) ||
-                    (j_player.second.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER &&
+                if (psd_colors.count(j_player.second.empire_color) ||
+                    psd_names.count(j_player.second.empire_name) ||
+                    psd_names.count(j_player.second.player_name) ||
+                    (j_player.second.client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER &&
                         !sender->HasAuthRole(Networking::ROLE_CLIENT_TYPE_PLAYER)) ||
-                    (j_player.second.m_client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR &&
+                    (j_player.second.client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR &&
                         !sender->HasAuthRole(Networking::ROLE_CLIENT_TYPE_MODERATOR)) ||
-                    (j_player.second.m_client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER &&
+                    (j_player.second.client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER &&
                         !sender->HasAuthRole(Networking::ROLE_CLIENT_TYPE_OBSERVER)))
                 {
-                    i_player.second.m_player_ready = false;
+                    i_player.second.player_ready = false;
                     player_setup_data_changed = true;
                 } else {
                     // check loaded empire
                     bool incorrect_empire = false;
-                    if (j_player.second.m_save_game_empire_id != ALL_EMPIRES) {
-                        const auto empire_it = m_lobby_data->m_save_game_empire_data.find(j_player.second.m_save_game_empire_id);
+                    if (j_player.second.save_game_empire_id != ALL_EMPIRES) {
+                        const auto empire_it = m_lobby_data->m_save_game_empire_data.find(j_player.second.save_game_empire_id);
                         if (empire_it != m_lobby_data->m_save_game_empire_data.end()) {
                             if (empire_it->second.m_eliminated) {
                                 WarnLogger(FSM) << "Trying to take over eliminated empire \"" << empire_it->second.m_empire_name << "\"";
@@ -1648,12 +1648,12 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                                 }
                             }
                         } else {
-                            WarnLogger(FSM) << "Unknown empire #" << j_player.second.m_save_game_empire_id;
+                            WarnLogger(FSM) << "Unknown empire #" << j_player.second.save_game_empire_id;
                             incorrect_empire = true;
                         }
                     }
                     if (incorrect_empire) {
-                        i_player.second.m_player_ready = false;
+                        i_player.second.player_ready = false;
                         player_setup_data_changed = true;
                         break;
                     }
@@ -1690,14 +1690,14 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
         // so that when the save is loaded no AI state as appropriate,
         // without having potential extra AIs lingering from the previous
         m_lobby_data->m_players.remove_if([](const std::pair<int, PlayerSetupData>& plr) {
-            return plr.second.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER;
+            return plr.second.client_type == Networking::CLIENT_TYPE_AI_PLAYER;
         });
         m_ai_next_index = 1;
 
         // reset assigned empires in save game for all players.  new loaded game may not have the same set of empire IDs to choose from
         for (auto& psd : m_lobby_data->m_players) {
-            psd.second.m_save_game_empire_id = ALL_EMPIRES;
-            psd.second.m_empire_color = GG::CLR_ZERO;
+            psd.second.save_game_empire_id = ALL_EMPIRES;
+            psd.second.empire_color = GG::CLR_ZERO;
         }
 
         // refresh save game empire data
@@ -1720,24 +1720,24 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                     continue;
 
                 PlayerSetupData player_setup_data;
-                player_setup_data.m_player_id =     Networking::INVALID_PLAYER_ID;
+                player_setup_data.player_id =     Networking::INVALID_PLAYER_ID;
                 // don't use original names to prevent collision with manually added AIs
-                player_setup_data.m_player_name =   UserString("AI_PLAYER") + "_" + std::to_string(m_ai_next_index++);
-                player_setup_data.m_client_type =   Networking::CLIENT_TYPE_AI_PLAYER;
-                player_setup_data.m_save_game_empire_id = pshd.m_empire_id;
-                player_setup_data.m_empire_name =   empire_data_it->second.m_empire_name;
-                player_setup_data.m_empire_color =  empire_data_it->second.m_color;
+                player_setup_data.player_name =   UserString("AI_PLAYER") + "_" + std::to_string(m_ai_next_index++);
+                player_setup_data.client_type =   Networking::CLIENT_TYPE_AI_PLAYER;
+                player_setup_data.save_game_empire_id = pshd.m_empire_id;
+                player_setup_data.empire_name =   empire_data_it->second.m_empire_name;
+                player_setup_data.empire_color =  empire_data_it->second.m_color;
                 if (m_lobby_data->m_seed != "")
-                    player_setup_data.m_starting_species_name = GetSpeciesManager().RandomPlayableSpeciesName();
+                    player_setup_data.starting_species_name = GetSpeciesManager().RandomPlayableSpeciesName();
                 else
-                    player_setup_data.m_starting_species_name = GetSpeciesManager().SequentialPlayableSpeciesName(m_ai_next_index);
+                    player_setup_data.starting_species_name = GetSpeciesManager().SequentialPlayableSpeciesName(m_ai_next_index);
                 m_lobby_data->m_players.push_back({Networking::INVALID_PLAYER_ID, player_setup_data});
             }
 
             // reset empire color of non-AI player to unused
             for (auto& psd : m_lobby_data->m_players) {
-                if (psd.second.m_save_game_empire_id == ALL_EMPIRES)
-                    psd.second.m_empire_color = GetUnusedEmpireColour(m_lobby_data->m_players, m_lobby_data->m_save_game_empire_data);
+                if (psd.second.save_game_empire_id == ALL_EMPIRES)
+                    psd.second.empire_color = GetUnusedEmpireColour(m_lobby_data->m_players, m_lobby_data->m_save_game_empire_data);
             }
         } catch (...) {
             // inform player who attempted to change the save file that there was a problem
@@ -1749,16 +1749,16 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
 
     if (has_important_changes) {
         for (auto& player : m_lobby_data->m_players)
-            player.second.m_player_ready = false;
+            player.second.player_ready = false;
     } else {
         // check if all established human players ready to play
         bool is_all_ready = true;
         for (auto& player : m_lobby_data->m_players) {
-            if ((player.first >= 0) && (player.second.m_client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
-                player.second.m_client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR ||
-                player.second.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER))
+            if ((player.first >= 0) && (player.second.client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
+                player.second.client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR ||
+                player.second.client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER))
             {
-                if (! player.second.m_player_ready)
+                if (! player.second.player_ready)
                     is_all_ready = false;
             }
         }
@@ -1843,7 +1843,7 @@ sc::result MPLobby::react(const PlayerChat& msg) {
         for (const auto& player : m_lobby_data->m_players) {
             if (player.first != sender->PlayerID())
                 continue;
-            text_color = player.second.m_empire_color;
+            text_color = player.second.empire_color;
         }
         server.PushChatMessage(data, sender->PlayerName(), text_color, timestamp);
     }
@@ -1989,23 +1989,23 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
         // vector, so can just use the contents of that to create AI
         // clients
         for (auto& psd : players) {
-            if (psd.m_player_name.empty()) {
-                if (psd.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER)
-                    psd.m_player_name = "AI_" + std::to_string(player_num++);
-                else if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
-                    psd.m_player_name = "Human_Player_" + std::to_string(player_num++);
-                else if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER)
-                    psd.m_player_name = "Observer_" + std::to_string(player_num++);
-                else if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
-                    psd.m_player_name = "Moderator_" + std::to_string(player_num++);
+            if (psd.player_name.empty()) {
+                if (psd.client_type == Networking::CLIENT_TYPE_AI_PLAYER)
+                    psd.player_name = "AI_" + std::to_string(player_num++);
+                else if (psd.client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
+                    psd.player_name = "Human_Player_" + std::to_string(player_num++);
+                else if (psd.client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER)
+                    psd.player_name = "Observer_" + std::to_string(player_num++);
+                else if (psd.client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
+                    psd.player_name = "Moderator_" + std::to_string(player_num++);
                 else
-                    psd.m_player_name = "Player_" + std::to_string(player_num++);
+                    psd.player_name = "Player_" + std::to_string(player_num++);
             }
 
-            if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
-                psd.m_player_id = server.Networking().HostPlayerID();
+            if (psd.client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
+                psd.player_id = server.Networking().HostPlayerID();
             } else {
-                psd.m_player_id = player_id++;
+                psd.player_id = player_id++;
             }
         }
 
@@ -2033,17 +2033,17 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
                 psgd.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER)
             {
                 PlayerSetupData psd;
-                psd.m_player_name =         psgd.m_name;
-                //psd.m_empire_name // left default
-                //psd.m_empire_color // left default
-                //psd.m_starting_species_name // left default
-                psd.m_save_game_empire_id = psgd.m_empire_id;
-                psd.m_client_type =         psgd.m_client_type;
+                psd.player_name =         psgd.m_name;
+                //psd.empire_name // left default
+                //psd.empire_color // left default
+                //psd.starting_species_name // left default
+                psd.save_game_empire_id = psgd.m_empire_id;
+                psd.client_type =         psgd.m_client_type;
 
-                if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
-                    psd.m_player_id = server.Networking().HostPlayerID();
+                if (psd.client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
+                    psd.player_id = server.Networking().HostPlayerID();
                 } else {
-                    psd.m_player_id = player_id++;
+                    psd.player_id = player_id++;
                 }
 
                 players.push_back(psd);
@@ -2054,8 +2054,8 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
     m_num_expected_players = players.size();
     m_expected_ai_names_and_ids.clear();
     for (const auto& player_data : players) {
-        if (player_data.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER)
-            m_expected_ai_names_and_ids.insert({player_data.m_player_name, player_data.m_player_id});
+        if (player_data.client_type == Networking::CLIENT_TYPE_AI_PLAYER)
+            m_expected_ai_names_and_ids.insert({player_data.player_name, player_data.player_id});
     }
 
     server.CreateAIClients(players, m_single_player_setup_data->m_ai_aggr);    // also disconnects any currently-connected AI clients
@@ -2224,8 +2224,8 @@ WaitingForMPGameJoiners::WaitingForMPGameJoiners(my_context c) :
 
     for (std::pair<int, PlayerSetupData>& psd : m_lobby_data->m_players) {
         player_setup_data.push_back(psd.second);
-        if (psd.second.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER)
-            m_expected_ai_player_names.insert(psd.second.m_player_name);
+        if (psd.second.client_type == Networking::CLIENT_TYPE_AI_PLAYER)
+            m_expected_ai_player_names.insert(psd.second.player_name);
     }
 
     server.CreateAIClients(player_setup_data, m_lobby_data->m_ai_aggr);
@@ -2335,7 +2335,7 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
                 collision = true;
             } else {
                 for (std::pair<int, PlayerSetupData>& plr : m_lobby_data->m_players) {
-                    if (plr.second.m_empire_name == new_player_name) {
+                    if (plr.second.empire_name == new_player_name) {
                         collision = true;
                         break;
                     }
@@ -2891,8 +2891,8 @@ sc::result PlayingGame::react(const LobbyUpdate& msg) {
 
     // try to add the player into the game if he choose empire
     for (const auto& player : incoming_lobby_data.m_players) {
-        if (player.first == sender->PlayerID() && player.second.m_save_game_empire_id != ALL_EMPIRES) {
-            int empire_id = server.AddPlayerIntoGame(sender, player.second.m_save_game_empire_id);
+        if (player.first == sender->PlayerID() && player.second.save_game_empire_id != ALL_EMPIRES) {
+            int empire_id = server.AddPlayerIntoGame(sender, player.second.save_game_empire_id);
             if (empire_id != ALL_EMPIRES) {
                 context<ServerFSM>().UpdateIngameLobby();
                 return discard_event();

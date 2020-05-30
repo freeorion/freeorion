@@ -566,34 +566,34 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
 
     // Human player setup data
     PlayerSetupData human_player_setup_data;
-    human_player_setup_data.m_player_name = GetOptionsDB().Get<std::string>("setup.player.name");
-    human_player_setup_data.m_empire_name = GetOptionsDB().Get<std::string>("setup.empire.name");
+    human_player_setup_data.player_name = GetOptionsDB().Get<std::string>("setup.player.name");
+    human_player_setup_data.empire_name = GetOptionsDB().Get<std::string>("setup.empire.name");
 
     // DB stores index into array of available colours, so need to get that array to look up value of index.
     // if stored value is invalid, use a default colour
     const std::vector<GG::Clr>& empire_colours = EmpireColors();
     int colour_index = GetOptionsDB().Get<int>("setup.empire.color.index");
     if (colour_index >= 0 && colour_index < static_cast<int>(empire_colours.size()))
-        human_player_setup_data.m_empire_color = empire_colours[colour_index];
+        human_player_setup_data.empire_color = empire_colours[colour_index];
     else
-        human_player_setup_data.m_empire_color = GG::CLR_GREEN;
+        human_player_setup_data.empire_color = GG::CLR_GREEN;
 
-    human_player_setup_data.m_starting_species_name = GetOptionsDB().Get<std::string>("setup.initial.species");
-    if (human_player_setup_data.m_starting_species_name == "1")
-        human_player_setup_data.m_starting_species_name = "SP_HUMAN";   // kludge / bug workaround for bug with options storage and retreival.  Empty-string options are stored, but read in as "true" boolean, and converted to string equal to "1"
+    human_player_setup_data.starting_species_name = GetOptionsDB().Get<std::string>("setup.initial.species");
+    if (human_player_setup_data.starting_species_name == "1")
+        human_player_setup_data.starting_species_name = "SP_HUMAN";   // kludge / bug workaround for bug with options storage and retreival.  Empty-string options are stored, but read in as "true" boolean, and converted to string equal to "1"
 
-    if (human_player_setup_data.m_starting_species_name != "RANDOM" &&
-        !GetSpecies(human_player_setup_data.m_starting_species_name))
+    if (human_player_setup_data.starting_species_name != "RANDOM" &&
+        !GetSpecies(human_player_setup_data.starting_species_name))
     {
         const SpeciesManager& sm = GetSpeciesManager();
         if (sm.NumPlayableSpecies() < 1)
-            human_player_setup_data.m_starting_species_name.clear();
+            human_player_setup_data.starting_species_name.clear();
         else
-            human_player_setup_data.m_starting_species_name = sm.playable_begin()->first;
+            human_player_setup_data.starting_species_name = sm.playable_begin()->first;
     }
 
-    human_player_setup_data.m_save_game_empire_id = ALL_EMPIRES; // not used for new games
-    human_player_setup_data.m_client_type = Networking::CLIENT_TYPE_HUMAN_PLAYER;
+    human_player_setup_data.save_game_empire_id = ALL_EMPIRES; // not used for new games
+    human_player_setup_data.client_type = Networking::CLIENT_TYPE_HUMAN_PLAYER;
 
     // add to setup data players
     setup_data.m_players.push_back(human_player_setup_data);
@@ -604,12 +604,12 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
     for (int ai_i = 1; ai_i <= num_AIs; ++ai_i) {
         PlayerSetupData ai_setup_data;
 
-        ai_setup_data.m_player_name = "AI_" + std::to_string(ai_i);
-        ai_setup_data.m_empire_name.clear();                // leave blank, to be set by server in Universe::GenerateEmpires
-        ai_setup_data.m_empire_color = GG::CLR_ZERO;        // to be set by server
-        ai_setup_data.m_starting_species_name.clear();      // leave blank, to be set by server
-        ai_setup_data.m_save_game_empire_id = ALL_EMPIRES;  // not used for new games
-        ai_setup_data.m_client_type = Networking::CLIENT_TYPE_AI_PLAYER;
+        ai_setup_data.player_name = "AI_" + std::to_string(ai_i);
+        ai_setup_data.empire_name.clear();                // leave blank, to be set by server in Universe::GenerateEmpires
+        ai_setup_data.empire_color = GG::CLR_ZERO;        // to be set by server
+        ai_setup_data.starting_species_name.clear();      // leave blank, to be set by server
+        ai_setup_data.save_game_empire_id = ALL_EMPIRES;  // not used for new games
+        ai_setup_data.client_type = Networking::CLIENT_TYPE_AI_PLAYER;
 
         setup_data.m_players.push_back(ai_setup_data);
     }

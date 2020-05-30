@@ -864,9 +864,9 @@ void InitEmpires(const std::map<int, PlayerSetupData>& player_setup_data) {
         if (empire_id == ALL_EMPIRES)
             ErrorLogger() << "InitEmpires empire id (" << empire_id << ") is invalid";
 
-        std::string player_name =   entry.second.m_player_name;
-        GG::Clr     empire_colour = entry.second.m_empire_color;
-        bool        authenticated = entry.second.m_authenticated;
+        std::string player_name =   entry.second.player_name;
+        GG::Clr     empire_colour = entry.second.empire_color;
+        bool        authenticated = entry.second.authenticated;
 
         // validate or generate empire colour
         // ensure no other empire gets auto-assigned this colour automatically
@@ -891,7 +891,7 @@ void InitEmpires(const std::map<int, PlayerSetupData>& player_setup_data) {
         std::string empire_name = UserString("EMPIRE") + std::to_string(empire_id);
 
         DebugLogger() << "Universe::InitEmpires creating new empire" << " with ID: " << empire_id
-                      << " for player: " << player_name << " in team: " << entry.second.m_starting_team;
+                      << " for player: " << player_name << " in team: " << entry.second.starting_team;
 
         // create new Empire object through empire manager
         Empires().CreateEmpire(empire_id, empire_name, player_name, empire_colour, authenticated);
@@ -900,14 +900,14 @@ void InitEmpires(const std::map<int, PlayerSetupData>& player_setup_data) {
     Empires().ResetDiplomacy();
 
     for (const auto& entry : player_setup_data) {
-        if (entry.second.m_starting_team < 0)
+        if (entry.second.starting_team < 0)
             continue;
 
         for (const auto& other_entry : player_setup_data) {
             if (entry.first == other_entry.first)
                 continue;
 
-            if (entry.second.m_starting_team != other_entry.second.m_starting_team)
+            if (entry.second.starting_team != other_entry.second.starting_team)
                 continue;
 
             Empires().SetDiplomaticStatus(entry.first, other_entry.first, DIPLO_ALLIED);

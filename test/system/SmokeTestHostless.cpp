@@ -156,7 +156,7 @@ BOOST_AUTO_TEST_CASE(hostless_server) {
             // fill lobby with AIs
             for (unsigned int ai_i = 1; ai_i <= num_AIs; ++ai_i) {
                 PlayerSetupData ai_plr;
-                ai_plr.m_client_type = Networking::CLIENT_TYPE_AI_PLAYER;
+                ai_plr.client_type = Networking::CLIENT_TYPE_AI_PLAYER;
                 m_lobby_data.m_players.push_back({Networking::INVALID_PLAYER_ID, ai_plr});
                 // publish changes
                 UpdateLobby();
@@ -173,7 +173,7 @@ BOOST_AUTO_TEST_CASE(hostless_server) {
         // get ready
         for (auto& plr : m_lobby_data.m_players) {
             if (plr.first == PlayerID())
-                plr.second.m_player_ready = true;
+                plr.second.player_ready = true;
         }
         UpdateLobby();
 

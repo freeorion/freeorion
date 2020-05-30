@@ -245,19 +245,19 @@ void serialize(Archive& ar, PlayerSetupData& obj, unsigned int const version)
 {
     using namespace boost::serialization;
 
-    ar  & make_nvp("m_player_name", obj.m_player_name)
-        & make_nvp("m_player_id", obj.m_player_id)
-        & make_nvp("m_empire_name", obj.m_empire_name)
-        & make_nvp("m_empire_color", obj.m_empire_color)
-        & make_nvp("m_starting_species_name", obj.m_starting_species_name)
-        & make_nvp("m_save_game_empire_id", obj.m_save_game_empire_id)
-        & make_nvp("m_client_type", obj.m_client_type)
-        & make_nvp("m_player_ready", obj.m_player_ready);
+    ar  & make_nvp("m_player_name", obj.player_name)
+        & make_nvp("m_player_id", obj.player_id)
+        & make_nvp("m_empire_name", obj.empire_name)
+        & make_nvp("m_empire_color", obj.empire_color)
+        & make_nvp("m_starting_species_name", obj.starting_species_name)
+        & make_nvp("m_save_game_empire_id", obj.save_game_empire_id)
+        & make_nvp("m_client_type", obj.client_type)
+        & make_nvp("m_player_ready", obj.player_ready);
     if (version >= 1) {
-        ar & make_nvp("m_authenticated", obj.m_authenticated);
+        ar & make_nvp("m_authenticated", obj.authenticated);
     }
     if (version >= 2) {
-        ar & make_nvp("m_starting_team", obj.m_starting_team);
+        ar & make_nvp("m_starting_team", obj.starting_team);
     }
 }
 

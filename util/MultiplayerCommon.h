@@ -146,17 +146,17 @@ struct FO_COMMON_API ServerSaveGameData {
 /** The data structure used to represent a single player's setup options for a
   * multiplayer game (in the multiplayer lobby screen). */
 struct PlayerSetupData {
-    std::string             m_player_name;
-    int                     m_player_id = Networking::INVALID_PLAYER_ID;
-    std::string             m_empire_name;
-    GG::Clr                 m_empire_color = GG::CLR_ZERO;
-    std::string             m_starting_species_name;
+    std::string             player_name;
+    int                     player_id = Networking::INVALID_PLAYER_ID;
+    std::string             empire_name;
+    GG::Clr                 empire_color = GG::CLR_ZERO;
+    std::string             starting_species_name;
     //! When loading a game, the ID of the empire that this player will control
-    int                     m_save_game_empire_id = ALL_EMPIRES;
-    Networking::ClientType  m_client_type = Networking::INVALID_CLIENT_TYPE;
-    bool                    m_player_ready = false;
-    bool                    m_authenticated = false;
-    int                     m_starting_team = Networking::NO_TEAM_ID;
+    int                     save_game_empire_id = ALL_EMPIRES;
+    Networking::ClientType  client_type = Networking::INVALID_CLIENT_TYPE;
+    bool                    player_ready = false;
+    bool                    authenticated = false;
+    int                     starting_team = Networking::NO_TEAM_ID;
 };
 
 bool FO_COMMON_API operator==(const PlayerSetupData& lhs, const PlayerSetupData& rhs);
