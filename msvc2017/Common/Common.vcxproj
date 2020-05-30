@@ -187,6 +187,7 @@
     <ClInclude Include="..\..\Empire\Diplomacy.h" />
     <ClInclude Include="..\..\Empire\Empire.h" />
     <ClInclude Include="..\..\Empire\Government.h" />
+    <ClInclude Include="..\..\Empire\InfluenceQueue.h" />
     <ClInclude Include="..\..\Empire\ResearchQueue.h" />
     <ClInclude Include="..\..\Empire\ProductionQueue.h" />
     <ClInclude Include="..\..\Empire\EmpireManager.h" />
@@ -268,6 +269,7 @@
     <ClCompile Include="..\..\Empire\Diplomacy.cpp" />
     <ClCompile Include="..\..\Empire\Empire.cpp" />
     <ClCompile Include="..\..\Empire\Government.cpp" />
+    <ClCompile Include="..\..\Empire\InfluenceQueue.cpp" />
     <ClCompile Include="..\..\Empire\ResearchQueue.cpp" />
     <ClCompile Include="..\..\Empire\ProductionQueue.cpp" />
     <ClCompile Include="..\..\Empire\EmpireManager.cpp" />

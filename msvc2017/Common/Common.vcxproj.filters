@@ -287,6 +287,12 @@
     <ClInclude Include="..\..\universe\CommonParams.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Empire\InfluenceQueue.h">
+      <Filter>Header Files\Empire</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\ShipHull.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\network\MessageQueue.cpp">
@@ -505,6 +511,12 @@
     </ClCompile>
     <ClCompile Include="..\..\Empire\Government.cpp">
       <Filter>Source Files\Empire</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Empire\InfluenceQueue.cpp">
+      <Filter>Source Files\Empire</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\ShipHull.cpp">
+      <Filter>Source Files\universe</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
