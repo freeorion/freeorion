@@ -587,10 +587,10 @@ boost::statechart::result MPLobby::react(const ChatHistory& msg) {
 
     const auto& wnd = Client().GetClientUI().GetMultiPlayerLobbyWnd();
     for (const auto& elem : chat_history)
-        wnd->ChatMessage(elem.m_text,
-                         elem.m_player_name,
-                         elem.m_player_name.empty() ? Client().GetClientUI().TextColor() : elem.m_text_color,
-                         elem.m_timestamp);
+        wnd->ChatMessage(elem.text,
+                         elem.player_name,
+                         elem.player_name.empty() ? Client().GetClientUI().TextColor() : elem.text_color,
+                         elem.timestamp);
 
     return discard_event();
 }

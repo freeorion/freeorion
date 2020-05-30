@@ -238,10 +238,10 @@ struct FO_COMMON_API MultiplayerLobbyData : public GalaxySetupData {
 
 /** The data structure stores information about latest chat massages. */
 struct FO_COMMON_API ChatHistoryEntity {
-    boost::posix_time::ptime    m_timestamp;
-    std::string                 m_player_name;
-    std::string                 m_text;
-    GG::Clr                     m_text_color;
+    boost::posix_time::ptime    timestamp;
+    std::string                 player_name;
+    std::string                 text;
+    GG::Clr                     text_color;
 };
 
 /** Information about one player that other players are informed of.  Assembled by server and sent to players. */

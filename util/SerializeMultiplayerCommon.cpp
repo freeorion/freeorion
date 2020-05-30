@@ -300,14 +300,14 @@ void serialize(Archive& ar, ChatHistoryEntity& obj, unsigned int const version)
     using namespace boost::serialization;
 
     if (version < 1) {
-        ar  & make_nvp("m_timestamp", obj.m_timestamp)
-            & make_nvp("m_player_name", obj.m_player_name)
-            & make_nvp("m_text", obj.m_text);
+        ar  & make_nvp("m_timestamp", obj.timestamp)
+            & make_nvp("m_player_name", obj.player_name)
+            & make_nvp("m_text", obj.text);
     } else {
-        ar  & make_nvp("m_text", obj.m_text)
-            & make_nvp("m_player_name", obj.m_player_name)
-            & make_nvp("m_text_color", obj.m_text_color)
-            & make_nvp("m_timestamp", obj.m_timestamp);
+        ar  & make_nvp("m_text", obj.text)
+            & make_nvp("m_player_name", obj.player_name)
+            & make_nvp("m_text_color", obj.text_color)
+            & make_nvp("m_timestamp", obj.timestamp);
     }
 }
 

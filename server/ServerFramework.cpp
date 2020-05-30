@@ -232,10 +232,10 @@ bool PythonServer::LoadChatHistory(boost::circular_buffer<ChatHistoryEntity>& ch
         boost::python::stl_input_iterator<boost::python::tuple> entity_begin(py_history), entity_end;
         for (auto& it = entity_begin; it != entity_end; ++ it) {
             ChatHistoryEntity e;
-            e.m_timestamp = boost::posix_time::from_time_t(boost::python::extract<time_t>((*it)[0]));;
-            e.m_player_name = boost::python::extract<std::string>((*it)[1]);
-            e.m_text = boost::python::extract<std::string>((*it)[2]);
-            e.m_text_color = boost::python::extract<GG::Clr>((*it)[3]);
+            e.timestamp = boost::posix_time::from_time_t(boost::python::extract<time_t>((*it)[0]));;
+            e.player_name = boost::python::extract<std::string>((*it)[1]);
+            e.text = boost::python::extract<std::string>((*it)[2]);
+            e.text_color = boost::python::extract<GG::Clr>((*it)[3]);
             chat_history.push_back(e);
         }
     }
@@ -255,10 +255,10 @@ bool PythonServer::PutChatHistoryEntity(const ChatHistoryEntity& chat_history_en
         return false;
     }
 
-    return f(boost::python::long_(to_time_t(chat_history_entity.m_timestamp)),
-             chat_history_entity.m_player_name,
-             chat_history_entity.m_text,
-             chat_history_entity.m_text_color);
+    return f(boost::python::long_(to_time_t(chat_history_entity.timestamp)),
+             chat_history_entity.player_name,
+             chat_history_entity.text,
+             chat_history_entity.text_color);
 }
 
 bool PythonServer::CreateUniverse(std::map<int, PlayerSetupData>& player_setup_data) {
