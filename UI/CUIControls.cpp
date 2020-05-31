@@ -1480,11 +1480,11 @@ GG::Pt StatisticIcon::MinUsableSize() const {
         return m_icon->Size();
 
     if (Width() >= Value(Height()))
-        return GG::Pt(m_text->RelativeUpperLeft().x + m_text->MinUsableSize().x,
-                      std::max(m_icon->RelativeLowerRight().y, m_text->MinUsableSize().y));
-     else
-        return GG::Pt(std::max(m_icon->RelativeLowerRight().x, m_text->MinUsableSize().x),
-                      m_icon->RelativeLowerRight().y + m_text->MinUsableSize().y);
+        return GG::Pt(m_text->RelativeUpperLeft().x + m_text->Width(),
+                      std::max(m_icon->RelativeLowerRight().y, m_text->Height()));
+    else
+        return GG::Pt(std::max(m_icon->RelativeLowerRight().x, m_text->Width()),
+                      m_icon->RelativeLowerRight().y + m_text->Height());
 }
 
 ///////////////////////////////////////
