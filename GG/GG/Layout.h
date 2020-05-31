@@ -214,11 +214,6 @@ public:
     /** Set this to true if this layout should render an outline of itself;
         this is sometimes useful for debugging purposes */
     void RenderOutline(bool render_outline);
-
-    /** Sets the outline color used to render this layout (this is only used
-        if RenderOutline() returns true).  This is sometimes useful for
-        debugging purposes. */
-    void SetOutlineColor(Clr color);
     //@}
 
     /** \name Exceptions */ ///@{
@@ -303,7 +298,6 @@ private:
     bool                            m_ignore_child_resize = false;
     bool                            m_stop_resize_recursion = false;
     bool                            m_render_outline = false;
-    Clr                             m_outline_color;
 
     friend class Wnd;
 };

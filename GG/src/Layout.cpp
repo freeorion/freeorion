@@ -83,11 +83,7 @@ Layout::Layout(X x, Y y, X w, Y h, std::size_t rows, std::size_t columns,
     m_border_margin(border_margin),
     m_cell_margin(cell_margin == INVALID_CELL_MARGIN ? border_margin : cell_margin),
     m_row_params(rows),
-    m_column_params(columns),
-    m_ignore_child_resize(false),
-    m_stop_resize_recursion(false),
-    m_render_outline(false),
-    m_outline_color(CLR_MAGENTA)
+    m_column_params(columns)
 {
     assert(rows);
     assert(columns);
@@ -178,9 +174,6 @@ std::vector<std::vector<Rect>> Layout::RelativeCellRects() const
 
 bool Layout::RenderOutline() const
 { return m_render_outline; }
-
-Clr Layout::OutlineColor() const
-{ return m_outline_color; }
 
 void Layout::StartingChildDragDrop(const Wnd* wnd, const Pt& offset)
 {
@@ -512,10 +505,20 @@ void Layout::Render()
 {
     if (m_render_outline) {
         Pt ul = UpperLeft(), lr = LowerRight();
-        FlatRectangle(ul, lr, CLR_ZERO, m_outline_color, 1);
-        for (const std::vector<Rect>& columns : CellRects()) {
-            for (const Rect& cell : columns) {
-                FlatRectangle(cell.ul, cell.lr, CLR_ZERO, m_outline_color, 1);
+        FlatRectangle(ul, lr, CLR_ZERO, CLR_MAGENTA, 1);
+        auto cell_rects{CellRects()};
+        for (std::size_t row_idx = 0; row_idx < cell_rects.size(); ++row_idx) {
+            const auto& columns{cell_rects.at(row_idx)};
+            GG::Y min_row_height = std::max(GG::Y1, MinimumRowHeight(row_idx));
+
+            for (std::size_t col_idx = 0; col_idx < columns.size(); ++col_idx) {
+                const Rect& cell{columns.at(col_idx)};
+                GG::X min_col_width = std::max(GG::X1, MinimumColumnWidth(col_idx));
+
+                // render minimum size of cell
+                FlatRectangle(cell.ul, cell.ul + GG::Pt{min_col_width, min_row_height}, CLR_ZERO, CLR_GREEN, 1);
+                // render current size of cell
+                FlatRectangle(cell.ul, cell.lr, CLR_ZERO, CLR_MAGENTA, 1);
             }
         }
     }
@@ -678,9 +681,6 @@ void Layout::SetMinimumColumnWidths(std::vector<X> widths)
 
 void Layout::RenderOutline(bool render_outline)
 { m_render_outline = render_outline; }
-
-void Layout::SetOutlineColor(Clr color)
-{ m_outline_color = color; }
 
 void Layout::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
 { ForwardEventToParent(); }
