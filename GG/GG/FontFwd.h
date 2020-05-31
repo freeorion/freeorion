@@ -44,8 +44,8 @@ extern GG_API const TextFormat FORMAT_VCENTER;     ///< Centers text vertically.
 extern GG_API const TextFormat FORMAT_TOP;         ///< Top-justifies text.
 extern GG_API const TextFormat FORMAT_BOTTOM;      ///< Justifies the text to the bottom of the rectangle.
 extern GG_API const TextFormat FORMAT_CENTER;      ///< Centers text horizontally in the rectangle.
-extern GG_API const TextFormat FORMAT_LEFT;        ///< Aligns text to the left. 
-extern GG_API const TextFormat FORMAT_RIGHT;       ///< Aligns text to the right. 
+extern GG_API const TextFormat FORMAT_LEFT;        ///< Aligns text to the left.
+extern GG_API const TextFormat FORMAT_RIGHT;       ///< Aligns text to the right.
 extern GG_API const TextFormat FORMAT_NOWRAP;      ///< Resize control to fit text, don't wrap text. Text only breaks at '\\n'.
 extern GG_API const TextFormat FORMAT_WORDBREAK;   ///< Breaks words. Lines are automatically broken between words if a word would extend past the edge of the control's bounding rectangle.  As always, a '\\n' also breaks the line.
 extern GG_API const TextFormat FORMAT_LINEWRAP;    ///< Lines are automatically broken when the next glyph would be drawn outside the the text rectangle.  As always, a '\\n' also breaks the line.
