@@ -1323,10 +1323,20 @@ void StatisticIcon::CompleteConstruction() {
     GG::Control::CompleteConstruction();
 
     SetName("StatisticIcon");
-
     SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
 
-    AttachChild(m_icon);
+    AttachChild(m_icon);    // created in constructor to forward texture
+
+    // Format for text?
+    GG::Flags<GG::TextFormat> format;
+
+    if (Width() >= Value(Height())) {
+        format = GG::FORMAT_LEFT;
+    } else {
+        format = GG::FORMAT_BOTTOM;
+    }
+    m_text = GG::Wnd::Create<CUILabel>("    ", format, GG::NO_WND_FLAGS);
+    AttachChild(m_text);
 
     RequirePreRender();
 }
@@ -1441,29 +1451,16 @@ void StatisticIcon::DoLayout() {
 
 
     // Calculate location and format
-    GG::Flags<GG::TextFormat> format;
     GG::Pt text_ul;
-    GG::Pt text_lr(Width(), Height());
-
     if (Width() >= Value(Height())) {
-        format = GG::FORMAT_LEFT;
         text_ul.x = GG::X(icon_dim + STAT_ICON_PAD);
     } else {
-        format = GG::FORMAT_BOTTOM;
         text_ul.y = GG::Y(icon_dim + STAT_ICON_PAD);
     }
 
-    if (!m_text) {
-        // Create new label in correct place.
-        m_text = GG::Wnd::Create<CUILabel>(text_elements.Text(), text_elements.Elements(),
-                                           format, GG::NO_WND_FLAGS,
-                                           text_ul.x, text_ul.y, text_lr.x - text_ul.x, text_lr.y - text_ul.y);
-        AttachChild(m_text);
-    } else {
-        // Adjust text and place label.
-       m_text->SetText(text_elements.Text(), text_elements.Elements());
-       m_text->SizeMove(text_ul, text_lr);
-    }
+    // Adjust text and place label.
+    m_text->SetText(text_elements.Text(), text_elements.Elements());
+    m_text->SizeMove(text_ul, {Width(), Height()});
 }
 
 GG::Pt StatisticIcon::MinUsableSize() const {
