@@ -1347,14 +1347,20 @@ void StatisticIcon::PreRender() {
 }
 
 double StatisticIcon::GetValue(size_t index) const {
-    if (index > 1) throw std::invalid_argument("index greater than 1 passed to StatisticIcon::Value.  Only 1 or 2 values, with indices 0 or 1, supported.");
-    if (index >= m_values.size()) throw std::invalid_argument("index greater than largest index available passed to StatisticIcon::Value");
+    if (index < 0 || index >= m_values.size()) {
+        ErrorLogger() << "StatisticIcon::GetValue passed index out of range index:" << index;
+        return 0.0;
+    }
     return std::get<0>(m_values[index]);
 }
 
 void StatisticIcon::SetValue(double value, size_t index) {
-    if (index > 1) throw std::invalid_argument("index greater than 1 passed to StatisticIcon::SetValue.  Only 1 or 2 values, with indices 0 or 1, supported.");
-    if (index + 1 > m_values.size()) {
+    if (index < 0 || index > 1) {
+        ErrorLogger() << "StatisticIcon::SetValue passed index out of range index:" << index;
+        return;
+    }
+
+    if (index >= m_values.size()) {
         auto entry = std::tuple<double, int, bool>(m_values[0]);
         std::get<0>(entry) = value;
         m_values.resize(index + 1, entry);
@@ -1363,6 +1369,40 @@ void StatisticIcon::SetValue(double value, size_t index) {
     if (value != std::get<0>(m_values[index]))
         RequirePreRender();
     std::get<0>(m_values[index]) = value;
+
+
+    // Compute text elements
+    GG::Font::TextAndElementsAssembler text_elements(*ClientUI::GetFont());
+    text_elements.AddOpenTag(ClientUI::TextColor())
+        .AddText(DoubleToString(std::get<0>(m_values[0]), std::get<1>(m_values[0]), std::get<2>(m_values[0])))
+        .AddCloseTag("rgba");
+
+    if (m_values.size() > 1) {
+        GG::Clr clr = ClientUI::TextColor();
+
+        int effectiveSign = EffectiveSign(std::get<0>(m_values.at(1)));
+
+        if (effectiveSign == -1)
+            clr = ClientUI::StatDecrColor();
+        else if (effectiveSign == 1)
+            clr = ClientUI::StatIncrColor();
+
+        text_elements.AddText(" ")
+                     .AddOpenTag(clr);
+
+        if (effectiveSign == -1)
+            text_elements.AddText("-");
+        else
+            text_elements.AddText("+");
+
+        text_elements
+            .AddText(DoubleToString(std::get<0>(m_values[1]), std::get<1>(m_values[1]), std::get<2>(m_values[1])))
+            .AddCloseTag("rgba");
+    }
+
+    m_text->SetText(text_elements.Text(), text_elements.Elements());
+
+    DoLayout();
 }
 
 void StatisticIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -1418,39 +1458,9 @@ void StatisticIcon::DoLayout() {
     m_icon->SizeMove(GG::Pt(GG::X0, GG::Y0),
                      GG::Pt(GG::X(icon_dim), GG::Y(icon_dim)));
 
-    if (m_values.size() <= 0)
+    if (m_values.empty())
         return;
 
-    // Precompute text elements
-    GG::Font::TextAndElementsAssembler text_elements(*ClientUI::GetFont());
-    text_elements.AddOpenTag(ClientUI::TextColor())
-        .AddText(DoubleToString(std::get<0>(m_values[0]), std::get<1>(m_values[0]), std::get<2>(m_values[0])))
-        .AddCloseTag("rgba");
-    if (m_values.size() > 1) {
-        GG::Clr clr = ClientUI::TextColor();
-
-        int effectiveSign = EffectiveSign(std::get<0>(m_values.at(1)));
-
-        if (effectiveSign == -1)
-            clr = ClientUI::StatDecrColor();
-        else if (effectiveSign == 1)
-            clr = ClientUI::StatIncrColor();
-
-        text_elements.AddText(" ")
-                     .AddOpenTag(clr);
-
-        if (effectiveSign == -1)
-            text_elements.AddText("-");
-        else
-            text_elements.AddText("+");
-
-        text_elements
-            .AddText(DoubleToString(std::get<0>(m_values[1]), std::get<1>(m_values[1]), std::get<2>(m_values[1])))
-            .AddCloseTag("rgba");
-    }
-
-
-    // Calculate location and format
     GG::Pt text_ul;
     if (Width() >= Value(Height())) {
         text_ul.x = GG::X(icon_dim + STAT_ICON_PAD);
@@ -1459,7 +1469,6 @@ void StatisticIcon::DoLayout() {
     }
 
     // Adjust text and place label.
-    m_text->SetText(text_elements.Text(), text_elements.Elements());
     m_text->SizeMove(text_ul, {Width(), Height()});
 }
 
