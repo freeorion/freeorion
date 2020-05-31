@@ -1423,16 +1423,22 @@ void StatisticIcon::DoLayout() {
 
         if (effectiveSign == -1)
             clr = ClientUI::StatDecrColor();
-        if (effectiveSign == 1)
+        else if (effectiveSign == 1)
             clr = ClientUI::StatIncrColor();
 
+        text_elements.AddText(" ")
+                     .AddOpenTag(clr);
+
+        if (effectiveSign == -1)
+            text_elements.AddText("-");
+        else
+            text_elements.AddText("+");
+
         text_elements
-            .AddText(" (")
-            .AddOpenTag(clr)
             .AddText(DoubleToString(std::get<0>(m_values[1]), std::get<1>(m_values[1]), std::get<2>(m_values[1])))
-            .AddCloseTag("rgba")
-            .AddText(")");
+            .AddCloseTag("rgba");
     }
+
 
     // Calculate location and format
     GG::Flags<GG::TextFormat> format;
