@@ -257,27 +257,27 @@ protected:
 private:
     struct GG_API RowColParams
     {
-        RowColParams();
+        explicit RowColParams() = default;
 
         float        stretch = 0.0f;
-        unsigned int min = 1;
-        unsigned int effective_min = 1; ///< current effective minimum size of this row or column, based on min, layout margins, and layout cell contents
-        int          current_origin = 1;///< current position of top or left side
-        unsigned int current_width = 1; ///< current extent in downward or rightward direction
+        unsigned int min = 0;
+        unsigned int effective_min = 0; ///< current effective minimum size of this row or column, based on min, layout margins, and layout cell contents
+        int          current_origin = 0;///< current position of top or left side
+        unsigned int current_width = 0; ///< current extent in downward or rightward direction
     };
 
     struct GG_API WndPosition
     {
-        WndPosition();
+        explicit WndPosition() = default;
         WndPosition(std::size_t first_row_, std::size_t first_column_,
                     std::size_t last_row_, std::size_t last_column_,
                     Flags<Alignment> alignment_, const Pt& original_ul_, const Pt& original_size_);
 
-        std::size_t      first_row;
-        std::size_t      first_column;
-        std::size_t      last_row;
-        std::size_t      last_column;
-        Flags<Alignment> alignment;
+        std::size_t      first_row = 0;
+        std::size_t      first_column = 0;
+        std::size_t      last_row = 0;
+        std::size_t      last_column = 0;
+        Flags<Alignment> alignment = ALIGN_NONE;
         Pt               original_ul;
         Pt               original_size;
     };

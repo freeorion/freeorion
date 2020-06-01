@@ -43,24 +43,8 @@ namespace {
     }
 }
 
-// RowColParams
-Layout::RowColParams::RowColParams() :
-    stretch(0),
-    min(0),
-    effective_min(0),
-    current_origin(0),
-    current_width(0)
-{}
 
 // WndPosition
-Layout::WndPosition::WndPosition() :
-    first_row(0),
-    first_column(0),
-    last_row(0),
-    last_column(0),
-    alignment(ALIGN_NONE)
-{}
-
 Layout::WndPosition::WndPosition(std::size_t first_row_, std::size_t first_column_,
                                  std::size_t last_row_, std::size_t last_column_,
                                  Flags<Alignment> alignment_, const Pt& original_ul_, const Pt& original_size_) :
