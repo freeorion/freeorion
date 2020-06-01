@@ -86,14 +86,18 @@ namespace {
     const std::string MAP_SIDEPANEL_WND_NAME = "map.sidepanel";
     const std::string GOVERNMENT_WND_NAME = "map.government";
 
-    const GG::Y     ZOOM_SLIDER_HEIGHT(200);
-    const GG::Y     SCALE_LINE_HEIGHT(20);
-    const GG::X     SCALE_LINE_MAX_WIDTH(240);
-    const int       MIN_SYSTEM_NAME_SIZE = 10;
-    const int       LAYOUT_MARGIN = 5;
-    const GG::Y     TOOLBAR_HEIGHT(32);
+    const GG::Y ZOOM_SLIDER_HEIGHT(200);
+    const GG::Y SCALE_LINE_HEIGHT(20);
+    const GG::X SCALE_LINE_MAX_WIDTH(240);
+    const int   MIN_SYSTEM_NAME_SIZE = 10;
+    const int   LAYOUT_MARGIN = 5;
+    const GG::Y TOOLBAR_HEIGHT(32);
 
-    const double    TWO_PI = 2.0*3.1415926536;
+    constexpr double TWO_PI = 2.0*3.1415926536;
+
+    const GG::X ICON_DUAL_WIDTH(100);
+    const GG::X ICON_WIDTH(24);
+
 
     DeclareThreadSafeLogger(effects);
 
@@ -989,11 +993,6 @@ void MapWnd::CompleteConstruction() {
     GG::GUI::GetGUI()->Register(m_toolbar);
     m_toolbar->Hide();
 
-    auto layout = GG::Wnd::Create<GG::Layout>(m_toolbar->ClientUpperLeft().x, m_toolbar->ClientUpperLeft().y,
-                                              m_toolbar->ClientWidth(),       m_toolbar->ClientHeight(),
-                                              1, 25);
-    layout->SetName("Toolbar Layout");
-    m_toolbar->SetLayout(layout);
 
     //////////////////////////////
     // Toolbar buttons and icons
@@ -1019,8 +1018,7 @@ void MapWnd::CompleteConstruction() {
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "auto_turn.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "manual_turn_mouseover.png")));
 
-    m_btn_auto_turn->LeftClickedSignal.connect(
-        boost::bind(&MapWnd::ToggleAutoEndTurn, this));
+    m_btn_auto_turn->LeftClickedSignal.connect(boost::bind(&MapWnd::ToggleAutoEndTurn, this));
     m_btn_auto_turn->Resize(GG::Pt(GG::X(24), GG::Y(24)));
     m_btn_auto_turn->SetMinSize(GG::Pt(GG::X(24), GG::Y(24)));
     ToggleAutoEndTurn();    // toggle twice to set textures without changing default setting state
@@ -1229,8 +1227,6 @@ void MapWnd::CompleteConstruction() {
 
 
     // resources
-    const GG::X ICON_DUAL_WIDTH(100);
-    const GG::X ICON_WIDTH(24);
     m_population = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(METER_POPULATION), 0, 3, false,
                                                   ICON_DUAL_WIDTH, m_btn_turn->Height());
     m_population->SetName("Population StatisticIcon");
@@ -1299,128 +1295,69 @@ void MapWnd::CompleteConstruction() {
     /////////////////////////////////////
     // place buttons / icons on toolbar
     /////////////////////////////////////
-    int layout_column(0);
+    std::vector<GG::X> widths{
+        m_btn_turn->Width(),        ICON_WIDTH,                 m_timeout_remain->Width(),
+        GG::X(ClientUI::Pts()*4),   ICON_WIDTH,                 m_industry->Width(),
+        m_stockpile->Width(),       ICON_WIDTH,                 m_research->Width(),
+        m_influence->Width(),       m_fleet->Width(),           m_population->Width(),
+        m_detection->Width(),       m_btn_moderator->Width(),   m_btn_messages->Width(),
+        m_btn_siterep->Width(),     m_btn_empires->Width(),     m_btn_objects->Width(),
+        m_btn_research->Width(),    m_btn_production->Width(),  m_btn_design->Width(),
+        m_btn_government->Width(),  m_btn_graphs->Width(),      m_btn_pedia->Width(),
+        m_btn_menu->Width()};
 
-    layout->SetMinimumColumnWidth(layout_column, m_btn_turn->Width());
-    layout->SetColumnStretch(layout_column, 0.0);
-    layout->Add(m_btn_turn,         0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
-    ++layout_column;
+    std::vector<float> stretches{
+        0.0f,                       0.0f,                       0.0f,
+        0.0f,                       0.0f,                       1.0f,
+        1.2f,                       0.0f,                       1.0f,
+        1.2f,                       1.0f,                       1.0f,
+        1.0f,                       0.0f,                       0.0f,
+        0.0f,                       0.0f,                       0.0f,
+        0.0f,                       0.0f,                       0.0f,
+        0.0f,                       0.0f,                       0.0f,
+        0.0f};
 
-    layout->SetMinimumColumnWidth(layout_column, ICON_WIDTH);
-    layout->SetColumnStretch(layout_column, 0.0);
-    layout->Add(m_btn_auto_turn,    0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
-    ++layout_column;
-
-    layout->SetMinimumColumnWidth(layout_column, m_timeout_remain->Width());
-    layout->SetColumnStretch(layout_column, 0.0);
-    layout->Add(m_timeout_remain,   0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
-    ++layout_column;
-
-    layout->SetMinimumColumnWidth(layout_column, GG::X(ClientUI::Pts()*4));
-    layout->SetColumnStretch(layout_column, 0.0);
-    layout->Add(m_FPS,              0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
-    ++layout_column;
-
-    layout->SetMinimumColumnWidth(layout_column, ICON_WIDTH);
-    layout->SetColumnStretch(layout_column, 0.0);
-    layout->Add(m_industry_wasted,  0, layout_column, GG::ALIGN_RIGHT | GG::ALIGN_VCENTER);
-    ++layout_column;
-
-    layout->SetColumnStretch(layout_column, 1.0);
-    layout->Add(m_industry, 0, layout_column, GG::ALIGN_LEFT | GG::ALIGN_VCENTER);
-    ++layout_column;
-
-    layout->SetColumnStretch(layout_column, 1.2);
-    layout->Add(m_stockpile, 0, layout_column, GG::ALIGN_LEFT | GG::ALIGN_VCENTER);
-    ++layout_column;
-
-    layout->SetMinimumColumnWidth(layout_column, ICON_WIDTH);
-    layout->SetColumnStretch(layout_column, 0.0);
-    layout->Add(m_research_wasted,  0, layout_column, GG::ALIGN_RIGHT | GG::ALIGN_VCENTER);
-    ++layout_column;
-
-    layout->SetColumnStretch(layout_column, 1.0);
-    layout->Add(m_research,         0, layout_column, GG::ALIGN_LEFT | GG::ALIGN_VCENTER);
-    ++layout_column;
-
-    layout->SetColumnStretch(layout_column, 1.2);
-    layout->Add(m_influence,        0, layout_column, GG::ALIGN_LEFT | GG::ALIGN_VCENTER);
-    ++layout_column;
-
-    layout->SetColumnStretch(layout_column, 1.0);
-    layout->Add(m_fleet,            0, layout_column, GG::ALIGN_LEFT | GG::ALIGN_VCENTER);
-    ++layout_column;
-
-    layout->SetColumnStretch(layout_column, 1.0);
-    layout->Add(m_population,       0, layout_column, GG::ALIGN_LEFT | GG::ALIGN_VCENTER);
-    ++layout_column;
-
-    layout->SetColumnStretch(layout_column, 1.0);
-    layout->Add(m_detection,        0, layout_column, GG::ALIGN_LEFT | GG::ALIGN_VCENTER);
-    ++layout_column;
-
-    layout->SetMinimumColumnWidth(layout_column, m_btn_moderator->Width());
-    layout->SetColumnStretch(layout_column, 0.0);
-    layout->Add(m_btn_moderator,    0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
-    ++layout_column;
-
-    layout->SetMinimumColumnWidth(layout_column, m_btn_messages->Width());
-    layout->SetColumnStretch(layout_column, 0.0);
-    layout->Add(m_btn_messages,    0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
-    ++layout_column;
-
-    layout->SetMinimumColumnWidth(layout_column, m_btn_siterep->Width());
-    layout->SetColumnStretch(layout_column, 0.0);
-    layout->Add(m_btn_siterep,      0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
-    ++layout_column;
-
-    layout->SetMinimumColumnWidth(layout_column, m_btn_empires->Width());
-    layout->SetColumnStretch(layout_column, 0.0);
-    layout->Add(m_btn_empires,      0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
-    ++layout_column;
-
-    layout->SetMinimumColumnWidth(layout_column, m_btn_objects->Width());
-    layout->SetColumnStretch(layout_column, 0.0);
-    layout->Add(m_btn_objects,      0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
-    ++layout_column;
-
-    layout->SetMinimumColumnWidth(layout_column, m_btn_research->Width());
-    layout->SetColumnStretch(layout_column, 0.0);
-    layout->Add(m_btn_research,     0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
-    ++layout_column;
-
-    layout->SetMinimumColumnWidth(layout_column, m_btn_production->Width());
-    layout->SetColumnStretch(layout_column, 0.0);
-    layout->Add(m_btn_production,   0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
-    ++layout_column;
-
-    layout->SetMinimumColumnWidth(layout_column, m_btn_design->Width());
-    layout->SetColumnStretch(layout_column, 0.0);
-    layout->Add(m_btn_design,       0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
-    ++layout_column;
-
-    layout->SetMinimumColumnWidth(layout_column, m_btn_government->Width());
-    layout->SetColumnStretch(layout_column, 0.0);
-    layout->Add(m_btn_government,   0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
-    ++layout_column;
-
-    layout->SetMinimumColumnWidth(layout_column, m_btn_graphs->Width());
-    layout->SetColumnStretch(layout_column, 0.0);
-    layout->Add(m_btn_graphs,       0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
-    ++layout_column;
-
-    layout->SetMinimumColumnWidth(layout_column, m_btn_pedia->Width());
-    layout->SetColumnStretch(layout_column, 0.0);
-    layout->Add(m_btn_pedia,        0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
-    ++layout_column;
-
-    layout->SetMinimumColumnWidth(layout_column, m_btn_menu->Width());
-    layout->SetColumnStretch(layout_column, 0.0);
-    layout->Add(m_btn_menu,         0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
-    ++layout_column;
-
+    auto layout = GG::Wnd::Create<GG::Layout>(m_toolbar->ClientUpperLeft().x, m_toolbar->ClientUpperLeft().y,
+                                              m_toolbar->ClientWidth(),       m_toolbar->ClientHeight(),
+                                              1, widths.size());
+    layout->SetName("Toolbar Layout");
     layout->SetCellMargin(5);
     layout->SetBorderMargin(5);
+    layout->SetMinimumColumnWidths(widths);
+    layout->SetColumnStretches(stretches);
+    layout->SetMinimumRowHeight(0, GG::Y(Value(ICON_WIDTH)));
+    //layout->RenderOutline(true);
+
+
+    m_toolbar->SetLayout(layout);
+    int layout_column{0};
+
+    layout->Add(m_btn_turn,         0, layout_column++, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);  // 0
+    layout->Add(m_btn_auto_turn,    0, layout_column++, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+    layout->Add(m_timeout_remain,   0, layout_column++, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+    layout->Add(m_FPS,              0, layout_column++, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+    layout->Add(m_industry_wasted,  0, layout_column++, GG::ALIGN_RIGHT  | GG::ALIGN_VCENTER);
+    layout->Add(m_industry,         0, layout_column++, GG::ALIGN_LEFT   | GG::ALIGN_VCENTER);  // 5
+    layout->Add(m_stockpile,        0, layout_column++, GG::ALIGN_LEFT   | GG::ALIGN_VCENTER);
+    layout->Add(m_research_wasted,  0, layout_column++, GG::ALIGN_RIGHT  | GG::ALIGN_VCENTER);
+    layout->Add(m_research,         0, layout_column++, GG::ALIGN_LEFT   | GG::ALIGN_VCENTER);
+    layout->Add(m_influence,        0, layout_column++, GG::ALIGN_LEFT   | GG::ALIGN_VCENTER);
+    layout->Add(m_fleet,            0, layout_column++, GG::ALIGN_LEFT   | GG::ALIGN_VCENTER);  // 10
+    layout->Add(m_population,       0, layout_column++, GG::ALIGN_LEFT   | GG::ALIGN_VCENTER);
+    layout->Add(m_detection,        0, layout_column++, GG::ALIGN_LEFT   | GG::ALIGN_VCENTER);
+    layout->Add(m_btn_moderator,    0, layout_column++, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+    layout->Add(m_btn_messages,     0, layout_column++, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+    layout->Add(m_btn_siterep,      0, layout_column++, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);  // 15
+    layout->Add(m_btn_empires,      0, layout_column++, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+    layout->Add(m_btn_objects,      0, layout_column++, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+    layout->Add(m_btn_research,     0, layout_column++, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+    layout->Add(m_btn_production,   0, layout_column++, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+    layout->Add(m_btn_design,       0, layout_column++, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);  // 20
+    layout->Add(m_btn_government,   0, layout_column++, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+    layout->Add(m_btn_graphs,       0, layout_column++, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+    layout->Add(m_btn_pedia,        0, layout_column++, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+    layout->Add(m_btn_menu,         0, layout_column++, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+
 
     ///////////////////
     // Misc widgets on map screen
