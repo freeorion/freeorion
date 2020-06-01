@@ -2162,7 +2162,7 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
         auto all_enqueued_techs = queue.AllEnqueuedProjects();
         if (all_enqueued_techs.empty())
             return "";
-        std::size_t idx = RandSmallInt(0, static_cast<int>(all_enqueued_techs.size()) - 1);
+        std::size_t idx = RandInt(0, static_cast<int>(all_enqueued_techs.size()) - 1);
         return *std::next(all_enqueued_techs.begin(), idx);
 
     } else if (variable_name == "RandomResearchableTech") {
@@ -2179,7 +2179,7 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
         auto researchable_techs = TechsResearchableByEmpire(empire_id);
         if (researchable_techs.empty())
             return "";
-        std::size_t idx = RandSmallInt(0, static_cast<int>(researchable_techs.size()) - 1);
+        std::size_t idx = RandInt(0, static_cast<int>(researchable_techs.size()) - 1);
         return *std::next(researchable_techs.begin(), idx);
     } else if (variable_name == "RandomCompleteTech") {
         int empire_id = ALL_EMPIRES;
@@ -2195,7 +2195,7 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
         auto complete_techs = TechsResearchedByEmpire(empire_id);
         if (complete_techs.empty())
             return "";
-        std::size_t idx = RandSmallInt(0, static_cast<int>(complete_techs.size()) - 1);
+        std::size_t idx = RandInt(0, static_cast<int>(complete_techs.size()) - 1);
         return *std::next(complete_techs.begin(), idx);
     } else if (variable_name == "LowestCostTransferrableTech") {
         int empire1_id = ALL_EMPIRES;
@@ -2215,7 +2215,7 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
         std::vector<std::string> sendable_techs = TransferrableTechs(empire1_id, empire2_id);
         if (sendable_techs.empty())
             return "";
-        std::size_t idx = RandSmallInt(0, static_cast<int>(sendable_techs.size()) - 1);
+        std::size_t idx = RandInt(0, static_cast<int>(sendable_techs.size()) - 1);
         return *std::next(sendable_techs.begin(), idx);
 
     } else if (variable_name == "HighestCostTransferrableTech") {
@@ -2714,7 +2714,7 @@ std::string Operation<std::string>::EvalImpl(const ScriptingContext& context) co
         // select one operand, evaluate it, return result
         if (m_operands.empty())
             return "";
-        unsigned int idx = RandSmallInt(0, m_operands.size() - 1);
+        unsigned int idx = RandInt(0, m_operands.size() - 1);
         auto& vr = *std::next(m_operands.begin(), idx);
         if (!vr)
             return "";
@@ -2859,7 +2859,7 @@ double Operation<double>::EvalImpl(const ScriptingContext& context) const
             // select one operand, evaluate it, return result
             if (m_operands.empty())
                 return 0.0;
-            unsigned int idx = RandSmallInt(0, m_operands.size() - 1);
+            unsigned int idx = RandInt(0, m_operands.size() - 1);
             auto& vr = *std::next(m_operands.begin(), idx);
             if (!vr)
                 return 0.0;
@@ -3010,7 +3010,7 @@ int Operation<int>::EvalImpl(const ScriptingContext& context) const
             // select one operand, evaluate it, return result
             if (m_operands.empty())
                 return 0;
-            unsigned int idx = RandSmallInt(0, m_operands.size() - 1);
+            unsigned int idx = RandInt(0, m_operands.size() - 1);
             auto& vr = *std::next(m_operands.begin(), idx);
             if (!vr)
                 return 0;

@@ -1886,7 +1886,7 @@ void CreateSystem::Execute(ScriptingContext& context) const {
         star_type = m_type->Eval(context);
     } else {
         int max_type_idx = int(NUM_STAR_TYPES) - 1;
-        int type_idx = RandSmallInt(0, max_type_idx);
+        int type_idx = RandInt(0, max_type_idx);
         star_type = StarType(type_idx);
     }
 
@@ -2884,7 +2884,7 @@ void SetDestination::Execute(ScriptingContext& context) const {
         return;
 
     // "randomly" pick a destination
-    int destination_idx = RandSmallInt(0, valid_locations.size() - 1);
+    int destination_idx = RandInt(0, valid_locations.size() - 1);
     auto destination = std::const_pointer_cast<UniverseObject>(
         *std::next(valid_locations.begin(), destination_idx));
     int destination_system_id = destination->SystemID();

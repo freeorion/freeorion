@@ -226,7 +226,7 @@ void IDAllocator::ObfuscateBeforeSerialization() {
     // Advance each client to its own random offset.
     ID_t assigning_empire_offset_modulus = 0;
     for (const auto assigning_empire : m_offset_to_empire_id) {
-        auto empire_random_offset =  SmallIntDist(0, max_random_offset)();
+        auto empire_random_offset = RandInt(0, max_random_offset);
         auto new_next_id = empire_random_offset + m_zero;
 
         // Increment until it is at the correct offset

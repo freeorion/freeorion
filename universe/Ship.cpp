@@ -788,7 +788,7 @@ std::string NewMonsterName() {
         monster_names.push_back(UserString("MONSTER"));
 
     // select name randomly from list
-    int monster_name_index = RandSmallInt(0, static_cast<int>(monster_names.size()) - 1);
+    int monster_name_index = RandInt(0, static_cast<int>(monster_names.size()) - 1);
     std::string result = monster_names[monster_name_index];
     if (monster_names_used[result]++) {
         result += " " + RomanNumber(monster_names_used[result]);

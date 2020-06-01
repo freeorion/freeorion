@@ -143,7 +143,7 @@ namespace {
         }
         if (!valid_names.empty()) {
             // pick a name from the list of empire names
-            int empire_name_idx = RandSmallInt(0, static_cast<int>(valid_names.size()) - 1);
+            int empire_name_idx = RandInt(0, static_cast<int>(valid_names.size()) - 1);
             return *std::next(valid_names.begin(), empire_name_idx);
         }
         // use a player_name as it unique among players

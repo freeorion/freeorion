@@ -305,7 +305,7 @@ void AIClientApp::HandleMessage(const Message& msg) {
 
             if (this_aggr > 0  && my_seed > 0) {
                 Seed(my_seed);
-                rand_num = RandSmallInt(0, 99);
+                rand_num = RandInt(0, 99);
                 // if it's in the top 25% then decrease aggression.
                 if (rand_num > 74) this_aggr--;
                 // Leaving the following as commented out code for now. Possibly for 0.4.4+?
