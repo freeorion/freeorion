@@ -1974,6 +1974,9 @@ Active une sauvegarde automatique lors d'un abandon ou de la fermeture du jeu. E
 OPTIONS_DB_AUTOSAVE_HOSTLESS
 Active la sauvegarde automatique en mode sans hôte.
 
+OPTIONS_DB_AUTOSAVE_HOSTLESS_EACH_PLAYER
+Active la sauvegarde automatique en mode sans hôte chaque fois qu'un joueur envoie ses ordres définitifs. Évite la perte des ordres transmis dans l'éventualité d'un crash de serveur.
+
 OPTIONS_DB_AUTOSAVE_INTERVAL
 Délai en secondes après le tour le plus récent ou dernière sauvegarde automatique, jusqu'à la prochaine sauvegarde automatique. Évite la perte des ordres du joueurs lors d'un crash de serveur. 0 si désactivé.
 
