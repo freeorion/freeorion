@@ -164,7 +164,7 @@ def _calculate_research_priority():
 
     if ((tech_is_complete("SHP_WEAPON_2_4") or
          tech_is_complete("SHP_WEAPON_4_1")) and
-            tech_is_complete(AIDependencies.PROD_AUTO_1)):
+            tech_is_complete(AIDependencies.PRO_AUTO_1)):
         # industry_factor = [ [0.25, 0.2], [0.3, 0.25], [0.3, 0.25] ][style_index ]
         # researchPriority = min(researchPriority, industry_factor[got_solar_gen]*industryPriority)
         research_priority *= 0.9
