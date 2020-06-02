@@ -1,10 +1,8 @@
 #ifndef _ValueRef_h_
 #define _ValueRef_h_
 
-
 #include "ScriptingContext.h"
 #include "../util/Export.h"
-
 
 namespace ValueRef {
 
@@ -22,6 +20,7 @@ struct FO_COMMON_API ValueRefBase {
     virtual bool ConstantExpr() const    { return false; }
 
     virtual std::string Description() const = 0;                    //! Returns a user-readable text description of this ValueRef
+    virtual std::string StringResult() const = 0;                   //! Returns a textual representation of the evaluation result of this ValueRef
     virtual std::string Dump(unsigned short ntabs = 0) const = 0;   //! Returns a textual representation that should be parseable to recreate this ValueRef
 
     virtual void SetTopLevelContent(const std::string& content_name) {}
@@ -58,6 +57,12 @@ struct FO_COMMON_API ValueRef : public ValueRefBase
       * to objects such as the source, effect target, or condition candidates
       * that exist in the tree. */
     virtual T Eval(const ScriptingContext& context) const = 0;
+
+    /** Evaluates the expression tree with an empty context and retuns the
+      * a string representation of the result value iff the result type is
+      * supported (currently std::string, int, float, double).
+      * See ValueRefs.cpp for specialisation implementations. */
+    std::string StringResult() const;
 };
 
 enum StatisticType : int {
@@ -83,5 +88,4 @@ enum StatisticType : int {
 
 }
 
-
-#endif
+#endif // _ValueRef_h_

@@ -29,6 +29,7 @@ struct UnlockableItem;
 class Policy;
 
 namespace ValueRef {
+    struct ValueRefBase;
     template <typename T>
     struct ValueRef;
 }
@@ -36,6 +37,7 @@ namespace ValueRef {
 namespace parse {
     FO_PARSE_API std::map<std::string, std::unique_ptr<BuildingType>> buildings(const boost::filesystem::path& path);
     FO_PARSE_API std::map<std::string, std::unique_ptr<FieldType>> fields(const boost::filesystem::path& path);
+    FO_PARSE_API std::map<std::string, std::unique_ptr<ValueRef::ValueRefBase>> named_value_refs(const boost::filesystem::path& path);
     FO_PARSE_API std::map<std::string, std::unique_ptr<Special>> specials(const boost::filesystem::path& path);
 
     FO_PARSE_API std::map<std::string, std::unique_ptr<Policy>> policies(const boost::filesystem::path& path);

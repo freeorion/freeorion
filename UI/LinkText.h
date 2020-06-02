@@ -51,6 +51,12 @@ public:
     std::string DecorateRollover(const std::string& path_type, const std::string& content) const override;
 };
 
+class ValueRefDecorator : public LinkDecorator {
+public:
+    std::string Decorate(const std::string& value_ref_name, const std::string& content) const override;
+    std::string DecorateRollover(const std::string& value_ref_name, const std::string& content) const override;
+};
+
 class TextLinker {
 public:
     TextLinker();

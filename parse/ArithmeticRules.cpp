@@ -5,6 +5,17 @@
 
 #include <boost/spirit/include/phoenix.hpp>
 
+namespace parse {
+
+  void errorlog_hello(const std::string& name) // TODO remove this
+    {
+       ErrorLogger() << "trying constructing a NamedRef for : " << name << " !";
+    }
+
+      BOOST_PHOENIX_ADAPT_FUNCTION(void, errorlog_hello_, errorlog_hello, 1)
+}
+
+
 namespace parse { namespace detail {
 
     template <typename T>
@@ -23,6 +34,7 @@ namespace parse { namespace detail {
 
         boost::spirit::qi::_1_type _1;
         boost::spirit::qi::_2_type _2;
+        boost::spirit::qi::_4_type _4;
         boost::spirit::qi::_a_type _a;
         boost::spirit::qi::_b_type _b;
         boost::spirit::qi::_c_type _c;
@@ -33,6 +45,17 @@ namespace parse { namespace detail {
         const boost::phoenix::function<construct_movable> construct_movable_;
         const boost::phoenix::function<deconstruct_movable> deconstruct_movable_;
         const boost::phoenix::function<deconstruct_movable_vector> deconstruct_movable_vector_;
+
+        named_lookup_expr
+          =   (
+                   tok.Named_ >> tok.Value_ >> tok.Lookup_
+                >> label(tok.Name_)
+                >> tok.string
+              ) [
+                     ::parse::errorlog_hello_(_2),
+                     _val = construct_movable_(new_<ValueRef::NamedRef<T>>(_4))
+              ]
+            ;
 
         functional_expr
             =   (
@@ -195,6 +218,7 @@ namespace parse { namespace detail {
             ;
 
     #if DEBUG_VALUEREF_PARSERS
+	debug(named_lookup_expr);
         debug(functional_expr);
         debug(exponential_expr);
         debug(multiplicative_expr);
@@ -207,6 +231,7 @@ namespace parse { namespace detail {
         debug(expr);
     #endif
 
+        named_lookup_expr.name(type_name + " nominal lookup expression");
         functional_expr.name(type_name + " function expression");
         exponential_expr.name(type_name + " exponential expression");
         multiplicative_expr.name(type_name + " multiplication expression");

@@ -11,6 +11,7 @@
 #include <boost/range/adaptor/map.hpp>
 #include <boost/range/numeric.hpp>
 #include "Building.h"
+#include "Enums.h"
 #include "Field.h"
 #include "Fighter.h"
 #include "Fleet.h"
@@ -47,10 +48,10 @@ namespace {
         ValueRef::ReferenceType ref_type,
         const ScriptingContext& context)
     {
-        //DebugLogger() << "FollowReference: source: " << (context.source ? context.source->Name() : "0")
-        //              << " target: " << (context.effect_target ? context.effect_target->Name() : "0")
-        //              << " local c: " << (context.condition_local_candidate ? context.condition_local_candidate->Name() : "0")
-        //              << " root c: " << (context.condition_root_candidate ? context.condition_root_candidate->Name() : "0");
+        DebugLogger() << "FollowReference: source: " << (context.source ? context.source->Name() : "0")
+                      << " target: " << (context.effect_target ? context.effect_target->Name() : "0")
+                      << " local c: " << (context.condition_local_candidate ? context.condition_local_candidate->Name() : "0")
+                      << " root c: " << (context.condition_root_candidate ? context.condition_root_candidate->Name() : "0");
 
         std::shared_ptr<const UniverseObject> obj;
         switch (ref_type) {
@@ -248,7 +249,47 @@ namespace {
     const std::string EMPTY_STRING;
 }
 
+// helper: support enums in ValueRef<T>::StringResult() via ADL
+// c++11 direct use of std::enable_if would confuse the signature of StringResult
+// c++17 could use: if constexpr (std::is_enum<T>::value
+template <typename T>
+typename std::enable_if<std::is_enum<T>::value, std::string>::type to_string(T val) {
+    return std::to_string(static_cast<typename std::underlying_type<T>::type>(val));
+}
+
 namespace ValueRef {
+    
+// enums and arithmetics
+template <typename T>
+std::string ValueRef<T>::StringResult() const {
+    using std::to_string;
+    return to_string(Eval()); // uses ::to_string or std::to_string per ADL (argument dependent lookup)
+}
+
+template <>
+std::string ValueRef<std::string>::StringResult() const {
+    return Eval();
+}
+
+template <>
+std::string ValueRef<std::vector<std::string>>::StringResult() const {
+    std::string s;
+    for (const auto &piece : Eval()) s += piece;
+    return s;
+}
+
+// instantiations of StringResult implementation
+template std::string ValueRef<int>::StringResult() const;
+template std::string ValueRef<float>::StringResult() const;
+template std::string ValueRef<double>::StringResult() const;
+template std::string ValueRef<PlanetEnvironment>::StringResult() const;
+template std::string ValueRef<PlanetSize>::StringResult() const;
+template std::string ValueRef<PlanetType>::StringResult() const;
+template std::string ValueRef<StarType>::StringResult() const;
+template std::string ValueRef<UniverseObjectType>::StringResult() const;
+template std::string ValueRef<Visibility>::StringResult() const;
+
+
 MeterType NameToMeter(const std::string& name) {
     MeterType retval = MeterType::INVALID_METER_TYPE;
     auto it = GetMeterNameMap().find(name);
@@ -3033,4 +3074,4 @@ int Operation<int>::EvalImpl(const ScriptingContext& context) const
     throw std::runtime_error("double ValueRef evaluated with an unknown or invalid OpType.");
     return 0;
 }
-}
+} // namespace ValueRef

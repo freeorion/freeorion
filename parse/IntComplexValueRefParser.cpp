@@ -27,7 +27,6 @@ namespace parse {
         namespace phoenix = boost::phoenix;
         namespace qi = boost::spirit::qi;
 
-        using phoenix::construct;
         using phoenix::new_;
 
         qi::_1_type _1;

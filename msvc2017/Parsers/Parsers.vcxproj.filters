@@ -68,6 +68,9 @@
     <ClCompile Include="..\..\parse\PlanetTypeValueRefParser.cpp">
       <Filter>Source Files\parse</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\parse\NamedValueRefParser.cpp">
+      <Filter>Source Files\parse</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\parse\ReportParseError.cpp">
       <Filter>Source Files\parse</Filter>
     </ClCompile>

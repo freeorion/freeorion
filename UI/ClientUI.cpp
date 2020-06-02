@@ -75,6 +75,8 @@ int         ClientUI::TitlePts()                { return GetOptionsDB().Get<int>
 GG::Clr     ClientUI::TextColor()               { return GetOptionsDB().Get<GG::Clr>("ui.font.color"); }
 GG::Clr     ClientUI::DefaultLinkColor()        { return GetOptionsDB().Get<GG::Clr>("ui.font.link.color"); }
 GG::Clr     ClientUI::RolloverLinkColor()       { return GetOptionsDB().Get<GG::Clr>("ui.font.link.rollover.color"); }
+GG::Clr     ClientUI::DefaultTooltipColor()        { return GetOptionsDB().Get<GG::Clr>("ui.font.tooltip.color"); }
+GG::Clr     ClientUI::RolloverTooltipColor()       { return GetOptionsDB().Get<GG::Clr>("ui.font.tooltip.rollover.color"); }
 
 
 GG::Clr     ClientUI::WndColor()                { return GetOptionsDB().Get<GG::Clr>("ui.window.background.color"); }
@@ -546,6 +548,8 @@ namespace {
         db.Add("ui.font.color",                                         UserStringNop("OPTIONS_DB_UI_TEXT_COLOR"),                  GG::Clr(255, 255, 255, 255),    Validator<GG::Clr>());
         db.Add("ui.font.link.color",                                    UserStringNop("OPTIONS_DB_UI_DEFAULT_LINK_COLOR"),          GG::Clr(80, 255, 128, 255),     Validator<GG::Clr>());
         db.Add("ui.font.link.rollover.color",                           UserStringNop("OPTIONS_DB_UI_ROLLOVER_LINK_COLOR"),         GG::Clr(192, 80, 255, 255),     Validator<GG::Clr>());
+        db.Add("ui.font.tooltip.color",                                 UserStringNop("OPTIONS_DB_UI_DEFAULT_TOOLTIP_COLOR"),       GG::Clr(180, 220, 200, 255),     Validator<GG::Clr>());
+        db.Add("ui.font.tooltip.rollover.color",                        UserStringNop("OPTIONS_DB_UI_ROLLOVER_TOOLTIP_COLOR"),      GG::Clr(200, 100, 255, 255),     Validator<GG::Clr>());
 
         db.Add("ui.research.status.completed.background.color",         UserStringNop("OPTIONS_DB_UI_KNOWN_TECH"),                  GG::Clr(72, 72, 72, 255),       Validator<GG::Clr>());
         db.Add("ui.research.status.completed.border.color",             UserStringNop("OPTIONS_DB_UI_KNOWN_TECH_BORDER"),           GG::Clr(164, 164, 164, 255),    Validator<GG::Clr>());

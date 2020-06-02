@@ -103,7 +103,7 @@ EffectsGroup
                 tag = "planet" data = Target.ID
             ]
             empire = Source.Owner
-
+    
 // Tell all the others that you have better detection tech (the information is public anyway)
 EffectsGroup
     scope = And [

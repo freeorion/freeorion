@@ -3,6 +3,7 @@
 #include "Parse.h"
 #include "MovableEnvelope.h"
 #include "../universe/ValueRef.h"
+#include "../universe/ValueRefs.h"
 
 #include <boost/spirit/include/phoenix.hpp>
 
@@ -90,6 +91,8 @@ parse::double_parser_rules::double_parser_rules(
     using phoenix::static_cast_;
 
     qi::_1_type _1;
+    qi::_2_type _2;
+    qi::_3_type _3;
     qi::_val_type _val;
     qi::_pass_type _pass;
     const boost::phoenix::function<detail::construct_movable> construct_movable_;
@@ -117,6 +120,22 @@ parse::double_parser_rules::double_parser_rules(
         =   int_complex_grammar [ _val = construct_movable_(new_<ValueRef::StaticCast<int, double>>(deconstruct_movable_(_1, _pass))) ]
         ;
 
+    named_real_valueref
+        = (     tok.Named_ >> tok.Real_
+            >>  label(tok.Name_) > tok.string
+             >  label(tok.Value_) > primary_expr
+          ) [
+             // Register the value ref under the given name by lazy invoking RegisterValueRef
+             parse::detail::open_and_register_as_string_(_2, _3, _pass),
+             _val = construct_movable_(new_<ValueRef::NamedRef<double>>(_2))
+          ] | (
+                tok.Named_ >> tok.Real_ >> tok.Lookup_
+            >>  label(tok.Name_) > tok.string
+          ) [
+             _val = construct_movable_(new_<ValueRef::NamedRef<double>>(_2))
+          ]
+        ;
+
     statistic_value_ref_expr
         = primary_expr.alias();
 
@@ -124,18 +143,21 @@ parse::double_parser_rules::double_parser_rules(
         =   ('(' > expr > ')')
         |    simple
         |    statistic_expr
+        |    named_lookup_expr
         |    int_statistic_cast
         |    double_complex_grammar
         |    int_constant_cast
         |    int_free_variable_cast
         |    int_bound_variable_cast
         |    int_complex_variable_cast
+        |    named_real_valueref
         ;
 
     int_free_variable_cast.name("integer free variable");
     int_bound_variable_cast.name("integer bound variable");
     int_statistic_cast.name("integer statistic");
     int_complex_variable_cast.name("integer complex variable");
+    named_real_valueref.name("named real valueref");
 
 #if DEBUG_VALUEREF_PARSERS
     debug(int_constant_cast);
@@ -144,6 +166,7 @@ parse::double_parser_rules::double_parser_rules(
     debug(int_statistic_cast);
     debug(int_complex_variable_cast);
     debug(double_complex_variable);
+    debug(named_real_valueref);
 #endif
 }
 
