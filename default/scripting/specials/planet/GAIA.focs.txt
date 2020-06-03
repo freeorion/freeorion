@@ -25,11 +25,7 @@ Special
                 Not Planet environment = Good
                 Population low = 0.01
                 OwnedBy affiliation = AnyEmpire
-                Not And [
-                    Species name = "SP_EXOBOT"
-                    Planet environment = adequate
-                ]
-                Not Species name = "SP_SLY"
+                Not Planet type = Source.NextBetterPlanetType
                 Random probability = 0.5
             ]
             effects = [
