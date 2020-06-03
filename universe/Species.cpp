@@ -268,16 +268,19 @@ PlanetType Species::NextBetterPlanetType(PlanetType initial_planet_type) const {
     if (m_planet_environments.empty())
         return initial_planet_type;
 
-    // determine which environment rating is the best available for this species
+    // determine which environment rating is the best available for this species,
+    // excluding gas giants and asteroids
     PlanetEnvironment best_environment = PE_UNINHABITABLE;
     //std::set<PlanetType> best_types;
     for (const auto& entry : m_planet_environments) {
-        if (entry.second == best_environment) {
-            //best_types.insert(entry.first);
-        } else if (entry.second > best_environment) {
-            best_environment = entry.second;
-            //best_types.clear();
-            //best_types.insert(entry.first);
+        if (entry.first < PT_ASTEROIDS) {
+            if (entry.second == best_environment) {
+                //best_types.insert(entry.first);
+            } else if (entry.second > best_environment) {
+                best_environment = entry.second;
+                //best_types.clear();
+                //best_types.insert(entry.first);
+            }
         }
     }
 
