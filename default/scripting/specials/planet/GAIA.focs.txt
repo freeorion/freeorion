@@ -29,6 +29,7 @@ Special
                     Species name = "SP_EXOBOT"
                     Planet environment = adequate
                 ]
+                Not Species name = "SP_SLY"
                 Random probability = 0.5
             ]
             effects = [
