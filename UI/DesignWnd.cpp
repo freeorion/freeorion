@@ -1896,6 +1896,8 @@ void DesignWnd::PartPalette::CompleteConstruction() {
 
     CUIWnd::CompleteConstruction();
 
+    SetMinSize(GG::Pt(PART_CONTROL_WIDTH + 70 ,PART_CONTROL_HEIGHT + 70));
+
     DoLayout();
     SaveDefaultedOptions();
 }
@@ -3448,6 +3450,8 @@ void DesignWnd::BaseSelector::CompleteConstruction() {
 
     CUIWnd::CompleteConstruction();
 
+    SetMinSize(GG::Pt(PART_CONTROL_WIDTH + 70 ,PART_CONTROL_HEIGHT + 70));
+
     DoLayout();
     SaveDefaultedOptions();
 }
@@ -4115,6 +4119,7 @@ void DesignWnd::MainPanel::CompleteConstruction() {
     DesignChanged(); // Initialize components that rely on the current state of the design.
 
     CUIWnd::CompleteConstruction();
+    SetMinSize(GG::Pt(PART_CONTROL_WIDTH + 70 ,PART_CONTROL_HEIGHT + 70));
 
     DoLayout();
     SaveDefaultedOptions();

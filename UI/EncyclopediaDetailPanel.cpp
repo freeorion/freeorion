@@ -79,6 +79,9 @@ namespace {
     const std::string TAG_EXTINCT = "CTRL_EXTINCT";
     /** @content_tag{PEDIA_} Defines an encyclopedia category for the generated article of the containing content definition.  The category name should be postfixed to this tag. **/
     const std::string TAG_PEDIA_PREFIX = "PEDIA_";
+
+    const GG::X         CONTROL_WIDTH(54);
+    const GG::Y         CONTROL_HEIGHT(54);
 }
 
 namespace {
@@ -673,6 +676,9 @@ void EncyclopediaDetailPanel::CompleteConstruction() {
 
     SetChildClippingMode(ClipToWindow);
     DoLayout();
+
+    SetMinSize(GG::Pt(CONTROL_WIDTH + 70, CONTROL_HEIGHT + 70));
+
     MoveChildUp(m_graph);
     SaveDefaultedOptions();
 
