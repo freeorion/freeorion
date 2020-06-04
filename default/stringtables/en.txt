@@ -7020,6 +7020,12 @@ On %planet%: The colony has reached sufficient size and [[metertype METER_HAPPIN
 SITREP_POP_THRESHOLD_LABEL
 Colonizing Threshold
 
+SITREP_NOVA_DETECTED
+Astronomers have observed a new supernova, destroying everything in that region of %system%!
+
+SITREP_NOVA_DETECTED_LABEL
+Supernova detected
+
 EFFECT_EXPERIMENT_MONSTERS_LAUNCH
 WARNING: Sightings of %rawtext% %predefinedshipdesign% are reported around the %species% Outpost at %system%!
 
