@@ -2686,8 +2686,10 @@ namespace {
             detailed_description += "\n";
         }
 
-        detailed_description += UserString("ENC_SUITABILITY_REPORT_WHEEL_INTRO")
-                                + "<img src=\"encyclopedia/EP_wheel.png\"></img>";
+        if (planet->Size() < SZ_ASTEROIDS) {
+            detailed_description += UserString("ENC_SUITABILITY_REPORT_WHEEL_INTRO")
+                                    + "<img src=\"encyclopedia/EP_wheel.png\"></img>";
+        }
     }
 
     void RefreshDetailPanelSearchResultsTag(const std::string& item_type, const std::string& item_name,
