@@ -51,7 +51,7 @@ XENOPHOBIC_SELF
                 PopulationCenter
                 HasTag name = "SELF_SUSTAINING"
             ]
-            stackinggroup = "XENOPHOBIC_POP_SELF"
+            stackinggroup = "XENOPHOBIC_LABEL_SELF"
             accountinglabel = "XENOPHOBIC_LABEL_SELF"
             priority = [[TARGET_POPULATION_LAST_BEFORE_OVERRIDE_PRIORITY]]
             effects = SetTargetPopulation value = Value - min(
