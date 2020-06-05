@@ -1,0 +1,29 @@
+includes:
+  - /scripting/common/upkeep.yml
+  - /scripting/ship_parts/targeting.yml
+  - shortrange.yml
+ship_parts:
+  - name: SR_WEAPON_0_1
+    description: SR_WEAPON_0_1_DESC
+    class: ShortRange
+    damage: 1
+    shots: 3
+    no_default_capacity_effect: True
+    combat_targets: !pp |
+      And [
+        [[COMBAT_TARGETS_VISIBLE_ENEMY]]
+        Fighter
+      ]
+    slot_types: [External]
+    buildcost: !pp |
+      20 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildtime: 1
+    tags: [PEDIA_PC_DIRECT_WEAPON]
+    location: OwnedBy empire = Source.Owner
+    effectsgroups:
+      - scope: Source
+        activation: !pp '[[WEAPON_BASE_DEFAULT_ACTIVATION(SR_WEAPON_0_1)]]'
+        stackinggroup: WEAPON_BASE_DEFAULT_EFFECTS_SR_WEAPON_0_1
+        accountinglabel: SR_WEAPON_0_1
+        effects: !pp '[[WEAPON_BASE_DEFAULT_EFFECTS(SR_WEAPON_0_1)]]'
+    icon: icons/ship_parts/flak.png

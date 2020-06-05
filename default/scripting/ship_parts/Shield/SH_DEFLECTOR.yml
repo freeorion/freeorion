@@ -1,0 +1,20 @@
+includes:
+  - /scripting/common/upkeep.yml
+ship_parts:
+  - name: SH_DEFLECTOR
+    description: SH_DEFLECTOR_DESC
+    exclusions:
+      - SH_BLACK
+      - SH_DEFENSE_GRID
+      - SH_DEFLECTOR
+      - SH_MULTISPEC
+      - SH_PLASMA
+    class: Shield
+    capacity: 5
+    slot_types: [Internal]
+    buildcost: !pp |
+      35 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildtime: 4
+    tags: [PEDIA_PC_SHIELD]
+    location: OwnedBy empire = Source.Owner
+    icon: icons/ship_parts/deflector_shield.png

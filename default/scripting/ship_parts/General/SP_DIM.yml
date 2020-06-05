@@ -1,0 +1,41 @@
+ship_parts:
+  - name: SP_DIM
+    description: SP_DIM
+    class: General
+    slot_types: [Internal]
+    buildcost: 1
+    buildtime: 1
+    tags: [PEDIA_PC_GENERAL]
+    location: All
+    effectsgroups:
+      - scope: |
+          NumberOf number = 1 condition = And [
+            Planet
+            InSystem id = Source.SystemID
+          ]
+        activation: |
+          And [
+            Random probability = 0.15
+            InSystem
+          ]
+        effects: AddSpecial name = "DIM_RIFT_MASTER_SPECIAL"
+      - scope: Source
+        activation: Number low = 1 condition = OwnerHasTech name = "SPY_STEALTH_4"
+        effects: |
+          [
+            CreateShip designname = "SM_VOID" empire = Source.Owner
+            Destroy
+          ]
+      - scope: HasSpecial name = "VOLCANIC_ASH_MASTER_SPECIAL"
+        effects: |
+          [
+            RemoveSpecial name = "VOLCANIC_ASH_MASTER_SPECIAL"
+            AddSpecial name = "DIM_RIFT_MASTER_SPECIAL"
+          ]
+      - scope: HasSpecial name = "CLOUD_COVER_MASTER_SPECIAL"
+        effects: |
+          [
+            RemoveSpecial name = "CLOUD_COVER_MASTER_SPECIAL"
+            AddSpecial name = "DIM_RIFT_MASTER_SPECIAL"
+          ]
+    icon: ''

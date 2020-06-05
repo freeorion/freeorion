@@ -1,0 +1,19 @@
+macros:
+  COLONY_UPKEEP_MULTIPLICATOR: |
+    (1 + 0.06 * SpeciesColoniesOwned empire = Source.Owner)
+  FLEET_UPKEEP_MULTIPLICATOR: |
+    (1 +
+        (1 - (GameRule name = "RULE_SHIP_PART_BASED_UPKEEP")) * (
+            (0.01 * ShipDesignsOwned empire = Source.Owner) +
+            (0.01 * ShipDesignsInProduction empire = Source.Owner)) +
+        (GameRule name = "RULE_SHIP_PART_BASED_UPKEEP") * (
+          (0.002 * ShipPartsOwned empire = Source.Owner class = ShortRange) +
+          (0.002 * ShipPartsOwned empire = Source.Owner class = FighterHangar) +
+          (0.002 * ShipPartsOwned empire = Source.Owner class = Armour) +
+          (0.002 * ShipPartsOwned empire = Source.Owner class = Troops) +
+          (0.002 * ShipDesignsOwned empire = Source.Owner) +
+          (0.01 * ShipDesignsInProduction empire = Source.Owner)))
+  SHIP_HULL_COST_MULTIPLIER: |
+    (GameRule name = "RULE_SHIP_HULL_COST_FACTOR")
+  SHIP_PART_COST_MULTIPLIER: |
+    (GameRule name = "RULE_SHIP_PART_COST_FACTOR")

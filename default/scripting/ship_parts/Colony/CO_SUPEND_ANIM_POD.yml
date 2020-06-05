@@ -1,0 +1,22 @@
+includes:
+  - /scripting/common/upkeep.yml
+  - /scripting/common/misc.yml
+ship_parts:
+  - name: CO_SUSPEND_ANIM_POD
+    description: CO_SUSPEND_ANIM_POD_DESC
+    class: Colony
+    capacity: !pp '[[MIN_RECOLONIZING_SIZE]]'
+    slot_types: [Internal]
+    buildcost: !pp |
+      120 * [[COLONY_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]] * [[COLONIZATION_POLICY_MULTIPLIER]]
+    buildtime: 10
+    tags: [PEDIA_PC_COLONY]
+    location: !pp |
+      And [
+        OwnedBy empire = Source.Owner
+        Population low = [[MIN_RECOLONIZING_SIZE]] high = 999
+      ]
+    # Population consumption is commented out until the discrepancy between
+    # outpost population consumption and this consumption is regularized.
+    #consumption: Population consumption = 3 condition = Source
+    icon: icons/ship_parts/cryonic_colony_pod.png

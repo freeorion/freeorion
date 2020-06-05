@@ -1,0 +1,22 @@
+includes:
+  - /scripting/common/upkeep.yml
+ship_parts:
+  - name: GT_TROOP_POD
+    description: GT_TROOP_POD_DESC
+    class: Troops
+    capacity: 2
+    slot_types: [External, Internal]
+    buildcost: !pp |
+      3 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]] * [[MARINE_RECRUITMENT_POLICY_MULTIPLIER]]
+    buildtime: 1
+    tags: [COMFORTABLE, PEDIA_PC_TROOPS]
+    location: |
+      And [
+        OwnedBy empire = Source.Owner
+        /// @content_tag{NO_ATTACKTROOPS} Prevents production of ships with this part in their design at locations with this tag
+        Not HasTag name = "NO_ATTACKTROOPS"
+        Troops low = 2
+      ]
+    #consumption: |
+    #  Troops consumption = 1 condition = Source
+    icon: icons/ship_parts/troops.png

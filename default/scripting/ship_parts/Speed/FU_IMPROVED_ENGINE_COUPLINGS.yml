@@ -1,0 +1,20 @@
+includes:
+  - /scripting/common/upkeep.yml
+ship_parts:
+  - name: FU_IMPROVED_ENGINE_COUPLINGS
+    description: FU_IMPROVED_ENGINE_COUPLINGS_DESC
+    exclusions:
+      - FU_IMPROVED_ENGINE_COUPLINGS
+      - FU_N_DIMENSIONAL_ENGINE_MATRIX
+      - FU_SINGULARITY_ENGINE_CORE
+      - FU_TRANSPATIAL_DRIVE
+      - SH_COLONY_BASE
+    class: Speed
+    capacity: 20
+    slot_types: [Internal]
+    buildcost: !pp |
+      15 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildtime: 3
+    tags: [PEDIA_PC_SPEED]
+    location: OwnedBy empire = Source.Owner
+    icon: icons/ship_parts/engine-1.png

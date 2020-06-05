@@ -1,0 +1,14 @@
+macros:
+  # If unowned or owner has not unlocked the ship part yet.
+  # @1@ Weapon name
+  WEAPON_BASE_DEFAULT_ACTIVATION: |
+    [
+      Unowned
+      Not OwnerHasShipPartAvailable name = "@1@"
+    ]
+  # @1@ Weapon name
+  WEAPON_BASE_DEFAULT_EFFECTS: |
+    [
+      SetMaxCapacity partname = "@1@" value = Value + PartCapacity name = "@1@"
+      SetMaxSecondaryStat partname = "@1@" value = Value + PartSecondaryStat name = "@1@"
+    ]

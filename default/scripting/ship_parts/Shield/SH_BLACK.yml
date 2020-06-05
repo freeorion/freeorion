@@ -1,0 +1,20 @@
+includes:
+  - /scripting/common/upkeep.yml
+ship_parts:
+  - name: SH_BLACK
+    description: SH_BLACK_DESC
+    exclusions:
+      - SH_BLACK
+      - SH_DEFENSE_GRID
+      - SH_DEFLECTOR
+      - SH_MULTISPEC
+      - SH_PLASMA
+    class: Shield
+    capacity: 15
+    slot_types: [Internal]
+    buildcost: !pp |
+      120 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildtime: 6
+    tags: [PEDIA_PC_SHIELD]
+    location: OwnedBy empire = Source.Owner
+    icon: icons/ship_parts/blackshield.png

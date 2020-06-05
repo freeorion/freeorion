@@ -1,0 +1,48 @@
+includes:
+  - /scripting/common/upkeep.yml
+ship_parts:
+  - name: SP_KRILL_SPAWNER
+    description: SP_KRILL_SPAWNER_DESC
+    class: General
+    slot_types: [Internal]
+    buildcost: !pp |
+      100 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildtime: 9
+    tags: [PEDIA_PC_GENERAL]
+    location: All
+    effectsgroups:
+      - scope: |
+          And [
+            Planet
+            Planet type = Asteroids
+            InSystem id = Source.SystemID
+            Unowned
+          ]
+        activation: |
+          And [
+            InSystem
+            Not ContainedBy And [
+              Object id = Source.SystemID
+              System
+              Contains And [
+                Ship
+                InSystem id = Source.SystemID
+                Or [
+                  DesignHasHull name = "SH_KRILL_1_BODY"
+                  DesignHasHull name = "SH_KRILL_2_BODY"
+                  DesignHasHull name = "SH_KRILL_3_BODY"
+                  DesignHasHull name = "SH_KRILL_4_BODY"
+                ]
+              ]
+            ]
+          ]
+        stackinggroup: SP_KRILL_SPAWN_STACK
+        effects: CreateShip designname = "SM_KRILL_1"
+      - scope: Source
+        activation: |
+          And [
+            Not DesignHasPartClass Low=1 High=999 Class=Stealth
+            Not Armed
+          ]
+        effects: SetStealth value = Value + 40
+    icon: ''

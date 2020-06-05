@@ -1,0 +1,22 @@
+includes:
+  - /scripting/common/upkeep.yml
+ship_parts:
+  - name: FU_RAMSCOOP
+    description: FU_RAMSCOOP_DESC
+    exclusions: SH_COLONY_BASE
+    class: Fuel
+    capacity: 0
+    no_default_capacity_effect: True
+    slot_types: [External]
+    buildcost: !pp |
+      10 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildtime: 6
+    tags: [PEDIA_PC_FUEL]
+    location: OwnedBy empire = Source.Owner
+    effectsgroups:
+      - scope: Source
+        activation: Stationary
+        stackinggroup: RAMSCOOP_STACK
+        # Update ship_hulls.macros if this number changes
+        effects: SetFuel value = Value + 0.1
+    icon: icons/ship_parts/antimatter_tank.png

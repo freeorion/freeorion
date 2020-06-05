@@ -1,0 +1,17 @@
+includes:
+  - /scripting/common/upkeep.yml
+ship_parts:
+  - name: SP_DISTORTION_MODULATOR
+    description: SP_DISTORTION_MODULATOR_DESC
+    class: General
+    slot_types: [Internal]
+    buildcost: !pp |
+      15 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildtime: 10
+    tags: [PEDIA_PC_GENERAL]
+    location: OwnedBy empire = Source.Owner
+    effectsgroups:
+      - scope: WithinDistance distance = 0 condition = Source
+        stackinggroup: "SP_DISTORTION_MODULATOR_STACK"
+        effects: SetStealth value = Value - 20
+    icon: icons/ship_parts/distortion_modulator.png
