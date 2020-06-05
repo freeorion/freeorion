@@ -234,6 +234,11 @@ namespace YAML {
     struct convert<std::unique_ptr<ValueRef::ValueRef<double>>> {
         static bool decode(const Node& node, std::unique_ptr<ValueRef::ValueRef<double>>& rhs);
     };
+
+    template <>
+    struct convert<std::unique_ptr<ValueRef::ValueRef<int>>> {
+        static bool decode(const Node& node, std::unique_ptr<ValueRef::ValueRef<int>>& rhs);
+    };
 }
 
 #endif

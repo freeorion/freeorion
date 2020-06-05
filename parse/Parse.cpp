@@ -617,4 +617,50 @@ bool convert<std::unique_ptr<ValueRef::ValueRef<double>>>::decode(const Node& no
 
     return passed;
 }
+
+bool convert<std::unique_ptr<ValueRef::ValueRef<int>>>::decode(const Node& node, std::unique_ptr<ValueRef::ValueRef<int>>& rhs) {
+    if (!node.IsScalar())
+        return false;
+
+    bool success{false};
+    bool passed{true};
+
+    try {
+        parse::detail::MovableEnvelope<ValueRef::ValueRef<int>> value;
+        const parse::lexer lexer;
+        parse::detail::Labeller label;
+        parse::conditions_parser_grammar condition(lexer, label);
+        parse::string_parser_grammar string(lexer, label, condition);
+        parse::castable_as_int_parser_rules valueref_int(lexer, label, condition, string);
+        boost::spirit::qi::in_state_type in_state;
+        parse::text_iterator begin = node.Scalar().begin();
+        parse::text_iterator end = node.Scalar().end();
+        parse::token_iterator it = lexer.begin(begin, end);
+
+        success = boost::spirit::qi::phrase_parse(
+            it, lexer.end(),
+            valueref_int.flexible_int, in_state("WS")[lexer.self],
+            value);
+
+        rhs = value.OpenEnvelope(passed);
+    }
+    catch(...) {
+        ErrorLogger() << "YAML::convert<ValueRef<int>>: failed to parse value attribute";
+        return false;
+    }
+
+    if (!success) {
+        ErrorLogger() << "YAML::convert<ValueRef<int>>: failed to parse value attribute";
+        return false;
+    }
+
+    return passed;
+}
+
+bool convert<std::unique_ptr<Effect::Effect>>::decode(const Node& node, std::unique_ptr<Effect::Effect>& rhs) {
+    if (!node.IsMap())
+        return false;
+
+    return true;
+}
 }
