@@ -30,18 +30,17 @@ namespace {
 ///////////////////////////////////////////////////////////
 // Policy                                                //
 ///////////////////////////////////////////////////////////
-Policy::Policy(const std::string& name, const std::string& description,
-               const std::string& short_description, const std::string& category,
+Policy::Policy(std::string name, std::string description,
+               std::string short_description, std::string category,
                std::unique_ptr<ValueRef::ValueRef<double>>&& adoption_cost,
                std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
-               const std::string& graphic) :
-    m_name(name),
-    m_description(description),
-    m_short_description(short_description),
-    m_category(category),
+               std::string graphic) :
+    m_name(std::move(name)),
+    m_description(std::move(description)),
+    m_short_description(std::move(short_description)),
+    m_category(std::move(category)),
     m_adoption_cost(std::move(adoption_cost)),
-    m_effects(),
-    m_graphic(graphic)
+    m_graphic(std::move(graphic))
 {
     for (auto&& effect : effects)
         m_effects.emplace_back(std::move(effect));
@@ -49,15 +48,12 @@ Policy::Policy(const std::string& name, const std::string& description,
     Init();
 }
 
-Policy::~Policy()
-{}
-
 void Policy::Init() {
     if (m_adoption_cost)
         m_adoption_cost->SetTopLevelContent(m_name);
 
     for (auto& effect : m_effects)
-    { effect->SetTopLevelContent(m_name); }
+        effect->SetTopLevelContent(m_name);
 }
 
 std::string Policy::Dump(unsigned short ntabs) const {
@@ -143,7 +139,7 @@ std::vector<std::string> PolicyManager::PolicyNames(const std::string& name) con
     std::vector<std::string> retval;
     for (const auto& policy : m_policies)
         if (policy.second->Category() == name)
-            retval.push_back(policy.first);
+            retval.emplace_back(policy.first);
     return retval;
 }
 
@@ -151,7 +147,7 @@ std::set<std::string> PolicyManager::PolicyCategories() const {
     CheckPendingPolicies();
     std::set<std::string> retval;
     for (const auto& policy : m_policies)
-        retval.insert(policy.second->Category());
+        retval.emplace(policy.second->Category());
     return retval;
 }
 

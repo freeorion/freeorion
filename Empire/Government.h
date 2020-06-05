@@ -19,12 +19,11 @@ namespace Effect {
 
 class FO_COMMON_API Policy {
 public:
-    Policy(const std::string& name, const std::string& description,
-           const std::string& short_description, const std::string& category,
+    Policy(std::string name, std::string description,
+           std::string short_description, std::string category,
            std::unique_ptr<ValueRef::ValueRef<double>>&& adoption_cost,
            std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
-           const std::string& graphic);
-    ~Policy();
+           std::string graphic);
 
     /** \name Accessors */ //@{
     const std::string&  Name() const                { return m_name; }
