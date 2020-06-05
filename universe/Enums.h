@@ -210,7 +210,7 @@ GG_ENUM(BuildType,
     INVALID_BUILD_TYPE = -1,
     BT_NOT_BUILDING,        ///< no building is taking place
     BT_BUILDING,            ///< a Building object is being produced
-    BT_SHIP,                ///< a Ship object is being produce
+    BT_SHIP,                ///< a Ship object is being produced
     BT_PROJECT,             ///< a project may generate effects while on the queue, may or may not ever complete, and does not result in a ship or building being produced
     BT_STOCKPILE,
     NUM_BUILD_TYPES
