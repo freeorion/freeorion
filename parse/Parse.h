@@ -81,6 +81,7 @@ namespace parse {
     FO_PARSE_API void process_include_substitutions(std::string& text,
                                                     const boost::filesystem::path& file_search_path,
                                                     std::set<boost::filesystem::path>& files_included);
+    void macro_substitution(std::string& text, std::map<std::string, std::string> macros = {});
 
     FO_PARSE_API bool int_free_variable(std::string& text);
     FO_PARSE_API bool double_free_variable(std::string& text);

@@ -174,27 +174,6 @@ namespace parse {
         }
     }
 
-    void macro_substitution(std::string& text) {
-        //DebugLogger() << "macro_substitution for text:" << text;
-        std::map<std::string, std::string> macros;
-
-        parse_and_erase_macro_definitions(text, macros);
-        check_for_cyclic_macro_references(macros);
-
-        //DebugLogger() << "after macro pasring text:" << text;
-
-        // recursively expand macro keys: replace [[MACRO_KEY]] in other macro
-        // text with the macro text corresponding to MACRO_KEY.
-        for (auto& macro : macros)
-        { replace_macro_references(macro.second, macros); }
-
-        // substitute macro keys - replace [[MACRO_KEY]] in the input text with
-        // the macro text corresponding to MACRO_KEY
-        replace_macro_references(text, macros);
-
-        //DebugLogger() << "after macro substitution text: " << text;
-    }
-
     bool read_file(const boost::filesystem::path& path, std::string& file_contents) {
         boost::filesystem::ifstream ifs(path);
         if (!ifs)
@@ -323,6 +302,22 @@ namespace parse {
             // TraceLogger() << "Parse: contents after scrub of " << fn_match << ":\n" << text;
         }
     }
+
+    void macro_substitution(std::string& text, std::map<std::string, std::string> macros) {
+        if (macros.empty())
+            parse_and_erase_macro_definitions(text, macros);
+        check_for_cyclic_macro_references(macros);
+
+        // recursively expand macro keys: replace [[MACRO_KEY]] in other macro
+        // text with the macro text corresponding to MACRO_KEY.
+        for (auto& macro : macros)
+        { replace_macro_references(macro.second, macros); }
+
+        // substitute macro keys - replace [[MACRO_KEY]] in the input text with
+        // the macro text corresponding to MACRO_KEY
+        replace_macro_references(text, macros);
+    }
+
 
     namespace detail {
     double_grammar::double_grammar(const parse::lexer& tok) :
