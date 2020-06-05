@@ -8,6 +8,7 @@
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/spirit/include/qi.hpp>
+#include <yaml-cpp/yaml.h>
 
 #include <GG/Clr.h>
 
@@ -216,5 +217,13 @@ namespace parse { namespace detail {
     }
 
 } }
+
+
+namespace YAML {
+    template <>
+    struct convert<std::unique_ptr<Condition::Condition>> {
+        static bool decode(const Node& node, std::unique_ptr<Condition::Condition>& rhs);
+    };
+}
 
 #endif

@@ -2,49 +2,9 @@
 
 #include <boost/filesystem/fstream.hpp>
 #include <yaml-cpp/yaml.h>
-#include "MovableEnvelope.h"
-#include "ConditionParser.h"
+#include "ParseImpl.h"
 #include "../universe/Condition.h"
 #include "../universe/FleetPlan.h"
-
-
-namespace YAML {
-    template <>
-    struct convert<std::unique_ptr<Condition::Condition>> {
-        static bool decode(const Node& node, std::unique_ptr<Condition::Condition>& rhs) {
-            if (!node.IsScalar())
-                return false;
-
-            std::string data{node.as<std::string>()};
-
-            const parse::lexer lexer;
-            parse::detail::Labeller label;
-            parse::conditions_parser_grammar condition_parser(lexer, label);
-            boost::spirit::qi::in_state_type in_state;
-            parse::text_iterator begin = data.begin();
-            parse::text_iterator end = data.end();
-            parse::token_iterator it = lexer.begin(begin, end);
-
-            parse::detail::MovableEnvelope<Condition::Condition> location;
-
-            bool success = boost::spirit::qi::phrase_parse(
-                it, lexer.end(),
-                condition_parser, in_state("WS")[lexer.self],
-                location);
-
-            if (!success) {
-                ErrorLogger() << "monster_fleet_plans: failed to parse location attribute";
-                return false;
-            }
-
-            bool passed{true};
-
-            rhs = location.OpenEnvelope(passed);
-
-            return passed;
-        }
-    };
-}
 
 
 namespace parse {
