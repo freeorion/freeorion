@@ -90,10 +90,11 @@ void IApp::StartBackgroundParsing() {
     else
         ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/species").string();
 
-    if (fs::exists(rdir / "scripting/ship_parts"))
-        GetShipPartManager().SetShipParts(Pending::StartParsing(parse::ship_parts, rdir / "scripting/ship_parts"));
+    auto ship_parts_dir = rdir / "scripting" / "ship_parts";
+    if (fs::exists(ship_parts_dir))
+        GetShipPartManager().SetShipParts(Pending::StartParsing(parse::ship_parts, ship_parts_dir));
     else
-        ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/ship_parts").string();
+        ErrorLogger() << "Background parse path doesn't exist: " << (ship_parts_dir).string();
 
     if (fs::exists(rdir / "scripting/ship_hulls"))
         GetShipHullManager().SetShipHulls(Pending::StartParsing(parse::ship_hulls, rdir / "scripting/ship_hulls"));

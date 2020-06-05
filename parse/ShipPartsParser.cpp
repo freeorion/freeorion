@@ -1,175 +1,187 @@
-#define FUSION_MAX_VECTOR_SIZE 15
-#define PHOENIX_LIMIT 12
-#define BOOST_RESULT_OF_NUM_ARGS PHOENIX_LIMIT
-
+#include <boost/filesystem.hpp>
+#include <boost/filesystem/fstream.hpp>
+#include <boost/format.hpp>
 #include "Parse.h"
-
 #include "ParseImpl.h"
-#include "EnumParser.h"
-#include "ValueRefParser.h"
-#include "ConditionParserImpl.h"
-#include "CommonParamsParser.h"
-
-#include "../universe/Condition.h"
+#include "../universe/ConditionAll.h"
+#include "../universe/Effect.h"
+#include "../universe/Enums.h"
 #include "../universe/ShipPart.h"
 #include "../universe/ValueRef.h"
 #include "../util/Directories.h"
-
-#include <boost/spirit/include/phoenix.hpp>
-
-
-#define DEBUG_PARSERS 0
-
-#if DEBUG_PARSERS
-namespace std {
-    inline ostream& operator<<(ostream& os, const std::vector<ShipSlotType>&) { return os; }
-    inline ostream& operator<<(ostream& os, const parse::effects_group_payload&) { return os; }
-    inline ostream& operator<<(ostream& os, const std::map<std::string, std::unique_ptr<ShipPart>>&) { return os; }
-    inline ostream& operator<<(ostream& os, const std::pair<const std::string, std::unique_ptr<ShipPart>>&) { return os; }
-}
-#endif
-
-namespace parse {
-    namespace detail {
-        typedef std::tuple<
-            boost::optional<double>,
-            boost::optional<double>,
-            boost::optional<parse::detail::MovableEnvelope<Condition::Condition>>
-        > OptCap_OptStat2_OptMoveableTargets;
-    }
-}
-
-namespace {
-    const boost::phoenix::function<parse::detail::is_unique> is_unique_;
-
-    void insert_shippart(std::map<std::string, std::unique_ptr<ShipPart>>& ship_parts,
-                         ShipPartClass part_class,
-                         const parse::detail::OptCap_OptStat2_OptMoveableTargets& capacity_and_stat2_and_targets,
-                         parse::detail::MovableEnvelope<CommonParams>& common_params,
-                         parse::detail::MoreCommonParams& more_common_params,
-                         boost::optional<std::vector<ShipSlotType>> mountable_slot_types,
-                         std::string& icon,
-                         bool no_default_capacity_effect,
-                         bool& pass)
-    {
-        boost::optional<double> capacity, stat2;
-        boost::optional<parse::detail::MovableEnvelope<Condition::Condition>> combat_targets;
-        std::tie(capacity, stat2, combat_targets) = capacity_and_stat2_and_targets;
+#include <yaml-cpp/yaml.h>
 
 
-        auto ship_part = std::make_unique<ShipPart>(
-            part_class,
-            (capacity ? *capacity : 0.0),
-            (stat2 ? *stat2 : 1.0),
-            std::move(*common_params.OpenEnvelope(pass)),
-            std::move(more_common_params.name),
-            std::move(more_common_params.description),
-            std::move(more_common_params.exclusions),
-            (mountable_slot_types ? std::move(*mountable_slot_types) : std::vector<ShipSlotType>{}),
-            std::move(icon),
-            !no_default_capacity_effect,
-            (combat_targets ? (*combat_targets).OpenEnvelope(pass) : nullptr));
+namespace YAML {
+    template <>
+    struct convert<ShipSlotType> {
+        static bool decode(const Node& node, ShipSlotType& rhs);
+    };
 
-        ship_parts.emplace(ship_part->Name(), std::move(ship_part));
-    }
+    template <>
+    struct convert<ShipPartClass> {
+        static bool decode(const Node& node, ShipPartClass& rhs);
+    };
 
-    BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_shippart_, insert_shippart, 9)
+    template <>
+    struct convert<MeterType> {
+        static bool decode(const Node& node, MeterType& rhs);
+    };
 
-    using start_rule_payload = std::map<std::string, std::unique_ptr<ShipPart>>;
-    using start_rule_signature = void(start_rule_payload&);
+    bool convert<ShipSlotType>::decode(const Node& node, ShipSlotType& rhs) {
+        if (!node.IsScalar())
+            return false;
 
-    struct grammar : public parse::detail::grammar<start_rule_signature> {
-        grammar(const parse::lexer& tok,
-                const std::string& filename,
-                const parse::text_iterator& first, const parse::text_iterator& last) :
-            grammar::base_type(start),
-            condition_parser(tok, label),
-            string_grammar(tok, label, condition_parser),
-            tags_parser(tok, label),
-            common_rules(tok, label, condition_parser, string_grammar, tags_parser),
-            ship_slot_type_enum(tok),
-            ship_part_class_enum(tok),
-            double_rule(tok),
-            one_or_more_slots(ship_slot_type_enum)
-        {
-            namespace phoenix = boost::phoenix;
-            namespace qi = boost::spirit::qi;
-
-            using phoenix::construct;
-
-            qi::_1_type _1;
-            qi::_2_type _2;
-            qi::_3_type _3;
-            qi::_4_type _4;
-            qi::_5_type _5;
-            qi::_6_type _6;
-            qi::_7_type _7;
-            qi::_8_type _8;
-            qi::_9_type _9;
-            phoenix::actor<boost::spirit::argument<9>> _10; // qi::_10_type is not predefined
-            qi::_pass_type _pass;
-            qi::_r1_type _r1;
-            qi::matches_type matches_;
-
-            ship_part
-                = ( tok.Part_                                       // _1
-                >   common_rules.more_common                        // _2
-                >   label(tok.Class_)       > ship_part_class_enum  // _3
-                > -( (label(tok.Capacity_)  > double_rule)          // _4
-                   | (label(tok.Damage_)    > double_rule)          // _4
-                   )
-                > -( (label(tok.Damage_)    > double_rule )         // _5 : damage is secondary stat for fighters
-                   | (label(tok.Shots_)     > double_rule )         // _5 : shots is secondary stat for direct fire weapons
-                   )
-                > matches_[tok.NoDefaultCapacityEffect_]                // _6
-                > -(label(tok.CombatTargets_)       > condition_parser) // _7
-                > -(label(tok.MountableSlotTypes_)  > one_or_more_slots)// _8
-                >   common_rules.common                                 // _9
-                >   label(tok.Icon_)        > tok.string                // _10
-                  ) [ _pass = is_unique_(_r1, _1, phoenix::bind(&parse::detail::MoreCommonParams::name, _2)),
-                      insert_shippart_(_r1, _3,
-                                       construct<parse::detail::OptCap_OptStat2_OptMoveableTargets>(_4, _5, _7)
-                                       , _9, _2, _8, _10, _6, _pass) ]
-                ;
-
-            start
-                =   +ship_part(_r1)
-                ;
-
-            ship_part.name("Part");
-
-#if DEBUG_PARSERS
-            debug(ship_part);
-#endif
-
-            qi::on_error<qi::fail>(start, parse::report_error(filename, first, last, _1, _2, _3, _4));
+        try {
+            // TODO: maybe fixme
+            rhs = boost::lexical_cast<ShipSlotType>("SL_" + boost::to_upper_copy(node.Scalar()));
+        }
+        catch(const boost::bad_lexical_cast&) {
+            return false;
         }
 
-        using  ship_part_rule = parse::detail::rule<void (start_rule_payload&)>;
-        using start_rule = parse::detail::rule<start_rule_signature>;
+        if (GG::EnumMap<ShipSlotType>::BAD_VALUE == rhs)
+            return false;
 
-        parse::detail::Labeller                 label;
-        const parse::conditions_parser_grammar  condition_parser;
-        const parse::string_parser_grammar      string_grammar;
-        parse::detail::tags_grammar             tags_parser;
-        parse::detail::common_params_rules      common_rules;
-        parse::ship_slot_enum_grammar           ship_slot_type_enum;
-        parse::ship_part_class_enum_grammar     ship_part_class_enum;
-        parse::detail::double_grammar           double_rule;
-        parse::detail::single_or_bracketed_repeat<parse::ship_slot_enum_grammar>
-                                                one_or_more_slots;
-        ship_part_rule                          ship_part;
-        start_rule                              start;
-    };
+        return true;
+    }
+
+    bool convert<ShipPartClass>::decode(const Node& node, ShipPartClass& rhs) {
+        if (!node.IsScalar())
+            return false;
+
+        try {
+            // TODO: maybe fixme
+            std::string class_str{boost::to_upper_copy(node.Scalar())};
+            if ("FIGHTERBAY" == class_str) {
+                rhs = PC_FIGHTER_BAY;
+                return true;
+            }
+            if ("FIGHTERHANGAR" == class_str) {
+                rhs = PC_FIGHTER_HANGAR;
+                return true;
+            }
+            if ("SHORTRANGE" == class_str) {
+                rhs = PC_DIRECT_WEAPON;
+                return true;
+            }
+            rhs = boost::lexical_cast<ShipPartClass>("PC_" + class_str);
+        }
+        catch(const boost::bad_lexical_cast&) {
+            return false;
+        }
+
+        if (GG::EnumMap<ShipPartClass>::BAD_VALUE == rhs)
+            return false;
+
+        return true;
+    }
+
+    bool convert<MeterType>::decode(const Node& node, MeterType& rhs) {
+        if (!node.IsScalar())
+            return false;
+
+        try {
+            // TODO: maybe fixme
+            rhs = boost::lexical_cast<MeterType>("METER_" + boost::to_upper_copy(node.Scalar()));
+        }
+        catch(const boost::bad_lexical_cast&) {
+            return false;
+        }
+
+        if (GG::EnumMap<MeterType>::BAD_VALUE == rhs)
+            return false;
+
+        return true;
+    }
+
 }
 
-namespace parse {
-    start_rule_payload ship_parts(const boost::filesystem::path& path) {
-        const lexer lexer;
-        start_rule_payload parts;
 
-        for (const auto& file : ListDir(path, IsFOCScript))
-            /*auto success =*/ detail::parse_file<grammar, start_rule_payload>(lexer, file, parts);
+namespace parse {
+    std::map<std::string, std::unique_ptr<ShipPart>> ship_parts(const boost::filesystem::path& path) {
+        const lexer lexer;
+        std::map<std::string, std::unique_ptr<ShipPart>> parts;
+
+        for (const auto& file_path : ListDir(path, IsYAML)) {
+            YAML::Node doc;
+
+            try {
+                boost::filesystem::ifstream ifs(file_path);
+                doc = YAML::Load(ifs);
+                ifs.close();
+
+                if (!doc["ship_parts"])
+                    continue;
+
+                resolve_macro_includes(doc, file_path);
+
+                auto macros = doc["macros"].as<std::map<std::string, std::string>>(std::map<std::string, std::string>{});
+                preprocess_macros(doc, file_path, macros);
+
+                for (const auto& ship_part_node : doc["ship_parts"]) {
+                    std::unique_ptr<Condition::Condition> location{std::make_unique<Condition::All>()};
+                    std::unique_ptr<Condition::Condition> enqueue_location{std::make_unique<Condition::All>()};
+                    std::unique_ptr<Condition::Condition> combat_targets{};
+                    std::vector<std::unique_ptr<Effect::EffectsGroup>> effects{};
+                    ConsumptionMap<MeterType> consumption;
+                    ConsumptionMap<std::string> buildconsumption;
+
+                    if (ship_part_node["location"])
+                        location = ship_part_node["location"].as<std::unique_ptr<Condition::Condition>>();
+
+                    if (ship_part_node["enqueue_location"])
+                        enqueue_location = ship_part_node["enqueue_location"].as<std::unique_ptr<Condition::Condition>>();
+
+                    if (ship_part_node["combat_targets"])
+                        combat_targets = ship_part_node["combat_targets"].as<std::unique_ptr<Condition::Condition>>();
+                    if (ship_part_node["effects"])
+                        effects = ship_part_node["effects"].as<std::vector<std::unique_ptr<Effect::EffectsGroup>>>();
+                    if (ship_part_node["consumption"])
+                        consumption = ship_part_node["consumption"].as<ConsumptionMap<MeterType>>();
+                    if (ship_part_node["buildconsumption"])
+                        buildconsumption = ship_part_node["buildconsumption"].as<ConsumptionMap<std::string>>();
+
+                    CommonParams common_params{
+                        ship_part_node["buildcost"].as<std::unique_ptr<ValueRef::ValueRef<double>>>(),
+                        ship_part_node["buildtime"].as<std::unique_ptr<ValueRef::ValueRef<int>>>(),
+                        ship_part_node["producible"].as<bool>(true),
+                        ship_part_node["tags"].as<std::set<std::string>>(std::set<std::string>{}),
+                        std::move(location),
+                        std::move(effects),
+                        std::move(consumption),
+                        std::move(buildconsumption),
+                        std::move(enqueue_location)
+                    };
+
+                    auto part_class = ship_part_node["class"].as<ShipPartClass>();
+                    std::string primary_stat{"capacity"}; // damage
+                    std::string secondary_stat{"damage"}; // shots
+
+                    auto ship_part = std::make_unique<ShipPart>(
+                        part_class,
+                        ship_part_node[primary_stat].as<double>(0.0),
+                        ship_part_node[secondary_stat].as<double>(1.0),
+                        common_params,
+                        ship_part_node["name"].as<std::string>(),
+                        ship_part_node["description"].as<std::string>(),
+                        ship_part_node["exclusions"].as<std::set<std::string>>(std::set<std::string>{}),
+                        ship_part_node["slot_types"].as<std::vector<ShipSlotType>>(),
+                        ship_part_node["icon"].as<std::string>(),
+                        !ship_part_node["no_default_capacity_effect"].as<bool>(false),
+                        std::move(combat_targets));
+
+                    parts.insert(std::make_pair(ship_part->Name(), std::move(ship_part)));
+                }
+            }
+            catch(YAML::Exception& e) {
+                ErrorLogger() << boost::format(
+                    "parse::ship_parts: %1%:%2%:%3%: %4%")
+                    % file_path % e.mark.line % e.mark.column % e.what();
+
+                InfoLogger() << doc;
+            }
+        }
 
         return parts;
     }

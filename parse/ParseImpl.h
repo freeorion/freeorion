@@ -19,6 +19,7 @@ namespace Condition {
 
 namespace Effect {
     class Effect;
+    class EffectsGroup;
 }
 
 namespace ValueRef {
@@ -26,7 +27,12 @@ namespace ValueRef {
     class ValueRef;
 }
 
-namespace parse { namespace detail {
+namespace parse {
+    void resolve_macro_includes(YAML::Node& doc, const boost::filesystem::path& file_path);
+
+    void preprocess_macros(YAML::Node& node, const boost::filesystem::path& file_path, std::map<std::string, std::string>& macros);
+
+namespace detail {
     /// A functor to determine if \p key will be unique in \p map of \p type, and log an error otherwise.
     struct is_unique {
         typedef bool result_type;
@@ -244,6 +250,16 @@ namespace YAML {
     template <>
     struct convert<std::unique_ptr<Condition::Condition>> {
         static bool decode(const Node& node, std::unique_ptr<Condition::Condition>& rhs);
+    };
+
+    template <>
+    struct convert<std::unique_ptr<Effect::Effect>> {
+        static bool decode(const Node& node, std::unique_ptr<Effect::Effect>& rhs);
+    };
+
+    template <>
+    struct convert<std::unique_ptr<Effect::EffectsGroup>> {
+        static bool decode(const Node& node, std::unique_ptr<Effect::EffectsGroup>& rhs);
     };
 
     template <>

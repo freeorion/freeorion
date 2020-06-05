@@ -4,8 +4,10 @@
 #include "ConditionParserImpl.h"
 #include "EffectParser.h"
 #include "EnumParser.h"
+#include "MovableEnvelope.h"
 #include "ValueRefParser.h"
 
+#include "../universe/Effect.h"
 #include "../universe/UnlockableItem.h"
 #include "../util/Logger.h"
 #include "../util/Directories.h"
@@ -16,6 +18,8 @@
 #include <boost/filesystem/fstream.hpp>
 #include <boost/spirit/include/phoenix.hpp>
 #include <boost/algorithm/string/find_iterator.hpp>
+
+#include <memory>
 
 #define DEBUG_PARSERS 0
 
@@ -318,6 +322,86 @@ namespace parse {
         replace_macro_references(text, macros);
     }
 
+    void resolve_macro_includes(YAML::Node& doc, const boost::filesystem::path& file_path) {
+        namespace fs = boost::filesystem;
+
+        if (!doc["includes"])
+            return;
+
+        if (!doc["includes"].IsSequence())
+            throw YAML::RepresentationException(doc["includes"].Mark(), "Expected a sequence of macro defintions");
+
+        for (auto include : doc["includes"]) {
+            if (!include.IsScalar())
+                continue;
+
+            fs::path include_path;
+
+            if (0 == include.Scalar().find('/'))
+                include_path = fs::canonical("./" + include.Scalar(), GetResourceDir());
+            else
+                include_path = fs::canonical(include.Scalar(), file_path.parent_path());
+
+            if (file_path == include_path) {
+                ErrorLogger() << boost::format(
+                    "resolve_macro_includes: %1%:%2%:%3%: include refers to this file, ignoring")
+                    % file_path % include.Mark().line % include.Mark().column;
+                continue;
+            }
+
+            if (!fs::is_regular_file(include_path)) {
+                ErrorLogger() << boost::format(
+                    "resolve_macro_includes: %1%:%2%:%3%: include %4% does not refer to a regular file")
+                    % file_path % include.Mark().line % include.Mark().column % include_path;
+                continue;
+            }
+
+            try {
+                boost::filesystem::ifstream ifs(include_path);
+                YAML::Node include_doc = YAML::Load(ifs);
+                ifs.close();
+
+                for (auto macro : include_doc["macros"]) {
+                    if (doc["macros"][macro.first]) {
+                        ErrorLogger() << boost::format(
+                            "resolve_macro_includes: %1%: macro %2% already exists (first included from %3%, now reincluded from %4%:%5%:%6%), ignoring")
+                            % file_path
+                            % macro.first
+                            % doc["macros"][macro.first].Tag().substr(std::string{"!included:"}.size())
+                            % fs::relative(include_path, GetResourceDir()).generic_string()
+                            % macro.first.Mark().line
+                            % macro.first.Mark().column;
+                        continue;
+                    }
+
+                    doc["macros"][macro.first] = macro.second;
+                    doc["macros"][macro.first].SetTag(boost::str(boost::format(
+                        "!included:/%1%:%2%:%3%")
+                        % fs::relative(include_path, GetResourceDir()).generic_string()
+                        % macro.first.Mark().line % macro.first.Mark().column));
+                }
+            }
+            catch(YAML::Exception& e) {
+                ErrorLogger() << boost::format(
+                    "resolve_macro_includes: %1%:%2%:%3%: %4%")
+                    % file_path % e.mark.line % e.mark.column % e.what();
+            }
+        }
+
+        doc.remove("includes");
+    }
+
+    void preprocess_macros(YAML::Node& node, const boost::filesystem::path& file_path, std::map<std::string, std::string>& macros) {
+        if (node.IsScalar() && "!pp" == node.Tag()) {
+            std::string scalar{node.Scalar()};
+            macro_substitution(scalar, macros);
+            boost::trim(scalar);
+            node = scalar;
+            node.SetTag("");
+        }
+        for (auto child : node)
+            preprocess_macros(node.IsMap() ? child.second : child, file_path, macros);
+    }
 
     namespace detail {
     double_grammar::double_grammar(const parse::lexer& tok) :
@@ -574,6 +658,62 @@ bool convert<std::unique_ptr<Condition::Condition>>::decode(const Node& node, st
     return passed;
 }
 
+bool convert<std::unique_ptr<Effect::Effect>>::decode(const Node& node, std::unique_ptr<Effect::Effect>& rhs) {
+    if (!node.IsScalar())
+        return false;
+
+    bool success{false};
+    bool passed{true};
+
+    try {
+        parse::detail::MovableEnvelope<Effect::Effect> value;
+        const parse::lexer lexer;
+        parse::detail::Labeller label;
+        parse::conditions_parser_grammar condition(lexer, label);
+        parse::string_parser_grammar string(lexer, label, condition);
+        parse::effects_parser_grammar effect(lexer, label, condition, string);
+        boost::spirit::qi::in_state_type in_state;
+        parse::text_iterator begin = node.Scalar().begin();
+        parse::text_iterator end = node.Scalar().end();
+        parse::token_iterator it = lexer.begin(begin, end);
+
+        success = boost::spirit::qi::phrase_parse(
+            it, lexer.end(),
+            effect, in_state("WS")[lexer.self],
+            value);
+
+        rhs = value.OpenEnvelope(passed);
+    }
+    catch(...) {
+        ErrorLogger() << "YAML::convert<std::unique_ptr<Effect::Effect>>: failed to parse value attribute";
+        return false;
+    }
+
+    if (!success) {
+        ErrorLogger() << "YAML::convert<std::unique_ptr<Effect::Effect>>: failed to parse value attribute";
+        return false;
+    }
+
+    return passed;
+}
+
+bool convert<std::unique_ptr<Effect::EffectsGroup>>::decode(const Node& node, std::unique_ptr<Effect::EffectsGroup>& rhs) {
+    if (!node.IsMap())
+        return false;
+
+    rhs = std::make_unique<Effect::EffectsGroup>(
+        node["scope"].as<std::unique_ptr<Condition::Condition>>(),
+        node["activation"].as<std::unique_ptr<Condition::Condition>>(),
+        node["effects"].as<std::vector<std::unique_ptr<Effect::Effect>>>(),
+        node["accounting_label"].as<std::string>(""),
+        node["stacking_group"].as<std::string>(""),
+        node["priority"].as<int>(100),
+        node["description"].as<std::string>("")
+    );
+
+    return true;
+}
+
 bool convert<std::unique_ptr<ValueRef::ValueRef<double>>>::decode(const Node& node, std::unique_ptr<ValueRef::ValueRef<double>>& rhs) {
     if (!node.IsScalar())
         return false;
@@ -650,12 +790,5 @@ bool convert<std::unique_ptr<ValueRef::ValueRef<int>>>::decode(const Node& node,
     }
 
     return passed;
-}
-
-bool convert<std::unique_ptr<Effect::Effect>>::decode(const Node& node, std::unique_ptr<Effect::Effect>& rhs) {
-    if (!node.IsMap())
-        return false;
-
-    return true;
 }
 }
