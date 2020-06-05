@@ -225,6 +225,22 @@ namespace parse { namespace detail {
 
 
 namespace YAML {
+    template <typename T>
+    struct convert<std::set<T>> {
+        static bool decode(const Node& node, std::set<T>& rhs);
+    };
+
+    template<typename T>
+    bool convert<std::set<T>>::decode(const Node& node, std::set<T>& rhs) {
+        if (!node.IsSequence())
+            return false;
+
+        for (auto& child : node)
+            rhs.insert(child.as<T>());
+
+        return true;
+    }
+
     template <>
     struct convert<std::unique_ptr<Condition::Condition>> {
         static bool decode(const Node& node, std::unique_ptr<Condition::Condition>& rhs);
