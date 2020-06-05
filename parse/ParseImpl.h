@@ -21,6 +21,11 @@ namespace Effect {
     class Effect;
 }
 
+namespace ValueRef {
+    template <typename T>
+    class ValueRef;
+}
+
 namespace parse { namespace detail {
     /// A functor to determine if \p key will be unique in \p map of \p type, and log an error otherwise.
     struct is_unique {
@@ -223,6 +228,11 @@ namespace YAML {
     template <>
     struct convert<std::unique_ptr<Condition::Condition>> {
         static bool decode(const Node& node, std::unique_ptr<Condition::Condition>& rhs);
+    };
+
+    template <>
+    struct convert<std::unique_ptr<ValueRef::ValueRef<double>>> {
+        static bool decode(const Node& node, std::unique_ptr<ValueRef::ValueRef<double>>& rhs);
     };
 }
 
