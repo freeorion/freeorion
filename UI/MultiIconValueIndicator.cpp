@@ -120,6 +120,11 @@ void MultiIconValueIndicator::Update() {
             if (!obj)
                 continue;
             auto type = m_meter_types[i].first;
+            const auto* meter{obj->GetMeter(type)};
+            if (!meter) {
+                ErrorLogger() << "MultiIconValueIndicator::Update couldn't get meter type " << type << " for object " << obj->Name() << " (" << obj->ID() << ")";
+                continue;
+            }
             double value = obj->GetMeter(type)->Initial();
             // Supply is a special case: the only thing that matters is the highest value.
             if (type == METER_SUPPLY)
