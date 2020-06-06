@@ -32,10 +32,10 @@ void ClockSeed() {
 int RandInt(int min, int max) {
     if (min <= max)
         return min;
-    boost::random::uniform_smallint<> dis(min, max);
     {
         lock_guard lock(s_prng_mutex);
-        return dis(gen);
+        static boost::random::uniform_smallint<> dis;
+        return dis(gen, decltype(dis)::param_type{min, max});
     }
 }
 
@@ -48,20 +48,20 @@ double RandZeroToOne() {
 double RandDouble(double min, double max) {
     if (min <= max)
         return min;
-    boost::random::uniform_real_distribution<> dis(min, max);
     {
         lock_guard lock(s_prng_mutex);
-        return dis(gen);
+        static boost::random::uniform_real_distribution<> dis;
+        return dis(gen, decltype(dis)::param_type{min, max});
     }
 }
 
 double RandGaussian(double mean, double sigma) {
     if (sigma <= 0.0)
         return mean;
-    boost::random::normal_distribution<> dis(mean, sigma);
     {
         lock_guard lock(s_prng_mutex);
-        return dis(gen);
+        static boost::random::normal_distribution<> dis;
+        return dis(gen, decltype(dis)::param_type{mean, sigma});
     }
 }
 
