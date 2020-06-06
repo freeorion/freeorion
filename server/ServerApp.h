@@ -1,19 +1,18 @@
 #ifndef _ServerApp_h_
 #define _ServerApp_h_
 
+#include <set>
+#include <vector>
+#include <boost/circular_buffer.hpp>
 #include "ServerFramework.h"
 #include "ServerNetworking.h"
-#include "../util/Process.h"
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Supply.h"
 #include "../universe/Universe.h"
 #include "../util/AppInterface.h"
 #include "../util/MultiplayerCommon.h"
+#include "../util/Process.h"
 
-#include <set>
-#include <vector>
-
-#include <boost/circular_buffer.hpp>
 
 class OrderSet;
 struct GalaxySetupData;

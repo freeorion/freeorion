@@ -1,10 +1,11 @@
 #ifndef _Ship_h_
 #define _Ship_h_
 
-#include "UniverseObject.h"
-#include "Meter.h"
 
+#include "Meter.h"
+#include "UniverseObject.h"
 #include "../util/Export.h"
+
 
 FO_COMMON_API extern const int ALL_EMPIRES;
 FO_COMMON_API extern const int INVALID_DESIGN_ID;

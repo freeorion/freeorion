@@ -1,13 +1,13 @@
 #include "PopCenter.h"
 
-#include "../util/OptionsDB.h"
-#include "../util/Directories.h"
-#include "../util/Logger.h"
-#include "Meter.h"
-#include "Enums.h"
-
 #include <algorithm>
 #include <stdexcept>
+#include "Enums.h"
+#include "Meter.h"
+#include "../util/Directories.h"
+#include "../util/Logger.h"
+#include "../util/OptionsDB.h"
+
 
 namespace {
     const double MINIMUM_POP_CENTER_POPULATION = 0.01001;  // rounds up to 0.1 when showing 2 digits, down to 0.05 or 50.0 when showing 3

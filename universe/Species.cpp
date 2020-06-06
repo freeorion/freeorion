@@ -1,22 +1,20 @@
 #include "Species.h"
 
+#include <iterator>
+#include <boost/filesystem/fstream.hpp>
 #include "Conditions.h"
 #include "Effect.h"
+#include "Enums.h"
 #include "PopCenter.h"
 #include "Ship.h"
 #include "UniverseObject.h"
 #include "ValueRefs.h"
-#include "Enums.h"
-#include "../util/OptionsDB.h"
-#include "../util/Logger.h"
-#include "../util/Random.h"
 #include "../util/AppInterface.h"
 #include "../util/CheckSums.h"
+#include "../util/Logger.h"
+#include "../util/OptionsDB.h"
+#include "../util/Random.h"
 #include "../util/ScopedTimer.h"
-
-#include <boost/filesystem/fstream.hpp>
-
-#include <iterator>
 
 
 /////////////////////////////////////////////////

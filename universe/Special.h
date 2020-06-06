@@ -2,16 +2,14 @@
 #define _Special_h_
 
 
-#include <boost/serialization/nvp.hpp>
-#include <boost/optional/optional.hpp>
-
-#include "../util/Export.h"
-#include "../util/Pending.h"
-
+#include <map>
 #include <memory>
 #include <string>
 #include <vector>
-#include <map>
+#include <boost/serialization/nvp.hpp>
+#include <boost/optional/optional.hpp>
+#include "../util/Export.h"
+#include "../util/Pending.h"
 
 
 namespace Effect {

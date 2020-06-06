@@ -1,9 +1,9 @@
 #include "Building.h"
 
 #include "BuildingType.h"
+#include "Enums.h"
 #include "Predicates.h"
 #include "Universe.h"
-#include "Enums.h"
 #include "../Empire/EmpireManager.h"
 #include "../util/AppInterface.h"
 #include "../util/i18n.h"

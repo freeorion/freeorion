@@ -2,9 +2,8 @@
 #define _Predicates_h_
 
 
-#include "../util/Export.h"
-
 #include <memory>
+#include "../util/Export.h"
 
 
 class UniverseObject;

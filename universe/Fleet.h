@@ -1,11 +1,11 @@
 #ifndef _Fleet_h_
 #define _Fleet_h_
 
-#include "UniverseObject.h"
+#include <boost/serialization/version.hpp>
 #include "ObjectMap.h"
+#include "UniverseObject.h"
 #include "../util/Export.h"
 
-#include <boost/serialization/version.hpp>
 
 ////////////////////////////////////////////////
 // MovePathNode

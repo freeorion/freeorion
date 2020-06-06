@@ -1,17 +1,16 @@
 #ifndef _SidePanel_h_
 #define _SidePanel_h_
 
-#include "CUIControls.h"
-#include "CUIWnd.h"
-
-#include "../universe/ResourceCenter.h"
-#include "../universe/Planet.h"
-#include "../universe/System.h"
-
+#include <vector>
 #include <GG/DynamicGraphic.h>
 #include <GG/Texture.h>
+#include "CUIControls.h"
+#include "CUIWnd.h"
+#include "../universe/Planet.h"
+#include "../universe/ResourceCenter.h"
+#include "../universe/System.h"
 
-#include <vector>
+
 class Ship;
 
 class CUIDropDownList;

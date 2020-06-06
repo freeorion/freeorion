@@ -1,6 +1,5 @@
 #include "FleetPlan.h"
 
-
 #include "../util/i18n.h"
 
 

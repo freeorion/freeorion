@@ -1,17 +1,17 @@
 #include "Special.h"
 
+#include <boost/filesystem/fstream.hpp>
 #include "Condition.h"
 #include "Effect.h"
 #include "UniverseObject.h"
 #include "ValueRef.h"
-#include "../util/OptionsDB.h"
-#include "../util/Logger.h"
 #include "../util/AppInterface.h"
 #include "../util/CheckSums.h"
+#include "../util/Logger.h"
+#include "../util/OptionsDB.h"
 #include "../util/ScopedTimer.h"
 #include "../util/i18n.h"
 
-#include <boost/filesystem/fstream.hpp>
 
 SpecialsManager::SpecialsManager()
 {}

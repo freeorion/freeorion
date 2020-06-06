@@ -2,19 +2,17 @@
 #define _Object_Map_h_
 
 
-#include <boost/range/any_range.hpp>
-#include <boost/range/size.hpp>
-#include <boost/range/adaptor/map.hpp>
-#include <boost/serialization/access.hpp>
-
-#include "../util/Export.h"
-
 #include <map>
 #include <memory>
 #include <set>
 #include <string>
-#include <vector>
 #include <type_traits>
+#include <vector>
+#include <boost/range/adaptor/map.hpp>
+#include <boost/range/any_range.hpp>
+#include <boost/range/size.hpp>
+#include <boost/serialization/access.hpp>
+#include "../util/Export.h"
 
 
 struct UniverseObjectVisitor;

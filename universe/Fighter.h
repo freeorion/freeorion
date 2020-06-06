@@ -1,9 +1,11 @@
 #ifndef _Fighter_h_
 #define _Fighter_h_
 
+
 #include "UniverseObject.h"
 #include "../universe/Condition.h"
 #include "../util/Export.h"
+
 
 ////////////////////////////////////////////////
 // Fighter

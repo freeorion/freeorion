@@ -2,25 +2,22 @@
 #define _Universe_h_
 
 
-#include "EnumsFwd.h"
-#include "ObjectMap.h"
-#include "UniverseObject.h"
-#include "../util/Pending.h"
-
-#include <boost/signals2/signal.hpp>
-#include <boost/serialization/access.hpp>
-#include <boost/thread/shared_mutex.hpp>
-#include <boost/container/flat_map.hpp>
-
 #include <list>
 #include <map>
 #include <memory>
 #include <set>
 #include <string>
-#include <vector>
 #include <unordered_map>
-
+#include <vector>
+#include <boost/container/flat_map.hpp>
+#include <boost/serialization/access.hpp>
+#include <boost/signals2/signal.hpp>
+#include <boost/thread/shared_mutex.hpp>
+#include "EnumsFwd.h"
+#include "ObjectMap.h"
+#include "UniverseObject.h"
 #include "../util/Export.h"
+#include "../util/Pending.h"
 
 
 class Empire;

@@ -1,10 +1,11 @@
 #ifndef _System_h_
 #define _System_h_
 
+
+#include <map>
 #include "UniverseObject.h"
 #include "../util/Export.h"
 
-#include <map>
 
 class Fleet;
 

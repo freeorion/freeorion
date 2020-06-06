@@ -1,21 +1,21 @@
 #include "Fleet.h"
 
+#include <boost/algorithm/cxx11/all_of.hpp>
+#include "Enums.h"
+#include "Pathfinder.h"
 #include "Predicates.h"
 #include "ShipDesign.h"
 #include "Ship.h"
 #include "System.h"
-#include "Pathfinder.h"
 #include "Universe.h"
-#include "Enums.h"
-#include "../util/i18n.h"
+#include "../Empire/EmpireManager.h"
+#include "../Empire/Empire.h"
+#include "../Empire/Supply.h"
+#include "../util/AppInterface.h"
 #include "../util/Logger.h"
 #include "../util/ScopedTimer.h"
-#include "../util/AppInterface.h"
-#include "../Empire/Empire.h"
-#include "../Empire/EmpireManager.h"
-#include "../Empire/Supply.h"
+#include "../util/i18n.h"
 
-#include <boost/algorithm/cxx11/all_of.hpp>
 
 namespace {
     const bool ALLOW_ALLIED_SUPPLY = true;

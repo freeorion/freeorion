@@ -1,10 +1,11 @@
 #ifndef _ValueRef_h_
 #define _ValueRef_h_
 
+
+#include <string>
 #include "ScriptingContext.h"
 #include "../util/Export.h"
 
-#include <string>
 
 namespace ValueRef {
 

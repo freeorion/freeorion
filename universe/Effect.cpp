@@ -1,8 +1,9 @@
 #include "Effect.h"
 
-#include "UniverseObject.h"
-#include "ObjectMap.h"
 #include "Enums.h"
+#include "ObjectMap.h"
+#include "UniverseObject.h"
+
 
 Effect::EffectCause::EffectCause() :
     cause_type(INVALID_EFFECTS_GROUP_CAUSE_TYPE),

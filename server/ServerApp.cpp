@@ -1,54 +1,53 @@
 #include "ServerApp.h"
 
+#include <ctime>
+#include <thread>
+#include <boost/date_time/posix_time/time_formatters.hpp>
+#include <boost/filesystem/exception.hpp>
+#include <boost/filesystem/fstream.hpp>
+#include <boost/filesystem/operations.hpp>
+#include <boost/functional/hash.hpp>
+#include <boost/lexical_cast.hpp>
+#include <boost/uuid/random_generator.hpp>
+#include <boost/uuid/uuid_io.hpp>
 #include "SaveLoad.h"
 #include "ServerFSM.h"
 #include "UniverseGenerator.h"
-#include "../combat/CombatSystem.h"
 #include "../combat/CombatEvents.h"
 #include "../combat/CombatLogManager.h"
+#include "../combat/CombatSystem.h"
+#include "../Empire/Empire.h"
 #include "../parse/Parse.h"
 #include "../universe/Building.h"
 #include "../universe/Condition.h"
+#include "../universe/Enums.h"
 #include "../universe/Fleet.h"
 #include "../universe/FleetPlan.h"
-#include "../universe/Ship.h"
-#include "../universe/ShipDesign.h"
 #include "../universe/Planet.h"
 #include "../universe/Predicates.h"
+#include "../universe/ShipDesign.h"
+#include "../universe/Ship.h"
 #include "../universe/Special.h"
-#include "../universe/System.h"
 #include "../universe/Species.h"
+#include "../universe/System.h"
 #include "../universe/Tech.h"
 #include "../universe/UnlockableItem.h"
-#include "../universe/Enums.h"
 #include "../universe/ValueRef.h"
-#include "../Empire/Empire.h"
 #include "../util/Directories.h"
+#include "../util/GameRules.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
 #include "../util/LoggerWithOptionsDB.h"
-#include "../util/GameRules.h"
 #include "../util/OptionsDB.h"
 #include "../util/Order.h"
 #include "../util/OrderSet.h"
 #include "../util/Pending.h"
 #include "../util/Random.h"
 #include "../util/SaveGamePreviewUtils.h"
-#include "../util/SitRepEntry.h"
 #include "../util/ScopedTimer.h"
+#include "../util/SitRepEntry.h"
 #include "../util/Version.h"
 
-#include <boost/filesystem/exception.hpp>
-#include <boost/filesystem/fstream.hpp>
-#include <boost/filesystem/operations.hpp>
-#include <boost/lexical_cast.hpp>
-#include <boost/functional/hash.hpp>
-#include <boost/date_time/posix_time/time_formatters.hpp>
-#include <boost/uuid/random_generator.hpp>
-#include <boost/uuid/uuid_io.hpp>
-
-#include <ctime>
-#include <thread>
 
 namespace fs = boost::filesystem;
 

@@ -1,12 +1,13 @@
 #ifndef _Planet_h_
 #define _Planet_h_
 
-#include "UniverseObject.h"
+
+#include "Meter.h"
 #include "PopCenter.h"
 #include "ResourceCenter.h"
-#include "Meter.h"
-
+#include "UniverseObject.h"
 #include "../util/Export.h"
+
 
 /** a class representing a FreeOrion planet. */
 class FO_COMMON_API Planet :

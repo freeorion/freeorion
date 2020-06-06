@@ -1,13 +1,12 @@
 #ifndef _Meter_h_
 #define _Meter_h_
 
-#include "../util/Export.h"
 
+#include <string>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/version.hpp>
-
-#include <string>
+#include "../util/Export.h"
 
 
 /** A Meter is a value with an associated maximum value.  A typical example is

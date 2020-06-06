@@ -1,29 +1,27 @@
 #include "Order.h"
 
-#include "Logger.h"
-#include "OrderSet.h"
-#include "AppInterface.h"
-#include "../universe/Fleet.h"
-#include "../universe/Predicates.h"
-#include "../universe/Species.h"
-#include "../universe/Building.h"
-#include "../universe/Planet.h"
-#include "../universe/Ship.h"
-#include "../universe/ShipDesign.h"
-#include "../universe/System.h"
-#include "../universe/Pathfinder.h"
-#include "../universe/Universe.h"
-#include "../universe/UniverseObject.h"
-#include "../universe/Enums.h"
-#include "../Empire/EmpireManager.h"
-#include "../Empire/Empire.h"
-
+#include <fstream>
+#include <vector>
 #include <boost/uuid/nil_generator.hpp>
 #include <boost/uuid/random_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
-
-#include <fstream>
-#include <vector>
+#include "AppInterface.h"
+#include "Logger.h"
+#include "OrderSet.h"
+#include "../Empire/Empire.h"
+#include "../Empire/EmpireManager.h"
+#include "../universe/Building.h"
+#include "../universe/Enums.h"
+#include "../universe/Fleet.h"
+#include "../universe/Pathfinder.h"
+#include "../universe/Planet.h"
+#include "../universe/Predicates.h"
+#include "../universe/ShipDesign.h"
+#include "../universe/Ship.h"
+#include "../universe/Species.h"
+#include "../universe/System.h"
+#include "../universe/Universe.h"
+#include "../universe/UniverseObject.h"
 
 
 /////////////////////////////////////////////////////

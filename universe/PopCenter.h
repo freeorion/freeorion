@@ -2,14 +2,11 @@
 #define _PopCenter_h_
 
 
-#include "EnumsFwd.h"
-
-#include <boost/serialization/nvp.hpp>
-
-#include "../util/Export.h"
-
 #include <memory>
 #include <string>
+#include <boost/serialization/nvp.hpp>
+#include "EnumsFwd.h"
+#include "../util/Export.h"
 
 
 class Meter;

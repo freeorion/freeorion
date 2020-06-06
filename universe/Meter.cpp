@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <sstream>
 
+
 const float Meter::LARGE_VALUE = static_cast<float>(2 << 15);
 const float Meter::INVALID_VALUE = -LARGE_VALUE;
 

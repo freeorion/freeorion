@@ -2,21 +2,19 @@
 #define _Species_h_
 
 
-#include "EnumsFwd.h"
-#include "../util/Export.h"
-#include "../util/Serialize.h"
-#include "../util/Pending.h"
-
-#include <boost/algorithm/string/case_conv.hpp>
-#include <boost/serialization/nvp.hpp>
-#include <boost/iterator/filter_iterator.hpp>
-#include <boost/optional/optional.hpp>
-
 #include <map>
 #include <memory>
 #include <set>
 #include <string>
 #include <vector>
+#include <boost/algorithm/string/case_conv.hpp>
+#include <boost/iterator/filter_iterator.hpp>
+#include <boost/optional/optional.hpp>
+#include <boost/serialization/nvp.hpp>
+#include "EnumsFwd.h"
+#include "../util/Export.h"
+#include "../util/Serialize.h"
+#include "../util/Pending.h"
 
 
 namespace Condition {

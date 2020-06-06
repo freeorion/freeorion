@@ -1,6 +1,5 @@
 #include "ShipHull.h"
 
-
 #include "ConditionSource.h"
 #include "Effects.h"
 #include "Enums.h"

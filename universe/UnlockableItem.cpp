@@ -1,7 +1,7 @@
 #include "UnlockableItem.h"
 
-#include "../util/Logger.h"
 #include "../util/CheckSums.h"
+#include "../util/Logger.h"
 
 
 UnlockableItem::UnlockableItem() :

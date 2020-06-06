@@ -1,35 +1,34 @@
 #include "Effects.h"
 
+#include <cctype>
+#include <iterator>
+#include <boost/filesystem/fstream.hpp>
+#include "BuildingType.h"
+#include "Building.h"
+#include "Condition.h"
+#include "Enums.h"
+#include "FieldType.h"
+#include "Field.h"
+#include "Fleet.h"
+#include "Pathfinder.h"
+#include "Planet.h"
+#include "ShipDesign.h"
+#include "Ship.h"
+#include "Species.h"
+#include "System.h"
+#include "Tech.h"
+#include "UniverseObject.h"
+#include "Universe.h"
+#include "ValueRefs.h"
+#include "../Empire/EmpireManager.h"
+#include "../Empire/Empire.h"
+#include "../util/Directories.h"
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
 #include "../util/Random.h"
-#include "../util/Directories.h"
-#include "../util/i18n.h"
 #include "../util/SitRepEntry.h"
-#include "../Empire/EmpireManager.h"
-#include "../Empire/Empire.h"
-#include "ValueRefs.h"
-#include "Condition.h"
-#include "Pathfinder.h"
-#include "Universe.h"
-#include "UniverseObject.h"
-#include "Building.h"
-#include "BuildingType.h"
-#include "Planet.h"
-#include "System.h"
-#include "Field.h"
-#include "FieldType.h"
-#include "Fleet.h"
-#include "Ship.h"
-#include "ShipDesign.h"
-#include "Tech.h"
-#include "Species.h"
-#include "Enums.h"
+#include "../util/i18n.h"
 
-#include <boost/filesystem/fstream.hpp>
-
-#include <cctype>
-#include <iterator>
 
 namespace {
     DeclareThreadSafeLogger(effects);

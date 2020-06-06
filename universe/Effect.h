@@ -2,18 +2,16 @@
 #define _Effect_h_
 
 
-#include "EnumsFwd.h"
-
+#include <map>
+#include <memory>
+#include <string>
+#include <unordered_map>
+#include <vector>
 #include <boost/container/flat_map.hpp>
 #include <boost/serialization/access.hpp>
-
-#include <memory>
-#include <map>
-#include <string>
-#include <vector>
-#include <unordered_map>
-
+#include "EnumsFwd.h"
 #include "../util/Export.h"
+
 
 FO_COMMON_API extern const int INVALID_OBJECT_ID;
 

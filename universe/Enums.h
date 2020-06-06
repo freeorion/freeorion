@@ -1,13 +1,13 @@
 #ifndef _Enums_h_
 #define _Enums_h_
 
-#include <GG/Enum.h>
 
 #include <iostream>
 #include <string>
 #include <vector>
-
+#include <GG/Enum.h>
 #include "../util/Export.h"
+
 
 /* the various major subclasses of UniverseObject */
 GG_ENUM(UniverseObjectType,

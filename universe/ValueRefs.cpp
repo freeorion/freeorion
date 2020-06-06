@@ -1,40 +1,38 @@
 #include "ValueRefs.h"
 
-#include "Building.h"
-#include "Fleet.h"
-#include "ShipDesign.h"
-#include "ShipPart.h"
-#include "ShipHull.h"
-#include "Ship.h"
-#include "Planet.h"
-#include "Predicates.h"
-#include "Species.h"
-#include "System.h"
-#include "Field.h"
-#include "Fighter.h"
-#include "Pathfinder.h"
-#include "Universe.h"
-#include "UniverseObject.h"
-#include "Enums.h"
-#include "Tech.h"
-#include "../Empire/EmpireManager.h"
-#include "../Empire/Empire.h"
-#include "../Empire/Supply.h"
-#include "../util/Random.h"
-#include "../util/Logger.h"
-#include "../util/MultiplayerCommon.h"
-#include "../util/GameRules.h"
-
+#include <functional>
+#include <iomanip>
+#include <iterator>
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/range/adaptor/filtered.hpp>
 #include <boost/range/adaptor/map.hpp>
 #include <boost/range/numeric.hpp>
-
-#include <functional>
-#include <iomanip>
-#include <iterator>
+#include "Building.h"
+#include "Enums.h"
+#include "Field.h"
+#include "Fighter.h"
+#include "Fleet.h"
+#include "Pathfinder.h"
+#include "Planet.h"
+#include "Predicates.h"
+#include "ShipDesign.h"
+#include "ShipHull.h"
+#include "ShipPart.h"
+#include "Ship.h"
+#include "Species.h"
+#include "System.h"
+#include "Tech.h"
+#include "UniverseObject.h"
+#include "Universe.h"
+#include "../Empire/EmpireManager.h"
+#include "../Empire/Empire.h"
+#include "../Empire/Supply.h"
+#include "../util/GameRules.h"
+#include "../util/Logger.h"
+#include "../util/MultiplayerCommon.h"
+#include "../util/Random.h"
 
 
 std::string DoubleToString(double val, int digits, bool always_show_sign);
