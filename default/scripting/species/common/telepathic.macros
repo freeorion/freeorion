@@ -1,3 +1,17 @@
+PRECOGNITIVE_DETECTION
+'''     EffectsGroup
+            description = "PRECOGNITIVE_DETECTION_DESC"
+            scope = And [
+                PopulationCenter
+                Not VisibleToEmpire empire = Source.Owner
+                Not Source
+                Not OwnedBy empire = Source.Owner
+                WithinStarlaneJumps jumps = @1@ condition = Source
+            ]
+            activation = OwnedBy affiliation = AnyEmpire
+            effects = SetVisibility empire = Source.Owner visibility = max(Basic, Value)
+'''
+
 TELEPATHIC_DETECTION
 '''     EffectsGroup
             description = "TELEPATHIC_DETECTION_DESC"

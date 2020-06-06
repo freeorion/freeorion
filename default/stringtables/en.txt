@@ -8405,7 +8405,7 @@ SP_FULVER_DESC
 The Fulvers' appearance resembles that of large nervous ants. They possess quantum computing brains which effectively allows them to predict all possible near futures making them hard to surprise in combat.
 
 Name:
-The precognition ability is also unique to the Fulvers species on the Fulver homeworld. As such a "Fulver" is "One who can see" your possible reactions.
+No other species on the Fulver homeworld has this precognition ability. As such a "Fulver" is "One who can see" your possible reactions.
 
 Personality:
 Fulver prefer to concentrate on their strength and prefer to live from day to day. Fulver often favor the tools and decisions which allows for the highest number of future choices. Having a bad memory and no capability for long term future prediction they are bad at long term commitments like science and building up defensive structures. Feeling locked in by the limited number of choices they are restless and unsatisfied and constantly try to overcome their situation.
@@ -15360,6 +15360,9 @@ LIGHT_SENSITIVE_DESC
 
 TELEPATHIC_DETECTION_DESC
 +	Telepathic Detection: can sense nearby populated planets.
+
+PRECOGNITIVE_DETECTION_DESC
++	Procognitive Detection: can sense starlane connected planets.
 
 COMMUNAL_VISION_DESC
 '''	Communal Vision: shares visibility within the same species.'''
