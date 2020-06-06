@@ -2680,7 +2680,7 @@ namespace {
             detailed_description += "\n";
         }
 
-        if (planet->Size() < SZ_ASTEROIDS) {
+        if (planet->Type() < PT_ASTEROIDS && planet->Type() > INVALID_PLANET_TYPE) {
             detailed_description += UserString("ENC_SUITABILITY_REPORT_WHEEL_INTRO")
                                     + "<img src=\"encyclopedia/EP_wheel.png\"></img>";
         }
