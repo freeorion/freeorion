@@ -70,3 +70,7 @@ void RandomShuffle(std::vector<bool>& c) {
     std::shuffle(c.begin(), c.end(), gen);
 }
 
+void RandomShuffle(std::vector<int>& c) {
+    lock_guard lock(s_prng_mutex);
+    std::shuffle(c.begin(), c.end(), gen);
+}

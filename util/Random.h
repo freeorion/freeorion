@@ -39,5 +39,6 @@ FO_COMMON_API double RandGaussian(double mean, double sigma);
 
 /** shuffles contents of container */
 FO_COMMON_API void RandomShuffle(std::vector<bool>& c);
+FO_COMMON_API void RandomShuffle(std::vector<int>& c);
 
 #endif // _Random_h_
