@@ -12274,7 +12274,7 @@ SHP_REINFORCED_HULL
 Reinforced Hull
 
 SHP_REINFORCED_HULL_DESC
-'''Increases max [[metertype METER_STRUCTURE]] of all ships by 5.
+'''Increases max [[metertype METER_STRUCTURE]] of all ships by 40.
 
 Standard ship hulls are designed and constructed with advanced microgravity architectural techniques and highly resistant materials. However, the limitations of physical matter impose a severe limitation on the strength of hulls. By enhancing the hull with structural integrity fields, a sizable increase in strength can be obtained.'''
 
@@ -12282,7 +12282,7 @@ SHP_BASIC_DAM_CONT
 Basic Damage Control
 
 SHP_BASIC_DAM_CONT_DESC
-Gradually repairs damaged ships. Current [[metertype METER_STRUCTURE]] of all ships is replenished at a rate of 1 per turn every turn they are not engaged in combat.
+Gradually repairs damaged ships. Current [[metertype METER_STRUCTURE]] of all ships is replenished at a rate of 8 per turn every turn they are not engaged in combat.
 
 SHP_ADV_DAM_CONT
 Advanced Damage Control
@@ -12315,7 +12315,7 @@ SHP_FIGHTERS_1_DESC
 
 A [[encyclopedia PC_FIGHTER_BAY]] can launch a number of fighters in each combat round. These fighters will then be both valid targets and able to attack ships and other fighters in subsequent combat rounds, but a single hit from any source will destroy a fighter. Unlike [[encyclopedia DAMAGE_TITLE]] inflicted by regular weapons, fighter damage ignores [[metertype METER_SHIELD]] on warships (they fire from within the shields).
 
-Piloting traits affect [[FT_HANGAR_2]], [[FT_HANGAR_3]], and [[FT_HANGAR_4]] fighters in the same way: bad piloting reduces damage by 1 per fighter; good piloting increases damage by 1, great piloting by 2, and ultimate piloting by 3 per fighter shot.
+Piloting traits affect [[FT_HANGAR_2]], [[FT_HANGAR_3]], and [[FT_HANGAR_4]] fighters in the same way: bad piloting reduces damage by 6 per fighter; good piloting increases damage by 6, great piloting by 12, and ultimate piloting by 18 per fighter shot.
 Piloting traits do not affect [[FT_HANGAR_1]] fighters.
 
 At the end of combat, carriers will collect any fighters that have survived. If a carrier is in [[metertype METER_SUPPLY]] immediately after movement is resolved, it will refill hangars to maximum.'''
@@ -12324,37 +12324,37 @@ SHP_FIGHTERS_2
 Laser Fighters
 
 SHP_FIGHTERS_2_DESC
-Upgrades the fighters of all carriers within [[metertype METER_SUPPLY]] to have laser weaponry. [[encyclopedia DAMAGE_TITLE]] from fighters in a [[shippart FT_HANGAR_2]] is increased by 2, [[shippart FT_HANGAR_3]] by 3, and [[shippart FT_HANGAR_4]] by 6. For [[shippart FT_HANGAR_1]] fighters the capacity as well as the launch rate of the [[shippart FT_BAY_1]] is increased by 1.
+Upgrades the fighters of all carriers within [[metertype METER_SUPPLY]] to have laser weaponry. [[encyclopedia DAMAGE_TITLE]] from fighters in a [[shippart FT_HANGAR_2]] is increased by 12, [[shippart FT_HANGAR_3]] by 18, and [[shippart FT_HANGAR_4]] by 36. For [[shippart FT_HANGAR_1]] fighters the capacity as well as the launch rate of the [[shippart FT_BAY_1]] is increased by 1.
 
 SHP_FIGHTERS_3
 Plasma Fighters
 
 SHP_FIGHTERS_3_DESC
-Upgrades the fighters of all carriers within [[metertype METER_SUPPLY]] to have plasma weaponry. [[encyclopedia DAMAGE_TITLE]] from fighters in a [[shippart FT_HANGAR_2]] is increased by 2, [[shippart FT_HANGAR_3]] by 3, and [[shippart FT_HANGAR_4]] by 6. For [[shippart FT_HANGAR_1]] fighters the capacity as well as the launch rate of the [[shippart FT_BAY_1]] is increased by 1.
+Upgrades the fighters of all carriers within [[metertype METER_SUPPLY]] to have plasma weaponry. [[encyclopedia DAMAGE_TITLE]] from fighters in a [[shippart FT_HANGAR_2]] is increased by 12, [[shippart FT_HANGAR_3]] by 18, and [[shippart FT_HANGAR_4]] by 36. For [[shippart FT_HANGAR_1]] fighters the capacity as well as the launch rate of the [[shippart FT_BAY_1]] is increased by 1.
 
 SHP_FIGHTERS_4
 Death Ray Fighters
 
 SHP_FIGHTERS_4_DESC
-Upgrades the fighters of all carriers within [[metertype METER_SUPPLY]] to have death ray weaponry. [[encyclopedia DAMAGE_TITLE]] from fighters in a [[shippart FT_HANGAR_2]] is increased by 2, [[shippart FT_HANGAR_3]] by 3, and [[shippart FT_HANGAR_4]] by 6. For [[shippart FT_HANGAR_1]] fighters the capacity as well as the launch rate of the [[shippart FT_BAY_1]] is increased by 1.
+Upgrades the fighters of all carriers within [[metertype METER_SUPPLY]] to have death ray weaponry. [[encyclopedia DAMAGE_TITLE]] from fighters in a [[shippart FT_HANGAR_2]] is increased by 12, [[shippart FT_HANGAR_3]] by 18, and [[shippart FT_HANGAR_4]] by 36. For [[shippart FT_HANGAR_1]] fighters the capacity as well as the launch rate of the [[shippart FT_BAY_1]] is increased by 1.
 
 SHP_WEAPON_1_2
 Mass Driver 2
 
 SHP_WEAPON_1_2_DESC
-Upgrades [[shippart SR_WEAPON_1_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 4.
+Upgrades [[shippart SR_WEAPON_1_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 24.
 
 SHP_WEAPON_1_3
 Mass Driver 3
 
 SHP_WEAPON_1_3_DESC
-Upgrades [[shippart SR_WEAPON_1_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 5.
+Upgrades [[shippart SR_WEAPON_1_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 30.
 
 SHP_WEAPON_1_4
 Mass Driver 4
 
 SHP_WEAPON_1_4_DESC
-Upgrades [[shippart SR_WEAPON_1_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 6.
+Upgrades [[shippart SR_WEAPON_1_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 36.
 
 SHP_WEAPON_2_1
 Laser Weapons
@@ -12366,19 +12366,19 @@ SHP_WEAPON_2_2
 Laser 2
 
 SHP_WEAPON_2_2_DESC
-Upgrades [[shippart SR_WEAPON_2_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 7.
+Upgrades [[shippart SR_WEAPON_2_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 42.
 
 SHP_WEAPON_2_3
 Laser 3
 
 SHP_WEAPON_2_3_DESC
-Upgrades [[shippart SR_WEAPON_2_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 9.
+Upgrades [[shippart SR_WEAPON_2_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 54.
 
 SHP_WEAPON_2_4
 Laser 4
 
 SHP_WEAPON_2_4_DESC
-Upgrades [[shippart SR_WEAPON_2_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 11.
+Upgrades [[shippart SR_WEAPON_2_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 66.
 
 SHP_WEAPON_3_1
 Plasma Cannons
@@ -12390,19 +12390,19 @@ SHP_WEAPON_3_2
 Plasma Cannon 2
 
 SHP_WEAPON_3_2_DESC
-Upgrades [[shippart SR_WEAPON_3_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 12.
+Upgrades [[shippart SR_WEAPON_3_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 72.
 
 SHP_WEAPON_3_3
 Plasma Cannon 3
 
 SHP_WEAPON_3_3_DESC
-Upgrades [[shippart SR_WEAPON_3_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 15.
+Upgrades [[shippart SR_WEAPON_3_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 90.
 
 SHP_WEAPON_3_4
 Plasma Cannon 4
 
 SHP_WEAPON_3_4_DESC
-Upgrades [[shippart SR_WEAPON_3_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 18.
+Upgrades [[shippart SR_WEAPON_3_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 108.
 
 SHP_WEAPON_4_1
 Death Rays
@@ -12414,37 +12414,37 @@ SHP_WEAPON_4_2
 Death Ray 2
 
 SHP_WEAPON_4_2_DESC
-Upgrades [[shippart SR_WEAPON_4_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 20.
+Upgrades [[shippart SR_WEAPON_4_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 120.
 
 SHP_WEAPON_4_3
 Death Ray 3
 
 SHP_WEAPON_4_3_DESC
-Upgrades [[shippart SR_WEAPON_4_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 25.
+Upgrades [[shippart SR_WEAPON_4_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 150.
 
 SHP_WEAPON_4_4
 Death Ray 4
 
 SHP_WEAPON_4_4_DESC
-Upgrades [[shippart SR_WEAPON_4_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 30.
+Upgrades [[shippart SR_WEAPON_4_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 180.
 
 SHP_WEAPON_ARC_DISRUPTOR_1
 Arc Disruptors
 
 SHP_WEAPON_ARC_DISRUPTOR_1_DESC
-Unlocks the [[shippart SR_ARC_DISRUPTOR]], an automated weapon system doing low damage to multiple targets. The base weapon part has shot damage 2.
+Unlocks the [[shippart SR_ARC_DISRUPTOR]], an automated weapon system doing low damage to multiple targets. The base weapon part has shot damage 12.
 
 SHP_WEAPON_ARC_DISRUPTOR_2
 Arc Disruptor 2
 
 SHP_WEAPON_ARC_DISRUPTOR_2_DESC
-Upgrades [[shippart SR_ARC_DISRUPTOR]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 4.
+Upgrades [[shippart SR_ARC_DISRUPTOR]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 24.
 
 SHP_WEAPON_ARC_DISRUPTOR_3
 Arc Disruptor 3
 
 SHP_WEAPON_ARC_DISRUPTOR_3_DESC
-Upgrades [[shippart SR_ARC_DISRUPTOR]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 7.
+Upgrades [[shippart SR_ARC_DISRUPTOR]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 42.
 
 SHP_ION_CANNON
 Ion Cannon
@@ -14128,7 +14128,7 @@ SH_ROBOTIC_INTERFACE_SHIELDS
 Robotic Interface: Shields
 
 SH_ROBOTIC_INTERFACE_SHIELDS_DESC
-'''Robotic Interface: Shields have a shield strength of roughly 1 shield strength per other Robotic Interface: Shielded ships at the same location, though with diminishing returns at higher numbers. The effect is capped at 20 shield strength, only applies to ships crewed by [[encyclopedia ROBOTIC_SPECIES_TITLE]] species and can only be placed in a [[encyclopedia HULL_LINE_ROBOTIC]] ship.
+'''Robotic Interface: Shields have a shield strength of roughly 6 shield strength per other Robotic Interface: Shielded ships at the same location, though with diminishing returns at higher numbers. The effect is capped at 20 shield strength, only applies to ships crewed by [[encyclopedia ROBOTIC_SPECIES_TITLE]] species and can only be placed in a [[encyclopedia HULL_LINE_ROBOTIC]] ship.
 
 Robotic species have an inherent ability to network together and thereby substantially increase their sheer computational power. Robotic Interface: Shields use that network to calculate the trajectory of incoming fire and applying shield strength at the point of impact.
 '''
