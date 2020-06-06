@@ -13096,7 +13096,7 @@ Increases [[metertype METER_RESEARCH]] on its planet by 5, if that planet has re
 
 Learning to design devices for use by different species is crucial for developing universally usable tools.
 
-Each empire may contain an academy on up to six planets with different species. To support an academy, a planet's [[metertype METER_POPULATION]] must be happy, and at least three starlane jumps away from the nearest existing academy.'''
+Each empire may contain an academy on up to six planets with different species. To support an academy, a planet's [[metertype METER_POPULATION]] must be happy, and more than three starlane jumps away from the nearest existing academy.'''
 
 BLD_STOCKPILING_CENTER
 Imperial Entanglement Center
