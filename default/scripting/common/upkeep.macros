@@ -15,7 +15,20 @@ FLEET_UPKEEP_MULTIPLICATOR
         (0.01 * ShipDesignsInProduction empire = Source.Owner)))'''
 
 SHIP_HULL_COST_MULTIPLIER
-'''(GameRule name = "RULE_SHIP_HULL_COST_FACTOR")'''
+'''(GameRule name = "RULE_SHIP_HULL_COST_FACTOR") * [[DESIGN_SIMPLICITY_POLICY_MULTIPLIER]]'''
 
 SHIP_PART_COST_MULTIPLIER
-'''(GameRule name = "RULE_SHIP_PART_COST_FACTOR")'''
+'''(GameRule name = "RULE_SHIP_PART_COST_FACTOR") * [[DESIGN_SIMPLICITY_POLICY_MULTIPLIER]]'''
+
+COLONIZATION_POLICY_MULTIPLIER
+'''(1 - 0.3*(Statistic If condition = EmpireHasAdoptedPolicy name = "PLC_COLONIZATION"))'''
+
+MARINE_RECRUITMENT_POLICY_MULTIPLIER
+'''(1 - 0.5*(Statistic If condition = EmpireHasAdoptedPolicy name = "PLC_MARINE_RECRUITMENT"))'''
+
+DESIGN_SIMPLICITY_POLICY_MULTIPLIER
+'''(1 - 0.2*(Statistic If condition = And [
+    EmpireHasAdoptedPolicy name = "PLC_DESIGN_SIMPLICITY"
+    ((PartsInShipDesign design = UsedInDesignID) <= 6)  // Used in part or hull cost expressions, in which "UsedInDesignID" will contain the ID of the ship design in which the part is being used
+]))
+'''

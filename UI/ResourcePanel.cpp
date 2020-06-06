@@ -57,7 +57,7 @@ void ResourcePanel::CompleteConstruction() {
     std::vector<std::pair<MeterType, MeterType>> meters;
 
     // small meter indicators - for use when panel is collapsed
-    for (MeterType meter : {METER_INDUSTRY, METER_RESEARCH,
+    for (MeterType meter : {METER_INDUSTRY, METER_RESEARCH, METER_INFLUENCE,
                             METER_SUPPLY, METER_STOCKPILE})
     {
         auto stat = GG::Wnd::Create<StatisticIcon>(
@@ -109,8 +109,8 @@ namespace {
                           std::pair<MeterType, std::shared_ptr<StatisticIcon>> right)
     {
         if (left.second->GetValue() == right.second->GetValue()) {
-            if (left.first == METER_TRADE && right.first == METER_CONSTRUCTION) {
-                // swap order of METER_TRADE and METER_CONSTRUCTION in relation to
+            if (left.first == METER_INFLUENCE && right.first == METER_CONSTRUCTION) {
+                // swap order of METER_INFLUENCE and METER_CONSTRUCTION in relation to
                 // MeterType enum.
                 return false;
             }

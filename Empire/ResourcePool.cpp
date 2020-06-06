@@ -32,7 +32,8 @@ float ResourcePool::TotalOutput() const {
     return retval;
 }
 
-std::map<std::set<int>, float> ResourcePool::Output() const { return m_connected_object_groups_resource_output; }
+std::map<std::set<int>, float> ResourcePool::Output() const
+{ return m_connected_object_groups_resource_output; }
 
 float ResourcePool::GroupOutput(int object_id) const {
     // find group containing specified object
@@ -45,7 +46,6 @@ float ResourcePool::GroupOutput(int object_id) const {
     //DebugLogger() << "ResourcePool::GroupOutput passed unknown object id: " << object_id;
     return 0.0f;
 }
-
 
 float ResourcePool::TargetOutput() const {
     float retval = 0.0f;
@@ -100,7 +100,10 @@ void ResourcePool::SetConnectedSupplyGroups(const std::set<std::set<int>>& conne
 { m_connected_system_groups = connected_system_groups; }
 
 void ResourcePool::SetStockpile(float d)
-{ m_stockpile = d; }
+{
+    DebugLogger() << "ResourcePool " << boost::lexical_cast<std::string>(m_type) << " set to " << d;
+    m_stockpile = d;
+}
 
 void ResourcePool::Update() {
     //DebugLogger() << "ResourcePool::Update for type " << m_type;

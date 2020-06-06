@@ -10,6 +10,7 @@ Tech
         "LRN_MIND_VOID"
         "PRO_GENERIC_SUPPLIES"
     ]
+    unlock = Item type = Policy name = "PLC_STOCKPILE_LIQUIDATION"
     effectsgroups = [
         EffectsGroup
             scope = And [

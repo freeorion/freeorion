@@ -150,8 +150,8 @@ BOOST_AUTO_TEST_CASE(NonShipPartMeterTypeParser) {
     CHECK_ENUM_AND_RESULT("SetTargetIndustry", METER_TARGET_INDUSTRY, MeterType, parse::set_non_ship_part_meter_enum_grammar);
     CHECK_ENUM_AND_RESULT("TargetResearch", METER_TARGET_RESEARCH, MeterType, parse::non_ship_part_meter_enum_grammar);
     CHECK_ENUM_AND_RESULT("SetTargetResearch", METER_TARGET_RESEARCH, MeterType, parse::set_non_ship_part_meter_enum_grammar);
-    CHECK_ENUM_AND_RESULT("TargetTrade", METER_TARGET_TRADE, MeterType, parse::non_ship_part_meter_enum_grammar);
-    CHECK_ENUM_AND_RESULT("SetTargetTrade", METER_TARGET_TRADE, MeterType, parse::set_non_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("TargetInfluence", METER_TARGET_INFLUENCE, MeterType, parse::non_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("SetTargetInfluence", METER_TARGET_INFLUENCE, MeterType, parse::set_non_ship_part_meter_enum_grammar);
     CHECK_ENUM_AND_RESULT("TargetConstruction", METER_TARGET_CONSTRUCTION, MeterType, parse::non_ship_part_meter_enum_grammar);
     CHECK_ENUM_AND_RESULT("SetTargetConstruction", METER_TARGET_CONSTRUCTION, MeterType, parse::set_non_ship_part_meter_enum_grammar);
     CHECK_ENUM_AND_RESULT("MaxFuel", METER_MAX_FUEL, MeterType, parse::non_ship_part_meter_enum_grammar);
@@ -170,8 +170,8 @@ BOOST_AUTO_TEST_CASE(NonShipPartMeterTypeParser) {
     CHECK_ENUM_AND_RESULT("SetIndustry", METER_INDUSTRY, MeterType, parse::set_non_ship_part_meter_enum_grammar);
     CHECK_ENUM_AND_RESULT("Research", METER_RESEARCH, MeterType, parse::non_ship_part_meter_enum_grammar);
     CHECK_ENUM_AND_RESULT("SetResearch", METER_RESEARCH, MeterType, parse::set_non_ship_part_meter_enum_grammar);
-    CHECK_ENUM_AND_RESULT("Trade", METER_TRADE, MeterType, parse::non_ship_part_meter_enum_grammar);
-    CHECK_ENUM_AND_RESULT("SetTrade", METER_TRADE, MeterType, parse::set_non_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Influence", METER_INFLUENCE, MeterType, parse::non_ship_part_meter_enum_grammar);
+    CHECK_ENUM_AND_RESULT("SetInfluence", METER_INFLUENCE, MeterType, parse::set_non_ship_part_meter_enum_grammar);
     CHECK_ENUM_AND_RESULT("Construction", METER_CONSTRUCTION, MeterType, parse::non_ship_part_meter_enum_grammar);
     CHECK_ENUM_AND_RESULT("SetConstruction", METER_CONSTRUCTION, MeterType, parse::set_non_ship_part_meter_enum_grammar);
     CHECK_ENUM_AND_RESULT("Fuel", METER_FUEL, MeterType, parse::non_ship_part_meter_enum_grammar);
@@ -261,7 +261,7 @@ BOOST_AUTO_TEST_CASE(ShipPartsClassParser) {
     CHECK_ENUM_AND_RESULT("Bombard", PC_BOMBARD, ShipPartClass, parse::ship_part_class_enum_grammar);
     CHECK_ENUM_AND_RESULT("Industry", PC_INDUSTRY, ShipPartClass, parse::ship_part_class_enum_grammar);
     CHECK_ENUM_AND_RESULT("Research", PC_RESEARCH, ShipPartClass, parse::ship_part_class_enum_grammar);
-    CHECK_ENUM_AND_RESULT("Trade", PC_TRADE, ShipPartClass, parse::ship_part_class_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Influence", PC_INFLUENCE, ShipPartClass, parse::ship_part_class_enum_grammar);
     CHECK_ENUM_AND_RESULT("ProductionLocation", PC_PRODUCTION_LOCATION, ShipPartClass, parse::ship_part_class_enum_grammar);
     CHECK_FAILED_ENUM(ShipPartClass, parse::ship_part_class_enum_grammar);
 }
@@ -328,13 +328,14 @@ BOOST_AUTO_TEST_CASE(StarTypeParser) {
 BOOST_AUTO_TEST_CASE(UnlockableItemTypeParser)
 {
     // Literal is number of tests, not number of enums.
-    BOOST_REQUIRE_MESSAGE(NUM_UNLOCKABLE_ITEM_TYPES == 5, "Untested enumeration value.");
+    BOOST_REQUIRE_MESSAGE(NUM_UNLOCKABLE_ITEM_TYPES == 6, "Untested enumeration value.");
 
     CHECK_ENUM_AND_RESULT("Building", UIT_BUILDING, UnlockableItemType, parse::unlockable_item_enum_grammar);
     CHECK_ENUM_AND_RESULT("ShipPart", UIT_SHIP_PART, UnlockableItemType, parse::unlockable_item_enum_grammar);
     CHECK_ENUM_AND_RESULT("ShipHull", UIT_SHIP_HULL, UnlockableItemType, parse::unlockable_item_enum_grammar);
     CHECK_ENUM_AND_RESULT("ShipDesign", UIT_SHIP_DESIGN, UnlockableItemType, parse::unlockable_item_enum_grammar);
     CHECK_ENUM_AND_RESULT("Tech", UIT_TECH, UnlockableItemType, parse::unlockable_item_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Policy", UIT_POLICY, UnlockableItemType, parse::unlockable_item_enum_grammar);
     CHECK_FAILED_ENUM(UnlockableItemType, parse::unlockable_item_enum_grammar);
 }
 

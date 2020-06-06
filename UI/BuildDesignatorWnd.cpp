@@ -1461,6 +1461,9 @@ void BuildDesignatorWnd::ShowPlanetInEncyclopedia(int planet_id)
 void BuildDesignatorWnd::ShowTechInEncyclopedia(const std::string& tech_name)
 { m_enc_detail_panel->SetTech(tech_name); }
 
+void BuildDesignatorWnd::ShowPolicyInEncyclopedia(const std::string& policy_name)
+{ m_enc_detail_panel->SetPolicy(policy_name); }
+
 void BuildDesignatorWnd::ShowShipPartInEncyclopedia(const std::string& part_name)
 { m_enc_detail_panel->SetShipPart(part_name); }
 

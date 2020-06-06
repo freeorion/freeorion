@@ -21,6 +21,7 @@ BOOST_CLASS_EXPORT(ColonizeOrder)
 BOOST_CLASS_EXPORT(InvadeOrder)
 BOOST_CLASS_EXPORT(BombardOrder)
 BOOST_CLASS_EXPORT(ChangeFocusOrder)
+BOOST_CLASS_EXPORT(PolicyOrder)
 BOOST_CLASS_EXPORT(ResearchQueueOrder)
 BOOST_CLASS_EXPORT(ProductionQueueOrder)
 BOOST_CLASS_VERSION(ProductionQueueOrder, 2)
@@ -117,6 +118,16 @@ void ChangeFocusOrder::serialize(Archive& ar, const unsigned int version)
 }
 
 template <typename Archive>
+void PolicyOrder::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Order)
+        & BOOST_SERIALIZATION_NVP(m_policy_name)
+        & BOOST_SERIALIZATION_NVP(m_category)
+        & BOOST_SERIALIZATION_NVP(m_adopt)
+        & BOOST_SERIALIZATION_NVP(m_slot);
+}
+
+template <class Archive>
 void ResearchQueueOrder::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Order)

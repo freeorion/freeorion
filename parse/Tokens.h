@@ -13,6 +13,7 @@
     (AddSpecial)                                \
     (AddStarlanes)                              \
     (Adequate)                                  \
+    (AdoptionCost)                              \
     (Affiliation)                               \
     (Age)                                       \
     (Aggressive)                                \
@@ -106,6 +107,7 @@
     (EffectsGroups)                             \
     (Else)                                      \
     (Empire)                                    \
+    (EmpireHasAdoptedPolicy)                    \
     (EmpireHasBuildingAvailable)                \
     (EmpireHasShipDesignAvailable)              \
     (EmpireHasShipPartAvailable)                \
@@ -188,6 +190,7 @@
     (If)                                        \
     (Industry)                                  \
     (Inferno)                                   \
+    (Influence)                                 \
     (InSystem)                                  \
     (Interceptor)                               \
     (Integer)                                   \
@@ -319,6 +322,7 @@
     (PlanetType)                                \
     (Playable)                                  \
     (PointDefense)                              \
+    (Policy)                                    \
     (Poor)                                      \
     (Population)                                \
     (PopulationCenter)                          \
@@ -385,6 +389,7 @@
     (SetFuel)                                   \
     (SetHappiness)                              \
     (SetIndustry)                               \
+    (SetInfluence)                              \
     (SetMaxCapacity)                            \
     (SetMaxDamage)                              \
     (SetMaxDefense)                             \
@@ -421,11 +426,10 @@
     (SetTargetConstruction)                     \
     (SetTargetHappiness)                        \
     (SetTargetIndustry)                         \
+    (SetTargetInfluence)                        \
     (SetTargetPopulation)                       \
     (SetTargetResearch)                         \
-    (SetTargetTrade)                            \
     (SetTexture)                                \
-    (SetTrade)                                  \
     (SetTroops)                                 \
     (SetVisibility)
 
@@ -512,9 +516,9 @@
     (TargetConstruction)                        \
     (TargetHappiness)                           \
     (TargetIndustry)                            \
+    (TargetInfluence)                           \
     (TargetPopulation)                          \
     (TargetResearch)                            \
-    (TargetTrade)                               \
     (Tech)                                      \
     (Terran)                                    \
     (TestValue)                                 \
@@ -540,6 +544,7 @@
     (Troops)                                    \
     (Tundra)                                    \
     (Turn)                                      \
+    (TurnPolicyAdopted)                         \
     (TurnsSinceFocusChange)                     \
     (TurnTechResearched)                        \
     (Type)                                      \

@@ -2,6 +2,7 @@
 
 #include "../parse/Parse.h"
 #include "../Empire/EmpireManager.h"
+#include "../Empire/Government.h"
 #include "../universe/BuildingType.h"
 #include "../universe/Encyclopedia.h"
 #include "../universe/FieldType.h"
@@ -63,6 +64,11 @@ void IApp::StartBackgroundParsing() {
         GetBuildingTypeManager().SetBuildingTypes(Pending::StartParsing(parse::buildings, rdir / "scripting/buildings"));
     else
         ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/buildings").string();
+
+    if (fs::exists(rdir / "scripting/policies"))
+        GetPolicyManager().SetPolicies(Pending::StartParsing(parse::policies, rdir / "scripting/policies"));
+    else
+        ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/policies").string();
 
     if (fs::exists(rdir / "scripting/encyclopedia"))
         GetEncyclopedia().SetArticles(Pending::StartParsing(parse::encyclopedia_articles, rdir / "scripting/encyclopedia"));

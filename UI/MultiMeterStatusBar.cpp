@@ -26,8 +26,8 @@ namespace {
         case METER_TARGET_RESEARCH:
             return GG::Clr(0, 255, 255, 255);
             break;
-        case METER_TRADE:
-        case METER_TARGET_TRADE:
+        case METER_INFLUENCE:
+        case METER_TARGET_INFLUENCE:
             return GG::Clr(255, 200, 0, 255);
             break;
         case METER_SHIELD:

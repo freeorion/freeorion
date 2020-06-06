@@ -218,6 +218,7 @@
     <ClCompile Include="..\..\parse\PlanetEnvironmentValueRefParser.cpp" />
     <ClCompile Include="..\..\parse\PlanetSizeValueRefParser.cpp" />
     <ClCompile Include="..\..\parse\PlanetTypeValueRefParser.cpp" />
+    <ClCompile Include="..\..\parse\PoliciesParser.cpp" />
     <ClCompile Include="..\..\parse\ReportParseError.cpp" />
     <ClCompile Include="..\..\parse\ShipDesignsParser.cpp" />
     <ClCompile Include="..\..\parse\ShipHullsParser.cpp">

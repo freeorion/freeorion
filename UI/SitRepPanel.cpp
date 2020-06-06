@@ -73,6 +73,8 @@ namespace {
 
             } else if (link_type == VarText::TECH_TAG) {
                 ClientUI::GetClientUI()->ZoomToTech(data);
+            } else if (link_type == VarText::POLICY_TAG) {
+                ClientUI::GetClientUI()->ZoomToPolicy(data);
             } else if (link_type == VarText::BUILDING_TYPE_TAG) {
                 ClientUI::GetClientUI()->ZoomToBuildingType(data);
             } else if (link_type == VarText::SPECIAL_TAG) {

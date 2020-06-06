@@ -9,7 +9,7 @@ Tech
     prerequisites = [
         "SHP_INTSTEL_LOG"
         "SHP_BASIC_DAM_CONT"
-            ]
+    ]
     effectsgroups =
         EffectsGroup
             scope = And [
@@ -19,7 +19,11 @@ Tech
                 Or [
                     OwnedBy empire = Source.Owner
                     And [
-                        ((GameRule name = "RULE_ENABLE_ALLIED_REPAIR") > 0)
+                        // either ally providing repair or owner of ship beign repaired must adopt policy to share repairs
+                        Or [
+                            EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_ALLIED_REPAIR"
+                            EmpireHasAdoptedPolicy empire = LocalCandidate.Owner name = "PLC_ALLIED_REPAIR"
+                        ]
                         OwnedBy affiliation = AllyOf empire = Source.Owner
                     ]
                 ]
@@ -29,5 +33,6 @@ Tech
             ]
 	    stackinggroup = "FLEET_REPAIR"
             effects = SetStructure value = Value + (Target.MaxStructure/10)
+    graphic = "icons/tech/fleet_field_repair.png"
 
 #include "/scripting/common/base_prod.macros"

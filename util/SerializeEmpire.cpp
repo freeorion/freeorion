@@ -124,6 +124,47 @@ template void ProductionQueue::serialize<freeorion_xml_oarchive>(freeorion_xml_o
 template void ProductionQueue::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
 
 template <typename Archive>
+void InfluenceQueue::Element::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_NVP(name)
+        & BOOST_SERIALIZATION_NVP(empire_id)
+        & BOOST_SERIALIZATION_NVP(allocated_ip)
+        & BOOST_SERIALIZATION_NVP(paused);
+}
+
+template void InfluenceQueue::Element::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
+template void InfluenceQueue::Element::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
+template void InfluenceQueue::Element::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
+template void InfluenceQueue::Element::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
+
+template <class Archive>
+void InfluenceQueue::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_NVP(m_queue)
+        & BOOST_SERIALIZATION_NVP(m_projects_in_progress)
+        & BOOST_SERIALIZATION_NVP(m_total_IPs_spent)
+        & BOOST_SERIALIZATION_NVP(m_empire_id);
+}
+
+template void InfluenceQueue::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
+template void InfluenceQueue::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
+template void InfluenceQueue::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
+template void InfluenceQueue::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
+
+template <class Archive>
+void Empire::PolicyAdoptionInfo::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_NVP(adoption_turn)
+        & BOOST_SERIALIZATION_NVP(category)
+        & BOOST_SERIALIZATION_NVP(slot_in_category);
+}
+
+template void Empire::PolicyAdoptionInfo::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
+template void Empire::PolicyAdoptionInfo::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
+template void Empire::PolicyAdoptionInfo::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
+template void Empire::PolicyAdoptionInfo::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
+
+template <class Archive>
 void Empire::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_id)
@@ -162,6 +203,18 @@ void Empire::serialize(Archive& ar, const unsigned int version)
         ar  & boost::serialization::make_nvp("m_techs", dummy_string_int_map);
     } else {
         ar  & BOOST_SERIALIZATION_NVP(m_techs);
+
+        if (Archive::is_loading::value && version < 4) {
+            m_adopted_policies.clear();
+            m_initial_adopted_policies.clear();
+            m_available_policies.clear();
+            m_policy_adoption_total_duration.clear();
+        } else {
+            ar  & BOOST_SERIALIZATION_NVP(m_adopted_policies)
+                & BOOST_SERIALIZATION_NVP(m_initial_adopted_policies)
+                & BOOST_SERIALIZATION_NVP(m_available_policies)
+                & BOOST_SERIALIZATION_NVP(m_policy_adoption_total_duration);
+        }
     }
 
     ar  & BOOST_SERIALIZATION_NVP(m_meters);
@@ -172,9 +225,11 @@ void Empire::serialize(Archive& ar, const unsigned int version)
         std::map<std::string, float> empty_research_progress;
         ProductionQueue empty_production_queue(m_id);
         std::set<std::string> empty_string_set;
+        InfluenceQueue empty_influence_queue(m_id);
         ar  & boost::serialization::make_nvp("m_research_queue", empty_research_queue)
             & boost::serialization::make_nvp("m_research_progress", empty_research_progress)
             & boost::serialization::make_nvp("m_production_queue", empty_production_queue)
+            & boost::serialization::make_nvp("m_influence_queue", empty_influence_queue)
             & boost::serialization::make_nvp("m_available_building_types", empty_string_set)
             & boost::serialization::make_nvp("m_available_part_types", empty_string_set)
             & boost::serialization::make_nvp("m_available_hull_types", empty_string_set);
@@ -185,6 +240,7 @@ void Empire::serialize(Archive& ar, const unsigned int version)
         ar  & BOOST_SERIALIZATION_NVP(m_research_queue)
             & BOOST_SERIALIZATION_NVP(m_research_progress)
             & BOOST_SERIALIZATION_NVP(m_production_queue)
+            & BOOST_SERIALIZATION_NVP(m_influence_queue)
             & BOOST_SERIALIZATION_NVP(m_available_building_types)
             & boost::serialization::make_nvp("m_available_part_types", m_available_ship_parts)
             & boost::serialization::make_nvp("m_available_hull_types", m_available_ship_hulls);

@@ -89,7 +89,7 @@ GG_ENUM(MeterType,
     METER_TARGET_POPULATION,
     METER_TARGET_INDUSTRY,
     METER_TARGET_RESEARCH,
-    METER_TARGET_TRADE,
+    METER_TARGET_INFLUENCE,
     METER_TARGET_CONSTRUCTION,
     METER_TARGET_HAPPINESS,
 
@@ -107,7 +107,7 @@ GG_ENUM(MeterType,
     METER_POPULATION,
     METER_INDUSTRY,
     METER_RESEARCH,
-    METER_TRADE,
+    METER_INFLUENCE,
     METER_CONSTRUCTION,
     METER_HAPPINESS,
 
@@ -203,14 +203,15 @@ GG_ENUM(TechStatus,
     NUM_TECH_STATUSES
 )
 
-/** The general type of production being done at a ProdCenter.  Within each valid type, a specific kind 
-    of item is being built, e.g. under BUILDING a kind of building called "SuperFarm" might be built. */
+/** The general type of production being done at a ProdCenter.  Within each
+  * valid type, a specific kind of item is being built, e.g. under BT_BUILDING
+  * a kind of building called "SuperFarm" might be built. */
 GG_ENUM(BuildType,
     INVALID_BUILD_TYPE = -1,
     BT_NOT_BUILDING,        ///< no building is taking place
-    BT_BUILDING,            ///< a Building object is being built
-    BT_SHIP,                ///< a Ship object is being built
-    BT_PROJECT,             ///< a project may produce effects while on the queue, may or may not ever complete, and does not result in a ship or building being produced
+    BT_BUILDING,            ///< a Building object is being produced
+    BT_SHIP,                ///< a Ship object is being produced
+    BT_PROJECT,             ///< a project may generate effects while on the queue, may or may not ever complete, and does not result in a ship or building being produced
     BT_STOCKPILE,
     NUM_BUILD_TYPES
 )
@@ -219,7 +220,7 @@ GG_ENUM(BuildType,
 GG_ENUM(ResourceType,
     INVALID_RESOURCE_TYPE = -1,
     RE_INDUSTRY,
-    RE_TRADE,
+    RE_INFLUENCE,
     RE_RESEARCH,
     RE_STOCKPILE,
     NUM_RESOURCE_TYPES
@@ -289,7 +290,8 @@ GG_ENUM(EffectsCauseType,
     ECT_SPECIAL,
     ECT_SPECIES,
     ECT_SHIP_PART,
-    ECT_SHIP_HULL
+    ECT_SHIP_HULL,
+    ECT_POLICY
 )
 
 /** Used for tracking what moderator action is set */

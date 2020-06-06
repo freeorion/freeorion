@@ -22,7 +22,7 @@ BuildingType
                 SetTargetConstruction value = Value + 30
                 SetEmpireCapital
                 SetIndustry value = Target.TargetIndustry
-                SetTrade value = Target.TargetTrade
+                SetInfluence value = Target.TargetInfluence
                 SetResearch value = Target.TargetResearch
             ]
 

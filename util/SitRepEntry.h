@@ -47,6 +47,7 @@ SitRepEntry CreateShipBlockBuiltSitRep(int system_id, int shipdesign_id, int num
 SitRepEntry CreateBuildingBuiltSitRep(int building_id, int planet_id);
 
 SitRepEntry CreateTechUnlockedSitRep(const std::string& tech_name);
+SitRepEntry CreatePolicyUnlockedSitRep(const std::string& policy_name);
 SitRepEntry CreateBuildingTypeUnlockedSitRep(const std::string& building_type_name);
 SitRepEntry CreateShipHullUnlockedSitRep(const std::string& ship_hull_name);
 SitRepEntry CreateShipPartUnlockedSitRep(const std::string& ship_part_name);

@@ -973,6 +973,9 @@ void ProductionWnd::ShowPlanetInEncyclopedia(int planet_id)
 void ProductionWnd::ShowTechInEncyclopedia(const std::string& tech_name)
 { m_build_designator_wnd->ShowTechInEncyclopedia(tech_name); }
 
+void ProductionWnd::ShowPolicyInEncyclopedia(const std::string& policy_name)
+{ m_build_designator_wnd->ShowPolicyInEncyclopedia(policy_name); }
+
 void ProductionWnd::ShowShipPartInEncyclopedia(const std::string& part_name)
 { m_build_designator_wnd->ShowShipPartInEncyclopedia(part_name); }
 

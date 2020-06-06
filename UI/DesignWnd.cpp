@@ -121,7 +121,7 @@ namespace {
             case PC_TROOPS:
             case PC_RESEARCH:
             case PC_INDUSTRY:
-            case PC_TRADE:
+            case PC_INFLUENCE:
                 return part->Capacity();
                 break;
             case PC_GENERAL:
@@ -4540,7 +4540,7 @@ void DesignWnd::MainPanel::Populate() {
 
     const std::vector<ShipHull::Slot>& hull_slots = m_hull->Slots();
 
-    for (size_t i = 0; i != hull_slots.size(); ++i) {
+    for (std::size_t i = 0; i < hull_slots.size(); ++i) {
         const ShipHull::Slot& slot = hull_slots[i];
         auto slot_control = GG::Wnd::Create<SlotControl>(slot.x, slot.y, slot.type);
         m_slots.push_back(slot_control);

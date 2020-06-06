@@ -5907,7 +5907,7 @@ namespace {
         case METER_TARGET_POPULATION:   return "TargetPopulation";   break;
         case METER_TARGET_INDUSTRY:     return "TargetIndustry";     break;
         case METER_TARGET_RESEARCH:     return "TargetResearch";     break;
-        case METER_TARGET_TRADE:        return "TargetTrade";        break;
+        case METER_TARGET_INFLUENCE:    return "TargetInfluence";    break;
         case METER_TARGET_CONSTRUCTION: return "TargetConstruction"; break;
         case METER_TARGET_HAPPINESS:    return "TargetHappiness";    break;
         case METER_MAX_CAPACITY:        return "MaxCapacity";        break;
@@ -5922,7 +5922,7 @@ namespace {
         case METER_POPULATION:          return "Population";         break;
         case METER_INDUSTRY:            return "Industry";           break;
         case METER_RESEARCH:            return "Research";           break;
-        case METER_TRADE:               return "Trade";              break;
+        case METER_INFLUENCE:           return "Influence";          break;
         case METER_CONSTRUCTION:        return "Construction";       break;
         case METER_HAPPINESS:           return "Happiness";          break;
         case METER_CAPACITY:            return "Capacity";           break;
@@ -6243,8 +6243,7 @@ bool EmpireMeterValue::operator==(const Condition& rhs) const {
 
     const EmpireMeterValue& rhs_ = static_cast<const EmpireMeterValue&>(rhs);
 
-    if (m_empire_id != rhs_.m_empire_id)
-        return false;
+    CHECK_COND_VREF_MEMBER(m_empire_id)
 
     if (m_meter != rhs_.m_meter)
         return false;
@@ -6254,7 +6253,6 @@ bool EmpireMeterValue::operator==(const Condition& rhs) const {
 
     return true;
 }
-
 
 void EmpireMeterValue::Eval(const ScriptingContext& parent_context,
                             ObjectSet& matches, ObjectSet& non_matches,
@@ -6284,7 +6282,9 @@ void EmpireMeterValue::Eval(const ScriptingContext& parent_context,
         }
 
     } else {
-        // re-evaluate allowed turn range for each candidate object
+        // re-evaluate all parameters for each candidate object.
+        // could optimize further by only re-evaluating the local-candidate
+        // variants.
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
 }
@@ -6408,6 +6408,17 @@ EmpireStockpileValue::EmpireStockpileValue(ResourceType stockpile,
     m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
 }
 
+EmpireStockpileValue::EmpireStockpileValue(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
+                                           ResourceType stockpile,
+                                           std::unique_ptr<ValueRef::ValueRef<double>>&& low,
+                                           std::unique_ptr<ValueRef::ValueRef<double>>&& high) :
+    Condition(),
+    m_empire_id(std::move(empire_id)),
+    m_stockpile(stockpile),
+    m_low(std::move(low)),
+    m_high(std::move(high))
+{}
+
 bool EmpireStockpileValue::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;
@@ -6415,6 +6426,8 @@ bool EmpireStockpileValue::operator==(const Condition& rhs) const {
         return false;
 
     const EmpireStockpileValue& rhs_ = static_cast<const EmpireStockpileValue&>(rhs);
+
+    CHECK_COND_VREF_MEMBER(m_empire_id)
 
     if (m_stockpile != rhs_.m_stockpile)
         return false;
@@ -6479,7 +6492,7 @@ std::string EmpireStockpileValue::Description(bool negated/* = false*/) const {
 std::string EmpireStockpileValue::Dump(unsigned short ntabs) const {
     std::string retval = DumpIndent(ntabs);
     switch (m_stockpile) {
-    case RE_TRADE:      retval += "OwnerTradeStockpile";    break;
+    case RE_INFLUENCE:  retval += "OwnerInfluenceStockpile";    break;
     case RE_RESEARCH:   retval += "OwnerResearchStockpile"; break;
     case RE_INDUSTRY:   retval += "OwnerIndustryStockpile"; break;
     default:            retval += "?";                      break;
@@ -6556,6 +6569,154 @@ unsigned int EmpireStockpileValue::GetCheckSum() const {
 }
 
 ///////////////////////////////////////////////////////////
+// EmpireHasAdoptedPolicy                                //
+///////////////////////////////////////////////////////////
+EmpireHasAdoptedPolicy::EmpireHasAdoptedPolicy(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
+                                               std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
+    Condition(),
+    m_name(std::move(name)),
+    m_empire_id(std::move(empire_id))
+{
+    m_root_candidate_invariant =
+        (!m_empire_id || m_empire_id->RootCandidateInvariant()) &&
+        (!m_name || m_name->RootCandidateInvariant());
+    m_target_invariant =
+        (!m_empire_id || m_empire_id->TargetInvariant()) &&
+        (!m_name || m_name->TargetInvariant());
+    m_source_invariant =
+        (!m_empire_id || m_empire_id->SourceInvariant()) &&
+        (!m_name || m_name->SourceInvariant());
+}
+
+EmpireHasAdoptedPolicy::EmpireHasAdoptedPolicy(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
+    EmpireHasAdoptedPolicy(nullptr, std::move(name))
+{}
+
+EmpireHasAdoptedPolicy::~EmpireHasAdoptedPolicy()
+{}
+
+bool EmpireHasAdoptedPolicy::operator==(const Condition& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const EmpireHasAdoptedPolicy& rhs_ = static_cast<const EmpireHasAdoptedPolicy&>(rhs);
+
+    CHECK_COND_VREF_MEMBER(m_empire_id)
+    CHECK_COND_VREF_MEMBER(m_name)
+
+    return true;
+}
+
+void EmpireHasAdoptedPolicy::Eval(const ScriptingContext& parent_context,
+                                  ObjectSet& matches, ObjectSet& non_matches,
+                                  SearchDomain search_domain/* = NON_MATCHES*/) const
+{
+    bool simple_eval_safe = ((m_empire_id && m_empire_id->LocalCandidateInvariant()) &&
+                             (!m_name || m_name->LocalCandidateInvariant()) &&
+                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
+    if (simple_eval_safe) {
+        // If m_empire_id is specified (not null), and all parameters are
+        // local-candidate-invariant, then matching for this condition doesn't
+        // need to check each candidate object separately for matching, so
+        // don't need to use EvalImpl and can instead do a simpler transfer
+        bool match = Match(parent_context);
+
+        // transfer objects to or from candidate set, according to whether the
+        // specified empire meter was in the requested range
+        if (match && search_domain == NON_MATCHES) {
+            // move all objects from non_matches to matches
+            matches.insert(matches.end(), non_matches.begin(), non_matches.end());
+            non_matches.clear();
+        } else if (!match && search_domain == MATCHES) {
+            // move all objects from matches to non_matches
+            non_matches.insert(non_matches.end(), matches.begin(), matches.end());
+            matches.clear();
+        }
+
+    } else {
+        // re-evaluate allowed turn range for each candidate object
+        Condition::Eval(parent_context, matches, non_matches, search_domain);
+    }
+}
+
+std::string EmpireHasAdoptedPolicy::Description(bool negated/* = false*/) const {
+    std::string name_str;
+    if (m_name) {
+        name_str = m_name->Description();
+        if (m_name->ConstantExpr() && UserStringExists(name_str))
+            name_str = UserString(name_str);
+    }
+    return str(FlexibleFormat((!negated)
+        ? UserString("DESC_EMPIRE_HAS_ADOPTED_POLICY")
+        : UserString("DESC_EMPIRE_HAS_ADOPTED_POLICY_NOT"))
+        % name_str);
+}
+
+std::string EmpireHasAdoptedPolicy::Dump(unsigned short ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "EmpireHasAdoptedPolicy";
+    if (m_empire_id)
+        retval += " empire = " + m_empire_id->Dump(ntabs);
+    if (m_name)
+        retval += " name = " + m_name->Dump(ntabs);
+    retval += "\n";
+    return retval;
+}
+
+bool EmpireHasAdoptedPolicy::Match(const ScriptingContext& local_context) const {
+    int empire_id = ALL_EMPIRES;
+    auto candidate = local_context.condition_local_candidate;
+    // if m_empire_id not set, default to candidate object's owner
+    if (!m_empire_id && !candidate) {
+        ErrorLogger() << "EmpireHasAdoptedPolicy::Match passed no candidate object but expects one due to having no empire id valueref specified and thus wanting to use the local candidate's owner as the empire id";
+        return false;
+
+    } else if (m_empire_id && !candidate && !m_empire_id->LocalCandidateInvariant()) {
+        ErrorLogger() << "EmpireHasAdoptedPolicy::Match passed no candidate object but but empire id valueref references the local candidate";
+        return false;
+
+    } else if (!m_empire_id && candidate) {
+        // default to candidate's owner if no empire id valueref is specified
+        empire_id = candidate->Owner();
+
+    } else if (m_empire_id) {
+        // either candidate exists or m_empire_id is local-candidate-invariant (or both)
+        empire_id = m_empire_id->Eval(local_context);
+
+    } else {
+        ErrorLogger() << "EmpireHasAdoptedPolicy::Match reached unexpected default case for candidate and empire id valueref existance";
+        return false;
+    }
+
+    const Empire* empire = GetEmpire(empire_id);
+    if (!empire)
+         return false;
+
+    std::string name = m_name ? m_name->Eval(local_context) : "";
+
+    return empire->PolicyAdopted(name);
+}
+
+void EmpireHasAdoptedPolicy::SetTopLevelContent(const std::string& content_name) {
+    if (m_empire_id)
+        m_empire_id->SetTopLevelContent(content_name);
+    if (m_name)
+        m_name->SetTopLevelContent(content_name);
+}
+
+unsigned int EmpireHasAdoptedPolicy::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::EmpireHasAdoptedPolicy");
+    CheckSums::CheckSumCombine(retval, m_empire_id);
+    CheckSums::CheckSumCombine(retval, m_name);
+
+    TraceLogger() << "GetCheckSum(EmpireHasAdoptedPolicy): retval: " << retval;
+    return retval;
+}
+
+///////////////////////////////////////////////////////////
 // OwnerHasTech                                          //
 ///////////////////////////////////////////////////////////
 OwnerHasTech::OwnerHasTech(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
@@ -6587,9 +6748,7 @@ bool OwnerHasTech::operator==(const Condition& rhs) const {
 
     const OwnerHasTech& rhs_ = static_cast<const OwnerHasTech&>(rhs);
 
-    if (m_empire_id != rhs_.m_empire_id)
-        return false;
-
+    CHECK_COND_VREF_MEMBER(m_empire_id)
     CHECK_COND_VREF_MEMBER(m_name)
 
     return true;
@@ -6738,9 +6897,7 @@ bool OwnerHasBuildingTypeAvailable::operator==(const Condition& rhs) const {
 
     const OwnerHasBuildingTypeAvailable& rhs_ = static_cast<const OwnerHasBuildingTypeAvailable&>(rhs);
 
-    if (m_empire_id != rhs_.m_empire_id)
-        return false;
-
+    CHECK_COND_VREF_MEMBER(m_empire_id)
     CHECK_COND_VREF_MEMBER(m_name)
 
     return true;
@@ -6878,9 +7035,7 @@ bool OwnerHasShipDesignAvailable::operator==(const Condition& rhs) const {
 
     const OwnerHasShipDesignAvailable& rhs_ = static_cast<const OwnerHasShipDesignAvailable&>(rhs);
 
-    if (m_empire_id != rhs_.m_empire_id)
-        return false;
-
+    CHECK_COND_VREF_MEMBER(m_empire_id)
     CHECK_COND_VREF_MEMBER(m_id)
 
     return true;
@@ -7021,12 +7176,9 @@ bool OwnerHasShipPartAvailable::operator==(const Condition& rhs) const {
     if (typeid(*this) != typeid(rhs))
         return false;
 
-    const OwnerHasShipPartAvailable& rhs_ =
-        static_cast<const OwnerHasShipPartAvailable&>(rhs);
+    const OwnerHasShipPartAvailable& rhs_ = static_cast<const OwnerHasShipPartAvailable&>(rhs);
 
-    if (m_empire_id != rhs_.m_empire_id)
-        return false;
-
+    CHECK_COND_VREF_MEMBER(m_empire_id)
     CHECK_COND_VREF_MEMBER(m_name)
 
     return true;

@@ -1078,6 +1078,36 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
+/** Matches all objects if the empire with id \a empire_id has adopted the
+  * imperial policy with name \a name */
+struct FO_COMMON_API EmpireHasAdoptedPolicy final : public Condition {
+    EmpireHasAdoptedPolicy(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
+                           std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
+    explicit EmpireHasAdoptedPolicy(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
+    virtual ~EmpireHasAdoptedPolicy();
+
+    bool operator==(const Condition& rhs) const override;
+
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+
+    std::string Description(bool negated = false) const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
+    unsigned int GetCheckSum() const override;
+
+private:
+    bool Match(const ScriptingContext& local_context) const override;
+
+    std::unique_ptr<ValueRef::ValueRef<std::string>>    m_name;
+    std::unique_ptr<ValueRef::ValueRef<int>>            m_empire_id;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
 /** Matches all objects whose owner who has tech \a name. */
 struct FO_COMMON_API OwnerHasTech final : public Condition {
     OwnerHasTech(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
@@ -1964,8 +1994,17 @@ template <typename Archive>
 void EmpireStockpileValue::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
+        & BOOST_SERIALIZATION_NVP(m_empire_id)
+        & BOOST_SERIALIZATION_NVP(m_stockpile)
         & BOOST_SERIALIZATION_NVP(m_low)
-        & BOOST_SERIALIZATION_NVP(m_high)
+        & BOOST_SERIALIZATION_NVP(m_high);
+}
+
+template <class Archive>
+void EmpireHasAdoptedPolicy::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Condition)
+        & BOOST_SERIALIZATION_NVP(m_name)
         & BOOST_SERIALIZATION_NVP(m_empire_id);
 }
 

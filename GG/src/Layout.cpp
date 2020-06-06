@@ -43,24 +43,8 @@ namespace {
     }
 }
 
-// RowColParams
-Layout::RowColParams::RowColParams() :
-    stretch(0),
-    min(0),
-    effective_min(0),
-    current_origin(0),
-    current_width(0)
-{}
 
 // WndPosition
-Layout::WndPosition::WndPosition() :
-    first_row(0),
-    first_column(0),
-    last_row(0),
-    last_column(0),
-    alignment(ALIGN_NONE)
-{}
-
 Layout::WndPosition::WndPosition(std::size_t first_row_, std::size_t first_column_,
                                  std::size_t last_row_, std::size_t last_column_,
                                  Flags<Alignment> alignment_, const Pt& original_ul_, const Pt& original_size_) :
@@ -83,11 +67,7 @@ Layout::Layout(X x, Y y, X w, Y h, std::size_t rows, std::size_t columns,
     m_border_margin(border_margin),
     m_cell_margin(cell_margin == INVALID_CELL_MARGIN ? border_margin : cell_margin),
     m_row_params(rows),
-    m_column_params(columns),
-    m_ignore_child_resize(false),
-    m_stop_resize_recursion(false),
-    m_render_outline(false),
-    m_outline_color(CLR_MAGENTA)
+    m_column_params(columns)
 {
     assert(rows);
     assert(columns);
@@ -136,7 +116,7 @@ std::vector<std::vector<const Wnd*>> Layout::Cells() const
         for (std::size_t j = 0; j < m_cells[i].size(); ++j) {
             retval[i][j] = m_cells[i][j].lock().get();
         }
-    }    
+    }
     return retval;
 }
 
@@ -178,9 +158,6 @@ std::vector<std::vector<Rect>> Layout::RelativeCellRects() const
 
 bool Layout::RenderOutline() const
 { return m_render_outline; }
-
-Clr Layout::OutlineColor() const
-{ return m_outline_color; }
 
 void Layout::StartingChildDragDrop(const Wnd* wnd, const Pt& offset)
 {
@@ -289,8 +266,8 @@ void Layout::DoLayout(Pt ul, Pt lr)
     }
 
     // determine final effective minimums, preserving stretch ratios
-    double greatest_min_over_stretch_ratio = 0.0;
-    double greatest_usable_min_over_stretch_ratio = 0.0;
+    float greatest_min_over_stretch_ratio = 0.0f;
+    float greatest_usable_min_over_stretch_ratio = 0.0f;
     bool is_zero_total_stretch = true;
     for (std::size_t i = 0; i < m_row_params.size(); ++i) {
         if (m_row_params[i].stretch) {
@@ -309,8 +286,8 @@ void Layout::DoLayout(Pt ul, Pt lr)
                 static_cast<unsigned int>(m_row_params[i].stretch * greatest_usable_min_over_stretch_ratio));
         }
     }
-    greatest_min_over_stretch_ratio = 0.0;
-    greatest_usable_min_over_stretch_ratio = 0.0;
+    greatest_min_over_stretch_ratio = 0.0f;
+    greatest_usable_min_over_stretch_ratio = 0.0f;
     is_zero_total_stretch = true;
     for (std::size_t i = 0; i < m_column_params.size(); ++i) {
         if (m_column_params[i].stretch) {
@@ -362,11 +339,11 @@ void Layout::DoLayout(Pt ul, Pt lr)
     }
 
     // determine row and column positions
-    double total_stretch = TotalStretch(m_row_params);
+    float total_stretch = TotalStretch(m_row_params);
     int total_stretch_space = Value(Size().y - MinSize().y);
-    double space_per_unit_stretch = total_stretch ? total_stretch_space / total_stretch : 0.0;
+    float space_per_unit_stretch = total_stretch ? total_stretch_space / total_stretch : 0.0f;
     bool larger_than_min = 0 < total_stretch_space;
-    double remainder = 0.0;
+    float remainder = 0.0f;
     int current_origin = m_border_margin;
     for (std::size_t i = 0; i < m_row_params.size(); ++i) {
         if (larger_than_min) {
@@ -512,10 +489,20 @@ void Layout::Render()
 {
     if (m_render_outline) {
         Pt ul = UpperLeft(), lr = LowerRight();
-        FlatRectangle(ul, lr, CLR_ZERO, m_outline_color, 1);
-        for (const std::vector<Rect>& columns : CellRects()) {
-            for (const Rect& cell : columns) {
-                FlatRectangle(cell.ul, cell.lr, CLR_ZERO, m_outline_color, 1);
+        FlatRectangle(ul, lr, CLR_ZERO, CLR_MAGENTA, 1);
+        auto cell_rects{CellRects()};
+        for (std::size_t row_idx = 0; row_idx < cell_rects.size(); ++row_idx) {
+            const auto& columns{cell_rects.at(row_idx)};
+            GG::Y min_row_height = std::max(GG::Y1, MinimumRowHeight(row_idx));
+
+            for (std::size_t col_idx = 0; col_idx < columns.size(); ++col_idx) {
+                const Rect& cell{columns.at(col_idx)};
+                GG::X min_col_width = std::max(GG::X1, MinimumColumnWidth(col_idx));
+
+                // render minimum size of cell
+                FlatRectangle(cell.ul, cell.ul + GG::Pt{min_col_width, min_row_height}, CLR_ZERO, CLR_GREEN, 1);
+                // render current size of cell
+                FlatRectangle(cell.ul, cell.lr, CLR_ZERO, CLR_MAGENTA, 1);
             }
         }
     }
@@ -632,17 +619,25 @@ void Layout::SetCellMargin(unsigned int margin)
     RedoLayout();
 }
 
-void Layout::SetRowStretch(std::size_t row, double stretch)
+void Layout::SetRowStretch(std::size_t row, float stretch)
 {
     assert(row < m_row_params.size());
     m_row_params[row].stretch = stretch;
     RedoLayout();
 }
 
-void Layout::SetColumnStretch(std::size_t column, double stretch)
+void Layout::SetColumnStretch(std::size_t column, float stretch)
 {
     assert(column < m_column_params.size());
     m_column_params[column].stretch = stretch;
+    RedoLayout();
+}
+
+void Layout::SetColumnStretches(std::vector<float> stretches)
+{
+    std::size_t num_cols{std::min(m_column_params.size(), stretches.size())};
+    for (std::size_t c_idx = 0; c_idx < num_cols; ++c_idx)
+        m_column_params[c_idx].stretch = stretches[c_idx];
     RedoLayout();
 }
 
@@ -660,11 +655,16 @@ void Layout::SetMinimumColumnWidth(std::size_t column, X width)
     RedoLayout();
 }
 
+void Layout::SetMinimumColumnWidths(std::vector<X> widths)
+{
+    std::size_t num_cols{std::min(m_column_params.size(), widths.size())};
+    for (std::size_t c_idx = 0; c_idx < num_cols; ++c_idx)
+        m_column_params[c_idx].min = Value(widths[c_idx]);
+    RedoLayout();
+}
+
 void Layout::RenderOutline(bool render_outline)
 { m_render_outline = render_outline; }
-
-void Layout::SetOutlineColor(Clr color)
-{ m_outline_color = color; }
 
 void Layout::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
 { ForwardEventToParent(); }
@@ -675,12 +675,11 @@ void Layout::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_k
 void Layout::KeyRelease(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys)
 { ForwardEventToParent(); }
 
-double Layout::TotalStretch(const std::vector<RowColParams>& params_vec) const
+float Layout::TotalStretch(const std::vector<RowColParams>& params_vec) const
 {
-    double retval = 0.0;
-    for (const RowColParams& param : params_vec) {
+    float retval = 0.0f;
+    for (const RowColParams& param : params_vec)
         retval += param.stretch;
-    }
     return retval;
 }
 

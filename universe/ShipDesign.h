@@ -122,7 +122,7 @@ public:
 
     float                           IndustryGeneration() const  { return m_industry_generation; }   ///< returns the industry output from this ship design
     float                           ResearchGeneration() const  { return m_research_generation; }   ///< returns the research output from this ship design
-    float                           TradeGeneration() const     { return m_trade_generation; }      ///< returns the trade output from this ship design
+    float                           InfluenceGeneration() const { return m_influence_generation; }  ///< returns the influence output from this ship design
     bool                            IsProductionLocation() const{ return m_is_production_location;} ///< returns true if this ship design can be a production location
 
     bool                            CanColonize() const;
@@ -233,7 +233,7 @@ private:
     float   m_speed = 0.0f;
     float   m_research_generation = 0.0f;
     float   m_industry_generation = 0.0f;
-    float   m_trade_generation = 0.0f;
+    float   m_influence_generation = 0.0f;
     bool    m_is_production_location = false;
     std::map<std::string, int>      m_num_ship_parts;
     std::map<ShipPartClass, int>    m_num_part_classes;

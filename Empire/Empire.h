@@ -4,6 +4,7 @@
 #include "PopulationPool.h"
 #include "ProductionQueue.h"
 #include "ResearchQueue.h"
+#include "InfluenceQueue.h"
 #include "ResourcePool.h"
 #include "../util/Export.h"
 #include "../universe/Meter.h"
@@ -55,19 +56,39 @@ public:
 
     /** Return an object id that is owned by the empire or INVALID_OBJECT_ID. */
     int                 SourceID() const;
-    /** Return an object that is owned by the empire or null.*/
+    /** Return an object that is owned by the empire, or null.*/
     std::shared_ptr<const UniverseObject> Source() const;
 
-    std::string Dump() const;
+    std::string         Dump() const;
+
+    bool                            PolicyAdopted(const std::string& name) const;
+    int                             TurnPolicyAdopted(const std::string& name) const;
+    int                             SlotPolicyAdoptedIn(const std::string& name) const;
+    std::vector<std::string>        AdoptedPolicies() const;
+
+    /** For each category, returns the slots in which policies have been adopted
+      * and what policy is in that slot. */
+    std::map<std::string, std::map<int, std::string>>
+                                    CategoriesSlotsPoliciesAdopted() const;
+
+    /** Returns the policies the empire has adopted and the categories
+      * in which they were adopted. */
+    std::map<std::string, int>      TurnsPoliciesAdopted() const;
+
+    /** Returns the set of policies / slots the empire has avaialble. */
+    const std::set<std::string>&    AvailablePolicies() const;
+    bool                            PolicyAvailable(const std::string& name) const;
+    std::map<std::string, int>      TotalPolicySlots() const;
+    std::map<std::string, int>      EmptyPolicySlots() const;
 
     /** Returns the set of Tech names available to this empire. */
-    const std::map<std::string, int>& ResearchedTechs() const;
+    const std::map<std::string, int>&   ResearchedTechs() const;
 
     /** Returns the set of BuildingType names availble to this empire. */
-    const std::set<std::string>& AvailableBuildingTypes() const;
+    const std::set<std::string>&    AvailableBuildingTypes() const;
 
     /** Returns the set of ShipDesign IDs available for this empire to build. */
-    std::set<int> AvailableShipDesigns() const;
+    std::set<int>                   AvailableShipDesigns() const;
 
     const std::set<int>&            ShipDesigns() const;                ///< Returns the set of all ship design ids of this empire
     const std::set<std::string>&    AvailableShipParts() const;         ///< Returns the set of ship part names this empire that the empire can currently build
@@ -91,6 +112,7 @@ public:
 
     const ResearchQueue&    GetResearchQueue() const;                   ///< Returns the queue of techs being or queued to be researched.
     const ProductionQueue&  GetProductionQueue() const;                 ///< Returns the queue of items being or queued to be produced.
+    const InfluenceQueue&   GetInfluenceQueue() const;                  ///< Returns the queue of items being funded with influence.
 
     bool        ResearchableTech(const std::string& name) const;        ///< Returns true iff \a name is a tech that has not been researched, and has no unresearched prerequisites.
     float       ResearchProgress(const std::string& name) const;        ///< Returns the RPs spent towards tech \a name if it has partial research progress, or 0.0 if it is already researched.
@@ -170,6 +192,16 @@ public:
       * planet to be this empire's capital, and otherwise does nothing. */
     void SetCapitalID(int id);
 
+    /** Adopts the specified policy, assuming its conditions are met. Revokes
+      * the policy if \a adopt is false; */
+    void AdoptPolicy(const std::string& name, const std::string& category,
+                     bool adopt = true, int slot = -1);
+
+    /** Checks that all policy adoption conditions are met, removing any that
+      * are not allowed. Also copies adopted policies to initial adopted
+      * policies. Updates how many turns each policy has (ever) been adopted. */
+    void UpdatePolicies();
+
     /** Returns the meter with the indicated \a name if it exists, or nullptr. */
     Meter* GetMeter(const std::string& name);
     void BackPropagateMeters();
@@ -216,6 +248,7 @@ public:
 
     void AddNewlyResearchedTechToGrantAtStartOfNextTurn(const std::string& name);    ///< Inserts the given Tech into the Empire's list of innovations. Call ApplyAddedTech to make it effective.
     void ApplyNewTechs();                            ///< Moves all Techs from the Empire's list of innovations into the Empire's list of available technologies.
+    void AddPolicy(const std::string& name);         ///< Inserts the given Policy into the Empire's list of available policies
 
     //! Adds a given producible item (Building, Ship Hull, Ship part) to the
     //! list of available items.
@@ -251,6 +284,7 @@ public:
     void ClearSitRep();                              ///< Clears all sitrep entries
 
     void RemoveTech(const std::string& name);        ///< Removes the given Tech from the empire's list
+    void RemovePolicy(const std::string& name);      ///< Removes the given Policy from the list available to the empire
 
     //! Removes a given producible item (Building, Ship Hull, Ship Part) from
     //! the list of available items.
@@ -296,12 +330,9 @@ public:
       * of the techs that should be added to the known techs list. */
     std::vector<std::string> CheckResearchProgress();
     /** Eventually : Will check for social projects that have been completed and
-      * / or process ongoing social projects... (not sure exactly what form
-      * "social projects" will take or how they will work).  Also will update
-      * the empire's trade stockpile to account for trade production and
-      * expenditures. Currently: Deducts cost of maintenance of buildings from
-      * empire's trade stockpile */
-    void CheckTradeSocialProgress();
+      * / or process ongoing social projects, and update the empire's influence
+      * stockpile to account for influence production and expenditures.*/
+    void CheckInfluenceProgress();
 
     void SetColor(const GG::Clr& color);                 ///< Mutator for empire color
     void SetName(const std::string& name);               ///< Mutator for empire name
@@ -316,7 +347,7 @@ public:
 
     /** Resets production of resources and calculates allocated resources (on
       * each item in queues and overall) for each resource by calling
-      * UpdateResearchQueue, UpdateProductionQueue, UpdateTradeSpending.  Does
+      * UpdateResearchQueue, UpdateProductionQueue, UpdateInfluenceSpending.  Does
       * not actually "spend" resources, but just determines how much and on what
       * to spend.  Actual consumption of resources, removal of items from queue,
       * processing of finished items and population growth happens in various
@@ -328,12 +359,11 @@ public:
     /** Calls Update() on empire's production queue, which recalculates the PPs
       * spent on and number of turns left for each project in the queue. */
     void UpdateProductionQueue();
-    /** Eventually: Calls appropriate subsystem Update to calculate trade spent
-      * on social projects and maintenance of buildings.  Later call to
-      * CheckTradeSocialProgress() will then have the correct allocations of
-      * trade. Currently: Sums maintenance costs of all buildings owned by
-      * empire, sets m_maintenance_total_cost */
-    void UpdateTradeSpending();
+    /** Eventually: Calls appropriate subsystem Update to calculate influence
+      * spent on social projects and maintenance of buildings.  Later call to
+      * CheckInfluenceProgress() will then have the correct allocations of
+      * influence. */
+    void UpdateInfluenceSpending();
     /** Has m_population_pool recalculate all PopCenters' and empire's total
       * expected population growth */
     void UpdatePopulationGrowth();
@@ -430,7 +460,7 @@ public:
       * current empire */
     static void ConquerProductionQueueItemsAtLocation(int location_id, int empire_id);
 
-    mutable boost::signals2::signal<void ()>  ShipDesignsChangedSignal;
+    mutable boost::signals2::signal<void ()> ShipDesignsChangedSignal;
 
 private:
     void Init();
@@ -438,11 +468,32 @@ private:
     int                             m_id = ALL_EMPIRES;         ///< Empire's unique numeric id
     std::string                     m_name;                     ///< Empire's name
     std::string                     m_player_name;              ///< Empire's Player's name
+
     /** Empire's Player's authentication flag. Set if only player with empire's player's name
         should play this empire. */
     bool                            m_authenticated;
+
     GG::Clr                         m_color;                    ///< Empire's color
     int                             m_capital_id = INVALID_OBJECT_ID;  ///< the ID of the empire's capital planet
+
+    struct PolicyAdoptionInfo {
+        PolicyAdoptionInfo();
+        PolicyAdoptionInfo(int turn, const std::string& cat, int slot);
+        int         adoption_turn = -1;
+        std::string category = "";
+        int         slot_in_category = -1;
+
+        friend class boost::serialization::access;
+        template <class Archive>
+        void serialize(Archive& ar, const unsigned int version);
+    };
+    std::map<std::string, PolicyAdoptionInfo>
+                                    m_adopted_policies;                 ///< map from policy name to turn, category, and slot in/on which it was adopted
+    std::map<std::string, PolicyAdoptionInfo>
+                                    m_initial_adopted_policies;         ///< adopted policies at start of turn
+    std::map<std::string, int>      m_policy_adoption_total_duration;   ///< how many turns each policy has been adopted over the course of the game by this empire
+    std::set<std::string>           m_available_policies;               ///< names of unlocked policies
+
 
     /** The source id is the id of any object owned by the empire.  It is
         mutable so that Source() can be const and still cache its result. */
@@ -459,6 +510,7 @@ private:
     std::map<std::string, float>    m_research_progress;        ///< progress of partially-researched techs; fully researched techs are removed
 
     ProductionQueue                 m_production_queue;         ///< the queue of items being or waiting to be built
+    InfluenceQueue                  m_influence_queue;
 
     std::set<std::string>           m_available_building_types; ///< list of acquired BuildingType.  These are string names referencing BuildingType objects
     //! List of acquired ShipPart referenced by name.

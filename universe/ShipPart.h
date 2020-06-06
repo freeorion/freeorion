@@ -29,7 +29,7 @@ GG_ENUM(ShipPartClass,
     PC_BOMBARD,             //!< permit orbital bombardment by ships against planets
     PC_INDUSTRY,            //!< generates production points for owner at its location
     PC_RESEARCH,            //!< generates research points for owner
-    PC_TRADE,               //!< generates trade points for owner
+    PC_INFLUENCE,           ///< generates influence points for owner
     PC_PRODUCTION_LOCATION, //!< allows production items to be produced at its location
     NUM_SHIP_PART_CLASSES
 )

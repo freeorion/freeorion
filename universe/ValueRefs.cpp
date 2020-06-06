@@ -210,8 +210,8 @@ namespace {
             {"TargetIndustry",       METER_TARGET_INDUSTRY},
             {"Research",             METER_RESEARCH},
             {"TargetResearch",       METER_TARGET_RESEARCH},
-            {"Trade",                METER_TRADE},
-            {"TargetTrade",          METER_TARGET_TRADE},
+            {"Influence",            METER_INFLUENCE},
+            {"TargetInfluence",      METER_TARGET_INFLUENCE},
             {"Construction",         METER_CONSTRUCTION},
             {"TargetConstruction",   METER_TARGET_CONSTRUCTION},
             {"Happiness",            METER_HAPPINESS},
@@ -1445,6 +1445,8 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         empire_property_string_key = &Empire::ShipPartsOwned;
     if (variable_name == "TurnTechResearched")
         empire_property_string_key = &Empire::ResearchedTechs;
+    if (variable_name == "TurnPolicyAdopted")
+        empire_property_string_key = &Empire::TurnsPoliciesAdopted;
 
     // empire properties indexed by strings
     if (empire_property_string_key) {
@@ -1763,6 +1765,26 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
             return 0;
 
         return object->SpecialAddedOnTurn(special_name);
+
+    }
+    else if (variable_name == "TurnPolicyAdopted") {
+        if (!m_string_ref1)
+            return 0;
+        std::string policy_name = m_string_ref1->Eval();
+        if (policy_name.empty())
+            return 0;
+
+        int empire_id = ALL_EMPIRES;
+        if (m_int_ref1) {
+            empire_id = m_int_ref1->Eval(context);
+            if (empire_id == ALL_EMPIRES)
+                return 0;
+        }
+        const Empire* empire = GetEmpire(empire_id);
+        if (!empire)
+            return 0;
+
+        return empire->TurnPolicyAdopted(policy_name);
     }
 
     return 0;
@@ -2138,8 +2160,8 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
         if (!empire)
             return "";
         // get all techs on queue, randomly pick one
-        const ResearchQueue& queue = empire->GetResearchQueue();
-        std::vector<std::string> all_enqueued_techs = queue.AllEnqueuedProjects();
+        const auto& queue = empire->GetResearchQueue();
+        auto all_enqueued_techs = queue.AllEnqueuedProjects();
         if (all_enqueued_techs.empty())
             return "";
         std::size_t idx = RandSmallInt(0, static_cast<int>(all_enqueued_techs.size()) - 1);
@@ -2156,7 +2178,7 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
         if (!empire)
             return "";
 
-        std::vector<std::string> researchable_techs = TechsResearchableByEmpire(empire_id);
+        auto researchable_techs = TechsResearchableByEmpire(empire_id);
         if (researchable_techs.empty())
             return "";
         std::size_t idx = RandSmallInt(0, static_cast<int>(researchable_techs.size()) - 1);
@@ -2172,7 +2194,7 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
         if (!empire)
             return "";
 
-        std::vector<std::string> complete_techs = TechsResearchedByEmpire(empire_id);
+        auto complete_techs = TechsResearchedByEmpire(empire_id);
         if (complete_techs.empty())
             return "";
         std::size_t idx = RandSmallInt(0, static_cast<int>(complete_techs.size()) - 1);
@@ -2310,6 +2332,46 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
     return "";
 }
 
+template <>
+std::vector<std::string> ComplexVariable<std::vector<std::string>>::Eval(
+    const ScriptingContext& context) const
+{
+    const std::string& variable_name = m_property_name.back();
+
+    // unindexed empire properties
+    if (variable_name == "EmpireAdoptedPolices") {
+        int empire_id = ALL_EMPIRES;
+        if (m_int_ref1) {
+            empire_id = m_int_ref1->Eval(context);
+            if (empire_id == ALL_EMPIRES)
+                return {};
+        }
+        const Empire* empire = GetEmpire(empire_id);
+        if (!empire)
+            return {};
+
+        return empire->AdoptedPolicies();
+
+    } else if (variable_name == "EmpireAvailablePolices") {
+        int empire_id = ALL_EMPIRES;
+        if (m_int_ref1) {
+            empire_id = m_int_ref1->Eval(context);
+            if (empire_id == ALL_EMPIRES)
+                return {};
+        }
+        const Empire* empire = GetEmpire(empire_id);
+        if (!empire)
+            return {};
+
+        std::vector<std::string> retval;
+        const auto& pols = empire->AvailablePolicies();
+        std::copy(pols.begin(), pols.end(), std::back_inserter(retval));
+        return retval;
+    }
+
+    return {};
+}
+
 #undef IF_CURRENT_VALUE
 
 template <>
@@ -2413,7 +2475,7 @@ std::string ComplexVariable<int>::Dump(unsigned short ntabs) const
 {
     const std::string& variable_name = m_property_name.back();
     std::string retval = variable_name;
-
+    // todo: implement like <double> case
     return retval;
 }
 
@@ -2422,7 +2484,16 @@ std::string ComplexVariable<std::string>::Dump(unsigned short ntabs) const
 {
     const std::string& variable_name = m_property_name.back();
     std::string retval = variable_name;
+    // todo: implement like <double> case
+    return retval;
+}
 
+template <>
+std::string ComplexVariable<std::vector<std::string>>::Dump(unsigned short ntabs) const
+{
+    const std::string& variable_name = m_property_name.back();
+    std::string retval = variable_name;
+    // todo: implement like <double> case
     return retval;
 }
 

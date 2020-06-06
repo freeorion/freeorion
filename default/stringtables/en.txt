@@ -1075,6 +1075,12 @@ Cheap and Fast Techs
 RULE_CHEAP_AND_FAST_TECH_RESEARCH_DESC
 Techs cost 1 RP and take 1 turn to research.
 
+RULE_CHEAP_POLICIES
+Cheap Policies
+
+RULE_CHEAP_POLICIES_DESC
+Policies cost 1 IP to adopt.
+
 RULE_CHEAP_AND_FAST_BUILDING_PRODUCTION
 Cheap and Fast Buildings
 
@@ -3382,6 +3388,12 @@ Design
 MAP_BTN_DESIGN_DESC
 ''''''
 
+MAP_BTN_GOVERNMENT
+Government Policies
+
+MAP_BTN_GOVERNMENT_DESC
+''''''
+
 MAP_BTN_GRAPH
 Graphs
 
@@ -3462,11 +3474,11 @@ Empire Detection
 MAP_DETECTION_TEXT
 Empire Detection Strength
 
-MAP_TRADE_TITLE
-Trade
+MAP_INFLUENCE_TITLE
+Influence
 
-MAP_TRADE_TEXT
-Empire total trade output. (Trade does nothing)
+MAP_INFLUENCE_TEXT
+Empire total influence output
 
 MAP_FLEET_SHIP_COUNT
 Total Ships
@@ -3513,8 +3525,8 @@ Industrial Output
 RESEARCH_PRODUCTION
 Research Output
 
-TRADE_PRODUCTION
-Trade Output
+INFLUENCE_PRODUCTION
+Influence Output
 
 STOCKPILE_GENERATION
 Stockpile Capacity Generation
@@ -3525,8 +3537,8 @@ Industrial Consumption
 RESEARCH_CONSUMPTION
 Research Consumption
 
-TRADE_CONSUMPTION
-Trade Consumption
+INFLUENCE_CONSUMPTION
+Influence Consumption
 
 STOCKPILE_USE
 Stockpile Capacity Use
@@ -3731,6 +3743,11 @@ Species <i>%2%</i>
 # %2% name of field
 TT_FIELD
 <i>%2%</i>
+
+# %1% name of the adopting empire.
+# %2% name of policy
+TT_POLICY
+%1% Policy <i>%2%</i>
 
 TT_FIGHTER_LAUNCH
 Launching
@@ -3974,8 +3991,8 @@ Fleet Industry - Equal to the total industry output of ships in the fleet.
 FW_FLEET_RESEARCH_SUMMARY
 Fleet Research - Equal to the total research output of ships in the fleet.
 
-FW_FLEET_TRADE_SUMMARY
-Fleet Trade - Equal to the total trade output of ships in the fleet.
+FW_FLEET_INFLUENCE_SUMMARY
+Fleet Influence - Equal to the total influence output of ships in the fleet.
 
 FW_MERGE_SYSTEM_FLEETS
 Merge System Ships Into Fleet
@@ -4203,6 +4220,17 @@ Category
 
 TECH_WND_LIST_COLUMN_DESCRIPTION
 Description
+
+
+##
+## Government Wnd
+##
+
+POLICY_LOCKED
+Policy Unavailable
+
+POLICY_ADOPTABLE_COST
+Policy Adoptable for %1% IP
 
 
 ##
@@ -4748,6 +4776,26 @@ Unable to write file:\n"%1%"
 
 
 ##
+## Government window
+##
+
+GOVERNMENT_INFO_IP
+IP
+
+GOVERNMENT_WND_CLEAR
+Clear
+
+ECONOMIC_CATEGORY
+Economic
+
+SOCIAL_CATEGORY
+Social
+
+MILITARY_CATEGORY
+Military
+
+
+##
 ## Statistics
 ##
 
@@ -4924,6 +4972,12 @@ Technologies
 ENC_TECH_DESC
 New effects, improved planetary stats, buildings, and ship parts can be unlocked by [[encyclopedia RESEARCH_TECH_GUIDE_TITLE]], each falling into one of the categories listed here.
 
+ENC_POLICY
+Policies
+
+ENC_POLICY_DESC
+Improved or situational effects that can be adopted by empires.
+
 ENC_SPECIAL
 Special
 
@@ -4980,6 +5034,12 @@ Turn
 
 NO_TECHS_RESEARCHED
 No Techs Researched
+
+ADOPTED_POLICIES
+'''Adopted Policies: '''
+
+NO_POLICIES_ADOPTED
+No Policies AdoptedAVAILABLE_PARTS
 
 AVAILABLE_PARTS
 '''Available Parts: '''
@@ -5137,6 +5197,9 @@ PP
 ENC_RP
 RP
 
+ENC_IP
+IP
+
 # Concise listing of costs required to produce item or research tech.
 # %1% cost to complete requested item or technology.
 # %2% unit of costs; can be `ENC_PP` or `ENC_RP` depending on the item or
@@ -5144,6 +5207,10 @@ RP
 # %3% turns to complete requested item or technology.
 ENC_COST_AND_TURNS_STR
 %1% %2% and %3% Turns
+
+# same, but without turns
+ENC_COST_STR
+%1% %2%
 
 ENC_VERB_PRODUCE_STR
 produce
@@ -5629,11 +5696,11 @@ METER_TARGET_RESEARCH_VALUE_LABEL
 METER_TARGET_RESEARCH_VALUE_DESC
 [[METER_RESEARCH_VALUE_DESC]]
 
-METER_TARGET_TRADE_VALUE_LABEL
-[[METER_TRADE_VALUE_LABEL]]
+METER_TARGET_INFLUENCE_VALUE_LABEL
+[[METER_INFLUENCE_VALUE_LABEL]]
 
-METER_TARGET_TRADE_VALUE_DESC
-[[METER_TRADE_VALUE_DESC]]
+METER_TARGET_INFLUENCE_VALUE_DESC
+[[METER_INFLUENCE_VALUE_DESC]]
 
 METER_TARGET_CONSTRUCTION_VALUE_LABEL
 [[METER_CONSTRUCTION_VALUE_LABEL]]
@@ -5738,11 +5805,11 @@ The tech at the top of the queue is given RP first. Any remaining RP are then gi
 
 Research does not require [[metertype METER_SUPPLY]] line connections to be used.'''
 
-METER_TRADE_VALUE_LABEL
-Trade
+METER_INFLUENCE_VALUE_LABEL
+Influence
 
-METER_TRADE_VALUE_DESC
-[[MAP_TRADE_TEXT]]
+METER_INFLUENCE_VALUE_DESC
+[[MAP_INFLUENCE_TEXT]]
 
 METER_CONSTRUCTION_VALUE_LABEL
 Infrastructure
@@ -5940,11 +6007,11 @@ A planet focused on Growth extends those benefits to other planets connected to 
 
 [[GROWTH_SPECIALS_ENTRY_LIST]]'''
 
-TRADE_FOCUS_TITLE
-Trade Focus
+INFLUENCE_FOCUS_TITLE
+Influence Focus
 
-TRADE_FOCUS_TEXT
-Trade doesn't do anything. It is just a placeholder to show that more resources are planned.
+INFLUENCE_FOCUS_TEXT
+Influence isn't implemented yet.
 
 PROTECTION_FOCUS_TITLE
 Protection Focus
@@ -6788,6 +6855,12 @@ SITREP_TECH_UNLOCKED
 
 SITREP_TECH_UNLOCKED_LABEL
 Tech Unlocked
+
+SITREP_POLICY_UNLOCKED
+%policy% has been unlocked and can now be adopted.
+
+SITREP_POLICY_UNLOCKED_LABEL
+Policy Unlocked
 
 SITREP_SHIP_PART_UNLOCKED
 %shippart% has been unlocked and can now be produced in ship designs.
@@ -9066,8 +9139,8 @@ FOCUS_RESEARCH
 Research
 
 # Focus types
-FOCUS_TRADE
-Trade
+FOCUS_INFLUENCE
+Influence
 
 # Focus types
 FOCUS_LOGISTICS
@@ -9130,8 +9203,8 @@ METER_TARGET_RESEARCH
 Target Research
 
 # Meter types
-METER_TARGET_TRADE
-Target Trade
+METER_TARGET_INFLUENCE
+Target Influence
 
 # Meter types
 METER_TARGET_CONSTRUCTION
@@ -9190,8 +9263,8 @@ METER_RESEARCH
 Research
 
 # Meter types
-METER_TRADE
-Trade
+METER_INFLUENCE
+Influence
 
 # Meter types
 METER_CONSTRUCTION
@@ -9270,6 +9343,12 @@ Ship Cost Factor
 METER_TECH_COST_FACTOR
 Tech Cost Factor
 
+ECONOMIC_CATEGORY_NUM_POLICY_SLOTS
+Economic Policy Slots
+
+SOCIAL_CATEGORY_NUM_POLICY_SLOTS
+Social Policy Slots
+
 ALIGN_MILITARISM
 Militarism
 
@@ -9336,6 +9415,10 @@ Ship Hull
 UIT_TECH
 Technology
 
+# Unlockable item types
+UIT_POLICY
+Policy
+
 # Build types
 BT_NOT_BUILDING
 no build
@@ -9357,8 +9440,8 @@ INVALID_RESOURCE_TYPE
 invalid resource type
 
 # Resource types
-RE_TRADE
-trade
+RE_INFLUENCE
+influence
 
 # Resource types
 RE_INDUSTRY
@@ -9528,8 +9611,8 @@ PC_RESEARCH_DESC
 Research parts increase the [[metertype METER_RESEARCH]] generated from a ship. The ship may also require [[metertype METER_POPULATION]] to begin increasing the output.
 
 # Ship part classes
-PC_TRADE
-Trade
+PC_INFLUENCE
+Influence
 
 # Ship part classes
 PC_PRODUCTION_LOCATION
@@ -9768,8 +9851,8 @@ DESC_VAR_TARGETINDUSTRY
 DESC_VAR_TARGETRESEARCH
 [[METER_TARGET_RESEARCH]]
 
-DESC_VAR_TARGETTRADE
-[[METER_TARGET_TRADE]]
+DESC_VAR_TARGETINFLUENCE
+[[METER_TARGET_INFLUENCE]]
 
 DESC_VAR_TARGETCONSTRUCTION
 [[METER_TARGET_CONSTRUCTION]]
@@ -9804,8 +9887,8 @@ DESC_VAR_INDUSTRY
 DESC_VAR_RESEARCH
 [[METER_RESEARCH]]
 
-DESC_VAR_TRADE
-[[METER_TRADE]]
+DESC_VAR_INFLUENCE
+[[METER_INFLUENCE]]
 
 DESC_VAR_CONSTRUCTION
 [[METER_CONSTRUCTION]]
@@ -9846,11 +9929,11 @@ DESC_VAR_SECONDARY_STAT
 DESC_VAR_SIZE
 [[METER_SIZE]]
 
-DESC_VAR_TRADESTOCKPILE
-trade stockpile
+DESC_VAR_INFLUENCESTOCKPILE
+influence stockpile
 
-DESC_VAR_TRADEOUTPUT
-trade output
+DESC_VAR_INFLUENCEOUTPUT
+influence output
 
 DESC_VAR_INDUSTRYOUTPUT
 industry output
@@ -10810,6 +10893,130 @@ DESC_HAS_TAG_NOT
 
 
 ##
+## Policy categories
+##
+
+SOCIOLOGY_CATEGORY
+Sociology
+
+
+##
+## Imperial Policies
+##
+
+PLC_NO_GROWTH
+No Growth
+
+PLC_NO_GROWTH_DESC
+Prevents planets from increasing population from turn to turn.
+
+PLC_NO_GROWTH_SHORT_DESC
+Stops planet growth
+
+PLC_POPULATION
+Population
+
+PLC_POPULATION_DESC
+Increases natural population growth rate by 50%.
+
+PLC_POPULATION_SHORT_DESC
+Increases Growth Rate
+
+PLC_NO_SUPPLY
+No Supply
+
+PLC_NO_SUPPLY_DESC
+Prevents planets from generating supply networks.
+
+PLC_NO_SUPPLY_SHORT_DESC
+Stops supply propagation
+
+PLC_CENTRALIZATION
+Centralization
+
+PLC_CENTRALIZATION_DESC
+Increases resourse output at the capital but reduces supply range and stockpiling.
+
+PLC_CENTRALIZATION_SHORT_DESC
+Boosts Capital
+
+PLC_COLONIZATION
+Colonization
+
+PLC_COLONIZATION_DESC
+Decreases cost of colonization ship parts.
+
+PLC_COLONIZATION_SHORT_DESC
+Discounts Colonization
+
+PLC_CONTINUOUS_SCANNING
+Continuous Scanning
+
+PLC_CONTINUOUS_SCANNING_DESC
+Increases ship detection range and imperial detection strength, increasing with duration of adoption, while also reducing ship stealth.
+
+PLC_CONTINUOUS_SCANNING_SHORT_DESC
+Improves Detection and Hinders Stealth
+
+PLC_EXPLORATION
+Exploration
+
+PLC_EXPLORATION_DESC
+'''Increases speed of ships with no weapons, fighters, shields, armour, troops, colony pods, bombardment, research, industry, influence, production, or general parts.
+
+Detection, fuel, and engine parts are allowed.'''
+
+PLC_EXPLORATION_SHORT_DESC
+Speeds Up Explorer Ships
+
+PLC_MARINE_RECRUITMENT
+Marine Recruitment
+
+PLC_MARINE_RECRUITMENT_DESC
+Reduces the cost of ground troop ship parts by 50%.
+
+PLC_MARINE_RECRUITMENT_SHORT_DESC
+Reduces Ground Troop Cost
+
+PLC_DESIGN_SIMPLICITY
+Design Simplicity
+
+PLC_DESIGN_SIMPLICITY_DESC
+Reduces production cost by 20% for ship designs with 6 or fewer parts.
+
+PLC_DESIGN_SIMPLICITY_SHORT_DESC
+Reduces Cost of Simple Designs
+
+PLC_PSYONIC_SHIELDS
+Psyonic Shields
+
+PLC_PSYONIC_SHIELDS_DESC
+'''On planets with telepathic species, increases max shields by 20.
+On ships with telepathic species, increases max shields by 2.'''
+
+PLC_PSYONIC_SHIELDS_SHORT_DESC
+Generates Shields
+
+PLC_STOCKPILE_LIQUIDATION
+Stockpile Liquidation
+
+PLC_STOCKPILE_LIQUIDATION_DESC
+Doubles stockpiling on stockpile-focused planets.
+
+PLC_STOCKPILE_LIQUIDATION_SHORT_DESC
+Increases stockpiling
+
+PLC_ALLIED_REPAIR
+Allied Repair
+
+PLC_ALLIED_REPAIR_DESC
+If two empires are allied, and either has adopted this policy, both will receive repairs to damaged ships while at eachother's [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]]s and from [[tech SHP_FLEET_REPAIR]].
+
+PLC_ALLIED_REPAIR_SHORT_DESC
+Allows allies to repair ships
+
+
+##
 ## Technology categories
 ##
 
@@ -10983,9 +11190,7 @@ LRN_TRANSLING_THT
 Translinguistics
 
 LRN_TRANSLING_THT_DESC
-'''Does nothing. Later this can enable peaceful acquisition of native planets.
-
-Lesser minds struggle with, or accept the confines of the language they have learned. Adequate minds reach and feel constrained by the concepts they are given ways to express. Truly great minds break free of the bounds of language, forming and analyzing thoughts that verge on the transcendental. But merely great minds are left isolated and futile, for without language to express thoughts, how can they share their insights?'''
+Lesser minds struggle with, or accept the confines of the language they have learned. Adequate minds reach and feel constrained by the concepts they are given ways to express. Truly great minds break free of the bounds of language, forming and analyzing thoughts that verge on the transcendental. But merely great minds are left isolated and futile, for without language to express thoughts, how can they share their insights?
 
 LRN_PSIONICS
 Psionics
@@ -11050,7 +11255,9 @@ LRN_MIND_VOID
 Mind of the Void
 
 LRN_MIND_VOID_DESC
-We are not alone in the cosmos... but why should the search be so limited? Many cultures have myths, legends or fervent belief in a higher consciousness. Whether a loving or malevolent God, or a detached observer, it is clear that something, perhaps the universe itself on some level, is alive, aware, watching.
+'''Unlocks [[policy PLC_DESIGN_SIMPLICITY]]
+
+We are not alone in the cosmos... but why should the search be so limited? Many cultures have myths, legends or fervent belief in a higher consciousness. Whether a loving or malevolent God, or a detached observer, it is clear that something, perhaps the universe itself on some level, is alive, aware, watching.'''
 
 LRN_TIME_MECH
 Temporal Mechanics
@@ -11369,7 +11576,10 @@ CON_ARCH_PSYCH
 Architectural Psychology
 
 CON_ARCH_PSYCH_DESC
-The form of a structure or inhabited space is not merely guided by the physical limitations of the materials from which it is constructed. Psychological effects on the inhabitants within, or observers outside can have a far greater influence on the success of a design than the strength of a wall or sturdiness of a foundation.
+'''The form of a structure or inhabited space is not merely guided by the physical limitations of the materials from which it is constructed. Psychological effects on the inhabitants within, or observers outside can have a far greater influence on the success of a design than the strength of a wall or sturdiness of a foundation.
+
+Grants 1 extra social policy slot.
+'''
 
 CON_ORGANIC_STRC
 Organic Structures
@@ -11431,7 +11641,9 @@ CON_TRANS_ARCH
 Transcendent Architecture
 
 CON_TRANS_ARCH_DESC
-'''Mastering advanced orbital construction techniques, scientists create methods to enable construction of the awe inspiring [[buildingtype BLD_MEGALITH]].
+'''Grants 1 extra social policy slot.
+
+Mastering advanced orbital construction techniques, scientists create methods to enable construction of the awe inspiring [[buildingtype BLD_MEGALITH]].
 
 The epitome of design unifies optimal functionality with elegance of form. A transcendent structure expands and inspires the minds of its occupants or observers with its shape, placement, substance and integration, whether through awe-inspiring scale, perfect emphasis of a single idea, perception or lack thereof, or utter simplicity and fitness for purpose.'''
 
@@ -12722,9 +12934,19 @@ BLD_IMPERIAL_PALACE
 Imperial Palace
 
 BLD_IMPERIAL_PALACE_DESC
-'''Increases [[metertype METER_SUPPLY]] line range by 2, [[metertype METER_TARGET_CONSTRUCTION]] by 20, [[metertype METER_DEFENSE]] by 5, and [[metertype METER_TROOPS]] by 6. Also sets the owner's Capital for the empire.
+'''Increases [[metertype METER_SUPPLY]] line range by 2, [[metertype METER_INFLUENCE]] by 1, [[metertype METER_TARGET_CONSTRUCTION]] by 20, [[metertype METER_DEFENSE]] by 5, and [[metertype METER_TROOPS]] by 6.
+
+Grants 1 economic policy slot.
+
+Sets the owner's Capital for the empire.
 
 Represents imperial power and prestige and functions as a center of control for the empire's holdings.'''
+
+BLD_MILITARY_COMMAND
+Military Command
+
+BLD_MILITARY_COMMAND_DESC
+Provides a military policy slot.
 
 BLD_SUPER_TEST
 Super-Tester Takeover
@@ -14087,7 +14309,7 @@ RS_AUTOTRADER
 Autotrader
 
 RS_AUTOTRADER_DESC
-Generates trade for owner.
+Generates influence for owner.
 
 
 ##

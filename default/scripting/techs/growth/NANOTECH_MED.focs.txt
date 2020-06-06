@@ -10,6 +10,7 @@ Tech
         "GRO_GENETIC_MED"
         "PRO_NANOTECH_PROD"
     ]
+    unlock = Item type = Policy name = "PLC_POPULATION"
     graphic = "icons/tech/nanotech_medicine.png"
 
 #include "/scripting/common/base_prod.macros"

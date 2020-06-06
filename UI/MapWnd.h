@@ -23,6 +23,7 @@ class MapWndPopup;
 class DesignWnd;
 class ProductionWnd;
 class ResearchWnd;
+class GovernmentWnd;
 class EncyclopediaDetailPanel;
 class CombatReportWnd;
 class ObjectListWnd;
@@ -158,6 +159,7 @@ public:
     void ShowPlanet(int planet_id);                              //!< brings up encyclopedia panel and displays info about the planet
     void ShowCombatLog(int log_id);                              //!< brings up encyclopedia panel and displays info about the combat
     void ShowTech(const std::string& tech_name);                 //!< brings up the research screen and centers the tech tree on \a tech_name
+    void ShowPolicy(const std::string& policy_name);             //!< brings up ??? and displays info about the policy with name \a policy_name
     void ShowBuildingType(const std::string& building_type_name);//!< brings up the production screen and displays info about the buildtype \a type_name
 
     //! Brings up the production screen and displays info about
@@ -184,10 +186,10 @@ public:
     /** Programatically selects fleets. */
     void SelectFleet(std::shared_ptr<Fleet> fleet);
 
-    void ReselectLastFleet();                    //!< re-selects the most recent selected fleet, if a valid one exists
+    void ReselectLastFleet();                   //!< re-selects the most recent selected fleet, if a valid one exists
 
-    void RemoveFleet(int fleet_id); //!< removes specified fleet.
-    void SetFleetMovementLine(int fleet_id);     //!< creates fleet movement line for a single fleet.  Move lines originate from the fleet's button location.
+    void RemoveFleet(int fleet_id);             //!< removes specified fleet.
+    void SetFleetMovementLine(int fleet_id);    //!< creates fleet movement line for a single fleet.  Move lines originate from the fleet's button location.
 
     /* creates specially-coloured projected fleet movement line for specified
      * fleet following the specified route.  Move line originates from the
@@ -205,7 +207,7 @@ public:
 
     void ResetEmpireShown();                     //!< auto-resets the shown empire in any contained Wnds, to the current client's empire (if any)
 
-    void RegisterPopup(const std::shared_ptr<MapWndPopup>& popup);              //!< registers a MapWndPopup, which can be cleaned up with a call to DeleteAllPopups( )
+    void RegisterPopup(const std::shared_ptr<MapWndPopup>& popup);  //!< registers a MapWndPopup, which can be cleaned up with a call to DeleteAllPopups( )
     void RemovePopup(MapWndPopup* popup);        //!< removes a MapWndPopup from the list cleaned up on a call to DeleteAllPopups( )
     void Sanitize();                             //!< sanitizes the MapWnd after a game
     void ResetTimeoutClock(int timeout);         //!< start count down \a timeout seconds
@@ -220,7 +222,7 @@ public:
 private:
     void RefreshTurnButtonTooltip();
 
-    void RefreshTradeResourceIndicator();
+    void RefreshInfluenceResourceIndicator();
     void RefreshFleetResourceIndicator();
     void RefreshResearchResourceIndicator();
     void RefreshIndustryResourceIndicator();
@@ -250,22 +252,22 @@ private:
 
     class MapScaleLine;
 
-    void            InitializeWindows();
+    void InitializeWindows();
 
-    void            Zoom(int delta);                            //!< changes the zoom level of the main map by zoom step size to the power of \a delta (adds delta to the current zoom exponent)
-    void            Zoom(int delta, const GG::Pt& position);    //!< changes the zoom level of the main map by zoom step size to the power of \a delta (adds delta to the current zoom exponent) Keeps the screen position \a position in the same place after zooming
-    void            SetZoom(double steps_in, bool update_slide);//!< sets zoom level of the main map to zoom step size to the power of \a steps_in and updates zoom slider position if \a update_slide is true
-    void            SetZoom(double steps_in, bool update_slide, const GG::Pt& position);//!< sets zoom level of the main map to zoom step size to the power of \a steps_in and updates zoom slider position if \a update_slide is true. Keeps the screen position \a position in the same place after zooming
+    void Zoom(int delta);                            //!< changes the zoom level of the main map by zoom step size to the power of \a delta (adds delta to the current zoom exponent)
+    void Zoom(int delta, const GG::Pt& position);    //!< changes the zoom level of the main map by zoom step size to the power of \a delta (adds delta to the current zoom exponent) Keeps the screen position \a position in the same place after zooming
+    void SetZoom(double steps_in, bool update_slide);//!< sets zoom level of the main map to zoom step size to the power of \a steps_in and updates zoom slider position if \a update_slide is true
+    void SetZoom(double steps_in, bool update_slide, const GG::Pt& position);//!< sets zoom level of the main map to zoom step size to the power of \a steps_in and updates zoom slider position if \a update_slide is true. Keeps the screen position \a position in the same place after zooming
 
-    void            Pan(const GG::Pt& delta);                   //!< pans map
-    bool            PanX(GG::X x = GG::X(50));
-    bool            PanY(GG::Y y = GG::Y(50));
+    void Pan(const GG::Pt& delta);                   //!< pans map
+    bool PanX(GG::X x = GG::X(50));
+    bool PanY(GG::Y y = GG::Y(50));
 
     /** Mark all fleet buttons for a refresh. */
-    void            RefreshFleetButtons();
+    void RefreshFleetButtons();
     /** Removes old / existing and create new fleet buttons. Only called once
       * per render interval.*/
-    void            DeferredRefreshFleetButtons();
+    void DeferredRefreshFleetButtons();
 
     /** Use the vectors of fleet ids from \p fleets_map to create fleet buttons
       * in \p type_fleet_buttons and record the fleet buttons in
@@ -420,6 +422,10 @@ private:
     void ShowDesign();
     void HideDesign();
 
+    bool ToggleGovernment();
+    void ShowGovernment();
+    void HideGovernment();
+
     bool ShowMenu();
 
     bool CloseSystemView(); //!< closes off the current system view
@@ -458,6 +464,7 @@ private:
     std::shared_ptr<ResearchWnd>                m_research_wnd;             //!< research screen
     std::shared_ptr<ProductionWnd>              m_production_wnd;           //!< production screen
     std::shared_ptr<DesignWnd>                  m_design_wnd;               //!< design screen
+    std::shared_ptr<GovernmentWnd>              m_government_wnd;           //!< government screen
     std::shared_ptr<EncyclopediaDetailPanel>    m_pedia_panel;              //!< encyclpedia panel
     std::shared_ptr<ObjectListWnd>              m_object_list_wnd;          //!< filterable list of objects in universe
     std::shared_ptr<ModeratorActionsWnd>        m_moderator_wnd;            //!< buttons to select moderator actions
@@ -565,14 +572,14 @@ private:
     bool                            m_sidepanel_open_before_showing_other = false;  //!< was the sidepanel open before switching to production, research or design screens?  If so, it should be restored when leaving them.
 
     std::shared_ptr<CUIToolBar>     m_toolbar;
-    std::shared_ptr<StatisticIcon>  m_trade, m_population, m_research,
+    std::shared_ptr<StatisticIcon>  m_influence, m_population, m_research,
                                     m_industry, m_stockpile, m_detection,
                                     m_fleet;
     std::shared_ptr<GG::Button>     m_industry_wasted, m_research_wasted,
                                     m_btn_moderator, m_btn_messages, m_btn_empires,
                                     m_btn_siterep, m_btn_research, m_btn_production,
-                                    m_btn_design, m_btn_pedia, m_btn_graphs,
-                                    m_btn_objects, m_btn_menu;
+                                    m_btn_design, m_btn_government, m_btn_pedia,
+                                    m_btn_graphs, m_btn_objects, m_btn_menu;
     std::shared_ptr<GG::Label>      m_FPS;
 
     std::shared_ptr<MapScaleLine>       m_scale_line;   //!< indicates the on-screen distance that reprensents an in-universe distance

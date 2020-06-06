@@ -32,6 +32,7 @@
 #include "../universe/Species.h"
 #include "../universe/FieldType.h"
 #include "../universe/Enums.h"
+#include "../Empire/Government.h"
 #include "../combat/CombatLogManager.h"
 #include "../client/human/HumanClientApp.h"
 
@@ -185,9 +186,9 @@ std::shared_ptr<GG::Texture> ClientUI::MeterIcon(MeterType meter_type) {
     case METER_RESEARCH:
     case METER_TARGET_RESEARCH:
         icon_filename = "research.png";     break;
-    case METER_TRADE:
-    case METER_TARGET_TRADE:
-        icon_filename = "trade.png";        break;
+    case METER_INFLUENCE:
+    case METER_TARGET_INFLUENCE:
+        icon_filename = "influence.png";    break;
     case METER_CONSTRUCTION:
     case METER_TARGET_CONSTRUCTION:
         icon_filename = "construction.png"; break;
@@ -196,10 +197,10 @@ std::shared_ptr<GG::Texture> ClientUI::MeterIcon(MeterType meter_type) {
         icon_filename = "happiness.png";    break;
     case METER_CAPACITY:
     case METER_MAX_CAPACITY:
-        icon_filename = "capacity.png";   break;
+        icon_filename = "capacity.png";     break;
     case METER_SECONDARY_STAT:
     case METER_MAX_SECONDARY_STAT:
-        icon_filename = "secondary.png";   break;
+        icon_filename = "secondary.png";    break;
     case METER_STRUCTURE:
     case METER_MAX_STRUCTURE:
         icon_filename = "structure.png";    break;
@@ -261,6 +262,14 @@ std::shared_ptr<GG::Texture> ClientUI::TechIcon(const std::string& tech_name) {
         if (texture_name.empty())
             return CategoryIcon(tech->Category());
     }
+    return ClientUI::GetTexture(ArtDir() / texture_name, true);
+}
+
+std::shared_ptr<GG::Texture> ClientUI::PolicyIcon(const std::string& policy_name) {
+    const Policy* policy = GetPolicyManager().GetPolicy(policy_name);
+    std::string texture_name;
+    if (policy)
+        texture_name = policy->Graphic();
     return ClientUI::GetTexture(ArtDir() / texture_name, true);
 }
 
@@ -907,6 +916,13 @@ bool ClientUI::ZoomToTech(const std::string& tech_name) {
     if (!GetTech(tech_name))
         return false;
     GetMapWnd()->ShowTech(tech_name);
+    return true;
+}
+
+bool ClientUI::ZoomToPolicy(const std::string& policy_name) {
+    if (!GetPolicy(policy_name))
+        return false;
+    GetMapWnd()->ShowPolicy(policy_name);
     return true;
 }
 

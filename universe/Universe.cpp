@@ -9,6 +9,7 @@
 #include "../util/GameRules.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
+#include "../Empire/Government.h"
 #include "IDAllocator.h"
 #include "Building.h"
 #include "BuildingType.h"
@@ -1350,6 +1351,33 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
         }
     }
 
+    // 3.5) EffectsGroups from Policies
+    type_timer.EnterSection("policies");
+    TraceLogger(effects) << "Universe::GetEffectsAndTargets for POLICIES";
+    std::list<Condition::ObjectSet> policy_sources; // for each empire, a set with a single source object for all its policies
+    for (auto& entry : Empires()) {
+        const Empire* empire = entry.second;
+        auto source = empire->Source();
+        if (!source)
+            continue;
+
+        // like techs, all policies for an empire have the same source object
+        policy_sources.emplace_back(Condition::ObjectSet{1U, source});
+        const auto& source_objects = policy_sources.back();
+
+        for (const auto& policy_name : empire->AdoptedPolicies()) {
+            const Policy* policy = GetPolicy(policy_name);
+            if (!policy) continue;
+
+            DispatchEffectsGroupScopeEvaluations(ECT_POLICY, policy_name,
+                                                 source_objects, policy->Effects(),
+                                                 only_meter_effects,
+                                                 m_objects, potential_targets,
+                                                 potential_ids_set,
+                                                 source_effects_targets_causes_reorder_buffer,
+                                                 thread_pool, n);
+        }
+    }
 
     // 4) EffectsGroups from Buildings
     type_timer.EnterSection("buildings");
