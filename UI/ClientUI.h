@@ -226,6 +226,10 @@ private:
     std::shared_ptr<SaveFileDialog>         m_savefile_dialog;
     std::shared_ptr<PasswordEnterWnd>       m_password_enter_wnd;   //!< the authentication window
 
+    //!< map key represents a directory and first part of a texture filename.
+    //!< when textures are looked up with GetPrefixedTextures, the specified
+    //!< dir is searched for filenames that start with the prefix. pointers
+    //!< to the Texture objects for these files are stored as the mapped value.
     std::map<std::string, std::vector<std::shared_ptr<GG::Texture>>>
                                             m_prefixed_textures;
 
