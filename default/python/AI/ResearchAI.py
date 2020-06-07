@@ -999,7 +999,7 @@ def generate_classic_research_orders():
     if True:  # just to help with cold-folding / organization
         if (fo.currentTurn() > 50 and len(AIstate.empireStars.get(fo.starType.blackHole, [])) != 0 and
                 aistate.character.may_research_tech_classic("PRO_SINGULAR_GEN") and not tech_is_complete(Dep.PRO_SINGULAR_GEN) and
-                tech_is_complete(Dep.PRO_SOL_ORB_GEN)):
+                tech_is_complete("LRN_EVERYTHING")):
             # sing_tech_list = [ "LRN_GRAVITONICS" , "PRO_SINGULAR_GEN"]  # formerly also "CON_ARCH_PSYCH", "CON_CONC_CAMP",
             sing_gen_tech = fo.getTech(Dep.PRO_SINGULAR_GEN)
             sing_tech_list = [pre_req for pre_req in sing_gen_tech.recursivePrerequisites(empire_id) if not tech_is_complete(pre_req)]
