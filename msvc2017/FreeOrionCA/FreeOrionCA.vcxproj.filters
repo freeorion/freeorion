@@ -197,9 +197,6 @@
     <ClInclude Include="..\..\universe\ResourceCenter.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\universe\Predicates.h">
-      <Filter>Header Files\universe</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\universe\PopCenter.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>

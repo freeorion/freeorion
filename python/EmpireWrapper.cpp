@@ -4,7 +4,6 @@
 #include "../Empire/Diplomacy.h"
 #include "../Empire/Government.h"
 #include "../Empire/InfluenceQueue.h"
-#include "../universe/Predicates.h"
 #include "../universe/UniverseObject.h"
 #include "../universe/UnlockableItem.h"
 #include "../universe/Planet.h"

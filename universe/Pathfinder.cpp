@@ -12,7 +12,6 @@
 #include <boost/variant/variant.hpp>
 #include "Field.h"
 #include "Fleet.h"
-#include "Predicates.h"
 #include "Ship.h"
 #include "System.h"
 #include "UniverseObject.h"

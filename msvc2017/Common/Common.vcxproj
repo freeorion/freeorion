@@ -222,7 +222,7 @@
     <ClInclude Include="..\..\universe\ObjectMap.h" />
     <ClInclude Include="..\..\universe\Planet.h" />
     <ClInclude Include="..\..\universe\PopCenter.h" />
-    <ClInclude Include="..\..\universe\Predicates.h" />
+    <ClInclude Include="..\..\universe\UniverseObjectVisitors.h" />
     <ClInclude Include="..\..\universe\ResourceCenter.h" />
     <ClInclude Include="..\..\universe\Ship.h" />
     <ClInclude Include="..\..\universe\ShipDesign.h" />
@@ -232,6 +232,7 @@
     <ClInclude Include="..\..\universe\Species.h" />
     <ClInclude Include="..\..\universe\System.h" />
     <ClInclude Include="..\..\universe\Tech.h" />
+    <ClInclude Include="..\..\universe\UniverseObjectVisitor.h" />
     <ClInclude Include="..\..\universe\Universe.h" />
     <ClInclude Include="..\..\universe\UnlockableItem.h" />
     <ClInclude Include="..\..\universe\Pathfinder.h" />
@@ -302,7 +303,7 @@
     <ClCompile Include="..\..\universe\ObjectMap.cpp" />
     <ClCompile Include="..\..\universe\Planet.cpp" />
     <ClCompile Include="..\..\universe\PopCenter.cpp" />
-    <ClCompile Include="..\..\universe\Predicates.cpp" />
+    <ClCompile Include="..\..\universe\UniverseObjectVisitors.cpp" />
     <ClCompile Include="..\..\universe\ResourceCenter.cpp" />
     <ClCompile Include="..\..\universe\Ship.cpp" />
     <ClCompile Include="..\..\universe\ShipDesign.cpp" />
@@ -312,6 +313,7 @@
     <ClCompile Include="..\..\universe\Species.cpp" />
     <ClCompile Include="..\..\universe\System.cpp" />
     <ClCompile Include="..\..\universe\Tech.cpp" />
+    <ClCompile Include="..\..\universe\UniverseObjectVisitor.cpp" />
     <ClCompile Include="..\..\universe\Universe.cpp" />
     <ClCompile Include="..\..\universe\UnlockableItem.cpp" />
     <ClCompile Include="..\..\universe\Pathfinder.cpp" />

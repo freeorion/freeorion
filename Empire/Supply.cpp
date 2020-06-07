@@ -8,10 +8,10 @@
 #include "../universe/Enums.h"
 #include "../universe/Fleet.h"
 #include "../universe/Planet.h"
-#include "../universe/Predicates.h"
 #include "../universe/System.h"
 #include "../universe/Universe.h"
 #include "../universe/UniverseObject.h"
+#include "../universe/UniverseObjectVisitors.h"
 #include "../util/AppInterface.h"
 #include "../util/Logger.h"
 

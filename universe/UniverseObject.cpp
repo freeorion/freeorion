@@ -4,9 +4,9 @@
 #include <boost/lexical_cast.hpp>
 #include "Enums.h"
 #include "Pathfinder.h"
-#include "Predicates.h"
 #include "Special.h"
 #include "System.h"
+#include "UniverseObjectVisitor.h"
 #include "Universe.h"
 #include "../Empire/EmpireManager.h"
 #include "../util/AppInterface.h"

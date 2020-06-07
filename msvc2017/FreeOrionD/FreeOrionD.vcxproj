@@ -190,7 +190,6 @@
     <ClInclude Include="..\..\universe\ObjectMap.h" />
     <ClInclude Include="..\..\universe\Planet.h" />
     <ClInclude Include="..\..\universe\PopCenter.h" />
-    <ClInclude Include="..\..\universe\Predicates.h" />
     <ClInclude Include="..\..\universe\ResourceCenter.h" />
     <ClInclude Include="..\..\universe\Ship.h" />
     <ClInclude Include="..\..\universe\ShipDesign.h" />

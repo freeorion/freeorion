@@ -21,7 +21,6 @@ target_sources(freeorioncommon
         ${CMAKE_CURRENT_LIST_DIR}/ObjectMap.h
         ${CMAKE_CURRENT_LIST_DIR}/Planet.h
         ${CMAKE_CURRENT_LIST_DIR}/PopCenter.h
-        ${CMAKE_CURRENT_LIST_DIR}/Predicates.h
         ${CMAKE_CURRENT_LIST_DIR}/ResourceCenter.h
         ${CMAKE_CURRENT_LIST_DIR}/ScriptingContext.h
         ${CMAKE_CURRENT_LIST_DIR}/Ship.h
@@ -36,6 +35,8 @@ target_sources(freeorioncommon
         ${CMAKE_CURRENT_LIST_DIR}/UnlockableItem.h
         ${CMAKE_CURRENT_LIST_DIR}/Pathfinder.h
         ${CMAKE_CURRENT_LIST_DIR}/UniverseObject.h
+        ${CMAKE_CURRENT_LIST_DIR}/UniverseObjectVisitor.h
+        ${CMAKE_CURRENT_LIST_DIR}/UniverseObjectVisitors.h
         ${CMAKE_CURRENT_LIST_DIR}/ValueRef.h
         ${CMAKE_CURRENT_LIST_DIR}/ValueRefs.h
     PRIVATE
@@ -56,7 +57,6 @@ target_sources(freeorioncommon
         ${CMAKE_CURRENT_LIST_DIR}/ObjectMap.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Planet.cpp
         ${CMAKE_CURRENT_LIST_DIR}/PopCenter.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/Predicates.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ResourceCenter.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Ship.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ShipDesign.cpp
@@ -70,5 +70,7 @@ target_sources(freeorioncommon
         ${CMAKE_CURRENT_LIST_DIR}/UnlockableItem.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Pathfinder.cpp
         ${CMAKE_CURRENT_LIST_DIR}/UniverseObject.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/UniverseObjectVisitor.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/UniverseObjectVisitors.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ValueRefs.cpp
 )

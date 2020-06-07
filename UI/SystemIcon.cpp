@@ -8,7 +8,6 @@
 #include "CUIControls.h"
 #include "CUIDrawUtil.h"
 #include "../universe/Fleet.h"
-#include "../universe/Predicates.h"
 #include "../universe/System.h"
 #include "../universe/Planet.h"
 #include "../universe/Building.h"

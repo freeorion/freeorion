@@ -4,7 +4,6 @@
 #include "../universe/Universe.h"
 #include "../util/GameRules.h"
 #include "../util/OptionsDB.h"
-#include "../universe/Predicates.h"
 #include "../universe/Planet.h"
 #include "../universe/Fleet.h"
 #include "../universe/Ship.h"

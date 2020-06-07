@@ -3,10 +3,10 @@
 #include <boost/algorithm/cxx11/all_of.hpp>
 #include "Enums.h"
 #include "Pathfinder.h"
-#include "Predicates.h"
 #include "ShipDesign.h"
 #include "Ship.h"
 #include "System.h"
+#include "UniverseObjectVisitor.h"
 #include "Universe.h"
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Empire.h"
