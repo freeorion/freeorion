@@ -35,7 +35,7 @@ bool TechTreeLayout::Column::Fit(int index, TechTreeLayout::Node* node) {
     if (index + node->weight > size)
         column.resize(index + node->weight, nullptr);
 
-    for (int j = index + node->weight; j-->index; ) {
+    for (int j = index; j < index + node->weight; j++) {
         if (column[j] != nullptr && column[j] != node)
             return false;
     }
@@ -64,7 +64,7 @@ int TechTreeLayout::Column::ClosestFreeIndex(int index, TechTreeLayout::Node* no
 
 bool TechTreeLayout::Column::Place(int index, TechTreeLayout::Node* node) {
     if (Fit(index, node)) {
-        for (int i = index + node->weight; i-->index; )
+        for (int i = index; j < index + node->weight; i++)
             column[i] = node;
 
         node->row = index;
