@@ -480,7 +480,7 @@ const std::string& SpeciesManager::RandomSpeciesName() const {
     if (m_species.empty())
         return EMPTY_STRING;
 
-    int species_idx = RandSmallInt(0, static_cast<int>(m_species.size()) - 1);
+    int species_idx = RandInt(0, static_cast<int>(m_species.size()) - 1);
     return std::next(begin(), species_idx)->first;
 }
 
@@ -488,7 +488,7 @@ const std::string& SpeciesManager::RandomPlayableSpeciesName() const {
     if (NumPlayableSpecies() <= 0)
         return EMPTY_STRING;
 
-    int species_idx = RandSmallInt(0, NumPlayableSpecies() - 1);
+    int species_idx = RandInt(0, NumPlayableSpecies() - 1);
     return std::next(playable_begin(), species_idx)->first;
 }
 

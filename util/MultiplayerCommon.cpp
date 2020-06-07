@@ -201,7 +201,7 @@ void GalaxySetupData::SetSeed(const std::string& seed) {
         ClockSeed();
         new_seed.clear();
         for (int i = 0; i < 8; ++i)
-            new_seed += alphanum[RandSmallInt(0, (sizeof(alphanum) - 2))];
+            new_seed += alphanum[RandInt(0, (sizeof(alphanum) - 2))];
         DebugLogger() << "Set empty or requested random seed to " << new_seed;
     }
     m_seed = std::move(new_seed);

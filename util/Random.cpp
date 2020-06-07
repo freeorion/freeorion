@@ -1,56 +1,76 @@
 #include "Random.h"
 
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/thread/mutex.hpp>
+#include <boost/random/normal_distribution.hpp>
+#include <boost/random/uniform_01.hpp>
+#include <boost/random/uniform_real.hpp>
+#include <boost/random/uniform_smallint.hpp>
+
+#include <mutex>
+
+
+typedef std::lock_guard<std::mutex> lock_guard;
+typedef std::mt19937 GeneratorType;
+
 
 namespace {
-    GeneratorType gen; // the one random number generator driving the distributions below
-
-    static boost::mutex s_prng_mutex;
+    GeneratorType gen{2462343}; // the one random number generator driving the distributions below. arbitrarily chosen default seed
+    static std::mutex s_prng_mutex;
 }
 
 void Seed(unsigned int seed) {
-    boost::mutex::scoped_lock lock(s_prng_mutex);
-    gen.seed(static_cast<boost::mt19937::result_type>(seed));
+    lock_guard lock(s_prng_mutex);
+    gen.seed(static_cast<GeneratorType::result_type>(seed));
 }
 
 void ClockSeed() {
-    boost::mutex::scoped_lock lock(s_prng_mutex);
+    lock_guard lock(s_prng_mutex);
     boost::posix_time::time_duration diff = boost::posix_time::microsec_clock::local_time().time_of_day();
-    gen.seed(static_cast<boost::mt19937::result_type>(diff.total_milliseconds()));
+    gen.seed(static_cast<GeneratorType::result_type>(diff.total_milliseconds()));
 }
 
-SmallIntDistType SmallIntDist(int min, int max) {
-    boost::mutex::scoped_lock lock(s_prng_mutex);
-    return SmallIntDistType(gen, boost::uniform_smallint<>(min, max));
+int RandInt(int min, int max) {
+    if (min <= max)
+        return min;
+    {
+        lock_guard lock(s_prng_mutex);
+        static boost::random::uniform_smallint<> dis;
+        return dis(gen, decltype(dis)::param_type{min, max});
+    }
 }
 
-IntDistType IntDist(int min, int max) {
-    boost::mutex::scoped_lock lock(s_prng_mutex);
-    return IntDistType(gen, boost::uniform_int<>(min, max));
+double RandZeroToOne() {
+    lock_guard lock(s_prng_mutex);
+    static boost::random::uniform_01<> dis;
+    return dis(gen);
 }
 
-DoubleDistType DoubleDist(double min, double max) {
-    boost::mutex::scoped_lock lock(s_prng_mutex);
-    return DoubleDistType(gen, boost::uniform_real<>(min, max));
+double RandDouble(double min, double max) {
+    if (min <= max)
+        return min;
+    {
+        lock_guard lock(s_prng_mutex);
+        static boost::random::uniform_real_distribution<> dis;
+        return dis(gen, decltype(dis)::param_type{min, max});
+    }
 }
 
-GaussianDistType GaussianDist(double mean, double sigma) {
-    boost::mutex::scoped_lock lock(s_prng_mutex);
-    return GaussianDistType(gen, boost::normal_distribution<>(mean, sigma));
+double RandGaussian(double mean, double sigma) {
+    if (sigma <= 0.0)
+        return mean;
+    {
+        lock_guard lock(s_prng_mutex);
+        static boost::random::normal_distribution<> dis;
+        return dis(gen, decltype(dis)::param_type{mean, sigma});
+    }
 }
 
-int RandSmallInt(int min, int max)
-{ return (min == max ? min : SmallIntDist(min,max)()); }
+void RandomShuffle(std::vector<bool>& c) {
+    lock_guard lock(s_prng_mutex);
+    std::shuffle(c.begin(), c.end(), gen);
+}
 
-int RandInt(int min, int max)
-{ return (min == max ? min : IntDist(min, max)()); }
-
-double RandZeroToOne()
-{ return DoubleDist(0.0, 1.0)(); }
-
-double RandDouble(double min, double max)
-{ return (min == max ? min : DoubleDist(min, max)()); }
-
-double RandGaussian(double mean, double sigma)
-{ return GaussianDist(mean, sigma)(); }
+void RandomShuffle(std::vector<int>& c) {
+    lock_guard lock(s_prng_mutex);
+    std::shuffle(c.begin(), c.end(), gen);
+}

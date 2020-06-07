@@ -1792,7 +1792,7 @@ std::string Empire::NewShipName() {
         ship_names.push_back(UserString("OBJ_SHIP"));
 
     // select name randomly from list
-    int ship_name_idx = RandSmallInt(0, static_cast<int>(ship_names.size()) - 1);
+    int ship_name_idx = RandInt(0, static_cast<int>(ship_names.size()) - 1);
     std::string retval = ship_names[ship_name_idx];
     int times_name_used = ++m_ship_names_used[retval];
     if (1 < times_name_used)

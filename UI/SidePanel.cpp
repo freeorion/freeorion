@@ -744,7 +744,7 @@ public:
             const auto& atmosphere_data = GetPlanetAtmosphereData();
             auto it = atmosphere_data.find(rpd.filename);
             if (it != atmosphere_data.end()) {
-                const auto& atmosphere = it->second.atmospheres[RandSmallInt(0, it->second.atmospheres.size() - 1)];
+                const auto& atmosphere = it->second.atmospheres[RandInt(0, it->second.atmospheres.size() - 1)];
                 m_atmosphere_texture = ClientUI::GetTexture(ClientUI::ArtDir() / atmosphere.filename, true);
                 m_atmosphere_alpha = atmosphere.alpha;
                 m_atmosphere_planet_rect = GG::Rect(GG::X1, GG::Y1, m_atmosphere_texture->DefaultWidth() - 4, m_atmosphere_texture->DefaultHeight() - 4);
@@ -1150,7 +1150,7 @@ void SidePanel::PlanetPanel::RefreshPlanetGraphic() {
                                                                texture_width, texture_height, 0, textures,
                                                                GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
         m_planet_graphic->SetFPS(GetAsteroidsFPS());
-        m_planet_graphic->SetFrameIndex(RandSmallInt(0, textures.size() - 1));
+        m_planet_graphic->SetFrameIndex(RandInt(0, textures.size() - 1));
         AttachChild(m_planet_graphic);
         m_planet_graphic->Play();
     } else if (planet->Type() < NUM_PLANET_TYPES) {

@@ -1938,7 +1938,7 @@ T Operation<T>::EvalImpl(const ScriptingContext& context) const
         // select one operand, evaluate it, return result
         if (m_operands.empty())
             return T(-1);   // should be INVALID_T of enum types
-        unsigned int idx = RandSmallInt(0, m_operands.size() - 1);
+        auto idx = RandInt(0, m_operands.size() - 1);
         auto& vr = *std::next(m_operands.begin(), idx);
         if (!vr)
             return T(-1);   // should be INVALID_T of enum types

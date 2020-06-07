@@ -674,11 +674,6 @@ bool SortedNumberOf::operator==(const Condition& rhs) const {
 }
 
 namespace {
-    /** Random number genrator function to use with random_shuffle */
-    int CustomRandInt(int max_plus_one)
-    { return RandSmallInt(0, max_plus_one - 1); }
-    int (*CRI)(int) = CustomRandInt;
-
     /** Transfers the indicated \a number of objects, randomly selected from from_set to to_set */
     void TransferRandomObjects(unsigned int number, ObjectSet& from_set, ObjectSet& to_set) {
         // ensure number of objects to be moved is within reasonable range
@@ -694,7 +689,7 @@ namespace {
         std::fill_n(transfer_flags.begin(), number, true);
 
         // shuffle flags to randomize which flags are set
-        std::random_shuffle(transfer_flags.begin(), transfer_flags.end(), CRI);
+        RandomShuffle(transfer_flags);
 
         // transfer objects that have been flagged
         int i = 0;
