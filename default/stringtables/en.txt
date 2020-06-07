@@ -9367,6 +9367,9 @@ Economic Policy Slots
 SOCIAL_CATEGORY_NUM_POLICY_SLOTS
 Social Policy Slots
 
+MILITARY_CATEGORY_NUM_POLICY_SLOTS
+Military Policy Slots
+
 ALIGN_MILITARISM
 Militarism
 
