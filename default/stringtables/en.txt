@@ -5057,7 +5057,7 @@ ADOPTED_POLICIES
 '''Adopted Policies: '''
 
 NO_POLICIES_ADOPTED
-No Policies AdoptedAVAILABLE_PARTS
+No Policies Adopted
 
 AVAILABLE_PARTS
 '''Available Parts: '''
