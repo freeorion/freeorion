@@ -1279,12 +1279,6 @@ Drydocks and Fleet Field Repair repair allied ships
 RULE_ENABLE_ALLIED_REPAIR_DESC
 Allow Drydocks building and Fleet Field Repair tech to repair ships of allied empires.
 
-RULE_SHOW_DETAILED_EMPIRES_DATA
-Show detailed empires data
-
-RULE_SHOW_DETAILED_EMPIRES_DATA_DESC
-Show research and production, researched buildings, parts, and hulls of all empires.
-
 RULE_DIPLOMACY
 Allowed diplomacy
 
