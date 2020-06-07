@@ -8,58 +8,73 @@
 FO_COMMON_API extern const int ALL_EMPIRES;
 
 
-/** returns obj iff \a obj is a Fleet belonging to the given empire object that is parked at a System, not under orders to move.  
-    If the given empire is -1, all orderd moving fleets will be returned.  Note that it is preferable to use this functor on System
-    searches, rather than Universe ones. */
+//! Returns obj iff @a obj is a Fleet belonging to the given empire that is
+//! parked at a System, not under orders to move.
+//!
+//! If the given empire is ALL_EMPIRES, all orderd moving fleets will be
+//! returned.
+//
+//! Note that it is preferable to use this functor on System searches, rather
+//! than Universe ones.
 struct FO_COMMON_API StationaryFleetVisitor : UniverseObjectVisitor
 {
     StationaryFleetVisitor(int empire = ALL_EMPIRES);
 
     virtual ~StationaryFleetVisitor();
 
-    std::shared_ptr<UniverseObject> Visit(std::shared_ptr<Fleet> obj) const override;
+    auto Visit(std::shared_ptr<Fleet> obj) const -> std::shared_ptr<UniverseObject> override;
 
-    const int empire_id;
+    int const empire_id;
 };
 
-/** returns obj iff \a obj is a Fleet belonging to the given empire, and that is under orders to move, but is not yet moving. 
-    If the given empire is -1, all stationary fleets will be returned.  Note that it is preferable to use this functor on System
-    searches, rather than Universe ones. */
+
+//! Returns obj iff @a obj is a Fleet belonging to the given empire, and that
+//! is under orders to move, but is not yet moving.
+//!
+//! If the given empire is ALL_EMPIRES, all stationary fleets will be returned.
+//!
+//! Note that it is preferable to use this functor on System searches, rather
+//! than Universe ones.
 struct FO_COMMON_API OrderedMovingFleetVisitor : UniverseObjectVisitor
 {
     OrderedMovingFleetVisitor(int empire = ALL_EMPIRES);
 
     virtual ~OrderedMovingFleetVisitor();
 
-    std::shared_ptr<UniverseObject> Visit(std::shared_ptr<Fleet> obj) const override;
+    auto Visit(std::shared_ptr<Fleet> obj) const -> std::shared_ptr<UniverseObject> override;
 
-    const int empire_id;
+    int const empire_id;
 };
 
-/** returns obj iff \a obj is a moving Fleet belonging to the given empire, and that is moving between systems.  
-    If the given empire is -1, all moving fleets will be returned. */
+
+//! Returns obj iff @a obj is a moving Fleet belonging to the given empire,
+//! and that is moving between systems.
+//!
+//! If the given empire is ALL_EMPIRE, all moving fleets will be returned.
 struct FO_COMMON_API MovingFleetVisitor : UniverseObjectVisitor
 {
     MovingFleetVisitor(int empire = ALL_EMPIRES);
 
     virtual ~MovingFleetVisitor();
 
-    std::shared_ptr<UniverseObject> Visit(std::shared_ptr<Fleet> obj) const override;
+    auto Visit(std::shared_ptr<Fleet> obj) const -> std::shared_ptr<UniverseObject> override;
 
-    const int empire_id;
+    int const empire_id;
 };
 
-/** returns obj iff \a obj is owned by the empire with id \a empire, and \a obj is of type T. */
+
+//! Returns obj iff @a obj is owned by the empire with id @a empire_id.
 struct FO_COMMON_API OwnedVisitor : UniverseObjectVisitor
 {
     OwnedVisitor(int empire = ALL_EMPIRES);
 
     virtual ~OwnedVisitor();
 
-    std::shared_ptr<UniverseObject> Visit(std::shared_ptr<UniverseObject> obj) const override;
+    auto Visit(std::shared_ptr<UniverseObject> obj) const -> std::shared_ptr<UniverseObject> override;
 
-    const int empire_id;
+    int const empire_id;
 };
+
 
 struct FO_COMMON_API HostileVisitor : UniverseObjectVisitor
 {
@@ -67,10 +82,11 @@ struct FO_COMMON_API HostileVisitor : UniverseObjectVisitor
 
     virtual ~HostileVisitor();
 
-    std::shared_ptr<UniverseObject> Visit(std::shared_ptr<UniverseObject> obj) const override;
+    auto Visit(std::shared_ptr<UniverseObject> obj) const -> std::shared_ptr<UniverseObject> override;
 
-    const int viewing_empire_id;
-    const int owning_empire_id;
+    int const viewing_empire_id;
+    int const owning_empire_id;
 };
+
 
 #endif // _UniverseObjectVisitors_h_
