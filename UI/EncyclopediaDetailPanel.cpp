@@ -602,6 +602,9 @@ void EncyclopediaDetailPanel::CompleteConstruction() {
     const int PTS = ClientUI::Pts();
     const int NAME_PTS = PTS*3/2;
     const int SUMMARY_PTS = PTS*4/3;
+    const GG::X CONTROL_WIDTH(54);
+    const GG::Y CONTROL_HEIGHT(74);
+    const GG::Pt PALETTE_MIN_SIZE{GG::X{CONTROL_WIDTH + 70}, GG::Y{CONTROL_HEIGHT + 70}};
 
     m_name_text =    GG::Wnd::Create<CUILabel>("");
     m_cost_text =    GG::Wnd::Create<CUILabel>("");
@@ -682,6 +685,9 @@ void EncyclopediaDetailPanel::CompleteConstruction() {
 
     SetChildClippingMode(ClipToWindow);
     DoLayout();
+
+    SetMinSize(PALETTE_MIN_SIZE);
+
     MoveChildUp(m_graph);
     SaveDefaultedOptions();
 
