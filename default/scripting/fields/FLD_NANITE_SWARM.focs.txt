@@ -1,6 +1,6 @@
 FieldType
-    name = "FLD_ION_STORM"
-    description = "FLD_ION_STORM_DESC"
+    name = "FLD_NANITE_SWARM"
+    description = "FLD_NANITE_SWARM_DESC"
     stealth = 0.01
     tags = [ "EXOTIC" ]
     effectsgroups = [
@@ -15,7 +15,7 @@ FieldType
         EffectsGroup    // grow size when young
             scope = Source
             activation = And [
-                (LocalCandidate.Age <= max((UniverseWidth ^ 1.1) / 50, 20))
+                (Source.Age <= max((UniverseWidth ^ 1.1) / 50, 20))
                 Size high = 50
             ]
             effects = SetSize value = Value + min(max(Value * RandomNumber(0.05, 0.1), 1.0), 3.0)
@@ -24,33 +24,25 @@ FieldType
             scope = Source
             activation = (Source.Age >= max((UniverseWidth ^ 1.1) / 50, 20))
             effects = SetSize value = Value - min(max(Value * RandomNumber(0.05, 0.1), 1.0), 3.0)
-/*
-        EffectsGroup    // after reaching a certain age, shrink size a bit each turn when near systems
-            scope = Source
-            activation = (Source.Age >= 10)
-            effects = SetSize value = Value - 0.3 * (Count condition = And [
-                System
-                WithinDistance distance = 80 condition = Source
-            ])
-*/
-        EffectsGroup    // affect stealth / detection of objects in storm
+
+        EffectsGroup    // increase ship structure
             scope = And [
-                Not Field
+                Ship
                 WithinDistance distance = Source.Size * 0.9 condition = Source
             ]
-            stackinggroup = "ION_STORM_STEALTH_DETECTION_REDUCTION"
+            stackinggroup = "NANITE_SWARM_SHIP_REPAIR"
             effects = [
-                SetStealth value = Value + 40
-                SetDetection value = Value - 40
+                SetStructure value = Value + 5
+                SetIndustry value = max(1, Value)
             ]
 
         EffectsGroup    // after reaching a certain age, dissipate when small
             scope = Source
             activation = And [
-                (LocalCandidate.Age >= 10)
+                (Source.Age >= 10)
                 Size high = 10
             ]
             effects = Destroy
 
     ]
-    graphic = "fields/ion_storm.png"
+    graphic = "fields/nanite_swarm.png"

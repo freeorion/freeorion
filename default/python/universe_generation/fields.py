@@ -15,11 +15,11 @@ def generate_fields(systems):
     if not candidates:
         print("...no empty no star systems found, no fields created")
         return
-    # pick 10-20% of all empty no star systems to create stationary fields in them, but at least one
-    accepted = sample(candidates, max(int(len(candidates) * uniform(0.1, 0.2)), 1))
+    # pick 10-15% of all empty no star systems to create stationary fields in them, but at least one
+    accepted = sample(candidates, max(int(len(candidates) * uniform(0.1, 0.15)), 1))
     for system in accepted:
         # randomly pick a field type
-        field_type = choice(["FLD_NEBULA_1", "FLD_NEBULA_2"])
+        field_type = choice(["FLD_NEBULA_1", "FLD_NEBULA_2", "FLD_NEBULA_3"])
         # and create the field
         if fo.create_field_in_system(field_type, uniform(40, 120), system) == fo.invalid_object():
             # create field failed, report an error

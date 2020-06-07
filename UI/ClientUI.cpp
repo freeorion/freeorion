@@ -299,7 +299,7 @@ std::shared_ptr<GG::Texture> ClientUI::FieldTexture(const std::string& field_typ
     if (type)
         texture_name = type->Graphic();
     if (texture_name.empty())
-        return ClientUI::GetTexture(ArtDir() / "fields" / "rainbow_storm.png", true);
+        return ClientUI::GetTexture(ArtDir() / "fields" / "ion_storm.png", true);
     return ClientUI::GetTexture(ArtDir() / texture_name, true);
 }
 

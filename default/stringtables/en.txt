@@ -873,12 +873,18 @@ FLD_NEBULA_1
 Nebula
 
 FLD_NEBULA_1_DESC
-Cloud of hydrogen gas that could coalesce to form a new star.
+Cloud of hydrogen gas that could coalesce to form a new star. Ship [[metertype METER_SPEED]] and [[metertype METER_DETECTION]] are reduced by 20, [[metertype METER_STEALTH]] is increased by 20.
 
 FLD_NEBULA_2
 [[FLD_NEBULA_1]]
 
 FLD_NEBULA_2_DESC
+[[FLD_NEBULA_1_DESC]]
+
+FLD_NEBULA_3
+[[FLD_NEBULA_1]]
+
+FLD_NEBULA_3_DESC
 [[FLD_NEBULA_1_DESC]]
 
 FLD_SUBSPACE_RIFT
@@ -892,6 +898,24 @@ Accretion Disc
 
 FLD_ACCRETION_DISC_DESC
 An accretion disc is a structure (often a circumstellar disc) formed by diffused material in orbital motion around a massive central body. All planets in the affected system get a [[metertype METER_SUPPLY]] penalty of -1.
+
+FLD_NANITE_SWARM
+Nanite Swarm
+
+FLD_NANITE_SWARM_DESC
+A swarm of ancient robotic particles that attach themselves to ship hulls, repairing ship [[metertype METER_STRUCTURE]] by 5 per turn. Harvesting of particles creates one unit of [[metertype METER_INDUSTRY]] per turn.
+
+FLD_METEOR_BLIZZARD
+Meteor Blizzard
+
+FLD_METEOR_BLIZZARD_DESC
+Mystical and mysterious appearance of meteors. Generates one [[metertype METER_RESEARCH]] per ship due to scientific examination of the phenomenom.
+
+FLD_VOID_RIFT
+Void Rift
+
+FLD_VOID_RIFT_DESC
+Anomalous rift in space that reduces ship [[metertype METER_SPEED]] by 50%.
 
 
 ##
