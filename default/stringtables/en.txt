@@ -7021,7 +7021,7 @@ SITREP_POP_THRESHOLD_LABEL
 Colonizing Threshold
 
 SITREP_NOVA_DETECTED
-Astronomers have observed a new supernova, destroying everything in a once thriving star system leaving only %system%!
+Astronomers have observed a new supernova, destroying everything in the star system leaving only %system%!
 
 SITREP_NOVA_DETECTED_LABEL
 Supernova detected
