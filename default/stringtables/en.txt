@@ -9370,36 +9370,6 @@ Social Policy Slots
 MILITARY_CATEGORY_NUM_POLICY_SLOTS
 Military Policy Slots
 
-ALIGN_MILITARISM
-Militarism
-
-ALIGN_MILITARY_STRENGTH_DESC
-Strength and size of military
-
-ALIGN_SOCIAL_CONTROL
-Social Control
-
-ALIGN_SOCIAL_CONTROL_DESC
-Degree to which population is monitored, restricted and manipulated
-
-ALIGN_ENVIRONMENT_MODIFICATION
-Environment Modification
-
-ALIGN_ENVIRONMENT_MODIFICATION_DESC
-'''Use of terraforming or other large-scale '''
-
-ALIGN_BIOLOGICAL_ALTERATION
-Biological Alteration
-
-ALIGN_BIOLOGICAL_ALTERATION_DESC
-Use of biological engineering and alteration
-
-ALIGN_MECHANIZATION
-Mechanization
-
-ALIGN_MECHANIZATION_DESC
-Use of artificial sentience and automation
-
 # Empire affiliation types
 AFFIL_SELF
 self
