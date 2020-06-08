@@ -1,8 +1,8 @@
 BuildingType
     name = "BLD_ART_BLACK_HOLE"
     description = "BLD_ART_BLACK_HOLE_DESC"
-    buildcost = 40 * [[BUILDING_COST_MULTIPLIER]]
-    buildtime = 10
+    buildcost = 45 * [[BUILDING_COST_MULTIPLIER]]
+    buildtime = 6
     location = And [
         Planet
         Not Contains Building name = "BLD_ART_BLACK_HOLE"
