@@ -1208,7 +1208,7 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Matches all objects that are visible to at least one Empire in \a empire_ids. */
+/** Matches all objects that are visible to the Empire with id \a empire_id */
 struct FO_COMMON_API VisibleToEmpire final : public Condition {
     explicit VisibleToEmpire(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id);
 
