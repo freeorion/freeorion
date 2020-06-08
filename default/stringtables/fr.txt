@@ -873,12 +873,18 @@ FLD_NEBULA_1
 Nébuleuse
 
 FLD_NEBULA_1_DESC
-Nuage de gaz d'hydrogène qui, en s'effondrant sur lui-même, peut donner naissance à une nouvelle étoile.
+Nuage de gaz d'hydrogène qui, en s'effondrant sur lui-même, peut donner naissance à une nouvelle étoile. La [[metertype METER_SPEED]] et le [[metertype METER_DETECTION]] des astronefs diminuent de 20, la [[metertype METER_STEALTH]] augmente de 20.
 
 FLD_NEBULA_2  # translated
 [[FLD_NEBULA_1]]
 
 FLD_NEBULA_2_DESC  # translated
+[[FLD_NEBULA_1_DESC]]
+
+FLD_NEBULA_3  # translated
+[[FLD_NEBULA_1]]
+
+FLD_NEBULA_3_DESC  # translated
 [[FLD_NEBULA_1_DESC]]
 
 FLD_SUBSPACE_RIFT
@@ -892,6 +898,24 @@ Disque d'Accrétion
 
 FLD_ACCRETION_DISC_DESC
 Un disque d'accrétion est une structure astrophysique (la plupart du temps un disque circumstellaire) composée de matière diffuse en orbite autour d'un corps massif central. Toutes les planètes d'un système se situant dans la zone d'influence d'un disque d'accrétion ont un malus d'[[metertype METER_SUPPLY]] de -1.
+
+FLD_NANITE_SWARM
+Essaim Nanorobotique
+
+FLD_NANITE_SWARM_DESC
+Un essaim composé d'anciennes particules nanorobotiques se fixant automatiquement aux coques des astronefs, et restaurant la [[metertype METER_STRUCTURE]] d'un astronef de 5 par tour. La récolte de ces particules génère une unité d'[[metertype METER_INDUSTRY]] par tour.
+
+FLD_METEOR_BLIZZARD
+Blizzard Météoritique
+
+FLD_METEOR_BLIZZARD_DESC
+Apparition mystérieuse et mystique de météores. Génère une unité de [[metertype METER_RESEARCH]] par astronef du fait de l'observation scientifique du phénomène.
+
+FLD_VOID_RIFT
+Faille du Vide
+
+FLD_VOID_RIFT_DESC
+Une faille singulière de l'espace-temps diminuant de 50% la [[metertype METER_SPEED]] des astronefs.
 
 
 ##
@@ -1074,6 +1098,12 @@ Technologies gratuites et immédiates
 
 RULE_CHEAP_AND_FAST_TECH_RESEARCH_DESC
 Les technologies coûtent seulement 1 PR et 1 tour de recherche.
+
+RULE_CHEAP_POLICIES
+Stratégies gratuites
+
+RULE_CHEAP_POLICIES_DESC
+Appliquer une stratégie coûte seulement 1 PI.
 
 RULE_CHEAP_AND_FAST_BUILDING_PRODUCTION
 Structures gratuites et immédiates
@@ -3376,6 +3406,12 @@ Conception
 MAP_BTN_DESIGN_DESC
 ''''''
 
+MAP_BTN_GOVERNMENT
+Stratégies Gouvernementales
+
+MAP_BTN_GOVERNMENT_DESC
+''''''
+
 MAP_BTN_GRAPH
 Graphiques
 
@@ -3456,11 +3492,11 @@ Détection
 MAP_DETECTION_TEXT
 Puissance de détection de l'empire
 
-MAP_TRADE_TITLE
-Commerce
+MAP_INFLUENCE_TITLE  # translated
+Influence
 
-MAP_TRADE_TEXT
-Commerce total de l'empire (sans effet)
+MAP_INFLUENCE_TEXT
+Influence totale de l'empire
 
 MAP_FLEET_SHIP_COUNT
 Total d'astronefs
@@ -3502,25 +3538,25 @@ RESOURCE_ALLOCATION_TOOLTIP
 Système - %1% : %2%
 
 INDUSTRY_PRODUCTION
-Capacité industrielle
+Capacité Industrie
 
 RESEARCH_PRODUCTION
-Capacité scientifique
+Capacité Recherche
 
-TRADE_PRODUCTION
-Capacité commerciale
+INFLUENCE_PRODUCTION
+Capacité Influence
 
 STOCKPILE_GENERATION
 Génération Stock
 
 INDUSTRY_CONSUMPTION
-Consommation industrielle
+Consommation Industrie
 
 RESEARCH_CONSUMPTION
-Consommation scientifique
+Consommation Recherche
 
-TRADE_CONSUMPTION
-Consommation commerciale
+INFLUENCE_CONSUMPTION
+Consommation Influence
 
 STOCKPILE_USE
 Usage Stock
@@ -3725,6 +3761,11 @@ Espèce <i>%2%</i>
 # %2% name of field
 #TT_FIELD
 #<i>%2%</i>
+
+# %1% name of the adopting empire.
+# %2% name of policy
+TT_POLICY
+%1% Stratégie <i>%2%</i>
 
 TT_FIGHTER_LAUNCH
 Lancement
@@ -3963,13 +4004,13 @@ FW_FLEET_COLONY_SUMMARY
 Colons Flotte - Égal à la somme des colons à bord des astronefs composant la Flotte.
 
 FW_FLEET_INDUSTRY_SUMMARY
-Industrie Flotte - Égal au total de capacité industrielle des astronefs composant la Flotte.
+Industrie Flotte - Égal au total de capacité d'industrie des astronefs composant la Flotte.
 
 FW_FLEET_RESEARCH_SUMMARY
-Recherche Flotte - Égal au total de capacité scientifique des astronefs composant la Flotte.
+Recherche Flotte - Égal au total de capacité de recherche des astronefs composant la Flotte.
 
-FW_FLEET_TRADE_SUMMARY
-Commerce Flotte - Égal au total de capacité commerciale des astronefs composant la Flotte.
+FW_FLEET_INFLUENCE_SUMMARY
+Influence Flotte - Égal au total de capacité d'influence des astronefs composant la Flotte.
 
 FW_MERGE_SYSTEM_FLEETS
 Regrouper les astronefs du système en Flotte
@@ -4197,6 +4238,17 @@ Catégorie
 
 TECH_WND_LIST_COLUMN_DESCRIPTION  # translated
 Description
+
+
+##
+## Government Wnd
+##
+
+POLICY_LOCKED
+Stratégie indisponible
+
+POLICY_ADOPTABLE_COST
+Stratégie applicable pour %1% PI
 
 
 ##
@@ -4742,6 +4794,26 @@ Impossible de créer le fichier:\n"%1%"
 
 
 ##
+## Government window
+##
+
+GOVERNMENT_INFO_IP
+PI
+
+GOVERNMENT_WND_CLEAR
+Vider
+
+ECONOMIC_CATEGORY
+Économique
+
+SOCIAL_CATEGORY
+Social
+
+MILITARY_CATEGORY
+Militaire
+
+
+##
 ## Statistics
 ##
 
@@ -4918,6 +4990,12 @@ Technologies
 ENC_TECH_DESC
 [[encyclopedia RESEARCH_TECH_GUIDE_TITLE]] permet de débloquer de nouveaux effets, indicateurs planétaires améliorés, structures, ou équipements d'astronef, chacun d'entre eux appartenant à l'une des catégories ci-dessous.
 
+ENC_POLICY
+Stratégies
+
+ENC_POLICY_DESC
+Effets d'amélioration ou situationnels pouvant être appliqués par les empires.
+
 ENC_SPECIAL
 Particularité
 
@@ -4974,6 +5052,12 @@ Tour
 
 NO_TECHS_RESEARCHED
 Aucune Technologie recherchée
+
+ADOPTED_POLICIES
+'''Stratégies appliquées: '''
+
+NO_POLICIES_ADOPTED
+Aucune Stratégie appliquée
 
 AVAILABLE_PARTS
 '''Équipements disponibles : '''
@@ -5131,6 +5215,9 @@ PP
 ENC_RP
 PR
 
+ENC_IP
+PI
+
 # Concise listing of costs required to produce item or research tech.
 # %1% cost to complete requested item or technology.
 # %2% unit of costs; can be `ENC_PP` or `ENC_RP` depending on the item or
@@ -5138,6 +5225,10 @@ PR
 # %3% turns to complete requested item or technology.
 ENC_COST_AND_TURNS_STR
 %1% %2% & %3% tours
+
+# same, but without turns
+ENC_COST_STR  # translated
+%1% %2%
 
 ENC_VERB_PRODUCE_STR
 produire
@@ -5623,11 +5714,11 @@ METER_TARGET_RESEARCH_VALUE_LABEL
 METER_TARGET_RESEARCH_VALUE_DESC
 [[METER_RESEARCH_VALUE_DESC]]
 
-METER_TARGET_TRADE_VALUE_LABEL
-[[METER_TRADE_VALUE_LABEL]]
+METER_TARGET_INFLUENCE_VALUE_LABEL
+[[METER_INFLUENCE_VALUE_LABEL]]
 
-METER_TARGET_TRADE_VALUE_DESC
-[[METER_TRADE_VALUE_DESC]]
+METER_TARGET_INFLUENCE_VALUE_DESC
+[[METER_INFLUENCE_VALUE_DESC]]
 
 METER_TARGET_CONSTRUCTION_VALUE_LABEL
 [[METER_CONSTRUCTION_VALUE_LABEL]]
@@ -5732,11 +5823,11 @@ Les PR sont affectés aux technologies à assimiler selon leur position dans la 
 
 À l'inverse de l'[[metertype METER_INDUSTRY]], la Recherche n'impose pas d'échanges matériels entre planètes et n'est donc pas dépendante des lignes d'[[metertype METER_SUPPLY]] de l'empire.'''
 
-METER_TRADE_VALUE_LABEL
-Commerce
+METER_INFLUENCE_VALUE_LABEL  # translated
+Influence
 
-METER_TRADE_VALUE_DESC
-[[MAP_TRADE_TEXT]]
+METER_INFLUENCE_VALUE_DESC
+[[MAP_INFLUENCE_TEXT]]
 
 METER_CONSTRUCTION_VALUE_LABEL
 Infrastructure
@@ -5934,11 +6025,11 @@ Une planète privilégiant la Croissance propage ces bénéfices aux autres plan
 
 [[GROWTH_SPECIALS_ENTRY_LIST]]'''
 
-TRADE_FOCUS_TITLE
-Focus Commerce
+INFLUENCE_FOCUS_TITLE
+Focus Influence
 
-TRADE_FOCUS_TEXT
-Le Commerce est sans effet. Il s'agit juste d'un espace réservé indiquant que d'autres ressources sont prévues.
+INFLUENCE_FOCUS_TEXT
+L'Influence n'est pas encore implémentée.
 
 PROTECTION_FOCUS_TITLE
 Focus Protection
@@ -6782,6 +6873,12 @@ La technologie %tech% a été débloquée et peut désormais être assimilée gr
 
 SITREP_TECH_UNLOCKED_LABEL
 Technologie débloquée
+
+SITREP_POLICY_UNLOCKED
+La stratégie %policy% a été débloquée et peut désormais être appliquée.
+
+SITREP_POLICY_UNLOCKED_LABEL
+Stratégie débloquée
 
 SITREP_SHIP_PART_UNLOCKED
 L'équipement %shippart% a été débloqué et peut désormais être utilisé lors de la conception de modèles d'astronef.
@@ -8326,7 +8423,7 @@ SP_FULVER_DESC
 Les Fulvers ont l'apparence de grandes fourmis nerveuses. Ces dernières sont dotées d'un cerveau quantique qui leur permet de prédire avec une grande efficacité tous les futurs proches possibles, rendant très difficile de les surprendre en situation de combat.
 
 Nom:
-La capacité de précognition est unique à l'espèce des Fulvers au sein du monde natal des Fulvers. Par conséquent, un "Fulver" est "Celui qui peut voir" toutes vos réactions possibles.
+Aucune autre espèce au sein du monde natal des Fulvers ne dispose de cette capacité de précognition. Par conséquent, un "Fulver" est "Celui qui peut voir" toutes vos possibles réactions.
 
 Personnalité:
 Un Fulver préfère se concentrer sur sa force individuelle et vivre au jour le jour. Il favorise le plus souvent les outils et les décisions qui lui permettent d'appréhender le plus grand nombre de choix futurs. Ayant une mauvaise mémoire et étant dans l'impossibilité de prévoir le futur à long terme, les Fulvers ne peuvent pas entreprendre sur le long terme, dans le domaine scientifique ou la construction de structures défensives complexes. Se sentant entravés par ce nombre limité de choix, les Fulvers, constamment agités et insatisfaits, tentent cependant de surmonter leur condition.
@@ -9060,8 +9157,8 @@ FOCUS_RESEARCH
 Recherche
 
 # Focus types
-FOCUS_TRADE
-Commerce
+FOCUS_INFLUENCE  # translated
+Influence
 
 # Focus types
 FOCUS_LOGISTICS
@@ -9124,8 +9221,8 @@ METER_TARGET_RESEARCH
 Projection Recherche
 
 # Meter types
-METER_TARGET_TRADE
-Projection Commerce
+METER_TARGET_INFLUENCE
+Projection Influence
 
 # Meter types
 METER_TARGET_CONSTRUCTION
@@ -9184,8 +9281,8 @@ METER_RESEARCH
 Recherche
 
 # Meter types
-METER_TRADE
-Commerce
+METER_INFLUENCE  # translated
+Influence
 
 # Meter types
 METER_CONSTRUCTION  # translated
@@ -9264,35 +9361,14 @@ Facteur Coût Astronef
 METER_TECH_COST_FACTOR
 Facteur Coût Technologie
 
-ALIGN_MILITARISM
-Militarisme
+ECONOMIC_CATEGORY_NUM_POLICY_SLOTS
+Choix de Stratégie Économique
 
-ALIGN_MILITARY_STRENGTH_DESC
-Grandeur et puissance des forces militaires
+SOCIAL_CATEGORY_NUM_POLICY_SLOTS
+Choix de Stratégie Sociale
 
-ALIGN_SOCIAL_CONTROL
-Contrôle social
-
-ALIGN_SOCIAL_CONTROL_DESC
-Degré auquel une population est surveillée, contrôlée et manipulée.
-
-ALIGN_ENVIRONMENT_MODIFICATION
-Modification de l'environnement
-
-ALIGN_ENVIRONMENT_MODIFICATION_DESC
-Usage de la terraformation ou autres actions environnementales à grande échelle.
-
-ALIGN_BIOLOGICAL_ALTERATION
-Modification biologique
-
-ALIGN_BIOLOGICAL_ALTERATION_DESC
-Usage de la modification et de l'ingéniérie biologique.
-
-ALIGN_MECHANIZATION
-Mécanisation
-
-ALIGN_MECHANIZATION_DESC
-Usage de la sentience artificielle et de l'automatisation
+MILITARY_CATEGORY_NUM_POLICY_SLOTS
+Choix de Stratégie Militaire
 
 # Empire affiliation types
 AFFIL_SELF
@@ -9330,6 +9406,10 @@ Coque d'astronef
 UIT_TECH
 Technologie
 
+# Unlockable item types
+UIT_POLICY
+Stratégie
+
 # Build types
 BT_NOT_BUILDING
 pas de structure
@@ -9351,8 +9431,8 @@ INVALID_RESOURCE_TYPE
 type de ressource invalide
 
 # Resource types
-RE_TRADE
-commerce
+RE_INFLUENCE  # translated
+influence
 
 # Resource types
 RE_INDUSTRY
@@ -9522,8 +9602,8 @@ PC_RESEARCH_DESC
 Les équipements de Recherche augmentent la [[metertype METER_RESEARCH]] générée  sur un astronef. Ce dernier requiert également une [[metertype METER_POPULATION]] à bord afin de générer la capacité de Recherche.
 
 # Ship part classes
-PC_TRADE
-Commerce
+PC_INFLUENCE  # translated
+Influence
 
 # Ship part classes
 PC_PRODUCTION_LOCATION  # translated
@@ -9762,8 +9842,8 @@ DESC_VAR_TARGETINDUSTRY
 DESC_VAR_TARGETRESEARCH
 [[METER_TARGET_RESEARCH]]
 
-DESC_VAR_TARGETTRADE
-[[METER_TARGET_TRADE]]
+DESC_VAR_TARGETINFLUENCE
+[[METER_TARGET_INFLUENCE]]
 
 DESC_VAR_TARGETCONSTRUCTION
 [[METER_TARGET_CONSTRUCTION]]
@@ -9798,8 +9878,8 @@ DESC_VAR_INDUSTRY
 DESC_VAR_RESEARCH
 [[METER_RESEARCH]]
 
-DESC_VAR_TRADE
-[[METER_TRADE]]
+DESC_VAR_INFLUENCE
+[[METER_INFLUENCE]]
 
 DESC_VAR_CONSTRUCTION
 [[METER_CONSTRUCTION]]
@@ -9840,17 +9920,17 @@ DESC_VAR_SECONDARY_STAT
 DESC_VAR_SIZE
 [[METER_SIZE]]
 
-DESC_VAR_TRADESTOCKPILE
-stock commercial
+DESC_VAR_INFLUENCESTOCKPILE
+stock influence
 
-DESC_VAR_TRADEOUTPUT
-production commerciale
+DESC_VAR_INFLUENCEOUTPUT
+capacité influence
 
 DESC_VAR_INDUSTRYOUTPUT
-production industrielle
+capacité industrie
 
 DESC_VAR_RESEARCHOUTPUT
-production de la recherche
+capacité recherche
 
 DESC_VAR_OWNER
 propriétaire
@@ -10804,6 +10884,130 @@ DESC_HAS_TAG_NOT
 
 
 ##
+## Policy categories
+##
+
+SOCIOLOGY_CATEGORY
+Sociologie
+
+
+##
+## Imperial Policies
+##
+
+PLC_NO_GROWTH
+Pas de Croissance
+
+PLC_NO_GROWTH_DESC
+Empêche les planètes d'accroître leur Population de tour en tour.
+
+PLC_NO_GROWTH_SHORT_DESC
+Stoppe la croissance planétaire
+
+PLC_POPULATION  # translated
+Population
+
+PLC_POPULATION_DESC
+Augmente de 50% le taux de Croissance naturelle de la Population.
+
+PLC_POPULATION_SHORT_DESC
+Augmente le taux de Croissance
+
+PLC_NO_SUPPLY
+Pas d'Approvisionnement
+
+PLC_NO_SUPPLY_DESC
+Empêche les planètes de générer des réseaux d'Approvisionnement.
+
+PLC_NO_SUPPLY_SHORT_DESC
+Stoppe la propagation de l'Approvisionnement
+
+PLC_CENTRALIZATION
+Centralisation
+
+PLC_CENTRALIZATION_DESC
+Augmente la production de ressources dans la Capitale mais diminue la portée de l'Approvisionnement et l'usage du Stock.
+
+PLC_CENTRALIZATION_SHORT_DESC
+Favorise la Capitale
+
+PLC_COLONIZATION
+Colonisation
+
+PLC_COLONIZATION_DESC
+Diminue le coût des équipements de colonisation pour astronefs.
+
+PLC_COLONIZATION_SHORT_DESC
+Remise de prix sur la colonisation
+
+PLC_CONTINUOUS_SCANNING
+Scan Continuel
+
+PLC_CONTINUOUS_SCANNING_DESC
+Améliore le Champ de Détection des astronefs et la Capacité de Détection impériale, ces indicateurs augmentant en corrélation avec la durée d'application, tandis que la Furtivité des astronefs diminue de manière réciproque.
+
+PLC_CONTINUOUS_SCANNING_SHORT_DESC
+Améliore la Détection et réduit la Furtivité
+
+PLC_EXPLORATION  # translated
+Exploration
+
+PLC_EXPLORATION_DESC
+'''Améliore la Vitesse pour les astronefs non-armés et sans Chasseur, Bouclier, Blindage, Infanterie, Module de Colonisation, Bombardement, Recherche, Industrie, Influence, Production, et autres équipements généraux.
+
+Les équipements de Détection, Carburant, et Motorisation sont autorisés.'''
+
+PLC_EXPLORATION_SHORT_DESC
+Accélère les Astronefs d'Exploration
+
+PLC_MARINE_RECRUITMENT
+Recrutement de Troupes
+
+PLC_MARINE_RECRUITMENT_DESC
+Diminue de 50% le coût des équipements d'Infanterie pour astronefs.
+
+PLC_MARINE_RECRUITMENT_SHORT_DESC
+Diminue le coût de l'Infanterie
+
+PLC_DESIGN_SIMPLICITY
+Simplicité de Conception
+
+PLC_DESIGN_SIMPLICITY_DESC
+Diminue de 20% le coût de production des modèles d'astronef avec 6 équipements ou moins.
+
+PLC_DESIGN_SIMPLICITY_SHORT_DESC
+Diminue le coût des Modèles d'astronef simples
+
+PLC_PSYONIC_SHIELDS
+Boucliers Psioniques
+
+PLC_PSYONIC_SHIELDS_DESC
+'''Pour les planètes abritant des espèces télépathiques, augmente les Boucliers max de 20.
+Pour les astronefs pilotés par des espèces télépathiques, augmente les Boucliers max de 2.'''
+
+PLC_PSYONIC_SHIELDS_SHORT_DESC
+Renforce les Boucliers
+
+PLC_STOCKPILE_LIQUIDATION
+Liquidation des Stocks
+
+PLC_STOCKPILE_LIQUIDATION_DESC
+Double l'usage du Stock sur les planètes en Focus Stock.
+
+PLC_STOCKPILE_LIQUIDATION_SHORT_DESC
+Augmente l'usage du Stock
+
+PLC_ALLIED_REPAIR
+Réparation Alliée
+
+PLC_ALLIED_REPAIR_DESC
+Si deux empires sont alliés, et que l'un ou l'autre applique cette stratégie, les deux empires bénéficieront de la réparation des astronefs endommagés en  [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] quel que soit l'empire propriétaire, et profiteront mutuellement de la technologie [[tech SHP_FLEET_REPAIR]].
+
+PLC_ALLIED_REPAIR_SHORT_DESC
+Permet aux alliés la réparation mutuelle des astronefs
+
+
+##
 ## Technology categories
 ##
 
@@ -10977,9 +11181,7 @@ LRN_TRANSLING_THT
 Translinguistique
 
 LRN_TRANSLING_THT_DESC
-'''Sans effet dans l'immédiat, mais permettra par la suite l'acquisition pacifique de planètes indigènes.
-
-Les faibles d'esprit luttent contre ou acceptent les limites de la langue qu'ils ont apprise. Les esprits plus évolués se sentent limités par les concepts qu'ils parviennent à exprimer. Les vrais grands esprits se libèrent du carcan du langage, formant et analysant des pensées aux frontières du transcendantal. Mais ces grands esprits se retrouvent souvent isolés et désœuvrés, car sans langage pour exprimer des pensées, comment pourraient-ils bien partager leurs profondes idées?'''
+Les faibles d'esprit luttent contre ou acceptent les limites de la langue qu'ils ont apprise. Les esprits plus évolués se sentent limités par les concepts qu'ils parviennent à exprimer. Les vrais grands esprits se libèrent du carcan du langage, formant et analysant des pensées aux frontières du transcendantal. Mais ces grands esprits se retrouvent souvent isolés et désœuvrés, car sans langage pour exprimer des pensées, comment pourraient-ils bien partager leurs profondes idées?
 
 LRN_PSIONICS
 Psionique
@@ -11044,7 +11246,9 @@ LRN_MIND_VOID
 Esprit du Vide
 
 LRN_MIND_VOID_DESC
-Nous ne sommes pas seuls dans le cosmos... mais pourquoi la recherche d'autres existences devrait se limiter à un unique paradigme? De nombreuses cultures possèdent des mythes, des légendes ou de ferventes croyances en une plus haute conscience. Que ce soit un Dieu miséricordieux ou malveillant, ou bien un observateur détaché, il est indéniable que quelque chose, peut-être l'univers lui-même à un certain niveau, est vivant, conscient, et observe.
+'''Débloque la stratégie [[policy PLC_DESIGN_SIMPLICITY]]
+
+Nous ne sommes pas seuls dans le cosmos... mais pourquoi la recherche d'autres existences devrait se limiter à un unique paradigme? De nombreuses cultures possèdent des mythes, des légendes ou de ferventes croyances en une plus haute conscience. Que ce soit un Dieu miséricordieux ou malveillant, ou bien un observateur détaché, il est indéniable que quelque chose, peut-être l'univers lui-même à un certain niveau, est vivant, conscient, et observe.'''
 
 LRN_TIME_MECH
 Mécanique Temporelle
@@ -11363,7 +11567,10 @@ CON_ARCH_PSYCH
 Psychologie Architecturale
 
 CON_ARCH_PSYCH_DESC
-La forme d'une structure ou la configuration d'un espace habité ne se définissent pas seulement par les limitations physiques des matériaux qui les composent. L'influence psychologique des habitants, ou d'observateurs extérieurs, peut avoir une incidence bien plus importante sur la réussite et la fonctionnalité d'un design, que la simple robustesse de ses murs ou la profonde solidité de ses fondations.
+'''La forme d'une structure ou la configuration d'un espace habité ne se définissent pas seulement par les limitations physiques des matériaux qui les composent. L'influence psychologique des habitants, ou d'observateurs extérieurs, peut avoir une incidence bien plus importante sur la réussite et la fonctionnalité d'un design, que la simple robustesse de ses murs ou la profonde solidité de ses fondations.
+
+Octroie un choix supplémentaire de Stratégie sociale.
+'''
 
 CON_ORGANIC_STRC
 Structures Organiques
@@ -11425,7 +11632,9 @@ CON_TRANS_ARCH
 Architecture Transcendantale
 
 CON_TRANS_ARCH_DESC
-'''La maîtrise des techniques avancées de construction orbitale permet aux scientifiques d'élaborer des méthodes visant à construire un [[buildingtype BLD_MEGALITH]] d'une majestuosité sans égale.
+'''Octroie un choix supplémentaire de Stratégie sociale.
+
+La maîtrise des techniques avancées de construction orbitale permet aux scientifiques d'élaborer des méthodes visant à construire un [[buildingtype BLD_MEGALITH]] d'une majestuosité sans égale.
 
 La quintessence du design unifie une fonctionnalité optimale et l'élégance de la forme. Une structure transcendantale inspire et développe l'esprit de ses occupants ou observateurs, par sa forme, son emplacement, sa consistance et son organisation, lui conférant un caractère grandiose, une emphase parfaite de l'idée absolue, de la perception ou de la recherche, de la simplicité la plus totale à l'adaptabilité la plus complète.'''
 
@@ -12056,7 +12265,7 @@ SHP_REINFORCED_HULL
 Coques Renforcées
 
 SHP_REINFORCED_HULL_DESC
-'''Augmente de 5 la [[metertype METER_STRUCTURE]] max de tous les astronefs.
+'''Augmente de 40 la [[metertype METER_STRUCTURE]] max de tous les astronefs.
 
 Les coques standards d'astronef sont conçues à l'aide de techniques avancées d'architecture en microgravité et fabriquées à partir de matériaux hautement résistants. Cependant, les contraintes inhérentes de la matière physique limitent la résistance maximale des coques. En modifiant l'intégrité structurelle d'une coque à l'aide de champs moléculaires améliorés, une augmentation considérable de sa résistance peut être obtenue.'''
 
@@ -12064,7 +12273,7 @@ SHP_BASIC_DAM_CONT
 Contrôle Basique des Dégâts
 
 SHP_BASIC_DAM_CONT_DESC
-Répare progressivement les astronefs endommagés. La valeur de [[metertype METER_STRUCTURE]] de tous les astronefs est restaurée au rythme d'1 point par tour, si pour chaque tour les astronefs n'ont engagé aucun combat.
+Répare progressivement les astronefs endommagés. La valeur de [[metertype METER_STRUCTURE]] de tous les astronefs est restaurée au rythme de 8 points par tour, si pour chaque tour les astronefs n'ont engagé aucun combat.
 
 SHP_ADV_DAM_CONT
 Contrôle Avancé des Dégâts
@@ -12097,7 +12306,7 @@ SHP_FIGHTERS_1_DESC
 
 Une <encyclopedia PC_FIGHTER_BAY>Rampe de Lancement</encyclopedia> peut faire décoller un nombre défini de chasseurs lors de chaque passe de combat. Ces chasseurs deviennent des cibles valides et peuvent attaquer les astronefs et chasseurs ennemis lors de chaque passe suivante de combat. Toutefois, un unique tir de n'importe quelle nature subi par un chasseur détruira ce dernier. Contrairement aux [[encyclopedia DAMAGE_TITLE]] qu'infligent les armements traditionnels, les dommages résultant d'un tir de chasseur ne sont pas minorés par les [[metertype METER_SHIELD]] d'astronef (les chasseurs faisant feu une fois à l'intérieur de la zone de protection d'un bouclier).
 
-L'attribut "Pilotes" affecte les chasseurs issus d'un [[shippart FT_HANGAR_2]], d'un [[shippart FT_HANGAR_3]], ou d'un [[shippart FT_HANGAR_4]]: "Mauvais Pilotes" réduit les dommages de 1 par chasseur; "Bons Pilotes" augmente les dommages de 1, "Excellents Pilotes" de 2, et "Parfaits Pilotes" de 3 par tir de chasseur.
+L'attribut "Pilotes" affecte les chasseurs issus d'un [[shippart FT_HANGAR_2]], d'un [[shippart FT_HANGAR_3]], ou d'un [[shippart FT_HANGAR_4]]: "Mauvais Pilotes" réduit les dommages de 6 par chasseur; "Bons Pilotes" augmente les dommages de 6, "Excellents Pilotes" de 12, et "Parfaits Pilotes" de 18 par tir de chasseur.
 L'attribut "Pilotes" n'affecte pas les chasseurs provenant d'un [[shippart FT_HANGAR_1]].
 
 Au terme d'un combat, les astronefs transporteurs récupèreront automatiquement les chasseurs non-détruits. Si un transporteur est stationnaire dans une zone d'[[metertype METER_SUPPLY]], ses hangars seront rééquipés à leur capacité maximale.'''
@@ -12106,37 +12315,37 @@ SHP_FIGHTERS_2
 Chasseurs Laser
 
 SHP_FIGHTERS_2_DESC
-Améliore les chasseurs de tous les transporteurs à portée d'[[metertype METER_SUPPLY]] en les dotant d'un armement Laser. Les [[encyclopedia DAMAGE_TITLE]] infligés par les chasseurs d'un [[shippart FT_HANGAR_2]] augmentent de 2, augmentent de 3 pour un [[shippart FT_HANGAR_3]] et de 6 pour un [[shippart FT_HANGAR_4]]. Pour les chasseurs d'un [[shippart FT_HANGAR_1]], la capacité ainsi que la cadence de lancement de la [[shippart FT_BAY_1]] augmentent de 1.
+Améliore les chasseurs de tous les transporteurs à portée d'[[metertype METER_SUPPLY]] en les dotant d'un armement Laser. Les [[encyclopedia DAMAGE_TITLE]] infligés par les chasseurs d'un [[shippart FT_HANGAR_2]] augmentent de 12, augmentent de 18 pour un [[shippart FT_HANGAR_3]] et de 36 pour un [[shippart FT_HANGAR_4]]. Pour les chasseurs d'un [[shippart FT_HANGAR_1]], la capacité ainsi que la cadence de lancement de la [[shippart FT_BAY_1]] augmentent de 1.
 
 SHP_FIGHTERS_3
 Chasseurs Plasma
 
 SHP_FIGHTERS_3_DESC
-Améliore les chasseurs de tous les transporteurs à portée d'[[metertype METER_SUPPLY]] en les dotant d'un armement Plasma. Les [[encyclopedia DAMAGE_TITLE]] infligés par les chasseurs d'un [[shippart FT_HANGAR_2]] augmentent de 2, augmentent de 3 pour un [[shippart FT_HANGAR_3]] et de 6 pour un [[shippart FT_HANGAR_4]]. Pour les chasseurs d'un [[shippart FT_HANGAR_1]], la capacité ainsi que la cadence de lancement de la [[shippart FT_BAY_1]] augmentent de 1.
+Améliore les chasseurs de tous les transporteurs à portée d'[[metertype METER_SUPPLY]] en les dotant d'un armement Plasma. Les [[encyclopedia DAMAGE_TITLE]] infligés par les chasseurs d'un [[shippart FT_HANGAR_2]] augmentent de 12, augmentent de 18 pour un [[shippart FT_HANGAR_3]] et de 36 pour un [[shippart FT_HANGAR_4]]. Pour les chasseurs d'un [[shippart FT_HANGAR_1]], la capacité ainsi que la cadence de lancement de la [[shippart FT_BAY_1]] augmentent de 1.
 
 SHP_FIGHTERS_4
 Chasseurs Gamma
 
 SHP_FIGHTERS_4_DESC
-Améliore les chasseurs de tous les transporteurs à portée d'[[metertype METER_SUPPLY]] en les dotant d'un armement Gamma. Les [[encyclopedia DAMAGE_TITLE]] infligés par les chasseurs d'un [[shippart FT_HANGAR_2]] augmentent de 2, augmentent de 3 pour un [[shippart FT_HANGAR_3]] et de 6 pour un [[shippart FT_HANGAR_4]]. Pour les chasseurs d'un [[shippart FT_HANGAR_1]], la capacité ainsi que la cadence de lancement de la [[shippart FT_BAY_1]] augmentent de 1.
+Améliore les chasseurs de tous les transporteurs à portée d'[[metertype METER_SUPPLY]] en les dotant d'un armement Gamma. Les [[encyclopedia DAMAGE_TITLE]] infligés par les chasseurs d'un [[shippart FT_HANGAR_2]] augmentent de 12, augmentent de 18 pour un [[shippart FT_HANGAR_3]] et de 36 pour un [[shippart FT_HANGAR_4]]. Pour les chasseurs d'un [[shippart FT_HANGAR_1]], la capacité ainsi que la cadence de lancement de la [[shippart FT_BAY_1]] augmentent de 1.
 
 SHP_WEAPON_1_2
 Canon Mitrailleur 2
 
 SHP_WEAPON_1_2_DESC
-Améliore l'équipement [[shippart SR_WEAPON_1_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 4 une fois l'équipement amélioré.
+Améliore l'équipement [[shippart SR_WEAPON_1_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 24 une fois l'équipement amélioré.
 
 SHP_WEAPON_1_3
 Canon Mitrailleur 3
 
 SHP_WEAPON_1_3_DESC
-Améliore l'équipement [[shippart SR_WEAPON_1_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 5 une fois l'équipement amélioré.
+Améliore l'équipement [[shippart SR_WEAPON_1_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 30 une fois l'équipement amélioré.
 
 SHP_WEAPON_1_4
 Canon Mitrailleur 4
 
 SHP_WEAPON_1_4_DESC
-Améliore l'équipement [[shippart SR_WEAPON_1_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 6 une fois l'équipement amélioré.
+Améliore l'équipement [[shippart SR_WEAPON_1_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 36 une fois l'équipement amélioré.
 
 SHP_WEAPON_2_1
 Canons Laser
@@ -12148,19 +12357,19 @@ SHP_WEAPON_2_2
 Canon Laser 2
 
 SHP_WEAPON_2_2_DESC
-Améliore l'équipement [[shippart SR_WEAPON_2_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 7 une fois l'équipement amélioré.
+Améliore l'équipement [[shippart SR_WEAPON_2_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 42 une fois l'équipement amélioré.
 
 SHP_WEAPON_2_3
 Canon Laser 3
 
 SHP_WEAPON_2_3_DESC
-Améliore l'équipement [[shippart SR_WEAPON_2_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 9 une fois l'équipement amélioré.
+Améliore l'équipement [[shippart SR_WEAPON_2_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 54 une fois l'équipement amélioré.
 
 SHP_WEAPON_2_4
 Canon Laser 4
 
 SHP_WEAPON_2_4_DESC
-Améliore l'équipement [[shippart SR_WEAPON_2_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 11 une fois l'équipement amélioré.
+Améliore l'équipement [[shippart SR_WEAPON_2_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 66 une fois l'équipement amélioré.
 
 SHP_WEAPON_3_1
 Canons Plasma
@@ -12172,19 +12381,19 @@ SHP_WEAPON_3_2
 Canon Plasma 2
 
 SHP_WEAPON_3_2_DESC
-Améliore l'équipement [[shippart SR_WEAPON_3_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 12 une fois l'équipement amélioré.
+Améliore l'équipement [[shippart SR_WEAPON_3_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 72 une fois l'équipement amélioré.
 
 SHP_WEAPON_3_3
 Canon Plasma 3
 
 SHP_WEAPON_3_3_DESC
-Améliore l'équipement [[shippart SR_WEAPON_3_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 15 une fois l'équipement amélioré.
+Améliore l'équipement [[shippart SR_WEAPON_3_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 90 une fois l'équipement amélioré.
 
 SHP_WEAPON_3_4
 Canon Plasma 4
 
 SHP_WEAPON_3_4_DESC
-Améliore l'équipement [[shippart SR_WEAPON_3_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 18 une fois l'équipement amélioré.
+Améliore l'équipement [[shippart SR_WEAPON_3_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 108 une fois l'équipement amélioré.
 
 SHP_WEAPON_4_1
 Rayons Gamma
@@ -12196,37 +12405,37 @@ SHP_WEAPON_4_2
 Rayon Gamma 2
 
 SHP_WEAPON_4_2_DESC
-Améliore l'équipement [[shippart SR_WEAPON_4_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 20 une fois l'équipement amélioré.
+Améliore l'équipement [[shippart SR_WEAPON_4_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 120 une fois l'équipement amélioré.
 
 SHP_WEAPON_4_3
 Rayon Gamma 3
 
 SHP_WEAPON_4_3_DESC
-Améliore l'équipement [[shippart SR_WEAPON_4_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 25 une fois l'équipement amélioré.
+Améliore l'équipement [[shippart SR_WEAPON_4_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 150 une fois l'équipement amélioré.
 
 SHP_WEAPON_4_4
 Rayon Gamma 4
 
 SHP_WEAPON_4_4_DESC
-Améliore l'équipement [[shippart SR_WEAPON_4_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 30 une fois l'équipement amélioré.
+Améliore l'équipement [[shippart SR_WEAPON_4_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 180 une fois l'équipement amélioré.
 
 SHP_WEAPON_ARC_DISRUPTOR_1
 Perturbateurs Électro-Conducteurs
 
 SHP_WEAPON_ARC_DISRUPTOR_1_DESC
-Débloque l'équipement [[shippart SR_ARC_DISRUPTOR]], un système automatique d'armement infligeant de faibles dommages à de multiples cibles simultanément. Les [[encyclopedia DAMAGE_TITLE]] de l'équipement de base sont de 2 par tir.
+Débloque l'équipement [[shippart SR_ARC_DISRUPTOR]], un système automatique d'armement infligeant de faibles dommages à de multiples cibles simultanément. Les [[encyclopedia DAMAGE_TITLE]] de l'équipement de base sont de 12 par tir.
 
 SHP_WEAPON_ARC_DISRUPTOR_2
 Perturbateurs Électro-Conducteurs 2
 
 SHP_WEAPON_ARC_DISRUPTOR_2_DESC
-Améliore l'équipement [[shippart SR_ARC_DISRUPTOR]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 4 une fois l'équipement amélioré.
+Améliore l'équipement [[shippart SR_ARC_DISRUPTOR]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 24 une fois l'équipement amélioré.
 
 SHP_WEAPON_ARC_DISRUPTOR_3
 Perturbateurs Électro-Conducteurs 3
 
 SHP_WEAPON_ARC_DISRUPTOR_3_DESC
-Améliore l'équipement [[shippart SR_ARC_DISRUPTOR]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 7 une fois l'équipement amélioré.
+Améliore l'équipement [[shippart SR_ARC_DISRUPTOR]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 42 une fois l'équipement amélioré.
 
 SHP_ION_CANNON
 Canon Ionique
@@ -12716,9 +12925,19 @@ BLD_IMPERIAL_PALACE
 Palais Impérial
 
 BLD_IMPERIAL_PALACE_DESC
-'''Augmente de 2 la portée de l'[[metertype METER_SUPPLY]], la [[metertype METER_TARGET_CONSTRUCTION]] de 20, la [[metertype METER_DEFENSE]] de 5, et l'[[metertype METER_TROOPS]] de 6. Son emplacement définit également la Capitale de l'empire.
+'''Augmente de 2 la portée de l'[[metertype METER_SUPPLY]], l'[[metertype METER_INFLUENCE]] de 1, la [[metertype METER_TARGET_CONSTRUCTION]] de 20, la [[metertype METER_DEFENSE]] de 5, et l'[[metertype METER_TROOPS]] de 6.
+
+Octroie 1 choix de Stratégie économique.
+
+Son emplacement définit la Capitale de l'empire.
 
 Représente le pouvoir et le prestige impérial et remplit la fonction de centre de contrôle pour toutes les possessions de l'empire.'''
+
+BLD_MILITARY_COMMAND
+Commandement Militaire
+
+BLD_MILITARY_COMMAND_DESC
+Fournit un choix de Stratégie militaire.
 
 BLD_SUPER_TEST
 Invasion Super-Testeurs
@@ -12868,7 +13087,7 @@ Augmente la [[metertype METER_RESEARCH]] de 5 sur la planète, si cette dernièr
 
 Apprendre à concevoir des dispositifs utilisables par différentes espèces est crucial afin de développer des outils universellement exploitables.
 
-Chaque empire peut abriter une académie sur une à six planètes peuplées par différentes espèces. Pour accueillir une académie, le [[metertype METER_HAPPINESS]] de la [[metertype METER_POPULATION]] sur la planète doit être élevé et cette dernière doit se trouver à au moins trois Voies spatiales de l'académie existante la plus proche.'''
+Chaque empire peut abriter une académie sur une à six planètes peuplées par différentes espèces. Pour accueillir une académie, le [[metertype METER_HAPPINESS]] de la [[metertype METER_POPULATION]] sur la planète doit être élevé et cette dernière doit se trouver à plus de trois Voies spatiales de l'académie existante la plus proche.'''
 
 BLD_STOCKPILING_CENTER
 Centre d'Intrication Impériale
@@ -13900,7 +14119,7 @@ SH_ROBOTIC_INTERFACE_SHIELDS
 Boucliers à Interface Robotique
 
 SH_ROBOTIC_INTERFACE_SHIELDS_DESC
-'''Les Boucliers à Interface Robotique ont approximativement une solidité de 1 multipliée par le nombre des autres astronefs situés au même emplacement et équipés du même bouclier, bien que cette valeur tende à diminuer lorsqu'un grand nombre d'astronefs est concerné. La solidité du bouclier ne peut dépasser 20, l'effet ne s'applique qu'aux astronefs de [[encyclopedia HULL_LINE_ROBOTIC]] et dont l'équipage est une espèce à [[encyclopedia ROBOTIC_SPECIES_TITLE]].
+'''Les Boucliers à Interface Robotique ont approximativement une solidité de 6 multipliée par le nombre des autres astronefs situés au même emplacement et équipés du même bouclier, bien que cette valeur tende à diminuer lorsqu'un grand nombre d'astronefs est concerné. La solidité du bouclier ne peut dépasser 20, l'effet ne s'applique qu'aux astronefs de [[encyclopedia HULL_LINE_ROBOTIC]] et dont l'équipage est une espèce à [[encyclopedia ROBOTIC_SPECIES_TITLE]].
 
 Les Espèces Robotiques ont la capacité intrinsèque de fonctionner en réseau et augmentent ainsi considérablement leur puissance de calcul pure. Les Boucliers à Interface Robotique utilisent ce réseau afin de calculer la trajectoire du feu ennemi et concentrer la solidité du bouclier au point d'impact.
 '''
@@ -14081,7 +14300,7 @@ RS_AUTOTRADER  # translated
 Autotrader
 
 RS_AUTOTRADER_DESC
-Génère des Points de Commerce pour l'empire.
+Génère des Points d'Influence pour l'empire.
 
 
 ##
@@ -14796,7 +15015,7 @@ SHIPDESIGN_OUTPOSTS_CAPACITY
 pouvant bâtir un [[encyclopedia OUTPOSTS_TITLE]] dans un monde inhabitable
 
 SHIPDESIGN_NO_TRAVEL
-Ce vaisseau ne peut pas voyager sur les Voies Spatiales.
+Ce vaisseau ne peut pas voyager sur les Voies spatiales.
 
 SHIPDESIGN_PLANET_INVASION
 [[metertype METER_TROOPS]] et l'équipement pouvant être utilisés pour envahir une planète
@@ -15132,6 +15351,9 @@ LIGHT_SENSITIVE_DESC
 
 TELEPATHIC_DETECTION_DESC
 +	Détection Télépathique: peut percevoir les planètes habitées proches.
+
+PRECOGNITIVE_DETECTION_DESC
++	Détection Précognitive: peut percevoir les planètes reliées par Voies spatiales.
 
 COMMUNAL_VISION_DESC
 '''	Vision Commune: partage ce qui est visible avec tout autre représentant de l'espèce dans l'univers.'''
