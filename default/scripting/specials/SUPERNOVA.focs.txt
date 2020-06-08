@@ -12,6 +12,14 @@ Special
                 RemoveSpecial name = "NOVA_BOMB_ACTIVATOR_SPECIAL"
                 RemoveSpecial name = "SUPERNOVA_SPECIAL"
                 AddSpecial name = "SUPERNOVA_SPECIAL2"
+                GenerateSitRepMessage
+                    message = "SITREP_NOVA_DETECTED"
+                    label = "SITREP_NOVA_DETECTED_LABEL"
+                    icon = "stars/old_stars/purple2.png"
+                    parameters = [
+                        tag = "system" data = Source.SystemID
+                    ]
+                    affiliation = CanSee condition = Source
             ]
     graphic = "icons/specials_huge/nova_boom.png"
 
