@@ -1387,7 +1387,7 @@ Visibility ComplexVariable<Visibility>::Eval(const ScriptingContext& context) co
 {
     const std::string& variable_name = m_property_name.back();
 
-    if (variable_name == "EmpireObjectVisiblity") {
+    if (variable_name == "EmpireObjectVisibility") {
         int empire_id = ALL_EMPIRES;
         if (m_int_ref1) {
             empire_id = m_int_ref1->Eval(context);
@@ -2378,7 +2378,7 @@ std::string ComplexVariable<Visibility>::Dump(unsigned short ntabs) const
     const std::string& variable_name = m_property_name.back();
     std::string retval = variable_name;
 
-    if (variable_name == "EmpireObjectVisiblity") {
+    if (variable_name == "EmpireObjectVisibility") {
         if (m_int_ref1)
             retval += " empire = " + m_int_ref1->Dump(ntabs);
         if (m_int_ref2)
