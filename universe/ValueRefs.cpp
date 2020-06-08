@@ -1012,14 +1012,6 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         return INVALID_DESIGN_ID;
 
     }
-    else if (property_name == "SpeciesID") {
-        if (auto planet = std::dynamic_pointer_cast<const Planet>(object))
-            return GetSpeciesManager().GetSpeciesID(planet->SpeciesName());
-        else if (auto ship = std::dynamic_pointer_cast<const Ship>(object))
-            return GetSpeciesManager().GetSpeciesID(ship->SpeciesName());
-        return -1;
-
-    }
     else if (property_name == "FleetID") {
         if (auto ship = std::dynamic_pointer_cast<const Ship>(object))
             return ship->FleetID();
