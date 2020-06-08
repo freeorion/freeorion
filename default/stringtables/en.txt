@@ -3291,7 +3291,7 @@ Turn %1%
 
 # %1% current turn number.
 MAP_BTN_TURN_UNREADY
-Revise Orders %1%
+Revise %1%
 
 MAP_BTN_TURN_TOOLTIP
 Start Turn
@@ -3332,17 +3332,17 @@ Effect execution, production of ships and buildings, unlocking of new technologi
 
 # %1% number of seconds
 MAP_TIMEOUT_SECONDS
-%1% seconds
+%1% s
 
 # %1% number of minutes
 # %2% number of seconds
 MAP_TIMEOUT_MINS_SECS
-%1% mins %2% secs
+%1% min %2% s
 
 # %1% number of hours
 # %2% number of minutes
 MAP_TIMEOUT_HRS_MINS
-%1% hrs %2% mins
+%1% hr %2% min
 
 # %1% number of frames currently displayed per second.
 MAP_INDICATOR_FPS

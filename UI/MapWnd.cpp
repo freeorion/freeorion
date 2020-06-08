@@ -93,8 +93,11 @@ namespace {
 
     constexpr double TWO_PI = 2.0*3.1415926536;
 
-    const GG::X ICON_DUAL_WIDTH(100);
+    const GG::X ICON_SINGLE_WIDTH(40);
+    const GG::X ICON_DUAL_WIDTH(64);
     const GG::X ICON_WIDTH(24);
+    const GG::Pt ICON_SIZE{GG::X{24}, GG::Y{24}};
+    const GG::Pt MENU_ICON_SIZE{GG::X{32}, GG::Y{32}};
 
 
     DeclareThreadSafeLogger(effects);
@@ -998,11 +1001,8 @@ void MapWnd::CompleteConstruction() {
 
     // turn button
     // determine size from the text that will go into the button, using a test year string
-    std::string turn_button_longest_reasonable_text = boost::io::str(FlexibleFormat(UserString("MAP_BTN_TURN_UPDATE")) % "99999"); // it is unlikely a game will go over 100000 turns
-    std::string unready_button_longest_reasonable_text = boost::io::str(FlexibleFormat(UserString("MAP_BTN_TURN_UNREADY")) % "99999");
-    m_btn_turn = Wnd::Create<CUIButton>(turn_button_longest_reasonable_text.size() > unready_button_longest_reasonable_text.size() ?
-                                        turn_button_longest_reasonable_text :
-                                        unready_button_longest_reasonable_text);
+    std::string unready_longest_reasonable = boost::io::str(FlexibleFormat(UserString("MAP_BTN_TURN_UNREADY")) % "99999");
+    m_btn_turn = Wnd::Create<CUIButton>(unready_longest_reasonable);
     m_btn_turn->Resize(m_btn_turn->MinUsableSize());
     m_btn_turn->LeftClickedSignal.connect(boost::bind(&MapWnd::EndTurn, this));
     m_btn_turn->LeftClickedSignal.connect(&PlayTurnButtonClickSound);
@@ -1017,22 +1017,15 @@ void MapWnd::CompleteConstruction() {
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "manual_turn_mouseover.png")));
 
     m_btn_auto_turn->LeftClickedSignal.connect(boost::bind(&MapWnd::ToggleAutoEndTurn, this));
-    m_btn_auto_turn->Resize(GG::Pt(GG::X(24), GG::Y(24)));
-    m_btn_auto_turn->SetMinSize(GG::Pt(GG::X(24), GG::Y(24)));
+    m_btn_auto_turn->Resize(ICON_SIZE);
+    m_btn_auto_turn->SetMinSize(ICON_SIZE);
     ToggleAutoEndTurn();    // toggle twice to set textures without changing default setting state
     ToggleAutoEndTurn();
 
     // timeout remain label
     // determine size from the text that will go into label, using a test time string
-    std::string timeout_seconds_longest_reasonable_text = boost::io::str(FlexibleFormat(UserString("MAP_TIMEOUT_SECONDS")) % 59); // seconds part never exceeds 59
-    std::string timeout_mins_secs_longest_reasonable_text = boost::io::str(FlexibleFormat(UserString("MAP_TIMEOUT_MINS_SECS")) % 59 % 59); // seconds and minutes part never exceeds 59
-    std::string timeout_hrs_mins_longest_reasonable_text = boost::io::str(FlexibleFormat(UserString("MAP_TIMEOUT_HRS_MINS")) % 999 % 59); // minutes part never exceeds 59, turn interval hopefully doesn't exceed month
-    const auto& timeout_1_longest_reasonable_text = timeout_seconds_longest_reasonable_text.size() > timeout_mins_secs_longest_reasonable_text.size() ?
-                                                    timeout_seconds_longest_reasonable_text :
-                                                    timeout_mins_secs_longest_reasonable_text;
-    m_timeout_remain = Wnd::Create<CUILabel>(timeout_hrs_mins_longest_reasonable_text.size() > timeout_1_longest_reasonable_text.size() ?
-                                             timeout_hrs_mins_longest_reasonable_text :
-                                             timeout_1_longest_reasonable_text);
+    std::string timeout_longest_reasonable = boost::io::str(FlexibleFormat(UserString("MAP_TIMEOUT_HRS_MINS")) % 999 % 59); // minutes part never exceeds 59, turn interval hopefully doesn't exceed month
+    m_timeout_remain = Wnd::Create<CUILabel>(timeout_longest_reasonable);
     m_timeout_remain->Resize(m_timeout_remain->MinUsableSize());
 
     // FPS indicator
@@ -1050,7 +1043,7 @@ void MapWnd::CompleteConstruction() {
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "menu_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "menu_mouseover.png")),
         in_window_func);
-    m_btn_menu->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
+    m_btn_menu->SetMinSize(MENU_ICON_SIZE);
     m_btn_menu->LeftClickedSignal.connect(boost::bind(&MapWnd::ShowMenu, this));
     m_btn_menu->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_btn_menu->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
@@ -1065,7 +1058,7 @@ void MapWnd::CompleteConstruction() {
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "pedia_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "pedia_mouseover.png")),
         in_window_func);
-    m_btn_pedia->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
+    m_btn_pedia->SetMinSize(MENU_ICON_SIZE);
     m_btn_pedia->LeftClickedSignal.connect(boost::bind(&MapWnd::TogglePedia, this));
     m_btn_pedia->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_btn_pedia->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
@@ -1080,7 +1073,7 @@ void MapWnd::CompleteConstruction() {
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "charts_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "charts_mouseover.png")),
         in_window_func);
-    m_btn_graphs->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
+    m_btn_graphs->SetMinSize(MENU_ICON_SIZE);
     m_btn_graphs->LeftClickedSignal.connect(boost::bind(&MapWnd::ShowGraphs, this));
     m_btn_graphs->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_btn_graphs->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
@@ -1095,7 +1088,7 @@ void MapWnd::CompleteConstruction() {
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "design_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "design_mouseover.png")),
         in_window_func);
-    m_btn_design->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
+    m_btn_design->SetMinSize(MENU_ICON_SIZE);
     m_btn_design->LeftClickedSignal.connect(boost::bind(&MapWnd::ToggleDesign, this));
     m_btn_design->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_btn_design->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
@@ -1110,7 +1103,7 @@ void MapWnd::CompleteConstruction() {
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "government_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "government_mouseover.png")),
         in_window_func);
-    m_btn_government->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
+    m_btn_government->SetMinSize(MENU_ICON_SIZE);
     m_btn_government->LeftClickedSignal.connect(
         boost::bind(&MapWnd::ToggleGovernment, this));
     m_btn_government->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
@@ -1127,7 +1120,7 @@ void MapWnd::CompleteConstruction() {
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "production_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "production_mouseover.png")),
         in_window_func);
-    m_btn_production->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
+    m_btn_production->SetMinSize(MENU_ICON_SIZE);
     m_btn_production->LeftClickedSignal.connect(boost::bind(&MapWnd::ToggleProduction, this));
     m_btn_production->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_btn_production->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
@@ -1142,7 +1135,7 @@ void MapWnd::CompleteConstruction() {
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "research_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "research_mouseover.png")),
         in_window_func);
-    m_btn_research->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
+    m_btn_research->SetMinSize(MENU_ICON_SIZE);
     m_btn_research->LeftClickedSignal.connect(boost::bind(&MapWnd::ToggleResearch, this));
     m_btn_research->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_btn_research->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
@@ -1157,7 +1150,7 @@ void MapWnd::CompleteConstruction() {
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "objects_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "objects_mouseover.png")),
         in_window_func);
-    m_btn_objects->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
+    m_btn_objects->SetMinSize(MENU_ICON_SIZE);
     m_btn_objects->LeftClickedSignal.connect(boost::bind(&MapWnd::ToggleObjects, this));
     m_btn_objects->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_btn_objects->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
@@ -1172,7 +1165,7 @@ void MapWnd::CompleteConstruction() {
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "empires_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "empires_mouseover.png")),
         in_window_func);
-    m_btn_empires->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
+    m_btn_empires->SetMinSize(MENU_ICON_SIZE);
     m_btn_empires->LeftClickedSignal.connect(boost::bind(&MapWnd::ToggleEmpires, this));
     m_btn_empires->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_btn_empires->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
@@ -1187,7 +1180,7 @@ void MapWnd::CompleteConstruction() {
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "sitrep_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "sitrep_mouseover.png")),
         in_window_func);
-    m_btn_siterep->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
+    m_btn_siterep->SetMinSize(MENU_ICON_SIZE);
     m_btn_siterep->LeftClickedSignal.connect(boost::bind(&MapWnd::ToggleSitRep, this));
     m_btn_siterep->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_btn_siterep->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
@@ -1202,7 +1195,7 @@ void MapWnd::CompleteConstruction() {
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "messages_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "messages_mouseover.png")),
         in_window_func);
-    m_btn_messages->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
+    m_btn_messages->SetMinSize(MENU_ICON_SIZE);
     m_btn_messages->LeftClickedSignal.connect(boost::bind(&MapWnd::ToggleMessages, this));
     m_btn_messages->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_btn_messages->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
@@ -1217,7 +1210,7 @@ void MapWnd::CompleteConstruction() {
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "moderator_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "moderator_mouseover.png")),
         in_window_func);
-    m_btn_moderator->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
+    m_btn_moderator->SetMinSize(MENU_ICON_SIZE);
     m_btn_moderator->LeftClickedSignal.connect(boost::bind(&MapWnd::ToggleModeratorActions, this));
     m_btn_moderator->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_btn_moderator->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
@@ -1226,11 +1219,11 @@ void MapWnd::CompleteConstruction() {
 
     // resources
     m_population = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(METER_POPULATION), 0, 3, false,
-                                                  ICON_DUAL_WIDTH, m_btn_turn->Height());
+                                                  ICON_SINGLE_WIDTH, m_btn_turn->Height());
     m_population->SetName("Population StatisticIcon");
 
     m_industry = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(METER_INDUSTRY), 0, 3, false,
-                                                ICON_DUAL_WIDTH, m_btn_turn->Height());
+                                                ICON_SINGLE_WIDTH, m_btn_turn->Height());
     m_industry->SetName("Industry StatisticIcon");
     m_industry->LeftClickedSignal.connect(boost::bind(&MapWnd::ToggleProduction, this));
 
@@ -1239,7 +1232,7 @@ void MapWnd::CompleteConstruction() {
     m_stockpile->SetName("Stockpile StatisticIcon");
 
     m_research = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(METER_RESEARCH), 0, 3, false,
-                                                ICON_DUAL_WIDTH, m_btn_turn->Height());
+                                                ICON_SINGLE_WIDTH, m_btn_turn->Height());
     m_research->SetName("Research StatisticIcon");
     m_research->LeftClickedSignal.connect(boost::bind(&MapWnd::ToggleResearch, this));
 
@@ -1249,11 +1242,11 @@ void MapWnd::CompleteConstruction() {
 
     m_fleet = GG::Wnd::Create<StatisticIcon>(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "sitrep" / "fleet_arrived.png"),
                                              0, 3, false,
-                                             ICON_DUAL_WIDTH, m_btn_turn->Height());
+                                             ICON_SINGLE_WIDTH, m_btn_turn->Height());
     m_fleet->SetName("Fleet StatisticIcon");
 
     m_detection = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(METER_DETECTION), 0, 3, false,
-                                                 ICON_DUAL_WIDTH, m_btn_turn->Height());
+                                                 ICON_SINGLE_WIDTH, m_btn_turn->Height());
     m_detection->SetName("Detection StatisticIcon");
 
     GG::SubTexture wasted_ressource_subtexture = GG::SubTexture(ClientUI::GetTexture(button_texture_dir /
@@ -1273,10 +1266,10 @@ void MapWnd::CompleteConstruction() {
         wasted_ressource_clicked_subtexture,
         wasted_ressource_mouseover_subtexture);
 
-    m_industry_wasted->Resize(GG::Pt(ICON_WIDTH, GG::Y(Value(ICON_WIDTH))));
-    m_industry_wasted->SetMinSize(GG::Pt(ICON_WIDTH, GG::Y(Value(ICON_WIDTH))));
-    m_research_wasted->Resize(GG::Pt(ICON_WIDTH, GG::Y(Value(ICON_WIDTH))));
-    m_research_wasted->SetMinSize(GG::Pt(ICON_WIDTH, GG::Y(Value(ICON_WIDTH))));
+    m_industry_wasted->Resize(ICON_SIZE);
+    m_industry_wasted->SetMinSize(ICON_SIZE);
+    m_research_wasted->Resize(ICON_SIZE);
+    m_research_wasted->SetMinSize(ICON_SIZE);
 
     m_industry_wasted->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_research_wasted->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
@@ -1294,21 +1287,21 @@ void MapWnd::CompleteConstruction() {
     // place buttons / icons on toolbar
     /////////////////////////////////////
     std::vector<GG::X> widths{
-        m_btn_turn->Width(),        ICON_WIDTH,                 m_timeout_remain->Width(),
-        GG::X(ClientUI::Pts()*4),   ICON_WIDTH,                 m_industry->Width(),
-        m_stockpile->Width(),       ICON_WIDTH,                 m_research->Width(),
-        m_influence->Width(),       m_fleet->Width(),           m_population->Width(),
-        m_detection->Width(),       m_btn_moderator->Width(),   m_btn_messages->Width(),
-        m_btn_siterep->Width(),     m_btn_empires->Width(),     m_btn_objects->Width(),
-        m_btn_research->Width(),    m_btn_production->Width(),  m_btn_design->Width(),
-        m_btn_government->Width(),  m_btn_graphs->Width(),      m_btn_pedia->Width(),
-        m_btn_menu->Width()};
+        m_btn_turn->Width(),        ICON_WIDTH,                 ICON_WIDTH,
+        ICON_WIDTH,                 ICON_WIDTH,                 ICON_SINGLE_WIDTH,
+        ICON_DUAL_WIDTH,            ICON_WIDTH,                 ICON_SINGLE_WIDTH,
+        ICON_DUAL_WIDTH,            ICON_SINGLE_WIDTH,          ICON_SINGLE_WIDTH,
+        ICON_SINGLE_WIDTH,          MENU_ICON_SIZE.x,           MENU_ICON_SIZE.x,
+        MENU_ICON_SIZE.x,           MENU_ICON_SIZE.x,           MENU_ICON_SIZE.x,
+        MENU_ICON_SIZE.x,           MENU_ICON_SIZE.x,           MENU_ICON_SIZE.x,
+        MENU_ICON_SIZE.x,           MENU_ICON_SIZE.x,           MENU_ICON_SIZE.x,
+        MENU_ICON_SIZE.x};
 
     std::vector<float> stretches{
         0.0f,                       0.0f,                       0.0f,
         0.0f,                       0.0f,                       1.0f,
-        1.2f,                       0.0f,                       1.0f,
-        1.2f,                       1.0f,                       1.0f,
+        2.0f,                       0.0f,                       1.0f,
+        2.0f,                       1.0f,                       1.0f,
         1.0f,                       0.0f,                       0.0f,
         0.0f,                       0.0f,                       0.0f,
         0.0f,                       0.0f,                       0.0f,
@@ -1321,13 +1314,11 @@ void MapWnd::CompleteConstruction() {
     layout->SetName("Toolbar Layout");
     layout->SetCellMargin(5);
     layout->SetBorderMargin(5);
-    layout->SetMinimumColumnWidths(widths);
-    layout->SetColumnStretches(stretches);
-    layout->SetMinimumRowHeight(0, GG::Y(Value(ICON_WIDTH)));
+    layout->SetMinimumRowHeight(0, ICON_SIZE.y);
     //layout->RenderOutline(true);
+    layout->SetColumnStretches(stretches);
+    layout->SetMinimumColumnWidths(widths);
 
-
-    m_toolbar->SetLayout(layout);
     int layout_column{0};
 
     layout->Add(m_btn_turn,         0, layout_column++, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);  // 0
@@ -1356,6 +1347,7 @@ void MapWnd::CompleteConstruction() {
     layout->Add(m_btn_pedia,        0, layout_column++, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
     layout->Add(m_btn_menu,         0, layout_column++, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
 
+    m_toolbar->SetLayout(layout);
 
     ///////////////////
     // Misc widgets on map screen
