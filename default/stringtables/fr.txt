@@ -11006,9 +11006,9 @@ LRN_ARTIF_MINDS
 Consciences Artificielles
 
 LRN_ARTIF_MINDS_DESC
-'''Augmente la [[metertype METER_TARGET_RESEARCH]] de 3 sur toutes les planètes.
+'''Augmente la [[metertype METER_TARGET_RESEARCH]] de 1 sur toutes les planètes en Focus Recherche.
 
-Les consciences artificielles constituent la quête ultime des recherches en sciences cognitives. Elles dépassent le stade prédéfini des intelligences artificielles, pour atteindre celui de conscience de soi et de sentience au sein d'un être artificiel. Ces systèmes sentients peuvent élargir de leur proche chef les limites de la science et de la recherche, identifiant par eux-mêmes de nouvelles manières de traiter les données et d'en déduire de nouvelles connaissances. Chaque planète peut héberger de telles structures, indépendamment des activités de la population, procurant ainsi un bonus de Recherche dans tout l'empire.'''
+Les consciences artificielles constituent la quête ultime des recherches en sciences cognitives. Elles dépassent le stade prédéfini des intelligences artificielles, pour atteindre celui de conscience de soi et de sentience au sein d'un être artificiel. Ces systèmes sentients peuvent élargir de leur proche chef les limites de la science et de la recherche, identifiant par eux-mêmes de nouvelles manières de traiter les données et d'en déduire de nouvelles connaissances. Chaque planète peut héberger de telles structures, if properly maintained and assisted by researchers.'''
 
 LRN_XENOARCH
 Xénoarchéologie
@@ -11320,7 +11320,7 @@ PRO_SENTIENT_AUTOMATION
 Automates Conscients
 
 PRO_SENTIENT_AUTOMATION_DESC
-'''Augmente la [[metertype METER_TARGET_INDUSTRY]] de 6 sur toutes les planètes.
+'''Augmente la [[metertype METER_TARGET_INDUSTRY]] de 3 sur toutes les planètes en Focus Industrie.
 
 L'évolution naturelle des usines automatisées s'accomplit en attribuant aux consciences artificielles qui dirigent de telles structures, le pouvoir de déduire et décider par elles-mêmes des meilleurs processus afin d'atteindre les buts de leurs propriétaires, avant même que ces derniers n'aient commencé à y réfléchir. Cette amélioration décisionnelle augmente grandement la performance des installations autonomes de production dans tout l'empire.'''
 

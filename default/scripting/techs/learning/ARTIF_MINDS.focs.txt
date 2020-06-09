@@ -16,9 +16,10 @@ Tech
                 ProductionCenter
                 OwnedBy empire = Source.Owner
                 TargetPopulation low = 0.0001
+                Focus type = "FOCUS_RESEARCH"
             ]
             priority = [[VERY_LATE_PRIORITY]]
-            effects = SetTargetResearch value = Value + 15 * [[RESEARCH_PER_POP]]
+            effects = SetTargetResearch value = Value + 5 * [[RESEARCH_PER_POP]]
     ]
     graphic = "icons/tech/basic_autolabs.png"
 

@@ -11006,9 +11006,9 @@ LRN_ARTIF_MINDS
 Artificial Minds
 
 LRN_ARTIF_MINDS_DESC
-'''Increases [[metertype METER_TARGET_RESEARCH]] on all planets by 3.
+'''Increases [[metertype METER_TARGET_RESEARCH]] on all Research focused planets by 1.
 
-Artificial minds are the epitome of the research on cognitive sciences. These are not facsimiles of self-awareness, consciousness or sentience, but the true attainment of such qualities within an artificial being. This sentient devices can expand on their own the limits of science and research, identifying by themselves new ways of data processing and deduction of knowledge. Each planet can contain such structures regardless of the population's occupations, giving a bonus to research on all worlds.'''
+Artificial minds are the epitome of the research on cognitive sciences. These are not facsimiles of self-awareness, consciousness or sentience, but the true attainment of such qualities within an artificial being. This sentient devices can expand on their own the limits of science and research, identifying by themselves new ways of data processing and deduction of knowledge. Each planet can contain such structures, if properly maintained and assisted by researchers.'''
 
 LRN_XENOARCH
 Xenoarchaeology
@@ -11320,9 +11320,9 @@ PRO_SENTIENT_AUTOMATION
 Sentient Automation
 
 PRO_SENTIENT_AUTOMATION_DESC
-'''Increases [[metertype METER_TARGET_INDUSTRY]] on all planets by 6.
+'''Increases [[metertype METER_TARGET_INDUSTRY]] on all planets with the Industry focus by 3.
 
-The natural evolution of automated factories is achieved by confering to the artificial minds that control such facilities the ability to deduce and decide on their own the best course of action to achieve the goals of their owners, even before they can think about it. This improvement greatly increase the performance of the autonomous production facilities on all worlds.'''
+The natural evolution of automated factories is achieved by confering to the artificial minds that control such facilities the ability to deduce and decide on their own the best course of action to achieve the goals of their owners, even before they can think about it. This improvement greatly increase the performance of the autonomous production facilities on all worlds that are actively dedicated to industrial production.'''
 
 PRO_NDIM_ASSMB
 N-Dimensional Assembly
