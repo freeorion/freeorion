@@ -17,6 +17,7 @@ BuildingType
                 System
             ]
             activation = Star type = Red
+            stackinggroup = "ART_BLACK_HOLE"
             effects = [
                 SetStarType type = BlackHole
                 GenerateSitRepMessage
