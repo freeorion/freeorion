@@ -322,7 +322,7 @@ supply_range_techs = {
 # Industry flat modifiers - [[VERY_LATE_PRIORITY]]: Not affected by species modifiers
 INDUSTRY_EFFECTS_FLAT_NOT_MODIFIED_BY_SPECIES = {
     PRO_AUTO_1: 2,
-    PRO_AUTO_2: 6,
+    PRO_AUTO_2: 3,
 }
 # Industry modifiers per population - [[EARLY_PRIORITY]]: Affected by species modifiers
 INDUSTRY_EFFECTS_PER_POP_MODIFIED_BY_SPECIES = {
