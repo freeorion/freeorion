@@ -7,54 +7,61 @@
 #include "../util/Export.h"
 
 
-/** A Building UniverseObject type. */
+//! A Building UniverseObject type.
 class FO_COMMON_API Building : public UniverseObject {
 public:
-    /** \name Accessors */ //@{
-    bool                    HostileToEmpire(int empire_id) const override;
-    std::set<std::string>   Tags() const override;
-    bool                    HasTag(const std::string& name) const override;
-    UniverseObjectType      ObjectType() const override;
-    std::string             Dump(unsigned short ntabs = 0) const override;
-    int                     ContainerObjectID() const override { return m_planet_id; }
-    bool                    ContainedBy(int object_id) const override;
+    Building(int empire_id, std::string const& building_type, int produced_by_empire_id = ALL_EMPIRES);
 
-    std::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
+    ~Building();
 
-    /** Returns the name of the BuildingType object for this building. */
-    const std::string&      BuildingTypeName() const    { return m_building_type; };
-    int                     PlanetID() const            { return m_planet_id; }             ///< returns the ID number of the planet this building is on
-    int                     ProducedByEmpireID() const  { return m_produced_by_empire_id; } ///< returns the empire ID of the empire that produced this building
-    bool                    OrderedScrapped() const     { return m_ordered_scrapped; }
-    //@}
+    auto HostileToEmpire(int empire_id) const -> bool override;
 
-    /** \name Mutators */ //@{
-    void Copy(std::shared_ptr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES) override;
-    void SetPlanetID(int planet_id);         ///< sets the planet on which the building is located
-    void Reset();                            ///< resets any building state, and removes owners
-    void SetOrderedScrapped(bool b = true);  ///< flags building for scrapping
+    auto Tags() const -> std::set<std::string> override;
+
+    auto HasTag(std::string const& name) const -> bool override;
+
+    auto ObjectType() const -> UniverseObjectType override;
+
+    auto Dump(unsigned short ntabs = 0) const -> std::string override;
+
+    auto ContainerObjectID() const -> int override
+    { return m_planet_id; }
+
+    auto ContainedBy(int object_id) const -> bool override;
+
+    auto Accept(UniverseObjectVisitor const& visitor) const -> std::shared_ptr<UniverseObject> override;
+
+    auto BuildingTypeName() const -> std::string const&
+    { return m_building_type; };
+
+    auto PlanetID() const -> int
+    { return m_planet_id; }
+
+    void SetPlanetID(int planet_id);
+
+    auto ProducedByEmpireID() const -> int
+    { return m_produced_by_empire_id; }
+
+    auto OrderedScrapped() const -> bool
+    { return m_ordered_scrapped; }
+
+    void SetOrderedScrapped(bool b = true);
+
+    void Copy(std::shared_ptr<UniverseObject const> copied_object, int empire_id = ALL_EMPIRES) override;
+
+    //! Resets any building state, and removes owners
+    void Reset();
+
     void ResetTargetMaxUnpairedMeters() override;
-    //@}
 
 protected:
     friend class Universe;
-    /** \name Structors */ //@{
-    Building() {}
+    Building();
 
-public:
-    Building(int empire_id, const std::string& building_type,
-             int produced_by_empire_id = ALL_EMPIRES);
+    template <typename T>
+    friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
 
-protected:
-    template <typename T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
-
-public:
-    ~Building() {}
-
-protected:
-    /** Returns new copy of this Building. */
-    Building* Clone(int empire_id = ALL_EMPIRES) const override;
-    //@}
+    auto Clone(int empire_id = ALL_EMPIRES) const -> Building* override;
 
 private:
     std::string m_building_type;

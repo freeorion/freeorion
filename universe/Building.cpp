@@ -9,8 +9,7 @@
 #include "../util/i18n.h"
 
 
-Building::Building(int empire_id, const std::string& building_type,
-                   int produced_by_empire_id/* = ALL_EMPIRES*/) :
+Building::Building(int empire_id, std::string const& building_type, int produced_by_empire_id) :
     m_building_type(building_type),
     m_produced_by_empire_id(produced_by_empire_id)
 {
@@ -24,7 +23,12 @@ Building::Building(int empire_id, const std::string& building_type,
     UniverseObject::Init();
 }
 
-Building* Building::Clone(int empire_id) const {
+Building::Building() = default;
+
+Building::~Building() = default;
+
+auto Building::Clone(int empire_id) const -> Building*
+{
     Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
     if (!(vis >= VIS_BASIC_VISIBILITY && vis <= VIS_FULL_VISIBILITY))
@@ -35,7 +39,8 @@ Building* Building::Clone(int empire_id) const {
     return retval;
 }
 
-void Building::Copy(std::shared_ptr<const UniverseObject> copied_object, int empire_id) {
+void Building::Copy(std::shared_ptr<UniverseObject const> copied_object, int empire_id)
+{
     if (copied_object.get() == this)
         return;
     auto copied_building = std::dynamic_pointer_cast<const Building>(copied_object);
@@ -66,34 +71,39 @@ void Building::Copy(std::shared_ptr<const UniverseObject> copied_object, int emp
     }
 }
 
-bool Building::HostileToEmpire(int empire_id) const {
+auto Building::HostileToEmpire(int empire_id) const -> bool
+{
     if (OwnedBy(empire_id))
         return false;
     return empire_id == ALL_EMPIRES || Unowned() ||
            Empires().GetDiplomaticStatus(Owner(), empire_id) == DIPLO_WAR;
 }
 
-std::set<std::string> Building::Tags() const {
+auto Building::Tags() const -> std::set<std::string>
+{
     if (const BuildingType* type = ::GetBuildingType(m_building_type))
         return type->Tags();
     return {};
 }
 
-bool Building::HasTag(const std::string& name) const {
+auto Building::HasTag(std::string const& name) const -> bool
+{
     const BuildingType* type = GetBuildingType(m_building_type);
     return type && type->Tags().count(name);
 }
 
-UniverseObjectType Building::ObjectType() const
+auto Building::ObjectType() const -> UniverseObjectType
 { return OBJ_BUILDING; }
 
-bool Building::ContainedBy(int object_id) const {
+auto Building::ContainedBy(int object_id) const -> bool
+{
     return object_id != INVALID_OBJECT_ID
         && (    object_id == m_planet_id
             ||  object_id == this->SystemID());
 }
 
-std::string Building::Dump(unsigned short ntabs) const {
+auto Building::Dump(unsigned short ntabs) const -> std::string
+{
     std::stringstream os;
     os << UniverseObject::Dump(ntabs);
     os << " building type: " << m_building_type
@@ -101,33 +111,30 @@ std::string Building::Dump(unsigned short ntabs) const {
     return os.str();
 }
 
-std::shared_ptr<UniverseObject> Building::Accept(const UniverseObjectVisitor& visitor) const
+auto Building::Accept(UniverseObjectVisitor const& visitor) const -> std::shared_ptr<UniverseObject>
 { return visitor.Visit(std::const_pointer_cast<Building>(std::static_pointer_cast<const Building>(shared_from_this()))); }
 
-void Building::SetPlanetID(int planet_id) {
+void Building::SetPlanetID(int planet_id)
+{
     if (planet_id != m_planet_id) {
         m_planet_id = planet_id;
         StateChangedSignal();
     }
 }
 
-void Building::ResetTargetMaxUnpairedMeters() {
-    UniverseObject::ResetTargetMaxUnpairedMeters();
+void Building::ResetTargetMaxUnpairedMeters()
+{ UniverseObject::ResetTargetMaxUnpairedMeters(); }
 
-    //// give buildings base stealth slightly above 0, so that they can't be seen from a distance without high detection ability
-    //if (Meter* stealth = GetMeter(METER_STEALTH))
-    //    stealth->AddToCurrent(0.01f);
-}
-
-void Building::Reset() {
+void Building::Reset()
+{
     UniverseObject::SetOwner(ALL_EMPIRES);
     m_ordered_scrapped = false;
 }
 
-void Building::SetOrderedScrapped(bool b) {
+void Building::SetOrderedScrapped(bool b)
+{
     bool initial_status = m_ordered_scrapped;
     if (b == initial_status) return;
     m_ordered_scrapped = b;
     StateChangedSignal();
 }
-
