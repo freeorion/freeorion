@@ -38,166 +38,293 @@ struct MovePathNode {
 };
 
 
-/** Encapsulates data for a FreeOrion fleet.  Fleets are basically a group of
-  * ships that travel together. */
+//! Encapsulates data for a FreeOrion fleet.  Fleets are basically a group of
+//! ships that travel together.
 class FO_COMMON_API Fleet : public UniverseObject {
 public:
-    /** \name Accessors */ //@{
-    bool HostileToEmpire(int empire_id) const override;
+    //! Creates a new fleet with the given name, position and owner id.
+    Fleet(const std::string& name, double x, double y, int owner);
 
-    UniverseObjectType ObjectType() const override;
+    ~Fleet();
 
-    std::string Dump(unsigned short ntabs = 0) const override;
+    auto HostileToEmpire(int empire_id) const -> bool override;
 
-    int ContainerObjectID() const override;
+    auto ObjectType() const -> UniverseObjectType override;
 
-    const std::set<int>& ContainedObjectIDs() const override;
+    auto Dump(unsigned short ntabs = 0) const -> std::string override;
 
-    bool Contains(int object_id) const override;
+    auto ContainerObjectID() const -> int override
+    { return SystemID(); }
 
-    bool ContainedBy(int object_id) const override;
+    auto ContainedObjectIDs() const -> std::set<int> const& override
+    { return m_ships; }
 
-    const std::string& PublicName(int empire_id) const override;
+    auto Contains(int object_id) const -> bool override;
 
-    std::shared_ptr<UniverseObject>Accept(const UniverseObjectVisitor& visitor) const override;
+    auto ContainedBy(int object_id) const -> bool override;
 
-    const std::set<int>&                ShipIDs() const     { return m_ships; }         ///< returns set of IDs of ships in fleet.
-    int                                 MaxShipAgeInTurns() const;                      ///< Returns the age of the oldest ship in the fleet
+    auto PublicName(int empire_id) const -> std::string const& override;
 
-    /** Returns the list of systems that this fleet will move through en route
-      * to its destination (may be empty).  If this fleet is currently at a
-      * system, that system will be the first one in the list. */
-    const std::list<int>&               TravelRoute() const;
+    auto Accept(UniverseObjectVisitor const& visitor) const -> std::shared_ptr<UniverseObject> override;
 
-    int                                 OrderedGivenToEmpire() const    { return m_ordered_given_to_empire_id; }///< returns the ID of the empire this fleet has been ordered given to, or ALL_EMPIRES if this fleet hasn't been ordered given to an empire
+    auto ShipIDs() const -> std::set<int> const&
+    { return m_ships; }
 
-    bool                                Aggressive() const  { return m_aggressive; }
+    //! Returns number of ships in fleet.
+    auto NumShips() const -> int
+    { return m_ships.size(); }
 
-    /** Returns a list of locations at which notable events will occur along the fleet's path if it follows the 
-        specified route.  It is assumed in the calculation that the fleet starts its move path at its actual current
-        location, however the fleet's current location will not be on the list, even if it is currently in a system. */
-    std::list<MovePathNode>             MovePath(const std::list<int>& route, bool flag_blockades = false) const;
-    std::list<MovePathNode>             MovePath(bool flag_blockades = false) const;            ///< Returns MovePath for fleet's current TravelRoute
-    std::pair<int, int>                 ETA() const;                                            ///< Returns the number of turns which must elapse before the fleet arrives at its current final destination and the turns to the next system, respectively.
-    std::pair<int, int>                 ETA(const std::list<MovePathNode>& move_path) const;    ///< Returns the number of turns which must elapse before the fleet arrives at the final destination and next system in the spepcified \a move_path
+    //! Returns true if fleet contains no ships, false otherwise.
+    auto Empty() const -> bool
+    { return m_ships.empty(); }
 
-    float   Damage() const;                     ///< Returns total amount of damage this fleet has, which is the sum of the ships' damage
-    float   Structure() const;                  ///< Returns total amount of structure this fleet has, which is the sum of the ships' structure
-    float   Shields() const;                    ///< Returns total amount of shields this fleet has, which is the sum of the ships' shields
-    float   Fuel() const;                       ///< Returns effective amount of fuel this fleet has, which is the least of the amounts of fuel that the ships have
-    float   MaxFuel() const;                    ///< Returns effective maximum amount of fuel this fleet has, which is the least of the max amounts of fuel that the ships can have
-    int     FinalDestinationID() const;         ///< Returns ID of system that this fleet is moving to or INVALID_OBJECT_ID if staying still.
-    int     PreviousSystemID() const    { return m_prev_system; }               ///< Returns ID of system that this fleet is moving away from as it moves to its destination.
-    int     NextSystemID() const        { return m_next_system; }               ///< Returns ID of system that this fleet is moving to next as it moves to its destination.
-    bool    Blockaded() const;                  ///< returns true iff either (i) fleet is stationary and at least one system exit is blocked for this fleet or (ii) fleet is attempting to depart a system along a blocked system exit
-    bool    BlockadedAtSystem(int start_system_id, int dest_system_id) const;   ///< returns true iff this fleet's movement would be blockaded at system.
-    float   Speed() const;                      ///< Returns speed of fleet. (Should be equal to speed of slowest ship in fleet, unless in future the calculation of fleet speed changes.)
-    bool    CanChangeDirectionEnRoute() const   { return false; }               ///< Returns true iff this fleet can change its direction while in interstellar space.
-    bool    HasMonsters() const;                ///< returns true iff this fleet contains monster ships.
-    bool    HasArmedShips() const;              ///< Returns true if there is at least one armed ship in the fleet, meaning it has direct fire weapons or fighters that can be launched and that do damage
-    bool    HasFighterShips() const;            ///< Returns true if there is at least one ship with fighters in the fleet.
-    bool    HasColonyShips() const;             ///< Returns true if there is at least one colony ship with nonzero capacity in the fleet.
-    bool    HasOutpostShips() const;            ///< Returns true if there is at least one colony ship with zero capacity in the fleet
-    bool    HasTroopShips() const;              ///< Returns true if there is at least one troop ship in the fleet.
-    bool    HasShipsOrderedScrapped() const;    ///< Returns true if there is at least one ship ordered scrapped in the fleet.
-    bool    HasShipsWithoutScrapOrders() const; ///< Returns true if there is at least one ship without any scrap orders in the fleet.
-    int     NumShips() const            { return m_ships.size(); }  ///< Returns number of ships in fleet.
-    bool    Empty() const               { return m_ships.empty(); } ///< Returns true if fleet contains no ships, false otherwise.
-    float   ResourceOutput(ResourceType type) const;
+    auto HasMonsters() const -> bool;
 
-    /** Returns true iff this fleet is moving, but the route is unknown.  This
-      * is usually the case when a foreign player A's fleet is represented on
-      * another player B's client, and player B has never seen one or more of
-      * the systems in the fleet's route. */
-    bool UnknownRoute() const;
+    //! Returns true if there is at least one armed ship in the fleet, meaning
+    //! it has direct fire weapons or fighters that can be launched and that do
+    //! damage.
+    auto HasArmedShips() const -> bool;
 
-    /** Returns true iff this fleet arrived at its current System this turn. */
-    bool ArrivedThisTurn() const { return m_arrived_this_turn; }
+    //! Returns true if there is at least one ship with fighters in the fleet.
+    auto HasFighterShips() const -> bool;
 
-    /** Has two primary uses: orientation in tactical combat, and determination of starlane blockade restrictions.
-     * Returns the ID of the starlane that this fleet arrived on, if it arrived into a blockade which is not yet broken.
-     * If in a system and not blockaded, the value is the current system ID. The blockade intent is that you can't
-     * break a blockade unless you beat the blockaders (via combat or they retreat).**/
-    int ArrivalStarlane() const { return m_arrival_starlane; }
-    //@}
+    //! Returns true if there is at least one colony ship with nonzero capacity
+    //! in the fleet.
+    auto HasColonyShips() const -> bool;
 
-    /** \name Mutators */ //@{
-    void Copy(std::shared_ptr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES) override;
+    //! Returns true if there is at least one colony ship with zero capacity in
+    //! the fleet
+    auto HasOutpostShips() const -> bool;
+
+    //! Returns true if there is at least one troop ship in the fleet.
+    auto HasTroopShips() const -> bool;
+
+    //! Returns true if there is at least one ship ordered scrapped in the
+    //! fleet.
+    auto HasShipsOrderedScrapped() const -> bool;
+
+    //! Returns true if there is at least one ship without any scrap orders in
+    //! the fleet.
+    auto HasShipsWithoutScrapOrders() const -> bool;
+
+    //! Adds the ships to the fleet
+    void AddShips(const std::vector<int>& ship_ids);
+
+    //! Removes the ships from the fleet.
+    void RemoveShips(const std::vector<int>& ship_ids);
+
+    //! Returns the age of the oldest ship in the fleet
+    auto MaxShipAgeInTurns() const -> int;
+
+    //! Returns the list of systems that this fleet will move through en route
+    //! to its destination (may be empty).
+    //!
+    //! If this fleet is currently at a system, that system will be the first
+    //! one in the list.
+    auto TravelRoute() const -> std::list<int> const&
+    { return m_travel_route; }
+
+    //! Returns true iff this fleet is moving, but the route is unknown.i
+    //!
+    //! This is usually the case when a foreign player A's fleet is represented
+    //! on another player B's client, and player B has never seen one or more
+    //! of the systems in the fleet's route.
+    auto UnknownRoute() const -> bool;
+
+    //! Returns true iff this fleet can change its direction while in
+    //! interstellar space.
+    auto CanChangeDirectionEnRoute() const -> bool
+    { return false; }
+
+    //! Sets this fleet to move through the series of systems in the list, in
+    //! order
+    void SetRoute(std::list<int> const& route);
+
+    //! Sets this fleet to move through the series of systems that makes the
+    //! shortest path from its current location to target_system_id.
+    void CalculateRouteTo(int target_system_id);
+
+    //! Returns the ID of the empire this fleet has been ordered given to, or
+    //! ALL_EMPIRES if this fleet hasn't been ordered given to an empire
+    auto OrderedGivenToEmpire() const -> int
+    { return m_ordered_given_to_empire_id; }
+
+    //! Marks fleet to be given to empire
+    void SetGiveToEmpire(int empire_id);
+
+    //! Marks fleet not to be given to any empire
+    void ClearGiveToEmpire()
+    { SetGiveToEmpire(ALL_EMPIRES); }
+
+    auto Aggressive() const -> bool
+    { return m_aggressive; }
+
+    //! Sets this fleet to be agressive (true) or passive (false)
+    void SetAggressive(bool aggressive = true);
+
+    //! Returns a list of locations at which notable events will occur along
+    //! the fleet's path if it follows the specified route.
+    //!
+    //! It is assumed in the calculation that the fleet starts its move path at
+    //! its actual current location, however the fleet's current location will
+    //! not be on the list, even if it is currently in a system.
+    auto MovePath(std::list<int> const& route, bool flag_blockades = false) const -> std::list<MovePathNode>;
+
+    //! Returns MovePath for fleet's current TravelRoute.
+    auto MovePath(bool flag_blockades = false) const -> std::list<MovePathNode>;
+
+    //! Returned for ETA estimations, when the fleet can't reach destination
+    //! due to lack of route or inability to move.
+    static int const ETA_NEVER;
+
+    //! Returned for ETA estimations, when the ETA can't be determined.
+    static int const ETA_UNKNOWN;
+
+    //! Returned for ETA estimations, when the fleet can't reacht the
+    //! destination due to insufficient fuel capacity and lack of fleet
+    //! resupply on route
+    static int const ETA_OUT_OF_RANGE;
+
+    //! Returns the number of turns to the final travel destination and the next
+    //! system on the current travel path, respectively.
+    auto ETA() const -> std::pair<int, int>
+    { return ETA(MovePath()); }
+
+    //! Returns the number of turns to the final travel destination and the next
+    //! system on the given @p move_path, respectively.
+    auto ETA(std::list<MovePathNode> const& move_path) const -> std::pair<int, int>;
+
+    //! Returns the accumulated damage output of this fleet ships.
+    auto Damage() const -> float;
+
+    //! Returns the accumulated structural integrity of this fleet ships.
+    auto Structure() const -> float;
+
+    //! Returns the accumulated shield defense of this fleet ships.
+    auto Shields() const -> float;
+
+    //! Return the least fuel level of this fleet ships.
+    auto Fuel() const -> float;
+
+    //! Return the least fuel capacity of this fleet ships.
+    auto MaxFuel() const -> float;
+
+    //! Returns ID of system that this fleet is moving to or INVALID_OBJECT_ID
+    //! if staying still.
+    auto FinalDestinationID() const -> int;
+
+    //! Returns ID of system that this fleet is moving away from as it moves to
+    //! its destination.
+    auto PreviousSystemID() const -> int
+    { return m_prev_system; }
+
+    //! Returns ID of system that this fleet is moving to next as it moves to
+    //! its destination.
+    auto NextSystemID() const -> int
+    { return m_next_system; }
+
+    //! Sets the previous and next systems for this fleet.  Useful after
+    //! moving a moving fleet to a different location, so that it moves along
+    //! its new local starlanes
+    void SetNextAndPreviousSystems(int next, int prev);
+
+    //! Returns true iff either:
+    //!  * fleet is stationary and at least one system exit is blocked for this
+    //!    fleet.
+    //!  * fleet is attempting to depart a system along a blocked system exit
+    auto Blockaded() const -> bool;
+
+    //! Returns true iff this fleet's movement would be blockaded at system.
+    auto BlockadedAtSystem(int start_system_id, int dest_system_id) const -> bool;
+
+    //! Return the interstellar speed of the slowest ship in this fleet.
+    auto Speed() const -> float;
+
+    auto ResourceOutput(ResourceType type) const -> float;
+
+    //! Returns true iff this fleet arrived at its current System this turn.
+    auto ArrivedThisTurn() const -> bool
+    { return m_arrived_this_turn; }
+
+    //! Used to clear the m_arrived_this_turn flag, prior to any fleets moving,
+    //! for accurate blockade tests
+    void ClearArrivalFlag()
+    { m_arrived_this_turn = false; }
+
+    //! Has two uses: orientation in tactical combat, and determination of
+    //! starlane blockade restrictions.
+    //!
+    //! Returns the ID of the starlane that this fleet arrived on, if it
+    //! arrived into a blockade which is not yet broken.
+    //!
+    //! If in a system and not blockaded, the value is the current system ID.
+    //! The blockade intent is that you can't break a blockade unless you beat
+    //! the blockaders (via combat or they retreat).
+    auto ArrivalStarlane() const -> int
+    { return m_arrival_starlane; }
+
+    //! Sets the arrival starlane, used to clear blockaded status after combat.
+    void SetArrivalStarlane(int starlane)
+    { m_arrival_starlane = starlane; }
+
+    void Copy(std::shared_ptr<UniverseObject const> copied_object, int empire_id = ALL_EMPIRES) override;
 
     void MovementPhase() override;
 
     void ResetTargetMaxUnpairedMeters() override;
 
-    void SetRoute(const std::list<int>& route);             ///< sets this fleet to move through the series of systems in the list, in order
-    void CalculateRouteTo(int target_system_id);            ///< sets this fleet to move through the series of systems that makes the shortest path from its current location to target_system_id
-
-    void SetAggressive(bool aggressive = true);             ///< sets this fleet to be agressive (true) or passive (false)
-
-    void AddShips(const std::vector<int>& ship_ids);        ///< adds the ships to the fleet
-    void RemoveShips(const std::vector<int>& ship_ids);     ///< removes the ships from the fleet.
-
-    void SetNextAndPreviousSystems(int next, int prev);     ///< sets the previous and next systems for this fleet.  Useful after moving a moving fleet to a different location, so that it moves along its new local starlanes
-    void SetArrivalStarlane(int starlane) { m_arrival_starlane = starlane; }///< sets the arrival starlane, used to clear blockaded status after combat
-    void ClearArrivalFlag() { m_arrived_this_turn = false; }///< used to clear the m_arrived_this_turn flag, prior to any fleets moving, for accurate blockade tests
-
-    void SetGiveToEmpire(int empire_id);                    ///< marks fleet to be given to empire
-    void ClearGiveToEmpire();                               ///< marks fleet not to be given to any empire
-    //@}
-
     /* returns a name for a fleet based on its ships*/
     std::string GenerateFleetName();
-
-    static const int ETA_NEVER;                             ///< returned by ETA when fleet can't reach destination due to lack of route or inability to move
-    static const int ETA_UNKNOWN;                           ///< returned when ETA can't be determined
-    static const int ETA_OUT_OF_RANGE;                      ///< returned by ETA when fleet can't reach destination due to insufficient fuel capacity and lack of fleet resupply on route
 
 protected:
     friend class Universe;
     friend class ObjectMap;
+    Fleet();
 
-    /** \name Structors */ //@{
-    Fleet() {}
+    template <typename T>
+    friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
 
-public:
-    Fleet(const std::string& name, double x, double y, int owner);      ///< general ctor taking name, position and owner id
-
-protected:
-    template <typename T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
-
-public:
-    ~Fleet() {}
-
-protected:
-    /** Returns new copy of this Fleet. */
-    Fleet* Clone(int empire_id = ALL_EMPIRES) const override;
-    //@}
+    //! Returns new copy of this Fleet.
+    auto Clone(int empire_id = ALL_EMPIRES) const -> Fleet* override;
 
 private:
-    std::set<int>               m_ships;
+    std::set<int> m_ships;
 
-    // these two uniquely describe the starlane graph edge the fleet is on, if it it's on one
-    int                         m_prev_system = INVALID_OBJECT_ID;  ///< the previous system in the route, if any
-    int                         m_next_system = INVALID_OBJECT_ID;  ///< the next system in the route, if any
+    //! These two uniquely describe the starlane graph edge the fleet is
+    //! traveling on, if it it's on one.
+    //! @{
+    int m_prev_system = INVALID_OBJECT_ID;
+    int m_next_system = INVALID_OBJECT_ID;
+    //! @}
 
-    bool                        m_aggressive = true;    ///< should this fleet attack enemies in the same system?
+    //! Should this fleet attack enemies in the same system?
+    bool m_aggressive = true;
 
-    int                         m_ordered_given_to_empire_id = ALL_EMPIRES;
+    int m_ordered_given_to_empire_id = ALL_EMPIRES;
 
-    /** list of systems on travel route of fleet from current position to
-      * destination.  If the fleet is currently in a system, that will be the
-      * first system on the list.  Otherwise, the first system on the list will
-      * be the next system the fleet will reach along its path.  The list may
-      * also contain a single null pointer, which indicates that the route is
-      * unknown.  The list may also be empty, which indicates that the fleet
-      * is not planning to move. */
-    std::list<int>              m_travel_route;
+    //! List of systems on travel route of fleet from current position to
+    //! destination.
+    //!
+    //! If the fleet is currently in a system, that will be the first system on
+    //! the list.  Otherwise, the first system on the list will be the next
+    //! system the fleet will reach along its path.
+    //!
+    //! The list may also contain a single INVALID_OBJECT_ID, which indicates
+    //! that the route is unknown.
+    //!
+    //! The list may also be empty, which indicates that the fleet is not
+    //! planning to move.
+    std::list<int> m_travel_route;
 
-    bool                        m_arrived_this_turn = false;
-    int                         m_arrival_starlane = INVALID_OBJECT_ID; // see comment for ArrivalStarlane()
+    bool m_arrived_this_turn = false;
+
+    //! @see ArrivalStarlane()
+    int m_arrival_starlane = INVALID_OBJECT_ID;
 
     friend class boost::serialization::access;
     template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
+    void serialize(Archive& ar, unsigned int const version);
 };
+
 
 #endif // _Fleet_h_
