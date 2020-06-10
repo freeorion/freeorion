@@ -305,24 +305,5 @@ GG_ENUM(ModeratorActionSetting,
     MAS_CreatePlanet
 )
 
-/** Types of root directories */
-GG_ENUM(PathType,
-    PATH_BINARY,
-    PATH_RESOURCE,
-    PATH_PYTHON,
-    PATH_DATA_ROOT,
-    PATH_DATA_USER,
-    PATH_CONFIG,
-    PATH_SAVE,
-    PATH_TEMP,
-    PATH_INVALID
-)
-
-/** Returns a string representation of PathType */
-FO_COMMON_API const std::string& PathTypeToString(PathType path_type);
-
-/** Returns a vector of strings for all PathTypes */
-FO_COMMON_API const std::vector<std::string>& PathTypeStrings();
-
 
 #endif // _Enums_h_

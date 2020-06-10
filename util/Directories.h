@@ -1,11 +1,31 @@
 #ifndef _Directories_h_
 #define _Directories_h_
 
-#include <boost/filesystem/path.hpp>
 #include <string>
-
+#include <boost/filesystem/path.hpp>
+#include <GG/Enum.h>
 #include "Export.h"
-#include "../universe/EnumsFwd.h"
+
+
+//! Types of root directories
+GG_ENUM(PathType,
+    PATH_BINARY,
+    PATH_RESOURCE,
+    PATH_PYTHON,
+    PATH_DATA_ROOT,
+    PATH_DATA_USER,
+    PATH_CONFIG,
+    PATH_SAVE,
+    PATH_TEMP,
+    PATH_INVALID
+)
+
+
+//! Returns a string representation of PathType
+FO_COMMON_API auto PathTypeToString(PathType path_type) -> std::string const&;
+
+//! Returns a vector of strings for all PathTypes
+FO_COMMON_API auto PathTypeStrings() -> std::vector<std::string> const&;
 
 /** This function must be called before any Get*Dir function is called. It
   * stores the current working directory as well as creating local
