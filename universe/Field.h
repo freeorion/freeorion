@@ -7,65 +7,60 @@
 #include "../util/Pending.h"
 
 
-namespace Effect {
-    class EffectsGroup;
-}
-
-/** a class representing a region of space */
+//! A class representing a region of space
 class FO_COMMON_API Field : public UniverseObject {
 public:
-    /** \name Accessors */ //@{
-    std::set<std::string>   Tags() const override;
-    bool                    HasTag(const std::string& name) const override;
+    Field(std::string const& field_type, double x, double y, double radius);
 
-    UniverseObjectType  ObjectType() const override;
+    ~Field();
 
-    std::string         Dump(unsigned short ntabs = 0) const override;
+    auto Tags() const -> std::set<std::string> override;
 
-    int                 ContainerObjectID() const override;
-    bool                ContainedBy(int object_id) const override;
+    auto HasTag(std::string const& name) const -> bool override;
 
-    const std::string&  PublicName(int empire_id) const override;
-    const std::string&  FieldTypeName() const { return m_type_name; }
+    auto ObjectType() const -> UniverseObjectType override;
 
-    /* Field is (presently) the only distributed UniverseObject that isn't just
-     * location at a single point in space. These functions check if locations
-     * or objecs are within this field's area. */
-    bool                InField(std::shared_ptr<const UniverseObject> obj) const;
-    bool                InField(double x, double y) const;
+    auto Dump(unsigned short ntabs = 0) const -> std::string override;
 
-    std::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
-    //@}
+    auto ContainerObjectID() const -> int override;
 
-    /** \name Mutators */ //@{
-    void Copy(std::shared_ptr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES) override;
+    auto ContainedBy(int object_id) const -> bool override;
+
+    auto PublicName(int empire_id) const -> std::string const& override;
+
+    auto FieldTypeName() const -> std::string const&
+    { return m_type_name; }
+
+    //! Field is (presently) the only distributed UniverseObject that isn't
+    //! just location at a single point in space. These functions check if
+    //! locations or objecs are within this field's area.
+    auto InField(std::shared_ptr<UniverseObject const> obj) const -> bool;
+
+    auto InField(double x, double y) const -> bool;
+
+    auto Accept(UniverseObjectVisitor const& visitor) const -> std::shared_ptr<UniverseObject> override;
+
+    void Copy(std::shared_ptr<UniverseObject const> copied_object, int empire_id = ALL_EMPIRES) override;
 
     void ResetTargetMaxUnpairedMeters() override;
+
     void ClampMeters() override;
-    //@}
 
 protected:
     friend class Universe;
-    /** \name Structors */ //@{
     Field();
 
-public:
-    Field(const std::string& field_type, double x, double y, double radius);
-    ~Field();
+    template <typename T>
+    friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
 
-protected:
-    template <typename T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
-
-    /** Returns new copy of this Field. */
-    Field* Clone(int empire_id = ALL_EMPIRES) const override;
-    //@}
+    auto Clone(int empire_id = ALL_EMPIRES) const -> Field* override;
 
 private:
     std::string m_type_name;
 
     friend class boost::serialization::access;
     template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
+    void serialize(Archive& ar, unsigned int const version);
 };
 
 

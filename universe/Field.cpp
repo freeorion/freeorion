@@ -9,16 +9,11 @@
 #include "../util/i18n.h"
 
 
-/////////////////////////////////////////////////
-// Field                                       //
-/////////////////////////////////////////////////
-Field::Field()
-{}
+Field::Field() = default;
 
-Field::~Field()
-{}
+Field::~Field() = default;
 
-Field::Field(const std::string& field_type, double x, double y, double radius) :
+Field::Field(std::string const& field_type, double x, double y, double radius) :
     UniverseObject("", x, y),
     m_type_name(field_type)
 {
@@ -35,7 +30,8 @@ Field::Field(const std::string& field_type, double x, double y, double radius) :
     UniverseObject::GetMeter(METER_SIZE)->Set(radius, radius);
 }
 
-Field* Field::Clone(int empire_id) const {
+auto Field::Clone(int empire_id) const -> Field*
+{
     Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
     if (!(vis >= VIS_BASIC_VISIBILITY && vis <= VIS_FULL_VISIBILITY))
@@ -46,7 +42,8 @@ Field* Field::Clone(int empire_id) const {
     return retval;
 }
 
-void Field::Copy(std::shared_ptr<const UniverseObject> copied_object, int empire_id) {
+void Field::Copy(std::shared_ptr<UniverseObject const> copied_object, int empire_id)
+{
     if (copied_object.get() == this)
         return;
     std::shared_ptr<const Field> copied_field = std::dynamic_pointer_cast<const Field>(copied_object);
@@ -67,49 +64,55 @@ void Field::Copy(std::shared_ptr<const UniverseObject> copied_object, int empire
     }
 }
 
-std::set<std::string> Field::Tags() const {
+auto Field::Tags() const -> std::set<std::string>
+{
     const FieldType* type = GetFieldType(m_type_name);
     if (!type)
         return {};
     return type->Tags();
 }
 
-bool Field::HasTag(const std::string& name) const {
+auto Field::HasTag(std::string const& name) const -> bool
+{
     const FieldType* type = GetFieldType(m_type_name);
 
     return type && type->Tags().count(name);
 }
 
-UniverseObjectType Field::ObjectType() const
+auto Field::ObjectType() const -> UniverseObjectType
 { return OBJ_FIELD; }
 
-std::string Field::Dump(unsigned short ntabs) const {
+auto Field::Dump(unsigned short ntabs) const -> std::string
+{
     std::stringstream os;
     os << UniverseObject::Dump(ntabs);
     os << " field type: " << m_type_name;
     return os.str();
 }
 
-const std::string& Field::PublicName(int empire_id) const {
+auto Field::PublicName(int empire_id) const -> std::string const&
+{
     // always just return name since fields (as of this writing) don't have owners
     return UserString(m_type_name);
 }
 
-std::shared_ptr<UniverseObject> Field::Accept(const UniverseObjectVisitor& visitor) const
+auto Field::Accept(UniverseObjectVisitor const& visitor) const -> std::shared_ptr<UniverseObject>
 { return visitor.Visit(std::const_pointer_cast<Field>(std::static_pointer_cast<const Field>(shared_from_this()))); }
 
-int Field::ContainerObjectID() const
+auto Field::ContainerObjectID() const -> int
 { return this->SystemID(); }
 
-bool Field::ContainedBy(int object_id) const {
+auto Field::ContainedBy(int object_id) const -> bool
+{
     return object_id != INVALID_OBJECT_ID
         && object_id == this->SystemID();
 }
 
-bool Field::InField(std::shared_ptr<const UniverseObject> obj) const
+auto Field::InField(std::shared_ptr<UniverseObject const> obj) const -> bool
 { return obj && InField(obj->X(), obj->Y()); }
 
-bool Field::InField(double x, double y) const {
+auto Field::InField(double x, double y) const -> bool
+{
     const Meter* size_meter = GetMeter(METER_SIZE);
     double radius = 1.0;
     if (size_meter)
@@ -119,14 +122,16 @@ bool Field::InField(double x, double y) const {
     return dist2 < radius*radius;
 }
 
-void Field::ResetTargetMaxUnpairedMeters() {
+void Field::ResetTargetMaxUnpairedMeters()
+{
     UniverseObject::ResetTargetMaxUnpairedMeters();
 
     GetMeter(METER_SPEED)->ResetCurrent();
     // intentionally not resetting size, so that it is presistant
 }
 
-void Field::ClampMeters() {
+void Field::ClampMeters()
+{
     UniverseObject::ClampMeters();
 
     // intentionally not clamping METER_SPEED, to allow negative speeds
