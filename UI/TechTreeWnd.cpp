@@ -11,7 +11,6 @@
 #include "../util/i18n.h"
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
-#include "../util/Directories.h"
 #include "../util/ScopedTimer.h"
 #include "../universe/Effects.h"
 #include "../universe/Enums.h"

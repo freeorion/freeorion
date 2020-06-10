@@ -14,7 +14,6 @@
 #include "../util/Order.h"
 #include "../util/OptionsDB.h"
 #include "../util/ScopedTimer.h"
-#include "../util/Directories.h"
 #include "../Empire/Empire.h"
 #include "../Empire/Government.h"
 #include "../client/human/HumanClientApp.h"

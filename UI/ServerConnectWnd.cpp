@@ -12,7 +12,6 @@
 #include "../util/i18n.h"
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
-#include "../util/Directories.h"
 #include "../client/human/HumanClientApp.h"
 #include "../client/ClientNetworking.h"
 #include "ClientUI.h"

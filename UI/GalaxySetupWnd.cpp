@@ -10,7 +10,6 @@
 #include "../util/Logger.h"
 #include "../util/GameRules.h"
 #include "../util/OptionsDB.h"
-#include "../util/Directories.h"
 #include "../util/AppInterface.h"
 
 #include <boost/filesystem/fstream.hpp>

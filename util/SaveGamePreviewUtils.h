@@ -15,7 +15,6 @@
 #include "MultiplayerCommon.h"
 #include "Export.h"
 #include "Serialize.h"
-#include "Directories.h"
 
 /** Contains preview information about a savegame.
   * Stored the beginning of a savefile for quick access. */

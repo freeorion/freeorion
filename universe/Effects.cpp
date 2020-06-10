@@ -22,7 +22,6 @@
 #include "ValueRefs.h"
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Empire.h"
-#include "../util/Directories.h"
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
 #include "../util/Random.h"
