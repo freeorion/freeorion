@@ -31,7 +31,7 @@ XENOPHOBIC_SELF
                 SetTargetResearch value = Value * 0.9
                 SetTargetHappiness value = Value - (
                     Statistic Count condition = And [
-                        Planet
+                        PopulationCenter
                         OwnedBy empire = Source.Owner
                         Not OR [ 
                             Species name = Source.Species
@@ -58,39 +58,19 @@ XENOPHOBIC_SELF
                     max(Value, 0) * 0.4 * (1 - 0.8^[[XENOPHOBIC_SELFSUSTAINING_QUALIFYING_PLANET_COUNT]]),
                     3 * Target.HabitableSize  // Cap malus at the self-sustaining bonus
                 )
-
 '''
 
-
-// There is no way to determine empire detection strength directly, so it is evaluated backwards
-// from the currently available detection technology.
 XENOPHOBIC_SELFSUSTAINING_QUALIFYING_PLANET_COUNT
 '''
 Statistic Count condition = And [
-            PopulationCenter
-            Not OR [
-                Species name = Source.Species
-                Species name = "SP_EXOBOT"
-            ]
-            Not Population high = 0
-            OR [
-                And [ WithinStarlaneJumps jumps = 2 condition = Source OwnerHasTech name = "SPY_DETECT_1"
-                      Stealth high = 10
+                    PopulationCenter
+                    Not OR [
+                        Species name = Source.Species
+                        Species name = "SP_EXOBOT"
+                    ]
+                    Not Population high = 0
+                    WithinStarlaneJumps jumps = 2 condition = Source
                 ]
-                And [ WithinStarlaneJumps jumps = 2 condition = Source OwnerHasTech name = "SPY_DETECT_2"
-                      Stealth high = 30
-                ]
-                And [ WithinStarlaneJumps jumps = 2 condition = Source OwnerHasTech name = "SPY_DETECT_3"
-                      Stealth high = 50
-                ]
-                And [ WithinStarlaneJumps jumps = 2 condition = Source OwnerHasTech name = "SPY_DETECT_4"
-                      Stealth high = 700
-                ]
-                And [ WithinStarlaneJumps jumps = 2 condition = Source OwnerHasTech name = "SPY_DETECT_5"
-                      Stealth high = 200
-                ]
-            ]
-       ]
 '''
 
 // single argument should be the name of the species capitalized

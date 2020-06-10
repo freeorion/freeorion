@@ -32,7 +32,7 @@ Species
 
         [[XENOPHOBIC_SELF]]
         [[XENOPHOBIC_OTHER(TRITH)]]
-        [[TELEPATHIC_DETECTION(5)]]
+        [[TELEPATHIC_DETECTION(5,2)]]
 
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
