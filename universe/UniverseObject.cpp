@@ -14,23 +14,18 @@
 #include "../util/i18n.h"
 
 
-// static(s)
-const int INVALID_OBJECT_ID      = -1;
-const int TEMPORARY_OBJECT_ID    = -2;
+int const INVALID_OBJECT_ID      = -1;
 
-const double    UniverseObject::INVALID_POSITION  = -100000.0;
-const int       UniverseObject::INVALID_OBJECT_AGE = -(1 << 30) - 1;  // using big negative number to allow for potential negative object ages, which might be useful in the event of time travel.
-const int       UniverseObject::SINCE_BEFORE_TIME_AGE = (1 << 30) + 1;
+int const TEMPORARY_OBJECT_ID    = -2;
+
+double const UniverseObject::INVALID_POSITION  = -100000.0;
+
 
 UniverseObject::UniverseObject() :
-    StateChangedSignal(blocking_combiner<boost::signals2::optional_last_value<void>>(
-        GetUniverse().UniverseObjectSignalsInhibited())),
-    m_x(INVALID_POSITION),
-    m_y(INVALID_POSITION),
-    m_created_on_turn(CurrentTurn() )
+    UniverseObject("", INVALID_POSITION, INVALID_POSITION)
 {}
 
-UniverseObject::UniverseObject(const std::string name, double x, double y) :
+UniverseObject::UniverseObject(std::string const name, double x, double y) :
     StateChangedSignal(blocking_combiner<boost::signals2::optional_last_value<void>>(
         GetUniverse().UniverseObjectSignalsInhibited())),
     m_name(name),
@@ -39,11 +34,10 @@ UniverseObject::UniverseObject(const std::string name, double x, double y) :
     m_created_on_turn(CurrentTurn() )
 {}
 
-UniverseObject::~UniverseObject()
-{}
+UniverseObject::~UniverseObject() = default;
 
-void UniverseObject::Copy(std::shared_ptr<const UniverseObject> copied_object,
-                          Visibility vis, const std::set<std::string>& visible_specials)
+void UniverseObject::Copy(std::shared_ptr<UniverseObject const> copied_object,
+                          Visibility vis, std::set<std::string> const& visible_specials)
 {
     if (copied_object.get() == this)
         return;
@@ -110,22 +104,14 @@ void UniverseObject::Copy(std::shared_ptr<const UniverseObject> copied_object,
 void UniverseObject::Init()
 { AddMeter(METER_STEALTH); }
 
-int UniverseObject::ID() const
-{ return m_id; }
+// using big negative number to allow for potential negative object ages, which
+// might be useful in the event of time travel.
+int const UniverseObject::INVALID_OBJECT_AGE = -(1 << 30) - 1;
 
-const std::string& UniverseObject::Name() const
-{ return m_name; }
+int const UniverseObject::SINCE_BEFORE_TIME_AGE = (1 << 30) + 1;
 
-double UniverseObject::X() const
-{ return m_x; }
-
-double UniverseObject::Y() const
-{ return m_y; }
-
-int UniverseObject::CreationTurn() const
-{ return m_created_on_turn; }
-
-int UniverseObject::AgeInTurns() const {
+auto UniverseObject::AgeInTurns() const -> int
+{
     if (m_created_on_turn == BEFORE_FIRST_TURN)
         return SINCE_BEFORE_TIME_AGE;
     if ((m_created_on_turn == INVALID_GAME_TURN) || (CurrentTurn() == INVALID_GAME_TURN))
@@ -133,42 +119,27 @@ int UniverseObject::AgeInTurns() const {
     return CurrentTurn() - m_created_on_turn;
 }
 
-int UniverseObject::Owner() const
-{ return m_owner_empire_id; }
-
-int UniverseObject::SystemID() const
-{ return m_system_id; }
-
-const std::map<std::string, std::pair<int, float>>& UniverseObject::Specials() const
-{ return m_specials; }
-
-bool UniverseObject::HasSpecial(const std::string& name) const
-{ return m_specials.count(name); }
-
-int UniverseObject::SpecialAddedOnTurn(const std::string& name) const {
+auto UniverseObject::SpecialAddedOnTurn(std::string const& name) const -> int
+{
     auto it = m_specials.find(name);
     if (it == m_specials.end())
         return INVALID_GAME_TURN;
     return it->second.first;
 }
 
-float UniverseObject::SpecialCapacity(const std::string& name) const {
+auto UniverseObject::SpecialCapacity(std::string const& name) const -> float
+{
     auto it = m_specials.find(name);
     if (it == m_specials.end())
         return 0.0f;
     return it->second.second;
 }
 
-std::set<std::string> UniverseObject::Tags() const
-{ return {}; }
-
-bool UniverseObject::HasTag(const std::string& name) const
-{ return false; }
-
-UniverseObjectType UniverseObject::ObjectType() const
+auto UniverseObject::ObjectType() const -> UniverseObjectType
 { return INVALID_UNIVERSE_OBJECT_TYPE; }
 
-std::string UniverseObject::Dump(unsigned short ntabs) const {
+auto UniverseObject::Dump(unsigned short ntabs) const -> std::string
+{
     auto system = Objects().get<System>(this->SystemID());
 
     std::stringstream os;
@@ -218,10 +189,11 @@ namespace {
     std::set<int> EMPTY_SET;
 }
 
-const std::set<int>& UniverseObject::ContainedObjectIDs() const
+auto UniverseObject::ContainedObjectIDs() const -> std::set<int> const&
 { return EMPTY_SET; }
 
-std::set<int> UniverseObject::VisibleContainedObjectIDs(int empire_id) const {
+auto UniverseObject::VisibleContainedObjectIDs(int empire_id) const -> std::set<int>
+{
     std::set<int> retval;
     const Universe& universe = GetUniverse();
     for (int object_id : ContainedObjectIDs()) {
@@ -231,53 +203,36 @@ std::set<int> UniverseObject::VisibleContainedObjectIDs(int empire_id) const {
     return retval;
 }
 
-int UniverseObject::ContainerObjectID() const
-{ return INVALID_OBJECT_ID; }
-
-bool UniverseObject::Contains(int object_id) const
-{ return false; }
-
-bool UniverseObject::ContainedBy(int object_id) const
-{ return false; }
-
-const Meter* UniverseObject::GetMeter(MeterType type) const {
+auto UniverseObject::GetMeter(MeterType type) const -> Meter const*
+{
     auto it = m_meters.find(type);
     if (it != m_meters.end())
         return &(it->second);
     return nullptr;
 }
 
-void UniverseObject::AddMeter(MeterType meter_type) {
+void UniverseObject::AddMeter(MeterType meter_type)
+{
     if (INVALID_METER_TYPE == meter_type)
         ErrorLogger() << "UniverseObject::AddMeter asked to add invalid meter type!";
     else
         m_meters[meter_type];
 }
 
-bool UniverseObject::Unowned() const
-{ return Owner() == ALL_EMPIRES; }
-
-bool UniverseObject::OwnedBy(int empire) const
-{ return empire != ALL_EMPIRES && empire == Owner(); }
-
-bool UniverseObject::HostileToEmpire(int empire_id) const
-{ return false; }
-
-Visibility UniverseObject::GetVisibility(int empire_id) const
+auto UniverseObject::GetVisibility(int empire_id) const -> Visibility
 { return GetUniverse().GetObjectVisibilityByEmpire(this->ID(), empire_id); }
 
-const std::string& UniverseObject::PublicName(int empire_id) const
-{ return m_name; }
-
-std::shared_ptr<UniverseObject> UniverseObject::Accept(const UniverseObjectVisitor& visitor) const
+auto UniverseObject::Accept(UniverseObjectVisitor const& visitor) const -> std::shared_ptr<UniverseObject>
 { return visitor.Visit(std::const_pointer_cast<UniverseObject>(shared_from_this())); }
 
-void UniverseObject::SetID(int id) {
+void UniverseObject::SetID(int id)
+{
     m_id = id;
     StateChangedSignal();
 }
 
-void UniverseObject::Rename(const std::string& name) {
+void UniverseObject::Rename(std::string const& name)
+{
     m_name = name;
     StateChangedSignal();
 }
@@ -288,7 +243,8 @@ void UniverseObject::Move(double x, double y)
 void UniverseObject::MoveTo(int object_id)
 { MoveTo(Objects().get(object_id)); }
 
-void UniverseObject::MoveTo(std::shared_ptr<UniverseObject> object) {
+void UniverseObject::MoveTo(std::shared_ptr<UniverseObject> object)
+{
     if (!object) {
         ErrorLogger() << "UniverseObject::MoveTo : attempted to move to a null object.";
         return;
@@ -296,7 +252,8 @@ void UniverseObject::MoveTo(std::shared_ptr<UniverseObject> object) {
     MoveTo(object->X(), object->Y());
 }
 
-void UniverseObject::MoveTo(double x, double y) {
+void UniverseObject::MoveTo(double x, double y)
+{
     if (m_x == x && m_y == y)
         return;
 
@@ -306,19 +263,22 @@ void UniverseObject::MoveTo(double x, double y) {
     StateChangedSignal();
 }
 
-Meter* UniverseObject::GetMeter(MeterType type) {
+auto UniverseObject::GetMeter(MeterType type) -> Meter*
+{
     auto it = m_meters.find(type);
     if (it != m_meters.end())
         return &(it->second);
     return nullptr;
 }
 
-void UniverseObject::BackPropagateMeters() {
+void UniverseObject::BackPropagateMeters()
+{
     for (auto& m : m_meters)
         m.second.BackPropagate();
 }
 
-void UniverseObject::SetOwner(int id) {
+void UniverseObject::SetOwner(int id)
+{
     if (m_owner_empire_id != id) {
         m_owner_empire_id = id;
         StateChangedSignal();
@@ -328,28 +288,30 @@ void UniverseObject::SetOwner(int id) {
      * to call empire->AddExploredSystem(system_id); */
 }
 
-void UniverseObject::SetSystem(int sys) {
-    //DebugLogger() << "UniverseObject::SetSystem(int sys)";
+void UniverseObject::SetSystem(int sys)
+{
     if (sys != m_system_id) {
         m_system_id = sys;
         StateChangedSignal();
     }
 }
 
-void UniverseObject::AddSpecial(const std::string& name, float capacity)
+void UniverseObject::AddSpecial(std::string const& name, float capacity)
 { m_specials[name] = std::make_pair(CurrentTurn(), capacity); }
 
-void UniverseObject::SetSpecialCapacity(const std::string& name, float capacity) {
+void UniverseObject::SetSpecialCapacity(std::string const& name, float capacity)
+{
     if (m_specials.count(name))
         m_specials[name].second = capacity;
     else
         AddSpecial(name, capacity);
 }
 
-void UniverseObject::RemoveSpecial(const std::string& name)
+void UniverseObject::RemoveSpecial(std::string const& name)
 { m_specials.erase(name); }
 
-UniverseObject::MeterMap UniverseObject::CensoredMeters(Visibility vis) const {
+auto UniverseObject::CensoredMeters(Visibility vis) const -> MeterMap
+{
     MeterMap retval;
     if (vis >= VIS_PARTIAL_VISIBILITY) {
         retval = m_meters;
@@ -358,13 +320,15 @@ UniverseObject::MeterMap UniverseObject::CensoredMeters(Visibility vis) const {
     return retval;
 }
 
-void UniverseObject::ResetTargetMaxUnpairedMeters() {
+void UniverseObject::ResetTargetMaxUnpairedMeters()
+{
     auto it = m_meters.find(METER_STEALTH);
     if (it != m_meters.end())
         it->second.ResetCurrent();
 }
 
-void UniverseObject::ResetPairedActiveMeters() {
+void UniverseObject::ResetPairedActiveMeters()
+{
     // iterate over paired active meters (those that have an associated max or
     // target meter.  if another paired meter type is added to Enums.h, it
     // should be added here as well.
@@ -376,7 +340,8 @@ void UniverseObject::ResetPairedActiveMeters() {
     }
 }
 
-void UniverseObject::ClampMeters() {
+void UniverseObject::ClampMeters()
+{
     auto it = m_meters.find(METER_STEALTH);
     if (it != m_meters.end())
         it->second.ClampCurrentToRange();
