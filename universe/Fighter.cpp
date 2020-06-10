@@ -7,10 +7,7 @@
 #include "../util/Logger.h"
 
 
-Fighter::Fighter()
-{}
-
-Fighter::Fighter(int empire_id, int launched_from_id, const std::string& species_name, float damage, const ::Condition::Condition* combat_targets) :
+Fighter::Fighter(int empire_id, int launched_from_id, std::string const& species_name, float damage, Condition::Condition const* combat_targets) :
     UniverseObject(),
     m_damage(damage),
     m_launched_from_id(launched_from_id),
@@ -21,38 +18,26 @@ Fighter::Fighter(int empire_id, int launched_from_id, const std::string& species
     UniverseObject::Init();
 }
 
-Fighter::~Fighter()
-{}
+Fighter::Fighter() = default;
 
-bool Fighter::HostileToEmpire(int empire_id) const {
+Fighter::~Fighter() = default;
+
+auto Fighter::HostileToEmpire(int empire_id) const -> bool
+{
     if (OwnedBy(empire_id))
         return false;
     return empire_id == ALL_EMPIRES || Unowned() ||
            Empires().GetDiplomaticStatus(Owner(), empire_id) == DIPLO_WAR;
 }
 
-UniverseObjectType Fighter::ObjectType() const
+auto Fighter::ObjectType() const -> UniverseObjectType
 { return OBJ_FIGHTER; }
-
-const ::Condition::Condition* Fighter::CombatTargets() const
-{ return m_combat_targets; }
-
-float Fighter::Damage() const
-{ return m_damage; }
-
-bool Fighter::Destroyed() const
-{ return m_destroyed; }
-
-int Fighter::LaunchedFrom() const
-{ return m_launched_from_id; }
-
-const std::string& Fighter::SpeciesName() const
-{ return m_species_name; }
 
 void Fighter::SetDestroyed(bool destroyed)
 { m_destroyed = destroyed; }
 
-std::string Fighter::Dump(unsigned short ntabs) const {
+auto Fighter::Dump(unsigned short ntabs) const -> std::string
+{
     std::stringstream os;
     os << UniverseObject::Dump(ntabs);
     os << " (Combat Fighter) damage: " << m_damage;
@@ -61,16 +46,18 @@ std::string Fighter::Dump(unsigned short ntabs) const {
     return os.str();
 }
 
-std::shared_ptr<UniverseObject> Fighter::Accept(const UniverseObjectVisitor& visitor) const
+auto Fighter::Accept(UniverseObjectVisitor const& visitor) const -> std::shared_ptr<UniverseObject>
 { return visitor.Visit(std::const_pointer_cast<Fighter>(std::static_pointer_cast<const Fighter>(shared_from_this()))); }
 
-Fighter* Fighter::Clone(int empire_id) const {
+auto Fighter::Clone(int empire_id) const -> Fighter*
+{
     Fighter* retval = new Fighter();
     retval->Copy(shared_from_this(), empire_id);
     return retval;
 }
 
-void Fighter::Copy(std::shared_ptr<const UniverseObject> copied_object, int empire_id) {
+void Fighter::Copy(std::shared_ptr<UniverseObject const> copied_object, int empire_id)
+{
     if (copied_object.get() == this)
         return;
     std::shared_ptr<const Fighter> copied_fighter = std::dynamic_pointer_cast<const Fighter>(copied_object);
