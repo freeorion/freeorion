@@ -8,23 +8,39 @@
 #include "../util/Export.h"
 
 
-////////////////////////////////////////////////
-// MovePathNode
-////////////////////////////////////////////////
-/** Contains info about a single notable point on the move path of a fleet or
-  * other UniverseObject. */
+//! Contains info about a single notable point on the move path of a fleet or
+//! other UniverseObject.
 struct MovePathNode {
     MovePathNode(double x_, double y_, bool turn_end_, int eta_, int id_, int lane_start_id_, int lane_end_id_, bool post_blockade_ = false) :
-    x(x_), y(y_), turn_end(turn_end_), eta(eta_), object_id(id_), lane_start_id(lane_start_id_), lane_end_id(lane_end_id_), post_blockade(post_blockade_)
+        x(x_), y(y_), turn_end(turn_end_), eta(eta_), object_id(id_), lane_start_id(lane_start_id_), lane_end_id(lane_end_id_), post_blockade(post_blockade_)
     {}
-    double  x, y;           ///< location in Universe of node
-    bool    turn_end;       ///< true if the fleet will end a turn at this point
-    int     eta;            ///< estimated turns to reach this node
-    int     object_id;      ///< id of object (most likely a system) located at this node, or INVALID_OBJECT_ID if there is no object here
-    int     lane_start_id;  ///< id of object (most likely a system) at the start of the starlane on which this MovePathNode is located, or INVALID_OBJECT_ID if not on a starlane
-    int     lane_end_id;    ///< id of object (most likely a system) at the end of the starlane on which this MovePathNode is located, or INVALID_OBJECT_ID if not on a starlane
-    bool    post_blockade;  ///< estimation of whether this node is past a blockade for the subject fleet
+
+    //! Location in Universe of node
+    double x, y;
+
+    //! True if the fleet will end a turn at this point
+    bool turn_end;
+
+    //! Estimated turns to reach this node
+    int eta;
+
+    //! ID of object (most likely a system) located at this node, or
+    //! INVALID_OBJECT_ID if there is no object here
+    int object_id;
+
+    //! ID of object (most likely a system) at the start of the starlane on
+    //! which this MovePathNode is located, or INVALID_OBJECT_ID if not on
+    //! a starlane
+    int lane_start_id;
+
+    //! ID of object (most likely a system) at the end of the starlane on which
+    //! this MovePathNode is located, or INVALID_OBJECT_ID if not on a starlane
+    int lane_end_id;
+
+    //! Estimation of whether this node is past a blockade for the subject fleet
+    bool post_blockade;
 };
+
 
 /** Encapsulates data for a FreeOrion fleet.  Fleets are basically a group of
   * ships that travel together. */
