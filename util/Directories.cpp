@@ -625,9 +625,6 @@ std::vector<fs::path> ListDir(const fs::path& path, std::function<bool (const fs
     return retval;
 }
 
-bool IsValidUTF8(const std::string& in)
-{ return utf8::is_valid(in.begin(), in.end()); }
-
 bool IsInDir(const fs::path& dir, const fs::path& test_dir) {
     if (!fs::exists(dir) || !fs::is_directory(dir))
         return false;

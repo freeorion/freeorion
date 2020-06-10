@@ -15,12 +15,12 @@
 #include "../universe/Species.h"
 #include "../universe/Tech.h"
 #include "../universe/BuildingType.h"
-#include "../util/Directories.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
 
 #include <GG/GUI.h>
+#include <GG/utf8/checked.h>
 
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/xpressive/xpressive.hpp>
@@ -376,7 +376,7 @@ void MessageWnd::HandlePlayerChatMessage(const std::string& text,
     if (pm)
         pm_text = UserString("MESSAGES_WHISPER");
     const std::string&& formatted_timestamp = ClientUI::FormatTimestamp(timestamp);
-    if (IsValidUTF8(formatted_timestamp))
+    if (utf8::is_valid(formatted_timestamp.begin(), formatted_timestamp.end()))
         wrapped_text += formatted_timestamp;
     if (player_name.empty())
         wrapped_text += filtered_message + "</rgba>";

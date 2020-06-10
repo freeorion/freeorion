@@ -121,9 +121,6 @@ FO_COMMON_API bool IsFOCScript(const boost::filesystem::path& path);
 //! this predicate.  If no predicate is given pathes need to refer to files.
 FO_COMMON_API std::vector<boost::filesystem::path> ListDir(const boost::filesystem::path& path, std::function<bool (const boost::filesystem::path&)> predicate=nullptr);
 
-/** Returns true iff the string \a in is valid UTF-8. */
-FO_COMMON_API bool IsValidUTF8(const std::string& in);
-
 /** Returns true iff the \p test_dir is in \p dir and \p dir
     is existing directory. */
 FO_COMMON_API bool IsInDir(const boost::filesystem::path& dir, const boost::filesystem::path& test_dir);
