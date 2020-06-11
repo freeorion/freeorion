@@ -475,7 +475,6 @@
     (SpecialAddedOnTurn)                        \
     (SpecialCapacity)                           \
     (Species)                                   \
-    (SpeciesID)                                 \
     (SpeciesCensusOrdering)                     \
     (SpeciesOpinion)                            \
     (SpeciesPlanetsBombed)                      \

@@ -224,9 +224,6 @@ public:
     const Species*      GetSpecies(const std::string& name) const;
     Species*            GetSpecies(const std::string& name);
 
-    /** returns a unique numeric id for reach species, or -1 for an invalid species name. */
-    int                 GetSpeciesID(const std::string& name) const;
-
     /** iterators for all species */
     iterator            begin() const;
     iterator            end() const;
