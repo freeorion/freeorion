@@ -1,6 +1,5 @@
 #include "Fighter.h"
 
-#include "Enums.h"
 #include "UniverseObjectVisitor.h"
 #include "../Empire/EmpireManager.h"
 #include "../util/AppInterface.h"

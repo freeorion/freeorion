@@ -3,8 +3,11 @@
 
 
 #include "UniverseObject.h"
-#include "../universe/Condition.h"
-#include "../util/Export.h"
+
+
+namespace Condition {
+    struct Condition;
+}
 
 
 //! A class representing a Fighter in combat.
