@@ -9,7 +9,7 @@ Hull
     slots = Slot type = Internal position = (0.50, 0.50)
     buildCost = 17 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_HULL_COST_MULTIPLIER]]
     buildTime = 2
-    tags = [ "PEDIA_HULL_LINE_ROBOTIC" "GREAT_FUEL_EFFICIENCY" ]
+    tags = [ "ROBOTIC_HULL" "PEDIA_HULL_LINE_ROBOTIC" "GREAT_FUEL_EFFICIENCY" ]
     location = And [
         Contains And [
             Building name = "BLD_SHIPYARD_BASE"
