@@ -18,7 +18,5 @@ BuildingType
     ]
     icon = "icons/building/shipyard-5.png"
 
-
-
 #include "/scripting/common/enqueue.macros"
 #include "/scripting/common/base_prod.macros"
