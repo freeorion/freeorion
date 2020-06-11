@@ -23,7 +23,7 @@ struct FO_COMMON_API InfluenceQueue {
     struct FO_COMMON_API Element {
         explicit Element() = default;
         Element(int empire_id_, std::string name_, bool paused_ = false) :
-            name(name_),
+            name(std::move(name_)),
             empire_id(empire_id_),
             paused(paused_)
         {}
@@ -55,9 +55,10 @@ struct FO_COMMON_API InfluenceQueue {
     //@}
 
     /** \name Accessors */ //@{
-    bool    InQueue(const std::string& name) const; ///< Returns true iff \a name influence project is in this queue.
-    int     ProjectsInProgress() const;             ///< Returns the number of Influence projects currently (perhaps partially) funded.
-    float   TotalIPsSpent() const;                  ///< Returns the number of IPs currently spent on the projects in this queue.
+    bool    InQueue(const std::string& name) const;
+
+    int     ProjectsInProgress() const { return m_projects_in_progress; }
+    float   TotalIPsSpent() const { return m_total_IPs_spent; };
     int     EmpireID() const { return m_empire_id; }
 
     /** Returns amount of stockpile IP allocated to Influence queue elements. */
@@ -69,12 +70,14 @@ struct FO_COMMON_API InfluenceQueue {
 
 
     // STL container-like interface
-    bool            empty() const;
-    unsigned int    size() const;
-    const_iterator  begin() const;
-    const_iterator  end() const;
+    bool            empty() const { return m_queue.empty(); }
+    unsigned int    size() const { return m_queue.size(); }
+    const_iterator  begin() const { return m_queue.begin(); }
+    const_iterator  end() const { return m_queue.end(); }
     const_iterator  find(const std::string& item_name) const;
+    const Element&  operator[](std::size_t i) const;
     const Element&  operator[](int i) const;
+
 
     /** \name Mutators */ //@{
     /** Recalculates the PPs spent on and number of turns left for each project in the queue.  Also
@@ -84,14 +87,15 @@ struct FO_COMMON_API InfluenceQueue {
       * in the universe. */
     void Update();
 
-    // STL container-like interface
-    void        push_back(const Element& element);
-    void        insert(iterator it, const Element& element);
-    void        erase(int i);
-    iterator    erase(iterator it);
 
-    iterator    begin();
-    iterator    end();
+    // STL container-like interface
+    void        push_back(const Element& element) { m_queue.push_back(element); }
+    void        insert(iterator it, const Element& element) { m_queue.insert(it, element); }
+    void        erase(int i);
+    iterator    erase(iterator it) { return m_queue.erase(it); }
+
+    iterator    begin() { return m_queue.begin(); }
+    iterator    end() { return m_queue.end(); }
     iterator    find(const std::string& item_name);
     Element&    operator[](int i);
 

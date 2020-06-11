@@ -32,6 +32,8 @@ namespace {
         return starting_stockpile + new_contributions + project_transfer_to_stockpile - allocated_stockpile_IP;
     }
 
+    const InfluenceQueue::Element EMPTY_ELEMENT;
+
     /** Sets the allocated_IP value for each Element in the passed
       * InfluenceQueue \a queue. Elements are allocated IP based on their need,
       * the limits they can be given per turn, and the amount available to the
@@ -85,43 +87,24 @@ std::string InfluenceQueue::Element::Dump() const {
 // InfluenceQueue //
 ////////////////////
 bool InfluenceQueue::InQueue(const std::string& name) const {
-    return std::count_if(m_queue.begin(), m_queue.end(),
+    return std::any_of(m_queue.begin(), m_queue.end(),
                        [name](const Element& e){ return e.name == name; });
 }
-
-int InfluenceQueue::ProjectsInProgress() const
-{ return m_projects_in_progress; }
-
-float InfluenceQueue::TotalIPsSpent() const
-{ return m_total_IPs_spent; }
 
 float InfluenceQueue::AllocatedStockpileIP() const
 { return 0.0f; } // todo
 
-bool InfluenceQueue::empty() const
-{ return !m_queue.size(); }
+InfluenceQueue::const_iterator InfluenceQueue::find(const std::string& item_name) const
+{ return std::find_if(begin(), end(), [&](const auto& e) { return e.name == item_name; }); }
 
-unsigned int InfluenceQueue::size() const
-{ return m_queue.size(); }
-
-InfluenceQueue::const_iterator InfluenceQueue::begin() const
-{ return m_queue.begin(); }
-
-InfluenceQueue::const_iterator InfluenceQueue::end() const
-{ return m_queue.end(); }
-
-InfluenceQueue::const_iterator InfluenceQueue::find(const std::string& item_name) const {
-    for (auto it = begin(); it != end(); ++it) {
-        if (it->name == item_name)
-            return it;
-    }
-    return end();
-}
-
-const InfluenceQueue::Element& InfluenceQueue::operator[](int i) const {
-    assert(0 <= i && i < static_cast<int>(m_queue.size()));
+const InfluenceQueue::Element& InfluenceQueue::operator[](std::size_t i) const {
+    if (i >= m_queue.size())
+        return EMPTY_ELEMENT;
     return m_queue[i];
 }
+
+const InfluenceQueue::Element& InfluenceQueue::operator[](int i) const
+{ return operator[](static_cast<std::size_t>(i)); }
 
 void InfluenceQueue::Update() {
     const Empire* empire = GetEmpire(m_empire_id);
@@ -165,35 +148,13 @@ void InfluenceQueue::Update() {
     InfluenceQueueChangedSignal();
 }
 
-void InfluenceQueue::push_back(const Element& element)
-{ m_queue.push_back(element); }
-
-void InfluenceQueue::insert(iterator it, const Element& element)
-{ m_queue.insert(it, element); }
-
 void InfluenceQueue::erase(int i) {
-    assert(i <= static_cast<int>(size()));
-    m_queue.erase(begin() + i);
+    if (i > 0 && i < static_cast<int>(m_queue.size()))
+        m_queue.erase(begin() + i);
 }
 
-InfluenceQueue::iterator InfluenceQueue::erase(iterator it) {
-    assert(it != end());
-    return m_queue.erase(it);
-}
-
-InfluenceQueue::iterator InfluenceQueue::begin()
-{ return m_queue.begin(); }
-
-InfluenceQueue::iterator InfluenceQueue::end()
-{ return m_queue.end(); }
-
-InfluenceQueue::iterator InfluenceQueue::find(const std::string& item_name) {
-    for (auto it = begin(); it != end(); ++it) {
-        if (it->name == item_name)
-            return it;
-    }
-    return end();
-}
+InfluenceQueue::iterator InfluenceQueue::find(const std::string& item_name)
+{ return std::find_if(begin(), end(), [&](const auto& e) { return e.name == item_name; }); }
 
 InfluenceQueue::Element& InfluenceQueue::operator[](int i) {
     assert(0 <= i && i < static_cast<int>(m_queue.size()));
