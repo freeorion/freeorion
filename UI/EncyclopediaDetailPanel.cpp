@@ -1453,7 +1453,6 @@ namespace {
         if (GetOptionsDB().Get<bool>("resource.effects.description.shown") && !policy->Effects().empty()) {
             detailed_description += "\n" + Dump(policy->Effects());
         }
-
     }
 
     void RefreshDetailPanelBuildingTypeTag( const std::string& item_type, const std::string& item_name,
@@ -1628,15 +1627,15 @@ namespace {
         auto policies = empire->AdoptedPolicies();
         if (!policies.empty()) {
             detailed_description += "\n" + UserString("ADOPTED_POLICIES");
-            for (const auto& entry : policies) {
+            for (const auto& policy_name : policies) {
                 detailed_description += "\n";
                 std::string turn_text;
-                int turn = empire->TurnPolicyAdopted(entry);
+                int turn = empire->TurnPolicyAdopted(policy_name);
                 if (turn == BEFORE_FIRST_TURN)
                     turn_text = UserString("BEFORE_FIRST_TURN");
                 else
                     turn_text = UserString("TURN") + " " + std::to_string(turn);
-                detailed_description += LinkTaggedText(VarText::TECH_TAG, entry)
+                detailed_description += LinkTaggedText(VarText::POLICY_TAG, policy_name)
                                      + " : " + turn_text;
             }
         } else {
