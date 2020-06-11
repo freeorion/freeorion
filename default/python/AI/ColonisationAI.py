@@ -122,14 +122,12 @@ def calc_max_pop(planet, species, detail):
             detail.append("%s_PCM(%d)" % (tech, POP_CONST_MOD_MAP[tech][planet_env]))
 
     for _special in planet_specials.intersection(AIDependencies.POP_FIXED_MOD_SPECIALS):
-        this_mod = sum(AIDependencies.POP_FIXED_MOD_SPECIALS[_special].get(int(psize), 0)
-                       for psize in [-1, planet.size])
+        this_mod = AIDependencies.POP_FIXED_MOD_SPECIALS[_special]
         detail.append("%s_PCM(%d)" % (_special, this_mod))
         pop_const_mod += this_mod
 
     for _special in planet_specials.intersection(AIDependencies.POP_PROPORTIONAL_MOD_SPECIALS):
-        this_mod = sum(AIDependencies.POP_PROPORTIONAL_MOD_SPECIALS[_special].get(int(psize), 0)
-                       for psize in [-1, planet.size])
+        this_mod = AIDependencies.POP_PROPORTIONAL_MOD_SPECIALS[_special]
         detail.append("%s (maxPop%+.1f)" % (_special, this_mod))
         base_pop_not_modified_by_species += this_mod
 
