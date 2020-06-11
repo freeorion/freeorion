@@ -4,7 +4,6 @@
 #include <stdexcept>
 #include "Enums.h"
 #include "Meter.h"
-#include "../util/Directories.h"
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
 

@@ -22,6 +22,5 @@ enum Visibility : int;
 enum CaptureResult : int;
 enum EffectsCauseType : int;
 enum ModeratorActionSetting : int;
-enum PathType : int;
 
 #endif // _EnumsFwd_h_

@@ -37,6 +37,7 @@
 #include "../client/human/HumanClientApp.h"
 
 #include <GG/Clr.h>
+#include <GG/utf8/checked.h>
 #include <GG/dialogs/ThreeButtonDlg.h>
 #include <GG/GUI.h>
 #include <GG/RichText/ImageBlock.h>
@@ -765,10 +766,11 @@ std::string ClientUI::FormatTimestamp(boost::posix_time::ptime timestamp) {
         // Determine local time from provided UTC timestamp
         auto local_timestamp = boost::date_time::c_local_adjustor<boost::posix_time::ptime>::utc_to_local(timestamp);
         date_format_sstream << local_timestamp;
-        TraceLogger() << "ClientUI::FormatTimestamp date formatted: " << date_format_sstream.str()
-                      << " Valid utf8?: " << (IsValidUTF8(date_format_sstream.str()) ? "yes" : "no");
+        auto date_format_str = date_format_sstream.str();
+        TraceLogger() << "ClientUI::FormatTimestamp date formatted: " << date_format_str
+                      << " Valid utf8?: " << (utf8::is_valid(date_format_str.begin(), date_format_str.end()) ? "yes" : "no");
 
-        return date_format_sstream.str();
+        return date_format_str;
     }
     return "";
 }

@@ -36,7 +36,6 @@
 #include "../universe/Species.h"
 #include "../universe/System.h"
 #include "../universe/UniverseObjectVisitors.h"
-#include "../util/Directories.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"

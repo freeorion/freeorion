@@ -11,138 +11,58 @@
 
 #include <cstdlib>
 
-#ifdef __FreeBSD__
-#include <sys/sysctl.h>
+#if defined(FREEORION_MACOSX)
+#  include <iostream>
+#  include <sys/param.h>
+#  include <mach-o/dyld.h>
+#  include <CoreFoundation/CoreFoundation.h>
 #endif
 
-namespace fs = boost::filesystem;
-
-namespace {
-    bool g_initialized = false;
-    fs::path bin_dir = fs::initial_path();
-}
-
-#if defined(FREEORION_MACOSX)
-
-#include <iostream>
-#include <sys/param.h>
-#include <CoreFoundation/CoreFoundation.h>
-#include <mach-o/dyld.h>
-
-/* sets up the directories in the following way:
-   localdir: ~/Library/FreeOrion
-   globaldir: FreeOrion.app/Contents/Resources
-   bindir:  FreeOrion.app/Contents/Executables
-   configpath: ~/Library/FreeOrion/config.xml
-   pythonhome: FreeOrion.app/Contents/Frameworks/Python.framework/Versions/{PythonMajor}.{PythonMinor}
-*/
-namespace {
-    fs::path   s_user_dir;
-    fs::path   s_root_data_dir;
-    fs::path   s_bin_dir;
-    fs::path   s_config_path;
-    fs::path   s_python_home;
-}
-
-void InitBinDir(const std::string& argv0);
-
-void InitDirs(const std::string& argv0) {
-    if (g_initialized)
-        return;
-
-    // store working dir
-    fs::initial_path();
-    fs::path bundle_path;
-    fs::path app_path;
-
-    CFBundleRef bundle = CFBundleGetMainBundle();
-    char bundle_dir[MAXPATHLEN];
-
-    if (bundle) {
-        CFURLRef bundleurl = CFBundleCopyBundleURL(bundle);
-        CFURLGetFileSystemRepresentation(bundleurl, true, reinterpret_cast<UInt8*>(bundle_dir), MAXPATHLEN);
-    } else {
-        // executable is not the main binary in application bundle (i.e. Server or AI)
-        uint32_t size = sizeof(bundle_dir);
-        if (_NSGetExecutablePath(bundle_dir, &size) != 0) {
-            std::cerr << "_NSGetExecutablePath() failed: buffer too small; need size " << size << std::endl;
-            exit(-1);
-        }
-    }
-
-    bundle_path = fs::path(bundle_dir);
-
-    // search bundle_path for a directory named "FreeOrion.app", exiting if not found, else constructing a path to application bundle contents
-    auto appiter = std::find(bundle_path.begin(), bundle_path.end(), "FreeOrion.app");
-    if (appiter == bundle_path.end()) {
-        std::cerr << "Error: Application bundle must be named 'FreeOrion.app' and executables must not be called from outside of it." << std::endl;
-        exit(-1);
-    } else {
-        for (auto piter = bundle_path.begin(); piter != appiter; ++piter) {
-            app_path /= *piter;
-        }
-        app_path /= "FreeOrion.app/Contents";
-    }
-
-    s_root_data_dir =   app_path / "Resources";
-    s_user_dir      =   fs::path(getenv("HOME")) / "Library" / "Application Support" / "FreeOrion";
-    s_bin_dir       =   app_path / "Executables";
-    s_config_path   =   s_user_dir / "config.xml";
-    s_python_home   =   app_path / "Frameworks" / "Python.framework" / "Versions" / FREEORION_PYTHON_VERSION;
-
-    fs::path p = s_user_dir;
-    if (!exists(p))
-        fs::create_directories(p);
-
-    p /= "save";
-    if (!exists(p))
-        fs::create_directories(p);
-
-    // Intentionally do not create the server save dir.
-    // The server save dir is publically accessible and should not be
-    // automatically created for the user.
-
-    g_initialized = true;
-}
-
-const fs::path GetUserConfigDir() {
-    if (!g_initialized)
-        InitDirs("");
-    return s_user_dir;
-}
-
-const fs::path GetUserDataDir() {
-    if (!g_initialized)
-        InitDirs("");
-    return s_user_dir;
-}
-
-const fs::path GetRootDataDir() {
-    if (!g_initialized)
-        InitDirs("");
-    return s_root_data_dir;
-}
-
-const fs::path GetBinDir() {
-    if (!g_initialized)
-        InitDirs("");
-    return s_bin_dir;
-}
-
-const fs::path GetPythonHome() {
-    if (!g_initialized)
-        InitDirs("");
-    return s_python_home;
-}
-
-#elif defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD)
+#if defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD)
 #include "binreloc.h"
 #include <unistd.h>
 #include <boost/filesystem/fstream.hpp>
 
+#  ifdef __FreeBSD__
+#    include <sys/sysctl.h>
+#  endif
+#endif
+
+# if defined(FREEORION_WIN32) || defined(FREEORION_MACOSX) || defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD)
+# else
+#  error Neither FREEORION_LINUX, FREEORION_FREEBSD, FREEORION_OPENBSD nor FREEORION_WIN32 set
+#endif
+
+
+namespace fs = ::boost::filesystem;
+
 namespace {
-    /// Copy directory from to directory to only to a depth of safe_depth
-    void copy_directory_safe(fs::path from, fs::path to, int safe_depth) {
+    bool g_initialized = false;
+    fs::path bin_dir = fs::initial_path();
+
+    const std::string EMPTY_STRING = "";
+    const std::string PATH_BINARY_STR = "PATH_BINARY";
+    const std::string PATH_RESOURCE_STR = "PATH_RESOURCE";
+    const std::string PATH_DATA_ROOT_STR = "PATH_DATA_ROOT";
+    const std::string PATH_DATA_USER_STR = "PATH_DATA_USER";
+    const std::string PATH_CONFIG_STR = "PATH_CONFIG";
+    const std::string PATH_SAVE_STR = "PATH_SAVE";
+    const std::string PATH_TEMP_STR = "PATH_TEMP";
+    const std::string PATH_PYTHON_STR = "PATH_PYTHON";
+    const std::string PATH_INVALID_STR = "PATH_INVALID";
+
+#if defined(FREEORION_MACOSX)
+    fs::path   s_user_dir;
+    fs::path   s_root_data_dir;
+    fs::path   s_bin_dir;
+    //! pythonhome: FreeOrion.app/Contents/Frameworks/Python.framework/Versions/{PythonMajor}.{PythonMinor}
+    fs::path   s_python_home;
+#endif
+
+#if defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD)
+    //! Copy directory from to directory to only to a depth of safe_depth
+    void copy_directory_safe(fs::path from, fs::path to, int safe_depth)
+    {
         if (safe_depth < 0)
             return;
 
@@ -158,13 +78,15 @@ namespace {
         }
     }
 
-    /** If the old configuration directory exists, but neither
-        the XDG_CONFIG_DIR nor the XDG_DATA_DIR exist then
-        copy the config and data files and inform the user.
-
-        It also updates the data dir in the config.xml and persisten_config.xml files.
-     */
-    void MigrateOldConfigDirsToXDGLocation() {
+    //! Migrate existing old FreeOrion configuration directory to XDG Base Dir
+    //!
+    //! If the old configuration directory exists, but neither
+    //! the XDG_CONFIG_DIR nor the XDG_DATA_DIR exist then copy the config and
+    //! data files and inform the user.
+    //!
+    //! It also updates the data dir in the config.xml and persisten_config.xml files.
+    void MigrateOldConfigDirsToXDGLocation()
+    {
         const fs::path old_path = fs::path(getenv("HOME")) / ".freeorion";
         const fs::path config_path = GetUserConfigDir();
         const fs::path data_path = GetUserDataDir();
@@ -230,90 +152,60 @@ namespace {
 
         std::cout << msg.str();
     }
-
+#endif
 }
 
-void InitBinDir(const std::string& argv0);
-
-void InitDirs(const std::string& argv0) {
-    if (g_initialized)
-        return;
-
-    /* store working dir.  some implimentations get the value of initial_path
-     * from the value of current_path the first time initial_path is called,
-     * so it is necessary to call initial_path as soon as possible after
-     * starting the program, so that current_path doesn't have a chance to
-     * change before initial_path is initialized. */
-    fs::initial_path();
-
-    br_init(nullptr);
-
-    MigrateOldConfigDirsToXDGLocation();
-
-    fs::path cp = GetUserConfigDir();
-    if (!exists(cp)) {
-        fs::create_directories(cp);
-    }
-
-    fs::path p = GetUserDataDir();
-    if (!exists(p)) {
-        fs::create_directories(p);
-    }
-
-    p /= "save";
-    if (!exists(p)) {
-        fs::create_directories(p);
-    }
-
-    // Intentionally do not create the server save dir.
-    // The server save dir is publically accessible and should not be
-    // automatically created for the user.
-
-    InitBinDir(argv0);
-
-    g_initialized = true;
-}
-
-const fs::path GetUserConfigDir() {
-    static fs::path p = getenv("XDG_CONFIG_HOME")
-        ? fs::path(getenv("XDG_CONFIG_HOME")) / "freeorion"
-        : fs::path(getenv("HOME")) / ".config" / "freeorion";
-    return p;
-}
-
-const fs::path GetUserDataDir() {
-    static fs::path p = getenv("XDG_DATA_HOME")
-        ? fs::path(getenv("XDG_DATA_HOME")) / "freeorion"
-        : fs::path(getenv("HOME")) / ".local" / "share" / "freeorion";
-    return p;
-}
-
-const fs::path GetRootDataDir() {
-    if (!g_initialized) InitDirs("");
-    char* dir_name = br_find_data_dir(SHAREPATH);
-    fs::path p(dir_name);
-    std::free(dir_name);
-    p /= "freeorion";
-    // if the path does not exist, we fall back to the working directory
-    if (!exists(p)) {
-        return fs::initial_path();
-    } else {
-        return p;
+auto PathTypeToString(PathType path_type) -> std::string const&
+{
+    switch (path_type) {
+        case PATH_BINARY:       return PATH_BINARY_STR;
+        case PATH_RESOURCE:     return PATH_RESOURCE_STR;
+        case PATH_PYTHON:       return PATH_PYTHON_STR;
+        case PATH_DATA_ROOT:    return PATH_DATA_ROOT_STR;
+        case PATH_DATA_USER:    return PATH_DATA_USER_STR;
+        case PATH_CONFIG:       return PATH_CONFIG_STR;
+        case PATH_SAVE:         return PATH_SAVE_STR;
+        case PATH_TEMP:         return PATH_TEMP_STR;
+        case PATH_INVALID:      return PATH_INVALID_STR;
+        default:                return EMPTY_STRING;
     }
 }
 
-const fs::path GetBinDir() {
-    if (!g_initialized) InitDirs("");
-    return bin_dir;
+auto PathTypeStrings() -> std::vector<std::string> const&
+{
+    static std::vector<std::string> path_type_list;
+    if (path_type_list.empty()) {
+        for (auto path_type = PathType(0); path_type < PATH_INVALID; path_type = PathType(path_type + 1)) {
+            // PATH_PYTHON is only valid for FREEORION_WIN32 or FREEORION_MACOSX
+#if defined(FREEORION_LINUX)
+            if (path_type == PATH_PYTHON)
+                continue;
+#endif
+            path_type_list.push_back(PathTypeToString(path_type));
+        }
+    }
+    return path_type_list;
 }
 
-void InitBinDir(const std::string& argv0) {
+void InitBinDir(std::string const& argv0)
+{
+#if defined(FREEORION_WIN32)
+    try {
+        fs::path binary_file = fs::system_complete(FilenameToPath(argv0));
+        bin_dir = binary_file.branch_path();
+    } catch (const fs::filesystem_error &) {
+        bin_dir = fs::initial_path();
+    }
+#elif defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD)
     bool problem = false;
     try {
         // get this executable's path by following link
         char buf[2048] = {'\0'};
 
-#ifdef __FreeBSD__
+#if defined(FREEORION_LINUX)
+        problem = (-1 == readlink("/proc/self/exe", buf, sizeof(buf) - 1));
+#endif
+#if defined(FREEORION_FREEBSD)
         int mib[4];
         mib[0] = CTL_KERN;
         mib[1] = KERN_PROC;
@@ -321,7 +213,8 @@ void InitBinDir(const std::string& argv0) {
         mib[3] = -1;
         size_t buf_size = sizeof(buf);
         sysctl(mib, 4, buf, &buf_size, 0, 0);
-#elif defined(__OpenBSD__)
+#endif
+#if defined(FREEORION_OPENBSD)
         // OpenBSD does not have executable path's retrieval feature
         std::string argpath(argv0);
         boost::erase_all(argpath, "\"");
@@ -329,8 +222,6 @@ void InitBinDir(const std::string& argv0) {
             problem = (nullptr == realpath(argpath.c_str(), buf));
         else
             strncpy(buf, argpath.c_str(), sizeof(buf));
-#else
-        problem = (-1 == readlink("/proc/self/exe", buf, sizeof(buf) - 1));
 #endif
 
         if (!problem) {
@@ -364,16 +255,101 @@ void InitBinDir(const std::string& argv0) {
             bin_dir = p;
         }
     }
+#elif defined(FREEORION_MACOSX)
+    // no binary directory setup required.
+#endif
 }
 
-#elif defined(FREEORION_WIN32)
 
-void InitBinDir(const std::string& argv0);
-
-void InitDirs(const std::string& argv0) {
+void InitDirs(std::string const& argv0)
+{
     if (g_initialized)
         return;
 
+#if defined(FREEORION_MACOSX)
+    // store working dir
+    fs::initial_path();
+    fs::path bundle_path;
+    fs::path app_path;
+
+    CFBundleRef bundle = CFBundleGetMainBundle();
+    char bundle_dir[MAXPATHLEN];
+
+    if (bundle) {
+        CFURLRef bundleurl = CFBundleCopyBundleURL(bundle);
+        CFURLGetFileSystemRepresentation(bundleurl, true, reinterpret_cast<UInt8*>(bundle_dir), MAXPATHLEN);
+    } else {
+        // executable is not the main binary in application bundle (i.e. Server or AI)
+        uint32_t size = sizeof(bundle_dir);
+        if (_NSGetExecutablePath(bundle_dir, &size) != 0) {
+            std::cerr << "_NSGetExecutablePath() failed: buffer too small; need size " << size << std::endl;
+            exit(-1);
+        }
+    }
+
+    bundle_path = fs::path(bundle_dir);
+
+    // search bundle_path for a directory named "FreeOrion.app", exiting if not found, else constructing a path to application bundle contents
+    auto appiter = std::find(bundle_path.begin(), bundle_path.end(), "FreeOrion.app");
+    if (appiter == bundle_path.end()) {
+        std::cerr << "Error: Application bundle must be named 'FreeOrion.app' and executables must not be called from outside of it." << std::endl;
+        exit(-1);
+    } else {
+        for (auto piter = bundle_path.begin(); piter != appiter; ++piter) {
+            app_path /= *piter;
+        }
+        app_path /= "FreeOrion.app/Contents";
+    }
+
+    s_root_data_dir =   app_path / "Resources";
+    s_user_dir      =   fs::path(getenv("HOME")) / "Library" / "Application Support" / "FreeOrion";
+    s_bin_dir       =   app_path / "Executables";
+    s_python_home   =   app_path / "Frameworks" / "Python.framework" / "Versions" / FREEORION_PYTHON_VERSION;
+
+    fs::path p = s_user_dir;
+    if (!exists(p))
+        fs::create_directories(p);
+
+    p /= "save";
+    if (!exists(p))
+        fs::create_directories(p);
+
+    // Intentionally do not create the server save dir.
+    // The server save dir is publically accessible and should not be
+    // automatically created for the user.
+#elif defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD)
+    /* store working dir.  some implimentations get the value of initial_path
+     * from the value of current_path the first time initial_path is called,
+     * so it is necessary to call initial_path as soon as possible after
+     * starting the program, so that current_path doesn't have a chance to
+     * change before initial_path is initialized. */
+    fs::initial_path();
+
+    br_init(nullptr);
+
+    MigrateOldConfigDirsToXDGLocation();
+
+    fs::path cp = GetUserConfigDir();
+    if (!exists(cp)) {
+        fs::create_directories(cp);
+    }
+
+    fs::path p = GetUserDataDir();
+    if (!exists(p)) {
+        fs::create_directories(p);
+    }
+
+    p /= "save";
+    if (!exists(p)) {
+        fs::create_directories(p);
+    }
+
+    // Intentionally do not create the server save dir.
+    // The server save dir is publically accessible and should not be
+    // automatically created for the user.
+
+    InitBinDir(argv0);
+#elif defined(FREEORION_WIN32)
     fs::path local_dir = GetUserConfigDir();
     if (!exists(local_dir))
         fs::create_directories(local_dir);
@@ -387,45 +363,102 @@ void InitDirs(const std::string& argv0) {
     // automatically created for the user.
 
     InitBinDir(argv0);
+#endif
 
     g_initialized = true;
 }
 
-const fs::path GetUserConfigDir() {
+
+auto GetUserConfigDir() -> fs::path const
+{
+#if defined(FREEORION_MACOSX) || defined(FREEORION_WIN32)
+    return GetUserDataDir();
+#elif defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD)
+    static fs::path p = getenv("XDG_CONFIG_HOME")
+        ? fs::path(getenv("XDG_CONFIG_HOME")) / "freeorion"
+        : fs::path(getenv("HOME")) / ".config" / "freeorion";
+    return p;
+#endif
+}
+
+
+auto GetUserDataDir() -> fs::path const
+{
+#if defined(FREEORION_MACOSX)
+    if (!g_initialized)
+        InitDirs("");
+    return s_user_dir;
+#elif defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD)
+    static fs::path p = getenv("XDG_DATA_HOME")
+        ? fs::path(getenv("XDG_DATA_HOME")) / "freeorion"
+        : fs::path(getenv("HOME")) / ".local" / "share" / "freeorion";
+    return p;
+#elif defined(FREEORION_WIN32)
     static fs::path p = fs::path(std::wstring(_wgetenv(L"APPDATA"))) / "FreeOrion";
     return p;
+#endif
 }
 
-const fs::path GetUserDataDir() {
-    static fs::path p = fs::path(std::wstring(_wgetenv(L"APPDATA"))) / "FreeOrion";
-    return p;
-}
 
-const fs::path GetRootDataDir()
-{ return fs::initial_path(); }
-
-const fs::path GetBinDir() {
-    if (!g_initialized) InitDirs("");
-    return bin_dir;
-}
-
-const fs::path GetPythonHome()
-{ return GetBinDir(); }
-
-void InitBinDir(const std::string& argv0) {
-    try {
-        fs::path binary_file = fs::system_complete(FilenameToPath(argv0));
-        bin_dir = binary_file.branch_path();
-    } catch (const fs::filesystem_error &) {
-        bin_dir = fs::initial_path();
+auto GetRootDataDir() -> fs::path const
+{
+#if defined(FREEORION_MACOSX)
+    if (!g_initialized)
+        InitDirs("");
+    return s_root_data_dir;
+#elif defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD)
+    if (!g_initialized)
+        InitDirs("");
+    char* dir_name = br_find_data_dir(SHAREPATH);
+    fs::path p(dir_name);
+    std::free(dir_name);
+    p /= "freeorion";
+    // if the path does not exist, we fall back to the working directory
+    if (!exists(p)) {
+        return fs::initial_path();
+    } else {
+        return p;
     }
+#elif defined(FREEORION_WIN32)
+    return fs::initial_path();
+#endif
 }
 
-#else
-#  error Neither FREEORION_LINUX, FREEORION_FREEBSD, FREEORION_OPENBSD nor FREEORION_WIN32 set
+
+auto GetBinDir() -> fs::path const
+{
+#if defined(FREEORION_MACOSX)
+    if (!g_initialized)
+        InitDirs("");
+    return s_bin_dir;
+#elif defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD)
+    if (!g_initialized)
+        InitDirs("");
+    return bin_dir;
+#elif defined(FREEORION_WIN32)
+    if (!g_initialized)
+        InitDirs("");
+    return bin_dir;
+#endif
+}
+
+
+#if defined(FREEORION_MACOSX) || defined(FREEORION_WIN32)
+auto GetPythonHome() -> fs::path const
+{
+#if defined(FREEORION_MACOSX)
+    if (!g_initialized)
+        InitDirs("");
+    return s_python_home;
+#elif defined(FREEORION_WIN32)
+    return GetBinDir();
+#endif
+}
 #endif
 
-void CompleteXDGMigration() {
+
+void CompleteXDGMigration()
+{
     fs::path sentinel = GetUserDataDir() / "MIGRATION_TO_XDG_IN_PROGRESS";
     if (exists(sentinel)) {
         fs::remove(sentinel);
@@ -437,7 +470,8 @@ void CompleteXDGMigration() {
     }
 }
 
-const fs::path GetResourceDir() {
+auto GetResourceDir() -> fs::path const
+{
     // if resource dir option has been set, use specified location. otherwise,
     // use default location
     std::string options_resource_dir = GetOptionsDB().Get<std::string>("resource.path");
@@ -452,17 +486,20 @@ const fs::path GetResourceDir() {
     return dir;
 }
 
-const fs::path GetConfigPath() {
+auto GetConfigPath() -> fs::path const
+{
     static const fs::path p = GetUserConfigDir() / "config.xml";
     return p;
 }
 
-const fs::path GetPersistentConfigPath() {
+auto GetPersistentConfigPath() -> fs::path const
+{
     static const fs::path p = GetUserConfigDir() / "persistent_config.xml";
     return p;
 }
 
-const fs::path GetSaveDir() {
+auto GetSaveDir() -> fs::path const
+{
     // if save dir option has been set, use specified location.  otherwise,
     // use default location
     std::string options_save_dir = GetOptionsDB().Get<std::string>("save.path");
@@ -471,7 +508,8 @@ const fs::path GetSaveDir() {
     return FilenameToPath(options_save_dir);
 }
 
-const fs::path GetServerSaveDir() {
+auto GetServerSaveDir() -> fs::path const
+{
     // if server save dir option has been set, use specified location.  otherwise,
     // use default location
     std::string options_save_dir = GetOptionsDB().Get<std::string>("save.server.path");
@@ -480,7 +518,8 @@ const fs::path GetServerSaveDir() {
     return FilenameToPath(options_save_dir);
 }
 
-fs::path RelativePath(const fs::path& from, const fs::path& to) {
+auto RelativePath(fs::path const& from, fs::path const& to) -> fs::path
+{
     fs::path retval;
     fs::path from_abs = fs::absolute(from);
     fs::path to_abs = fs::absolute(to);
@@ -499,37 +538,36 @@ fs::path RelativePath(const fs::path& from, const fs::path& to) {
     return retval;
 }
 
+auto FilenameToPath(std::string const& path_str) -> fs::path
+{
 #if defined(FREEORION_WIN32)
-
-std::string PathToString(const fs::path& path) {
-    fs::path::string_type native_string = path.generic_wstring();
-    std::string retval;
-    utf8::utf16to8(native_string.begin(), native_string.end(), std::back_inserter(retval));
-    return retval;
-}
-
-fs::path FilenameToPath(const std::string& path_str) {
     // convert UTF-8 directory string to UTF-16
-    boost::filesystem::path::string_type directory_native;
+    fs::path::string_type directory_native;
     utf8::utf8to16(path_str.begin(), path_str.end(), std::back_inserter(directory_native));
 #if (BOOST_VERSION >= 106300)
     return fs::path(directory_native).generic_path();
 #else
     return fs::path(directory_native);
 #endif
+#else // defined(FREEORION_WIN32)
+    return fs::path(path_str);
+#endif // defined(FREEORION_WIN32)
 }
 
+auto PathToString(fs::path const& path) -> std::string
+{
+#if defined(FREEORION_WIN32)
+    fs::path::string_type native_string = path.generic_wstring();
+    std::string retval;
+    utf8::utf16to8(native_string.begin(), native_string.end(), std::back_inserter(retval));
+    return retval;
 #else // defined(FREEORION_WIN32)
-
-std::string PathToString(const fs::path& path)
-{ return path.string(); }
-
-fs::path FilenameToPath(const std::string& path_str)
-{ return fs::path(path_str); }
-
+    return path.string();
 #endif // defined(FREEORION_WIN32)
+}
 
-std::string FilenameTimestamp() {
+auto FilenameTimestamp() -> std::string
+{
     boost::posix_time::time_facet* facet = new boost::posix_time::time_facet("%Y%m%d_%H%M%S");
     std::stringstream date_stream;
 
@@ -550,10 +588,11 @@ std::string FilenameTimestamp() {
     return retval;
 }
 
-bool IsFOCScript(const boost::filesystem::path& path)
+auto IsFOCScript(const fs::path& path) -> bool
 { return fs::is_regular_file(path) && ".txt" == path.extension() && path.stem().extension() == ".focs"; }
 
-std::vector<fs::path> ListDir(const fs::path& path, std::function<bool (const fs::path&)> predicate) {
+auto ListDir(const fs::path& path, std::function<bool (const fs::path&)> predicate) -> std::vector<fs::path>
+{
     std::vector<fs::path> retval;
 
     if (!predicate)
@@ -582,10 +621,8 @@ std::vector<fs::path> ListDir(const fs::path& path, std::function<bool (const fs
     return retval;
 }
 
-bool IsValidUTF8(const std::string& in)
-{ return utf8::is_valid(in.begin(), in.end()); }
-
-bool IsInDir(const fs::path& dir, const fs::path& test_dir) {
+auto IsInDir(fs::path const& dir, fs::path const& test_dir) -> bool
+{
     if (!fs::exists(dir) || !fs::is_directory(dir))
         return false;
 
@@ -611,7 +648,8 @@ bool IsInDir(const fs::path& dir, const fs::path& test_dir) {
     return std::equal(canon_dir.begin(), canon_dir.end(), canon_path.begin());
 }
 
-fs::path GetPath(PathType path_type) {
+auto GetPath(PathType path_type) -> fs::path
+{
     switch (path_type) {
     case PATH_BINARY:
         return GetBinDir();
@@ -638,7 +676,8 @@ fs::path GetPath(PathType path_type) {
     }
 }
 
-fs::path GetPath(const std::string& path_string) {
+auto GetPath(std::string const& path_string) -> fs::path
+{
     if (path_string.empty()) {
         ErrorLogger() << "GetPath called with empty argument";
         return fs::temp_directory_path();
@@ -664,11 +703,12 @@ fs::path GetPath(const std::string& path_string) {
     return GetPath(path_type);
 }
 
-bool IsExistingFile(const fs::path& path) {
+auto IsExistingFile(const fs::path& path) -> bool
+{
     try {
         auto stat = fs::status(path);
         return fs::exists(stat) && fs::is_regular_file(stat);
-    } catch(boost::filesystem::filesystem_error& ec) {
+    } catch(fs::filesystem_error& ec) {
         ErrorLogger() << "Filesystem error during stat of " << PathToString(path) << " : " << ec.what();
     }
 

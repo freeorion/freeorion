@@ -5,9 +5,9 @@
 #include "OptionsWnd.h"
 #include "../client/human/HumanClientApp.h"
 #include "../network/Networking.h"
+#include "../util/Directories.h"
 #include "../util/i18n.h"
 #include "../util/OptionsDB.h"
-#include "../util/Directories.h"
 #include "../util/Logger.h"
 #include "../util/SaveGamePreviewUtils.h"
 #include "../util/VarText.h"
@@ -533,7 +533,7 @@ public:
                 fs::path last_bit_of_path = it->path().filename();
                 std::string utf8_dir_name = PathToString(last_bit_of_path);
                 DebugLogger() << "SaveFileDialog::FindLocalRelativeDirs name: " << utf8_dir_name
-                              << " valid UTF-8: " << IsValidUTF8(utf8_dir_name);
+                              << " valid UTF-8: " << utf8::is_valid(utf8_dir_name.begin(), utf8_dir_name.end());
                 dirs.push_back(utf8_dir_name);
             }
         }
@@ -798,13 +798,13 @@ void SaveFileDialog::Confirm() {
     }
 
     fs::path choice_path = FilenameToPath(choice);
-    DebugLogger() << "choice: " << choice << " valid utf-8: " << IsValidUTF8(choice);
+    DebugLogger() << "choice: " << choice << " valid utf-8: " << utf8::is_valid(choice.begin(), choice.end());
 
     fs::path current_dir = FilenameToPath(GetDirPath());
-    DebugLogger() << "current dir PathString: " << PathToString(current_dir) << " valid utf-8: " << IsValidUTF8(PathToString(current_dir));
+    DebugLogger() << "current dir PathString: " << PathToString(current_dir) << " valid utf-8: " << utf8::is_valid(PathToString(current_dir).begin(), PathToString(current_dir).end());
 
     fs::path chosen_full_path = current_dir / choice_path;
-    DebugLogger() << "chosen_full_path PathString: " << PathToString(chosen_full_path) << " valid utf-8: " << IsValidUTF8(PathToString(chosen_full_path));
+    DebugLogger() << "chosen_full_path PathString: " << PathToString(chosen_full_path) << " valid utf-8: " << utf8::is_valid(PathToString(chosen_full_path).begin(), PathToString(chosen_full_path).end());
     DebugLogger() << "chosen_full_path is directory? : " << fs::is_directory(chosen_full_path);
 
     if (fs::is_directory(chosen_full_path)) {

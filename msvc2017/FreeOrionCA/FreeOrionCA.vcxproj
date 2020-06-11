@@ -202,7 +202,6 @@
     <ClInclude Include="..\..\universe\ValueRefs.h" />
     <ClInclude Include="..\..\util\AppInterface.h" />
     <ClInclude Include="..\..\util\binreloc.h" />
-    <ClInclude Include="..\..\util\Directories.h" />
     <ClInclude Include="..\..\util\MultiplayerCommon.h" />
     <ClInclude Include="..\..\util\GameRules.h" />
     <ClInclude Include="..\..\util\i18n.h" />

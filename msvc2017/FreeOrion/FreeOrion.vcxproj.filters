@@ -279,9 +279,6 @@
     <ClInclude Include="..\..\util\binreloc.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\util\Directories.h">
-      <Filter>Header Files\util</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\universe\IDAllocator.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>

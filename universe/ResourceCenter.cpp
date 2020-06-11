@@ -8,7 +8,6 @@
 #include "System.h"
 #include "../Empire/Empire.h"
 #include "../util/AppInterface.h"
-#include "../util/Directories.h"
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
 

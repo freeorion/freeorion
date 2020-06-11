@@ -7,7 +7,6 @@
 #include "../universe/Condition.h"
 #include "../universe/Universe.h"
 #include "../universe/FleetPlan.h"
-#include "../util/Directories.h"
 
 #include <boost/spirit/include/phoenix.hpp>
 

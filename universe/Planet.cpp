@@ -13,7 +13,6 @@
 #include "ValueRef.h"
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Empire.h"
-#include "../util/Directories.h"
 #include "../util/GameRules.h"
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
