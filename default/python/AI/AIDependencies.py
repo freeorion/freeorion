@@ -208,7 +208,7 @@ for metab, boosts in metabolismBoostMap.items():
 # Regardless of whether the sub-dictionary here has PlanetSize keys, the final
 # value will be applied as a *fixed-size mod* to the max population
 POP_FIXED_MOD_SPECIALS = {
-    'DIM_RIFT_MASTER_SPECIAL': {-1: -4},
+    'DIM_RIFT_MASTER_SPECIAL': -4,
 }
 
 # Please see the Note at top of this file regarding PlanetSize-Dependent-Lookup
@@ -221,12 +221,8 @@ POP_FIXED_MOD_SPECIALS = {
 # Regardless of whether the sub-dictionary here has PlanetSize keys, the final
 # value will be applied as a fixed-size mod to the max population
 POP_PROPORTIONAL_MOD_SPECIALS = {
-    'TIDAL_LOCK_SPECIAL': {
-        -1: -1,
-    },
-    'TEMPORAL_ANOMALY_SPECIAL': {
-        -1: -5,
-    },
+    'TIDAL_LOCK_SPECIAL': -1,
+    'TEMPORAL_ANOMALY_SPECIAL': -5,
 }
 # </editor-fold>
 
