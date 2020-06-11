@@ -5,7 +5,6 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include <boost/serialization/access.hpp>
 #include "../util/Export.h"
 
 
@@ -104,10 +103,6 @@ private:
     friend struct MatchHelper;
 
     virtual bool Match(const ScriptingContext& local_context) const;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 }
