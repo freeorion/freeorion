@@ -2,9 +2,7 @@
 #define _Building_h_
 
 
-#include "ObjectMap.h"
 #include "UniverseObject.h"
-#include "../util/Export.h"
 
 
 //! A Building UniverseObject type.
