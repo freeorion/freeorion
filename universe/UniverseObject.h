@@ -4,7 +4,6 @@
 
 #include <set>
 #include <string>
-#include <vector>
 #include <boost/container/flat_map.hpp>
 #include <boost/python/detail/destroy.hpp>
 #include <boost/serialization/access.hpp>

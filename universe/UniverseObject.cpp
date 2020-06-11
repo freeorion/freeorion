@@ -1,17 +1,12 @@
 #include "UniverseObject.h"
 
-#include <stdexcept>
-#include <boost/lexical_cast.hpp>
 #include "Enums.h"
 #include "Pathfinder.h"
-#include "Special.h"
 #include "System.h"
 #include "UniverseObjectVisitor.h"
-#include "Universe.h"
 #include "../Empire/EmpireManager.h"
 #include "../util/AppInterface.h"
 #include "../util/Logger.h"
-#include "../util/i18n.h"
 
 
 int const INVALID_OBJECT_ID      = -1;
