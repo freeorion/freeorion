@@ -110,29 +110,27 @@ public:
     /** \name Accessors */ ///@{
     Pt MinUsableSize() const override;
 
-    std::size_t      Rows() const;                             ///< returns the number of rows in the layout
-    std::size_t      Columns() const;                          ///< returns the number of columns in the layout
-    Flags<Alignment> ChildAlignment(const Wnd* wnd) const;     ///< returns the aligment of child \a wnd.  \throw GG::Layout::NoSuchChild Throws if no such child exists.
-    unsigned int     BorderMargin() const;                     ///< returns the number of pixels that the layout will leave between its edges and the windows it contains
-    unsigned int     CellMargin() const;                       ///< returns the number of pixels the layout leaves between the edges of windows in adjacent cells
-    double           RowStretch(std::size_t row) const;        ///< returns the stretch factor for row \a row.  Note that \a row is not range-checked.
-    double           ColumnStretch(std::size_t column) const;  ///< returns the stretch factor for column \a column.  Note that \a column is not range-checked.
-    Y                MinimumRowHeight(std::size_t row) const;  ///< returns the minimum height allowed for row \a row.  Note that \a row is not range-checked.
-    X                MinimumColumnWidth(std::size_t column) const; ///< returns the minimum height allowed for column \a column.  Note that \a column is not range-checked.
-    std::vector<std::vector<const Wnd*>>
-                     Cells() const;                            ///< returns a matrix of the Wnds that can be found in each cell
-    std::vector<std::vector<Rect>>
-                     CellRects() const;                        ///< returns a matrix of rectangles in screen space that cover the cells in which child Wnds are placed
-    std::vector<std::vector<Rect>>
-                     RelativeCellRects() const;                ///< returns a matrix of rectangles in layout client space that cover the cells in which child Wnds are placed
+    std::size_t      Rows() const;
+    std::size_t      Columns() const;
+    Flags<Alignment> ChildAlignment(const Wnd* wnd) const;          //! returns the aligment of child \a wnd.  \throw GG::Layout::NoSuchChild Throws if no such child exists.
+    unsigned int     BorderMargin() const;                          //! returns the number of pixels that the layout will leave between its edges and the windows it contains
+    unsigned int     CellMargin() const;                            //! returns the number of pixels the layout leaves between the edges of windows in adjacent cells
+    double           RowStretch(std::size_t row) const;             //! returns the stretch factor for row \a row.  Note that \a row is not range-checked.
+    double           ColumnStretch(std::size_t column) const;       //! returns the stretch factor for column \a column.  Note that \a column is not range-checked.
+    Y                MinimumRowHeight(std::size_t row) const;       //! returns the minimum height allowed for row \a row.  Note that \a row is not range-checked.
+    X                MinimumColumnWidth(std::size_t column) const;  //! returns the minimum height allowed for column \a column.  Note that \a column is not range-checked.
 
-    /** Returns true iff this layout will render an outline of itself; this is
-        sometimes useful for debugging purposes */
+    std::vector<std::vector<const Wnd*>>Cells() const;              //! returns a matrix of the Wnds that can be found in each cell
+    std::vector<std::vector<Rect>>      CellRects() const;          //! returns a matrix of rectangles in screen space that cover the cells in which child Wnds are placed
+    std::vector<std::vector<Rect>>      RelativeCellRects() const;  //! returns a matrix of rectangles in layout client space that cover the cells in which child Wnds are placed
+
+    //! Returns true iff this layout will render an outline of itself; this is
+    //! sometimes useful for debugging purposes
     bool   RenderOutline() const;
 
-    /** Returns the outline color used to render this layout (this is only
-        used if RenderOutline() returns true).  This is sometimes useful for
-        debugging purposes. */
+    //! Returns the outline color used to render this layout (this is only
+    //! used if RenderOutline() returns true).  This is sometimes useful for
+    //! debugging purposes
     Clr    OutlineColor() const;
     //@}
 
@@ -143,95 +141,96 @@ public:
     void SizeMove(const Pt& ul, const Pt& lr) override;
     void Render() override;
 
-    /** Inserts \a w into the layout in the indicated cell, expanding the
-        layout grid as necessary.  \throw GG::Layout::AttemptedOverwrite
-        Throws if there is already a Wnd in the given cell. */
+    //! Inserts \a w into the layout in the indicated cell, expanding the
+    //! layout grid as necessary.  \throw GG::Layout::AttemptedOverwrite
+    //! Throws if there is already a Wnd in the given cell.
     void Add(std::shared_ptr<Wnd> wnd, std::size_t row, std::size_t column, Flags<Alignment> alignment = ALIGN_NONE);
 
-    /** Inserts \a w into the layout, covering the indicated cell(s),
-        expanding the layout grid as necessary.  The num_rows and num_columns
-        indicate how many rows and columns \a w covers, respectively.  So
-        Add(foo, 1, 2, 2, 3) covers cells (1, 2) through (2, 4), inclusive.
-        Note that \a num_rows and \a num_columns must be positive, though this
-        is not checked. \throw GG::Layout::AttemptedOverwrite Throws if there
-        is already a Wnd in one of the given cells. */
-    void Add(std::shared_ptr<Wnd> wnd, std::size_t row, std::size_t column, std::size_t num_rows, std::size_t num_columns, Flags<Alignment> alignment = ALIGN_NONE);
+    //! Inserts \a w into the layout, covering the indicated cell(s),
+    //! expanding the layout grid as necessary.  The num_rows and num_columns
+    //! indicate how many rows and columns \a w covers, respectively.  So
+    //! Add(foo, 1, 2, 2, 3) covers cells (1, 2) through (2, 4), inclusive.
+    //! Note that \a num_rows and \a num_columns must be positive, though this
+    //! is not checked. \throw GG::Layout::AttemptedOverwrite Throws if there
+    //! is already a Wnd in one of the given cells.
+    void Add(std::shared_ptr<Wnd> wnd, std::size_t row, std::size_t column,
+             std::size_t num_rows, std::size_t num_columns, Flags<Alignment> alignment = ALIGN_NONE);
 
-    /** Removes \a w from the layout, recalculating the layout as needed.
-        Note that this causes the layout to relinquish responsibility for \a
-        wnd's memory management. */
+    //! Removes \a w from the layout, recalculating the layout as needed.
+    //! Note that this causes the layout to relinquish responsibility for \a
+    //! wnd's memory management.
     void Remove(Wnd* wnd);
 
-    /** Resets children to their original sizes and detaches them, so that a
-        removed Layout can leave the Wnds it lays out in their original
-        configuration when it is no longer useful. */
+    //! Resets children to their original sizes and detaches them, so that a
+    //! removed Layout can leave the Wnds it lays out in their original
+    //! configuration when it is no longer useful.
     void DetachAndResetChildren();
 
-    /** Resizes the layout to be \a rows by \a columns.  If the layout
-        shrinks, any contained windows are deleted.  Each of \a rows and \a
-        columns must be greater than 0, though this is not checked. */
+    //! Resizes the layout to be \a rows by \a columns.  If the layout
+    //! shrinks, any contained windows are deleted.  Each of \a rows and \a
+    //! columns must be greater than 0, though this is not checked.
     void ResizeLayout(std::size_t rows, std::size_t columns);
 
-    /** Sets the aligment of child \a wnd to \a alignment.  If no such child
-        exists, no action is taken. */
+    //! Sets the aligment of child \a wnd to \a alignment.  If no such child
+    //! exists, no action is taken.
     void SetChildAlignment(const Wnd* wnd, Flags<Alignment> alignment);
 
-    /** Sets the number of pixels that the layout will leave between its edges
-        and the windows it contains */
+    //! Sets the number of pixels that the layout will leave between its edges
+    //! and the windows it contains.
     void SetBorderMargin(unsigned int margin);
 
-    /** Sets the number of pixels the layout leaves between the edges of
-        windows in adjacent cells */
+    //! Sets the number of pixels the layout leaves between the edges of
+    //! windows in adjacent cells.
     void SetCellMargin(unsigned int margin);
 
-    /** Sets the amount of stretching, relative to other rows, that \a row
-        will do when the layout is resized.  0.0 indicates that the row's size
-        will not change unless all rows have 0.0 stretch as well.  Note that
-        \a row is not range-checked. */
+    //! Sets the amount of stretching, relative to other rows, that \a row
+    //! will do when the layout is resized.  0.0 indicates that the row's size
+    //! will not change unless all rows have 0.0 stretch as well.  Note that
+    //! \a row is not range-checked.
     void SetRowStretch(std::size_t row, float stretch);
 
-    /** Sets the amount of stretching, relative to other columns, that \a
-        column will do when the layout is resized.  0.0 indicates that the
-        column's size will not change unless all columns have 0.0 stretch as
-        well.  Note that \a column is not range-checked. */
+    //! Sets the amount of stretching, relative to other columns, that \a
+    //! column will do when the layout is resized.  0.0 indicates that the
+    //! column's size will not change unless all columns have 0.0 stretch as
+    //! well.  Note that \a column is not range-checked.
     void SetColumnStretch(std::size_t column, float stretch);
 
-    /** Sets the amount of stretching for columns with matching indices as
-        \a stretches */
+    //! Sets the amount of stretching for columns with matching indices as
+    //! \a stretches
     void SetColumnStretches(std::vector<float> stretches);
 
-    /** Sets the minimum height of row \a row to \a height.  Note that \a row
-        is not range-checked. */
+    //! Sets the minimum height of row \a row to \a height.  Note that \a row
+    //! is not range-checked.
     void SetMinimumRowHeight(std::size_t row, Y height);
 
-    /** Sets the minimum width of column \a column to \a width.  Note that \a
-        column is not range-checked. */
+    //! Sets the minimum width of column \a column to \a width.  Note that \a
+    //! column is not range-checked.
     void SetMinimumColumnWidth(std::size_t column, X width);
 
-    /** Sets the minimum width of columns with matching indices as \a widthss. */
+    //! Sets the minimum width of columns with matching indices as \a widths
     void SetMinimumColumnWidths(std::vector<X> widths);
 
-    /** Set this to true if this layout should render an outline of itself;
-        this is sometimes useful for debugging purposes */
+    //! Set this to true if this layout should render an outline of itself;
+    //! this is sometimes useful for debugging purposes.
     void RenderOutline(bool render_outline);
     //@}
 
     /** \name Exceptions */ ///@{
-    /** The base class for Layout exceptions. */
+    //! The base class for Layout exceptions.
     GG_ABSTRACT_EXCEPTION(Exception);
 
-    /** Thrown when a negative margin is provided. */
+    //! Thrown when a negative margin is provided.
     GG_CONCRETE_EXCEPTION(InvalidMargin, GG::Layout, Exception);
 
-    /** Thrown when a property of a nonexistent child is requested. */
+    //! Thrown when a property of a nonexistent child is requested.
     GG_CONCRETE_EXCEPTION(NoSuchChild, GG::Layout, Exception);
 
-    /** Thrown when an internal check of calculations made by the layout
-        algorithm fails. */
+    //! Thrown when an internal check of calculations made by the layout
+    //! algorithm fails.
     GG_CONCRETE_EXCEPTION(FailedCalculationCheck, GG::Layout, Exception);
 
-    /** Thrown when an attempt is made to place a Wnd in a nonempty layout
-        cell. */
+    //! Thrown when an attempt is made to place a Wnd in a nonempty layout
+    //! cell.
     GG_CONCRETE_EXCEPTION(AttemptedOverwrite, GG::Layout, Exception);
     //@}
 
@@ -245,30 +244,29 @@ protected:
 
     virtual void DoLayout(Pt ul, Pt lr);
 
-    /** Redo the layout.  This is called internally when something changes and
-        it needs to redo the layout.
-
-        Bug:  This does nothing if the size has not changed.  Fixing it to use
-        call DoLayout() even when the size has not changed breaks all text boxes.
-    */
+    //! Redo the layout.  This is called internally when something changes and
+    //! it needs to redo the layout.
+    //!
+    //! Bug:  This does nothing if the size has not changed.  Fixing it to use
+    //! call DoLayout() even when the size has not changed breaks all text boxes.
     virtual void RedoLayout();
     //@}
 
 private:
     struct GG_API RowColParams
     {
-        explicit RowColParams() = default;
+        RowColParams() = default;
 
         float        stretch = 0.0f;
         unsigned int min = 0;
-        unsigned int effective_min = 0; ///< current effective minimum size of this row or column, based on min, layout margins, and layout cell contents
-        int          current_origin = 0;///< current position of top or left side
-        unsigned int current_width = 0; ///< current extent in downward or rightward direction
+        unsigned int effective_min = 0; //! current effective minimum size of this row or column, based on min, layout margins, and layout cell contents
+        int          current_origin = 0;//! current position of top or left side
+        unsigned int current_width = 0; //! current extent in downward or rightward direction
     };
 
     struct GG_API WndPosition
     {
-        explicit WndPosition() = default;
+        WndPosition() = default;
         WndPosition(std::size_t first_row_, std::size_t first_column_,
                     std::size_t last_row_, std::size_t last_column_,
                     Flags<Alignment> alignment_, const Pt& original_ul_, const Pt& original_size_);
@@ -282,7 +280,8 @@ private:
         Pt               original_size;
     };
 
-    float  TotalStretch(const std::vector<RowColParams>& params_vec) const;
+    static float TotalStretch(const std::vector<RowColParams>& params_vec);
+
     X      TotalMinWidth() const;
     Y      TotalMinHeight() const;
     void   ValidateAlignment(Flags<Alignment>& alignment);

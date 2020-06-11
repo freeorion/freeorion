@@ -122,7 +122,7 @@ std::vector<std::vector<const Wnd*>> Layout::Cells() const
 
 std::vector<std::vector<Rect>> Layout::CellRects() const
 {
-    std::vector<std::vector<Rect>> retval = RelativeCellRects();
+    auto retval = RelativeCellRects();
     for (std::vector<Rect>& column : retval) {
         for (Rect& cell : column) {
             cell += ClientUpperLeft();
@@ -490,7 +490,7 @@ void Layout::Render()
     if (m_render_outline) {
         Pt ul = UpperLeft(), lr = LowerRight();
         FlatRectangle(ul, lr, CLR_ZERO, CLR_MAGENTA, 1);
-        auto cell_rects{CellRects()};
+        auto cell_rects{this->CellRects()};
         for (std::size_t row_idx = 0; row_idx < cell_rects.size(); ++row_idx) {
             const auto& columns{cell_rects.at(row_idx)};
             GG::Y min_row_height = std::max(GG::Y1, MinimumRowHeight(row_idx));
@@ -675,7 +675,7 @@ void Layout::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_k
 void Layout::KeyRelease(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys)
 { ForwardEventToParent(); }
 
-float Layout::TotalStretch(const std::vector<RowColParams>& params_vec) const
+float Layout::TotalStretch(const std::vector<RowColParams>& params_vec)
 {
     float retval = 0.0f;
     for (const RowColParams& param : params_vec)
