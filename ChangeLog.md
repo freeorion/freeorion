@@ -4,21 +4,172 @@ Changelog
 Notable changes to the FreeOrion project will be documented in this file.
 
 
-[v0.4.9+] - TBA
+[v0.4.10] - TBA
 ---------------
+
+### Key Changes
+
+- ???
 
 ### Detailed Changelog
 
-#### Removed features
+#### Graphics / Interface
 
-- Removed the scripting/keymaps.inf configuration file, which allowed users to remap one keycode to another to simulate keyboard layouts.
-  The functionality is already handled by the operating system and exposed by SDL2.
+- Added combat forces accordion panels to show more details
+- Zooming to an object as a chat command can look up an object by ID (as well as name)
+- Added arrived-from-system and ship production cost to objects list columns
+- Added a mouseover indicator for fields that indicates their size
+- Improved pedia search for entered text, which should now find more results, including articles generated at runtime
+- Made dark red and dark blue empire colours a bit lighter, to be easier to see on black backgrounds
+- Tweaked ship design screen layout
+- Ship design screen description reworked to be toggled active and multiline
+- Improved objects list refresh responsiveness
+- Made objects list column default wider
+- Added outer border highlighting of GUI window with input focus
+- Added widget for bold font texture file in options window
+- Moved font options to separate tab
+- Added vertical scale labels to empire statistic graphs
+- Added a right-click popup menu to empire statistic graphs, with several display options
+- Made the window resize tab bigger
+- Reworked pedia window layout, putting search bar and navigation buttons at top, similar to a web browser standard layout
+- Fixed display of circle arrow icons on production screen
+- Made options.xml contain only modified options by default, but added a button to output the full options database to the options window
+- Reworked splash / menu screen layout
+- Added time to produce at the currently selected location with available PP to production item tooltips
+- Added an option to reset empire readiness when joining a game, so orders can be revised even after they were submitted
+- Replace total cost and minimum production time with turns to produce, if fully funded, at current production location to the producible items list
+- Added indication in tooltips when production cost or minimum time are location-dependent and no location is selected
+- Added option to disable disclosure of galaxy seed
+- Prohibit typing some characters into galaxy seed text box, to prevent pedia layout script injection
+- The server stop auto-advancing turns after a player has won the game
+- Relabelled Resign button to Exit to Menu
+- Removed unused / redundant keymaps configuration file
+- Repeatedly clicking to close the game window will override the default autosave and exit faster
+
+#### Content and Balance
+
+- Stringtables
+    - Added a few names to lists used for ship names
+    - Translation updates: Spanish
+    - Cleaned up stringtables, removing duplicates from english in other languages
+    - Added stealth and slots to hull descriptions
+    - Fuel efficiency effects are now described like "-40%" instead of like "60%"
+    - Fixed some typos
+    - Corrected colony base hull description about slots
+    - Fixed descriptions of concentration camp effects
+
+- New Stuff
+    - Added Arc Disruptor ship weapon part
+    - Added sitreps for gifting to allied empires
+
+- Reworked what weapons can target fighters, ships, and planets
+    - Mass drivers, Lasers, Plasmas, Death Rays, and Spinal antimatter cannon attack ships and planets (no fighters)
+    - Interceptors attack enemy fighters only
+    - Fighters attack ships and fighters
+    - Bombers attack ships only
+    - Heavy bombers are re-enabled and attack ships and planets
+
+- Rebalanced fighters
+    - Interceptors launch 50% faster than other fighters
+    - Fighter refinement techs increase interceptor capacity and launch rate, not damage
+    - Techs increase strike fighter damage by +2, bomber damage by +3, and heavy bomber damage by +6
+    - Adjusted costs and build times
+    - Species piloting traits give -1 to +3 for all fighters except interceptors
+
+- Ships
+    - Ship production cost increases ("upkeep") also count ships on the production queue
+    - Reduced Shield part costs
+    - Colony base hulls may not mount engines or fuel parts
+    - Set Colony Base hull structure to 2
+    - Scaled up ship structure to avoid fractional numbers
+    - Increased default combat rounds from 3 to 4 and rebalanced ship structure levels accordingly
+
+- Planets
+    - Tweaked ordering of population effects for Lembala'Lam species
+    - Kobuntura prefer industry focus
+    - Normal industry and research growth only if planet happiness is at least five
+    - Force energy structure industry and research growth only if happiness is at least five
+    - Planets can be attacked in combat with nonzero infrastructure, in addition to nonzero defense or shields, so that they will be regularly attacked every turn in combat and thus not regenerate meters every other turn
+    - New colonies start with 1, 2, or 4 happiness depending on environment level
+    - Outposts have default 1 infratructure so that they can be attacked every turn
+    - Reduced some population-based bonuses to resource output to mitigate snowballing empire development
+    - Rebalanced some flat bonuses from techs and Gas Giant Generators
+    - Rebalance empire-wide pop-based specials and increase their protection
+    - Added one refinement level to Nascent Artificial Intelligence and Adaptive Automation techs
+    - Rebalanced Exobots to be adequate on all planet types and very bad a research
+
+- Empires
+    - Added separate empire affiliation for peace, distinct from allied
+    - Enabled sharing of special visibility between allied empires
+    - Added team-based player homeworld placement for multiplayer games
+
+#### Other Bug Fixes
+
+- Crashes or Disconnects
+    - Fixed potential crashes and logged errors when executing fleet move orders
+    - Fixed crash when passing empty string to set option on command line
+    - Added some safety checks to network message handling to prevent some malformed / malicious messages from crashing the server
+
+- Gameplay
+    - Fixed issue where supply propagation occasionally didn't work
+    - Fixed some production queue order issues by using unique internal IDs for all production queue items
+    - Fixed calculation of some broken empire statistics
+    - Fixed a bug where ships could be ordered to invade but then not do so
+    - Fixed bug where a fleet would not block enemy supply propagation when it should have
+    - Accounted for production epsilon to avoid rounding errors in producible items list time estimates
+    - Fixed fighter hangar capacity being increased if any ship was owned by an empire with the appropriate tech, rather than just the ship's owner having it
+    - Fixed issue with ship designs being added with conflicting IDs when loading a game
+    - Fixed ships not getting the Interstellar Logistics speed bonus on the turn they were produced
+
+- Fixed some broken pedia links in stringtable entries
+- Fixed the sitrep "Last" button when the most-recent turn doesn't have any visible sitreps
+- Fixed parsed content checksum for ShipDesigns, which was looking up the design name in the stringtable
+- Fixed issue with options being reset / lost between executions within an app bundle
 
 #### Technical / Internal
 
-- C++14 is now supported and required to compile.
-- Removed OpenGL Utility (GLU) library dependency.
-- Provide FreeDesktop.org AppStream metainfo file.
+- Dependencies and Versions
+    - Updated to support and require Python 3.5+
+    - Raised C++ language version to C++14
+    - Raised minimum required version to build with CMake to 3.5
+    - Moved to compiling with Visual Studio 2017 on Windows
+    - Removed GLU library dependency
+    - Merged SDLGUI library into FreeOrion client
+
+- Scripting
+    - Optimized some condition internal evaluation and scripted implementation
+    - Optimized evaluation of effectsgroup scopes
+    - Optimized some effect execution
+    - Reworked hull and fuel regeneration part effects
+
+- Python AI
+    - Scripted AIs to scrap Gateways to the Void that they capture
+    - Reprioritized fuel tach research
+    - Reworked logic for responding to alliance requests
+    - Exposed option to append to a fleet route in the API
+    - Exposed productionLocation functions on ship parts and hulls to check if they can be produced at a location
+    - Wrapped calls to Python functions with error handlers that log exceptions
+    - Cached some results from calls to the API to improve performance
+    - Various other internal performance improvements
+    - Exposed empire stat records
+
+- FreeOrion Content Script Interface (FOCS)
+    - Added UsedInDesignID ValueRef to access the ID of the ship design in which a part or hull is used
+    - Added arrived-from system property value ref for fleets
+    - Added ShipDesignCost ComplexValueRef
+    - Made some ValueRefs return default values rather than throwing errors when invalid properties are evaluated
+    - Added missing empire ID handling in several conditions
+    - Replaced OwnerTradeStockpile with EmpireStockpile (that refers to industry stockpiled)
+    - Added NoDefaultFuelEffect flag to hulls
+    - Added FieldType bound variable ValueRef to access what type a field is
+    - Added CombatBout ValueRef to access the current round of combat
+    - Added ValueRef access to the last turn a planet was colonized
+    - Added ContainerID property
+    - Added OnPlanet condition, which is faster than the equivalent composition of other conditions
+
+- Enabled (non-portable) binary serialization for dispatching combat logs when client and server versions are consistent
+- Provided FreeDesktop.org AppStream metainfo file
+- Fixed a compile error in GCC 5.4.0
 
 
 [v0.4.9] - 2020-02-02
