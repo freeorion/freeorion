@@ -481,16 +481,7 @@ void PoliciesListBox::Populate() {
 
     /// filter policies by availability and current designation of categories
     // for display
-    auto cats_policies = GroupAvailableDisplayablePolicies(empire);
-
-    // get empire id and location to use for cost and time comparisons
-    int loc_id = INVALID_OBJECT_ID;
-    if (empire) {
-        auto location = Objects().get(empire->CapitalID());
-        loc_id = location ? location->ID() : INVALID_OBJECT_ID;
-    }
-
-    for (auto& cat : cats_policies) {
+    for (const auto& cat : GroupAvailableDisplayablePolicies(empire)) {
         //std::cout << "  cat: " << cat.first << std::endl;
         // take the sorted policies and make UI element rows for the PoliciesListBox
         for (const auto* policy: cat.second) {
@@ -513,8 +504,6 @@ void PoliciesListBox::Populate() {
             control->RightClickedSignal.connect(PoliciesListBox::PolicyRightClickedSignal);
 
             cur_row->push_back(control);
-
-            //std::cout << "PoliciesListBox::Populate created row for policy: " << policy->Name() << std::endl;
         }
     }
     // add any incomplete rows
