@@ -10,6 +10,12 @@ BuildingType
         OwnedBy empire = Source.Owner
     ]
     EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Not Planet type = Asteroids
+            effects = Destroy
+    ]
     icon = "icons/building/shipyard-5.png"
 
 #include "/scripting/common/enqueue.macros"

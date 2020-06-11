@@ -11,6 +11,12 @@ BuildingType
         [[LOCATION_ALLOW_BUILD_IF_PREREQ_ENQUEUED(BLD_SHIPYARD_AST)]]
     ]
     EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Not Planet type = Asteroids
+            effects = Destroy
+    ]
     icon = "icons/building/shipyard-6.png"
 
 #include "/scripting/common/enqueue.macros"
