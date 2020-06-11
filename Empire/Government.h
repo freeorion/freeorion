@@ -52,7 +52,6 @@ public:
 private:
     Policy(const Policy&);                  // disabled
     const Policy& operator=(const Policy&); // disabled
-    void Init();
 
     std::string                                         m_name;
     std::string                                         m_description;

@@ -45,10 +45,6 @@ Policy::Policy(std::string name, std::string description,
     for (auto&& effect : effects)
         m_effects.emplace_back(std::move(effect));
 
-    Init();
-}
-
-void Policy::Init() {
     if (m_adoption_cost)
         m_adoption_cost->SetTopLevelContent(m_name);
 
