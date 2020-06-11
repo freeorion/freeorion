@@ -3,8 +3,6 @@
 
 
 #include "UniverseObject.h"
-#include "../util/Export.h"
-#include "../util/Pending.h"
 
 
 //! A class representing a region of space

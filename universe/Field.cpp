@@ -2,9 +2,7 @@
 
 #include "Enums.h"
 #include "FieldType.h"
-#include "Meter.h"
 #include "UniverseObjectVisitor.h"
-#include "Universe.h"
 #include "../util/AppInterface.h"
 #include "../util/i18n.h"
 
