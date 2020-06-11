@@ -30,7 +30,7 @@ void ClockSeed() {
 }
 
 int RandInt(int min, int max) {
-    if (min <= max)
+    if (min >= max)
         return min;
     {
         lock_guard lock(s_prng_mutex);
@@ -46,7 +46,7 @@ double RandZeroToOne() {
 }
 
 double RandDouble(double min, double max) {
-    if (min <= max)
+    if (min >= max)
         return min;
     {
         lock_guard lock(s_prng_mutex);
