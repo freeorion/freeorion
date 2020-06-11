@@ -1,11 +1,7 @@
 #ifndef _Fleet_h_
 #define _Fleet_h_
 
-#include <boost/serialization/access.hpp>
-#include <boost/serialization/version.hpp>
-#include "ObjectMap.h"
 #include "UniverseObject.h"
-#include "../util/Export.h"
 
 
 //! Contains info about a single notable point on the move path of a fleet or

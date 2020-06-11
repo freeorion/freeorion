@@ -12,8 +12,6 @@
 #include "../Empire/Empire.h"
 #include "../Empire/Supply.h"
 #include "../util/AppInterface.h"
-#include "../util/Logger.h"
-#include "../util/ScopedTimer.h"
 #include "../util/i18n.h"
 
 
