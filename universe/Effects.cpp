@@ -3648,7 +3648,12 @@ Conditional::Conditional(std::unique_ptr<Condition::Condition>&& target_conditio
     m_target_condition(std::move(target_condition)),
     m_true_effects(std::move(true_effects)),
     m_false_effects(std::move(false_effects))
-{}
+{
+    if (m_target_condition && !m_target_condition->TargetInvariant()) {
+        ErrorLogger() << "Conditional effect has a target condition that depends on the target object. The condition is evaluated once to pick the targets, so when evaluating it, there is no defined target object.";
+        DebugLogger() << "Condition effect is: " << Dump();
+    }
+}
 
 void Conditional::Execute(ScriptingContext& context) const {
     if (!context.effect_target)
@@ -3708,12 +3713,8 @@ void Conditional::Execute(ScriptingContext& context,
     TargetSet non_matches;
     non_matches.reserve(matches.size());
 
-    if (m_target_condition) {
-        if (!m_target_condition->TargetInvariant())
-            ErrorLogger() << "Conditional::Execute has a subcondition that depends on the target object. The subcondition is currently evaluated once to pick the targets, so when evaluating it, there is no defined target object. Instead use RootCandidate.";
-
+    if (m_target_condition)
         m_target_condition->Eval(context, matches, non_matches, Condition::MATCHES);
-    }
 
 
     // execute true and false effects to target matches and non-matches respectively
