@@ -5504,8 +5504,14 @@ CATEGORY_GUIDES
 CATEGORY_GAME_CONCEPTS
 *Game Concepts*
 
+DISTORTION_ARTICLE_SHORT_DESC
+Distortion
+
 GROWTH_ARTICLE_SHORT_DESC
 Growth
+
+INDUSTRY_ARTICLE_SHORT_DESC
+Industry
 
 STOCKPILE_ARTICLE_SHORT_DESC
 Stockpile
@@ -5513,8 +5519,14 @@ Stockpile
 OUTPOSTS_ARTICLE_SHORT_DESC
 Outpost
 
+LOGISTICS_ARTICLE_SHORT_DESC
+Logistics
+
 HOMEWORLDS_ARTICLE_SHORT_DESC
 Homeworld
+
+PLANETDRIVE_ARTICLE_SHORT_DESC
+Planet Drive
 
 PRODUCTION_ARTICLE_SHORT_DESC
 Production
@@ -5533,6 +5545,9 @@ Meters
 
 POPULATION_TITLE_SHORT_DESC
 Population
+
+PSYCHIC_TITLE_SHORT_DESC
+Psychic
 
 MANAGEMENT_TITLE_SHORT_DESC
 Management
@@ -5927,6 +5942,12 @@ The focus of a planet may grant it bonuses or enable effects. A small penalty ap
 
 A planet will default to the inhabiting species' preferred focus if it has one, otherwise it will default to [[metertype METER_INDUSTRY]].'''
 
+DISTORTION_FOCUS_TITLE
+Spatial Distortion Focus
+
+DISTORTION_FOCUS_TEXT
+Available after construction the [[BLD_SPATIAL_DISTORT_GEN]], the properties of each starlane leading to the planet can be manipulated to slow down incoming enemy ships, retarding their progress by 40uu per turn. Slow ships may even be forced back to their origin system.
+
 GROWTH_FOCUS_TITLE
 Growth Focus
 
@@ -5937,17 +5958,46 @@ A planet focused on Growth extends those benefits to other planets connected to 
 
 [[GROWTH_SPECIALS_ENTRY_LIST]]'''
 
+INDUSTRY_FOCUS_TITLE
+Industry Focus
+
+INDUSTRY_FOCUS_TEXT
+The Industry Focus represents a plantey primarily focused on industrial production. [[metertype METER_INDUSTRY]] will receive a bonus which increases as the planetary population increases. This is the default focus for any species that does not have a preferred focus.
+
 TRADE_FOCUS_TITLE
 Trade Focus
 
 TRADE_FOCUS_TEXT
 Trade doesn't do anything. It is just a placeholder to show that more resources are planned.
 
+LOGISTICS_FOCUS_TITLE
+Logistics Focus
+
+LOGISTICS_FOCUS_TEXT
+By focusing on Logistics, a planet is able to vastly extend its supply. The [[metertype METER_SUPPLY]] will be increased by a factor of three.
+
+PLANETDRIVE_FOCUS_TITLE
+Planet Drive Focus
+
+PLANETDRIVE_FOCUS_TEXT
+After a [[BLD_PLANET_DRIVE]] has been constructed, and a [[buildingtype BLD_PLANET_BEACON]] or [[shippart SP_PLANET_BEACON]] is in an adjacent system, selecting the [[PLANETDRIVE_FOCUS_TITLE]] allows the planet to move between star systems.
+
 PROTECTION_FOCUS_TITLE
 Protection Focus
 
 PROTECTION_FOCUS_TEXT
 The Protection focus represents a planet wholly focused on defending itself. [[metertype METER_TROOPS]], Planetary [[metertype METER_DEFENSE]], and Planetary [[metertype METER_SHIELD]] are doubled.
+
+PSYCHIC_FOCUS_TITLE
+Psychic Domination Focus
+
+PSYCHIC_FOCUS_TEXT
+'''The [[PSYCHIC_FOCUS_TITLE]] concentrates the mental force exerted by the entire population to dominate the thoughts of non-telepathic crews of ships in the same system.
+
+Each turn there is a 10% chance of taking control of of their ships unless the enemy empire also posesses the technology [[LRN_PSY_DOM]].
+
+When the Psychic Domination Focus is engaged it also reduces the chance that [[predefinedshipdesign SM_PSIONIC_SNOWFLAKE]]s take over your ships.'''
+
 
 STOCKPILE_FOCUS_TITLE
 Stockpile Focus
