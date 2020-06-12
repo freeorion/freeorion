@@ -9,6 +9,7 @@
 #include "Serialize.h"
 
 #include <GG/Clr.h>
+#include <GG/ClrConstants.h>
 
 #include <list>
 #include <set>
@@ -110,36 +111,13 @@ BOOST_CLASS_VERSION(SaveGameUIData, 4);
 
 /** The data for one empire necessary for game-setup during multiplayer loading. */
 struct FO_COMMON_API SaveGameEmpireData {
-    /** \name Structors */ //@{
-    SaveGameEmpireData() :
-        m_empire_id(ALL_EMPIRES),
-        m_empire_name(),
-        m_player_name(),
-        m_color(),
-        m_authenticated(false),
-        m_eliminated(false),
-        m_won(false)
-    {}
-    SaveGameEmpireData(int empire_id, const std::string& empire_name,
-                       const std::string& player_name, const GG::Clr& colour,
-                       bool authenticated, bool eliminated, bool won) :
-        m_empire_id(empire_id),
-        m_empire_name(empire_name),
-        m_player_name(player_name),
-        m_color(colour),
-        m_authenticated(authenticated),
-        m_eliminated(eliminated),
-        m_won(won)
-    {}
-    //@}
-
-    int         m_empire_id;
+    int         m_empire_id = ALL_EMPIRES;
     std::string m_empire_name;
     std::string m_player_name;
     GG::Clr     m_color;
-    bool        m_authenticated;
-    bool        m_eliminated;
-    bool        m_won;
+    bool        m_authenticated = false;
+    bool        m_eliminated = false;
+    bool        m_won = false;
 
 private:
     friend class boost::serialization::access;
@@ -151,22 +129,9 @@ BOOST_CLASS_VERSION(SaveGameEmpireData, 2);
 
 /** Contains basic data about a player in a game. */
 struct FO_COMMON_API PlayerSaveHeaderData {
-    PlayerSaveHeaderData() :
-        m_name(),
-        m_empire_id(ALL_EMPIRES),
-        m_client_type(Networking::INVALID_CLIENT_TYPE)
-    {}
-
-    PlayerSaveHeaderData(const std::string& name, int empire_id,
-                         Networking::ClientType client_type) :
-        m_name(name),
-        m_empire_id(empire_id),
-        m_client_type(client_type)
-    {}
-
     std::string             m_name;
-    int                     m_empire_id;
-    Networking::ClientType  m_client_type;
+    int                     m_empire_id = ALL_EMPIRES;
+    Networking::ClientType  m_client_type = Networking::INVALID_CLIENT_TYPE;
 
 private:
     friend class boost::serialization::access;
@@ -188,7 +153,7 @@ struct FO_COMMON_API PlayerSaveGameData : public PlayerSaveHeaderData {
                        const std::shared_ptr<SaveGameUIData>& ui_data,
                        const std::string& save_state_string,
                        Networking::ClientType client_type) :
-        PlayerSaveHeaderData(name, empire_id, client_type),
+        PlayerSaveHeaderData{name, empire_id, client_type},
         m_orders(orders),
         m_ui_data(ui_data),
         m_save_state_string(save_state_string)
@@ -209,15 +174,7 @@ BOOST_CLASS_VERSION(PlayerSaveGameData, 2);
 /** Data that must be retained by the server when saving and loading a
   * game that isn't player data or the universe */
 struct FO_COMMON_API ServerSaveGameData {
-    ServerSaveGameData() :
-        m_current_turn(INVALID_GAME_TURN)
-    {}
-
-    ServerSaveGameData(int current_turn) :
-        m_current_turn(current_turn)
-    {}
-
-    int m_current_turn;
+    int m_current_turn = INVALID_GAME_TURN;
 
 private:
     friend class boost::serialization::access;
@@ -228,31 +185,17 @@ private:
 /** The data structure used to represent a single player's setup options for a
   * multiplayer game (in the multiplayer lobby screen). */
 struct PlayerSetupData {
-    /** \name Structors */ //@{
-    PlayerSetupData() :
-        m_player_name(),
-        m_player_id(Networking::INVALID_PLAYER_ID),
-        m_empire_name(),
-        m_empire_color(GG::Clr(0, 0, 0, 0)),
-        m_starting_species_name(),
-        m_save_game_empire_id(ALL_EMPIRES),
-        m_client_type(Networking::INVALID_CLIENT_TYPE),
-        m_player_ready(false),
-        m_authenticated(false),
-        m_starting_team(Networking::NO_TEAM_ID)
-    {}
-    //@}
-
-    std::string             m_player_name;          ///< the player's name
-    int                     m_player_id;            ///< player id
-    std::string             m_empire_name;          ///< the name of the player's empire when starting a new game
-    GG::Clr                 m_empire_color;         ///< the color used to represent this player's empire when starting a new game
-    std::string             m_starting_species_name;///< name of the species with which the player starts when starting a new game
-    int                     m_save_game_empire_id;  ///< when loading a game, the ID of the empire that this player will control
-    Networking::ClientType  m_client_type;          ///< is this player an AI, human player or...?
-    bool                    m_player_ready;         ///< if player ready to play.
-    bool                    m_authenticated;        ///< if player was authenticated
-    int                     m_starting_team;        ///< team id or -1 if no team.
+    std::string             m_player_name;
+    int                     m_player_id = Networking::INVALID_PLAYER_ID;
+    std::string             m_empire_name;
+    GG::Clr                 m_empire_color = GG::CLR_ZERO;
+    std::string             m_starting_species_name;
+    //! When loading a game, the ID of the empire that this player will control
+    int                     m_save_game_empire_id = ALL_EMPIRES;
+    Networking::ClientType  m_client_type = Networking::INVALID_CLIENT_TYPE;
+    bool                    m_player_ready = false;
+    bool                    m_authenticated = false;
+    int                     m_starting_team = Networking::NO_TEAM_ID;
 
 private:
     friend class boost::serialization::access;
@@ -352,11 +295,6 @@ BOOST_CLASS_VERSION(MultiplayerLobbyData, 2);
 
 /** The data structure stores information about latest chat massages. */
 struct FO_COMMON_API ChatHistoryEntity {
-    /** \name Structors */ //@{
-    ChatHistoryEntity()
-    {}
-    //@}
-
     boost::posix_time::ptime    m_timestamp;
     std::string                 m_player_name;
     std::string                 m_text;
@@ -372,24 +310,12 @@ BOOST_CLASS_VERSION(ChatHistoryEntity, 1);
 
 /** Information about one player that other players are informed of.  Assembled by server and sent to players. */
 struct PlayerInfo {
-    PlayerInfo() :
-        name(""),
-        empire_id(ALL_EMPIRES),
-        client_type(Networking::INVALID_CLIENT_TYPE),
-        host(false)
-    {}
-    PlayerInfo(const std::string& player_name_, int empire_id_,
-               Networking::ClientType client_type_, bool host_) :
-        name(player_name_),
-        empire_id(empire_id_),
-        client_type(client_type_),
-        host(host_)
-    {}
-
-    std::string             name;           ///< name of this player (not the same as the empire name)
-    int                     empire_id;      ///< id of the player's empire
-    Networking::ClientType  client_type;    ///< is this a human player, AI player, or observer?
-    bool                    host;           ///< true iff this is the host player
+    //! Name of this player (not the same as the empire name)
+    std::string             name;
+    int                     empire_id = ALL_EMPIRES;
+    Networking::ClientType  client_type = Networking::INVALID_CLIENT_TYPE;
+    //! true iff this is the host player
+    bool                    host = false;
 
     friend class boost::serialization::access;
     template <typename Archive>

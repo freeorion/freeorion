@@ -1031,11 +1031,7 @@ void ServerApp::PushChatMessage(const std::string& text,
                                 GG::Clr text_color,
                                 const boost::posix_time::ptime& timestamp)
 {
-    ChatHistoryEntity chat;
-    chat.m_timestamp = timestamp;
-    chat.m_player_name = player_name;
-    chat.m_text_color = text_color;
-    chat.m_text = text;
+    ChatHistoryEntity chat{timestamp, player_name, text, text_color};
     m_chat_history.push_back(chat);
 
     bool success = false;
@@ -1611,10 +1607,10 @@ std::map<int, PlayerInfo> ServerApp::GetPlayerInfoMap() const {
         }
 
         // assemble player info for all players
-        player_info_map[player_id] = PlayerInfo(player_connection->PlayerName(),
+        player_info_map[player_id] = PlayerInfo{player_connection->PlayerName(),
                                                 empire_id,
                                                 player_connection->GetClientType(),
-                                                m_networking.PlayerIsHost(player_connection->PlayerID()));
+                                                m_networking.PlayerIsHost(player_connection->PlayerID())};
     }
     return player_info_map;
 }
@@ -3609,10 +3605,10 @@ void ServerApp::PostCombatProcessTurns() {
     {
         PlayerConnectionPtr player = *player_it;
         int player_id = player->PlayerID();
-        players[player_id] = PlayerInfo(player->PlayerName(),
+        players[player_id] = PlayerInfo{player->PlayerName(),
                                         PlayerEmpireID(player_id),
                                         player->GetClientType(),
-                                        m_networking.PlayerIsHost(player_id));
+                                        m_networking.PlayerIsHost(player_id)};
     }
 
     m_universe.ObfuscateIDGenerator();
