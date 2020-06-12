@@ -237,11 +237,12 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
     if (route.size() == 2 && route.front() == route.back())
         return retval;                                      // nowhere to go => empty path
     if (this->Speed() < FLEET_MOVEMENT_EPSILON) {
-        retval.emplace_back(this->X(), this->Y(), true, ETA_NEVER,
-                            this->SystemID(),
-                            INVALID_OBJECT_ID,
-                            INVALID_OBJECT_ID,
-                            false);
+        retval.emplace_back(MovePathNode{
+            this->X(), this->Y(), true, ETA_NEVER,
+            this->SystemID(),
+            INVALID_OBJECT_ID,
+            INVALID_OBJECT_ID,
+            false});
         return retval;                                      // can't move => path is just this system with explanatory ETA
     }
 
@@ -268,10 +269,11 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
         this->SystemID() != INVALID_OBJECT_ID &&
         !fleet_supplied_systems.count(this->SystemID()))
     {
-        retval.emplace_back(this->X(), this->Y(), true, ETA_OUT_OF_RANGE,
-                            this->SystemID(),
-                            INVALID_OBJECT_ID,
-                            INVALID_OBJECT_ID);
+        retval.emplace_back(MovePathNode{
+            this->X(), this->Y(), true, ETA_OUT_OF_RANGE,
+            this->SystemID(),
+            INVALID_OBJECT_ID,
+            INVALID_OBJECT_ID});
         return retval;      // can't move => path is just this system with explanatory ETA
     }
 
@@ -321,11 +323,12 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
         }
     }
     // place initial position MovePathNode
-    retval.emplace_back(this->X(), this->Y(), false, 0,
-                        (cur_system  ? cur_system->ID()  : INVALID_OBJECT_ID),
-                        (prev_system ? prev_system->ID() : INVALID_OBJECT_ID),
-                        (next_system ? next_system->ID() : INVALID_OBJECT_ID),
-                        false);
+    retval.emplace_back(MovePathNode{
+        this->X(), this->Y(), false, 0,
+        (cur_system  ? cur_system->ID()  : INVALID_OBJECT_ID),
+        (prev_system ? prev_system->ID() : INVALID_OBJECT_ID),
+        (next_system ? next_system->ID() : INVALID_OBJECT_ID),
+        false});
 
 
     const int       TOO_LONG =              100;            // limit on turns to simulate.  99 turns max keeps ETA to two digits, making UI work better
@@ -510,11 +513,12 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
                       << is_post_blockade << " and ETA " << turns_taken;
 
         // add MovePathNode for current position (end of turn position and/or system location)
-        retval.emplace_back(cur_x, cur_y, end_turn_at_cur_position, turns_taken,
-                            (cur_system  ? cur_system->ID()  : INVALID_OBJECT_ID),
-                            (prev_system ? prev_system->ID() : INVALID_OBJECT_ID),
-                            (next_system ? next_system->ID() : INVALID_OBJECT_ID),
-                            is_post_blockade);
+        retval.emplace_back(MovePathNode{
+            cur_x, cur_y, end_turn_at_cur_position, turns_taken,
+            (cur_system  ? cur_system->ID()  : INVALID_OBJECT_ID),
+            (prev_system ? prev_system->ID() : INVALID_OBJECT_ID),
+            (next_system ? next_system->ID() : INVALID_OBJECT_ID),
+            is_post_blockade});
 
 
         // if the turn ended at this position, increment the turns taken and
@@ -536,11 +540,12 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
                   << (cur_system  ? cur_system->ID()  : INVALID_OBJECT_ID) << " with post blockade status "
                   << is_post_blockade << " and ETA " << turns_taken;
 
-    retval.emplace_back(cur_x, cur_y, true, turns_taken,
-                        (cur_system  ? cur_system->ID()  : INVALID_OBJECT_ID),
-                        (prev_system ? prev_system->ID() : INVALID_OBJECT_ID),
-                        (next_system ? next_system->ID() : INVALID_OBJECT_ID),
-                        is_post_blockade);
+    retval.emplace_back(MovePathNode{
+        cur_x, cur_y, true, turns_taken,
+        (cur_system  ? cur_system->ID()  : INVALID_OBJECT_ID),
+        (prev_system ? prev_system->ID() : INVALID_OBJECT_ID),
+        (next_system ? next_system->ID() : INVALID_OBJECT_ID),
+        is_post_blockade});
     TraceLogger() << "Fleet::MovePath for fleet " << this->Name() << "(" << this->ID() << ") is complete";
 
     return retval;

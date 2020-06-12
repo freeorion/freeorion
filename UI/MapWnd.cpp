@@ -4620,9 +4620,11 @@ void MapWnd::SetProjectedFleetMovementLine(int fleet_id, const std::list<int>& t
     // We need the route to contain the current system
     // even when it is empty to switch between non appending
     // and appending projections on shift changes
-    if (path.empty()) {
-        path.push_back(MovePathNode(fleet->X(), fleet->Y(), true, 0, fleet->SystemID(), INVALID_OBJECT_ID, INVALID_OBJECT_ID));
-    }
+    if (path.empty())
+        path.emplace_back(MovePathNode{
+            fleet->X(), fleet->Y(),
+            true, 0, fleet->SystemID(),
+            INVALID_OBJECT_ID, INVALID_OBJECT_ID});
 
     auto route_it = travel_route.begin();
     if (!travel_route.empty() && (++route_it) != travel_route.end()) {
