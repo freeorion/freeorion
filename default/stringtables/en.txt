@@ -6086,7 +6086,6 @@ Each turn there is a 10% chance of taking control of of their ships unless the e
 
 When the Psychic Domination Focus is engaged it also reduces the chance that [[predefinedshipdesign SM_PSIONIC_SNOWFLAKE]]s take over your ships.'''
 
-
 STOCKPILE_FOCUS_TITLE
 Stockpile Focus
 
