@@ -1511,8 +1511,7 @@ unsigned int Target::GetCheckSum() const {
 // Homeworld                                             //
 ///////////////////////////////////////////////////////////
 Homeworld::Homeworld() :
-    Condition(),
-    m_names()
+    Homeworld(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>{})
 {}
 
 Homeworld::Homeworld(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names) :
@@ -2225,8 +2224,8 @@ HasSpecial::HasSpecial() :
                std::unique_ptr<ValueRef::ValueRef<int>>{})
 {}
 
-HasSpecial::HasSpecial(const std::string& name) :
-    HasSpecial(std::make_unique<ValueRef::Constant<std::string>>(name),
+HasSpecial::HasSpecial(std::string name) :
+    HasSpecial(std::make_unique<ValueRef::Constant<std::string>>(std::move(name)),
                std::unique_ptr<ValueRef::ValueRef<int>>{},
                std::unique_ptr<ValueRef::ValueRef<int>>{})
 {}
