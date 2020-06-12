@@ -339,8 +339,8 @@ private:
 
 /** Matches all objects that have an attached Special named \a name. */
 struct FO_COMMON_API HasSpecial final : public Condition {
-    explicit HasSpecial();
-    explicit HasSpecial(const std::string& name);
+    HasSpecial();
+    explicit HasSpecial(std::string name);
     explicit HasSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
     HasSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
                std::unique_ptr<ValueRef::ValueRef<int>>&& since_turn_low,
@@ -769,7 +769,7 @@ private:
 
 /** Matches ships whose design id \a id. */
 struct FO_COMMON_API NumberedShipDesign final : public Condition {
-    NumberedShipDesign(std::unique_ptr<ValueRef::ValueRef<int>>&& design_id);
+    explicit NumberedShipDesign(std::unique_ptr<ValueRef::ValueRef<int>>&& design_id);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -787,7 +787,7 @@ private:
 
 /** Matches ships or buildings produced by the empire with id \a empire_id.*/
 struct FO_COMMON_API ProducedByEmpire final : public Condition {
-    ProducedByEmpire(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id);
+    explicit ProducedByEmpire(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -805,7 +805,7 @@ private:
 
 /** Matches a given object with a linearly distributed probability of \a chance. */
 struct FO_COMMON_API Chance final : public Condition {
-    Chance(std::unique_ptr<ValueRef::ValueRef<double>>&& chance);
+    explicit Chance(std::unique_ptr<ValueRef::ValueRef<double>>&& chance);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -1147,7 +1147,7 @@ private:
 /** Matches objects that are moving. ... What does that mean?  Departing this
   * turn, or were located somewhere else last turn...? */
 struct FO_COMMON_API Stationary final : public Condition {
-    explicit Stationary();
+    Stationary();
 
     bool operator==(const Condition& rhs) const override;
     std::string Description(bool negated = false) const override;
@@ -1162,7 +1162,7 @@ private:
 
 /** Matches objects that are aggressive fleets or are in aggressive fleets. */
 struct FO_COMMON_API Aggressive final : public Condition {
-    explicit Aggressive();
+    Aggressive();
     explicit Aggressive(bool aggressive);
 
     bool operator==(const Condition& rhs) const override;
@@ -1223,7 +1223,7 @@ private:
 
 /** Matches objects whose species has the ability to found new colonies. */
 struct FO_COMMON_API CanColonize final : public Condition {
-    explicit CanColonize();
+    CanColonize();
 
     bool operator==(const Condition& rhs) const override;
     std::string Description(bool negated = false) const override;
