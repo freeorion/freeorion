@@ -159,7 +159,7 @@ ADVANCED_FOCUS_EFFECTS
             ]
             stackinggroup = "DISTORTION_MOVEMENT_STACK"
             effects = [
-                If condition = WithinDistance distance = 40 condition = Object id = Target.PreviousSystemID
+                If condition = WithinDistance distance = 40 condition = Object id = RootCandidate.PreviousSystemID
                     effects = [
                         GenerateSitrepMessage
                             message = "EFFECT_FLEET_MOVED_TO"
