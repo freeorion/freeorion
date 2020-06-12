@@ -872,11 +872,11 @@ private:
 /** Matches all objects if the empire with id \a empire_id has an empire meter
   * \a meter whose current value is >= \a low and <= \a high. */
 struct FO_COMMON_API EmpireMeterValue final : public Condition {
-    EmpireMeterValue(const std::string& meter,
+    EmpireMeterValue(std::string meter,
                      std::unique_ptr<ValueRef::ValueRef<double>>&& low,
                      std::unique_ptr<ValueRef::ValueRef<double>>&& high);
     EmpireMeterValue(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
-                     const std::string& meter,
+                     std::string meter,
                      std::unique_ptr<ValueRef::ValueRef<double>>&& low,
                      std::unique_ptr<ValueRef::ValueRef<double>>&& high);
 

@@ -2491,7 +2491,7 @@ namespace {
     struct HasTagSimpleMatch {
         HasTagSimpleMatch() :
             m_any_tag_ok(true),
-            m_name()
+            m_name(EMPTY_STRING)
         {}
 
         HasTagSimpleMatch(const std::string& name) :
@@ -2509,8 +2509,8 @@ namespace {
             return candidate->HasTag(m_name);
         }
 
-        bool        m_any_tag_ok;
-        std::string m_name;
+        bool               m_any_tag_ok;
+        const std::string& m_name;
     };
 }
 
@@ -2931,22 +2931,20 @@ bool ContainedBy::operator==(const Condition& rhs) const {
 
 namespace {
     struct ContainedBySimpleMatch {
-        ContainedBySimpleMatch(const ObjectSet& subcondition_matches) :
-            m_subcondition_matches_ids()
-        {
-            // We need a sorted container for efficiently intersecting 
+        ContainedBySimpleMatch(const ObjectSet& subcondition_matches) {
+            // We need a sorted container for efficiently intersecting
             // subcondition_matches with the set of objects containing some
             // candidate object.
             // We only need ids, not objects, so we can do that conversion
             // here as well, simplifying later code.
-            // Note that this constructor is called only once per 
+            // Note that this constructor is called only once per
             // ContainedBy::Eval(), its work cannot help performance when
             // executed for each candidate.
             m_subcondition_matches_ids.reserve(subcondition_matches.size());
             // gather the ids
             for (auto& obj : subcondition_matches) {
                 if (obj)
-                { m_subcondition_matches_ids.push_back(obj->ID()); }
+                    m_subcondition_matches_ids.push_back(obj->ID());
             }
             // sort them
             std::sort(m_subcondition_matches_ids.begin(), m_subcondition_matches_ids.end());
@@ -4429,12 +4427,12 @@ namespace {
             return (m_low <= count && count <= m_high);
         }
 
-        BuildType   m_build_type;
-        std::string m_name;
-        int         m_design_id;
-        int         m_empire_id;
-        int         m_low;
-        int         m_high;
+        BuildType          m_build_type;
+        const std::string& m_name;
+        int                m_design_id;
+        int                m_empire_id;
+        int                m_low;
+        int                m_high;
     };
 }
 
@@ -4969,7 +4967,7 @@ namespace {
             return design->Hull() == m_name;
         }
 
-        const std::string&  m_name;
+        const std::string& m_name;
     };
 }
 
@@ -5426,7 +5424,7 @@ namespace {
     struct PredefinedShipDesignSimpleMatch {
         PredefinedShipDesignSimpleMatch() :
             m_any_predef_design_ok(true),
-            m_name()
+            m_name(EMPTY_STRING)
         {}
 
         PredefinedShipDesignSimpleMatch(const std::string& name) :
@@ -5454,8 +5452,8 @@ namespace {
             return (m_name == candidate_design->Name(false)); // don't look up in stringtable; predefined designs are stored by stringtable entry key
         }
 
-        bool        m_any_predef_design_ok;
-        std::string m_name;
+        bool               m_any_predef_design_ok;
+        const std::string& m_name;
     };
 }
 
@@ -6094,10 +6092,10 @@ namespace {
             return (m_low <= meter_current && meter_current <= m_high);
         }
 
-        std::string m_part_name;
-        float       m_low;
-        float       m_high;
-        MeterType   m_meter;
+        const std::string& m_part_name;
+        float              m_low;
+        float              m_high;
+        MeterType          m_meter;
     };
 }
 
@@ -6172,7 +6170,7 @@ bool ShipPartMeterValue::Match(const ScriptingContext& local_context) const {
     float low = (m_low ? m_low->Eval(local_context) : -Meter::LARGE_VALUE);
     float high = (m_high ? m_high->Eval(local_context) : Meter::LARGE_VALUE);
     std::string part_name = (m_part_name ? m_part_name->Eval(local_context) : "");
-    return ShipPartMeterValueSimpleMatch(part_name, m_meter, low, high)(candidate);
+    return ShipPartMeterValueSimpleMatch(std::move(part_name), m_meter, low, high)(candidate);
 }
 
 void ShipPartMeterValue::SetTopLevelContent(const std::string& content_name) {
@@ -6200,19 +6198,19 @@ unsigned int ShipPartMeterValue::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // EmpireMeterValue                                      //
 ///////////////////////////////////////////////////////////
-EmpireMeterValue::EmpireMeterValue(const std::string& meter,
+EmpireMeterValue::EmpireMeterValue(std::string meter,
                                    std::unique_ptr<ValueRef::ValueRef<double>>&& low,
                                    std::unique_ptr<ValueRef::ValueRef<double>>&& high) :
-    EmpireMeterValue(nullptr, meter, std::move(low), std::move(high))
+    EmpireMeterValue(nullptr, std::move(meter), std::move(low), std::move(high))
 {}
 
 EmpireMeterValue::EmpireMeterValue(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
-                                   const std::string& meter,
+                                   std::string meter,
                                    std::unique_ptr<ValueRef::ValueRef<double>>&& low,
                                    std::unique_ptr<ValueRef::ValueRef<double>>&& high) :
     Condition(),
     m_empire_id(std::move(empire_id)),
-    m_meter(meter),
+    m_meter(std::move(meter)),
     m_low(std::move(low)),
     m_high(std::move(high))
 {
@@ -6772,8 +6770,8 @@ namespace {
             return empire->TechResearched(m_name);
         }
 
-        int         m_empire_id;
-        std::string m_name;
+        int                m_empire_id;
+        const std::string& m_name;
     };
 }
 
@@ -6921,8 +6919,8 @@ namespace {
             return empire->BuildingTypeAvailable(m_name);
         }
 
-        int         m_empire_id;
-        std::string m_name;
+        int                m_empire_id;
+        const std::string& m_name;
     };
 }
 
@@ -7202,8 +7200,8 @@ namespace {
             return empire->ShipPartAvailable(m_name);
         }
 
-        int         m_empire_id;
-        std::string m_name;
+        int                 m_empire_id;
+        const std::string&  m_name;
     };
 }
 
