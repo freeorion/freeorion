@@ -7,7 +7,7 @@ Tech
     researchturns = 12
     tags = [ "PEDIA_SHIP_WEAPONS_CATEGORY" ]
     prerequisites = [
-        "LRN_TIME_MECH"
+        "LRN_STELLAR_TOMOGRAPHY"
         "PRO_ZERO_GEN"
     ]
     unlock = [
