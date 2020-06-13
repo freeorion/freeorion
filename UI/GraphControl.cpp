@@ -196,8 +196,14 @@ void GraphControl::Render() {
         glEnable(GL_TEXTURE_2D);
         auto font = ClientUI::GetFont();
         glColor(ClientUI::TextColor());
-        for (auto label : m_y_scale_ticks)
-            font->RenderText({ul.x + GG::X1, lr.y + label.first}, boost::lexical_cast<std::string>(label.second));
+        for (auto label : m_y_scale_ticks) {
+            std::string labeltext = "";
+            std::stringstream rndlabel;
+            rndlabel.precision(12);
+            rndlabel << label.second;
+            labeltext += rndlabel.str();
+            font->RenderText({ul.x + GG::X1, lr.y + label.first}, labeltext);
+        }
     }
 
     glPushMatrix();
