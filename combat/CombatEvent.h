@@ -2,8 +2,6 @@
 #define COMBATEVENT_H
 
 
-#include <boost/serialization/access.hpp>
-#include <boost/serialization/export.hpp>
 #include <boost/optional/optional.hpp>
 
 #include "../util/Export.h"
