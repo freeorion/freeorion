@@ -9,7 +9,6 @@ Tech
     prerequisites = [
         "PRO_NDIM_ASSMB"
         "PRO_SINGULAR_GEN"
-        "LRN_EVERYTHING"
     ]
     graphic = "icons/tech/zero_point_energy.png"
 
