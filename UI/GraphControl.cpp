@@ -197,12 +197,10 @@ void GraphControl::Render() {
         auto font = ClientUI::GetFont();
         glColor(ClientUI::TextColor());
         for (auto label : m_y_scale_ticks) {
-            std::string labeltext = "";
             std::stringstream rndlabel;
             rndlabel.precision(12);
             rndlabel << label.second;
-            labeltext += rndlabel.str();
-            font->RenderText({ul.x + GG::X1, lr.y + label.first}, labeltext);
+            font->RenderText({ul.x + GG::X1, lr.y + label.first}, rndlabel.str());
         }
     }
 
