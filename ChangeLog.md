@@ -9,7 +9,13 @@ Notable changes to the FreeOrion project will be documented in this file.
 
 ### Key Changes
 
-- ???
+- Python 3.5+ is now supported and required. Python 2 dependence is removed
+- Added a new ship weapon part, the Arc Disruptor, which is useful for countering many cheap "chaff" ships
+- Reworked weapon and fighter combat targeting to limit what each can target
+- Added happiness requirements for normal planet resource meter growth
+- Added team-based player homeworld placement for multiplayer games
+- Rebalanced some bonuses from techs and specials to make high population less important and mitigate runaway empire growth "snowballing"
+
 
 ### Detailed Changelog
 
@@ -79,10 +85,8 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Ships
     - Ship production cost increases ("upkeep") also count ships on the production queue
     - Reduced Shield part costs
-    - Colony base hulls may not mount engines or fuel parts
-    - Set Colony Base hull structure to 2
+    - Colony Base hulls is more expensive, has 3 internal slots, but may not mount engines or fuel parts    
     - Scaled up ship structure to avoid fractional numbers
-    - Increased default combat rounds from 3 to 4 and rebalanced ship structure levels accordingly
 
 - Planets
     - Tweaked ordering of population effects for Lembala'Lam species
