@@ -10941,7 +10941,7 @@ PLC_COLONIZATION
 Colonization
 
 PLC_COLONIZATION_DESC
-Decreases cost of colonization ship parts.
+Decreases cost of colonization ship parts and give ships with colony parts but no weapons, troops, bombard, or general parts +3 base fuel capacity.
 
 PLC_COLONIZATION_SHORT_DESC
 Discounts Colonization
