@@ -6,7 +6,6 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include <boost/serialization/nvp.hpp>
 #include <boost/optional/optional.hpp>
 #include "../util/Export.h"
 #include "../util/Pending.h"
@@ -81,10 +80,6 @@ private:
     std::unique_ptr<ValueRef::ValueRef<double>>         m_initial_capacity;
     std::unique_ptr<Condition::Condition>               m_location;
     std::string                                         m_graphic;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Returns the Special object used to represent specials of type \a name.
@@ -94,20 +89,6 @@ FO_COMMON_API const Special* GetSpecial(const std::string& name);
 /** Returns names of all specials. */
 FO_COMMON_API std::vector<std::string> SpecialNames();
 
-// template implementations
-template <typename Archive>
-void Special::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_NVP(m_name)
-        & BOOST_SERIALIZATION_NVP(m_description)
-        & BOOST_SERIALIZATION_NVP(m_stealth)
-        & BOOST_SERIALIZATION_NVP(m_effects)
-        & BOOST_SERIALIZATION_NVP(m_spawn_rate)
-        & BOOST_SERIALIZATION_NVP(m_spawn_limit)
-        & BOOST_SERIALIZATION_NVP(m_initial_capacity)
-        & BOOST_SERIALIZATION_NVP(m_location)
-        & BOOST_SERIALIZATION_NVP(m_graphic);
-}
 
 /** Look up table for specials.*/
 class FO_COMMON_API SpecialsManager {
