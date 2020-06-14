@@ -1435,8 +1435,6 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         empire_property_string_key = &Empire::ShipPartsOwned;
     if (variable_name == "TurnTechResearched")
         empire_property_string_key = &Empire::ResearchedTechs;
-    if (variable_name == "TurnPolicyAdopted")
-        empire_property_string_key = &Empire::TurnsPoliciesAdopted;
 
     // empire properties indexed by strings
     if (empire_property_string_key) {
