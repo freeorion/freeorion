@@ -224,7 +224,7 @@ DEFAULT_EMPIRE_NAME
 名無しの帝国
 
 DEFAULT_PLAYER_NAME
-愚かな皇帝
+とある皇帝
 
 MONSTER
 モンスター
@@ -280,7 +280,7 @@ ERROR_SOUND_INITIALIZATION_FAILED
 '''
 
 OPENGL_VERSION_LOW_TITLE
-OpenGLのバージョンが低いです
+OpenGLのバージョンが古いです
 
 OPENGL_VERSION_LOW_TEXT
 '''このシステムのOpenGLのバージョンは2.0より前のものです
@@ -387,18 +387,19 @@ SD_SCOUT_2
 レーダー斥候船
 
 SD_SCOUT_2_DESC
-偵察と探査用に設計された改良された[[metertype METER_DETECTION]]を装備した小型で安価な非武装船。 [[BLD_SHIPYARD_BASE_REQUIRED]]
+偵察と探査用に設計され改良された[[metertype METER_DETECTION]]を装備した小型で安価な非武装船。 [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_SCOUT_3
 スキャナ斥候船
 
 SD_SCOUT_3_DESC
-偵察と探査用に設計された改良された[[metertype METER_DETECTION]]を装備した小型で安価な非武装船。 [[BLD_SHIPYARD_BASE_REQUIRED]]
+偵察と探査用に設計され改良された[[metertype METER_DETECTION]]を装備した小型で安価な非武装船。 [[BLD_SHIPYARD_BASE_REQUIRED]]
+
 SD_SCOUT_4
 センサー斥候船
 
 SD_SCOUT_4_DESC
-偵察と探査用に設計された改良された[[metertype METER_DETECTION]]を装備した小型で安価な非武装船。 [[BLD_SHIPYARD_BASE_REQUIRED]]
+偵察と探査用に設計され改良された[[metertype METER_DETECTION]]を装備した小型で安価な非武装船。 [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_ENG_SCOUT
 エネルギー斥候船
@@ -416,7 +417,7 @@ SD_MARK_1
 フリゲート艦
 
 SD_MARK1_DESC
-基本的なマスドライバーフリゲート。 [[BLD_SHIPYARD_BASE_REQUIRED]]
+基本的なマスドライバー。 [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_LARGE_MARK_1
 巡洋艦Ms
@@ -488,13 +489,13 @@ SD_ROBOTIC_CARRIER1
 艦隊輸送船MB
 
 SD_ROBOTIC_CARRIER1_DESC
-艦隊アクション用に設計された攻撃キャリア。 [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
+艦隊アクション用に設計された攻撃輸送船。 [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
 
 SD_ROBOTIC_CARRIER2
 艦隊輸送船LBz
 
 SD_ROBOTIC_CARRIER2_DESC
-艦隊アクション用に設計された攻撃キャリア。 [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
+艦隊アクション用に設計された攻撃輸送船。 [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
 
 SD_ROBOTIC_CARRIER3
 護衛輸送船MIs
@@ -512,21 +513,22 @@ SD_GRAVITATING2
 戦艦 DFX BS
 
 SD_GRAVITATING2_DESC
-最先端の技術で武装して保護された大型の最先端の戦艦。 そしてそれに応じた価格。 [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_CON_GEOINT_REQUIRED]]
+最先端の技術で武装して保護された大型の最先端の戦艦。 [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_CON_GEOINT_REQUIRED]]
+
 SD_ROBO_TITAN1
 ドレッドノート
 
 SD_ROBO_TITAN1_DESC
-最新の技術で武装し、保護された大規模な最先端の戦艦。 そしてそれに応じた価格。 [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_CON_GEOINT_REQUIRED]]
+最新の技術で武装し、保護された大規模な最先端の戦艦。  [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_CON_GEOINT_REQUIRED]]
 
 SD_AST_1
 ロック駆逐艦(L)
 
 SD_AST_1_DESC
-フリートアクション用に設計された小惑星船体。 [[BLD_SHIPYARD_BASE_AST_REQUIRED]]
+艦隊行動用に設計された小惑星船体。 [[BLD_SHIPYARD_BASE_AST_REQUIRED]]
 
 SD_COLONY_SHIP
-植民船
+星間移民船
 
 SD_COLONY_SHIP_DESC
 武装していない船[[SHIPDESIGN_MILLIONS_COLONIZATION_CAPACITY]]。 [[MIN_POPULATION_THREE_REQUIRED]]、[[buildingtype BLD_SHIPYARD_BASE]]。
@@ -577,13 +579,13 @@ SD_TROOP_DROP
 陸上落下部隊
 
 SD_TROOP_DROP_DESC
-同じシステム内の地上旅団[[SHIPDESIGN_PLANET_INVASION]]を運びます。
+同じ星系内に地上旅団[[SHIPDESIGN_PLANET_INVASION]]を運びます。
 
 SD_TROOP_DROP_HVY
 重陸上落下部隊
 
 SD_TROOP_DROP_HVY_DESC
-同じシステムで地上高度の旅団[[SHIPDESIGN_PLANET_INVASION]]を運びます。
+同じシステムで地上特殊旅団[[SHIPDESIGN_PLANET_INVASION]]を運びます。
 
 SD_SMALL_TROOP_SHIP
 小兵隊船
@@ -637,7 +639,7 @@ SM_TREE
 ダイソンフォレスト
 
 SM_TREE_DESC
-糸状の枝を持つ多数の宇宙生まれの「木」で構成される「森」。 木は、ホスト星の周りの適切な距離でバブル内で増殖し、整列します。 ダイソンフォレストは航行にとって危険であり、時間が経つにつれて、フォレストは拡大し、根絶するのが難しくなります。 破壊されない場合、彼らは定期的に星間航路を介して種を送り出し、他の星系に定着させます。 [[SM_TREE]]シードは[[predefinedshipdesign SM_FLOATER]]として知られており、検出が難しい場合があります。
+糸状の枝を持つ多数の宇宙生まれの「木」で構成される「森」。 木は、ホスト星の周りの適切な距離でバブル内で増殖し、整列します。 ダイソンフォレストは航行にとって危険であり、時間が経つにつれて、フォレストは拡大し、根絶するのが難しくなります。 破壊されない場合、彼らは定期的に星間航路を介して種を送り出し、他の星系に定着させます。 [[SM_TREE]]の種は[[predefinedshipdesign SM_FLOATER]]として知られており、検出が難しい場合があります。
 
 SM_FLOATER
 フローター
@@ -646,10 +648,10 @@ SM_FLOATER_DESC
 [[predefinedshipdesign SM_TREE]]によって種として送られ、他の星の周りに新しい森を見つけるために宇宙を漂うガスで満たされた球根嚢 通常、[[SM_FLOATER]]をできるだけ早く破棄することをお勧めします。 ただし、それらは小さく、検出が困難です。 通常、[[tech SPY_DETECT_2]]テクノロジーが必要です。
 
 SM_DRAGON
-真空ドラゴン
+星間ドラゴン
 
 SM_DRAGON_DESC
-獲物のためのスペースをうろつき、人口の多い地域で大混乱を引き起こす恐ろしい巨大なモンスター。
+獲物のための銀河をうろつき、人口の多い地域で大混乱を引き起こす恐ろしい巨大なモンスター。
 
 SM_DRONE
 ドローン
@@ -670,7 +672,7 @@ SM_GUARD_0_DESC
 星系の星間航路エントリを維持するために前駆体によってプログラムされた無人船。軽く武装しているだけですが、すべての侵入者を攻撃します。
 
 SM_GUARD_1
-歩哨
+スコッティ
 
 SM_GUARD_1_DESC
 小さな無人警備船[[SM_GUARD_MACRO]]
@@ -712,13 +714,13 @@ SM_KRAKEN_3_DESC
 [[SM_KRAKEN_ENVIRONMENT]]'''
 
 SM_WHITE_KRAKEN
-ホワイト ーケン
+ホワイトクラーケン
 
 SM_WHITE_KRAKEN_DESC
 白いクラーケンは、クラーケン宇宙怪物の白色の先史時代の祖先です。
 
 SM_BLACK_KRAKEN
-ブラック クラーケン
+ブラッククラーケン
 
 SM_BLACK_KRAKEN_DESC
 '''強力な、不自然に見える宇宙のモンスター。
@@ -737,7 +739,7 @@ SM_SNOWFLAKE_2
 スノーフレーク
 
 SM_SNOWFLAKE_2_DESC
-'''卓越したビジョンを持つ軽量宇宙モンスター。
+'''卓越した視界を持つ軽量宇宙モンスター。
 
 [[SM_SNOWFLAKE_ENVIRONMENT]]'''
 
@@ -761,7 +763,7 @@ SM_JUGGERNAUT_1
 小さなジャガーノート
 
 SM_JUGGERNAUT_1_DESC
-'''いくつかの保護シールドを持つ手ごわい重重量宇宙モンスター。
+'''いくつかシールドを持つ手ごわい重重量宇宙モンスター。
 
 [[SM_JUGGERNAUT_ENVIRONMENT]]'''
 
@@ -769,7 +771,7 @@ SM_JUGGERNAUT_2
 ジャガーノート
 
 SM_JUGGERNAUT_2_DESC
-'''適度な保護シールドを持つ手ごわい重重量空間モンスター。
+'''中度のシールドを持つ手ごわい重重量空間モンスター。
 
 [[SM_JUGGERNAUT_ENVIRONMENT]]'''
 
@@ -777,7 +779,7 @@ SM_JUGGERNAUT_3
 大きなジャガーノート
 
 SM_JUGGERNAUT_3_DESC
-'''強力な保護シールドを持つ手ごわい重重量空間モンスター。
+'''強力なシールドを持つ手ごわい重重量空間モンスター。
 
 [[SM_JUGGERNAUT_ENVIRONMENT]]'''
 
@@ -799,7 +801,7 @@ SM_ASH
 宇宙火山
 
 SM_ASH_DESC
-ランダム星に[[metertype METER_STEALTH]]を追加する曖昧な生き物
+ランダムな星に[[metertype METER_STEALTH]]を追加する曖昧な生き物
 
 SM_DIM
 次元の漂流者
@@ -826,7 +828,7 @@ SM_DAMPENING_CLOUD_DESC
 何らかの形の感覚を獲得した、高エネルギー粒子の宇宙雲。 それは人口の多い植民地のエネルギーの特徴に反発されます。 それにも関わらず、ポテンシャルエネルギーの蓄えに強く惹かれ、システム内の船舶から[[metertype METER_FUEL]]を盗みます
 
 SM_ACIREMA_GUARD
-アシリマ警備船
+アシケマ警備船
 
 SM_ACIREA_GUARD_DESC
 アシケマによって建造された無人武装船で、星系の上に立っています。
@@ -857,6 +859,7 @@ FLD_ION_STORM
 
 FLD_ION_STORM_DESC
 センサーに干渉し、センサー内のすべてのオブジェクトを覆い隠す相対論的荷電粒子の磁気渦。 ストーム内のすべてのオブジェクトは、40の[[metertype METER_STEALTH]]まで増加しますが、40の[[metertype METER_DETECTION]]まで減少します。
+
 FLD_MOLECULAR_CLOUD
 分子雲
 
@@ -867,12 +870,18 @@ FLD_NEBULA_1
 星雲
 
 FLD_NEBULA_1_DESC
-新しい星を形成するために合体する可能性のある水素ガスの雲。
+新しい星を形成するために合体する可能性のある水素ガスの雲。船の[[metertype METER_SPEED]]と[[metertype METER_DETECTION]]が20減少し、[[metertype METER_STEALTH]]が20増加します。
 
 FLD_NEBULA_2
 [[FLD_NEBULA_1]]
 
 FLD_NEBULA_2_DESC
+[[FLD_NEBULA_1_DESC]]
+
+FLD_NEBULA_3
+[[FLD_NEBULA_1]]
+
+FLD_NEBULA_3_DESC
 [[FLD_NEBULA_1_DESC]]
 
 FLD_SUBSPACE_RIFT
@@ -887,6 +896,23 @@ FLD_ACCRETION_DISC
 FLD_ACCRETION_DISC_DESC
 降着円盤は、大規模な中心体の周りの軌道運動で拡散した物質によって形成される構造（多くの場合、星周円盤）です。 影響を受けるシステム内のすべての惑星は、-1の[[metertype METER_SUPPLY]]ペナルティを受け取ります。
 
+FLD_NANITE_SWARM
+ナナイトの群れ
+
+FLD_NANITE_SWARM_DESC
+船の船体に付着し、船[[metertype METER_STRUCTURE]]を1ターンに5回修理する古代のロボット粒子の群れ。 パーティクルを収集すると、ターンごとに[[metertype METER_INDUSTRY]]の1ユニットが作成されます。
+
+FLD_METEOR_BLIZZARD
+流星ブリザード
+
+FLD_METEOR_BLIZZARD_DESC
+流星の神秘的で神秘的な外観。 現象の科学的調査により、船ごとに[[metertype METER_RESEARCH]]を1つ生成します。
+
+FLD_VOID_RIFT
+ボイドリフト
+
+FLD_VOID_RIFT_DESC
+船[[metertype METER_SPEED]]を50％減少させる、宇宙の異常な裂け目。
 ##
 ## Predefined starting fleets
 ##
@@ -915,7 +941,7 @@ SERVER_WONT_START
 サーバーを起動できませんでした。
 
 SERVER_TIMEOUT
-ーバーが応答していません。
+サーバーが応答していません。
 
 SERVER_LOST
 サーバーへの接続が失われました。
@@ -971,10 +997,10 @@ ABORT_SAVE_AND_EXIT
 保存せずにフリーオリオンを終了します。
 
 EMPIRE_NOT_FOUND_CANT_HANDLE_ORDERS
-このクライアントによって制御されている帝国はありません。注文を発行することはできません。
+このクライアントによって制御されている帝国はありません。命令することはできません。
 
 RDERS_FOR_WRONG_EMPIRE
-このクライアントが制御していない帝国に対して注文が送られました。
+このクライアントが制御していない帝国に対して命令が送られました。
 
 SERVER_ALREADY_HOSTING_GAME
 このサーバーは既にゲームをホストしています。
@@ -1002,6 +1028,7 @@ ERROR_PLAYER_NAME_ALREADY_USED
 
 ERROR_WRONG_PASSWORD
 プレイヤー名%1% のパスワードが正しくありません。
+
 ERROR_CLIENT_TYPE_NOT_ALLOWED
 クライアントの種類が指定されていません。
 
@@ -1018,10 +1045,10 @@ ERROR_TOO_MANY_HUMAN_PLAYERS
 人間のプレーヤーが多すぎます。
 
 ERROR_NOT_ENOUGH_CONNECTED_HUMAN_PLAYERS
-Not enough connected human empire players.
+接続された人間の帝国プレイヤーが足りません
 
 ERROR_TOO_MANY_UNCONNECTED_HUMAN_PLAYERS
-Too many unconnected human empire players.
+接続されていない人間の帝国プレイヤーが多すぎます。
 
 ERROR_CONNECTION_WAS_REPLACED
 接続が置き換えられました。
@@ -1031,6 +1058,7 @@ ERROR_NONPLAYER_CANNOT_CONCEDE
 
 ERROR_CONCEDE_DISABLED
 リタイヤは無効です。
+
 ERROR_CONCEDE_EXCEED_COLONIES
 リタイヤすることはできません。帝国はあまりにも多くの植民地を持っています。
 
@@ -1038,10 +1066,10 @@ ERROR_CONCEDE_LAST_HUMAN_PLAYER
 人間のプレイヤーが1人しかいないゲームからリタイヤすることはできません。
 
 ERROR_INCOMPATIBLE_VERSION
-Server cannot properly read messages from your client, most likely due to incompatible game versions.
+サーバーはクライアントからのメッセージを正しく読み取ることができません。互換性のないゲームバージョンが原因である可能性が高いです。
 
 ERROR_CHECKSUM_MISMATCH
-Content checksum on the server and the client differs.
+サーバーとクライアントのコンテンツチェックサムは異なります。
 
 ##
 ## Game Rules
@@ -1060,10 +1088,16 @@ RULE_PRODUCTION_QUEUE_TOPPING_UP_FACTOR_DESC
 最終品目ビルドでの PP 超過引当の割合は、時間内にビルドされます。
 
 RULE_CHEAP_AND_FAST_TECH_RESEARCH
-価で高速な技術
+安価で高速な技術
 
 RULE_CHEAP_AND_FAST_TECH_RESEARCH_DESC
 技術は1 RPの費用がかかり、研究に1ターンかかります。
+
+RULE_CHEAP_POLICIES
+安い政策
+
+RULE_CHEAP_POLICIES_DESC
+政策の採用に1 IPがかかります。
 
 RULE_CHEAP_AND_FAST_BUILDING_PRODUCTION
 安価で高速な建物
@@ -1105,7 +1139,19 @@ RULE_SHIP_STRUCTURE_FACTOR
 船舶構造のスケーリング
 
 RULE_SHIP_STRUCTURE_FACTOR_DESC
-船体および装甲部品の構造を調整する
+船体と装甲部品の構造を調整します。 構造の成長、損傷制御、惑星シールドも調整します
+
+RULE_SHIP_WEAPON_DAMAGE_FACTOR
+船の武器ダメージスケーリング
+
+RULE_SHIP_WEAPON_DAMAGE_FACTOR_DESC
+船の主武器のダメージとシールドを調整します。 惑星防御も調整します
+
+RULE_FIGHTER_DAMAGE_FACTOR
+戦闘機のダメージスケーリング
+
+RULE_FIGHTER_DAMAGE_FACTOR_DESC
+戦闘機のダメージを調整します
 
 RULE_SHIP_HULL_COST_FACTOR
 船体コストスケーリング
@@ -1225,12 +1271,6 @@ RULE_ENABLE_ALLIED_REPAIR
 RULE_ENABLE_ALLIED_REPAIR_DESC
 Drydocksの建造とFleet Field Repair技術により、同盟帝国の船を修理できます。
 
-RULE_SHOW_DETAILED_EMPIRES_DATA
-詳細な帝国データを表示
-
-RULE_SHOW_DETAILED_EMPIRES_DATA_DESC
-すべての帝国の研究と生産、研究された建物、部品、船体を表示します。
-
 RULE_DIPLOMACY
 許可された外交
 
@@ -1248,19 +1288,19 @@ RULE_DIPLOMACY_FORBIDDEN_FOR_ALL
 ##
 
 COMMAND_LINE_NOT_FOUND
-'''一致するオプションまたはセクションが見つかりません'''
+一致するオプションまたはセクションが見つかりません
 
 COMMAND_LINE_USAGE
-'''使用法: -h |--help [グループ名 | オプション名]'''
+使用法: -h |--help [グループ名 | オプション名]
 
 COMMAND_LINE_DEFAULT
-'''既定'''
+既定
 
 COMMAND_LINE_SECTIONS
-'''オプショングループ'''
+オプショングループ
 
 COMMAND_LINE_OPTIONS
-'''オプション'''
+オプション
 
 OPTIONS_DB_HELP
 '''このヘルプ メッセージを印刷します。
@@ -1282,7 +1322,7 @@ OPTIONS_DB_SKIP_CHECKSUM
 リソース ディレクトリのチェックサムの比較はスキップします。 これにより、クライアントとサーバーが同じマシン上にあり、同じリソース ディレクトリを使用して、より高速に起動できます。
 
 OPTIONS_DB_TESTING
-Linux only. AI will output log to console instead file for testing purpose.
+Linuxのみ。 AIはログをテスト目的でファイルではなくコンソールに出力します。
 
 OPTIONS_DB_GENERATE_CONFIG_XML
 既定の設定、既存の config.xml ファイルの設定、およびコマンド ラインで指定された設定を使用して、config.xml ファイルを生成します。このコマンドを実行すると、現在の config.xml ファイルが存在する場合は、そのファイルが上書きされます。
@@ -1421,17 +1461,23 @@ Cookieレコードが期限切れと見なされるまでの分数。
 OPTIONS_DB_PUBLISH_STATISTICS
 プレイヤーへの帝国統計の送信を有効にします
 
+OPTIONS_DB_PUBLISH_SEED
+プレイヤーへの銀河のシードの送信を有効にします。
+
 OPTIONS_DB_FIRST_TURN_TIME
 UTCの形式「2019-01-20 11:59:59」の絶対時刻。 空の場合、間隔が切れると最初のターン前進が行われます。 有効にするには固定間隔が必要です。
 
 OPTIONS_DB_TIMEOUT_INTERVAL
-ターンが進む間の最大間隔（秒単位）。 0の場合、タイムアウトによるターンアドバンスは無効になり、ターンはすべてのプレイヤーがターンを終了した後にのみ進行します。
+ターンの自動進行の最大間隔（秒単位）。 0の場合、タイムアウトによるターンの進行は無効になり、すべてのプレイヤーがターンを終了したときにのみターンが進行します。 プレイヤーがゲームに勝った後、自動ターンアドバンスも無効になります。
 
 OPTIONS_DB_TIMEOUT_FIXED_INTERVAL
 プレイヤーがターンオーダーを送信したタイミングとタイミングに関係なく、一定の間隔でターンが進みます。
 
 OPTIONS_DB_CLIENT_MESSAGE_SIZE_MAX
 バイト単位のクライアントメッセージサイズの制限
+
+OPTIONS_DB_DROP_EMPIRE_READY
+帝国のゲームへの参加準備を脱落させる。
 
 OPTIONS_DB_UI_MAIN_MENU_X
 アプリケーションの全幅の一部として、イントロ画面メインメニューの中心の位置。
@@ -1653,7 +1699,7 @@ OPTIONS_DB_UI_PLANET_STATUS_CONQUERED
 %1%が征服されました。 幸福はおそらく減少します。
 
 OPTIONS_DB_UI_PLANET_STATUS_UNHAPPY
-%1%の人口は非常に不幸です。 ここから入植者を募集することはできません。
+%1%の人口は非常に不幸です。 [[metertype METER_INDUSTRY]]も[[metertype METER_RESEARCH]]も増加しません。 入植者のためのソースとして使用することはできません。
 
 OPTIONS_DB_UI_PLANET_STATUS_NO_SUPPLY
 %1%が供給されなくなりました。 この惑星で生成された産業は、ここでのみ使用できます。
@@ -1791,7 +1837,7 @@ OPTIONS_DB_GAMESETUP_SEED
 同じ設定で生成された銀河と同じ種は同じになります。'''
 
 OPTIONS_DB_GAMESETUP_UID
-新しいゲームのゲームUID。 サーバーレスオプションは、ホストレスサーバーで予測可能なゲーム名に使用できます。
+'''新しいゲームのゲームUID。 サーバーレスオプションは、ホストレスサーバーで予測可能なゲーム名に使用できます。'''
 
 OPTIONS_DB_GAMESETUP_STARS
 '''生成される銀河系の概数。
@@ -1817,7 +1863,7 @@ OPTIONS_DB_GAMESETUP_PLANET_DENSITY
 OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY
 '''銀河の星間航路の数。
 
-[低] に設定すると、ほとんどの星系は通常、1 つまたは 2 つの星間航路を持ちます。[高] に設定すると、ほとんどの星系は 120uu 内のほとんどの近くの星系に星間航路を結び付けます。'''
+[低] に設定すると、ほとんどの星系は通常、1 つまたは 2 つの星間航路を持ちます。[高] に設定すると、ほとんどの星系は 120uu 内のほとんどの近くの星系に星���航路を結び付けます。'''
 
 OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY
 '''特殊機能を含む惑星と星系の比率。
@@ -1839,7 +1885,7 @@ OPTIONS_DB_GAMESETUP_NATIVE_FREQUENCY
 OPTIONS_DB_GAMESETUP_AI_MAX_AGGRESSION
 '''AI相手の最大攻撃レベル。
 
-ほとんどのAIはレベルセットで、いくつかは次のレベルにあるかもしれません、すべてが挨拶を送信し、最初のターン中にメッセージウィンドウで自分のレベルを述べるべきです。'''
+ほとんどのAIはレベルセットで���いくつかは次のレベルにあるかもしれません、すべてが挨拶を送信し、最初のターン中にメッセージウィンドウで自分のレベルを述べるべきです。'''
 
 OPTIONS_DB_GAMESETUP_EMPIRE_NAME
 あなたの帝国の名前。
@@ -1942,6 +1988,9 @@ OPTIONS_DB_AUTOSAVE_GAME_CLOSE
 
 OPTIONS_DB_AUTOSAVE_HOSTLESS
 ホストレス モードで自動保存を有効にします。
+
+OPTIONS_DB_AUTOSAVE_HOSTLESS_EACH_PLAYER
+プレーヤーがターンを終えるごとに、ホストレスモードで自動保存を有効にします。 これにより、サーバーがクラッシュしたときに発行された注文が失われるのを防ぐことができます。
 
 OPTIONS_DB_AUTOSAVE_INTERVAL
 最後のターン開始または自動保存から次の自動保存までの秒単位の遅延。 サーバーがクラッシュしてもプレーヤーの注文が失われないようにします。 無効の場合は0。
@@ -2563,7 +2612,7 @@ GAME_MENU_LOAD
 ゲームをロードする
 
 GAME_MENU_RESIGN
-リタイヤ
+タイトルへ戻る
 
 GAME_MENU_CONCEDE
 認める
@@ -2575,7 +2624,13 @@ BUTTON_DISABLED
 ボタン無効
 
 SAVE_DISABLED_BROWSE_TEXT
-[セーブ データ] ボタンは、このクライアントがホストでもモデレーターでもないマルチプレイヤー ゲームであるか、またはこのメニューが開かれた時点で、AI の少なくとも 1 つがターンの移動をまだ送信していない (緑色の tr で示されている) ため、無効になっています。帝国ウィンドウのプレーヤータイプのアイコンのすぐ左にあるiangleステータスアイコン)。
+'''[ゲームを保存]ボタンは無効になっています。 次の理由が考えられます。
+
+-これは、このクライアントがホストでもモデレーターでもないマルチプレイヤーゲームです。
+
+-このメニューを開いたとき、少なくとも1つのAIがそのターンの移動をまだ完了していません（[エンパイア]ウィンドウのプレーヤータイプアイコンのすぐ左にある緑色の三角形のステータスアイコンで確認できます）
+
+-別の保存が進行中です'''
 
 
 ##
@@ -3182,8 +3237,11 @@ OPTIONS_CREATE_PERSISTENT_CONFIG_TOOLTIP_TITLE
 
 OPTIONS_CREATE_PERSISTENT_CONFIG_TOOLTIP_DESC
 '''現在の構成設定を永続的な既定の設定として保存します。
+
 このような設定は、config.xml の設定よりも優先されますが、コマンド ラインは優先しません。
+
 既定値から変更された設定のみを格納します。
+
 既存の永続構成ファイルはすべて上書きされます。
 
 設定がバージョン間で常に有効であるとは限りません。
@@ -3222,6 +3280,9 @@ OPTIONS_CREATE_ALL_CONFIG_TOOLTIP_DESC
 MAP_BTN_TURN_UPDATE
 ターン%1%次へ 
 
+# %1% current turn number.
+MAP_BTN_TURN_UNREADY
+%1%行動を修正
 
 MAP_BTN_TURN_TOOLTIP
 ターンを開始
@@ -3336,6 +3397,12 @@ MAP_BTN_DESIGN
 #MAP_BTN_DESIGN_DESC
 #''''''
 
+MAP_BTN_GOVERNMENT
+政府の政策
+
+MAP_BTN_GOVERNMENT_DESC
+''''''
+
 MAP_BTN_GRAPH
 グラフ
 
@@ -3416,11 +3483,11 @@ MAP_DETECTION_TITLE
 MAP_DETECTION_TEXT
 帝国検出力
 
-MAP_TRADE_TITLE
-貿易
+MAP_INFLUENCE_TITLE
+影響
 
-MAP_TRADE_TEXT
-帝国総貿易出力。(貿易は何もしない)
+MAP_INFLUENCE_TEXT
+帝国総影響力
 
 MAP_FLEET_SHIP_COUNT
 総船舶
@@ -3462,13 +3529,13 @@ RESOURCE_ALLOCATION_TOOLTIP
 星系%1%:%2%
 
 INDUSTRY_PRODUCTION
-工業生産
+工業力
 
 RESEARCH_PRODUCTION
-研究出力
+研究力
 
-TRADE_PRODUCTION
-貿易出力
+INFLUENCE_PRODUCTION
+影響力
 
 STOCKPILE_GENERATION
 備蓄能力の生成
@@ -3479,8 +3546,8 @@ INDUSTRY_CONSUMPTION
 RESEARCH_CONSUMPTION
 研究消費
 
-TRADE_CONSUMPTION
-貿易消費
+INFLUENCE_CONSUMPTION
+影響消費
 
 STOCKPILE_USE
 備蓄能力の使用
@@ -3682,6 +3749,11 @@ TT_SPECIES
 # %2% name of field
 #TT_FIELD
 #<i>%2%</i>
+
+# %1% name of the adopting empire.
+# %2% name of policy
+TT_POLICY
+%1%方針<i>%2%</i>
 
 TT_FIGHTER_LAUNCH
 起動
@@ -3925,8 +3997,8 @@ FW_FLEET_INDUSTRY_SUMMARY
 FW_FLEET_RESEARCH_SUMMARY
 艦隊研究 - 艦隊内の船舶の総研究出力に等しい。
 
-FW_FLEET_TRADE_SUMMARY
-艦隊トレード - 艦隊内の船舶の総貿易出力に等しい。
+FW_FLEET_INFLUENCE_SUMMARY
+艦隊の影響-艦隊内の船の総影響力に等しい。
 
 FW_MERGE_SYSTEM_FLEETS
 星系の船を艦隊にマージ
@@ -4154,6 +4226,17 @@ TECH_WND_LIST_COLUMN_CATEGORY
 
 TECH_WND_LIST_COLUMN_DESCRIPTION
 説明
+
+
+##
+## Government Wnd
+##
+
+POLICY_LOCKED
+実行できない政策
+
+POLICY_ADOPTABLE_COST
+%1%IPに可能な施策
 
 
 ##
@@ -4474,7 +4557,7 @@ MOVE_DOWN_LIST_ITEM
 下へ
 
 SPLIT_INCOMPLETE
-現在の繰り返しを分離する
+現在の繰り返し��分離する
 
 DUPLICATE
 複製
@@ -4487,6 +4570,12 @@ PRODUCTION_WND_TOOLTIP_PROD_TIME
 
 PRODUCTION_WND_TOOLTIP_PARTS
 出荷部品
+
+PRODUCTION_WND_TOOLTIP_PROD_TIME
+全額出資の生産は%2%でターンかかります：%1%
+
+NO_PRODUCTION_HERE_CANT_PRODUCE
+%1%での生産が不十分です
 
 # %1% name of the location where the object should be build.
 PRODUCTION_WND_TOOLTIP_FAILED_COND
@@ -4585,7 +4674,7 @@ DESIGN_ENTER_NEW_DESIGN_NAME
 新しい設計名を入力してください:
 
 DESIGN_INVALID
-無効なデザイン
+無効なデザ���ン
 
 DESIGN_INV_MODERATOR
 モデレータとオブザーバーは、船舶の設計を作成または変更することはできません。
@@ -4604,7 +4693,7 @@ DESIGN_WND_KNOWN_DETAIL
 この設計は"%1% " の複製です。
 
 DESIGN_WND_RENAME_FINISHED
-完成したデザインの名前を変更
+完成した���ザインの名前を変更
 
 # %1% name of the equivalent ship design.
 # %2% new name of the ship design.
@@ -4686,6 +4775,26 @@ NO_SAVED_OR_DEFAULT_DESIGNS_ADDED_PROMPT
 # %1% File path of unwritable file
 ERROR_UNABLE_TO_WRITE_FILE
 ファイルを書き込むことができません: n"%1%"
+
+
+##
+## Government window
+##
+
+GOVERNMENT_INFO_IP
+IP
+
+GOVERNMENT_WND_CLEAR
+clear
+
+ECONOMIC_CATEGORY
+経済的
+
+SOCIAL_CATEGORY
+ソーシャル
+
+MILITARY_CATEGORY
+ミリタリー
 
 
 ##
@@ -4864,6 +4973,12 @@ ENC_TECH
 ENC_TECH_DESC
 [[encyclopedia RESEARCH_TECH_GUIDE_TITLE]]によって、新しい効果、改善された惑星の統計、建物、船の部品をロック解除できます。それぞれがここにリストされているカテゴリのいずれかに分類されます。
 
+ENC_POLICY
+ポリシー
+
+ENC_POLICY_DESC
+帝国が採用できる改善された効果または状況効果。
+
 ENC_SPECIAL
 特別
 
@@ -4920,6 +5035,12 @@ TURN
 
 NO_TECHS_RESEARCHED
 研究されていない技術
+
+ADOPTED_POLICIES
+'''採用ポリシー：'''
+
+NO_POLICIES_ADOPTED
+採用されているポリシーはありません
 
 AVAILABLE_PARTS
 '''利用可能な部品:'''
@@ -5072,19 +5193,24 @@ ENC_SEARCH_NOTHING_FOUND
 #%1% %2%
 
 ENC_PP
-頁
+PP
 
 ENC_RP
 Rp
+
+ENC_IP
+IP
 
 # Concise listing of costs required to produce item or research tech.
 # %1% cost to complete requested item or technology.
 # %2% unit of costs; can be `ENC_PP` or `ENC_RP` depending on the item or
 #     technology.
 # %3% turns to complete requested item or technology.
-#ENC_COST_AND_TURNS_STR
-#%1% %2% と %3%ターン
+ENC_COST_AND_TURNS_STR
+%1% %2% と %3%ターン
 
+ENC_COST_STR
+%1%%2%
 ENC_VERB_PRODUCE_STR
 生成
 
@@ -5482,7 +5608,7 @@ MANAGEMENT_TITLE_SHORT_DESC
 
 
 ##
-## Encyclopedia subcategories
+## Encyclopedia articles in Guides category
 ##
 
 # In Guides category
@@ -5493,7 +5619,7 @@ INTERFACE_TITLE
 INTERFACE_TEXT
 フリーオリオンインターフェイス機能の非網羅的なリスト:
 
-# In Game Concepts category
+## Encyclopedia articles in Game Concepts category
 
 DIPLOMACY_TITLE
 外交
@@ -5572,11 +5698,11 @@ SYSTEM_BLOCKADE_TEXT
 #METER_TARGET_RESEARCH_VALUE_DESC
 #[[METER_RESEARCH_VALUE_DESC]]
 
-#METER_TARGET_TRADE_VALUE_LABEL
-#[[METER_TRADE_VALUE_LABEL]]
+#METER_TARGET_INFLUENCE_VALUE_LABEL
+#[[METER_INFLUENCE_VALUE_LABEL]]
 
-#METER_TARGET_TRADE_VALUE_DESC
-#[[METER_TRADE_VALUE_DESC]]
+#METER_TARGET_INFLUENCE_VALUE_DESC
+#[[METER_INFLUENCE_VALUE_DESC]]
 
 #METER_TARGET_CONSTRUCTION_VALUE_LABEL
 #[[METER_CONSTRUCTION_VALUE_LABEL]]
@@ -5677,11 +5803,11 @@ METER_RESEARCH_VALUE_DESC
 
 研究では、[[metertype METER_SUPPLY]]ライン接続を使用する必要はありません。'''
 
-METER_TRADE_VALUE_LABEL
+METER_INFLUENCE_VALUE_LABEL
 貿易
 
-#METER_TRADE_VALUE_DESC
-#[[MAP_TRADE_TEXT]]
+#METER_INFLUENCE_VALUE_DESC
+#[[MAP_INFLUENCE_TEXT]]
 
 METER_CONSTRUCTION_VALUE_LABEL
 インフラ
@@ -5880,25 +6006,25 @@ GROWTH_FOCUS_TEXT
 
 [[GROWTH_SPECIALS_ENTRY_LIST]]'''
 
-TRADE_FOCUS_TITLE
-トレード重視
+INFLUENCE_FOCUS_TITLE
+影響力重視
 
-TRADE_FOCUS_TEXT
-貿易は何もしません。これは、より多くのリソースが計画されていることを示すプレースホルダにすぎません。
+INFLUENCE_FOCUS_TEXT
+影響力は何もしません。只今制作中
 
 PROTECTION_FOCUS_TITLE
 保護重視
 
 PROTECTION_FOCUS_TEXT
-The Protection focus represents a planet wholly focused on defending itself. [[metertype METER_TROOPS]], Planetary [[metertype METER_DEFENSE]], and Planetary [[metertype METER_SHIELD]] are doubled.
+保護重視は、自分自身の防御にすべてを使う惑星を表しています。 [[metertype METER_TROOPS]]、惑星の[[metertype METER_DEFENSE]]、惑星の[[metertype METER_SHIELD]]は2倍になります。
 
 STOCKPILE_FOCUS_TITLE
 備蓄重視
 
 STOCKPILE_FOCUS_TEXT
-'''The Stockpile focus increases the [[metertype METER_STOCKPILE]] of a planet.
+'''備蓄重視は、惑星の[[metertype METER_STOCKPILE]]を増やします。
 
-A Homeworld focused on Stockpile also helps other planets of the same species and increases the [[metertype METER_STOCKPILE]] there by an additional 0.04 per population.
+備蓄に焦点を当てたホームワールドは、同じ種の他の惑星も助け、[[metertype METER_STOCKPILE]]を人口あたり0.04追加します。
 
 [[METER_STOCKPILE_VALUE_DESC]]'''
 
@@ -5906,7 +6032,7 @@ ARMOR_TITLE
 アーマーメッキ
 
 ARMOR_TEXT
-Increases the maximum [[metertype METER_STRUCTURE]] of its ship by the strength rating of the armor plating part.
+装甲板パーツの強度により、船の最大[[metertype METER_STRUCTURE]]を増やします。
 
 SLOT_TITLE
 スロット
@@ -5918,7 +6044,7 @@ DETECTION_TITLE
 検出強度
 
 DETECTION_TEXT
-'''The term Detection Strength represents the technological level of an empire's sensors. An empire can only see objects that have a [[metertype METER_STEALTH]] value lower than or equal to its Detection Strength and are within [[metertype METER_DETECTION]] of a controlled space ship or planet.
+'''検出強度という用語は、帝国のセンサーの技術レベルを表します。 帝国は、[[metertype METER_STEALTH]]の値が検出強度以下で、制御された宇宙船または惑星の[[metertype METER_DETECTION]]内にあるオブジェクトのみを表示できます。
 
 帝国には検出強度メーターがあります。'''
 
@@ -6147,7 +6273,7 @@ GREETINGS_GUIDE_TITLE
 **挨拶**
 
 GREETINGS_INTRO
-こんにちは、そしてフリーオリオンの世界へようこそ!
+こんにちは、そしてフリーオリオンの世界���ようこそ!
 
 GREETINGS_GUIDE_REFERENCE
 Newcomers to this universe may particularly wish to consult the [[encyclopedia QUICK_START_GUIDE_TITLE]].
@@ -6284,10 +6410,10 @@ Linux: ${XDG_CONFIG_HOME}/freeorion or if $XDG_CONFIG_HOME is not set: ${HOME}/.
 ##
 
 TURN_PROGRESS_PHASE_FLEET_MOVEMENT
-フリート・ムーブメント
+艦隊移動
 
 TURN_PROGRESS_PHASE_COMBAT
-コンバットの解決
+戦闘実行
 
 TURN_PROGRESS_PHASE_EMPIRE_GROWTH
 生産と成長
@@ -6308,7 +6434,7 @@ TURN_PROGRESS_PHASE_LOADING_GAME
 読み込み中
 
 TURN_PROGRESS_PHASE_GENERATING_UNIVERSE
-宇宙を生み出す
+宇宙を作成中
 
 TURN_PROGRESS_STARTING_AIS
 AI クライアントの作成
@@ -6724,6 +6850,12 @@ SITREP_TECH_UNLOCKED
 SITREP_TECH_UNLOCKED_LABEL
 技術のロック解除
 
+SITREP_POLICY_UNLOCKED
+%policy%のロックが解除され、採用できるようになりました。
+
+SITREP_POLICY_UNLOCKED_LABEL
+ロック解除されたポリシー
+
 SITREP_SHIP_PART_UNLOCKED
 %shippart%のロックが解除され、船のデザインで生産できるようになりました。
 
@@ -7004,7 +7136,7 @@ EFFECT_ANCIENT_RUINS_EMPTY_LABEL
 古代遺跡空の発掘
 
 EFFECT_NATIVES_TECH
-%planet%: 技術 %tech% は %species% から学習しました。
+%planet%: 技術%tech% は %species% から学習しました。
 
 EFFECT_NATIVES_TECH_LABEL
 原住民テック
@@ -7028,13 +7160,13 @@ SITREP_SHIP_REPAIR_DOCK_NOPOP
 軌道ドライドック修理 - 人口なし
 
 SITREP_SHIP_REPAIR_DOCK_PARTIAL
-軌道ドライドック修理 - 部分
+軌道ドライドック修理 - 部分的
 
 SITREP_SHIP_REPAIR_DOCK_COMPLETE
 軌道ドライドック修理 - 完了
 
 EFFECT_DRYDOCK_SHIP_REPAIR_NONE
-On %planet%: The %building% could not start repairs on %ship%, due to low [[metertype METER_HAPPINESS]].
+％planet％：[[meter type METER HAPPINESS]]が低いため、％building％は％ship％で修理を開始できませんでした。
 
 EFFECT_DRYDOCK_SHIP_REPAIR_NOPOP
 %planet%:%building%が放棄され、船の修理を支援する人は残っていません
@@ -7118,7 +7250,7 @@ EFFECT_TAME_MONSTER_HATCHED_LABEL
 モンスターハッチ
 
 EFFECT_TAME_MONSTER_MATURED
-%system%: より強力な飼い慣らし %predefinedshipdesign% は、より少ない形式から成熟しています。
+%system%: より強力な飼い慣らし %predefinedshipdesign% は、より少ない形式から進化しています。
 
 EFFECT_TAME_MONSTER_MATURED_LABEL
 モンスター成熟
@@ -7734,7 +7866,7 @@ SP_SLY_DESC
 右のダイエットでスライは精製された燃料を排泄します。ガスの巨人とのシステムで、Sly乗組員の船は燃料を再生します。
 
 社会構造:
-Slyは非常に長生きしており、文化的知識全体がエンコードされた曲を生き続けます。彼らは銀河に対して非常にオープンで好奇心旺盛で、彼らは今やっと遭遇することができる他の種です。
+Slyは非常に長生きしており、文化的知識全体がエ��コードされた曲を生き続けます。彼らは銀河に対して非常にオープンで好奇心旺盛で、彼らは今やっと遭遇することができる他の種です。
 '''
 
 SP_LEMBALALAM
@@ -7780,7 +7912,7 @@ SP_MUURSH_GAMEPLAY_DESC
 '''
 
 SP_MUURSH_DESC
-'''ムー・ウルシュは、漠然としたネコの外観の平和で非攻撃的なレースであり、彼らは彼らの優れた反応と視力のために部分的に彼らの惑星上の支配的な生命体となりました。彼らは彼らの能力を使って、平和な惑星を確保するために数を制限し、すべての脅迫的な捕食生物を切り上げて制御しました。
+'''ムー・ウルシュは、漠然としたネコの外観の平和で非攻撃��なレースであり、彼らは彼らの優れた反応と視力のために部分的に彼らの惑星上の支配的な生命体となりました。彼らは彼らの能力を使って、平和な惑星を確保するために数を制限し、すべての脅迫的な捕食生物を切り上げて制御しました。
 
 彼らの残念なことに、彼らの自然な能力は彼らを例外的に才能のあるパイロットにするように見え、その数の中のいくつかは銀河の平和を確保するための最良の方法は、すべての積極的な知的種を征服し、制御し、銀河を平和にすることです彼らの故郷の世界。'''
 
@@ -8541,7 +8673,7 @@ COMPUTRONIUM_SPECIAL
 コンピュータ・ムーン
 
 COMPUTRONIUM_SPECIAL_DESC
-'''コンピュータ・ムーンがある惑星が[[metertype METER_RESEARCH]]重視の場合、帝国のすべての研究重視の惑星は、人口あたり0.2 [[metertype METER_RESEARCH]]を獲得します。
+'''コンピュータ・ムーンがある惑星が[[metertype METER_RESEARCH]]重視の場合、帝国のすべての研究重視の惑星は、人口あたり0.1 [[metertype METER_RESEARCH]]を獲得します。
 
 いくつかの消えた文明によって残され、月全体 - 表面からコアまで - 素晴らしい力のコンピューティングデバイスです。最も複雑なシミュレーションや方程式を入力するよりも速く完了できます。'''
 
@@ -8549,7 +8681,7 @@ HONEYCOMB_SPECIAL
 ハニカム
 
 HONEYCOMB_SPECIAL_DESC
-'''ハニカムのある惑星が[[metertype METER_INDUSTRY]]に焦点を合わせると、業界に焦点を合わせたすべての[[metertype METER_SUPPLY]]に接続された惑星は、[[metertype METER_POPULATION]]ごとに0.5 [[metertype METER_TARGET_INDUSTRY]]を獲得します。
+'''ハニカムのある惑星が[[metertype METER_INDUSTRY]]に焦点を合わせると、業界に焦点を合わせたすべての[[metertype METER_SUPPLY]]に接続された惑星は、[[metertype METER_POPULATION]]ごとに0.2 [[metertype METER_TARGET_INDUSTRY]]を獲得します。
 
 ハニカムは、古代のビルダーによって隠し場所として準備された惑星です。 周囲のシステムにある他のほとんどすべての惑星は、貴重な物質が取り除かれ、その後解体されました。 材料は分類され、惑星の地殻に埋め込まれた巨大なチューブに別々に保管されました。 スペクトルは、希少で貴重な元素から、生産が困難な分子や膨大な数のエネルギー源までさまざまです。 ビルダーがこの宝物を使って何を作りたかったのか、なぜ彼らが最後にそれを使わなかったのかは不明です。'''
 
@@ -8620,7 +8752,7 @@ CLOUD_COVER_MASTER_SPECIAL
 クラウドスポーン
 
 CLOUD_COVER_MASTER_SPECIAL_DESC
-この惑星には湿度を放出する空中生物が生息し、雲量が高い。彼らのライフサイクルの後半では、彼らは地面に埋め込み、大量の火山活動を引き起こします。
+この惑星には湿度を放出する空中生物が生息���、雲量が��い。彼らのライフサイクルの後半では、彼らは地面に埋め込み、大量の火山活動を引き起こします。
 
 CLOUD_COVER_SLAVE_SPECIAL
 高い雲のカバー
@@ -8970,8 +9102,8 @@ FOCUS_RESEARCH
 研究
 
 # Focus types
-FOCUS_TRADE
-貿易
+FOCUS_INFLUENCE
+影響力
 
 # Focus types
 FOCUS_LOGISTICS
@@ -9034,8 +9166,8 @@ METER_TARGET_RESEARCH
 研究
 
 # Meter types
-METER_TARGET_TRADE
-貿易
+METER_TARGET_INFLUENCE
+影響力
 
 # Meter types
 METER_TARGET_CONSTRUCTION
@@ -9094,8 +9226,8 @@ METER_RESEARCH
 研究
 
 # Meter types
-METER_TRADE
-貿易
+METER_INFLUENCE
+影響力
 
 # Meter types
 METER_CONSTRUCTION
@@ -9174,35 +9306,14 @@ METER_SHIP_COST_FACTOR
 METER_TECH_COST_FACTOR
 技術コスト係数
 
-ALIGN_MILITARISM
-軍国主義
+ECONOMIC_CATEGORY_NUM_POLICY_SLOTS
+経済政策スロット
 
-ALIGN_MILITARY_STRENGTH_DESC
-軍隊の強さと大きさ
+SOCIAL_CATEGORY_NUM_POLICY_SLOTS
+社会政策スロット
 
-ALIGN_SOCIAL_CONTROL
-社会統制
-
-ALIGN_SOCIAL_CONTROL_DESC
-集団の監視、制限、操作の程度
-
-ALIGN_ENVIRONMENT_MODIFICATION
-環境の変更
-
-ALIGN_ENVIRONMENT_MODIFICATION_DESC
-'''テラフォーミングまたはその他の大規模な使用'''
-
-ALIGN_BIOLOGICAL_ALTERATION
-生物学的変化
-
-ALIGN_BIOLOGICAL_ALTERATION_DESC
-生物工学の利用と改変
-
-ALIGN_MECHANIZATION
-機械化
-
-ALIGN_MECHANIZATION_DESC
-人工的な感性と自動化の使用
+MILITARY_CATEGORY_NUM_POLICY_SLOTS
+軍事政策スロット
 
 # Empire affiliation types
 AFFIL_SELF
@@ -9240,9 +9351,13 @@ UIT_SHIP_HULL
 UIT_TECH
 技術
 
+# Unlockable item types
+UIT_POLICY
+政策
+
 # Build types
 BT_NOT_BUILDING
-ビルドなし
+建物なし
 
 # Build types
 BT_BUILDING
@@ -9261,8 +9376,8 @@ INVALID_RESOURCE_TYPE
 無効なリソースの種類
 
 # Resource types
-RE_TRADE
-貿易
+RE_INFLUENCE
+影響力
 
 # Resource types
 RE_INDUSTRY
@@ -9432,8 +9547,8 @@ PC_RESEARCH_DESC
 研究パーツは、船から生成される[[metertype METER_RESEARCH]]を増やします。 船はまた、[[metertype METER_POPULATION]]が出力の増加を開始することを要求する場合があります。
 
 # Ship part classes
-PC_TRADE
-貿易
+PC_INFLUENCE
+影響力
 
 # Ship part classes
 PC_PRODUCTION_LOCATION
@@ -9669,8 +9784,8 @@ DESC_VAR_NON_OBJECT_REFERENCE
 #DESC_VAR_TARGETRESEARCH
 #[[METER_TARGET_RESEARCH]]
 
-#DESC_VAR_TARGETTRADE
-#[[METER_TARGET_TRADE]]
+#DESC_VAR_TARGETINFLUENCE
+#[[METER_TARGET_INFLUENCE]]
 
 #DESC_VAR_TARGETCONSTRUCTION
 #[[METER_TARGET_CONSTRUCTION]]
@@ -9705,8 +9820,8 @@ DESC_VAR_NON_OBJECT_REFERENCE
 #DESC_VAR_RESEARCH
 #[[METER_RESEARCH]]
 
-#DESC_VAR_TRADE
-#[[METER_TRADE]]
+#DESC_VAR_INFLUENCE
+#[[METER_INFLUENCE]]
 
 #DESC_VAR_CONSTRUCTION
 #[[METER_CONSTRUCTION]]
@@ -9747,17 +9862,17 @@ DESC_VAR_NON_OBJECT_REFERENCE
 #DESC_VAR_SIZE
 #[[METER_SIZE]]
 
-DESC_VAR_TRADESTOCKPILE
-貿易備蓄
+DESC_VAR_INFLUENCESTOCKPILE
+影響力備蓄
 
-DESC_VAR_TRADEOUTPUT
-貿易生産
+DESC_VAR_INFLUENCEOUTPUT
+影響力生産
 
 DESC_VAR_INDUSTRYOUTPUT
-産業出力
+産業力
 
 DESC_VAR_RESEARCHOUTPUT
-研究出力
+研究力
 
 DESC_VAR_OWNER
 所有者
@@ -10636,11 +10751,11 @@ DESC_CONTAINED_BY
 DESC_CONTAINED_BY_NOT
 '''オブジェクトに含まれていない%1%'''
 
-# %1% FIXME
+# %1%  text description of what system's ID the candidate object should be in
 DESC_IN_SYSTEM
 '''ID%1% の星系内にある'''
 
-# %1% FIXME
+# %1% text description of what system's ID the candidate object should not be in
 DESC_IN_SYSTEM_NOT
 '''ID%1% の星系にありません'''
 
@@ -10649,6 +10764,20 @@ DESC_IN_SYSTEM_SIMPLE
 
 DESC_IN_SYSTEM_SIMPLE_NOT
 '''星系にない'''
+
+# %1% text description of what planet's ID the candidate object should be on
+DESC_ON_PLANET
+'''ID%1%の惑星にあります'''
+
+# %1% text description of what planet's ID the candidate object should not be on
+DESC_ON_PLANET_NOT
+'''ID%1%の惑星にありません'''
+
+DESC_ON_PLANET_SIMPLE
+'''惑星にあります'''
+
+DESC_ON_PLANET_SIMPLE_NOT
+'''惑星にありません'''
 
 # %1% FIXME
 DESC_OBJECT_ID
@@ -10703,14 +10832,138 @@ DESC_HAS_TAG_NOT
 
 
 ##
+## Policy categories
+##
+
+SOCIOLOGY_CATEGORY
+社会学
+
+
+##
+## Imperial Policies
+##
+
+PLC_NO_GROWTH
+成長無し
+
+PLC_NO_GROWTH_DESC
+惑星がターンごとに人口を増やすのを防ぎます。
+
+PLC_NO_GROWTH_SHORT_DESC
+惑星の成長を止める
+
+PLC_POPULATION
+人口
+
+PLC_POPULATION_DESC
+自然人口増加率が50％増加します。
+
+PLC_POPULATION_SHORT_DESC
+成長率を上げる
+
+PLC_NO_SUPPLY
+供給なし
+
+PLC_NO_SUPPLY_DESC
+惑星が供給ネットワークを生成するのを防ぎます。
+
+PLC_NO_SUPPLY_SHORT_DESC
+供給の伝播を停止します
+
+PLC_CENTRALIZATION
+一元化
+
+PLC_CENTRALIZATION_DESC
+首都での資源生産を増やしますが、供給範囲と備蓄を減らします。
+
+PLC_CENTRALIZATION_SHORT_DESC
+資本を増やす
+
+PLC_COLONIZATION
+植民地化
+
+PLC_COLONIZATION_DESC
+植民地化船の部品のコストを削減します。
+
+PLC_COLONIZATION_SHORT_DESC
+植民地化の割引
+
+PLC_CONTINUOUS_SCANNING
+連続スキャン
+
+PLC_CONTINUOUS_SCANNING_DESC
+船の探知範囲と帝国探知の強度を高め、採用期間とともに増加し、同時に船のステルスを減らします。
+
+PLC_CONTINUOUS_SCANNING_SHORT_DESC
+検出を改善し、ステルスを妨げます
+
+PLC_EXPLORATION
+探査
+
+PLC_EXPLORATION_DESC
+'''武器、戦闘機、シールド、鎧、軍隊、コロニーポッド、砲撃、研究、産業、影響力、生産、または一般的な部品のない船の速度を上げます。
+
+検出、燃料、エンジン部品は許可されています'''
+
+PLC_EXPLORATION_SHORT_DESC
+エクスプローラー船のスピードアップ
+
+PLC_MARINE_RECRUITMENT
+マリンリクルートメント
+
+PLC_MARINE_RECRUITMENT_DESC
+陸軍の船の部品のコストを50％削減します。
+
+PLC_MARINE_RECRUITMENT_SHORT_DESC
+地上部隊のコストを削減
+
+PLC_DESIGN_SIMPLICITY
+シンプルなデザイン
+
+PLC_DESIGN_SIMPLICITY_DESC
+部品が6個以下の船の設計で、製造コストを20％削減します。
+
+PLC_DESIGN_SIMPLICITY_SHORT_DESC
+シンプルなデザインのコストを削減
+
+PLC_PSYONIC_SHIELDS
+サイオニックシールド
+
+PLC_PSYONIC_SHIELDS_DESC
+'''テレパシー種の惑星では、最大シールドが20増加します。
+テレパシー種のいる船では、最大シールドが2増加します。'''
+
+PLC_PSYONIC_SHIELDS_SHORT_DESC
+シールドを生成します
+
+PLC_STOCKPILE_LIQUIDATION
+備蓄清算
+
+PLC_STOCKPILE_LIQUIDATION_DESC
+備蓄重視の惑星で備蓄を2倍にします。
+
+PLC_STOCKPILE_LIQUIDATION_SHORT_DESC
+備蓄を増やす
+
+PLC_ALLIED_REPAIR
+同盟修理
+
+PLC_ALLIED_REPAIR_DESC
+2つの帝国が同盟を結んでいて、どちらかがこのポリシーを採用している場合、お互いの[[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]]と[[tech SHP_FLEET_REPAIR]]にいる間に、両方が損傷した船の修理を受けます。
+
+PLC_ALLIED_REPAIR_SHORT_DESC
+同盟国が船を修理できるようにします
+
+
+##
 ## Technology categories
 ##
 
 LEARNING_CATEGORY
-学習
+研究
 
 LEARNING_CATEGORY_DESC
-学習に関連する技術。
+研究に関連する技術。
 
 PRODUCTION_CATEGORY
 生産
@@ -10865,10 +11118,10 @@ LRN_PHYS_BRAIN_DESC
 脳内の構造とその機能が決定されます。思考と記憶の電気化学的および量子的性質が暴露される。理解を得て、脳機能の変化と増強が可能になり、思考のフロンティア、その表現、そしてその代替に新しいアイデアが生まれます。
 
 LRN_ALGO_ELEGANCE
-優雅なアルゴリズム
+洗練されたアルゴリズム
 
 LRN_ALGO_ELEGANCE_DESC
-'''研究重視のすべての惑星[[metertype METER_RESEARCH]]を人口あたり0.1ずつ増やします。
+'''研究重視のすべての惑星[[metertype METER_RESEARCH]]を人口あたり0.05ずつ増やします。
 
 データ解析の問題が非常に難しくなるほど、従来のアルゴリズム性能の測定は、還元不可能な複雑さの限界により、あまり有用ではなくなります。この段階では、アルゴリズムの形式と関数の他のメジャーが重要になります。美的にも比喩的にも、ソリューションの優雅さを最適化する必要があります。'''
 
@@ -10876,9 +11129,7 @@ LRN_TRANSLING_THT
 言語横断
 
 LRN_TRANSLING_THT_DESC
-'''何もしません。後で、これは原住民惑星の平和的な取得を可能にすることができます。
-
-より少ない心は、彼らが学んだ言語の限界に苦労したり、受け入れたりします。十分な心は、彼らが表現する方法を与えられている概念に制約を感じます。本当に偉大な心は言語の限界から解放され、超越的な思考を形成し、分析します。しかし、単に偉大な心は孤立し、無駄なままにされ、思考を表現する言語がなければ、どのように彼らは彼らの洞察を共有することができますか?'''
+より少ない心は、彼らが学んだ言語の限界に苦労したり、受け入れたりします。十分な心は、彼らが表現する方法を与えられている概念に制約を感じます。本当に偉大な心は言語の限界から解放され、超越的な思考を形成し、分析します。しかし、単に偉大な心は孤立し、無駄なままにされ、思考を表現する言語がなければ、どのように彼らは彼らの洞察を共有することができますか?
 
 LRN_PSIONICS
 超能力
@@ -10888,15 +11139,23 @@ LRN_PSIONICS_DESC
 
 深い内省や人工的な強化を通じて、脳は身体の限界を迂回して、周囲の宇宙と直接相互作用する能力を開発する可能性があります。テレパシー、共感、クレアボヤンス、前科学、サイコキネシス、精神エネルギーなどの力は、平凡な生物学的または技術的な選択肢を置き換えるか、または上回ります。マインドコントロール、人格の変化、所有を含むこれらの力の適用は、才能と才能のない存在の関係に深い意味を持ちます。'''
 
-LRN_ARTIF_MINDS
+LRN_NASCENT_AI
 新生人工知能
 
-LRN_ARTIF_MINDS_DESC
+LRN_NASCENT_AI_DESC
 '''すべての惑星の[[metertype METER_RESEARCH]]を2増やします。
 
 従来のコンピュータは、ほとんど計り知れない知性と計算能力を持っていますが、自己認識、意識またはセンチデンスの本質的な資質を欠いています。これらの形質は依然として不可解であるが、合理的なファクシミリが生み出される可能性がある。これらの調査は、認知科学と新しいメタパラダイムに関する研究の新しい道を開きます。
 
 新生AIは、アクティブな研究者によって発見されたすべてのデータを単一の自動データ処理ネットワークに入力し、データを分析し、完全に自動化された研究施設から得られた新しいデータを得ることができます。各惑星は、人口の職業に関係なく、すべての世界の研究にボーナスを与え、このような構造を含めることができます。'''
+
+LRN_ARTIF_MINDS
+人工心
+
+LRN_ARTIF_MINDS_DESC
+'''リサーチに重視の惑星の[[metertype METER_TARGET_RESEARCH]]を1増やします。
+
+人工心は認知科学の研究の縮図です。 これらは自己認識、意識、知覚の模倣ではなく、人工的な存在の中でのそのような性質の真の達成です。 この知的なデバイスは、それ自体で科学と研究の限界を拡大し、データ処理と知識の推論の新しい方法を自ら識別します。 研究者によって適切に維持および支援されている場合、各惑星はそのような構造を含むことができます'''
 
 LRN_XENOARCH
 異種学
@@ -10935,7 +11194,9 @@ LRN_MIND_VOID
 超空洞の真髄
 
 LRN_MIND_VOID_DESC
-私たちは宇宙の中で一人ではありません。しかし、なぜ検索はそんなに制限する必要がありますか?多くの文化は、より高い意識に神話、伝説や熱烈な信念を持っています。愛情深い神であろうと悪意のある神であろうと、離れた観察者であろうと、おそらくあるレベルの宇宙そのものが生きていて、気づいて、見ていることは明らかです。
+'''ロック解除[[policy PLC_DESIGN_SIMPLICITY]]
+
+私たちは宇宙の中で一人ではありません。しかし、なぜ検索はそんなに制限する必要がありますか?多くの文化は、より高い意識に神話、伝説や熱烈な信念を持っています。愛情深い神であろうと悪意のある神であろうと、離れた観察者であろうと、おそ���くあるレベルの宇宙そのものが生きていて、気づいて、見ていることは明らかです。'''
 
 LRN_TIME_MECH
 時間力学
@@ -10961,7 +11222,7 @@ LRN_QUANT_NET
 量子ネットワーク
 
 LRN_QUANT_NET_DESC
-'''研究重視のすべての惑星のターゲット[[metertype METER_RESEARCH]]を人口あたり0.5ずつ増やします。
+'''研究��視のすべての惑星のターゲット[[metertype METER_RESEARCH]]を人口あたり0.1ずつ増やします。
 
 星間航路の長く間接的な経路を介してではなく、任意の2つの場所間で瞬時に情報を転送することができる大規模な、帝国全体のデータネットワーク。この進歩は、帝国全体の研究を促進します。
 
@@ -10974,7 +11235,7 @@ LRN_COLLAPSER_DESC
 空間歪みと恒星スケール操作の集大成により、[[STAR_BLACK]]の特異性が反転し、星間スケールで時空の混乱が生じます。 しかし、この混乱は不安定で、急速に崩壊し、すべての艦隊、惑星、またはシステム全体を範囲内に引き寄せ、中心に落ちるものを完全に破壊します。
 
 LRN_TRANSCEND
-超越の特異性
+現実の超越
 
 LRN_TRANSCEND_DESC
 神性とは何ですか?神はそれが道徳的で慈悲深いのか、悪で横暴なのかに関心がありますか?神は死すべき人を注意と愛,憎しみと苦しみ,または切り離された無関心で扱いますか。神は、物理的な宇宙の無限にマイナスの問題を認識し続けるか、または記述を超えた形の真の神性であり、その死体によって理解することができないのは、他の方向にも等しく当てはまるのでしょうか?
@@ -11077,7 +11338,8 @@ GRO_ENERGY_META
 純粋エネルギー代謝
 
 GRO_ENERGY_META_DESC
-'''
+'''すべての船の最大[[metertype METER_FUEL]]を1増やします（[[encyclopedia FUEL_EFFICIENCY_TITLE]]でスケーリングする前に）、すべての惑星の最大[[metertype METER_DEFENSE]]を5、最大[[metertype METER_SHIELD]]を5増やします。 産業重視のすべての惑星で[[metertype METER_POPULATION]]ごとに[[metertype METER_TARGET_INDUSTRY]]を0.1、研究重視のすべての惑星で[[metertype METER_POPULATION]]ごとに0.2ずつ[[metertype METER_TARGET_RESEARCH]]を増やす。 
+
 人口全体を純粋なエネルギーの存在に変えるのは現実的ではありませんが、特定のタスクは、非肉体的に自分自身を現すことができる個人に適しています。例えば、船の乗組員は、もはや乗組員の四分の一や配給貯蔵でスペースを無駄にする必要はありません。より大きなエネルギーチャネリング能力を持つ存在は、惑星の盾と防衛を強化することができ、資源生産は一般的に強化されます。
 
 身体発達の究極の段階は、物理的な全てを超越することです。身体がなければ、個人や社会は、不必要な身体的限界やホメオスタシスを支えるエネルギーを無駄にする非効率的な代謝プロセスに妨げられることなく、自由に動き、成長し、存在する可能性があります。'''
@@ -11147,7 +11409,7 @@ PRO_MICROGRAV_MAN
 微小重力産業
 
 PRO_MICROGRAV_MAN_DESC
-'''小惑星帯の前哨地または植民地のある星系で、産業方針のすべての植民地で、[[metertype METER_INDUSTRY]]を+5増やします。 追加の主張された小惑星帯は追加の利益を提供しません。
+'''小惑星帯の前哨地または植民地のある星系で、産業方針のすべての植民地で、[[metertype METER_INDUSTRY]]を+2増やします。 追加の主張された小惑星帯は追加の利益を提供しません。
 
 亜惑星サイズの体からの鉱物資源抽出は課題を伴い、本格的な惑星のものとは全く異なる機会を提供します。自己液化と差別化に十分な質量を欠いている小惑星は、より重い元素へのアクセスをはるかに容易にし、重力の欠如は宇宙での使用のための抽出をはるかに効率的にすることができます。逆に、各ソース小惑星の限られたサイズは、完全に携帯自給自足の抽出施設を必要とします。また、微小重力環境の課題を克服する必要があり、多くの伝統的な方法の再設計が必要です。
 
@@ -11157,11 +11419,11 @@ PRO_ROBOTIC_PROD
 ロボット生産
 
 PRO_ROBOTIC_PROD_DESC
-'''すべての惑星のターゲット[[metertype METER_INDUSTRY]]を人口あたり0.1ずつ増加させます。
+'''[[metertype METER_POPULATION]]ごとに、産業重視の[[metertype METER_TARGET_INDUSTRY]]を0.05増やします。
 
-エキソボットは、一般的に知られるようになり、形の出会いの驚異である機能です。電子工学から大規模な建設まで幅広い分野で、ほぼすべての製造作業を果たすように設計されたロボットです。容易に大量生産され、それらは産業に高い優先順位を置く植民地で最も役立つ。主に産業重視のすべての世界は、エキソボットのチームを受け取り、工業生産を大幅に増加させます。
+エレクトロニクスから大規模建設まで幅広い分野でほぼすべての仕事を果たすように設計されたロボットは、主に産業に焦点を当てた世界のパフォーマンスを向上させます。
 
-高レベルの初期設計および初期設備の設定には依然として積極的な監督が必要ですが、実際の生産プロセスからオペレータを排除することで多くのボトルネックが解消されます。ロボットは、より大きな経済的補償を求める永続的な要求なしに、継続的に動作します。ロボットは工場内の有害な環境条件に対する耐性がはるかに高く、オフサイトで追加の居住可能なスペースを必要としません。ロボットは割り当てられたタスクを完璧に、または少なくとも指示に従って実行します。'''
+高レベルの設計と初期設備のセットアップには依然として積極的な監督が必要ですが、実際の生産プロセスからオペレーターを排除することで、多くのボトルネックが排除されます。 ロボットは継続的に動作し、工場内の危険な環境条件に対する許容度が非常に高く、敷地外に居住可能なスペースを追加する必要がありません。 ロボットは、割り当てられたタスクを完璧に、または少なくとも指示されたとおりに実行します。'''
 
 PRO_EXOBOTS
 エキソボット
@@ -11173,14 +11435,14 @@ PRO_FUSION_GEN
 核融合発電
 
 PRO_FUSION_GEN_DESC
-'''業界に焦点を当てた惑星のターゲット[[metertype METER_INDUSTRY]]を人口あたり0.2ずつ増加させます。
+'''産業重視の惑星の[[metertype METER_INDUSTRY]]を[[metertype METER_POPULATION]]あたり0.2ずつ増加させます。
 
 核融合プラントは、生産と維持に高価ですが、電力需要が増え続ける工業化された世界に電気を供給します。古い核分裂ベースの原子力発電所への依存は、徐々に過去のものになるでしょう。
 
 爆発性または制御不能な熱核反応は、小型戦術弾頭から超巨大恒星炉に至るまでのスケールで引き起こすのは比較的簡単です。反応からの制御、安定、実用発電は、やや困難である。しかし、燃料のほぼ無限の供給と排出のない運転の可能性があるため、このプロセスは依然として魅力的です。'''
 
 PRO_NANOTECH_PROD
-ナノテック生産
+ナノテク生産
 
 PRO_NANOTECH_PROD_DESC
 従来の生産技術は、基本的に、使用するツールのサイズと形態によって制限されます。製品が形をとるにつれて、その外側の層は、アセンブリの順序に不便で非効率的な調整を必要とする、内部構造の直接アクセスと操作を妨げる可能性があります。さらに、より大きな製品のコンポーネントは、組み合わせ時に意図したとおりに機能するように、慎重に形成され、厳密な仕様に組み立てる必要があります。ナノテクノロジーを使用して、ストック材料から直接、1つのステップで完全な製品を形成することにより、これらの制限を回避することができ、劇的に効率と生産速度を向上させます。
@@ -11193,15 +11455,23 @@ PRO_ORBITAL_GEN_DESC
 
 惑星体の低軌道は、惑星表面と比較して発電に多くの利点を提供する。大気の減衰なしに近くの日射に直接曝露し、微小重力で組み立てて収集できる桁の大きな構造の順序は大きな利点です。得られた電力は、軌道上で使用されてもよいし、表面産業を支えるために惑星にビームされてもよい。また、惑星磁場結合、軌道運動量交換、惑星大気との摩擦加熱など、エネルギー変換の新しいメカニズムが軌道上で利用可能になり、特殊な用途に特有の効果があります。'''
 
-PRO_SENTIENT_AUTOMATION
+PRO_ADAPTIVE_AUTOMATION
 適応型オートメーション
 
-PRO_SENTIENT_AUTOMATION_DESC
+PRO_ADAPTIVE_AUTOMATION_DESC
 '''すべての惑星のターゲット[[metertype METER_INDUSTRY]]を5増やします。
 
 直接監督なしに稼働する自動化工場を生産することで、完全に自動化された施設での工業生産を増やすことができます。これらの工場は、焦点に関係なく、任意の惑星に建設し、維持することができ、すべての世界の産業にボーナスを提供します。
 
 機器の自動化が進むに伴い、必要な原材料や、要求された最終製品以外の外部サポートなしで、完全に複製および維持することが可能になります。人工的な心によって制御されると、星系全体が自律的に学習、計画、反応、適応することができ、労働者を収容し雇用するために伝統的に必要とされる面倒な非効率性なしに実現できます。'''
+
+PRO_SENTIENT_AUTOMATION
+センティエントオートメーション
+
+PRO_SENTIENT_AUTOMATION_DESC
+'''工業重視のすべての惑星で[[metertype METER_TARGET_INDUSTRY]]が3増加します。
+
+自動化された工場の自然な進化は、そのような施設を制御する人工知能に、所有者の目標を達成するための最良の行動方針を推測および決定する能力を、彼らがそれを考える前であっても協議することによって達成されます。 この改善により、工業生産に積極的に専念しているすべての世界の自律生産設備のパフォーマンスが大幅に向上しました'''
 
 PRO_NDIM_ASSMB
 N次元アセンブリ
@@ -11235,12 +11505,16 @@ PRO_NEUTRONIUM_EXTRACTION
 PRO_NEUTRONIUM_EXTRACTION_DESC
 [[STAR_NEUTRON]]星のコアは、重力によって最も重い通常の物質よりもはるかに大きい密度に圧縮された縮退した中性子物質で構成されています。 このエキゾチックな素材は、かつて星から抽出された数多くの用途があり、他の方法では不可能な構造や船の部品の製造を可能にします。
 
+CON_OUTPOST
+前哨作成
+
 CON_ARCH_PSYCH
 建築心理学
 
 CON_ARCH_PSYCH_DESC
-構造や有人空間の形態は、単にそれが構築される材料の物理的な限界によって導かれるだけではありません。内部の住民、または外の観察者に対する心理的影響は、壁の強さや基礎の頑丈さよりも、設計の成功にはるかに大きな影響を与える可能性があります。
+'''構造や有人空間の形態は、単にそれが構築される材料の物理的な限界によって導かれるだけではありません。内部の住民、または外の観察者に対する心理的影響は、壁の強さや基礎の頑丈さよりも、設計の成功にはるかに大きな影響を与える可能性があります。
 
+1つの追加の社会政策スロットを付与します。'''
 CON_ORGANIC_STRC
 有機構造
 
@@ -11301,7 +11575,9 @@ CON_TRANS_ARCH
 超越建築
 
 CON_TRANS_ARCH_DESC
-'''科学者は高度な軌道構築技術を習得し、畏敬の念を起こさせる畏怖の構築を可能にする方法を作成します[[buildingtype BLD_MEGALITH]]。
+'''1つの追加の社会政策スロットを付与します。
+
+科学者は高度な軌道構築技術を習得し、畏敬の念を起こさせる畏怖の構築を可能にする方法を作成します[[buildingtype BLD_MEGALITH]]。
 
 デザインの縮図は、最適な機能性を優雅な形で統一します。超越的な構造は、畏敬の念を抱くスケール、単一のアイデアの完全な強調、知覚または欠如、または完全なシンプルさを通じて、その形、配置、物質と統合で乗員や観察者の心を拡大し、刺激しますそして目的のための適性。'''
 
@@ -11601,7 +11877,7 @@ CON_CONC_CAMP_DESC
 通常、死刑を余儀なくされると、市民はある程度の抵抗を起こし、外部の観察者の同情と支持を得るでしょう。しかし、部外者の中で正義の火を消し、内部の人々の無価値感と従属感を促進するために設計された建物を慎重に作成することによって、強制収容所は反乱を恐れずに効果的に利用することができます。
 
 CON_FRC_ENRG_CAMO
-フォースエネルギーカモフラージュ
+エネルギーカモフラージュ
 
 CON_FRC_ENRG_CAMO_DESC
 '''すべての建物の[[metertype METER_STEALTH]]を20増やします。
@@ -11707,7 +11983,7 @@ LRN_OBSERVATORY_I
 天文台
 
 LRN_OBSERVATORY_I_DESC
-星の性質とその内部および外部の属性を研究し、理解することは、恒星現象や惑星体の性質に対する強力な洞察を提供します。さらに、フラクタルアルゴリズムを使用して銀河全体の星間航路の分散を解読し、何らかの形で間接的に接続されている恒星を、監視対象の星間航路の既知のネットワークに対して可能にすることができる。
+星の性質とその内部および外部の属性を研究し、理解することは、恒星現象や惑星体の性質に対する強力な洞察を提供します。さらに、フラクタルア���ゴリズムを使用して銀河全体の星間航路の分散を解読し、何らかの形で間接的に接続されている恒星を、監視対象の星間航路の既知のネットワークに対して可能にすることができる。
 
 LRN_SOLAR_MAN
 太陽の操作
@@ -11728,10 +12004,10 @@ LRN_STELLAR_TOMOGRAPHY
 
 LRN_STELLAR_TOMOGRAPHY_DESC
 '''人口ごとに、星のタイプに応じて、研究重視の惑星の[[metertype METER_RESEARCH]]を増やします。
- [[STAR_BLACK]] (x1)
- [[STAR_NEUTRON]] (x0.75)
- [[STAR_BLUE]] or [[STAR_WHITE]] (x0.5)
- [[STAR_YELLOW]], [[STAR_ORANGE]] or [[STAR_RED]] (x0.2)
+* [[STAR_BLACK]] (x0.2)
+* [[STAR_NEUTRON]] (x0.15)
+* [[STAR_BLUE]] or [[STAR_WHITE]] (x0.1)
+* [[STAR_YELLOW]], [[STAR_ORANGE]] or [[STAR_RED]] (x0.05)
 
 特殊衛星のネットワークは、断層法を使用して、星の奥深くで起こっている活動を再構築することができます。それ以外の場合、高価な生産条件は、よりエキゾチックな星の種類のためのより大きな利点を持つ、様々な研究努力に最適です。'''
 
@@ -11766,7 +12042,7 @@ LRN_PSY_DOM_DESC
 '''敵帝国が[[tech LRN_PSY_DOM]]も知っている場合を除き、支配力のある惑星と同じシステム内の非テレパシークルーで敵船を支配する可能性が10%あります。
 [[predefinedshipdesign SM_PSIONIC_SNOWFLAKE]]が船を乗っ取るのを防ぎます。
 
-意識のある個人が、その意志に反して他の実体の完全な精神的制御に服従することを強制することは困難です。しかし、関係する時間枠を操作することによって、一定期間にわたって人口が及ぼす精神的な力は、数秒の間に単一の個人に負担させられ、統一された心に加わることをほとんど魅力的に強制する可能性があります。'''
+意識のある個人が、その意志に反して他の実体の完全���精神的制御��服従することを強制することは困難です。しかし、関係する時間枠を操作することによって、一定期間にわたって人口が及ぼす精神的な力は、数秒の間に単一の個人に負担させられ、統一された心に加わることをほとんど魅力的に強制する可能性があります。'''
 
 MIND_CONTROL_SHORT_DESC
 マインドコントロールを可能にする
@@ -11931,7 +12207,7 @@ SHP_REINFORCED_HULL
 強化機体
 
 SHP_REINFORCED_HULL_DESC
-'''すべての船の最大[[metertype METER_STRUCTURE]]を5増やします。
+'''すべての船の最大[[metertype METER_STRUCTURE]]を40増やします。
 
 標準的な船体は高度の微小重力建築技術および非常に抵抗力がある材料と設計され、造られます。しかし、物理的な問題の限界は、船体の強度に厳しい制限を課します。構造完全性フィールドを有する船体を増強することにより、強度の大幅な増加が得られる。'''
 
@@ -11939,7 +12215,7 @@ SHP_BASIC_DAM_CONT
 基本的なダメージコントロール
 
 SHP_BASIC_DAM_CONT_DESC
-損傷した船を徐々に修理します。 すべての船の現在の[[metertype METER_STRUCTURE]]は、戦闘に従事していない場合、毎ターン1ターンの割合で補充されます。
+損傷した船を徐々に修理します。 すべての船の現在の[[metertype METER_STRUCTURE]]は、戦闘に従事していない場合、毎ターン8の体力を修復します
 
 SHP_ADV_DAM_CONT
 高度なダメージコントロール
@@ -11954,7 +12230,7 @@ SHP_ROOT_AGGRESSION_DESC
 基本的な武器と[[shippart GT_TROOP_POD]]を許可します。
 
 SHP_BOMBARD
-衝突
+爆撃
 
 SHP_BOMBARD_DESC
 惑星砲撃兵器の開発を可能にします。
@@ -11964,50 +12240,50 @@ SHP_FIGHTERS_1
 戦闘機と打ち上げベイ
 
 SHP_FIGHTERS_1_DESC
-'''帝国がファイターハンガーとローンチベイを使用して船を建造できるようにします。船は1種類の戦闘機格納庫しか持つことができませんが、利用可能なスロットと同じ数だけ持つことができます。各[[encyclopedia PC_FIGHTER_HANGAR]]には戦闘機の最大容量があり、それらの戦闘機はすべて同じ強さを持ちます（種の能力とさらなる研究によって変更できます）。
+'''帝国がファイターハンガーとローンチベイを使用して船を建造できるようにします。船は1種類の戦闘機格納庫しか持つことができませんが、利用可能なスロットと同じ数だけ持つことができます。各[[エンサイクロペディアPC_FIGHTER_HANGAR]]には戦闘機の最大容量があり、それらの戦闘機はすべて同じ強さを持ちます（種の能力とさらなる研究によって変更できます）。
 
-[[encyclopedia PC_FIGHTER_BAY]]は、各戦闘ラウンドで多数の戦闘機を起動できます。これらの戦闘機は有効なターゲットとなり、その後の戦闘ラウンドで船や他の戦闘機を攻撃できるようになりますが、どのソースからの1回の攻撃でも戦闘機は破壊されます。通常の武器によって与えられる[[encyclopedia DAMAGE_TITLE]]とは異なり、戦闘機のダメージは、軍艦（シールド内から発砲）の[[metertype METER_SHIELD]]を無視します。
+[[encyclopedia PC_FIGHTER_BAY]]は、各戦闘ラウンドで多数の戦闘機を起動できます。これらの戦闘機は有効なターゲットとなり、その後の戦闘ラウンドで船や他の戦闘機を攻撃できるようになりますが、任意のソースからのシングルヒットは戦闘機を破壊します。通常の武器によって与えられた[[encyclopedia DAMAGE_TITLE]]とは異なり、戦闘機のダメージは軍艦（シールド内から発砲）の[[metertype METER_SHIELD]]を無視します。
 
-戦闘の終わりに、キャリアは生き残った戦闘機を集めます。移動が解決された直後に空母が[[metertype METER_SUPPLY]]にいる場合、格納庫は最大まで補充されます。
+パイロット特性は、[[FT_HANGAR_2]]、[[FT_HANGAR_3]]、および[[FT_HANGAR_4]]ファイターにも同じように影響します。良好な操縦は、ダメージを6増加させ、偉大な操縦は12増加させ、究極の操縦は戦闘機1ショットあたり18増加させます。
+操縦特性は[[FT_HANGAR_1]]戦闘機に影響しません。
 
-操縦特性は、[[FT_HANGAR_2]]、[[FT_HANGAR_3]]、および[[FT_HANGAR_4]]戦闘機にも同じように影響します。操縦が悪いと、戦闘機ごとに1つずつダメージが減少します。 良好な操縦は、ダメージを1増加させ、偉大な操縦を2増加させ、最終的な操縦を戦闘機1ショットあたり3増加させます。
-操縦特性は[[FT_HANGAR_1]]戦闘機には影響しません。'''
+戦闘の終わりに、キャリアは生き残った戦闘機を集めます。移動が解決された直後に空母が[[metertype METER_SUPPLY]]にいる場合、格納庫は最大まで補充されます。'''
 
 SHP_FIGHTERS_2
 レーザー戦闘機
 
 SHP_FIGHTERS_2_DESC
-[[metertype METER_SUPPLY]]内のすべての空母の戦闘機をアップグレードして、レーザー兵器を入手します。 [[shippart FT_HANGAR_2]]の戦闘機からの[[encyclopedia DAMAGE_TITLE]]は2増加し、[[shippart FT_HANGAR_3]]は3増加し、[[shippart FT_HANGAR_4]]は6増加します。[[shippart FT_HANGAR_1]]戦闘機の容量 [[shippart FT_BAY_1]]の発売率も1増加します。
+[[metertype METER_SUPPLY]]内のすべての空母の戦闘機をアップグレードして、レーザー兵器を入手します。 [[shippart FT_HANGAR_2]]の戦闘機からの[[encyclopedia DAMAGE_TITLE]]は12増加し、[[shippart FT_HANGAR_3]]は18増加し、[[shippart FT_HANGAR_4]]は36増加します。[[shippart FT_HANGAR_1]]戦闘機の容量 [[shippart FT_BAY_1]]の容量も1増加します。
 
 SHP_FIGHTERS_3
 プラズマ戦闘機
 
 SHP_FIGHTERS_3_DESC
-[[metertype METER_SUPPLY]]内のすべての空母の戦闘機をアップグレードして、プラズマ兵器を入手します。 [[shippart FT_HANGAR_2]]の戦闘機からの[[encyclopedia DAMAGE_TITLE]]は2増加し、[[shippart FT_HANGAR_3]]は3増加し、[[shippart FT_HANGAR_4]]は6増加します。[[shippart FT_HANGAR_1]]戦闘機の容量 [[shippart FT_BAY_1]]の発売率も1増加します。
+[[metertype METER_SUPPLY]]内のすべての空母の戦闘機をアップグレードして、プラズマ兵器を入手します。 [[shippart FT_HANGAR_2]]の戦闘機からの[[encyclopedia DAMAGE_TITLE]]は12増加し、[[shippart FT_HANGAR_3]]は18増加し、[[shippart FT_HANGAR_4]]は36増加します。[[shippart FT_HANGAR_1]]戦闘機の容量 [[shippart FT_BAY_1]]の容量も1増加します。
 
 SHP_FIGHTERS_4
 デスレイ戦闘機
 
 SHP_FIGHTERS_4_DESC
-[[metertype METER_SUPPLY]]内のすべての空母の戦闘機をアップグレードして、死光線兵器を入手します。 [[shippart FT_HANGAR_2]]の戦闘機からの[[encyclopedia DAMAGE_TITLE]]は2増加し、[[shippart FT_HANGAR_3]]は3増加し、[[shippart FT_HANGAR_4]]は6増加します。[[shippart FT_HANGAR_1]]戦闘機の容量 [[shippart FT_BAY_1]]の発売率も1増加します。
+[[metertype METER_SUPPLY]]内のすべての空母の戦闘機をアップグレードして、デスレイ兵器を入手します。 [[shippart FT_HANGAR_2]]の戦闘機からの[[encyclopedia DAMAGE_TITLE]]は2増加し、[[shippart FT_HANGAR_3]]は3増加し、[[shippart FT_HANGAR_4]]は6増加します。[[shippart FT_HANGAR_1]]戦闘機の容量 [[shippart FT_BAY_1]]の容量も1増加します。
 
 SHP_WEAPON_1_2
 マスドライバー2
 
 SHP_WEAPON_1_2_DESC
-[[metertype METER_SUPPLY]]内（または後で入力した後）のすべての船の[[shippart SR_WEAPON_1_1]]パーツをアップグレードします。 改良された武器部分の射撃ダメージは4です。
+[[metertype METER_SUPPLY]]内（または後で入力した後）のすべての船の[[shippart SR_WEAPON_1_1]]パーツをアップグレードします。 改良された武器部分の射撃ダメージは24です。
 
 SHP_WEAPON_1_3
 マスドライバー3
 
 SHP_WEAPON_1_3_DESC
-[[metertype METER_SUPPLY]]内（または後で入力した後）のすべての船の[[shippart SR_WEAPON_1_1]]パーツをアップグレードします。 改良された武器パーツのダメージは5です。
+[[metertype METER_SUPPLY]]内（または後で入力した後）のすべての船の[[shippart SR_WEAPON_1_1]]パーツをアップグレードします。 改良された武器パーツのダメージは30です。
 
 SHP_WEAPON_1_4
 マスドライバー4
 
 SHP_WEAPON_1_4_DESC
-[[metertype METER_SUPPLY]]内（または後で入力した後）のすべての船の[[shippart SR_WEAPON_1_1]]パーツをアップグレードします。 改良された武器パーツの射撃ダメージは6です。
+[[metertype METER_SUPPLY]]内（または後で入力した後）のすべての船の[[shippart SR_WEAPON_1_1]]パーツをアップグレードします。 改良された武器パーツの射撃ダメージは36です。
 
 SHP_WEAPON_2_1
 レーザー武器
@@ -12019,19 +12295,19 @@ SHP_WEAPON_2_2
 レーザー2
 
 SHP_WEAPON_2_2_DESC
-[[metertype METER_SUPPLY]]内（または後で入力した後）のすべての船の[[shippart SR_WEAPON_2_1]]パーツをアップグレードします。 改良された武器パーツの攻撃力は7です。
+[[metertype METER_SUPPLY]]内（または後で入力した後）のすべての船の[[shippart SR_WEAPON_2_1]]パーツをアップグレードします。 改良された武器パーツの攻撃力は42です。
 
 SHP_WEAPON_2_3
 レーザー3
 
 SHP_WEAPON_2_3_DESC
-[[metertype METER_SUPPLY]]内（または後で入力した後）のすべての船の[[shippart SR_WEAPON_2_1]]パーツをアップグレードします。 改良された武器部分は9の攻撃力を持っています。
+[[metertype METER_SUPPLY]]内（または後で入力した後）のすべての船の[[shippart SR_WEAPON_2_1]]パーツをアップグレードします。 改良された武器パーツの攻撃力は54です。
 
 SHP_WEAPON_2_4
 レーザー 4
 
 SHP_WEAPON_2_4_DESC
-[[metertype METER_SUPPLY]]内（または後で入力した後）のすべての船の[[shippart SR_WEAPON_2_1]]パーツをアップグレードします。 改良された武器パーツの射撃ダメージは11です。
+[[metertype METER_SUPPLY]]内（または後で入力した後）のすべての船の[[shippart SR_WEAPON_2_1]]パーツをアップグレードします。 改良された武器パーツの攻撃力は66です。
 
 SHP_WEAPON_3_1
 プラズマキャノン
@@ -12043,19 +12319,19 @@ SHP_WEAPON_3_2
 プラズマキャノン2
 
 SHP_WEAPON_3_2_DESC
-[[metertype METER_SUPPLY]]内（または後で入力した後）のすべての船の[[shippart SR_WEAPON_3_1]]パーツをアップグレードします。 改良された武器パーツの射撃ダメージは12です。
+[[metertype METER_SUPPLY]]内（または後で入力した後）のすべての船の[[shippart SR_WEAPON_3_1]]パーツをアップグレードします。 改良された武器パーツの射撃ダメージは72です。
 
 SHP_WEAPON_3_3
 プラズマキャノン3
 
 SHP_WEAPON_3_3_DESC
-[[metertype METER_SUPPLY]]内（または後で入力した後）のすべての船の[[shippart SR_WEAPON_3_1]]パーツをアップグレードします。 改良された武器パーツの射撃ダメージは15です。
+[[metertype METER_SUPPLY]]内（または後で入力した後）のすべての船の[[shippart SR_WEAPON_3_1]]パーツをアップグレードします。 改良された武器パーツの射撃ダメージは90です。
 
 SHP_WEAPON_3_4
 プラズマキャノン4
 
 SHP_WEAPON_3_4_DESC
-[[metertype METER_SUPPLY]]内（または後で入力した後）のすべての船の[[shippart SR_WEAPON_3_1]]パーツをアップグレードします。 改良された武器部分は18の攻撃力を持っています。
+[[metertype METER_SUPPLY]]内（または後で入力した後）のすべての船の[[shippart SR_WEAPON_3_1]]パーツをアップグレードします。 改良された武器部分は108の攻撃力を持っています。
 
 SHP_WEAPON_4_1
 デスレイズ
@@ -12067,37 +12343,37 @@ SHP_WEAPON_4_2
 デスレイ2
 
 SHP_WEAPON_4_2_DESC
-[[metertype METER_SUPPLY]]内（または後で入力した後）のすべての船の[[shippart SR_WEAPON_4_1]]パーツをアップグレードします。 改良された武器パーツの攻撃力は20です。
+[[metertype METER_SUPPLY]]内（または後で入力した後）のすべての船の[[shippart SR_WEAPON_4_1]]パーツをアップグレードします。 改良された武器パーツの攻撃力は120です。
 
 SHP_WEAPON_4_3
 デスレイ3
 
 SHP_WEAPON_4_3_DESC
-[[metertype METER_SUPPLY]]内（または後で入力した後）のすべての船の[[shippart SR_WEAPON_4_1]]パーツをアップグレードします。 改良された武器部分は25の攻撃力を持っています。
+[[metertype METER_SUPPLY]]内（または後で入力した後）のすべての船の[[shippart SR_WEAPON_4_1]]パーツをアップグレードします。 改良された武器部分は150の攻撃力を持っています。
 
 SHP_WEAPON_4_4
 デスレイ4
 
 SHP_WEAPON_4_4_DESC
-[[metertype METER_SUPPLY]]内（または後で入力した後）のすべての船の[[shippart SR_WEAPON_4_1]]パーツをアップグレードします。 改良された武器パーツの射撃ダメージは30です。
+[[metertype METER_SUPPLY]]内（または後で入力した後）のすべての船の[[shippart SR_WEAPON_4_1]]パーツをアップグレードします。 改良された武器パーツの射撃ダメージは180です。
 
 SHP_WEAPON_ARC_DISRUPTOR_1
 アークディスラプター
 
 SHP_WEAPON_ARC_DISRUPTOR_1_DESC
-[[shippart SR_ARC_DISRUPTOR]]のロックを解除します。これは、複数のターゲットへのダメージが少ない自動化された武器システムです。 基本武器のパーツにショットダメージが2あります。
+[[shippart SR_ARC_DISRUPTOR]]のロックを解除します。これは、複数のターゲットへのダメージが少ない自動化された武器システムです。 基本武器のパーツにショットダメージが12あります。
 
 SHP_WEAPON_ARC_DISRUPTOR_2
 アークディスラプター2
 
 SHP_WEAPON_ARC_DISRUPTOR_2_DESC
-[[metertype METER_SUPPLY]]内（または後で入力した後）のすべての船の[[shippart SR_ARC_DISRUPTOR]]パーツをアップグレードします。 改良された武器部分の射撃ダメージは4です。
+[[metertype METER_SUPPLY]]内（または後で入力した後）のすべての船の[[shippart SR_ARC_DISRUPTOR]]パーツをアップグレードします。 改良された武器部分の射撃ダメージは24です。
 
 SHP_WEAPON_ARC_DISRUPTOR_3
 アークディスラプター3
 
 SHP_WEAPON_ARC_DISRUPTOR_3_DESC
-[[metertype METER_SUPPLY]]内（または後で入力した後）のすべての船の[[shippart SR_ARC_DISRUPTOR]]パーツをアップグレードします。 改良された武器パーツのショットダメージは7です。
+[[metertype METER_SUPPLY]]内（または後で入力した後）のすべての船の[[shippart SR_ARC_DISRUPTOR]]パーツをアップグレードします。 改良された武器パーツのショットダメージは42です。
 
 SHP_ION_CANNON
 イオンキャノン
@@ -12586,9 +12862,19 @@ BLD_IMPERIAL_PALACE
 皇居
 
 BLD_IMPERIAL_PALACE_DESC
-'''[[metertype METER_SUPPLY]]のライン範囲を2増やし、[[metertype METER_CONSTRUCTION]]を20増やし、[[metertype METER_DEFENSE]]を5増やし、[[metertype METER_TROOPS]]を6増やします。また、帝国の所有者の資本を設定します。
+'''[[metertype METER_SUPPLY]]のライン範囲を2増やし、[[metertype METER_CONSTRUCTION]]を20増やし、[[metertype METER_DEFENSE]]を5増やし、[[metertype METER_TROOPS]]を6増やします。
+
+1つの経済政策枠を付与します。
+
+また、帝国の所有者の首都を設定します。
 
 帝国の権力と威信を表し、帝国の支配の中心として機能します。'''
+
+BLD_MILITARY_COMMAND
+軍事コマンド
+
+BLD_MILITARY_COMMAND_DESC
+軍事政策スロットを提供します。
 
 BLD_SUPER_TEST
 スーパーテスター化
@@ -12722,7 +13008,7 @@ BLD_INDUSTRY_CENTER
 産業センター
 
 BLD_INDUSTRY_CENTER_DESC
-'''最初は、[[metertype METER_INDUSTRY]]のボーナスを、[[metertype METER_SUPPLY]]ラインに接続されたすべての惑星に提供します。
+'''[[metertype METER_SUPPLY]]ラインで接続された産業重視の惑星に[[metertype METER_POPULATION]]ごとに0.05ずつ[[metertype METER_TARGET_INDUSTRY]]を増やす
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
 [[tech PRO_INDUSTRY_CENTER_II]]の改良により、ボーナスが2倍になりました。
@@ -12738,7 +13024,7 @@ BLD_INTERSPECIES_ACADEMY_DESC
 
 さまざまな種で使用するデバイスを設計することを学ぶことは、汎用的に使用できるツールを開発するために不可欠です。
 
-各帝国は、異なる種を持つ最大6つの惑星にアカデミーを含めることができます。アカデミーをサポートするには、惑星の人口は幸せでなければならず、少なくとも3つの星間航路は最も近い既存のアカデミーから飛び降りる。'''
+各帝国は異なる種族を持つ最大6つの惑星にアカデミーを置くことができる。アカデミーをサポートするためには、惑星の[[metertype METER_POPULATION]]が幸せでなければならず、最も近い既存のアカデミーから3星間航路以上離れている必要がある。'''
 
 BLD_STOCKPILING_CENTER
 帝国 エンタングルメント センター
@@ -12790,7 +13076,7 @@ BLD_COLLECTIVE_NET
 集団思考ネットワーク
 
 BLD_COLLECTIVE_NET_DESC
-'''業界に焦点を当てた惑星の[[metertype METER_INDUSTRY]]を人口あたり0.5ずつ増やし、研究に焦点を当てた惑星の[[metertype METER_RESEARCH]]を人口あたり0.5増やします。 スターレーンが200 uu以内に移動すると、この建物の有効性が損なわれ、これらのボーナスがなくなります。
+'''産業重視の惑星の[[metertype METER_INDUSTRY]]を人口あたり0.1ずつ増やし、研究に焦点を当てた惑星の[[metertype METER_RESEARCH]]を人口あたり0.5増やします。 スターレーンが200 uu以内に移動すると、この建物の有効性が損なわれ、これらのボーナスがなくなります。
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
 心をサイバー空間に移すことで、何千もの心が一つとして機能し、問題を解決し、単一の心ではできないブレークスルーを行うことができます。'''
@@ -12807,7 +13093,7 @@ BLD_ENCLAVE_VOID
 空虚の飛び地
 
 BLD_ENCLAVE_VOID_DESC
-'''リサーチフォーカスを持つすべての惑星のターゲット[[metertype METER_RESEARCH]]を人口あたり0.75増加します。
+'''研究重視の惑星の[[metertype METER_RESEARCH]]を人口あたり0.15増加します。
 複数のコピーがスタックしません。
 
 惑星全体の人口は、遺伝的にボイドマインドに調和し、帝国にその知恵をチャネリングすることに専念しています。ボイド・エンクレーブの住人は、司祭、より高い思考と知恵のチャネルとみなされています。帝国にとって重要なあらゆる問題において、彼らの助言は求められている。エンクレーブからの使者は、帝国の研究プロジェクトを支援するために送ることさえできます。'''
@@ -12828,7 +13114,7 @@ BLD_HYPER_DAM
 ハイパー空間ダム
 
 BLD_HYPER_DAM_DESC
-'''[[buildingtype BLD_BLACK_HOLE_POW_GEN]]に接続されていない惑星の場合、[[metertype METER_SUPPLY]]ラインに接続されている惑星のターゲット[[metertype METER_INDUSTRY]]を人口に1つずつ増やしますが、そのような惑星の人口は惑星のサイズによって減少します。 （[[SZ_TINY]] -1）（[[SZ_SMALL]] -2）（[[SZ_MEDIUM]] -3）（[[SZ_LARGE]] -4）（[[SZ_HUGE]] -5）。
+'''[[buildingtype BLD_BLACK_HOLE_POW_GEN]]に接続されていない惑星の場合、[[metertype METER_SUPPLY]]ラインに接続されている惑星のターゲット[[metertype METER_INDUSTRY]]を人口につき0.2ずつ増やしますが、そのような惑星の人口は惑星のサイズによって減少します。 （[[SZ_TINY]] -1）（[[SZ_SMALL]] -2）（[[SZ_MEDIUM]] -3）（[[SZ_LARGE]] -4）（[[SZ_HUGE]] -5）。
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
 安全に制御および利用されている、宇宙のファブリックの涙。 各惑星は独自の超空間ダムを構築する場合がありますが、時空の連続体が応力によって引き裂かれないようにするために、単一の制御センターが必要です。 さらに、超空間ダムを使用するすべての惑星は、[[STAR_BLACK]]を周回していない限り、健康上の問題を経験します。
@@ -12846,9 +13132,9 @@ BLD_SOL_ORB_GEN
 
 BLD_SOL_ORB_GEN_DESC
 '''[[metertype METER_SUPPLY]]ラインに接続された惑星上の人口[1]と星型に応じて、ターゲット[[metertype METER_INDUSTRY]]を増やします。
-  [[STAR_BLUE]]または[[STAR_WHITE]]（x0.4）
-  [[STAR_YELLOW]]または[[STAR_ORANGE]]（x0.2）
-  [[STAR_RED]]（x0.1）
+  [[STAR_BLUE]]または[[STAR_WHITE]]（x0.15）
+  [[STAR_YELLOW]]または[[STAR_ORANGE]]（x0.1）
+  [[STAR_RED]]（x0.05）
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]最高のボーナスが適用されます。
 
 星のエネルギーを直接利用するように設計された低太陽軌道の発電機。 スターのタイプが異なれば、生成されるエネルギーの量も異なるため、システム全体の業界ボーナスはスターのタイプによって異なります。 [[BUILDING_AVAILABLE_ON_OUTPOSTS]]。'''
@@ -12871,13 +13157,13 @@ BLD_TERRAFORM_REVERT
 テラフォーミング・リバージョン
 
 BLD_TERRAFORM_REVERT_DESC
-Terraformは、元のタイプの[[encyclopedia ENVIRONMENT_TITLE]]に一歩戻った世界を形成しています。
+テラフォーミング・リバージョンは、テラフォーミングする前の[[encyclopedia ENVIRONMENT_TITLE]]に戻します。
 
 BLD_REMOTE_TERRAFORM
 リモートテラフォーミング
 
 BLD_REMOTE_TERRAFORM_DESC
-Terraformは、生息する種の[[encyclopedia ENVIRONMENT_TITLE]]好みに一歩近づくように世界を形成します。 このプロセスは、[[encyclopedia OUTPOSTS_TITLE]]で実施できます。
+テラフォーミングは、生息する種の[[encyclopedia ENVIRONMENT_TITLE]]好みに一歩近づくように世界を形成します。 このプロセスは、[[encyclopedia OUTPOSTS_TITLE]]で実施できます。
 
 BLD_NEST_ERADICATOR
 ネスト・エラディケーター
@@ -12889,23 +13175,23 @@ BLD_NEUTRONIUM_EXTRACTOR
 中性子抽出器
 
 BLD_NEUTRONIUM_EXTRACTOR_DESC
-'''Makes Neutronium available to the owning empire. Neutronium may be used at a [[buildingtype BLD_NEUTRONIUM_FORGE]] to enable construction of ships with Neutronium ship parts, like the [[shippart AR_NEUTRONIUM_PLATE]].
+'''ニュートロニウムを帝国が利用できるようにします。 ニュートロニウムは、[[buildingtype BLD_NEUTRONIUM_FORGE]]で使用して、[[shippart AR_NEUTRONIUM_PLATE]]のようなニュートロニウムの部品を備えた船の建造を可能にできます。
 
-Before parts can be built using Neutronium, it must be extracted from a [[STAR_NEUTRON]] star. Neutronium extracted at this facility is transported to Neutronium Forges throughout the empire. [[BUILDING_AVAILABLE_ON_OUTPOSTS]].'''
+ニュートロニウムを使用してパーツを作成する前に、[[STAR_NEUTRON]]スターからパーツを抽出する必要があります。 この施設で抽出されたニュートロニウムは、帝国全体のニュートロニウムフォージに輸送されます。 [[BUILDING_AVAILABLE_ON_OUTPOSTS]]。'''
 
 BLD_NEUTRONIUM_FORGE
 中性子の鍛蔵
 
 BLD_NEUTRONIUM_FORGE_DESC
-'''This building is required at the same location as a [[buildingtype BLD_SHIPYARD_BASE]] to enable building ships with neutronium parts.
+'''この建物は、[[buildingtype BLD_SHIPYARD_BASE]]と同じ場所に必要で、ニュートロニウムパーツを備えた船を建造できます。
 
-The industrial processing of neutronium requires an extensive specialized facility, this building cannot be built at an [[encyclopedia OUTPOSTS_TITLE]]. [[MACRO_NEUTRONIUM_BUILDINGS]]'''
+ニュートロニウムの工業処理には、大規模な専門施設が必要です。この建物は、[[encyclopedia OUTPOSTS_TITLE]]に構築することはできません。 [[MACRO_NEUTRONIUM_BUILDINGS]]'''
 
 BLD_NEUTRONIUM_SYNTH
 中性子化器
 
 BLD_NEUTRONIUM_SYNTH_DESC
-'''An empire with this building does not need a [[buildingtype BLD_NEUTRONIUM_EXTRACTOR]] to harvest the neutronium required to enable construction of ships with Neutronium ship parts.
+'''この建物を持つ帝国は、ニュートロニウムの船の部品を備えた船の建造を可能にするために[[buildingtype BLD_NEUTRONIUM_EXTRACTOR]]を必要としません。
 
 古くから中性子を合成するために設計された古代の建物。'''
 
@@ -12915,66 +13201,64 @@ BLD_CONC_CAMP
 BLD_CONC_CAMP_DESC
 '''1ターンあたり3の割合で惑星の人口を減らし、目標[[metertype METER_INDUSTRY]]を惑星の人口の5倍に増やし、目標[[metertype METER_HAPPINESS]]を0に設定します。
 
-望ましくない種の惑星に乗り込むと、より適した種の導入が可能になります。市民を死に働かすために設計された強制収容所の惑星全体のネットワークを作成することにより、この目標は迅速かつ効率的に達成することができます。
-
-Ridding a planet of an undesirable species allows the introduction of a more suited species. By creating a planet-wide network of concentration camps designed to work the citizens to death, this goal can be achieved quickly and efficiently.'''
+惑星に望ましくない種に使うことで、より適した種の導入が可能になります。 市民を死ぬまで働かせるように設計された地球規模の強制収容所のネットワークを構築することにより、この目標は迅速かつ効率的に達��できます。'''
 
 BLD_CONC_CAMP_REMNANT
 強制収容所の残党
 
 BLD_CONC_CAMP_REMNANT_DESC
-Though the local authorities may try to hide these remnants of old [[buildingtype BLD_CONC_CAMP]], the populace is still aware of their presence.
+帝国はこれらの古い[[buildingtype BLD_CONC_CAMP]]の残骸を隠そうとするかもしれませんが、大衆は強制収容所の存在をまだ認識しています。
 
 BLD_BLACK_HOLE_POW_GEN
 ブラックホール発電装置
 
 BLD_BLACK_HOLE_POW_GEN_DESC
-'''Increases [[metertype METER_INDUSTRY]] on all [[metertype METER_SUPPLY]] line connected planets with the Industry focus by 1 per Population.
+'''[[metertype METER_POPULATION]]ごとに、[[metertype METER_SUPPLY]]ラインに接続された惑星の[[metertype METER_TARGET_INDUSTRY]]を0.2増加させます。
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
-[[BUILDING_AVAILABLE_ON_OUTPOSTS]], but must be in a [[STAR_BLACK]] system.'''
+[[BUILDING_AVAILABLE_ON_OUTPOSTS]]、ただし[[STAR_BLACK]]のある星系に存在する必要があります。'''
 
 BLD_PLANET_DRIVE
 プラネタリー 星間航路 ドライブ
 
 BLD_PLANET_DRIVE_DESC
-'''Allows a planet to move between star systems. An [[buildingtype BLD_LIGHTHOUSE]] is required within 200 uu of the target system to allow the planet to proceed safely. Otherwise, the planet will have a 50% chance of being destroyed in transit. This is a hazardous journey even if the planet survives however, and only half the population of a planet will live even with support from the interstellar lighthouse. [[BUILDING_AVAILABLE_ON_OUTPOSTS]], but cannot be used unless the planet is colonised.
+'''惑星が星系の間を移動できるようにします。惑星が安全に進むためには、[[buildingtype BLD_LIGHTHOUSE]]がターゲットシステムから200 uu以内に必要です。そうでなければ、惑星は輸送中に破壊される可能性が50％あります。しかし、これは惑星が生き残ったとしても危険な旅であり、星間灯台の支援があっても惑星の人口の半分しか生きられません。 [[BUILDING_AVAILABLE_ON_OUTPOSTS]]、ただし惑星が植民地化されていない場合は使用できません。
 
-Due to a lack of UI targeting, either a [[buildingtype BLD_PLANET_BEACON]] or a ship equipped with a [[shippart SP_PLANET_BEACON]] currently required on the other end of the starlane. This building will destroy itself immediately, so that the planet can move to a different target system later.
+UIターゲティングが不足しているため、現在[[buildingtype BLD_PLANET_BEACON]]または[[shippart SP_PLANET_BEACON]]を搭載した船がスターレーンの反対側に必要です。この建物はすぐにそれ自体を破壊するため、惑星は後で別のターゲットシステムに移動できます。
 
-To use this building, either construct a [[buildingtype BLD_PLANET_BEACON]] in the adjacent destination system or move your ship with a [[shippart SP_PLANET_BEACON]] there, then set the planet to Planet Drive focus. The planet will then be moved to that system. Note the beacon needs to have been in system for a turn: the drive will not work on the turn the building is completed or on the turn the ship arrives. Also note, a [[buildingtype BLD_TRANSFORMER]] can be used to replicate the effects of this building.'''
+この建物を使用するには、隣接する目的地システムに[[buildingtype BLD_PLANET_BEACON]]を構築するか、[[shippart SP_PLANET_BEACON]]で船を移動し、惑星をPlanet Driveフォーカスに設定します。その後、惑星はそのシステムに移動します。ビーコンは、システムがターンに入っている必要があることに注意してください。ドライブは、建物が完成したターンまたは船が到着するターンでは機能しません。また、[[buildingtype BLD_TRANSFORMER]]を使用すると、この建物の効果を再現できます。'''
 
 BLD_PLANET_BEACON
 惑星ビーコン
 
 BLD_PLANET_BEACON_DESC
-Designates the target for the [[buildingtype BLD_PLANET_DRIVE]]. [[BUILDING_AVAILABLE_ON_OUTPOSTS]].
+[[buildingtype BLD_PLANET_DRIVE]]のターゲットを指定します。 [[BUILDING_AVAILABLE_ON_OUTPOSTS]]。
 
 BLD_ART_PLANET
 人工惑星
 
 BLD_ART_PLANET_DESC
-Forms an artificial planet from an asteroid belt or a gas giant. [[PT_ASTEROIDS]] become [[SZ_TINY]] [[PT_BARREN]] planets and [[PT_GASGIANT]]s become [[SZ_HUGE]] [[PT_BARREN]] planets. [[ARTIFICIAL_PLANET_PROCESS_LOCATION]]
+小惑星帯またはガス巨人から人工惑星を形成します。 [[PT_ASTEROIDS]]は[[SZ_TINY]] [[PT_BARREN]]惑星になり、[[PT_GASGIANT]]は[[SZ_HUGE]] [[PT_BARREN]]惑星になります。 [[ARTIFICIAL_PLANET_PROCESS_LOCATION]]
 
 BLD_ART_FACTORY_PLANET
 人工工場の世界
 
 BLD_ART_FACTORY_PLANET_DESC
-Forms an artificial planet from an asteroid belt or a gas giant, and then populates it with [[species SP_EXOBOT]]s. [[PT_ASTEROIDS]] become [[SZ_TINY]] [[PT_BARREN]] planets and [[PT_GASGIANT]]s become [[SZ_HUGE]] [[PT_BARREN]] planets. [[ARTIFICIAL_PLANET_PROCESS_LOCATION]]
+小惑星帯またはガスジャイアントから人工惑星を形成し、[[種SP_EXOBOT]]をそこに投入します。 [[PT_ASTEROIDS]]は[[SZ_TINY]] [[PT_BARREN]]惑星になり、[[PT_GASGIANT]]は[[SZ_HUGE]] [[PT_BARREN]]惑星になります。 [[ARTIFICIAL_PLANET_PROCESS_LOCATION]]
 
 BLD_ART_PARADISE_PLANET
 人工パラダイスワールド
 
 BLD_ART_PARADISE_PLANET_DESC
-Forms an artificial paradise planet from an asteroid belt or a gas giant. [[PT_ASTEROIDS]] become [[SZ_TINY]] [[PT_BARREN]] planets and [[PT_GASGIANT]]s become [[SZ_HUGE]] [[PT_BARREN]] planets. The planet will have the [[special GAIA_SPECIAL]] special which will terraform it in stages to eventually perfectly suit its inhabitants. [[ARTIFICIAL_PLANET_PROCESS_LOCATION]]
+小惑星帯またはガス巨人から人工の楽園惑星を形成します。 [[PT_ASTEROIDS]]は[[SZ_TINY]] [[PT_BARREN]]惑星になり、[[PT_GASGIANT]]は[[SZ_HUGE]] [[PT_BARREN]]惑星になります。 惑星には、[[スペシャルGAIA_SPECIAL]]スペシャルがあり、段階的にテレフォームして最終的には住民に完全に適合します。 [[ARTIFICIAL_PLANET_PROCESS_LOCATION]]
 
 BLD_ART_MOON
 人工月
 
 BLD_ART_MOON_DESC
-'''Forms an artificial moon with 1:1 orbital period - rotational period resonance. Adds the [[special RESONANT_MOON_SPECIAL]] special to the planet.
+'''1：1の軌道周期-回転周期の共鳴を持つ人工月を形成します。 [[special RESONANT_MOON_SPECIAL]]スペシャルを惑星に追加します。
 
-This cannot be constructed at a [[PT_GASGIANT]] or Asteroid Belt.
+これは[[PT_GASGIANT]]または小惑星帯では構築できません。
 
 自然衛星は惑星の中で比較的一般的な出来事ですが、その回転期間と同じ軌道周期を持つ月を見つけることは本当にまれです。このような衛星は、一方の側が常に地球から離れて向き合い、通常の状況下では惑星表面から簡単に見える大規模な設置の建設を完全に秘密にして構築することを可能にするだろう下の惑星の疑いのない民衆には見えない。惑星を周回する船はまた、侵略者からより効果的に隠すことができるだろう。'''
 
@@ -12982,7 +13266,7 @@ BLD_SOL_REJUV
 ソーラー・リジュベナ
 
 BLD_SOL_REJUV_DESC
-A Solar Rejuvenator artificially rejuvenates a star by increasing its fuel supply. The star becomes one type younger, according to the following order: [[STAR_RED]], [[STAR_ORANGE]], [[STAR_YELLOW]], [[STAR_WHITE]], [[STAR_BLUE]]. This process can be enacted at an [[encyclopedia OUTPOSTS_TITLE]].
+ソーラー・レジュベネーターは、その燃料供給を増やすことによって人工的に星を若返らせます。 星は、[[STAR_RED]]、[[STAR_ORANGE]]、[[STAR_YELLOW]]、[[STAR_WHITE]]、[[STAR_BLUE]]の順に1つ若いタイプになります。 このプロセスは、[[encyclopedia OUTPOSTS_TITLE]]で実施できます。
 
 BLD_TRANSFORMER
 トランス
@@ -12990,13 +13274,13 @@ BLD_TRANSFORMER
 BLD_TRANSFORMER_DESC
 '''所有者がトランスフォーマーが模倣している建物のロックを解除している場合、現在、それが構築されている惑星のフォーカス設定を使用して活性化され、他の多くの建物の効果を持つことができる汎用性と非常に高価な建物。
 
-This building can be given the effects of a [[buildingtype BLD_BIOTERROR_PROJECTOR]], a [[buildingtype BLD_STARGATE]], a [[buildingtype BLD_PLANET_DRIVE]], or a [[buildingtype BLD_SPATIAL_DISTORT_GEN]], provided the owner has the appropriate technology.'''
+この建物には、[[buildingtype BLD_BIOTERROR_PROJECTOR]]、[[buildingtype BLD_STARGATE]]、[[buildingtype BLD_PLANET_DRIVE]]、または[[buildingtype BLD_SPATIAL_DISTORT_GEN]]の効果を与えることができます。'''
 
 BLD_PLANET_CLOAK
 惑星クローキング装置
 
 BLD_PLANET_CLOAK_DESC
-'''Gives the planet it is built on a huge bonus to [[metertype METER_STEALTH]].
+'''[[metertype METER_STEALTH]]に大きなボーナスを加えて構築された惑星を与えます。
 
 全世界を覆うことができる強力なクローキング装置。'''
 
@@ -13018,10 +13302,10 @@ BLD_GAS_GIANT_GEN
 ガス惑星発電機
 
 BLD_GAS_GIANT_GEN_DESC
-'''This building can only be constructed at a [[PT_GASGIANT]] and gives a +10 [[metertype METER_INDUSTRY]] bonus to planets with the Industry focus in the same system.
+'''この建物は[[PT_GASGIANT]]でのみ構築でき、同じ星系上で工業重視の惑星に+5 [[metertype METER_INDUSTRY]]ボーナスを与えます。住民がいる場合+3
 同じ星系内の複数のコピーがスタックしません。
 
-A power generator designed to harvest the energy of a [[PT_GASGIANT]].'''
+[[PT_GASGIANT]]のエネルギーを収穫するために設計された発電機。'''
 
 BLD_STARLANE_BORE
 星間航路ボア
@@ -13039,13 +13323,13 @@ BLD_XENORESURRECTION_LAB
 ゼノレサーレクションラボ
 
 BLD_XENORESURRECTION_LAB_DESC
-The Xenoresurrection Lab restores living samples of extinct species, allowing colonization of [[metertype METER_SUPPLY]] connected planets with the extinct species found in [[special ANCIENT_RUINS_SPECIAL]]. It can only be built on planets where the excavations of [[special ANCIENT_RUINS_SPECIAL]] have found well preserved bodies of an extinct species.
+Xenoresurrection Labは、絶滅種の生きているサンプルを復元し、[[metertype METER_SUPPLY]]に接続された惑星に[[special ANCIENT_RUINS_SPECIAL]]で見つかった絶滅種を植民地化できるようにします。 [[特別ANCIENT_RUINS_SPECIAL]]の発掘調査により、絶滅した種の遺体がよく保存されている惑星でのみ構築できます。
 
 BLD_COLONY_BASE
 植民船体
 
 BLD_COLONY_BASE_DESC
-Creates a [[predefinedshipdesign SD_COLONY_BASE]] ship which can be used to colonize another planet in the same system. [[MIN_POPULATION_THREE_REQUIRED]].
+同じ星系内の別の惑星に植民するために使用できる[[predefinedshipdesign SD_COLONY_BASE]]船を作成します。 [[MIN_POPULATION_THREE_REQUIRED]]。
 
 BLD_EXPERIMENTOR_OUTPOST
 実験者の前哨基地
@@ -13057,7 +13341,7 @@ BLD_NOVA_BOMB_ACTIVATOR
 超新星爆弾アクティベーター
 
 BLD_NOVA_BOMB_ACTIVATOR_DESC
-Activates all [[shippart SP_NOVA_BOMB]]s within one starlane jump.
+1つのスターレーンジャンプ内のすべての[[shippart SP_NOVA_BOMB]]をアクティブにします。
 
 BLD_SCRYING_SPHERE
 スクライイング・スフィア
@@ -13069,7 +13353,7 @@ BLD_COL_ABADDONI
 アバドニ植民地
 
 BLD_COL_ABADDONI_DESC
-[[BLD_COL_PART_1]] [[species SP_ABADDONI]] colony. [[BLD_COL_PART_2]] Abaddoni colony [[BLD_COL_PART_3]].
+[[BLD_COL_PART_1]] [[species SP_ABADDONI]] 植民地. [[BLD_COL_PART_2]] アバドニの植民地 [[BLD_COL_PART_3]].
 
 BLD_COL_BANFORO
 バンフォーロ植民地
@@ -13768,7 +14052,7 @@ SH_ROBOTIC_INTERFACE_SHIELDS
 ロボットインタフェース: シールド
 
 SH_ROBOTIC_INTERFACE_SHIELDS_DESC
-'''ロボットインターフェース：シールドのシールド強度は、約1です。ロボットインターフェース：シールドされた船は同じ場所にありますが、数値が高くなると戻り値が減少します。 効果の上限は20シールドで、[[encyclopedia ROBOTIC_SPECIES_TITLE]]種が搭乗する船にのみ適用され、[[encyclopedia HULL_LINE_ROBOTIC]]船にのみ配置できます。
+'''ロボットインターフェース：シールドのシールド強度は、約6です。ロボットインターフェース：シールドされた船は同じ場所にありますが、数値が高くなると戻り値が減少します。 効果の上限は20シールドで、[[encyclopedia ROBOTIC_SPECIES_TITLE]]種が搭乗する船にのみ適用され、[[encyclopedia HULL_LINE_ROBOTIC]]船にのみ配置できます。
 
 ロボット種は、一緒にネットワーク化し、それによってその膨大な計算能力を大幅に増加させる固有の能力を有する。ロボットインタフェース:シールドは、そのネットワークを使用して、着信火災の軌道を計算し、衝撃点でシールド強度を適用します。
 '''
@@ -13937,19 +14221,19 @@ RS_AUTOLAB
 オートラボ
 
 RS_AUTOLAB_DESC
-所有者の調査を生成します。
+所有者のために研究します。
 
 RS_AUTOFACTORY
 オートファクトリー
 
 RS_AUTOFACTORY_DESC
-所有者の業種を生成します。
+所有者ためにの工業生産します。
 
 RS_AUTOTRADER
 オートトレーダー
 
 RS_AUTOTRADER_DESC
-所有者の取引を生成します。
+所有者の影響力を生成します。
 
 
 ##
@@ -14455,7 +14739,7 @@ SH_KRAKEN_3_BODY
 グレートクラーケンボディ
 
 SH_KRAKEN_3_BODY_DESC
-手ごわい重重量宇宙怪獣。
+手ごわい重重��宇宙怪獣。
 
 SH_WHITE_KRAKEN_BODY
 ホワイトクラーケンボディ
@@ -14544,7 +14828,7 @@ SH_DAMPENING_CLOUD_BODY_DESC
 ##
 
 SM_KRILL_MACRO_1
-重力から遠く離れたほこりや岩を食べる小さく、漠然とした昆虫生物。個別に簡単なスペースオキアミは、コヒーレント光を介して通信し、群れが軌道を調整して計算することを可能にする
+重力から遠く離れたほこりや岩を食べる小さく、漠然とした昆虫生物。個別に簡単なスペースオキアミは、コヒーレント光を介して通信し、群れが軌道���調整して計算��ることを可能にする
 
 SM_KRILL_MACRO_2
 小惑星帯に見られる低G資源の高量は急速に増殖するのに最適な条件をオキアリを提供します。
@@ -14777,6 +15061,9 @@ GROWTH_SPECIAL_LABEL
 NO_INDUSTRY_DESC
 −−−	[[metertype METER_INDUSTRY]]なし
 
+VERY_BAD_INDUSTRY_DESC
+−−	とても悪い[[metertype METER_INDUSTRY]]: 50%
+
 BAD_INDUSTRY_DESC
 −	悪い[[metertype METER_INDUSTRY]]: 75%
 
@@ -14794,6 +15081,9 @@ ULTIMATE_INDUSTRY_DESC
 
 NO_RESEARCH_DESC
 −−−	[[metertype METER_RESEARCH]]なし
+
+VERY_BAD_RESEARCH_DESC
+−−	とても悪い[[metertype METER_RESEARCH]]: 50%
 
 BAD_RESEARCH_DESC
 −	悪い[[metertype METER_RESEARCH]]: 75%
@@ -14987,6 +15277,9 @@ LIGHT_SENSITIVE_DESC
 TELEPATHIC_DETECTION_DESC
 +	テレパシー検出：近くの人口惑星を感知できます。
 
+PRECOGNITIVE_DETECTION_DESC
++	Procognitive Detection: スターレーンに接続された惑星を感知することができます。
+
 COMMUNAL_VISION_DESC
 　	共同ビジョン:同じ種内の可視性を共有します。
 
@@ -15072,6 +15365,11 @@ FOCUS_INDUSTRY_LABEL
 
 # %1% FIXME
 # %2% FIXME
+VERY_BAD_INDUSTRY_LABEL
+%2% とても悪い工業力
+
+# %1% FIXME
+# %2% FIXME
 BAD_INDUSTRY_LABEL
 %2%小さな工業力
 
@@ -15094,6 +15392,11 @@ ULTIMATE_INDUSTRY_LABEL
 # %2% FIXME
 FOCUS_RESEARCH_LABEL
 %2%研究力
+
+# %1% FIXME
+# %2% FIXME
+VERY_BAD_RESEARCH_LABEL
+%2%とても弱い研究力
 
 # %1% FIXME
 # %2% FIXME
