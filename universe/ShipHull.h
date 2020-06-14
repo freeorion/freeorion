@@ -2,8 +2,6 @@
 #define _ShipHull_h_
 
 
-#include <boost/serialization/access.hpp>
-#include <boost/serialization/nvp.hpp>
 #include "CommonParams.h"
 #include "../util/Pending.h"
 
@@ -173,35 +171,7 @@ private:
     std::vector<std::shared_ptr<Effect::EffectsGroup>>  m_effects;
     std::string                                         m_graphic;
     std::string                                         m_icon;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
-
-
-template <typename Archive>
-void ShipHull::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_NVP(m_name)
-        & BOOST_SERIALIZATION_NVP(m_description)
-        & BOOST_SERIALIZATION_NVP(m_speed)
-        & BOOST_SERIALIZATION_NVP(m_fuel)
-        & BOOST_SERIALIZATION_NVP(m_stealth)
-        & BOOST_SERIALIZATION_NVP(m_structure)
-        & BOOST_SERIALIZATION_NVP(m_production_cost)
-        & BOOST_SERIALIZATION_NVP(m_production_time)
-        & BOOST_SERIALIZATION_NVP(m_producible)
-        & BOOST_SERIALIZATION_NVP(m_slots)
-        & BOOST_SERIALIZATION_NVP(m_tags)
-        & BOOST_SERIALIZATION_NVP(m_production_meter_consumption)
-        & BOOST_SERIALIZATION_NVP(m_production_special_consumption)
-        & BOOST_SERIALIZATION_NVP(m_location)
-        & BOOST_SERIALIZATION_NVP(m_exclusions)
-        & BOOST_SERIALIZATION_NVP(m_effects)
-        & BOOST_SERIALIZATION_NVP(m_graphic)
-        & BOOST_SERIALIZATION_NVP(m_icon);
-}
 
 
 namespace CheckSums {
