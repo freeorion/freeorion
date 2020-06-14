@@ -12653,7 +12653,7 @@ SHP_DEUTERIUM_TANK_DESC
 Small upgrade to each of your [[shippart FU_BASIC_TANK]] ship parts. Increases [[metertype METER_FUEL]] capacity and thereby the number of jumps your ships can do without refueling.
 
 SHP_DEUTERIUM_TANK_EFFECT
-Deuterium Tank Technology
+Tech <i>Deuterium Tank</i>
 
 SHP_ANTIMATTER_TANK
 Antimatter Tank
@@ -12662,7 +12662,7 @@ SHP_ANTIMATTER_TANK_DESC
 Moderate upgrade to each of your [[shippart FU_BASIC_TANK]] ship parts. Increases [[metertype METER_FUEL]] capacity and thereby the number of jumps your ships can do without refueling.
 
 SHP_ANTIMATTER_TANK_EFFECT
-Antimatter Tank Technology
+Tech <i>Antimatter Tank</i>
 
 SHP_ZERO_POINT
 Zero-Point Fuel Generator
