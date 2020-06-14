@@ -5,3 +5,16 @@ Policy
     category = "SOCIAL_CATEGORY"
     adoptioncost = floor(5 + 0.25 * Statistic Sum value = LocalCandidate.Population condition = And [ Planet OwnedBy empire = Source.Owner ])
     graphic = "icons/focus/growth.png"
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species
+            ]
+            priority = [[METER_OVERRIDE_PRIORITY]]
+            effects =
+                SetPopulation value = Value +
+                    Min (0, ((Value - Target.Population) * 1.5))
+
+#include "/scripting/common/priorities.macros"
