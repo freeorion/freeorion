@@ -4,4 +4,21 @@ Policy
     short_description = "PLC_COLONIZATION_SHORT_DESC"
     category = "SOCIAL_CATEGORY"
     adoptioncost = floor(5 + 0.25 * Statistic Sum value = LocalCandidate.Population condition = And [ Planet OwnedBy empire = Source.Owner ])
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                DesignHasPartClass low = 1 class = Colony
+                DesignHasPartClass low = 0 high = 0 class = ShortRange
+                DesignHasPartClass low = 0 high = 0 class = FighterBay
+                DesignHasPartClass low = 0 high = 0 class = FighterHangar
+                DesignHasPartClass low = 0 high = 0 class = Troops
+                DesignHasPartClass low = 0 high = 0 class = General
+                DesignHasPartClass low = 0 high = 0 class = Bombard
+            ]
+            priority = [[LATE_PRIORITY]]
+            effects = SetMaxFuel value = Value + 1
     graphic = "icons/policies/colonization.png"
+
+#include "/scripting/common/priorities.macros"
