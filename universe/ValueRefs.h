@@ -41,18 +41,6 @@ struct FO_COMMON_API Constant final : public ValueRef<T>
     bool operator==(const ValueRef<T>& rhs) const override;
     T Eval(const ScriptingContext& context) const override;
 
-    bool RootCandidateInvariant() const override
-    { return true; }
-
-    bool LocalCandidateInvariant() const override
-    { return true; }
-
-    bool TargetInvariant() const override
-    { return true; }
-
-    bool SourceInvariant() const override
-    { return true; }
-
     bool ConstantExpr() const override
     { return true; }
 
@@ -105,10 +93,6 @@ struct FO_COMMON_API Variable : public ValueRef<T>
 
     bool operator==(const ValueRef<T>& rhs) const override;
     T Eval(const ScriptingContext& context) const override;
-    bool RootCandidateInvariant() const override;
-    bool LocalCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description() const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     ReferenceType GetReferenceType() const;
@@ -136,10 +120,6 @@ struct FO_COMMON_API Statistic final : public Variable<T>
 
     bool        operator==(const ValueRef<T>& rhs) const override;
     T           Eval(const ScriptingContext& context) const override;
-    bool        RootCandidateInvariant() const override;
-    bool        LocalCandidateInvariant() const override;
-    bool        TargetInvariant() const override;
-    bool        SourceInvariant() const override;
     std::string Description() const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void        SetTopLevelContent(const std::string& content_name) override;
@@ -199,10 +179,6 @@ struct FO_COMMON_API ComplexVariable final : public Variable<T>
 
     bool operator==(const ValueRef<T>& rhs) const override;
     T Eval(const ScriptingContext& context) const override;
-    bool RootCandidateInvariant() const override;
-    bool LocalCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description() const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -239,10 +215,6 @@ struct FO_COMMON_API StaticCast final : public Variable<ToType>
 
     bool operator==(const ValueRef<ToType>& rhs) const override;
     ToType Eval(const ScriptingContext& context) const override;
-    bool RootCandidateInvariant() const override;
-    bool LocalCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description() const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -266,10 +238,6 @@ struct FO_COMMON_API StringCast final : public Variable<std::string>
 
     bool operator==(const ValueRef<std::string>& rhs) const override;
     std::string Eval(const ScriptingContext& context) const override;
-    bool RootCandidateInvariant() const override;
-    bool LocalCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description() const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -291,10 +259,6 @@ struct FO_COMMON_API UserStringLookup final : public Variable<std::string> {
 
     bool operator==(const ValueRef<std::string>& rhs) const override;
     std::string Eval(const ScriptingContext& context) const override;
-    bool RootCandidateInvariant() const override;
-    bool LocalCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description() const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -321,10 +285,6 @@ struct FO_COMMON_API NameLookup final : public Variable<std::string> {
 
     bool operator==(const ValueRef<std::string>& rhs) const override;
     std::string Eval(const ScriptingContext& context) const override;
-    bool RootCandidateInvariant() const override;
-    bool LocalCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
     std::string Description() const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -389,11 +349,7 @@ struct FO_COMMON_API Operation final : public ValueRef<T>
 
     bool operator==(const ValueRef<T>& rhs) const override;
     T Eval(const ScriptingContext& context) const override;
-    bool RootCandidateInvariant() const override;
-    bool LocalCandidateInvariant() const override;
-    bool TargetInvariant() const override;
-    bool SourceInvariant() const override;
-    bool SimpleIncrement() const override;
+    bool SimpleIncrement() const override { return m_simple_increment; }
     bool ConstantExpr() const override { return m_constant_expr; }
     std::string Description() const override;
     std::string Dump(unsigned short ntabs = 0) const override;
@@ -412,13 +368,14 @@ struct FO_COMMON_API Operation final : public ValueRef<T>
     unsigned int GetCheckSum() const override;
 
 private:
-    void    DetermineIfConstantExpr();
+    void    InitConstInvariants();
     void    CacheConstValue();
     T       EvalImpl(const ScriptingContext& context) const;
 
     OpType                                      m_op_type = TIMES;
     std::vector<std::unique_ptr<ValueRef<T>>>   m_operands;
     bool                                        m_constant_expr = false;
+    bool                                        m_simple_increment = false;
     T                                           m_cached_const_value = T();
 };
 
@@ -471,8 +428,14 @@ bool ValueRef<T>::operator==(const ValueRef<T>& rhs) const
 ///////////////////////////////////////////////////////////
 template <typename T>
 Constant<T>::Constant(T value) :
+    ValueRef<T>(),
     m_value(std::move(value))
-{}
+{
+    this->m_root_candidate_invariant = true;
+    this->m_local_candidate_invariant = true;
+    this->m_target_invariant = true;
+    this->m_source_invariant = true;
+}
 
 template <typename T>
 bool Constant<T>::operator==(const ValueRef<T>& rhs) const
@@ -559,52 +522,90 @@ FO_COMMON_API std::string Constant<std::string>::Eval(const ScriptingContext& co
 template <typename T>
 Variable<T>::Variable(ReferenceType ref_type, std::vector<std::string>&& property_name,
                       bool return_immediate_value) :
+    ValueRef<T>(),
     m_ref_type(ref_type),
     m_property_name(std::move(property_name)),
     m_return_immediate_value(return_immediate_value)
-{}
+{
+    this->m_root_candidate_invariant = m_ref_type != CONDITION_ROOT_CANDIDATE_REFERENCE;
+    this->m_local_candidate_invariant = m_ref_type != CONDITION_LOCAL_CANDIDATE_REFERENCE;
+    this->m_target_invariant = m_ref_type != EFFECT_TARGET_REFERENCE && m_ref_type != EFFECT_TARGET_VALUE_REFERENCE;
+    this->m_source_invariant = m_ref_type != SOURCE_REFERENCE;
+}
 
 template <typename T>
 Variable<T>::Variable(ReferenceType ref_type, const std::vector<std::string>& property_name,
                       bool return_immediate_value) :
+    ValueRef<T>(),
     m_ref_type(ref_type),
     m_property_name(property_name),
     m_return_immediate_value(return_immediate_value)
-{}
+{
+    this->m_root_candidate_invariant = m_ref_type != CONDITION_ROOT_CANDIDATE_REFERENCE;
+    this->m_local_candidate_invariant = m_ref_type != CONDITION_LOCAL_CANDIDATE_REFERENCE;
+    this->m_target_invariant = m_ref_type != EFFECT_TARGET_REFERENCE && m_ref_type != EFFECT_TARGET_VALUE_REFERENCE;
+    this->m_source_invariant = m_ref_type != SOURCE_REFERENCE;
+}
 
 template <typename T>
 Variable<T>::Variable(ReferenceType ref_type, bool return_immediate_value) :
+    ValueRef<T>(),
     m_ref_type(ref_type),
     m_return_immediate_value(return_immediate_value)
-{}
+{
+    this->m_root_candidate_invariant = m_ref_type != CONDITION_ROOT_CANDIDATE_REFERENCE;
+    this->m_local_candidate_invariant = m_ref_type != CONDITION_LOCAL_CANDIDATE_REFERENCE;
+    this->m_target_invariant = m_ref_type != EFFECT_TARGET_REFERENCE && m_ref_type != EFFECT_TARGET_VALUE_REFERENCE;
+    this->m_source_invariant = m_ref_type != SOURCE_REFERENCE;
+}
 
 template <typename T>
 Variable<T>::Variable(ReferenceType ref_type, const char* property_name,
                       bool return_immediate_value) :
+    ValueRef<T>(),
     m_ref_type(ref_type),
     m_property_name{1, property_name},
     m_return_immediate_value(return_immediate_value)
-{}
+{
+    this->m_root_candidate_invariant = m_ref_type != CONDITION_ROOT_CANDIDATE_REFERENCE;
+    this->m_local_candidate_invariant = m_ref_type != CONDITION_LOCAL_CANDIDATE_REFERENCE;
+    this->m_target_invariant = m_ref_type != EFFECT_TARGET_REFERENCE && m_ref_type != EFFECT_TARGET_VALUE_REFERENCE;
+    this->m_source_invariant = m_ref_type != SOURCE_REFERENCE;
+}
 
 template <typename T>
 template <typename S>
 Variable<T>::Variable(ReferenceType ref_type, S&& property_name,
                       bool return_immediate_value) :
+    ValueRef<T>(),
     m_ref_type(ref_type),
     m_return_immediate_value(return_immediate_value)
-{ m_property_name.emplace_back(std::move(property_name)); }
+{
+    m_property_name.emplace_back(std::move(property_name));
+
+    this->m_root_candidate_invariant = m_ref_type != CONDITION_ROOT_CANDIDATE_REFERENCE;
+    this->m_local_candidate_invariant = m_ref_type != CONDITION_LOCAL_CANDIDATE_REFERENCE;
+    this->m_target_invariant = m_ref_type != EFFECT_TARGET_REFERENCE && m_ref_type != EFFECT_TARGET_VALUE_REFERENCE;
+    this->m_source_invariant = m_ref_type != SOURCE_REFERENCE;
+}
 
 template <typename T>
 Variable<T>::Variable(ReferenceType ref_type,
                       boost::optional<std::string>&& container_name,
                       std::string&& property_name,
                       bool return_immediate_value) :
+    ValueRef<T>(),
     m_ref_type(ref_type),
     m_return_immediate_value(return_immediate_value)
 {
     if (container_name)
         m_property_name.emplace_back(std::move(*container_name));
     m_property_name.emplace_back(std::move(property_name));
+
+    this->m_root_candidate_invariant = m_ref_type != CONDITION_ROOT_CANDIDATE_REFERENCE;
+    this->m_local_candidate_invariant = m_ref_type != CONDITION_LOCAL_CANDIDATE_REFERENCE;
+    this->m_target_invariant = m_ref_type != EFFECT_TARGET_REFERENCE && m_ref_type != EFFECT_TARGET_VALUE_REFERENCE;
+    this->m_source_invariant = m_ref_type != SOURCE_REFERENCE;
 }
 
 template <typename T>
@@ -631,22 +632,6 @@ const std::vector<std::string>& Variable<T>::PropertyName() const
 template <typename T>
 bool Variable<T>::ReturnImmediateValue() const
 { return m_return_immediate_value; }
-
-template <typename T>
-bool Variable<T>::RootCandidateInvariant() const
-{ return m_ref_type != CONDITION_ROOT_CANDIDATE_REFERENCE; }
-
-template <typename T>
-bool Variable<T>::LocalCandidateInvariant() const
-{ return m_ref_type != CONDITION_LOCAL_CANDIDATE_REFERENCE; }
-
-template <typename T>
-bool Variable<T>::TargetInvariant() const
-{ return m_ref_type != EFFECT_TARGET_REFERENCE && m_ref_type != EFFECT_TARGET_VALUE_REFERENCE; }
-
-template <typename T>
-bool Variable<T>::SourceInvariant() const
-{ return m_ref_type != SOURCE_REFERENCE; }
 
 template <typename T>
 std::string Variable<T>::Description() const
@@ -710,7 +695,21 @@ Statistic<T>::Statistic(std::unique_ptr<ValueRef<T>>&& value_ref, StatisticType 
     m_stat_type(stat_type),
     m_sampling_condition(std::move(sampling_condition)),
     m_value_ref(std::move(value_ref))
-{}
+{
+    this->m_root_candidate_invariant = (!m_sampling_condition || m_sampling_condition->RootCandidateInvariant()) &&
+                                       (!m_value_ref || m_value_ref->RootCandidateInvariant());
+
+    // don't need to check if sampling condition is LocalCandidateInvariant, as
+    // all conditions aren't, but that refers to their own local candidate.  no
+    // condition is explicitly dependent on the parent context's local candidate.
+    this->m_local_candidate_invariant = (!m_value_ref || m_value_ref->LocalCandidateInvariant());
+
+    this->m_target_invariant = (!m_sampling_condition || m_sampling_condition->TargetInvariant()) &&
+                                 (!m_value_ref || m_value_ref->TargetInvariant());
+
+    this->m_source_invariant = (!m_sampling_condition || m_sampling_condition->SourceInvariant()) &&
+                               (!m_value_ref || m_value_ref->SourceInvariant());
+}
 
 template <typename T>
 bool Statistic<T>::operator==(const ValueRef<T>& rhs) const
@@ -764,40 +763,6 @@ void Statistic<T>::GetObjectPropertyValues(const ScriptingContext& context,
             object_property_values[object] = property_value;
         }
     }
-}
-
-template <typename T>
-bool Statistic<T>::RootCandidateInvariant() const
-{
-    return Variable<T>::RootCandidateInvariant() &&
-           m_sampling_condition->RootCandidateInvariant() &&
-           (!m_value_ref || m_value_ref->RootCandidateInvariant());
-}
-
-template <typename T>
-bool Statistic<T>::LocalCandidateInvariant() const
-{
-    // don't need to check if sampling condition is LocalCandidateInvariant, as
-    // all conditions aren't, but that refers to their own local candidate.  no
-    // condition is explicitly dependent on the parent context's local candidate.
-    return Variable<T>::LocalCandidateInvariant() &&
-           (!m_value_ref || m_value_ref->LocalCandidateInvariant());
-}
-
-template <typename T>
-bool Statistic<T>::TargetInvariant() const
-{
-    return Variable<T>::TargetInvariant() &&
-           m_sampling_condition->TargetInvariant() &&
-           (!m_value_ref || m_value_ref->TargetInvariant());
-}
-
-template <typename T>
-bool Statistic<T>::SourceInvariant() const
-{
-    return Variable<T>::SourceInvariant() &&
-           m_sampling_condition->SourceInvariant() &&
-           (!m_value_ref || m_value_ref->SourceInvariant());
 }
 
 template <typename T>
@@ -1114,7 +1079,31 @@ ComplexVariable<T>::ComplexVariable(S&& variable_name,
     m_int_ref3(std::move(int_ref3)),
     m_string_ref1(std::move(string_ref1)),
     m_string_ref2(std::move(string_ref2))
-{}
+{
+    this->m_root_candidate_invariant = (!m_int_ref1 || m_int_ref1->RootCandidateInvariant()) &&
+                                       (!m_int_ref2 || m_int_ref2->RootCandidateInvariant()) &&
+                                       (!m_int_ref3 || m_int_ref3->RootCandidateInvariant()) &&
+                                       (!m_string_ref1 || m_string_ref1->RootCandidateInvariant()) &&
+                                       (!m_string_ref2 || m_string_ref2->RootCandidateInvariant());
+
+    this->m_local_candidate_invariant = (!m_int_ref1 || m_int_ref1->LocalCandidateInvariant()) &&
+                                        (!m_int_ref2 || m_int_ref2->LocalCandidateInvariant()) &&
+                                        (!m_int_ref3 || m_int_ref3->LocalCandidateInvariant()) &&
+                                        (!m_string_ref1 || m_string_ref1->LocalCandidateInvariant()) &&
+                                        (!m_string_ref2 || m_string_ref2->LocalCandidateInvariant());
+
+    this->m_target_invariant = (!m_int_ref1 || m_int_ref1->TargetInvariant()) &&
+                               (!m_int_ref2 || m_int_ref2->TargetInvariant()) &&
+                               (!m_int_ref3 || m_int_ref3->TargetInvariant()) &&
+                               (!m_string_ref1 || m_string_ref1->TargetInvariant()) &&
+                               (!m_string_ref2 || m_string_ref2->TargetInvariant());
+
+    this->m_source_invariant = (!m_int_ref1 || m_int_ref1->SourceInvariant()) &&
+                               (!m_int_ref2 || m_int_ref2->SourceInvariant()) &&
+                               (!m_int_ref3 || m_int_ref3->SourceInvariant()) &&
+                               (!m_string_ref1 || m_string_ref1->SourceInvariant()) &&
+                               (!m_string_ref2 || m_string_ref2->SourceInvariant());
+}
 
 template <typename T>
 ComplexVariable<T>::ComplexVariable(const char* variable_name,
@@ -1130,7 +1119,31 @@ ComplexVariable<T>::ComplexVariable(const char* variable_name,
     m_int_ref3(std::move(int_ref3)),
     m_string_ref1(std::move(string_ref1)),
     m_string_ref2(std::move(string_ref2))
-{}
+{
+    this->m_root_candidate_invariant = (!m_int_ref1 || m_int_ref1->RootCandidateInvariant()) &&
+                                       (!m_int_ref2 || m_int_ref2->RootCandidateInvariant()) &&
+                                       (!m_int_ref3 || m_int_ref3->RootCandidateInvariant()) &&
+                                       (!m_string_ref1 || m_string_ref1->RootCandidateInvariant()) &&
+                                       (!m_string_ref2 || m_string_ref2->RootCandidateInvariant());
+
+    this->m_local_candidate_invariant = (!m_int_ref1 || m_int_ref1->LocalCandidateInvariant()) &&
+                                        (!m_int_ref2 || m_int_ref2->LocalCandidateInvariant()) &&
+                                        (!m_int_ref3 || m_int_ref3->LocalCandidateInvariant()) &&
+                                        (!m_string_ref1 || m_string_ref1->LocalCandidateInvariant()) &&
+                                        (!m_string_ref2 || m_string_ref2->LocalCandidateInvariant());
+
+    this->m_target_invariant = (!m_int_ref1 || m_int_ref1->TargetInvariant()) &&
+                               (!m_int_ref2 || m_int_ref2->TargetInvariant()) &&
+                               (!m_int_ref3 || m_int_ref3->TargetInvariant()) &&
+                               (!m_string_ref1 || m_string_ref1->TargetInvariant()) &&
+                               (!m_string_ref2 || m_string_ref2->TargetInvariant());
+
+    this->m_source_invariant = (!m_int_ref1 || m_int_ref1->SourceInvariant()) &&
+                               (!m_int_ref2 || m_int_ref2->SourceInvariant()) &&
+                               (!m_int_ref3 || m_int_ref3->SourceInvariant()) &&
+                               (!m_string_ref1 || m_string_ref1->SourceInvariant()) &&
+                               (!m_string_ref2 || m_string_ref2->SourceInvariant());
+}
 
 template <typename T>
 bool ComplexVariable<T>::operator==(const ValueRef<T>& rhs) const
@@ -1213,47 +1226,6 @@ const ValueRef<std::string>* ComplexVariable<T>::StringRef1() const
 template <typename T>
 const ValueRef<std::string>* ComplexVariable<T>::StringRef2() const
 { return m_string_ref2.get(); }
-
-template <typename T>
-bool ComplexVariable<T>::RootCandidateInvariant() const
-{
-    return Variable<T>::RootCandidateInvariant()
-        && (!m_int_ref1 || m_int_ref1->RootCandidateInvariant())
-        && (!m_int_ref2 || m_int_ref2->RootCandidateInvariant())
-        && (!m_int_ref3 || m_int_ref3->RootCandidateInvariant())
-        && (!m_string_ref1 || m_string_ref1->RootCandidateInvariant())
-        && (!m_string_ref2 || m_string_ref2->RootCandidateInvariant());
-}
-
-template <typename T>
-bool ComplexVariable<T>::LocalCandidateInvariant() const
-{
-    return (!m_int_ref1 || m_int_ref1->LocalCandidateInvariant())
-        && (!m_int_ref2 || m_int_ref2->LocalCandidateInvariant())
-        && (!m_int_ref3 || m_int_ref3->LocalCandidateInvariant())
-        && (!m_string_ref1 || m_string_ref1->LocalCandidateInvariant())
-        && (!m_string_ref2 || m_string_ref2->LocalCandidateInvariant());
-}
-
-template <typename T>
-bool ComplexVariable<T>::TargetInvariant() const
-{
-    return (!m_int_ref1 || m_int_ref1->TargetInvariant())
-        && (!m_int_ref2 || m_int_ref2->TargetInvariant())
-        && (!m_int_ref3 || m_int_ref3->TargetInvariant())
-        && (!m_string_ref1 || m_string_ref1->TargetInvariant())
-        && (!m_string_ref2 || m_string_ref2->TargetInvariant());
-}
-
-template <typename T>
-bool ComplexVariable<T>::SourceInvariant() const
-{
-    return (!m_int_ref1 || m_int_ref1->SourceInvariant())
-        && (!m_int_ref2 || m_int_ref2->SourceInvariant())
-        && (!m_int_ref3 || m_int_ref3->SourceInvariant())
-        && (!m_string_ref1 || m_string_ref1->SourceInvariant())
-        && (!m_string_ref2 || m_string_ref2->SourceInvariant());
-}
 
 template <typename T>
 std::string ComplexVariable<T>::Description() const
@@ -1367,7 +1339,12 @@ StaticCast<FromType, ToType>::StaticCast(
     typename std::enable_if<std::is_convertible<T, std::unique_ptr<Variable<FromType>>>::value>::type*) :
     Variable<ToType>(value_ref->GetReferenceType(), value_ref->PropertyName()),
     m_value_ref(std::move(value_ref))
-{}
+{
+    this->m_root_candidate_invariant = !m_value_ref || m_value_ref->RootCandidateInvariant();
+    this->m_local_candidate_invariant = !m_value_ref || m_value_ref->LocalCandidateInvariant();
+    this->m_target_invariant = !m_value_ref || m_value_ref->TargetInvariant();
+    this->m_source_invariant = !m_value_ref || m_value_ref->SourceInvariant();
+}
 
 template <typename FromType, typename ToType>
 template <typename T>
@@ -1378,7 +1355,12 @@ StaticCast<FromType, ToType>::StaticCast(
     && !std::is_convertible<T, std::unique_ptr<Variable<FromType>>>::value>::type*) :
     Variable<ToType>(NON_OBJECT_REFERENCE),
     m_value_ref(std::move(value_ref))
-{}
+{
+    this->m_root_candidate_invariant = !m_value_ref || m_value_ref->RootCandidateInvariant();
+    this->m_local_candidate_invariant = !m_value_ref || m_value_ref->LocalCandidateInvariant();
+    this->m_target_invariant = !m_value_ref || m_value_ref->TargetInvariant();
+    this->m_source_invariant = !m_value_ref || m_value_ref->SourceInvariant();
+}
 
 template <typename FromType, typename ToType>
 bool StaticCast<FromType, ToType>::operator==(const ValueRef<ToType>& rhs) const
@@ -1405,22 +1387,6 @@ bool StaticCast<FromType, ToType>::operator==(const ValueRef<ToType>& rhs) const
 template <typename FromType, typename ToType>
 ToType StaticCast<FromType, ToType>::Eval(const ScriptingContext& context) const
 { return static_cast<ToType>(m_value_ref->Eval(context)); }
-
-template <typename FromType, typename ToType>
-bool StaticCast<FromType, ToType>::RootCandidateInvariant() const
-{ return m_value_ref->RootCandidateInvariant(); }
-
-template <typename FromType, typename ToType>
-bool StaticCast<FromType, ToType>::LocalCandidateInvariant() const
-{ return m_value_ref->LocalCandidateInvariant(); }
-
-template <typename FromType, typename ToType>
-bool StaticCast<FromType, ToType>::TargetInvariant() const
-{ return m_value_ref->TargetInvariant(); }
-
-template <typename FromType, typename ToType>
-bool StaticCast<FromType, ToType>::SourceInvariant() const
-{ return m_value_ref->SourceInvariant(); }
 
 template <typename FromType, typename ToType>
 std::string StaticCast<FromType, ToType>::Description() const
@@ -1465,6 +1431,11 @@ StringCast<FromType>::StringCast(std::unique_ptr<ValueRef<FromType>>&& value_ref
         this->m_ref_type = var_ref->GetReferenceType();
         this->m_property_name = var_ref->PropertyName();
     }
+
+    this->m_root_candidate_invariant = !m_value_ref || m_value_ref->RootCandidateInvariant();
+    this->m_local_candidate_invariant = !m_value_ref || m_value_ref->LocalCandidateInvariant();
+    this->m_target_invariant = !m_value_ref || m_value_ref->TargetInvariant();
+    this->m_source_invariant = !m_value_ref || m_value_ref->SourceInvariant();
 }
 
 template <typename FromType>
@@ -1523,22 +1494,6 @@ template <>
 FO_COMMON_API std::string StringCast<std::vector<std::string>>::Eval(const ScriptingContext& context) const;
 
 template <typename FromType>
-bool StringCast<FromType>::RootCandidateInvariant() const
-{ return m_value_ref->RootCandidateInvariant(); }
-
-template <typename FromType>
-bool StringCast<FromType>::LocalCandidateInvariant() const
-{ return m_value_ref->LocalCandidateInvariant(); }
-
-template <typename FromType>
-bool StringCast<FromType>::TargetInvariant() const
-{ return m_value_ref->TargetInvariant(); }
-
-template <typename FromType>
-bool StringCast<FromType>::SourceInvariant() const
-{ return m_value_ref->SourceInvariant(); }
-
-template <typename FromType>
 std::string StringCast<FromType>::Description() const
 { return m_value_ref->Description(); }
 
@@ -1569,6 +1524,11 @@ UserStringLookup<FromType>::UserStringLookup(std::unique_ptr<ValueRef<FromType>>
         this->m_ref_type = var_ref->GetReferenceType();
         this->m_property_name = var_ref->PropertyName();
     }
+
+    this->m_root_candidate_invariant = !m_value_ref || m_value_ref->RootCandidateInvariant();
+    this->m_local_candidate_invariant = !m_value_ref || m_value_ref->LocalCandidateInvariant();
+    this->m_target_invariant = !m_value_ref || m_value_ref->TargetInvariant();
+    this->m_source_invariant = !m_value_ref || m_value_ref->SourceInvariant();
 }
 
 template <typename FromType>
@@ -1610,30 +1570,6 @@ template <>
 FO_COMMON_API std::string UserStringLookup<std::vector<std::string>>::Eval(const ScriptingContext& context) const;
 
 template <typename FromType>
-bool UserStringLookup<FromType>::RootCandidateInvariant() const
-{
-    return m_value_ref->RootCandidateInvariant();
-}
-
-template <typename FromType>
-bool UserStringLookup<FromType>::LocalCandidateInvariant() const
-{
-    return !m_value_ref || m_value_ref->LocalCandidateInvariant();
-}
-
-template <typename FromType>
-bool UserStringLookup<FromType>::TargetInvariant() const
-{
-    return !m_value_ref || m_value_ref->TargetInvariant();
-}
-
-template <typename FromType>
-bool UserStringLookup<FromType>::SourceInvariant() const
-{
-    return !m_value_ref || m_value_ref->SourceInvariant();
-}
-
-template <typename FromType>
 std::string UserStringLookup<FromType>::Description() const
 {
     return m_value_ref->Description();
@@ -1670,23 +1606,25 @@ template <typename T>
 Operation<T>::Operation(OpType op_type,
                         std::unique_ptr<ValueRef<T>>&& operand1,
                         std::unique_ptr<ValueRef<T>>&& operand2) :
+    ValueRef<T>(),
     m_op_type(op_type)
 {
     if (operand1)
         m_operands.push_back(std::move(operand1));
     if (operand2)
         m_operands.push_back(std::move(operand2));
-    DetermineIfConstantExpr();
+    InitConstInvariants();
     CacheConstValue();
 }
 
 template <typename T>
 Operation<T>::Operation(OpType op_type, std::unique_ptr<ValueRef<T>>&& operand) :
+    ValueRef<T>(),
     m_op_type(op_type)
 {
     if (operand)
         m_operands.push_back(std::move(operand));
-    DetermineIfConstantExpr();
+    InitConstInvariants();
     CacheConstValue();
 }
 
@@ -1695,26 +1633,46 @@ Operation<T>::Operation(OpType op_type, std::vector<std::unique_ptr<ValueRef<T>>
     m_op_type(op_type),
     m_operands(std::move(operands))
 {
-    DetermineIfConstantExpr();
+    InitConstInvariants();
     CacheConstValue();
 }
 
 template <typename T>
-void Operation<T>::DetermineIfConstantExpr()
+void Operation<T>::InitConstInvariants()
 {
     if (m_op_type == RANDOM_UNIFORM || m_op_type == RANDOM_PICK) {
         m_constant_expr = false;
+        this->m_root_candidate_invariant = false;
+        this->m_local_candidate_invariant = false;
+        this->m_target_invariant = false;
+        this->m_source_invariant = false;
         return;
     }
 
-    m_constant_expr = true; // may be overridden...
+    m_constant_expr = std::all_of(m_operands.begin(), m_operands.end(),
+        [](const auto& operand) { return operand && operand->ConstantExpr(); });
 
-    for (auto& operand : m_operands) {
-        if (operand && !operand->ConstantExpr()) {
-            m_constant_expr = false;
-            return;
-        }
-    }
+    this->m_root_candidate_invariant = std::all_of(m_operands.begin(), m_operands.end(),
+        [](const auto& operand) { return operand && operand->RootCandidateInvariant(); });
+    this->m_local_candidate_invariant = std::all_of(m_operands.begin(), m_operands.end(),
+        [](const auto& operand) { return operand && operand->LocalCandidateInvariant(); });
+    this->m_target_invariant = std::all_of(m_operands.begin(), m_operands.end(),
+        [](const auto& operand) { return operand && operand->TargetInvariant(); });
+    this->m_source_invariant = std::all_of(m_operands.begin(), m_operands.end(),
+        [](const auto& operand) { return operand && operand->SourceInvariant(); });
+
+    // determine if this is a simple incrment operation
+    if (m_op_type != PLUS && m_op_type != MINUS)
+        return;
+    if (m_operands.size() < 2 || !m_operands[0] || !m_operands[1])
+        return;
+    // RHS must be the same value for all targets
+    if (!(m_operands[1]->TargetInvariant()))
+        return;
+    // LHS must be just the immediate value of what's being incremented
+    const auto lhs = dynamic_cast<const Variable<T>*>(m_operands[0].get());
+    if (lhs && lhs->GetReferenceType() == EFFECT_TARGET_VALUE_REFERENCE)
+        m_simple_increment = true;
 }
 
 template <typename T>
@@ -1722,7 +1680,6 @@ void Operation<T>::CacheConstValue()
 {
     if (!m_constant_expr)
         return;
-
     m_cached_const_value = this->EvalImpl(ScriptingContext());
 }
 
@@ -1897,71 +1854,6 @@ FO_COMMON_API double Operation<double>::EvalImpl(const ScriptingContext& context
 
 template <>
 FO_COMMON_API int Operation<int>::EvalImpl(const ScriptingContext& context) const;
-
-template <typename T>
-bool Operation<T>::RootCandidateInvariant() const
-{
-    if (m_op_type == RANDOM_UNIFORM || m_op_type == RANDOM_PICK)
-        return false;
-    for (auto& operand : m_operands) {
-        if (operand && !operand->RootCandidateInvariant())
-            return false;
-    }
-    return true;
-}
-
-template <typename T>
-bool Operation<T>::LocalCandidateInvariant() const
-{
-    if (m_op_type == RANDOM_UNIFORM || m_op_type == RANDOM_PICK)
-        return false;
-    for (auto& operand : m_operands) {
-        if (operand && !operand->LocalCandidateInvariant())
-            return false;
-    }
-    return true;
-}
-
-template <typename T>
-bool Operation<T>::TargetInvariant() const
-{
-    if (m_op_type == RANDOM_UNIFORM || m_op_type == RANDOM_PICK)
-        return false;
-    for (auto& operand : m_operands) {
-        if (operand && !operand->TargetInvariant())
-            return false;
-    }
-    return true;
-}
-
-template <typename T>
-bool Operation<T>::SourceInvariant() const
-{
-    if (m_op_type == RANDOM_UNIFORM || m_op_type == RANDOM_PICK)
-        return false;
-    for (auto& operand : m_operands) {
-        if (operand && !operand->SourceInvariant())
-            return false;
-    }
-    return true;
-}
-
-template <typename T>
-bool Operation<T>::SimpleIncrement() const
-{
-    if (m_op_type != PLUS && m_op_type != MINUS)
-        return false;
-    if (m_operands.size() < 2 || !m_operands[0] || !m_operands[1])
-        return false;
-    // RHS must be the same value for all targets
-    if (!(m_operands[1]->TargetInvariant()))
-        return false;
-    // LHS must be just the immediate value of what's being incremented
-    const auto lhs = dynamic_cast<const Variable<T>*>(m_operands[0].get());
-    if (!lhs)
-        return false;
-    return lhs->GetReferenceType() == EFFECT_TARGET_VALUE_REFERENCE;
-}
 
 template <typename T>
 std::string Operation<T>::Description() const

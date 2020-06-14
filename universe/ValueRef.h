@@ -14,8 +14,8 @@ namespace ValueRef {
 template <typename T>
 struct FO_COMMON_API ValueRef
 {
-    virtual ~ValueRef()
-    {}
+    ValueRef() = default;
+    virtual ~ValueRef() {}
 
     virtual bool operator==(const ValueRef<T>& rhs) const;
 
@@ -33,17 +33,17 @@ struct FO_COMMON_API ValueRef
       * that exist in the tree. */
     virtual T Eval(const ScriptingContext& context) const = 0;
 
-    virtual bool RootCandidateInvariant() const
-    { return false; }
+    bool RootCandidateInvariant() const
+    { return m_root_candidate_invariant; }
 
-    virtual bool LocalCandidateInvariant() const
-    { return false; }
+    bool LocalCandidateInvariant() const
+    { return m_local_candidate_invariant; }
 
-    virtual bool TargetInvariant() const
-    { return false; }
+    bool TargetInvariant() const
+    { return m_target_invariant; }
 
-    virtual bool SourceInvariant() const
-    { return false; }
+    bool SourceInvariant() const
+    { return m_source_invariant; }
 
     virtual bool SimpleIncrement() const
     { return false; }
@@ -61,6 +61,12 @@ struct FO_COMMON_API ValueRef
 
     virtual unsigned int GetCheckSum() const
     { return 0; }
+
+protected:
+    bool m_root_candidate_invariant = false;
+    bool m_local_candidate_invariant = false;
+    bool m_target_invariant = false;
+    bool m_source_invariant = false;
 };
 
 enum StatisticType : int {
