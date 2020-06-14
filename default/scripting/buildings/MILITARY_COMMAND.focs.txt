@@ -7,10 +7,10 @@ BuildingType
     location = And [
         Planet
         OwnedBy empire = Source.Owner
-        Not Contains Building name = "BLD_MILITARY_COMMAND_DESC"
+        Not Contains Building name = "BLD_MILITARY_COMMAND"
         TargetPopulation low = 1
         Number low = 0 high = 0 condition = And [
-            Building name = "BLD_MILITARY_COMMAND_DESC"
+            Building name = "BLD_MILITARY_COMMAND"
             OwnedBy empire = Source.Owner
         ]
     ]
