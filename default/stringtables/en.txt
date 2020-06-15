@@ -5546,7 +5546,7 @@ Meters
 POPULATION_TITLE_SHORT_DESC
 Population
 
-PSYCHIC_TITLE_SHORT_DESC
+PSYCHIC_ARTICLE_SHORT_DESC
 Psychic
 
 MANAGEMENT_TITLE_SHORT_DESC
@@ -5946,7 +5946,7 @@ DISTORTION_FOCUS_TITLE
 Spatial Distortion Focus
 
 DISTORTION_FOCUS_TEXT
-Available after construction the [[BLD_SPATIAL_DISTORT_GEN]], the properties of each starlane leading to the planet can be manipulated to slow down incoming enemy ships, retarding their progress by 40uu per turn. Slow ships may even be forced back to their origin system.
+Manipulates starlanes leading to the planet slowing the progress of enemy ships by 40uu per turn. Slow ships may even be forced back to the system at the far end of the starlane. Available after constructing a [[buildingtype BLD_SPATIAL_DISTORT_GEN]].
 
 GROWTH_FOCUS_TITLE
 Growth Focus
@@ -5962,7 +5962,7 @@ INDUSTRY_FOCUS_TITLE
 Industry Focus
 
 INDUSTRY_FOCUS_TEXT
-The Industry Focus represents a plantey primarily focused on industrial production. [[metertype METER_INDUSTRY]] will receive a bonus which increases as the planetary population increases. This is the default focus for any species that does not have a preferred focus.
+Planets focussed on Industry will generate more [[metertype METER_INDUSTRY]] will output for their empire, which is used for producing ships and buildings, or may be stockpiled for later use. Industry focus increases output more for higher population planets.
 
 TRADE_FOCUS_TITLE
 Trade Focus
@@ -5974,13 +5974,13 @@ LOGISTICS_FOCUS_TITLE
 Logistics Focus
 
 LOGISTICS_FOCUS_TEXT
-By focusing on Logistics, a planet is able to vastly extend its supply. The [[metertype METER_SUPPLY]] will be increased by a factor of three.
+Logistics focus increases the [[metertype METER_SUPPLY]] of the planet is increased by 3. This extends the planet's empire's supply network from the planet by 3 starlane jumps.
 
 PLANETDRIVE_FOCUS_TITLE
 Planet Drive Focus
 
 PLANETDRIVE_FOCUS_TEXT
-After a [[BLD_PLANET_DRIVE]] has been constructed, and a [[buildingtype BLD_PLANET_BEACON]] or [[shippart SP_PLANET_BEACON]] is in an adjacent system, selecting the [[PLANETDRIVE_FOCUS_TITLE]] allows the planet to move between star systems.
+After a [[buildingtype BLD_PLANET_DRIVE]] has been constructed, and a [[buildingtype BLD_PLANET_BEACON]] or [[shippart SP_PLANET_BEACON]] is in an adjacent system, selecting the [[PLANETDRIVE_FOCUS_TITLE]] will move the planet to move between star systems.
 
 PROTECTION_FOCUS_TITLE
 Protection Focus
@@ -5992,11 +5992,11 @@ PSYCHIC_FOCUS_TITLE
 Psychic Domination Focus
 
 PSYCHIC_FOCUS_TEXT
-'''The [[PSYCHIC_FOCUS_TITLE]] concentrates the mental force exerted by the entire population to dominate the thoughts of non-telepathic crews of ships in the same system.
+'''The [[PSYCHIC_FOCUS_TITLE]] concentrates the mental force exerted by the entire population to dominate the thoughts of non-telepathic crews of enemy empire ships in the same system.
 
-Each turn there is a 10% chance of taking control of of their ships unless the enemy empire also posesses the technology [[LRN_PSY_DOM]].
+Each turn there is a 10% chance of taking control of each ship, unless the enemy empire also posesses the technology [[LRN_PSY_DOM]].
 
-When the Psychic Domination Focus is engaged it also reduces the chance that [[predefinedshipdesign SM_PSIONIC_SNOWFLAKE]]s take over your ships.'''
+When the Psychic Domination Focus is engaged it also reduces the chance that [[predefinedshipdesign SM_PSIONIC_SNOWFLAKE]]s will take control of ships controlled by the planet's empire.'''
 
 STOCKPILE_FOCUS_TITLE
 Stockpile Focus
