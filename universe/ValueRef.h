@@ -15,7 +15,7 @@ template <typename T>
 struct FO_COMMON_API ValueRef
 {
     ValueRef() = default;
-    virtual ~ValueRef() {}
+    virtual ~ValueRef() = default;
 
     virtual bool operator==(const ValueRef<T>& rhs) const;
 
