@@ -5,6 +5,7 @@
 #include <iterator>
 #include <map>
 #include <set>
+#include <boost/algorithm/cxx11/all_of.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
@@ -190,6 +191,8 @@ struct FO_COMMON_API ComplexVariable final : public Variable<T>
     unsigned int GetCheckSum() const override;
 
 protected:
+    void InitInvariants();
+
     std::unique_ptr<ValueRef<int>> m_int_ref1;
     std::unique_ptr<ValueRef<int>> m_int_ref2;
     std::unique_ptr<ValueRef<int>> m_int_ref3;
@@ -1079,31 +1082,7 @@ ComplexVariable<T>::ComplexVariable(S&& variable_name,
     m_int_ref3(std::move(int_ref3)),
     m_string_ref1(std::move(string_ref1)),
     m_string_ref2(std::move(string_ref2))
-{
-    this->m_root_candidate_invariant = (!m_int_ref1 || m_int_ref1->RootCandidateInvariant()) &&
-                                       (!m_int_ref2 || m_int_ref2->RootCandidateInvariant()) &&
-                                       (!m_int_ref3 || m_int_ref3->RootCandidateInvariant()) &&
-                                       (!m_string_ref1 || m_string_ref1->RootCandidateInvariant()) &&
-                                       (!m_string_ref2 || m_string_ref2->RootCandidateInvariant());
-
-    this->m_local_candidate_invariant = (!m_int_ref1 || m_int_ref1->LocalCandidateInvariant()) &&
-                                        (!m_int_ref2 || m_int_ref2->LocalCandidateInvariant()) &&
-                                        (!m_int_ref3 || m_int_ref3->LocalCandidateInvariant()) &&
-                                        (!m_string_ref1 || m_string_ref1->LocalCandidateInvariant()) &&
-                                        (!m_string_ref2 || m_string_ref2->LocalCandidateInvariant());
-
-    this->m_target_invariant = (!m_int_ref1 || m_int_ref1->TargetInvariant()) &&
-                               (!m_int_ref2 || m_int_ref2->TargetInvariant()) &&
-                               (!m_int_ref3 || m_int_ref3->TargetInvariant()) &&
-                               (!m_string_ref1 || m_string_ref1->TargetInvariant()) &&
-                               (!m_string_ref2 || m_string_ref2->TargetInvariant());
-
-    this->m_source_invariant = (!m_int_ref1 || m_int_ref1->SourceInvariant()) &&
-                               (!m_int_ref2 || m_int_ref2->SourceInvariant()) &&
-                               (!m_int_ref3 || m_int_ref3->SourceInvariant()) &&
-                               (!m_string_ref1 || m_string_ref1->SourceInvariant()) &&
-                               (!m_string_ref2 || m_string_ref2->SourceInvariant());
-}
+{ InitInvariants(); }
 
 template <typename T>
 ComplexVariable<T>::ComplexVariable(const char* variable_name,
@@ -1119,30 +1098,17 @@ ComplexVariable<T>::ComplexVariable(const char* variable_name,
     m_int_ref3(std::move(int_ref3)),
     m_string_ref1(std::move(string_ref1)),
     m_string_ref2(std::move(string_ref2))
+{ InitInvariants(); }
+
+template <typename T>
+void ComplexVariable<T>::InitInvariants()
 {
-    this->m_root_candidate_invariant = (!m_int_ref1 || m_int_ref1->RootCandidateInvariant()) &&
-                                       (!m_int_ref2 || m_int_ref2->RootCandidateInvariant()) &&
-                                       (!m_int_ref3 || m_int_ref3->RootCandidateInvariant()) &&
-                                       (!m_string_ref1 || m_string_ref1->RootCandidateInvariant()) &&
-                                       (!m_string_ref2 || m_string_ref2->RootCandidateInvariant());
-
-    this->m_local_candidate_invariant = (!m_int_ref1 || m_int_ref1->LocalCandidateInvariant()) &&
-                                        (!m_int_ref2 || m_int_ref2->LocalCandidateInvariant()) &&
-                                        (!m_int_ref3 || m_int_ref3->LocalCandidateInvariant()) &&
-                                        (!m_string_ref1 || m_string_ref1->LocalCandidateInvariant()) &&
-                                        (!m_string_ref2 || m_string_ref2->LocalCandidateInvariant());
-
-    this->m_target_invariant = (!m_int_ref1 || m_int_ref1->TargetInvariant()) &&
-                               (!m_int_ref2 || m_int_ref2->TargetInvariant()) &&
-                               (!m_int_ref3 || m_int_ref3->TargetInvariant()) &&
-                               (!m_string_ref1 || m_string_ref1->TargetInvariant()) &&
-                               (!m_string_ref2 || m_string_ref2->TargetInvariant());
-
-    this->m_source_invariant = (!m_int_ref1 || m_int_ref1->SourceInvariant()) &&
-                               (!m_int_ref2 || m_int_ref2->SourceInvariant()) &&
-                               (!m_int_ref3 || m_int_ref3->SourceInvariant()) &&
-                               (!m_string_ref1 || m_string_ref1->SourceInvariant()) &&
-                               (!m_string_ref2 || m_string_ref2->SourceInvariant());
+    std::initializer_list<ValueRef::ValueRefBase*> refs =
+        { m_int_ref1.get(), m_int_ref2.get(), m_int_ref3.get(), m_string_ref1.get(), m_string_ref2.get() };
+    this->m_root_candidate_invariant = boost::algorithm::all_of(refs, [](const auto& e) { return !e || e->RootCandidateInvariant(); });
+    this->m_local_candidate_invariant = boost::algorithm::all_of(refs, [](const auto& e) { return !e || e->LocalCandidateInvariant(); });
+    this->m_target_invariant = boost::algorithm::all_of(refs, [](const auto& e) { return !e || e->TargetInvariant(); });
+    this->m_source_invariant = boost::algorithm::all_of(refs, [](const auto& e) { return !e || e->SourceInvariant(); });
 }
 
 template <typename T>
