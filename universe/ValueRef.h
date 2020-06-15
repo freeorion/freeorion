@@ -9,10 +9,37 @@
 
 namespace ValueRef {
 
-/** The base class for all ValueRef classes.  This class provides the public
-  * interface for a ValueRef expression tree. */
+//! The common base class for all ValueRef classes. This class provides
+//! some the return-type-independent interface.
+struct FO_COMMON_API ValueRefBase {
+    ValueRefBase() = default;
+    virtual ~ValueRefBase() = default;
+
+    bool RootCandidateInvariant() const  { return m_root_candidate_invariant; }
+    bool LocalCandidateInvariant() const { return m_local_candidate_invariant; }
+    bool TargetInvariant() const         { return m_target_invariant; }
+    bool SourceInvariant() const         { return m_source_invariant; }
+    virtual bool SimpleIncrement() const { return false; }
+    virtual bool ConstantExpr() const    { return false; }
+
+    virtual std::string Description() const = 0;                    //! Returns a user-readable text description of this ValueRef
+    virtual std::string Dump(unsigned short ntabs = 0) const = 0;   //! Returns a textual representation that should be parseable to recreate this ValueRef
+
+    virtual void SetTopLevelContent(const std::string& content_name) {}
+
+    virtual unsigned int GetCheckSum() const { return 0; }
+
+protected:
+    bool m_root_candidate_invariant = false;
+    bool m_local_candidate_invariant = false;
+    bool m_target_invariant = false;
+    bool m_source_invariant = false;
+};
+
+//! The base class for all ValueRef classes returning type T. This class
+//! provides the public interface for a ValueRef expression tree.
 template <typename T>
-struct FO_COMMON_API ValueRef
+struct FO_COMMON_API ValueRef : public ValueRefBase
 {
     ValueRef() = default;
     virtual ~ValueRef() = default;
@@ -32,41 +59,6 @@ struct FO_COMMON_API ValueRef
       * to objects such as the source, effect target, or condition candidates
       * that exist in the tree. */
     virtual T Eval(const ScriptingContext& context) const = 0;
-
-    bool RootCandidateInvariant() const
-    { return m_root_candidate_invariant; }
-
-    bool LocalCandidateInvariant() const
-    { return m_local_candidate_invariant; }
-
-    bool TargetInvariant() const
-    { return m_target_invariant; }
-
-    bool SourceInvariant() const
-    { return m_source_invariant; }
-
-    virtual bool SimpleIncrement() const
-    { return false; }
-
-    virtual bool ConstantExpr() const
-    { return false; }
-
-    virtual std::string Description() const = 0;
-
-    /** Returns a text description of this type of special. */
-    virtual std::string Dump(unsigned short ntabs = 0) const = 0;
-
-    virtual void SetTopLevelContent(const std::string& content_name)
-    {}
-
-    virtual unsigned int GetCheckSum() const
-    { return 0; }
-
-protected:
-    bool m_root_candidate_invariant = false;
-    bool m_local_candidate_invariant = false;
-    bool m_target_invariant = false;
-    bool m_source_invariant = false;
 };
 
 enum StatisticType : int {
