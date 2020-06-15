@@ -2,7 +2,6 @@
 #define _ValueRef_h_
 
 
-#include <string>
 #include "ScriptingContext.h"
 #include "../util/Export.h"
 

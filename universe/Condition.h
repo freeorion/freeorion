@@ -26,7 +26,7 @@ enum SearchDomain : int {
 
 /** The base class for all Conditions. */
 struct FO_COMMON_API Condition {
-    Condition() {}
+    Condition() = default;
     virtual ~Condition();
 
     virtual bool operator==(const Condition& rhs) const;

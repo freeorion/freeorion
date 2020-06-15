@@ -652,7 +652,6 @@ SortedNumberOf::SortedNumberOf(std::unique_ptr<ValueRef::ValueRef<int>>&& number
         (!m_number || m_number->SourceInvariant()) &&
         (!m_sort_key || m_sort_key->SourceInvariant()) &&
         (!m_condition || m_condition->SourceInvariant());
-
 }
 
 bool SortedNumberOf::operator==(const Condition& rhs) const {
@@ -2234,16 +2233,11 @@ HasSpecial::HasSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
     m_since_turn_low(std::move(since_turn_low)),
     m_since_turn_high(std::move(since_turn_high))
 {
-    auto operands = {m_since_turn_low.get(), m_since_turn_high.get()};
-    m_root_candidate_invariant =
-        (!m_name || m_name->RootCandidateInvariant()) &&
-        boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
-    m_target_invariant =
-        (!m_name || m_name->TargetInvariant()) &&
-        boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
-    m_source_invariant =
-        (!m_name || m_name->SourceInvariant()) &&
-        boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
+    std::initializer_list<ValueRef::ValueRefBase*> operands =
+        { m_name.get(), m_since_turn_low.get(), m_since_turn_high.get() };
+    m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
+    m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
+    m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
 }
 
 HasSpecial::HasSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
