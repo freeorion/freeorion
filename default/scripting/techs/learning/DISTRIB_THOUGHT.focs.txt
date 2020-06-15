@@ -17,6 +17,10 @@ Tech
             ]
             priority = [[EARLY_PRIORITY]]
             effects = SetTargetResearch value = Value + Target.Population * 0.5 * [[RESEARCH_PER_POP]]
+            
+        EffectsGroup
+            scope = Source
+            effects = SetEmpireMeter empire = Source.Owner meter = "MILITARY_CATEGORY_NUM_POLICY_SLOTS" value = Value + 1            
     ]
     graphic = "icons/tech/distributed_thought.png"
 

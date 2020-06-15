@@ -1,4 +1,4 @@
-﻿English
+English
 
 # This is the English String Table file for FreeOrion
 #
@@ -11260,7 +11260,9 @@ LRN_TIME_MECH
 Temporal Mechanics
 
 LRN_TIME_MECH_DESC
-What are "now", "future" and "past"? The twin paradox of special relativity, or the theoretical "wormhole" in its place, suggest early forms of "time travel". Direct manipulation of spacetime and temporal flux permit these effects to be harnessed and magnified. Temporal incursions cannot perceptibly alter the past of the universe that we perceive. They can, however, compress ages or extend moments to arbitrary durations, to uses limited only by the material supplies provided, and our own patience...
+'''Grants 1 extra military policy slot.
+
+What are "now", "future" and "past"? The twin paradox of special relativity, or the theoretical "wormhole" in its place, suggest early forms of "time travel". Direct manipulation of spacetime and temporal flux permit these effects to be harnessed and magnified. Temporal incursions cannot perceptibly alter the past of the universe that we perceive. They can, however, compress ages or extend moments to arbitrary durations, to uses limited only by the material supplies provided, and our own patience...'''
 
 LRN_NDIM_SUBSPACE
 N-Dimensional Subspace
@@ -11528,6 +11530,8 @@ Sentient Automation
 
 PRO_SENTIENT_AUTOMATION_DESC
 '''Increases [[metertype METER_TARGET_INDUSTRY]] on all planets with the Industry focus by 3.
+
+Grants 1 extra economic policy slot.
 
 The natural evolution of automated factories is achieved by confering to the artificial minds that control such facilities the ability to deduce and decide on their own the best course of action to achieve the goals of their owners, even before they can think about it. This improvement greatly increase the performance of the autonomous production facilities on all worlds that are actively dedicated to industrial production.'''
 
@@ -12060,6 +12064,8 @@ Distributed Thought Computing
 
 LRN_DISTRIB_THOUGHT_DESC
 '''Increases [[metertype METER_TARGET_RESEARCH]] on all planets with any focus by 0.1 per [[metertype METER_POPULATION]].
+
+Grants 1 extra military policy slot.
 
 The average citizen literally wastes his mind away, one of the finest computing devices in the universe. By tapping into the idle brain cycles of a sufficiently large population through a network of simple cybernetic transceivers, the research centers of a world can gain access to cheap and plentiful raw computing power.'''
 

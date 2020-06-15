@@ -20,6 +20,10 @@ Tech
             ]
             priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetIndustry value = Value + 15 * [[INDUSTRY_PER_POP]]
+            
+        EffectsGroup
+            scope = Source
+            effects = SetEmpireMeter empire = Source.Owner meter = "ECONOMIC_CATEGORY_NUM_POLICY_SLOTS" value = Value + 1            
     ]
     graphic = "icons/tech/basic_autofactories.png"
 
