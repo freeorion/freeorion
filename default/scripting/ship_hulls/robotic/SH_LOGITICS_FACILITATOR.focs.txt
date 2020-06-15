@@ -62,7 +62,7 @@ Hull
             ]
             stackinggroup = "FLAGSHIP_EFFECT_LOGISTICS"
             priority = [[LATE_PRIORITY]]
-            effects = SetStructure value = max((Target.Structure + Target.Structure), (Target.Structure + 50))
+            effects = SetStructure value = max((Target.Structure + Target.Structure), (Target.Structure + (50*[[SHIP_STRUCTURE_FACTOR]])))
 
         EffectsGroup
             scope = And [
@@ -81,7 +81,7 @@ Hull
             ]
             stackinggroup = "FLAGSHIP_EFFECT_LOGISTICS"
             priority = [[VERY_LATE_PRIORITY]]
-            effects = SetStructure value = max((Target.Structure + ( Target.Structure/10 )), (Target.Structure + 20))
+            effects = SetStructure value = max( (Target.Structure + ( Target.Structure/10 )), (Target.Structure + (20*[[SHIP_STRUCTURE_FACTOR]])) )
 
         [[BAD_FUEL_EFFICIENCY]]
         [[ADD_HULL_FUEL_TO_MAX_FUEL_METER]]
@@ -99,4 +99,7 @@ Hull
 #include "../ship_hulls.macros"
 
 #include "/scripting/common/upkeep.macros"
+
 #include "/scripting/common/priorities.macros"
+
+#include "/scripting/common/misc.macros"
