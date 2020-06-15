@@ -3291,7 +3291,7 @@ Tour %1%
 
 # %1% current turn number.
 MAP_BTN_TURN_UNREADY
-Réviser Ordres %1%
+Réviser %1%
 
 MAP_BTN_TURN_TOOLTIP
 Lancer Tour
@@ -3332,17 +3332,17 @@ Application des effets, production des astronefs et structures, déverrouillage 
 
 # %1% number of seconds
 MAP_TIMEOUT_SECONDS
-%1% secondes
+%1% s
 
 # %1% number of minutes
 # %2% number of seconds
 MAP_TIMEOUT_MINS_SECS  # translated
-%1% mins %2% secs
+%1% min %2% s
 
 # %1% number of hours
 # %2% number of minutes
 MAP_TIMEOUT_HRS_MINS  # translated
-%1% hrs %2% mins
+%1% hr %2% min
 
 # %1% number of frames currently displayed per second.
 MAP_INDICATOR_FPS
@@ -7110,6 +7110,12 @@ Sur %planet% : la colonie a atteint la taille et le [[metertype METER_HAPPINESS]
 
 SITREP_POP_THRESHOLD_LABEL
 Seuil de Colonisation
+
+SITREP_NOVA_DETECTED
+Les astronomes ont observé une nouvelle supernova ayant détruit la totalité du système stellaire et ne laissant qu'un %system%!
+
+SITREP_NOVA_DETECTED_LABEL
+Supernova détectée
 
 EFFECT_EXPERIMENT_MONSTERS_LAUNCH
 ALERTE: il semble que %rawtext% %predefinedshipdesign% aient été repérés dans le système %system%, rôdant près de l'Avant-Poste %species%!
@@ -11207,7 +11213,7 @@ Consciences Artificielles
 LRN_ARTIF_MINDS_DESC
 '''Augmente la [[metertype METER_TARGET_RESEARCH]] de 1 sur toutes les planètes en Focus Recherche.
 
-Les consciences artificielles constituent la quête ultime des recherches en sciences cognitives. Elles dépassent le stade prédéfini des intelligences artificielles, pour atteindre celui de conscience de soi et de sentience au sein d'un être artificiel. Ces systèmes sentients peuvent élargir de leur proche chef les limites de la science et de la recherche, identifiant par eux-mêmes de nouvelles manières de traiter les données et d'en déduire de nouvelles connaissances. Chaque planète peut héberger de telles structures, if properly maintained and assisted by researchers.'''
+Les consciences artificielles constituent la quête ultime des recherches en sciences cognitives. Elles dépassent le stade prédéfini des intelligences artificielles, pour atteindre celui de conscience de soi et de sentience au sein d'un être artificiel. Ces systèmes sentients peuvent élargir de leur proche chef les limites de la science et de la recherche, identifiant par eux-mêmes de nouvelles manières de traiter les données et d'en déduire de nouvelles connaissances. Chaque planète peut héberger de telles structures, tant que celles-ci bénéficient de la maintenance et de l'expertise de chercheurs qualifiés.'''
 
 LRN_XENOARCH
 Xénoarchéologie
@@ -11523,7 +11529,7 @@ Automates Conscients
 PRO_SENTIENT_AUTOMATION_DESC
 '''Augmente la [[metertype METER_TARGET_INDUSTRY]] de 3 sur toutes les planètes en Focus Industrie.
 
-L'évolution naturelle des usines automatisées s'accomplit en attribuant aux consciences artificielles qui dirigent de telles structures, le pouvoir de déduire et décider par elles-mêmes des meilleurs processus afin d'atteindre les buts de leurs propriétaires, avant même que ces derniers n'aient commencé à y réfléchir. Cette amélioration décisionnelle augmente grandement la performance des installations autonomes de production dans tout l'empire.'''
+L'évolution naturelle des usines automatisées s'accomplit en attribuant aux consciences artificielles qui dirigent de telles structures, le pouvoir de déduire et décider par elles-mêmes des meilleurs processus afin d'atteindre les buts de leurs propriétaires, avant même que ces derniers n'aient commencé à y réfléchir. Cette amélioration décisionnelle augmente grandement la performance des installations autonomes de production dans tous les systèmes de l'empire se consacrant à la production industrielle.'''
 
 PRO_NDIM_ASSMB
 Assemblage Multidimensionnel
