@@ -761,10 +761,8 @@ void Statistic<T>::GetObjectPropertyValues(const ScriptingContext& context,
     if (m_value_ref) {
         // evaluate ValueRef with each condition match as the LocalCandidate
         // TODO: Can / should this be paralleized?
-        for (auto& object : objects) {
-            T property_value = m_value_ref->Eval(ScriptingContext(context, object));
-            object_property_values[object] = property_value;
-        }
+        for (auto& object : objects)
+            object_property_values.emplace(object, m_value_ref->Eval(ScriptingContext(context, object)));
     }
 }
 
