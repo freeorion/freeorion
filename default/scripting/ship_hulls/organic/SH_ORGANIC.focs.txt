@@ -30,7 +30,7 @@ Hull
         EffectsGroup
             scope = Source
             effects = [
-                SetStructure value = Value + 2
+                SetStructure value = Value + (2*[[SHIP_STRUCTURE_FACTOR]])
                 SetDetection value = Value + 10
             ]
 
@@ -54,5 +54,3 @@ Hull
 #include "../ship_hulls.macros"
 
 #include "/scripting/common/upkeep.macros"
-
-#include "/scripting/common/misc.macros"
