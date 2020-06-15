@@ -158,6 +158,13 @@ class _LoggerHandler(logging.Handler):
 
     def emit(self, record):
         msg = self.format(record)
+        # By default, there is no line terminator in the msg
+        # and the C++ backend will buffer the input until
+        # newline is reached, i.e. will not add any terminator itself.
+        # Since we don't want to manually add a newline terminator in
+        # each logging call, ensure proper line termination.
+        # Note that in the logging library, Handler.emit() is responsible
+        # to add the required terminator, not Handler.format()
         if not msg.endswith("\n"):
             msg += "\n"
         self.logger(msg, record.filename, record.lineno)
