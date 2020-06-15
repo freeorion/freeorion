@@ -158,7 +158,9 @@ class _LoggerHandler(logging.Handler):
 
     def emit(self, record):
         msg = self.format(record)
-        self.logger(msg, str(record.filename), record.lineno)
+        if not msg.endswith("\n"):
+            msg += "\n"
+        self.logger(msg, record.filename, record.lineno)
 
 
 class FOLogFormatter(logging.Formatter):
