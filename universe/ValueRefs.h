@@ -1610,6 +1610,7 @@ void Operation<T>::InitConstInvariants()
         this->m_local_candidate_invariant = false;
         this->m_target_invariant = false;
         this->m_source_invariant = false;
+        m_simple_increment = false;
         return;
     }
 
@@ -1625,18 +1626,26 @@ void Operation<T>::InitConstInvariants()
     this->m_source_invariant = std::all_of(m_operands.begin(), m_operands.end(),
         [](const auto& operand) { return operand && operand->SourceInvariant(); });
 
+
     // determine if this is a simple incrment operation
-    if (m_op_type != PLUS && m_op_type != MINUS)
+    if (m_op_type != PLUS && m_op_type != MINUS) {
+        m_simple_increment = false;
         return;
-    if (m_operands.size() < 2 || !m_operands[0] || !m_operands[1])
+    }
+    if (m_operands.size() < 2 || !m_operands[0] || !m_operands[1]) {
+        m_simple_increment = false;
         return;
+    }
     // RHS must be the same value for all targets
-    if (!(m_operands[1]->TargetInvariant()))
+    if (!m_operands[1]->TargetInvariant()) {
+        m_simple_increment = false;
         return;
+    }
     // LHS must be just the immediate value of what's being incremented
-    const auto lhs = dynamic_cast<const Variable<T>*>(m_operands[0].get());
-    if (lhs && lhs->GetReferenceType() == EFFECT_TARGET_VALUE_REFERENCE)
-        m_simple_increment = true;
+    if (const auto lhs = dynamic_cast<const Variable<T>*>(m_operands[0].get()))
+        m_simple_increment = (lhs->GetReferenceType() == EFFECT_TARGET_VALUE_REFERENCE);
+    else
+        m_simple_increment = false;
 }
 
 template <typename T>
