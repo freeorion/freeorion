@@ -708,7 +708,7 @@ Statistic<T>::Statistic(std::unique_ptr<ValueRef<T>>&& value_ref, StatisticType 
     this->m_local_candidate_invariant = (!m_value_ref || m_value_ref->LocalCandidateInvariant());
 
     this->m_target_invariant = (!m_sampling_condition || m_sampling_condition->TargetInvariant()) &&
-                                 (!m_value_ref || m_value_ref->TargetInvariant());
+                               (!m_value_ref || m_value_ref->TargetInvariant());
 
     this->m_source_invariant = (!m_sampling_condition || m_sampling_condition->SourceInvariant()) &&
                                (!m_value_ref || m_value_ref->SourceInvariant());
