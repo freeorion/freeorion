@@ -1101,7 +1101,7 @@ ComplexVariable<T>::ComplexVariable(const char* variable_name,
 template <typename T>
 void ComplexVariable<T>::InitInvariants()
 {
-    std::initializer_list<ValueRef::ValueRefBase*> refs =
+    std::initializer_list<ValueRefBase*> refs =
         { m_int_ref1.get(), m_int_ref2.get(), m_int_ref3.get(), m_string_ref1.get(), m_string_ref2.get() };
     this->m_root_candidate_invariant = boost::algorithm::all_of(refs, [](const auto& e) { return !e || e->RootCandidateInvariant(); });
     this->m_local_candidate_invariant = boost::algorithm::all_of(refs, [](const auto& e) { return !e || e->LocalCandidateInvariant(); });
