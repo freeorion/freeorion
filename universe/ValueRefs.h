@@ -102,6 +102,8 @@ struct FO_COMMON_API Variable : public ValueRef<T>
     unsigned int GetCheckSum() const override;
 
 protected:
+    void InitInvariants();
+
     ReferenceType               m_ref_type = INVALID_REFERENCE_TYPE;
     std::vector<std::string>    m_property_name;
     bool                        m_return_immediate_value = false;
@@ -529,12 +531,7 @@ Variable<T>::Variable(ReferenceType ref_type, std::vector<std::string>&& propert
     m_ref_type(ref_type),
     m_property_name(std::move(property_name)),
     m_return_immediate_value(return_immediate_value)
-{
-    this->m_root_candidate_invariant = m_ref_type != CONDITION_ROOT_CANDIDATE_REFERENCE;
-    this->m_local_candidate_invariant = m_ref_type != CONDITION_LOCAL_CANDIDATE_REFERENCE;
-    this->m_target_invariant = m_ref_type != EFFECT_TARGET_REFERENCE && m_ref_type != EFFECT_TARGET_VALUE_REFERENCE;
-    this->m_source_invariant = m_ref_type != SOURCE_REFERENCE;
-}
+{ InitInvariants(); }
 
 template <typename T>
 Variable<T>::Variable(ReferenceType ref_type, const std::vector<std::string>& property_name,
@@ -543,38 +540,18 @@ Variable<T>::Variable(ReferenceType ref_type, const std::vector<std::string>& pr
     m_ref_type(ref_type),
     m_property_name(property_name),
     m_return_immediate_value(return_immediate_value)
-{
-    this->m_root_candidate_invariant = m_ref_type != CONDITION_ROOT_CANDIDATE_REFERENCE;
-    this->m_local_candidate_invariant = m_ref_type != CONDITION_LOCAL_CANDIDATE_REFERENCE;
-    this->m_target_invariant = m_ref_type != EFFECT_TARGET_REFERENCE && m_ref_type != EFFECT_TARGET_VALUE_REFERENCE;
-    this->m_source_invariant = m_ref_type != SOURCE_REFERENCE;
-}
+{ InitInvariants(); }
 
 template <typename T>
 Variable<T>::Variable(ReferenceType ref_type, bool return_immediate_value) :
-    ValueRef<T>(),
-    m_ref_type(ref_type),
-    m_return_immediate_value(return_immediate_value)
-{
-    this->m_root_candidate_invariant = m_ref_type != CONDITION_ROOT_CANDIDATE_REFERENCE;
-    this->m_local_candidate_invariant = m_ref_type != CONDITION_LOCAL_CANDIDATE_REFERENCE;
-    this->m_target_invariant = m_ref_type != EFFECT_TARGET_REFERENCE && m_ref_type != EFFECT_TARGET_VALUE_REFERENCE;
-    this->m_source_invariant = m_ref_type != SOURCE_REFERENCE;
-}
+    Variable<T>(ref_type, std::vector<std::string>{}, return_immediate_value)
+{}
 
 template <typename T>
 Variable<T>::Variable(ReferenceType ref_type, const char* property_name,
                       bool return_immediate_value) :
-    ValueRef<T>(),
-    m_ref_type(ref_type),
-    m_property_name{1, property_name},
-    m_return_immediate_value(return_immediate_value)
-{
-    this->m_root_candidate_invariant = m_ref_type != CONDITION_ROOT_CANDIDATE_REFERENCE;
-    this->m_local_candidate_invariant = m_ref_type != CONDITION_LOCAL_CANDIDATE_REFERENCE;
-    this->m_target_invariant = m_ref_type != EFFECT_TARGET_REFERENCE && m_ref_type != EFFECT_TARGET_VALUE_REFERENCE;
-    this->m_source_invariant = m_ref_type != SOURCE_REFERENCE;
-}
+    Variable<T>(ref_type, std::vector<std::string>{1, property_name}, return_immediate_value)
+{}
 
 template <typename T>
 template <typename S>
@@ -585,11 +562,7 @@ Variable<T>::Variable(ReferenceType ref_type, S&& property_name,
     m_return_immediate_value(return_immediate_value)
 {
     m_property_name.emplace_back(std::move(property_name));
-
-    this->m_root_candidate_invariant = m_ref_type != CONDITION_ROOT_CANDIDATE_REFERENCE;
-    this->m_local_candidate_invariant = m_ref_type != CONDITION_LOCAL_CANDIDATE_REFERENCE;
-    this->m_target_invariant = m_ref_type != EFFECT_TARGET_REFERENCE && m_ref_type != EFFECT_TARGET_VALUE_REFERENCE;
-    this->m_source_invariant = m_ref_type != SOURCE_REFERENCE;
+    InitInvariants();
 }
 
 template <typename T>
@@ -605,6 +578,12 @@ Variable<T>::Variable(ReferenceType ref_type,
         m_property_name.emplace_back(std::move(*container_name));
     m_property_name.emplace_back(std::move(property_name));
 
+    InitInvariants();
+}
+
+template <typename T>
+void Variable<T>::InitInvariants()
+{
     this->m_root_candidate_invariant = m_ref_type != CONDITION_ROOT_CANDIDATE_REFERENCE;
     this->m_local_candidate_invariant = m_ref_type != CONDITION_LOCAL_CANDIDATE_REFERENCE;
     this->m_target_invariant = m_ref_type != EFFECT_TARGET_REFERENCE && m_ref_type != EFFECT_TARGET_VALUE_REFERENCE;
