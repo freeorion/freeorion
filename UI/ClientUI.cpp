@@ -853,6 +853,7 @@ bool ClientUI::ZoomToCombatLog(int id) {
         GetMapWnd()->ShowCombatLog(id);
         return true;
     }
+    ErrorLogger() << "Unable to find combat log with id " << id;
     return false;
 }
 
