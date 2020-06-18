@@ -9,6 +9,14 @@ BuildingType
         Not Contains Building name = "BLD_GAS_GIANT_GEN"
         OwnedBy empire = Source.Owner
         Planet type = GasGiant
+        ContainedBy And [
+            System
+            Contains And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Not Population high = 0
+            ]
+        ]
     ]
     EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
