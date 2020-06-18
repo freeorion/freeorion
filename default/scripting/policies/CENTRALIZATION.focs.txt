@@ -12,12 +12,13 @@ Policy
             ]
             priority = [[DEFAULT_PRIORITY]]
             effects = [
-                SetTargetIndustry value = Value + 2
-                SetTargetResearch value = Value + 2
-                SetTargetConstruction value = Value + 5
-                SetMaxSupply value = Value - 1
+                SetTargetIndustry value = Value + Target.Population * [[INDUSTRY_PER_POP]]
+                SetTargetResearch value = Value + Target.Population * [[RESEARCH_PER_POP]]
+                SetTargetConstruction value = Value + 10
+                SetMaxSupply value = Value - 2
                 SetMaxStockpile value = Value - 2
             ]
     graphic = "icons/policies/centralization.png"
 
+#include "/scripting/common/base_prod.macros"
 #include "/scripting/common/priorities.macros"
