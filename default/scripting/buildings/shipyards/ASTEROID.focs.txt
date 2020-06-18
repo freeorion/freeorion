@@ -8,6 +8,17 @@ BuildingType
         Not Contains Building name = "BLD_SHIPYARD_AST"
         Planet type = Asteroids
         OwnedBy empire = Source.Owner
+        ContainedBy And [
+            System
+            Contains And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Or [
+                    Contains Building name = "BLD_SHIPYARD_BASE"
+                    Enqueued type = Building name = "BLD_SHIPYARD_BASE"
+                ]
+            ]
+        ]
     ]
     EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [

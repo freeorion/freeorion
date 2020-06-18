@@ -12995,7 +12995,7 @@ BLD_SHIPYARD_AST
 Asteroid Processor
 
 BLD_SHIPYARD_AST_DESC
-'''This building is required for the production of all asteroid hulls and all further asteroid processor upgrades. This building can only be built on an asteroid belt, which also can be an [[encyclopedia OUTPOSTS_TITLE]].
+'''This building is required for the production of all asteroid hulls and all further asteroid processor upgrades. This building can only be built on an asteroid belt of a system with a [[buildingtype BLD_SHIPYARD_BASE]], and can be built at an [[encyclopedia OUTPOSTS_TITLE]].
 
 A massive processing plant dedicated to the purpose of hollowing out asteroids and preparing them to be used as ships' hulls. Asteroids thus prepared are sent to a [[buildingtype BLD_SHIPYARD_BASE]] in the same system, where they are turned into the final hull.'''
 
