@@ -29,10 +29,11 @@ FieldType
             scope = And [
                 Ship
                 WithinDistance distance = Source.Size * 0.9 condition = Source
+                Not Monster
             ]
             stackinggroup = "METEOR_BLIZZARD_SHIP_EFFECTS"
             effects = [
-                SetResearch value = max(1, Value)
+                SetTargetResearch value = Value + 1
             ]
 
         EffectsGroup    // after reaching a certain age, dissipate when small

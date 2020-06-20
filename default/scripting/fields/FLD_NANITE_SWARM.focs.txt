@@ -25,15 +25,16 @@ FieldType
             activation = (Source.Age >= max((UniverseWidth ^ 1.1) / 50, 20))
             effects = SetSize value = Value - min(max(Value * RandomNumber(0.05, 0.1), 1.0), 3.0)
 
-        EffectsGroup    // increase ship structure
+        EffectsGroup    // increase ship structure, grant industry
             scope = And [
                 Ship
                 WithinDistance distance = Source.Size * 0.9 condition = Source
+                Not Monster
             ]
             stackinggroup = "NANITE_SWARM_SHIP_REPAIR"
             effects = [
                 SetStructure value = Value + 5
-                SetIndustry value = max(1, Value)
+                SetTargetIndustry value = Value + 1
             ]
 
         EffectsGroup    // after reaching a certain age, dissipate when small
