@@ -126,8 +126,8 @@ void serialize(Archive& ar, SaveGameUIData& obj, unsigned int const version)
         // (attempt to) directly deserialize / load design ordering and obsolescence
         try {
             ar  & make_nvp("ordered_ship_design_ids_and_obsolete", obj.ordered_ship_design_ids_and_obsolete);
-        } catch (...) {
-            ErrorLogger() << "Deserializing ship design ids and obsoletes failed. Skipping hull order and obsoletion, and obsolete ship parts.";
+        } catch (const std::exception& e) {
+            ErrorLogger() << "Deserializing ship design ids and obsoletes failed with '" << e.what() << "'. Skipping hull order and obsoletion, and obsolete ship parts.";
             return;
         }
     }
@@ -151,8 +151,8 @@ void serialize(Archive& ar, SaveGameUIData& obj, unsigned int const version)
     } else {    // is_loading with version < 4
         try {
             ar  & make_nvp("obsolete_ship_parts", obj.obsolete_ship_parts);
-        } catch (...) {
-            ErrorLogger() << "Deserializing obsolete ship parts failed.";
+        } catch (const std::exception& e) {
+            ErrorLogger() << "Deserializing obsolete ship parts failed with '" << e.what() << "'.";
         }
     }
     TraceLogger() << "SaveGameUIData::serialize obsoleted ship parts processed " << obj.obsolete_ship_parts.size()
