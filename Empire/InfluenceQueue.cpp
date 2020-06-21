@@ -18,19 +18,19 @@ namespace {
     {}
     bool temp_bool = RegisterGameRules(&AddRules);
 
-    float CalculateNewInfluenceStockpile(int empire_id, float starting_stockpile, float project_transfer_to_stockpile,
-                                         float available_IP, float allocated_IP, float allocated_stockpile_IP)
-    {
-        TraceLogger() << "CalculateNewInfluenceStockpile for empire " << empire_id;
-        const Empire* empire = GetEmpire(empire_id);
-        if (!empire) {
-            ErrorLogger() << "CalculateNewInfluenceStockpile() passed null empire.  doing nothing.";
-            return 0.0f;
-        }
-        TraceLogger() << " ... stockpile used: " << allocated_stockpile_IP;
-        float new_contributions = available_IP - allocated_IP;
-        return starting_stockpile + new_contributions + project_transfer_to_stockpile - allocated_stockpile_IP;
-    }
+    //float CalculateNewInfluenceStockpile(int empire_id, float starting_stockpile, float project_transfer_to_stockpile,
+    //                                     float available_IP, float allocated_IP, float allocated_stockpile_IP)
+    //{
+    //    TraceLogger() << "CalculateNewInfluenceStockpile for empire " << empire_id;
+    //    const Empire* empire = GetEmpire(empire_id);
+    //    if (!empire) {
+    //        ErrorLogger() << "CalculateNewInfluenceStockpile() passed null empire.  doing nothing.";
+    //        return 0.0f;
+    //    }
+    //    TraceLogger() << " ... stockpile used: " << allocated_stockpile_IP;
+    //    float new_contributions = available_IP - allocated_IP;
+    //    return starting_stockpile + new_contributions + project_transfer_to_stockpile - allocated_stockpile_IP;
+    //}
 
     const InfluenceQueue::Element EMPTY_ELEMENT;
 
@@ -38,34 +38,34 @@ namespace {
       * InfluenceQueue \a queue. Elements are allocated IP based on their need,
       * the limits they can be given per turn, and the amount available to the
       * empire. Also checks if elements will be completed this turn. */
-    void SetInfluenceQueueElementSpending(
-        float available_IP, float available_stockpile,
-        InfluenceQueue::QueueType& queue,
-        float& allocated_IP, float& allocated_stockpile_IP,
-        int& projects_in_progress, bool simulating)
-    {
-        projects_in_progress = 0;
-        allocated_IP = 0.0f;
-        allocated_stockpile_IP = 0.0f;
+    //void SetInfluenceQueueElementSpending(
+    //    float available_IP, float available_stockpile,
+    //    InfluenceQueue::QueueType& queue,
+    //    float& allocated_IP, float& allocated_stockpile_IP,
+    //    int& projects_in_progress, bool simulating)
+    //{
+    //    projects_in_progress = 0;
+    //    allocated_IP = 0.0f;
+    //    allocated_stockpile_IP = 0.0f;
 
-        float dummy_IP_source = 0.0f;
-        float stockpile_transfer = 0.0f;
+    //    float dummy_IP_source = 0.0f;
+    //    float stockpile_transfer = 0.0f;
 
-        //DebugLogger() << "queue size: " << queue.size();
-        int i = 0;
-        for (auto& queue_element : queue) {
-            queue_element.allocated_ip = 0.0f;  // default, to be updated below...
-            if (queue_element.paused) {
-                TraceLogger() << "allocation: " << queue_element.allocated_ip
-                              << "  to: " << queue_element.name
-                              << "  due to it being paused";
-                ++i;
-                continue;
-            }
+    //    //DebugLogger() << "queue size: " << queue.size();
+    //    int i = 0;
+    //    for (auto& queue_element : queue) {
+    //        queue_element.allocated_ip = 0.0f;  // default, to be updated below...
+    //        if (queue_element.paused) {
+    //            TraceLogger() << "allocation: " << queue_element.allocated_ip
+    //                          << "  to: " << queue_element.name
+    //                          << "  due to it being paused";
+    //            ++i;
+    //            continue;
+    //        }
 
-            ++i;
-        }
-    }
+    //        ++i;
+    //    }
+    //}
 }
 
 
