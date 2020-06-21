@@ -197,10 +197,8 @@ void GraphControl::Render() {
         auto font = ClientUI::GetFont();
         glColor(ClientUI::TextColor());
         for (auto label : m_y_scale_ticks) {
-            std::stringstream rndlabel;
-            rndlabel.precision(12);
-            rndlabel << label.second;
-            font->RenderText({ul.x + GG::X1, lr.y + label.first}, rndlabel.str());
+            auto roundedlabel = boost::format("%|1$.12|") % label.second;
+            font->RenderText({ul.x + GG::X1, lr.y + label.first}, roundedlabel.str());
         }
     }
 
