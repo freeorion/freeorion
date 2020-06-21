@@ -196,8 +196,10 @@ void GraphControl::Render() {
         glEnable(GL_TEXTURE_2D);
         auto font = ClientUI::GetFont();
         glColor(ClientUI::TextColor());
-        for (auto label : m_y_scale_ticks)
-            font->RenderText({ul.x + GG::X1, lr.y + label.first}, boost::lexical_cast<std::string>(label.second));
+        for (auto label : m_y_scale_ticks) {
+            auto roundedlabel = boost::format("%|1$.12|") % label.second;
+            font->RenderText({ul.x + GG::X1, lr.y + label.first}, roundedlabel.str());
+        }
     }
 
     glPushMatrix();
