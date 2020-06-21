@@ -124,49 +124,47 @@ namespace {
                        from_set.end());
     }
 
-    std::vector<Condition::Condition*> FlattenAndNestedConditions(
-        const std::vector<Condition::Condition*>& input_conditions)
+    std::vector<const Condition::Condition*> FlattenAndNestedConditions(
+        const std::vector<const Condition::Condition*>& input_conditions)
     {
-        std::vector<Condition::Condition*> retval;
-        for (Condition::Condition* condition : input_conditions) {
-            if (Condition::And* and_condition = dynamic_cast<Condition::And*>(condition)) {
-                std::vector<Condition::Condition*> flattened_operands =
-                    FlattenAndNestedConditions(and_condition->Operands());
-                std::copy(flattened_operands.begin(), flattened_operands.end(), std::back_inserter(retval));
-            } else {
-                if (condition)
-                    retval.push_back(condition);
+        std::vector<const Condition::Condition*> retval;
+        retval.reserve(input_conditions.size() * 2);    // bit extra for some subconditions
+        for (const Condition::Condition* condition : input_conditions) {
+            if (const Condition::And* and_condition = dynamic_cast<const Condition::And*>(condition)) {
+                auto flattened_operands = FlattenAndNestedConditions(and_condition->Operands());
+                retval.insert(retval.end(), flattened_operands.begin(), flattened_operands.end());
+            } else if (condition) {
+                retval.push_back(condition);
             }
         }
         return retval;
     }
 
     std::map<std::string, bool> ConditionDescriptionAndTest(
-        const std::vector<Condition::Condition*>& conditions,
+        const std::vector<const Condition::Condition*>& conditions,
         const ScriptingContext& parent_context,
         std::shared_ptr<const UniverseObject> candidate_object/* = nullptr*/)
     {
         std::map<std::string, bool> retval;
 
-        std::vector<Condition::Condition*> flattened_conditions;
+        std::vector<const Condition::Condition*> flattened_conditions;
         if (conditions.empty())
             return retval;
-        else if (conditions.size() > 1 || dynamic_cast<Condition::And*>(*conditions.begin()))
+        else if (conditions.size() > 1 || dynamic_cast<const Condition::And*>(*conditions.begin()))
             flattened_conditions = FlattenAndNestedConditions(conditions);
         //else if (dynamic_cast<const Condition::Or*>(*conditions.begin()))
         //    flattened_conditions = FlattenOrNestedConditions(conditions);
         else
             flattened_conditions = conditions;
 
-        for (Condition::Condition* condition : flattened_conditions) {
-            retval[condition->Description()] = condition->Eval(parent_context, candidate_object);
-        }
+        for (const Condition::Condition* condition : flattened_conditions)
+            retval.emplace(condition->Description(), condition->Eval(parent_context, candidate_object));
         return retval;
     }
 }
 
 namespace Condition {
-std::string ConditionFailedDescription(const std::vector<Condition*>& conditions,
+std::string ConditionFailedDescription(const std::vector<const Condition*>& conditions,
                                        std::shared_ptr<const UniverseObject> candidate_object/* = nullptr*/,
                                        std::shared_ptr<const UniverseObject> source_object/* = nullptr*/)
 {
@@ -177,8 +175,8 @@ std::string ConditionFailedDescription(const std::vector<Condition*>& conditions
 
     // test candidate against all input conditions, and store descriptions of each
     for (const auto& result : ConditionDescriptionAndTest(conditions, ScriptingContext(source_object), candidate_object)) {
-            if (!result.second)
-                 retval += UserString("FAILED") + " <rgba 255 0 0 255>" + result.first +"</rgba>\n";
+        if (!result.second)
+             retval += UserString("FAILED") + " <rgba 255 0 0 255>" + result.first +"</rgba>\n";
     }
 
     // remove empty line from the end of the string
@@ -187,7 +185,7 @@ std::string ConditionFailedDescription(const std::vector<Condition*>& conditions
     return retval;
 }
 
-std::string ConditionDescription(const std::vector<Condition*>& conditions,
+std::string ConditionDescription(const std::vector<const Condition*>& conditions,
                                  std::shared_ptr<const UniverseObject> candidate_object/* = nullptr*/,
                                  std::shared_ptr<const UniverseObject> source_object/* = nullptr*/)
 {
@@ -205,10 +203,10 @@ std::string ConditionDescription(const std::vector<Condition*>& conditions,
 
     // concatenate (non-duplicated) single-description results
     std::string retval;
-    if (conditions.size() > 1 || dynamic_cast<And*>(*conditions.begin())) {
+    if (conditions.size() > 1 || dynamic_cast<const And*>(*conditions.begin())) {
         retval += UserString("ALL_OF") + " ";
         retval += (all_conditions_match_candidate ? UserString("PASSED") : UserString("FAILED")) + "\n";
-    } else if (dynamic_cast<Or*>(*conditions.begin())) {
+    } else if (dynamic_cast<const Or*>(*conditions.begin())) {
         retval += UserString("ANY_OF") + " ";
         retval += (at_least_one_condition_matches_candidate ? UserString("PASSED") : UserString("FAILED")) + "\n";
     }
@@ -9768,8 +9766,9 @@ unsigned int And::GetCheckSum() const {
     return retval;
 }
 
-const std::vector<Condition*> And::Operands() const {
-    std::vector<Condition*> retval(m_operands.size());
+std::vector<const Condition*> And::Operands() const {
+    std::vector<const Condition*> retval;
+    retval.reserve(m_operands.size());
     std::transform(m_operands.begin(), m_operands.end(), retval.begin(),
                    [](const std::unique_ptr<Condition>& xx) {return xx.get();});
     return retval;
@@ -10229,8 +10228,9 @@ unsigned int OrderedAlternativesOf::GetCheckSum() const {
     return retval;
 }
 
-const std::vector<Condition*> OrderedAlternativesOf::Operands() const {
-    std::vector<Condition*> retval(m_operands.size());
+std::vector<const Condition*> OrderedAlternativesOf::Operands() const {
+    std::vector<const Condition*> retval;
+    retval.reserve(m_operands.size());
     std::transform(m_operands.begin(), m_operands.end(), retval.begin(),
                    [](const std::unique_ptr<Condition>& xx) {return xx.get();});
     return retval;
