@@ -5,8 +5,8 @@
 #include "../network/Networking.h"
 #include "Export.h"
 #include "OptionsDB.h"
+#include "OrderSet.h"
 #include "Pending.h"
-#include "Serialize.h"
 
 #include <GG/Clr.h>
 #include <GG/ClrConstants.h>
@@ -15,7 +15,6 @@
 #include <set>
 #include <vector>
 #include <map>
-#include <boost/serialization/access.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 
 
@@ -76,14 +75,7 @@ struct FO_COMMON_API GalaxySetupData {
       * have to rewrite any custom boost::serialization classes that implement
       * empire-dependent visibility. */
     int                 m_encoding_empire; ///< used during serialization to globally set what empire knowledge to use
-
-private:
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
-
-BOOST_CLASS_VERSION(GalaxySetupData, 3);
 
 
 /** Contains the UI data that must be saved in save game files in order to
@@ -99,14 +91,7 @@ struct FO_COMMON_API SaveGameUIData {
     std::vector<std::pair<int, boost::optional<std::pair<bool, int>>>> ordered_ship_design_ids_and_obsolete;
     std::vector<std::pair<std::string, std::pair<bool, int>>> ordered_ship_hull_and_obsolete;
     std::unordered_map<std::string, int> obsolete_ship_parts;
-
-private:
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
-
-BOOST_CLASS_VERSION(SaveGameUIData, 4);
 
 
 /** The data for one empire necessary for game-setup during multiplayer loading. */
@@ -118,25 +103,13 @@ struct FO_COMMON_API SaveGameEmpireData {
     bool        m_authenticated = false;
     bool        m_eliminated = false;
     bool        m_won = false;
-
-private:
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
-
-BOOST_CLASS_VERSION(SaveGameEmpireData, 2);
 
 /** Contains basic data about a player in a game. */
 struct FO_COMMON_API PlayerSaveHeaderData {
     std::string             m_name;
     int                     m_empire_id = ALL_EMPIRES;
     Networking::ClientType  m_client_type = Networking::INVALID_CLIENT_TYPE;
-
-private:
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Contains data that must be saved for a single player. */
@@ -162,24 +135,12 @@ struct FO_COMMON_API PlayerSaveGameData : public PlayerSaveHeaderData {
     std::shared_ptr<OrderSet>       m_orders;
     std::shared_ptr<SaveGameUIData> m_ui_data;
     std::string                     m_save_state_string;
-
-private:
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
-
-BOOST_CLASS_VERSION(PlayerSaveGameData, 2);
 
 /** Data that must be retained by the server when saving and loading a
   * game that isn't player data or the universe */
 struct FO_COMMON_API ServerSaveGameData {
     int m_current_turn = INVALID_GAME_TURN;
-
-private:
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** The data structure used to represent a single player's setup options for a
@@ -196,16 +157,10 @@ struct PlayerSetupData {
     bool                    m_player_ready = false;
     bool                    m_authenticated = false;
     int                     m_starting_team = Networking::NO_TEAM_ID;
-
-private:
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
+
 bool FO_COMMON_API operator==(const PlayerSetupData& lhs, const PlayerSetupData& rhs);
 bool operator!=(const PlayerSetupData& lhs, const PlayerSetupData& rhs);
-
-BOOST_CLASS_VERSION(PlayerSetupData, 2);
 
 /** The data needed to establish a new single player game.  If \a m_new_game
   * is true, a new game is to be started, using the remaining members besides
@@ -223,11 +178,6 @@ struct SinglePlayerSetupData : public GalaxySetupData {
     bool                            m_new_game;
     std::string                     m_filename;
     std::vector<PlayerSetupData>    m_players;
-
-private:
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** The data structure that represents the state of the multiplayer lobby. */
@@ -284,14 +234,7 @@ struct FO_COMMON_API MultiplayerLobbyData : public GalaxySetupData {
 
     std::string                                 m_start_lock_cause;
     bool                                        m_in_game; ///< In-game lobby
-
-private:
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
-
-BOOST_CLASS_VERSION(MultiplayerLobbyData, 2);
 
 /** The data structure stores information about latest chat massages. */
 struct FO_COMMON_API ChatHistoryEntity {
@@ -299,14 +242,7 @@ struct FO_COMMON_API ChatHistoryEntity {
     std::string                 m_player_name;
     std::string                 m_text;
     GG::Clr                     m_text_color;
-
-private:
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
-
-BOOST_CLASS_VERSION(ChatHistoryEntity, 1);
 
 /** Information about one player that other players are informed of.  Assembled by server and sent to players. */
 struct PlayerInfo {
@@ -316,12 +252,7 @@ struct PlayerInfo {
     Networking::ClientType  client_type = Networking::INVALID_CLIENT_TYPE;
     //! true iff this is the host player
     bool                    host = false;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
-// Note: *::serialize() implemented in SerializeMultiplayerCommon.cpp.
 
 #endif // _MultiplayerCommon_h_

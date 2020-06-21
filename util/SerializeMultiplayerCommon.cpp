@@ -14,69 +14,75 @@
 
 
 template <typename Archive>
-void GalaxySetupData::serialize(Archive& ar, const unsigned int version)
+void serialize(Archive& ar, GalaxySetupData& obj, unsigned int const version)
 {
-    if (Archive::is_saving::value && m_encoding_empire != ALL_EMPIRES && (!GetOptionsDB().Get<bool>("network.server.publish-seed"))) {
+    using namespace boost::serialization;
+
+    if (Archive::is_saving::value && obj.m_encoding_empire != ALL_EMPIRES && (!GetOptionsDB().Get<bool>("network.server.publish-seed"))) {
         std::string dummy = "";
-        ar  & boost::serialization::make_nvp("m_seed", dummy);
+        ar  & make_nvp("m_seed", dummy);
     } else {
-        ar  & BOOST_SERIALIZATION_NVP(m_seed);
+        ar  & make_nvp("m_seed", obj.m_seed);
     }
 
-    ar  & BOOST_SERIALIZATION_NVP(m_size)
-        & BOOST_SERIALIZATION_NVP(m_shape)
-        & BOOST_SERIALIZATION_NVP(m_age)
-        & BOOST_SERIALIZATION_NVP(m_starlane_freq)
-        & BOOST_SERIALIZATION_NVP(m_planet_density)
-        & BOOST_SERIALIZATION_NVP(m_specials_freq)
-        & BOOST_SERIALIZATION_NVP(m_monster_freq)
-        & BOOST_SERIALIZATION_NVP(m_native_freq)
-        & BOOST_SERIALIZATION_NVP(m_ai_aggr);
+    ar  & make_nvp("m_size", obj.m_size)
+        & make_nvp("m_shape", obj.m_shape)
+        & make_nvp("m_age", obj.m_age)
+        & make_nvp("m_starlane_freq", obj.m_starlane_freq)
+        & make_nvp("m_planet_density", obj.m_planet_density)
+        & make_nvp("m_specials_freq", obj.m_specials_freq)
+        & make_nvp("m_monster_freq", obj.m_monster_freq)
+        & make_nvp("m_native_freq", obj.m_native_freq)
+        & make_nvp("m_ai_aggr", obj.m_ai_aggr);
 
     if (version >= 1) {
-        ar & BOOST_SERIALIZATION_NVP(m_game_rules);
+        ar & make_nvp("m_game_rules", obj.m_game_rules);
     }
 
     if (version >= 2) {
-        ar & BOOST_SERIALIZATION_NVP(m_game_uid);
+        ar & make_nvp("m_game_uid", obj.m_game_uid);
     } else {
         if (Archive::is_loading::value) {
-            m_game_uid = boost::uuids::to_string(boost::uuids::random_generator()());
+            obj.m_game_uid = boost::uuids::to_string(boost::uuids::random_generator()());
         }
     }
 }
 
-template void GalaxySetupData::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
-template void GalaxySetupData::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
-template void GalaxySetupData::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
-template void GalaxySetupData::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
+template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, GalaxySetupData&, unsigned int const);
+template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, GalaxySetupData&, unsigned int const);
+template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, GalaxySetupData&, unsigned int const);
+template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, GalaxySetupData&, unsigned int const);
 
 
 template <typename Archive>
-void SinglePlayerSetupData::serialize(Archive& ar, const unsigned int version)
+void serialize(Archive& ar, SinglePlayerSetupData& obj, unsigned int const version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(GalaxySetupData)
-        & BOOST_SERIALIZATION_NVP(m_new_game)
-        & BOOST_SERIALIZATION_NVP(m_filename)
-        & BOOST_SERIALIZATION_NVP(m_players);
+    using namespace boost::serialization;
+
+    ar  & make_nvp("GalaxySetupData", base_object<GalaxySetupData>(obj))
+        & make_nvp("m_new_game", obj.m_new_game)
+        & make_nvp("m_filename", obj.m_filename)
+        & make_nvp("m_players", obj.m_players);
 }
 
-template void SinglePlayerSetupData::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
-template void SinglePlayerSetupData::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
-template void SinglePlayerSetupData::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
-template void SinglePlayerSetupData::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
+template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, SinglePlayerSetupData&, unsigned int const);
+template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, SinglePlayerSetupData&, unsigned int const);
+template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, SinglePlayerSetupData&, unsigned int const);
+template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, SinglePlayerSetupData&, unsigned int const);
 
 
 template <typename Archive>
-void SaveGameUIData::serialize(Archive& ar, const unsigned int version)
+void serialize(Archive& ar, SaveGameUIData& obj, unsigned int const version)
 {
+    using namespace boost::serialization;
+
     TraceLogger() << "SaveGameUIData::serialize " << (Archive::is_saving::value ? "saving" : "loading")
                   << " version " << version;
-    ar  & BOOST_SERIALIZATION_NVP(map_top)
-        & BOOST_SERIALIZATION_NVP(map_left)
-        & BOOST_SERIALIZATION_NVP(map_zoom_steps_in)
-        & BOOST_SERIALIZATION_NVP(fleets_exploring)
-        & BOOST_SERIALIZATION_NVP(obsolete_ui_event_count);
+    ar  & make_nvp("map_top", obj.map_top)
+        & make_nvp("map_left", obj.map_left)
+        & make_nvp("map_zoom_steps_in", obj.map_zoom_steps_in)
+        & make_nvp("fleets_exploring", obj.fleets_exploring)
+        & make_nvp("obsolete_ui_event_count", obj.obsolete_ui_event_count);
     TraceLogger() << "SaveGameUIData::serialize processed obsolete UI event count";
     if (Archive::is_saving::value || version >= 3) {
         // serializing / deserializing boost::optional can cause problem, so
@@ -88,7 +94,7 @@ void SaveGameUIData::serialize(Archive& ar, const unsigned int version)
 
         if (Archive::is_saving::value) {
             // populate temp containers
-            for (auto id_pair_pair : ordered_ship_design_ids_and_obsolete) {
+            for (auto id_pair_pair : obj.ordered_ship_design_ids_and_obsolete) {
                 ordered_ship_design_ids.push_back(id_pair_pair.first);
                 if (id_pair_pair.second)
                     ids_obsolete[id_pair_pair.first] = id_pair_pair.second.get();
@@ -106,33 +112,33 @@ void SaveGameUIData::serialize(Archive& ar, const unsigned int version)
             TraceLogger() << "SaveGameUIData::serialize design data from archive completed";
 
             // extract from temp containers into member storage with boost::optional
-            ordered_ship_design_ids_and_obsolete.clear();
+            obj.ordered_ship_design_ids_and_obsolete.clear();
             for (int id : ordered_ship_design_ids) {
                 auto it = ids_obsolete.find(id);
                 auto opt_p_i = it == ids_obsolete.end() ?
                     boost::optional<std::pair<bool, int>>() :
                     boost::optional<std::pair<bool, int>>(it->second);
-                ordered_ship_design_ids_and_obsolete.push_back(std::make_pair(id, opt_p_i));
+                obj.ordered_ship_design_ids_and_obsolete.push_back(std::make_pair(id, opt_p_i));
             }
             TraceLogger() << "SaveGameUIData::serialize design data extracted";
         }
     } else {    // is_loading with version < 3
         // (attempt to) directly deserialize / load design ordering and obsolescence
         try {
-            ar  & BOOST_SERIALIZATION_NVP(ordered_ship_design_ids_and_obsolete);
-        } catch (...) {
-            ErrorLogger() << "Deserializing ship design ids and obsoletes failed. Skipping hull order and obsoletion, and obsolete ship parts.";
+            ar  & make_nvp("ordered_ship_design_ids_and_obsolete", obj.ordered_ship_design_ids_and_obsolete);
+        } catch (const std::exception& e) {
+            ErrorLogger() << "Deserializing ship design ids and obsoletes failed with '" << e.what() << "'. Skipping hull order and obsoletion, and obsolete ship parts.";
             return;
         }
     }
-    ar  & BOOST_SERIALIZATION_NVP(ordered_ship_hull_and_obsolete);
+    ar  & make_nvp("ordered_ship_hull_and_obsolete", obj.ordered_ship_hull_and_obsolete);
     TraceLogger() << "SaveGameUIData::serialize ship hull processed";
     if (Archive::is_saving::value || version >= 4) {
         std::map<std::string, int> ordered_obsolete_ship_parts;
 
         if (Archive::is_saving::value) {
             // populate temp container
-            ordered_obsolete_ship_parts = std::map<std::string, int>(obsolete_ship_parts.begin(), obsolete_ship_parts.end());
+            ordered_obsolete_ship_parts = std::map<std::string, int>(obj.obsolete_ship_parts.begin(), obj.obsolete_ship_parts.end());
             // serialize into archive
             ar & BOOST_SERIALIZATION_NVP(ordered_obsolete_ship_parts);
         } else {
@@ -140,175 +146,189 @@ void SaveGameUIData::serialize(Archive& ar, const unsigned int version)
             ar & BOOST_SERIALIZATION_NVP(ordered_obsolete_ship_parts);
 
             // extract from temp container
-            obsolete_ship_parts = std::unordered_map<std::string, int>(ordered_obsolete_ship_parts.begin(), ordered_obsolete_ship_parts.end());
+            obj.obsolete_ship_parts = std::unordered_map<std::string, int>(ordered_obsolete_ship_parts.begin(), ordered_obsolete_ship_parts.end());
         }
     } else {    // is_loading with version < 4
         try {
-            ar  & BOOST_SERIALIZATION_NVP(obsolete_ship_parts);
-        } catch (...) {
-            ErrorLogger() << "Deserializing obsolete ship parts failed.";
+            ar  & make_nvp("obsolete_ship_parts", obj.obsolete_ship_parts);
+        } catch (const std::exception& e) {
+            ErrorLogger() << "Deserializing obsolete ship parts failed with '" << e.what() << "'.";
         }
     }
-    TraceLogger() << "SaveGameUIData::serialize obsoleted ship parts processed " << obsolete_ship_parts.size()
-                  << " items. Bucket count " << obsolete_ship_parts.bucket_count();
+    TraceLogger() << "SaveGameUIData::serialize obsoleted ship parts processed " << obj.obsolete_ship_parts.size()
+                  << " items. Bucket count " << obj.obsolete_ship_parts.bucket_count();
 }
 
-template void SaveGameUIData::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
-template void SaveGameUIData::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
-template void SaveGameUIData::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
-template void SaveGameUIData::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
+template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, SaveGameUIData&, unsigned int const);
+template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, SaveGameUIData&, unsigned int const);
+template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, SaveGameUIData&, unsigned int const);
+template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, SaveGameUIData&, unsigned int const);
 
 
 template <typename Archive>
-void SaveGameEmpireData::serialize(Archive& ar, const unsigned int version)
+void serialize(Archive& ar, SaveGameEmpireData& obj, unsigned int const version)
 {
-    ar  & BOOST_SERIALIZATION_NVP(m_empire_id)
-        & BOOST_SERIALIZATION_NVP(m_empire_name)
-        & BOOST_SERIALIZATION_NVP(m_player_name)
-        & BOOST_SERIALIZATION_NVP(m_color);
+    using namespace boost::serialization;
+
+    ar  & make_nvp("m_empire_id", obj.m_empire_id)
+        & make_nvp("m_empire_name", obj.m_empire_name)
+        & make_nvp("m_player_name", obj.m_player_name)
+        & make_nvp("m_color", obj.m_color);
     if (version >= 1) {
-        ar & BOOST_SERIALIZATION_NVP(m_authenticated);
+        ar & make_nvp("m_authenticated", obj.m_authenticated);
     }
     if (version >= 2) {
-        ar & BOOST_SERIALIZATION_NVP(m_eliminated);
-        ar & BOOST_SERIALIZATION_NVP(m_won);
+        ar & make_nvp("m_eliminated", obj.m_eliminated);
+        ar & make_nvp("m_won", obj.m_won);
     }
 }
 
-template void SaveGameEmpireData::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
-template void SaveGameEmpireData::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
-template void SaveGameEmpireData::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
-template void SaveGameEmpireData::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
+template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, SaveGameEmpireData&, unsigned int const);
+template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, SaveGameEmpireData&, unsigned int const);
+template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, SaveGameEmpireData&, unsigned int const);
+template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, SaveGameEmpireData&, unsigned int const);
 
 
 template <typename Archive>
-void PlayerSaveHeaderData::serialize(Archive& ar, const unsigned int version)
+void serialize(Archive& ar, PlayerSaveHeaderData& obj, unsigned int const version)
 {
-    ar  & BOOST_SERIALIZATION_NVP(m_name)
-        & BOOST_SERIALIZATION_NVP(m_empire_id)
-        & BOOST_SERIALIZATION_NVP(m_client_type);
+    using namespace boost::serialization;
+
+    ar  & make_nvp("m_name", obj.m_name)
+        & make_nvp("m_empire_id", obj.m_empire_id)
+        & make_nvp("m_client_type", obj.m_client_type);
 }
 
-template void PlayerSaveHeaderData::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
-template void PlayerSaveHeaderData::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
-template void PlayerSaveHeaderData::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
-template void PlayerSaveHeaderData::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
+template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, PlayerSaveHeaderData&, unsigned int const);
+template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, PlayerSaveHeaderData&, unsigned int const);
+template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, PlayerSaveHeaderData&, unsigned int const);
+template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, PlayerSaveHeaderData&, unsigned int const);
 
 
 template <typename Archive>
-void PlayerSaveGameData::serialize(Archive& ar, const unsigned int version)
+void serialize(Archive& ar, PlayerSaveGameData& obj, unsigned int const version)
 {
-    ar  & BOOST_SERIALIZATION_NVP(m_name)
-        & BOOST_SERIALIZATION_NVP(m_empire_id)
-        & BOOST_SERIALIZATION_NVP(m_orders)
-        & BOOST_SERIALIZATION_NVP(m_ui_data)
-        & BOOST_SERIALIZATION_NVP(m_save_state_string)
-        & BOOST_SERIALIZATION_NVP(m_client_type);
+    using namespace boost::serialization;
+
+    ar  & make_nvp("m_name", obj.m_name)
+        & make_nvp("m_empire_id", obj.m_empire_id)
+        & make_nvp("m_orders", obj.m_orders)
+        & make_nvp("m_ui_data", obj.m_ui_data)
+        & make_nvp("m_save_state_string", obj.m_save_state_string)
+        & make_nvp("m_client_type", obj.m_client_type);
     if (version == 1) {
         bool ready{false};
-        ar & boost::serialization::make_nvp("m_ready", ready);
+        ar & make_nvp("m_ready", ready);
     }
 }
 
-template void PlayerSaveGameData::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
-template void PlayerSaveGameData::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
-template void PlayerSaveGameData::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
-template void PlayerSaveGameData::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
+template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, PlayerSaveGameData&, unsigned int const);
+template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, PlayerSaveGameData&, unsigned int const);
+template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, PlayerSaveGameData&, unsigned int const);
+template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, PlayerSaveGameData&, unsigned int const);
 
 
 template <typename Archive>
-void ServerSaveGameData::serialize(Archive& ar, const unsigned int version)
+void serialize(Archive& ar, ServerSaveGameData& obj, unsigned int const version)
 {
-    ar  & BOOST_SERIALIZATION_NVP(m_current_turn);
+    ar  & boost::serialization::make_nvp("m_current_turn", obj.m_current_turn);
 }
 
-template void ServerSaveGameData::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
-template void ServerSaveGameData::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
-template void ServerSaveGameData::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
-template void ServerSaveGameData::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
+template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, ServerSaveGameData&, unsigned int const);
+template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, ServerSaveGameData&, unsigned int const);
+template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, ServerSaveGameData&, unsigned int const);
+template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, ServerSaveGameData&, unsigned int const);
 
 
 template <typename Archive>
-void PlayerSetupData::serialize(Archive& ar, const unsigned int version)
+void serialize(Archive& ar, PlayerSetupData& obj, unsigned int const version)
 {
-    ar  & BOOST_SERIALIZATION_NVP(m_player_name)
-        & BOOST_SERIALIZATION_NVP(m_player_id)
-        & BOOST_SERIALIZATION_NVP(m_empire_name)
-        & BOOST_SERIALIZATION_NVP(m_empire_color)
-        & BOOST_SERIALIZATION_NVP(m_starting_species_name)
-        & BOOST_SERIALIZATION_NVP(m_save_game_empire_id)
-        & BOOST_SERIALIZATION_NVP(m_client_type)
-        & BOOST_SERIALIZATION_NVP(m_player_ready);
+    using namespace boost::serialization;
+
+    ar  & make_nvp("m_player_name", obj.m_player_name)
+        & make_nvp("m_player_id", obj.m_player_id)
+        & make_nvp("m_empire_name", obj.m_empire_name)
+        & make_nvp("m_empire_color", obj.m_empire_color)
+        & make_nvp("m_starting_species_name", obj.m_starting_species_name)
+        & make_nvp("m_save_game_empire_id", obj.m_save_game_empire_id)
+        & make_nvp("m_client_type", obj.m_client_type)
+        & make_nvp("m_player_ready", obj.m_player_ready);
     if (version >= 1) {
-        ar & BOOST_SERIALIZATION_NVP(m_authenticated);
+        ar & make_nvp("m_authenticated", obj.m_authenticated);
     }
     if (version >= 2) {
-        ar & BOOST_SERIALIZATION_NVP(m_starting_team);
+        ar & make_nvp("m_starting_team", obj.m_starting_team);
     }
 }
 
-template void PlayerSetupData::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
-template void PlayerSetupData::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
-template void PlayerSetupData::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
-template void PlayerSetupData::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
+template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, PlayerSetupData&, unsigned int const);
+template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, PlayerSetupData&, unsigned int const);
+template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, PlayerSetupData&, unsigned int const);
+template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, PlayerSetupData&, unsigned int const);
 
 
 template <typename Archive>
-void MultiplayerLobbyData::serialize(Archive& ar, const unsigned int version)
+void serialize(Archive& ar, MultiplayerLobbyData& obj, unsigned int const version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(GalaxySetupData)
-        & BOOST_SERIALIZATION_NVP(m_new_game)
-        & BOOST_SERIALIZATION_NVP(m_players)
-        & BOOST_SERIALIZATION_NVP(m_save_game)
-        & BOOST_SERIALIZATION_NVP(m_save_game_empire_data)
-        & BOOST_SERIALIZATION_NVP(m_any_can_edit)
-        & BOOST_SERIALIZATION_NVP(m_start_locked)
-        & BOOST_SERIALIZATION_NVP(m_start_lock_cause);
+    using namespace boost::serialization;
+
+    ar  & make_nvp("GalaxySetupData", base_object<GalaxySetupData>(obj))
+        & make_nvp("m_new_game", obj.m_new_game)
+        & make_nvp("m_players", obj.m_players)
+        & make_nvp("m_save_game", obj.m_save_game)
+        & make_nvp("m_save_game_empire_data", obj.m_save_game_empire_data)
+        & make_nvp("m_any_can_edit", obj.m_any_can_edit)
+        & make_nvp("m_start_locked", obj.m_start_locked)
+        & make_nvp("m_start_lock_cause", obj.m_start_lock_cause);
     if (version >= 1) {
-        ar & BOOST_SERIALIZATION_NVP(m_save_game_current_turn);
+        ar & make_nvp("m_save_game_current_turn", obj.m_save_game_current_turn);
     }
     if (version >= 2) {
-        ar & BOOST_SERIALIZATION_NVP(m_in_game);
+        ar & make_nvp("m_in_game", obj.m_in_game);
     }
 }
 
-template void MultiplayerLobbyData::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
-template void MultiplayerLobbyData::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
-template void MultiplayerLobbyData::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
-template void MultiplayerLobbyData::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
+template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, MultiplayerLobbyData&, unsigned int const);
+template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, MultiplayerLobbyData&, unsigned int const);
+template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, MultiplayerLobbyData&, unsigned int const);
+template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, MultiplayerLobbyData&, unsigned int const);
 
 
 template <typename Archive>
-void ChatHistoryEntity::serialize(Archive& ar, const unsigned int version)
+void serialize(Archive& ar, ChatHistoryEntity& obj, unsigned int const version)
 {
+    using namespace boost::serialization;
+
     if (version < 1) {
-        ar  & BOOST_SERIALIZATION_NVP(m_timestamp)
-            & BOOST_SERIALIZATION_NVP(m_player_name)
-            & BOOST_SERIALIZATION_NVP(m_text);
+        ar  & make_nvp("m_timestamp", obj.m_timestamp)
+            & make_nvp("m_player_name", obj.m_player_name)
+            & make_nvp("m_text", obj.m_text);
     } else {
-        ar  & BOOST_SERIALIZATION_NVP(m_text)
-            & BOOST_SERIALIZATION_NVP(m_player_name)
-            & BOOST_SERIALIZATION_NVP(m_text_color)
-            & BOOST_SERIALIZATION_NVP(m_timestamp);
+        ar  & make_nvp("m_text", obj.m_text)
+            & make_nvp("m_player_name", obj.m_player_name)
+            & make_nvp("m_text_color", obj.m_text_color)
+            & make_nvp("m_timestamp", obj.m_timestamp);
     }
 }
 
-template void ChatHistoryEntity::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
-template void ChatHistoryEntity::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
-template void ChatHistoryEntity::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
-template void ChatHistoryEntity::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
+template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, ChatHistoryEntity&, unsigned int const);
+template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, ChatHistoryEntity&, unsigned int const);
+template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, ChatHistoryEntity&, unsigned int const);
+template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, ChatHistoryEntity&, unsigned int const);
 
 
 template <typename Archive>
-void PlayerInfo::serialize(Archive& ar, const unsigned int version)
+void serialize(Archive& ar, PlayerInfo& obj, unsigned int const version)
 {
-    ar  & BOOST_SERIALIZATION_NVP(name)
-        & BOOST_SERIALIZATION_NVP(empire_id)
-        & BOOST_SERIALIZATION_NVP(client_type)
-        & BOOST_SERIALIZATION_NVP(host);
+    using namespace boost::serialization;
+
+    ar  & make_nvp("name", obj.name)
+        & make_nvp("empire_id", obj.empire_id)
+        & make_nvp("client_type", obj.client_type)
+        & make_nvp("host", obj.host);
 }
 
-template void PlayerInfo::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
-template void PlayerInfo::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
-template void PlayerInfo::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
-template void PlayerInfo::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
+template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, PlayerInfo&, unsigned int const);
+template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, PlayerInfo&, unsigned int const);
+template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, PlayerInfo&, unsigned int const);
+template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, PlayerInfo&, unsigned int const);
