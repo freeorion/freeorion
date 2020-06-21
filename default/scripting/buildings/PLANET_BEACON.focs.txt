@@ -6,7 +6,12 @@ BuildingType
     location = AND [
         Not Contains Building name = "BLD_PLANET_BEACON"
         OwnedBy empire = Source.Owner
+        Number high = 6 condition = AND [
+            Planet
+            InSystem id = RootCandidate.SystemID
+        ]
     ]
+
     EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups =
         EffectsGroup

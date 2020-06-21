@@ -13352,13 +13352,16 @@ BLD_PLANET_DRIVE_DESC
 
 Due to a lack of UI targeting, either a [[buildingtype BLD_PLANET_BEACON]] or a ship equipped with a [[shippart SP_PLANET_BEACON]] currently required on the other end of the starlane. This building will destroy itself immediately, so that the planet can move to a different target system later.
 
-To use this building, either construct a [[buildingtype BLD_PLANET_BEACON]] in the adjacent destination system or move your ship with a [[shippart SP_PLANET_BEACON]] there, then set the planet to Planet Drive focus. The planet will then be moved to that system. Note the beacon needs to have been in system for a turn: the drive will not work on the turn the building is completed or on the turn the ship arrives. Also note, a [[buildingtype BLD_TRANSFORMER]] can be used to replicate the effects of this building.'''
+To use this building, either construct a [[buildingtype BLD_PLANET_BEACON]] in the adjacent destination system or move a ship with a [[shippart SP_PLANET_BEACON]] there, then set the planet to Planet Drive focus. The planet will then be moved to that system. Note the beacon needs to have been in system for a turn: the drive will not work on the turn the building is completed or on the turn the ship arrives. Also note, a [[buildingtype BLD_TRANSFORMER]] can be used to replicate the effects of this building.
+
+A [[buildingtype BLD_PLANET_BEACON]] can only be constructed in systems with fewer than 7 planets (including Gas Giants and Asteroids). Should an attempt be made to use the [[BLD_PLANET_DRIVE]] to move a planet into a system at capacity, it will safely remain to its Origin system provided an [[buildingtype BLD_LIGHTHOUSE]] is present within 200uu. Otherwise there is a 50% chance of being destroyed in the attempt to move it to the full system.
+'''
 
 BLD_PLANET_BEACON
 Planetary Beacon
 
 BLD_PLANET_BEACON_DESC
-Designates the target for the [[buildingtype BLD_PLANET_DRIVE]]. [[BUILDING_AVAILABLE_ON_OUTPOSTS]].
+Designates the target for the [[buildingtype BLD_PLANET_DRIVE]]. This building can only be constructed in systems with fewer than 7 planets (including Gas Giants and Asteroids). [[BUILDING_AVAILABLE_ON_OUTPOSTS]].
 
 BLD_ART_PLANET
 Artificial Planet
