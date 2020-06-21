@@ -27,7 +27,7 @@ Hull
         EffectsGroup    // grow larger / stronger with age
             scope = Source
             accountinglabel = "AGE_BONUS"
-            effects = SetMaxStructure value = Value + Source.Age*3
+            effects = SetMaxStructure value = Value + Source.Age * 3 * [[SHIP_STRUCTURE_FACTOR]]
 
         EffectsGroup    // regeneration
             scope = Source
@@ -53,3 +53,5 @@ Hull
 #include "monster.macros"
 
 #include "../ship_hulls.macros"
+
+#include "/scripting/common/misc.macros"

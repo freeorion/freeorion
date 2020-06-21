@@ -33,7 +33,7 @@ FieldType
             ]
             stackinggroup = "NANITE_SWARM_SHIP_REPAIR"
             effects = [
-                SetStructure value = Value + 5
+                SetStructure value = Value + (5 * [[SHIP_STRUCTURE_FACTOR]])
                 SetTargetIndustry value = Value + 1
             ]
 
@@ -47,3 +47,5 @@ FieldType
 
     ]
     graphic = "fields/nanite_swarm.png"
+
+#include "/scripting/common/misc.macros"

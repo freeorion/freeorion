@@ -1,6 +1,3 @@
-STRUCTURE_MULTIPLICATOR
-'''2.0'''
-
 INFINITE_FUEL
 '''EffectsGroup
             scope = Source
@@ -210,7 +207,5 @@ ADD_HULL_FUEL_TO_MAX_FUEL_METER
             priority = [[VERY_VERY_LATE_PRIORITY]]
             effects = SetMaxFuel value = ( Value + HullFuel name = Source.Hull )
 '''
-
-
 
 #include "/scripting/common/priorities.macros"

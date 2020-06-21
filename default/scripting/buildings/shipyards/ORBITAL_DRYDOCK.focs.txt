@@ -188,7 +188,7 @@ CONST_ORB_DRYDOCK_TARGET_HAPPY
 
 // Minimum repair per turn, at target happiness
 CONST_ORB_DRYDOCK_MIN_REPAIR
-'''30.0'''
+'''30.0 * [[SHIP_STRUCTURE_FACTOR]]'''
 
 // Max repair rate, based on MaxStructure
 CONST_ORB_DRYDOCK_TARGET_REPAIR
@@ -232,3 +232,4 @@ PLANET_OWNED_DRYDOCK_HIGHEST_HAPPINESS
 #include "/scripting/common/enqueue.macros"
 #include "/scripting/common/priorities.macros"
 #include "/scripting/common/base_prod.macros"
+#include "/scripting/common/misc.macros"
