@@ -1126,17 +1126,17 @@ namespace {
             const GalaxySetupData& gsd = ClientApp::GetApp()->GetGalaxySetupData();
 
             detailed_description += str(FlexibleFormat(UserString("ENC_GALAXY_SETUP_SETTINGS"))
-                % gsd.m_seed
-                % std::to_string(gsd.m_size)
-                % TextForGalaxyShape(gsd.m_shape)
-                % TextForGalaxySetupSetting(gsd.m_age)
-                % TextForGalaxySetupSetting(gsd.m_starlane_freq)
-                % TextForGalaxySetupSetting(gsd.m_planet_density)
-                % TextForGalaxySetupSetting(gsd.m_specials_freq)
-                % TextForGalaxySetupSetting(gsd.m_monster_freq)
-                % TextForGalaxySetupSetting(gsd.m_native_freq)
-                % TextForAIAggression(gsd.m_ai_aggr)
-                % gsd.m_game_uid);
+                % gsd.seed
+                % std::to_string(gsd.size)
+                % TextForGalaxyShape(gsd.shape)
+                % TextForGalaxySetupSetting(gsd.age)
+                % TextForGalaxySetupSetting(gsd.starlane_freq)
+                % TextForGalaxySetupSetting(gsd.planet_density)
+                % TextForGalaxySetupSetting(gsd.specials_freq)
+                % TextForGalaxySetupSetting(gsd.monster_freq)
+                % TextForGalaxySetupSetting(gsd.native_freq)
+                % TextForAIAggression(gsd.ai_aggr)
+                % gsd.game_uid);
 
             return;
         }

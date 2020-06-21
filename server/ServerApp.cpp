@@ -99,17 +99,17 @@ ServerApp::ServerApp() :
     InfoLogger() << FreeOrionVersionString();
     LogDependencyVersions();
 
-    m_galaxy_setup_data.m_seed = GetOptionsDB().Get<std::string>("setup.seed");
-    m_galaxy_setup_data.m_size = GetOptionsDB().Get<int>("setup.star.count");
-    m_galaxy_setup_data.m_shape = GetOptionsDB().Get<Shape>("setup.galaxy.shape");
-    m_galaxy_setup_data.m_age = GetOptionsDB().Get<GalaxySetupOption>("setup.galaxy.age");
-    m_galaxy_setup_data.m_starlane_freq = GetOptionsDB().Get<GalaxySetupOption>("setup.starlane.frequency");
-    m_galaxy_setup_data.m_planet_density = GetOptionsDB().Get<GalaxySetupOption>("setup.planet.density");
-    m_galaxy_setup_data.m_specials_freq = GetOptionsDB().Get<GalaxySetupOption>("setup.specials.frequency");
-    m_galaxy_setup_data.m_monster_freq = GetOptionsDB().Get<GalaxySetupOption>("setup.monster.frequency");
-    m_galaxy_setup_data.m_native_freq = GetOptionsDB().Get<GalaxySetupOption>("setup.native.frequency");
-    m_galaxy_setup_data.m_ai_aggr = GetOptionsDB().Get<Aggression>("setup.ai.aggression");
-    m_galaxy_setup_data.m_game_uid = GetOptionsDB().Get<std::string>("setup.game.uid");
+    m_galaxy_setup_data.seed = GetOptionsDB().Get<std::string>("setup.seed");
+    m_galaxy_setup_data.size = GetOptionsDB().Get<int>("setup.star.count");
+    m_galaxy_setup_data.shape = GetOptionsDB().Get<Shape>("setup.galaxy.shape");
+    m_galaxy_setup_data.age = GetOptionsDB().Get<GalaxySetupOption>("setup.galaxy.age");
+    m_galaxy_setup_data.starlane_freq = GetOptionsDB().Get<GalaxySetupOption>("setup.starlane.frequency");
+    m_galaxy_setup_data.planet_density = GetOptionsDB().Get<GalaxySetupOption>("setup.planet.density");
+    m_galaxy_setup_data.specials_freq = GetOptionsDB().Get<GalaxySetupOption>("setup.specials.frequency");
+    m_galaxy_setup_data.monster_freq = GetOptionsDB().Get<GalaxySetupOption>("setup.monster.frequency");
+    m_galaxy_setup_data.native_freq = GetOptionsDB().Get<GalaxySetupOption>("setup.native.frequency");
+    m_galaxy_setup_data.ai_aggr = GetOptionsDB().Get<Aggression>("setup.ai.aggression");
+    m_galaxy_setup_data.game_uid = GetOptionsDB().Get<std::string>("setup.game.uid");
 
     // Start parsing content before FSM initialization
     // to have data initialized before autostart execution
@@ -197,7 +197,7 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
     // check if AI clients are needed for given setup data
     bool need_AIs = false;
     for (const PlayerSetupData& psd : player_setup_data) {
-        if (psd.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
+        if (psd.client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
             need_AIs = true;
             break;
         }
@@ -267,11 +267,11 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
 
     // for each AI client player, create a new AI client process
     for (const PlayerSetupData& psd : player_setup_data) {
-        if (psd.m_client_type != Networking::CLIENT_TYPE_AI_PLAYER)
+        if (psd.client_type != Networking::CLIENT_TYPE_AI_PLAYER)
             continue;
 
         // check that AIs have a name, as they will be sorted later based on it
-        std::string player_name = psd.m_player_name;
+        std::string player_name = psd.player_name;
         if (player_name.empty()) {
             ErrorLogger() << "ServerApp::CreateAIClients can't create a player with no name.";
             return;
@@ -539,12 +539,12 @@ void ServerApp::NewSPGameInit(const SinglePlayerSetupData& single_player_setup_d
     // id == m_networking.HostPlayerID() should be the human player in
     // PlayerSetupData.  AI player connections are assigned one of the remaining
     // PlayerSetupData entries that is for an AI player.
-    const auto& player_setup_data = single_player_setup_data.m_players;
+    const auto& player_setup_data = single_player_setup_data.players;
     NewGameInitConcurrentWithJoiners(single_player_setup_data, player_setup_data);
 }
 
 bool ServerApp::VerifySPGameAIs(const SinglePlayerSetupData& single_player_setup_data) {
-    const auto& player_setup_data = single_player_setup_data.m_players;
+    const auto& player_setup_data = single_player_setup_data.players;
     return NewGameInitVerifyJoiners(player_setup_data);
 }
 
@@ -553,14 +553,14 @@ void ServerApp::NewMPGameInit(const MultiplayerLobbyData& multiplayer_lobby_data
     // available (human) and names (for AI clients which didn't have an ID
     // before now because the lobby data was set up without connected/established
     // clients for the AIs.
-    const auto& player_setup_data = multiplayer_lobby_data.m_players;
+    const auto& player_setup_data = multiplayer_lobby_data.players;
     std::vector<PlayerSetupData> psds;
 
     for (const auto& entry : player_setup_data) {
         const PlayerSetupData& psd = entry.second;
-        if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER ||
-            psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
-            psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
+        if (psd.client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER ||
+            psd.client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
+            psd.client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
         {
             // Human players have consistent IDs, so these can be easily
             // matched between established player connections and setup data.
@@ -575,7 +575,7 @@ void ServerApp::NewMPGameInit(const MultiplayerLobbyData& multiplayer_lobby_data
                 if (player_connection->PlayerID() == player_id)
                 {
                     PlayerSetupData new_psd = psd;
-                    new_psd.m_player_id = player_id;
+                    new_psd.player_id = player_id;
                     psds.emplace_back(std::move(new_psd));
                     found_matched_id_connection = true;
                     break;
@@ -583,7 +583,7 @@ void ServerApp::NewMPGameInit(const MultiplayerLobbyData& multiplayer_lobby_data
             }
             if (!found_matched_id_connection) {
                 if (player_id != Networking::INVALID_PLAYER_ID) {
-                    ErrorLogger() << "ServerApp::NewMPGameInit couldn't find player setup data for human player with id: " << player_id << " player name: " << psd.m_player_name;
+                    ErrorLogger() << "ServerApp::NewMPGameInit couldn't find player setup data for human player with id: " << player_id << " player name: " << psd.player_name;
                 } else {
                     // There is no player currently connected for the current setup data. A player
                     // may connect later, at which time they may be assigned to this data or the
@@ -592,13 +592,13 @@ void ServerApp::NewMPGameInit(const MultiplayerLobbyData& multiplayer_lobby_data
                 }
             }
 
-        } else if (psd.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
+        } else if (psd.client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
             // All AI player setup data, as determined from their client type, is
             // assigned to player IDs of established AI players with the appropriate names
 
             // find player connection with same name as this player setup data
             bool found_matched_name_connection = false;
-            const std::string& player_name = psd.m_player_name;
+            const std::string& player_name = psd.player_name;
             for (auto established_player_it = m_networking.established_begin();
                  established_player_it != m_networking.established_end(); ++established_player_it)
             {
@@ -609,7 +609,7 @@ void ServerApp::NewMPGameInit(const MultiplayerLobbyData& multiplayer_lobby_data
                     // assign name-matched AI client's player setup data to appropriate AI connection
                     int player_id = player_connection->PlayerID();
                     PlayerSetupData new_psd = psd;
-                    new_psd.m_player_id = player_id;
+                    new_psd.player_id = player_id;
                     psds.emplace_back(std::move(new_psd));
                     found_matched_name_connection = true;
                     break;
@@ -672,9 +672,9 @@ void ServerApp::NewGameInitConcurrentWithJoiners(
     std::map<int, PlayerSetupData> active_empire_id_setup_data;
     int next_empire_id = 1;
     for (const auto& psd : player_setup_data) {
-        if (!psd.m_player_name.empty()
-            && (psd.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER
-                || psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER))
+        if (!psd.player_name.empty()
+            && (psd.client_type == Networking::CLIENT_TYPE_AI_PLAYER
+                || psd.client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER))
         {
             active_empire_id_setup_data[next_empire_id++] = psd;
         }
@@ -718,14 +718,14 @@ void ServerApp::NewGameInitConcurrentWithJoiners(
     // moderators are not included.
     for (const auto& player_id_and_setup : active_empire_id_setup_data) {
         int empire_id = player_id_and_setup.first;
-        if (player_id_and_setup.second.m_player_id != Networking::INVALID_PLAYER_ID)
-            m_player_empire_ids[player_id_and_setup.second.m_player_id] = empire_id;
+        if (player_id_and_setup.second.player_id != Networking::INVALID_PLAYER_ID)
+            m_player_empire_ids[player_id_and_setup.second.player_id] = empire_id;
 
         // add empires to turn processing
         if (auto *empire = GetEmpire(empire_id)) {
-            AddEmpireTurn(empire_id, PlayerSaveGameData(player_id_and_setup.second.m_player_name, empire_id,
+            AddEmpireTurn(empire_id, PlayerSaveGameData(player_id_and_setup.second.player_name, empire_id,
                                                         nullptr, nullptr, std::string(),
-                                                        player_id_and_setup.second.m_client_type));
+                                                        player_id_and_setup.second.client_type));
             empire->SetReady(false);
         }
     }
@@ -755,14 +755,14 @@ bool ServerApp::NewGameInitVerifyJoiners(const std::vector<PlayerSetupData>& pla
     bool host_in_player_id_setup_data = false;
 
     for (const auto& psd : player_setup_data) {
-        if (psd.m_client_type == Networking::INVALID_CLIENT_TYPE) {
-            ErrorLogger() << "Player with id " << psd.m_player_id << " has invalid client type";
+        if (psd.client_type == Networking::INVALID_CLIENT_TYPE) {
+            ErrorLogger() << "Player with id " << psd.player_id << " has invalid client type";
             continue;
         }
 
-        player_id_setup_data[psd.m_player_id] = psd;
+        player_id_setup_data[psd.player_id] = psd;
 
-        if (m_networking.HostPlayerID() == psd.m_player_id)
+        if (m_networking.HostPlayerID() == psd.player_id)
             host_in_player_id_setup_data = true;
     }
 
@@ -800,12 +800,12 @@ bool ServerApp::NewGameInitVerifyJoiners(const std::vector<PlayerSetupData>& pla
             return false;
         }
         const PlayerSetupData& psd = player_id_setup_data_it->second;
-        if (psd.m_client_type != client_type) {
-            ErrorLogger() << "ServerApp::NewGameInitVerifyJoiners found inconsistent client type between player connection (" << client_type << ") and player setup data (" << psd.m_client_type << ")";
+        if (psd.client_type != client_type) {
+            ErrorLogger() << "ServerApp::NewGameInitVerifyJoiners found inconsistent client type between player connection (" << client_type << ") and player setup data (" << psd.client_type << ")";
             return false;
         }
-        if (psd.m_player_name != player_connection->PlayerName()) {
-            ErrorLogger() << "ServerApp::NewGameInitVerifyJoiners found inconsistent player names: " << psd.m_player_name << " and " << player_connection->PlayerName();
+        if (psd.player_name != player_connection->PlayerName()) {
+            ErrorLogger() << "ServerApp::NewGameInitVerifyJoiners found inconsistent player names: " << psd.player_name << " and " << player_connection->PlayerName();
             return false;
         }
         if (player_connection->PlayerName().empty()) {
@@ -856,13 +856,13 @@ void ServerApp::LoadSPGameInit(const std::vector<PlayerSaveGameData>& player_sav
     // assign all saved game data to a player ID
     for (int i = 0; i < static_cast<int>(player_save_game_data.size()); ++i) {
         const PlayerSaveGameData& psgd = player_save_game_data[i];
-        if (psgd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
+        if (psgd.client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
             // In a single player game, the host player is always the human player, so
             // this is just a matter of finding which entry in player_save_game_data was
             // a human player, and assigning that saved player data to the host player ID
             player_id_to_save_game_data_index.push_back({m_networking.HostPlayerID(), i});
 
-        } else if (psgd.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
+        } else if (psgd.client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
             // All saved AI player data, as determined from their client type, is
             // assigned to player IDs of established AI players
 
@@ -1105,7 +1105,7 @@ namespace {
         // find save game data vector index that has requested empire id
         for (int i = 0; i < static_cast<int>(player_save_game_data.size()); ++i) {
             const PlayerSaveGameData& psgd = player_save_game_data.at(i);
-            if (psgd.m_empire_id == empire_id)
+            if (psgd.empire_id == empire_id)
                 return i;
         }
         return -1;
@@ -1118,7 +1118,7 @@ namespace {
                                             const ServerNetworking& sn)
     {
         // safety check: setup data has valid empire assigned
-        if (psd.m_save_game_empire_id == ALL_EMPIRES) {
+        if (psd.save_game_empire_id == ALL_EMPIRES) {
             ErrorLogger() << "ServerApp::LoadMPGameInit got player setup data for human player "
                                     << "with no empire assigned...";
             return;
@@ -1130,12 +1130,12 @@ namespace {
             return;   // error message logged in HumanPlayerWithIdConnected
 
         // determine and store save game data index for this player
-        int index = VectorIndexForPlayerSaveGameDataForEmpireID(player_save_game_data, psd.m_save_game_empire_id);
+        int index = VectorIndexForPlayerSaveGameDataForEmpireID(player_save_game_data, psd.save_game_empire_id);
         if (index != -1) {
             player_id_to_save_game_data_index.push_back({setup_data_player_id, index});
         } else {
             ErrorLogger() << "ServerApp::LoadMPGameInit couldn't find save game data for "
-                                   << "human player with assigned empire id: " << psd.m_save_game_empire_id;
+                                   << "human player with assigned empire id: " << psd.save_game_empire_id;
         }
     }
 
@@ -1175,30 +1175,30 @@ namespace {
         // as is listed in the player setup data for AI players.
 
         // safety check: setup data has valid empire assigned
-        if (psd.m_save_game_empire_id == ALL_EMPIRES) {
+        if (psd.save_game_empire_id == ALL_EMPIRES) {
             ErrorLogger() << "ServerApp::LoadMPGameInit got player setup data for AI player "
                                     << "with no empire assigned...";
             return;
         }
 
         // get ID of name-matched AI player
-        int player_id = AIPlayerIDWithName(sn, psd.m_player_name);
+        int player_id = AIPlayerIDWithName(sn, psd.player_name);
         if (player_id == Networking::INVALID_PLAYER_ID) {
-            ErrorLogger() << "ServerApp::LoadMPGameInit couldn't find expected AI player with name " << psd.m_player_name;
+            ErrorLogger() << "ServerApp::LoadMPGameInit couldn't find expected AI player with name " << psd.player_name;
             return;
         }
 
-        DebugLogger() << "ServerApp::LoadMPGameInit matched player named " << psd.m_player_name
+        DebugLogger() << "ServerApp::LoadMPGameInit matched player named " << psd.player_name
                                << " to setup data player id " << player_id
-                               << " with setup data empire id " << psd.m_save_game_empire_id;
+                               << " with setup data empire id " << psd.save_game_empire_id;
 
         // determine and store save game data index for this player
-        int index = VectorIndexForPlayerSaveGameDataForEmpireID(player_save_game_data, psd.m_save_game_empire_id);
+        int index = VectorIndexForPlayerSaveGameDataForEmpireID(player_save_game_data, psd.save_game_empire_id);
         if (index != -1) {
             player_id_to_save_game_data_index.push_back({player_id, index});
         } else {
             ErrorLogger() << "ServerApp::LoadMPGameInit couldn't find save game data for "
-                                   << "human player with assigned empire id: " << psd.m_save_game_empire_id;
+                                   << "human player with assigned empire id: " << psd.save_game_empire_id;
         }
     }
 }
@@ -1210,7 +1210,7 @@ void ServerApp::LoadMPGameInit(const MultiplayerLobbyData& lobby_data,
     // Need to determine which data in player_save_game_data should be assigned to which established player
     std::vector<std::pair<int, int>> player_id_to_save_game_data_index;
 
-    const auto& player_setup_data = lobby_data.m_players;
+    const auto& player_setup_data = lobby_data.players;
 
     // * Multiplayer lobby data has a map from player ID to PlayerSetupData.
     // * PlayerSetupData contains an empire ID that the player will be controlling.
@@ -1226,13 +1226,13 @@ void ServerApp::LoadMPGameInit(const MultiplayerLobbyData& lobby_data,
     for (const auto& entry : player_setup_data) {
         const PlayerSetupData& psd = entry.second;
 
-        if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
+        if (psd.client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
             int setup_data_player_id = entry.first;
             GetSaveGameDataIndexForHumanPlayer(player_id_to_save_game_data_index, psd,
                                                setup_data_player_id, player_save_game_data,
                                                m_networking);
 
-        } else if (psd.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
+        } else if (psd.client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
             // AI clients have no player id in setup data (even though humans do)
             GetSaveGameDataIndexForAIPlayer(player_id_to_save_game_data_index, psd,
                                             player_save_game_data, m_networking);
@@ -1297,7 +1297,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
 
 
     // restore server state info from save
-    m_current_turn = server_save_game_data->m_current_turn;
+    m_current_turn = server_save_game_data->current_turn;
 
     std::map<int, PlayerSaveGameData> player_id_save_game_data;
 
@@ -1332,7 +1332,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
         int empire_id = ALL_EMPIRES;
         try {
             const PlayerSaveGameData& psgd = player_save_game_data.at(player_save_game_data_index);
-            empire_id = psgd.m_empire_id;               // can't use GetPlayerEmpireID here because m_player_empire_ids hasn't been set up yet.
+            empire_id = psgd.empire_id;               // can't use GetPlayerEmpireID here because m_player_empire_ids hasn't been set up yet.
             player_id_save_game_data[player_id] = psgd; // store by player ID for easier access later
         } catch (...) {
             ErrorLogger() << "ServerApp::LoadGameInit couldn't find save game data with index " << player_save_game_data_index;
@@ -1353,7 +1353,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
     }
 
     for (const auto& psgd : player_save_game_data) {
-        int empire_id = psgd.m_empire_id;
+        int empire_id = psgd.empire_id;
         // add empires to turn processing, and restore saved orders and UI data or save state data
         if (Empire* empire = GetEmpire(empire_id)) {
             if (!empire->Eliminated())
@@ -1388,13 +1388,13 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
         if (save_data_it != player_id_save_game_data.end()) {
             psgd = save_data_it->second;
         }
-        if (!psgd.m_orders) {
-            psgd.m_orders.reset(new OrderSet());    // need an empty order set pointed to for serialization in case no data is loaded but the game start message wants orders to send
+        if (!psgd.orders) {
+            psgd.orders.reset(new OrderSet());    // need an empty order set pointed to for serialization in case no data is loaded but the game start message wants orders to send
         }
 
         // get empire ID for player. safety check on it.
         int empire_id = PlayerEmpireID(player_id);
-        if (empire_id != psgd.m_empire_id) {
+        if (empire_id != psgd.empire_id) {
             ErrorLogger() << "LoadGameInit got inconsistent empire ids between player save game data and result of PlayerEmpireID";
         }
 
@@ -1406,15 +1406,15 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
         // restore saved orders.  these will be re-executed on client and
         // re-sent to the server (after possibly modification) by clients
         // when they end their turn
-        auto orders = psgd.m_orders;
+        auto orders = psgd.orders;
 
         bool use_binary_serialization = player_connection->IsBinarySerializationUsed();
 
         if (client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
             // get save state string
             const std::string* sss = nullptr;
-            if (!psgd.m_save_state_string.empty())
-                sss = &psgd.m_save_state_string;
+            if (!psgd.save_state_string.empty())
+                sss = &psgd.save_state_string;
 
             player_connection->SendMessage(GameStartMessage(m_single_player_game, empire_id,
                                                             m_current_turn, m_empires, m_universe,
@@ -1427,7 +1427,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
                                                             m_current_turn, m_empires, m_universe,
                                                             GetSpeciesManager(), GetCombatLogManager(),
                                                             GetSupplyManager(),  player_info_map, *orders,
-                                                            psgd.m_ui_data.get(), m_galaxy_setup_data,
+                                                            psgd.ui_data.get(), m_galaxy_setup_data,
                                                             use_binary_serialization));
 
         } else if (client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
@@ -1457,11 +1457,11 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
     // Initialize RNG with provided seed to get reproducible universes
     int seed = 0;
     try {
-        seed = boost::lexical_cast<unsigned int>(GetGalaxySetupData().m_seed);
+        seed = boost::lexical_cast<unsigned int>(GetGalaxySetupData().seed);
     } catch (...) {
         try {
             boost::hash<std::string> string_hash;
-            std::size_t h = string_hash(GetGalaxySetupData().m_seed);
+            std::size_t h = string_hash(GetGalaxySetupData().seed);
             seed = static_cast<unsigned int>(h);
         } catch (...) {}
     }
@@ -1901,8 +1901,8 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, i
     empire->SetAuthenticated(player_connection->IsAuthenticated());
 
     const OrderSet dummy;
-    const OrderSet& orders = orders_it->second && orders_it->second->m_orders ? *(orders_it->second->m_orders) : dummy;
-    const SaveGameUIData* ui_data = orders_it->second ? orders_it->second->m_ui_data.get() : nullptr;
+    const OrderSet& orders = orders_it->second && orders_it->second->orders ? *(orders_it->second->orders) : dummy;
+    const SaveGameUIData* ui_data = orders_it->second ? orders_it->second->ui_data.get() : nullptr;
 
     if (GetOptionsDB().Get<bool>("network.server.drop-empire-ready")) {
         // drop ready status
@@ -2001,7 +2001,7 @@ void ServerApp::ClearEmpireTurnOrders() {
         if (order.second) {
             // reset only orders
             // left UI data and AI state intact
-            order.second->m_orders.reset();
+            order.second->orders.reset();
         }
     }
     for (auto& empire : Empires()) {
@@ -2015,13 +2015,13 @@ void ServerApp::SetEmpireSaveGameData(int empire_id, std::unique_ptr<PlayerSaveG
 void ServerApp::UpdatePartialOrders(int empire_id, const OrderSet& added, const std::set<int>& deleted) {
     const auto& psgd = m_turn_sequence[empire_id];
     if (psgd) {
-        if (psgd->m_orders) {
+        if (psgd->orders) {
             for (int id : deleted)
-                 psgd->m_orders->erase(id);
+                 psgd->orders->erase(id);
             for (auto it : added)
-                 psgd->m_orders->insert(it);
+                 psgd->orders->insert(it);
         } else {
-            psgd->m_orders = std::make_shared<OrderSet>(added);
+            psgd->orders = std::make_shared<OrderSet>(added);
         }
     }
 }
@@ -2051,7 +2051,7 @@ bool ServerApp::AllOrdersReceived() {
         } else if (!empire_orders.second) {
             DebugLogger() << " ... no orders from empire id: " << empire_orders.first;
             empire_orders_received = false;
-        } else if (!empire_orders.second->m_orders) {
+        } else if (!empire_orders.second->orders) {
             DebugLogger() << " ... no orders from empire id: " << empire_orders.first;
             empire_orders_received = false;
         } else {
@@ -3201,12 +3201,12 @@ void ServerApp::PreCombatProcessTurns() {
             DebugLogger() << "No SaveGameData for empire " << empire_orders.first;
             continue;
         }
-        if (!save_game_data->m_orders) {
+        if (!save_game_data->orders) {
             DebugLogger() << "No OrderSet for empire " << empire_orders.first;
             continue;
         }
         DebugLogger() << "<<= Executing Orders for empire " << empire_orders.first << " =>>";
-        for (const auto& id_and_order : *save_game_data->m_orders)
+        for (const auto& id_and_order : *save_game_data->orders)
             id_and_order.second->Execute();
     }
 
@@ -3439,7 +3439,7 @@ void ServerApp::PostCombatProcessTurns() {
     // execute all effects and update meters prior to production, research, etc.
     if (GetGameRules().Get<bool>("RULE_RESEED_PRNG_SERVER")) {
         static boost::hash<std::string> pcpt_string_hash;
-        Seed(static_cast<unsigned int>(CurrentTurn()) + pcpt_string_hash(m_galaxy_setup_data.m_seed));
+        Seed(static_cast<unsigned int>(CurrentTurn()) + pcpt_string_hash(m_galaxy_setup_data.seed));
     }
     m_universe.ApplyAllEffectsAndUpdateMeters(false);
 

@@ -1276,11 +1276,11 @@ namespace {
 namespace FreeOrionPython {
     void WrapServer() {
         class_<PlayerSetupData>("PlayerSetupData")
-            .def_readwrite("player_name",        &PlayerSetupData::m_player_name)
-            .def_readwrite("empire_name",        &PlayerSetupData::m_empire_name)
-            .def_readonly("empire_color",        &PlayerSetupData::m_empire_color)
-            .def_readwrite("starting_species",   &PlayerSetupData::m_starting_species_name)
-            .def_readwrite("starting_team",      &PlayerSetupData::m_starting_team);
+            .def_readwrite("player_name",        &PlayerSetupData::player_name)
+            .def_readwrite("empire_name",        &PlayerSetupData::empire_name)
+            .def_readonly("empire_color",        &PlayerSetupData::empire_color)
+            .def_readwrite("starting_species",   &PlayerSetupData::starting_species_name)
+            .def_readwrite("starting_team",      &PlayerSetupData::starting_team);
 
         class_<FleetPlanWrapper>("FleetPlan", init<const std::string&, const list&>())
             .def("name",                        &FleetPlanWrapper::Name)

@@ -18,32 +18,32 @@ void serialize(Archive& ar, GalaxySetupData& obj, unsigned int const version)
 {
     using namespace boost::serialization;
 
-    if (Archive::is_saving::value && obj.m_encoding_empire != ALL_EMPIRES && (!GetOptionsDB().Get<bool>("network.server.publish-seed"))) {
+    if (Archive::is_saving::value && obj.encoding_empire != ALL_EMPIRES && (!GetOptionsDB().Get<bool>("network.server.publish-seed"))) {
         std::string dummy = "";
         ar  & make_nvp("m_seed", dummy);
     } else {
-        ar  & make_nvp("m_seed", obj.m_seed);
+        ar  & make_nvp("m_seed", obj.seed);
     }
 
-    ar  & make_nvp("m_size", obj.m_size)
-        & make_nvp("m_shape", obj.m_shape)
-        & make_nvp("m_age", obj.m_age)
-        & make_nvp("m_starlane_freq", obj.m_starlane_freq)
-        & make_nvp("m_planet_density", obj.m_planet_density)
-        & make_nvp("m_specials_freq", obj.m_specials_freq)
-        & make_nvp("m_monster_freq", obj.m_monster_freq)
-        & make_nvp("m_native_freq", obj.m_native_freq)
-        & make_nvp("m_ai_aggr", obj.m_ai_aggr);
+    ar  & make_nvp("m_size", obj.size)
+        & make_nvp("m_shape", obj.shape)
+        & make_nvp("m_age", obj.age)
+        & make_nvp("m_starlane_freq", obj.starlane_freq)
+        & make_nvp("m_planet_density", obj.planet_density)
+        & make_nvp("m_specials_freq", obj.specials_freq)
+        & make_nvp("m_monster_freq", obj.monster_freq)
+        & make_nvp("m_native_freq", obj.native_freq)
+        & make_nvp("m_ai_aggr", obj.ai_aggr);
 
     if (version >= 1) {
-        ar & make_nvp("m_game_rules", obj.m_game_rules);
+        ar & make_nvp("m_game_rules", obj.game_rules);
     }
 
     if (version >= 2) {
-        ar & make_nvp("m_game_uid", obj.m_game_uid);
+        ar & make_nvp("m_game_uid", obj.game_uid);
     } else {
         if (Archive::is_loading::value) {
-            obj.m_game_uid = boost::uuids::to_string(boost::uuids::random_generator()());
+            obj.game_uid = boost::uuids::to_string(boost::uuids::random_generator()());
         }
     }
 }
@@ -60,9 +60,9 @@ void serialize(Archive& ar, SinglePlayerSetupData& obj, unsigned int const versi
     using namespace boost::serialization;
 
     ar  & make_nvp("GalaxySetupData", base_object<GalaxySetupData>(obj))
-        & make_nvp("m_new_game", obj.m_new_game)
-        & make_nvp("m_filename", obj.m_filename)
-        & make_nvp("m_players", obj.m_players);
+        & make_nvp("m_new_game", obj.new_game)
+        & make_nvp("m_filename", obj.filename)
+        & make_nvp("m_players", obj.players);
 }
 
 template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, SinglePlayerSetupData&, unsigned int const);
@@ -170,16 +170,16 @@ void serialize(Archive& ar, SaveGameEmpireData& obj, unsigned int const version)
 {
     using namespace boost::serialization;
 
-    ar  & make_nvp("m_empire_id", obj.m_empire_id)
-        & make_nvp("m_empire_name", obj.m_empire_name)
-        & make_nvp("m_player_name", obj.m_player_name)
-        & make_nvp("m_color", obj.m_color);
+    ar  & make_nvp("m_empire_id", obj.empire_id)
+        & make_nvp("m_empire_name", obj.empire_name)
+        & make_nvp("m_player_name", obj.player_name)
+        & make_nvp("m_color", obj.color);
     if (version >= 1) {
-        ar & make_nvp("m_authenticated", obj.m_authenticated);
+        ar & make_nvp("m_authenticated", obj.authenticated);
     }
     if (version >= 2) {
-        ar & make_nvp("m_eliminated", obj.m_eliminated);
-        ar & make_nvp("m_won", obj.m_won);
+        ar & make_nvp("m_eliminated", obj.eliminated);
+        ar & make_nvp("m_won", obj.won);
     }
 }
 
@@ -194,9 +194,9 @@ void serialize(Archive& ar, PlayerSaveHeaderData& obj, unsigned int const versio
 {
     using namespace boost::serialization;
 
-    ar  & make_nvp("m_name", obj.m_name)
-        & make_nvp("m_empire_id", obj.m_empire_id)
-        & make_nvp("m_client_type", obj.m_client_type);
+    ar  & make_nvp("m_name", obj.name)
+        & make_nvp("m_empire_id", obj.empire_id)
+        & make_nvp("m_client_type", obj.client_type);
 }
 
 template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, PlayerSaveHeaderData&, unsigned int const);
@@ -210,12 +210,12 @@ void serialize(Archive& ar, PlayerSaveGameData& obj, unsigned int const version)
 {
     using namespace boost::serialization;
 
-    ar  & make_nvp("m_name", obj.m_name)
-        & make_nvp("m_empire_id", obj.m_empire_id)
-        & make_nvp("m_orders", obj.m_orders)
-        & make_nvp("m_ui_data", obj.m_ui_data)
-        & make_nvp("m_save_state_string", obj.m_save_state_string)
-        & make_nvp("m_client_type", obj.m_client_type);
+    ar  & make_nvp("m_name", obj.name)
+        & make_nvp("m_empire_id", obj.empire_id)
+        & make_nvp("m_orders", obj.orders)
+        & make_nvp("m_ui_data", obj.ui_data)
+        & make_nvp("m_save_state_string", obj.save_state_string)
+        & make_nvp("m_client_type", obj.client_type);
     if (version == 1) {
         bool ready{false};
         ar & make_nvp("m_ready", ready);
@@ -231,7 +231,7 @@ template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, PlayerS
 template <typename Archive>
 void serialize(Archive& ar, ServerSaveGameData& obj, unsigned int const version)
 {
-    ar  & boost::serialization::make_nvp("m_current_turn", obj.m_current_turn);
+    ar  & boost::serialization::make_nvp("m_current_turn", obj.current_turn);
 }
 
 template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, ServerSaveGameData&, unsigned int const);
@@ -245,19 +245,19 @@ void serialize(Archive& ar, PlayerSetupData& obj, unsigned int const version)
 {
     using namespace boost::serialization;
 
-    ar  & make_nvp("m_player_name", obj.m_player_name)
-        & make_nvp("m_player_id", obj.m_player_id)
-        & make_nvp("m_empire_name", obj.m_empire_name)
-        & make_nvp("m_empire_color", obj.m_empire_color)
-        & make_nvp("m_starting_species_name", obj.m_starting_species_name)
-        & make_nvp("m_save_game_empire_id", obj.m_save_game_empire_id)
-        & make_nvp("m_client_type", obj.m_client_type)
-        & make_nvp("m_player_ready", obj.m_player_ready);
+    ar  & make_nvp("m_player_name", obj.player_name)
+        & make_nvp("m_player_id", obj.player_id)
+        & make_nvp("m_empire_name", obj.empire_name)
+        & make_nvp("m_empire_color", obj.empire_color)
+        & make_nvp("m_starting_species_name", obj.starting_species_name)
+        & make_nvp("m_save_game_empire_id", obj.save_game_empire_id)
+        & make_nvp("m_client_type", obj.client_type)
+        & make_nvp("m_player_ready", obj.player_ready);
     if (version >= 1) {
-        ar & make_nvp("m_authenticated", obj.m_authenticated);
+        ar & make_nvp("m_authenticated", obj.authenticated);
     }
     if (version >= 2) {
-        ar & make_nvp("m_starting_team", obj.m_starting_team);
+        ar & make_nvp("m_starting_team", obj.starting_team);
     }
 }
 
@@ -273,18 +273,18 @@ void serialize(Archive& ar, MultiplayerLobbyData& obj, unsigned int const versio
     using namespace boost::serialization;
 
     ar  & make_nvp("GalaxySetupData", base_object<GalaxySetupData>(obj))
-        & make_nvp("m_new_game", obj.m_new_game)
-        & make_nvp("m_players", obj.m_players)
-        & make_nvp("m_save_game", obj.m_save_game)
-        & make_nvp("m_save_game_empire_data", obj.m_save_game_empire_data)
-        & make_nvp("m_any_can_edit", obj.m_any_can_edit)
-        & make_nvp("m_start_locked", obj.m_start_locked)
-        & make_nvp("m_start_lock_cause", obj.m_start_lock_cause);
+        & make_nvp("m_new_game", obj.new_game)
+        & make_nvp("m_players", obj.players)
+        & make_nvp("m_save_game", obj.save_game)
+        & make_nvp("m_save_game_empire_data", obj.save_game_empire_data)
+        & make_nvp("m_any_can_edit", obj.any_can_edit)
+        & make_nvp("m_start_locked", obj.start_locked)
+        & make_nvp("m_start_lock_cause", obj.start_lock_cause);
     if (version >= 1) {
-        ar & make_nvp("m_save_game_current_turn", obj.m_save_game_current_turn);
+        ar & make_nvp("m_save_game_current_turn", obj.save_game_current_turn);
     }
     if (version >= 2) {
-        ar & make_nvp("m_in_game", obj.m_in_game);
+        ar & make_nvp("m_in_game", obj.in_game);
     }
 }
 
@@ -300,14 +300,14 @@ void serialize(Archive& ar, ChatHistoryEntity& obj, unsigned int const version)
     using namespace boost::serialization;
 
     if (version < 1) {
-        ar  & make_nvp("m_timestamp", obj.m_timestamp)
-            & make_nvp("m_player_name", obj.m_player_name)
-            & make_nvp("m_text", obj.m_text);
+        ar  & make_nvp("m_timestamp", obj.timestamp)
+            & make_nvp("m_player_name", obj.player_name)
+            & make_nvp("m_text", obj.text);
     } else {
-        ar  & make_nvp("m_text", obj.m_text)
-            & make_nvp("m_player_name", obj.m_player_name)
-            & make_nvp("m_text_color", obj.m_text_color)
-            & make_nvp("m_timestamp", obj.m_timestamp);
+        ar  & make_nvp("m_text", obj.text)
+            & make_nvp("m_player_name", obj.player_name)
+            & make_nvp("m_text_color", obj.text_color)
+            & make_nvp("m_timestamp", obj.timestamp);
     }
 }
 

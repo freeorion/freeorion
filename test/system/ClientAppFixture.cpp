@@ -50,21 +50,21 @@ void ClientAppFixture::HostSPGame(unsigned int num_AIs) {
     auto game_rules = GetGameRules().GetRulesAsStrings();
 
     SinglePlayerSetupData setup_data;
-    setup_data.m_new_game = true;
-    setup_data.m_filename.clear();  // not used for new game
+    setup_data.new_game = true;
+    setup_data.filename.clear();  // not used for new game
 
     // GalaxySetupData
     setup_data.SetSeed("TestSeed1");
-    setup_data.m_size =             100;
-    setup_data.m_shape =            Shape::SPIRAL_4;
-    setup_data.m_age =              GalaxySetupOption::GALAXY_SETUP_MEDIUM;
-    setup_data.m_starlane_freq =    GalaxySetupOption::GALAXY_SETUP_MEDIUM;
-    setup_data.m_planet_density =   GalaxySetupOption::GALAXY_SETUP_MEDIUM;
-    setup_data.m_specials_freq =    GalaxySetupOption::GALAXY_SETUP_MEDIUM;
-    setup_data.m_monster_freq =     GalaxySetupOption::GALAXY_SETUP_MEDIUM;
-    setup_data.m_native_freq =      GalaxySetupOption::GALAXY_SETUP_MEDIUM;
-    setup_data.m_ai_aggr =          Aggression::MANIACAL;
-    setup_data.m_game_rules =       game_rules;
+    setup_data.size =             100;
+    setup_data.shape =            Shape::SPIRAL_4;
+    setup_data.age =              GalaxySetupOption::GALAXY_SETUP_MEDIUM;
+    setup_data.starlane_freq =    GalaxySetupOption::GALAXY_SETUP_MEDIUM;
+    setup_data.planet_density =   GalaxySetupOption::GALAXY_SETUP_MEDIUM;
+    setup_data.specials_freq =    GalaxySetupOption::GALAXY_SETUP_MEDIUM;
+    setup_data.monster_freq =     GalaxySetupOption::GALAXY_SETUP_MEDIUM;
+    setup_data.native_freq =      GalaxySetupOption::GALAXY_SETUP_MEDIUM;
+    setup_data.ai_aggr =          Aggression::MANIACAL;
+    setup_data.game_rules =       game_rules;
 
     // SinglePlayerSetupData contains a map of PlayerSetupData, for
     // the human and AI players.  Need to compile this information
@@ -72,30 +72,30 @@ void ClientAppFixture::HostSPGame(unsigned int num_AIs) {
 
     // Human player setup data
     PlayerSetupData human_player_setup_data;
-    human_player_setup_data.m_player_name = "TestPlayer";
-    human_player_setup_data.m_empire_name = "TestEmpire";
-    human_player_setup_data.m_empire_color = GG::CLR_GREEN;
+    human_player_setup_data.player_name = "TestPlayer";
+    human_player_setup_data.empire_name = "TestEmpire";
+    human_player_setup_data.empire_color = GG::CLR_GREEN;
 
-    human_player_setup_data.m_starting_species_name = "SP_HUMAN";
-    human_player_setup_data.m_save_game_empire_id = ALL_EMPIRES; // not used for new games
-    human_player_setup_data.m_client_type = Networking::CLIENT_TYPE_HUMAN_PLAYER;
+    human_player_setup_data.starting_species_name = "SP_HUMAN";
+    human_player_setup_data.save_game_empire_id = ALL_EMPIRES; // not used for new games
+    human_player_setup_data.client_type = Networking::CLIENT_TYPE_HUMAN_PLAYER;
 
     // add to setup data players
-    setup_data.m_players.push_back(human_player_setup_data);
+    setup_data.players.push_back(human_player_setup_data);
 
     // AI player setup data.  One entry for each requested AI
 
     for (unsigned int ai_i = 1; ai_i <= num_AIs; ++ai_i) {
         PlayerSetupData ai_setup_data;
 
-        ai_setup_data.m_player_name = "AI_" + std::to_string(ai_i);
-        ai_setup_data.m_empire_name.clear();                // leave blank, to be set by server in Universe::GenerateEmpires
-        ai_setup_data.m_empire_color = GG::CLR_ZERO;        // to be set by server
-        ai_setup_data.m_starting_species_name.clear();      // leave blank, to be set by server
-        ai_setup_data.m_save_game_empire_id = ALL_EMPIRES;  // not used for new games
-        ai_setup_data.m_client_type = Networking::CLIENT_TYPE_AI_PLAYER;
+        ai_setup_data.player_name = "AI_" + std::to_string(ai_i);
+        ai_setup_data.empire_name.clear();                // leave blank, to be set by server in Universe::GenerateEmpires
+        ai_setup_data.empire_color = GG::CLR_ZERO;        // to be set by server
+        ai_setup_data.starting_species_name.clear();      // leave blank, to be set by server
+        ai_setup_data.save_game_empire_id = ALL_EMPIRES;  // not used for new games
+        ai_setup_data.client_type = Networking::CLIENT_TYPE_AI_PLAYER;
 
-        setup_data.m_players.push_back(ai_setup_data);
+        setup_data.players.push_back(ai_setup_data);
     }
 
     m_networking->SendMessage(HostSPGameMessage(setup_data));
@@ -276,8 +276,8 @@ void ClientAppFixture::UpdateLobby() {
 
 unsigned int ClientAppFixture::GetLobbyAICount() const {
     unsigned int res = 0;
-    for (const auto& plr: m_lobby_data.m_players) {
-        if (plr.second.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER)
+    for (const auto& plr: m_lobby_data.players) {
+        if (plr.second.client_type == Networking::CLIENT_TYPE_AI_PLAYER)
             ++ res;
     }
     return res;
