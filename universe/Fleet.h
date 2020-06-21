@@ -1,6 +1,7 @@
 #ifndef _Fleet_h_
 #define _Fleet_h_
 
+#include <boost/serialization/access.hpp>
 #include <boost/serialization/version.hpp>
 #include "ObjectMap.h"
 #include "UniverseObject.h"

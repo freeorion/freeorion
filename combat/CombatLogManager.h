@@ -76,9 +76,11 @@ private:
     CombatLogManager();
     ~CombatLogManager();
 
-    class Impl;
+    std::unordered_map<int, CombatLog> m_logs;
+    //! Set of logs ids that do not have bodies and need to be fetched from the server
+    std::set<int>                      m_incomplete_logs;
 
-    std::unique_ptr<Impl> const m_impl;
+    int                                m_latest_log_id = -1;
 
     friend class boost::serialization::access;
     template <typename Archive>
