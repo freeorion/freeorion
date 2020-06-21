@@ -153,21 +153,15 @@ public:
     auto operator<(Node const & y) const -> bool;
 
 private:
-    Node(Node* parent, Node* child, std::vector<Node*>& nodes);
-
-    auto Wobble(Column & column) -> bool;
+    Node(Node* parent, Node* child);
 
     void AddChild(Node* node);
 
-    void SetDepthRecursive(int depth);
+    void fillDepth();
 
     auto CalculateFamilyDistance(int row) -> double;
 
-    void CreatePlaceHolder(std::vector<Node*>& nodes);
-
-    void DoLayout(std::vector<Column> & row_index, bool cat);
-
-    void CalculateCoordinate(double column_width, double row_height);
+    void place(double column_width, double row_height);
 
     void CreateEdges(double x_margin, double column_width, double row_height);
 
@@ -175,8 +169,7 @@ private:
 
     std::vector<Node*> children;
 
-    //! depth 1 available at beginning 2 one requisite etc
-    int depth = -1;
+    unsigned int depth = 1;
 
     //! layout row, every node is organized in a straight tabelle system
     int row = -1;
@@ -204,18 +197,6 @@ private:
 
     //! height
     double m_height;
-};
-
-
-class TechTreeLayout::Column {
-public:
-    auto Fit(int index, TechTreeLayout::Node* node) -> bool;
-
-    auto ClosestFreeIndex(int index, TechTreeLayout::Node* node) -> int;
-
-    auto Place(int index, TechTreeLayout::Node* node) -> bool;
-
-    std::vector<TechTreeLayout::Node*> column;
 };
 
 #endif
