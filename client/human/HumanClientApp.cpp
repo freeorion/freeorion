@@ -24,7 +24,6 @@
 #include "../../util/OptionsDB.h"
 #include "../../util/Process.h"
 #include "../../util/SaveGamePreviewUtils.h"
-#include "../../util/Serialize.h"
 #include "../../util/SitRepEntry.h"
 #include "../../util/Directories.h"
 #include "../../util/Version.h"
@@ -48,7 +47,6 @@
 #include <boost/filesystem/fstream.hpp>
 #include <boost/format.hpp>
 #include <boost/optional/optional.hpp>
-#include <boost/serialization/vector.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/uuid/nil_generator.hpp>

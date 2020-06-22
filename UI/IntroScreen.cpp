@@ -12,7 +12,6 @@
 #include "../util/Directories.h"
 #include "../util/i18n.h"
 #include "../util/OptionsDB.h"
-#include "../util/Serialize.h"
 #include "../util/Version.h"
 #include "../util/XMLDoc.h"
 
