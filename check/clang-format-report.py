@@ -89,10 +89,16 @@ def main():
         args.clang_format = json.dumps(yaml.load(args.config))
     report = print_gcc_report
 
+    exit_code = 0
+
     for file_path in args.files:
         print("Checking format of {}".format(file_path))
         differences = collect_format_differences(file_path, args)
+        if len(differences):
+            exit_code = 1
         report(file_path, differences)
+
+    exit(exit_code)
 
 
 if __name__ == "__main__":
