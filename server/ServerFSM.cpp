@@ -2550,7 +2550,7 @@ sc::result PlayingGame::react(const PlayerChat& msg) {
     if (recipients.empty() && sender->GetClientType() != Networking::CLIENT_TYPE_AI_PLAYER)
     {
         GG::Clr text_color(255, 255, 255, 255);
-        if (auto empire = GetEmpire(sender->PlayerID()))
+        if (auto empire = GetEmpire(server.PlayerEmpireID(sender->PlayerID())))
             text_color = empire->Color();
 
         server.PushChatMessage(data, sender->PlayerName(), text_color, timestamp);
