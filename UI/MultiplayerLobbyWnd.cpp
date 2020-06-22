@@ -576,11 +576,13 @@ namespace {
     const int       CONTROL_MARGIN = 5; // gap to leave between controls in the window
     const GG::X     GALAXY_SETUP_PANEL_WIDTH(250);
     const GG::Y     GALAXY_SETUP_PANEL_HEIGHT(340);
+    const int       GALAXY_SETUP_PANEL_MARGIN = 45;
     const GG::Y     SAVED_GAMES_LIST_ROW_HEIGHT(22);
     const GG::Y     SAVED_GAMES_LIST_DROP_HEIGHT(10 * SAVED_GAMES_LIST_ROW_HEIGHT);
     const GG::X     CHAT_WIDTH(350);
     GG::Pt          g_preview_ul;
-    const GG::Pt    PREVIEW_SZ(GG::X(248), GG::Y(186));
+    const int       PREVIEW_WIDTH = 248;
+    const GG::Pt    PREVIEW_SZ(GG::X(PREVIEW_WIDTH), GG::Y(186));
     const int       PREVIEW_MARGIN = 3;
 
     std::vector<GG::X> PlayerRowColWidths(GG::X width = GG::X(600)) {
@@ -876,7 +878,8 @@ void MultiPlayerLobbyWnd::DoLayout() {
     const GG::Y RADIO_BN_HT(ClientUI::Pts() + 4);
 
     GG::Pt galaxy_setup_panel_ul(CHAT_WIDTH + 2*CONTROL_MARGIN, RADIO_BN_HT);
-    GG::Pt galaxy_setup_panel_lr = galaxy_setup_panel_ul + GG::Pt(GALAXY_SETUP_PANEL_WIDTH, GALAXY_SETUP_PANEL_HEIGHT);
+    GG::Pt galaxy_setup_panel_lr = galaxy_setup_panel_ul +
+        GG::Pt((ClientWidth() - (CHAT_WIDTH + PREVIEW_WIDTH + GALAXY_SETUP_PANEL_MARGIN)), GALAXY_SETUP_PANEL_HEIGHT);
     m_galaxy_setup_panel->SizeMove(galaxy_setup_panel_ul, galaxy_setup_panel_lr);
 
     GG::Pt game_buttons_ul(CHAT_WIDTH + CONTROL_MARGIN, GG::Y(CONTROL_MARGIN));
