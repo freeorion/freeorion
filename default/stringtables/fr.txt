@@ -5592,8 +5592,14 @@ CATEGORY_GUIDES  # translated
 CATEGORY_GAME_CONCEPTS
 *Concepts de jeu*
 
+DISTORTION_ARTICLE_SHORT_DESC  # translated
+Distortion
+
 GROWTH_ARTICLE_SHORT_DESC
 Croissance
+
+INDUSTRY_ARTICLE_SHORT_DESC
+Industrie
 
 STOCKPILE_ARTICLE_SHORT_DESC
 Stock
@@ -5601,8 +5607,14 @@ Stock
 OUTPOSTS_ARTICLE_SHORT_DESC
 Avant-Poste
 
+LOGISTICS_ARTICLE_SHORT_DESC
+Logistique
+
 HOMEWORLDS_ARTICLE_SHORT_DESC
 Planète Natale
+
+PLANETDRIVE_ARTICLE_SHORT_DESC
+Navigation Planétaire
 
 PRODUCTION_ARTICLE_SHORT_DESC  # translated
 Production
@@ -5621,6 +5633,9 @@ Indicateurs
 
 POPULATION_TITLE_SHORT_DESC  # translated
 Population
+
+PSYCHIC_ARTICLE_SHORT_DESC
+Psychisme
 
 MANAGEMENT_TITLE_SHORT_DESC
 Gestion
@@ -6015,6 +6030,12 @@ Le Focus d'une planète peut procurer un bonus ou engendrer certains effets sur 
 
 Une planète sera réglée par défaut sur le Focus favori de l'espèce la peuplant (si cette dernière en possède un), ou sinon par défaut sur le Focus [[metertype METER_INDUSTRY]].'''
 
+DISTORTION_FOCUS_TITLE
+Focus Distortion Spatiale
+
+DISTORTION_FOCUS_TEXT
+Manipule les Voies spatiales menant à la planète, ralentissant la progression des astronefs ennemis de 40uu par tour. Les astronefs les plus lents peuvent même être repoussés à l'extrémité opposée de la Voie spatiale empruntée. Disponible après avoir construit un [[buildingtype BLD_SPATIAL_DISTORT_GEN]].
+
 GROWTH_FOCUS_TITLE
 Focus Croissance
 
@@ -6025,17 +6046,45 @@ Une planète privilégiant la Croissance propage ces bénéfices aux autres plan
 
 [[GROWTH_SPECIALS_ENTRY_LIST]]'''
 
+INDUSTRY_FOCUS_TITLE
+Focus Industrie
+
+INDUSTRY_FOCUS_TEXT
+Les planètes de l'empire en Focus Industrie améliorent leur capacité d'[[metertype METER_INDUSTRY]], utilisée pour produire astronefs et structures, ou bien pour être stockée en vue d'un usage ultérieur. Le Focus Industrie augmente d'autant plus la capacité industrielle que la [[metertype METER_POPULATION]] planétaire est élevée.
+
 INFLUENCE_FOCUS_TITLE
 Focus Influence
 
 INFLUENCE_FOCUS_TEXT
 L'Influence n'est pas encore implémentée.
 
+LOGISTICS_FOCUS_TITLE
+Focus Logistique
+
+LOGISTICS_FOCUS_TEXT
+Les planètes en Focus Logistique voient leur [[metertype METER_SUPPLY]] augmenter de 3, ce qui déploie le réseau impérial d'approvisionnement de la planète sur 3 Voies spatiales supplémentaires consécutives.
+
+PLANETDRIVE_FOCUS_TITLE
+Focus Navigation Planétaire
+
+PLANETDRIVE_FOCUS_TEXT
+Après qu'un [[buildingtype BLD_PLANET_DRIVE]] ait été construit, et qu'une [[buildingtype BLD_PLANET_BEACON]] ou une [[shippart SP_PLANET_BEACON]] se trouve dans un système adjacent, sélectionner le [[PLANETDRIVE_FOCUS_TITLE]] déplacera la planète entre les systèmes stellaires.
+
 PROTECTION_FOCUS_TITLE
 Focus Protection
 
 PROTECTION_FOCUS_TEXT
 Privilégier la Protection consiste pour une planète à se consacrer entièrement à sa propre défense. Ses effectifs d'[[metertype METER_TROOPS]], sa capacité de [[metertype METER_DEFENSE]], et la solidité de ses [[metertype METER_SHIELD]] sont par conséquent doublés.
+
+PSYCHIC_FOCUS_TITLE
+Focus Domination Psychique
+
+PSYCHIC_FOCUS_TEXT
+'''Le [[PSYCHIC_FOCUS_TITLE]] concentre la force mentale d'une population afin de contrôler les pensées des équipages non-télépathiques des astronefs ennemis se trouvant dans le même système.
+
+À chaque tour, procure 10% de chance de prendre le contrôle de chaque astronef, à moins que l'empire ennemi ne dispose également de la technologie [[LRN_PSY_DOM]].
+
+Lorsque le Focus Domination Psychique est activé, réduit par ailleurs la chance qu'un [[predefinedshipdesign SM_PSIONIC_SNOWFLAKE]] prenne le contrôle des astronefs de l'empire se trouvant dans le même système.'''
 
 STOCKPILE_FOCUS_TITLE
 Focus Stock
@@ -9193,7 +9242,7 @@ FOCUS_STARGATE_RECEIVE_DESC
 Active le Stargate de réception d'astronefs envoyés depuis un autre système de l'empire
 
 FOCUS_PLANET_DRIVE
-Déplacement de Planète
+Navigation Planétaire
 
 FOCUS_DISTORTION
 Distortion Spatiale
@@ -11260,7 +11309,9 @@ LRN_TIME_MECH
 Mécanique Temporelle
 
 LRN_TIME_MECH_DESC
-Qu'est-ce que "le présent", "le futur" et "le passé"? Le double paradoxe de la relativité ou bien la théorie du "trou de ver", suggèrent les premières formes de "voyage dans le temps". La manipulation directe des flux spatio-temporels permet de contrôler et d'amplifier ces effets. Les incursions temporelles ne peuvent pas modifier d'une manière perceptible le passé de l'univers que nous observons. Cependant, ces manipulations peuvent compresser le temps ou allonger arbitrairement la durée des instants, en vue d'applications limitées seulement par nos ressources, ainsi que notre propre patience ...
+'''Octroie un choix supplémentaire de Stratégie Militaire.
+
+Qu'est-ce que "le présent", "le futur" et "le passé"? Le double paradoxe de la relativité ou bien la théorie du "trou de ver", suggèrent les premières formes de "voyage dans le temps". La manipulation directe des flux spatio-temporels permet de contrôler et d'amplifier ces effets. Les incursions temporelles ne peuvent pas modifier d'une manière perceptible le passé de l'univers que nous observons. Cependant, ces manipulations peuvent compresser le temps ou allonger arbitrairement la durée des instants, en vue d'applications limitées seulement par nos ressources, ainsi que notre propre patience...'''
 
 LRN_NDIM_SUBSPACE
 Espace Multidimensionnel
@@ -11528,6 +11579,8 @@ Automates Conscients
 
 PRO_SENTIENT_AUTOMATION_DESC
 '''Augmente la [[metertype METER_TARGET_INDUSTRY]] de 3 sur toutes les planètes en Focus Industrie.
+
+Octroie un choix supplémentaire de Stratégie Économique.
 
 L'évolution naturelle des usines automatisées s'accomplit en attribuant aux consciences artificielles qui dirigent de telles structures, le pouvoir de déduire et décider par elles-mêmes des meilleurs processus afin d'atteindre les buts de leurs propriétaires, avant même que ces derniers n'aient commencé à y réfléchir. Cette amélioration décisionnelle augmente grandement la performance des installations autonomes de production dans tous les systèmes de l'empire se consacrant à la production industrielle.'''
 
@@ -12060,6 +12113,8 @@ Centralisation Cérébrale
 
 LRN_DISTRIB_THOUGHT_DESC
 '''Augmente la [[metertype METER_TARGET_RESEARCH]] de 0.1 par [[metertype METER_POPULATION]] sur toutes les planètes, quel que soit le Focus choisi.
+
+Octroie un choix supplémentaire de Stratégie Militaire.
 
 Le citoyen moyen gaspille littéralement ses capacités cérébrales, pourtant issues d'un des outils de calcul les plus fins de l'univers. En intégrant les cycles cérébraux inactifs d'une population suffisament importante au sein d'un réseau de simples émetteurs-récepteurs cybernétiques, la totalité des centres de recherche d'un empire peuvent accéder à une puissance de calcul considérable et peu coûteuse.'''
 
@@ -13297,13 +13352,16 @@ BLD_PLANET_DRIVE_DESC
 
 En raison d'un manque de précision du dispositif de navigation, une [[buildingtype BLD_PLANET_BEACON]], ou bien un astronef équipé d'une [[shippart SP_PLANET_BEACON]], est nécessaire et doit se trouver à l'arrivée de la Voie spatiale empruntée. L'un comme l'autre s'auto-détruiront une fois utilisés, afin que la planète puisse événtuellement se déplacer vers un autre système si nécessaire.
 
-Pour utiliser le Navigateur Planétaire, une [[buildingtype BLD_PLANET_BEACON]] doit être construite dans le système adjacent de destination, ou bien un astronef équipé d'une [[shippart SP_PLANET_BEACON]] doit s'y trouver, tandis que la planète migrante doit être réglée sur le Focus Navigation Planétaire, afin qu'elle se dirige vers le système de destination. Il est à noter que la balise doit se trouver dans le système de destination depuis au moins un tour: le Navigateur ne fonctionnera donc pas durant le tour où sa construction est achevée, ou durant lequel un astronef équipé du dispositif arrive dans le système de destination. D'autre part, un [[buildingtype BLD_TRANSFORMER]] est en mesure de reproduire les effets d'un Navigateur Planétaire.'''
+Pour utiliser le Navigateur Planétaire, une [[buildingtype BLD_PLANET_BEACON]] doit être construite dans le système adjacent de destination, ou bien un astronef équipé d'une [[shippart SP_PLANET_BEACON]] doit s'y trouver, tandis que la planète migrante doit être réglée sur le Focus Navigation Planétaire, afin qu'elle se dirige vers le système de destination. Il est à noter que la balise doit se trouver dans le système de destination depuis au moins un tour: le Navigateur ne fonctionnera donc pas durant le tour où sa construction est achevée, ou durant lequel un astronef équipé du dispositif arrive dans le système de destination. D'autre part, un [[buildingtype BLD_TRANSFORMER]] est en mesure de reproduire les effets d'un Navigateur Planétaire.
+
+Une [[buildingtype BLD_PLANET_BEACON]] ne peut être construite qu'au sein de systèmes abritant moins de 7 planètes (Géantes Gazeuses et Astéroides compris). Si le [[BLD_PLANET_DRIVE]] est utilisé pour déplacer une planète vers un système dépassant cette limite, la planète restera saine et sauve dans son système d'origine à condition qu'un [[buildingtype BLD_LIGHTHOUSE]] soit présent à une distance de 200uu au plus. Dans le cas contraire, la planète a 50% de chance d'être détruite en tentant d'atteindre le système de destination déjà complet.
+'''
 
 BLD_PLANET_BEACON
 Balise Planétaire
 
 BLD_PLANET_BEACON_DESC
-Indique le système cible pour le [[buildingtype BLD_PLANET_DRIVE]]. [[BUILDING_AVAILABLE_ON_OUTPOSTS]].
+Indique le système cible pour le [[buildingtype BLD_PLANET_DRIVE]]. Cette structure ne peut être construite qu'au sein de systèmes abritant moins de 7 planètes (Géantes Gazeuses et Astéroides compris). [[BUILDING_AVAILABLE_ON_OUTPOSTS]].
 
 BLD_ART_PLANET
 Planète Artificielle
