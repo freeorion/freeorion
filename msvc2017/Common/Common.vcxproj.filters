@@ -334,6 +334,9 @@
     <ClCompile Include="..\..\util\Random.cpp">
       <Filter>Source Files\util</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\util\SerializeCombat.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\util\SerializeEmpire.cpp">
       <Filter>Source Files\util</Filter>
     </ClCompile>

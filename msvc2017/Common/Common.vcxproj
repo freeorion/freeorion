@@ -330,6 +330,7 @@
     <ClCompile Include="..\..\util\Order.cpp" />
     <ClCompile Include="..\..\util\OrderSet.cpp" />
     <ClCompile Include="..\..\util\Random.cpp" />
+    <ClCompile Include="..\..\util\SerializeCombat.cpp" />
     <ClCompile Include="..\..\util\SerializeEmpire.cpp" />
     <ClCompile Include="..\..\util\SerializeModeratorAction.cpp" />
     <ClCompile Include="..\..\util\SerializeMultiplayerCommon.cpp" />

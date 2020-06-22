@@ -4,10 +4,8 @@
 #include "CombatSystem.h"
 
 #include "../util/Export.h"
-#include "../util/Serialize.h"
 
 #include <boost/optional/optional.hpp>
-#include <boost/serialization/nvp.hpp>
 
 #include <memory>
 
@@ -20,10 +18,6 @@ struct FO_COMMON_API CombatParticipantState {
 
     CombatParticipantState();
     CombatParticipantState(const UniverseObject& object);
-private:
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 struct FO_COMMON_API CombatLog {
@@ -38,13 +32,8 @@ struct FO_COMMON_API CombatLog {
     std::set<int>               destroyed_object_ids;
     std::vector<CombatEventPtr> combat_events;
     std::map<int, CombatParticipantState> participant_states;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
-BOOST_CLASS_VERSION(CombatLog, 1);
 
 /** Stores and retreives combat logs. */
 class FO_COMMON_API CombatLogManager {
@@ -64,17 +53,10 @@ public:
     void CompleteLog(int id, const CombatLog& log);
     void Clear();
 
-    /** Serialize log headers so that the receiving LogManager can then request
-        complete logs in the background.*/
-    template <typename Archive>
-    void SerializeIncompleteLogs(Archive& ar, const unsigned int version);
-    //@}
-
     static CombatLogManager& GetCombatLogManager();
 
 private:
     CombatLogManager();
-    ~CombatLogManager();
 
     std::unordered_map<int, CombatLog> m_logs;
     //! Set of logs ids that do not have bodies and need to be fetched from the server
@@ -82,20 +64,12 @@ private:
 
     int                                m_latest_log_id = -1;
 
-    friend class boost::serialization::access;
     template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
+    friend void serialize(Archive&, CombatLogManager&, const unsigned int);
+
+    template <typename Archive>
+    friend void serializeIncompleteLogs(Archive&, CombatLogManager&, const unsigned int);
 };
-
-
-extern template
-FO_COMMON_API void CombatLogManager::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ar, const unsigned int version);
-extern template
-FO_COMMON_API void CombatLogManager::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& ar, const unsigned int version);
-extern template
-FO_COMMON_API void CombatLogManager::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, const unsigned int version);
-extern template
-FO_COMMON_API void CombatLogManager::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& ar, const unsigned int version);
 
 
 /** returns the singleton combat log manager */

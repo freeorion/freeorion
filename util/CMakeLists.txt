@@ -45,6 +45,7 @@ target_sources(freeorioncommon
         ${CMAKE_CURRENT_LIST_DIR}/Random.cpp
         ${CMAKE_CURRENT_LIST_DIR}/SaveGamePreviewUtils.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ScopedTimer.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/SerializeCombat.cpp
         ${CMAKE_CURRENT_LIST_DIR}/SerializeEmpire.cpp
         ${CMAKE_CURRENT_LIST_DIR}/SerializeModeratorAction.cpp
         ${CMAKE_CURRENT_LIST_DIR}/SerializeMultiplayerCommon.cpp

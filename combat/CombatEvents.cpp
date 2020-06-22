@@ -1,9 +1,5 @@
 #include "CombatEvents.h"
-#include <boost/serialization/serialization.hpp>
-#include <boost/serialization/version.hpp>
 
-#include "../util/Serialize.ipp"
-#include "../util/Serialize.h"
 #include "../universe/Universe.h"
 #include "../universe/Enums.h"
 
@@ -124,9 +120,11 @@ namespace {
     }
 }
 
+
 //////////////////////////////////////////
 ///////// BoutBeginEvent//////////////////
 //////////////////////////////////////////
+
 BoutBeginEvent::BoutBeginEvent() :
     bout(-1)
 {}
@@ -144,30 +142,11 @@ std::string BoutBeginEvent::DebugString() const {
 std::string BoutBeginEvent::CombatLogDescription(int viewing_empire_id) const
 { return str(FlexibleFormat(UserString("ENC_ROUND_BEGIN")) % bout); }
 
-template <typename Archive>
-void BoutBeginEvent::serialize(Archive& ar, const unsigned int version) {
-    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CombatEvent);
-    ar & BOOST_SERIALIZATION_NVP(bout);
-}
-
-BOOST_CLASS_EXPORT(BoutBeginEvent)
-
-template
-void BoutBeginEvent::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& ar, const unsigned int version);
-
-template
-void BoutBeginEvent::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ar, const unsigned int version);
-
-template
-void BoutBeginEvent::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& ar, const unsigned int version);
-
-template
-void BoutBeginEvent::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, const unsigned int version);
-
 
 //////////////////////////////////////////
 ///////// BoutEvent /////////////
 //////////////////////////////////////////
+
 BoutEvent::BoutEvent():
     bout(-1)
 {}
@@ -195,28 +174,6 @@ std::vector<ConstCombatEventPtr> BoutEvent::SubEvents(int viewing_empire_id) con
         all_events.push_back(event);
     return all_events;
 }
-
-template <typename Archive>
-void BoutEvent::serialize(Archive& ar, const unsigned int version) {
-    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CombatEvent);
-    ar & BOOST_SERIALIZATION_NVP(bout)
-       & BOOST_SERIALIZATION_NVP(events);
-}
-
-BOOST_CLASS_VERSION(BoutEvent, 4)
-BOOST_CLASS_EXPORT(BoutEvent)
-
-template
-void BoutEvent::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& ar, const unsigned int version);
-
-template
-void BoutEvent::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ar, const unsigned int version);
-
-template
-void BoutEvent::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& ar, const unsigned int version);
-
-template
-void BoutEvent::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, const unsigned int version);
 
 
 //////////////////////////////////////////
@@ -274,28 +231,6 @@ std::vector<ConstCombatEventPtr> SimultaneousEvents::SubEvents(int viewing_empir
 
     return ordered_events;
 }
-
-
-template <typename Archive>
-void SimultaneousEvents::serialize(Archive& ar, const unsigned int version) {
-    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CombatEvent);
-    ar & BOOST_SERIALIZATION_NVP(events);
-}
-
-BOOST_CLASS_VERSION(SimultaneousEvents, 4)
-BOOST_CLASS_EXPORT(SimultaneousEvents)
-
-template
-void SimultaneousEvents::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& ar, const unsigned int version);
-
-template
-void SimultaneousEvents::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ar, const unsigned int version);
-
-template
-void SimultaneousEvents::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& ar, const unsigned int version);
-
-template
-void SimultaneousEvents::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, const unsigned int version);
 
 
 //////////////////////////////////////////
@@ -363,27 +298,6 @@ std::string InitialStealthEvent::CombatLogDescription(int viewing_empire_id) con
 
     return desc;
 }
-
-template <typename Archive>
-void InitialStealthEvent::serialize(Archive& ar, const unsigned int version) {
-    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CombatEvent);
-    ar & BOOST_SERIALIZATION_NVP(empire_to_object_visibility);
-}
-
-BOOST_CLASS_VERSION(InitialStealthEvent, 4)
-BOOST_CLASS_EXPORT(InitialStealthEvent)
-
-template
-void InitialStealthEvent::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& ar, const unsigned int version);
-
-template
-void InitialStealthEvent::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ar, const unsigned int version);
-
-template
-void InitialStealthEvent::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& ar, const unsigned int version);
-
-template
-void InitialStealthEvent::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, const unsigned int version);
 
 
 //////////////////////////////////////////
@@ -496,55 +410,11 @@ std::vector<ConstCombatEventPtr> StealthChangeEvent::SubEvents(int viewing_empir
     return all_events;
 }
 
-template <typename Archive>
-void StealthChangeEvent::serialize(Archive& ar, const unsigned int version) {
-    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CombatEvent);
-    ar & BOOST_SERIALIZATION_NVP(bout)
-       & BOOST_SERIALIZATION_NVP(events);
-}
-
-BOOST_CLASS_VERSION(StealthChangeEvent, 4)
-BOOST_CLASS_EXPORT(StealthChangeEvent)
-
-template
-void StealthChangeEvent::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& ar, const unsigned int version);
-
-template
-void StealthChangeEvent::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ar, const unsigned int version);
-
-template
-void StealthChangeEvent::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& ar, const unsigned int version);
-
-template
-void StealthChangeEvent::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, const unsigned int version);
-
-template <typename Archive>
-void StealthChangeEvent::StealthChangeEventDetail::serialize(Archive& ar, const unsigned int version) {
-    ar  & BOOST_SERIALIZATION_NVP(attacker_id)
-        & BOOST_SERIALIZATION_NVP(target_id)
-        & BOOST_SERIALIZATION_NVP(attacker_empire_id)
-        & BOOST_SERIALIZATION_NVP(target_empire_id)
-        & BOOST_SERIALIZATION_NVP(visibility);
-}
-
-BOOST_CLASS_VERSION(StealthChangeEvent::StealthChangeEventDetail, 4)
-BOOST_CLASS_EXPORT(StealthChangeEvent::StealthChangeEventDetail)
-
-template
-void StealthChangeEvent::StealthChangeEventDetail::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& ar, const unsigned int version);
-
-template
-void StealthChangeEvent::StealthChangeEventDetail::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ar, const unsigned int version);
-
-template
-void StealthChangeEvent::StealthChangeEventDetail::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& ar, const unsigned int version);
-
-template
-void StealthChangeEvent::StealthChangeEventDetail::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, const unsigned int version);
 
 //////////////////////////////////////////
 ///////// Attack Event////////////////////
 //////////////////////////////////////////
+
 WeaponFireEvent::WeaponFireEvent() :
     bout(-1),
     round(-1),
@@ -615,53 +485,10 @@ boost::optional<int> WeaponFireEvent::PrincipalFaction(int viewing_empire_id) co
 }
 
 
-template <typename Archive>
-void WeaponFireEvent::serialize(Archive& ar, const unsigned int version) {
-    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CombatEvent);
-
-    if (version < 5) {
-        ar & BOOST_SERIALIZATION_NVP(bout)
-           & BOOST_SERIALIZATION_NVP(round)
-           & BOOST_SERIALIZATION_NVP(attacker_id)
-           & BOOST_SERIALIZATION_NVP(target_id)
-           & BOOST_SERIALIZATION_NVP(weapon_name)
-           & BOOST_SERIALIZATION_NVP(power)
-           & BOOST_SERIALIZATION_NVP(shield)
-           & BOOST_SERIALIZATION_NVP(damage)
-           & BOOST_SERIALIZATION_NVP(target_owner_id)
-           & BOOST_SERIALIZATION_NVP(attacker_owner_id);
-    } else {
-        ar & boost::serialization::make_nvp("b", bout)
-           & boost::serialization::make_nvp("r", round)
-           & boost::serialization::make_nvp("a", attacker_id)
-           & boost::serialization::make_nvp("t", target_id)
-           & boost::serialization::make_nvp("w", weapon_name)
-           & boost::serialization::make_nvp("p", power)
-           & boost::serialization::make_nvp("s", shield)
-           & boost::serialization::make_nvp("d", damage)
-           & boost::serialization::make_nvp("to", target_owner_id)
-           & boost::serialization::make_nvp("ao", attacker_owner_id);
-    }
-}
-
-BOOST_CLASS_VERSION(WeaponFireEvent, 5)
-BOOST_CLASS_EXPORT(WeaponFireEvent)
-
-template
-void WeaponFireEvent::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& ar, const unsigned int version);
-
-template
-void WeaponFireEvent::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ar, const unsigned int version);
-
-template
-void WeaponFireEvent::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& ar, const unsigned int version);
-
-template
-void WeaponFireEvent::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, const unsigned int version);
-
 //////////////////////////////////////////
 ///////// IncapacitationEvent/////////////
 //////////////////////////////////////////
+
 IncapacitationEvent::IncapacitationEvent() :
     bout(-1),
     object_id(INVALID_OBJECT_ID),
@@ -714,36 +541,6 @@ std::string IncapacitationEvent::CombatLogDescription(int viewing_empire_id) con
 
 boost::optional<int> IncapacitationEvent::PrincipalFaction(int viewing_empire_id) const
 { return object_owner_id; }
-
-
-template <typename Archive>
-void IncapacitationEvent::serialize (Archive& ar, const unsigned int version) {
-    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CombatEvent);
-    if (version < 2) {
-        ar & BOOST_SERIALIZATION_NVP(bout)
-           & BOOST_SERIALIZATION_NVP(object_id)
-           & BOOST_SERIALIZATION_NVP(object_owner_id);
-    } else {
-        ar & boost::serialization::make_nvp("b", bout)
-           & boost::serialization::make_nvp("i", object_id)
-           & boost::serialization::make_nvp("o", object_owner_id);
-    }
-}
-
-BOOST_CLASS_VERSION(IncapacitationEvent, 2)
-BOOST_CLASS_EXPORT(IncapacitationEvent)
-
-template
-void IncapacitationEvent::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& ar, const unsigned int version);
-
-template
-void IncapacitationEvent::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ar, const unsigned int version);
-
-template
-void IncapacitationEvent::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& ar, const unsigned int version);
-
-template
-void IncapacitationEvent::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, const unsigned int version);
 
 
 //////////////////////////////////////////
@@ -821,33 +618,10 @@ std::string FightersAttackFightersEvent::CombatLogDescription(int viewing_empire
 }
 
 
-template <typename Archive>
-void FightersAttackFightersEvent::serialize(Archive& ar, const unsigned int version) {
-    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CombatEvent);
-    ar & BOOST_SERIALIZATION_NVP(bout)
-       & BOOST_SERIALIZATION_NVP(events);
-}
-
-BOOST_CLASS_VERSION(FightersAttackFightersEvent, 4)
-BOOST_CLASS_EXPORT(FightersAttackFightersEvent)
-
-template
-void FightersAttackFightersEvent::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& ar, const unsigned int version);
-
-template
-void FightersAttackFightersEvent::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ar, const unsigned int version);
-
-template
-void FightersAttackFightersEvent::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& ar, const unsigned int version);
-
-template
-void FightersAttackFightersEvent::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, const unsigned int version);
-
-
-
 //////////////////////////////////////////
 /////////// FighterLaunchEvent ///////////
 //////////////////////////////////////////
+
 FighterLaunchEvent::FighterLaunchEvent() :
     bout(-1),
     fighter_owner_empire_id(ALL_EMPIRES),
@@ -888,30 +662,6 @@ std::string FighterLaunchEvent::CombatLogDescription(int viewing_empire_id) cons
 
 boost::optional<int> FighterLaunchEvent::PrincipalFaction(int viewing_empire_id) const
 { return fighter_owner_empire_id; }
-
-template <typename Archive>
-void FighterLaunchEvent::serialize (Archive& ar, const unsigned int version) {
-    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CombatEvent);
-    ar & BOOST_SERIALIZATION_NVP(bout)
-       & BOOST_SERIALIZATION_NVP(fighter_owner_empire_id)
-       & BOOST_SERIALIZATION_NVP(launched_from_id)
-       & BOOST_SERIALIZATION_NVP(number_launched);
-}
-
-BOOST_CLASS_EXPORT(FighterLaunchEvent)
-
-template
-void FighterLaunchEvent::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& ar, const unsigned int version);
-
-template
-void FighterLaunchEvent::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ar, const unsigned int version);
-
-template
-void FighterLaunchEvent::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& ar, const unsigned int version);
-
-template
-void FighterLaunchEvent::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, const unsigned int version);
-
 
 
 //////////////////////////////////////////
@@ -991,30 +741,6 @@ std::string FightersDestroyedEvent::CombatLogDescription(int viewing_empire_id) 
 
     return ss.str();
 }
-
-
-template <typename Archive>
-void FightersDestroyedEvent::serialize(Archive& ar, const unsigned int version) {
-    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CombatEvent);
-    ar & BOOST_SERIALIZATION_NVP(bout)
-       & BOOST_SERIALIZATION_NVP(events);
-}
-
-BOOST_CLASS_VERSION(FightersDestroyedEvent, 4)
-BOOST_CLASS_EXPORT(FightersDestroyedEvent)
-
-template
-void FightersDestroyedEvent::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& ar, const unsigned int version);
-
-template
-void FightersDestroyedEvent::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ar, const unsigned int version);
-
-template
-void FightersDestroyedEvent::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& ar, const unsigned int version);
-
-template
-void FightersDestroyedEvent::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, const unsigned int version);
-
 
 
 //////////////////////////////////////////
@@ -1117,27 +843,3 @@ std::vector<ConstCombatEventPtr> WeaponsPlatformEvent::SubEvents(int viewing_emp
 
 boost::optional<int> WeaponsPlatformEvent::PrincipalFaction(int viewing_empire_id) const
 { return attacker_owner_id; }
-
-template <typename Archive>
-void WeaponsPlatformEvent::serialize(Archive& ar, const unsigned int version) {
-    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CombatEvent);
-    ar & BOOST_SERIALIZATION_NVP(bout)
-       & BOOST_SERIALIZATION_NVP(attacker_id)
-       & BOOST_SERIALIZATION_NVP(attacker_owner_id)
-       & BOOST_SERIALIZATION_NVP(events);
-}
-
-BOOST_CLASS_VERSION(WeaponsPlatformEvent, 4)
-BOOST_CLASS_EXPORT(WeaponsPlatformEvent)
-
-template
-void WeaponsPlatformEvent::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& ar, const unsigned int version);
-
-template
-void WeaponsPlatformEvent::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ar, const unsigned int version);
-
-template
-void WeaponsPlatformEvent::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& ar, const unsigned int version);
-
-template
-void WeaponsPlatformEvent::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, const unsigned int version);

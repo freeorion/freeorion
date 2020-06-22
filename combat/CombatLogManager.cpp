@@ -2,8 +2,6 @@
 #include "../universe/Meter.h"
 #include "../universe/UniverseObject.h"
 #include "../universe/Enums.h"
-#include "../util/Serialize.h"
-#include "../util/Serialize.ipp"
 #include "../util/Logger.h"
 #include "CombatEvents.h"
 
@@ -89,63 +87,11 @@ CombatLog::CombatLog(const CombatInfo& combat_info) :
     }
 }
 
-template <typename Archive>
-void CombatParticipantState::serialize(Archive& ar, const unsigned int version)
-{
-    ar & BOOST_SERIALIZATION_NVP(current_health)
-       & BOOST_SERIALIZATION_NVP(max_health);
-}
-
-template <typename Archive>
-void CombatLog::serialize(Archive& ar, const unsigned int version)
-{
-    // CombatEvents are serialized only through
-    // pointers to their base class.
-    // Therefore we need to manually register their types
-    // in the archive.
-    ar.template register_type<WeaponFireEvent>();
-    ar.template register_type<IncapacitationEvent>();
-    ar.template register_type<BoutBeginEvent>();
-    ar.template register_type<InitialStealthEvent>();
-    ar.template register_type<StealthChangeEvent>();
-    ar.template register_type<WeaponsPlatformEvent>();
-
-    ar  & BOOST_SERIALIZATION_NVP(turn)
-        & BOOST_SERIALIZATION_NVP(system_id)
-        & BOOST_SERIALIZATION_NVP(empire_ids)
-        & BOOST_SERIALIZATION_NVP(object_ids)
-        & BOOST_SERIALIZATION_NVP(damaged_object_ids)
-        & BOOST_SERIALIZATION_NVP(destroyed_object_ids);
-
-    if (combat_events.size() > 1)
-        TraceLogger() << "CombatLog::serialize turn " << turn << "  combat at " << system_id << "  combat events size: " << combat_events.size();
-    try {
-        ar  & BOOST_SERIALIZATION_NVP(combat_events);
-    } catch (const std::exception& e) {
-        ErrorLogger() << "combat events serializing failed!: caught exception: " << e.what();
-    }
-
-    ar & BOOST_SERIALIZATION_NVP(participant_states);
-}
-
-template
-void CombatLog::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ar, const unsigned int version);
-template
-void CombatLog::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& ar, const unsigned int version);
-template
-void CombatLog::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, const unsigned int version);
-template
-void CombatLog::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& ar, const unsigned int version);
-
-
 
 ////////////////////////////////////////////////
 // CombatLogManager
 ////////////////////////////////////////////////
 CombatLogManager::CombatLogManager() = default;
-
-// Require here because CombatLogManagerImpl is defined in this file.
-CombatLogManager::~CombatLogManager() {}
 
 boost::optional<const CombatLog&> CombatLogManager::GetLog(int log_id) const
 {
@@ -208,63 +154,6 @@ CombatLogManager& CombatLogManager::GetCombatLogManager() {
     return manager;
 }
 
-template <typename Archive>
-void CombatLogManager::SerializeIncompleteLogs(Archive& ar, const unsigned int version)
-{
-    int old_latest_log_id = m_latest_log_id;
-    ar & BOOST_SERIALIZATION_NVP(m_latest_log_id);
-
-    // If the new m_latest_log_id is greater than the old one then add all
-    // of the new ids to the incomplete log set.
-    if (Archive::is_loading::value && m_latest_log_id > old_latest_log_id)
-        for (++old_latest_log_id; old_latest_log_id <= m_latest_log_id; ++old_latest_log_id)
-            m_incomplete_logs.insert(old_latest_log_id);
-}
-
-template <typename Archive>
-void CombatLogManager::serialize(Archive& ar, const unsigned int version)
-{
-    std::map<int, CombatLog> logs;
-
-    if (Archive::is_saving::value) {
-        // TODO: filter logs by who should have access to them
-        for (auto it = m_logs.begin(); it != m_logs.end(); ++it)
-            logs.insert({it->first, it->second});
-    }
-
-    ar  & BOOST_SERIALIZATION_NVP(logs)
-        & BOOST_SERIALIZATION_NVP(m_latest_log_id);
-
-    if (Archive::is_loading::value) {
-        // copy new logs, but don't erase old ones
-        for (auto& log : logs)
-            m_logs[log.first] = log.second;
-    }
-}
-
-template
-void CombatLogManager::SerializeIncompleteLogs<freeorion_bin_oarchive>(freeorion_bin_oarchive& ar, const unsigned int version);
-
-template
-void CombatLogManager::SerializeIncompleteLogs<freeorion_bin_iarchive>(freeorion_bin_iarchive& ar, const unsigned int version);
-
-template
-void CombatLogManager::SerializeIncompleteLogs<freeorion_xml_oarchive>(freeorion_xml_oarchive& ar, const unsigned int version);
-
-template
-void CombatLogManager::SerializeIncompleteLogs<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, const unsigned int version);
-
-template
-void CombatLogManager::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& ar, const unsigned int version);
-
-template
-void CombatLogManager::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ar, const unsigned int version);
-
-template
-void CombatLogManager::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& ar, const unsigned int version);
-
-template
-void CombatLogManager::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, const unsigned int version);
 
 ///////////////////////////////////////////////////////////
 // Free Functions                                        //
