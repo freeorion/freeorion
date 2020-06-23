@@ -13,7 +13,7 @@ _linux_setup_common: &_linux_setup_common
     # timeout before Travis kills jobs so that ccache is always at least partially populated
     - >
       function cmake {
-          timeout 40m cmake $@
+          timeout 45m cmake $@
       }
   install:
     # The build cache for a full project build currently packs around 340M
