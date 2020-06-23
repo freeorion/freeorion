@@ -22,9 +22,7 @@ _build_cpp_common: &_build_cpp_common
   language: cpp
   cache: ccache
   install:
-    - mkdir -p $HOME/.ccache;
-    - echo sloppiness = file_macro > $HOME/.ccache/ccache.conf
-    - echo max_size = 200M >> $HOME/.ccache/ccache.conf
+    - ccache --set-config=max_size=200M --set-config=sloppiness=file_macro
     - ccache --version
     - ccache --show-stats
   before_script:
