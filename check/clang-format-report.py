@@ -5,6 +5,11 @@ from distutils.spawn import find_executable
 from distutils.version import StrictVersion
 from subprocess import check_output
 import argparse
+try:
+    import colorama
+    HAS_COLORAMA=True
+except ImportError:
+    HAS_COLORAMA=False
 import difflib
 import sys
 import json
@@ -49,13 +54,22 @@ def collect_format_differences(file_path, args):
     return hunks
 
 
-def print_gcc_report(file_path, differences):
+def print_gcc_report(file_path, differences, args):
+    added_beg = ''
+    added_end = ''
+    removed_beg = ''
+    removed_end = ''
+    if HAS_COLORAMA and args.color:
+        added_beg = colorama.Fore.GREEN
+        added_end = colorama.Style.RESET_ALL
+        removed_beg = colorama.Fore.RED
+        removed_end = colorama.Style.RESET_ALL
     for hunk in differences:
         print('{}:{}: Formatting difference, clang-format suggests diff:\n{}\n{}'.format(
             file_path,
             hunk['from'],
-            '\n'.join(['-' + line for line in hunk['removed'].splitlines()]),
-            '\n'.join(['+' + line for line in hunk['added'].splitlines()])
+            '\n'.join([removed_beg + '-' + line + removed_end for line in hunk['removed'].splitlines()]),
+            '\n'.join([added_beg + '+' + line + added_end for line in hunk['added'].splitlines()])
         ))
 
 
@@ -72,6 +86,10 @@ def main():
         help='Name or path to the clang-format executable'
     )
     arg_parser.add_argument(
+        '--color', '-C', action='store_true', default=sys.stdout.isatty(),
+        help='Force colorized report output'
+    )
+    arg_parser.add_argument(
         'files', nargs='+', help='A list of files to scan for mismatches'
     )
 
@@ -83,6 +101,11 @@ def main():
         print("Unable to locate `clang-format` executable.", file=sys.stderr)
         exit(1)
 
+    if not HAS_COLORAMA:
+        args.color = False
+    else:
+        colorama.init(strip=not args.color)
+
     if hasattr(yaml, '__version__') and StrictVersion(yaml.__version__) >= StrictVersion('5.1'):
         args.clang_format = json.dumps(yaml.load(args.config, Loader=yaml.FullLoader))
     else:
@@ -92,11 +115,16 @@ def main():
     exit_code = 0
 
     for file_path in args.files:
-        print("Checking format of {}".format(file_path))
+        brighten_beg = '';
+        brighten_end = '';
+        if HAS_COLORAMA and args.color:
+            brighten_beg = colorama.Style.BRIGHT;
+            brighten_end = colorama.Style.RESET_ALL;
+        print("{}Checking format of {}:{}".format(brighten_beg, file_path, brighten_end))
         differences = collect_format_differences(file_path, args)
         if len(differences):
             exit_code = 1
-        report(file_path, differences)
+        report(file_path, differences, args)
 
     exit(exit_code)
 

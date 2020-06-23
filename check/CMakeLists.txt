@@ -20,6 +20,7 @@ if(TARGET ClangFormat::clang-format)
         ${CMAKE_CURRENT_SOURCE_DIR}/clang-format-report.py
             --config=${CMAKE_CURRENT_SOURCE_DIR}/clang-format
             --clang-format-executable=$<TARGET_FILE:ClangFormat::clang-format>
+            --color
             ${PROJECT_SOURCE_DIR}/client/*.h
             ${PROJECT_SOURCE_DIR}/client/*.cpp
             ${PROJECT_SOURCE_DIR}/client/AI/*.h
