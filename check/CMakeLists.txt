@@ -49,7 +49,7 @@ if(TARGET ClangFormat::clang-format)
             ${PROJECT_SOURCE_DIR}/universe/*.cpp
             ${PROJECT_SOURCE_DIR}/util/*.h
             ${PROJECT_SOURCE_DIR}/util/*.cpp
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
         COMMENT "Check C++ for malformatted code"
         USES_TERMINAL
     )

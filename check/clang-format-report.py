@@ -11,6 +11,7 @@ try:
 except ImportError:
     HAS_COLORAMA=False
 import difflib
+import os
 import sys
 import json
 import yaml
@@ -115,16 +116,17 @@ def main():
     exit_code = 0
 
     for file_path in args.files:
+        rel_path = os.path.relpath(file_path, os.getcwd())
         brighten_beg = '';
         brighten_end = '';
         if HAS_COLORAMA and args.color:
             brighten_beg = colorama.Style.BRIGHT;
             brighten_end = colorama.Style.RESET_ALL;
-        print("{}Checking format of {}:{}".format(brighten_beg, file_path, brighten_end))
+        print("{}Checking format of {}:{}".format(brighten_beg, rel_path, brighten_end))
         differences = collect_format_differences(file_path, args)
         if len(differences):
             exit_code = 1
-        report(file_path, differences, args)
+        report(rel_path, differences, args)
 
     exit(exit_code)
 
