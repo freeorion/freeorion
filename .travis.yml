@@ -23,8 +23,7 @@ _build_cpp_common: &_build_cpp_common
   cache: ccache
   install:
     - ccache --set-config=max_size=200M --set-config=sloppiness=file_macro
-    - ccache --version
-    - ccache --show-stats
+    - ccache --zero-stats
   before_script:
     - mkdir build
     - cd build
