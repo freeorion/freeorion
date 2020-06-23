@@ -22,7 +22,11 @@ _build_cpp_common: &_build_cpp_common
   language: cpp
   cache: ccache
   install:
-    - ccache --set-config=max_size=200M --set-config=sloppiness=file_macro
+    # The build cache for a full project build currently packs around 340M
+    # in combination wit a bug in ccache before 3.4.2 prematurely cleaned
+    # the cache if it was filled up to 80%.  Therefor raise the cache size
+    # to 500MB
+    - ccache --set-config=max_size=500M --set-config=sloppiness=file_macro
     - ccache --zero-stats
   before_script:
     - mkdir build
