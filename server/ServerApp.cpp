@@ -2073,11 +2073,14 @@ bool ServerApp::AllOrdersReceived() {
 namespace {
     /** Returns true if \a empire has been eliminated by the applicable
       * definition of elimination.  As of this writing, elimination means
-      * having no ships and no planets. */
+      * having no ships and no population on planets. */
     bool EmpireEliminated(int empire_id) {
-          return (Objects().find<Planet>(OwnedVisitor(empire_id)).empty() &&  // no planets
-                  Objects().find<Ship>(OwnedVisitor(empire_id)).empty());     // no ship
-      }
+        for (const auto& planet : Objects().find<Planet>(OwnedVisitor(empire_id))) {
+            if (planet->Populated())
+                return false;
+        }
+        return Objects().find<Ship>(OwnedVisitor(empire_id)).empty();     // no ship
+    }
 
     void GetEmpireFleetsAtSystem(std::map<int, std::set<int>>& empire_fleets, int system_id) {
         empire_fleets.clear();
