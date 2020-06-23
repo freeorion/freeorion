@@ -16,39 +16,31 @@ if(TARGET Cppcheck::cppcheck)
 endif()
 
 if(TARGET ClangFormat::clang-format)
+    list(APPEND CHECK_CPP_FORMAT_SOURCES "")
+
+    get_target_property(TARGET_SOURCES freeorioncommon SOURCES)
+    list(APPEND CHECK_CPP_FORMAT_SOURCES "${TARGET_SOURCES}")
+
+    get_target_property(TARGET_SOURCES freeorionparseobj SOURCES)
+    list(APPEND CHECK_CPP_FORMAT_SOURCES "${TARGET_SOURCES}")
+
+    get_target_property(TARGET_SOURCES freeoriond SOURCES)
+    list(APPEND CHECK_CPP_FORMAT_SOURCES "${TARGET_SOURCES}")
+
+    get_target_property(TARGET_SOURCES freeorionca SOURCES)
+    list(APPEND CHECK_CPP_FORMAT_SOURCES "${TARGET_SOURCES}")
+
+    if(TARGET freeorion)
+        get_target_property(TARGET_SOURCES freeorion SOURCES)
+        list(APPEND CHECK_CPP_FORMAT_SOURCES "${TARGET_SOURCES}")
+    endif()
+
     add_custom_target(check-cpp-format
         ${CMAKE_CURRENT_SOURCE_DIR}/clang-format-report.py
             --config=${CMAKE_CURRENT_SOURCE_DIR}/clang-format
             --clang-format-executable=$<TARGET_FILE:ClangFormat::clang-format>
             --color
-            ${PROJECT_SOURCE_DIR}/client/*.h
-            ${PROJECT_SOURCE_DIR}/client/*.cpp
-            ${PROJECT_SOURCE_DIR}/client/AI/*.h
-            ${PROJECT_SOURCE_DIR}/client/AI/*.cpp
-            ${PROJECT_SOURCE_DIR}/client/human/*.h
-            ${PROJECT_SOURCE_DIR}/client/human/*.cpp
-            ${PROJECT_SOURCE_DIR}/combat/*.h
-            ${PROJECT_SOURCE_DIR}/combat/*.cpp
-            ${PROJECT_SOURCE_DIR}/Empire/*.h
-            ${PROJECT_SOURCE_DIR}/Empire/*.cpp
-            ${PROJECT_SOURCE_DIR}/network/*.h
-            ${PROJECT_SOURCE_DIR}/network/*.cpp
-            ${PROJECT_SOURCE_DIR}/parse/*.h
-            ${PROJECT_SOURCE_DIR}/parse/*.cpp
-            ${PROJECT_SOURCE_DIR}/python/*.h
-            ${PROJECT_SOURCE_DIR}/python/*.cpp
-            ${PROJECT_SOURCE_DIR}/server/*.h
-            ${PROJECT_SOURCE_DIR}/server/*.cpp
-            ${PROJECT_SOURCE_DIR}/test/parse/*.h
-            ${PROJECT_SOURCE_DIR}/test/parse/*.cpp
-            ${PROJECT_SOURCE_DIR}/UI/*.h
-            ${PROJECT_SOURCE_DIR}/UI/*.cpp
-            ${PROJECT_SOURCE_DIR}/UI/CombatReport/*.h
-            ${PROJECT_SOURCE_DIR}/UI/CombatReport/*.cpp
-            ${PROJECT_SOURCE_DIR}/universe/*.h
-            ${PROJECT_SOURCE_DIR}/universe/*.cpp
-            ${PROJECT_SOURCE_DIR}/util/*.h
-            ${PROJECT_SOURCE_DIR}/util/*.cpp
+            ${CHECK_CPP_FORMAT_SOURCES}
         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
         COMMENT "Check C++ for malformatted code"
         USES_TERMINAL
