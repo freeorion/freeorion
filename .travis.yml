@@ -30,7 +30,7 @@ _build_cpp_common: &_build_cpp_common
   after_success:
     - cmake --build . --config Release --target unittest
   before_cache:
-    - ccache --clean
+    - ccache --cleanup
     - ccache --show-stats
 
 _test_python_common: &_test_python_common
