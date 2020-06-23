@@ -111,6 +111,8 @@ jobs:
       <<: *_build_cpp_common
       os: linux
       dist: bionic
+      env:
+        - CACHE_NAME=linux-full
       services:
         - docker
       before_install:
@@ -129,6 +131,8 @@ jobs:
       <<: *_build_cpp_common
       os: linux
       dist: bionic
+      env:
+        - CACHE_NAME=linux-headless
       services:
         - docker
       before_install:
@@ -148,6 +152,8 @@ jobs:
       os: osx
       osx_image: xcode8.3
       compiler: clang
+      env:
+        - CACHE_NAME=macos-full
       before_install:
         - brew install ccache
         - export PATH="/usr/local/opt/ccache/libexec:$PATH"
