@@ -140,12 +140,15 @@ ShipPart::ShipPart() :
 {}
 
 ShipPart::ShipPart(ShipPartClass part_class, double capacity, double stat2,
-                   CommonParams& common_params, const MoreCommonParams& more_common_params,
+                   CommonParams& common_params,
+                   const std::string& name,
+                   const std::string& description,
+                   const std::set<std::string>& exclusions,
                    std::vector<ShipSlotType> mountable_slot_types,
                    const std::string& icon, bool add_standard_capacity_effect,
                    std::unique_ptr<Condition::Condition>&& combat_targets) :
-    m_name(more_common_params.name),
-    m_description(more_common_params.description),
+    m_name(name),
+    m_description(description),
     m_class(part_class),
     m_capacity(capacity),
     m_secondary_stat(stat2),
@@ -156,7 +159,7 @@ ShipPart::ShipPart(ShipPartClass part_class, double capacity, double stat2,
     m_production_meter_consumption(std::move(common_params.production_meter_consumption)),
     m_production_special_consumption(std::move(common_params.production_special_consumption)),
     m_location(std::move(common_params.location)),
-    m_exclusions(more_common_params.exclusions),
+    m_exclusions(exclusions),
     m_icon(icon),
     m_add_standard_capacity_effect(add_standard_capacity_effect),
     m_combat_targets(std::move(combat_targets))

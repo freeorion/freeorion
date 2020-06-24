@@ -84,11 +84,13 @@ ShipHull::ShipHull()
 
 ShipHull::ShipHull(const ShipHullStats& stats,
                    CommonParams&& common_params,
-                   const MoreCommonParams& more_common_params,
+                   const std::string& name,
+                   const std::string& description,
+                   const std::set<std::string>& exclusions,
                    const std::vector<Slot>& slots,
                    const std::string& icon, const std::string& graphic) :
-    m_name(more_common_params.name),
-    m_description(more_common_params.description),
+    m_name(name),
+    m_description(description),
     m_speed(stats.speed),
     m_fuel(stats.fuel),
     m_stealth(stats.stealth),
@@ -100,7 +102,7 @@ ShipHull::ShipHull(const ShipHullStats& stats,
     m_production_meter_consumption(std::move(common_params.production_meter_consumption)),
     m_production_special_consumption(std::move(common_params.production_special_consumption)),
     m_location(std::move(common_params.location)),
-    m_exclusions(more_common_params.exclusions),
+    m_exclusions(exclusions),
     m_graphic(graphic),
     m_icon(icon)
 {

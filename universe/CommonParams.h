@@ -54,21 +54,5 @@ struct FO_COMMON_API CommonParams {
     std::vector<std::unique_ptr<Effect::EffectsGroup>>  effects;
 };
 
-struct MoreCommonParams {
-    MoreCommonParams() :
-        name(),
-        description(),
-        exclusions()
-    {}
-    MoreCommonParams(const std::string& name_, const std::string& description_,
-                     const std::set<std::string>& exclusions_) :
-        name(name_),
-        description(description_),
-        exclusions(exclusions_)
-    {}
-    std::string             name;
-    std::string             description;
-    std::set<std::string>   exclusions;
-};
 
 #endif // _CommonParams_h_

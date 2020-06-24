@@ -36,12 +36,15 @@ namespace {
     void insert_shiphull(std::map<std::string, std::unique_ptr<ShipHull>>& shiphulls,
                          const ShipHullStats& stats,
                          const std::unique_ptr<CommonParams>& common_params,
-                         const MoreCommonParams& more_common_params,
+                         const parse::detail::MoreCommonParams& more_common_params,
                          const boost::optional<std::vector<ShipHull::Slot>>& slots,
                          const std::string& icon, const std::string& graphic)
     {
         auto shiphull = std::make_unique<ShipHull>(
-            stats, std::move(*common_params), more_common_params,
+            stats, std::move(*common_params),
+            more_common_params.name,
+            more_common_params.description,
+            more_common_params.exclusions,
             (slots ? *slots : std::vector<ShipHull::Slot>()),
             icon, graphic);
         shiphulls.emplace(shiphull->Name(), std::move(shiphull));
@@ -115,7 +118,7 @@ namespace {
                 >   common_rules.common
                 >   label(tok.Icon_)    > tok.string
                 >   label(tok.Graphic_) > tok.string)
-                [ _pass = is_unique_(_r1, _1, phoenix::bind(&MoreCommonParams::name, _2)),
+                [ _pass = is_unique_(_r1, _1, phoenix::bind(&parse::detail::MoreCommonParams::name, _2)),
                   insert_shiphull_(_r1, _3,
                                    deconstruct_movable_(_5, _pass),
                                    _2, _4, _6, _7) ]

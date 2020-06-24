@@ -77,7 +77,9 @@ public:
 
     ShipHull(const ShipHullStats& stats,
              CommonParams&& common_params,
-             const MoreCommonParams& more_common_params,
+             const std::string& name,
+             const std::string& description,
+             const std::set<std::string>& exclusions,
              const std::vector<Slot>& slots,
              const std::string& icon, const std::string& graphic);
 
