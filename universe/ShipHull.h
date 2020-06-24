@@ -20,18 +20,18 @@ struct ShipHullStats {
                   float speed_,
                   float stealth_,
                   float structure_,
-                  bool no_default_fuel_effects_,
-                  bool no_default_speed_effects_,
-                  bool no_default_stealth_effects_,
-                  bool no_default_structure_effects_) :
+                  bool default_fuel_effects_,
+                  bool default_speed_effects_,
+                  bool default_stealth_effects_,
+                  bool default_structure_effects_) :
         fuel(fuel_),
         speed(speed_),
         stealth(stealth_),
         structure(structure_),
-        default_fuel_effects(!no_default_fuel_effects_),
-        default_speed_effects(!no_default_speed_effects_),
-        default_stealth_effects(!no_default_stealth_effects_),
-        default_structure_effects(!no_default_structure_effects_)
+        default_fuel_effects(default_fuel_effects_),
+        default_speed_effects(default_speed_effects_),
+        default_stealth_effects(default_stealth_effects_),
+        default_structure_effects(default_structure_effects_)
     {}
 
     float   fuel = 0.0f;

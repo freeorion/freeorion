@@ -99,7 +99,7 @@ namespace {
                 >   matches_[tok.NoDefaultStealthEffect_]   // _6
                 >   label(tok.Structure_)   >   double_rule // _7
                 >   matches_[tok.NoDefaultStructureEffect_])// _8
-                    [ _val = construct<ShipHullStats>(_3, _1, _5, _7, _4, _2, _6, _8) ]
+                    [ _val = construct<ShipHullStats>(_3, _1, _5, _7, !_4, !_2, !_6, !_8) ]
                 ;
 
             slot
