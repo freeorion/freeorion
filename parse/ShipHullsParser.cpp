@@ -26,11 +26,41 @@ namespace std {
     inline ostream& operator<<(ostream& os, const std::map<std::string, std::unique_ptr<ShipHull>>&) { return os; }
     inline ostream& operator<<(ostream& os, const std::pair<const std::string, std::unique_ptr<ShipHull>>&) { return os; }
     inline ostream& operator<<(ostream& os, const ShipHull::Slot&) { return os; }
-    inline ostream& operator<<(ostream& os, const ShipHullStats&) { return os; }
 }
 #endif
 
 namespace {
+struct ShipHullStats {
+    ShipHullStats() = default;
+
+    ShipHullStats(float fuel_,
+                  float speed_,
+                  float stealth_,
+                  float structure_,
+                  bool default_fuel_effects_,
+                  bool default_speed_effects_,
+                  bool default_stealth_effects_,
+                  bool default_structure_effects_) :
+        fuel(fuel_),
+        speed(speed_),
+        stealth(stealth_),
+        structure(structure_),
+        default_fuel_effects(default_fuel_effects_),
+        default_speed_effects(default_speed_effects_),
+        default_stealth_effects(default_stealth_effects_),
+        default_structure_effects(default_structure_effects_)
+    {}
+
+    float   fuel = 0.0f;
+    float   speed = 0.0f;
+    float   stealth = 0.0f;
+    float   structure = 0.0f;
+    bool    default_fuel_effects = true;
+    bool    default_speed_effects = true;
+    bool    default_stealth_effects = true;
+    bool    default_structure_effects = true;
+};
+
     const boost::phoenix::function<parse::detail::is_unique> is_unique_;
 
     void insert_shiphull(std::map<std::string, std::unique_ptr<ShipHull>>& shiphulls,
@@ -41,7 +71,15 @@ namespace {
                          const std::string& icon, const std::string& graphic)
     {
         auto shiphull = std::make_unique<ShipHull>(
-            stats, std::move(*common_params),
+            stats.fuel,
+            stats.speed,
+            stats.stealth,
+            stats.structure,
+            stats.default_fuel_effects,
+            stats.default_speed_effects,
+            stats.default_stealth_effects,
+            stats.default_structure_effects,
+            std::move(*common_params),
             more_common_params.name,
             more_common_params.description,
             more_common_params.exclusions,
