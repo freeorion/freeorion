@@ -42,18 +42,6 @@ struct ShipHullStats {
     bool    default_speed_effects = true;
     bool    default_stealth_effects = true;
     bool    default_structure_effects = true;
-
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int) {
-        ar  & BOOST_SERIALIZATION_NVP(fuel)
-            & BOOST_SERIALIZATION_NVP(speed)
-            & BOOST_SERIALIZATION_NVP(stealth)
-            & BOOST_SERIALIZATION_NVP(structure)
-            & BOOST_SERIALIZATION_NVP(default_fuel_effects)
-            & BOOST_SERIALIZATION_NVP(default_speed_effects)
-            & BOOST_SERIALIZATION_NVP(default_stealth_effects)
-            & BOOST_SERIALIZATION_NVP(default_structure_effects);
-    }
 };
 
 
