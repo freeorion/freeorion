@@ -85,7 +85,9 @@ namespace {
     }
 }
 
-Species::Species(const SpeciesStrings& strings,
+Species::Species(const std::string& name,
+                 const std::string& desc,
+                 const std::string& gameplay_desc,
                  const std::vector<FocusType>& foci,
                  const std::string& preferred_focus,
                  const std::map<PlanetType, PlanetEnvironment>& planet_environments,
@@ -94,9 +96,9 @@ Species::Species(const SpeciesStrings& strings,
                  const SpeciesParams& params,
                  const std::set<std::string>& tags,
                  const std::string& graphic) :
-    m_name(strings.name),
-    m_description(strings.desc),
-    m_gameplay_description(strings.gameplay_desc),
+    m_name(name),
+    m_description(desc),
+    m_gameplay_description(gameplay_desc),
     m_foci(foci),
     m_preferred_focus(preferred_focus),
     m_planet_environments(planet_environments),

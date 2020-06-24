@@ -88,21 +88,6 @@ struct SpeciesParams {
     bool can_produce_ships = false;
 };
 
-/** Used by parser due to limits on number of sub-items per parsed main item. */
-struct SpeciesStrings {
-    SpeciesStrings()
-    {}
-    SpeciesStrings(const std::string& name_, const std::string& desc_,
-                   const std::string& gameplay_desc_) :
-        name(name_),
-        desc(desc_),
-        gameplay_desc(gameplay_desc_)
-    {}
-    std::string name;
-    std::string desc;
-    std::string gameplay_desc;
-};
-
 /** A predefined type of population that can exist on a PopulationCenter.
   * Species have associated sets of EffectsGroups, and various other 
   * properties that affect how the object on which they reside functions.
@@ -111,7 +96,9 @@ struct SpeciesStrings {
 class FO_COMMON_API Species {
 public:
     /** \name Structors */ //@{
-    Species(const SpeciesStrings& strings,
+    Species(const std::string& name,
+            const std::string& desc,
+            const std::string& gameplay_desc,
             const std::vector<FocusType>& foci,
             const std::string& preferred_focus,
             const std::map<PlanetType, PlanetEnvironment>& planet_environments,

@@ -34,6 +34,22 @@ namespace std {
 namespace {
     const boost::phoenix::function<parse::detail::is_unique> is_unique_;
 
+    struct SpeciesStrings {
+        SpeciesStrings()
+        {}
+
+        SpeciesStrings(const std::string& name_, const std::string& desc_,
+                    const std::string& gameplay_desc_) :
+            name(name_),
+            desc(desc_),
+            gameplay_desc(gameplay_desc_)
+        {}
+
+        std::string name;
+        std::string desc;
+        std::string gameplay_desc;
+    };
+
     struct SpeciesStuff {
         SpeciesStuff(const boost::optional<std::vector<FocusType>>& foci_,
                      const boost::optional<std::string>& preferred_focus_,
@@ -63,7 +79,7 @@ namespace {
         bool& pass)
     {
         auto species_ptr = std::make_unique<Species>(
-            strings,
+            strings.name, strings.desc, strings.gameplay_desc,
             (foci_preferred_tags_graphic.foci ? *foci_preferred_tags_graphic.foci : std::vector<FocusType>()),
             (foci_preferred_tags_graphic.preferred_focus ? *foci_preferred_tags_graphic.preferred_focus : std::string()),
             (planet_environments ? *planet_environments : std::map<PlanetType, PlanetEnvironment>()),
