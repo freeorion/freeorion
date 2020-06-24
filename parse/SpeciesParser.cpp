@@ -50,6 +50,21 @@ namespace {
         std::string gameplay_desc;
     };
 
+    struct SpeciesParams {
+        SpeciesParams()
+        {}
+        SpeciesParams(bool playable_, bool native_, bool can_colonize_, bool can_produce_ships_) :
+            playable(playable_),
+            native(native_),
+            can_colonize(can_colonize_),
+            can_produce_ships(can_produce_ships_)
+        {}
+        bool playable = false;
+        bool native = false;
+        bool can_colonize = false;
+        bool can_produce_ships = false;
+    };
+
     struct SpeciesStuff {
         SpeciesStuff(const boost::optional<std::vector<FocusType>>& foci_,
                      const boost::optional<std::string>& preferred_focus_,
@@ -85,7 +100,10 @@ namespace {
             (planet_environments ? *planet_environments : std::map<PlanetType, PlanetEnvironment>()),
             (effects ? OpenEnvelopes(*effects, pass) : std::vector<std::unique_ptr<Effect::EffectsGroup>>()),
             (combat_targets ? (*combat_targets).OpenEnvelope(pass) : nullptr),
-            params,
+            params.playable,
+            params.native,
+            params.can_colonize,
+            params.can_produce_ships,
             foci_preferred_tags_graphic.tags,
             foci_preferred_tags_graphic.graphic);
 

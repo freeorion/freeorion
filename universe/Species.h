@@ -72,22 +72,6 @@ private:
     std::string                                     m_graphic;
 };
 
-/** Used by parser due to limits on number of sub-items per parsed main item. */
-struct SpeciesParams {
-    SpeciesParams()
-    {}
-    SpeciesParams(bool playable_, bool native_, bool can_colonize_, bool can_produce_ships_) :
-        playable(playable_),
-        native(native_),
-        can_colonize(can_colonize_),
-        can_produce_ships(can_produce_ships_)
-    {}
-    bool playable = false;
-    bool native = false;
-    bool can_colonize = false;
-    bool can_produce_ships = false;
-};
-
 /** A predefined type of population that can exist on a PopulationCenter.
   * Species have associated sets of EffectsGroups, and various other 
   * properties that affect how the object on which they reside functions.
@@ -104,7 +88,10 @@ public:
             const std::map<PlanetType, PlanetEnvironment>& planet_environments,
             std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
             std::unique_ptr<Condition::Condition>&& combat_targets,
-            const SpeciesParams& params,
+            bool playable,
+            bool native,
+            bool can_colonize,
+            bool can_produce_ships,
             const std::set<std::string>& tags,
             const std::string& graphic);
 
