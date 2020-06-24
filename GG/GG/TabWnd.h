@@ -254,11 +254,12 @@ public:
         tab. */
     static const std::size_t NO_TAB;
 
-    /** The default width to use for the left and right buttons. */
-    static const X BUTTON_WIDTH;
-
 protected:
     /** \name Accessors */ ///@{
+
+    /** The default width to use for the left and right buttons. */
+    X ButtonWidth() const;
+
     const Button*   LeftButton() const;
     const Button*   RightButton() const;
     //@}

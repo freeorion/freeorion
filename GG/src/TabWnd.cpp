@@ -256,7 +256,6 @@ void TabWnd::TabChanged(std::size_t index, bool signal)
 ////////////////////////////////////////////////
 // static(s)
 const std::size_t TabBar::NO_TAB = TabWnd::NO_WND;
-const X TabBar::BUTTON_WIDTH(10);
 TabBar::TabBar(const std::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/,
                Flags<WndFlag> flags/* = INTERACTIVE*/) :
     Control(X0, Y0, X1, TabHeightFromFont(font), flags),
@@ -283,8 +282,8 @@ void TabBar::CompleteConstruction()
 
     m_left_button = style_factory->NewTabBarLeftButton(m_font, Color(), m_text_color);
     m_right_button = style_factory->NewTabBarRightButton(m_font, Color(), m_text_color);
-    m_left_button->Resize(Pt(BUTTON_WIDTH, Height()));
-    m_right_button->Resize(Pt(BUTTON_WIDTH, Height()));
+    m_left_button->Resize(Pt(ButtonWidth(), Height()));
+    m_right_button->Resize(Pt(ButtonWidth(), Height()));
     m_left_right_button_layout->SetMinimumColumnWidth(1, m_left_button->Width());
     m_left_right_button_layout->SetMinimumColumnWidth(2, m_right_button->Width());
     m_left_right_button_layout->Add(m_left_button, 0, 1);
@@ -312,7 +311,7 @@ Pt TabBar::MinUsableSize() const
         if (y < button_min_y)
             y = button_min_y;
     }
-    return Pt(4 * BUTTON_WIDTH, y);
+    return Pt(4 * ButtonWidth(), y);
 }
 
 bool TabBar::Empty() const
@@ -416,6 +415,9 @@ void TabBar::SetCurrentTab(std::size_t index)
     m_tabs->SetCheck(index);
     TabChanged(index, false);
 }
+
+X TabBar::ButtonWidth() const
+{ return static_cast<X>( m_font->SpaceWidth() * 2.5 ); }
 
 const Button* TabBar::LeftButton() const
 { return m_left_button.get(); }
