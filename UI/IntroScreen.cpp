@@ -47,7 +47,7 @@ namespace {
 /** Displays scrolling credits. */
 class CreditsWnd : public GG::Wnd {
 public:
-    CreditsWnd(GG::X x, GG::Y y, GG::X w, GG::Y h, const XMLElement &credits, int cx, int cy, int cw, int ch, int co);
+    CreditsWnd(GG::X x, GG::Y y, GG::X w, GG::Y h, int cx, int cy, int cw, int ch, int co);
     ~CreditsWnd();
 
     void Render() override;
@@ -63,10 +63,10 @@ public:
     }
 
 private:
-    void DrawCredits(GG::X x1, GG::Y y1, GG::X x2, GG::Y y2, int transparency);
+    void DrawCredits(GG::X x1, GG::Y y1, GG::X x2, GG::Y y2);
     void OnExit();
 
-    XMLElement                  m_credits;
+    std::string                 m_credits;
     int                         m_cx, m_cy, m_cw, m_ch, m_co;
     int                         m_start_time;
     int                         m_scroll_offset = 0;
@@ -76,9 +76,8 @@ private:
     std::shared_ptr<GG::Font>   m_font;
 };
 
-CreditsWnd::CreditsWnd(GG::X x, GG::Y y, GG::X w, GG::Y h, const XMLElement &credits, int cx, int cy, int cw, int ch, int co) :
+CreditsWnd::CreditsWnd(GG::X x, GG::Y y, GG::X w, GG::Y h, int cx, int cy, int cw, int ch, int co) :
     GG::Wnd(x, y, w, h, GG::INTERACTIVE | GG::MODAL),
-    m_credits(credits),
     m_cx(cx),
     m_cy(cy),
     m_cw(cw),
@@ -91,6 +90,60 @@ CreditsWnd::CreditsWnd(GG::X x, GG::Y y, GG::X w, GG::Y h, const XMLElement &cre
     /** Handle app resizing by closing the credits window. */
     GG::GUI::GetGUI()->WindowResizedSignal.connect(
         boost::bind(&CreditsWnd::OnExit, this));
+
+    XMLDoc doc;
+    boost::filesystem::ifstream ifs(GetResourceDir() / "credits.xml");
+    doc.ReadDoc(ifs);
+    ifs.close();
+
+    if (!doc.root_node.ContainsChild("CREDITS"))
+        return;
+
+    auto credits_node = doc.root_node.Child("CREDITS");
+
+    std::ostringstream credits;
+
+    auto group_format = boost::format("%1%\n\n");
+    auto nick_format = boost::format(" <rgba 153 153 153 255>(%1%)</rgba>");
+    auto task_format = boost::format(" - <rgba 204 204 204 255>%1%</rgba>");
+    auto resource_format = boost::format("%1% - <rgba 153 153 153 255>%2%</rgba>\n%3% %4%%5%\n");
+    auto source_format = boost::format(" - <rgba 153 153 153 255>%1%</rgba>");
+    auto note_format = boost::format("<rgba 204 204 204 255>(%1%)\n");
+
+    for (const XMLElement& group : credits_node.children) {
+        if (0 == group.Tag().compare("GROUP")) {
+            credits << group_format % group.attributes.at("name");
+            for (const XMLElement& item : group.children) {
+                if (0 == item.Tag().compare("PERSON")) {
+                    if (item.attributes.count("name"))
+                        credits << item.attributes.at("name");
+                    if (item.attributes.count("nick") && item.attributes.at("nick").length() > 0)
+                        credits << nick_format % item.attributes.at("nick");
+                    if (item.attributes.count("task"))
+                        credits << task_format % item.attributes.at("task");
+                }
+
+                if (0 == item.Tag().compare("RESOURCE")) {
+                    credits << resource_format
+                        % item.attributes.at("author")
+                        % item.attributes.at("title")
+                        % UserString("INTRO_CREDITS_LICENSE")
+                        % item.attributes.at("license")
+                        % ((item.attributes.count("source"))
+                            ? boost::str(source_format % item.attributes.at("source"))
+                            : std::string{});
+                    if (item.attributes.count("notes"))
+                        credits << note_format % item.attributes.at("notes");
+                }
+
+                credits << "\n";
+            }
+
+            credits << "\n\n";
+        }
+    }
+
+    m_credits = credits.str();
 }
 
 CreditsWnd::~CreditsWnd() {
@@ -107,68 +160,21 @@ void CreditsWnd::OnExit() {
     m_done = true;
 }
 
-void CreditsWnd::DrawCredits(GG::X x1, GG::Y y1, GG::X x2, GG::Y y2, int transparency) {
+void CreditsWnd::DrawCredits(GG::X x1, GG::Y y1, GG::X x2, GG::Y y2) {
     GG::Flags<GG::TextFormat> format = GG::FORMAT_CENTER | GG::FORMAT_TOP;
 
     //offset starts with 0, credits are place by transforming the viewport
     GG::Y offset(0);
 
     //start color is white (name), this color is valid outside the rgba tags
-    glColor(GG::Clr(transparency, transparency, transparency, 255));
+    glColor(GG::Clr(255, 255, 255, 255));
 
-    std::string credit;
-    for (const XMLElement& group : m_credits.children) {
-        if (0 == group.Tag().compare("GROUP")) {
-            for (const XMLElement& item : group.children) {
-                credit = "";
-
-                if (0 == item.Tag().compare("PERSON")) {    
-                    if (item.attributes.count("name"))
-                        credit += item.attributes.at("name");
-                    if (item.attributes.count("nick") && item.attributes.at("nick").length() > 0) {
-                        credit += " <rgba 153 153 153 " + std::to_string(transparency) +">(";
-                        credit += item.attributes.at("nick");
-                        credit += ")</rgba>";
-                    }
-                    if (item.attributes.count("task") && item.attributes.at("task").length() > 0) {
-                        credit += " - <rgba 204 204 204 " + std::to_string(transparency) +">";
-                        credit += item.attributes.at("task");
-                        credit += "</rgba>";
-                    }
-                }
-
-                if (0 == item.Tag().compare("RESOURCE")) {
-                    if (item.attributes.count("author"))
-                        credit += item.attributes.at("author");
-                    if (item.attributes.count("title")) {
-                        credit += "<rgba 153 153 153 " + std::to_string(transparency) + "> - ";
-                        credit += item.attributes.at("title");
-                        credit += "</rgba>\n";
-                    }
-                    if (item.attributes.count("license"))
-                        credit += UserString("INTRO_CREDITS_LICENSE") + " " + item.attributes.at("license");
-                    if (item.attributes.count("source")) {
-                        credit += "<rgba 153 153 153 " + std::to_string(transparency) + "> - ";
-                        credit += item.attributes.at("source");
-                        credit += "</rgba>\n";
-                    }
-                    if (item.attributes.count("notes") && item.attributes.at("notes").length() > 0) {
-                        credit += "<rgba 204 204 204 " + std::to_string(transparency) + ">(";
-                        credit += item.attributes.at("notes");
-                        credit += ")</rgba>";
-                    }
-                }
-
-                std::vector<std::shared_ptr<GG::Font::TextElement>> text_elements =
-                    m_font->ExpensiveParseFromTextToTextElements(credit, format);
-                std::vector<GG::Font::LineData> lines =
-                    m_font->DetermineLines(credit, format, x2 - x1, text_elements);
-                m_font->RenderText(GG::Pt(x1, y1 + offset), GG::Pt(x2, y2), credit, format, lines);
-                offset += m_font->TextExtent(lines).y + 2;
-            }
-            offset += m_font->Lineskip() + 2;
-        }
-    }
+    std::vector<std::shared_ptr<GG::Font::TextElement>> text_elements =
+        m_font->ExpensiveParseFromTextToTextElements(m_credits, format);
+    std::vector<GG::Font::LineData> lines =
+        m_font->DetermineLines(m_credits, format, x2 - x1, text_elements);
+    m_font->RenderText(GG::Pt(x1, y1 + offset), GG::Pt(x2, y2), m_credits, format, lines);
+    offset = m_font->TextExtent(lines).y;
     //store complete height for self destruction
     m_credits_height = Value(offset);
 }
@@ -181,7 +187,7 @@ void CreditsWnd::Render() {
         // compile credits
         m_display_list_id = glGenLists(1);
         glNewList(m_display_list_id, GL_COMPILE);
-        DrawCredits(ul.x + m_cx, ul.y + m_cy, ul.x + m_cx + m_cw, ul.y + m_cy + m_ch, 255);
+        DrawCredits(ul.x + m_cx, ul.y + m_cy, ul.x + m_cx + m_cw, ul.y + m_cy + m_ch);
         glEndList();
     }
     //time passed
@@ -206,7 +212,7 @@ void CreditsWnd::Render() {
         glCallList(m_display_list_id);
     } else {
         // draw credits directly
-        DrawCredits(ul.x + m_cx, ul.y + m_cy, ul.x + m_cx + m_cw, ul.y + m_cy + m_ch, 255);
+        DrawCredits(ul.x + m_cx, ul.y + m_cy, ul.x + m_cx + m_cw, ul.y + m_cy + m_ch);
     }
 
     glPopMatrix();
@@ -365,16 +371,6 @@ void IntroScreen::OnWebsite()
 { HumanClientApp::GetApp()->OpenURL("http://freeorion.org"); }
 
 void IntroScreen::OnCredits() {
-    XMLDoc doc;
-    boost::filesystem::ifstream ifs(GetResourceDir() / "credits.xml");
-    doc.ReadDoc(ifs);
-    ifs.close();
-
-
-    if (!doc.root_node.ContainsChild("CREDITS"))
-        return;
-
-    XMLElement credits = doc.root_node.Child("CREDITS");
     // only the area between the upper and lower line of the splash screen should be darkend
     // if we use another splash screen we have the change the following values
     GG::Y nUpperLine = ( 79 * GG::GUI::GetGUI()->AppHeight()) / 768;
@@ -384,7 +380,6 @@ void IntroScreen::OnCredits() {
 
     auto credits_wnd = GG::Wnd::Create<CreditsWnd>(
         GG::X0, nUpperLine, GG::GUI::GetGUI()->AppWidth(), nLowerLine-nUpperLine,
-        credits,
         credit_side_pad, 0, Value(m_menu->Left()) - credit_side_pad,
         Value(nLowerLine-nUpperLine), Value((nLowerLine-nUpperLine))/2);
 
