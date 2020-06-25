@@ -160,7 +160,7 @@ namespace parse { namespace detail {
         enqueue_location.name("Enqueue Location");
         exclusions.name("Exclusions");
         more_common.name("More Common Parameters");
-        common.name("Common Paramaters");
+        common.name("Common Parameters");
         consumption.name("Consumption");
         consumable_special.name("Consumable Special");
         consumable_meter.name("Consumable Meter");
