@@ -101,53 +101,49 @@ CreditsWnd::CreditsWnd(GG::X x, GG::Y y, GG::X w, GG::Y h, int cx, int cy, int c
 
     auto credits_node = doc.root_node.Child("CREDITS");
 
+    std::ostringstream credits;
+
+    auto group_format = boost::format("%1%\n\n");
+    auto nick_format = boost::format(" <rgba 153 153 153 255>(%1%)</rgba>");
+    auto task_format = boost::format(" - <rgba 204 204 204 255>%1%</rgba>");
+    auto resource_format = boost::format("%1% - <rgba 153 153 153 255>%2%</rgba>\n%3% %4%%5%\n");
+    auto source_format = boost::format(" - <rgba 153 153 153 255>%1%</rgba>");
+    auto note_format = boost::format("<rgba 204 204 204 255>(%1%)\n");
+
     for (const XMLElement& group : credits_node.children) {
         if (0 == group.Tag().compare("GROUP")) {
-            m_credits += group.attributes.at("name") + "\n\n";
+            credits << group_format % group.attributes.at("name");
             for (const XMLElement& item : group.children) {
-                if (0 == item.Tag().compare("PERSON")) {    
+                if (0 == item.Tag().compare("PERSON")) {
                     if (item.attributes.count("name"))
-                        m_credits += item.attributes.at("name");
-                    if (item.attributes.count("nick") && item.attributes.at("nick").length() > 0) {
-                        m_credits += " <rgba 153 153 153 255>(";
-                        m_credits += item.attributes.at("nick");
-                        m_credits += ")</rgba>";
-                    }
-                    if (item.attributes.count("task") && item.attributes.at("task").length() > 0) {
-                        m_credits += " - <rgba 204 204 204 255>";
-                        m_credits += item.attributes.at("task");
-                        m_credits += "</rgba>";
-                    }
+                        credits << item.attributes.at("name");
+                    if (item.attributes.count("nick") && item.attributes.at("nick").length() > 0)
+                        credits << nick_format % item.attributes.at("nick");
+                    if (item.attributes.count("task"))
+                        credits << task_format % item.attributes.at("task");
                 }
 
                 if (0 == item.Tag().compare("RESOURCE")) {
-                    if (item.attributes.count("author"))
-                        m_credits += item.attributes.at("author");
-                    if (item.attributes.count("title")) {
-                        m_credits += "<rgba 153 153 153 255> - ";
-                        m_credits += item.attributes.at("title");
-                        m_credits += "</rgba>\n";
-                    }
-                    if (item.attributes.count("license"))
-                        m_credits += UserString("INTRO_CREDITS_LICENSE") + " " + item.attributes.at("license");
-                    if (item.attributes.count("source")) {
-                        m_credits += "<rgba 153 153 153 255> - ";
-                        m_credits += item.attributes.at("source");
-                        m_credits += "</rgba>\n";
-                    }
-                    if (item.attributes.count("notes") && item.attributes.at("notes").length() > 0) {
-                        m_credits += "<rgba 204 204 204 255>(";
-                        m_credits += item.attributes.at("notes");
-                        m_credits += ")</rgba>";
-                    }
+                    credits << resource_format
+                        % item.attributes.at("author")
+                        % item.attributes.at("title")
+                        % UserString("INTRO_CREDITS_LICENSE")
+                        % item.attributes.at("license")
+                        % ((item.attributes.count("source"))
+                            ? boost::str(source_format % item.attributes.at("source"))
+                            : std::string{});
+                    if (item.attributes.count("notes"))
+                        credits << note_format % item.attributes.at("notes");
                 }
 
-                m_credits += "\n";
+                credits << "\n";
             }
 
-            m_credits += "\n\n";
+            credits << "\n\n";
         }
     }
+
+    m_credits = credits.str();
 }
 
 CreditsWnd::~CreditsWnd() {
