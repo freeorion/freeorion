@@ -549,20 +549,6 @@ ProductionQueue::Element::Element(ProductionItem item_, int empire_id_,
     uuid(uuid_)
 {}
 
-ProductionQueue::Element::Element(BuildType build_type, std::string name, int empire_id_,
-                                  boost::uuids::uuid uuid_, int ordered_,
-                                  int remaining_, int blocksize_, int location_, bool paused_,
-                                  bool allowed_imperial_stockpile_use_) :
-    Element(ProductionItem(build_type, name), empire_id_, uuid_, ordered_, remaining_, blocksize_, location_, paused_, allowed_imperial_stockpile_use_)
-{}
-
-ProductionQueue::Element::Element(BuildType build_type, int design_id, int empire_id_,
-                                  boost::uuids::uuid uuid_, int ordered_,
-                                  int remaining_, int blocksize_, int location_, bool paused_,
-                                  bool allowed_imperial_stockpile_use_) :
-    Element(ProductionItem(build_type, design_id), empire_id_, uuid_, ordered_, remaining_, blocksize_, location_, paused_, allowed_imperial_stockpile_use_)
-{}
-
 std::string ProductionQueue::Element::Dump() const {
     std::string retval = "ProductionQueue::Element (" + item.Dump() + ") (" +
         std::to_string(blocksize) + ") x" + std::to_string(ordered) + " ";
