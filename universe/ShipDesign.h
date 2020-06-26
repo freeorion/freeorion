@@ -19,12 +19,12 @@ FO_COMMON_API extern const int INVALID_GAME_TURN;
 /** ParsedShipDesign holds the results of a parsed ship design which can be
     converted to a ShipDesign. */
 struct FO_COMMON_API ParsedShipDesign {
-    ParsedShipDesign(const std::string& name, const std::string& description,
-                     int designed_on_turn, int designed_by_empire, const std::string& hull,
-                     const std::vector<std::string>& parts,
-                     const std::string& icon, const std::string& model,
+    ParsedShipDesign(std::string&& name, std::string&& description,
+                     int designed_on_turn, int designed_by_empire,
+                     std::string&& hull, std::vector<std::string>&& parts,
+                     std::string&& icon, std::string&& model,
                      bool name_desc_in_stringtable = false, bool monster = false,
-                     const boost::uuids::uuid& uuid = boost::uuids::nil_uuid());
+                     boost::uuids::uuid uuid = boost::uuids::nil_uuid());
 
     std::string                 m_name;
     std::string                 m_description;
@@ -71,12 +71,12 @@ public:
         with a empty "" hull.
     */
     ShipDesign(const boost::optional<std::invalid_argument>& should_throw,
-               const std::string& name, const std::string& description,
-               int designed_on_turn, int designed_by_empire, const std::string& hull,
-               const std::vector<std::string>& parts,
-               const std::string& icon, const std::string& model,
+               std::string name, std::string description,
+               int designed_on_turn, int designed_by_empire, std::string hull,
+               std::vector<std::string> parts,
+               std::string icon, std::string model,
                bool name_desc_in_stringtable = false, bool monster = false,
-               const boost::uuids::uuid& uuid = boost::uuids::nil_uuid());
+               boost::uuids::uuid uuid = boost::uuids::nil_uuid());
 
     /** Convert a parsed ship design and do any required verification. */
     ShipDesign(const ParsedShipDesign& design);

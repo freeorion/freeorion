@@ -27,14 +27,15 @@ namespace std {
 
 namespace {
     void insert_ship_design(boost::optional<std::unique_ptr<ParsedShipDesign>>& maybe_design,
-                            const std::string& name, const std::string& description,
-                            const std::string& hull, const std::vector<std::string>& parts,
-                            const std::string& icon, const std::string& model,
-                            bool name_desc_in_stringtable, const boost::uuids::uuid& uuid)
+                            std::string& name, std::string& description,
+                            std::string& hull, std::vector<std::string>& parts,
+                            std::string& icon, std::string& model,
+                            bool name_desc_in_stringtable, boost::uuids::uuid uuid)
     {
         auto design = std::make_unique<ParsedShipDesign>(
-            name, description, 0, ALL_EMPIRES, hull, parts, icon, model,
-            name_desc_in_stringtable, false, uuid);
+            std::move(name), std::move(description), 0, ALL_EMPIRES,
+            std::move(hull), std::move(parts), std::move(icon),
+            std::move(model), name_desc_in_stringtable, false, std::move(uuid));
 
         maybe_design = std::move(design);
     };

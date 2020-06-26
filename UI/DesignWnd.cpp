@@ -3878,11 +3878,11 @@ public:
         {}
 
         /** Return the text a displayed. */
-        std::string DisplayText() const
+        const std::string& DisplayText() const
         { return m_is_in_stringtable ? UserString(m_text) : m_text; }
 
         /** Return the text as stored. */
-        std::string StoredString() const
+        const std::string& StoredString() const
         { return m_text; }
 
         bool IsInStringtable() const
@@ -3904,7 +3904,7 @@ public:
     /** If editing a saved design return a ShipDesign* otherwise boost::none. */
     boost::optional<const ShipDesign*> EditingSavedDesign() const;
 
-    const std::vector<std::string>      Parts() const;              //!< returns vector of names of parts in slots of current shown design.  empty slots are represented with empty stri
+    std::vector<std::string>            Parts() const;              //!< returns vector of names of parts in slots of current shown design.  empty slots are represented with empty stri
     const std::string&                  Hull() const;               //!< returns name of hull of current shown design
     bool                                IsDesignNameValid() const;  //!< checks design name validity
     /** Return a validated name and description.  If the design is a saved design then either both
@@ -3957,7 +3957,7 @@ public:
 
     void ClearParts();                                               //!< removes all parts from design.  hull is not altered
     /** Remove parts called \p part_name*/
-    void            ClearPart(const std::string& part_name);
+    void ClearPart(const std::string& part_name);
 
     /** Set the design hull \p hull_name, displaying appropriate background image and creating
         appropriate SlotControls.  If \p signal is false do not emit the the
@@ -4150,14 +4150,15 @@ boost::optional<const ShipDesign*> DesignWnd::MainPanel::EditingCurrentDesign() 
     return maybe_design;
 }
 
-const std::vector<std::string> DesignWnd::MainPanel::Parts() const {
+std::vector<std::string> DesignWnd::MainPanel::Parts() const {
     std::vector<std::string> retval;
+    retval.reserve(m_slots.size());
     for (const auto& slot : m_slots) {
         const ShipPart* part = slot->GetPart();
         if (part)
-            retval.push_back(part->Name());
+            retval.emplace_back(part->Name());
         else
-            retval.push_back("");
+            retval.emplace_back("");
     }
     return retval;
 }
@@ -4170,7 +4171,7 @@ const std::string& DesignWnd::MainPanel::Hull() const {
 }
 
 bool DesignWnd::MainPanel::IsDesignNameValid() const {
-    // All whitespace probably shouldn't be OK either.
+    // TODO: All whitespace probably shouldn't be OK either.
     return !m_design_name->Text().empty();
 }
 
@@ -4838,9 +4839,9 @@ std::string DesignWnd::MainPanel::GetCleanDesignDump(const ShipDesign* ship_desi
 }
 
 void DesignWnd::MainPanel::RefreshIncompleteDesign() const {
-    const auto name_and_description = ValidatedNameAndDescription();
-    const auto& name = name_and_description.first;
-    const auto& description = name_and_description.second;
+    auto name_and_description = ValidatedNameAndDescription();
+    auto& name = name_and_description.first;
+    auto& description = name_and_description.second;
 
     if (ShipDesign* design = m_incomplete_design.get()) {
         if (design->Hull() ==             Hull() &&
@@ -4854,12 +4855,10 @@ void DesignWnd::MainPanel::RefreshIncompleteDesign() const {
     }
 
     // assemble and check info for new design
-    const std::string& hull =           Hull();
-    std::vector<std::string> parts =    Parts();
-
+    const std::string& hull = Hull();
     const std::string& icon = m_hull ? m_hull->Icon() : EMPTY_STRING;
 
-    const auto uuid = boost::uuids::random_generator()();
+    auto uuid = boost::uuids::random_generator()();
 
     // update stored design
     m_incomplete_design.reset();
@@ -4870,8 +4869,8 @@ void DesignWnd::MainPanel::RefreshIncompleteDesign() const {
             std::invalid_argument(""),
             name.StoredString(), description.StoredString(),
             CurrentTurn(), ClientApp::GetApp()->EmpireID(),
-            hull, parts, icon, "", name.IsInStringtable(),
-            false, uuid);
+            hull, Parts(), icon, "", name.IsInStringtable(),
+            false, std::move(uuid));
     } catch (const std::invalid_argument& e) {
         ErrorLogger() << "DesignWnd::MainPanel::RefreshIncompleteDesign " << e.what();
     }

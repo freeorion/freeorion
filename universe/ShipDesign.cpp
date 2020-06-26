@@ -91,23 +91,20 @@ CommonParams::~CommonParams() {}
 // ParsedShipDesign     //
 /////////////////////////////////////
 ParsedShipDesign::ParsedShipDesign(
-    const std::string& name, const std::string& description,
-    int designed_on_turn, int designed_by_empire,
-    const std::string& hull,
-    const std::vector<std::string>& parts,
-    const std::string& icon, const std::string& model,
-    bool name_desc_in_stringtable, bool monster,
-    const boost::uuids::uuid& uuid) :
-    m_name(name),
-    m_description(description),
-    m_uuid(uuid),
+    std::string&& name, std::string&& description, int designed_on_turn,
+    int designed_by_empire, std::string&& hull, std::vector<std::string>&& parts,
+    std::string&& icon, std::string&& model, bool name_desc_in_stringtable,
+    bool monster, boost::uuids::uuid uuid) :
+    m_name(std::move(name)),
+    m_description(std::move(description)),
+    m_uuid(std::move(uuid)),
     m_designed_on_turn(designed_on_turn),
     m_designed_by_empire(designed_by_empire),
-    m_hull(hull),
-    m_parts(parts),
+    m_hull(std::move(hull)),
+    m_parts(std::move(parts)),
     m_is_monster(monster),
-    m_icon(icon),
-    m_3D_model(model),
+    m_icon(std::move(icon)),
+    m_3D_model(std::move(model)),
     m_name_desc_in_stringtable(name_desc_in_stringtable)
 {}
 
@@ -119,22 +116,22 @@ ShipDesign::ShipDesign() :
 {}
 
 ShipDesign::ShipDesign(const boost::optional<std::invalid_argument>& should_throw,
-                       const std::string& name, const std::string& description,
-                       int designed_on_turn, int designed_by_empire, const std::string& hull,
-                       const std::vector<std::string>& parts,
-                       const std::string& icon, const std::string& model,
+                       std::string name, std::string description,
+                       int designed_on_turn, int designed_by_empire,
+                       std::string hull, std::vector<std::string> parts,
+                       std::string icon, std::string model,
                        bool name_desc_in_stringtable, bool monster,
-                       const boost::uuids::uuid& uuid /*= boost::uuids::nil_uuid()*/) :
-    m_name(name),
-    m_description(description),
-    m_uuid(uuid),
+                       boost::uuids::uuid uuid) :
+    m_name(std::move(name)),
+    m_description(std::move(description)),
+    m_uuid(std::move(uuid)),
     m_designed_on_turn(designed_on_turn),
     m_designed_by_empire(designed_by_empire),
-    m_hull(hull),
-    m_parts(parts),
+    m_hull(std::move(hull)),
+    m_parts(std::move(parts)),
     m_is_monster(monster),
-    m_icon(icon),
-    m_3D_model(model),
+    m_icon(std::move(icon)),
+    m_3D_model(std::move(model)),
     m_name_desc_in_stringtable(name_desc_in_stringtable)
 {
     // Either force a valid design and log about it or just throw std::invalid_argument
