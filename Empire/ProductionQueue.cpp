@@ -553,32 +553,14 @@ ProductionQueue::Element::Element(BuildType build_type, std::string name, int em
                                   boost::uuids::uuid uuid_, int ordered_,
                                   int remaining_, int blocksize_, int location_, bool paused_,
                                   bool allowed_imperial_stockpile_use_) :
-    item(build_type, name),
-    empire_id(empire_id_),
-    ordered(ordered_),
-    blocksize(blocksize_),
-    remaining(remaining_),
-    location(location_),
-    blocksize_memory(blocksize_),
-    paused(paused_),
-    allowed_imperial_stockpile_use(allowed_imperial_stockpile_use_),
-    uuid(uuid_)
+    Element(ProductionItem(build_type, name), empire_id_, uuid_, ordered_, remaining_, blocksize_, location_, paused_, allowed_imperial_stockpile_use_)
 {}
 
 ProductionQueue::Element::Element(BuildType build_type, int design_id, int empire_id_,
                                   boost::uuids::uuid uuid_, int ordered_,
                                   int remaining_, int blocksize_, int location_, bool paused_,
                                   bool allowed_imperial_stockpile_use_) :
-    item(build_type, design_id),
-    empire_id(empire_id_),
-    ordered(ordered_),
-    blocksize(blocksize_),
-    remaining(remaining_),
-    location(location_),
-    blocksize_memory(blocksize_),
-    paused(paused_),
-    allowed_imperial_stockpile_use(allowed_imperial_stockpile_use_),
-    uuid(uuid_)
+    Element(ProductionItem(build_type, design_id), empire_id_, uuid_, ordered_, remaining_, blocksize_, location_, paused_, allowed_imperial_stockpile_use_)
 {}
 
 std::string ProductionQueue::Element::Dump() const {
