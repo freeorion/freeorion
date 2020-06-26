@@ -98,7 +98,7 @@ std::string EmpireManager::DumpDiplomacy() const {
     }
     retval += "Diplomatic Messages:\n";
     for (const auto& message : m_diplomatic_messages) {
-        if (message.second.GetType() == DiplomaticMessage::INVALID_DIPLOMATIC_MESSAGE_TYPE)
+        if (message.second.GetType() == DiplomaticMessage::Type::INVALID)
             continue;   // don't print non-messages and pollute the log files...
         retval += "From: " + std::to_string(message.first.first)
                + " to: " + std::to_string(message.first.second)
@@ -188,7 +188,7 @@ std::set<int> EmpireManager::GetEmpireIDsWithDiplomaticStatusWithEmpire(
 bool EmpireManager::DiplomaticMessageAvailable(int sender_id, int recipient_id) const {
     auto it = m_diplomatic_messages.find({sender_id, recipient_id});
     return it != m_diplomatic_messages.end() &&
-           it->second.GetType() != DiplomaticMessage::INVALID_DIPLOMATIC_MESSAGE_TYPE;
+           it->second.GetType() != DiplomaticMessage::Type::INVALID;
 }
 
 const DiplomaticMessage& EmpireManager::GetDiplomaticMessage(int sender_id, int recipient_id) const {
@@ -221,10 +221,10 @@ void EmpireManager::SetDiplomaticMessage(const DiplomaticMessage& message) {
 void EmpireManager::RemoveDiplomaticMessage(int sender_id, int recipient_id) {
     auto it = m_diplomatic_messages.find({sender_id, recipient_id});
     bool changed = (it != m_diplomatic_messages.end()) &&
-                   (it->second.GetType() != DiplomaticMessage::INVALID_DIPLOMATIC_MESSAGE_TYPE);
+                   (it->second.GetType() != DiplomaticMessage::Type::INVALID);
 
     m_diplomatic_messages[{sender_id, recipient_id}] =
-        DiplomaticMessage(sender_id, recipient_id, DiplomaticMessage::INVALID_DIPLOMATIC_MESSAGE_TYPE);
+        DiplomaticMessage(sender_id, recipient_id, DiplomaticMessage::Type::INVALID);
 
     // if there already was a message, and it wasn't already a non-message, notify about change
     if (changed)
@@ -244,7 +244,7 @@ void EmpireManager::HandleDiplomaticMessage(const DiplomaticMessage& message) {
     //bool message_from_sender_to_recipient_available = DiplomaticMessageAvailable(sender_empire_id, recipient_empire_id);
 
     switch (message.GetType()) {
-    case DiplomaticMessage::WAR_DECLARATION: {
+    case DiplomaticMessage::Type::WAR_DECLARATION: {
         if (diplo_status == DIPLO_PEACE) {
             // cancels any previous messages, sets empires at war
             RemoveDiplomaticMessage(sender_empire_id, recipient_empire_id);
@@ -254,13 +254,13 @@ void EmpireManager::HandleDiplomaticMessage(const DiplomaticMessage& message) {
         break;
     }
 
-    case DiplomaticMessage::PEACE_PROPOSAL: {
+    case DiplomaticMessage::Type::PEACE_PROPOSAL: {
         if (diplo_status == DIPLO_WAR && !message_from_recipient_to_sender_available) {
             SetDiplomaticMessage(message);
 
         } else if (diplo_status == DIPLO_WAR && message_from_recipient_to_sender_available) {
             if (existing_message_from_recipient_to_sender.GetType() ==
-                DiplomaticMessage::PEACE_PROPOSAL)
+                DiplomaticMessage::Type::PEACE_PROPOSAL)
             {
                 // somehow multiple peace proposals sent by players to eachother
                 // cancel and remove
@@ -272,9 +272,9 @@ void EmpireManager::HandleDiplomaticMessage(const DiplomaticMessage& message) {
         break;
     }
 
-    case DiplomaticMessage::ACCEPT_PEACE_PROPOSAL: {
+    case DiplomaticMessage::Type::ACCEPT_PEACE_PROPOSAL: {
         if (message_from_recipient_to_sender_available &&
-            existing_message_from_recipient_to_sender.GetType() == DiplomaticMessage::PEACE_PROPOSAL)
+            existing_message_from_recipient_to_sender.GetType() == DiplomaticMessage::Type::PEACE_PROPOSAL)
         {
             // one player proposed peace and the other accepted
             RemoveDiplomaticMessage(recipient_empire_id, sender_empire_id);
@@ -284,13 +284,13 @@ void EmpireManager::HandleDiplomaticMessage(const DiplomaticMessage& message) {
         break;
     }
 
-    case DiplomaticMessage::ALLIES_PROPOSAL: {
+    case DiplomaticMessage::Type::ALLIES_PROPOSAL: {
         if (diplo_status == DIPLO_PEACE && !message_from_recipient_to_sender_available) {
             SetDiplomaticMessage(message);
 
         } else if (diplo_status == DIPLO_PEACE && message_from_recipient_to_sender_available) {
             if (existing_message_from_recipient_to_sender.GetType() ==
-                DiplomaticMessage::ALLIES_PROPOSAL)
+                DiplomaticMessage::Type::ALLIES_PROPOSAL)
             {
                 // somehow multiple allies proposals sent by players to eachother
                 // cancel and remove
@@ -302,9 +302,9 @@ void EmpireManager::HandleDiplomaticMessage(const DiplomaticMessage& message) {
         break;
     }
 
-    case DiplomaticMessage::ACCEPT_ALLIES_PROPOSAL: {
+    case DiplomaticMessage::Type::ACCEPT_ALLIES_PROPOSAL: {
         if (message_from_recipient_to_sender_available &&
-            existing_message_from_recipient_to_sender.GetType() == DiplomaticMessage::ALLIES_PROPOSAL)
+            existing_message_from_recipient_to_sender.GetType() == DiplomaticMessage::Type::ALLIES_PROPOSAL)
         {
             // one player proposed alliance and the other accepted
             RemoveDiplomaticMessage(recipient_empire_id, sender_empire_id);
@@ -314,7 +314,7 @@ void EmpireManager::HandleDiplomaticMessage(const DiplomaticMessage& message) {
         break;
     }
 
-    case DiplomaticMessage::END_ALLIANCE_DECLARATION: {
+    case DiplomaticMessage::Type::END_ALLIANCE_DECLARATION: {
         if (diplo_status == DIPLO_ALLIED) {
             // cancels any previous messages, sets empires to peace
             RemoveDiplomaticMessage(sender_empire_id, recipient_empire_id);
@@ -324,12 +324,12 @@ void EmpireManager::HandleDiplomaticMessage(const DiplomaticMessage& message) {
         break;
     }
 
-    case DiplomaticMessage::CANCEL_PROPOSAL: {
+    case DiplomaticMessage::Type::CANCEL_PROPOSAL: {
         RemoveDiplomaticMessage(sender_empire_id, recipient_empire_id);
         break;
     }
 
-    case DiplomaticMessage::REJECT_PROPOSAL: {
+    case DiplomaticMessage::Type::REJECT_PROPOSAL: {
         RemoveDiplomaticMessage(sender_empire_id, recipient_empire_id);
         RemoveDiplomaticMessage(recipient_empire_id, sender_empire_id);
         break;

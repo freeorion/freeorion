@@ -316,7 +316,7 @@ namespace {
             // render incoming diplomatic message icon, if there is one
             const DiplomaticMessage& incoming_message_to_client =
                 Empires().GetDiplomaticMessage(m_empire_id, app->EmpireID());
-            if (incoming_message_to_client.GetType() != DiplomaticMessage::INVALID_DIPLOMATIC_MESSAGE_TYPE)
+            if (incoming_message_to_client.GetType() != DiplomaticMessage::Type::INVALID)
                 MessageIcon()->OrthoBlit(UpperLeft() + m_diplo_msg_ul, UpperLeft() + m_diplo_msg_ul + ICON_SIZE);
 
             // render player status icon
@@ -748,7 +748,7 @@ void PlayerListWnd::HandleDiplomaticMessageChange(int empire1_id, int empire2_id
         return;
 
     DiplomaticMessage message = Empires().GetDiplomaticMessage(empire1_id, empire2_id);
-    bool active_message = message.GetType() != DiplomaticMessage::INVALID_DIPLOMATIC_MESSAGE_TYPE;
+    bool active_message = message.GetType() != DiplomaticMessage::Type::INVALID;
 
     // only show PlayerListWnd if there is a new diplomatic offer for the client empire
     if (active_message && (empire2_id == client_empire_id)) {
@@ -760,7 +760,7 @@ void PlayerListWnd::HandleDiplomaticMessageChange(int empire1_id, int empire2_id
     active_message = false;
     for (const auto& empire : Empires()) {
         message = Empires().GetDiplomaticMessage(empire.first, client_empire_id);
-        if (message.GetType() != DiplomaticMessage::INVALID_DIPLOMATIC_MESSAGE_TYPE) {
+        if (message.GetType() != DiplomaticMessage::Type::INVALID) {
             active_message = true;
             break;
         }
@@ -989,15 +989,15 @@ void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& p
         bool show_allies_accept = false;
         bool show_declare_war = false;
 
-        if (existing_message_from_this_player_to_clicked_empire.GetType() == DiplomaticMessage::PEACE_PROPOSAL)
+        if (existing_message_from_this_player_to_clicked_empire.GetType() == DiplomaticMessage::Type::PEACE_PROPOSAL)
             show_peace_cancel = true;
-        else if (existing_message_from_this_player_to_clicked_empire.GetType() == DiplomaticMessage::ALLIES_PROPOSAL)
+        else if (existing_message_from_this_player_to_clicked_empire.GetType() == DiplomaticMessage::Type::ALLIES_PROPOSAL)
             show_allies_cancel = true;
 
-        if (existing_message_from_clicked_empire_to_this_player.GetType() == DiplomaticMessage::PEACE_PROPOSAL) {
+        if (existing_message_from_clicked_empire_to_this_player.GetType() == DiplomaticMessage::Type::PEACE_PROPOSAL) {
             show_peace_accept = true;
             show_peace_reject = true;
-        } else if (existing_message_from_clicked_empire_to_this_player.GetType() == DiplomaticMessage::ALLIES_PROPOSAL) {
+        } else if (existing_message_from_clicked_empire_to_this_player.GetType() == DiplomaticMessage::Type::ALLIES_PROPOSAL) {
             show_allies_accept = true;
             show_allies_reject = true;
         }
