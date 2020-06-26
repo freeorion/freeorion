@@ -11,52 +11,6 @@
 FO_COMMON_API extern const int INVALID_DESIGN_ID;
 
 
-//! Hull stats.  Used by parser due to limits on number of sub-items per parsed
-//! parsed main item.
-struct ShipHullStats {
-    ShipHullStats() = default;
-
-    ShipHullStats(float fuel_,
-                  float speed_,
-                  float stealth_,
-                  float structure_,
-                  bool no_default_fuel_effects_,
-                  bool no_default_speed_effects_,
-                  bool no_default_stealth_effects_,
-                  bool no_default_structure_effects_) :
-        fuel(fuel_),
-        speed(speed_),
-        stealth(stealth_),
-        structure(structure_),
-        default_fuel_effects(!no_default_fuel_effects_),
-        default_speed_effects(!no_default_speed_effects_),
-        default_stealth_effects(!no_default_stealth_effects_),
-        default_structure_effects(!no_default_structure_effects_)
-    {}
-
-    float   fuel = 0.0f;
-    float   speed = 0.0f;
-    float   stealth = 0.0f;
-    float   structure = 0.0f;
-    bool    default_fuel_effects = true;
-    bool    default_speed_effects = true;
-    bool    default_stealth_effects = true;
-    bool    default_structure_effects = true;
-
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int) {
-        ar  & BOOST_SERIALIZATION_NVP(fuel)
-            & BOOST_SERIALIZATION_NVP(speed)
-            & BOOST_SERIALIZATION_NVP(stealth)
-            & BOOST_SERIALIZATION_NVP(structure)
-            & BOOST_SERIALIZATION_NVP(default_fuel_effects)
-            & BOOST_SERIALIZATION_NVP(default_speed_effects)
-            & BOOST_SERIALIZATION_NVP(default_stealth_effects)
-            & BOOST_SERIALIZATION_NVP(default_structure_effects);
-    }
-};
-
-
 //! Specification for the hull, or base, on which ship designs are created by
 //! adding parts.  The hull determines some final design characteristics
 //! directly, and also determine how many parts can be added to the design.
@@ -75,9 +29,18 @@ public:
 
     ShipHull();
 
-    ShipHull(const ShipHullStats& stats,
+    ShipHull(float fuel,
+             float speed,
+             float stealth,
+             float structure,
+             bool default_fuel_effects,
+             bool default_speed_effects,
+             bool default_stealth_effects,
+             bool default_structure_effects,
              CommonParams&& common_params,
-             const MoreCommonParams& more_common_params,
+             const std::string& name,
+             const std::string& description,
+             const std::set<std::string>& exclusions,
              const std::vector<Slot>& slots,
              const std::string& icon, const std::string& graphic);
 
@@ -193,7 +156,10 @@ public:
 
 private:
     void Init(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
-              const ShipHullStats& stats);
+              bool default_fuel_effects,
+              bool default_speed_effects,
+              bool default_stealth_effects,
+              bool default_structure_effects);
 
     std::string m_name;
     std::string m_description;

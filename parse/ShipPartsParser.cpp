@@ -46,7 +46,7 @@ namespace {
                          ShipPartClass part_class,
                          const parse::detail::OptCap_OptStat2_OptMoveableTargets capacity_and_stat2_and_targets,
                          const parse::detail::MovableEnvelope<CommonParams>& common_params,
-                         const MoreCommonParams& more_common_params,
+                         const parse::detail::MoreCommonParams& more_common_params,
                          boost::optional<std::vector<ShipSlotType>> mountable_slot_types,
                          const std::string& icon,
                          bool no_default_capacity_effect,
@@ -61,7 +61,10 @@ namespace {
             part_class,
             (capacity ? *capacity : 0.0),
             (stat2 ? *stat2 : 1.0),
-            *common_params.OpenEnvelope(pass), more_common_params,
+            *common_params.OpenEnvelope(pass),
+            more_common_params.name,
+            more_common_params.description,
+            more_common_params.exclusions,
             (mountable_slot_types ? *mountable_slot_types : std::vector<ShipSlotType>()),
             icon,
             !no_default_capacity_effect,
@@ -123,7 +126,7 @@ namespace {
                 > -(label(tok.MountableSlotTypes_)  > one_or_more_slots)// _8
                 >   common_rules.common                                 // _9
                 >   label(tok.Icon_)        > tok.string                // _10
-                  ) [ _pass = is_unique_(_r1, _1, phoenix::bind(&MoreCommonParams::name, _2)),
+                  ) [ _pass = is_unique_(_r1, _1, phoenix::bind(&parse::detail::MoreCommonParams::name, _2)),
                       insert_shippart_(_r1, _3,
                                        construct<parse::detail::OptCap_OptStat2_OptMoveableTargets>(_4, _5, _7)
                                        , _9, _2, _8, _10, _6, _pass) ]

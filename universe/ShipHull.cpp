@@ -82,17 +82,26 @@ namespace {
 ShipHull::ShipHull()
 {}
 
-ShipHull::ShipHull(const ShipHullStats& stats,
+ShipHull::ShipHull(float fuel,
+                   float speed,
+                   float stealth,
+                   float structure,
+                   bool default_fuel_effects,
+                   bool default_speed_effects,
+                   bool default_stealth_effects,
+                   bool default_structure_effects,
                    CommonParams&& common_params,
-                   const MoreCommonParams& more_common_params,
+                   const std::string& name,
+                   const std::string& description,
+                   const std::set<std::string>& exclusions,
                    const std::vector<Slot>& slots,
                    const std::string& icon, const std::string& graphic) :
-    m_name(more_common_params.name),
-    m_description(more_common_params.description),
-    m_speed(stats.speed),
-    m_fuel(stats.fuel),
-    m_stealth(stats.stealth),
-    m_structure(stats.structure),
+    m_name(name),
+    m_description(description),
+    m_speed(speed),
+    m_fuel(fuel),
+    m_stealth(stealth),
+    m_structure(structure),
     m_production_cost(std::move(common_params.production_cost)),
     m_production_time(std::move(common_params.production_time)),
     m_producible(common_params.producible),
@@ -100,12 +109,16 @@ ShipHull::ShipHull(const ShipHullStats& stats,
     m_production_meter_consumption(std::move(common_params.production_meter_consumption)),
     m_production_special_consumption(std::move(common_params.production_special_consumption)),
     m_location(std::move(common_params.location)),
-    m_exclusions(more_common_params.exclusions),
+    m_exclusions(exclusions),
     m_graphic(graphic),
     m_icon(icon)
 {
     TraceLogger() << "hull type: " << m_name << " producible: " << m_producible << std::endl;
-    Init(std::move(common_params.effects), stats);
+    Init(std::move(common_params.effects),
+         default_fuel_effects,
+         default_speed_effects,
+         default_stealth_effects,
+         default_structure_effects);
 
     for (const std::string& tag : common_params.tags)
         m_tags.insert(boost::to_upper_copy<std::string>(tag));
@@ -118,15 +131,18 @@ ShipHull::Slot::Slot() :
 ShipHull::~ShipHull() {}
 
 void ShipHull::Init(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
-                    const ShipHullStats& stats)
+                    bool default_fuel_effects,
+                    bool default_speed_effects,
+                    bool default_stealth_effects,
+                    bool default_structure_effects)
 {
-    if (stats.default_fuel_effects && m_fuel != 0)
+    if (default_fuel_effects && m_fuel != 0)
         m_effects.push_back(IncreaseMeter(METER_MAX_FUEL,       m_fuel));
-    if (stats.default_stealth_effects && m_stealth != 0)
+    if (default_stealth_effects && m_stealth != 0)
         m_effects.push_back(IncreaseMeter(METER_STEALTH,        m_stealth));
-    if (stats.default_structure_effects && m_structure != 0)
+    if (default_structure_effects && m_structure != 0)
         m_effects.push_back(IncreaseMeter(METER_MAX_STRUCTURE,  m_structure,    "RULE_SHIP_STRUCTURE_FACTOR"));
-    if (stats.default_speed_effects && m_speed != 0)
+    if (default_speed_effects && m_speed != 0)
         m_effects.push_back(IncreaseMeter(METER_SPEED,          m_speed,        "RULE_SHIP_SPEED_FACTOR"));
 
     if (m_production_cost)

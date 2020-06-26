@@ -34,6 +34,37 @@ namespace std {
 namespace {
     const boost::phoenix::function<parse::detail::is_unique> is_unique_;
 
+    struct SpeciesStrings {
+        SpeciesStrings()
+        {}
+
+        SpeciesStrings(const std::string& name_, const std::string& desc_,
+                    const std::string& gameplay_desc_) :
+            name(name_),
+            desc(desc_),
+            gameplay_desc(gameplay_desc_)
+        {}
+
+        std::string name;
+        std::string desc;
+        std::string gameplay_desc;
+    };
+
+    struct SpeciesParams {
+        SpeciesParams()
+        {}
+        SpeciesParams(bool playable_, bool native_, bool can_colonize_, bool can_produce_ships_) :
+            playable(playable_),
+            native(native_),
+            can_colonize(can_colonize_),
+            can_produce_ships(can_produce_ships_)
+        {}
+        bool playable = false;
+        bool native = false;
+        bool can_colonize = false;
+        bool can_produce_ships = false;
+    };
+
     struct SpeciesStuff {
         SpeciesStuff(const boost::optional<std::vector<FocusType>>& foci_,
                      const boost::optional<std::string>& preferred_focus_,
@@ -63,13 +94,16 @@ namespace {
         bool& pass)
     {
         auto species_ptr = std::make_unique<Species>(
-            strings,
+            strings.name, strings.desc, strings.gameplay_desc,
             (foci_preferred_tags_graphic.foci ? *foci_preferred_tags_graphic.foci : std::vector<FocusType>()),
             (foci_preferred_tags_graphic.preferred_focus ? *foci_preferred_tags_graphic.preferred_focus : std::string()),
             (planet_environments ? *planet_environments : std::map<PlanetType, PlanetEnvironment>()),
             (effects ? OpenEnvelopes(*effects, pass) : std::vector<std::unique_ptr<Effect::EffectsGroup>>()),
             (combat_targets ? (*combat_targets).OpenEnvelope(pass) : nullptr),
-            params,
+            params.playable,
+            params.native,
+            params.can_colonize,
+            params.can_produce_ships,
             foci_preferred_tags_graphic.tags,
             foci_preferred_tags_graphic.graphic);
 

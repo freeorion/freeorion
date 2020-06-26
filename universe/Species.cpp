@@ -85,26 +85,31 @@ namespace {
     }
 }
 
-Species::Species(const SpeciesStrings& strings,
+Species::Species(const std::string& name,
+                 const std::string& desc,
+                 const std::string& gameplay_desc,
                  const std::vector<FocusType>& foci,
                  const std::string& preferred_focus,
                  const std::map<PlanetType, PlanetEnvironment>& planet_environments,
                  std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
                  std::unique_ptr<Condition::Condition>&& combat_targets,
-                 const SpeciesParams& params,
+                 bool playable,
+                 bool native,
+                 bool can_colonize,
+                 bool can_produce_ships,
                  const std::set<std::string>& tags,
                  const std::string& graphic) :
-    m_name(strings.name),
-    m_description(strings.desc),
-    m_gameplay_description(strings.gameplay_desc),
+    m_name(name),
+    m_description(desc),
+    m_gameplay_description(gameplay_desc),
     m_foci(foci),
     m_preferred_focus(preferred_focus),
     m_planet_environments(planet_environments),
     m_combat_targets(std::move(combat_targets)),
-    m_playable(params.playable),
-    m_native(params.native),
-    m_can_colonize(params.can_colonize),
-    m_can_produce_ships(params.can_produce_ships),
+    m_playable(playable),
+    m_native(native),
+    m_can_colonize(can_colonize),
+    m_can_produce_ships(can_produce_ships),
     m_graphic(graphic)
 {
     for (auto&& effect : effects)

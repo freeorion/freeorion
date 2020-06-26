@@ -72,37 +72,6 @@ private:
     std::string                                     m_graphic;
 };
 
-/** Used by parser due to limits on number of sub-items per parsed main item. */
-struct SpeciesParams {
-    SpeciesParams()
-    {}
-    SpeciesParams(bool playable_, bool native_, bool can_colonize_, bool can_produce_ships_) :
-        playable(playable_),
-        native(native_),
-        can_colonize(can_colonize_),
-        can_produce_ships(can_produce_ships_)
-    {}
-    bool playable = false;
-    bool native = false;
-    bool can_colonize = false;
-    bool can_produce_ships = false;
-};
-
-/** Used by parser due to limits on number of sub-items per parsed main item. */
-struct SpeciesStrings {
-    SpeciesStrings()
-    {}
-    SpeciesStrings(const std::string& name_, const std::string& desc_,
-                   const std::string& gameplay_desc_) :
-        name(name_),
-        desc(desc_),
-        gameplay_desc(gameplay_desc_)
-    {}
-    std::string name;
-    std::string desc;
-    std::string gameplay_desc;
-};
-
 /** A predefined type of population that can exist on a PopulationCenter.
   * Species have associated sets of EffectsGroups, and various other 
   * properties that affect how the object on which they reside functions.
@@ -111,13 +80,18 @@ struct SpeciesStrings {
 class FO_COMMON_API Species {
 public:
     /** \name Structors */ //@{
-    Species(const SpeciesStrings& strings,
+    Species(const std::string& name,
+            const std::string& desc,
+            const std::string& gameplay_desc,
             const std::vector<FocusType>& foci,
             const std::string& preferred_focus,
             const std::map<PlanetType, PlanetEnvironment>& planet_environments,
             std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
             std::unique_ptr<Condition::Condition>&& combat_targets,
-            const SpeciesParams& params,
+            bool playable,
+            bool native,
+            bool can_colonize,
+            bool can_produce_ships,
             const std::set<std::string>& tags,
             const std::string& graphic);
 
