@@ -85,19 +85,6 @@ GG_ENUM(EmpireAffiliationType,
     NUM_AFFIL_TYPES ///< keep last, the number of affiliation types
 )
 
-/** The general type of production being done at a ProdCenter.  Within each
-  * valid type, a specific kind of item is being built, e.g. under BT_BUILDING
-  * a kind of building called "SuperFarm" might be built. */
-GG_ENUM(BuildType,
-    INVALID_BUILD_TYPE = -1,
-    BT_NOT_BUILDING,        ///< no building is taking place
-    BT_BUILDING,            ///< a Building object is being produced
-    BT_SHIP,                ///< a Ship object is being produced
-    BT_PROJECT,             ///< a project may generate effects while on the queue, may or may not ever complete, and does not result in a ship or building being produced
-    BT_STOCKPILE,
-    NUM_BUILD_TYPES
-)
-
 /** Types of resources that planets can produce */
 GG_ENUM(ResourceType,
     INVALID_RESOURCE_TYPE = -1,

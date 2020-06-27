@@ -4,7 +4,6 @@
 #include <boost/filesystem/fstream.hpp>
 #include "Conditions.h"
 #include "Effect.h"
-#include "Enums.h"
 #include "PopCenter.h"
 #include "Planet.h"
 #include "Ship.h"
