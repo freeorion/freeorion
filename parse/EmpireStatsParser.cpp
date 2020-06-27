@@ -99,7 +99,7 @@ namespace parse {
 
         for (const auto& file : ListDir(path, IsFOCScript)) {
             start_rule_payload stats_;
-            if (/*auto success =*/ detail::parse_file<grammar, start_rule_payload>(lexer, file, stats_)) {
+            if (detail::parse_file<grammar, start_rule_payload>(lexer, file, stats_)) {
                 for (auto&& stat : stats_) {
                     auto maybe_inserted = all_stats.emplace(stat.first, std::move(stat.second));
                     if (!maybe_inserted.second) {
