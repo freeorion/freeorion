@@ -50,33 +50,33 @@ namespace {
     }
 
     void insert_tech(TechManager::TechContainer& techs,
-                     const parse::detail::MovableEnvelope<Tech::TechInfo>& tech_info,
-                     const boost::optional<parse::effects_group_payload>& effects,
-                     const boost::optional<std::set<std::string>>& prerequisites,
-                     const boost::optional<std::vector<UnlockableItem>>& unlocked_items,
-                     const boost::optional<std::string>& graphic,
+                     parse::detail::MovableEnvelope<Tech::TechInfo>& tech_info,
+                     boost::optional<parse::effects_group_payload>& effects,
+                     boost::optional<std::set<std::string>>& prerequisites,
+                     boost::optional<std::vector<UnlockableItem>>& unlocked_items,
+                     boost::optional<std::string>& graphic,
                      bool& pass)
     {
         auto tech_ptr = std::make_unique<Tech>(
-            *tech_info.OpenEnvelope(pass),
-            (effects ? parse::detail::OpenEnvelopes(*effects, pass) : std::vector<std::unique_ptr<Effect::EffectsGroup>>()),
-            (prerequisites ? *prerequisites : std::set<std::string>()),
-            (unlocked_items ? *unlocked_items : std::vector<UnlockableItem>()),
-            (graphic ? *graphic : std::string()));
+            std::move(*tech_info.OpenEnvelope(pass)),
+            (effects ? std::move(parse::detail::OpenEnvelopes(*effects, pass)) : std::vector<std::unique_ptr<Effect::EffectsGroup>>{}),
+            (prerequisites ? std::move(*prerequisites) : std::set<std::string>{}),
+            (unlocked_items ? std::move(*unlocked_items) : std::vector<UnlockableItem>{}),
+            (graphic ? std::move(*graphic) : std::string{}));
 
         if (check_tech(techs, tech_ptr)) {
-            g_categories_seen->insert(tech_ptr->Category());
-            techs.insert(std::move(tech_ptr));
+            g_categories_seen->emplace(tech_ptr->Category());
+            techs.emplace(std::move(tech_ptr));
         }
     }
 
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_tech_, insert_tech, 7)
 
     void insert_category(std::map<std::string, std::unique_ptr<TechCategory>>& categories,
-                         const std::string& name, const std::string& graphic, const GG::Clr& color)
+                         std::string& name, std::string& graphic, const GG::Clr& color)
     {
-        auto category_ptr = std::make_unique<TechCategory>(name, graphic, color);
-        categories.insert(std::make_pair(category_ptr->name, std::move(category_ptr)));
+        auto category_ptr = std::make_unique<TechCategory>(std::move(name), std::move(graphic), color);
+        categories.emplace(category_ptr->name, std::move(category_ptr));
     }
 
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_category_, insert_category, 4)
@@ -140,8 +140,9 @@ namespace {
                 >   label(tok.ResearchTurns_)       > castable_int_rules.flexible_int
                 >   researchable
                 >   tags_parser
-                ) [ _val = construct_movable_(new_<Tech::TechInfo>(_1, _2, _3, _4, deconstruct_movable_(_5, _pass),
-                                                                   deconstruct_movable_(_6, _pass), _7, _8)) ]
+                ) [ _val = construct_movable_(new_<Tech::TechInfo>(
+                    _1, _2, _3, _4, deconstruct_movable_(_5, _pass),
+                    deconstruct_movable_(_6, _pass), _7, _8)) ]
                 ;
 
             prerequisites

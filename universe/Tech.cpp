@@ -93,26 +93,23 @@ namespace CheckSums {
 ///////////////////////////////////////////////////////////
 // Tech Info                                             //
 ///////////////////////////////////////////////////////////
-Tech::TechInfo::TechInfo() :
-    research_cost(nullptr),
-    research_turns(nullptr),
-    researchable(false)
+Tech::TechInfo::TechInfo()
 {}
 
-Tech::TechInfo::TechInfo(const std::string& name_, const std::string& description_, const std::string& short_description_,
-                   const std::string& category_,
-                   std::unique_ptr<ValueRef::ValueRef<double>>&& research_cost_,
-                   std::unique_ptr<ValueRef::ValueRef<int>>&& research_turns_,
-                   bool researchable_,
-                   const std::set<std::string>& tags_) :
-    name(name_),
-    description(description_),
-    short_description(short_description_),
-    category(category_),
+Tech::TechInfo::TechInfo(std::string& name_, std::string& description_,
+                         std::string& short_description_, std::string& category_,
+                         std::unique_ptr<ValueRef::ValueRef<double>>&& research_cost_,
+                         std::unique_ptr<ValueRef::ValueRef<int>>&& research_turns_,
+                         bool researchable_,
+                         std::set<std::string>& tags_) :
+    name(std::move(name_)),
+    description(std::move(description_)),
+    short_description(std::move(short_description_)),
+    category(std::move(category_)),
     research_cost(std::move(research_cost_)),
     research_turns(std::move(research_turns_)),
     researchable(researchable_),
-    tags(tags_)
+    tags(std::move(tags_))
 {}
 
 Tech::TechInfo::~TechInfo()
@@ -121,26 +118,27 @@ Tech::TechInfo::~TechInfo()
 ///////////////////////////////////////////////////////////
 // Tech                                                  //
 ///////////////////////////////////////////////////////////
-Tech::Tech(const std::string& name, const std::string& description, const std::string& short_description,
-           const std::string& category,
+Tech::Tech(std::string&& name, std::string&& description,
+           std::string&& short_description, std::string&& category,
            std::unique_ptr<ValueRef::ValueRef<double>>&& research_cost,
            std::unique_ptr<ValueRef::ValueRef<int>>&& research_turns,
            bool researchable,
-           const std::set<std::string>& tags,
-           const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects,
-           const std::set<std::string>& prerequisites, const std::vector<UnlockableItem>& unlocked_items,
-           const std::string& graphic) :
-    m_name(name),
-    m_description(description),
-    m_short_description(short_description),
-    m_category(category),
+           std::set<std::string>&& tags,
+           std::vector<std::shared_ptr<Effect::EffectsGroup>>&& effects,
+           std::set<std::string>&& prerequisites,
+           std::vector<UnlockableItem>&& unlocked_items,
+           std::string&& graphic) :
+    m_name(std::move(name)),
+    m_description(std::move(description)),
+    m_short_description(std::move(short_description)),
+    m_category(std::move(category)),
     m_research_cost(std::move(research_cost)),
     m_research_turns(std::move(research_turns)),
     m_researchable(researchable),
-    m_effects(effects),
-    m_prerequisites(prerequisites),
-    m_unlocked_items(unlocked_items),
-    m_graphic(graphic)
+    m_effects(std::move(effects)),
+    m_prerequisites(std::move(prerequisites)),
+    m_unlocked_items(std::move(unlocked_items)),
+    m_graphic(std::move(graphic))
 {
     for (const std::string& tag : tags)
         m_tags.emplace(boost::to_upper_copy<std::string>(tag));
@@ -149,20 +147,19 @@ Tech::Tech(const std::string& name, const std::string& description, const std::s
 
 Tech::Tech(TechInfo& tech_info,
            std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
-           const std::set<std::string>& prerequisites, const std::vector<UnlockableItem>& unlocked_items,
-           const std::string& graphic) :
-    m_name(tech_info.name),
-    m_description(tech_info.description),
-    m_short_description(tech_info.short_description),
-    m_category(tech_info.category),
+           std::set<std::string>&& prerequisites,
+           std::vector<UnlockableItem>&& unlocked_items,
+           std::string&& graphic) :
+    m_name(std::move(tech_info.name)),
+    m_description(std::move(tech_info.description)),
+    m_short_description(std::move(tech_info.short_description)),
+    m_category(std::move(tech_info.category)),
     m_research_cost(std::move(tech_info.research_cost)),
     m_research_turns(std::move(tech_info.research_turns)),
     m_researchable(tech_info.researchable),
-    m_tags(),
-    m_effects(),
-    m_prerequisites(prerequisites),
-    m_unlocked_items(unlocked_items),
-    m_graphic(graphic)
+    m_prerequisites(std::move(prerequisites)),
+    m_unlocked_items(std::move(unlocked_items)),
+    m_graphic(std::move(graphic))
 {
     for (auto&& effect : effects)
         m_effects.emplace_back(std::move(effect));
