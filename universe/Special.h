@@ -31,7 +31,7 @@ namespace ValueRef {
 class FO_COMMON_API Special {
 public:
     /** \name Structors */ //@{
-    Special(const std::string& name, const std::string& description,
+    Special(std::string&& name, std::string&& description,
             std::unique_ptr<ValueRef::ValueRef<double>>&& stealth,
             std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
             double spawn_rate = 1.0, int spawn_limit = 99999,

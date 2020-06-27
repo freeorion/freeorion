@@ -24,53 +24,43 @@ namespace std {
 namespace {
     const boost::phoenix::function<parse::detail::is_unique> is_unique_;
 
-    struct special_pod {
-        special_pod(std::string name_,
-                    std::string description_,
-                    const boost::optional<parse::detail::value_ref_payload<double>>& stealth_,
-                    const boost::optional<parse::effects_group_payload>& effects_,
-                    boost::optional<double> spawn_rate_,
-                    boost::optional<int> spawn_limit_,
-                    const boost::optional<parse::detail::value_ref_payload<double>>& initial_capacity_,
-                    const boost::optional<parse::detail::condition_payload>& location_,
-                    const std::string& graphic_) :
-            name(name_),
-            description(description_),
-            stealth(stealth_),
-            effects(effects_),
-            spawn_rate(spawn_rate_),
-            spawn_limit(spawn_limit_),
-            initial_capacity(initial_capacity_),
-            location(location_),
-            graphic(graphic_)
+    struct special_data {
+        special_data(boost::optional<double>& spawn_rate_,
+                     boost::optional<int>& spawn_limit_,
+                     std::string& graphic_) :
+            spawn_rate(std::move(spawn_rate_)),
+            spawn_limit(std::move(spawn_limit_)),
+            graphic(std::move(graphic_))
         {}
 
-        std::string name;
-        std::string description;
-        const boost::optional<parse::detail::value_ref_payload<double>> stealth;
-        const boost::optional<parse::effects_group_payload>& effects;
         boost::optional<double> spawn_rate;
         boost::optional<int> spawn_limit;
-        boost::optional<const parse::detail::value_ref_payload<double>> initial_capacity;
-        boost::optional<parse::detail::condition_payload> location;
-        const std::string& graphic;
+        std::string graphic;
     };
 
-    void insert_special(std::map<std::string, std::unique_ptr<Special>>& specials, special_pod special_, bool& pass) {
+    void insert_special(std::map<std::string, std::unique_ptr<Special>>& specials,
+                        const special_data& special_pod,
+                        std::string& name, std::string& description,
+                        boost::optional<parse::detail::value_ref_payload<double>>& stealth,
+                        boost::optional<parse::effects_group_payload>& effects,
+                        boost::optional<parse::detail::value_ref_payload<double>>& initial_capacity,
+                        boost::optional<parse::detail::condition_payload>& location,
+                        bool& pass)
+    {
         auto special_ptr = std::make_unique<Special>(
-            special_.name, special_.description,
-            (special_.stealth ? special_.stealth->OpenEnvelope(pass) : nullptr),
-            (special_.effects ? OpenEnvelopes(*special_.effects, pass) : std::vector<std::unique_ptr<Effect::EffectsGroup>>()),
-            (special_.spawn_rate ? *special_.spawn_rate : 1.0),
-            (special_.spawn_limit ? *special_.spawn_limit : 9999),
-            (special_.initial_capacity ? special_.initial_capacity->OpenEnvelope(pass) : nullptr),
-            (special_.location ? special_.location->OpenEnvelope(pass) : nullptr),
-            special_.graphic);
+            std::move(name), std::move(description),
+            (stealth ? std::move(stealth->OpenEnvelope(pass)) : nullptr),
+            (effects ? std::move(OpenEnvelopes(*effects, pass)) : std::vector<std::unique_ptr<Effect::EffectsGroup>>{}),
+            (special_pod.spawn_rate ? *special_pod.spawn_rate : 1.0),
+            (special_pod.spawn_limit ? *special_pod.spawn_limit : 9999),
+            (initial_capacity ? std::move(initial_capacity->OpenEnvelope(pass)) : nullptr),
+            (location ? std::move(location->OpenEnvelope(pass)) : nullptr),
+            special_pod.graphic);
 
-        specials.insert(std::make_pair(special_ptr->Name(), std::move(special_ptr)));
+        specials.emplace(special_ptr->Name(), std::move(special_ptr));
     }
 
-    BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_special_, insert_special, 3)
+    BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_special_, insert_special, 9)
 
     using start_rule_payload = SpecialsManager::SpecialsTypeMap;
     using start_rule_signature = void(start_rule_payload&);
@@ -107,17 +97,18 @@ namespace {
 
             special
                 = (  tok.Special_
-                >    label(tok.Name_)           > tok.string
-                >    label(tok.Description_)    > tok.string
-                >  -(label(tok.Stealth_)        > double_rules.expr)
-                >  -(label(tok.SpawnRate_)      > double_rule)
-                >  -(label(tok.SpawnLimit_)     > int_rule)
-                >  -(label(tok.Capacity_)       > double_rules.expr)
-                >  -(label(tok.Location_)       > condition_parser)
-                >  -(label(tok.EffectsGroups_)  > effects_group_grammar)
-                >    label(tok.Graphic_)        > tok.string)
+                >    label(tok.Name_)           > tok.string                // _2
+                >    label(tok.Description_)    > tok.string                // _3
+                >  -(label(tok.Stealth_)        > double_rules.expr)        // _4
+                >  -(label(tok.SpawnRate_)      > double_rule)              // _5
+                >  -(label(tok.SpawnLimit_)     > int_rule)                 // _6
+                >  -(label(tok.Capacity_)       > double_rules.expr)        // _7
+                >  -(label(tok.Location_)       > condition_parser)         // _8
+                >  -(label(tok.EffectsGroups_)  > effects_group_grammar)    // _9
+                >    label(tok.Graphic_)        > tok.string)               // _10
                 [  _pass = is_unique_(_r1, _1, _2),
-                   insert_special_(_r1, phoenix::construct<special_pod>(_2, _3, _4, _9, _5, _6, _7, _8, _10), _pass) ]
+                   insert_special_(_r1, phoenix::construct<special_data>(_5, _6, _10),
+                                   _2, _3, _4, _9, _7, _8, _pass) ]
                 ;
 
             start
