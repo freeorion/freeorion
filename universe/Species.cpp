@@ -6,6 +6,7 @@
 #include "Effect.h"
 #include "Enums.h"
 #include "PopCenter.h"
+#include "Planet.h"
 #include "Ship.h"
 #include "UniverseObject.h"
 #include "ValueRefs.h"

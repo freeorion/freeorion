@@ -7,6 +7,7 @@
 #include "../util/AppInterface.h"
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Empire.h"
+#include "../universe/Planet.h"
 #include "../universe/System.h"
 #include "TextBrowseWnd.h"
 

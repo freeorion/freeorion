@@ -9,37 +9,6 @@
 #include "../util/Export.h"
 
 
-/** types of planets */
-GG_ENUM(PlanetType,
-    INVALID_PLANET_TYPE = -1,
-    PT_SWAMP,
-    PT_TOXIC,
-    PT_INFERNO,
-    PT_RADIATED,
-    PT_BARREN,
-    PT_TUNDRA,
-    PT_DESERT,
-    PT_TERRAN,
-    PT_OCEAN,
-    PT_ASTEROIDS,
-    PT_GASGIANT,
-    NUM_PLANET_TYPES
-)
-
-/** sizes of planets */
-GG_ENUM(PlanetSize,
-    INVALID_PLANET_SIZE = -1,
-    SZ_NOWORLD,         ///< used to designate an empty planet slot
-    SZ_TINY,
-    SZ_SMALL,
-    SZ_MEDIUM,
-    SZ_LARGE,
-    SZ_HUGE,
-    SZ_ASTEROIDS,
-    SZ_GASGIANT,
-    NUM_PLANET_SIZES
-)
-
 /** environmental suitability of planets for a particular race */
 GG_ENUM(PlanetEnvironment,
     INVALID_PLANET_ENVIRONMENT = -1,

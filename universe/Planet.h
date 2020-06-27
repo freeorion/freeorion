@@ -9,6 +9,39 @@
 #include "../util/Export.h"
 
 
+//! Types of Planet%s
+GG_ENUM(PlanetType,
+    INVALID_PLANET_TYPE = -1,
+    PT_SWAMP,
+    PT_TOXIC,
+    PT_INFERNO,
+    PT_RADIATED,
+    PT_BARREN,
+    PT_TUNDRA,
+    PT_DESERT,
+    PT_TERRAN,
+    PT_OCEAN,
+    PT_ASTEROIDS,
+    PT_GASGIANT,
+    NUM_PLANET_TYPES
+)
+
+
+//! Sizes of Planet%s
+GG_ENUM(PlanetSize,
+    INVALID_PLANET_SIZE = -1,
+    SZ_NOWORLD,  //!< Used to designate an empty planet slot
+    SZ_TINY,
+    SZ_SMALL,
+    SZ_MEDIUM,
+    SZ_LARGE,
+    SZ_HUGE,
+    SZ_ASTEROIDS,
+    SZ_GASGIANT,
+    NUM_PLANET_SIZES
+)
+
+
 /** a class representing a FreeOrion planet. */
 class FO_COMMON_API Planet :
     public UniverseObject,
