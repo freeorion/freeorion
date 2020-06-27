@@ -1,15 +1,35 @@
 #ifndef _ResourcePool_h_
 #define _ResourcePool_h_
 
+
+#include <set>
+#include <vector>
+#include <boost/serialization/nvp.hpp>
+#include <boost/serialization/version.hpp>
+#include <boost/signals2/signal.hpp>
+#include <GG/Enum.h>
 #include "../universe/EnumsFwd.h"
 #include "../util/Export.h"
 
-#include <boost/signals2/signal.hpp>
-#include <boost/serialization/nvp.hpp>
-#include <boost/serialization/version.hpp>
 
-#include <vector>
-#include <set>
+//! Types of resources that Empire%s can produce
+GG_ENUM(ResourceType,
+    INVALID_RESOURCE_TYPE = -1,
+    RE_INDUSTRY,
+    RE_INFLUENCE,
+    RE_RESEARCH,
+    RE_STOCKPILE,
+    NUM_RESOURCE_TYPES
+)
+
+/** Returns the equivalent meter type for the given resource type; if no such
+  * meter type exists, returns INVALID_METER_TYPE. */
+FO_COMMON_API MeterType ResourceToMeter(ResourceType type);
+FO_COMMON_API MeterType ResourceToTargetMeter(ResourceType type);
+
+/** Returns the equivalent resource type for the given meter type; if no such
+  * resource type exists, returns INVALID_RESOURCE_TYPE. */
+FO_COMMON_API ResourceType MeterToResource(MeterType type);
 
 /** The ResourcePool class keeps track of an empire's stockpile and production
   * of a particular resource (eg. research, industry). */

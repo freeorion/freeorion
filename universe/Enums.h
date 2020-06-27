@@ -74,34 +74,6 @@ GG_ENUM(EmpireAffiliationType,
     NUM_AFFIL_TYPES ///< keep last, the number of affiliation types
 )
 
-/** Types of resources that planets can produce */
-GG_ENUM(ResourceType,
-    INVALID_RESOURCE_TYPE = -1,
-    RE_INDUSTRY,
-    RE_INFLUENCE,
-    RE_RESEARCH,
-    RE_STOCKPILE,
-    NUM_RESOURCE_TYPES
-)
-
-/* Types of slots in hulls.  Parts may be restricted to only certain slot types */
-GG_ENUM(ShipSlotType,
-    INVALID_SHIP_SLOT_TYPE = -1,
-    SL_EXTERNAL,            ///< external slots.  more easily damaged
-    SL_INTERNAL,            ///< internal slots.  more protected, fewer in number
-    SL_CORE,
-    NUM_SHIP_SLOT_TYPES
-)
-
-
-/** Returns the equivalent meter type for the given resource type; if no such
-  * meter type exists, returns INVALID_METER_TYPE. */
-FO_COMMON_API MeterType ResourceToMeter(ResourceType type);
-FO_COMMON_API MeterType ResourceToTargetMeter(ResourceType type);
-
-/** Returns the equivalent resource type for the given meter type; if no such
-  * resource type exists, returns INVALID_RESOURCE_TYPE. */
-FO_COMMON_API ResourceType MeterToResource(MeterType type);
 
 /** Returns mapping from active to target or max meter types that correspond.
   * eg. METER_RESEARCH -> METER_TARGET_RESEARCH */

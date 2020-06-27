@@ -1,5 +1,6 @@
 #include "ConditionParser3.h"
 
+#include "../Empire/ResourcePool.h"
 #include "../universe/Conditions.h"
 #include "../universe/ValueRef.h"
 
