@@ -4,11 +4,6 @@
 #include "../util/Logger.h"
 
 
-UnlockableItem::UnlockableItem() :
-    type(INVALID_UNLOCKABLE_ITEM_TYPE),
-    name()
-{}
-
 std::string UnlockableItem::Dump(unsigned short ntabs) const {
     std::string retval = "Item type = ";
     switch (type) {

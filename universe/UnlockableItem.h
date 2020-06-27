@@ -25,10 +25,12 @@ GG_ENUM(UnlockableItemType,
 //! actual item (e.g. (UIT_BUILDING, "Superfarm") or
 //! (UIT_SHIP_PART, "Death Ray")).
 struct FO_COMMON_API UnlockableItem {
-    UnlockableItem();
-    UnlockableItem(UnlockableItemType type_, const std::string& name_) :
+    UnlockableItem() = default;
+
+    template <typename S>
+    UnlockableItem(UnlockableItemType type_, S&& name_) :
         type(type_),
-        name(name_)
+        name(std::forward<S>(name_))
     {}
 
     //! Returns a data file format representation of this object
@@ -43,7 +45,7 @@ struct FO_COMMON_API UnlockableItem {
     auto GetCheckSum() const -> unsigned int;
 
     //! The kind of item this is
-    UnlockableItemType type;
+    UnlockableItemType type = INVALID_UNLOCKABLE_ITEM_TYPE;
 
     //! the exact item this is
     std::string name;
