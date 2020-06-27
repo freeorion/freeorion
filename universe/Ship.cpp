@@ -56,8 +56,7 @@ Ship::Ship(int empire_id, int design_id, const std::string& species_name,
     AddMeter(METER_TARGET_INFLUENCE);
     AddMeter(METER_INFLUENCE);
 
-    const std::vector<std::string>& part_names = Design()->Parts();
-    for (const std::string& part_name : part_names) {
+    for (const std::string& part_name : Design()->Parts()) {
         if (!part_name.empty()) {
             const ShipPart* part = GetShipPart(part_name);
             if (!part) {
