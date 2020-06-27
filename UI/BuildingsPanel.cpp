@@ -16,6 +16,7 @@
 #include "CUIControls.h"
 #include "IconTextBrowseWnd.h"
 #include "MapWnd.h"
+#include "ModeratorActionsWnd.h"
 #include "MultiIconValueIndicator.h"
 #include "MultiMeterStatusBar.h"
 

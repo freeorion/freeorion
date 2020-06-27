@@ -9,6 +9,18 @@
 #include "../universe/EnumsFwd.h"
 
 
+//! Used for tracking what moderator action is set
+GG_ENUM(ModeratorActionSetting,
+    MAS_NoAction,
+    MAS_Destroy,
+    MAS_SetOwner,
+    MAS_AddStarlane,
+    MAS_RemoveStarlane,
+    MAS_CreateSystem,
+    MAS_CreatePlanet
+)
+
+
 class ModeratorActionsWnd : public CUIWnd {
 public:
     ModeratorActionsWnd(const std::string& config_name = "");

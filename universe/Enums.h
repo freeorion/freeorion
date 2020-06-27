@@ -135,16 +135,5 @@ GG_ENUM(CaptureResult,
     CR_RETAIN      // object ownership unchanged: original empire(s) still own object
 )
 
-/** Used for tracking what moderator action is set */
-GG_ENUM(ModeratorActionSetting,
-    MAS_NoAction,
-    MAS_Destroy,
-    MAS_SetOwner,
-    MAS_AddStarlane,
-    MAS_RemoveStarlane,
-    MAS_CreateSystem,
-    MAS_CreatePlanet
-)
-
 
 #endif

@@ -4,6 +4,7 @@
 #include "SidePanel.h"
 #include "IconTextBrowseWnd.h"
 #include "MeterBrowseWnd.h"
+#include "ModeratorActionsWnd.h"
 #include "ClientUI.h"
 #include "Sound.h"
 #include "../util/i18n.h"

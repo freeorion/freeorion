@@ -17,6 +17,7 @@
 #include "FleetWnd.h"
 #include "MapWnd.h"
 #include "MilitaryPanel.h"
+#include "ModeratorActionsWnd.h"
 #include "MultiIconValueIndicator.h"
 #include "PopulationPanel.h"
 #include "ResourcePanel.h"
