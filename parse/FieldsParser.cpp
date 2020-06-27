@@ -24,16 +24,16 @@ namespace {
     const boost::phoenix::function<parse::detail::is_unique> is_unique_;
 
     void insert_fieldtype(std::map<std::string, std::unique_ptr<FieldType>>& fieldtypes,
-                          const std::string& name, const std::string& description,
+                          std::string& name, std::string& description,
                           float stealth, const std::set<std::string>& tags,
-                          const boost::optional<parse::effects_group_payload>& effects,
-                          const std::string& graphic,
+                          boost::optional<parse::effects_group_payload>& effects,
+                          std::string& graphic,
                           bool& pass)
     {
         auto fieldtype_ptr = std::make_unique<FieldType>(
-            name, description, stealth, tags,
-            (effects ? OpenEnvelopes(*effects, pass) : std::vector<std::unique_ptr<Effect::EffectsGroup>>()),
-            graphic);
+            std::move(name), std::move(description), stealth, tags,
+            (effects ? std::move(OpenEnvelopes(*effects, pass)) : std::vector<std::unique_ptr<Effect::EffectsGroup>>{}),
+            std::move(graphic));
 
         fieldtypes.insert(std::make_pair(fieldtype_ptr->Name(), std::move(fieldtype_ptr)));
     }

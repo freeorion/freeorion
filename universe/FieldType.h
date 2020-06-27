@@ -18,10 +18,10 @@ namespace Effect {
 //! A specification for a type of Field.
 class FO_COMMON_API FieldType {
 public:
-    FieldType(const std::string& name, const std::string& description,
+    FieldType(std::string&& name, std::string&& description,
               float stealth, const std::set<std::string>& tags,
               std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
-              const std::string& graphic);
+              std::string&& graphic);
 
     //! Returns the unique name for this type of field
     auto Name() const -> const std::string&

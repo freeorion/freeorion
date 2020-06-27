@@ -28,16 +28,14 @@ namespace {
 }
 
 
-FieldType::FieldType(const std::string& name, const std::string& description,
+FieldType::FieldType(std::string&& name, std::string&& description,
                      float stealth, const std::set<std::string>& tags,
                      std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
-                     const std::string& graphic) :
-    m_name(name),
-    m_description(description),
+                     std::string&& graphic) :
+    m_name(std::move(name)),
+    m_description(std::move(description)),
     m_stealth(stealth),
-    m_tags(),
-    m_effects(),
-    m_graphic(graphic)
+    m_graphic(std::move(graphic))
 {
     for (const std::string& tag : tags)
         m_tags.emplace(boost::to_upper_copy<std::string>(tag));
