@@ -63,7 +63,7 @@ public:
 
     /** basic ctor taking helper struct to reduce number of direct parameters
       * in order to making parsing work. */
-    Tech(TechInfo& tech_info,
+    Tech(TechInfo&& tech_info,
          std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
          std::set<std::string>&& prerequisites,
          std::vector<UnlockableItem>&& unlocked_items,

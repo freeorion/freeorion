@@ -145,7 +145,7 @@ Tech::Tech(std::string&& name, std::string&& description,
     Init();
 }
 
-Tech::Tech(TechInfo& tech_info,
+Tech::Tech(TechInfo&& tech_info,
            std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
            std::set<std::string>&& prerequisites,
            std::vector<UnlockableItem>&& unlocked_items,
