@@ -1,7 +1,6 @@
 #include "Building.h"
 
 #include "BuildingType.h"
-#include "Enums.h"
 #include "UniverseObjectVisitor.h"
 #include "Universe.h"
 #include "../Empire/EmpireManager.h"

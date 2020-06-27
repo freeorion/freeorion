@@ -11,7 +11,6 @@
 #include "../../combat/CombatLogManager.h"
 #include "../../universe/System.h"
 #include "../../universe/UniverseObject.h"
-#include "../../universe/Enums.h"
 #include "../../util/AppInterface.h"
 #include "../../util/i18n.h"
 #include "../../util/Logger.h"

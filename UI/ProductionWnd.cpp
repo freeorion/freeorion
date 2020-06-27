@@ -15,7 +15,6 @@
 #include "../util/ScopedTimer.h"
 #include "../universe/BuildingType.h"
 #include "../universe/ShipDesign.h"
-#include "../universe/Enums.h"
 
 #include <GG/Layout.h>
 #include <GG/StaticGraphic.h>

@@ -10,6 +10,7 @@
 #include <boost/serialization/access.hpp>
 #include <boost/signals2/optional_last_value.hpp>
 #include <boost/signals2/signal.hpp>
+#include <GG/Enum.h>
 #include "EnumsFwd.h"
 #include "Meter.h"
 #include "../util/blocking_combiner.h"
@@ -30,6 +31,35 @@ FO_COMMON_API extern const int INVALID_OBJECT_ID;
 
 // The ID number assigned to temporary universe objects
 FO_COMMON_API extern const int TEMPORARY_OBJECT_ID;
+
+
+//! The various major subclasses of UniverseObject
+GG_ENUM(UniverseObjectType,
+    INVALID_UNIVERSE_OBJECT_TYPE = -1,
+    OBJ_BUILDING,
+    OBJ_SHIP,
+    OBJ_FLEET,
+    OBJ_PLANET,
+    OBJ_POP_CENTER,
+    OBJ_PROD_CENTER,
+    OBJ_SYSTEM,
+    OBJ_FIELD,
+    OBJ_FIGHTER,
+    NUM_OBJ_TYPES
+)
+
+//! Degrees of visibility an Empire or UniverseObject can have for an
+//! UniverseObject.  Determines how much information the empire gets about
+//!the (non)visible object.
+GG_ENUM(Visibility,
+    INVALID_VISIBILITY = -1,
+    VIS_NO_VISIBILITY,
+    VIS_BASIC_VISIBILITY,
+    VIS_PARTIAL_VISIBILITY,
+    VIS_FULL_VISIBILITY,
+    NUM_VISIBILITIES
+)
+
 
 /** The abstract base class for all objects in the universe
   * The UniverseObject class itself has an ID number, a name, a position, an ID

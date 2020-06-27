@@ -43,7 +43,6 @@
 #include "../client/human/HumanClientApp.h"
 #include "../Empire/Empire.h"
 #include "../network/Message.h"
-#include "../universe/Enums.h"
 #include "../universe/Field.h"
 #include "../universe/Fleet.h"
 #include "../universe/Pathfinder.h"

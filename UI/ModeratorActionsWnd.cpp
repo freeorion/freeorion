@@ -7,7 +7,6 @@
 #include "../util/AppInterface.h"
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Empire.h"
-#include "../universe/Enums.h"
 #include "TextBrowseWnd.h"
 
 #include <GG/Button.h>

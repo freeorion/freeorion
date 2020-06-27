@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include "Enums.h"
 #include "Meter.h"
+#include "UniverseObject.h"
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
 

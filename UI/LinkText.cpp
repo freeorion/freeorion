@@ -9,7 +9,6 @@
 #include "../util/VarText.h"
 #include "../util/i18n.h"
 #include "../util/Directories.h"
-#include "../universe/Enums.h"
 
 #include <GG/WndEvent.h>
 #include <GG/GUI.h>

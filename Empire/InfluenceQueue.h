@@ -2,7 +2,6 @@
 #define _InfluenceQueue_h_
 
 #include "../util/Export.h"
-#include "../universe/Enums.h"
 
 #include <deque>
 #include <map>

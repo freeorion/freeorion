@@ -13,7 +13,6 @@
 #include "../util/OptionsDB.h"
 #include "../util/ScopedTimer.h"
 #include "../universe/Effects.h"
-#include "../universe/Enums.h"
 #include "../universe/Tech.h"
 #include "../universe/UnlockableItem.h"
 #include "../universe/ValueRef.h"

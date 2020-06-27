@@ -3,7 +3,6 @@
 #include "EnumParser.h"
 #include "EnumValueRefRules.h"
 
-#include "../universe/Enums.h"
 #include "../universe/ValueRefs.h"
 
 #include <boost/spirit/include/phoenix.hpp>

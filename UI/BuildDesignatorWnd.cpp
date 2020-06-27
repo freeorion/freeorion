@@ -21,7 +21,6 @@
 #include "../universe/ShipHull.h"
 #include "../universe/ShipPart.h"
 #include "../universe/Conditions.h"
-#include "../universe/Enums.h"
 #include "../universe/ValueRef.h"
 #include "../client/human/HumanClientApp.h"
 

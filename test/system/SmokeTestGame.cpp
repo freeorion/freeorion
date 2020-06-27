@@ -2,7 +2,6 @@
 
 #include "ClientAppFixture.h"
 #include "Empire/Empire.h"
-#include "universe/Enums.h"
 #include "util/Directories.h"
 #include "util/Process.h"
 #include "util/SitRepEntry.h"

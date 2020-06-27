@@ -21,7 +21,6 @@
 #include "../universe/Pathfinder.h"
 #include "../universe/Universe.h"
 #include "../universe/UnlockableItem.h"
-#include "../universe/Enums.h"
 #include "../universe/ValueRef.h"
 
 #include "../util/Directories.h"

@@ -9,21 +9,6 @@
 #include "../util/Export.h"
 
 
-/* the various major subclasses of UniverseObject */
-GG_ENUM(UniverseObjectType,
-    INVALID_UNIVERSE_OBJECT_TYPE = -1,
-    OBJ_BUILDING,
-    OBJ_SHIP,
-    OBJ_FLEET,
-    OBJ_PLANET,
-    OBJ_POP_CENTER,
-    OBJ_PROD_CENTER,
-    OBJ_SYSTEM,
-    OBJ_FIELD,
-    OBJ_FIGHTER,
-    NUM_OBJ_TYPES
-)
-
 /** types of stars */
 GG_ENUM(StarType,
     INVALID_STAR_TYPE = -1,
@@ -244,19 +229,6 @@ FO_COMMON_API const std::map<MeterType, MeterType>& AssociatedMeterTypes();
   * active meter type.  If no associated meter type exists, INVALID_METER_TYPE
   * is returned. */
 FO_COMMON_API MeterType AssociatedMeterType(MeterType meter_type);
-
-
-/** degrees of visibility an Empire or UniverseObject can have for an
-  * UniverseObject.  determines how much information the empire
-  * gets about the (non)visible object. */
-GG_ENUM(Visibility,
-    INVALID_VISIBILITY = -1,
-    VIS_NO_VISIBILITY,
-    VIS_BASIC_VISIBILITY,
-    VIS_PARTIAL_VISIBILITY,
-    VIS_FULL_VISIBILITY,
-    NUM_VISIBILITIES
-)
 
 
 /** Possible results of an UniverseObject being captured by other empires, or an

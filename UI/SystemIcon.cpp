@@ -12,7 +12,6 @@
 #include "../universe/Planet.h"
 #include "../universe/Building.h"
 #include "../universe/Species.h"
-#include "../universe/Enums.h"
 #include "../client/human/HumanClientApp.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"

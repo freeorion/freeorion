@@ -1,7 +1,6 @@
 #include "CombatEvents.h"
 
 #include "../universe/Universe.h"
-#include "../universe/Enums.h"
 
 #include "../util/i18n.h"
 #include "../util/Logger.h"
