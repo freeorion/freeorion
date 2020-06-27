@@ -594,14 +594,13 @@ namespace {
     class TagHandler {
     public:
         TagHandler() :
-            m_known_tags(),
             m_regex_w_tags(m_known_tags, false),
             m_regex_w_tags_skipping_unmatched(m_known_tags, true)
         {}
 
         /** Add a tag to the set of known tags.*/
         void Insert(const std::string& tag)
-        { m_known_tags.insert(tag); }
+        { m_known_tags.emplace(tag); }
 
         /** Remove a tag from the set of known tags.*/
         void Erase(const std::string& tag)
@@ -1932,10 +1931,8 @@ void Font::Init(FT_Face& face)
                          PRINTABLE_ASCII_ALPHA_RANGES.begin(),
                          PRINTABLE_ASCII_ALPHA_RANGES.end());
     } else {
-        typedef std::pair<std::uint32_t, std::uint32_t> Pair;
-        for (std::size_t i = 0; i < m_charsets.size(); ++i) {
-            range_vec.push_back(Pair(m_charsets[i].m_first_char, m_charsets[i].m_last_char));
-        }
+        for (std::size_t i = 0; i < m_charsets.size(); ++i)
+            range_vec.emplace_back(m_charsets[i].m_first_char, m_charsets[i].m_last_char);
     }
 
     //Get maximum texture size

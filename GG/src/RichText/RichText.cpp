@@ -271,9 +271,8 @@ namespace GG {
     std::set<T> RichTextPrivate::MapKeys(const std::map<T, V>& arg_map)
     {
         std::set<T> keys;
-        for (const auto& pair : arg_map) {
-            keys.insert(pair.first);
-        }
+        for (const auto& pair : arg_map)
+            keys.emplace(pair.first);
         return keys;
     }
 

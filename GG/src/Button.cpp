@@ -705,7 +705,7 @@ void RadioButtonGroup::InsertButton(std::size_t index, std::shared_ptr<StateButt
         layout->SetMinimumRowHeight(index * CELLS_PER_BUTTON, bn_sz.y);
     else
         layout->SetMinimumColumnWidth(index * CELLS_PER_BUTTON, bn_sz.x);
-    m_button_slots.insert(m_button_slots.begin() + index, ButtonSlot(bn));
+    m_button_slots.emplace(m_button_slots.begin() + index, ButtonSlot(bn));
 
     if (m_checked_button != NO_BUTTON && index <= m_checked_button)
         ++m_checked_button;

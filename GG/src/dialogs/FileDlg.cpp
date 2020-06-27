@@ -371,9 +371,9 @@ void FileDlg::OkHandler(bool double_click)
             boost::filesystem::path::string_type path_native = p.native();
             std::string path_string;
             utf8::utf16to8(path_native.begin(), path_native.end(), std::back_inserter(path_string));
-            m_result.insert(path_string);
+            m_result.emplace(path_string);
 #else
-            m_result.insert(p.string());
+            m_result.emplace(p.string());
 #endif
             // check to see if file already exists; if so, ask if it's ok to overwrite
             if (fs::exists(p)) {
@@ -411,12 +411,13 @@ void FileDlg::OkHandler(bool double_click)
                     }
 #if defined(_WIN32)
                     // convert UTF-16 path string to UTF-8
-                    std::string temp;
                     boost::filesystem::path::string_type file_name_native = p.native();
+                    std::string temp;
+                    temp.reserve(file_name_native.size());
                     utf8::utf16to8(file_name_native.begin(), file_name_native.end(), std::back_inserter(temp));
-                    m_result.insert(temp);
+                    m_result.emplace(std::move(temp));
 #else
-                    m_result.insert(p.string());
+                    m_result.emplace(p.string());
 #endif
                     results_valid = true; // indicate validity only if at least one good file was found
                 } else {
@@ -596,7 +597,7 @@ void FileDlg::UpdateList()
                     std::string row_text = "[" + it->path().filename().string() + "]";
 #endif
                     row->push_back(GetStyleFactory()->NewTextControl(row_text, m_font, m_text_color, FORMAT_NOWRAP));
-                    sorted_rows.insert({row_text, row});
+                    sorted_rows.emplace(row_text, row);
                 }
             } catch (const fs::filesystem_error&) {
             }
@@ -620,8 +621,9 @@ void FileDlg::UpdateList()
                         }
                         if (meets_filters) {
                             auto row = Wnd::Create<ListBox::Row>();
-                            row->push_back(GetStyleFactory()->NewTextControl(it->path().filename().string(), m_font, m_text_color, FORMAT_NOWRAP));
-                            sorted_rows.insert({it->path().filename().string(), row});
+                            row->push_back(GetStyleFactory()->NewTextControl(
+                                it->path().filename().string(), m_font, m_text_color, FORMAT_NOWRAP));
+                            sorted_rows.emplace(it->path().filename().string(), row);
                         }
                     }
                 } catch (const fs::filesystem_error&) {

@@ -745,9 +745,8 @@ void ListBox::StartingChildDragDrop(const Wnd* wnd, const Pt& offset)
     // Preserve the displayed row order in the dragged selections by finding the y offset of wnd
     // and adjusting all the dragged rows relative to wnd.
     std::map<GG::Y, SelectionSet::iterator> selections_Y_sorted;
-    for (SelectionSet::iterator sel_it = m_selections.begin(); sel_it != m_selections.end(); ++sel_it) {
-        selections_Y_sorted.insert({(**sel_it)->Top(), sel_it});
-    }
+    for (auto sel_it = m_selections.begin(); sel_it != m_selections.end(); ++sel_it)
+        selections_Y_sorted.emplace((**sel_it)->Top(), sel_it);
 
     Y vertical_offset = offset.y;
     for (const auto& sorted_sel : selections_Y_sorted) {
@@ -814,7 +813,7 @@ void ListBox::ChildrenDraggedAway(const std::vector<Wnd*>& wnds, const Wnd* dest
         for (auto& row : initially_selected_rows) {
             iterator sel_it = std::find(m_rows.begin(), m_rows.end(), row);
             if (sel_it != m_rows.end())
-                new_selections.insert(sel_it);
+                new_selections.emplace(sel_it);
         }
 
         m_selections = new_selections;
@@ -1086,7 +1085,7 @@ void ListBox::SelectRow(iterator it, bool signal/* = false*/)
     if (m_style & LIST_SINGLESEL)
         m_selections.clear();
 
-    m_selections.insert(it);
+    m_selections.emplace(it);
 
     if (signal && previous_selections != m_selections)
         SelRowsChangedSignal(m_selections);
@@ -1114,11 +1113,12 @@ void ListBox::SelectAll(bool signal/* = false*/)
 
     if (m_style & LIST_SINGLESEL) {
         if (m_selections.empty() && !m_rows.empty()) {
-            m_selections.insert(m_rows.begin());
+            m_selections.emplace(m_rows.begin());
         }
     } else {
         if (m_selections.size() != m_rows.size()) {
             m_selections.clear();
+            m_selections.reserve(m_rows.size());
             for (iterator it = m_rows.begin(); it != m_rows.end(); ++it)
                 m_selections.insert(it);
         }
@@ -1993,9 +1993,9 @@ std::shared_ptr<ListBox::SelectionCache> ListBox::CacheSelections()
 {
     auto cache = std::make_shared<ListBox::SelectionCache>();
     cache->caret = IteratorToShared(m_caret, m_rows.end());
-    for (const auto& sel : m_selections) {
-        cache->selections.insert(*sel);
-    }
+    for (const auto& sel : m_selections)
+        cache->selections.emplace(*sel);
+
     cache->old_sel_row =      IteratorToShared(m_old_sel_row, m_rows.end());
     cache->old_rdown_row =    IteratorToShared(m_old_rdown_row, m_rows.end());
     cache->lclick_row =       IteratorToShared(m_lclick_row, m_rows.end());
@@ -2016,7 +2016,7 @@ void ListBox::RestoreCachedSelections(const ListBox::SelectionCache& cache)
         if (cache.caret == row)
             m_caret = it;
         if (cache.selections.count(row))
-            m_selections.insert(it);
+            m_selections.emplace(it);
         if (cache.old_sel_row == row)
             m_old_sel_row = it;
         if (cache.old_rdown_row == row)
@@ -2032,10 +2032,11 @@ void ListBox::RestoreCachedSelections(const ListBox::SelectionCache& cache)
 
 void ListBox::Resort()
 {
-    std::shared_ptr<ListBox::SelectionCache> cached_selections = CacheSelections();
+    std::shared_ptr<ListBox::SelectionCache> cached_selections{CacheSelections()};
 
-    std::vector<std::shared_ptr<Row>> rows_vec(m_rows.size());
-    std::copy(m_rows.begin(), m_rows.end(), rows_vec.begin());
+    std::vector<std::shared_ptr<Row>> rows_vec;
+    rows_vec.reserve(m_rows.size());
+    std::copy(m_rows.begin(), m_rows.end(), rows_vec.end());
     std::stable_sort(rows_vec.begin(), rows_vec.end(),
                      RowSorter(m_sort_cmp, m_sort_col, m_style & LIST_SORTDESCENDING));
     m_rows.clear();

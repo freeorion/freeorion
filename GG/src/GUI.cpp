@@ -483,7 +483,7 @@ void GUIImpl::HandleMouseButtonRelease(unsigned int mouse_button, const GG::Pt& 
     const auto&& click_drag_wnd = LockAndResetIfExpired(m_drag_wnds[mouse_button]);
     std::set<Wnd*> ignores;
     if (m_curr_drag_wnd_dragged && click_drag_wnd)
-        ignores.insert(click_drag_wnd.get());
+        ignores.emplace(click_drag_wnd.get());
     curr_wnd_under_cursor = m_zlist.Pick(pos, GUI::s_gui->ModalWindow(), &ignores);
     m_curr_wnd_under_cursor = curr_wnd_under_cursor;
 
@@ -1076,11 +1076,8 @@ std::set<std::pair<CPSize, CPSize>> GUI::FindWords(const std::string& str) const
     utf8_wchar_iterator last(str.end(), str.begin(), str.end());
     word_regex_iterator it(first, last, DEFAULT_WORD_REGEX);
     word_regex_iterator end_it;
-    for ( ; it != end_it; ++it) {
-        retval.insert(std::pair<CPSize, CPSize>(
-                          CPSize(it->position()),
-                          CPSize(it->position() + it->length())));
-    }
+    for ( ; it != end_it; ++it)
+        retval.emplace(CPSize(it->position()), CPSize(it->position() + it->length()));
     return retval;
 }
 
@@ -1104,7 +1101,7 @@ std::set<std::pair<StrSize, StrSize>> GUI::FindWordsStringIndices(const std::str
         std::advance(word_pos_it, match_result.length());
         StrSize end_idx(std::distance(str.begin(), word_pos_it.base()));
 
-        retval.insert({start_idx, end_idx});
+        retval.emplace(start_idx, end_idx);
     }
     return retval;
 }
@@ -1372,7 +1369,7 @@ void GUI::CancelDragDrop()
 }
 
 void GUI::RegisterTimer(Timer& timer)
-{ m_impl->m_timers.insert(&timer); }
+{ m_impl->m_timers.emplace(&timer); }
 
 void GUI::RemoveTimer(Timer& timer)
 { m_impl->m_timers.erase(&timer); }
@@ -1417,7 +1414,7 @@ GUI::accel_iterator GUI::accel_end()
 void GUI::SetAccelerator(Key key, Flags<ModKey> mod_keys/* = MOD_KEY_NONE*/)
 {
     mod_keys = MassagedAccelModKeys(mod_keys);
-    m_impl->m_accelerators.insert({key, mod_keys});
+    m_impl->m_accelerators.emplace(key, mod_keys);
 }
 
 void GUI::RemoveAccelerator(Key key, Flags<ModKey> mod_keys/* = MOD_KEY_NONE*/)
