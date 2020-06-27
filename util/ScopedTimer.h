@@ -18,9 +18,9 @@
 //! print output.
 class FO_COMMON_API ScopedTimer {
 public:
-    explicit ScopedTimer(const std::string& timed_name = "", bool enable_output = false,
+    explicit ScopedTimer(std::string timed_name = "", bool enable_output = false,
                          std::chrono::microseconds threshold = std::chrono::milliseconds(1));
-    ScopedTimer(const std::string& timed_name, std::chrono::microseconds threshold);
+    ScopedTimer(std::string timed_name, std::chrono::microseconds threshold);
     ~ScopedTimer();
 
     void restart();
@@ -99,7 +99,7 @@ private:
 //! ```
 class FO_COMMON_API SectionedScopedTimer {
 public:
-    explicit SectionedScopedTimer(const std::string& timed_name,
+    explicit SectionedScopedTimer(std::string timed_name,
                                   std::chrono::microseconds threshold = std::chrono::milliseconds(1),
                                   bool enable_output = true,
                                   bool unify_section_duration_units = true);

@@ -13,9 +13,9 @@ namespace {
 
 class ScopedTimer::Impl {
 public:
-    Impl(const std::string& timed_name, bool enable_output, std::chrono::microseconds threshold) :
+    Impl(std::string timed_name, bool enable_output, std::chrono::microseconds threshold) :
         m_start(std::chrono::high_resolution_clock::now()),
-        m_name(timed_name),
+        m_name(std::move(timed_name)),
         m_enable_output(enable_output),
         m_threshold(threshold)
     {}
@@ -99,14 +99,14 @@ public:
     std::chrono::microseconds                      m_threshold;
 };
 
-ScopedTimer::ScopedTimer(const std::string& timed_name, bool enable_output,
+ScopedTimer::ScopedTimer(std::string timed_name, bool enable_output,
                          std::chrono::microseconds threshold) :
-    m_impl(new Impl(timed_name, enable_output, threshold))
+    m_impl(new Impl(std::move(timed_name), enable_output, threshold))
 {}
 
-ScopedTimer::ScopedTimer(const std::string& timed_name,
+ScopedTimer::ScopedTimer(std::string timed_name,
                          std::chrono::microseconds threshold) :
-    m_impl(new Impl(timed_name, true, threshold))
+    m_impl(new Impl(std::move(timed_name), true, threshold))
 {}
 
 //! @note
@@ -130,13 +130,10 @@ class SectionedScopedTimer::Impl : public ScopedTimer::Impl {
     struct Sections {
         Sections(const std::chrono::high_resolution_clock::time_point& now,
                  const std::chrono::nanoseconds& time_from_start) :
-            m_table(),
-            m_section_start(now),
-            m_curr(),
-            m_section_names()
+            m_section_start(now)
         {
             // Create a dummy "" section so that m_curr is always a valid iterator.
-            auto curr = m_table.insert({"", time_from_start});
+            auto curr = m_table.emplace("", time_from_start);
             m_curr = curr.first;
         }
 
@@ -152,13 +149,13 @@ class SectionedScopedTimer::Impl : public ScopedTimer::Impl {
             m_section_start = now;
 
             // Create a new section if needed and update m_curr.
-            auto maybe_new = m_table.insert(
-                {section_name, std::chrono::high_resolution_clock::duration::zero()});
+            auto maybe_new = m_table.emplace(
+                section_name, std::chrono::high_resolution_clock::duration::zero());
             m_curr = maybe_new.first;
 
             // Insert succeed, so grab the new section name.
             if (maybe_new.second)
-                m_section_names.push_back(section_name);
+                m_section_names.emplace_back(section_name);
 
         }
 
@@ -178,9 +175,9 @@ class SectionedScopedTimer::Impl : public ScopedTimer::Impl {
     };
 
 public:
-    Impl(const std::string& timed_name, std::chrono::microseconds threshold,
+    Impl(std::string timed_name, std::chrono::microseconds threshold,
          bool enable_output, bool unify_section_duration_units) :
-        ScopedTimer::Impl(timed_name, enable_output, threshold),
+        ScopedTimer::Impl(std::move(timed_name), enable_output, threshold),
         m_unify_units(unify_section_duration_units)
     {}
 
@@ -281,11 +278,11 @@ private:
     bool m_unify_units = false;
 };
 
-SectionedScopedTimer::SectionedScopedTimer(const std::string& timed_name,
+SectionedScopedTimer::SectionedScopedTimer(std::string timed_name,
                                            std::chrono::microseconds threshold,
                                            bool enable_output,
                                            bool unify_section_duration_units) :
-    m_impl(new Impl(timed_name, threshold, enable_output, unify_section_duration_units))
+    m_impl(new Impl(std::move(timed_name), threshold, enable_output, unify_section_duration_units))
 {}
 
 // ~SectionedScopedTimer is required because Impl is defined here.
