@@ -2273,11 +2273,10 @@ void FPSIndicator::UpdateEnabled() {
 MultiTextureStaticGraphic::MultiTextureStaticGraphic(const std::vector<std::shared_ptr<GG::Texture>>& textures,
                                                      const std::vector<GG::Flags<GG::GraphicStyle>>& styles) :
     GG::Control(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::NO_WND_FLAGS),
-    m_graphics(),
     m_styles(styles)
 {
     for (auto& texture : textures)
-        m_graphics.push_back(GG::SubTexture(texture, GG::X0, GG::Y0, texture->DefaultWidth(), texture->DefaultHeight()));
+        m_graphics.emplace_back(texture, GG::X0, GG::Y0, texture->DefaultWidth(), texture->DefaultHeight());
     Init();
 }
 
@@ -2288,9 +2287,7 @@ MultiTextureStaticGraphic::MultiTextureStaticGraphic(const std::vector<GG::SubTe
     m_styles(styles)
 { Init(); }
 
-MultiTextureStaticGraphic::MultiTextureStaticGraphic() :
-    m_graphics(),
-    m_styles()
+MultiTextureStaticGraphic::MultiTextureStaticGraphic()
 {}
 
 GG::Rect MultiTextureStaticGraphic::RenderedArea(const GG::SubTexture& subtexture,
