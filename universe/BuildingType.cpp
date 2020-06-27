@@ -42,7 +42,7 @@ BuildingType::BuildingType(const std::string& name,
         m_effects.emplace_back(std::move(effect));
     Init();
     for (const std::string& tag : common_params.tags)
-        m_tags.insert(boost::to_upper_copy<std::string>(tag));
+        m_tags.emplace(boost::to_upper_copy<std::string>(tag));
 }
 
 BuildingType::~BuildingType()

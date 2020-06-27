@@ -121,7 +121,7 @@ ShipHull::ShipHull(float fuel,
          default_structure_effects);
 
     for (const std::string& tag : common_params.tags)
-        m_tags.insert(boost::to_upper_copy<std::string>(tag));
+        m_tags.emplace(boost::to_upper_copy<std::string>(tag));
 }
 
 ShipHull::Slot::Slot() :
@@ -137,13 +137,13 @@ void ShipHull::Init(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects
                     bool default_structure_effects)
 {
     if (default_fuel_effects && m_fuel != 0)
-        m_effects.push_back(IncreaseMeter(METER_MAX_FUEL,       m_fuel));
+        m_effects.emplace_back(IncreaseMeter(METER_MAX_FUEL,        m_fuel));
     if (default_stealth_effects && m_stealth != 0)
-        m_effects.push_back(IncreaseMeter(METER_STEALTH,        m_stealth));
+        m_effects.emplace_back(IncreaseMeter(METER_STEALTH,         m_stealth));
     if (default_structure_effects && m_structure != 0)
-        m_effects.push_back(IncreaseMeter(METER_MAX_STRUCTURE,  m_structure,    "RULE_SHIP_STRUCTURE_FACTOR"));
+        m_effects.emplace_back(IncreaseMeter(METER_MAX_STRUCTURE,   m_structure,    "RULE_SHIP_STRUCTURE_FACTOR"));
     if (default_speed_effects && m_speed != 0)
-        m_effects.push_back(IncreaseMeter(METER_SPEED,          m_speed,        "RULE_SHIP_SPEED_FACTOR"));
+        m_effects.emplace_back(IncreaseMeter(METER_SPEED,           m_speed,        "RULE_SHIP_SPEED_FACTOR"));
 
     if (m_production_cost)
         m_production_cost->SetTopLevelContent(m_name);
@@ -314,9 +314,8 @@ void ShipHullManager::CheckPendingShipHulls() const {
 
     TraceLogger() << [this]() {
         std::string retval("Hull Types:");
-        for (const auto& entry : m_hulls) {
+        for (const auto& entry : m_hulls)
             retval.append("\n\t" + entry.second->Name());
-        }
         return retval;
     }();
 

@@ -52,9 +52,9 @@ namespace {
                 }
                 if (starting_stack_size == stack.size()) {
                     stack.pop_back();
-                    checked_techs.insert(current_tech);
+                    checked_techs.emplace(current_tech);
                     if (all_prereqs_known)
-                        retval.push_back(current_tech);
+                        retval.emplace_back(current_tech);
                 }
             }
         }
@@ -137,14 +137,13 @@ Tech::Tech(const std::string& name, const std::string& description, const std::s
     m_research_cost(std::move(research_cost)),
     m_research_turns(std::move(research_turns)),
     m_researchable(researchable),
-    m_tags(),
     m_effects(effects),
     m_prerequisites(prerequisites),
     m_unlocked_items(unlocked_items),
     m_graphic(graphic)
 {
     for (const std::string& tag : tags)
-        m_tags.insert(boost::to_upper_copy<std::string>(tag));
+        m_tags.emplace(boost::to_upper_copy<std::string>(tag));
     Init();
 }
 
@@ -168,7 +167,7 @@ Tech::Tech(TechInfo& tech_info,
     for (auto&& effect : effects)
         m_effects.emplace_back(std::move(effect));
     for (const std::string& tag : tech_info.tags)
-        m_tags.insert(boost::to_upper_copy<std::string>(tag));
+        m_tags.emplace(boost::to_upper_copy<std::string>(tag));
     Init();
 }
 
@@ -182,7 +181,7 @@ void Tech::Init() {
         m_research_turns->SetTopLevelContent(m_name);
 
     for (auto& effect : m_effects)
-    { effect->SetTopLevelContent(m_name); }
+        effect->SetTopLevelContent(m_name);
 }
 
 std::string Tech::Dump(unsigned short ntabs) const {
@@ -431,7 +430,7 @@ void TechManager::CheckPendingTechs() const {
     for (const auto& map : m_categories) {
         auto set_it = categories_seen_in_techs.find(map.first);
         if (set_it == categories_seen_in_techs.end()) {
-            empty_defined_categories.insert(map.first);
+            empty_defined_categories.emplace(map.first);
         } else {
             categories_seen_in_techs.erase(set_it);
         }
@@ -475,7 +474,7 @@ void TechManager::CheckPendingTechs() const {
     for (const auto& tech : m_techs) {
         for (const std::string& prereq : tech->Prerequisites()) {
             if (Tech* prereq_tech = const_cast<Tech*>(GetTech(prereq)))
-                prereq_tech->m_unlocked_techs.insert(tech->Name());
+                prereq_tech->m_unlocked_techs.emplace(tech->Name());
         }
     }
 
@@ -565,7 +564,7 @@ std::string TechManager::FindFirstDependencyCycle() const {
 
             if (starting_stack_size == stack.size()) {
                 stack.pop_back();
-                checked_techs.insert(current_tech);
+                checked_techs.emplace(current_tech);
             }
         }
     }
@@ -654,9 +653,9 @@ std::vector<std::string> TechManager::RecursivePrereqs(const std::string& tech_n
             continue;
 
         // tech is new, so put it into the set of already-processed prereqs
-        prereqs_set.insert(cur_name);
+        prereqs_set.emplace(cur_name);
         // and the map of techs, sorted by cost
-        techs_to_add_map.insert(std::pair<float, std::string>(cur_tech->ResearchCost(empire_id), cur_name));
+        techs_to_add_map.emplace(cur_tech->ResearchCost(empire_id), cur_name);
 
         // get prereqs of new tech, append to list
         cur_prereqs = cur_tech->Prerequisites();

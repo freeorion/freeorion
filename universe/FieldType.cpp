@@ -40,17 +40,16 @@ FieldType::FieldType(const std::string& name, const std::string& description,
     m_graphic(graphic)
 {
     for (const std::string& tag : tags)
-        m_tags.insert(boost::to_upper_copy<std::string>(tag));
+        m_tags.emplace(boost::to_upper_copy<std::string>(tag));
 
     for (auto&& effect : effects)
         m_effects.emplace_back(std::move(effect));
 
     if (m_stealth != 0.0f)
-        m_effects.push_back(IncreaseMeter(METER_STEALTH,    m_stealth));
+        m_effects.emplace_back(IncreaseMeter(METER_STEALTH, m_stealth));
 
-    for (auto& effect : m_effects) {
+    for (auto& effect : m_effects)
         effect->SetTopLevelContent(m_name);
-    }
 }
 
 std::string FieldType::Dump(unsigned short ntabs) const {
