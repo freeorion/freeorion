@@ -7,6 +7,7 @@
 #include "universe/Enums.h"
 #include "universe/Planet.h"
 #include "universe/ShipPart.h"
+#include "universe/Species.h"
 #include "universe/System.h"
 #include "universe/UnlockableItem.h"
 

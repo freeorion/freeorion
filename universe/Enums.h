@@ -9,17 +9,6 @@
 #include "../util/Export.h"
 
 
-/** environmental suitability of planets for a particular race */
-GG_ENUM(PlanetEnvironment,
-    INVALID_PLANET_ENVIRONMENT = -1,
-    PE_UNINHABITABLE,
-    PE_HOSTILE,
-    PE_POOR,
-    PE_ADEQUATE,
-    PE_GOOD,
-    NUM_PLANET_ENVIRONMENTS
-)
-
 /** Types for Meters
   * Only active paired meters should lie between METER_POPULATION and METER_TROOPS
   * (See: UniverseObject::ResetPairedActiveMeters())
