@@ -167,8 +167,6 @@ unsigned int Special::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_description);
     CheckSums::CheckSumCombine(retval, m_stealth);
     CheckSums::CheckSumCombine(retval, m_effects);
-    CheckSums::CheckSumCombine(retval, m_spawn_rate);
-    CheckSums::CheckSumCombine(retval, m_spawn_limit);
     CheckSums::CheckSumCombine(retval, m_initial_capacity);
     CheckSums::CheckSumCombine(retval, m_location);
     CheckSums::CheckSumCombine(retval, m_graphic);
