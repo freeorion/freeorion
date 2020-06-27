@@ -22,8 +22,7 @@ Field::Field(const std::string& field_type, double x, double y, double radius) :
     UniverseObject("", x, y),
     m_type_name(field_type)
 {
-    const FieldType* type = GetFieldType(m_type_name);
-    if (type)
+    if (const FieldType* type = GetFieldType(m_type_name))
         Rename(UserString(type->Name()));
     else
         Rename(UserString("ENC_FIELD"));

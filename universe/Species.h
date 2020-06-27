@@ -138,7 +138,7 @@ public:
     //@}
 
 private:
-    void    Init();
+    void Init();
 
     std::string                             m_name;
     std::string                             m_description;
