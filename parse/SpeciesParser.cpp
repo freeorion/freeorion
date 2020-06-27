@@ -48,35 +48,28 @@ namespace {
         std::string gameplay_desc;
     };
 
-    struct SpeciesParams {
-        SpeciesParams() = default;
-        SpeciesParams(bool playable_, bool native_, bool can_colonize_, bool can_produce_ships_) :
+    struct SpeciesParamsAndStuff {
+        SpeciesParamsAndStuff() = default;
+        SpeciesParamsAndStuff(bool playable_, bool native_,
+                              bool can_colonize_, bool can_produce_ships_,
+                              boost::optional<std::vector<FocusType>>& foci_,
+                              boost::optional<std::string>& preferred_focus_,
+                              std::set<std::string>& tags_) :
             playable(playable_),
             native(native_),
             can_colonize(can_colonize_),
-            can_produce_ships(can_produce_ships_)
-        {}
-        bool playable = false;
-        bool native = false;
-        bool can_colonize = false;
-        bool can_produce_ships = false;
-    };
-
-    struct SpeciesStuff {
-        SpeciesStuff(boost::optional<std::vector<FocusType>>& foci_,
-                     boost::optional<std::string>& preferred_focus_,
-                     std::set<std::string>& tags_,
-                     std::string& graphic_) :
+            can_produce_ships(can_produce_ships_),
             foci(std::move(foci_)),
             preferred_focus(std::move(preferred_focus_)),
-            tags(std::move(tags_)),
-            graphic(std::move(graphic_))
+            tags(std::move(tags_))
         {}
-
+        bool                                    playable = false;
+        bool                                    native = false;
+        bool                                    can_colonize = false;
+        bool                                    can_produce_ships = false;
         boost::optional<std::vector<FocusType>> foci;
         boost::optional<std::string>            preferred_focus;
         std::set<std::string>                   tags;
-        std::string                             graphic;
     };
 
 
@@ -86,23 +79,23 @@ namespace {
         boost::optional<std::map<PlanetType, PlanetEnvironment>>& planet_environments,
         boost::optional<parse::effects_group_payload>& effects,
         boost::optional<parse::detail::MovableEnvelope<Condition::Condition>>& combat_targets,
-        SpeciesParams& params,
-        const SpeciesStuff& foci_preferred_tags_graphic,
+        SpeciesParamsAndStuff& params,
+        std::string& graphic,
         bool& pass)
     {
         auto species_ptr = std::make_unique<Species>(
             std::move(strings.name), std::move(strings.desc), std::move(strings.gameplay_desc),
-            (foci_preferred_tags_graphic.foci ? *foci_preferred_tags_graphic.foci : std::vector<FocusType>{}),
-            (foci_preferred_tags_graphic.preferred_focus ? *foci_preferred_tags_graphic.preferred_focus : std::string{}),
-            (planet_environments ? *planet_environments : std::map<PlanetType, PlanetEnvironment>{}),
-            (effects ? OpenEnvelopes(*effects, pass) : std::vector<std::unique_ptr<Effect::EffectsGroup>>{}),
-            (combat_targets ? (*combat_targets).OpenEnvelope(pass) : nullptr),
+            (params.foci ? std::move(*params.foci) : std::vector<FocusType>{}),
+            (params.preferred_focus ? std::move(*params.preferred_focus) : std::string{}),
+            (planet_environments ? std::move(*planet_environments) : std::map<PlanetType, PlanetEnvironment>{}),
+            (effects ? std::move(OpenEnvelopes(*effects, pass)) : std::vector<std::unique_ptr<Effect::EffectsGroup>>{}),
+            (combat_targets ? std::move((*combat_targets).OpenEnvelope(pass)) : nullptr),
             params.playable,
             params.native,
             params.can_colonize,
             params.can_produce_ships,
-            foci_preferred_tags_graphic.tags,
-            foci_preferred_tags_graphic.graphic);
+            params.tags,    // intentionally not moved
+            std::move(graphic));
 
         species.insert(std::make_pair(species_ptr->Name(), std::move(species_ptr)));
     }
@@ -143,8 +136,6 @@ namespace {
             qi::_5_type _5;
             qi::_6_type _6;
             qi::_7_type _7;
-            qi::_8_type _8;
-            qi::_9_type _9;
             qi::_pass_type _pass;
             qi::_r1_type _r1;
             qi::_val_type _val;
@@ -179,12 +170,15 @@ namespace {
                 |     environment_map_element [ insert(_val, _1) ]
                 ;
 
-            species_params
-                =   (matches_[tok.Playable_]
-                >    matches_[tok.Native_]
-                >    matches_[tok.CanProduceShips_]
-                >    matches_[tok.CanColonize_]
-                    ) [ _val = construct<SpeciesParams>(_1, _2, _4, _3) ]
+            species_params_and_stuff
+                =   (matches_[tok.Playable_]        // _1
+                >    matches_[tok.Native_]          // _2
+                >    matches_[tok.CanProduceShips_] // _3
+                >    matches_[tok.CanColonize_]     // _4
+                >    tags_parser                    // _5
+                >   -foci                           // _6
+                >   -as_string_[(label(tok.PreferredFocus_) > tok.string )] // _7
+                    ) [ _val = construct<SpeciesParamsAndStuff>(_1, _2, _4, _3, _6, _7, _5) ]
                 ;
 
             species_strings
@@ -197,18 +191,13 @@ namespace {
                 ;
 
             species
-                = ( species_strings(_r1)// _1
-                >   species_params      // _2
-                >   tags_parser         // _3
-                >  -foci                // _4
-                >  -as_string_[(label(tok.PreferredFocus_)  >   tok.string )]           // _5
-                > -(label(tok.EffectsGroups_)               >   effects_group_grammar)  // _6
-                > -(label(tok.CombatTargets_)               >   condition_parser)       // _7
-                > -(label(tok.Environments_)                >   environment_map)        // _8
-                >   label(tok.Graphic_)                     >   tok.string              // _9
-                  ) [ insert_species_(_r1, _1, _8, _6, _7, _2,
-                                      construct<SpeciesStuff>(_4, _5, _3, _9),
-                                      _pass) ]
+                = ( species_strings(_r1)        // _1
+                >   species_params_and_stuff    // _2
+                > -(label(tok.EffectsGroups_)   >   effects_group_grammar)  // _3
+                > -(label(tok.CombatTargets_)   >   condition_parser)       // _4
+                > -(label(tok.Environments_)    >   environment_map)        // _5
+                >   label(tok.Graphic_)         >   tok.string              // _6
+                  ) [ insert_species_(_r1, _1, _5, _3, _4, _2, _6, _pass) ]
                 ;
 
             start
@@ -219,7 +208,7 @@ namespace {
             foci.name("Foci");
             environment_map_element.name("Type = <type> Environment = <env>");
             environment_map.name("Environments");
-            species_params.name("Species Flags");
+            species_params_and_stuff.name("Species Flags, ");
             species_strings.name("Species Strings");
             species.name("Species");
             start.name("start");
@@ -242,7 +231,7 @@ namespace {
         using foci_rule = parse::detail::rule<std::vector<FocusType> ()>;
         using environment_map_element_rule = parse::detail::rule<std::pair<PlanetType, PlanetEnvironment> ()>;
         using environment_map_rule = parse::detail::rule<std::map<PlanetType, PlanetEnvironment> ()>;
-        using species_params_rule = parse::detail::rule<SpeciesParams ()>;
+        using species_params_rule = parse::detail::rule<SpeciesParamsAndStuff ()>;
         using species_strings_rule = parse::detail::rule<SpeciesStrings (const start_rule_payload::first_type&)>;
         using species_rule = parse::detail::rule<void (start_rule_payload::first_type&)>;
         using start_rule = parse::detail::rule<start_rule_signature>;
@@ -257,7 +246,7 @@ namespace {
         parse::detail::single_or_bracketed_repeat<focus_type_rule> one_or_more_foci;
         environment_map_element_rule                               environment_map_element;
         environment_map_rule                                       environment_map;
-        species_params_rule                                        species_params;
+        species_params_rule                                        species_params_and_stuff;
         species_strings_rule                                       species_strings;
         species_rule                                               species;
         start_rule                                                 start;

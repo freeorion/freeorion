@@ -81,7 +81,7 @@ public:
             std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
             std::unique_ptr<Condition::Condition>&& combat_targets,
             bool playable, bool native, bool can_colonize, bool can_produce_ships,
-            const std::set<std::string>& tags, std::string graphic);
+            const std::set<std::string>& tags, std::string&& graphic);
 
     ~Species();
     //@}
