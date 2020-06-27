@@ -6,6 +6,7 @@
 #include "parse/ConditionParserImpl.h"
 #include "universe/Enums.h"
 #include "universe/ShipPart.h"
+#include "universe/System.h"
 #include "universe/UnlockableItem.h"
 
 #include <type_traits>

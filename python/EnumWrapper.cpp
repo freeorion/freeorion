@@ -1,5 +1,6 @@
 #include "../universe/Enums.h"
 #include "../universe/ShipPart.h"
+#include "../universe/System.h"
 #include "../universe/UniverseObject.h"
 #include "../universe/UnlockableItem.h"
 #include "../Empire/Diplomacy.h"

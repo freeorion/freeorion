@@ -9,20 +9,6 @@
 #include "../util/Export.h"
 
 
-/** types of stars */
-GG_ENUM(StarType,
-    INVALID_STAR_TYPE = -1,
-    STAR_BLUE,
-    STAR_WHITE,
-    STAR_YELLOW,
-    STAR_ORANGE,
-    STAR_RED,
-    STAR_NEUTRON,
-    STAR_BLACK,
-    STAR_NONE,
-    NUM_STAR_TYPES
-)
-
 /** types of planets */
 GG_ENUM(PlanetType,
     INVALID_PLANET_TYPE = -1,
