@@ -41,12 +41,10 @@ public:
     ShipPart();
 
     ShipPart(ShipPartClass part_class, double capacity, double stat2,
-             CommonParams& common_params,
-             const std::string& name,
-             const std::string& description,
-             const std::set<std::string>& exclusions,
+             CommonParams&& common_params, std::string&& name,
+             std::string&& description, std::set<std::string>&& exclusions,
              std::vector<ShipSlotType> mountable_slot_types,
-             const std::string& icon, bool add_standard_capacity_effect = true,
+             std::string&& icon, bool add_standard_capacity_effect = true,
              std::unique_ptr<Condition::Condition>&& combat_targets = nullptr);
 
     ~ShipPart();

@@ -140,34 +140,32 @@ ShipPart::ShipPart() :
 {}
 
 ShipPart::ShipPart(ShipPartClass part_class, double capacity, double stat2,
-                   CommonParams& common_params,
-                   const std::string& name,
-                   const std::string& description,
-                   const std::set<std::string>& exclusions,
+                   CommonParams&& common_params, std::string&& name,
+                   std::string&& description, std::set<std::string>&& exclusions,
                    std::vector<ShipSlotType> mountable_slot_types,
-                   const std::string& icon, bool add_standard_capacity_effect,
+                   std::string&& icon, bool add_standard_capacity_effect,
                    std::unique_ptr<Condition::Condition>&& combat_targets) :
-    m_name(name),
-    m_description(description),
+    m_name(std::move(name)),
+    m_description(std::move(description)),
     m_class(part_class),
     m_capacity(capacity),
     m_secondary_stat(stat2),
     m_producible(common_params.producible),
     m_production_cost(std::move(common_params.production_cost)),
     m_production_time(std::move(common_params.production_time)),
-    m_mountable_slot_types(mountable_slot_types),
+    m_mountable_slot_types(std::move(mountable_slot_types)),
     m_production_meter_consumption(std::move(common_params.production_meter_consumption)),
     m_production_special_consumption(std::move(common_params.production_special_consumption)),
     m_location(std::move(common_params.location)),
-    m_exclusions(exclusions),
-    m_icon(icon),
+    m_exclusions(std::move(exclusions)),
+    m_icon(std::move(icon)),
     m_add_standard_capacity_effect(add_standard_capacity_effect),
     m_combat_targets(std::move(combat_targets))
 {
     Init(std::move(common_params.effects));
 
     for (const std::string& tag : common_params.tags)
-        m_tags.insert(boost::to_upper_copy<std::string>(tag));
+        m_tags.emplace(boost::to_upper_copy<std::string>(tag));
 
     TraceLogger() << "ShipPart::ShipPart: name: " << m_name
                   << " description: " << m_description

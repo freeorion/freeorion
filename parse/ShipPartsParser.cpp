@@ -44,11 +44,11 @@ namespace {
 
     void insert_shippart(std::map<std::string, std::unique_ptr<ShipPart>>& ship_parts,
                          ShipPartClass part_class,
-                         const parse::detail::OptCap_OptStat2_OptMoveableTargets capacity_and_stat2_and_targets,
-                         const parse::detail::MovableEnvelope<CommonParams>& common_params,
-                         const parse::detail::MoreCommonParams& more_common_params,
+                         const parse::detail::OptCap_OptStat2_OptMoveableTargets& capacity_and_stat2_and_targets,
+                         parse::detail::MovableEnvelope<CommonParams>& common_params,
+                         parse::detail::MoreCommonParams& more_common_params,
                          boost::optional<std::vector<ShipSlotType>> mountable_slot_types,
-                         const std::string& icon,
+                         std::string& icon,
                          bool no_default_capacity_effect,
                          bool& pass)
     {
@@ -61,16 +61,16 @@ namespace {
             part_class,
             (capacity ? *capacity : 0.0),
             (stat2 ? *stat2 : 1.0),
-            *common_params.OpenEnvelope(pass),
-            more_common_params.name,
-            more_common_params.description,
-            more_common_params.exclusions,
-            (mountable_slot_types ? *mountable_slot_types : std::vector<ShipSlotType>()),
-            icon,
+            std::move(*common_params.OpenEnvelope(pass)),
+            std::move(more_common_params.name),
+            std::move(more_common_params.description),
+            std::move(more_common_params.exclusions),
+            (mountable_slot_types ? std::move(*mountable_slot_types) : std::vector<ShipSlotType>{}),
+            std::move(icon),
             !no_default_capacity_effect,
             (combat_targets ? (*combat_targets).OpenEnvelope(pass) : nullptr));
 
-        ship_parts.insert(std::make_pair(ship_part->Name(), std::move(ship_part)));
+        ship_parts.emplace(ship_part->Name(), std::move(ship_part));
     }
 
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_shippart_, insert_shippart, 9)
