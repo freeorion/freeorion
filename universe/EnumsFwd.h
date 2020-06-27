@@ -14,7 +14,6 @@ enum ShipPartClass : int;
 enum ShipSlotType : int;
 enum Visibility : int;
 enum CaptureResult : int;
-enum EffectsCauseType : int;
 enum ModeratorActionSetting : int;
 
 

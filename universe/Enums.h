@@ -135,21 +135,6 @@ GG_ENUM(CaptureResult,
     CR_RETAIN      // object ownership unchanged: original empire(s) still own object
 )
 
-/** Types of in-game things that might contain an EffectsGroup, or "cause" effects to occur */
-GG_ENUM(EffectsCauseType,
-    INVALID_EFFECTS_GROUP_CAUSE_TYPE = -1,
-    ECT_UNKNOWN_CAUSE,
-    ECT_INHERENT,
-    ECT_TECH,
-    ECT_BUILDING,
-    ECT_FIELD,
-    ECT_SPECIAL,
-    ECT_SPECIES,
-    ECT_SHIP_PART,
-    ECT_SHIP_HULL,
-    ECT_POLICY
-)
-
 /** Used for tracking what moderator action is set */
 GG_ENUM(ModeratorActionSetting,
     MAS_NoAction,

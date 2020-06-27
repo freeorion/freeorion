@@ -1,3 +1,4 @@
+#include "../universe/Effect.h"
 #include "../universe/Enums.h"
 #include "../universe/Planet.h"
 #include "../universe/ShipPart.h"
