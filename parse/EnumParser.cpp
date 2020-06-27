@@ -2,6 +2,7 @@
 
 #include "../universe/BuildingType.h"
 #include "../universe/Enums.h"
+#include "../universe/ShipHull.h"
 #include "../universe/ShipPart.h"
 #include "../universe/UnlockableItem.h"
 
