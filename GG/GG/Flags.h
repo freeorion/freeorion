@@ -216,18 +216,19 @@ public:
         If \a permanent is true, this flag becomes non-removable.  Alls flags
         added by GG are added as permanent flags.  User-added flags should not
         be added as permanent. */
-    void insert(FlagType flag, const std::string& name, bool permanent = false)
+    template<typename S>
+    void insert(FlagType flag, S&& name, bool permanent = false)
     {
 #ifndef NDEBUG
         std::pair<typename std::set<FlagType>::iterator, bool> result =
 #endif
-        m_flags.insert(flag);
+        m_flags.emplace(flag);
 #ifndef NDEBUG
         assert(result.second);
 #endif
         if (permanent)
-            m_permanent.insert(flag);
-        m_strings[flag] = name;
+            m_permanent.emplace(flag);
+        m_strings.emplace(flag, std::forward<S>(name));
     }
     /** Removes \a flag from the FlagSpec, returning whether the flag was
         actually removed or not.  Permanent flags are not removed.  The
