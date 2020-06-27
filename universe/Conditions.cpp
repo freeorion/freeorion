@@ -7,7 +7,6 @@
 #include <boost/graph/st_connected.hpp>
 #include "BuildingType.h"
 #include "Building.h"
-#include "Enums.h"
 #include "Fighter.h"
 #include "Fleet.h"
 #include "Meter.h"

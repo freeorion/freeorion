@@ -20,7 +20,6 @@
 #include "../parse/Parse.h"
 #include "../universe/Building.h"
 #include "../universe/Condition.h"
-#include "../universe/Enums.h"
 #include "../universe/Fleet.h"
 #include "../universe/FleetPlan.h"
 #include "../universe/Planet.h"

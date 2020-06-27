@@ -1,7 +1,6 @@
 #include "Fleet.h"
 
 #include <boost/algorithm/cxx11/all_of.hpp>
-#include "Enums.h"
 #include "Pathfinder.h"
 #include "ShipDesign.h"
 #include "Ship.h"

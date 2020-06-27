@@ -17,7 +17,6 @@
 #include "../universe/Ship.h"
 #include "../universe/ShipDesign.h"
 #include "../universe/System.h"
-#include "../universe/Enums.h"
 #include "../universe/Pathfinder.h"
 #include "../network/Message.h"
 #include "../Empire/Empire.h"

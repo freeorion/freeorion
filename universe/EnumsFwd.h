@@ -11,7 +11,6 @@ enum Shape : int;
 enum Aggression : int;
 enum GalaxySetupOption : int;
 enum EmpireAffiliationType : int;
-enum DiplomaticStatus : int;
 enum UnlockableItemType : int;
 enum TechStatus : int;
 enum BuildType : int;

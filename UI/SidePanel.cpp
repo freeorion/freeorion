@@ -29,7 +29,6 @@
 #include "../client/human/HumanClientApp.h"
 #include "../Empire/Empire.h"
 #include "../universe/Building.h"
-#include "../universe/Enums.h"
 #include "../universe/Fleet.h"
 #include "../universe/ShipDesign.h"
 #include "../universe/Ship.h"

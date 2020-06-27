@@ -6,7 +6,6 @@
 #include "BuildingType.h"
 #include "Building.h"
 #include "Condition.h"
-#include "Enums.h"
 #include "FieldType.h"
 #include "Field.h"
 #include "Fleet.h"

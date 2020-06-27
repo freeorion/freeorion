@@ -6,7 +6,6 @@
 #include "../util/i18n.h"
 #include "../util/Logger.h"
 #include "../util/XMLDoc.h"
-#include "../universe/Enums.h"
 
 #include <boost/filesystem/fstream.hpp>
 

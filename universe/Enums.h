@@ -184,15 +184,6 @@ GG_ENUM(EmpireAffiliationType,
     NUM_AFFIL_TYPES ///< keep last, the number of affiliation types
 )
 
-/** diplomatic statuses */
-GG_ENUM(DiplomaticStatus,
-    INVALID_DIPLOMATIC_STATUS = -1,
-    DIPLO_WAR,
-    DIPLO_PEACE,
-    DIPLO_ALLIED,
-    NUM_DIPLO_STATUSES
-)
-
 /** Research status of techs, relating to whether they have been or can be researched */
 GG_ENUM(TechStatus,
     INVALID_TECH_STATUS = -1,
