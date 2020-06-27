@@ -7,7 +7,6 @@
 #include "CommonParamsParser.h"
 
 #include "../universe/BuildingType.h"
-#include "../universe/Enums.h"
 #include "../universe/Condition.h"
 #include "../universe/ValueRef.h"
 #include "../util/Directories.h"

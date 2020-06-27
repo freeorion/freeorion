@@ -113,16 +113,4 @@ FO_COMMON_API const std::map<MeterType, MeterType>& AssociatedMeterTypes();
 FO_COMMON_API MeterType AssociatedMeterType(MeterType meter_type);
 
 
-/** Possible results of an UniverseObject being captured by other empires, or an
-  * object's containing UniverseObject being captured, or the location of a
-  * Production Queue Build Item being conquered, or the result of other future
-  * events, such as spy activity... */
-GG_ENUM(CaptureResult,
-    INVALID_CAPTURE_RESULT = -1,
-    CR_CAPTURE,    // object has ownership by original empire(s) removed, and conquering empire added
-    CR_DESTROY,    // object is destroyed
-    CR_RETAIN      // object ownership unchanged: original empire(s) still own object
-)
-
-
 #endif

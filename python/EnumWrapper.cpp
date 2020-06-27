@@ -1,3 +1,4 @@
+#include "../universe/BuildingType.h"
 #include "../universe/Effect.h"
 #include "../universe/Enums.h"
 #include "../universe/Planet.h"

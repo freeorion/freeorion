@@ -4,6 +4,7 @@
 #include "parse/ValueRefParser.h"
 #include "parse/EnumValueRefRules.h"
 #include "parse/ConditionParserImpl.h"
+#include "universe/BuildingType.h"
 #include "universe/Enums.h"
 #include "universe/Planet.h"
 #include "universe/ShipPart.h"
