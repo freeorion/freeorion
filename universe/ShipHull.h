@@ -29,20 +29,13 @@ public:
 
     ShipHull();
 
-    ShipHull(float fuel,
-             float speed,
-             float stealth,
-             float structure,
-             bool default_fuel_effects,
-             bool default_speed_effects,
-             bool default_stealth_effects,
-             bool default_structure_effects,
+    ShipHull(float fuel, float speed, float stealth, float structure,
+             bool default_fuel_effects, bool default_speed_effects,
+             bool default_stealth_effects, bool default_structure_effects,
              CommonParams&& common_params,
-             const std::string& name,
-             const std::string& description,
-             const std::set<std::string>& exclusions,
-             const std::vector<Slot>& slots,
-             const std::string& icon, const std::string& graphic);
+             std::string&& name, std::string&& description,
+             std::set<std::string>&& exclusions, std::vector<Slot>&& slots,
+             std::string&& icon, std::string&& graphic);
 
     ~ShipHull();
 

@@ -82,22 +82,15 @@ namespace {
 ShipHull::ShipHull()
 {}
 
-ShipHull::ShipHull(float fuel,
-                   float speed,
-                   float stealth,
-                   float structure,
-                   bool default_fuel_effects,
-                   bool default_speed_effects,
-                   bool default_stealth_effects,
-                   bool default_structure_effects,
+ShipHull::ShipHull(float fuel, float speed, float stealth, float structure,
+                   bool default_fuel_effects, bool default_speed_effects,
+                   bool default_stealth_effects, bool default_structure_effects,
                    CommonParams&& common_params,
-                   const std::string& name,
-                   const std::string& description,
-                   const std::set<std::string>& exclusions,
-                   const std::vector<Slot>& slots,
-                   const std::string& icon, const std::string& graphic) :
-    m_name(name),
-    m_description(description),
+                   std::string&& name, std::string&& description,
+                   std::set<std::string>&& exclusions, std::vector<Slot>&& slots,
+                   std::string&& icon, std::string&& graphic) :
+    m_name(std::move(name)),
+    m_description(std::move(description)),
     m_speed(speed),
     m_fuel(fuel),
     m_stealth(stealth),
@@ -105,13 +98,13 @@ ShipHull::ShipHull(float fuel,
     m_production_cost(std::move(common_params.production_cost)),
     m_production_time(std::move(common_params.production_time)),
     m_producible(common_params.producible),
-    m_slots(slots),
+    m_slots(std::move(slots)),
     m_production_meter_consumption(std::move(common_params.production_meter_consumption)),
     m_production_special_consumption(std::move(common_params.production_special_consumption)),
     m_location(std::move(common_params.location)),
-    m_exclusions(exclusions),
-    m_graphic(graphic),
-    m_icon(icon)
+    m_exclusions(std::move(exclusions)),
+    m_graphic(std::move(graphic)),
+    m_icon(std::move(icon))
 {
     TraceLogger() << "hull type: " << m_name << " producible: " << m_producible << std::endl;
     Init(std::move(common_params.effects),
