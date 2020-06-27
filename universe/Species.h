@@ -35,26 +35,20 @@ FO_COMMON_API extern const int ALL_EMPIRES;
 class FO_COMMON_API FocusType {
 public:
     /** \name Structors */ //@{
-    FocusType() :
-        m_name(),
-        m_description(),
-        m_location(),
-        m_graphic()
-    {}
-
-    FocusType(const std::string& name, const std::string& description,
+    FocusType() = default;
+    FocusType(std::string& name, std::string& description,
               std::unique_ptr<Condition::Condition>&& location,
-              const std::string& graphic);
+              std::string& graphic);
 
     ~FocusType();
     //@}
 
     /** \name Accessors */ //@{
-    const std::string&              Name() const        { return m_name; }          ///< returns the name for this focus type
-    const std::string&              Description() const { return m_description; }   ///< returns a text description of this focus type
-    const Condition::Condition*     Location() const    { return m_location.get(); }///< returns the condition that determines whether an UniverseObject can use this FocusType
-    const std::string&              Graphic() const     { return m_graphic; }       ///< returns the name of the grapic file for this focus type
-    std::string                     Dump(unsigned short ntabs = 0) const;       ///< returns a data file format representation of this object
+    const std::string&          Name() const        { return m_name; }          ///< returns the name for this focus type
+    const std::string&          Description() const { return m_description; }   ///< returns a text description of this focus type
+    const Condition::Condition* Location() const    { return m_location.get(); }///< returns the condition that determines whether an UniverseObject can use this FocusType
+    const std::string&          Graphic() const     { return m_graphic; }       ///< returns the name of the grapic file for this focus type
+    std::string                 Dump(unsigned short ntabs = 0) const;           ///< returns a data file format representation of this object
 
     /** Returns a number, calculated from the contained data, which should be
       * different for different contained data, and must be the same for
@@ -62,14 +56,14 @@ public:
       * and executions of the program and the function. Useful to verify that
       * the parsed content is consistent without sending it all between
       * clients and server. */
-    unsigned int                    GetCheckSum() const;
+    unsigned int GetCheckSum() const;
     //@}
 
 private:
-    std::string                                     m_name;
-    std::string                                     m_description;
-    std::shared_ptr<const Condition::Condition>     m_location;
-    std::string                                     m_graphic;
+    std::string                                 m_name;
+    std::string                                 m_description;
+    std::shared_ptr<const Condition::Condition> m_location;
+    std::string                                 m_graphic;
 };
 
 /** A predefined type of population that can exist on a PopulationCenter.
@@ -80,20 +74,14 @@ private:
 class FO_COMMON_API Species {
 public:
     /** \name Structors */ //@{
-    Species(const std::string& name,
-            const std::string& desc,
-            const std::string& gameplay_desc,
-            const std::vector<FocusType>& foci,
-            const std::string& preferred_focus,
-            const std::map<PlanetType, PlanetEnvironment>& planet_environments,
+    Species(std::string&& name, std::string&& desc,
+            std::string&& gameplay_desc, std::vector<FocusType>&& foci,
+            std::string&& preferred_focus,
+            std::map<PlanetType, PlanetEnvironment>&& planet_environments,
             std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
             std::unique_ptr<Condition::Condition>&& combat_targets,
-            bool playable,
-            bool native,
-            bool can_colonize,
-            bool can_produce_ships,
-            const std::set<std::string>& tags,
-            const std::string& graphic);
+            bool playable, bool native, bool can_colonize, bool can_produce_ships,
+            const std::set<std::string>& tags, std::string graphic);
 
     ~Species();
     //@}

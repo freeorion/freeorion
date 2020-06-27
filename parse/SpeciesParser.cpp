@@ -35,14 +35,12 @@ namespace {
     const boost::phoenix::function<parse::detail::is_unique> is_unique_;
 
     struct SpeciesStrings {
-        SpeciesStrings()
-        {}
-
-        SpeciesStrings(const std::string& name_, const std::string& desc_,
-                    const std::string& gameplay_desc_) :
-            name(name_),
-            desc(desc_),
-            gameplay_desc(gameplay_desc_)
+        SpeciesStrings() = default;
+        SpeciesStrings(std::string& name_, std::string& desc_,
+                       std::string& gameplay_desc_) :
+            name(std::move(name_)),
+            desc(std::move(desc_)),
+            gameplay_desc(std::move(gameplay_desc_))
         {}
 
         std::string name;
@@ -51,8 +49,7 @@ namespace {
     };
 
     struct SpeciesParams {
-        SpeciesParams()
-        {}
+        SpeciesParams() = default;
         SpeciesParams(bool playable_, bool native_, bool can_colonize_, bool can_produce_ships_) :
             playable(playable_),
             native(native_),
@@ -66,14 +63,14 @@ namespace {
     };
 
     struct SpeciesStuff {
-        SpeciesStuff(const boost::optional<std::vector<FocusType>>& foci_,
-                     const boost::optional<std::string>& preferred_focus_,
-                     const std::set<std::string>& tags_,
-                     const std::string& graphic_) :
-            foci(foci_),
-            preferred_focus(preferred_focus_),
-            tags(tags_),
-            graphic(graphic_)
+        SpeciesStuff(boost::optional<std::vector<FocusType>>& foci_,
+                     boost::optional<std::string>& preferred_focus_,
+                     std::set<std::string>& tags_,
+                     std::string& graphic_) :
+            foci(std::move(foci_)),
+            preferred_focus(std::move(preferred_focus_)),
+            tags(std::move(tags_)),
+            graphic(std::move(graphic_))
         {}
 
         boost::optional<std::vector<FocusType>> foci;
@@ -85,20 +82,20 @@ namespace {
 
     void insert_species(
         std::map<std::string, std::unique_ptr<Species>>& species,
-        const SpeciesStrings& strings,
-        const boost::optional<std::map<PlanetType, PlanetEnvironment>>& planet_environments,
-        const boost::optional<parse::effects_group_payload>& effects,
+        SpeciesStrings& strings,
+        boost::optional<std::map<PlanetType, PlanetEnvironment>>& planet_environments,
+        boost::optional<parse::effects_group_payload>& effects,
         boost::optional<parse::detail::MovableEnvelope<Condition::Condition>>& combat_targets,
-        const SpeciesParams& params,
+        SpeciesParams& params,
         const SpeciesStuff& foci_preferred_tags_graphic,
         bool& pass)
     {
         auto species_ptr = std::make_unique<Species>(
-            strings.name, strings.desc, strings.gameplay_desc,
-            (foci_preferred_tags_graphic.foci ? *foci_preferred_tags_graphic.foci : std::vector<FocusType>()),
-            (foci_preferred_tags_graphic.preferred_focus ? *foci_preferred_tags_graphic.preferred_focus : std::string()),
-            (planet_environments ? *planet_environments : std::map<PlanetType, PlanetEnvironment>()),
-            (effects ? OpenEnvelopes(*effects, pass) : std::vector<std::unique_ptr<Effect::EffectsGroup>>()),
+            std::move(strings.name), std::move(strings.desc), std::move(strings.gameplay_desc),
+            (foci_preferred_tags_graphic.foci ? *foci_preferred_tags_graphic.foci : std::vector<FocusType>{}),
+            (foci_preferred_tags_graphic.preferred_focus ? *foci_preferred_tags_graphic.preferred_focus : std::string{}),
+            (planet_environments ? *planet_environments : std::map<PlanetType, PlanetEnvironment>{}),
+            (effects ? OpenEnvelopes(*effects, pass) : std::vector<std::unique_ptr<Effect::EffectsGroup>>{}),
             (combat_targets ? (*combat_targets).OpenEnvelope(pass) : nullptr),
             params.playable,
             params.native,
