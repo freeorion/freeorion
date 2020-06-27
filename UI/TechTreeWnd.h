@@ -1,11 +1,11 @@
 #ifndef _TechTreeWnd_h_
 #define _TechTreeWnd_h_
 
-#include <GG/Wnd.h>
 
 #include <boost/signals2/signal.hpp>
+#include <GG/Wnd.h>
+#include "../Empire/Empire.h"
 
-#include "../universe/EnumsFwd.h"
 
 class Tech;
 class EncyclopediaDetailPanel;

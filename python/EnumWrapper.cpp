@@ -5,6 +5,7 @@
 #include "../universe/UniverseObject.h"
 #include "../universe/UnlockableItem.h"
 #include "../Empire/Diplomacy.h"
+#include "../Empire/Empire.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/GameRules.h"
 

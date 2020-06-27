@@ -9,7 +9,6 @@ enum PlanetEnvironment : int;
 enum MeterType : int;
 enum EmpireAffiliationType : int;
 enum UnlockableItemType : int;
-enum TechStatus : int;
 enum BuildType : int;
 enum ResourceType : int;
 enum ShipPartClass : int;

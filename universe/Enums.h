@@ -85,16 +85,6 @@ GG_ENUM(EmpireAffiliationType,
     NUM_AFFIL_TYPES ///< keep last, the number of affiliation types
 )
 
-/** Research status of techs, relating to whether they have been or can be researched */
-GG_ENUM(TechStatus,
-    INVALID_TECH_STATUS = -1,
-    TS_UNRESEARCHABLE,          ///< never researchable, or has no researched prerequisites
-    TS_HAS_RESEARCHED_PREREQ,   ///< has at least one researched, and at least one unreserached, prerequisite
-    TS_RESEARCHABLE,            ///< all prerequisites researched
-    TS_COMPLETE,                ///< has been researched
-    NUM_TECH_STATUSES
-)
-
 /** The general type of production being done at a ProdCenter.  Within each
   * valid type, a specific kind of item is being built, e.g. under BT_BUILDING
   * a kind of building called "SuperFarm" might be built. */
