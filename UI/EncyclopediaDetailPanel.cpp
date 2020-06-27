@@ -44,7 +44,6 @@
 #include "../universe/UnlockableItem.h"
 #include "../universe/ValueRef.h"
 #include "../util/Directories.h"
-#include "../util/EnumText.h"
 #include "../util/GameRules.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"

@@ -4,7 +4,6 @@
 #include "i18n.h"
 #include "Directories.h"
 #include "Logger.h"
-#include "EnumText.h"
 #include "Serialize.h"
 #include "Serialize.ipp"
 #include "ScopedTimer.h"

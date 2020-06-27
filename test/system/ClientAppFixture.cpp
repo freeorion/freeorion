@@ -2,7 +2,6 @@
 
 #include "combat/CombatLogManager.h"
 #include "client/ClientNetworking.h"
-#include "universe/Enums.h"
 #include "universe/Species.h"
 #include "util/Directories.h"
 #include "util/GameRules.h"
