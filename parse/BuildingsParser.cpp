@@ -27,17 +27,17 @@ namespace {
     const boost::phoenix::function<parse::detail::is_unique> is_unique_;
 
     void insert_building(std::map<std::string, std::unique_ptr<BuildingType>>& building_types,
-                         const std::string& name,
-                         const std::string& description,
-                         const parse::detail::MovableEnvelope<CommonParams>& common_params,
-                         CaptureResult& capture_result,
-                         const std::string& icon,
+                         std::string& name, std::string& description,
+                         parse::detail::MovableEnvelope<CommonParams>& common_params,
+                         CaptureResult& capture_result, std::string& icon,
                          bool& pass)
     {
         auto building_type = std::make_unique<BuildingType>(
-            name, description, *common_params.OpenEnvelope(pass), capture_result, icon);
+            std::move(name), std::move(description),
+            std::move(*common_params.OpenEnvelope(pass)),
+            capture_result, std::move(icon));
 
-        building_types.insert(std::make_pair(building_type->Name(), std::move(building_type)));
+        building_types.emplace(building_type->Name(), std::move(building_type));
     }
 
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_building_, insert_building, 7)

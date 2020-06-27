@@ -25,12 +25,9 @@ namespace ValueRef {
 //! looked up using GetBuildingType(...).
 class FO_COMMON_API BuildingType {
 public:
-    BuildingType(const std::string& name,
-                 const std::string& description,
-                 CommonParams& common_params,
-                 CaptureResult capture_result,
-                 const std::string& icon);
-
+    BuildingType(std::string&& name, std::string&& description,
+                 CommonParams&& common_params, CaptureResult capture_result,
+                 std::string&& icon);
     ~BuildingType();
 
     //! Returns the unique name for this type of building

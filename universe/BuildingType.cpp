@@ -21,13 +21,11 @@ namespace {
 }
 
 
-BuildingType::BuildingType(const std::string& name,
-                           const std::string& description,
-                           CommonParams& common_params,
-                           CaptureResult capture_result,
-                           const std::string& icon) :
-    m_name(name),
-    m_description(description),
+BuildingType::BuildingType(std::string&& name, std::string&& description,
+                           CommonParams&& common_params, CaptureResult capture_result,
+                           std::string&& icon) :
+    m_name(std::move(name)),
+    m_description(std::move(description)),
     m_production_cost(std::move(common_params.production_cost)),
     m_production_time(std::move(common_params.production_time)),
     m_producible(common_params.producible),
@@ -36,13 +34,13 @@ BuildingType::BuildingType(const std::string& name,
     m_production_special_consumption(std::move(common_params.production_special_consumption)),
     m_location(std::move(common_params.location)),
     m_enqueue_location(std::move(common_params.enqueue_location)),
-    m_icon(icon)
+    m_icon(std::move(icon))
 {
     for (auto&& effect : common_params.effects)
         m_effects.emplace_back(std::move(effect));
-    Init();
     for (const std::string& tag : common_params.tags)
         m_tags.emplace(boost::to_upper_copy<std::string>(tag));
+    Init();
 }
 
 BuildingType::~BuildingType()
