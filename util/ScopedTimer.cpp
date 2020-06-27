@@ -193,7 +193,7 @@ public:
 
         EnterSection("");   // Stop the final section
 
-        if (m_sections->m_section_names.size() == 1 && *m_sections->m_section_names.begin() == "")
+        if (m_sections->m_section_names.size() == 1 && m_sections->m_section_names.begin()->empty())
             return; // Don't print the table if the only section is the default section
 
 
