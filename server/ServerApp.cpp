@@ -3207,8 +3207,7 @@ void ServerApp::PreCombatProcessTurns() {
             continue;
         }
         DebugLogger() << "<<= Executing Orders for empire " << empire_orders.first << " =>>";
-        for (const auto& id_and_order : *save_game_data->m_orders)
-            id_and_order.second->Execute();
+        save_game_data->m_orders->ApplyOrders();
     }
 
     // clean up orders, which are no longer needed
