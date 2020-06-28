@@ -39,9 +39,9 @@ Empire* Order::GetValidatedEmpire() const {
 void Order::Execute() const {
     if (m_executed)
         return;
+    m_executed = true;
 
     ExecuteImpl();
-    m_executed = true;
 }
 
 bool Order::Undo() const {
