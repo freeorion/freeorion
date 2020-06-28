@@ -2657,7 +2657,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
         if (ship_menuitem_id > MENUITEM_SET_SHIP_BASE) {
             popup->AddMenuItem(std::move(ship_menu_item_top));
             popup->AddMenuItem(std::move(ship_menu_item));
-	}
+    }
 
         GG::MenuItem building_menu_item_top(UserString("MENUITEM_ENQUEUE_BUILDING_TO_TOP_OF_QUEUE"), false, false);
         GG::MenuItem building_menu_item(UserString("MENUITEM_ENQUEUE_BUILDING"), false, false);
