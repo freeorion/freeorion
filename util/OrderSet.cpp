@@ -24,7 +24,11 @@ int OrderSet::IssueOrder(OrderPtr&& order) {
     // Insert the order into the m_orders map.  forward the rvalue to use the move constructor.
     auto inserted = m_orders.emplace(retval, std::forward<OrderPtr>(order));
     m_last_added_orders.emplace(retval);
-    inserted.first->second->Execute();
+    try {
+        inserted.first->second->Execute();
+    } catch (const std::exception& e) {
+        ErrorLogger() << "OrderSet::IssueOrder caught exception issuing order: " << e.what();
+    }
 
     TraceLogger() << "OrderSetIssueOrder m_orders size: " << m_orders.size();
 
