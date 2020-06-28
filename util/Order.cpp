@@ -1113,7 +1113,8 @@ void ProductionQueueOrder::ExecuteImpl() const {
             ErrorLogger() << "ProductionQueueOrder::ExecuteImpl got invalid action";
         }
     } catch (const std::exception& e) {
-        ErrorLogger() << "Build order execution threw exception: " << e.what();
+        ErrorLogger() << "Production order execution threw exception: " << e.what();
+        throw;
     }
 }
 
@@ -1258,7 +1259,6 @@ void ShipDesignOrder::ExecuteImpl() const {
                           << " that this empire hasn't seen";
             return;
         }
-
     }
 }
 
