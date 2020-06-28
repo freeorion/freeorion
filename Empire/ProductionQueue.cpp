@@ -905,10 +905,22 @@ void ProductionQueue::Update() {
 }
 
 void ProductionQueue::push_back(const Element& element)
-{ m_queue.push_back(element); }
+{
+    if (find(element.uuid) != end()) {
+        ErrorLogger() << "Trying to push back repeated UUID " << element.uuid;
+        throw std::invalid_argument("Repeated use of UUID");
+    }
+    m_queue.push_back(element);
+}
 
 void ProductionQueue::insert(iterator it, const Element& element)
-{ m_queue.insert(it, element); }
+{
+    if (find(element.uuid) != end()) {
+        ErrorLogger() << "Trying to insert repeated UUID " << element.uuid;
+        throw std::invalid_argument("Repeated use of UUID");
+    }
+    m_queue.insert(it, element);
+}
 
 void ProductionQueue::erase(int i) {
     if (i < 0 || i >= static_cast<int>(m_queue.size()))
