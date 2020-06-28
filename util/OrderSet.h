@@ -54,7 +54,7 @@ public:
     std::size_t     size() const            { return m_orders.size(); }
     bool            empty() const           { return m_orders.empty(); }
     iterator        find(const key_type& k) { return m_orders.find(k); }
-    std::pair<iterator,bool> insert (const value_type& val) { return m_orders.insert(val); } ///< direct insert without saving changes
+    std::pair<iterator, bool> insert(const value_type& val) { return m_orders.insert(val); } ///< direct insert without saving changes
     void            erase(const key_type& k){ m_orders.erase(k); } ///< direct erase without saving changes
     OrderPtr&       operator[](std::size_t i);
     key_compare     key_comp() const        { return m_orders.key_comp(); }
