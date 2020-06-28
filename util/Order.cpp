@@ -1023,7 +1023,7 @@ void ProductionQueueOrder::ExecuteImpl() const {
             if (idx == -1) {
                 ErrorLogger() << "ProductionQueueOrder asked to remove invalid UUID: " << boost::uuids::to_string(m_uuid);
             } else {
-                DebugLogger() << "ProductionQueueOrder removing item";
+                DebugLogger() << "ProductionQueueOrder removing item at index: " << idx;
                 empire->RemoveProductionFromQueue(idx);
             }
             break;
