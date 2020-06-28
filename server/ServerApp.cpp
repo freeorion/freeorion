@@ -861,7 +861,7 @@ void ServerApp::LoadSPGameInit(const std::vector<PlayerSaveGameData>& player_sav
             // In a single player game, the host player is always the human player, so
             // this is just a matter of finding which entry in player_save_game_data was
             // a human player, and assigning that saved player data to the host player ID
-            player_id_to_save_game_data_index.push_back({m_networking.HostPlayerID(), i});
+            player_id_to_save_game_data_index.emplace_back(m_networking.HostPlayerID(), i);
 
         } else if (psgd.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
             // All saved AI player data, as determined from their client type, is
@@ -874,7 +874,7 @@ void ServerApp::LoadSPGameInit(const std::vector<PlayerSaveGameData>& player_sav
                 // if player is an AI, assign it to this
                 if (player_connection->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER) {
                     int player_id = player_connection->PlayerID();
-                    player_id_to_save_game_data_index.push_back({player_id, i});
+                    player_id_to_save_game_data_index.emplace_back(player_id, i);
                     break;
                 }
             }
@@ -1996,7 +1996,7 @@ int ServerApp::EffectsProcessingThreads() const
 { return GetOptionsDB().Get<int>("effects.server.threads"); }
 
 void ServerApp::AddEmpireTurn(int empire_id, const PlayerSaveGameData& psgd)
-{ m_turn_sequence[empire_id] = std::make_unique<PlayerSaveGameData>(psgd); }
+{ m_turn_sequence.emplace(empire_id, std::make_unique<PlayerSaveGameData>(psgd)); }
 
 void ServerApp::RemoveEmpireTurn(int empire_id)
 { m_turn_sequence.erase(empire_id); }

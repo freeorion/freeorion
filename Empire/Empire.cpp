@@ -1149,7 +1149,8 @@ void Empire::PlaceProductionOnQueue(const ProductionQueue::ProductionItem& item,
         throw std::invalid_argument("Empire::PlaceProductionOnQueue was passed a ProductionQueue::ProductionItem with an invalid BuildType");
     }
 
-    ProductionQueue::Element elem{item, m_id, uuid, number, number, blocksize, location, false, item.build_type != BT_STOCKPILE};
+    ProductionQueue::Element elem{item, m_id, uuid, number, number, blocksize,
+                                  location, false, item.build_type != BT_STOCKPILE};
     if (pos < 0 || static_cast<int>(m_production_queue.size()) <= pos)
         m_production_queue.push_back(elem);
     else
