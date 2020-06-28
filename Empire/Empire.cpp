@@ -1201,7 +1201,7 @@ void Empire::SplitIncompleteProductionItem(int index, boost::uuids::uuid uuid) {
 }
 
 void Empire::DuplicateProductionItem(int index, boost::uuids::uuid uuid) {
-    DebugLogger() << "Empire::DuplicateProductionItem() called for index " << index;
+    DebugLogger() << "Empire::DuplicateProductionItem() called for index " << index << " with new UUID: " << uuid;
     if (index < 0 || static_cast<int>(m_production_queue.size()) <= index)
         throw std::runtime_error("Empire::DuplicateProductionItem() : Attempted to adjust the quantity of items to be built in a nonexistent production queue item.");
 
