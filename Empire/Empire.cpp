@@ -20,6 +20,7 @@
 #include "EmpireManager.h"
 #include "Supply.h"
 
+#include <boost/uuid/uuid_io.hpp>
 #include <unordered_set>
 
 
@@ -1201,7 +1202,7 @@ void Empire::SplitIncompleteProductionItem(int index, boost::uuids::uuid uuid) {
 }
 
 void Empire::DuplicateProductionItem(int index, boost::uuids::uuid uuid) {
-    DebugLogger() << "Empire::DuplicateProductionItem() called for index " << index << " with new UUID: " << uuid;
+    DebugLogger() << "Empire::DuplicateProductionItem() called for index " << index << " with new UUID: " << boost::uuids::to_string(uuid);
     if (index < 0 || static_cast<int>(m_production_queue.size()) <= index)
         throw std::runtime_error("Empire::DuplicateProductionItem() : Attempted to adjust the quantity of items to be built in a nonexistent production queue item.");
 

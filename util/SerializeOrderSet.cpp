@@ -7,6 +7,7 @@
 #include <boost/serialization/version.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/uuid/nil_generator.hpp>
+#include "Logger.h"
 
 
 BOOST_CLASS_EXPORT(Order)
