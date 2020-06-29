@@ -10,10 +10,8 @@
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/iterator/filter_iterator.hpp>
 #include <boost/optional/optional.hpp>
-#include <boost/serialization/nvp.hpp>
 #include "EnumsFwd.h"
 #include "../util/Export.h"
-#include "../util/Serialize.h"
 #include "../util/Pending.h"
 
 
@@ -308,19 +306,9 @@ private:
 
     static SpeciesManager* s_instance;
 
-    friend class boost::serialization::access;
     template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
+    friend void serialize(Archive&, SpeciesManager&, unsigned int const);
 };
-
-extern template
-FO_COMMON_API void SpeciesManager::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& ar, const unsigned int version);
-extern template
-FO_COMMON_API void SpeciesManager::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& ar, const unsigned int version);
-extern template
-FO_COMMON_API void SpeciesManager::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ar, const unsigned int version);
-extern template
-FO_COMMON_API void SpeciesManager::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, const unsigned int version);
 
 /** returns the singleton species manager */
 FO_COMMON_API SpeciesManager& GetSpeciesManager();

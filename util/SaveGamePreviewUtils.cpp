@@ -8,7 +8,6 @@
 #include "Serialize.h"
 #include "Serialize.ipp"
 #include "ScopedTimer.h"
-#include "Version.h"
 
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/operations.hpp>
@@ -124,68 +123,6 @@ bool SaveGamePreviewData::Valid() const
 
 void SaveGamePreviewData::SetBinary(bool bin)
 { description = bin ? BIN_SAVE_FILE_DESCRIPTION : XML_SAVE_FILE_DESCRIPTION; }
-
-template <typename Archive>
-void SaveGamePreviewData::serialize(Archive& ar, unsigned int version)
-{
-    if (version >= 2) {
-        if (Archive::is_saving::value) {
-            freeorion_version = FreeOrionVersionString();
-        }
-        ar & BOOST_SERIALIZATION_NVP(description)
-           & BOOST_SERIALIZATION_NVP(freeorion_version);
-        if (version >= 3) {
-            ar & BOOST_SERIALIZATION_NVP(save_format_marker);
-            if (version >= 4) {
-                ar & BOOST_SERIALIZATION_NVP(uncompressed_text_size)
-                   & BOOST_SERIALIZATION_NVP(compressed_text_size);
-            }
-        }
-    }
-    ar & BOOST_SERIALIZATION_NVP(magic_number)
-       & BOOST_SERIALIZATION_NVP(main_player_name);
-    ar & BOOST_SERIALIZATION_NVP(main_player_empire_name)
-       & BOOST_SERIALIZATION_NVP(main_player_empire_colour)
-       & BOOST_SERIALIZATION_NVP(save_time)
-       & BOOST_SERIALIZATION_NVP(current_turn);
-    if (version > 0) {
-        ar & BOOST_SERIALIZATION_NVP(number_of_empires)
-           & BOOST_SERIALIZATION_NVP(number_of_human_players);
-    }
-}
-
-template void SaveGamePreviewData::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, unsigned int);
-template void SaveGamePreviewData::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, unsigned int);
-template void SaveGamePreviewData::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, unsigned int);
-template void SaveGamePreviewData::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, unsigned int);
-
-
-template <typename Archive>
-void FullPreview::serialize(Archive& ar, unsigned int version)
-{
-    ar & BOOST_SERIALIZATION_NVP(filename)
-       & BOOST_SERIALIZATION_NVP(preview)
-       & BOOST_SERIALIZATION_NVP(galaxy);
-}
-
-template void FullPreview::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, unsigned int);
-template void FullPreview::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, unsigned int);
-template void FullPreview::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, unsigned int);
-template void FullPreview::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, unsigned int);
-
-
-template<typename Archive>
-void PreviewInformation::serialize(Archive& ar, const unsigned int version)
-{
-    ar & BOOST_SERIALIZATION_NVP(subdirectories)
-       & BOOST_SERIALIZATION_NVP(folder)
-       & BOOST_SERIALIZATION_NVP(previews);
-}
-
-template void PreviewInformation::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
-template void PreviewInformation::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
-template void PreviewInformation::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
-template void PreviewInformation::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
 
 
 bool SaveFileWithValidHeader(const boost::filesystem::path& path) {

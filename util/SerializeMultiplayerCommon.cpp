@@ -4,6 +4,8 @@
 #include "OptionsDB.h"
 #include "OrderSet.h"
 #include "Order.h"
+#include "SaveGamePreviewUtils.h"
+#include "Version.h"
 #include "../universe/System.h"
 
 #include "Serialize.ipp"
@@ -11,6 +13,22 @@
 #include <boost/date_time/posix_time/time_serialize.hpp>
 #include <boost/uuid/random_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
+
+
+template <typename Archive>
+void serialize(Archive& ar, FullPreview& fp, unsigned int const version)
+{
+    using namespace boost::serialization;
+
+    ar & make_nvp("filename", fp.filename)
+       & make_nvp("preview", fp.preview)
+       & make_nvp("galaxy", fp.galaxy);
+}
+
+template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, FullPreview&, unsigned int const);
+template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, FullPreview&, unsigned int const);
+template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, FullPreview&, unsigned int const);
+template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, FullPreview&, unsigned int const);
 
 
 template <typename Archive>
@@ -69,6 +87,43 @@ template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, SingleP
 template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, SinglePlayerSetupData&, unsigned int const);
 template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, SinglePlayerSetupData&, unsigned int const);
 template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, SinglePlayerSetupData&, unsigned int const);
+
+
+template <typename Archive>
+void serialize(Archive& ar, SaveGamePreviewData& obj, unsigned int const version)
+{
+    using namespace boost::serialization;
+
+    if (version >= 2) {
+        if (Archive::is_saving::value) {
+            obj.freeorion_version = FreeOrionVersionString();
+        }
+        ar & make_nvp("description", obj.description)
+           & make_nvp("freeorion_version", obj.freeorion_version);
+        if (version >= 3) {
+            ar & make_nvp("save_format_marker", obj.save_format_marker);
+            if (version >= 4) {
+                ar & make_nvp("uncompressed_text_size", obj.uncompressed_text_size)
+                   & make_nvp("compressed_text_size", obj.compressed_text_size);
+            }
+        }
+    }
+    ar & make_nvp("magic_number", obj.magic_number)
+       & make_nvp("main_player_name", obj.main_player_name);
+    ar & make_nvp("main_player_empire_name", obj.main_player_empire_name)
+       & make_nvp("main_player_empire_colour", obj.main_player_empire_colour)
+       & make_nvp("save_time", obj.save_time)
+       & make_nvp("current_turn", obj.current_turn);
+    if (version > 0) {
+        ar & make_nvp("number_of_empires", obj.number_of_empires)
+           & make_nvp("number_of_human_players", obj.number_of_human_players);
+    }
+}
+
+template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, SaveGamePreviewData&, unsigned int const);
+template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, SaveGamePreviewData&, unsigned int const);
+template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, SaveGamePreviewData&, unsigned int const);
+template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, SaveGamePreviewData&, unsigned int const);
 
 
 template <typename Archive>
@@ -226,6 +281,22 @@ template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, PlayerS
 template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, PlayerSaveGameData&, unsigned int const);
 template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, PlayerSaveGameData&, unsigned int const);
 template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, PlayerSaveGameData&, unsigned int const);
+
+
+template<typename Archive>
+void serialize(Archive& ar, PreviewInformation& pi, unsigned int const version)
+{
+    using namespace boost::serialization;
+
+    ar & make_nvp("subdirectories", pi.subdirectories)
+       & make_nvp("folder", pi.folder)
+       & make_nvp("previews", pi.previews);
+}
+
+template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, PreviewInformation&, unsigned int const);
+template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, PreviewInformation&, unsigned int const);
+template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, PreviewInformation&, unsigned int const);
+template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, PreviewInformation&, unsigned int const);
 
 
 template <typename Archive>
