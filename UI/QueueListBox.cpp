@@ -197,27 +197,36 @@ void QueueListBox::SetEmptyPromptText(const std::string prompt) {
 
 std::function<void()> QueueListBox::MoveToTopAction(GG::ListBox::iterator it) {
     return [it, this]() {
-        ListBox::Insert(*it, begin(), true);
+        if (OrderIssuingEnabled())
+            ListBox::Insert(*it, begin(), true);
     };
 }
 
 std::function<void()> QueueListBox::MoveToBottomAction(GG::ListBox::iterator it) {
     return [it, this]() {
-        ListBox::Insert(*it, end(), true);
+        if (OrderIssuingEnabled())
+            ListBox::Insert(*it, end(), true);
     };
 }
 
-std::function<void()> QueueListBox::DeleteAction(GG::ListBox::iterator it) const
-{ return [it, this]() { QueueItemDeletedSignal(it); }; }
+std::function<void()> QueueListBox::DeleteAction(GG::ListBox::iterator it) const {
+    return [it, this]() {
+        if (OrderIssuingEnabled())
+            QueueItemDeletedSignal(it);
+    };
+}
 
 void QueueListBox::ItemRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
 { this->ItemRightClickedImpl(it, pt, modkeys); }
 
 void QueueListBox::ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
-    popup->AddMenuItem(GG::MenuItem(UserString("MOVE_UP_QUEUE_ITEM"),   false, false, MoveToTopAction(it)));
-    popup->AddMenuItem(GG::MenuItem(UserString("MOVE_DOWN_QUEUE_ITEM"), false, false, MoveToBottomAction(it)));
-    popup->AddMenuItem(GG::MenuItem(UserString("DELETE_QUEUE_ITEM"),    false, false, DeleteAction(it)));
+
+    bool disabled = !OrderIssuingEnabled();
+
+    popup->AddMenuItem(GG::MenuItem(UserString("MOVE_UP_QUEUE_ITEM"),   disabled, false, MoveToTopAction(it)));
+    popup->AddMenuItem(GG::MenuItem(UserString("MOVE_DOWN_QUEUE_ITEM"), disabled, false, MoveToBottomAction(it)));
+    popup->AddMenuItem(GG::MenuItem(UserString("DELETE_QUEUE_ITEM"),    disabled, false, DeleteAction(it)));
     popup->Run();
 }
 
