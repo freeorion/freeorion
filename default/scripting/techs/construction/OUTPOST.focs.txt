@@ -9,8 +9,21 @@ Tech
 
     // Effects for outposts
     effectsgroups = [
+        // Outposts only have 50% of troops
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Population high = 0
+            ]
+            stackinggroup = "OUTPOST_TROOPS_STACK"
+            priority = [[VERY_LATE_PRIORITY]]
+            effects = SetMaxTroops value = Value * .5
+            accountinglabel = "OUTPOST_TROOP_LABEL"
+
+        // Ensure construction minimum value of one, as this is necessary for being attacked
         // For colonies see STANDARD_CONSTRUCTION in default/scripting/species/common/general.macros
-        EffectsGroup    // always ensure minimum value of one, as this is necessary for being attacked
+        EffectsGroup
             scope = And [
                 Planet
                 OwnedBy empire = Source.Owner
@@ -22,6 +35,7 @@ Tech
                 SetTargetConstruction value = max(Value, 1)
                 SetConstruction value = max(Value, 1)
             ]
+
     ]
 
 #include "/scripting/common/priorities.macros"
