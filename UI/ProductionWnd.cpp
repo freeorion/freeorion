@@ -666,7 +666,7 @@ namespace {
             QueueListBox::EnableOrderIssuing(enable);
 
             for (auto it = this->begin(); it != this->end(); ++it) {
-                if (auto& queue_row = std::dynamic_pointer_cast<QueueRow>(*it))
+                if (auto queue_row = std::dynamic_pointer_cast<QueueRow>(*it))
                     queue_row->Disable(!enable);
             }
         }
