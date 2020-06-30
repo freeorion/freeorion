@@ -671,21 +671,6 @@ namespace {
             }
         }
 
-        // scans this ListBox for the input iterator \a and returns its distance
-        // from begin(), or -1 if not present
-        int IteraterIndex(const ProdQueueListBox::const_iterator it) {
-            if (it == this->end())
-                return -1;
-
-            size_t dist = 0;
-            for (auto qit = this->begin(); qit != this->end(); ++qit) {
-                if (qit == it)
-                    return dist;
-                dist++;
-            }
-            return -1;
-        }
-
         boost::signals2::signal<void (GG::ListBox::iterator, int)>  QueueItemRalliedToSignal;
         boost::signals2::signal<void ()>                            ShowPediaSignal;
         boost::signals2::signal<void (GG::ListBox::iterator, bool)> QueueItemPausedSignal;
