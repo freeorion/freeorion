@@ -34,6 +34,10 @@ public:
 
     GG::X           RowWidth() const;
 
+    //! scans this ListBox for the input iterator \a and returns its distance
+    //! from begin(), or -1 if not present
+    int             IteraterIndex(const const_iterator it);
+
     virtual void    EnableOrderIssuing(bool enable = true);
     bool            OrderIssuingEnabled() const { return m_order_issuing_enabled; }
     bool            DisplayingValidQueueItems(); ///< whether or not this QueueListBox is displaying valid queue items, as opposed to, for example, a prompt for the user to enter an item
