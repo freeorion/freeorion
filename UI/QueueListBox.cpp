@@ -43,9 +43,6 @@ void PromptRow::SizeMove(const GG::Pt& ul, const GG::Pt& lr)  {
 QueueListBox::QueueListBox(const boost::optional<std::string>& drop_type_str, const std::string& prompt_str) :
     CUIListBox(),
     m_drop_point(end()),
-    m_show_drop_point(false),
-    m_order_issuing_enabled(true),
-    m_showing_prompt(false),
     m_prompt_str(prompt_str)
 {
     if (drop_type_str)

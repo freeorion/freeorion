@@ -25,14 +25,11 @@ public:
     void CompleteConstruction() override;
 
     void Render() override;
-
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
-
-    void AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds, GG::Flags<GG::ModKey> mod_keys) override;
-
+    void AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds,
+                     GG::Flags<GG::ModKey> mod_keys) override;
     void DragDropHere(const GG::Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
                       GG::Flags<GG::ModKey> mod_keys) override;
-
     void DragDropLeave() override;
 
     GG::X           RowWidth() const;
@@ -51,7 +48,7 @@ public:
 protected:
     void KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
 
-    virtual void    ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
+    virtual void ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
 
     /** Return a functor that will signal that \p it should be moved to the top of the list.*/
     virtual std::function<void()> MoveToTopAction(GG::ListBox::iterator it);
@@ -63,15 +60,15 @@ protected:
     virtual std::function<void()> DeleteAction(GG::ListBox::iterator it) const;
 
 private:
-    void            ItemRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
-    void            EnsurePromptHiddenSlot(iterator it);
-    void            ShowPromptSlot();
-    void            ShowPromptConditionallySlot(iterator it);
+    void ItemRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
+    void EnsurePromptHiddenSlot(iterator it);
+    void ShowPromptSlot();
+    void ShowPromptConditionallySlot(iterator it);
 
     iterator    m_drop_point;
-    bool        m_show_drop_point;
-    bool        m_order_issuing_enabled;
-    bool        m_showing_prompt;
+    bool        m_show_drop_point = false;
+    bool        m_order_issuing_enabled = true;
+    bool        m_showing_prompt = false;
     std::string m_prompt_str;
 };
 
