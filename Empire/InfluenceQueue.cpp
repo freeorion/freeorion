@@ -14,9 +14,9 @@
 namespace {
     const float EPSILON = 0.01f;
 
-    void AddRules(GameRules& rules)
-    {}
-    bool temp_bool = RegisterGameRules(&AddRules);
+    //void AddRules(GameRules& rules)
+    //{}
+    //bool temp_bool = RegisterGameRules(&AddRules);
 
     //float CalculateNewInfluenceStockpile(int empire_id, float starting_stockpile, float project_transfer_to_stockpile,
     //                                     float available_IP, float allocated_IP, float allocated_stockpile_IP)
