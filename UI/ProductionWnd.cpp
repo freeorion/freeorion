@@ -391,11 +391,10 @@ namespace {
             RowQuantChangedSignal(queue_index, quantity, blocksize);
         }
 
-        std::shared_ptr<QueueProductionItemPanel>                           panel;
+        std::shared_ptr<QueueProductionItemPanel>           panel;
         const int                                           queue_index;
         const ProductionQueue::Element                      elem;
         mutable boost::signals2::signal<void (int,int,int)> RowQuantChangedSignal;
-
     };
 
     //////////////////////////////////////////////////
@@ -453,7 +452,8 @@ namespace {
                     location_text = boost::io::str(FlexibleFormat(UserString(
                         "PRODUCTION_QUEUE_ITEM_RALLIED_FROM_LOCATION")) % location->Name()) + " ";
                 } else {
-                    location_text = boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_ITEM_LOCATION")) % location->Name()) + " ";
+                    location_text = boost::io::str(FlexibleFormat(UserString(
+                        "PRODUCTION_QUEUE_ITEM_LOCATION")) % location->Name()) + " ";
                 }
             }
         }
@@ -465,10 +465,10 @@ namespace {
             m_icon = GG::Wnd::Create<GG::StaticGraphic>(graphic, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
 
         if (elem.item.build_type == BT_SHIP || elem.item.build_type == BT_STOCKPILE) {
-            m_quantity_selector = GG::Wnd::Create<QuantitySelector>(elem, GG::X1, GG::Y(MARGIN), GG::Y(FONT_PTS-2*MARGIN),
-                                                                    m_in_progress, GG::X(FONT_PTS*2.5), false);
-            m_block_size_selector = GG::Wnd::Create<QuantitySelector>(elem, GG::X1, GG::Y(MARGIN), GG::Y(FONT_PTS-2*MARGIN),
-                                                                      m_in_progress, GG::X(FONT_PTS*2.5), true);
+            m_quantity_selector = GG::Wnd::Create<QuantitySelector>(
+                elem, GG::X1, GG::Y(MARGIN), GG::Y(FONT_PTS-2*MARGIN), m_in_progress, GG::X(FONT_PTS*2.5), false);
+            m_block_size_selector = GG::Wnd::Create<QuantitySelector>(
+                elem, GG::X1, GG::Y(MARGIN), GG::Y(FONT_PTS-2*MARGIN), m_in_progress, GG::X(FONT_PTS*2.5), true);
             m_quantity_selector->SetOnlyMouseScrollWhenDropped(true);
             m_block_size_selector->SetOnlyMouseScrollWhenDropped(true);
         }
@@ -656,11 +656,35 @@ namespace {
     class ProdQueueListBox : public QueueListBox {
     public:
         ProdQueueListBox() :
-            QueueListBox(BuildDesignatorWnd::PRODUCTION_ITEM_DROP_TYPE,  UserString("PRODUCTION_QUEUE_PROMPT"))
+            QueueListBox(BuildDesignatorWnd::PRODUCTION_ITEM_DROP_TYPE, UserString("PRODUCTION_QUEUE_PROMPT"))
         {}
 
         void CompleteConstruction() override
         { QueueListBox::CompleteConstruction(); }
+
+        void EnableOrderIssuing(bool enable = true) override {
+            QueueListBox::EnableOrderIssuing(enable);
+
+            for (auto it = this->begin(); it != this->end(); ++it) {
+                if (auto& queue_row = std::dynamic_pointer_cast<QueueRow>(*it))
+                    queue_row->Disable(!enable);
+            }
+        }
+
+        // scans this ListBox for the input iterator \a and returns its distance
+        // from begin(), or -1 if not present
+        int IteraterIndex(const ProdQueueListBox::const_iterator it) {
+            if (it == this->end())
+                return -1;
+
+            size_t dist = 0;
+            for (auto qit = this->begin(); qit != this->end(); ++qit) {
+                if (qit == it)
+                    return dist;
+                dist++;
+            }
+            return -1;
+        }
 
         boost::signals2::signal<void (GG::ListBox::iterator, int)>  QueueItemRalliedToSignal;
         boost::signals2::signal<void ()>                            ShowPediaSignal;
@@ -688,9 +712,11 @@ namespace {
 
             auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
 
-            popup->AddMenuItem(GG::MenuItem(UserString("MOVE_UP_QUEUE_ITEM"),   false, false, MoveToTopAction(it)));
-            popup->AddMenuItem(GG::MenuItem(UserString("MOVE_DOWN_QUEUE_ITEM"), false, false, MoveToBottomAction(it)));
-            popup->AddMenuItem(GG::MenuItem(UserString("DELETE_QUEUE_ITEM"),    false, false, DeleteAction(it)));
+            bool disabled = !OrderIssuingEnabled();
+
+            popup->AddMenuItem(GG::MenuItem(UserString("MOVE_UP_QUEUE_ITEM"),   disabled, false, MoveToTopAction(it)));
+            popup->AddMenuItem(GG::MenuItem(UserString("MOVE_DOWN_QUEUE_ITEM"), disabled, false, MoveToBottomAction(it)));
+            popup->AddMenuItem(GG::MenuItem(UserString("DELETE_QUEUE_ITEM"),    disabled, false, DeleteAction(it)));
 
             // inspect clicked item: was it a ship?
             auto& row = *it;
@@ -711,24 +737,24 @@ namespace {
                 return;
             }
 
-            popup->AddMenuItem(GG::MenuItem(UserString("DUPLICATE"), !location_passes, false, dupe_action));
+            popup->AddMenuItem(GG::MenuItem(UserString("DUPLICATE"), disabled || !location_passes, false, dupe_action));
             if (remaining > 1) {
-                popup->AddMenuItem(GG::MenuItem(UserString("SPLIT_INCOMPLETE"), false, false, split_action));
+                popup->AddMenuItem(GG::MenuItem(UserString("SPLIT_INCOMPLETE"), disabled, false, split_action));
             }
 
             if (build_type == BT_SHIP) {
                 // for ships, add a set rally point command
                 if (auto system = Objects().get<System>(SidePanel::SystemID())) {
                     std::string rally_prompt = boost::io::str(FlexibleFormat(UserString("RALLY_QUEUE_ITEM")) % system->PublicName(HumanClientApp::GetApp()->EmpireID()));
-                    popup->AddMenuItem(GG::MenuItem(rally_prompt,               false, false, rally_to_action));
+                    popup->AddMenuItem(GG::MenuItem(rally_prompt, disabled, false, rally_to_action));
                 }
             }
 
             // pause / resume commands
             if (queue_row && queue_row->elem.paused) {
-                popup->AddMenuItem(GG::MenuItem(UserString("RESUME"),           false, false, resume_action));
+                popup->AddMenuItem(GG::MenuItem(UserString("RESUME"), disabled, false, resume_action));
             } else {
-                popup->AddMenuItem(GG::MenuItem(UserString("PAUSE"),            false, false, pause_action));
+                popup->AddMenuItem(GG::MenuItem(UserString("PAUSE"), disabled, false, pause_action));
             }
 
             // stockpile use allow/disallow commands
@@ -736,9 +762,9 @@ namespace {
             case BT_BUILDING:
             case BT_SHIP:
                 if (queue_row && queue_row->elem.allowed_imperial_stockpile_use) {
-                    popup->AddMenuItem(GG::MenuItem(UserString("DISALLOW_IMPERIAL_PP_STOCKPILE_USE"), false, false, disallow_stockpile_action));
+                    popup->AddMenuItem(GG::MenuItem(UserString("DISALLOW_IMPERIAL_PP_STOCKPILE_USE"), disabled, false, disallow_stockpile_action));
                 } else {
-                    popup->AddMenuItem(GG::MenuItem(UserString("ALLOW_IMPERIAL_PP_STOCKPILE_USE"), false, false, allow_stockpile_action));
+                    popup->AddMenuItem(GG::MenuItem(UserString("ALLOW_IMPERIAL_PP_STOCKPILE_USE"), disabled, false, allow_stockpile_action));
                 }
             default:
                 break;
@@ -819,7 +845,7 @@ private:
                              GG::Pt(ClientWidth(), ClientHeight() - GG::Y(CUIWnd::INNER_BORDER_ANGLE_OFFSET)));
     }
 
-    std::shared_ptr<ProdQueueListBox>   m_queue_lb;
+    std::shared_ptr<ProdQueueListBox> m_queue_lb;
 };
 
 //////////////////////////////////////////////////
@@ -1022,7 +1048,9 @@ void ProductionWnd::SelectSystem(int system_id) {
     }
 }
 
-void ProductionWnd::QueueItemMoved(const GG::ListBox::iterator& row_it, const GG::ListBox::iterator& original_position_it) {
+void ProductionWnd::QueueItemMoved(const GG::ListBox::iterator& row_it,
+                                   const GG::ListBox::iterator& original_position_it)
+{
     if (!m_order_issuing_enabled)
         return;
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
@@ -1031,8 +1059,8 @@ void ProductionWnd::QueueItemMoved(const GG::ListBox::iterator& row_it, const GG
         return;
 
     // This precorrects the position for a factor in Empire::MoveProductionWithinQueue
-    int new_position = std::distance(m_queue_wnd->GetQueueListBox()->begin(), row_it);
-    int original_position = std::distance(m_queue_wnd->GetQueueListBox()->begin(), original_position_it);
+    int new_position = m_queue_wnd->GetQueueListBox()->IteraterIndex(row_it);
+    int original_position = m_queue_wnd->GetQueueListBox()->IteraterIndex(original_position_it);
     auto direction = original_position < new_position;
     int corrected_new_position = new_position + (direction ? 1 : 0);
 
@@ -1060,12 +1088,16 @@ void ProductionWnd::UpdateQueue() {
     ScopedTimer timer("ProductionWnd::UpdateQueue");
 
     m_queue_wnd->SetEmpire(m_empire_shown_id);
-    QueueListBox* queue_lb = m_queue_wnd->GetQueueListBox();
+    ProdQueueListBox* queue_lb = m_queue_wnd->GetQueueListBox();
 
     // Capture the list scroll state
     // Try to preserve the same queue context with completely new queue items
-    std::size_t initial_offset_from_begin = std::distance(queue_lb->begin(), queue_lb->FirstRowShown());
-    std::size_t initial_offset_to_end = std::distance(queue_lb->FirstRowShown(), queue_lb->end());
+    int initial_offset_from_begin = queue_lb->IteraterIndex(queue_lb->FirstRowShown());
+    int initial_offset_to_end = 0;
+    if (initial_offset_from_begin < 0)
+        ErrorLogger() << "ProductionWnd::UpdateQueue initial offset from begin was invalid...";
+    else
+        initial_offset_to_end = std::distance(queue_lb->FirstRowShown(), queue_lb->end());
     bool initial_last_visible_row_is_end(queue_lb->LastVisibleRow() == queue_lb->end());
 
     queue_lb->Clear();
@@ -1091,12 +1123,12 @@ void ProductionWnd::UpdateQueue() {
         queue_lb->SetFirstRowShown(queue_lb->begin());
 
     // If we were not at the bottom then keep the same first row position
-    else if (!initial_last_visible_row_is_end && initial_offset_from_begin < queue_lb->NumRows())
+    else if (!initial_last_visible_row_is_end && initial_offset_from_begin < static_cast<int>(queue_lb->NumRows()))
         queue_lb->SetFirstRowShown(std::next(queue_lb->begin(), initial_offset_from_begin));
 
     // otherwise keep the same relative position from the bottom to
     // preserve the end of list dead space
-    else if (initial_offset_to_end < queue_lb->NumRows())
+    else if (initial_offset_to_end < static_cast<int>(queue_lb->NumRows()))
         queue_lb->SetFirstRowShown(std::next(queue_lb->begin(), queue_lb->NumRows() - initial_offset_to_end));
     else
         queue_lb->SetFirstRowShown(queue_lb->begin());
@@ -1233,7 +1265,7 @@ void ProductionWnd::DeleteQueueItem(GG::ListBox::iterator it) {
     if (!empire)
         return;
 
-    auto idx = std::distance(m_queue_wnd->GetQueueListBox()->begin(), it);
+    auto idx = m_queue_wnd->GetQueueListBox()->IteraterIndex(it);
     auto queue_it = empire->GetProductionQueue().find(idx);
 
     if (queue_it != empire->GetProductionQueue().end())
@@ -1249,13 +1281,13 @@ void ProductionWnd::QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt&
         if (modkeys & GG::MOD_KEY_CTRL)
             DeleteQueueItem(it);
         else
-            m_build_designator_wnd->CenterOnBuild(std::distance(m_queue_wnd->GetQueueListBox()->begin(), it));
+            m_build_designator_wnd->CenterOnBuild(m_queue_wnd->GetQueueListBox()->IteraterIndex(it));
     }
 }
 
 void ProductionWnd::QueueItemDoubleClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
     if (m_queue_wnd->GetQueueListBox()->DisplayingValidQueueItems())
-        m_build_designator_wnd->CenterOnBuild(std::distance(m_queue_wnd->GetQueueListBox()->begin(), it), true);
+        m_build_designator_wnd->CenterOnBuild(m_queue_wnd->GetQueueListBox()->IteraterIndex(it), true);
 }
 
 void ProductionWnd::QueueItemRallied(GG::ListBox::iterator it, int object_id) {
@@ -1274,7 +1306,7 @@ void ProductionWnd::QueueItemRallied(GG::ListBox::iterator it, int object_id) {
     if (rally_point_id == INVALID_OBJECT_ID)
         return;
 
-    auto idx = std::distance(m_queue_wnd->GetQueueListBox()->begin(), it);
+    auto idx = m_queue_wnd->GetQueueListBox()->IteraterIndex(it);
     auto queue_it = empire->GetProductionQueue().find(idx);
 
     if (queue_it != empire->GetProductionQueue().end())
@@ -1294,7 +1326,7 @@ void ProductionWnd::QueueItemPaused(GG::ListBox::iterator it, bool pause) {
     if (!empire)
         return;
 
-    auto idx = std::distance(m_queue_wnd->GetQueueListBox()->begin(), it);
+    auto idx = m_queue_wnd->GetQueueListBox()->IteraterIndex(it);
     auto queue_it = empire->GetProductionQueue().find(idx);
     auto action = pause ? ProductionQueueOrder::PAUSE_PRODUCTION : ProductionQueueOrder::RESUME_PRODUCTION;
 
@@ -1313,7 +1345,7 @@ void ProductionWnd::QueueItemDuped(GG::ListBox::iterator it) {
     if (!empire)
         return;
 
-    auto idx = std::distance(m_queue_wnd->GetQueueListBox()->begin(), it);
+    auto idx = m_queue_wnd->GetQueueListBox()->IteraterIndex(it);
     auto queue_it = empire->GetProductionQueue().find(idx);
 
     if (queue_it != empire->GetProductionQueue().end())
@@ -1332,7 +1364,7 @@ void ProductionWnd::QueueItemSplit(GG::ListBox::iterator it) {
     if (!empire)
         return;
 
-    auto idx = std::distance(m_queue_wnd->GetQueueListBox()->begin(), it);
+    auto idx = m_queue_wnd->GetQueueListBox()->IteraterIndex(it);
     auto queue_it = empire->GetProductionQueue().find(idx);
 
     if (queue_it != empire->GetProductionQueue().end())
@@ -1351,7 +1383,7 @@ void ProductionWnd::QueueItemUseImperialPP(GG::ListBox::iterator it, bool allow)
     if (!empire)
         return;
 
-    auto idx = std::distance(m_queue_wnd->GetQueueListBox()->begin(), it);
+    auto idx = m_queue_wnd->GetQueueListBox()->IteraterIndex(it);
     auto queue_it = empire->GetProductionQueue().find(idx);
     auto action = allow ? ProductionQueueOrder::ALLOW_STOCKPILE_USE : ProductionQueueOrder::DISALLOW_STOCKPILE_USE;
 
