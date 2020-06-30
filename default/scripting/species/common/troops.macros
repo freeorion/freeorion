@@ -65,16 +65,7 @@ BASIC_DEFENSE_TROOPS
 '''
 
 AFTER_SPECIES_MULTIPLICATOR_TROOPS
-'''        EffectsGroup
-            scope = And [
-                Planet
-                OwnedBy empire = Source.Owner
-                Population high = 0
-            ]
-            stackinggroup = "OUTPOST_TROOPS_STACK"
-            priority = [[VERY_LATE_PRIORITY]]
-            effects = SetMaxTroops value = Value * .5
-            accountinglabel = "OUTPOST_TROOP_LABEL"
+'''        // VERY_LATE_PRIORITY halving troops on outposts can be found in techs/construction/OUTPOST.focs.txt
 
 [[PROTECTION_FOCUS_TROOPS]]
 '''
