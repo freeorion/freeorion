@@ -157,6 +157,19 @@ void QueueListBox::DragDropLeave() {
     m_show_drop_point = false;
 }
 
+int QueueListBox::IteraterIndex(const const_iterator it) {
+    if (it == this->end())
+        return -1;
+
+    size_t dist = 0;
+    for (auto qit = this->begin(); qit != this->end(); ++qit) {
+        if (qit == it)
+            return dist;
+        dist++;
+    }
+    return -1;
+}
+
 void QueueListBox::EnableOrderIssuing(bool enable/* = true*/) {
     m_order_issuing_enabled = enable;
     AllowDrops(enable);
