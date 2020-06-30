@@ -1292,7 +1292,7 @@ void BuildDesignatorWnd::SetBuild(int queue_idx) {
             m_build_selector->DisplayStockpileProjectSignal();
         }
     } else {
-            m_enc_detail_panel->OnIndex();
+        m_enc_detail_panel->OnIndex();
     }
     m_enc_detail_panel->Refresh();
 }
