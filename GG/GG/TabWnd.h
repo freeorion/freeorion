@@ -102,12 +102,10 @@ private:
 class GG_API TabWnd : public Wnd
 {
 public:
-    /** \name Signal Types */ ///@{
     /** Emitted when the currently-selected Wnd has changed; the new selected
         Wnd's index in the group is provided (this may be NO_WND if no Wnd is
         currently selected). */
     typedef boost::signals2::signal<void (std::size_t)> TabChangedSignalType;
-    //@}
 
     TabWnd(X x, Y y, X w, Y h, const std::shared_ptr<Font>& font,
            Clr color, Clr text_color = CLR_BLACK);
@@ -181,12 +179,10 @@ private:
 class GG_API TabBar : public Control
 {
 public:
-    /** \name Signal Types */ ///@{
     /** Emitted when the currently-selected tab has changed; the new selected
         tab's index in the group is provided (this may be NO_TAB if no tab is
         currently selected). */
     typedef boost::signals2::signal<void (std::size_t)> TabChangedSignalType;
-    //@}
 
     TabBar(const std::shared_ptr<Font>& font, Clr color, Clr text_color = CLR_BLACK,
            Flags<WndFlag> flags = INTERACTIVE);

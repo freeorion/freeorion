@@ -217,7 +217,6 @@ public:
 
     typedef std::unordered_set<iterator, IteratorHash> SelectionSet;
 
-    /** \name Signal Types */ ///@{
     /** emitted when the list box is cleared */
     typedef boost::signals2::signal<void ()>                                                ClearedRowsSignalType;
     /** emitted when one or more rows are selected or deselected */
@@ -238,7 +237,6 @@ public:
     typedef RowSignalType      BeforeEraseRowSignalType;    ///< emitted when a row in the listbox is erased; provides the deleted Row, and is emitted before the row is removed
     typedef RowSignalType      AfterEraseRowSignalType;     ///< emitted when a row in the listbox is erased; provides the deleted Row, and is emitted after the row is removed
     typedef RowSignalType      BrowsedRowSignalType;        ///< emitted when a row in the listbox is "browsed" (rolled over) by the cursor; provides the browsed row
-    //@}
 
     /** \name Constants */ ///@{
     static const int DEFAULT_MARGIN;

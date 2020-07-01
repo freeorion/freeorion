@@ -49,9 +49,6 @@ class TextControl;
 */
 struct GG_API MenuItem
 {
-    /** \name Signal Types */ ///@{
-    //@}
-
     MenuItem();
 
     MenuItem(const std::string& str, bool disable, bool check,
@@ -84,9 +81,6 @@ struct GG_API MenuItem
 class GG_API PopupMenu : public Wnd
 {
 public:
-    /** \name Signal Types */ ///@{
-    //@}
-
     /** Ctor.  Parameter \a m should contain the desired menu in its
         next_level member. */
     PopupMenu(X x, Y y, const std::shared_ptr<Font>& font, Clr text_color = CLR_WHITE,

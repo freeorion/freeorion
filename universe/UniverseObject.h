@@ -51,13 +51,9 @@ public:
     //typedef flat_map<MeterType, Meter, std::less<MeterType>, std::vector<std::pair<MeterType, Meter>>> MeterMap;
     typedef flat_map<MeterType, Meter, std::less<MeterType>> MeterMap;
 
-    /** \name Signal Types */ //@{
     typedef boost::signals2::signal<void (), blocking_combiner<boost::signals2::optional_last_value<void>>> StateChangedSignalType;
-    //@}
 
-    /** \name Slot Types */ //@{
     typedef StateChangedSignalType::slot_type StateChangedSlotType;
-    //@}
 
     /** \name Accessors */ //@{
     int                         ID() const;                         ///< returns the ID number of this object.  Each object in FreeOrion has a unique ID number.

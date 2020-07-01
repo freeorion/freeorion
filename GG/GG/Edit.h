@@ -59,7 +59,6 @@ namespace GG {
 class GG_API Edit : public TextControl
 {
 public:
-    /** \name Signal Types */ ///@{
     /** Emitted whenever the text of the Edit are altered (keypresses,
         deletes, etc.); provides the new text of the Edit. */
     typedef boost::signals2::signal<void (const std::string&)> EditedSignalType;
@@ -68,7 +67,6 @@ public:
         one of enter or return has been pressed; provides the new text of the
         Edit. */
     typedef boost::signals2::signal<void (const std::string&)> FocusUpdateSignalType;
-    //@}
 
     /** Ctor. Height is determined from the font and point size used. */
     Edit(const std::string& str, const std::shared_ptr<Font>& font, Clr color,

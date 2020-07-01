@@ -60,10 +60,8 @@ struct GG_API HSVClr
 class GG_API HueSaturationPicker : public Control
 {
 public:
-    /** \name Signal Types */ ///@{
     /** emitted whenever the hue or saturation in the picker changes */
     typedef boost::signals2::signal<void (double, double)> ChangedSignalType;
-    //@}
 
     HueSaturationPicker(X x, Y y, X w, Y h);
 
@@ -92,10 +90,8 @@ private:
 class GG_API ValuePicker : public Control
 {
 public:
-    /** \name Signal Types */ ///@{
     /** emitted whenever the hue or saturation in the picker changes */
     typedef boost::signals2::signal<void (double)> ChangedSignalType;
-    //@}
 
     ValuePicker(X x, Y y, X w, Y h, Clr arrow_color);
 

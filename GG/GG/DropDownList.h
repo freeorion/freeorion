@@ -72,14 +72,12 @@ public:
     typedef ListBox::iterator iterator;
     typedef ListBox::const_iterator const_iterator;
 
-    /** \name Signal Types */ ///@{
     /** emitted when a new item is selected; will be end() when no item is
       * selected */
     typedef boost::signals2::signal<void (iterator)>   SelChangedSignalType;
 
     /** Signal \a true when drop down opens and false when it closes.*/
     typedef boost::signals2::signal<void (bool)>       DropDownOpenedSignalType;
-    //@}
 
     /** basic ctor.  DropDownList retains ownership of \a lb, if it is non-null. */
     DropDownList(size_t num_shown_elements, Clr color);

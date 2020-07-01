@@ -57,10 +57,8 @@ public:
         BN_ROLLOVER    ///< The button has the cursor over it, but is unpressed
     )
 
-    /** \name Signal Types */ ///@{
     /** Emitted when the button is clicked by the user */
     typedef boost::signals2::signal<void ()> ClickedSignalType;
-    //@}
 
     Button(const std::string& str, const std::shared_ptr<Font>& font, Clr color,
            Clr text_color = CLR_BLACK, Flags<WndFlag> flags = INTERACTIVE);
@@ -158,11 +156,9 @@ public:
         BN_ROLLOVER    ///< The button has the cursor over it, but is unpressed
     )
 
-    /** \name Signal Types */ ///@{
     /** Emitted when the StateButton is checked or unchecked; the checked or
         unchecked status is indicated by the bool parameter */
     typedef boost::signals2::signal<void (bool)> CheckedSignalType;
-    //@}
 
     StateButton(const std::string& str, const std::shared_ptr<Font>& font, Flags<TextFormat> format,
                 Clr color, std::shared_ptr<StateButtonRepresenter> representer, Clr text_color = CLR_BLACK); ///< Ctor
@@ -316,12 +312,10 @@ public:
 class GG_API RadioButtonGroup : public Control
 {
 public:
-    /** \name Signal Types */ ///@{
     /** emitted when the currently-selected button has changed; the new
         selected button's index in the group is provided (this may be
         NO_BUTTON if no button is currently selected) */
     typedef boost::signals2::signal<void (std::size_t)> ButtonChangedSignalType;
-    //@}
 
     RadioButtonGroup(Orientation orientation);
 

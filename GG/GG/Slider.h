@@ -57,7 +57,6 @@ template <typename T>
 class Slider : public Control
 {
 public:
-    /** \name Signal Types */ ///@{
     /**emitted whenever the slider is moved; the tab position and the upper
        and lower bounds of the slider's range are indicated, respectively */
     typedef boost::signals2::signal<void (T, T, T)> SlidSignalType;
@@ -66,7 +65,6 @@ public:
         programmatically; the tab position and the upper and lower bounds
         of the slider's range are indicated, respectively */
     typedef boost::signals2::signal<void (T, T, T)> SlidAndStoppedSignalType;
-    //@}
 
     Slider(T min, T max, Orientation orientation, Clr color,
            unsigned int tab_width, unsigned int line_width = 5, Flags<WndFlag> flags = INTERACTIVE);

@@ -70,7 +70,6 @@ class Texture;
 class GG_API DynamicGraphic : public Control
 {
 public:
-    /** \name Signal Types */ ///@{
     /** Emitted whenever playback ends because the last frame was reached and
         Looping() == false; the argument is the index of the last frame (may
         be the first frame, if playing in reverse).  \note Unlike most other
@@ -84,7 +83,6 @@ public:
         the execution of Render(), so keep this in mind when processing this
         signal.*/
     typedef boost::signals2::signal<void (std::size_t)> EndFrameSignalType;
-    //@}
 
     /** Ctor taking a vector of GG::Textures and the number of frames in those
         Textures.  The default \a frames value ALL_FRAMES indicates all

@@ -72,10 +72,8 @@ template <typename T>
 class Spin : public Control
 {
 public:
-    /** \name Signal Types */ ///@{
     /** emitted whenever the value of the Spin has changed */
     typedef typename boost::signals2::signal<void (T)> ValueChangedSignalType;
-    //@}
 
     /** Ctor that does not required height. Height is determined from the font
         and point size used.*/

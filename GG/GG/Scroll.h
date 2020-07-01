@@ -64,7 +64,6 @@ public:
         SBR_PAGE_UP
     )
 
-    /** \name Signal Types */ ///@{
     /** emitted whenever the scrollbar is moved; the upper and lower extents
         of the tab and the upper and lower bounds of the scroll's range are
         indicated, respectively */
@@ -75,7 +74,6 @@ public:
         upper and lower bounds of the scroll's range are indicated,
         respectively */
     typedef boost::signals2::signal<void (int, int, int, int)> ScrolledAndStoppedSignalType;
-    //@}
 
     Scroll(Orientation orientation, Clr color, Clr interior);
     void CompleteConstruction() override;

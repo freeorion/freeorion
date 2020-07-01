@@ -49,10 +49,8 @@ class Wnd;
 class GG_API Timer
 {
 public:
-    /** \name Signal Types */ ///@{
     /** Emitted when the timer fires */
     typedef boost::signals2::signal<void (unsigned int, Timer*)> FiredSignalType;
-    //@}
 
     /** Basic ctor.  Takes an interval and a start time in ms; if the start
         time is ommitted, the start time will be immediate. */
