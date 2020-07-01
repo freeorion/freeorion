@@ -21,6 +21,7 @@
 #include "Supply.h"
 #include "Government.h"
 
+#include <boost/uuid/uuid_io.hpp>
 #include <unordered_set>
 
 
@@ -1465,7 +1466,8 @@ void Empire::PlaceProductionOnQueue(const ProductionQueue::ProductionItem& item,
         throw std::invalid_argument("Empire::PlaceProductionOnQueue was passed a ProductionQueue::ProductionItem with an invalid BuildType");
     }
 
-    ProductionQueue::Element elem{item, m_id, uuid, number, number, blocksize, location, false, item.build_type != BT_STOCKPILE};
+    ProductionQueue::Element elem{item, m_id, uuid, number, number, blocksize,
+                                  location, false, item.build_type != BT_STOCKPILE};
     if (pos < 0 || static_cast<int>(m_production_queue.size()) <= pos)
         m_production_queue.push_back(elem);
     else
@@ -1516,7 +1518,7 @@ void Empire::SplitIncompleteProductionItem(int index, boost::uuids::uuid uuid) {
 }
 
 void Empire::DuplicateProductionItem(int index, boost::uuids::uuid uuid) {
-    DebugLogger() << "Empire::DuplicateProductionItem() called for index " << index;
+    DebugLogger() << "Empire::DuplicateProductionItem() called for index " << index << " with new UUID: " << boost::uuids::to_string(uuid);
     if (index < 0 || static_cast<int>(m_production_queue.size()) <= index)
         throw std::runtime_error("Empire::DuplicateProductionItem() : Attempted to adjust the quantity of items to be built in a nonexistent production queue item.");
 

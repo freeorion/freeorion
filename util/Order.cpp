@@ -36,9 +36,9 @@ Empire* Order::GetValidatedEmpire() const {
 void Order::Execute() const {
     if (m_executed)
         return;
+    m_executed = true;
 
     ExecuteImpl();
-    m_executed = true;
 }
 
 bool Order::Undo() const {
@@ -1023,7 +1023,7 @@ void ProductionQueueOrder::ExecuteImpl() const {
             if (idx == -1) {
                 ErrorLogger() << "ProductionQueueOrder asked to remove invalid UUID: " << boost::uuids::to_string(m_uuid);
             } else {
-                DebugLogger() << "ProductionQueueOrder removing item";
+                DebugLogger() << "ProductionQueueOrder removing item at index: " << idx;
                 empire->RemoveProductionFromQueue(idx);
             }
             break;
@@ -1132,7 +1132,8 @@ void ProductionQueueOrder::ExecuteImpl() const {
             ErrorLogger() << "ProductionQueueOrder::ExecuteImpl got invalid action";
         }
     } catch (const std::exception& e) {
-        ErrorLogger() << "Build order execution threw exception: " << e.what();
+        ErrorLogger() << "Production order execution threw exception: " << e.what();
+        throw;
     }
 }
 
@@ -1277,7 +1278,6 @@ void ShipDesignOrder::ExecuteImpl() const {
                           << " that this empire hasn't seen";
             return;
         }
-
     }
 }
 

@@ -756,7 +756,7 @@ namespace {
             }
 
             // pedia lookup
-            std::string item_name = "";
+            std::string item_name;
             switch (build_type) {
             case BT_BUILDING:
             case BT_STOCKPILE:
@@ -1253,10 +1253,12 @@ void ProductionWnd::DeleteQueueItem(GG::ListBox::iterator it) {
     auto idx = m_queue_wnd->GetQueueListBox()->IteraterIndex(it);
     auto queue_it = empire->GetProductionQueue().find(idx);
 
-    if (queue_it != empire->GetProductionQueue().end())
+    if (queue_it != empire->GetProductionQueue().end()) {
+        DebugLogger() << "DeleteQueueItem idx: " << idx << "  item: " << queue_it->Dump();
         HumanClientApp::GetApp()->Orders().IssueOrder(
             std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::REMOVE_FROM_QUEUE,
                                                    client_empire_id, queue_it->uuid));
+    }
 
     empire->UpdateProductionQueue();
 }
