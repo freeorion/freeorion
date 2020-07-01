@@ -780,6 +780,4 @@ private:
 };
 
 
-// Note: *::serialize() implemented in SerializeOrderSet.cpp.
-
 #endif // _Order_h_

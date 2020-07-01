@@ -1,5 +1,3 @@
-//About.cpp
-
 #include "About.h"
 
 #include "ClientUI.h"

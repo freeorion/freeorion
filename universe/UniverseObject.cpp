@@ -14,7 +14,6 @@
 #include "../util/i18n.h"
 
 
-// static(s)
 const int INVALID_OBJECT_ID      = -1;
 const int TEMPORARY_OBJECT_ID    = -2;
 
@@ -60,7 +59,7 @@ void UniverseObject::Copy(std::shared_ptr<const UniverseObject> copied_object,
         auto m_meter_it = m_meters.find(type);
         bool meter_already_known = (m_meter_it != m_meters.end());
         if (!meter_already_known)
-            m_meters[type]; // default initialize to (0, 0).  Alternative: = Meter(Meter::INVALID_VALUE, Meter::INVALID_VALUE);*/
+            m_meters[type]; // default initialize to (0, 0).  Alternative: = Meter(Meter::INVALID_VALUE, Meter::INVALID_VALUE);
         Meter& this_meter = m_meters[type];
 
         // if there is an update to meter from censored meters, update this object's copy

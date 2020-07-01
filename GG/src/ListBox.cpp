@@ -39,7 +39,7 @@
 
 using namespace GG;
 
-// static(s)
+
 const int ListBox::DEFAULT_MARGIN(2);
 const X ListBox::DEFAULT_ROW_WIDTH(50);
 const Y ListBox::DEFAULT_ROW_HEIGHT(22);

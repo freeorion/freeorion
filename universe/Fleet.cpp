@@ -77,7 +77,7 @@ namespace {
     }
 }
 
-// static(s)
+
 const int Fleet::ETA_UNKNOWN =      (1 << 30);
 const int Fleet::ETA_OUT_OF_RANGE = (1 << 30) - 1;
 const int Fleet::ETA_NEVER =        (1 << 30) - 2;
