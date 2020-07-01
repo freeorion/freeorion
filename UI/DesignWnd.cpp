@@ -3952,7 +3952,6 @@ public:
 
     /** Track changes in base type. */
     void HandleBaseTypeChange(const DesignWnd::BaseSelector::BaseSelectorTab base_type);
-    //@}
 
     /** emitted when the design is changed (by adding or removing parts, not
       * name or description changes) */

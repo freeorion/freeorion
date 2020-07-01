@@ -208,7 +208,6 @@ public:
     //! this is sometimes useful for debugging purposes.
     void RenderOutline(bool render_outline);
 
-    /** \name Exceptions */ ///@{
     //! The base class for Layout exceptions.
     GG_ABSTRACT_EXCEPTION(Exception);
 
@@ -225,7 +224,6 @@ public:
     //! Thrown when an attempt is made to place a Wnd in a nonempty layout
     //! cell.
     GG_CONCRETE_EXCEPTION(AttemptedOverwrite, GG::Layout, Exception);
-    //@}
 
     static const unsigned int INVALID_CELL_MARGIN;
 

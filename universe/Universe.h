@@ -102,10 +102,8 @@ public:
     typedef std::map<int, ShipDesign*>              ShipDesignMap;                  ///< ShipDesigns in universe; keyed by design id
     typedef ShipDesignMap::const_iterator           ship_design_iterator;           ///< const iterator over ship designs created by players that are known by this client
 
-    /** \name Signal Types */ //@{
     /** emitted just before the UniverseObject is deleted */
     typedef boost::signals2::signal<void (std::shared_ptr<const UniverseObject>)> UniverseObjectDeleteSignalType;
-    //@}
 
     Universe();
     virtual ~Universe();
@@ -363,7 +361,6 @@ public:
     void SetUniverseWidth(double width) { m_universe_width = width; }
     bool AllObjectsVisible() const { return m_all_objects_visible; }
 
-    /** \name Generators */ //@{
     /** InsertNew constructs and inserts a UniverseObject into the object map with a new
         id. It returns the new object. */
     template <typename T, typename... Args>
@@ -391,7 +388,6 @@ public:
 
         return InsertID<T>(id, std::forward<Args>(args)...);
     }
-    //@}
 
     //! Set items unlocked before turn 1 from \p future.
     void SetInitiallyUnlockedItems(Pending::Pending<std::vector<UnlockableItem>>&& future);

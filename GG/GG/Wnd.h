@@ -528,7 +528,6 @@ public:
 
     /** Adjusts \p ul and \p lr to correct for minsize and maxsize.*/
     void ClampRectWithMinAndMaxSize(Pt& ul, Pt& lr) const;
-    //@}
 
     /** Sets the string key that defines the type of data that this Wnd
         represents in a drag-and-drop drag.  This should be set to the empty
@@ -769,7 +768,6 @@ public:
         construction. */
     static void SetDefaultBrowseInfoWnd(const std::shared_ptr<BrowseInfoWnd>& browse_info_wnd);
 
-    /** \name Exceptions */ ///@{
     /** The base class for Wnd exceptions. */
     GG_ABSTRACT_EXCEPTION(Exception);
 

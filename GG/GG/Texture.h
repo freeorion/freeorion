@@ -106,7 +106,6 @@ public:
     void SetFilters(GLenum min, GLenum mag);  ///< sets the opengl min/mag filter modes associated with opengl texture m_opengl_id
     void Clear();  ///< frees the opengl texture object associated with this object
 
-    /** \name Exceptions */ ///@{
     /** The base class for Texture exceptions. */
     GG_ABSTRACT_EXCEPTION(Exception);
 
@@ -118,7 +117,6 @@ public:
 
     /** Thrown when GL fails to provide a requested texture object. */
     GG_CONCRETE_EXCEPTION(InsufficientResources, GG::Texture, Exception);
-    //@}
 
 private:
     Texture(const Texture& rhs);             ///< disabled
@@ -189,7 +187,6 @@ public:
 
     void Clear();
 
-    /** \name Exceptions */ ///@{
     /** The base class for SubTexture exceptions. */
     GG_ABSTRACT_EXCEPTION(Exception);
 
@@ -200,7 +197,6 @@ public:
     /** Thrown when invalid or out-of-order texture coordinates are
         supplied.*/
     GG_CONCRETE_EXCEPTION(InvalidTextureCoordinates, GG::SubTexture, Exception);
-    //@}
 
 private:
     /** shared_ptr to texture object with entire image. */

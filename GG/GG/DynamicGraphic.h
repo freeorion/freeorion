@@ -184,14 +184,12 @@ public:
         GraphicStyle */
     void  SetStyle(Flags<GraphicStyle> style);
 
-    /** \name Exceptions */ ///@{
     /** The base class for DynamicGraphic exceptions. */
     GG_ABSTRACT_EXCEPTION(Exception);
 
     /** Thrown when an attempt is made to add a frame to a DynamicGraphic from
         a texture smaller than a single frame. */
     GG_CONCRETE_EXCEPTION(CannotAddFrame, GG::DynamicGraphic, Exception);
-    //@}
 
     static const std::size_t  ALL_FRAMES;
     static const std::size_t  INVALID_INDEX;

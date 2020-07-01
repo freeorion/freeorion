@@ -629,7 +629,6 @@ public:
     /** Returns the input \a text, stripped of any formatting tags. */
     static std::string StripTags(const std::string& text, bool strip_unpaired_tags = true);
 
-    /** \name Exceptions */ ///@{
     /** The base class for Font exceptions. */
     GG_ABSTRACT_EXCEPTION(Exception);
 
@@ -654,7 +653,6 @@ public:
     /** Thrown when FreeType is unable to fulfill a request to load or render
         a glpyh. */
     GG_CONCRETE_EXCEPTION(BadGlyph, GG::Font, Exception);
-    //@}
 
     /** Throws a BadGlyph exception, with \a c converted to a printable ASCII
         character (if possible), or as a Unicode code point.  \a format_str

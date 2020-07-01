@@ -117,13 +117,11 @@ public:
     /** Converts a string to a path in a cross platform safe manner. */
     static const boost::filesystem::path StringToPath(const std::string& str);
 
-    /** \name Exceptions */ ///@{
     /** The base class for FileDlg exceptions. */
     GG_ABSTRACT_EXCEPTION(Exception);
 
     /** Thrown when the initial directory for the dialog is bad. */
     GG_CONCRETE_EXCEPTION(BadInitialDirectory, GG::FileDlg, Exception);
-    //@}
 
 protected:
     static const X DEFAULT_WIDTH;  ///< default width for the dialog

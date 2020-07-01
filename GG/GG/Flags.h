@@ -157,7 +157,6 @@ public:
     /** Const iterator over all known flags. */
     typedef typename std::set<FlagType>::const_iterator const_iterator;
 
-    /** \name Exceptions */ ///@{
     /** The base class for FlagSpec exceptions. */
     GG_ABSTRACT_EXCEPTION(Exception);
 
@@ -166,7 +165,6 @@ public:
 
     /** Thrown when a string-to-flag conversion is requested for an unknown string. */
     GG_CONCRETE_EXCEPTION(UnknownString, GG::FlagSpec, Exception);
-    //@}
 
     /** Returns the singelton instance of this class. */
     static FlagSpec& instance();
@@ -277,13 +275,11 @@ public:
     // flag types.
     static_assert(is_flag_type<FlagType>::value, "Using Flags without GG_FLAG_TYPE macro");
 
-    /** \name Exceptions */ ///@{
     /** The base class for Flags exceptions. */
     GG_ABSTRACT_EXCEPTION(Exception);
 
     /** Thrown when an unknown flag is used to construct a Flags. */
     GG_CONCRETE_EXCEPTION(UnknownFlag, GG::Flags, Exception);
-    //@}
 
     Flags() :
         m_flags(0)
@@ -298,7 +294,6 @@ public:
         if (!FlagSpec<FlagType>::instance().contains(flag))
             throw UnknownFlag("Invalid flag with value " + std::to_string(flag.m_value));
     }
-    //@}
 
     /** Conversion to bool, so that a Flags object can be used as a boolean
         test.  It is convertible to true when it contains one or more flags,

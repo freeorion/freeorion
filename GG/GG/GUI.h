@@ -414,14 +414,12 @@ public:
     /** Emitted whenever the app is requested to close. */
     boost::signals2::signal<void ()>    AppQuittingSignal;
 
-    /** \name Exceptions */ ///@{
     /** The base class for GUI exceptions. */
     GG_ABSTRACT_EXCEPTION(Exception);
 
     /** Thrown when an attempt is made to invoke either of the save- or
         load-window functions before they have been set. */
     GG_CONCRETE_EXCEPTION(BadFunctionPointer, GG::GUI, Exception);
-    //@}
 
     /** Returns a list of resolutions that are supported for full-screen.
      * The format is [width]x[height] @ [bits per pixel].

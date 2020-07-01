@@ -271,7 +271,6 @@ public:
       * the parsed content is consistent without sending it all between
       * clients and server. */
     unsigned int        GetCheckSum() const;
-    //@}
 
     /** Adds designs in this manager to the universe with the design creator
       * left as no empire. */

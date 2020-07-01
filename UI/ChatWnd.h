@@ -16,11 +16,8 @@ class MessageWnd : public CUIWnd {
 public:
     MessageWnd(GG::Flags<GG::WndFlag> flags, const std::string& config_name = "");
     void CompleteConstruction() override;
-    //@}
 
-    //! \name Acessors */ //@{
     std::string GetText() const;
-    //@}
 
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 

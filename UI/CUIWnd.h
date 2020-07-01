@@ -133,10 +133,7 @@ public:
     virtual void    CloseClicked();                     //!< called when window is closed via the close button
     virtual void    PinClicked();                       //!< called when window is pinned or unpinned via the pin button
 
-    //! \name Statics //@{
     static void     InvalidateUnusedOptions();          //!< removes unregistered and registered-but-unused window options from the OptionsDB so that new windows fall back to their default properties.
-
-    //@}
 
 protected:
     virtual GG::Pt          MinimizedSize() const;              //!< the size of a minimized CUIWnd
@@ -146,7 +143,6 @@ protected:
 
     virtual GG::Rect        CalculatePosition() const;          //!< override this if a class determines its own position/size and return the calculated values, called by ResetDefaultPosition()
 
-    //! \name Statics //@{
     static const std::string AddWindowOptions(const std::string& config_name,
                                               int left, int top, int width, int height,
                                               bool visible, bool pinned, bool minimized);   //!< Adds OptionsDB entries for a window under a given name along with default values.
@@ -156,7 +152,6 @@ protected:
                                               bool visible, bool pinned, bool minimized);   //!< overload that accepts GG::X and GG::Y instead of ints
 
     static void              InvalidateWindowOptions(const std::string& config_name);       //!< removes options containing \a config_name, logs an error instead if "ui."+config_name+".initialized" exists (i.e. if a window is currently using that name)
-    //@}
 
     virtual void    MinimizeClicked();              //!< called when window is minimized or restored via the minimize/restore button
     virtual void    InitButtons();                  //!< called to create the buttons, withtout positioning them

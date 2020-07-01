@@ -36,13 +36,11 @@ public:
         fails. */
     void Load(const boost::filesystem::path& path);
 
-    /** \name Exceptions */ ///@{
     /** The base class for VectorTexture exceptions. */
     GG_ABSTRACT_EXCEPTION(Exception);
 
     /** Thrown when valid vector image data cannot be read from a file. */
     GG_CONCRETE_EXCEPTION(BadFile, GG::VectorTexture, Exception);
-    //@}
 
 private:
     VectorTexture(const VectorTexture& rhs);            ///< disabled
