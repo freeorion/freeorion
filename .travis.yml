@@ -58,11 +58,10 @@ jobs:
     - name: Lint AI with Python 3.5
       <<: *_linux_setup_common
       stage: lint
-      before_script:
-        - cd default/python
       script:
-        - flake8
-        - python3 -m compileall -q .
+        - cmake ..
+        - cmake --build . --target check-python
+        - cmake --build . --target check-pep8
 
     - name: Lint string tables
       stage: lint

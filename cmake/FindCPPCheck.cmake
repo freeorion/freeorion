@@ -9,8 +9,15 @@ if(CPPCHECK_EXECUTABLE)
 endif()
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(cppcheck REQUIRED_VARS CPPCHECK_EXECUTABLE VERSION_VAR CPPCHECK_VERSION)
+find_package_handle_standard_args(CPPCheck REQUIRED_VARS CPPCHECK_EXECUTABLE VERSION_VAR CPPCHECK_VERSION)
 
 mark_as_advanced(
     CPPCHECK_EXECUTABLE
 )
+
+if(CPPCHECK_FOUND)
+    if(NOT TARGET Cppcheck::cppcheck)
+        add_executable(Cppcheck::cppcheck IMPORTED)
+        set_property(TARGET Cppcheck::cppcheck PROPERTY IMPORTED_LOCATION ${CPPCHECK_EXECUTABLE})
+    endif()
+endif()
