@@ -24,7 +24,6 @@ class CUISpin : public GG::Spin<T>
 public:
     typedef typename GG::Spin<T>::ValueType ValueType;
 
-    /** \name Structors */ //@{
     CUISpin(T value, T step, T min, T max, bool edits) :
     GG::Spin<T>(value, step, min, max, edits, ClientUI::GetFont(), ClientUI::CtrlBorderColor(),
                 ClientUI::TextColor())

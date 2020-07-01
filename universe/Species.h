@@ -32,14 +32,12 @@ FO_COMMON_API extern const int ALL_EMPIRES;
   * focus setting is. */
 class FO_COMMON_API FocusType {
 public:
-    /** \name Structors */ //@{
     FocusType() = default;
     FocusType(std::string& name, std::string& description,
               std::unique_ptr<Condition::Condition>&& location,
               std::string& graphic);
 
     ~FocusType();
-    //@}
 
     /** \name Accessors */ //@{
     const std::string&          Name() const        { return m_name; }          ///< returns the name for this focus type
@@ -71,7 +69,6 @@ private:
   * looked up using GetSpecies(). */
 class FO_COMMON_API Species {
 public:
-    /** \name Structors */ //@{
     Species(std::string&& name, std::string&& desc,
             std::string&& gameplay_desc, std::vector<FocusType>&& foci,
             std::string&& preferred_focus,
@@ -82,7 +79,6 @@ public:
             const std::set<std::string>& tags, std::string&& graphic);
 
     ~Species();
-    //@}
 
     /** \name Accessors */ //@{
     const std::string&              Name() const                        { return m_name; }                  ///< returns the unique name for this type of species

@@ -68,10 +68,8 @@ public:
     typedef boost::signals2::signal<void (T, T, T)> SlidAndStoppedSignalType;
     //@}
 
-    /** \name Structors */ ///@{
     Slider(T min, T max, Orientation orientation, Clr color,
            unsigned int tab_width, unsigned int line_width = 5, Flags<WndFlag> flags = INTERACTIVE);
-    //@}
     void CompleteConstruction() override;
 
     /** \name Accessors */ ///@{

@@ -15,10 +15,8 @@ class StatisticIcon;
 /** Shows resource meters with meter-bars */
 class ResourcePanel : public AccordionPanel {
 public:
-    /** \name Structors */ //@{
     ResourcePanel(GG::X w, int object_id);
     ~ResourcePanel();
-    //@}
     void CompleteConstruction() override;
 
     /** \name Accessors */ //@{

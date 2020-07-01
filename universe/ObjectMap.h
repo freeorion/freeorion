@@ -36,7 +36,6 @@ public:
     template <typename T>
     using container_type = std::map<int, std::shared_ptr<T>>;
 
-    /** \name Structors */ //@{
     ObjectMap();
     ~ObjectMap();
 
@@ -44,7 +43,6 @@ public:
       * returned.  Copies are limited to only duplicate information that the
       * empire with id \a empire_id would know about the copied objects. */
     ObjectMap* Clone(int empire_id = ALL_EMPIRES) const;
-    //@}
 
     /** \name Accessors */ //@{
     /** Returns the number of objects of the specified class in this ObjectMap. */

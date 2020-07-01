@@ -44,11 +44,9 @@ struct FO_COMMON_API ResearchQueue {
     /** The const ResearchQueue iterator type.  Dereference yields an Element. */
     typedef QueueType::const_iterator const_iterator;
 
-    /** \name Structors */ //@{
     ResearchQueue(int empire_id) :
         m_empire_id(empire_id)
     {}
-    //@}
 
     /** \name Accessors */ //@{
     bool                        InQueue(const std::string& tech_name) const;///< Returns true iff \a tech is in this queue.

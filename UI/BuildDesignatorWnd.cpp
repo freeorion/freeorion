@@ -613,10 +613,8 @@ namespace {
 //////////////////////////////////////////////////
 class BuildDesignatorWnd::BuildSelector : public CUIWnd {
 public:
-    /** \name Structors */ //@{
     BuildSelector(const std::string& config_name = "");
     void CompleteConstruction() override;
-    //@}
 
     /** \name Accessors */ //@{
     /** returns set of BulldType shown in this selector */

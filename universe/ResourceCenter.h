@@ -22,11 +22,9 @@ class UniverseObject;
   * sort. */
 class FO_COMMON_API ResourceCenter : virtual public std::enable_shared_from_this<UniverseObject> {
 public:
-    /** \name Structors */ //@{
     ResourceCenter();
     ResourceCenter(const ResourceCenter& rhs);
     virtual ~ResourceCenter();
-    //@}
 
     /** \name Accessors */ //@{
     const std::string&              Focus() const;                                  ///< current focus to which this ResourceCenter is set

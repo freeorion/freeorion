@@ -12,10 +12,8 @@ class ResearchQueueWnd;
 /** Contains a TechTreeWnd, some stats on the empire-wide research queue, and the queue itself. */
 class ResearchWnd : public GG::Wnd {
 public:
-    /** \name Structors */ //@{
     ResearchWnd(GG::X w, GG::Y h, bool initially_hidden = true);
     ~ResearchWnd();
-    //@}
     void CompleteConstruction() override;
 
     /** \name Accessors */ //@{

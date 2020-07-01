@@ -29,7 +29,6 @@ namespace ValueRef {
   * GetSpecial(). */
 class FO_COMMON_API Special {
 public:
-    /** \name Structors */ //@{
     Special(std::string&& name, std::string&& description,
             std::unique_ptr<ValueRef::ValueRef<double>>&& stealth,
             std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
@@ -39,7 +38,6 @@ public:
             const std::string& graphic = "");
 
     ~Special();
-    //@}
 
     /** \name Accessors */ //@{
     const std::string&                  Name() const            { return m_name; }          ///< returns the unique name for this type of special
@@ -95,10 +93,8 @@ class FO_COMMON_API SpecialsManager {
 public:
     using SpecialsTypeMap = std::map<std::string, std::unique_ptr<Special>>;
 
-    /** \name Structors */ //@{
     SpecialsManager();
     ~SpecialsManager();
-    //@}
 
     /** \name Accessors */ //@{
     int                         NumSpecials() const { return m_specials.size(); }

@@ -507,11 +507,9 @@ namespace {
   * one time in a SidePanel */
 class SidePanel::PlanetPanel : public GG::Control {
 public:
-    /** \name Structors */ //@{
     PlanetPanel(GG::X w, int planet_id, StarType star_type);
 
     ~PlanetPanel();
-    //@}
     void CompleteConstruction() override;
 
     /** \name Accessors */ //@{
@@ -606,10 +604,8 @@ private:
   * scrolling through them by the user. */
 class SidePanel::PlanetPanelContainer : public GG::Wnd {
 public:
-    /** \name Structors */ //@{
     PlanetPanelContainer();
     ~PlanetPanelContainer();
-    //@}
 
     /** \name Accessors */ //@{
     bool InWindow(const GG::Pt& pt) const override;

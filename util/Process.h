@@ -23,7 +23,6 @@
    DLLs it may be using.*/
 class FO_COMMON_API Process {
 public:
-    /** \name Structors */ //@{
     /** Creates a Process with no associated child process.  A child process
         will never be associated with this default-constructed Process unless
         another Process is assigned to it. */
@@ -45,7 +44,6 @@ public:
 
         Process returns immediately. */
     Process(const std::string& cmd, const std::vector<std::string>& argv);
-    //@}
 
     /** \name Accessors */ //@{
     bool Empty() const      { return m_empty; }         ///< returns true if this is a default-constructed object with no associated process

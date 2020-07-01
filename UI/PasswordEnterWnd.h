@@ -8,10 +8,8 @@
 
 class PasswordEnterWnd : public CUIWnd {
 public:
-    /** \name Structors */ //@{
     PasswordEnterWnd();
     void CompleteConstruction() override;
-    //@}
 
     //! \name Mutators
     //!@{

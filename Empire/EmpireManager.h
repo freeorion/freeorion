@@ -27,12 +27,10 @@ public:
     /// Const Iterator over Empires
     typedef std::map<int, Empire*>::const_iterator const_iterator;
 
-    /** \name Structors */ //@{
     EmpireManager();
     virtual ~EmpireManager();
 
     const EmpireManager& operator=(EmpireManager& rhs); ///< assignment operator (move semantics)
-    //@}
 
     /** \name Accessors */ //@{
     /** Returns the empire whose ID is \a ID, or 0 if none exists. */

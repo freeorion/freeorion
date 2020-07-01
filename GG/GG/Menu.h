@@ -52,7 +52,6 @@ struct GG_API MenuItem
     /** \name Signal Types */ ///@{
     //@}
 
-    /** \name Structors */ ///@{
     MenuItem();
 
     MenuItem(const std::string& str, bool disable, bool check,
@@ -61,7 +60,6 @@ struct GG_API MenuItem
     explicit MenuItem(bool separator);
 
     virtual ~MenuItem();
-    //@}
 
     /** \name Accessors */ ///@{
     //@}
@@ -89,12 +87,10 @@ public:
     /** \name Signal Types */ ///@{
     //@}
 
-    /** \name Structors */ ///@{
     /** Ctor.  Parameter \a m should contain the desired menu in its
         next_level member. */
     PopupMenu(X x, Y y, const std::shared_ptr<Font>& font, Clr text_color = CLR_WHITE,
               Clr border_color = CLR_BLACK, Clr interior_color = CLR_SHADOW, Clr hilite_color = CLR_GRAY);
-    //@}
 
     /** \name Accessors */ ///@{
     Pt ClientUpperLeft() const override;

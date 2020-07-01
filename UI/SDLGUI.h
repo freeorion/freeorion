@@ -48,13 +48,11 @@ class Framebuffer;
 class SDLGUI : public GG::GUI
 {
 public:
-    /** \name Structors */ ///@{
     explicit SDLGUI(int w = 1024, int h = 768, bool calc_FPS = false, const std::string& app_name = "GG",
                     int x = SDL_WINDOWPOS_UNDEFINED, int y = SDL_WINDOWPOS_UNDEFINED, bool fullscreen = false,
                     bool fake_mode_change = false);
 
     virtual ~SDLGUI();
-    //@}
 
     /** \name Accessors */ ///@{
     GG::X AppWidth() const override;

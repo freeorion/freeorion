@@ -22,7 +22,6 @@ public:
                                           const GG::Flags<GG::ModKey>&)>            TechClickSignalType;
     typedef boost::signals2::signal<void (const std::vector<std::string>&, int)>    QueueAddTechsSignalType;
 
-    /** \name Structors */ //@{
     /** TechTreeWnd contructor is usually called before client has
         access to techs.  Attempting to show the tech tree takes a long
         time and generates errors.  If \p initially_hidden is true then the
@@ -30,7 +29,6 @@ public:
         called, speeding up the constructor and preventing spurious errors.*/
     TechTreeWnd(GG::X w, GG::Y h, bool initially_hidden = true);
     ~TechTreeWnd();
-    //@}
     void CompleteConstruction() override;
 
     /** \name Accessors */ //@{

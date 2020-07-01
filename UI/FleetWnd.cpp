@@ -605,10 +605,8 @@ namespace {
     /** Shows info about a single ship. */
     class ShipDataPanel : public GG::Control {
     public:
-        /** \name Structors */ //@{
         ShipDataPanel(GG::X w, GG::Y h, int ship_id);
         ~ShipDataPanel();
-        //@}
 
         //! \name Accessors //@{
         /** Excludes border from the client area. */

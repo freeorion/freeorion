@@ -45,7 +45,6 @@ struct FO_COMMON_API ParsedShipDesign {
 
 class FO_COMMON_API ShipDesign {
 public:
-    /** \name Structors */ //@{
 private:
     /** The ShipDesign() constructor constructs invalid designs and is only used by boost
         serialization. */
@@ -80,7 +79,6 @@ public:
 
     /** Convert a parsed ship design and do any required verification. */
     ShipDesign(const ParsedShipDesign& design);
-    //@}
 
     /** \name Accessors */ //@{
     int                             ID() const  { return m_id; }    ///< returns id number of design

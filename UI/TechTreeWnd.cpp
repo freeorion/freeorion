@@ -209,10 +209,8 @@ std::shared_ptr<GG::BrowseInfoWnd> TechRowBrowseWnd(const std::string& tech_name
   * categories, statuses and types of techs to show. */
 class TechTreeWnd::TechTreeControls : public CUIWnd {
 public:
-    //! \name Structors //@{
     TechTreeControls(const std::string& config_name = "");
     void CompleteConstruction() override;
-     //@}
 
     //! \name Mutators //@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
@@ -487,9 +485,7 @@ void TechTreeWnd::TechTreeControls::SetTechStatus(TechStatus status, bool state)
 /** The window that contains the actual tech panels and dependency arcs. */
 class TechTreeWnd::LayoutPanel : public GG::Wnd {
 public:
-    /** \name Structors */ //@{
     LayoutPanel(GG::X w, GG::Y h);
-    //@}
 
     void CompleteConstruction() override;
 
@@ -1490,10 +1486,8 @@ bool TechTreeWnd::LayoutPanel::TreeZoomOutKeyboard() {
 //////////////////////////////////////////////////
 class TechTreeWnd::TechListBox : public CUIListBox {
 public:
-    /** \name Structors */ //@{
     TechListBox(GG::X w, GG::Y h);
     virtual ~TechListBox();
-    //@}
 
     void CompleteConstruction() override;
 

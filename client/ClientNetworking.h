@@ -41,10 +41,8 @@ public:
     /** The type of list returned by a call to DiscoverLANServers(). */
     using ServerNames =  std::vector<std::string>;
 
-    /** \name Structors */ //@{
     ClientNetworking();
     ~ClientNetworking();
-    //@}
 
     /** \name Accessors */ //@{
     /** Returns true iff the client is full duplex connected to the server. */

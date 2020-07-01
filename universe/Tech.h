@@ -50,7 +50,6 @@ public:
         std::set<std::string>   tags;
     };
 
-    /** \name Structors */ //@{
     Tech(std::string&& name, std::string&& description,
          std::string&& short_description, std::string&& category,
          std::unique_ptr<ValueRef::ValueRef<double>>&& research_cost,
@@ -70,7 +69,6 @@ public:
          std::string&& graphic);
 
     ~Tech();
-    //@}
 
     /** \name Accessors */ //@{
     const std::string&  Name() const                { return m_name; }              //!< returns name of this tech

@@ -82,9 +82,7 @@ public:
     > PositionWnd;
 
 protected:
-    /** \name Structors */ ///@{
     BrowseInfoWnd(X x, Y y, X w, Y h);
-    //@}
 
 private:
     Pt m_cursor_pos;
@@ -103,12 +101,10 @@ private:
 class GG_API TextBoxBrowseInfoWnd : public BrowseInfoWnd
 {
 public:
-    /** \name Structors */ ///@{
     TextBoxBrowseInfoWnd(X w, const std::shared_ptr<Font>& font, Clr color, Clr border_color, Clr text_color,
                          Flags<TextFormat> format = FORMAT_LEFT | FORMAT_WORDBREAK,
                          unsigned int border_width = 2, unsigned int text_margin = 4);
     void CompleteConstruction() override;
-    //@}
 
     /** \name Accessors */ ///@{
     bool WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const override;

@@ -1210,9 +1210,7 @@ ShipDesignManager::Designs* ShipDesignManager::SavedDesigns() {
   * dragged onto SlotControls to add parts to the design. */
 class PartControl : public GG::Control {
 public:
-    /** \name Structors */ //@{
     PartControl(const ShipPart* part);
-    //@}
     void CompleteConstruction() override;
 
     /** \name Accessors */ //@{
@@ -1309,9 +1307,7 @@ public:
         const AvailabilityManager& m_availabilities_state;
     };
 
-    /** \name Structors */ //@{
     explicit PartsListBox(const AvailabilityManager& availabilities_state);
-    //@}
 
     /** \name Accessors */ //@{
     const std::set<ShipPartClass>&  GetClassesShown() const;
@@ -1768,10 +1764,8 @@ void PartsListBox::HideSuperfluousParts(bool refresh_list) {
   * onto slots to assign parts to those slots */
 class DesignWnd::PartPalette : public CUIWnd {
 public:
-    /** \name Structors */ //@{
     PartPalette(const std::string& config_name);
     void CompleteConstruction() override;
-    //@}
 
     /** \name Mutators */ //@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
@@ -2157,11 +2151,9 @@ class BasesListBox : public QueueListBox {
 public:
     static const std::string BASES_LIST_BOX_DROP_TYPE;
 
-    /** \name Structors */ //@{
     BasesListBox(const AvailabilityManager& availabilities_state,
                  const boost::optional<std::string>& drop_type = boost::none,
                  const boost::optional<std::string>& empty_prompt = boost::none);
-    //@}
     void CompleteConstruction() override;
 
     /** \name Accessors */ //@{
@@ -3340,10 +3332,8 @@ bool SavedDesignsListBox::SavedDesignListBoxRow::LookupInStringtable() const {
 //////////////////////////////////////////////////
 class DesignWnd::BaseSelector : public CUIWnd {
 public:
-    /** \name Structors */ //@{
     BaseSelector(const std::string& config_name);
     void CompleteConstruction() override;
-    //@}
 
     /** \name Mutators */ //@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
@@ -3568,10 +3558,8 @@ void DesignWnd::BaseSelector::DoLayout() {
   * the part may be set programmatically with SetPart(). */
 class SlotControl : public GG::Control {
 public:
-    /** \name Structors */ //@{
     SlotControl();
     SlotControl(double x, double y, ShipSlotType slot_type);
-    //@}
     void CompleteConstruction() override;
 
     /** \name Accessors */ //@{
@@ -3893,10 +3881,8 @@ public:
         const std::string m_text;
     };
 
-    /** \name Structors */ //@{
     MainPanel(const std::string& config_name);
     void CompleteConstruction() override;
-    //@}
 
     /** \name Accessors */ //@{
     /** If editing a current design return a ShipDesign* otherwise boost::none. */

@@ -132,12 +132,10 @@ public:
         PLAYER_DISCONNECT,      ///< an active player (not an observer) was disconnected
     )
 
-    /** \name Structors */ //@{
     Message();
 
     Message(MessageType message_type,
             const std::string& text);
-    //@}
 
     /** \name Accessors */ //@{
     MessageType Type() const;               ///< Returns the type of the message.

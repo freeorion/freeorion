@@ -48,11 +48,9 @@ struct FO_COMMON_API InfluenceQueue {
     /** The const InfluenceQueue iterator type.  Dereference yields a Element. */
     typedef QueueType::const_iterator const_iterator;
 
-    /** \name Structors */ //@{
     explicit InfluenceQueue(int empire_id) :
         m_empire_id(empire_id)
     {}
-    //@}
 
     /** \name Accessors */ //@{
     bool    InQueue(const std::string& name) const;

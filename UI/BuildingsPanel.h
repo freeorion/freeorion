@@ -11,10 +11,8 @@ class ShaderProgram;
 /** Contains various BuildingIndicator to represent buildings on a planet. */
 class BuildingsPanel : public AccordionPanel {
 public:
-    /** \name Structors */ //@{
     BuildingsPanel(GG::X w, int columns, int planet_id);
     ~BuildingsPanel();
-    //@}
     void CompleteConstruction() override;
 
     /** \name Accessors */ //@{

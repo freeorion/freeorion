@@ -16,9 +16,7 @@ class CUIEdit;
 /** Displays game rules options */
 class GameRulesPanel : public GG::Control {
 public:
-    /** \name Structors*/ //!@{
     GameRulesPanel(GG::X w = GG::X1, GG::Y h = GG::Y1);
-    //!@}
     void CompleteConstruction() override;
 
     /** \name Accessors*/ //!@{
@@ -64,9 +62,7 @@ class GalaxySetupPanel : public GG::Control {
 public:
     static const GG::X DefaultWidth();
 
-    /** \name Structors*/ //!@{
     GalaxySetupPanel(GG::X w = GG::X(FontBasedUpscale(305)), GG::Y h = GG::Y(330));
-    //!@}
 
     void CompleteConstruction() override;
 
@@ -138,10 +134,8 @@ private:
 //! that allows the user to choose a galaxy style, size, etc.
 class GalaxySetupWnd : public CUIWnd {
 public:
-    /** \name Structors*/ //!@{
     GalaxySetupWnd();
     void CompleteConstruction() override;
-    //!@}
 
     /** \name Accessors*/ //!@{
     /** returns true iff the dialog is finished running and it was closed with the "OK" button */

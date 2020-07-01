@@ -54,13 +54,11 @@ public:
     typedef boost::signals2::signal<void (unsigned int, Timer*)> FiredSignalType;
     //@}
 
-    /** \name Structors */ ///@{
     /** Basic ctor.  Takes an interval and a start time in ms; if the start
         time is ommitted, the start time will be immediate. */
     explicit Timer(unsigned int interval, unsigned int start_time = 0);
 
-    ~Timer(); ///< Dtor.
-    //@}
+    ~Timer();
 
     /** \name Accessors */ ///@{
     unsigned int Interval() const;      ///< Returns the interval in ms between firings of the timer

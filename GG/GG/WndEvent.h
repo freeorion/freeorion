@@ -110,7 +110,6 @@ public:
         TimerFiring
     };
 
-    /** \name Structors */ ///@{
     WndEvent(EventType type, const Pt& pt, Flags<ModKey> mod_keys);
     WndEvent(EventType type, const Pt& pt, const Pt& move, Flags<ModKey> mod_keys);
     WndEvent(EventType type, const Pt& pt, int move, Flags<ModKey> mod_keys);
@@ -121,7 +120,6 @@ public:
     WndEvent(EventType type, unsigned int ticks, Timer* timer);
     WndEvent(EventType type, const std::string* text);
     explicit WndEvent(EventType type);
-    //@}
 
     /** \name Accessors */ ///@{
     EventType                   Type() const;           ///< returns the type of the WndEvent

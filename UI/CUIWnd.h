@@ -78,7 +78,6 @@ extern GG::WndFlag PINABLE;        ///< allows the window to be pinned
 */
 class CUIWnd : public GG::Wnd {
 public:
-    //! \name Structors //@{
     /** Constructs the window to be a CUI window. Specifying \a config_name
       * causes the window to save its position and other properties to the
       * OptionsDB under that name, if no other windows are currently using that
@@ -97,7 +96,6 @@ public:
     void CompleteConstruction() override;
     /** Virtual destructor. */
     virtual ~CUIWnd();
-    //@}
 
     //! \name Accessors //@{
     bool    Minimized() const {return m_minimized;} //!< returns true if window is minimized

@@ -20,11 +20,9 @@ class SidePanel : public CUIWnd {
 public:
     class PlanetPanel;
 
-    /** \name Structors */ //@{
     SidePanel(const std::string& config_name);
     void CompleteConstruction() override;
     ~SidePanel();
-    //@}
 
     /** \name Accessors */ //@{
     bool InWindow(const GG::Pt& pt) const override;

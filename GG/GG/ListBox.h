@@ -132,11 +132,9 @@ public:
         /** the type of key used to sort rows */
         typedef std::string SortKeyType;
 
-        /** \name Structors */ ///@{
         Row();
         Row(X w, Y h);
         virtual ~Row();
-        //@}
 
         void CompleteConstruction() override;
 
@@ -251,11 +249,9 @@ public:
     static const unsigned int BORDER_THICK; ///< the thickness with which to render the border of the control
     //@}
 
-    /** \name Structors */ ///@{
     ListBox(Clr color, Clr interior = CLR_ZERO);
 
     virtual ~ListBox();
-    //@}
 
     void CompleteConstruction() override;
 

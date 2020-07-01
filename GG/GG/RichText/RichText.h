@@ -66,7 +66,6 @@ public:
     // Allows you to register a custom control for displaying plaintext.
     static const std::string PLAINTEXT_TAG;
 
-    /** \name Structors */ ///@{
     RichText(X x, Y y, X w, Y h, const std::string& str, const std::shared_ptr<Font>& font,
              Clr color = CLR_BLACK, Flags<TextFormat> format = FORMAT_NONE,
              Flags<WndFlag> flags = NO_WND_FLAGS);
@@ -74,7 +73,6 @@ public:
     void CompleteConstruction() override;
 
     ~RichText();
-    //@}
 
     /** Set the text content. */
     virtual void SetText(const std::string& str);

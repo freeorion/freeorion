@@ -13,10 +13,8 @@ class StatisticIcon;
 /** Shows military-related meters including stealth, detection, shields, defense; with meter bars */
 class MilitaryPanel : public AccordionPanel {
 public:
-    /** \name Structors */ //@{
     MilitaryPanel(GG::X w, int planet_id);
     ~MilitaryPanel();
-    //@}
     void CompleteConstruction() override;
 
     /** \name Accessors */ //@{

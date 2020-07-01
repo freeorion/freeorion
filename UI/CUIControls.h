@@ -30,7 +30,6 @@
 /** a FreeOrion Label control */
 class CUILabel : public GG::TextControl {
 public:
-    /** \name Structors */ //@{
     CUILabel(const std::string& str,
              GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE,
              GG::Flags<GG::WndFlag> flags = GG::NO_WND_FLAGS,
@@ -41,7 +40,6 @@ public:
              GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE,
              GG::Flags<GG::WndFlag> flags = GG::NO_WND_FLAGS,
              GG::X x = GG::X0, GG::Y y = GG::Y0, GG::X w = GG::X1, GG::Y h = GG::Y1);
-    //@}
 
     /** \name Mutators */ //@{
     void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
@@ -51,11 +49,9 @@ public:
 /** a FreeOrion Button control */
 class CUIButton : public GG::Button {
 public:
-    /** \name Structors */ //@{
     CUIButton(const std::string& str);
 
     CUIButton(const GG::SubTexture& unpressed, const GG::SubTexture& pressed, const GG::SubTexture& rollover);
-    //@}
 
     /** \name Accessors */ //@{
     GG::Pt MinUsableSize() const override;
@@ -79,9 +75,7 @@ protected:
 
 class SettableInWindowCUIButton : public CUIButton {
 public:
-    /** \name Structors */ //@{
     SettableInWindowCUIButton(const GG::SubTexture& unpressed, const GG::SubTexture& pressed, const GG::SubTexture& rollover, std::function<bool (const SettableInWindowCUIButton*, const GG::Pt&)> in_window_function);
-    //@}
     /** \name Accessors */ //@{
     bool InWindow(const GG::Pt& pt) const override;
     //@}
@@ -93,10 +87,8 @@ private:
 /** a FreeOrion triangular arrow button */
 class CUIArrowButton : public GG::Button {
 public:
-    /** \name Structors */ //@{
     CUIArrowButton(ShapeOrientation orientation, bool fill_background,
                    GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE);
-    //@}
 
     /** \name Accessors */ //@{
     bool InWindow(const GG::Pt& pt) const override;
@@ -197,19 +189,15 @@ private:
 /** a FreeOrion StateButton control */
 class CUIStateButton : public GG::StateButton {
 public:
-    /** \name Structors */ //@{
     CUIStateButton(const std::string& str, GG::Flags<GG::TextFormat> format, std::shared_ptr<GG::StateButtonRepresenter> representer);
-    //@}
 
 };
 
 /** Tab bar with buttons for selecting tabbed windows. */
 class CUITabBar : public GG::TabBar {
 public:
-    /** \name Structors */ ///@{
     CUITabBar(const std::shared_ptr<GG::Font>& font, GG::Clr color,
               GG::Clr text_color);
-    //@}
 
 private:
     void DistinguishCurrentTab(const std::vector<GG::StateButton*>& tab_buttons) override;
@@ -244,9 +232,7 @@ public:
         bool m_being_dragged;
     };
 
-    /** \name Structors */ //@{
     CUIScroll(GG::Orientation orientation);
-    //@}
 
     /** \name Mutators */ //@{
     void Render() override;
@@ -261,9 +247,7 @@ protected:
 /** a FreeOrion ListBox control */
 class CUIListBox : public GG::ListBox {
 public:
-    /** \name Structors */ //@{
     CUIListBox(void);
-    //@}
 
     /** \name Mutators */ //@{
     void Render() override;
@@ -273,9 +257,7 @@ public:
 /** a FreeOrion DropDownList control */
 class CUIDropDownList : public GG::DropDownList {
 public:
-    /** \name Structors */ //@{
     explicit CUIDropDownList(size_t num_shown_elements);
-    //@}
 
     /** Return the width of the dropped row which excludes the DropArrow. */
     GG::X DroppedRowWidth() const override;
@@ -305,9 +287,7 @@ private:
 /** a FreeOrion Edit control */
 class CUIEdit : public GG::Edit {
 public:
-    /** \name Structors */ //@{
     explicit CUIEdit(const std::string& str);
-    //@}
 
     void CompleteConstruction() override;
 
@@ -335,9 +315,7 @@ private:
   * placeholder. Useful for password entry.*/
 class CensoredCUIEdit : public CUIEdit {
 public:
-    /** \name Structors */ //@{
     explicit CensoredCUIEdit(const std::string& str, char display_placeholder = '*');
-    //@}
 
     /** \name Accessors */ //@{
     const std::string& RawText() const;
@@ -361,10 +339,8 @@ private:
 /** a FreeOrion MultiEdit control */
 class CUIMultiEdit : public GG::MultiEdit {
 public:
-    /** \name Structors */ //@{
     explicit CUIMultiEdit(const std::string& str,
                           GG::Flags<GG::MultiEditStyle> style = GG::MULTI_LINEWRAP);
-    //@}
     void CompleteConstruction() override;
 
     /** \name Mutators */ //@{
@@ -376,9 +352,7 @@ public:
 /** a FreeOrion MultiEdit control that parses its text and makes links within clickable */
 class CUILinkTextMultiEdit : public CUIMultiEdit, public TextLinker {
 public:
-    /** \name Structors */ //@{
     CUILinkTextMultiEdit(const std::string& str, GG::Flags<GG::MultiEditStyle> style = GG::MULTI_LINEWRAP);
-    //@}
     void CompleteConstruction() override;
 
     /** \name Accessors */ //@{
@@ -435,14 +409,12 @@ private:
   */
 class StatisticIcon : public GG::Control {
 public:
-    /** \name Structors */ //@{
     StatisticIcon(const std::shared_ptr<GG::Texture> texture,
                   GG::X w = GG::X1, GG::Y h = GG::Y1); ///< initialized with no value (just an icon)
 
     StatisticIcon(const std::shared_ptr<GG::Texture> texture,
                   double value, int digits, bool showsign,
                   GG::X w = GG::X1, GG::Y h = GG::Y1); ///< initializes with one value
-    //@}
 
     void CompleteConstruction() override;
 
@@ -490,9 +462,7 @@ private:
 
 class CUIToolBar : public GG::Control {
 public:
-    /** \name Structors */ //@{
     CUIToolBar();
-    //@}
 
     /** \name Accessors */ //@{
     bool InWindow(const GG::Pt& pt) const override;
@@ -507,9 +477,7 @@ private:
 /** A control used to pick from at list of species names. */
 class SpeciesSelector : public CUIDropDownList {
 public:
-    /** \name Structors */ //@{
     SpeciesSelector(const std::string& preselect_species, GG::X w, GG::Y h);    ///< populates with all species in SpeciesManager
-    //@}
 
     /** \name Accessors */ //@{
     const std::string& CurrentSpeciesName() const;  ///< returns the name of the species that is currently selected
@@ -521,9 +489,7 @@ public:
 /** A control used to pick from the empire colors returned by EmpireColors(). */
 class EmpireColorSelector : public CUIDropDownList {
 public:
-    /** \name Structors */ //@{
     explicit EmpireColorSelector(GG::Y h);
-    //@}
 
     /** \name Accessors */ //@{
     GG::Clr CurrentColor() const; ///< returns the color that is currently selected, or GG::CLR_ZERO if none is selected
@@ -539,11 +505,9 @@ public:
 /** A control used to pick arbitrary colors using GG::ColorDlg. */
 class ColorSelector : public GG::Control {
 public:
-    /** \name Structors */ //@{
     ColorSelector(GG::Clr color, GG::Clr default_color);
 
     virtual ~ColorSelector();
-    //@}
 
     /** \name Mutators */ //@{
     void Render() override;
@@ -563,11 +527,10 @@ private:
 /** A GG file dialog in the FreeOrion style. */
 class FileDlg : public GG::FileDlg {
 public:
-    /** \name Structors */ //@{
     FileDlg(const std::string& directory, const std::string& filename, bool save, bool multi,
             std::vector<std::pair<std::string, std::string>> types);
-    //@}
     void CompleteConstruction() override;
+
 private:
     const std::vector<std::pair<std::string, std::string>> m_init_file_filters;
 };
@@ -576,11 +539,9 @@ private:
     screens. */
 class ResourceInfoPanel : public CUIWnd {
 public:
-    /** \name Structors */ //@{
     ResourceInfoPanel(const std::string& title, const std::string& point_units_str,
                       const GG::X x, const GG::Y y, const GG::X w, const GG::Y h,
                       const std::string& config_name);
-    //@}
     void    CompleteConstruction() override;
 
     /** \name Accessors */ //@{
@@ -634,7 +595,6 @@ private:
 /** Displays progress that is divided over mulitple turns, as in the Research and Production screens. */
 class MultiTurnProgressBar : public GG::Control {
 public:
-    /** @name Structors */ //@{
     /** Ctor
     * @param[in] num_segments Number of segments in the bar
     * @param[in] percent_completed Percent(0.0-1.0) of bar to fill,
@@ -652,7 +612,6 @@ public:
     MultiTurnProgressBar(int num_segments, float percent_completed,
                          float percent_predicted, const GG::Clr& bar_color,
                          const GG::Clr& bg_color, const GG::Clr& outline_color);
-    //@}
 
     /** @name Mutators */ //@{
     void Render() override;
@@ -685,8 +644,6 @@ private:
   * on top of eachother, rather than just a single texture. */
 class MultiTextureStaticGraphic : public GG::Control {
 public:
-    /** \name Structors */ ///@{
-
     /** creates a MultiTextureStaticGraphic from multiple pre-existing Textures which are rendered back-to-front in the
       * order they are specified in \a textures with GraphicStyles specified in the same-indexed value of \a styles.
       * if \a styles is not specified or contains fewer entres than \a textures, entries in \a textures without 
@@ -700,7 +657,6 @@ public:
       * associated styles use the style GRAPHIC_CENTER. */
     MultiTextureStaticGraphic(const std::vector<GG::SubTexture>& subtextures,
                               const std::vector<GG::Flags<GG::GraphicStyle>>& styles = std::vector<GG::Flags<GG::GraphicStyle>>());
-    //@}
 
     /** \name Mutators */ ///@{
     /** Renders textures in order specified in constructor, back-to-front. */
@@ -727,10 +683,8 @@ private:
   * and/or at a continuous angular rate. */
 class RotatingGraphic : public GG::StaticGraphic {
 public:
-    /** \name Structors */ ///@{
     RotatingGraphic(const std::shared_ptr<GG::Texture>& texture, GG::Flags<GG::GraphicStyle> style = GG::GRAPHIC_NONE,
                     GG::Flags<GG::WndFlag> flags = GG::NO_WND_FLAGS);
-    //@}
 
     /** \name Mutators */ ///@{
     void Render() override;

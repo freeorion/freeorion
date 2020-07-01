@@ -42,9 +42,7 @@ private:
 /** Lets the player design ships */
 class DesignWnd : public GG::Wnd {
 public:
-    /** \name Structors */ //@{
     DesignWnd(GG::X w, GG::Y h);
-    //@}
     void CompleteConstruction() override;
 
     /** \name Mutators */ //@{

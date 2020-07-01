@@ -11,12 +11,10 @@
 
 class ModeratorActionsWnd : public CUIWnd {
 public:
-    //! \name Structors //!@{
     ModeratorActionsWnd(const std::string& config_name = "");
     void CompleteConstruction() override;
 
     virtual ~ModeratorActionsWnd();
-    //!@}
 
     /** \name Accessors */ //@{
     ModeratorActionSetting  SelectedAction() const;

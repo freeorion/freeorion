@@ -24,12 +24,10 @@ public:
     enum class Purpose {Save, Load};
     enum class SaveType {SinglePlayer, MultiPlayer};
 
-    /** \name Structors */ //@{
     SaveFileDialog(const Purpose purpose = Purpose::Load, const SaveType type = SaveType::SinglePlayer);
 
     void CompleteConstruction() override;
     ~SaveFileDialog();
-    //@}
 
     /** \name Mutators */ //@{
     void ModalInit() override;

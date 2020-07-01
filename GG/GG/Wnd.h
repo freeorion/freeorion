@@ -333,9 +333,7 @@ public:
         ClipToClientAndWindowSeparately
     };
 
-    /** \name Structors */ ///@{
     virtual ~Wnd();
-    //@}
 
     /** Create is the default factory which allocates and configures a T type
         derived from Wnd.  It requires that the T constructor followed by
@@ -812,13 +810,11 @@ protected:
         DRAGGED_OVER_ACCEPTING_DROP_TARGET
     };
 
-    /** \name Structors */ ///@{
     Wnd();
 
     /** Ctor that allows a size and position to be specified, as well as
         creation flags. */
     Wnd(X x, Y y, X w, Y h, Flags<WndFlag> flags = INTERACTIVE | DRAGABLE);
-    //@}
 
     /** \name Accessors */ ///@{
     /** Returns the states the Wnd is in, with respect to drag-and-drop

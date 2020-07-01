@@ -14,9 +14,7 @@ class BuildDesignatorWnd : public GG::Wnd {
 public:
     static const std::string PRODUCTION_ITEM_DROP_TYPE;
 
-    /** \name Structors */ //@{
     BuildDesignatorWnd(GG::X w, GG::Y h);
-    //@}
     void CompleteConstruction() override;
 
     /** \name Accessors */ //@{

@@ -42,11 +42,9 @@ namespace GG {
 class GG_API DeferredLayout : public Layout
 {
 public:
-    /** \name Structors */ ///@{
     /** Ctor. */
     DeferredLayout(X x, Y y, X w, Y h, std::size_t rows, std::size_t columns,
                    unsigned int border_margin = 0, unsigned int cell_margin = INVALID_CELL_MARGIN);
-    //@}
 
     /** \name Accessors */ ///@{
     //@}

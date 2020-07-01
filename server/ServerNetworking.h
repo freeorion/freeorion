@@ -69,14 +69,12 @@ public:
     typedef boost::filter_iterator<EstablishedPlayer, PlayerConnections::iterator>          established_iterator;
     typedef boost::filter_iterator<EstablishedPlayer, PlayerConnections::const_iterator>    const_established_iterator;
 
-    /** \name Structors */ //@{
     ServerNetworking(boost::asio::io_context& io_context,
                      MessageAndConnectionFn nonplayer_message_callback,
                      MessageAndConnectionFn player_message_callback,
                      ConnectionFn disconnected_callback);
 
     ~ServerNetworking();
-    //@}
 
     /** \name Accessors */ //@{
     /** Returns true if size() == 0. */
@@ -219,9 +217,7 @@ class PlayerConnection :
     public std::enable_shared_from_this<PlayerConnection>
 {
 public:
-    /** \name Structors */ //@{
-    ~PlayerConnection(); ///< Dtor.
-    //@}
+    ~PlayerConnection();
 
     /** \name Accessors */ //@{
     /** Returns true if EstablishPlayer() successfully has been called on this

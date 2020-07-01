@@ -41,10 +41,8 @@ public:
     typedef std::vector<SitRepEntry>::const_iterator    SitRepItr;
     //@}
 
-    /** \name Structors */ //@{
     Empire(const std::string& name, const std::string& player_name, int ID, const GG::Clr& color, bool authenticated);  ///< basic constructor
     ~Empire();
-    //@}
 
     /** \name Accessors */ //@{
     const std::string&  Name() const;            ///< Returns the Empire's name

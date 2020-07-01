@@ -46,7 +46,6 @@ public:
 
 protected:
     friend class Universe;
-    /** \name Structors */ //@{
     Field();
 
 public:
@@ -58,7 +57,6 @@ protected:
 
     /** Returns new copy of this Field. */
     Field* Clone(int empire_id = ALL_EMPIRES) const override;
-    //@}
 
 private:
     std::string m_type_name;

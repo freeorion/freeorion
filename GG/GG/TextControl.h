@@ -69,8 +69,6 @@ class GG_API TextControl : public Control
 public:
     using Wnd::SetMinSize;
 
-    /** \name Structors */ ///@{
-    /** Ctor. */
     TextControl(X x, Y y, X w, Y h, const std::string& str,
                 const std::shared_ptr<Font>& font,
                 Clr color = CLR_BLACK, Flags<TextFormat> format = FORMAT_NONE,
@@ -104,7 +102,6 @@ public:
     explicit TextControl(const TextControl& that);
 
     virtual ~TextControl();
-    //@}
 
     /** Assignment operator.
 

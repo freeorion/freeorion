@@ -14,11 +14,9 @@ class ProductionQueueWnd;
 //! Contains a BuildDesignatorWnd, some stats on the empire-wide production queue, and the queue itself.
 class ProductionWnd : public GG::Wnd {
 public:
-    /** \name Structors */ //@{
     ProductionWnd(GG::X w, GG::Y h);
 
     virtual ~ProductionWnd();
-    //@}
     void CompleteConstruction() override;
 
     /** \name Accessors */ //@{

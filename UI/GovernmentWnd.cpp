@@ -204,9 +204,7 @@ namespace {
   * and can be dragged onto SlotControls to add policies to the government. */
 class PolicyControl : public GG::Control {
 public:
-    /** \name Structors */ //@{
     explicit PolicyControl(const Policy* policy);
-    //@}
     void CompleteConstruction() override;
 
     /** \name Accessors */ //@{
@@ -303,9 +301,7 @@ public:
         const AvailabilityManager& m_availabilities_state;
     };
 
-    /** \name Structors */ //@{
     explicit PoliciesListBox(const AvailabilityManager& availabilities_state);
-    //@}
 
     /** \name Accessors */ //@{
     const std::set<std::string>&    GetCategoriesShown() const;
@@ -554,10 +550,8 @@ void PoliciesListBox::HideAllCategories(bool refresh_list) {
   * onto slots to assign policies to those slots */
 class GovernmentWnd::PolicyPalette : public GG::Wnd {
 public:
-    /** \name Structors */ //@{
     PolicyPalette(GG::X w, GG::Y h);
     void CompleteConstruction() override;
-    //@}
 
     /** \name Mutators */ //@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
@@ -858,11 +852,9 @@ void GovernmentWnd::PolicyPalette::Populate()
   * the government, or the policy may be set programmatically with SetPolicy(). */
 class PolicySlotControl : public GG::Control {
 public:
-    /** \name Structors */ //@{
     PolicySlotControl();
     PolicySlotControl(const std::string& slot_category, int category_index,
                       unsigned int slot_index);
-    //@}
     void CompleteConstruction() override;
 
     /** \name Accessors */ //@{
@@ -1133,10 +1125,8 @@ void PoliciesListBox::DropsAcceptable(DropsAcceptableIter first, DropsAcceptable
 //////////////////////////////////////////////////
 class GovernmentWnd::MainPanel : public GG::Wnd {
 public:
-    /** \name Structors */ //@{
     MainPanel(GG::X w, GG::Y h);
     void CompleteConstruction() override;
-    //@}
 
     /** \name Accessors */ //@{
     std::vector<std::string> Policies() const; //!< returns vector of names of policies in slots of current shown design.  empty slots are represented with empty string

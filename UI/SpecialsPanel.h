@@ -8,9 +8,7 @@ class StatisticIcon;
 /** Displays a set of specials attached to an UniverseObject */
 class SpecialsPanel : public GG::Wnd {
 public:
-    /** \name Structors */ //@{
     SpecialsPanel(GG::X w, int object_id);
-    //@}
     void CompleteConstruction() override;
 
     /** \name Accessors */ //@{

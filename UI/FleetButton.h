@@ -23,12 +23,10 @@ public:
         LARGE
     };
 
-    /** \name Structors */ //@{
     FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type = SizeType::LARGE);
     FleetButton(int fleet_id, SizeType size_type = SizeType::LARGE);
     void CompleteConstruction() override;
     virtual ~FleetButton();
-    //@}
 
     /** \name Accessors */ //@{
     /** Returns true if \a pt is within or over the button. */

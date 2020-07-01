@@ -15,10 +15,8 @@ class StatisticIcon;
 /** Shows population with meter bars */
 class PopulationPanel : public AccordionPanel {
 public:
-    /** \name Structors */ //@{
     PopulationPanel(GG::X w, int object_id);
     ~PopulationPanel();
-    //@}
     void CompleteConstruction() override;
 
     /** \name Accessors */ //@{

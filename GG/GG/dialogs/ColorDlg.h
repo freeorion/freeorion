@@ -65,9 +65,7 @@ public:
     typedef boost::signals2::signal<void (double, double)> ChangedSignalType;
     //@}
 
-    /** \name Structors */ ///@{
     HueSaturationPicker(X x, Y y, X w, Y h);
-    //@}
 
     /** \name Mutators */ ///@{
     void Render() override;
@@ -101,9 +99,7 @@ public:
     typedef boost::signals2::signal<void (double)> ChangedSignalType;
     //@}
 
-    /** \name Structors */ ///@{
     ValuePicker(X x, Y y, X w, Y h, Clr arrow_color);
-    //@}
 
     /** \name Mutators */ ///@{
     void Render() override;
@@ -143,9 +139,7 @@ public:
     class GG_API ColorButton : public Button
     {
     public:
-        /** \name Structors */ ///@{
         ColorButton(const Clr& color);
-        //@}
 
         /** \name Accessors */ ///@{
         /** returns the custom color represented by the button */
@@ -177,19 +171,15 @@ public:
     class GG_API ColorDisplay : public Control
     {
     public:
-        /** \name Structors */ ///@{
         ColorDisplay(Clr color);
-        //@}
 
         /** \name Accessors */ ///@{
         void Render() override;
         //@}
     };
 
-    /** \name Structors */ ///@{
     ColorDlg(X x, Y y, Clr original_color, const std::shared_ptr<Font>& font,
              Clr dialog_color, Clr border_color, Clr text_color = CLR_BLACK);
-    //@}
     void CompleteConstruction() override;
 
     /** \name Accessors */ ///@{

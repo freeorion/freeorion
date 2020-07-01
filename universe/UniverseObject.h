@@ -195,7 +195,6 @@ protected:
     friend class Universe;
     friend class ObjectMap;
 
-    /** \name Structors */ //@{
     UniverseObject();
     UniverseObject(const std::string name, double x, double y);
 
@@ -210,7 +209,6 @@ protected:
       * by the detection and visibility system.  Caller takes ownership of
       * returned pointee. */
     virtual UniverseObject* Clone(int empire_id = ALL_EMPIRES) const = 0;
-    //@}
 
     void                    AddMeter(MeterType meter_type); ///< inserts a meter into object as the \a meter_type meter.  Should be used by derived classes to add their specialized meters to objects
     void                    Init();                         ///< adds stealth meter

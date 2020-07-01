@@ -55,11 +55,9 @@ struct LaneEndpoints {
 /** This class is a window that graphically displays everything in the universe */
 class MapWnd : public GG::Wnd {
 public:
-    //! \name Structors //!@{
     MapWnd();
 
     ~MapWnd();
-    //!@}
 
     void CompleteConstruction() override;
 

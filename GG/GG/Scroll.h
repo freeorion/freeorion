@@ -77,10 +77,7 @@ public:
     typedef boost::signals2::signal<void (int, int, int, int)> ScrolledAndStoppedSignalType;
     //@}
 
-    /** \name Structors */ ///@{
-    /** Ctor. */
     Scroll(Orientation orientation, Clr color, Clr interior);
-    //@}
     void CompleteConstruction() override;
 
     /** \name Accessors */ ///@{

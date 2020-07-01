@@ -38,7 +38,6 @@ public:
 
 protected:
     friend class Universe;
-    /** \name Structors */ //@{
     Building() {}
 
 public:
@@ -54,7 +53,6 @@ public:
 protected:
     /** Returns new copy of this Building. */
     Building* Clone(int empire_id = ALL_EMPIRES) const override;
-    //@}
 
 private:
     std::string m_building_type;

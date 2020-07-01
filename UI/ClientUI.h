@@ -32,10 +32,8 @@ class ShipDesignManager;
 //!display of all information onscreen.
 class ClientUI {
 public:
-    //! \name Structors //!@{
     ClientUI();
     ~ClientUI();
-    //!@}
 
     //! \name Accessors //!@{
     std::shared_ptr<MapWnd>                 GetMapWnd();                //!< Returns the main map window.

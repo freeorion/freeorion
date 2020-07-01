@@ -23,10 +23,8 @@ public:
     typedef std::shared_ptr<const Pathfinder> ConstPtr;
     typedef std::shared_ptr<UniverseObjectVisitor> SystemExclusionPredicateType;
 
-    /** \name Structors */ //@{
     Pathfinder();
     virtual ~Pathfinder();
-    //@}
 
     /** \name Accessors */ //@{
 

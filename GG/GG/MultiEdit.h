@@ -60,14 +60,11 @@ class Scroll;
 class GG_API MultiEdit : public Edit
 {
 public:
-    /** \name Structors */ ///@{
-    /** Ctor. */
     MultiEdit(const std::string& str, const std::shared_ptr<Font>& font,
               Clr color, Flags<MultiEditStyle> style = MULTI_LINEWRAP,
               Clr text_color = CLR_BLACK, Clr interior = CLR_ZERO);
 
     virtual ~MultiEdit();
-    //@}
     void CompleteConstruction() override;
 
     /** \name Accessors */ ///@{

@@ -62,10 +62,8 @@ public:
     typedef boost::signals2::signal<void ()> ClickedSignalType;
     //@}
 
-   /** \name Structors */ ///@{
     Button(const std::string& str, const std::shared_ptr<Font>& font, Clr color,
            Clr text_color = CLR_BLACK, Flags<WndFlag> flags = INTERACTIVE);
-    //@}
     void CompleteConstruction() override;
 
     /** \name Accessors */ ///@{
@@ -170,10 +168,8 @@ public:
     typedef boost::signals2::signal<void (bool)> CheckedSignalType;
     //@}
 
-    /** \name Structors */ ///@{
     StateButton(const std::string& str, const std::shared_ptr<Font>& font, Flags<TextFormat> format,
                 Clr color, std::shared_ptr<StateButtonRepresenter> representer, Clr text_color = CLR_BLACK); ///< Ctor
-    //@}
     void CompleteConstruction() override;
 
     /** \name Accessors */ ///@{
@@ -335,9 +331,7 @@ public:
     typedef boost::signals2::signal<void (std::size_t)> ButtonChangedSignalType;
     //@}
 
-    /** \name Structors */ ///@{
     RadioButtonGroup(Orientation orientation);
-    //@}
 
     /** \name Accessors */ ///@{
     Pt MinUsableSize() const override;

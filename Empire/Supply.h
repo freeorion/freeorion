@@ -13,10 +13,8 @@ FO_COMMON_API extern const int ALL_EMPIRES;
 /** Used to calcuate all empires' supply distributions. */
 class FO_COMMON_API SupplyManager {
 public:
-    /** \name Structors */ //@{
     SupplyManager();
     SupplyManager& operator=(const SupplyManager& rhs);
-    //@}
 
     /** \name Accessors */ //@{
     /** Returns set of directed starlane traversals along which supply can flow.

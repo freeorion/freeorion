@@ -143,7 +143,6 @@ protected:
     friend class Universe;
     friend class ObjectMap;
 
-    /** \name Structors */ //@{
     Fleet() {}
 
 public:
@@ -158,7 +157,6 @@ public:
 protected:
     /** Returns new copy of this Fleet. */
     Fleet* Clone(int empire_id = ALL_EMPIRES) const override;
-    //@}
 
 private:
     std::set<int>               m_ships;

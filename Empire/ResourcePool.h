@@ -15,9 +15,7 @@
   * of a particular resource (eg. research, industry). */
 class FO_COMMON_API ResourcePool {
 public:
-    /** \name Structors */ //@{
     ResourcePool(ResourceType type);
-    //@}
 
     /** \name Accessors */ //@{
     const std::vector<int>&         ObjectIDs() const;                      ///< returns UniverseObject IDs in this ResourcePool

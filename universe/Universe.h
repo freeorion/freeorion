@@ -107,10 +107,8 @@ public:
     typedef boost::signals2::signal<void (std::shared_ptr<const UniverseObject>)> UniverseObjectDeleteSignalType;
     //@}
 
-    /** \name Structors */ //@{
     Universe();
     virtual ~Universe();
-    //@}
 
     /** \name Accessors */ //@{
     /** Returns objects in this Universe. */

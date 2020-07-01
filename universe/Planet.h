@@ -121,7 +121,6 @@ protected:
     friend class Universe;
     friend class ObjectMap;
 
-    /** \name Structors */ //@{
     Planet();
 
 public:
@@ -136,7 +135,6 @@ protected:
 protected:
     /** returns new copy of this Planet. */
     Planet* Clone(int empire_id = ALL_EMPIRES) const override;
-    //@}
 
 private:
     void Init();

@@ -40,12 +40,10 @@ private:
   * UniverseObject associated with it. */
 class SystemIcon : public GG::Control {
 public:
-    //! \name Structors //!@{
     /** Construct from a universe ID at specified size and position. */
     SystemIcon(GG::X x, GG::Y y, GG::X w, int system_id);
 
     ~SystemIcon();
-    //!@}
     void CompleteConstruction() override;
 
     //! \name Accessors //!@{

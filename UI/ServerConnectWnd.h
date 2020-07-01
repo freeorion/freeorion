@@ -19,10 +19,8 @@ public:
         Networking::ClientType type;
     };
 
-    /** \name Structors */ //@{
     ServerConnectWnd();
     void CompleteConstruction() override;
-    //@}
 
     //! \name Mutators
     //!@{

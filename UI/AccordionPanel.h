@@ -11,10 +11,8 @@
 
 class AccordionPanel : public GG::Control {
 public:
-    /** \name Structors */ //@{
     AccordionPanel(GG::X w, GG::Y h, bool is_button_on_left = false);
     virtual ~AccordionPanel();
-    //@}
 
     void CompleteConstruction() override;
     GG::Pt ClientUpperLeft() const override;

@@ -289,7 +289,6 @@ public:
     GG_CONCRETE_EXCEPTION(UnknownFlag, GG::Flags, Exception);
     //@}
 
-    /** \name Structors */ ///@{
     Flags() :
         m_flags(0)
     {}

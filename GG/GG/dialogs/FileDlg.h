@@ -55,7 +55,6 @@ class Font;
 class GG_API FileDlg : public Wnd
 {
 public:
-    /** \name Structors */ ///@{
     /** Basic ctor.  Parameters \a directory and \a filename pass an initial
         directory and filename to the dialog, if desired (such as when "Save
         As..." is selected in an app, and there is a current filename).  If \a
@@ -68,7 +67,6 @@ public:
         invalid. */
     FileDlg(const std::string& directory, const std::string& filename, bool save, bool multi, const std::shared_ptr<Font>& font,
             Clr color, Clr border_color, Clr text_color = CLR_BLACK);
-    //@}
     void CompleteConstruction() override;
 
     /** \name Accessors */ ///@{

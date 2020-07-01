@@ -11,9 +11,7 @@
 /** The PopulationPool class keeps track of an empire's total population and its growth. */
 class FO_COMMON_API PopulationPool {
 public:
-    /** \name Structors */ //@{
     PopulationPool();
-    //@}
 
     /** \name Accessors */ //@{
     const std::vector<int>& PopCenterIDs() const { return m_pop_center_ids; }   ///< returns the PopCenter vector

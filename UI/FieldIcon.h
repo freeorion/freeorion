@@ -13,10 +13,8 @@
     associated with it. */
 class FieldIcon : public GG::Control {
 public:
-    //! \name Structors //!@{
     FieldIcon(int field_id);
     ~FieldIcon();
-    //!@}
     void CompleteConstruction() override;
 
     //! \name Accessors //!@{

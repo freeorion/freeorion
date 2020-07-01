@@ -95,7 +95,6 @@ private:
     (a FleetDetailPanel). */
 class FleetWnd : public MapWndPopup {
 public:
-    /** \name Structors */ //@{
     FleetWnd();
     FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled,
              double allowed_bounding_box_leeway = 0,
@@ -104,7 +103,6 @@ public:
              const std::string& config_name = "");
 
     ~FleetWnd();
-    //@}
     void CompleteConstruction() override;
 
     //! \name Accessors //@{

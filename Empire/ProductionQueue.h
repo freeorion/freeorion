@@ -103,9 +103,7 @@ struct FO_COMMON_API ProductionQueue {
     /** The const ProductionQueue iterator type.  Dereference yields a Element. */
     typedef QueueType::const_iterator const_iterator;
 
-    /** \name Structors */ //@{
     ProductionQueue(int empire_id);
-    //@}
 
     /** \name Accessors */ //@{
     int     ProjectsInProgress() const;         ///< Returns the number of production projects currently (perhaps partially) funded.

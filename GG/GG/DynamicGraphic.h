@@ -86,7 +86,6 @@ public:
     typedef boost::signals2::signal<void (std::size_t)> EndFrameSignalType;
     //@}
 
-    /** \name Structors */ ///@{
     /** Ctor taking a vector of GG::Textures and the number of frames in those
         Textures.  The default \a frames value ALL_FRAMES indicates all
         possible area is considered to contain valid frames.  Regardless of
@@ -98,7 +97,6 @@ public:
                    const std::vector<std::shared_ptr<Texture>>& textures,
                    Flags<GraphicStyle> style = GRAPHIC_NONE, std::size_t frames = ALL_FRAMES,
                    Flags<WndFlag> flags = NO_WND_FLAGS);
-    //@}
 
     /** \name Accessors */ ///@{
     std::size_t  Frames() const;      ///< returns the total number of frames in all the Textures that make up the animated sequence

@@ -42,10 +42,8 @@ class WndEvent;
 class GG_API OverlayWnd : public Wnd
 {
 public:
-    /** \name Structors */ ///@{
     OverlayWnd(X x, Y y, X w, Y h, Flags<WndFlag> flags = NO_WND_FLAGS);
     ~OverlayWnd();
-    //@}
     void CompleteConstruction() override;
 
     /** \name Accessors */ ///@{
@@ -113,10 +111,8 @@ public:
     typedef boost::signals2::signal<void (std::size_t)> TabChangedSignalType;
     //@}
 
-    /** \name Structors */ ///@{
     TabWnd(X x, Y y, X w, Y h, const std::shared_ptr<Font>& font,
            Clr color, Clr text_color = CLR_BLACK);
-    //@}
     void CompleteConstruction() override;
 
     /** \name Accessors */ ///@{
@@ -196,11 +192,9 @@ public:
     typedef boost::signals2::signal<void (std::size_t)> TabChangedSignalType;
     //@}
 
-    /** \name Structors */ ///@{
     TabBar(const std::shared_ptr<Font>& font, Clr color, Clr text_color = CLR_BLACK,
            Flags<WndFlag> flags = INTERACTIVE);
     void CompleteConstruction() override;
-    //@}
 public:
 
     /** \name Accessors */ ///@{

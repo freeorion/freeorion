@@ -27,13 +27,11 @@ class GraphControl;
 //! Tech, ShipPart, ShipHull, BuildingType, ShipDesign, etc.
 class EncyclopediaDetailPanel : public CUIWnd {
 public:
-    //! \name Structors //!@{
     EncyclopediaDetailPanel(GG::Flags<GG::WndFlag> flags = GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE |
                                                            GG::RESIZABLE | CLOSABLE | PINABLE,
                             const std::string& config_name = "");
     void CompleteConstruction() override;
     virtual ~EncyclopediaDetailPanel();
-    //!@}
 
     /** \name Mutators */ //@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;

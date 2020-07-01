@@ -63,11 +63,9 @@ namespace GG {
 class GG_API Texture
 {
 public:
-    /** \name Structors */ ///@{
     Texture();
 
     virtual ~Texture();
-    //@}
 
     /** \name Accessors */ ///@{
     const boost::filesystem::path&  Path() const;   ///< returns the file path from which this texture was loaded (default / empty if this texture was not loaded from a file)
@@ -160,7 +158,6 @@ private:
 class GG_API SubTexture
 {
 public:
-    /** \name Structors */ ///@{
     SubTexture();
 
     /** Creates a SubTexture from a GG::Texture and coordinates into it.
@@ -179,7 +176,6 @@ public:
     const SubTexture& operator=(const SubTexture& rhs);
 
     virtual ~SubTexture();
-    //@}
 
     /** \name Accessors */ ///@{
     bool             Empty() const;     ///< returns true if this object has no associated GG::Texture

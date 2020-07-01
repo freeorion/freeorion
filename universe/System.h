@@ -130,7 +130,6 @@ protected:
     friend class Universe;
     friend class ObjectMap;
 
-    /** \name Structors */ //@{
     explicit System();
 
 public:
@@ -148,7 +147,6 @@ public:
 protected:
     /** Returns new copy of this System. */
     System* Clone(int empire_id = ALL_EMPIRES) const override;
-    //@}
 
 private:
     StarType            m_star;

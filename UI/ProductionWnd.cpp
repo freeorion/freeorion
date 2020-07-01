@@ -105,7 +105,6 @@ namespace {
     public:
         mutable boost::signals2::signal<void (int, int)> QuantChangedSignal;
 
-        /** \name Structors */
         QuantitySelector(const ProductionQueue::Element &build, GG::X xoffset, GG::Y yoffset,
                          GG::Y h_, bool inProgress, GG::X nwidth, bool amBlockType_) :
             CUIDropDownList(12),
@@ -784,7 +783,6 @@ namespace {
 //////////////////////////////////////////////////
 class ProductionQueueWnd : public CUIWnd {
 public:
-    /** \name Structors */ //@{
     ProductionQueueWnd(GG::X x, GG::Y y, GG::X w, GG::Y h) :
         CUIWnd("", x, y, w, h, GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP | PINABLE,
                "production.queue")
@@ -804,7 +802,6 @@ public:
         DoLayout();
         SaveDefaultedOptions();
     }
-    //@}
 
     /** \name Mutators */ //@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {

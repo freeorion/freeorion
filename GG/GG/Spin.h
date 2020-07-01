@@ -77,7 +77,6 @@ public:
     typedef typename boost::signals2::signal<void (T)> ValueChangedSignalType;
     //@}
 
-    /** \name Structors */ ///@{
     /** Ctor that does not required height. Height is determined from the font
         and point size used.*/
     Spin(T value, T step, T min, T max, bool edits, const std::shared_ptr<Font>& font,
@@ -85,7 +84,6 @@ public:
     void CompleteConstruction() override;
 
     ~Spin();
-    //@}
 
     /** \name Accessors */ ///@{
     Pt      MinUsableSize() const override;

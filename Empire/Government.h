@@ -70,10 +70,8 @@ public:
     using PoliciesTypeMap = std::map<std::string, std::unique_ptr<Policy>>;
     using iterator = PoliciesTypeMap::const_iterator;
 
-    /** \name Structors */ //@{
     PolicyManager();
     ~PolicyManager();
-    //@}
 
     /** \name Accessors */ //@{
     //! returns the policy with the name \a name; you should use the free

@@ -26,11 +26,9 @@ FO_COMMON_API extern const int INVALID_GAME_TURN;
 
 /** The data that represent the galaxy setup for a new game. */
 struct FO_COMMON_API GalaxySetupData {
-    /** \name Structors */ //@{
     GalaxySetupData();
     GalaxySetupData(const GalaxySetupData&) = default;
     GalaxySetupData(GalaxySetupData&& base);
-    //@}
 
     /** \name Accessors */ //@{
     const std::string&  GetSeed() const;
@@ -164,13 +162,11 @@ bool operator!=(const PlayerSetupData& lhs, const PlayerSetupData& rhs);
   * \a m_filename.  Otherwise, the saved game \a m_filename will be loaded
   * instead. */
 struct SinglePlayerSetupData : public GalaxySetupData {
-    /** \name Structors */ //@{
     SinglePlayerSetupData():
         new_game(true),
         filename(),
         players()
     {}
-    //@}
 
     bool                            new_game;
     std::string                     filename;
@@ -179,7 +175,6 @@ struct SinglePlayerSetupData : public GalaxySetupData {
 
 /** The data structure that represents the state of the multiplayer lobby. */
 struct FO_COMMON_API MultiplayerLobbyData : public GalaxySetupData {
-    /** \name Structors */ //@{
     MultiplayerLobbyData() :
         any_can_edit(false),
         new_game(true),
@@ -214,7 +209,6 @@ struct FO_COMMON_API MultiplayerLobbyData : public GalaxySetupData {
         save_game_current_turn(0),
         in_game(false)
     {}
-    //@}
 
     std::string Dump() const;
 

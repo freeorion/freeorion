@@ -27,7 +27,6 @@ class ShipDesign;
   * the colonize button, she is locked in to this decision. */
 class FO_COMMON_API Order {
 public:
-    /** \name Structors */ //@{
     Order()
     {}
 
@@ -38,7 +37,6 @@ public:
 
     virtual ~Order()
     {}
-    //@}
 
     /** \name Accessors */ //@{
     /** Returns the ID of the Empire issuing the order. */
@@ -96,9 +94,7 @@ private:
 /** the Order subclass that represents the renaming of a UniverseObject. */
 class FO_COMMON_API RenameOrder : public Order {
 public:
-    /** \name Structors */ //@{
     RenameOrder(int empire, int object, const std::string& name);
-    //@}
 
     /** \name Accessors */ //@{
     /** Returns ID of fleet selected in this order. */
@@ -142,11 +138,9 @@ private:
     Only one of system or position will be used to place the new fleet.*/
 class FO_COMMON_API NewFleetOrder : public Order {
 public:
-    /** \name Structors */ //@{
     NewFleetOrder(int empire, const std::string& fleet_name,
                   const std::vector<int>& ship_ids,
                   bool aggressive);
-    //@}
 
     /** \name Accessors */ //@{
     const std::string& FleetName() const
@@ -195,10 +189,8 @@ private:
     These orders change the current destination of a fleet */
 class FO_COMMON_API FleetMoveOrder : public Order {
 public:
-    /** \name Structors */ //@{
     FleetMoveOrder(int empire_id, int fleet_id, int dest_system_id,
                    bool append = false);
-    //@}
 
     /** \name Accessors */ //@{
     /** Returns ID of fleet selected in this order. */
@@ -250,9 +242,7 @@ private:
   * another. */
 class FO_COMMON_API FleetTransferOrder : public Order {
 public:
-    /** \name Structors */ //@{
     FleetTransferOrder(int empire, int dest_fleet, const std::vector<int>& ships);
-    //@}
 
     /** \name Accessors */ //@{
     /* Returns ID of the fleet that the ships will go into. */
@@ -295,9 +285,7 @@ private:
 /** the Order subclass that represents a planet colonization action*/
 class FO_COMMON_API ColonizeOrder : public Order {
 public:
-    /** \name Structors */ //@{
     ColonizeOrder(int empire, int ship, int planet);
-    //@}
 
     /** \name Accessors */ //@{
     /** Returns ID of the planet to be colonized. */
@@ -344,9 +332,7 @@ private:
 /** the Order subclass that represents a planet invasion action*/
 class FO_COMMON_API InvadeOrder : public Order {
 public:
-    /** \name Structors */ //@{
     InvadeOrder(int empire, int ship, int planet);
-    //@}
 
     /** \name Accessors */ //@{
     /** Returns ID of the planet to be invaded. */
@@ -393,9 +379,7 @@ private:
 /** the Order subclass that represents a planet bombardment action*/
 class FO_COMMON_API BombardOrder : public Order {
 public:
-    /** \name Structors */ //@{
     BombardOrder(int empire, int ship, int planet);
-    //@}
 
     /** \name Accessors */ //@{
     /** Returns ID of the planet to be bombarded. */
@@ -440,9 +424,7 @@ private:
 /** the Order subclass that represents changing a planet focus*/
 class FO_COMMON_API ChangeFocusOrder : public Order {
 public:
-    /** \name Structors */ //@{
     ChangeFocusOrder(int empire, int planet, const std::string& focus);
-    //@}
 
     /** \name Accessors */ //@{
     /* Returns ID of the fleet to be deleted. */
@@ -478,11 +460,9 @@ private:
 /** the Order subclass that represents the adoptiong imperial polices. */
 class FO_COMMON_API PolicyOrder : public Order {
 public:
-    /** \name Structors */ //@{
     PolicyOrder(int empire, const std::string& name,
                 const std::string& category, bool adopt,
                 int slot = -1);
-    //@}
 
     /** \name Accessors */ //@{
     /** Returns ID of fleet selected in this order. */
@@ -516,11 +496,9 @@ private:
   * ctor places \a tech_name at position \a position in \a empire's research queue. */
 class FO_COMMON_API ResearchQueueOrder : public Order {
 public:
-    /** \name Structors */ //@{
     ResearchQueueOrder(int empire, const std::string& tech_name);
     ResearchQueueOrder(int empire, const std::string& tech_name, int position);
     ResearchQueueOrder(int empire, const std::string& tech_name, bool pause, float dummy);
-    //@}
 
 private:
     ResearchQueueOrder() = default;
@@ -570,14 +548,12 @@ public:
         NUM_PROD_QUEUE_ACTIONS
     };
 
-    /** \name Structors */ //@{
     ProductionQueueOrder(ProdQueueOrderAction action, int empire,
                          const ProductionQueue::ProductionItem& item,
                          int number, int location, int pos = -1);
     ProductionQueueOrder(ProdQueueOrderAction action, int empire,
                          boost::uuids::uuid uuid,
                          int num1 = -1, int num2 = -1);
-    //@}
 
 private:
     ProductionQueueOrder() = default;
@@ -618,13 +594,11 @@ private:
   */
 class FO_COMMON_API ShipDesignOrder : public Order {
 public:
-    /** \name Structors */ //@{
     ShipDesignOrder(int empire, int existing_design_id_to_remember);
     ShipDesignOrder(int empire, int design_id_to_erase, bool dummy);
     ShipDesignOrder(int empire, const ShipDesign& ship_design);
     ShipDesignOrder(int empire, int existing_design_id, const std::string& new_name,
                     const std::string& new_description = "");
-    //@}
 
     int DesignID() const
     { return m_design_id; }
@@ -684,9 +658,7 @@ private:
   * a building or ship owned by an empire. */
 class FO_COMMON_API ScrapOrder : public Order {
 public:
-    /** \name Structors */ //@{
     ScrapOrder(int empire, int object_id);
-    //@}
 
     /** \name Accessors */ //@{
     /** Returns ID of object selected in this order. */
@@ -725,9 +697,7 @@ private:
   * controlled by an empire. */
 class FO_COMMON_API AggressiveOrder : public Order {
 public:
-    /** \name Structors */ //@{
     AggressiveOrder(int empire, int object_id, bool aggression = true);
-    //@}
 
     /** \name Accessors */ //@{
     /** Returns ID of object selected in this order. */
@@ -770,9 +740,7 @@ private:
   * another empire */
 class FO_COMMON_API GiveObjectToEmpireOrder : public Order {
 public:
-    /** \name Structors */ //@{
     GiveObjectToEmpireOrder(int empire, int object_id, int recipient);
-    //@}
 
     /** \name Accessors */ //@{
     /** Returns ID of object selected in this order. */
@@ -814,9 +782,7 @@ private:
 /** ForgetOrder removes the object from the empire's known objects. */
 class FO_COMMON_API ForgetOrder : public Order {
 public:
-    /** \name Structors */ //@{
     ForgetOrder(int empire, int object_id);
-    //@}
 
     /** \name Accessors */ //@{
     /** Returns ID of object selected in this order. */

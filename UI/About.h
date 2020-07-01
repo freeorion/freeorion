@@ -7,10 +7,7 @@
 //! This is a screen showing license and vision
 class About final : public CUIWnd {
 public:
-    //! \name Structors
-    //!@{
     About();
-    //!@}
     void CompleteConstruction() override;
 
     //! \name Mutators

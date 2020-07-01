@@ -162,9 +162,7 @@ public:
         accel_end(). */
     typedef std::set<std::pair<Key, Flags<ModKey>>>::const_iterator const_accel_iterator;
 
-    /** \name Structors */ ///@{
     virtual ~GUI();
-    //@}
 
     /** \name Accessors */ ///@{
     const std::string&          AppName() const;                    ///< returns the user-defined name of the application
@@ -443,9 +441,7 @@ public:
     virtual Pt GetDefaultResolution(int display_id) const = 0;
 
 protected:
-    /** \name Structors */ ///@{
     GUI(const std::string& app_name); ///< protected ctor, called by derived classes
-    //@}
 
     /** \name Mutators */ ///@{
     void            ProcessBrowseInfo();    ///< determines the current browse info mode, if any

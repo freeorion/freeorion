@@ -113,7 +113,6 @@ public:
 protected:
     friend class Universe;
 
-    /** \name Structors */ //@{
     Ship();
 
 public:
@@ -127,7 +126,6 @@ protected:
 
 public:
     ~Ship() {}
-    //@}
 
 private:
     int             m_design_id = INVALID_DESIGN_ID;

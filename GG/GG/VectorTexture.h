@@ -20,9 +20,7 @@ namespace GG {
 class GG_API VectorTexture
 {
 public:
-    /** \name Structors */ ///@{
     VectorTexture();
-    //@}
 
     /** \name Accessors */ ///@{
     const boost::filesystem::path& Path() const;    ///< returns the file path from which this vector texture was loaded (default / empty if this vector texture was not loaded from a file)

@@ -10,10 +10,8 @@ class SitRepEntry;
 
 class SitRepPanel : public CUIWnd {
 public:
-    /** \name Structors */ //@{
     SitRepPanel(const std::string& config_name = "");
     void CompleteConstruction() override;
-    //@}
 
     /** \name Accessors */ //@{
     std::set<std::string>   HiddenSitRepTemplates() const { return m_hidden_sitrep_templates; }

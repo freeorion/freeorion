@@ -14,10 +14,8 @@ class CreditsWnd;
   * a menu window on one side. */
 class IntroScreen : public GG::Wnd {
 public:
-    /** \name Structors*/ //!@{
     IntroScreen();
     ~IntroScreen();
-    //!@}
 
     void CompleteConstruction() override;
 

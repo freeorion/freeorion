@@ -447,20 +447,19 @@ public:
         ~RenderCache();
     };
 
-    /** \name Structors */ ///@{
-    /** Ctor.  Construct a font using only the printable ASCII characters.
+    /** Construct a font using only the printable ASCII characters.
         \throw Font::Exception Throws a subclass of Font::Exception if the
         condition specified for the subclass is met. */
     Font(const std::string& font_filename, unsigned int pts);
 
-    /** Ctor.  Construct a font using only the printable ASCII characters,
+    /** Construct a font using only the printable ASCII characters,
         from the in-memory contents \a file_contents.  \throw Font::Exception
         Throws a subclass of Font::Exception if the condition specified for
         the subclass is met. */
     Font(const std::string& font_filename, unsigned int pts,
          const std::vector<unsigned char>& file_contents);
 
-    /** Ctor.  Construct a font using all the code points in the
+    /** Construct a font using all the code points in the
         UnicodeCharsets in the range [first, last).  \throw Font::Exception
         Throws a subclass of Font::Exception if the condition specified for
         the subclass is met. */
@@ -468,7 +467,7 @@ public:
     Font(const std::string& font_filename, unsigned int pts,
          CharSetIter first, CharSetIter last);
 
-    /** Ctor.  Construct a font using all the code points in the
+    /** Construct a font using all the code points in the
         UnicodeCharsets in the range [first, last), from the in-memory
         contents \a file_contents.  \throw Font::Exception Throws a subclass
         of Font::Exception if the condition specified for the subclass is
@@ -478,8 +477,7 @@ public:
          const std::vector<unsigned char>& file_contents,
          CharSetIter first, CharSetIter last);
 
-    ~Font(); ///< Dtor.
-    //@}
+    ~Font();
 
     /** \name Accessors */ ///@{
     /** Returns the name of the file from which this font was created. */
@@ -667,9 +665,7 @@ public:
     static void ThrowBadGlyph(const std::string& format_str, std::uint32_t c);
 
 protected:
-    /** \name Structors */ ///@{
     Font();
-    //@}
 
 private:
     /** \brief This just holds the essential data necessary to render a glyph

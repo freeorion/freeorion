@@ -15,12 +15,9 @@
 //! This is a dialog box that allows the user to control certain basic game parameters, such as sound and music
 class OptionsWnd : public CUIWnd {
 public:
-    //! \name Structors
-    //!@{
     OptionsWnd(bool is_game_running_);
     ~OptionsWnd();
     void CompleteConstruction() override;
-    //!@}
 
     //! \name Mutators
     //!@{

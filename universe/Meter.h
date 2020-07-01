@@ -15,7 +15,6 @@
   * or downwards, and the current may be as well. */
 class FO_COMMON_API Meter {
 public:
-    /** \name Structors */ //@{
     /** Creates a new meter with both initial and current value set to
         DEFAULT_VALUE. */
     Meter() = default;
@@ -23,7 +22,6 @@ public:
     /** Creates a new meter with the current value set to @p current_value and
         the initial value set to @p initial_value. */
     Meter(float current_value, float initial_value);
-    //@}
 
     /** \name Accessors */ //@{
     float Current() const;                  ///< returns the current value of the meter

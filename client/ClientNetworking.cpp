@@ -156,9 +156,7 @@ public:
     /** The type of list returned by a call to DiscoverLANServers(). */
     using ServerList = std::vector<std::pair<boost::asio::ip::address, std::string>>;
 
-    /** \name Structors */ //@{
     Impl();
-    //@}
 
     /** \name Accessors */ //@{
     /** Returns true iff the client is full duplex connected to the server. */
