@@ -52,7 +52,6 @@ public:
     Pt ClientLowerRight() const override;
     //@}
 
-    /** \name Mutators */ ///@{
     void Render() override;
 
     /** Sets the color of the group box. */
@@ -72,7 +71,6 @@ public:
     void SetClientCornersEqualToBoxCorners(bool b);
 
     virtual void SetText(const std::string& str);
-    //@}
 
 protected:
     GroupBox();

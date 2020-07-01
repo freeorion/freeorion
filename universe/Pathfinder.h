@@ -132,8 +132,6 @@ public:
 
     //@}
 
-    /** \name Mutators */ //@{
-
     /** Fills pathfinding data structure and determines least jumps distances
       * between systems for the empire with id \a for_empire_id or uses the
       * main / true / visible objects if \a for_empire_id is ALL_EMPIRES*/
@@ -143,7 +141,6 @@ public:
       * system graph based on empire visibility.  Does not regenerate the base
       * graph to account for actual system-starlane connectivity changes. */
     void UpdateEmpireVisibilityFilteredSystemGraphs(int for_empire_id = ALL_EMPIRES);
-    //@}
 
     class PathfinderImpl;
 private:

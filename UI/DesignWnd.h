@@ -45,7 +45,6 @@ public:
     DesignWnd(GG::X w, GG::Y h);
     void CompleteConstruction() override;
 
-    /** \name Mutators */ //@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
     void Render() override;
     void Reset();
@@ -62,7 +61,6 @@ public:
 
     /** Enables, or disables if \a enable is false, issuing orders via this DesignWnd. */
     void EnableOrderIssuing(bool enable = true);
-    //@}
 
 private:
     class BaseSelector;     // has tabs to pick empty hull, previously-saved design or an autodesign template to start new design

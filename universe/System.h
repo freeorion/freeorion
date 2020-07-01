@@ -100,7 +100,6 @@ public:
     mutable boost::signals2::signal<void (const std::vector<std::shared_ptr<Fleet>>&)> FleetsRemovedSignal;
     //@}
 
-    /** \name Mutators */ //@{
     void Copy(std::shared_ptr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES) override;
 
     /** Adding owner to system objects is a no-op. */
@@ -124,7 +123,6 @@ public:
     void SetLastTurnBattleHere(int turn);///< Sets the last turn there was a battle at this system
 
     void SetOverlayTexture(const std::string& texture, double size);
-    //@}
 
 protected:
     friend class Universe;

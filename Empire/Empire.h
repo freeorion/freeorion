@@ -185,7 +185,6 @@ public:
     float                   Population() const;                                 ///< returns total Population of empire
     //@}
 
-    /** \name Mutators */ //@{
     /** If the object with id \a id is a planet owned by this empire, sets that
       * planet to be this empire's capital, and otherwise does nothing. */
     void SetCapitalID(int id);
@@ -449,7 +448,6 @@ public:
 
     auto BuildingTypesScrapped() const -> const std::map<std::string, int>&
     { return m_building_types_scrapped; }
-    //@}
 
     /** Processes Builditems on queues of empires other than the indicated
       * empires, at the location with id \a location_id and, as appropriate,

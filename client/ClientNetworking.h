@@ -70,7 +70,6 @@ public:
     const std::string& Destination() const;
     //@}
 
-    /** \name Mutators */ //@{
     /** Returns a list of the addresses and names of all servers on the Local
         Area Network. */
     ServerNames DiscoverLANServerNames();
@@ -113,7 +112,6 @@ public:
 
     /** Access to client's authorization roles */
     Networking::AuthRoles& AuthorizationRoles();
-    //@}
 
 private:
     class Impl;

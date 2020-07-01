@@ -64,7 +64,6 @@ public:
     std::size_t  CurrentWndIndex() const;
     //@}
 
-    /** \name Mutators */ ///@{
     /** Adds \a wnd to the sequence of Wnds in this OverlayWnd, with name \a name.
         \a name can be used later to remove the Wnd (\a name is not checked
         for uniqueness).  Returns the index at which \a wnd is placed. */
@@ -87,7 +86,6 @@ public:
     /** Sets the currently visible Wnd in the sequence to the Wnd in the \a
         index position within the sequence.  Not range checked. */
     void SetCurrentWnd(std::size_t index);
-    //@}
 
     /** The invalid Wnd position index that there is no currently-selected
         Wnd. */
@@ -133,7 +131,6 @@ public:
     std::size_t     CurrentWndIndex() const;
     //@}
 
-    /** \name Mutators */ ///@{
     /** Adds \a wnd to the sequence of Wnds in this TabWnd, with name \a name.
         \a name can be used later to remove the Wnd (\a name is not checked
         for uniqueness).  Returns the index at which \a wnd is placed. */
@@ -153,7 +150,6 @@ public:
     /** Sets the currently visible Wnd in the sequence to the Wnd in the \a
         index position within the sequence.  Not range checked. */
     void            SetCurrentWnd(std::size_t index);
-    //@}
 
     mutable TabChangedSignalType TabChangedSignal; ///< The Wnd change signal object for this TabWnd
 
@@ -215,7 +211,6 @@ public:
     Clr             TextColor() const;
     //@}
 
-    /** \name Mutators */ ///@{
     void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys) override;
     void SizeMove(const Pt& ul, const Pt& lr) override;
     void Render() override;
@@ -240,7 +235,6 @@ public:
     /** Sets the current tab in the sequence to the tab in the \a index
         position within the sequence.  Not range checked. */
     void SetCurrentTab(std::size_t index);
-    //@}
 
     mutable TabChangedSignalType TabChangedSignal; ///< The tab change signal object for this TabBar
 
@@ -258,13 +252,11 @@ protected:
     const Button*   RightButton() const;
     //@}
 
-    /** \name Mutators */ ///@{
     bool EventFilter(Wnd* w, const WndEvent& event) override;
 
     /** Brings the currently-selected tab button to the top within the tab
         button group. */
     void RaiseCurrentTabButton();
-    //@}
 
 private:
     virtual void DistinguishCurrentTab(const std::vector<StateButton*>& tab_buttons);

@@ -37,12 +37,10 @@ public:
     std::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
     //@}
 
-    /** \name Mutators */ //@{
     void Copy(std::shared_ptr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES) override;
 
     void ResetTargetMaxUnpairedMeters() override;
     void ClampMeters() override;
-    //@}
 
 protected:
     friend class Universe;

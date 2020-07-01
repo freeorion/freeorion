@@ -41,9 +41,7 @@ public:
              GG::Flags<GG::WndFlag> flags = GG::NO_WND_FLAGS,
              GG::X x = GG::X0, GG::Y y = GG::Y0, GG::X w = GG::X1, GG::Y h = GG::Y1);
 
-    /** \name Mutators */ //@{
     void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-    //@}
 };
 
 /** a FreeOrion Button control */
@@ -59,18 +57,14 @@ public:
     bool InWindow(const GG::Pt& pt) const override;
     //@}
 
-    /** \name Mutators */ //@{
     void MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-    //@}
 
 protected:
-    /** \name Mutators control */ //@{
     void RenderPressed() override;
 
     void RenderRollover() override;
 
     void RenderUnpressed() override;
-    //@}
 };
 
 class SettableInWindowCUIButton : public CUIButton {
@@ -94,18 +88,14 @@ public:
     bool InWindow(const GG::Pt& pt) const override;
     //@}
 
-    /** \name Mutators */ //@{
     void MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-    //@}
 
 protected:
-    /** \name Mutators control */ //@{
     void RenderPressed() override;
 
     void RenderRollover() override;
 
     void RenderUnpressed() override;
-    //@}
 
 private:
     ShapeOrientation m_orientation;
@@ -234,11 +224,9 @@ public:
 
     CUIScroll(GG::Orientation orientation);
 
-    /** \name Mutators */ //@{
     void Render() override;
 
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
-    //@}
 
 protected:
     GG::Clr m_border_color;
@@ -249,9 +237,7 @@ class CUIListBox : public GG::ListBox {
 public:
     CUIListBox(void);
 
-    /** \name Mutators */ //@{
     void Render() override;
-    //@}
 };
 
 /** a FreeOrion DropDownList control */
@@ -264,7 +250,6 @@ public:
 
     GG::Pt ClientLowerRight() const override;
 
-    /** \name Mutators */ //@{
     void Render() override;
 
     void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
@@ -275,7 +260,6 @@ public:
 
     void            DisableDropArrow();  ///< disables rendering of the small downward-facing arrow on the right of the control
     void            EnableDropArrow();   ///< enables rendering of the small downward-facing arrow on the right of the control
-    //@}
 
 private:
     void InitBuffer() override;
@@ -291,7 +275,6 @@ public:
 
     void CompleteConstruction() override;
 
-    /** \name Mutators */ //@{
     void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
     void KeyPress(GG::Key key, std::uint32_t key_code_point,
                   GG::Flags<GG::ModKey> mod_keys) override;
@@ -302,7 +285,6 @@ public:
     virtual bool AutoComplete() { return false; };
     void DisallowChars(const std::string& chars)
     { m_disallowed_chars = chars; }
-    //@}
 
     mutable boost::signals2::signal<void ()> GainingFocusSignal;
     mutable boost::signals2::signal<void ()> LosingFocusSignal;
@@ -321,11 +303,9 @@ public:
     const std::string& RawText() const;
     //@}
 
-    /** \name Mutators */ //@{
     void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
     void SetText(const std::string& str) override;
     void AcceptPastedText(const std::string& text) override;
-    //@}
 
 protected:
     char m_placeholder = '*';
@@ -343,10 +323,8 @@ public:
                           GG::Flags<GG::MultiEditStyle> style = GG::MULTI_LINEWRAP);
     void CompleteConstruction() override;
 
-    /** \name Mutators */ //@{
     void Render() override;
     void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-    //@}
 };
 
 /** a FreeOrion MultiEdit control that parses its text and makes links within clickable */
@@ -363,7 +341,6 @@ public:
     const std::string& RawText() const override;
     //@}
 
-    /** \name Mutators */ //@{
     void Render() override;
     void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
     void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
@@ -378,7 +355,6 @@ public:
         was used), calls to this function cause the window to be resized to
         whatever space the newly rendered text occupies. */
     void SetText(const std::string& str) override;
-    //@}
 
 private:
     void SetLinkedText(const std::string& str) override;
@@ -423,7 +399,6 @@ public:
     GG::Pt MinUsableSize() const override;
     //@}
 
-    /** \name Mutators */ //@{
     void PreRender() override;
     void Render() override
     {}
@@ -446,7 +421,6 @@ public:
     void DragDropLeave() override;
 
     void SetValue(double value, size_t index = 0);  ///< sets displayed \a value with \a index
-    //@}
 
     mutable boost::signals2::signal<void (const GG::Pt&)> LeftClickedSignal;
     mutable boost::signals2::signal<void (const GG::Pt&)> RightClickedSignal;
@@ -468,9 +442,7 @@ public:
     bool InWindow(const GG::Pt& pt) const override;
     //@}
 
-    /** \name Mutators */ //@{
     void Render() override;
-    //@}
 private:
 };
 
@@ -495,9 +467,7 @@ public:
     GG::Clr CurrentColor() const; ///< returns the color that is currently selected, or GG::CLR_ZERO if none is selected
     //@}
 
-    /** \name Mutators */ //@{
     void SelectColor(const GG::Clr& clr);
-    //@}
 
     mutable boost::signals2::signal<void (const GG::Clr&)> ColorChangedSignal;
 };
@@ -509,12 +479,10 @@ public:
 
     virtual ~ColorSelector();
 
-    /** \name Mutators */ //@{
     void Render() override;
     void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
     void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
-    //@}
 
     mutable boost::signals2::signal<void (const GG::Clr&)> ColorChangedSignal;
 
@@ -548,7 +516,6 @@ public:
     GG::Pt  MinUsableSize() const override;
     //@}
 
-    /** \name Mutators */ //@{
     void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
     void    SetTotalPointsCost(float total_points, float total_cost);
@@ -558,7 +525,6 @@ public:
     void    SetEmpireID(int empire_id);
     void    ClearLocalInfo();
     void    Clear();
-    //@}
 
 private:
     void    DoLayout();
@@ -613,9 +579,7 @@ public:
                          float percent_predicted, const GG::Clr& bar_color,
                          const GG::Clr& bg_color, const GG::Clr& outline_color);
 
-    /** @name Mutators */ //@{
     void Render() override;
-    //@}
 
 private:
     int m_num_segments;
@@ -658,10 +622,8 @@ public:
     MultiTextureStaticGraphic(const std::vector<GG::SubTexture>& subtextures,
                               const std::vector<GG::Flags<GG::GraphicStyle>>& styles = std::vector<GG::Flags<GG::GraphicStyle>>());
 
-    /** \name Mutators */ ///@{
     /** Renders textures in order specified in constructor, back-to-front. */
     void Render() override;
-    //@}
 
 protected:
     MultiTextureStaticGraphic();
@@ -686,12 +648,10 @@ public:
     RotatingGraphic(const std::shared_ptr<GG::Texture>& texture, GG::Flags<GG::GraphicStyle> style = GG::GRAPHIC_NONE,
                     GG::Flags<GG::WndFlag> flags = GG::NO_WND_FLAGS);
 
-    /** \name Mutators */ ///@{
     void Render() override;
 
     void            SetRPM(float rpm)               { m_rpm = std::max(-3600.0f, std::min(3600.0f, rpm)); }
     void            SetPhaseOffset(float degrees)   { m_phase_offset = degrees; }
-    //@}
 
 private:
     float   m_rpm;

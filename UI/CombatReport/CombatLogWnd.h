@@ -21,13 +21,11 @@ public:
     GG::Pt MinUsableSize() const override;
     //@}
 
-    /** \name Mutators */ //@{
     void PreRender() override;
 
     void SetFont(std::shared_ptr<GG::Font> font);
     /// Set which log to show
     void SetLog(int log_id);
-    //@}
 
     ///link clicked signals: first string is the link type, second string is the specific item clicked
     mutable boost::signals2::signal<void (const std::string&, const std::string&)> LinkClickedSignal;

@@ -21,7 +21,6 @@ public:
     int PlanetID() const { return m_planet_id; }
     //@}
 
-    /** \name Mutators */ //@{
     void PreRender() override;
     /** expands or collapses panel to show details or just summary info */
     void ExpandCollapse(bool expanded);
@@ -30,13 +29,10 @@ public:
     void Update();
     /** updates, redoes layout, resizes indicator */
     void Refresh();
-    //@}
 
 protected:
-    /** \name Mutators */ //@{
     /** resizes panel and positions widgets */
     void DoLayout() override;
-    //@}
 
 private:
     /** toggles panel expanded or collapsed */

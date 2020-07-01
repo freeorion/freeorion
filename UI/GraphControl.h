@@ -10,7 +10,6 @@ class GraphControl : public GG::Control {
 public:
     GraphControl();
 
-    //! \name Mutators //@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
     void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
 
@@ -31,7 +30,6 @@ public:
     void ShowScale(bool show = true);
     void UseLogScale(bool log = true);
     void ScaleToZero(bool zero = true);
-    //@}
 
 private:
     void DoLayout();

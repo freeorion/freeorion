@@ -18,13 +18,11 @@ public:
     float Population() const;   ///< returns current total population
     //@}
 
-    /** \name Mutators */ //@{
     /** emitted after updating population and growth numbers */
     mutable boost::signals2::signal<void ()> ChangedSignal;
 
     void    SetPopCenters(const std::vector<int>& pop_center_ids);
     void    Update();                           ///< recalculates total population and growth
-    //@}
 
 private:
     std::vector<int>    m_pop_center_ids;       ///< UniverseObject ids of PopCenters that contribute to the pool

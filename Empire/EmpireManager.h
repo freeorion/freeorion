@@ -54,7 +54,6 @@ public:
     std::string         Dump() const;
     //@}
 
-    /** \name Mutators */ //@{
     /** Returns the empire whose ID is \a id, or 0 if none exists. */
     Empire*     GetEmpire(int id);
 
@@ -79,7 +78,6 @@ public:
 
     /** Removes and deletes all empires from the manager. */
     void        Clear();
-    //@}
 
     typedef boost::signals2::signal<void (int, int)>  DiploSignalType;
 

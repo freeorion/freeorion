@@ -99,7 +99,6 @@ public:
     }
     //@}
 
-    /** \name Mutators */ //@{
     /** Adds a rule, optionally with a custom validator.
         Adds option setup.rules.{RULE_NAME} to override default value and
         option setup.rules.server-locked.{RULE_NAME} to block rule changes from players */
@@ -146,7 +145,6 @@ public:
 
     /** Resets all rules to default values. */
     void ResetToDefaults();
-    //@}
 
 private:
     /** Assigns any m_pending_rules to m_game_rules. */

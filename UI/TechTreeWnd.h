@@ -38,7 +38,6 @@ public:
     bool                    TechIsVisible(const std::string& tech_name) const;
     //@}
 
-    //! \name Mutators //@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
     void Show() override;
@@ -66,7 +65,6 @@ public:
     void            ShowPedia();
     void            HidePedia();
     void            TogglePedia();
-    //@}
 
     mutable TechSignalType          TechSelectedSignal;
     mutable QueueAddTechsSignalType AddTechsToQueueSignal;

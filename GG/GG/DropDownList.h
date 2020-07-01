@@ -141,7 +141,6 @@ public:
     DropDownOpenedSignalType DropDownOpenedSignal;
     //@}
 
-    /** \name Mutators */ ///@{
     void PreRender() override;
     void Render() override;
     /** Resizes the control, ensuring the proper height is maintained based on
@@ -218,10 +217,8 @@ public:
 
     /** Set the drop down list to only mouse scroll if it is dropped. */
     void SetOnlyMouseScrollWhenDropped(bool enable);
-    //@}
 
 protected:
-    /** \name Mutators */ ///@{
     void LButtonDown(const Pt& pt, Flags<ModKey> mod_keys) override;
     void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
     void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys) override;
@@ -232,7 +229,6 @@ protected:
     virtual void RenderDisplayedRow();
 
     GL2DVertexBuffer    m_buffer;
-    //@}
 
 private:
     const ListBox*  LB() const;

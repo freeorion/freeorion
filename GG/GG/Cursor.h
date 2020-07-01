@@ -50,11 +50,9 @@ public:
 
     virtual ~Cursor();
 
-    /** \name Mutators */ ///@{
     /** Renders the cursor at the specified location.  Subclasses should take
         care to ensure that the cursor's "hotspot" is rendered at \a pt. */
     virtual void Render(const Pt& pt) = 0;
-    //@}
 };
 
 /** \brief TextureCursor is a very simple subclass of Cursor.
@@ -79,9 +77,7 @@ public:
     const Pt& Hotspot() const;
     //@}
 
-    /** \name Mutators */ ///@{
     void Render(const Pt& pt) override;
-    //@}
 
 private:
     std::shared_ptr<Texture> m_texture;

@@ -130,7 +130,6 @@ public:
     int GetCookiesSize() const;
     //@}
 
-    /** \name Mutators */ //@{
     /** Sends a synchronous message \a message to the all established players. */
     void SendMessageAll(const Message& message);
 
@@ -178,7 +177,6 @@ public:
 
     /** Clean up expired cookies. */
     void CleanupCookies();
-    //@}
 
 private:
     void Init();
@@ -259,7 +257,6 @@ public:
     boost::uuids::uuid Cookie() const;
     //@}
 
-    /** \name Mutators */ //@{
     /** Starts the connection reading incoming messages on its socket. */
     void Start();
 
@@ -292,7 +289,6 @@ public:
 
     /** Sets cookie value to this connection to update expire date. */
     void SetCookie(boost::uuids::uuid cookie);
-    //@}
 
     mutable boost::signals2::signal<void (const NullaryFn&)> EventSignal;
 

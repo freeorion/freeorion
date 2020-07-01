@@ -46,7 +46,6 @@ public:
     bool HaveWindowFocus() const;   ///< as far as the HCA knows, does the game window have focus?
     //@}
 
-    /** \name Mutators */ //@{
     void HandleTurnUpdate() override;           ///< Handle background events that need starting when the turn updates
     void StartTurn(const SaveGameUIData& ui_data) override;
     void UnreadyTurn();                         ///< Revoke ready state of turn orders.
@@ -107,7 +106,6 @@ public:
     void OpenURL(const std::string& url);
     /** Opens the users preferred application for file manager at the specified path @p browse_path */
     void BrowsePath(const boost::filesystem::path& browse_path);
-    //@}
 
     mutable FullscreenSwitchSignalType  FullscreenSwitchSignal;
     mutable RepositionWindowsSignalType RepositionWindowsSignal;

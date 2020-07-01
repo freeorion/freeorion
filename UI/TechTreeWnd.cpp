@@ -212,7 +212,6 @@ public:
     TechTreeControls(const std::string& config_name = "");
     void CompleteConstruction() override;
 
-    //! \name Mutators //@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
     void Render() override;
@@ -221,7 +220,6 @@ public:
 
     /** Set checked value of control for TechStatus @p status to @p state */
     void SetTechStatus(TechStatus status, bool state);
-    //@}
 
 private:
     void            DoButtonLayout();
@@ -501,7 +499,6 @@ public:
     mutable TechTreeWnd::TechSignalType         TechPediaDisplaySignal;
     //@}
 
-    //! \name Mutators //@{
     void Render() override;
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
@@ -524,7 +521,6 @@ public:
     // doing the inverse or same transformation as DoZoom does with gl calls
     GG::Pt ConvertPtScreenToZoomed(const GG::Pt& pt) const;
     GG::Pt ConvertPtZoomedToScreen(const GG::Pt& pt) const;
-    //@}
 
 private:
     class TechPanel;
@@ -1495,7 +1491,6 @@ public:
     bool TechRowCmp(const GG::ListBox::Row& lhs, const GG::ListBox::Row& rhs, std::size_t column);
     //@}
 
-    //! \name Mutators //@{
     void    Reset();
     void    Update(bool populate = true);
 
@@ -1505,7 +1500,6 @@ public:
     void    HideAllCategories();
     void    ShowStatus(TechStatus status);
     void    HideStatus(TechStatus status);
-    //@}
 
     mutable TechClickSignalType TechLeftClickedSignal;  ///< emitted when a technology is single-left-clicked
     mutable TechClickSignalType TechDoubleClickedSignal;///< emitted when a technology is double-clicked

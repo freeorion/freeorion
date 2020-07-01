@@ -24,7 +24,6 @@ public:
     std::shared_ptr<const System> GetSystem() const;
     //@}
 
-    /** \name Mutators */ //@{
     /** Returns System object in this CombatInfo's objects if one exists with
         id system_id. */
     std::shared_ptr<System> GetSystem();

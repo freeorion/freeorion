@@ -50,7 +50,6 @@ public:
     bool HasLowPriority()   { return m_low_priority; }  ///< true if process is set to low priority
     //@}
 
-    /** \name Mutators */ //@{
     /** sets process priority */
     bool SetLowPriority(bool low);
 
@@ -66,7 +65,6 @@ public:
 
     /** frees the controlled process from auto-deletion when this Process object is destroyed. */
     void Free();
-    //@}
 
 private:
     class Impl;

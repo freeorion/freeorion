@@ -36,7 +36,6 @@ public:
     { return m_current_value < rhs.m_current_value || (m_current_value == rhs.m_current_value && m_initial_value < rhs.m_initial_value); }
     //@}
 
-    /** \name Mutators */ //@{
     void SetCurrent(float current_value);   ///< sets current value, leaving initial value unchanged
     void Set(float current_value, float initial_value); ///< sets current and initial values
     void ResetCurrent();                    ///< sets current value to DEFAULT_VALUE
@@ -46,7 +45,6 @@ public:
     void ClampCurrentToRange(float min = DEFAULT_VALUE, float max = LARGE_VALUE);   ///< ensures the current value falls in the range [\a min, \a max]
 
     void BackPropagate();                   ///< sets previous equal to initial, then sets initial equal to current
-    //@}
 
     static constexpr float DEFAULT_VALUE = 0.0f;///< value assigned to current or initial when resetting or when no value is specified in a constructor
     static const float LARGE_VALUE;             ///< a very large number, which is useful to set current to when it will be later clamped, to ensure that the result is the max value in the clamp range

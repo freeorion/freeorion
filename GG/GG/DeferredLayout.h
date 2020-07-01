@@ -49,15 +49,11 @@ public:
     /** \name Accessors */ ///@{
     //@}
 
-    /** \name Mutators */ ///@{
     void SizeMove(const Pt& ul, const Pt& lr) override;
     void PreRender() override;
-    //@}
 
 protected:
-    /** \name Mutators */ ///@{
     void RedoLayout() override;
-    //@}
 
 private:
     Pt   m_ul_prerender;

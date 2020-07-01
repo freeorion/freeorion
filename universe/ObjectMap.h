@@ -125,8 +125,6 @@ public:
     { return m_existing_fields; }
     //@}
 
-    /** \name Mutators */ //@{
-
     /** Copies the contents of the ObjectMap \a copied_map into this ObjectMap.
       * Each object in \a copied_map has information transferred to this map.
       * If there already is a version of an object in \a copied_map in this map
@@ -185,7 +183,6 @@ public:
       * contains, and what other objects think they are contained by the first
       * object. */
     void AuditContainment(const std::set<int>& destroyed_object_ids);
-    //@}
 
 private:
     void insertCore(std::shared_ptr<UniverseObject> item, int empire_id = ALL_EMPIRES);

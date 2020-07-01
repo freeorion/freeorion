@@ -87,7 +87,6 @@ public:
     std::vector<float>          AllWeaponsMaxDamage(float shield_DR = 0.0f, bool include_fighters = true) const;///< any nonzero weapons strengths, assuming the ship has been refueled recently, after adjustment versus an enemy with a given shields DR
     //@}
 
-    /** \name Mutators */ //@{
     void            SetFleetID(int fleet_id);                                   ///< sets the ID of the fleet the ship resides in
     void            SetArrivedOnTurn(int turn);
 
@@ -108,7 +107,6 @@ public:
     Meter*          GetPartMeter(MeterType type, const std::string& part_name); ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
 
     virtual void    SetShipMetersToMax();
-    //@}
 
 protected:
     friend class Universe;

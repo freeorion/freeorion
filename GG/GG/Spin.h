@@ -104,7 +104,6 @@ public:
     mutable ValueChangedSignalType ValueChangedSignal; ///< the value changed signal object for this Spin
     //@}
 
-    /** \name Mutators */ ///@{
     void Render() override;
     void SizeMove(const Pt& ul, const Pt& lr) override;
     void Disable(bool b = true) override;
@@ -124,7 +123,6 @@ public:
     void SetInteriorColor(Clr c);       ///< sets the interior color of the control
     void SetHiliteColor(Clr c);         ///< sets the color used to render hiliting around selected text
     void SetSelectedTextColor(Clr c);   ///< sets the color used to render selected text   
-    //@}
 
 protected:
     typedef T ValueType;
@@ -137,12 +135,10 @@ protected:
     Edit*   GetEdit() const;    ///< returns a pointer to the Edit control used to render this control's text and accept keyboard input
     //@}
 
-    /** \name Mutators */ ///@{
     void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
     void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys) override;
     bool EventFilter(Wnd* w, const WndEvent& event) override;
     virtual void SetEditTextFromValue();
-    //@}
 
     std::shared_ptr<Edit> m_edit;
 

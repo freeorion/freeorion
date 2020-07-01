@@ -14,10 +14,8 @@ public:
     ObjectListWnd(const std::string& config_name = "");
     void CompleteConstruction() override;
 
-    /** \name Mutators */ //@{
     void            SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
     void            Refresh();
-    //!@}
 
     mutable boost::signals2::signal<void ()>    SelectedObjectsChangedSignal;
     mutable boost::signals2::signal<void (int)> ObjectDoubleClickedSignal;

@@ -46,7 +46,6 @@ public:
     boost::optional<std::vector<int>> IncompleteLogIDs() const;
     //@}
 
-    /** \name Mutators */ //@{
     int  AddNewLog(const CombatLog& log);   // adds log, returns unique log id
     /** Replace incomplete log with \p id with \p log. An incomplete log is a
         partially downloaded log where only the log id is known.*/

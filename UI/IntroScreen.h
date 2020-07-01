@@ -19,7 +19,6 @@ public:
 
     void CompleteConstruction() override;
 
-    /** \name Mutators*/ //!@{
     void KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
     void Render() override;
 
@@ -43,7 +42,6 @@ public:
     void OnExitGame();
 
     virtual void Close();
-    //!@}
 
 private:
     std::shared_ptr<GG::Button>         m_continue;     //!< continues from last autosave

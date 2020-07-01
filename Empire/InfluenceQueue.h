@@ -77,7 +77,6 @@ struct FO_COMMON_API InfluenceQueue {
     const Element&  operator[](int i) const;
 
 
-    /** \name Mutators */ //@{
     /** Recalculates the PPs spent on and number of turns left for each project in the queue.  Also
       * determines the number of projects in progress, and the industry consumed by projects
       * in each resource-sharing group of systems.  Does not actually "spend" the PP; a later call to
@@ -100,7 +99,6 @@ struct FO_COMMON_API InfluenceQueue {
     void        clear();
 
     mutable boost::signals2::signal<void ()> InfluenceQueueChangedSignal;
-    //@}
 
 private:
     QueueType   m_queue;

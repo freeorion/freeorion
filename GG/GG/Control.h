@@ -53,13 +53,11 @@ public:
     bool Disabled() const;  ///< returns true if the control is disabled, false otherwise
     //@}
 
-    /** \name Mutators */ ///@{
     /** Sets the color of the control. */
     virtual void SetColor(Clr c);
 
     /** Disables/enables the control; disabled controls appear greyed. */
     virtual void Disable(bool b = true);
-    //@}
 
 protected:
     Control();

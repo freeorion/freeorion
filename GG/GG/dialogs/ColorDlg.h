@@ -67,7 +67,6 @@ public:
 
     HueSaturationPicker(X x, Y y, X w, Y h);
 
-    /** \name Mutators */ ///@{
     void Render() override;
 
     void LButtonDown(const Pt& pt, Flags<ModKey> mod_keys) override;
@@ -75,7 +74,6 @@ public:
     void LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys) override;
 
     void SetHueSaturation(double hue, double saturation); ///< sets the current hue and saturation.  Note that this does not cause a signal to be emitted.
-    //@}
 
     mutable ChangedSignalType ChangedSignal; ///< emitted whenever the hue or saturation in the picker changes
 
@@ -101,7 +99,6 @@ public:
 
     ValuePicker(X x, Y y, X w, Y h, Clr arrow_color);
 
-    /** \name Mutators */ ///@{
     void Render() override;
     void LButtonDown(const Pt& pt, Flags<ModKey> mod_keys) override;
     void LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys) override;
@@ -110,7 +107,6 @@ public:
         the control, and do not otherwise influence its operation. */
     void SetHueSaturation(double hue, double saturation);
     void SetValue(double value); ///< sets the current value.  Note that this does not cause a signal to be emitted.
-    //@}
 
     mutable ChangedSignalType ChangedSignal; ///< emitted whenever the hue or saturation in the picker changes
 
@@ -146,17 +142,13 @@ public:
         Clr RepresentedColor() const;
         //@}
 
-        /** \name Mutators */ ///@{
         /** sets the custom color represented by the button */
         void SetRepresentedColor(const Clr& color);
-        //@}
 
     protected:
-        /** \name Mutators */ ///@{
         void RenderUnpressed() override;
         void RenderPressed() override;
         void RenderRollover() override;
-        //@}
 
     private:
         Clr m_represented_color;

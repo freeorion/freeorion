@@ -87,7 +87,6 @@ public:
     Pt ScrollPosition() const;
     //@}
 
-    /** \name Mutators */ ///@{
     void Render() override;
 
     void SizeMove(const Pt& ul, const Pt& lr) override;
@@ -111,7 +110,6 @@ public:
     void SetHScrollWheelIncrement(unsigned int increment);
 
     void AcceptPastedText(const std::string& text) override;
-    //@}
 
     /** A sentinel value that indicates that there is no limit on the number
         of lines of history are to be stored.  \see MaxLinesOfHistory() \see
@@ -195,7 +193,6 @@ protected:
     std::pair<std::size_t, CPSize> LowCursorPos() const;
     //@}
 
-    /** \name Mutators */ ///@{
     void LButtonDown(const Pt& pt, Flags<ModKey> mod_keys) override;
     void LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys) override;
     void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys) override;
@@ -215,7 +212,6 @@ protected:
     void PreserveTextPositionOnNextSetText();
 
     std::pair<CPSize, CPSize> GetDoubleButtonDownWordIndices(CPSize char_index) override;
-    //@}
 
     /** The width used to create the control's vertical and horizontal
         Scrolls. */

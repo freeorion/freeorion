@@ -95,7 +95,6 @@ public:
     mutable ScrolledAndStoppedSignalType ScrolledAndStoppedSignal; ///< the scrolled-and-stopped signal object for this Scroll
     //@}
 
-    /** \name Mutators */ ///@{
     void Render() override;
 
     void SizeMove(const Pt& ul, const Pt& lr) override;
@@ -117,7 +116,6 @@ public:
     void ScrollLineDecr(int lines = 1); ///< scrolls the control up (or left) by \a lines lines
     void ScrollPageIncr(); ///< scrolls the control down (or right) by a page
     void ScrollPageDecr(); ///< scrolls the control up (or left) by a page
-    //@}
 
 protected:
     /** \name Accessors */ ///@{
@@ -130,7 +128,6 @@ protected:
     Button*       DecrButton() const;    ///< returns the decrease button (line up/line left)
     //@}
 
-    /** \name Mutators */ ///@{
     void LButtonDown(const Pt& pt, Flags<ModKey> mod_keys) override;
     void LButtonUp(const Pt& pt, Flags<ModKey> mod_keys) override;
     void LClick(const Pt& pt, Flags<ModKey> mod_keys) override;
@@ -138,7 +135,6 @@ protected:
     bool EventFilter(Wnd* w, const WndEvent& event) override;
 
     virtual void InitBuffer();
-    //@}
 
     GG::GL2DVertexBuffer    m_buffer;
 

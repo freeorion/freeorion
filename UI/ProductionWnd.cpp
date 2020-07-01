@@ -803,7 +803,6 @@ public:
         SaveDefaultedOptions();
     }
 
-    /** \name Mutators */ //@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
         GG::Pt sz = Size();
         CUIWnd::SizeMove(ul, lr);
@@ -819,7 +818,6 @@ public:
         else
             SetName("");
     }
-    //@}
 
 private:
     void DoLayout() {

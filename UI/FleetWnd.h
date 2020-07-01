@@ -41,7 +41,6 @@ public:
     std::set<int>   SelectedShipIDs() const;    // returns the ids of all selected ships in the active fleetwnd
     //@}
 
-    //! \name Mutators //@{
     std::shared_ptr<FleetWnd> NewFleetWnd(const std::vector<int>& fleet_ids,
                                           double allowed_bounding_box_leeway = 0,
                                           int selected_fleet_id = INVALID_OBJECT_ID,
@@ -54,7 +53,6 @@ public:
 
     /** Enables, or disables if \a enable is false, issuing orders via FleetWnds. */
     void            EnableOrderIssuing(bool enable = true);
-    //@}
 
     /** emitted when the selected FleetWnd changes */
     mutable boost::signals2::signal<void ()> ActiveFleetWndChangedSignal;
@@ -120,7 +118,6 @@ public:
     GG::Rect CalculatePosition() const override;
     //@}
 
-    //! \name Mutators //@{
     void PreRender() override;
 
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
@@ -133,7 +130,6 @@ public:
 
     /** Enables, or disables if \a enable is false, issuing orders via this FleetWnd. */
     void                    EnableOrderIssuing(bool enable = true);
-    //@}
 
     mutable boost::signals2::signal<void ()>    SelectedFleetsChangedSignal;
     mutable boost::signals2::signal<void ()>    SelectedShipsChangedSignal;
@@ -142,11 +138,9 @@ public:
     mutable boost::signals2::signal<void (int)> ShipRightClickedSignal;
 
 protected:
-    //! \name Mutators //@{
     void CloseClicked() override;
     void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
     void DoLayout();
-    //@}
 
 private:
     void RequireRefresh();

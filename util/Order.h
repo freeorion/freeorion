@@ -67,11 +67,9 @@ public:
     bool Undo() const;
 
 protected:
-    /** \name Mutators */ //@{
     /** Verifies that the empire ID in this order is valid and return the Empire pointer.
      *  Throws an std::runtime_error if not valid. */
     Empire* GetValidatedEmpire() const;
-    //@}
 
 private:
     virtual void ExecuteImpl() const = 0;

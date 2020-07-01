@@ -15,7 +15,6 @@ public:
         GG::Slider<T>(min, max, orientation, ClientUI::CtrlColor(), ClientUI::ScrollWidth(), 5, flags)
     {}
 
-    /** \name Mutators */ //@{
     void Render() override {
         const GG::Pt UL = this->UpperLeft();
         const GG::Pt LR = this->LowerRight();
@@ -49,7 +48,6 @@ public:
         }
         this->MoveTabToPosn();
     }
-    //@}
 };
 
 #endif // _CUISlider_h_

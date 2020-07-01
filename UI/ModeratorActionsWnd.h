@@ -24,12 +24,10 @@ public:
     int                     SelectedEmpire() const;
     //!@}
 
-    /** \name Mutators */ //@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
     void            Refresh();
     void            EnableActions(bool enable = true);
-    //!@}
 
     mutable boost::signals2::signal<void ()>           ClosingSignal;
     mutable boost::signals2::signal<void ()>           NoActionSelectedSignal;

@@ -195,7 +195,6 @@ public:
     Pt TextLowerRight() const;
     //@}
 
-    /** \name Mutators */ ///@{
     void Render() override;
 
     void SizeMove(const Pt& ul, const Pt& lr) override;
@@ -310,7 +309,6 @@ public:
     /** Erases code points from the text between the specified starting and
       * ending line and character positions. */
     void  Erase(std::size_t line1, CPSize pos1, std::size_t line2, CPSize pos2);
-    //@}
 
 protected:
     /** \name Accessors */ ///@{

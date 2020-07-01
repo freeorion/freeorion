@@ -48,7 +48,6 @@ public:
     void                                    GetSaveGameUIData(SaveGameUIData& data) const; //!< populates the relevant UI state that should be restored after a save-and-load cycle
     //!@}
 
-    //! \name Mutators //!@{
     /** Return the IntroScreen. Hides the MapWnd, MessageWnd and
       * PlayerListWnd if visible, but doesn't create them just to hide them. **/
     void ShowIntroScreen();
@@ -113,7 +112,6 @@ public:
     std::vector<std::shared_ptr<GG::Texture>> GetPrefixedTextures(const boost::filesystem::path& dir,
                                                                   const std::string& prefix,
                                                                   bool mipmap = false);
-    //!@}
 
     static ClientUI* GetClientUI();     //!< returns a pointer to the singleton ClientUI class
 

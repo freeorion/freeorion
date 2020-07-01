@@ -109,7 +109,6 @@ public:
     int ArrivalStarlane() const { return m_arrival_starlane; }
     //@}
 
-    /** \name Mutators */ //@{
     void Copy(std::shared_ptr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES) override;
 
     void MovementPhase() override;
@@ -130,7 +129,6 @@ public:
 
     void SetGiveToEmpire(int empire_id);                    ///< marks fleet to be given to empire
     void ClearGiveToEmpire();                               ///< marks fleet not to be given to any empire
-    //@}
 
     /* returns a name for a fleet based on its ships*/
     std::string GenerateFleetName();

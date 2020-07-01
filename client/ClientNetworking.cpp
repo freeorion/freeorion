@@ -184,7 +184,6 @@ public:
     const std::string& Destination() const;
     //@}
 
-    /** \name Mutators */ //@{
     /** Returns a list of the addresses and names of all servers on the Local
         Area Network. */
     ClientNetworking::ServerNames DiscoverLANServerNames();
@@ -224,7 +223,6 @@ public:
 
     /** Get authorization roles access. */
     Networking::AuthRoles& AuthorizationRoles();
-    //@}
 
 private:
     void HandleException(const boost::system::system_error& error);

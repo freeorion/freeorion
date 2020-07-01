@@ -71,13 +71,11 @@ struct GG_API Pt
         { return x < rhs.x ? true : (x == rhs.x ? (y < rhs.y ? true : false) : false); }
     //@}
 
-    /** \name Mutators */ ///@{
     void  operator+=(const Pt& rhs)     { x += rhs.x; y += rhs.y; }     ///< Adds \a rhs to Pt.
     void  operator-=(const Pt& rhs)     { x -= rhs.x; y -= rhs.y; }     ///< Subtracts \a rhs from Pt.
     Pt    operator-() const             { return Pt(-x, -y); }          ///< Negates Pt.
     Pt    operator/=(const double rhs)  { return Pt(x / rhs, y / rhs); }///< Devides components of Pt by \a rhs
     Pt    operator*=(const double rhs)  { return Pt(x * rhs, y * rhs); }///< Devides components of Pt by \a rhs
-    //@}
 
     X x; ///< The x component.
     Y y; ///< The y component.
@@ -112,10 +110,8 @@ struct GG_API Rect
     bool  Contains(const Pt& pt) const; ///< returns true iff \a pt falls inside the Rect
     //@}
 
-    /** \name Mutators */ ///@{
     void operator+=(const Pt& pt)      { ul += pt; lr += pt; } ///< shifts the Rect by adding \a pt to each corner
     void operator-=(const Pt& pt)      { ul -= pt; lr -= pt; } ///< shifts the Rect by subtracting \a pt from each corner
-    //@}
 
     Pt ul; ///< the upper-left corner of the Rect
     Pt lr; ///< the lower-right corner of the Rect

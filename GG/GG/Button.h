@@ -87,7 +87,6 @@ public:
     mutable ClickedSignalType RightPressedSignal;
     //@}
 
-    /** \name Mutators */ ///@{
     void Show() override;
     void Render() override;
     void SizeMove(const Pt& ul, const Pt& lr) override;
@@ -102,10 +101,8 @@ public:
     void SetUnpressedGraphic(const SubTexture& st); ///< Sets the SubTexture to be used as the image of the button when unpressed
     void SetPressedGraphic(const SubTexture& st);   ///< Sets the SubTexture to be used as the image of the button when pressed
     void SetRolloverGraphic(const SubTexture& st);  ///< Sets the SubTexture to be used as the image of the button when it contains the cursor, but is not pressed
-    //@}
 
 protected:
-    /** \name Mutators */ ///@{
     void LButtonDown(const Pt& pt, Flags<ModKey> mod_keys) override;
     void LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys) override;
     void LButtonUp(const Pt& pt, Flags<ModKey> mod_keys) override;
@@ -124,7 +121,6 @@ protected:
     virtual void RenderPressed();
     /** Draws the button rolled-over.  If an rollover graphic has been supplied, it is used. */
     virtual void RenderRollover();
-    //@}
 
     std::shared_ptr<TextControl> m_label;   ///< Label used to display text
 
@@ -187,7 +183,6 @@ public:
     mutable CheckedSignalType CheckedSignal; ///< The checked signal object for this StaticButton
     //@}
 
-    /** \name Mutators */ ///@{
     void Show() override;
     void Render() override;
     void SizeMove(const Pt& ul, const Pt& lr) override;
@@ -195,10 +190,8 @@ public:
     void Reset();                 ///< Unchecks button
     void SetCheck(bool b = true); ///< (Un)checks button
     void SetTextColor(Clr c); ///< Sets the color of the box label text
-    //@}
 
 protected:
-    /** \name Mutators */ ///@{
     void LButtonDown(const Pt& pt, Flags<ModKey> mod_keys) override;
     void LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys) override;
     void LButtonUp(const Pt& pt, Flags<ModKey> mod_keys) override;
@@ -208,7 +201,6 @@ protected:
 
     /** Sets button state programmatically \see ButtonState */
     void SetState(ButtonState next_state);
-    //@}
 
 private:
     std::shared_ptr<StateButtonRepresenter> m_representer;
@@ -368,7 +360,6 @@ public:
     mutable ButtonChangedSignalType ButtonChangedSignal; ///< The button changed signal object for this RadioButtonGroup
     //@}
 
-    /** \name Mutators */ ///@{
     void Render() override;
 
     /** Checks the index-th button, and unchecks all others.  If there is no
@@ -420,7 +411,6 @@ public:
     /** The invalid button position index that there is no currently-checked
         button. */
     static const std::size_t NO_BUTTON;
-    //@}
 
 protected:
     /** \brief Encapsulates all data pertaining ot a single button in a

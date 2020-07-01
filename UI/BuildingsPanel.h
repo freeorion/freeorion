@@ -19,7 +19,6 @@ public:
     int PlanetID() const { return m_planet_id; }
     //@}
 
-    /** \name Mutators */ //@{
     void PreRender() override;
 
     /** updates, redoes layout, resizes indicator */
@@ -30,19 +29,16 @@ public:
 
     /** Enables, or disables if \a enable is false, issuing orders via this panel. */
     void EnableOrderIssuing(bool enable = true);
-    //@}
 
     mutable boost::signals2::signal<void (int)> BuildingRightClickedSignal;
 
 protected:
-    /** \name Mutators */ //@{
     /** resizes panel and positions widgets */
     void DoLayout() override;
 
     /** updates indicators with values of associated object.  Does not do layout and resizing. */
     void Update();
     void RefreshImpl();
-    //@}
 
 private:
     /** toggles panel expanded or collapsed */
@@ -72,7 +68,6 @@ public:
 
     void CompleteConstruction() override;
 
-    /** \name Mutators */ //@{
     void PreRender() override;
 
     void Render() override;
@@ -85,7 +80,6 @@ public:
 
     /** Enables, or disables if \a enable is false, issuing orders via this BuildingIndicator. */
     void            EnableOrderIssuing(bool enable = true);
-    //@}
 
     mutable boost::signals2::signal<void (int)> RightClickedSignal;
 

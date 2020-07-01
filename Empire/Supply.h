@@ -64,12 +64,10 @@ public:
     std::string Dump(int empire_id = ALL_EMPIRES) const;
     //@}
 
-    /** \name Mutators */ //@{
     /** Calculates systems at which fleets of empires can be supplied, and
       * groups of systems that can exchange resources, and the starlane
       * traversals used to do so. */
     void    Update();
-    //@}
 
 private:
     /** ordered pairs of system ids between which a starlane runs that can be

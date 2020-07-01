@@ -88,7 +88,6 @@ public:
     const boost::filesystem::path& GetTexturePath() const;
     //@}
 
-    /** \name Mutators */ ///@{
     void Render() override;
 
     /** Sets the style flags, and perfroms sanity checking \see
@@ -99,7 +98,6 @@ public:
     void SetTexture(const std::shared_ptr<Texture>& texture);
     void SetTexture(const SubTexture& subtexture);
     void SetTexture(const std::shared_ptr<VectorTexture>& vector_texture);
-    //@}
 
 private:
     void ValidateStyle();   ///< ensures that the style flags are consistent

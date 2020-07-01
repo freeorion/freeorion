@@ -102,7 +102,6 @@ public:
     Clr         SelectedTextColor() const; ///< returns the color used to render a hilited menu item's text
     //@}
 
-    /** \name Mutators */ ///@{
     /** Add \p menu_item to the end of the popup menu and store its callback.*/
     void AddMenuItem(MenuItem&& menu_item);
     void Render() override;
@@ -120,7 +119,6 @@ public:
     void SetTextColor(Clr clr);         ///< sets the color used to render menu item text
     void SetHiliteColor(Clr clr);       ///< sets the color used to indicate a hilited menu item
     void SetSelectedTextColor(Clr clr); ///< sets the color used to render a hilited menu item's text
-    //@}
 
     static const std::size_t INVALID_CARET;
 

@@ -28,7 +28,6 @@ public:
     std::string     GetChatText() const;
     //@}
 
-    /** \name Mutators */ //@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
     void Render() override;
@@ -44,7 +43,6 @@ public:
     void            LobbyUpdate(const MultiplayerLobbyData& lobby_data);
     void            Refresh();
     void            CleanupChat();
-    //@}
 
 protected:
     struct PlayerLabelRow : GG::ListBox::Row {

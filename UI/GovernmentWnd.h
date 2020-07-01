@@ -9,7 +9,6 @@ public:
     explicit GovernmentWnd(const std::string& config_name = "");
     void CompleteConstruction() override;
 
-    /** \name Mutators */ //@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
     void Reset();
@@ -18,7 +17,6 @@ public:
 
     /** Enables, or disables if \a enable is false, issuing orders via this DesignWnd. */
     void EnableOrderIssuing(bool enable = true);
-    //@}
 
     mutable boost::signals2::signal<void ()> ClosingSignal;
 

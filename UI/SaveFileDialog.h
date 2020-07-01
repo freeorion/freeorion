@@ -29,14 +29,12 @@ public:
     void CompleteConstruction() override;
     ~SaveFileDialog();
 
-    /** \name Mutators */ //@{
     void ModalInit() override;
 
     void KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
 
     /** Update the previews with \p preview_info*/
     void SetPreviewList(const PreviewInformation& preview_info);
-    //@}
 
     /// Get the chosen save files full path
     std::string Result() const;

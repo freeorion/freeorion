@@ -131,7 +131,6 @@ public:
     Clr    OutlineColor() const;
     //@}
 
-    /** \name Mutators */ ///@{
     void StartingChildDragDrop(const Wnd* wnd, const Pt& offset) override;
     void CancellingChildDragDrop(const std::vector<const Wnd*>& wnds) override;
     void ChildrenDraggedAway(const std::vector<Wnd*>& wnds, const Wnd* destination) override;
@@ -210,7 +209,6 @@ public:
     //! Set this to true if this layout should render an outline of itself;
     //! this is sometimes useful for debugging purposes.
     void RenderOutline(bool render_outline);
-    //@}
 
     /** \name Exceptions */ ///@{
     //! The base class for Layout exceptions.
@@ -234,7 +232,6 @@ public:
     static const unsigned int INVALID_CELL_MARGIN;
 
 protected:
-    /** \name Mutators */ ///@{
     void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys) override;
     void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
     void KeyRelease(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
@@ -247,7 +244,6 @@ protected:
     //! Bug:  This does nothing if the size has not changed.  Fixing it to use
     //! call DoLayout() even when the size has not changed breaks all text boxes.
     virtual void RedoLayout();
-    //@}
 
 private:
     struct GG_API RowColParams

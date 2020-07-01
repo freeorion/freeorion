@@ -25,11 +25,9 @@ public:
 
     mutable boost::signals2::signal<void ()> SettingsChangedSignal;
 
-    /** \name Mutators*/ //!@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
     void Render() override;
     void Disable(bool b = true) override;
-    //!@}
 
 private:
     void DoLayout();
@@ -88,14 +86,12 @@ public:
     mutable boost::signals2::signal<void (std::shared_ptr<GG::Texture>)> ImageChangedSignal;
     //!@}
 
-    /** \name Mutators*/ //!@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
     void Render() override {}
     void Disable(bool b = true) override;
     void SetFromSetupData(const GalaxySetupData& setup_data); ///< sets the controls from a GalaxySetupData
     void GetSetupData(GalaxySetupData& setup_data) const;     ///< fills values in \a setup_data from the panel's current state
     void SetSeed(const std::string& seed, bool inhibit_single = false);
-    //!@}
 
 private:
     void DoLayout();
@@ -150,11 +146,9 @@ public:
                             GetRulesAsStrings() const;
     //!@}
 
-    /** \name Mutators*/ //!@{
     void Render() override;
     void KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
-    //!@}
 
 protected:
     GG::Rect CalculatePosition() const override;

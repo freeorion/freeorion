@@ -92,7 +92,6 @@ public:
     void OrthoBlit(const Pt& pt) const;
     //@}
 
-    /** \name Mutators */ ///@{
     // intialization functions
     /** Frees any currently-held memory and loads a texture from file \a
         path.  \throw GG::Texture::BadFile Throws if the texture creation
@@ -108,7 +107,6 @@ public:
 
     void SetFilters(GLenum min, GLenum mag);  ///< sets the opengl min/mag filter modes associated with opengl texture m_opengl_id
     void Clear();  ///< frees the opengl texture object associated with this object
-    //@}
 
     /** \name Exceptions */ ///@{
     /** The base class for Texture exceptions. */
@@ -193,9 +191,7 @@ public:
     void OrthoBlit(const Pt& pt) const;
     //@}
 
-    /** \name Mutators */ ///@{
     void Clear();
-    //@}
 
     /** \name Exceptions */ ///@{
     /** The base class for SubTexture exceptions. */
@@ -233,7 +229,6 @@ public:
     const std::map<std::string, std::shared_ptr<Texture>>& Textures() const;
     //@}
 
-    /** \name Mutators */ ///@{
     /** Stores a pre-existing GG::Texture in the manager's texture pool, and
         returns a shared_ptr to it. \warning Calling code <b>must not</b>
         delete \a texture; \a texture becomes the property of the manager,
@@ -260,7 +255,6 @@ public:
         \a name, if it exists.  \note Due to shared_ptr semantics, the
         texture may not be deleted until much later. */
     void                     FreeTexture(const std::string& name);
-    //@}
 
 private:
     TextureManager();

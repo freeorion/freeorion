@@ -30,7 +30,6 @@ public:
     int SelectedPlanetID() const;
     //@}
 
-    /** \name Mutators */ //@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
     /** Centres map wnd on location of item on queue with index \a queue_idx
@@ -99,7 +98,6 @@ public:
 
     /** returns true if the encyclopedia detail panel is visible */
     bool PediaVisible();
-    //@}
 
     /** emitted when the indicated build is indicated by the user */
     mutable boost::signals2::signal<void (const ProductionQueue::ProductionItem&, int, int, int)>

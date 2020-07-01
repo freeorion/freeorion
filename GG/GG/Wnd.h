@@ -531,7 +531,6 @@ public:
     void ClampRectWithMinAndMaxSize(Pt& ul, Pt& lr) const;
     //@}
 
-    /** \name Mutators */ ///@{
     /** Sets the string key that defines the type of data that this Wnd
         represents in a drag-and-drop drag.  This should be set to the empty
         string when this Wnd cannot be used in drag-and-drop. */
@@ -781,7 +780,6 @@ public:
         illegal starting positions, or when a SetLayout() call would result in
         an illegal state. */
     GG_CONCRETE_EXCEPTION(BadLayout, GG::Wnd, Exception);
-    //@}
 
 protected:
     /** Sets the \a second member of each iterator to true or false,
@@ -823,7 +821,6 @@ protected:
     DragDropRenderingState GetDragDropRenderingState() const;
     //@}
 
-    /** \name Mutators */ ///@{
     /** Respond to left button down msg.  A window receives this whenever any
         input device button changes from up to down while over the window.
         \note If this Wnd was created with the REPEAT_BUTTON_DOWN flag, this
@@ -1002,7 +999,6 @@ protected:
     void EndNonclientClipping();
 
     virtual void SetParent(const std::shared_ptr<Wnd>& wnd);
-    //@}
 
     /** Modal Wnd's set this to true to stop modal loop. */
     bool m_done = false;

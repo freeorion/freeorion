@@ -149,7 +149,6 @@ public:
     const std::string& RawText() const override;
     //@}
 
-    /** \name Mutators */ //@{
     void Render() override;
     void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
     void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
@@ -162,7 +161,6 @@ public:
         was used), calls to this function cause the window to be resized to
         whatever space the newly rendered text occupies. */
     void SetText(const std::string& str) override;
-    //@}
 
 private:
     void SetLinkedText(const std::string& str) override;

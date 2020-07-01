@@ -10,10 +10,7 @@ public:
     About();
     void CompleteConstruction() override;
 
-    //! \name Mutators
-    //!@{
     void KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
-    //!@}
 
     void ShowLicense();
     void ShowVision();

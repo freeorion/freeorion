@@ -113,7 +113,6 @@ public:
     int                         SelectedPlanetID() const;
     //!@}
 
-    //! \name Mutators //!@{
     void PreRender() override;
     void Render() override;
     void LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
@@ -206,7 +205,6 @@ public:
     void RemovePopup(MapWndPopup* popup);        //!< removes a MapWndPopup from the list cleaned up on a call to DeleteAllPopups( )
     void Sanitize();                             //!< sanitizes the MapWnd after a game
     void ResetTimeoutClock(int timeout);         //!< start count down \a timeout seconds
-    //!@}
 
     void SetFleetExploring(const int fleet_id);
     void StopFleetExploring(const int fleet_id);

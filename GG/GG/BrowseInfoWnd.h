@@ -59,7 +59,6 @@ public:
     virtual bool WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const = 0;
     //@}
 
-    /** \name Mutators */ ///@{
     /** Collects data from \a target that is needed by Render().  Note that
         the one datum that is always available for any Wnd is the text to
         display for \a mode, accessible through Wnd::BrowseInfoText() (though
@@ -70,7 +69,6 @@ public:
 
     /** Sets the current cursor position to the one given. */
     void SetCursorPosition(const Pt& cursor_pos);
-    //@}
 
     /** If set by the user, this function is used to determine the position of
         this BrowseInfoWnd.  It takes the current cursor position, the
@@ -123,7 +121,6 @@ public:
     unsigned int                   TextMargin() const;     ///< returns the margin to leave between the text and the text box
     //@}
 
-    /** \name Mutators */ ///@{
     void         SetText(const std::string& str);
     void Render() override;
     void SizeMove(const Pt& ul, const Pt& lr) override;
@@ -139,7 +136,6 @@ public:
     void SetTextFormat(Flags<TextFormat> format);      ///< sets the text format used to render the text
     void SetBorderWidth(unsigned int border_width);    ///< sets the width of the text box border
     void SetTextMargin(unsigned int text_margin);      ///< sets the margin to leave between the text and the text box
-    //@}
 
 private:
     virtual void InitBuffer();

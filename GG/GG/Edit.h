@@ -105,7 +105,6 @@ public:
     mutable FocusUpdateSignalType FocusUpdateSignal;
     //@}
 
-    /** \name Mutators */ ///@{
     void Render() override;
 
     void SetColor(Clr c) override;
@@ -139,7 +138,6 @@ public:
 
     /** Replaces selected text with, or inserts at cursor, the text in \a text. */
     virtual void AcceptPastedText(const std::string& text);
-    //@}
 
     /** The number of pixels to leave between the text and the control's
         frame. */
@@ -189,7 +187,6 @@ protected:
     std::vector<GG::Font::LineData>::size_type NumLines() const;
     //@}
 
-    /** \name Mutators */ ///@{
     void LButtonDown(const Pt& pt, Flags<ModKey> mod_keys) override;
     void LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys) override;
     void LButtonUp(const Pt& pt, Flags<ModKey> mod_keys) override;
@@ -218,7 +215,6 @@ protected:
     /** Sets the value of InDoubleButtonDownMode() to false.  This should be
         called in LClick() and LButtonUp() overrides. */
     void ClearDoubleButtonDownMode();
-    //@}
 
     /** If .first == .second, the caret is drawn before character at
         m_cursor_pos.first; otherwise, the range is selected (when range is

@@ -46,10 +46,8 @@ struct FO_COMMON_API GalaxySetupData {
     const std::string&  GetGameUID() const;
     //@}
 
-    /** \name Mutators */ //@{
     void                SetSeed(const std::string& seed);
     void                SetGameUID(const std::string& game_uid);
-    //@}
 
     GalaxySetupData& operator=(const GalaxySetupData&) = default;
 

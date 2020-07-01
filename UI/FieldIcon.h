@@ -27,7 +27,6 @@ public:
     const std::shared_ptr<GG::Texture>& FieldTexture() const;
     //!@}
 
-    //! \name Mutators //!@{
     void LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
     void LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys) override;
     void LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
@@ -49,7 +48,6 @@ public:
     mutable boost::signals2::signal<void (int)> RightClickedSignal;
     mutable boost::signals2::signal<void (int)> LeftDoubleClickedSignal;
     mutable boost::signals2::signal<void (int)> RightDoubleClickedSignal;
-    //!@}
 
 private:
     int                                 m_field_id;             //!< the Field associated with this FieldIcon

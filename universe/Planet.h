@@ -78,7 +78,6 @@ public:
     std::string         CardinalSuffix() const; ///< returns a roman number representing this planets orbit in relation to other planets
     //@}
 
-    /** \name Mutators */ //@{
     void Copy(std::shared_ptr<const UniverseObject> copied_object,
               int empire_id = ALL_EMPIRES) override;
 
@@ -113,7 +112,6 @@ public:
     void SetLastTurnAttackedByShip(int turn);///< Sets the last turn this planet was attacked by a ship
     void SetSurfaceTexture(const std::string& texture);
     void ResetTargetMaxUnpairedMeters() override;
-    //@}
 
     static int TypeDifference(PlanetType type1, PlanetType type2);
 

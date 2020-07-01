@@ -37,7 +37,6 @@ public:
     std::string                     Dump() const;
     //@}
 
-    /** \name Mutators */ //@{
     /** emitted after updating production, or called externally to indicate
       * that stockpile and change need to be refreshed. */
     mutable boost::signals2::signal<void ()> ChangedSignal;
@@ -50,7 +49,6 @@ public:
     void        SetStockpile(float d);      ///< sets current sockpiled amount of resource
 
     void        Update();                   ///< recalculates total resource production
-    //@}
 
 private:
     ResourcePool(); ///< default ctor needed for serialization

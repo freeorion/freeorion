@@ -624,7 +624,6 @@ public:
     const std::pair<bool, bool>& GetAvailabilitiesShown() const;
     //@}
 
-    /** \name Mutators */ //@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
     /** Sets build location for this selector, which may be used to filter
@@ -650,7 +649,6 @@ public:
       * items are those which have been unlocked for this selector's emipre. */
     void ShowAvailability(bool available, bool refresh_list = true);
     void HideAvailability(bool available, bool refresh_list = true);
-    //@}
 
     mutable boost::signals2::signal<void (const BuildingType*)> DisplayBuildingTypeSignal;
     mutable boost::signals2::signal<void (const ShipDesign*)>   DisplayShipDesignSignal;

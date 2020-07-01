@@ -66,7 +66,6 @@ public:
     virtual bool FakeModeChange() const final;
     //@}
 
-    /** \name Mutators */ ///@{
     void ExitApp(int code = 0) override;
     bool SetClipboardText(const std::string& text) override;
 
@@ -84,7 +83,6 @@ public:
 
     void            SetWindowTitle(const std::string& title);
     void            SetVideoMode(GG::X width, GG::Y height, bool fullscreen, bool fake_mode_change);
-    //@}
 
     static SDLGUI*  GetGUI();                             ///< allows any code to access the gui framework by calling SDLGUI::GetGUI()
 

@@ -65,7 +65,6 @@ public:
     bool Running() const;               ///< Returns true iff the timer is operating.  When false, this indicates that no firings will occur until Start() is called.
     //@}
 
-    /** \name Mutators */ ///@{
     void Reset(unsigned int start_time = 0); ///< Resets the last-firing time of the timer to \a start_time (in ms), or the current time if \a start_time is ommitted.
     void SetInterval(unsigned int interval); ///< Sets the interval in ms between firings of the timer
     void Connect(Wnd* wnd);         ///< Connects this timer to \a wnd, meaning that \a wnd will be notified when the timer fires.
@@ -73,7 +72,6 @@ public:
     void Start();                   ///< Starts the timer firing; does not reset the timer.
     void Stop();                    ///< Stops the timer firing until Start() is called.
     void Update(unsigned int ticks); ///< Signals listeners iff the timer is running and the last time it fired is is more than Interval() ms ago.
-    //@}
 
     mutable FiredSignalType FiredSignal; ///< The fired signal object for this Timer
 

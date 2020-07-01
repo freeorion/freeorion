@@ -38,7 +38,6 @@ public:
         this->SetEditTextFromValue();
     }
 
-    /** \name Mutators */ //@{
     void Render() override {
         GG::Clr color_to_use = this->Disabled() ? DisabledColor(this->Color()) : this->Color();
         GG::Clr int_color_to_use = this->Disabled() ? DisabledColor(this->InteriorColor()) : this->InteriorColor();
@@ -47,7 +46,6 @@ public:
     }
 
     void SetEditTextFromValue() override;
-    //@}
 };
 
 template <typename T>

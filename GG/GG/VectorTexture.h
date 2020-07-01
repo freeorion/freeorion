@@ -32,13 +32,11 @@ public:
     Pt Size() const;
     //@}
 
-    /** \name Mutators */ ///@{
     // intialization functions
     /** Frees any currently-held memory and loads a texture from file \a
         path.  \throw GG::Texture::BadFile Throws if the texture creation
         fails. */
     void Load(const boost::filesystem::path& path);
-    //@}
 
     /** \name Exceptions */ ///@{
     /** The base class for VectorTexture exceptions. */
@@ -69,7 +67,6 @@ public:
     const std::map<std::string, std::shared_ptr<VectorTexture>>& Textures() const;
     //@}
 
-    /** \name Mutators */ ///@{
     /** Returns a shared_ptr to the texture created from image file \a path.
         If the texture is not present in the manager's pool, it will be loaded
         from disk. */
@@ -84,7 +81,6 @@ public:
         \a name, if it exists.  \note Due to shared_ptr semantics, the
         texture may not be deleted until much later. */
     void                           FreeTexture(const std::string& name);
-    //@}
 
 private:
     VectorTextureManager();

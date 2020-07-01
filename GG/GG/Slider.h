@@ -91,7 +91,6 @@ public:
     mutable SlidAndStoppedSignalType SlidAndStoppedSignal; ///< returns the slid-and-stopped signal object for this Slider
     //@}
 
-    /** \name Mutators */ ///@{
     void Render() override;
     void SizeMove(const Pt& ul, const Pt& lr) override;
     void Disable(bool b = true) override;
@@ -107,7 +106,6 @@ public:
         this defaults to 10% of the slider's range.  To disable clicks off the
         tab, set the page size to 0. */
     void           SetPageSize(T size);
-    //@}
 
     static const T INVALID_PAGE_SIZE;
 
@@ -117,13 +115,11 @@ protected:
     T       PtToPosn(const Pt& pt) const; ///< maps an arbitrary screen point to its nearest logical slider position
     //@}
 
-    /** \name Mutators */ ///@{
     void LClick(const Pt& pt, Flags<ModKey> mod_keys) override;
     void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
     bool EventFilter(Wnd* w, const WndEvent& event) override;
 
     void MoveTabToPosn(); ///< moves the tab to the current logical position
-    //@}
 
 private:
     void SlideToImpl(T p, bool signal);

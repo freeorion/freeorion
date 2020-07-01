@@ -1218,13 +1218,11 @@ public:
     const std::string&  PartName() const { return m_part ? m_part->Name() : EMPTY_STRING; }
     //@}
 
-    /** \name Mutators */ //@{
     void Render() override;
     void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
     void LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
     void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
     void SetAvailability(const AvailabilityManager::DisplayedAvailabilies& type);
-    //@}
 
     mutable boost::signals2::signal<void (const ShipPart*, GG::Flags<GG::ModKey>)> ClickedSignal;
     mutable boost::signals2::signal<void (const ShipPart*, const GG::Pt& pt)> RightClickedSignal;
@@ -1315,7 +1313,6 @@ public:
     bool                            GetShowingSuperfluous() const { return m_show_superfluous_parts; }
     //@}
 
-    /** \name Mutators */ //@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
     void AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds,
                      GG::Flags<GG::ModKey> mod_keys) override;
@@ -1327,7 +1324,6 @@ public:
     void HideAllClasses(bool refresh_list = true);
     void ShowSuperfluousParts(bool refresh_list = true);
     void HideSuperfluousParts(bool refresh_list = true);
-    //@}
 
     mutable boost::signals2::signal<void (const ShipPart*, GG::Flags<GG::ModKey>)>  ShipPartClickedSignal;
     mutable boost::signals2::signal<void (const ShipPart*)>                         ShipPartDoubleClickedSignal;
@@ -1767,7 +1763,6 @@ public:
     PartPalette(const std::string& config_name);
     void CompleteConstruction() override;
 
-    /** \name Mutators */ //@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
     void ShowClass(ShipPartClass part_class, bool refresh_list = true);
@@ -1784,7 +1779,6 @@ public:
     void ToggleSuperfluous(bool refresh_list = true);
 
     void Populate();
-    //@}
 
     mutable boost::signals2::signal<void (const ShipPart*, GG::Flags<GG::ModKey>)> ShipPartClickedSignal;
     mutable boost::signals2::signal<void (const ShipPart*)> ShipPartDoubleClickedSignal;
@@ -2159,14 +2153,12 @@ public:
     /** \name Accessors */ //@{
     //@}
 
-    /** \name Mutators */ //@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
     void ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const GG::Wnd* destination) override;
     virtual void QueueItemMoved(const GG::ListBox::iterator& row_it, const GG::ListBox::iterator& original_position_it)
     {}
     void SetEmpireShown(int empire_id, bool refresh_list = true);
     virtual void Populate();
-    //@}
 
     mutable boost::signals2::signal<void (int)>                 DesignSelectedSignal;
     mutable boost::signals2::signal<void (int)>                 DesignUpdatedSignal;
@@ -3335,14 +3327,12 @@ public:
     BaseSelector(const std::string& config_name);
     void CompleteConstruction() override;
 
-    /** \name Mutators */ //@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
     void Reset();
     void ToggleAvailability(const Availability::Enum type);
     void SetEmpireShown(int empire_id, bool refresh_list);
     void EnableOrderIssuing(bool enable/* = true*/);
-    //@}
 
     mutable boost::signals2::signal<void (int)>                         DesignSelectedSignal;
     mutable boost::signals2::signal<void (int)>                         DesignUpdatedSignal;
@@ -3569,7 +3559,6 @@ public:
     const ShipPart* GetPart() const;
     //@}
 
-    /** \name Mutators */ //@{
     void StartingChildDragDrop(const GG::Wnd* wnd, const GG::Pt& offset) override;
     void CancellingChildDragDrop(const std::vector<const GG::Wnd*>& wnds) override;
     void AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds,
@@ -3588,7 +3577,6 @@ public:
     //! Used to programmatically set the ShipPart in this slot.
     //! Does not emit signal.
     void SetPart(const ShipPart* part = nullptr);
-    //@}
 
     /** emitted when the contents of a slot are altered by the dragging
       * a PartControl in or out of the slot.  signal should be caught and the
@@ -3909,7 +3897,6 @@ public:
     boost::optional<const ShipDesign*>        CurrentDesignIsRegistered();
     //@}
 
-    /** \name Mutators */ //@{
     void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
 
     void AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds, GG::Flags<GG::ModKey> mod_keys) override;

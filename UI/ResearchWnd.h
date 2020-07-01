@@ -21,7 +21,6 @@ public:
     bool    PediaVisible();
     //@}
 
-    /** \name Mutators */ //@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
     void Render() override;
@@ -46,7 +45,6 @@ public:
 
     /** Enables, or disables if \a enable is false, issuing orders via this ResearchWnd. */
     void    EnableOrderIssuing(bool enable = true);
-    //@}
 
 private:
     void    DoLayout(bool init = false);

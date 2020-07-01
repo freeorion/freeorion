@@ -211,7 +211,6 @@ public:
     }
     //@}
 
-    /** \name Mutators */ ///@{
     /** Adds \a flag, with stringification string \a name, to the FlagSpec.
         If \a permanent is true, this flag becomes non-removable.  Alls flags
         added by GG are added as permanent flags.  User-added flags should not
@@ -247,7 +246,6 @@ public:
         }
         return retval;
     }
-    //@}
 
 private:
     FlagSpec() {}
@@ -323,7 +321,6 @@ public:
     { return m_flags < rhs.m_flags; }
     //@}
 
-    /** \name Mutators */ ///@{
     /** Performs a bitwise-or of *this and \a rhs, placing the result in *this. */
     Flags<FlagType>& operator|=(Flags<FlagType> rhs)
     {
@@ -342,7 +339,6 @@ public:
         m_flags ^= rhs.m_flags;
         return *this;
     }
-    //@}
 
 private:
     unsigned int m_flags;

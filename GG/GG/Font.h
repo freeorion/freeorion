@@ -798,7 +798,6 @@ public:
                  CharSetIter first, CharSetIter last) const;
     //@}
 
-    /** \name Mutators */ ///@{
     /** Returns a shared_ptr to the requested font, supporting all printable
         ASCII characters.  \note May load font if unavailable at time of
         request. */
@@ -829,7 +828,6 @@ public:
     /** Removes the indicated font from the font manager.  Due to shared_ptr
         semantics, the font may not be deleted until much later. */
     void                    FreeFont(const std::string& font_filename, unsigned int pts);
-    //@}
 
 private:
     FontManager();

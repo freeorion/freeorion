@@ -39,7 +39,6 @@ public:
     mutable boost::signals2::signal<void ()> ResourceCenterChangedSignal;
     //@}
 
-    /** \name Mutators */ //@{
     void Copy(std::shared_ptr<const ResourceCenter> copied_object, Visibility vis);
     void Copy(std::shared_ptr<const ResourceCenter> copied_object);
 
@@ -52,7 +51,6 @@ public:
     /** Resets the meters, etc. This should be called when a ResourceCenter is
         wiped out due to starvation, etc. */
     virtual void Reset();
-    //@}
 
 protected:
     void Init();    ///< initialization that needs to be called by derived class after derived class is constructed

@@ -18,7 +18,6 @@ public:
     int                     NumVisibleSitrepsThisTurn() const;
     //@}
 
-    /** \name Mutators */ //@{
     void KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
 
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
@@ -27,7 +26,6 @@ public:
 
     void ShowSitRepsForTurn(int turn);
     void SetHiddenSitRepTemplates(const std::set<std::string>& templates);
-    //@}
 
     mutable boost::signals2::signal<void ()> ClosingSignal;
 

@@ -125,7 +125,6 @@ public:
     mutable EndFrameSignalType EndFrameSignal; ///< the end-frame signal object for this DynamicGraphic
     //@}
 
-    /** \name Mutators */ ///@{
     void Render() override;
 
     /** Adds a set of frames from Texture \a texture to the animation.  If \a
@@ -188,7 +187,6 @@ public:
     /** Sets the style flags, and perfroms sanity checking \see
         GraphicStyle */
     void  SetStyle(Flags<GraphicStyle> style);
-    //@}
 
     /** \name Exceptions */ ///@{
     /** The base class for DynamicGraphic exceptions. */

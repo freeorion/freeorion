@@ -235,7 +235,6 @@ public:
     void                                    SaveWndAsPNG(const Wnd* wnd, const std::string& filename) const;
     //@}
 
-    /** \name Mutators */ ///@{
     //! Executes main event handler/render loop
     virtual void    Run() = 0;
 
@@ -390,7 +389,6 @@ public:
 
     bool SetPrevFocusWndInCycle();                          ///< sets the focus Wnd to the next INTERACTIVE Wnd in a cycle determined by Wnd parent-child relationships
     bool SetNextFocusWndInCycle();                          ///< sets the focus Wnd to the next in the cycle.
-    //@}
 
     static GUI*  GetGUI();                  ///< allows any GG code access to GUI framework by calling GUI::GetGUI()
 
@@ -443,14 +441,12 @@ public:
 protected:
     GUI(const std::string& app_name); ///< protected ctor, called by derived classes
 
-    /** \name Mutators */ ///@{
     void            ProcessBrowseInfo();    ///< determines the current browse info mode, if any
     /** Allow all windows in the z-list to update data before rendering. */
     virtual void    PreRender();
     virtual void    RenderBegin() = 0;      ///< clears the backbuffer, etc.
     virtual void    Render();               ///< renders the windows in the z-list
     virtual void    RenderEnd() = 0;        ///< swaps buffers, etc.
-    //@}
 
     /** Determine if the app has the mouse focus. */
     virtual bool    AppHasMouseFocus() const { return true; };

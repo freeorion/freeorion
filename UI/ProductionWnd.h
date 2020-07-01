@@ -24,7 +24,6 @@ public:
     int ShownEmpireID() const;
     //@}
 
-    /** \name Mutators */ //@{
     bool InWindow(const GG::Pt& pt) const override;
     bool InClient(const GG::Pt& pt) const override;
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
@@ -97,7 +96,6 @@ public:
 
     //! Enables, or disables if \a enable is false, issuing orders via this ProductionWnd.
     void EnableOrderIssuing(bool enable = true);
-    //@}
 
     //! emitted when the user changes the selected system in the
     //! production screen

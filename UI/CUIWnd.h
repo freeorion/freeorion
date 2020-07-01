@@ -108,7 +108,6 @@ public:
     GG::Y   BottomBorder() const;               //!< the distance at the bottom between the outer edge of the window and the inner border
     //@}
 
-    //! \name Mutators //@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
     void Render() override;
     void LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
@@ -132,12 +131,9 @@ public:
     void Close()           { CloseClicked(); }
     void ValidatePosition();                                 //!< calls SizeMove() to trigger position-checking and position the window entirely within the parent window/app window
     void InitSizeMove(const GG::Pt& ul, const GG::Pt& lr);   //!< sets default positions and if default positions were set beforehand, calls SizeMove()
-    //@}
 
-    //! \name Mutators //@{
     virtual void    CloseClicked();                     //!< called when window is closed via the close button
     virtual void    PinClicked();                       //!< called when window is pinned or unpinned via the pin button
-    //@}
 
     //! \name Statics //@{
     static void     InvalidateUnusedOptions();          //!< removes unregistered and registered-but-unused window options from the OptionsDB so that new windows fall back to their default properties.
@@ -166,7 +162,6 @@ protected:
     static void              InvalidateWindowOptions(const std::string& config_name);       //!< removes options containing \a config_name, logs an error instead if "ui."+config_name+".initialized" exists (i.e. if a window is currently using that name)
     //@}
 
-    //! \name Mutators //@{
     virtual void    MinimizeClicked();              //!< called when window is minimized or restored via the minimize/restore button
     virtual void    InitButtons();                  //!< called to create the buttons, withtout positioning them
     virtual void    PositionButtons();              //!< called to position the buttons
@@ -181,7 +176,6 @@ protected:
     void            SetDefaultedOptions();
     /** Sets the default value any options previously determined from calls to SetDefaultedOptions to their current value */
     void            SaveDefaultedOptions();
-    //@}
 
     bool                    m_resizable = false;    //!< true if the window is able to be resized
     bool                    m_closable = false;     //!< true if the window is able to be closed with a button press

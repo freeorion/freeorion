@@ -42,7 +42,6 @@ public:
     bool                PlanetSelectable(int planet_id) const;
     //@}
 
-    /** \name Mutators */ //@{
     void PreRender() override;
 
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
@@ -73,7 +72,6 @@ public:
 
     /** Enables, or disables if \a enable is false, issuing orders via the SidePanel. */
     void                EnableOrderIssuing(bool enable = true);
-    //@}
 
     /** emitted when a rotating planet in the side panel is clicked by the
       * user */

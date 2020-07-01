@@ -11,14 +11,11 @@ public:
     PasswordEnterWnd();
     void CompleteConstruction() override;
 
-    //! \name Mutators
-    //!@{
     void ModalInit() override;
 
     void KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
 
     void SetPlayerName(const std::string& player_name);
-    //!@}
 
 protected:
     GG::Rect CalculatePosition() const override;

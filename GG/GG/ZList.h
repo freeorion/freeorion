@@ -81,7 +81,6 @@ public:
     std::shared_ptr<Wnd> Pick(const Pt& pt, const std::shared_ptr<Wnd>& modal, const std::set<Wnd*>* ignore = nullptr) const;
     //@}
 
-    /** \name Mutators */ ///@{
     /** Add() places \a wnd in front of the list. */
     void Add(std::shared_ptr<Wnd> wnd);
 
@@ -98,7 +97,6 @@ public:
         wnd's z-value. */
     bool MoveDown(const std::shared_ptr<Wnd>& wnd);
     bool MoveDown(const Wnd* const wnd);
-    //@}
 
 private:
     using iterator = std::list<std::shared_ptr<Wnd>>::iterator;

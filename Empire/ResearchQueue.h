@@ -67,7 +67,6 @@ struct FO_COMMON_API ResearchQueue {
     const Element&  operator[](int i) const;
     //@}
 
-    /** \name Mutators */ //@{
     /** Recalculates the RPs spent on and number of turns left for each project
       * in the queue.  Also determines the number of projects in prgress, and
       * the total number of RPs spent on the projects in the queue.  \note A
@@ -88,7 +87,6 @@ struct FO_COMMON_API ResearchQueue {
     void            clear();
 
     mutable boost::signals2::signal<void ()> ResearchQueueChangedSignal;
-    //@}
 
 private:
     QueueType   m_queue;

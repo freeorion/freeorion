@@ -186,7 +186,6 @@ public:
     mutable UniverseObjectDeleteSignalType UniverseObjectDeleteSignal; ///< the state changed signal object for this UniverseObject
     //@}
 
-    /** \name Mutators */ //@{
     /** Inserts \a ship_design into the universe. Return true on success. The
         ship design's id will be the newly assigned id.
         \note Universe gains ownership of \a ship_design once inserted. */
@@ -351,7 +350,6 @@ public:
     void InhibitUniverseObjectSignals(bool inhibit = true);
 
     void UpdateStatRecords();
-    //@}
 
     /** Returns true if UniverseOjbectSignals are inhibited, false otherwise. */
     const bool& UniverseObjectSignalsInhibited();

@@ -28,13 +28,11 @@ public:
     bool                    OrderedScrapped() const     { return m_ordered_scrapped; }
     //@}
 
-    /** \name Mutators */ //@{
     void Copy(std::shared_ptr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES) override;
     void SetPlanetID(int planet_id);         ///< sets the planet on which the building is located
     void Reset();                            ///< resets any building state, and removes owners
     void SetOrderedScrapped(bool b = true);  ///< flags building for scrapping
     void ResetTargetMaxUnpairedMeters() override;
-    //@}
 
 protected:
     friend class Universe;

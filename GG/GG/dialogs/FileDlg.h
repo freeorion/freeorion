@@ -84,7 +84,6 @@ public:
     bool AppendMissingSaveExtension() const;
     //@}
 
-    /** \name Mutators */ ///@{
     void Render() override;
     void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
 
@@ -112,7 +111,6 @@ public:
         considered to match all files, so ("All Files", "") is perfectly
         correct. */
     void SetFileFilters(const std::vector<std::pair<std::string, std::string>>& filters);
-    //@}
 
     /** Returns the current directory (the one that will be used by default on
         the next invocation of FileDlg::Run()) */

@@ -149,7 +149,6 @@ struct FO_COMMON_API ProductionQueue {
     const_iterator  find(boost::uuids::uuid uuid) const;
     int             IndexOfUUID(boost::uuids::uuid uuid) const;
 
-    /** \name Mutators */ //@{
     /** Recalculates the PPs spent on and number of turns left for each project in the queue.  Also
       * determines the number of projects in progress, and the industry consumed by projects
       * in each resource-sharing group of systems.  Does not actually "spend" the PP; a later call to
@@ -171,7 +170,6 @@ struct FO_COMMON_API ProductionQueue {
     void        clear();
 
     mutable boost::signals2::signal<void ()> ProductionQueueChangedSignal;
-    //@}
 
 private:
     QueueType                       m_queue;

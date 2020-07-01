@@ -518,7 +518,6 @@ public:
     int PlanetID() const { return m_planet_id; }
     //@}
 
-    /** \name Mutators */ //@{
     void PreRender() override;
 
     void Render() override;
@@ -539,7 +538,6 @@ public:
 
     /** Enables, or disables if \a enable is false, issuing orders via this PlanetPanel. */
     void EnableOrderIssuing(bool enable = true);
-    //@}
 
     /** emitted when the planet panel is left clicked by the user.
       * returns the id of the clicked planet */
@@ -617,7 +615,6 @@ public:
     int                     ScrollPosition() const;
     //@}
 
-    /** \name Mutators */ //@{
     void LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys) override;
 
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
@@ -642,7 +639,6 @@ public:
     /** Enables, or disables if \a enable is false, issuing orders via the
       * PlanetPanels in this PlanetPanelContainer. */
     void EnableOrderIssuing(bool enable = true);
-    //@}
 
     /** emitted when an enabled planet panel is clicked by the user */
     mutable boost::signals2::signal<void (int)> PlanetClickedSignal;

@@ -124,7 +124,6 @@ public:
     mutable StateChangedSignalType StateChangedSignal;              ///< emitted when the UniverseObject is altered in any way
     //@}
 
-    /** \name Mutators */ //@{
     /** copies data from \a copied_object to this object, limited to only copy
       * data about the copied object that is known to the empire with id
       * \a empire_id (or all data if empire_id is ALL_EMPIRES) */
@@ -185,7 +184,6 @@ public:
         actions during the pop growth/production/research phase of a turn. */
     virtual void    PopGrowthProductionResearchPhase()
     {};
-    //@}
 
     static const double INVALID_POSITION;       ///< the position in x and y at which default-constructed objects are placed
     static const int    INVALID_OBJECT_AGE;     ///< the age returned by UniverseObject::AgeInTurns() if the current turn is INVALID_GAME_TURN, or if the turn on which an object was created is INVALID_GAME_TURN

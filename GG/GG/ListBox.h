@@ -156,7 +156,6 @@ public:
         bool         IsNormalized() const;
         //@}
 
-        /** \name Mutators */ ///@{
         void         Render() override;
 
         void         push_back(std::shared_ptr<Control> c); ///< adds a given Control to the end of the Row; this Control becomes property of the Row
@@ -176,7 +175,6 @@ public:
         void         SetMargin(unsigned int margin); ///< sets the amount of space left between the contents of adjacent cells, in pixels
         /** Set normalized.  Used by ListBox to track normalization.*/
         void         SetNormalized(bool normalized);
-        //@}
 
         boost::signals2::signal<void(const Pt&, GG::Flags<GG::ModKey>)> RightClickedSignal;
 
@@ -334,7 +332,6 @@ public:
     mutable BrowsedRowSignalType         BrowsedRowSignal;         ///< the browsed signal object for this ListBox
     //@}
 
-    /** \name Mutators */ ///@{
     void StartingChildDragDrop(const Wnd* wnd, const GG::Pt& offset) override;
     void AcceptDrops(const Pt& pt, std::vector<std::shared_ptr<Wnd>> wnds, Flags<ModKey> mod_keys) override;
     void ChildrenDraggedAway(const std::vector<Wnd*>& wnds, const Wnd* destination) override;
@@ -477,7 +474,6 @@ public:
     /** Sets the number of milliseconds that elapse between row/column scrolls
         when auto-scrolling. */
     void SetAutoScrollInterval(unsigned int interval);
-    //@}
 
     /** \brief Sorts two Rows of a ListBox using operator<() on the
         Row::SortKeyType provided by the rows' SortKey() methods.
@@ -513,7 +509,6 @@ protected:
     bool            AutoScrollingRight() const; ///< returns true iff the list is being autoscrolled right due to drag-and-drop
     //@}
 
-    /** \name Mutators */ ///@{
     void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
     void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys) override;
     void DragDropEnter(const Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable, Flags<ModKey> mod_keys) override;
@@ -538,7 +533,6 @@ protected:
     void ResetAutoScrollVars(); ///< resets all variables related to auto-scroll to their initial values
     void Resort();              ///< performs a full resort of all rows, using the current sort functor.
     Row& ColHeaders();          ///< returns the row containing the headings for the columns, if any.  If undefined, the returned heading Row will have size() 0. non-const for derivers
-    //@}
 
     /** creates, destroys, or resizes scrolls to reflect size of data in listbox. \p force_scroll
         forces the scroll bar to be added.*/

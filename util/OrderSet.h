@@ -60,7 +60,6 @@ public:
     key_compare     key_comp() const        { return m_orders.key_comp(); }
     //@}
 
-    /** \name Mutators */ //@{
     /** Execute the \p order immediately on the client.
         Store the \p order in the OrderSet to be executed later on the server.
         Return an index that can be used to reference the order. */
@@ -77,7 +76,6 @@ public:
     void Reset(); ///< clears all orders; should be called at the beginning of a new turn
 
     std::pair<OrderSet, std::set<int>> ExtractChanges(); ///< extract and clear changed orders
-    //@}
 
 private:
     OrderMap      m_orders;

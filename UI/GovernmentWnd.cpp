@@ -212,7 +212,6 @@ public:
     const Policy*       GetPolicy() const   { return m_policy; }
     //@}
 
-    /** \name Mutators */ //@{
     void Render() override;
 
     void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
@@ -220,7 +219,6 @@ public:
     void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
 
     void SetAvailability(const AvailabilityManager::DisplayedAvailabilies& type);
-    //@}
 
     mutable boost::signals2::signal<void (const Policy*, GG::Flags<GG::ModKey>)> ClickedSignal;
     mutable boost::signals2::signal<void (const Policy*, const GG::Pt& pt)> RightClickedSignal;
@@ -308,7 +306,6 @@ public:
     const AvailabilityManager&      AvailabilityState() const { return m_availabilities_state; }
     //@}
 
-    /** \name Mutators */ //@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
     void AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds,
                      GG::Flags<GG::ModKey> mod_keys) override;
@@ -318,7 +315,6 @@ public:
     void ShowAllCategories(bool refresh_list = true);
     void HideCategory(const std::string& category, bool refresh_list = true);
     void HideAllCategories(bool refresh_list = true);
-    //@}
 
     mutable boost::signals2::signal<void (const Policy*, GG::Flags<GG::ModKey>)>    PolicyClickedSignal;
     mutable boost::signals2::signal<void (const Policy*)>                           PolicyDoubleClickedSignal;
@@ -553,7 +549,6 @@ public:
     PolicyPalette(GG::X w, GG::Y h);
     void CompleteConstruction() override;
 
-    /** \name Mutators */ //@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
     void ShowCategory(const std::string& category, bool refresh_list = true);
@@ -566,7 +561,6 @@ public:
     void ToggleAvailability(const Availability::Enum type);
 
     void Populate();
-    //@}
 
     mutable boost::signals2::signal<void (const Policy*, GG::Flags<GG::ModKey>)> PolicyClickedSignal;
     mutable boost::signals2::signal<void (const Policy*)> PolicyDoubleClickedSignal;
@@ -864,7 +858,6 @@ public:
     unsigned int        SlotIndex() const       { return m_slot_index; }
     //@}
 
-    /** \name Mutators */ //@{
     void StartingChildDragDrop(const GG::Wnd* wnd, const GG::Pt& offset) override;
     void CancellingChildDragDrop(const std::vector<const GG::Wnd*>& wnds) override;
     void AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds,
@@ -880,7 +873,6 @@ public:
 
     void SetPolicy(const std::string& policy_name); //!< used to programmatically set the PolicyControl in this slot.
     void SetPolicy(const Policy* policy);           //!< used to programmatically set the PolicyControl in this slot.
-    //@}
 
     /** emitted when the contents of a slot are altered by the dragging
       * a PolicyControl in or out of the slot.  signal should be caught and the
@@ -1132,7 +1124,6 @@ public:
     std::vector<std::string> Policies() const; //!< returns vector of names of policies in slots of current shown design.  empty slots are represented with empty string
     //@}
 
-    /** \name Mutators */ //@{
     //void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
     void AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds, GG::Flags<GG::ModKey> mod_keys) override;
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
@@ -1149,7 +1140,6 @@ public:
     bool CanPolicyBeAdded(const Policy* policy) const;
     void ClearPolicies();   //!< removes all policies from government
     void ClearPolicy(const std::string& policy_name);
-    //@}
 
     mutable boost::signals2::signal<void (const Policy*, GG::Flags<GG::ModKey>)> PolicyClickedSignal;
 
