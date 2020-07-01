@@ -83,6 +83,6 @@ private:
     Pt                         m_hotspot;
 };
 
-} // namespace GG
+}
 
 #endif

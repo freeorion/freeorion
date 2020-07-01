@@ -139,7 +139,7 @@ private:
     MenuItem*         m_item_selected = nullptr;    ///< the menu item selected (0 if none)
 };
 
-} // namespace GG
+}
 
 
 #endif

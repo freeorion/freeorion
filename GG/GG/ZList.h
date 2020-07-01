@@ -112,6 +112,6 @@ private:
     mutable std::list<std::shared_ptr<Wnd>> m_list;
 };
 
-} // namespace GG
+}
 
 #endif

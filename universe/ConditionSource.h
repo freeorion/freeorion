@@ -27,6 +27,6 @@ private:
     bool Match(const ScriptingContext& local_context) const override;
 };
 
-} // namespace Condition
+}
 
 #endif // _ConditionSource_h_

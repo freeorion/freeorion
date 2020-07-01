@@ -344,9 +344,9 @@ private:
 
 typedef TextControl Label;
 
-} // namespace GG
+}
 
-// template implementations
+
 template <typename T>
 void GG::TextControl::operator>>(T& t) const
 {

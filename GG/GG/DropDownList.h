@@ -232,6 +232,6 @@ private:
     const std::shared_ptr<ModalListPicker> m_modal_picker;
 };
 
-} // namespace GG
+}
 
 #endif

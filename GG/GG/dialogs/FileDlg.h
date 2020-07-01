@@ -176,6 +176,6 @@ private:
     static boost::filesystem::path s_working_dir; ///< declared static so each instance of FileDlg opens up the same directory
 };
 
-} // namespace GG
+}
 
 #endif

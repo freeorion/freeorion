@@ -543,7 +543,7 @@ namespace { // file-scope constants and functions
         glPopClientAttrib();
         glEnable(GL_TEXTURE_2D);
     }
-} // namespace
+}
 
 
 namespace GG {
@@ -825,4 +825,4 @@ namespace GG {
                           (up ? DarkenClr(color) : LightenClr(color)),
                           corner_radius);
     }
-} // namespace GG
+}

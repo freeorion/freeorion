@@ -290,6 +290,6 @@ private:
     friend class Wnd;
 };
 
-} // namespace GG
+}
 
 #endif

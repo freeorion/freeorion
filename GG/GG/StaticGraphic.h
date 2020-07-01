@@ -105,6 +105,6 @@ private:
     Flags<GraphicStyle>             m_style;        ///< position of texture wrt the window area
 };
 
-} // namespace GG
+}
 
 #endif

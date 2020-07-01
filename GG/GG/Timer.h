@@ -83,6 +83,6 @@ private:
     unsigned int   m_last_fire;
 };
 
-} // namespace GG
+}
 
 #endif

@@ -635,7 +635,7 @@ private:
     friend class DropDownList; ///< allow complete access to DropDownList, which relies on ListBox to do its rendering
 };
 
-} // namespace GG
+}
 
 
 // template implementations

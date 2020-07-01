@@ -521,9 +521,9 @@ namespace spin_details {
     double div<double> (double dividend, double divisor) {return std::floor(dividend / divisor);}
     template <> inline
     long double div<long double> (long double dividend, long double divisor) {return std::floor(dividend / divisor);}
-} // namespace spin_details
+}
 
-} // namespace GG
+}
 
 #endif
 

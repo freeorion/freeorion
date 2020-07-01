@@ -427,6 +427,6 @@ private:
     bool                    m_render_outline;
 };
 
-} // namespace GG
+}
 
 #endif

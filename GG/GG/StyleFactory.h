@@ -192,6 +192,6 @@ public:
     static const std::string& DefaultFontName();
 };
 
-} // namespace GG
+}
 
 #endif

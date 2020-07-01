@@ -450,6 +450,6 @@ void Slider<T>::SlidEcho::operator()(T pos, T min, T max)
               << "(pos=" << pos << " min=" << min << " max=" << max << ")\n";
 }
 
-} // namespace GG
+}
 
 #endif

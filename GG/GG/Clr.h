@@ -183,7 +183,6 @@ inline bool operator<(const Clr& lhs, const Clr& rhs)
     return rhs.a < lhs.a;
 }
 
-} // namespace GG
+}
 
 #endif
-

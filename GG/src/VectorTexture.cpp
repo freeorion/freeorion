@@ -31,7 +31,7 @@ namespace {
 
 namespace rack {
     void svgDraw(NVGcontext *vg, NSVGimage *svg);
-} // namespace rack
+}
 
 
 class VectorTextureImpl {

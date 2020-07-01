@@ -260,6 +260,6 @@ private:
 /** Returns the singleton TextureManager instance. */
 GG_API TextureManager& GetTextureManager();
 
-} // namespace GG
+}
 
 #endif

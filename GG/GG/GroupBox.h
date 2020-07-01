@@ -89,6 +89,6 @@ private:
     bool                            m_set_client_corners_equal_to_box_corners = false;
 };
 
-} // namespace GG
+}
 
 #endif

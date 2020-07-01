@@ -91,6 +91,6 @@ private:
 GG_API VectorTextureManager& GetVectorTextureManager();
 
 
-} // namespace GG
+}
 
 #endif

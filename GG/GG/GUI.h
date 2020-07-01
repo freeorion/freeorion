@@ -493,6 +493,6 @@ std::shared_ptr<Font> GUI::GetFont(const std::string& font_filename, unsigned in
                                    CharSetIter first, CharSetIter last)
 { return GetFontManager().GetFont(font_filename, pts, file_contents, first, last); }
 
-} // namespace GG
+}
 
 #endif

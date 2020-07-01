@@ -58,6 +58,6 @@ private:
     bool m_make_resize_immediate_during_prerender;
 };
 
-} // namespace GG
+}
 
 #endif

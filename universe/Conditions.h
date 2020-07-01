@@ -1461,7 +1461,7 @@ private:
     std::unique_ptr<Condition> m_condition;
     std::string m_desc_stringtable_key;
 };
-} // namespace Condition
+}
 
 
 #endif // _Conditions_h_

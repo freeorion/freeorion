@@ -69,6 +69,6 @@ protected:
     bool m_disabled = false;    ///< whether or not this control is disabled
 };
 
-} // namespace GG
+}
 
 #endif

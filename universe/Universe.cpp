@@ -1190,7 +1190,7 @@ namespace {
             });
         }
     }
-} // namespace
+}
 
 void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsAndCausesVec>& source_effects_targets_causes,
                                     bool only_meter_effects) const

@@ -75,6 +75,6 @@ GG_API const UnicodeCharset* CharsetContaining(std::uint32_t c);
     exists. */
 GG_API const UnicodeCharset* CharsetWithName(const std::string& name);
 
-} // namespace GG
+}
 
 #endif

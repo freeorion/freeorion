@@ -2048,6 +2048,6 @@ void Operation<T>::SetTopLevelContent(const std::string& content_name) {
 }
 
 
-} // namespace ValueRef
+}
 
 #endif // _ValueRefs_h_

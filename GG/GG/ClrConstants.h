@@ -57,7 +57,7 @@ constexpr Clr CLR_DARK_BLUE = Clr(0, 0, 127, 255);
 constexpr Clr CLR_PURPLE = Clr(127, 0, 127, 255);
 constexpr Clr CLR_ORANGE = Clr(255, 127, 0, 255);
 
-} // namespace GG
+}
 
 #endif
 

@@ -46,6 +46,6 @@ extern GG_API const Alignment ALIGN_CENTER;   ///< Horizontally-centered.
 extern GG_API const Alignment ALIGN_LEFT;     ///< Aligned to left.
 extern GG_API const Alignment ALIGN_RIGHT;    ///< Aligned to right.
 
-} // namespace GG
+}
 
 #endif

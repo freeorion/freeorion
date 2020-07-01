@@ -474,6 +474,6 @@ typename std::enable_if<
 operator~(FlagType flag)
 { return ~Flags<FlagType>(flag); }
 
-} // namespace GG
+}
 
 #endif

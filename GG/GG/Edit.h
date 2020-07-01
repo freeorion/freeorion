@@ -241,6 +241,6 @@ CPSize GG_API NextWordEdgeFrom(const std::string& text,
                                bool search_right = true);
 
 
-} // namespace GG
+}
 
 #endif

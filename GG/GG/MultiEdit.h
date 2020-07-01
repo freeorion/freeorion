@@ -243,6 +243,6 @@ private:
     bool            m_ignore_adjust_scrolls = false;
 };
 
-} // namespace GG
+}
 
 #endif

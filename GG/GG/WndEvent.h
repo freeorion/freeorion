@@ -163,6 +163,6 @@ private:
     mutable std::map<const Wnd*, bool>          m_acceptable_drop_wnds;
 };
 
-} // namespace GG
+}
 
 #endif

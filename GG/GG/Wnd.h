@@ -1050,6 +1050,6 @@ private:
     friend class Timer; ///< Timer needs to be able to call HandleEvent
 };
 
-} // namespace GG
+}
 
 #endif

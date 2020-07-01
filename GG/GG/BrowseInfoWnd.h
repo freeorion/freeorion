@@ -148,6 +148,6 @@ private:
     unsigned int                    m_text_margin;
 };
 
-} // namespace GG
+}
 
 #endif

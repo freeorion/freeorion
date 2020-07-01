@@ -194,6 +194,6 @@ namespace GG {
         default_value = value + 1;
     }
 
-} // namespace GG
+}
 
 #endif

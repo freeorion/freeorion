@@ -869,7 +869,7 @@ namespace detail {
     };
 }
 
-} // namespace GG
+}
 
 
 // template implementations

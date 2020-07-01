@@ -265,6 +265,6 @@ private:
     std::size_t                                 m_first_tab_shown = 0;
 };
 
-} // namespace GG
+}
 
 #endif

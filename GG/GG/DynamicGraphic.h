@@ -236,6 +236,6 @@ private:
     Flags<GraphicStyle> m_style;
 };
 
-} // namespace GG
+}
 
 #endif

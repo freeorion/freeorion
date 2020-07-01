@@ -96,6 +96,6 @@ private:
     std::shared_ptr<Layout>     m_button_layout;
 };
 
-} // namespace GG
+}
 
 #endif

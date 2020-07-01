@@ -229,6 +229,6 @@ private:
     static std::vector<Clr>   s_custom_colors;
 };
 
-} // namespace GG
+}
 
 #endif

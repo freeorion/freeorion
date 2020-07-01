@@ -104,6 +104,6 @@ private:
             {return # class_name "::" # name ;}                         \
     };
 
-} // namespace GG
+}
 
 #endif

@@ -158,6 +158,6 @@ private:
     additionally signalled on Scroll::ScrolledAndStoppedSignal. */
 GG_API void SignalScroll(const Scroll& scroll, bool stopped);
 
-} // namespace GG
+}
 
 #endif
