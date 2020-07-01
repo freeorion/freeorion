@@ -59,6 +59,5 @@ void PopCenter::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_NVP(m_species_name);
 }
 
-#endif // _PopCenter_h_
 
-
+#endif

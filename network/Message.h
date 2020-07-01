@@ -453,4 +453,5 @@ FO_COMMON_API void ExtractSetAuthorizationRolesMessage(const Message &msg, Netwo
 
 FO_COMMON_API void ExtractPlayerInfoMessageData(const Message &msg, std::map<int, PlayerInfo>& players);
 
-#endif // _Message_h_
+
+#endif

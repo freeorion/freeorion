@@ -118,4 +118,5 @@ void CombatInfo::load(Archive & ar, const unsigned int version)
     combat_events.swap(           filtered_combat_events);
 }
 
-#endif // _CombatSystem_h_
+
+#endif

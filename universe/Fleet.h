@@ -182,4 +182,5 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-#endif // _Fleet_h_
+
+#endif

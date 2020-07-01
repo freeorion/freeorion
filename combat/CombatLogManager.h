@@ -76,4 +76,5 @@ FO_COMMON_API CombatLogManager& GetCombatLogManager();
   * is no avaiable log with that id. */
 FO_COMMON_API boost::optional<const CombatLog&> GetCombatLog(int log_id);
 
-#endif // _CombatLogManager_h_
+
+#endif

@@ -56,4 +56,5 @@ private:
     std::shared_ptr<GG::Label>          m_name;                 //!< the control that holds the name of the system;
 };
 
-#endif // _SystemIcon_h_
+
+#endif

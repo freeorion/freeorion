@@ -181,4 +181,5 @@ std::string LinkTaggedPresetText(const std::string& tag, const std::string& stri
 /// XML tags is handled by GG::Font
 void RegisterLinkTags();
 
-#endif // _LinkText_h_
+
+#endif

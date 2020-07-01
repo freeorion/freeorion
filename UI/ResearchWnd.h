@@ -64,4 +64,5 @@ private:
     boost::signals2::connection m_empire_connection;
 };
 
-#endif // _ResearchWnd_h_
+
+#endif

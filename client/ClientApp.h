@@ -254,4 +254,5 @@ protected:
     std::map<int, PlayerInfo>   m_player_info;
 };
 
-#endif // _ClientApp_h_
+
+#endif

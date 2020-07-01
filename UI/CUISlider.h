@@ -50,4 +50,5 @@ public:
     }
 };
 
-#endif // _CUISlider_h_
+
+#endif

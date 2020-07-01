@@ -2050,4 +2050,5 @@ void Operation<T>::SetTopLevelContent(const std::string& content_name) {
 
 }
 
-#endif // _ValueRefs_h_
+
+#endif

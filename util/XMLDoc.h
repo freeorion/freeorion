@@ -353,7 +353,8 @@ private:
     static void PushElem2(const char*, const char*);
     static void PopElem(const char*, const char*);
     static void AppendToText(const char* first, const char* last);
-    //! @}
+    //!@}
 };
 
-#endif // _XMLDoc_h_
+
+#endif

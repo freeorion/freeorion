@@ -91,4 +91,5 @@ private:
     bool                        m_init_flag;
 };
 
-#endif // _TechTreeWnd_h_
+
+#endif

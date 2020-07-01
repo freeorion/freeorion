@@ -100,4 +100,4 @@ FO_COMMON_API PolicyManager& GetPolicyManager();
 FO_COMMON_API const Policy* GetPolicy(const std::string& name);
 
 
-#endif // _Government_h_
+#endif

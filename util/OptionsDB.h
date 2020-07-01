@@ -476,4 +476,4 @@ template <>
 FO_COMMON_API std::vector<std::string> OptionsDB::Get<std::vector<std::string>>(const std::string& name) const;
 
 
-#endif // _OptionsDB_h_
+#endif

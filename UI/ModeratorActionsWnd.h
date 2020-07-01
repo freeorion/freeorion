@@ -68,4 +68,5 @@ private:
     std::shared_ptr<GG::Button>             m_remove_starlane_button;
 };
 
-#endif // _ModeratorActionsWnd_h_
+
+#endif

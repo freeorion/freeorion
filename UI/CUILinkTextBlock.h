@@ -44,4 +44,5 @@ private:
     std::shared_ptr<CUILinkTextMultiEdit> m_link_text;
 };
 
-#endif // CUILINKTEXTBLOCK_H
+
+#endif

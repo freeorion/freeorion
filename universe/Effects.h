@@ -807,4 +807,5 @@ private:
 };
 }
 
-#endif // _Effects_h_
+
+#endif

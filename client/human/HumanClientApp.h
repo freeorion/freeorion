@@ -187,4 +187,5 @@ private:
     boost::signals2::signal<void ()>    SaveGamesCompletedSignal;
 };
 
-#endif // _HumanClientApp_h_
+
+#endif

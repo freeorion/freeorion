@@ -51,4 +51,5 @@ const std::string GetPythonAuthDir();
 // Returns folder containing the Python chat scripts
 const std::string GetPythonChatDir();
 
-#endif // _ServerFramework_h_
+
+#endif

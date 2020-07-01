@@ -76,4 +76,5 @@ public:
 
 }
 
-#endif // TAGPARSER_H
+
+#endif

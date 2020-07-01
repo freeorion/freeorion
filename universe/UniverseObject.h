@@ -234,4 +234,5 @@ private:
 inline std::string DumpIndent(unsigned short ntabs = 1)
 { return std::string(ntabs * 4 /* conversion to size_t is safe */, ' '); }
 
-#endif // _UniverseObject_h_
+
+#endif

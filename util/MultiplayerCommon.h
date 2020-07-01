@@ -242,4 +242,4 @@ struct PlayerInfo {
 };
 
 
-#endif // _MultiplayerCommon_h_
+#endif

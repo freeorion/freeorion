@@ -588,4 +588,5 @@ private:
     ("BuildingManager", <checksum>) */
 FO_COMMON_API std::map<std::string, unsigned int> CheckSumContent();
 
-#endif // _Universe_h_
+
+#endif

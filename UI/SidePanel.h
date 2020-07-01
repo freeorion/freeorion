@@ -162,4 +162,5 @@ std::shared_ptr<const Ship> ValidSelectedColonyShip(int system_id);
 
 int                         AutomaticallyChosenColonyShip(int target_planet_id);
 
-#endif // _SidePanel_h_
+
+#endif

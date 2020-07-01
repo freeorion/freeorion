@@ -55,4 +55,5 @@ private:
 
 }
 
-#endif // TEXTBLOCK_H
+
+#endif

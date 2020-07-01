@@ -45,4 +45,5 @@ private:
 
     };
 
-#endif // COMBATLOGWND_H
+
+#endif

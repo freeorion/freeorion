@@ -62,4 +62,5 @@ private:
     std::shared_ptr<GG::Label>          m_version;
 };
 
-#endif // _IntroScreen_h_
+
+#endif

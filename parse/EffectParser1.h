@@ -50,4 +50,6 @@ namespace parse { namespace detail {
 
     }
 }
-#endif // _EffectParser1_h_
+
+
+#endif

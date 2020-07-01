@@ -80,4 +80,5 @@ void ResourcePool::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_NVP(m_connected_system_groups);
 }
 
-#endif // _ResourcePool_h_
+
+#endif

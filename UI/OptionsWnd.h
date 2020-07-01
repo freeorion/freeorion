@@ -89,4 +89,5 @@ private:
     SoundOptionsFeedback        m_sound_feedback;   // Enable and disable the sound when audio options are changed.
 };
 
-#endif // _OptionsWnd_h_
+
+#endif

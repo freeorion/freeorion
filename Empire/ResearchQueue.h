@@ -97,4 +97,5 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-#endif // _ResearchQueue_h_
+
+#endif

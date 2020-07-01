@@ -264,4 +264,4 @@ extern template FO_COMMON_API void serialize<freeorion_bin_iarchive>(freeorion_b
 extern template FO_COMMON_API void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, SpeciesManager&, unsigned int const);
 
 
-#endif // _Serialize_h_
+#endif

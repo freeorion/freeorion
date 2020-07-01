@@ -343,4 +343,5 @@ private:
     friend struct ShuttingDownServer;
 };
 
-#endif // _ServerApp_h_
+
+#endif

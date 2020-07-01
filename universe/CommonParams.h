@@ -55,4 +55,4 @@ struct FO_COMMON_API CommonParams {
 };
 
 
-#endif // _CommonParams_h_
+#endif

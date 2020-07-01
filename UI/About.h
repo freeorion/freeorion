@@ -25,4 +25,5 @@ private:
     std::string                     m_license_str;  //!< String containing the copyright license
 };
 
-#endif // _About_h_
+
+#endif

@@ -332,4 +332,5 @@ FO_COMMON_API std::tuple<
     std::vector<boost::uuids::uuid>>
 LoadShipDesignsAndManifestOrderFromParseResults(PredefinedShipDesignManager::ParsedShipDesignsType& parsed);
 
-#endif // _ShipDesign_h_
+
+#endif

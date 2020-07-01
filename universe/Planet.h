@@ -171,4 +171,4 @@ private:
 };
 
 
-#endif // _Planet_h_
+#endif

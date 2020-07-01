@@ -17,4 +17,5 @@
     }
  }
 
-#endif // _EffectParser5_h_
+
+#endif

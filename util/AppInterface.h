@@ -152,4 +152,5 @@ FO_COMMON_API extern const int INVALID_GAME_TURN;     ///< returned by CurrentGa
 FO_COMMON_API extern const int BEFORE_FIRST_TURN;     ///< returned by CurrentGameTurn if the galaxy is currently being set up
 FO_COMMON_API extern const int IMPOSSIBLY_LARGE_TURN; ///< a number that's almost assuredly larger than any real turn number that might come up
 
-#endif // _AppInterface_h_
+
+#endif

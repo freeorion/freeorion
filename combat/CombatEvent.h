@@ -75,4 +75,4 @@ struct FO_COMMON_API CombatEvent {
 };
 
 
-#endif // COMBATEVENT_H
+#endif

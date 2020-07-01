@@ -57,4 +57,5 @@ private:
     std::set<std::string>           m_hidden_sitrep_templates;
 };
 
-#endif // _SitRepPanel_h_
+
+#endif

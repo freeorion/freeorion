@@ -58,5 +58,5 @@ private:
     int                 m_max_aggression;
 };
 
-#endif // _AIClientApp_h_
 
+#endif

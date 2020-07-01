@@ -29,4 +29,5 @@ private:
 
 }
 
-#endif // _ConditionSource_h_
+
+#endif

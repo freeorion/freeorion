@@ -26,4 +26,5 @@ struct FO_COMMON_API All final : public Condition {
 
 }
 
-#endif // _ConditionAll_h_
+
+#endif

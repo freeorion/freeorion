@@ -107,4 +107,5 @@ FO_COMMON_API const std::vector<GG::Clr>& EmpireColors();
 /** Initialize empire colors from \p path */
 FO_COMMON_API void InitEmpireColors(const boost::filesystem::path& path);
 
-#endif // _EmpireManager_h_
+
+#endif

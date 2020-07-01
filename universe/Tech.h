@@ -298,4 +298,5 @@ FO_COMMON_API const Tech* GetTech(const std::string& name);
 /** returns a pointer to the tech category with the name \a name, or 0 if no such category exists */
 FO_COMMON_API const TechCategory* GetTechCategory(const std::string& name);
 
-#endif // _Tech_h_
+
+#endif

@@ -303,4 +303,5 @@ FO_COMMON_API SpeciesManager& GetSpeciesManager();
   * If no such Species exists, 0 is returned instead. */
 FO_COMMON_API const Species* GetSpecies(const std::string& name);
 
-#endif // _Species_h_
+
+#endif

@@ -144,4 +144,5 @@ private:
 
 FO_COMMON_API std::string NewMonsterName();
 
-#endif // _Ship_h_
+
+#endif

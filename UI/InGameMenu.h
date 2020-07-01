@@ -37,4 +37,5 @@ private:
     std::shared_ptr<GG::Button> m_resign_btn;
 };
 
-#endif // _InGameMenu_h_
+
+#endif

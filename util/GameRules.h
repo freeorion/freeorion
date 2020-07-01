@@ -157,4 +157,5 @@ private:
     friend FO_COMMON_API GameRules& GetGameRules();
 };
 
-#endif // _GameRules_h_
+
+#endif

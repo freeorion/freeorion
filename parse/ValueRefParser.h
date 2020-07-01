@@ -304,4 +304,5 @@ namespace parse {
     };
 }
 
-#endif // _ValueRefParser_h_
+
+#endif

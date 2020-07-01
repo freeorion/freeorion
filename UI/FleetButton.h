@@ -77,4 +77,5 @@ std::shared_ptr<GG::Texture> FleetBlockadedIcon(FleetButton::SizeType size_type)
 /* returns icon for indication fleet icon selection */
 std::shared_ptr<GG::Texture> FleetSelectionIndicatorIcon();
 
-#endif // _FleetButton_h_
+
+#endif

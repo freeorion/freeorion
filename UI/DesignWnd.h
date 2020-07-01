@@ -77,4 +77,5 @@ private:
     std::shared_ptr<MainPanel>                  m_main_panel;
 };
 
-#endif // _DesignWnd_h_
+
+#endif

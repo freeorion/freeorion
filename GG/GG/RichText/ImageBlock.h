@@ -79,4 +79,5 @@ private:
 
 }
 
-#endif // IMAGEBLOCK_H
+
+#endif

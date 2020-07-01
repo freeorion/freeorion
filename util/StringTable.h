@@ -194,4 +194,5 @@ private:
     bool m_initialized = false;
 };
 
-#endif // StringTable_h_
+
+#endif

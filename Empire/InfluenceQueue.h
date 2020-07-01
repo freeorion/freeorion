@@ -111,4 +111,5 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-#endif //  _InfluenceQueue_h_
+
+#endif

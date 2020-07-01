@@ -42,4 +42,5 @@ namespace parse { namespace detail {
     }
 }
 
-#endif // _ConditionParser1_h_
+
+#endif

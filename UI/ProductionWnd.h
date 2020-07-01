@@ -135,4 +135,5 @@ private:
     boost::signals2::connection m_empire_connection;
 };
 
-#endif // _ProductionWnd_h_
+
+#endif

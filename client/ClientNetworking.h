@@ -116,4 +116,5 @@ private:
     std::unique_ptr<Impl> const m_impl;
 };
 
-#endif // _ClientNetworking_h_
+
+#endif

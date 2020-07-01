@@ -182,4 +182,5 @@ private:
     friend class FleetUIManager;
 };
 
-#endif // _FleetWnd_h_
+
+#endif

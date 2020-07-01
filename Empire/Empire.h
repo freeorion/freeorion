@@ -568,4 +568,5 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-#endif // _Empire_h_
+
+#endif

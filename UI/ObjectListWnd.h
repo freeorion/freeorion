@@ -43,4 +43,5 @@ private:
     std::shared_ptr<GG::Button>     m_collapse_button;
 };
 
-#endif // _ObjectListWnd_h_
+
+#endif

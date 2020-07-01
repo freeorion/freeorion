@@ -608,4 +608,5 @@ public:
     void    Close();
 };
 
-#endif // _MapWnd_h_
+
+#endif

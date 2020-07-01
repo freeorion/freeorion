@@ -88,4 +88,5 @@ private:
     std::shared_ptr<GG::Label>              m_start_conditions_text;
 };
 
-#endif // _MultiPlayerLobbyWnd_h_
+
+#endif

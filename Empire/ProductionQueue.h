@@ -184,4 +184,5 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-#endif //  _ProductionQueue_h_
+
+#endif

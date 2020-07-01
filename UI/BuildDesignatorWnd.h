@@ -125,4 +125,5 @@ private:
     std::map<int, int>                          m_system_default_planets;   //!< map from system id to id of planet to auto select when viewing each system
 };
 
-#endif // _BuildDesignatorWnd_h_
+
+#endif

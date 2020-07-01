@@ -13,4 +13,5 @@ namespace FreeOrionPython {
     void WrapAI();
 }
 
-#endif // _AIWrapper_h_
+
+#endif

@@ -661,4 +661,5 @@ public:
     CUIPopupMenu(GG::X x, GG::Y y);
 };
 
-#endif // _CUIControls_h_
+
+#endif

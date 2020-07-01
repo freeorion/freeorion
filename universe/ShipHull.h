@@ -237,4 +237,4 @@ FO_COMMON_API auto GetShipHullManager() -> ShipHullManager&;
 FO_COMMON_API auto GetShipHull(const std::string& name) -> const ShipHull*;
 
 
-#endif // _ShipHull_h_
+#endif

@@ -60,4 +60,5 @@ FO_COMMON_API DiplomaticMessage EndAllianceDiplomaticMessage(int sender_empire_i
 FO_COMMON_API DiplomaticMessage CancelDiplomaticMessage(int sender_empire_id, int recipient_empire_id);
 FO_COMMON_API DiplomaticMessage RejectProposalDiplomaticMessage(int sender_empire_id, int recipient_empire_id);
 
-#endif // _Diplomacy_h_
+
+#endif

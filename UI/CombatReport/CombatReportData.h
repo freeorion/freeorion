@@ -54,4 +54,5 @@ public:
     void            Sort();                                                     // Sorts the units of this side in some sensible fashion
 };
 
-#endif // COMBATREPORTDATA_H
+
+#endif

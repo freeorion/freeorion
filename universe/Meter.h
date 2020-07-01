@@ -73,4 +73,5 @@ void Meter::serialize(Archive& ar, const unsigned int version)
     }
 }
 
-#endif // _Meter_h_
+
+#endif

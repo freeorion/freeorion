@@ -1464,4 +1464,4 @@ private:
 }
 
 
-#endif // _Conditions_h_
+#endif

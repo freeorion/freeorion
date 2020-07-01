@@ -212,4 +212,4 @@ FO_COMMON_API ShipPartManager& GetShipPartManager();
 FO_COMMON_API const ShipPart* GetShipPart(const std::string& name);
 
 
-#endif // _ShipPart_h_
+#endif

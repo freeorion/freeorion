@@ -176,4 +176,5 @@ private:
     GG::Pt                  m_preview_ul;
 };
 
-#endif // _GalaxySetupWnd_h_
+
+#endif

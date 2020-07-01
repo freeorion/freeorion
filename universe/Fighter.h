@@ -41,4 +41,5 @@ private:
     const ::Condition::Condition* m_combat_targets = nullptr;
 };
 
-#endif // _Fighter_h_
+
+#endif

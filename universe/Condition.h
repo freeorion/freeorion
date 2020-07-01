@@ -107,4 +107,5 @@ private:
 
 }
 
-#endif // _Condition_h_
+
+#endif

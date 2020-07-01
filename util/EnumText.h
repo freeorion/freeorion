@@ -21,4 +21,5 @@ FO_COMMON_API const std::string& TextForGalaxyShape(Shape shape);
 /// Returns a user readable string for an Aggression
 FO_COMMON_API const std::string& TextForAIAggression(Aggression a);
 
-#endif // _EnumText_h_
+
+#endif

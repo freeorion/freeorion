@@ -203,4 +203,4 @@ FO_COMMON_API auto GetBuildingTypeManager() -> BuildingTypeManager&;
 FO_COMMON_API auto GetBuildingType(const std::string& name) -> const BuildingType*;
 
 
-#endif // _BuildingType_h_
+#endif

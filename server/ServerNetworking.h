@@ -333,4 +333,5 @@ private:
     friend class ServerNetworking;
 };
 
-#endif // _ServerNetworking_h_
+
+#endif

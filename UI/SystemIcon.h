@@ -131,4 +131,5 @@ private:
     boost::signals2::connection     m_system_connection;
 };
 
-#endif // _SystemIcon_h_
+
+#endif

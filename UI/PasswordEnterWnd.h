@@ -30,6 +30,5 @@ private:
     std::shared_ptr<CUIButton>          m_cancel_bn;
 };
 
-#endif // _PasswordEnterDialog_h_
 
-
+#endif

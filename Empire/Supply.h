@@ -113,4 +113,5 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-#endif // _Supply_h_
+
+#endif

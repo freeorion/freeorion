@@ -62,4 +62,4 @@ private:
 };
 
 
-#endif // _Building_h_
+#endif

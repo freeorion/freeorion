@@ -37,4 +37,5 @@ void PopulationPool::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_NVP(m_pop_center_ids);
 }
 
-#endif //_PopulationPool_h_
+
+#endif

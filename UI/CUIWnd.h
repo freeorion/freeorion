@@ -233,4 +233,5 @@ private:
     static const int CONTROL_MARGIN;
 };
 
-#endif // _CUIWnd_h_
+
+#endif

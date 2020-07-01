@@ -239,4 +239,5 @@ namespace GG {
 /** Increases the given value when font size is larger than 12 */
 int FontBasedUpscale(int x);
 
-#endif // _ClientUI_h_
+
+#endif

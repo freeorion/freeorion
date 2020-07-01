@@ -96,4 +96,5 @@ void OrderSet::serialize(Archive& ar, const unsigned int version)
     }
 }
 
-#endif // _OrderSet_h_
+
+#endif

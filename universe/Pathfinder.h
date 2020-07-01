@@ -143,4 +143,5 @@ private:
     const std::unique_ptr<PathfinderImpl> pimpl;
 };
 
-#endif // _Pathfinder_h_
+
+#endif

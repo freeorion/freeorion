@@ -31,4 +31,5 @@ private:
     std::shared_ptr<MainPanel>      m_main_panel = nullptr;
 };
 
-#endif // _GovernmentWnd_h_
+
+#endif

@@ -72,4 +72,5 @@ private:
     bool                    m_low_priority = false; ///< true if this process is set to low priority
 };
 
-#endif // _Process_h_
+
+#endif

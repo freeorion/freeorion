@@ -54,4 +54,5 @@ private:
     std::shared_ptr<GG::Button>                         m_cancel_bn;
 };
 
-#endif // _ServerConnectWnd_h_
+
+#endif

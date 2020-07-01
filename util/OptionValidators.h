@@ -216,4 +216,5 @@ struct OrValidator : public Validator<T>
     const std::unique_ptr<Validator<T>> m_validator_b;
 };
 
-#endif // _OptionValidators_h_
+
+#endif

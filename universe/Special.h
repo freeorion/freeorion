@@ -115,4 +115,5 @@ private:
 
 FO_COMMON_API SpecialsManager& GetSpecialsManager();
 
-#endif // _Special_h_
+
+#endif

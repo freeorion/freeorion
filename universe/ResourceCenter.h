@@ -80,4 +80,5 @@ void ResourceCenter::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_last_turn_focus_changed_turn_initial);
 }
 
-#endif // _ResourceCenter_h_
+
+#endif

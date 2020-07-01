@@ -64,4 +64,5 @@ namespace detail {
     inline void PlayValueChangedSound::operator()(int) const {operator()(0.0);}
 }
 
-#endif // _CUISpin_h_
+
+#endif

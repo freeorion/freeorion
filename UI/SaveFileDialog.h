@@ -84,4 +84,5 @@ private:
     SaveFileDialog& operator=(const SaveFileDialog&);
 };
 
-#endif // _SaveFileDialog_h_
+
+#endif

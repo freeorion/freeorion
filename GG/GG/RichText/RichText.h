@@ -105,4 +105,5 @@ private:
 
 }
 
-#endif // RICHTEXT_H
+
+#endif
