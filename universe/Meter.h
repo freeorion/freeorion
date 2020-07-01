@@ -59,7 +59,7 @@ private:
 
 BOOST_CLASS_VERSION(Meter, 1)
 
-// template implementations
+
 template <typename Archive>
 void Meter::serialize(Archive& ar, const unsigned int version)
 {

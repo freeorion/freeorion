@@ -872,7 +872,6 @@ namespace detail {
 }
 
 
-// template implementations
 template <typename CharSetIter>
 GG::Font::Font(const std::string& font_filename, unsigned int pts,
                CharSetIter first, CharSetIter last) :

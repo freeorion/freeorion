@@ -159,7 +159,6 @@ private:
 };
 
 
-// template implementations
 template <typename T>
 Spin<T>::Spin(T value, T step, T min, T max, bool edits, const std::shared_ptr<Font>& font, Clr color,
               Clr text_color/* = CLR_BLACK*/) :

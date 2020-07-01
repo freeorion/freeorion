@@ -70,7 +70,7 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-// template implementations
+
 template <typename Archive>
 void ResourceCenter::serialize(Archive& ar, const unsigned int version)
 {

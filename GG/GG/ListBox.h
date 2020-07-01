@@ -638,7 +638,6 @@ private:
 }
 
 
-// template implementations
 template <typename RowType>
 bool GG::ListBox::DefaultRowCmp<RowType>::operator()(const GG::ListBox::Row& lhs, const GG::ListBox::Row& rhs, std::size_t column) const
 {

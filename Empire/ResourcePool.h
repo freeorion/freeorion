@@ -66,7 +66,7 @@ private:
 
 BOOST_CLASS_VERSION(ResourcePool, 1)
 
-// template implementations
+
 template <typename Archive>
 void ResourcePool::serialize(Archive& ar, const unsigned int version)
 {

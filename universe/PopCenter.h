@@ -52,7 +52,7 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-// template implementations
+
 template <typename Archive>
 void PopCenter::serialize(Archive& ar, const unsigned int version)
 {

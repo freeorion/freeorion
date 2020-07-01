@@ -138,7 +138,7 @@ private:
     bool                      m_dragging_tab;
 };
 
-// template implementations
+
 template <typename T>
 const T Slider<T>::INVALID_PAGE_SIZE = std::numeric_limits<T>::max();
 

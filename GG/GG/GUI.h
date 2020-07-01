@@ -472,7 +472,6 @@ GG_API bool MatchesOrContains(const std::shared_ptr<Wnd>& lwnd, const std::share
 GG_API Flags<ModKey> MassagedAccelModKeys(Flags<ModKey> mod_keys);
 
 
-// template implementations
 template <typename InIt>
 bool GUI::OrCombiner::operator()(InIt first, InIt last) const
 {
