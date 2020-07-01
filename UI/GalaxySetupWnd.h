@@ -19,9 +19,7 @@ public:
     GameRulesPanel(GG::X w = GG::X1, GG::Y h = GG::Y1);
     void CompleteConstruction() override;
 
-    /** \name Accessors*/ //!@{
     std::map<std::string, std::string> GetRulesAsStrings() const;
-    //!@}
 
     mutable boost::signals2::signal<void ()> SettingsChangedSignal;
 
@@ -64,7 +62,6 @@ public:
 
     void CompleteConstruction() override;
 
-    /** \name Accessors*/ //!@{
     const std::string&              GetSeed() const;                //!< Returns string version of seed. This value is converted to a number or (if that fails) hashed to get the actual seed value.
     int                             Systems() const;                //!< Returns the number of star systems to use in generating the galaxy
     Shape                           GetShape() const;               //!< Returns the shape of the galaxy
@@ -84,7 +81,6 @@ public:
 
     /** the image changed signal object for this GalaxySetupPanel */
     mutable boost::signals2::signal<void (std::shared_ptr<GG::Texture>)> ImageChangedSignal;
-    //!@}
 
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
     void Render() override {}
@@ -133,7 +129,6 @@ public:
     GalaxySetupWnd();
     void CompleteConstruction() override;
 
-    /** \name Accessors*/ //!@{
     /** returns true iff the dialog is finished running and it was closed with the "OK" button */
     bool                    EndedWithOk() const {return m_done && m_ended_with_ok;}
 
@@ -144,7 +139,6 @@ public:
     int                     NumberAIs() const;
     std::map<std::string, std::string>
                             GetRulesAsStrings() const;
-    //!@}
 
     void Render() override;
     void KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;

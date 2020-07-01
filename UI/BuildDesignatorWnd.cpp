@@ -616,13 +616,11 @@ public:
     BuildSelector(const std::string& config_name = "");
     void CompleteConstruction() override;
 
-    /** \name Accessors */ //@{
     /** returns set of BulldType shown in this selector */
     const std::set<BuildType>&   GetBuildTypesShown() const;
 
     /** .first -> available items; .second -> unavailable items */
     const std::pair<bool, bool>& GetAvailabilitiesShown() const;
-    //@}
 
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 

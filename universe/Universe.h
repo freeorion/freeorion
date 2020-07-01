@@ -110,7 +110,6 @@ public:
     Universe();
     virtual ~Universe();
 
-    /** \name Accessors */ //@{
     /** Returns objects in this Universe. */
     const ObjectMap&        Objects() const { return m_objects; }
     ObjectMap&              Objects()       { return m_objects; }
@@ -184,7 +183,6 @@ public:
     GetStatRecords() const { return m_stat_records; }
 
     mutable UniverseObjectDeleteSignalType UniverseObjectDeleteSignal; ///< the state changed signal object for this UniverseObject
-    //@}
 
     /** Inserts \a ship_design into the universe. Return true on success. The
         ship design's id will be the newly assigned id.

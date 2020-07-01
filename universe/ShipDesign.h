@@ -80,7 +80,6 @@ public:
     /** Convert a parsed ship design and do any required verification. */
     ShipDesign(const ParsedShipDesign& design);
 
-    /** \name Accessors */ //@{
     int                             ID() const  { return m_id; }    ///< returns id number of design
     /** returns name of design.  if \a stringtable_lookup is true and the
       * design was constructed specifying name_desc_in_stringtable true,
@@ -163,7 +162,6 @@ public:
     unsigned int                    GetCheckSum() const;
 
     friend FO_COMMON_API bool operator ==(const ShipDesign& first, const ShipDesign& second);
-    //@}
 
     bool                            ProductionLocation(int empire_id, int location_id) const;   ///< returns true iff the empire with ID empire_id can produce this design at the location with location_id
 

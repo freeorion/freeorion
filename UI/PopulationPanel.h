@@ -19,9 +19,7 @@ public:
     ~PopulationPanel();
     void CompleteConstruction() override;
 
-    /** \name Accessors */ //@{
     int PopCenterID() const { return m_popcenter_id; }
-    //@}
 
     void PreRender() override;
 

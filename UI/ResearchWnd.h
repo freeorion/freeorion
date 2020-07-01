@@ -16,10 +16,8 @@ public:
     ~ResearchWnd();
     void CompleteConstruction() override;
 
-    /** \name Accessors */ //@{
     int     ShownEmpireID() const;
     bool    PediaVisible();
-    //@}
 
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 

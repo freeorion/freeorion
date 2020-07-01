@@ -67,7 +67,6 @@ public:
 
     virtual ~Texture();
 
-    /** \name Accessors */ ///@{
     const boost::filesystem::path&  Path() const;   ///< returns the file path from which this texture was loaded (default / empty if this texture was not loaded from a file)
 
     GLenum           WrapS() const;             ///< returns S-wrap mode associated with this opengl texture
@@ -90,7 +89,6 @@ public:
     /** Blit default portion of texture unscaled to \a pt (upper left
         corner)*/
     void OrthoBlit(const Pt& pt) const;
-    //@}
 
     // intialization functions
     /** Frees any currently-held memory and loads a texture from file \a
@@ -175,7 +173,6 @@ public:
 
     virtual ~SubTexture();
 
-    /** \name Accessors */ ///@{
     bool             Empty() const;     ///< returns true if this object has no associated GG::Texture
     const GLfloat*   TexCoords() const; ///< texture coordinates to use when blitting this sub-texture
     X                Width() const;     ///< width of sub-texture in pixels
@@ -189,7 +186,6 @@ public:
     /** Blit sub-texture unscaled to \a pt (upper left corner) \see
         GG::Texture::OrthoBlit*/
     void OrthoBlit(const Pt& pt) const;
-    //@}
 
     void Clear();
 
@@ -225,9 +221,7 @@ private:
 class GG_API TextureManager
 {
 public:
-    /** \name Accessors */ ///@{
     const std::map<std::string, std::shared_ptr<Texture>>& Textures() const;
-    //@}
 
     /** Stores a pre-existing GG::Texture in the manager's texture pool, and
         returns a shared_ptr to it. \warning Calling code <b>must not</b>

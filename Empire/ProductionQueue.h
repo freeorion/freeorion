@@ -105,7 +105,6 @@ struct FO_COMMON_API ProductionQueue {
 
     ProductionQueue(int empire_id);
 
-    /** \name Accessors */ //@{
     int     ProjectsInProgress() const;         ///< Returns the number of production projects currently (perhaps partially) funded.
     float   TotalPPsSpent() const;              ///< Returns the number of PPs currently spent on the projects in this queue.
     int     EmpireID() const { return m_empire_id; }

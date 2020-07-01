@@ -19,9 +19,7 @@ public:
     ~ResourcePanel();
     void CompleteConstruction() override;
 
-    /** \name Accessors */ //@{
     int ResourceCenterID() const { return m_rescenter_id; }
-    //@}
 
     void PreRender() override;
 

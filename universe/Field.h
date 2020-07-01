@@ -14,7 +14,6 @@ namespace Effect {
 /** a class representing a region of space */
 class FO_COMMON_API Field : public UniverseObject {
 public:
-    /** \name Accessors */ //@{
     std::set<std::string>   Tags() const override;
     bool                    HasTag(const std::string& name) const override;
 
@@ -35,7 +34,6 @@ public:
     bool                InField(double x, double y) const;
 
     std::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
-    //@}
 
     void Copy(std::shared_ptr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES) override;
 

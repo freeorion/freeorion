@@ -39,7 +39,6 @@ public:
 
     ~FocusType();
 
-    /** \name Accessors */ //@{
     const std::string&          Name() const        { return m_name; }          ///< returns the name for this focus type
     const std::string&          Description() const { return m_description; }   ///< returns a text description of this focus type
     const Condition::Condition* Location() const    { return m_location.get(); }///< returns the condition that determines whether an UniverseObject can use this FocusType
@@ -53,7 +52,6 @@ public:
       * the parsed content is consistent without sending it all between
       * clients and server. */
     unsigned int GetCheckSum() const;
-    //@}
 
 private:
     std::string                                 m_name;
@@ -80,7 +78,6 @@ public:
 
     ~Species();
 
-    /** \name Accessors */ //@{
     const std::string&              Name() const                        { return m_name; }                  ///< returns the unique name for this type of species
     const std::string&              Description() const                 { return m_description; }           ///< returns a text description of this type of species
     /** returns a text description of this type of species */
@@ -119,7 +116,6 @@ public:
       * the parsed content is consistent without sending it all between
       * clients and server. */
     unsigned int                    GetCheckSum() const;
-    //@}
 
     void AddHomeworld(int homeworld_id);
     void RemoveHomeworld(int homeworld_id);
@@ -172,7 +168,6 @@ public:
     typedef boost::filter_iterator<PlayableSpecies, iterator>   playable_iterator;
     typedef boost::filter_iterator<NativeSpecies, iterator>     native_iterator;
 
-    /** \name Accessors */ //@{
     /** returns the building type with the name \a name; you should use the
       * free function GetSpecies() instead, mainly to save some typing. */
     const Species*      GetSpecies(const std::string& name) const;
@@ -246,7 +241,6 @@ public:
       * the parsed content is consistent without sending it all between
       * clients and server. */
     unsigned int GetCheckSum() const;
-    //@}
 
     /** sets all species to have no homeworlds.  this is useful when generating
       * a new game, when any homeworlds species had in the previous game should

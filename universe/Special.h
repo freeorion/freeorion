@@ -39,7 +39,6 @@ public:
 
     ~Special();
 
-    /** \name Accessors */ //@{
     const std::string&                  Name() const            { return m_name; }          ///< returns the unique name for this type of special
     std::string                         Description() const;                                ///< returns a text description of this type of special
     std::string                         Dump(unsigned short ntabs = 0) const;               ///< returns a data file format representation of this object
@@ -64,7 +63,6 @@ public:
       * the parsed content is consistent without sending it all between
       * clients and server. */
     unsigned int GetCheckSum() const;
-    //@}
 
 private:
     void Init();
@@ -96,12 +94,10 @@ public:
     SpecialsManager();
     ~SpecialsManager();
 
-    /** \name Accessors */ //@{
     int                         NumSpecials() const { return m_specials.size(); }
     std::vector<std::string>    SpecialNames() const;
     const Special*              GetSpecial(const std::string& name) const;
     unsigned int                GetCheckSum() const;
-    //@}
 
     /** Sets types to the value of \p future. */
     void SetSpecialsTypes(Pending::Pending<SpecialsTypeMap>&& future);

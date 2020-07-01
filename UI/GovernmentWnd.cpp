@@ -207,10 +207,8 @@ public:
     explicit PolicyControl(const Policy* policy);
     void CompleteConstruction() override;
 
-    /** \name Accessors */ //@{
     const std::string&  PolicyName() const  { return m_policy ? m_policy->Name() : EMPTY_STRING; }
     const Policy*       GetPolicy() const   { return m_policy; }
-    //@}
 
     void Render() override;
 
@@ -301,10 +299,8 @@ public:
 
     explicit PoliciesListBox(const AvailabilityManager& availabilities_state);
 
-    /** \name Accessors */ //@{
     const std::set<std::string>&    GetCategoriesShown() const;
     const AvailabilityManager&      AvailabilityState() const { return m_availabilities_state; }
-    //@}
 
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
     void AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds,
@@ -851,12 +847,10 @@ public:
                       unsigned int slot_index);
     void CompleteConstruction() override;
 
-    /** \name Accessors */ //@{
     const std::string&  SlotCategory() const    { return m_slot_category; }
     const Policy*       GetPolicy() const;
     int                 CategoryIndex() const   { return m_category_index; }
     unsigned int        SlotIndex() const       { return m_slot_index; }
-    //@}
 
     void StartingChildDragDrop(const GG::Wnd* wnd, const GG::Pt& offset) override;
     void CancellingChildDragDrop(const std::vector<const GG::Wnd*>& wnds) override;
@@ -1120,9 +1114,7 @@ public:
     MainPanel(GG::X w, GG::Y h);
     void CompleteConstruction() override;
 
-    /** \name Accessors */ //@{
     std::vector<std::string> Policies() const; //!< returns vector of names of policies in slots of current shown design.  empty slots are represented with empty string
-    //@}
 
     //void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
     void AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds, GG::Flags<GG::ModKey> mod_keys) override;

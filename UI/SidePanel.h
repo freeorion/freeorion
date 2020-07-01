@@ -24,7 +24,6 @@ public:
     void CompleteConstruction() override;
     ~SidePanel();
 
-    /** \name Accessors */ //@{
     bool InWindow(const GG::Pt& pt) const override;
 
     GG::Pt ClientUpperLeft() const override;
@@ -40,7 +39,6 @@ public:
     /** Returns whether this SidePanel contains an object with the indicated
       * \a object_id that can be selected within the SidePanel. */
     bool                PlanetSelectable(int planet_id) const;
-    //@}
 
     void PreRender() override;
 

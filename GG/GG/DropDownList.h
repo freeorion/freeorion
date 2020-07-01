@@ -83,7 +83,6 @@ public:
     DropDownList(size_t num_shown_elements, Clr color);
     ~DropDownList();
 
-    /** \name Accessors */ ///@{
     iterator        CurrentItem() const;            ///< returns the currently selected list item (returns end() if none is selected)
     std::size_t     CurrentItemIndex() const;       ///< returns the position of the currently selected list item within the list (returns -1 if none is selected)
 
@@ -137,7 +136,6 @@ public:
     mutable SelChangedSignalType SelChangedWhileDroppedSignal;
 
     DropDownOpenedSignalType DropDownOpenedSignal;
-    //@}
 
     void PreRender() override;
     void Render() override;

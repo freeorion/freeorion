@@ -171,7 +171,6 @@ public:
     /** Returns the singelton instance of this class. */
     static FlagSpec& instance();
 
-    /** \name Accessors */ ///@{
     /** Returns true iff FlagSpec contains \a flag. */
     bool contains(FlagType flag) const
     { return m_flags.count(flag) != 0; }
@@ -209,7 +208,6 @@ public:
         }
         throw UnknownString("Could not find flag corresponding to unknown string");
     }
-    //@}
 
     /** Adds \a flag, with stringification string \a name, to the FlagSpec.
         If \a permanent is true, this flag becomes non-removable.  Alls flags
@@ -302,7 +300,6 @@ public:
     }
     //@}
 
-    /** \name Accessors */ ///@{
     /** Conversion to bool, so that a Flags object can be used as a boolean
         test.  It is convertible to true when it contains one or more flags,
         and convertible to false otherwise. */
@@ -319,7 +316,6 @@ public:
         associative containers only; it is otherwise meaningless. */
     bool operator<(Flags<FlagType> rhs) const
     { return m_flags < rhs.m_flags; }
-    //@}
 
     /** Performs a bitwise-or of *this and \a rhs, placing the result in *this. */
     Flags<FlagType>& operator|=(Flags<FlagType> rhs)

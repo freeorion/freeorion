@@ -15,9 +15,7 @@ public:
     ~BuildingsPanel();
     void CompleteConstruction() override;
 
-    /** \name Accessors */ //@{
     int PlanetID() const { return m_planet_id; }
-    //@}
 
     void PreRender() override;
 

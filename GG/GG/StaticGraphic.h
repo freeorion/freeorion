@@ -73,7 +73,6 @@ public:
                            Flags<GraphicStyle> style = GRAPHIC_NONE,
                            Flags<WndFlag> flags = NO_WND_FLAGS);
 
-    /** \name Accessors */ ///@{
     /** Returns the style of the StaticGraphic \see GraphicStyle */
     Flags<GraphicStyle> Style() const;
 
@@ -86,7 +85,6 @@ public:
     const std::shared_ptr<VectorTexture>& GetVectorTexture() const;
 
     const boost::filesystem::path& GetTexturePath() const;
-    //@}
 
     void Render() override;
 

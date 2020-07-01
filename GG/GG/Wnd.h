@@ -368,7 +368,6 @@ public:
         need a fully formed weak_from_this() (e.g. to call AttachChild()) to be correctly constructed. */
     virtual void CompleteConstruction() {};
 
-    /** \name Accessors */ ///@{
     /** Returns true iff a click over this window does not pass through.  Note
         that this also determines whether a mouse-over will detect this window
         or the ones under it. */
@@ -752,8 +751,6 @@ public:
 
     /** Sets the currently-installed style factory. */
     void SetStyleFactory(const std::shared_ptr<StyleFactory>& factory);
-    //@}
-
 
     /** Returns the single time to place in the browse modes during Wnd
         construction. */
@@ -814,12 +811,10 @@ protected:
         creation flags. */
     Wnd(X x, Y y, X w, Y h, Flags<WndFlag> flags = INTERACTIVE | DRAGABLE);
 
-    /** \name Accessors */ ///@{
     /** Returns the states the Wnd is in, with respect to drag-and-drop
         operations.  Wnds may wish to consider the current state when
         rendering to provide visual feedback to the user. */
     DragDropRenderingState GetDragDropRenderingState() const;
-    //@}
 
     /** Respond to left button down msg.  A window receives this whenever any
         input device button changes from up to down while over the window.

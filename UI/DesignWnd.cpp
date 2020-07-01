@@ -1213,10 +1213,8 @@ public:
     PartControl(const ShipPart* part);
     void CompleteConstruction() override;
 
-    /** \name Accessors */ //@{
     const ShipPart*     Part() const { return m_part; }
     const std::string&  PartName() const { return m_part ? m_part->Name() : EMPTY_STRING; }
-    //@}
 
     void Render() override;
     void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
@@ -1307,11 +1305,9 @@ public:
 
     explicit PartsListBox(const AvailabilityManager& availabilities_state);
 
-    /** \name Accessors */ //@{
     const std::set<ShipPartClass>&  GetClassesShown() const;
     const AvailabilityManager&      AvailabilityState() const { return m_availabilities_state; }
     bool                            GetShowingSuperfluous() const { return m_show_superfluous_parts; }
-    //@}
 
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
     void AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds,
@@ -2150,9 +2146,6 @@ public:
                  const boost::optional<std::string>& empty_prompt = boost::none);
     void CompleteConstruction() override;
 
-    /** \name Accessors */ //@{
-    //@}
-
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
     void ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const GG::Wnd* destination) override;
     virtual void QueueItemMoved(const GG::ListBox::iterator& row_it, const GG::ListBox::iterator& original_position_it)
@@ -2238,14 +2231,12 @@ protected:
     /** If \p wnd is a valid dragged child return a replacement row.  Otherwise return nullptr. */
     virtual std::shared_ptr<Row> ChildrenDraggedAwayCore(const GG::Wnd* const wnd) = 0;
 
-    /** \name Accessors for derived classes. */ //@{
     int EmpireID() const { return m_empire_id_shown; }
 
     const AvailabilityManager& AvailabilityState() const
     { return m_availabilities_state; }
 
     GG::Pt  ListRowSize();
-    //@}
 
     virtual void BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
     {}
@@ -3552,12 +3543,10 @@ public:
     SlotControl(double x, double y, ShipSlotType slot_type);
     void CompleteConstruction() override;
 
-    /** \name Accessors */ //@{
     ShipSlotType    SlotType() const;
     double          XPositionFraction() const;
     double          YPositionFraction() const;
     const ShipPart* GetPart() const;
-    //@}
 
     void StartingChildDragDrop(const GG::Wnd* wnd, const GG::Pt& offset) override;
     void CancellingChildDragDrop(const std::vector<const GG::Wnd*>& wnds) override;
@@ -3872,7 +3861,6 @@ public:
     MainPanel(const std::string& config_name);
     void CompleteConstruction() override;
 
-    /** \name Accessors */ //@{
     /** If editing a current design return a ShipDesign* otherwise boost::none. */
     boost::optional<const ShipDesign*> EditingCurrentDesign() const;
     /** If editing a saved design return a ShipDesign* otherwise boost::none. */
@@ -3895,7 +3883,6 @@ public:
     /** If a design with the same hull and parts is registered with the empire then return the
         design, otherwise return boost::none. */
     boost::optional<const ShipDesign*>        CurrentDesignIsRegistered();
-    //@}
 
     void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
 

@@ -17,7 +17,6 @@ public:
     ~FieldIcon();
     void CompleteConstruction() override;
 
-    //! \name Accessors //!@{
     /** Checks to see if point lies inside in-system fleet buttons before
         checking parent InWindow method. */
     bool InWindow(const GG::Pt& pt) const override;
@@ -25,7 +24,6 @@ public:
 
     /** Returns the field texture. */
     const std::shared_ptr<GG::Texture>& FieldTexture() const;
-    //!@}
 
     void LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
     void LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys) override;

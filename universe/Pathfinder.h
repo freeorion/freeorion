@@ -26,8 +26,6 @@ public:
     Pathfinder();
     virtual ~Pathfinder();
 
-    /** \name Accessors */ //@{
-
     /** Returns the straight-line distance between the objects with the given
       * IDs. \throw std::out_of_range This function will throw if either object
       * ID is out of range. */
@@ -129,8 +127,6 @@ public:
     /** Returns the id of the System object that is closest to the specified
       * (\a x, \a y) location on the map, by direct-line distance. */
     int                                     NearestSystemTo(double x, double y) const;
-
-    //@}
 
     /** Fills pathfinding data structure and determines least jumps distances
       * between systems for the empire with id \a for_empire_id or uses the

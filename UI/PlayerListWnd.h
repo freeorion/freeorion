@@ -12,9 +12,7 @@ public:
     PlayerListWnd(const std::string& config_name);
     void CompleteConstruction() override;
 
-    //! \name Accessors //@{
     std::set<int>   SelectedPlayerIDs() const;
-    //@}
 
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 

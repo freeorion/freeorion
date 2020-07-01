@@ -13,10 +13,8 @@ public:
     SitRepPanel(const std::string& config_name = "");
     void CompleteConstruction() override;
 
-    /** \name Accessors */ //@{
     std::set<std::string>   HiddenSitRepTemplates() const { return m_hidden_sitrep_templates; }
     int                     NumVisibleSitrepsThisTurn() const;
-    //@}
 
     void KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
 

@@ -48,7 +48,6 @@ struct FO_COMMON_API ResearchQueue {
         m_empire_id(empire_id)
     {}
 
-    /** \name Accessors */ //@{
     bool                        InQueue(const std::string& tech_name) const;///< Returns true iff \a tech is in this queue.
     bool                        Paused(const std::string& tech_name) const; ///< Returns true iff \a tech is in this queue and paused.
     bool                        Paused(int idx) const;                      ///< Returns true iff there are at least \a idx - 1 items in the queue and item with index \a idx is paused
@@ -65,7 +64,6 @@ struct FO_COMMON_API ResearchQueue {
     const_iterator  end() const;
     const_iterator  find(const std::string& tech_name) const;
     const Element&  operator[](int i) const;
-    //@}
 
     /** Recalculates the RPs spent on and number of turns left for each project
       * in the queue.  Also determines the number of projects in prgress, and

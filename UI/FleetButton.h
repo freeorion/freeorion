@@ -28,13 +28,11 @@ public:
     void CompleteConstruction() override;
     virtual ~FleetButton();
 
-    /** \name Accessors */ //@{
     /** Returns true if \a pt is within or over the button. */
     bool InWindow(const GG::Pt& pt) const override;
 
     const std::vector<int>& Fleets() const      { return m_fleets; }    ///< returns the fleets represented by this control
     bool                    Selected() const    { return m_selected; }  ///< returns whether this button has been marked selected
-    //@}
 
     void MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
 

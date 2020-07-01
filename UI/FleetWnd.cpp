@@ -608,12 +608,10 @@ namespace {
         ShipDataPanel(GG::X w, GG::Y h, int ship_id);
         ~ShipDataPanel();
 
-        //! \name Accessors //@{
         /** Excludes border from the client area. */
         GG::Pt ClientUpperLeft() const override;
         /** Excludes border from the client area. */
         GG::Pt ClientLowerRight() const override;
-        //@}
 
         /** Renders black panel background, border with color depending on the
          *current state and a background for the ship's name text. */

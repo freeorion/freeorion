@@ -34,8 +34,6 @@ public:
 
     ServerApp& operator=(IApp&&) = delete;
 
-    /** \name Accessors */ //@{
-
     /** Returns a ClientApp pointer to the singleton instance of the app. */
     static ServerApp* GetApp();
     Universe& GetUniverse() override;
@@ -92,8 +90,6 @@ public:
     bool IsTurnExpired() const;
 
     bool IsHaveWinner() const;
-    //@}
-
 
     void    operator()();               ///< external interface to Run()
 

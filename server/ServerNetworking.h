@@ -76,7 +76,6 @@ public:
 
     ~ServerNetworking();
 
-    /** \name Accessors */ //@{
     /** Returns true if size() == 0. */
     bool empty() const;
 
@@ -128,7 +127,6 @@ public:
 
     /** Returns count of stored cookies so we don't collide with reserved player names. */
     int GetCookiesSize() const;
-    //@}
 
     /** Sends a synchronous message \a message to the all established players. */
     void SendMessageAll(const Message& message);
@@ -217,7 +215,6 @@ class PlayerConnection :
 public:
     ~PlayerConnection();
 
-    /** \name Accessors */ //@{
     /** Returns true if EstablishPlayer() successfully has been called on this
         connection. */
     bool EstablishedPlayer() const;
@@ -255,7 +252,6 @@ public:
 
     /** Get cookie associated with this connection. */
     boost::uuids::uuid Cookie() const;
-    //@}
 
     /** Starts the connection reading incoming messages on its socket. */
     void Start();

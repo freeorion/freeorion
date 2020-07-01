@@ -16,13 +16,11 @@ public:
 
     virtual ~ModeratorActionsWnd();
 
-    /** \name Accessors */ //@{
     ModeratorActionSetting  SelectedAction() const;
     PlanetType              SelectedPlanetType() const;
     PlanetSize              SelectedPlanetSize() const;
     StarType                SelectedStarType() const;
     int                     SelectedEmpire() const;
-    //!@}
 
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 

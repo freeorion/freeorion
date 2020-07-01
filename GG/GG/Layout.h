@@ -104,7 +104,6 @@ public:
     Layout(X x, Y y, X w, Y h, std::size_t rows, std::size_t columns,
            unsigned int border_margin = 0, unsigned int cell_margin = INVALID_CELL_MARGIN);
 
-    /** \name Accessors */ ///@{
     Pt MinUsableSize() const override;
 
     std::size_t      Rows() const;
@@ -129,7 +128,6 @@ public:
     //! used if RenderOutline() returns true).  This is sometimes useful for
     //! debugging purposes
     Clr    OutlineColor() const;
-    //@}
 
     void StartingChildDragDrop(const Wnd* wnd, const Pt& offset) override;
     void CancellingChildDragDrop(const std::vector<const Wnd*>& wnds) override;

@@ -44,7 +44,6 @@ public:
     ClientNetworking();
     ~ClientNetworking();
 
-    /** \name Accessors */ //@{
     /** Returns true iff the client is full duplex connected to the server. */
     bool IsConnected() const;
 
@@ -68,7 +67,6 @@ public:
 
     /** Returns address of multiplayer server entered by player. */
     const std::string& Destination() const;
-    //@}
 
     /** Returns a list of the addresses and names of all servers on the Local
         Area Network. */

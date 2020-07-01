@@ -121,7 +121,6 @@ public:
     WndEvent(EventType type, const std::string* text);
     explicit WndEvent(EventType type);
 
-    /** \name Accessors */ ///@{
     EventType                   Type() const;           ///< returns the type of the WndEvent
     const Pt&                   Point() const;          ///< returns the point at which the event took place, if any
     Key                         GetKey() const;         ///< returns the key pressed or released in the WndEvent, if any
@@ -142,7 +141,6 @@ public:
     const std::map<const Wnd* const, Pt>&   DragDropWnds() const;   ///< returns the drag-and-drop wnds represented by the WndEvent, if any
     std::vector<std::shared_ptr<Wnd>>&          GetDragDropWnds() const;
     std::map<const Wnd*, bool>& GetAcceptableDropWnds() const;
-    //@}
 
 private:
     EventType                       m_type;

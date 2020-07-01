@@ -46,7 +46,6 @@ public:
     ~OverlayWnd();
     void CompleteConstruction() override;
 
-    /** \name Accessors */ ///@{
     Pt MinUsableSize() const override;
 
     /** Returns true iff NumWnds() == 0. */
@@ -62,7 +61,6 @@ public:
         currently shown.  NO_WND is returned if there is no Wnd currently
         visible. */
     std::size_t  CurrentWndIndex() const;
-    //@}
 
     /** Adds \a wnd to the sequence of Wnds in this OverlayWnd, with name \a name.
         \a name can be used later to remove the Wnd (\a name is not checked
@@ -111,7 +109,6 @@ public:
            Clr color, Clr text_color = CLR_BLACK);
     void CompleteConstruction() override;
 
-    /** \name Accessors */ ///@{
     Pt MinUsableSize() const override;
 
     /** Returns true iff NumWnds() == 0. */
@@ -127,7 +124,6 @@ public:
         currently shown.  NO_WND is returned if there is no Wnd currently
         visible. */
     std::size_t     CurrentWndIndex() const;
-    //@}
 
     /** Adds \a wnd to the sequence of Wnds in this TabWnd, with name \a name.
         \a name can be used later to remove the Wnd (\a name is not checked
@@ -156,11 +152,9 @@ public:
     static const std::size_t NO_WND;
 
 protected:
-    /** \name Accessors */ ///@{
     /** Returns the set of Wnds currently controlled by this TabWnd, indexed
         by name. */
     const std::map<std::string, Wnd*>&  WndNames() const;
-    //@}
 
 private:
     void    TabChanged(std::size_t tab_index, bool signal);
@@ -189,7 +183,6 @@ public:
     void CompleteConstruction() override;
 public:
 
-    /** \name Accessors */ ///@{
     Pt MinUsableSize() const override;
 
     /** Returns true iff NumWnds() == 0. */
@@ -205,7 +198,6 @@ public:
 
     /** Returns the color used to render the text in this TabBar. */
     Clr             TextColor() const;
-    //@}
 
     void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys) override;
     void SizeMove(const Pt& ul, const Pt& lr) override;
@@ -239,14 +231,11 @@ public:
     static const std::size_t NO_TAB;
 
 protected:
-    /** \name Accessors */ ///@{
-
     /** The default width to use for the left and right buttons. */
     X ButtonWidth() const;
 
     const Button*   LeftButton() const;
     const Button*   RightButton() const;
-    //@}
 
     bool EventFilter(Wnd* w, const WndEvent& event) override;
 

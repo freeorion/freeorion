@@ -22,7 +22,6 @@ class GG_API VectorTexture
 public:
     VectorTexture();
 
-    /** \name Accessors */ ///@{
     const boost::filesystem::path& Path() const;    ///< returns the file path from which this vector texture was loaded (default / empty if this vector texture was not loaded from a file)
 
     /** Renders to region between \a pt1 and \a pt2 */
@@ -30,7 +29,6 @@ public:
     bool TextureLoaded() const;
     int NumShapes() const;
     Pt Size() const;
-    //@}
 
     // intialization functions
     /** Frees any currently-held memory and loads a texture from file \a
@@ -63,9 +61,7 @@ private:
 class GG_API VectorTextureManager
 {
 public:
-    /** \name Accessors */ ///@{
     const std::map<std::string, std::shared_ptr<VectorTexture>>& Textures() const;
-    //@}
 
     /** Returns a shared_ptr to the texture created from image file \a path.
         If the texture is not present in the manager's pool, it will be loaded

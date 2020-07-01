@@ -13,10 +13,8 @@ class FO_COMMON_API PopulationPool {
 public:
     PopulationPool();
 
-    /** \name Accessors */ //@{
     const std::vector<int>& PopCenterIDs() const { return m_pop_center_ids; }   ///< returns the PopCenter vector
     float Population() const;   ///< returns current total population
-    //@}
 
     /** emitted after updating population and growth numbers */
     mutable boost::signals2::signal<void ()> ChangedSignal;

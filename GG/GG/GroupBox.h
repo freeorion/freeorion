@@ -47,10 +47,8 @@ public:
              Clr text_color = CLR_BLACK, Clr interior = CLR_ZERO, Flags<WndFlag> flags = NO_WND_FLAGS);
     void CompleteConstruction() override;
 
-    /** \name Accessors */ ///@{
     Pt ClientUpperLeft() const override;
     Pt ClientLowerRight() const override;
-    //@}
 
     void Render() override;
 

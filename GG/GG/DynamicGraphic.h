@@ -96,7 +96,6 @@ public:
                    Flags<GraphicStyle> style = GRAPHIC_NONE, std::size_t frames = ALL_FRAMES,
                    Flags<WndFlag> flags = NO_WND_FLAGS);
 
-    /** \name Accessors */ ///@{
     std::size_t  Frames() const;      ///< returns the total number of frames in all the Textures that make up the animated sequence
     bool         Playing() const;     ///< returns true if the animation is running
     bool         Looping() const;     ///< returns true if playback is looping instead of stopping when it reaches the end
@@ -121,7 +120,6 @@ public:
 
     mutable StoppedSignalType  StoppedSignal;  ///< the stopped signal object for this DynamicGraphic
     mutable EndFrameSignalType EndFrameSignal; ///< the end-frame signal object for this DynamicGraphic
-    //@}
 
     void Render() override;
 
@@ -208,7 +206,6 @@ protected:
         std::size_t                      frames;  ///< the number of frames in this texture
     };
 
-    /** \name Accessors */ ///@{
     std::size_t FramesInTexture(const Texture* t) const; ///< returns the maximum number of frames that could be stored in \a t given the size of the control and Margin()
     const std::vector<FrameSet>& Textures() const; ///< returns the shared_ptrs to texture objects with all animation frames
 
@@ -216,7 +213,6 @@ protected:
     std::size_t  CurrentSubTexture() const; ///< returns the current frame being shown within Texture number CurrTexture(); INVALID_INDEX if none
     unsigned int FirstFrameTime() const;    ///< returns the time index in ms that the first frame in the sequence was shown during the current playback; INVALID_TIME if none
     unsigned int LastFrameTime() const;     ///< returns the time index in ms of the most recent frame shown (should be m_curr_frame); INVALID_TIME if none
-    //@}
 
     const unsigned int m_margin;            ///< the number of pixels placed between frames and between the frames and the Texture edges
     const X            m_frame_width;       ///< the width of each frame 

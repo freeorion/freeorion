@@ -44,7 +44,6 @@ public:
       * empire with id \a empire_id would know about the copied objects. */
     ObjectMap* Clone(int empire_id = ALL_EMPIRES) const;
 
-    /** \name Accessors */ //@{
     /** Returns the number of objects of the specified class in this ObjectMap. */
     template <typename T = UniverseObject>
     std::size_t size() const;
@@ -123,7 +122,6 @@ public:
     { return m_existing_buildings; }
     const container_type<const UniverseObject>& ExistingFields() const
     { return m_existing_fields; }
-    //@}
 
     /** Copies the contents of the ObjectMap \a copied_map into this ObjectMap.
       * Each object in \a copied_map has information transferred to this map.

@@ -35,7 +35,6 @@ public:
     int SystemID() const override
     { return this->ID(); }
 
-    /** \name Accessors */ //@{
     UniverseObjectType ObjectType() const override;
 
     std::string Dump(unsigned short ntabs = 0) const override;
@@ -98,7 +97,6 @@ public:
     mutable boost::signals2::signal<void (const std::vector<std::shared_ptr<Fleet>>&)> FleetsInsertedSignal;
     /** fleets are removed from system */
     mutable boost::signals2::signal<void (const std::vector<std::shared_ptr<Fleet>>&)> FleetsRemovedSignal;
-    //@}
 
     void Copy(std::shared_ptr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES) override;
 

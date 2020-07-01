@@ -67,7 +67,6 @@ public:
     virtual ~MultiEdit();
     void CompleteConstruction() override;
 
-    /** \name Accessors */ ///@{
     Pt MinUsableSize() const override;
 
     Pt ClientLowerRight() const override;
@@ -85,7 +84,6 @@ public:
 
     /** Returns the positions of the scrollbars. */
     Pt ScrollPosition() const;
-    //@}
 
     void Render() override;
 
@@ -120,7 +118,6 @@ public:
     static const unsigned int BORDER_THICK;
 
 protected:
-    /** \name Accessors */ ///@{
     /** Returns true if >= 1 characters are selected. */
     bool MultiSelected() const override;
 
@@ -191,7 +188,6 @@ protected:
 
     /** Returns the lesser of m_cursor_begin and m_cursor_end. */
     std::pair<std::size_t, CPSize> LowCursorPos() const;
-    //@}
 
     void LButtonDown(const Pt& pt, Flags<ModKey> mod_keys) override;
     void LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys) override;

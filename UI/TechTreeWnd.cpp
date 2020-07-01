@@ -487,7 +487,6 @@ public:
 
     void CompleteConstruction() override;
 
-    /** \name Accessors */ //@{
     GG::Pt ClientLowerRight() const override;
 
     double                  Scale() const;
@@ -497,7 +496,6 @@ public:
     mutable TechTreeWnd::TechClickSignalType    TechSelectedSignal;
     mutable TechTreeWnd::TechClickSignalType    TechDoubleClickedSignal;
     mutable TechTreeWnd::TechSignalType         TechPediaDisplaySignal;
-    //@}
 
     void Render() override;
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
@@ -1487,9 +1485,7 @@ public:
 
     void CompleteConstruction() override;
 
-    /** \name Accessors */ //@{
     bool TechRowCmp(const GG::ListBox::Row& lhs, const GG::ListBox::Row& rhs, std::size_t column);
-    //@}
 
     void    Reset();
     void    Update(bool populate = true);

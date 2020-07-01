@@ -30,7 +30,6 @@ struct MovePathNode {
   * ships that travel together. */
 class FO_COMMON_API Fleet : public UniverseObject {
 public:
-    /** \name Accessors */ //@{
     bool HostileToEmpire(int empire_id) const override;
 
     UniverseObjectType ObjectType() const override;
@@ -107,7 +106,6 @@ public:
      * If in a system and not blockaded, the value is the current system ID. The blockade intent is that you can't
      * break a blockade unless you beat the blockaders (via combat or they retreat).**/
     int ArrivalStarlane() const { return m_arrival_starlane; }
-    //@}
 
     void Copy(std::shared_ptr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES) override;
 

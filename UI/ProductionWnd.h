@@ -19,10 +19,8 @@ public:
     virtual ~ProductionWnd();
     void CompleteConstruction() override;
 
-    /** \name Accessors */ //@{
     int SelectedPlanetID() const;
     int ShownEmpireID() const;
-    //@}
 
     bool InWindow(const GG::Pt& pt) const override;
     bool InClient(const GG::Pt& pt) const override;

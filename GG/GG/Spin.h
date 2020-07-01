@@ -83,7 +83,6 @@ public:
 
     ~Spin();
 
-    /** \name Accessors */ ///@{
     Pt      MinUsableSize() const override;
 
     T       Value() const;              ///< returns the current value of the control's text
@@ -100,7 +99,6 @@ public:
     Clr     SelectedTextColor() const;  ///< returns the color used to render selected text
 
     mutable ValueChangedSignalType ValueChangedSignal; ///< the value changed signal object for this Spin
-    //@}
 
     void Render() override;
     void SizeMove(const Pt& ul, const Pt& lr) override;
@@ -127,11 +125,9 @@ protected:
 
     enum {BORDER_THICK = 2, PIXEL_MARGIN = 5};
 
-    /** \name Accessors */ ///@{
     Button* UpButton() const;   ///< returns a pointer to the Button control used as this control's up button
     Button* DownButton() const; ///< returns a pointer to the Button control used as this control's down button
     Edit*   GetEdit() const;    ///< returns a pointer to the Edit control used to render this control's text and accept keyboard input
-    //@}
 
     void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
     void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys) override;

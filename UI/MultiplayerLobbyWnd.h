@@ -20,13 +20,11 @@ public:
     MultiPlayerLobbyWnd();
     void CompleteConstruction() override;
 
-    /** \name Accessors */ //@{
     GG::Pt MinUsableSize() const override;
 
     bool            LoadGameSelected() const;
 
     std::string     GetChatText() const;
-    //@}
 
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 

@@ -23,7 +23,6 @@ public:
         the initial value set to @p initial_value. */
     Meter(float current_value, float initial_value);
 
-    /** \name Accessors */ //@{
     float Current() const;                  ///< returns the current value of the meter
     float Initial() const;                  ///< returns the value of the meter as it was at the beginning of the turn
 
@@ -34,7 +33,6 @@ public:
 
     bool operator<(const Meter& rhs) const
     { return m_current_value < rhs.m_current_value || (m_current_value == rhs.m_current_value && m_initial_value < rhs.m_initial_value); }
-    //@}
 
     void SetCurrent(float current_value);   ///< sets current value, leaving initial value unchanged
     void Set(float current_value, float initial_value); ///< sets current and initial values

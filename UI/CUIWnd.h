@@ -97,7 +97,6 @@ public:
     /** Virtual destructor. */
     virtual ~CUIWnd();
 
-    //! \name Accessors //@{
     bool    Minimized() const {return m_minimized;} //!< returns true if window is minimized
     GG::Pt  ClientUpperLeft() const override;
     GG::Pt  ClientLowerRight() const override;
@@ -106,7 +105,6 @@ public:
     GG::Y   TopBorder() const;                  //!< the distance at the top between the outer edge of the window and the inner border
     GG::X   RightBorder() const;                //!< the distance on the right side between the outer edge of the window and the inner border
     GG::Y   BottomBorder() const;               //!< the distance at the bottom between the outer edge of the window and the inner border
-    //@}
 
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
     void Render() override;
@@ -141,14 +139,12 @@ public:
     //@}
 
 protected:
-    //! \name Accessors //@{
     virtual GG::Pt          MinimizedSize() const;              //!< the size of a minimized CUIWnd
     int                     InnerBorderAngleOffset() const;     //!< the distance from where the lower right corner of the inner border should be to where the angled portion of the inner border meets the right and bottom lines of the border
     bool                    InResizeTab(const GG::Pt& pt) const;//!< returns true iff the specified \a pt is in the region where dragging will resize this Wnd
     void                    SaveOptions() const;                //!< saves options for this window to the OptionsDB if config_name was specified in the constructor
 
     virtual GG::Rect        CalculatePosition() const;          //!< override this if a class determines its own position/size and return the calculated values, called by ResetDefaultPosition()
-    //@}
 
     //! \name Statics //@{
     static const std::string AddWindowOptions(const std::string& config_name,

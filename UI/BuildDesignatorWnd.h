@@ -17,7 +17,6 @@ public:
     BuildDesignatorWnd(GG::X w, GG::Y h);
     void CompleteConstruction() override;
 
-    /** \name Accessors */ //@{
     bool InWindow(const GG::Pt& pt) const override;
     bool InClient(const GG::Pt& pt) const override;
 
@@ -28,7 +27,6 @@ public:
     const std::pair<bool, bool>&    GetAvailabilitiesShown() const;
 
     int SelectedPlanetID() const;
-    //@}
 
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 

@@ -30,7 +30,6 @@ struct FO_COMMON_API GalaxySetupData {
     GalaxySetupData(const GalaxySetupData&) = default;
     GalaxySetupData(GalaxySetupData&& base);
 
-    /** \name Accessors */ //@{
     const std::string&  GetSeed() const;
     int                 GetSize() const;
     Shape               GetShape() const;
@@ -44,7 +43,6 @@ struct FO_COMMON_API GalaxySetupData {
     const std::map<std::string, std::string>&
                         GetGameRules() const;
     const std::string&  GetGameUID() const;
-    //@}
 
     void                SetSeed(const std::string& seed);
     void                SetGameUID(const std::string& game_uid);

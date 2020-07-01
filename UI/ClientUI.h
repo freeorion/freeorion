@@ -35,7 +35,6 @@ public:
     ClientUI();
     ~ClientUI();
 
-    //! \name Accessors //!@{
     std::shared_ptr<MapWnd>                 GetMapWnd();                //!< Returns the main map window.
     MapWnd const*                           GetMapWndConst() const;     //!< Returns the main map window.
     std::shared_ptr<MessageWnd>             GetMessageWnd();            //!< Returns the chat / message window.
@@ -46,7 +45,6 @@ public:
     std::shared_ptr<SaveFileDialog>         GetSaveFileDialog();        //!< Returns a perhaps nullptr to any existing SaveFileDialog
     ShipDesignManager*                      GetShipDesignManager() { return m_ship_designs.get(); };
     void                                    GetSaveGameUIData(SaveGameUIData& data) const; //!< populates the relevant UI state that should be restored after a save-and-load cycle
-    //!@}
 
     /** Return the IntroScreen. Hides the MapWnd, MessageWnd and
       * PlayerListWnd if visible, but doesn't create them just to hide them. **/

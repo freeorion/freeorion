@@ -52,7 +52,6 @@ struct FO_COMMON_API InfluenceQueue {
         m_empire_id(empire_id)
     {}
 
-    /** \name Accessors */ //@{
     bool    InQueue(const std::string& name) const;
 
     int     ProjectsInProgress() const { return m_projects_in_progress; }

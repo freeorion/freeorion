@@ -133,10 +133,8 @@ public:
     public:
         ColorButton(const Clr& color);
 
-        /** \name Accessors */ ///@{
         /** returns the custom color represented by the button */
         Clr RepresentedColor() const;
-        //@}
 
         /** sets the custom color represented by the button */
         void SetRepresentedColor(const Clr& color);
@@ -161,16 +159,13 @@ public:
     public:
         ColorDisplay(Clr color);
 
-        /** \name Accessors */ ///@{
         void Render() override;
-        //@}
     };
 
     ColorDlg(X x, Y y, Clr original_color, const std::shared_ptr<Font>& font,
              Clr dialog_color, Clr border_color, Clr text_color = CLR_BLACK);
     void CompleteConstruction() override;
 
-    /** \name Accessors */ ///@{
     /** Returns true iff the user selected a color and then clicked the "Ok"
         button.  Otherwise, the color returned by Result() will be the
         original color if one was selected, or undefined if one was not. */
@@ -178,7 +173,6 @@ public:
 
     /** returns the color selected by the user, if the "Ok" button was used to close the dialog. */
     Clr Result() const;
-    //@}
 
     void Render() override;
     void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;

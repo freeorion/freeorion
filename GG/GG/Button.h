@@ -64,7 +64,6 @@ public:
            Clr text_color = CLR_BLACK, Flags<WndFlag> flags = INTERACTIVE);
     void CompleteConstruction() override;
 
-    /** \name Accessors */ ///@{
     Pt MinUsableSize() const override;
 
     /** Returns button state \see ButtonState */
@@ -83,7 +82,6 @@ public:
     mutable ClickedSignalType LeftPressedSignal;
     /** The right pressed signal object for this Button */
     mutable ClickedSignalType RightPressedSignal;
-    //@}
 
     void Show() override;
     void Render() override;
@@ -164,7 +162,6 @@ public:
                 Clr color, std::shared_ptr<StateButtonRepresenter> representer, Clr text_color = CLR_BLACK); ///< Ctor
     void CompleteConstruction() override;
 
-    /** \name Accessors */ ///@{
     Pt                  MinUsableSize() const override;
 
     /** Returns button state \see ButtonState */
@@ -177,7 +174,6 @@ public:
     TextControl*        GetLabel() const;
 
     mutable CheckedSignalType CheckedSignal; ///< The checked signal object for this StaticButton
-    //@}
 
     void Show() override;
     void Render() override;
@@ -319,7 +315,6 @@ public:
 
     RadioButtonGroup(Orientation orientation);
 
-    /** \name Accessors */ ///@{
     Pt MinUsableSize() const override;
 
     /** Returns the orientation of the buttons in the group */
@@ -352,7 +347,6 @@ public:
     bool             RenderOutline() const;
 
     mutable ButtonChangedSignalType ButtonChangedSignal; ///< The button changed signal object for this RadioButtonGroup
-    //@}
 
     void Render() override;
 
@@ -418,9 +412,7 @@ protected:
         boost::signals2::connection connection;
     };
 
-    /** \name Accessors */ ///@{
     const std::vector<ButtonSlot>& ButtonSlots() const; ///< returns the state buttons in the group
-    //@}
 
 private:
     void ConnectSignals();

@@ -17,9 +17,7 @@ public:
     ~MilitaryPanel();
     void CompleteConstruction() override;
 
-    /** \name Accessors */ //@{
     int PlanetID() const { return m_planet_id; }
-    //@}
 
     void PreRender() override;
     /** expands or collapses panel to show details or just summary info */

@@ -16,7 +16,6 @@ public:
     SupplyManager();
     SupplyManager& operator=(const SupplyManager& rhs);
 
-    /** \name Accessors */ //@{
     /** Returns set of directed starlane traversals along which supply can flow.
       * Results are pairs of system ids of start and end system of traversal. */
     const std::map<int, std::set<std::pair<int, int>>>&     SupplyStarlaneTraversals() const;
@@ -62,7 +61,6 @@ public:
     bool        SystemHasFleetSupply(int system_id, int empire_id, bool include_allies) const;
 
     std::string Dump(int empire_id = ALL_EMPIRES) const;
-    //@}
 
     /** Calculates systems at which fleets of empires can be supplied, and
       * groups of systems that can exchange resources, and the starlane

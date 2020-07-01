@@ -27,9 +27,7 @@ class CombatLogWnd::Impl {
 public:
     Impl(CombatLogWnd& _log);
 
-    /** \name Accessors */ ///@{
     GG::Pt MinUsableSize() const;
-    //@}
 
     void SetFont(std::shared_ptr<GG::Font> font);
     /// Set which log to show

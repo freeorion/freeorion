@@ -58,10 +58,8 @@ public:
 
     ~Timer();
 
-    /** \name Accessors */ ///@{
     unsigned int Interval() const;      ///< Returns the interval in ms between firings of the timer
     bool Running() const;               ///< Returns true iff the timer is operating.  When false, this indicates that no firings will occur until Start() is called.
-    //@}
 
     void Reset(unsigned int start_time = 0); ///< Resets the last-firing time of the timer to \a start_time (in ms), or the current time if \a start_time is ommitted.
     void SetInterval(unsigned int interval); ///< Sets the interval in ms between firings of the timer

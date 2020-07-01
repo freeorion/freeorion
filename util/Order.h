@@ -38,14 +38,12 @@ public:
     virtual ~Order()
     {}
 
-    /** \name Accessors */ //@{
     /** Returns the ID of the Empire issuing the order. */
     int EmpireID() const { return m_empire; }
 
     /** Returns true iff this order has been executed (a second execution
       * indicates server-side execution). */
     bool Executed() const;
-    //@}
 
     /** Executes the order on the Universe and Empires.
      *
@@ -94,7 +92,6 @@ class FO_COMMON_API RenameOrder : public Order {
 public:
     RenameOrder(int empire, int object, const std::string& name);
 
-    /** \name Accessors */ //@{
     /** Returns ID of fleet selected in this order. */
     int ObjectID() const
     { return m_object; }
@@ -102,7 +99,6 @@ public:
     /** Returns the new name of the fleet. */
     const std::string& Name() const
     { return m_name; }
-    //@}
 
     //! Returns true when the Order parameters are valid.
     static bool Check(int empire, int object, const std::string& new_name);
@@ -140,7 +136,6 @@ public:
                   const std::vector<int>& ship_ids,
                   bool aggressive);
 
-    /** \name Accessors */ //@{
     const std::string& FleetName() const
     { return m_fleet_name; }
 
@@ -152,7 +147,6 @@ public:
 
     bool Aggressive() const
     { return m_aggressive; }
-    //@}
 
     static bool Check(int empire, const std::string& fleet_name, const std::vector<int>& ship_ids, bool aggressive);
 private:
@@ -190,7 +184,6 @@ public:
     FleetMoveOrder(int empire_id, int fleet_id, int dest_system_id,
                    bool append = false);
 
-    /** \name Accessors */ //@{
     /** Returns ID of fleet selected in this order. */
     int FleetID() const
     { return m_fleet; }
@@ -202,7 +195,6 @@ public:
     /* Returns the IDs of the systems in the route specified by this Order. */
     const std::vector<int>& Route() const
     { return m_route; }
-    //@}
 
     static bool Check(int empire_id, int fleet_id, int dest_fleet_id, bool append = false);
 private:
@@ -242,7 +234,6 @@ class FO_COMMON_API FleetTransferOrder : public Order {
 public:
     FleetTransferOrder(int empire, int dest_fleet, const std::vector<int>& ships);
 
-    /** \name Accessors */ //@{
     /* Returns ID of the fleet that the ships will go into. */
     int DestinationFleet() const
     { return m_dest_fleet; }
@@ -250,7 +241,6 @@ public:
     /** Returns IDs of the ships selected for addition to the fleet. */
     const std::vector<int>& Ships() const
     { return m_add_ships; }
-    //@}
 
     static bool Check(int empire_id, int dest_fleet_id, const std::vector<int>& ship_ids);
 
@@ -285,7 +275,6 @@ class FO_COMMON_API ColonizeOrder : public Order {
 public:
     ColonizeOrder(int empire, int ship, int planet);
 
-    /** \name Accessors */ //@{
     /** Returns ID of the planet to be colonized. */
     int PlanetID() const
     { return m_planet; }
@@ -293,7 +282,6 @@ public:
     /** Returns ID of the ship which is colonizing the planet. */
     int ShipID() const
     { return m_ship; }
-    //@}
 
     static bool Check(int empire_id, int ship_id, int planet_id);
 
@@ -332,7 +320,6 @@ class FO_COMMON_API InvadeOrder : public Order {
 public:
     InvadeOrder(int empire, int ship, int planet);
 
-    /** \name Accessors */ //@{
     /** Returns ID of the planet to be invaded. */
     int PlanetID() const
     { return m_planet; }
@@ -340,7 +327,6 @@ public:
     /** Returns ID of the ship which is invading the planet. */
     int ShipID() const
     { return m_ship; }
-    //@}
 
     static bool Check(int empire_id, int ship_id, int planet_id);
 
@@ -379,7 +365,6 @@ class FO_COMMON_API BombardOrder : public Order {
 public:
     BombardOrder(int empire, int ship, int planet);
 
-    /** \name Accessors */ //@{
     /** Returns ID of the planet to be bombarded. */
     int PlanetID() const
     { return m_planet; }
@@ -387,7 +372,6 @@ public:
     /** Returns ID of the ship which is bombarding the planet. */
     int ShipID() const
     { return m_ship; }
-    //@}
 
     static bool Check(int empire_id, int ship_id, int planet_id);
 
@@ -424,11 +408,9 @@ class FO_COMMON_API ChangeFocusOrder : public Order {
 public:
     ChangeFocusOrder(int empire, int planet, const std::string& focus);
 
-    /** \name Accessors */ //@{
     /* Returns ID of the fleet to be deleted. */
     int PlanetID() const
     { return m_planet; }
-    //@}
 
     static bool Check(int empire_id, int planet_id, const std::string& focus);
 
@@ -462,13 +444,11 @@ public:
                 const std::string& category, bool adopt,
                 int slot = -1);
 
-    /** \name Accessors */ //@{
     /** Returns ID of fleet selected in this order. */
     const std::string&  PolicyName() const  { return m_policy_name; }
     const std::string&  CategoryName() const{ return m_category; }
     bool                Adopt() const       { return m_adopt; }
     int                 Slot() const        { return m_slot; }
-    //@}
 
 private:
     PolicyOrder() = default;
@@ -658,11 +638,9 @@ class FO_COMMON_API ScrapOrder : public Order {
 public:
     ScrapOrder(int empire, int object_id);
 
-    /** \name Accessors */ //@{
     /** Returns ID of object selected in this order. */
     int ObjectID() const
     { return m_object_id; }
-    //@}
 
     static bool Check(int empire_id, int object_id);
 private:
@@ -697,7 +675,6 @@ class FO_COMMON_API AggressiveOrder : public Order {
 public:
     AggressiveOrder(int empire, int object_id, bool aggression = true);
 
-    /** \name Accessors */ //@{
     /** Returns ID of object selected in this order. */
     int ObjectID() const
     { return m_object_id; }
@@ -705,7 +682,6 @@ public:
     /** Returns aggression state to set object to. */
     bool Aggression() const
     { return m_aggression; }
-    //@}
 
     static bool Check(int empire_id, int object_id, bool aggression);
 
@@ -740,7 +716,6 @@ class FO_COMMON_API GiveObjectToEmpireOrder : public Order {
 public:
     GiveObjectToEmpireOrder(int empire, int object_id, int recipient);
 
-    /** \name Accessors */ //@{
     /** Returns ID of object selected in this order. */
     int ObjectID() const
     { return m_object_id; }
@@ -748,7 +723,6 @@ public:
     /** Returns ID of empire to which object is given. */
     int RecipientEmpireID()
     { return m_recipient_empire_id; }
-    //@}
 
     static bool Check(int empire_id, int object_id, int recipient_empire_id);
 private:
@@ -782,11 +756,9 @@ class FO_COMMON_API ForgetOrder : public Order {
 public:
     ForgetOrder(int empire, int object_id);
 
-    /** \name Accessors */ //@{
     /** Returns ID of object selected in this order. */
     int ObjectID() const
     { return m_object_id; }
-    //@}
 
 private:
     ForgetOrder() = default;

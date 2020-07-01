@@ -69,7 +69,6 @@ public:
             Clr color, Clr border_color, Clr text_color = CLR_BLACK);
     void CompleteConstruction() override;
 
-    /** \name Accessors */ ///@{
     std::set<std::string> Result() const; ///< returns a set of strings that contains the files chosen by the user; there will be only one file if \a multi == false was passed to the ctor
 
     /** Returns true iff this FileDlg will select directories instead of files. */
@@ -82,7 +81,6 @@ public:
         satisfied, any filename the user selects that does not end in "foo"
         will have "foo" appended to it. */
     bool AppendMissingSaveExtension() const;
-    //@}
 
     void Render() override;
     void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;

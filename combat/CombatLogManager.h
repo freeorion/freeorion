@@ -38,13 +38,11 @@ struct FO_COMMON_API CombatLog {
 /** Stores and retreives combat logs. */
 class FO_COMMON_API CombatLogManager {
 public:
-    /** \name Accessors */ //@{
     /** Return the requested combat log or boost::none.*/
     boost::optional<const CombatLog&>  GetLog(int log_id) const;
 
     /** Return the ids of all incomplete logs or boost::none if they are all complete.*/
     boost::optional<std::vector<int>> IncompleteLogIDs() const;
-    //@}
 
     int  AddNewLog(const CombatLog& log);   // adds log, returns unique log id
     /** Replace incomplete log with \p id with \p log. An incomplete log is a

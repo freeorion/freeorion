@@ -38,13 +38,11 @@ public:
     const HumanClientApp& operator=(const HumanClientApp&) = delete;
     HumanClientApp& operator=(const HumanClientApp&&) = delete;
 
-    /** \name Accessors */ //@{
     int EffectsProcessingThreads() const override;
     bool SinglePlayerGame() const;  ///< returns true iff this game is a single-player game
     bool CanSaveNow() const;        ///< returns true / false to indicate whether this client can currently safely initiate a game save
     int  AutoTurnsLeft() const;     ///< returns number of turns left to execute automatically
     bool HaveWindowFocus() const;   ///< as far as the HCA knows, does the game window have focus?
-    //@}
 
     void HandleTurnUpdate() override;           ///< Handle background events that need starting when the turn updates
     void StartTurn(const SaveGameUIData& ui_data) override;

@@ -57,7 +57,6 @@ public:
 
     GameRules();
 
-    /** \name Accessors */ //@{
     bool Empty() const;
     std::unordered_map<std::string, Rule>::const_iterator begin() const;
     std::unordered_map<std::string, Rule>::const_iterator end() const;
@@ -97,7 +96,6 @@ public:
             }
         }
     }
-    //@}
 
     /** Adds a rule, optionally with a custom validator.
         Adds option setup.rules.{RULE_NAME} to override default value and

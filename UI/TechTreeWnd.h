@@ -31,12 +31,10 @@ public:
     ~TechTreeWnd();
     void CompleteConstruction() override;
 
-    /** \name Accessors */ //@{
     double                  Scale() const;
     bool                    PediaVisible();
     /** If tech @p tech_name is currently visible */
     bool                    TechIsVisible(const std::string& tech_name) const;
-    //@}
 
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 

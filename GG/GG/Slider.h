@@ -70,7 +70,6 @@ public:
            unsigned int tab_width, unsigned int line_width = 5, Flags<WndFlag> flags = INTERACTIVE);
     void CompleteConstruction() override;
 
-    /** \name Accessors */ ///@{
     Pt MinUsableSize() const override;
 
     T                    Posn() const;           ///< returns the current tab position
@@ -87,7 +86,6 @@ public:
 
     mutable SlidSignalType           SlidSignal;           ///< returns the slid signal object for this Slider
     mutable SlidAndStoppedSignalType SlidAndStoppedSignal; ///< returns the slid-and-stopped signal object for this Slider
-    //@}
 
     void Render() override;
     void SizeMove(const Pt& ul, const Pt& lr) override;
@@ -108,10 +106,8 @@ public:
     static const T INVALID_PAGE_SIZE;
 
 protected:
-    /** \name Accessors */ ///@{
     Button* Tab() const;                  ///< returns a pointer to the Button used as this control's sliding tab
     T       PtToPosn(const Pt& pt) const; ///< maps an arbitrary screen point to its nearest logical slider position
-    //@}
 
     void LClick(const Pt& pt, Flags<ModKey> mod_keys) override;
     void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;

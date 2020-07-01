@@ -58,9 +58,6 @@ struct GG_API MenuItem
 
     virtual ~MenuItem();
 
-    /** \name Accessors */ ///@{
-    //@}
-
     std::string           label;      ///< text shown for this menu item
     bool                  disabled;   ///< set to true when this menu item is disabled
     bool                  checked;    ///< set to true when this menu item can be toggled, and is currently on
@@ -86,7 +83,6 @@ public:
     PopupMenu(X x, Y y, const std::shared_ptr<Font>& font, Clr text_color = CLR_WHITE,
               Clr border_color = CLR_BLACK, Clr interior_color = CLR_SHADOW, Clr hilite_color = CLR_GRAY);
 
-    /** \name Accessors */ ///@{
     Pt ClientUpperLeft() const override;
 
     Clr         BorderColor() const;       ///< returns the color used to render the border of the control
@@ -94,7 +90,6 @@ public:
     Clr         TextColor() const;         ///< returns the color used to render menu item text
     Clr         HiliteColor() const;       ///< returns the color used to indicate a hilited menu item
     Clr         SelectedTextColor() const; ///< returns the color used to render a hilited menu item's text
-    //@}
 
     /** Add \p menu_item to the end of the popup menu and store its callback.*/
     void AddMenuItem(MenuItem&& menu_item);
@@ -117,7 +112,6 @@ public:
     static const std::size_t INVALID_CARET;
 
 protected:
-    /** \name Accessors */ ///@{
     /** Returns the font used to render text in the control. */
     const std::shared_ptr<Font>& GetFont() const;
 
@@ -125,7 +119,6 @@ protected:
     const std::vector<Rect>&        OpenLevels() const;   ///< returns the bounding rectangles for each open submenu, used to detect clicks in them
     const std::vector<std::size_t>& Caret() const;        ///< returns the stack representing the caret's location's path (eg 0th subitem of 1st subitem of item 3) back() is the most recent push
     const MenuItem*                 ItemSelected() const; ///< returns the menu item selected (0 if none)
-    //@}
 
 private:
     /** The font used to render the text in the control. */

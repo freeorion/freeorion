@@ -61,7 +61,6 @@ public:
 
     void CompleteConstruction() override;
 
-    //! \name Accessors //!@{
     GG::Pt ClientUpperLeft() const override;
 
     double                      ZoomFactor() const;
@@ -111,7 +110,6 @@ public:
     /** Returns the id of the currently-selected planet, or
       * INVALID_OBJECT_ID if no planet is selected */
     int                         SelectedPlanetID() const;
-    //!@}
 
     void PreRender() override;
     void Render() override;

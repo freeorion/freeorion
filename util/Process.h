@@ -45,10 +45,8 @@ public:
         Process returns immediately. */
     Process(const std::string& cmd, const std::vector<std::string>& argv);
 
-    /** \name Accessors */ //@{
     bool Empty() const      { return m_empty; }         ///< returns true if this is a default-constructed object with no associated process
     bool HasLowPriority()   { return m_low_priority; }  ///< true if process is set to low priority
-    //@}
 
     /** sets process priority */
     bool SetLowPriority(bool low);

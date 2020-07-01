@@ -51,11 +51,9 @@ public:
 
     CUIButton(const GG::SubTexture& unpressed, const GG::SubTexture& pressed, const GG::SubTexture& rollover);
 
-    /** \name Accessors */ //@{
     GG::Pt MinUsableSize() const override;
 
     bool InWindow(const GG::Pt& pt) const override;
-    //@}
 
     void MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
 
@@ -70,9 +68,8 @@ protected:
 class SettableInWindowCUIButton : public CUIButton {
 public:
     SettableInWindowCUIButton(const GG::SubTexture& unpressed, const GG::SubTexture& pressed, const GG::SubTexture& rollover, std::function<bool (const SettableInWindowCUIButton*, const GG::Pt&)> in_window_function);
-    /** \name Accessors */ //@{
+
     bool InWindow(const GG::Pt& pt) const override;
-    //@}
 
 private:
     std::function<bool (const SettableInWindowCUIButton*, const GG::Pt&)>    m_in_window_func;
@@ -84,9 +81,7 @@ public:
     CUIArrowButton(ShapeOrientation orientation, bool fill_background,
                    GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE);
 
-    /** \name Accessors */ //@{
     bool InWindow(const GG::Pt& pt) const override;
-    //@}
 
     void MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
 
@@ -299,9 +294,7 @@ class CensoredCUIEdit : public CUIEdit {
 public:
     explicit CensoredCUIEdit(const std::string& str, char display_placeholder = '*');
 
-    /** \name Accessors */ //@{
     const std::string& RawText() const;
-    //@}
 
     void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
     void SetText(const std::string& str) override;
@@ -333,13 +326,11 @@ public:
     CUILinkTextMultiEdit(const std::string& str, GG::Flags<GG::MultiEditStyle> style = GG::MULTI_LINEWRAP);
     void CompleteConstruction() override;
 
-    /** \name Accessors */ //@{
     const std::vector<GG::Font::LineData>& GetLineData() const override;
     const std::shared_ptr<GG::Font>& GetFont() const override;
     GG::Pt TextUpperLeft() const override;
     GG::Pt TextLowerRight() const override;
     const std::string& RawText() const override;
-    //@}
 
     void Render() override;
     void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
@@ -394,10 +385,8 @@ public:
 
     void CompleteConstruction() override;
 
-    /** \name Accessors */ //@{
     double GetValue(size_t index = 0) const;
     GG::Pt MinUsableSize() const override;
-    //@}
 
     void PreRender() override;
     void Render() override
@@ -438,9 +427,7 @@ class CUIToolBar : public GG::Control {
 public:
     CUIToolBar();
 
-    /** \name Accessors */ //@{
     bool InWindow(const GG::Pt& pt) const override;
-    //@}
 
     void Render() override;
 private:
@@ -451,9 +438,7 @@ class SpeciesSelector : public CUIDropDownList {
 public:
     SpeciesSelector(const std::string& preselect_species, GG::X w, GG::Y h);    ///< populates with all species in SpeciesManager
 
-    /** \name Accessors */ //@{
     const std::string& CurrentSpeciesName() const;  ///< returns the name of the species that is currently selected
-    //@}
 
     mutable boost::signals2::signal<void (const std::string&)> SpeciesChangedSignal;
 };
@@ -463,9 +448,7 @@ class EmpireColorSelector : public CUIDropDownList {
 public:
     explicit EmpireColorSelector(GG::Y h);
 
-    /** \name Accessors */ //@{
     GG::Clr CurrentColor() const; ///< returns the color that is currently selected, or GG::CLR_ZERO if none is selected
-    //@}
 
     void SelectColor(const GG::Clr& clr);
 
@@ -512,9 +495,7 @@ public:
                       const std::string& config_name);
     void    CompleteConstruction() override;
 
-    /** \name Accessors */ //@{
     GG::Pt  MinUsableSize() const override;
-    //@}
 
     void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 

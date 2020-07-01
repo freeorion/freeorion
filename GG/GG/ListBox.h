@@ -138,7 +138,6 @@ public:
 
         void CompleteConstruction() override;
 
-        /** \name Accessors */ ///@{
         /** Returns the string by which this row may be sorted. */
         virtual SortKeyType SortKey(std::size_t column) const;
         std::size_t         size() const;                       ///< returns the number of Controls in this Row
@@ -154,7 +153,6 @@ public:
         unsigned int Margin() const;                    ///< returns the amount of space left between the contents of adjacent cells, in pixels
         /** Return true if the row is normalized.  Used by ListBox to track normalization.*/
         bool         IsNormalized() const;
-        //@}
 
         void         Render() override;
 
@@ -251,7 +249,6 @@ public:
 
     void CompleteConstruction() override;
 
-    /** \name Accessors */ ///@{
     Pt MinUsableSize() const override;
     Pt ClientUpperLeft() const override;
     Pt ClientLowerRight() const override;
@@ -328,7 +325,6 @@ public:
     mutable BeforeEraseRowSignalType     BeforeEraseRowSignal;     ///< the before erase signal object for this ListBox
     mutable AfterEraseRowSignalType      AfterEraseRowSignal;      ///< the after erase signal object for this ListBox
     mutable BrowsedRowSignalType         BrowsedRowSignal;         ///< the browsed signal object for this ListBox
-    //@}
 
     void StartingChildDragDrop(const Wnd* wnd, const GG::Pt& offset) override;
     void AcceptDrops(const Pt& pt, std::vector<std::shared_ptr<Wnd>> wnds, Flags<ModKey> mod_keys) override;
@@ -489,7 +485,6 @@ public:
     //@}
 
 protected:
-    /** \name Accessors */ ///@{
     X               RightMargin() const;     ///< space skipped at right of client area for vertical scroll bar
     Y               BottomMargin() const;    ///< space skipped at bottom of client area for horizontal scroll bar
     unsigned int    CellMargin() const;      ///< the number of pixels left between the contents of each cell and the cell boundary
@@ -505,7 +500,6 @@ protected:
     bool            AutoScrollingDown() const;  ///< returns true iff the list is being autoscrolled down due to drag-and-drop
     bool            AutoScrollingLeft() const;  ///< returns true iff the list is being autoscrolled left due to drag-and-drop
     bool            AutoScrollingRight() const; ///< returns true iff the list is being autoscrolled right due to drag-and-drop
-    //@}
 
     void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
     void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys) override;

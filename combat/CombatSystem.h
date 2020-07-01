@@ -18,11 +18,9 @@ public:
     CombatInfo() = default;
     CombatInfo(int system_id_, int turn_);  ///< ctor taking system id where combat occurs and game turn on which combat occurs
 
-    /** \name Accessors */ //@{
     /** Returns System object in this CombatInfo's objects if one exists with
         id system_id. */
     std::shared_ptr<const System> GetSystem() const;
-    //@}
 
     /** Returns System object in this CombatInfo's objects if one exists with
         id system_id. */

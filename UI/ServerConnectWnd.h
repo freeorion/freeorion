@@ -26,10 +26,8 @@ public:
 
     void KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
 
-    /** \name Accessors */ //@{
     /** returns a the player's name (.player_name); the location of the server (.server_dest -- IP address or name), or "" if none was selected and client type (.type) */
     const Result& GetResult() const;
-    //@}
 
 protected:
     GG::Rect CalculatePosition() const override;

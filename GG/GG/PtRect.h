@@ -63,13 +63,11 @@ struct GG_API Pt
     Pt(X x_, Y_d y_);   ///< Ctor that creates a Pt ( \a _x , \a y ).
     Pt(X_d x_, Y_d y_); ///< Ctor that creates a Pt ( \a _x , \a y ).
 
-    /** \name Accessors */ ///@{
     /** Returns true if x < \a rhs.x or returns true if x == \a rhs.x and y
         <\a rhs.y.  This is useful for sorting Pts in STL containers and
         algorithms. */
     bool Less(const Pt& rhs) const
         { return x < rhs.x ? true : (x == rhs.x ? (y < rhs.y ? true : false) : false); }
-    //@}
 
     void  operator+=(const Pt& rhs)     { x += rhs.x; y += rhs.y; }     ///< Adds \a rhs to Pt.
     void  operator-=(const Pt& rhs)     { x -= rhs.x; y -= rhs.y; }     ///< Subtracts \a rhs from Pt.
@@ -94,7 +92,6 @@ struct GG_API Rect
     Rect(const Pt& pt1, const Pt& pt2);    ///< ctor that constructs a Rect from two corners; any two opposing corners will do
     Rect(X x1, Y y1, X x2, Y y2);  ///< ctor that constructs a Rect from its left, upper, right, and bottom boundaries
 
-    /** \name Accessors */ ///@{
     X   Left() const        { return ul.x; }            ///< returns the left boundary of the Rect
     X   Right() const       { return lr.x; }            ///< returns the right boundary of the Rect
     Y   Top() const         { return ul.y; }            ///< returns the top boundary of the Rect
@@ -108,7 +105,6 @@ struct GG_API Rect
 
 
     bool  Contains(const Pt& pt) const; ///< returns true iff \a pt falls inside the Rect
-    //@}
 
     void operator+=(const Pt& pt)      { ul += pt; lr += pt; } ///< shifts the Rect by adding \a pt to each corner
     void operator-=(const Pt& pt)      { ul -= pt; lr -= pt; } ///< shifts the Rect by subtracting \a pt from each corner

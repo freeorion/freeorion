@@ -72,14 +72,12 @@ public:
         const std::vector<std::shared_ptr<Wnd>> m_list;
     };
 
-    /** \name Accessors */ ///@{
     /** Return a RenderOrderIterable in back to front render order. */
     RenderOrderIterable RenderOrder() const;
 
     /** Returns pointer to the window under the point pt; constrains pick to
         modal if nonzero, and ignores \a ignore if nonzero. */
     std::shared_ptr<Wnd> Pick(const Pt& pt, const std::shared_ptr<Wnd>& modal, const std::set<Wnd*>* ignore = nullptr) const;
-    //@}
 
     /** Add() places \a wnd in front of the list. */
     void Add(std::shared_ptr<Wnd> wnd);

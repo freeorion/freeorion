@@ -70,7 +70,6 @@ public:
 
     ~Tech();
 
-    /** \name Accessors */ //@{
     const std::string&  Name() const                { return m_name; }              //!< returns name of this tech
     const std::string&  Description() const         { return m_description; }       //!< Returns the text description of this tech
     const std::string&  ShortDescription() const    { return m_short_description; } //!< Returns the single-line short text description of this tech
@@ -105,7 +104,6 @@ public:
       * the parsed content is consistent without sending it all between
       * clients and server. */
     unsigned int                    GetCheckSum() const;
-    //@}
 
 private:
     Tech(const Tech&);                  // disabled
@@ -184,7 +182,6 @@ public:
     /** iterator that runs over all techs */
     typedef TechContainer::index<NameIndex>::type::const_iterator     iterator;
 
-    /** \name Accessors */ //@{
     /** returns the tech with the name \a name; you should use the free function GetTech() instead */
     const Tech*                     GetTech(const std::string& name) const;
 
@@ -242,7 +239,6 @@ public:
       * the parsed content is consistent without sending it all between
       * clients and server. */
     unsigned int                    GetCheckSum() const;
-    //@}
 
     using TechParseTuple = std::tuple<
         TechManager::TechContainer, // techs_

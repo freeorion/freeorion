@@ -54,7 +54,6 @@ public:
 
     virtual ~SDLGUI();
 
-    /** \name Accessors */ ///@{
     GG::X AppWidth() const override;
     GG::Y AppHeight() const override;
     unsigned int Ticks() const override;
@@ -64,7 +63,6 @@ public:
 
     virtual bool Fullscreen() const final;
     virtual bool FakeModeChange() const final;
-    //@}
 
     void ExitApp(int code = 0) override;
     bool SetClipboardText(const std::string& text) override;

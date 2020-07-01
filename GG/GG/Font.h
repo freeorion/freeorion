@@ -479,7 +479,6 @@ public:
 
     ~Font();
 
-    /** \name Accessors */ ///@{
     /** Returns the name of the file from which this font was created. */
     const std::string& FontName() const;
 
@@ -613,7 +612,6 @@ public:
 
     /** Returns the maximum dimensions of the text in x and y. */
     Pt   TextExtent(const std::vector<LineData>& line_data) const;
-    //@}
 
     /** Adds \a tag to the list of embedded tags that Font should not print
         when rendering text.  Passing "foo" will cause Font to treat "<foo>",
@@ -786,7 +784,6 @@ private:
     };
 
 public:
-    /** \name Accessors */ ///@{
     /** Returns true iff this manager contains a font with the given filename
         and point size, regardless of charsets. */
     bool HasFont(const std::string& font_filename, unsigned int pts) const;
@@ -796,7 +793,6 @@ public:
     template <typename CharSetIter>
     bool HasFont(const std::string& font_filename, unsigned int pts,
                  CharSetIter first, CharSetIter last) const;
-    //@}
 
     /** Returns a shared_ptr to the requested font, supporting all printable
         ASCII characters.  \note May load font if unavailable at time of

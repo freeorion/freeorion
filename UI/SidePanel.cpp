@@ -512,11 +512,9 @@ public:
     ~PlanetPanel();
     void CompleteConstruction() override;
 
-    /** \name Accessors */ //@{
     bool InWindow(const GG::Pt& pt) const override;
 
     int PlanetID() const { return m_planet_id; }
-    //@}
 
     void PreRender() override;
 
@@ -605,7 +603,6 @@ public:
     PlanetPanelContainer();
     ~PlanetPanelContainer();
 
-    /** \name Accessors */ //@{
     bool InWindow(const GG::Pt& pt) const override;
 
     void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) override;
@@ -613,7 +610,6 @@ public:
     int                     SelectedPlanetID() const    {return m_selected_planet_id;}
     const std::set<int>&    SelectionCandidates() const {return m_candidate_ids;}
     int                     ScrollPosition() const;
-    //@}
 
     void LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys) override;
 

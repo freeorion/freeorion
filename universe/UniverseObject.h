@@ -55,7 +55,6 @@ public:
 
     typedef StateChangedSignalType::slot_type StateChangedSlotType;
 
-    /** \name Accessors */ //@{
     int                         ID() const;                         ///< returns the ID number of this object.  Each object in FreeOrion has a unique ID number.
     const std::string&          Name() const;                       ///< returns the name of this object; some valid objects will have no name
     virtual double              X() const;                          ///< the X-coordinate of this object
@@ -118,7 +117,6 @@ public:
     int                         AgeInTurns() const;                 ///< returns elapsed number of turns between turn object was created and current game turn
 
     mutable StateChangedSignalType StateChangedSignal;              ///< emitted when the UniverseObject is altered in any way
-    //@}
 
     /** copies data from \a copied_object to this object, limited to only copy
       * data about the copied object that is known to the empire with id

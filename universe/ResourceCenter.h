@@ -26,7 +26,6 @@ public:
     ResourceCenter(const ResourceCenter& rhs);
     virtual ~ResourceCenter();
 
-    /** \name Accessors */ //@{
     const std::string&              Focus() const;                                  ///< current focus to which this ResourceCenter is set
     int                             TurnsSinceFocusChange() const;                  ///< number of turns since focus was last changed.
     virtual std::vector<std::string>AvailableFoci() const;                          ///< focus settings available to this ResourceCenter
@@ -37,7 +36,6 @@ public:
 
     /** the state changed signal object for this ResourceCenter */
     mutable boost::signals2::signal<void ()> ResourceCenterChangedSignal;
-    //@}
 
     void Copy(std::shared_ptr<const ResourceCenter> copied_object, Visibility vis);
     void Copy(std::shared_ptr<const ResourceCenter> copied_object);

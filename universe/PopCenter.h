@@ -24,13 +24,11 @@ public:
     explicit PopCenter(const std::string& species_name);
     virtual ~PopCenter();
 
-    /** \name Accessors */ //@ {
     const std::string&  SpeciesName() const {return m_species_name;}        ///< returns the name of the species that populates this planet
     std::string         Dump(unsigned short ntabs = 0) const;
     bool                Populated() const;
     virtual Meter*      GetMeter(MeterType type) = 0;                       ///< implementation should return the requested Meter, or 0 if no such Meter of that type is found in this object
     virtual const Meter*GetMeter(MeterType type) const = 0;                 ///< implementation should return the requested Meter, or 0 if no such Meter of that type is found in this object
-    //@}
 
     void                Copy(std::shared_ptr<const PopCenter> copied_object, Visibility vis);
     void                Copy(std::shared_ptr<const PopCenter> copied_object);

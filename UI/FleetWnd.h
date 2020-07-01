@@ -30,7 +30,6 @@ class FleetUIManager {
 public:
     typedef std::set<std::weak_ptr<FleetWnd>>::const_iterator iterator;
 
-    //! \name Accessors //@{
     bool            empty() const;
     iterator        begin() const;
     iterator        end() const;
@@ -39,7 +38,6 @@ public:
     std::shared_ptr<FleetWnd> WndForFleetIDs(const std::vector<int>& fleet_ids_) const;
     int             SelectedShipID() const;     // if a single ship is selected in the active fleetwnd, returns that ship's ID.  Otherwise, returns INVALID_OBJECT_ID
     std::set<int>   SelectedShipIDs() const;    // returns the ids of all selected ships in the active fleetwnd
-    //@}
 
     std::shared_ptr<FleetWnd> NewFleetWnd(const std::vector<int>& fleet_ids,
                                           double allowed_bounding_box_leeway = 0,
@@ -103,7 +101,6 @@ public:
     ~FleetWnd();
     void CompleteConstruction() override;
 
-    //! \name Accessors //@{
     int                     SystemID() const;                   ///< returns ID of system whose fleets are shown in this FleetWnd, which may be INVALID_OBJECT_ID if this FleetWnd isn't set to show fleets of a system
     int                     EmpireID() const;                   ///< returns ID of empire whose fleets are shown in this FleetWnd, which may be ALL_EMPIRES if this FleetWnd isn't set to show fleets of a particular empire
     bool                    ContainsFleet(int fleet_id) const;  ///< returns true if fleet with ID \a fleet_id is shown in this FleetWnd
@@ -116,7 +113,6 @@ public:
     NewFleetAggression      GetNewFleetAggression() const;      ///< returns this FleetWnd's setting for new fleet aggression (auto, aggressive, or passive)
 
     GG::Rect CalculatePosition() const override;
-    //@}
 
     void PreRender() override;
 

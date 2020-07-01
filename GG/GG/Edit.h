@@ -72,7 +72,6 @@ public:
     Edit(const std::string& str, const std::shared_ptr<Font>& font, Clr color,
          Clr text_color = CLR_BLACK, Clr interior = CLR_ZERO);
 
-    /** \name Accessors */ ///@{
     Pt MinUsableSize() const override;
     Pt ClientUpperLeft() const override;
     Pt ClientLowerRight() const override;
@@ -101,7 +100,6 @@ public:
 
     /** The focus update signal object for this Edit. */
     mutable FocusUpdateSignalType FocusUpdateSignal;
-    //@}
 
     void Render() override;
 
@@ -142,7 +140,6 @@ public:
     static const int PIXEL_MARGIN;
 
 protected:
-    /** \name Accessors */ ///@{
     /** Returns true if >= 1 characters selected. */
     virtual bool MultiSelected() const;
 
@@ -183,7 +180,6 @@ protected:
     /** Return the index of the last LineData() or 0 if LineData is empty.
      Allows index based Edit to handle empty line data.*/
     std::vector<GG::Font::LineData>::size_type NumLines() const;
-    //@}
 
     void LButtonDown(const Pt& pt, Flags<ModKey> mod_keys) override;
     void LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys) override;

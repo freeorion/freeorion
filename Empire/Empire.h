@@ -44,7 +44,6 @@ public:
     Empire(const std::string& name, const std::string& player_name, int ID, const GG::Clr& color, bool authenticated);  ///< basic constructor
     ~Empire();
 
-    /** \name Accessors */ //@{
     const std::string&  Name() const;            ///< Returns the Empire's name
     const std::string&  PlayerName() const;      ///< Returns the Empire's player's name
     bool                IsAuthenticated() const; ///< Returns the Empire's player's authentication status
@@ -183,7 +182,6 @@ public:
 
     const PopulationPool&   GetPopulationPool() const;                          ///< Returns PopulationPool
     float                   Population() const;                                 ///< returns total Population of empire
-    //@}
 
     /** If the object with id \a id is a planet owned by this empire, sets that
       * planet to be this empire's capital, and otherwise does nothing. */

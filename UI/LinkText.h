@@ -138,7 +138,6 @@ public:
         and no larger.  \see DynamicText::DynamicText() */
     LinkText(GG::X x, GG::Y y, const std::string& str, const std::shared_ptr<GG::Font>& font, GG::Clr color = GG::CLR_BLACK);
 
-    /** \name Accessors */ //@{
     GG::Pt TextUpperLeft() const override;
     GG::Pt TextLowerRight() const override;
 
@@ -147,7 +146,6 @@ public:
 
     /** Returns text displayed before link formatting is added. */
     const std::string& RawText() const override;
-    //@}
 
     void Render() override;
     void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;

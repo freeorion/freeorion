@@ -69,13 +69,11 @@ public:
         is clamped to \a texture's valid area. */
     TextureCursor(const std::shared_ptr<Texture>& texture, const Pt& hotspot = Pt());
 
-    /** \name Accessors */ ///@{
     /** Returns the texture used to render this TextureCursor. */
     const std::shared_ptr<Texture>& GetTexture() const;
 
     /** Returns the position within Texture() of the cursor hotspot. */
     const Pt& Hotspot() const;
-    //@}
 
     void Render(const Pt& pt) override;
 

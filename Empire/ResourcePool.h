@@ -17,7 +17,6 @@ class FO_COMMON_API ResourcePool {
 public:
     ResourcePool(ResourceType type);
 
-    /** \name Accessors */ //@{
     const std::vector<int>&         ObjectIDs() const;                      ///< returns UniverseObject IDs in this ResourcePool
     float                           Stockpile() const;                      ///< returns current stockpiled amount of resource
 
@@ -35,7 +34,6 @@ public:
     float                           GroupAvailable(int object_id) const;    ///< returns amount of resource available in resource sharing group that contains the object with id \a object_id
 
     std::string                     Dump() const;
-    //@}
 
     /** emitted after updating production, or called externally to indicate
       * that stockpile and change need to be refreshed. */

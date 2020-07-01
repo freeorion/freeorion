@@ -162,7 +162,6 @@ public:
 
     virtual ~GUI();
 
-    /** \name Accessors */ ///@{
     const std::string&          AppName() const;                    ///< returns the user-defined name of the application
     std::shared_ptr<Wnd>        FocusWnd() const;                   ///< returns the GG::Wnd that currently has the input focus
     bool                        FocusWndAcceptsTypingInput() const; ///< returns true iff the current focus GG::Wnd accepts typing input
@@ -231,7 +230,6 @@ public:
         wnd is not rendered during the render cycle, or PNG support is not
         enabled, this is a no-op. */
     void                                    SaveWndAsPNG(const Wnd* wnd, const std::string& filename) const;
-    //@}
 
     //! Executes main event handler/render loop
     virtual void    Run() = 0;
