@@ -2,7 +2,6 @@
 #define _ShipPart_h_
 
 
-#include <boost/serialization/nvp.hpp>
 #include <GG/Enum.h>
 #include "CommonParams.h"
 #include "../util/Pending.h"
@@ -154,35 +153,7 @@ private:
     std::string                                         m_icon;
     bool                                                m_add_standard_capacity_effect = false;
     std::unique_ptr<Condition::Condition>               m_combat_targets;
-
-    friend class boost::serialization::access;
-    template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
-
-
-template <typename Archive>
-void ShipPart::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_NVP(m_name)
-        & BOOST_SERIALIZATION_NVP(m_description)
-        & BOOST_SERIALIZATION_NVP(m_class)
-        & BOOST_SERIALIZATION_NVP(m_capacity)
-        & BOOST_SERIALIZATION_NVP(m_secondary_stat)
-        & BOOST_SERIALIZATION_NVP(m_production_cost)
-        & BOOST_SERIALIZATION_NVP(m_production_time)
-        & BOOST_SERIALIZATION_NVP(m_producible)
-        & BOOST_SERIALIZATION_NVP(m_mountable_slot_types)
-        & BOOST_SERIALIZATION_NVP(m_tags)
-        & BOOST_SERIALIZATION_NVP(m_production_meter_consumption)
-        & BOOST_SERIALIZATION_NVP(m_production_special_consumption)
-        & BOOST_SERIALIZATION_NVP(m_location)
-        & BOOST_SERIALIZATION_NVP(m_exclusions)
-        & BOOST_SERIALIZATION_NVP(m_effects)
-        & BOOST_SERIALIZATION_NVP(m_icon)
-        & BOOST_SERIALIZATION_NVP(m_add_standard_capacity_effect)
-        & BOOST_SERIALIZATION_NVP(m_combat_targets);
-}
 
 
 //! Holds FreeOrion available ShipParts
