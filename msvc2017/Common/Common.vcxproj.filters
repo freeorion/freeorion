@@ -151,9 +151,6 @@
     <ClInclude Include="..\..\universe\Tech.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\universe\UniverseObjectVistor.h">
-      <Filter>Header Files\universe</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\universe\Universe.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
@@ -294,6 +291,9 @@
       <Filter>Header Files\Empire</Filter>
     </ClInclude>
     <ClInclude Include="..\..\universe\ShipHull.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\UniverseObjectVisitor.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
   </ItemGroup>
