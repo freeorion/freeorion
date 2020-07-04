@@ -38,6 +38,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Added vertical scale labels to empire statistic graphs
 - Added a right-click popup menu to empire statistic graphs, with several display options
 - Made the window resize tab bigger
+- Set a minimum size for some windows to prevent them from being made too small to be usable
 - Reworked pedia window layout, putting search bar and navigation buttons at top, similar to a web browser standard layout
 - Fixed display of circle arrow icons on production screen
 - Made options.xml contain only modified options by default, but added a button to output the full options database to the options window
@@ -54,16 +55,6 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Repeatedly clicking to close the game window will override the default autosave and exit faster
 
 #### Content and Balance
-
-- Stringtables
-    - Added a few names to lists used for ship names
-    - Translation updates: Spanish, French
-    - Cleaned up stringtables, removing duplicates from english in other languages
-    - Added stealth and slots to hull descriptions
-    - Fuel efficiency effects are now described like "-40%" instead of like "60%"
-    - Fixed some typos
-    - Corrected colony base hull description about slots
-    - Fixed descriptions of concentration camp effects
 
 - New Stuff
     - Added Arc Disruptor ship weapon part
@@ -86,8 +77,11 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Ships
     - Ship production cost increases ("upkeep") also count ships on the production queue
     - Reduced Shield part costs
-    - Colony Base hulls is more expensive, has 3 internal slots, but may not mount engines or fuel parts    
+    - Colony Base hulls are more expensive, have 3 internal slots, but may not mount engines or fuel parts    
     - Scaled up ship structure to avoid fractional numbers
+    - Made Space Flux Bubble hull be considered a robotic hull
+    - Experimentor outpost spawns two instead of three Black Krakens, and starts 50 turns later
+    - Nova Bomb prerequisites set to Zero Point Generation and Temporal Mechanics
 
 - Planets
     - Tweaked ordering of population effects for Lembala'Lam species
@@ -102,11 +96,28 @@ Notable changes to the FreeOrion project will be documented in this file.
     - Rebalance empire-wide pop-based specials and increase their protection
     - Added one refinement level to Nascent Artificial Intelligence and Adaptive Automation techs
     - Rebalanced Exobots to be adequate on all planet types and very bad a research
+    - Made Singularity Generation tech require Temporal Mechanics instead of Gravitonics
+    - Made Artificial Black Hole faster but slightly more expensive to produce
+    - Converting an asteroid field into an artificial planet removes an Asteroid Processor
 
 - Empires
     - Added separate empire affiliation for peace, distinct from allied
     - Enabled sharing of special visibility between allied empires
     - Added team-based player homeworld placement for multiplayer games
+    - Empires are considered defeated if they have no population and no ships, rather than no population and no planets
+
+- Pedia
+    - Added stealth and slots to hull descriptions
+    - Added articles about planetary focus game concept
+
+- Stringtables
+    - Added a few names to lists used for ship names
+    - Translation updates: Spanish, French
+    - Cleaned up stringtables, removing duplicates from english in other languages
+    - Fuel efficiency effects are now described like "-40%" instead of like "60%"
+    - Fixed some typos
+    - Corrected colony base hull description about slots
+    - Fixed descriptions of concentration camp effects
 
 #### Other Bug Fixes
 
@@ -114,10 +125,12 @@ Notable changes to the FreeOrion project will be documented in this file.
     - Fixed potential crashes and logged errors when executing fleet move orders
     - Fixed crash when passing empty string to set option on command line
     - Added some safety checks to network message handling to prevent some malformed / malicious messages from crashing the server
+    - Made dedicated hostless servers not shut down on errors when idling
+    - Fixed production and research queue popups causing the client to hang if used after a turn cycle occurs while they are open
 
 - Gameplay
     - Fixed issue where supply propagation occasionally didn't work
-    - Fixed some production queue order issues by using unique internal IDs for all production queue items
+    - Fixed some production queue order issues when saving and reloading a game, by using unique internal IDs for all production queue items. There may still be some issues with this, however.
     - Fixed calculation of some broken empire statistics
     - Fixed a bug where ships could be ordered to invade but then not do so
     - Fixed bug where a fleet would not block enemy supply propagation when it should have
@@ -125,11 +138,18 @@ Notable changes to the FreeOrion project will be documented in this file.
     - Fixed fighter hangar capacity being increased if any ship was owned by an empire with the appropriate tech, rather than just the ship's owner having it
     - Fixed issue with ship designs being added with conflicting IDs when loading a game
     - Fixed ships not getting the Interstellar Logistics speed bonus on the turn they were produced
+    - Fixed potentially receiving multiple sitreps from a single Artificial Black Hole creation event
+    - Fixed a scripting error within the Distortion Focus effect
+    - Fixed issue where bombardment orders wouldn't work if a ship had no other weapons
+    - Fixed issue with Sly refueling at gas giants or elsewhere
 
 - Fixed some broken pedia links in stringtable entries
 - Fixed the sitrep "Last" button when the most-recent turn doesn't have any visible sitreps
 - Fixed parsed content checksum for ShipDesigns, which was looking up the design name in the stringtable
 - Fixed issue with options being reset / lost between executions within an app bundle
+- Fixed chat messages marked with the colour of the empire with the same ID as a player's ID, rather than the colour of the empire the player controls
+- Excluded galaxy generation info about spawn rate and limits of specials from checksums
+
 
 #### Technical / Internal
 
@@ -283,7 +303,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Increased spacing between systems and starlanes generated by the Starlane Nexus
 - Conceding from a game destroys all an empire's buildings 
 - Made Scylior BAD_SUPPLY and BAD_FUEL
-- Made Chato bad pilots (BAD_WEAPONS)
+- Made Chato bad pilots (BAD_WEAPONS) and bad population
 - Planets with dying population no longer have their production and research zeroed, avoiding an issue where temporary disconnection from a growth special would cause sudden loss of resource output
 - Added some additional tie-breaking checks when deciding what empire can supply in a system
 - Stockpile focus is allowed on all colonies, but growth focus gives no stockpiling bonus
