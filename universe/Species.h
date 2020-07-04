@@ -16,10 +16,6 @@
 #include "../util/Pending.h"
 
 
-namespace Effect {
-    class EffectsGroup;
-}
-
 FO_COMMON_API extern const int ALL_EMPIRES;
 
 /** A setting that a ResourceCenter can be assigned to influence what it
@@ -69,7 +65,7 @@ public:
             std::string&& gameplay_desc, std::vector<FocusType>&& foci,
             std::string&& preferred_focus,
             std::map<PlanetType, PlanetEnvironment>&& planet_environments,
-            std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
+            std::vector<std::unique_ptr<focs::EffectsGroup>>&& effects,
             std::unique_ptr<focs::Condition>&& combat_targets,
             bool playable, bool native, bool can_colonize, bool can_produce_ships,
             const std::set<std::string>& tags, std::string&& graphic);
@@ -97,7 +93,7 @@ public:
 
     /** Returns the EffectsGroups that encapsulate the effects that species of
         this type have. */
-    const std::vector<std::shared_ptr<Effect::EffectsGroup>>& Effects() const
+    const std::vector<std::shared_ptr<focs::EffectsGroup>>& Effects() const
     { return m_effects; }
 
     bool                            Playable() const        { return m_playable; }          ///< returns whether this species is a suitable starting species for players
@@ -138,7 +134,7 @@ private:
     std::string                             m_preferred_focus;
     std::map<PlanetType, PlanetEnvironment> m_planet_environments;
 
-    std::vector<std::shared_ptr<Effect::EffectsGroup>>  m_effects;
+    std::vector<std::shared_ptr<focs::EffectsGroup>>  m_effects;
     std::unique_ptr<focs::Condition>               m_location;
     std::unique_ptr<focs::Condition>               m_combat_targets;
 

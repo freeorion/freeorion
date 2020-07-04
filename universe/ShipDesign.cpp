@@ -67,7 +67,7 @@ CommonParams::CommonParams(std::unique_ptr<focs::ValueRef<double>>&& production_
                            bool producible_,
                            const std::set<std::string>& tags_,
                            std::unique_ptr<focs::Condition>&& location_,
-                           std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects_,
+                           std::vector<std::unique_ptr<focs::EffectsGroup>>&& effects_,
                            ConsumptionMap<MeterType>&& production_meter_consumption_,
                            ConsumptionMap<std::string>&& production_special_consumption_,
                            std::unique_ptr<focs::Condition>&& enqueue_location_) :

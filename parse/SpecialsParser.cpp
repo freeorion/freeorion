@@ -49,7 +49,7 @@ namespace {
         auto special_ptr = std::make_unique<Special>(
             std::move(name), std::move(description),
             (stealth ? std::move(stealth->OpenEnvelope(pass)) : nullptr),
-            (effects ? std::move(OpenEnvelopes(*effects, pass)) : std::vector<std::unique_ptr<Effect::EffectsGroup>>{}),
+            (effects ? std::move(OpenEnvelopes(*effects, pass)) : std::vector<std::unique_ptr<focs::EffectsGroup>>{}),
             (special_pod.spawn_rate ? *special_pod.spawn_rate : 1.0),
             (special_pod.spawn_limit ? *special_pod.spawn_limit : 9999),
             (initial_capacity ? std::move(initial_capacity->OpenEnvelope(pass)) : nullptr),

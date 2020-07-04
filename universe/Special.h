@@ -12,11 +12,6 @@
 #include "../util/Pending.h"
 
 
-namespace Effect {
-    class EffectsGroup;
-}
-
-
 /** A predefined set of EffectsGroups that can be attached to a UniverseObject
   * (often referred to as the "source" object).  The effects of a Special are
   * not limited to the object to which it is attached.  Each kind of Special
@@ -26,7 +21,7 @@ class FO_COMMON_API Special {
 public:
     Special(std::string&& name, std::string&& description,
             std::unique_ptr<focs::ValueRef<double>>&& stealth,
-            std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
+            std::vector<std::unique_ptr<focs::EffectsGroup>>&& effects,
             double spawn_rate = 1.0, int spawn_limit = 99999,
             std::unique_ptr<focs::ValueRef<double>>&& initial_capaicty = nullptr,
             std::unique_ptr<focs::Condition>&& location = nullptr,
@@ -41,7 +36,7 @@ public:
 
     /** Returns the EffectsGroups that encapsulate the effects that specials of
         this type have. */
-    const std::vector<std::shared_ptr<Effect::EffectsGroup>>& Effects() const
+    const std::vector<std::shared_ptr<focs::EffectsGroup>>& Effects() const
     { return m_effects; }
 
     float                               SpawnRate() const       { return m_spawn_rate; }
@@ -65,7 +60,7 @@ private:
     std::string                                         m_name;
     std::string                                         m_description;
     std::unique_ptr<focs::ValueRef<double>>         m_stealth;
-    std::vector<std::shared_ptr<Effect::EffectsGroup>>  m_effects;
+    std::vector<std::shared_ptr<focs::EffectsGroup>>  m_effects;
     float                                               m_spawn_rate = 0.0f;
     int                                                 m_spawn_limit = 99999;
     std::unique_ptr<focs::ValueRef<double>>         m_initial_capacity;

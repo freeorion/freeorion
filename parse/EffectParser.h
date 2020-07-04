@@ -1,18 +1,14 @@
 #ifndef _EffectParser_h_
 #define _EffectParser_h_
 
+#include <boost/spirit/include/qi.hpp>
 #include "ConditionParser.h"
 #include "MovableEnvelope.h"
+#include "../focs/focs.hpp"
 
-#include <boost/spirit/include/qi.hpp>
-
-namespace Effect {
-    class Effect;
-    class EffectsGroup;
-}
 
 namespace parse { namespace detail {
-    using effect_payload        = MovableEnvelope<Effect::Effect>;
+    using effect_payload        = MovableEnvelope<focs::Effect>;
     using effect_signature      = effect_payload ();
     using effect_parser_rule    = rule<effect_signature>;
     using effect_parser_grammar = grammar<effect_signature>;
@@ -35,7 +31,7 @@ namespace parse {
         std::unique_ptr<Impl> m_impl;
     };
 
-    using effects_group_payload = std::vector<parse::detail::MovableEnvelope<Effect::EffectsGroup>>;
+    using effects_group_payload = std::vector<parse::detail::MovableEnvelope<focs::EffectsGroup>>;
     using effects_group_signature = effects_group_payload ();
     using effects_group_rule = detail::rule<effects_group_signature>;
 
@@ -46,7 +42,7 @@ namespace parse {
                               const detail::value_ref_grammar<std::string>& string_grammar);
 
         typedef detail::rule<
-            parse::detail::MovableEnvelope<Effect::EffectsGroup> (),
+            parse::detail::MovableEnvelope<focs::EffectsGroup> (),
             boost::spirit::qi::locals<
                 parse::detail::condition_payload,
                 parse::detail::condition_payload,

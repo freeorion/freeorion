@@ -56,7 +56,7 @@ namespace {
             policy_.short_description,
             policy_.category,
             (policy_.adoption_cost ? policy_.adoption_cost->OpenEnvelope(pass) : nullptr),
-            (policy_.effects ? OpenEnvelopes(*policy_.effects, pass) : std::vector<std::unique_ptr<Effect::EffectsGroup>>()),
+            (policy_.effects ? OpenEnvelopes(*policy_.effects, pass) : std::vector<std::unique_ptr<focs::EffectsGroup>>()),
             policy_.graphic);
 
         policies.insert(std::make_pair(policy_ptr->Name(), std::move(policy_ptr)));

@@ -51,7 +51,7 @@ namespace parse { namespace detail {
             )
             >   double_rules.expr [ _b = _1 ]
             > -(label(tok.AccountingLabel_) > tok.string) [ _c = _1]
-            ) [ _val = construct_movable_(new_<Effect::SetMeter>(
+            ) [ _val = construct_movable_(new_<focs::SetMeter>(
                 _a,
                 deconstruct_movable_(_b, _pass),
                 _c)) ]
@@ -60,7 +60,7 @@ namespace parse { namespace detail {
         set_ship_part_meter
             = ((set_ship_part_meter_type_enum  >>   label(tok.PartName_))   > string_grammar
                >    label(tok.Value_)      > double_rules.expr
-              ) [ _val = construct_movable_(new_<Effect::SetShipPartMeter>(
+              ) [ _val = construct_movable_(new_<focs::SetShipPartMeter>(
                   _1,
                   deconstruct_movable_(_2, _pass),
                   deconstruct_movable_(_3, _pass))) ]
@@ -70,12 +70,12 @@ namespace parse { namespace detail {
             =   tok.SetEmpireStockpile_ [ _a = RE_INDUSTRY ]
             >   (
                 (   label(tok.Empire_) > int_rules.expr [ _b = _1 ]
-                    >   label(tok.Value_)  > double_rules.expr [ _val = construct_movable_(new_<Effect::SetEmpireStockpile>(
+                    >   label(tok.Value_)  > double_rules.expr [ _val = construct_movable_(new_<focs::SetEmpireStockpile>(
                         deconstruct_movable_(_b, _pass),
                         _a,
                         deconstruct_movable_(_1, _pass))) ]
                 )
-                |  (label(tok.Value_)  > double_rules.expr [ _val = construct_movable_(new_<Effect::SetEmpireStockpile>(
+                |  (label(tok.Value_)  > double_rules.expr [ _val = construct_movable_(new_<focs::SetEmpireStockpile>(
                             _a,
                             deconstruct_movable_(_1, _pass))) ]
                        )
@@ -86,33 +86,33 @@ namespace parse { namespace detail {
             =    tok.SetEmpireCapital_
             >   (
                 (label(tok.Empire_) > int_rules.expr [ _val = construct_movable_(
-                        new_<Effect::SetEmpireCapital>(deconstruct_movable_(_1, _pass))) ])
-                |    eps [ _val = construct_movable_(new_<Effect::SetEmpireCapital>()) ]
+                        new_<focs::SetEmpireCapital>(deconstruct_movable_(_1, _pass))) ])
+                |    eps [ _val = construct_movable_(new_<focs::SetEmpireCapital>()) ]
             )
             ;
 
         set_planet_type
             =    tok.SetPlanetType_
             >    label(tok.Type_) > planet_type_rules.expr [ _val = construct_movable_(
-                new_<Effect::SetPlanetType>(deconstruct_movable_(_1, _pass))) ]
+                new_<focs::SetPlanetType>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         set_planet_size
             =    tok.SetPlanetSize_
             >    label(tok.PlanetSize_) > planet_size_rules.expr [
-                _val = construct_movable_(new_<Effect::SetPlanetSize>(deconstruct_movable_(_1, _pass))) ]
+                _val = construct_movable_(new_<focs::SetPlanetSize>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         set_species
             =    tok.SetSpecies_
             >    label(tok.Name_) > string_grammar [
-                _val = construct_movable_(new_<Effect::SetSpecies>(deconstruct_movable_(_1, _pass))) ]
+                _val = construct_movable_(new_<focs::SetSpecies>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         set_owner
             =    tok.SetOwner_
             >    label(tok.Empire_) > int_rules.expr [
-                _val = construct_movable_(new_<Effect::SetOwner>(deconstruct_movable_(_1, _pass))) ]
+                _val = construct_movable_(new_<focs::SetOwner>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         set_species_opinion
@@ -121,14 +121,14 @@ namespace parse { namespace detail {
             > (
                 (   label(tok.Empire_) >  int_rules.expr [ _c = _1 ]
                     >  label(tok.Opinion_) > double_rules.expr
-                    [ _val = construct_movable_(new_<Effect::SetSpeciesEmpireOpinion>(
+                    [ _val = construct_movable_(new_<focs::SetSpeciesEmpireOpinion>(
                             deconstruct_movable_(_a, _pass),
                             deconstruct_movable_(_c, _pass),
                             deconstruct_movable_(_1, _pass))) ])
                 |
                 (   label(tok.Species_) > string_grammar [ _b = _1 ]
                     >   label(tok.Opinion_) > double_rules.expr
-                    [ _val = construct_movable_(new_<Effect::SetSpeciesSpeciesOpinion>(
+                    [ _val = construct_movable_(new_<focs::SetSpeciesSpeciesOpinion>(
                             deconstruct_movable_(_a, _pass),
                             deconstruct_movable_(_b, _pass),
                             deconstruct_movable_(_1, _pass))) ])
@@ -159,7 +159,7 @@ namespace parse { namespace detail {
                 >  label(tok.Visibility_) > visibility_rules.expr [ _c = _1 ]
                 >-(label(tok.Condition_) > condition_parser [ _e = _1 ])
             ) [ _val = construct_movable_(
-                new_<Effect::SetVisibility>(deconstruct_movable_(_c, _pass),
+                new_<focs::SetVisibility>(deconstruct_movable_(_c, _pass),
                                             _d,
                                             deconstruct_movable_(_b, _pass),
                                             deconstruct_movable_(_e, _pass))) ]

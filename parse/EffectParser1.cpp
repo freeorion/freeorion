@@ -24,7 +24,7 @@ namespace parse { namespace detail {
         bool& pass)
     {
         return effect_payload(
-            new Effect::GenerateSitRepMessage(
+            new focs::GenerateSitRepMessage(
                 message_string,
                 icon,
                 OpenEnvelopes(message_parameters, pass),
@@ -46,7 +46,7 @@ namespace parse { namespace detail {
         bool& pass)
     {
         return effect_payload(
-            new Effect::GenerateSitRepMessage(
+            new focs::GenerateSitRepMessage(
                 message_string,
                 icon,
                 OpenEnvelopes(message_parameters, pass),
@@ -67,7 +67,7 @@ namespace parse { namespace detail {
         bool& pass)
     {
         return effect_payload(
-            new Effect::GenerateSitRepMessage(
+            new focs::GenerateSitRepMessage(
                 message_string,
                 icon,
                 OpenEnvelopes(message_parameters, pass),
@@ -120,7 +120,7 @@ namespace parse { namespace detail {
               > label(tok.Meter_)           >   tok.string
               > label(tok.Value_)           >   double_rules.expr
             ) [ _val = construct_movable_(
-                new_<Effect::SetEmpireMeter>(
+                new_<focs::SetEmpireMeter>(
                     deconstruct_movable_(_1, _pass),
                     _2,
                     deconstruct_movable_(_3, _pass))) ]
@@ -130,7 +130,7 @@ namespace parse { namespace detail {
             = (( omit_[tok.SetEmpireMeter_]
                >> label(tok.Meter_))        >   tok.string
                >  label(tok.Value_)         >   double_rules.expr
-              ) [ _val = construct_movable_(new_<Effect::SetEmpireMeter>(
+              ) [ _val = construct_movable_(new_<focs::SetEmpireMeter>(
                    _1,
                    deconstruct_movable_(_2, _pass))) ]
             ;
@@ -139,7 +139,7 @@ namespace parse { namespace detail {
             =   (   omit_[tok.GiveEmpireTech_]
                     >   label(tok.Name_)    >   string_grammar
                     > -(label(tok.Empire_)  >   int_rules.expr)
-                ) [ _val = construct_movable_(new_<Effect::GiveEmpireTech>(
+                ) [ _val = construct_movable_(new_<focs::GiveEmpireTech>(
                     deconstruct_movable_(_1, _pass),
                     deconstruct_movable_(_2, _pass))) ]
             ;
@@ -149,7 +149,7 @@ namespace parse { namespace detail {
                 >   label(tok.Name_)        >   string_grammar
                 >   label(tok.Progress_)    >   double_rules.expr
                 > -(label(tok.Empire_)      >   int_rules.expr)
-              ) [ _val = construct_movable_(new_<Effect::SetEmpireTechProgress>(
+              ) [ _val = construct_movable_(new_<focs::SetEmpireTechProgress>(
                         deconstruct_movable_(_1, _pass),
                         deconstruct_movable_(_2, _pass),
                         deconstruct_movable_(_3, _pass))) ]
@@ -207,7 +207,7 @@ namespace parse { namespace detail {
             = ( omit_[tok.SetOverlayTexture_]
                 > label(tok.Name_)    > tok.string
                 > label(tok.Size_)    > double_rules.expr
-              ) [ _val = construct_movable_(new_<Effect::SetOverlayTexture>(
+              ) [ _val = construct_movable_(new_<focs::SetOverlayTexture>(
                   _1,
                   deconstruct_movable_(_2, _pass))) ]
             ;

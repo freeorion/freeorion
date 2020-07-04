@@ -11,16 +11,12 @@
 #include "../util/Pending.h"
 
 
-namespace Effect {
-    class EffectsGroup;
-}
-
 class FO_COMMON_API Policy {
 public:
     Policy(std::string name, std::string description,
            std::string short_description, std::string category,
            std::unique_ptr<focs::ValueRef<double>>&& adoption_cost,
-           std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
+           std::vector<std::unique_ptr<focs::EffectsGroup>>&& effects,
            std::string graphic);
 
     const std::string&  Name() const                { return m_name; }
@@ -32,7 +28,7 @@ public:
 
     //! returns the effects that are applied to the discovering empire's capital
     //! when this policy is adopted.
-    const std::vector<std::shared_ptr<Effect::EffectsGroup>>& Effects() const
+    const std::vector<std::shared_ptr<focs::EffectsGroup>>& Effects() const
     { return m_effects; }
 
     const std::string&  Graphic() const       { return m_graphic; }
@@ -54,7 +50,7 @@ private:
     std::string                                         m_short_description;
     std::string                                         m_category;
     std::unique_ptr<focs::ValueRef<double>>             m_adoption_cost;
-    std::vector<std::shared_ptr<Effect::EffectsGroup>>  m_effects;
+    std::vector<std::shared_ptr<focs::EffectsGroup>>  m_effects;
     std::string                                         m_graphic;
 
     friend class PolicyManager;

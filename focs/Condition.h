@@ -12,12 +12,10 @@
 class UniverseObject;
 struct ScriptingContext;
 
-namespace Effect {
-    typedef std::vector<std::shared_ptr<UniverseObject>> TargetSet;
-}
 
 namespace focs {
 
+typedef std::vector<std::shared_ptr<UniverseObject>> TargetSet;
 typedef std::vector<std::shared_ptr<const UniverseObject>> ObjectSet;
 
 }
@@ -43,8 +41,8 @@ struct FO_COMMON_API focs::Condition {
                       SearchDomain search_domain = NON_MATCHES) const;
 
     void Eval(const ScriptingContext& parent_context,
-              Effect::TargetSet& matches,
-              Effect::TargetSet& non_matches,
+              TargetSet& matches,
+              TargetSet& non_matches,
               SearchDomain search_domain = NON_MATCHES) const;
 
     /** Tests all objects in universe as NON_MATCHES. */
@@ -53,7 +51,7 @@ struct FO_COMMON_API focs::Condition {
 
     /** Tests all objects in universe as NON_MATCHES. */
     void Eval(const ScriptingContext& parent_context,
-              Effect::TargetSet& matches) const;
+              TargetSet& matches) const;
 
     /** Tests single candidate object, returning true iff it matches condition. */
     bool Eval(const ScriptingContext& parent_context,

@@ -8,11 +8,6 @@
 #include "../util/Pending.h"
 
 
-namespace Effect {
-    class EffectsGroup;
-}
-
-
 //! Class to specify a kind of building.
 //!
 //! Each building type must have a unique @a name string, by which it can be
@@ -89,7 +84,7 @@ public:
 
     //! Returns the EffectsGroups that encapsulate the effects that buildings of
     //! this type have when operational.
-    auto Effects() const -> const std::vector<std::shared_ptr<Effect::EffectsGroup>>&
+    auto Effects() const -> const std::vector<std::shared_ptr<focs::EffectsGroup>>&
     { return m_effects; }
 
     //! Returns the name of the grapic file for this building type
@@ -135,7 +130,7 @@ private:
     ConsumptionMap<std::string>                         m_production_special_consumption;
     std::unique_ptr<focs::Condition>               m_location;
     std::unique_ptr<focs::Condition>               m_enqueue_location;
-    std::vector<std::shared_ptr<Effect::EffectsGroup>>  m_effects;
+    std::vector<std::shared_ptr<focs::EffectsGroup>>  m_effects;
     std::string                                         m_icon;
 };
 

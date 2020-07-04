@@ -21,7 +21,7 @@
 
 #if DEBUG_PARSERS
 namespace std {
-    inline ostream& operator<<(ostream& os, const std::vector<Effect::Effect*>&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::vector<focs::Effect*>&) { return os; }
     inline ostream& operator<<(ostream& os, const GG::Clr&) { return os; }
     inline ostream& operator<<(ostream& os, const UnlockableItem&) { return os; }
 }

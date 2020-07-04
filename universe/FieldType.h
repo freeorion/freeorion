@@ -6,13 +6,9 @@
 #include <set>
 #include <string>
 #include <vector>
+#include "../focs/focs.hpp"
 #include "../util/Export.h"
 #include "../util/Pending.h"
-
-
-namespace Effect {
-    class EffectsGroup;
-}
 
 
 //! A specification for a type of Field.
@@ -20,7 +16,7 @@ class FO_COMMON_API FieldType {
 public:
     FieldType(std::string&& name, std::string&& description,
               float stealth, const std::set<std::string>& tags,
-              std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
+              std::vector<std::unique_ptr<focs::EffectsGroup>>&& effects,
               std::string&& graphic);
 
     //! Returns the unique name for this type of field
@@ -43,7 +39,7 @@ public:
 
     //! Returns the EffectsGroups that encapsulate the effects of this
     //! FieldType.
-    auto Effects() const -> const std::vector<std::shared_ptr<Effect::EffectsGroup>>&
+    auto Effects() const -> const std::vector<std::shared_ptr<focs::EffectsGroup>>&
     { return m_effects; }
 
     //! Returns the name of the grapic file for this field type
@@ -63,7 +59,7 @@ private:
     std::string                                         m_description;
     float                                               m_stealth;
     std::set<std::string>                               m_tags;
-    std::vector<std::shared_ptr<Effect::EffectsGroup>>  m_effects;
+    std::vector<std::shared_ptr<focs::EffectsGroup>>  m_effects;
     std::string                                         m_graphic;
 };
 

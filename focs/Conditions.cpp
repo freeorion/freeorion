@@ -263,7 +263,7 @@ void Condition::Eval(const ScriptingContext& parent_context,
 { EvalImpl(matches, non_matches, search_domain, MatchHelper(this, parent_context)); }
 
 void Condition::Eval(const ScriptingContext& parent_context,
-                     Effect::TargetSet& matches, Effect::TargetSet& non_matches,
+                     TargetSet& matches, TargetSet& non_matches,
                      SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     // reinterpret sets of mutable objects as sets of non-mutable objects.
@@ -286,7 +286,7 @@ void Condition::Eval(const ScriptingContext& parent_context,
 }
 
 void Condition::Eval(const ScriptingContext& parent_context,
-                     Effect::TargetSet& matches) const
+                     TargetSet& matches) const
 {
     // reinterpret sets of mutable objects as sets of non-mutable objects.
     auto& matches_as_objectset = reinterpret_cast<ObjectSet&>(matches);

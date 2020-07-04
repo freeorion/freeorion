@@ -13,10 +13,6 @@
 #include <GG/Clr.h>
 
 
-namespace Effect {
-    class Effect;
-}
-
 namespace parse { namespace detail {
     /// A functor to determine if \p key will be unique in \p map of \p type, and log an error otherwise.
     struct is_unique {

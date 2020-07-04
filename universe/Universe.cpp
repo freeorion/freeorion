@@ -505,7 +505,7 @@ void Universe::ApplyAllEffectsAndUpdateMeters(bool do_accounting) {
     // cache all activation and scoping condition results before applying
     // Effects, since the application of these Effects may affect the activation
     // and scoping evaluations
-    std::map<int, Effect::SourcesEffectsTargetsAndCausesVec> source_effects_targets_causes;
+    std::map<int, focs::SourcesEffectsTargetsAndCausesVec> source_effects_targets_causes;
     GetEffectsAndTargets(source_effects_targets_causes, false);
 
     // revert all current meter values (which are modified by effects) to
@@ -534,7 +534,7 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_i
     }
     // cache all activation and scoping condition results before applying Effects, since the application of
     // these Effects may affect the activation and scoping evaluations
-    std::map<int, Effect::SourcesEffectsTargetsAndCausesVec> source_effects_targets_causes;
+    std::map<int, focs::SourcesEffectsTargetsAndCausesVec> source_effects_targets_causes;
     GetEffectsAndTargets(source_effects_targets_causes, object_ids, true);
 
     std::vector<std::shared_ptr<UniverseObject>> objects = m_objects.find(object_ids);
@@ -562,7 +562,7 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(bool do_accounting) {
         do_accounting = GetOptionsDB().Get<bool>("effects.accounting.enabled");
     }
 
-    std::map<int, Effect::SourcesEffectsTargetsAndCausesVec> source_effects_targets_causes;
+    std::map<int, focs::SourcesEffectsTargetsAndCausesVec> source_effects_targets_causes;
     GetEffectsAndTargets(source_effects_targets_causes, true);
 
     TraceLogger(effects) << "Universe::ApplyMeterEffectsAndUpdateMeters resetting...";
@@ -596,7 +596,7 @@ void Universe::ApplyAppearanceEffects(const std::vector<int>& object_ids) {
     // cache all activation and scoping condition results before applying
     // Effects, since the application of these Effects may affect the
     // activation and scoping evaluations
-    std::map<int, Effect::SourcesEffectsTargetsAndCausesVec> source_effects_targets_causes;
+    std::map<int, focs::SourcesEffectsTargetsAndCausesVec> source_effects_targets_causes;
     GetEffectsAndTargets(source_effects_targets_causes, object_ids, false);
     ExecuteEffects(source_effects_targets_causes, false, false, true);
 }
@@ -607,7 +607,7 @@ void Universe::ApplyAppearanceEffects() {
     // cache all activation and scoping condition results before applying
     // Effects, since the application of Effects in general (even if not these
     // particular Effects) may affect the activation and scoping evaluations
-    std::map<int, Effect::SourcesEffectsTargetsAndCausesVec> source_effects_targets_causes;
+    std::map<int, focs::SourcesEffectsTargetsAndCausesVec> source_effects_targets_causes;
     GetEffectsAndTargets(source_effects_targets_causes, false);
     ExecuteEffects(source_effects_targets_causes, false, false, true);
 }
@@ -618,7 +618,7 @@ void Universe::ApplyGenerateSitRepEffects() {
     // cache all activation and scoping condition results before applying
     // Effects, since the application of Effects in general (even if not these
     // particular Effects) may affect the activation and scoping evaluations
-    std::map<int, Effect::SourcesEffectsTargetsAndCausesVec> source_effects_targets_causes;
+    std::map<int, focs::SourcesEffectsTargetsAndCausesVec> source_effects_targets_causes;
     GetEffectsAndTargets(source_effects_targets_causes, false);
     ExecuteEffects(source_effects_targets_causes, false, false, false, false, true);
 }
@@ -840,7 +840,7 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, boo
 
     // cache all activation and scoping condition results before applying Effects, since the application of
     // these Effects may affect the activation and scoping evaluations
-    std::map<int, Effect::SourcesEffectsTargetsAndCausesVec> source_effects_targets_causes;
+    std::map<int, focs::SourcesEffectsTargetsAndCausesVec> source_effects_targets_causes;
     GetEffectsAndTargets(source_effects_targets_causes, objects_vec, true);
 
     // Apply and record effect meter adjustments
@@ -910,13 +910,13 @@ namespace {
       * source object, as a separate entry in \a targets_cases_out */
     void StoreTargetsAndCausesOfEffectsGroup(
         const ObjectMap&                            object_map,
-        const Effect::EffectsGroup*                 effects_group,
+        const focs::EffectsGroup*                 effects_group,
         const focs::ObjectSet&                 source_objects,
         EffectsCauseType                            effect_cause_type,
         const std::string&                          specific_cause_name,
         const std::unordered_set<int>&              candidate_object_ids,   // TODO: Can this be removed along with scope is source test?
-        Effect::TargetSet&                          candidate_objects_in,   // may be empty: indicates to test for full universe of objects
-        Effect::SourcesEffectsTargetsAndCausesVec&  source_effects_targets_causes_out,
+        focs::TargetSet&                          candidate_objects_in,   // may be empty: indicates to test for full universe of objects
+        focs::SourcesEffectsTargetsAndCausesVec&  source_effects_targets_causes_out,
         int n)
     {
         TraceLogger(effects) << "StoreTargetsAndCausesOfEffectsGroup < " << n << " >"
@@ -949,13 +949,13 @@ namespace {
             // TargetsAndCause {TargetSet target_set; EffectCause effect_cause;}
             // typedef std::vector<std::pair<SourcedEffectsGroup, TargetsAndCause>> SourcesEffectsTargetsAndCausesVec;
             source_effects_targets_causes_out.emplace_back(
-                Effect::SourcedEffectsGroup{source->ID(), effects_group},
-                Effect::TargetsAndCause{
-                    {}, // empty Effect::TargetSet
-                    Effect::EffectCause{effect_cause_type, specific_cause_name, effects_group->AccountingLabel()}});
+                focs::SourcedEffectsGroup{source->ID(), effects_group},
+                focs::TargetsAndCause{
+                    {}, // empty focs::TargetSet
+                    focs::EffectCause{effect_cause_type, specific_cause_name, effects_group->AccountingLabel()}});
 
-            // extract output Effect::TargetSet
-            Effect::TargetSet& matched_targets{source_effects_targets_causes_out.back().second.target_set};
+            // extract output focs::TargetSet
+            focs::TargetSet& matched_targets{source_effects_targets_causes_out.back().second.target_set};
 
             // move scope condition matches into output matches
             if (candidate_objects_in.empty()) {
@@ -992,13 +992,13 @@ namespace {
         EffectsCauseType effect_cause_type,
         const std::string& specific_cause_name,
         const focs::ObjectSet& source_objects,
-        const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects_groups,
+        const std::vector<std::shared_ptr<focs::EffectsGroup>>& effects_groups,
         bool only_meter_effects,
         const ObjectMap& object_map,
         const focs::ObjectSet& potential_targets,
         const std::unordered_set<int>& potential_target_ids,
-        std::list<std::pair<Effect::SourcesEffectsTargetsAndCausesVec,
-                            Effect::SourcesEffectsTargetsAndCausesVec*>>& source_effects_targets_causes_reorder_buffer_out,
+        std::list<std::pair<focs::SourcesEffectsTargetsAndCausesVec,
+                            focs::SourcesEffectsTargetsAndCausesVec*>>& source_effects_targets_causes_reorder_buffer_out,
         boost::asio::thread_pool& thread_pool,
         int& n)
     {
@@ -1076,14 +1076,14 @@ namespace {
         // TODO: is it faster to index by scope and activation condition or scope and filtered sources set?
         std::vector<std::tuple<focs::Condition*,
                                focs::ObjectSet,
-                               Effect::SourcesEffectsTargetsAndCausesVec*>>
+                               focs::SourcesEffectsTargetsAndCausesVec*>>
             already_dispatched_scope_condition_ptrs;
         already_evaluated_activation_condition_idx.reserve(effects_groups.size());
 
 
         // duplicate input ObjectSet potential_targets as local TargetSet
         // that can be passed to StoreTargetsAndCausesOfEffectsGroup
-        Effect::TargetSet potential_targets_copy;
+        focs::TargetSet potential_targets_copy;
         potential_targets_copy.reserve(potential_targets.size());
         for (const auto& obj : potential_targets)
             potential_targets_copy.emplace_back(std::const_pointer_cast<UniverseObject>(obj));
@@ -1122,15 +1122,15 @@ namespace {
                             std::get<2>(cond_sources_ptr);
 
                         // allocate result structs that contain empty
-                        // Effect::TargetSets that will be filled later
+                        // focs::TargetSets that will be filled later
                         auto& vec_out{source_effects_targets_causes_reorder_buffer_out.back().first};
                         for (auto& source : active_sources[i]) {
                             source_context.source = source;
                             vec_out.emplace_back(
-                                Effect::SourcedEffectsGroup{source->ID(), effects_group},
-                                Effect::TargetsAndCause{
-                                    {}, // empty Effect::TargetSet
-                                    Effect::EffectCause{effect_cause_type, specific_cause_name,
+                                focs::SourcedEffectsGroup{source->ID(), effects_group},
+                                focs::TargetsAndCause{
+                                    {}, // empty focs::TargetSet
+                                    focs::EffectCause{effect_cause_type, specific_cause_name,
                                                         effects_group->AccountingLabel()}});
                         }
 
@@ -1192,14 +1192,14 @@ namespace {
     }
 }
 
-void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsAndCausesVec>& source_effects_targets_causes,
+void Universe::GetEffectsAndTargets(std::map<int, focs::SourcesEffectsTargetsAndCausesVec>& source_effects_targets_causes,
                                     bool only_meter_effects) const
 {
     source_effects_targets_causes.clear();
     GetEffectsAndTargets(source_effects_targets_causes, std::vector<int>(), only_meter_effects);
 }
 
-void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsAndCausesVec>& source_effects_targets_causes,
+void Universe::GetEffectsAndTargets(std::map<int, focs::SourcesEffectsTargetsAndCausesVec>& source_effects_targets_causes,
                                     const std::vector<int>& target_object_ids,
                                     bool only_meter_effects) const
 {
@@ -1222,8 +1222,8 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     // to another earlier entry in this list, which contains the results of
     // evaluating the same scope condition on the same set of activation-passing
     // source objects, and which should be copied into the paired Vec
-    std::list<std::pair<Effect::SourcesEffectsTargetsAndCausesVec,
-                        Effect::SourcesEffectsTargetsAndCausesVec*>> source_effects_targets_causes_reorder_buffer;
+    std::list<std::pair<focs::SourcesEffectsTargetsAndCausesVec,
+                        focs::SourcesEffectsTargetsAndCausesVec*>> source_effects_targets_causes_reorder_buffer;
 
     const unsigned int num_threads = static_cast<unsigned int>(std::max(1, EffectsProcessingThreads()));
     boost::asio::thread_pool thread_pool(num_threads);
@@ -1540,7 +1540,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     type_timer.EnterSection("reordering");
     for (const auto& job_results : source_effects_targets_causes_reorder_buffer) {
         if (job_results.second) {
-            // entry in reorder buffer contains empty Effect::TargetSets that
+            // entry in reorder buffer contains empty focs::TargetSets that
             // should be populated from the pointed-to earlier entry
             const auto& resolved_scope_target_sets{*job_results.second};
             TraceLogger(effects) << "Reordering using cached result of size " << resolved_scope_target_sets.size()
@@ -1569,7 +1569,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     }
 }
 
-void Universe::ExecuteEffects(std::map<int, Effect::SourcesEffectsTargetsAndCausesVec>& source_effects_targets_causes,
+void Universe::ExecuteEffects(std::map<int, focs::SourcesEffectsTargetsAndCausesVec>& source_effects_targets_causes,
                               bool update_effect_accounting,
                               bool only_meter_effects/* = false*/,
                               bool only_appearance_effects/* = false*/,
@@ -1585,16 +1585,16 @@ void Universe::ExecuteEffects(std::map<int, Effect::SourcesEffectsTargetsAndCaus
     // within each priority group, execute effects in dispatch order
     for (auto& priority_group : source_effects_targets_causes) {
         //int priority = priority_group.first;
-        Effect::SourcesEffectsTargetsAndCausesVec& setc{priority_group.second};
+        focs::SourcesEffectsTargetsAndCausesVec& setc{priority_group.second};
 
         // construct a source context, which is updated for each entry in sources-effects-targets.
         // execute each effectsgroup on its target set
         ScriptingContext source_context;
-        for (std::pair<Effect::SourcedEffectsGroup, Effect::TargetsAndCause>& effect_group_entry : setc) {
-            Effect::TargetsAndCause& targets_and_cause{effect_group_entry.second};
-            Effect::TargetSet& target_set{targets_and_cause.target_set};
+        for (std::pair<focs::SourcedEffectsGroup, focs::TargetsAndCause>& effect_group_entry : setc) {
+            focs::TargetsAndCause& targets_and_cause{effect_group_entry.second};
+            focs::TargetSet& target_set{targets_and_cause.target_set};
 
-            const Effect::EffectsGroup* effects_group = effect_group_entry.first.effects_group;
+            const focs::EffectsGroup* effects_group = effect_group_entry.first.effects_group;
 
             if (only_meter_effects && !effects_group->HasMeterEffects())
                 continue;

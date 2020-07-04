@@ -233,7 +233,7 @@ void MeterBrowseWnd::UpdateImpl(std::size_t mode, const Wnd* target) {
 
 namespace {
     /** Return the vector of accounting information from \p obj_id of \p meter_type.*/
-    boost::optional<const std::vector<Effect::AccountingInfo>&> GetAccountingInfo(
+    boost::optional<const std::vector<focs::AccountingInfo>&> GetAccountingInfo(
         int obj_id, const MeterType& meter_type)
     {
         // get object and meter, aborting if not valid

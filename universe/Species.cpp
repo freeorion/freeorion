@@ -89,7 +89,7 @@ Species::Species(std::string&& name, std::string&& desc,
                  std::string&& gameplay_desc, std::vector<FocusType>&& foci,
                  std::string&& preferred_focus,
                  std::map<PlanetType, PlanetEnvironment>&& planet_environments,
-                 std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
+                 std::vector<std::unique_ptr<focs::EffectsGroup>>&& effects,
                  std::unique_ptr<focs::Condition>&& combat_targets,
                  bool playable, bool native, bool can_colonize, bool can_produce_ships,
                  const std::set<std::string>& tags, std::string&& graphic) :

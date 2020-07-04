@@ -86,7 +86,7 @@ namespace {
             (params.foci ? std::move(*params.foci) : std::vector<FocusType>{}),
             (params.preferred_focus ? std::move(*params.preferred_focus) : std::string{}),
             (planet_environments ? std::move(*planet_environments) : std::map<PlanetType, PlanetEnvironment>{}),
-            (effects ? std::move(OpenEnvelopes(*effects, pass)) : std::vector<std::unique_ptr<Effect::EffectsGroup>>{}),
+            (effects ? std::move(OpenEnvelopes(*effects, pass)) : std::vector<std::unique_ptr<focs::EffectsGroup>>{}),
             (combat_targets ? std::move((*combat_targets).OpenEnvelope(pass)) : nullptr),
             params.playable,
             params.native,

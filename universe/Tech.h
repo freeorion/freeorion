@@ -18,8 +18,6 @@
 #include "../util/Pending.h"
 
 
-namespace Effect
-{ class EffectsGroup; }
 class TechManager;
 struct UnlockableItem;
 
@@ -52,7 +50,7 @@ public:
          std::unique_ptr<focs::ValueRef<double>>&& research_cost,
          std::unique_ptr<focs::ValueRef<int>>&& research_turns,
          bool researchable, std::set<std::string>&& tags,
-         std::vector<std::shared_ptr<Effect::EffectsGroup>>&& effects,
+         std::vector<std::shared_ptr<focs::EffectsGroup>>&& effects,
          std::set<std::string>&& prerequisites,
          std::vector<UnlockableItem>&& unlocked_items,
          std::string&& graphic);
@@ -60,7 +58,7 @@ public:
     /** basic ctor taking helper struct to reduce number of direct parameters
       * in order to making parsing work. */
     Tech(TechInfo&& tech_info,
-         std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
+         std::vector<std::unique_ptr<focs::EffectsGroup>>&& effects,
          std::set<std::string>&& prerequisites,
          std::vector<UnlockableItem>&& unlocked_items,
          std::string&& graphic);
@@ -82,7 +80,7 @@ public:
     /** returns the effects that are applied to the discovering empire's capital
       * when this tech is researched; not all techs have effects, in which case
       * this returns 0 */
-    const std::vector<std::shared_ptr<Effect::EffectsGroup>>& Effects() const
+    const std::vector<std::shared_ptr<focs::EffectsGroup>>& Effects() const
     { return m_effects; }
 
     const std::set<std::string>&    Prerequisites() const { return m_prerequisites; }   //!< returns the set of names of all techs required before this one can be researched
@@ -115,7 +113,7 @@ private:
     std::unique_ptr<focs::ValueRef<int>>    m_research_turns;
     bool                            m_researchable = false;
     std::set<std::string>           m_tags;
-    std::vector<std::shared_ptr<Effect::EffectsGroup>> m_effects;
+    std::vector<std::shared_ptr<focs::EffectsGroup>> m_effects;
     std::set<std::string>           m_prerequisites;
     std::vector<UnlockableItem>     m_unlocked_items;
     std::string                     m_graphic;

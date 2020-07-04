@@ -114,7 +114,7 @@ public:
     { return m_exclusions; }
 
     //! Returns the EffectsGroups that encapsulate the effects this part has.
-    auto Effects() const -> const std::vector<std::shared_ptr<Effect::EffectsGroup>>&
+    auto Effects() const -> const std::vector<std::shared_ptr<focs::EffectsGroup>>&
     { return m_effects; }
 
     //! Returns icon graphic that represents part in UI
@@ -131,7 +131,7 @@ public:
     //@}
 
 private:
-    void Init(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects);
+    void Init(std::vector<std::unique_ptr<focs::EffectsGroup>>&& effects);
 
     std::string     m_name;
     std::string     m_description;
@@ -149,7 +149,7 @@ private:
     ConsumptionMap<std::string>                         m_production_special_consumption;
     std::unique_ptr<focs::Condition>               m_location;
     std::set<std::string>                               m_exclusions;
-    std::vector<std::shared_ptr<Effect::EffectsGroup>>  m_effects;
+    std::vector<std::shared_ptr<focs::EffectsGroup>>  m_effects;
     std::string                                         m_icon;
     bool                                                m_add_standard_capacity_effect = false;
     std::unique_ptr<focs::Condition>               m_combat_targets;

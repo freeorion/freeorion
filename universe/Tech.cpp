@@ -124,7 +124,7 @@ Tech::Tech(std::string&& name, std::string&& description,
            std::unique_ptr<focs::ValueRef<int>>&& research_turns,
            bool researchable,
            std::set<std::string>&& tags,
-           std::vector<std::shared_ptr<Effect::EffectsGroup>>&& effects,
+           std::vector<std::shared_ptr<focs::EffectsGroup>>&& effects,
            std::set<std::string>&& prerequisites,
            std::vector<UnlockableItem>&& unlocked_items,
            std::string&& graphic) :
@@ -146,7 +146,7 @@ Tech::Tech(std::string&& name, std::string&& description,
 }
 
 Tech::Tech(TechInfo&& tech_info,
-           std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
+           std::vector<std::unique_ptr<focs::EffectsGroup>>&& effects,
            std::set<std::string>&& prerequisites,
            std::vector<UnlockableItem>&& unlocked_items,
            std::string&& graphic) :

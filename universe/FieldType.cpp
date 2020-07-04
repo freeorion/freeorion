@@ -10,9 +10,9 @@
 
 
 namespace {
-    std::shared_ptr<Effect::EffectsGroup>
+    std::shared_ptr<focs::EffectsGroup>
     IncreaseMeter(MeterType meter_type, double increase) {
-        typedef std::vector<std::unique_ptr<Effect::Effect>> Effects;
+        typedef std::vector<std::unique_ptr<focs::Effect>> Effects;
         auto scope = std::make_unique<focs::Source>();
         std::unique_ptr<focs::Source> activation = nullptr;
         auto vr =
@@ -22,15 +22,15 @@ namespace {
                 std::make_unique<focs::Constant<double>>(increase)
             );
         auto effects = Effects();
-        effects.push_back(std::make_unique<Effect::SetMeter>(meter_type, std::move(vr)));
-        return std::make_shared<Effect::EffectsGroup>(std::move(scope), std::move(activation), std::move(effects));
+        effects.push_back(std::make_unique<focs::SetMeter>(meter_type, std::move(vr)));
+        return std::make_shared<focs::EffectsGroup>(std::move(scope), std::move(activation), std::move(effects));
     }
 }
 
 
 FieldType::FieldType(std::string&& name, std::string&& description,
                      float stealth, const std::set<std::string>& tags,
-                     std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
+                     std::vector<std::unique_ptr<focs::EffectsGroup>>&& effects,
                      std::string&& graphic) :
     m_name(std::move(name)),
     m_description(std::move(description)),

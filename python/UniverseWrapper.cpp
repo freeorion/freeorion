@@ -360,27 +360,27 @@ namespace FreeOrionPython {
         ///////////////////////////
         //   Effect Accounting   //
         ///////////////////////////
-        class_<Effect::EffectCause>("EffectCause")
-            .add_property("causeType",          &Effect::AccountingInfo::cause_type)
-            .def_readonly("specificCause",      &Effect::AccountingInfo::specific_cause)
-            .def_readonly("customLabel",        &Effect::AccountingInfo::custom_label)
+        class_<focs::EffectCause>("EffectCause")
+            .add_property("causeType",          &focs::AccountingInfo::cause_type)
+            .def_readonly("specificCause",      &focs::AccountingInfo::specific_cause)
+            .def_readonly("customLabel",        &focs::AccountingInfo::custom_label)
         ;
-        class_<Effect::AccountingInfo, bases<Effect::EffectCause>>("AccountingInfo")
-            .add_property("sourceID",           &Effect::AccountingInfo::source_id)
-            .add_property("meterChange",        &Effect::AccountingInfo::meter_change)
-            .add_property("meterRunningTotal",  &Effect::AccountingInfo::running_meter_total)
+        class_<focs::AccountingInfo, bases<focs::EffectCause>>("AccountingInfo")
+            .add_property("sourceID",           &focs::AccountingInfo::source_id)
+            .add_property("meterChange",        &focs::AccountingInfo::meter_change)
+            .add_property("meterRunningTotal",  &focs::AccountingInfo::running_meter_total)
         ;
-        class_<std::vector<Effect::AccountingInfo>>("AccountingInfoVec")
+        class_<std::vector<focs::AccountingInfo>>("AccountingInfoVec")
             .def(boost::python::vector_indexing_suite<
-                 std::vector<Effect::AccountingInfo>, true>())
+                 std::vector<focs::AccountingInfo>, true>())
         ;
-        class_<std::map<MeterType, std::vector<Effect::AccountingInfo>>>("MeterTypeAccountingInfoVecMap")
+        class_<std::map<MeterType, std::vector<focs::AccountingInfo>>>("MeterTypeAccountingInfoVecMap")
             .def(boost::python::map_indexing_suite<
-                 std::map<MeterType, std::vector<Effect::AccountingInfo>>, true>())
+                 std::map<MeterType, std::vector<focs::AccountingInfo>>, true>())
         ;
-        class_<Effect::AccountingMap>("TargetIDAccountingMapMap")
+        class_<focs::AccountingMap>("TargetIDAccountingMapMap")
             .def(boost::python::map_indexing_suite<
-                 Effect::AccountingMap, true>())
+                 focs::AccountingMap, true>())
         ;
 
         ///////////////

@@ -64,7 +64,7 @@ SpecialsManager& GetSpecialsManager() {
 /////////////////////////////////////////////////
 Special::Special(std::string&& name, std::string&& description,
                  std::unique_ptr<focs::ValueRef<double>>&& stealth,
-                 std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
+                 std::vector<std::unique_ptr<focs::EffectsGroup>>&& effects,
                  double spawn_rate, int spawn_limit,
                  std::unique_ptr<focs::ValueRef<double>>&& initial_capaicty,
                  std::unique_ptr<focs::Condition>&& location,

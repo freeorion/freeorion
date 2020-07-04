@@ -26,11 +26,11 @@ namespace {
 
     // create effectsgroup that increases the value of \a meter_type
     // by the result of evalulating \a increase_vr
-    std::shared_ptr<Effect::EffectsGroup>
+    std::shared_ptr<focs::EffectsGroup>
     IncreaseMeter(MeterType meter_type,
                   std::unique_ptr<focs::ValueRef<double>>&& increase_vr)
     {
-        typedef std::vector<std::unique_ptr<Effect::Effect>> Effects;
+        typedef std::vector<std::unique_ptr<focs::Effect>> Effects;
         auto scope = std::make_unique<focs::Source>();
         auto activation = std::make_unique<focs::Source>();
 
@@ -41,13 +41,13 @@ namespace {
                 std::move(increase_vr)
             );
         auto effects = Effects();
-        effects.push_back(std::make_unique<Effect::SetMeter>(meter_type, std::move(vr)));
-        return std::make_shared<Effect::EffectsGroup>(std::move(scope), std::move(activation), std::move(effects));
+        effects.push_back(std::make_unique<focs::SetMeter>(meter_type, std::move(vr)));
+        return std::make_shared<focs::EffectsGroup>(std::move(scope), std::move(activation), std::move(effects));
     }
 
     // create effectsgroup that increases the value of \a meter_type
     // by the specified amount \a fixed_increase
-    std::shared_ptr<Effect::EffectsGroup>
+    std::shared_ptr<focs::EffectsGroup>
     IncreaseMeter(MeterType meter_type, float fixed_increase) {
         auto increase_vr = std::make_unique<focs::Constant<double>>(fixed_increase);
         return IncreaseMeter(meter_type, std::move(increase_vr));
@@ -56,7 +56,7 @@ namespace {
     // create effectsgroup that increases the value of \a meter_type
     // by the product of \a base_increase and the value of the game
     // rule of type double with the name \a scaling_factor_rule_name
-    std::shared_ptr<Effect::EffectsGroup>
+    std::shared_ptr<focs::EffectsGroup>
     IncreaseMeter(MeterType meter_type, float base_increase,
                   const std::string& scaling_factor_rule_name)
     {
@@ -123,7 +123,7 @@ ShipHull::Slot::Slot() :
 
 ShipHull::~ShipHull() {}
 
-void ShipHull::Init(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
+void ShipHull::Init(std::vector<std::unique_ptr<focs::EffectsGroup>>&& effects,
                     bool default_fuel_effects,
                     bool default_speed_effects,
                     bool default_stealth_effects,

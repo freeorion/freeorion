@@ -126,7 +126,7 @@ public:
 
     //! Returns the EffectsGroups that encapsulate the effects this part hull
     //! has.
-    auto Effects() const -> const std::vector<std::shared_ptr<Effect::EffectsGroup>>&
+    auto Effects() const -> const std::vector<std::shared_ptr<focs::EffectsGroup>>&
     { return m_effects; }
 
     //! Returns the image that represents the hull on the design screen
@@ -146,7 +146,7 @@ public:
     auto GetCheckSum() const -> unsigned int;
 
 private:
-    void Init(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
+    void Init(std::vector<std::unique_ptr<focs::EffectsGroup>>&& effects,
               bool default_fuel_effects,
               bool default_speed_effects,
               bool default_stealth_effects,
@@ -168,7 +168,7 @@ private:
     ConsumptionMap<std::string>                         m_production_special_consumption;
     std::unique_ptr<focs::Condition>               m_location;
     std::set<std::string>                               m_exclusions;
-    std::vector<std::shared_ptr<Effect::EffectsGroup>>  m_effects;
+    std::vector<std::shared_ptr<focs::EffectsGroup>>  m_effects;
     std::string                                         m_graphic;
     std::string                                         m_icon;
 };

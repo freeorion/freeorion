@@ -970,16 +970,16 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
             std::set<std::string> specials_affected;
             std::set<std::string> parts_whose_meters_are_affected;
             for (auto& effects_group : tech->Effects()) {
-                for (Effect::Effect* effect : effects_group->EffectsList()) {
-                    if (const Effect::SetMeter* set_meter_effect = dynamic_cast<const Effect::SetMeter*>(effect)) {
+                for (focs::Effect* effect : effects_group->EffectsList()) {
+                    if (const focs::SetMeter* set_meter_effect = dynamic_cast<const focs::SetMeter*>(effect)) {
                         meters_affected.insert(set_meter_effect->GetMeterType());
 
-                    } else if (const Effect::SetShipPartMeter* set_ship_part_meter_effect = dynamic_cast<const Effect::SetShipPartMeter*>(effect)) {
+                    } else if (const focs::SetShipPartMeter* set_ship_part_meter_effect = dynamic_cast<const focs::SetShipPartMeter*>(effect)) {
                         const focs::ValueRef<std::string>* part_name = set_ship_part_meter_effect->GetPartName();
                         if (part_name && part_name->ConstantExpr())
                             parts_whose_meters_are_affected.insert(part_name->Eval());
 
-                    } else if (const Effect::AddSpecial* add_special_effect = dynamic_cast<const Effect::AddSpecial*>(effect)) {
+                    } else if (const focs::AddSpecial* add_special_effect = dynamic_cast<const focs::AddSpecial*>(effect)) {
                         const focs::ValueRef<std::string>* special_name = add_special_effect->GetSpecialName();
                         if (special_name && special_name->ConstantExpr())
                             specials_affected.insert(special_name->Eval());

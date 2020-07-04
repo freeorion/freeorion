@@ -12,7 +12,7 @@
 
 namespace parse {
 
-    detail::MovableEnvelope<Effect::EffectsGroup> construct_EffectsGroup(
+    detail::MovableEnvelope<focs::EffectsGroup> construct_EffectsGroup(
         const detail::MovableEnvelope<focs::Condition>& scope,
         const detail::MovableEnvelope<focs::Condition>& activation,
         const std::vector<detail::effect_payload>& effects,
@@ -22,8 +22,8 @@ namespace parse {
         const std::string& description,
         bool& pass)
     {
-        return detail::MovableEnvelope<Effect::EffectsGroup>(
-            std::make_unique<Effect::EffectsGroup>(
+        return detail::MovableEnvelope<focs::EffectsGroup>(
+            std::make_unique<focs::EffectsGroup>(
                 scope.OpenEnvelope(pass),
                 activation.OpenEnvelope(pass),
                 OpenEnvelopes(effects, pass),
@@ -33,7 +33,7 @@ namespace parse {
                 description
             ));
     }
-    BOOST_PHOENIX_ADAPT_FUNCTION(detail::MovableEnvelope<Effect::EffectsGroup>,
+    BOOST_PHOENIX_ADAPT_FUNCTION(detail::MovableEnvelope<focs::EffectsGroup>,
                                  construct_EffectsGroup_, construct_EffectsGroup, 8)
 
     /** effects_parser_grammar::Impl holds the rules for

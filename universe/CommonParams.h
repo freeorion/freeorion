@@ -12,10 +12,6 @@
 #include "../util/Export.h"
 
 
-namespace Effect {
-    class EffectsGroup;
-}
-
 template <typename T>
 using ConsumptionMap = std::map<T, std::pair<std::unique_ptr<focs::ValueRef<double>>,
                                              std::unique_ptr<focs::Condition>>>;
@@ -31,7 +27,7 @@ struct FO_COMMON_API CommonParams {
                  bool producible_,
                  const std::set<std::string>& tags_,
                  std::unique_ptr<focs::Condition>&& location_,
-                 std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects_,
+                 std::vector<std::unique_ptr<focs::EffectsGroup>>&& effects_,
                  ConsumptionMap<MeterType>&& production_meter_consumption_,
                  ConsumptionMap<std::string>&& production_special_consumption_,
                  std::unique_ptr<focs::Condition>&& enqueue_location_);
@@ -45,7 +41,7 @@ struct FO_COMMON_API CommonParams {
     ConsumptionMap<std::string>                         production_special_consumption;
     std::unique_ptr<focs::Condition>               location;
     std::unique_ptr<focs::Condition>               enqueue_location;
-    std::vector<std::unique_ptr<Effect::EffectsGroup>>  effects;
+    std::vector<std::unique_ptr<focs::EffectsGroup>>  effects;
 };
 
 

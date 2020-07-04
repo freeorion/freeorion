@@ -7,10 +7,6 @@
 #include "../util/Pending.h"
 
 
-namespace Effect {
-    class EffectsGroup;
-}
-
 /** a class representing a region of space */
 class FO_COMMON_API Field : public UniverseObject {
 public:
