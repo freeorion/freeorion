@@ -24,7 +24,7 @@ struct ValueRefIntFixture: boost::unit_test::test_observer {
         }
     }
 
-    void printTree(const ValueRef::ValueRef<int>* root, int depth) {
+    void printTree(const focs::ValueRef<int>* root, int depth) {
         if(depth > 10) {
             std::cout << "Tree print overflow" << std::endl;
         }
@@ -40,7 +40,7 @@ struct ValueRefIntFixture: boost::unit_test::test_observer {
         }
     }
 
-    bool parse(std::string phrase, ValueRef::ValueRef<int>*& result) {
+    bool parse(std::string phrase, focs::ValueRef<int>*& result) {
         const parse::lexer& lexer = lexer.instance();
         boost::spirit::qi::in_state_type in_state;
         boost::spirit::qi::eoi_type eoi;
@@ -69,7 +69,7 @@ struct ValueRefIntFixture: boost::unit_test::test_observer {
     static const std::array<std::string, 3> containerTypes;
     static const std::array<std::string, 13> attributes;
 
-    ValueRef::ValueRef<int>* result;
+    focs::ValueRef<int>* result;
     const ValueRef::Operation<int>* operation1;
     const ValueRef::Operation<int>* operation2;
     const ValueRef::Operation<int>* operation3;

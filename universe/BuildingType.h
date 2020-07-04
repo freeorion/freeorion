@@ -3,6 +3,7 @@
 
 
 #include "CommonParams.h"
+#include "../focs/focs.hpp"
 #include "../util/Export.h"
 #include "../util/Pending.h"
 
@@ -12,10 +13,6 @@ namespace Effect {
 }
 namespace Condition {
     struct Condition;
-}
-namespace ValueRef {
-    template <typename T>
-    struct ValueRef;
 }
 
 
@@ -58,11 +55,11 @@ public:
     auto ProductionTime(int empire_id, int location_id) const -> int;
 
     //! Returns the ValueRef that determines ProductionCost()
-    auto Cost() const -> const ValueRef::ValueRef<double>*
+    auto Cost() const -> const focs::ValueRef<double>*
     { return m_production_cost.get(); }
 
     //! Returns the ValueRef that determines ProductionTime()
-    auto Time() const -> const ValueRef::ValueRef<int>*
+    auto Time() const -> const focs::ValueRef<int>*
     { return m_production_time.get(); }
 
     //! Returns whether this building type is producible by players and appears
@@ -132,8 +129,8 @@ private:
 
     std::string                                         m_name;
     std::string                                         m_description;
-    std::unique_ptr<ValueRef::ValueRef<double>>         m_production_cost;
-    std::unique_ptr<ValueRef::ValueRef<int>>            m_production_time;
+    std::unique_ptr<focs::ValueRef<double>>         m_production_cost;
+    std::unique_ptr<focs::ValueRef<int>>            m_production_time;
     bool                                                m_producible = true;
     CaptureResult                                       m_capture_result;
     std::set<std::string>                               m_tags;

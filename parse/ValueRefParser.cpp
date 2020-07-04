@@ -11,8 +11,8 @@
 // These are just here to satisfy the requirements of boost::spirit::qi::debug(<rule>).
 #if DEBUG_VALUEREF_PARSERS
 namespace std {
-    inline ostream& operator<<(ostream& os, const std::vector<boost::variant<ValueRef::OpType, value_ref_payload<int>>>&) { return os; }
-    inline ostream& operator<<(ostream& os, const std::vector<boost::variant<ValueRef::OpType, value_ref_payload<double>>>&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::vector<boost::variant<focs::OpType, value_ref_payload<int>>>&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::vector<boost::variant<focs::OpType, value_ref_payload<double>>>&) { return os; }
 }
 #endif
 
@@ -26,10 +26,10 @@ namespace parse { namespace detail {
 
         reference_token_rule variable_scope;
         variable_scope
-            =   tok.Source_         [ _val = ValueRef::SOURCE_REFERENCE ]
-            |   tok.Target_         [ _val = ValueRef::EFFECT_TARGET_REFERENCE ]
-            |   tok.LocalCandidate_ [ _val = ValueRef::CONDITION_LOCAL_CANDIDATE_REFERENCE ]
-            |   tok.RootCandidate_  [ _val = ValueRef::CONDITION_ROOT_CANDIDATE_REFERENCE ]
+            =   tok.Source_         [ _val = focs::SOURCE_REFERENCE ]
+            |   tok.Target_         [ _val = focs::EFFECT_TARGET_REFERENCE ]
+            |   tok.LocalCandidate_ [ _val = focs::CONDITION_LOCAL_CANDIDATE_REFERENCE ]
+            |   tok.RootCandidate_  [ _val = focs::CONDITION_ROOT_CANDIDATE_REFERENCE ]
             ;
 
         variable_scope.name("Source, Target, LocalCandidate, or RootCandidate");
@@ -63,11 +63,11 @@ namespace parse { namespace detail {
 
         free_variable
             =  (tok.Value_ >> !lit('('))
-                [ _val = construct_movable_(new_<ValueRef::Variable<T>>(
-                    ValueRef::EFFECT_TARGET_VALUE_REFERENCE)) ]
+                [ _val = construct_movable_(new_<focs::Variable<T>>(
+                    focs::EFFECT_TARGET_VALUE_REFERENCE)) ]
             |   free_variable_name
-                [ _val = construct_movable_(new_<ValueRef::Variable<T>>(
-                    ValueRef::NON_OBJECT_REFERENCE, _1)) ]
+                [ _val = construct_movable_(new_<focs::Variable<T>>(
+                    focs::NON_OBJECT_REFERENCE, _1)) ]
             ;
 
         simple

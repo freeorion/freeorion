@@ -16,10 +16,10 @@ namespace {
         auto scope = std::make_unique<Condition::Source>();
         std::unique_ptr<Condition::Source> activation = nullptr;
         auto vr =
-            std::make_unique<ValueRef::Operation<double>>(
-                ValueRef::PLUS,
-                std::make_unique<ValueRef::Variable<double>>(ValueRef::EFFECT_TARGET_VALUE_REFERENCE),
-                std::make_unique<ValueRef::Constant<double>>(increase)
+            std::make_unique<focs::Operation<double>>(
+                focs::PLUS,
+                std::make_unique<focs::Variable<double>>(focs::EFFECT_TARGET_VALUE_REFERENCE),
+                std::make_unique<focs::Constant<double>>(increase)
             );
         auto effects = Effects();
         effects.push_back(std::make_unique<Effect::SetMeter>(meter_type, std::move(vr)));

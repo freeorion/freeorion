@@ -22,7 +22,7 @@ namespace parse {
                              Labeller& label,
                              const condition_parser_grammar& condition_parser);
 
-        rule<ValueRef::OpType ()> selection_operator;
+        rule<focs::OpType ()> selection_operator;
         value_ref_rule<T> selection_expr;
         name_token_rule variable_name;
         enum_rule<T> enum_expr;
@@ -65,9 +65,9 @@ namespace parse {
             =  ( (omit_[tok.Statistic_] >>  omit_[tok.Mode_])
                  >   label(tok.Value_)     >     value_ref
                  >   label(tok.Condition_) >     condition_parser)
-            [ _val = construct_movable_(new_<ValueRef::Statistic<T>>(
+            [ _val = construct_movable_(new_<focs::Statistic<T>>(
                 deconstruct_movable_(_1, _pass),
-                ValueRef::MODE,
+                focs::MODE,
                 deconstruct_movable_(_2, _pass))) ]
             ;
     }
@@ -92,7 +92,7 @@ namespace parse {
         const boost::phoenix::function<deconstruct_movable_vector> deconstruct_movable_vector_;
 
         constant_expr
-            =   enum_expr [ _val = construct_movable_(new_<ValueRef::Constant<T>>(_1)) ]
+            =   enum_expr [ _val = construct_movable_(new_<focs::Constant<T>>(_1)) ]
             ;
 
         variable_scope_rule = variable_scope(tok);
@@ -110,13 +110,13 @@ namespace parse {
             ;
 
         selection_operator
-            =   tok.OneOf_  [ _val = ValueRef::RANDOM_PICK ]
-            |   tok.Min_    [ _val = ValueRef::MINIMUM ]
-            |   tok.Max_    [ _val = ValueRef::MAXIMUM ];
+            =   tok.OneOf_  [ _val = focs::RANDOM_PICK ]
+            |   tok.Min_    [ _val = focs::MINIMUM ]
+            |   tok.Max_    [ _val = focs::MAXIMUM ];
 
         selection_expr
             = (selection_operator > '(' > (expr % ',') > ')')
-            [ _val = construct_movable_(new_<ValueRef::Operation<T>>(_1, deconstruct_movable_vector_(_2, _pass))) ];
+            [ _val = construct_movable_(new_<focs::Operation<T>>(_1, deconstruct_movable_vector_(_2, _pass))) ];
 
         functional_expr %=  selection_expr | primary_expr;
 

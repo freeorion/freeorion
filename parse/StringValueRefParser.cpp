@@ -48,7 +48,7 @@ namespace parse {
             ;
 
         constant
-            =   tok.string          [ _val = construct_movable_(new_<ValueRef::Constant<std::string>>(_1)) ]
+            =   tok.string          [ _val = construct_movable_(new_<focs::Constant<std::string>>(_1)) ]
             |  (    tok.CurrentContent_
                 |   tok.ThisBuilding_
                 |   tok.ThisField_
@@ -57,12 +57,12 @@ namespace parse {
                 |   tok.ThisTech_
                 |   tok.ThisSpecies_
                 |   tok.ThisSpecial_
-               ) [ _val = construct_movable_(new_<ValueRef::Constant<std::string>>(TOK_CURRENT_CONTENT)) ]
+               ) [ _val = construct_movable_(new_<focs::Constant<std::string>>(TOK_CURRENT_CONTENT)) ]
             ;
 
         free_variable
-            =   tok.Value_          [ _val = construct_movable_(new_<ValueRef::Variable<std::string>>(ValueRef::EFFECT_TARGET_VALUE_REFERENCE)) ]
-            |   tok.GalaxySeed_     [ _val = construct_movable_(new_<ValueRef::Variable<std::string>>(ValueRef::NON_OBJECT_REFERENCE, _1)) ]
+            =   tok.Value_          [ _val = construct_movable_(new_<focs::Variable<std::string>>(focs::EFFECT_TARGET_VALUE_REFERENCE)) ]
+            |   tok.GalaxySeed_     [ _val = construct_movable_(new_<focs::Variable<std::string>>(focs::NON_OBJECT_REFERENCE, _1)) ]
             ;
 
         variable_scope_rule = detail::variable_scope(tok);
@@ -83,17 +83,17 @@ namespace parse {
             =   (
                 (
                     (
-                        tok.OneOf_  [ _c = ValueRef::RANDOM_PICK ]
-                    |   tok.Min_    [ _c = ValueRef::MINIMUM ]
-                    |   tok.Max_    [ _c = ValueRef::MAXIMUM ]
+                        tok.OneOf_  [ _c = focs::RANDOM_PICK ]
+                    |   tok.Min_    [ _c = focs::MINIMUM ]
+                    |   tok.Max_    [ _c = focs::MAXIMUM ]
                     )
                     > (     '('  >   expr [ push_back(_d, _1) ]
                         > *(','  >   expr [ push_back(_d, _1) ] ) > ')' )
-                    [ _val = construct_movable_(new_<ValueRef::Operation<std::string>>(_c, deconstruct_movable_vector_(_d, _pass))) ]
+                    [ _val = construct_movable_(new_<focs::Operation<std::string>>(_c, deconstruct_movable_vector_(_d, _pass))) ]
                 )
                 |   (
                     tok.UserString_ >   ('(' > expr > ')')
-                    [ _val = construct_movable_(new_<ValueRef::UserStringLookup<std::string>>(deconstruct_movable_(_1, _pass))) ]
+                    [ _val = construct_movable_(new_<focs::UserStringLookup<std::string>>(deconstruct_movable_(_1, _pass))) ]
                 )
                 |   (
                     primary_expr [ _val = _1 ]
@@ -106,14 +106,14 @@ namespace parse {
             (
                 (
                     function_expr [ _a = _1 ]
-                    >>  lit('+') [ _c = ValueRef::PLUS ]
-                    >>  function_expr [ _b = construct_movable_(new_<ValueRef::Operation<std::string>>(_c, deconstruct_movable_(_a, _pass), deconstruct_movable_(_1, _pass))) ]
+                    >>  lit('+') [ _c = focs::PLUS ]
+                    >>  function_expr [ _b = construct_movable_(new_<focs::Operation<std::string>>(_c, deconstruct_movable_(_a, _pass), deconstruct_movable_(_1, _pass))) ]
                     [ _val = _b ]
                 )
                 |   (
                     function_expr [ push_back(_d, _1) ]     // template string
                     >>+('%' >   function_expr [ push_back(_d, _1) ] )   // must have at least one sub-string
-                    [ _val = construct_movable_(new_<ValueRef::Operation<std::string>>(ValueRef::SUBSTITUTION, deconstruct_movable_vector_(_d, _pass))) ]
+                    [ _val = construct_movable_(new_<focs::Operation<std::string>>(focs::SUBSTITUTION, deconstruct_movable_vector_(_d, _pass))) ]
                 )
                 |   (
                     function_expr [ _val = _1 ]

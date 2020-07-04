@@ -329,14 +329,14 @@ bool Condition::Match(const ScriptingContext& local_context) const
 ///////////////////////////////////////////////////////////
 // Number                                                //
 ///////////////////////////////////////////////////////////
-Number::Number(std::unique_ptr<ValueRef::ValueRef<int>>&& low,
-               std::unique_ptr<ValueRef::ValueRef<int>>&& high,
+Number::Number(std::unique_ptr<focs::ValueRef<int>>&& low,
+               std::unique_ptr<focs::ValueRef<int>>&& high,
                std::unique_ptr<Condition>&& condition) :
     m_low(std::move(low)),
     m_high(std::move(high)),
     m_condition(std::move(condition))
 {
-    std::array<const ValueRef::ValueRefBase*, 2> operands = { m_low.get(), m_high.get() };
+    std::array<const focs::ValueRefBase*, 2> operands = { m_low.get(), m_high.get() };
     m_root_candidate_invariant =
         m_condition->RootCandidateInvariant() &&
         boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
@@ -483,12 +483,12 @@ unsigned int Number::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // Turn                                                  //
 ///////////////////////////////////////////////////////////
-Turn::Turn(std::unique_ptr<ValueRef::ValueRef<int>>&& low,
-           std::unique_ptr<ValueRef::ValueRef<int>>&& high) :
+Turn::Turn(std::unique_ptr<focs::ValueRef<int>>&& low,
+           std::unique_ptr<focs::ValueRef<int>>&& high) :
     m_low(std::move(low)),
     m_high(std::move(high))
 {
-    std::array<const ValueRef::ValueRefBase*, 2> operands = { m_low.get(), m_high.get() };
+    std::array<const focs::ValueRefBase*, 2> operands = { m_low.get(), m_high.get() };
     m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
     m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
     m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
@@ -625,13 +625,13 @@ unsigned int Turn::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // SortedNumberOf                                        //
 ///////////////////////////////////////////////////////////
-SortedNumberOf::SortedNumberOf(std::unique_ptr<ValueRef::ValueRef<int>>&& number,
+SortedNumberOf::SortedNumberOf(std::unique_ptr<focs::ValueRef<int>>&& number,
                                std::unique_ptr<Condition>&& condition) :
     SortedNumberOf(std::move(number), nullptr, SORT_RANDOM, std::move(condition))
 {}
 
-SortedNumberOf::SortedNumberOf(std::unique_ptr<ValueRef::ValueRef<int>>&& number,
-                               std::unique_ptr<ValueRef::ValueRef<double>>&& sort_key_ref,
+SortedNumberOf::SortedNumberOf(std::unique_ptr<focs::ValueRef<int>>&& number,
+                               std::unique_ptr<focs::ValueRef<double>>&& sort_key_ref,
                                SortingMethod sorting_method,
                                std::unique_ptr<Condition>&& condition) :
     m_number(std::move(number)),
@@ -639,7 +639,7 @@ SortedNumberOf::SortedNumberOf(std::unique_ptr<ValueRef::ValueRef<int>>&& number
     m_sorting_method(sorting_method),
     m_condition(std::move(condition))
 {
-    std::array<const ValueRef::ValueRefBase*, 2> operands = { m_number.get(), m_sort_key.get() };
+    std::array<const focs::ValueRefBase*, 2> operands = { m_number.get(), m_sort_key.get() };
     m_root_candidate_invariant =
         boost::algorithm::all_of(operands, [](const auto& e) { return !e || e->RootCandidateInvariant(); }) &&
         (!m_condition || m_condition->RootCandidateInvariant());
@@ -705,7 +705,7 @@ namespace {
       * of \a sort_key evaluated on them, with the largest / smallest / most
       * common sort keys chosen, or a random selection chosen, depending on the
       * specified \a sorting_method */
-    void TransferSortedObjects(unsigned int number, ValueRef::ValueRef<double>* sort_key,
+    void TransferSortedObjects(unsigned int number, focs::ValueRef<double>* sort_key,
                                const ScriptingContext& context, SortingMethod sorting_method,
                                ObjectSet& from_set, ObjectSet& to_set)
     {
@@ -1124,7 +1124,7 @@ unsigned int None::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // EmpireAffiliation                                     //
 ///////////////////////////////////////////////////////////
-EmpireAffiliation::EmpireAffiliation(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
+EmpireAffiliation::EmpireAffiliation(std::unique_ptr<focs::ValueRef<int>>&& empire_id,
                                      EmpireAffiliationType affiliation) :
     m_empire_id(std::move(empire_id)),
     m_affiliation(affiliation)
@@ -1134,7 +1134,7 @@ EmpireAffiliation::EmpireAffiliation(std::unique_ptr<ValueRef::ValueRef<int>>&& 
     m_source_invariant = !m_empire_id || m_empire_id->SourceInvariant();
 }
 
-EmpireAffiliation::EmpireAffiliation(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id) :
+EmpireAffiliation::EmpireAffiliation(std::unique_ptr<focs::ValueRef<int>>&& empire_id) :
     EmpireAffiliation(std::move(empire_id), AFFIL_SELF)
 {}
 
@@ -1497,10 +1497,10 @@ unsigned int Target::GetCheckSum() const {
 // Homeworld                                             //
 ///////////////////////////////////////////////////////////
 Homeworld::Homeworld() :
-    Homeworld(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>{})
+    Homeworld(std::vector<std::unique_ptr<focs::ValueRef<std::string>>>{})
 {}
 
-Homeworld::Homeworld(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names) :
+Homeworld::Homeworld(std::vector<std::unique_ptr<focs::ValueRef<std::string>>>&& names) :
     Condition(),
     m_names(std::move(names))
 {
@@ -1854,7 +1854,7 @@ unsigned int Armed::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // Type                                                  //
 ///////////////////////////////////////////////////////////
-Type::Type(std::unique_ptr<ValueRef::ValueRef<UniverseObjectType>>&& type) :
+Type::Type(std::unique_ptr<focs::ValueRef<UniverseObjectType>>&& type) :
     Condition(),
     m_type(std::move(type))
 {
@@ -1864,7 +1864,7 @@ Type::Type(std::unique_ptr<ValueRef::ValueRef<UniverseObjectType>>&& type) :
 }
 
 Type::Type(UniverseObjectType type) :
-    Type(std::make_unique<ValueRef::Constant<UniverseObjectType>>(type))
+    Type(std::make_unique<focs::Constant<UniverseObjectType>>(type))
 {}
 
 bool Type::operator==(const Condition& rhs) const {
@@ -1944,7 +1944,7 @@ std::string Type::Description(bool negated/* = false*/) const {
 
 std::string Type::Dump(unsigned short ntabs) const {
     std::string retval = DumpIndent(ntabs);
-    if (dynamic_cast<ValueRef::Constant<UniverseObjectType>*>(m_type.get())) {
+    if (dynamic_cast<focs::Constant<UniverseObjectType>*>(m_type.get())) {
         switch (m_type->Eval()) {
         case OBJ_BUILDING:    retval += "Building\n"; break;
         case OBJ_SHIP:        retval += "Ship\n"; break;
@@ -2041,7 +2041,7 @@ unsigned int Type::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // Building                                              //
 ///////////////////////////////////////////////////////////
-Building::Building(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names) :
+Building::Building(std::vector<std::unique_ptr<focs::ValueRef<std::string>>>&& names) :
     Condition(),
     m_names(std::move(names))
 {
@@ -2206,46 +2206,46 @@ unsigned int Building::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 HasSpecial::HasSpecial() :
     HasSpecial(nullptr,
-               std::unique_ptr<ValueRef::ValueRef<int>>{},
-               std::unique_ptr<ValueRef::ValueRef<int>>{})
+               std::unique_ptr<focs::ValueRef<int>>{},
+               std::unique_ptr<focs::ValueRef<int>>{})
 {}
 
 HasSpecial::HasSpecial(std::string name) :
-    HasSpecial(std::make_unique<ValueRef::Constant<std::string>>(std::move(name)),
-               std::unique_ptr<ValueRef::ValueRef<int>>{},
-               std::unique_ptr<ValueRef::ValueRef<int>>{})
+    HasSpecial(std::make_unique<focs::Constant<std::string>>(std::move(name)),
+               std::unique_ptr<focs::ValueRef<int>>{},
+               std::unique_ptr<focs::ValueRef<int>>{})
 {}
 
-HasSpecial::HasSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
+HasSpecial::HasSpecial(std::unique_ptr<focs::ValueRef<std::string>>&& name) :
     HasSpecial(std::move(name),
-               std::unique_ptr<ValueRef::ValueRef<int>>{},
-               std::unique_ptr<ValueRef::ValueRef<int>>{})
+               std::unique_ptr<focs::ValueRef<int>>{},
+               std::unique_ptr<focs::ValueRef<int>>{})
 {}
 
-HasSpecial::HasSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
-                       std::unique_ptr<ValueRef::ValueRef<int>>&& since_turn_low,
-                       std::unique_ptr<ValueRef::ValueRef<int>>&& since_turn_high) :
+HasSpecial::HasSpecial(std::unique_ptr<focs::ValueRef<std::string>>&& name,
+                       std::unique_ptr<focs::ValueRef<int>>&& since_turn_low,
+                       std::unique_ptr<focs::ValueRef<int>>&& since_turn_high) :
     Condition(),
     m_name(std::move(name)),
     m_since_turn_low(std::move(since_turn_low)),
     m_since_turn_high(std::move(since_turn_high))
 {
-    std::array<ValueRef::ValueRefBase*, 3> operands =
+    std::array<focs::ValueRefBase*, 3> operands =
         { m_name.get(), m_since_turn_low.get(), m_since_turn_high.get() };
     m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
     m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
     m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
 }
 
-HasSpecial::HasSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
-                       std::unique_ptr<ValueRef::ValueRef<double>>&& capacity_low,
-                       std::unique_ptr<ValueRef::ValueRef<double>>&& capacity_high) :
+HasSpecial::HasSpecial(std::unique_ptr<focs::ValueRef<std::string>>&& name,
+                       std::unique_ptr<focs::ValueRef<double>>&& capacity_low,
+                       std::unique_ptr<focs::ValueRef<double>>&& capacity_high) :
     Condition(),
     m_name(std::move(name)),
     m_capacity_low(std::move(capacity_low)),
     m_capacity_high(std::move(capacity_high))
 {
-    std::array<ValueRef::ValueRefBase*, 3> operands =
+    std::array<focs::ValueRefBase*, 3> operands =
         { m_name.get(), m_capacity_low.get(), m_capacity_high.get() };
     m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
     m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
@@ -2445,14 +2445,14 @@ unsigned int HasSpecial::GetCheckSum() const {
 // HasTag                                                //
 ///////////////////////////////////////////////////////////
 HasTag::HasTag() :
-    HasTag(std::unique_ptr<ValueRef::ValueRef<std::string>>{})
+    HasTag(std::unique_ptr<focs::ValueRef<std::string>>{})
 {}
 
 HasTag::HasTag(const std::string& name) :
-    HasTag(std::make_unique<ValueRef::Constant<std::string>>(name))
+    HasTag(std::make_unique<focs::Constant<std::string>>(name))
 {}
 
-HasTag::HasTag(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
+HasTag::HasTag(std::unique_ptr<focs::ValueRef<std::string>>&& name) :
     Condition(),
     m_name(std::move(name))
 {
@@ -2574,13 +2574,13 @@ unsigned int HasTag::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // CreatedOnTurn                                         //
 ///////////////////////////////////////////////////////////
-CreatedOnTurn::CreatedOnTurn(std::unique_ptr<ValueRef::ValueRef<int>>&& low,
-                             std::unique_ptr<ValueRef::ValueRef<int>>&& high) :
+CreatedOnTurn::CreatedOnTurn(std::unique_ptr<focs::ValueRef<int>>&& low,
+                             std::unique_ptr<focs::ValueRef<int>>&& high) :
     Condition(),
     m_low(std::move(low)),
     m_high(std::move(high))
 {
-    std::array<ValueRef::ValueRefBase*, 2> operands = { m_low.get(), m_high.get() };
+    std::array<focs::ValueRefBase*, 2> operands = { m_low.get(), m_high.get() };
     m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
     m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
     m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
@@ -3111,7 +3111,7 @@ unsigned int ContainedBy::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // InOrIsSystem                                          //
 ///////////////////////////////////////////////////////////
-InOrIsSystem::InOrIsSystem(std::unique_ptr<ValueRef::ValueRef<int>>&& system_id) :
+InOrIsSystem::InOrIsSystem(std::unique_ptr<focs::ValueRef<int>>&& system_id) :
     Condition(),
     m_system_id(std::move(system_id))
 {
@@ -3263,7 +3263,7 @@ unsigned int InOrIsSystem::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // OnPlanet                                              //
 ///////////////////////////////////////////////////////////
-OnPlanet::OnPlanet(std::unique_ptr<ValueRef::ValueRef<int>>&& planet_id) :
+OnPlanet::OnPlanet(std::unique_ptr<focs::ValueRef<int>>&& planet_id) :
     Condition(),
     m_planet_id(std::move(planet_id))
 {
@@ -3413,7 +3413,7 @@ unsigned int OnPlanet::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // ObjectID                                              //
 ///////////////////////////////////////////////////////////
-ObjectID::ObjectID(std::unique_ptr<ValueRef::ValueRef<int>>&& object_id) :
+ObjectID::ObjectID(std::unique_ptr<focs::ValueRef<int>>&& object_id) :
     Condition(),
     m_object_id(std::move(object_id))
 {
@@ -3541,7 +3541,7 @@ unsigned int ObjectID::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // PlanetType                                            //
 ///////////////////////////////////////////////////////////
-PlanetType::PlanetType(std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetType>>>&& types) :
+PlanetType::PlanetType(std::vector<std::unique_ptr<focs::ValueRef< ::PlanetType>>>&& types) :
     Condition(),
     m_types(std::move(types))
 {
@@ -3706,7 +3706,7 @@ unsigned int PlanetType::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // PlanetSize                                            //
 ///////////////////////////////////////////////////////////
-PlanetSize::PlanetSize(std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetSize>>>&& sizes) :
+PlanetSize::PlanetSize(std::vector<std::unique_ptr<focs::ValueRef< ::PlanetSize>>>&& sizes) :
     Condition(),
     m_sizes(std::move(sizes))
 {
@@ -3874,8 +3874,8 @@ unsigned int PlanetSize::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // PlanetEnvironment                                     //
 ///////////////////////////////////////////////////////////
-PlanetEnvironment::PlanetEnvironment(std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetEnvironment>>>&& environments,
-                                     std::unique_ptr<ValueRef::ValueRef<std::string>>&& species_name_ref) :
+PlanetEnvironment::PlanetEnvironment(std::vector<std::unique_ptr<focs::ValueRef< ::PlanetEnvironment>>>&& environments,
+                                     std::unique_ptr<focs::ValueRef<std::string>>&& species_name_ref) :
     Condition(),
     m_environments(std::move(environments)),
     m_species_name(std::move(species_name_ref))
@@ -4081,7 +4081,7 @@ unsigned int PlanetEnvironment::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // Species                                               //
 ///////////////////////////////////////////////////////////
-Species::Species(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names) :
+Species::Species(std::vector<std::unique_ptr<focs::ValueRef<std::string>>>&& names) :
     Condition(),
     m_names(std::move(names))
 {
@@ -4091,7 +4091,7 @@ Species::Species(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&&
 }
 
 Species::Species() :
-    Species(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>{})
+    Species(std::vector<std::unique_ptr<focs::ValueRef<std::string>>>{})
 {}
 
 bool Species::operator==(const Condition& rhs) const {
@@ -4283,10 +4283,10 @@ unsigned int Species::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // Enqueued                                              //
 ///////////////////////////////////////////////////////////
-Enqueued::Enqueued(std::unique_ptr<ValueRef::ValueRef<int>>&& design_id,
-                   std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
-                   std::unique_ptr<ValueRef::ValueRef<int>>&& low,
-                   std::unique_ptr<ValueRef::ValueRef<int>>&& high) :
+Enqueued::Enqueued(std::unique_ptr<focs::ValueRef<int>>&& design_id,
+                   std::unique_ptr<focs::ValueRef<int>>&& empire_id,
+                   std::unique_ptr<focs::ValueRef<int>>&& low,
+                   std::unique_ptr<focs::ValueRef<int>>&& high) :
     Condition(),
     m_build_type(BT_SHIP),
     m_design_id(std::move(design_id)),
@@ -4294,7 +4294,7 @@ Enqueued::Enqueued(std::unique_ptr<ValueRef::ValueRef<int>>&& design_id,
     m_low(std::move(low)),
     m_high(std::move(high))
 {
-    std::array<ValueRef::ValueRefBase*, 4> operands =
+    std::array<focs::ValueRefBase*, 4> operands =
         { m_design_id.get(), m_empire_id.get(), m_low.get(), m_high.get() };
     m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
     m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
@@ -4306,10 +4306,10 @@ Enqueued::Enqueued() :
 {}
 
 Enqueued::Enqueued(BuildType build_type,
-                   std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
-                   std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
-                   std::unique_ptr<ValueRef::ValueRef<int>>&& low,
-                   std::unique_ptr<ValueRef::ValueRef<int>>&& high) :
+                   std::unique_ptr<focs::ValueRef<std::string>>&& name,
+                   std::unique_ptr<focs::ValueRef<int>>&& empire_id,
+                   std::unique_ptr<focs::ValueRef<int>>&& low,
+                   std::unique_ptr<focs::ValueRef<int>>&& high) :
     Condition(),
     m_build_type(build_type),
     m_name(std::move(name)),
@@ -4317,7 +4317,7 @@ Enqueued::Enqueued(BuildType build_type,
     m_low(std::move(low)),
     m_high(std::move(high))
 {
-    std::array<ValueRef::ValueRefBase*, 4> operands =
+    std::array<focs::ValueRefBase*, 4> operands =
         { m_name.get(), m_empire_id.get(), m_low.get(), m_high.get() };
     m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
     m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
@@ -4589,7 +4589,7 @@ unsigned int Enqueued::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // FocusType                                             //
 ///////////////////////////////////////////////////////////
-FocusType::FocusType(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names) :
+FocusType::FocusType(std::vector<std::unique_ptr<focs::ValueRef<std::string>>>&& names) :
     Condition(),
     m_names(std::move(names))
 {
@@ -4758,7 +4758,7 @@ unsigned int FocusType::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // StarType                                              //
 ///////////////////////////////////////////////////////////
-StarType::StarType(std::vector<std::unique_ptr<ValueRef::ValueRef< ::StarType>>>&& types) :
+StarType::StarType(std::vector<std::unique_ptr<focs::ValueRef< ::StarType>>>&& types) :
     Condition(),
     m_types(std::move(types))
 {
@@ -4906,7 +4906,7 @@ unsigned int StarType::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // DesignHasHull                                         //
 ///////////////////////////////////////////////////////////
-DesignHasHull::DesignHasHull(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
+DesignHasHull::DesignHasHull(std::unique_ptr<focs::ValueRef<std::string>>&& name) :
     Condition(),
     m_name(std::move(name))
 {
@@ -5030,15 +5030,15 @@ unsigned int DesignHasHull::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // DesignHasPart                                         //
 ///////////////////////////////////////////////////////////
-DesignHasPart::DesignHasPart(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
-                             std::unique_ptr<ValueRef::ValueRef<int>>&& low,
-                             std::unique_ptr<ValueRef::ValueRef<int>>&& high) :
+DesignHasPart::DesignHasPart(std::unique_ptr<focs::ValueRef<std::string>>&& name,
+                             std::unique_ptr<focs::ValueRef<int>>&& low,
+                             std::unique_ptr<focs::ValueRef<int>>&& high) :
     Condition(),
     m_low(std::move(low)),
     m_high(std::move(high)),
     m_name(std::move(name))
 {
-    std::array<ValueRef::ValueRefBase*, 3> operands = { m_name.get(), m_low.get(), m_high.get() };
+    std::array<focs::ValueRefBase*, 3> operands = { m_name.get(), m_low.get(), m_high.get() };
     m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
     m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
     m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
@@ -5213,14 +5213,14 @@ unsigned int DesignHasPart::GetCheckSum() const {
 // DesignHasPartClass                                    //
 ///////////////////////////////////////////////////////////
 DesignHasPartClass::DesignHasPartClass(ShipPartClass part_class,
-                                       std::unique_ptr<ValueRef::ValueRef<int>>&& low,
-                                       std::unique_ptr<ValueRef::ValueRef<int>>&& high) :
+                                       std::unique_ptr<focs::ValueRef<int>>&& low,
+                                       std::unique_ptr<focs::ValueRef<int>>&& high) :
     Condition(),
     m_low(std::move(low)),
     m_high(std::move(high)),
     m_class(std::move(part_class))
 {
-    std::array<ValueRef::ValueRefBase*, 2> operands = { m_low.get(), m_high.get() };
+    std::array<focs::ValueRefBase*, 2> operands = { m_low.get(), m_high.get() };
     m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
     m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
     m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
@@ -5373,7 +5373,7 @@ unsigned int DesignHasPartClass::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // PredefinedShipDesign                                  //
 ///////////////////////////////////////////////////////////
-PredefinedShipDesign::PredefinedShipDesign(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
+PredefinedShipDesign::PredefinedShipDesign(std::unique_ptr<focs::ValueRef<std::string>>&& name) :
     Condition(),
     m_name(std::move(name))
 {
@@ -5506,7 +5506,7 @@ unsigned int PredefinedShipDesign::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // NumberedShipDesign                                    //
 ///////////////////////////////////////////////////////////
-NumberedShipDesign::NumberedShipDesign(std::unique_ptr<ValueRef::ValueRef<int>>&& design_id) :
+NumberedShipDesign::NumberedShipDesign(std::unique_ptr<focs::ValueRef<int>>&& design_id) :
     Condition(),
     m_design_id(std::move(design_id))
 {
@@ -5609,7 +5609,7 @@ unsigned int NumberedShipDesign::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // ProducedByEmpire                                      //
 ///////////////////////////////////////////////////////////
-ProducedByEmpire::ProducedByEmpire(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id) :
+ProducedByEmpire::ProducedByEmpire(std::unique_ptr<focs::ValueRef<int>>&& empire_id) :
     Condition(),
     m_empire_id(std::move(empire_id))
 {
@@ -5718,7 +5718,7 @@ unsigned int ProducedByEmpire::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // Chance                                                //
 ///////////////////////////////////////////////////////////
-Chance::Chance(std::unique_ptr<ValueRef::ValueRef<double>>&& chance) :
+Chance::Chance(std::unique_ptr<focs::ValueRef<double>>&& chance) :
     Condition(),
     m_chance(std::move(chance))
 {
@@ -5812,14 +5812,14 @@ unsigned int Chance::GetCheckSum() const {
 // MeterValue                                            //
 ///////////////////////////////////////////////////////////
 MeterValue::MeterValue(MeterType meter,
-                       std::unique_ptr<ValueRef::ValueRef<double>>&& low,
-                       std::unique_ptr<ValueRef::ValueRef<double>>&& high) :
+                       std::unique_ptr<focs::ValueRef<double>>&& low,
+                       std::unique_ptr<focs::ValueRef<double>>&& high) :
     Condition(),
     m_meter(meter),
     m_low(std::move(low)),
     m_high(std::move(high))
 {
-    std::array<ValueRef::ValueRefBase*, 2> operands = { m_low.get(), m_high.get() };
+    std::array<focs::ValueRefBase*, 2> operands = { m_low.get(), m_high.get() };
     m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
     m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
     m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
@@ -6004,17 +6004,17 @@ unsigned int MeterValue::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // ShipPartMeterValue                                    //
 ///////////////////////////////////////////////////////////
-ShipPartMeterValue::ShipPartMeterValue(std::unique_ptr<ValueRef::ValueRef<std::string>>&& ship_part_name,
+ShipPartMeterValue::ShipPartMeterValue(std::unique_ptr<focs::ValueRef<std::string>>&& ship_part_name,
                                        MeterType meter,
-                                       std::unique_ptr<ValueRef::ValueRef<double>>&& low,
-                                       std::unique_ptr<ValueRef::ValueRef<double>>&& high) :
+                                       std::unique_ptr<focs::ValueRef<double>>&& low,
+                                       std::unique_ptr<focs::ValueRef<double>>&& high) :
     Condition(),
     m_part_name(std::move(ship_part_name)),
     m_meter(meter),
     m_low(std::move(low)),
     m_high(std::move(high))
 {
-    std::array<ValueRef::ValueRefBase*, 3> operands = { m_part_name.get(), m_low.get(), m_high.get() };
+    std::array<focs::ValueRefBase*, 3> operands = { m_part_name.get(), m_low.get(), m_high.get() };
     m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
     m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
     m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
@@ -6168,22 +6168,22 @@ unsigned int ShipPartMeterValue::GetCheckSum() const {
 // EmpireMeterValue                                      //
 ///////////////////////////////////////////////////////////
 EmpireMeterValue::EmpireMeterValue(std::string meter,
-                                   std::unique_ptr<ValueRef::ValueRef<double>>&& low,
-                                   std::unique_ptr<ValueRef::ValueRef<double>>&& high) :
+                                   std::unique_ptr<focs::ValueRef<double>>&& low,
+                                   std::unique_ptr<focs::ValueRef<double>>&& high) :
     EmpireMeterValue(nullptr, std::move(meter), std::move(low), std::move(high))
 {}
 
-EmpireMeterValue::EmpireMeterValue(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
+EmpireMeterValue::EmpireMeterValue(std::unique_ptr<focs::ValueRef<int>>&& empire_id,
                                    std::string meter,
-                                   std::unique_ptr<ValueRef::ValueRef<double>>&& low,
-                                   std::unique_ptr<ValueRef::ValueRef<double>>&& high) :
+                                   std::unique_ptr<focs::ValueRef<double>>&& low,
+                                   std::unique_ptr<focs::ValueRef<double>>&& high) :
     Condition(),
     m_empire_id(std::move(empire_id)),
     m_meter(std::move(meter)),
     m_low(std::move(low)),
     m_high(std::move(high))
 {
-    std::array<ValueRef::ValueRefBase*, 3> operands = { m_empire_id.get(), m_low.get(), m_high.get() };
+    std::array<focs::ValueRefBase*, 3> operands = { m_empire_id.get(), m_low.get(), m_high.get() };
     m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
     m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
     m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
@@ -6349,22 +6349,22 @@ unsigned int EmpireMeterValue::GetCheckSum() const {
 // EmpireStockpileValue                                  //
 ///////////////////////////////////////////////////////////
 EmpireStockpileValue::EmpireStockpileValue(ResourceType stockpile,
-                                           std::unique_ptr<ValueRef::ValueRef<double>>&& low,
-                                           std::unique_ptr<ValueRef::ValueRef<double>>&& high) :
+                                           std::unique_ptr<focs::ValueRef<double>>&& low,
+                                           std::unique_ptr<focs::ValueRef<double>>&& high) :
     EmpireStockpileValue(nullptr, stockpile, std::move(low), std::move(high))
 {}
 
-EmpireStockpileValue::EmpireStockpileValue(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
+EmpireStockpileValue::EmpireStockpileValue(std::unique_ptr<focs::ValueRef<int>>&& empire_id,
                                            ResourceType stockpile,
-                                           std::unique_ptr<ValueRef::ValueRef<double>>&& low,
-                                           std::unique_ptr<ValueRef::ValueRef<double>>&& high) :
+                                           std::unique_ptr<focs::ValueRef<double>>&& low,
+                                           std::unique_ptr<focs::ValueRef<double>>&& high) :
     Condition(),
     m_empire_id(std::move(empire_id)),
     m_stockpile(stockpile),
     m_low(std::move(low)),
     m_high(std::move(high))
 {
-    std::array<ValueRef::ValueRefBase*, 3> operands = { m_empire_id.get(), m_low.get(), m_high.get() };
+    std::array<focs::ValueRefBase*, 3> operands = { m_empire_id.get(), m_low.get(), m_high.get() };
     m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
     m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
     m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
@@ -6522,19 +6522,19 @@ unsigned int EmpireStockpileValue::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // EmpireHasAdoptedPolicy                                //
 ///////////////////////////////////////////////////////////
-EmpireHasAdoptedPolicy::EmpireHasAdoptedPolicy(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
-                                               std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
+EmpireHasAdoptedPolicy::EmpireHasAdoptedPolicy(std::unique_ptr<focs::ValueRef<int>>&& empire_id,
+                                               std::unique_ptr<focs::ValueRef<std::string>>&& name) :
     Condition(),
     m_name(std::move(name)),
     m_empire_id(std::move(empire_id))
 {
-    std::array<ValueRef::ValueRefBase*, 2> operands = { m_name.get(), m_empire_id.get() };
+    std::array<focs::ValueRefBase*, 2> operands = { m_name.get(), m_empire_id.get() };
     m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
     m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
     m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
 }
 
-EmpireHasAdoptedPolicy::EmpireHasAdoptedPolicy(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
+EmpireHasAdoptedPolicy::EmpireHasAdoptedPolicy(std::unique_ptr<focs::ValueRef<std::string>>&& name) :
     EmpireHasAdoptedPolicy(nullptr, std::move(name))
 {}
 
@@ -6665,19 +6665,19 @@ unsigned int EmpireHasAdoptedPolicy::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // OwnerHasTech                                          //
 ///////////////////////////////////////////////////////////
-OwnerHasTech::OwnerHasTech(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
-                           std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
+OwnerHasTech::OwnerHasTech(std::unique_ptr<focs::ValueRef<int>>&& empire_id,
+                           std::unique_ptr<focs::ValueRef<std::string>>&& name) :
     Condition(),
     m_name(std::move(name)),
     m_empire_id(std::move(empire_id))
 {
-    std::array<ValueRef::ValueRefBase*, 2> operands = { m_name.get(), m_empire_id.get() };
+    std::array<focs::ValueRefBase*, 2> operands = { m_name.get(), m_empire_id.get() };
     m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
     m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
     m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
 }
 
-OwnerHasTech::OwnerHasTech(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
+OwnerHasTech::OwnerHasTech(std::unique_ptr<focs::ValueRef<std::string>>&& name) :
     OwnerHasTech(nullptr, std::move(name))
 {}
 
@@ -6804,24 +6804,24 @@ unsigned int OwnerHasTech::GetCheckSum() const {
 // OwnerHasBuildingTypeAvailable                         //
 ///////////////////////////////////////////////////////////
 OwnerHasBuildingTypeAvailable::OwnerHasBuildingTypeAvailable(
-    std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
-    std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
+    std::unique_ptr<focs::ValueRef<int>>&& empire_id,
+    std::unique_ptr<focs::ValueRef<std::string>>&& name) :
     Condition(),
     m_name(std::move(name)),
     m_empire_id(std::move(empire_id))
 {
-    std::array<ValueRef::ValueRefBase*, 2> operands = { m_name.get(), m_empire_id.get() };
+    std::array<focs::ValueRefBase*, 2> operands = { m_name.get(), m_empire_id.get() };
     m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
     m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
     m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
 }
 
 OwnerHasBuildingTypeAvailable::OwnerHasBuildingTypeAvailable(const std::string& name) :
-    OwnerHasBuildingTypeAvailable(nullptr, std::make_unique<ValueRef::Constant<std::string>>(name))
+    OwnerHasBuildingTypeAvailable(nullptr, std::make_unique<focs::Constant<std::string>>(name))
 {}
 
 OwnerHasBuildingTypeAvailable::OwnerHasBuildingTypeAvailable(
-    std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
+    std::unique_ptr<focs::ValueRef<std::string>>&& name) :
     OwnerHasBuildingTypeAvailable(nullptr, std::move(name))
 {}
 
@@ -6943,23 +6943,23 @@ unsigned int OwnerHasBuildingTypeAvailable::GetCheckSum() const {
 // OwnerHasShipDesignAvailable                           //
 ///////////////////////////////////////////////////////////
 OwnerHasShipDesignAvailable::OwnerHasShipDesignAvailable(
-    std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
-    std::unique_ptr<ValueRef::ValueRef<int>>&& design_id) :
+    std::unique_ptr<focs::ValueRef<int>>&& empire_id,
+    std::unique_ptr<focs::ValueRef<int>>&& design_id) :
     Condition(),
     m_id(std::move(design_id)),
     m_empire_id(std::move(empire_id))
 {
-    std::array<ValueRef::ValueRefBase*, 2> operands = { m_id.get(), m_empire_id.get() };
+    std::array<focs::ValueRefBase*, 2> operands = { m_id.get(), m_empire_id.get() };
     m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
     m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
     m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
 }
 
 OwnerHasShipDesignAvailable::OwnerHasShipDesignAvailable(int design_id) :
-    OwnerHasShipDesignAvailable(nullptr, std::make_unique<ValueRef::Constant<int>>(design_id))
+    OwnerHasShipDesignAvailable(nullptr, std::make_unique<focs::Constant<int>>(design_id))
 {}
 
-OwnerHasShipDesignAvailable::OwnerHasShipDesignAvailable(std::unique_ptr<ValueRef::ValueRef<int>>&& design_id) :
+OwnerHasShipDesignAvailable::OwnerHasShipDesignAvailable(std::unique_ptr<focs::ValueRef<int>>&& design_id) :
     OwnerHasShipDesignAvailable(nullptr, std::move(design_id))
 {}
 
@@ -7081,23 +7081,23 @@ unsigned int OwnerHasShipDesignAvailable::GetCheckSum() const {
 // OwnerHasShipPartAvailable                             //
 ///////////////////////////////////////////////////////////
 OwnerHasShipPartAvailable::OwnerHasShipPartAvailable(
-    std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
-    std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
+    std::unique_ptr<focs::ValueRef<int>>&& empire_id,
+    std::unique_ptr<focs::ValueRef<std::string>>&& name) :
     Condition(),
     m_name(std::move(name)),
     m_empire_id(std::move(empire_id))
 {
-    std::array<ValueRef::ValueRefBase*, 2> operands = { m_empire_id.get(), m_name.get() };
+    std::array<focs::ValueRefBase*, 2> operands = { m_empire_id.get(), m_name.get() };
     m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
     m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
     m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
 }
 
 OwnerHasShipPartAvailable::OwnerHasShipPartAvailable(const std::string& name) :
-    OwnerHasShipPartAvailable(nullptr, std::make_unique<ValueRef::Constant<std::string>>(name))
+    OwnerHasShipPartAvailable(nullptr, std::make_unique<focs::Constant<std::string>>(name))
 {}
 
-OwnerHasShipPartAvailable::OwnerHasShipPartAvailable(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
+OwnerHasShipPartAvailable::OwnerHasShipPartAvailable(std::unique_ptr<focs::ValueRef<std::string>>&& name) :
     OwnerHasShipPartAvailable(nullptr, std::move(name))
 {}
 
@@ -7216,7 +7216,7 @@ unsigned int OwnerHasShipPartAvailable::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // VisibleToEmpire                                       //
 ///////////////////////////////////////////////////////////
-VisibleToEmpire::VisibleToEmpire(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id) :
+VisibleToEmpire::VisibleToEmpire(std::unique_ptr<focs::ValueRef<int>>&& empire_id) :
     Condition(),
     m_empire_id(std::move(empire_id))
 {
@@ -7345,7 +7345,7 @@ unsigned int VisibleToEmpire::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // WithinDistance                                        //
 ///////////////////////////////////////////////////////////
-WithinDistance::WithinDistance(std::unique_ptr<ValueRef::ValueRef<double>>&& distance,
+WithinDistance::WithinDistance(std::unique_ptr<focs::ValueRef<double>>&& distance,
                                std::unique_ptr<Condition>&& condition) :
     Condition(),
     m_distance(std::move(distance)),
@@ -7481,7 +7481,7 @@ unsigned int WithinDistance::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // WithinStarlaneJumps                                   //
 ///////////////////////////////////////////////////////////
-WithinStarlaneJumps::WithinStarlaneJumps(std::unique_ptr<ValueRef::ValueRef<int>>&& jumps,
+WithinStarlaneJumps::WithinStarlaneJumps(std::unique_ptr<focs::ValueRef<int>>&& jumps,
                                          std::unique_ptr<Condition>&& condition) :
     Condition(),
     m_jumps(std::move(jumps)),
@@ -8037,7 +8037,7 @@ unsigned int CanAddStarlaneConnection::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // ExploredByEmpire                                      //
 ///////////////////////////////////////////////////////////
-ExploredByEmpire::ExploredByEmpire(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id) :
+ExploredByEmpire::ExploredByEmpire(std::unique_ptr<focs::ValueRef<int>>&& empire_id) :
     Condition(),
     m_empire_id(std::move(empire_id))
 {
@@ -8272,7 +8272,7 @@ unsigned int Aggressive::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // FleetSupplyableByEmpire                               //
 ///////////////////////////////////////////////////////////
-FleetSupplyableByEmpire::FleetSupplyableByEmpire(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id) :
+FleetSupplyableByEmpire::FleetSupplyableByEmpire(std::unique_ptr<focs::ValueRef<int>>&& empire_id) :
     Condition(),
     m_empire_id(std::move(empire_id))
 {
@@ -8389,7 +8389,7 @@ unsigned int FleetSupplyableByEmpire::GetCheckSum() const {
 // ResourceSupplyConnectedByEmpire                       //
 ///////////////////////////////////////////////////////////
 ResourceSupplyConnectedByEmpire::ResourceSupplyConnectedByEmpire(
-    std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
+    std::unique_ptr<focs::ValueRef<int>>&& empire_id,
     std::unique_ptr<Condition>&& condition) :
     Condition(),
     m_empire_id(std::move(empire_id)),
@@ -8897,11 +8897,11 @@ namespace {
     }
 }
 
-ValueTest::ValueTest(std::unique_ptr<ValueRef::ValueRef<double>>&& value_ref1,
+ValueTest::ValueTest(std::unique_ptr<focs::ValueRef<double>>&& value_ref1,
                      ComparisonType comp1,
-                     std::unique_ptr<ValueRef::ValueRef<double>>&& value_ref2,
+                     std::unique_ptr<focs::ValueRef<double>>&& value_ref2,
                      ComparisonType comp2,
-                     std::unique_ptr<ValueRef::ValueRef<double>>&& value_ref3) :
+                     std::unique_ptr<focs::ValueRef<double>>&& value_ref3) :
     Condition(),
     m_value_ref1(std::move(value_ref1)),
     m_value_ref2(std::move(value_ref2)),
@@ -8915,11 +8915,11 @@ ValueTest::ValueTest(std::unique_ptr<ValueRef::ValueRef<double>>&& value_ref1,
     m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
 }
 
-ValueTest::ValueTest(std::unique_ptr<ValueRef::ValueRef<std::string>>&& value_ref1,
+ValueTest::ValueTest(std::unique_ptr<focs::ValueRef<std::string>>&& value_ref1,
                      ComparisonType comp1,
-                     std::unique_ptr<ValueRef::ValueRef<std::string>>&& value_ref2,
+                     std::unique_ptr<focs::ValueRef<std::string>>&& value_ref2,
                      ComparisonType comp2,
-                     std::unique_ptr<ValueRef::ValueRef<std::string>>&& value_ref3) :
+                     std::unique_ptr<focs::ValueRef<std::string>>&& value_ref3) :
     Condition(),
     m_string_value_ref1(std::move(value_ref1)),
     m_string_value_ref2(std::move(value_ref2)),
@@ -8933,11 +8933,11 @@ ValueTest::ValueTest(std::unique_ptr<ValueRef::ValueRef<std::string>>&& value_re
     m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
 }
 
-ValueTest::ValueTest(std::unique_ptr<ValueRef::ValueRef<int>>&& value_ref1,
+ValueTest::ValueTest(std::unique_ptr<focs::ValueRef<int>>&& value_ref1,
                      ComparisonType comp1,
-                     std::unique_ptr<ValueRef::ValueRef<int>>&& value_ref2,
+                     std::unique_ptr<focs::ValueRef<int>>&& value_ref2,
                      ComparisonType comp2,
-                     std::unique_ptr<ValueRef::ValueRef<int>>&& value_ref3) :
+                     std::unique_ptr<focs::ValueRef<int>>&& value_ref3) :
     Condition(),
     m_int_value_ref1(std::move(value_ref1)),
     m_int_value_ref2(std::move(value_ref2)),
@@ -9249,14 +9249,14 @@ namespace {
 }
 
 Location::Location(ContentType content_type,
-                   std::unique_ptr<ValueRef::ValueRef<std::string>>&& name1,
-                   std::unique_ptr<ValueRef::ValueRef<std::string>>&& name2) :
+                   std::unique_ptr<focs::ValueRef<std::string>>&& name1,
+                   std::unique_ptr<focs::ValueRef<std::string>>&& name2) :
     Condition(),
     m_name1(std::move(name1)),
     m_name2(std::move(name2)),
     m_content_type(content_type)
 {
-    std::array<ValueRef::ValueRefBase*, 2> operands = { m_name1.get(), m_name2.get() };
+    std::array<focs::ValueRefBase*, 2> operands = { m_name1.get(), m_name2.get() };
     m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
     m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
     m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
@@ -9423,7 +9423,7 @@ namespace {
 }
 
 CombatTarget::CombatTarget(ContentType content_type,
-                           std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
+                           std::unique_ptr<focs::ValueRef<std::string>>&& name) :
     Condition(),
     m_name(std::move(name)),
     m_content_type(content_type)

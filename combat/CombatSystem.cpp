@@ -264,27 +264,27 @@ namespace {
                 std::make_unique<Condition::EmpireAffiliation>(AFFIL_NONE),   // unowned candidate object
 
                 std::make_unique<Condition::ValueTest>(           // when source object is owned (ie. not the same owner as the candidate object)
-                    std::make_unique<ValueRef::Variable<int>>(
-                        ValueRef::SOURCE_REFERENCE, "Owner"),
+                    std::make_unique<focs::Variable<int>>(
+                        focs::SOURCE_REFERENCE, "Owner"),
                     Condition::NOT_EQUAL,
-                    std::make_unique<ValueRef::Variable<int>>(
-                        ValueRef::CONDITION_LOCAL_CANDIDATE_REFERENCE, "Owner")),
+                    std::make_unique<focs::Variable<int>>(
+                        focs::CONDITION_LOCAL_CANDIDATE_REFERENCE, "Owner")),
 
                 std::make_unique<Condition::VisibleToEmpire>(     // when source object's owner empire can detect the candidate object
-                    std::make_unique<ValueRef::Variable<int>>(    // source's owner empire id
-                        ValueRef::SOURCE_REFERENCE, "Owner"))),
+                    std::make_unique<focs::Variable<int>>(    // source's owner empire id
+                        focs::SOURCE_REFERENCE, "Owner"))),
 
             // owned candidate object case
             std::make_unique<Condition::And>(
                 std::make_unique<Condition::EmpireAffiliation>(AFFIL_ANY),    // candidate is owned by an empire
 
                 std::make_unique<Condition::EmpireAffiliation>(               // candidate is owned by enemy of source's owner
-                    std::make_unique<ValueRef::Variable<int>>(
-                        ValueRef::SOURCE_REFERENCE, "Owner"), AFFIL_ENEMY),
+                    std::make_unique<focs::Variable<int>>(
+                        focs::SOURCE_REFERENCE, "Owner"), AFFIL_ENEMY),
 
                 std::make_unique<Condition::VisibleToEmpire>(     // when source empire can detect the candidate object
-                    std::make_unique<ValueRef::Variable<int>>(    // source's owner empire id
-                        ValueRef::SOURCE_REFERENCE, "Owner"))
+                    std::make_unique<focs::Variable<int>>(    // source's owner empire id
+                        focs::SOURCE_REFERENCE, "Owner"))
             ))
         ;
     }
@@ -298,7 +298,7 @@ namespace {
                         std::make_unique<Condition::MeterValue>(
                             METER_STRUCTURE,
                             nullptr,
-                            std::make_unique<ValueRef::Constant<double>>(0.0)))),
+                            std::make_unique<focs::Constant<double>>(0.0)))),
                 std::make_unique<Condition::Type>(OBJ_FIGHTER)),
             std::unique_ptr<Condition::Condition>{VisibleEnemyOfOwnerCondition()});
 
@@ -310,7 +310,7 @@ namespace {
                 std::make_unique<Condition::MeterValue>(
                     METER_STRUCTURE,
                     nullptr,
-                    std::make_unique<ValueRef::Constant<double>>(0.0))),
+                    std::make_unique<focs::Constant<double>>(0.0))),
 
             std::unique_ptr<Condition::Condition>{VisibleEnemyOfOwnerCondition()});
 
@@ -325,7 +325,7 @@ namespace {
                             std::make_unique<Condition::MeterValue>(
                                 METER_STRUCTURE,
                                 nullptr,
-                                std::make_unique<ValueRef::Constant<double>>(0.0)))),
+                                std::make_unique<focs::Constant<double>>(0.0)))),
                     std::make_unique<Condition::Type>(OBJ_FIGHTER)),
 
                 std::make_unique<Condition::And>(
@@ -335,23 +335,23 @@ namespace {
                             std::make_unique<Condition::MeterValue>(
                                 METER_DEFENSE,
                                 nullptr,
-                                std::make_unique<ValueRef::Constant<double>>(0.0))),
+                                std::make_unique<focs::Constant<double>>(0.0))),
                         std::make_unique<Condition::Not>(
                             std::make_unique<Condition::MeterValue>(
                                 METER_SHIELD,
                                 nullptr,
-                                std::make_unique<ValueRef::Constant<double>>(0.0))),
+                                std::make_unique<focs::Constant<double>>(0.0))),
                         std::make_unique<Condition::Not>(
                             std::make_unique<Condition::MeterValue>(
                                 METER_CONSTRUCTION,
                                 nullptr,
-                                std::make_unique<ValueRef::Constant<double>>(0.0)))))));
+                                std::make_unique<focs::Constant<double>>(0.0)))))));
 
     const std::unique_ptr<Condition::Condition> if_source_is_planet_then_ships_else_all =
         std::make_unique<Condition::Or>(
             std::make_unique<Condition::And>(     // if source is a planet, match ships
                 std::make_unique<Condition::Number>(
-                    std::make_unique<ValueRef::Constant<int>>(1), // minimum objects matching subcondition
+                    std::make_unique<focs::Constant<int>>(1), // minimum objects matching subcondition
                     nullptr,
                     std::make_unique<Condition::And>(             // subcondition: source is a planet
                         std::make_unique<Condition::Source>(),
@@ -363,7 +363,7 @@ namespace {
 
             std::make_unique<Condition::Number>(  // if source is not a planet, match anything
                 nullptr,
-                std::make_unique<ValueRef::Constant<int>>(0),     // maximum objects matching subcondition
+                std::make_unique<focs::Constant<int>>(0),     // maximum objects matching subcondition
                 std::make_unique<Condition::And>(                 // subcondition: source is a planet
                     std::make_unique<Condition::Source>(),
                     std::make_unique<Condition::Type>(OBJ_PLANET)

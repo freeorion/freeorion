@@ -37,41 +37,41 @@ namespace parse { namespace detail {
             =   (
                 (
                     (
-                            tok.Sin_    [ _c = ValueRef::SINE ]                     // single-parameter math functions
-                        |   tok.Cos_    [ _c = ValueRef::COSINE ]
-                        |   tok.Log_    [ _c = ValueRef::LOGARITHM ]
-                        |   tok.Abs_    [ _c = ValueRef::ABS ]
-                        |   tok.Round_  [ _c = ValueRef::ROUND_NEAREST ]
-                        |   tok.Ceil_   [ _c = ValueRef::ROUND_UP ]
-                        |   tok.Floor_  [ _c = ValueRef::ROUND_DOWN ]
+                            tok.Sin_    [ _c = focs::SINE ]                     // single-parameter math functions
+                        |   tok.Cos_    [ _c = focs::COSINE ]
+                        |   tok.Log_    [ _c = focs::LOGARITHM ]
+                        |   tok.Abs_    [ _c = focs::ABS ]
+                        |   tok.Round_  [ _c = focs::ROUND_NEAREST ]
+                        |   tok.Ceil_   [ _c = focs::ROUND_UP ]
+                        |   tok.Floor_  [ _c = focs::ROUND_DOWN ]
                     )
-                    >> ('(' > expr > ')') [ _val = construct_movable_(new_<ValueRef::Operation<T>>(_c, deconstruct_movable_(_1, _pass))) ]
+                    >> ('(' > expr > ')') [ _val = construct_movable_(new_<focs::Operation<T>>(_c, deconstruct_movable_(_1, _pass))) ]
                 )
                 |   (
-                    tok.RandomNumber_   [ _c = ValueRef::RANDOM_UNIFORM ]           // random number requires a min and max value
+                    tok.RandomNumber_   [ _c = focs::RANDOM_UNIFORM ]           // random number requires a min and max value
                     >  ( '(' > expr >  ',' > expr > ')' ) [ _val = construct_movable_(
-                            new_<ValueRef::Operation<T>>(_c, deconstruct_movable_(_1, _pass), deconstruct_movable_(_2, _pass))) ]
+                            new_<focs::Operation<T>>(_c, deconstruct_movable_(_1, _pass), deconstruct_movable_(_2, _pass))) ]
                 )
                 |   (
                     (
-                            tok.OneOf_  [ _c = ValueRef::RANDOM_PICK ]              // oneof, min, or max can take any number or operands
-                        |   tok.Min_    [ _c = ValueRef::MINIMUM ]
-                        |   tok.Max_    [ _c = ValueRef::MAXIMUM ]
+                            tok.OneOf_  [ _c = focs::RANDOM_PICK ]              // oneof, min, or max can take any number or operands
+                        |   tok.Min_    [ _c = focs::MINIMUM ]
+                        |   tok.Max_    [ _c = focs::MAXIMUM ]
                     )
                     >>  ( '(' >>  expr [ push_back(_d, _1) ]
                     >>(*(',' >  expr [ push_back(_d, _1) ] )) >> ')' )
-                    [ _val = construct_movable_(new_<ValueRef::Operation<T>>(_c, deconstruct_movable_vector_(_d, _pass))) ]
+                    [ _val = construct_movable_(new_<focs::Operation<T>>(_c, deconstruct_movable_vector_(_d, _pass))) ]
                 )
                 |   (
                     lit('(') >> expr [ push_back(_d, _1) ]
                     >> (
-                        (       lit("==")   [ _c = ValueRef::COMPARE_EQUAL ]
-                              | lit('=')    [ _c = ValueRef::COMPARE_EQUAL ]
-                              | lit(">=")   [ _c = ValueRef::COMPARE_GREATER_THAN_OR_EQUAL ]
-                              | lit('>')    [ _c = ValueRef::COMPARE_GREATER_THAN ]
-                              | lit("<=")   [ _c = ValueRef::COMPARE_LESS_THAN_OR_EQUAL ]
-                              | lit('<')    [ _c = ValueRef::COMPARE_LESS_THAN ]
-                              | lit("!=")   [ _c = ValueRef::COMPARE_NOT_EQUAL ]
+                        (       lit("==")   [ _c = focs::COMPARE_EQUAL ]
+                              | lit('=')    [ _c = focs::COMPARE_EQUAL ]
+                              | lit(">=")   [ _c = focs::COMPARE_GREATER_THAN_OR_EQUAL ]
+                              | lit('>')    [ _c = focs::COMPARE_GREATER_THAN ]
+                              | lit("<=")   [ _c = focs::COMPARE_LESS_THAN_OR_EQUAL ]
+                              | lit('<')    [ _c = focs::COMPARE_LESS_THAN ]
+                              | lit("!=")   [ _c = focs::COMPARE_NOT_EQUAL ]
                         )
                         > expr [ push_back(_d, _1) ]
                        )
@@ -84,14 +84,14 @@ namespace parse { namespace detail {
                                 |  ( lit(':') > expr [ push_back(_d, _1) ] > ')' )
                               )
                           )
-                    ) [ _val = construct_movable_(new_<ValueRef::Operation<T>>(_c, deconstruct_movable_vector_(_d, _pass))) ]
+                    ) [ _val = construct_movable_(new_<focs::Operation<T>>(_c, deconstruct_movable_vector_(_d, _pass))) ]
                 )
                 |   (
                     lit('-') >> functional_expr
                     // single parameter math function with a function expression
                     // rather than any arbitrary expression as parameter, because
                     // negating more general expressions can be ambiguous
-                    [ _val = construct_movable_(new_<ValueRef::Operation<T>>(ValueRef::NEGATE, deconstruct_movable_(_1, _pass))) ]
+                    [ _val = construct_movable_(new_<focs::Operation<T>>(focs::NEGATE, deconstruct_movable_(_1, _pass))) ]
                 )
                 |   (
                         primary_expr [ _val = _1 ]
@@ -105,8 +105,8 @@ namespace parse { namespace detail {
                 >>
                 -( '^'
                       >> functional_expr [
-                          _b = construct_movable_(new_<ValueRef::Operation<T>>(
-                              ValueRef::EXPONENTIATE,
+                          _b = construct_movable_(new_<focs::Operation<T>>(
+                              focs::EXPONENTIATE,
                               deconstruct_movable_(_a, _pass),
                               deconstruct_movable_(_1, _pass) )) ,
                           _a = _b]
@@ -121,11 +121,11 @@ namespace parse { namespace detail {
                 *(
                     (
                         (
-                            lit('*') [ _c = ValueRef::TIMES ]
-                            |   lit('/') [ _c = ValueRef::DIVIDE ]
+                            lit('*') [ _c = focs::TIMES ]
+                            |   lit('/') [ _c = focs::DIVIDE ]
                         )
                         >>  exponential_expr [
-                            _b = construct_movable_(new_<ValueRef::Operation<T>>(
+                            _b = construct_movable_(new_<focs::Operation<T>>(
                                 _c,
                                 deconstruct_movable_(_a, _pass),
                                 deconstruct_movable_(_1, _pass))) ]
@@ -141,11 +141,11 @@ namespace parse { namespace detail {
                 *(
                     (
                         (
-                            lit('+') [ _c = ValueRef::PLUS ]
-                        |   lit('-') [ _c = ValueRef::MINUS ]
+                            lit('+') [ _c = focs::PLUS ]
+                        |   lit('-') [ _c = focs::MINUS ]
                         )
                         >>   multiplicative_expr [
-                            _b = construct_movable_(new_<ValueRef::Operation<T>>(
+                            _b = construct_movable_(new_<focs::Operation<T>>(
                                 _c,
                                 deconstruct_movable_(_a, _pass),
                                 deconstruct_movable_(_1, _pass))) ]
@@ -156,19 +156,19 @@ namespace parse { namespace detail {
 
         statistic_collection_expr
             =   (tok.Statistic_
-                 >> (   tok.Count_  [ _b = ValueRef::COUNT ]
-                    |   tok.If_     [ _b = ValueRef::IF ]
+                 >> (   tok.Count_  [ _b = focs::COUNT ]
+                    |   tok.If_     [ _b = focs::IF ]
                     )
                 )
             >   label(tok.Condition_) >    condition_parser
-            [ _val = construct_movable_(new_<ValueRef::Statistic<T>>(deconstruct_movable_(_a, _pass), _b, deconstruct_movable_(_1, _pass))) ]
+            [ _val = construct_movable_(new_<focs::Statistic<T>>(deconstruct_movable_(_a, _pass), _b, deconstruct_movable_(_1, _pass))) ]
             ;
 
         statistic_value_expr
             =  (tok.Statistic_ >>       statistic_type_enum [ _b = _1 ])
             >   label(tok.Value_) >     statistic_value_ref_expr [ _a = _1 ]
             >   label(tok.Condition_) > condition_parser
-            [ _val = construct_movable_(new_<ValueRef::Statistic<T>>(deconstruct_movable_(_a, _pass), _b, deconstruct_movable_(_1, _pass))) ]
+            [ _val = construct_movable_(new_<focs::Statistic<T>>(deconstruct_movable_(_a, _pass), _b, deconstruct_movable_(_1, _pass))) ]
             ;
 
         statistic_expr

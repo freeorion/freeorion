@@ -2,15 +2,15 @@
 #define _focs_ValueRef_h_
 
 
+#include "focs.hpp"
 #include "ScriptingContext.h"
 #include "../util/Export.h"
 
 
-namespace ValueRef {
 
 //! The common base class for all ValueRef classes. This class provides
 //! some the return-type-independent interface.
-struct FO_COMMON_API ValueRefBase {
+struct FO_COMMON_API focs::ValueRefBase {
     ValueRefBase() = default;
     virtual ~ValueRefBase() = default;
 
@@ -38,7 +38,7 @@ protected:
 //! The base class for all ValueRef classes returning type T. This class
 //! provides the public interface for a ValueRef expression tree.
 template <typename T>
-struct FO_COMMON_API ValueRef : public ValueRefBase
+struct FO_COMMON_API focs::ValueRef : public ValueRefBase
 {
     ValueRef() = default;
     virtual ~ValueRef() = default;
@@ -60,7 +60,7 @@ struct FO_COMMON_API ValueRef : public ValueRefBase
     virtual T Eval(const ScriptingContext& context) const = 0;
 };
 
-enum StatisticType : int {
+enum focs::StatisticType : int {
     INVALID_STATISTIC_TYPE = -1,
     COUNT,  // returns the number of objects matching the condition
     UNIQUE_COUNT,   // returns the number of distinct property values of objects matching the condition. eg. if 3 objects have the property value "small", and two have "big", then this value is 2, as there are 2 unique property values.
@@ -76,7 +76,6 @@ enum StatisticType : int {
     PRODUCT // returns the product of the property values of all objects matching the condition
 };
 
-}
 
 
 #endif

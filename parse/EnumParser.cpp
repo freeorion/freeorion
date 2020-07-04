@@ -92,18 +92,18 @@ namespace parse {
         statistic_enum_grammar::base_type(rule, "statistic_enum_grammar")
     {
         rule
-            =   tok.CountUnique_    [ _val = ValueRef::UNIQUE_COUNT ]
-            |   tok.Count_          [ _val = ValueRef::COUNT ]
-            |   tok.If_             [ _val = ValueRef::IF ]
-            |   tok.Sum_            [ _val = ValueRef::SUM ]
-            |   tok.Mean_           [ _val = ValueRef::MEAN ]
-            |   tok.RMS_            [ _val = ValueRef::RMS ]
-            |   tok.Mode_           [ _val = ValueRef::MODE ]
-            |   tok.Max_            [ _val = ValueRef::MAX ]
-            |   tok.Min_            [ _val = ValueRef::MIN ]
-            |   tok.Spread_         [ _val = ValueRef::SPREAD ]
-            |   tok.StDev_          [ _val = ValueRef::STDEV ]
-            |   tok.Product_        [ _val = ValueRef::PRODUCT ]
+            =   tok.CountUnique_    [ _val = focs::UNIQUE_COUNT ]
+            |   tok.Count_          [ _val = focs::COUNT ]
+            |   tok.If_             [ _val = focs::IF ]
+            |   tok.Sum_            [ _val = focs::SUM ]
+            |   tok.Mean_           [ _val = focs::MEAN ]
+            |   tok.RMS_            [ _val = focs::RMS ]
+            |   tok.Mode_           [ _val = focs::MODE ]
+            |   tok.Max_            [ _val = focs::MAX ]
+            |   tok.Min_            [ _val = focs::MIN ]
+            |   tok.Spread_         [ _val = focs::SPREAD ]
+            |   tok.StDev_          [ _val = focs::STDEV ]
+            |   tok.Product_        [ _val = focs::PRODUCT ]
             ;
     }
 

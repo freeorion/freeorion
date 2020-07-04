@@ -33,7 +33,7 @@ namespace parse { namespace detail {
         game_rule
             = ( tok.GameRule_
                 >   label(tok.Name_) >     string_grammar
-              ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<std::string>>(_1, nullptr, nullptr, nullptr, deconstruct_movable_(_2, _pass), nullptr)) ]
+              ) [ _val = construct_movable_(new_<focs::ComplexVariable<std::string>>(_1, nullptr, nullptr, nullptr, deconstruct_movable_(_2, _pass), nullptr)) ]
             ;
 
         empire_ref =
@@ -56,7 +56,7 @@ namespace parse { namespace detail {
                     |   tok.RandomControlledSpecies_
                 )
                 >   label(tok.Empire_) > simple_int
-            ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<std::string>>(_1, deconstruct_movable_(_2, _pass), nullptr, nullptr, nullptr, nullptr)) ]
+            ) [ _val = construct_movable_(new_<focs::ComplexVariable<std::string>>(_1, deconstruct_movable_(_2, _pass), nullptr, nullptr, nullptr, nullptr)) ]
             ;
 
         empire_empire_ref =
@@ -69,7 +69,7 @@ namespace parse { namespace detail {
                 )
                 >   label(tok.Empire_) > simple_int
                 >   label(tok.Empire_) > simple_int
-            ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<std::string>>(_1, deconstruct_movable_(_2, _pass), deconstruct_movable_(_3, _pass), nullptr, nullptr, nullptr)) ]
+            ) [ _val = construct_movable_(new_<focs::ComplexVariable<std::string>>(_1, deconstruct_movable_(_2, _pass), deconstruct_movable_(_3, _pass), nullptr, nullptr, nullptr)) ]
             ;
 
         start

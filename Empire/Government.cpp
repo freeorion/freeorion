@@ -32,7 +32,7 @@ namespace {
 ///////////////////////////////////////////////////////////
 Policy::Policy(std::string name, std::string description,
                std::string short_description, std::string category,
-               std::unique_ptr<ValueRef::ValueRef<double>>&& adoption_cost,
+               std::unique_ptr<focs::ValueRef<double>>&& adoption_cost,
                std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
                std::string graphic) :
     m_name(std::move(name)),

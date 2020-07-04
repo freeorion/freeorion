@@ -141,8 +141,8 @@ private:
     float           m_secondary_stat = 0.0f;
     bool            m_producible = false;
 
-    std::unique_ptr<ValueRef::ValueRef<double>>         m_production_cost;
-    std::unique_ptr<ValueRef::ValueRef<int>>            m_production_time;
+    std::unique_ptr<focs::ValueRef<double>>         m_production_cost;
+    std::unique_ptr<focs::ValueRef<int>>            m_production_time;
     std::vector<ShipSlotType>                           m_mountable_slot_types;
     std::set<std::string>                               m_tags;
     ConsumptionMap<MeterType>                           m_production_meter_consumption;

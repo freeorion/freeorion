@@ -1698,7 +1698,7 @@ void Universe::CountDestructionInStats(int object_id, int source_object_id) {
 }
 
 void Universe::SetEffectDerivedVisibility(int empire_id, int object_id, int source_id,
-                                          const ValueRef::ValueRef<Visibility>* vis)
+                                          const focs::ValueRef<Visibility>* vis)
 {
     if (empire_id == ALL_EMPIRES)
         return;

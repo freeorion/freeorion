@@ -12,12 +12,12 @@ namespace phoenix = boost::phoenix;
 
 namespace parse { namespace detail {
     using PassedMessageParams =
-        std::vector<std::pair<std::string, MovableEnvelope<ValueRef::ValueRef<std::string>>>>;
+        std::vector<std::pair<std::string, MovableEnvelope<focs::ValueRef<std::string>>>>;
 
     effect_payload construct_GenerateSitRepMessage1(
         std::string& message_string, std::string& icon,
         const PassedMessageParams& message_parameters,
-        const MovableEnvelope<ValueRef::ValueRef<int>>& recipient_empire_id,
+        const MovableEnvelope<focs::ValueRef<int>>& recipient_empire_id,
         EmpireAffiliationType affiliation,
         std::string label,
         bool stringtable_lookup,
@@ -217,9 +217,9 @@ namespace parse { namespace detail {
             (
                 label(tok.Tag_)  >  tok.string [ _a = _1 ] >
                 label(tok.Data_)
-                >  (   int_rules.expr    [ _b = construct_movable_(new_<ValueRef::StringCast<int>>(deconstruct_movable_(_1, _pass))) ]
-                     | double_rules.expr [ _b = construct_movable_(new_<ValueRef::StringCast<double>>(deconstruct_movable_(_1, _pass))) ]
-                     | tok.string        [ _b = construct_movable_(new_<ValueRef::Constant<std::string>>(_1)) ]
+                >  (   int_rules.expr    [ _b = construct_movable_(new_<focs::StringCast<int>>(deconstruct_movable_(_1, _pass))) ]
+                     | double_rules.expr [ _b = construct_movable_(new_<focs::StringCast<double>>(deconstruct_movable_(_1, _pass))) ]
+                     | tok.string        [ _b = construct_movable_(new_<focs::Constant<std::string>>(_1)) ]
                      | string_grammar    [ _b = _1 ]
                    )
             )

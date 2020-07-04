@@ -19,7 +19,7 @@ class FO_COMMON_API Policy {
 public:
     Policy(std::string name, std::string description,
            std::string short_description, std::string category,
-           std::unique_ptr<ValueRef::ValueRef<double>>&& adoption_cost,
+           std::unique_ptr<focs::ValueRef<double>>&& adoption_cost,
            std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
            std::string graphic);
 
@@ -53,7 +53,7 @@ private:
     std::string                                         m_description;
     std::string                                         m_short_description;
     std::string                                         m_category;
-    std::unique_ptr<ValueRef::ValueRef<double>>         m_adoption_cost;
+    std::unique_ptr<focs::ValueRef<double>>             m_adoption_cost;
     std::vector<std::shared_ptr<Effect::EffectsGroup>>  m_effects;
     std::string                                         m_graphic;
 

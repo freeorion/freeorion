@@ -13,16 +13,13 @@
 #include <boost/optional/optional.hpp>
 #include <GG/Clr.h>
 #include "EnumsFwd.h"
+#include "../focs/focs.hpp"
 #include "../util/Export.h"
 #include "../util/Pending.h"
 
 
 namespace Effect
 { class EffectsGroup; }
-namespace ValueRef {
-    template <typename T>
-    struct ValueRef;
-}
 class TechManager;
 struct UnlockableItem;
 
@@ -34,8 +31,8 @@ public:
         TechInfo();
         TechInfo(std::string& name_, std::string& description_,
                  std::string& short_description_, std::string& category_,
-                 std::unique_ptr<ValueRef::ValueRef<double>>&& research_cost_,
-                 std::unique_ptr<ValueRef::ValueRef<int>>&& research_turns_,
+                 std::unique_ptr<focs::ValueRef<double>>&& research_cost_,
+                 std::unique_ptr<focs::ValueRef<int>>&& research_turns_,
                  bool researchable_,
                  std::set<std::string>& tags_);
         ~TechInfo();
@@ -44,16 +41,16 @@ public:
         std::string             description;
         std::string             short_description;
         std::string             category;
-        std::unique_ptr<ValueRef::ValueRef<double>> research_cost;
-        std::unique_ptr<ValueRef::ValueRef<int>>    research_turns;
+        std::unique_ptr<focs::ValueRef<double>> research_cost;
+        std::unique_ptr<focs::ValueRef<int>>    research_turns;
         bool                    researchable = false;
         std::set<std::string>   tags;
     };
 
     Tech(std::string&& name, std::string&& description,
          std::string&& short_description, std::string&& category,
-         std::unique_ptr<ValueRef::ValueRef<double>>&& research_cost,
-         std::unique_ptr<ValueRef::ValueRef<int>>&& research_turns,
+         std::unique_ptr<focs::ValueRef<double>>&& research_cost,
+         std::unique_ptr<focs::ValueRef<int>>&& research_turns,
          bool researchable, std::set<std::string>&& tags,
          std::vector<std::shared_ptr<Effect::EffectsGroup>>&& effects,
          std::set<std::string>&& prerequisites,
@@ -114,8 +111,8 @@ private:
     std::string                     m_description;
     std::string                     m_short_description;
     std::string                     m_category;
-    std::unique_ptr<ValueRef::ValueRef<double>> m_research_cost;
-    std::unique_ptr<ValueRef::ValueRef<int>>    m_research_turns;
+    std::unique_ptr<focs::ValueRef<double>> m_research_cost;
+    std::unique_ptr<focs::ValueRef<int>>    m_research_turns;
     bool                            m_researchable = false;
     std::set<std::string>           m_tags;
     std::vector<std::shared_ptr<Effect::EffectsGroup>> m_effects;

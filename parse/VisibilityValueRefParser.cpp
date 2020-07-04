@@ -34,7 +34,7 @@ namespace parse { namespace detail {
             = ( tok.EmpireObjectVisibility_
                 >   label(tok.Empire_) >   simple_int
                 >   label(tok.Object_) >   simple_int
-              ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<Visibility>>(_1, deconstruct_movable_(_2, _pass), deconstruct_movable_(_3, _pass), nullptr, nullptr, nullptr)) ]
+              ) [ _val = construct_movable_(new_<focs::ComplexVariable<Visibility>>(_1, deconstruct_movable_(_2, _pass), deconstruct_movable_(_3, _pass), nullptr, nullptr, nullptr)) ]
             ;
 
         start
@@ -77,7 +77,7 @@ namespace parse { namespace detail {
             ;
 
         free_variable_expr
-        =   tok.Value_      [ _val = construct_movable_(new_<ValueRef::Variable<Visibility>>(ValueRef::EFFECT_TARGET_VALUE_REFERENCE)) ]
+        =   tok.Value_      [ _val = construct_movable_(new_<focs::Variable<Visibility>>(focs::EFFECT_TARGET_VALUE_REFERENCE)) ]
             ;
 
         complex_expr = visibility_var_complex_grammar;

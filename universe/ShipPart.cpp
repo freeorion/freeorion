@@ -19,16 +19,16 @@ namespace {
     // by the result of evalulating \a increase_vr
     std::shared_ptr<Effect::EffectsGroup>
     IncreaseMeter(MeterType meter_type,
-                  std::unique_ptr<ValueRef::ValueRef<double>>&& increase_vr)
+                  std::unique_ptr<focs::ValueRef<double>>&& increase_vr)
     {
         typedef std::vector<std::unique_ptr<Effect::Effect>> Effects;
         auto scope = std::make_unique<Condition::Source>();
         auto activation = std::make_unique<Condition::Source>();
 
         auto vr =
-            std::make_unique<ValueRef::Operation<double>>(
-                ValueRef::PLUS,
-                std::make_unique<ValueRef::Variable<double>>(ValueRef::EFFECT_TARGET_VALUE_REFERENCE),
+            std::make_unique<focs::Operation<double>>(
+                focs::PLUS,
+                std::make_unique<focs::Variable<double>>(focs::EFFECT_TARGET_VALUE_REFERENCE),
                 std::move(increase_vr)
             );
         auto effects = Effects();
@@ -40,7 +40,7 @@ namespace {
     // by the specified amount \a fixed_increase
     std::shared_ptr<Effect::EffectsGroup>
     IncreaseMeter(MeterType meter_type, float fixed_increase) {
-        auto increase_vr = std::make_unique<ValueRef::Constant<double>>(fixed_increase);
+        auto increase_vr = std::make_unique<focs::Constant<double>>(fixed_increase);
         return IncreaseMeter(meter_type, std::move(increase_vr));
     }
 
@@ -49,20 +49,20 @@ namespace {
     // by the result of evalulating \a increase_vr
     std::shared_ptr<Effect::EffectsGroup>
     IncreaseMeter(MeterType meter_type, const std::string& part_name,
-                  std::unique_ptr<ValueRef::ValueRef<double>>&& increase_vr, bool allow_stacking = true)
+                  std::unique_ptr<focs::ValueRef<double>>&& increase_vr, bool allow_stacking = true)
     {
         typedef std::vector<std::unique_ptr<Effect::Effect>> Effects;
         auto scope = std::make_unique<Condition::Source>();
         auto activation = std::make_unique<Condition::Source>();
 
-        auto value_vr = std::make_unique<ValueRef::Operation<double>>(
-            ValueRef::PLUS,
-            std::make_unique<ValueRef::Variable<double>>(ValueRef::EFFECT_TARGET_VALUE_REFERENCE),
+        auto value_vr = std::make_unique<focs::Operation<double>>(
+            focs::PLUS,
+            std::make_unique<focs::Variable<double>>(focs::EFFECT_TARGET_VALUE_REFERENCE),
             std::move(increase_vr)
         );
 
         auto part_name_vr =
-            std::make_unique<ValueRef::Constant<std::string>>(part_name);
+            std::make_unique<focs::Constant<std::string>>(part_name);
 
         std::string stacking_group = (allow_stacking ? "" :
             (part_name + "_" + boost::lexical_cast<std::string>(meter_type) + "_PartMeter"));
@@ -86,12 +86,12 @@ namespace {
         if (scaling_factor_rule_name.empty())
             return IncreaseMeter(meter_type, base_increase);
 
-        auto increase_vr = std::make_unique<ValueRef::Operation<double>>(
-            ValueRef::TIMES,
-            std::make_unique<ValueRef::Constant<double>>(base_increase),
-            std::make_unique<ValueRef::ComplexVariable<double>>(
+        auto increase_vr = std::make_unique<focs::Operation<double>>(
+            focs::TIMES,
+            std::make_unique<focs::Constant<double>>(base_increase),
+            std::make_unique<focs::ComplexVariable<double>>(
                 "GameRule", nullptr, nullptr, nullptr,
-                std::make_unique<ValueRef::Constant<std::string>>(scaling_factor_rule_name)
+                std::make_unique<focs::Constant<std::string>>(scaling_factor_rule_name)
             )
         );
 
@@ -105,7 +105,7 @@ namespace {
     IncreaseMeter(MeterType meter_type, const std::string& part_name,
                   float fixed_increase, bool allow_stacking = true)
     {
-        auto increase_vr = std::make_unique<ValueRef::Constant<double>>(fixed_increase);
+        auto increase_vr = std::make_unique<focs::Constant<double>>(fixed_increase);
         return IncreaseMeter(meter_type, part_name, std::move(increase_vr), allow_stacking);
     }
 
@@ -121,12 +121,12 @@ namespace {
         if (scaling_factor_rule_name.empty())
             return IncreaseMeter(meter_type, part_name, base_increase, allow_stacking);
 
-        auto increase_vr = std::make_unique<ValueRef::Operation<double>>(
-            ValueRef::TIMES,
-            std::make_unique<ValueRef::Constant<double>>(base_increase),
-            std::make_unique<ValueRef::ComplexVariable<double>>(
+        auto increase_vr = std::make_unique<focs::Operation<double>>(
+            focs::TIMES,
+            std::make_unique<focs::Constant<double>>(base_increase),
+            std::make_unique<focs::ComplexVariable<double>>(
                 "GameRule", nullptr, nullptr, nullptr,
-                std::make_unique<ValueRef::Constant<std::string>>(scaling_factor_rule_name)
+                std::make_unique<focs::Constant<std::string>>(scaling_factor_rule_name)
             )
         );
 

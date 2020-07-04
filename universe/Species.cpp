@@ -126,12 +126,12 @@ void Species::Init() {
         // set up a Condition structure to match popcenters that have
         // (not uninhabitable) environment for this species
 
-        std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetEnvironment>>> environments;
+        std::vector<std::unique_ptr<focs::ValueRef< ::PlanetEnvironment>>> environments;
         environments.emplace_back(
-            std::make_unique<ValueRef::Constant<PlanetEnvironment>>( ::PE_UNINHABITABLE));
+            std::make_unique<focs::Constant<PlanetEnvironment>>( ::PE_UNINHABITABLE));
 
         auto this_species_name_ref =
-            std::make_unique<ValueRef::Constant<std::string>>(m_name);  // m_name specifies this species
+            std::make_unique<focs::Constant<std::string>>(m_name);  // m_name specifies this species
 
         auto enviro_cond = std::unique_ptr<Condition::Condition>(
             std::make_unique<Condition::Not>(
@@ -140,7 +140,7 @@ void Species::Init() {
                         std::move(environments), std::move(this_species_name_ref)))));
 
         auto type_cond = std::make_unique<Condition::Type>(
-            std::make_unique<ValueRef::Constant<UniverseObjectType>>( ::OBJ_POP_CENTER));
+            std::make_unique<focs::Constant<UniverseObjectType>>( ::OBJ_POP_CENTER));
 
         m_location = std::unique_ptr<Condition::Condition>(std::make_unique<Condition::And>(
             std::move(enviro_cond), std::move(type_cond)));

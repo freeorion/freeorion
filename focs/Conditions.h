@@ -5,6 +5,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include "focs.hpp"
 #include "ConditionAll.h"
 #include "ConditionSource.h"
 #include "Condition.h"
@@ -12,11 +13,6 @@
 #include "../util/CheckSums.h"
 #include "../util/Export.h"
 
-
-namespace ValueRef {
-    template <typename T>
-    struct ValueRef;
-}
 
 /** this namespace holds Condition and its subclasses; these classes
   * represent predicates about UniverseObjects used by, for instance, the
@@ -71,8 +67,8 @@ FO_COMMON_API std::string ConditionDescription(const std::vector<const Condition
   * \a condition is is >= \a low and < \a high.  Matched objects may
   * or may not themselves match the condition. */
 struct FO_COMMON_API Number final : public Condition {
-    Number(std::unique_ptr<ValueRef::ValueRef<int>>&& low,
-           std::unique_ptr<ValueRef::ValueRef<int>>&& high,
+    Number(std::unique_ptr<focs::ValueRef<int>>&& low,
+           std::unique_ptr<focs::ValueRef<int>>&& high,
            std::unique_ptr<Condition>&& condition);
 
     bool operator==(const Condition& rhs) const override;
@@ -86,15 +82,15 @@ struct FO_COMMON_API Number final : public Condition {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::unique_ptr<ValueRef::ValueRef<int>> m_low;
-    std::unique_ptr<ValueRef::ValueRef<int>> m_high;
+    std::unique_ptr<focs::ValueRef<int>> m_low;
+    std::unique_ptr<focs::ValueRef<int>> m_high;
     std::unique_ptr<Condition> m_condition;
 };
 
 /** Matches all objects if the current game turn is >= \a low and < \a high. */
 struct FO_COMMON_API Turn final : public Condition {
-    explicit Turn(std::unique_ptr<ValueRef::ValueRef<int>>&& low,
-                  std::unique_ptr<ValueRef::ValueRef<int>>&& high = nullptr);
+    explicit Turn(std::unique_ptr<focs::ValueRef<int>>&& low,
+                  std::unique_ptr<focs::ValueRef<int>>&& high = nullptr);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -107,8 +103,8 @@ struct FO_COMMON_API Turn final : public Condition {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::unique_ptr<ValueRef::ValueRef<int>> m_low;
-    std::unique_ptr<ValueRef::ValueRef<int>> m_high;
+    std::unique_ptr<focs::ValueRef<int>> m_low;
+    std::unique_ptr<focs::ValueRef<int>> m_high;
 };
 
 /** Matches a specified \a number of objects that match Condition \a condition
@@ -121,13 +117,13 @@ private:
   * selected preferentially. */
 struct FO_COMMON_API SortedNumberOf final : public Condition {
     /** Sorts randomly, without considering a sort key. */
-    SortedNumberOf(std::unique_ptr<ValueRef::ValueRef<int>>&& number,
+    SortedNumberOf(std::unique_ptr<focs::ValueRef<int>>&& number,
                    std::unique_ptr<Condition>&& condition);
 
     /** Sorts according to the specified method, based on the key values
       * evaluated for each object. */
-    SortedNumberOf(std::unique_ptr<ValueRef::ValueRef<int>>&& number,
-                   std::unique_ptr<ValueRef::ValueRef<double>>&& sort_key_ref,
+    SortedNumberOf(std::unique_ptr<focs::ValueRef<int>>&& number,
+                   std::unique_ptr<focs::ValueRef<double>>&& sort_key_ref,
                    SortingMethod sorting_method,
                    std::unique_ptr<Condition>&& condition);
 
@@ -142,8 +138,8 @@ struct FO_COMMON_API SortedNumberOf final : public Condition {
     unsigned int GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRef<int>> m_number;
-    std::unique_ptr<ValueRef::ValueRef<double>> m_sort_key;
+    std::unique_ptr<focs::ValueRef<int>> m_number;
+    std::unique_ptr<focs::ValueRef<double>> m_sort_key;
     SortingMethod m_sorting_method;
     std::unique_ptr<Condition> m_condition;
 };
@@ -169,8 +165,8 @@ struct FO_COMMON_API None final : public Condition {
   * (if \a exclusive == true) by an empire that has affilitation type
   * \a affilitation with Empire \a empire_id. */
 struct FO_COMMON_API EmpireAffiliation final : public Condition {
-    EmpireAffiliation(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id, EmpireAffiliationType affiliation);
-    explicit EmpireAffiliation(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id);
+    EmpireAffiliation(std::unique_ptr<focs::ValueRef<int>>&& empire_id, EmpireAffiliationType affiliation);
+    explicit EmpireAffiliation(std::unique_ptr<focs::ValueRef<int>>&& empire_id);
     explicit EmpireAffiliation(EmpireAffiliationType affiliation);
 
     bool operator==(const Condition& rhs) const override;
@@ -184,7 +180,7 @@ struct FO_COMMON_API EmpireAffiliation final : public Condition {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::unique_ptr<ValueRef::ValueRef<int>> m_empire_id;
+    std::unique_ptr<focs::ValueRef<int>> m_empire_id;
     EmpireAffiliationType m_affiliation;
 };
 
@@ -231,7 +227,7 @@ private:
   * any species in the current game Universe. */
 struct FO_COMMON_API Homeworld final : public Condition {
     Homeworld();
-    explicit Homeworld(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names);
+    explicit Homeworld(std::vector<std::unique_ptr<focs::ValueRef<std::string>>>&& names);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -246,7 +242,7 @@ struct FO_COMMON_API Homeworld final : public Condition {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>> m_names;
+    std::vector<std::unique_ptr<focs::ValueRef<std::string>>> m_names;
 };
 
 /** Matches planets that are an empire's capital. */
@@ -297,7 +293,7 @@ private:
 
 /** Matches all objects that are of UniverseObjectType \a type. */
 struct FO_COMMON_API Type final : public Condition {
-    explicit Type(std::unique_ptr<ValueRef::ValueRef<UniverseObjectType>>&& type);
+    explicit Type(std::unique_ptr<focs::ValueRef<UniverseObjectType>>&& type);
     explicit Type(UniverseObjectType type);
 
     bool operator==(const Condition& rhs) const override;
@@ -313,13 +309,13 @@ struct FO_COMMON_API Type final : public Condition {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::unique_ptr<ValueRef::ValueRef<UniverseObjectType>> m_type;
+    std::unique_ptr<focs::ValueRef<UniverseObjectType>> m_type;
 };
 
 /** Matches all Building objects that are one of the building types specified
   * in \a names. */
 struct FO_COMMON_API Building final : public Condition {
-    explicit Building(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names);
+    explicit Building(std::vector<std::unique_ptr<focs::ValueRef<std::string>>>&& names);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -334,20 +330,20 @@ struct FO_COMMON_API Building final : public Condition {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>> m_names;
+    std::vector<std::unique_ptr<focs::ValueRef<std::string>>> m_names;
 };
 
 /** Matches all objects that have an attached Special named \a name. */
 struct FO_COMMON_API HasSpecial final : public Condition {
     HasSpecial();
     explicit HasSpecial(std::string name);
-    explicit HasSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
-    HasSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
-               std::unique_ptr<ValueRef::ValueRef<int>>&& since_turn_low,
-               std::unique_ptr<ValueRef::ValueRef<int>>&& since_turn_high = nullptr);
-    HasSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
-               std::unique_ptr<ValueRef::ValueRef<double>>&& capacity_low,
-               std::unique_ptr<ValueRef::ValueRef<double>>&& capacity_high = nullptr);
+    explicit HasSpecial(std::unique_ptr<focs::ValueRef<std::string>>&& name);
+    HasSpecial(std::unique_ptr<focs::ValueRef<std::string>>&& name,
+               std::unique_ptr<focs::ValueRef<int>>&& since_turn_low,
+               std::unique_ptr<focs::ValueRef<int>>&& since_turn_high = nullptr);
+    HasSpecial(std::unique_ptr<focs::ValueRef<std::string>>&& name,
+               std::unique_ptr<focs::ValueRef<double>>&& capacity_low,
+               std::unique_ptr<focs::ValueRef<double>>&& capacity_high = nullptr);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -360,18 +356,18 @@ struct FO_COMMON_API HasSpecial final : public Condition {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::unique_ptr<ValueRef::ValueRef<std::string>>    m_name;
-    std::unique_ptr<ValueRef::ValueRef<double>>         m_capacity_low;
-    std::unique_ptr<ValueRef::ValueRef<double>>         m_capacity_high;
-    std::unique_ptr<ValueRef::ValueRef<int>>            m_since_turn_low;
-    std::unique_ptr<ValueRef::ValueRef<int>>            m_since_turn_high;
+    std::unique_ptr<focs::ValueRef<std::string>>    m_name;
+    std::unique_ptr<focs::ValueRef<double>>         m_capacity_low;
+    std::unique_ptr<focs::ValueRef<double>>         m_capacity_high;
+    std::unique_ptr<focs::ValueRef<int>>            m_since_turn_low;
+    std::unique_ptr<focs::ValueRef<int>>            m_since_turn_high;
 };
 
 /** Matches all objects that have the tag \a tag. */
 struct FO_COMMON_API HasTag final : public Condition {
     HasTag();
     explicit HasTag(const std::string& name);
-    explicit HasTag(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
+    explicit HasTag(std::unique_ptr<focs::ValueRef<std::string>>&& name);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -384,13 +380,13 @@ struct FO_COMMON_API HasTag final : public Condition {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::unique_ptr<ValueRef::ValueRef<std::string>> m_name;
+    std::unique_ptr<focs::ValueRef<std::string>> m_name;
 };
 
 /** Matches all objects that were created on turns within the specified range. */
 struct FO_COMMON_API CreatedOnTurn final : public Condition {
-    CreatedOnTurn(std::unique_ptr<ValueRef::ValueRef<int>>&& low,
-                  std::unique_ptr<ValueRef::ValueRef<int>>&& high);
+    CreatedOnTurn(std::unique_ptr<focs::ValueRef<int>>&& low,
+                  std::unique_ptr<focs::ValueRef<int>>&& high);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -403,8 +399,8 @@ struct FO_COMMON_API CreatedOnTurn final : public Condition {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::unique_ptr<ValueRef::ValueRef<int>> m_low;
-    std::unique_ptr<ValueRef::ValueRef<int>> m_high;
+    std::unique_ptr<focs::ValueRef<int>> m_low;
+    std::unique_ptr<focs::ValueRef<int>> m_high;
 };
 
 /** Matches all objects that contain an object that matches Condition
@@ -453,7 +449,7 @@ private:
   * or that are that system. If \a system_id is INVALID_OBJECT_ID then matches
   * all objects in any system*/
 struct FO_COMMON_API InOrIsSystem final : public Condition {
-    InOrIsSystem(std::unique_ptr<ValueRef::ValueRef<int>>&& system_id);
+    InOrIsSystem(std::unique_ptr<focs::ValueRef<int>>&& system_id);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -468,14 +464,14 @@ struct FO_COMMON_API InOrIsSystem final : public Condition {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::unique_ptr<ValueRef::ValueRef<int>> m_system_id;
+    std::unique_ptr<focs::ValueRef<int>> m_system_id;
 };
 
 /** Matches all objects that are on the planet with the indicated \a planet_id
   * or that are that planet. If \a planet_id is INVALID_OBJECT_ID then matches
   * all objects on any planet */
 struct FO_COMMON_API OnPlanet final : public Condition {
-    OnPlanet(std::unique_ptr<ValueRef::ValueRef<int>>&& planet_id);
+    OnPlanet(std::unique_ptr<focs::ValueRef<int>>&& planet_id);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -490,12 +486,12 @@ struct FO_COMMON_API OnPlanet final : public Condition {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::unique_ptr<ValueRef::ValueRef<int>> m_planet_id;
+    std::unique_ptr<focs::ValueRef<int>> m_planet_id;
 };
 
 /** Matches the object with the id \a object_id */
 struct FO_COMMON_API ObjectID final : public Condition {
-    ObjectID(std::unique_ptr<ValueRef::ValueRef<int>>&& object_id);
+    ObjectID(std::unique_ptr<focs::ValueRef<int>>&& object_id);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -510,14 +506,14 @@ struct FO_COMMON_API ObjectID final : public Condition {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::unique_ptr<ValueRef::ValueRef<int>> m_object_id;
+    std::unique_ptr<focs::ValueRef<int>> m_object_id;
 };
 
 /** Matches all Planet objects that have one of the PlanetTypes in \a types.
   * Note that all Building objects which are on matching planets are also
   * matched. */
 struct FO_COMMON_API PlanetType final : public Condition {
-    PlanetType(std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetType>>>&& types);
+    PlanetType(std::vector<std::unique_ptr<focs::ValueRef< ::PlanetType>>>&& types);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -532,14 +528,14 @@ struct FO_COMMON_API PlanetType final : public Condition {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::vector<std::unique_ptr<ValueRef::ValueRef<::PlanetType>>> m_types;
+    std::vector<std::unique_ptr<focs::ValueRef<::PlanetType>>> m_types;
 };
 
 /** Matches all Planet objects that have one of the PlanetSizes in \a sizes.
   * Note that all Building objects which are on matching planets are also
   * matched. */
 struct FO_COMMON_API PlanetSize final : public Condition {
-    PlanetSize(std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetSize>>>&& sizes);
+    PlanetSize(std::vector<std::unique_ptr<focs::ValueRef< ::PlanetSize>>>&& sizes);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -554,15 +550,15 @@ struct FO_COMMON_API PlanetSize final : public Condition {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::vector<std::unique_ptr<ValueRef::ValueRef<::PlanetSize>>> m_sizes;
+    std::vector<std::unique_ptr<focs::ValueRef<::PlanetSize>>> m_sizes;
 };
 
 /** Matches all Planet objects that have one of the PlanetEnvironments in
   * \a environments.  Note that all Building objects which are on matching
   * planets are also matched. */
 struct FO_COMMON_API PlanetEnvironment final : public Condition {
-    PlanetEnvironment(std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetEnvironment>>>&& environments,
-                      std::unique_ptr<ValueRef::ValueRef<std::string>>&& species_name_ref = nullptr);
+    PlanetEnvironment(std::vector<std::unique_ptr<focs::ValueRef< ::PlanetEnvironment>>>&& environments,
+                      std::unique_ptr<focs::ValueRef<std::string>>&& species_name_ref = nullptr);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -577,15 +573,15 @@ struct FO_COMMON_API PlanetEnvironment final : public Condition {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::vector<std::unique_ptr<ValueRef::ValueRef<::PlanetEnvironment>>> m_environments;
-    std::unique_ptr<ValueRef::ValueRef<std::string>> m_species_name;
+    std::vector<std::unique_ptr<focs::ValueRef<::PlanetEnvironment>>> m_environments;
+    std::unique_ptr<focs::ValueRef<std::string>> m_species_name;
 };
 
 /** Matches all planets or ships that have one of the species in \a species.
   * Note that all Building object which are on matching planets are also
   * matched. */
 struct FO_COMMON_API Species final : public Condition {
-    explicit Species(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names);
+    explicit Species(std::vector<std::unique_ptr<focs::ValueRef<std::string>>>&& names);
     Species();
 
     bool operator==(const Condition& rhs) const override;
@@ -601,21 +597,21 @@ struct FO_COMMON_API Species final : public Condition {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>> m_names;
+    std::vector<std::unique_ptr<focs::ValueRef<std::string>>> m_names;
 };
 
 /** Matches planets where the indicated number of the indicated building type
   * or ship design are enqueued on the production queue. */
 struct FO_COMMON_API Enqueued final : public Condition {
     Enqueued(BuildType build_type,
-             std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
-             std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id = nullptr,
-             std::unique_ptr<ValueRef::ValueRef<int>>&& low = nullptr,
-             std::unique_ptr<ValueRef::ValueRef<int>>&& high = nullptr);
-    explicit Enqueued(std::unique_ptr<ValueRef::ValueRef<int>>&& design_id,
-                      std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id = nullptr,
-                      std::unique_ptr<ValueRef::ValueRef<int>>&& low = nullptr,
-                      std::unique_ptr<ValueRef::ValueRef<int>>&& high = nullptr);
+             std::unique_ptr<focs::ValueRef<std::string>>&& name,
+             std::unique_ptr<focs::ValueRef<int>>&& empire_id = nullptr,
+             std::unique_ptr<focs::ValueRef<int>>&& low = nullptr,
+             std::unique_ptr<focs::ValueRef<int>>&& high = nullptr);
+    explicit Enqueued(std::unique_ptr<focs::ValueRef<int>>&& design_id,
+                      std::unique_ptr<focs::ValueRef<int>>&& empire_id = nullptr,
+                      std::unique_ptr<focs::ValueRef<int>>&& low = nullptr,
+                      std::unique_ptr<focs::ValueRef<int>>&& high = nullptr);
     Enqueued();
 
     bool operator==(const Condition& rhs) const override;
@@ -632,16 +628,16 @@ private:
     bool Match(const ScriptingContext& local_context) const override;
 
     BuildType m_build_type;
-    std::unique_ptr<ValueRef::ValueRef<std::string>>    m_name;
-    std::unique_ptr<ValueRef::ValueRef<int>>            m_design_id;
-    std::unique_ptr<ValueRef::ValueRef<int>>            m_empire_id;
-    std::unique_ptr<ValueRef::ValueRef<int>>            m_low;
-    std::unique_ptr<ValueRef::ValueRef<int>>            m_high;
+    std::unique_ptr<focs::ValueRef<std::string>>    m_name;
+    std::unique_ptr<focs::ValueRef<int>>            m_design_id;
+    std::unique_ptr<focs::ValueRef<int>>            m_empire_id;
+    std::unique_ptr<focs::ValueRef<int>>            m_low;
+    std::unique_ptr<focs::ValueRef<int>>            m_high;
 };
 
 /** Matches all ProdCenter objects that have one of the FocusTypes in \a foci. */
 struct FO_COMMON_API FocusType final : public Condition {
-    FocusType(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names);
+    FocusType(std::vector<std::unique_ptr<focs::ValueRef<std::string>>>&& names);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -656,13 +652,13 @@ struct FO_COMMON_API FocusType final : public Condition {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>> m_names;
+    std::vector<std::unique_ptr<focs::ValueRef<std::string>>> m_names;
 };
 
 /** Matches all System objects that have one of the StarTypes in \a types.  Note that all objects
     in matching Systems are also matched (Ships, Fleets, Buildings, Planets, etc.). */
 struct FO_COMMON_API StarType final : public Condition {
-    StarType(std::vector<std::unique_ptr<ValueRef::ValueRef< ::StarType>>>&& types);
+    StarType(std::vector<std::unique_ptr<focs::ValueRef< ::StarType>>>&& types);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -675,12 +671,12 @@ struct FO_COMMON_API StarType final : public Condition {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::vector<std::unique_ptr<ValueRef::ValueRef<::StarType>>> m_types;
+    std::vector<std::unique_ptr<focs::ValueRef<::StarType>>> m_types;
 };
 
 /** Matches all ships whose ShipDesign has the hull specified by \a name. */
 struct FO_COMMON_API DesignHasHull final : public Condition {
-    explicit DesignHasHull(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
+    explicit DesignHasHull(std::unique_ptr<focs::ValueRef<std::string>>&& name);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -695,15 +691,15 @@ struct FO_COMMON_API DesignHasHull final : public Condition {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::unique_ptr<ValueRef::ValueRef<std::string>> m_name;
+    std::unique_ptr<focs::ValueRef<std::string>> m_name;
 };
 
 /** Matches all ships whose ShipDesign has >= \a low and < \a high of the ship
   * part specified by \a name. */
 struct FO_COMMON_API DesignHasPart final : public Condition {
-    DesignHasPart(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
-                  std::unique_ptr<ValueRef::ValueRef<int>>&& low = nullptr,
-                  std::unique_ptr<ValueRef::ValueRef<int>>&& high = nullptr);
+    DesignHasPart(std::unique_ptr<focs::ValueRef<std::string>>&& name,
+                  std::unique_ptr<focs::ValueRef<int>>&& low = nullptr,
+                  std::unique_ptr<focs::ValueRef<int>>&& high = nullptr);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -718,17 +714,17 @@ struct FO_COMMON_API DesignHasPart final : public Condition {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::unique_ptr<ValueRef::ValueRef<int>> m_low;
-    std::unique_ptr<ValueRef::ValueRef<int>> m_high;
-    std::unique_ptr<ValueRef::ValueRef<std::string>> m_name;
+    std::unique_ptr<focs::ValueRef<int>> m_low;
+    std::unique_ptr<focs::ValueRef<int>> m_high;
+    std::unique_ptr<focs::ValueRef<std::string>> m_name;
 };
 
 /** Matches ships whose ShipDesign has >= \a low and < \a high of ship parts of
   * the specified \a part_class */
 struct FO_COMMON_API DesignHasPartClass final : public Condition {
     DesignHasPartClass(ShipPartClass part_class,
-                       std::unique_ptr<ValueRef::ValueRef<int>>&& low,
-                       std::unique_ptr<ValueRef::ValueRef<int>>&& high);
+                       std::unique_ptr<focs::ValueRef<int>>&& low,
+                       std::unique_ptr<focs::ValueRef<int>>&& high);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -743,15 +739,15 @@ struct FO_COMMON_API DesignHasPartClass final : public Condition {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::unique_ptr<ValueRef::ValueRef<int>> m_low;
-    std::unique_ptr<ValueRef::ValueRef<int>> m_high;
+    std::unique_ptr<focs::ValueRef<int>> m_low;
+    std::unique_ptr<focs::ValueRef<int>> m_high;
     ShipPartClass m_class;
 };
 
 /** Matches ships who ShipDesign is a predefined shipdesign with the name
   * \a name */
 struct FO_COMMON_API PredefinedShipDesign final : public Condition {
-    explicit PredefinedShipDesign(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
+    explicit PredefinedShipDesign(std::unique_ptr<focs::ValueRef<std::string>>&& name);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -764,12 +760,12 @@ struct FO_COMMON_API PredefinedShipDesign final : public Condition {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::unique_ptr<ValueRef::ValueRef<std::string>> m_name;
+    std::unique_ptr<focs::ValueRef<std::string>> m_name;
 };
 
 /** Matches ships whose design id \a id. */
 struct FO_COMMON_API NumberedShipDesign final : public Condition {
-    explicit NumberedShipDesign(std::unique_ptr<ValueRef::ValueRef<int>>&& design_id);
+    explicit NumberedShipDesign(std::unique_ptr<focs::ValueRef<int>>&& design_id);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -782,12 +778,12 @@ struct FO_COMMON_API NumberedShipDesign final : public Condition {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::unique_ptr<ValueRef::ValueRef<int>> m_design_id;
+    std::unique_ptr<focs::ValueRef<int>> m_design_id;
 };
 
 /** Matches ships or buildings produced by the empire with id \a empire_id.*/
 struct FO_COMMON_API ProducedByEmpire final : public Condition {
-    explicit ProducedByEmpire(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id);
+    explicit ProducedByEmpire(std::unique_ptr<focs::ValueRef<int>>&& empire_id);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -800,12 +796,12 @@ struct FO_COMMON_API ProducedByEmpire final : public Condition {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::unique_ptr<ValueRef::ValueRef<int>> m_empire_id;
+    std::unique_ptr<focs::ValueRef<int>> m_empire_id;
 };
 
 /** Matches a given object with a linearly distributed probability of \a chance. */
 struct FO_COMMON_API Chance final : public Condition {
-    explicit Chance(std::unique_ptr<ValueRef::ValueRef<double>>&& chance);
+    explicit Chance(std::unique_ptr<focs::ValueRef<double>>&& chance);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -818,15 +814,15 @@ struct FO_COMMON_API Chance final : public Condition {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::unique_ptr<ValueRef::ValueRef<double>> m_chance;
+    std::unique_ptr<focs::ValueRef<double>> m_chance;
 };
 
 /** Matches all objects that have a meter of type \a meter, and whose current
   * value is >= \a low and <= \a high. */
 struct FO_COMMON_API MeterValue final : public Condition {
     MeterValue(MeterType meter,
-               std::unique_ptr<ValueRef::ValueRef<double>>&& low,
-               std::unique_ptr<ValueRef::ValueRef<double>>&& high);
+               std::unique_ptr<focs::ValueRef<double>>&& low,
+               std::unique_ptr<focs::ValueRef<double>>&& high);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -840,17 +836,17 @@ private:
     bool Match(const ScriptingContext& local_context) const override;
 
     MeterType m_meter;
-    std::unique_ptr<ValueRef::ValueRef<double>> m_low;
-    std::unique_ptr<ValueRef::ValueRef<double>> m_high;
+    std::unique_ptr<focs::ValueRef<double>> m_low;
+    std::unique_ptr<focs::ValueRef<double>> m_high;
 };
 
 /** Matches ships that have a ship part meter of type \a meter for part \a part
   * whose current value is >= low and <= high. */
 struct FO_COMMON_API ShipPartMeterValue final : public Condition {
-    ShipPartMeterValue(std::unique_ptr<ValueRef::ValueRef<std::string>>&& ship_part_name,
+    ShipPartMeterValue(std::unique_ptr<focs::ValueRef<std::string>>&& ship_part_name,
                        MeterType meter,
-                       std::unique_ptr<ValueRef::ValueRef<double>>&& low,
-                       std::unique_ptr<ValueRef::ValueRef<double>>&& high);
+                       std::unique_ptr<focs::ValueRef<double>>&& low,
+                       std::unique_ptr<focs::ValueRef<double>>&& high);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -863,22 +859,22 @@ struct FO_COMMON_API ShipPartMeterValue final : public Condition {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::unique_ptr<ValueRef::ValueRef<std::string>> m_part_name;
+    std::unique_ptr<focs::ValueRef<std::string>> m_part_name;
     MeterType m_meter;
-    std::unique_ptr<ValueRef::ValueRef<double>> m_low;
-    std::unique_ptr<ValueRef::ValueRef<double>> m_high;
+    std::unique_ptr<focs::ValueRef<double>> m_low;
+    std::unique_ptr<focs::ValueRef<double>> m_high;
 };
 
 /** Matches all objects if the empire with id \a empire_id has an empire meter
   * \a meter whose current value is >= \a low and <= \a high. */
 struct FO_COMMON_API EmpireMeterValue final : public Condition {
     EmpireMeterValue(std::string meter,
-                     std::unique_ptr<ValueRef::ValueRef<double>>&& low,
-                     std::unique_ptr<ValueRef::ValueRef<double>>&& high);
-    EmpireMeterValue(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
+                     std::unique_ptr<focs::ValueRef<double>>&& low,
+                     std::unique_ptr<focs::ValueRef<double>>&& high);
+    EmpireMeterValue(std::unique_ptr<focs::ValueRef<int>>&& empire_id,
                      std::string meter,
-                     std::unique_ptr<ValueRef::ValueRef<double>>&& low,
-                     std::unique_ptr<ValueRef::ValueRef<double>>&& high);
+                     std::unique_ptr<focs::ValueRef<double>>&& low,
+                     std::unique_ptr<focs::ValueRef<double>>&& high);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -891,22 +887,22 @@ struct FO_COMMON_API EmpireMeterValue final : public Condition {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::unique_ptr<ValueRef::ValueRef<int>> m_empire_id;
+    std::unique_ptr<focs::ValueRef<int>> m_empire_id;
     const std::string m_meter;
-    std::unique_ptr<ValueRef::ValueRef<double>> m_low;
-    std::unique_ptr<ValueRef::ValueRef<double>> m_high;
+    std::unique_ptr<focs::ValueRef<double>> m_low;
+    std::unique_ptr<focs::ValueRef<double>> m_high;
 };
 
 /** Matches all objects whose owner's stockpile of \a stockpile is between
   * \a low and \a high, inclusive. */
 struct FO_COMMON_API EmpireStockpileValue final : public Condition {
     EmpireStockpileValue(ResourceType stockpile,
-                         std::unique_ptr<ValueRef::ValueRef<double>>&& low,
-                         std::unique_ptr<ValueRef::ValueRef<double>>&& high);
-    EmpireStockpileValue(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
+                         std::unique_ptr<focs::ValueRef<double>>&& low,
+                         std::unique_ptr<focs::ValueRef<double>>&& high);
+    EmpireStockpileValue(std::unique_ptr<focs::ValueRef<int>>&& empire_id,
                          ResourceType stockpile,
-                         std::unique_ptr<ValueRef::ValueRef<double>>&& low,
-                         std::unique_ptr<ValueRef::ValueRef<double>>&& high);
+                         std::unique_ptr<focs::ValueRef<double>>&& low,
+                         std::unique_ptr<focs::ValueRef<double>>&& high);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -919,18 +915,18 @@ struct FO_COMMON_API EmpireStockpileValue final : public Condition {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::unique_ptr<ValueRef::ValueRef<int>>    m_empire_id;
+    std::unique_ptr<focs::ValueRef<int>>    m_empire_id;
     ResourceType                                m_stockpile;
-    std::unique_ptr<ValueRef::ValueRef<double>> m_low;
-    std::unique_ptr<ValueRef::ValueRef<double>> m_high;
+    std::unique_ptr<focs::ValueRef<double>> m_low;
+    std::unique_ptr<focs::ValueRef<double>> m_high;
 };
 
 /** Matches all objects if the empire with id \a empire_id has adopted the
   * imperial policy with name \a name */
 struct FO_COMMON_API EmpireHasAdoptedPolicy final : public Condition {
-    EmpireHasAdoptedPolicy(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
-                           std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
-    explicit EmpireHasAdoptedPolicy(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
+    EmpireHasAdoptedPolicy(std::unique_ptr<focs::ValueRef<int>>&& empire_id,
+                           std::unique_ptr<focs::ValueRef<std::string>>&& name);
+    explicit EmpireHasAdoptedPolicy(std::unique_ptr<focs::ValueRef<std::string>>&& name);
     virtual ~EmpireHasAdoptedPolicy();
 
     bool operator==(const Condition& rhs) const override;
@@ -947,15 +943,15 @@ struct FO_COMMON_API EmpireHasAdoptedPolicy final : public Condition {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::unique_ptr<ValueRef::ValueRef<std::string>>    m_name;
-    std::unique_ptr<ValueRef::ValueRef<int>>            m_empire_id;
+    std::unique_ptr<focs::ValueRef<std::string>>    m_name;
+    std::unique_ptr<focs::ValueRef<int>>            m_empire_id;
 };
 
 /** Matches all objects whose owner who has tech \a name. */
 struct FO_COMMON_API OwnerHasTech final : public Condition {
-    OwnerHasTech(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
-                 std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
-    explicit OwnerHasTech(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
+    OwnerHasTech(std::unique_ptr<focs::ValueRef<int>>&& empire_id,
+                 std::unique_ptr<focs::ValueRef<std::string>>&& name);
+    explicit OwnerHasTech(std::unique_ptr<focs::ValueRef<std::string>>&& name);
 
     bool            operator==(const Condition& rhs) const override;
     void            Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -968,16 +964,16 @@ struct FO_COMMON_API OwnerHasTech final : public Condition {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::unique_ptr<ValueRef::ValueRef<std::string>> m_name;
-    std::unique_ptr<ValueRef::ValueRef<int>>         m_empire_id;
+    std::unique_ptr<focs::ValueRef<std::string>> m_name;
+    std::unique_ptr<focs::ValueRef<int>>         m_empire_id;
 };
 
 /** Matches all objects whose owner who has the building type \a name available. */
 struct FO_COMMON_API OwnerHasBuildingTypeAvailable final : public Condition {
-    OwnerHasBuildingTypeAvailable(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
-                                  std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
+    OwnerHasBuildingTypeAvailable(std::unique_ptr<focs::ValueRef<int>>&& empire_id,
+                                  std::unique_ptr<focs::ValueRef<std::string>>&& name);
     explicit OwnerHasBuildingTypeAvailable(const std::string& name);
-    explicit OwnerHasBuildingTypeAvailable(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
+    explicit OwnerHasBuildingTypeAvailable(std::unique_ptr<focs::ValueRef<std::string>>&& name);
 
     bool            operator==(const Condition& rhs) const override;
     void            Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -990,16 +986,16 @@ struct FO_COMMON_API OwnerHasBuildingTypeAvailable final : public Condition {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::unique_ptr<ValueRef::ValueRef<std::string>> m_name;
-    std::unique_ptr<ValueRef::ValueRef<int>>         m_empire_id;
+    std::unique_ptr<focs::ValueRef<std::string>> m_name;
+    std::unique_ptr<focs::ValueRef<int>>         m_empire_id;
 };
 
 /** Matches all objects whose owner who has the ship design \a id available. */
 struct FO_COMMON_API OwnerHasShipDesignAvailable final : public Condition {
-    OwnerHasShipDesignAvailable(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
-                                std::unique_ptr<ValueRef::ValueRef<int>>&& design_id);
+    OwnerHasShipDesignAvailable(std::unique_ptr<focs::ValueRef<int>>&& empire_id,
+                                std::unique_ptr<focs::ValueRef<int>>&& design_id);
     explicit OwnerHasShipDesignAvailable(int design_id);
-    explicit OwnerHasShipDesignAvailable(std::unique_ptr<ValueRef::ValueRef<int>>&& design_id);
+    explicit OwnerHasShipDesignAvailable(std::unique_ptr<focs::ValueRef<int>>&& design_id);
 
     bool            operator==(const Condition& rhs) const override;
     void            Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -1012,16 +1008,16 @@ struct FO_COMMON_API OwnerHasShipDesignAvailable final : public Condition {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::unique_ptr<ValueRef::ValueRef<int>> m_id;
-    std::unique_ptr<ValueRef::ValueRef<int>> m_empire_id;
+    std::unique_ptr<focs::ValueRef<int>> m_id;
+    std::unique_ptr<focs::ValueRef<int>> m_empire_id;
 };
 
 /** Matches all objects whose owner who has the ship part @a name available. */
 struct FO_COMMON_API OwnerHasShipPartAvailable final : public Condition {
-    OwnerHasShipPartAvailable(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
-                              std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
+    OwnerHasShipPartAvailable(std::unique_ptr<focs::ValueRef<int>>&& empire_id,
+                              std::unique_ptr<focs::ValueRef<std::string>>&& name);
     explicit OwnerHasShipPartAvailable(const std::string& name);
-    explicit OwnerHasShipPartAvailable(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
+    explicit OwnerHasShipPartAvailable(std::unique_ptr<focs::ValueRef<std::string>>&& name);
 
     bool            operator==(const Condition& rhs) const override;
     void            Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -1034,13 +1030,13 @@ struct FO_COMMON_API OwnerHasShipPartAvailable final : public Condition {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::unique_ptr<ValueRef::ValueRef<std::string>> m_name;
-    std::unique_ptr<ValueRef::ValueRef<int>>         m_empire_id;
+    std::unique_ptr<focs::ValueRef<std::string>> m_name;
+    std::unique_ptr<focs::ValueRef<int>>         m_empire_id;
 };
 
 /** Matches all objects that are visible to the Empire with id \a empire_id */
 struct FO_COMMON_API VisibleToEmpire final : public Condition {
-    explicit VisibleToEmpire(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id);
+    explicit VisibleToEmpire(std::unique_ptr<focs::ValueRef<int>>&& empire_id);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -1053,7 +1049,7 @@ struct FO_COMMON_API VisibleToEmpire final : public Condition {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::unique_ptr<ValueRef::ValueRef<int>> m_empire_id;
+    std::unique_ptr<focs::ValueRef<int>> m_empire_id;
 };
 
 /** Matches all objects that are within \a distance units of at least one
@@ -1061,7 +1057,7 @@ private:
   * down considerably if overused.  It is best to use Conditions that yield
   * relatively few matches. */
 struct FO_COMMON_API WithinDistance final : public Condition {
-    WithinDistance(std::unique_ptr<ValueRef::ValueRef<double>>&& distance,
+    WithinDistance(std::unique_ptr<focs::ValueRef<double>>&& distance,
                    std::unique_ptr<Condition>&& condition);
 
     bool operator==(const Condition& rhs) const override;
@@ -1075,7 +1071,7 @@ struct FO_COMMON_API WithinDistance final : public Condition {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::unique_ptr<ValueRef::ValueRef<double>> m_distance;
+    std::unique_ptr<focs::ValueRef<double>> m_distance;
     std::unique_ptr<Condition> m_condition;
 };
 
@@ -1084,7 +1080,7 @@ private:
   * down considerably if overused.  It is best to use Conditions that yield
   * relatively few matches. */
 struct FO_COMMON_API WithinStarlaneJumps final : public Condition {
-    WithinStarlaneJumps(std::unique_ptr<ValueRef::ValueRef<int>>&& jumps,
+    WithinStarlaneJumps(std::unique_ptr<focs::ValueRef<int>>&& jumps,
                         std::unique_ptr<Condition>&& condition);
 
     bool operator==(const Condition& rhs) const override;
@@ -1098,7 +1094,7 @@ struct FO_COMMON_API WithinStarlaneJumps final : public Condition {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::unique_ptr<ValueRef::ValueRef<int>> m_jumps;
+    std::unique_ptr<focs::ValueRef<int>> m_jumps;
     std::unique_ptr<Condition> m_condition;
 };
 
@@ -1128,7 +1124,7 @@ private:
 /** Matches systems that have been explored by at least one Empire
   * in \a empire_ids. */
 struct FO_COMMON_API ExploredByEmpire final : public Condition {
-    explicit ExploredByEmpire(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id);
+    explicit ExploredByEmpire(std::unique_ptr<focs::ValueRef<int>>&& empire_id);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -1141,7 +1137,7 @@ struct FO_COMMON_API ExploredByEmpire final : public Condition {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::unique_ptr<ValueRef::ValueRef<int>> m_empire_id;
+    std::unique_ptr<focs::ValueRef<int>> m_empire_id;
 };
 
 /** Matches objects that are moving. ... What does that mean?  Departing this
@@ -1183,7 +1179,7 @@ private:
 /** Matches objects that are in systems that can be fleet supplied by the
   * empire with id \a empire_id */
 struct FO_COMMON_API FleetSupplyableByEmpire final : public Condition {
-    explicit FleetSupplyableByEmpire(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id);
+    explicit FleetSupplyableByEmpire(std::unique_ptr<focs::ValueRef<int>>&& empire_id);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -1196,14 +1192,14 @@ struct FO_COMMON_API FleetSupplyableByEmpire final : public Condition {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::unique_ptr<ValueRef::ValueRef<int>> m_empire_id;
+    std::unique_ptr<focs::ValueRef<int>> m_empire_id;
 };
 
 /** Matches objects that are in systems that are connected by resource-sharing
   * to at least one object that meets \a condition using the resource-sharing
   * network of the empire with id \a empire_id */
 struct FO_COMMON_API ResourceSupplyConnectedByEmpire final : public Condition {
-    ResourceSupplyConnectedByEmpire(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
+    ResourceSupplyConnectedByEmpire(std::unique_ptr<focs::ValueRef<int>>&& empire_id,
                                     std::unique_ptr<Condition>&& condition);
 
     bool operator==(const Condition& rhs) const override;
@@ -1217,7 +1213,7 @@ struct FO_COMMON_API ResourceSupplyConnectedByEmpire final : public Condition {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::unique_ptr<ValueRef::ValueRef<int>> m_empire_id;
+    std::unique_ptr<focs::ValueRef<int>> m_empire_id;
     std::unique_ptr<Condition> m_condition;
 };
 
@@ -1273,23 +1269,23 @@ private:
 /** Matches all objects if the comparisons between values of ValueRefs meet the
   * specified comparison types. */
 struct FO_COMMON_API ValueTest final : public Condition {
-    ValueTest(std::unique_ptr<ValueRef::ValueRef<double>>&& value_ref1,
+    ValueTest(std::unique_ptr<focs::ValueRef<double>>&& value_ref1,
               ComparisonType comp1,
-              std::unique_ptr<ValueRef::ValueRef<double>>&& value_ref2,
+              std::unique_ptr<focs::ValueRef<double>>&& value_ref2,
               ComparisonType comp2 = INVALID_COMPARISON,
-              std::unique_ptr<ValueRef::ValueRef<double>>&& value_ref3 = nullptr);
+              std::unique_ptr<focs::ValueRef<double>>&& value_ref3 = nullptr);
 
-    ValueTest(std::unique_ptr<ValueRef::ValueRef<std::string>>&& value_ref1,
+    ValueTest(std::unique_ptr<focs::ValueRef<std::string>>&& value_ref1,
               ComparisonType comp1,
-              std::unique_ptr<ValueRef::ValueRef<std::string>>&& value_ref2,
+              std::unique_ptr<focs::ValueRef<std::string>>&& value_ref2,
               ComparisonType comp2 = INVALID_COMPARISON,
-              std::unique_ptr<ValueRef::ValueRef<std::string>>&& value_ref3 = nullptr);
+              std::unique_ptr<focs::ValueRef<std::string>>&& value_ref3 = nullptr);
 
-    ValueTest(std::unique_ptr<ValueRef::ValueRef<int>>&& value_ref1,
+    ValueTest(std::unique_ptr<focs::ValueRef<int>>&& value_ref1,
               ComparisonType comp1,
-              std::unique_ptr<ValueRef::ValueRef<int>>&& value_ref2,
+              std::unique_ptr<focs::ValueRef<int>>&& value_ref2,
               ComparisonType comp2 = INVALID_COMPARISON,
-              std::unique_ptr<ValueRef::ValueRef<int>>&& value_ref3 = nullptr);
+              std::unique_ptr<focs::ValueRef<int>>&& value_ref3 = nullptr);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -1302,15 +1298,15 @@ struct FO_COMMON_API ValueTest final : public Condition {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::unique_ptr<ValueRef::ValueRef<double>> m_value_ref1;
-    std::unique_ptr<ValueRef::ValueRef<double>> m_value_ref2;
-    std::unique_ptr<ValueRef::ValueRef<double>> m_value_ref3;
-    std::unique_ptr<ValueRef::ValueRef<std::string>> m_string_value_ref1;
-    std::unique_ptr<ValueRef::ValueRef<std::string>> m_string_value_ref2;
-    std::unique_ptr<ValueRef::ValueRef<std::string>> m_string_value_ref3;
-    std::unique_ptr<ValueRef::ValueRef<int>> m_int_value_ref1;
-    std::unique_ptr<ValueRef::ValueRef<int>> m_int_value_ref2;
-    std::unique_ptr<ValueRef::ValueRef<int>> m_int_value_ref3;
+    std::unique_ptr<focs::ValueRef<double>> m_value_ref1;
+    std::unique_ptr<focs::ValueRef<double>> m_value_ref2;
+    std::unique_ptr<focs::ValueRef<double>> m_value_ref3;
+    std::unique_ptr<focs::ValueRef<std::string>> m_string_value_ref1;
+    std::unique_ptr<focs::ValueRef<std::string>> m_string_value_ref2;
+    std::unique_ptr<focs::ValueRef<std::string>> m_string_value_ref3;
+    std::unique_ptr<focs::ValueRef<int>> m_int_value_ref1;
+    std::unique_ptr<focs::ValueRef<int>> m_int_value_ref2;
+    std::unique_ptr<focs::ValueRef<int>> m_int_value_ref3;
 
     ComparisonType m_compare_type1 = INVALID_COMPARISON;
     ComparisonType m_compare_type2 = INVALID_COMPARISON;
@@ -1321,8 +1317,8 @@ private:
 struct FO_COMMON_API Location final : public Condition {
 public:
     Location(ContentType content_type,
-             std::unique_ptr<ValueRef::ValueRef<std::string>>&& name1,
-             std::unique_ptr<ValueRef::ValueRef<std::string>>&& name2 = nullptr);
+             std::unique_ptr<focs::ValueRef<std::string>>&& name1,
+             std::unique_ptr<focs::ValueRef<std::string>>&& name2 = nullptr);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -1335,8 +1331,8 @@ public:
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::unique_ptr<ValueRef::ValueRef<std::string>> m_name1;
-    std::unique_ptr<ValueRef::ValueRef<std::string>> m_name2;
+    std::unique_ptr<focs::ValueRef<std::string>> m_name1;
+    std::unique_ptr<focs::ValueRef<std::string>> m_name2;
     ContentType m_content_type;
 };
 
@@ -1345,7 +1341,7 @@ private:
 struct FO_COMMON_API CombatTarget final : public Condition {
 public:
     CombatTarget(ContentType content_type,
-                 std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
+                 std::unique_ptr<focs::ValueRef<std::string>>&& name);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -1358,7 +1354,7 @@ public:
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    std::unique_ptr<ValueRef::ValueRef<std::string>> m_name;
+    std::unique_ptr<focs::ValueRef<std::string>> m_name;
     ContentType m_content_type;
 };
 

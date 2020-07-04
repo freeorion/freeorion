@@ -66,7 +66,7 @@ parse::detail::simple_double_parser_rules::simple_double_parser_rules(const pars
         ;
 
     constant
-        =   tok.double_ [ _val = construct_movable_(new_<ValueRef::Constant<double>>(_1)) ]
+        =   tok.double_ [ _val = construct_movable_(new_<focs::Constant<double>>(_1)) ]
         ;
 }
 
@@ -98,23 +98,23 @@ parse::double_parser_rules::double_parser_rules(
     const parse::detail::value_ref_rule<double>& simple = simple_double_rules.simple;
 
     int_constant_cast
-        =   tok.int_ [ _val = construct_movable_(new_<ValueRef::Constant<double>>(static_cast_<double>(_1))) ]
+        =   tok.int_ [ _val = construct_movable_(new_<focs::Constant<double>>(static_cast_<double>(_1))) ]
         ;
 
     int_bound_variable_cast
-        =   simple_int_rules.bound_variable [ _val = construct_movable_(new_<ValueRef::StaticCast<int, double>>(deconstruct_movable_(_1, _pass))) ]
+        =   simple_int_rules.bound_variable [ _val = construct_movable_(new_<focs::StaticCast<int, double>>(deconstruct_movable_(_1, _pass))) ]
         ;
 
     int_free_variable_cast
-        =   simple_int_rules.free_variable [ _val = construct_movable_(new_<ValueRef::StaticCast<int, double>>(deconstruct_movable_(_1, _pass))) ]
+        =   simple_int_rules.free_variable [ _val = construct_movable_(new_<focs::StaticCast<int, double>>(deconstruct_movable_(_1, _pass))) ]
         ;
 
     int_statistic_cast
-        =   int_rules.statistic_expr [ _val = construct_movable_(new_<ValueRef::StaticCast<int, double>>(deconstruct_movable_(_1, _pass))) ]
+        =   int_rules.statistic_expr [ _val = construct_movable_(new_<focs::StaticCast<int, double>>(deconstruct_movable_(_1, _pass))) ]
         ;
 
     int_complex_variable_cast
-        =   int_complex_grammar [ _val = construct_movable_(new_<ValueRef::StaticCast<int, double>>(deconstruct_movable_(_1, _pass))) ]
+        =   int_complex_grammar [ _val = construct_movable_(new_<focs::StaticCast<int, double>>(deconstruct_movable_(_1, _pass))) ]
         ;
 
     statistic_value_ref_expr

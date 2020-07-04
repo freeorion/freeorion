@@ -7,7 +7,7 @@
 
 namespace parse {
 
-    BOOST_PHOENIX_ADAPT_FUNCTION(std::string, MeterToName_, ValueRef::MeterToName, 1)
+    BOOST_PHOENIX_ADAPT_FUNCTION(std::string, MeterToName_, focs::detail::MeterToName, 1)
 
     double_complex_parser_grammar::double_complex_parser_grammar(
         const lexer& tok,
@@ -50,7 +50,7 @@ namespace parse {
                 |   tok.PartCapacity_
                 |   tok.PartSecondaryStat_
                ) >   label(tok.Name_) > string_grammar
-              ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
+              ) [ _val = construct_movable_(new_<focs::ComplexVariable<double>>(
                         _1,
                         nullptr,
                         nullptr,
@@ -64,7 +64,7 @@ namespace parse {
                  >  label(tok.Design_) > simple_int
                  >  label(tok.Empire_) > simple_int
                  >  label(tok.Location_) > simple_int
-              )     [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
+              )     [ _val = construct_movable_(new_<focs::ComplexVariable<double>>(
                 _1,
                 deconstruct_movable_(_2, _pass),
                 deconstruct_movable_(_3, _pass),
@@ -76,12 +76,12 @@ namespace parse {
             = (     tok.EmpireMeterValue_
                  >  label(tok.Empire_) > simple_int
                  >  label(tok.Meter_) > tok.string
-              ) [_val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
+              ) [_val = construct_movable_(new_<focs::ComplexVariable<double>>(
                 _1,
                 deconstruct_movable_(_2, _pass),
                 nullptr,
                 nullptr,
-                deconstruct_movable_(construct_movable_(new_<ValueRef::Constant<std::string>>(_3)), _pass),
+                deconstruct_movable_(construct_movable_(new_<focs::Constant<std::string>>(_3)), _pass),
                 nullptr)) ]
             ;
 
@@ -89,7 +89,7 @@ namespace parse {
             = (     tok.DirectDistanceBetween_
                  >  label(tok.Object_) > simple_int
                  >  label(tok.Object_) > simple_int
-              ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
+              ) [ _val = construct_movable_(new_<focs::ComplexVariable<double>>(
                 _1,
                 deconstruct_movable_(_2, _pass),
                 deconstruct_movable_(_3, _pass),
@@ -106,7 +106,7 @@ namespace parse {
                         tok.ShortestPath_
                     >   label(tok.Object_) > simple_int
                     >   label(tok.Object_) > simple_int
-                ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
+                ) [ _val = construct_movable_(new_<focs::ComplexVariable<double>>(
                 _1,
                 deconstruct_movable_(_2, _pass),
                 deconstruct_movable_(_3, _pass),
@@ -120,7 +120,7 @@ namespace parse {
         species_empire_opinion
             = (     species_opinion
                 >> (label(tok.Empire_) > simple_int)
-              ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
+              ) [ _val = construct_movable_(new_<focs::ComplexVariable<double>>(
                 construct<std::string>(TOK_SPECIES_EMPIRE_OPINION),
                 deconstruct_movable_(_2, _pass),
                 nullptr,
@@ -132,7 +132,7 @@ namespace parse {
         species_species_opinion
             = (     species_opinion
                 >> (label(tok.Species_) > string_grammar)
-              ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
+              ) [ _val = construct_movable_(new_<focs::ComplexVariable<double>>(
                 construct<std::string>(TOK_SPECIES_SPECIES_OPINION),
                 nullptr,
                 nullptr,
@@ -146,13 +146,13 @@ namespace parse {
                 >   label(tok.Part_)    >   string_grammar
                 >   label(tok.Meter_)   >   ship_part_meter_type_enum
                 >   label(tok.Object_)  >   simple_int
-              ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
+              ) [ _val = construct_movable_(new_<focs::ComplexVariable<double>>(
                     _1,                                     // variable_name
                     deconstruct_movable_(_4, _pass),        // int_ref1
                     nullptr,                                // int_ref2
                     nullptr,                                // int_ref3
                     deconstruct_movable_(_2, _pass),        // string_ref1
-                    deconstruct_movable_(construct_movable_(new_<ValueRef::Constant<std::string>>(MeterToName_(_3))), _pass),   // string_ref2
+                    deconstruct_movable_(construct_movable_(new_<focs::Constant<std::string>>(MeterToName_(_3))), _pass),   // string_ref2
                     false                                   // return_immediate_value
                   ))]
             ;
@@ -164,13 +164,13 @@ namespace parse {
                 >   label(tok.Meter_)   >   ship_part_meter_type_enum
                 >   label(tok.Object_)  >   simple_int
                 >>  ')'
-              ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
+              ) [ _val = construct_movable_(new_<focs::ComplexVariable<double>>(
                     _1,                                     // variable_name
                     deconstruct_movable_(_4, _pass),        // int_ref1
                     nullptr,                                // int_ref2
                     nullptr,                                // int_ref3
                     deconstruct_movable_(_2, _pass),        // string_ref1
-                    deconstruct_movable_(construct_movable_(new_<ValueRef::Constant<std::string>>(MeterToName_(_3))), _pass),   // string_ref2
+                    deconstruct_movable_(construct_movable_(new_<focs::Constant<std::string>>(MeterToName_(_3))), _pass),   // string_ref2
                     true                                    // return_immediate_value
                   ))]
             ;
@@ -180,7 +180,7 @@ namespace parse {
                 >   label(tok.Name_) > string_grammar
                 >>  label(tok.Object_)
                 >   simple_int
-              ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
+              ) [ _val = construct_movable_(new_<focs::ComplexVariable<double>>(
                 _1,                                 // variable_name
                 deconstruct_movable_(_3, _pass),    // int_ref1
                 nullptr,                            // int_ref2

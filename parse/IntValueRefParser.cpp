@@ -68,7 +68,7 @@ parse::detail::simple_int_parser_rules::simple_int_parser_rules(const parse::lex
         ;
 
     constant
-        =   tok.int_ [ _val = construct_movable_(new_<ValueRef::Constant<int>>(_1)) ]
+        =   tok.int_ [ _val = construct_movable_(new_<focs::Constant<int>>(_1)) ]
         ;
 }
 
@@ -93,7 +93,7 @@ parse::castable_as_int_parser_rules::castable_as_int_parser_rules(
     const boost::phoenix::function<parse::detail::deconstruct_movable> deconstruct_movable_;
 
     castable_expr
-        = double_rules.expr [ _val = construct_movable_(new_<ValueRef::StaticCast<double, int>>(deconstruct_movable_(_1, _pass))) ]
+        = double_rules.expr [ _val = construct_movable_(new_<focs::StaticCast<double, int>>(deconstruct_movable_(_1, _pass))) ]
         ;
 
     flexible_int

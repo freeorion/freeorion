@@ -18,7 +18,7 @@ namespace parse { namespace detail {
     // TODO: Investigate refactoring ValueRef to use variant,
     // for increased locality of reference.
     template <typename T>
-    using value_ref_payload = MovableEnvelope<ValueRef::ValueRef<T>>;
+    using value_ref_payload = MovableEnvelope<focs::ValueRef<T>>;
     template <typename T>
     using value_ref_signature = value_ref_payload<T> ();
     template <typename T>
@@ -31,13 +31,13 @@ namespace parse { namespace detail {
     using condition_parser_grammar = grammar<condition_signature>;
 
     using name_token_rule = rule<std::string ()>;
-    using reference_token_rule = rule<ValueRef::ReferenceType ()>;
+    using reference_token_rule = rule<focs::ReferenceType ()>;
     const parse::detail::reference_token_rule variable_scope(const parse::lexer& tok);
     const parse::detail::name_token_rule container_type(const parse::lexer& tok);
 
 
     template <typename T>
-    using variable_payload = MovableEnvelope<ValueRef::Variable<T>>;
+    using variable_payload = MovableEnvelope<focs::Variable<T>>;
     template <typename T>
     using variable_signature = variable_payload<T> ();
     template <typename T>
@@ -45,7 +45,7 @@ namespace parse { namespace detail {
         variable_signature<T>,
         boost::spirit::qi::locals<
             std::vector<std::string>,
-            ValueRef::ReferenceType
+            focs::ReferenceType
             >
         >;
 
@@ -67,7 +67,7 @@ namespace parse { namespace detail {
     };
 
     template <typename T>
-    using statistic_payload = MovableEnvelope<ValueRef::Statistic<T>>;
+    using statistic_payload = MovableEnvelope<focs::Statistic<T>>;
     template <typename T>
     using statistic_signature = statistic_payload<T> ();
     template <typename T>
@@ -75,7 +75,7 @@ namespace parse { namespace detail {
         statistic_signature<T>,
         boost::spirit::qi::locals<
             value_ref_payload<T>,
-            ValueRef::StatisticType
+            focs::StatisticType
             >
         >;
 
@@ -85,7 +85,7 @@ namespace parse { namespace detail {
         boost::spirit::qi::locals<
             value_ref_payload<T>,
             value_ref_payload<T>,
-            ValueRef::OpType,
+            focs::OpType,
             std::vector<value_ref_payload<T>>
             >
         >;
@@ -119,7 +119,7 @@ namespace parse { namespace detail {
     };
 
     template <typename T>
-    using complex_variable_payload = MovableEnvelope<ValueRef::ComplexVariable<T>>;
+    using complex_variable_payload = MovableEnvelope<focs::ComplexVariable<T>>;
     template <typename T>
     using complex_variable_signature = complex_variable_payload<T> ();
     template <typename T>
@@ -167,7 +167,7 @@ namespace parse { namespace detail {
                      variable_scope_rule >> '.'
                 >> -(container_type_rule > '.')
                 >>   variable_name
-              ) [ _val = construct_movable_(new_<ValueRef::Variable<T>>(
+              ) [ _val = construct_movable_(new_<focs::Variable<T>>(
                   _1, construct<boost::optional<std::string>>(_2),
                   construct<std::string>(_3), false)) ];
 
@@ -178,7 +178,7 @@ namespace parse { namespace detail {
                 >> -(container_type_rule > '.')
                 >>   variable_name
                 >>   ')'
-              ) [ _val = construct_movable_(new_<ValueRef::Variable<T>>(
+              ) [ _val = construct_movable_(new_<focs::Variable<T>>(
                   _1, construct<boost::optional<std::string>>(_2),
                   construct<std::string>(_3), true)) ];
 

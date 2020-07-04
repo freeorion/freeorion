@@ -297,17 +297,17 @@ BOOST_AUTO_TEST_CASE(ShipSlotTypeParser) {
 BOOST_AUTO_TEST_CASE(StatisticTypeParser) {
     // XXX: No enum number value to validate enum coverage.
 
-    CHECK_ENUM_AND_RESULT("Count", ValueRef::COUNT, ValueRef::StatisticType, parse::statistic_enum_grammar);
-    CHECK_ENUM_AND_RESULT("Sum", ValueRef::SUM, ValueRef::StatisticType, parse::statistic_enum_grammar);
-    CHECK_ENUM_AND_RESULT("Mean", ValueRef::MEAN, ValueRef::StatisticType, parse::statistic_enum_grammar);
-    CHECK_ENUM_AND_RESULT("Rms", ValueRef::RMS, ValueRef::StatisticType, parse::statistic_enum_grammar);
-    CHECK_ENUM_AND_RESULT("Mode", ValueRef::MODE, ValueRef::StatisticType, parse::statistic_enum_grammar);
-    CHECK_ENUM_AND_RESULT("Max", ValueRef::MAX, ValueRef::StatisticType, parse::statistic_enum_grammar);
-    CHECK_ENUM_AND_RESULT("Min", ValueRef::MIN, ValueRef::StatisticType, parse::statistic_enum_grammar);
-    CHECK_ENUM_AND_RESULT("Spread", ValueRef::SPREAD, ValueRef::StatisticType, parse::statistic_enum_grammar);
-    CHECK_ENUM_AND_RESULT("StDev", ValueRef::STDEV, ValueRef::StatisticType, parse::statistic_enum_grammar);
-    CHECK_ENUM_AND_RESULT("Product", ValueRef::PRODUCT, ValueRef::StatisticType, parse::statistic_enum_grammar);
-    CHECK_FAILED_ENUM(ValueRef::StatisticType, parse::statistic_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Count", focs::COUNT, focs::StatisticType, parse::statistic_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Sum", focs::SUM, focs::StatisticType, parse::statistic_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Mean", focs::MEAN, focs::StatisticType, parse::statistic_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Rms", focs::RMS, focs::StatisticType, parse::statistic_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Mode", focs::MODE, focs::StatisticType, parse::statistic_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Max", focs::MAX, focs::StatisticType, parse::statistic_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Min", focs::MIN, focs::StatisticType, parse::statistic_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Spread", focs::SPREAD, focs::StatisticType, parse::statistic_enum_grammar);
+    CHECK_ENUM_AND_RESULT("StDev", focs::STDEV, focs::StatisticType, parse::statistic_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Product", focs::PRODUCT, focs::StatisticType, parse::statistic_enum_grammar);
+    CHECK_FAILED_ENUM(focs::StatisticType, parse::statistic_enum_grammar);
 }
 
 BOOST_AUTO_TEST_CASE(StarTypeParser) {

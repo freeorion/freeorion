@@ -22,9 +22,9 @@
 
 namespace CheckSums {
     template <typename T>
-    void CheckSumCombine(unsigned int& sum, const typename ValueRef::ValueRef<T>& c)
+    void CheckSumCombine(unsigned int& sum, const typename focs::ValueRef<T>& c)
     {
-        TraceLogger() << "CheckSumCombine(ValueRef::ValueRef<T>): " << typeid(c).name();
+        TraceLogger() << "CheckSumCombine(focs::ValueRef<T>): " << typeid(c).name();
         sum += c.GetCheckSum();
         sum %= CHECKSUM_MODULUS;
     }
@@ -32,10 +32,9 @@ namespace CheckSums {
 
 class UniverseObject;
 
-namespace ValueRef {
 /** the constant value leaf ValueRef class. */
 template <typename T>
-struct FO_COMMON_API Constant final : public ValueRef<T>
+struct FO_COMMON_API focs::Constant final : public ValueRef<T>
 {
     explicit Constant(T value);
 
@@ -56,7 +55,7 @@ private:
     std::string m_top_level_content;    // in the special case that T is std::string and m_value is "CurrentContent", return this instead
 };
 
-enum ReferenceType : int {
+enum focs::ReferenceType : int {
     INVALID_REFERENCE_TYPE = -1,
     NON_OBJECT_REFERENCE,               // ValueRef::Variable is not evalulated on any specific object
     SOURCE_REFERENCE,                   // ValueRef::Variable is evaluated on the source object
@@ -69,7 +68,7 @@ enum ReferenceType : int {
 /** The variable value ValueRef class.  The value returned by this node is
   * taken from the gamestate, most often from the Source or Target objects. */
 template <typename T>
-struct FO_COMMON_API Variable : public ValueRef<T>
+struct FO_COMMON_API focs::Variable : public ValueRef<T>
 {
     template <typename S>
     Variable(ReferenceType ref_type, S&& property_name,
@@ -115,7 +114,7 @@ protected:
   * \a sampling_condition and the statistic indicated by \a stat_type is
   * calculated from them and returned. */
 template <typename T>
-struct FO_COMMON_API Statistic final : public Variable<T>
+struct FO_COMMON_API focs::Statistic final : public Variable<T>
 {
     Statistic(std::unique_ptr<ValueRef<T>>&& value_ref,
               StatisticType stat_type,
@@ -161,7 +160,7 @@ private:
 /** The complex variable ValueRef class. The value returned by this node
   * is taken from the gamestate. */
 template <typename T>
-struct FO_COMMON_API ComplexVariable final : public Variable<T>
+struct FO_COMMON_API focs::ComplexVariable final : public Variable<T>
 {
     template<typename S>
     explicit ComplexVariable(S&& variable_name,
@@ -206,7 +205,7 @@ protected:
   * from the ctor \a value_ref parameter's FromType value, static_cast to
   * ToType. */
 template <typename FromType, typename ToType>
-struct FO_COMMON_API StaticCast final : public Variable<ToType>
+struct FO_COMMON_API focs::StaticCast final : public Variable<ToType>
 {
     template <typename T>
     StaticCast(T&& value_ref,
@@ -237,7 +236,7 @@ private:
   * is taken from the ctor \a value_ref parameter's FromType value,
   * lexical_cast to std::string */
 template <typename FromType>
-struct FO_COMMON_API StringCast final : public Variable<std::string>
+struct FO_COMMON_API focs::StringCast final : public Variable<std::string>
 {
     explicit StringCast(std::unique_ptr<ValueRef<FromType>>&& value_ref);
 
@@ -259,7 +258,7 @@ private:
 /** Looks up a string ValueRef or vector of string ValueRefs, and returns
   * and returns the UserString equivalent(s). */
 template <typename FromType>
-struct FO_COMMON_API UserStringLookup final : public Variable<std::string> {
+struct FO_COMMON_API focs::UserStringLookup final : public Variable<std::string> {
     explicit UserStringLookup(std::unique_ptr<ValueRef<FromType>>&& value_ref);
 
     bool operator==(const ValueRef<std::string>& rhs) const override;
@@ -278,7 +277,7 @@ private:
 };
 
 /** Returns the in-game name of the object / empire / etc. with a specified id. */
-struct FO_COMMON_API NameLookup final : public Variable<std::string> {
+struct FO_COMMON_API focs::NameLookup final : public Variable<std::string> {
     enum LookupType : int {
         INVALID_LOOKUP = -1,
         OBJECT_NAME,
@@ -307,7 +306,7 @@ private:
     LookupType m_lookup_type;
 };
 
-enum OpType : int {
+enum focs::OpType : int {
     PLUS,
     MINUS,
     TIMES,
@@ -340,7 +339,7 @@ enum OpType : int {
   * random number generation are performed on the child(ren) of this node, and
   * the result is returned. */
 template <typename T>
-struct FO_COMMON_API Operation final : public ValueRef<T>
+struct FO_COMMON_API focs::Operation final : public ValueRef<T>
 {
     /** Binary operation ctor. */
     Operation(OpType op_type, std::unique_ptr<ValueRef<T>>&& operand1,
@@ -384,6 +383,9 @@ private:
     T                                           m_cached_const_value = T();
 };
 
+
+namespace focs { namespace detail {
+
 FO_COMMON_API MeterType             NameToMeter(const std::string& name);
 FO_COMMON_API const std::string&    MeterToName(MeterType meter);
 FO_COMMON_API std::string           ReconstructName(const std::vector<std::string>& property_name,
@@ -414,12 +416,15 @@ FO_COMMON_API std::string StatisticDescription(StatisticType stat_type,
                                                const std::string& value_desc,
                                                const std::string& condition_desc);
 
+}}
+
+
 // Template Implementations
 ///////////////////////////////////////////////////////////
 // ValueRef                                          //
 ///////////////////////////////////////////////////////////
 template <typename T>
-bool ValueRef<T>::operator==(const ValueRef<T>& rhs) const
+bool focs::ValueRef<T>::operator==(const ValueRef<T>& rhs) const
 {
     if (&rhs == this)
         return true;
@@ -432,7 +437,7 @@ bool ValueRef<T>::operator==(const ValueRef<T>& rhs) const
 // Constant                                              //
 ///////////////////////////////////////////////////////////
 template <typename T>
-Constant<T>::Constant(T value) :
+focs::Constant<T>::Constant(T value) :
     ValueRef<T>(),
     m_value(std::move(value))
 {
@@ -443,7 +448,7 @@ Constant<T>::Constant(T value) :
 }
 
 template <typename T>
-bool Constant<T>::operator==(const ValueRef<T>& rhs) const
+bool focs::Constant<T>::operator==(const ValueRef<T>& rhs) const
 {
     if (&rhs == this)
         return true;
@@ -455,23 +460,23 @@ bool Constant<T>::operator==(const ValueRef<T>& rhs) const
 }
 
 template <typename T>
-T Constant<T>::Value() const
+T focs::Constant<T>::Value() const
 { return m_value; }
 
 template <typename T>
-T Constant<T>::Eval(const ScriptingContext& context) const
+T focs::Constant<T>::Eval(const ScriptingContext& context) const
 { return m_value; }
 
 template <typename T>
-std::string Constant<T>::Description() const
+std::string focs::Constant<T>::Description() const
 { return UserString(boost::lexical_cast<std::string>(m_value)); }
 
 template <typename T>
-void Constant<T>::SetTopLevelContent(const std::string& content_name)
+void focs::Constant<T>::SetTopLevelContent(const std::string& content_name)
 { m_top_level_content = content_name; }
 
 template <typename T>
-unsigned int Constant<T>::GetCheckSum() const
+unsigned int focs::Constant<T>::GetCheckSum() const
 {
     unsigned int retval{0};
 
@@ -482,50 +487,50 @@ unsigned int Constant<T>::GetCheckSum() const
 }
 
 template <>
-FO_COMMON_API std::string Constant<int>::Description() const;
+FO_COMMON_API std::string focs::Constant<int>::Description() const;
 
 template <>
-FO_COMMON_API std::string Constant<double>::Description() const;
+FO_COMMON_API std::string focs::Constant<double>::Description() const;
 
 template <>
-FO_COMMON_API std::string Constant<std::string>::Description() const;
+FO_COMMON_API std::string focs::Constant<std::string>::Description() const;
 
 template <>
-FO_COMMON_API std::string Constant<PlanetSize>::Dump(unsigned short ntabs) const;
+FO_COMMON_API std::string focs::Constant<PlanetSize>::Dump(unsigned short ntabs) const;
 
 template <>
-FO_COMMON_API std::string Constant<PlanetType>::Dump(unsigned short ntabs) const;
+FO_COMMON_API std::string focs::Constant<PlanetType>::Dump(unsigned short ntabs) const;
 
 template <>
-FO_COMMON_API std::string Constant<PlanetEnvironment>::Dump(unsigned short ntabs) const;
+FO_COMMON_API std::string focs::Constant<PlanetEnvironment>::Dump(unsigned short ntabs) const;
 
 template <>
-FO_COMMON_API std::string Constant<UniverseObjectType>::Dump(unsigned short ntabs) const;
+FO_COMMON_API std::string focs::Constant<UniverseObjectType>::Dump(unsigned short ntabs) const;
 
 template <>
-FO_COMMON_API std::string Constant<StarType>::Dump(unsigned short ntabs) const;
+FO_COMMON_API std::string focs::Constant<StarType>::Dump(unsigned short ntabs) const;
 
 template <>
-FO_COMMON_API std::string Constant<Visibility>::Dump(unsigned short ntabs) const;
+FO_COMMON_API std::string focs::Constant<Visibility>::Dump(unsigned short ntabs) const;
 
 template <>
-FO_COMMON_API std::string Constant<double>::Dump(unsigned short ntabs) const;
+FO_COMMON_API std::string focs::Constant<double>::Dump(unsigned short ntabs) const;
 
 template <>
-FO_COMMON_API std::string Constant<int>::Dump(unsigned short ntabs) const;
+FO_COMMON_API std::string focs::Constant<int>::Dump(unsigned short ntabs) const;
 
 template <>
-FO_COMMON_API std::string Constant<std::string>::Dump(unsigned short ntabs) const;
+FO_COMMON_API std::string focs::Constant<std::string>::Dump(unsigned short ntabs) const;
 
 template <>
-FO_COMMON_API std::string Constant<std::string>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API std::string focs::Constant<std::string>::Eval(const ScriptingContext& context) const;
 
 
 ///////////////////////////////////////////////////////////
 // Variable                                              //
 ///////////////////////////////////////////////////////////
 template <typename T>
-Variable<T>::Variable(ReferenceType ref_type, std::vector<std::string>&& property_name,
+focs::Variable<T>::Variable(ReferenceType ref_type, std::vector<std::string>&& property_name,
                       bool return_immediate_value) :
     ValueRef<T>(),
     m_ref_type(ref_type),
@@ -534,7 +539,7 @@ Variable<T>::Variable(ReferenceType ref_type, std::vector<std::string>&& propert
 { InitInvariants(); }
 
 template <typename T>
-Variable<T>::Variable(ReferenceType ref_type, const std::vector<std::string>& property_name,
+focs::Variable<T>::Variable(ReferenceType ref_type, const std::vector<std::string>& property_name,
                       bool return_immediate_value) :
     ValueRef<T>(),
     m_ref_type(ref_type),
@@ -543,19 +548,19 @@ Variable<T>::Variable(ReferenceType ref_type, const std::vector<std::string>& pr
 { InitInvariants(); }
 
 template <typename T>
-Variable<T>::Variable(ReferenceType ref_type, bool return_immediate_value) :
+focs::Variable<T>::Variable(ReferenceType ref_type, bool return_immediate_value) :
     Variable<T>(ref_type, std::vector<std::string>{}, return_immediate_value)
 {}
 
 template <typename T>
-Variable<T>::Variable(ReferenceType ref_type, const char* property_name,
+focs::Variable<T>::Variable(ReferenceType ref_type, const char* property_name,
                       bool return_immediate_value) :
     Variable<T>(ref_type, std::vector<std::string>{1, property_name}, return_immediate_value)
 {}
 
 template <typename T>
 template <typename S>
-Variable<T>::Variable(ReferenceType ref_type, S&& property_name,
+focs::Variable<T>::Variable(ReferenceType ref_type, S&& property_name,
                       bool return_immediate_value) :
     ValueRef<T>(),
     m_ref_type(ref_type),
@@ -566,7 +571,7 @@ Variable<T>::Variable(ReferenceType ref_type, S&& property_name,
 }
 
 template <typename T>
-Variable<T>::Variable(ReferenceType ref_type,
+focs::Variable<T>::Variable(ReferenceType ref_type,
                       boost::optional<std::string>&& container_name,
                       std::string&& property_name,
                       bool return_immediate_value) :
@@ -582,7 +587,7 @@ Variable<T>::Variable(ReferenceType ref_type,
 }
 
 template <typename T>
-void Variable<T>::InitInvariants()
+void focs::Variable<T>::InitInvariants()
 {
     this->m_root_candidate_invariant = m_ref_type != CONDITION_ROOT_CANDIDATE_REFERENCE;
     this->m_local_candidate_invariant = m_ref_type != CONDITION_LOCAL_CANDIDATE_REFERENCE;
@@ -591,7 +596,7 @@ void Variable<T>::InitInvariants()
 }
 
 template <typename T>
-bool Variable<T>::operator==(const ValueRef<T>& rhs) const
+bool focs::Variable<T>::operator==(const ValueRef<T>& rhs) const
 {
     if (&rhs == this)
         return true;
@@ -604,27 +609,27 @@ bool Variable<T>::operator==(const ValueRef<T>& rhs) const
 }
 
 template <typename T>
-ReferenceType Variable<T>::GetReferenceType() const
+focs::ReferenceType focs::Variable<T>::GetReferenceType() const
 { return m_ref_type; }
 
 template <typename T>
-const std::vector<std::string>& Variable<T>::PropertyName() const
+const std::vector<std::string>& focs::Variable<T>::PropertyName() const
 { return m_property_name; }
 
 template <typename T>
-bool Variable<T>::ReturnImmediateValue() const
+bool focs::Variable<T>::ReturnImmediateValue() const
 { return m_return_immediate_value; }
 
 template <typename T>
-std::string Variable<T>::Description() const
-{ return FormatedDescriptionPropertyNames(m_ref_type, m_property_name, m_return_immediate_value); }
+std::string focs::Variable<T>::Description() const
+{ return detail::FormatedDescriptionPropertyNames(m_ref_type, m_property_name, m_return_immediate_value); }
 
 template <typename T>
-std::string Variable<T>::Dump(unsigned short ntabs) const
-{ return ReconstructName(m_property_name, m_ref_type, m_return_immediate_value); }
+std::string focs::Variable<T>::Dump(unsigned short ntabs) const
+{ return detail::ReconstructName(m_property_name, m_ref_type, m_return_immediate_value); }
 
 template <typename T>
-unsigned int Variable<T>::GetCheckSum() const
+unsigned int focs::Variable<T>::GetCheckSum() const
 {
     unsigned int retval{0};
 
@@ -637,41 +642,41 @@ unsigned int Variable<T>::GetCheckSum() const
 }
 
 template <>
-FO_COMMON_API PlanetSize Variable<PlanetSize>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API PlanetSize focs::Variable<PlanetSize>::Eval(const ScriptingContext& context) const;
 
 template <>
-FO_COMMON_API PlanetType Variable<PlanetType>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API PlanetType focs::Variable<PlanetType>::Eval(const ScriptingContext& context) const;
 
 template <>
-FO_COMMON_API PlanetEnvironment Variable<PlanetEnvironment>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API PlanetEnvironment focs::Variable<PlanetEnvironment>::Eval(const ScriptingContext& context) const;
 
 template <>
-FO_COMMON_API UniverseObjectType Variable<UniverseObjectType>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API UniverseObjectType focs::Variable<UniverseObjectType>::Eval(const ScriptingContext& context) const;
 
 template <>
-FO_COMMON_API StarType Variable<StarType>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API StarType focs::Variable<StarType>::Eval(const ScriptingContext& context) const;
 
 template <>
-FO_COMMON_API Visibility Variable<Visibility>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API Visibility focs::Variable<Visibility>::Eval(const ScriptingContext& context) const;
 
 template <>
-FO_COMMON_API double Variable<double>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API double focs::Variable<double>::Eval(const ScriptingContext& context) const;
 
 template <>
-FO_COMMON_API int Variable<int>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API int focs::Variable<int>::Eval(const ScriptingContext& context) const;
 
 template <>
-FO_COMMON_API std::string Variable<std::string>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API std::string focs::Variable<std::string>::Eval(const ScriptingContext& context) const;
 
 template <>
-FO_COMMON_API std::vector<std::string> Variable<std::vector<std::string>>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API std::vector<std::string> focs::Variable<std::vector<std::string>>::Eval(const ScriptingContext& context) const;
 
 
 ///////////////////////////////////////////////////////////
 // Statistic                                             //
 ///////////////////////////////////////////////////////////
 template <typename T>
-Statistic<T>::Statistic(std::unique_ptr<ValueRef<T>>&& value_ref, StatisticType stat_type,
+focs::Statistic<T>::Statistic(std::unique_ptr<ValueRef<T>>&& value_ref, StatisticType stat_type,
                         std::unique_ptr<Condition::Condition>&& sampling_condition) :
     Variable<T>(NON_OBJECT_REFERENCE),
     m_stat_type(stat_type),
@@ -694,7 +699,7 @@ Statistic<T>::Statistic(std::unique_ptr<ValueRef<T>>&& value_ref, StatisticType 
 }
 
 template <typename T>
-bool Statistic<T>::operator==(const ValueRef<T>& rhs) const
+bool focs::Statistic<T>::operator==(const ValueRef<T>& rhs) const
 {
     if (&rhs == this)
         return true;
@@ -720,7 +725,7 @@ bool Statistic<T>::operator==(const ValueRef<T>& rhs) const
 }
 
 template <typename T>
-void Statistic<T>::GetConditionMatches(const ScriptingContext& context,
+void focs::Statistic<T>::GetConditionMatches(const ScriptingContext& context,
                                        Condition::ObjectSet& condition_targets,
                                        Condition::Condition* condition) const
 {
@@ -731,7 +736,7 @@ void Statistic<T>::GetConditionMatches(const ScriptingContext& context,
 }
 
 template <typename T>
-void Statistic<T>::GetObjectPropertyValues(const ScriptingContext& context,
+void focs::Statistic<T>::GetObjectPropertyValues(const ScriptingContext& context,
                                            const Condition::ObjectSet& objects,
                                            std::map<std::shared_ptr<const UniverseObject>, T>& object_property_values) const
 {
@@ -746,21 +751,21 @@ void Statistic<T>::GetObjectPropertyValues(const ScriptingContext& context,
 }
 
 template <typename T>
-std::string Statistic<T>::Description() const
+std::string focs::Statistic<T>::Description() const
 {
     if (m_value_ref)
-        return StatisticDescription(m_stat_type, m_value_ref->Description(),
+        return detail::StatisticDescription(m_stat_type, m_value_ref->Description(),
                                     m_sampling_condition ? m_sampling_condition->Description() : "");
 
     auto temp = Variable<T>::Description();
     if (!temp.empty())
-        return StatisticDescription(m_stat_type, temp, m_sampling_condition ? m_sampling_condition->Description() : "");
+        return detail::StatisticDescription(m_stat_type, temp, m_sampling_condition ? m_sampling_condition->Description() : "");
 
-    return StatisticDescription(m_stat_type, "", m_sampling_condition ? m_sampling_condition->Description() : "");
+    return detail::StatisticDescription(m_stat_type, "", m_sampling_condition ? m_sampling_condition->Description() : "");
 }
 
 template <typename T>
-std::string Statistic<T>::Dump(unsigned short ntabs) const
+std::string focs::Statistic<T>::Dump(unsigned short ntabs) const
 {
     std::string retval = "Statistic ";
 
@@ -787,7 +792,7 @@ std::string Statistic<T>::Dump(unsigned short ntabs) const
 }
 
 template <typename T>
-void Statistic<T>::SetTopLevelContent(const std::string& content_name)
+void focs::Statistic<T>::SetTopLevelContent(const std::string& content_name)
 {
     if (m_sampling_condition)
         m_sampling_condition->SetTopLevelContent(content_name);
@@ -796,7 +801,7 @@ void Statistic<T>::SetTopLevelContent(const std::string& content_name)
 }
 
 template <typename T>
-T Statistic<T>::Eval(const ScriptingContext& context) const
+T focs::Statistic<T>::Eval(const ScriptingContext& context) const
 {
     Condition::ObjectSet condition_matches;
     GetConditionMatches(context, condition_matches, m_sampling_condition.get());
@@ -849,7 +854,7 @@ T Statistic<T>::Eval(const ScriptingContext& context) const
 }
 
 template <typename T>
-unsigned int Statistic<T>::GetCheckSum() const
+unsigned int focs::Statistic<T>::GetCheckSum() const
 {
     unsigned int retval{0};
 
@@ -862,16 +867,16 @@ unsigned int Statistic<T>::GetCheckSum() const
 }
 
 template <>
-FO_COMMON_API double Statistic<double>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API double focs::Statistic<double>::Eval(const ScriptingContext& context) const;
 
 template <>
-FO_COMMON_API int Statistic<int>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API int focs::Statistic<int>::Eval(const ScriptingContext& context) const;
 
 template <>
-FO_COMMON_API std::string Statistic<std::string>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API std::string focs::Statistic<std::string>::Eval(const ScriptingContext& context) const;
 
 template <typename T>
-T Statistic<T>::ReduceData(const std::map<std::shared_ptr<const UniverseObject>, T>& object_property_values) const
+T focs::Statistic<T>::ReduceData(const std::map<std::shared_ptr<const UniverseObject>, T>& object_property_values) const
 {
     if (object_property_values.empty())
         return T(0);
@@ -1046,7 +1051,7 @@ T Statistic<T>::ReduceData(const std::map<std::shared_ptr<const UniverseObject>,
 ///////////////////////////////////////////////////////////
 template <typename T>
 template <typename S>
-ComplexVariable<T>::ComplexVariable(S&& variable_name,
+focs::ComplexVariable<T>::ComplexVariable(S&& variable_name,
                                     std::unique_ptr<ValueRef<int>>&& int_ref1,
                                     std::unique_ptr<ValueRef<int>>&& int_ref2,
                                     std::unique_ptr<ValueRef<int>>&& int_ref3,
@@ -1062,7 +1067,7 @@ ComplexVariable<T>::ComplexVariable(S&& variable_name,
 { InitInvariants(); }
 
 template <typename T>
-ComplexVariable<T>::ComplexVariable(const char* variable_name,
+focs::ComplexVariable<T>::ComplexVariable(const char* variable_name,
                                     std::unique_ptr<ValueRef<int>>&& int_ref1,
                                     std::unique_ptr<ValueRef<int>>&& int_ref2,
                                     std::unique_ptr<ValueRef<int>>&& int_ref3,
@@ -1078,7 +1083,7 @@ ComplexVariable<T>::ComplexVariable(const char* variable_name,
 { InitInvariants(); }
 
 template <typename T>
-void ComplexVariable<T>::InitInvariants()
+void focs::ComplexVariable<T>::InitInvariants()
 {
     std::initializer_list<ValueRefBase*> refs =
         { m_int_ref1.get(), m_int_ref2.get(), m_int_ref3.get(), m_string_ref1.get(), m_string_ref2.get() };
@@ -1089,7 +1094,7 @@ void ComplexVariable<T>::InitInvariants()
 }
 
 template <typename T>
-bool ComplexVariable<T>::operator==(const ValueRef<T>& rhs) const
+bool focs::ComplexVariable<T>::operator==(const ValueRef<T>& rhs) const
 {
     if (&rhs == this)
         return true;
@@ -1151,29 +1156,29 @@ bool ComplexVariable<T>::operator==(const ValueRef<T>& rhs) const
 }
 
 template <typename T>
-const ValueRef<int>* ComplexVariable<T>::IntRef1() const
+const focs::ValueRef<int>* focs::ComplexVariable<T>::IntRef1() const
 { return m_int_ref1.get(); }
 
 template <typename T>
-const ValueRef<int>* ComplexVariable<T>::IntRef2() const
+const focs::ValueRef<int>* focs::ComplexVariable<T>::IntRef2() const
 { return m_int_ref2.get(); }
 
 template <typename T>
-const ValueRef<int>* ComplexVariable<T>::IntRef3() const
+const focs::ValueRef<int>* focs::ComplexVariable<T>::IntRef3() const
 { return m_int_ref3.get(); }
 
 template <typename T>
-const ValueRef<std::string>* ComplexVariable<T>::StringRef1() const
+const focs::ValueRef<std::string>* focs::ComplexVariable<T>::StringRef1() const
 { return m_string_ref1.get(); }
 
 template <typename T>
-const ValueRef<std::string>* ComplexVariable<T>::StringRef2() const
+const focs::ValueRef<std::string>* focs::ComplexVariable<T>::StringRef2() const
 { return m_string_ref2.get(); }
 
 template <typename T>
-std::string ComplexVariable<T>::Description() const
+std::string focs::ComplexVariable<T>::Description() const
 {
-    std::string retval = ComplexVariableDescription(
+    std::string retval = detail::ComplexVariableDescription(
         this->m_property_name,
         m_int_ref1 ? m_int_ref1.get() : nullptr,
         m_int_ref2 ? m_int_ref2.get() : nullptr,
@@ -1186,9 +1191,9 @@ std::string ComplexVariable<T>::Description() const
 }
 
 template <typename T>
-std::string ComplexVariable<T>::Dump(unsigned short ntabs) const
+std::string focs::ComplexVariable<T>::Dump(unsigned short ntabs) const
 {
-    return ComplexVariableDump(this->m_property_name,
+    return detail::ComplexVariableDump(this->m_property_name,
                                m_int_ref1 ? m_int_ref1.get() : nullptr,
                                m_int_ref2 ? m_int_ref2.get() : nullptr,
                                m_int_ref3 ? m_int_ref3.get() : nullptr,
@@ -1197,7 +1202,7 @@ std::string ComplexVariable<T>::Dump(unsigned short ntabs) const
 }
 
 template <typename T>
-void ComplexVariable<T>::SetTopLevelContent(const std::string& content_name)
+void focs::ComplexVariable<T>::SetTopLevelContent(const std::string& content_name)
 {
     if (m_int_ref1)
         m_int_ref1->SetTopLevelContent(content_name);
@@ -1212,7 +1217,7 @@ void ComplexVariable<T>::SetTopLevelContent(const std::string& content_name)
 }
 
 template <typename T>
-unsigned int ComplexVariable<T>::GetCheckSum() const
+unsigned int focs::ComplexVariable<T>::GetCheckSum() const
 {
     unsigned int retval{0};
 
@@ -1227,49 +1232,49 @@ unsigned int ComplexVariable<T>::GetCheckSum() const
 }
 
 template <>
-FO_COMMON_API PlanetSize ComplexVariable<PlanetSize>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API PlanetSize focs::ComplexVariable<PlanetSize>::Eval(const ScriptingContext& context) const;
 
 template <>
-FO_COMMON_API PlanetType ComplexVariable<PlanetType>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API PlanetType focs::ComplexVariable<PlanetType>::Eval(const ScriptingContext& context) const;
 
 template <>
-FO_COMMON_API PlanetEnvironment ComplexVariable<PlanetEnvironment>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API PlanetEnvironment focs::ComplexVariable<PlanetEnvironment>::Eval(const ScriptingContext& context) const;
 
 template <>
-FO_COMMON_API UniverseObjectType ComplexVariable<UniverseObjectType>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API UniverseObjectType focs::ComplexVariable<UniverseObjectType>::Eval(const ScriptingContext& context) const;
 
 template <>
-FO_COMMON_API StarType ComplexVariable<StarType>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API StarType focs::ComplexVariable<StarType>::Eval(const ScriptingContext& context) const;
 
 template <>
-FO_COMMON_API std::vector<std::string> ComplexVariable<std::vector<std::string>>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API std::vector<std::string> focs::ComplexVariable<std::vector<std::string>>::Eval(const ScriptingContext& context) const;
 
 template <>
-FO_COMMON_API Visibility ComplexVariable<Visibility>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API Visibility focs::ComplexVariable<Visibility>::Eval(const ScriptingContext& context) const;
 
 template <>
-FO_COMMON_API double ComplexVariable<double>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API double focs::ComplexVariable<double>::Eval(const ScriptingContext& context) const;
 
 template <>
-FO_COMMON_API int ComplexVariable<int>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API int focs::ComplexVariable<int>::Eval(const ScriptingContext& context) const;
 
 template <>
-FO_COMMON_API std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API std::string focs::ComplexVariable<std::string>::Eval(const ScriptingContext& context) const;
 
 template <>
-FO_COMMON_API std::string ComplexVariable<std::vector<std::string>>::Dump(unsigned short ntabs) const;
+FO_COMMON_API std::string focs::ComplexVariable<std::vector<std::string>>::Dump(unsigned short ntabs) const;
 
 template <>
-FO_COMMON_API std::string ComplexVariable<Visibility>::Dump(unsigned short ntabs) const;
+FO_COMMON_API std::string focs::ComplexVariable<Visibility>::Dump(unsigned short ntabs) const;
 
 template <>
-FO_COMMON_API std::string ComplexVariable<double>::Dump(unsigned short ntabs) const;
+FO_COMMON_API std::string focs::ComplexVariable<double>::Dump(unsigned short ntabs) const;
 
 template <>
-FO_COMMON_API std::string ComplexVariable<int>::Dump(unsigned short ntabs) const;
+FO_COMMON_API std::string focs::ComplexVariable<int>::Dump(unsigned short ntabs) const;
 
 template <>
-FO_COMMON_API std::string ComplexVariable<std::string>::Dump(unsigned short ntabs) const;
+FO_COMMON_API std::string focs::ComplexVariable<std::string>::Dump(unsigned short ntabs) const;
 
 
 ///////////////////////////////////////////////////////////
@@ -1277,7 +1282,7 @@ FO_COMMON_API std::string ComplexVariable<std::string>::Dump(unsigned short ntab
 ///////////////////////////////////////////////////////////
 template <typename FromType, typename ToType>
 template <typename T>
-StaticCast<FromType, ToType>::StaticCast(
+focs::StaticCast<FromType, ToType>::StaticCast(
     T&& value_ref,
     typename std::enable_if<std::is_convertible<T, std::unique_ptr<Variable<FromType>>>::value>::type*) :
     Variable<ToType>(value_ref->GetReferenceType(), value_ref->PropertyName()),
@@ -1291,7 +1296,7 @@ StaticCast<FromType, ToType>::StaticCast(
 
 template <typename FromType, typename ToType>
 template <typename T>
-StaticCast<FromType, ToType>::StaticCast(
+focs::StaticCast<FromType, ToType>::StaticCast(
     T&& value_ref,
     typename std::enable_if<
     std::is_convertible<T, std::unique_ptr<ValueRef<FromType>>>::value
@@ -1306,7 +1311,7 @@ StaticCast<FromType, ToType>::StaticCast(
 }
 
 template <typename FromType, typename ToType>
-bool StaticCast<FromType, ToType>::operator==(const ValueRef<ToType>& rhs) const
+bool focs::StaticCast<FromType, ToType>::operator==(const ValueRef<ToType>& rhs) const
 {
     if (&rhs == this)
         return true;
@@ -1328,26 +1333,26 @@ bool StaticCast<FromType, ToType>::operator==(const ValueRef<ToType>& rhs) const
 }
 
 template <typename FromType, typename ToType>
-ToType StaticCast<FromType, ToType>::Eval(const ScriptingContext& context) const
+ToType focs::StaticCast<FromType, ToType>::Eval(const ScriptingContext& context) const
 { return static_cast<ToType>(m_value_ref->Eval(context)); }
 
 template <typename FromType, typename ToType>
-std::string StaticCast<FromType, ToType>::Description() const
+std::string focs::StaticCast<FromType, ToType>::Description() const
 { return m_value_ref->Description(); }
 
 template <typename FromType, typename ToType>
-std::string StaticCast<FromType, ToType>::Dump(unsigned short ntabs) const
+std::string focs::StaticCast<FromType, ToType>::Dump(unsigned short ntabs) const
 { return m_value_ref->Dump(ntabs); }
 
 template <typename FromType, typename ToType>
-void StaticCast<FromType, ToType>::SetTopLevelContent(const std::string& content_name)
+void focs::StaticCast<FromType, ToType>::SetTopLevelContent(const std::string& content_name)
 {
     if (m_value_ref)
         m_value_ref->SetTopLevelContent(content_name);
 }
 
 template <typename FromType, typename ToType>
-unsigned int StaticCast<FromType, ToType>::GetCheckSum() const
+unsigned int focs::StaticCast<FromType, ToType>::GetCheckSum() const
 {
     unsigned int retval{0};
 
@@ -1362,7 +1367,7 @@ unsigned int StaticCast<FromType, ToType>::GetCheckSum() const
 // StringCast                                            //
 ///////////////////////////////////////////////////////////
 template <typename FromType>
-StringCast<FromType>::StringCast(std::unique_ptr<ValueRef<FromType>>&& value_ref) :
+focs::StringCast<FromType>::StringCast(std::unique_ptr<ValueRef<FromType>>&& value_ref) :
     Variable<std::string>(NON_OBJECT_REFERENCE),
     m_value_ref(std::move(value_ref))
 {
@@ -1382,7 +1387,7 @@ StringCast<FromType>::StringCast(std::unique_ptr<ValueRef<FromType>>&& value_ref
 }
 
 template <typename FromType>
-bool StringCast<FromType>::operator==(const ValueRef<std::string>& rhs) const
+bool focs::StringCast<FromType>::operator==(const ValueRef<std::string>& rhs) const
 {
     if (&rhs == this)
         return true;
@@ -1404,7 +1409,7 @@ bool StringCast<FromType>::operator==(const ValueRef<std::string>& rhs) const
 }
 
 template <typename FromType>
-std::string StringCast<FromType>::Eval(const ScriptingContext& context) const
+std::string focs::StringCast<FromType>::Eval(const ScriptingContext& context) const
 {
     if (!m_value_ref)
         return "";
@@ -1417,7 +1422,7 @@ std::string StringCast<FromType>::Eval(const ScriptingContext& context) const
 }
 
 template <typename FromType>
-unsigned int StringCast<FromType>::GetCheckSum() const
+unsigned int focs::StringCast<FromType>::GetCheckSum() const
 {
     unsigned int retval{0};
 
@@ -1428,24 +1433,24 @@ unsigned int StringCast<FromType>::GetCheckSum() const
 }
 
 template <>
-FO_COMMON_API std::string StringCast<double>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API std::string focs::StringCast<double>::Eval(const ScriptingContext& context) const;
 
 template <>
-FO_COMMON_API std::string StringCast<int>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API std::string focs::StringCast<int>::Eval(const ScriptingContext& context) const;
 
 template <>
-FO_COMMON_API std::string StringCast<std::vector<std::string>>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API std::string focs::StringCast<std::vector<std::string>>::Eval(const ScriptingContext& context) const;
 
 template <typename FromType>
-std::string StringCast<FromType>::Description() const
+std::string focs::StringCast<FromType>::Description() const
 { return m_value_ref->Description(); }
 
 template <typename FromType>
-std::string StringCast<FromType>::Dump(unsigned short ntabs) const
+std::string focs::StringCast<FromType>::Dump(unsigned short ntabs) const
 { return m_value_ref->Dump(ntabs); }
 
 template <typename FromType>
-void StringCast<FromType>::SetTopLevelContent(const std::string& content_name) {
+void focs::StringCast<FromType>::SetTopLevelContent(const std::string& content_name) {
     if (m_value_ref)
         m_value_ref->SetTopLevelContent(content_name);
 }
@@ -1455,7 +1460,7 @@ void StringCast<FromType>::SetTopLevelContent(const std::string& content_name) {
 // UserStringLookup                                      //
 ///////////////////////////////////////////////////////////
 template <typename FromType>
-UserStringLookup<FromType>::UserStringLookup(std::unique_ptr<ValueRef<FromType>>&& value_ref) :
+focs::UserStringLookup<FromType>::UserStringLookup(std::unique_ptr<ValueRef<FromType>>&& value_ref) :
     Variable<std::string>(NON_OBJECT_REFERENCE),
     m_value_ref(std::move(value_ref))
 {
@@ -1475,7 +1480,7 @@ UserStringLookup<FromType>::UserStringLookup(std::unique_ptr<ValueRef<FromType>>
 }
 
 template <typename FromType>
-bool UserStringLookup<FromType>::operator==(const ValueRef<std::string>& rhs) const {
+bool focs::UserStringLookup<FromType>::operator==(const ValueRef<std::string>& rhs) const {
     if (&rhs == this)
         return true;
     if (typeid(rhs) != typeid(*this))
@@ -1497,7 +1502,7 @@ bool UserStringLookup<FromType>::operator==(const ValueRef<std::string>& rhs) co
 }
 
 template <typename FromType>
-std::string UserStringLookup<FromType>::Eval(const ScriptingContext& context) const {
+std::string focs::UserStringLookup<FromType>::Eval(const ScriptingContext& context) const {
     if (!m_value_ref)
         return "";
     std::string ref_val = boost::lexical_cast<std::string>(m_value_ref->Eval(context));
@@ -1507,31 +1512,31 @@ std::string UserStringLookup<FromType>::Eval(const ScriptingContext& context) co
 }
 
 template <>
-FO_COMMON_API std::string UserStringLookup<std::string>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API std::string focs::UserStringLookup<std::string>::Eval(const ScriptingContext& context) const;
 
 template <>
-FO_COMMON_API std::string UserStringLookup<std::vector<std::string>>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API std::string focs::UserStringLookup<std::vector<std::string>>::Eval(const ScriptingContext& context) const;
 
 template <typename FromType>
-std::string UserStringLookup<FromType>::Description() const
+std::string focs::UserStringLookup<FromType>::Description() const
 {
     return m_value_ref->Description();
 }
 
 template <typename FromType>
-std::string UserStringLookup<FromType>::Dump(unsigned short ntabs) const
+std::string focs::UserStringLookup<FromType>::Dump(unsigned short ntabs) const
 {
     return m_value_ref->Dump(ntabs);
 }
 
 template <typename FromType>
-void UserStringLookup<FromType>::SetTopLevelContent(const std::string& content_name) {
+void focs::UserStringLookup<FromType>::SetTopLevelContent(const std::string& content_name) {
     if (m_value_ref)
         m_value_ref->SetTopLevelContent(content_name);
 }
 
 template <typename FromType>
-unsigned int UserStringLookup<FromType>::GetCheckSum() const
+unsigned int focs::UserStringLookup<FromType>::GetCheckSum() const
 {
     unsigned int retval{0};
 
@@ -1546,7 +1551,7 @@ unsigned int UserStringLookup<FromType>::GetCheckSum() const
 // Operation                                             //
 ///////////////////////////////////////////////////////////
 template <typename T>
-Operation<T>::Operation(OpType op_type,
+focs::Operation<T>::Operation(OpType op_type,
                         std::unique_ptr<ValueRef<T>>&& operand1,
                         std::unique_ptr<ValueRef<T>>&& operand2) :
     ValueRef<T>(),
@@ -1561,7 +1566,7 @@ Operation<T>::Operation(OpType op_type,
 }
 
 template <typename T>
-Operation<T>::Operation(OpType op_type, std::unique_ptr<ValueRef<T>>&& operand) :
+focs::Operation<T>::Operation(OpType op_type, std::unique_ptr<ValueRef<T>>&& operand) :
     ValueRef<T>(),
     m_op_type(op_type)
 {
@@ -1572,7 +1577,7 @@ Operation<T>::Operation(OpType op_type, std::unique_ptr<ValueRef<T>>&& operand) 
 }
 
 template <typename T>
-Operation<T>::Operation(OpType op_type, std::vector<std::unique_ptr<ValueRef<T>>>&& operands) :
+focs::Operation<T>::Operation(OpType op_type, std::vector<std::unique_ptr<ValueRef<T>>>&& operands) :
     m_op_type(op_type),
     m_operands(std::move(operands))
 {
@@ -1581,7 +1586,7 @@ Operation<T>::Operation(OpType op_type, std::vector<std::unique_ptr<ValueRef<T>>
 }
 
 template <typename T>
-void Operation<T>::InitConstInvariants()
+void focs::Operation<T>::InitConstInvariants()
 {
     if (m_op_type == RANDOM_UNIFORM || m_op_type == RANDOM_PICK) {
         m_constant_expr = false;
@@ -1628,7 +1633,7 @@ void Operation<T>::InitConstInvariants()
 }
 
 template <typename T>
-void Operation<T>::CacheConstValue()
+void focs::Operation<T>::CacheConstValue()
 {
     if (!m_constant_expr)
         return;
@@ -1636,7 +1641,7 @@ void Operation<T>::CacheConstValue()
 }
 
 template <typename T>
-bool Operation<T>::operator==(const ValueRef<T>& rhs) const
+bool focs::Operation<T>::operator==(const ValueRef<T>& rhs) const
 {
     if (&rhs == this)
         return true;
@@ -1665,11 +1670,11 @@ bool Operation<T>::operator==(const ValueRef<T>& rhs) const
 }
 
 template <typename T>
-OpType Operation<T>::GetOpType() const
+auto focs::Operation<T>::GetOpType() const -> OpType
 { return m_op_type; }
 
 template <typename T>
-const ValueRef<T>* Operation<T>::LHS() const
+auto focs::Operation<T>::LHS() const -> const ValueRef<T>*
 {
     if (m_operands.empty())
         return nullptr;
@@ -1677,7 +1682,7 @@ const ValueRef<T>* Operation<T>::LHS() const
 }
 
 template <typename T>
-const ValueRef<T>* Operation<T>::RHS() const
+const focs::ValueRef<T>* focs::Operation<T>::RHS() const
 {
     if (m_operands.size() < 2)
         return nullptr;
@@ -1685,7 +1690,7 @@ const ValueRef<T>* Operation<T>::RHS() const
 }
 
 template <typename T>
-const std::vector<ValueRef<T>*> Operation<T>::Operands() const
+const std::vector<focs::ValueRef<T>*> focs::Operation<T>::Operands() const
 {
     std::vector<ValueRef<T>*> retval(m_operands.size());
     std::transform(m_operands.begin(), m_operands.end(), retval.begin(),
@@ -1694,7 +1699,7 @@ const std::vector<ValueRef<T>*> Operation<T>::Operands() const
 }
 
 template <typename T>
-T Operation<T>::Eval(const ScriptingContext& context) const
+T focs::Operation<T>::Eval(const ScriptingContext& context) const
 {
     if (m_constant_expr)
         return m_cached_const_value;
@@ -1702,7 +1707,7 @@ T Operation<T>::Eval(const ScriptingContext& context) const
 }
 
 template <typename T>
-T Operation<T>::EvalImpl(const ScriptingContext& context) const
+T focs::Operation<T>::EvalImpl(const ScriptingContext& context) const
 {
     switch (m_op_type) {
     case TIMES: {
@@ -1785,7 +1790,7 @@ T Operation<T>::EvalImpl(const ScriptingContext& context) const
 }
 
 template <typename T>
-unsigned int Operation<T>::GetCheckSum() const
+unsigned int focs::Operation<T>::GetCheckSum() const
 {
     unsigned int retval{0};
 
@@ -1799,16 +1804,16 @@ unsigned int Operation<T>::GetCheckSum() const
 }
 
 template <>
-FO_COMMON_API std::string Operation<std::string>::EvalImpl(const ScriptingContext& context) const;
+FO_COMMON_API std::string focs::Operation<std::string>::EvalImpl(const ScriptingContext& context) const;
 
 template <>
-FO_COMMON_API double Operation<double>::EvalImpl(const ScriptingContext& context) const;
+FO_COMMON_API double focs::Operation<double>::EvalImpl(const ScriptingContext& context) const;
 
 template <>
-FO_COMMON_API int Operation<int>::EvalImpl(const ScriptingContext& context) const;
+FO_COMMON_API int focs::Operation<int>::EvalImpl(const ScriptingContext& context) const;
 
 template <typename T>
-std::string Operation<T>::Description() const
+std::string focs::Operation<T>::Description() const
 {
     if (m_op_type == NEGATE) {
         if (auto rhs = dynamic_cast<const Operation<T>*>(LHS())) {
@@ -1924,7 +1929,7 @@ std::string Operation<T>::Description() const
 }
 
 template <typename T>
-std::string Operation<T>::Dump(unsigned short ntabs) const
+std::string focs::Operation<T>::Dump(unsigned short ntabs) const
 {
     if (m_op_type == NEGATE) {
         if (auto rhs = dynamic_cast<const Operation<T>*>(LHS())) {
@@ -2040,14 +2045,11 @@ std::string Operation<T>::Dump(unsigned short ntabs) const
 }
 
 template <typename T>
-void Operation<T>::SetTopLevelContent(const std::string& content_name) {
+void focs::Operation<T>::SetTopLevelContent(const std::string& content_name) {
     for (auto& operand : m_operands) {
         if (operand)
             operand->SetTopLevelContent(content_name);
     }
-}
-
-
 }
 
 

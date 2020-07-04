@@ -12,15 +12,15 @@
 #define DEBUG_PARSERS 0
 #if DEBUG_PARSERS
 namespace std {
-    inline ostream& operator<<(ostream& os, const std::map<std::string, std::unique_ptr<ValueRef::ValueRef<double>>>&)
+    inline ostream& operator<<(ostream& os, const std::map<std::string, std::unique_ptr<focs::ValueRef<double>>>&)
     { return os; }
-    inline ostream& operator<<(ostream& os, const std::map<std::string, parse::detail::MovableEnvelope<ValueRef::ValueRef<double>>>&)
+    inline ostream& operator<<(ostream& os, const std::map<std::string, parse::detail::MovableEnvelope<focs::ValueRef<double>>>&)
     { return os; }
 }
 #endif
 
 namespace {
-    using start_rule_payload = std::map<std::string, std::unique_ptr<ValueRef::ValueRef<double>>>;
+    using start_rule_payload = std::map<std::string, std::unique_ptr<focs::ValueRef<double>>>;
     using start_rule_signature = void(start_rule_payload&);
 
     struct grammar : public parse::detail::grammar<
@@ -61,7 +61,7 @@ namespace {
 
             start
                 =   (+stat [ insert(_a, _1) ])
-                [ _r1 = phoenix::bind(&parse::detail::OpenEnvelopes<std::string, ValueRef::ValueRef<double>>, _a, _pass) ]
+                [ _r1 = phoenix::bind(&parse::detail::OpenEnvelopes<std::string, focs::ValueRef<double>>, _a, _pass) ]
                 ;
 
             stat.name("Double Statistic ValueRef");

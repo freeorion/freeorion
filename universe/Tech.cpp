@@ -98,8 +98,8 @@ Tech::TechInfo::TechInfo()
 
 Tech::TechInfo::TechInfo(std::string& name_, std::string& description_,
                          std::string& short_description_, std::string& category_,
-                         std::unique_ptr<ValueRef::ValueRef<double>>&& research_cost_,
-                         std::unique_ptr<ValueRef::ValueRef<int>>&& research_turns_,
+                         std::unique_ptr<focs::ValueRef<double>>&& research_cost_,
+                         std::unique_ptr<focs::ValueRef<int>>&& research_turns_,
                          bool researchable_,
                          std::set<std::string>& tags_) :
     name(std::move(name_)),
@@ -120,8 +120,8 @@ Tech::TechInfo::~TechInfo()
 ///////////////////////////////////////////////////////////
 Tech::Tech(std::string&& name, std::string&& description,
            std::string&& short_description, std::string&& category,
-           std::unique_ptr<ValueRef::ValueRef<double>>&& research_cost,
-           std::unique_ptr<ValueRef::ValueRef<int>>&& research_turns,
+           std::unique_ptr<focs::ValueRef<double>>&& research_cost,
+           std::unique_ptr<focs::ValueRef<int>>&& research_turns,
            bool researchable,
            std::set<std::string>&& tags,
            std::vector<std::shared_ptr<Effect::EffectsGroup>>&& effects,

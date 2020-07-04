@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 #include "EnumsFwd.h"
+#include "../focs/focs.hpp"
 #include "../util/Export.h"
 
 
@@ -17,13 +18,9 @@ namespace Condition {
 namespace Effect {
     class EffectsGroup;
 }
-namespace ValueRef {
-    template <typename T>
-    struct ValueRef;
-}
 
 template <typename T>
-using ConsumptionMap = std::map<T, std::pair<std::unique_ptr<ValueRef::ValueRef<double>>,
+using ConsumptionMap = std::map<T, std::pair<std::unique_ptr<focs::ValueRef<double>>,
                                              std::unique_ptr<Condition::Condition>>>;
 
 //! Common parameters for ShipPart, ShipHull, and BuildingType constructors.
@@ -32,8 +29,8 @@ using ConsumptionMap = std::map<T, std::pair<std::unique_ptr<ValueRef::ValueRef<
 //! per item.
 struct FO_COMMON_API CommonParams {
     CommonParams();
-    CommonParams(std::unique_ptr<ValueRef::ValueRef<double>>&& production_cost_,
-                 std::unique_ptr<ValueRef::ValueRef<int>>&& production_time_,
+    CommonParams(std::unique_ptr<focs::ValueRef<double>>&& production_cost_,
+                 std::unique_ptr<focs::ValueRef<int>>&& production_time_,
                  bool producible_,
                  const std::set<std::string>& tags_,
                  std::unique_ptr<Condition::Condition>&& location_,
@@ -43,8 +40,8 @@ struct FO_COMMON_API CommonParams {
                  std::unique_ptr<Condition::Condition>&& enqueue_location_);
     ~CommonParams();
 
-    std::unique_ptr<ValueRef::ValueRef<double>>         production_cost;
-    std::unique_ptr<ValueRef::ValueRef<int>>            production_time;
+    std::unique_ptr<focs::ValueRef<double>>         production_cost;
+    std::unique_ptr<focs::ValueRef<int>>            production_time;
     bool                                                producible = true;
     std::set<std::string>                               tags;
     ConsumptionMap<MeterType>                           production_meter_consumption;

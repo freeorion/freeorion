@@ -35,6 +35,9 @@
 #include "../util/Random.h"
 
 
+using namespace focs;
+
+
 std::string DoubleToString(double val, int digits, bool always_show_sign);
 bool UserStringExists(const std::string& str);
 
@@ -44,7 +47,7 @@ namespace {
     std::shared_ptr<const UniverseObject> FollowReference(
         std::vector<std::string>::const_iterator first,
         std::vector<std::string>::const_iterator last,
-        ValueRef::ReferenceType ref_type,
+        focs::ReferenceType ref_type,
         const ScriptingContext& context)
     {
         //DebugLogger() << "FollowReference: source: " << (context.source ? context.source->Name() : "0")
@@ -54,21 +57,21 @@ namespace {
 
         std::shared_ptr<const UniverseObject> obj;
         switch (ref_type) {
-        case ValueRef::NON_OBJECT_REFERENCE:                    return context.condition_local_candidate;   break;
-        case ValueRef::SOURCE_REFERENCE:                        obj = context.source;                       break;
-        case ValueRef::EFFECT_TARGET_REFERENCE:                 obj = context.effect_target;                break;
-        case ValueRef::CONDITION_ROOT_CANDIDATE_REFERENCE:      obj = context.condition_root_candidate;     break;
-        case ValueRef::CONDITION_LOCAL_CANDIDATE_REFERENCE:
+        case focs::NON_OBJECT_REFERENCE:                    return context.condition_local_candidate;   break;
+        case focs::SOURCE_REFERENCE:                        obj = context.source;                       break;
+        case focs::EFFECT_TARGET_REFERENCE:                 obj = context.effect_target;                break;
+        case focs::CONDITION_ROOT_CANDIDATE_REFERENCE:      obj = context.condition_root_candidate;     break;
+        case focs::CONDITION_LOCAL_CANDIDATE_REFERENCE:
         default:                                                obj = context.condition_local_candidate;    break;
         }
 
         if (!obj) {
             std::string type_string;
             switch (ref_type) {
-            case ValueRef::SOURCE_REFERENCE:                        type_string = "Source";         break;
-            case ValueRef::EFFECT_TARGET_REFERENCE:                 type_string = "Target";         break;
-            case ValueRef::CONDITION_ROOT_CANDIDATE_REFERENCE:      type_string = "RootCandidate";  break;
-            case ValueRef::CONDITION_LOCAL_CANDIDATE_REFERENCE:
+            case focs::SOURCE_REFERENCE:                        type_string = "Source";         break;
+            case focs::EFFECT_TARGET_REFERENCE:                 type_string = "Target";         break;
+            case focs::CONDITION_ROOT_CANDIDATE_REFERENCE:      type_string = "RootCandidate";  break;
+            case focs::CONDITION_LOCAL_CANDIDATE_REFERENCE:
             default:                                                type_string = "LocalCandidate"; break;
             }
             ErrorLogger() << "FollowReference : top level object (" << type_string << ") not defined in scripting context";
@@ -106,29 +109,29 @@ namespace {
     // the ReconstructName() info with additional info identifying the object
     // references that were successfully followed.
     std::string TraceReference(const std::vector<std::string>& property_name,
-                               ValueRef::ReferenceType ref_type,
+                               focs::ReferenceType ref_type,
                                const ScriptingContext& context)
     {
         std::shared_ptr<const UniverseObject> obj, initial_obj;
-        std::string retval = ReconstructName(property_name, ref_type, false) + " : ";
+        std::string retval = focs::detail::ReconstructName(property_name, ref_type, false) + " : ";
         switch (ref_type) {
-        case ValueRef::NON_OBJECT_REFERENCE:
+        case focs::NON_OBJECT_REFERENCE:
             retval += " | Non Object Reference |";
             return retval;
             break;
-        case ValueRef::SOURCE_REFERENCE:
+        case focs::SOURCE_REFERENCE:
             retval += " | Source: ";
             obj = context.source;
             break;
-        case ValueRef::EFFECT_TARGET_REFERENCE:
+        case focs::EFFECT_TARGET_REFERENCE:
             retval += " | Effect Target: ";
             obj = context.effect_target;
             break;
-        case ValueRef::CONDITION_ROOT_CANDIDATE_REFERENCE:
+        case focs::CONDITION_ROOT_CANDIDATE_REFERENCE:
             retval += " | Root Candidate: ";
             obj = context.condition_root_candidate;
             break;
-        case ValueRef::CONDITION_LOCAL_CANDIDATE_REFERENCE:
+        case focs::CONDITION_LOCAL_CANDIDATE_REFERENCE:
         default:
             retval += " | Local Candidate: ";
             obj = context.condition_local_candidate;
@@ -248,8 +251,7 @@ namespace {
     const std::string EMPTY_STRING;
 }
 
-namespace ValueRef {
-MeterType NameToMeter(const std::string& name) {
+MeterType detail::NameToMeter(const std::string& name) {
     MeterType retval = INVALID_METER_TYPE;
     auto it = GetMeterNameMap().find(name);
     if (it != GetMeterNameMap().end())
@@ -257,7 +259,7 @@ MeterType NameToMeter(const std::string& name) {
     return retval;
 }
 
-const std::string& MeterToName(MeterType meter) {
+const std::string& detail::MeterToName(MeterType meter) {
     for (const auto& entry : GetMeterNameMap()) {
         if (entry.second == meter)
             return entry.first;
@@ -265,9 +267,9 @@ const std::string& MeterToName(MeterType meter) {
     return EMPTY_STRING;
 }
 
-std::string ReconstructName(const std::vector<std::string>& property_name,
-                            ReferenceType ref_type,
-                            bool return_immediate_value)
+std::string detail::ReconstructName(const std::vector<std::string>& property_name,
+                                    ReferenceType ref_type,
+                                    bool return_immediate_value)
 {
     std::string retval;
     retval.reserve(64);
@@ -299,9 +301,9 @@ std::string ReconstructName(const std::vector<std::string>& property_name,
     return retval;
 }
 
-std::string FormatedDescriptionPropertyNames(ReferenceType ref_type,
-                                             const std::vector<std::string>& property_names,
-                                             bool return_immediate_value)
+std::string focs::detail::FormatedDescriptionPropertyNames(ReferenceType ref_type,
+                                                           const std::vector<std::string>& property_names,
+                                                           bool return_immediate_value)
 {
     int num_references = property_names.size();
     if (ref_type == NON_OBJECT_REFERENCE)
@@ -345,12 +347,12 @@ std::string FormatedDescriptionPropertyNames(ReferenceType ref_type,
     return boost::io::str(formatter);
 }
 
-std::string ComplexVariableDescription(const std::vector<std::string>& property_names,
-                                       const ValueRef<int>* int_ref1,
-                                       const ValueRef<int>* int_ref2,
-                                       const ValueRef<int>* int_ref3,
-                                       const ValueRef<std::string>* string_ref1,
-                                       const ValueRef<std::string>* string_ref2)
+std::string focs::detail::ComplexVariableDescription(const std::vector<std::string>& property_names,
+                                                     const ValueRef<int>* int_ref1,
+                                                     const ValueRef<int>* int_ref2,
+                                                     const ValueRef<int>* int_ref3,
+                                                     const ValueRef<std::string>* string_ref1,
+                                                     const ValueRef<std::string>* string_ref2)
 {
     if (property_names.empty()) {
         ErrorLogger() << "ComplexVariableDescription passed empty property names?!";
@@ -377,12 +379,12 @@ std::string ComplexVariableDescription(const std::vector<std::string>& property_
     return boost::io::str(formatter);
 }
 
-std::string ComplexVariableDump(const std::vector<std::string>& property_names,
-                                const ValueRef<int>* int_ref1,
-                                const ValueRef<int>* int_ref2,
-                                const ValueRef<int>* int_ref3,
-                                const ValueRef<std::string>* string_ref1,
-                                const ValueRef<std::string>* string_ref2)
+std::string focs::detail::ComplexVariableDump(const std::vector<std::string>& property_names,
+                                              const ValueRef<int>* int_ref1,
+                                              const ValueRef<int>* int_ref2,
+                                              const ValueRef<int>* int_ref3,
+                                              const ValueRef<std::string>* string_ref1,
+                                              const ValueRef<std::string>* string_ref2)
 {
     std::string retval;
     if (property_names.empty()) {
@@ -410,9 +412,9 @@ std::string ComplexVariableDump(const std::vector<std::string>& property_names,
     return retval;
 }
 
-std::string StatisticDescription(StatisticType stat_type,
-                                 const std::string& value_desc,
-                                 const std::string& condition_desc)
+std::string focs::detail::StatisticDescription(StatisticType stat_type,
+                                               const std::string& value_desc,
+                                               const std::string& condition_desc)
 {
     std::string stringtable_key("DESC_VAR_" + boost::to_upper_copy(
         boost::lexical_cast<std::string>(stat_type)));
@@ -795,7 +797,7 @@ double Variable<double>::Eval(const ScriptingContext& context) const
         return 0.0;
     }
 
-    MeterType meter_type = NameToMeter(property_name);
+    MeterType meter_type = detail::NameToMeter(property_name);
     if (object && meter_type != INVALID_METER_TYPE) {
         if (auto* m = object->GetMeter(meter_type))
             return m_return_immediate_value ? m->Current() : m->Initial();
@@ -2028,7 +2030,7 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         if (meter_name.empty())
             return 0.0;
 
-        MeterType meter_type = NameToMeter(meter_name);
+        MeterType meter_type = detail::NameToMeter(meter_name);
         if (meter_type != INVALID_METER_TYPE) {
             if (m_return_immediate_value)
                 return ship->CurrentPartMeterValue(meter_type, part_name);
@@ -2655,7 +2657,7 @@ void NameLookup::SetTopLevelContent(const std::string& content_name) {
 unsigned int NameLookup::GetCheckSum() const {
     unsigned int retval{0};
 
-    CheckSums::CheckSumCombine(retval, "ValueRef::NameLookup");
+    CheckSums::CheckSumCombine(retval, "focs::NameLookup");
     CheckSums::CheckSumCombine(retval, m_value_ref);
     CheckSums::CheckSumCombine(retval, m_lookup_type);
     std::cout << "GetCheckSum(NameLookup): " << typeid(*this).name() << " retval: " << retval << std::endl << std::endl;
@@ -2792,7 +2794,7 @@ double Operation<double>::EvalImpl(const ScriptingContext& context) const
                 double op1 = LHS()->Eval(context);
                 return std::pow(op1, op2);
             } catch (...) {
-                ErrorLogger() << "Error evaluating exponentiation ValueRef::Operation";
+                ErrorLogger() << "Error evaluating exponentiation focs::Operation";
                 return 0.0;
             }
             break;
@@ -2935,7 +2937,7 @@ int Operation<int>::EvalImpl(const ScriptingContext& context) const
                 double op1 = LHS()->Eval(context);
                 return static_cast<int>(std::pow(op1, op2));
             } catch (...) {
-                ErrorLogger() << "Error evaluating exponentiation ValueRef::Operation";
+                ErrorLogger() << "Error evaluating exponentiation focs::Operation";
                 return 0;
             }
             break;
@@ -3047,5 +3049,4 @@ int Operation<int>::EvalImpl(const ScriptingContext& context) const
 
     throw std::runtime_error("double ValueRef evaluated with an unknown or invalid OpType.");
     return 0;
-}
 }

@@ -37,9 +37,9 @@ namespace parse {
         detail::enum_rule<CaptureResult> rule;
     };
 
-    struct statistic_enum_grammar : public detail::enum_grammar<ValueRef::StatisticType> {
+    struct statistic_enum_grammar : public detail::enum_grammar<focs::StatisticType> {
         statistic_enum_grammar(const parse::lexer& tok);
-        detail::enum_rule<ValueRef::StatisticType> rule;
+        detail::enum_rule<focs::StatisticType> rule;
     };
 
     struct non_ship_part_meter_enum_grammar : public detail::enum_grammar<MeterType> {

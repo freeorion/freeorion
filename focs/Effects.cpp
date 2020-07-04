@@ -392,7 +392,7 @@ unsigned int NoOp::GetCheckSum() const {
 // SetMeter                                              //
 ///////////////////////////////////////////////////////////
 SetMeter::SetMeter(MeterType meter,
-                   std::unique_ptr<ValueRef::ValueRef<double>>&& value,
+                   std::unique_ptr<focs::ValueRef<double>>&& value,
                    boost::optional<std::string> accounting_label) :
     m_meter(meter),
     m_value(std::move(value))
@@ -485,7 +485,7 @@ void SetMeter::Execute(ScriptingContext& context, const TargetSet& targets) cons
     } else if (m_value->SimpleIncrement()) {
         // meter value is a consistent constant increment for each target, so handle with
         // deep inspection single ValueRef evaluation
-        auto op = dynamic_cast<ValueRef::Operation<double>*>(m_value.get());
+        auto op = dynamic_cast<focs::Operation<double>*>(m_value.get());
         if (!op) {
             ErrorLogger() << "SetMeter::Execute couldn't cast simple increment ValueRef to an Operation. Reverting to standard execute.";
             Effect::Execute(context, targets);
@@ -496,9 +496,9 @@ void SetMeter::Execute(ScriptingContext& context, const TargetSet& targets) cons
         // RHS should be target-invariant, so safe to evaluate once and use for
         // all target objects
         float increment = 0.0f;
-        if (op->GetOpType() == ValueRef::PLUS) {
+        if (op->GetOpType() == focs::PLUS) {
             increment = op->RHS()->Eval(context);
-        } else if (op->GetOpType() == ValueRef::MINUS) {
+        } else if (op->GetOpType() == focs::MINUS) {
             increment = -op->RHS()->Eval(context);
         } else {
             ErrorLogger() << "SetMeter::Execute got invalid increment optype (not PLUS or MINUS). Reverting to standard execute.";
@@ -590,8 +590,8 @@ unsigned int SetMeter::GetCheckSum() const {
 // SetShipPartMeter                                      //
 ///////////////////////////////////////////////////////////
 SetShipPartMeter::SetShipPartMeter(MeterType meter,
-                                   std::unique_ptr<ValueRef::ValueRef<std::string>>&& part_name,
-                                   std::unique_ptr<ValueRef::ValueRef<double>>&& value) :
+                                   std::unique_ptr<focs::ValueRef<std::string>>&& part_name,
+                                   std::unique_ptr<focs::ValueRef<double>>&& value) :
     m_part_name(std::move(part_name)),
     m_meter(meter),
     m_value(std::move(value))
@@ -686,7 +686,7 @@ void SetShipPartMeter::Execute(ScriptingContext& context, const TargetSet& targe
     } else if (m_value->SimpleIncrement()) {
         // meter value is a consistent constant increment for each target, so handle with
         // deep inspection single ValueRef evaluation
-        auto op = dynamic_cast<ValueRef::Operation<double>*>(m_value.get());
+        auto op = dynamic_cast<focs::Operation<double>*>(m_value.get());
         if (!op) {
             ErrorLogger() << "SetShipPartMeter::Execute couldn't cast simple increment ValueRef to an Operation. Reverting to standard execute.";
             Effect::Execute(context, targets);
@@ -697,9 +697,9 @@ void SetShipPartMeter::Execute(ScriptingContext& context, const TargetSet& targe
         // RHS should be target-invariant, so safe to evaluate once and use for
         // all target objects
         float increment = 0.0f;
-        if (op->GetOpType() == ValueRef::PLUS) {
+        if (op->GetOpType() == focs::PLUS) {
             increment = op->RHS()->Eval(context);
-        } else if (op->GetOpType() == ValueRef::MINUS) {
+        } else if (op->GetOpType() == focs::MINUS) {
             increment = -op->RHS()->Eval(context);
         } else {
             ErrorLogger() << "SetShipPartMeter::Execute got invalid increment optype (not PLUS or MINUS). Reverting to standard execute.";
@@ -768,14 +768,14 @@ unsigned int SetShipPartMeter::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // SetEmpireMeter                                        //
 ///////////////////////////////////////////////////////////
-SetEmpireMeter::SetEmpireMeter(std::string& meter, std::unique_ptr<ValueRef::ValueRef<double>>&& value) :
-    m_empire_id(std::make_unique<ValueRef::Variable<int>>(ValueRef::EFFECT_TARGET_REFERENCE, "Owner")),
+SetEmpireMeter::SetEmpireMeter(std::string& meter, std::unique_ptr<focs::ValueRef<double>>&& value) :
+    m_empire_id(std::make_unique<focs::Variable<int>>(focs::EFFECT_TARGET_REFERENCE, "Owner")),
     m_meter(std::move(meter)),
     m_value(std::move(value))
 {}
 
-SetEmpireMeter::SetEmpireMeter(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id, std::string& meter,
-                               std::unique_ptr<ValueRef::ValueRef<double>>&& value) :
+SetEmpireMeter::SetEmpireMeter(std::unique_ptr<focs::ValueRef<int>>&& empire_id, std::string& meter,
+                               std::unique_ptr<focs::ValueRef<double>>&& value) :
     m_empire_id(std::move(empire_id)),
     m_meter(std::move(meter)),
     m_value(std::move(value))
@@ -874,15 +874,15 @@ unsigned int SetEmpireMeter::GetCheckSum() const {
 // SetEmpireStockpile                                    //
 ///////////////////////////////////////////////////////////
 SetEmpireStockpile::SetEmpireStockpile(ResourceType stockpile,
-                                       std::unique_ptr<ValueRef::ValueRef<double>>&& value) :
-    m_empire_id(std::make_unique<ValueRef::Variable<int>>(ValueRef::EFFECT_TARGET_REFERENCE, "Owner")),
+                                       std::unique_ptr<focs::ValueRef<double>>&& value) :
+    m_empire_id(std::make_unique<focs::Variable<int>>(focs::EFFECT_TARGET_REFERENCE, "Owner")),
     m_stockpile(stockpile),
     m_value(std::move(value))
 {}
 
-SetEmpireStockpile::SetEmpireStockpile(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
+SetEmpireStockpile::SetEmpireStockpile(std::unique_ptr<focs::ValueRef<int>>&& empire_id,
                                        ResourceType stockpile,
-                                       std::unique_ptr<ValueRef::ValueRef<double>>&& value) :
+                                       std::unique_ptr<focs::ValueRef<double>>&& value) :
     m_empire_id(std::move(empire_id)),
     m_stockpile(stockpile),
     m_value(std::move(value))
@@ -936,10 +936,10 @@ unsigned int SetEmpireStockpile::GetCheckSum() const {
 // SetEmpireCapital                                      //
 ///////////////////////////////////////////////////////////
 SetEmpireCapital::SetEmpireCapital() :
-    m_empire_id(std::make_unique<ValueRef::Variable<int>>(ValueRef::EFFECT_TARGET_REFERENCE, "Owner"))
+    m_empire_id(std::make_unique<focs::Variable<int>>(focs::EFFECT_TARGET_REFERENCE, "Owner"))
 {}
 
-SetEmpireCapital::SetEmpireCapital(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id) :
+SetEmpireCapital::SetEmpireCapital(std::unique_ptr<focs::ValueRef<int>>&& empire_id) :
     m_empire_id(std::move(empire_id))
 {}
 
@@ -979,7 +979,7 @@ unsigned int SetEmpireCapital::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // SetPlanetType                                         //
 ///////////////////////////////////////////////////////////
-SetPlanetType::SetPlanetType(std::unique_ptr<ValueRef::ValueRef<PlanetType>>&& type) :
+SetPlanetType::SetPlanetType(std::unique_ptr<focs::ValueRef<PlanetType>>&& type) :
     m_type(std::move(type))
 {}
 
@@ -1020,7 +1020,7 @@ unsigned int SetPlanetType::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // SetPlanetSize                                         //
 ///////////////////////////////////////////////////////////
-SetPlanetSize::SetPlanetSize(std::unique_ptr<ValueRef::ValueRef<PlanetSize>>&& size) :
+SetPlanetSize::SetPlanetSize(std::unique_ptr<focs::ValueRef<PlanetSize>>&& size) :
     m_size(std::move(size))
 {}
 
@@ -1059,7 +1059,7 @@ unsigned int SetPlanetSize::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // SetSpecies                                            //
 ///////////////////////////////////////////////////////////
-SetSpecies::SetSpecies(std::unique_ptr<ValueRef::ValueRef<std::string>>&& species) :
+SetSpecies::SetSpecies(std::unique_ptr<focs::ValueRef<std::string>>&& species) :
     m_species_name(std::move(species))
 {}
 
@@ -1132,7 +1132,7 @@ unsigned int SetSpecies::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // SetOwner                                              //
 ///////////////////////////////////////////////////////////
-SetOwner::SetOwner(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id) :
+SetOwner::SetOwner(std::unique_ptr<focs::ValueRef<int>>&& empire_id) :
     m_empire_id(std::move(empire_id))
 {}
 
@@ -1196,9 +1196,9 @@ unsigned int SetOwner::GetCheckSum() const {
 // SetSpeciesEmpireOpinion                               //
 ///////////////////////////////////////////////////////////
 SetSpeciesEmpireOpinion::SetSpeciesEmpireOpinion(
-    std::unique_ptr<ValueRef::ValueRef<std::string>>&& species_name,
-    std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
-    std::unique_ptr<ValueRef::ValueRef<double>>&& opinion
+    std::unique_ptr<focs::ValueRef<std::string>>&& species_name,
+    std::unique_ptr<focs::ValueRef<int>>&& empire_id,
+    std::unique_ptr<focs::ValueRef<double>>&& opinion
 ) :
     m_species_name(std::move(species_name)),
     m_empire_id(std::move(empire_id)),
@@ -1254,9 +1254,9 @@ unsigned int SetSpeciesEmpireOpinion::GetCheckSum() const {
 // SetSpeciesSpeciesOpinion                              //
 ///////////////////////////////////////////////////////////
 SetSpeciesSpeciesOpinion::SetSpeciesSpeciesOpinion(
-    std::unique_ptr<ValueRef::ValueRef<std::string>>&& opinionated_species_name,
-    std::unique_ptr<ValueRef::ValueRef<std::string>>&& rated_species_name,
-    std::unique_ptr<ValueRef::ValueRef<double>>&& opinion
+    std::unique_ptr<focs::ValueRef<std::string>>&& opinionated_species_name,
+    std::unique_ptr<focs::ValueRef<std::string>>&& rated_species_name,
+    std::unique_ptr<focs::ValueRef<double>>&& opinion
 ) :
     m_opinionated_species_name(std::move(opinionated_species_name)),
     m_rated_species_name(std::move(rated_species_name)),
@@ -1311,9 +1311,9 @@ unsigned int SetSpeciesSpeciesOpinion::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // CreatePlanet                                          //
 ///////////////////////////////////////////////////////////
-CreatePlanet::CreatePlanet(std::unique_ptr<ValueRef::ValueRef<PlanetType>>&& type,
-                           std::unique_ptr<ValueRef::ValueRef<PlanetSize>>&& size,
-                           std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
+CreatePlanet::CreatePlanet(std::unique_ptr<focs::ValueRef<PlanetType>>&& type,
+                           std::unique_ptr<focs::ValueRef<PlanetSize>>&& size,
+                           std::unique_ptr<focs::ValueRef<std::string>>&& name,
                            std::vector<std::unique_ptr<Effect>>&& effects_to_apply_after) :
     m_type(std::move(type)),
     m_size(std::move(size)),
@@ -1423,8 +1423,8 @@ unsigned int CreatePlanet::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // CreateBuilding                                        //
 ///////////////////////////////////////////////////////////
-CreateBuilding::CreateBuilding(std::unique_ptr<ValueRef::ValueRef<std::string>>&& building_type_name,
-                               std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
+CreateBuilding::CreateBuilding(std::unique_ptr<focs::ValueRef<std::string>>&& building_type_name,
+                               std::unique_ptr<focs::ValueRef<std::string>>&& name,
                                std::vector<std::unique_ptr<Effect>>&& effects_to_apply_after) :
     m_building_type_name(std::move(building_type_name)),
     m_name(std::move(name)),
@@ -1526,10 +1526,10 @@ unsigned int CreateBuilding::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // CreateShip                                            //
 ///////////////////////////////////////////////////////////
-CreateShip::CreateShip(std::unique_ptr<ValueRef::ValueRef<std::string>>&& predefined_ship_design_name,
-                       std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
-                       std::unique_ptr<ValueRef::ValueRef<std::string>>&& species_name,
-                       std::unique_ptr<ValueRef::ValueRef<std::string>>&& ship_name,
+CreateShip::CreateShip(std::unique_ptr<focs::ValueRef<std::string>>&& predefined_ship_design_name,
+                       std::unique_ptr<focs::ValueRef<int>>&& empire_id,
+                       std::unique_ptr<focs::ValueRef<std::string>>&& species_name,
+                       std::unique_ptr<focs::ValueRef<std::string>>&& ship_name,
                        std::vector<std::unique_ptr<Effect>>&& effects_to_apply_after) :
     m_design_name(std::move(predefined_ship_design_name)),
     m_empire_id(std::move(empire_id)),
@@ -1538,10 +1538,10 @@ CreateShip::CreateShip(std::unique_ptr<ValueRef::ValueRef<std::string>>&& predef
     m_effects_to_apply_after(std::move(effects_to_apply_after))
 {}
 
-CreateShip::CreateShip(std::unique_ptr<ValueRef::ValueRef<int>>&& ship_design_id,
-                       std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
-                       std::unique_ptr<ValueRef::ValueRef<std::string>>&& species_name,
-                       std::unique_ptr<ValueRef::ValueRef<std::string>>&& ship_name,
+CreateShip::CreateShip(std::unique_ptr<focs::ValueRef<int>>&& ship_design_id,
+                       std::unique_ptr<focs::ValueRef<int>>&& empire_id,
+                       std::unique_ptr<focs::ValueRef<std::string>>&& species_name,
+                       std::unique_ptr<focs::ValueRef<std::string>>&& ship_name,
                        std::vector<std::unique_ptr<Effect>>&& effects_to_apply_after) :
     m_design_id(std::move(ship_design_id)),
     m_empire_id(std::move(empire_id)),
@@ -1704,9 +1704,9 @@ unsigned int CreateShip::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // CreateField                                           //
 ///////////////////////////////////////////////////////////
-CreateField::CreateField(std::unique_ptr<ValueRef::ValueRef<std::string>>&& field_type_name,
-                         std::unique_ptr<ValueRef::ValueRef<double>>&& size,
-                         std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
+CreateField::CreateField(std::unique_ptr<focs::ValueRef<std::string>>&& field_type_name,
+                         std::unique_ptr<focs::ValueRef<double>>&& size,
+                         std::unique_ptr<focs::ValueRef<std::string>>&& name,
                          std::vector<std::unique_ptr<Effect>>&& effects_to_apply_after) :
     m_field_type_name(std::move(field_type_name)),
     m_size(std::move(size)),
@@ -1714,11 +1714,11 @@ CreateField::CreateField(std::unique_ptr<ValueRef::ValueRef<std::string>>&& fiel
     m_effects_to_apply_after(std::move(effects_to_apply_after))
 {}
 
-CreateField::CreateField(std::unique_ptr<ValueRef::ValueRef<std::string>>&& field_type_name,
-                         std::unique_ptr<ValueRef::ValueRef<double>>&& x,
-                         std::unique_ptr<ValueRef::ValueRef<double>>&& y,
-                         std::unique_ptr<ValueRef::ValueRef<double>>&& size,
-                         std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
+CreateField::CreateField(std::unique_ptr<focs::ValueRef<std::string>>&& field_type_name,
+                         std::unique_ptr<focs::ValueRef<double>>&& x,
+                         std::unique_ptr<focs::ValueRef<double>>&& y,
+                         std::unique_ptr<focs::ValueRef<double>>&& size,
+                         std::unique_ptr<focs::ValueRef<std::string>>&& name,
                          std::vector<std::unique_ptr<Effect>>&& effects_to_apply_after) :
     m_field_type_name(std::move(field_type_name)),
     m_x(std::move(x)),
@@ -1852,10 +1852,10 @@ unsigned int CreateField::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // CreateSystem                                          //
 ///////////////////////////////////////////////////////////
-CreateSystem::CreateSystem(std::unique_ptr<ValueRef::ValueRef< ::StarType>>&& type,
-                           std::unique_ptr<ValueRef::ValueRef<double>>&& x,
-                           std::unique_ptr<ValueRef::ValueRef<double>>&& y,
-                           std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
+CreateSystem::CreateSystem(std::unique_ptr<focs::ValueRef< ::StarType>>&& type,
+                           std::unique_ptr<focs::ValueRef<double>>&& x,
+                           std::unique_ptr<focs::ValueRef<double>>&& y,
+                           std::unique_ptr<focs::ValueRef<std::string>>&& name,
                            std::vector<std::unique_ptr<Effect>>&& effects_to_apply_after) :
     m_type(std::move(type)),
     m_x(std::move(x)),
@@ -1866,9 +1866,9 @@ CreateSystem::CreateSystem(std::unique_ptr<ValueRef::ValueRef< ::StarType>>&& ty
     DebugLogger() << "Effect System created 1";
 }
 
-CreateSystem::CreateSystem(std::unique_ptr<ValueRef::ValueRef<double>>&& x,
-                           std::unique_ptr<ValueRef::ValueRef<double>>&& y,
-                           std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
+CreateSystem::CreateSystem(std::unique_ptr<focs::ValueRef<double>>&& x,
+                           std::unique_ptr<focs::ValueRef<double>>&& y,
+                           std::unique_ptr<focs::ValueRef<std::string>>&& name,
                            std::vector<std::unique_ptr<Effect>>&& effects_to_apply_after) :
     m_x(std::move(x)),
     m_y(std::move(y)),
@@ -2003,12 +2003,12 @@ unsigned int Destroy::GetCheckSum() const {
 // AddSpecial                                            //
 ///////////////////////////////////////////////////////////
 AddSpecial::AddSpecial(std::string& name, float capacity) :
-    m_name(std::make_unique<ValueRef::Constant<std::string>>(std::move(name))),
-    m_capacity(std::make_unique<ValueRef::Constant<double>>(capacity))
+    m_name(std::make_unique<focs::Constant<std::string>>(std::move(name))),
+    m_capacity(std::make_unique<focs::Constant<double>>(capacity))
 {}
 
-AddSpecial::AddSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
-                       std::unique_ptr<ValueRef::ValueRef<double>>&& capacity) :
+AddSpecial::AddSpecial(std::unique_ptr<focs::ValueRef<std::string>>&& name,
+                       std::unique_ptr<focs::ValueRef<double>>&& capacity) :
     m_name(std::move(name)),
     m_capacity(std::move(capacity))
 {}
@@ -2055,10 +2055,10 @@ unsigned int AddSpecial::GetCheckSum() const {
 // RemoveSpecial                                         //
 ///////////////////////////////////////////////////////////
 RemoveSpecial::RemoveSpecial(std::string& name) :
-    m_name(std::make_unique<ValueRef::Constant<std::string>>(std::move(name)))
+    m_name(std::make_unique<focs::Constant<std::string>>(std::move(name)))
 {}
 
-RemoveSpecial::RemoveSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
+RemoveSpecial::RemoveSpecial(std::unique_ptr<focs::ValueRef<std::string>>&& name) :
     m_name(std::move(name))
 {}
 
@@ -2229,7 +2229,7 @@ unsigned int RemoveStarlanes::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // SetStarType                                           //
 ///////////////////////////////////////////////////////////
-SetStarType::SetStarType(std::unique_ptr<ValueRef::ValueRef<StarType>>&& type) :
+SetStarType::SetStarType(std::unique_ptr<focs::ValueRef<StarType>>&& type) :
     m_type(std::move(type))
 {}
 
@@ -2557,15 +2557,15 @@ unsigned int MoveTo::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // MoveInOrbit                                           //
 ///////////////////////////////////////////////////////////
-MoveInOrbit::MoveInOrbit(std::unique_ptr<ValueRef::ValueRef<double>>&& speed,
+MoveInOrbit::MoveInOrbit(std::unique_ptr<focs::ValueRef<double>>&& speed,
                          std::unique_ptr<Condition::Condition>&& focal_point_condition) :
     m_speed(std::move(speed)),
     m_focal_point_condition(std::move(focal_point_condition))
 {}
 
-MoveInOrbit::MoveInOrbit(std::unique_ptr<ValueRef::ValueRef<double>>&& speed,
-                         std::unique_ptr<ValueRef::ValueRef<double>>&& focus_x/* = 0*/,
-                         std::unique_ptr<ValueRef::ValueRef<double>>&& focus_y/* = 0*/) :
+MoveInOrbit::MoveInOrbit(std::unique_ptr<focs::ValueRef<double>>&& speed,
+                         std::unique_ptr<focs::ValueRef<double>>&& focus_x/* = 0*/,
+                         std::unique_ptr<focs::ValueRef<double>>&& focus_y/* = 0*/) :
     m_speed(std::move(speed)),
     m_focus_x(std::move(focus_x)),
     m_focus_y(std::move(focus_y))
@@ -2701,15 +2701,15 @@ unsigned int MoveInOrbit::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // MoveTowards                                           //
 ///////////////////////////////////////////////////////////
-MoveTowards::MoveTowards(std::unique_ptr<ValueRef::ValueRef<double>>&& speed,
+MoveTowards::MoveTowards(std::unique_ptr<focs::ValueRef<double>>&& speed,
                          std::unique_ptr<Condition::Condition>&& dest_condition) :
     m_speed(std::move(speed)),
     m_dest_condition(std::move(dest_condition))
 {}
 
-MoveTowards::MoveTowards(std::unique_ptr<ValueRef::ValueRef<double>>&& speed,
-                         std::unique_ptr<ValueRef::ValueRef<double>>&& dest_x/* = 0*/,
-                         std::unique_ptr<ValueRef::ValueRef<double>>&& dest_y/* = 0*/) :
+MoveTowards::MoveTowards(std::unique_ptr<focs::ValueRef<double>>&& speed,
+                         std::unique_ptr<focs::ValueRef<double>>&& dest_x/* = 0*/,
+                         std::unique_ptr<focs::ValueRef<double>>&& dest_y/* = 0*/) :
     m_speed(std::move(speed)),
     m_dest_x(std::move(dest_x)),
     m_dest_y(std::move(dest_y))
@@ -3010,15 +3010,15 @@ unsigned int Victory::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // SetEmpireTechProgress                                 //
 ///////////////////////////////////////////////////////////
-SetEmpireTechProgress::SetEmpireTechProgress(std::unique_ptr<ValueRef::ValueRef<std::string>>&& tech_name,
-                                             std::unique_ptr<ValueRef::ValueRef<double>>&& research_progress,
-                                             std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id /*= nullptr*/) :
+SetEmpireTechProgress::SetEmpireTechProgress(std::unique_ptr<focs::ValueRef<std::string>>&& tech_name,
+                                             std::unique_ptr<focs::ValueRef<double>>&& research_progress,
+                                             std::unique_ptr<focs::ValueRef<int>>&& empire_id /*= nullptr*/) :
     m_tech_name(std::move(tech_name)),
     m_research_progress(std::move(research_progress)),
     m_empire_id(
         empire_id
         ? std::move(empire_id)
-        : std::make_unique<ValueRef::Variable<int>>(ValueRef::EFFECT_TARGET_REFERENCE, "Owner"))
+        : std::make_unique<focs::Variable<int>>(focs::EFFECT_TARGET_REFERENCE, "Owner"))
 {}
 
 void SetEmpireTechProgress::Execute(ScriptingContext& context) const {
@@ -3081,13 +3081,13 @@ unsigned int SetEmpireTechProgress::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // GiveEmpireTech                                        //
 ///////////////////////////////////////////////////////////
-GiveEmpireTech::GiveEmpireTech(std::unique_ptr<ValueRef::ValueRef<std::string>>&& tech_name,
-                               std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id) :
+GiveEmpireTech::GiveEmpireTech(std::unique_ptr<focs::ValueRef<std::string>>&& tech_name,
+                               std::unique_ptr<focs::ValueRef<int>>&& empire_id) :
     m_tech_name(std::move(tech_name)),
     m_empire_id(std::move(empire_id))
 {
     if (!m_empire_id)
-        m_empire_id.reset(new ValueRef::Variable<int>(ValueRef::EFFECT_TARGET_REFERENCE, "Owner"));
+        m_empire_id.reset(new focs::Variable<int>(focs::EFFECT_TARGET_REFERENCE, "Owner"));
 }
 
 void GiveEmpireTech::Execute(ScriptingContext& context) const {
@@ -3147,7 +3147,7 @@ unsigned int GiveEmpireTech::GetCheckSum() const {
 GenerateSitRepMessage::GenerateSitRepMessage(std::string& message_string,
                                              std::string& icon,
                                              MessageParams&& message_parameters,
-                                             std::unique_ptr<ValueRef::ValueRef<int>>&& recipient_empire_id,
+                                             std::unique_ptr<focs::ValueRef<int>>&& recipient_empire_id,
                                              EmpireAffiliationType affiliation,
                                              std::string label,
                                              bool stringtable_lookup) :
@@ -3381,11 +3381,11 @@ unsigned int GenerateSitRepMessage::GetCheckSum() const {
     return retval;
 }
 
-std::vector<std::pair<std::string, ValueRef::ValueRef<std::string>*>>
+std::vector<std::pair<std::string, focs::ValueRef<std::string>*>>
 GenerateSitRepMessage::MessageParameters() const {
-    std::vector<std::pair<std::string, ValueRef::ValueRef<std::string>*>> retval(m_message_parameters.size());
+    std::vector<std::pair<std::string, focs::ValueRef<std::string>*>> retval(m_message_parameters.size());
     std::transform(m_message_parameters.begin(), m_message_parameters.end(), retval.begin(),
-                   [](const std::pair<std::string, std::unique_ptr<ValueRef::ValueRef<std::string>>>& xx) {
+                   [](const std::pair<std::string, std::unique_ptr<focs::ValueRef<std::string>>>& xx) {
                        return std::make_pair(xx.first, xx.second.get());
                    });
     return retval;
@@ -3395,12 +3395,12 @@ GenerateSitRepMessage::MessageParameters() const {
 // SetOverlayTexture                                     //
 ///////////////////////////////////////////////////////////
 SetOverlayTexture::SetOverlayTexture(std::string& texture,
-                                     std::unique_ptr<ValueRef::ValueRef<double>>&& size) :
+                                     std::unique_ptr<focs::ValueRef<double>>&& size) :
     m_texture(std::move(texture)),
     m_size(std::move(size))
 {}
 
-SetOverlayTexture::SetOverlayTexture(std::string& texture, ValueRef::ValueRef<double>* size) :
+SetOverlayTexture::SetOverlayTexture(std::string& texture, focs::ValueRef<double>* size) :
     m_texture(std::move(texture)),
     m_size(size)
 {}
@@ -3472,9 +3472,9 @@ unsigned int SetTexture::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // SetVisibility                                         //
 ///////////////////////////////////////////////////////////
-SetVisibility::SetVisibility(std::unique_ptr<ValueRef::ValueRef<Visibility>> vis,
+SetVisibility::SetVisibility(std::unique_ptr<focs::ValueRef<Visibility>> vis,
                              EmpireAffiliationType affiliation,
-                             std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
+                             std::unique_ptr<focs::ValueRef<int>>&& empire_id,
                              std::unique_ptr<Condition::Condition>&& of_objects) :
     m_vis(std::move(vis)),
     m_empire_id(std::move(empire_id)),

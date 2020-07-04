@@ -159,8 +159,8 @@ private:
     float       m_stealth = 0.0f;
     float       m_structure = 0.0f;
 
-    std::unique_ptr<ValueRef::ValueRef<double>>         m_production_cost;
-    std::unique_ptr<ValueRef::ValueRef<int>>            m_production_time;
+    std::unique_ptr<focs::ValueRef<double>>         m_production_cost;
+    std::unique_ptr<focs::ValueRef<int>>            m_production_time;
     bool                                                m_producible = false;
     std::vector<Slot>                                   m_slots;
     std::set<std::string>                               m_tags;

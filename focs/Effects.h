@@ -3,17 +3,13 @@
 
 
 #include <boost/optional/optional.hpp>
+#include "focs.hpp"
 #include "Effect.h"
 #include "../util/Export.h"
 
 
 namespace Condition {
     typedef std::vector<std::shared_ptr<const UniverseObject>> ObjectSet;
-}
-
-namespace ValueRef {
-    template <typename T>
-    struct ValueRef;
 }
 
 namespace Effect {
@@ -36,7 +32,7 @@ public:
 class FO_COMMON_API SetMeter final : public Effect {
 public:
     SetMeter(MeterType meter,
-             std::unique_ptr<ValueRef::ValueRef<double>>&& value,
+             std::unique_ptr<focs::ValueRef<double>>&& value,
              boost::optional<std::string> accounting_label = boost::none);
 
     void Execute(ScriptingContext& context) const override;
@@ -61,7 +57,7 @@ public:
 
 private:
     MeterType m_meter;
-    std::unique_ptr<ValueRef::ValueRef<double>> m_value;
+    std::unique_ptr<focs::ValueRef<double>> m_value;
     std::string m_accounting_label;
 };
 
@@ -76,8 +72,8 @@ public:
     /** Affects the \a meter_type meter that belongs to part(s) named \a
         part_name. */
     SetShipPartMeter(MeterType meter_type,
-                     std::unique_ptr<ValueRef::ValueRef<std::string>>&& part_name,
-                     std::unique_ptr<ValueRef::ValueRef<double>>&& value);
+                     std::unique_ptr<focs::ValueRef<std::string>>&& part_name,
+                     std::unique_ptr<focs::ValueRef<double>>&& value);
 
     void Execute(ScriptingContext& context) const override;
     void Execute(ScriptingContext& context, const TargetSet& targets) const override;
@@ -93,14 +89,14 @@ public:
     std::string     Dump(unsigned short ntabs = 0) const override;
     bool            IsMeterEffect() const override { return true; }
     void            SetTopLevelContent(const std::string& content_name) override;
-    const           ValueRef::ValueRef<std::string>* GetPartName() const { return m_part_name.get(); }
+    const           focs::ValueRef<std::string>* GetPartName() const { return m_part_name.get(); }
     MeterType       GetMeterType() const { return m_meter; }
     unsigned int    GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRef<std::string>>    m_part_name;
+    std::unique_ptr<focs::ValueRef<std::string>>    m_part_name;
     MeterType                                           m_meter;
-    std::unique_ptr<ValueRef::ValueRef<double>>         m_value;
+    std::unique_ptr<focs::ValueRef<double>>         m_value;
 };
 
 /** Sets the indicated meter on the empire with the indicated id to the
@@ -108,10 +104,10 @@ private:
   * does nothing. */
 class FO_COMMON_API SetEmpireMeter final : public Effect {
 public:
-    SetEmpireMeter(std::string& meter, std::unique_ptr<ValueRef::ValueRef<double>>&& value);
+    SetEmpireMeter(std::string& meter, std::unique_ptr<focs::ValueRef<double>>&& value);
 
-    SetEmpireMeter(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id, std::string& meter,
-                   std::unique_ptr<ValueRef::ValueRef<double>>&& value);
+    SetEmpireMeter(std::unique_ptr<focs::ValueRef<int>>&& empire_id, std::string& meter,
+                   std::unique_ptr<focs::ValueRef<double>>&& value);
 
     void Execute(ScriptingContext& context) const override;
     void Execute(ScriptingContext& context, const TargetSet& targets) const override;
@@ -131,9 +127,9 @@ public:
     unsigned int    GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRef<int>>    m_empire_id;
+    std::unique_ptr<focs::ValueRef<int>>    m_empire_id;
     std::string                                 m_meter;
-    std::unique_ptr<ValueRef::ValueRef<double>> m_value;
+    std::unique_ptr<focs::ValueRef<double>> m_value;
 };
 
 /** Sets the empire stockpile of the target's owning empire to \a value.  If
@@ -141,10 +137,10 @@ private:
 class FO_COMMON_API SetEmpireStockpile final : public Effect {
 public:
     SetEmpireStockpile(ResourceType stockpile,
-                       std::unique_ptr<ValueRef::ValueRef<double>>&& value);
-    SetEmpireStockpile(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
+                       std::unique_ptr<focs::ValueRef<double>>&& value);
+    SetEmpireStockpile(std::unique_ptr<focs::ValueRef<int>>&& empire_id,
                        ResourceType stockpile,
-                       std::unique_ptr<ValueRef::ValueRef<double>>&& value);
+                       std::unique_ptr<focs::ValueRef<double>>&& value);
 
     void Execute(ScriptingContext& context) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
@@ -152,9 +148,9 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRef<int>>    m_empire_id;
+    std::unique_ptr<focs::ValueRef<int>>    m_empire_id;
     ResourceType                                m_stockpile;
-    std::unique_ptr<ValueRef::ValueRef<double>> m_value;
+    std::unique_ptr<focs::ValueRef<double>> m_value;
 };
 
 /** Makes the target planet the capital of its owner's empire.  If the target
@@ -163,7 +159,7 @@ private:
 class FO_COMMON_API SetEmpireCapital final : public Effect {
 public:
     explicit SetEmpireCapital();
-    explicit SetEmpireCapital(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id);
+    explicit SetEmpireCapital(std::unique_ptr<focs::ValueRef<int>>&& empire_id);
 
     void            Execute(ScriptingContext& context) const override;
     std::string     Dump(unsigned short ntabs = 0) const override;
@@ -171,7 +167,7 @@ public:
     unsigned int    GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRef<int>> m_empire_id;
+    std::unique_ptr<focs::ValueRef<int>> m_empire_id;
 };
 
 /** Sets the planet type of the target to \a type.  This has no effect on non-Planet targets.  Note that changing the
@@ -180,7 +176,7 @@ private:
     SZ_GASGIANT, respectively. */
 class FO_COMMON_API SetPlanetType final : public Effect {
 public:
-    explicit SetPlanetType(std::unique_ptr<ValueRef::ValueRef<PlanetType>>&& type);
+    explicit SetPlanetType(std::unique_ptr<focs::ValueRef<PlanetType>>&& type);
 
     void Execute(ScriptingContext& context) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
@@ -188,7 +184,7 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRef<PlanetType>> m_type;
+    std::unique_ptr<focs::ValueRef<PlanetType>> m_type;
 };
 
 /** Sets the planet size of the target to \a size.  This has no effect on non-
@@ -198,7 +194,7 @@ private:
   * or PT_GASGIANT, respectively. */
 class FO_COMMON_API SetPlanetSize final : public Effect {
 public:
-    explicit SetPlanetSize(std::unique_ptr<ValueRef::ValueRef<PlanetSize>>&& size);
+    explicit SetPlanetSize(std::unique_ptr<focs::ValueRef<PlanetSize>>&& size);
 
     void Execute(ScriptingContext& context) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
@@ -206,14 +202,14 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRef<PlanetSize>> m_size;
+    std::unique_ptr<focs::ValueRef<PlanetSize>> m_size;
 };
 
 /** Sets the species on the target to \a species_name.  This works on planets
   * and ships, but has no effect on other objects. */
 class FO_COMMON_API SetSpecies final : public Effect {
 public:
-    explicit SetSpecies(std::unique_ptr<ValueRef::ValueRef<std::string>>&& species);
+    explicit SetSpecies(std::unique_ptr<focs::ValueRef<std::string>>&& species);
 
     void Execute(ScriptingContext& context) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
@@ -221,14 +217,14 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRef<std::string>> m_species_name;
+    std::unique_ptr<focs::ValueRef<std::string>> m_species_name;
 };
 
 /** Sets empire \a empire_id as the owner of the target.  This has no effect if
   * \a empire_id was already the owner of the target object. */
 class FO_COMMON_API SetOwner final : public Effect {
 public:
-    explicit SetOwner(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id);
+    explicit SetOwner(std::unique_ptr<focs::ValueRef<int>>&& empire_id);
 
     void Execute(ScriptingContext& context) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
@@ -236,16 +232,16 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRef<int>> m_empire_id;
+    std::unique_ptr<focs::ValueRef<int>> m_empire_id;
 };
 
 /** Sets the opinion of Species \a species for empire with id \a empire_id to
   * \a opinion */
 class FO_COMMON_API SetSpeciesEmpireOpinion final : public Effect {
 public:
-    SetSpeciesEmpireOpinion(std::unique_ptr<ValueRef::ValueRef<std::string>>&& species_name,
-                            std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
-                            std::unique_ptr<ValueRef::ValueRef<double>>&& opinion);
+    SetSpeciesEmpireOpinion(std::unique_ptr<focs::ValueRef<std::string>>&& species_name,
+                            std::unique_ptr<focs::ValueRef<int>>&& empire_id,
+                            std::unique_ptr<focs::ValueRef<double>>&& opinion);
 
     void Execute(ScriptingContext& context) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
@@ -253,18 +249,18 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRef<std::string>>    m_species_name;
-    std::unique_ptr<ValueRef::ValueRef<int>>            m_empire_id;
-    std::unique_ptr<ValueRef::ValueRef<double>>         m_opinion;
+    std::unique_ptr<focs::ValueRef<std::string>>    m_species_name;
+    std::unique_ptr<focs::ValueRef<int>>            m_empire_id;
+    std::unique_ptr<focs::ValueRef<double>>         m_opinion;
 };
 
 /** Sets the opinion of Species \a opinionated_species for other species
   * \a rated_species to \a opinion */
 class FO_COMMON_API SetSpeciesSpeciesOpinion final : public Effect {
 public:
-    SetSpeciesSpeciesOpinion(std::unique_ptr<ValueRef::ValueRef<std::string>>&& opinionated_species_name,
-                             std::unique_ptr<ValueRef::ValueRef<std::string>>&& rated_species_name,
-                             std::unique_ptr<ValueRef::ValueRef<double>>&& opinion);
+    SetSpeciesSpeciesOpinion(std::unique_ptr<focs::ValueRef<std::string>>&& opinionated_species_name,
+                             std::unique_ptr<focs::ValueRef<std::string>>&& rated_species_name,
+                             std::unique_ptr<focs::ValueRef<double>>&& opinion);
 
     void Execute(ScriptingContext& context) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
@@ -272,18 +268,18 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRef<std::string>>    m_opinionated_species_name;
-    std::unique_ptr<ValueRef::ValueRef<std::string>>    m_rated_species_name;
-    std::unique_ptr<ValueRef::ValueRef<double>>         m_opinion;
+    std::unique_ptr<focs::ValueRef<std::string>>    m_opinionated_species_name;
+    std::unique_ptr<focs::ValueRef<std::string>>    m_rated_species_name;
+    std::unique_ptr<focs::ValueRef<double>>         m_opinion;
 };
 
 /** Creates a new Planet with specified \a type and \a size at the system with
   * specified \a location_id */
 class FO_COMMON_API CreatePlanet final : public Effect {
 public:
-    CreatePlanet(std::unique_ptr<ValueRef::ValueRef<PlanetType>>&& type,
-                 std::unique_ptr<ValueRef::ValueRef<PlanetSize>>&& size,
-                 std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
+    CreatePlanet(std::unique_ptr<focs::ValueRef<PlanetType>>&& type,
+                 std::unique_ptr<focs::ValueRef<PlanetSize>>&& size,
+                 std::unique_ptr<focs::ValueRef<std::string>>&& name,
                  std::vector<std::unique_ptr<Effect>>&& effects_to_apply_after);
 
     void Execute(ScriptingContext& context) const override;
@@ -292,17 +288,17 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRef<PlanetType>>     m_type;
-    std::unique_ptr<ValueRef::ValueRef<PlanetSize>>     m_size;
-    std::unique_ptr<ValueRef::ValueRef<std::string>>    m_name;
+    std::unique_ptr<focs::ValueRef<PlanetType>>     m_type;
+    std::unique_ptr<focs::ValueRef<PlanetSize>>     m_size;
+    std::unique_ptr<focs::ValueRef<std::string>>    m_name;
     std::vector<std::unique_ptr<Effect>>                m_effects_to_apply_after;
 };
 
 /** Creates a new Building with specified \a type on the \a target Planet. */
 class FO_COMMON_API CreateBuilding final : public Effect {
 public:
-    CreateBuilding(std::unique_ptr<ValueRef::ValueRef<std::string>>&& building_type_name,
-                   std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
+    CreateBuilding(std::unique_ptr<focs::ValueRef<std::string>>&& building_type_name,
+                   std::unique_ptr<focs::ValueRef<std::string>>&& name,
                    std::vector<std::unique_ptr<Effect>>&& effects_to_apply_after);
 
     void Execute(ScriptingContext& context) const override;
@@ -311,8 +307,8 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRef<std::string>>    m_building_type_name;
-    std::unique_ptr<ValueRef::ValueRef<std::string>>    m_name;
+    std::unique_ptr<focs::ValueRef<std::string>>    m_building_type_name;
+    std::unique_ptr<focs::ValueRef<std::string>>    m_name;
     std::vector<std::unique_ptr<Effect>>                m_effects_to_apply_after;
 };
 
@@ -321,16 +317,16 @@ private:
   * empire with the specified \a empire_id */
 class FO_COMMON_API CreateShip final : public Effect {
 public:
-    CreateShip(std::unique_ptr<ValueRef::ValueRef<std::string>>&& predefined_ship_design_name,
-               std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
-               std::unique_ptr<ValueRef::ValueRef<std::string>>&& species_name,
-               std::unique_ptr<ValueRef::ValueRef<std::string>>&& ship_name,
+    CreateShip(std::unique_ptr<focs::ValueRef<std::string>>&& predefined_ship_design_name,
+               std::unique_ptr<focs::ValueRef<int>>&& empire_id,
+               std::unique_ptr<focs::ValueRef<std::string>>&& species_name,
+               std::unique_ptr<focs::ValueRef<std::string>>&& ship_name,
                std::vector<std::unique_ptr<Effect>>&& effects_to_apply_after);
 
-    CreateShip(std::unique_ptr<ValueRef::ValueRef<int>>&& ship_design_id,
-               std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
-               std::unique_ptr<ValueRef::ValueRef<std::string>>&& species_name,
-               std::unique_ptr<ValueRef::ValueRef<std::string>>&& ship_name,
+    CreateShip(std::unique_ptr<focs::ValueRef<int>>&& ship_design_id,
+               std::unique_ptr<focs::ValueRef<int>>&& empire_id,
+               std::unique_ptr<focs::ValueRef<std::string>>&& species_name,
+               std::unique_ptr<focs::ValueRef<std::string>>&& ship_name,
                std::vector<std::unique_ptr<Effect>>&& effects_to_apply_after);
 
     void Execute(ScriptingContext& context) const override;
@@ -339,11 +335,11 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRef<std::string>>    m_design_name;
-    std::unique_ptr<ValueRef::ValueRef<int>>            m_design_id;
-    std::unique_ptr<ValueRef::ValueRef<int>>            m_empire_id;
-    std::unique_ptr<ValueRef::ValueRef<std::string>>    m_species_name;
-    std::unique_ptr<ValueRef::ValueRef<std::string>>    m_name;
+    std::unique_ptr<focs::ValueRef<std::string>>    m_design_name;
+    std::unique_ptr<focs::ValueRef<int>>            m_design_id;
+    std::unique_ptr<focs::ValueRef<int>>            m_empire_id;
+    std::unique_ptr<focs::ValueRef<std::string>>    m_species_name;
+    std::unique_ptr<focs::ValueRef<std::string>>    m_name;
     std::vector<std::unique_ptr<Effect>>                m_effects_to_apply_after;
 };
 
@@ -351,16 +347,16 @@ private:
   * of the specified \a size. */
 class FO_COMMON_API CreateField final : public Effect {
 public:
-    CreateField(std::unique_ptr<ValueRef::ValueRef<std::string>>&& field_type_name,
-                std::unique_ptr<ValueRef::ValueRef<double>>&& size,
-                std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
+    CreateField(std::unique_ptr<focs::ValueRef<std::string>>&& field_type_name,
+                std::unique_ptr<focs::ValueRef<double>>&& size,
+                std::unique_ptr<focs::ValueRef<std::string>>&& name,
                 std::vector<std::unique_ptr<Effect>>&& effects_to_apply_after);
 
-    CreateField(std::unique_ptr<ValueRef::ValueRef<std::string>>&& field_type_name,
-                std::unique_ptr<ValueRef::ValueRef<double>>&& x,
-                std::unique_ptr<ValueRef::ValueRef<double>>&& y,
-                std::unique_ptr<ValueRef::ValueRef<double>>&& size,
-                std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
+    CreateField(std::unique_ptr<focs::ValueRef<std::string>>&& field_type_name,
+                std::unique_ptr<focs::ValueRef<double>>&& x,
+                std::unique_ptr<focs::ValueRef<double>>&& y,
+                std::unique_ptr<focs::ValueRef<double>>&& size,
+                std::unique_ptr<focs::ValueRef<std::string>>&& name,
                 std::vector<std::unique_ptr<Effect>>&& effects_to_apply_after);
 
     void Execute(ScriptingContext& context) const override;
@@ -369,11 +365,11 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRef<std::string>>    m_field_type_name;
-    std::unique_ptr<ValueRef::ValueRef<double>>         m_x;
-    std::unique_ptr<ValueRef::ValueRef<double>>         m_y;
-    std::unique_ptr<ValueRef::ValueRef<double>>         m_size;
-    std::unique_ptr<ValueRef::ValueRef<std::string>>    m_name;
+    std::unique_ptr<focs::ValueRef<std::string>>    m_field_type_name;
+    std::unique_ptr<focs::ValueRef<double>>         m_x;
+    std::unique_ptr<focs::ValueRef<double>>         m_y;
+    std::unique_ptr<focs::ValueRef<double>>         m_size;
+    std::unique_ptr<focs::ValueRef<std::string>>    m_name;
     std::vector<std::unique_ptr<Effect>>                m_effects_to_apply_after;
 };
 
@@ -381,15 +377,15 @@ private:
   * location. */
 class FO_COMMON_API CreateSystem final : public Effect {
 public:
-    CreateSystem(std::unique_ptr<ValueRef::ValueRef< ::StarType>>&& type,
-                 std::unique_ptr<ValueRef::ValueRef<double>>&& x,
-                 std::unique_ptr<ValueRef::ValueRef<double>>&& y,
-                 std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
+    CreateSystem(std::unique_ptr<focs::ValueRef< ::StarType>>&& type,
+                 std::unique_ptr<focs::ValueRef<double>>&& x,
+                 std::unique_ptr<focs::ValueRef<double>>&& y,
+                 std::unique_ptr<focs::ValueRef<std::string>>&& name,
                  std::vector<std::unique_ptr<Effect>>&& effects_to_apply_after);
 
-    CreateSystem(std::unique_ptr<ValueRef::ValueRef<double>>&& x,
-                 std::unique_ptr<ValueRef::ValueRef<double>>&& y,
-                 std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
+    CreateSystem(std::unique_ptr<focs::ValueRef<double>>&& x,
+                 std::unique_ptr<focs::ValueRef<double>>&& y,
+                 std::unique_ptr<focs::ValueRef<std::string>>&& name,
                  std::vector<std::unique_ptr<Effect>>&& effects_to_apply_after);
 
     void Execute(ScriptingContext& context) const override;
@@ -398,10 +394,10 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRef< ::StarType>>    m_type;
-    std::unique_ptr<ValueRef::ValueRef<double>>         m_x;
-    std::unique_ptr<ValueRef::ValueRef<double>>         m_y;
-    std::unique_ptr<ValueRef::ValueRef<std::string>>    m_name;
+    std::unique_ptr<focs::ValueRef< ::StarType>>    m_type;
+    std::unique_ptr<focs::ValueRef<double>>         m_x;
+    std::unique_ptr<focs::ValueRef<double>>         m_y;
+    std::unique_ptr<focs::ValueRef<std::string>>    m_name;
     std::vector<std::unique_ptr<Effect>>                m_effects_to_apply_after;
 };
 
@@ -424,19 +420,19 @@ public:
 class FO_COMMON_API AddSpecial final : public Effect {
 public:
     explicit AddSpecial(std::string& name, float capacity = 1.0f);
-    explicit AddSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
-                        std::unique_ptr<ValueRef::ValueRef<double>>&& capacity = nullptr);
+    explicit AddSpecial(std::unique_ptr<focs::ValueRef<std::string>>&& name,
+                        std::unique_ptr<focs::ValueRef<double>>&& capacity = nullptr);
 
     void Execute(ScriptingContext& context) const override;
 
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
-    const ValueRef::ValueRef<std::string>* GetSpecialName() const { return m_name.get(); }
+    const focs::ValueRef<std::string>* GetSpecialName() const { return m_name.get(); }
     unsigned int GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRef<std::string>> m_name;
-    std::unique_ptr<ValueRef::ValueRef<double>> m_capacity;
+    std::unique_ptr<focs::ValueRef<std::string>> m_name;
+    std::unique_ptr<focs::ValueRef<double>> m_capacity;
 };
 
 /** Removes the Special with the name \a name to the target object.  This has
@@ -444,7 +440,7 @@ private:
 class FO_COMMON_API RemoveSpecial final : public Effect {
 public:
     explicit RemoveSpecial(std::string& name);
-    explicit RemoveSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
+    explicit RemoveSpecial(std::unique_ptr<focs::ValueRef<std::string>>&& name);
 
     void Execute(ScriptingContext& context) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
@@ -452,7 +448,7 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRef<std::string>> m_name;
+    std::unique_ptr<focs::ValueRef<std::string>> m_name;
 };
 
 /** Creates starlane(s) between the target system and systems that match
@@ -489,7 +485,7 @@ private:
   * non-System targets. */
 class FO_COMMON_API SetStarType final : public Effect {
 public:
-    explicit SetStarType(std::unique_ptr<ValueRef::ValueRef<StarType>>&& type);
+    explicit SetStarType(std::unique_ptr<focs::ValueRef<StarType>>&& type);
 
     void            Execute(ScriptingContext& context) const override;
     std::string     Dump(unsigned short ntabs = 0) const override;
@@ -497,7 +493,7 @@ public:
     unsigned int    GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRef<StarType>> m_type;
+    std::unique_ptr<focs::ValueRef<StarType>> m_type;
 };
 
 /** Moves an UniverseObject to a location of another UniverseObject that matches
@@ -522,11 +518,11 @@ private:
   * rotation.*/
 class FO_COMMON_API MoveInOrbit final : public Effect {
 public:
-    MoveInOrbit(std::unique_ptr<ValueRef::ValueRef<double>>&& speed,
+    MoveInOrbit(std::unique_ptr<focs::ValueRef<double>>&& speed,
                 std::unique_ptr<Condition::Condition>&& focal_point_condition);
-    MoveInOrbit(std::unique_ptr<ValueRef::ValueRef<double>>&& speed,
-                std::unique_ptr<ValueRef::ValueRef<double>>&& focus_x = nullptr,
-                std::unique_ptr<ValueRef::ValueRef<double>>&& focus_y = nullptr);
+    MoveInOrbit(std::unique_ptr<focs::ValueRef<double>>&& speed,
+                std::unique_ptr<focs::ValueRef<double>>&& focus_x = nullptr,
+                std::unique_ptr<focs::ValueRef<double>>&& focus_y = nullptr);
 
     void            Execute(ScriptingContext& context) const override;
     std::string     Dump(unsigned short ntabs = 0) const override;
@@ -534,21 +530,21 @@ public:
     unsigned int    GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRef<double>> m_speed;
+    std::unique_ptr<focs::ValueRef<double>> m_speed;
     std::unique_ptr<Condition::Condition>       m_focal_point_condition;
-    std::unique_ptr<ValueRef::ValueRef<double>> m_focus_x;
-    std::unique_ptr<ValueRef::ValueRef<double>> m_focus_y;
+    std::unique_ptr<focs::ValueRef<double>> m_focus_x;
+    std::unique_ptr<focs::ValueRef<double>> m_focus_y;
 };
 
 /** Moves an UniverseObject a specified distance towards some object or
   * position on the map. */
 class FO_COMMON_API MoveTowards final : public Effect {
 public:
-    MoveTowards(std::unique_ptr<ValueRef::ValueRef<double>>&& speed,
+    MoveTowards(std::unique_ptr<focs::ValueRef<double>>&& speed,
                 std::unique_ptr<Condition::Condition>&& dest_condition);
-    MoveTowards(std::unique_ptr<ValueRef::ValueRef<double>>&& speed,
-                std::unique_ptr<ValueRef::ValueRef<double>>&& dest_x = nullptr,
-                std::unique_ptr<ValueRef::ValueRef<double>>&& dest_y = nullptr);
+    MoveTowards(std::unique_ptr<focs::ValueRef<double>>&& speed,
+                std::unique_ptr<focs::ValueRef<double>>&& dest_x = nullptr,
+                std::unique_ptr<focs::ValueRef<double>>&& dest_y = nullptr);
 
     void            Execute(ScriptingContext& context) const override;
     std::string     Dump(unsigned short ntabs = 0) const override;
@@ -556,10 +552,10 @@ public:
     unsigned int    GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRef<double>> m_speed;
+    std::unique_ptr<focs::ValueRef<double>> m_speed;
     std::unique_ptr<Condition::Condition>       m_dest_condition;
-    std::unique_ptr<ValueRef::ValueRef<double>> m_dest_x;
-    std::unique_ptr<ValueRef::ValueRef<double>> m_dest_y;
+    std::unique_ptr<focs::ValueRef<double>> m_dest_x;
+    std::unique_ptr<focs::ValueRef<double>> m_dest_y;
 };
 
 /** Sets the route of the target fleet to move to an UniverseObject that
@@ -612,9 +608,9 @@ private:
   * progress towards that tech has been completed. */
 class FO_COMMON_API SetEmpireTechProgress final : public Effect {
 public:
-    SetEmpireTechProgress(std::unique_ptr<ValueRef::ValueRef<std::string>>&& tech_name,
-                          std::unique_ptr<ValueRef::ValueRef<double>>&& research_progress,
-                          std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id = nullptr);
+    SetEmpireTechProgress(std::unique_ptr<focs::ValueRef<std::string>>&& tech_name,
+                          std::unique_ptr<focs::ValueRef<double>>&& research_progress,
+                          std::unique_ptr<focs::ValueRef<int>>&& empire_id = nullptr);
 
     void            Execute(ScriptingContext& context) const override;
     std::string     Dump(unsigned short ntabs = 0) const override;
@@ -622,15 +618,15 @@ public:
     unsigned int    GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRef<std::string>>    m_tech_name;
-    std::unique_ptr<ValueRef::ValueRef<double>>         m_research_progress;
-    std::unique_ptr<ValueRef::ValueRef<int>>            m_empire_id;
+    std::unique_ptr<focs::ValueRef<std::string>>    m_tech_name;
+    std::unique_ptr<focs::ValueRef<double>>         m_research_progress;
+    std::unique_ptr<focs::ValueRef<int>>            m_empire_id;
 };
 
 class FO_COMMON_API GiveEmpireTech final : public Effect {
 public:
-    explicit GiveEmpireTech(std::unique_ptr<ValueRef::ValueRef<std::string>>&& tech_name,
-                            std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id = nullptr);
+    explicit GiveEmpireTech(std::unique_ptr<focs::ValueRef<std::string>>&& tech_name,
+                            std::unique_ptr<focs::ValueRef<int>>&& empire_id = nullptr);
 
     void            Execute(ScriptingContext& context) const override;
     std::string     Dump(unsigned short ntabs = 0) const override;
@@ -638,8 +634,8 @@ public:
     unsigned int    GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRef<std::string>>    m_tech_name;
-    std::unique_ptr<ValueRef::ValueRef<int>>            m_empire_id;
+    std::unique_ptr<focs::ValueRef<std::string>>    m_tech_name;
+    std::unique_ptr<focs::ValueRef<int>>            m_empire_id;
 };
 
 /** Generates a sitrep message for the empire with id \a recipient_empire_id.
@@ -651,11 +647,11 @@ private:
 class FO_COMMON_API GenerateSitRepMessage final : public Effect {
 public:
     using MessageParams =  std::vector<std::pair<
-        std::string, std::unique_ptr<ValueRef::ValueRef<std::string>>>>;
+        std::string, std::unique_ptr<focs::ValueRef<std::string>>>>;
 
     GenerateSitRepMessage(std::string& message_string, std::string& icon,
                           MessageParams&& message_parameters,
-                          std::unique_ptr<ValueRef::ValueRef<int>>&& recipient_empire_id,
+                          std::unique_ptr<focs::ValueRef<int>>&& recipient_empire_id,
                           EmpireAffiliationType affiliation,
                           std::string label = "",
                           bool stringtable_lookup = true);
@@ -678,9 +674,9 @@ public:
     const std::string&  MessageString() const               { return m_message_string; }
     const std::string&  Icon() const                        { return m_icon; }
 
-    std::vector<std::pair<std::string, ValueRef::ValueRef<std::string>* >> MessageParameters() const;
+    std::vector<std::pair<std::string, focs::ValueRef<std::string>* >> MessageParameters() const;
 
-    ValueRef::ValueRef<int>*    RecipientID() const     { return m_recipient_empire_id.get(); }
+    focs::ValueRef<int>*    RecipientID() const     { return m_recipient_empire_id.get(); }
     Condition::Condition*       GetCondition() const    { return m_condition.get(); }
     EmpireAffiliationType           Affiliation() const     { return m_affiliation; }
     unsigned int                    GetCheckSum() const override;
@@ -688,9 +684,9 @@ public:
 private:
     std::string             m_message_string;
     std::string             m_icon;
-    std::vector<std::pair<std::string, std::unique_ptr<ValueRef::ValueRef<std::string>>>>
+    std::vector<std::pair<std::string, std::unique_ptr<focs::ValueRef<std::string>>>>
                             m_message_parameters;
-    std::unique_ptr<ValueRef::ValueRef<int>>
+    std::unique_ptr<focs::ValueRef<int>>
                             m_recipient_empire_id;
     std::unique_ptr<Condition::Condition>
                             m_condition;
@@ -702,8 +698,8 @@ private:
 /** Applies an overlay texture to Systems. */
 class FO_COMMON_API SetOverlayTexture final : public Effect {
 public:
-    SetOverlayTexture(std::string& texture, std::unique_ptr<ValueRef::ValueRef<double>>&& size);
-    SetOverlayTexture(std::string& texture, ValueRef::ValueRef<double>* size);
+    SetOverlayTexture(std::string& texture, std::unique_ptr<focs::ValueRef<double>>&& size);
+    SetOverlayTexture(std::string& texture, focs::ValueRef<double>* size);
 
     void Execute(ScriptingContext& context) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
@@ -713,7 +709,7 @@ public:
 
 private:
     std::string m_texture;
-    std::unique_ptr<ValueRef::ValueRef<double>> m_size;
+    std::unique_ptr<focs::ValueRef<double>> m_size;
 };
 
 /** Applies a texture to Planets. */
@@ -736,19 +732,19 @@ private:
   * visibility mechanics. */
 class FO_COMMON_API SetVisibility final : public Effect {
 public:
-    SetVisibility(std::unique_ptr<ValueRef::ValueRef<Visibility>> vis,
+    SetVisibility(std::unique_ptr<focs::ValueRef<Visibility>> vis,
                   EmpireAffiliationType affiliation,
-                  std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id = nullptr,
+                  std::unique_ptr<focs::ValueRef<int>>&& empire_id = nullptr,
                   std::unique_ptr<Condition::Condition>&& of_objects = nullptr);    // if not specified, acts on target. if specified, acts on all matching objects
 
     void Execute(ScriptingContext& context) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
 
-    ValueRef::ValueRef<Visibility>* GetVisibility() const
+    focs::ValueRef<Visibility>* GetVisibility() const
     { return m_vis.get(); }
 
-    ValueRef::ValueRef<int>* EmpireID() const
+    focs::ValueRef<int>* EmpireID() const
     { return m_empire_id.get(); }
 
     EmpireAffiliationType Affiliation() const
@@ -760,8 +756,8 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    std::unique_ptr<ValueRef::ValueRef<Visibility>> m_vis;
-    std::unique_ptr<ValueRef::ValueRef<int>> m_empire_id;
+    std::unique_ptr<focs::ValueRef<Visibility>> m_vis;
+    std::unique_ptr<focs::ValueRef<int>> m_empire_id;
     EmpireAffiliationType m_affiliation;
     std::unique_ptr<Condition::Condition> m_condition;
 };

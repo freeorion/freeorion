@@ -15,10 +15,10 @@ namespace phoenix = boost::phoenix;
 #if DEBUG_CONDITION_PARSERS
 namespace std {
     inline ostream& operator<<(ostream& os, const std::vector<condition_payload>&) { return os; }
-    inline ostream& operator<<(ostream& os, const std::vector<ValueRef::ValueRef<std::string>*>&) { return os; }
-    inline ostream& operator<<(ostream& os, const std::vector<ValueRef::ValueRef<PlanetSize>*>&) { return os; }
-    inline ostream& operator<<(ostream& os, const std::vector<ValueRef::ValueRef<PlanetType>*>&) { return os; }
-    inline ostream& operator<<(ostream& os, const std::vector<ValueRef::ValueRef<PlanetEnvironment>*>&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::vector<focs::ValueRef<std::string>*>&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::vector<focs::ValueRef<PlanetSize>*>&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::vector<focs::ValueRef<PlanetType>*>&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::vector<focs::ValueRef<PlanetEnvironment>*>&) { return os; }
 }
 #endif
 
@@ -111,8 +111,8 @@ namespace parse { namespace detail {
             =   universe_object_type_rules.enum_expr [
                 _val = construct_movable_(
                     new_<Condition::Type>(
-                        construct<std::unique_ptr<ValueRef::ValueRef<UniverseObjectType>>>(
-                            new_<ValueRef::Constant<UniverseObjectType>>(_1)))) ]
+                        construct<std::unique_ptr<focs::ValueRef<UniverseObjectType>>>(
+                            new_<focs::Constant<UniverseObjectType>>(_1)))) ]
             |   (
                 tok.ObjectType_
                 >   label(tok.Type_) > universe_object_type_rules.expr [
