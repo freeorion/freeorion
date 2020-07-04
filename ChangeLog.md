@@ -4,14 +4,15 @@ Changelog
 Notable changes to the FreeOrion project will be documented in this file.
 
 
-[v0.4.10] - TBA
+[v0.4.10] - 2020-07-??
 ---------------
 
 ### Key Changes
 
 - Python 3.5+ is now supported and required. Python 2 dependence is removed
-- Added a new ship weapon part, the Arc Disruptor, which is useful for countering many cheap "chaff" ships
-- Reworked weapon and fighter combat targeting to limit what each can target
+- The Arc Disruptor weapon part and techs have been added, which are useful with bad pilots, against large numbers of cheap targets, and against ships without shields
+- The possible targets for each weapon type has been limited, making weapon types useful in different situations
+- Fighters have been rebalanced and the Heavy Bomber fighter type was added
 - Added happiness requirements for normal planet resource meter growth
 - Added team-based player homeworld placement for multiplayer games
 - Rebalanced some bonuses from techs and specials to make high population less important and mitigate runaway empire growth "snowballing"
@@ -56,7 +57,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 
 - Stringtables
     - Added a few names to lists used for ship names
-    - Translation updates: Spanish
+    - Translation updates: Spanish, French
     - Cleaned up stringtables, removing duplicates from english in other languages
     - Added stealth and slots to hull descriptions
     - Fuel efficiency effects are now described like "-40%" instead of like "60%"
@@ -71,7 +72,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Reworked what weapons can target fighters, ships, and planets
     - Mass drivers, Lasers, Plasmas, Death Rays, and Spinal antimatter cannon attack ships and planets (no fighters)
     - Interceptors attack enemy fighters only
-    - Fighters attack ships and fighters
+    - Strike Fighters (formerly called just "fighters") attack ships and fighters
     - Bombers attack ships only
     - Heavy bombers are re-enabled and attack ships and planets
 
@@ -148,7 +149,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 
 - Python AI
     - Scripted AIs to scrap Gateways to the Void that they capture
-    - Reprioritized fuel tach research
+    - Reprioritized fuel tech research
     - Reworked logic for responding to alliance requests
     - Exposed option to append to a fleet route in the API
     - Exposed productionLocation functions on ship parts and hulls to check if they can be produced at a location
@@ -164,7 +165,8 @@ Notable changes to the FreeOrion project will be documented in this file.
     - Made some ValueRefs return default values rather than throwing errors when invalid properties are evaluated
     - Added missing empire ID handling in several conditions
     - Replaced OwnerTradeStockpile with EmpireStockpile (that refers to industry stockpiled)
-    - Added NoDefaultFuelEffect flag to hulls
+    - Added several falgs to hulls to prevent automatic generation of effects from the a hull's stats: NoDefaultSpeedEffect, NoDefaultFuelEffect, NoDefaultStealthEffect, and NoDefaultStructureEffect
+    - Non-monster hulls now use NoDefaultFuelEffect to provide fuel efficiency
     - Added FieldType bound variable ValueRef to access what type a field is
     - Added CombatBout ValueRef to access the current round of combat
     - Added ValueRef access to the last turn a planet was colonized
