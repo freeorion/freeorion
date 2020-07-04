@@ -48,13 +48,10 @@ struct FO_COMMON_API InfluenceQueue {
     /** The const InfluenceQueue iterator type.  Dereference yields a Element. */
     typedef QueueType::const_iterator const_iterator;
 
-    /** \name Structors */ //@{
     explicit InfluenceQueue(int empire_id) :
         m_empire_id(empire_id)
     {}
-    //@}
 
-    /** \name Accessors */ //@{
     bool    InQueue(const std::string& name) const;
 
     int     ProjectsInProgress() const { return m_projects_in_progress; }
@@ -79,7 +76,6 @@ struct FO_COMMON_API InfluenceQueue {
     const Element&  operator[](int i) const;
 
 
-    /** \name Mutators */ //@{
     /** Recalculates the PPs spent on and number of turns left for each project in the queue.  Also
       * determines the number of projects in progress, and the industry consumed by projects
       * in each resource-sharing group of systems.  Does not actually "spend" the PP; a later call to
@@ -102,7 +98,6 @@ struct FO_COMMON_API InfluenceQueue {
     void        clear();
 
     mutable boost::signals2::signal<void ()> InfluenceQueueChangedSignal;
-    //@}
 
 private:
     QueueType   m_queue;
@@ -116,4 +111,5 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-#endif //  _InfluenceQueue_h_
+
+#endif

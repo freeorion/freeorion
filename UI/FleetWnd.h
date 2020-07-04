@@ -30,7 +30,6 @@ class FleetUIManager {
 public:
     typedef std::set<std::weak_ptr<FleetWnd>>::const_iterator iterator;
 
-    //! \name Accessors //@{
     bool            empty() const;
     iterator        begin() const;
     iterator        end() const;
@@ -39,9 +38,7 @@ public:
     std::shared_ptr<FleetWnd> WndForFleetIDs(const std::vector<int>& fleet_ids_) const;
     int             SelectedShipID() const;     // if a single ship is selected in the active fleetwnd, returns that ship's ID.  Otherwise, returns INVALID_OBJECT_ID
     std::set<int>   SelectedShipIDs() const;    // returns the ids of all selected ships in the active fleetwnd
-    //@}
 
-    //! \name Mutators //@{
     std::shared_ptr<FleetWnd> NewFleetWnd(const std::vector<int>& fleet_ids,
                                           double allowed_bounding_box_leeway = 0,
                                           int selected_fleet_id = INVALID_OBJECT_ID,
@@ -54,7 +51,6 @@ public:
 
     /** Enables, or disables if \a enable is false, issuing orders via FleetWnds. */
     void            EnableOrderIssuing(bool enable = true);
-    //@}
 
     /** emitted when the selected FleetWnd changes */
     mutable boost::signals2::signal<void ()> ActiveFleetWndChangedSignal;
@@ -95,7 +91,6 @@ private:
     (a FleetDetailPanel). */
 class FleetWnd : public MapWndPopup {
 public:
-    /** \name Structors */ //@{
     FleetWnd();
     FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled,
              double allowed_bounding_box_leeway = 0,
@@ -104,10 +99,8 @@ public:
              const std::string& config_name = "");
 
     ~FleetWnd();
-    //@}
     void CompleteConstruction() override;
 
-    //! \name Accessors //@{
     int                     SystemID() const;                   ///< returns ID of system whose fleets are shown in this FleetWnd, which may be INVALID_OBJECT_ID if this FleetWnd isn't set to show fleets of a system
     int                     EmpireID() const;                   ///< returns ID of empire whose fleets are shown in this FleetWnd, which may be ALL_EMPIRES if this FleetWnd isn't set to show fleets of a particular empire
     bool                    ContainsFleet(int fleet_id) const;  ///< returns true if fleet with ID \a fleet_id is shown in this FleetWnd
@@ -120,9 +113,7 @@ public:
     NewFleetAggression      GetNewFleetAggression() const;      ///< returns this FleetWnd's setting for new fleet aggression (auto, aggressive, or passive)
 
     GG::Rect CalculatePosition() const override;
-    //@}
 
-    //! \name Mutators //@{
     void PreRender() override;
 
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
@@ -135,7 +126,6 @@ public:
 
     /** Enables, or disables if \a enable is false, issuing orders via this FleetWnd. */
     void                    EnableOrderIssuing(bool enable = true);
-    //@}
 
     mutable boost::signals2::signal<void ()>    SelectedFleetsChangedSignal;
     mutable boost::signals2::signal<void ()>    SelectedShipsChangedSignal;
@@ -144,11 +134,9 @@ public:
     mutable boost::signals2::signal<void (int)> ShipRightClickedSignal;
 
 protected:
-    //! \name Mutators //@{
     void CloseClicked() override;
     void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
     void DoLayout();
-    //@}
 
 private:
     void RequireRefresh();
@@ -194,4 +182,5 @@ private:
     friend class FleetUIManager;
 };
 
-#endif // _FleetWnd_h_
+
+#endif

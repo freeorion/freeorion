@@ -294,4 +294,4 @@ private:
 };
 
 
-#endif // COMBATEVENT_H
+#endif

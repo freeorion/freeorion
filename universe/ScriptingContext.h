@@ -144,4 +144,5 @@ private:
     const ObjectMap&                        const_objects;
 };
 
-#endif // _ScriptingContext_h_
+
+#endif

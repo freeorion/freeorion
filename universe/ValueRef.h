@@ -78,4 +78,5 @@ enum StatisticType : int {
 
 }
 
-#endif // _ValueRef_h_
+
+#endif

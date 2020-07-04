@@ -9,16 +9,11 @@ class PlayerListBox;
 
 class PlayerListWnd : public CUIWnd {
 public:
-    //! \name Structors //@{
     PlayerListWnd(const std::string& config_name);
     void CompleteConstruction() override;
-    //@}
 
-    //! \name Accessors //@{
     std::set<int>   SelectedPlayerIDs() const;
-    //@}
 
-    //! \name Mutators //@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
     void            HandleDiplomaticMessageChange(int empire1_id, int empire2_id);
@@ -27,7 +22,6 @@ public:
     void            Clear();
 
     void            SetSelectedPlayers(const std::set<int>& player_ids);
-    //@}
 
     mutable boost::signals2::signal<void ()>    SelectedPlayersChangedSignal;
     mutable boost::signals2::signal<void (int)> PlayerDoubleClickedSignal;

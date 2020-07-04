@@ -69,16 +69,13 @@ public:
     typedef boost::filter_iterator<EstablishedPlayer, PlayerConnections::iterator>          established_iterator;
     typedef boost::filter_iterator<EstablishedPlayer, PlayerConnections::const_iterator>    const_established_iterator;
 
-    /** \name Structors */ //@{
     ServerNetworking(boost::asio::io_context& io_context,
                      MessageAndConnectionFn nonplayer_message_callback,
                      MessageAndConnectionFn player_message_callback,
                      ConnectionFn disconnected_callback);
 
     ~ServerNetworking();
-    //@}
 
-    /** \name Accessors */ //@{
     /** Returns true if size() == 0. */
     bool empty() const;
 
@@ -130,9 +127,7 @@ public:
 
     /** Returns count of stored cookies so we don't collide with reserved player names. */
     int GetCookiesSize() const;
-    //@}
 
-    /** \name Mutators */ //@{
     /** Sends a synchronous message \a message to the all established players. */
     void SendMessageAll(const Message& message);
 
@@ -180,7 +175,6 @@ public:
 
     /** Clean up expired cookies. */
     void CleanupCookies();
-    //@}
 
 private:
     void Init();
@@ -219,11 +213,8 @@ class PlayerConnection :
     public std::enable_shared_from_this<PlayerConnection>
 {
 public:
-    /** \name Structors */ //@{
-    ~PlayerConnection(); ///< Dtor.
-    //@}
+    ~PlayerConnection();
 
-    /** \name Accessors */ //@{
     /** Returns true if EstablishPlayer() successfully has been called on this
         connection. */
     bool EstablishedPlayer() const;
@@ -261,9 +252,7 @@ public:
 
     /** Get cookie associated with this connection. */
     boost::uuids::uuid Cookie() const;
-    //@}
 
-    /** \name Mutators */ //@{
     /** Starts the connection reading incoming messages on its socket. */
     void Start();
 
@@ -296,7 +285,6 @@ public:
 
     /** Sets cookie value to this connection to update expire date. */
     void SetCookie(boost::uuids::uuid cookie);
-    //@}
 
     mutable boost::signals2::signal<void (const NullaryFn&)> EventSignal;
 
@@ -345,4 +333,5 @@ private:
     friend class ServerNetworking;
 };
 
-#endif // _ServerNetworking_h_
+
+#endif

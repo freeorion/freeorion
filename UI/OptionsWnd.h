@@ -15,18 +15,12 @@
 //! This is a dialog box that allows the user to control certain basic game parameters, such as sound and music
 class OptionsWnd : public CUIWnd {
 public:
-    //! \name Structors
-    //!@{
     OptionsWnd(bool is_game_running_);
     ~OptionsWnd();
     void CompleteConstruction() override;
-    //!@}
 
-    //! \name Mutators
-    //!@{
     void KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
-    //!@}
 
 protected:
     GG::Rect CalculatePosition() const override;
@@ -95,4 +89,5 @@ private:
     SoundOptionsFeedback        m_sound_feedback;   // Enable and disable the sound when audio options are changed.
 };
 
-#endif // _OptionsWnd_h_
+
+#endif

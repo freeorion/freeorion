@@ -60,16 +60,11 @@ struct GG_API HSVClr
 class GG_API HueSaturationPicker : public Control
 {
 public:
-    /** \name Signal Types */ ///@{
     /** emitted whenever the hue or saturation in the picker changes */
     typedef boost::signals2::signal<void (double, double)> ChangedSignalType;
-    //@}
 
-    /** \name Structors */ ///@{
     HueSaturationPicker(X x, Y y, X w, Y h);
-    //@}
 
-    /** \name Mutators */ ///@{
     void Render() override;
 
     void LButtonDown(const Pt& pt, Flags<ModKey> mod_keys) override;
@@ -77,7 +72,6 @@ public:
     void LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys) override;
 
     void SetHueSaturation(double hue, double saturation); ///< sets the current hue and saturation.  Note that this does not cause a signal to be emitted.
-    //@}
 
     mutable ChangedSignalType ChangedSignal; ///< emitted whenever the hue or saturation in the picker changes
 
@@ -96,16 +90,11 @@ private:
 class GG_API ValuePicker : public Control
 {
 public:
-    /** \name Signal Types */ ///@{
     /** emitted whenever the hue or saturation in the picker changes */
     typedef boost::signals2::signal<void (double)> ChangedSignalType;
-    //@}
 
-    /** \name Structors */ ///@{
     ValuePicker(X x, Y y, X w, Y h, Clr arrow_color);
-    //@}
 
-    /** \name Mutators */ ///@{
     void Render() override;
     void LButtonDown(const Pt& pt, Flags<ModKey> mod_keys) override;
     void LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys) override;
@@ -114,7 +103,6 @@ public:
         the control, and do not otherwise influence its operation. */
     void SetHueSaturation(double hue, double saturation);
     void SetValue(double value); ///< sets the current value.  Note that this does not cause a signal to be emitted.
-    //@}
 
     mutable ChangedSignalType ChangedSignal; ///< emitted whenever the hue or saturation in the picker changes
 
@@ -143,26 +131,18 @@ public:
     class GG_API ColorButton : public Button
     {
     public:
-        /** \name Structors */ ///@{
         ColorButton(const Clr& color);
-        //@}
 
-        /** \name Accessors */ ///@{
         /** returns the custom color represented by the button */
         Clr RepresentedColor() const;
-        //@}
 
-        /** \name Mutators */ ///@{
         /** sets the custom color represented by the button */
         void SetRepresentedColor(const Clr& color);
-        //@}
 
     protected:
-        /** \name Mutators */ ///@{
         void RenderUnpressed() override;
         void RenderPressed() override;
         void RenderRollover() override;
-        //@}
 
     private:
         Clr m_represented_color;
@@ -177,22 +157,15 @@ public:
     class GG_API ColorDisplay : public Control
     {
     public:
-        /** \name Structors */ ///@{
         ColorDisplay(Clr color);
-        //@}
 
-        /** \name Accessors */ ///@{
         void Render() override;
-        //@}
     };
 
-    /** \name Structors */ ///@{
     ColorDlg(X x, Y y, Clr original_color, const std::shared_ptr<Font>& font,
              Clr dialog_color, Clr border_color, Clr text_color = CLR_BLACK);
-    //@}
     void CompleteConstruction() override;
 
-    /** \name Accessors */ ///@{
     /** Returns true iff the user selected a color and then clicked the "Ok"
         button.  Otherwise, the color returned by Result() will be the
         original color if one was selected, or undefined if one was not. */
@@ -200,11 +173,9 @@ public:
 
     /** returns the color selected by the user, if the "Ok" button was used to close the dialog. */
     Clr Result() const;
-    //@}
 
     void Render() override;
     void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
-    //@}
 
     static const std::size_t INVALID_COLOR_BUTTON;
 
@@ -258,6 +229,6 @@ private:
     static std::vector<Clr>   s_custom_colors;
 };
 
-} // namespace GG
+}
 
 #endif

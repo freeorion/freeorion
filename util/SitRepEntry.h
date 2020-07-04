@@ -80,4 +80,5 @@ void SitRepEntry::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_label);
 }
 
-#endif // _SitRepEntry_h_
+
+#endif

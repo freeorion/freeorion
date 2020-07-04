@@ -46,7 +46,6 @@ public:
     typedef OrderMap::difference_type difference_type;
     typedef OrderMap::key_compare key_compare;
 
-    /** \name Accessors */ //@{
     const_iterator  begin() const           { return m_orders.begin(); }///< returns the begin const_iterator for the OrderSet
     const_iterator  end() const             { return m_orders.end(); }  ///< returns the end const_iterator for the OrderSet
     iterator        begin()                 { return m_orders.begin(); }///< returns the begin const_iterator for the OrderSet
@@ -58,9 +57,7 @@ public:
     void            erase(const key_type& k){ m_orders.erase(k); } ///< direct erase without saving changes
     OrderPtr&       operator[](std::size_t i);
     key_compare     key_comp() const        { return m_orders.key_comp(); }
-    //@}
 
-    /** \name Mutators */ //@{
     /** Execute the \p order immediately on the client.
         Store the \p order in the OrderSet to be executed later on the server.
         Return an index that can be used to reference the order. */
@@ -77,7 +74,6 @@ public:
     void Reset(); ///< clears all orders; should be called at the beginning of a new turn
 
     std::pair<OrderSet, std::set<int>> ExtractChanges(); ///< extract and clear changed orders
-    //@}
 
 private:
     OrderMap      m_orders;
@@ -100,4 +96,5 @@ void OrderSet::serialize(Archive& ar, const unsigned int version)
     }
 }
 
-#endif // _OrderSet_h_
+
+#endif

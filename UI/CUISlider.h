@@ -10,14 +10,11 @@ template <typename T>
 class CUISlider : public GG::Slider<T>
 {
 public:
-    /** \name Structors */ //@{
     CUISlider(T min, T max,
               GG::Orientation orientation, GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE) :
         GG::Slider<T>(min, max, orientation, ClientUI::CtrlColor(), ClientUI::ScrollWidth(), 5, flags)
     {}
-    //@}
 
-    /** \name Mutators */ //@{
     void Render() override {
         const GG::Pt UL = this->UpperLeft();
         const GG::Pt LR = this->LowerRight();
@@ -51,7 +48,7 @@ public:
         }
         this->MoveTabToPosn();
     }
-    //@}
 };
 
-#endif // _CUISlider_h_
+
+#endif

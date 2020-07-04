@@ -15,17 +15,12 @@ class StatisticIcon;
 /** Shows resource meters with meter-bars */
 class ResourcePanel : public AccordionPanel {
 public:
-    /** \name Structors */ //@{
     ResourcePanel(GG::X w, int object_id);
     ~ResourcePanel();
-    //@}
     void CompleteConstruction() override;
 
-    /** \name Accessors */ //@{
     int ResourceCenterID() const { return m_rescenter_id; }
-    //@}
 
-    /** \name Mutators */ //@{
     void PreRender() override;
 
     /** expands or collapses panel to show details or just summary info */
@@ -35,13 +30,10 @@ public:
     void Update();
     /** updates, redoes layout, resizes indicator */
     void Refresh();
-    //@}
 
 protected:
-    /** \name Mutators */ //@{
     /** resizes panel and positions widgets */
     void DoLayout() override;
-    //@}
 
 private:
     /** toggles panel expanded or collapsed */

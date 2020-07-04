@@ -23,4 +23,5 @@ enum CaptureResult : int;
 enum EffectsCauseType : int;
 enum ModeratorActionSetting : int;
 
-#endif // _EnumsFwd_h_
+
+#endif

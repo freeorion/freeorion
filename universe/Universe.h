@@ -102,17 +102,12 @@ public:
     typedef std::map<int, ShipDesign*>              ShipDesignMap;                  ///< ShipDesigns in universe; keyed by design id
     typedef ShipDesignMap::const_iterator           ship_design_iterator;           ///< const iterator over ship designs created by players that are known by this client
 
-    /** \name Signal Types */ //@{
     /** emitted just before the UniverseObject is deleted */
     typedef boost::signals2::signal<void (std::shared_ptr<const UniverseObject>)> UniverseObjectDeleteSignalType;
-    //@}
 
-    /** \name Structors */ //@{
     Universe();
     virtual ~Universe();
-    //@}
 
-    /** \name Accessors */ //@{
     /** Returns objects in this Universe. */
     const ObjectMap&        Objects() const { return m_objects; }
     ObjectMap&              Objects()       { return m_objects; }
@@ -186,9 +181,7 @@ public:
     GetStatRecords() const { return m_stat_records; }
 
     mutable UniverseObjectDeleteSignalType UniverseObjectDeleteSignal; ///< the state changed signal object for this UniverseObject
-    //@}
 
-    /** \name Mutators */ //@{
     /** Inserts \a ship_design into the universe. Return true on success. The
         ship design's id will be the newly assigned id.
         \note Universe gains ownership of \a ship_design once inserted. */
@@ -353,7 +346,6 @@ public:
     void InhibitUniverseObjectSignals(bool inhibit = true);
 
     void UpdateStatRecords();
-    //@}
 
     /** Returns true if UniverseOjbectSignals are inhibited, false otherwise. */
     const bool& UniverseObjectSignalsInhibited();
@@ -369,7 +361,6 @@ public:
     void SetUniverseWidth(double width) { m_universe_width = width; }
     bool AllObjectsVisible() const { return m_all_objects_visible; }
 
-    /** \name Generators */ //@{
     /** InsertNew constructs and inserts a UniverseObject into the object map with a new
         id. It returns the new object. */
     template <typename T, typename... Args>
@@ -397,7 +388,6 @@ public:
 
         return InsertID<T>(id, std::forward<Args>(args)...);
     }
-    //@}
 
     //! Set items unlocked before turn 1 from \p future.
     void SetInitiallyUnlockedItems(Pending::Pending<std::vector<UnlockableItem>>&& future);
@@ -598,4 +588,5 @@ private:
     ("BuildingManager", <checksum>) */
 FO_COMMON_API std::map<std::string, unsigned int> CheckSumContent();
 
-#endif // _Universe_h_
+
+#endif

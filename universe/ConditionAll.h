@@ -24,6 +24,7 @@ struct FO_COMMON_API All final : public Condition {
     unsigned int GetCheckSum() const override;
 };
 
-} // namespace Condition
+}
 
-#endif // _ConditionAll_h_
+
+#endif

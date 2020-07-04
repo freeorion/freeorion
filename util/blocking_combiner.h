@@ -36,4 +36,5 @@ private:
     inner_combiner m_combiner;
 };
 
-#endif // _blocking_combiner_h_
+
+#endif

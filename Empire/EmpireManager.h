@@ -27,14 +27,11 @@ public:
     /// Const Iterator over Empires
     typedef std::map<int, Empire*>::const_iterator const_iterator;
 
-    /** \name Structors */ //@{
     EmpireManager();
     virtual ~EmpireManager();
 
     const EmpireManager& operator=(EmpireManager& rhs); ///< assignment operator (move semantics)
-    //@}
 
-    /** \name Accessors */ //@{
     /** Returns the empire whose ID is \a ID, or 0 if none exists. */
     const Empire*       GetEmpire(int id) const;
     /** Return the empire source or nullptr if the empire or source doesn't exist.*/
@@ -54,9 +51,7 @@ public:
     const DiplomaticMessage&    GetDiplomaticMessage(int sender_id, int recipient_id) const;
 
     std::string         Dump() const;
-    //@}
 
-    /** \name Mutators */ //@{
     /** Returns the empire whose ID is \a id, or 0 if none exists. */
     Empire*     GetEmpire(int id);
 
@@ -81,7 +76,6 @@ public:
 
     /** Removes and deletes all empires from the manager. */
     void        Clear();
-    //@}
 
     typedef boost::signals2::signal<void (int, int)>  DiploSignalType;
 
@@ -113,4 +107,5 @@ FO_COMMON_API const std::vector<GG::Clr>& EmpireColors();
 /** Initialize empire colors from \p path */
 FO_COMMON_API void InitEmpireColors(const boost::filesystem::path& path);
 
-#endif // _EmpireManager_h_
+
+#endif

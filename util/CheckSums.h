@@ -99,4 +99,5 @@ namespace CheckSums {
     }
 }
 
-#endif // _CheckSums_h_
+
+#endif

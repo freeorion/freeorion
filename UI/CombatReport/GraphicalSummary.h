@@ -44,4 +44,5 @@ private:
     void GenerateGraph();
 };
 
-#endif // GRAPHICALSUMMARY_H
+
+#endif

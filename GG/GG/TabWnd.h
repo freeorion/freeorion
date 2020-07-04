@@ -42,13 +42,10 @@ class WndEvent;
 class GG_API OverlayWnd : public Wnd
 {
 public:
-    /** \name Structors */ ///@{
     OverlayWnd(X x, Y y, X w, Y h, Flags<WndFlag> flags = NO_WND_FLAGS);
     ~OverlayWnd();
-    //@}
     void CompleteConstruction() override;
 
-    /** \name Accessors */ ///@{
     Pt MinUsableSize() const override;
 
     /** Returns true iff NumWnds() == 0. */
@@ -64,9 +61,7 @@ public:
         currently shown.  NO_WND is returned if there is no Wnd currently
         visible. */
     std::size_t  CurrentWndIndex() const;
-    //@}
 
-    /** \name Mutators */ ///@{
     /** Adds \a wnd to the sequence of Wnds in this OverlayWnd, with name \a name.
         \a name can be used later to remove the Wnd (\a name is not checked
         for uniqueness).  Returns the index at which \a wnd is placed. */
@@ -89,7 +84,6 @@ public:
     /** Sets the currently visible Wnd in the sequence to the Wnd in the \a
         index position within the sequence.  Not range checked. */
     void SetCurrentWnd(std::size_t index);
-    //@}
 
     /** The invalid Wnd position index that there is no currently-selected
         Wnd. */
@@ -106,20 +100,15 @@ private:
 class GG_API TabWnd : public Wnd
 {
 public:
-    /** \name Signal Types */ ///@{
     /** Emitted when the currently-selected Wnd has changed; the new selected
         Wnd's index in the group is provided (this may be NO_WND if no Wnd is
         currently selected). */
     typedef boost::signals2::signal<void (std::size_t)> TabChangedSignalType;
-    //@}
 
-    /** \name Structors */ ///@{
     TabWnd(X x, Y y, X w, Y h, const std::shared_ptr<Font>& font,
            Clr color, Clr text_color = CLR_BLACK);
-    //@}
     void CompleteConstruction() override;
 
-    /** \name Accessors */ ///@{
     Pt MinUsableSize() const override;
 
     /** Returns true iff NumWnds() == 0. */
@@ -135,9 +124,7 @@ public:
         currently shown.  NO_WND is returned if there is no Wnd currently
         visible. */
     std::size_t     CurrentWndIndex() const;
-    //@}
 
-    /** \name Mutators */ ///@{
     /** Adds \a wnd to the sequence of Wnds in this TabWnd, with name \a name.
         \a name can be used later to remove the Wnd (\a name is not checked
         for uniqueness).  Returns the index at which \a wnd is placed. */
@@ -157,7 +144,6 @@ public:
     /** Sets the currently visible Wnd in the sequence to the Wnd in the \a
         index position within the sequence.  Not range checked. */
     void            SetCurrentWnd(std::size_t index);
-    //@}
 
     mutable TabChangedSignalType TabChangedSignal; ///< The Wnd change signal object for this TabWnd
 
@@ -166,11 +152,9 @@ public:
     static const std::size_t NO_WND;
 
 protected:
-    /** \name Accessors */ ///@{
     /** Returns the set of Wnds currently controlled by this TabWnd, indexed
         by name. */
     const std::map<std::string, Wnd*>&  WndNames() const;
-    //@}
 
 private:
     void    TabChanged(std::size_t tab_index, bool signal);
@@ -189,21 +173,16 @@ private:
 class GG_API TabBar : public Control
 {
 public:
-    /** \name Signal Types */ ///@{
     /** Emitted when the currently-selected tab has changed; the new selected
         tab's index in the group is provided (this may be NO_TAB if no tab is
         currently selected). */
     typedef boost::signals2::signal<void (std::size_t)> TabChangedSignalType;
-    //@}
 
-    /** \name Structors */ ///@{
     TabBar(const std::shared_ptr<Font>& font, Clr color, Clr text_color = CLR_BLACK,
            Flags<WndFlag> flags = INTERACTIVE);
     void CompleteConstruction() override;
-    //@}
 public:
 
-    /** \name Accessors */ ///@{
     Pt MinUsableSize() const override;
 
     /** Returns true iff NumWnds() == 0. */
@@ -219,9 +198,7 @@ public:
 
     /** Returns the color used to render the text in this TabBar. */
     Clr             TextColor() const;
-    //@}
 
-    /** \name Mutators */ ///@{
     void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys) override;
     void SizeMove(const Pt& ul, const Pt& lr) override;
     void Render() override;
@@ -246,7 +223,6 @@ public:
     /** Sets the current tab in the sequence to the tab in the \a index
         position within the sequence.  Not range checked. */
     void SetCurrentTab(std::size_t index);
-    //@}
 
     mutable TabChangedSignalType TabChangedSignal; ///< The tab change signal object for this TabBar
 
@@ -255,22 +231,17 @@ public:
     static const std::size_t NO_TAB;
 
 protected:
-    /** \name Accessors */ ///@{
-
     /** The default width to use for the left and right buttons. */
     X ButtonWidth() const;
 
     const Button*   LeftButton() const;
     const Button*   RightButton() const;
-    //@}
 
-    /** \name Mutators */ ///@{
     bool EventFilter(Wnd* w, const WndEvent& event) override;
 
     /** Brings the currently-selected tab button to the top within the tab
         button group. */
     void RaiseCurrentTabButton();
-    //@}
 
 private:
     virtual void DistinguishCurrentTab(const std::vector<StateButton*>& tab_buttons);
@@ -294,6 +265,6 @@ private:
     std::size_t                                 m_first_tab_shown = 0;
 };
 
-} // namespace GG
+}
 
 #endif

@@ -26,4 +26,5 @@ private:
     std::unique_ptr<Impl> m_impl;
 };
 
-#endif // COMBATREPORTDLG_H
+
+#endif

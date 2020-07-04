@@ -57,29 +57,23 @@ class Font;
 class GG_API ThreeButtonDlg : public Wnd
 {
 public:
-    /** \name Structors */ ///@{
     /** Ctor that automatically centers the dialog in the app's area*/
     ThreeButtonDlg(X w, Y h, const std::string& msg, const std::shared_ptr<Font>& font, Clr color,
                    Clr border_color, Clr button_color, Clr text_color, std::size_t buttons, const std::string& zero = "", 
                    const std::string& one = "", const std::string& two = "");
-    //@}
     void CompleteConstruction() override;
 
-    /** \name Accessors */ ///@{
     Clr         ButtonColor() const;   ///< returns the color of the buttons in the dialog
     std::size_t Result() const;        ///< returns 0, 1, or 2, depending on which buttoon was clicked
     std::size_t DefaultButton() const; ///< returns the number of the button that will be chosen by default if the user hits enter (NO_BUTTON if none)
     std::size_t EscapeButton() const;  ///< returns the number of the button that will be chosen by default if the user hits ESC (NO_BUTTON if none)
-    //@}
 
-    /** \name Mutators */ ///@{
     void Render() override;
     void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
 
     void SetButtonColor(Clr color);       ///< sets the color used to render the dialog's buttons
     void SetDefaultButton(std::size_t i); ///< sets the number of the button that will be chosen by default if the user hits enter (NO_BUTTON to disable)
     void SetEscapeButton(std::size_t i);  ///< sets the number of the button that will be chosen by default if the user hits ESC (NO_BUTTON to disable)
-    //@}
 
     static const std::size_t NO_BUTTON;
 
@@ -102,6 +96,6 @@ private:
     std::shared_ptr<Layout>     m_button_layout;
 };
 
-} // namespace GG
+}
 
 #endif

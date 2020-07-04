@@ -59,4 +59,4 @@ struct FO_COMMON_API UniverseObjectVisitor {
 };
 
 
-#endif // _UniverseObjectVisitor_h_
+#endif

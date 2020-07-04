@@ -78,7 +78,6 @@ extern GG::WndFlag PINABLE;        ///< allows the window to be pinned
 */
 class CUIWnd : public GG::Wnd {
 public:
-    //! \name Structors //@{
     /** Constructs the window to be a CUI window. Specifying \a config_name
       * causes the window to save its position and other properties to the
       * OptionsDB under that name, if no other windows are currently using that
@@ -97,9 +96,7 @@ public:
     void CompleteConstruction() override;
     /** Virtual destructor. */
     virtual ~CUIWnd();
-    //@}
 
-    //! \name Accessors //@{
     bool    Minimized() const {return m_minimized;} //!< returns true if window is minimized
     GG::Pt  ClientUpperLeft() const override;
     GG::Pt  ClientLowerRight() const override;
@@ -108,9 +105,7 @@ public:
     GG::Y   TopBorder() const;                  //!< the distance at the top between the outer edge of the window and the inner border
     GG::X   RightBorder() const;                //!< the distance on the right side between the outer edge of the window and the inner border
     GG::Y   BottomBorder() const;               //!< the distance at the bottom between the outer edge of the window and the inner border
-    //@}
 
-    //! \name Mutators //@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
     void Render() override;
     void LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
@@ -134,29 +129,20 @@ public:
     void Close()           { CloseClicked(); }
     void ValidatePosition();                                 //!< calls SizeMove() to trigger position-checking and position the window entirely within the parent window/app window
     void InitSizeMove(const GG::Pt& ul, const GG::Pt& lr);   //!< sets default positions and if default positions were set beforehand, calls SizeMove()
-    //@}
 
-    //! \name Mutators //@{
     virtual void    CloseClicked();                     //!< called when window is closed via the close button
     virtual void    PinClicked();                       //!< called when window is pinned or unpinned via the pin button
-    //@}
 
-    //! \name Statics //@{
     static void     InvalidateUnusedOptions();          //!< removes unregistered and registered-but-unused window options from the OptionsDB so that new windows fall back to their default properties.
 
-    //@}
-
 protected:
-    //! \name Accessors //@{
     virtual GG::Pt          MinimizedSize() const;              //!< the size of a minimized CUIWnd
     int                     InnerBorderAngleOffset() const;     //!< the distance from where the lower right corner of the inner border should be to where the angled portion of the inner border meets the right and bottom lines of the border
     bool                    InResizeTab(const GG::Pt& pt) const;//!< returns true iff the specified \a pt is in the region where dragging will resize this Wnd
     void                    SaveOptions() const;                //!< saves options for this window to the OptionsDB if config_name was specified in the constructor
 
     virtual GG::Rect        CalculatePosition() const;          //!< override this if a class determines its own position/size and return the calculated values, called by ResetDefaultPosition()
-    //@}
 
-    //! \name Statics //@{
     static const std::string AddWindowOptions(const std::string& config_name,
                                               int left, int top, int width, int height,
                                               bool visible, bool pinned, bool minimized);   //!< Adds OptionsDB entries for a window under a given name along with default values.
@@ -166,9 +152,7 @@ protected:
                                               bool visible, bool pinned, bool minimized);   //!< overload that accepts GG::X and GG::Y instead of ints
 
     static void              InvalidateWindowOptions(const std::string& config_name);       //!< removes options containing \a config_name, logs an error instead if "ui."+config_name+".initialized" exists (i.e. if a window is currently using that name)
-    //@}
 
-    //! \name Mutators //@{
     virtual void    MinimizeClicked();              //!< called when window is minimized or restored via the minimize/restore button
     virtual void    InitButtons();                  //!< called to create the buttons, withtout positioning them
     virtual void    PositionButtons();              //!< called to position the buttons
@@ -183,7 +167,6 @@ protected:
     void            SetDefaultedOptions();
     /** Sets the default value any options previously determined from calls to SetDefaultedOptions to their current value */
     void            SaveDefaultedOptions();
-    //@}
 
     bool                    m_resizable = false;    //!< true if the window is able to be resized
     bool                    m_closable = false;     //!< true if the window is able to be closed with a button press
@@ -250,4 +233,5 @@ private:
     static const int CONTROL_MARGIN;
 };
 
-#endif // _CUIWnd_h_
+
+#endif

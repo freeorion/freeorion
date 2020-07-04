@@ -484,9 +484,6 @@ void ColorDlg::ColorDisplay::Render()
 }
 
 
-// ColorDlg
-
-// static(s)
 std::vector<Clr> ColorDlg::s_custom_colors;
 const std::size_t ColorDlg::INVALID_COLOR_BUTTON = std::numeric_limits<std::size_t>::max();
 

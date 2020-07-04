@@ -45,7 +45,6 @@ struct FO_COMMON_API ParsedShipDesign {
 
 class FO_COMMON_API ShipDesign {
 public:
-    /** \name Structors */ //@{
 private:
     /** The ShipDesign() constructor constructs invalid designs and is only used by boost
         serialization. */
@@ -80,9 +79,7 @@ public:
 
     /** Convert a parsed ship design and do any required verification. */
     ShipDesign(const ParsedShipDesign& design);
-    //@}
 
-    /** \name Accessors */ //@{
     int                             ID() const  { return m_id; }    ///< returns id number of design
     /** returns name of design.  if \a stringtable_lookup is true and the
       * design was constructed specifying name_desc_in_stringtable true,
@@ -165,17 +162,14 @@ public:
     unsigned int                    GetCheckSum() const;
 
     friend FO_COMMON_API bool operator ==(const ShipDesign& first, const ShipDesign& second);
-    //@}
 
     bool                            ProductionLocation(int empire_id, int location_id) const;   ///< returns true iff the empire with ID empire_id can produce this design at the location with location_id
 
-    /** \name Mutators */ //@{
     void                            SetID(int id);                          ///< sets the ID number of the design to \a id .  Should only be used by Universe class when inserting new design into Universe.
     /** Set the UUID. */
     void                            SetUUID(const boost::uuids::uuid& uuid);
     void                            Rename(const std::string& name) { m_name = name; }  ///< renames this design to \a name
     void                            SetMonster(const bool is_monster) {m_is_monster = is_monster; }
-    //@}
 
     /** Return true if \p hull and \p parts would make a valid design. */
     static bool ValidDesign(const std::string& hull, const std::vector<std::string>& parts);
@@ -277,7 +271,6 @@ public:
       * the parsed content is consistent without sending it all between
       * clients and server. */
     unsigned int        GetCheckSum() const;
-    //@}
 
     /** Adds designs in this manager to the universe with the design creator
       * left as no empire. */
@@ -339,4 +332,5 @@ FO_COMMON_API std::tuple<
     std::vector<boost::uuids::uuid>>
 LoadShipDesignsAndManifestOrderFromParseResults(PredefinedShipDesignManager::ParsedShipDesignsType& parsed);
 
-#endif // _ShipDesign_h_
+
+#endif

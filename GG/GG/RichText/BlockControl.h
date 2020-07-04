@@ -50,4 +50,5 @@ public:
 
 }
 
-#endif // BLOCKCONTROL_H
+
+#endif

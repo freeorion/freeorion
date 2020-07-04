@@ -32,4 +32,4 @@ bool SetEmpireHomeworld(Empire* empire, int planet_id, std::string species_name)
 void InitEmpires(const std::map<int, PlayerSetupData>& player_setup_data);
 
 
-#endif // _UniverseGenerator_h_
+#endif

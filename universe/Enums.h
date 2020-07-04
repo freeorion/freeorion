@@ -306,4 +306,4 @@ GG_ENUM(ModeratorActionSetting,
 )
 
 
-#endif // _Enums_h_
+#endif

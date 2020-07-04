@@ -48,24 +48,18 @@ namespace GG {
 class GG_API Control : public Wnd
 {
 public:
-    /** \name Accessors */ ///@{
     Clr Color() const;      ///< returns the color of the control
     bool Disabled() const;  ///< returns true if the control is disabled, false otherwise
-    //@}
 
-    /** \name Mutators */ ///@{
     /** Sets the color of the control. */
     virtual void SetColor(Clr c);
 
     /** Disables/enables the control; disabled controls appear greyed. */
     virtual void Disable(bool b = true);
-    //@}
 
 protected:
-    /** \name Structors */ ///@{
     Control();
     Control(X x, Y y, X w, Y h, Flags<WndFlag> flags = INTERACTIVE);
-    //@}
 
     void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys) override;
     void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
@@ -75,6 +69,6 @@ protected:
     bool m_disabled = false;    ///< whether or not this control is disabled
 };
 
-} // namespace GG
+}
 
 #endif

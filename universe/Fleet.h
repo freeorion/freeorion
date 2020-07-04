@@ -30,7 +30,6 @@ struct MovePathNode {
   * ships that travel together. */
 class FO_COMMON_API Fleet : public UniverseObject {
 public:
-    /** \name Accessors */ //@{
     bool HostileToEmpire(int empire_id) const override;
 
     UniverseObjectType ObjectType() const override;
@@ -107,9 +106,7 @@ public:
      * If in a system and not blockaded, the value is the current system ID. The blockade intent is that you can't
      * break a blockade unless you beat the blockaders (via combat or they retreat).**/
     int ArrivalStarlane() const { return m_arrival_starlane; }
-    //@}
 
-    /** \name Mutators */ //@{
     void Copy(std::shared_ptr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES) override;
 
     void MovementPhase() override;
@@ -130,7 +127,6 @@ public:
 
     void SetGiveToEmpire(int empire_id);                    ///< marks fleet to be given to empire
     void ClearGiveToEmpire();                               ///< marks fleet not to be given to any empire
-    //@}
 
     /* returns a name for a fleet based on its ships*/
     std::string GenerateFleetName();
@@ -143,7 +139,6 @@ protected:
     friend class Universe;
     friend class ObjectMap;
 
-    /** \name Structors */ //@{
     Fleet() {}
 
 public:
@@ -158,7 +153,6 @@ public:
 protected:
     /** Returns new copy of this Fleet. */
     Fleet* Clone(int empire_id = ALL_EMPIRES) const override;
-    //@}
 
 private:
     std::set<int>               m_ships;
@@ -188,4 +182,5 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-#endif // _Fleet_h_
+
+#endif

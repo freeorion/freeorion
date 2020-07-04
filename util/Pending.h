@@ -107,4 +107,5 @@ namespace Pending {
     }
 }
 
-#endif // _Pending_h_
+
+#endif

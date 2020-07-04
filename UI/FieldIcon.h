@@ -13,13 +13,10 @@
     associated with it. */
 class FieldIcon : public GG::Control {
 public:
-    //! \name Structors //!@{
     FieldIcon(int field_id);
     ~FieldIcon();
-    //!@}
     void CompleteConstruction() override;
 
-    //! \name Accessors //!@{
     /** Checks to see if point lies inside in-system fleet buttons before
         checking parent InWindow method. */
     bool InWindow(const GG::Pt& pt) const override;
@@ -27,9 +24,7 @@ public:
 
     /** Returns the field texture. */
     const std::shared_ptr<GG::Texture>& FieldTexture() const;
-    //!@}
 
-    //! \name Mutators //!@{
     void LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
     void LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys) override;
     void LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
@@ -51,7 +46,6 @@ public:
     mutable boost::signals2::signal<void (int)> RightClickedSignal;
     mutable boost::signals2::signal<void (int)> LeftDoubleClickedSignal;
     mutable boost::signals2::signal<void (int)> RightDoubleClickedSignal;
-    //!@}
 
 private:
     int                                 m_field_id;             //!< the Field associated with this FieldIcon
@@ -62,4 +56,5 @@ private:
     std::shared_ptr<GG::Label>          m_name;                 //!< the control that holds the name of the system;
 };
 
-#endif // _SystemIcon_h_
+
+#endif

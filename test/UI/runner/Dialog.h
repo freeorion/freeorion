@@ -21,4 +21,5 @@ private:
     std::shared_ptr<GG::Wnd> m_child;
 };
 
-#endif // Dialog_h
+
+#endif

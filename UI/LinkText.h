@@ -11,10 +11,8 @@
 /// but a decorator is free to manipulate the decorated text in any way.
 class LinkDecorator {
 public:
-    /** \name Structors */ //@{
     LinkDecorator() {};
     virtual ~LinkDecorator() {};
-    //@}
 
     /// Gets called for each link of the type this decorator is assigned to.
     /// The return value is shown to the user as the link.
@@ -55,10 +53,8 @@ public:
 
 class TextLinker {
 public:
-    /** \name Structors */ //@{
     TextLinker();
     virtual ~TextLinker();
-    //@}
 
     /// Sets the link decorator for a link type.
     /// \param link_type The link type (tag) to be decorated. Eg. "planet"
@@ -135,16 +131,13 @@ private:
   * is fine. */
 class LinkText : public GG::TextControl, public TextLinker {
 public:
-    /** \name Structors */ //@{
     LinkText(GG::X x, GG::Y y, GG::X w, const std::string& str, const std::shared_ptr<GG::Font>& font, GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE, GG::Clr color = GG::CLR_BLACK); ///< ctor taking a font directly
 
     /** ctor that does not require window size.
         Window size is determined from the string and font; the window will be large enough to fit the text as rendered,
         and no larger.  \see DynamicText::DynamicText() */
     LinkText(GG::X x, GG::Y y, const std::string& str, const std::shared_ptr<GG::Font>& font, GG::Clr color = GG::CLR_BLACK);
-    //@}
 
-    /** \name Accessors */ //@{
     GG::Pt TextUpperLeft() const override;
     GG::Pt TextLowerRight() const override;
 
@@ -153,9 +146,7 @@ public:
 
     /** Returns text displayed before link formatting is added. */
     const std::string& RawText() const override;
-    //@}
 
-    /** \name Mutators */ //@{
     void Render() override;
     void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
     void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
@@ -168,7 +159,6 @@ public:
         was used), calls to this function cause the window to be resized to
         whatever space the newly rendered text occupies. */
     void SetText(const std::string& str) override;
-    //@}
 
 private:
     void SetLinkedText(const std::string& str) override;
@@ -191,4 +181,5 @@ std::string LinkTaggedPresetText(const std::string& tag, const std::string& stri
 /// XML tags is handled by GG::Font
 void RegisterLinkTags();
 
-#endif // _LinkText_h_
+
+#endif

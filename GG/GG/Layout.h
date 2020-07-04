@@ -101,13 +101,9 @@ namespace GG {
 class GG_API Layout : public Wnd
 {
 public:
-    /** \name Structors */ ///@{
-    /** Ctor. */
     Layout(X x, Y y, X w, Y h, std::size_t rows, std::size_t columns,
            unsigned int border_margin = 0, unsigned int cell_margin = INVALID_CELL_MARGIN);
-    //@}
 
-    /** \name Accessors */ ///@{
     Pt MinUsableSize() const override;
 
     std::size_t      Rows() const;
@@ -132,9 +128,7 @@ public:
     //! used if RenderOutline() returns true).  This is sometimes useful for
     //! debugging purposes
     Clr    OutlineColor() const;
-    //@}
 
-    /** \name Mutators */ ///@{
     void StartingChildDragDrop(const Wnd* wnd, const Pt& offset) override;
     void CancellingChildDragDrop(const std::vector<const Wnd*>& wnds) override;
     void ChildrenDraggedAway(const std::vector<Wnd*>& wnds, const Wnd* destination) override;
@@ -213,9 +207,7 @@ public:
     //! Set this to true if this layout should render an outline of itself;
     //! this is sometimes useful for debugging purposes.
     void RenderOutline(bool render_outline);
-    //@}
 
-    /** \name Exceptions */ ///@{
     //! The base class for Layout exceptions.
     GG_ABSTRACT_EXCEPTION(Exception);
 
@@ -232,12 +224,10 @@ public:
     //! Thrown when an attempt is made to place a Wnd in a nonempty layout
     //! cell.
     GG_CONCRETE_EXCEPTION(AttemptedOverwrite, GG::Layout, Exception);
-    //@}
 
     static const unsigned int INVALID_CELL_MARGIN;
 
 protected:
-    /** \name Mutators */ ///@{
     void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys) override;
     void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
     void KeyRelease(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
@@ -250,7 +240,6 @@ protected:
     //! Bug:  This does nothing if the size has not changed.  Fixing it to use
     //! call DoLayout() even when the size has not changed breaks all text boxes.
     virtual void RedoLayout();
-    //@}
 
 private:
     struct GG_API RowColParams
@@ -301,6 +290,6 @@ private:
     friend class Wnd;
 };
 
-} // namespace GG
+}
 
 #endif

@@ -7,16 +7,10 @@
 //! This is a screen showing license and vision
 class About final : public CUIWnd {
 public:
-    //! \name Structors
-    //!@{
     About();
-    //!@}
     void CompleteConstruction() override;
 
-    //! \name Mutators
-    //!@{
     void KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
-    //!@}
 
     void ShowLicense();
     void ShowVision();
@@ -31,4 +25,5 @@ private:
     std::string                     m_license_str;  //!< String containing the copyright license
 };
 
-#endif // _About_h_
+
+#endif

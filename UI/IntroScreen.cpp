@@ -1,4 +1,3 @@
-//IntroScreen.cpp
 #include "IntroScreen.h"
 
 #include "../client/human/HumanClientApp.h"

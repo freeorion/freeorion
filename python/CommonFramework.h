@@ -11,10 +11,8 @@
 
 class PythonBase {
 public:
-    /** \name ctor */ //@{
     PythonBase();
     virtual ~PythonBase();
-    //@}
 
     /**
        Handles boost::python::error_already_set.

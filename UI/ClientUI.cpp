@@ -64,7 +64,7 @@ bool TextureFileNameCompare(const std::shared_ptr<GG::Texture> t1, const std::sh
 
 namespace fs = boost::filesystem;
 
-// static members
+
 fs::path    ClientUI::ArtDir()                  { return GetResourceDir() / "data" / "art"; }
 fs::path    ClientUI::SoundDir()                { return GetResourceDir() / "data" / "sound"; }
 
@@ -75,12 +75,12 @@ GG::Clr     ClientUI::TextColor()               { return GetOptionsDB().Get<GG::
 GG::Clr     ClientUI::DefaultLinkColor()        { return GetOptionsDB().Get<GG::Clr>("ui.font.link.color"); }
 GG::Clr     ClientUI::RolloverLinkColor()       { return GetOptionsDB().Get<GG::Clr>("ui.font.link.rollover.color"); }
 
-// windows
+
 GG::Clr     ClientUI::WndColor()                { return GetOptionsDB().Get<GG::Clr>("ui.window.background.color"); }
 GG::Clr     ClientUI::WndOuterBorderColor()     { return GetOptionsDB().Get<GG::Clr>("ui.window.border.outer.color"); }
 GG::Clr     ClientUI::WndInnerBorderColor()     { return GetOptionsDB().Get<GG::Clr>("ui.window.border.inner.color"); }
 
-// controls
+
 GG::Clr     ClientUI::CtrlColor()               { return GetOptionsDB().Get<GG::Clr>("ui.control.background.color"); }
 GG::Clr     ClientUI::CtrlBorderColor()         { return GetOptionsDB().Get<GG::Clr>("ui.control.border.color"); }
 GG::Clr     ClientUI::ButtonHiliteColor() {
@@ -120,7 +120,7 @@ double      ClientUI::MediumFleetButtonZoomThreshold()  { return GetOptionsDB().
 
 bool        ClientUI::DisplayTimestamp()                { return GetOptionsDB().Get<bool>("ui.map.messages.timestamp.shown"); }
 
-// content texture getters
+
 std::shared_ptr<GG::Texture> ClientUI::PlanetIcon(PlanetType planet_type) {
     std::string icon_filename;
     switch (planet_type) {
@@ -352,7 +352,6 @@ std::shared_ptr<GG::Texture> ClientUI::ShipDesignIcon(int design_id) {
 }
 
 
-// tech screen
 GG::Clr     ClientUI::KnownTechFillColor()                   { return GetOptionsDB().Get<GG::Clr>("ui.research.status.completed.background.color"); }
 GG::Clr     ClientUI::KnownTechTextAndBorderColor()          { return GetOptionsDB().Get<GG::Clr>("ui.research.status.completed.border.color"); }
 GG::Clr     ClientUI::ResearchableTechFillColor()            { return GetOptionsDB().Get<GG::Clr>("ui.research.status.researchable.background.color"); }
@@ -418,7 +417,7 @@ std::map<StarType, std::string>& ClientUI::HaloStarTypeFilePrefixes() {
     return prefixes;
 }
 
-// private static members
+
 ClientUI* ClientUI::s_the_UI = nullptr;
 
 std::ostream& operator<< (std::ostream& os, const GG::UnicodeCharset& chset) {

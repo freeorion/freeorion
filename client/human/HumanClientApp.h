@@ -38,15 +38,12 @@ public:
     const HumanClientApp& operator=(const HumanClientApp&) = delete;
     HumanClientApp& operator=(const HumanClientApp&&) = delete;
 
-    /** \name Accessors */ //@{
     int EffectsProcessingThreads() const override;
     bool SinglePlayerGame() const;  ///< returns true iff this game is a single-player game
     bool CanSaveNow() const;        ///< returns true / false to indicate whether this client can currently safely initiate a game save
     int  AutoTurnsLeft() const;     ///< returns number of turns left to execute automatically
     bool HaveWindowFocus() const;   ///< as far as the HCA knows, does the game window have focus?
-    //@}
 
-    /** \name Mutators */ //@{
     void HandleTurnUpdate() override;           ///< Handle background events that need starting when the turn updates
     void StartTurn(const SaveGameUIData& ui_data) override;
     void UnreadyTurn();                         ///< Revoke ready state of turn orders.
@@ -107,7 +104,6 @@ public:
     void OpenURL(const std::string& url);
     /** Opens the users preferred application for file manager at the specified path @p browse_path */
     void BrowsePath(const boost::filesystem::path& browse_path);
-    //@}
 
     mutable FullscreenSwitchSignalType  FullscreenSwitchSignal;
     mutable RepositionWindowsSignalType RepositionWindowsSignal;
@@ -191,4 +187,5 @@ private:
     boost::signals2::signal<void ()>    SaveGamesCompletedSignal;
 };
 
-#endif // _HumanClientApp_h_
+
+#endif

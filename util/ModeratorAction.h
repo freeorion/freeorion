@@ -146,4 +146,5 @@ private:
 
 }
 
-#endif // _Moderator_Action_h_
+
+#endif

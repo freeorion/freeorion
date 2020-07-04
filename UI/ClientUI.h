@@ -32,12 +32,9 @@ class ShipDesignManager;
 //!display of all information onscreen.
 class ClientUI {
 public:
-    //! \name Structors //!@{
     ClientUI();
     ~ClientUI();
-    //!@}
 
-    //! \name Accessors //!@{
     std::shared_ptr<MapWnd>                 GetMapWnd();                //!< Returns the main map window.
     MapWnd const*                           GetMapWndConst() const;     //!< Returns the main map window.
     std::shared_ptr<MessageWnd>             GetMessageWnd();            //!< Returns the chat / message window.
@@ -48,9 +45,7 @@ public:
     std::shared_ptr<SaveFileDialog>         GetSaveFileDialog();        //!< Returns a perhaps nullptr to any existing SaveFileDialog
     ShipDesignManager*                      GetShipDesignManager() { return m_ship_designs.get(); };
     void                                    GetSaveGameUIData(SaveGameUIData& data) const; //!< populates the relevant UI state that should be restored after a save-and-load cycle
-    //!@}
 
-    //! \name Mutators //!@{
     /** Return the IntroScreen. Hides the MapWnd, MessageWnd and
       * PlayerListWnd if visible, but doesn't create them just to hide them. **/
     void ShowIntroScreen();
@@ -115,7 +110,6 @@ public:
     std::vector<std::shared_ptr<GG::Texture>> GetPrefixedTextures(const boost::filesystem::path& dir,
                                                                   const std::string& prefix,
                                                                   bool mipmap = false);
-    //!@}
 
     static ClientUI* GetClientUI();     //!< returns a pointer to the singleton ClientUI class
 
@@ -245,4 +239,5 @@ namespace GG {
 /** Increases the given value when font size is larger than 12 */
 int FontBasedUpscale(int x);
 
-#endif // _ClientUI_h_
+
+#endif

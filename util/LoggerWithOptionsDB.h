@@ -70,4 +70,5 @@ FO_COMMON_API std::set<std::tuple<std::string, std::string, LogLevel>>
 /** Sets the logger thresholds from a list of options, labels and thresholds. */
 FO_COMMON_API void SetLoggerThresholds(const std::set<std::tuple<std::string, std::string, LogLevel>>& full_option_name_and_level);
 
-#endif // _LoggerWithOptionsDB_h_
+
+#endif

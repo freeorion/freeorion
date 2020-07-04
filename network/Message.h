@@ -132,25 +132,19 @@ public:
         PLAYER_DISCONNECT,      ///< an active player (not an observer) was disconnected
     )
 
-    /** \name Structors */ //@{
     Message();
 
     Message(MessageType message_type,
             const std::string& text);
-    //@}
 
-    /** \name Accessors */ //@{
     MessageType Type() const;               ///< Returns the type of the message.
     std::size_t Size() const;               ///< Returns the size of the underlying buffer.
     const char* Data() const;               ///< Returns the underlying buffer.
     std::string Text() const;               ///< Returns the underlying buffer as a std::string.
-    //@}
 
-    /** \name Accessors */ //@{
     void        Resize(std::size_t size);   ///< Resizes the underlying char buffer to \a size uninitialized bytes.
     char*       Data();                     ///< Returns the underlying buffer.
     void        Swap(Message& rhs);         ///< Swaps the contents of \a *this with \a rhs.  Does not throw.
-    //@}
 
 private:
     MessageType   m_type;
@@ -459,4 +453,5 @@ FO_COMMON_API void ExtractSetAuthorizationRolesMessage(const Message &msg, Netwo
 
 FO_COMMON_API void ExtractPlayerInfoMessageData(const Message &msg, std::map<int, PlayerInfo>& players);
 
-#endif // _Message_h_
+
+#endif

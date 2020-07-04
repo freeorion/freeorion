@@ -69,11 +69,9 @@ struct UnicodeCharset;
 class GG_API StyleFactory
 {
 public:
-    /** \name Structors */ ///@{
     StyleFactory();
 
     virtual ~StyleFactory();
-    //@}
 
     /** Returns the default font for this style, in the size \a pts,
         supporting all printable ASCII characters. */
@@ -90,7 +88,6 @@ public:
         dialoges provided by GiGi. */
     virtual std::string Translate(const std::string& key) const;
 
-    /** \name Controls */ ///@{
     /** Returns a new GG Button. */
     virtual std::shared_ptr<Button> NewButton(const std::string& str,
                               const std::shared_ptr<Font>& font, Clr color, Clr text_color = CLR_BLACK,
@@ -124,7 +121,6 @@ public:
     virtual std::shared_ptr<TextControl> NewTextControl(const std::string& str, const std::shared_ptr<Font>& font,
                                         Clr color = CLR_BLACK, Flags<TextFormat> format = FORMAT_NONE) const;
 
-    /** \name Subcontrols */ ///@{
     /** Returns a new ListBox, to be used in a DropDownList. */
     virtual std::shared_ptr<ListBox> NewDropDownListListBox(Clr color, Clr interior = CLR_ZERO) const;
 
@@ -184,21 +180,18 @@ public:
 
     /** Returns a new left Button, to be used in a TabBar. */
     virtual std::shared_ptr<Button> NewTabBarRightButton(const std::shared_ptr<Font>& font, Clr color, Clr text_color = CLR_BLACK) const;
-    //@}
 
-    /** \name Dialogs */ ///@{
     /** Returns a new GG ThreeButtonDlg that automatically centers itself in
         the app. */
     virtual std::shared_ptr<ThreeButtonDlg> NewThreeButtonDlg(X w, Y h, const std::string& msg, const std::shared_ptr<Font>& font,
                                               Clr color, Clr border_color, Clr button_color, Clr text_color, int buttons,
                                               const std::string& zero = "", const std::string& one = "",
                                               const std::string& two = "") const;
-    //@}
 
     /** The "filename" of the default font. */
     static const std::string& DefaultFontName();
 };
 
-} // namespace GG
+}
 
 #endif

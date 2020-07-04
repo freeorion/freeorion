@@ -23,38 +23,30 @@ public:
         LARGE
     };
 
-    /** \name Structors */ //@{
     FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type = SizeType::LARGE);
     FleetButton(int fleet_id, SizeType size_type = SizeType::LARGE);
     void CompleteConstruction() override;
     virtual ~FleetButton();
-    //@}
 
-    /** \name Accessors */ //@{
     /** Returns true if \a pt is within or over the button. */
     bool InWindow(const GG::Pt& pt) const override;
 
     const std::vector<int>& Fleets() const      { return m_fleets; }    ///< returns the fleets represented by this control
     bool                    Selected() const    { return m_selected; }  ///< returns whether this button has been marked selected
-    //@}
 
-    /** \name Mutators */ //@{
     void MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
 
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
     void                    SetSelected(bool selected = true);      ///< sets selection status of button.  if selected = true, marks button as selected.  otherwise marks button as not selected
-    //@}
 
     static void             PlayFleetButtonOpenSound();
     static void             PlayFleetButtonRolloverSound();
 
 protected:
-    /** \name Mutators */ //@{
     void RenderUnpressed() override;
     void RenderPressed() override;
     void RenderRollover() override;
-    //@}
 
 private:
     void LayoutIcons();
@@ -85,4 +77,5 @@ std::shared_ptr<GG::Texture> FleetBlockadedIcon(FleetButton::SizeType size_type)
 /* returns icon for indication fleet icon selection */
 std::shared_ptr<GG::Texture> FleetSelectionIndicatorIcon();
 
-#endif // _FleetButton_h_
+
+#endif

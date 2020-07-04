@@ -51,15 +51,10 @@ public:
     //typedef flat_map<MeterType, Meter, std::less<MeterType>, std::vector<std::pair<MeterType, Meter>>> MeterMap;
     typedef flat_map<MeterType, Meter, std::less<MeterType>> MeterMap;
 
-    /** \name Signal Types */ //@{
     typedef boost::signals2::signal<void (), blocking_combiner<boost::signals2::optional_last_value<void>>> StateChangedSignalType;
-    //@}
 
-    /** \name Slot Types */ //@{
     typedef StateChangedSignalType::slot_type StateChangedSlotType;
-    //@}
 
-    /** \name Accessors */ //@{
     int                         ID() const;                         ///< returns the ID number of this object.  Each object in FreeOrion has a unique ID number.
     const std::string&          Name() const;                       ///< returns the name of this object; some valid objects will have no name
     virtual double              X() const;                          ///< the X-coordinate of this object
@@ -122,9 +117,7 @@ public:
     int                         AgeInTurns() const;                 ///< returns elapsed number of turns between turn object was created and current game turn
 
     mutable StateChangedSignalType StateChangedSignal;              ///< emitted when the UniverseObject is altered in any way
-    //@}
 
-    /** \name Mutators */ //@{
     /** copies data from \a copied_object to this object, limited to only copy
       * data about the copied object that is known to the empire with id
       * \a empire_id (or all data if empire_id is ALL_EMPIRES) */
@@ -185,7 +178,6 @@ public:
         actions during the pop growth/production/research phase of a turn. */
     virtual void    PopGrowthProductionResearchPhase()
     {};
-    //@}
 
     static const double INVALID_POSITION;       ///< the position in x and y at which default-constructed objects are placed
     static const int    INVALID_OBJECT_AGE;     ///< the age returned by UniverseObject::AgeInTurns() if the current turn is INVALID_GAME_TURN, or if the turn on which an object was created is INVALID_GAME_TURN
@@ -195,7 +187,6 @@ protected:
     friend class Universe;
     friend class ObjectMap;
 
-    /** \name Structors */ //@{
     UniverseObject();
     UniverseObject(const std::string name, double x, double y);
 
@@ -210,7 +201,6 @@ protected:
       * by the detection and visibility system.  Caller takes ownership of
       * returned pointee. */
     virtual UniverseObject* Clone(int empire_id = ALL_EMPIRES) const = 0;
-    //@}
 
     void                    AddMeter(MeterType meter_type); ///< inserts a meter into object as the \a meter_type meter.  Should be used by derived classes to add their specialized meters to objects
     void                    Init();                         ///< adds stealth meter
@@ -244,4 +234,5 @@ private:
 inline std::string DumpIndent(unsigned short ntabs = 1)
 { return std::string(ntabs * 4 /* conversion to size_t is safe */, ' '); }
 
-#endif // _UniverseObject_h_
+
+#endif

@@ -20,13 +20,10 @@ class SidePanel : public CUIWnd {
 public:
     class PlanetPanel;
 
-    /** \name Structors */ //@{
     SidePanel(const std::string& config_name);
     void CompleteConstruction() override;
     ~SidePanel();
-    //@}
 
-    /** \name Accessors */ //@{
     bool InWindow(const GG::Pt& pt) const override;
 
     GG::Pt ClientUpperLeft() const override;
@@ -42,9 +39,7 @@ public:
     /** Returns whether this SidePanel contains an object with the indicated
       * \a object_id that can be selected within the SidePanel. */
     bool                PlanetSelectable(int planet_id) const;
-    //@}
 
-    /** \name Mutators */ //@{
     void PreRender() override;
 
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
@@ -75,7 +70,6 @@ public:
 
     /** Enables, or disables if \a enable is false, issuing orders via the SidePanel. */
     void                EnableOrderIssuing(bool enable = true);
-    //@}
 
     /** emitted when a rotating planet in the side panel is clicked by the
       * user */
@@ -168,4 +162,5 @@ std::shared_ptr<const Ship> ValidSelectedColonyShip(int system_id);
 
 int                         AutomaticallyChosenColonyShip(int target_planet_id);
 
-#endif // _SidePanel_h_
+
+#endif

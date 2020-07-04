@@ -57,7 +57,6 @@ public:
 
     GameRules();
 
-    /** \name Accessors */ //@{
     bool Empty() const;
     std::unordered_map<std::string, Rule>::const_iterator begin() const;
     std::unordered_map<std::string, Rule>::const_iterator end() const;
@@ -97,9 +96,7 @@ public:
             }
         }
     }
-    //@}
 
-    /** \name Mutators */ //@{
     /** Adds a rule, optionally with a custom validator.
         Adds option setup.rules.{RULE_NAME} to override default value and
         option setup.rules.server-locked.{RULE_NAME} to block rule changes from players */
@@ -146,7 +143,6 @@ public:
 
     /** Resets all rules to default values. */
     void ResetToDefaults();
-    //@}
 
 private:
     /** Assigns any m_pending_rules to m_game_rules. */
@@ -161,4 +157,5 @@ private:
     friend FO_COMMON_API GameRules& GetGameRules();
 };
 
-#endif // _GameRules_h_
+
+#endif

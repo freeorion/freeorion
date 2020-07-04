@@ -333,9 +333,7 @@ public:
         ClipToClientAndWindowSeparately
     };
 
-    /** \name Structors */ ///@{
     virtual ~Wnd();
-    //@}
 
     /** Create is the default factory which allocates and configures a T type
         derived from Wnd.  It requires that the T constructor followed by
@@ -370,7 +368,6 @@ public:
         need a fully formed weak_from_this() (e.g. to call AttachChild()) to be correctly constructed. */
     virtual void CompleteConstruction() {};
 
-    /** \name Accessors */ ///@{
     /** Returns true iff a click over this window does not pass through.  Note
         that this also determines whether a mouse-over will detect this window
         or the ones under it. */
@@ -531,9 +528,7 @@ public:
 
     /** Adjusts \p ul and \p lr to correct for minsize and maxsize.*/
     void ClampRectWithMinAndMaxSize(Pt& ul, Pt& lr) const;
-    //@}
 
-    /** \name Mutators */ ///@{
     /** Sets the string key that defines the type of data that this Wnd
         represents in a drag-and-drop drag.  This should be set to the empty
         string when this Wnd cannot be used in drag-and-drop. */
@@ -755,8 +750,6 @@ public:
 
     /** Sets the currently-installed style factory. */
     void SetStyleFactory(const std::shared_ptr<StyleFactory>& factory);
-    //@}
-
 
     /** Returns the single time to place in the browse modes during Wnd
         construction. */
@@ -775,7 +768,6 @@ public:
         construction. */
     static void SetDefaultBrowseInfoWnd(const std::shared_ptr<BrowseInfoWnd>& browse_info_wnd);
 
-    /** \name Exceptions */ ///@{
     /** The base class for Wnd exceptions. */
     GG_ABSTRACT_EXCEPTION(Exception);
 
@@ -783,7 +775,6 @@ public:
         illegal starting positions, or when a SetLayout() call would result in
         an illegal state. */
     GG_CONCRETE_EXCEPTION(BadLayout, GG::Wnd, Exception);
-    //@}
 
 protected:
     /** Sets the \a second member of each iterator to true or false,
@@ -812,22 +803,17 @@ protected:
         DRAGGED_OVER_ACCEPTING_DROP_TARGET
     };
 
-    /** \name Structors */ ///@{
     Wnd();
 
     /** Ctor that allows a size and position to be specified, as well as
         creation flags. */
     Wnd(X x, Y y, X w, Y h, Flags<WndFlag> flags = INTERACTIVE | DRAGABLE);
-    //@}
 
-    /** \name Accessors */ ///@{
     /** Returns the states the Wnd is in, with respect to drag-and-drop
         operations.  Wnds may wish to consider the current state when
         rendering to provide visual feedback to the user. */
     DragDropRenderingState GetDragDropRenderingState() const;
-    //@}
 
-    /** \name Mutators */ ///@{
     /** Respond to left button down msg.  A window receives this whenever any
         input device button changes from up to down while over the window.
         \note If this Wnd was created with the REPEAT_BUTTON_DOWN flag, this
@@ -1006,7 +992,6 @@ protected:
     void EndNonclientClipping();
 
     virtual void SetParent(const std::shared_ptr<Wnd>& wnd);
-    //@}
 
     /** Modal Wnd's set this to true to stop modal loop. */
     bool m_done = false;
@@ -1065,6 +1050,6 @@ private:
     friend class Timer; ///< Timer needs to be able to call HandleEvent
 };
 
-} // namespace GG
+}
 
 #endif

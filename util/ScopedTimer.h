@@ -118,4 +118,5 @@ private:
     std::unique_ptr<Impl> const m_impl;
 };
 
-#endif // _ScopedTimer_h_
+
+#endif

@@ -58,7 +58,6 @@ extern GG_API const GraphicStyle GRAPHIC_PROPSCALE;   ///< If GRAPHIC_FITGRAPHIC
 class GG_API StaticGraphic : public Control
 {
 public:
-    /** \name Structors */ ///@{
      ///< creates a StaticGraphic from a pre-existing Texture.
     explicit StaticGraphic(const std::shared_ptr<Texture>& texture,
                            Flags<GraphicStyle> style = GRAPHIC_NONE,
@@ -73,9 +72,7 @@ public:
     explicit StaticGraphic(const std::shared_ptr<VectorTexture>& vector_texture,
                            Flags<GraphicStyle> style = GRAPHIC_NONE,
                            Flags<WndFlag> flags = NO_WND_FLAGS);
-    //@}
 
-    /** \name Accessors */ ///@{
     /** Returns the style of the StaticGraphic \see GraphicStyle */
     Flags<GraphicStyle> Style() const;
 
@@ -88,9 +85,7 @@ public:
     const std::shared_ptr<VectorTexture>& GetVectorTexture() const;
 
     const boost::filesystem::path& GetTexturePath() const;
-    //@}
 
-    /** \name Mutators */ ///@{
     void Render() override;
 
     /** Sets the style flags, and perfroms sanity checking \see
@@ -101,7 +96,6 @@ public:
     void SetTexture(const std::shared_ptr<Texture>& texture);
     void SetTexture(const SubTexture& subtexture);
     void SetTexture(const std::shared_ptr<VectorTexture>& vector_texture);
-    //@}
 
 private:
     void ValidateStyle();   ///< ensures that the style flags are consistent
@@ -111,6 +105,6 @@ private:
     Flags<GraphicStyle>             m_style;        ///< position of texture wrt the window area
 };
 
-} // namespace GG
+}
 
 #endif

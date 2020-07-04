@@ -24,7 +24,6 @@ class CUISpin : public GG::Spin<T>
 public:
     typedef typename GG::Spin<T>::ValueType ValueType;
 
-    /** \name Structors */ //@{
     CUISpin(T value, T step, T min, T max, bool edits) :
     GG::Spin<T>(value, step, min, max, edits, ClientUI::GetFont(), ClientUI::CtrlBorderColor(),
                 ClientUI::TextColor())
@@ -39,7 +38,6 @@ public:
         this->SetEditTextFromValue();
     }
 
-    /** \name Mutators */ //@{
     void Render() override {
         GG::Clr color_to_use = this->Disabled() ? DisabledColor(this->Color()) : this->Color();
         GG::Clr int_color_to_use = this->Disabled() ? DisabledColor(this->InteriorColor()) : this->InteriorColor();
@@ -48,7 +46,6 @@ public:
     }
 
     void SetEditTextFromValue() override;
-    //@}
 };
 
 template <typename T>
@@ -67,4 +64,5 @@ namespace detail {
     inline void PlayValueChangedSound::operator()(int) const {operator()(0.0);}
 }
 
-#endif // _CUISpin_h_
+
+#endif

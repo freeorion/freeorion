@@ -5,4 +5,5 @@ namespace FreeOrionPython {
     void WrapServer();
 }
 
-#endif // _ServerWrapper_h_
+
+#endif

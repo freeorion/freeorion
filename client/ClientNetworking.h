@@ -41,12 +41,9 @@ public:
     /** The type of list returned by a call to DiscoverLANServers(). */
     using ServerNames =  std::vector<std::string>;
 
-    /** \name Structors */ //@{
     ClientNetworking();
     ~ClientNetworking();
-    //@}
 
-    /** \name Accessors */ //@{
     /** Returns true iff the client is full duplex connected to the server. */
     bool IsConnected() const;
 
@@ -70,9 +67,7 @@ public:
 
     /** Returns address of multiplayer server entered by player. */
     const std::string& Destination() const;
-    //@}
 
-    /** \name Mutators */ //@{
     /** Returns a list of the addresses and names of all servers on the Local
         Area Network. */
     ServerNames DiscoverLANServerNames();
@@ -115,11 +110,11 @@ public:
 
     /** Access to client's authorization roles */
     Networking::AuthRoles& AuthorizationRoles();
-    //@}
 
 private:
     class Impl;
     std::unique_ptr<Impl> const m_impl;
 };
 
-#endif // _ClientNetworking_h_
+
+#endif

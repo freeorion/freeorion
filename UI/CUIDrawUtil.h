@@ -143,5 +143,5 @@ private:
     std::unique_ptr<Impl> const m_impl;
 };
 
-#endif // _CUIDrawUtil_h_
 
+#endif

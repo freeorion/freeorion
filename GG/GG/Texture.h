@@ -63,13 +63,10 @@ namespace GG {
 class GG_API Texture
 {
 public:
-    /** \name Structors */ ///@{
     Texture();
 
     virtual ~Texture();
-    //@}
 
-    /** \name Accessors */ ///@{
     const boost::filesystem::path&  Path() const;   ///< returns the file path from which this texture was loaded (default / empty if this texture was not loaded from a file)
 
     GLenum           WrapS() const;             ///< returns S-wrap mode associated with this opengl texture
@@ -92,9 +89,7 @@ public:
     /** Blit default portion of texture unscaled to \a pt (upper left
         corner)*/
     void OrthoBlit(const Pt& pt) const;
-    //@}
 
-    /** \name Mutators */ ///@{
     // intialization functions
     /** Frees any currently-held memory and loads a texture from file \a
         path.  \throw GG::Texture::BadFile Throws if the texture creation
@@ -110,9 +105,7 @@ public:
 
     void SetFilters(GLenum min, GLenum mag);  ///< sets the opengl min/mag filter modes associated with opengl texture m_opengl_id
     void Clear();  ///< frees the opengl texture object associated with this object
-    //@}
 
-    /** \name Exceptions */ ///@{
     /** The base class for Texture exceptions. */
     GG_ABSTRACT_EXCEPTION(Exception);
 
@@ -124,7 +117,6 @@ public:
 
     /** Thrown when GL fails to provide a requested texture object. */
     GG_CONCRETE_EXCEPTION(InsufficientResources, GG::Texture, Exception);
-    //@}
 
 private:
     Texture(const Texture& rhs);             ///< disabled
@@ -160,7 +152,6 @@ private:
 class GG_API SubTexture
 {
 public:
-    /** \name Structors */ ///@{
     SubTexture();
 
     /** Creates a SubTexture from a GG::Texture and coordinates into it.
@@ -179,9 +170,7 @@ public:
     const SubTexture& operator=(const SubTexture& rhs);
 
     virtual ~SubTexture();
-    //@}
 
-    /** \name Accessors */ ///@{
     bool             Empty() const;     ///< returns true if this object has no associated GG::Texture
     const GLfloat*   TexCoords() const; ///< texture coordinates to use when blitting this sub-texture
     X                Width() const;     ///< width of sub-texture in pixels
@@ -195,13 +184,9 @@ public:
     /** Blit sub-texture unscaled to \a pt (upper left corner) \see
         GG::Texture::OrthoBlit*/
     void OrthoBlit(const Pt& pt) const;
-    //@}
 
-    /** \name Mutators */ ///@{
     void Clear();
-    //@}
 
-    /** \name Exceptions */ ///@{
     /** The base class for SubTexture exceptions. */
     GG_ABSTRACT_EXCEPTION(Exception);
 
@@ -212,7 +197,6 @@ public:
     /** Thrown when invalid or out-of-order texture coordinates are
         supplied.*/
     GG_CONCRETE_EXCEPTION(InvalidTextureCoordinates, GG::SubTexture, Exception);
-    //@}
 
 private:
     /** shared_ptr to texture object with entire image. */
@@ -233,11 +217,8 @@ private:
 class GG_API TextureManager
 {
 public:
-    /** \name Accessors */ ///@{
     const std::map<std::string, std::shared_ptr<Texture>>& Textures() const;
-    //@}
 
-    /** \name Mutators */ ///@{
     /** Stores a pre-existing GG::Texture in the manager's texture pool, and
         returns a shared_ptr to it. \warning Calling code <b>must not</b>
         delete \a texture; \a texture becomes the property of the manager,
@@ -264,7 +245,6 @@ public:
         \a name, if it exists.  \note Due to shared_ptr semantics, the
         texture may not be deleted until much later. */
     void                     FreeTexture(const std::string& name);
-    //@}
 
 private:
     TextureManager();
@@ -280,6 +260,6 @@ private:
 /** Returns the singleton TextureManager instance. */
 GG_API TextureManager& GetTextureManager();
 
-} // namespace GG
+}
 
 #endif

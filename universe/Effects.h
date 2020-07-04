@@ -805,6 +805,7 @@ private:
     std::vector<std::unique_ptr<Effect>> m_true_effects;      // effects to execute if m_target_condition matches target object
     std::vector<std::unique_ptr<Effect>> m_false_effects;     // effects to execute if m_target_condition does not match target object
 };
-} // namespace Effect
+}
 
-#endif // _Effects_h_
+
+#endif

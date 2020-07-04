@@ -44,13 +44,10 @@ struct FO_COMMON_API ResearchQueue {
     /** The const ResearchQueue iterator type.  Dereference yields an Element. */
     typedef QueueType::const_iterator const_iterator;
 
-    /** \name Structors */ //@{
     ResearchQueue(int empire_id) :
         m_empire_id(empire_id)
     {}
-    //@}
 
-    /** \name Accessors */ //@{
     bool                        InQueue(const std::string& tech_name) const;///< Returns true iff \a tech is in this queue.
     bool                        Paused(const std::string& tech_name) const; ///< Returns true iff \a tech is in this queue and paused.
     bool                        Paused(int idx) const;                      ///< Returns true iff there are at least \a idx - 1 items in the queue and item with index \a idx is paused
@@ -67,9 +64,7 @@ struct FO_COMMON_API ResearchQueue {
     const_iterator  end() const;
     const_iterator  find(const std::string& tech_name) const;
     const Element&  operator[](int i) const;
-    //@}
 
-    /** \name Mutators */ //@{
     /** Recalculates the RPs spent on and number of turns left for each project
       * in the queue.  Also determines the number of projects in prgress, and
       * the total number of RPs spent on the projects in the queue.  \note A
@@ -90,7 +85,6 @@ struct FO_COMMON_API ResearchQueue {
     void            clear();
 
     mutable boost::signals2::signal<void ()> ResearchQueueChangedSignal;
-    //@}
 
 private:
     QueueType   m_queue;
@@ -103,4 +97,5 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-#endif // _ResearchQueue_h_
+
+#endif

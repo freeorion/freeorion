@@ -11,22 +11,16 @@
 /** The PopulationPool class keeps track of an empire's total population and its growth. */
 class FO_COMMON_API PopulationPool {
 public:
-    /** \name Structors */ //@{
     PopulationPool();
-    //@}
 
-    /** \name Accessors */ //@{
     const std::vector<int>& PopCenterIDs() const { return m_pop_center_ids; }   ///< returns the PopCenter vector
     float Population() const;   ///< returns current total population
-    //@}
 
-    /** \name Mutators */ //@{
     /** emitted after updating population and growth numbers */
     mutable boost::signals2::signal<void ()> ChangedSignal;
 
     void    SetPopCenters(const std::vector<int>& pop_center_ids);
     void    Update();                           ///< recalculates total population and growth
-    //@}
 
 private:
     std::vector<int>    m_pop_center_ids;       ///< UniverseObject ids of PopCenters that contribute to the pool
@@ -43,4 +37,5 @@ void PopulationPool::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_NVP(m_pop_center_ids);
 }
 
-#endif //_PopulationPool_h_
+
+#endif

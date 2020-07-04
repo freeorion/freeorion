@@ -48,15 +48,12 @@ class Framebuffer;
 class SDLGUI : public GG::GUI
 {
 public:
-    /** \name Structors */ ///@{
     explicit SDLGUI(int w = 1024, int h = 768, bool calc_FPS = false, const std::string& app_name = "GG",
                     int x = SDL_WINDOWPOS_UNDEFINED, int y = SDL_WINDOWPOS_UNDEFINED, bool fullscreen = false,
                     bool fake_mode_change = false);
 
     virtual ~SDLGUI();
-    //@}
 
-    /** \name Accessors */ ///@{
     GG::X AppWidth() const override;
     GG::Y AppHeight() const override;
     unsigned int Ticks() const override;
@@ -66,9 +63,7 @@ public:
 
     virtual bool Fullscreen() const final;
     virtual bool FakeModeChange() const final;
-    //@}
 
-    /** \name Mutators */ ///@{
     void ExitApp(int code = 0) override;
     bool SetClipboardText(const std::string& text) override;
 
@@ -86,7 +81,6 @@ public:
 
     void            SetWindowTitle(const std::string& title);
     void            SetVideoMode(GG::X width, GG::Y height, bool fullscreen, bool fake_mode_change);
-    //@}
 
     static SDLGUI*  GetGUI();                             ///< allows any code to access the gui framework by calling SDLGUI::GetGUI()
 

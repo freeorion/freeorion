@@ -27,17 +27,13 @@ class CombatLogWnd::Impl {
 public:
     Impl(CombatLogWnd& _log);
 
-    /** \name Accessors */ ///@{
     GG::Pt MinUsableSize() const;
-    //@}
 
-    /** \name Mutators */ //@{
     void SetFont(std::shared_ptr<GG::Font> font);
     /// Set which log to show
     void SetLog(int log_id);
     /** Add a row \p wnd at the end of the combat report. */
     void AddRow(std::shared_ptr<GG::Wnd> wnd);
-    //@}
 
     /** When windows changes forces a re-layout */
     void HandleWndChanged();

@@ -104,14 +104,12 @@ FO_COMMON_API OptionsDB& GetOptionsDB();
   * \see RegisterOptions (for static-time options specification) */
 class FO_COMMON_API OptionsDB {
 public:
-    /** \name Signal Types */ //@{
     /** emitted when an option has changed */
     typedef boost::signals2::signal<void ()>                   OptionChangedSignalType;
     /** emitted when an option is added */
     typedef boost::signals2::signal<void (const std::string&)> OptionAddedSignalType;
     /** emitted when an option is removed */
     typedef boost::signals2::signal<void (const std::string&)> OptionRemovedSignalType;
-    //@}
 
     /** indicates whether an option with name \a name has been added to this
         OptionsDB. */
@@ -478,4 +476,4 @@ template <>
 FO_COMMON_API std::vector<std::string> OptionsDB::Get<std::vector<std::string>>(const std::string& name) const;
 
 
-#endif // _OptionsDB_h_
+#endif

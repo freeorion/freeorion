@@ -23,12 +23,8 @@ public:
     typedef std::shared_ptr<const Pathfinder> ConstPtr;
     typedef std::shared_ptr<UniverseObjectVisitor> SystemExclusionPredicateType;
 
-    /** \name Structors */ //@{
     Pathfinder();
     virtual ~Pathfinder();
-    //@}
-
-    /** \name Accessors */ //@{
 
     /** Returns the straight-line distance between the objects with the given
       * IDs. \throw std::out_of_range This function will throw if either object
@@ -132,10 +128,6 @@ public:
       * (\a x, \a y) location on the map, by direct-line distance. */
     int                                     NearestSystemTo(double x, double y) const;
 
-    //@}
-
-    /** \name Mutators */ //@{
-
     /** Fills pathfinding data structure and determines least jumps distances
       * between systems for the empire with id \a for_empire_id or uses the
       * main / true / visible objects if \a for_empire_id is ALL_EMPIRES*/
@@ -145,11 +137,11 @@ public:
       * system graph based on empire visibility.  Does not regenerate the base
       * graph to account for actual system-starlane connectivity changes. */
     void UpdateEmpireVisibilityFilteredSystemGraphs(int for_empire_id = ALL_EMPIRES);
-    //@}
 
     class PathfinderImpl;
 private:
     const std::unique_ptr<PathfinderImpl> pimpl;
 };
 
-#endif // _Pathfinder_h_
+
+#endif

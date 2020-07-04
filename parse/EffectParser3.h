@@ -42,4 +42,6 @@ namespace parse { namespace detail {
 
     }
 }
-#endif // _EffectParser3_h_
+
+
+#endif

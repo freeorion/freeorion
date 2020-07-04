@@ -390,6 +390,6 @@ GG_ENUM(Key,
     GGK_LAST
 )
 
-} // namespace GG
+}
 
 #endif

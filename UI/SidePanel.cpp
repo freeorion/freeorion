@@ -507,20 +507,15 @@ namespace {
   * one time in a SidePanel */
 class SidePanel::PlanetPanel : public GG::Control {
 public:
-    /** \name Structors */ //@{
     PlanetPanel(GG::X w, int planet_id, StarType star_type);
 
     ~PlanetPanel();
-    //@}
     void CompleteConstruction() override;
 
-    /** \name Accessors */ //@{
     bool InWindow(const GG::Pt& pt) const override;
 
     int PlanetID() const { return m_planet_id; }
-    //@}
 
-    /** \name Mutators */ //@{
     void PreRender() override;
 
     void Render() override;
@@ -541,7 +536,6 @@ public:
 
     /** Enables, or disables if \a enable is false, issuing orders via this PlanetPanel. */
     void EnableOrderIssuing(bool enable = true);
-    //@}
 
     /** emitted when the planet panel is left clicked by the user.
       * returns the id of the clicked planet */
@@ -606,12 +600,9 @@ private:
   * scrolling through them by the user. */
 class SidePanel::PlanetPanelContainer : public GG::Wnd {
 public:
-    /** \name Structors */ //@{
     PlanetPanelContainer();
     ~PlanetPanelContainer();
-    //@}
 
-    /** \name Accessors */ //@{
     bool InWindow(const GG::Pt& pt) const override;
 
     void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) override;
@@ -619,9 +610,7 @@ public:
     int                     SelectedPlanetID() const    {return m_selected_planet_id;}
     const std::set<int>&    SelectionCandidates() const {return m_candidate_ids;}
     int                     ScrollPosition() const;
-    //@}
 
-    /** \name Mutators */ //@{
     void LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys) override;
 
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
@@ -646,7 +635,6 @@ public:
     /** Enables, or disables if \a enable is false, issuing orders via the
       * PlanetPanels in this PlanetPanelContainer. */
     void EnableOrderIssuing(bool enable = true);
-    //@}
 
     /** emitted when an enabled planet panel is clicked by the user */
     mutable boost::signals2::signal<void (int)> PlanetClickedSignal;

@@ -15,18 +15,13 @@
   * occurs. */
 struct CombatInfo : public ScriptingCombatInfo {
 public:
-    /** \name Structors */ //@{
     CombatInfo() = default;
     CombatInfo(int system_id_, int turn_);  ///< ctor taking system id where combat occurs and game turn on which combat occurs
-    //@}
 
-    /** \name Accessors */ //@{
     /** Returns System object in this CombatInfo's objects if one exists with
         id system_id. */
     std::shared_ptr<const System> GetSystem() const;
-    //@}
 
-    /** \name Mutators */ //@{
     /** Returns System object in this CombatInfo's objects if one exists with
         id system_id. */
     std::shared_ptr<System> GetSystem();
@@ -123,4 +118,5 @@ void CombatInfo::load(Archive & ar, const unsigned int version)
     combat_events.swap(           filtered_combat_events);
 }
 
-#endif // _CombatSystem_h_
+
+#endif

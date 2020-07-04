@@ -14,12 +14,9 @@ class BuildDesignatorWnd : public GG::Wnd {
 public:
     static const std::string PRODUCTION_ITEM_DROP_TYPE;
 
-    /** \name Structors */ //@{
     BuildDesignatorWnd(GG::X w, GG::Y h);
-    //@}
     void CompleteConstruction() override;
 
-    /** \name Accessors */ //@{
     bool InWindow(const GG::Pt& pt) const override;
     bool InClient(const GG::Pt& pt) const override;
 
@@ -30,9 +27,7 @@ public:
     const std::pair<bool, bool>&    GetAvailabilitiesShown() const;
 
     int SelectedPlanetID() const;
-    //@}
 
-    /** \name Mutators */ //@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
     /** Centres map wnd on location of item on queue with index \a queue_idx
@@ -101,7 +96,6 @@ public:
 
     /** returns true if the encyclopedia detail panel is visible */
     bool PediaVisible();
-    //@}
 
     /** emitted when the indicated build is indicated by the user */
     mutable boost::signals2::signal<void (const ProductionQueue::ProductionItem&, int, int, int)>
@@ -131,4 +125,5 @@ private:
     std::map<int, int>                          m_system_default_planets;   //!< map from system id to id of planet to auto select when viewing each system
 };
 
-#endif // _BuildDesignatorWnd_h_
+
+#endif

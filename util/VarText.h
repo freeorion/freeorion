@@ -208,4 +208,5 @@ void VarText::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_variables);
 }
 
-#endif // _VarText_h_
+
+#endif

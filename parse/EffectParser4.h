@@ -31,4 +31,5 @@ namespace parse { namespace detail {
     }
 }
 
-#endif // _EffectParser4_h_
+
+#endif

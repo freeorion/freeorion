@@ -34,5 +34,5 @@ protected:
     MultiplayerLobbyData m_lobby_data;     ///< Lobby data.
 };
 
-#endif // _ClientAppFixture_h_
 
+#endif

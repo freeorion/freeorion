@@ -11,16 +11,13 @@
 
 class AccordionPanel : public GG::Control {
 public:
-    /** \name Structors */ //@{
     AccordionPanel(GG::X w, GG::Y h, bool is_button_on_left = false);
     virtual ~AccordionPanel();
-    //@}
 
     void CompleteConstruction() override;
     GG::Pt ClientUpperLeft() const override;
     GG::Pt ClientLowerRight() const override;
 
-    /** \name Mutators */ //@{
     void Render() override;
     void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) override;
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
@@ -31,7 +28,6 @@ public:
     /** Set the number of pixels between the expansion symbol and the
         client area. */
     void SetBorderMargin(unsigned int margin);
-    //@}
 
     typedef boost::signals2::signal<void ()> ExpandCollapseSignalType;
     mutable ExpandCollapseSignalType ExpandCollapseSignal;

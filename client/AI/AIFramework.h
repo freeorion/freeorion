@@ -119,4 +119,5 @@ private:
     int m_aggression;
 };
 
-#endif // _AIFramework_h_
+
+#endif

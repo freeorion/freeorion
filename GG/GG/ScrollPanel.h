@@ -88,4 +88,5 @@ private:
 
 }
 
-#endif // GG_SCROLLPANEL_H
+
+#endif

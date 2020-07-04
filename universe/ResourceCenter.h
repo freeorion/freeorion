@@ -22,13 +22,10 @@ class UniverseObject;
   * sort. */
 class FO_COMMON_API ResourceCenter : virtual public std::enable_shared_from_this<UniverseObject> {
 public:
-    /** \name Structors */ //@{
     ResourceCenter();
     ResourceCenter(const ResourceCenter& rhs);
     virtual ~ResourceCenter();
-    //@}
 
-    /** \name Accessors */ //@{
     const std::string&              Focus() const;                                  ///< current focus to which this ResourceCenter is set
     int                             TurnsSinceFocusChange() const;                  ///< number of turns since focus was last changed.
     virtual std::vector<std::string>AvailableFoci() const;                          ///< focus settings available to this ResourceCenter
@@ -39,9 +36,7 @@ public:
 
     /** the state changed signal object for this ResourceCenter */
     mutable boost::signals2::signal<void ()> ResourceCenterChangedSignal;
-    //@}
 
-    /** \name Mutators */ //@{
     void Copy(std::shared_ptr<const ResourceCenter> copied_object, Visibility vis);
     void Copy(std::shared_ptr<const ResourceCenter> copied_object);
 
@@ -54,7 +49,6 @@ public:
     /** Resets the meters, etc. This should be called when a ResourceCenter is
         wiped out due to starvation, etc. */
     virtual void Reset();
-    //@}
 
 protected:
     void Init();    ///< initialization that needs to be called by derived class after derived class is constructed
@@ -76,7 +70,7 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-// template implementations
+
 template <typename Archive>
 void ResourceCenter::serialize(Archive& ar, const unsigned int version)
 {
@@ -86,4 +80,5 @@ void ResourceCenter::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_last_turn_focus_changed_turn_initial);
 }
 
-#endif // _ResourceCenter_h_
+
+#endif

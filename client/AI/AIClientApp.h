@@ -26,14 +26,11 @@ public:
 
     AIClientApp& operator=(const AIClientApp&&) = delete;
 
-    /** \name Mutators */ //@{
     //! Executes main event handler
     void                Run();
     void                ExitApp(int code = 0); ///< does basic clean-up, then calls exit(); callable from anywhere in user code via GetApp()
     void                SetPlayerName(const std::string& player_name) { m_player_name = player_name; }
-    //@}
 
-    /** \name Accessors */ //@{
     int EffectsProcessingThreads() const override;
 
     /** @brief Return the player name of this client
@@ -43,7 +40,6 @@ public:
      */
     const std::string& PlayerName() const
     { return m_player_name; }
-    //@}
 
     static AIClientApp* GetApp();       ///< returns a AIClientApp pointer to the singleton instance of the app
     const PythonAI*     GetAI();        ///< returns pointer to AIBase implementation of AI for this client
@@ -62,5 +58,5 @@ private:
     int                 m_max_aggression;
 };
 
-#endif // _AIClientApp_h_
 
+#endif

@@ -49,10 +49,6 @@ class TextControl;
 */
 struct GG_API MenuItem
 {
-    /** \name Signal Types */ ///@{
-    //@}
-
-    /** \name Structors */ ///@{
     MenuItem();
 
     MenuItem(const std::string& str, bool disable, bool check,
@@ -61,10 +57,6 @@ struct GG_API MenuItem
     explicit MenuItem(bool separator);
 
     virtual ~MenuItem();
-    //@}
-
-    /** \name Accessors */ ///@{
-    //@}
 
     std::string           label;      ///< text shown for this menu item
     bool                  disabled;   ///< set to true when this menu item is disabled
@@ -86,17 +78,11 @@ struct GG_API MenuItem
 class GG_API PopupMenu : public Wnd
 {
 public:
-    /** \name Signal Types */ ///@{
-    //@}
-
-    /** \name Structors */ ///@{
     /** Ctor.  Parameter \a m should contain the desired menu in its
         next_level member. */
     PopupMenu(X x, Y y, const std::shared_ptr<Font>& font, Clr text_color = CLR_WHITE,
               Clr border_color = CLR_BLACK, Clr interior_color = CLR_SHADOW, Clr hilite_color = CLR_GRAY);
-    //@}
 
-    /** \name Accessors */ ///@{
     Pt ClientUpperLeft() const override;
 
     Clr         BorderColor() const;       ///< returns the color used to render the border of the control
@@ -104,9 +90,7 @@ public:
     Clr         TextColor() const;         ///< returns the color used to render menu item text
     Clr         HiliteColor() const;       ///< returns the color used to indicate a hilited menu item
     Clr         SelectedTextColor() const; ///< returns the color used to render a hilited menu item's text
-    //@}
 
-    /** \name Mutators */ ///@{
     /** Add \p menu_item to the end of the popup menu and store its callback.*/
     void AddMenuItem(MenuItem&& menu_item);
     void Render() override;
@@ -124,12 +108,10 @@ public:
     void SetTextColor(Clr clr);         ///< sets the color used to render menu item text
     void SetHiliteColor(Clr clr);       ///< sets the color used to indicate a hilited menu item
     void SetSelectedTextColor(Clr clr); ///< sets the color used to render a hilited menu item's text
-    //@}
 
     static const std::size_t INVALID_CARET;
 
 protected:
-    /** \name Accessors */ ///@{
     /** Returns the font used to render text in the control. */
     const std::shared_ptr<Font>& GetFont() const;
 
@@ -137,7 +119,6 @@ protected:
     const std::vector<Rect>&        OpenLevels() const;   ///< returns the bounding rectangles for each open submenu, used to detect clicks in them
     const std::vector<std::size_t>& Caret() const;        ///< returns the stack representing the caret's location's path (eg 0th subitem of 1st subitem of item 3) back() is the most recent push
     const MenuItem*                 ItemSelected() const; ///< returns the menu item selected (0 if none)
-    //@}
 
 private:
     /** The font used to render the text in the control. */
@@ -158,7 +139,7 @@ private:
     MenuItem*         m_item_selected = nullptr;    ///< the menu item selected (0 if none)
 };
 
-} // namespace GG
+}
 
 
 #endif

@@ -3830,4 +3830,4 @@ unsigned int Conditional::GetCheckSum() const {
     return retval;
 }
 
-} // namespace Effect
+}

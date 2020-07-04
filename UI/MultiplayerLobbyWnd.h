@@ -17,20 +17,15 @@ struct PlayerLabelRow;
 /** multiplayer lobby window */
 class MultiPlayerLobbyWnd : public CUIWnd {
 public:
-    /** \name Structors */ //@{
     MultiPlayerLobbyWnd();
     void CompleteConstruction() override;
-    //@}
 
-    /** \name Accessors */ //@{
     GG::Pt MinUsableSize() const override;
 
     bool            LoadGameSelected() const;
 
     std::string     GetChatText() const;
-    //@}
 
-    /** \name Mutators */ //@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
     void Render() override;
@@ -46,7 +41,6 @@ public:
     void            LobbyUpdate(const MultiplayerLobbyData& lobby_data);
     void            Refresh();
     void            CleanupChat();
-    //@}
 
 protected:
     struct PlayerLabelRow : GG::ListBox::Row {
@@ -94,4 +88,5 @@ private:
     std::shared_ptr<GG::Label>              m_start_conditions_text;
 };
 
-#endif // _MultiPlayerLobbyWnd_h_
+
+#endif

@@ -22,7 +22,6 @@ public:
                                           const GG::Flags<GG::ModKey>&)>            TechClickSignalType;
     typedef boost::signals2::signal<void (const std::vector<std::string>&, int)>    QueueAddTechsSignalType;
 
-    /** \name Structors */ //@{
     /** TechTreeWnd contructor is usually called before client has
         access to techs.  Attempting to show the tech tree takes a long
         time and generates errors.  If \p initially_hidden is true then the
@@ -30,17 +29,13 @@ public:
         called, speeding up the constructor and preventing spurious errors.*/
     TechTreeWnd(GG::X w, GG::Y h, bool initially_hidden = true);
     ~TechTreeWnd();
-    //@}
     void CompleteConstruction() override;
 
-    /** \name Accessors */ //@{
     double                  Scale() const;
     bool                    PediaVisible();
     /** If tech @p tech_name is currently visible */
     bool                    TechIsVisible(const std::string& tech_name) const;
-    //@}
 
-    //! \name Mutators //@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
     void Show() override;
@@ -68,7 +63,6 @@ public:
     void            ShowPedia();
     void            HidePedia();
     void            TogglePedia();
-    //@}
 
     mutable TechSignalType          TechSelectedSignal;
     mutable QueueAddTechsSignalType AddTechsToQueueSignal;
@@ -97,4 +91,5 @@ private:
     bool                        m_init_flag;
 };
 
-#endif // _TechTreeWnd_h_
+
+#endif

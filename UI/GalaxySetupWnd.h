@@ -16,22 +16,16 @@ class CUIEdit;
 /** Displays game rules options */
 class GameRulesPanel : public GG::Control {
 public:
-    /** \name Structors*/ //!@{
     GameRulesPanel(GG::X w = GG::X1, GG::Y h = GG::Y1);
-    //!@}
     void CompleteConstruction() override;
 
-    /** \name Accessors*/ //!@{
     std::map<std::string, std::string> GetRulesAsStrings() const;
-    //!@}
 
     mutable boost::signals2::signal<void ()> SettingsChangedSignal;
 
-    /** \name Mutators*/ //!@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
     void Render() override;
     void Disable(bool b = true) override;
-    //!@}
 
 private:
     void DoLayout();
@@ -64,13 +58,10 @@ class GalaxySetupPanel : public GG::Control {
 public:
     static const GG::X DefaultWidth();
 
-    /** \name Structors*/ //!@{
     GalaxySetupPanel(GG::X w = GG::X(FontBasedUpscale(305)), GG::Y h = GG::Y(330));
-    //!@}
 
     void CompleteConstruction() override;
 
-    /** \name Accessors*/ //!@{
     const std::string&              GetSeed() const;                //!< Returns string version of seed. This value is converted to a number or (if that fails) hashed to get the actual seed value.
     int                             Systems() const;                //!< Returns the number of star systems to use in generating the galaxy
     Shape                           GetShape() const;               //!< Returns the shape of the galaxy
@@ -90,16 +81,13 @@ public:
 
     /** the image changed signal object for this GalaxySetupPanel */
     mutable boost::signals2::signal<void (std::shared_ptr<GG::Texture>)> ImageChangedSignal;
-    //!@}
 
-    /** \name Mutators*/ //!@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
     void Render() override {}
     void Disable(bool b = true) override;
     void SetFromSetupData(const GalaxySetupData& setup_data); ///< sets the controls from a GalaxySetupData
     void GetSetupData(GalaxySetupData& setup_data) const;     ///< fills values in \a setup_data from the panel's current state
     void SetSeed(const std::string& seed, bool inhibit_single = false);
-    //!@}
 
 private:
     void DoLayout();
@@ -138,12 +126,9 @@ private:
 //! that allows the user to choose a galaxy style, size, etc.
 class GalaxySetupWnd : public CUIWnd {
 public:
-    /** \name Structors*/ //!@{
     GalaxySetupWnd();
     void CompleteConstruction() override;
-    //!@}
 
-    /** \name Accessors*/ //!@{
     /** returns true iff the dialog is finished running and it was closed with the "OK" button */
     bool                    EndedWithOk() const {return m_done && m_ended_with_ok;}
 
@@ -154,13 +139,10 @@ public:
     int                     NumberAIs() const;
     std::map<std::string, std::string>
                             GetRulesAsStrings() const;
-    //!@}
 
-    /** \name Mutators*/ //!@{
     void Render() override;
     void KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
-    //!@}
 
 protected:
     GG::Rect CalculatePosition() const override;
@@ -194,4 +176,5 @@ private:
     GG::Pt                  m_preview_ul;
 };
 
-#endif // _GalaxySetupWnd_h_
+
+#endif

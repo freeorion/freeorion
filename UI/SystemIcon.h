@@ -40,15 +40,12 @@ private:
   * UniverseObject associated with it. */
 class SystemIcon : public GG::Control {
 public:
-    //! \name Structors //!@{
     /** Construct from a universe ID at specified size and position. */
     SystemIcon(GG::X x, GG::Y y, GG::X w, int system_id);
 
     ~SystemIcon();
-    //!@}
     void CompleteConstruction() override;
 
-    //! \name Accessors //!@{
     /** Checks to see if point lies inside in-system fleet buttons before
         checking parent InWindow method. */
     bool InWindow(const GG::Pt& pt) const override;
@@ -66,9 +63,7 @@ public:
 
     GG::Pt          NthFleetButtonUpperLeft(unsigned int button_number, bool moving) const; //!< returns upper left point of moving or stationary fleetbutton number \a button_number
     int             EnclosingCircleDiameter() const;        //!< returns diameter of circle enclosing icon around which other icons can be placed and within which the mouse is over the icon
-    //!@}
 
-    //! \name Mutators //!@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
     void Render() override;
@@ -104,7 +99,6 @@ public:
     mutable boost::signals2::signal<void (int, GG::Flags< GG::ModKey > mod_keys)> RightClickedSignal;
     mutable boost::signals2::signal<void (int)> LeftDoubleClickedSignal;
     mutable boost::signals2::signal<void (int)> RightDoubleClickedSignal;
-    //!@}
 
 private:
     void            PositionSystemName();
@@ -137,4 +131,5 @@ private:
     boost::signals2::connection     m_system_connection;
 };
 
-#endif // _SystemIcon_h_
+
+#endif

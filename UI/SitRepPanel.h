@@ -10,17 +10,12 @@ class SitRepEntry;
 
 class SitRepPanel : public CUIWnd {
 public:
-    /** \name Structors */ //@{
     SitRepPanel(const std::string& config_name = "");
     void CompleteConstruction() override;
-    //@}
 
-    /** \name Accessors */ //@{
     std::set<std::string>   HiddenSitRepTemplates() const { return m_hidden_sitrep_templates; }
     int                     NumVisibleSitrepsThisTurn() const;
-    //@}
 
-    /** \name Mutators */ //@{
     void KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
 
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
@@ -29,7 +24,6 @@ public:
 
     void ShowSitRepsForTurn(int turn);
     void SetHiddenSitRepTemplates(const std::set<std::string>& templates);
-    //@}
 
     mutable boost::signals2::signal<void ()> ClosingSignal;
 
@@ -63,4 +57,5 @@ private:
     std::set<std::string>           m_hidden_sitrep_templates;
 };
 
-#endif // _SitRepPanel_h_
+
+#endif

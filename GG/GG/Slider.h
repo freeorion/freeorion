@@ -57,7 +57,6 @@ template <typename T>
 class Slider : public Control
 {
 public:
-    /** \name Signal Types */ ///@{
     /**emitted whenever the slider is moved; the tab position and the upper
        and lower bounds of the slider's range are indicated, respectively */
     typedef boost::signals2::signal<void (T, T, T)> SlidSignalType;
@@ -66,15 +65,11 @@ public:
         programmatically; the tab position and the upper and lower bounds
         of the slider's range are indicated, respectively */
     typedef boost::signals2::signal<void (T, T, T)> SlidAndStoppedSignalType;
-    //@}
 
-    /** \name Structors */ ///@{
     Slider(T min, T max, Orientation orientation, Clr color,
            unsigned int tab_width, unsigned int line_width = 5, Flags<WndFlag> flags = INTERACTIVE);
-    //@}
     void CompleteConstruction() override;
 
-    /** \name Accessors */ ///@{
     Pt MinUsableSize() const override;
 
     T                    Posn() const;           ///< returns the current tab position
@@ -91,9 +86,7 @@ public:
 
     mutable SlidSignalType           SlidSignal;           ///< returns the slid signal object for this Slider
     mutable SlidAndStoppedSignalType SlidAndStoppedSignal; ///< returns the slid-and-stopped signal object for this Slider
-    //@}
 
-    /** \name Mutators */ ///@{
     void Render() override;
     void SizeMove(const Pt& ul, const Pt& lr) override;
     void Disable(bool b = true) override;
@@ -109,23 +102,18 @@ public:
         this defaults to 10% of the slider's range.  To disable clicks off the
         tab, set the page size to 0. */
     void           SetPageSize(T size);
-    //@}
 
     static const T INVALID_PAGE_SIZE;
 
 protected:
-    /** \name Accessors */ ///@{
     Button* Tab() const;                  ///< returns a pointer to the Button used as this control's sliding tab
     T       PtToPosn(const Pt& pt) const; ///< maps an arbitrary screen point to its nearest logical slider position
-    //@}
 
-    /** \name Mutators */ ///@{
     void LClick(const Pt& pt, Flags<ModKey> mod_keys) override;
     void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
     bool EventFilter(Wnd* w, const WndEvent& event) override;
 
     void MoveTabToPosn(); ///< moves the tab to the current logical position
-    //@}
 
 private:
     void SlideToImpl(T p, bool signal);
@@ -150,7 +138,7 @@ private:
     bool                      m_dragging_tab;
 };
 
-// template implementations
+
 template <typename T>
 const T Slider<T>::INVALID_PAGE_SIZE = std::numeric_limits<T>::max();
 
@@ -462,6 +450,6 @@ void Slider<T>::SlidEcho::operator()(T pos, T min, T max)
               << "(pos=" << pos << " min=" << min << " max=" << max << ")\n";
 }
 
-} // namespace GG
+}
 
 #endif

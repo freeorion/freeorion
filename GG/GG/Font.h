@@ -447,20 +447,19 @@ public:
         ~RenderCache();
     };
 
-    /** \name Structors */ ///@{
-    /** Ctor.  Construct a font using only the printable ASCII characters.
+    /** Construct a font using only the printable ASCII characters.
         \throw Font::Exception Throws a subclass of Font::Exception if the
         condition specified for the subclass is met. */
     Font(const std::string& font_filename, unsigned int pts);
 
-    /** Ctor.  Construct a font using only the printable ASCII characters,
+    /** Construct a font using only the printable ASCII characters,
         from the in-memory contents \a file_contents.  \throw Font::Exception
         Throws a subclass of Font::Exception if the condition specified for
         the subclass is met. */
     Font(const std::string& font_filename, unsigned int pts,
          const std::vector<unsigned char>& file_contents);
 
-    /** Ctor.  Construct a font using all the code points in the
+    /** Construct a font using all the code points in the
         UnicodeCharsets in the range [first, last).  \throw Font::Exception
         Throws a subclass of Font::Exception if the condition specified for
         the subclass is met. */
@@ -468,7 +467,7 @@ public:
     Font(const std::string& font_filename, unsigned int pts,
          CharSetIter first, CharSetIter last);
 
-    /** Ctor.  Construct a font using all the code points in the
+    /** Construct a font using all the code points in the
         UnicodeCharsets in the range [first, last), from the in-memory
         contents \a file_contents.  \throw Font::Exception Throws a subclass
         of Font::Exception if the condition specified for the subclass is
@@ -478,10 +477,8 @@ public:
          const std::vector<unsigned char>& file_contents,
          CharSetIter first, CharSetIter last);
 
-    ~Font(); ///< Dtor.
-    //@}
+    ~Font();
 
-    /** \name Accessors */ ///@{
     /** Returns the name of the file from which this font was created. */
     const std::string& FontName() const;
 
@@ -615,7 +612,6 @@ public:
 
     /** Returns the maximum dimensions of the text in x and y. */
     Pt   TextExtent(const std::vector<LineData>& line_data) const;
-    //@}
 
     /** Adds \a tag to the list of embedded tags that Font should not print
         when rendering text.  Passing "foo" will cause Font to treat "<foo>",
@@ -633,7 +629,6 @@ public:
     /** Returns the input \a text, stripped of any formatting tags. */
     static std::string StripTags(const std::string& text, bool strip_unpaired_tags = true);
 
-    /** \name Exceptions */ ///@{
     /** The base class for Font exceptions. */
     GG_ABSTRACT_EXCEPTION(Exception);
 
@@ -658,7 +653,6 @@ public:
     /** Thrown when FreeType is unable to fulfill a request to load or render
         a glpyh. */
     GG_CONCRETE_EXCEPTION(BadGlyph, GG::Font, Exception);
-    //@}
 
     /** Throws a BadGlyph exception, with \a c converted to a printable ASCII
         character (if possible), or as a Unicode code point.  \a format_str
@@ -667,9 +661,7 @@ public:
     static void ThrowBadGlyph(const std::string& format_str, std::uint32_t c);
 
 protected:
-    /** \name Structors */ ///@{
     Font();
-    //@}
 
 private:
     /** \brief This just holds the essential data necessary to render a glyph
@@ -790,7 +782,6 @@ private:
     };
 
 public:
-    /** \name Accessors */ ///@{
     /** Returns true iff this manager contains a font with the given filename
         and point size, regardless of charsets. */
     bool HasFont(const std::string& font_filename, unsigned int pts) const;
@@ -800,9 +791,7 @@ public:
     template <typename CharSetIter>
     bool HasFont(const std::string& font_filename, unsigned int pts,
                  CharSetIter first, CharSetIter last) const;
-    //@}
 
-    /** \name Mutators */ ///@{
     /** Returns a shared_ptr to the requested font, supporting all printable
         ASCII characters.  \note May load font if unavailable at time of
         request. */
@@ -833,7 +822,6 @@ public:
     /** Removes the indicated font from the font manager.  Due to shared_ptr
         semantics, the font may not be deleted until much later. */
     void                    FreeFont(const std::string& font_filename, unsigned int pts);
-    //@}
 
 private:
     FontManager();
@@ -881,10 +869,9 @@ namespace detail {
     };
 }
 
-} // namespace GG
+}
 
 
-// template implementations
 template <typename CharSetIter>
 GG::Font::Font(const std::string& font_filename, unsigned int pts,
                CharSetIter first, CharSetIter last) :

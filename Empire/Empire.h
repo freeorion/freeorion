@@ -41,12 +41,9 @@ public:
     typedef std::vector<SitRepEntry>::const_iterator    SitRepItr;
     //@}
 
-    /** \name Structors */ //@{
     Empire(const std::string& name, const std::string& player_name, int ID, const GG::Clr& color, bool authenticated);  ///< basic constructor
     ~Empire();
-    //@}
 
-    /** \name Accessors */ //@{
     const std::string&  Name() const;            ///< Returns the Empire's name
     const std::string&  PlayerName() const;      ///< Returns the Empire's player's name
     bool                IsAuthenticated() const; ///< Returns the Empire's player's authentication status
@@ -185,9 +182,7 @@ public:
 
     const PopulationPool&   GetPopulationPool() const;                          ///< Returns PopulationPool
     float                   Population() const;                                 ///< returns total Population of empire
-    //@}
 
-    /** \name Mutators */ //@{
     /** If the object with id \a id is a planet owned by this empire, sets that
       * planet to be this empire's capital, and otherwise does nothing. */
     void SetCapitalID(int id);
@@ -451,7 +446,6 @@ public:
 
     auto BuildingTypesScrapped() const -> const std::map<std::string, int>&
     { return m_building_types_scrapped; }
-    //@}
 
     /** Processes Builditems on queues of empires other than the indicated
       * empires, at the location with id \a location_id and, as appropriate,
@@ -574,4 +568,5 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-#endif // _Empire_h_
+
+#endif

@@ -69,8 +69,6 @@ class GG_API TextControl : public Control
 public:
     using Wnd::SetMinSize;
 
-    /** \name Structors */ ///@{
-    /** Ctor. */
     TextControl(X x, Y y, X w, Y h, const std::string& str,
                 const std::shared_ptr<Font>& font,
                 Clr color = CLR_BLACK, Flags<TextFormat> format = FORMAT_NONE,
@@ -104,7 +102,6 @@ public:
     explicit TextControl(const TextControl& that);
 
     virtual ~TextControl();
-    //@}
 
     /** Assignment operator.
 
@@ -117,7 +114,6 @@ public:
     */
     TextControl& operator=(const TextControl& that);
 
-    /** \name Accessors */ ///@{
     Pt MinUsableSize() const override;
 
     /** Returns the minimum usable size if the text were reflowed into a \a width box.*/
@@ -196,9 +192,7 @@ public:
     /** Returns the lower-right corner of the text as it is would be rendered
         if it were not bound to the dimensions of this control. */
     Pt TextLowerRight() const;
-    //@}
 
-    /** \name Mutators */ ///@{
     void Render() override;
 
     void SizeMove(const Pt& ul, const Pt& lr) override;
@@ -313,15 +307,12 @@ public:
     /** Erases code points from the text between the specified starting and
       * ending line and character positions. */
     void  Erase(std::size_t line1, CPSize pos1, std::size_t line2, CPSize pos2);
-    //@}
 
 protected:
-    /** \name Accessors */ ///@{
     /** Returns the line data for the text in this TextControl. */
     virtual const std::vector<Font::LineData>& GetLineData() const;
 
     friend class StateButtonRepresenter;
-    //@}
 
 private:
     void ValidateFormat();      ///< ensures that the format flags are consistent
@@ -353,9 +344,9 @@ private:
 
 typedef TextControl Label;
 
-} // namespace GG
+}
 
-// template implementations
+
 template <typename T>
 void GG::TextControl::operator>>(T& t) const
 {

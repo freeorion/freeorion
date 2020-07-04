@@ -64,7 +64,6 @@ public:
         SBR_PAGE_UP
     )
 
-    /** \name Signal Types */ ///@{
     /** emitted whenever the scrollbar is moved; the upper and lower extents
         of the tab and the upper and lower bounds of the scroll's range are
         indicated, respectively */
@@ -75,15 +74,10 @@ public:
         upper and lower bounds of the scroll's range are indicated,
         respectively */
     typedef boost::signals2::signal<void (int, int, int, int)> ScrolledAndStoppedSignalType;
-    //@}
 
-    /** \name Structors */ ///@{
-    /** Ctor. */
     Scroll(Orientation orientation, Clr color, Clr interior);
-    //@}
     void CompleteConstruction() override;
 
-    /** \name Accessors */ ///@{
     Pt MinUsableSize() const override;
 
     std::pair<int, int>  PosnRange() const;         ///< range currently being viewed
@@ -96,9 +90,7 @@ public:
 
     mutable ScrolledSignalType           ScrolledSignal;           ///< the scrolled signal object for this Scroll
     mutable ScrolledAndStoppedSignalType ScrolledAndStoppedSignal; ///< the scrolled-and-stopped signal object for this Scroll
-    //@}
 
-    /** \name Mutators */ ///@{
     void Render() override;
 
     void SizeMove(const Pt& ul, const Pt& lr) override;
@@ -120,10 +112,8 @@ public:
     void ScrollLineDecr(int lines = 1); ///< scrolls the control up (or left) by \a lines lines
     void ScrollPageIncr(); ///< scrolls the control down (or right) by a page
     void ScrollPageDecr(); ///< scrolls the control up (or left) by a page
-    //@}
 
 protected:
-    /** \name Accessors */ ///@{
     unsigned int  TabSpace() const;          ///< returns the space the tab has to move about in (the control's width less the width of the incr & decr buttons)
     unsigned int  TabWidth() const;          ///< returns the calculated width of the tab, based on PageSize() and the logical size of the control, in pixels
     ScrollRegion  RegionUnder(const Pt& pt); ///< determines whether a pt is in the incr or decr or tab buttons, or in PgUp/PgDn regions in between
@@ -131,9 +121,7 @@ protected:
     Button*       TabButton() const;     ///< returns the button representing the tab
     Button*       IncrButton() const;    ///< returns the increase button (line down/line right)
     Button*       DecrButton() const;    ///< returns the decrease button (line up/line left)
-    //@}
 
-    /** \name Mutators */ ///@{
     void LButtonDown(const Pt& pt, Flags<ModKey> mod_keys) override;
     void LButtonUp(const Pt& pt, Flags<ModKey> mod_keys) override;
     void LClick(const Pt& pt, Flags<ModKey> mod_keys) override;
@@ -141,7 +129,6 @@ protected:
     bool EventFilter(Wnd* w, const WndEvent& event) override;
 
     virtual void InitBuffer();
-    //@}
 
     GG::GL2DVertexBuffer    m_buffer;
 
@@ -171,6 +158,6 @@ private:
     additionally signalled on Scroll::ScrolledAndStoppedSignal. */
 GG_API void SignalScroll(const Scroll& scroll, bool stopped);
 
-} // namespace GG
+}
 
 #endif

@@ -72,12 +72,9 @@ template <typename T>
 class Spin : public Control
 {
 public:
-    /** \name Signal Types */ ///@{
     /** emitted whenever the value of the Spin has changed */
     typedef typename boost::signals2::signal<void (T)> ValueChangedSignalType;
-    //@}
 
-    /** \name Structors */ ///@{
     /** Ctor that does not required height. Height is determined from the font
         and point size used.*/
     Spin(T value, T step, T min, T max, bool edits, const std::shared_ptr<Font>& font,
@@ -85,9 +82,7 @@ public:
     void CompleteConstruction() override;
 
     ~Spin();
-    //@}
 
-    /** \name Accessors */ ///@{
     Pt      MinUsableSize() const override;
 
     T       Value() const;              ///< returns the current value of the control's text
@@ -104,9 +99,7 @@ public:
     Clr     SelectedTextColor() const;  ///< returns the color used to render selected text
 
     mutable ValueChangedSignalType ValueChangedSignal; ///< the value changed signal object for this Spin
-    //@}
 
-    /** \name Mutators */ ///@{
     void Render() override;
     void SizeMove(const Pt& ul, const Pt& lr) override;
     void Disable(bool b = true) override;
@@ -126,25 +119,20 @@ public:
     void SetInteriorColor(Clr c);       ///< sets the interior color of the control
     void SetHiliteColor(Clr c);         ///< sets the color used to render hiliting around selected text
     void SetSelectedTextColor(Clr c);   ///< sets the color used to render selected text   
-    //@}
 
 protected:
     typedef T ValueType;
 
     enum {BORDER_THICK = 2, PIXEL_MARGIN = 5};
 
-    /** \name Accessors */ ///@{
     Button* UpButton() const;   ///< returns a pointer to the Button control used as this control's up button
     Button* DownButton() const; ///< returns a pointer to the Button control used as this control's down button
     Edit*   GetEdit() const;    ///< returns a pointer to the Edit control used to render this control's text and accept keyboard input
-    //@}
 
-    /** \name Mutators */ ///@{
     void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
     void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys) override;
     bool EventFilter(Wnd* w, const WndEvent& event) override;
     virtual void SetEditTextFromValue();
-    //@}
 
     std::shared_ptr<Edit> m_edit;
 
@@ -171,7 +159,6 @@ private:
 };
 
 
-// template implementations
 template <typename T>
 Spin<T>::Spin(T value, T step, T min, T max, bool edits, const std::shared_ptr<Font>& font, Clr color,
               Clr text_color/* = CLR_BLACK*/) :
@@ -533,9 +520,9 @@ namespace spin_details {
     double div<double> (double dividend, double divisor) {return std::floor(dividend / divisor);}
     template <> inline
     long double div<long double> (long double dividend, long double divisor) {return std::floor(dividend / divisor);}
-} // namespace spin_details
+}
 
-} // namespace GG
+}
 
 #endif
 

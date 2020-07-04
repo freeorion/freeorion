@@ -55,7 +55,6 @@ class Font;
 class GG_API FileDlg : public Wnd
 {
 public:
-    /** \name Structors */ ///@{
     /** Basic ctor.  Parameters \a directory and \a filename pass an initial
         directory and filename to the dialog, if desired (such as when "Save
         As..." is selected in an app, and there is a current filename).  If \a
@@ -68,10 +67,8 @@ public:
         invalid. */
     FileDlg(const std::string& directory, const std::string& filename, bool save, bool multi, const std::shared_ptr<Font>& font,
             Clr color, Clr border_color, Clr text_color = CLR_BLACK);
-    //@}
     void CompleteConstruction() override;
 
-    /** \name Accessors */ ///@{
     std::set<std::string> Result() const; ///< returns a set of strings that contains the files chosen by the user; there will be only one file if \a multi == false was passed to the ctor
 
     /** Returns true iff this FileDlg will select directories instead of files. */
@@ -84,9 +81,7 @@ public:
         satisfied, any filename the user selects that does not end in "foo"
         will have "foo" appended to it. */
     bool AppendMissingSaveExtension() const;
-    //@}
 
-    /** \name Mutators */ ///@{
     void Render() override;
     void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
 
@@ -114,7 +109,6 @@ public:
         considered to match all files, so ("All Files", "") is perfectly
         correct. */
     void SetFileFilters(const std::vector<std::pair<std::string, std::string>>& filters);
-    //@}
 
     /** Returns the current directory (the one that will be used by default on
         the next invocation of FileDlg::Run()) */
@@ -123,13 +117,11 @@ public:
     /** Converts a string to a path in a cross platform safe manner. */
     static const boost::filesystem::path StringToPath(const std::string& str);
 
-    /** \name Exceptions */ ///@{
     /** The base class for FileDlg exceptions. */
     GG_ABSTRACT_EXCEPTION(Exception);
 
     /** Thrown when the initial directory for the dialog is bad. */
     GG_CONCRETE_EXCEPTION(BadInitialDirectory, GG::FileDlg, Exception);
-    //@}
 
 protected:
     static const X DEFAULT_WIDTH;  ///< default width for the dialog
@@ -184,6 +176,6 @@ private:
     static boost::filesystem::path s_working_dir; ///< declared static so each instance of FileDlg opens up the same directory
 };
 
-} // namespace GG
+}
 
 #endif

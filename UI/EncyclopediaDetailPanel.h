@@ -27,15 +27,12 @@ class GraphControl;
 //! Tech, ShipPart, ShipHull, BuildingType, ShipDesign, etc.
 class EncyclopediaDetailPanel : public CUIWnd {
 public:
-    //! \name Structors //!@{
     EncyclopediaDetailPanel(GG::Flags<GG::WndFlag> flags = GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE |
                                                            GG::RESIZABLE | CLOSABLE | PINABLE,
                             const std::string& config_name = "");
     void CompleteConstruction() override;
     virtual ~EncyclopediaDetailPanel();
-    //!@}
 
-    /** \name Mutators */ //@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
     void KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
     void PreRender() override;
@@ -88,7 +85,6 @@ public:
     void OnIndex();
     void OnBack();
     void OnNext();
-    //@}
 
     mutable boost::signals2::signal<void ()> ClosingSignal;
 

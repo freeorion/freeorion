@@ -35,7 +35,6 @@ public:
     int SystemID() const override
     { return this->ID(); }
 
-    /** \name Accessors */ //@{
     UniverseObjectType ObjectType() const override;
 
     std::string Dump(unsigned short ntabs = 0) const override;
@@ -98,9 +97,7 @@ public:
     mutable boost::signals2::signal<void (const std::vector<std::shared_ptr<Fleet>>&)> FleetsInsertedSignal;
     /** fleets are removed from system */
     mutable boost::signals2::signal<void (const std::vector<std::shared_ptr<Fleet>>&)> FleetsRemovedSignal;
-    //@}
 
-    /** \name Mutators */ //@{
     void Copy(std::shared_ptr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES) override;
 
     /** Adding owner to system objects is a no-op. */
@@ -124,13 +121,11 @@ public:
     void SetLastTurnBattleHere(int turn);///< Sets the last turn there was a battle at this system
 
     void SetOverlayTexture(const std::string& texture, double size);
-    //@}
 
 protected:
     friend class Universe;
     friend class ObjectMap;
 
-    /** \name Structors */ //@{
     explicit System();
 
 public:
@@ -148,7 +143,6 @@ public:
 protected:
     /** Returns new copy of this System. */
     System* Clone(int empire_id = ALL_EMPIRES) const override;
-    //@}
 
 private:
     StarType            m_star;
@@ -171,4 +165,4 @@ private:
 };
 
 
-#endif // _System_h_
+#endif

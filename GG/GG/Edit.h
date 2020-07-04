@@ -59,7 +59,6 @@ namespace GG {
 class GG_API Edit : public TextControl
 {
 public:
-    /** \name Signal Types */ ///@{
     /** Emitted whenever the text of the Edit are altered (keypresses,
         deletes, etc.); provides the new text of the Edit. */
     typedef boost::signals2::signal<void (const std::string&)> EditedSignalType;
@@ -68,15 +67,11 @@ public:
         one of enter or return has been pressed; provides the new text of the
         Edit. */
     typedef boost::signals2::signal<void (const std::string&)> FocusUpdateSignalType;
-    //@}
 
-    /** \name Structors */ ///@{
     /** Ctor. Height is determined from the font and point size used. */
     Edit(const std::string& str, const std::shared_ptr<Font>& font, Clr color,
          Clr text_color = CLR_BLACK, Clr interior = CLR_ZERO);
-    //@}
 
-    /** \name Accessors */ ///@{
     Pt MinUsableSize() const override;
     Pt ClientUpperLeft() const override;
     Pt ClientLowerRight() const override;
@@ -105,9 +100,7 @@ public:
 
     /** The focus update signal object for this Edit. */
     mutable FocusUpdateSignalType FocusUpdateSignal;
-    //@}
 
-    /** \name Mutators */ ///@{
     void Render() override;
 
     void SetColor(Clr c) override;
@@ -141,14 +134,12 @@ public:
 
     /** Replaces selected text with, or inserts at cursor, the text in \a text. */
     virtual void AcceptPastedText(const std::string& text);
-    //@}
 
     /** The number of pixels to leave between the text and the control's
         frame. */
     static const int PIXEL_MARGIN;
 
 protected:
-    /** \name Accessors */ ///@{
     /** Returns true if >= 1 characters selected. */
     virtual bool MultiSelected() const;
 
@@ -189,9 +180,7 @@ protected:
     /** Return the index of the last LineData() or 0 if LineData is empty.
      Allows index based Edit to handle empty line data.*/
     std::vector<GG::Font::LineData>::size_type NumLines() const;
-    //@}
 
-    /** \name Mutators */ ///@{
     void LButtonDown(const Pt& pt, Flags<ModKey> mod_keys) override;
     void LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys) override;
     void LButtonUp(const Pt& pt, Flags<ModKey> mod_keys) override;
@@ -220,7 +209,6 @@ protected:
     /** Sets the value of InDoubleButtonDownMode() to false.  This should be
         called in LClick() and LButtonUp() overrides. */
     void ClearDoubleButtonDownMode();
-    //@}
 
     /** If .first == .second, the caret is drawn before character at
         m_cursor_pos.first; otherwise, the range is selected (when range is
@@ -253,6 +241,6 @@ CPSize GG_API NextWordEdgeFrom(const std::string& text,
                                bool search_right = true);
 
 
-} // namespace GG
+}
 
 #endif

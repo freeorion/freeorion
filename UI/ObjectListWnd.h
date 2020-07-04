@@ -11,15 +11,11 @@ class ObjectListBox;
 
 class ObjectListWnd : public CUIWnd {
 public:
-    //! \name Structors //!@{
     ObjectListWnd(const std::string& config_name = "");
     void CompleteConstruction() override;
-    //!@}
 
-    /** \name Mutators */ //@{
     void            SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
     void            Refresh();
-    //!@}
 
     mutable boost::signals2::signal<void ()>    SelectedObjectsChangedSignal;
     mutable boost::signals2::signal<void (int)> ObjectDoubleClickedSignal;
@@ -47,4 +43,5 @@ private:
     std::shared_ptr<GG::Button>     m_collapse_button;
 };
 
-#endif // _ObjectListWnd_h_
+
+#endif

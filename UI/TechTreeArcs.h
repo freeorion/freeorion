@@ -34,4 +34,5 @@ private:
     std::unique_ptr<Impl> m_impl;
 };
 
-#endif // TECHTREEARCS_H
+
+#endif

@@ -6,12 +6,9 @@
 /** Lets the player design ships */
 class GovernmentWnd : public CUIWnd {
 public:
-    //! \name Structors //!@{
     explicit GovernmentWnd(const std::string& config_name = "");
     void CompleteConstruction() override;
-    //!@}
 
-    /** \name Mutators */ //@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
     void Reset();
@@ -20,7 +17,6 @@ public:
 
     /** Enables, or disables if \a enable is false, issuing orders via this DesignWnd. */
     void EnableOrderIssuing(bool enable = true);
-    //@}
 
     mutable boost::signals2::signal<void ()> ClosingSignal;
 
@@ -35,4 +31,5 @@ private:
     std::shared_ptr<MainPanel>      m_main_panel = nullptr;
 };
 
-#endif // _GovernmentWnd_h_
+
+#endif

@@ -24,21 +24,17 @@ public:
     enum class Purpose {Save, Load};
     enum class SaveType {SinglePlayer, MultiPlayer};
 
-    /** \name Structors */ //@{
     SaveFileDialog(const Purpose purpose = Purpose::Load, const SaveType type = SaveType::SinglePlayer);
 
     void CompleteConstruction() override;
     ~SaveFileDialog();
-    //@}
 
-    /** \name Mutators */ //@{
     void ModalInit() override;
 
     void KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
 
     /** Update the previews with \p preview_info*/
     void SetPreviewList(const PreviewInformation& preview_info);
-    //@}
 
     /// Get the chosen save files full path
     std::string Result() const;
@@ -88,4 +84,5 @@ private:
     SaveFileDialog& operator=(const SaveFileDialog&);
 };
 
-#endif // _SaveFileDialog_h_
+
+#endif

@@ -130,12 +130,10 @@ private:
     };
 
 public:
-    /** \name Signal Types */ ///@{
     /** Emitted when a keyboard accelerator is invoked. A return value of true
         indicates that the accelerator was processed by some slot; otherwise,
         a keystroke event is processed instead. */
     typedef boost::signals2::signal<bool (), OrCombiner> AcceleratorSignalType;
-    //@}
 
     /// These are the only events absolutely necessary for GG to function
     /// properly
@@ -162,11 +160,8 @@ public:
         accel_end(). */
     typedef std::set<std::pair<Key, Flags<ModKey>>>::const_iterator const_accel_iterator;
 
-    /** \name Structors */ ///@{
     virtual ~GUI();
-    //@}
 
-    /** \name Accessors */ ///@{
     const std::string&          AppName() const;                    ///< returns the user-defined name of the application
     std::shared_ptr<Wnd>        FocusWnd() const;                   ///< returns the GG::Wnd that currently has the input focus
     bool                        FocusWndAcceptsTypingInput() const; ///< returns true iff the current focus GG::Wnd accepts typing input
@@ -235,9 +230,7 @@ public:
         wnd is not rendered during the render cycle, or PNG support is not
         enabled, this is a no-op. */
     void                                    SaveWndAsPNG(const Wnd* wnd, const std::string& filename) const;
-    //@}
 
-    /** \name Mutators */ ///@{
     //! Executes main event handler/render loop
     virtual void    Run() = 0;
 
@@ -392,7 +385,6 @@ public:
 
     bool SetPrevFocusWndInCycle();                          ///< sets the focus Wnd to the next INTERACTIVE Wnd in a cycle determined by Wnd parent-child relationships
     bool SetNextFocusWndInCycle();                          ///< sets the focus Wnd to the next in the cycle.
-    //@}
 
     static GUI*  GetGUI();                  ///< allows any GG code access to GUI framework by calling GUI::GetGUI()
 
@@ -422,14 +414,12 @@ public:
     /** Emitted whenever the app is requested to close. */
     boost::signals2::signal<void ()>    AppQuittingSignal;
 
-    /** \name Exceptions */ ///@{
     /** The base class for GUI exceptions. */
     GG_ABSTRACT_EXCEPTION(Exception);
 
     /** Thrown when an attempt is made to invoke either of the save- or
         load-window functions before they have been set. */
     GG_CONCRETE_EXCEPTION(BadFunctionPointer, GG::GUI, Exception);
-    //@}
 
     /** Returns a list of resolutions that are supported for full-screen.
      * The format is [width]x[height] @ [bits per pixel].
@@ -443,18 +433,14 @@ public:
     virtual Pt GetDefaultResolution(int display_id) const = 0;
 
 protected:
-    /** \name Structors */ ///@{
     GUI(const std::string& app_name); ///< protected ctor, called by derived classes
-    //@}
 
-    /** \name Mutators */ ///@{
     void            ProcessBrowseInfo();    ///< determines the current browse info mode, if any
     /** Allow all windows in the z-list to update data before rendering. */
     virtual void    PreRender();
     virtual void    RenderBegin() = 0;      ///< clears the backbuffer, etc.
     virtual void    Render();               ///< renders the windows in the z-list
     virtual void    RenderEnd() = 0;        ///< swaps buffers, etc.
-    //@}
 
     /** Determine if the app has the mouse focus. */
     virtual bool    AppHasMouseFocus() const { return true; };
@@ -486,7 +472,6 @@ GG_API bool MatchesOrContains(const std::shared_ptr<Wnd>& lwnd, const std::share
 GG_API Flags<ModKey> MassagedAccelModKeys(Flags<ModKey> mod_keys);
 
 
-// template implementations
 template <typename InIt>
 bool GUI::OrCombiner::operator()(InIt first, InIt last) const
 {
@@ -507,6 +492,6 @@ std::shared_ptr<Font> GUI::GetFont(const std::string& font_filename, unsigned in
                                    CharSetIter first, CharSetIter last)
 { return GetFontManager().GetFont(font_filename, pts, file_contents, first, last); }
 
-} // namespace GG
+}
 
 #endif

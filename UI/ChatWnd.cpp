@@ -74,14 +74,10 @@ namespace {
 
 class MessageWndEdit : public CUIEdit {
 public:
-    //! \name Structors //@{
     MessageWndEdit();
-    //@}
 
-    //! \name Mutators //@{
     void KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
     bool AutoComplete() override;   //!< Autocomplete current word
-    //@}
 
     /** emitted when user presses enter/return while entering text */
     mutable boost::signals2::signal<void ()> TextEnteredSignal;

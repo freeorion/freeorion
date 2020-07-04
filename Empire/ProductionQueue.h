@@ -103,11 +103,8 @@ struct FO_COMMON_API ProductionQueue {
     /** The const ProductionQueue iterator type.  Dereference yields a Element. */
     typedef QueueType::const_iterator const_iterator;
 
-    /** \name Structors */ //@{
     ProductionQueue(int empire_id);
-    //@}
 
-    /** \name Accessors */ //@{
     int     ProjectsInProgress() const;         ///< Returns the number of production projects currently (perhaps partially) funded.
     float   TotalPPsSpent() const;              ///< Returns the number of PPs currently spent on the projects in this queue.
     int     EmpireID() const { return m_empire_id; }
@@ -151,7 +148,6 @@ struct FO_COMMON_API ProductionQueue {
     const_iterator  find(boost::uuids::uuid uuid) const;
     int             IndexOfUUID(boost::uuids::uuid uuid) const;
 
-    /** \name Mutators */ //@{
     /** Recalculates the PPs spent on and number of turns left for each project in the queue.  Also
       * determines the number of projects in progress, and the industry consumed by projects
       * in each resource-sharing group of systems.  Does not actually "spend" the PP; a later call to
@@ -173,7 +169,6 @@ struct FO_COMMON_API ProductionQueue {
     void        clear();
 
     mutable boost::signals2::signal<void ()> ProductionQueueChangedSignal;
-    //@}
 
 private:
     QueueType                       m_queue;
@@ -189,4 +184,5 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-#endif //  _ProductionQueue_h_
+
+#endif

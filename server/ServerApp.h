@@ -34,8 +34,6 @@ public:
 
     ServerApp& operator=(IApp&&) = delete;
 
-    /** \name Accessors */ //@{
-
     /** Returns a ClientApp pointer to the singleton instance of the app. */
     static ServerApp* GetApp();
     Universe& GetUniverse() override;
@@ -92,10 +90,7 @@ public:
     bool IsTurnExpired() const;
 
     bool IsHaveWinner() const;
-    //@}
 
-
-    /** \name Mutators */ //@{
     void    operator()();               ///< external interface to Run()
 
     void StartBackgroundParsing() override;
@@ -202,7 +197,6 @@ public:
 
     /** Sets turn to be expired. Server doesn't wait for human player turns. */
     void ExpireTurn();
-    //@}
 
     void UpdateSavePreviews(const Message& msg, PlayerConnectionPtr player_connection);
 
@@ -349,4 +343,5 @@ private:
     friend struct ShuttingDownServer;
 };
 
-#endif // _ServerApp_h_
+
+#endif

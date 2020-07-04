@@ -121,4 +121,5 @@ FO_COMMON_API auto GetFieldTypeManager() -> FieldTypeManager&;
 //! type @p name.  If no such FieldType exists, nullptr is returned instead.
 FO_COMMON_API auto GetFieldType(const std::string& name) -> const FieldType*;
 
-#endif // _FieldType_h_
+
+#endif

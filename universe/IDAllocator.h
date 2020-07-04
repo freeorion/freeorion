@@ -108,4 +108,5 @@ private:
     std::mt19937 m_random_generator;
 };
 
-#endif // _IDAllocator_h_
+
+#endif

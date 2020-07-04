@@ -352,7 +352,6 @@ protected:
 //////////////////////////////////////////////////
 class ResearchQueueWnd : public CUIWnd {
 public:
-    /** \name Structors */ //@{
     ResearchQueueWnd(GG::X x, GG::Y y, GG::X w, GG::Y h) :
         CUIWnd("", x, y, w, h, GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP | PINABLE,
                "research.queue")
@@ -373,9 +372,7 @@ public:
         SaveDefaultedOptions();
         SaveOptions();
     }
-    //@}
 
-    /** \name Mutators */ //@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
         GG::Pt sz = Size();
         CUIWnd::SizeMove(ul, lr);
@@ -391,7 +388,6 @@ public:
         else
             SetName("");
     }
-    //@}
 
 private:
     void DoLayout() {

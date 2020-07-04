@@ -10258,4 +10258,4 @@ unsigned int Described::GetCheckSum() const {
     TraceLogger() << "GetCheckSum(Described): retval: " << retval;
     return retval;
 }
-} // namespace Condition
+}

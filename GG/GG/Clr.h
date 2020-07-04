@@ -48,7 +48,6 @@ namespace GG {
     (little-endian) or opaque yellow (big-endian).*/
 struct Clr
 {
-    /** \name Structors */ ///@{
     Clr() :
         r(0), g(0), b(0), a(0)
         {}
@@ -60,7 +59,6 @@ struct Clr
                   unsigned char a_) :
         r(r_), g(g_), b(b_), a(a_)
         {}
-    //@}
 
     unsigned char r;   ///< the red channel
     unsigned char g;   ///< the green channel
@@ -185,7 +183,6 @@ inline bool operator<(const Clr& lhs, const Clr& rhs)
     return rhs.a < lhs.a;
 }
 
-} // namespace GG
+}
 
 #endif
-

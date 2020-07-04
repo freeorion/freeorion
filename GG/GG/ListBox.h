@@ -132,15 +132,12 @@ public:
         /** the type of key used to sort rows */
         typedef std::string SortKeyType;
 
-        /** \name Structors */ ///@{
         Row();
         Row(X w, Y h);
         virtual ~Row();
-        //@}
 
         void CompleteConstruction() override;
 
-        /** \name Accessors */ ///@{
         /** Returns the string by which this row may be sorted. */
         virtual SortKeyType SortKey(std::size_t column) const;
         std::size_t         size() const;                       ///< returns the number of Controls in this Row
@@ -156,9 +153,7 @@ public:
         unsigned int Margin() const;                    ///< returns the amount of space left between the contents of adjacent cells, in pixels
         /** Return true if the row is normalized.  Used by ListBox to track normalization.*/
         bool         IsNormalized() const;
-        //@}
 
-        /** \name Mutators */ ///@{
         void         Render() override;
 
         void         push_back(std::shared_ptr<Control> c); ///< adds a given Control to the end of the Row; this Control becomes property of the Row
@@ -178,7 +173,6 @@ public:
         void         SetMargin(unsigned int margin); ///< sets the amount of space left between the contents of adjacent cells, in pixels
         /** Set normalized.  Used by ListBox to track normalization.*/
         void         SetNormalized(bool normalized);
-        //@}
 
         boost::signals2::signal<void(const Pt&, GG::Flags<GG::ModKey>)> RightClickedSignal;
 
@@ -221,7 +215,6 @@ public:
 
     typedef std::unordered_set<iterator, IteratorHash> SelectionSet;
 
-    /** \name Signal Types */ ///@{
     /** emitted when the list box is cleared */
     typedef boost::signals2::signal<void ()>                                                ClearedRowsSignalType;
     /** emitted when one or more rows are selected or deselected */
@@ -242,24 +235,18 @@ public:
     typedef RowSignalType      BeforeEraseRowSignalType;    ///< emitted when a row in the listbox is erased; provides the deleted Row, and is emitted before the row is removed
     typedef RowSignalType      AfterEraseRowSignalType;     ///< emitted when a row in the listbox is erased; provides the deleted Row, and is emitted after the row is removed
     typedef RowSignalType      BrowsedRowSignalType;        ///< emitted when a row in the listbox is "browsed" (rolled over) by the cursor; provides the browsed row
-    //@}
 
-    /** \name Constants */ ///@{
     static const int DEFAULT_MARGIN;
     static const X DEFAULT_ROW_WIDTH;
     static const Y DEFAULT_ROW_HEIGHT;
     static const unsigned int BORDER_THICK; ///< the thickness with which to render the border of the control
-    //@}
 
-    /** \name Structors */ ///@{
     ListBox(Clr color, Clr interior = CLR_ZERO);
 
     virtual ~ListBox();
-    //@}
 
     void CompleteConstruction() override;
 
-    /** \name Accessors */ ///@{
     Pt MinUsableSize() const override;
     Pt ClientUpperLeft() const override;
     Pt ClientLowerRight() const override;
@@ -336,9 +323,7 @@ public:
     mutable BeforeEraseRowSignalType     BeforeEraseRowSignal;     ///< the before erase signal object for this ListBox
     mutable AfterEraseRowSignalType      AfterEraseRowSignal;      ///< the after erase signal object for this ListBox
     mutable BrowsedRowSignalType         BrowsedRowSignal;         ///< the browsed signal object for this ListBox
-    //@}
 
-    /** \name Mutators */ ///@{
     void StartingChildDragDrop(const Wnd* wnd, const GG::Pt& offset) override;
     void AcceptDrops(const Pt& pt, std::vector<std::shared_ptr<Wnd>> wnds, Flags<ModKey> mod_keys) override;
     void ChildrenDraggedAway(const std::vector<Wnd*>& wnds, const Wnd* destination) override;
@@ -481,7 +466,6 @@ public:
     /** Sets the number of milliseconds that elapse between row/column scrolls
         when auto-scrolling. */
     void SetAutoScrollInterval(unsigned int interval);
-    //@}
 
     /** \brief Sorts two Rows of a ListBox using operator<() on the
         Row::SortKeyType provided by the rows' SortKey() methods.
@@ -495,11 +479,7 @@ public:
         bool operator()(const Row& lhs, const Row& rhs, std::size_t column) const;
     };
 
-    /** \name Exceptions */ ///@{
-    //@}
-
 protected:
-    /** \name Accessors */ ///@{
     X               RightMargin() const;     ///< space skipped at right of client area for vertical scroll bar
     Y               BottomMargin() const;    ///< space skipped at bottom of client area for horizontal scroll bar
     unsigned int    CellMargin() const;      ///< the number of pixels left between the contents of each cell and the cell boundary
@@ -515,9 +495,7 @@ protected:
     bool            AutoScrollingDown() const;  ///< returns true iff the list is being autoscrolled down due to drag-and-drop
     bool            AutoScrollingLeft() const;  ///< returns true iff the list is being autoscrolled left due to drag-and-drop
     bool            AutoScrollingRight() const; ///< returns true iff the list is being autoscrolled right due to drag-and-drop
-    //@}
 
-    /** \name Mutators */ ///@{
     void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
     void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys) override;
     void DragDropEnter(const Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable, Flags<ModKey> mod_keys) override;
@@ -542,7 +520,6 @@ protected:
     void ResetAutoScrollVars(); ///< resets all variables related to auto-scroll to their initial values
     void Resort();              ///< performs a full resort of all rows, using the current sort functor.
     Row& ColHeaders();          ///< returns the row containing the headings for the columns, if any.  If undefined, the returned heading Row will have size() 0. non-const for derivers
-    //@}
 
     /** creates, destroys, or resizes scrolls to reflect size of data in listbox. \p force_scroll
         forces the scroll bar to be added.*/
@@ -658,10 +635,9 @@ private:
     friend class DropDownList; ///< allow complete access to DropDownList, which relies on ListBox to do its rendering
 };
 
-} // namespace GG
+}
 
 
-// template implementations
 template <typename RowType>
 bool GG::ListBox::DefaultRowCmp<RowType>::operator()(const GG::ListBox::Row& lhs, const GG::ListBox::Row& rhs, std::size_t column) const
 {

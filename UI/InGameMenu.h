@@ -5,18 +5,14 @@
 
 class InGameMenu : public CUIWnd {
 public:
-    /** \name Structors */ //@{
     InGameMenu();
     void CompleteConstruction() override;
 
     ~InGameMenu();
-    //@}
 
-    /** \name Mutators */ //@{
     void KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
 
     void         DoLayout();
-    //@}
 
 protected:
     GG::Rect CalculatePosition() const override;
@@ -41,4 +37,5 @@ private:
     std::shared_ptr<GG::Button> m_resign_btn;
 };
 
-#endif // _InGameMenu_h_
+
+#endif

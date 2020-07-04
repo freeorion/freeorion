@@ -1210,23 +1210,17 @@ ShipDesignManager::Designs* ShipDesignManager::SavedDesigns() {
   * dragged onto SlotControls to add parts to the design. */
 class PartControl : public GG::Control {
 public:
-    /** \name Structors */ //@{
     PartControl(const ShipPart* part);
-    //@}
     void CompleteConstruction() override;
 
-    /** \name Accessors */ //@{
     const ShipPart*     Part() const { return m_part; }
     const std::string&  PartName() const { return m_part ? m_part->Name() : EMPTY_STRING; }
-    //@}
 
-    /** \name Mutators */ //@{
     void Render() override;
     void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
     void LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
     void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
     void SetAvailability(const AvailabilityManager::DisplayedAvailabilies& type);
-    //@}
 
     mutable boost::signals2::signal<void (const ShipPart*, GG::Flags<GG::ModKey>)> ClickedSignal;
     mutable boost::signals2::signal<void (const ShipPart*, const GG::Pt& pt)> RightClickedSignal;
@@ -1309,17 +1303,12 @@ public:
         const AvailabilityManager& m_availabilities_state;
     };
 
-    /** \name Structors */ //@{
     explicit PartsListBox(const AvailabilityManager& availabilities_state);
-    //@}
 
-    /** \name Accessors */ //@{
     const std::set<ShipPartClass>&  GetClassesShown() const;
     const AvailabilityManager&      AvailabilityState() const { return m_availabilities_state; }
     bool                            GetShowingSuperfluous() const { return m_show_superfluous_parts; }
-    //@}
 
-    /** \name Mutators */ //@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
     void AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds,
                      GG::Flags<GG::ModKey> mod_keys) override;
@@ -1331,7 +1320,6 @@ public:
     void HideAllClasses(bool refresh_list = true);
     void ShowSuperfluousParts(bool refresh_list = true);
     void HideSuperfluousParts(bool refresh_list = true);
-    //@}
 
     mutable boost::signals2::signal<void (const ShipPart*, GG::Flags<GG::ModKey>)>  ShipPartClickedSignal;
     mutable boost::signals2::signal<void (const ShipPart*)>                         ShipPartDoubleClickedSignal;
@@ -1768,12 +1756,9 @@ void PartsListBox::HideSuperfluousParts(bool refresh_list) {
   * onto slots to assign parts to those slots */
 class DesignWnd::PartPalette : public CUIWnd {
 public:
-    /** \name Structors */ //@{
     PartPalette(const std::string& config_name);
     void CompleteConstruction() override;
-    //@}
 
-    /** \name Mutators */ //@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
     void ShowClass(ShipPartClass part_class, bool refresh_list = true);
@@ -1790,7 +1775,6 @@ public:
     void ToggleSuperfluous(bool refresh_list = true);
 
     void Populate();
-    //@}
 
     mutable boost::signals2::signal<void (const ShipPart*, GG::Flags<GG::ModKey>)> ShipPartClickedSignal;
     mutable boost::signals2::signal<void (const ShipPart*)> ShipPartDoubleClickedSignal;
@@ -2157,24 +2141,17 @@ class BasesListBox : public QueueListBox {
 public:
     static const std::string BASES_LIST_BOX_DROP_TYPE;
 
-    /** \name Structors */ //@{
     BasesListBox(const AvailabilityManager& availabilities_state,
                  const boost::optional<std::string>& drop_type = boost::none,
                  const boost::optional<std::string>& empty_prompt = boost::none);
-    //@}
     void CompleteConstruction() override;
 
-    /** \name Accessors */ //@{
-    //@}
-
-    /** \name Mutators */ //@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
     void ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const GG::Wnd* destination) override;
     virtual void QueueItemMoved(const GG::ListBox::iterator& row_it, const GG::ListBox::iterator& original_position_it)
     {}
     void SetEmpireShown(int empire_id, bool refresh_list = true);
     virtual void Populate();
-    //@}
 
     mutable boost::signals2::signal<void (int)>                 DesignSelectedSignal;
     mutable boost::signals2::signal<void (int)>                 DesignUpdatedSignal;
@@ -2254,14 +2231,12 @@ protected:
     /** If \p wnd is a valid dragged child return a replacement row.  Otherwise return nullptr. */
     virtual std::shared_ptr<Row> ChildrenDraggedAwayCore(const GG::Wnd* const wnd) = 0;
 
-    /** \name Accessors for derived classes. */ //@{
     int EmpireID() const { return m_empire_id_shown; }
 
     const AvailabilityManager& AvailabilityState() const
     { return m_availabilities_state; }
 
     GG::Pt  ListRowSize();
-    //@}
 
     virtual void BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
     {}
@@ -3340,19 +3315,15 @@ bool SavedDesignsListBox::SavedDesignListBoxRow::LookupInStringtable() const {
 //////////////////////////////////////////////////
 class DesignWnd::BaseSelector : public CUIWnd {
 public:
-    /** \name Structors */ //@{
     BaseSelector(const std::string& config_name);
     void CompleteConstruction() override;
-    //@}
 
-    /** \name Mutators */ //@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
     void Reset();
     void ToggleAvailability(const Availability::Enum type);
     void SetEmpireShown(int empire_id, bool refresh_list);
     void EnableOrderIssuing(bool enable/* = true*/);
-    //@}
 
     mutable boost::signals2::signal<void (int)>                         DesignSelectedSignal;
     mutable boost::signals2::signal<void (int)>                         DesignUpdatedSignal;
@@ -3568,20 +3539,15 @@ void DesignWnd::BaseSelector::DoLayout() {
   * the part may be set programmatically with SetPart(). */
 class SlotControl : public GG::Control {
 public:
-    /** \name Structors */ //@{
     SlotControl();
     SlotControl(double x, double y, ShipSlotType slot_type);
-    //@}
     void CompleteConstruction() override;
 
-    /** \name Accessors */ //@{
     ShipSlotType    SlotType() const;
     double          XPositionFraction() const;
     double          YPositionFraction() const;
     const ShipPart* GetPart() const;
-    //@}
 
-    /** \name Mutators */ //@{
     void StartingChildDragDrop(const GG::Wnd* wnd, const GG::Pt& offset) override;
     void CancellingChildDragDrop(const std::vector<const GG::Wnd*>& wnds) override;
     void AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds,
@@ -3600,7 +3566,6 @@ public:
     //! Used to programmatically set the ShipPart in this slot.
     //! Does not emit signal.
     void SetPart(const ShipPart* part = nullptr);
-    //@}
 
     /** emitted when the contents of a slot are altered by the dragging
       * a PartControl in or out of the slot.  signal should be caught and the
@@ -3893,12 +3858,9 @@ public:
         const std::string m_text;
     };
 
-    /** \name Structors */ //@{
     MainPanel(const std::string& config_name);
     void CompleteConstruction() override;
-    //@}
 
-    /** \name Accessors */ //@{
     /** If editing a current design return a ShipDesign* otherwise boost::none. */
     boost::optional<const ShipDesign*> EditingCurrentDesign() const;
     /** If editing a saved design return a ShipDesign* otherwise boost::none. */
@@ -3921,9 +3883,7 @@ public:
     /** If a design with the same hull and parts is registered with the empire then return the
         design, otherwise return boost::none. */
     boost::optional<const ShipDesign*>        CurrentDesignIsRegistered();
-    //@}
 
-    /** \name Mutators */ //@{
     void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
 
     void AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds, GG::Flags<GG::ModKey> mod_keys) override;
@@ -3992,7 +3952,6 @@ public:
 
     /** Track changes in base type. */
     void HandleBaseTypeChange(const DesignWnd::BaseSelector::BaseSelectorTab base_type);
-    //@}
 
     /** emitted when the design is changed (by adding or removing parts, not
       * name or description changes) */

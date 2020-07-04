@@ -60,17 +60,13 @@ class Scroll;
 class GG_API MultiEdit : public Edit
 {
 public:
-    /** \name Structors */ ///@{
-    /** Ctor. */
     MultiEdit(const std::string& str, const std::shared_ptr<Font>& font,
               Clr color, Flags<MultiEditStyle> style = MULTI_LINEWRAP,
               Clr text_color = CLR_BLACK, Clr interior = CLR_ZERO);
 
     virtual ~MultiEdit();
-    //@}
     void CompleteConstruction() override;
 
-    /** \name Accessors */ ///@{
     Pt MinUsableSize() const override;
 
     Pt ClientLowerRight() const override;
@@ -88,9 +84,7 @@ public:
 
     /** Returns the positions of the scrollbars. */
     Pt ScrollPosition() const;
-    //@}
 
-    /** \name Mutators */ ///@{
     void Render() override;
 
     void SizeMove(const Pt& ul, const Pt& lr) override;
@@ -114,7 +108,6 @@ public:
     void SetHScrollWheelIncrement(unsigned int increment);
 
     void AcceptPastedText(const std::string& text) override;
-    //@}
 
     /** A sentinel value that indicates that there is no limit on the number
         of lines of history are to be stored.  \see MaxLinesOfHistory() \see
@@ -125,7 +118,6 @@ public:
     static const unsigned int BORDER_THICK;
 
 protected:
-    /** \name Accessors */ ///@{
     /** Returns true if >= 1 characters are selected. */
     bool MultiSelected() const override;
 
@@ -196,9 +188,7 @@ protected:
 
     /** Returns the lesser of m_cursor_begin and m_cursor_end. */
     std::pair<std::size_t, CPSize> LowCursorPos() const;
-    //@}
 
-    /** \name Mutators */ ///@{
     void LButtonDown(const Pt& pt, Flags<ModKey> mod_keys) override;
     void LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys) override;
     void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys) override;
@@ -218,7 +208,6 @@ protected:
     void PreserveTextPositionOnNextSetText();
 
     std::pair<CPSize, CPSize> GetDoubleButtonDownWordIndices(CPSize char_index) override;
-    //@}
 
     /** The width used to create the control's vertical and horizontal
         Scrolls. */
@@ -254,6 +243,6 @@ private:
     bool            m_ignore_adjust_scrolls = false;
 };
 
-} // namespace GG
+}
 
 #endif

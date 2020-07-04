@@ -156,11 +156,8 @@ public:
     /** The type of list returned by a call to DiscoverLANServers(). */
     using ServerList = std::vector<std::pair<boost::asio::ip::address, std::string>>;
 
-    /** \name Structors */ //@{
     Impl();
-    //@}
 
-    /** \name Accessors */ //@{
     /** Returns true iff the client is full duplex connected to the server. */
     bool IsConnected() const;
 
@@ -184,9 +181,7 @@ public:
 
     /** Returns destination address of server. */
     const std::string& Destination() const;
-    //@}
 
-    /** \name Mutators */ //@{
     /** Returns a list of the addresses and names of all servers on the Local
         Area Network. */
     ClientNetworking::ServerNames DiscoverLANServerNames();
@@ -226,7 +221,6 @@ public:
 
     /** Get authorization roles access. */
     Networking::AuthRoles& AuthorizationRoles();
-    //@}
 
 private:
     void HandleException(const boost::system::system_error& error);

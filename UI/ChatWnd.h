@@ -16,13 +16,9 @@ class MessageWnd : public CUIWnd {
 public:
     MessageWnd(GG::Flags<GG::WndFlag> flags, const std::string& config_name = "");
     void CompleteConstruction() override;
-    //@}
 
-    //! \name Acessors */ //@{
     std::string GetText() const;
-    //@}
 
-    //! \name Mutators //@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
     void PreRender() override;
@@ -40,7 +36,6 @@ public:
     void            Clear();
     void            OpenForInput();
     void            SetChatText(const std::string& chat_text);
-    //@}
 
     /** emitted when the edit gains focus.  Keyboard accelerators elsewhere
         should be disabled */

@@ -61,4 +61,5 @@ namespace CheckSums {
     FO_COMMON_API void CheckSumCombine(unsigned int& sum, const UnlockableItem& item);
 }
 
-#endif // _UnlockableItem_h_
+
+#endif

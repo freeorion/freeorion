@@ -57,18 +57,13 @@ public:
         BN_ROLLOVER    ///< The button has the cursor over it, but is unpressed
     )
 
-    /** \name Signal Types */ ///@{
     /** Emitted when the button is clicked by the user */
     typedef boost::signals2::signal<void ()> ClickedSignalType;
-    //@}
 
-   /** \name Structors */ ///@{
     Button(const std::string& str, const std::shared_ptr<Font>& font, Clr color,
            Clr text_color = CLR_BLACK, Flags<WndFlag> flags = INTERACTIVE);
-    //@}
     void CompleteConstruction() override;
 
-    /** \name Accessors */ ///@{
     Pt MinUsableSize() const override;
 
     /** Returns button state \see ButtonState */
@@ -87,9 +82,7 @@ public:
     mutable ClickedSignalType LeftPressedSignal;
     /** The right pressed signal object for this Button */
     mutable ClickedSignalType RightPressedSignal;
-    //@}
 
-    /** \name Mutators */ ///@{
     void Show() override;
     void Render() override;
     void SizeMove(const Pt& ul, const Pt& lr) override;
@@ -104,10 +97,8 @@ public:
     void SetUnpressedGraphic(const SubTexture& st); ///< Sets the SubTexture to be used as the image of the button when unpressed
     void SetPressedGraphic(const SubTexture& st);   ///< Sets the SubTexture to be used as the image of the button when pressed
     void SetRolloverGraphic(const SubTexture& st);  ///< Sets the SubTexture to be used as the image of the button when it contains the cursor, but is not pressed
-    //@}
 
 protected:
-    /** \name Mutators */ ///@{
     void LButtonDown(const Pt& pt, Flags<ModKey> mod_keys) override;
     void LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys) override;
     void LButtonUp(const Pt& pt, Flags<ModKey> mod_keys) override;
@@ -126,7 +117,6 @@ protected:
     virtual void RenderPressed();
     /** Draws the button rolled-over.  If an rollover graphic has been supplied, it is used. */
     virtual void RenderRollover();
-    //@}
 
     std::shared_ptr<TextControl> m_label;   ///< Label used to display text
 
@@ -164,19 +154,14 @@ public:
         BN_ROLLOVER    ///< The button has the cursor over it, but is unpressed
     )
 
-    /** \name Signal Types */ ///@{
     /** Emitted when the StateButton is checked or unchecked; the checked or
         unchecked status is indicated by the bool parameter */
     typedef boost::signals2::signal<void (bool)> CheckedSignalType;
-    //@}
 
-    /** \name Structors */ ///@{
     StateButton(const std::string& str, const std::shared_ptr<Font>& font, Flags<TextFormat> format,
                 Clr color, std::shared_ptr<StateButtonRepresenter> representer, Clr text_color = CLR_BLACK); ///< Ctor
-    //@}
     void CompleteConstruction() override;
 
-    /** \name Accessors */ ///@{
     Pt                  MinUsableSize() const override;
 
     /** Returns button state \see ButtonState */
@@ -189,9 +174,7 @@ public:
     TextControl*        GetLabel() const;
 
     mutable CheckedSignalType CheckedSignal; ///< The checked signal object for this StaticButton
-    //@}
 
-    /** \name Mutators */ ///@{
     void Show() override;
     void Render() override;
     void SizeMove(const Pt& ul, const Pt& lr) override;
@@ -199,10 +182,8 @@ public:
     void Reset();                 ///< Unchecks button
     void SetCheck(bool b = true); ///< (Un)checks button
     void SetTextColor(Clr c); ///< Sets the color of the box label text
-    //@}
 
 protected:
-    /** \name Mutators */ ///@{
     void LButtonDown(const Pt& pt, Flags<ModKey> mod_keys) override;
     void LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys) override;
     void LButtonUp(const Pt& pt, Flags<ModKey> mod_keys) override;
@@ -212,7 +193,6 @@ protected:
 
     /** Sets button state programmatically \see ButtonState */
     void SetState(ButtonState next_state);
-    //@}
 
 private:
     std::shared_ptr<StateButtonRepresenter> m_representer;
@@ -328,18 +308,13 @@ public:
 class GG_API RadioButtonGroup : public Control
 {
 public:
-    /** \name Signal Types */ ///@{
     /** emitted when the currently-selected button has changed; the new
         selected button's index in the group is provided (this may be
         NO_BUTTON if no button is currently selected) */
     typedef boost::signals2::signal<void (std::size_t)> ButtonChangedSignalType;
-    //@}
 
-    /** \name Structors */ ///@{
     RadioButtonGroup(Orientation orientation);
-    //@}
 
-    /** \name Accessors */ ///@{
     Pt MinUsableSize() const override;
 
     /** Returns the orientation of the buttons in the group */
@@ -372,9 +347,7 @@ public:
     bool             RenderOutline() const;
 
     mutable ButtonChangedSignalType ButtonChangedSignal; ///< The button changed signal object for this RadioButtonGroup
-    //@}
 
-    /** \name Mutators */ ///@{
     void Render() override;
 
     /** Checks the index-th button, and unchecks all others.  If there is no
@@ -426,7 +399,6 @@ public:
     /** The invalid button position index that there is no currently-checked
         button. */
     static const std::size_t NO_BUTTON;
-    //@}
 
 protected:
     /** \brief Encapsulates all data pertaining ot a single button in a
@@ -440,9 +412,7 @@ protected:
         boost::signals2::connection connection;
     };
 
-    /** \name Accessors */ ///@{
     const std::vector<ButtonSlot>& ButtonSlots() const; ///< returns the state buttons in the group
-    //@}
 
 private:
     void ConnectSignals();
@@ -457,6 +427,6 @@ private:
     bool                    m_render_outline;
 };
 
-} // namespace GG
+}
 
 #endif

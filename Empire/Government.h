@@ -25,7 +25,6 @@ public:
            std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
            std::string graphic);
 
-    /** \name Accessors */ //@{
     const std::string&  Name() const                { return m_name; }
     const std::string&  Description() const         { return m_description; }
     const std::string&  ShortDescription() const    { return m_short_description; }
@@ -47,7 +46,6 @@ public:
     //! the parsed content is consistent without sending it all between
     //! clients and server. */
     unsigned int        GetCheckSum() const;
-    //@}
 
 private:
     Policy(const Policy&);                  // disabled
@@ -70,12 +68,9 @@ public:
     using PoliciesTypeMap = std::map<std::string, std::unique_ptr<Policy>>;
     using iterator = PoliciesTypeMap::const_iterator;
 
-    /** \name Structors */ //@{
     PolicyManager();
     ~PolicyManager();
-    //@}
 
-    /** \name Accessors */ //@{
     //! returns the policy with the name \a name; you should use the free
     //! function GetPolicy() instead
     const Policy*               GetPolicy(const std::string& name) const;
@@ -87,7 +82,6 @@ public:
 
     iterator begin() const; //! iterator to the first policy
     iterator end() const;   //! iterator to the last + 1th policy
-    //@}
 
     //! sets types to the value of \p future
     void SetPolicies(Pending::Pending<PoliciesTypeMap>&& future);
@@ -106,4 +100,4 @@ FO_COMMON_API PolicyManager& GetPolicyManager();
 FO_COMMON_API const Policy* GetPolicy(const std::string& name);
 
 
-#endif // _Government_h_
+#endif

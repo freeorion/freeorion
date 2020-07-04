@@ -20,27 +20,21 @@ class UniverseObject;
   * population and still travel between systems). */
 class FO_COMMON_API PopCenter : virtual public std::enable_shared_from_this<UniverseObject> {
 public:
-    /** \name Structors */ //@ {
     PopCenter();
     explicit PopCenter(const std::string& species_name);
     virtual ~PopCenter();
-    //@}
 
-    /** \name Accessors */ //@ {
     const std::string&  SpeciesName() const {return m_species_name;}        ///< returns the name of the species that populates this planet
     std::string         Dump(unsigned short ntabs = 0) const;
     bool                Populated() const;
     virtual Meter*      GetMeter(MeterType type) = 0;                       ///< implementation should return the requested Meter, or 0 if no such Meter of that type is found in this object
     virtual const Meter*GetMeter(MeterType type) const = 0;                 ///< implementation should return the requested Meter, or 0 if no such Meter of that type is found in this object
-    //@}
 
-    /** \name Mutators */ //@ {
     void                Copy(std::shared_ptr<const PopCenter> copied_object, Visibility vis);
     void                Copy(std::shared_ptr<const PopCenter> copied_object);
     virtual void        SetSpecies(const std::string& species_name);        ///< sets the species of the population to \a species_name
     virtual void        Reset();                                            ///< sets all meters to 0, clears race name
     virtual void        Depopulate();                                       ///< removes population
-    //@}
 
 protected:
     void Init();    ///< initialization that needs to be called by derived class after derived class is constructed
@@ -58,13 +52,12 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-// template implementations
+
 template <typename Archive>
 void PopCenter::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_species_name);
 }
 
-#endif // _PopCenter_h_
 
-
+#endif

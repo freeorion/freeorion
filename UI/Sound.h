@@ -75,4 +75,5 @@ private:
     ~Sound();
 };
 
-#endif // _Sound_h_
+
+#endif

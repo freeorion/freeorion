@@ -13,12 +13,9 @@ FO_COMMON_API extern const int ALL_EMPIRES;
 /** Used to calcuate all empires' supply distributions. */
 class FO_COMMON_API SupplyManager {
 public:
-    /** \name Structors */ //@{
     SupplyManager();
     SupplyManager& operator=(const SupplyManager& rhs);
-    //@}
 
-    /** \name Accessors */ //@{
     /** Returns set of directed starlane traversals along which supply can flow.
       * Results are pairs of system ids of start and end system of traversal. */
     const std::map<int, std::set<std::pair<int, int>>>&     SupplyStarlaneTraversals() const;
@@ -64,14 +61,11 @@ public:
     bool        SystemHasFleetSupply(int system_id, int empire_id, bool include_allies) const;
 
     std::string Dump(int empire_id = ALL_EMPIRES) const;
-    //@}
 
-    /** \name Mutators */ //@{
     /** Calculates systems at which fleets of empires can be supplied, and
       * groups of systems that can exchange resources, and the starlane
       * traversals used to do so. */
     void    Update();
-    //@}
 
 private:
     /** ordered pairs of system ids between which a starlane runs that can be
@@ -119,4 +113,5 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-#endif // _Supply_h_
+
+#endif

@@ -60,4 +60,5 @@ public:
                                                      GG::Clr text_color = GG::CLR_BLACK) const override;
 };
 
-#endif // _CUIStyle_h_
+
+#endif

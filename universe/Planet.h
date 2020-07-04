@@ -16,7 +16,6 @@ class FO_COMMON_API Planet :
     public ResourceCenter
 {
 public:
-    /** \name Accessors */ //@{
     std::set<std::string>   Tags() const override;
     bool                    HasTag(const std::string& name) const override;
     UniverseObjectType      ObjectType() const override;
@@ -76,9 +75,7 @@ public:
 
     const std::string&  SurfaceTexture() const  { return m_surface_texture; }
     std::string         CardinalSuffix() const; ///< returns a roman number representing this planets orbit in relation to other planets
-    //@}
 
-    /** \name Mutators */ //@{
     void Copy(std::shared_ptr<const UniverseObject> copied_object,
               int empire_id = ALL_EMPIRES) override;
 
@@ -113,7 +110,6 @@ public:
     void SetLastTurnAttackedByShip(int turn);///< Sets the last turn this planet was attacked by a ship
     void SetSurfaceTexture(const std::string& texture);
     void ResetTargetMaxUnpairedMeters() override;
-    //@}
 
     static int TypeDifference(PlanetType type1, PlanetType type2);
 
@@ -121,7 +117,6 @@ protected:
     friend class Universe;
     friend class ObjectMap;
 
-    /** \name Structors */ //@{
     Planet();
 
 public:
@@ -136,7 +131,6 @@ protected:
 protected:
     /** returns new copy of this Planet. */
     Planet* Clone(int empire_id = ALL_EMPIRES) const override;
-    //@}
 
 private:
     void Init();
@@ -177,4 +171,4 @@ private:
 };
 
 
-#endif // _Planet_h_
+#endif

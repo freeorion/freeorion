@@ -605,19 +605,14 @@ namespace {
     /** Shows info about a single ship. */
     class ShipDataPanel : public GG::Control {
     public:
-        /** \name Structors */ //@{
         ShipDataPanel(GG::X w, GG::Y h, int ship_id);
         ~ShipDataPanel();
-        //@}
 
-        //! \name Accessors //@{
         /** Excludes border from the client area. */
         GG::Pt ClientUpperLeft() const override;
         /** Excludes border from the client area. */
         GG::Pt ClientLowerRight() const override;
-        //@}
 
-        //! \name Mutators //@{
         /** Renders black panel background, border with color depending on the
          *current state and a background for the ship's name text. */
         void Render() override;
@@ -629,7 +624,6 @@ namespace {
 
         /** Indicate ship data has changed and needs refresh. */
         void RequireRefresh();
-        //@}
 
     private:
         double StatValue(MeterType stat_name) const;

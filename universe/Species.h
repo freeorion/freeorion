@@ -32,16 +32,13 @@ FO_COMMON_API extern const int ALL_EMPIRES;
   * focus setting is. */
 class FO_COMMON_API FocusType {
 public:
-    /** \name Structors */ //@{
     FocusType() = default;
     FocusType(std::string& name, std::string& description,
               std::unique_ptr<Condition::Condition>&& location,
               std::string& graphic);
 
     ~FocusType();
-    //@}
 
-    /** \name Accessors */ //@{
     const std::string&          Name() const        { return m_name; }          ///< returns the name for this focus type
     const std::string&          Description() const { return m_description; }   ///< returns a text description of this focus type
     const Condition::Condition* Location() const    { return m_location.get(); }///< returns the condition that determines whether an UniverseObject can use this FocusType
@@ -55,7 +52,6 @@ public:
       * the parsed content is consistent without sending it all between
       * clients and server. */
     unsigned int GetCheckSum() const;
-    //@}
 
 private:
     std::string                                 m_name;
@@ -71,7 +67,6 @@ private:
   * looked up using GetSpecies(). */
 class FO_COMMON_API Species {
 public:
-    /** \name Structors */ //@{
     Species(std::string&& name, std::string&& desc,
             std::string&& gameplay_desc, std::vector<FocusType>&& foci,
             std::string&& preferred_focus,
@@ -82,9 +77,7 @@ public:
             const std::set<std::string>& tags, std::string&& graphic);
 
     ~Species();
-    //@}
 
-    /** \name Accessors */ //@{
     const std::string&              Name() const                        { return m_name; }                  ///< returns the unique name for this type of species
     const std::string&              Description() const                 { return m_description; }           ///< returns a text description of this type of species
     /** returns a text description of this type of species */
@@ -123,9 +116,7 @@ public:
       * the parsed content is consistent without sending it all between
       * clients and server. */
     unsigned int                    GetCheckSum() const;
-    //@}
 
-    /** \name Mutators */ //@{
     void AddHomeworld(int homeworld_id);
     void RemoveHomeworld(int homeworld_id);
     void SetHomeworlds(const std::set<int>& homeworld_ids);
@@ -133,7 +124,6 @@ public:
     void SetEmpireOpinion(int empire_id, double opinion);
     void SetOtherSpeciesOpinions(const std::map<std::string, double>& opinions);
     void SetOtherSpeciesOpinion(const std::string& species_name, double opinion);
-    //@}
 
 private:
     void Init();
@@ -178,7 +168,6 @@ public:
     typedef boost::filter_iterator<PlayableSpecies, iterator>   playable_iterator;
     typedef boost::filter_iterator<NativeSpecies, iterator>     native_iterator;
 
-    /** \name Accessors */ //@{
     /** returns the building type with the name \a name; you should use the
       * free function GetSpecies() instead, mainly to save some typing. */
     const Species*      GetSpecies(const std::string& name) const;
@@ -252,9 +241,7 @@ public:
       * the parsed content is consistent without sending it all between
       * clients and server. */
     unsigned int GetCheckSum() const;
-    //@}
 
-    /** \name Mutators */ //@{
     /** sets all species to have no homeworlds.  this is useful when generating
       * a new game, when any homeworlds species had in the previous game should
       * be removed before the new game's homeworlds are added. */
@@ -280,7 +267,6 @@ public:
 
     /** Sets species types to the value of \p future. */
     void SetSpeciesTypes(Pending::Pending<std::pair<SpeciesTypeMap, CensusOrder>>&& future);
-    //@}
 
 private:
     SpeciesManager();
@@ -317,4 +303,5 @@ FO_COMMON_API SpeciesManager& GetSpeciesManager();
   * If no such Species exists, 0 is returned instead. */
 FO_COMMON_API const Species* GetSpecies(const std::string& name);
 
-#endif // _Species_h_
+
+#endif

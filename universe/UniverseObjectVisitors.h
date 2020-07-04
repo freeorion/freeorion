@@ -89,4 +89,4 @@ struct FO_COMMON_API HostileVisitor : UniverseObjectVisitor
 };
 
 
-#endif // _UniverseObjectVisitors_h_
+#endif

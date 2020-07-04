@@ -187,4 +187,5 @@ boost::format FlexibleFormatList(
     return FlexibleFormatList(header_words, words, plural_header, single_header, empty_header, plural_header);
 }
 
-#endif // _I18N_h_
+
+#endif

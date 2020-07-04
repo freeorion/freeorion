@@ -1,5 +1,3 @@
-//CUIWnd.cpp
-
 #include "CUIWnd.h"
 
 #include "../client/human/HumanClientApp.h"

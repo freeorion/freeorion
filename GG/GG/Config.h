@@ -33,4 +33,5 @@
 #define GG_HAVE_LIBPNG 1
 #define GG_HAVE_LIBTIFF 0
 
-#endif // _GG_Config_h_
+
+#endif

@@ -25,4 +25,5 @@ private:
     Impl* const self;
 };
 
-#endif // Application_h
+
+#endif
