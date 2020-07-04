@@ -12,7 +12,7 @@
 
 /** Contains information about the state of a combat before or after the combat
   * occurs. */
-struct CombatInfo : public ScriptingCombatInfo {
+struct CombatInfo : public focs::ScriptingCombatInfo {
 public:
     CombatInfo() = default;
     CombatInfo(int system_id_, int turn_);  ///< ctor taking system id where combat occurs and game turn on which combat occurs

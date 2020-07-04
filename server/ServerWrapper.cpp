@@ -238,7 +238,7 @@ namespace {
         // get location condition and evaluate it with the specified universe object
         // if no location condition has been defined, all objects matches
         if (cond && cond->SourceInvariant())
-            cond->Eval(ScriptingContext(), permitted_objs, objs);
+            cond->Eval(focs::ScriptingContext(), permitted_objs, objs);
         else
             permitted_objs = std::move(objs);
 

@@ -3,6 +3,7 @@
 
 
 #include <boost/any.hpp>
+#include "focs.hpp"
 #include "../universe/Universe.h"
 #include "../util/AppInterface.h"
 
@@ -11,7 +12,7 @@ class UniverseObject;
 
 /** combat/CombatInfo extends this ScriptingCombatInfo in order
   * to give Conditions and ValueRefs access to combat related data */
-struct FO_COMMON_API ScriptingCombatInfo {
+struct FO_COMMON_API focs::ScriptingCombatInfo {
     ScriptingCombatInfo() {}
     ScriptingCombatInfo(int bout_, const Universe::EmpireObjectVisibilityMap& vis) :
         bout(bout_),
@@ -22,9 +23,15 @@ struct FO_COMMON_API ScriptingCombatInfo {
     ObjectMap                           objects;                    ///< actual state of objects relevant to combat
     Universe::EmpireObjectVisibilityMap empire_object_visibility;   ///< indexed by empire id and object id, the visibility level the empire has of each object.  may be increased during battle
 };
+
+namespace focs {
+
 const ScriptingCombatInfo EMPTY_COMBAT_INFO{};
 
-struct ScriptingContext {
+}
+
+
+struct focs::ScriptingContext {
     explicit ScriptingContext() :
         objects(Objects()),
         const_objects(Objects())

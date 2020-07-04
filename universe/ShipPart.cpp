@@ -341,7 +341,7 @@ float ShipPart::ProductionCost(int empire_id, int location_id, int in_design_id)
     if (m_production_cost->ConstantExpr()) {
         return static_cast<float>(m_production_cost->Eval());
     } else if (m_production_cost->SourceInvariant() && m_production_cost->TargetInvariant()) {
-        ScriptingContext context(nullptr, nullptr, in_design_id);
+        focs::ScriptingContext context(nullptr, nullptr, in_design_id);
         return static_cast<float>(m_production_cost->Eval(context));
     }
 
@@ -353,7 +353,7 @@ float ShipPart::ProductionCost(int empire_id, int location_id, int in_design_id)
     if (!source && !m_production_cost->SourceInvariant())
         return ARBITRARY_LARGE_COST;
 
-    ScriptingContext context(source, location, in_design_id);
+    focs::ScriptingContext context(source, location, in_design_id);
     return static_cast<float>(m_production_cost->Eval(context));
 }
 
@@ -364,7 +364,7 @@ int ShipPart::ProductionTime(int empire_id, int location_id, int in_design_id) c
     if (m_production_time->ConstantExpr()) {
         return m_production_time->Eval();
     } else if (m_production_time->SourceInvariant() && m_production_time->TargetInvariant()) {
-        ScriptingContext context(nullptr, nullptr, in_design_id);
+        focs::ScriptingContext context(nullptr, nullptr, in_design_id);
         return m_production_time->Eval(context);
     }
 
@@ -376,7 +376,7 @@ int ShipPart::ProductionTime(int empire_id, int location_id, int in_design_id) c
     if (!source && !m_production_time->SourceInvariant())
         return ARBITRARY_LARGE_TURNS;
 
-    ScriptingContext context(source, location, in_design_id);
+    focs::ScriptingContext context(source, location, in_design_id);
     return m_production_time->Eval(context);
 }
 

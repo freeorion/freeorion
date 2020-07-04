@@ -94,7 +94,7 @@ float Policy::AdoptionCost(int empire_id) const {
         if (!source && !m_adoption_cost->SourceInvariant())
             return arbitrary_large_number;
 
-        ScriptingContext context(source);
+        focs::ScriptingContext context(source);
         return m_adoption_cost->Eval(context);
     }
 }

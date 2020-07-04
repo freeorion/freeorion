@@ -137,7 +137,7 @@ float BuildingType::ProductionCost(int empire_id, int location_id) const {
     if (!source && !m_production_cost->SourceInvariant())
         return ARBITRARY_LARGE_COST;
 
-    ScriptingContext context(source, location);
+    focs::ScriptingContext context(source, location);
 
     return m_production_cost->Eval(context);
 }
@@ -164,7 +164,7 @@ int BuildingType::ProductionTime(int empire_id, int location_id) const {
     if (!source && !m_production_time->SourceInvariant())
         return ARBITRARY_LARGE_TURNS;
 
-    ScriptingContext context(source, location);
+    focs::ScriptingContext context(source, location);
 
     return m_production_time->Eval(context);
 }
@@ -181,7 +181,7 @@ bool BuildingType::ProductionLocation(int empire_id, int location_id) const {
     if (!source)
         return false;
 
-    return m_location->Eval(ScriptingContext(source), location);
+    return m_location->Eval(focs::ScriptingContext(source), location);
 }
 
 bool BuildingType::EnqueueLocation(int empire_id, int location_id) const {
@@ -196,7 +196,7 @@ bool BuildingType::EnqueueLocation(int empire_id, int location_id) const {
     if (!source)
         return false;
 
-    return m_enqueue_location->Eval(ScriptingContext(source), location);
+    return m_enqueue_location->Eval(focs::ScriptingContext(source), location);
 }
 
 unsigned int BuildingType::GetCheckSum() const {

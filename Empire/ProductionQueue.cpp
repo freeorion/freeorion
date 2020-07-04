@@ -372,7 +372,7 @@ bool ProductionQueue::ProductionItem::EnqueueConditionPassedAt(int location_id) 
             auto c = bt->EnqueueLocation();
             if (!c)
                 return true;
-            return c->Eval(ScriptingContext(location_obj), location_obj);
+            return c->Eval(focs::ScriptingContext(location_obj), location_obj);
         }
         return true;
         break;
@@ -405,7 +405,7 @@ ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id) c
     case BT_BUILDING: {
         if (const BuildingType* bt = GetBuildingType(name)) {
             auto location_obj = Objects().get(location_id);
-            ScriptingContext context(location_obj);
+            focs::ScriptingContext context(location_obj);
 
             for (const auto& psc : bt->ProductionSpecialConsumption()) {
                 if (!psc.second.first)
@@ -431,7 +431,7 @@ ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id) c
     case BT_SHIP: {
         if (const ShipDesign* sd = GetShipDesign(design_id)) {
             auto location_obj = Objects().get(location_id);
-            ScriptingContext context(location_obj);
+            focs::ScriptingContext context(location_obj);
 
             if (const ShipHull* ship_hull = GetShipHull(sd->Hull())) {
                 for (const auto& psc : ship_hull->ProductionSpecialConsumption()) {
@@ -471,7 +471,7 @@ ProductionQueue::ProductionItem::CompletionMeterConsumption(int location_id) con
     case BT_BUILDING: {
         if (const BuildingType* bt = GetBuildingType(name)) {
             auto obj = Objects().get(location_id);
-            ScriptingContext context(obj);
+            focs::ScriptingContext context(obj);
 
             for (const auto& pmc : bt->ProductionMeterConsumption()) {
                 if (!pmc.second.first)
@@ -484,7 +484,7 @@ ProductionQueue::ProductionItem::CompletionMeterConsumption(int location_id) con
     case BT_SHIP: {
         if (const ShipDesign* sd = GetShipDesign(design_id)) {
             auto obj = Objects().get(location_id);
-            ScriptingContext context(obj);
+            focs::ScriptingContext context(obj);
 
             if (const ShipHull* ship_hull = GetShipHull(sd->Hull())) {
                 for (const auto& pmc : ship_hull->ProductionMeterConsumption()) {

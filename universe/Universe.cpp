@@ -937,7 +937,7 @@ namespace {
         ScopedTimer timer(message, std::chrono::milliseconds(20));
 
         source_effects_targets_causes_out.reserve(source_objects.size());
-        ScriptingContext source_context(object_map);
+        focs::ScriptingContext source_context(object_map);
 
         for (auto& source : source_objects) {
             // assuming input sources objects set was already filtered with activation condition
@@ -1012,7 +1012,7 @@ namespace {
 
         // evaluate activation conditions of effects_groups on input source objects
         std::vector<focs::ObjectSet> active_sources{effects_groups.size()};
-        ScriptingContext source_context{object_map};
+        focs::ScriptingContext source_context{object_map};
         for (std::size_t i = 0; i < effects_groups.size(); ++i) {
             const auto* effects_group = effects_groups.at(i).get();
             if (only_meter_effects && !effects_group->HasMeterEffects())
@@ -1589,7 +1589,7 @@ void Universe::ExecuteEffects(std::map<int, focs::SourcesEffectsTargetsAndCauses
 
         // construct a source context, which is updated for each entry in sources-effects-targets.
         // execute each effectsgroup on its target set
-        ScriptingContext source_context;
+        focs::ScriptingContext source_context;
         for (std::pair<focs::SourcedEffectsGroup, focs::TargetsAndCause>& effect_group_entry : setc) {
             focs::TargetsAndCause& targets_and_cause{effect_group_entry.second};
             focs::TargetSet& target_set{targets_and_cause.target_set};
@@ -1736,7 +1736,7 @@ void Universe::ApplyEffectDerivedVisibilities() {
             for (auto& source_ref_entry : object_entry.second) {
                 // set up context for executing ValueRef to determine visibility to set
                 auto source = m_objects.get(source_ref_entry.first);
-                ScriptingContext context(source, target, target_initial_vis, nullptr, nullptr, m_objects);
+                focs::ScriptingContext context(source, target, target_initial_vis, nullptr, nullptr, m_objects);
 
                 const auto val_ref = source_ref_entry.second;
 
@@ -2364,7 +2364,7 @@ namespace {
                     float stealth = 0.0f;
                     const auto special_stealth = special->Stealth();
                     if (special_stealth)
-                        stealth = special_stealth->Eval(ScriptingContext(obj, objects));
+                        stealth = special_stealth->Eval(focs::ScriptingContext(obj, objects));
 
                     // if special is 0 stealth, or has stealth less than empire's detection strength, mark as visible
                     if (stealth <= 0.0f || stealth <= detection_strength) {
@@ -2918,7 +2918,7 @@ void Universe::UpdateStatRecords() {
             if (value_ref->SourceInvariant()) {
                 stat_records[empire_id][current_turn] = value_ref->Eval();
             } else if (entry.second) {
-                stat_records[empire_id][current_turn] = value_ref->Eval(ScriptingContext(entry.second, m_objects));
+                stat_records[empire_id][current_turn] = value_ref->Eval(focs::ScriptingContext(entry.second, m_objects));
             }
         }
     }

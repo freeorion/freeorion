@@ -16,7 +16,6 @@
 FO_COMMON_API extern const int INVALID_OBJECT_ID;
 
 class UniverseObject;
-struct ScriptingContext;
 
 namespace focs {
 

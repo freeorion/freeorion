@@ -10,7 +10,6 @@
 
 
 class UniverseObject;
-struct ScriptingContext;
 
 
 namespace focs {

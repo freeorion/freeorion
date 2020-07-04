@@ -106,6 +106,8 @@ struct PredefinedShipDesign;
 struct ProducedByEmpire;
 struct ResourceSupplyConnectedByEmpire;
 struct RootCandidate;
+struct ScriptingCombatInfo;
+struct ScriptingContext;
 struct ShipPartMeterValue;
 struct SortedNumberOf;
 struct Source;
