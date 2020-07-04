@@ -131,8 +131,8 @@ def calc_max_pop(planet, species, detail):
         detail.append("%s (maxPop%+.1f)" % (_special, this_mod))
         base_pop_not_modified_by_species += this_mod
 
-    #  exobots can't ever get to good environ so no gaia bonus, for others we'll assume they'll get there
-    if "GAIA_SPECIAL" in planet_specials and species.name != "SP_EXOBOT":
+    #  exobots and sly can't ever get to good environ so no gaia bonus, for others we'll assume they'll get there
+    if "GAIA_SPECIAL" in planet_specials and species.name != "SP_EXOBOT" and species.name != "SP_SLY":
         base_pop_not_modified_by_species += 3
         detail.append("Gaia_PSM_late(3)")
 
