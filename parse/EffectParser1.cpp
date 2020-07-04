@@ -1,11 +1,11 @@
 #include "EffectParser1.h"
 
-#include "../universe/Effects.h"
-#include "../universe/ValueRef.h"
-#include "../universe/Enums.h"
-
 #include <boost/spirit/include/phoenix.hpp>
 #include <boost/phoenix/function/adapt_function.hpp>
+#include "../focs/Effects.h"
+#include "../focs/ValueRef.h"
+#include "../universe/Enums.h"
+
 
 namespace qi = boost::spirit::qi;
 namespace phoenix = boost::phoenix;

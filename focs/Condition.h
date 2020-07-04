@@ -1,5 +1,5 @@
-#ifndef _Condition_h_
-#define _Condition_h_
+#ifndef _focs_Condition_h_
+#define _focs_Condition_h_
 
 
 #include <memory>

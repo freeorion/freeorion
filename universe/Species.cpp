@@ -2,13 +2,13 @@
 
 #include <iterator>
 #include <boost/filesystem/fstream.hpp>
-#include "Conditions.h"
-#include "Effect.h"
 #include "Enums.h"
 #include "PopCenter.h"
 #include "Ship.h"
 #include "UniverseObject.h"
-#include "ValueRefs.h"
+#include "../focs/Conditions.h"
+#include "../focs/Effect.h"
+#include "../focs/ValueRefs.h"
 #include "../util/AppInterface.h"
 #include "../util/CheckSums.h"
 #include "../util/Logger.h"

@@ -3,8 +3,9 @@
 #include "ServerApp.h"
 #include "UniverseGenerator.h"
 
-#include "../universe/Condition.h"
-#include "../universe/ScriptingContext.h"
+#include "../focs/Condition.h"
+#include "../focs/ScriptingContext.h"
+#include "../focs/ValueRef.h"
 #include "../universe/Species.h"
 #include "../universe/Special.h"
 #include "../universe/System.h"
@@ -22,7 +23,6 @@
 #include "../universe/Universe.h"
 #include "../universe/UnlockableItem.h"
 #include "../universe/Enums.h"
-#include "../universe/ValueRef.h"
 
 #include "../util/Directories.h"
 #include "../util/Logger.h"

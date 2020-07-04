@@ -1,8 +1,8 @@
 #include "ConditionParser3.h"
 
-#include "../universe/Conditions.h"
+#include "../focs/Conditions.h"
+#include "../focs/ValueRef.h"
 #include "../universe/Enums.h"
-#include "../universe/ValueRef.h"
 
 #include <boost/spirit/include/phoenix.hpp>
 

@@ -1,11 +1,11 @@
 #include "FieldType.h"
 
 #include <boost/algorithm/string/case_conv.hpp>
-#include "ConditionSource.h"
-#include "Effects.h"
 #include "Enums.h"
 #include "UniverseObject.h"
-#include "ValueRefs.h"
+#include "../focs/ConditionSource.h"
+#include "../focs/Effects.h"
+#include "../focs/ValueRefs.h"
 #include "../util/CheckSums.h"
 
 

@@ -1,15 +1,14 @@
 #include "EffectParserImpl.h"
 
+#include <boost/spirit/include/phoenix.hpp>
 #include "EffectParser1.h"
 #include "EffectParser2.h"
 #include "EffectParser3.h"
 #include "EffectParser4.h"
 #include "EffectParser5.h"
+#include "../focs/Condition.h"
+#include "../focs/Effect.h"
 
-#include "../universe/Condition.h"
-#include "../universe/Effect.h"
-
-#include <boost/spirit/include/phoenix.hpp>
 
 namespace parse {
 

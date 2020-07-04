@@ -1,16 +1,14 @@
 #ifndef _Government_h_
 #define _Government_h_
 
-#include "../universe/ValueRef.h"
+#include <map>
+#include <memory>
+#include <set>
+#include <string>
+#include <boost/optional/optional.hpp>
+#include "../focs/ValueRef.h"
 #include "../util/Export.h"
 #include "../util/Pending.h"
-
-#include <boost/optional/optional.hpp>
-
-#include <memory>
-#include <string>
-#include <map>
-#include <set>
 
 
 namespace Effect {

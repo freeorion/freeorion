@@ -1,9 +1,9 @@
 #include "ValueRefParser.h"
 
-#include "MovableEnvelope.h"
-#include "../universe/ValueRefs.h"
-
 #include <boost/spirit/include/phoenix.hpp>
+#include "MovableEnvelope.h"
+#include "../focs/ValueRefs.h"
+
 
 namespace parse { namespace detail {
     string_complex_parser_grammar::string_complex_parser_grammar(

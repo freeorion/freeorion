@@ -2,9 +2,9 @@
 
 #include "EnumParser.h"
 #include "EnumValueRefRules.h"
-
+#include "../focs/ValueRef.h"
 #include "../universe/Enums.h"
-#include "../universe/ValueRef.h"
+
 
 namespace parse { namespace detail {
     planet_size_parser_rules::planet_size_parser_rules(

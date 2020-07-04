@@ -1,8 +1,8 @@
 #include "Effect.h"
 
-#include "Enums.h"
-#include "ObjectMap.h"
-#include "UniverseObject.h"
+#include "../universe/Enums.h"
+#include "../universe/ObjectMap.h"
+#include "../universe/UniverseObject.h"
 
 
 Effect::EffectCause::EffectCause() :

@@ -1,5 +1,5 @@
-#ifndef _Effect_h_
-#define _Effect_h_
+#ifndef _focs_Effect_h_
+#define _focs_Effect_h_
 
 
 #include <map>
@@ -8,7 +8,7 @@
 #include <unordered_map>
 #include <vector>
 #include <boost/container/flat_map.hpp>
-#include "EnumsFwd.h"
+#include "../universe/EnumsFwd.h"
 #include "../util/Export.h"
 
 

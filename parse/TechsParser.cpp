@@ -1,20 +1,18 @@
 #include "Parse.h"
 
+#include <boost/spirit/include/phoenix.hpp>
+#include <boost/spirit/include/qi_as.hpp>
 #include "ParseImpl.h"
 #include "EnumParser.h"
 #include "EffectParser.h"
 #include "ValueRefParser.h"
 #include "MovableEnvelope.h"
-
-#include "../universe/Effect.h"
+#include "../focs/Effect.h"
+#include "../focs/ValueRef.h"
 #include "../universe/Species.h"
 #include "../universe/Tech.h"
 #include "../universe/UnlockableItem.h"
-#include "../universe/ValueRef.h"
 #include "../util/Directories.h"
-
-#include <boost/spirit/include/phoenix.hpp>
-#include <boost/spirit/include/qi_as.hpp>
 
 
 #define DEBUG_PARSERS 0

@@ -9,9 +9,9 @@
 #include "EffectParser.h"
 #include "ValueRefParser.h"
 
-#include "../universe/ConditionAll.h"
-#include "../universe/Effect.h"
-#include "../universe/ValueRefs.h"
+#include "../focs/ConditionAll.h"
+#include "../focs/Effect.h"
+#include "../focs/ValueRefs.h"
 
 #include <boost/spirit/include/phoenix.hpp>
 

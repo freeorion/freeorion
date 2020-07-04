@@ -1,10 +1,10 @@
 #include "ShipHull.h"
 
-#include "ConditionSource.h"
-#include "Effects.h"
 #include "Enums.h"
-#include "ValueRefs.h"
 #include "../Empire/EmpireManager.h"
+#include "../focs/ConditionSource.h"
+#include "../focs/Effects.h"
+#include "../focs/ValueRefs.h"
 #include "../util/GameRules.h"
 
 

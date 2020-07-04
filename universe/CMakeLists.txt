@@ -3,12 +3,6 @@ target_sources(freeorioncommon
         ${CMAKE_CURRENT_LIST_DIR}/Building.h
         ${CMAKE_CURRENT_LIST_DIR}/BuildingType.h
         ${CMAKE_CURRENT_LIST_DIR}/CommonParams.h
-        ${CMAKE_CURRENT_LIST_DIR}/Condition.h
-        ${CMAKE_CURRENT_LIST_DIR}/ConditionAll.h
-        ${CMAKE_CURRENT_LIST_DIR}/ConditionSource.h
-        ${CMAKE_CURRENT_LIST_DIR}/Conditions.h
-        ${CMAKE_CURRENT_LIST_DIR}/Effect.h
-        ${CMAKE_CURRENT_LIST_DIR}/Effects.h
         ${CMAKE_CURRENT_LIST_DIR}/Encyclopedia.h
         ${CMAKE_CURRENT_LIST_DIR}/Enums.h
         ${CMAKE_CURRENT_LIST_DIR}/Field.h
@@ -22,7 +16,6 @@ target_sources(freeorioncommon
         ${CMAKE_CURRENT_LIST_DIR}/Planet.h
         ${CMAKE_CURRENT_LIST_DIR}/PopCenter.h
         ${CMAKE_CURRENT_LIST_DIR}/ResourceCenter.h
-        ${CMAKE_CURRENT_LIST_DIR}/ScriptingContext.h
         ${CMAKE_CURRENT_LIST_DIR}/Ship.h
         ${CMAKE_CURRENT_LIST_DIR}/ShipDesign.h
         ${CMAKE_CURRENT_LIST_DIR}/ShipHull.h
@@ -37,14 +30,9 @@ target_sources(freeorioncommon
         ${CMAKE_CURRENT_LIST_DIR}/UniverseObject.h
         ${CMAKE_CURRENT_LIST_DIR}/UniverseObjectVisitor.h
         ${CMAKE_CURRENT_LIST_DIR}/UniverseObjectVisitors.h
-        ${CMAKE_CURRENT_LIST_DIR}/ValueRef.h
-        ${CMAKE_CURRENT_LIST_DIR}/ValueRefs.h
     PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/Building.cpp
         ${CMAKE_CURRENT_LIST_DIR}/BuildingType.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/Conditions.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/Effect.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/Effects.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Encyclopedia.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Enums.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Field.cpp
@@ -72,5 +60,4 @@ target_sources(freeorioncommon
         ${CMAKE_CURRENT_LIST_DIR}/UniverseObject.cpp
         ${CMAKE_CURRENT_LIST_DIR}/UniverseObjectVisitor.cpp
         ${CMAKE_CURRENT_LIST_DIR}/UniverseObjectVisitors.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/ValueRefs.cpp
 )

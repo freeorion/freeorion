@@ -3,7 +3,7 @@
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
 #include "../util/Version.h"
-#include "../universe/ValueRefs.h"
+#include "../focs/ValueRefs.h"
 #include "../parse/Parse.h"
 
 #include <boost/iterator/filter_iterator.hpp>

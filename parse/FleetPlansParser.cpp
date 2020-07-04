@@ -1,12 +1,11 @@
 #include "Parse.h"
 
+#include <boost/spirit/include/phoenix.hpp>
 #include "ParseImpl.h"
 #include "MovableEnvelope.h"
-
-#include "../universe/Condition.h"
+#include "../focs/Condition.h"
 #include "../universe/FleetPlan.h"
 
-#include <boost/spirit/include/phoenix.hpp>
 
 #define DEBUG_PARSERS 0
 

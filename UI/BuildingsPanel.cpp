@@ -3,22 +3,22 @@
 #include <GG/Button.h>
 #include <GG/StaticGraphic.h>
 
-#include "../util/i18n.h"
-#include "../util/Logger.h"
-#include "../util/OptionsDB.h"
-#include "../util/Order.h"
-#include "../universe/Building.h"
-#include "../universe/BuildingType.h"
-#include "../universe/Effect.h"
-#include "../universe/Planet.h"
-#include "../universe/Enums.h"
-#include "../Empire/Empire.h"
-#include "../client/human/HumanClientApp.h"
 #include "CUIControls.h"
 #include "IconTextBrowseWnd.h"
 #include "MapWnd.h"
 #include "MultiIconValueIndicator.h"
 #include "MultiMeterStatusBar.h"
+#include "../client/human/HumanClientApp.h"
+#include "../Empire/Empire.h"
+#include "../focs/Effect.h"
+#include "../universe/Building.h"
+#include "../universe/BuildingType.h"
+#include "../universe/Enums.h"
+#include "../universe/Planet.h"
+#include "../util/i18n.h"
+#include "../util/Logger.h"
+#include "../util/OptionsDB.h"
+#include "../util/Order.h"
 
 namespace {
     /** How big we want meter icons with respect to the current UI font size.

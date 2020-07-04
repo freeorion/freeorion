@@ -1,9 +1,9 @@
 #include "ValueRefParser.h"
 
-#include "MovableEnvelope.h"
-#include "../universe/ValueRefs.h"
-#include "EnumParser.h"
 #include <boost/spirit/include/phoenix.hpp>
+#include "MovableEnvelope.h"
+#include "EnumParser.h"
+#include "../focs/ValueRefs.h"
 
 namespace parse {
 

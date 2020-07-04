@@ -1,5 +1,5 @@
-#ifndef _ConditionSource_h_
-#define _ConditionSource_h_
+#ifndef _focs_ConditionAll_h_
+#define _focs_ConditionAll_h_
 
 
 #include "Condition.h"
@@ -10,21 +10,18 @@
   * Effect system. */
 namespace Condition {
 
-/** Matches the source object only. */
-struct FO_COMMON_API Source final : public Condition {
-    Source();
+/** Matches all objects. */
+struct FO_COMMON_API All final : public Condition {
+    All();
 
     bool operator==(const Condition& rhs) const override;
-    void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                           ObjectSet& condition_non_targets) const override;
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override
     {}
     unsigned int GetCheckSum() const override;
-
-private:
-    bool Match(const ScriptingContext& local_context) const override;
 };
 
 }

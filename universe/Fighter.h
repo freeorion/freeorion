@@ -3,7 +3,7 @@
 
 
 #include "UniverseObject.h"
-#include "../universe/Condition.h"
+#include "../focs/Condition.h"
 #include "../util/Export.h"
 
 

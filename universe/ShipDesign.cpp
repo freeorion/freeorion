@@ -2,15 +2,15 @@
 
 #include <boost/uuid/random_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
-#include "Condition.h"
-#include "Effect.h"
 #include "Planet.h"
-#include "ScriptingContext.h"
+#include "Ship.h"
 #include "ShipHull.h"
 #include "ShipPart.h"
-#include "Ship.h"
 #include "Species.h"
-#include "ValueRef.h"
+#include "../focs/Condition.h"
+#include "../focs/Effect.h"
+#include "../focs/ScriptingContext.h"
+#include "../focs/ValueRef.h"
 #include "../util/AppInterface.h"
 #include "../util/CheckSums.h"
 #include "../util/GameRules.h"

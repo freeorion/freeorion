@@ -3,18 +3,16 @@
 
 #include "Parse.h"
 
+#include <boost/spirit/include/phoenix.hpp>
 #include "ParseImpl.h"
 #include "EnumParser.h"
 #include "ConditionParserImpl.h"
 #include "ValueRefParser.h"
 #include "CommonParamsParser.h"
-
-#include "../universe/Condition.h"
+#include "../focs/Condition.h"
+#include "../focs/ValueRef.h"
 #include "../universe/ShipHull.h"
-#include "../universe/ValueRef.h"
 #include "../util/Directories.h"
-
-#include <boost/spirit/include/phoenix.hpp>
 
 
 #define DEBUG_PARSERS 0

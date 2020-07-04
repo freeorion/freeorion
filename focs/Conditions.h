@@ -1,5 +1,5 @@
-#ifndef _Conditions_h_
-#define _Conditions_h_
+#ifndef _focs_Conditions_h_
+#define _focs_Conditions_h_
 
 
 #include <memory>
@@ -8,7 +8,7 @@
 #include "ConditionAll.h"
 #include "ConditionSource.h"
 #include "Condition.h"
-#include "EnumsFwd.h"
+#include "../universe/EnumsFwd.h"
 #include "../util/CheckSums.h"
 #include "../util/Export.h"
 

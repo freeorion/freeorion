@@ -1,7 +1,7 @@
 #include "ValueRefParser.h"
 
 #include "MovableEnvelope.h"
-#include "../universe/ValueRefs.h"
+#include "../focs/ValueRefs.h"
 
 #include <boost/spirit/include/phoenix.hpp>
 

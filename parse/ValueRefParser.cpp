@@ -1,10 +1,9 @@
 #include "ValueRefParser.h"
 
+#include <boost/spirit/include/phoenix.hpp>
 #include "ConditionParserImpl.h"
 #include "MovableEnvelope.h"
-#include "../universe/ValueRefs.h"
-
-#include <boost/spirit/include/phoenix.hpp>
+#include "../focs/ValueRefs.h"
 
 
 #define DEBUG_VALUEREF_PARSERS 0

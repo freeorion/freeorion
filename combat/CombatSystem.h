@@ -1,14 +1,13 @@
 #ifndef _CombatSystem_h_
 #define _CombatSystem_h_
 
-#include "../universe/Universe.h"
-#include "../universe/ScriptingContext.h"
-#include "../util/AppInterface.h"
-#include "CombatEvent.h"
-
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/split_member.hpp>
 #include <boost/serialization/version.hpp>
+#include "CombatEvent.h"
+#include "../focs/ScriptingContext.h"
+#include "../universe/Universe.h"
+#include "../util/AppInterface.h"
 
 
 /** Contains information about the state of a combat before or after the combat

@@ -6,10 +6,10 @@
 #include "ValueRefParser.h"
 #include "CommonParamsParser.h"
 
+#include "../focs/Condition.h"
+#include "../focs/ValueRef.h"
 #include "../universe/BuildingType.h"
 #include "../universe/Enums.h"
-#include "../universe/Condition.h"
-#include "../universe/ValueRef.h"
 #include "../util/Directories.h"
 
 

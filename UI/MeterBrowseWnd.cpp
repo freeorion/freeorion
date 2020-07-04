@@ -1,10 +1,10 @@
 #include "MeterBrowseWnd.h"
 
+#include "../focs/Effect.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
 #include "../util/GameRules.h"
 #include "../universe/Building.h"
-#include "../universe/Effect.h"
 #include "../universe/Planet.h"
 #include "../universe/PopCenter.h"
 #include "../universe/Ship.h"

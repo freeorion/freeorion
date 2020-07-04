@@ -1,11 +1,11 @@
 #include "EffectParser3.h"
 
-#include "ValueRefParser.h"
-#include "../universe/Condition.h"
-#include "../universe/Effects.h"
-#include "../universe/ValueRef.h"
-
 #include <boost/spirit/include/phoenix.hpp>
+#include "ValueRefParser.h"
+#include "../focs/Condition.h"
+#include "../focs/Effects.h"
+#include "../focs/ValueRef.h"
+
 
 namespace qi = boost::spirit::qi;
 namespace phoenix = boost::phoenix;

@@ -1,14 +1,14 @@
 #include "Tech.h"
 
 #include <boost/filesystem/fstream.hpp>
-#include "Effect.h"
 #include "Enums.h"
 #include "ObjectMap.h"
 #include "UniverseObject.h"
 #include "UnlockableItem.h"
-#include "ValueRef.h"
-#include "../Empire/EmpireManager.h"
 #include "../Empire/Empire.h"
+#include "../Empire/EmpireManager.h"
+#include "../focs/Effect.h"
+#include "../focs/ValueRef.h"
 #include "../util/AppInterface.h"
 #include "../util/CheckSums.h"
 #include "../util/GameRules.h"

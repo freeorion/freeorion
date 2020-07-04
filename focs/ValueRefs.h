@@ -1,5 +1,5 @@
-#ifndef _ValueRefs_h_
-#define _ValueRefs_h_
+#ifndef _focs_ValueRefs_h_
+#define _focs_ValueRefs_h_
 
 
 #include <iterator>
@@ -12,8 +12,8 @@
 #include <boost/serialization/nvp.hpp>
 #include "Condition.h"
 #include "ScriptingContext.h"
-#include "Universe.h"
 #include "ValueRef.h"
+#include "../universe/Universe.h"
 #include "../util/CheckSums.h"
 #include "../util/Export.h"
 #include "../util/i18n.h"

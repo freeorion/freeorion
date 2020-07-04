@@ -1,34 +1,33 @@
 #include "BuildDesignatorWnd.h"
 
-#include "CUIControls.h"
+#include <iterator>
+#include <GG/Layout.h>
+#include <GG/StaticGraphic.h>
 #include "ClientUI.h"
+#include "CUIControls.h"
 #include "CUIWnd.h"
-#include "SidePanel.h"
-#include "TechTreeWnd.h"
-#include "MapWnd.h"
+#include "DesignWnd.h"
 #include "EncyclopediaDetailPanel.h"
 #include "IconTextBrowseWnd.h"
-#include "DesignWnd.h"
+#include "MapWnd.h"
+#include "SidePanel.h"
+#include "TechTreeWnd.h"
+#include "../client/human/HumanClientApp.h"
+#include "../Empire/Empire.h"
+#include "../Empire/EmpireManager.h"
+#include "../focs/Conditions.h"
+#include "../focs/ValueRef.h"
+#include "../universe/BuildingType.h"
+#include "../universe/Enums.h"
+#include "../universe/ShipDesign.h"
+#include "../universe/ShipHull.h"
+#include "../universe/ShipPart.h"
+#include "../universe/UniverseObject.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
 #include "../util/ScopedTimer.h"
-#include "../universe/UniverseObject.h"
-#include "../Empire/Empire.h"
-#include "../Empire/EmpireManager.h"
-#include "../universe/BuildingType.h"
-#include "../universe/ShipDesign.h"
-#include "../universe/ShipHull.h"
-#include "../universe/ShipPart.h"
-#include "../universe/Conditions.h"
-#include "../universe/Enums.h"
-#include "../universe/ValueRef.h"
-#include "../client/human/HumanClientApp.h"
 
-#include <GG/Layout.h>
-#include <GG/StaticGraphic.h>
-
-#include <iterator>
 
 namespace {
     const std::string PROD_PEDIA_WND_NAME = "production.pedia";

@@ -1,12 +1,12 @@
 #include "ValueRefParser.h"
 
+#include <boost/spirit/include/phoenix.hpp>
 #include "Parse.h"
 #include "ConditionParserImpl.h"
 #include "EnumValueRefRules.h"
 #include "MovableEnvelope.h"
-#include "../universe/ValueRefs.h"
+#include "../focs/ValueRefs.h"
 
-#include <boost/spirit/include/phoenix.hpp>
 
 namespace parse {
     string_parser_grammar::string_parser_grammar(

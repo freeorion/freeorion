@@ -1,10 +1,10 @@
 #include "ValueRefParser.h"
 
+#include <boost/spirit/include/phoenix.hpp>
 #include "Parse.h"
 #include "MovableEnvelope.h"
-#include "../universe/ValueRef.h"
+#include "../focs/ValueRef.h"
 
-#include <boost/spirit/include/phoenix.hpp>
 
 parse::detail::simple_double_parser_rules::simple_double_parser_rules(const parse::lexer& tok) :
     simple_variable_rules("double", tok)

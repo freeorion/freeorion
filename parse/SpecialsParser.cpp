@@ -2,13 +2,12 @@
 
 #include "EffectParser.h"
 
-#include "../universe/Condition.h"
-#include "../universe/Effect.h"
-#include "../universe/Special.h"
-#include "../universe/ValueRef.h"
-#include "../util/Directories.h"
-
 #include <boost/spirit/include/phoenix.hpp>
+#include "../focs/Condition.h"
+#include "../focs/Effect.h"
+#include "../focs/ValueRef.h"
+#include "../universe/Special.h"
+#include "../util/Directories.h"
 
 
 #define DEBUG_PARSERS 0

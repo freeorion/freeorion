@@ -1,14 +1,13 @@
 #include "Parse.h"
 
+#include <boost/spirit/include/phoenix.hpp>
 #include "EffectParser.h"
-
-#include "../universe/ValueRef.h"
-#include "../universe/Condition.h"
-#include "../universe/Effect.h"
+#include "../focs/Condition.h"
+#include "../focs/Effect.h"
+#include "../focs/ValueRef.h"
 #include "../Empire/Government.h"
 #include "../util/Directories.h"
 
-#include <boost/spirit/include/phoenix.hpp>
 
 #define DEBUG_PARSERS 0
 

@@ -5,7 +5,7 @@
 #include "../python/CommonWrappers.h"
 
 #include "../util/Logger.h"
-#include "../universe/Condition.h"
+#include "../focs/Condition.h"
 #include "../universe/Universe.h"
 
 #include <boost/filesystem.hpp>

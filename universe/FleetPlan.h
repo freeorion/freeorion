@@ -5,7 +5,7 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include "../universe/Condition.h"
+#include "../focs/Condition.h"
 #include "../util/Export.h"
 
 

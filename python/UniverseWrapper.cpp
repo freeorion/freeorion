@@ -2,10 +2,11 @@
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/map_indexing_suite.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
+#include "../focs/Condition.h"
+#include "../focs/Effect.h"
+#include "../focs/ScriptingContext.h"
 #include "../universe/Building.h"
 #include "../universe/BuildingType.h"
-#include "../universe/Condition.h"
-#include "../universe/Effect.h"
 #include "../universe/Enums.h"
 #include "../universe/Field.h"
 #include "../universe/FieldType.h"
@@ -14,7 +15,6 @@
 #include "../universe/Planet.h"
 #include "../universe/PopCenter.h"
 #include "../universe/ResourceCenter.h"
-#include "../universe/ScriptingContext.h"
 #include "../universe/ShipDesign.h"
 #include "../universe/Ship.h"
 #include "../universe/ShipHull.h"

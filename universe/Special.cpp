@@ -1,10 +1,10 @@
 #include "Special.h"
 
 #include <boost/filesystem/fstream.hpp>
-#include "Condition.h"
-#include "Effect.h"
 #include "UniverseObject.h"
-#include "ValueRef.h"
+#include "../focs/Condition.h"
+#include "../focs/Effect.h"
+#include "../focs/ValueRef.h"
 #include "../util/AppInterface.h"
 #include "../util/CheckSums.h"
 #include "../util/Logger.h"

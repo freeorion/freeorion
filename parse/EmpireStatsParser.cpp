@@ -1,13 +1,12 @@
 #include "Parse.h"
 
+#include <boost/spirit/include/phoenix.hpp>
 #include "ParseImpl.h"
 #include "ValueRefParser.h"
 #include "ConditionParserImpl.h"
 #include "MovableEnvelope.h"
-#include "../universe/ValueRef.h"
+#include "../focs/ValueRef.h"
 #include "../util/Directories.h"
-
-#include <boost/spirit/include/phoenix.hpp>
 
 
 #define DEBUG_PARSERS 0

@@ -1,9 +1,9 @@
-#ifndef _ScriptingContext_h_
-#define _ScriptingContext_h_
+#ifndef _focs_ScriptingContext_h_
+#define _focs_ScriptingContext_h_
 
 
 #include <boost/any.hpp>
-#include "Universe.h"
+#include "../universe/Universe.h"
 #include "../util/AppInterface.h"
 
 

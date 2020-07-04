@@ -2,8 +2,8 @@
 
 #include "ValueRefParser.h"
 
-#include "../universe/Conditions.h"
-#include "../universe/ValueRefs.h"
+#include "../focs/Conditions.h"
+#include "../focs/ValueRefs.h"
 
 #include <boost/spirit/include/phoenix.hpp>
 

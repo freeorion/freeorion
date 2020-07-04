@@ -1,13 +1,13 @@
 #include "BuildingType.h"
 
 #include <boost/algorithm/string/case_conv.hpp>
+#include "../Empire/EmpireManager.h"
+#include "../focs/Condition.h"
+#include "../focs/Effect.h"
+#include "../focs/ValueRef.h"
 #include "../util/CheckSums.h"
 #include "../util/GameRules.h"
 #include "../util/Logger.h"
-#include "../Empire/EmpireManager.h"
-#include "Condition.h"
-#include "Effect.h"
-#include "ValueRef.h"
 
 
 namespace {

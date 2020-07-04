@@ -3,11 +3,10 @@
 
 #include <ostream>
 #include <typeinfo>
-
 #include <boost/spirit/include/qi_expect.hpp>
-
-#include "universe/ValueRefs.h"
 #include "parse/Lexer.h"
+#include "../focs/ValueRefs.h"
+
 
 namespace std {
     std::ostream& operator << (std::ostream& stream, const std::type_info& type);

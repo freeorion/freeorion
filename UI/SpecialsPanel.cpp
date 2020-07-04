@@ -1,9 +1,9 @@
 #include "SpecialsPanel.h"
 
+#include "../focs/Effect.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
-#include "../universe/Effect.h"
 #include "../universe/Special.h"
 #include "../universe/UniverseObject.h"
 #include "../client/human/HumanClientApp.h"

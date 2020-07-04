@@ -1,10 +1,10 @@
 #include "EffectParser5.h"
 
-#include "ConditionParserImpl.h"
-#include "../universe/Effects.h"
-#include "../universe/Condition.h"
-
 #include <boost/spirit/include/phoenix.hpp>
+#include "ConditionParserImpl.h"
+#include "../focs/Effects.h"
+#include "../focs/Condition.h"
+
 
 namespace qi = boost::spirit::qi;
 namespace phoenix = boost::phoenix;

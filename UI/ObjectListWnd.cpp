@@ -13,6 +13,8 @@
 #include "../util/ScopedTimer.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
+#include "../focs/Conditions.h"
+#include "../focs/ValueRefs.h"
 #include "../universe/System.h"
 #include "../universe/Fleet.h"
 #include "../universe/Ship.h"
@@ -21,8 +23,6 @@
 #include "../universe/Building.h"
 #include "../universe/Field.h"
 #include "../universe/Species.h"
-#include "../universe/Conditions.h"
-#include "../universe/ValueRefs.h"
 #include "../universe/Enums.h"
 
 #include <GG/Layout.h>

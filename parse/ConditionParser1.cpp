@@ -1,10 +1,10 @@
 #include "ConditionParser1.h"
 
-#include "../universe/Conditions.h"
-#include "../universe/Enums.h"
-#include "../universe/ValueRef.h"
-
 #include <boost/spirit/include/phoenix.hpp>
+#include "../focs/Conditions.h"
+#include "../focs/ValueRef.h"
+#include "../universe/Enums.h"
+
 
 namespace qi = boost::spirit::qi;
 namespace phoenix = boost::phoenix;

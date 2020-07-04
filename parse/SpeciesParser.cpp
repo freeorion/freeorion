@@ -1,5 +1,6 @@
 #include "Parse.h"
 
+#include <boost/spirit/include/phoenix.hpp>
 #include "ParseImpl.h"
 #include "EnumParser.h"
 #include "ValueRefParser.h"
@@ -7,13 +8,10 @@
 #include "EffectParser.h"
 #include "ConditionParserImpl.h"
 #include "MovableEnvelope.h"
-
-#include "../universe/Condition.h"
-#include "../universe/Effect.h"
+#include "../focs/Condition.h"
+#include "../focs/Effect.h"
 #include "../universe/Species.h"
 #include "../util/Directories.h"
-
-#include <boost/spirit/include/phoenix.hpp>
 
 
 #define DEBUG_PARSERS 0

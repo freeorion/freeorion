@@ -18,6 +18,9 @@
     <Filter Include="Header Files\combat">
       <UniqueIdentifier>{764c47ba-1d26-4f9e-a713-5fe40180a278}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\focs">
+      <UniqueIdentifier>{43f4183a-a57b-41e7-ba41-dcd67de4ce57}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Header Files\universe">
       <UniqueIdentifier>{43f4183a-a57b-41e7-ba41-dcd67de4ce56}</UniqueIdentifier>
     </Filter>
@@ -32,6 +35,9 @@
     </Filter>
     <Filter Include="Source Files\Empire">
       <UniqueIdentifier>{329c410c-9729-4f42-9a1f-09106fff80a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\focs">
+      <UniqueIdentifier>{150b0529-eaa2-4ad3-b805-488bc11d1d6f}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\util">
       <UniqueIdentifier>{8288356b-fc09-4aef-992b-9ecf8963f7f9}</UniqueIdentifier>
@@ -85,14 +91,14 @@
     <ClInclude Include="..\..\universe\BuildingType.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\universe\Conditions.h">
-      <Filter>Header Files\universe</Filter>
+    <ClInclude Include="..\..\focs\Conditions.h">
+      <Filter>Header Files\focs</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\universe\Effects.h">
-      <Filter>Header Files\universe</Filter>
+    <ClInclude Include="..\..\focs\Effects.h">
+      <Filter>Header Files\focs</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\universe\Effect.h">
-      <Filter>Header Files\universe</Filter>
+    <ClInclude Include="..\..\focs\Effect.h">
+      <Filter>Header Files\focs</Filter>
     </ClInclude>
     <ClInclude Include="..\..\universe\Encyclopedia.h">
       <Filter>Header Files\universe</Filter>
@@ -151,6 +157,9 @@
     <ClInclude Include="..\..\universe\Tech.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\universe\UniverseObjectVisitor.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\universe\Universe.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
@@ -160,8 +169,8 @@
     <ClInclude Include="..\..\universe\UnlockableItem.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\universe\ValueRefs.h">
-      <Filter>Header Files\universe</Filter>
+    <ClInclude Include="..\..\focs\ValueRefs.h">
+      <Filter>Header Files\focs</Filter>
     </ClInclude>
     <ClInclude Include="..\..\util\AppInterface.h">
       <Filter>Header Files\util</Filter>
@@ -266,23 +275,23 @@
     <ClInclude Include="..\..\universe\EnumsFwd.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\universe\ValueRef.h">
-      <Filter>Header Files\universe</Filter>
+    <ClInclude Include="..\..\focs\ValueRef.h">
+      <Filter>Header Files\focs</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\universe\Condition.h">
-      <Filter>Header Files\universe</Filter>
+    <ClInclude Include="..\..\focs\Condition.h">
+      <Filter>Header Files\focs</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\universe\ScriptingContext.h">
-      <Filter>Header Files\universe</Filter>
+    <ClInclude Include="..\..\focs\ScriptingContext.h">
+      <Filter>Header Files\focs</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Empire\Government.h">
       <Filter>Header Files\Empire</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\universe\ConditionSource.h">
-      <Filter>Header Files\universe</Filter>
+    <ClInclude Include="..\..\focs\ConditionSource.h">
+      <Filter>Header Files\focs</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\universe\ConditionAll.h">
-      <Filter>Header Files\universe</Filter>
+    <ClInclude Include="..\..\focs\ConditionAll.h">
+      <Filter>Header Files\focs</Filter>
     </ClInclude>
     <ClInclude Include="..\..\universe\CommonParams.h">
       <Filter>Header Files\universe</Filter>
@@ -291,9 +300,6 @@
       <Filter>Header Files\Empire</Filter>
     </ClInclude>
     <ClInclude Include="..\..\universe\ShipHull.h">
-      <Filter>Header Files\universe</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\universe\UniverseObjectVisitor.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
   </ItemGroup>
@@ -385,8 +391,8 @@
     <ClCompile Include="..\..\universe\BuildingType.cpp">
       <Filter>Source Files\universe</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\universe\Effect.cpp">
-      <Filter>Source Files\universe</Filter>
+    <ClCompile Include="..\..\focs\Effect.cpp">
+      <Filter>Source Files\focs</Filter>
     </ClCompile>
     <ClCompile Include="..\..\universe\Encyclopedia.cpp">
       <Filter>Source Files\universe</Filter>
@@ -509,14 +515,14 @@
       <Filter>Source Files\util</Filter>
     </ClCompile>
     <ClCompile Include="StdAfx.cpp" />
-    <ClCompile Include="..\..\universe\Effects.cpp">
-      <Filter>Source Files\universe</Filter>
+    <ClCompile Include="..\..\focs\Effects.cpp">
+      <Filter>Source Files\focs</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\universe\Conditions.cpp">
-      <Filter>Source Files\universe</Filter>
+    <ClCompile Include="..\..\focs\Conditions.cpp">
+      <Filter>Source Files\focs</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\universe\ValueRefs.cpp">
-      <Filter>Source Files\universe</Filter>
+    <ClCompile Include="..\..\focs\ValueRefs.cpp">
+      <Filter>Source Files\focs</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Empire\Government.cpp">
       <Filter>Source Files\Empire</Filter>

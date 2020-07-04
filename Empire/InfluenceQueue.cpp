@@ -2,7 +2,7 @@
 
 #include "Empire.h"
 #include "Government.h"
-#include "../universe/ValueRef.h"
+#include "../focs/ValueRef.h"
 #include "../util/AppInterface.h"
 #include "../util/GameRules.h"
 #include "../util/ScopedTimer.h"

@@ -1,13 +1,11 @@
 #include "Parse.h"
 
+#include <boost/spirit/include/phoenix.hpp>
 #include "ParseImpl.h"
 #include "EffectParser.h"
-
-#include "../universe/Effect.h"
+#include "../focs/Effect.h"
 #include "../universe/FieldType.h"
 #include "../util/Directories.h"
-
-#include <boost/spirit/include/phoenix.hpp>
 
 
 #define DEBUG_PARSERS 0

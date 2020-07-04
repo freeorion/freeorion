@@ -1,5 +1,5 @@
-#ifndef _Effects_h_
-#define _Effects_h_
+#ifndef _focs_Effects_h_
+#define _focs_Effects_h_
 
 
 #include <boost/optional/optional.hpp>

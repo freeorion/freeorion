@@ -1,5 +1,5 @@
-#ifndef _ValueRef_h_
-#define _ValueRef_h_
+#ifndef _focs_ValueRef_h_
+#define _focs_ValueRef_h_
 
 
 #include "ScriptingContext.h"
