@@ -33,11 +33,6 @@ class FleetPlan;
 class MonsterFleetPlan;
 
 
-namespace Condition {
-    struct Condition;
-    typedef std::vector<std::shared_ptr<const UniverseObject>> ObjectSet;
-}
-
 namespace Effect {
     struct AccountingInfo;
     struct TargetsAndCause;     // struct TargetsAndCause { TargetSet target_set; EffectCause effect_cause; };

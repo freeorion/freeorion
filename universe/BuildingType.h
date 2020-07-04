@@ -11,9 +11,6 @@
 namespace Effect {
     class EffectsGroup;
 }
-namespace Condition {
-    struct Condition;
-}
 
 
 //! Class to specify a kind of building.
@@ -78,7 +75,7 @@ public:
 
     //! Returns the condition that determines the locations where this building
     //! can be produced
-    auto Location() const -> const Condition::Condition*
+    auto Location() const -> const focs::Condition*
     { return m_location.get(); }
 
     //! Returns a condition that can be used by the UI to further filter (beyond
@@ -87,7 +84,7 @@ public:
     //! BuildDesignatorWnd. Example usage: Buildings that are already enqueued
     //! at a production location are hidden so they don't appear in the list of
     //! available items that can be enqueued/produced (again) at that location.
-    auto EnqueueLocation() const -> const Condition::Condition*
+    auto EnqueueLocation() const -> const focs::Condition*
     { return m_enqueue_location.get(); }
 
     //! Returns the EffectsGroups that encapsulate the effects that buildings of
@@ -136,8 +133,8 @@ private:
     std::set<std::string>                               m_tags;
     ConsumptionMap<MeterType>                           m_production_meter_consumption;
     ConsumptionMap<std::string>                         m_production_special_consumption;
-    std::unique_ptr<Condition::Condition>               m_location;
-    std::unique_ptr<Condition::Condition>               m_enqueue_location;
+    std::unique_ptr<focs::Condition>               m_location;
+    std::unique_ptr<focs::Condition>               m_enqueue_location;
     std::vector<std::shared_ptr<Effect::EffectsGroup>>  m_effects;
     std::string                                         m_icon;
 };

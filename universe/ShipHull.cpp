@@ -31,8 +31,8 @@ namespace {
                   std::unique_ptr<focs::ValueRef<double>>&& increase_vr)
     {
         typedef std::vector<std::unique_ptr<Effect::Effect>> Effects;
-        auto scope = std::make_unique<Condition::Source>();
-        auto activation = std::make_unique<Condition::Source>();
+        auto scope = std::make_unique<focs::Source>();
+        auto activation = std::make_unique<focs::Source>();
 
         auto vr =
             std::make_unique<focs::Operation<double>>(

@@ -2,6 +2,7 @@
 #define _ParseImpl_h_
 
 #include "ReportParseError.h"
+#include "../focs/focs.hpp"
 #include "../util/Logger.h"
 #include "../util/ScopedTimer.h"
 
@@ -11,10 +12,6 @@
 
 #include <GG/Clr.h>
 
-
-namespace Condition {
-    struct Condition;
-}
 
 namespace Effect {
     class Effect;

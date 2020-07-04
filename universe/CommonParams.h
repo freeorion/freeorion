@@ -12,16 +12,13 @@
 #include "../util/Export.h"
 
 
-namespace Condition {
-    struct Condition;
-}
 namespace Effect {
     class EffectsGroup;
 }
 
 template <typename T>
 using ConsumptionMap = std::map<T, std::pair<std::unique_ptr<focs::ValueRef<double>>,
-                                             std::unique_ptr<Condition::Condition>>>;
+                                             std::unique_ptr<focs::Condition>>>;
 
 //! Common parameters for ShipPart, ShipHull, and BuildingType constructors.
 //!
@@ -33,11 +30,11 @@ struct FO_COMMON_API CommonParams {
                  std::unique_ptr<focs::ValueRef<int>>&& production_time_,
                  bool producible_,
                  const std::set<std::string>& tags_,
-                 std::unique_ptr<Condition::Condition>&& location_,
+                 std::unique_ptr<focs::Condition>&& location_,
                  std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects_,
                  ConsumptionMap<MeterType>&& production_meter_consumption_,
                  ConsumptionMap<std::string>&& production_special_consumption_,
-                 std::unique_ptr<Condition::Condition>&& enqueue_location_);
+                 std::unique_ptr<focs::Condition>&& enqueue_location_);
     ~CommonParams();
 
     std::unique_ptr<focs::ValueRef<double>>         production_cost;
@@ -46,8 +43,8 @@ struct FO_COMMON_API CommonParams {
     std::set<std::string>                               tags;
     ConsumptionMap<MeterType>                           production_meter_consumption;
     ConsumptionMap<std::string>                         production_special_consumption;
-    std::unique_ptr<Condition::Condition>               location;
-    std::unique_ptr<Condition::Condition>               enqueue_location;
+    std::unique_ptr<focs::Condition>               location;
+    std::unique_ptr<focs::Condition>               enqueue_location;
     std::vector<std::unique_ptr<Effect::EffectsGroup>>  effects;
 };
 

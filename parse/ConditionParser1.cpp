@@ -42,83 +42,83 @@ namespace parse { namespace detail {
         using phoenix::push_back;
 
         all
-            =   tok.All_ [ _val = construct_movable_(new_<Condition::All>()) ]
+            =   tok.All_ [ _val = construct_movable_(new_<focs::All>()) ]
             ;
 
         none
-            =   tok.None_ [ _val = construct_movable_(new_<Condition::None>()) ]
+            =   tok.None_ [ _val = construct_movable_(new_<focs::None>()) ]
             ;
 
         source
-            =   tok.Source_ [ _val = construct_movable_(new_<Condition::Source>()) ]
+            =   tok.Source_ [ _val = construct_movable_(new_<focs::Source>()) ]
             ;
 
         root_candidate
-            =   tok.RootCandidate_ [ _val = construct_movable_(new_<Condition::RootCandidate>()) ]
+            =   tok.RootCandidate_ [ _val = construct_movable_(new_<focs::RootCandidate>()) ]
             ;
 
         target
-            =   tok.Target_ [ _val = construct_movable_(new_<Condition::Target>()) ]
+            =   tok.Target_ [ _val = construct_movable_(new_<focs::Target>()) ]
             ;
 
         stationary
-            =   tok.Stationary_ [ _val = construct_movable_(new_<Condition::Stationary>()) ]
+            =   tok.Stationary_ [ _val = construct_movable_(new_<focs::Stationary>()) ]
             ;
 
         aggressive
-            = ((tok.Aggressive_ [ _val = construct_movable_(new_<Condition::Aggressive>(true)) ])
-               |(tok.Passive_ [ _val = construct_movable_(new_<Condition::Aggressive>(false)) ])
+            = ((tok.Aggressive_ [ _val = construct_movable_(new_<focs::Aggressive>(true)) ])
+               |(tok.Passive_ [ _val = construct_movable_(new_<focs::Aggressive>(false)) ])
               )
             ;
 
         can_colonize
-            =   tok.CanColonize_ [ _val = construct_movable_(new_<Condition::CanColonize>()) ]
+            =   tok.CanColonize_ [ _val = construct_movable_(new_<focs::CanColonize>()) ]
             ;
 
         can_produce_ships
-            =   tok.CanProduceShips_ [ _val = construct_movable_(new_<Condition::CanProduceShips>()) ]
+            =   tok.CanProduceShips_ [ _val = construct_movable_(new_<focs::CanProduceShips>()) ]
             ;
 
         capital
-            =   tok.Capital_ [ _val = construct_movable_(new_<Condition::Capital>()) ]
+            =   tok.Capital_ [ _val = construct_movable_(new_<focs::Capital>()) ]
             ;
 
         monster
-            =   tok.Monster_ [ _val = construct_movable_(new_<Condition::Monster>()) ]
+            =   tok.Monster_ [ _val = construct_movable_(new_<focs::Monster>()) ]
             ;
 
         armed
-            =   tok.Armed_ [ _val = construct_movable_(new_<Condition::Armed>()) ]
+            =   tok.Armed_ [ _val = construct_movable_(new_<focs::Armed>()) ]
             ;
 
         owned_by_1
             =   (   tok.OwnedBy_
                  >> label(tok.Empire_)
                 ) > int_rules.expr
-            [ _val = construct_movable_(new_<Condition::EmpireAffiliation>(deconstruct_movable_(_1, _pass))) ]
+            [ _val = construct_movable_(new_<focs::EmpireAffiliation>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         owned_by_2
             =   tok.OwnedBy_
             >>  label(tok.Affiliation_) >> tok.AnyEmpire_
-            [ _val = construct_movable_(new_<Condition::EmpireAffiliation>( AFFIL_ANY )) ]
+            [ _val = construct_movable_(new_<focs::EmpireAffiliation>( AFFIL_ANY )) ]
             ;
 
         owned_by_3
             =   tok.Unowned_
-            [ _val = construct_movable_(new_<Condition::EmpireAffiliation>( AFFIL_NONE )) ]
+            [ _val = construct_movable_(new_<focs::EmpireAffiliation>( AFFIL_NONE )) ]
             ;
 
         owned_by_4
             =   tok.Human_
-            [ _val = construct_movable_(new_<Condition::EmpireAffiliation>( AFFIL_HUMAN )) ]
+            [ _val = construct_movable_(new_<focs::EmpireAffiliation>( AFFIL_HUMAN )) ]
             ;
 
         owned_by_5
             =  ((omit_[tok.OwnedBy_]
                  >>  label(tok.Affiliation_) >> empire_affiliation_type_enum
                  >>  label(tok.Empire_)    ) >  int_rules.expr)
-            [ _val = construct_movable_(new_<Condition::EmpireAffiliation>(deconstruct_movable_(_2, _pass), _1)) ]
+            [ _val = construct_movable_(new_<focs::EmpireAffiliation>(deconstruct_movable_(_2, _pass), _1)) ]
             ;
 
         owned_by
@@ -131,29 +131,29 @@ namespace parse { namespace detail {
 
         and_
             = ( omit_[tok.And_] > '[' > +condition_parser > lit(']'))
-            [ _val = construct_movable_(new_<Condition::And>(deconstruct_movable_vector_(_1, _pass))) ]
+            [ _val = construct_movable_(new_<focs::And>(deconstruct_movable_vector_(_1, _pass))) ]
             ;
 
         or_
             = ( omit_[tok.Or_] > '[' > +condition_parser > lit(']'))
-            [ _val = construct_movable_(new_<Condition::Or>(deconstruct_movable_vector_(_1, _pass))) ]
+            [ _val = construct_movable_(new_<focs::Or>(deconstruct_movable_vector_(_1, _pass))) ]
             ;
 
         not_
             = tok.Not_ > condition_parser
-            [ _val = construct_movable_(new_<Condition::Not>(deconstruct_movable_(_1, _pass))) ]
+            [ _val = construct_movable_(new_<focs::Not>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         ordered_alternatives_of
             = ( omit_[tok.OrderedAlternativesOf_] > '[' > +condition_parser > lit(']'))
-            [ _val = construct_movable_(new_<Condition::OrderedAlternativesOf>(deconstruct_movable_vector_(_1, _pass))) ]
+            [ _val = construct_movable_(new_<focs::OrderedAlternativesOf>(deconstruct_movable_vector_(_1, _pass))) ]
             ;
 
         described
             = ( omit_[tok.Described_]
                 > label(tok.Description_) > tok.string
                 > label(tok.Condition_) > condition_parser)
-            [ _val = construct_movable_( new_<Condition::Described>(deconstruct_movable_(_2, _pass), _1)) ]
+            [ _val = construct_movable_( new_<focs::Described>(deconstruct_movable_(_2, _pass), _1)) ]
             ;
 
         start

@@ -76,7 +76,7 @@ namespace {
         SpeciesStrings& strings,
         boost::optional<std::map<PlanetType, PlanetEnvironment>>& planet_environments,
         boost::optional<parse::effects_group_payload>& effects,
-        boost::optional<parse::detail::MovableEnvelope<Condition::Condition>>& combat_targets,
+        boost::optional<parse::detail::MovableEnvelope<focs::Condition>>& combat_targets,
         SpeciesParamsAndStuff& params,
         std::string& graphic,
         bool& pass)

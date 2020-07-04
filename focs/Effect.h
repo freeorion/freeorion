@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <vector>
 #include <boost/container/flat_map.hpp>
+#include "focs.hpp"
 #include "../universe/EnumsFwd.h"
 #include "../util/Export.h"
 
@@ -16,10 +17,6 @@ FO_COMMON_API extern const int INVALID_OBJECT_ID;
 
 class UniverseObject;
 struct ScriptingContext;
-
-namespace Condition {
-    struct Condition;
-}
 
 namespace Effect {
     struct AccountingInfo;
@@ -129,8 +126,8 @@ namespace Effect {
     * active in the current turn. */
     class FO_COMMON_API EffectsGroup {
     public:
-        EffectsGroup(std::unique_ptr<Condition::Condition>&& scope,
-                     std::unique_ptr<Condition::Condition>&& activation,
+        EffectsGroup(std::unique_ptr<focs::Condition>&& scope,
+                     std::unique_ptr<focs::Condition>&& activation,
                      std::vector<std::unique_ptr<Effect>>&& effects,
                      const std::string& accounting_label = "",
                      const std::string& stacking_group = "",
@@ -149,8 +146,8 @@ namespace Effect {
                      bool only_generate_sitrep_effects = false) const;
 
         const std::string&              StackingGroup() const       { return m_stacking_group; }
-        Condition::Condition*           Scope() const               { return m_scope.get(); }
-        Condition::Condition*           Activation() const          { return m_activation.get(); }
+        focs::Condition*           Scope() const               { return m_scope.get(); }
+        focs::Condition*           Activation() const          { return m_activation.get(); }
         const std::vector<Effect*>      EffectsList() const;
         const std::string&              GetDescription() const;
         const std::string&              AccountingLabel() const     { return m_accounting_label; }
@@ -166,8 +163,8 @@ namespace Effect {
         virtual unsigned int            GetCheckSum() const;
 
     protected:
-        std::unique_ptr<Condition::Condition>   m_scope;
-        std::unique_ptr<Condition::Condition>   m_activation;
+        std::unique_ptr<focs::Condition>   m_scope;
+        std::unique_ptr<focs::Condition>   m_activation;
         std::string                             m_stacking_group;
         std::vector<std::unique_ptr<Effect>>    m_effects;
         std::string                             m_accounting_label;

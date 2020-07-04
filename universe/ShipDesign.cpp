@@ -66,11 +66,11 @@ CommonParams::CommonParams(std::unique_ptr<focs::ValueRef<double>>&& production_
                            std::unique_ptr<focs::ValueRef<int>>&& production_time_,
                            bool producible_,
                            const std::set<std::string>& tags_,
-                           std::unique_ptr<Condition::Condition>&& location_,
+                           std::unique_ptr<focs::Condition>&& location_,
                            std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects_,
                            ConsumptionMap<MeterType>&& production_meter_consumption_,
                            ConsumptionMap<std::string>&& production_special_consumption_,
-                           std::unique_ptr<Condition::Condition>&& enqueue_location_) :
+                           std::unique_ptr<focs::Condition>&& enqueue_location_) :
     production_cost(std::move(production_cost_)),
     production_time(std::move(production_time_)),
     producible(producible_),

@@ -21,7 +21,7 @@
 // FocusType                                   //
 /////////////////////////////////////////////////
 FocusType::FocusType(std::string& name, std::string& description,
-                     std::unique_ptr<Condition::Condition>&& location,
+                     std::unique_ptr<focs::Condition>&& location,
                      std::string& graphic) :
     m_name(std::move(name)),
     m_description(std::move(description)),
@@ -90,7 +90,7 @@ Species::Species(std::string&& name, std::string&& desc,
                  std::string&& preferred_focus,
                  std::map<PlanetType, PlanetEnvironment>&& planet_environments,
                  std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
-                 std::unique_ptr<Condition::Condition>&& combat_targets,
+                 std::unique_ptr<focs::Condition>&& combat_targets,
                  bool playable, bool native, bool can_colonize, bool can_produce_ships,
                  const std::set<std::string>& tags, std::string&& graphic) :
     m_name(std::move(name)),
@@ -133,16 +133,16 @@ void Species::Init() {
         auto this_species_name_ref =
             std::make_unique<focs::Constant<std::string>>(m_name);  // m_name specifies this species
 
-        auto enviro_cond = std::unique_ptr<Condition::Condition>(
-            std::make_unique<Condition::Not>(
-                std::unique_ptr<Condition::Condition>(
-                    std::make_unique<Condition::PlanetEnvironment>(
+        auto enviro_cond = std::unique_ptr<focs::Condition>(
+            std::make_unique<focs::Not>(
+                std::unique_ptr<focs::Condition>(
+                    std::make_unique<focs::PlanetEnvironment>(
                         std::move(environments), std::move(this_species_name_ref)))));
 
-        auto type_cond = std::make_unique<Condition::Type>(
+        auto type_cond = std::make_unique<focs::Type>(
             std::make_unique<focs::Constant<UniverseObjectType>>( ::OBJ_POP_CENTER));
 
-        m_location = std::unique_ptr<Condition::Condition>(std::make_unique<Condition::And>(
+        m_location = std::unique_ptr<focs::Condition>(std::make_unique<focs::And>(
             std::move(enviro_cond), std::move(type_cond)));
     }
     m_location->SetTopLevelContent(m_name);

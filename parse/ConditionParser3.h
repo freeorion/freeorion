@@ -10,8 +10,8 @@ namespace parse { namespace detail {
                                  const condition_parser_grammar& condition_parser,
                                  const value_ref_grammar<std::string>& string_grammar);
 
-        using comparison_operator_rule = rule<Condition::ComparisonType ()>;
-        using sorting_operator_rule = rule<Condition::SortingMethod ()>;
+        using comparison_operator_rule = rule<focs::ComparisonType ()>;
+        using sorting_operator_rule = rule<focs::SortingMethod ()>;
 
         parse::int_arithmetic_rules         int_rules;
         parse::castable_as_int_parser_rules castable_int_rules;

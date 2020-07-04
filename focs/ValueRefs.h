@@ -118,7 +118,7 @@ struct FO_COMMON_API focs::Statistic final : public Variable<T>
 {
     Statistic(std::unique_ptr<ValueRef<T>>&& value_ref,
               StatisticType stat_type,
-              std::unique_ptr<Condition::Condition>&& sampling_condition);
+              std::unique_ptr<Condition>&& sampling_condition);
 
     bool        operator==(const ValueRef<T>& rhs) const override;
     T           Eval(const ScriptingContext& context) const override;
@@ -129,7 +129,7 @@ struct FO_COMMON_API focs::Statistic final : public Variable<T>
     StatisticType GetStatisticType() const
     { return m_stat_type; }
 
-    const Condition::Condition* GetSamplingCondition() const
+    const Condition* GetSamplingCondition() const
     { return m_sampling_condition.get(); }
 
     const ValueRef<T>* GetValueRef() const
@@ -140,21 +140,21 @@ struct FO_COMMON_API focs::Statistic final : public Variable<T>
 protected:
     /** Gets the set of objects in the Universe that match the sampling condition. */
     void GetConditionMatches(const ScriptingContext& context,
-                             Condition::ObjectSet& condition_targets,
-                             Condition::Condition* condition) const;
+                             ObjectSet& condition_targets,
+                             Condition* condition) const;
 
     /** Evaluates the property for the specified objects. */
     void  GetObjectPropertyValues(const ScriptingContext& context,
-                                  const Condition::ObjectSet& objects,
+                                  const ObjectSet& objects,
                                   std::map<std::shared_ptr<const UniverseObject>, T>& object_property_values) const;
 
     /** Computes the statistic from the specified set of property values. */
     T ReduceData(const std::map<std::shared_ptr<const UniverseObject>, T>& object_property_values) const;
 
 private:
-    StatisticType                         m_stat_type;
-    std::unique_ptr<Condition::Condition> m_sampling_condition;
-    std::unique_ptr<ValueRef<T>>          m_value_ref;
+    StatisticType                 m_stat_type;
+    std::unique_ptr<Condition>    m_sampling_condition;
+    std::unique_ptr<ValueRef<T>>  m_value_ref;
 };
 
 /** The complex variable ValueRef class. The value returned by this node
@@ -677,7 +677,7 @@ FO_COMMON_API std::vector<std::string> focs::Variable<std::vector<std::string>>:
 ///////////////////////////////////////////////////////////
 template <typename T>
 focs::Statistic<T>::Statistic(std::unique_ptr<ValueRef<T>>&& value_ref, StatisticType stat_type,
-                        std::unique_ptr<Condition::Condition>&& sampling_condition) :
+                        std::unique_ptr<Condition>&& sampling_condition) :
     Variable<T>(NON_OBJECT_REFERENCE),
     m_stat_type(stat_type),
     m_sampling_condition(std::move(sampling_condition)),
@@ -726,8 +726,8 @@ bool focs::Statistic<T>::operator==(const ValueRef<T>& rhs) const
 
 template <typename T>
 void focs::Statistic<T>::GetConditionMatches(const ScriptingContext& context,
-                                       Condition::ObjectSet& condition_targets,
-                                       Condition::Condition* condition) const
+                                             ObjectSet& condition_targets,
+                                             Condition* condition) const
 {
     condition_targets.clear();
     if (!condition)
@@ -737,8 +737,8 @@ void focs::Statistic<T>::GetConditionMatches(const ScriptingContext& context,
 
 template <typename T>
 void focs::Statistic<T>::GetObjectPropertyValues(const ScriptingContext& context,
-                                           const Condition::ObjectSet& objects,
-                                           std::map<std::shared_ptr<const UniverseObject>, T>& object_property_values) const
+                                                 const ObjectSet& objects,
+                                                 std::map<std::shared_ptr<const UniverseObject>, T>& object_property_values) const
 {
     object_property_values.clear();
 
@@ -803,7 +803,7 @@ void focs::Statistic<T>::SetTopLevelContent(const std::string& content_name)
 template <typename T>
 T focs::Statistic<T>::Eval(const ScriptingContext& context) const
 {
-    Condition::ObjectSet condition_matches;
+    ObjectSet condition_matches;
     GetConditionMatches(context, condition_matches, m_sampling_condition.get());
 
     // special case for IF statistic... return a T(1) for true.

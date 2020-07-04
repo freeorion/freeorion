@@ -5,6 +5,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include "focs.hpp"
 #include "../util/Export.h"
 
 
@@ -15,17 +16,20 @@ namespace Effect {
     typedef std::vector<std::shared_ptr<UniverseObject>> TargetSet;
 }
 
-namespace Condition {
+namespace focs {
 
 typedef std::vector<std::shared_ptr<const UniverseObject>> ObjectSet;
 
-enum SearchDomain : int {
+}
+
+
+enum focs::SearchDomain : int {
     NON_MATCHES,    ///< The Condition will only examine items in the non matches set; those that match the Condition will be inserted into the matches set.
     MATCHES         ///< The Condition will only examine items in the matches set; those that do not match the Condition will be inserted into the nonmatches set.
 };
 
 /** The base class for all Conditions. */
-struct FO_COMMON_API Condition {
+struct FO_COMMON_API focs::Condition {
     Condition() = default;
     virtual ~Condition();
 
@@ -105,7 +109,6 @@ private:
     virtual bool Match(const ScriptingContext& local_context) const;
 };
 
-}
 
 
 #endif

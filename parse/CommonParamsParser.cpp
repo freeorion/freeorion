@@ -77,12 +77,12 @@ namespace parse { namespace detail {
 
         location
             %=    (label(tok.Location_) > condition_parser)
-            |     eps [ _val = construct_movable_(new_<Condition::All>()) ]
+            |     eps [ _val = construct_movable_(new_<focs::All>()) ]
             ;
 
         enqueue_location
             %=    (label(tok.EnqueueLocation_) > condition_parser)
-            |     eps [ _val = construct_movable_(new_<Condition::All>()) ]
+            |     eps [ _val = construct_movable_(new_<focs::All>()) ]
             ;
 
         exclusions

@@ -455,7 +455,7 @@ private:
   * \a other_lane_endpoint_condition */
 class FO_COMMON_API AddStarlanes final : public Effect {
 public:
-    explicit AddStarlanes(std::unique_ptr<Condition::Condition>&& other_lane_endpoint_condition);
+    explicit AddStarlanes(std::unique_ptr<focs::Condition>&& other_lane_endpoint_condition);
 
     void Execute(ScriptingContext& context) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
@@ -463,14 +463,14 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    std::unique_ptr<Condition::Condition> m_other_lane_endpoint_condition;
+    std::unique_ptr<focs::Condition> m_other_lane_endpoint_condition;
 };
 
 /** Removes starlane(s) between the target system and systems that match
   * \a other_lane_endpoint_condition */
 class FO_COMMON_API RemoveStarlanes final : public Effect {
 public:
-    explicit RemoveStarlanes(std::unique_ptr<Condition::Condition>&& other_lane_endpoint_condition);
+    explicit RemoveStarlanes(std::unique_ptr<focs::Condition>&& other_lane_endpoint_condition);
 
     void            Execute(ScriptingContext& context) const override;
     std::string     Dump(unsigned short ntabs = 0) const override;
@@ -478,7 +478,7 @@ public:
     unsigned int    GetCheckSum() const override;
 
 private:
-    std::unique_ptr<Condition::Condition> m_other_lane_endpoint_condition;
+    std::unique_ptr<focs::Condition> m_other_lane_endpoint_condition;
 };
 
 /** Sets the star type of the target to \a type.  This has no effect on
@@ -502,7 +502,7 @@ private:
   * nothing is done. */
 class FO_COMMON_API MoveTo final : public Effect {
 public:
-    explicit MoveTo(std::unique_ptr<Condition::Condition>&& location_condition);
+    explicit MoveTo(std::unique_ptr<focs::Condition>&& location_condition);
 
     void            Execute(ScriptingContext& context) const override;
     std::string     Dump(unsigned short ntabs = 0) const override;
@@ -510,7 +510,7 @@ public:
     unsigned int    GetCheckSum() const override;
 
 private:
-    std::unique_ptr<Condition::Condition> m_location_condition;
+    std::unique_ptr<focs::Condition> m_location_condition;
 };
 
 /** Moves an UniverseObject to a location as though it was moving in orbit of
@@ -519,7 +519,7 @@ private:
 class FO_COMMON_API MoveInOrbit final : public Effect {
 public:
     MoveInOrbit(std::unique_ptr<focs::ValueRef<double>>&& speed,
-                std::unique_ptr<Condition::Condition>&& focal_point_condition);
+                std::unique_ptr<focs::Condition>&& focal_point_condition);
     MoveInOrbit(std::unique_ptr<focs::ValueRef<double>>&& speed,
                 std::unique_ptr<focs::ValueRef<double>>&& focus_x = nullptr,
                 std::unique_ptr<focs::ValueRef<double>>&& focus_y = nullptr);
@@ -531,7 +531,7 @@ public:
 
 private:
     std::unique_ptr<focs::ValueRef<double>> m_speed;
-    std::unique_ptr<Condition::Condition>       m_focal_point_condition;
+    std::unique_ptr<focs::Condition>       m_focal_point_condition;
     std::unique_ptr<focs::ValueRef<double>> m_focus_x;
     std::unique_ptr<focs::ValueRef<double>> m_focus_y;
 };
@@ -541,7 +541,7 @@ private:
 class FO_COMMON_API MoveTowards final : public Effect {
 public:
     MoveTowards(std::unique_ptr<focs::ValueRef<double>>&& speed,
-                std::unique_ptr<Condition::Condition>&& dest_condition);
+                std::unique_ptr<focs::Condition>&& dest_condition);
     MoveTowards(std::unique_ptr<focs::ValueRef<double>>&& speed,
                 std::unique_ptr<focs::ValueRef<double>>&& dest_x = nullptr,
                 std::unique_ptr<focs::ValueRef<double>>&& dest_y = nullptr);
@@ -553,7 +553,7 @@ public:
 
 private:
     std::unique_ptr<focs::ValueRef<double>> m_speed;
-    std::unique_ptr<Condition::Condition>       m_dest_condition;
+    std::unique_ptr<focs::Condition>       m_dest_condition;
     std::unique_ptr<focs::ValueRef<double>> m_dest_x;
     std::unique_ptr<focs::ValueRef<double>> m_dest_y;
 };
@@ -564,7 +564,7 @@ private:
   * nothing is done. */
 class FO_COMMON_API SetDestination final : public Effect {
 public:
-    explicit SetDestination(std::unique_ptr<Condition::Condition>&& location_condition);
+    explicit SetDestination(std::unique_ptr<focs::Condition>&& location_condition);
 
     void            Execute(ScriptingContext& context) const override;
     std::string     Dump(unsigned short ntabs = 0) const override;
@@ -572,7 +572,7 @@ public:
     unsigned int    GetCheckSum() const override;
 
 private:
-    std::unique_ptr<Condition::Condition> m_location_condition;
+    std::unique_ptr<focs::Condition> m_location_condition;
 };
 
 /** Sets aggression level of the target object. */
@@ -658,7 +658,7 @@ public:
     GenerateSitRepMessage(std::string& message_string, std::string& icon,
                           MessageParams&& message_parameters,
                           EmpireAffiliationType affiliation,
-                          std::unique_ptr<Condition::Condition>&& condition,
+                          std::unique_ptr<focs::Condition>&& condition,
                           std::string label = "",
                           bool stringtable_lookup = true);
     GenerateSitRepMessage(std::string& message_string, std::string& icon,
@@ -677,7 +677,7 @@ public:
     std::vector<std::pair<std::string, focs::ValueRef<std::string>* >> MessageParameters() const;
 
     focs::ValueRef<int>*    RecipientID() const     { return m_recipient_empire_id.get(); }
-    Condition::Condition*       GetCondition() const    { return m_condition.get(); }
+    focs::Condition*       GetCondition() const    { return m_condition.get(); }
     EmpireAffiliationType           Affiliation() const     { return m_affiliation; }
     unsigned int                    GetCheckSum() const override;
 
@@ -688,7 +688,7 @@ private:
                             m_message_parameters;
     std::unique_ptr<focs::ValueRef<int>>
                             m_recipient_empire_id;
-    std::unique_ptr<Condition::Condition>
+    std::unique_ptr<focs::Condition>
                             m_condition;
     EmpireAffiliationType   m_affiliation;
     std::string             m_label;
@@ -735,7 +735,7 @@ public:
     SetVisibility(std::unique_ptr<focs::ValueRef<Visibility>> vis,
                   EmpireAffiliationType affiliation,
                   std::unique_ptr<focs::ValueRef<int>>&& empire_id = nullptr,
-                  std::unique_ptr<Condition::Condition>&& of_objects = nullptr);    // if not specified, acts on target. if specified, acts on all matching objects
+                  std::unique_ptr<focs::Condition>&& of_objects = nullptr);    // if not specified, acts on target. if specified, acts on all matching objects
 
     void Execute(ScriptingContext& context) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
@@ -750,7 +750,7 @@ public:
     EmpireAffiliationType Affiliation() const
     { return m_affiliation; }
 
-    Condition::Condition* OfObjectsCondition() const
+    focs::Condition* OfObjectsCondition() const
     { return m_condition.get(); }
 
     unsigned int GetCheckSum() const override;
@@ -759,14 +759,14 @@ private:
     std::unique_ptr<focs::ValueRef<Visibility>> m_vis;
     std::unique_ptr<focs::ValueRef<int>> m_empire_id;
     EmpireAffiliationType m_affiliation;
-    std::unique_ptr<Condition::Condition> m_condition;
+    std::unique_ptr<focs::Condition> m_condition;
 };
 
 /** Executes a set of effects if an execution-time condition is met, or an
   * alterative set of effects if the condition is not met. */
 class FO_COMMON_API Conditional final : public Effect {
 public:
-    Conditional(std::unique_ptr<Condition::Condition>&& target_condition,
+    Conditional(std::unique_ptr<focs::Condition>&& target_condition,
                 std::vector<std::unique_ptr<Effect>>&& true_effects,
                 std::vector<std::unique_ptr<Effect>>&& false_effects);
 
@@ -797,7 +797,7 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    std::unique_ptr<Condition::Condition> m_target_condition; // condition to apply to each target object to determine which effects to execute
+    std::unique_ptr<focs::Condition> m_target_condition; // condition to apply to each target object to determine which effects to execute
     std::vector<std::unique_ptr<Effect>> m_true_effects;      // effects to execute if m_target_condition matches target object
     std::vector<std::unique_ptr<Effect>> m_false_effects;     // effects to execute if m_target_condition does not match target object
 };

@@ -5,13 +5,8 @@
 #include "Condition.h"
 
 
-/** this namespace holds Condition and its subclasses; these classes
-  * represent predicates about UniverseObjects used by, for instance, the
-  * Effect system. */
-namespace Condition {
-
 /** Matches the source object only. */
-struct FO_COMMON_API Source final : public Condition {
+struct FO_COMMON_API focs::Source final : public Condition {
     Source();
 
     bool operator==(const Condition& rhs) const override;
@@ -26,8 +21,6 @@ struct FO_COMMON_API Source final : public Condition {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 };
-
-}
 
 
 #endif

@@ -15,9 +15,7 @@
 namespace Effect {
     class EffectsGroup;
 }
-namespace Condition {
-    struct Condition;
-}
+
 
 /** A predefined set of EffectsGroups that can be attached to a UniverseObject
   * (often referred to as the "source" object).  The effects of a Special are
@@ -31,7 +29,7 @@ public:
             std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
             double spawn_rate = 1.0, int spawn_limit = 99999,
             std::unique_ptr<focs::ValueRef<double>>&& initial_capaicty = nullptr,
-            std::unique_ptr<Condition::Condition>&& location = nullptr,
+            std::unique_ptr<focs::Condition>&& location = nullptr,
             const std::string& graphic = "");
 
     ~Special();
@@ -50,7 +48,7 @@ public:
     int                                 SpawnLimit() const      { return m_spawn_limit; }
     const focs::ValueRef<double>*   InitialCapacity() const { return m_initial_capacity.get(); }///< returns the ValueRef to use to set the initial capacity of the special when placed
     float                               InitialCapacity(int object_id) const;                       ///< evaluates initial apacity ValueRef using the object with specified \a object_id as the object on which the special will be placed
-    const Condition::Condition*         Location() const        { return m_location.get(); }        ///< returns the condition that determines whether an UniverseObject can have this special applied during universe creation
+    const focs::Condition*         Location() const        { return m_location.get(); }        ///< returns the condition that determines whether an UniverseObject can have this special applied during universe creation
     const std::string&                  Graphic() const         { return m_graphic; };              ///< returns the name of the grapic file for this special
 
     /** Returns a number, calculated from the contained data, which should be
@@ -71,7 +69,7 @@ private:
     float                                               m_spawn_rate = 0.0f;
     int                                                 m_spawn_limit = 99999;
     std::unique_ptr<focs::ValueRef<double>>         m_initial_capacity;
-    std::unique_ptr<Condition::Condition>               m_location;
+    std::unique_ptr<focs::Condition>               m_location;
     std::string                                         m_graphic;
 };
 

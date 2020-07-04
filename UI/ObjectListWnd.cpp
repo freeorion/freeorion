@@ -63,19 +63,19 @@ namespace {
     bool temp_bool = RegisterOptions(&AddOptions);
 
     // returns a condition which matches objects with the specififed \a object_types
-    std::unique_ptr<Condition::Condition> ConditionForObjectTypes(
+    std::unique_ptr<focs::Condition> ConditionForObjectTypes(
         const std::vector<UniverseObjectType>& object_types)
     {
         if (object_types.empty())
-            return std::make_unique<Condition::None>();
+            return std::make_unique<focs::None>();
 
         if (object_types.size() == 1)
-            return std::make_unique<Condition::Type>(*object_types.begin());
+            return std::make_unique<focs::Type>(*object_types.begin());
 
-        std::vector<std::unique_ptr<Condition::Condition>> subconditions;
+        std::vector<std::unique_ptr<focs::Condition>> subconditions;
         for (auto obj_type : object_types)
-            subconditions.emplace_back(std::make_unique<Condition::Type>(obj_type));
-        return std::make_unique<Condition::Or>(std::move(subconditions));
+            subconditions.emplace_back(std::make_unique<focs::Type>(obj_type));
+        return std::make_unique<focs::Or>(std::move(subconditions));
     }
 
     // returns default value (eg. 0 or an empty string) unless object is of
@@ -94,8 +94,8 @@ namespace {
             std::make_unique<focs::Statistic<T>>(     // returns non-empty string if the source object matches the object type condition
                 nullptr,                                    // property value value ref not used for IF statistic
                 focs::IF,
-                std::make_unique<Condition::And>(         // want this statistic to return true only if the source object has the specified object type, if there exists any object of that type in the universe
-                    std::make_unique<Condition::Source>(),
+                std::make_unique<focs::And>(         // want this statistic to return true only if the source object has the specified object type, if there exists any object of that type in the universe
+                    std::make_unique<focs::Source>(),
                     ConditionForObjectTypes(object_types)
                 )
             ),
@@ -390,54 +390,54 @@ namespace {
 
     std::map<std::string, std::string> object_list_cond_description_map;
 
-    const std::string& ConditionClassName(const Condition::Condition* const condition) {
-        if (dynamic_cast<const Condition::All* const>(condition))
+    const std::string& ConditionClassName(const focs::Condition* const condition) {
+        if (dynamic_cast<const focs::All* const>(condition))
             return ALL_CONDITION;
-        else if (dynamic_cast<const Condition::EmpireAffiliation* const>(condition))
+        else if (dynamic_cast<const focs::EmpireAffiliation* const>(condition))
             return EMPIREAFFILIATION_CONDITION;
-        else if (dynamic_cast<const Condition::Homeworld* const>(condition))
+        else if (dynamic_cast<const focs::Homeworld* const>(condition))
             return HOMEWORLD_CONDITION;
-        else if (dynamic_cast<const Condition::Capital* const>(condition))
+        else if (dynamic_cast<const focs::Capital* const>(condition))
             return CAPITAL_CONDITION;
-        else if (dynamic_cast<const Condition::Monster* const>(condition))
+        else if (dynamic_cast<const focs::Monster* const>(condition))
             return MONSTER_CONDITION;
-        else if (dynamic_cast<const Condition::Armed* const>(condition))
+        else if (dynamic_cast<const focs::Armed* const>(condition))
             return ARMED_CONDITION;
-        else if (dynamic_cast<const Condition::Stationary* const>(condition))
+        else if (dynamic_cast<const focs::Stationary* const>(condition))
             return STATIONARY_CONDITION;
-        else if (dynamic_cast<const Condition::CanProduceShips* const>(condition))
+        else if (dynamic_cast<const focs::CanProduceShips* const>(condition))
             return CANPRODUCESHIPS_CONDITION;
-        else if (dynamic_cast<const Condition::CanColonize* const>(condition))
+        else if (dynamic_cast<const focs::CanColonize* const>(condition))
             return CANCOLONIZE_CONDITION;
-        else if (dynamic_cast<const Condition::Building* const>(condition))
+        else if (dynamic_cast<const focs::Building* const>(condition))
             return BUILDING_CONDITION;
-        else if (dynamic_cast<const Condition::HasSpecial* const>(condition))
+        else if (dynamic_cast<const focs::HasSpecial* const>(condition))
             return HASSPECIAL_CONDITION;
-        else if (dynamic_cast<const Condition::HasTag* const>(condition))
+        else if (dynamic_cast<const focs::HasTag* const>(condition))
             return HASTAG_CONDITION;
-        else if (dynamic_cast<const Condition::Species* const>(condition))
+        else if (dynamic_cast<const focs::Species* const>(condition))
             return SPECIES_CONDITION;
-        else if (dynamic_cast<const Condition::ProducedByEmpire* const>(condition))
+        else if (dynamic_cast<const focs::ProducedByEmpire* const>(condition))
             return PRODUCEDBYEMPIRE_CONDITION;
-        else if (dynamic_cast<const Condition::ExploredByEmpire* const>(condition))
+        else if (dynamic_cast<const focs::ExploredByEmpire* const>(condition))
             return EXPLOREDBYEMPIRE_CONDITION;
-        else if (dynamic_cast<const Condition::ContainedBy* const>(condition))
+        else if (dynamic_cast<const focs::ContainedBy* const>(condition))
             return CONTAINEDBY_CONDITION;
-        else if (dynamic_cast<const Condition::InOrIsSystem* const>(condition))
+        else if (dynamic_cast<const focs::InOrIsSystem* const>(condition))
             return INSYSTEM_CONDITION;
-        else if (dynamic_cast<const Condition::ObjectID* const>(condition))
+        else if (dynamic_cast<const focs::ObjectID* const>(condition))
             return OBJECTID_CONDITION;
-        else if (dynamic_cast<const Condition::CreatedOnTurn* const>(condition))
+        else if (dynamic_cast<const focs::CreatedOnTurn* const>(condition))
             return CREATEDONTURN_CONDITION;
-        else if (dynamic_cast<const Condition::PlanetSize* const>(condition))
+        else if (dynamic_cast<const focs::PlanetSize* const>(condition))
             return PLANETSIZE_CONDITION;
-        else if (dynamic_cast<const Condition::PlanetType* const>(condition))
+        else if (dynamic_cast<const focs::PlanetType* const>(condition))
             return PLANETTYPE_CONDITION;
-        else if (dynamic_cast<const Condition::FocusType* const>(condition))
+        else if (dynamic_cast<const focs::FocusType* const>(condition))
             return FOCUSTYPE_CONDITION;
-        else if (dynamic_cast<const Condition::StarType* const>(condition))
+        else if (dynamic_cast<const focs::StarType* const>(condition))
             return STARTYPE_CONDITION;
-        else if (dynamic_cast<const Condition::MeterValue* const>(condition))
+        else if (dynamic_cast<const focs::MeterValue* const>(condition))
             return METERVALUE_CONDITION;
 
         auto desc_it = object_list_cond_description_map.find(condition->Description());
@@ -463,11 +463,11 @@ const GG::X CONDITION_WIDGET_WIDTH(380);
 
 class ConditionWidget : public GG::Control {
 public:
-    ConditionWidget(GG::X x, GG::Y y, const Condition::Condition* initial_condition = nullptr) :
+    ConditionWidget(GG::X x, GG::Y y, const focs::Condition* initial_condition = nullptr) :
         GG::Control(x, y, CONDITION_WIDGET_WIDTH, GG::Y1, GG::INTERACTIVE)
     {
         if (!initial_condition) {
-            auto init_condition = std::make_unique<Condition::All>();
+            auto init_condition = std::make_unique<focs::All>();
             Init(init_condition.get());
         } else {
             Init(initial_condition);
@@ -487,24 +487,24 @@ public:
     ~ConditionWidget()
     {}
 
-    std::unique_ptr<Condition::Condition> GetCondition() {
+    std::unique_ptr<focs::Condition> GetCondition() {
         auto row_it = m_class_drop->CurrentItem();
         if (row_it == m_class_drop->end())
-            return std::make_unique<Condition::All>();
+            return std::make_unique<focs::All>();
         ConditionRow* condition_row = dynamic_cast<ConditionRow*>(row_it->get());
         if (!condition_row)
-            return std::make_unique<Condition::All>();
+            return std::make_unique<focs::All>();
         const std::string& condition_key = condition_row->GetKey();
 
         if (condition_key == ALL_CONDITION) {
-            return std::make_unique<Condition::All>();
+            return std::make_unique<focs::All>();
 
         } else if (condition_key == EMPIREAFFILIATION_CONDITION) {
             EmpireAffiliationType affil = AFFIL_SELF;
 
             const std::string& empire_name = GetString();
             if (empire_name.empty())
-                return std::make_unique<Condition::EmpireAffiliation>(affil);
+                return std::make_unique<focs::EmpireAffiliation>(affil);
 
             // get id of empire matching name
             int empire_id = ALL_EMPIRES;
@@ -514,113 +514,113 @@ public:
                     break;
                 }
             }
-            return std::make_unique<Condition::EmpireAffiliation>(
+            return std::make_unique<focs::EmpireAffiliation>(
                 std::make_unique<focs::Constant<int>>(empire_id), affil);
 
         } else if (condition_key == HOMEWORLD_CONDITION) {
             const std::string& species_name = GetString();
             if (species_name.empty())
-                return std::make_unique<Condition::Homeworld>();
+                return std::make_unique<focs::Homeworld>();
             std::vector<std::unique_ptr<focs::ValueRef<std::string>>> names;
             names.emplace_back(std::make_unique<focs::Constant<std::string>>(species_name));
-            return std::make_unique<Condition::Homeworld>(std::move(names));
+            return std::make_unique<focs::Homeworld>(std::move(names));
 
         } else if (condition_key == CANCOLONIZE_CONDITION) {
-            return std::make_unique<Condition::CanColonize>();
+            return std::make_unique<focs::CanColonize>();
 
         } else if (condition_key == CANPRODUCESHIPS_CONDITION) {
-            return std::make_unique<Condition::CanProduceShips>();
+            return std::make_unique<focs::CanProduceShips>();
 
         } else if (condition_key == HASSPECIAL_CONDITION) {
-            return std::make_unique<Condition::HasSpecial>(GetString());
+            return std::make_unique<focs::HasSpecial>(GetString());
 
         } else if (condition_key == HASGROWTHSPECIAL_CONDITION) {
-            std::vector<std::unique_ptr<Condition::Condition>> operands;
+            std::vector<std::unique_ptr<focs::Condition>> operands;
             // determine sitrep order
             std::istringstream template_stream(UserString("FUNCTIONAL_GROWTH_SPECIALS_LIST"));
             for (auto stream_it = std::istream_iterator<std::string>(template_stream);
                  stream_it != std::istream_iterator<std::string>(); stream_it++)
-            { operands.emplace_back(std::make_unique<Condition::HasSpecial>(*stream_it)); }
+            { operands.emplace_back(std::make_unique<focs::HasSpecial>(*stream_it)); }
 
-            std::unique_ptr<Condition::Condition> this_cond = std::make_unique<Condition::Or>(std::move(operands));
+            std::unique_ptr<focs::Condition> this_cond = std::make_unique<focs::Or>(std::move(operands));
             object_list_cond_description_map[this_cond->Description()] = HASGROWTHSPECIAL_CONDITION;
             return this_cond;
 
         } else if (condition_key == ASTWITHPTYPE_CONDITION) { // And [Planet PlanetType PT_ASTEROIDS ContainedBy And [System Contains PlanetType X]]
-            std::vector<std::unique_ptr<Condition::Condition>> operands1;
-            operands1.emplace_back(std::make_unique<Condition::Type>(std::make_unique<focs::Constant<UniverseObjectType>>(OBJ_PLANET)));
+            std::vector<std::unique_ptr<focs::Condition>> operands1;
+            operands1.emplace_back(std::make_unique<focs::Type>(std::make_unique<focs::Constant<UniverseObjectType>>(OBJ_PLANET)));
             const std::string& text = GetString();
             if (text == UserString("CONDITION_ANY")) {
                 std::vector<std::unique_ptr<focs::ValueRef<PlanetType>>> copytype;
                 copytype.emplace_back(std::make_unique<focs::Constant<PlanetType>>(PT_ASTEROIDS));
-                operands1.emplace_back(std::make_unique<Condition::Not>(std::make_unique<Condition::PlanetType>(std::move(copytype))));
+                operands1.emplace_back(std::make_unique<focs::Not>(std::make_unique<focs::PlanetType>(std::move(copytype))));
             } else {
-                operands1.emplace_back(std::make_unique<Condition::PlanetType>(GetEnumValueRefVec< ::PlanetType>()));
+                operands1.emplace_back(std::make_unique<focs::PlanetType>(GetEnumValueRefVec< ::PlanetType>()));
             }
-            std::vector<std::unique_ptr<Condition::Condition>> operands2;
-            operands2.emplace_back(std::make_unique<Condition::Type>(std::make_unique<focs::Constant<UniverseObjectType>>(OBJ_SYSTEM)));
+            std::vector<std::unique_ptr<focs::Condition>> operands2;
+            operands2.emplace_back(std::make_unique<focs::Type>(std::make_unique<focs::Constant<UniverseObjectType>>(OBJ_SYSTEM)));
             std::vector<std::unique_ptr<focs::ValueRef<PlanetType>>> maintype;
             maintype.emplace_back(std::make_unique<focs::Constant<PlanetType>>(PT_ASTEROIDS));
-            operands2.emplace_back(std::make_unique<Condition::Contains>(std::make_unique<Condition::PlanetType>(std::move(maintype))));
-            operands1.emplace_back(std::make_unique<Condition::ContainedBy>(std::make_unique<Condition::And>(std::move(operands2))));
-            std::unique_ptr<Condition::Condition> this_cond = std::make_unique<Condition::And>(std::move(operands1));
+            operands2.emplace_back(std::make_unique<focs::Contains>(std::make_unique<focs::PlanetType>(std::move(maintype))));
+            operands1.emplace_back(std::make_unique<focs::ContainedBy>(std::make_unique<focs::And>(std::move(operands2))));
+            std::unique_ptr<focs::Condition> this_cond = std::make_unique<focs::And>(std::move(operands1));
             object_list_cond_description_map[this_cond->Description()] = ASTWITHPTYPE_CONDITION;
             return this_cond;
 
         } else if (condition_key == GGWITHPTYPE_CONDITION) { // And [Planet PlanetType PT_GASGIANT ContainedBy And [System Contains PlanetType X]]
-            std::vector<std::unique_ptr<Condition::Condition>> operands1;
+            std::vector<std::unique_ptr<focs::Condition>> operands1;
             const std::string& text = GetString();
             if (text == UserString("CONDITION_ANY")) {
                 std::vector<std::unique_ptr<focs::ValueRef<PlanetType>>> copytype;
                     copytype.emplace_back(std::make_unique<focs::Constant<PlanetType>>(PT_GASGIANT));
-                    operands1.emplace_back(std::make_unique<Condition::Not>(std::make_unique<Condition::PlanetType>(std::move(copytype))));
+                    operands1.emplace_back(std::make_unique<focs::Not>(std::make_unique<focs::PlanetType>(std::move(copytype))));
             } else
-                operands1.emplace_back(std::make_unique<Condition::PlanetType>(GetEnumValueRefVec< ::PlanetType>()));
-            std::vector<std::unique_ptr<Condition::Condition>> operands2;
-            operands2.emplace_back(std::make_unique<Condition::Type>(std::make_unique<focs::Constant<UniverseObjectType>>(OBJ_SYSTEM)));
+                operands1.emplace_back(std::make_unique<focs::PlanetType>(GetEnumValueRefVec< ::PlanetType>()));
+            std::vector<std::unique_ptr<focs::Condition>> operands2;
+            operands2.emplace_back(std::make_unique<focs::Type>(std::make_unique<focs::Constant<UniverseObjectType>>(OBJ_SYSTEM)));
             std::vector<std::unique_ptr<focs::ValueRef<PlanetType>>> maintype;
             maintype.emplace_back(std::make_unique<focs::Constant<PlanetType>>(PT_GASGIANT));
-            operands2.emplace_back(std::make_unique<Condition::Contains>(std::make_unique<Condition::PlanetType>(std::move(maintype))));
-            operands1.emplace_back(std::make_unique<Condition::ContainedBy>(std::make_unique<Condition::And>(std::move(operands2))));
-            std::unique_ptr<Condition::Condition> this_cond = std::make_unique<Condition::And>(std::move(operands1));
+            operands2.emplace_back(std::make_unique<focs::Contains>(std::make_unique<focs::PlanetType>(std::move(maintype))));
+            operands1.emplace_back(std::make_unique<focs::ContainedBy>(std::make_unique<focs::And>(std::move(operands2))));
+            std::unique_ptr<focs::Condition> this_cond = std::make_unique<focs::And>(std::move(operands1));
             object_list_cond_description_map[this_cond->Description()] = GGWITHPTYPE_CONDITION;
             return this_cond;
 
         } else if (condition_key == HASTAG_CONDITION) {
-            return std::make_unique<Condition::HasTag>(GetString());
+            return std::make_unique<focs::HasTag>(GetString());
 
         } else if (condition_key == MONSTER_CONDITION) {
-            return std::make_unique<Condition::Monster>();
+            return std::make_unique<focs::Monster>();
 
         } else if (condition_key == CAPITAL_CONDITION) {
-            return std::make_unique<Condition::Capital>();
+            return std::make_unique<focs::Capital>();
 
         } else if (condition_key == ARMED_CONDITION) {
-            return std::make_unique<Condition::Armed>();
+            return std::make_unique<focs::Armed>();
 
         } else if (condition_key == STATIONARY_CONDITION) {
-            return std::make_unique<Condition::Stationary>();
+            return std::make_unique<focs::Stationary>();
 
         } else if (condition_key == SPECIES_CONDITION) {
-            return std::make_unique<Condition::Species>(GetStringValueRefVec());
+            return std::make_unique<focs::Species>(GetStringValueRefVec());
 
         } else if (condition_key == PLANETSIZE_CONDITION) {
-            return std::make_unique<Condition::PlanetSize>(GetEnumValueRefVec< ::PlanetSize>());
+            return std::make_unique<focs::PlanetSize>(GetEnumValueRefVec< ::PlanetSize>());
 
         } else if (condition_key == PLANETTYPE_CONDITION) {
-            return std::make_unique<Condition::PlanetType>(GetEnumValueRefVec< ::PlanetType>());
+            return std::make_unique<focs::PlanetType>(GetEnumValueRefVec< ::PlanetType>());
 
         } else if (condition_key == FOCUSTYPE_CONDITION) {
-            return std::make_unique<Condition::FocusType>(GetStringValueRefVec());
+            return std::make_unique<focs::FocusType>(GetStringValueRefVec());
 
         } else if (condition_key == STARTYPE_CONDITION) {
-            return std::make_unique<Condition::StarType>(GetEnumValueRefVec< ::StarType>());
+            return std::make_unique<focs::StarType>(GetEnumValueRefVec< ::StarType>());
 
         } else if (condition_key == METERVALUE_CONDITION) {
-            return std::make_unique<Condition::MeterValue>(GetEnum< ::MeterType>(), GetDouble1ValueRef(), GetDouble2ValueRef());
+            return std::make_unique<focs::MeterValue>(GetEnum< ::MeterType>(), GetDouble1ValueRef(), GetDouble2ValueRef());
         }
 
-        return std::make_unique<Condition::All>();
+        return std::make_unique<focs::All>();
     }
 
     void Render() override
@@ -771,7 +771,7 @@ private:
     int DropListDropHeight() const
     { return 12; }
 
-    void Init(const Condition::Condition* init_condition) {
+    void Init(const focs::Condition* init_condition) {
         // fill droplist with basic types of conditions and select appropriate row
         m_class_drop = GG::Wnd::Create<CUIDropDownList>(DropListDropHeight());
         m_class_drop->Resize(GG::Pt(DropListWidth(), DropListHeight()));
@@ -1068,12 +1068,12 @@ private:
 class FilterDialog : public CUIWnd {
 public:
     FilterDialog(const std::map<UniverseObjectType, std::set<VIS_DISPLAY>>& vis_filters,
-                 const Condition::Condition* const condition_filter);
+                 const focs::Condition* const condition_filter);
 
     void CompleteConstruction() override;
     bool ChangesAccepted();
     std::map<UniverseObjectType, std::set<VIS_DISPLAY>> GetVisibilityFilters() const;
-    std::unique_ptr<Condition::Condition> GetConditionFilter();
+    std::unique_ptr<focs::Condition> GetConditionFilter();
 
 protected:
     GG::Rect CalculatePosition() const override;
@@ -1101,7 +1101,7 @@ private:
 
 FilterDialog::FilterDialog(const std::map<UniverseObjectType,
                            std::set<VIS_DISPLAY>>& vis_filters,
-                           const Condition::Condition* const condition_filter) :
+                           const focs::Condition* const condition_filter) :
     CUIWnd(UserString("FILTERS"),
            GG::INTERACTIVE | GG::DRAGABLE | GG::MODAL,
            FILTER_OPTIONS_WND_NAME),
@@ -1209,7 +1209,7 @@ bool FilterDialog::ChangesAccepted()
 std::map<UniverseObjectType, std::set<VIS_DISPLAY>> FilterDialog::GetVisibilityFilters() const
 { return m_vis_filters; }
 
-std::unique_ptr<Condition::Condition> FilterDialog::GetConditionFilter()
+std::unique_ptr<focs::Condition> FilterDialog::GetConditionFilter()
 { return m_condition_widget->GetCondition(); }
 
 GG::Rect FilterDialog::CalculatePosition() const
@@ -1861,7 +1861,7 @@ public:
 
         SetVScrollWheelIncrement(Value(ListRowHeight())*4);
 
-        m_filter_condition = std::make_unique<Condition::All>();
+        m_filter_condition = std::make_unique<focs::All>();
 
         //m_visibilities[OBJ_BUILDING].insert(SHOW_VISIBLE);
         //m_visibilities[OBJ_BUILDING].insert(SHOW_PREVIOUSLY_VISIBLE);
@@ -1909,7 +1909,7 @@ public:
     static GG::Y ListRowHeight()
     { return GG::Y(ClientUI::Pts() * 2); }
 
-    const Condition::Condition* const FilterCondition() const
+    const focs::Condition* const FilterCondition() const
     { return m_filter_condition.get(); }
 
     const std::map<UniverseObjectType, std::set<VIS_DISPLAY>> Visibilities() const
@@ -1941,7 +1941,7 @@ public:
     bool AnythingCollapsed() const
     { return !m_collapsed_objects.empty(); }
 
-    void SetFilterCondition(std::unique_ptr<Condition::Condition>&& condition) {
+    void SetFilterCondition(std::unique_ptr<focs::Condition>&& condition) {
         m_filter_condition = std::move(condition);
         Refresh();
     }
@@ -2346,7 +2346,7 @@ private:
 
     std::map<int, boost::signals2::connection>          m_object_change_connections;
     std::set<int>                                       m_collapsed_objects;
-    std::unique_ptr<Condition::Condition>               m_filter_condition;
+    std::unique_ptr<focs::Condition>               m_filter_condition;
     std::map<UniverseObjectType, std::set<VIS_DISPLAY>> m_visibilities;
     std::shared_ptr<ObjectHeaderRow>                    m_header_row;
     boost::signals2::connection                         m_obj_deleted_connection;

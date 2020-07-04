@@ -40,7 +40,7 @@ namespace parse { namespace detail {
                >   label(tok.Name_) >  string_grammar
                > -(label(tok.Low_)  >  double_rules.expr)
                > -(label(tok.High_) >  double_rules.expr)
-              ) [ _val = construct_movable_(new_<Condition::HasSpecial>(
+              ) [ _val = construct_movable_(new_<focs::HasSpecial>(
                     deconstruct_movable_(_1, _pass),
                     deconstruct_movable_(_2, _pass),
                     deconstruct_movable_(_3, _pass))) ]
@@ -50,7 +50,7 @@ namespace parse { namespace detail {
             = (omit_[tok.WithinDistance_]
                > label(tok.Distance_)  > double_rules.expr
                > label(tok.Condition_) > condition_parser
-              ) [ _val = construct_movable_(new_<Condition::WithinDistance>(
+              ) [ _val = construct_movable_(new_<focs::WithinDistance>(
                     deconstruct_movable_(_1, _pass),
                     deconstruct_movable_(_2, _pass))) ]
             ;
@@ -59,7 +59,7 @@ namespace parse { namespace detail {
             = (omit_[tok.WithinStarlaneJumps_]
                > label(tok.Jumps_)     > castable_int_rules.flexible_int
                > label(tok.Condition_) > condition_parser
-              ) [ _val = construct_movable_(new_<Condition::WithinStarlaneJumps>(
+              ) [ _val = construct_movable_(new_<focs::WithinStarlaneJumps>(
                     deconstruct_movable_(_1, _pass),
                     deconstruct_movable_(_2, _pass))) ]
             ;
@@ -69,26 +69,26 @@ namespace parse { namespace detail {
                > -(label(tok.Low_)   >  castable_int_rules.flexible_int)
                > -(label(tok.High_)  >  castable_int_rules.flexible_int)
                >   label(tok.Condition_) > condition_parser
-              ) [ _val = construct_movable_(new_<Condition::Number>(
+              ) [ _val = construct_movable_(new_<focs::Number>(
                     deconstruct_movable_(_1, _pass),
                     deconstruct_movable_(_2, _pass),
                     deconstruct_movable_(_3, _pass))) ]
             ;
 
         comparison_operator =
-              lit("==")   [ _val = Condition::EQUAL ]
-            | lit('=')    [ _val = Condition::EQUAL ]
-            | lit(">=")   [ _val = Condition::GREATER_THAN_OR_EQUAL ]
-            | lit('>')    [ _val = Condition::GREATER_THAN ]
-            | lit("<=")   [ _val = Condition::LESS_THAN_OR_EQUAL ]
-            | lit('<')    [ _val = Condition::LESS_THAN ]
-            | lit("!=")   [ _val = Condition::NOT_EQUAL ]
+              lit("==")   [ _val = focs::EQUAL ]
+            | lit('=')    [ _val = focs::EQUAL ]
+            | lit(">=")   [ _val = focs::GREATER_THAN_OR_EQUAL ]
+            | lit('>')    [ _val = focs::GREATER_THAN ]
+            | lit("<=")   [ _val = focs::LESS_THAN_OR_EQUAL ]
+            | lit('<')    [ _val = focs::LESS_THAN ]
+            | lit("!=")   [ _val = focs::NOT_EQUAL ]
             ;
 
         string_comparison_operator =
-              lit("==")   [ _val = Condition::EQUAL ]
-            | lit('=')    [ _val = Condition::EQUAL ]
-            | lit("!=")   [ _val = Condition::NOT_EQUAL ]
+              lit("==")   [ _val = focs::EQUAL ]
+            | lit('=')    [ _val = focs::EQUAL ]
+            | lit("!=")   [ _val = focs::NOT_EQUAL ]
             ;
 
         comparison_binary_double
@@ -98,7 +98,7 @@ namespace parse { namespace detail {
                 >> double_rules.expr // assuming the trinary form already didn't pass, can expect a (double) here, though it might be an (int) casted to (double). By matching the (int) cases first, can assume that at least one of the parameters here is not an (int) casted to double.
                ) > ')'
               ) [ _val = construct_movable_(
-                new_<Condition::ValueTest>(
+                new_<focs::ValueTest>(
                     deconstruct_movable_(_1, _pass),
                     _2,
                     deconstruct_movable_(_3, _pass))) ]
@@ -113,7 +113,7 @@ namespace parse { namespace detail {
                >> double_rules.expr    // if already seen (double) (operator) (double) (operator) can expect to see another (double). Some of these (double) may be (int) casted to double, though not all of them can be, as in that case, the (int) parser should have matched.
                ) >  ')'
               ) [ _val = construct_movable_(
-                new_<Condition::ValueTest>(
+                new_<focs::ValueTest>(
                     deconstruct_movable_(_1, _pass),
                     _2,
                     deconstruct_movable_(_3, _pass),
@@ -128,7 +128,7 @@ namespace parse { namespace detail {
                 >> string_grammar // assuming the trinary (string) form already didn't parse, if already seen (string) (operator) can expect another (string)
                ) > ')'
               ) [ _val = construct_movable_(
-                new_<Condition::ValueTest>(
+                new_<focs::ValueTest>(
                     deconstruct_movable_(_1, _pass),
                     _2,
                     deconstruct_movable_(_3, _pass))) ]
@@ -144,7 +144,7 @@ namespace parse { namespace detail {
               >>  string_grammar // if already seen (string) (operator) (string) (operator) can expect to see another (string)
              ) >  ')'
             ) [ _val = construct_movable_(
-                new_<Condition::ValueTest>(
+                new_<focs::ValueTest>(
                     deconstruct_movable_(_1, _pass),
                     _2,
                     deconstruct_movable_(_3, _pass),
@@ -159,7 +159,7 @@ namespace parse { namespace detail {
                 >> int_rules.expr   // can't expect an (int) here, as it could actually be a (double) comparision with the first (double) cased from an (int)
                ) > ')'
               ) [ _val = construct_movable_(
-                new_<Condition::ValueTest>(
+                new_<focs::ValueTest>(
                     deconstruct_movable_(_1, _pass),
                     _2,
                     deconstruct_movable_(_3, _pass))) ]
@@ -174,7 +174,7 @@ namespace parse { namespace detail {
                >> int_rules.expr   // only treat as trinary (int) comparison if all parameters are (int). otherwise fall back to (double) comparison, which allows some of the parameters to be (int) casted to (double)
                ) > ')'
               ) [ _val = construct_movable_(
-                new_<Condition::ValueTest>(
+                new_<focs::ValueTest>(
                     deconstruct_movable_(_1, _pass),
                     _2,
                     deconstruct_movable_(_3, _pass),
@@ -186,7 +186,7 @@ namespace parse { namespace detail {
                 = ( omit_[tok.Turn_]
                 > -(label(tok.Low_)  > (castable_int_rules.flexible_int ))
                 > -(label(tok.High_) > (castable_int_rules.flexible_int )))
-                [ _val = construct_movable_(new_<Condition::Turn>(
+                [ _val = construct_movable_(new_<focs::Turn>(
                         deconstruct_movable_(_1, _pass),
                         deconstruct_movable_(_2, _pass))) ]
                 ;
@@ -195,21 +195,21 @@ namespace parse { namespace detail {
                 = ( omit_[tok.CreatedOnTurn_]
                 > -(label(tok.Low_)  > castable_int_rules.flexible_int )
                 > -(label(tok.High_) > castable_int_rules.flexible_int ))
-                [ _val = construct_movable_(new_<Condition::CreatedOnTurn>(
+                [ _val = construct_movable_(new_<focs::CreatedOnTurn>(
                         deconstruct_movable_(_1, _pass),
                         deconstruct_movable_(_2, _pass))) ]
                 ;
 
             sorting_operator =
-                    tok.MaximumNumberOf_ [ _val = Condition::SORT_MAX ]
-                |   tok.MinimumNumberOf_ [ _val = Condition::SORT_MIN ]
-                |   tok.ModeNumberOf_    [ _val = Condition::SORT_MODE ];
+                    tok.MaximumNumberOf_ [ _val = focs::SORT_MAX ]
+                |   tok.MinimumNumberOf_ [ _val = focs::SORT_MIN ]
+                |   tok.ModeNumberOf_    [ _val = focs::SORT_MODE ];
 
             number_of1
                 = ( omit_[tok.NumberOf_]
                 >   label(tok.Number_)    > castable_int_rules.flexible_int
                 >   label(tok.Condition_) > condition_parser)
-                [ _val = construct_movable_(new_<Condition::SortedNumberOf>(
+                [ _val = construct_movable_(new_<focs::SortedNumberOf>(
                         deconstruct_movable_(_1, _pass),
                         deconstruct_movable_(_2, _pass))) ]
                 ;
@@ -219,7 +219,7 @@ namespace parse { namespace detail {
                 >   label(tok.Number_)    > castable_int_rules.flexible_int
                 >   label(tok.SortKey_)   > double_rules.expr
                 >   label(tok.Condition_) > condition_parser)
-                [ _val = construct_movable_(new_<Condition::SortedNumberOf>(
+                [ _val = construct_movable_(new_<focs::SortedNumberOf>(
                         deconstruct_movable_(_2, _pass),
                         deconstruct_movable_(_3, _pass),
                         _1,
@@ -234,14 +234,14 @@ namespace parse { namespace detail {
             random
                 =   tok.Random_
                 >   label(tok.Probability_) > double_rules.expr
-                [ _val = construct_movable_(new_<Condition::Chance>(deconstruct_movable_(_1, _pass))) ]
+                [ _val = construct_movable_(new_<focs::Chance>(deconstruct_movable_(_1, _pass))) ]
                 ;
 
             stockpile
                 = ( omit_[tok.EmpireStockpile_]
                 >   label(tok.Low_)  > double_rules.expr
                 >   label(tok.High_) > double_rules.expr)
-                [ _val = construct_movable_(new_<Condition::EmpireStockpileValue>(
+                [ _val = construct_movable_(new_<focs::EmpireStockpileValue>(
                         RE_INDUSTRY,
                         deconstruct_movable_(_1, _pass),
                         deconstruct_movable_(_2, _pass))) ]
@@ -251,7 +251,7 @@ namespace parse { namespace detail {
                 = ( omit_[tok.ResourceSupplyConnected_]
                     > label(tok.Empire_)    > int_rules.expr
                     > label(tok.Condition_) > condition_parser)
-                [ _val = construct_movable_(new_<Condition::ResourceSupplyConnectedByEmpire>(
+                [ _val = construct_movable_(new_<focs::ResourceSupplyConnectedByEmpire>(
                         deconstruct_movable_(_1, _pass),
                         deconstruct_movable_(_2, _pass))) ]
                 ;
@@ -259,7 +259,7 @@ namespace parse { namespace detail {
             can_add_starlane
                 = ( omit_[tok.CanAddStarlanesTo_]
                 >   label(tok.Condition_) > condition_parser)
-                [ _val = construct_movable_(new_<Condition::CanAddStarlaneConnection>(
+                [ _val = construct_movable_(new_<focs::CanAddStarlaneConnection>(
                         deconstruct_movable_(_1, _pass))) ]
                 ;
 

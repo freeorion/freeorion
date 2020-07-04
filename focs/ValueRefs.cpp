@@ -81,7 +81,7 @@ namespace {
         while (first != last) {
             std::string property_name = *first;
             if (property_name == "Planet") {
-                if (auto b = std::dynamic_pointer_cast<const Building>(obj)) {
+                if (auto b = std::dynamic_pointer_cast<const ::Building>(obj)) {
                     obj = context.ContextObjects().get<Planet>(b->PlanetID());
                 } else {
                     ErrorLogger() << "FollowReference : object not a building, so can't get its planet.";
@@ -150,7 +150,7 @@ namespace {
             std::string property_name_part = *first;
             retval += " " + property_name_part + " ";
             if (property_name_part == "Planet") {
-                if (auto b = std::dynamic_pointer_cast<const Building>(obj)) {
+                if (auto b = std::dynamic_pointer_cast<const ::Building>(obj)) {
                     retval += "(" + std::to_string(b->PlanetID()) + "): ";
                     obj = context.ContextObjects().get<Planet>(b->PlanetID());
                 } else
@@ -182,7 +182,7 @@ namespace {
     struct ObjectTypeVisitor : UniverseObjectVisitor {
         ObjectTypeVisitor() : m_type(INVALID_UNIVERSE_OBJECT_TYPE) {}
 
-        std::shared_ptr<UniverseObject> Visit(std::shared_ptr<Building> obj) const override
+        std::shared_ptr<UniverseObject> Visit(std::shared_ptr<::Building> obj) const override
         { m_type = OBJ_BUILDING; return obj; }
 
         std::shared_ptr<UniverseObject> Visit(std::shared_ptr<Fleet> obj) const override
@@ -452,7 +452,7 @@ std::string Constant<std::string>::Description() const
 }
 
 template <>
-std::string Constant<PlanetSize>::Dump(unsigned short ntabs) const
+std::string Constant<::PlanetSize>::Dump(unsigned short ntabs) const
 {
     switch (m_value) {
     case SZ_TINY:       return "Tiny";
@@ -467,7 +467,7 @@ std::string Constant<PlanetSize>::Dump(unsigned short ntabs) const
 }
 
 template <>
-std::string Constant<PlanetType>::Dump(unsigned short ntabs) const
+std::string Constant<::PlanetType>::Dump(unsigned short ntabs) const
 {
     switch (m_value) {
     case PT_SWAMP:      return "Swamp";
@@ -486,7 +486,7 @@ std::string Constant<PlanetType>::Dump(unsigned short ntabs) const
 }
 
 template <>
-std::string Constant<PlanetEnvironment>::Dump(unsigned short ntabs) const
+std::string Constant<::PlanetEnvironment>::Dump(unsigned short ntabs) const
 {
     switch (m_value) {
     case PE_UNINHABITABLE:  return "Uninhabitable";
@@ -515,7 +515,7 @@ std::string Constant<UniverseObjectType>::Dump(unsigned short ntabs) const
 }
 
 template <>
-std::string Constant<StarType>::Dump(unsigned short ntabs) const
+std::string Constant<::StarType>::Dump(unsigned short ntabs) const
 {
     switch (m_value) {
     case STAR_BLUE:     return "Blue";
@@ -592,9 +592,9 @@ else                                                                   \
     ErrorLogger() << "source (none)";
 
 template <>
-PlanetSize Variable<PlanetSize>::Eval(const ScriptingContext& context) const
+::PlanetSize Variable<::PlanetSize>::Eval(const ScriptingContext& context) const
 {
-    IF_CURRENT_VALUE(PlanetSize)
+    IF_CURRENT_VALUE(::PlanetSize)
 
     const std::string& property_name = m_property_name.empty() ? "" : m_property_name.back();
 
@@ -605,7 +605,7 @@ PlanetSize Variable<PlanetSize>::Eval(const ScriptingContext& context) const
         return INVALID_PLANET_SIZE;
     }
 
-    std::function<PlanetSize (const Planet&)> planet_property{nullptr};
+    std::function<::PlanetSize (const Planet&)> planet_property{nullptr};
 
     if (property_name == "PlanetSize")
         planet_property = &Planet::Size;
@@ -626,9 +626,9 @@ PlanetSize Variable<PlanetSize>::Eval(const ScriptingContext& context) const
 }
 
 template <>
-PlanetType Variable<PlanetType>::Eval(const ScriptingContext& context) const
+::PlanetType Variable<::PlanetType>::Eval(const ScriptingContext& context) const
 {
-    IF_CURRENT_VALUE(PlanetType)
+    IF_CURRENT_VALUE(::PlanetType)
 
     const std::string& property_name = m_property_name.empty() ? "" : m_property_name.back();
 
@@ -639,7 +639,7 @@ PlanetType Variable<PlanetType>::Eval(const ScriptingContext& context) const
         return INVALID_PLANET_TYPE;
     }
 
-    std::function<PlanetType (const Planet&)> planet_property{nullptr};
+    std::function<::PlanetType (const Planet&)> planet_property{nullptr};
 
     if (property_name == "PlanetType")
         planet_property = &Planet::Type;
@@ -666,9 +666,9 @@ PlanetType Variable<PlanetType>::Eval(const ScriptingContext& context) const
 }
 
 template <>
-PlanetEnvironment Variable<PlanetEnvironment>::Eval(const ScriptingContext& context) const
+::PlanetEnvironment Variable<::PlanetEnvironment>::Eval(const ScriptingContext& context) const
 {
-    IF_CURRENT_VALUE(PlanetEnvironment)
+    IF_CURRENT_VALUE(::PlanetEnvironment)
 
     const std::string& property_name = m_property_name.empty() ? "" : m_property_name.back();
 
@@ -719,9 +719,9 @@ UniverseObjectType Variable<UniverseObjectType>::Eval(const ScriptingContext& co
 }
 
 template <>
-StarType Variable<StarType>::Eval(const ScriptingContext& context) const
+::StarType Variable<::StarType>::Eval(const ScriptingContext& context) const
 {
-    IF_CURRENT_VALUE(StarType)
+    IF_CURRENT_VALUE(::StarType)
 
     const std::string& property_name = m_property_name.empty() ? "" : m_property_name.back();
 
@@ -732,7 +732,7 @@ StarType Variable<StarType>::Eval(const ScriptingContext& context) const
         return INVALID_STAR_TYPE;
     }
 
-    std::function<StarType (const System&)> system_property{nullptr};
+    std::function<::StarType (const System&)> system_property{nullptr};
 
     if (property_name == "StarType")
         system_property = &System::GetStarType;
@@ -1003,7 +1003,7 @@ int Variable<int>::Eval(const ScriptingContext& context) const
     else if (property_name == "ProducedByEmpireID") {
         if (auto ship = std::dynamic_pointer_cast<const Ship>(object))
             return ship->ProducedByEmpireID();
-        else if (auto building = std::dynamic_pointer_cast<const Building>(object))
+        else if (auto building = std::dynamic_pointer_cast<const ::Building>(object))
             return building->ProducedByEmpireID();
         return ALL_EMPIRES;
 
@@ -1023,7 +1023,7 @@ int Variable<int>::Eval(const ScriptingContext& context) const
 
     }
     else if (property_name == "PlanetID") {
-        if (auto building = std::dynamic_pointer_cast<const Building>(object))
+        if (auto building = std::dynamic_pointer_cast<const ::Building>(object))
             return building->PlanetID();
         else if (auto planet = std::dynamic_pointer_cast<const Planet>(object))
             return planet->ID();
@@ -1211,7 +1211,7 @@ std::string Variable<std::string>::Eval(const ScriptingContext& context) const
         return "";
 
     } else if (property_name == "BuildingType") {
-        if (auto building = std::dynamic_pointer_cast<const Building>(object))
+        if (auto building = std::dynamic_pointer_cast<const ::Building>(object))
             return building->BuildingTypeName();
         return "";
 
@@ -1221,7 +1221,7 @@ std::string Variable<std::string>::Eval(const ScriptingContext& context) const
         return "";
 
     } else if (property_name == "PreferredFocus") {
-        const Species* species = nullptr;
+        const ::Species* species = nullptr;
         if (auto planet = std::dynamic_pointer_cast<const Planet>(object)) {
             species = GetSpecies(planet->SpeciesName());
         } else if (auto ship = std::dynamic_pointer_cast<const Ship>(object)) {
@@ -1246,7 +1246,7 @@ std::string Variable<std::string>::Eval(const ScriptingContext& context) const
 template <>
 double Statistic<double>::Eval(const ScriptingContext& context) const
 {
-    Condition::ObjectSet condition_matches;
+    ObjectSet condition_matches;
     GetConditionMatches(context, condition_matches, m_sampling_condition.get());
 
     // these two statistic types don't depend on the object property values,
@@ -1266,7 +1266,7 @@ double Statistic<double>::Eval(const ScriptingContext& context) const
 template <>
 int Statistic<int>::Eval(const ScriptingContext& context) const
 {
-    Condition::ObjectSet condition_matches;
+    ObjectSet condition_matches;
     GetConditionMatches(context, condition_matches, m_sampling_condition.get());
 
     // these two statistic types don't depend on the object property values,
@@ -1286,7 +1286,7 @@ int Statistic<int>::Eval(const ScriptingContext& context) const
 template <>
 std::string Statistic<std::string>::Eval(const ScriptingContext& context) const
 {
-    Condition::ObjectSet condition_matches;
+    ObjectSet condition_matches;
     GetConditionMatches(context, condition_matches, m_sampling_condition.get());
 
     if (condition_matches.empty())
@@ -1339,15 +1339,15 @@ std::string Statistic<std::string>::Eval(const ScriptingContext& context) const
 // ComplexVariable                                       //
 ///////////////////////////////////////////////////////////
 template <>
-PlanetSize ComplexVariable<PlanetSize>::Eval(const ScriptingContext& context) const
+::PlanetSize ComplexVariable<::PlanetSize>::Eval(const ScriptingContext& context) const
 { return INVALID_PLANET_SIZE; }
 
 template <>
-PlanetType ComplexVariable<PlanetType>::Eval(const ScriptingContext& context) const
+::PlanetType ComplexVariable<::PlanetType>::Eval(const ScriptingContext& context) const
 { return INVALID_PLANET_TYPE; } // TODO: Species favourite planet type?
 
 template <>
-PlanetEnvironment ComplexVariable<PlanetEnvironment>::Eval(const ScriptingContext& context) const
+::PlanetEnvironment ComplexVariable<::PlanetEnvironment>::Eval(const ScriptingContext& context) const
 {
     const std::string& variable_name = m_property_name.back();
 
@@ -1373,7 +1373,7 @@ UniverseObjectType ComplexVariable<UniverseObjectType>::Eval(const ScriptingCont
 { return INVALID_UNIVERSE_OBJECT_TYPE; }
 
 template <>
-StarType ComplexVariable<StarType>::Eval(const ScriptingContext& context) const
+::StarType ComplexVariable<::StarType>::Eval(const ScriptingContext& context) const
 { return INVALID_STAR_TYPE; }
 
 template <>

@@ -10,9 +10,6 @@
 #include <boost/spirit/include/qi.hpp>
 #include <boost/spirit/include/phoenix.hpp>
 
-namespace Condition {
-    struct Condition;
-}
 
 namespace parse { namespace detail {
     // TODO: Investigate refactoring ValueRef to use variant,
@@ -26,7 +23,7 @@ namespace parse { namespace detail {
     template <typename T>
     using value_ref_grammar = detail::grammar<value_ref_signature<T>>;
 
-    using condition_payload        = MovableEnvelope<Condition::Condition>;
+    using condition_payload        = MovableEnvelope<focs::Condition>;
     using condition_signature      = condition_payload ();
     using condition_parser_grammar = grammar<condition_signature>;
 

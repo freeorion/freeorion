@@ -171,8 +171,8 @@ namespace Effect {
 ///////////////////////////////////////////////////////////
 // EffectsGroup                                          //
 ///////////////////////////////////////////////////////////
-EffectsGroup::EffectsGroup(std::unique_ptr<Condition::Condition>&& scope,
-                           std::unique_ptr<Condition::Condition>&& activation,
+EffectsGroup::EffectsGroup(std::unique_ptr<focs::Condition>&& scope,
+                           std::unique_ptr<focs::Condition>&& activation,
                            std::vector<std::unique_ptr<Effect>>&& effects,
                            const std::string& accounting_label,
                            const std::string& stacking_group, int priority,
@@ -2095,7 +2095,7 @@ unsigned int RemoveSpecial::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // AddStarlanes                                          //
 ///////////////////////////////////////////////////////////
-AddStarlanes::AddStarlanes(std::unique_ptr<Condition::Condition>&& other_lane_endpoint_condition) :
+AddStarlanes::AddStarlanes(std::unique_ptr<focs::Condition>&& other_lane_endpoint_condition) :
     m_other_lane_endpoint_condition(std::move(other_lane_endpoint_condition))
 {}
 
@@ -2112,7 +2112,7 @@ void AddStarlanes::Execute(ScriptingContext& context) const {
         return; // nothing to do!
 
     // get other endpoint systems...
-    Condition::ObjectSet endpoint_objects;
+    focs::ObjectSet endpoint_objects;
     // apply endpoints condition to determine objects whose systems should be
     // connected to the source system
     m_other_lane_endpoint_condition->Eval(context, endpoint_objects);
@@ -2161,7 +2161,7 @@ unsigned int AddStarlanes::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // RemoveStarlanes                                       //
 ///////////////////////////////////////////////////////////
-RemoveStarlanes::RemoveStarlanes(std::unique_ptr<Condition::Condition>&& other_lane_endpoint_condition) :
+RemoveStarlanes::RemoveStarlanes(std::unique_ptr<focs::Condition>&& other_lane_endpoint_condition) :
     m_other_lane_endpoint_condition(std::move(other_lane_endpoint_condition))
 {}
 
@@ -2179,7 +2179,7 @@ void RemoveStarlanes::Execute(ScriptingContext& context) const {
 
     // get other endpoint systems...
 
-    Condition::ObjectSet endpoint_objects;
+    focs::ObjectSet endpoint_objects;
     // apply endpoints condition to determine objects whose systems should be
     // connected to the source system
     m_other_lane_endpoint_condition->Eval(context, endpoint_objects);
@@ -2266,7 +2266,7 @@ unsigned int SetStarType::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // MoveTo                                                //
 ///////////////////////////////////////////////////////////
-MoveTo::MoveTo(std::unique_ptr<Condition::Condition>&& location_condition) :
+MoveTo::MoveTo(std::unique_ptr<focs::Condition>&& location_condition) :
     m_location_condition(std::move(location_condition))
 {}
 
@@ -2278,7 +2278,7 @@ void MoveTo::Execute(ScriptingContext& context) const {
 
     Universe& universe = GetUniverse();
 
-    Condition::ObjectSet valid_locations;
+    focs::ObjectSet valid_locations;
     // apply location condition to determine valid location to move target to
     m_location_condition->Eval(context, valid_locations);
 
@@ -2558,7 +2558,7 @@ unsigned int MoveTo::GetCheckSum() const {
 // MoveInOrbit                                           //
 ///////////////////////////////////////////////////////////
 MoveInOrbit::MoveInOrbit(std::unique_ptr<focs::ValueRef<double>>&& speed,
-                         std::unique_ptr<Condition::Condition>&& focal_point_condition) :
+                         std::unique_ptr<focs::Condition>&& focal_point_condition) :
     m_speed(std::move(speed)),
     m_focal_point_condition(std::move(focal_point_condition))
 {}
@@ -2588,7 +2588,7 @@ void MoveInOrbit::Execute(ScriptingContext& context) const {
     if (speed == 0.0)
         return;
     if (m_focal_point_condition) {
-        Condition::ObjectSet matches;
+        focs::ObjectSet matches;
         m_focal_point_condition->Eval(context, matches);
         if (matches.empty())
             return;
@@ -2702,7 +2702,7 @@ unsigned int MoveInOrbit::GetCheckSum() const {
 // MoveTowards                                           //
 ///////////////////////////////////////////////////////////
 MoveTowards::MoveTowards(std::unique_ptr<focs::ValueRef<double>>&& speed,
-                         std::unique_ptr<Condition::Condition>&& dest_condition) :
+                         std::unique_ptr<focs::Condition>&& dest_condition) :
     m_speed(std::move(speed)),
     m_dest_condition(std::move(dest_condition))
 {}
@@ -2732,7 +2732,7 @@ void MoveTowards::Execute(ScriptingContext& context) const {
     if (speed == 0.0)
         return;
     if (m_dest_condition) {
-        Condition::ObjectSet matches;
+        focs::ObjectSet matches;
         m_dest_condition->Eval(context, matches);
         if (matches.empty())
             return;
@@ -2855,7 +2855,7 @@ unsigned int MoveTowards::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // SetDestination                                        //
 ///////////////////////////////////////////////////////////
-SetDestination::SetDestination(std::unique_ptr<Condition::Condition>&& location_condition) :
+SetDestination::SetDestination(std::unique_ptr<focs::Condition>&& location_condition) :
     m_location_condition(std::move(location_condition))
 {}
 
@@ -2874,7 +2874,7 @@ void SetDestination::Execute(ScriptingContext& context) const {
 
     Universe& universe = GetUniverse();
 
-    Condition::ObjectSet valid_locations;
+    focs::ObjectSet valid_locations;
     // apply location condition to determine valid location to move target to
     m_location_condition->Eval(context, valid_locations);
 
@@ -3164,7 +3164,7 @@ GenerateSitRepMessage::GenerateSitRepMessage(std::string& message_string,
                                              std::string& icon,
                                              MessageParams&& message_parameters,
                                              EmpireAffiliationType affiliation,
-                                             std::unique_ptr<Condition::Condition>&& condition,
+                                             std::unique_ptr<focs::Condition>&& condition,
                                              std::string label,
                                              bool stringtable_lookup) :
     m_message_string(std::move(message_string)),
@@ -3266,7 +3266,7 @@ void GenerateSitRepMessage::Execute(ScriptingContext& context) const {
 
     case AFFIL_CAN_SEE: {
         // evaluate condition
-        Condition::ObjectSet condition_matches;
+        focs::ObjectSet condition_matches;
         if (m_condition)
             m_condition->Eval(context, condition_matches);
 
@@ -3475,7 +3475,7 @@ unsigned int SetTexture::GetCheckSum() const {
 SetVisibility::SetVisibility(std::unique_ptr<focs::ValueRef<Visibility>> vis,
                              EmpireAffiliationType affiliation,
                              std::unique_ptr<focs::ValueRef<int>>&& empire_id,
-                             std::unique_ptr<Condition::Condition>&& of_objects) :
+                             std::unique_ptr<focs::Condition>&& of_objects) :
     m_vis(std::move(vis)),
     m_empire_id(std::move(empire_id)),
     m_affiliation(affiliation),
@@ -3566,7 +3566,7 @@ void SetVisibility::Execute(ScriptingContext& context) const {
     if (!m_condition) {
         object_ids.insert(context.effect_target->ID());
     } else {
-        Condition::ObjectSet condition_matches;
+        focs::ObjectSet condition_matches;
         m_condition->Eval(context, condition_matches);
         for (auto& object : condition_matches) {
             object_ids.insert(object->ID());
@@ -3642,7 +3642,7 @@ unsigned int SetVisibility::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // Conditional                                           //
 ///////////////////////////////////////////////////////////
-Conditional::Conditional(std::unique_ptr<Condition::Condition>&& target_condition,
+Conditional::Conditional(std::unique_ptr<focs::Condition>&& target_condition,
                          std::vector<std::unique_ptr<Effect>>&& true_effects,
                          std::vector<std::unique_ptr<Effect>>&& false_effects) :
     m_target_condition(std::move(target_condition)),
@@ -3681,7 +3681,7 @@ void Conditional::Execute(ScriptingContext& context, const TargetSet& targets) c
     TargetSet non_matches;
     non_matches.reserve(matches.size());
     if (m_target_condition)
-        m_target_condition->Eval(context, matches, non_matches, Condition::MATCHES);
+        m_target_condition->Eval(context, matches, non_matches, focs::MATCHES);
 
     if (!matches.empty() && !m_true_effects.empty()) {
         for (auto& effect : m_true_effects) {
@@ -3714,7 +3714,7 @@ void Conditional::Execute(ScriptingContext& context,
     non_matches.reserve(matches.size());
 
     if (m_target_condition)
-        m_target_condition->Eval(context, matches, non_matches, Condition::MATCHES);
+        m_target_condition->Eval(context, matches, non_matches, focs::MATCHES);
 
 
     // execute true and false effects to target matches and non-matches respectively

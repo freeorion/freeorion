@@ -44,7 +44,7 @@ public:
              std::string&& description, std::set<std::string>&& exclusions,
              std::vector<ShipSlotType> mountable_slot_types,
              std::string&& icon, bool add_standard_capacity_effect = true,
-             std::unique_ptr<Condition::Condition>&& combat_targets = nullptr);
+             std::unique_ptr<focs::Condition>&& combat_targets = nullptr);
 
     ~ShipPart();
 
@@ -73,7 +73,7 @@ public:
 
     //! Returns the condition for possible targets. may be nullptr if no
     //! condition was specified.
-    auto CombatTargets() const -> const Condition::Condition*
+    auto CombatTargets() const -> const focs::Condition*
     { return m_combat_targets.get(); }
 
     auto MountableSlotTypes() const -> const std::vector<ShipSlotType>&
@@ -105,7 +105,7 @@ public:
 
     //! Returns the condition that determines the locations where ShipDesign
     //! containing part can be produced
-    auto Location() const -> const Condition::Condition*
+    auto Location() const -> const focs::Condition*
     { return m_location.get(); }
 
     //! Returns the names of other content that cannot be used in the same
@@ -147,12 +147,12 @@ private:
     std::set<std::string>                               m_tags;
     ConsumptionMap<MeterType>                           m_production_meter_consumption;
     ConsumptionMap<std::string>                         m_production_special_consumption;
-    std::unique_ptr<Condition::Condition>               m_location;
+    std::unique_ptr<focs::Condition>               m_location;
     std::set<std::string>                               m_exclusions;
     std::vector<std::shared_ptr<Effect::EffectsGroup>>  m_effects;
     std::string                                         m_icon;
     bool                                                m_add_standard_capacity_effect = false;
-    std::unique_ptr<Condition::Condition>               m_combat_targets;
+    std::unique_ptr<focs::Condition>               m_combat_targets;
 };
 
 

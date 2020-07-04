@@ -911,7 +911,7 @@ namespace {
     void StoreTargetsAndCausesOfEffectsGroup(
         const ObjectMap&                            object_map,
         const Effect::EffectsGroup*                 effects_group,
-        const Condition::ObjectSet&                 source_objects,
+        const focs::ObjectSet&                 source_objects,
         EffectsCauseType                            effect_cause_type,
         const std::string&                          specific_cause_name,
         const std::unordered_set<int>&              candidate_object_ids,   // TODO: Can this be removed along with scope is source test?
@@ -926,7 +926,7 @@ namespace {
         auto scope = effects_group->Scope();
         if (!scope)
             return;
-        bool scope_is_just_source = dynamic_cast<Condition::Source*>(scope);
+        bool scope_is_just_source = dynamic_cast<focs::Source*>(scope);
 
         auto message{"StoreTargetsAndCausesOfEffectsGroup < " + std::to_string(n) + " >"
                      + "  cause type: " + boost::lexical_cast<std::string>(effect_cause_type)
@@ -991,18 +991,18 @@ namespace {
     void DispatchEffectsGroupScopeEvaluations(
         EffectsCauseType effect_cause_type,
         const std::string& specific_cause_name,
-        const Condition::ObjectSet& source_objects,
+        const focs::ObjectSet& source_objects,
         const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects_groups,
         bool only_meter_effects,
         const ObjectMap& object_map,
-        const Condition::ObjectSet& potential_targets,
+        const focs::ObjectSet& potential_targets,
         const std::unordered_set<int>& potential_target_ids,
         std::list<std::pair<Effect::SourcesEffectsTargetsAndCausesVec,
                             Effect::SourcesEffectsTargetsAndCausesVec*>>& source_effects_targets_causes_reorder_buffer_out,
         boost::asio::thread_pool& thread_pool,
         int& n)
     {
-        std::vector<std::pair<Condition::Condition*, int>> already_evaluated_activation_condition_idx;
+        std::vector<std::pair<focs::Condition*, int>> already_evaluated_activation_condition_idx;
         already_evaluated_activation_condition_idx.reserve(effects_groups.size());
 
         TraceLogger(effects) << "Checking activation condition for " << source_objects.size()
@@ -1011,7 +1011,7 @@ namespace {
                              << " potential targets";
 
         // evaluate activation conditions of effects_groups on input source objects
-        std::vector<Condition::ObjectSet> active_sources{effects_groups.size()};
+        std::vector<focs::ObjectSet> active_sources{effects_groups.size()};
         ScriptingContext source_context{object_map};
         for (std::size_t i = 0; i < effects_groups.size(); ++i) {
             const auto* effects_group = effects_groups.at(i).get();
@@ -1041,11 +1041,11 @@ namespace {
                 // no cache hit; need to evaluate activation condition on input source objects
                 if (effects_group->Activation()->SourceInvariant()) {
                     // can apply condition to all source objects simultaneously
-                    Condition::ObjectSet rejected;
+                    focs::ObjectSet rejected;
                     rejected.reserve(source_objects.size());
                     active_sources[i] = source_objects; // copy input source objects set
                     source_context.source = nullptr;
-                    effects_group->Activation()->Eval(source_context, active_sources[i], rejected, Condition::MATCHES);
+                    effects_group->Activation()->Eval(source_context, active_sources[i], rejected, focs::MATCHES);
 
                 } else {
                     // need to apply separately to each source object
@@ -1074,8 +1074,8 @@ namespace {
 
 
         // TODO: is it faster to index by scope and activation condition or scope and filtered sources set?
-        std::vector<std::tuple<Condition::Condition*,
-                               Condition::ObjectSet,
+        std::vector<std::tuple<focs::Condition*,
+                               focs::ObjectSet,
                                Effect::SourcesEffectsTargetsAndCausesVec*>>
             already_dispatched_scope_condition_ptrs;
         already_evaluated_activation_condition_idx.reserve(effects_groups.size());
@@ -1206,7 +1206,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     SectionedScopedTimer type_timer("Effect TargetSets Evaluation", std::chrono::microseconds(0));
 
     // assemble target objects from input vector of IDs
-    Condition::ObjectSet potential_targets{m_objects.find(target_object_ids)};
+    focs::ObjectSet potential_targets{m_objects.find(target_object_ids)};
     std::unordered_set<int> potential_ids_set{target_object_ids.begin(), target_object_ids.end()};
 
     TraceLogger(effects) << "GetEffectsAndTargets input candidate target objects:";
@@ -1325,7 +1325,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     // 3) EffectsGroups from Techs
     type_timer.EnterSection("techs");
     TraceLogger(effects) << "Universe::GetEffectsAndTargets for TECHS";
-    std::list<Condition::ObjectSet> tech_sources;   // for each empire, a set with a single source object for all its techs
+    std::list<focs::ObjectSet> tech_sources;   // for each empire, a set with a single source object for all its techs
     // select a source object for each empire and dispatch condition evaluations
     for (auto& entry : Empires()) {
         const Empire* empire = entry.second;
@@ -1334,7 +1334,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
             continue;
 
         // unlike species and special effectsgroups, all techs for an empire have the same source object
-        tech_sources.emplace_back(Condition::ObjectSet{1U, source});
+        tech_sources.emplace_back(focs::ObjectSet{1U, source});
         const auto& source_objects = tech_sources.back();
 
         for (const auto tech_entry : empire->ResearchedTechs()) {
@@ -1355,7 +1355,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     // 3.5) EffectsGroups from Policies
     type_timer.EnterSection("policies");
     TraceLogger(effects) << "Universe::GetEffectsAndTargets for POLICIES";
-    std::list<Condition::ObjectSet> policy_sources; // for each empire, a set with a single source object for all its policies
+    std::list<focs::ObjectSet> policy_sources; // for each empire, a set with a single source object for all its policies
     for (auto& entry : Empires()) {
         const Empire* empire = entry.second;
         auto source = empire->Source();
@@ -1363,7 +1363,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
             continue;
 
         // like techs, all policies for an empire have the same source object
-        policy_sources.emplace_back(Condition::ObjectSet{1U, source});
+        policy_sources.emplace_back(focs::ObjectSet{1U, source});
         const auto& source_objects = policy_sources.back();
 
         for (const auto& policy_name : empire->AdoptedPolicies()) {

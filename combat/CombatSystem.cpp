@@ -257,116 +257,116 @@ void CombatInfo::InitializeObjectVisibility() {
 namespace {
     // if source is owned by ALL_EMPIRES, match objects owned by an empire
     // if source is owned by an empire, match unowned objects and objects owned by enemies of source's owner empire
-    Condition::Condition* VisibleEnemyOfOwnerCondition() {
-        return new Condition::Or(
+    focs::Condition* VisibleEnemyOfOwnerCondition() {
+        return new focs::Or(
             // unowned candidate object case
-            std::make_unique<Condition::And>(
-                std::make_unique<Condition::EmpireAffiliation>(AFFIL_NONE),   // unowned candidate object
+            std::make_unique<focs::And>(
+                std::make_unique<focs::EmpireAffiliation>(AFFIL_NONE),   // unowned candidate object
 
-                std::make_unique<Condition::ValueTest>(           // when source object is owned (ie. not the same owner as the candidate object)
+                std::make_unique<focs::ValueTest>(           // when source object is owned (ie. not the same owner as the candidate object)
                     std::make_unique<focs::Variable<int>>(
                         focs::SOURCE_REFERENCE, "Owner"),
-                    Condition::NOT_EQUAL,
+                    focs::NOT_EQUAL,
                     std::make_unique<focs::Variable<int>>(
                         focs::CONDITION_LOCAL_CANDIDATE_REFERENCE, "Owner")),
 
-                std::make_unique<Condition::VisibleToEmpire>(     // when source object's owner empire can detect the candidate object
+                std::make_unique<focs::VisibleToEmpire>(     // when source object's owner empire can detect the candidate object
                     std::make_unique<focs::Variable<int>>(    // source's owner empire id
                         focs::SOURCE_REFERENCE, "Owner"))),
 
             // owned candidate object case
-            std::make_unique<Condition::And>(
-                std::make_unique<Condition::EmpireAffiliation>(AFFIL_ANY),    // candidate is owned by an empire
+            std::make_unique<focs::And>(
+                std::make_unique<focs::EmpireAffiliation>(AFFIL_ANY),    // candidate is owned by an empire
 
-                std::make_unique<Condition::EmpireAffiliation>(               // candidate is owned by enemy of source's owner
+                std::make_unique<focs::EmpireAffiliation>(               // candidate is owned by enemy of source's owner
                     std::make_unique<focs::Variable<int>>(
                         focs::SOURCE_REFERENCE, "Owner"), AFFIL_ENEMY),
 
-                std::make_unique<Condition::VisibleToEmpire>(     // when source empire can detect the candidate object
+                std::make_unique<focs::VisibleToEmpire>(     // when source empire can detect the candidate object
                     std::make_unique<focs::Variable<int>>(    // source's owner empire id
                         focs::SOURCE_REFERENCE, "Owner"))
             ))
         ;
     }
 
-    const std::unique_ptr<Condition::Condition> is_enemy_ship_or_fighter =
-        std::make_unique<Condition::And>(
-            std::make_unique<Condition::Or>(
-                std::make_unique<Condition::And>(
-                    std::make_unique<Condition::Type>(OBJ_SHIP),
-                    std::make_unique<Condition::Not>(
-                        std::make_unique<Condition::MeterValue>(
+    const std::unique_ptr<focs::Condition> is_enemy_ship_or_fighter =
+        std::make_unique<focs::And>(
+            std::make_unique<focs::Or>(
+                std::make_unique<focs::And>(
+                    std::make_unique<focs::Type>(OBJ_SHIP),
+                    std::make_unique<focs::Not>(
+                        std::make_unique<focs::MeterValue>(
                             METER_STRUCTURE,
                             nullptr,
                             std::make_unique<focs::Constant<double>>(0.0)))),
-                std::make_unique<Condition::Type>(OBJ_FIGHTER)),
-            std::unique_ptr<Condition::Condition>{VisibleEnemyOfOwnerCondition()});
+                std::make_unique<focs::Type>(OBJ_FIGHTER)),
+            std::unique_ptr<focs::Condition>{VisibleEnemyOfOwnerCondition()});
 
-    const std::unique_ptr<Condition::Condition> is_enemy_ship =
-        std::make_unique<Condition::And>(
-            std::make_unique<Condition::Type>(OBJ_SHIP),
+    const std::unique_ptr<focs::Condition> is_enemy_ship =
+        std::make_unique<focs::And>(
+            std::make_unique<focs::Type>(OBJ_SHIP),
 
-            std::make_unique<Condition::Not>(
-                std::make_unique<Condition::MeterValue>(
+            std::make_unique<focs::Not>(
+                std::make_unique<focs::MeterValue>(
                     METER_STRUCTURE,
                     nullptr,
                     std::make_unique<focs::Constant<double>>(0.0))),
 
-            std::unique_ptr<Condition::Condition>{VisibleEnemyOfOwnerCondition()});
+            std::unique_ptr<focs::Condition>{VisibleEnemyOfOwnerCondition()});
 
-    const std::unique_ptr<Condition::Condition> is_enemy_ship_fighter_or_armed_planet =
-        std::make_unique<Condition::And>(
-            std::unique_ptr<Condition::Condition>{VisibleEnemyOfOwnerCondition()},  // enemies
-            std::make_unique<Condition::Or>(
-                std::make_unique<Condition::Or>(
-                    std::make_unique<Condition::And>(
-                        std::make_unique<Condition::Type>(OBJ_SHIP),
-                        std::make_unique<Condition::Not>(
-                            std::make_unique<Condition::MeterValue>(
+    const std::unique_ptr<focs::Condition> is_enemy_ship_fighter_or_armed_planet =
+        std::make_unique<focs::And>(
+            std::unique_ptr<focs::Condition>{VisibleEnemyOfOwnerCondition()},  // enemies
+            std::make_unique<focs::Or>(
+                std::make_unique<focs::Or>(
+                    std::make_unique<focs::And>(
+                        std::make_unique<focs::Type>(OBJ_SHIP),
+                        std::make_unique<focs::Not>(
+                            std::make_unique<focs::MeterValue>(
                                 METER_STRUCTURE,
                                 nullptr,
                                 std::make_unique<focs::Constant<double>>(0.0)))),
-                    std::make_unique<Condition::Type>(OBJ_FIGHTER)),
+                    std::make_unique<focs::Type>(OBJ_FIGHTER)),
 
-                std::make_unique<Condition::And>(
-                    std::make_unique<Condition::Type>(OBJ_PLANET),
-                    std::make_unique<Condition::Or>(
-                        std::make_unique<Condition::Not>(
-                            std::make_unique<Condition::MeterValue>(
+                std::make_unique<focs::And>(
+                    std::make_unique<focs::Type>(OBJ_PLANET),
+                    std::make_unique<focs::Or>(
+                        std::make_unique<focs::Not>(
+                            std::make_unique<focs::MeterValue>(
                                 METER_DEFENSE,
                                 nullptr,
                                 std::make_unique<focs::Constant<double>>(0.0))),
-                        std::make_unique<Condition::Not>(
-                            std::make_unique<Condition::MeterValue>(
+                        std::make_unique<focs::Not>(
+                            std::make_unique<focs::MeterValue>(
                                 METER_SHIELD,
                                 nullptr,
                                 std::make_unique<focs::Constant<double>>(0.0))),
-                        std::make_unique<Condition::Not>(
-                            std::make_unique<Condition::MeterValue>(
+                        std::make_unique<focs::Not>(
+                            std::make_unique<focs::MeterValue>(
                                 METER_CONSTRUCTION,
                                 nullptr,
                                 std::make_unique<focs::Constant<double>>(0.0)))))));
 
-    const std::unique_ptr<Condition::Condition> if_source_is_planet_then_ships_else_all =
-        std::make_unique<Condition::Or>(
-            std::make_unique<Condition::And>(     // if source is a planet, match ships
-                std::make_unique<Condition::Number>(
+    const std::unique_ptr<focs::Condition> if_source_is_planet_then_ships_else_all =
+        std::make_unique<focs::Or>(
+            std::make_unique<focs::And>(     // if source is a planet, match ships
+                std::make_unique<focs::Number>(
                     std::make_unique<focs::Constant<int>>(1), // minimum objects matching subcondition
                     nullptr,
-                    std::make_unique<Condition::And>(             // subcondition: source is a planet
-                        std::make_unique<Condition::Source>(),
-                        std::make_unique<Condition::Type>(OBJ_PLANET)
+                    std::make_unique<focs::And>(             // subcondition: source is a planet
+                        std::make_unique<focs::Source>(),
+                        std::make_unique<focs::Type>(OBJ_PLANET)
                     )
                 ),
-                std::make_unique<Condition::Type>(OBJ_SHIP)
+                std::make_unique<focs::Type>(OBJ_SHIP)
             ),
 
-            std::make_unique<Condition::Number>(  // if source is not a planet, match anything
+            std::make_unique<focs::Number>(  // if source is not a planet, match anything
                 nullptr,
                 std::make_unique<focs::Constant<int>>(0),     // maximum objects matching subcondition
-                std::make_unique<Condition::And>(                 // subcondition: source is a planet
-                    std::make_unique<Condition::Source>(),
-                    std::make_unique<Condition::Type>(OBJ_PLANET)
+                std::make_unique<focs::And>(                 // subcondition: source is a planet
+                    std::make_unique<focs::Source>(),
+                    std::make_unique<focs::Type>(OBJ_PLANET)
                 )
             )
         );
@@ -374,7 +374,7 @@ namespace {
     struct PartAttackInfo {
         PartAttackInfo(ShipPartClass part_class_, const std::string& part_name_,
                        float part_attack_,
-                       const ::Condition::Condition* combat_targets_ = nullptr) :
+                       const ::focs::Condition* combat_targets_ = nullptr) :
             part_class(part_class_),
             ship_part_name(part_name_),
             part_attack(part_attack_),
@@ -383,7 +383,7 @@ namespace {
         PartAttackInfo(ShipPartClass part_class_, const std::string& part_name_,
                        int fighters_launched_, float fighter_damage_,
                        const std::string& fighter_type_name_,
-                       const ::Condition::Condition* combat_targets_ = nullptr) :
+                       const ::focs::Condition* combat_targets_ = nullptr) :
             part_class(part_class_),
             ship_part_name(part_name_),
             combat_targets(combat_targets_),
@@ -395,7 +395,7 @@ namespace {
         ShipPartClass                       part_class = INVALID_SHIP_PART_CLASS;
         std::string                         ship_part_name;
         float                               part_attack = 0.0f;     // for direct damage parts
-        const ::Condition::Condition*       combat_targets = nullptr;
+        const ::focs::Condition*       combat_targets = nullptr;
         int                                 fighters_launched = 0;  // for fighter bays, input value should be limited by ship available fighters to launch
         float                               fighter_damage = 0.0f;  // for fighter bays, input value should be determined by ship fighter weapon setup
         std::string                         fighter_type_name;
@@ -886,7 +886,7 @@ namespace {
         float fighter_attack = 0.0f;
         std::string fighter_name = UserString("OBJ_FIGHTER");
         std::map<std::string, int> part_fighter_launch_capacities;
-        const ::Condition::Condition* fighter_combat_targets = nullptr;
+        const ::focs::Condition* fighter_combat_targets = nullptr;
 
         // determine what ship does during combat, based on parts and their meters...
         for (const auto& part_name : design->Parts()) {
@@ -894,7 +894,7 @@ namespace {
             if (!part)
                 continue;
             ShipPartClass part_class = part->Class();
-            const ::Condition::Condition* part_combat_targets = part->CombatTargets();
+            const ::focs::Condition* part_combat_targets = part->CombatTargets();
 
             // direct weapon and fighter-related parts all handled differently...
             if (part_class == PC_DIRECT_WEAPON) {
@@ -1008,7 +1008,7 @@ namespace {
         std::vector<int> AddFighters(int number, float damage, int owner_empire_id,
                                      int from_ship_id, const std::string& species,
                                      const std::string& fighter_name,
-                                     const Condition::Condition* combat_targets)
+                                     const focs::Condition* combat_targets)
         {
             std::vector<int> retval;
 
@@ -1331,7 +1331,7 @@ namespace {
         return weapons;
     }
 
-    const Condition::Condition* SpeciesTargettingCondition(const std::shared_ptr<UniverseObject>& attacker) {
+    const focs::Condition* SpeciesTargettingCondition(const std::shared_ptr<UniverseObject>& attacker) {
         if (!attacker)
             return if_source_is_planet_then_ships_else_all.get();
 
@@ -1349,7 +1349,7 @@ namespace {
         return species->CombatTargets();
     }
 
-    void AddAllObjectsSet(ObjectMap& obj_map, Condition::ObjectSet& condition_non_targets) {
+    void AddAllObjectsSet(ObjectMap& obj_map, focs::ObjectSet& condition_non_targets) {
         condition_non_targets.reserve(condition_non_targets.size() + obj_map.ExistingObjects().size());
         std::transform(obj_map.ExistingObjects().begin(), obj_map.ExistingObjects().end(),  // ExistingObjects() here does not consider whether objects have been destroyed during this combat
                        std::back_inserter(condition_non_targets), [](const std::map<int, std::shared_ptr<const UniverseObject>>::value_type& p) {
@@ -1396,15 +1396,15 @@ namespace {
             TraceLogger(combat) << "Weapon targeting condition: " << weapon.combat_targets->Dump();
 
 
-            Condition::ObjectSet targets, rejected_targets;
+            focs::ObjectSet targets, rejected_targets;
             AddAllObjectsSet(combat_state.combat_info.objects, targets);
 
             // attacker is source object for condition evaluation. use combat-specific vis info.
             ScriptingContext context(attacker, combat_state.combat_info);
 
             // apply species targeting condition and then weapon targeting condition
-            species_targetting_condition->Eval(context, targets, rejected_targets, Condition::MATCHES);
-            weapon.combat_targets->Eval(context, targets, rejected_targets, Condition::MATCHES);
+            species_targetting_condition->Eval(context, targets, rejected_targets, focs::MATCHES);
+            weapon.combat_targets->Eval(context, targets, rejected_targets, focs::MATCHES);
 
 
             if (targets.empty()) {

@@ -21,7 +21,7 @@ namespace parse { namespace detail {
                 std::string,
                 bool,
                 value_ref_payload<int>,
-                parse::detail::MovableEnvelope<Condition::Condition>
+                parse::detail::MovableEnvelope<focs::Condition>
                 >
             > generate_sitrep_message_rule;
 

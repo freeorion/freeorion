@@ -410,7 +410,7 @@ ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id) c
             for (const auto& psc : bt->ProductionSpecialConsumption()) {
                 if (!psc.second.first)
                     continue;
-                Condition::ObjectSet matches;
+                focs::ObjectSet matches;
                 // if a condition selectin gwhere to take resources from was specified, use it.
                 // Otherwise take from the production location
                 if (psc.second.second) {

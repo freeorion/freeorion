@@ -45,7 +45,7 @@ namespace parse { namespace detail {
                 non_ship_part_meter_type_enum
                 >  -(label(tok.Low_)  > double_rules.expr)
                 >  -(label(tok.High_) > double_rules.expr)
-            ) [ _val = construct_movable_(new_<Condition::MeterValue>(
+            ) [ _val = construct_movable_(new_<focs::MeterValue>(
                 _1,
                 deconstruct_movable_(_2, _pass),
                 deconstruct_movable_(_3, _pass))) ]
@@ -58,7 +58,7 @@ namespace parse { namespace detail {
                 >   label(tok.Meter_)   >   ship_part_meter_type_enum
                 >  -(label(tok.Low_)    >   double_rules.expr)
                 >  -(label(tok.High_)   >   double_rules.expr)
-            ) [ _val = construct_movable_(new_<Condition::ShipPartMeterValue>(
+            ) [ _val = construct_movable_(new_<focs::ShipPartMeterValue>(
                 deconstruct_movable_(_1, _pass),
                 _2,
                 deconstruct_movable_(_3, _pass),
@@ -72,7 +72,7 @@ namespace parse { namespace detail {
                 >   label(tok.Meter_)    >   tok.string
                 >  -(label(tok.Low_)     >   double_rules.expr)
                 >  -(label(tok.High_)    >   double_rules.expr)
-            ) [ _val = construct_movable_(new_<Condition::EmpireMeterValue>(
+            ) [ _val = construct_movable_(new_<focs::EmpireMeterValue>(
                 deconstruct_movable_(_1, _pass),
                 _2,
                 deconstruct_movable_(_3, _pass),
@@ -85,7 +85,7 @@ namespace parse { namespace detail {
                 >>   label(tok.Meter_))  >   tok.string
                 >  -(label(tok.Low_)     >   double_rules.expr)
                 >  -(label(tok.High_)    >   double_rules.expr)
-            ) [ _val = construct_movable_(new_<Condition::EmpireMeterValue>(
+            ) [ _val = construct_movable_(new_<focs::EmpireMeterValue>(
                 _1,
                 deconstruct_movable_(_2, _pass),
                 deconstruct_movable_(_3, _pass))) ]

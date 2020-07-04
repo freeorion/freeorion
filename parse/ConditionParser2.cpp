@@ -39,7 +39,7 @@ namespace parse { namespace detail {
                         >   label(tok.Name_) >  string_grammar
                         > -(label(tok.Low_)  >  castable_int_rules.flexible_int )
                         > -(label(tok.High_) >  castable_int_rules.flexible_int )
-                ) [ _val = construct_movable_(new_<Condition::HasSpecial>(
+                ) [ _val = construct_movable_(new_<focs::HasSpecial>(
                     deconstruct_movable_(_1, _pass),
                     deconstruct_movable_(_2, _pass),
                     deconstruct_movable_(_3, _pass))) ]
@@ -59,7 +59,7 @@ namespace parse { namespace detail {
                     > -(label(tok.Empire_) >    int_rules.expr)
                     > -(label(tok.Low_)    >    castable_int_rules.flexible_int)
                     > -(label(tok.High_)   >    castable_int_rules.flexible_int)
-                ) [ _val = construct_movable_(new_<Condition::Enqueued>(
+                ) [ _val = construct_movable_(new_<focs::Enqueued>(
                     BT_BUILDING,
                     deconstruct_movable_(_1, _pass),
                     deconstruct_movable_(_2, _pass),
@@ -74,7 +74,7 @@ namespace parse { namespace detail {
                     > -(label(tok.Empire_) >    int_rules.expr)
                     > -(label(tok.Low_)    >    castable_int_rules.flexible_int)
                     > -(label(tok.High_)   >    castable_int_rules.flexible_int)
-                ) [ _val = construct_movable_(new_<Condition::Enqueued>(
+                ) [ _val = construct_movable_(new_<focs::Enqueued>(
                     deconstruct_movable_(_1, _pass),
                     deconstruct_movable_(_2, _pass),
                     deconstruct_movable_(_3, _pass),
@@ -88,7 +88,7 @@ namespace parse { namespace detail {
                     > -(label(tok.Empire_) >    int_rules.expr)
                     > -(label(tok.Low_)    >    castable_int_rules.flexible_int)
                     > -(label(tok.High_)   >    castable_int_rules.flexible_int)
-                ) [ _val = construct_movable_(new_<Condition::Enqueued>(
+                ) [ _val = construct_movable_(new_<focs::Enqueued>(
                     BT_SHIP,
                     deconstruct_movable_(_1, _pass),
                     deconstruct_movable_(_2, _pass),
@@ -101,7 +101,7 @@ namespace parse { namespace detail {
                     > -(label(tok.Empire_) >    int_rules.expr)
                     > -(label(tok.Low_)    >    castable_int_rules.flexible_int)
                     > -(label(tok.High_)   >    castable_int_rules.flexible_int)
-                ) [ _val = construct_movable_(new_<Condition::Enqueued>(
+                ) [ _val = construct_movable_(new_<focs::Enqueued>(
                     INVALID_BUILD_TYPE,
                     nullptr,
                     deconstruct_movable_(_1, _pass),
@@ -114,7 +114,7 @@ namespace parse { namespace detail {
                     > -(label(tok.Low_)   > castable_int_rules.flexible_int)
                     > -(label(tok.High_)  > castable_int_rules.flexible_int)
                     >   label(tok.Name_)  > string_grammar
-                ) [ _val = construct_movable_(new_<Condition::DesignHasPart>(
+                ) [ _val = construct_movable_(new_<focs::DesignHasPart>(
                     deconstruct_movable_(_3, _pass),
                     deconstruct_movable_(_1, _pass),
                     deconstruct_movable_(_2, _pass))) ]
@@ -125,7 +125,7 @@ namespace parse { namespace detail {
                     > -(label(tok.Low_)   > castable_int_rules.flexible_int)
                     > -(label(tok.High_)  > castable_int_rules.flexible_int)
                     >   label(tok.Class_) > ship_part_class_enum
-                ) [ _val = construct_movable_(new_<Condition::DesignHasPartClass>(
+                ) [ _val = construct_movable_(new_<focs::DesignHasPartClass>(
                     _3,
                     deconstruct_movable_(_1, _pass),
                     deconstruct_movable_(_2, _pass))) ]
@@ -134,13 +134,13 @@ namespace parse { namespace detail {
         in_system
             =   (   omit_[tok.InSystem_]
                     >  -(label(tok.ID_)  > int_rules.expr)
-                ) [ _val = construct_movable_(new_<Condition::InOrIsSystem>(deconstruct_movable_(_1, _pass))) ]
+                ) [ _val = construct_movable_(new_<focs::InOrIsSystem>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         on_planet
             =   (   omit_[tok.OnPlanet_]
                     >  -(label(tok.ID_)  > int_rules.expr)
-                ) [ _val = construct_movable_(new_<Condition::OnPlanet>(deconstruct_movable_(_1, _pass))) ]
+                ) [ _val = construct_movable_(new_<focs::OnPlanet>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         start

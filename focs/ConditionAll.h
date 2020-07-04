@@ -5,13 +5,8 @@
 #include "Condition.h"
 
 
-/** this namespace holds Condition and its subclasses; these classes
-  * represent predicates about UniverseObjects used by, for instance, the
-  * Effect system. */
-namespace Condition {
-
 /** Matches all objects. */
-struct FO_COMMON_API All final : public Condition {
+struct FO_COMMON_API focs::All final : public Condition {
     All();
 
     bool operator==(const Condition& rhs) const override;
@@ -23,8 +18,6 @@ struct FO_COMMON_API All final : public Condition {
     {}
     unsigned int GetCheckSum() const override;
 };
-
-}
 
 
 #endif

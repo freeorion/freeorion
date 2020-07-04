@@ -22,8 +22,8 @@ namespace {
                   std::unique_ptr<focs::ValueRef<double>>&& increase_vr)
     {
         typedef std::vector<std::unique_ptr<Effect::Effect>> Effects;
-        auto scope = std::make_unique<Condition::Source>();
-        auto activation = std::make_unique<Condition::Source>();
+        auto scope = std::make_unique<focs::Source>();
+        auto activation = std::make_unique<focs::Source>();
 
         auto vr =
             std::make_unique<focs::Operation<double>>(
@@ -52,8 +52,8 @@ namespace {
                   std::unique_ptr<focs::ValueRef<double>>&& increase_vr, bool allow_stacking = true)
     {
         typedef std::vector<std::unique_ptr<Effect::Effect>> Effects;
-        auto scope = std::make_unique<Condition::Source>();
-        auto activation = std::make_unique<Condition::Source>();
+        auto scope = std::make_unique<focs::Source>();
+        auto activation = std::make_unique<focs::Source>();
 
         auto value_vr = std::make_unique<focs::Operation<double>>(
             focs::PLUS,
@@ -144,7 +144,7 @@ ShipPart::ShipPart(ShipPartClass part_class, double capacity, double stat2,
                    std::string&& description, std::set<std::string>&& exclusions,
                    std::vector<ShipSlotType> mountable_slot_types,
                    std::string&& icon, bool add_standard_capacity_effect,
-                   std::unique_ptr<Condition::Condition>&& combat_targets) :
+                   std::unique_ptr<focs::Condition>&& combat_targets) :
     m_name(std::move(name)),
     m_description(std::move(description)),
     m_class(part_class),

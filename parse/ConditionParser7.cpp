@@ -47,42 +47,42 @@ namespace parse { namespace detail {
         ordered_bombarded_by
             =    tok.OrderedBombardedBy_
             >   -label(tok.Condition_) > condition_parser
-            [ _val = construct_movable_(new_<Condition::OrderedBombarded>(deconstruct_movable_(_1, _pass))) ]
+            [ _val = construct_movable_(new_<focs::OrderedBombarded>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         contains
             =    tok.Contains_
             >   -label(tok.Condition_) > condition_parser
-            [ _val = construct_movable_(new_<Condition::Contains>(deconstruct_movable_(_1, _pass))) ]
+            [ _val = construct_movable_(new_<focs::Contains>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         contained_by
             =    tok.ContainedBy_
             >   -label(tok.Condition_) > condition_parser
-            [ _val = construct_movable_(new_<Condition::ContainedBy>(deconstruct_movable_(_1, _pass))) ]
+            [ _val = construct_movable_(new_<focs::ContainedBy>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         star_type
             =    tok.Star_
             >    label(tok.Type_)
             >    one_or_more_star_types
-            [ _val = construct_movable_(new_<Condition::StarType>(deconstruct_movable_vector_(_1, _pass))) ]
+            [ _val = construct_movable_(new_<focs::StarType>(deconstruct_movable_vector_(_1, _pass))) ]
             ;
 
         content_type =
-                tok.Building_   [ _val = Condition::CONTENT_BUILDING ]
-            |   tok.Species_    [ _val = Condition::CONTENT_SPECIES ]
-            |   tok.Hull_       [ _val = Condition::CONTENT_SHIP_HULL ]
-            |   tok.Part_       [ _val = Condition::CONTENT_SHIP_PART ]
-            |   tok.Special_    [ _val = Condition::CONTENT_SPECIAL ]
-            |   tok.Focus_      [ _val = Condition::CONTENT_FOCUS ];
+                tok.Building_   [ _val = focs::CONTENT_BUILDING ]
+            |   tok.Species_    [ _val = focs::CONTENT_SPECIES ]
+            |   tok.Hull_       [ _val = focs::CONTENT_SHIP_HULL ]
+            |   tok.Part_       [ _val = focs::CONTENT_SHIP_PART ]
+            |   tok.Special_    [ _val = focs::CONTENT_SPECIAL ]
+            |   tok.Focus_      [ _val = focs::CONTENT_FOCUS ];
 
         location
             =   (omit_[tok.Location_]
                  >    label(tok.Type_)  >   content_type
                  >    label(tok.Name_)  >   string_grammar
                  >  -(label(tok.Name_)  >   string_grammar))
-            [ _val = construct_movable_(new_<Condition::Location>(
+            [ _val = construct_movable_(new_<focs::Location>(
                     _1,
                     deconstruct_movable_(_2, _pass),
                     deconstruct_movable_(_3, _pass))) ]
@@ -92,7 +92,7 @@ namespace parse { namespace detail {
             =   (omit_[tok.CombatTargets_]
                  >    label(tok.Type_)  >   content_type
                  >    label(tok.Name_)  >   string_grammar)
-            [ _val = construct_movable_(new_<Condition::CombatTarget>(
+            [ _val = construct_movable_(new_<focs::CombatTarget>(
                     _1,
                     deconstruct_movable_(_2, _pass))) ]
             ;
@@ -101,7 +101,7 @@ namespace parse { namespace detail {
             = (
                     omit_[tok.EmpireHasBuildingAvailable_]
                  >  label(tok.Name_) > string_grammar
-              ) [ _val = construct_movable_(new_<Condition::OwnerHasBuildingTypeAvailable>(
+              ) [ _val = construct_movable_(new_<focs::OwnerHasBuildingTypeAvailable>(
                     deconstruct_movable_(_1, _pass))) ]
             ;
 
@@ -110,7 +110,7 @@ namespace parse { namespace detail {
                     omit_[tok.EmpireHasBuildingAvailable_]
                  >> label(tok.Empire_) > int_rules.expr
                  >  label(tok.Name_)   > string_grammar
-              ) [ _val = construct_movable_(new_<Condition::OwnerHasBuildingTypeAvailable>(
+              ) [ _val = construct_movable_(new_<focs::OwnerHasBuildingTypeAvailable>(
                     deconstruct_movable_(_1, _pass),
                     deconstruct_movable_(_2, _pass))) ]
             ;
@@ -124,7 +124,7 @@ namespace parse { namespace detail {
             = (
                     omit_[tok.EmpireHasShipDesignAvailable_]
                  >> label(tok.DesignID_) > int_rules.expr
-              ) [ _val = construct_movable_(new_<Condition::OwnerHasShipDesignAvailable>(
+              ) [ _val = construct_movable_(new_<focs::OwnerHasShipDesignAvailable>(
                     deconstruct_movable_(_1, _pass))) ]
             ;
 
@@ -133,7 +133,7 @@ namespace parse { namespace detail {
                     omit_[tok.EmpireHasShipDesignAvailable_]
                  >> label(tok.Empire_)   > int_rules.expr
                  >  label(tok.DesignID_) > int_rules.expr
-              ) [ _val = construct_movable_(new_<Condition::OwnerHasShipDesignAvailable>(
+              ) [ _val = construct_movable_(new_<focs::OwnerHasShipDesignAvailable>(
                     deconstruct_movable_(_1, _pass),
                     deconstruct_movable_(_2, _pass))) ]
             ;
@@ -147,7 +147,7 @@ namespace parse { namespace detail {
             = (
                     omit_[tok.OwnerHasShipPartAvailable_]
                  >  label(tok.Name_) > string_grammar
-              ) [ _val = construct_movable_(new_<Condition::OwnerHasShipPartAvailable>(
+              ) [ _val = construct_movable_(new_<focs::OwnerHasShipPartAvailable>(
                     deconstruct_movable_(_1, _pass))) ]
             ;
 
@@ -156,7 +156,7 @@ namespace parse { namespace detail {
                     omit_[tok.EmpireHasShipPartAvailable_]
                  >> label(tok.Empire_) > int_rules.expr
                  >  label(tok.Name_)   > string_grammar
-              ) [ _val = construct_movable_(new_<Condition::OwnerHasShipPartAvailable>(
+              ) [ _val = construct_movable_(new_<focs::OwnerHasShipPartAvailable>(
                     deconstruct_movable_(_1, _pass),
                     deconstruct_movable_(_2, _pass))) ]
             ;

@@ -11,13 +11,11 @@
 #include <boost/iterator/filter_iterator.hpp>
 #include <boost/optional/optional.hpp>
 #include "EnumsFwd.h"
+#include "../focs/focs.hpp"
 #include "../util/Export.h"
 #include "../util/Pending.h"
 
 
-namespace Condition {
-    struct Condition;
-}
 namespace Effect {
     class EffectsGroup;
 }
@@ -34,14 +32,14 @@ class FO_COMMON_API FocusType {
 public:
     FocusType() = default;
     FocusType(std::string& name, std::string& description,
-              std::unique_ptr<Condition::Condition>&& location,
+              std::unique_ptr<focs::Condition>&& location,
               std::string& graphic);
 
     ~FocusType();
 
     const std::string&          Name() const        { return m_name; }          ///< returns the name for this focus type
     const std::string&          Description() const { return m_description; }   ///< returns a text description of this focus type
-    const Condition::Condition* Location() const    { return m_location.get(); }///< returns the condition that determines whether an UniverseObject can use this FocusType
+    const focs::Condition* Location() const    { return m_location.get(); }///< returns the condition that determines whether an UniverseObject can use this FocusType
     const std::string&          Graphic() const     { return m_graphic; }       ///< returns the name of the grapic file for this focus type
     std::string                 Dump(unsigned short ntabs = 0) const;           ///< returns a data file format representation of this object
 
@@ -56,7 +54,7 @@ public:
 private:
     std::string                                 m_name;
     std::string                                 m_description;
-    std::shared_ptr<const Condition::Condition> m_location;
+    std::shared_ptr<const focs::Condition> m_location;
     std::string                                 m_graphic;
 };
 
@@ -72,7 +70,7 @@ public:
             std::string&& preferred_focus,
             std::map<PlanetType, PlanetEnvironment>&& planet_environments,
             std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
-            std::unique_ptr<Condition::Condition>&& combat_targets,
+            std::unique_ptr<focs::Condition>&& combat_targets,
             bool playable, bool native, bool can_colonize, bool can_produce_ships,
             const std::set<std::string>& tags, std::string&& graphic);
 
@@ -87,8 +85,8 @@ public:
     const std::map<int, double>&            EmpireOpinions() const      { return m_empire_opinions; }       ///< returns the positive/negative opinions of this species about empires
     const std::map<std::string, double>&    OtherSpeciesOpinions() const{ return m_other_species_opinions; }///< returns the positive/negative opinions of this species about other species
 
-    const Condition::Condition*     Location() const                    { return m_location.get(); }        ///< returns the condition determining what planets on which this species may spawn
-    const Condition::Condition*     CombatTargets() const               { return m_combat_targets.get(); }  ///< returns the condition for possible targets. may be nullptr if no condition was specified.
+    const focs::Condition*     Location() const                    { return m_location.get(); }        ///< returns the condition determining what planets on which this species may spawn
+    const focs::Condition*     CombatTargets() const               { return m_combat_targets.get(); }  ///< returns the condition for possible targets. may be nullptr if no condition was specified.
 
     std::string                     Dump(unsigned short ntabs = 0) const;                                   ///< returns a data file format representation of this object
     const std::vector<FocusType>&   Foci() const                        { return m_foci; }                  ///< returns the focus types this species can use
@@ -141,8 +139,8 @@ private:
     std::map<PlanetType, PlanetEnvironment> m_planet_environments;
 
     std::vector<std::shared_ptr<Effect::EffectsGroup>>  m_effects;
-    std::unique_ptr<Condition::Condition>               m_location;
-    std::unique_ptr<Condition::Condition>               m_combat_targets;
+    std::unique_ptr<focs::Condition>               m_location;
+    std::unique_ptr<focs::Condition>               m_combat_targets;
 
     bool                                    m_playable;
     bool                                    m_native;

@@ -13,8 +13,8 @@ namespace {
     std::shared_ptr<Effect::EffectsGroup>
     IncreaseMeter(MeterType meter_type, double increase) {
         typedef std::vector<std::unique_ptr<Effect::Effect>> Effects;
-        auto scope = std::make_unique<Condition::Source>();
-        std::unique_ptr<Condition::Source> activation = nullptr;
+        auto scope = std::make_unique<focs::Source>();
+        std::unique_ptr<focs::Source> activation = nullptr;
         auto vr =
             std::make_unique<focs::Operation<double>>(
                 focs::PLUS,

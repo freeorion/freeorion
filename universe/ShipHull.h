@@ -116,7 +116,7 @@ public:
 
     //! Returns the condition that determines the locations where ShipDesign
     //! containing hull can be produced
-    auto Location() const -> const Condition::Condition*
+    auto Location() const -> const focs::Condition*
     { return m_location.get(); }
 
     //! Returns the names of other content that cannot be used in the same
@@ -166,7 +166,7 @@ private:
     std::set<std::string>                               m_tags;
     ConsumptionMap<MeterType>                           m_production_meter_consumption;
     ConsumptionMap<std::string>                         m_production_special_consumption;
-    std::unique_ptr<Condition::Condition>               m_location;
+    std::unique_ptr<focs::Condition>               m_location;
     std::set<std::string>                               m_exclusions;
     std::vector<std::shared_ptr<Effect::EffectsGroup>>  m_effects;
     std::string                                         m_graphic;

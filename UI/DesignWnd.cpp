@@ -1472,12 +1472,12 @@ PartGroupsType PartsListBox::GroupAvailableDisplayableParts(const Empire* empire
 namespace {
     // Checks if the Location condition of the check_part totally contains the Location condition of ref_part
     // i,e,, the ref_part condition is met anywhere the check_part condition is
-    bool LocationASubsumesLocationB(const Condition::Condition* check_part_loc,
-                                    const Condition::Condition* ref_part_loc)
+    bool LocationASubsumesLocationB(const focs::Condition* check_part_loc,
+                                    const focs::Condition* ref_part_loc)
     {
-        //const Condition::ConditionBase* check_part_loc = check_part->Location();
-        //const Condition::ConditionBase* ref_part_loc = ref_part->Location();
-        if (dynamic_cast<const Condition::All*>(ref_part_loc))
+        //const focs::ConditionBase* check_part_loc = check_part->Location();
+        //const focs::ConditionBase* ref_part_loc = ref_part->Location();
+        if (dynamic_cast<const focs::All*>(ref_part_loc))
             return true;
         if (!check_part_loc || !ref_part_loc)
             return false;
