@@ -270,16 +270,7 @@ namespace {
 
         }
         else if (dir_name == "ENC_SPECIES") {
-            // add links to category (Organic, Robotic, etc.) categorized species
-            for (const auto& entry : GetSpeciesManager()) {
-                std::string&& custom_category = DetermineCustomCategory(entry.second->Tags());
-                if (custom_category.empty()) {
-                    sorted_entries_list.emplace(UserString(entry.first),
-                                                std::make_pair(LinkTaggedText(VarText::SPECIES_TAG, entry.first) + "\n",
-                                                               entry.first));
-                }
-            }
-
+            // directory populated with list of links to other articles that list species
         }
         else if (dir_name == "ENC_HOMEWORLDS") {
             const SpeciesManager& species_manager = GetSpeciesManager();
@@ -537,7 +528,7 @@ namespace {
 
             // species
             for (const auto& entry : GetSpeciesManager())
-                if (DetermineCustomCategory(entry.second->Tags()) == dir_name)
+                if (dir_name == "ALL_SPECIES" || DetermineCustomCategory(entry.second->Tags()) == dir_name)
                     dir_entries.emplace(
                         UserString(entry.first),
                         std::make_pair(VarText::SPECIES_TAG, entry.first));
