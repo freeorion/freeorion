@@ -228,7 +228,10 @@ def _calculate_colonisation_priority():
     if num_colonies > colony_growth_barrier:
         return 0.0
     colony_cost = AIDependencies.COLONY_POD_COST * (1 + AIDependencies.COLONY_POD_UPKEEP * num_colonies)
-    turns_to_build = 8  # TODO: check for susp anim pods, build time 10
+    if tech_is_complete(AIDependencies.GRO_LIFE_CYCLE):
+        turns_to_build = 10
+    else:
+        turns_to_build = 8
     mil_prio = aistate.get_priority(PriorityType.PRODUCTION_MILITARY)
     allotted_portion = ([[[0.6, 0.8], [0.3, 0.4]], [[0.8, 0.9], [0.4, 0.6]]][galaxy_is_sparse]
                         [any(enemies_sighted)])
