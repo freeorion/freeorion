@@ -59,18 +59,6 @@ struct FO_COMMON_API ProductionQueue {
                 int location_, bool paused_ = false,
                 bool allowed_imperial_stockpile_use_ = true);
 
-        Element(BuildType build_type, std::string name, int empire_id_,
-                boost::uuids::uuid uuid_,
-                int ordered_, int remaining_, int blocksize_,
-                int location_, bool paused_ = false,
-                bool allowed_imperial_stockpile_use_ = true);
-
-        Element(BuildType build_type, int design_id, int empire_id_,
-                boost::uuids::uuid uuid_,
-                int ordered_, int remaining_, int blocksize_,
-                int location_, bool paused_ = false,
-                bool allowed_imperial_stockpile_use_ = true);
-
         ProductionItem      item;
         int                 empire_id = ALL_EMPIRES;
         int                 ordered = 0;                ///< how many of item (blocks) to produce
