@@ -21,10 +21,10 @@ namespace {
 DiplomaticMessage::DiplomaticMessage() :
     m_sender_empire(ALL_EMPIRES),
     m_recipient_empire(ALL_EMPIRES),
-    m_type(INVALID_DIPLOMATIC_MESSAGE_TYPE)
+    m_type(Type::INVALID)
 {}
 
-DiplomaticMessage::DiplomaticMessage(int sender_empire_id, int recipient_empire_id, DiplomaticMessageType type) :
+DiplomaticMessage::DiplomaticMessage(int sender_empire_id, int recipient_empire_id, Type type) :
     m_sender_empire(sender_empire_id),
     m_recipient_empire(recipient_empire_id),
     m_type(type)
@@ -44,16 +44,16 @@ std::string DiplomaticMessage::Dump() const {
     retval += "Dimplomatic message from : " + std::to_string(m_sender_empire) +
               " to: " + std::to_string(m_recipient_empire) + " about: ";
     switch (m_type) {
-    case WAR_DECLARATION:           retval += "War Declaration";            break;
-    case PEACE_PROPOSAL:            retval += "Peace Proposal";             break;
-    case ACCEPT_PEACE_PROPOSAL:     retval += "Accept Peace Proposal";      break;
-    case ALLIES_PROPOSAL:           retval += "Allies Proposal";            break;
-    case ACCEPT_ALLIES_PROPOSAL:    retval += "Accept Allies Proposal";     break;
-    case END_ALLIANCE_DECLARATION:  retval += "End Alliance Declaration";   break;
-    case CANCEL_PROPOSAL:           retval += "Cancel Proposal";            break;
-    case REJECT_PROPOSAL:           retval += "Reject Proposal";            break;
-    case INVALID_DIPLOMATIC_MESSAGE_TYPE:
-    default:                        retval += "Invalid / Unknown";          break;
+    case Type::WAR_DECLARATION:           retval += "War Declaration";            break;
+    case Type::PEACE_PROPOSAL:            retval += "Peace Proposal";             break;
+    case Type::ACCEPT_PEACE_PROPOSAL:     retval += "Accept Peace Proposal";      break;
+    case Type::ALLIES_PROPOSAL:           retval += "Allies Proposal";            break;
+    case Type::ACCEPT_ALLIES_PROPOSAL:    retval += "Accept Allies Proposal";     break;
+    case Type::END_ALLIANCE_DECLARATION:  retval += "End Alliance Declaration";   break;
+    case Type::CANCEL_PROPOSAL:           retval += "Cancel Proposal";            break;
+    case Type::REJECT_PROPOSAL:           retval += "Reject Proposal";            break;
+    case Type::INVALID:
+    default:                              retval += "Invalid / Unknown";          break;
     }
     return retval;
 }
@@ -77,26 +77,25 @@ DiplomaticStatusUpdateInfo::DiplomaticStatusUpdateInfo(int empire1_id_, int empi
 
 
 DiplomaticMessage WarDeclarationDiplomaticMessage(int sender_empire_id, int recipient_empire_id)
-{ return DiplomaticMessage(sender_empire_id, recipient_empire_id, DiplomaticMessage::WAR_DECLARATION); }
+{ return DiplomaticMessage(sender_empire_id, recipient_empire_id, DiplomaticMessage::Type::WAR_DECLARATION); }
 
 DiplomaticMessage PeaceProposalDiplomaticMessage(int sender_empire_id, int recipient_empire_id)
-{ return DiplomaticMessage(sender_empire_id, recipient_empire_id, DiplomaticMessage::PEACE_PROPOSAL); }
+{ return DiplomaticMessage(sender_empire_id, recipient_empire_id, DiplomaticMessage::Type::PEACE_PROPOSAL); }
 
 DiplomaticMessage AcceptPeaceDiplomaticMessage(int sender_empire_id, int recipient_empire_id)
-{ return DiplomaticMessage(sender_empire_id, recipient_empire_id, DiplomaticMessage::ACCEPT_PEACE_PROPOSAL); }
+{ return DiplomaticMessage(sender_empire_id, recipient_empire_id, DiplomaticMessage::Type::ACCEPT_PEACE_PROPOSAL); }
 
 DiplomaticMessage AlliesProposalDiplomaticMessage(int sender_empire_id, int recipient_empire_id)
-{ return DiplomaticMessage(sender_empire_id, recipient_empire_id, DiplomaticMessage::ALLIES_PROPOSAL); }
+{ return DiplomaticMessage(sender_empire_id, recipient_empire_id, DiplomaticMessage::Type::ALLIES_PROPOSAL); }
 
 DiplomaticMessage AcceptAlliesDiplomaticMessage(int sender_empire_id, int recipient_empire_id)
-{ return DiplomaticMessage(sender_empire_id, recipient_empire_id, DiplomaticMessage::ACCEPT_ALLIES_PROPOSAL); }
+{ return DiplomaticMessage(sender_empire_id, recipient_empire_id, DiplomaticMessage::Type::ACCEPT_ALLIES_PROPOSAL); }
 
 DiplomaticMessage EndAllianceDiplomaticMessage(int sender_empire_id, int recipient_empire_id)
-{ return DiplomaticMessage(sender_empire_id, recipient_empire_id, DiplomaticMessage::END_ALLIANCE_DECLARATION); }
+{ return DiplomaticMessage(sender_empire_id, recipient_empire_id, DiplomaticMessage::Type::END_ALLIANCE_DECLARATION); }
 
 DiplomaticMessage CancelDiplomaticMessage(int sender_empire_id, int recipient_empire_id)
-{ return DiplomaticMessage(sender_empire_id, recipient_empire_id, DiplomaticMessage::CANCEL_PROPOSAL); }
+{ return DiplomaticMessage(sender_empire_id, recipient_empire_id, DiplomaticMessage::Type::CANCEL_PROPOSAL); }
 
 DiplomaticMessage RejectProposalDiplomaticMessage(int sender_empire_id, int recipient_empire_id)
-{ return DiplomaticMessage(sender_empire_id, recipient_empire_id, DiplomaticMessage::REJECT_PROPOSAL); }
-
+{ return DiplomaticMessage(sender_empire_id, recipient_empire_id, DiplomaticMessage::Type::REJECT_PROPOSAL); }

@@ -596,10 +596,10 @@ namespace FreeOrionPython {
         // DiplomaticMessage //
         ///////////////////////
         class_<DiplomaticMessage>("diplomaticMessage")
-            .def(init<int, int, DiplomaticMessage::DiplomaticMessageType>())
-            .add_property("type",               &DiplomaticMessage::GetType)
-            .add_property("recipient",          &DiplomaticMessage::RecipientEmpireID)
-            .add_property("sender",             &DiplomaticMessage::SenderEmpireID)
+            .def(init<int, int, DiplomaticMessage::Type>())
+            .add_property("type",      &DiplomaticMessage::GetType)
+            .add_property("recipient", &DiplomaticMessage::RecipientEmpireID)
+            .add_property("sender",    &DiplomaticMessage::SenderEmpireID)
         ;
 
         ////////////////////////////
