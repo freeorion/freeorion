@@ -8,9 +8,10 @@
 #include <boost/python.hpp>
 
 namespace FreeOrionPython {
-    using boost::python::enum_;
     void WrapGameStateEnums() {
-        enum_<StarType>("starType")
+        namespace py = boost::python;
+
+        py::enum_<StarType>("starType")
             .value("blue",      STAR_BLUE)
             .value("white",     STAR_WHITE)
             .value("yellow",    STAR_YELLOW)
@@ -21,14 +22,14 @@ namespace FreeOrionPython {
             .value("noStar",    STAR_NONE)
             .value("unknown",   INVALID_STAR_TYPE)
         ;
-        enum_<Visibility>("visibility")
+        py::enum_<Visibility>("visibility")
             .value("invalid",   INVALID_VISIBILITY)
             .value("none",      VIS_NO_VISIBILITY)
             .value("basic",     VIS_BASIC_VISIBILITY)
             .value("partial",   VIS_PARTIAL_VISIBILITY)
             .value("full",      VIS_FULL_VISIBILITY)
         ;
-        enum_<PlanetSize>("planetSize")
+        py::enum_<PlanetSize>("planetSize")
             .value("tiny",      SZ_TINY)
             .value("small",     SZ_SMALL)
             .value("medium",    SZ_MEDIUM)
@@ -39,7 +40,7 @@ namespace FreeOrionPython {
             .value("noWorld",   SZ_NOWORLD)
             .value("unknown",   INVALID_PLANET_SIZE)
         ;
-        enum_<PlanetType>("planetType")
+        py::enum_<PlanetType>("planetType")
             .value("swamp",     PT_SWAMP)
             .value("radiated",  PT_RADIATED)
             .value("toxic",     PT_TOXIC)
@@ -53,31 +54,31 @@ namespace FreeOrionPython {
             .value("gasGiant",  PT_GASGIANT)
             .value("unknown",   INVALID_PLANET_TYPE)
         ;
-        enum_<PlanetEnvironment>("planetEnvironment")
+        py::enum_<PlanetEnvironment>("planetEnvironment")
             .value("uninhabitable", PE_UNINHABITABLE)
             .value("hostile",       PE_HOSTILE)
             .value("poor",          PE_POOR)
             .value("adequate",      PE_ADEQUATE)
             .value("good",          PE_GOOD)
         ;
-        enum_<TechStatus>("techStatus")
+        py::enum_<TechStatus>("techStatus")
             .value("unresearchable",    TS_UNRESEARCHABLE)
             .value("partiallyUnlocked", TS_HAS_RESEARCHED_PREREQ)
             .value("researchable",      TS_RESEARCHABLE)
             .value("complete",          TS_COMPLETE)
         ;
-        enum_<BuildType>("buildType")
+        py::enum_<BuildType>("buildType")
             .value("building",          BT_BUILDING)
             .value("ship",              BT_SHIP)
             .value("stockpile",         BT_STOCKPILE)
         ;
-        enum_<ResourceType>("resourceType")
+        py::enum_<ResourceType>("resourceType")
             .value("industry",          RE_INDUSTRY)
             .value("influence",         RE_INFLUENCE)
             .value("research",          RE_RESEARCH)
             .value("stockpile",         RE_STOCKPILE)
         ;
-        enum_<MeterType>("meterType")
+        py::enum_<MeterType>("meterType")
             .value("targetPopulation",  METER_TARGET_POPULATION)
             .value("targetIndustry",    METER_TARGET_INDUSTRY)
             .value("targetResearch",    METER_TARGET_RESEARCH)
@@ -122,12 +123,12 @@ namespace FreeOrionPython {
             .value("detection",         METER_DETECTION)
             .value("speed",             METER_SPEED)
         ;
-        enum_<DiplomaticStatus>("diplomaticStatus")
+        py::enum_<DiplomaticStatus>("diplomaticStatus")
             .value("war",               DIPLO_WAR)
             .value("peace",             DIPLO_PEACE)
             .value("allied",            DIPLO_ALLIED)
         ;
-        enum_<DiplomaticMessage::Type>("diplomaticMessageType")
+        py::enum_<DiplomaticMessage::Type>("diplomaticMessageType")
             .value("noMessage",             DiplomaticMessage::Type::INVALID)
             .value("warDeclaration",        DiplomaticMessage::Type::WAR_DECLARATION)
             .value("peaceProposal",         DiplomaticMessage::Type::PEACE_PROPOSAL)
@@ -138,12 +139,12 @@ namespace FreeOrionPython {
             .value("cancelProposal",        DiplomaticMessage::Type::CANCEL_PROPOSAL)
             .value("rejectProposal",        DiplomaticMessage::Type::REJECT_PROPOSAL)
         ;
-        enum_<CaptureResult>("captureResult")
+        py::enum_<CaptureResult>("captureResult")
             .value("capture",       CR_CAPTURE)
             .value("destroy",       CR_DESTROY)
             .value("retain",        CR_RETAIN)
         ;
-        enum_<EffectsCauseType>("effectsCauseType")
+        py::enum_<EffectsCauseType>("effectsCauseType")
             .value("invalid",       INVALID_EFFECTS_GROUP_CAUSE_TYPE)
             .value("unknown",       ECT_UNKNOWN_CAUSE)
             .value("inherent",      ECT_INHERENT)
@@ -156,12 +157,12 @@ namespace FreeOrionPython {
             .value("shipHull",      ECT_SHIP_HULL)
             .value("policy",        ECT_POLICY)
         ;
-        enum_<ShipSlotType>("shipSlotType")
+        py::enum_<ShipSlotType>("shipSlotType")
             .value("external",      SL_EXTERNAL)
             .value("internal",      SL_INTERNAL)
             .value("core",          SL_CORE)
         ;
-        enum_<ShipPartClass>("shipPartClass")
+        py::enum_<ShipPartClass>("shipPartClass")
             .value("shortRange",        PC_DIRECT_WEAPON)
             .value("fighterBay",        PC_FIGHTER_BAY)
             .value("fighterHangar",     PC_FIGHTER_HANGAR)
@@ -180,7 +181,7 @@ namespace FreeOrionPython {
             .value("influence",         PC_INFLUENCE)
             .value("productionLocation",PC_PRODUCTION_LOCATION)
         ;
-        enum_<UnlockableItemType>("unlockableItemType")
+        py::enum_<UnlockableItemType>("unlockableItemType")
             .value("invalid",       INVALID_UNLOCKABLE_ITEM_TYPE)
             .value("building",      UIT_BUILDING)
             .value("shipPart",      UIT_SHIP_PART)
@@ -189,7 +190,7 @@ namespace FreeOrionPython {
             .value("tech",          UIT_TECH)
             .value("policy",        UIT_POLICY)
         ;
-        enum_<Aggression>("aggression")
+        py::enum_<Aggression>("aggression")
             .value("invalid",       INVALID_AGGRESSION)
             .value("beginner",      BEGINNER)
             .value("turtle",        TURTLE)
@@ -198,7 +199,7 @@ namespace FreeOrionPython {
             .value("aggressive",    AGGRESSIVE)
             .value("maniacal",      MANIACAL)
         ;
-        enum_<GalaxySetupOption>("galaxySetupOption")
+        py::enum_<GalaxySetupOption>("galaxySetupOption")
             .value("invalid",       INVALID_GALAXY_SETUP_OPTION)
             .value("none",          GALAXY_SETUP_NONE)
             .value("low",           GALAXY_SETUP_LOW)
@@ -206,7 +207,7 @@ namespace FreeOrionPython {
             .value("high",          GALAXY_SETUP_HIGH)
             .value("random",        GALAXY_SETUP_RANDOM)
         ;
-        enum_<Shape>("galaxyShape")
+        py::enum_<Shape>("galaxyShape")
             .value("invalid",       INVALID_SHAPE)
             .value("spiral2",       SPIRAL_2)
             .value("spiral3",       SPIRAL_3)
@@ -219,14 +220,14 @@ namespace FreeOrionPython {
             .value("ring",          RING)
             .value("random",        RANDOM)
         ;
-        enum_<GameRules::Type>("ruleType")
+        py::enum_<GameRules::Type>("ruleType")
             .value("invalid",       GameRules::Type::INVALID)
             .value("toggle",        GameRules::Type::TOGGLE)
             .value("int",           GameRules::Type::INT)
             .value("double",        GameRules::Type::DOUBLE)
             .value("string",        GameRules::Type::STRING)
         ;
-        enum_<Networking::RoleType>("roleType")
+        py::enum_<Networking::RoleType>("roleType")
             .value("host",                Networking::ROLE_HOST)
             .value("clientTypeModerator", Networking::ROLE_CLIENT_TYPE_MODERATOR)
             .value("clientTypePlayer",    Networking::ROLE_CLIENT_TYPE_PLAYER)

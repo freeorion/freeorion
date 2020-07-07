@@ -8,11 +8,6 @@
 
 
 namespace FreeOrionPython {
-    using boost::python::class_;
-    using boost::python::no_init;
-    using boost::python::def;
-    using boost::python::iterator;
-
     /* SetWrapper class encapsulates functions that expose the STL std::set<>
      * class to Python in a limited, read-only fashion.  The set can be iterated
      * through in Python, and printed. */
@@ -32,13 +27,15 @@ namespace FreeOrionPython {
         static SetIterator  end(const Set& self) { return self.end(); }
 
         static void Wrap(const std::string& python_name) {
-            class_<Set>(python_name.c_str(), no_init)
+            namespace py = boost::python;
+
+            py::class_<Set>(python_name.c_str(), py::no_init)
                 .def("__len__",         &size)
                 .def("size",            &size)
                 .def("empty",           &empty)
                 .def("__contains__",    &contains)
                 .def("count",           &count)
-                .def("__iter__",        iterator<Set>())
+                .def("__iter__",        py::iterator<Set>())
             ;
         }
     };

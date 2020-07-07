@@ -5,28 +5,27 @@
 
 #include <string>
 
-using boost::python::def;
-using boost::python::return_value_policy;
-using boost::python::return_by_value;
+namespace py = boost::python;
+
 
 namespace {
-    boost::python::object GetOptionsDBOptionStr(std::string const &option)
-    { return GetOptionsDB().OptionExists(option) ? boost::python::str(GetOptionsDB().Get<std::string>(option)) : boost::python::str(); }
+    py::object GetOptionsDBOptionStr(std::string const &option)
+    { return GetOptionsDB().OptionExists(option) ? py::str(GetOptionsDB().Get<std::string>(option)) : py::str(); }
 
-    boost::python::object GetOptionsDBOptionInt(std::string const &option)
-    { return GetOptionsDB().OptionExists(option) ? boost::python::object(GetOptionsDB().Get<int>(option)) : boost::python::object(); }
+    py::object GetOptionsDBOptionInt(std::string const &option)
+    { return GetOptionsDB().OptionExists(option) ? py::object(GetOptionsDB().Get<int>(option)) : py::object(); }
 
-    boost::python::object GetOptionsDBOptionBool(std::string const &option)
-    { return GetOptionsDB().OptionExists(option) ? boost::python::object(GetOptionsDB().Get<bool>(option)) : boost::python::object(); }
+    py::object GetOptionsDBOptionBool(std::string const &option)
+    { return GetOptionsDB().OptionExists(option) ? py::object(GetOptionsDB().Get<bool>(option)) : py::object(); }
 
-    boost::python::object GetOptionsDBOptionDouble(std::string const &option)
-    { return GetOptionsDB().OptionExists(option) ? boost::python::object(GetOptionsDB().Get<double>(option)) : boost::python::object(); }
+    py::object GetOptionsDBOptionDouble(std::string const &option)
+    { return GetOptionsDB().OptionExists(option) ? py::object(GetOptionsDB().Get<double>(option)) : py::object(); }
 
-    boost::python::str GetUserConfigDirWrapper()
-    { return boost::python::str(PathToString(GetUserConfigDir())); }
+    py::str GetUserConfigDirWrapper()
+    { return py::str(PathToString(GetUserConfigDir())); }
 
-    boost::python::str GetUserDataDirWrapper()
-    { return boost::python::str(PathToString(GetUserDataDir())); }
+    py::str GetUserDataDirWrapper()
+    { return py::str(PathToString(GetUserDataDir())); }
 }
 
 namespace FreeOrionPython {
@@ -35,24 +34,24 @@ namespace FreeOrionPython {
 #ifdef FREEORION_BUILD_AI
         // For the AI client provide function names in camelCase,
         // as that's still the preferred style there (for the time being)
-        def("getOptionsDBOptionStr",    GetOptionsDBOptionStr,     return_value_policy<return_by_value>(), "Returns the string value of option in OptionsDB or None if the option does not exist.");
-        def("getOptionsDBOptionInt",    GetOptionsDBOptionInt,     return_value_policy<return_by_value>(), "Returns the integer value of option in OptionsDB or None if the option does not exist.");
-        def("getOptionsDBOptionBool",   GetOptionsDBOptionBool,    return_value_policy<return_by_value>(), "Returns the bool value of option in OptionsDB or None if the option does not exist.");
-        def("getOptionsDBOptionDouble", GetOptionsDBOptionDouble,  return_value_policy<return_by_value>(), "Returns the double value of option in OptionsDB or None if the option does not exist.");
+        py::def("getOptionsDBOptionStr",    GetOptionsDBOptionStr,     py::return_value_policy<py::return_by_value>(), "Returns the string value of option in OptionsDB or None if the option does not exist.");
+        py::def("getOptionsDBOptionInt",    GetOptionsDBOptionInt,     py::return_value_policy<py::return_by_value>(), "Returns the integer value of option in OptionsDB or None if the option does not exist.");
+        py::def("getOptionsDBOptionBool",   GetOptionsDBOptionBool,    py::return_value_policy<py::return_by_value>(), "Returns the bool value of option in OptionsDB or None if the option does not exist.");
+        py::def("getOptionsDBOptionDouble", GetOptionsDBOptionDouble,  py::return_value_policy<py::return_by_value>(), "Returns the double value of option in OptionsDB or None if the option does not exist.");
 
-        def("getUserConfigDir",         GetUserConfigDirWrapper,        /* no return value policy, */ "Returns path to directory where FreeOrion stores user specific configuration.");
-        def("getUserDataDir",           GetUserDataDirWrapper,          /* no return value policy, */ "Returns path to directory where FreeOrion stores user specific data (saves, etc.).");
+        py::def("getUserConfigDir",         GetUserConfigDirWrapper,        /* no return value policy, */ "Returns path to directory where FreeOrion stores user specific configuration.");
+        py::def("getUserDataDir",           GetUserDataDirWrapper,          /* no return value policy, */ "Returns path to directory where FreeOrion stores user specific data (saves, etc.).");
 #endif
 
 #ifdef FREEORION_BUILD_SERVER
         // For the server, provide the function names already in snake_case
-        def("get_options_db_option_str",    GetOptionsDBOptionStr,     return_value_policy<return_by_value>(), "Returns the string value of option in OptionsDB or None if the option does not exist.");
-        def("get_options_db_option_int",    GetOptionsDBOptionInt,     return_value_policy<return_by_value>(), "Returns the integer value of option in OptionsDB or None if the option does not exist.");
-        def("get_options_db_option_bool",   GetOptionsDBOptionBool,    return_value_policy<return_by_value>(), "Returns the bool value of option in OptionsDB or None if the option does not exist.");
-        def("get_options_db_option_double", GetOptionsDBOptionDouble,  return_value_policy<return_by_value>(), "Returns the double value of option in OptionsDB or None if the option does not exist.");
+        py::def("get_options_db_option_str",    GetOptionsDBOptionStr,     py::return_value_policy<py::return_by_value>(), "Returns the string value of option in OptionsDB or None if the option does not exist.");
+        py::def("get_options_db_option_int",    GetOptionsDBOptionInt,     py::return_value_policy<py::return_by_value>(), "Returns the integer value of option in OptionsDB or None if the option does not exist.");
+        py::def("get_options_db_option_bool",   GetOptionsDBOptionBool,    py::return_value_policy<py::return_by_value>(), "Returns the bool value of option in OptionsDB or None if the option does not exist.");
+        py::def("get_options_db_option_double", GetOptionsDBOptionDouble,  py::return_value_policy<py::return_by_value>(), "Returns the double value of option in OptionsDB or None if the option does not exist.");
 
-        def("get_user_config_dir",         GetUserConfigDirWrapper,        /* no return value policy, */ "Returns path to directory where FreeOrion stores user specific configuration.");
-        def("get_user_data_dir",           GetUserDataDirWrapper,          /* no return value policy, */ "Returns path to directory where FreeOrion stores user specific data (saves, etc.).");
+        py::def("get_user_config_dir",         GetUserConfigDirWrapper,        /* no return value policy, */ "Returns path to directory where FreeOrion stores user specific configuration.");
+        py::def("get_user_data_dir",           GetUserDataDirWrapper,          /* no return value policy, */ "Returns path to directory where FreeOrion stores user specific data (saves, etc.).");
 #endif
     }
 }
