@@ -61,7 +61,7 @@ Notable changes to the FreeOrion project will be documented in this file.
     - Added sitreps for gifting to allied empires
 
 - Reworked what weapons can target fighters, ships, and planets
-    - Mass drivers, Lasers, Plasmas, Death Rays, and Spinal antimatter cannon attack ships and planets (no fighters)
+    - Mass drivers, Lasers, Plasmas, Death Rays, and Spinal antimatter cannon attack ships and planets
     - Interceptors attack enemy fighters only
     - Strike Fighters (formerly called just "fighters") attack ships and fighters
     - Bombers attack ships only
@@ -75,7 +75,7 @@ Notable changes to the FreeOrion project will be documented in this file.
     - Species piloting traits give -1 to +3 for all fighters except interceptors
 
 - Ships
-    - Ship production cost increases ("upkeep") also count ships on the production queue
+    - Ship production cost increases ("upkeep") also count ships on the production queue that have received some production points
     - Reduced Shield part costs
     - Colony Base hulls are more expensive, have 3 internal slots, but may not mount engines or fuel parts    
     - Scaled up ship structure to avoid fractional numbers
@@ -95,7 +95,7 @@ Notable changes to the FreeOrion project will be documented in this file.
     - Rebalanced some flat bonuses from techs and Gas Giant Generators
     - Rebalance empire-wide pop-based specials and increase their protection
     - Added one refinement level to Nascent Artificial Intelligence and Adaptive Automation techs
-    - Rebalanced Exobots to be adequate on all planet types and very bad a research
+    - Rebalanced Exobots to be adequate on all planet types and very bad at research
     - Made Singularity Generation tech require Temporal Mechanics instead of Gravitonics
     - Made Artificial Black Hole faster but slightly more expensive to produce
     - Converting an asteroid field into an artificial planet removes an Asteroid Processor
