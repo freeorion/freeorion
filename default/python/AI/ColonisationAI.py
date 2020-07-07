@@ -57,7 +57,18 @@ MINIMUM_COLONY_SCORE = 60
 
 
 def colony_pod_cost():
-    return AIDependencies.COLONY_POD_COST * (1 + state.get_number_of_colonies()*AIDependencies.COLONY_POD_UPKEEP)
+    if tech_is_complete(AIDependencies.GRO_LIFE_CYCLE):
+        base_cost = AIDependencies.CRYONIC_COLONY_POD_COST
+    else:
+        base_cost = AIDependencies.COLONY_POD_COST
+    return base_cost * (1 + state.get_number_of_colonies() * AIDependencies.COLONY_POD_UPKEEP)
+
+
+def colony_pod_build_turns():
+    if tech_is_complete(AIDependencies.GRO_LIFE_CYCLE):
+        return AIDependencies.CRYONIC_COLONY_POD_TURNS_TO_BUILD
+    else:
+        return AIDependencies.COLONY_POD_TURNS_TO_BUILD
 
 
 def outpod_pod_cost():
