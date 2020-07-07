@@ -5504,8 +5504,14 @@ CATEGORY_GUIDES  # translated
 CATEGORY_GAME_CONCEPTS
 *Concepts de jeu*
 
+DISTORTION_ARTICLE_SHORT_DESC  # translated
+Distortion
+
 GROWTH_ARTICLE_SHORT_DESC
 Croissance
+
+INDUSTRY_ARTICLE_SHORT_DESC
+Industrie
 
 STOCKPILE_ARTICLE_SHORT_DESC
 Stock
@@ -5513,8 +5519,14 @@ Stock
 OUTPOSTS_ARTICLE_SHORT_DESC
 Avant-Poste
 
+LOGISTICS_ARTICLE_SHORT_DESC
+Logistique
+
 HOMEWORLDS_ARTICLE_SHORT_DESC
 Planète Natale
+
+PLANETDRIVE_ARTICLE_SHORT_DESC
+Navigation Planétaire
 
 PRODUCTION_ARTICLE_SHORT_DESC  # translated
 Production
@@ -5533,6 +5545,9 @@ Indicateurs
 
 POPULATION_TITLE_SHORT_DESC  # translated
 Population
+
+PSYCHIC_ARTICLE_SHORT_DESC
+Psychisme
 
 MANAGEMENT_TITLE_SHORT_DESC
 Gestion
@@ -5927,6 +5942,12 @@ Le Focus d'une planète peut procurer un bonus ou engendrer certains effets sur 
 
 Une planète sera réglée par défaut sur le Focus favori de l'espèce la peuplant (si cette dernière en possède un), ou sinon par défaut sur le Focus [[metertype METER_INDUSTRY]].'''
 
+DISTORTION_FOCUS_TITLE
+Focus Distortion Spatiale
+
+DISTORTION_FOCUS_TEXT
+Manipule les Voies spatiales menant à la planète, ralentissant la progression des astronefs ennemis de 40uu par tour. Les astronefs les plus lents peuvent même être repoussés à l'extrémité opposée de la Voie spatiale empruntée. Disponible après avoir construit un [[buildingtype BLD_SPATIAL_DISTORT_GEN]].
+
 GROWTH_FOCUS_TITLE
 Focus Croissance
 
@@ -5937,17 +5958,45 @@ Une planète privilégiant la Croissance propage ces bénéfices aux autres plan
 
 [[GROWTH_SPECIALS_ENTRY_LIST]]'''
 
+INDUSTRY_FOCUS_TITLE
+Focus Industrie
+
+INDUSTRY_FOCUS_TEXT
+Les planètes de l'empire en Focus Industrie améliorent leur capacité d'[[metertype METER_INDUSTRY]], utilisée pour produire astronefs et structures, ou bien pour être stockée en vue d'un usage ultérieur. Le Focus Industrie augmente d'autant plus la capacité industrielle que la [[metertype METER_POPULATION]] planétaire est élevée.
+
 TRADE_FOCUS_TITLE
 Focus Commerce
 
 TRADE_FOCUS_TEXT
 Le Commerce est sans effet. Il s'agit juste d'un espace réservé indiquant que d'autres ressources sont prévues.
 
+LOGISTICS_FOCUS_TITLE
+Focus Logistique
+
+LOGISTICS_FOCUS_TEXT
+Les planètes en Focus Logistique voient leur [[metertype METER_SUPPLY]] augmenter de 3, ce qui déploie le réseau impérial d'approvisionnement de la planète sur 3 Voies spatiales supplémentaires consécutives.
+
+PLANETDRIVE_FOCUS_TITLE
+Focus Navigation Planétaire
+
+PLANETDRIVE_FOCUS_TEXT
+Après qu'un [[buildingtype BLD_PLANET_DRIVE]] ait été construit, et qu'une [[buildingtype BLD_PLANET_BEACON]] ou une [[shippart SP_PLANET_BEACON]] se trouve dans un système adjacent, sélectionner le [[PLANETDRIVE_FOCUS_TITLE]] déplacera la planète entre les systèmes stellaires.
+
 PROTECTION_FOCUS_TITLE
 Focus Protection
 
 PROTECTION_FOCUS_TEXT
 Privilégier la Protection consiste pour une planète à se consacrer entièrement à sa propre défense. Ses effectifs d'[[metertype METER_TROOPS]], sa capacité de [[metertype METER_DEFENSE]], et la solidité de ses [[metertype METER_SHIELD]] sont par conséquent doublés.
+
+PSYCHIC_FOCUS_TITLE
+Focus Domination Psychique
+
+PSYCHIC_FOCUS_TEXT
+'''Le [[PSYCHIC_FOCUS_TITLE]] concentre la force mentale d'une population afin de contrôler les pensées des équipages non-télépathiques des astronefs ennemis se trouvant dans le même système.
+
+À chaque tour, procure 10% de chance de prendre le contrôle de chaque astronef, à moins que l'empire ennemi ne dispose également de la technologie [[LRN_PSY_DOM]].
+
+Lorsque le Focus Domination Psychique est activé, réduit par ailleurs la chance qu'un [[predefinedshipdesign SM_PSIONIC_SNOWFLAKE]] prenne le contrôle des astronefs de l'empire se trouvant dans le même système.'''
 
 STOCKPILE_FOCUS_TITLE
 Focus Stock
@@ -9093,7 +9142,7 @@ FOCUS_STARGATE_RECEIVE_DESC
 Active le Stargate de réception d'astronefs envoyés depuis un autre système de l'empire
 
 FOCUS_PLANET_DRIVE
-Déplacement de Planète
+Navigation Planétaire
 
 FOCUS_DISTORTION
 Distortion Spatiale
@@ -11008,7 +11057,7 @@ Consciences Artificielles
 LRN_ARTIF_MINDS_DESC
 '''Augmente la [[metertype METER_TARGET_RESEARCH]] de 1 sur toutes les planètes en Focus Recherche.
 
-Les consciences artificielles constituent la quête ultime des recherches en sciences cognitives. Elles dépassent le stade prédéfini des intelligences artificielles, pour atteindre celui de conscience de soi et de sentience au sein d'un être artificiel. Ces systèmes sentients peuvent élargir de leur proche chef les limites de la science et de la recherche, identifiant par eux-mêmes de nouvelles manières de traiter les données et d'en déduire de nouvelles connaissances. Chaque planète peut héberger de telles structures, if properly maintained and assisted by researchers.'''
+Les consciences artificielles constituent la quête ultime des recherches en sciences cognitives. Elles dépassent le stade prédéfini des intelligences artificielles, pour atteindre celui de conscience de soi et de sentience au sein d'un être artificiel. Ces systèmes sentients peuvent élargir de leur proche chef les limites de la science et de la recherche, identifiant par eux-mêmes de nouvelles manières de traiter les données et d'en déduire de nouvelles connaissances. Chaque planète peut héberger de telles structures, tant que celles-ci bénéficient de la maintenance et de l'expertise de chercheurs qualifiés.'''
 
 LRN_XENOARCH
 Xénoarchéologie
@@ -11322,7 +11371,7 @@ Automates Conscients
 PRO_SENTIENT_AUTOMATION_DESC
 '''Augmente la [[metertype METER_TARGET_INDUSTRY]] de 3 sur toutes les planètes en Focus Industrie.
 
-L'évolution naturelle des usines automatisées s'accomplit en attribuant aux consciences artificielles qui dirigent de telles structures, le pouvoir de déduire et décider par elles-mêmes des meilleurs processus afin d'atteindre les buts de leurs propriétaires, avant même que ces derniers n'aient commencé à y réfléchir. Cette amélioration décisionnelle augmente grandement la performance des installations autonomes de production dans tout l'empire.'''
+L'évolution naturelle des usines automatisées s'accomplit en attribuant aux consciences artificielles qui dirigent de telles structures, le pouvoir de déduire et décider par elles-mêmes des meilleurs processus afin d'atteindre les buts de leurs propriétaires, avant même que ces derniers n'aient commencé à y réfléchir. Cette amélioration décisionnelle augmente grandement la performance des installations autonomes de production dans tous les systèmes de l'empire se consacrant à la production industrielle.'''
 
 PRO_NDIM_ASSMB
 Assemblage Multidimensionnel
@@ -12871,7 +12920,7 @@ Augmente la [[metertype METER_RESEARCH]] de 5 sur la planète, si cette dernièr
 
 Apprendre à concevoir des dispositifs utilisables par différentes espèces est crucial afin de développer des outils universellement exploitables.
 
-Chaque empire peut abriter une académie sur une à six planètes peuplées par différentes espèces. Pour accueillir une académie, le [[metertype METER_HAPPINESS]] de la [[metertype METER_POPULATION]] sur la planète doit être élevé et cette dernière doit se trouver à au moins trois Voies spatiales de l'académie existante la plus proche.'''
+Chaque empire peut abriter une académie sur une à six planètes peuplées par différentes espèces. Pour accueillir une académie, le [[metertype METER_HAPPINESS]] de la [[metertype METER_POPULATION]] sur la planète doit être élevé et cette dernière doit se trouver à plus de trois Voies spatiales de l'académie existante la plus proche.'''
 
 BLD_STOCKPILING_CENTER
 Centre d'Intrication Impériale
@@ -14799,7 +14848,7 @@ SHIPDESIGN_OUTPOSTS_CAPACITY
 pouvant bâtir un [[encyclopedia OUTPOSTS_TITLE]] dans un monde inhabitable
 
 SHIPDESIGN_NO_TRAVEL
-Ce vaisseau ne peut pas voyager sur les Voies Spatiales.
+Ce vaisseau ne peut pas voyager sur les Voies spatiales.
 
 SHIPDESIGN_PLANET_INVASION
 [[metertype METER_TROOPS]] et l'équipement pouvant être utilisés pour envahir une planète
