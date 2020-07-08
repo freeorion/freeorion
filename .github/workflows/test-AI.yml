@@ -28,7 +28,7 @@ jobs:
           ninja-build
       - name: Set up python test dependencies
         run: |
-          python3 -m pip install flake8==3.7.9 pytest==5.4.1
+          python3 -m pip install flake8==3.7.9 pytest==5.4.1 pytest-github-actions-annotate-failures==0.0.5
       - name: Create build directory
         run: |
           mkdir build
