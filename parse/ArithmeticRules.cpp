@@ -12,7 +12,8 @@ namespace parse { namespace detail {
         const std::string& type_name,
         const parse::lexer& tok,
         parse::detail::Labeller& label,
-        const parse::detail::condition_parser_grammar& condition_parser
+        const parse::detail::condition_parser_grammar& condition_parser,
+        const detail::value_ref_grammar<std::string>& string_grammar
     ) :
         statistic_type_enum(tok)
     {
@@ -160,16 +161,28 @@ namespace parse { namespace detail {
                     |   tok.If_     [ _b = ValueRef::IF ]
                     )
                 )
-            >   label(tok.Condition_) >    condition_parser
-            [ _val = construct_movable_(new_<ValueRef::Statistic<T>>(deconstruct_movable_(_a, _pass), _b, deconstruct_movable_(_1, _pass))) ]
+            >   label(tok.Condition_) > condition_parser
+            [ _val = construct_movable_(new_<ValueRef::Statistic<T>>(
+                deconstruct_movable_(_a, _pass), _b, deconstruct_movable_(_1, _pass))) ]
             ;
 
         statistic_value_expr
-            =  (tok.Statistic_ >>       statistic_type_enum [ _b = _1 ])
-            >   label(tok.Value_) >     statistic_value_ref_expr [ _a = _1 ]
-            >   label(tok.Condition_) > condition_parser
-            [ _val = construct_movable_(new_<ValueRef::Statistic<T>>(deconstruct_movable_(_a, _pass), _b, deconstruct_movable_(_1, _pass))) ]
-            ;
+            =  (tok.Statistic_ >> statistic_type_enum [ _b = _1 ])
+            >>  label(tok.Value_)
+            >> (
+                (
+                        statistic_value_ref_expr [ _a = _1 ]
+                    >   label(tok.Condition_) > condition_parser
+                    [ _val = construct_movable_(new_<ValueRef::Statistic<T, T>>(
+                        deconstruct_movable_(_a, _pass), _b, deconstruct_movable_(_1, _pass))) ]
+                )
+            |   (
+                        string_grammar [ _c = _1 ]
+                    >   label(tok.Condition_) > condition_parser
+                    [ _val = construct_movable_(new_<ValueRef::Statistic<T, std::string>>(
+                        deconstruct_movable_(_c, _pass), _b, deconstruct_movable_(_1, _pass))) ]
+                )
+               );
 
         statistic_expr
             =   statistic_collection_expr
@@ -208,9 +221,11 @@ namespace parse { namespace detail {
     // Explicit instantiation to prevent costly recompilation in multiple units
     template arithmetic_rules<double>::arithmetic_rules(
         const std::string& type_name, const parse::lexer& tok, parse::detail::Labeller& label,
-        const parse::detail::condition_parser_grammar& condition_parser);
+        const parse::detail::condition_parser_grammar& condition_parser,
+        const detail::value_ref_grammar<std::string>& string_grammar);
     template arithmetic_rules<int>::arithmetic_rules(
         const std::string& type_name, const parse::lexer& tok, parse::detail::Labeller& label,
-        const parse::detail::condition_parser_grammar& condition_parser);
+        const parse::detail::condition_parser_grammar& condition_parser,
+        const detail::value_ref_grammar<std::string>& string_grammar);
 
     }}

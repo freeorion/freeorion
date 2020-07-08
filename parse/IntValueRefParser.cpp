@@ -115,7 +115,7 @@ parse::int_arithmetic_rules::int_arithmetic_rules(
     const parse::detail::condition_parser_grammar& condition_parser,
     const parse::detail::value_ref_grammar<std::string>& string_grammar
 ) :
-    arithmetic_rules("integer", tok, label, condition_parser),
+    arithmetic_rules("integer", tok, label, condition_parser, string_grammar),
     simple_int_rules(tok),
     int_complex_grammar(tok, label, *this, string_grammar)
 {

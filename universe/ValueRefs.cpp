@@ -1241,7 +1241,7 @@ std::string Variable<std::string>::Eval(const ScriptingContext& context) const
 // Statistic                                             //
 ///////////////////////////////////////////////////////////
 template <>
-double Statistic<double>::Eval(const ScriptingContext& context) const
+double Statistic<double, double>::Eval(const ScriptingContext& context) const
 {
     Condition::ObjectSet condition_matches;
     GetConditionMatches(context, condition_matches, m_sampling_condition.get());
@@ -1261,7 +1261,37 @@ double Statistic<double>::Eval(const ScriptingContext& context) const
 }
 
 template <>
-int Statistic<int>::Eval(const ScriptingContext& context) const
+double Statistic<double, std::string>::Eval(const ScriptingContext& context) const
+{
+    Condition::ObjectSet condition_matches;
+    GetConditionMatches(context, condition_matches, m_sampling_condition.get());
+
+    // these two statistic types don't depend on the object property values,
+    // so can be evaluated without getting those values.
+    if (m_stat_type == COUNT)
+        return static_cast<double>(condition_matches.size());
+    if (m_stat_type == IF)
+        return condition_matches.empty() ? 0.0 : 1.0;
+
+    if (m_stat_type != UNIQUE_COUNT) {
+        ErrorLogger() << "Statistic<int, std::string>::Eval has invalid statistic type: "
+                      << m_stat_type;
+        return 0.0;
+    }
+
+    // evaluate property for each condition-matched object
+    std::map<std::shared_ptr<const UniverseObject>, std::string> object_property_values;
+    GetObjectPropertyValues(context, condition_matches, object_property_values);
+
+    std::set<std::string> observed_values;
+    for (const auto& entry : object_property_values)
+        observed_values.insert(entry.second);
+
+    return static_cast<double>(observed_values.size());
+}
+
+template <>
+int Statistic<int, int>::Eval(const ScriptingContext& context) const
 {
     Condition::ObjectSet condition_matches;
     GetConditionMatches(context, condition_matches, m_sampling_condition.get());
@@ -1281,7 +1311,37 @@ int Statistic<int>::Eval(const ScriptingContext& context) const
 }
 
 template <>
-std::string Statistic<std::string>::Eval(const ScriptingContext& context) const
+int Statistic<int, std::string>::Eval(const ScriptingContext& context) const
+{
+    Condition::ObjectSet condition_matches;
+    GetConditionMatches(context, condition_matches, m_sampling_condition.get());
+
+    // these two statistic types don't depend on the object property values,
+    // so can be evaluated without getting those values.
+    if (m_stat_type == COUNT)
+        return static_cast<int>(condition_matches.size());
+    if (m_stat_type == IF)
+        return condition_matches.empty() ? 0 : 1;
+
+    if (m_stat_type != UNIQUE_COUNT) {
+        ErrorLogger() << "Statistic<int, std::string>::Eval has invalid statistic type: "
+                      << m_stat_type;
+        return 0;
+    }
+
+    // evaluate property for each condition-matched object
+    std::map<std::shared_ptr<const UniverseObject>, std::string> object_property_values;
+    GetObjectPropertyValues(context, condition_matches, object_property_values);
+
+    std::set<std::string> observed_values;
+    for (const auto& entry : object_property_values)
+        observed_values.insert(entry.second);
+
+    return static_cast<int>(observed_values.size());
+}
+
+template <>
+std::string Statistic<std::string, std::string>::Eval(const ScriptingContext& context) const
 {
     Condition::ObjectSet condition_matches;
     GetConditionMatches(context, condition_matches, m_sampling_condition.get());
@@ -1298,7 +1358,7 @@ std::string Statistic<std::string>::Eval(const ScriptingContext& context) const
     // the only other statistic that can be computed on non-number property
     // types and that is itself of a non-number type is the most common value
     if (m_stat_type != MODE) {
-        ErrorLogger() << "Statistic<std::string>::Eval has invalid statistic type: "
+        ErrorLogger() << "Statistic<std::string, std::string>::Eval has invalid statistic type: "
                       << m_stat_type;
         return "";
     }

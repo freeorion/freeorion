@@ -67,7 +67,7 @@ namespace parse { namespace detail {
     };
 
     template <typename T>
-    using statistic_payload = MovableEnvelope<ValueRef::Statistic<T>>;
+    using statistic_payload = MovableEnvelope<ValueRef::ValueRef<T>>;
     template <typename T>
     using statistic_signature = statistic_payload<T> ();
     template <typename T>
@@ -75,7 +75,8 @@ namespace parse { namespace detail {
         statistic_signature<T>,
         boost::spirit::qi::locals<
             value_ref_payload<T>,
-            ValueRef::StatisticType
+            ValueRef::StatisticType,
+            value_ref_payload<std::string>
             >
         >;
 
@@ -95,7 +96,8 @@ namespace parse { namespace detail {
         arithmetic_rules(const std::string& type_name,
                          const parse::lexer& tok,
                          Labeller& label,
-                         const condition_parser_grammar& condition_parser);
+                         const condition_parser_grammar& condition_parser,
+                         const value_ref_grammar<std::string>& string_grammar);
 
         parse::statistic_enum_grammar   statistic_type_enum;
         expression_rule<T>              functional_expr;

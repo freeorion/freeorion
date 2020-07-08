@@ -113,10 +113,10 @@ protected:
   * \a property_name is computed for each object that matches
   * \a sampling_condition and the statistic indicated by \a stat_type is
   * calculated from them and returned. */
-template <typename T>
+template <typename T, typename V = T>
 struct FO_COMMON_API Statistic final : public Variable<T>
 {
-    Statistic(std::unique_ptr<ValueRef<T>>&& value_ref,
+    Statistic(std::unique_ptr<ValueRef<V>>&& value_ref,
               StatisticType stat_type,
               std::unique_ptr<Condition::Condition>&& sampling_condition);
 
@@ -132,7 +132,7 @@ struct FO_COMMON_API Statistic final : public Variable<T>
     const Condition::Condition* GetSamplingCondition() const
     { return m_sampling_condition.get(); }
 
-    const ValueRef<T>* GetValueRef() const
+    const ValueRef<V>* GetValueRef() const
     { return m_value_ref.get(); }
 
     unsigned int GetCheckSum() const override;
@@ -146,15 +146,15 @@ protected:
     /** Evaluates the property for the specified objects. */
     void  GetObjectPropertyValues(const ScriptingContext& context,
                                   const Condition::ObjectSet& objects,
-                                  std::map<std::shared_ptr<const UniverseObject>, T>& object_property_values) const;
+                                  std::map<std::shared_ptr<const UniverseObject>, V>& object_property_values) const;
 
     /** Computes the statistic from the specified set of property values. */
-    T ReduceData(const std::map<std::shared_ptr<const UniverseObject>, T>& object_property_values) const;
+    T ReduceData(const std::map<std::shared_ptr<const UniverseObject>, V>& object_property_values) const;
 
 private:
     StatisticType                         m_stat_type;
     std::unique_ptr<Condition::Condition> m_sampling_condition;
-    std::unique_ptr<ValueRef<T>>          m_value_ref;
+    std::unique_ptr<ValueRef<V>>          m_value_ref;
 };
 
 /** The complex variable ValueRef class. The value returned by this node
@@ -669,9 +669,9 @@ FO_COMMON_API std::vector<std::string> Variable<std::vector<std::string>>::Eval(
 ///////////////////////////////////////////////////////////
 // Statistic                                             //
 ///////////////////////////////////////////////////////////
-template <typename T>
-Statistic<T>::Statistic(std::unique_ptr<ValueRef<T>>&& value_ref, StatisticType stat_type,
-                        std::unique_ptr<Condition::Condition>&& sampling_condition) :
+template <typename T, typename V>
+Statistic<T, V>::Statistic(std::unique_ptr<ValueRef<V>>&& value_ref, StatisticType stat_type,
+                           std::unique_ptr<Condition::Condition>&& sampling_condition) :
     Variable<T>(NON_OBJECT_REFERENCE),
     m_stat_type(stat_type),
     m_sampling_condition(std::move(sampling_condition)),
@@ -692,14 +692,14 @@ Statistic<T>::Statistic(std::unique_ptr<ValueRef<T>>&& value_ref, StatisticType 
                                (!m_value_ref || m_value_ref->SourceInvariant());
 }
 
-template <typename T>
-bool Statistic<T>::operator==(const ValueRef<T>& rhs) const
+template <typename T, typename V>
+bool Statistic<T, V>::operator==(const ValueRef<T>& rhs) const
 {
     if (&rhs == this)
         return true;
     if (typeid(rhs) != typeid(*this))
         return false;
-    const Statistic<T>& rhs_ = static_cast<const Statistic<T>&>(rhs);
+    const Statistic<T, V>& rhs_ = static_cast<const Statistic<T, V>&>(rhs);
 
     if (m_stat_type != rhs_.m_stat_type)
         return false;
@@ -718,10 +718,10 @@ bool Statistic<T>::operator==(const ValueRef<T>& rhs) const
     return true;
 }
 
-template <typename T>
-void Statistic<T>::GetConditionMatches(const ScriptingContext& context,
-                                       Condition::ObjectSet& condition_targets,
-                                       Condition::Condition* condition) const
+template <typename T, typename V>
+void Statistic<T, V>::GetConditionMatches(const ScriptingContext& context,
+                                          Condition::ObjectSet& condition_targets,
+                                          Condition::Condition* condition) const
 {
     condition_targets.clear();
     if (!condition)
@@ -729,10 +729,10 @@ void Statistic<T>::GetConditionMatches(const ScriptingContext& context,
     condition->Eval(context, condition_targets);
 }
 
-template <typename T>
-void Statistic<T>::GetObjectPropertyValues(const ScriptingContext& context,
-                                           const Condition::ObjectSet& objects,
-                                           std::map<std::shared_ptr<const UniverseObject>, T>& object_property_values) const
+template <typename T, typename V>
+void Statistic<T, V>::GetObjectPropertyValues(const ScriptingContext& context,
+                                              const Condition::ObjectSet& objects,
+                                              std::map<std::shared_ptr<const UniverseObject>, V>& object_property_values) const
 {
     object_property_values.clear();
 
@@ -744,8 +744,8 @@ void Statistic<T>::GetObjectPropertyValues(const ScriptingContext& context,
     }
 }
 
-template <typename T>
-std::string Statistic<T>::Description() const
+template <typename T, typename V>
+std::string Statistic<T, V>::Description() const
 {
     if (m_value_ref)
         return StatisticDescription(m_stat_type, m_value_ref->Description(),
@@ -758,8 +758,8 @@ std::string Statistic<T>::Description() const
     return StatisticDescription(m_stat_type, "", m_sampling_condition ? m_sampling_condition->Description() : "");
 }
 
-template <typename T>
-std::string Statistic<T>::Dump(unsigned short ntabs) const
+template <typename T, typename V>
+std::string Statistic<T, V>::Dump(unsigned short ntabs) const
 {
     std::string retval = "Statistic ";
 
@@ -785,8 +785,8 @@ std::string Statistic<T>::Dump(unsigned short ntabs) const
     return retval;
 }
 
-template <typename T>
-void Statistic<T>::SetTopLevelContent(const std::string& content_name)
+template <typename T, typename V>
+void Statistic<T, V>::SetTopLevelContent(const std::string& content_name)
 {
     if (m_sampling_condition)
         m_sampling_condition->SetTopLevelContent(content_name);
@@ -794,8 +794,8 @@ void Statistic<T>::SetTopLevelContent(const std::string& content_name)
         m_value_ref->SetTopLevelContent(content_name);
 }
 
-template <typename T>
-T Statistic<T>::Eval(const ScriptingContext& context) const
+template <typename T, typename V>
+T Statistic<T, V>::Eval(const ScriptingContext& context) const
 {
     Condition::ObjectSet condition_matches;
     GetConditionMatches(context, condition_matches, m_sampling_condition.get());
@@ -819,20 +819,20 @@ T Statistic<T>::Eval(const ScriptingContext& context) const
     }
 
     // evaluate property for each condition-matched object
-    std::map<std::shared_ptr<const UniverseObject>, T> object_property_values;
+    std::map<std::shared_ptr<const UniverseObject>, V> object_property_values;
     GetObjectPropertyValues(context, condition_matches, object_property_values);
 
     // count number of each result, tracking which has the most occurances
-    std::map<T, unsigned int> histogram;
+    std::map<V, unsigned int> histogram;
     auto most_common_property_value_it = histogram.begin();
     unsigned int max_seen(0);
 
     for (const auto& entry : object_property_values) {
-        const T& property_value = entry.second;
+        auto property_value = entry.second;
 
         auto hist_it = histogram.find(property_value);
         if (hist_it == histogram.end())
-            hist_it = histogram.insert({property_value, 0}).first;
+            hist_it = histogram.emplace(property_value, 0).first;
         unsigned int& num_seen = hist_it->second;
 
         num_seen++;
@@ -847,8 +847,8 @@ T Statistic<T>::Eval(const ScriptingContext& context) const
     return most_common_property_value_it->first;
 }
 
-template <typename T>
-unsigned int Statistic<T>::GetCheckSum() const
+template <typename T, typename V>
+unsigned int Statistic<T, V>::GetCheckSum() const
 {
     unsigned int retval{0};
 
@@ -861,16 +861,22 @@ unsigned int Statistic<T>::GetCheckSum() const
 }
 
 template <>
-FO_COMMON_API double Statistic<double>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API double Statistic<double, double>::Eval(const ScriptingContext& context) const;
 
 template <>
-FO_COMMON_API int Statistic<int>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API double Statistic<double, std::string>::Eval(const ScriptingContext& context) const;
 
 template <>
-FO_COMMON_API std::string Statistic<std::string>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API int Statistic<int, int>::Eval(const ScriptingContext& context) const;
 
-template <typename T>
-T Statistic<T>::ReduceData(const std::map<std::shared_ptr<const UniverseObject>, T>& object_property_values) const
+template <>
+FO_COMMON_API int Statistic<int, std::string>::Eval(const ScriptingContext& context) const;
+
+template <>
+FO_COMMON_API std::string Statistic<std::string, std::string>::Eval(const ScriptingContext& context) const;
+
+template <typename T, typename V>
+T Statistic<T, V>::ReduceData(const std::map<std::shared_ptr<const UniverseObject>, V>& object_property_values) const
 {
     if (object_property_values.empty())
         return T(0);
@@ -895,47 +901,45 @@ T Statistic<T>::ReduceData(const std::map<std::shared_ptr<const UniverseObject>,
             break;
         }
         case SUM: {
-            T accumulator(0);
-            for (const auto& entry : object_property_values) {
+            V accumulator(0);
+            for (const auto& entry : object_property_values)
                 accumulator += entry.second;
-            }
-            return accumulator;
+
+            return static_cast<T>(accumulator);
             break;
         }
 
         case MEAN: {
-            T accumulator(0);
-            for (const auto& entry : object_property_values) {
+            V accumulator(0);
+            for (const auto& entry : object_property_values)
                 accumulator += entry.second;
-            }
-            return accumulator / static_cast<T>(object_property_values.size());
+
+            return static_cast<T>(accumulator) / static_cast<T>(object_property_values.size());
             break;
         }
 
         case RMS: {
-            T accumulator(0);
-            for (const auto& entry : object_property_values) {
+            V accumulator(0);
+            for (const auto& entry : object_property_values)
                 accumulator += (entry.second * entry.second);
-            }
-            accumulator /= static_cast<T>(object_property_values.size());
 
-            double retval = std::sqrt(static_cast<double>(accumulator));
-            return static_cast<T>(retval);
+            double tempval = static_cast<double>(accumulator) / object_property_values.size();
+            return static_cast<T>(std::sqrt(tempval));
             break;
         }
 
         case MODE: {
             // count number of each result, tracking which has the most occurances
-            std::map<T, unsigned int> histogram;
+            std::map<V, unsigned int> histogram;
             auto most_common_property_value_it = histogram.begin();
             unsigned int max_seen(0);
 
             for (const auto& entry : object_property_values) {
-                const T& property_value = entry.second;
+                auto property_value = entry.second;
 
-               auto hist_it = histogram.find(property_value);
+                auto hist_it = histogram.find(property_value);
                 if (hist_it == histogram.end())
-                    hist_it = histogram.insert({property_value, 0}).first;
+                    hist_it = histogram.emplace(property_value, 0).first;
                 unsigned int& num_seen = hist_it->second;
 
                 num_seen++;
@@ -947,7 +951,7 @@ T Statistic<T>::ReduceData(const std::map<std::shared_ptr<const UniverseObject>,
             }
 
             // return result (property value) that occured most frequently
-            return most_common_property_value_it->first;
+            return static_cast<T>(most_common_property_value_it->first);
             break;
         }
 
@@ -957,13 +961,13 @@ T Statistic<T>::ReduceData(const std::map<std::shared_ptr<const UniverseObject>,
             for (auto it = object_property_values.begin();
                  it != object_property_values.end(); ++it)
             {
-                const T& property_value = it->second;
+                auto property_value = it->second;
                 if (property_value > max_it->second)
                     max_it = it;
             }
 
             // return maximal observed propery value
-            return max_it->second;
+            return static_cast<T>(max_it->second);
             break;
         }
 
@@ -973,13 +977,13 @@ T Statistic<T>::ReduceData(const std::map<std::shared_ptr<const UniverseObject>,
             for (auto it = object_property_values.begin();
                  it != object_property_values.end(); ++it)
             {
-                const T& property_value = it->second;
+                auto property_value = it->second;
                 if (property_value < min_it->second)
                     min_it = it;
             }
 
             // return minimal observed propery value
-            return min_it->second;
+            return static_cast<T>(min_it->second);
             break;
         }
 
@@ -990,7 +994,7 @@ T Statistic<T>::ReduceData(const std::map<std::shared_ptr<const UniverseObject>,
             for (auto it = object_property_values.begin();
                  it != object_property_values.end(); ++it)
             {
-                const T& property_value = it->second;
+                auto property_value = it->second;
                 if (property_value > max_it->second)
                     max_it = it;
                 if (property_value < min_it->second)
@@ -998,7 +1002,7 @@ T Statistic<T>::ReduceData(const std::map<std::shared_ptr<const UniverseObject>,
             }
 
             // return difference between maximal and minimal observed propery values
-            return max_it->second - min_it->second;
+            return static_cast<T>(max_it->second - min_it->second);
             break;
         }
 
@@ -1007,29 +1011,28 @@ T Statistic<T>::ReduceData(const std::map<std::shared_ptr<const UniverseObject>,
                 return T(0);
 
             // find sample mean
-            T accumulator(0);
-            for (const auto& entry : object_property_values) {
-                accumulator += entry.second;
-            }
-            const T MEAN(accumulator / static_cast<T>(object_property_values.size()));
+            double accumulator = 0.0;
+            for (auto entry : object_property_values)
+                accumulator += static_cast<double>(entry.second);
+
+            double MEAN = accumulator / object_property_values.size();
 
             // find average of squared deviations from sample mean
-            accumulator = T(0);
-            for (const auto& entry : object_property_values) {
-                accumulator += (entry.second - MEAN) * (entry.second - MEAN);
-            }
-            const T MEAN_DEV2(accumulator / static_cast<T>(static_cast<int>(object_property_values.size()) - 1));
-            double retval = std::sqrt(static_cast<double>(MEAN_DEV2));
-            return static_cast<T>(retval);
+            accumulator = 0;
+            for (auto entry : object_property_values)
+                accumulator += (static_cast<double>(entry.second) - MEAN) * (static_cast<double>(entry.second) - MEAN);
+
+            double retval = accumulator / static_cast<double>(object_property_values.size() - 1.0);
+            return static_cast<T>(std::sqrt(retval));
             break;
         }
 
         case PRODUCT: {
-            T accumulator(1);
-            for (const auto& entry : object_property_values) {
+            V accumulator(1);
+            for (const auto& entry : object_property_values)
                 accumulator *= entry.second;
-            }
-            return accumulator;
+
+            return static_cast<T>(accumulator);
             break;
         }
 

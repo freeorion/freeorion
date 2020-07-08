@@ -76,7 +76,7 @@ parse::double_parser_rules::double_parser_rules(
     const parse::detail::condition_parser_grammar& condition_parser,
     const parse::detail::value_ref_grammar<std::string>& string_grammar
 ) :
-    arithmetic_rules("real number", tok, label, condition_parser),
+    arithmetic_rules("real number", tok, label, condition_parser, string_grammar),
     int_rules(tok, label, condition_parser, string_grammar),
     simple_int_rules(tok),
     simple_double_rules(tok),
