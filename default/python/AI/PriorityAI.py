@@ -215,6 +215,7 @@ def _calculate_exploration_priority():
 
     return exploration_priority
 
+
 def _calculate_colonisation_priority():
     """Calculates the demand for colony ships by colonisable planets."""
     global allottedColonyTargets
