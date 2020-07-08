@@ -514,15 +514,15 @@ namespace {
         db.Add<std::string>("ui.font.path",                             UserStringNop("OPTIONS_DB_UI_FONT"),                        (GetRootDataDir() / "default/data/fonts/Roboto-Regular.ttf").string());
         db.Add<std::string>("ui.font.bold.path",                        UserStringNop("OPTIONS_DB_UI_FONT_BOLD"),                   (GetRootDataDir() / "default" / "data" / "fonts" / "Roboto-Bold.ttf").string());
 #ifdef FREEORION_MACOSX
-        db.Add("ui.font.size",                                          UserStringNop("OPTIONS_DB_UI_FONT_SIZE"),                   15,                             RangedValidator<int>(4, 40));
+        db.Add("ui.font.size",                                          UserStringNop("OPTIONS_DB_UI_FONT_SIZE"),                   15,                             RangedValidator<int>(4, 100));
 #else
-        db.Add("ui.font.size",                                          UserStringNop("OPTIONS_DB_UI_FONT_SIZE"),                   16,                             RangedValidator<int>(4, 40));
+        db.Add("ui.font.size",                                          UserStringNop("OPTIONS_DB_UI_FONT_SIZE"),                   16,                             RangedValidator<int>(4, 100));
 #endif
         db.Add<std::string>("ui.font.title.path",                       UserStringNop("OPTIONS_DB_UI_TITLE_FONT"),                  (GetRootDataDir() / "default/data/fonts/Roboto-Regular.ttf").string());
 #ifdef FREEORION_MACOSX
-        db.Add("ui.font.title.size",                                    UserStringNop("OPTIONS_DB_UI_TITLE_FONT_SIZE"),             16,                             RangedValidator<int>(4, 40));
+        db.Add("ui.font.title.size",                                    UserStringNop("OPTIONS_DB_UI_TITLE_FONT_SIZE"),             16,                             RangedValidator<int>(4, 100));
 #else
-        db.Add("ui.font.title.size",                                    UserStringNop("OPTIONS_DB_UI_TITLE_FONT_SIZE"),             17,                             RangedValidator<int>(4, 40));
+        db.Add("ui.font.title.size",                                    UserStringNop("OPTIONS_DB_UI_TITLE_FONT_SIZE"),             17,                             RangedValidator<int>(4, 100));
 #endif
 
         // colors
