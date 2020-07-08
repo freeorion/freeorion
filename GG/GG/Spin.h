@@ -183,7 +183,6 @@ Spin<T>::Spin(T value, T step, T min, T max, bool edits, const std::shared_ptr<F
 template <typename T>
 void Spin<T>::CompleteConstruction()
 {
-    const auto& style = GetStyleFactory();
     m_edit->InstallEventFilter(shared_from_this());
     m_up_button->InstallEventFilter(shared_from_this());
     m_down_button->InstallEventFilter(shared_from_this());
@@ -441,7 +440,7 @@ void Spin<T>::ValueUpdated(const std::string& val_text)
     T value;
     try {
         value = boost::lexical_cast<T>(val_text);
-    } catch (boost::bad_lexical_cast) {
+    } catch (const boost::bad_lexical_cast &) {
         SetValueImpl(m_min_value, true);
         return;
     }
