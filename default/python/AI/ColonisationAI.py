@@ -13,6 +13,7 @@ import PlanetUtilsAI
 import PriorityAI
 import ProductionAI
 import MilitaryAI
+import freeOrionAIInterface as fo
 from aistate_interface import get_aistate
 from target import TargetPlanet
 from turn_state import state
@@ -22,6 +23,7 @@ from freeorion_tools import (tech_is_complete, get_species_tag_grade, cache_by_t
 from AIDependencies import (INVALID_ID, OUTPOSTING_TECH, POP_CONST_MOD_MAP,
                             POP_SIZE_MOD_MAP_MODIFIED_BY_SPECIES, POP_SIZE_MOD_MAP_NOT_MODIFIED_BY_SPECIES,
                             Tags)
+from ShipDesignAI import get_ship_part
 
 colonization_timer = AITimer('getColonyFleets()')
 
@@ -57,18 +59,34 @@ MINIMUM_COLONY_SCORE = 60
 
 
 def colony_pod_cost():
-    if tech_is_complete(AIDependencies.GRO_LIFE_CYCLE):
-        base_cost = AIDependencies.CRYONIC_COLONY_POD_COST
+    empire = fo.getEmpire()
+    empire_id = empire.empireID
+    loc = INVALID_ID
+    pid = INVALID_ID
+    parts = [get_ship_part(part) for part in list(empire.availableShipParts)]
+    colo_parts = [part for part in parts if part.partClass in frozenset({fo.shipPartClass.colony}) and part.capacity > 0]
+    if colo_parts:
+        colo_part = max(colo_parts, key=lambda x: x.capacity)
+        base_cost = colo_part.productionCost(empire_id, pid, loc)
     else:
-        base_cost = AIDependencies.COLONY_POD_COST
+        base_cost = 0
+        debug("no available colony parts with capacity > 0")
     return base_cost * (1 + state.get_number_of_colonies() * AIDependencies.COLONY_POD_UPKEEP)
 
-
 def colony_pod_build_turns():
-    if tech_is_complete(AIDependencies.GRO_LIFE_CYCLE):
-        return AIDependencies.CRYONIC_COLONY_POD_TURNS_TO_BUILD
+    empire = fo.getEmpire()
+    empire_id = empire.empireID
+    loc = INVALID_ID
+    pid = INVALID_ID
+    parts = [get_ship_part(part) for part in list(empire.availableShipParts)]
+    colo_parts = [part for part in parts if part.partClass in frozenset({fo.shipPartClass.colony}) and part.capacity > 0]
+    if colo_parts:
+        colo_part = max(colo_parts, key=lambda x: x.capacity)
+        prod_turns = colo_part.productionTime(empire_id, pid, loc)
     else:
-        return AIDependencies.COLONY_POD_TURNS_TO_BUILD
+        prod_turns = 0
+        debug("no available colony parts with capacity > 0")
+    return prod_turns
 
 
 def outpod_pod_cost():
