@@ -35,6 +35,7 @@
 #include "../../combat/CombatLogManager.h"
 #include "../../parse/Parse.h"
 
+#include <GG/Measure.h>
 #include <GG/BrowseInfoWnd.h>
 #include <GG/dialogs/ThreeButtonDlg.h>
 #include <GG/Cursor.h>
@@ -293,6 +294,8 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
     } catch (const Sound::InitializationFailureException&) {
         inform_user_sound_failed = true;
     }
+
+    GG::Measure::SetFont(ClientUI::GetFont());
 
     m_ui.reset(new ClientUI());
 

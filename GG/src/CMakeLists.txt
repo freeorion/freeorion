@@ -46,6 +46,7 @@ target_sources(GiGi
         ${CMAKE_CURRENT_LIST_DIR}/GUI.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Layout.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ListBox.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/Measure.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Menu.cpp
         ${CMAKE_CURRENT_LIST_DIR}/MultiEdit.cpp
         ${CMAKE_CURRENT_LIST_DIR}/PtRect.cpp

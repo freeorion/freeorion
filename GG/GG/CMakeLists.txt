@@ -54,6 +54,7 @@ target_sources(GiGi
         ${CMAKE_CURRENT_LIST_DIR}/GUI.h
         ${CMAKE_CURRENT_LIST_DIR}/Layout.h
         ${CMAKE_CURRENT_LIST_DIR}/ListBox.h
+        ${CMAKE_CURRENT_LIST_DIR}/Measure.h
         ${CMAKE_CURRENT_LIST_DIR}/Menu.h
         ${CMAKE_CURRENT_LIST_DIR}/MultiEditFwd.h
         ${CMAKE_CURRENT_LIST_DIR}/MultiEdit.h
