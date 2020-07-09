@@ -36,22 +36,39 @@ namespace py = boost::python;
 #if defined(_MSC_VER)
 #  if (_MSC_VER == 1900)
 namespace boost {
-    template<>
-    const volatile UniverseObject*  get_pointer(const volatile UniverseObject* p) { return p; }
-    template<>
-    const volatile Fleet*           get_pointer(const volatile Fleet* p) { return p; }
-    template<>
-    const volatile Ship*            get_pointer(const volatile Ship* p) { return p; }
-    template<>
-    const volatile Planet*          get_pointer(const volatile Planet* p) { return p; }
-    template<>
-    const volatile System*          get_pointer(const volatile System* p) { return p; }
-    template<>
-    const volatile Field*           get_pointer(const volatile Field* p) { return p; }
-    template<>
-    const volatile Building*        get_pointer(const volatile Building* p) { return p; }
-    template<>
-    const volatile Universe*        get_pointer<const volatile Universe>(const volatile Universe* p) { return p; }
+
+template<>
+auto get_pointer(const volatile UniverseObject* p) -> const volatile UniverseObject*
+{ return p; }
+
+template<>
+auto get_pointer(const volatile Fleet* p) -> const volatile Fleet*
+{ return p; }
+
+template<>
+auto get_pointer(const volatile Ship* p) -> const volatile Ship*
+{ return p; }
+
+template<>
+auto get_pointer(const volatile Planet* p) -> const volatile Planet*
+{ return p; }
+
+template<>
+auto get_pointer(const volatile System* p) -> const volatile System*
+{ return p; }
+
+template<>
+auto get_pointer(const volatile Field* p) -> const volatile Field*
+{ return p; }
+
+template<>
+auto get_pointer(const volatile Building* p) -> const volatile Building*
+{ return p; }
+
+template<>
+auto get_pointer<const volatile Universe>(const volatile Universe* p) -> const volatile Universe*
+{ return p; }
+
 }
 #  endif
 #endif
@@ -66,23 +83,29 @@ namespace {
     // We're returning the result of operator-> here so that python doesn't
     // need to deal with std::shared_ptr class.
     // Please don't use this trick elsewhere to grab a raw UniverseObject*!
-    const UniverseObject*   GetUniverseObjectP(const Universe& universe, int id)
+    auto GetUniverseObjectP(const Universe& universe, int id) -> const UniverseObject*
     { return ::Objects().get<UniverseObject>(id).operator->(); }
-    const Ship*             GetShipP(const Universe& universe, int id)
+
+    auto GetShipP(const Universe& universe, int id) -> const Ship*
     { return ::Objects().get<Ship>(id).operator->(); }
-    const Fleet*            GetFleetP(const Universe& universe, int id)
+
+    auto GetFleetP(const Universe& universe, int id) -> const Fleet*
     { return ::Objects().get<Fleet>(id).operator->(); }
-    const Planet*           GetPlanetP(const Universe& universe, int id)
+
+    auto GetPlanetP(const Universe& universe, int id) -> const Planet*
     { return ::Objects().get<Planet>(id).operator->(); }
-    const System*           GetSystemP(const Universe& universe, int id)
+
+    auto GetSystemP(const Universe& universe, int id) -> const System*
     { return ::Objects().get<System>(id).operator->(); }
-    const Field*            GetFieldP(const Universe& universe, int id)
+
+    auto GetFieldP(const Universe& universe, int id) -> const Field*
     { return ::Objects().get<Field>(id).operator->();  }
-    const Building*         GetBuildingP(const Universe& universe, int id)
+
+    auto GetBuildingP(const Universe& universe, int id) -> const Building*
     { return ::Objects().get<Building>(id).operator->(); }
 
     template<typename T>
-    std::vector<int> ObjectIDs(const Universe& universe)
+    auto ObjectIDs(const Universe& universe) -> std::vector<int>
     {
         std::vector<int> result;
         result.reserve(universe.Objects().size<T>());
@@ -91,7 +114,8 @@ namespace {
         return result;
     }
 
-    std::vector<std::string>SpeciesFoci(const Species& species) {
+    auto SpeciesFoci(const Species& species) -> std::vector<std::string>
+    {
         std::vector<std::string> retval;
         retval.reserve(species.Foci().size());
         for (const FocusType& focus : species.Foci())
@@ -99,26 +123,29 @@ namespace {
         return retval;
     }
 
-    void UpdateMetersWrapper(const Universe& universe, const py::object& objIter) {
+    void UpdateMetersWrapper(const Universe& universe, const py::object& objIter)
+    {
         py::stl_input_iterator<int> begin(objIter), end;
         std::vector<int> objvec(begin, end);
         GetUniverse().UpdateMeterEstimates(objvec);
     }
 
-    double LinearDistance(const Universe& universe, int system1_id, int system2_id)
+    auto LinearDistance(const Universe& universe, int system1_id, int system2_id) -> double
     { return universe.GetPathfinder()->LinearDistance(system1_id, system2_id); }
 
-    int JumpDistanceBetweenObjects(const Universe& universe, int object1_id, int object2_id)
+    auto JumpDistanceBetweenObjects(const Universe& universe, int object1_id, int object2_id) -> int
     { return universe.GetPathfinder()->JumpDistanceBetweenObjects(object1_id, object2_id); }
 
-    std::vector<int> ShortestPath(const Universe& universe, int start_sys, int end_sys, int empire_id) {
+    auto ShortestPath(const Universe& universe, int start_sys, int end_sys, int empire_id) -> std::vector<int>
+    {
         std::vector<int> retval;
         std::pair<std::list<int>, int> path = universe.GetPathfinder()->ShortestPath(start_sys, end_sys, empire_id);
         std::copy(path.first.begin(), path.first.end(), std::back_inserter(retval));
         return retval;
     }
 
-    std::vector<int> ShortestNonHostilePath(const Universe& universe, int start_sys, int end_sys, int empire_id) {
+    auto ShortestNonHostilePath(const Universe& universe, int start_sys, int end_sys, int empire_id) -> std::vector<int>
+    {
         std::vector<int> retval;
         auto fleet_pred = std::make_shared<HostileVisitor>(empire_id);
         std::pair<std::list<int>, int> path = universe.GetPathfinder()->ShortestPath(start_sys, end_sys, empire_id, fleet_pred);
@@ -126,42 +153,47 @@ namespace {
         return retval;
     }
 
-    double ShortestPathDistance(const Universe& universe, int object1_id, int object2_id)
+    auto ShortestPathDistance(const Universe& universe, int object1_id, int object2_id) -> double
     { return universe.GetPathfinder()->ShortestPathDistance(object1_id, object2_id); }
 
-    std::vector<int> LeastJumpsPath(const Universe& universe, int start_sys, int end_sys, int empire_id) {
+    auto LeastJumpsPath(const Universe& universe, int start_sys, int end_sys, int empire_id) -> std::vector<int>
+    {
         std::vector<int> retval;
         std::pair<std::list<int>, int> path = universe.GetPathfinder()->LeastJumpsPath(start_sys, end_sys, empire_id);
         std::copy(path.first.begin(), path.first.end(), std::back_inserter(retval));
         return retval;
     }
 
-    bool SystemsConnected(const Universe& universe, int system1_id, int system2_id, int empire_id)
+    auto SystemsConnected(const Universe& universe, int system1_id, int system2_id, int empire_id) -> bool
     { return universe.GetPathfinder()->SystemsConnected(system1_id, system2_id, empire_id); }
 
-    bool SystemHasVisibleStarlanes(const Universe& universe, int system_id, int empire_id)
+    auto SystemHasVisibleStarlanes(const Universe& universe, int system_id, int empire_id) -> bool
     { return universe.GetPathfinder()->SystemHasVisibleStarlanes(system_id, empire_id); }
 
-    std::vector<int> ImmediateNeighbors(const Universe& universe, int system1_id, int empire_id) {
+    auto ImmediateNeighbors(const Universe& universe, int system1_id, int empire_id) -> std::vector<int>
+    {
         std::vector<int> retval;
         for (const auto& entry : universe.GetPathfinder()->ImmediateNeighbors(system1_id, empire_id))
         { retval.push_back(entry.second); }
         return retval;
     }
 
-    std::map<int, double> SystemNeighborsMap(const Universe& universe, int system1_id, int empire_id = ALL_EMPIRES) {
+    auto SystemNeighborsMap(const Universe& universe, int system1_id, int empire_id = ALL_EMPIRES) -> std::map<int, double>
+    {
         std::map<int, double> retval;
         for (const auto& entry : universe.GetPathfinder()->ImmediateNeighbors(system1_id, empire_id))
         { retval[entry.second] = entry.first; }
         return retval;
     }
 
-    const Meter*            (UniverseObject::*ObjectGetMeter)(MeterType) const =                &UniverseObject::GetMeter;
+    auto ObjectGetMeter(const UniverseObject& object, MeterType type) -> const Meter*
+    { return object.GetMeter(type); }
 
-    std::map<MeterType, Meter> ObjectMeters(const UniverseObject& object)
+    auto ObjectMeters(const UniverseObject& object) -> std::map<MeterType, Meter>
     { return std::map<MeterType, Meter>{object.Meters().begin(), object.Meters().end()}; }
 
-    std::vector<std::string> ObjectSpecials(const UniverseObject& object) {
+    auto ObjectSpecials(const UniverseObject& object) -> std::vector<std::string>
+    {
         std::vector<std::string> retval;
         retval.reserve(object.Specials().size());
         for (const auto& special : object.Specials())
@@ -169,36 +201,43 @@ namespace {
         return retval;
     }
 
-    const Meter*            (Ship::*ShipGetPartMeter)(MeterType, const std::string&) const =    &Ship::GetPartMeter;
-    const auto&             (Ship::*ShipPartMeters)(void) const =                               &Ship::PartMeters;
+    auto ShipGetPartMeter(const Ship& ship, MeterType type, const std::string& part_name) -> const Meter*
+    { return ship.GetPartMeter(type, part_name); }
 
-    float ObjectCurrentMeterValue(const UniverseObject& o, MeterType meter_type) {
+    auto ShipPartMeters(const Ship& ship) -> const Ship::PartMeterMap&
+    { return ship.PartMeters(); }
+
+    auto ObjectCurrentMeterValue(const UniverseObject& o, MeterType meter_type) -> float
+    {
         if (auto* m = o.GetMeter(meter_type))
             return m->Current();
         return 0.0f;
     }
 
-    float ObjectInitialMeterValue(const UniverseObject& o, MeterType meter_type) {
+    auto ObjectInitialMeterValue(const UniverseObject& o, MeterType meter_type) -> float
+    {
         if (auto* m = o.GetMeter(meter_type))
             return m->Initial();
         return 0.0f;
     }
 
-    const ShipHull* ShipDesignHull(const ShipDesign& design)
+    auto ShipDesignHull(const ShipDesign& design) -> const ShipHull*
     { return GetShipHull(design.Hull()); }
 
-    const std::string& ShipDesignName(const ShipDesign& ship_design)
+    auto ShipDesignName(const ShipDesign& ship_design) -> const std::string&
     { return ship_design.Name(false); }
 
-    const std::string& ShipDesignDescription(const ShipDesign& ship_design)
+    auto ShipDesignDescription(const ShipDesign& ship_design) -> const std::string&
     { return ship_design.Description(false); }
 
-    bool                    (*ValidDesignHullAndParts)(const std::string& hull,
-                                                       const std::vector<std::string>& parts) = &ShipDesign::ValidDesign;
+    auto ValidDesignHullAndParts(const ShipDesign& design, const std::string& hull, const std::vector<std::string>& parts) -> bool
+    { return design.ValidDesign(hull, parts); }
 
-    const std::vector<std::string>& (ShipDesign::*PartsVoid)(void) const =                      &ShipDesign::Parts;
+    auto PartsVoid(const ShipDesign& design) -> const std::vector<std::string>&
+    { return design.Parts(); }
 
-    std::vector<int> AttackStats(const ShipDesign& ship_design) {
+    auto AttackStats(const ShipDesign& ship_design) -> std::vector<int>
+    {
         std::vector<int> results;
         results.reserve(ship_design.Parts().size());
         for (const std::string& part_name : ship_design.Parts()) {
@@ -209,26 +248,34 @@ namespace {
         return results;
     }
 
-    std::vector<ShipSlotType> HullSlots(const ShipHull& hull) {
+    auto HullSlots(const ShipHull& hull) -> std::vector<ShipSlotType>
+    {
         std::vector<ShipSlotType> retval;
         for (const ShipHull::Slot& slot : hull.Slots())
             retval.push_back(slot.type);
         return retval;
     }
 
-    unsigned int            (ShipHull::*NumSlotsTotal)(void) const =                            &ShipHull::NumSlots;
-    unsigned int            (ShipHull::*NumSlotsOfSlotType)(ShipSlotType) const =               &ShipHull::NumSlots;
+    auto NumSlotsTotal(const ShipHull& hull) -> unsigned int
+    { return hull.NumSlots(); }
+
+    auto NumSlotsOfSlotType(const ShipHull& hull, ShipSlotType slot_type) -> unsigned int
+    { return hull.NumSlots(slot_type); }
 
     bool ObjectInField(const Field& field, const UniverseObject& obj)
     { return field.InField(obj.X(), obj.Y()); }
-    bool                    (Field::*LocationInField)(double x, double y) const =               &Field::InField;
 
-    float                   (Special::*SpecialInitialCapacityOnObject)(int) const =             &Special::InitialCapacity;
+    auto LocationInField(const Field& field, double x, double y) -> bool
+    { return field.InField(x, y); }
 
-    bool EnqueueLocationTest(const BuildingType& building_type, int empire_id, int loc_id)
+    auto SpecialInitialCapacityOnObject(const Special& special, int obj_id) -> float
+    { return special.InitialCapacity(obj_id); }
+
+    auto EnqueueLocationTest(const BuildingType& building_type, int empire_id, int loc_id) -> bool
     { return building_type.EnqueueLocation(empire_id, loc_id);}
 
-    bool HullProductionLocation(const ShipHull& hull, int location_id) {
+    auto HullProductionLocation(const ShipHull& hull, int location_id) -> bool
+    {
         auto location = Objects().get(location_id);
         if (!location) {
             ErrorLogger() << "UniverseWrapper::HullProductionLocation Could not find location with id " << location_id;
@@ -238,7 +285,8 @@ namespace {
         return hull.Location()->Eval(location_as_source_context, location);
     }
 
-    bool ShipPartProductionLocation(const ShipPart& part_type, int location_id) {
+    auto ShipPartProductionLocation(const ShipPart& part_type, int location_id) -> bool
+    {
         auto location = Objects().get(location_id);
         if (!location) {
             ErrorLogger() << "UniverseWrapper::PartTypeProductionLocation Could not find location with id " << location_id;
@@ -248,9 +296,10 @@ namespace {
         return part_type.Location()->Eval(location_as_source_context, location);
     }
 
-    bool RuleExistsAnyType(const GameRules& rules, const std::string& name)
+    auto RuleExistsAnyType(const GameRules& rules, const std::string& name) -> bool
     { return rules.RuleExists(name); }
-    bool RuleExistsWithType(const GameRules& rules, const std::string& name, GameRules::Type type)
+
+    auto RuleExistsWithType(const GameRules& rules, const std::string& name, GameRules::Type type) -> bool
     { return rules.RuleExists(name, type); }
 }
 
