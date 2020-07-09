@@ -9,22 +9,22 @@ namespace py = boost::python;
 
 
 namespace {
-    py::object GetOptionsDBOptionStr(std::string const &option)
+    auto GetOptionsDBOptionStr(std::string const &option) -> py::object
     { return GetOptionsDB().OptionExists(option) ? py::str(GetOptionsDB().Get<std::string>(option)) : py::str(); }
 
-    py::object GetOptionsDBOptionInt(std::string const &option)
+    auto GetOptionsDBOptionInt(std::string const &option) -> py::object
     { return GetOptionsDB().OptionExists(option) ? py::object(GetOptionsDB().Get<int>(option)) : py::object(); }
 
-    py::object GetOptionsDBOptionBool(std::string const &option)
+    auto GetOptionsDBOptionBool(std::string const &option) -> py::object
     { return GetOptionsDB().OptionExists(option) ? py::object(GetOptionsDB().Get<bool>(option)) : py::object(); }
 
-    py::object GetOptionsDBOptionDouble(std::string const &option)
+    auto GetOptionsDBOptionDouble(std::string const &option) -> py::object
     { return GetOptionsDB().OptionExists(option) ? py::object(GetOptionsDB().Get<double>(option)) : py::object(); }
 
-    py::str GetUserConfigDirWrapper()
+    auto GetUserConfigDirWrapper() -> py::str
     { return py::str(PathToString(GetUserConfigDir())); }
 
-    py::str GetUserDataDirWrapper()
+    auto GetUserDataDirWrapper() -> py::str
     { return py::str(PathToString(GetUserDataDir())); }
 }
 
