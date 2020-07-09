@@ -61,23 +61,6 @@ FO_COMMON_API extern const int INVALID_DESIGN_ID;
 // Helper stuff (classes, functions etc.) exposed to the
 // server side Python scripts
 namespace {
-    // Functions that return various important constants
-    auto AllEmpires() -> int
-    { return ALL_EMPIRES; }
-
-    auto InvalidObjectID() -> int
-    { return INVALID_OBJECT_ID; }
-
-    auto LargeMeterValue() -> float
-    { return Meter::LARGE_VALUE; }
-
-    auto InvalidPosition() -> double
-    { return UniverseObject::INVALID_POSITION; }
-
-    // Wrapper for GetResourceDir
-    auto GetResourceDirWrapper() -> py::object
-    { return py::object(PathToString(GetResourceDir())); }
-
     // Wrapper for getting empire objects
     auto GetAllEmpires() -> py::list
     {
@@ -117,11 +100,6 @@ namespace {
             empire->AddSitRepEntry(CreateSitRep(template_string, sitrep_turn, icon, params));
         }
     }
-
-    void GenerateSitRep1(int empire_id,
-                         const std::string& template_string,
-                         const std::string& icon)
-    { GenerateSitRep(empire_id, template_string, py::dict(), icon); }
 
     // Wrappers for Species / SpeciesManager class (member) functions
     auto SpeciesPreferredFocus(const std::string& species_name) -> py::object
@@ -647,19 +625,6 @@ namespace {
         obj->RemoveSpecial(special_name);
     }
 
-    // Wrappers for Universe class
-    auto GetUniverseWidth() -> double
-    { return GetUniverse().UniverseWidth(); }
-
-    void SetUniverseWidth(double width)
-    { GetUniverse().SetUniverseWidth(width); }
-
-    auto LinearDistance(int system1_id, int system2_id) -> double
-    { return GetPathfinder()->LinearDistance(system1_id, system2_id); }
-
-    auto JumpDistanceBetweenSystems(int system1_id, int system2_id) -> int
-    { return GetPathfinder()->JumpDistanceBetweenSystems(system1_id, system2_id); }
-
     auto GetAllObjects() -> py::list
     {
         py::list py_all_objects;
@@ -900,12 +865,6 @@ namespace {
         //return the new ships id
         return ship->ID();
     }
-
-    auto CreateMonsterFleet(int system_id) -> int
-    { return CreateFleet(UserString("MONSTERS"), system_id, ALL_EMPIRES, true); }
-
-    auto CreateMonster(const std::string& design_name, int fleet_id) -> int
-    { return CreateShip(NewMonsterName(), design_name, "", fleet_id); }
 
     auto CreateFieldImpl(const std::string& field_type_name, double x, double y, double size) -> std::shared_ptr<Field>
     {
@@ -1343,17 +1302,17 @@ namespace FreeOrionPython {
 
         py::def("user_string",                      make_function(&UserString,      py::return_value_policy<py::copy_const_reference>()));
         py::def("roman_number",                     RomanNumber);
-        py::def("get_resource_dir",                 GetResourceDirWrapper);
+        py::def("get_resource_dir",                 +[]() -> py::object { return py::object(PathToString(GetResourceDir())); });
 
-        py::def("all_empires",                      AllEmpires);
-        py::def("invalid_object",                   InvalidObjectID);
-        py::def("large_meter_value",                LargeMeterValue);
-        py::def("invalid_position",                 InvalidPosition);
+        py::def("all_empires",                      +[]() -> int { return ALL_EMPIRES; });
+        py::def("invalid_object",                   +[]() -> int { return INVALID_OBJECT_ID; });
+        py::def("large_meter_value",                +[]() -> float { return Meter::LARGE_VALUE; });
+        py::def("invalid_position",                 +[]() -> double { return UniverseObject::INVALID_POSITION; });
 
         py::def("get_galaxy_setup_data",            GetGalaxySetupData,             py::return_value_policy<py::reference_existing_object>());
         py::def("current_turn",                     CurrentTurn);
         py::def("generate_sitrep",                  GenerateSitRep);
-        py::def("generate_sitrep",                  GenerateSitRep1);
+        py::def("generate_sitrep",                  +[](int empire_id, const std::string& template_string, const std::string& icon) { GenerateSitRep(empire_id, template_string, py::dict(), icon); });
         py::def("generate_starlanes",               GenerateStarlanes);
 
         py::def("species_preferred_focus",          SpeciesPreferredFocus);
@@ -1394,10 +1353,10 @@ namespace FreeOrionPython {
         py::def("add_special",                      AddSpecial);
         py::def("remove_special",                   RemoveSpecial);
 
-        py::def("get_universe_width",               GetUniverseWidth);
-        py::def("set_universe_width",               SetUniverseWidth);
-        py::def("linear_distance",                  LinearDistance);
-        py::def("jump_distance",                    JumpDistanceBetweenSystems);
+        py::def("get_universe_width",               +[]() -> double { return GetUniverse().UniverseWidth(); });
+        py::def("set_universe_width",               +[](double width) { GetUniverse().SetUniverseWidth(width); });
+        py::def("linear_distance",                  +[](int system1_id, int system2_id) -> double { return GetPathfinder()->LinearDistance(system1_id, system2_id); });
+        py::def("jump_distance",                    +[](int system1_id, int system2_id) -> int { return GetPathfinder()->JumpDistanceBetweenSystems(system1_id, system2_id); });
         py::def("get_all_objects",                  GetAllObjects);
         py::def("get_systems",                      GetSystems);
         py::def("create_system",                    CreateSystem);
@@ -1405,8 +1364,8 @@ namespace FreeOrionPython {
         py::def("create_building",                  CreateBuilding);
         py::def("create_fleet",                     CreateFleet);
         py::def("create_ship",                      CreateShip);
-        py::def("create_monster_fleet",             CreateMonsterFleet);
-        py::def("create_monster",                   CreateMonster);
+        py::def("create_monster_fleet",             +[](int system_id) -> int { return CreateFleet(UserString("MONSTERS"), system_id, ALL_EMPIRES, true); });
+        py::def("create_monster",                   +[](const std::string& design_name, int fleet_id) -> int { return CreateShip(NewMonsterName(), design_name, "", fleet_id); });
         py::def("create_field",                     CreateField);
         py::def("create_field_in_system",           CreateFieldInSystem);
 
