@@ -57,9 +57,10 @@ namespace boost {
 #endif
 
 namespace {
-    void                    DumpObjects(const Universe& universe)
+    void DumpObjects(const Universe& universe)
     { DebugLogger() << universe.Objects().Dump(); }
-    std::string             ObjectDump(const UniverseObject& obj)
+
+    auto ObjectDump(const UniverseObject& obj) -> std::string
     { return obj.Dump(0); }
 
     // We're returning the result of operator-> here so that python doesn't
@@ -104,18 +105,11 @@ namespace {
         GetUniverse().UpdateMeterEstimates(objvec);
     }
 
-    //void (Universe::*UpdateMeterEstimatesVoidFunc)(void) = &Universe::UpdateMeterEstimates;
+    double LinearDistance(const Universe& universe, int system1_id, int system2_id)
+    { return universe.GetPathfinder()->LinearDistance(system1_id, system2_id); }
 
-    double LinearDistance(const Universe& universe, int system1_id, int system2_id) {
-        double retval = universe.GetPathfinder()->LinearDistance(system1_id, system2_id);
-        return retval;
-    }
-    std::function<double (const Universe&, int, int)> LinearDistanceFunc = &LinearDistance;
-
-    int JumpDistanceBetweenObjects(const Universe& universe, int object1_id, int object2_id) {
-        return universe.GetPathfinder()->JumpDistanceBetweenObjects(object1_id, object2_id);
-    }
-    std::function<int (const Universe&, int, int)> JumpDistanceFunc = &JumpDistanceBetweenObjects;
+    int JumpDistanceBetweenObjects(const Universe& universe, int object1_id, int object2_id)
+    { return universe.GetPathfinder()->JumpDistanceBetweenObjects(object1_id, object2_id); }
 
     std::vector<int> ShortestPath(const Universe& universe, int start_sys, int end_sys, int empire_id) {
         std::vector<int> retval;
@@ -123,7 +117,6 @@ namespace {
         std::copy(path.first.begin(), path.first.end(), std::back_inserter(retval));
         return retval;
     }
-    std::function<std::vector<int> (const Universe&, int, int, int)> ShortestPathFunc = &ShortestPath;
 
     std::vector<int> ShortestNonHostilePath(const Universe& universe, int start_sys, int end_sys, int empire_id) {
         std::vector<int> retval;
@@ -132,12 +125,9 @@ namespace {
         std::copy(path.first.begin(), path.first.end(), std::back_inserter(retval));
         return retval;
     }
-    std::function<std::vector<int> (const Universe&, int, int, int)> ShortestNonHostilePathFunc = &ShortestNonHostilePath;
 
-    double ShortestPathDistance(const Universe& universe, int object1_id, int object2_id) {
-        return universe.GetPathfinder()->ShortestPathDistance(object1_id, object2_id);
-    }
-    std::function<double (const Universe&, int, int)> ShortestPathDistanceFunc = &ShortestPathDistance;
+    double ShortestPathDistance(const Universe& universe, int object1_id, int object2_id)
+    { return universe.GetPathfinder()->ShortestPathDistance(object1_id, object2_id); }
 
     std::vector<int> LeastJumpsPath(const Universe& universe, int start_sys, int end_sys, int empire_id) {
         std::vector<int> retval;
@@ -145,42 +135,31 @@ namespace {
         std::copy(path.first.begin(), path.first.end(), std::back_inserter(retval));
         return retval;
     }
-    std::function<std::vector<int> (const Universe&, int, int, int)> LeastJumpsFunc = &LeastJumpsPath;
 
-    bool SystemsConnectedP(const Universe& universe, int system1_id, int system2_id, int empire_id=ALL_EMPIRES) {
-        //DebugLogger() << "SystemsConnected!(" << system1_id << ", " << system2_id << ")";
-        bool retval = universe.GetPathfinder()->SystemsConnected(system1_id, system2_id, empire_id);
-        //DebugLogger() << "SystemsConnected! retval: " << retval;
-        return retval;
-    }
-    std::function<bool (const Universe&, int, int, int)> SystemsConnectedFunc = &SystemsConnectedP;
+    bool SystemsConnected(const Universe& universe, int system1_id, int system2_id, int empire_id)
+    { return universe.GetPathfinder()->SystemsConnected(system1_id, system2_id, empire_id); }
 
-    bool SystemHasVisibleStarlanesP(const Universe& universe, int system_id, int empire_id = ALL_EMPIRES) {
-        return universe.GetPathfinder()->SystemHasVisibleStarlanes(system_id, empire_id);
-    }
-    std::function<bool (const Universe&, int, int)> SystemHasVisibleStarlanesFunc = &SystemHasVisibleStarlanesP;
+    bool SystemHasVisibleStarlanes(const Universe& universe, int system_id, int empire_id)
+    { return universe.GetPathfinder()->SystemHasVisibleStarlanes(system_id, empire_id); }
 
-    std::vector<int> ImmediateNeighborsP(const Universe& universe, int system1_id, int empire_id = ALL_EMPIRES) {
+    std::vector<int> ImmediateNeighbors(const Universe& universe, int system1_id, int empire_id) {
         std::vector<int> retval;
         for (const auto& entry : universe.GetPathfinder()->ImmediateNeighbors(system1_id, empire_id))
         { retval.push_back(entry.second); }
         return retval;
     }
-    std::function<std::vector<int> (const Universe&, int, int)> ImmediateNeighborsFunc = &ImmediateNeighborsP;
 
-    std::map<int, double> SystemNeighborsMapP(const Universe& universe, int system1_id, int empire_id = ALL_EMPIRES) {
+    std::map<int, double> SystemNeighborsMap(const Universe& universe, int system1_id, int empire_id = ALL_EMPIRES) {
         std::map<int, double> retval;
         for (const auto& entry : universe.GetPathfinder()->ImmediateNeighbors(system1_id, empire_id))
         { retval[entry.second] = entry.first; }
         return retval;
     }
-    std::function<std::map<int, double> (const Universe&, int, int)> SystemNeighborsMapFunc = &SystemNeighborsMapP;
 
     const Meter*            (UniverseObject::*ObjectGetMeter)(MeterType) const =                &UniverseObject::GetMeter;
 
-    std::map<MeterType, Meter> ObjectMetersP(const UniverseObject& object)
+    std::map<MeterType, Meter> ObjectMeters(const UniverseObject& object)
     { return std::map<MeterType, Meter>{object.Meters().begin(), object.Meters().end()}; }
-    std::function<std::map<MeterType, Meter> (const UniverseObject&)> ObjectMetersFunc = &ObjectMetersP;
 
     std::vector<std::string> ObjectSpecials(const UniverseObject& object) {
         std::vector<std::string> retval;
@@ -193,40 +172,33 @@ namespace {
     const Meter*            (Ship::*ShipGetPartMeter)(MeterType, const std::string&) const =    &Ship::GetPartMeter;
     const auto&             (Ship::*ShipPartMeters)(void) const =                               &Ship::PartMeters;
 
-    float ObjectCurrentMeterValueP(const UniverseObject& o, MeterType meter_type) {
+    float ObjectCurrentMeterValue(const UniverseObject& o, MeterType meter_type) {
         if (auto* m = o.GetMeter(meter_type))
             return m->Current();
         return 0.0f;
     }
-    std::function<float(const UniverseObject&, MeterType)> ObjectCurrentMeterValueFunc = &ObjectCurrentMeterValueP;
 
-    float ObjectInitialMeterValueP(const UniverseObject& o, MeterType meter_type) {
+    float ObjectInitialMeterValue(const UniverseObject& o, MeterType meter_type) {
         if (auto* m = o.GetMeter(meter_type))
             return m->Initial();
         return 0.0f;
     }
-    std::function<float(const UniverseObject&, MeterType)> ObjectInitialMeterValueFunc = &ObjectInitialMeterValueP;
 
-    const ShipHull* ShipDesignHullP(const ShipDesign& design)
+    const ShipHull* ShipDesignHull(const ShipDesign& design)
     { return GetShipHull(design.Hull()); }
-    std::function<const ShipHull*(const ShipDesign& ship)> ShipDesignHullFunc = &ShipDesignHullP;
 
     const std::string& ShipDesignName(const ShipDesign& ship_design)
     { return ship_design.Name(false); }
-    std::function<const std::string& (const ShipDesign&)> ShipDesignNameFunc = &ShipDesignName;
 
     const std::string& ShipDesignDescription(const ShipDesign& ship_design)
     { return ship_design.Description(false); }
-    std::function<const std::string& (const ShipDesign&)> ShipDesignDescriptionFunc = &ShipDesignDescription;
 
     bool                    (*ValidDesignHullAndParts)(const std::string& hull,
                                                        const std::vector<std::string>& parts) = &ShipDesign::ValidDesign;
 
     const std::vector<std::string>& (ShipDesign::*PartsVoid)(void) const =                      &ShipDesign::Parts;
-    // The following (PartsSlotType) is not currently used, but left as an example for this kind of wrapper
-    //std::vector<std::string>        (ShipDesign::*PartsSlotType)(ShipSlotType) const =          &ShipDesign::Parts;
 
-    std::vector<int> AttackStatsP(const ShipDesign& ship_design) {
+    std::vector<int> AttackStats(const ShipDesign& ship_design) {
         std::vector<int> results;
         results.reserve(ship_design.Parts().size());
         for (const std::string& part_name : ship_design.Parts()) {
@@ -236,7 +208,6 @@ namespace {
         }
         return results;
     }
-    std::function<std::vector<int> (const ShipDesign&)> AttackStatsFunc = &AttackStatsP;
 
     std::vector<ShipSlotType> HullSlots(const ShipHull& hull) {
         std::vector<ShipSlotType> retval;
@@ -244,7 +215,6 @@ namespace {
             retval.push_back(slot.type);
         return retval;
     }
-    std::function<std::vector<ShipSlotType> (const ShipHull&)> HullSlotsFunc = &HullSlots;
 
     unsigned int            (ShipHull::*NumSlotsTotal)(void) const =                            &ShipHull::NumSlots;
     unsigned int            (ShipHull::*NumSlotsOfSlotType)(ShipSlotType) const =               &ShipHull::NumSlots;
@@ -401,7 +371,7 @@ namespace FreeOrionPython {
                                                               py::return_value_policy<py::return_by_value>()))
 
             .def("systemHasStarlane",           make_function(
-                                                    SystemHasVisibleStarlanesFunc,
+                                                    SystemHasVisibleStarlanes,
                                                     py::return_value_policy<py::return_by_value>(),
                                                     boost::mpl::vector<bool, const Universe&, int, int>()
                                                 ))
@@ -411,13 +381,13 @@ namespace FreeOrionPython {
                                                                                     py::return_value_policy<py::reference_existing_object>()))
 
             .def("linearDistance",              make_function(
-                                                    LinearDistanceFunc,
+                                                    LinearDistance,
                                                     py::return_value_policy<py::return_by_value>(),
                                                     boost::mpl::vector<double, const Universe&, int, int>()
                                                 ))
 
             .def("jumpDistance",                make_function(
-                                                    JumpDistanceFunc,
+                                                    JumpDistanceBetweenObjects,
                                                     py::return_value_policy<py::return_by_value>(),
                                                     boost::mpl::vector<int, const Universe&, int, int>()
                                                 ),
@@ -429,13 +399,13 @@ namespace FreeOrionPython {
                                                 )
 
             .def("shortestPath",                make_function(
-                                                    ShortestPathFunc,
+                                                    ShortestPath,
                                                     py::return_value_policy<py::return_by_value>(),
                                                     boost::mpl::vector<std::vector<int>, const Universe&, int, int, int>()
                                                 ))
 
             .def("shortestNonHostilePath",      make_function(
-                                                    ShortestNonHostilePathFunc,
+                                                    ShortestNonHostilePath,
                                                     py::return_value_policy<py::return_by_value>(),
                                                     boost::mpl::vector<std::vector<int>, const Universe&, int, int, int>()
                                                 ),
@@ -445,31 +415,31 @@ namespace FreeOrionPython {
                                                 )
 
             .def("shortestPathDistance",        make_function(
-                                                    ShortestPathDistanceFunc,
+                                                    ShortestPathDistance,
                                                     py::return_value_policy<py::return_by_value>(),
                                                     boost::mpl::vector<double, const Universe&, int, int>()
                                                 ))
 
             .def("leastJumpsPath",              make_function(
-                                                    LeastJumpsFunc,
+                                                    LeastJumpsPath,
                                                     py::return_value_policy<py::return_by_value>(),
                                                     boost::mpl::vector<std::vector<int>, const Universe&, int, int, int>()
                                                 ))
 
             .def("systemsConnected",            make_function(
-                                                    SystemsConnectedFunc,
+                                                    SystemsConnected,
                                                     py::return_value_policy<py::return_by_value>(),
                                                     boost::mpl::vector<bool, const Universe&, int, int, int>()
                                                 ))
 
             .def("getImmediateNeighbors",       make_function(
-                                                    ImmediateNeighborsFunc,
+                                                    ImmediateNeighbors,
                                                     py::return_value_policy<py::return_by_value>(),
                                                     boost::mpl::vector<std::vector<int>, const Universe&, int, int>()
                                                 ))
 
             .def("getSystemNeighborsMap",       make_function(
-                                                    SystemNeighborsMapFunc,
+                                                    SystemNeighborsMap,
                                                     py::return_value_policy<py::return_by_value>(),
                                                     boost::mpl::vector<std::map<int, double>, const Universe&, int, int>()
                                                 ))
@@ -494,7 +464,7 @@ namespace FreeOrionPython {
                                                 "number (int), pointing to the statisic value (double)."
                                                 )
 
-            .def("dump",                        &DumpObjects)
+            .def("dump",                        DumpObjects)
         ;
 
         ////////////////////
@@ -519,24 +489,24 @@ namespace FreeOrionPython {
             .add_property("containedObjects",   make_function(&UniverseObject::ContainedObjectIDs,  py::return_value_policy<py::return_by_value>()))
             .add_property("containerObject",    &UniverseObject::ContainerObjectID)
             .def("currentMeterValue",           make_function(
-                                                    ObjectCurrentMeterValueFunc,
+                                                    ObjectCurrentMeterValue,
                                                     py::return_value_policy<py::return_by_value>(),
                                                     boost::mpl::vector<float, const UniverseObject&, MeterType>()
                                                 ))
             .def("initialMeterValue",           make_function(
-                                                    ObjectInitialMeterValueFunc,
+                                                    ObjectInitialMeterValue,
                                                     py::return_value_policy<py::return_by_value>(),
                                                     boost::mpl::vector<float, const UniverseObject&, MeterType>()
                                                 ))
             .add_property("tags",               make_function(&UniverseObject::Tags,        py::return_value_policy<py::return_by_value>()))
             .def("hasTag",                      &UniverseObject::HasTag)
             .add_property("meters",             make_function(
-                                                    ObjectMetersFunc,
+                                                    ObjectMeters,
                                                     py::return_value_policy<py::return_by_value>(),
                                                     boost::mpl::vector<std::map<MeterType, Meter>, const UniverseObject&>()
                                                 ))
             .def("getMeter",                    make_function(ObjectGetMeter,               py::return_internal_reference<>()))
-            .def("dump",                        make_function(&ObjectDump,                  py::return_value_policy<py::return_by_value>()), "Returns string with debug information.")
+            .def("dump",                        make_function(ObjectDump,                   py::return_value_policy<py::return_by_value>()), "Returns string with debug information.")
         ;
 
         ///////////////////
@@ -598,12 +568,12 @@ namespace FreeOrionPython {
         py::class_<ShipDesign, boost::noncopyable>("shipDesign", py::no_init)
             .add_property("id",                 make_function(&ShipDesign::ID,              py::return_value_policy<py::return_by_value>()))
             .add_property("name",               make_function(
-                                                    ShipDesignNameFunc,
+                                                    ShipDesignName,
                                                     py::return_value_policy<py::copy_const_reference>(),
                                                     boost::mpl::vector<const std::string&, const ShipDesign&>()
                                                 ))
             .add_property("description",        make_function(
-                                                    ShipDesignDescriptionFunc,
+                                                    ShipDesignDescription,
                                                     py::return_value_policy<py::copy_const_reference>(),
                                                     boost::mpl::vector<const std::string&, const ShipDesign&>()
                                                 ))
@@ -634,13 +604,13 @@ namespace FreeOrionPython {
                                                 &ShipDesign::ProductionCostTimeLocationInvariant)
             .add_property("hull",               make_function(&ShipDesign::Hull,            py::return_value_policy<py::return_by_value>()))
             .add_property("ship_hull",          make_function(
-                                                    ShipDesignHullFunc,
+                                                    ShipDesignHull,
                                                     py::return_value_policy<py::reference_existing_object>(),
                                                     boost::mpl::vector<const ShipHull*, const ShipDesign&>()
                                                 ))
             .add_property("parts",              make_function(PartsVoid,                    py::return_internal_reference<>()))
             .add_property("attackStats",        make_function(
-                                                    AttackStatsFunc,
+                                                    AttackStats,
                                                     py::return_value_policy<py::return_by_value>(),
                                                     boost::mpl::vector<std::vector<int>, const ShipDesign&>()
                                                 ))
@@ -678,7 +648,7 @@ namespace FreeOrionPython {
             .add_property("speed",              &ShipHull::Speed)
             .def("numSlotsOfSlotType",          NumSlotsOfSlotType)
             .add_property("slots",              make_function(
-                                                    HullSlotsFunc,
+                                                    HullSlots,
                                                     py::return_value_policy<py::return_by_value>(),
                                                     boost::mpl::vector<std::vector<ShipSlotType>, const ShipHull&>()
                                                 ))
