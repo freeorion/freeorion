@@ -40,7 +40,7 @@ namespace {
     // static string to save AI state
     static std::string s_save_state_string("");
 
-    const std::string& PlayerName()
+    auto PlayerName() -> const std::string&
     { return AIClientApp::GetApp()->PlayerName(); }
 
     /** @brief Return the player name of the client identified by @a player_id
@@ -51,7 +51,8 @@ namespace {
      *      name of this client or an empty string the player is not known or
      *      does not exist.
      */
-    const std::string& PlayerNameByID(int player_id) {
+    auto PlayerNameByID(int player_id) -> const std::string&
+    {
         auto& players = AIClientApp::GetApp()->Players();
         auto it = players.find(player_id);
         if (it != players.end())
@@ -62,10 +63,11 @@ namespace {
         }
     }
 
-    int PlayerID()
+    auto PlayerID() -> int
     { return AIClientApp::GetApp()->PlayerID(); }
 
-    int EmpirePlayerID(int empire_id) {
+    auto EmpirePlayerID(int empire_id) -> int
+    {
         int player_id = AIClientApp::GetApp()->EmpirePlayerID(empire_id);
         if (Networking::INVALID_PLAYER_ID == player_id)
             DebugLogger() << "AIWrapper::EmpirePlayerID(" << empire_id << ") - passed an invalid empire_id";
@@ -76,7 +78,8 @@ namespace {
      *
      * @return A vector containing the identifiers of all players.
      */
-    std::vector<int> AllPlayerIDs() {
+    auto AllPlayerIDs() -> std::vector<int>
+    {
         std::vector<int> player_ids;
         for (auto& entry : AIClientApp::GetApp()->Players())
             player_ids.push_back(entry.first);
@@ -89,7 +92,7 @@ namespace {
      *
      * @return True if the player is an AI, false if not.
      */
-    bool PlayerIsAI(int player_id)
+    auto PlayerIsAI(int player_id) -> bool
     { return AIClientApp::GetApp()->GetPlayerClientType(player_id) == Networking::CLIENT_TYPE_AI_PLAYER; }
 
     /** @brief Return if the player identified by @a player_id is the game
@@ -99,7 +102,8 @@ namespace {
      *
      * @return True if the player is the game host, false if not.
      */
-    bool PlayerIsHost(int player_id) {
+    auto PlayerIsHost(int player_id) -> bool
+    {
         auto& players = AIClientApp::GetApp()->Players();
         auto it = players.find(player_id);
         if (it == players.end())
@@ -107,7 +111,7 @@ namespace {
         return it->second.host;
     }
 
-    int EmpireID()
+    auto EmpireID() -> int
     { return AIClientApp::GetApp()->EmpireID(); }
 
     /** @brief Return the empire identifier of the empire @a player_id controls
@@ -116,7 +120,8 @@ namespace {
      *
      * @return An empire identifier.
      */
-    int PlayerEmpireID(int player_id) {
+    auto PlayerEmpireID(int player_id) -> int
+    {
         for (auto& entry : AIClientApp::GetApp()->Players()) {
             if (entry.first == player_id)
                 return entry.second.empire_id;
@@ -128,7 +133,8 @@ namespace {
      *
      * @return A vector containing the identifiers of all empires.
      */
-    std::vector<int> AllEmpireIDs() {
+    auto AllEmpireIDs() -> std::vector<int>
+    {
         std::vector<int> empire_ids;
         for (auto& entry : AIClientApp::GetApp()->Players()) {
             auto empire_id = entry.second.empire_id;
@@ -143,13 +149,13 @@ namespace {
      * @return A pointer to the Empire instance this client has the control
      *      over.
      */
-    const Empire* PlayerEmpire()
+    auto PlayerEmpire() -> const Empire*
     { return AIClientApp::GetApp()->GetEmpire(AIClientApp::GetApp()->EmpireID()); }
 
-    const Empire* GetEmpireByID(int empire_id)
+    auto GetEmpireByID(int empire_id) -> const Empire*
     { return AIClientApp::GetApp()->GetEmpire(empire_id); }
 
-    const GalaxySetupData& PythonGalaxySetupData()
+    auto PythonGalaxySetupData() -> const GalaxySetupData&
     { return AIClientApp::GetApp()->GetGalaxySetupData(); }
 
     void InitMeterEstimatesAndDiscrepancies() {
@@ -235,7 +241,8 @@ namespace {
         empire->UpdateProductionQueue();
     }
 
-    py::list GetUserStringList(const std::string& list_key) {
+    auto GetUserStringList(const std::string& list_key) -> py::list
+    {
         py::list ret_list;
         for (const std::string& string : UserStringList(list_key))
             ret_list.append(string);
@@ -249,14 +256,15 @@ namespace {
     //! @return
     //! The canonical path pointing to the directory containing all python AI
     //! scripts.
-    std::string GetAIDir()
+    auto GetAIDir() -> std::string
     { return (GetResourceDir() / GetOptionsDB().Get<std::string>("ai-path")).string(); }
 
-    OrderSet& IssuedOrders()
+    auto IssuedOrders() -> OrderSet&
     { return AIClientApp::GetApp()->Orders(); }
 
     template<typename OrderType, typename... Args>
-    int Issue(Args &&... args) {
+    auto Issue(Args &&... args) -> int
+    {
         auto app = ClientApp::GetApp();
 
         if (!OrderType::Check(app->EmpireID(), std::forward<Args>(args)...))
@@ -267,7 +275,8 @@ namespace {
         return 1;
     }
 
-    int IssueNewFleetOrder(const std::string& fleet_name, int ship_id) {
+    auto IssueNewFleetOrder(const std::string& fleet_name, int ship_id) -> int
+    {
         std::vector<int> ship_ids{ship_id};
         auto app = ClientApp::GetApp();
         if (!NewFleetOrder::Check(app->EmpireID(), fleet_name, ship_ids, false))
@@ -279,21 +288,23 @@ namespace {
         return order->FleetID();
     }
 
-    int IssueFleetTransferOrder(int ship_id, int new_fleet_id) {
+    auto IssueFleetTransferOrder(int ship_id, int new_fleet_id) -> int
+    {
         std::vector<int> ship_ids{ship_id};
         return Issue<FleetTransferOrder>(new_fleet_id, ship_ids);
     }
 
-    int IssueRenameOrder(int object_id, const std::string& new_name)
+    auto IssueRenameOrder(int object_id, const std::string& new_name) -> int
     { return Issue<RenameOrder>(object_id, new_name); }
 
-    int IssueScrapOrder(int object_id)
+    auto IssueScrapOrder(int object_id) -> int
     { return Issue<ScrapOrder>(object_id); }
 
-    int IssueChangeFocusOrder(int planet_id, const std::string& focus)
+    auto IssueChangeFocusOrder(int planet_id, const std::string& focus) -> int
     { return Issue<ChangeFocusOrder>(planet_id, focus); }
 
-    int IssueEnqueueTechOrder(const std::string& tech_name, int position) {
+    auto IssueEnqueueTechOrder(const std::string& tech_name, int position) -> int
+    {
         const Tech* tech = GetTech(tech_name);
         if (!tech) {
             ErrorLogger() << "IssueEnqueueTechOrder : passed tech_name that is not the name of a tech.";
@@ -308,7 +319,8 @@ namespace {
         return 1;
     }
 
-    int IssueDequeueTechOrder(const std::string& tech_name) {
+    auto IssueDequeueTechOrder(const std::string& tech_name) -> int
+    {
         const Tech* tech = GetTech(tech_name);
         if (!tech) {
             ErrorLogger() << "IssueDequeueTechOrder : passed tech_name that is not the name of a tech.";
@@ -322,7 +334,8 @@ namespace {
         return 1;
     }
 
-    int IssueAdoptPolicyOrder(const std::string& policy_name, const std::string& category, int slot) {
+    auto IssueAdoptPolicyOrder(const std::string& policy_name, const std::string& category, int slot) -> int
+    {
         const Policy* policy = GetPolicy(policy_name);
         if (!policy) {
             ErrorLogger() << "IssueAdoptPolicyOrder : passed policy_name, " << policy_name << ", that is not the name of a policy.";
@@ -350,7 +363,8 @@ namespace {
         return 1;
     }
 
-    int IssueDeadoptPolicyOrder(const std::string& policy_name) {
+    auto IssueDeadoptPolicyOrder(const std::string& policy_name) -> int
+    {
         int empire_id = AIClientApp::GetApp()->EmpireID();
         Empire* empire = AIClientApp::GetApp()->GetEmpire(empire_id);
         if (!empire) {
@@ -368,7 +382,8 @@ namespace {
 
     }
 
-    int IssueEnqueueBuildingProductionOrder(const std::string& item_name, int location_id) {
+    auto IssueEnqueueBuildingProductionOrder(const std::string& item_name, int location_id) -> int
+    {
         int empire_id = AIClientApp::GetApp()->EmpireID();
         Empire* empire = AIClientApp::GetApp()->GetEmpire(empire_id);
         if (!empire) {
@@ -395,7 +410,8 @@ namespace {
         return 1;
     }
 
-    int IssueEnqueueShipProductionOrder(int design_id, int location_id) {
+    auto IssueEnqueueShipProductionOrder(int design_id, int location_id) -> int
+    {
         int empire_id = AIClientApp::GetApp()->EmpireID();
         Empire* empire = AIClientApp::GetApp()->GetEmpire(empire_id);
         if (!empire) {
@@ -417,7 +433,8 @@ namespace {
         return 1;
     }
 
-    int IssueChangeProductionQuantityOrder(int queue_index, int new_quantity, int new_blocksize) {
+    auto IssueChangeProductionQuantityOrder(int queue_index, int new_quantity, int new_blocksize) -> int
+    {
         int empire_id = AIClientApp::GetApp()->EmpireID();
         Empire* empire = AIClientApp::GetApp()->GetEmpire(empire_id);
         if (!empire) {
@@ -446,7 +463,8 @@ namespace {
         return 1;
     }
 
-    int IssueRequeueProductionOrder(int old_queue_index, int new_queue_index) {
+    auto IssueRequeueProductionOrder(int old_queue_index, int new_queue_index) -> int
+    {
         if (old_queue_index == new_queue_index) {
             ErrorLogger() << "IssueRequeueProductionOrder : passed same old and new indexes... nothing to do.";
             return 0;
@@ -487,7 +505,8 @@ namespace {
         return 1;
     }
 
-    int IssueDequeueProductionOrder(int queue_index) {
+    auto IssueDequeueProductionOrder(int queue_index) -> int
+    {
         int empire_id = AIClientApp::GetApp()->EmpireID();
         Empire* empire = AIClientApp::GetApp()->GetEmpire(empire_id);
         if (!empire) {
@@ -511,7 +530,8 @@ namespace {
         return 1;
     }
 
-    int IssuePauseProductionOrder(int queue_index, bool pause) {
+    auto IssuePauseProductionOrder(int queue_index, bool pause) -> int
+    {
         int empire_id = AIClientApp::GetApp()->EmpireID();
         Empire* empire = AIClientApp::GetApp()->GetEmpire(empire_id);
         if (!empire) {
@@ -535,7 +555,8 @@ namespace {
         return 1;
     }
 
-    int IssueAllowStockpileProductionOrder(int queue_index, bool use_stockpile) {
+    auto IssueAllowStockpileProductionOrder(int queue_index, bool use_stockpile) -> int
+    {
         int empire_id = AIClientApp::GetApp()->EmpireID();
         Empire* empire = AIClientApp::GetApp()->GetEmpire(empire_id);
         if (!empire) {
@@ -559,10 +580,10 @@ namespace {
         return 1;
     }
 
-    int IssueCreateShipDesignOrder(const std::string& name, const std::string& description,
-                                   const std::string& hull, const py::list parts_list,
-                                   const std::string& icon, const std::string& model,
-                                   bool name_desc_in_stringtable)
+    auto IssueCreateShipDesignOrder(const std::string& name, const std::string& description,
+                                    const std::string& hull, const py::list parts_list,
+                                    const std::string& icon, const std::string& model,
+                                    bool name_desc_in_stringtable) -> int
     {
         if (name.empty() || description.empty() || hull.empty()) {
             ErrorLogger() << "IssueCreateShipDesignOrderOrder : passed an empty name, description, or hull.";
@@ -597,25 +618,25 @@ namespace {
         return 1;
     }
 
-    int IssueFleetMoveOrder(int fleet_id, int destination_id)
+    auto IssueFleetMoveOrder(int fleet_id, int destination_id) -> int
     { return Issue<FleetMoveOrder>(fleet_id, destination_id); }
 
-    int AppendFleetMoveOrder(int fleet_id, int destination_id)
+    auto AppendFleetMoveOrder(int fleet_id, int destination_id) -> int
     { return Issue<FleetMoveOrder>(fleet_id, destination_id, true); }
 
-    int IssueColonizeOrder(int ship_id, int planet_id)
+    auto IssueColonizeOrder(int ship_id, int planet_id) -> int
     { return Issue<ColonizeOrder>(ship_id, planet_id); }
 
-    int IssueInvadeOrder(int ship_id, int planet_id)
+    auto IssueInvadeOrder(int ship_id, int planet_id) -> int
     { return Issue<InvadeOrder>(ship_id, planet_id); }
 
-    int IssueBombardOrder(int ship_id, int planet_id)
+    auto IssueBombardOrder(int ship_id, int planet_id) -> int
     { return Issue<BombardOrder>(ship_id, planet_id); }
 
-    int IssueAggressionOrder(int object_id, bool aggressive)
+    auto IssueAggressionOrder(int object_id, bool aggressive) -> int
     { return Issue<AggressiveOrder>(object_id, aggressive); }
 
-    int IssueGiveObjectToEmpireOrder(int object_id, int recipient_id)
+    auto IssueGiveObjectToEmpireOrder(int object_id, int recipient_id) -> int
     { return Issue<GiveObjectToEmpireOrder>(object_id, recipient_id); }
 
     void SendPlayerChatMessage(int recipient_player_id, const std::string& message_text)
@@ -636,7 +657,7 @@ namespace {
 }
 
 namespace FreeOrionPython {
-    const std::string& GetStaticSaveStateString()
+    auto GetStaticSaveStateString() -> const std::string&
     { return s_save_state_string; }
 
     void SetStaticSaveStateString(const std::string& new_state_string)
