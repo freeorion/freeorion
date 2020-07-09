@@ -40,9 +40,6 @@ namespace {
     // static string to save AI state
     static std::string s_save_state_string("");
 
-    auto PlayerName() -> const std::string&
-    { return AIClientApp::GetApp()->PlayerName(); }
-
     /** @brief Return the player name of the client identified by @a player_id
      *
      * @param player_id An client identifier.
@@ -62,9 +59,6 @@ namespace {
             throw std::invalid_argument("AIWrapper::PlayerName : given invalid player_id");
         }
     }
-
-    auto PlayerID() -> int
-    { return AIClientApp::GetApp()->PlayerID(); }
 
     auto EmpirePlayerID(int empire_id) -> int
     {
@@ -86,15 +80,6 @@ namespace {
         return player_ids;
     }
 
-    /** @brief Return if the player identified by @a player_id is an AI
-     *
-     * @param player_id An client identifier.
-     *
-     * @return True if the player is an AI, false if not.
-     */
-    auto PlayerIsAI(int player_id) -> bool
-    { return AIClientApp::GetApp()->GetPlayerClientType(player_id) == Networking::CLIENT_TYPE_AI_PLAYER; }
-
     /** @brief Return if the player identified by @a player_id is the game
      *      host
      *
@@ -110,9 +95,6 @@ namespace {
             return false;
         return it->second.host;
     }
-
-    auto EmpireID() -> int
-    { return AIClientApp::GetApp()->EmpireID(); }
 
     /** @brief Return the empire identifier of the empire @a player_id controls
      *
@@ -143,20 +125,6 @@ namespace {
         }
         return empire_ids;
     }
-
-    /** @brief Return the ::Empire this client controls
-     *
-     * @return A pointer to the Empire instance this client has the control
-     *      over.
-     */
-    auto PlayerEmpire() -> const Empire*
-    { return AIClientApp::GetApp()->GetEmpire(AIClientApp::GetApp()->EmpireID()); }
-
-    auto GetEmpireByID(int empire_id) -> const Empire*
-    { return AIClientApp::GetApp()->GetEmpire(empire_id); }
-
-    auto PythonGalaxySetupData() -> const GalaxySetupData&
-    { return AIClientApp::GetApp()->GetGalaxySetupData(); }
 
     void InitMeterEstimatesAndDiscrepancies() {
         Universe& universe = AIClientApp::GetApp()->GetUniverse();
@@ -249,19 +217,6 @@ namespace {
         return ret_list;
     }
 
-    //! Return the canonical AI directory path
-    //!
-    //! The value depends on the ::OptionsDB `resource.path` and `ai-path` keys.
-    //!
-    //! @return
-    //! The canonical path pointing to the directory containing all python AI
-    //! scripts.
-    auto GetAIDir() -> std::string
-    { return (GetResourceDir() / GetOptionsDB().Get<std::string>("ai-path")).string(); }
-
-    auto IssuedOrders() -> OrderSet&
-    { return AIClientApp::GetApp()->Orders(); }
-
     template<typename OrderType, typename... Args>
     auto Issue(Args &&... args) -> int
     {
@@ -293,15 +248,6 @@ namespace {
         std::vector<int> ship_ids{ship_id};
         return Issue<FleetTransferOrder>(new_fleet_id, ship_ids);
     }
-
-    auto IssueRenameOrder(int object_id, const std::string& new_name) -> int
-    { return Issue<RenameOrder>(object_id, new_name); }
-
-    auto IssueScrapOrder(int object_id) -> int
-    { return Issue<ScrapOrder>(object_id); }
-
-    auto IssueChangeFocusOrder(int planet_id, const std::string& focus) -> int
-    { return Issue<ChangeFocusOrder>(planet_id, focus); }
 
     auto IssueEnqueueTechOrder(const std::string& tech_name, int position) -> int
     {
@@ -618,30 +564,6 @@ namespace {
         return 1;
     }
 
-    auto IssueFleetMoveOrder(int fleet_id, int destination_id) -> int
-    { return Issue<FleetMoveOrder>(fleet_id, destination_id); }
-
-    auto AppendFleetMoveOrder(int fleet_id, int destination_id) -> int
-    { return Issue<FleetMoveOrder>(fleet_id, destination_id, true); }
-
-    auto IssueColonizeOrder(int ship_id, int planet_id) -> int
-    { return Issue<ColonizeOrder>(ship_id, planet_id); }
-
-    auto IssueInvadeOrder(int ship_id, int planet_id) -> int
-    { return Issue<InvadeOrder>(ship_id, planet_id); }
-
-    auto IssueBombardOrder(int ship_id, int planet_id) -> int
-    { return Issue<BombardOrder>(ship_id, planet_id); }
-
-    auto IssueAggressionOrder(int object_id, bool aggressive) -> int
-    { return Issue<AggressiveOrder>(object_id, aggressive); }
-
-    auto IssueGiveObjectToEmpireOrder(int object_id, int recipient_id) -> int
-    { return Issue<GiveObjectToEmpireOrder>(object_id, recipient_id); }
-
-    void SendPlayerChatMessage(int recipient_player_id, const std::string& message_text)
-    { AIClientApp::GetApp()->Networking().SendMessage(PlayerChatMessage(message_text, {recipient_player_id}, false)); }
-
     void SendDiplomaticMessage(const DiplomaticMessage& diplo_message) {
         AIClientApp* app = AIClientApp::GetApp();
         if (!app) return;
@@ -680,28 +602,52 @@ namespace FreeOrionPython {
      */
     void WrapAI()
     {
-        py::def("playerName",               PlayerName,                     py::return_value_policy<py::copy_const_reference>(), "Returns the name (string) of this AI player.");
+        py::def("playerName",
+                +[]() -> std::string const& { return AIClientApp::GetApp()->PlayerName(); },
+                py::return_value_policy<py::copy_const_reference>(),
+                "Returns the name (string) of this AI player.");
+
         py::def("playerName",               PlayerNameByID,                 py::return_value_policy<py::copy_const_reference>(), "Returns the name (string) of the player with the indicated playerID (int).");
 
-        py::def("playerID",                 PlayerID,                       "Returns the integer id of this AI player.");
+        py::def("playerID",
+                +[]() -> int { return AIClientApp::GetApp()->PlayerID(); },
+                "Returns the integer id of this AI player.");
+
         py::def("empirePlayerID",           EmpirePlayerID,                 "Returns the player ID (int) of the player who is controlling the empire with the indicated empireID (int).");
         py::def("allPlayerIDs",             AllPlayerIDs,                   py::return_value_policy<py::return_by_value>(), "Returns an object (intVec) that contains the player IDs of all players in the game.");
 
-        py::def("playerIsAI",               PlayerIsAI,                     "Returns True (boolean) if the player with the indicated playerID (int) is controlled by an AI and false (boolean) otherwise.");
+        py::def("playerIsAI",
+                +[](int player_id) -> bool { return AIClientApp::GetApp()->GetPlayerClientType(player_id) == Networking::CLIENT_TYPE_AI_PLAYER; },
+                "Returns True (boolean) if the player with the indicated"
+                " playerID (int) is controlled by an AI and false (boolean)"
+                " otherwise.");
+
         py::def("playerIsHost",             PlayerIsHost,                   "Returns True (boolean) if the player with the indicated playerID (int) is the host player for the game and false (boolean) otherwise.");
 
-        py::def("empireID",                 EmpireID,                       "Returns the empire ID (int) of this AI player's empire.");
+        py::def("empireID",
+                +[]() -> int { return AIClientApp::GetApp()->EmpireID(); },
+                "Returns the empire ID (int) of this AI player's empire.");
+
         py::def("playerEmpireID",           PlayerEmpireID,                 "Returns the empire ID (int) of the player with the specified player ID (int).");
         py::def("allEmpireIDs",             AllEmpireIDs,                   py::return_value_policy<py::return_by_value>(), "Returns an object (intVec) that contains the empire IDs of all empires in the game.");
 
-        py::def("getEmpire",                PlayerEmpire,                   py::return_value_policy<py::reference_existing_object>(), "Returns the empire object (Empire) of this AI player");
-        py::def("getEmpire",                GetEmpireByID,                  py::return_value_policy<py::reference_existing_object>(), "Returns the empire object (Empire) with the specified empire ID (int)");
+        py::def("getEmpire",
+                +[]() -> const Empire* { return AIClientApp::GetApp()->GetEmpire(AIClientApp::GetApp()->EmpireID()); },
+                py::return_value_policy<py::reference_existing_object>(),
+                "Returns the empire object (Empire) of this AI player");
+
+        py::def("getEmpire",
+                +[](int empire_id) -> const Empire* { return AIClientApp::GetApp()->GetEmpire(empire_id); },
+                py::return_value_policy<py::reference_existing_object>(),
+                "Returns the empire object (Empire) with the specified empire ID (int)");
 
         py::def("getUniverse",              GetUniverse,       py::return_value_policy<py::reference_existing_object>(), "Returns the universe object (Universe)");
 
         py::def("currentTurn",              CurrentTurn,       "Returns the current game turn (int).");
 
-        py::def("getAIDir",                 GetAIDir,                       py::return_value_policy<py::return_by_value>());
+        py::def("getAIDir",
+                +[]() -> std::string { return (GetResourceDir() / GetOptionsDB().Get<std::string>("ai-path")).string(); },
+                py::return_value_policy<py::return_by_value>());
 
         py::def("initMeterEstimatesDiscrepancies",      InitMeterEstimatesAndDiscrepancies);
         py::def("updateMeterEstimates",                 UpdateMeterEstimates);
@@ -709,18 +655,67 @@ namespace FreeOrionPython {
         py::def("updateResearchQueue",                  UpdateResearchQueue);
         py::def("updateProductionQueue",                UpdateProductionQueue);
 
-        py::def("issueFleetMoveOrder",                  IssueFleetMoveOrder, "Orders the fleet with indicated fleetID (int) to move to the system with the indicated destinationID (int). Returns 1 (int) on success or 0 (int) on failure due to not finding the indicated fleet or system.");
-        py::def("appendFleetMoveOrder",                 AppendFleetMoveOrder, "Orders the fleet with indicated fleetID (int) to append the system with the indicated destinationID (int) to its possibly already enqueued route. Returns 1 (int) on success or 0 (int) on failure due to not finding the indicated fleet or system.");
-        py::def("issueRenameOrder",                     IssueRenameOrder, "Orders the renaming of the object with indicated objectID (int) to the new indicated name (string). Returns 1 (int) on success or 0 (int) on failure due to this AI player not being able to rename the indicated object (which this player must fully own, and which must be a fleet, ship or planet).");
-        py::def("issueScrapOrder",                      IssueScrapOrder, "Orders the ship or building with the indicated objectID (int) to be scrapped. Returns 1 (int) on success or 0 (int) on failure due to not finding a ship or building with the indicated ID, or if the indicated ship or building is not owned by this AI client's empire.");
+        py::def("issueFleetMoveOrder",
+                +[](int fleet_id, int destination_id) -> int { return Issue<FleetMoveOrder>(fleet_id, destination_id); },
+                "Orders the fleet with indicated fleetID (int) to move to the"
+                " system with the indicated destinationID (int). Returns 1 (int)"
+                " on success or 0 (int) on failure due to not finding the"
+                " indicated fleet or system.");
+
+        py::def("appendFleetMoveOrder",
+                +[](int fleet_id, int destination_id) -> int { return Issue<FleetMoveOrder>(fleet_id, destination_id, true); },
+                "Orders the fleet with indicated fleetID (int) to append the"
+                " system with the indicated destinationID (int) to its possibly"
+                " already enqueued route. Returns 1 (int) on success or 0 (int)"
+                " on failure due to not finding the indicated fleet or system.");
+
+        py::def("issueRenameOrder",
+                +[](int object_id, const std::string& new_name) -> int { return Issue<RenameOrder>(object_id, new_name); },
+                "Orders the renaming of the object with indicated objectID (int)"
+                " to the new indicated name (string). Returns 1 (int) on success"
+                " or 0 (int) on failure due to this AI player not being able to"
+                " rename the indicated object (which this player must fully own,"
+                " and which must be a fleet, ship or planet).");
+
+        py::def("issueScrapOrder",
+                +[](int object_id) -> int { return Issue<ScrapOrder>(object_id); },
+                "Orders the ship or building with the indicated objectID (int)"
+                " to be scrapped. Returns 1 (int) on success or 0 (int) on"
+                " failure due to not finding a ship or building with the"
+                " indicated ID, or if the indicated ship or building is not"
+                " owned by this AI client's empire.");
+
         py::def("issueNewFleetOrder",                   IssueNewFleetOrder, "Orders a new fleet to be created with the indicated name (string) and containing the indicated shipIDs (IntVec). The ships must be located in the same system and must all be owned by this player. Returns the new fleets id (int) on success or 0 (int) on failure due to one of the noted conditions not being met.");
         py::def("issueFleetTransferOrder",              IssueFleetTransferOrder, "Orders the ship with ID shipID (int) to be transferred to the fleet with ID newFleetID. Returns 1 (int) on success, or 0 (int) on failure due to not finding the fleet or ship, or the client's empire not owning either, or the two not being in the same system (or either not being in a system) or the ship already being in the fleet.");
-        py::def("issueColonizeOrder",                   IssueColonizeOrder, "Orders the ship with ID shipID (int) to colonize the planet with ID planetID (int). Returns 1 (int) on success or 0 (int) on failure due to not finding the indicated ship or planet, this client's player not owning the indicated ship, the planet already being colonized, or the planet and ship not being in the same system.");
-        py::def("issueInvadeOrder",                     IssueInvadeOrder);
-        py::def("issueBombardOrder",                    IssueBombardOrder);
-        py::def("issueAggressionOrder",                 IssueAggressionOrder);
-        py::def("issueGiveObjectToEmpireOrder",         IssueGiveObjectToEmpireOrder);
-        py::def("issueChangeFocusOrder",                IssueChangeFocusOrder, "Orders the planet with ID planetID (int) to use focus setting focus (string). Returns 1 (int) on success or 0 (int) on failure if the planet can't be found or isn't owned by this player, or if the specified focus is not valid on the planet.");
+
+        py::def("issueColonizeOrder",
+                +[](int ship_id, int planet_id) -> int { return Issue<ColonizeOrder>(ship_id, planet_id); },
+                "Orders the ship with ID shipID (int) to colonize the planet"
+                " with ID planetID (int). Returns 1 (int) on success or 0 (int)"
+                " on failure due to not finding the indicated ship or planet,"
+                " this client's player not owning the indicated ship, the"
+                " planet already being colonized, or the planet and ship not"
+                " being in the same system.");
+
+        py::def("issueInvadeOrder",
+                +[](int ship_id, int planet_id) -> int { return Issue<InvadeOrder>(ship_id, planet_id); });
+
+        py::def("issueBombardOrder",
+                +[](int ship_id, int planet_id) -> int { return Issue<BombardOrder>(ship_id, planet_id); });
+
+        py::def("issueAggressionOrder",
+                +[](int object_id, bool aggressive) -> int { return Issue<AggressiveOrder>(object_id, aggressive); });
+
+        py::def("issueGiveObjectToEmpireOrder",
+                +[](int object_id, int recipient_id) -> int { return Issue<GiveObjectToEmpireOrder>(object_id, recipient_id); });
+
+        py::def("issueChangeFocusOrder",
+                +[](int planet_id, const std::string& focus) -> int { return Issue<ChangeFocusOrder>(planet_id, focus); },
+                "Orders the planet with ID planetID (int) to use focus setting"
+                " focus (string). Returns 1 (int) on success or 0 (int) on"
+                " failure if the planet can't be found or isn't owned by this"
+                " player, or if the specified focus is not valid on the planet.");
+
         py::def("issueEnqueueTechOrder",                IssueEnqueueTechOrder, "Orders the tech with name techName (string) to be added to the tech queue at position (int) on the queue. Returns 1 (int) on success or 0 (int) on failure if the indicated tech can't be found. Will return 1 (int) but do nothing if the indicated tech can't be enqueued by this player's empire.");
         py::def("issueDequeueTechOrder",                IssueDequeueTechOrder, "Orders the tech with name techName (string) to be removed from the queue. Returns 1 (int) on success or 0 (int) on failure if the indicated tech can't be found. Will return 1 (int) but do nothing if the indicated tech isn't on this player's empire's tech queue.");
         py::def("issueAdoptPolicyOrder",                IssueAdoptPolicyOrder, "Orders the policy with name policyName (string) to be adopted by the empire in the category categoryName (string) and slot slot (int). Returns 1 (int) on success or 0 (int) on failure if the indicated policy can't be found. Will return 1 (int) but do nothing if the indicated policy can't be enqueued by this player's empire in the requested category and slot.");
@@ -744,9 +739,17 @@ namespace FreeOrionPython {
             .add_property("executed",   &Order::Executed)
         ;
 
-        py::def("getOrders",                IssuedOrders,                   py::return_value_policy<py::reference_existing_object>(), "Returns the orders the client empire has issued (OrderSet).");
+        py::def("getOrders",
+                +[]() -> OrderSet& { return AIClientApp::GetApp()->Orders(); },
+                py::return_value_policy<py::reference_existing_object>(),
+                "Returns the orders the client empire has issued (OrderSet).");
 
-        py::def("sendChatMessage",          SendPlayerChatMessage,          "Sends the indicated message (string) to the player with the indicated recipientID (int) or to all players if recipientID is -1.");
+        py::def("sendChatMessage",
+                +[](int recipient, const std::string& message) { AIClientApp::GetApp()->Networking().SendMessage(PlayerChatMessage(message, {recipient}, false)); },
+                "Sends the indicated message (string) to the player with the"
+                " indicated recipientID (int) or to all players if"
+                " recipientID is -1.");
+
         py::def("sendDiplomaticMessage",    SendDiplomaticMessage);
 
         py::def("setSaveStateString",       SetStaticSaveStateString,       "Sets the save state string (string). This is a persistant storage space for the AI script to retain state information when the game is saved and reloaded. Any AI state information to be saved should be stored in a single string (likely using Python's pickle module) and stored using this function when the prepareForSave() Python function is called.");
@@ -756,7 +759,9 @@ namespace FreeOrionPython {
         py::def("userStringExists",         make_function(&UserStringExists,py::return_value_policy<py::return_by_value>()));
         py::def("userStringList",           &GetUserStringList);
 
-        py::def("getGalaxySetupData",       PythonGalaxySetupData, py::return_value_policy<py::copy_const_reference>());
+        py::def("getGalaxySetupData",
+                +[]() -> const GalaxySetupData& { return AIClientApp::GetApp()->GetGalaxySetupData(); },
+                py::return_value_policy<py::copy_const_reference>());
 
         py::scope().attr("INVALID_GAME_TURN") = INVALID_GAME_TURN;
     }
