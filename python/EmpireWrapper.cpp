@@ -30,62 +30,6 @@ namespace py = boost::python;
 
 
 namespace {
-    // Queues test whether they contain items by name, but Python needs
-    // a __contains__ function that takes a *Queue::Element.  This helper
-    // functions take an Element and returns the associated name string.
-    const std::string& TechFromResearchQueueElement(const ResearchQueue::Element& element)
-    { return element.name; }
-    const std::string& NameFromInfluenceQueueElement(const InfluenceQueue::Element& element)
-    { return element.name; }
-
-    std::vector<std::string> (TechManager::*TechNamesVoid)(void) const = &TechManager::TechNames;
-
-    std::vector<std::string> (TechManager::*TechNamesCategory)(const std::string&) const = &TechManager::TechNames;
-
-    std::vector<std::string> (PolicyManager::*PolicyNamesVoid)(void) const = &PolicyManager::PolicyNames;
-
-    std::vector<std::string> (PolicyManager::*PolicyNamesCategory)(const std::string&) const = &PolicyManager::PolicyNames;
-
-    std::vector<std::string> TechRecursivePrereqs(const Tech& tech, int empire_id)
-    { return GetTechManager().RecursivePrereqs(tech.Name(), empire_id); }
-
-    // Concatenate functions to create one that takes two parameters.  The first
-    // parameter is a ResearchQueue*, which is passed directly to
-    // ResearchQueue::InQueue as the this pointer.  The second parameter is a
-    // ResearchQueue::Element which is passed into TechFromResearchQueueElement,
-    // which returns a Tech*, which is passed into ResearchQueue::InQueue as the
-    // second parameter.
-    auto InQueueFromResearchQueueElementFunc =
-        boost::bind(&ResearchQueue::InQueue, boost::placeholders::_1,
-                    boost::bind(TechFromResearchQueueElement, boost::placeholders::_2));
-    auto InQueueFromInfluenceQueueElementFunc =
-        boost::bind(&InfluenceQueue::InQueue, _1, boost::bind(NameFromInfluenceQueueElement, _2));
-
-    // ProductionQueue::Element contains a ProductionItem which contains details of the item on the queue.  Need helper
-    // functions to get the details about the item in the Element without adding extra pointless exposed classes to
-    // the Python interface
-    BuildType           BuildTypeFromProductionQueueElement(const ProductionQueue::Element& element)    { return element.item.build_type; }
-    const std::string&  NameFromProductionQueueElement(const ProductionQueue::Element& element)         { return element.item.name; }
-    int                 DesignIDFromProductionQueueElement(const ProductionQueue::Element& element)     { return element.item.design_id; }
-
-    bool                (Empire::*BuildableItemBuilding)(BuildType, const std::string&, int) const =    &Empire::ProducibleItem;
-    bool                (Empire::*BuildableItemShip)(BuildType, int, int) const =                       &Empire::ProducibleItem;
-
-    const ProductionQueue::Element&
-                        (ProductionQueue::*ProductionQueueOperatorSquareBrackets)(int) const =          &ProductionQueue::operator[];
-    const InfluenceQueue::Element&
-                        (InfluenceQueue::*InfluenceQueueOperatorSquareBrackets)(int) const =            &InfluenceQueue::operator[];
-
-
-    const SitRepEntry&  GetSitRep(const Empire& empire, int index) {
-        static SitRepEntry EMPTY_ENTRY;
-        if (index < 0 || index >= empire.NumSitRepEntries())
-            return EMPTY_ENTRY;
-        return *std::next(empire.SitRepBegin(), index);
-    }
-
-    const Meter* (Empire::*EmpireGetMeter)(const std::string&) const = &Empire::GetMeter;
-
     template<typename T1, typename T2>
     struct PairToTupleConverter {
         static PyObject* convert(const std::pair<T1, T2>& pair) {
@@ -93,17 +37,72 @@ namespace {
         }
     };
 
-    typedef PairToTupleConverter<int, int> myIntIntPairConverter;
+    typedef PairToTupleConverter<int, int> IntIntPairConverter;
 
-    typedef std::pair<int, int> IntPair;
+    typedef PairToTupleConverter<float, int> FloatIntPairConverter;
 
-    typedef std::set<int> IntSet;
 
-    typedef std::map<std::pair<int, int>,int > PairIntInt_IntMap;
+    auto AllTechNames() -> std::vector<std::string>
+    { return GetTechManager().TechNames(); }
 
-    std::vector<IntPair> obstructedStarlanes(const Empire& empire) {
-        const std::set<IntPair>& laneset = GetSupplyManager().SupplyObstructedStarlaneTraversals(empire.EmpireID());
-        std::vector<IntPair> retval;
+    auto TechNamesByCategory(const std::string& category) -> std::vector<std::string>
+    { return GetTechManager().TechNames(category); }
+
+    auto AllPolicyNames() -> std::vector<std::string>
+    { return GetPolicyManager().PolicyNames(); }
+
+    auto PolicyNamesByCategory(const std::string& category) -> std::vector<std::string>
+    { return GetPolicyManager().PolicyNames(category); }
+
+    auto TechRecursivePrereqs(const Tech& tech, int empire_id) -> std::vector<std::string>
+    { return GetTechManager().RecursivePrereqs(tech.Name(), empire_id); }
+
+    auto ResearchQueueContainsElement(const ResearchQueue* queue, const ResearchQueue::Element& element) -> bool
+    { return queue->InQueue(element.name); }
+
+    auto InfluenceQueueContainsElement(const InfluenceQueue* queue, const InfluenceQueue::Element& element) -> bool
+    { return queue->InQueue(element.name); }
+
+    // ProductionQueue::Element contains a ProductionItem which contains
+    // details of the item on the queue.  Need helper functions to get the
+    // details about the item in the Element without adding extra pointless
+    // exposed classes to the Python interface
+    auto BuildTypeFromProductionQueueElement(const ProductionQueue::Element& element) -> BuildType
+    { return element.item.build_type; }
+
+    auto NameFromProductionQueueElement(const ProductionQueue::Element& element) -> const std::string&
+    { return element.item.name; }
+
+    auto DesignIDFromProductionQueueElement(const ProductionQueue::Element& element) -> int
+    { return element.item.design_id; }
+
+    auto BuildableItemBuilding(const Empire& empire, BuildType build_type, const std::string& name, int location) -> bool
+    { return empire.ProducibleItem(build_type, name, location); }
+
+    auto BuildableItemShip(const Empire& empire, BuildType build_type, int design, int location) -> bool
+    { return empire.ProducibleItem(build_type, design, location); }
+
+    auto ProductionQueueSubscript(const ProductionQueue& queue, int index) -> const ProductionQueue::Element&
+    { return queue[index]; }
+
+    auto InfluenceQueueSubscript(const InfluenceQueue& queue, int index) -> const InfluenceQueue::Element&
+    { return queue[index]; }
+
+    auto GetSitRep(const Empire& empire, int index) -> const SitRepEntry&
+    {
+        static SitRepEntry EMPTY_ENTRY;
+        if (index < 0 || index >= empire.NumSitRepEntries())
+            return EMPTY_ENTRY;
+        return *std::next(empire.SitRepBegin(), index);
+    }
+
+    auto EmpireGetMeter(const Empire& empire, const std::string& name) -> const Meter*
+    { return empire.GetMeter(name); }
+
+    auto obstructedStarlanes(const Empire& empire) -> std::vector<std::pair<int, int>>
+    {
+        const std::set<std::pair<int, int>>& laneset = GetSupplyManager().SupplyObstructedStarlaneTraversals(empire.EmpireID());
+        std::vector<std::pair<int, int>> retval;
         try {
             for (const std::pair<int, int>& lane : laneset)
             { retval.push_back(lane); }
@@ -112,7 +111,8 @@ namespace {
         return retval;
     }
 
-    std::map<int, int> jumpsToSuppliedSystem(const Empire& empire) {
+    auto jumpsToSuppliedSystem(const Empire& empire) -> std::map<int, int>
+    {
         std::map<int, int> retval;
         const std::map<int, std::set<int>>& empire_starlanes = empire.KnownStarlanes();
         std::list<int> propagating_list;
@@ -156,17 +156,14 @@ namespace {
         return retval;
     }
 
-    const std::set<int>& EmpireFleetSupplyableSystemIDs(const Empire& empire)
+    auto EmpireFleetSupplyableSystemIDs(const Empire& empire) -> const std::set<int>&
     { return GetSupplyManager().FleetSupplyableSystemIDs(empire.EmpireID()); }
 
-    typedef std::pair<float, int> FloatIntPair;
-
-    typedef PairToTupleConverter<float, int> FloatIntPairConverter;
-
-    FloatIntPair ProductionCostAndTime(const Empire& empire, const ProductionQueue::Element& element)
+    auto ProductionCostAndTime(const Empire& empire, const ProductionQueue::Element& element) -> std::pair<float, int>
     { return empire.ProductionCostAndTime(element); }
 
-    std::map<std::set<int>, float> PlanetsWithAvailablePP(const Empire& empire) {
+    auto PlanetsWithAvailablePP(const Empire& empire) -> std::map<std::set<int>, float>
+    {
         const auto& industry_pool = empire.GetResourcePool(RE_INDUSTRY);
         const ProductionQueue& prod_queue = empire.GetProductionQueue();
         std::map<std::set<int>, float> planets_with_available_pp;
@@ -183,7 +180,8 @@ namespace {
         return planets_with_available_pp;
     }
 
-    std::map<std::set<int>, float> PlanetsWithAllocatedPP(const Empire& empire) {
+    auto PlanetsWithAllocatedPP(const Empire& empire) -> std::map<std::set<int>, float>
+    {
         const auto& prod_queue = empire.GetProductionQueue();
         std::map<std::set<int>, float> planets_with_allocated_pp;
         for (const auto& objects_pp : prod_queue.AllocatedPP()) {
@@ -199,7 +197,8 @@ namespace {
         return planets_with_allocated_pp;
     }
 
-    std::set<std::set<int>> PlanetsWithWastedPP(const Empire& empire) {
+    auto PlanetsWithWastedPP(const Empire& empire) -> std::set<std::set<int>>
+    {
         const auto& industry_pool = empire.GetResourcePool(RE_INDUSTRY);
         const ProductionQueue& prod_queue = empire.GetProductionQueue();
         std::set<std::set<int>> planets_with_wasted_pp;
@@ -216,7 +215,8 @@ namespace {
              return planets_with_wasted_pp;
     }
 
-    std::set<std::string> ResearchedTechNames(const Empire& empire) {
+    auto ResearchedTechNames(const Empire& empire) -> std::set<std::string>
+    {
         std::set<std::string> retval;
         for (const auto& entry : empire.ResearchedTechs())
             retval.insert(entry.first);
@@ -225,9 +225,6 @@ namespace {
 }
 
 namespace FreeOrionPython {
-    using boost::placeholders::_1;
-    using boost::placeholders::_2;
-
     /**
      * CallPolicies:
      *
@@ -246,24 +243,25 @@ namespace FreeOrionPython {
      *                                                  called
      */
     void WrapEmpire() {
-        py::class_<PairIntInt_IntMap>("PairIntInt_IntMap")
-            .def(py::map_indexing_suite<PairIntInt_IntMap, true>())
+        py::to_python_converter<std::pair<int, int>, IntIntPairConverter>();
+
+        py::to_python_converter<std::pair<float, int>, FloatIntPairConverter>();
+
+        py::class_<std::map<std::pair<int, int>, int>>("PairIntInt_IntMap")
+            .def(py::map_indexing_suite<std::map<std::pair<int, int>, int>, true>())
         ;
 
-        py::to_python_converter<IntPair, myIntIntPairConverter>();
-
-        py::class_<std::vector<IntPair>>("IntPairVec")
-            .def(py::vector_indexing_suite<std::vector<IntPair>, true>())
+        py::class_<std::vector<std::pair<int, int>>>("IntPairVec")
+            .def(py::vector_indexing_suite<std::vector<std::pair<int, int>>, true>())
         ;
+
         py::class_<std::vector<UnlockableItem>>("UnlockableItemVec")
             .def(py::vector_indexing_suite<std::vector<UnlockableItem>, true>())
         ;
-        py::to_python_converter<FloatIntPair, FloatIntPairConverter>();
 
         py::class_<ResourcePool, std::shared_ptr<ResourcePool>, boost::noncopyable>("resPool", py::no_init);
 
-        //FreeOrionPython::SetWrapper<int>::Wrap("IntSet");
-        FreeOrionPython::SetWrapper<IntSet>::Wrap("IntSetSet");
+        FreeOrionPython::SetWrapper<std::set<int>>::Wrap("IntSetSet");
 
         py::class_<std::map<std::set<int>, float>>("resPoolMap")
             .def(py::map_indexing_suite<std::map<std::set<int>, float>, true>())
@@ -304,7 +302,7 @@ namespace FreeOrionPython {
             .def("productionCostAndTime",           make_function(
                                                         ProductionCostAndTime,
                                                         py::return_value_policy<py::return_by_value>(),
-                                                        boost::mpl::vector<FloatIntPair, const Empire&, const ProductionQueue::Element& >()
+                                                        boost::mpl::vector<std::pair<float, int>, const Empire&, const ProductionQueue::Element& >()
                                                     ))
             .add_property("planetsWithAvailablePP", make_function(
                                                         PlanetsWithAvailablePP,
@@ -378,7 +376,7 @@ namespace FreeOrionPython {
             .def("obstructedStarlanes",             make_function(
                                                         obstructedStarlanes,
                                                         py::return_value_policy<py::return_by_value>(),
-                                                        boost::mpl::vector<std::vector<IntPair>, const Empire&>()
+                                                        boost::mpl::vector<std::vector<std::pair<int, int>>, const Empire&>()
                                                     ))
             .def("supplyProjections",               make_function(
                                                         jumpsToSuppliedSystem,
@@ -396,17 +394,17 @@ namespace FreeOrionPython {
         //////////////////////
         py::class_<ProductionQueue::Element>("productionQueueElement", py::no_init)
             .add_property("name",                   make_function(
-                                                        boost::bind(NameFromProductionQueueElement, _1),
+                                                        NameFromProductionQueueElement,
                                                         py::return_value_policy<py::copy_const_reference>(),
                                                         boost::mpl::vector<const std::string&, const ProductionQueue::Element&>()
                                                     ))
             .add_property("designID",               make_function(
-                                                        boost::bind(DesignIDFromProductionQueueElement, _1),
+                                                        DesignIDFromProductionQueueElement,
                                                         py::return_value_policy<py::return_by_value>(),
                                                         boost::mpl::vector<int, const ProductionQueue::Element&>()
                                                     ))
             .add_property("buildType",              make_function(
-                                                        boost::bind(BuildTypeFromProductionQueueElement, _1),
+                                                        BuildTypeFromProductionQueueElement,
                                                         py::return_value_policy<py::return_by_value>(),
                                                         boost::mpl::vector<BuildType, const ProductionQueue::Element&>()
                                                     ))
@@ -419,9 +417,10 @@ namespace FreeOrionPython {
             .add_property("paused",                 &ProductionQueue::Element::paused)
             .add_property("allowedStockpile",       &ProductionQueue::Element::allowed_imperial_stockpile_use)
             ;
+
         py::class_<ProductionQueue, boost::noncopyable>("productionQueue", py::no_init)
             .def("__iter__",                        py::iterator<ProductionQueue>())  // ProductionQueue provides STL container-like interface to contained queue
-            .def("__getitem__",                     ProductionQueueOperatorSquareBrackets,              py::return_internal_reference<>())
+            .def("__getitem__",                     ProductionQueueSubscript,                           py::return_internal_reference<>())
             .def("__len__",                         &ProductionQueue::size)
             .add_property("size",                   &ProductionQueue::size)
             .add_property("empty",                  &ProductionQueue::empty)
@@ -440,6 +439,7 @@ namespace FreeOrionPython {
             .def_readonly("allocation",             &ResearchQueue::Element::allocated_rp)
             .def_readonly("turnsLeft",              &ResearchQueue::Element::turns_left)
         ;
+
         py::class_<ResearchQueue, boost::noncopyable>("researchQueue", py::no_init)
             .def("__iter__",                        py::iterator<ResearchQueue>())  // ResearchQueue provides STL container-like interface to contained queue
             .def("__getitem__",                     &ResearchQueue::operator[],                         py::return_internal_reference<>())
@@ -448,7 +448,7 @@ namespace FreeOrionPython {
             .add_property("empty",                  &ResearchQueue::empty)
             .def("inQueue",                         &ResearchQueue::InQueue)
             .def("__contains__",                    make_function(
-                                                        boost::bind(InQueueFromResearchQueueElementFunc, _1, _2),
+                                                        ResearchQueueContainsElement,
                                                         py::return_value_policy<py::return_by_value>(),
                                                         boost::mpl::vector<bool, const ResearchQueue*, const ResearchQueue::Element&>()
                                                     ))
@@ -480,15 +480,15 @@ namespace FreeOrionPython {
         def("getTech",                              &GetTech,                               py::return_value_policy<py::reference_existing_object>(), "Returns the tech (Tech) with the indicated name (string).");
         def("getTechCategories",                    &TechManager::CategoryNames,            py::return_value_policy<py::return_by_value>(), "Returns the names of all tech categories (StringVec).");
 
-        py::object techsFunc = make_function(boost::bind(TechNamesVoid, &(GetTechManager())),
-                                                        py::return_value_policy<py::return_by_value>(),
-                                                        boost::mpl::vector<std::vector<std::string>>());
+        py::object techsFunc = make_function(AllTechNames,
+                                             py::return_value_policy<py::return_by_value>(),
+                                             boost::mpl::vector<std::vector<std::string>>());
         py::setattr(techsFunc, "__doc__", py::str("Returns the names of all techs (StringVec)."));
         def("techs", techsFunc);
 
-        py::object techsInCategoryFunc = make_function(boost::bind(TechNamesCategory, &(GetTechManager()), _1),
-                                                                  py::return_value_policy<py::return_by_value>(),
-                                                                  boost::mpl::vector<std::vector<std::string>, const std::string&>());
+        py::object techsInCategoryFunc = make_function(TechNamesByCategory,
+                                                       py::return_value_policy<py::return_by_value>(),
+                                                       boost::mpl::vector<std::vector<std::string>, const std::string&>());
         py::setattr(techsInCategoryFunc, "__doc__", py::str("Returns the names of all techs (StringVec) in the indicated tech category name (string)."));
         def("techsInCategory", techsInCategoryFunc);
 
@@ -506,13 +506,13 @@ namespace FreeOrionPython {
         ;
         py::class_<InfluenceQueue, boost::noncopyable>("influenceQueue", py::no_init)
             .def("__iter__",                        py::iterator<InfluenceQueue>())  // InfluenceQueue provides STL container-like interface to contained queue
-            .def("__getitem__",                     InfluenceQueueOperatorSquareBrackets,               py::return_internal_reference<>())
+            .def("__getitem__",                     InfluenceQueueSubscript,               py::return_internal_reference<>())
             .def("__len__",                         &InfluenceQueue::size)
             .add_property("size",                   &InfluenceQueue::size)
             .add_property("empty",                  &InfluenceQueue::empty)
             .def("inQueue",                         &InfluenceQueue::InQueue)
             .def("__contains__",                    make_function(
-                                                        boost::bind(InQueueFromInfluenceQueueElementFunc, _1, _2),
+                                                        InfluenceQueueContainsElement,
                                                         py::return_value_policy<py::return_by_value>(),
                                                         boost::mpl::vector<bool, const InfluenceQueue*, const InfluenceQueue::Element&>()
                                                     ))
@@ -537,15 +537,15 @@ namespace FreeOrionPython {
         def("getPolicy",                            &GetPolicy,                                 py::return_value_policy<py::reference_existing_object>(), "Returns the policy (Policy) with the indicated name (string).");
         def("getPolicyCategories",                  &PolicyManager::PolicyCategories,           py::return_value_policy<py::return_by_value>(), "Returns the names of all policy categories (StringVec).");
 
-        py::object policiesFunc = make_function(boost::bind(PolicyNamesVoid, &(GetPolicyManager())),
-                                                           py::return_value_policy<py::return_by_value>(),
-                                                           boost::mpl::vector<std::vector<std::string>>());
+        py::object policiesFunc = make_function(AllPolicyNames,
+                                                py::return_value_policy<py::return_by_value>(),
+                                                boost::mpl::vector<std::vector<std::string>>());
         py::setattr(policiesFunc, "__doc__", py::str("Returns the names of all policies (StringVec)."));
         def("policies", policiesFunc);
 
-        py::object policiesInCategoryFunc = make_function(boost::bind(PolicyNamesCategory, &(GetPolicyManager()), _1),
-                                                                     py::return_value_policy<py::return_by_value>(),
-                                                                     boost::mpl::vector<std::vector<std::string>, const std::string&>());
+        py::object policiesInCategoryFunc = make_function(PolicyNamesByCategory,
+                                                          py::return_value_policy<py::return_by_value>(),
+                                                          boost::mpl::vector<std::vector<std::string>, const std::string&>());
         py::setattr(policiesInCategoryFunc, "__doc__", py::str("Returns the names of all policies (StringVec) in the indicated policy category name (string)."));
         def("policiesInCategory", policiesInCategoryFunc);
 
