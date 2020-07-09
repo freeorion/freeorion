@@ -33,26 +33,21 @@ namespace {
     // Queues test whether they contain items by name, but Python needs
     // a __contains__ function that takes a *Queue::Element.  This helper
     // functions take an Element and returns the associated name string.
-    const std::string&  TechFromResearchQueueElement(const ResearchQueue::Element& element)
+    const std::string& TechFromResearchQueueElement(const ResearchQueue::Element& element)
     { return element.name; }
-    const std::string&  NameFromInfluenceQueueElement(const InfluenceQueue::Element& element)
+    const std::string& NameFromInfluenceQueueElement(const InfluenceQueue::Element& element)
     { return element.name; }
 
     std::vector<std::string> (TechManager::*TechNamesVoid)(void) const = &TechManager::TechNames;
-    auto TechNamesMemberFunc = TechNamesVoid;
 
     std::vector<std::string> (TechManager::*TechNamesCategory)(const std::string&) const = &TechManager::TechNames;
-    auto TechNamesCategoryMemberFunc = TechNamesCategory;
 
     std::vector<std::string> (PolicyManager::*PolicyNamesVoid)(void) const = &PolicyManager::PolicyNames;
-    auto PolicyNamesMemberFunc = PolicyNamesVoid;
 
     std::vector<std::string> (PolicyManager::*PolicyNamesCategory)(const std::string&) const = &PolicyManager::PolicyNames;
-    auto PolicyNamesCategoryMemberFunc = PolicyNamesCategory;
 
-    std::vector<std::string>    TechRecursivePrereqs(const Tech& tech, int empire_id)
+    std::vector<std::string> TechRecursivePrereqs(const Tech& tech, int empire_id)
     { return GetTechManager().RecursivePrereqs(tech.Name(), empire_id); }
-    auto TechRecursivePrereqsFunc = TechRecursivePrereqs;
 
     // Concatenate functions to create one that takes two parameters.  The first
     // parameter is a ResearchQueue*, which is passed directly to
@@ -88,7 +83,6 @@ namespace {
             return EMPTY_ENTRY;
         return *std::next(empire.SitRepBegin(), index);
     }
-    auto GetEmpireSitRepFunc = GetSitRep;
 
     const Meter* (Empire::*EmpireGetMeter)(const std::string&) const = &Empire::GetMeter;
 
@@ -107,7 +101,7 @@ namespace {
 
     typedef std::map<std::pair<int, int>,int > PairIntInt_IntMap;
 
-    std::vector<IntPair> obstructedStarlanesP(const Empire& empire) {
+    std::vector<IntPair> obstructedStarlanes(const Empire& empire) {
         const std::set<IntPair>& laneset = GetSupplyManager().SupplyObstructedStarlaneTraversals(empire.EmpireID());
         std::vector<IntPair> retval;
         try {
@@ -117,9 +111,8 @@ namespace {
         }
         return retval;
     }
-    auto obstructedStarlanesFunc = &obstructedStarlanesP;
 
-    std::map<int, int> jumpsToSuppliedSystemP(const Empire& empire) {
+    std::map<int, int> jumpsToSuppliedSystem(const Empire& empire) {
         std::map<int, int> retval;
         const std::map<int, std::set<int>>& empire_starlanes = empire.KnownStarlanes();
         std::list<int> propagating_list;
@@ -154,7 +147,7 @@ namespace {
         }
 
         //// DEBUG
-        //DebugLogger() << "jumpsToSuppliedSystemP results for empire, " << empire.Name() << " (" << empire.EmpireID() << ") :";
+        //DebugLogger() << "jumpsToSuppliedSystem results for empire, " << empire.Name() << " (" << empire.EmpireID() << ") :";
         //for (const auto& system_jumps : retval) {
         //    DebugLogger() << "sys " << system_jumps.first << "  range: " << system_jumps.second;
         //}
@@ -163,27 +156,17 @@ namespace {
         return retval;
     }
 
-    auto jumpsToSuppliedSystemFunc = &jumpsToSuppliedSystemP;
-
-    const std::set<int>& EmpireFleetSupplyableSystemIDsP(const Empire& empire)
+    const std::set<int>& EmpireFleetSupplyableSystemIDs(const Empire& empire)
     { return GetSupplyManager().FleetSupplyableSystemIDs(empire.EmpireID()); }
-    auto empireFleetSupplyableSystemIDsFunc = &EmpireFleetSupplyableSystemIDsP;
 
     typedef std::pair<float, int> FloatIntPair;
 
     typedef PairToTupleConverter<float, int> FloatIntPairConverter;
 
-    //boost::mpl::vector<FloatIntPair, const Empire&, const ProductionQueue::Element&>()
-    FloatIntPair ProductionCostAndTimeP(const Empire& empire,
-                                        const ProductionQueue::Element& element)
+    FloatIntPair ProductionCostAndTime(const Empire& empire, const ProductionQueue::Element& element)
     { return empire.ProductionCostAndTime(element); }
-    auto ProductionCostAndTimeFunc = &ProductionCostAndTimeP;
 
-    //.def("availablePP",                     make_function(&ProductionQueue::AvailablePP,          py::return_value_policy<py::return_by_value>()))
-    //.add_property("allocatedPP",            make_function(&ProductionQueue::AllocatedPP,          py::return_internal_reference<>()))
-    //.def("objectsWithWastedPP",             make_function(&ProductionQueue::ObjectsWithWastedPP,  py::return_value_policy<py::return_by_value>()))
-
-    std::map<std::set<int>, float> PlanetsWithAvailablePP_P(const Empire& empire) {
+    std::map<std::set<int>, float> PlanetsWithAvailablePP(const Empire& empire) {
         const auto& industry_pool = empire.GetResourcePool(RE_INDUSTRY);
         const ProductionQueue& prod_queue = empire.GetProductionQueue();
         std::map<std::set<int>, float> planets_with_available_pp;
@@ -199,9 +182,8 @@ namespace {
         }
         return planets_with_available_pp;
     }
-    auto PlanetsWithAvailablePP_Func = &PlanetsWithAvailablePP_P;
 
-    std::map<std::set<int>, float> PlanetsWithAllocatedPP_P(const Empire& empire) {
+    std::map<std::set<int>, float> PlanetsWithAllocatedPP(const Empire& empire) {
         const auto& prod_queue = empire.GetProductionQueue();
         std::map<std::set<int>, float> planets_with_allocated_pp;
         for (const auto& objects_pp : prod_queue.AllocatedPP()) {
@@ -216,9 +198,8 @@ namespace {
         }
         return planets_with_allocated_pp;
     }
-    auto PlanetsWithAllocatedPP_Func = &PlanetsWithAllocatedPP_P;
 
-    std::set<std::set<int>> PlanetsWithWastedPP_P(const Empire& empire) {
+    std::set<std::set<int>> PlanetsWithWastedPP(const Empire& empire) {
         const auto& industry_pool = empire.GetResourcePool(RE_INDUSTRY);
         const ProductionQueue& prod_queue = empire.GetProductionQueue();
         std::set<std::set<int>> planets_with_wasted_pp;
@@ -234,7 +215,6 @@ namespace {
              }
              return planets_with_wasted_pp;
     }
-    auto PlanetsWithWastedPP_Func = &PlanetsWithWastedPP_P;
 
     std::set<std::string> ResearchedTechNames(const Empire& empire) {
         std::set<std::string> retval;
@@ -242,8 +222,6 @@ namespace {
             retval.insert(entry.first);
         return retval;
     }
-    auto ResearchTechNamesFunc = &ResearchedTechNames;
-
 }
 
 namespace FreeOrionPython {
@@ -324,31 +302,31 @@ namespace FreeOrionPython {
             .add_property("availableShipHulls",     make_function(&Empire::AvailableShipHulls,      py::return_value_policy<py::copy_const_reference>()))
             .add_property("productionQueue",        make_function(&Empire::GetProductionQueue,      py::return_internal_reference<>()))
             .def("productionCostAndTime",           make_function(
-                                                        ProductionCostAndTimeFunc,
+                                                        ProductionCostAndTime,
                                                         py::return_value_policy<py::return_by_value>(),
                                                         boost::mpl::vector<FloatIntPair, const Empire&, const ProductionQueue::Element& >()
                                                     ))
             .add_property("planetsWithAvailablePP", make_function(
-                                                        PlanetsWithAvailablePP_Func,
+                                                        PlanetsWithAvailablePP,
                                                         py::return_value_policy<py::return_by_value>(),
                                                         boost::mpl::vector<std::map<std::set<int>, float>, const Empire& >()
                                                     ))
             .add_property("planetsWithAllocatedPP", make_function(
-                                                        PlanetsWithAllocatedPP_Func,
+                                                        PlanetsWithAllocatedPP,
                                                         py::return_value_policy<py::return_by_value>(),
                                                         boost::mpl::vector<std::map<std::set<int>, float>, const Empire& >()
                                                     ))
             .add_property("planetsWithWastedPP",    make_function(
-                                                        PlanetsWithWastedPP_Func,
+                                                        PlanetsWithWastedPP,
                                                         py::return_value_policy<py::return_by_value>(),
                                                         boost::mpl::vector<std::set<std::set<int>>, const Empire& >()
                                                     ))
 
             .def("techResearched",                  &Empire::TechResearched)
             .add_property("availableTechs",         make_function(
-                                                        ResearchTechNamesFunc,
+                                                        ResearchedTechNames,
                                                         py::return_value_policy<py::return_by_value>(),
-                                                        boost::mpl::vector<const std::set<std::string>&, const Empire& >()
+                                                        boost::mpl::vector<std::set<std::string>, const Empire& >()
                                                     ))
             .def("getTechStatus",                   &Empire::GetTechStatus)
             .def("researchProgress",                &Empire::ResearchProgress)
@@ -384,7 +362,7 @@ namespace FreeOrionPython {
 
             .def("preservedLaneTravel",             &Empire::PreservedLaneTravel)
             .add_property("fleetSupplyableSystemIDs",   make_function(
-                                                            empireFleetSupplyableSystemIDsFunc,
+                                                            EmpireFleetSupplyableSystemIDs,
                                                             py::return_value_policy<py::copy_const_reference>(),
                                                             boost::mpl::vector<const std::set<int>&, const Empire& >()
                                                         ))
@@ -393,18 +371,17 @@ namespace FreeOrionPython {
 
             .def("numSitReps",                      &Empire::NumSitRepEntries)
             .def("getSitRep",                       make_function(
-                                                        GetEmpireSitRepFunc,
+                                                        GetSitRep,
                                                         py::return_internal_reference<>(),
                                                         boost::mpl::vector<const SitRepEntry&, const Empire&, int>()
                                                     ))
-            //.add_property("obstructedStarlanes",  make_function(&Empire::SupplyObstructedStarlaneTraversals,   py::return_value_policy<py::return_by_value>()))
             .def("obstructedStarlanes",             make_function(
-                                                        obstructedStarlanesFunc,
+                                                        obstructedStarlanes,
                                                         py::return_value_policy<py::return_by_value>(),
                                                         boost::mpl::vector<std::vector<IntPair>, const Empire&>()
                                                     ))
             .def("supplyProjections",               make_function(
-                                                        jumpsToSuppliedSystemFunc,
+                                                        jumpsToSuppliedSystem,
                                                         py::return_value_policy<py::return_by_value>(),
                                                         boost::mpl::vector<std::map<int, int>, const Empire&>()
                                                     ))
@@ -494,7 +471,7 @@ namespace FreeOrionPython {
             .add_property("unlockedTechs",          make_function(&Tech::UnlockedTechs,     py::return_internal_reference<>()))
             .add_property("unlockedItems",          make_function(&Tech::UnlockedItems,     py::return_internal_reference<>()))
             .def("recursivePrerequisites",          make_function(
-                                                        TechRecursivePrereqsFunc,
+                                                        TechRecursivePrereqs,
                                                         py::return_value_policy<py::return_by_value>(),
                                                         boost::mpl::vector<std::vector<std::string>, const Tech&, int>()
                                                     ))
@@ -503,13 +480,13 @@ namespace FreeOrionPython {
         def("getTech",                              &GetTech,                               py::return_value_policy<py::reference_existing_object>(), "Returns the tech (Tech) with the indicated name (string).");
         def("getTechCategories",                    &TechManager::CategoryNames,            py::return_value_policy<py::return_by_value>(), "Returns the names of all tech categories (StringVec).");
 
-        py::object techsFunc = make_function(boost::bind(TechNamesMemberFunc, &(GetTechManager())),
+        py::object techsFunc = make_function(boost::bind(TechNamesVoid, &(GetTechManager())),
                                                         py::return_value_policy<py::return_by_value>(),
                                                         boost::mpl::vector<std::vector<std::string>>());
         py::setattr(techsFunc, "__doc__", py::str("Returns the names of all techs (StringVec)."));
         def("techs", techsFunc);
 
-        py::object techsInCategoryFunc = make_function(boost::bind(TechNamesCategoryMemberFunc, &(GetTechManager()), _1),
+        py::object techsInCategoryFunc = make_function(boost::bind(TechNamesCategory, &(GetTechManager()), _1),
                                                                   py::return_value_policy<py::return_by_value>(),
                                                                   boost::mpl::vector<std::vector<std::string>, const std::string&>());
         py::setattr(techsInCategoryFunc, "__doc__", py::str("Returns the names of all techs (StringVec) in the indicated tech category name (string)."));
@@ -560,13 +537,13 @@ namespace FreeOrionPython {
         def("getPolicy",                            &GetPolicy,                                 py::return_value_policy<py::reference_existing_object>(), "Returns the policy (Policy) with the indicated name (string).");
         def("getPolicyCategories",                  &PolicyManager::PolicyCategories,           py::return_value_policy<py::return_by_value>(), "Returns the names of all policy categories (StringVec).");
 
-        py::object policiesFunc = make_function(boost::bind(PolicyNamesMemberFunc, &(GetPolicyManager())),
+        py::object policiesFunc = make_function(boost::bind(PolicyNamesVoid, &(GetPolicyManager())),
                                                            py::return_value_policy<py::return_by_value>(),
                                                            boost::mpl::vector<std::vector<std::string>>());
         py::setattr(policiesFunc, "__doc__", py::str("Returns the names of all policies (StringVec)."));
         def("policies", policiesFunc);
 
-        py::object policiesInCategoryFunc = make_function(boost::bind(PolicyNamesCategoryMemberFunc, &(GetPolicyManager()), _1),
+        py::object policiesInCategoryFunc = make_function(boost::bind(PolicyNamesCategory, &(GetPolicyManager()), _1),
                                                                      py::return_value_policy<py::return_by_value>(),
                                                                      boost::mpl::vector<std::vector<std::string>, const std::string&>());
         py::setattr(policiesInCategoryFunc, "__doc__", py::str("Returns the names of all policies (StringVec) in the indicated policy category name (string)."));
