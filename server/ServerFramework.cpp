@@ -47,16 +47,16 @@ BOOST_PYTHON_MODULE(freeorion) {
     FreeOrionPython::SetWrapper<std::string>::Wrap("StringSet");
 }
 
-namespace {
-}
 
-bool PythonServer::InitImports() {
+auto PythonServer::InitImports() -> bool
+{
     DebugLogger() << "Initializing server Python imports";
     // Allow the "freeorion" C++ module to be imported within Python code
     return PyImport_AppendInittab("freeorion", &PyInit_freeorion) != -1;
 }
 
-bool PythonServer::InitModules() {
+auto PythonServer::InitModules() -> bool
+{
     DebugLogger() << "Initializing server Python modules";
 
     // Confirm existence of the directory containing the universe generation
@@ -106,7 +106,8 @@ bool PythonServer::InitModules() {
     return true;
 }
 
-bool PythonServer::IsRequireAuthOrReturnRoles(const std::string& player_name, bool &result, Networking::AuthRoles& roles) const {
+auto PythonServer::IsRequireAuthOrReturnRoles(const std::string& player_name, bool &result, Networking::AuthRoles& roles) const -> bool
+{
     py::object auth_provider = m_python_module_auth.attr("__dict__")["auth_provider"];
     if (!auth_provider) {
         ErrorLogger() << "Unable to get Python object auth_provider";
@@ -131,7 +132,8 @@ bool PythonServer::IsRequireAuthOrReturnRoles(const std::string& player_name, bo
     return true;
 }
 
-bool PythonServer::IsSuccessAuthAndReturnRoles(const std::string& player_name, const std::string& auth, bool &result, Networking::AuthRoles& roles) const {
+auto PythonServer::IsSuccessAuthAndReturnRoles(const std::string& player_name, const std::string& auth, bool &result, Networking::AuthRoles& roles) const -> bool
+{
     py::object auth_provider = m_python_module_auth.attr("__dict__")["auth_provider"];
     if (!auth_provider) {
         ErrorLogger() << "Unable to get Python object auth_provider";
@@ -158,7 +160,8 @@ bool PythonServer::IsSuccessAuthAndReturnRoles(const std::string& player_name, c
     return true;
 }
 
-bool PythonServer::FillListPlayers(std::list<PlayerSetupData>& players) const {
+auto PythonServer::FillListPlayers(std::list<PlayerSetupData>& players) const -> bool
+{
     py::object auth_provider = m_python_module_auth.attr("__dict__")["auth_provider"];
     if (!auth_provider) {
         ErrorLogger() << "Unable to get Python object auth_provider";
@@ -183,7 +186,8 @@ bool PythonServer::FillListPlayers(std::list<PlayerSetupData>& players) const {
     return true;
 }
 
-bool PythonServer::GetPlayerDelegation(const std::string& player_name, std::list<std::string> &result) const {
+auto PythonServer::GetPlayerDelegation(const std::string& player_name, std::list<std::string> &result) const -> bool
+{
     py::object auth_provider = m_python_module_auth.attr("__dict__")["auth_provider"];
     if (!auth_provider) {
         ErrorLogger() << "Unable to get Python object auth_provider";
@@ -209,7 +213,8 @@ bool PythonServer::GetPlayerDelegation(const std::string& player_name, std::list
     return true;
 }
 
-bool PythonServer::LoadChatHistory(boost::circular_buffer<ChatHistoryEntity>& chat_history) {
+auto PythonServer::LoadChatHistory(boost::circular_buffer<ChatHistoryEntity>& chat_history) -> bool
+{
     py::object chat_provider = m_python_module_chat.attr("__dict__")["chat_history_provider"];
     if (!chat_provider) {
         ErrorLogger() << "Unable to get Python object chat_history_provider";
@@ -237,7 +242,8 @@ bool PythonServer::LoadChatHistory(boost::circular_buffer<ChatHistoryEntity>& ch
     return true;
 }
 
-bool PythonServer::PutChatHistoryEntity(const ChatHistoryEntity& chat_history_entity) {
+auto PythonServer::PutChatHistoryEntity(const ChatHistoryEntity& chat_history_entity) -> bool
+{
     py::object chat_provider = m_python_module_chat.attr("__dict__")["chat_history_provider"];
     if (!chat_provider) {
         ErrorLogger() << "Unable to get Python object chat_history_provider";
@@ -255,7 +261,8 @@ bool PythonServer::PutChatHistoryEntity(const ChatHistoryEntity& chat_history_en
              chat_history_entity.text_color);
 }
 
-bool PythonServer::CreateUniverse(std::map<int, PlayerSetupData>& player_setup_data) {
+auto PythonServer::CreateUniverse(std::map<int, PlayerSetupData>& player_setup_data) -> bool
+{
     // Confirm existence of the directory containing the universe generation
     // Python scripts and add it to Pythons sys.path to make sure Python will
     // find our scripts
@@ -287,7 +294,8 @@ bool PythonServer::CreateUniverse(std::map<int, PlayerSetupData>& player_setup_d
     return f(py_player_setup_data);
 }
 
-bool PythonServer::ExecuteTurnEvents() {
+auto PythonServer::ExecuteTurnEvents() -> bool
+{
     py::object f = m_python_module_turn_events.attr("execute_turn_events");
     if (!f) {
         ErrorLogger() << "Unable to call Python function execute_turn_events ";
@@ -296,14 +304,14 @@ bool PythonServer::ExecuteTurnEvents() {
     return f();
 }
 
-const std::string GetPythonUniverseGeneratorDir()
+auto GetPythonUniverseGeneratorDir() -> const std::string
 { return GetPythonDir() + "/universe_generation"; }
 
-const std::string GetPythonTurnEventsDir()
+auto GetPythonTurnEventsDir() -> const std::string
 { return GetPythonDir() + "/turn_events"; }
 
-const std::string GetPythonAuthDir()
+auto GetPythonAuthDir() -> const std::string
 { return GetPythonDir() + "/auth"; }
 
-const std::string GetPythonChatDir()
+auto GetPythonChatDir() -> const std::string
 { return GetPythonDir() + "/chat"; }
