@@ -71,7 +71,7 @@ def colony_pod_cost_turns():
         build_turns = colo_part.productionTime(empire_id, pid, loc)
     else:
         base_cost = 0
-        base_turns = 0
+        build_turns = 0
         debug("no available colony parts with capacity > 0")
     return (base_cost * (1 + state.get_number_of_colonies() * AIDependencies.COLONY_POD_UPKEEP), build_turns)
 
