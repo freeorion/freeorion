@@ -133,7 +133,7 @@ namespace {
         return retval;
     }
 
-    auto SystemNeighborsMap(const Universe& universe, int system1_id, int empire_id = ALL_EMPIRES) -> std::map<int, double>
+    auto SystemNeighborsMap(const Universe& universe, int system1_id, int empire_id) -> std::map<int, double>
     {
         std::map<int, double> retval;
         for (const auto& entry : universe.GetPathfinder()->ImmediateNeighbors(system1_id, empire_id))
@@ -318,7 +318,9 @@ namespace FreeOrionPython {
                                                 py::return_value_policy<py::reference_existing_object>())
             .def("getBuilding",                 +[](const Universe&, int id) -> const Building* { return ::Objects().get<Building>(id).operator->(); },
                                                 py::return_value_policy<py::reference_existing_object>())
-            .def("getGenericShipDesign",        &Universe::GetGenericShipDesign,    py::return_value_policy<py::reference_existing_object>(), "Returns the ship design (ShipDesign) with the indicated name (string).")
+            .def("getGenericShipDesign",        &Universe::GetGenericShipDesign,
+                                                py::return_value_policy<py::reference_existing_object>(),
+                                                "Returns the ship design (ShipDesign) with the indicated name (string).")
 
             .add_property("allObjectIDs",       make_function(ObjectIDs<UniverseObject>,py::return_value_policy<py::return_by_value>()))
             .add_property("fleetIDs",           make_function(ObjectIDs<Fleet>,         py::return_value_policy<py::return_by_value>()))
@@ -327,97 +329,64 @@ namespace FreeOrionPython {
             .add_property("planetIDs",          make_function(ObjectIDs<Planet>,        py::return_value_policy<py::return_by_value>()))
             .add_property("shipIDs",            make_function(ObjectIDs<Ship>,          py::return_value_policy<py::return_by_value>()))
             .add_property("buildingIDs",        make_function(ObjectIDs<Building>,      py::return_value_policy<py::return_by_value>()))
-            .def("destroyedObjectIDs",          make_function(&Universe::EmpireKnownDestroyedObjectIDs,
-                                                              py::return_value_policy<py::return_by_value>()))
+            .def("destroyedObjectIDs",          &Universe::EmpireKnownDestroyedObjectIDs,
+                                                py::return_value_policy<py::return_by_value>())
 
-            .def("systemHasStarlane",           make_function(
-                                                    +[](const Universe& universe, int system_id, int empire_id) -> bool { return universe.GetPathfinder()->SystemHasVisibleStarlanes(system_id, empire_id); },
-                                                    py::return_value_policy<py::return_by_value>()
-                                                ))
+            .def("systemHasStarlane",           +[](const Universe& universe, int system_id, int empire_id) -> bool { return universe.GetPathfinder()->SystemHasVisibleStarlanes(system_id, empire_id); },
+                                                py::return_value_policy<py::return_by_value>())
 
             .def("updateMeterEstimates",        &UpdateMetersWrapper)
             .add_property("effectAccounting",   make_function(&Universe::GetEffectAccountingMap,
                                                                                     py::return_value_policy<py::reference_existing_object>()))
 
-            .def("linearDistance",              make_function(
-                                                    +[](const Universe& universe, int system1_id, int system2_id) -> double { return universe.GetPathfinder()->LinearDistance(system1_id, system2_id); },
-                                                    py::return_value_policy<py::return_by_value>()
-                                                ))
+            .def("linearDistance",              +[](const Universe& universe, int system1_id, int system2_id) -> double { return universe.GetPathfinder()->LinearDistance(system1_id, system2_id); },
+                                                py::return_value_policy<py::return_by_value>())
 
-            .def("jumpDistance",                make_function(
-                                                    +[](const Universe& universe, int object1_id, int object2_id) -> int { return universe.GetPathfinder()->JumpDistanceBetweenObjects(object1_id, object2_id); },
-                                                    py::return_value_policy<py::return_by_value>()
-                                                ),
+            .def("jumpDistance",                +[](const Universe& universe, int object1_id, int object2_id) -> int { return universe.GetPathfinder()->JumpDistanceBetweenObjects(object1_id, object2_id); },
+                                                py::return_value_policy<py::return_by_value>(),
                                                 "If two system ids are passed or both objects are within a system, "
                                                 "return the jump distance between the two systems. If one object "
                                                 "(e.g. a fleet) is on a starlane, then calculate the jump distance "
                                                 "from both ends of the starlane to the target system and "
-                                                "return the smaller one."
-                                                )
+                                                "return the smaller one.")
 
-            .def("shortestPath",                make_function(
-                                                    ShortestPath,
-                                                    py::return_value_policy<py::return_by_value>(),
-                                                    boost::mpl::vector<std::vector<int>, const Universe&, int, int, int>()
-                                                ))
+            .def("shortestPath",                ShortestPath,
+                                                py::return_value_policy<py::return_by_value>())
 
-            .def("shortestNonHostilePath",      make_function(
-                                                    ShortestNonHostilePath,
-                                                    py::return_value_policy<py::return_by_value>(),
-                                                    boost::mpl::vector<std::vector<int>, const Universe&, int, int, int>()
-                                                ),
+            .def("shortestNonHostilePath",      ShortestNonHostilePath,
+                                                py::return_value_policy<py::return_by_value>(),
                                                 "Shortest sequence of System ids and distance from System (number1) to "
                                                 "System (number2) with no hostile Fleets as determined by visibility "
-                                                "of Empire (number3).  (number3) must be a valid empire."
-                                                )
+                                                "of Empire (number3).  (number3) must be a valid empire.")
 
-            .def("shortestPathDistance",        make_function(
-                                                    +[](const Universe& universe, int object1_id, int object2_id) -> double { return universe.GetPathfinder()->ShortestPathDistance(object1_id, object2_id); },
-                                                    py::return_value_policy<py::return_by_value>()
-                                                ))
+            .def("shortestPathDistance",        +[](const Universe& universe, int object1_id, int object2_id) -> double { return universe.GetPathfinder()->ShortestPathDistance(object1_id, object2_id); },
+                                                py::return_value_policy<py::return_by_value>())
 
-            .def("leastJumpsPath",              make_function(
-                                                    LeastJumpsPath,
-                                                    py::return_value_policy<py::return_by_value>(),
-                                                    boost::mpl::vector<std::vector<int>, const Universe&, int, int, int>()
-                                                ))
+            .def("leastJumpsPath",              LeastJumpsPath,
+                                                py::return_value_policy<py::return_by_value>())
 
-            .def("systemsConnected",            make_function(
-                                                    +[](const Universe& universe, int system1_id, int system2_id, int empire_id) -> bool { return universe.GetPathfinder()->SystemsConnected(system1_id, system2_id, empire_id); },
-                                                    py::return_value_policy<py::return_by_value>()
-                                                ))
+            .def("systemsConnected",            +[](const Universe& universe, int system1_id, int system2_id, int empire_id) -> bool { return universe.GetPathfinder()->SystemsConnected(system1_id, system2_id, empire_id); },
+                                                py::return_value_policy<py::return_by_value>())
 
-            .def("getImmediateNeighbors",       make_function(
-                                                    ImmediateNeighbors,
-                                                    py::return_value_policy<py::return_by_value>(),
-                                                    boost::mpl::vector<std::vector<int>, const Universe&, int, int>()
-                                                ))
+            .def("getImmediateNeighbors",       ImmediateNeighbors,
+                                                py::return_value_policy<py::return_by_value>())
 
-            .def("getSystemNeighborsMap",       make_function(
-                                                    SystemNeighborsMap,
-                                                    py::return_value_policy<py::return_by_value>(),
-                                                    boost::mpl::vector<std::map<int, double>, const Universe&, int, int>()
-                                                ))
+            .def("getSystemNeighborsMap",       SystemNeighborsMap,
+                                                py::return_value_policy<py::return_by_value>())
 
-            .def("getVisibilityTurnsMap",       make_function(
-                                                    &Universe::GetObjectVisibilityTurnMapByEmpire,
-                                                    py::return_value_policy<py::return_by_value>()
-                                                ))
+            .def("getVisibilityTurnsMap",       &Universe::GetObjectVisibilityTurnMapByEmpire,
+                                                py::return_value_policy<py::return_by_value>())
 
-            .def("getVisibility",               make_function(
-                                                    &Universe::GetObjectVisibilityByEmpire,
-                                                    py::return_value_policy<py::return_by_value>()
-                                                ))
+            .def("getVisibility",               &Universe::GetObjectVisibilityByEmpire,
+                                                py::return_value_policy<py::return_by_value>())
 
             // Indexed by stat name (string), contains a map indexed by empire id,
             // contains a map from turn number (int) to stat value (double).
-            .def("statRecords",                 make_function(
-                                                    &Universe::GetStatRecords,
-                                                    py::return_value_policy<py::reference_existing_object>()),
+            .def("statRecords",                 &Universe::GetStatRecords,
+                                                py::return_value_policy<py::reference_existing_object>(),
                                                 "Empire statistics recorded by the server each turn. Indexed first by "
                                                 "staistic name (string), then by empire id (int), then by turn "
-                                                "number (int), pointing to the statisic value (double)."
-                                                )
+                                                "number (int), pointing to the statisic value (double).")
 
             .def("dump",                        +[](const Universe& universe) { DebugLogger() << universe.Objects().Dump(); })
         ;
@@ -443,16 +412,10 @@ namespace FreeOrionPython {
             .def("containedBy",                 &UniverseObject::ContainedBy)
             .add_property("containedObjects",   make_function(&UniverseObject::ContainedObjectIDs,  py::return_value_policy<py::return_by_value>()))
             .add_property("containerObject",    &UniverseObject::ContainerObjectID)
-            .def("currentMeterValue",           make_function(
-                                                    ObjectCurrentMeterValue,
-                                                    py::return_value_policy<py::return_by_value>(),
-                                                    boost::mpl::vector<float, const UniverseObject&, MeterType>()
-                                                ))
-            .def("initialMeterValue",           make_function(
-                                                    ObjectInitialMeterValue,
-                                                    py::return_value_policy<py::return_by_value>(),
-                                                    boost::mpl::vector<float, const UniverseObject&, MeterType>()
-                                                ))
+            .def("currentMeterValue",           ObjectCurrentMeterValue,
+                                                py::return_value_policy<py::return_by_value>())
+            .def("initialMeterValue",           ObjectInitialMeterValue,
+                                                py::return_value_policy<py::return_by_value>())
             .add_property("tags",               make_function(&UniverseObject::Tags,        py::return_value_policy<py::return_by_value>()))
             .def("hasTag",                      &UniverseObject::HasTag)
             .add_property("meters",             make_function(
@@ -572,8 +535,7 @@ namespace FreeOrionPython {
                                                 ))
             .add_property("attackStats",        make_function(
                                                     AttackStats,
-                                                    py::return_value_policy<py::return_by_value>(),
-                                                    boost::mpl::vector<std::vector<int>, const ShipDesign&>()
+                                                    py::return_value_policy<py::return_by_value>()
                                                 ))
 
             .def("productionLocationForEmpire", &ShipDesign::ProductionLocation)
@@ -620,8 +582,7 @@ namespace FreeOrionPython {
             .def("numSlotsOfSlotType",          +[](const ShipHull& hull, ShipSlotType slot_type) -> unsigned int { return hull.NumSlots(slot_type); })
             .add_property("slots",              make_function(
                                                     HullSlots,
-                                                    py::return_value_policy<py::return_by_value>(),
-                                                    boost::mpl::vector<std::vector<ShipSlotType>, const ShipHull&>()
+                                                    py::return_value_policy<py::return_by_value>()
                                                 ))
             .def("productionCost",              &ShipHull::ProductionCost)
             .def("productionTime",              &ShipHull::ProductionTime)
@@ -786,14 +747,24 @@ namespace FreeOrionPython {
 
         py::class_<GameRules, boost::noncopyable>("GameRules", py::no_init)
             .add_property("empty",              make_function(&GameRules::Empty,                py::return_value_policy<py::return_by_value>()))
-            .def("getRulesAsStrings",           make_function(&GameRules::GetRulesAsStrings,    py::return_value_policy<py::return_by_value>()))
+            .def("getRulesAsStrings",           &GameRules::GetRulesAsStrings,
+                                                py::return_value_policy<py::return_by_value>())
             .def("ruleExists",                  +[](const GameRules& rules, const std::string& name) -> bool { return rules.RuleExists(name); })
             .def("ruleExistsWithType",          +[](const GameRules& rules, const std::string& name, GameRules::Type type) -> bool { return rules.RuleExists(name, type); })
-            .def("getDescription",              make_function(&GameRules::GetDescription,       py::return_value_policy<py::copy_const_reference>()))
+            .def("getDescription",              &GameRules::GetDescription,
+                                                py::return_value_policy<py::copy_const_reference>())
             .def("getToggle",                   &GameRules::Get<bool>)
             .def("getInt",                      &GameRules::Get<int>)
             .def("getDouble",                   &GameRules::Get<double>)
-            .def("getString",                   make_function(&GameRules::Get<std::string>,     py::return_value_policy<py::return_by_value>()));
-        py::def("getGameRules",                     &GetGameRules,                                  py::return_value_policy<py::reference_existing_object>(), "Returns the game rules manager, which can be used to look up the names (string) of rules are defined with what type (boolean / toggle, int, double, string), and what values the rules have in the current game.");
+            .def("getString",                   &GameRules::Get<std::string>,
+                                                py::return_value_policy<py::return_by_value>());
+
+        py::def("getGameRules",
+                &GetGameRules,
+                py::return_value_policy<py::reference_existing_object>(),
+                "Returns the game rules manager, which can be used to look up"
+                " the names (string) of rules are defined with what type"
+                " (boolean / toggle, int, double, string), and what values the"
+                " rules have in the current game.");
     }
 }
