@@ -248,25 +248,21 @@ namespace FreeOrionPython {
                                                     py::return_value_policy<py::return_by_value>())
             .add_property("planetsWithAvailablePP", make_function(
                                                         PlanetsWithAvailablePP,
-                                                        py::return_value_policy<py::return_by_value>(),
-                                                        boost::mpl::vector<std::map<std::set<int>, float>, const Empire& >()
+                                                        py::return_value_policy<py::return_by_value>()
                                                     ))
             .add_property("planetsWithAllocatedPP", make_function(
                                                         PlanetsWithAllocatedPP,
-                                                        py::return_value_policy<py::return_by_value>(),
-                                                        boost::mpl::vector<std::map<std::set<int>, float>, const Empire& >()
+                                                        py::return_value_policy<py::return_by_value>()
                                                     ))
             .add_property("planetsWithWastedPP",    make_function(
                                                         PlanetsWithWastedPP,
-                                                        py::return_value_policy<py::return_by_value>(),
-                                                        boost::mpl::vector<std::set<std::set<int>>, const Empire& >()
+                                                        py::return_value_policy<py::return_by_value>()
                                                     ))
 
             .def("techResearched",                  &Empire::TechResearched)
             .add_property("availableTechs",         make_function(
                                                         ResearchedTechNames,
-                                                        py::return_value_policy<py::return_by_value>(),
-                                                        boost::mpl::vector<std::set<std::string>, const Empire& >()
+                                                        py::return_value_policy<py::return_by_value>()
                                                     ))
             .def("getTechStatus",                   &Empire::GetTechStatus)
             .def("researchProgress",                &Empire::ResearchProgress)
@@ -309,21 +305,12 @@ namespace FreeOrionPython {
             .add_property("systemSupplyRanges",         make_function(&Empire::SystemSupplyRanges,          py::return_internal_reference<>()))
 
             .def("numSitReps",                      &Empire::NumSitRepEntries)
-            .def("getSitRep",                       make_function(
-                                                        GetSitRep,
-                                                        py::return_internal_reference<>(),
-                                                        boost::mpl::vector<const SitRepEntry&, const Empire&, int>()
-                                                    ))
-            .def("obstructedStarlanes",             make_function(
-                                                        obstructedStarlanes,
-                                                        py::return_value_policy<py::return_by_value>(),
-                                                        boost::mpl::vector<std::vector<std::pair<int, int>>, const Empire&>()
-                                                    ))
-            .def("supplyProjections",               make_function(
-                                                        jumpsToSuppliedSystem,
-                                                        py::return_value_policy<py::return_by_value>(),
-                                                        boost::mpl::vector<std::map<int, int>, const Empire&>()
-                                                    ))
+            .def("getSitRep",                       GetSitRep,
+                                                    py::return_internal_reference<>())
+            .def("obstructedStarlanes",             obstructedStarlanes,
+                                                    py::return_value_policy<py::return_by_value>())
+            .def("supplyProjections",               jumpsToSuppliedSystem,
+                                                    py::return_value_policy<py::return_by_value>())
             .def("getMeter",                        +[](const Empire& empire, const std::string& name) -> const Meter* { return empire.GetMeter(name); },
                                                     py::return_internal_reference<>(),
                                                     "Returns the empire meter with the indicated name (string).")
@@ -364,9 +351,11 @@ namespace FreeOrionPython {
             .add_property("empty",                  &ProductionQueue::empty)
             .add_property("totalSpent",             &ProductionQueue::TotalPPsSpent)
             .add_property("empireID",               &ProductionQueue::EmpireID)
-            .def("availablePP",                     make_function(&ProductionQueue::AvailablePP,        py::return_value_policy<py::return_by_value>()))
+            .def("availablePP",                     &ProductionQueue::AvailablePP,
+                                                    py::return_value_policy<py::return_by_value>())
             .add_property("allocatedPP",            make_function(&ProductionQueue::AllocatedPP,        py::return_internal_reference<>()))
-            .def("objectsWithWastedPP",             make_function(&ProductionQueue::ObjectsWithWastedPP,py::return_value_policy<py::return_by_value>()))
+            .def("objectsWithWastedPP",             &ProductionQueue::ObjectsWithWastedPP,
+                                                    py::return_value_policy<py::return_by_value>())
             ;
 
         ////////////////////
@@ -482,7 +471,8 @@ namespace FreeOrionPython {
         ///////////////////
         py::class_<SitRepEntry, boost::noncopyable>("sitrep", py::no_init)
             .add_property("typeString",         make_function(&SitRepEntry::GetTemplateString,  py::return_value_policy<py::copy_const_reference>()))
-            .def("getDataString",               make_function(&SitRepEntry::GetDataString,      py::return_value_policy<py::copy_const_reference>()))
+            .def("getDataString",               &SitRepEntry::GetDataString,
+                                                py::return_value_policy<py::copy_const_reference>())
             .def("getDataIDNumber",             &SitRepEntry::GetDataIDNumber)
             .add_property("getTags",            make_function(&SitRepEntry::GetVariableTags,    py::return_value_policy<py::return_by_value>()))
             .add_property("getTurn",            &SitRepEntry::GetTurn)
