@@ -4,7 +4,7 @@ Changelog
 Notable changes to the FreeOrion project will be documented in this file.
 
 
-[v0.4.10] - 2020-07-??
+[v0.4.10] - 2020-07-10
 ---------------
 
 ### Key Changes
@@ -142,6 +142,8 @@ Notable changes to the FreeOrion project will be documented in this file.
     - Fixed a scripting error within the Distortion Focus effect
     - Fixed issue where bombardment orders wouldn't work if a ship had no other weapons
     - Fixed issue with Sly refueling at gas giants or elsewhere
+    - Fixed Gaia special to prevent it from cycling through planet environment types when occupied by Sly
+    - Fixed bug in determining best environment type of a planet
 
 - Fixed some broken pedia links in stringtable entries
 - Fixed the sitrep "Last" button when the most-recent turn doesn't have any visible sitreps
@@ -177,6 +179,7 @@ Notable changes to the FreeOrion project will be documented in this file.
     - Cached some results from calls to the API to improve performance
     - Various other internal performance improvements
     - Exposed empire stat records
+    - Adjusted Colonization AI to devalue the Gaia special as Sly derive benefit from it
 
 - FreeOrion Content Script Interface (FOCS)
     - Added UsedInDesignID ValueRef to access the ID of the ship design in which a part or hull is used
