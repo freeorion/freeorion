@@ -13,7 +13,6 @@ import PlanetUtilsAI
 import PriorityAI
 import ProductionAI
 import MilitaryAI
-import freeOrionAIInterface as fo
 from aistate_interface import get_aistate
 from target import TargetPlanet
 from turn_state import state
@@ -58,7 +57,8 @@ ULT_PILOT_RATING = 12.0
 MINIMUM_COLONY_SCORE = 60
 
 
-def colony_pod_cost():
+@cache_for_current_turn
+def colony_pod_cost_turns():
     empire = fo.getEmpire()
     empire_id = empire.empireID
     loc = INVALID_ID
@@ -68,25 +68,12 @@ def colony_pod_cost():
     if colo_parts:
         colo_part = max(colo_parts, key=lambda x: x.capacity)
         base_cost = colo_part.productionCost(empire_id, pid, loc)
+        build_turns = colo_part.productionTime(empire_id, pid, loc)
     else:
         base_cost = 0
+        base_turns = 0
         debug("no available colony parts with capacity > 0")
-    return base_cost * (1 + state.get_number_of_colonies() * AIDependencies.COLONY_POD_UPKEEP)
-
-def colony_pod_build_turns():
-    empire = fo.getEmpire()
-    empire_id = empire.empireID
-    loc = INVALID_ID
-    pid = INVALID_ID
-    parts = [get_ship_part(part) for part in list(empire.availableShipParts)]
-    colo_parts = [part for part in parts if part.partClass in frozenset({fo.shipPartClass.colony}) and part.capacity > 0]
-    if colo_parts:
-        colo_part = max(colo_parts, key=lambda x: x.capacity)
-        prod_turns = colo_part.productionTime(empire_id, pid, loc)
-    else:
-        prod_turns = 0
-        debug("no available colony parts with capacity > 0")
-    return prod_turns
+    return (base_cost * (1 + state.get_number_of_colonies() * AIDependencies.COLONY_POD_UPKEEP), build_turns)
 
 
 def outpod_pod_cost():
@@ -1230,7 +1217,7 @@ def send_colony_ships(colony_fleet_ids, evaluated_planets, mission_type):
         cost = 20 + outpod_pod_cost()
     else:
         try_all = True
-        cost = 20 + colony_pod_cost()
+        cost = 20 + colony_pod_cost_turns()[1]
         if fo.currentTurn() < 50:
             cost *= 0.4  # will be making fast tech progress so value is underestimated
         elif fo.currentTurn() < 80:
