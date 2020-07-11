@@ -24,14 +24,6 @@ if(TARGET Flake8::flake8)
     )
 endif()
 
-if(PYTHON_EXECUTABLE)
-    add_custom_target(check-python
-        COMMAND
-        "${PYTHON_EXECUTABLE}" -m compileall -qf .
-        WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/default/python"
-    )
-endif()
-
 if(NOT TARGET check)
     add_custom_target(check
         COMMENT "Run code quality checks"
@@ -44,8 +36,4 @@ endif()
 
 if(TARGET check-pep8)
     add_dependencies(check check-pep8)
-endif()
-
-if(TARGET check-python)
-    add_dependencies(check check-python)
 endif()
