@@ -22,6 +22,7 @@ from freeorion_tools import (tech_is_complete, get_species_tag_grade, cache_by_t
 from AIDependencies import (INVALID_ID, OUTPOSTING_TECH, POP_CONST_MOD_MAP,
                             POP_SIZE_MOD_MAP_MODIFIED_BY_SPECIES, POP_SIZE_MOD_MAP_NOT_MODIFIED_BY_SPECIES,
                             Tags)
+from ShipDesignAI import get_ship_part
 
 colonization_timer = AITimer('getColonyFleets()')
 
@@ -56,8 +57,23 @@ ULT_PILOT_RATING = 12.0
 MINIMUM_COLONY_SCORE = 60
 
 
-def colony_pod_cost():
-    return AIDependencies.COLONY_POD_COST * (1 + state.get_number_of_colonies()*AIDependencies.COLONY_POD_UPKEEP)
+@cache_for_current_turn
+def colony_pod_cost_turns():
+    empire = fo.getEmpire()
+    empire_id = empire.empireID
+    loc = INVALID_ID
+    pid = INVALID_ID
+    parts = [get_ship_part(part) for part in list(empire.availableShipParts)]
+    colo_parts = [part for part in parts if part.partClass in frozenset({fo.shipPartClass.colony}) and part.capacity > 0]
+    if colo_parts:
+        colo_part = max(colo_parts, key=lambda x: x.capacity)
+        base_cost = colo_part.productionCost(empire_id, pid, loc)
+        build_turns = colo_part.productionTime(empire_id, pid, loc)
+    else:
+        base_cost = 0
+        build_turns = 0
+        debug("no available colony parts with capacity > 0")
+    return (base_cost * (1 + state.get_number_of_colonies() * AIDependencies.COLONY_POD_UPKEEP), build_turns)
 
 
 def outpod_pod_cost():
@@ -1201,7 +1217,7 @@ def send_colony_ships(colony_fleet_ids, evaluated_planets, mission_type):
         cost = 20 + outpod_pod_cost()
     else:
         try_all = True
-        cost = 20 + colony_pod_cost()
+        cost = 20 + colony_pod_cost_turns()[1]
         if fo.currentTurn() < 50:
             cost *= 0.4  # will be making fast tech progress so value is underestimated
         elif fo.currentTurn() < 80:
