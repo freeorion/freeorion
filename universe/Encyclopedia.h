@@ -41,9 +41,9 @@ public:
 
     const ArticleMap& Articles() const;
 
-    FO_COMMON_API const EncyclopediaArticle& GetArticleByKey(const std::string& key) const;
-    FO_COMMON_API const EncyclopediaArticle& GetArticleByCategoryAndKey(const std::string& category, const std::string& key) const;
-    FO_COMMON_API const EncyclopediaArticle& GetArticleByName(const std::string& name) const;
+    const EncyclopediaArticle& GetArticleByKey(const std::string& key) const;
+    const EncyclopediaArticle& GetArticleByCategoryAndKey(const std::string& category, const std::string& key) const;
+    const EncyclopediaArticle& GetArticleByName(const std::string& name) const;
 
     const EncyclopediaArticle empty_article;
 private:
