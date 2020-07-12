@@ -7696,6 +7696,12 @@ Opinions des autres Espèces :
 ## Encyclopedia articles in Species Types category
 ##
 
+ALL_SPECIES
+Toutes les Espèces
+
+ALL_SPECIES_DESC
+Liste de toutes les espèces:
+
 LITHIC_SPECIES_CLASS
 Lithique
 
