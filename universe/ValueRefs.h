@@ -337,7 +337,7 @@ enum OpType : int {
   * random number generation are performed on the child(ren) of this node, and
   * the result is returned. */
 template <typename T>
-struct FO_COMMON_API Operation final : public ValueRef<T>
+struct Operation final : public ValueRef<T>
 {
     /** Binary operation ctor. */
     Operation(OpType op_type, std::unique_ptr<ValueRef<T>>&& operand1,
@@ -380,6 +380,21 @@ private:
     bool                                        m_simple_increment = false;
     T                                           m_cached_const_value = T();
 };
+
+template <> double Operation<double>::EvalImpl(const ScriptingContext& context) const;
+template <> int Operation<int>::EvalImpl(const ScriptingContext& context) const;
+template <> std::string Operation<std::string>::EvalImpl(const ScriptingContext& context) const;
+
+extern template struct Operation<double>;
+extern template struct Operation<int>;
+extern template struct Operation<UniverseObjectType>;
+extern template struct Operation<PlanetEnvironment>;
+extern template struct Operation<PlanetSize>;
+extern template struct Operation<PlanetType>;
+extern template struct Operation<StarType>;
+extern template struct Operation<Visibility>;
+extern template struct Operation<std::string>;
+
 
 FO_COMMON_API MeterType             NameToMeter(const std::string& name);
 FO_COMMON_API const std::string&    MeterToName(MeterType meter);
@@ -1638,7 +1653,6 @@ unsigned int UserStringLookup<FromType>::GetCheckSum() const
     return retval;
 }
 
-
 ///////////////////////////////////////////////////////////
 // Operation                                             //
 ///////////////////////////////////////////////////////////
@@ -1799,6 +1813,21 @@ T Operation<T>::Eval(const ScriptingContext& context) const
 }
 
 template <typename T>
+unsigned int Operation<T>::GetCheckSum() const
+{
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "ValueRef::Operation");
+    CheckSums::CheckSumCombine(retval, m_op_type);
+    CheckSums::CheckSumCombine(retval, m_operands);
+    CheckSums::CheckSumCombine(retval, m_constant_expr);
+    CheckSums::CheckSumCombine(retval, m_cached_const_value);
+    TraceLogger() << "GetCheckSum(Operation<T>): " << typeid(*this).name() << " retval: " << retval;
+    return retval;
+}
+
+
+template <typename T>
 T Operation<T>::EvalImpl(const ScriptingContext& context) const
 {
     switch (m_op_type) {
@@ -1880,29 +1909,6 @@ T Operation<T>::EvalImpl(const ScriptingContext& context) const
 
     throw std::runtime_error("ValueRef::Operation<T>::EvalImpl evaluated with an unknown or invalid OpType.");
 }
-
-template <typename T>
-unsigned int Operation<T>::GetCheckSum() const
-{
-    unsigned int retval{0};
-
-    CheckSums::CheckSumCombine(retval, "ValueRef::Operation");
-    CheckSums::CheckSumCombine(retval, m_op_type);
-    CheckSums::CheckSumCombine(retval, m_operands);
-    CheckSums::CheckSumCombine(retval, m_constant_expr);
-    CheckSums::CheckSumCombine(retval, m_cached_const_value);
-    TraceLogger() << "GetCheckSum(Operation<T>): " << typeid(*this).name() << " retval: " << retval;
-    return retval;
-}
-
-template <>
-FO_COMMON_API std::string Operation<std::string>::EvalImpl(const ScriptingContext& context) const;
-
-template <>
-FO_COMMON_API double Operation<double>::EvalImpl(const ScriptingContext& context) const;
-
-template <>
-FO_COMMON_API int Operation<int>::EvalImpl(const ScriptingContext& context) const;
 
 template <typename T>
 std::string Operation<T>::Description() const
@@ -2021,133 +2027,6 @@ std::string Operation<T>::Description() const
 
     return retval;
 }
-
-template <typename T>
-std::string Operation<T>::Dump(unsigned short ntabs) const
-{
-    if (m_op_type == NEGATE) {
-        if (auto rhs = dynamic_cast<const Operation<T>*>(LHS())) {
-            OpType op_type = rhs->GetOpType();
-            if (op_type == PLUS     || op_type == MINUS ||
-                op_type == TIMES    || op_type == DIVIDE ||
-                op_type == NEGATE   || op_type == EXPONENTIATE)
-            return "-(" + LHS()->Dump(ntabs) + ")";
-        } else {
-            return "-" + LHS()->Dump(ntabs);
-        }
-    }
-
-    if (m_op_type == ABS)
-        return "abs(" + LHS()->Dump(ntabs) + ")";
-    if (m_op_type == LOGARITHM)
-        return "log(" + LHS()->Dump(ntabs) + ")";
-    if (m_op_type == SINE)
-        return "sin(" + LHS()->Dump(ntabs) + ")";
-    if (m_op_type == COSINE)
-        return "cos(" + LHS()->Dump(ntabs) + ")";
-
-    if (m_op_type == MINIMUM) {
-        std::string retval = "min(";
-        for (auto it = m_operands.begin(); it != m_operands.end(); ++it) {
-            if (it != m_operands.begin())
-                retval += ", ";
-            retval += (*it)->Dump(ntabs);
-        }
-        retval += ")";
-        return retval;
-    }
-    if (m_op_type == MAXIMUM) {
-        std::string retval = "max(";
-        for (auto it = m_operands.begin(); it != m_operands.end(); ++it) {
-            if (it != m_operands.begin())
-                retval += ", ";
-            retval += (*it)->Dump(ntabs);
-        }
-        retval += ")";
-        return retval;
-    }
-
-    if (m_op_type == RANDOM_UNIFORM)
-        return "random(" + LHS()->Dump(ntabs) + ", " + LHS()->Dump(ntabs) + ")";
-
-    if (m_op_type == RANDOM_PICK) {
-        std::string retval = "randompick(";
-        for (auto it = m_operands.begin(); it != m_operands.end(); ++it) {
-            if (it != m_operands.begin())
-                retval += ", ";
-            retval += (*it)->Dump(ntabs);
-        }
-        retval += ")";
-        return retval;
-    }
-
-    if (m_op_type == ROUND_NEAREST)
-        return "round(" + LHS()->Dump(ntabs) + ")";
-    if (m_op_type == ROUND_UP)
-        return "ceil(" + LHS()->Dump(ntabs) + ")";
-    if (m_op_type == ROUND_DOWN)
-        return "floor(" + LHS()->Dump(ntabs) + ")";
-    if (m_op_type == SIGN)
-        return "sign(" + LHS()->Dump(ntabs) + ")";
-
-    bool parenthesize_lhs = false;
-    bool parenthesize_rhs = false;
-    if (auto lhs = dynamic_cast<const Operation<T>*>(LHS())) {
-        OpType op_type = lhs->GetOpType();
-        if (
-            (m_op_type == EXPONENTIATE &&
-             (op_type == EXPONENTIATE   || op_type == TIMES     || op_type == DIVIDE ||
-              op_type == PLUS           || op_type == MINUS     || op_type == NEGATE)
-            ) ||
-            (((m_op_type == TIMES        || m_op_type == DIVIDE) &&
-              (op_type == PLUS           || op_type == MINUS))    || op_type == NEGATE)
-           )
-            parenthesize_lhs = true;
-    }
-    if (auto rhs = dynamic_cast<const Operation<T>*>(RHS())) {
-        OpType op_type = rhs->GetOpType();
-        if (
-            (m_op_type == EXPONENTIATE &&
-             (op_type == EXPONENTIATE   || op_type == TIMES     || op_type == DIVIDE ||
-              op_type == PLUS           || op_type == MINUS     || op_type == NEGATE)
-            ) ||
-            (((m_op_type == TIMES        || m_op_type == DIVIDE) &&
-              (op_type == PLUS           || op_type == MINUS))    || op_type == NEGATE)
-           )
-            parenthesize_rhs = true;
-    }
-
-    std::string retval;
-    if (parenthesize_lhs)
-        retval += '(' + LHS()->Dump(ntabs) + ')';
-    else
-        retval += LHS()->Dump(ntabs);
-
-    switch (m_op_type) {
-    case PLUS:          retval += " + "; break;
-    case MINUS:         retval += " - "; break;
-    case TIMES:         retval += " * "; break;
-    case DIVIDE:        retval += " / "; break;
-    case EXPONENTIATE:  retval += " ^ "; break;
-    default:            retval += " ? "; break;
-    }
-
-    if (parenthesize_rhs)
-        retval += '(' + RHS()->Dump(ntabs) + ')';
-    else
-        retval += RHS()->Dump(ntabs);
-
-    return retval;
-}
-
-template <typename T>
-void Operation<T>::SetTopLevelContent(const std::string& content_name) {
-    for (auto& operand : m_operands) {
-        if (operand)
-            operand->SetTopLevelContent(content_name);
-    }
-}
-
 
 }
 
