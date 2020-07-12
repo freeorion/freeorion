@@ -60,7 +60,6 @@ jobs:
       stage: lint
       script:
         - cmake ..
-        - cmake --build . --target check-python
         - cmake --build . --target check-pep8
 
     - name: Lint string tables
