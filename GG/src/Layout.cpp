@@ -348,8 +348,8 @@ void Layout::DoLayout(Pt ul, Pt lr)
     float remainder = 0.0f;
     int current_origin = m_border_margin.ScaleY();
     for (std::size_t i = 0; i < m_row_params.size(); ++i) {
-        if (larger_than_min) {
-            if (i < m_row_params.size() - 1) {
+        if (i < m_row_params.size() - 1) {
+            if (larger_than_min) {
                 double raw_width =
                     m_row_params[i].effective_min +
                     (total_stretch ?
@@ -363,10 +363,10 @@ void Layout::DoLayout(Pt ul, Pt lr)
                     ++m_row_params[i].current_width;
                 }
             } else {
-                m_row_params[i].current_width = Value(Height() - m_border_margin) - current_origin;
+                m_row_params[i].current_width = m_row_params[i].effective_min;
             }
         } else {
-            m_row_params[i].current_width = m_row_params[i].effective_min;
+            m_row_params[i].current_width = Value(Height() - m_border_margin) - current_origin;
         }
         m_row_params[i].current_origin = current_origin;
         current_origin += m_row_params[i].current_width;
@@ -379,8 +379,8 @@ void Layout::DoLayout(Pt ul, Pt lr)
     remainder = 0.0;
     current_origin = m_border_margin.ScaleX();
     for (std::size_t i = 0; i < m_column_params.size(); ++i) {
-        if (larger_than_min) {
-            if (i < m_column_params.size() - 1) {
+        if (i < m_column_params.size() - 1) {
+            if (larger_than_min) {
                 double raw_width =
                     m_column_params[i].effective_min +
                     (total_stretch ?
@@ -394,10 +394,10 @@ void Layout::DoLayout(Pt ul, Pt lr)
                     ++m_column_params[i].current_width;
                 }
             } else {
-                m_column_params[i].current_width = Value(Width() - m_border_margin) - current_origin;
+                m_column_params[i].current_width = m_column_params[i].effective_min;
             }
         } else {
-            m_column_params[i].current_width = m_column_params[i].effective_min;
+            m_column_params[i].current_width = Value(Width() - m_border_margin) - current_origin;
         }
         m_column_params[i].current_origin = current_origin;
         current_origin += m_column_params[i].current_width;
