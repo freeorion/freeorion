@@ -920,7 +920,7 @@ void CUIWnd::SetParent(const std::shared_ptr<GG::Wnd>& wnd) {
 // class CUIEditWnd
 ///////////////////////////////////////
 const GG::X CUIEditWnd::BUTTON_WIDTH(75);
-const int CUIEditWnd::CONTROL_MARGIN = 5;
+const GG::Measure CUIEditWnd::CONTROL_MARGIN = GG::M5;
 
 CUIEditWnd::CUIEditWnd(GG::X w, const std::string& prompt_text, const std::string& edit_text, GG::Flags<GG::WndFlag> flags/* = Wnd::MODAL*/) :
     CUIWnd(prompt_text, GG::X0, GG::Y0, w, GG::Y1, flags)

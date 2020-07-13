@@ -44,7 +44,8 @@ class GG_API DeferredLayout : public Layout
 public:
     /** Ctor. */
     DeferredLayout(X x, Y y, X w, Y h, std::size_t rows, std::size_t columns,
-                   unsigned int border_margin = 0, unsigned int cell_margin = INVALID_CELL_MARGIN);
+                   Measure border_margin = M0,
+                   Measure cell_margin = INVALID_CELL_MARGIN);
 
     void SizeMove(const Pt& ul, const Pt& lr) override;
     void PreRender() override;

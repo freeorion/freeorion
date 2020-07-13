@@ -31,6 +31,7 @@
 
 #include <GG/ClrConstants.h>
 #include <GG/TextControl.h>
+#include <GG/Measure.h>
 
 #include <boost/signals2/signal.hpp>
 
@@ -135,9 +136,8 @@ public:
     /** Replaces selected text with, or inserts at cursor, the text in \a text. */
     virtual void AcceptPastedText(const std::string& text);
 
-    /** The number of pixels to leave between the text and the control's
-        frame. */
-    static const int PIXEL_MARGIN;
+    /** The margin to leave between the text and the control's frame. */
+    static const Measure PIXEL_MARGIN;
 
 protected:
     /** Returns true if >= 1 characters selected. */

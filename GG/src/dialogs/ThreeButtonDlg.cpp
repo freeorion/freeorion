@@ -47,7 +47,7 @@ ThreeButtonDlg::ThreeButtonDlg(X w, Y h, const std::string& msg, const std::shar
     m_text_color(text_color),
     m_button_color(button_color),
     m_escape(buttons - 1),
-    m_button_layout(Wnd::Create<Layout>(X0, Y0, X1, Y1, 2, 1, 10))
+    m_button_layout(Wnd::Create<Layout>(X0, Y0, X1, Y1, 2, 1, M10))
 {
     if (buttons < 1)
         buttons = 1;
@@ -57,7 +57,7 @@ ThreeButtonDlg::ThreeButtonDlg(X w, Y h, const std::string& msg, const std::shar
     const int SPACING = 10;
     const Y BUTTON_HEIGHT = font->Height() + 10;
 
-    auto button_layout = Wnd::Create<Layout>(X0, Y0, X1, Y1, 1, buttons, 0, 10);
+    auto button_layout = Wnd::Create<Layout>(X0, Y0, X1, Y1, 1, buttons, M0, M10);
 
     const auto& style = GetStyleFactory();
 

@@ -1311,8 +1311,8 @@ void MapWnd::CompleteConstruction() {
                                               m_toolbar->ClientWidth(),       m_toolbar->ClientHeight(),
                                               1, widths.size());
     layout->SetName("Toolbar Layout");
-    layout->SetCellMargin(5);
-    layout->SetBorderMargin(5);
+    layout->SetCellMargin(GG::M5);
+    layout->SetBorderMargin(GG::M5);
     layout->SetMinimumRowHeight(0, ICON_SIZE.y);
     //layout->RenderOutline(true);
     layout->SetColumnStretches(stretches);

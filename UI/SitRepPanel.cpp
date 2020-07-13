@@ -20,7 +20,7 @@
 
 
 namespace {
-    const int sitrep_row_margin(1);
+    const GG::Measure sitrep_row_margin(GG::M1);
     const int sitrep_edge_to_outline_spacing(2);
     const int sitrep_edge_to_content_spacing(sitrep_edge_to_outline_spacing + 1 + 2);
     const int sitrep_spacing(2);

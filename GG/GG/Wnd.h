@@ -32,6 +32,7 @@
 #include <GG/Base.h>
 #include <GG/Exception.h>
 #include <GG/Flags.h>
+#include <GG/Measure.h>
 
 #include <boost/signals2/trackable.hpp>
 
@@ -678,11 +679,11 @@ public:
     /** Sets the margin that should exist between the outer edges of the
         windows in the layout and the edge of the client area.  If no layout
         exists for the window, this has no effect. */
-    void SetLayoutBorderMargin(unsigned int margin);
+    void SetLayoutBorderMargin(Measure margin);
 
     /** Sets the margin that should exist between the windows in the layout.
         If no layout exists for the window, this has no effect. */
-    void SetLayoutCellMargin(unsigned int margin);
+    void SetLayoutCellMargin(Measure margin);
 
     /** Update Wnd prior to Render().
 

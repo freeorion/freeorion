@@ -519,16 +519,20 @@ ColorDlg::ColorDlg(X x, Y y, Clr original_color, const std::shared_ptr<Font>& fo
     m_value_picker = Wnd::Create<ValuePicker>(X(320), Y(10), X(25), Y(300), m_text_color);
     m_value_picker->SetHueSaturation(m_current_color.h, m_current_color.s);
     m_value_picker->SetValue(m_current_color.v);
-    const int HUE_SATURATION_PICKER_SIZE = 200;
-    m_pickers_layout = Wnd::Create<Layout>(X0, Y0, X(HUE_SATURATION_PICKER_SIZE + 30), Y(HUE_SATURATION_PICKER_SIZE),
-                                           1, 2, 0, 5);
+    const Measure HUE_SATURATION_PICKER_SIZE = Measure::c(200);
+    m_pickers_layout = Wnd::Create<Layout>(X0, Y0,
+                                           HUE_SATURATION_PICKER_SIZE + Measure::c(30),
+                                           HUE_SATURATION_PICKER_SIZE,
+                                           1, 2, M0, M5);
     m_pickers_layout->SetColumnStretch(0, 1);
     m_pickers_layout->SetMinimumColumnWidth(1, X(24));
     m_pickers_layout->Add(m_hue_saturation_picker, 0, 0);
     m_pickers_layout->Add(m_value_picker, 0, 1);
 
-    m_color_squares_layout = Wnd::Create<Layout>(X0, m_pickers_layout->Bottom() + 5, m_pickers_layout->Width(), Y(40),
-                                                 1, 1, 0, 4);
+    m_color_squares_layout = Wnd::Create<Layout>(X0, m_pickers_layout->Bottom() + 5,
+                                                 m_pickers_layout->Width(),
+                                                 Measure::c(40),
+                                                 1, 1, M0, M4);
     m_new_color_square = Wnd::Create<ColorDisplay>(color);
     if (m_original_color_specified) {
         m_new_color_square_text = style->NewTextControl(style->Translate("New"), font, m_text_color, FORMAT_RIGHT);
@@ -544,8 +548,13 @@ ColorDlg::ColorDlg(X x, Y y, Clr original_color, const std::shared_ptr<Font>& fo
         m_color_squares_layout->Add(m_new_color_square, 0, 0);
     }
 
-    m_color_buttons_layout = Wnd::Create<Layout>(X0, m_color_squares_layout->Bottom() + 5, m_pickers_layout->Width(), Y(80),
-                                                 COLOR_BUTTON_ROWS, COLOR_BUTTON_COLS, 0, 4);
+    m_color_buttons_layout = Wnd::Create<Layout>(X0,
+                                                 m_color_squares_layout->Bottom() + M5,
+                                                 m_pickers_layout->Width(),
+                                                 Measure::c(80),
+                                                 COLOR_BUTTON_ROWS,
+                                                 COLOR_BUTTON_COLS,
+                                                 M0, M4);
     for (int i = 0; i < COLOR_BUTTON_ROWS; ++i) {
         for (int j = 0; j < COLOR_BUTTON_COLS; ++j) {
             m_color_buttons.push_back(Wnd::Create<ColorButton>(m_color));
@@ -554,13 +563,18 @@ ColorDlg::ColorDlg(X x, Y y, Clr original_color, const std::shared_ptr<Font>& fo
         }
     }
 
-    m_sliders_ok_cancel_layout = Wnd::Create<Layout>(m_pickers_layout->Right() + 5, Y0, X(150), Y((25 + 5) * 8 - 5),
-                                                     9, 3, 0, 5);
+    m_sliders_ok_cancel_layout = Wnd::Create<Layout>(m_pickers_layout->Right() + M5,
+                                                     Y0,
+                                                     Measure::c(150),
+                                                     Measure::c((25 + 5) * 8 - 5),
+                                                     9, 3,
+                                                     M0, M5);
     m_sliders_ok_cancel_layout->SetMinimumColumnWidth(0, X(15));
     m_sliders_ok_cancel_layout->SetMinimumColumnWidth(1, X(30));
     m_sliders_ok_cancel_layout->SetColumnStretch(2, 1);
 
     int row = 0;
+
 
     for (auto entry : {
             std::make_tuple(static_cast<int>(color.r), 0, 255, "R:"),
@@ -599,7 +613,8 @@ void ColorDlg::CompleteConstruction()
 {
     Wnd::CompleteConstruction();
 
-    auto master_layout = Wnd::Create<Layout>(X0, Y0, ClientWidth(), ClientHeight(), 3, 2, 5, 5);
+    auto master_layout = Wnd::Create<Layout>(X0, Y0, ClientWidth(), ClientHeight(),
+                                             3, 2, M5, M5);
     master_layout->SetColumnStretch(0, 1.25);
     master_layout->SetColumnStretch(1, 1);
     master_layout->SetRowStretch(0, 1.25);

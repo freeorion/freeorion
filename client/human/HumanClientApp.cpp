@@ -35,6 +35,7 @@
 #include "../../combat/CombatLogManager.h"
 #include "../../parse/Parse.h"
 
+#include <GG/Measure.h>
 #include <GG/BrowseInfoWnd.h>
 #include <GG/dialogs/ThreeButtonDlg.h>
 #include <GG/Cursor.h>
@@ -294,6 +295,8 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
         inform_user_sound_failed = true;
     }
 
+    GG::Measure::SetFont(ClientUI::GetFont());
+
     m_ui.reset(new ClientUI());
 
     EnableFPS();
@@ -307,7 +310,7 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
         GG::Wnd::Create<GG::TextBoxBrowseInfoWnd>(
             GG::X(400), ClientUI::GetFont(),
             GG::Clr(0, 0, 0, 200), ClientUI::WndOuterBorderColor(), ClientUI::TextColor(),
-            GG::FORMAT_LEFT | GG::FORMAT_WORDBREAK, 1));
+            GG::FORMAT_LEFT | GG::FORMAT_WORDBREAK, GG::M1));
     GG::Wnd::SetDefaultBrowseInfoWnd(default_browse_info_wnd);
 
     auto cursor_texture = m_ui->GetTexture(ClientUI::ArtDir() / "cursors" / "default_cursor.png");

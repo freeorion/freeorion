@@ -58,7 +58,7 @@ namespace {
         return ColourWrappedtext(IntToString(number, prepend), clr);
     }
 
-    const int EDGE_PAD(3);
+    const GG::Measure EDGE_PAD(GG::Measure::c(3));
 
     GG::X MeterBrowseLabelWidth()
     { return GG::X(30*ClientUI::Pts()); }

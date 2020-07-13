@@ -34,6 +34,7 @@
 #include <GG/ClrConstants.h>
 #include <GG/Control.h>
 #include <GG/Timer.h>
+#include <GG/Measure.h>
 
 #include <boost/optional/optional.hpp>
 
@@ -150,7 +151,7 @@ public:
         Alignment    RowAlignment() const;              ///< returns the vertical alignment of this Row
         Alignment    ColAlignment(std::size_t n) const; ///< returns the horizontal alignment of the Control in the \a nth cell of this Row; not range checked
         X            ColWidth(std::size_t n) const;     ///< returns the width of the \a nth cell of this Row; not range checked
-        unsigned int Margin() const;                    ///< returns the amount of space left between the contents of adjacent cells, in pixels
+        Measure      Margin() const;                    ///< returns the amount of space left between the contents of adjacent cells
         /** Return true if the row is normalized.  Used by ListBox to track normalization.*/
         bool         IsNormalized() const;
 
@@ -170,7 +171,7 @@ public:
         void         SetColWidths(const std::vector<X>& widths); ///< sets all the widths of the cells of this Row; not range checked
         void         ClearColWidths(); ///< Clear the minimum widths of the cells of this Row.
         void         SetColStretches(const std::vector<double>& stretches); ///< Set all column stretches.
-        void         SetMargin(unsigned int margin); ///< sets the amount of space left between the contents of adjacent cells, in pixels
+        void         SetMargin(Measure margin); ///< sets the amount of space left between the contents of adjacent cells
         /** Set normalized.  Used by ListBox to track normalization.*/
         void         SetNormalized(bool normalized);
 
@@ -186,7 +187,7 @@ public:
         std::vector<Alignment>                  m_col_alignments;           ///< column alignments; each is one of ALIGN_TOP, ALIGN_VCENTER, or ALIGN_BOTTOM
         std::vector<X>                          m_col_widths;               ///< column widths
         std::vector<double>                     m_col_stretches;            ///< the stretch factor of each column
-        unsigned int                            m_margin = DEFAULT_MARGIN;  ///< the amount of space left between the contents of adjacent cells, in pixels
+        Measure                                 m_margin = DEFAULT_MARGIN;  ///< the amount of space left between the contents of adjacent cells
         bool                                    m_ignore_adjust_layout = false;
         bool                                    m_is_normalized = false;
     };
@@ -236,10 +237,10 @@ public:
     typedef RowSignalType      AfterEraseRowSignalType;     ///< emitted when a row in the listbox is erased; provides the deleted Row, and is emitted after the row is removed
     typedef RowSignalType      BrowsedRowSignalType;        ///< emitted when a row in the listbox is "browsed" (rolled over) by the cursor; provides the browsed row
 
-    static const int DEFAULT_MARGIN;
-    static const X DEFAULT_ROW_WIDTH;
-    static const Y DEFAULT_ROW_HEIGHT;
-    static const unsigned int BORDER_THICK; ///< the thickness with which to render the border of the control
+    static const Measure DEFAULT_MARGIN;
+    static const Measure DEFAULT_ROW_WIDTH;
+    static const Measure DEFAULT_ROW_HEIGHT;
+    static const Measure BORDER_THICK; ///< the thickness with which to render the border of the control
 
     ListBox(Clr color, Clr interior = CLR_ZERO);
 
@@ -482,7 +483,7 @@ public:
 protected:
     X               RightMargin() const;     ///< space skipped at right of client area for vertical scroll bar
     Y               BottomMargin() const;    ///< space skipped at bottom of client area for horizontal scroll bar
-    unsigned int    CellMargin() const;      ///< the number of pixels left between the contents of each cell and the cell boundary
+    Measure         CellMargin() const;      ///< the distance left between the contents of each cell and the cell boundary
 
     iterator        RowUnderPt(const Pt& pt) const; ///< returns row under pt, if any; value must be checked (i.e. it may be end())
 
@@ -599,7 +600,7 @@ private:
 
     std::vector<Alignment>  m_col_alignments;   ///< the horizontal alignment of each of the columns goes here
     std::vector<double>     m_col_stretches;    ///< the stretch factor of each column
-    unsigned int            m_cell_margin;      ///< the amount of space left between each edge of the cell and its contents, in pixels
+    Measure                 m_cell_margin;      ///< the amount of space left between each edge of the cell and its contents
 
     Clr                     m_int_color;                ///< color painted into the client area of the control
     Clr                     m_hilite_color = CLR_SHADOW;///< color behind selected line items

@@ -32,6 +32,7 @@
 
 #include <GG/Wnd.h>
 #include <GG/Font.h>
+#include <GG/Measure.h>
 #include <GG/GLClientAndServerBuffer.h>
 
 
@@ -99,7 +100,8 @@ class GG_API TextBoxBrowseInfoWnd : public BrowseInfoWnd
 public:
     TextBoxBrowseInfoWnd(X w, const std::shared_ptr<Font>& font, Clr color, Clr border_color, Clr text_color,
                          Flags<TextFormat> format = FORMAT_LEFT | FORMAT_WORDBREAK,
-                         unsigned int border_width = 2, unsigned int text_margin = 4);
+                         Measure border_width = M2,
+                         Measure text_margin = M4);
     void CompleteConstruction() override;
 
     bool WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const override;
@@ -114,8 +116,8 @@ public:
     Clr                            BorderColor() const;    ///< returns the color used to render the text box border
     Clr                            TextColor() const;      ///< returns the color used to render the text
     Flags<TextFormat>              GetTextFormat() const;  ///< returns the text format used to render the text
-    unsigned int                   BorderWidth() const;    ///< returns the width of the text box border
-    unsigned int                   TextMargin() const;     ///< returns the margin to leave between the text and the text box
+    Measure                        BorderWidth() const;    ///< returns the width of the text box border
+    Measure                        TextMargin() const;     ///< returns the margin to leave between the text and the text box
 
     void         SetText(const std::string& str);
     void Render() override;
@@ -130,8 +132,9 @@ public:
     void SetBorderColor(Clr border_color);             ///< sets the color used to render the text box border
     void SetTextColor(Clr text_color);                 ///< sets the color used to render the text
     void SetTextFormat(Flags<TextFormat> format);      ///< sets the text format used to render the text
-    void SetBorderWidth(unsigned int border_width);    ///< sets the width of the text box border
-    void SetTextMargin(unsigned int text_margin);      ///< sets the margin to leave between the text and the text box
+    void SetBorderWidth(Measure border_width);         ///< sets the width of the text box border
+    void SetTextMargin(Measure text_margin);           ///< sets the margin to leave between the text and the text box
+    //@}
 
 private:
     virtual void InitBuffer();
@@ -142,10 +145,10 @@ private:
     std::shared_ptr<Font>           m_font;
     Clr                             m_color;
     Clr                             m_border_color;
-    unsigned int                    m_border_width;
+    Measure                         m_border_width;
     X                               m_preferred_width;
     std::shared_ptr<TextControl>    m_text_control;
-    unsigned int                    m_text_margin;
+    Measure                         m_text_margin;
 };
 
 }

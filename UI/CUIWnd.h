@@ -230,7 +230,7 @@ private:
     std::shared_ptr<GG::Button> m_cancel_bn;
 
     static const GG::X BUTTON_WIDTH;
-    static const int CONTROL_MARGIN;
+    static const GG::Measure CONTROL_MARGIN;
 };
 
 
