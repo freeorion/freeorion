@@ -27,7 +27,7 @@ void PasswordEnterWnd::CompleteConstruction() {
     m_cancel_bn = Wnd::Create<CUIButton>(UserString("CANCEL"));
 
     const GG::X OK_CANCEL_BUTTON_WIDTH(100);
-    const int CONTROL_MARGIN = 5;
+    const GG::Measure CONTROL_MARGIN(GG::M5);
 
     auto layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0, GG::X1, GG::Y1, 4, 4, CONTROL_MARGIN);
     layout->SetMinimumColumnWidth(0, std::max(player_name_label->MinUsableSize().x,

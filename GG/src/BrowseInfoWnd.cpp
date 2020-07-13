@@ -78,7 +78,8 @@ void BrowseInfoWnd::UpdateImpl(std::size_t mode, const Wnd* target)
 ////////////////////////////////////////////////
 TextBoxBrowseInfoWnd::TextBoxBrowseInfoWnd(X w, const std::shared_ptr<Font>& font, Clr color, Clr border_color, Clr text_color,
                                            Flags<TextFormat> format/* = FORMAT_LEFT | FORMAT_WORDBREAK*/,
-                                           unsigned int border_width/* = 2*/, unsigned int text_margin/* = 4*/) :
+                                           Measure border_width/* = 2*/,
+                                           Measure text_margin/* = 4*/) :
     BrowseInfoWnd(X0, Y0, w, Y(100)),
     m_text_from_target(true),
     m_font(font),
@@ -126,24 +127,24 @@ Flags<TextFormat> TextBoxBrowseInfoWnd::GetTextFormat() const
 Clr TextBoxBrowseInfoWnd::BorderColor() const
 { return m_border_color; }
 
-unsigned int TextBoxBrowseInfoWnd::BorderWidth() const
+Measure TextBoxBrowseInfoWnd::BorderWidth() const
 { return m_border_width; }
 
-unsigned int TextBoxBrowseInfoWnd::TextMargin() const
+Measure TextBoxBrowseInfoWnd::TextMargin() const
 { return GetLayout()->BorderMargin(); }
 
 void TextBoxBrowseInfoWnd::SetText(const std::string& str)
 {
-    unsigned int margins = 2 * TextMargin();
+    Measure margins = TextMargin() * 2;
 
     Flags<TextFormat> fmt = GetTextFormat();
     auto text_elements = m_font->ExpensiveParseFromTextToTextElements(str, fmt);
-    auto lines = m_font->DetermineLines(str, fmt, m_preferred_width - X(margins),
+    auto lines = m_font->DetermineLines(str, fmt, m_preferred_width - margins,
                                         text_elements);
     Pt extent = m_font->TextExtent(lines);
-    SetMinSize(extent + Pt(X(margins), Y(margins)));
+    SetMinSize(extent + Pt(margins, margins));
     m_text_control->SetText(str);
-    Resize(extent + Pt(X(margins), Y0));
+    Resize(extent + Pt(margins, Y0));
     if (str.empty())
         Hide();
     else
@@ -178,7 +179,7 @@ void TextBoxBrowseInfoWnd::Render()
     glLoadIdentity();
     glTranslatef(static_cast<GLfloat>(Value(ul.x)), static_cast<GLfloat>(Value(ul.y)), 0.0f);
     glDisable(GL_TEXTURE_2D);
-    glLineWidth(m_border_width);
+    glLineWidth(m_border_width.ScaleX());
     glEnableClientState(GL_VERTEX_ARRAY);
 
     m_buffer.activate();
@@ -212,10 +213,10 @@ void TextBoxBrowseInfoWnd::SetTextColor(Clr text_color)
 void TextBoxBrowseInfoWnd::SetTextFormat(Flags<TextFormat> format)
 { m_text_control->SetTextFormat(format); }
 
-void TextBoxBrowseInfoWnd::SetBorderWidth(unsigned int border_width)
+void TextBoxBrowseInfoWnd::SetBorderWidth(Measure border_width)
 { m_border_width = border_width; }
 
-void TextBoxBrowseInfoWnd::SetTextMargin(unsigned int text_margin)
+void TextBoxBrowseInfoWnd::SetTextMargin(Measure text_margin)
 { SetLayoutBorderMargin(text_margin); }
 
 void TextBoxBrowseInfoWnd::UpdateImpl(std::size_t mode, const Wnd* target)

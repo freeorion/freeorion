@@ -105,8 +105,8 @@ namespace {
             {return lhs->Top() < rhs->Top();}
     };
 
-    const int DEFAULT_LAYOUT_BORDER_MARGIN = 0;
-    const int DEFAULT_LAYOUT_CELL_MARGIN = 5;
+    const Measure DEFAULT_LAYOUT_BORDER_MARGIN = M0;
+    const Measure DEFAULT_LAYOUT_CELL_MARGIN = M5;
 
     struct ForwardToParentException {};
 }
@@ -893,13 +893,13 @@ std::shared_ptr<Layout> Wnd::DetachLayout()
     return layout;
 }
 
-void Wnd::SetLayoutBorderMargin(unsigned int margin)
+void Wnd::SetLayoutBorderMargin(Measure margin)
 {
     if (auto&& layout = GetLayout())
         layout->SetBorderMargin(margin);
 }
 
-void Wnd::SetLayoutCellMargin(unsigned int margin)
+void Wnd::SetLayoutCellMargin(Measure margin)
 {
     if (auto&& layout = GetLayout())
         layout->SetCellMargin(margin);

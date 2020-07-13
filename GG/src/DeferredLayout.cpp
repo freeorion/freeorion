@@ -25,8 +25,8 @@
 using namespace GG;
 
 DeferredLayout::DeferredLayout(X x, Y y, X w, Y h, std::size_t rows, std::size_t columns,
-                               unsigned int border_margin/* = 0*/,
-                               unsigned int cell_margin/* = INVALID_CELL_MARGIN*/) :
+                               Measure border_margin/* = M0*/,
+                               Measure cell_margin/* = INVALID_CELL_MARGIN*/) :
     Layout(x, y, w, h, rows, columns, border_margin, cell_margin),
     m_ul_prerender(Pt(x, y)),
     m_lr_prerender(Pt(x + w, y + h)),

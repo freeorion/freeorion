@@ -58,10 +58,12 @@ Layout::WndPosition::WndPosition(std::size_t first_row_, std::size_t first_colum
 {}
 
 // Layout
-const unsigned int Layout::INVALID_CELL_MARGIN = std::numeric_limits<unsigned int>::max();
+const Measure Layout::INVALID_CELL_MARGIN = Measure::c(std::numeric_limits<int>::max());
 
-Layout::Layout(X x, Y y, X w, Y h, std::size_t rows, std::size_t columns,
-               unsigned int border_margin/* = 0*/, unsigned int cell_margin/* = INVALID_CELL_MARGIN*/) :
+Layout::Layout(X x, Y y, X w, Y h,
+               std::size_t rows, std::size_t columns,
+               Measure border_margin/* = 0*/,
+               Measure cell_margin/* = INVALID_CELL_MARGIN*/) :
     Wnd(x, y, w, h, NO_WND_FLAGS),
     m_cells(rows, std::vector<std::weak_ptr<Wnd>>(columns)),
     m_border_margin(border_margin),
@@ -90,10 +92,10 @@ Flags<Alignment> Layout::ChildAlignment(const Wnd* wnd) const
     return it->second.alignment;
 }
 
-unsigned int Layout::BorderMargin() const
+Measure Layout::BorderMargin() const
 { return m_border_margin; }
 
-unsigned int Layout::CellMargin() const
+Measure Layout::CellMargin() const
 { return m_cell_margin; }
 
 double Layout::RowStretch(std::size_t row) const
@@ -143,13 +145,13 @@ std::vector<std::vector<Rect>> Layout::RelativeCellRects() const
                             Y(m_row_params[i].current_width));
             Rect rect(ul, lr);
             if (j)
-                rect.ul.x += static_cast<int>(m_cell_margin / 2);
+                rect.ul.x += m_cell_margin / 2;
             if (j != m_cells[i].size() - 1)
-                rect.lr.x -= static_cast<int>(m_cell_margin - m_cell_margin / 2);
+                rect.lr.x -= m_cell_margin - m_cell_margin / 2;
             if (i)
-                rect.ul.y += static_cast<int>(m_cell_margin / 2);
+                rect.ul.y += m_cell_margin / 2;
             if (i != m_cells.size() - 1)
-                rect.lr.y -= static_cast<int>(m_cell_margin - m_cell_margin / 2);
+                rect.lr.y -= m_cell_margin - m_cell_margin / 2;
             retval[i][j] = rect;
         }
     }
@@ -191,13 +193,13 @@ void Layout::DoLayout(Pt ul, Pt lr)
 
     // reset effective_min values
     for (std::size_t i = 0; i < m_row_params.size(); ++i) {
-        unsigned int min_due_to_margin = MinDueToMargin(m_cell_margin, m_row_params.size(), i);
+        unsigned int min_due_to_margin = MinDueToMargin(m_cell_margin.ScaleY(), m_row_params.size(), i);
         m_row_params[i].effective_min = std::max(m_row_params[i].min, min_due_to_margin);
         row_effective_min_usable_sizes[i] = min_due_to_margin;
     }
 
     for (std::size_t i = 0; i < m_column_params.size(); ++i) {
-        unsigned int min_due_to_margin = MinDueToMargin(m_cell_margin, m_column_params.size(), i);
+        unsigned int min_due_to_margin = MinDueToMargin(m_cell_margin.ScaleX(), m_column_params.size(), i);
         m_column_params[i].effective_min = std::max(m_column_params[i].min, min_due_to_margin);
         column_effective_min_usable_sizes[i] = min_due_to_margin;
     }
@@ -208,11 +210,11 @@ void Layout::DoLayout(Pt ul, Pt lr)
         if (0 < wnd_position.second.first_row && wnd_position.second.last_row < m_row_params.size())
             margin.y = Y(m_cell_margin);
         else if (0 < wnd_position.second.first_row || wnd_position.second.last_row < m_row_params.size())
-            margin.y = Y(static_cast<int>(std::ceil(m_cell_margin / 2.0)));
+            margin.y = Y(static_cast<int>(std::ceil(m_cell_margin.ScaleY() / 2.0)));
         if (0 < wnd_position.second.first_column && wnd_position.second.last_column < m_column_params.size())
             margin.x = X(m_cell_margin);
         else if (0 < wnd_position.second.first_column || wnd_position.second.last_column < m_column_params.size())
-            margin.x = X(static_cast<int>(std::ceil(m_cell_margin / 2.0)));
+            margin.x = X(static_cast<int>(std::ceil(m_cell_margin.ScaleX() / 2.0)));
 
         Pt min_space_needed = wnd_position.first->MinSize() + margin;
         Pt min_usable_size = wnd_position.first->MinUsableSize() + margin;
@@ -307,11 +309,11 @@ void Layout::DoLayout(Pt ul, Pt lr)
     }
 
     //TODO Determine min usable size before stretching to fit space requested
-    m_min_usable_size.x = X(2 * m_border_margin);
+    m_min_usable_size.x = m_border_margin * 2;
     for (unsigned int column_size : column_effective_min_usable_sizes) {
         m_min_usable_size.x += static_cast<int>(column_size);
     }
-    m_min_usable_size.y = Y(2 * m_border_margin);
+    m_min_usable_size.y = m_border_margin * 2;
     for (unsigned int row_size : row_effective_min_usable_sizes) {
         m_min_usable_size.y += static_cast<int>(row_size);
     }
@@ -344,7 +346,7 @@ void Layout::DoLayout(Pt ul, Pt lr)
     float space_per_unit_stretch = total_stretch ? total_stretch_space / total_stretch : 0.0f;
     bool larger_than_min = 0 < total_stretch_space;
     float remainder = 0.0f;
-    int current_origin = m_border_margin;
+    int current_origin = m_border_margin.ScaleY();
     for (std::size_t i = 0; i < m_row_params.size(); ++i) {
         if (larger_than_min) {
             if (i < m_row_params.size() - 1) {
@@ -361,7 +363,7 @@ void Layout::DoLayout(Pt ul, Pt lr)
                     ++m_row_params[i].current_width;
                 }
             } else {
-                m_row_params[i].current_width = Value(Height()) - m_border_margin - current_origin;
+                m_row_params[i].current_width = Value(Height() - m_border_margin) - current_origin;
             }
         } else {
             m_row_params[i].current_width = m_row_params[i].effective_min;
@@ -375,7 +377,7 @@ void Layout::DoLayout(Pt ul, Pt lr)
     space_per_unit_stretch = total_stretch ? total_stretch_space / total_stretch : 0.0;
     larger_than_min = 0 < total_stretch_space;
     remainder = 0.0;
-    current_origin = m_border_margin;
+    current_origin = m_border_margin.ScaleX();
     for (std::size_t i = 0; i < m_column_params.size(); ++i) {
         if (larger_than_min) {
             if (i < m_column_params.size() - 1) {
@@ -392,7 +394,7 @@ void Layout::DoLayout(Pt ul, Pt lr)
                     ++m_column_params[i].current_width;
                 }
             } else {
-                m_column_params[i].current_width = Value(Width()) - m_border_margin - current_origin;
+                m_column_params[i].current_width = Value(Width() - m_border_margin) - current_origin;
             }
         } else {
             m_column_params[i].current_width = m_column_params[i].effective_min;
@@ -401,10 +403,12 @@ void Layout::DoLayout(Pt ul, Pt lr)
         current_origin += m_column_params[i].current_width;
     }
 
-    if (m_row_params.back().current_origin + m_row_params.back().current_width != Value(Height()) - m_border_margin)
+    if (m_row_params.back().current_origin + m_row_params.back().current_width
+        != static_cast<unsigned int>(Value(Height() - m_border_margin)))
         throw FailedCalculationCheck("Layout::DoLayout() : calculated row positions do not sum to the height of the layout");
 
-    if (m_column_params.back().current_origin + m_column_params.back().current_width != Value(Width()) - m_border_margin)
+    if (m_column_params.back().current_origin + m_column_params.back().current_width
+        != static_cast<unsigned int>(Value(Width() - m_border_margin)))
         throw FailedCalculationCheck("Layout::DoLayout() : calculated column positions do not sum to the width of the layout");
 
     // resize cells and their contents
@@ -419,13 +423,13 @@ void Layout::DoLayout(Pt ul, Pt lr)
         Pt ul_margin(X0, Y0);
         Pt lr_margin(X0, Y0);
         if (0 < wnd_position.second.first_row)
-            ul_margin.y += static_cast<int>(m_cell_margin / 2);
+            ul_margin.y += m_cell_margin / 2;
         if (0 < wnd_position.second.first_column)
-            ul_margin.x += static_cast<int>(m_cell_margin / 2);
+            ul_margin.x += m_cell_margin / 2;
         if (wnd_position.second.last_row < m_row_params.size())
-            lr_margin.y += static_cast<int>(m_cell_margin / 2.0 + 0.5);
+            lr_margin.y += static_cast<int>(m_cell_margin.ScaleY() / 2.0 + 0.5);
         if (wnd_position.second.last_column < m_column_params.size())
-            lr_margin.x += static_cast<int>(m_cell_margin / 2.0 + 0.5);
+            lr_margin.x += static_cast<int>(m_cell_margin.ScaleX() / 2.0 + 0.5);
 
         wnd_ul += ul_margin;
         wnd_lr -= lr_margin;
@@ -607,13 +611,13 @@ void Layout::SetChildAlignment(const Wnd* wnd, Flags<Alignment> alignment)
     }
 }
 
-void Layout::SetBorderMargin(unsigned int margin)
+void Layout::SetBorderMargin(Measure margin)
 {
     m_border_margin = margin;
     RedoLayout();
 }
 
-void Layout::SetCellMargin(unsigned int margin)
+void Layout::SetCellMargin(Measure margin)
 {
     m_cell_margin = margin;
     RedoLayout();
@@ -685,7 +689,7 @@ float Layout::TotalStretch(const std::vector<RowColParams>& params_vec)
 
 X Layout::TotalMinWidth() const
 {
-    X retval = X(2 * m_border_margin);
+    X retval = m_border_margin * 2;
     for (const RowColParams& column_param : m_column_params) {
         retval += static_cast<int>(column_param.effective_min);
     }
@@ -694,7 +698,7 @@ X Layout::TotalMinWidth() const
 
 Y Layout::TotalMinHeight() const
 {
-    Y retval = Y(2 * m_border_margin);
+    Y retval = m_border_margin * 2;
     for (const RowColParams& row_param : m_row_params) {
         retval += static_cast<int>(row_param.effective_min);
     }

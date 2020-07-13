@@ -31,13 +31,13 @@ namespace fs = boost::filesystem;
 using GG::Measure;
 
 namespace {
-    const Measure PAGE_WIDTH(400);
-    const Measure PAGE_HEIGHT(520);
-    const Measure INDENTATION(20);
-    const Measure ROW_WIDTH(PAGE_WIDTH - Measure(4 + 14 + 5));
-    const Measure COLOR_SELECTOR_WIDTH(75);
-    const Measure SPIN_WIDTH(92);
-    const Measure LAYOUT_MARGIN(5);
+    const Measure PAGE_WIDTH(Measure::c(400));
+    const Measure PAGE_HEIGHT(Measure::c(520));
+    const Measure INDENTATION(Measure::c(20));
+    const Measure ROW_WIDTH(PAGE_WIDTH - Measure::c(4 + 14 + 5));
+    const Measure COLOR_SELECTOR_WIDTH(Measure::c(75));
+    const Measure SPIN_WIDTH(Measure::c(92));
+    const Measure LAYOUT_MARGIN(GG::M5);
 
     const std::string OPTIONS_WND_NAME = "options";
 
@@ -377,7 +377,7 @@ namespace {
 
     private:
         GG::X ListRowWidth() const
-        { return Width() - RightMargin() - Measure(5); }
+        { return Width() - RightMargin() - GG::M5; }
 
         void InitRowSizes() {
             // preinitialize listbox/row column widths, because what
@@ -399,7 +399,7 @@ namespace {
         auto num_log_levels = 1 + static_cast<std::size_t>(LogLevel::max) - static_cast<std::size_t>(LogLevel::min);
         auto drop_list = GG::Wnd::Create<CUIDropDownList>(num_log_levels);
         drop_list->Resize(GG::Pt(drop_list->MinUsableSize().x,
-                                 GG::Y(ClientUI::Pts() + Measure(4))));
+                                 GG::Y(ClientUI::Pts() + GG::M4)));
         drop_list->SetMaxSize(GG::Pt(drop_list->MaxSize().x, drop_list->Size().y));
         drop_list->SetStyle(GG::LIST_NOSORT);
         drop_list->SetOnlyMouseScrollWhenDropped(true);
@@ -419,7 +419,8 @@ namespace {
             drop_list->Select(selected_level);
 
         // Make a layout with a row etc. for this option
-        auto layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0, GG::X1, GG::Y1, 1, 2, 0, LAYOUT_MARGIN.Value());
+        auto layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0, GG::X1, GG::Y1,
+                                                  1, 2, GG::M0, LAYOUT_MARGIN);
         layout->Add(logger_label, 0, 0);
         layout->Add(drop_list,    0, 1, 1, 1, GG::ALIGN_VCENTER);
 
@@ -465,7 +466,7 @@ void OptionsWnd::CompleteConstruction() {
     CUIWnd::CompleteConstruction();
 
     ResetDefaultPosition();
-    SetMinSize(GG::Pt(PAGE_WIDTH + Measure(20), PAGE_HEIGHT + Measure(70)));
+    SetMinSize(GG::Pt(PAGE_WIDTH + Measure::c(20), PAGE_HEIGHT + Measure::c(70)));
 
     AttachChild(m_done_button);
     AttachChild(m_tabs);
@@ -810,8 +811,8 @@ void OptionsWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 }
 
 void OptionsWnd::DoLayout() {
-    const Measure BUTTON_WIDTH(75);
-    const GG::Y BUTTON_HEIGHT(ClientUI::GetFont()->Lineskip() + Measure(6));
+    const Measure BUTTON_WIDTH(Measure::c(75));
+    const GG::Y BUTTON_HEIGHT(ClientUI::GetFont()->Lineskip() + Measure::c(6));
 
     GG::Pt done_button_lr = ScreenToClient(ClientLowerRight()) - GG::Pt(GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN));
     GG::Pt done_button_ul = done_button_lr - GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
@@ -823,9 +824,9 @@ void OptionsWnd::DoLayout() {
 }
 
 GG::Rect OptionsWnd::CalculatePosition() const {
-    GG::Pt ul((GG::GUI::GetGUI()->AppWidth() - (PAGE_WIDTH + Measure(20))) / 2,
-              (GG::GUI::GetGUI()->AppHeight() - (PAGE_HEIGHT + Measure(70))) / 2);
-    GG::Pt wh(PAGE_WIDTH + Measure(20), PAGE_HEIGHT + Measure(70));
+    GG::Pt ul((GG::GUI::GetGUI()->AppWidth() - (PAGE_WIDTH + Measure::c(20))) / 2,
+              (GG::GUI::GetGUI()->AppHeight() - (PAGE_HEIGHT + Measure::c(70))) / 2);
+    GG::Pt wh(PAGE_WIDTH + Measure::c(20), PAGE_HEIGHT + Measure::c(70));
     return GG::Rect(ul, ul + wh);
 }
 
@@ -912,8 +913,9 @@ void OptionsWnd::HotkeyOption(GG::ListBox* page, int indentation_level, const st
     auto text_control = GG::Wnd::Create<CUILabel>(text, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
     auto button = Wnd::Create<CUIButton>(hk.PrettyPrint());
 
-    auto layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0, ROW_WIDTH, std::max(button->MinUsableSize().y, text_control->MinUsableSize().y),
-                                              1, 2, 0, 5);
+    auto layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0, ROW_WIDTH,
+                                              std::max(button->MinUsableSize().y, text_control->MinUsableSize().y),
+                                              1, 2, GG::M0, GG::M5);
     layout->Add(text_control,   0, 0, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
     layout->Add(button,         0, 1, GG::ALIGN_VCENTER | GG::ALIGN_RIGHT);
 
@@ -944,7 +946,7 @@ GG::Spin<int>* OptionsWnd::IntOption(GG::ListBox* page, int indentation_level, c
         return nullptr;
     }
     spin->Resize(GG::Pt(SPIN_WIDTH, spin->MinUsableSize().y));
-    auto layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0, ROW_WIDTH, spin->MinUsableSize().y, 1, 2, 0, 5);
+    auto layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0, ROW_WIDTH, spin->MinUsableSize().y, 1, 2, GG::M0, GG::M5);
     layout->Add(spin, 0, 0, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
     layout->Add(text_control, 0, 1, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
     layout->SetMinimumColumnWidth(0, SPIN_WIDTH);
@@ -981,7 +983,9 @@ GG::Spin<double>* OptionsWnd::DoubleOption(GG::ListBox* page, int indentation_le
         return nullptr;
     }
     spin->Resize(GG::Pt(SPIN_WIDTH, spin->MinUsableSize().y));
-    auto layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0, ROW_WIDTH, spin->MinUsableSize().y, 1, 2, 0, 5);
+    auto layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0,
+                                              ROW_WIDTH, spin->MinUsableSize().y,
+                                              1, 2, GG::M0, GG::M5);
     layout->Add(spin, 0, 0, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
     layout->Add(text_control, 0, 1, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
     layout->SetMinimumColumnWidth(0, SPIN_WIDTH);
@@ -1009,7 +1013,8 @@ void OptionsWnd::MusicVolumeOption(GG::ListBox* page, int indentation_level, Sou
     assert(validator);
     auto slider = GG::Wnd::Create<CUISlider<int>>(validator->m_min, validator->m_max, GG::HORIZONTAL);
     slider->SlideTo(GetOptionsDB().Get<int>("audio.music.volume"));
-    auto layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0, GG::X1, GG::Y1, 1, 2, 0, 5);
+    auto layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0, GG::X1, GG::Y1,
+                                              1, 2, GG::M0, GG::M5);
     layout->Add(button, 0, 0);
     layout->Add(slider, 0, 1);
     row->Resize(GG::Pt(ROW_WIDTH, std::max(button->MinUsableSize().y, slider->MinUsableSize().y) + 6));
@@ -1041,7 +1046,8 @@ void OptionsWnd::VolumeOption(GG::ListBox* page, int indentation_level, const st
     assert(validator);
     auto slider = GG::Wnd::Create<CUISlider<int>>(validator->m_min, validator->m_max, GG::HORIZONTAL);
     slider->SlideTo(GetOptionsDB().Get<int>(volume_option_name));
-    auto layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0, GG::X1, GG::Y1, 1, 2, 0, 5);
+    auto layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0, GG::X1, GG::Y1,
+                                              1, 2, GG::M0, GG::M5);
     layout->Add(button, 0, 0);
     layout->Add(slider, 0, 1);
     row->Resize(GG::Pt(ROW_WIDTH, std::max(button->MinUsableSize().y, slider->MinUsableSize().y) + 6));
@@ -1077,8 +1083,9 @@ void OptionsWnd::FileOptionImpl(GG::ListBox* page, int indentation_level, const 
         button->Disable();
     }
 
-    auto layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0, ROW_WIDTH, button->MinUsableSize().y,
-                                              1, 3, 0, 5);
+    auto layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0, ROW_WIDTH,
+                                              button->MinUsableSize().y,
+                                              1, 3, GG::M0, GG::M5);
 
     layout->Add(text_control,   0, 0, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
     layout->Add(edit,           0, 1, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
@@ -1212,14 +1219,15 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
     drop_list_label->SetBrowseText(UserString("OPTIONS_VIDEO_MODE_LIST_DESCRIPTION"));
 
     auto drop_list = GG::Wnd::Create<CUIDropDownList>(6);
-    drop_list->Resize(GG::Pt(drop_list->MinUsableSize().x, GG::Y(ClientUI::Pts() + Measure(4))));
+    drop_list->Resize(GG::Pt(drop_list->MinUsableSize().x, GG::Y(ClientUI::Pts() + GG::M4)));
     drop_list->SetMaxSize(GG::Pt(drop_list->MaxSize().x, drop_list->Size().y));
     drop_list->SetStyle(GG::LIST_NOSORT);
     drop_list->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     drop_list->SetBrowseText(UserString("OPTIONS_VIDEO_MODE_LIST_DESCRIPTION"));
     drop_list->SetOnlyMouseScrollWhenDropped(true);
 
-    auto layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0, GG::X1, GG::Y1, 2, 1, 0, LAYOUT_MARGIN.Value());
+    auto layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0, GG::X1, GG::Y1,
+                                              2, 1, GG::M0, LAYOUT_MARGIN);
     layout->Add(drop_list_label, 0, 0);
     layout->Add(drop_list, 1, 0, 1, 1, GG::ALIGN_VCENTER);
 

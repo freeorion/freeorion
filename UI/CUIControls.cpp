@@ -1519,7 +1519,7 @@ namespace {
         SpeciesRow(const Species* species, GG::X w, GG::Y h) :
             GG::ListBox::Row(w, h)
         {
-            SetMargin(0);
+            SetMargin(GG::M0);
             if (!species)
                 return;
             const std::string& species_name = species->Name();
@@ -1532,7 +1532,7 @@ namespace {
                    GG::X w, GG::Y h, std::shared_ptr<GG::Texture> species_icon) :
             GG::ListBox::Row(w, h)
         {
-            SetMargin(0);
+            SetMargin(GG::M0);
             GG::Wnd::SetName(species_name);
             Init(species_name, localized_name, species_desc, w, h, species_icon);
         };

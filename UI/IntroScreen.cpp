@@ -29,8 +29,8 @@
 using GG::Measure;
 
 namespace {
-    const Measure MAIN_MENU_WIDTH(200);
-    const Measure MAIN_MENU_HEIGHT(450);
+    const Measure MAIN_MENU_WIDTH(Measure::c(200));
+    const Measure MAIN_MENU_HEIGHT(Measure::c(450));
 
     void Options(OptionsDB& db) {
         db.AddFlag("network.server.external.force", UserStringNop("OPTIONS_DB_FORCE_EXTERNAL_SERVER"),  false);
@@ -287,7 +287,7 @@ void IntroScreen::CompleteConstruction() {
         needed_width = std::max(needed_width, b->MinUsableSize().x);
         needed_height = std::max(needed_height, b->MinUsableSize().y);
     }
-    int PAD = Value(needed_width) / 16;
+    const GG::Measure PAD(GG::Measure::c(9));
     bool have_load = HumanClientApp::GetApp()->IsLoadGameAvailable();
 
     //Layout(X x, Y y, X w, Y h, std::size_t rows, std::size_t columns,
@@ -354,7 +354,8 @@ void IntroScreen::OnPedia() {
     auto enc_panel = GG::Wnd::Create<EncyclopediaDetailPanel>(
         GG::MODAL | GG::INTERACTIVE | GG::DRAGABLE |
         GG::RESIZABLE | CLOSABLE | PINABLE, INTRO_PEDIA_WND_NAME);
-    enc_panel->InitSizeMove(GG::Pt(Measure(100), Measure(100)), Size() - GG::Pt(Measure(100), Measure(100)));
+    static const Measure M100 = Measure::c(100);
+    enc_panel->InitSizeMove(GG::Pt(M100, M100), Size() - GG::Pt(M100, M100));
     enc_panel->ClearItems();
     enc_panel->SetIndex();
     enc_panel->ValidatePosition();
@@ -378,7 +379,7 @@ void IntroScreen::OnCredits() {
     GG::Y nUpperLine = ( 79 * GG::GUI::GetGUI()->AppHeight()) / 768;
     GG::Y nLowerLine = (692 * GG::GUI::GetGUI()->AppHeight()) / 768;
 
-    Measure credit_side_pad(30);
+    Measure credit_side_pad(Measure::c(30));
 
     auto credits_wnd = GG::Wnd::Create<CreditsWnd>(
         GG::X0, nUpperLine, GG::GUI::GetGUI()->AppWidth(), nLowerLine-nUpperLine,

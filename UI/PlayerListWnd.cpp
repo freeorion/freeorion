@@ -612,7 +612,7 @@ namespace {
             m_empire_id(empire_id),
             m_panel(nullptr)
         {
-            SetMargin(0);
+            SetMargin(GG::M0);
             SetRowAlignment(GG::ALIGN_NONE);
             SetName("PlayerRow");
             SetChildClippingMode(ClipToClient);

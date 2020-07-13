@@ -39,11 +39,10 @@
 
 using namespace GG;
 
-
-const int ListBox::DEFAULT_MARGIN(2);
-const X ListBox::DEFAULT_ROW_WIDTH(50);
-const Y ListBox::DEFAULT_ROW_HEIGHT(22);
-const unsigned int ListBox::BORDER_THICK = 2;
+const Measure ListBox::DEFAULT_MARGIN(M2);
+const Measure ListBox::DEFAULT_ROW_WIDTH(Measure::c(50));
+const Measure ListBox::DEFAULT_ROW_HEIGHT(Measure::c(22));
+const Measure ListBox::BORDER_THICK(M2);
 
 namespace {
     struct ListSignalEcho
@@ -79,7 +78,7 @@ namespace {
         std::string m_name;
     };
 
-    const int SCROLL_WIDTH = 14;
+    const Measure SCROLL_WIDTH(Measure::c(14));
 
     class RowSorter // used to sort rows by a certain column (which may contain some empty cells)
     {
@@ -245,7 +244,7 @@ Alignment ListBox::Row::ColAlignment(std::size_t n) const
 X ListBox::Row::ColWidth(std::size_t n) const
 { return m_col_widths[n]; }
 
-unsigned int ListBox::Row::Margin() const
+Measure ListBox::Row::Margin() const
 { return m_margin; }
 
 bool ListBox::Row::IsNormalized() const
@@ -480,7 +479,7 @@ void ListBox::Row::SetColStretches(const std::vector<double>& stretches)
     }
 }
 
-void ListBox::Row::SetMargin(unsigned int margin)
+void ListBox::Row::SetMargin(Measure margin)
 {
     if (margin == m_margin)
         return;
@@ -595,18 +594,18 @@ void ListBox::HandleRowRightClicked(const Pt& pt, GG::Flags<GG::ModKey> mod) {
 
 Pt ListBox::MinUsableSize() const
 {
-    return Pt(X(5 * SCROLL_WIDTH + 2 * BORDER_THICK),
-              Y(5 * SCROLL_WIDTH + 2 * BORDER_THICK));
+    const Measure min = (SCROLL_WIDTH * 5) + (BORDER_THICK * 2);
+    return Pt(min, min);
 }
 
 Pt ListBox::ClientUpperLeft() const
 {
     return UpperLeft() +
-        Pt(X(BORDER_THICK), static_cast<int>(BORDER_THICK) + (m_header_row->empty() ? Y0 : m_header_row->Height()));
+        Pt(BORDER_THICK, BORDER_THICK + (m_header_row->empty() ? Y0 : m_header_row->Height()));
 }
 
 Pt ListBox::ClientLowerRight() const
-{ return LowerRight() - Pt(static_cast<int>(BORDER_THICK) + RightMargin(), static_cast<int>(BORDER_THICK) + BottomMargin()); }
+{ return LowerRight() - Pt(BORDER_THICK + RightMargin(), BORDER_THICK + BottomMargin()); }
 
 bool ListBox::Empty() const
 { return m_rows.empty(); }
@@ -896,13 +895,13 @@ void ListBox::Render()
     Clr int_color_to_use = Disabled() ? DisabledColor(m_int_color) : m_int_color;
     Clr hilite_color_to_use = Disabled() ? DisabledColor(m_hilite_color) : m_hilite_color;
 
-    BeveledRectangle(ul, lr, int_color_to_use, color_to_use, false, BORDER_THICK);
+    BeveledRectangle(ul, lr, int_color_to_use, color_to_use, false, BORDER_THICK.ScaleX());
 
     // HACK! This gets around the issue of how to render headers and scrolls,
     // which do not fall within the client area.
     if (!m_header_row->empty()) {
-        Rect header_area(Pt(ul.x + static_cast<int>(BORDER_THICK), m_header_row->Top()),
-                         Pt(lr.x - static_cast<int>(BORDER_THICK), m_header_row->Bottom()));
+        Rect header_area(Pt(ul.x + BORDER_THICK, m_header_row->Top()),
+                         Pt(lr.x - BORDER_THICK, m_header_row->Bottom()));
         BeginScissorClipping(header_area.ul, header_area.lr);
         GUI::GetGUI()->RenderWindow(m_header_row.get());
         EndScissorClipping();
@@ -1440,12 +1439,12 @@ void ListBox::SetAutoScrollInterval(unsigned int interval)
 { m_auto_scroll_timer.SetInterval(interval); }
 
 X ListBox::RightMargin() const
-{ return X(m_vscroll ? SCROLL_WIDTH : 0); }
+{ return m_vscroll ? SCROLL_WIDTH : X0; }
 
 Y ListBox::BottomMargin() const
-{ return Y(m_hscroll ? SCROLL_WIDTH : 0); }
+{ return m_hscroll ? SCROLL_WIDTH : Y0; }
 
-unsigned int ListBox::CellMargin() const
+Measure ListBox::CellMargin() const
 { return m_cell_margin; }
 
 ListBox::iterator ListBox::RowUnderPt(const Pt& pt) const
@@ -2094,10 +2093,10 @@ Pt ListBox::ClientSizeExcludingScrolls() const
     // This client area calculation is used to determine if scroll should/should not be added, so
     // it does not include the thickness of scrolls.
     Pt cl_sz = (LowerRight()
-                - Pt(X(BORDER_THICK), Y(BORDER_THICK))
+                - Pt(BORDER_THICK, BORDER_THICK)
                 - UpperLeft()
-                - Pt(X(BORDER_THICK),
-                     static_cast<int>(BORDER_THICK)
+                - Pt(BORDER_THICK,
+                     BORDER_THICK
                      + (m_header_row->empty() ? Y0 : m_header_row->Height())));
     return cl_sz;
 }
@@ -2178,7 +2177,8 @@ std::pair<bool, bool> ListBox::AddOrRemoveScrolls(
         m_vscroll = style->NewListBoxVScroll(m_color, CLR_SHADOW);
         m_vscroll->NonClientChild(true);
         m_vscroll->MoveTo(Pt(cl_sz.x - SCROLL_WIDTH, Y0));
-        m_vscroll->Resize(Pt(X(SCROLL_WIDTH), cl_sz.y - (horizontal_needed ? SCROLL_WIDTH : 0)));
+        m_vscroll->Resize(Pt(SCROLL_WIDTH,
+                             cl_sz.y - (horizontal_needed ? SCROLL_WIDTH : Y0)));
 
         namespace ph = boost::placeholders;
 
@@ -2193,7 +2193,7 @@ std::pair<bool, bool> ListBox::AddOrRemoveScrolls(
             line_size = Value(row->Height());
         }
 
-        unsigned int page_size = std::abs(Value(cl_sz.y - (horizontal_needed ? SCROLL_WIDTH : 0)));
+        unsigned int page_size = std::abs(Value(cl_sz.y - (horizontal_needed ? SCROLL_WIDTH : Y0)));
 
         m_vscroll->SizeScroll(0, Value(*required_total_extents.second - 1),
                               line_size, std::max(line_size, page_size));
@@ -2228,7 +2228,7 @@ std::pair<bool, bool> ListBox::AddOrRemoveScrolls(
         m_hscroll = style->NewListBoxHScroll(m_color, CLR_SHADOW);
         m_hscroll->NonClientChild(true);
         m_hscroll->MoveTo(Pt(X0, cl_sz.y - SCROLL_WIDTH));
-        m_hscroll->Resize(Pt(cl_sz.x - (vertical_needed ? SCROLL_WIDTH : 0), Y(SCROLL_WIDTH)));
+        m_hscroll->Resize(Pt(cl_sz.x - (vertical_needed ? SCROLL_WIDTH : X0), SCROLL_WIDTH));
 
         namespace ph = boost::placeholders;
 
@@ -2243,7 +2243,7 @@ std::pair<bool, bool> ListBox::AddOrRemoveScrolls(
             line_size = Value(row->Height());
         }
 
-        unsigned int page_size = std::abs(Value(cl_sz.x - (vertical_needed ? SCROLL_WIDTH : 0)));
+        unsigned int page_size = std::abs(Value(cl_sz.x - (vertical_needed ? SCROLL_WIDTH : X0)));
 
         m_hscroll->SizeScroll(0, Value(*required_total_extents.first - 1),
                               line_size, std::max(line_size, page_size));
@@ -2272,14 +2272,14 @@ void ListBox::AdjustScrolls(bool adjust_for_resize, const std::pair<bool, bool>&
         Y scroll_y(0);
         m_vscroll->SizeMove(Pt(scroll_x, scroll_y),
                             Pt(scroll_x + SCROLL_WIDTH,
-                               scroll_y + cl_sz.y - (m_hscroll ? SCROLL_WIDTH : 0)));
+                               scroll_y + cl_sz.y - (m_hscroll ? SCROLL_WIDTH : Y0)));
     }
 
     if (m_hscroll) {
         X scroll_x(0);
         Y scroll_y = cl_sz.y - SCROLL_WIDTH;
         m_hscroll->SizeMove(Pt(scroll_x, scroll_y),
-                            Pt(scroll_x + cl_sz.x - (m_vscroll ? SCROLL_WIDTH : 0),
+                            Pt(scroll_x + cl_sz.x - (m_vscroll ? SCROLL_WIDTH : X0),
                                scroll_y + SCROLL_WIDTH));
     }
 

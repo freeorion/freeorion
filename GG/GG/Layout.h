@@ -31,6 +31,7 @@
 
 #include <GG/AlignmentFlags.h>
 #include <GG/Wnd.h>
+#include <GG/Measure.h>
 
 
 namespace GG {
@@ -101,16 +102,18 @@ namespace GG {
 class GG_API Layout : public Wnd
 {
 public:
-    Layout(X x, Y y, X w, Y h, std::size_t rows, std::size_t columns,
-           unsigned int border_margin = 0, unsigned int cell_margin = INVALID_CELL_MARGIN);
+    Layout(X x, Y y, X w, Y h,
+           std::size_t rows, std::size_t columns,
+           Measure border_margin = M0,
+           Measure cell_margin = INVALID_CELL_MARGIN);
 
     Pt MinUsableSize() const override;
 
     std::size_t      Rows() const;
     std::size_t      Columns() const;
     Flags<Alignment> ChildAlignment(const Wnd* wnd) const;          //! returns the aligment of child \a wnd.  \throw GG::Layout::NoSuchChild Throws if no such child exists.
-    unsigned int     BorderMargin() const;                          //! returns the number of pixels that the layout will leave between its edges and the windows it contains
-    unsigned int     CellMargin() const;                            //! returns the number of pixels the layout leaves between the edges of windows in adjacent cells
+    Measure          BorderMargin() const;                          //! returns the distance that the layout will leave between its edges and the windows it contains
+    Measure          CellMargin() const;                            //! returns the distance the layout leaves between the edges of windows in adjacent cells
     double           RowStretch(std::size_t row) const;             //! returns the stretch factor for row \a row.  Note that \a row is not range-checked.
     double           ColumnStretch(std::size_t column) const;       //! returns the stretch factor for column \a column.  Note that \a column is not range-checked.
     Y                MinimumRowHeight(std::size_t row) const;       //! returns the minimum height allowed for row \a row.  Note that \a row is not range-checked.
@@ -169,13 +172,13 @@ public:
     //! exists, no action is taken.
     void SetChildAlignment(const Wnd* wnd, Flags<Alignment> alignment);
 
-    //! Sets the number of pixels that the layout will leave between its edges
+    //! Sets the distance that the layout will leave between its edges
     //! and the windows it contains.
-    void SetBorderMargin(unsigned int margin);
+    void SetBorderMargin(Measure margin);
 
-    //! Sets the number of pixels the layout leaves between the edges of
+    //! Sets the distance the layout leaves between the edges of
     //! windows in adjacent cells.
-    void SetCellMargin(unsigned int margin);
+    void SetCellMargin(Measure margin);
 
     //! Sets the amount of stretching, relative to other rows, that \a row
     //! will do when the layout is resized.  0.0 indicates that the row's size
@@ -225,7 +228,7 @@ public:
     //! cell.
     GG_CONCRETE_EXCEPTION(AttemptedOverwrite, GG::Layout, Exception);
 
-    static const unsigned int INVALID_CELL_MARGIN;
+    static const Measure INVALID_CELL_MARGIN;
 
 protected:
     void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys) override;
@@ -277,8 +280,8 @@ private:
     void   ChildSizeOrMinSizeChanged();
 
     std::vector<std::vector<std::weak_ptr<Wnd>>>  m_cells;
-    unsigned int                    m_border_margin = 1;
-    unsigned int                    m_cell_margin = 1;
+    Measure                         m_border_margin = M1;
+    Measure                         m_cell_margin = M1;
     std::vector<RowColParams>       m_row_params;
     std::vector<RowColParams>       m_column_params;
     std::map<Wnd*, WndPosition>     m_wnd_positions;

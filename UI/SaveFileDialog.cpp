@@ -44,8 +44,8 @@ namespace {
     const double DEFAULT_STRETCH = 1.0;
 
     const GG::X SAVE_FILE_BUTTON_MARGIN ( 10 );
-    const unsigned int SAVE_FILE_CELL_MARGIN = 2;
-    const unsigned int ROW_MARGIN = 2;
+    const GG::Measure SAVE_FILE_CELL_MARGIN = GG::M2;
+    const GG::Measure ROW_MARGIN = GG::M2;
 
     const std::string PATH_DELIM_BEGIN = "[";
     const std::string PATH_DELIM_END = "]";

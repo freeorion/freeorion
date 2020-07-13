@@ -250,9 +250,11 @@ void MultiEdit::Render()
 
 void MultiEdit::SizeMove(const Pt& ul, const Pt& lr)
 {
+    const std::shared_ptr<Font> &font = GetFont();
     Pt lower_right = lr;
     if (m_style & MULTI_INTEGRAL_HEIGHT)
-        lower_right.y -= ((lr.y - ul.y) - (2 * PIXEL_MARGIN)) % GetFont()->Lineskip();
+        lower_right.y -=
+            ((lr.y - ul.y) - (PIXEL_MARGIN.GetY(font) * 2)) % font->Lineskip();
     bool resized = lower_right - ul != Size();
 
     // need to restore scroll position after SetText call below, so that
@@ -1237,7 +1239,7 @@ void MultiEdit::AdjustScrolls()
 
     Pt orig_cl_sz = ClientSize();
 
-    const int GAP = PIXEL_MARGIN - 2; // the space between the client area and the border
+    const Measure GAP = PIXEL_MARGIN - Measure::c(2); // the space between the client area and the border
 
     const auto& style = GetStyleFactory();
 
@@ -1254,7 +1256,6 @@ void MultiEdit::AdjustScrolls()
     Y vscroll_max = vscroll_min + m_contents_sz.y - 1;
     X hscroll_max = hscroll_min + m_contents_sz.x - 1;
 
-    const int INT_GAP = static_cast<int>(GAP);
     if (m_vscroll) { // if scroll already exists...
         if (!need_vert) { // remove scroll
             DetachChild(m_vscroll.get());
@@ -1268,16 +1269,16 @@ void MultiEdit::AdjustScrolls()
 
             m_vscroll->SizeScroll(Value(vscroll_min), Value(vscroll_max),
                                   line_size, std::max(line_size, page_size));
-            X scroll_x = cl_sz.x + INT_GAP - INT_SCROLL_WIDTH;
+            X scroll_x = cl_sz.x + GAP - INT_SCROLL_WIDTH;
             Y scroll_y(-GAP);
             m_vscroll->SizeMove(Pt(scroll_x, scroll_y),
                                 Pt(scroll_x + INT_SCROLL_WIDTH,
-                                   scroll_y + cl_sz.y + 2 * INT_GAP - (need_horz ? INT_SCROLL_WIDTH : 0)));
+                                   scroll_y + cl_sz.y + GAP*2 - (need_horz ? INT_SCROLL_WIDTH : 0)));
         }
     } else if (!m_vscroll && need_vert) { // if scroll doesn't exist but is needed
         m_vscroll = style->NewMultiEditVScroll(m_color, CLR_SHADOW);
-        m_vscroll->MoveTo(Pt(cl_sz.x + INT_GAP - INT_SCROLL_WIDTH, Y(-GAP)));
-        m_vscroll->Resize(Pt(X(SCROLL_WIDTH), cl_sz.y + 2 * INT_GAP - (need_horz ? INT_SCROLL_WIDTH : 0)));
+        m_vscroll->MoveTo(Pt(cl_sz.x + GAP - INT_SCROLL_WIDTH, -GAP));
+        m_vscroll->Resize(Pt(X(SCROLL_WIDTH), cl_sz.y + GAP*2 - (need_horz ? INT_SCROLL_WIDTH : 0)));
 
         unsigned int line_size = (m_vscroll_wheel_scroll_increment != 0
                                     ? m_vscroll_wheel_scroll_increment
@@ -1308,15 +1309,15 @@ void MultiEdit::AdjustScrolls()
             m_hscroll->SizeScroll(Value(hscroll_min), Value(hscroll_max),
                                   line_size, std::max(line_size, page_size));
             X scroll_x(-GAP);
-            Y scroll_y = cl_sz.y + INT_GAP - INT_SCROLL_WIDTH;
+            Y scroll_y = cl_sz.y + GAP - INT_SCROLL_WIDTH;
             m_hscroll->SizeMove(Pt(scroll_x, scroll_y),
-                                Pt(scroll_x + cl_sz.x + 2 * INT_GAP - (need_vert ? INT_SCROLL_WIDTH : 0),
+                                Pt(scroll_x + cl_sz.x + GAP*2 - (need_vert ? INT_SCROLL_WIDTH : 0),
                                    scroll_y + INT_SCROLL_WIDTH));
         }
     } else if (!m_hscroll && need_horz) { // if scroll doesn't exist but is needed
         m_hscroll = style->NewMultiEditHScroll(m_color, CLR_SHADOW);
         m_hscroll->MoveTo(Pt(X(-GAP), cl_sz.y + GAP - INT_SCROLL_WIDTH));
-        m_hscroll->Resize(Pt(cl_sz.x + 2 * GAP - (need_vert ? INT_SCROLL_WIDTH : 0), Y(SCROLL_WIDTH)));
+        m_hscroll->Resize(Pt(cl_sz.x + GAP*2 - (need_vert ? INT_SCROLL_WIDTH : 0), Y(SCROLL_WIDTH)));
 
         unsigned int line_size = (m_hscroll_wheel_scroll_increment != 0
                                     ? m_hscroll_wheel_scroll_increment

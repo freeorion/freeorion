@@ -318,7 +318,7 @@ GG::Spin<int>* GameRulesPanel::IntRuleWidget(GG::ListBox* page, int indentation_
     }
 
     spin->Resize(GG::Pt(SPIN_WIDTH, spin->MinUsableSize().y));
-    auto layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0, Width(), spin->MinUsableSize().y, 1, 2, 0, 5);
+    auto layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0, Width(), spin->MinUsableSize().y, 1, 2, GG::M0, GG::M5);
     layout->Add(spin, 0, 0, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
     layout->Add(text_control, 0, 1, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
     layout->SetMinimumColumnWidth(0, SPIN_WIDTH);
@@ -366,7 +366,7 @@ GG::Spin<double>* GameRulesPanel::DoubleRuleWidget(GG::ListBox* page, int indent
     }
 
     spin->Resize(GG::Pt(SPIN_WIDTH, spin->MinUsableSize().y));
-    auto layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0, Width(), spin->MinUsableSize().y, 1, 2, 0, 5);
+    auto layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0, Width(), spin->MinUsableSize().y, 1, 2, GG::M0, GG::M5);
     layout->Add(spin, 0, 0, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
     layout->Add(text_control, 0, 1, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
     layout->SetMinimumColumnWidth(0, SPIN_WIDTH);
@@ -394,7 +394,7 @@ namespace {
         UserStringRow(const std::string& key, GG::X w, GG::Y h) :
             GG::ListBox::Row(w, h)
         {
-            SetMargin(0);
+            SetMargin(GG::M0);
             SetRowAlignment(GG::ALIGN_VCENTER);
             GG::Wnd::SetName(key);
         }
@@ -436,7 +436,7 @@ GG::DropDownList* GameRulesPanel::StringRuleWidget(GG::ListBox* page, int indent
     }
 
 
-    auto layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0, Width(), drop->MinUsableSize().y, 1, 2, 1, 5);
+    auto layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0, Width(), drop->MinUsableSize().y, 1, 2, GG::M1, GG::M5);
     layout->Add(drop, 0, 0, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
     layout->Add(text_control, 0, 1, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
     layout->SetMinimumColumnWidth(0, SPIN_WIDTH);

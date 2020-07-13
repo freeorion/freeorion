@@ -529,7 +529,7 @@ namespace {
             m_item(item)
         {
             SetName("ProductionItemRow");
-            SetMargin(0);
+            SetMargin(GG::M0);
             SetRowAlignment(GG::ALIGN_NONE);
             SetChildClippingMode(ClipToClient);
 

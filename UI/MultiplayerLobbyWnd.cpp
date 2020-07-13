@@ -19,7 +19,8 @@
 namespace {
     // Margin between text and row edge.
     GG::Y PlayerRowMargin()
-    { return GG::Y(GG::ListBox::DEFAULT_MARGIN + std::max(CUIEdit::PIXEL_MARGIN, GG::ListBox::DEFAULT_MARGIN)); }
+    { return GG::ListBox::DEFAULT_MARGIN
+            + std::max(CUIEdit::PIXEL_MARGIN, GG::ListBox::DEFAULT_MARGIN); }
     GG::Y PlayerFontHeight()
     { return ClientUI::GetFont(ClientUI::Pts())->Height(); }
     GG::Y PlayerRowHeight()

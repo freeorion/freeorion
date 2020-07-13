@@ -49,19 +49,19 @@ namespace {
         const CPSize m_value;
     };
 
-    Y HeightFromFont(const std::shared_ptr<Font>& font, unsigned int pixel_margin)
-    {  return font->Height() + 2 * static_cast<int>(pixel_margin); }
+    Y HeightFromFont(const std::shared_ptr<Font>& font)
+    {  return font->Height() + (2 * Edit::PIXEL_MARGIN); }
 }
 
 ////////////////////////////////////////////////
 // GG::Edit
 ////////////////////////////////////////////////
 // static(s)
-const int Edit::PIXEL_MARGIN = 5;
+const Measure Edit::PIXEL_MARGIN(M5);
 
 Edit::Edit(const std::string& str, const std::shared_ptr<Font>& font, Clr color,
            Clr text_color/* = CLR_BLACK*/, Clr interior/* = CLR_ZERO*/) :
-    TextControl(X0, Y0, X1, HeightFromFont(font, PIXEL_MARGIN), str, font, text_color,
+    TextControl(X0, Y0, X1, HeightFromFont(font), str, font, text_color,
                 FORMAT_LEFT | FORMAT_IGNORETAGS, INTERACTIVE | REPEAT_KEY_PRESS),
     m_cursor_pos(CP0, CP0),
     m_last_button_down_time(0),
@@ -82,7 +82,7 @@ Edit::Edit(const std::string& str, const std::shared_ptr<Font>& font, Clr color,
 }
 
 Pt Edit::MinUsableSize() const
-{ return Pt(X(4 * PIXEL_MARGIN), HeightFromFont(GetFont(), PIXEL_MARGIN)); }
+{ return Pt(PIXEL_MARGIN * 4, HeightFromFont(GetFont())); }
 
 Pt Edit::MinUsableSize(X width) const
 { return MinUsableSize(); }

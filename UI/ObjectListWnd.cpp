@@ -1567,7 +1567,7 @@ public:
         m_expanded_init(expanded),
         m_indent_init(indent)
     {
-        SetMargin(1);
+        SetMargin(GG::M1);
         SetRowAlignment(GG::ALIGN_VCENTER);
     }
 
@@ -1786,7 +1786,7 @@ public:
     ObjectHeaderRow(GG::X w, GG::Y h) :
         GG::ListBox::Row(w, h)
     {
-        SetMargin(1);
+        SetMargin(GG::M1);
         SetRowAlignment(GG::ALIGN_CENTER);
         m_panel = GG::Wnd::Create<ObjectHeaderPanel>(w, h);
     }

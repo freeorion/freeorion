@@ -310,7 +310,7 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
         GG::Wnd::Create<GG::TextBoxBrowseInfoWnd>(
             GG::X(400), ClientUI::GetFont(),
             GG::Clr(0, 0, 0, 200), ClientUI::WndOuterBorderColor(), ClientUI::TextColor(),
-            GG::FORMAT_LEFT | GG::FORMAT_WORDBREAK, 1));
+            GG::FORMAT_LEFT | GG::FORMAT_WORDBREAK, GG::M1));
     GG::Wnd::SetDefaultBrowseInfoWnd(default_browse_info_wnd);
 
     auto cursor_texture = m_ui->GetTexture(ClientUI::ArtDir() / "cursors" / "default_cursor.png");
