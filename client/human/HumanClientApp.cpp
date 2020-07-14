@@ -39,6 +39,7 @@
 #include <GG/dialogs/ThreeButtonDlg.h>
 #include <GG/Cursor.h>
 #include <GG/utf8/checked.h>
+#include <GG/Scale.h>
 
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/algorithm/string/trim.hpp>
@@ -293,6 +294,8 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
     } catch (const Sound::InitializationFailureException&) {
         inform_user_sound_failed = true;
     }
+
+    GG::SetScaleFont(ClientUI::GetFont());
 
     m_ui.reset(new ClientUI());
 

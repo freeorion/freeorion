@@ -49,6 +49,7 @@ target_sources(GiGi
         ${CMAKE_CURRENT_LIST_DIR}/Menu.cpp
         ${CMAKE_CURRENT_LIST_DIR}/MultiEdit.cpp
         ${CMAKE_CURRENT_LIST_DIR}/PtRect.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/Scale.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Scroll.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ScrollPanel.cpp
         ${CMAKE_CURRENT_LIST_DIR}/StaticGraphic.cpp
