@@ -10,6 +10,7 @@
 #include "../util/Logger.h"
 
 #include <GG/GUI.h>
+#include <GG/Scale.h>
 
 #include <limits>
 #include <boost/algorithm/string.hpp>
@@ -298,6 +299,8 @@ void CUIWnd::Render() {
     glDisableClientState(GL_COLOR_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
+    GG::PushScale();
+
     m_vertex_buffer.activate();
 
     // within m_vertex_buffer:
@@ -330,6 +333,8 @@ void CUIWnd::Render() {
             glDrawArrays(GL_LINES,      m_buffer_indices[3].first, m_buffer_indices[3].second);
         }
     }
+
+    GG::PopScale();
 
     glEnable(GL_TEXTURE_2D);
 
