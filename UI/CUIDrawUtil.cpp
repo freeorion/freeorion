@@ -6,6 +6,7 @@
 #include "../util/OptionsDB.h"
 
 #include <GG/DrawUtil.h>
+#include <GG/Scale.h>
 
 #include <cmath>
 
@@ -225,6 +226,7 @@ void AngledCornerRectangle(const GG::Pt& ul, const GG::Pt& lr, GG::Clr color, GG
     glEnableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    GG::PushScale();
 
     vert_buf.activate();
 
@@ -237,6 +239,7 @@ void AngledCornerRectangle(const GG::Pt& ul, const GG::Pt& lr, GG::Clr color, GG
         glLineWidth(1.0f);
     }
 
+    GG::PopScale();
     glPopClientAttrib();
 
     glEnable(GL_TEXTURE_2D);
@@ -346,6 +349,7 @@ void CircleArc(const GG::Pt& ul, const GG::Pt& lr, double theta1, double theta2,
     glEnableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    GG::PushScale();
 
     vert_buf.activate();
 
@@ -354,6 +358,7 @@ void CircleArc(const GG::Pt& ul, const GG::Pt& lr, double theta1, double theta2,
     else
         glDrawArrays(GL_LINE_STRIP, 0, vert_buf.size());
 
+    GG::PopScale();
     glPopClientAttrib();
     //glEnable(GL_TEXTURE_2D);
 }
@@ -373,6 +378,7 @@ void PartlyRoundedRect(const GG::Pt& ul, const GG::Pt& lr, int radius,
     glEnableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    GG::PushScale();
 
     vert_buf.activate();
 
@@ -381,6 +387,7 @@ void PartlyRoundedRect(const GG::Pt& ul, const GG::Pt& lr, int radius,
     else
         glDrawArrays(GL_LINE_LOOP, 0, vert_buf.size());
 
+    GG::PopScale();
     glPopClientAttrib();
     //glEnable(GL_TEXTURE_2D);
 }
