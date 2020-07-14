@@ -28,6 +28,7 @@
 #include <GG/DrawUtil.h>
 #include <GG/StyleFactory.h>
 #include <GG/WndEvent.h>
+#include <GG/Scale.h>
 
 
 using namespace GG;
@@ -153,6 +154,7 @@ void Scroll::Render()
     glPushMatrix();
     glLoadIdentity();
     glTranslatef(static_cast<GLfloat>(Value(ul.x)), static_cast<GLfloat>(Value(ul.y)), 0.0f);
+    GG::PushScale();
     glDisable(GL_TEXTURE_2D);
     glLineWidth(2.0);
     glEnableClientState(GL_VERTEX_ARRAY);
@@ -163,6 +165,7 @@ void Scroll::Render()
 
     glLineWidth(1.0f);
     glEnable(GL_TEXTURE_2D);
+    GG::PopScale();
     glPopMatrix();
     glDisableClientState(GL_VERTEX_ARRAY);
 }
