@@ -11,6 +11,7 @@
 #include <GG/Layout.h>
 #include <GG/Scroll.h>
 #include <GG/StaticGraphic.h>
+#include <GG/Scale.h>
 #include "BuildingsPanel.h"
 #include "CUIControls.h"
 #include "CUIWnd.h"
@@ -259,6 +260,8 @@ namespace {
             glBindTexture(GL_TEXTURE_2D, texture->OpenGLId());
         }
 
+        GG::PushScale();
+
         // commented out shininess rendering because it wasn't working properly.
         // it just appeared as a white blob, seemingly at the poles of the planet (but possibly not?)
         // regardless, IMO it didn't look good. -Geoff
@@ -287,6 +290,8 @@ namespace {
             }
             glEnd();
         }
+
+        GG::PopScale();
     }
 
     GLfloat*    GetLightPosition() {
