@@ -25,6 +25,7 @@
 #include <GG/Cursor.h>
 
 #include <GG/Texture.h>
+#include <GG/Scale.h>
 
 
 using namespace GG;
@@ -70,6 +71,7 @@ void TextureCursor::Render(const Pt& pt)
         glEnableClientState(GL_VERTEX_ARRAY);
         glDisableClientState(GL_COLOR_ARRAY);
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+        PushScale();
 
         glVertexPointer(2, GL_INT, 0, verts);
 
@@ -80,6 +82,7 @@ void TextureCursor::Render(const Pt& pt)
 
         glEnable(GL_TEXTURE_2D);
 
+        PopScale();
         glPopClientAttrib();
     }
     glColor4ub(255, 255, 255, 255);
