@@ -18,6 +18,7 @@
 #include <GG/StaticGraphic.h>
 #include <GG/Texture.h>
 #include <GG/Layout.h>
+#include <GG/Scale.h>
 
 #include <boost/filesystem/fstream.hpp>
 
@@ -200,7 +201,10 @@ void CreditsWnd::Render() {
 
     // define clip area
     glEnable(GL_SCISSOR_TEST);
-    glScissor(Value(ul.x + m_cx), Value(GG::GUI::GetGUI()->AppHeight() - lr.y), m_cw, m_ch);
+    glScissor(GG::Scale(ul.x + m_cx),
+              GG::Scale(GG::GUI::GetGUI()->AppHeight() - lr.y),
+              GG::Scale(GG::X(m_cw)),
+              GG::Scale(GG::Y(m_ch)));
 
     // move credits
     glTranslatef(0, m_co - ticks_delta/40, 0);
