@@ -29,6 +29,7 @@
 #include <GG/StyleFactory.h>
 #include <GG/utf8/checked.h>
 #include <GG/GLClientAndServerBuffer.h>
+#include <GG/Scale.h>
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -1279,6 +1280,7 @@ void Font::RenderCachedText(RenderCache& cache) const
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
+    PushScale();
 
     cache.vertices->activate();
     cache.coordinates->activate();
@@ -1292,6 +1294,7 @@ void Font::RenderCachedText(RenderCache& cache) const
     cache.underline_colors->activate();
     glDrawArrays(GL_QUADS, 0, cache.underline_vertices->size());
 
+    PopScale();
     glPopClientAttrib();
 }
 
