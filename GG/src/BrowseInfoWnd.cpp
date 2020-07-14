@@ -30,6 +30,7 @@
 #include <GG/Layout.h>
 #include <GG/StyleFactory.h>
 #include <GG/TextControl.h>
+#include <GG/Scale.h>
 
 #include <tuple>
 
@@ -177,6 +178,7 @@ void TextBoxBrowseInfoWnd::Render()
     glPushMatrix();
     glLoadIdentity();
     glTranslatef(static_cast<GLfloat>(Value(ul.x)), static_cast<GLfloat>(Value(ul.y)), 0.0f);
+    PushScale();
     glDisable(GL_TEXTURE_2D);
     glLineWidth(m_border_width);
     glEnableClientState(GL_VERTEX_ARRAY);
@@ -190,6 +192,7 @@ void TextBoxBrowseInfoWnd::Render()
 
     glLineWidth(1.0f);
     glEnable(GL_TEXTURE_2D);
+    PopScale();
     glPopMatrix();
     glDisableClientState(GL_VERTEX_ARRAY);
 }
