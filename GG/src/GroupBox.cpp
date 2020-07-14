@@ -28,6 +28,7 @@
 #include <GG/DrawUtil.h>
 #include <GG/StyleFactory.h>
 #include <GG/TextControl.h>
+#include <GG/Scale.h>
 
 
 using namespace GG;
@@ -110,6 +111,7 @@ void GroupBox::Render()
     --vertices[12];
     --vertices[22];
 
+    PushScale();
     glDisable(GL_TEXTURE_2D);
 
     glColor(light);
@@ -135,6 +137,7 @@ void GroupBox::Render()
     glEnd();
 
     glEnable(GL_TEXTURE_2D);
+    PopScale();
 }
 
 void GroupBox::SetColor(Clr c)
