@@ -30,6 +30,7 @@
 #include <GG/Scroll.h>
 #include <GG/StyleFactory.h>
 #include <GG/WndEvent.h>
+#include <GG/Scale.h>
 
 #include <boost/optional/optional.hpp>
 
@@ -690,6 +691,7 @@ void DropDownList::Render()
     glPushMatrix();
     glLoadIdentity();
     glTranslatef(static_cast<GLfloat>(Value(ul.x)), static_cast<GLfloat>(Value(ul.y)), 0.0f);
+    GG::PushScale();
     glDisable(GL_TEXTURE_2D);
     glEnableClientState(GL_VERTEX_ARRAY);
 
@@ -714,6 +716,7 @@ void DropDownList::Render()
     }
 
     glEnable(GL_TEXTURE_2D);
+    GG::PopScale();
     glPopMatrix();
     glDisableClientState(GL_VERTEX_ARRAY);
 

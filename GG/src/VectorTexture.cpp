@@ -4,6 +4,7 @@
 #include <GG/Config.h>
 #include <GG/DrawUtil.h>
 #include <GG/utf8/checked.h>
+#include <GG/Scale.h>
 
 #define NANOSVG_IMPLEMENTATION
 #include "nanosvg/nanosvg.h"
@@ -113,6 +114,7 @@ public:
 
         glPushAttrib(GL_ALL_ATTRIB_BITS);
         glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+        PushScale();
         glPushMatrix();
 
         nvgBeginFrame(VG(), viewport[2] - viewport[0], viewport[3] - viewport[1], 1.0f);
@@ -134,6 +136,7 @@ public:
         nvgEndFrame(VG());
 
         glPopMatrix();
+        PopScale();
         glPopClientAttrib();
         glPopAttrib();
 

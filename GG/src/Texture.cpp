@@ -27,6 +27,7 @@
 #include <GG/GLClientAndServerBuffer.h>
 #include <GG/Config.h>
 #include <GG/utf8/checked.h>
+#include <GG/Scale.h>
 
 #include <boost/filesystem/operations.hpp>
 #include <boost/gil/extension/dynamic_image/any_image.hpp>
@@ -161,6 +162,7 @@ void Texture::OrthoBlit(const Pt& pt1, const Pt& pt2,
     glEnableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    PushScale();
 
     glBindTexture(GL_TEXTURE_2D, m_opengl_id);
     vertex_buffer.activate();
@@ -175,8 +177,8 @@ void Texture::OrthoBlit(const Pt& pt1, const Pt& pt2,
     if (need_mag_filter_change)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_mag_filter);
 
+    PopScale();
     glPopClientAttrib();
-
     glPopAttrib();
 }
 

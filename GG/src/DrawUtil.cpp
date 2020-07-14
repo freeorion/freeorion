@@ -27,6 +27,7 @@
 #include <GG/ClrConstants.h>
 #include <GG/GUI.h>
 #include <GG/GLClientAndServerBuffer.h>
+#include <GG/Scale.h>
 
 
 #include <valarray>
@@ -85,6 +86,8 @@ namespace { // file-scope constants and functions
         glDisableClientState(GL_COLOR_ARRAY);
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
+        PushScale();
+
         // draw beveled edges
         if (bevel_thick && (border_color1 != CLR_ZERO || border_color2 != CLR_ZERO)) {
             glColor(border_color1);
@@ -103,6 +106,7 @@ namespace { // file-scope constants and functions
             glDrawArrays(GL_QUADS, 10, 4);
         }
 
+        PopScale();
         glPopClientAttrib();
         glEnable(GL_TEXTURE_2D);
     }
@@ -138,6 +142,8 @@ namespace { // file-scope constants and functions
         glDisableClientState(GL_COLOR_ARRAY);
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
+        PushScale();
+
         vert_buf.activate();
 
         glColor(color3);
@@ -150,6 +156,8 @@ namespace { // file-scope constants and functions
         glColor(color1);
         glDrawArrays(GL_TRIANGLES, 15, 3);
         glDrawArrays(GL_QUADS, 18, 4);
+
+        PopScale();
 
         glPopClientAttrib();
 
@@ -191,6 +199,8 @@ namespace { // file-scope constants and functions
         glDisableClientState(GL_COLOR_ARRAY);
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
+        PushScale();
+
         vert_buf.activate();
 
         glColor(color1);
@@ -204,6 +214,8 @@ namespace { // file-scope constants and functions
         glColor(color3);
         glDrawArrays(GL_TRIANGLES, 22, 6);
         glDrawArrays(GL_QUADS, 28, 16);
+
+        PopScale();
 
         glPopClientAttrib();
 
@@ -256,6 +268,8 @@ namespace { // file-scope constants and functions
         glTranslatef(Value(ul.x + wd / 2.0), Value(ul.y + ht / 2.0), 0.0);   // move origin to the center of the rectangle
         glScalef(Value(wd / 2.0), Value(ht / 2.0), 1.0);                 // map the range [-1,1] to the rectangle in both (x- and y-) directions
 
+        PushScale();
+
         glColor(color1);
         glBegin(GL_TRIANGLE_FAN);
         glVertex2f(0, 0);
@@ -280,6 +294,7 @@ namespace { // file-scope constants and functions
         glColor4ub(clr.r, clr.g, clr.b, clr.a);
         glVertex2f(x, y);
         glEnd();
+        PopScale();
         glPopMatrix();
         glEnable(GL_TEXTURE_2D);
     }
@@ -331,6 +346,8 @@ namespace { // file-scope constants and functions
         glTranslatef(Value(ul.x + wd / 2.0), Value(ul.y + ht / 2.0), 0.0);   // move origin to the center of the rectangle
         glScalef(Value(wd / 2.0), Value(ht / 2.0), 1.0);                 // map the range [-1,1] to the rectangle in both (x- and y-) directions
 
+        PushScale();
+
         double inner_radius = (std::min(Value(wd), Value(ht)) - 2.0 * bevel_thick) / std::min(Value(wd), Value(ht));
         glColor(color);
         glBegin(GL_TRIANGLE_FAN);
@@ -367,6 +384,7 @@ namespace { // file-scope constants and functions
         glVertex2f(theta2_x, theta2_y);
         glVertex2f(theta2_x * inner_radius, theta2_y * inner_radius);
         glEnd();
+        PopScale();
         glPopMatrix();
         glEnable(GL_TEXTURE_2D);
     }
@@ -449,12 +467,14 @@ namespace { // file-scope constants and functions
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_COLOR_ARRAY);
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+        PushScale();
 
         vert_buf.activate();
         colour_buf.activate();
 
         glDrawArrays(GL_QUADS, 0, vert_buf.size());
 
+        PopScale();
         glPopClientAttrib();
         glEnable(GL_TEXTURE_2D);
     }
@@ -535,11 +555,13 @@ namespace { // file-scope constants and functions
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_COLOR_ARRAY);
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+        PushScale();
 
         verts.activate();
         colours.activate();
         glDrawArrays(GL_QUADS, 0, verts.size());
 
+        PopScale();
         glPopClientAttrib();
         glEnable(GL_TEXTURE_2D);
     }
@@ -580,8 +602,12 @@ namespace GG {
             lr.x = std::max(r.Left(), std::min(lr.x, r.Right()));
             lr.y = std::max(r.Top(), std::min(lr.y, r.Bottom()));
         }
+        glScissor(Scale(ul.x), Scale(GUI::GetGUI()->AppHeight() - lr.y),
+                  Scale(lr.x - ul.x), Scale(lr.y - ul.y));
+        /*
         glScissor(Value(ul.x), Value(GUI::GetGUI()->AppHeight() - lr.y),
                   Value(lr.x - ul.x), Value(lr.y - ul.y));
+        */
         g_scissor_clipping_rects.push_back(Rect(ul, lr));
     }
 
@@ -595,8 +621,12 @@ namespace GG {
             glPopAttrib();
         } else {
             const Rect& r = g_scissor_clipping_rects.back();
+            glScissor(Scale(r.Left()), Scale(GUI::GetGUI()->AppHeight() - r.Bottom()),
+                      Scale(r.Width()), Scale(r.Height()));
+            /*
             glScissor(Value(r.Left()), Value(GUI::GetGUI()->AppHeight() - r.Bottom()),
                       Value(r.Width()), Value(r.Height()));
+            */
         }
     }
 
@@ -631,6 +661,8 @@ namespace GG {
         glDisableClientState(GL_COLOR_ARRAY);
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
+        PushScale();
+
         glStencilFunc(GL_ALWAYS, mask, mask);
         glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
         GLint outer_vertices[] = {
@@ -662,6 +694,7 @@ namespace GG {
         glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
         ++g_stencil_bit;
 
+        PopScale();
         glPopClientAttrib();
     }
 
@@ -695,8 +728,12 @@ namespace GG {
         glDisableClientState(GL_COLOR_ARRAY);
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
+        PushScale();
+
         glVertexPointer(2, GL_FLOAT, 0, vertices);
         glDrawArrays(GL_LINES, 0, 2);
+
+        PopScale();
 
         glPopClientAttrib();
         glLineWidth(1.0f);
@@ -715,6 +752,8 @@ namespace GG {
         glDisableClientState(GL_COLOR_ARRAY);
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
+        PushScale();
+
         glVertexPointer(2, GL_FLOAT, 0, vertices);
         glColor(color);
         glDrawArrays(GL_TRIANGLES, 0, 3);
@@ -727,6 +766,7 @@ namespace GG {
             glLineWidth(1.0f);
         }
 
+        PopScale();
         glPopClientAttrib();
         glEnable(GL_TEXTURE_2D);
     }
@@ -743,6 +783,8 @@ namespace GG {
         glDisableClientState(GL_COLOR_ARRAY);
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
+        PushScale();
+
         glVertexPointer(2, GL_FLOAT, 0, vertices);
 
         if (filled)
@@ -750,6 +792,7 @@ namespace GG {
         else
             glDrawArrays(GL_TRIANGLES, 0, 3);
 
+        PopScale();
         glPopClientAttrib();
         glEnable(GL_TEXTURE_2D);
     }

@@ -8,6 +8,7 @@
  */
 
 #include <GG/GLClientAndServerBuffer.h>
+#include <GG/Scale.h>
 
 namespace GG {
 

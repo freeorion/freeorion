@@ -18,6 +18,7 @@
 #include <GG/dialogs/ColorDlg.h>
 #include <GG/GUI.h>
 #include <GG/Layout.h>
+#include <GG/Scale.h>
 
 #include <boost/format.hpp>
 #include <boost/regex.hpp>
@@ -328,6 +329,7 @@ void CUICheckBoxRepresenter::Render(const GG::StateButton& button) const {
         glEnableClientState(GL_VERTEX_ARRAY);
         glDisableClientState(GL_COLOR_ARRAY);
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+        GG::PushScale();
 
         glColor(inside_color);
         glDrawArrays(GL_QUADS, 0, 8);
@@ -335,6 +337,7 @@ void CUICheckBoxRepresenter::Render(const GG::StateButton& button) const {
         glColor(outside_color);
         glDrawArrays(GL_LINE_STRIP, 8, 8);
 
+        GG::PopScale();
         glPopClientAttrib();
         glEnable(GL_TEXTURE_2D);
     } else {
@@ -698,6 +701,7 @@ void CUIScroll::Render() {
     glPushMatrix();
     glLoadIdentity();
     glTranslatef(static_cast<GLfloat>(Value(ul.x)), static_cast<GLfloat>(Value(ul.y)), 0.0f);
+    GG::PushScale();
     glDisable(GL_TEXTURE_2D);
     glLineWidth(1.0f);
     glEnableClientState(GL_VERTEX_ARRAY);
@@ -709,6 +713,7 @@ void CUIScroll::Render() {
     glDrawArrays(GL_LINE_LOOP,      0, m_buffer.size());
 
     glEnable(GL_TEXTURE_2D);
+    GG::PopScale();
     glPopMatrix();
     glDisableClientState(GL_VERTEX_ARRAY);
 }
@@ -801,6 +806,7 @@ void CUIDropDownList::Render() {
     glPushMatrix();
     glLoadIdentity();
     glTranslatef(static_cast<GLfloat>(Value(ul.x)), static_cast<GLfloat>(Value(ul.y)), 0.0f);
+    GG::PushScale();
     glDisable(GL_TEXTURE_2D);
     glEnableClientState(GL_VERTEX_ARRAY);
 
@@ -835,6 +841,7 @@ void CUIDropDownList::Render() {
     }
 
     glEnable(GL_TEXTURE_2D);
+    GG::PopScale();
     glPopMatrix();
     glDisableClientState(GL_VERTEX_ARRAY);
 
@@ -1716,6 +1723,7 @@ void ColorSelector::Render() {
     glPushMatrix();
     glLoadIdentity();
     glTranslatef(static_cast<GLfloat>(Value(ul.x)), static_cast<GLfloat>(Value(ul.y)), 0.0f);
+    GG::PushScale();
     glDisable(GL_TEXTURE_2D);
     glLineWidth(1.0f);
     glEnableClientState(GL_VERTEX_ARRAY);
@@ -1727,6 +1735,7 @@ void ColorSelector::Render() {
     glDrawArrays(GL_LINE_LOOP,      0, m_border_buffer.size());
 
     glEnable(GL_TEXTURE_2D);
+    GG::PopScale();
     glPopMatrix();
     glDisableClientState(GL_VERTEX_ARRAY);
 }
@@ -2183,6 +2192,7 @@ void MultiTurnProgressBar::Render() {
     glEnableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    GG::PushScale();
 
     // draw background
     if (!bg_verts.empty()) {
@@ -2219,9 +2229,9 @@ void MultiTurnProgressBar::Render() {
         glDrawArrays(GL_LINES, 0, segment_verts.size());
     }
 
+    GG::PopScale();
     glPopClientAttrib();
     glEnable(GL_TEXTURE_2D);
-
 }
 
 
@@ -2457,6 +2467,7 @@ void RotatingGraphic::Render() {
     glEnableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    GG::PushScale();
 
     verts.activate();
     glTexCoordPointer(2, GL_FLOAT, 0, texture_coordinate_data);
@@ -2469,6 +2480,7 @@ void RotatingGraphic::Render() {
     //glDrawArrays(GL_LINE_LOOP, 0, verts.size());
     //// end debug
 
+    GG::PopScale();
     glPopClientAttrib();
     glPopMatrix();
 }
