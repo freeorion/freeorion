@@ -351,7 +351,7 @@ PROJECT_BT_STOCKPILE_SHORT_DESC
 Transfers PP into the imperial stockpile
 
 PROJECT_BT_STOCKPILE_DESC
-'''PP allocated to the transfer project are added to the imperial stockpile. The amount to transfer and how many times the transfer should repeat can be specified.
+'''Production Points (PP) allocated to the transfer project are added to the imperial stockpile. The amount to transfer and how many times the transfer should repeat can be specified.
 
 Only PP that are produced in the same supply-group (and none from the imperial stockpile) are allocated to the stockpile transfer project.
 
@@ -4397,7 +4397,7 @@ It also allows for some interaction with the [[encyclopedia MAP_WINDOW_ARTICLE_T
 <u>Production Summary panel</u>
 
 (default position: top left)
-The Production Summary panel shows available Production Points.
+The Production Summary panel shows available Production Points (PP).
 If a system is selected, there are two columns shown. The left column shows production points across your entire empire. The right column gives production points for the selected system (but is absent if no system is selected).
 Available Points relates to the PP available for production. The right value are the maximum available production points for the selected system. This may be less than the total available when all of your empire's systems are not [[metertype METER_SUPPLY]] connected.
 Stockpile relates to the PP available for production using the imperial stockpile. Production items are enabled to use PP from the Imperial Stockpile by default and have to be explicitly disabled from doing so.
@@ -5914,9 +5914,9 @@ Supply
 METER_SUPPLY_VALUE_DESC
 '''The supply meter on a planet represents the number of star-lanes supply can extend through. Smaller planets can supply greater distances, large planets reduced distances.
 
-Supply lines are shown by coloring star-lanes with an empire's color. Planets connected by supply lines form a 'Resource Group' and can share physical resources. Production Points created on one planet can be used on any connected planet to build ships or structures.
+Supply lines are shown by coloring star-lanes with an empire's color. Planets connected by supply lines form a 'Resource Group' and can share physical resources. Production Points (PP) created on one planet can be used on any connected planet to build ships or structures.
 
-A set of core supply starlanes for an empire (the set of least-jump starlanes connecting the resource-producing systems of each Resource Group) will have greater thickness than the non-core starlanes. If PP is currently being wasted within a Resource Group, the outer bands of the core starlanes will be a contrasting color.
+A set of core supply starlanes for an empire (the set of least-jump starlanes connecting the resource-producing systems of each Resource Group) will have greater thickness than the non-core starlanes. If PP are currently unalloted within a Resource Group, the outer bands of the core starlanes will be a contrasting color.
 
 Supply lines can also be used to refill the [[metertype METER_FUEL]] supply of ships.
 
@@ -5926,7 +5926,7 @@ METER_STOCKPILE_VALUE_LABEL
 Stockpile
 
 METER_STOCKPILE_VALUE_DESC
-'''The imperial stockpile capacity indicates an empire's ability to take in excess and to use stockpiled production points. An empire's total stockpiling capacity is the sum of all its planets' stockpile meters plus technology bonus. The total determines how many PP can be taken out of the stockpile each turn to be used for production.
+'''The stockpile meter of a planet represents how much it contributes to the imperial stockpile use limit. The imperial stockpile use limit indicates an empire's ability to use stockpiled Production Points (PP). An empire's stockpile use limit is the sum of all its planets' stockpile meters plus technology bonus. The total determines how many PP can be taken out of the stockpile each turn to be used for production.
 
 Species have various innate levels of stockpiling ability.'''
 
@@ -11053,10 +11053,10 @@ PLC_STOCKPILE_LIQUIDATION
 Stockpile Liquidation
 
 PLC_STOCKPILE_LIQUIDATION_DESC
-Doubles stockpiling on stockpile-focused planets.
+Doubles stockpile use capacity added by stockpile-focused planets.
 
 PLC_STOCKPILE_LIQUIDATION_SHORT_DESC
-Increases stockpiling
+Increases Stockpile Use Limit
 
 PLC_ALLIED_REPAIR
 Allied Repair
@@ -11479,7 +11479,7 @@ PRO_PREDICTIVE_STOCKPILING_DESC
 The imperial stockpile service has a fleet for distributing raw materials to places where important projects are predicted to be started.
 This task is difficult as the service has to predict when demand happens, where it happens, what materials and goods are demanded and also who the users will be.
 
-Unused PP will automatically be transferred to the Imperial Production Stockpile.
+Unused Production Points (PP) will automatically be transferred to the Imperial Production Stockpile.
 An item on the production queue draws automatically on the Imperial Stockpile if the item has not been explicitly disabled from doing so.
 
 This is the basic technology for the imperial stockpile, which increases the [[metertype METER_STOCKPILE]] of stockpile-focused planets by 1.'''
@@ -13149,7 +13149,7 @@ BLD_INTERSPECIES_ACADEMY
 Species InterDesign Academy
 
 BLD_INTERSPECIES_ACADEMY_DESC
-'''Increases stockpile extraction on its planet by 10, if that planet has stockpiling focus.
+'''Increases the imperial stockpile use limit by increasing the stockpile use capacity on a planet by 10, if that planet has stockpiling focus.
 Increases [[metertype METER_RESEARCH]] on its planet by 5, if that planet has research focus.
 
 Learning to design devices for use by different species is crucial for developing universally usable tools.
