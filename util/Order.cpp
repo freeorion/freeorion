@@ -11,7 +11,6 @@
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 #include "../universe/Building.h"
-#include "../universe/Enums.h"
 #include "../universe/Fleet.h"
 #include "../universe/Pathfinder.h"
 #include "../universe/Planet.h"

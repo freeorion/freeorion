@@ -6,7 +6,6 @@
 #include "../universe/BuildingType.h"
 #include "../universe/Condition.h"
 #include "../universe/Effect.h"
-#include "../universe/Enums.h"
 #include "../universe/Field.h"
 #include "../universe/FieldType.h"
 #include "../universe/Fleet.h"

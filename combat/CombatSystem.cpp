@@ -12,7 +12,6 @@
 #include "../universe/ShipPart.h"
 #include "../universe/System.h"
 #include "../universe/Species.h"
-#include "../universe/Enums.h"
 #include "../universe/Conditions.h"
 #include "../universe/ValueRefs.h"
 #include "../Empire/Empire.h"

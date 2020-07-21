@@ -11,12 +11,12 @@
 #include "../universe/BuildingType.h"
 #include "../universe/Effect.h"
 #include "../universe/Planet.h"
-#include "../universe/Enums.h"
 #include "../Empire/Empire.h"
 #include "../client/human/HumanClientApp.h"
 #include "CUIControls.h"
 #include "IconTextBrowseWnd.h"
 #include "MapWnd.h"
+#include "ModeratorActionsWnd.h"
 #include "MultiIconValueIndicator.h"
 #include "MultiMeterStatusBar.h"
 

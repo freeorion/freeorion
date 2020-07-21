@@ -1,7 +1,6 @@
 #include <boost/test/unit_test.hpp>
 
 #include "parse/ValueRefParser.h"
-#include "universe/Enums.h"
 #include "universe/ValueRefs.h"
 #include "CommonTest.h"
 

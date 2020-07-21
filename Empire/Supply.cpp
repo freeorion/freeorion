@@ -5,7 +5,6 @@
 #include <boost/graph/connected_components.hpp>
 #include "Empire.h"
 #include "EmpireManager.h"
-#include "../universe/Enums.h"
 #include "../universe/Fleet.h"
 #include "../universe/Planet.h"
 #include "../universe/System.h"

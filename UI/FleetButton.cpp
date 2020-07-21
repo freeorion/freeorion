@@ -12,7 +12,6 @@
 #include "../universe/Fleet.h"
 #include "../universe/Ship.h"
 #include "../universe/System.h"
-#include "../universe/Enums.h"
 #include "../Empire/Empire.h"
 
 #include <GG/GLClientAndServerBuffer.h>

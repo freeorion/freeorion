@@ -1,17 +1,18 @@
 #ifndef _Empire_h_
 #define _Empire_h_
 
+
+#include <string>
+#include <GG/Clr.h>
+#include <GG/Enum.h>
+#include "InfluenceQueue.h"
 #include "PopulationPool.h"
 #include "ProductionQueue.h"
 #include "ResearchQueue.h"
-#include "InfluenceQueue.h"
 #include "ResourcePool.h"
-#include "../util/Export.h"
 #include "../universe/Meter.h"
+#include "../util/Export.h"
 
-#include <GG/Clr.h>
-
-#include <string>
 
 struct UnlockableItem;
 class Building;
@@ -25,6 +26,23 @@ FO_COMMON_API extern const int INVALID_DESIGN_ID;
 FO_COMMON_API extern const int INVALID_GAME_TURN;
 FO_COMMON_API extern const int INVALID_OBJECT_ID;
 FO_COMMON_API extern const int ALL_EMPIRES;
+
+
+//! Research status of techs, relating to whether they have been or can be
+//! researched
+GG_ENUM(TechStatus,
+    INVALID_TECH_STATUS = -1,
+    //! Never researchable, or has no researched prerequisites
+    TS_UNRESEARCHABLE,
+    //! Has at least one researched, and at least one unreserached,
+    //! prerequisite
+    TS_HAS_RESEARCHED_PREREQ,
+    //! All prerequisites researched
+    TS_RESEARCHABLE,
+    //! Has been researched
+    TS_COMPLETE,
+    NUM_TECH_STATUSES
+)
 
 
 /** Class to maintain the state of a single empire. In both the client and

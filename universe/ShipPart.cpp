@@ -3,7 +3,7 @@
 #include <boost/algorithm/string/case_conv.hpp>
 #include "ConditionSource.h"
 #include "Effects.h"
-#include "Enums.h"
+#include "ShipHull.h"
 #include "ValueRefs.h"
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Empire.h"

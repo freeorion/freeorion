@@ -4,7 +4,6 @@
 #include "../universe/UniverseObject.h"
 #include "../universe/ObjectMap.h"
 #include "../universe/ValueRef.h"
-#include "../universe/Enums.h"
 #include "../util/OptionsDB.h"
 #include "../util/Logger.h"
 #include "../util/AppInterface.h"

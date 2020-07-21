@@ -22,7 +22,6 @@
 #include "../universe/ShipDesign.h"
 #include "../universe/ShipPart.h"
 #include "../universe/ShipHull.h"
-#include "../universe/Enums.h"
 
 #include <GG/StaticGraphic.h>
 #include <GG/TabWnd.h>

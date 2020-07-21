@@ -1,7 +1,7 @@
 #include "ConditionParser3.h"
 
+#include "../Empire/ResourcePool.h"
 #include "../universe/Conditions.h"
-#include "../universe/Enums.h"
 #include "../universe/ValueRef.h"
 
 #include <boost/spirit/include/phoenix.hpp>

@@ -1,6 +1,7 @@
 #include "EffectParser2.h"
 
 #include "ValueRefParser.h"
+#include "../Empire/ResourcePool.h"
 #include "../universe/Condition.h"
 #include "../universe/Effects.h"
 #include "../universe/Enums.h"

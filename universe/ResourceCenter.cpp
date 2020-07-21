@@ -2,7 +2,6 @@
 
 #include <stdexcept>
 #include "Building.h"
-#include "Enums.h"
 #include "Fleet.h"
 #include "Planet.h"
 #include "System.h"

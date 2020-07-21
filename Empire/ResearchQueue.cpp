@@ -1,7 +1,6 @@
 #include "ResearchQueue.h"
 
 #include "Empire.h"
-#include "../universe/Enums.h"
 #include "../universe/Tech.h"
 #include "../util/AppInterface.h"
 

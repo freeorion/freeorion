@@ -4,7 +4,6 @@
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 #include "../universe/Tech.h"
-#include "../universe/Enums.h"
 #include "../client/human/HumanClientApp.h"
 #include "TechTreeLayout.h"
 

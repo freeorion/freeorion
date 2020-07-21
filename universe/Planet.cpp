@@ -3,7 +3,6 @@
 #include "BuildingType.h"
 #include "Building.h"
 #include "Condition.h"
-#include "Enums.h"
 #include "Fleet.h"
 #include "Ship.h"
 #include "Species.h"

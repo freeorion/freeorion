@@ -1,7 +1,6 @@
 #include "System.h"
 
 #include "Building.h"
-#include "Enums.h"
 #include "Fleet.h"
 #include "Planet.h"
 #include "Ship.h"

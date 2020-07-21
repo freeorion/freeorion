@@ -2,7 +2,6 @@
 
 #include <boost/filesystem/fstream.hpp>
 #include "Effect.h"
-#include "Enums.h"
 #include "ObjectMap.h"
 #include "UniverseObject.h"
 #include "UnlockableItem.h"

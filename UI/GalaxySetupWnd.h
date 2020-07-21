@@ -5,6 +5,7 @@
 #include <GG/ListBox.h>
 
 #include "../universe/Universe.h"
+#include "../util/MultiplayerCommon.h"
 #include "ClientUI.h"
 #include "CUIWnd.h"
 

@@ -7,7 +7,6 @@
 #include "Conditions.h"
 #include "Effect.h"
 #include "Encyclopedia.h"
-#include "Enums.h"
 #include "FieldType.h"
 #include "Field.h"
 #include "FleetPlan.h"

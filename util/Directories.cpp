@@ -3,7 +3,6 @@
 #include "OptionsDB.h"
 #include "i18n.h"
 #include <GG/utf8/checked.h>
-#include "../universe/Enums.h"
 
 #include <boost/filesystem/convenience.hpp>
 #include <boost/filesystem/operations.hpp>

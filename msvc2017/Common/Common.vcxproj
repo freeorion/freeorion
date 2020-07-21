@@ -285,7 +285,6 @@
     <ClCompile Include="..\..\universe\Fighter.cpp" />
     <ClCompile Include="..\..\universe\ValueRefs.cpp" />
     <ClCompile Include="..\..\util\CheckSums.cpp" />
-    <ClCompile Include="..\..\util\EnumText.cpp" />
     <ClCompile Include="..\..\util\SaveGamePreviewUtils.cpp" />
     <ClCompile Include="..\..\util\ScopedTimer.cpp" />
     <ClCompile Include="..\..\util\StringTable.cpp" />

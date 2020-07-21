@@ -3,6 +3,7 @@
 
 
 #include <map>
+#include <GG/Enum.h>
 #include "UniverseObject.h"
 #include "../util/Export.h"
 
@@ -15,6 +16,22 @@ namespace {
     const int SYSTEM_ORBITS = 7;
 }
 struct UniverseObjectVisitor;
+
+
+//! Types of stars
+GG_ENUM(StarType,
+    INVALID_STAR_TYPE = -1,
+    STAR_BLUE,
+    STAR_WHITE,
+    STAR_YELLOW,
+    STAR_ORANGE,
+    STAR_RED,
+    STAR_NEUTRON,
+    STAR_BLACK,
+    STAR_NONE,
+    NUM_STAR_TYPES
+)
+
 
 /** contains UniverseObjects and connections to other systems (starlanes and
    wormholes).  All systems are UniversObjects contained within the universe,
