@@ -11053,7 +11053,7 @@ PLC_STOCKPILE_LIQUIDATION
 Stockpile Liquidation
 
 PLC_STOCKPILE_LIQUIDATION_DESC
-Doubles stockpile use capacity added by stockpile-focused planets.
+Doubles planetary stockpile use capacity of stockpile-focused planets which increases the imperial stockpile use limit.
 
 PLC_STOCKPILE_LIQUIDATION_SHORT_DESC
 Increases Stockpile Use Limit
