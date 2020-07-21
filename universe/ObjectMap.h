@@ -11,7 +11,6 @@
 #include <boost/range/adaptor/map.hpp>
 #include <boost/range/any_range.hpp>
 #include <boost/range/size.hpp>
-#include <boost/serialization/access.hpp>
 #include "../util/Export.h"
 
 
@@ -216,9 +215,8 @@ private:
     container_type<const UniverseObject>  m_existing_buildings;
     container_type<const UniverseObject>  m_existing_fields;
 
-    friend class boost::serialization::access;
     template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
+    friend void serialize(Archive&, ObjectMap&, unsigned int const);
 };
 
 template <typename T>

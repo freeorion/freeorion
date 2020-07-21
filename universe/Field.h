@@ -40,11 +40,6 @@ public:
     void ResetTargetMaxUnpairedMeters() override;
     void ClampMeters() override;
 
-protected:
-    friend class Universe;
-    Field();
-
-public:
     Field(const std::string& field_type, double x, double y, double radius);
     ~Field();
 
@@ -57,9 +52,8 @@ protected:
 private:
     std::string m_type_name;
 
-    friend class boost::serialization::access;
     template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
+    friend void serialize(Archive&, Field&, unsigned int const);
 };
 
 

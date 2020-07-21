@@ -3,7 +3,6 @@
 
 
 #include <boost/signals2/signal.hpp>
-#include <boost/serialization/nvp.hpp>
 #include "EnumsFwd.h"
 #include "../util/Export.h"
 
@@ -65,20 +64,9 @@ private:
     virtual Visibility  GetVisibility(int empire_id) const = 0;         ///< implementation should return the visibility of this ResourceCenter for the empire with the specified \a empire_id
     virtual void        AddMeter(MeterType meter_type) = 0;             ///< implementation should add a meter to the object so that it can be accessed with the GetMeter() functions
 
-    friend class boost::serialization::access;
     template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
+    friend void serialize(Archive&, ResourceCenter&, unsigned int const);
 };
-
-
-template <typename Archive>
-void ResourceCenter::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_NVP(m_focus)
-        & BOOST_SERIALIZATION_NVP(m_last_turn_focus_changed)
-        & BOOST_SERIALIZATION_NVP(m_focus_turn_initial)
-        & BOOST_SERIALIZATION_NVP(m_last_turn_focus_changed_turn_initial);
-}
 
 
 #endif

@@ -111,10 +111,6 @@ ParsedShipDesign::ParsedShipDesign(
 ////////////////////////////////////////////////
 // ShipDesign
 ////////////////////////////////////////////////
-ShipDesign::ShipDesign() :
-    m_uuid(boost::uuids::nil_generator()())
-{}
-
 ShipDesign::ShipDesign(const boost::optional<std::invalid_argument>& should_throw,
                        std::string name, std::string description,
                        int designed_on_turn, int designed_by_empire,

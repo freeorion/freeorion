@@ -10,7 +10,6 @@
 #include <unordered_map>
 #include <vector>
 #include <boost/container/flat_map.hpp>
-#include <boost/serialization/access.hpp>
 #include <boost/signals2/signal.hpp>
 #include <boost/thread/shared_mutex.hpp>
 #include "EnumsFwd.h"
@@ -578,9 +577,8 @@ private:
     /** Manages allocating and verifying new ship design ids.*/
     std::unique_ptr<IDAllocator> const m_design_id_allocator;
 
-    friend class boost::serialization::access;
     template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
+    friend void serialize(Archive&, Universe&, unsigned int const);
 };
 
 

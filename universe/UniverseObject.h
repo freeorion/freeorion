@@ -7,7 +7,6 @@
 #include <vector>
 #include <boost/container/flat_map.hpp>
 #include <boost/python/detail/destroy.hpp>
-#include <boost/serialization/access.hpp>
 #include <boost/signals2/optional_last_value.hpp>
 #include <boost/signals2/signal.hpp>
 #include "EnumsFwd.h"
@@ -224,9 +223,8 @@ private:
     MeterMap                                        m_meters;
     int                                             m_created_on_turn = INVALID_GAME_TURN;
 
-    friend class boost::serialization::access;
     template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
+    friend void serialize(Archive&, UniverseObject&, unsigned int const);
 };
 
 /** A function that returns the correct amount of spacing for an indentation of

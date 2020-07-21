@@ -8,6 +8,7 @@
 
 
 class Fleet;
+class ObjectMap;
 
 FO_COMMON_API extern const int INVALID_OBJECT_ID;
 namespace {
@@ -122,12 +123,6 @@ public:
 
     void SetOverlayTexture(const std::string& texture, double size);
 
-protected:
-    friend class Universe;
-    friend class ObjectMap;
-
-    explicit System();
-
 public:
     System(StarType star, const std::string& name, double x, double y);
 
@@ -159,9 +154,10 @@ private:
     std::string         m_overlay_texture;          // intentionally not serialized; set by local effects
     double              m_overlay_size = 1.0;
 
-    friend class boost::serialization::access;
+    friend ObjectMap;
+
     template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
+    friend void serialize(Archive&, System&, unsigned int const);
 };
 
 

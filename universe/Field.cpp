@@ -12,9 +12,6 @@
 /////////////////////////////////////////////////
 // Field                                       //
 /////////////////////////////////////////////////
-Field::Field()
-{}
-
 Field::~Field()
 {}
 
@@ -41,7 +38,7 @@ Field* Field::Clone(int empire_id) const {
     if (!(vis >= VIS_BASIC_VISIBILITY && vis <= VIS_FULL_VISIBILITY))
         return nullptr;
 
-    Field* retval = new Field();
+    Field* retval = new Field(m_type_name, X(), Y(), GetMeter(METER_SIZE)->Current());
     retval->Copy(shared_from_this(), empire_id);
     return retval;
 }

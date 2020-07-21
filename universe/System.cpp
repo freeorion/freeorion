@@ -15,10 +15,6 @@
 #include "../util/i18n.h"
 
 
-System::System() :
-    m_star(INVALID_STAR_TYPE)
-{}
-
 System::System(StarType star, const std::string& name, double x, double y) :
     UniverseObject(name, x, y),
     m_star(star)
@@ -53,7 +49,7 @@ System* System::Clone(int empire_id) const {
     if (!(vis >= VIS_BASIC_VISIBILITY && vis <= VIS_FULL_VISIBILITY))
         return nullptr;
 
-    System* retval = new System();
+    System* retval = new System(m_star, m_name, X(), Y());
     retval->Copy(shared_from_this(), empire_id);
     return retval;
 }

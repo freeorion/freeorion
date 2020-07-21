@@ -114,10 +114,7 @@ public:
     static int TypeDifference(PlanetType type1, PlanetType type2);
 
 protected:
-    friend class Universe;
     friend class ObjectMap;
-
-    Planet();
 
 public:
     /** Create planet from @p type and @p size. */
@@ -165,9 +162,8 @@ private:
 
     std::string     m_surface_texture;  // intentionally not serialized; set by local effects
 
-    friend class boost::serialization::access;
     template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
+    friend void serialize(Archive&, Planet&, unsigned int const);
 };
 
 

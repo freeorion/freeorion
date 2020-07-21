@@ -4,7 +4,6 @@
 
 #include <memory>
 #include <string>
-#include <boost/serialization/nvp.hpp>
 #include "EnumsFwd.h"
 #include "../util/Export.h"
 
@@ -47,17 +46,9 @@ private:
 
     std::string m_species_name = "";                            ///< the name of the species that occupies this planet
 
-    friend class boost::serialization::access;
     template <typename Archive>
-    void serialize(Archive& ar, const unsigned int version);
+    friend void serialize(Archive&, PopCenter&, unsigned int const);
 };
-
-
-template <typename Archive>
-void PopCenter::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_NVP(m_species_name);
-}
 
 
 #endif
