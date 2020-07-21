@@ -351,7 +351,7 @@ PROJECT_BT_STOCKPILE_SHORT_DESC
 Transfers PP into the imperial stockpile
 
 PROJECT_BT_STOCKPILE_DESC
-'''Production Points (PP) allocated to the transfer project are added to the imperial stockpile. The amount to transfer and how many times the transfer should repeat can be specified.
+'''Production Points (PP) allocated to the transfer project are added to the [[encyclopedia STOCKPILE_TITLE]]. The amount to transfer and how many times the transfer should repeat can be specified.
 
 Only PP that are produced in the same supply-group (and none from the imperial stockpile) are allocated to the stockpile transfer project.
 
@@ -5668,6 +5668,25 @@ Metabolism
 METABOLISM_TEXT
 The Metabolism of [[encyclopedia ENC_SPECIES]] in the galaxy fall into one of the types listed here.
 
+STOCKPILE_TITLE
+Imperial Stockpile
+
+STOCKPILE_TEXT
+'''Most industry is used immediately for producing buildings or ships. An empire can also store Production Points (PP) for later use in the imperial stockpile. Usually PP can only be used for production if the production site is in the supply network where the PP are generated. Contrary to this PP from the imperial stockpile can be used at any owned production site. Only a small amount of PP-no more than the imperial use limit-can be used for production each turn.
+
+There are two ways two store PP in the imperial stockpile:
+* Surplus PP (PP not allocated to anything on the queue) at any other location are automatically transferred to the stockpile. This may trigger a warning.
+* PP explicitly allocated to a [[encyclopedia PROJECT_BT_STOCKPILE]] are also transferred to the stockpile.
+
+The imperial stockpile use limit is the total of the [[metertype METER_STOCKPILE]] of each planet.
+Species stockpiling ability, buildings, technologies, and setting the [[encyclopedia STOCKPILE_FOCUS_TITLE]] increase it.
+
+Information about imperial stockpile, the use, and the use limit can be seen in the top of the [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]].
+Details for production can be seen in the [[encyclopedia PRODUCTION_WINDOW_ARTICLE_TITLE]].
+The effects which contribute to the planetary [[metertype METER_STOCKPILE]] can be found in the [[PLANET_PANEL]] in the system overview.
+'''
+
+
 PLANET_MANAGEMENT_TITLE
 Planet Management
 
@@ -5926,7 +5945,7 @@ METER_STOCKPILE_VALUE_LABEL
 Stockpile
 
 METER_STOCKPILE_VALUE_DESC
-'''The stockpile meter of a planet represents how much it contributes to the imperial stockpile use limit. The imperial stockpile use limit indicates an empire's ability to use stockpiled Production Points (PP). An empire's stockpile use limit is the sum of all its planets' stockpile meters plus technology bonus. The total determines how many PP can be taken out of the stockpile each turn to be used for production.
+'''The stockpile meter of a planet represents how much it contributes to the [[encyclopedia STOCKPILE_TITLE]] use limit. The imperial stockpile use limit indicates an empire's ability to use stockpiled Production Points (PP). An empire's stockpile use limit is the sum of all its planets' stockpile meters plus technology bonus. The total determines how many PP can be taken out of the stockpile each turn to be used for production.
 
 Species have various innate levels of stockpiling ability.'''
 
@@ -6252,7 +6271,7 @@ MAP_WINDOW_ARTICLE_TEXT
 
 In the upper left corner is the Turn Button, which reads as "Turn n" (where n is the current turn); left clicking the Turn Button causes the game to advance to the next turn. Immediately to its right is the Auto Advance Toggle; when showing as a double arrow, the game will not auto-advance; if clicked to toggle to circular arcing arrows, the game will autoadvance to the next turn once all other empires have submitted their orders for the turn.
 
-Next are icons showing the player empire total [[metertype METER_INDUSTRY]], total [[metertype METER_RESEARCH]], number of existing ships, and Empire [[encyclopedia DETECTION_TITLE]].
+Next are icons showing the player empire total [[metertype METER_INDUSTRY]], [[metertype METER_STOCKPILE]], total [[metertype METER_RESEARCH]], number of existing ships, and Empire [[encyclopedia DETECTION_TITLE]].
 
 On the right hand side of the control bar are a number of icons for toggling display of other significant UI windows. Tooltips are available for these.'''
 
@@ -11053,7 +11072,7 @@ PLC_STOCKPILE_LIQUIDATION
 Stockpile Liquidation
 
 PLC_STOCKPILE_LIQUIDATION_DESC
-Doubles planetary stockpile use capacity of stockpile-focused planets which increases the imperial stockpile use limit.
+Doubles the contribution of stockpile-focused planets to the [[encyclopedia STOCKPILE_TITLE]] use limit.
 
 PLC_STOCKPILE_LIQUIDATION_SHORT_DESC
 Increases Stockpile Use Limit
