@@ -5683,9 +5683,7 @@ Species stockpiling ability, buildings, technologies, and setting the [[encyclop
 
 Information about imperial stockpile, the use, and the use limit can be seen in the top of the [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]].
 Details for production can be seen in the [[encyclopedia PRODUCTION_WINDOW_ARTICLE_TITLE]].
-The effects which contribute to the planetary [[metertype METER_STOCKPILE]] can be found in the [[PLANET_PANEL]] in the system overview.
-'''
-
+The effects which contribute to the planetary [[metertype METER_STOCKPILE]] can be found in the [[PLANET_PANEL]] in the system overview.'''
 
 PLANET_MANAGEMENT_TITLE
 Planet Management
