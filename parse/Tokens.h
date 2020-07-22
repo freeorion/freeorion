@@ -176,6 +176,9 @@
     (HighestCostEnqueuedTech)                   \
     (HighestCostResearchableTech)               \
     (HighestCostTransferrableTech)              \
+    (HistogramMax)                              \
+    (HistogramMin)                              \
+    (HistogramSpread)                           \
     (Homeworld)                                 \
     (Hostile)                                   \
     (Huge)                                      \

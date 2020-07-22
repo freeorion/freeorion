@@ -95,8 +95,11 @@ namespace parse {
     {
         rule
             =   tok.CountUnique_    [ _val = ValueRef::UNIQUE_COUNT ]
-            |   tok.Count_          [ _val = ValueRef::COUNT ]
             |   tok.If_             [ _val = ValueRef::IF ]
+            |   tok.Count_          [ _val = ValueRef::COUNT ]
+            |   tok.HistogramMax_   [ _val = ValueRef::HISTO_MAX ]
+            |   tok.HistogramMin_   [ _val = ValueRef::HISTO_MIN ]
+            |   tok.HistogramSpread_[ _val = ValueRef::HISTO_SPREAD ]
             |   tok.Sum_            [ _val = ValueRef::SUM ]
             |   tok.Mean_           [ _val = ValueRef::MEAN ]
             |   tok.RMS_            [ _val = ValueRef::RMS ]
