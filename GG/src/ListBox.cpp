@@ -2034,13 +2034,13 @@ void ListBox::Resort()
 {
     std::shared_ptr<ListBox::SelectionCache> cached_selections{CacheSelections()};
 
-    std::vector<std::shared_ptr<Row>> rows_vec;
-    rows_vec.reserve(m_rows.size());
-    std::copy(m_rows.begin(), m_rows.end(), rows_vec.end());
+    std::vector<std::shared_ptr<Row>> rows_vec{std::make_move_iterator(m_rows.begin()),
+                                               std::make_move_iterator(m_rows.end())};
     std::stable_sort(rows_vec.begin(), rows_vec.end(),
                      RowSorter(m_sort_cmp, m_sort_col, m_style & LIST_SORTDESCENDING));
     m_rows.clear();
-    m_rows.insert(m_rows.begin(), rows_vec.begin(), rows_vec.end());
+    std::copy(std::make_move_iterator(rows_vec.begin()), std::make_move_iterator(rows_vec.end()),
+              std::back_inserter(m_rows));
 
     RequirePreRender();
 
