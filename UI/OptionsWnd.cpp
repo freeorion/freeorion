@@ -710,6 +710,7 @@ void OptionsWnd::CompleteConstruction() {
     IntOption(current_page,  0, "save.auto.file.limit",     UserString("OPTIONS_AUTOSAVE_LIMIT"));
     BoolOption(current_page, 0, "save.auto.initial.enabled", UserString("OPTIONS_DB_AUTOSAVE_GALAXY_CREATION"));
     BoolOption(current_page, 0, "save.auto.exit.enabled",   UserString("OPTIONS_DB_AUTOSAVE_GAME_CLOSE"));
+    PathDisplay(current_page, 0, UserString("OPTIONS_FOLDER_SAVE"), GetUserDataDir());
     m_tabs->SetCurrentWnd(0);
 
     // Keyboard shortcuts tab
@@ -728,6 +729,8 @@ void OptionsWnd::CompleteConstruction() {
 
     // Logging page
     current_page = CreatePage(UserString("OPTIONS_PAGE_LOGS"));
+    PathDisplay(current_page, 0, UserString("OPTIONS_FOLDER_CONFIG_LOG"), GetUserConfigDir());
+
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_DB_UI_LOGGER_THRESHOLDS"),
                         UserString("OPTIONS_DB_UI_LOGGER_THRESHOLD_TOOLTIP"));
 
@@ -789,6 +792,10 @@ void OptionsWnd::CompleteConstruction() {
     current_page->Insert(GG::Wnd::Create<OptionsListRow>(ROW_WIDTH,
                                                          persistent_config_button->MinUsableSize().y + LAYOUT_MARGIN + 6,
                                                          persistent_config_button, 0));
+
+    PathDisplay(current_page, 0, UserString("OPTIONS_FOLDER_CONFIG_LOG"), GetUserConfigDir());
+
+
     m_tabs->SetCurrentWnd(0);
 
     DoLayout();
