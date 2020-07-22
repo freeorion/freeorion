@@ -1,0 +1,39 @@
+#includes:
+#  - /scripting/common/upkeep.yml
+#ship_parts:
+#  - name: RS_AUTOLAB
+#    description: RS_AUTOLAB_DESC
+#    class: Research
+#    capacity: 80
+#    slot_types: [Internal]
+#    buildcost: !pp |
+#      1 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+#    buildtime: 1
+#    tags: [PEDIA_PC_RESEARCH]
+#    producible: True
+#    location: OwnedBy empire = Source.Owner
+#    icon: icons/tech/categories/learning.png
+#  - name: RS_AUTOFACTORY
+#    description: RS_AUTOFACTORY_DESC
+#    class: Industry
+#    capacity: 80
+#    slot_types: [Internal]
+#    buildcost: !pp |
+#      1 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+#    buildtime: 1
+#    tags: [PEDIA_PC_INDUSTRY]
+#    producible: True
+#    location: OwnedBy empire = Source.Owner
+#    icon: icons/tech/categories/production.png
+#  - name: RS_AUTOTRADER
+#    description: RS_AUTOTRADER_DESC
+#    class: Trade
+#    capacity: 80
+#    slot_types: [Internal]
+#    buildcost: !pp |
+#      1 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+#    buildtime: 1
+#    tags: [PEDIA_PC_TRADE]
+#    producible: True
+#    location: OwnedBy empire = Source.Owner
+#    icon: icons/tech/categories/economics.png

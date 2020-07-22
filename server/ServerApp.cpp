@@ -165,25 +165,20 @@ void ServerApp::StartBackgroundParsing() {
     IApp::StartBackgroundParsing();
     const auto& rdir = GetResourceDir();
 
-    if (fs::exists(rdir / "scripting/starting_unlocks/items.inf"))
-        m_universe.SetInitiallyUnlockedItems(Pending::StartParsing(parse::items, rdir / "scripting/starting_unlocks/items.inf"));
+    auto starting_unlocks_path = rdir / "scripting" / "starting_unlocks.yml";
+    if (fs::exists(starting_unlocks_path)) {
+        m_universe.SetInitiallyUnlockedItems(Pending::StartParsing(parse::items, starting_unlocks_path));
+        m_universe.SetInitiallyUnlockedBuildings(Pending::StartParsing(parse::starting_buildings, starting_unlocks_path));
+        m_universe.SetInitiallyUnlockedFleetPlans(Pending::StartParsing(parse::fleet_plans, starting_unlocks_path));
+    }
     else
-        ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/starting_unlocks/items.inf").string();
+        ErrorLogger() << "Background parse path doesn't exist: " << starting_unlocks_path.string();
 
-    if (fs::exists(rdir / "scripting/starting_unlocks/buildings.inf"))
-        m_universe.SetInitiallyUnlockedBuildings(Pending::StartParsing(parse::starting_buildings, rdir / "scripting/starting_unlocks/buildings.inf"));
+    auto monster_fleet_plans_path = rdir / "scripting" / "monster_fleets.yml";
+    if (fs::exists(monster_fleet_plans_path))
+        m_universe.SetMonsterFleetPlans(Pending::StartParsing(parse::monster_fleet_plans, monster_fleet_plans_path));
     else
-        ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/starting_unlocks/buildings.inf").string();
-
-    if (fs::exists(rdir / "scripting/starting_unlocks/fleets.inf"))
-        m_universe.SetInitiallyUnlockedFleetPlans(Pending::StartParsing(parse::fleet_plans, rdir / "scripting/starting_unlocks/fleets.inf"));
-    else
-        ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/starting_unlocks/fleets.inf").string();
-
-    if (fs::exists(rdir / "scripting/monster_fleets.inf"))
-        m_universe.SetMonsterFleetPlans(Pending::StartParsing(parse::monster_fleet_plans, rdir / "scripting/monster_fleets.inf"));
-    else
-        ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/monster_fleets.inf").string();
+        ErrorLogger() << "Background parse path doesn't exist: " << monster_fleet_plans_path.string();
 
     if (fs::exists(rdir / "scripting/empire_statistics"))
         m_universe.SetEmpireStats(Pending::StartParsing(parse::statistics, rdir / "scripting/empire_statistics"));

@@ -1,0 +1,13 @@
+includes:
+  - /scripting/common/upkeep.yml
+ship_parts:
+  - name: SP_PLANET_BEACON
+    description: SP_PLANET_BEACON_DESC
+    class: General
+    slot_types: [Core]
+    buildcost: !pp |
+      10 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildtime: 4
+    tags: [PEDIA_PC_GENERAL]
+    location: OwnedBy empire = Source.Owner
+    icon: icons/building/beacon.png

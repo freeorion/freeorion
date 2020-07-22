@@ -1,0 +1,5 @@
+articles:
+  - name: ENC_SHIP_HULL
+    category: ENC_SHIP_HULL
+    description: ENC_SHIP_HULL_DESC
+    icon: icons/ship_hulls/generic_hull.png

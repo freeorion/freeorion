@@ -1,0 +1,6 @@
+articles:
+  - name: FOCUS_TITLE
+    category: PLANETARY_FOCUS_TITLE
+    short_description: FOCUS_TITLE
+    description: FOCUS_TEXT
+    icon: icons/meter/construction.png

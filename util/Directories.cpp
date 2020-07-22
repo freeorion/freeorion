@@ -590,6 +590,9 @@ auto FilenameTimestamp() -> std::string
 auto IsFOCScript(const fs::path& path) -> bool
 { return fs::is_regular_file(path) && ".txt" == path.extension() && path.stem().extension() == ".focs"; }
 
+auto IsYAML(fs::path const& path) -> bool
+{ return fs::is_regular_file(path) && (".yml" == path.extension() || ".yaml" == path.extension()); }
+
 auto ListDir(const fs::path& path, std::function<bool (const fs::path&)> predicate) -> std::vector<fs::path>
 {
     std::vector<fs::path> retval;

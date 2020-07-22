@@ -1,0 +1,65 @@
+includes:
+  - /scripting/common/upkeep.yml
+  - /scripting/common/misc.yml
+macros:
+  COUNT_OF_LOCAL_ROBOTIC_INTERFACE_SHIELDS: |
+    Statistic Count condition = And [
+      Ship
+      OwnedBy empire = Source.Owner
+      VisibleToEmpire empire = Source.Owner
+      /// @content_tag{ROBOTIC} Ships with this part and ROBOTIC_HULL tag contribute towards increased shields of other ships with this part within 0 starlane jumps
+      HasTag name = "ROBOTIC"
+      /// @content_tag{ROBOTIC_HULL} Ships with this part and ROBOTIC tag contribute towards increased shields of other ships with this part within 0 starlane jumps
+      HasTag name = "ROBOTIC_HULL"
+      Not Source
+      DesignHasPart low = 1 high = 999 name = "SH_ROBOTIC_INTERFACE_SHIELDS"
+      WithinStarlaneJumps jumps = 0 condition = Source
+    ]
+  ROBOTIC_SHIELD_EFFECT: !pp |
+    min(
+      20.0,
+      [[COUNT_OF_LOCAL_ROBOTIC_INTERFACE_SHIELDS]],
+      ([[COUNT_OF_LOCAL_ROBOTIC_INTERFACE_SHIELDS]] * 7 ) ^ 0.5
+    )
+  BEST_SHIELD_EFFECT: |
+    max(max(max(max(
+      min(1, PartsInShipDesign Name = "SH_DEFENSE_GRID" design = Source.DesignID)
+      * PartCapacity name = "SH_DEFENSE_GRID",
+      min(1, PartsInShipDesign Name = "SH_DEFLECTOR" design = Source.DesignID)
+      * PartCapacity name = "SH_DEFLECTOR"),
+      min(1, PartsInShipDesign Name = "SH_PLASMA" design = Source.DesignID)
+      * PartCapacity name = "SH_PLASMA"),
+      min(1, PartsInShipDesign Name = "SH_BLACK" design = Source.DesignID)
+      * PartCapacity name = "SH_BLACK"),
+      min(1, PartsInShipDesign Name = "SH_MULTISPEC" design = Source.DesignID)
+      * PartCapacity name = "SH_MULTISPEC"
+    )
+ship_parts:
+  - name: SH_ROBOTIC_INTERFACE_SHIELDS
+    description: SH_ROBOTIC_INTERFACE_SHIELDS_DESC
+    class: Shield
+    capacity: 0
+    slot_types: [Internal]
+    buildcost: !pp |
+      40 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildtime: 4
+    tags: [PEDIA_PC_SHIELD]
+    location: |
+      And [
+        OwnedBy empire = Source.Owner
+        /// @content_tag{ROBOTIC} Allows a location to produce this ShipPart
+        HasTag name = "ROBOTIC"
+      ]
+    effectsgroups:
+      - scope: |
+          And [
+            Source
+            HasTag name = "ROBOTIC"
+            /// @content_tag{ROBOTIC_HULL} Combined with ROBOTIC tag, allows shield increase from this ShipPart
+            HasTag name = "ROBOTIC_HULL"
+          ]
+        activation: !pp ([[ROBOTIC_SHIELD_EFFECT]] >= [[BEST_SHIELD_EFFECT]])
+        stackinggroup: ROBOTIC_SHIELD_PART_STACK
+        accountinglabel: ROBOTIC_INTERFACE_EFFECT
+        effects: !pp SetMaxShield value = Value - [[BEST_SHIELD_EFFECT]] + ( [[ROBOTIC_SHIELD_EFFECT]] * [[SHIP_SHIELD_FACTOR]] )
+    icon: icons/ship_parts/robotic-interface-shields.png

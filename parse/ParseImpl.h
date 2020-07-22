@@ -8,6 +8,7 @@
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/spirit/include/qi.hpp>
+#include <yaml-cpp/yaml.h>
 
 #include <GG/Clr.h>
 
@@ -18,9 +19,20 @@ namespace Condition {
 
 namespace Effect {
     class Effect;
+    class EffectsGroup;
 }
 
-namespace parse { namespace detail {
+namespace ValueRef {
+    template <typename T>
+    class ValueRef;
+}
+
+namespace parse {
+    void resolve_macro_includes(YAML::Node& doc, const boost::filesystem::path& file_path);
+
+    void preprocess_macros(YAML::Node& node, const boost::filesystem::path& file_path, std::map<std::string, std::string>& macros);
+
+namespace detail {
     /// A functor to determine if \p key will be unique in \p map of \p type, and log an error otherwise.
     struct is_unique {
         typedef bool result_type;
@@ -216,5 +228,49 @@ namespace parse { namespace detail {
     }
 
 } }
+
+
+namespace YAML {
+    template <typename T>
+    struct convert<std::set<T>> {
+        static bool decode(const Node& node, std::set<T>& rhs);
+    };
+
+    template<typename T>
+    bool convert<std::set<T>>::decode(const Node& node, std::set<T>& rhs) {
+        if (!node.IsSequence())
+            return false;
+
+        for (auto& child : node)
+            rhs.insert(child.as<T>());
+
+        return true;
+    }
+
+    template <>
+    struct convert<std::unique_ptr<Condition::Condition>> {
+        static bool decode(const Node& node, std::unique_ptr<Condition::Condition>& rhs);
+    };
+
+    template <>
+    struct convert<std::unique_ptr<Effect::Effect>> {
+        static bool decode(const Node& node, std::unique_ptr<Effect::Effect>& rhs);
+    };
+
+    template <>
+    struct convert<std::unique_ptr<Effect::EffectsGroup>> {
+        static bool decode(const Node& node, std::unique_ptr<Effect::EffectsGroup>& rhs);
+    };
+
+    template <>
+    struct convert<std::unique_ptr<ValueRef::ValueRef<double>>> {
+        static bool decode(const Node& node, std::unique_ptr<ValueRef::ValueRef<double>>& rhs);
+    };
+
+    template <>
+    struct convert<std::unique_ptr<ValueRef::ValueRef<int>>> {
+        static bool decode(const Node& node, std::unique_ptr<ValueRef::ValueRef<int>>& rhs);
+    };
+}
 
 #endif

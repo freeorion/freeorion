@@ -1,0 +1,14 @@
+includes:
+  - /scripting/common/upkeep.yml
+ship_parts:
+  - name: FT_BAY_KRILL
+    description: FT_BAY_KRILL_DESC
+    class: FighterBay
+    capacity: 4
+    slot_types: [External]
+    buildcost: !pp |
+      20 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildtime: 1
+    tags: [PEDIA_PC_FIGHTER_BAY]
+    location: OwnedBy empire = Source.Owner
+    icon: icons/ship_parts/krill.png

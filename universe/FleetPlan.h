@@ -14,7 +14,7 @@
 //! FleetPlan%s are used for providing Fleets during universe generation or
 //! during game events.
 //! 
-//! Fleet plans are loaded from the `default/scripting/starting_unlocks/fleets.inf`
+//! Fleet plans are loaded from the `default/scripting/starting_unlocks/fleets.yml`
 //! file, the ShipDesign referenced are liste in `default/scripting/ship_designs`.
 class FO_COMMON_API FleetPlan {
 public:

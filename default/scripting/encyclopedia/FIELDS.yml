@@ -1,0 +1,5 @@
+articles:
+  - name: ENC_FIELD_TYPE
+    category: ENC_FIELD_TYPE
+    description: FIELDS_TEXT
+    icon: icons/tech/galactic_exploration.png

@@ -1,0 +1,379 @@
+contributors:
+  - group: Lead
+    members:
+    - name: Geoff Topping
+      nick: Geoff the Medio
+      tasks: [Programming, Design]
+    - nick: Vezzra
+      tasks: [Release Management, Design]
+  - group: Lead Emeritus
+    members:
+    - name: Mark Saward
+      nick: Tyreth
+      tasks: [Programming, Game Design, Graphics]
+    - name: Zach Laine
+      nick: Tzlaine
+      tasks: [Programming, Game Design]
+    - name: Samuel Knowlton
+      nick: Aquitaine
+      tasks: [Game Design]
+    - name: J. W. Bjerk
+      nick: eleazar
+      tasks: [Game Design, Graphics]
+    - name: Mathias Köhler
+      nick: pd
+      tasks: [Graphics]
+    - name: Anton Ruonala
+      nick: Miu
+      tasks: [Graphics]
+    - name: Jonathan Hill
+      nick: Obiwan
+      tasks: [Graphics]
+    - name: Kenneth Welch
+      nick: LithiumMongoose
+      tasks: [Audio]
+    - nick: Dilvish
+      tasks: [Programming, Design]
+  - group: Programmers
+    members:
+    - name: Joseph Bissonnette
+      nick: Oceanmachine
+      tasks: [Programming, Game Design]
+    - name: Dennis Brakhane
+      nick: Yoghurt
+      tasks: [Programming]
+    - name: Isaac Supeene
+      nick: Bigjoe5
+      tasks: [Programming, Game Design]
+    - name: Joshua Barczak
+      nick: jbarcz1
+      tasks: [Programming, Game Design]
+    - name: Andrew Emmons
+      tasks: [Programming]
+    - name: Ronald Nölte
+      nick: Noelte
+      tasks: [Programming]
+    - name: Tony Casale
+      nick: Tsev
+      tasks: [Programming]
+    - name: Michael J. Agostini
+      tasks: [Programming]
+    - name: Karol Szumski
+      nick: MareviQ
+      tasks: [Programming]
+    - name: Mike Dotterer
+      nick: maelstrom512
+      tasks: [Programming]
+    - nick: qk-gen
+      tasks: [Programming]
+    - name: Adrian Schweizer
+      nick: LaplaceOperator
+      tasks: [Programming]
+    - name: Karl Chen
+      nick: quarl
+      tasks: [Programming]
+    - name: Eliot Eshelman
+      nick: igrok
+      tasks: [Programming]
+    - nick: stride
+      tasks: [Programming]
+    - nick: Anonymous
+      tasks: [Programming]
+    - name: Francesco Marass
+      nick: francys
+      tasks: [Programming]
+    - name: Martin Wuttke
+      nick: The Silent One
+      tasks: [Programming, German Translation, Graphics]
+    - name: Markus Sinner
+      nick: kroddn
+      tasks: [Programming, German Translation]
+    - name: Jon Siwek
+      nick: .Id
+      tasks: [Programming]
+    - name: Bernard Helyer
+      nick: bhelyer
+      tasks: [Programming]
+    - name: Wojtek Ruszczewski
+      nick: wrwrwr
+      tasks: [Programming]
+    - name: Peter Schneider
+      nick: Lathanda
+      tasks: [Programming]
+    - name: Dominic Tancredi
+      nick: neuro
+      tasks: [Programming]
+    - name: Anton Poznyakovskiy
+      nick: iron_gollum
+      tasks: [Programming]
+    - nick: RgnadKzin
+      tasks: [Programming]
+    - name: Rainer Kupke
+      nick: rkupke
+      tasks: [Programming]
+    - name: Sebastian Wagner
+      nick: night
+      tasks: [Programming]
+    - name: Carsten Milkau
+      nick: cami
+      tasks: [Programming]
+    - name: Greg Mojonnier
+      nick: fixIt
+      tasks: [Programming]
+    - nick: Spike
+      tasks: [Programming]
+    - nick: aineko
+      tasks: [Programming]
+    - name: Patrick B.
+      nick: Rogor
+      tasks: [Programming]
+    - name: Landon Manning
+      nick: yandonman
+      tasks: [Programming]
+    - name: Marcel Metz
+      nick: adrian_broher
+      tasks: [Programming, German Translation]
+    - name: Vincent Fourmond
+      nick: yanub
+      tasks: [Programming]
+    - nick: Vegavis
+      tasks: [Programming]
+    - nick: Mitten.O
+      tasks: [Programming]
+    - name: Mark de Ruijter
+      nick: Eloque
+      tasks: [Programming]
+    - name: Vincent Legoll
+      nick: vincele
+      tasks: [Programming]
+    - name: Fabian Wendt
+      nick: Morlic
+      tasks: [Programming]
+    - nick: mel-odious
+      tasks: [Programming]
+    - name: S.M.
+      nick: wheals
+      tasks: [Programming]
+    - name: Andrey Solomatin
+      nick: Cjkjvfnby
+      tasks: [Programming]
+    - nick: LGM-Doyle
+      tasks: [Programming]
+    - name: D. Benage
+      nick: dbenage-cx
+      tasks: [Programming]
+    - nick: matthoppe
+      tasks: [Programming]
+    - nick: o01eg
+      tasks: [Programming]
+    - name: Sergey Alirzaev
+      nick: L29Ah
+      tasks: [Programming]
+    - nick: VPeruS
+      tasks: [Programming]
+    - name: Ingo Schwarze
+      nick: ischwarze
+      tasks: [Programming]
+    - nick: agrrr3
+      tasks: [Programming]
+    - nick: OlafPettersson
+      tasks: [Programming]
+    - name: Justin Wood
+      nick: swaqvalley
+      tasks: [Programming]
+    - name: Rob Gill
+      nick: rrobgill
+      tasks: [Programming]
+  - group: Game Designers
+    members:
+    - name: Krum Stanoev
+      tasks: [Game Design]
+    - name: Ben Lake
+      nick: Drek
+      tasks: [Game Design]
+    - nick: Nightfish
+      tasks: [Game Design]
+    - name: Chris Martin
+      nick: utilae
+      tasks: [Game Design]
+    - nick: skdiw
+      tasks: [Game Design]
+    - name: Peter DeVries
+      nick: Krikkitone
+      tasks: [Game Design]
+    - name: Kenneth Ferland
+      nick: Impaler
+      tasks: [Game Design]
+    - nick: emrys
+      tasks: [Game Design]
+    - name: Andreas Bernard
+      tasks: [Game Design]
+    - nick: Teal Ablaze
+      tasks: [Game Design]
+    - name: Bryan Patterson
+      nick: PowerCrazy
+      tasks: [Game Design]
+    - name: Andrew Hull
+      nick: moxy
+      tasks: [Game Design]
+    - name: Benjamin Confino
+      nick: Tortanick
+      tasks: [Game Design]
+    - name: Colin Ng
+      nick: unjashfan
+      tasks: [Game Design]
+    - nick: Sloth
+      tasks: [Game Design]
+    - name: Mat Bowles
+      nick: MatGB
+      tasks: [Game Design]
+    - nick: matt474
+      tasks: [Content]
+    - name: Mark Mattson
+      nick: mem359
+      tasks: [Content]
+    - nick: Tualha
+      tasks: [Content]
+    - name: Timothy Jaeger
+      nick: alleryn
+      tasks: [Content]
+    - name: Dmitriy Parev
+      nick: DmStrelok
+      tasks: [Content]
+  - group: Graphic Artists
+    members:
+    - name: Josh Combs
+      nick: Josh
+      tasks: [Graphics]
+    - nick: Ka
+      tasks: [Graphics]
+    - name: Alex Kaludis
+      nick: That Guy
+      tasks: [Graphics]
+    - name: Chris Montgomery
+      tasks: [Graphics]
+    - name: Tim Gilmour
+      nick: burndaddy
+      tasks: [Graphics]
+    - nick: Zanzibar
+      tasks: [Graphics]
+    - nick: Satyagraha
+      tasks: [Graphics]
+    - name: Tomi Hartikka
+      nick: Mystiqq
+      tasks: [Graphics]
+    - name: Brendan Mauro
+      nick: BreadMan
+      tasks: [Graphics]
+    - name: Karel Kalvoda
+      nick: Solid Liquid
+      tasks: [Graphics]
+    - name: Thomas Meschede
+      nick: ssalamass
+      tasks: [Graphics]
+    - name: Michael T. Young
+      nick: shrinkshooter
+      tasks: [Graphics]
+    - name: Porter Peterson Nielsen
+      nick: Redcap
+      tasks: [Graphics]
+    - name: Hugh Edward Durham III
+      nick: GlasShadow
+      tasks: [Graphics]
+    - name: Marko Brasovan
+      nick: Cmd. Marko
+      tasks: [Graphics]
+    - name: Shane McLafferty
+      nick: Dart_Tech
+      tasks: [Graphics]
+    - name: Kevin RJ Berry
+      nick: BraveSirKevin
+      tasks: [Graphics]
+    - nick: Ta'Lon
+      tasks: [Graphics]
+    - name: Viktor Hahn
+      nick: Unnamed
+      tasks: [Graphics]
+    - name: Fabian Hernandez
+      nick: coCoKNIght
+      tasks: [Graphics]
+    - name: Holger Motz
+      nick: Captain M
+      tasks: [Graphics]
+    - name: Daria Sharonova
+      nick: Bestary
+      tasks: [Graphics, Russian Translation]
+  - group: Sound Artists
+    members:
+    - name: Scott R. Looney
+      nick: metaphysician
+      tasks: [Audio]
+    - name: Shannon Roberts
+      nick: Guiguibaah
+      tasks: [Audio]
+    - nick: Mejoff
+      tasks: [Audio]
+    - nick: Run_Lugge
+      tasks: [Audio]
+    - nick: _Robbob_
+      tasks: [Audio]
+  - group: Translators
+    members:
+    - name: Ivan Sanchez
+      nick: Ivan s c
+      tasks: [Spanish Translation]
+    - name: Myckel Habets
+      nick: Myckel
+      tasks: [Dutch Translation]
+    - name: Martin Roth
+      nick: Captain Rage
+      tasks: [Swedish Translation]
+    - name: Fran Valenzuela
+      nick: Synyestro
+      tasks: [Spanish Translation]
+    - name: Guillaume
+      nick: nyquist
+      tasks: [French Translation]
+    - name: Wojciech Moch
+      nick: Feagorn
+      tasks: [Polish Translation]
+    - name: Łukasz Korpalski
+      nick: Cyber Killer
+      tasks: [Polish Translation]
+    - name: Mikko Maununen
+      nick: MikkoM
+      tasks: [Finnish Translation]
+    - name: Vladimir Safronenkov
+      nick: pohlman
+      tasks: [Russian Translation]
+    - name: Alexandr Kopitkov
+      nick: Cjckem
+      tasks: [Russian Translation]
+    - nick: alchemy
+      tasks: [French Translation]
+    - nick: andrewsa
+      tasks: [Russian Translation]
+    - nick: Nilstilar
+      tasks: [French Translation]
+    - name: Jean-Charles Schmidt
+      nick: Ouaz
+      tasks: [French Translation]
+    - nick: evzorge
+      tasks: [Russian Translation]
+    - name: Claudio Giordano
+      nick: Shining
+      tasks: [Italian Translation]
+    - name: Stefano Peris
+      nick: LordStephen77
+      tasks: [Italian Translation]
+    - nick: nikqz
+      tasks: [Russian Translation]
+    - name: Iaroslav Gridin
+      nick: Voker57
+      tasks: [Russian Translation]
+resources:
+  - author: Adam Evans
+    title: Andromeda Galaxy (with h-alpha).jpg
+    license: CC-BY 2.0
+    source: http://www.flickr.com/photos/8269775@N05
+    notes: used for galaxy picture background

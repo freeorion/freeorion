@@ -1,0 +1,27 @@
+macros:
+  MIN_RECOLONIZING_SIZE: |
+    3.0
+  MIN_RECOLONIZING_HAPPINESS: |
+    5.0
+  IMPOSSIBLY_LARGE_TURN: |
+    (2^15)
+  DESCRIPTION_EFFECTSGROUP_MACRO: |
+    EffectsGroup
+      description = "@1@"
+      scope = Source
+      activation = None
+      effects = NoOp
+  FIGHTER_DAMAGE_FACTOR: |
+    (GameRule name = "RULE_FIGHTER_DAMAGE_FACTOR")
+  PLANET_DEFENSE_FACTOR: |
+    (GameRule name = "RULE_SHIP_WEAPON_DAMAGE_FACTOR")
+  PLANET_SHIELD_FACTOR: |
+    (GameRule name = "RULE_SHIP_STRUCTURE_FACTOR")
+  SHIP_WEAPON_DAMAGE_FACTOR: |
+    (GameRule name = "RULE_SHIP_WEAPON_DAMAGE_FACTOR")
+  SHIP_SHIELD_FACTOR: |
+    (GameRule name = "RULE_SHIP_WEAPON_DAMAGE_FACTOR")
+  SHIP_STRUCTURE_FACTOR: |
+    (GameRule name = "RULE_SHIP_STRUCTURE_FACTOR")
+  SYSTEM_MINES_DAMAGE_FACTOR: |
+    (GameRule name = "RULE_SHIP_STRUCTURE_FACTOR")

@@ -1,0 +1,76 @@
+includes:
+  - /scripting/common/upkeep.yml
+  - /scripting/common/priorities.yml
+ship_parts:
+  - name: SP_EMP
+    description: SP_EMP_DESC
+    class: Bombard
+    capacity: 0.5
+    slot_types: [External]
+    buildcost: !pp |
+      5 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildtime: 3
+    tags: [CTRL_BOMBARD_ROBOTIC, PEDIA_PC_BOMBARD]
+    location: All
+    effectsgroups:
+      # players can order EMP used on enemies
+      - scope: |
+          And [
+            Planet
+            Species
+            InSystem id = Source.SystemID
+            OrderedBombardedBy condition = Source
+            Or [
+              OwnedBy affiliation = EnemyOf empire = Source.Owner
+              Unowned
+            ]
+            VisibleToEmpire empire = Source.Owner
+            /// @content_tag{ROBOTIC} When bombarding in-system enemy with this part, reduces population on visible populated Planet with tag
+            HasTag name = "ROBOTIC"
+          ]
+        priority: !pp [[EARLY_POPULATION_PRIORITY]]
+        effects: |
+          [
+            SetPopulation value = Value - 0.5
+            GenerateSitRepMessage
+              message = "EFFECT_BIOWEAPON"
+              label = "EFFECT_BIOWEAPON_LABEL"
+              icon = "icons/sitrep/bio_weapon_1.png"
+              parameters = [
+                tag = "planet" data = Target.ID
+                tag = "rawtext" data = "0.5"
+                tag = "shippart" data = "SP_EMP"
+              ]
+              empire = Target.Owner
+          ]
+      # monsters use EMP on player planets
+      - scope: |
+          NumberOf number = 1 condition = And [
+            Planet
+            InSystem id = Source.SystemID
+            OwnedBy affiliation = AnyEmpire
+            Stealth high = Source.Detection
+            /// @content_tag{ROBOTIC} Each part owned by Unowned in system will reduce population on one visible populated empire Planet with tag
+            HasTag name = "ROBOTIC"
+          ]
+        activation: |
+          And [
+            Unowned
+            InSystem
+          ]
+        priority: !pp [[EARLY_POPULATION_PRIORITY]]
+        effects: |
+          [
+            SetPopulation value = Value - 0.5
+            GenerateSitRepMessage
+              message = "EFFECT_BIOWEAPON"
+              label = "EFFECT_BIOWEAPON_LABEL"
+              icon = "icons/sitrep/bio_weapon_1.png"
+              parameters = [
+                tag = "planet" data = Target.ID
+                tag = "rawtext" data = "0.5"
+                tag = "shippart" data = "SP_EMP"
+              ]
+              empire = Target.Owner
+          ]
+    icon: icons/ship_parts/EMP.png

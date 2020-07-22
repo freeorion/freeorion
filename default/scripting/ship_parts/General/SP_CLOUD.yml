@@ -1,0 +1,44 @@
+ship_parts:
+  - name: SP_CLOUD
+    description: SP_CLOUD
+    class: General
+    slot_types: [Internal]
+    buildcost: 1
+    buildtime: 1
+    tags: [PEDIA_PC_GENERAL]
+    location: All
+    effectsgroups:
+      - scope: |
+          NumberOf number = 1 condition = And [
+            Planet
+            InSystem id = Source.SystemID
+            Not Planet type = [Asteroids GasGiant Barren Desert]
+          ]
+        activation: |
+          And [
+            Random probability = 0.15
+            InSystem
+          ]
+        effects: AddSpecial name = "CLOUD_COVER_MASTER_SPECIAL"
+      - scope: Source
+        activation: Number low = 1 condition = OwnerHasTech name = "SPY_STEALTH_2"
+        effects: |
+          [
+            CreateShip designname = "SM_ASH" empire = Source.Owner
+            Destroy
+          ]
+      - scope: Source
+        activation: Number low = 1 condition = OwnerHasTech name = "SPY_STEALTH_3"
+        effects: |
+          [
+            CreateShip designname = "SM_DIM" empire = Source.Owner
+            Destroy
+          ]
+      - scope: Source
+        activation: Number low = 1 condition = OwnerHasTech name = "SPY_STEALTH_4"
+        effects: |
+          [
+            CreateShip designname = "SM_VOID" empire = Source.Owner
+            Destroy
+          ]
+    icon: ''

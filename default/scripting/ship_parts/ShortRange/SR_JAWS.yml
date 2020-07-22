@@ -1,0 +1,15 @@
+includes:
+  - /scripting/common/upkeep.yml
+  - shortrange.yml
+ship_parts:
+  - name: SR_JAWS
+    description: SR_JAWS_DESC
+    class: ShortRange
+    damage: 5
+    slot_types: [External]
+    buildcost: !pp |
+      20 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildtime: 1
+    tags: [PEDIA_PC_DIRECT_WEAPON]
+    location: OwnedBy empire = Source.Owner
+    icon: icons/ship_parts/teeth.png

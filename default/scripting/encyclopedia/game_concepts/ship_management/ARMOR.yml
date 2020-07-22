@@ -1,0 +1,6 @@
+articles:
+  - name: ARMOR_TITLE
+    category: SHIP_MANAGEMENT_TITLE
+    short_description: ARMOR_TITLE
+    description: ARMOR_TEXT
+    icon: icons/tech/armor_plating.png

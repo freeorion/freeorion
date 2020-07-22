@@ -1,22 +1,19 @@
 #include "SitRepPanel.h"
 
+#include <boost/lexical_cast.hpp>
+#include <GG/Layout.h>
+#include <yaml-cpp/yaml.h>
 #include "CUIControls.h"
 #include "LinkText.h"
 #include "Sound.h"
 #include "../client/human/HumanClientApp.h"
 #include "../Empire/Empire.h"
-#include "../util/i18n.h"
+#include "../universe/ShipDesign.h"
 #include "../util/Directories.h"
+#include "../util/i18n.h"
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
 #include "../util/SitRepEntry.h"
-#include "../universe/ShipDesign.h"
-
-#include <GG/Layout.h>
-
-#include <boost/lexical_cast.hpp>
-
-#include <iterator>
 
 
 namespace {
@@ -98,12 +95,23 @@ namespace {
     }
 
     std::vector<std::string> OrderedSitrepTemplateStrings() {
-        // determine sitrep order
-        std::istringstream template_stream(UserString("FUNCTIONAL_SITREP_PRIORITY_ORDER"));
-        std::vector<std::string> sitrep_order;
-        std::copy(std::istream_iterator<std::string>(template_stream),
-                  std::istream_iterator<std::string>(),
-                  std::back_inserter<std::vector<std::string>>(sitrep_order));
+        static std::vector<std::string> sitrep_order;
+
+        if (sitrep_order.empty()) {
+            YAML::Node doc;
+            try {
+                boost::filesystem::ifstream ifs(GetResourceDir() / "customizations" / "common_user_customizations.yml");
+                doc = YAML::Load(ifs);
+                ifs.close();
+
+                for (const auto& sitrep_node: doc["sitrep_priority_order"])
+                    sitrep_order.emplace_back(sitrep_node.as<std::string>());
+            }
+            catch(YAML::Exception& e) {
+                ErrorLogger() << "OrderedSitrepTemplateStrings: " << e.what();
+            }
+        }
+
         return sitrep_order;
     }
 

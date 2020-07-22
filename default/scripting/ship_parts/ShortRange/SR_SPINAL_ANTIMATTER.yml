@@ -1,0 +1,24 @@
+includes:
+  - /scripting/common/upkeep.yml
+  - /scripting/ship_parts/targeting.yml
+  - shortrange.yml
+ship_parts:
+  - name: SR_SPINAL_ANTIMATTER
+    description: SR_SPINAL_ANTIMATTER_DESC
+    class: ShortRange
+    damage: 100
+    combat_targets: !pp |
+      And [
+        [[COMBAT_TARGETS_VISIBLE_ENEMY]]
+        Or [
+           [[COMBAT_TARGETS_NOT_DESTROYED_SHIP]]
+           [[COMBAT_TARGETS_PLANET_WITH_DEFENSE]]
+        ]
+      ]
+    slot_types: [Core]
+    buildcost: !pp |
+      250 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildtime: 4
+    tags: [PEDIA_PC_DIRECT_WEAPON]
+    location: OwnedBy empire = Source.Owner
+    icon: icons/ship_parts/spinal_antimatter.png

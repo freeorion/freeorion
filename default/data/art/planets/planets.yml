@@ -1,0 +1,189 @@
+---
+light:
+  position: [10.0, -7.0, 8.0]
+  ambient: 0.8
+  diffuse: 1.0
+stars:
+  blue: ~
+  white: "#ffffff"
+  yellow: "#ffffc0"
+  orange: "#ffc0a0"
+  red: "#ffc0c0"
+  neutron: "#a0d0c0"
+  black: "#60a0a0"
+  none: "#202020"
+asteroids:
+  fps: 20.0
+planets:
+  swamp:
+    - surface: planets/Swamp01.png
+      shininess: 0.0
+      atmospheres:
+        - atmosphere: planets/atmospheres/green_atmosphere.png
+          transparency: 150
+    - surface: planets/Swamp02.png
+      shininess: 0.0
+      atmospheres:
+        - atmosphere: planets/atmospheres/green_atmosphere.png
+          transparency: 150
+    - surface: planets/Swamp03.png
+      shininess: 0.0
+      atmospheres:
+        - atmosphere: planets/atmospheres/green_atmosphere.png
+          transparency: 150
+  toxic:
+    - surface: planets/Toxic01.png
+      shininess: 0.0
+      atmospheres:
+        - atmosphere: planets/atmospheres/turquoise_atmosphere.png
+          transparency: 204
+    - surface: planets/Toxic02.png
+      shininess: 0.0
+      atmospheres:
+        - atmosphere: planets/atmospheres/turquoise_atmosphere.png
+          transparency: 204
+    - surface: planets/Toxic03.png
+      shininess: 0.0
+      atmospheres:
+        - atmosphere: planets/atmospheres/turquoise_atmosphere.png
+          transparency: 204
+  inferno:
+    - surface: planets/Inferno01.png
+      shininess: 0.0
+      atmospheres:
+        - atmosphere: planets/atmospheres/red_atmosphere.png
+          transparency: 230
+    - surface: planets/Inferno02.png
+      shininess: 0.0
+      atmospheres:
+        - atmosphere: planets/atmospheres/red_atmosphere.png
+          transparency: 230
+    - surface: planets/Inferno03.png
+      shininess: 0.0
+      atmospheres:
+        - atmosphere: planets/atmospheres/red_atmosphere.png
+          transparency: 170
+  radiated:
+    - surface: planets/Radiated01.png
+      shininess: 0.0
+      atmospheres:
+        - atmosphere: planets/atmospheres/pink_atmosphere.png
+          transparency: 204
+    - surface: planets/Radiated02.png
+      shininess: 0.0
+      atmospheres:
+        - atmosphere: planets/atmospheres/pink_atmosphere.png
+          transparency: 204
+    - surface: planets/Radiated03.png
+      shininess: 0.0
+      atmospheres:
+        - atmosphere: planets/atmospheres/pink_atmosphere.png
+          transparency: 204
+  barren:
+    - surface: planets/Barren01.png
+      shininess: 0.0
+    - surface: planets/Barren02.png
+      shininess: 0.0
+    - surface: planets/Barren03.png
+      shininess: 0.0
+    - surface: planets/Barren01.png
+      shininess: 0.0
+  tundra:
+    - surface: planets/Tundra01.png
+      shininess: 25.0
+      atmospheres:
+        - atmosphere: planets/atmospheres/white_atmosphere.png
+          transparency: 255
+    - surface: planets/Tundra02.png
+      shininess: 25.0
+      atmospheres:
+        - atmosphere: planets/atmospheres/white_atmosphere.png
+          transparency: 255
+    - surface: planets/Tundra03.png
+      shininess: 20.0
+      atmospheres:
+        - atmosphere: planets/atmospheres/white_atmosphere.png
+          transparency: 255
+  desert:
+    - surface: planets/Desert01.png
+      shininess: 0.0
+      atmospheres:
+        - atmosphere: planets/atmospheres/yellow_atmosphere.png
+          transparency: 230
+    - surface: planets/Desert02.png
+      shininess: 0.0
+      atmospheres:
+        - atmosphere: planets/atmospheres/yellow_atmosphere.png
+          transparency: 230
+    - surface: planets/Desert03.png
+      shininess: 0.0
+      atmospheres:
+        - atmosphere: planets/atmospheres/yellow_atmosphere.png
+          transparency: 230
+  terran:
+    - surface: planets/Terran01.png
+      shininess: 20.0
+      atmospheres:
+        - atmosphere: planets/atmospheres/blue_atmosphere.png
+          transparency: 204
+    - surface: planets/Terran02.png
+      shininess: 20.0
+      atmospheres:
+        - atmosphere: planets/atmospheres/blue_atmosphere.png
+          transparency: 204
+    - surface: planets/Terran03.png
+      shininess: 20.0
+      atmospheres:
+        - atmosphere: planets/atmospheres/blue_atmosphere.png
+          transparency: 204
+  ocean:
+    - surface: planets/Ocean01.png
+      shininess: 40.0
+      atmospheres:
+        - atmosphere: planets/atmospheres/purple_atmosphere.png
+          transparency: 204
+    - surface: planets/Ocean02.png
+      shininess: 40.0
+      atmospheres:
+        - atmosphere: planets/atmospheres/purple_atmosphere.png
+          transparency: 204
+    - surface: planets/Ocean03.png
+      shininess: 40.0
+      atmospheres:
+        - atmosphere: planets/atmospheres/purple_atmosphere.png
+          transparency: 204
+  gasgiant:
+    - surface: planets/GasGiant01.png
+      shininess: 0.0
+      atmospheres:
+        - atmosphere: planets/atmospheres/yellow_atmosphere.png
+          transparency: 150
+    - surface: planets/GasGiant02.png
+      shininess: 0.0
+      atmospheres:
+        - atmosphere: planets/atmospheres/yellow_atmosphere.png
+          transparency: 150
+    - surface: planets/GasGiant03.png
+      shininess: 0.0
+      atmospheres:
+        - atmosphere: planets/atmospheres/yellow_atmosphere.png
+          transparency: 150
+    - surface: planets/GasGiant04.png
+      shininess: 0.0
+      atmospheres:
+        - atmosphere: planets/atmospheres/yellow_atmosphere.png
+          transparency: 150
+    - surface: planets/GasGiant05.png
+      shininess: 0.0
+    - surface: planets/GasGiant06.png
+      shininess: 0.0
+    - surface: planets/GasGiant07.png
+      shininess: 0.0
+    - surface: planets/GasGiant08.png
+      shininess: 0.0
+    - surface: planets/GasGiant09.png
+      shininess: 0.0
+    - surface: planets/GasGiant10.png
+      shininess: 0.0
+    - surface: planets/GasGiant11.png
+      shininess: 0.0

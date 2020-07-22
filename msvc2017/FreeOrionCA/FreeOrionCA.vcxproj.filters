@@ -95,9 +95,6 @@
     <ClInclude Include="..\..\util\Version.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\util\XMLDoc.h">
-      <Filter>Header Files\util</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\util\AppInterface.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>

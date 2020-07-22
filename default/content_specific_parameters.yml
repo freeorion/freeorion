@@ -1,0 +1,20 @@
+# Growth specials list
+# Controls the 'HasGrowthSpecial' condition in the ObjectListWnd
+growth_specials:
+  - CRYSTALS_SPECIAL
+  - FRUIT_SPECIAL
+  - ELERIUM_SPECIAL
+  - MINERALS_SPECIAL
+  - MONOPOLE_SPECIAL
+  - POSITRONIUM_SPECIAL
+  - PROBIOTIC_SPECIAL
+  - SPICE_SPECIAL
+  - SUPERCONDUCTOR_SPECIAL
+# This list defines which hull tags on HULLs which are shown in the given order
+# in the hull description.  There should be corresponding HULL_DESC_*
+# stringtable entries (e.g. HULL_DESC_GREAT_FUEL_EFFICIENCY)
+hull_tags_to_describe:
+  - BAD_FUEL_EFFICIENCY
+  - AVERAGE_FUEL_EFFICIENCY
+  - GOOD_FUEL_EFFICIENCY
+  - GREAT_FUEL_EFFICIENCY

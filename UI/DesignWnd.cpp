@@ -23,22 +23,22 @@
 #include "../universe/ShipPart.h"
 #include "../universe/ShipHull.h"
 
-#include <GG/StaticGraphic.h>
-#include <GG/TabWnd.h>
-
-#include <boost/cast.hpp>
+#include <algorithm>
+#include <functional>
+#include <iterator>
+#include <unordered_map>
+#include <unordered_set>
 #include <boost/algorithm/string/replace.hpp>
-#include <boost/filesystem/operations.hpp>
+#include <boost/cast.hpp>
 #include <boost/filesystem/fstream.hpp>
+#include <boost/filesystem/operations.hpp>
+#include <boost/uuid/random_generator.hpp>
 #include <boost/uuid/random_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
-#include <boost/uuid/random_generator.hpp>
+#include <GG/StaticGraphic.h>
+#include <GG/TabWnd.h>
+#include <yaml-cpp/yaml.h>
 
-#include <algorithm>
-#include <iterator>
-#include <unordered_set>
-#include <unordered_map>
-#include <functional>
 
 FO_COMMON_API extern const int INVALID_DESIGN_ID;
 
@@ -1518,41 +1518,41 @@ void PartsListBox::CullSuperfluousParts(std::vector<const ShipPart*>& this_group
 {
     // This is not merely a check for obsolescence; see PartsListBox::Populate
     // for more info
-    static float min_bargain_ratio = -1.0;
-    static float max_cost_ratio = -1.0;
-    static float max_time_ratio = -1.0;
+    static float min_bargain_ratio{1.0};
+    static float max_cost_ratio{1.0};
+    static float max_time_ratio{1.0};
+    static bool filter_loaded{false};
 
-    if (min_bargain_ratio == -1.0) {
-        min_bargain_ratio = 1.0;
+    if (!filter_loaded) {
+        filter_loaded = true;
+
+        YAML::Node doc;
         try {
-            if (UserStringExists("FUNCTIONAL_MIN_BARGAIN_RATIO")) {
-                float new_bargain_ratio = std::atof(UserString("FUNCTIONAL_MIN_BARGAIN_RATIO").c_str());
+            boost::filesystem::ifstream ifs(GetResourceDir() / "customizations" / "common_user_customizations.yml");
+            doc = YAML::Load(ifs);
+            ifs.close();
+
+            if (doc["redundant_part_filters"]["min_bargain_ratio"]) {
+                auto new_bargain_ratio = doc["redundant_part_filters"]["min_bargain_ratio"].as<float>(1.0f);
                 if (new_bargain_ratio > 1.0f)
                     min_bargain_ratio = new_bargain_ratio;
             }
-        } catch (...) {}
-    }
 
-    if (max_cost_ratio == -1.0) {
-        max_cost_ratio = 1.0;
-        try {
-            if (UserStringExists("FUNCTIONAL_MAX_COST_RATIO")) {
-                float new_cost_ratio = std::atof(UserString("FUNCTIONAL_MAX_COST_RATIO").c_str());
+            if (doc["redundant_part_filters"]["max_cost_ratio"]) {
+                auto new_cost_ratio = doc["redundant_part_filters"]["max_cost_ratio"].as<float>(1.0f);
                 if (new_cost_ratio > 1.0f)
                     max_cost_ratio = new_cost_ratio;
             }
-        } catch (...) {}
-    }
 
-    if (max_time_ratio == -1.0) {
-        max_time_ratio = 1.0;
-        try {
-            if (UserStringExists("FUNCTIONAL_MAX_TIME_RATIO")) {
-                float new_time_ratio = std::atof(UserString("FUNCTIONAL_MAX_TIME_RATIO").c_str());
+            if (doc["redundant_part_filters"]["max_time_ratio"]) {
+                auto new_time_ratio = doc["redundant_part_filters"]["max_time_ratio"].as<float>(1.0f);
                 if (new_time_ratio > 1.0f)
                     max_time_ratio = new_time_ratio;
             }
-        } catch (...) {}
+        }
+        catch(YAML::Exception& e) {
+            ErrorLogger() << "PartsListBox::CullSuperfluousParts: " << e.what();
+        }
     }
 
     for (auto part_it = this_group.begin();
@@ -1575,7 +1575,7 @@ void PartsListBox::CullSuperfluousParts(std::vector<const ShipPart*>& this_group
             // adjusting the max cost ratio to 1.4 or higher, will allow, for example, for
             // Zortium armor to make Standard armor redundant.  Setting a min_bargain_ratio higher than one can keep
             // trivial bargains from blocking lower valued parts.
-            // TODO: move these values into default/customizations/common_user_customizations.txt  once that is supported
+            // TODO: move these values into default/customizations/common_user_customizations.yml  once that is supported
 
             if ((cap_ratio > 1.0) && ((cost_ratio <= 1.0) || ((bargain_ratio >= min_bargain_ratio) && (cost_ratio <= max_cost_ratio))) &&
                 (time_ratio <= max_time_ratio) && PartALocationSubsumesPartB(checkPart, ref_part))

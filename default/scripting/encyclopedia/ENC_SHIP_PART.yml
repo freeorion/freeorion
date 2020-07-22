@@ -1,0 +1,5 @@
+articles:
+  - name: ENC_SHIP_PART
+    category: ENC_SHIP_PART
+    description: ENC_SHIP_PART_DESC
+    icon: icons/ship_parts/generic_part.png

@@ -12,18 +12,17 @@
 #include "../util/i18n.h"
 #include "../util/OptionsDB.h"
 #include "../util/Version.h"
-#include "../util/XMLDoc.h"
-
-#include <GG/GUI.h>
-#include <GG/StaticGraphic.h>
-#include <GG/Texture.h>
-#include <GG/Layout.h>
-
-#include <boost/filesystem/fstream.hpp>
 
 #include <cstdlib>
 #include <fstream>
 #include <string>
+#include <boost/filesystem/fstream.hpp>
+#include <GG/GUI.h>
+#include <GG/Layout.h>
+#include <GG/StaticGraphic.h>
+#include <GG/Texture.h>
+#include <yaml-cpp/yaml.h>
+
 
 namespace {
     const GG::X MAIN_MENU_WIDTH(200);
@@ -90,15 +89,21 @@ CreditsWnd::CreditsWnd(GG::X x, GG::Y y, GG::X w, GG::Y h, int cx, int cy, int c
     GG::GUI::GetGUI()->WindowResizedSignal.connect(
         boost::bind(&CreditsWnd::OnExit, this));
 
-    XMLDoc doc;
-    boost::filesystem::ifstream ifs(GetResourceDir() / "credits.xml");
-    doc.ReadDoc(ifs);
-    ifs.close();
-
-    if (!doc.root_node.ContainsChild("CREDITS"))
+    YAML::Node doc;
+    try {
+        boost::filesystem::ifstream ifs(GetResourceDir() / "credits.yml");
+        doc = YAML::Load(ifs);
+        ifs.close();
+    }
+    catch(YAML::Exception& e) {
+        ErrorLogger() << "CreditsWnd::CreditsWnd " << e.what();
         return;
+    }
 
-    auto credits_node = doc.root_node.Child("CREDITS");
+    if (!doc["contributors"]) {
+        ErrorLogger() << "CreditsWnd::CreditsWnd contributors key now found in credits, skipping";
+        return;
+    }
 
     std::ostringstream credits;
 
@@ -109,37 +114,41 @@ CreditsWnd::CreditsWnd(GG::X x, GG::Y y, GG::X w, GG::Y h, int cx, int cy, int c
     auto source_format = boost::format(" - <rgba 153 153 153 255>%1%</rgba>");
     auto note_format = boost::format("<rgba 204 204 204 255>(%1%)\n");
 
-    for (const XMLElement& group : credits_node.children) {
-        if (0 == group.Tag().compare("GROUP")) {
-            credits << group_format % group.attributes.at("name");
-            for (const XMLElement& item : group.children) {
-                if (0 == item.Tag().compare("PERSON")) {
-                    if (item.attributes.count("name"))
-                        credits << item.attributes.at("name");
-                    if (item.attributes.count("nick") && item.attributes.at("nick").length() > 0)
-                        credits << nick_format % item.attributes.at("nick");
-                    if (item.attributes.count("task"))
-                        credits << task_format % item.attributes.at("task");
-                }
-
-                if (0 == item.Tag().compare("RESOURCE")) {
-                    credits << resource_format
-                        % item.attributes.at("author")
-                        % item.attributes.at("title")
-                        % UserString("INTRO_CREDITS_LICENSE")
-                        % item.attributes.at("license")
-                        % ((item.attributes.count("source"))
-                            ? boost::str(source_format % item.attributes.at("source"))
-                            : std::string{});
-                    if (item.attributes.count("notes"))
-                        credits << note_format % item.attributes.at("notes");
-                }
-
-                credits << "\n";
-            }
-
-            credits << "\n\n";
+    for (const auto& group_node: doc["contributors"]) {
+        if (!group_node["group"]) {
+            ErrorLogger() << "CreditsWnd::CreditsWnd contributors.%1% has no group name set, skipping.";
+            continue;
         }
+
+        credits << group_format % group_node["group"].as<std::string>();
+        for (const auto& contributor_node : group_node["members"]) {
+            if (contributor_node["name"])
+                credits << contributor_node["name"].as<std::string>();
+            if (contributor_node["nick"])
+                credits << nick_format % contributor_node["nick"].as<std::string>());
+            if (contributor_node["tasks"])
+                credits << task_format % contributor_node["tasks"]);
+        }
+
+        credits << "\n";
+    }
+
+    if (doc["resources"])
+        credits << "External Resources\n\n";
+
+    for (const auto& resource_node: doc["resources"]) {
+        credits << resource_format
+            % resource_node["author"].as<std::string>()
+            % resource_node["title"].as<std::string>()
+            % UserString("INTRO_CREDITS_LICENSE")
+            % resource_node["license"].as<std::string>()
+            % ((resource_node["source"])
+                ? boost::str(source_format % resource_node["source"].as<std::string>())
+                : std::string{}));
+        if (resource_node["notes"])
+            credits << note_format % resource_node["notes"].as<std::string>());
+
+        credits << "\n";
     }
 
     m_credits = credits.str();

@@ -1,0 +1,19 @@
+includes:
+  - /scripting/common/upkeep.yml
+ship_parts:
+  - name: FU_ZERO_FUEL
+    description: FU_ZERO_FUEL_DESC
+    exclusions: [SH_COLONY_BASE]
+    class: Fuel
+    capacity: 0
+    no_default_capacity_effect: True
+    slot_types: [Core]
+    buildcost: !pp |
+      40 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildtime: 5
+    tags: [PEDIA_PC_FUEL]
+    location: OwnedBy empire = Source.Owner
+    effectsgroups:
+      - scope: Source
+        effects: SetFuel value = Target.MaxFuel
+    icon: icons/ship_parts/zero-point-generator.png

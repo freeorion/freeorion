@@ -1,0 +1,15 @@
+includes:
+  - /scripting/common/upkeep.yml
+ship_parts:
+  - name: DT_DETECTOR_1
+    description: DT_DETECTOR_1_DESC
+    exclusions: [DT_DETECTOR_1, DT_DETECTOR_2, DT_DETECTOR_3, DT_DETECTOR_4]
+    class: Detection
+    capacity: 25
+    slot_types: [External]
+    buildcost: !pp |
+      2 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildtime: 2
+    tags: [PEDIA_PC_DETECTION]
+    location: OwnedBy empire = Source.Owner
+    icon: icons/ship_parts/detector-1.png

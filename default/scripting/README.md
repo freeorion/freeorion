@@ -52,18 +52,13 @@ loaded from here unless included elsewhere.
 * species/  -  All in-game species definitions.  **The *SP_HUMAN* definition
 is required.**
 * techs/  -  All in-game technology definitions and categories.
-* monster_fleets.inf  -  Fleet definitions for space monsters
+* monster_fleets.yml  -  Fleet definitions for space monsters
 (spawn rate/quantity/limitations).  **This file and at least one entry are
 required.**
-* starting_unlocks/  -  Contains lists of items that are unlocked for each
-player at the start of the game.
-* starting_unlocks/items.inf  -  Items each player starts the game with:
-completed techs and available buildings, ship hulls, and ship parts.  **This
-file and at least one entry are required.**
-* starting_unlocks/buildings.inf  -  Buildings each player starts with
-pre-built.  **This file and at least one entry are required.**
-* starting_unlocks/fleets.inf  -  Fleets each player starts with.  **This file
-and at least one entry are required.**
+* starting_unlocks.yml  -  Contains lists of items that are unlocked for each
+player at the start of the game.  Items each player starts the game with:
+completed techs and available building types, ship hulls, ship parts,
+buildings, and fleets.  **This file is required.**
 
 
 ## filename guidelines

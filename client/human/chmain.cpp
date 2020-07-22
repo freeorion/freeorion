@@ -191,7 +191,7 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
         // application bundle.  This may happen if a previous installed
         // version of FreeOrion was residing in a different directory.
         if (!boost::filesystem::exists(GetResourceDir()) ||
-            !boost::filesystem::exists(GetResourceDir() / "credits.xml") ||
+            !boost::filesystem::exists(GetResourceDir() / "credits.yml") ||
             !boost::filesystem::exists(GetResourceDir() / "data" / "art" / "misc" / "missing.png"))
         {
             DebugLogger() << "Resources directory from config.xml missing or does not contain expected files. Resetting to default.";
@@ -200,7 +200,7 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
 
             // double-check that resetting actually fixed things...
             if (!boost::filesystem::exists(GetResourceDir()) ||
-                !boost::filesystem::exists(GetResourceDir() / "credits.xml") ||
+                !boost::filesystem::exists(GetResourceDir() / "credits.yml") ||
                 !boost::filesystem::exists(GetResourceDir() / "data" / "art" / "misc" / "missing.png"))
             {
                 DebugLogger() << "Default Resources directory missing or does not contain expected files. Cannot start game.";

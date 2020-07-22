@@ -240,6 +240,7 @@ find_package(Boost ${MINIMUM_BOOST_VERSION}
 find_package(Boost COMPONENTS python${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR} REQUIRED)
 set(Boost_PYTHON_SUFFIX "${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}")
 
+find_package(yaml-cpp REQUIRED)
 find_package(ZLIB REQUIRED)
 if(NOT BUILD_HEADLESS)
     set(SDL_NO_MAIN true)
@@ -357,6 +358,7 @@ target_compile_definitions(freeorioncommon
 target_link_libraries(freeorioncommon
     PUBLIC
         GiGi::header
+        yaml-cpp
         Boost::boost
         Boost::disable_autolinking
         Boost::dynamic_linking

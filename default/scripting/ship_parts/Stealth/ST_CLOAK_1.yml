@@ -1,0 +1,19 @@
+includes:
+  - /scripting/common/upkeep.yml
+ship_parts:
+  - name: ST_CLOAK_1
+    description: ST_CLOAK_1_DESC
+    exclusions:
+      - ST_CLOAK_1
+      - ST_CLOAK_2
+      - ST_CLOAK_3
+      - ST_CLOAK_4
+    class: Stealth
+    capacity: 20
+    slot_types: [Internal]
+    buildcost: !pp |
+      2 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildtime: 3
+    tags: [PEDIA_PC_STEALTH]
+    location: OwnedBy empire = Source.Owner
+    icon: icons/ship_parts/cloak-1.png

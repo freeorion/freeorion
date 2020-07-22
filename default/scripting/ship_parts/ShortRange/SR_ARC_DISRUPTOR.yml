@@ -1,0 +1,24 @@
+includes:
+  - /scripting/common/upkeep.yml
+  - /scripting/ship_parts/targeting.yml
+  - shortrange.yml
+ship_parts:
+  - name: SR_ARC_DISRUPTOR
+    description: SR_ARC_DISRUPTOR_DESC
+    class: ShortRange
+    damage: 2
+    shots: 3
+    no_default_capacity_effect: True
+    slot_types: [External]
+    buildcost: !pp |
+      40 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildtime: 1
+    tags: [PEDIA_PC_DIRECT_WEAPON]
+    location: OwnedBy empire = Source.Owner
+    effectsgroups:
+      - scope: Source
+        activation: !pp '[[WEAPON_BASE_DEFAULT_ACTIVATION(SR_ARC_DISTRUPTOR)]]'
+        stackinggroup: WEAPON_BASE_DEFAULT_EFFECTS_SR_ARC_DISTRUPTOR
+        accountinglabel: SR_ARC_DISTRUPTOR
+        effects: !pp '[[WEAPON_BASE_DEFAULT_EFFECTS(SR_ARC_DISTRUPTOR)]]'
+    icon: icons/ship_parts/pulse-laser.png

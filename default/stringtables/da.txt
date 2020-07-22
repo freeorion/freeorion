@@ -1,11 +1,6 @@
 Danish
 
 # This is the Danish String Table file for FreeOrion
-#
-# Notes: to avoid potential conflict with functional keys in other files, do not
-# make any stringtable keys beginning with "FUNCTIONAL_".
-# New Sitreps priorities should be added to
-# `default/customizations/common_user_customizations.txt`.
 
 # semi-randomly collected characters to force font code page loading
 # 肛門オーガズム
@@ -553,6 +548,3 @@ Teknologien %tech% er blevet opfundet.
 ##
 ## Name lists
 ##
-
-#include "../content_specific_parameters.txt"
-#include "../customizations/common_user_customizations.txt"

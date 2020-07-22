@@ -7,12 +7,14 @@
 #   define FO_PARSE_API
 #endif
 
-#include <boost/filesystem/path.hpp>
-#include <boost/uuid/uuid.hpp>
-
 #include <map>
 #include <set>
 #include <vector>
+#include <boost/filesystem/path.hpp>
+#include <boost/uuid/uuid.hpp>
+#include <GG/Clr.h>
+#include <yaml-cpp/yaml.h>
+
 
 class BuildingType;
 class FieldType;
@@ -79,10 +81,21 @@ namespace parse {
     FO_PARSE_API void process_include_substitutions(std::string& text,
                                                     const boost::filesystem::path& file_search_path,
                                                     std::set<boost::filesystem::path>& files_included);
+    FO_PARSE_API void macro_substitution(std::string& text, std::map<std::string, std::string> macros = {});
 
     FO_PARSE_API bool int_free_variable(std::string& text);
     FO_PARSE_API bool double_free_variable(std::string& text);
     FO_PARSE_API bool string_free_variable(std::string& text);
 }
+
+
+namespace YAML {
+    template <>
+    struct FO_PARSE_API convert<GG::Clr> {
+        static bool decode(const Node& node, GG::Clr& rhs);
+    };
+
+}
+
 
 #endif

@@ -1,0 +1,25 @@
+includes:
+  - /scripting/common/upkeep.yml
+ship_parts:
+  - name: SH_MULTISPEC
+    description: SH_MULTISPEC_DESC
+    exclusions:
+      - SH_BLACK
+      - SH_DEFENSE_GRID
+      - SH_DEFLECTOR
+      - SH_MULTISPEC
+      - SH_PLASMA
+    class: Shield
+    capacity: 10
+    slot_types: [Internal]
+    buildcost: !pp |
+      80 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildtime: 8
+    tags: [PEDIA_PC_SHIELD]
+    location: OwnedBy empire = Source.Owner
+    effectsgroups:
+      - scope: Source
+        activation: Star type = [Red Orange Yellow White Blue]
+        stackinggroup: STEALTH_SOLAR_STACK
+        effects: SetStealth value = Value + 60
+    icon: icons/ship_parts/multi-spectral.png

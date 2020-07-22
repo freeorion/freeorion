@@ -1,0 +1,96 @@
+# These are settings & lists which the UI uses to adapt itself to current
+# content, and to your preferences.
+
+# DesignWnd Redundant Part Filtering
+# Default settings will deem a first part redundant to a second only if the
+# second is all of (i) more powerful, # (ii) no more expensive, (iii) takes
+# no longer to build, and (iv) has no Location restrictions not also required.
+#
+# Adjusting the maximum cost ratio (max_cost_ratio) above 1.0 allows the
+# filtering to consider a superior part which might cost a bit more, but whose
+# capacity to ost ratio is at least equal to the minimum bargain ratio
+# (min_bargain_ratio).
+#  Then
+## also increasing the Max Time Ratio to 1.4 or higher would cause N-Dimensional Engines to suppress Improved Engine Couplings.
+## Both settings have a minimum value of 1.0
+redundant_part_filters:
+  max_cost_ratio: 1.0
+  min_bargain_ratio: 1.0
+  max_time_ratio: 1.0
+# sitrep_priority_order prioritizes these sitreps to be presented in the
+# SitrepPanel.  Sitreps not specified below will appear in the SitrepPanel
+# following those below.  Sitreps should be placed with similar existing Sitreps
+# as appropriate.
+sitrep_priority_order:
+  - SITREP_WELCOME_LABEL
+  - SITREP_VICTORY_LABEL
+  - CUSTOM_1
+  - CUSTOM_2
+  - CUSTOM_3
+  - CUSTOM_4
+  - "[[CUSTOM_1]]"
+  - "[[CUSTOM_2]]"
+  - "[[CUSTOM_3]]"
+  - "[[CUSTOM_4]]"
+  - BEGINNER_HINTS
+  - SITREP_EMPIRE_ELIMINATED_LABEL
+  - HEAD_ON_A_SPIKE_MESSAGE_LABEL
+  - EFFECT_EXPERIMENT_MONSTERS_LAUNCH_LABEL
+  - EFFECT_ANCIENT_SHIP_LABEL
+  - EFFECT_ANCIENT_SHIP_RUMORS_LABEL
+  - EFFECT_ANCIENT_BUILDING_LABEL
+  - EFFECT_ANCIENT_BUILDING_RUMORS_LABEL
+  - EFFECT_ANCIENT_TECH_LABEL
+  - EFFECT_ANCIENT_TECH_RUMORS_LABEL
+  - EFFECT_ANCIENT_RUINS_EMPTY_LABEL
+  - EFFECT_ANCIENT_EXTINCT_SPECIES_LABEL
+  - EFFECT_ANCIENT_EXTINCT_SPECIES_RUMORS_LABEL
+  - SITREP_TECH_RESEARCHED_LABEL
+  - SITREP_TECH_UNLOCKED_LABEL
+  - SITREP_SHIP_PART_UNLOCKED_LABEL
+  - SITREP_SHIP_HULL_UNLOCKED_LABEL
+  - SITREP_BUILDING_TYPE_UNLOCKED_LABEL
+  - SITREP_GROUND_BATTLE_LABEL
+  - SITREP_GROUND_BATTLE_ENEMY_LABEL
+  - SITREP_PLANET_CAPTURED_LABEL
+  - EFFECT_ANCIENT_GUARDIANS_CAPTURED_LABEL
+  - SITREP_PLANET_DEPOPULATED_LABEL
+  - SITREP_PLANET_COLONIZED_LABEL
+  - SITREP_PLANET_OUTPOSTED_LABEL
+  - SITREP_NEW_COLONY_ESTABLISHED_LABEL
+  - SITREP_POP_THRESHOLD_LABEL
+  - EFFECT_STARLANE_BORE_LABEL
+  - EFFECT_CONC_CAMP_COMLETE_LABEL
+  - EFFECT_GAIAN_TERRAFORM_LABEL
+  - EFFECT_TERRAFORM_LABEL
+  - EFFECT_BLACKHOLE_LABEL
+  - EFFECT_GAIA_LABEL
+  - EFFECT_TREE_LABEL
+  - EFFECT_DAMP_CLOUD_LABEL
+  - EFFECT_NEBULA_LABEL
+  - EFFECT_ART_PLANET_LABEL
+  - EFFECT_TAME_MONSTER_HATCHED_LABEL
+  - EFFECT_TAME_MONSTER_MATURED_LABEL
+  - EFFECT_NEST_REMOVAL_LABEL
+  - SITREP_BUILDING_BUILT_LABEL
+  - SITREP_SHIP_BUILT_LABEL
+  - SITREP_SHIP_BATCH_BUILT_LABEL
+  - EFFECT_EVACUEES_LABEL
+  - EFFECT_PSY_DOM_LABEL
+  - EFFECT_STARGATE_LABEL
+  - EFFECT_SHIP_REFUELED_LABEL
+  - EFFECT_PLANET_DRIVE_LABEL
+  - SITREP_PLANET_DRIVE_FAILURE_LABEL
+  - SITREP_OWN_FLEET_ARRIVED_AT_DESTINATION_LABEL
+  - SITREP_OWN_SHIP_ARRIVED_AT_DESTINATION_LABEL
+  - SITREP_FOREIGN_FLEET_ARRIVED_AT_DESTINATION_LABEL
+  - SITREP_FOREIGN_SHIP_ARRIVED_AT_DESTINATION_LABEL
+  - SITREP_MONSTER_FLEET_ARRIVED_AT_DESTINATION_LABEL
+  - SITREP_MONSTER_SHIP_ARRIVED_AT_DESTINATION_LABEL
+  - SITREP_FLEET_ARRIVED_AT_DESTINATION_LABEL
+  - SITREP_PLANET_BOMBARDED_AT_SYSTEM_LABEL
+  - SITREP_UNOWNED_PLANET_BOMBARDED_AT_SYSTEM_LABEL
+  - SITREP_SHIP_REPAIR_DOCK_NOPOP
+  - SITREP_SHIP_REPAIR_DOCK_NONE
+  - SITREP_SHIP_REPAIR_DOCK_PARTIAL
+  - SITREP_SHIP_REPAIR_DOCK_COMPLETE
