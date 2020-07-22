@@ -2837,13 +2837,11 @@ std::shared_ptr<BasesListBox::Row> AllDesignsListBox::ChildrenDraggedAwayCore(co
     return row;
 }
 
-
 void EmptyHullsListBox::EnableOrderIssuing(bool enable/* = true*/)
 { QueueListBox::EnableOrderIssuing(enable); }
 
 void MonstersListBox::EnableOrderIssuing(bool)
 { QueueListBox::EnableOrderIssuing(false); }
-
 
 void EmptyHullsListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt,
                                           const GG::Flags<GG::ModKey>& modkeys)
@@ -2895,7 +2893,6 @@ void AllDesignsListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt
 
     DesignSelectedSignal(cd_row->DesignID());
 }
-
 
 void EmptyHullsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt,
                                         const GG::Flags<GG::ModKey>& modkeys)
@@ -2986,7 +2983,6 @@ void AllDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& 
 
     DesignClickedSignal(design);
 }
-
 
 void EmptyHullsListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt,
                                          const GG::Flags<GG::ModKey>& modkeys)
@@ -3193,9 +3189,7 @@ void SavedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::P
                                    toggle_add_all_saved_game_start_action));
 
     popup->Run();
-
 }
-
 
 void EmptyHullsListBox::QueueItemMoved(const GG::ListBox::iterator& row_it,
                                        const GG::ListBox::iterator& original_position_it)
