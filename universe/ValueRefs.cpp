@@ -1,5 +1,6 @@
 #include "ValueRefs.h"
 
+#include <algorithm>
 #include <functional>
 #include <iomanip>
 #include <iterator>
@@ -1240,105 +1241,6 @@ std::string Variable<std::string>::Eval(const ScriptingContext& context) const
 ///////////////////////////////////////////////////////////
 // Statistic                                             //
 ///////////////////////////////////////////////////////////
-template <>
-double Statistic<double, double>::Eval(const ScriptingContext& context) const
-{
-    Condition::ObjectSet condition_matches;
-    GetConditionMatches(context, condition_matches, m_sampling_condition.get());
-
-    // these two statistic types don't depend on the object property values,
-    // so can be evaluated without getting those values.
-    if (m_stat_type == COUNT)
-        return static_cast<double>(condition_matches.size());
-    if (m_stat_type == IF)
-        return condition_matches.empty() ? 0.0 : 1.0;
-
-    // evaluate property for each condition-matched object
-    std::map<std::shared_ptr<const UniverseObject>, double> object_property_values;
-    GetObjectPropertyValues(context, condition_matches, object_property_values);
-
-    return ReduceData(object_property_values);
-}
-
-template <>
-double Statistic<double, std::string>::Eval(const ScriptingContext& context) const
-{
-    Condition::ObjectSet condition_matches;
-    GetConditionMatches(context, condition_matches, m_sampling_condition.get());
-
-    // these two statistic types don't depend on the object property values,
-    // so can be evaluated without getting those values.
-    if (m_stat_type == COUNT)
-        return static_cast<double>(condition_matches.size());
-    if (m_stat_type == IF)
-        return condition_matches.empty() ? 0.0 : 1.0;
-
-    if (m_stat_type != UNIQUE_COUNT) {
-        ErrorLogger() << "Statistic<int, std::string>::Eval has invalid statistic type: "
-                      << m_stat_type;
-        return 0.0;
-    }
-
-    // evaluate property for each condition-matched object
-    std::map<std::shared_ptr<const UniverseObject>, std::string> object_property_values;
-    GetObjectPropertyValues(context, condition_matches, object_property_values);
-
-    std::set<std::string> observed_values;
-    for (const auto& entry : object_property_values)
-        observed_values.insert(entry.second);
-
-    return static_cast<double>(observed_values.size());
-}
-
-template <>
-int Statistic<int, int>::Eval(const ScriptingContext& context) const
-{
-    Condition::ObjectSet condition_matches;
-    GetConditionMatches(context, condition_matches, m_sampling_condition.get());
-
-    // these two statistic types don't depend on the object property values,
-    // so can be evaluated without getting those values.
-    if (m_stat_type == COUNT)
-        return static_cast<int>(condition_matches.size());
-    if (m_stat_type == IF)
-        return condition_matches.empty() ? 0 : 1;
-
-    // evaluate property for each condition-matched object
-    std::map<std::shared_ptr<const UniverseObject>, int> object_property_values;
-    GetObjectPropertyValues(context, condition_matches, object_property_values);
-
-    return ReduceData(object_property_values);
-}
-
-template <>
-int Statistic<int, std::string>::Eval(const ScriptingContext& context) const
-{
-    Condition::ObjectSet condition_matches;
-    GetConditionMatches(context, condition_matches, m_sampling_condition.get());
-
-    // these two statistic types don't depend on the object property values,
-    // so can be evaluated without getting those values.
-    if (m_stat_type == COUNT)
-        return static_cast<int>(condition_matches.size());
-    if (m_stat_type == IF)
-        return condition_matches.empty() ? 0 : 1;
-
-    if (m_stat_type != UNIQUE_COUNT) {
-        ErrorLogger() << "Statistic<int, std::string>::Eval has invalid statistic type: "
-                      << m_stat_type;
-        return 0;
-    }
-
-    // evaluate property for each condition-matched object
-    std::map<std::shared_ptr<const UniverseObject>, std::string> object_property_values;
-    GetObjectPropertyValues(context, condition_matches, object_property_values);
-
-    std::set<std::string> observed_values;
-    for (const auto& entry : object_property_values)
-        observed_values.insert(entry.second);
-
-    return static_cast<int>(observed_values.size());
-}
 
 template <>
 std::string Statistic<std::string, std::string>::Eval(const ScriptingContext& context) const
@@ -1347,7 +1249,7 @@ std::string Statistic<std::string, std::string>::Eval(const ScriptingContext& co
     GetConditionMatches(context, condition_matches, m_sampling_condition.get());
 
     if (condition_matches.empty())
-        return "";
+        return "";  // empty string
 
     // special case for IF statistic... return a non-empty string for true
     if (m_stat_type == IF)
@@ -1367,29 +1269,15 @@ std::string Statistic<std::string, std::string>::Eval(const ScriptingContext& co
     std::map<std::shared_ptr<const UniverseObject>, std::string> object_property_values;
     GetObjectPropertyValues(context, condition_matches, object_property_values);
 
-    // count number of each result, tracking which has the most occurances
-    std::map<std::string, unsigned int> histogram;
-    auto most_common_property_value_it = histogram.begin();
-    unsigned int max_seen(0);
+    // value that appears the most often
+    std::map<std::string, unsigned int> observed_values;
+    for (auto& entry : object_property_values)
+        observed_values[std::move(entry.second)]++;
 
-    for (const auto& entry : object_property_values) {
-        const std::string& property_value = entry.second;
+    auto max = std::max_element(observed_values.begin(), observed_values.end(),
+                                [](auto p1, auto p2) { return p1.second < p2.second; });
 
-        auto hist_it = histogram.find(property_value);
-        if (hist_it == histogram.end())
-            hist_it = histogram.insert({property_value, 0}).first;
-        unsigned int& num_seen = hist_it->second;
-
-        num_seen++;
-
-        if (num_seen > max_seen) {
-            most_common_property_value_it = hist_it;
-            max_seen = num_seen;
-        }
-    }
-
-    // return result (property value) that occured most frequently
-    return most_common_property_value_it->first;
+    return max->first;
 }
 
 ///////////////////////////////////////////////////////////

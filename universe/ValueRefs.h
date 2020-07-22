@@ -144,12 +144,9 @@ protected:
                              Condition::Condition* condition) const;
 
     /** Evaluates the property for the specified objects. */
-    void  GetObjectPropertyValues(const ScriptingContext& context,
-                                  const Condition::ObjectSet& objects,
-                                  std::map<std::shared_ptr<const UniverseObject>, V>& object_property_values) const;
-
-    /** Computes the statistic from the specified set of property values. */
-    T ReduceData(const std::map<std::shared_ptr<const UniverseObject>, V>& object_property_values) const;
+    void GetObjectPropertyValues(const ScriptingContext& context,
+                                 const Condition::ObjectSet& objects,
+                                 std::map<std::shared_ptr<const UniverseObject>, V>& object_property_values) const;
 
 private:
     StatisticType                         m_stat_type;
@@ -764,19 +761,22 @@ std::string Statistic<T, V>::Dump(unsigned short ntabs) const
     std::string retval = "Statistic ";
 
     switch (m_stat_type) {
-        case COUNT:              retval += "Count";         break;
-        case UNIQUE_COUNT:       retval += "CountUnique";   break;
-        case IF:                 retval += "If";            break;
-        case SUM:                retval += "Sum";           break;
-        case MEAN:               retval += "Mean";          break;
-        case RMS:                retval += "RMS";           break;
-        case MODE:               retval += "Mode";          break;
-        case MAX:                retval += "Max";           break;
-        case MIN:                retval += "Min";           break;
-        case SPREAD:             retval += "Spread";        break;
-        case STDEV:              retval += "StDev";         break;
-        case PRODUCT:            retval += "Product";       break;
-        default:                 retval += "???";           break;
+        case IF:                 retval += "If";                break;
+        case COUNT:              retval += "Count";             break;
+        case UNIQUE_COUNT:       retval += "CountUnique";       break;
+        case HISTO_MAX:          retval += "HistogramMax";      break;
+        case HISTO_MIN:          retval += "HistogramMin";      break;
+        case HISTO_SPREAD:       retval += "HistogramSpread";   break;
+        case SUM:                retval += "Sum";               break;
+        case MEAN:               retval += "Mean";              break;
+        case RMS:                retval += "RMS";               break;
+        case MODE:               retval += "Mode";              break;
+        case MAX:                retval += "Max";               break;
+        case MIN:                retval += "Min";               break;
+        case SPREAD:             retval += "Spread";            break;
+        case STDEV:              retval += "StDev";             break;
+        case PRODUCT:            retval += "Product";           break;
+        default:                 retval += "???";               break;
     }
     if (m_value_ref)
         retval += " value = " + m_value_ref->Dump();
@@ -794,112 +794,81 @@ void Statistic<T, V>::SetTopLevelContent(const std::string& content_name)
         m_value_ref->SetTopLevelContent(content_name);
 }
 
-template <typename T, typename V>
-T Statistic<T, V>::Eval(const ScriptingContext& context) const
-{
-    Condition::ObjectSet condition_matches;
-    GetConditionMatches(context, condition_matches, m_sampling_condition.get());
-
-    // special case for IF statistic... return a T(1) for true.
-    if (m_stat_type == IF) {
-        if (condition_matches.empty())
-            return T(0);
-        else
-            return T(1);
-    }
-
-    // todo: consider allowing MAX and MIN using string sorting?
-
-    // the only other statistic that can be computed on non-number property
-    // types and that is itself of a non-number type is the most common value
-    if (m_stat_type != MODE) {
-        ErrorLogger() << "Statistic<std::string>::Eval has invalid statistic type: "
-                      << m_stat_type;
-        return T(-1);
-    }
-
-    // evaluate property for each condition-matched object
-    std::map<std::shared_ptr<const UniverseObject>, V> object_property_values;
-    GetObjectPropertyValues(context, condition_matches, object_property_values);
-
-    // count number of each result, tracking which has the most occurances
-    std::map<V, unsigned int> histogram;
-    auto most_common_property_value_it = histogram.begin();
-    unsigned int max_seen(0);
-
-    for (const auto& entry : object_property_values) {
-        auto property_value = entry.second;
-
-        auto hist_it = histogram.find(property_value);
-        if (hist_it == histogram.end())
-            hist_it = histogram.emplace(property_value, 0).first;
-        unsigned int& num_seen = hist_it->second;
-
-        num_seen++;
-
-        if (num_seen > max_seen) {
-            most_common_property_value_it = hist_it;
-            max_seen = num_seen;
-        }
-    }
-
-    // return result (property value) that occured most frequently
-    return most_common_property_value_it->first;
-}
-
-template <typename T, typename V>
-unsigned int Statistic<T, V>::GetCheckSum() const
-{
-    unsigned int retval{0};
-
-    CheckSums::CheckSumCombine(retval, "ValueRef::Statistic");
-    CheckSums::CheckSumCombine(retval, m_stat_type);
-    CheckSums::CheckSumCombine(retval, m_sampling_condition);
-    CheckSums::CheckSumCombine(retval, m_value_ref);
-    TraceLogger() << "GetCheckSum(Statisic<T>): " << typeid(*this).name() << " retval: " << retval;
-    return retval;
-}
-
-template <>
-FO_COMMON_API double Statistic<double, double>::Eval(const ScriptingContext& context) const;
-
-template <>
-FO_COMMON_API double Statistic<double, std::string>::Eval(const ScriptingContext& context) const;
-
-template <>
-FO_COMMON_API int Statistic<int, int>::Eval(const ScriptingContext& context) const;
-
-template <>
-FO_COMMON_API int Statistic<int, std::string>::Eval(const ScriptingContext& context) const;
-
-template <>
-FO_COMMON_API std::string Statistic<std::string, std::string>::Eval(const ScriptingContext& context) const;
-
-template <typename T, typename V>
-T Statistic<T, V>::ReduceData(const std::map<std::shared_ptr<const UniverseObject>, V>& object_property_values) const
+template <
+    typename T,
+    typename V,
+    typename std::enable_if<std::is_arithmetic<T>::value && std::is_arithmetic<V>::value>::type* = nullptr
+>
+T ReduceData(StatisticType stat_type, std::map<std::shared_ptr<const UniverseObject>, V> object_property_values)
 {
     if (object_property_values.empty())
         return T(0);
 
-    switch (m_stat_type) {
-        case COUNT: {
-            return T(object_property_values.size());
-            break;
-        }
-        case UNIQUE_COUNT: {
-            std::set<T> observed_values;
-            for (const auto& entry : object_property_values) {
-                observed_values.insert(entry.second);
-            }
-            return T(observed_values.size());
-            break;
-        }
+    // should be able to convert between V and T types, so can do a bunch of
+    // numerical statistics or histogram statistics
+
+    switch (stat_type) {
         case IF: {
-            if (object_property_values.empty())
-                return T(0);
+            // 1 if any objects have property values, else 0 above
             return T(1);
             break;
         }
+
+        case COUNT: {
+            // how many objects / values
+            return T(object_property_values.size());
+            break;
+        }
+
+        case UNIQUE_COUNT: {
+            // how many unique values appear
+            std::set<V> observed_values;
+            for (const auto& entry : object_property_values)
+                observed_values.emplace(entry.second);
+
+            return T(observed_values.size());
+            break;
+        }
+
+        case HISTO_MAX: {
+            // number of times the most common value appears
+            std::map<V, unsigned int> observed_values;
+            for (const auto& entry : object_property_values)
+                observed_values[entry.second]++;
+
+            auto max = std::max_element(observed_values.begin(), observed_values.end(),
+                                        [](auto p1, auto p2) { return p1.second < p2.second; });
+
+            return T(max->second);
+            break;
+        }
+
+        case HISTO_MIN: {
+            // number of times the least common value appears
+            std::map<V, unsigned int> observed_values;
+            for (const auto& entry : object_property_values)
+                observed_values[entry.second]++;
+
+            auto min = std::min_element(observed_values.begin(), observed_values.end(),
+                                        [](auto p1, auto p2) { return p1.second < p2.second; });
+
+            return T(min->second);
+            break;
+        }
+
+        case HISTO_SPREAD: {
+            // positive difference between the number of times the most and least common values appear
+            std::map<V, unsigned int> observed_values;
+            for (auto& entry : object_property_values)
+                observed_values[std::move(entry.second)]++;
+
+            auto minmax = std::minmax_element(observed_values.begin(), observed_values.end(),
+                                              [](auto p1, auto p2) { return p1.second < p2.second; });
+
+            return T(minmax.second->second - minmax.first->second);
+            break;
+        }
+
         case SUM: {
             V accumulator(0);
             for (const auto& entry : object_property_values)
@@ -929,80 +898,39 @@ T Statistic<T, V>::ReduceData(const std::map<std::shared_ptr<const UniverseObjec
         }
 
         case MODE: {
-            // count number of each result, tracking which has the most occurances
-            std::map<V, unsigned int> histogram;
-            auto most_common_property_value_it = histogram.begin();
-            unsigned int max_seen(0);
+            // value that appears the most often
+            std::map<V, unsigned int> observed_values;
+            for (auto& entry : object_property_values)
+                observed_values[std::move(entry.second)]++;
 
-            for (const auto& entry : object_property_values) {
-                auto property_value = entry.second;
+            auto max = std::max_element(observed_values.begin(), observed_values.end(),
+                                        [](auto p1, auto p2) { return p1.second < p2.second; });
 
-                auto hist_it = histogram.find(property_value);
-                if (hist_it == histogram.end())
-                    hist_it = histogram.emplace(property_value, 0).first;
-                unsigned int& num_seen = hist_it->second;
-
-                num_seen++;
-
-                if (num_seen > max_seen) {
-                    most_common_property_value_it = hist_it;
-                    max_seen = num_seen;
-                }
-            }
-
-            // return result (property value) that occured most frequently
-            return static_cast<T>(most_common_property_value_it->first);
+            return T(max->first);
             break;
         }
 
         case MAX: {
-            auto max_it = object_property_values.begin();
+            auto max = std::max_element(object_property_values.begin(), object_property_values.end(),
+                                        [](auto p1, auto p2) { return p1.second < p1.second; });
 
-            for (auto it = object_property_values.begin();
-                 it != object_property_values.end(); ++it)
-            {
-                auto property_value = it->second;
-                if (property_value > max_it->second)
-                    max_it = it;
-            }
-
-            // return maximal observed propery value
-            return static_cast<T>(max_it->second);
+            return static_cast<T>(max->second);
             break;
         }
 
         case MIN: {
-            auto min_it = object_property_values.begin();
+            auto min = std::min_element(object_property_values.begin(), object_property_values.end(),
+                                        [](auto p1, auto p2) { return p1.second < p1.second; });
 
-            for (auto it = object_property_values.begin();
-                 it != object_property_values.end(); ++it)
-            {
-                auto property_value = it->second;
-                if (property_value < min_it->second)
-                    min_it = it;
-            }
-
-            // return minimal observed propery value
-            return static_cast<T>(min_it->second);
+            return static_cast<T>(min->second);
             break;
         }
 
         case SPREAD: {
-            auto max_it = object_property_values.begin();
-            auto min_it = object_property_values.begin();
+            auto minmax = std::minmax_element(object_property_values.begin(), object_property_values.end(),
+                                              [](auto p1, auto p2) { return p1.second < p2.second; });
 
-            for (auto it = object_property_values.begin();
-                 it != object_property_values.end(); ++it)
-            {
-                auto property_value = it->second;
-                if (property_value > max_it->second)
-                    max_it = it;
-                if (property_value < min_it->second)
-                    min_it = it;
-            }
-
-            // return difference between maximal and minimal observed propery values
-            return static_cast<T>(max_it->second - min_it->second);
+            return static_cast<T>(minmax.second->second - minmax.first->second);
             break;
         }
 
@@ -1037,11 +965,177 @@ T Statistic<T, V>::ReduceData(const std::map<std::shared_ptr<const UniverseObjec
         }
 
         default:
-            throw std::runtime_error("ValueRef evaluated with an unknown or invalid StatisticType.");
+            throw std::runtime_error("ReduceData evaluated with an unknown or invalid StatisticType.");
             break;
     }
 }
 
+template <
+    typename T,
+    typename V,
+    typename std::enable_if<std::is_enum<T>::value, T>::type* = nullptr,
+    typename std::enable_if<std::is_same<T, V>::value>::type* = nullptr
+>
+T ReduceData(StatisticType stat_type, std::map<std::shared_ptr<const UniverseObject>, T> object_property_values)
+{
+    if (object_property_values.empty())
+        return T(0);
+
+    // enum types T and V are the return value type and the property value type
+    // so can calculate the most common value and return it
+
+    switch (stat_type) {
+        case IF: {
+            // 1 if any objects have property values, else 0
+            if (object_property_values.empty())
+                return T(0);
+            return T(1);
+            break;
+        }
+
+        case MODE: {
+            // value that appears the most often
+            std::map<T, unsigned int> observed_values;
+            for (auto& entry : object_property_values)
+                observed_values[std::move(entry.second)]++;
+
+            auto max = std::max_element(observed_values.begin(), observed_values.end(),
+                                        [](auto p1, auto p2) { return p1.second < p2.second; });
+
+            return max->first;
+            break;
+        }
+
+        default:
+            throw std::runtime_error("ReduceData evaluated with an unknown or invalid StatisticType.");
+            break;
+    }
+}
+
+template <
+    typename T,
+    typename V,
+    typename std::enable_if<std::is_arithmetic<T>::value, T>::type* = nullptr,
+    typename std::enable_if<!std::is_arithmetic<V>::value, V>::type* = nullptr>
+T ReduceData(StatisticType stat_type, std::map<std::shared_ptr<const UniverseObject>, V> object_property_values)
+{
+    if (object_property_values.empty())
+        return T(0);
+
+    // return value type T is a number and the object property value type V is
+    // not a numeric type, such as std::string or an enum type, so can calculate
+    // various histogram properties that are not enum type valued.
+
+    switch (stat_type) {
+        case IF: {
+            // 1 if any objects have property values, else 0
+            if (object_property_values.empty())
+                return T(0);
+            return T(1);
+            break;
+        }
+
+        case COUNT: {
+            // how many objects / values
+            return T(object_property_values.size());
+            break;
+        }
+
+        case UNIQUE_COUNT: {
+            // how many unique values appear
+            std::set<V> observed_values;
+            for (const auto& entry : object_property_values)
+                observed_values.emplace(entry.second);
+
+            return T(observed_values.size());
+            break;
+        }
+
+        case HISTO_MAX: {
+            // number of times the most common value appears
+            std::map<V, unsigned int> observed_values;
+            for (const auto& entry : object_property_values)
+                observed_values[entry.second]++;
+
+            auto max = std::max_element(observed_values.begin(), observed_values.end(),
+                                        [](auto p1, auto p2) { return p1.second < p2.second; });
+
+            return T(max->second);
+            break;
+        }
+
+        case HISTO_MIN: {
+            // number of times the least common value appears
+            std::map<V, unsigned int> observed_values;
+            for (const auto& entry : object_property_values)
+                observed_values[entry.second]++;
+
+            auto min = std::min_element(observed_values.begin(), observed_values.end(),
+                                        [](auto p1, auto p2) { return p1.second < p2.second; });
+
+            return T(min->second);
+            break;
+        }
+
+        case HISTO_SPREAD: {
+            // positive difference between the number of times the most and least common values appear
+            std::map<V, unsigned int> observed_values;
+            for (auto& entry : object_property_values)
+                observed_values[std::move(entry.second)]++;
+
+            auto minmax = std::minmax_element(observed_values.begin(), observed_values.end(),
+                                              [](auto p1, auto p2) { return p1.second < p2.second; });
+
+            return T(minmax.second->second - minmax.first->second);
+            break;
+        }
+
+        default:
+            throw std::runtime_error("ReduceData evaluated with an unknown or invalid StatisticType.");
+            break;
+    }
+}
+
+template <typename T, typename V>
+T Statistic<T, V>::Eval(const ScriptingContext& context) const
+{
+    Condition::ObjectSet condition_matches;
+    GetConditionMatches(context, condition_matches, m_sampling_condition.get());
+
+    // these two statistic types don't depend on the object property values,
+    // so can be evaluated without getting those values.
+    if (m_stat_type == COUNT)
+        return static_cast<T>(condition_matches.size());
+    if (m_stat_type == IF)
+        return condition_matches.empty() ? T(0) : T(1);
+
+    // evaluate property for each condition-matched object
+    std::map<std::shared_ptr<const UniverseObject>, V> object_property_values;
+    GetObjectPropertyValues(context, condition_matches, object_property_values);
+
+    return ReduceData<T, V>(m_stat_type, std::move(object_property_values));
+}
+
+template <typename T, typename V>
+unsigned int Statistic<T, V>::GetCheckSum() const
+{
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "ValueRef::Statistic");
+    CheckSums::CheckSumCombine(retval, m_stat_type);
+    CheckSums::CheckSumCombine(retval, m_sampling_condition);
+    CheckSums::CheckSumCombine(retval, m_value_ref);
+    TraceLogger() << "GetCheckSum(Statisic<T>): " << typeid(*this).name() << " retval: " << retval;
+    return retval;
+}
+
+template <>
+FO_COMMON_API std::string Statistic<std::string, std::string>::Eval(const ScriptingContext& context) const;
+
+template struct Statistic<double, double>;
+template struct Statistic<double, std::string>;
+template struct Statistic<int, int>;
+template struct Statistic<int, std::string>;
 
 ///////////////////////////////////////////////////////////
 // ComplexVariable                                       //
@@ -1296,8 +1390,8 @@ template <typename T>
 StaticCast<FromType, ToType>::StaticCast(
     T&& value_ref,
     typename std::enable_if<
-    std::is_convertible<T, std::unique_ptr<ValueRef<FromType>>>::value
-    && !std::is_convertible<T, std::unique_ptr<Variable<FromType>>>::value>::type*) :
+        std::is_convertible<T, std::unique_ptr<ValueRef<FromType>>>::value &&
+        !std::is_convertible<T, std::unique_ptr<Variable<FromType>>>::value>::type*) :
     Variable<ToType>(NON_OBJECT_REFERENCE),
     m_value_ref(std::move(value_ref))
 {
