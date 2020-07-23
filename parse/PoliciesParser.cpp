@@ -32,10 +32,10 @@ namespace {
                    const boost::optional<parse::detail::value_ref_payload<double>>& adoption_cost_,
                    const boost::optional<parse::effects_group_payload>& effects_,
                    const std::string& graphic_) :
-            name(name_),
-            description(description_),
-            short_description(short_description_),
-            category(category_),
+            name(std::move(name_)),
+            description(std::move(description_)),
+            short_description(std::move(short_description_)),
+            category(std::move(category_)),
             adoption_cost(adoption_cost_),
             effects(effects_),
             graphic(graphic_)
@@ -52,15 +52,15 @@ namespace {
 
     void insert_policy(PolicyManager::PoliciesTypeMap& policies, policy_pod policy_, bool& pass) {
         auto policy_ptr = std::make_unique<Policy>(
-            policy_.name,
-            policy_.description,
-            policy_.short_description,
-            policy_.category,
+            std::move(policy_.name),
+            std::move(policy_.description),
+            std::move(policy_.short_description),
+            std::move(policy_.category),
             (policy_.adoption_cost ? policy_.adoption_cost->OpenEnvelope(pass) : nullptr),
             (policy_.effects ? OpenEnvelopes(*policy_.effects, pass) : std::vector<std::unique_ptr<Effect::EffectsGroup>>()),
             policy_.graphic);
 
-        policies.insert(std::make_pair(policy_ptr->Name(), std::move(policy_ptr)));
+        policies.emplace(policy_ptr->Name(), std::move(policy_ptr));
     }
 
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_policy_, insert_policy, 3)
@@ -138,6 +138,8 @@ namespace parse {
     start_rule_payload policies(const boost::filesystem::path& path) {
         const lexer lexer;
         start_rule_payload policies_;
+
+        ScopedTimer timer("Policies Parsing", true);
 
         for (const auto& file : ListDir(path, IsFOCScript))
             detail::parse_file<grammar, start_rule_payload>(lexer, file, policies_);
