@@ -11,6 +11,7 @@ STANDARD_METER_GROWTH
             effects = [
                 SetResearch value = Value + min(max(Value(Target.TargetResearch) - Value, -1), min(1, Value(Target.Happiness) - 4))
                 SetIndustry value = Value + min(max(Value(Target.TargetIndustry) - Value, -1), min(1, Value(Target.Happiness) - 4))
+                SetInfluence value = Value + min(max(Value(Target.TargetInfluence) - Value, -1), min(1, Value(Target.Happiness) - 4))
             ]
 
         // increase or decrease towards target meter of ships
@@ -21,6 +22,7 @@ STANDARD_METER_GROWTH
             effects = [
                 SetResearch value = Value + min(max(Value(Target.TargetResearch) - Value, -1), 1)
                 SetIndustry value = Value + min(max(Value(Target.TargetIndustry) - Value, -1), 1)
+                SetInfluence value = Value + min(max(Value(Target.TargetInfluence) - Value, -1), 1)
             ]
 
         // removes residual production from a dead planet
@@ -38,6 +40,7 @@ STANDARD_METER_GROWTH
                 SetIndustry value = 0
                 SetTargetIndustry value = 0
                 SetTargetResearch value = 0
+                SetTargetInfluence value = 0
             ]
 '''
 
@@ -87,6 +90,16 @@ FOCUS_CHANGE_PENALTY
             ]
             priority = [[FOCUS_CHANGE_PENALTY_PRIORITY]]
             effects = SetResearch value = Value - max(0, min(1 - Target.TurnsSinceFocusChange, Value - Value(Target.TargetResearch)))
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Not Focus type = "FOCUS_INFLUENCE"
+                (0 == LocalCandidate.TurnsSinceFocusChange)
+            ]
+            priority = [[FOCUS_CHANGE_PENALTY_PRIORITY]]
+            effects = SetInfluence value = Value - max(0, min(1 - Target.TurnsSinceFocusChange, Value - Value(Target.TargetInfluence)))
 
 // TODO Delete this whole Stockpile penalty clause if Stockpile is determined to remain as a Max rather than a Target type meter
 // If a decision is made to change Stockpile to a Target type meter, then simply change MaxStockpile below to TargetStockpile
