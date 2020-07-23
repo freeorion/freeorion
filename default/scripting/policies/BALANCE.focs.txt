@@ -1,0 +1,38 @@
+Policy
+    name = "PLC_BALANCE"
+    description = "PLC_BALANCE_DESC"
+    short_description = "PLC_BALANCE_SHORT_DESC"
+    category = "ECONOMIC_CATEGORY"
+    adoptioncost = 1.0*floor(5 + 0.25 * Statistic Sum value = LocalCandidate.Population condition = And [ Planet OwnedBy empire = Source.Owner ])
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                Capital
+                OwnedBy empire = Source.Owner
+            ]
+            priority = [[VERY_LATE_PRIORITY]]
+            effects = [
+                // want bigger bonus for using equal numbers of each focus settings
+                // and for using a greater variety of focus settings
+                // focus used equally -> decrease with HistoSpread
+                // use more different focus -> increase with CountUnique
+                SetTargetInfluence value = (Value + 1) * (1 + 0.5 *
+                    Statistic CountUnique
+                        value = LocalCandidate.Focus
+                        condition = And [ Planet OwnedBy empire = Source.Owner ]
+                    / (1 + Statistic HistogramSpread
+                        value = LocalCandidate.Focus
+                        condition = And [ Planet OwnedBy empire = Source.Owner ]))
+                        
+                SetTargetHappiness value = Value * (1 + 0.1 *
+                    Statistic CountUnique
+                        value = LocalCandidate.Focus
+                        condition = And [ Planet OwnedBy empire = Source.Owner ]
+                    / (1 + Statistic HistogramSpread
+                        value = LocalCandidate.Focus
+                        condition = And [ Planet OwnedBy empire = Source.Owner ]))
+            ]
+    graphic = "icons/policies/centralization.png"
+
+#include "/scripting/common/base_prod.macros"
+#include "/scripting/common/priorities.macros"

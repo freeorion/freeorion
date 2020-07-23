@@ -6070,13 +6070,13 @@ INDUSTRY_FOCUS_TITLE
 Industry Focus
 
 INDUSTRY_FOCUS_TEXT
-Planets focused on Industry will generate more [[metertype METER_INDUSTRY]] will output for their empire, which is used for producing ships and buildings, or may be stockpiled for later use. Industry focus increases output more for higher population planets.
+Planets focused on Industry will generate more [[metertype METER_INDUSTRY]] output for their empire, which is used for producing ships and buildings, or may be stockpiled for later use. Industry focus increases output more for higher population planets.
 
 INFLUENCE_FOCUS_TITLE
 Influence Focus
 
 INFLUENCE_FOCUS_TEXT
-Influence isn't implemented yet.
+Planets focused on Influence will generate more [[metertype METER_INFLUENCE]] for their empire, which is used to adopt government policies.
 
 LOGISTICS_FOCUS_TITLE
 Logistics Focus
@@ -9222,9 +9222,15 @@ invalid focus type
 FOCUS_GROWTH
 Growth
 
+FOCUS_GROWTH_DESC
+Exports growth resources from this planet
+
 # Focus types
 FOCUS_INDUSTRY
 Industry
+
+FOCUS_INDUSTRY_DESC
+Generates more industry output
 
 # Focus types
 FOCUS_STOCKPILE
@@ -9237,17 +9243,29 @@ Allows stockpile techs to boost stockpile withdrawal capacity
 FOCUS_RESEARCH
 Research
 
+FOCUS_RESEARCH_DESC
+Generates more research output
+
 # Focus types
 FOCUS_INFLUENCE
 Influence
+
+FOCUS_INFLUENCE_DESC
+Generates more influence
 
 # Focus types
 FOCUS_LOGISTICS
 Logistics
 
+FOCUS_LOGISTICS_DESC
+Extends supply lines
+
 # Focus types
 FOCUS_STEALTH
 Stealth
+
+FOCUS_STEALTH_DESC
+Increases planet stealth
 
 # Focus types
 FOCUS_BIOTERROR
@@ -11086,6 +11104,19 @@ If two empires are allied, and either has adopted this policy, both will receive
 
 PLC_ALLIED_REPAIR_SHORT_DESC
 Allows allies to repair ships
+
+PLC_BALANCE
+Balance
+
+PLC_BALANCE_DESC
+'''Gives a bonus to the empire's capital's influence output and happiness when the distribution of how many planets, which the empire controls and that are using different focus settings, is uniform. For each focus used in the empire, how many planets that use it are counted. If the difference is small between how many planets use the most popular focus and how many use the least popular focus, the bonuses on the capital are larger. The bonuses are also larger when more different focus settings are in use.
+
+Outposts with no focus selected also count as a focus, and may be the most popular focus setting, which may make getting large bonuses difficult.
+
+For example, 6 outposts with no focus, 3 planets with industry focus, and 2 planets with research focus have 3 different focus settings in use and a difference of 6 - 2 = 4 between the number of times the most and least popular focus settings are in use. Using more different focus settings or reducing the difference between the most and least popular settings would give larger bonuses.'''
+
+PLC_BALANCE_SHORT_DESC
+Increases influence and happiness when more different foci are used
 
 
 ##
@@ -15264,6 +15295,27 @@ GREAT_RESEARCH_DESC
 ULTIMATE_RESEARCH_DESC
 +++	Ultimate [[metertype METER_RESEARCH]]: 300%
 
+NO_INFLUENCE_DESC
+−−−	No [[metertype METER_INFLUENCE]]
+
+VERY_BAD_INFLUENCE_DESC
+−−	Very bad [[metertype METER_INFLUENCE]]: 50%
+
+BAD_INFLUENCE_DESC
+−	Bad [[metertype METER_INFLUENCE]]: 75%
+
+AVERAGE_INFLUENCE_DESC
+'''	Average [[metertype METER_INFLUENCE]]: 100%'''
+
+GOOD_INFLUENCE_DESC
++	Good [[metertype METER_INFLUENCE]]: 150%
+
+GREAT_INFLUENCE_DESC
+++	Great [[metertype METER_INFLUENCE]]: 200%
+
+ULTIMATE_INFLUENCE_DESC
++++	Ultimate [[metertype METER_INFLUENCE]]: 300%
+
 NO_DEFENSE_TROOPS_DESC
 −−−	No Defensive Ground [[metertype METER_TROOPS]]
 
@@ -15581,6 +15633,36 @@ GREAT_RESEARCH_LABEL
 # %1% FIXME
 # %2% FIXME
 ULTIMATE_RESEARCH_LABEL
+%2% Ultimate Research
+
+# %1% FIXME
+# %2% FIXME
+FOCUS_INFLUENCE_LABEL
+%2% Influence Focus
+
+# %1% FIXME
+# %2% FIXME
+VERY_BAD_INFLUENCE_LABEL
+%2% Very Bad Influence
+
+# %1% FIXME
+# %2% FIXME
+BAD_INFLUENCE_LABEL
+%2% Bad Influence
+
+# %1% FIXME
+# %2% FIXME
+GOOD_INFLUENCE_LABEL
+%2% Good Influence
+
+# %1% FIXME
+# %2% FIXME
+GREAT_INFLUENCE_LABEL
+%2% Great Influence
+
+# %1% FIXME
+# %2% FIXME
+ULTIMATE_INFLUENCE_LABEL
 %2% Ultimate Research
 
 # %1% FIXME

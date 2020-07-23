@@ -1,0 +1,104 @@
+NO_INFLUENCE
+'''[[DESCRIPTION_EFFECTSGROUP_MACRO(NO_INFLUENCE_DESC)]]'''
+
+BASIC_INFLUENCE
+'''        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Focus type = "FOCUS_INFLUENCE"
+            ]
+            accountinglabel = "FOCUS_INFLUENCE_LABEL"
+            priority = [[EARLY_PRIORITY]]
+            effects = SetTargetInfluence value = Value + 1
+
+        EffectsGroup      // gives human bonuses when AI Aggression set to Beginner
+            scope = Source
+            activation = And [
+                Planet
+                Human     // human player, not human species
+                (GalaxyMaxAIAggression = 0)
+            ]
+            accountinglabel = "DIFFICULTY"
+            priority = [[LATE_PRIORITY]]
+            effects = SetTargetInfluence value = Value + 1
+'''
+
+VERY_BAD_INFLUENCE
+'''[[BASIC_INFLUENCE]]
+
+        EffectsGroup
+            description = "VERY_BAD_INFLUENCE_DESC"
+            scope = Source
+            activation = And [
+                Planet
+                Focus type = "FOCUS_INFLUENCE"
+            ]
+            accountinglabel = "VERY_BAD_INFLUENCE_LABEL"
+            priority = [[DEFAULT_PRIORITY]]
+            effects = SetTargetInfluence value = Value*[[VERY_BAD_MULTIPLIER]]
+'''
+
+BAD_INFLUENCE
+'''[[BASIC_INFLUENCE]]
+
+        EffectsGroup
+            description = "BAD_INFLUENCE_DESC"
+            scope = Source
+            activation = And [
+                Planet
+                Focus type = "FOCUS_INFLUENCE"
+            ]
+            accountinglabel = "BAD_INFLUENCE_LABEL"
+            priority = [[DEFAULT_PRIORITY]]
+            effects = SetTargetInfluence value = Value*[[BAD_MULTIPLIER]]
+'''
+
+AVERAGE_INFLUENCE
+'''[[BASIC_INFLUENCE]]
+'''
+
+GOOD_INFLUENCE
+'''[[BASIC_INFLUENCE]]
+
+        EffectsGroup
+            description = "GOOD_INFLUENCE_DESC"
+            scope = Source
+            activation = And [
+                Planet
+                Focus type = "FOCUS_INFLUENCE"
+            ]
+            accountinglabel = "GOOD_INFLUENCE_LABEL"
+            priority = [[DEFAULT_PRIORITY]]
+            effects = SetTargetInfluence value = Value*[[GOOD_MULTIPLIER]]
+'''
+
+GREAT_INFLUENCE
+'''[[BASIC_INFLUENCE]]
+
+        EffectsGroup
+            description = "GREAT_INFLUENCE_DESC"
+            scope = Source
+            activation = And [
+                Planet
+                Focus type = "FOCUS_INFLUENCE"
+            ]
+            accountinglabel = "GREAT_INFLUENCE_LABEL"
+            priority = [[DEFAULT_PRIORITY]]
+            effects = SetTargetInfluence value = Value*[[GREAT_MULTIPLIER]]
+'''
+
+ULTIMATE_INFLUENCE
+'''[[BASIC_INFLUENCE]]
+
+        EffectsGroup
+            description = "ULTIMATE_INFLUENCE_DESC"
+            scope = Source
+            activation = And [
+                Planet
+                Focus type = "FOCUS_INFLUENCE"
+            ]
+            accountinglabel = "ULTIMATE_INFLUENCE_LABEL"
+            priority = [[DEFAULT_PRIORITY]]
+            effects = SetTargetInfluence value = Value*[[ULTIMATE_MULTIPLIER]]
+'''

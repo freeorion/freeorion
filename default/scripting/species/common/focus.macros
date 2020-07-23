@@ -14,6 +14,14 @@ HAS_RESEARCH_FOCUS
             graphic = "icons/focus/research.png"
 '''
 
+HAS_INFLUENCE_FOCUS
+'''        Focus
+            name = "FOCUS_INFLUENCE"
+            description = "FOCUS_INFLUENCE_DESC"
+            location = Planet
+            graphic = "icons/focus/influence.png"
+'''
+
 HAS_GROWTH_FOCUS
 '''        Focus
             name = "FOCUS_GROWTH"

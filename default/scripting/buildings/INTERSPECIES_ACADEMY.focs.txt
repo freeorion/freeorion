@@ -76,6 +76,8 @@ BuildingType
             accountinglabel = "INTERSPECIES_ACADEMY_LABEL"
             priority = [[LATE_PRIORITY]]
             effects = SetMaxStockpile value = Value + 10
+        
+        // Research bonus    
         EffectsGroup
             scope = And [
                 Object id = Source.PlanetID
@@ -88,6 +90,18 @@ BuildingType
             priority = [[LATE_PRIORITY]]
             effects = SetTargetResearch value = Value + 5
             
+        // Influence bonus    
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+                Focus type = "FOCUS_INFLUENCE"
+                OwnedBy empire = Source.Owner
+                Species
+            ]
+            accountinglabel = "INTERSPECIES_ACADEMY_LABEL"
+            priority = [[LATE_PRIORITY]]
+            effects = SetTargetInfluence value = Value + 2
     ]
     icon = "icons/building/science-institute.png"
 
