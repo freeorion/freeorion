@@ -503,8 +503,9 @@ void FileDlg::PopulateFilters()
     } else {
         for (auto& file_filter : m_file_filters) {
             auto row = Wnd::Create<ListBox::Row>();
-            row->push_back(GetStyleFactory()->NewTextControl(file_filter.first, m_font, m_text_color, FORMAT_NOWRAP));
-            m_filter_list->Insert(row);
+            row->push_back(GetStyleFactory()->NewTextControl(file_filter.first, m_font,
+                                                             m_text_color, FORMAT_NOWRAP));
+            m_filter_list->Insert(std::move(row));
         }
         m_filter_list->Select(m_filter_list->begin());
         m_filter_list->SelChangedSignal(m_filter_list->CurrentItem());
@@ -562,13 +563,13 @@ void FileDlg::UpdateList()
         {
             auto row = Wnd::Create<ListBox::Row>();
             row->push_back(GetStyleFactory()->NewTextControl("[..]", m_font, m_text_color, FORMAT_NOWRAP));
-            m_files_list->Insert(row);
+            m_files_list->Insert(std::move(row));
         }
         // current directory selector
         {
             auto row = Wnd::Create<ListBox::Row>();
             row->push_back(GetStyleFactory()->NewTextControl("[.]", m_font, m_text_color, FORMAT_NOWRAP));
-            m_files_list->Insert(row);
+            m_files_list->Insert(std::move(row));
         }
         try {
             fs::directory_iterator test(s_working_dir);
@@ -596,8 +597,9 @@ void FileDlg::UpdateList()
 #else
                     std::string row_text = "[" + it->path().filename().string() + "]";
 #endif
-                    row->push_back(GetStyleFactory()->NewTextControl(row_text, m_font, m_text_color, FORMAT_NOWRAP));
-                    sorted_rows.emplace(row_text, row);
+                    row->push_back(GetStyleFactory()->NewTextControl(row_text, m_font, m_text_color,
+                                                                     FORMAT_NOWRAP));
+                    sorted_rows.emplace(row_text, std::move(row));
                 }
             } catch (const fs::filesystem_error&) {
             }
@@ -606,8 +608,8 @@ void FileDlg::UpdateList()
         std::vector<std::shared_ptr<ListBox::Row>> rows;
         rows.reserve(sorted_rows.size());
         for (auto& row : sorted_rows)
-        { rows.push_back(row.second); }
-        m_files_list->Insert(rows);
+            rows.emplace_back(row.second);
+        m_files_list->Insert(std::move(rows));
 
         if (!m_select_directories) {
             sorted_rows.clear();
@@ -623,15 +625,14 @@ void FileDlg::UpdateList()
                             auto row = Wnd::Create<ListBox::Row>();
                             row->push_back(GetStyleFactory()->NewTextControl(
                                 it->path().filename().string(), m_font, m_text_color, FORMAT_NOWRAP));
-                            sorted_rows.emplace(it->path().filename().string(), row);
+                            sorted_rows.emplace(it->path().filename().string(), std::move(row));
                         }
                     }
                 } catch (const fs::filesystem_error&) {
                 }
             }
-            for (const auto& row : sorted_rows) {
-                m_files_list->Insert(row.second);
-            }
+            for (const auto& row : sorted_rows)
+                m_files_list->Insert(std::move(row.second));
         }
     } else {
         for (char c = 'C'; c <= 'Z'; ++c) {
@@ -639,8 +640,9 @@ void FileDlg::UpdateList()
                 fs::path path(c + std::string(":"));
                 if (fs::exists(path)) {
                     auto row = Wnd::Create<ListBox::Row>();
-                    row->push_back(GetStyleFactory()->NewTextControl("[" + path.root_name().string() + "]", m_font, m_text_color, FORMAT_NOWRAP));
-                    m_files_list->Insert(row);
+                    row->push_back(GetStyleFactory()->NewTextControl("[" + path.root_name().string() + "]",
+                                                                     m_font, m_text_color, FORMAT_NOWRAP));
+                    m_files_list->Insert(std::move(row));
                 }
             } catch (const fs::filesystem_error&) {
             }

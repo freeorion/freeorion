@@ -772,8 +772,8 @@ void ListBox::AcceptDrops(const Pt& pt, std::vector<std::shared_ptr<Wnd>> wnds, 
     iterator insertion_it = RowUnderPt(pt);
     bool inserting_at_first_row = insertion_it == m_first_row_shown;
     for (auto& wnd : wnds) {
-        if (const auto& row = std::dynamic_pointer_cast<Row>(wnd))
-            Insert(row, insertion_it, true);
+        if (auto row = std::dynamic_pointer_cast<Row>(wnd))
+            Insert(std::move(row), insertion_it, true);
     }
 
     // Adjust to show rows inserted before the first row.
@@ -790,7 +790,7 @@ void ListBox::ChildrenDraggedAway(const std::vector<Wnd*>& wnds, const Wnd* dest
     if (!(m_style & LIST_NOSEL) && !m_selections.empty()) {
         // save selections...
         for (const auto& sel : m_selections)
-            initially_selected_rows.push_back(*sel);
+            initially_selected_rows.emplace_back(*sel);
         m_selections.clear();
     }
 
@@ -1024,16 +1024,22 @@ void ListBox::SetColor(Clr c)
 }
 
 ListBox::iterator ListBox::Insert(std::shared_ptr<Row> row, iterator it)
-{ return Insert(std::forward<std::shared_ptr<Row>>(row), it, false); }
+{ return Insert(std::move(row), it, false); }
 
 ListBox::iterator ListBox::Insert(std::shared_ptr<Row> row)
-{ return Insert(std::forward<std::shared_ptr<Row>>(row), m_rows.end(), false); }
+{ return Insert(std::move(row), m_rows.end(), false); }
 
 void ListBox::Insert(const std::vector<std::shared_ptr<Row>>& rows, iterator it)
 { Insert(rows, it, false); }
 
+void ListBox::Insert(std::vector<std::shared_ptr<Row>>&& rows, iterator it)
+{ Insert(std::move(rows), it, false); }
+
 void ListBox::Insert(const std::vector<std::shared_ptr<Row>>& rows)
 { Insert(rows, m_rows.end(), false); }
+
+void ListBox::Insert(std::vector<std::shared_ptr<Row>>&& rows)
+{ Insert(std::move(rows), m_rows.end(), false); }
 
 std::shared_ptr<ListBox::Row> ListBox::Erase(iterator it, bool signal/* = false*/)
 { return Erase(it, false, signal); }
@@ -1858,7 +1864,7 @@ void ListBox::DefineColStretches(const Row& row)
 
 ListBox::iterator ListBox::Insert(std::shared_ptr<Row> row, iterator it, bool dropped)
 {
-    if(!row)
+    if (!row)
         return m_rows.end();
 
     // Track the originating row in case this is an intra-ListBox
@@ -1877,7 +1883,7 @@ ListBox::iterator ListBox::Insert(std::shared_ptr<Row> row, iterator it, bool dr
     BeforeInsertRowSignal(it);
 
     if (m_rows.empty()) {
-        m_rows.push_back(row);
+        m_rows.emplace_back(row);
         retval = m_rows.begin();
     } else {
         if (!(m_style & LIST_NOSORT)) {
@@ -1921,7 +1927,13 @@ ListBox::iterator ListBox::Insert(std::shared_ptr<Row> row, iterator it, bool dr
 void ListBox::Insert(const std::vector<std::shared_ptr<Row>>& rows, iterator it, bool dropped)
 {
     for (auto& row : rows)
-    { Insert(row, it, dropped); }
+        Insert(row, it, dropped);
+}
+
+void ListBox::Insert(std::vector<std::shared_ptr<Row>>&& rows, iterator it, bool dropped)
+{
+    for (auto& row : rows)
+        Insert(std::move(row), it, dropped);
 }
 
 std::shared_ptr<ListBox::Row> ListBox::Erase(iterator it, bool removing_duplicate, bool signal)

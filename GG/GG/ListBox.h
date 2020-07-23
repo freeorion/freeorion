@@ -354,11 +354,13 @@ public:
         unsorted ListBox before \a it. The Rows become the property of this
         ListBox. */
     void Insert(const std::vector<std::shared_ptr<Row>>& rows, iterator it);
+    void Insert(std::vector<std::shared_ptr<Row>>&& rows, iterator it);
 
     /** Insertion sorts \a rows into the ListBox if sorted, or inserts into an
         unsorted ListBox at the end of the list. The Rows become the property
         of this ListBox. */
     void Insert(const std::vector<std::shared_ptr<Row>>& rows);
+    void Insert(std::vector<std::shared_ptr<Row>>&& rows);
 
     std::shared_ptr<Row>Erase(iterator it, bool signal = false);        ///< removes and returns the row that \a it points to from the ListBox, or 0 if no such row exists
 
@@ -514,6 +516,7 @@ protected:
     /** Insertion sorts into list, or inserts into an unsorted list before
         \a it; returns insertion point. */
     void Insert(const std::vector<std::shared_ptr<Row>>& rows, iterator it, bool dropped);
+    void Insert(std::vector<std::shared_ptr<Row>>&& rows, iterator it, bool dropped);
 
     std::shared_ptr<Row> Erase(iterator it, bool removing_duplicate, bool signal); ///< erases the row at index \a idx, handling it as a duplicate removal (such as for drag-and-drops within a single ListBox) if indicated
     void BringCaretIntoView();  ///< makes sure caret is visible when scrolling occurs due to keystrokes etc.
