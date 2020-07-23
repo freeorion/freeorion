@@ -2,7 +2,7 @@ BuildingType
     name = "BLD_TERRAFORM_REVERT"
     description = "BLD_TERRAFORM_REVERT_DESC"
     buildcost = 150 * [[BUILDING_COST_MULTIPLIER]]
-    buildtime = 6
+    buildtime = 8 - 2 * Statistic If condition = EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_TERRAFORMING"
     location = And [
         Planet
         Not Contains Building name = "BLD_TERRAFORM"

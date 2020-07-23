@@ -9,6 +9,8 @@ Tech
     prerequisites = [
         "GRO_TERRAFORM"
     ]
+    unlock =
+        Item type = Policy name = "PLC_TERRAFORMING"
     graphic = "icons/tech/trans_organic_sentience.png"
 
 #include "/scripting/common/base_prod.macros"

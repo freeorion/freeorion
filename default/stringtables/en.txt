@@ -11128,8 +11128,14 @@ Boosts research, happiness, influence, and stealth on non-terraformed populated 
 
 Makes terraforming more expensive.'''
 
-PLC_ENVIRONMENTALISM_SHORT_DESC
-Boosts / penalizes for terraforming
+PLC_TERRAFORMING_SHORT_DESC
+Speeds up terraforming
+
+PLC_TERRAFORMING
+Terraforming
+
+PLC_TERRAFORMING_DESC
+Decreases the minimum time to produce [[buildingtype BLD_TERRAFORM]] and [[buildingtype BLD_TERRAFORM_REVERT]] projects on planets.
 
 
 ##
