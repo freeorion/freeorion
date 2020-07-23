@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_BLACK_HOLE_POW_GEN"
     description = "BLD_BLACK_HOLE_POW_GEN_DESC"
-    buildcost = 250 * [[BUILDING_COST_MULTIPLIER]]
+    buildcost = 300 * [[BUILDING_COST_MULTIPLIER]] * (1 - 0.5 * Statistic If condition = EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_INDUSTRIALISM")
     buildtime = 8
     tags = "ORBITAL"
     location = And [

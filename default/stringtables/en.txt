@@ -11137,6 +11137,17 @@ Terraforming
 PLC_TERRAFORMING_DESC
 Decreases the minimum time to produce [[buildingtype BLD_TERRAFORM]] and [[buildingtype BLD_TERRAFORM_REVERT]] projects on planets.
 
+PLC_INDUSTRIALISM_SHORT_DESC
+Improves industry output
+
+PLC_INDUSTRIALISM
+Industrialism
+
+PLC_INDUSTRIALISM_DESC
+'''Increases industry output of planets by 25% and makes industry-focused planets happier.
+
+Also makes some production-boosting generation techs cheaper to research.'''
+
 
 ##
 ## Technology categories

@@ -3,7 +3,7 @@ Tech
     description = "PRO_ZERO_GEN_DESC"
     short_description = "THEORY_SHORT_DESC"
     category = "PRODUCTION_CATEGORY"
-    researchcost = 500 * [[TECH_COST_MULTIPLIER]]
+    researchcost = 640 * [[TECH_COST_MULTIPLIER]] * (1 - 0.5 * Statistic If condition = EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_INDUSTRIALISM")
     researchturns = 7
     tags = [ "PEDIA_PRODUCTION_CATEGORY" "THEORY" ]
     prerequisites = [
