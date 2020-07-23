@@ -10,6 +10,7 @@ Tech
     unlock = [
         Item type = Building name = "BLD_TERRAFORM"
         Item type = Building name = "BLD_TERRAFORM_REVERT"
+        Item type = Policy name = "PLC_ENVIRONMENTALISM"
     ]
     graphic = "icons/tech/terraform.png"
 

@@ -11118,6 +11118,19 @@ For example, 6 outposts with no focus, 3 planets with industry focus, and 2 plan
 PLC_BALANCE_SHORT_DESC
 Increases influence and happiness when more different foci are used
 
+PLC_ENVIRONMENTALISM
+Environmentalism
+
+PLC_ENVIRONMENTALISM_DESC
+'''Decreases industry and construction of all owned planets. Penalizes further construction, happiness, and influence on terraformed planets.
+
+Boosts research, happiness, influence, and stealth on non-terraformed populated planets.
+
+Makes terraforming more expensive.'''
+
+PLC_ENVIRONMENTALISM_SHORT_DESC
+Boosts / penalizes for terraforming
+
 
 ##
 ## Technology categories

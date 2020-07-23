@@ -1,0 +1,57 @@
+Policy
+    name = "PLC_ENVIRONMENTALISM"
+    description = "PLC_ENVIRONMENTALISM_DESC"
+    short_description = "PLC_ENVIRONMENTALISM_SHORT_DESC"
+    category = "ECONOMIC_CATEGORY"
+    adoptioncost = 1.0*floor(5 + 0.25 * Statistic Sum value = LocalCandidate.Population condition = And [ Planet OwnedBy empire = Source.Owner ])
+    effectsgroups = [
+    
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Not Planet type = GasGiant
+                Not Planet type = Asteroids
+            ]
+            priority = [[LATE_PRIORITY]]
+            effects = [
+                SetTargetIndustry value = Value - 5
+                SetTargetConstruction value = Value - 10
+            ]
+        
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Not Planet type = GasGiant
+                Not Planet type = Asteroids
+                Not Planet type = LocalCandidate.OriginalType
+            ]
+            priority = [[LATE_PRIORITY]]
+            effects = [
+                SetTargetConstruction value = Value - 20
+                SetTargetHappiness value = Value - 10
+                SetTargetInfluence value = Value - 5
+            ]
+            
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Not Planet type = GasGiant
+                Not Planet type = Asteroids
+                Planet type = LocalCandidate.OriginalType
+                Population low = 0.001
+            ]
+            priority = [[LATE_PRIORITY]]
+            effects = [
+                SetTargetHappiness value = Value + 10
+                SetTargetInfluence value = Value + 2
+                SetTargetResearch value = Value + 3
+                SetStealth value = Value + 10
+            ]            
+    ]
+    graphic = "icons/policies/environmentalism.png"
+
+#include "/scripting/common/base_prod.macros"
+#include "/scripting/common/priorities.macros"
