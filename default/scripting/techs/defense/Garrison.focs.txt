@@ -28,6 +28,7 @@ Tech
     researchturns = 5
     tags = [ "PEDIA_DEFENSE_CATEGORY" ]
     prerequisites = "DEF_GARRISON_1"
+    unlock = Item type = Policy name = "PLC_CHECKPOINTS"
     effectsgroups = [
         EffectsGroup
             scope = And [

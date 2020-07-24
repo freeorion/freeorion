@@ -1,0 +1,32 @@
+Policy
+    name = "PLC_CHECKPOINTS"
+    description = "PLC_CHECKPOINTS_DESC"
+    short_description = "PLC_CHECKPOINTS_SHORT_DESC"
+    category = "ECONOMIC_CATEGORY"
+    adoptioncost = 5 + Statistic Sum value = LocalCandidate.Population condition = And [ Planet OwnedBy empire = Source.Owner ]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+            ]
+            effects = [
+                SetTargetInfluence value = Value - 2
+                SetMaxSupply value = Value - 1
+            ]
+
+        EffectsGroup
+            scope = And [
+                Capital
+                OwnedBy empire = Source.Owner
+            ]
+            effects = SetEmpireMeter
+                empire = Source.Owner
+                meter = "METER_DETECTION_STRENGTH"
+                value = Value + min(20.0,
+                    CurrentTurn - TurnPolicyAdopted empire = source.Owner
+                                                    name = "PLC_CHECKPOINTS"
+                                   )
+    ]
+    graphic = "icons/policies/checkpoints.png"
+

@@ -11148,6 +11148,17 @@ PLC_INDUSTRIALISM_DESC
 
 Also makes some production-boosting generation techs cheaper to research.'''
 
+PLC_CHECKPOINTS_SHORT_DESC
+Improves Detection / Hinders Supply
+
+PLC_CHECKPOINTS
+Border Checkpoints
+
+PLC_CHECKPOINTS_DESC
+'''Increases imperial detection strength by up to 20 (increasing over time).
+
+Reduces imperial supply networth range and influence generation.'''
+
 
 ##
 ## Technology categories
