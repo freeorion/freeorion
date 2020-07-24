@@ -92,7 +92,7 @@ BuildingType
                         tag = "system" data = Source.SystemID
                         tag = "predefinedshipdesign" data = "SM_BLACK_KRAKEN"
                         tag = "species" data = "SP_EXPERIMENTOR"
-                        tag = "rawtext" data = "3"
+                        tag = "rawtext" data = "2"
                     ]
                 [[EXPERIMENTOR_ADD_STARLANE]]
             ]
@@ -137,7 +137,7 @@ BuildingType
                         tag = "system" data = Source.SystemID
                         tag = "predefinedshipdesign" data = "SM_BLOATED_JUGGERNAUT"
                         tag = "species" data = "SP_EXPERIMENTOR"
-                        tag = "rawtext" data = "3"
+                        tag = "rawtext" data = "2"
                     ]
                 [[EXPERIMENTOR_ADD_STARLANE]]
             ]
@@ -182,7 +182,7 @@ BuildingType
                         tag = "system" data = Source.SystemID
                         tag = "predefinedshipdesign" data = "SM_PSIONIC_SNOWFLAKE"
                         tag = "species" data = "SP_EXPERIMENTOR"
-                        tag = "rawtext" data = "3"
+                        tag = "rawtext" data = "2"
                     ]
                 [[EXPERIMENTOR_ADD_STARLANE]]
             ]
