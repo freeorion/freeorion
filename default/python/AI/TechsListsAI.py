@@ -686,7 +686,7 @@ def test_tech_integrity():
                 warning("In %s: Tech %s seems not to exist!" % (group.__name__, tech))
                 error_occured = True
         for err in this_group.get_errors():
-            warning(err, exc_info=True)
+            warning(err)
             error_occured = True
         if not error_occured:
             debug("Seems to be OK!")
