@@ -184,7 +184,6 @@ class TechGroup1SparseB(TechGroup1):
         super(TechGroup1SparseB, self).__init__()
         self.enqueue(
             self.economy,
-            self.economy,
             self.weapon,
             self.hull,
             "SHP_ZORTRIUM_PLATE",
@@ -216,7 +215,6 @@ class TechGroup1SparseC(TechGroup1):
     def __init__(self):
         super(TechGroup1SparseC, self).__init__()
         self.enqueue(
-            self.economy,
             self.economy,
             "SHP_ORG_HULL",
             "SHP_MULTICELL_CAST",
@@ -298,7 +296,6 @@ class TechGroup2A(TechGroup2):
             self.weapon,
             self.weapon,
             self.weapon,
-            self.economy,
             self.hull,
         )
 
@@ -343,11 +340,8 @@ class TechGroup2SparseA(TechGroup2):
             self.economy,
             self.economy,
             Dep.LRN_ARTIF_MINDS_1,
-            self.defense,
-            self.defense,
             self.weapon,
             self.weapon,
-            self.defense,
             self.weapon,
             self.weapon,
             self.weapon,
@@ -367,11 +361,8 @@ class TechGroup2SparseB(TechGroup2):
             self.economy,
             self.economy,
             Dep.LRN_ARTIF_MINDS_1,
-            self.defense,
             self.weapon,
             self.weapon,
-            self.defense,
-            self.defense,
             self.weapon,
             self.weapon,
             self.weapon,
@@ -464,7 +455,7 @@ class TechGroup3A(TechGroup3):
             self.hull,
             self.misc,
             self.economy,
-            self.hull,
+
             self.economy,
             self.defense,
             self.misc,
@@ -519,7 +510,6 @@ class TechGroup3B(TechGroup3):
             self.hull,
             self.misc,
             self.economy,
-            self.hull,
             self.economy,
             self.defense,
             self.misc,
@@ -570,7 +560,6 @@ class TechGroup3Sparse(TechGroup3):
             self.hull,
             self.misc,
             self.economy,
-            self.hull,
             self.economy,
             self.defense,
             self.misc,
