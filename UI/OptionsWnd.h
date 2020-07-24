@@ -71,6 +71,8 @@ private:
     void                VolumeOption(GG::ListBox* page, int indentation_level, const std::string& toggle_option_name,
                                      const std::string& volume_option_name, const std::string& text, bool toggle_value,
                                      SoundOptionsFeedback &fb);
+    void                PathDisplay(GG::ListBox* page, int indentation_level, const std::string& text,
+                                    const boost::filesystem::path& path);
     void                FileOptionImpl(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text, const boost::filesystem::path& path, const std::vector<std::pair<std::string, std::string>>& filters, std::function<bool (const std::string&)> string_validator, bool directory, bool relative_path, bool disabled);
     void                FileOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text, const boost::filesystem::path& path, std::function<bool (const std::string&)> string_validator = nullptr);
     void                FileOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text, const boost::filesystem::path& path, const std::pair<std::string, std::string>& filter, std::function<bool (const std::string&)> string_validator = nullptr);

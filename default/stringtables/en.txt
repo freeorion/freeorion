@@ -3189,6 +3189,9 @@ Save files
 OPTIONS_SERVER_FOLDER_SAVE
 Server Save files
 
+OPTIONS_FOLDER_CONFIG_LOG
+Config and log files
+
 OPTIONS_LANGUAGE_FILE
 Language files
 

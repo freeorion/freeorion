@@ -710,6 +710,7 @@ void OptionsWnd::CompleteConstruction() {
     IntOption(current_page,  0, "save.auto.file.limit",     UserString("OPTIONS_AUTOSAVE_LIMIT"));
     BoolOption(current_page, 0, "save.auto.initial.enabled", UserString("OPTIONS_DB_AUTOSAVE_GALAXY_CREATION"));
     BoolOption(current_page, 0, "save.auto.exit.enabled",   UserString("OPTIONS_DB_AUTOSAVE_GAME_CLOSE"));
+    PathDisplay(current_page, 0, UserString("OPTIONS_FOLDER_SAVE"), GetUserDataDir());
     m_tabs->SetCurrentWnd(0);
 
     // Keyboard shortcuts tab
@@ -719,13 +720,17 @@ void OptionsWnd::CompleteConstruction() {
     current_page = CreatePage(UserString("OPTIONS_PAGE_DIRECTORIES"));
     /** GetRootDataDir() returns the default browse path when modifying this directory option.
      *  The actual default directory (before modifying) is gotten from the specified option name "resource.path" */
-    DirectoryOption(current_page, 0, "resource.path", UserString("OPTIONS_FOLDER_SETTINGS"), GetRootDataDir(), is_game_running);
-    DirectoryOption(current_page, 0, "save.path", UserString("OPTIONS_FOLDER_SAVE"), GetUserDataDir());
-    DirectoryOption(current_page, 0, "save.server.path", UserString("OPTIONS_SERVER_FOLDER_SAVE"), GetUserDataDir());
+    DirectoryOption(current_page, 0, "resource.path",   UserString("OPTIONS_FOLDER_SETTINGS"),      GetRootDataDir(), is_game_running);
+    DirectoryOption(current_page, 0, "save.path",       UserString("OPTIONS_FOLDER_SAVE"),          GetUserDataDir());
+    DirectoryOption(current_page, 0, "save.server.path",UserString("OPTIONS_SERVER_FOLDER_SAVE"),   GetUserDataDir());
+    PathDisplay(    current_page, 0,                    UserString("OPTIONS_FOLDER_CONFIG_LOG"),    GetUserConfigDir());
     m_tabs->SetCurrentWnd(0);
+
 
     // Logging page
     current_page = CreatePage(UserString("OPTIONS_PAGE_LOGS"));
+    PathDisplay(current_page, 0, UserString("OPTIONS_FOLDER_CONFIG_LOG"), GetUserConfigDir());
+
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_DB_UI_LOGGER_THRESHOLDS"),
                         UserString("OPTIONS_DB_UI_LOGGER_THRESHOLD_TOOLTIP"));
 
@@ -787,6 +792,10 @@ void OptionsWnd::CompleteConstruction() {
     current_page->Insert(GG::Wnd::Create<OptionsListRow>(ROW_WIDTH,
                                                          persistent_config_button->MinUsableSize().y + LAYOUT_MARGIN + 6,
                                                          persistent_config_button, 0));
+
+    PathDisplay(current_page, 0, UserString("OPTIONS_FOLDER_CONFIG_LOG"), GetUserConfigDir());
+
+
     m_tabs->SetCurrentWnd(0);
 
     DoLayout();
@@ -1057,12 +1066,33 @@ void OptionsWnd::VolumeOption(GG::ListBox* page, int indentation_level, const st
     fb.SetEffectsButton(std::move(button));
 }
 
+void OptionsWnd::PathDisplay(GG::ListBox* page, int indentation_level, const std::string& text,
+                             const boost::filesystem::path& path)
+{
+    auto text_control = GG::Wnd::Create<CUILabel>(text, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
+    auto edit = GG::Wnd::Create<CUIEdit>(PathToString(path));
+    edit->Resize(GG::Pt(50*SPIN_WIDTH, edit->Height())); // won't resize within layout bigger than its initial size, so giving a big initial size here
+    edit->Disable();
+
+    auto layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0, ROW_WIDTH, edit->MinUsableSize().y,
+                                              1, 3, 0, 5);
+
+    layout->Add(text_control,   0, 0, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
+    layout->Add(edit,           0, 1, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
+    layout->SetMinimumColumnWidth(0, SPIN_WIDTH);
+    layout->SetMinimumColumnWidth(1, SPIN_WIDTH);
+    layout->SetColumnStretch(0, 0.5);
+    layout->SetColumnStretch(1, 1.0);
+
+    auto row = GG::Wnd::Create<OptionsListRow>(ROW_WIDTH, layout->Height() + 6, layout, indentation_level);
+    page->Insert(row);
+}
+
 void OptionsWnd::FileOptionImpl(GG::ListBox* page, int indentation_level, const std::string& option_name,
                                 const std::string& text, const fs::path& path,
                                 const std::vector<std::pair<std::string, std::string>>& filters,
                                 std::function<bool (const std::string&)> string_validator,
-                                bool directory, bool relative_path,
-                                bool disabled)
+                                bool directory, bool relative_path, bool disabled)
 {
     auto text_control = GG::Wnd::Create<CUILabel>(text, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
     auto edit = GG::Wnd::Create<CUIEdit>(GetOptionsDB().Get<std::string>(option_name));
@@ -1111,19 +1141,25 @@ void OptionsWnd::FileOptionImpl(GG::ListBox* page, int indentation_level, const 
         edit->SetTextColor(GG::CLR_RED);
 }
 
-void OptionsWnd::FileOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text, const boost::filesystem::path& path,
+void OptionsWnd::FileOption(GG::ListBox* page, int indentation_level, const std::string& option_name,
+                            const std::string& text, const boost::filesystem::path& path,
                             std::function<bool (const std::string&)> string_validator/* = 0*/)
 { FileOption(page, indentation_level, option_name, text, path, std::vector<std::pair<std::string, std::string>>(), string_validator); }
 
-void OptionsWnd::FileOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text, const boost::filesystem::path& path,
-                            const std::pair<std::string, std::string>& filter, std::function<bool (const std::string&)> string_validator/* = 0*/)
+void OptionsWnd::FileOption(GG::ListBox* page, int indentation_level, const std::string& option_name,
+                            const std::string& text, const boost::filesystem::path& path,
+                            const std::pair<std::string, std::string>& filter,
+                            std::function<bool (const std::string&)> string_validator/* = 0*/)
 { FileOption(page, indentation_level, option_name, text, path, std::vector<std::pair<std::string, std::string>>(1, filter), string_validator); }
 
-void OptionsWnd::FileOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text, const boost::filesystem::path& path,
-                            const std::vector<std::pair<std::string, std::string>>& filters, std::function<bool (const std::string&)> string_validator/* = 0*/)
+void OptionsWnd::FileOption(GG::ListBox* page, int indentation_level, const std::string& option_name,
+                            const std::string& text, const boost::filesystem::path& path,
+                            const std::vector<std::pair<std::string, std::string>>& filters,
+                            std::function<bool (const std::string&)> string_validator/* = 0*/)
 { FileOptionImpl(page, indentation_level, option_name, text, path, filters, string_validator, false, false, false); }
 
-void OptionsWnd::SoundFileOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text) {
+void OptionsWnd::SoundFileOption(GG::ListBox* page, int indentation_level, const std::string& option_name,
+                                 const std::string& text) {
     FileOption(page, indentation_level, option_name, text, ClientUI::SoundDir(),
                {UserString("OPTIONS_SOUND_FILE"), "*" + SOUND_FILE_SUFFIX}, ValidSoundFile);
 }
@@ -1135,7 +1171,9 @@ void OptionsWnd::DirectoryOption(GG::ListBox* page, int indentation_level, const
                    ValidDirectory, true, false, disabled);
 }
 
-void OptionsWnd::ColorOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text) {
+void OptionsWnd::ColorOption(GG::ListBox* page, int indentation_level, const std::string& option_name,
+                             const std::string& text)
+{
     auto row = GG::Wnd::Create<GG::ListBox::Row>();
     auto text_control = GG::Wnd::Create<CUILabel>(text, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
     auto color_selector = GG::Wnd::Create<ColorSelector>(GetOptionsDB().Get<GG::Clr>(option_name),
@@ -1158,7 +1196,9 @@ void OptionsWnd::ColorOption(GG::ListBox* page, int indentation_level, const std
         [option_name](const GG::Clr& clr) { GetOptionsDB().Set<GG::Clr>(option_name, clr); });
 }
 
-void OptionsWnd::FontOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text) {
+void OptionsWnd::FontOption(GG::ListBox* page, int indentation_level, const std::string& option_name,
+                            const std::string& text)
+{
     FileOption(page, indentation_level, option_name, text, GetRootDataDir() / "default",
                {std::string(option_name), "*" + FONT_FILE_SUFFIX},
                &ValidFontFile);

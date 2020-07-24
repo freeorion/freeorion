@@ -72,23 +72,20 @@ class TechGroup:
         :type tech_lists: list[list | str]
         """
 
-        for this_list in tech_lists:
+        for step, this_list in enumerate(tech_lists, start=1):
             if isinstance(this_list, str):
                 tech_name = this_list
             else:
-
                 try:
                     tech_name = this_list.pop(0)
                 except IndexError:
                     # Do not display error message as those should be shown only once per game session
                     # by the initial test_tech_integrity() call.
-                    msg = "Try to enqueue tech from empty list"
-                    warning(msg)
+                    msg = "[step %s]: Try to enqueue tech from empty list" % step
                     self._errors.append(msg)
                     continue
             if tech_name in self._tech_queue:
-                msg = "Tech is already in queue: %s" % tech_name
-                warning(msg)
+                msg = "[step %s]: Tech is already in queue: %s" % (step, tech_name)
                 self._errors.append(msg)
             else:
                 self._tech_queue.append(tech_name)
@@ -689,7 +686,7 @@ def test_tech_integrity():
                 warning("In %s: Tech %s seems not to exist!" % (group.__name__, tech))
                 error_occured = True
         for err in this_group.get_errors():
-            warning(err, exc_info=True)
+            warning(err)
             error_occured = True
         if not error_occured:
             debug("Seems to be OK!")

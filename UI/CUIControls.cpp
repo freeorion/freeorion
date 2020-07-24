@@ -904,12 +904,12 @@ void CUIEdit::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
 
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
 
-    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_CUT"),           false, false, hotkey_cut_action));
-    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_COPY"),          false, false, hotkey_copy_action));
-    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_PASTE"),         false, false, hotkey_paste_action));
+    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_CUT"),        this->Disabled(), false, hotkey_cut_action));
+    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_COPY"),       false,            false, hotkey_copy_action));
+    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_PASTE"),      this->Disabled(), false, hotkey_paste_action));
     popup->AddMenuItem(GG::MenuItem(true)); // separator
-    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_SELECT_ALL"),    false, false, hotkey_select_all_action));
-    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_DESELECT"),      false, false, hotkey_deselect_action));
+    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_SELECT_ALL"), this->Disabled(), false, hotkey_select_all_action));
+    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_DESELECT"),   this->Disabled(), false, hotkey_deselect_action));
     popup->Run();
 
     // todo: italicize, underline, or colour selected text
@@ -1001,10 +1001,10 @@ void CensoredCUIEdit::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
 
     // omits copy command from base CUIEdit
-    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_PASTE"),         false, false, hotkey_paste_action));
+    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_PASTE"),      this->Disabled(), false, hotkey_paste_action));
     popup->AddMenuItem(GG::MenuItem(true)); // separator
-    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_SELECT_ALL"),    false, false, hotkey_select_all_action));
-    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_DESELECT"),      false, false, hotkey_deselect_action));
+    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_SELECT_ALL"), this->Disabled(), false, hotkey_select_all_action));
+    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_DESELECT"),   this->Disabled(), false, hotkey_deselect_action));
     popup->Run();
 }
 
@@ -1129,13 +1129,13 @@ void CUIMultiEdit::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     // create popup menu
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
     if (!(this->Style() & GG::MULTI_READ_ONLY))
-        popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_CUT"),       false, false, hotkey_cut_action));
-    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_COPY"),          false, false, hotkey_copy_action));
+        popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_CUT"),    this->Disabled(), false, hotkey_cut_action));
+    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_COPY"),       false,            false, hotkey_copy_action));
     if (!(this->Style() & GG::MULTI_READ_ONLY))
-        popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_PASTE"),     false, false, hotkey_paste_action));
+        popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_PASTE"),  this->Disabled(), false, hotkey_paste_action));
     popup->AddMenuItem(GG::MenuItem(true)); // separator
-    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_SELECT_ALL"),    false, false, hotkey_select_all_action));
-    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_DESELECT"),      false, false, hotkey_deselect_action));
+    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_SELECT_ALL"), this->Disabled(), false, hotkey_select_all_action));
+    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_DESELECT"),   this->Disabled(), false, hotkey_deselect_action));
     popup->Run();
     // todo: italicize, underline, or colour selected text
 }
@@ -1204,13 +1204,13 @@ void CUILinkTextMultiEdit::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_ke
         popup->AddMenuItem(GG::MenuItem(true)); // separator
     }
     if (!(this->Style() & GG::MULTI_READ_ONLY))
-        popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_CUT"),       false, false, hotkey_cut_action));
-    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_COPY"),          false, false, hotkey_copy_action));
+        popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_CUT"),    this->Disabled(), false, hotkey_cut_action));
+    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_COPY"),       false, false,     hotkey_copy_action));
     if (!(this->Style() & GG::MULTI_READ_ONLY))
-        popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_PASTE"),     false, false, hotkey_paste_action));
+        popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_PASTE"),  this->Disabled(), false, hotkey_paste_action));
     popup->AddMenuItem(GG::MenuItem(true)); // separator
-    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_SELECT_ALL"),    false, false, hotkey_select_all_action));
-    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_DESELECT"),      false, false, hotkey_deselect_action));
+    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_SELECT_ALL"), this->Disabled(), false, hotkey_select_all_action));
+    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_DESELECT"),   this->Disabled(), false, hotkey_deselect_action));
     popup->Run();
 
     // todo: italicize, underline, or colour selected text

@@ -159,11 +159,13 @@ public:
     /** Insertion sorts \a rows into a sorted list, or inserts into an unsorted
         list before \a it. The Rows become the property of this DropDownList. */
     void Insert(const std::vector<std::shared_ptr<Row>>& rows, iterator it);
+    void Insert(std::vector<std::shared_ptr<Row>>&& rows, iterator it);
 
     /** Insertion sorts \a rows into sorted list, or inserts into an unsorted
         list at the end of the list. The Rows become the property of thiis
         DropDownList. */
     void Insert(const std::vector<std::shared_ptr<Row>>& rows);
+    void Insert(std::vector<std::shared_ptr<Row>>&& rows);
 
     std::shared_ptr<Row> Erase(iterator it, bool signal = false); ///< removes and returns \a it from the list, or 0 if no such row exists
     void Clear();                        ///< empties the list
