@@ -17,7 +17,6 @@ def tech_group_class(request):
     yield request.param
 
 
-def test_tech_group_integrity(tech_group_class, caplog):
-    tech_group_class()
-    messages = [record.message for record in caplog.records]
-    assert not messages
+def test_tech_group_integrity(tech_group_class):
+    errors = tech_group_class().get_errors()
+    assert not errors
