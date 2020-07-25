@@ -44,6 +44,10 @@ struct FO_COMMON_API ParsedShipDesign {
 
 class FO_COMMON_API ShipDesign {
 public:
+    /** The ShipDesign() constructor constructs invalid designs and is only used by boost
+        serialization. */
+    ShipDesign();
+
     /** The public ShipDesign constructor will only construct valid ship
         designs, as long as the ShipHullManager has at least one hull.
 
