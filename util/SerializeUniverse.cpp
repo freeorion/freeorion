@@ -435,10 +435,6 @@ BOOST_CLASS_VERSION(Ship, 2)
 
 
 template <typename Archive>
-void load_construct_data(Archive& ar, ShipDesign* obj, unsigned int const version)
-{ ::new(obj)ShipDesign(boost::none, "", "", INVALID_GAME_TURN, ALL_EMPIRES, "", {}, "", ""); }
-
-template <typename Archive>
 void serialize(Archive& ar, ShipDesign& obj, unsigned int const version)
 {
     using namespace boost::serialization;
