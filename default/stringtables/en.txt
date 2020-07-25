@@ -11128,8 +11128,8 @@ Boosts research, happiness, influence, and stealth on non-terraformed populated 
 
 Makes terraforming more expensive.'''
 
-PLC_TERRAFORMING_SHORT_DESC
-Speeds up terraforming
+PLC_ENVIRONMENTALISM_SHORT_DESC
+Bonuses for not terraforming
 
 PLC_TERRAFORMING
 Terraforming
@@ -11137,8 +11137,8 @@ Terraforming
 PLC_TERRAFORMING_DESC
 Decreases the minimum time to produce [[buildingtype BLD_TERRAFORM]] and [[buildingtype BLD_TERRAFORM_REVERT]] projects on planets.
 
-PLC_INDUSTRIALISM_SHORT_DESC
-Improves industry output
+PLC_TERRAFORMING_SHORT_DESC
+Speeds up terraforming
 
 PLC_INDUSTRIALISM
 Industrialism
@@ -11148,8 +11148,8 @@ PLC_INDUSTRIALISM_DESC
 
 Also makes some production-boosting generation techs cheaper to research.'''
 
-PLC_CHECKPOINTS_SHORT_DESC
-Improves Detection / Hinders Supply
+PLC_INDUSTRIALISM_SHORT_DESC
+Improves industry output
 
 PLC_CHECKPOINTS
 Border Checkpoints
@@ -11158,6 +11158,20 @@ PLC_CHECKPOINTS_DESC
 '''Increases imperial detection strength by up to 20 (increasing over time).
 
 Reduces imperial supply networth range and influence generation.'''
+
+PLC_CHECKPOINTS_SHORT_DESC
+Improves Detection / Hinders Supply
+
+PLC_DIVERSITY
+Diversity
+
+PLC_DIVERSITY_DESC
+'''Gives bonuses or penalties to research, happiness, and capital influence, dependent on the number of species in the empire.
+
+Gives bigger bonuses or penalities the more above or below 4 species that are present.'''
+
+PLC_DIVERSITY_SHORT_DESC
+Improves research, happiness, and Influence
 
 
 ##

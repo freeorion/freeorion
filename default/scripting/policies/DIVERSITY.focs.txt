@@ -1,0 +1,63 @@
+Policy
+    name = "PLC_DIVERSITY"
+    description = "PLC_DIVERSITY_DESC"
+    short_description = "PLC_DIVERSITY_SHORT_DESC"
+    category = "SOCIAL_CATEGORY"
+    adoptioncost = 1.0*floor(5 + 0.25 * Statistic Sum value = LocalCandidate.Population condition = And [ Planet OwnedBy empire = Source.Owner ])
+    effectsgroups = [
+        // research bonus for more species in empire, penalty when less than 4 species
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Focus type = "FOCUS_RESEARCH"
+            ]
+            priority = [[DEFAULT_PRIORITY]]
+            effects = [
+                SetTargetResearch value = Value - 2 + 0.5 * Statistic CountUnique
+                    value = LocalCandidate.Species
+                    condition = And [
+                        Planet
+                        OwnedBy empire = Source.Owner
+                        Population low = 0.001
+                    ]
+            ]
+        
+        // happiness bonus for more species in empire, penalty when less than 4 species
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Population low = 0.001
+            ]
+            priority = [[DEFAULT_PRIORITY]]
+            effects = [
+                SetTargetHappiness value = Value - 2 + 0.5 * Statistic CountUnique
+                    value = LocalCandidate.Species
+                    condition = And [
+                        Planet
+                        OwnedBy empire = Source.Owner
+                        Population low = 0.001
+                    ]
+            ]
+
+        // influence bonus on capital for more species, penalty when less than 4 species
+        EffectsGroup
+            scope = And [
+                Capital
+                OwnedBy empire = Source.Owner
+            ]
+            priority = [[DEFAULT_PRIORITY]]
+            effects = [
+                SetTargetInfluence value = Value + 0.5 * Statistic CountUnique
+                    value = LocalCandidate.Species
+                    condition = And [
+                        Planet
+                        OwnedBy empire = Source.Owner
+                        Population low = 0.001
+                    ]
+            ]
+    ]
+    graphic = "icons/policies/diversity.png"
+
+#include "/scripting/common/priorities.macros"
