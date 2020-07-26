@@ -1,11 +1,11 @@
-/*
- *  GLClientAndServerBuffer.cpp
- *  FreeOrion
- *
- *  Created by Rainer Kupke on 06.02.11.
- *  Copyright 2011. All rights reserved.
- *
- */
+//! GiGi - A GUI for OpenGL
+//!
+//!  Copyright (C) 2011 Rainer Kupke
+//!  Copyright (C) 2013-2020 The FreeOrion Project
+//!
+//! Released under the GNU Lesser General Public License 2.1 or later.
+//! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
+//! SPDX-License-Identifier: LGPL-2.1-or-later
 
 #include <GG/GLClientAndServerBuffer.h>
 
