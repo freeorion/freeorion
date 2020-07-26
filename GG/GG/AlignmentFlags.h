@@ -7,8 +7,9 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-/** \file AlignmentFlags.h \brief Contains the Alignment flag type and the
-    global alignment flag constants. */
+//! @file GG/AlignmentFlags.h
+//!
+//! Contains the Alignment flag type and the global alignment flag constants.
 
 #ifndef _GG_AlignmentFlags_h_
 #define _GG_AlignmentFlags_h_

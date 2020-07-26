@@ -7,8 +7,10 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-/** \file Exception.h \brief Contains the GG::Exception base class and macros
-    that ease declaring subclasses. */
+//! @file GG/Exception.h
+//!
+//! Contains the GG::Exception base class and macros that ease declaring
+//! subclasses.
 
 #ifndef _GG_Exception_h_
 #define _GG_Exception_h_

@@ -7,8 +7,10 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-/** \file DrawUtil.h \brief Contains numerous 2D rendering convenience
-    functions, for rendering rectangles, circles, etc. */
+//! @file GG/DrawUtil.h
+//!
+//! Contains numerous 2D rendering convenience functions, for rendering
+//! rectangles, circles, etc.
 
 #ifndef _GG_DrawUtil_h_
 #define _GG_DrawUtil_h_

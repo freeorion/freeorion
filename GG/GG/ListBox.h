@@ -7,8 +7,10 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-/** \file ListBox.h \brief Contains the ListBox class, a control that contains
-    rows of other controls, commonly TextControls. */
+//! @file GG/ListBox.h
+//!
+//! Contains the ListBox class, a control that contains rows of other controls,
+//! commonly TextControls.
 
 #ifndef _GG_ListBox_h_
 #define _GG_ListBox_h_

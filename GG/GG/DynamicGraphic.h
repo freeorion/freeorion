@@ -8,8 +8,10 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-/** \file DynamicGraphic.h \brief Contains the DynamicGraphic class, a control
-    that allows display of a slideshow or animated sequence of images. */
+//! @file GG/DynamicGraphic.h
+//!
+//! Contains the DynamicGraphic class, a control that allows display of
+//! a slideshow or animated sequence of images.
 
 #ifndef _GG_DynamicGraphic_h_
 #define _GG_DynamicGraphic_h_

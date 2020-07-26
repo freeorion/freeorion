@@ -7,8 +7,10 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-/** \file Flags.h \brief Contains Flags and related classes, used to ensure
-    typesafety when using bitflags. */
+//! @file GG/Flags.h
+//!
+//! Contains Flags and related classes, used to ensure typesafety when using
+//! bitflags.
 
 #ifndef _GG_Flags_h_
 #define _GG_Flags_h_

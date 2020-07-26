@@ -7,8 +7,10 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-/** \file DeferredLayout.h \brief Contains the DefferedLayout class, which is used to size and
-    align GG windows in the PreRender() phase. */
+//! @file GG/DeferredLayout.h
+//!
+//! Contains the DeferredLayout class, which is used to size and align GG
+//! windows in the PreRender() phase.
 
 #ifndef _GG_DeferredLayout_h_
 #define _GG_DeferredLayout_h_

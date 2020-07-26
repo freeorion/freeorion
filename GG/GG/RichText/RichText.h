@@ -6,8 +6,9 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-/** \file RichText.h \brief Contains the RichText class that allows you
- to intersperse text with images.*/
+//! @file GG/RichText/RichText.h
+//!
+//! Contains the RichText class that allows you to intersperse text with images.
 
 #ifndef RICHTEXT_H
 #define RICHTEXT_H

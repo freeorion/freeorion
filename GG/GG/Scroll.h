@@ -7,7 +7,9 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-/** \file Scroll.h \brief Contains the Scroll scrollbar control class. */
+//! @file GG/Scroll.h
+//!
+//! Contains the Scroll scrollbar control class.
 
 #ifndef _GG_Scroll_h_
 #define _GG_Scroll_h_

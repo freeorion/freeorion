@@ -7,8 +7,9 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-/** \file Control.h \brief Contains the Control class, the base class for all
-    GG controls. */
+//! @file GG/Control.h
+//!
+//! Contains the Control class, the base class for all GG controls.
 
 #ifndef _GG_Control_h_
 #define _GG_Control_h_

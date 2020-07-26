@@ -7,9 +7,10 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-/** \file BrowseInfoWnd.h \brief Contains the BrowseInfoWnd class, and its
-    subclass TextBoxBrowseInfoWnd.  These classes display info on another
-    window. */
+//! @file GG/BrowseInfoWnd.h
+//!
+//! Contains the BrowseInfoWnd class, and its subclass TextBoxBrowseInfoWnd.
+//! These classes display info on another window.
 
 #ifndef _GG_BrowseInfoWnd_h_
 #define _GG_BrowseInfoWnd_h_

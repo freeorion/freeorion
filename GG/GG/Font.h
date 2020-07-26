@@ -7,11 +7,12 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-/** \file Font.h \brief Contains the Font class, a class that encapsulates the
-    rendering of a single FreeType-compatible font in italics, with
-    underlining, left-, right-, or center- justified, etc., and the
-    FontManager class which provides application-wide management of Font
-    objects. */
+//! @file GG/Font.h
+//!
+//! Contains the Font class, a class that encapsulates the rendering of
+//! a single FreeType-compatible font in italics, with underlining, left-,
+//! right-, or center- justified, etc., and the FontManager class which
+//! provides application-wide management of Font objects.
 
 #ifndef _GG_Font_h_
 #define _GG_Font_h_

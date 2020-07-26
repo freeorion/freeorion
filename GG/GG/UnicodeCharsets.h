@@ -7,9 +7,10 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-/** \file UnicodeCharsets.h \brief Contains the UnicodeCharsets class, and
-    functions related to the character sets defined in the Unicode
-    standard. */
+//! @file GG/UnicodeCharsets.h
+//!
+//! Contains the UnicodeCharsets class, and functions related to the character
+//! sets defined in the Unicode standard.
 
 #ifndef _UnicodeCharsets_h_
 #define _UnicodeCharsets_h_

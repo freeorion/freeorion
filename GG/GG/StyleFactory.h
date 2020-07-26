@@ -7,8 +7,10 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-/** \file StyleFactory.h \brief Contains the StyleFactory class, which creates
-    new controls for internal use by dialogs and other controls. */
+//! @file GG/StyleFactory.h
+//!
+//! Contains the StyleFactory class, which creates new controls for internal
+//! use by dialogs and other controls.
 
 #ifndef _GG_StyleFactory_h_
 #define _GG_StyleFactory_h_

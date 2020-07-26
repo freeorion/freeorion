@@ -7,8 +7,10 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-/** \file ZList.h \brief Contains the ZList class, which maintains the
-    Z-/depth-position of Wnds for GUI. */
+//! @file GG/ZList.h
+//!
+//! Contains the ZList class, which maintains the Z-/depth-position of Wnds for
+//! GUI.
 
 #ifndef _GG_ZList_h_
 #define _GG_ZList_h_

@@ -7,9 +7,11 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-/** \file Slider.h \brief Contains the Slider class, which provides a slider
-    control that allows the user to select a value from a range of an
-    arbitrary type (int, double, an enum, etc.). */
+//! @file GG/Slider.h
+//!
+//! Contains the Slider class, which provides a slider control that allows the
+//! user to select a value from a range of an arbitrary type (int, double, an
+//! enum, etc.).
 
 #ifndef _GG_Slider_h_
 #define _GG_Slider_h_

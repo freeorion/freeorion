@@ -7,8 +7,10 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-/** \file FontFwd.h \brief Contains forward declaration of Font, the
-    TextFormat flags, StrSize, and CPSize. */
+//! @file GG/FontFwd.h
+//!
+//! Contains forward declaration of Font, the TextFormat flags, StrSize, and
+//! CPSize.
 
 #ifndef _GG_FontFwd_h_
 #define _GG_FontFwd_h_

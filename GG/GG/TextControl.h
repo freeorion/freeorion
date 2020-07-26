@@ -7,8 +7,10 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-/** \file TextControl.h \brief Contains the TextControl class, a control which
-    represents a certain text string in a certain font, justification, etc. */
+//! @file GG/TextControl.h
+//!
+//! Contains the TextControl class, a control which represents a certain text
+//! string in a certain font, justification, etc.
 
 #ifndef _GG_TextControl_h_
 #define _GG_TextControl_h_

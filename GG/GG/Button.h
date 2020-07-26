@@ -7,10 +7,12 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-/** \file Button.h \brief Contains the Button push-button control class; the
-    StateButton control class, which represents check boxes and radio buttons;
-    and the RadioButtonGroup control class, which allows multiple radio
-    buttons to be combined into a single control. */
+//! @file GG/Button.h
+//!
+//! Contains the Button push-button control class; the StateButton control
+//! class, which represents check boxes and radio buttons; and the
+//! RadioButtonGroup control class, which allows multiple radio buttons to be
+//! combined into a single control.
 
 #ifndef _GG_Button_h_
 #define _GG_Button_h_

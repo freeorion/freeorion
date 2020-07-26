@@ -7,10 +7,11 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-/** \file DropDownList.h \brief Contains the DropDownList class, a control
-    that displays a current selection, and allows the user to select one of
-    several options from a list that drops down when the control is
-    clicked. */
+//! @file GG/DropDownList.h
+//!
+//! Contains the DropDownList class, a control that displays a current
+//! selection, and allows the user to select one of several options from a list
+//! that drops down when the control is clicked.
 
 #ifndef _GG_DropDownList_h_
 #define _GG_DropDownList_h_

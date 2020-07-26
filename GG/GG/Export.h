@@ -7,8 +7,10 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-/** \file Export.h \brief Contains the GG_API macro, which is used to specify
-    which class and function symbols will be exported in SO's/DLL's. */
+//! @file GG/Export.h
+//!
+//! Contains the GG_API macro, which is used to specify which class and function
+//! symbols will be exported in SO's/DLL's.
 
 #ifndef _GG_Export_h_
 #define _GG_Export_h_

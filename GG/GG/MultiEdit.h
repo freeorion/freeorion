@@ -7,8 +7,9 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-/** \file MultiEdit.h \brief Contains the MultiEdit class, a multi-line text
-    box control. */
+//! @file GG/MultiEdit.h
+//!
+//! Contains the MultiEdit class, a multi-line text box control.
 
 #ifndef _GG_MultiEdit_h_
 #define _GG_MultiEdit_h_

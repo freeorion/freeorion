@@ -7,8 +7,9 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-/** \file TabWnd.h \brief Contains the TabWnd class, which encapsulates a set
-    of tabbed windows. */
+//! @file GG/TabWnd.h
+//!
+//! Contains the TabWnd class, which encapsulates a set of tabbed windows.
 
 #ifndef _GG_TabWnd_h_
 #define _GG_TabWnd_h_

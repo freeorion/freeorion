@@ -7,8 +7,10 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-/** \file GUI.h \brief Contains GUI class, which encapsulates the state and
-    behavior of the entire GG GUI. */
+//! @file GG/GUI.h
+//!
+//! Contains GUI class, which encapsulates the state and behavior of the entire
+//! GG GUI.
 
 #ifndef _GG_GUI_h_
 #define _GG_GUI_h_

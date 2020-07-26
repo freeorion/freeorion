@@ -7,8 +7,10 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-/** \file WndEvent.h \brief Contains the WndEvent class, which is used
-    internally by GG to dispatch event messages to Wnds. */
+//! @file GG/WndEvent.h
+//!
+//! Contains the WndEvent class, which is used internally by GG to dispatch
+//! event messages to Wnds.
 
 #ifndef _GG_WndEvent_h_
 #define _GG_WndEvent_h_

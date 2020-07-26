@@ -7,8 +7,9 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-/** \file Clr.h \brief Contains the utility class Clr, which represents colors
-    in GG. */
+//! @file GG/Clr.h
+//!
+//! Contains the utility class Clr, which represents colors in GG.
 
 #ifndef _GG_Clr_h_
 #define _GG_Clr_h_

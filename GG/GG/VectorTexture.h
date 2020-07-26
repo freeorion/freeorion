@@ -7,9 +7,10 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-/** \file VectorTexture.h \brief Contains the VectorTexture class, which
-    encapsulates a vector texture object, which can be rendered like a
-    raster texture. */
+//! @file GG/VectorTexture.h
+//!
+//! Contains the VectorTexture class, which encapsulates a vector texture
+//! object, which can be rendered like a raster texture.
 
 #ifndef _GG_VectorTexture_h_
 #define _GG_VectorTexture_h_

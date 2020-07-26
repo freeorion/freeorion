@@ -7,8 +7,9 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-/** \file Config.h \brief Contains build-generated configuration macros used
-    throughout GG. */
+//! @file GG/Config.h
+//!
+//! Contains build-generated configuration macros used throughout GG.
 
 #ifndef _GG_Config_h_
 #define _GG_Config_h_

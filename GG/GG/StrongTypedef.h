@@ -7,9 +7,11 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-/** \file StrongTypedef.h \brief Contains macros used to create "strong
-    typedefs", that is value types that are not mutually interoperable with
-    each other or with builtin types for extra type safety. */
+//! @file GG/StrongTypedef.h
+//!
+//! Contains macros used to create "strong typedefs", that is value types that
+//! are not mutually interoperable with each other or with builtin types for
+//! extra type safety.
 
 #ifndef _GG_StrongTypedef_h_
 #define _GG_StrongTypedef_h_

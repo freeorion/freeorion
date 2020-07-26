@@ -7,9 +7,9 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-
-/** \file Base.h \brief Contains enums, utility classes, and free functions
-    used throughout GG. */
+//! @file GG/Base.h
+//!
+//! Contains enums, utility classes, and free functions used throughout GG.
 
 #ifndef _GG_Base_h_
 #define _GG_Base_h_

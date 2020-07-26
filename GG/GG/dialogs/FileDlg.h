@@ -7,7 +7,9 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-/** \file FileDlg.h \brief Contains the standard GG file dialog. */
+//! @file GG/dialogs/FileDlg.h
+//!
+//! Contains the standard GG file dialog.
 
 #ifndef _GG_FileDlg_h_
 #define _GG_FileDlg_h_

@@ -7,10 +7,12 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-/** \file Texture.h \brief Contains the Texture class, which encapsulates an
-    OpenGL texture object; the SubTexture class, which represents a portion of
-    an OpenGL texture object; and the TextureManager class, which provides
-    GUI-wide management of Texture objects. */
+//! @file GG/Texture.h
+//!
+//! Contains the Texture class, which encapsulates an OpenGL texture object;
+//! the SubTexture class, which represents a portion of an OpenGL texture
+//! object; and the TextureManager class, which provides GUI-wide management
+//! of Texture objects.
 
 #ifndef _GG_Texture_h_
 #define _GG_Texture_h_

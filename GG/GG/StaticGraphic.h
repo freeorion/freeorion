@@ -7,8 +7,9 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-/** \file StaticGraphic.h \brief Contains the StaticGraphic class, a fixed
-    image control. */
+//! @file GG/StaticGraphic.h
+//!
+//! Contains the StaticGraphic class, a fixed image control.
 
 #ifndef _GG_StaticGraphic_h_
 #define _GG_StaticGraphic_h_

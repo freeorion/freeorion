@@ -7,8 +7,9 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-/** \file \brief The implementation of BlockControl.
- */
+//! @file RichText/BlockControl.cpp
+//!
+//! The implementation of BlockControl.
 
 #include <GG/RichText/BlockControl.h>
 

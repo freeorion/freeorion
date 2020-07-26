@@ -7,8 +7,10 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-/** \file GroupBox.h \brief Contains the GroupBox class, a simple,
-    noninteractive box with an optional label. */
+//! @file GG/GroupBox.h
+//!
+//! Contains the GroupBox class, a simple, noninteractive box with an optional
+//! label.
 
 #ifndef _GG_GroupBox_h_
 #define _GG_GroupBox_h_

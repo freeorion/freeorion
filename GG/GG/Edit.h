@@ -7,8 +7,9 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-/** \file Edit.h \brief Contains the Edit class, a single-line editable
-    text-box control. */
+//! @file GG/Edit.h
+//!
+//! Contains the Edit class, a single-line editable text-box control.
 
 #ifndef _GG_Edit_h_
 #define _GG_Edit_h_

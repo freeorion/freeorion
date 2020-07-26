@@ -7,9 +7,10 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-/** \file Menu.h \brief Contains the MenuItem class, which represents menu
-    data and the PopupMenu class, which is used to provide immediate
-    context menus. */
+//! @file GG/Menu.h
+//!
+//! Contains the MenuItem class, which represents menu data and the PopupMenu
+//! class, which is used to provide immediate context menus.
 
 #ifndef _GG_Menu_h_
 #define _GG_Menu_h_

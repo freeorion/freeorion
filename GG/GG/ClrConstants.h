@@ -7,7 +7,9 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-/** \file ClrConstants.h \brief Contains some useful constants of type Clr. */
+//! @file GG/ClrConstants.h
+//!
+//! Contains some useful constants of type Clr.
 
 #ifndef _GG_ClrConstants_h_
 #define _GG_ClrConstants_h_

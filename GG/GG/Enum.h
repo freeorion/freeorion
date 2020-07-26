@@ -7,9 +7,10 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-/** \file Enum.h \brief Contains the utility classes and macros that allow for
-    easy conversion to and from an enum value and its textual
-    representation. */
+//! @file GG/Enum.h
+//!
+//! Contains the utility classes and macros that allow for easy conversion to
+//! and from an enum value and its textual representation.
 
 #ifndef _GG_Enum_h_
 #define _GG_Enum_h_

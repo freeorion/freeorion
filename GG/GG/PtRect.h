@@ -7,7 +7,9 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-/** \file PtRect.h \brief Contains the utility classes Pt and Rect. */
+//! @file GG/PtRect.h
+//!
+//! Contains the utility classes Pt and Rect.
 
 #ifndef _GG_PtRect_h_
 #define _GG_PtRect_h_

@@ -7,9 +7,11 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-/** \file Spin.h \brief Contains the Spin class template, which provides a
-    spin-box control that allows the user to select a value from a range an
-    arbitrary type (int, double, an enum, etc.). */
+//! @file GG/Spin.h
+//!
+//! Contains the Spin class template, which provides a spin-box control that
+//! allows the user to select a value from a range an arbitrary type (int,
+//! double, an enum, etc.).
 
 #ifndef _GG_Spin_h_
 #define _GG_Spin_h_

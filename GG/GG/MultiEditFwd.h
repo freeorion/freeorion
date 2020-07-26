@@ -7,8 +7,10 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-/** \file MultiEditFwd.h \brief Contains forward declaration of the MultiEdit
-    class, and the MultiEditStyle flags. */
+//! @file GG/MultiEditFwd.h
+//!
+//! Contains forward declaration of the MultiEdit class, and the MultiEditStyle
+//! flags.
 
 #ifndef _GG_MultiEditFwd_h_
 #define _GG_MultiEditFwd_h_

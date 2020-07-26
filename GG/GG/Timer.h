@@ -7,8 +7,10 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-/** \file Timer.h \brief Contains the Timer class, which allows Wnds to
-    receive regular notifications of the passage of time. */
+//! @file GG/Timer.h
+//!
+//! Contains the Timer class, which allows Wnds to receive regular
+//! notifications of the passage of time.
 
 #ifndef _GG_Timer_h_
 #define _GG_Timer_h_

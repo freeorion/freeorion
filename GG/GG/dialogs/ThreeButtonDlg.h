@@ -7,8 +7,9 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-/** \file ThreeButtonDlg.h \brief Contains the standard modal
-    user-input/-notification dialog. */
+//! @file GG/dialogs/ThreeButtonDlg.h
+//!
+//! Contains the standard modal user-input/-notification dialog.
 
 #ifndef _GG_ThreeButtonDlg_h_
 #define _GG_ThreeButtonDlg_h_
