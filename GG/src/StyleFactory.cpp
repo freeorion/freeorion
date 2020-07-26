@@ -7,8 +7,7 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-#include <GG/StyleFactory.h>
-
+#include <memory>
 #include <GG/Button.h>
 #include <GG/dialogs/ColorDlg.h>
 #include <GG/dialogs/FileDlg.h>
@@ -24,12 +23,10 @@
 #include <GG/Slider.h>
 #include <GG/Spin.h>
 #include <GG/StaticGraphic.h>
+#include <GG/StyleFactory.h>
 #include <GG/TabWnd.h>
 #include <GG/TextControl.h>
-
 #include "DefaultFont.h"
-
-#include <memory>
 
 
 using namespace GG;

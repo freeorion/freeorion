@@ -13,6 +13,7 @@
 
 #include <GG/RichText/BlockControl.h>
 
+
 namespace GG {
 
     BlockControl::BlockControl(X x, Y y, X w, GG::Flags<GG::WndFlag> flags):

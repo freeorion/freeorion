@@ -14,8 +14,10 @@
 #ifndef _GG_ClrConstants_h_
 #define _GG_ClrConstants_h_
 
+
 #include <GG/Clr.h>
 #include <GG/Export.h>
+
 
 namespace GG {
 
@@ -45,5 +47,5 @@ constexpr Clr CLR_ORANGE = Clr(255, 127, 0, 255);
 
 }
 
-#endif
 
+#endif

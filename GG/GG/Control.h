@@ -14,6 +14,7 @@
 #ifndef _GG_Control_h_
 #define _GG_Control_h_
 
+
 #include <GG/Wnd.h>
 
 
@@ -55,5 +56,6 @@ protected:
 };
 
 }
+
 
 #endif

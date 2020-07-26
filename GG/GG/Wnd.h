@@ -14,16 +14,15 @@
 #ifndef _GG_Wnd_h_
 #define _GG_Wnd_h_
 
+
+#include <list>
+#include <memory>
+#include <set>
+#include <vector>
+#include <boost/signals2/trackable.hpp>
 #include <GG/Base.h>
 #include <GG/Exception.h>
 #include <GG/Flags.h>
-
-#include <boost/signals2/trackable.hpp>
-
-#include <list>
-#include <set>
-#include <vector>
-#include <memory>
 
 
 namespace GG {
@@ -1036,5 +1035,6 @@ private:
 };
 
 }
+
 
 #endif

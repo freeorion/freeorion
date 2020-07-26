@@ -8,14 +8,12 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-#include <GG/DynamicGraphic.h>
-
+#include <cmath>
 #include <GG/ClrConstants.h>
 #include <GG/DrawUtil.h>
+#include <GG/DynamicGraphic.h>
 #include <GG/GUI.h>
 #include <GG/Texture.h>
-
-#include <cmath>
 
 
 using namespace GG;

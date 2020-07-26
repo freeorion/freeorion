@@ -7,20 +7,18 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-#include <GG/GUI.h>
-
-#include <GG/BrowseInfoWnd.h>
 #include <GG/Config.h>
-#include <GG/Cursor.h>
-#include <GG/Edit.h>
-#include <GG/Layout.h>
-#include <GG/ListBox.h>
-#include <GG/StyleFactory.h>
-#include <GG/Timer.h>
-#include <GG/utf8/checked.h>
-#include <GG/ZList.h>
-
+#include <cassert>
+#include <fstream>
+#include <functional>
+#include <iostream>
+#include <list>
+#include <thread>
+#include <boost/algorithm/string/predicate.hpp>
+#include <boost/format.hpp>
+#include <boost/xpressive/xpressive.hpp>
 #if GG_HAVE_LIBPNG
+# include <boost/gil/io/write_view.hpp>
 # if GIGI_CONFIG_USE_OLD_IMPLEMENTATION_OF_GIL_PNG_IO
 #  if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ > 7)
 #   pragma GCC diagnostic push
@@ -35,17 +33,17 @@
 #  include <boost/gil/extension/io/png.hpp>
 # endif
 #endif
+#include <GG/BrowseInfoWnd.h>
+#include <GG/Cursor.h>
+#include <GG/Edit.h>
+#include <GG/GUI.h>
+#include <GG/Layout.h>
+#include <GG/ListBox.h>
+#include <GG/StyleFactory.h>
+#include <GG/Timer.h>
+#include <GG/utf8/checked.h>
+#include <GG/ZList.h>
 
-#include <boost/algorithm/string/predicate.hpp>
-#include <boost/format.hpp>
-#include <boost/xpressive/xpressive.hpp>
-
-#include <cassert>
-#include <functional>
-#include <fstream>
-#include <iostream>
-#include <list>
-#include <thread>
 
 using namespace GG;
 

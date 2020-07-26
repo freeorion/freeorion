@@ -7,15 +7,14 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-#include <GG/Layout.h>
-
+#include <cassert>
+#include <cmath>
 #include <GG/ClrConstants.h>
 #include <GG/DrawUtil.h>
+#include <GG/Layout.h>
 #include <GG/TextControl.h>
 #include <GG/WndEvent.h>
 
-#include <cassert>
-#include <cmath>
 
 using namespace GG;
 

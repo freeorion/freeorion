@@ -16,10 +16,10 @@
 #ifndef _GG_DropDownList_h_
 #define _GG_DropDownList_h_
 
-#include <GG/ListBox.h>
-#include <GG/GLClientAndServerBuffer.h>
 
 #include <memory>
+#include <GG/GLClientAndServerBuffer.h>
+#include <GG/ListBox.h>
 
 
 class ModalListPicker;
@@ -220,5 +220,6 @@ private:
 };
 
 }
+
 
 #endif

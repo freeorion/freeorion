@@ -15,10 +15,11 @@
 #ifndef _GG_VectorTexture_h_
 #define _GG_VectorTexture_h_
 
+
+#include <boost/filesystem/path.hpp>
 #include <GG/Base.h>
 #include <GG/Exception.h>
 
-#include <boost/filesystem/path.hpp>
 
 class VectorTextureImpl;
 
@@ -100,5 +101,6 @@ GG_API VectorTextureManager& GetVectorTextureManager();
 
 
 }
+
 
 #endif

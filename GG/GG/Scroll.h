@@ -14,10 +14,10 @@
 #ifndef _GG_Scroll_h_
 #define _GG_Scroll_h_
 
-#include <GG/Control.h>
-#include <GG/GLClientAndServerBuffer.h>
 
 #include <boost/signals2/signal.hpp>
+#include <GG/Control.h>
+#include <GG/GLClientAndServerBuffer.h>
 
 
 namespace GG {
@@ -145,5 +145,6 @@ private:
 GG_API void SignalScroll(const Scroll& scroll, bool stopped);
 
 }
+
 
 #endif

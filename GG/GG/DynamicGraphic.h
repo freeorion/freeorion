@@ -16,9 +16,9 @@
 #ifndef _GG_DynamicGraphic_h_
 #define _GG_DynamicGraphic_h_
 
+
 #include <GG/Control.h>
 #include <GG/StaticGraphic.h>
-
 #include <boost/signals2/signal.hpp>
 
 
@@ -222,5 +222,6 @@ private:
 };
 
 }
+
 
 #endif

@@ -15,6 +15,7 @@
 #ifndef _GG_FontFwd_h_
 #define _GG_FontFwd_h_
 
+
 #include <GG/Flags.h>
 #include <GG/StrongTypedef.h>
 
@@ -68,5 +69,6 @@ extern GG_API const CPSize CP1;
 extern GG_API const CPSize INVALID_CP_SIZE;
 
 }
+
 
 #endif

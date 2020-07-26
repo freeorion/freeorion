@@ -7,19 +7,16 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-#include <GG/DropDownList.h>
-
+#include <iterator>
+#include <memory>
+#include <boost/optional/optional.hpp>
 #include <GG/DrawUtil.h>
+#include <GG/DropDownList.h>
 #include <GG/GUI.h>
 #include <GG/Layout.h>
 #include <GG/Scroll.h>
 #include <GG/StyleFactory.h>
 #include <GG/WndEvent.h>
-
-#include <boost/optional/optional.hpp>
-
-#include <iterator>
-#include <memory>
 
 
 using namespace GG;

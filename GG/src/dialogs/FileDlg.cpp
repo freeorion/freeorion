@@ -7,9 +7,19 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-#include <GG/dialogs/FileDlg.h>
-
+#include <boost/cast.hpp>
+#include <boost/algorithm/string/predicate.hpp>
+#include <boost/filesystem/operations.hpp>
+#include <boost/format.hpp>
+// boost::spirit::classic pulls in windows.h which in turn defines macro
+// versions of min and max.  Defining NOMINMAX disables the creation of those
+// macros
+#define NOMINMAX
+#include <boost/spirit/include/classic_dynamic.hpp>
+#include <boost/spirit/include/classic.hpp>
+#include <boost/system/system_error.hpp>
 #include <GG/Button.h>
+#include <GG/dialogs/FileDlg.h>
 #include <GG/dialogs/ThreeButtonDlg.h>
 #include <GG/DrawUtil.h>
 #include <GG/DropDownList.h>
@@ -19,18 +29,6 @@
 #include <GG/TextControl.h>
 #include <GG/utf8/checked.h>
 #include <GG/WndEvent.h>
-
-#include <boost/cast.hpp>
-#include <boost/format.hpp>
-#include <boost/algorithm/string/predicate.hpp>
-#include <boost/filesystem/operations.hpp>
-// boost::spirit::classic pulls in windows.h which in turn defines macro
-// versions of min and max.  Defining NOMINMAX disables the creation of those
-// macros
-#define NOMINMAX
-#include <boost/spirit/include/classic.hpp>
-#include <boost/spirit/include/classic_dynamic.hpp>
-#include <boost/system/system_error.hpp>
 
 
 using namespace GG;

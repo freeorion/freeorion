@@ -7,17 +7,16 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-#include "../GG/ScrollPanel.h"
-
+#include <algorithm>
 #include <GG/ClrConstants.h>
 #include <GG/Clr.h>
 #include <GG/DrawUtil.h>
 #include <GG/Flags.h>
 #include <GG/Scroll.h>
+#include <GG/ScrollPanel.h>
 #include <GG/StyleFactory.h>
 #include <GG/WndEvent.h>
 
-#include <algorithm>
 
 namespace GG {
 

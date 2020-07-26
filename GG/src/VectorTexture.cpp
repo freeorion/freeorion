@@ -7,23 +7,20 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-#include <GG/VectorTexture.h>
-
-#include <GG/GLClientAndServerBuffer.h>
+#include <boost/algorithm/string/case_conv.hpp>
+#include <boost/filesystem/fstream.hpp>
+#include <boost/filesystem/operations.hpp>
 #include <GG/Config.h>
 #include <GG/DrawUtil.h>
+#include <GG/GLClientAndServerBuffer.h>
 #include <GG/utf8/checked.h>
-
+#include <GG/VectorTexture.h>
 #define NANOSVG_IMPLEMENTATION
 #include "nanosvg/nanosvg.h"
-
 #include "nanovg/nanovg.h"
 #define NANOVG_GL2_IMPLEMENTATION
 #include "nanovg/nanovg_gl.h"
 
-#include <boost/filesystem/fstream.hpp>
-#include <boost/filesystem/operations.hpp>
-#include <boost/algorithm/string/case_conv.hpp>
 
 using namespace GG;
 

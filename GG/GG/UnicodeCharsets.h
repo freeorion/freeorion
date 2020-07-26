@@ -12,13 +12,13 @@
 //! Contains the UnicodeCharsets class, and functions related to the character
 //! sets defined in the Unicode standard.
 
-#ifndef _UnicodeCharsets_h_
-#define _UnicodeCharsets_h_
+#ifndef _GG_UnicodeCharsets_h_
+#define _GG_UnicodeCharsets_h_
 
-#include <GG/Base.h>
 
 #include <set>
 #include <vector>
+#include <GG/Base.h>
 
 
 namespace GG {
@@ -61,5 +61,6 @@ GG_API const UnicodeCharset* CharsetContaining(std::uint32_t c);
 GG_API const UnicodeCharset* CharsetWithName(const std::string& name);
 
 }
+
 
 #endif

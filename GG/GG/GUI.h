@@ -15,12 +15,11 @@
 #ifndef _GG_GUI_h_
 #define _GG_GUI_h_
 
-#include <GG/Font.h>
-#include <GG/WndEvent.h>
-
-#include <boost/signals2/signal.hpp>
 
 #include <chrono>
+#include <GG/Font.h>
+#include <GG/WndEvent.h>
+#include <boost/signals2/signal.hpp>
 
 
 namespace boost { namespace archive {
@@ -479,5 +478,6 @@ std::shared_ptr<Font> GUI::GetFont(const std::string& font_filename, unsigned in
 { return GetFontManager().GetFont(font_filename, pts, file_contents, first, last); }
 
 }
+
 
 #endif

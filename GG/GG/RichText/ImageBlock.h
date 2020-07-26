@@ -6,14 +6,15 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-#ifndef IMAGEBLOCK_H
-#define IMAGEBLOCK_H
+#ifndef _GG_RichText_ImageBlock_h_
+#define _GG_RichText_ImageBlock_h_
 
+
+#include <boost/filesystem/path.hpp>
 #include <GG/RichText/BlockControl.h>
 #include <GG/RichText/RichText.h>
 #include <GG/StaticGraphic.h>
 
-#include <boost/filesystem/path.hpp>
 
 namespace GG
 {

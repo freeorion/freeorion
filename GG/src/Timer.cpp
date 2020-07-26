@@ -7,12 +7,10 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-#include <GG/Timer.h>
-
-#include <GG/GUI.h>
-#include <GG/Wnd.h>
-
 #include <map>
+#include <GG/GUI.h>
+#include <GG/Timer.h>
+#include <GG/Wnd.h>
 
 
 using namespace GG;

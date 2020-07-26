@@ -14,6 +14,7 @@
 #ifndef _GG_MultiEdit_h_
 #define _GG_MultiEdit_h_
 
+
 #include <GG/Edit.h>
 #include <GG/MultiEditFwd.h>
 
@@ -229,5 +230,6 @@ private:
 };
 
 }
+
 
 #endif

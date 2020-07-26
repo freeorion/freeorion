@@ -8,8 +8,8 @@
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
 #include <GG/Control.h>
-
 #include <GG/WndEvent.h>
+
 
 using namespace GG;
 

@@ -16,16 +16,14 @@
 #define _GG_ListBox_h_
 
 
+#include <memory>
+#include <set>
+#include <unordered_set>
+#include <boost/optional/optional.hpp>
 #include <GG/AlignmentFlags.h>
 #include <GG/ClrConstants.h>
 #include <GG/Control.h>
 #include <GG/Timer.h>
-
-#include <boost/optional/optional.hpp>
-
-#include <memory>
-#include <set>
-#include <unordered_set>
 
 
 namespace GG {
@@ -632,5 +630,6 @@ bool GG::ListBox::DefaultRowCmp<RowType>::operator()(const GG::ListBox::Row& lhs
 {
     return static_cast<const RowType&>(lhs).SortKey(column) < static_cast<const RowType&>(rhs).SortKey(column);
 }
+
 
 #endif

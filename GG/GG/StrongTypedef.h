@@ -16,6 +16,7 @@
 #ifndef _GG_StrongTypedef_h_
 #define _GG_StrongTypedef_h_
 
+
 #include <iostream>
 #include <type_traits>
 
@@ -418,5 +419,6 @@ inline std::size_t Value(std::size_t s)
     }                                                                   \
                                                                         \
     void dummy_function_to_force_semicolon()
+
 
 #endif

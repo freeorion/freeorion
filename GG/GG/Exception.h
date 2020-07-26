@@ -15,10 +15,10 @@
 #ifndef _GG_Exception_h_
 #define _GG_Exception_h_
 
-#include <GG/Export.h>
 
 #include <stdexcept>
 #include <string>
+#include <GG/Export.h>
 
 
 namespace GG {
@@ -91,5 +91,6 @@ private:
     };
 
 }
+
 
 #endif

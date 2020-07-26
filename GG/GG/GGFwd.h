@@ -13,6 +13,7 @@
 #ifndef _GG_GGFwd_h_
 #define _GG_GGFwd_h_
 
+
 namespace GG {
     class Button;
     class DropDownList;
@@ -37,5 +38,6 @@ namespace GG {
     template <typename T>
     class Spin;
 }
+
 
 #endif

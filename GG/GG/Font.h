@@ -17,17 +17,16 @@
 #ifndef _GG_Font_h_
 #define _GG_Font_h_
 
-#include <GG/AlignmentFlags.h>
-#include <GG/FontFwd.h>
-#include <GG/Texture.h>
-#include <GG/UnicodeCharsets.h>
-
-#include <boost/graph/graph_concepts.hpp>
 
 #include <memory>
 #include <set>
 #include <stack>
 #include <unordered_map>
+#include <GG/AlignmentFlags.h>
+#include <GG/FontFwd.h>
+#include <GG/Texture.h>
+#include <GG/UnicodeCharsets.h>
+#include <boost/graph/graph_concepts.hpp>
 
 
 struct FT_FaceRec_;
@@ -984,5 +983,6 @@ GG::FontManager::GetFontImpl(std::string font_filename, unsigned int pts,
         }
     }
 }
+
 
 #endif

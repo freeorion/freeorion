@@ -14,6 +14,7 @@
 #ifndef _GG_TabWnd_h_
 #define _GG_TabWnd_h_
 
+
 #include <GG/Button.h>
 
 
@@ -251,5 +252,6 @@ private:
 };
 
 }
+
 
 #endif

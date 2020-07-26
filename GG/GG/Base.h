@@ -14,17 +14,14 @@
 #ifndef _GG_Base_h_
 #define _GG_Base_h_
 
-#include <GG/Export.h>
-
-// GL headers
-#include <GL/glew.h>
-
-// other headers
-#include <GG/Enum.h>
-#include <GG/Clr.h>
-#include <GG/PtRect.h>
 
 #include <memory>
+#include <GL/glew.h>
+#include <GG/Clr.h>
+#include <GG/Enum.h>
+#include <GG/Export.h>
+#include <GG/PtRect.h>
+
 
 /** \namespace GG \brief The namespace that encloses all GG classes,
     functions, typedefs, enums, etc. */
@@ -376,5 +373,6 @@ GG_ENUM(Key,
 )
 
 }
+
 
 #endif

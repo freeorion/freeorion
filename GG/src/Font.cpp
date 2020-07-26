@@ -7,28 +7,25 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-#include <GG/Font.h>
-
-#include <GG/GUI.h>
-#include <GG/Base.h>
-#include <GG/StyleFactory.h>
-#include <GG/utf8/checked.h>
-#include <GG/GLClientAndServerBuffer.h>
-
-#include <ft2build.h>
-#include FT_FREETYPE_H
-
-#include <boost/format.hpp>
-#include <boost/lexical_cast.hpp>
-#include <boost/xpressive/xpressive.hpp>
-#include <boost/xpressive/regex_actions.hpp>
-
 #include <cctype>
 #include <cmath>
 #include <iterator>
 #include <numeric>
 #include <sstream>
 #include <unordered_set>
+#include <boost/format.hpp>
+#include <boost/lexical_cast.hpp>
+#include <boost/xpressive/regex_actions.hpp>
+#include <boost/xpressive/xpressive.hpp>
+#include <ft2build.h>
+#include FT_FREETYPE_H
+#include <GG/Base.h>
+#include <GG/Font.h>
+#include <GG/GLClientAndServerBuffer.h>
+#include <GG/GUI.h>
+#include <GG/StyleFactory.h>
+#include <GG/utf8/checked.h>
+
 
 #define DEBUG_DETERMINELINES 0
 

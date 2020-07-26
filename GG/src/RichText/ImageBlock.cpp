@@ -7,17 +7,16 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
+#include <algorithm>
+#include <boost/filesystem.hpp>
+#include <GG/dialogs/FileDlg.h>
+#include <GG/DrawUtil.h>
 #include <GG/RichText/ImageBlock.h>
-
-#include <GG/Texture.h>
 #include <GG/RichText/RichText.h>
 #include <GG/TextControl.h>
-#include <GG/DrawUtil.h>
+#include <GG/Texture.h>
 #include <GG/utf8/checked.h>
-#include <GG/dialogs/FileDlg.h>
 
-#include <boost/filesystem.hpp>
-#include <algorithm>
 
 namespace GG {
     namespace fs = boost::filesystem;

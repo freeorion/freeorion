@@ -8,7 +8,6 @@
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
 #include <GG/Button.h>
-
 #include <GG/DrawUtil.h>
 #include <GG/Layout.h>
 #include <GG/StyleFactory.h>

@@ -11,8 +11,8 @@
 //!
 //! Contains the standard modal user-input/-notification dialog.
 
-#ifndef _GG_ThreeButtonDlg_h_
-#define _GG_ThreeButtonDlg_h_
+#ifndef _GG_dialogs_ThreeButtonDlg_h_
+#define _GG_dialogs_ThreeButtonDlg_h_
 
 #include <GG/Wnd.h>
 
@@ -82,5 +82,6 @@ private:
 };
 
 }
+
 
 #endif

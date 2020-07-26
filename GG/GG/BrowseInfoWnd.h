@@ -15,9 +15,10 @@
 #ifndef _GG_BrowseInfoWnd_h_
 #define _GG_BrowseInfoWnd_h_
 
-#include <GG/Wnd.h>
+
 #include <GG/Font.h>
 #include <GG/GLClientAndServerBuffer.h>
+#include <GG/Wnd.h>
 
 
 namespace GG {
@@ -134,5 +135,6 @@ private:
 };
 
 }
+
 
 #endif

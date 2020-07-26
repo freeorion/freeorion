@@ -15,9 +15,9 @@
 #ifndef _GG_Cursor_h_
 #define _GG_Cursor_h_
 
-#include <GG/PtRect.h>
 
 #include <memory>
+#include <GG/PtRect.h>
 
 
 namespace GG {
@@ -70,5 +70,6 @@ private:
 };
 
 }
+
 
 #endif

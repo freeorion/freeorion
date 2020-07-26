@@ -438,4 +438,5 @@ void Slider<T>::SlidEcho::operator()(T pos, T min, T max)
 
 }
 
+
 #endif

@@ -7,11 +7,10 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
+#include <limits.h>
+#include <GG/RichText/RichText.h>
 #include "TextBlock.h"
 
-#include <GG/RichText/RichText.h>
-
-#include <limits.h>
 
 namespace GG {
     TextBlock::TextBlock(X x, Y y, X w, const std::string& str,

@@ -14,9 +14,10 @@
 #ifndef _GG_PtRect_h_
 #define _GG_PtRect_h_
 
+
+#include <boost/functional/hash.hpp>
 #include <GG/Base.h>
 #include <GG/StrongTypedef.h>
-#include <boost/functional/hash.hpp>
 
 
 namespace GG {
@@ -143,5 +144,6 @@ GG_API std::ostream& operator<<(std::ostream& os, const Rect& rect); ///< Rect s
     }
 
 } // namepace GG
+
 
 #endif

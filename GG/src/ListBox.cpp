@@ -7,19 +7,16 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-#include <GG/ListBox.h>
-
+#include <iterator>
+#include <numeric>
+#include <boost/cast.hpp>
 #include <GG/DeferredLayout.h>
 #include <GG/DrawUtil.h>
 #include <GG/GUI.h>
+#include <GG/ListBox.h>
 #include <GG/Scroll.h>
 #include <GG/StyleFactory.h>
 #include <GG/TextControl.h>
-
-#include <boost/cast.hpp>
-
-#include <iterator>
-#include <numeric>
 
 
 using namespace GG;

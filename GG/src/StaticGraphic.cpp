@@ -7,10 +7,9 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-#include <GG/StaticGraphic.h>
-
 #include <GG/ClrConstants.h>
 #include <GG/DrawUtil.h>
+#include <GG/StaticGraphic.h>
 
 
 using namespace GG;

@@ -15,7 +15,9 @@
 #ifndef _GG_DeferredLayout_h_
 #define _GG_DeferredLayout_h_
 
+
 #include <GG/Layout.h>
+
 
 namespace GG {
 
@@ -44,5 +46,6 @@ private:
 };
 
 }
+
 
 #endif

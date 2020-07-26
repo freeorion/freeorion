@@ -8,7 +8,6 @@
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
 #include <GG/dialogs/ColorDlg.h>
-
 #include <GG/Font.h>
 #include <GG/GLClientAndServerBuffer.h>
 #include <GG/GUI.h>

@@ -16,14 +16,14 @@
 #ifndef _GG_Spin_h_
 #define _GG_Spin_h_
 
+
+#include <cmath>
+#include <limits>
 #include <GG/Button.h>
 #include <GG/Edit.h>
 #include <GG/GUI.h>
 #include <GG/StyleFactory.h>
 #include <GG/WndEvent.h>
-
-#include <cmath>
-#include <limits>
 
 
 namespace GG {
@@ -510,5 +510,5 @@ namespace spin_details {
 
 }
 
-#endif
 
+#endif

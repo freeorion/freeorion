@@ -7,14 +7,12 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-#include <GG/DrawUtil.h>
-
-#include <GG/ClrConstants.h>
-#include <GG/GUI.h>
-#include <GG/GLClientAndServerBuffer.h>
-
-
 #include <valarray>
+#include <GG/ClrConstants.h>
+#include <GG/DrawUtil.h>
+#include <GG/GLClientAndServerBuffer.h>
+#include <GG/GUI.h>
+
 
 namespace { // file-scope constants and functions
     using namespace GG;

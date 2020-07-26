@@ -15,14 +15,14 @@
 #ifndef _GG_ZList_h_
 #define _GG_ZList_h_
 
-#include <GG/Base.h>
-#include <boost/optional/optional.hpp>
 
-#include <vector>
-#include <list>
-#include <set>
-#include <memory>
 #include <functional>
+#include <list>
+#include <memory>
+#include <set>
+#include <vector>
+#include <boost/optional/optional.hpp>
+#include <GG/Base.h>
 
 
 namespace GG {
@@ -99,5 +99,6 @@ private:
 };
 
 }
+
 
 #endif

@@ -15,6 +15,7 @@
 #ifndef _GG_StyleFactory_h_
 #define _GG_StyleFactory_h_
 
+
 #include  <GG/ClrConstants.h>
 #include  <GG/FontFwd.h>
 #include  <GG/Wnd.h>
@@ -179,5 +180,6 @@ public:
 };
 
 }
+
 
 #endif

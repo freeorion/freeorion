@@ -15,11 +15,11 @@
 #ifndef _GG_TextControl_h_
 #define _GG_TextControl_h_
 
+
+#include <boost/lexical_cast.hpp>
 #include <GG/ClrConstants.h>
 #include <GG/Control.h>
 #include <GG/Font.h>
-
-#include <boost/lexical_cast.hpp>
 
 
 namespace GG {
@@ -350,5 +350,6 @@ T GG::TextControl::GetValue() const
 template <typename T>
 void GG::TextControl::operator<<(T t)
 { SetText(boost::lexical_cast<std::string>(t)); }
+
 
 #endif

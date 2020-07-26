@@ -10,13 +10,14 @@
 //!
 //! Contains the RichText class that allows you to intersperse text with images.
 
-#ifndef RICHTEXT_H
-#define RICHTEXT_H
+#ifndef _GG_RichText_RichText_h_
+#define _GG_RichText_RichText_h_
+
 
 #include <GG/ClrConstants.h>
+#include <GG/RichText/BlockControl.h>
 #include <GG/TextControl.h>
 
-#include <GG/RichText/BlockControl.h>
 
 namespace GG
 {

@@ -14,9 +14,9 @@
 #ifndef _GG_Edit_h_
 #define _GG_Edit_h_
 
+
 #include <GG/ClrConstants.h>
 #include <GG/TextControl.h>
-
 #include <boost/signals2/signal.hpp>
 
 
@@ -226,5 +226,6 @@ CPSize GG_API NextWordEdgeFrom(const std::string& text,
                                bool search_right = true);
 
 }
+
 
 #endif

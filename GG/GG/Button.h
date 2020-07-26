@@ -17,10 +17,10 @@
 #ifndef _GG_Button_h_
 #define _GG_Button_h_
 
-#include <GG/ClrConstants.h>
-#include <GG/TextControl.h>
-#include <GG/Enum.h>
 
+#include <GG/ClrConstants.h>
+#include <GG/Enum.h>
+#include <GG/TextControl.h>
 #include <boost/signals2/signal.hpp>
 
 
@@ -416,5 +416,6 @@ private:
 };
 
 }
+
 
 #endif

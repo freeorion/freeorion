@@ -17,10 +17,11 @@
 #ifndef _GG_Texture_h_
 #define _GG_Texture_h_
 
+
+#include <boost/filesystem/path.hpp>
 #include <GG/Base.h>
 #include <GG/Exception.h>
 
-#include <boost/filesystem/path.hpp>
 
 namespace GG {
 
@@ -247,5 +248,6 @@ private:
 GG_API TextureManager& GetTextureManager();
 
 }
+
 
 #endif

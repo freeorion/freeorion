@@ -7,11 +7,12 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
+#ifndef _GG_RichText_BlockControl_h_
+#define _GG_RichText_BlockControl_h_
 
-#ifndef BLOCKCONTROL_H
-#define BLOCKCONTROL_H
 
 #include <GG/Control.h>
+
 
 namespace GG {
 

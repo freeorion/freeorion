@@ -9,6 +9,7 @@
 
 #include <GG/DeferredLayout.h>
 
+
 using namespace GG;
 
 DeferredLayout::DeferredLayout(X x, Y y, X w, Y h, std::size_t rows, std::size_t columns,

@@ -34,4 +34,5 @@ extern GG_API const Alignment ALIGN_RIGHT;    ///< Aligned to right.
 
 }
 
+
 #endif

@@ -15,14 +15,15 @@
 #ifndef _GG_Enum_h_
 #define _GG_Enum_h_
 
+
+#include <climits>
 #include <cstdlib>
 #include <iostream>
 #include <map>
 #include <sstream>
 #include <string>
-#include <climits>
-
 #include <boost/algorithm/string/trim.hpp>
+
 
 namespace GG {
 
@@ -180,5 +181,6 @@ namespace GG {
     }
 
 }
+
 
 #endif

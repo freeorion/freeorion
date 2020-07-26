@@ -14,6 +14,7 @@
 #ifndef _GG_Layout_h_
 #define _GG_Layout_h_
 
+
 #include <GG/AlignmentFlags.h>
 #include <GG/Wnd.h>
 
@@ -276,5 +277,6 @@ private:
 };
 
 }
+
 
 #endif

@@ -15,11 +15,10 @@
 #ifndef _GG_Timer_h_
 #define _GG_Timer_h_
 
-#include <GG/Base.h>
-
-#include <boost/signals2/signal.hpp>
 
 #include <set>
+#include <boost/signals2/signal.hpp>
+#include <GG/Base.h>
 
 
 namespace GG {
@@ -70,5 +69,6 @@ private:
 };
 
 }
+
 
 #endif

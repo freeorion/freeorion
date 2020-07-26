@@ -14,6 +14,7 @@
 #ifndef _GG_StaticGraphic_h_
 #define _GG_StaticGraphic_h_
 
+
 #include <GG/Control.h>
 #include <GG/Texture.h>
 #include <GG/VectorTexture.h>
@@ -91,5 +92,6 @@ private:
 };
 
 }
+
 
 #endif

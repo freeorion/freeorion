@@ -15,6 +15,7 @@
 #ifndef _GG_MultiEditFwd_h_
 #define _GG_MultiEditFwd_h_
 
+
 #include <GG/Flags.h>
 
 
@@ -41,5 +42,6 @@ extern GG_API const MultiEditStyle MULTI_NO_HSCROLL;       ///< Horizontal scrol
 extern GG_API const Flags<MultiEditStyle> MULTI_NO_SCROLL; ///< Scrolls are not used for this control.
 
 }
+
 
 #endif

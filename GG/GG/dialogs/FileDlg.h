@@ -11,12 +11,12 @@
 //!
 //! Contains the standard GG file dialog.
 
-#ifndef _GG_FileDlg_h_
-#define _GG_FileDlg_h_
+#ifndef _GG_dialogs_FileDlg_h_
+#define _GG_dialogs_FileDlg_h_
 
-#include <GG/DropDownList.h>
 
 #include <boost/filesystem/path.hpp>
+#include <GG/DropDownList.h>
 
 
 namespace GG {
@@ -163,5 +163,6 @@ private:
 };
 
 }
+
 
 #endif

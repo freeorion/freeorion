@@ -15,8 +15,10 @@
 #ifndef _GG_DrawUtil_h_
 #define _GG_DrawUtil_h_
 
+
 #include <GG/Base.h>
 #include <GG/ClrConstants.h>
+
 
 namespace GG {
     /** Calls the appropriate version of glColor*() with \a clr. */
@@ -133,5 +135,6 @@ namespace GG {
         rectangle. */
     GG_API void BubbleRectangle(Pt ul, Pt lr, Clr color, bool up, unsigned int corner_radius = 5);
 }
+
 
 #endif

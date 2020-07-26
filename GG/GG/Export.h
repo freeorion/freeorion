@@ -15,6 +15,7 @@
 #ifndef _GG_Export_h_
 #define _GG_Export_h_
 
+
 #ifndef GG_API
 # ifdef _MSC_VER
 #  ifdef GiGi_EXPORTS
@@ -27,5 +28,6 @@
 #  define GG_API __attribute__((__visibility__("default")))
 # endif
 #endif
+
 
 #endif

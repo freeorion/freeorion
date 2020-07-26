@@ -14,11 +14,11 @@
 #ifndef _GG_Clr_h_
 #define _GG_Clr_h_
 
-#include <GG/Export.h>
 
-#include <string>
-#include <stdexcept>
 #include <sstream>
+#include <stdexcept>
+#include <string>
+#include <GG/Export.h>
 
 
 namespace GG {
@@ -169,5 +169,6 @@ inline bool operator<(const Clr& lhs, const Clr& rhs)
 }
 
 }
+
 
 #endif

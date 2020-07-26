@@ -15,13 +15,13 @@
 #ifndef _GG_Flags_h_
 #define _GG_Flags_h_
 
-#include <GG/Exception.h>
 
 #include <cassert>
 #include <iosfwd>
 #include <map>
 #include <set>
 #include <type_traits>
+#include <GG/Exception.h>
 
 
 namespace GG {
@@ -461,5 +461,6 @@ operator~(FlagType flag)
 { return ~Flags<FlagType>(flag); }
 
 }
+
 
 #endif

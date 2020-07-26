@@ -11,8 +11,9 @@
 //!
 //! Contains the Wnd class, upon which all GG GUI elements are based.
 
-#ifndef _GG_ColorDlg_h_
-#define _GG_ColorDlg_h_
+#ifndef _GG_dialogs_ColorDlg_h_
+#define _GG_dialogs_ColorDlg_h_
+
 
 #include <GG/Button.h>
 #include <GG/ClrConstants.h>
@@ -215,5 +216,6 @@ private:
 };
 
 }
+
 
 #endif

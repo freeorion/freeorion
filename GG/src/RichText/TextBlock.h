@@ -13,6 +13,7 @@
 #include <GG/TextControl.h>
 #include <GG/RichText/BlockControl.h>
 
+
 namespace GG
 {
 

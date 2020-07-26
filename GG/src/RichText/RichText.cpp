@@ -7,12 +7,10 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-#include <GG/RichText/RichText.h>
-
-#include "TagParser.h"
-
 #include <cctype>
 #include <sstream>
+#include <GG/RichText/RichText.h>
+#include "TagParser.h"
 
 
 namespace {

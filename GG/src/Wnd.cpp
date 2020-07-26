@@ -7,17 +7,15 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-#include <GG/Wnd.h>
-
-#include <GG/GUI.h>
-#include <GG/BrowseInfoWnd.h>
-#include <GG/DrawUtil.h>
-#include <GG/Layout.h>
-#include <GG/WndEvent.h>
-
 #include <boost/multi_index_container.hpp>
 #include <boost/multi_index/member.hpp>
 #include <boost/multi_index/ordered_index.hpp>
+#include <GG/BrowseInfoWnd.h>
+#include <GG/DrawUtil.h>
+#include <GG/GUI.h>
+#include <GG/Layout.h>
+#include <GG/WndEvent.h>
+#include <GG/Wnd.h>
 
 
 using namespace GG;

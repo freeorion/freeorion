@@ -10,9 +10,10 @@
 #ifndef _GLClientAndServerBuffer_h_
 #define _GLClientAndServerBuffer_h_
 
-#include <GG/Base.h>
 
 #include <vector>
+#include <GG/Base.h>
+
 
 namespace GG {
 
@@ -141,5 +142,6 @@ public:
 };
 
 }
+
 
 #endif

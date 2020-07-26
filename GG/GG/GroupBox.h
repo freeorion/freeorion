@@ -15,6 +15,7 @@
 #ifndef _GG_GroupBox_h_
 #define _GG_GroupBox_h_
 
+
 #include <GG/ClrConstants.h>
 #include <GG/Wnd.h>
 
@@ -76,5 +77,6 @@ private:
 };
 
 }
+
 
 #endif
