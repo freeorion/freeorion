@@ -11173,6 +11173,15 @@ Gives bigger bonuses or penalities the more above or below 4 species that are pr
 PLC_DIVERSITY_SHORT_DESC
 Improves research, happiness, and Influence
 
+PLC_RESERVE_TANKS
+Reserve Tanks
+
+PLC_RESERVE_TANKS_DESC
+Adds +1 fuel capacity to all ships, but halves their speed when they have less than half of their max fuel left.
+
+PLC_RESERVE_TANKS_SHORT_DESC
+Improves ship fuel economony
+
 
 ##
 ## Technology categories
