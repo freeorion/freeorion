@@ -1902,6 +1902,8 @@ public:
         m_header_row = GG::Wnd::Create<ObjectHeaderRow>(GG::X1, ListRowHeight());
         SetColHeaders(m_header_row); // Gives ownership
 
+        using boost::placeholders::_1;
+
         m_header_row->ColumnsChangedSignal.connect(
             boost::bind(&ObjectListBox::Refresh, this));
         m_header_row->ColumnHeaderLeftClickSignal.connect(
