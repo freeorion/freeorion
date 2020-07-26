@@ -38,6 +38,8 @@ public:
     virtual ~Order()
     {}
 
+    virtual std::string Dump() const { return ""; }
+
     /** Returns the ID of the Empire issuing the order. */
     int EmpireID() const { return m_empire; }
 
@@ -92,6 +94,8 @@ class FO_COMMON_API RenameOrder : public Order {
 public:
     RenameOrder(int empire, int object, const std::string& name);
 
+    std::string Dump() const override;
+
     /** Returns ID of fleet selected in this order. */
     int ObjectID() const
     { return m_object; }
@@ -135,6 +139,8 @@ public:
     NewFleetOrder(int empire, const std::string& fleet_name,
                   const std::vector<int>& ship_ids,
                   bool aggressive);
+
+    std::string Dump() const override;
 
     const std::string& FleetName() const
     { return m_fleet_name; }
@@ -183,6 +189,8 @@ class FO_COMMON_API FleetMoveOrder : public Order {
 public:
     FleetMoveOrder(int empire_id, int fleet_id, int dest_system_id,
                    bool append = false);
+
+    std::string Dump() const override;
 
     /** Returns ID of fleet selected in this order. */
     int FleetID() const
@@ -234,6 +242,8 @@ class FO_COMMON_API FleetTransferOrder : public Order {
 public:
     FleetTransferOrder(int empire, int dest_fleet, const std::vector<int>& ships);
 
+    std::string Dump() const override;
+
     /* Returns ID of the fleet that the ships will go into. */
     int DestinationFleet() const
     { return m_dest_fleet; }
@@ -274,6 +284,8 @@ private:
 class FO_COMMON_API ColonizeOrder : public Order {
 public:
     ColonizeOrder(int empire, int ship, int planet);
+
+    std::string Dump() const override;
 
     /** Returns ID of the planet to be colonized. */
     int PlanetID() const
@@ -320,6 +332,8 @@ class FO_COMMON_API InvadeOrder : public Order {
 public:
     InvadeOrder(int empire, int ship, int planet);
 
+    std::string Dump() const override;
+
     /** Returns ID of the planet to be invaded. */
     int PlanetID() const
     { return m_planet; }
@@ -365,6 +379,8 @@ class FO_COMMON_API BombardOrder : public Order {
 public:
     BombardOrder(int empire, int ship, int planet);
 
+    std::string Dump() const override;
+
     /** Returns ID of the planet to be bombarded. */
     int PlanetID() const
     { return m_planet; }
@@ -408,6 +424,8 @@ class FO_COMMON_API ChangeFocusOrder : public Order {
 public:
     ChangeFocusOrder(int empire, int planet, const std::string& focus);
 
+    std::string Dump() const override;
+
     /* Returns ID of the fleet to be deleted. */
     int PlanetID() const
     { return m_planet; }
@@ -444,6 +462,8 @@ public:
                 const std::string& category, bool adopt,
                 int slot = -1);
 
+    std::string Dump() const override;
+
     /** Returns ID of fleet selected in this order. */
     const std::string&  PolicyName() const  { return m_policy_name; }
     const std::string&  CategoryName() const{ return m_category; }
@@ -455,8 +475,8 @@ private:
 
     void ExecuteImpl() const override;
 
-    std::string m_policy_name = "";
-    std::string m_category = "";
+    std::string m_policy_name;
+    std::string m_category;
     int         m_slot = -1;
     bool        m_adopt = false;
 
@@ -477,6 +497,8 @@ public:
     ResearchQueueOrder(int empire, const std::string& tech_name);
     ResearchQueueOrder(int empire, const std::string& tech_name, int position);
     ResearchQueueOrder(int empire, const std::string& tech_name, bool pause, float dummy);
+
+    std::string Dump() const override;
 
 private:
     ResearchQueueOrder() = default;
@@ -533,6 +555,8 @@ public:
                          boost::uuids::uuid uuid,
                          int num1 = -1, int num2 = -1);
 
+    std::string Dump() const override;
+
 private:
     ProductionQueueOrder() = default;
 
@@ -577,6 +601,8 @@ public:
     ShipDesignOrder(int empire, const ShipDesign& ship_design);
     ShipDesignOrder(int empire, int existing_design_id, const std::string& new_name,
                     const std::string& new_description = "");
+
+    std::string Dump() const override;
 
     int DesignID() const
     { return m_design_id; }
@@ -638,6 +664,8 @@ class FO_COMMON_API ScrapOrder : public Order {
 public:
     ScrapOrder(int empire, int object_id);
 
+    std::string Dump() const override;
+
     /** Returns ID of object selected in this order. */
     int ObjectID() const
     { return m_object_id; }
@@ -674,6 +702,8 @@ private:
 class FO_COMMON_API AggressiveOrder : public Order {
 public:
     AggressiveOrder(int empire, int object_id, bool aggression = true);
+
+    std::string Dump() const override;
 
     /** Returns ID of object selected in this order. */
     int ObjectID() const
@@ -716,6 +746,8 @@ class FO_COMMON_API GiveObjectToEmpireOrder : public Order {
 public:
     GiveObjectToEmpireOrder(int empire, int object_id, int recipient);
 
+    std::string Dump() const override;
+
     /** Returns ID of object selected in this order. */
     int ObjectID() const
     { return m_object_id; }
@@ -755,6 +787,8 @@ private:
 class FO_COMMON_API ForgetOrder : public Order {
 public:
     ForgetOrder(int empire, int object_id);
+
+    std::string Dump() const override;
 
     /** Returns ID of object selected in this order. */
     int ObjectID() const

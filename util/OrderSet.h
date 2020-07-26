@@ -58,6 +58,8 @@ public:
     OrderPtr&       operator[](std::size_t i);
     key_compare     key_comp() const        { return m_orders.key_comp(); }
 
+    std::string     Dump() const;
+
     /** Execute the \p order immediately on the client.
         Store the \p order in the OrderSet to be executed later on the server.
         Return an index that can be used to reference the order. */

@@ -15,6 +15,13 @@ OrderPtr& OrderSet::operator[](std::size_t i) {
     return it->second;
 }
 
+std::string OrderSet::Dump() const {
+    std::string retval;
+    for (const auto& order : m_orders)
+        retval += std::to_string(order.first) + ": " + order.second->Dump() + "\n";
+    return retval;
+}
+
 int OrderSet::IssueOrder(const OrderPtr& order)
 { return IssueOrder(OrderPtr(order)); }
 

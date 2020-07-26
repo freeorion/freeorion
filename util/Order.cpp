@@ -6,6 +6,7 @@
 #include <boost/uuid/random_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include "AppInterface.h"
+#include "i18n.h"
 #include "Logger.h"
 #include "OrderSet.h"
 #include "../Empire/Empire.h"
@@ -67,6 +68,10 @@ RenameOrder::RenameOrder(int empire, int object, const std::string& name) :
     }
 }
 
+std::string RenameOrder::Dump() const {
+    return UserString("ORDER_RENAME");
+}
+
 bool RenameOrder::Check(int empire, int object, const std::string& new_name) {
     // disallow the name "", since that denotes an unknown object
     if (new_name.empty()) {
@@ -122,6 +127,10 @@ NewFleetOrder::NewFleetOrder(int empire, const std::string& fleet_name,
 {
     if (!Check(empire, fleet_name, ship_ids, aggressive))
         return;
+}
+
+std::string NewFleetOrder::Dump() const {
+    return UserString("ORDER_FLEET_NEW");
 }
 
 bool NewFleetOrder::Check(int empire, const std::string& fleet_name, const std::vector<int>& ship_ids, bool aggressive) {
@@ -289,6 +298,10 @@ FleetMoveOrder::FleetMoveOrder(int empire_id, int fleet_id, int dest_system_id,
         m_route.push_back(start_system);
 }
 
+std::string FleetMoveOrder::Dump() const {
+    return UserString("ORDER_FLEET_MOVE");
+}
+
 bool FleetMoveOrder::Check(int empire_id, int fleet_id, int dest_system_id, bool append) {
     auto fleet = Objects().get<Fleet>(fleet_id);
     if (!fleet) {
@@ -380,6 +393,10 @@ FleetTransferOrder::FleetTransferOrder(int empire, int dest_fleet,
 {
     if (!Check(empire, dest_fleet, ships))
         return;
+}
+
+std::string FleetTransferOrder::Dump() const {
+    return UserString("ORDER_FLEET_TRANSFER");
 }
 
 bool FleetTransferOrder::Check(int empire_id, int dest_fleet_id, const std::vector<int>& ship_ids) {
@@ -490,6 +507,10 @@ ColonizeOrder::ColonizeOrder(int empire, int ship, int planet) :
 {
     if (!Check(empire, ship, planet))
         return;
+}
+
+std::string ColonizeOrder::Dump() const {
+    return UserString("ORDER_COLONIZE");
 }
 
 bool ColonizeOrder::Check(int empire_id, int ship_id, int planet_id) {
@@ -623,6 +644,10 @@ InvadeOrder::InvadeOrder(int empire, int ship, int planet) :
         return;
 }
 
+std::string InvadeOrder::Dump() const {
+    return UserString("ORDER_INVADE");
+}
+
 bool InvadeOrder::Check(int empire_id, int ship_id, int planet_id) {
     // make sure ship_id is a ship...
     auto ship = Objects().get<Ship>(ship_id);
@@ -749,6 +774,10 @@ BombardOrder::BombardOrder(int empire, int ship, int planet) :
         return;
 }
 
+std::string BombardOrder::Dump() const {
+    return UserString("ORDER_BOMBARD");
+}
+
 bool BombardOrder::Check(int empire_id, int ship_id, int planet_id) {
     auto ship = Objects().get<Ship>(ship_id);
     if (!ship) {
@@ -853,6 +882,10 @@ ChangeFocusOrder::ChangeFocusOrder(int empire, int planet, const std::string& fo
         return;
 }
 
+std::string ChangeFocusOrder::Dump() const {
+    return UserString("ORDER_FOCUS_CHANGE");
+}
+
 bool ChangeFocusOrder::Check(int empire_id, int planet_id, const std::string& focus) {
     auto planet = Objects().get<Planet>(planet_id);
 
@@ -898,6 +931,10 @@ PolicyOrder::PolicyOrder(int empire, const std::string& name,
     m_adopt(adopt)
 {}
 
+std::string PolicyOrder::Dump() const {
+    return m_adopt ? UserString("ORDER_POLICY_ADOPT") : UserString("ORDER_POLICY_ABANDON");
+}
+
 void PolicyOrder::ExecuteImpl() const {
     auto empire = GetValidatedEmpire();
     if (m_adopt)
@@ -927,6 +964,10 @@ ResearchQueueOrder::ResearchQueueOrder(int empire, const std::string& tech_name,
     m_tech_name(tech_name),
     m_pause(pause ? PAUSE : RESUME)
 {}
+
+std::string ResearchQueueOrder::Dump() const {
+    return UserString("ORDER_RESEARCH");
+}
 
 void ResearchQueueOrder::ExecuteImpl() const {
     auto empire = GetValidatedEmpire();
@@ -1001,6 +1042,10 @@ ProductionQueueOrder::ProductionQueueOrder(ProdQueueOrderAction action, int empi
     default:
         ErrorLogger() << "ProductionQueueOrder given unrecognized action!";
     }
+}
+
+std::string ProductionQueueOrder::Dump() const {
+    return UserString("ORDER_PRODUCTION");
 }
 
 void ProductionQueueOrder::ExecuteImpl() const {
@@ -1181,6 +1226,10 @@ ShipDesignOrder::ShipDesignOrder(int empire, int existing_design_id, const std::
     m_description(new_description)
 {}
 
+std::string ShipDesignOrder::Dump() const {
+    return UserString("ORDER_SHIP_DESIGN");
+}
+
 void ShipDesignOrder::ExecuteImpl() const {
     auto empire = GetValidatedEmpire();
 
@@ -1291,6 +1340,10 @@ ScrapOrder::ScrapOrder(int empire, int object_id) :
         return;
 }
 
+std::string ScrapOrder::Dump() const {
+    return UserString("ORDER_SCRAP");
+}
+
 bool ScrapOrder::Check(int empire_id, int object_id) {
     auto obj = Objects().get(object_id);
 
@@ -1358,6 +1411,10 @@ AggressiveOrder::AggressiveOrder(int empire, int object_id, bool aggression/* = 
         return;
 }
 
+std::string AggressiveOrder::Dump() const {
+    return UserString("ORDER_FLEET_AGGRESSION");
+}
+
 bool AggressiveOrder::Check(int empire_id, int object_id, bool aggression) {
     auto fleet = Objects().get<Fleet>(object_id);
     if (!fleet) {
@@ -1394,6 +1451,10 @@ GiveObjectToEmpireOrder::GiveObjectToEmpireOrder(int empire, int object_id, int 
 {
     if (!Check(empire, object_id, recipient))
         return;
+}
+
+std::string GiveObjectToEmpireOrder::Dump() const {
+    return UserString("ORDER_GIVE_TO_EMPIRE");
 }
 
 bool GiveObjectToEmpireOrder::Check(int empire_id, int object_id, int recipient_empire_id) {
@@ -1478,6 +1539,10 @@ ForgetOrder::ForgetOrder(int empire, int object_id) :
     Order(empire),
     m_object_id(object_id)
 {}
+
+std::string ForgetOrder::Dump() const {
+    return UserString("ORDER_FORGET");
+}
 
 void ForgetOrder::ExecuteImpl() const {
     GetValidatedEmpire();

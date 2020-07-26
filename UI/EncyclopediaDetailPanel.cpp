@@ -1068,9 +1068,7 @@ namespace {
 
         return retval;
     }
-}
 
-namespace {
     int DefaultLocationForEmpire(int empire_id) {
         const Empire* empire = GetEmpire(empire_id);
         if (!empire) {
@@ -1696,6 +1694,10 @@ namespace {
             detailed_description += "\n\n" + UserString("NO_OWNED_FLEETS_KNOWN");
         }
 
+        // Issued orders this turn
+        unsigned int n = 1;
+        detailed_description += "\n\n" + UserString("ISSUED_ORDERS") + "\n" +
+                                HumanClientApp::GetApp()->Orders().Dump();
 
         // Techs
         auto techs = empire->ResearchedTechs();

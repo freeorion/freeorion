@@ -5047,6 +5047,60 @@ Meters:
 RESEARCHED_TECHS
 '''Researched Techs: '''
 
+ISSUED_ORDERS
+'''Issued Orders: '''
+
+ORDER_RENAME
+Rename
+
+ORDER_FLEET_NEW
+New fleet
+
+ORDER_FLEET_MOVE
+Fleet Move
+
+ORDER_FLEET_TRANSFER
+Fleet Transfer
+
+ORDER_COLONIZE
+Colonize
+
+ORDER_INVADE
+Invade
+
+ORDER_BOMBARD
+Bombard
+
+ORDER_FOCUS_CHANGE
+Focus Change
+
+ORDER_POLICY_ADOPT
+Adopt Policy
+
+ORDER_POLICY_ABANDON
+Abandon Policy
+
+ORDER_RESEARCH
+Research
+
+ORDER_PRODUCTION
+Production
+
+ORDER_SHIP_DESIGN
+Ship Design
+
+ORDER_SCRAP
+Scrap
+
+ORDER_FLEET_AGGRESSION
+Set Fleet Aggress
+
+ORDER_GIVE_TO_EMPIRE
+Give To Empire
+
+ORDER_FORGET
+Forget
+
 BEFORE_FIRST_TURN
 Before First Turn
 
