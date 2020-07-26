@@ -15,28 +15,30 @@
 
 
 namespace GG {
-    class Button;
-    class DropDownList;
-    class DynamicGraphic;
-    class Edit;
-    class Font;
-    class ListBox;
-    class MultiEdit;
-    class RadioButtonGroup;
-    class Scroll;
-    class ScrollPanel;
-    class StaticGraphic;
-    class SubTexture;
-    class TabWnd;
-    class Texture;
-    class TextControl;
-    class RichText;
-    struct Clr;
 
-    typedef TextControl Label;
+class Button;
+class DropDownList;
+class DynamicGraphic;
+class Edit;
+class Font;
+class ListBox;
+class MultiEdit;
+class RadioButtonGroup;
+class Scroll;
+class ScrollPanel;
+class StaticGraphic;
+class SubTexture;
+class TabWnd;
+class Texture;
+class TextControl;
+class RichText;
+struct Clr;
 
-    template <typename T>
-    class Spin;
+typedef TextControl Label;
+
+template <typename T>
+class Spin;
+
 }
 
 

@@ -113,33 +113,35 @@ private:
 };
 
 namespace {
-    struct DropDownListSelChangedEcho
-    {
-        DropDownListSelChangedEcho(const DropDownList& drop_list) :
-            m_drop_list(drop_list)
-        {}
-        void operator()(const DropDownList::iterator& it)
-        {
-            std::cerr << "GG SIGNAL : DropDownList::SelChangedSignal(row="
-                      << m_drop_list.IteratorToIndex(it)
-                      << ")" << std::endl;
-        }
-        const DropDownList& m_drop_list;
-    };
 
-    struct ModalListPickerSelChangedEcho
+struct DropDownListSelChangedEcho
+{
+    DropDownListSelChangedEcho(const DropDownList& drop_list) :
+        m_drop_list(drop_list)
+    {}
+    void operator()(const DropDownList::iterator& it)
     {
-        ModalListPickerSelChangedEcho(ModalListPicker& picker) :
-            m_picker(picker)
-        {}
-        void operator()(const ListBox::iterator& it)
-        {
-            std::cerr << "GG SIGNAL : ModalListPicker::SelChangedSignal(row="
-                      << std::distance(m_picker.LB()->begin(), it)
-                      << ")" << std::endl;
-        }
-        ModalListPicker& m_picker;
-    };
+        std::cerr << "GG SIGNAL : DropDownList::SelChangedSignal(row="
+                    << m_drop_list.IteratorToIndex(it)
+                    << ")" << std::endl;
+    }
+    const DropDownList& m_drop_list;
+};
+
+struct ModalListPickerSelChangedEcho
+{
+    ModalListPickerSelChangedEcho(ModalListPicker& picker) :
+        m_picker(picker)
+    {}
+    void operator()(const ListBox::iterator& it)
+    {
+        std::cerr << "GG SIGNAL : ModalListPicker::SelChangedSignal(row="
+                    << std::distance(m_picker.LB()->begin(), it)
+                    << ")" << std::endl;
+    }
+    ModalListPicker& m_picker;
+};
+
 }
 
 ////////////////////////////////////////////////

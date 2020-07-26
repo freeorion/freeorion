@@ -10,7 +10,7 @@
 #include <GG/GLClientAndServerBuffer.h>
 
 
-namespace GG {
+using namespace GG;
 
 ///////////////////////////////////////////////////////////////////////////
 // GLBufferBase
@@ -122,7 +122,7 @@ void GLClientAndServerBufferBase<vtype>::clear()
 ///////////////////////////////////////////////////////////////////////////
 // GLRGBAColorBuffer
 ///////////////////////////////////////////////////////////////////////////
-template class GLClientAndServerBufferBase<unsigned char>;
+template class GG::GLClientAndServerBufferBase<unsigned char>;
 
 GLRGBAColorBuffer::GLRGBAColorBuffer() :
 GLClientAndServerBufferBase<unsigned char>(4)
@@ -145,7 +145,7 @@ void GLRGBAColorBuffer::activate() const
 ///////////////////////////////////////////////////////////////////////////
 // GL2DVertexBuffer
 ///////////////////////////////////////////////////////////////////////////
-template class GLClientAndServerBufferBase<float>;
+template class GG::GLClientAndServerBufferBase<float>;
 
 GL2DVertexBuffer::GL2DVertexBuffer() :
     GLClientAndServerBufferBase<float>(2)
@@ -235,6 +235,4 @@ void GLNormalBuffer::activate() const
     } else {
         glNormalPointer(GL_FLOAT, 0, b_data.empty() ? nullptr: &b_data[0]);
     }
-}
-
 }

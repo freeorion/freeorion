@@ -17,8 +17,10 @@
 using namespace GG;
 
 namespace {
-    Y TopOfFrame(bool label, const std::shared_ptr<Font>& font)
-    { return label ? font->Lineskip() / 2 - 1 : Y0; }
+
+Y TopOfFrame(bool label, const std::shared_ptr<Font>& font)
+{ return label ? font->Lineskip() / 2 - 1 : Y0; }
+
 }
 
 ////////////////////////////////////////////////

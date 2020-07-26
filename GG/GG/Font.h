@@ -982,6 +982,7 @@ GG::FontManager::GetFontImpl(std::string font_filename, unsigned int pts,
             return it->second;
         }
     }
+
 }
 
 

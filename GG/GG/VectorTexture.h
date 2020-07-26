@@ -99,7 +99,6 @@ private:
 /** Returns the singleton VectorTextureManager instance. */
 GG_API VectorTextureManager& GetVectorTextureManager();
 
-
 }
 
 

@@ -171,4 +171,8 @@ inline bool operator<(const Clr& lhs, const Clr& rhs)
 }
 
 
+//! Calls the appropriate version of glColor*() with @a clr.
+GG_API void glColor(const GG::Clr& clr);
+
+
 #endif

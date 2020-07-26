@@ -18,7 +18,6 @@
 #include <boost/format.hpp>
 #include <boost/xpressive/xpressive.hpp>
 #if GG_HAVE_LIBPNG
-# include <boost/gil/io/write_view.hpp>
 # if GIGI_CONFIG_USE_OLD_IMPLEMENTATION_OF_GIL_PNG_IO
 #  if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ > 7)
 #   pragma GCC diagnostic push
@@ -46,82 +45,84 @@
 
 
 using namespace GG;
+namespace gil = boost::gil;
 
 namespace {
-    const bool INSTRUMENT_GET_WINDOW_UNDER = false;
 
-    struct AcceleratorEcho
+const bool INSTRUMENT_GET_WINDOW_UNDER = false;
+
+struct AcceleratorEcho
+{
+    AcceleratorEcho(Key key, Flags<ModKey> mod_keys) :
+        m_str("GG SIGNAL : GUI::AcceleratorSignal(key=" +
+                boost::lexical_cast<std::string>(key) +
+                " mod_keys=" +
+                boost::lexical_cast<std::string>(mod_keys) +
+                ")")
+    {}
+    bool operator()()
     {
-        AcceleratorEcho(Key key, Flags<ModKey> mod_keys) :
-            m_str("GG SIGNAL : GUI::AcceleratorSignal(key=" +
-                  boost::lexical_cast<std::string>(key) +
-                  " mod_keys=" +
-                  boost::lexical_cast<std::string>(mod_keys) +
-                  ")")
-        {}
-        bool operator()()
-        {
-            std::cerr << m_str << std::endl;
-            return false;
-        }
-        std::string m_str;
-    };
+        std::cerr << m_str << std::endl;
+        return false;
+    }
+    std::string m_str;
+};
 
-    // calculates WndEvent::EventType corresponding to a given mouse button
-    // and a given left mouse button event type. For example, given the 
-    // left mouse button drag and button 2 (the right mouse button),
-    // this will return right button drag.
-    WndEvent::EventType ButtonEvent(WndEvent::EventType left_type, unsigned int mouse_button)
-    { return WndEvent::EventType(left_type + (WndEvent::MButtonDown - WndEvent::LButtonDown) * mouse_button); }
+// calculates WndEvent::EventType corresponding to a given mouse button
+// and a given left mouse button event type. For example, given the 
+// left mouse button drag and button 2 (the right mouse button),
+// this will return right button drag.
+WndEvent::EventType ButtonEvent(WndEvent::EventType left_type, unsigned int mouse_button)
+{ return WndEvent::EventType(left_type + (WndEvent::MButtonDown - WndEvent::LButtonDown) * mouse_button); }
 
-    typedef utf8::wchar_iterator<std::string::const_iterator> utf8_wchar_iterator;
-    typedef boost::xpressive::basic_regex<utf8_wchar_iterator> word_regex;
-    typedef boost::xpressive::regex_iterator<utf8_wchar_iterator> word_regex_iterator;
-    const wchar_t WIDE_DASH = '-';
-    const word_regex DEFAULT_WORD_REGEX =
-        +boost::xpressive::set[boost::xpressive::_w | WIDE_DASH];
+typedef utf8::wchar_iterator<std::string::const_iterator> utf8_wchar_iterator;
+typedef boost::xpressive::basic_regex<utf8_wchar_iterator> word_regex;
+typedef boost::xpressive::regex_iterator<utf8_wchar_iterator> word_regex_iterator;
+const wchar_t WIDE_DASH = '-';
+const word_regex DEFAULT_WORD_REGEX =
+    +boost::xpressive::set[boost::xpressive::_w | WIDE_DASH];
 
-    void WriteWndToPNG(const Wnd* wnd, const std::string& filename)
-    {
+void WriteWndToPNG(const Wnd* wnd, const std::string& filename)
+{
 #if GG_HAVE_LIBPNG
-        Pt ul = wnd->UpperLeft();
-        Pt size = wnd->Size();
+    Pt ul = wnd->UpperLeft();
+    Pt size = wnd->Size();
 
-        std::vector<GLubyte> bytes(Value(size.x) * Value(size.y) * 4);
+    std::vector<GLubyte> bytes(Value(size.x) * Value(size.y) * 4);
 
-        glFinish();
+    glFinish();
 
-        glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT);
+    glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT);
 
-        glPixelStorei(GL_PACK_SWAP_BYTES, false);
-        glPixelStorei(GL_PACK_LSB_FIRST, false);
-        glPixelStorei(GL_PACK_ROW_LENGTH, 0);
-        glPixelStorei(GL_PACK_SKIP_ROWS, 0);
-        glPixelStorei(GL_PACK_SKIP_PIXELS, 0);
-        glPixelStorei(GL_PACK_ALIGNMENT, 1);
+    glPixelStorei(GL_PACK_SWAP_BYTES, false);
+    glPixelStorei(GL_PACK_LSB_FIRST, false);
+    glPixelStorei(GL_PACK_ROW_LENGTH, 0);
+    glPixelStorei(GL_PACK_SKIP_ROWS, 0);
+    glPixelStorei(GL_PACK_SKIP_PIXELS, 0);
+    glPixelStorei(GL_PACK_ALIGNMENT, 1);
 
-        glReadPixels(Value(ul.x),
-                     Value(GUI::GetGUI()->AppHeight() - wnd->Bottom()),
-                     Value(size.x),
-                     Value(size.y),
-                     GL_RGBA,
-                     GL_UNSIGNED_BYTE,
-                     &bytes[0]);
-
-        glPopClientAttrib();
-
-        using namespace boost::gil;
-        write_view(
-            filename,
-            flipped_up_down_view(
-                interleaved_view(
+    glReadPixels(Value(ul.x),
+                    Value(GUI::GetGUI()->AppHeight() - wnd->Bottom()),
                     Value(size.x),
                     Value(size.y),
-                    static_cast<rgba8_pixel_t*>(static_cast<void*>(&bytes[0])),
-                    Value(size.x) * sizeof(rgba8_pixel_t))),
-            png_tag());
+                    GL_RGBA,
+                    GL_UNSIGNED_BYTE,
+                    &bytes[0]);
+
+    glPopClientAttrib();
+
+    gil::write_view(
+        filename,
+        gil::flipped_up_down_view(
+            gil::interleaved_view(
+                Value(size.x),
+                Value(size.y),
+                static_cast<gil::rgba8_pixel_t*>(static_cast<void*>(&bytes[0])),
+                Value(size.x) * sizeof(gil::rgba8_pixel_t))),
+        gil::png_tag());
 #endif
-    }
+}
+
 }
 
 

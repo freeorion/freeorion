@@ -126,24 +126,24 @@ GG_API inline Rect operator-(const Pt& pt, const Rect& rect) { return rect - pt;
 
 GG_API std::ostream& operator<<(std::ostream& os, const Rect& rect); ///< Rect stream-output operator for debug output
 
-    // Hash functions
-    // Replace with C++11 equilvalent when converted to C++11
-    GG_API inline std::size_t hash_value(X const& x) { return boost::hash<int>()(Value(x)); }
-    GG_API inline std::size_t hash_value(Y const& y) { return boost::hash<int>()(Value(y)); }
-    GG_API inline std::size_t hash_value(Pt const& pt) {
-        std::size_t seed(0);
-        boost::hash_combine(seed, pt.x);
-        boost::hash_combine(seed, pt.y);
-        return seed;
-    }
-    GG_API inline std::size_t hash_value(Rect const& r) {
-        std::size_t seed(0);
-        boost::hash_combine(seed, r.ul);
-        boost::hash_combine(seed, r.lr);
-        return seed;
-    }
+// Hash functions
+// Replace with C++11 equilvalent when converted to C++11
+GG_API inline std::size_t hash_value(X const& x) { return boost::hash<int>()(Value(x)); }
+GG_API inline std::size_t hash_value(Y const& y) { return boost::hash<int>()(Value(y)); }
+GG_API inline std::size_t hash_value(Pt const& pt) {
+    std::size_t seed(0);
+    boost::hash_combine(seed, pt.x);
+    boost::hash_combine(seed, pt.y);
+    return seed;
+}
+GG_API inline std::size_t hash_value(Rect const& r) {
+    std::size_t seed(0);
+    boost::hash_combine(seed, r.ul);
+    boost::hash_combine(seed, r.lr);
+    return seed;
+}
 
-} // namepace GG
+}
 
 
 #endif

@@ -18,7 +18,9 @@
 using namespace GG;
 
 namespace {
-    const int BORDER_THICKNESS = 1; // thickness with which to draw menu borders
+
+const int BORDER_THICKNESS = 1; // thickness with which to draw menu borders
+
 }
 
 
@@ -55,8 +57,10 @@ MenuItem::~MenuItem()
 // GG::PopupMenu
 ////////////////////////////////////////////////
 namespace {
-    // distance to leave between edge of PopupMenuClassic contents and the control's border
-    const X HORIZONTAL_MARGIN(3);
+
+// distance to leave between edge of PopupMenuClassic contents and the control's border
+const X HORIZONTAL_MARGIN(3);
+
 }
 
 const std::size_t PopupMenu::INVALID_CARET = std::numeric_limits<std::size_t>::max();

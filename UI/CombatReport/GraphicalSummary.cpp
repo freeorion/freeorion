@@ -466,7 +466,7 @@ public:
         right_head.x -=  delta_x;
         right_head.y -= delta_y;
 
-        GG::glColor(GG::CLR_WHITE);
+        glColor(GG::CLR_WHITE);
         glLineWidth(2);
         glDisable(GL_TEXTURE_2D);
 

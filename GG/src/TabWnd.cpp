@@ -16,16 +16,18 @@
 using namespace GG;
 
 namespace {
-    struct TabChangedEcho
-    {
-        TabChangedEcho(const std::string& name) : m_name(name) {}
-        void operator()(std::size_t index)
-            { std::cerr << "GG SIGNAL : " << m_name << "(index=" << index << ")\n"; }
-        std::string m_name;
-    };
 
-    Y TabHeightFromFont(const std::shared_ptr<Font>& font)
-    { return font->Lineskip() + 10; }
+struct TabChangedEcho
+{
+    TabChangedEcho(const std::string& name) : m_name(name) {}
+    void operator()(std::size_t index)
+        { std::cerr << "GG SIGNAL : " << m_name << "(index=" << index << ")\n"; }
+    std::string m_name;
+};
+
+Y TabHeightFromFont(const std::shared_ptr<Font>& font)
+{ return font->Lineskip() + 10; }
+
 }
 
 ////////////////////////////////////////////////

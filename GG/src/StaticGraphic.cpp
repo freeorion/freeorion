@@ -31,22 +31,24 @@ const GraphicStyle GG::GRAPHIC_PROPSCALE     (1 << 8);
 GG_FLAGSPEC_IMPL(GraphicStyle);
 
 namespace {
-    bool RegisterGraphicStyles()
-    {
-        FlagSpec<GraphicStyle>& spec = FlagSpec<GraphicStyle>::instance();
-        spec.insert(GRAPHIC_NONE,       "GRAPHIC_NONE",         true);
-        spec.insert(GRAPHIC_VCENTER,    "GRAPHIC_VCENTER",      true);
-        spec.insert(GRAPHIC_TOP,        "GRAPHIC_TOP",          true);
-        spec.insert(GRAPHIC_BOTTOM,     "GRAPHIC_BOTTOM",       true);
-        spec.insert(GRAPHIC_CENTER,     "GRAPHIC_CENTER",       true);
-        spec.insert(GRAPHIC_LEFT,       "GRAPHIC_LEFT",         true);
-        spec.insert(GRAPHIC_RIGHT,      "GRAPHIC_RIGHT",        true);
-        spec.insert(GRAPHIC_FITGRAPHIC, "GRAPHIC_FITGRAPHIC",   true);
-        spec.insert(GRAPHIC_SHRINKFIT,  "GRAPHIC_SHRINKFIT",    true);
-        spec.insert(GRAPHIC_PROPSCALE,  "GRAPHIC_PROPSCALE",    true);
-        return true;
-    }
-    bool dummy = RegisterGraphicStyles();
+
+bool RegisterGraphicStyles()
+{
+    FlagSpec<GraphicStyle>& spec = FlagSpec<GraphicStyle>::instance();
+    spec.insert(GRAPHIC_NONE,       "GRAPHIC_NONE",         true);
+    spec.insert(GRAPHIC_VCENTER,    "GRAPHIC_VCENTER",      true);
+    spec.insert(GRAPHIC_TOP,        "GRAPHIC_TOP",          true);
+    spec.insert(GRAPHIC_BOTTOM,     "GRAPHIC_BOTTOM",       true);
+    spec.insert(GRAPHIC_CENTER,     "GRAPHIC_CENTER",       true);
+    spec.insert(GRAPHIC_LEFT,       "GRAPHIC_LEFT",         true);
+    spec.insert(GRAPHIC_RIGHT,      "GRAPHIC_RIGHT",        true);
+    spec.insert(GRAPHIC_FITGRAPHIC, "GRAPHIC_FITGRAPHIC",   true);
+    spec.insert(GRAPHIC_SHRINKFIT,  "GRAPHIC_SHRINKFIT",    true);
+    spec.insert(GRAPHIC_PROPSCALE,  "GRAPHIC_PROPSCALE",    true);
+    return true;
+}
+bool dummy = RegisterGraphicStyles();
+
 }
 
 

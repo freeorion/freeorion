@@ -21,77 +21,80 @@
 using namespace GG;
 
 namespace {
-    namespace mi = boost::multi_index;
-    struct GridLayoutWnd
-    {
-        GridLayoutWnd() {}
 
-        GridLayoutWnd(std::shared_ptr<Wnd>& wnd_, const Pt& ul_, const Pt& lr_) : wnd(wnd_), ul(ul_), lr(lr_) {}
-        std::shared_ptr<Wnd> wnd;
-        Pt ul;
-        Pt lr;
-    };
-    struct IsLeft
-    {
-        bool operator()(const Pt& lhs, const Pt& rhs) const {return lhs.x < rhs.x;}
-        bool operator()(X x, const Pt& pt) const            {return x < pt.x;}
-        bool operator()(const Pt& pt, X x) const            {return pt.x < x;}
-    };
-    struct IsTop
-    {
-        bool operator()(const Pt& lhs, const Pt& rhs) const {return lhs.y < rhs.y;}
-        bool operator()(Y y, const Pt& pt) const            {return y < pt.y;}
-        bool operator()(const Pt& pt, Y y) const            {return pt.y < y;}
-    };
-    struct IsRight
-    {
-        bool operator()(const Pt& lhs, const Pt& rhs) const {return rhs.x < lhs.x;}
-        bool operator()(X x, const Pt& pt) const            {return pt.x < x;}
-        bool operator()(const Pt& pt, X x) const            {return x < pt.x;}
-    };
-    struct IsBottom
-    {
-        bool operator()(const Pt& lhs, const Pt& rhs) const {return rhs.y < lhs.y;}
-        bool operator()(Y y, const Pt& pt) const            {return pt.y < y;}
-        bool operator()(const Pt& pt, Y y) const            {return y < pt.y;}
-    };
-    struct Pointer {};
-    struct LayoutLeft {};
-    struct LayoutTop {};
-    struct LayoutRight {};
-    struct LayoutBottom {};
-    typedef mi::multi_index_container<
-        GridLayoutWnd,
-        mi::indexed_by<
-            mi::ordered_unique<mi::tag<Pointer>,            mi::member<GridLayoutWnd, std::shared_ptr<Wnd>, &GridLayoutWnd::wnd>>,
-            mi::ordered_non_unique<mi::tag<LayoutLeft>,     mi::member<GridLayoutWnd, Pt,   &GridLayoutWnd::ul>, IsLeft>,
-            mi::ordered_non_unique<mi::tag<LayoutTop>,      mi::member<GridLayoutWnd, Pt,   &GridLayoutWnd::ul>, IsTop>,
-            mi::ordered_non_unique<mi::tag<LayoutRight>,    mi::member<GridLayoutWnd, Pt,   &GridLayoutWnd::lr>, IsRight>,
-            mi::ordered_non_unique<mi::tag<LayoutBottom>,   mi::member<GridLayoutWnd, Pt,   &GridLayoutWnd::lr>, IsBottom>
-        >
-    > GridLayoutWndContainer;
-    typedef GridLayoutWndContainer::index<Pointer>::type::iterator      PointerIter;
-    typedef GridLayoutWndContainer::index<LayoutLeft>::type::iterator   LeftIter;
-    typedef GridLayoutWndContainer::index<LayoutTop>::type::iterator    TopIter;
-    typedef GridLayoutWndContainer::index<LayoutRight>::type::iterator  RightIter;
-    typedef GridLayoutWndContainer::index<LayoutBottom>::type::iterator BottomIter;
+namespace mi = boost::multi_index;
 
-    struct WndHorizontalLess
-    {
-        bool operator()(const std::shared_ptr<Wnd>& lhs, const std::shared_ptr<Wnd>& rhs) const
-            {return lhs->Left() < rhs->Left();}
-    };
+struct GridLayoutWnd
+{
+    GridLayoutWnd() {}
 
-    struct WndVerticalLess
-    {
-        bool operator()(const std::shared_ptr<Wnd>& lhs, const std::shared_ptr<Wnd>& rhs) const
-            {return lhs->Top() < rhs->Top();}
-    };
+    GridLayoutWnd(std::shared_ptr<Wnd>& wnd_, const Pt& ul_, const Pt& lr_) : wnd(wnd_), ul(ul_), lr(lr_) {}
+    std::shared_ptr<Wnd> wnd;
+    Pt ul;
+    Pt lr;
+};
+struct IsLeft
+{
+    bool operator()(const Pt& lhs, const Pt& rhs) const {return lhs.x < rhs.x;}
+    bool operator()(X x, const Pt& pt) const            {return x < pt.x;}
+    bool operator()(const Pt& pt, X x) const            {return pt.x < x;}
+};
+struct IsTop
+{
+    bool operator()(const Pt& lhs, const Pt& rhs) const {return lhs.y < rhs.y;}
+    bool operator()(Y y, const Pt& pt) const            {return y < pt.y;}
+    bool operator()(const Pt& pt, Y y) const            {return pt.y < y;}
+};
+struct IsRight
+{
+    bool operator()(const Pt& lhs, const Pt& rhs) const {return rhs.x < lhs.x;}
+    bool operator()(X x, const Pt& pt) const            {return pt.x < x;}
+    bool operator()(const Pt& pt, X x) const            {return x < pt.x;}
+};
+struct IsBottom
+{
+    bool operator()(const Pt& lhs, const Pt& rhs) const {return rhs.y < lhs.y;}
+    bool operator()(Y y, const Pt& pt) const            {return pt.y < y;}
+    bool operator()(const Pt& pt, Y y) const            {return y < pt.y;}
+};
+struct Pointer {};
+struct LayoutLeft {};
+struct LayoutTop {};
+struct LayoutRight {};
+struct LayoutBottom {};
+typedef mi::multi_index_container<
+    GridLayoutWnd,
+    mi::indexed_by<
+        mi::ordered_unique<mi::tag<Pointer>,            mi::member<GridLayoutWnd, std::shared_ptr<Wnd>, &GridLayoutWnd::wnd>>,
+        mi::ordered_non_unique<mi::tag<LayoutLeft>,     mi::member<GridLayoutWnd, Pt,   &GridLayoutWnd::ul>, IsLeft>,
+        mi::ordered_non_unique<mi::tag<LayoutTop>,      mi::member<GridLayoutWnd, Pt,   &GridLayoutWnd::ul>, IsTop>,
+        mi::ordered_non_unique<mi::tag<LayoutRight>,    mi::member<GridLayoutWnd, Pt,   &GridLayoutWnd::lr>, IsRight>,
+        mi::ordered_non_unique<mi::tag<LayoutBottom>,   mi::member<GridLayoutWnd, Pt,   &GridLayoutWnd::lr>, IsBottom>
+    >
+> GridLayoutWndContainer;
+typedef GridLayoutWndContainer::index<Pointer>::type::iterator      PointerIter;
+typedef GridLayoutWndContainer::index<LayoutLeft>::type::iterator   LeftIter;
+typedef GridLayoutWndContainer::index<LayoutTop>::type::iterator    TopIter;
+typedef GridLayoutWndContainer::index<LayoutRight>::type::iterator  RightIter;
+typedef GridLayoutWndContainer::index<LayoutBottom>::type::iterator BottomIter;
 
-    const int DEFAULT_LAYOUT_BORDER_MARGIN = 0;
-    const int DEFAULT_LAYOUT_CELL_MARGIN = 5;
+struct WndHorizontalLess
+{
+    bool operator()(const std::shared_ptr<Wnd>& lhs, const std::shared_ptr<Wnd>& rhs) const
+        {return lhs->Left() < rhs->Left();}
+};
 
-    struct ForwardToParentException {};
+struct WndVerticalLess
+{
+    bool operator()(const std::shared_ptr<Wnd>& lhs, const std::shared_ptr<Wnd>& rhs) const
+        {return lhs->Top() < rhs->Top();}
+};
+
+const int DEFAULT_LAYOUT_BORDER_MARGIN = 0;
+const int DEFAULT_LAYOUT_CELL_MARGIN = 5;
+
+struct ForwardToParentException {};
+
 }
 
 ///////////////////////////////////////
@@ -109,20 +112,22 @@ const WndFlag GG::REPEAT_KEY_PRESS   (1 << 6);
 GG_FLAGSPEC_IMPL(WndFlag);
 
 namespace {
-    bool RegisterWndFlags()
-    {
-        FlagSpec<WndFlag>& spec = FlagSpec<WndFlag>::instance();
-        spec.insert(NO_WND_FLAGS,       "NO_WND_FLAGS",         true);
-        spec.insert(INTERACTIVE,        "INTERACTIVE",          true);
-        spec.insert(REPEAT_BUTTON_DOWN, "REPEAT_BUTTON_DOWN",   true);
-        spec.insert(DRAGABLE,           "DRAGABLE",             true);
-        spec.insert(RESIZABLE,          "RESIZABLE",            true);
-        spec.insert(ONTOP,              "ONTOP",                true);
-        spec.insert(MODAL,              "MODAL",                true);
-        spec.insert(REPEAT_KEY_PRESS,   "REPEAT_KEY_PRESS",     true);
-        return true;
-    }
-    bool dummy = RegisterWndFlags();
+
+bool RegisterWndFlags()
+{
+    FlagSpec<WndFlag>& spec = FlagSpec<WndFlag>::instance();
+    spec.insert(NO_WND_FLAGS,       "NO_WND_FLAGS",         true);
+    spec.insert(INTERACTIVE,        "INTERACTIVE",          true);
+    spec.insert(REPEAT_BUTTON_DOWN, "REPEAT_BUTTON_DOWN",   true);
+    spec.insert(DRAGABLE,           "DRAGABLE",             true);
+    spec.insert(RESIZABLE,          "RESIZABLE",            true);
+    spec.insert(ONTOP,              "ONTOP",                true);
+    spec.insert(MODAL,              "MODAL",                true);
+    spec.insert(REPEAT_KEY_PRESS,   "REPEAT_KEY_PRESS",     true);
+    return true;
+}
+bool dummy = RegisterWndFlags();
+
 }
 
 

@@ -34,90 +34,92 @@
 using namespace GG;
 
 namespace {
-    using namespace boost::spirit::classic;
 
-    // these functors are used by the if_p, while_p, and for_p parsers in UpdateList()
-    struct LeadingWildcard
-    {
-        LeadingWildcard(const std::string& str) : m_value(!str.empty() && *str.begin() == '*') {}
-        bool operator()() const {return m_value;}
-        bool m_value;
-    };
-    struct TrailingWildcard
-    {
-        TrailingWildcard(const std::string& str) : m_value(!str.empty() && *str.rbegin() == '*') {}
-        bool operator()() const {return m_value;}
-        bool m_value;
-    };
+using namespace boost::spirit::classic;
 
-    struct Index
-    {
-        Index(int i = 0) : m_initial_value(i) {}
-        void operator()() const {value = m_initial_value;}
-        int m_initial_value;
-        static int value;
-    };
-    int Index::value;
-    struct IndexLess
-    {
-        IndexLess(int val) : m_value(val) {}
-        bool operator()() const {return Index::value <  m_value;}
-        int m_value;
-    };
-    struct IndexIncr
-    {
-        void operator()() const {++Index::value;}
-    };
+// these functors are used by the if_p, while_p, and for_p parsers in UpdateList()
+struct LeadingWildcard
+{
+    LeadingWildcard(const std::string& str) : m_value(!str.empty() && *str.begin() == '*') {}
+    bool operator()() const {return m_value;}
+    bool m_value;
+};
+struct TrailingWildcard
+{
+    TrailingWildcard(const std::string& str) : m_value(!str.empty() && *str.rbegin() == '*') {}
+    bool operator()() const {return m_value;}
+    bool m_value;
+};
 
-    struct FrontStringBegin
-    {
-        FrontStringBegin(const std::shared_ptr<std::vector<std::string>>& strings) :
-            m_strings(strings)
-        {}
+struct Index
+{
+    Index(int i = 0) : m_initial_value(i) {}
+    void operator()() const {value = m_initial_value;}
+    int m_initial_value;
+    static int value;
+};
+int Index::value;
+struct IndexLess
+{
+    IndexLess(int val) : m_value(val) {}
+    bool operator()() const {return Index::value <  m_value;}
+    int m_value;
+};
+struct IndexIncr
+{
+    void operator()() const {++Index::value;}
+};
 
-        const char* operator()() const {return m_strings->front().c_str();}
+struct FrontStringBegin
+{
+    FrontStringBegin(const std::shared_ptr<std::vector<std::string>>& strings) :
+        m_strings(strings)
+    {}
 
-        std::shared_ptr<std::vector<std::string>> m_strings;
-    };
-    struct FrontStringEnd
-    {
-        FrontStringEnd(const std::shared_ptr<std::vector<std::string>>& strings) :
-            m_strings(strings)
-        {}
+    const char* operator()() const {return m_strings->front().c_str();}
 
-        const char* operator()() const {return m_strings->front().c_str() + m_strings->front().size();}
+    std::shared_ptr<std::vector<std::string>> m_strings;
+};
+struct FrontStringEnd
+{
+    FrontStringEnd(const std::shared_ptr<std::vector<std::string>>& strings) :
+        m_strings(strings)
+    {}
 
-        std::shared_ptr<std::vector<std::string>> m_strings;
-    };
-    struct IndexedStringBegin
-    {
-        IndexedStringBegin(const std::shared_ptr<std::vector<std::string>>& strings) :
-            m_strings(strings)
-        {}
+    const char* operator()() const {return m_strings->front().c_str() + m_strings->front().size();}
 
-        const char* operator()() const {return (*m_strings)[Index::value].c_str();}
+    std::shared_ptr<std::vector<std::string>> m_strings;
+};
+struct IndexedStringBegin
+{
+    IndexedStringBegin(const std::shared_ptr<std::vector<std::string>>& strings) :
+        m_strings(strings)
+    {}
 
-        std::shared_ptr<std::vector<std::string>> m_strings;
-    };
-    struct IndexedStringEnd
-    {
-        IndexedStringEnd(const std::shared_ptr<std::vector<std::string>>& strings) :
-            m_strings(strings)
-        {}
+    const char* operator()() const {return (*m_strings)[Index::value].c_str();}
 
-        const char* operator()() const {return (*m_strings)[Index::value].c_str() + (*m_strings)[Index::value].size();}
+    std::shared_ptr<std::vector<std::string>> m_strings;
+};
+struct IndexedStringEnd
+{
+    IndexedStringEnd(const std::shared_ptr<std::vector<std::string>>& strings) :
+        m_strings(strings)
+    {}
 
-        std::shared_ptr<std::vector<std::string>> m_strings;
-    };
+    const char* operator()() const {return (*m_strings)[Index::value].c_str() + (*m_strings)[Index::value].size();}
 
-    bool WindowsRoot(const std::string& root_name)
-    { return root_name.size() == 2 && std::isalpha(root_name[0]) && root_name[1] == ':'; }
+    std::shared_ptr<std::vector<std::string>> m_strings;
+};
 
-    bool Win32Paths()
-    { return WindowsRoot(boost::filesystem::initial_path().root_name().string()); }
+bool WindowsRoot(const std::string& root_name)
+{ return root_name.size() == 2 && std::isalpha(root_name[0]) && root_name[1] == ':'; }
 
-    const X H_SPACING(10);
-    const Y V_SPACING(10);
+bool Win32Paths()
+{ return WindowsRoot(boost::filesystem::initial_path().root_name().string()); }
+
+const X H_SPACING(10);
+const Y V_SPACING(10);
+
 }
 
 namespace fs = boost::filesystem;

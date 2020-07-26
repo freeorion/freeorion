@@ -15,7 +15,9 @@
 using namespace GG;
 
 namespace {
-    const Pt INVALID_USABLE_SIZE(-X1, -Y1);
+
+const Pt INVALID_USABLE_SIZE(-X1, -Y1);
+
 }
 
 ////////////////////////////////////////////////

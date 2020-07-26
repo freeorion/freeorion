@@ -26,7 +26,8 @@
 
 
 namespace GG {
-    class Wnd;
+
+class Wnd;
 
 /** \brief A Z-ordering (depth-ordering) of the windows in the GUI.
 

@@ -14,8 +14,7 @@
 #include <GG/RichText/BlockControl.h>
 
 
-namespace GG
-{
+using namespace GG;
 
 /**
  * @brief A text control embeddable in RichText.
@@ -37,8 +36,6 @@ public:
 private:
     std::shared_ptr<TextControl> m_text; //! The text control used to handle the text.
 };
-
-}
 
 
 #endif

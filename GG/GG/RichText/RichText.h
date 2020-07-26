@@ -19,8 +19,8 @@
 #include <GG/TextControl.h>
 
 
-namespace GG
-{
+namespace GG {
+
 class RichTextPrivate;
 
 /** \brief A control for showing text and images.

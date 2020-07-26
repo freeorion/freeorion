@@ -14,27 +14,29 @@
 using namespace GG;
 
 namespace {
-    std::shared_ptr<Wnd> PickWithinWindow(const Pt& pt, std::shared_ptr<Wnd> wnd,
-                                          const std::set<Wnd*>* ignore)
-    {
-        // look through all the children of wnd, and determine whether pt lies in
-        // any of them (or their children)
-        const auto& end_it = wnd->Children().rend();
-        for (auto it = wnd->Children().rbegin(); it != end_it; ++it) {
-            if (!(*it)->Visible())
-                continue;
-            if (!(*it)->InWindow(pt))
-                continue;
-            if (auto temp = PickWithinWindow(pt, std::move(*it), ignore))
-                return temp;
-        }
 
-        // if wnd is visible and clickable, return it if no child windows also catch pt
-        if (!wnd->Visible() || !wnd->Interactive()  || (ignore && ignore->count(wnd.get())))
-            return nullptr;
-
-        return wnd;
+std::shared_ptr<Wnd> PickWithinWindow(const Pt& pt, std::shared_ptr<Wnd> wnd,
+                                        const std::set<Wnd*>* ignore)
+{
+    // look through all the children of wnd, and determine whether pt lies in
+    // any of them (or their children)
+    const auto& end_it = wnd->Children().rend();
+    for (auto it = wnd->Children().rbegin(); it != end_it; ++it) {
+        if (!(*it)->Visible())
+            continue;
+        if (!(*it)->InWindow(pt))
+            continue;
+        if (auto temp = PickWithinWindow(pt, std::move(*it), ignore))
+            return temp;
     }
+
+    // if wnd is visible and clickable, return it if no child windows also catch pt
+    if (!wnd->Visible() || !wnd->Interactive()  || (ignore && ignore->count(wnd.get())))
+        return nullptr;
+
+    return wnd;
+}
+
 }
 
 ///////////////////////////////////////
@@ -167,11 +169,13 @@ bool ZList::MoveDown(const Wnd* const wnd)
 }
 
 namespace {
-    const std::function<boost::optional<bool> (const std::shared_ptr<Wnd>&)> IsNotOnTop =
-        [](const std::shared_ptr<Wnd>& wnd)
-    {
-        return !wnd->OnTop() ? boost::optional<bool>(true) : boost::optional<bool>(boost::none);
-    };
+
+const std::function<boost::optional<bool> (const std::shared_ptr<Wnd>&)> IsNotOnTop =
+    [](const std::shared_ptr<Wnd>& wnd)
+{
+    return !wnd->OnTop() ? boost::optional<bool>(true) : boost::optional<bool>(boost::none);
+};
+
 }
 
 ZList::iterator ZList::FirstNonOnTop()

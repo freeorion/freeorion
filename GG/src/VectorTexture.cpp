@@ -25,18 +25,22 @@
 using namespace GG;
 
 namespace {
-    NVGcontext* VG() {
-        static NVGcontext* s_vg = nullptr;
-        if (!s_vg) {
-            s_vg = nvgCreateGL2(NVG_ANTIALIAS | NVG_STENCIL_STROKES | NVG_DEBUG);   // leaks, as NVGcontext only defined in nanovg.c
-           // std::cout << "Initialized NVGcontext!" << std::endl;
-        }
-        return s_vg;
+
+NVGcontext* VG() {
+    static NVGcontext* s_vg = nullptr;
+    if (!s_vg) {
+        s_vg = nvgCreateGL2(NVG_ANTIALIAS | NVG_STENCIL_STROKES | NVG_DEBUG);   // leaks, as NVGcontext only defined in nanovg.c
+        // std::cout << "Initialized NVGcontext!" << std::endl;
     }
+    return s_vg;
+}
+
 }
 
 namespace rack {
-    void svgDraw(NVGcontext *vg, NSVGimage *svg);
+
+void svgDraw(NVGcontext *vg, NSVGimage *svg);
+
 }
 
 

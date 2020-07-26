@@ -17,20 +17,22 @@
 using namespace GG;
 
 namespace {
-    struct ScrolledEcho
-    {
-        ScrolledEcho(const std::string& name) : m_name(name) {}
-        void operator()(int tab_min, int tab_max, int scroll_min, int scroll_max)
-            {
-                std::cerr << "GG SIGNAL : " << m_name
-                          << "(tab_min=" << tab_min << " tab_max=" << tab_max
-                          << " scroll_min=" << scroll_min << " scroll_max=" << scroll_max
-                          << ")\n";
-            }
-        std::string m_name;
-    };
 
-    const unsigned int MIN_TAB_SIZE = 5;
+struct ScrolledEcho
+{
+    ScrolledEcho(const std::string& name) : m_name(name) {}
+    void operator()(int tab_min, int tab_max, int scroll_min, int scroll_max)
+        {
+            std::cerr << "GG SIGNAL : " << m_name
+                        << "(tab_min=" << tab_min << " tab_max=" << tab_max
+                        << " scroll_min=" << scroll_min << " scroll_max=" << scroll_max
+                        << ")\n";
+        }
+    std::string m_name;
+};
+
+const unsigned int MIN_TAB_SIZE = 5;
+
 }
 
 ////////////////////////////////////////////////

@@ -17,24 +17,26 @@
 using namespace GG;
 
 namespace {
-    struct EditedEcho
-    {
-        EditedEcho(const std::string& name) : m_name(name) {}
-        void operator()(const std::string& str)
-        { std::cerr << "GG SIGNAL : " << m_name << "(str=" << str << ")" << std::endl; }
-        std::string m_name;
-    };
 
-    struct InRange
-    {
-        InRange(CPSize value) : m_value(value) {}
-        bool operator()(const std::pair<CPSize, CPSize>& p) const
-        { return p.first < m_value && m_value < p.second; }
-        const CPSize m_value;
-    };
+struct EditedEcho
+{
+    EditedEcho(const std::string& name) : m_name(name) {}
+    void operator()(const std::string& str)
+    { std::cerr << "GG SIGNAL : " << m_name << "(str=" << str << ")" << std::endl; }
+    std::string m_name;
+};
 
-    Y HeightFromFont(const std::shared_ptr<Font>& font, unsigned int pixel_margin)
-    {  return font->Height() + 2 * static_cast<int>(pixel_margin); }
+struct InRange
+{
+    InRange(CPSize value) : m_value(value) {}
+    bool operator()(const std::pair<CPSize, CPSize>& p) const
+    { return p.first < m_value && m_value < p.second; }
+    const CPSize m_value;
+};
+
+Y HeightFromFont(const std::shared_ptr<Font>& font, unsigned int pixel_margin)
+{  return font->Height() + 2 * static_cast<int>(pixel_margin); }
+
 }
 
 ////////////////////////////////////////////////

@@ -16,11 +16,13 @@
 using namespace GG;
 
 namespace {
-    void FiredSignalEcho(unsigned int ticks, Timer* timer)
-    {
-        std::cerr << "GG SIGNAL : Timer::FiredSignal(ticks=" << ticks
-                  << ", timer=" << timer << ")\n";
-    }
+
+void FiredSignalEcho(unsigned int ticks, Timer* timer)
+{
+    std::cerr << "GG SIGNAL : Timer::FiredSignal(ticks=" << ticks
+                << ", timer=" << timer << ")\n";
+}
+
 }
 
 Timer::Timer() :

@@ -16,8 +16,8 @@
 #include <GG/StaticGraphic.h>
 
 
-namespace GG
-{
+namespace GG {
+
 /**
 * @brief A Block control containing an image.
 *

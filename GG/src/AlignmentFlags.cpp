@@ -27,17 +27,19 @@ const Alignment GG::ALIGN_RIGHT        (1 << 5);
 GG_FLAGSPEC_IMPL(Alignment);
 
 namespace {
-    bool RegisterAlignments()
-    {
-        FlagSpec<Alignment>& spec = FlagSpec<Alignment>::instance();
-        spec.insert(ALIGN_NONE,     "ALIGN_NONE",   true);
-        spec.insert(ALIGN_VCENTER,  "ALIGN_VCENTER",true);
-        spec.insert(ALIGN_TOP,      "ALIGN_TOP",    true);
-        spec.insert(ALIGN_BOTTOM,   "ALIGN_BOTTOM", true);
-        spec.insert(ALIGN_CENTER,   "ALIGN_CENTER", true);
-        spec.insert(ALIGN_LEFT,     "ALIGN_LEFT",   true);
-        spec.insert(ALIGN_RIGHT,    "ALIGN_RIGHT",  true);
-        return true;
-    }
-    bool dummy = RegisterAlignments();
+
+bool RegisterAlignments()
+{
+    FlagSpec<Alignment>& spec = FlagSpec<Alignment>::instance();
+    spec.insert(ALIGN_NONE,     "ALIGN_NONE",   true);
+    spec.insert(ALIGN_VCENTER,  "ALIGN_VCENTER",true);
+    spec.insert(ALIGN_TOP,      "ALIGN_TOP",    true);
+    spec.insert(ALIGN_BOTTOM,   "ALIGN_BOTTOM", true);
+    spec.insert(ALIGN_CENTER,   "ALIGN_CENTER", true);
+    spec.insert(ALIGN_LEFT,     "ALIGN_LEFT",   true);
+    spec.insert(ALIGN_RIGHT,    "ALIGN_RIGHT",  true);
+    return true;
+}
+bool dummy = RegisterAlignments();
+
 }

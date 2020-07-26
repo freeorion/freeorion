@@ -23,6 +23,7 @@
 
 
 namespace GG {
+
 class Texture;
 
 /** \brief A control that replays images in sequence, forwards or backwards,

@@ -15,7 +15,9 @@
 using namespace GG;
 
 namespace {
-    const std::size_t BLOCK_SIZE = 16;
+
+const std::size_t BLOCK_SIZE = 16;
+
 }
 
 UnicodeCharset::UnicodeCharset() :

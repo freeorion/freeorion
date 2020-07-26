@@ -19,16 +19,18 @@
 using namespace GG;
 
 namespace {
-    bool LineEndsWithEndlineCharacter(const std::vector<Font::LineData>& lines,
-                                      std::size_t line,
-                                      const std::string& original_string)
-    {
-        assert(line < lines.size());
-        if (lines[line].Empty())
-            return false;
-        else
-            return original_string[Value(lines[line].char_data.back().string_index)] == '\n';
-    }
+
+bool LineEndsWithEndlineCharacter(const std::vector<Font::LineData>& lines,
+                                    std::size_t line,
+                                    const std::string& original_string)
+{
+    assert(line < lines.size());
+    if (lines[line].Empty())
+        return false;
+    else
+        return original_string[Value(lines[line].char_data.back().string_index)] == '\n';
+}
+
 }
 
 ///////////////////////////////////////
@@ -52,26 +54,28 @@ const MultiEditStyle GG::MULTI_NO_HSCROLL       (1 << 12);
 GG_FLAGSPEC_IMPL(MultiEditStyle);
 
 namespace {
-    bool RegisterMultiEditStyles()
-    {
-        FlagSpec<MultiEditStyle>& spec = FlagSpec<MultiEditStyle>::instance();
-        spec.insert(MULTI_NONE,             "MULTI_NONE",           true);
-        spec.insert(MULTI_WORDBREAK,        "MULTI_WORDBREAK",      true);
-        spec.insert(MULTI_LINEWRAP,         "MULTI_LINEWRAP",       true);
-        spec.insert(MULTI_VCENTER,          "MULTI_VCENTER",        true);
-        spec.insert(MULTI_TOP,              "MULTI_TOP",            true);
-        spec.insert(MULTI_BOTTOM,           "MULTI_BOTTOM",         true);
-        spec.insert(MULTI_CENTER,           "MULTI_CENTER",         true);
-        spec.insert(MULTI_LEFT,             "MULTI_LEFT",           true);
-        spec.insert(MULTI_RIGHT,            "MULTI_RIGHT",          true);
-        spec.insert(MULTI_READ_ONLY,        "MULTI_READ_ONLY",      true);
-        spec.insert(MULTI_TERMINAL_STYLE,   "MULTI_TERMINAL_STYLE", true);
-        spec.insert(MULTI_INTEGRAL_HEIGHT,  "MULTI_INTEGRAL_HEIGHT",true);
-        spec.insert(MULTI_NO_VSCROLL,       "MULTI_NO_VSCROLL",     true);
-        spec.insert(MULTI_NO_HSCROLL,       "MULTI_NO_HSCROLL",     true);
-        return true;
-    }
-    bool dummy = RegisterMultiEditStyles();
+
+bool RegisterMultiEditStyles()
+{
+    FlagSpec<MultiEditStyle>& spec = FlagSpec<MultiEditStyle>::instance();
+    spec.insert(MULTI_NONE,             "MULTI_NONE",           true);
+    spec.insert(MULTI_WORDBREAK,        "MULTI_WORDBREAK",      true);
+    spec.insert(MULTI_LINEWRAP,         "MULTI_LINEWRAP",       true);
+    spec.insert(MULTI_VCENTER,          "MULTI_VCENTER",        true);
+    spec.insert(MULTI_TOP,              "MULTI_TOP",            true);
+    spec.insert(MULTI_BOTTOM,           "MULTI_BOTTOM",         true);
+    spec.insert(MULTI_CENTER,           "MULTI_CENTER",         true);
+    spec.insert(MULTI_LEFT,             "MULTI_LEFT",           true);
+    spec.insert(MULTI_RIGHT,            "MULTI_RIGHT",          true);
+    spec.insert(MULTI_READ_ONLY,        "MULTI_READ_ONLY",      true);
+    spec.insert(MULTI_TERMINAL_STYLE,   "MULTI_TERMINAL_STYLE", true);
+    spec.insert(MULTI_INTEGRAL_HEIGHT,  "MULTI_INTEGRAL_HEIGHT",true);
+    spec.insert(MULTI_NO_VSCROLL,       "MULTI_NO_VSCROLL",     true);
+    spec.insert(MULTI_NO_HSCROLL,       "MULTI_NO_HSCROLL",     true);
+    return true;
+}
+bool dummy = RegisterMultiEditStyles();
+
 }
 
 const Flags<MultiEditStyle> GG::MULTI_NO_SCROLL (MULTI_NO_VSCROLL | MULTI_NO_HSCROLL);
@@ -678,13 +682,15 @@ std::pair<std::size_t, CPSize> MultiEdit::LowCursorPos() const
 }
 
 namespace {
-    struct InRange
-    {
-        InRange(CPSize value) : m_value(value) {}
-        bool operator()(const std::pair<CPSize, CPSize>& p) const
-        { return p.first < m_value && m_value < p.second; }
-        const CPSize m_value;
-    };
+
+struct InRange
+{
+    InRange(CPSize value) : m_value(value) {}
+    bool operator()(const std::pair<CPSize, CPSize>& p) const
+    { return p.first < m_value && m_value < p.second; }
+    const CPSize m_value;
+};
+
 }
 
 std::pair<CPSize, CPSize> MultiEdit::GetDoubleButtonDownWordIndices(CPSize char_index)

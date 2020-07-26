@@ -21,109 +21,110 @@
 
 using namespace GG;
 
-
 const int ListBox::DEFAULT_MARGIN(2);
 const X ListBox::DEFAULT_ROW_WIDTH(50);
 const Y ListBox::DEFAULT_ROW_HEIGHT(22);
 const unsigned int ListBox::BORDER_THICK = 2;
 
 namespace {
-    struct ListSignalEcho
+
+struct ListSignalEcho
+{
+    ListSignalEcho(const ListBox& lb, const std::string& name) :
+        m_LB(lb),
+        m_name(name)
+    {}
+
+    void operator()()
+    { std::cerr << "GG SIGNAL : " << m_name << "()" << std::endl; }
+
+    void operator()(const ListBox::SelectionSet& sels)
     {
-        ListSignalEcho(const ListBox& lb, const std::string& name) :
-            m_LB(lb),
-            m_name(name)
-        {}
+        std::cerr << "GG SIGNAL : " << m_name << "(sels=[ ";
 
-        void operator()()
-        { std::cerr << "GG SIGNAL : " << m_name << "()" << std::endl; }
+        for (const auto& sel : sels)
+        { std::cerr << RowIndex(sel) << ' '; }
 
-        void operator()(const ListBox::SelectionSet& sels)
-        {
-            std::cerr << "GG SIGNAL : " << m_name << "(sels=[ ";
-
-            for (const auto& sel : sels)
-            { std::cerr << RowIndex(sel) << ' '; }
-
-            std::cerr << "])" << std::endl;
-        }
-
-        void operator()(ListBox::const_iterator it)
-        { std::cerr << "GG SIGNAL : " << m_name << "(row=" << RowIndex(it) << ")" << std::endl; }
-
-        void operator()(ListBox::const_iterator it, const Pt& pt, const Flags<ModKey>& mod_keys)
-        { std::cerr << "GG SIGNAL : " << m_name << "(row=" << RowIndex(it) << " pt=" << pt << ")" << std::endl; }
-
-        std::size_t RowIndex(ListBox::const_iterator it)
-        { return std::distance(m_LB.begin(), it); }
-
-        const ListBox& m_LB;
-        std::string m_name;
-    };
-
-    const int SCROLL_WIDTH = 14;
-
-    class RowSorter // used to sort rows by a certain column (which may contain some empty cells)
-    {
-    public:
-        RowSorter(const std::function<bool (const ListBox::Row&, const ListBox::Row&, std::size_t)>& cmp,
-                  std::size_t col, bool invert) :
-            m_cmp(cmp),
-            m_sort_col(col),
-            m_invert(invert)
-        {}
-
-        bool operator()(const std::shared_ptr<ListBox::Row>& l, const std::shared_ptr<ListBox::Row>& r)
-        { return m_invert ? m_cmp(*r, *l, m_sort_col) : m_cmp(*l, *r, m_sort_col); }
-        bool operator()(const ListBox::Row* l, const ListBox::Row* r)
-        { return m_invert ? m_cmp(*r, *l, m_sort_col) : m_cmp(*l, *r, m_sort_col); }
-
-    private:
-        std::function<bool (const ListBox::Row&, const ListBox::Row&, std::size_t)> m_cmp;
-        std::size_t m_sort_col;
-        bool m_invert;
-    };
-
-    ListBox::Row* SafeDeref(const ListBox::iterator& it, const ListBox::iterator& end)
-    { return it == end ? nullptr : it->get(); }
-
-    std::shared_ptr<ListBox::Row> IteratorToShared(const ListBox::iterator& it, const ListBox::iterator& end)
-    { return it == end ? std::shared_ptr<ListBox::Row>() : std::shared_ptr<ListBox::Row>(*it); }
-
-    bool RowAboveOrIsRow(ListBox::iterator lhs, ListBox::iterator rhs, ListBox::iterator end)
-    {
-        if (rhs == end)
-            return true;
-        if (lhs == end)
-            return false;
-        if (lhs == rhs)
-            return true;
-        const ListBox::Row* lhs_row = SafeDeref(lhs, end);
-        const ListBox::Row* rhs_row = SafeDeref(rhs, end);
-        if (!rhs_row)
-            return true;
-        if (!lhs_row)
-            return false;
-        return lhs_row->Top() < rhs_row->Top();
+        std::cerr << "])" << std::endl;
     }
 
-    void ResetIfEqual(ListBox::iterator& val, ListBox::iterator other, ListBox::iterator end)
-    {
-        if (val == other)
-            val = end;
-    }
+    void operator()(ListBox::const_iterator it)
+    { std::cerr << "GG SIGNAL : " << m_name << "(row=" << RowIndex(it) << ")" << std::endl; }
 
-    Alignment AlignmentFromStyle(Flags<ListBoxStyle> style)
-    {
-        Alignment retval = ALIGN_NONE;
-        if (style & LIST_LEFT)
-            retval = ALIGN_LEFT;
-        if (style & LIST_CENTER)
-            retval = ALIGN_CENTER;
-        if (style & LIST_RIGHT)
-            retval = ALIGN_RIGHT;
-        return retval;
-    }
+    void operator()(ListBox::const_iterator it, const Pt& pt, const Flags<ModKey>& mod_keys)
+    { std::cerr << "GG SIGNAL : " << m_name << "(row=" << RowIndex(it) << " pt=" << pt << ")" << std::endl; }
+
+    std::size_t RowIndex(ListBox::const_iterator it)
+    { return std::distance(m_LB.begin(), it); }
+
+    const ListBox& m_LB;
+    std::string m_name;
+};
+
+const int SCROLL_WIDTH = 14;
+
+class RowSorter // used to sort rows by a certain column (which may contain some empty cells)
+{
+public:
+    RowSorter(const std::function<bool (const ListBox::Row&, const ListBox::Row&, std::size_t)>& cmp,
+                std::size_t col, bool invert) :
+        m_cmp(cmp),
+        m_sort_col(col),
+        m_invert(invert)
+    {}
+
+    bool operator()(const std::shared_ptr<ListBox::Row>& l, const std::shared_ptr<ListBox::Row>& r)
+    { return m_invert ? m_cmp(*r, *l, m_sort_col) : m_cmp(*l, *r, m_sort_col); }
+    bool operator()(const ListBox::Row* l, const ListBox::Row* r)
+    { return m_invert ? m_cmp(*r, *l, m_sort_col) : m_cmp(*l, *r, m_sort_col); }
+
+private:
+    std::function<bool (const ListBox::Row&, const ListBox::Row&, std::size_t)> m_cmp;
+    std::size_t m_sort_col;
+    bool m_invert;
+};
+
+ListBox::Row* SafeDeref(const ListBox::iterator& it, const ListBox::iterator& end)
+{ return it == end ? nullptr : it->get(); }
+
+std::shared_ptr<ListBox::Row> IteratorToShared(const ListBox::iterator& it, const ListBox::iterator& end)
+{ return it == end ? std::shared_ptr<ListBox::Row>() : std::shared_ptr<ListBox::Row>(*it); }
+
+bool RowAboveOrIsRow(ListBox::iterator lhs, ListBox::iterator rhs, ListBox::iterator end)
+{
+    if (rhs == end)
+        return true;
+    if (lhs == end)
+        return false;
+    if (lhs == rhs)
+        return true;
+    const ListBox::Row* lhs_row = SafeDeref(lhs, end);
+    const ListBox::Row* rhs_row = SafeDeref(rhs, end);
+    if (!rhs_row)
+        return true;
+    if (!lhs_row)
+        return false;
+    return lhs_row->Top() < rhs_row->Top();
+}
+
+void ResetIfEqual(ListBox::iterator& val, ListBox::iterator other, ListBox::iterator end)
+{
+    if (val == other)
+        val = end;
+}
+
+Alignment AlignmentFromStyle(Flags<ListBoxStyle> style)
+{
+    Alignment retval = ALIGN_NONE;
+    if (style & LIST_LEFT)
+        retval = ALIGN_LEFT;
+    if (style & LIST_CENTER)
+        retval = ALIGN_CENTER;
+    if (style & LIST_RIGHT)
+        retval = ALIGN_RIGHT;
+    return retval;
+}
+
 }
 
 ///////////////////////////////////////
@@ -147,36 +148,40 @@ const ListBoxStyle GG::LIST_BROWSEUPDATES   (1 << 12);
 GG_FLAGSPEC_IMPL(ListBoxStyle);
 
 namespace {
-    bool RegisterListBoxStyles()
-    {
-        FlagSpec<ListBoxStyle>& spec = FlagSpec<ListBoxStyle>::instance();
-        spec.insert(LIST_NONE,          "LIST_NONE",            true);
-        spec.insert(LIST_VCENTER,       "LIST_VCENTER",         true);
-        spec.insert(LIST_TOP,           "LIST_TOP",             true);
-        spec.insert(LIST_BOTTOM,        "LIST_BOTTOM",          true);
-        spec.insert(LIST_CENTER,        "LIST_CENTER",          true);
-        spec.insert(LIST_LEFT,          "LIST_LEFT",            true);
-        spec.insert(LIST_RIGHT,         "LIST_RIGHT",           true);
-        spec.insert(LIST_NOSORT,        "LIST_NOSORT",          true);
-        spec.insert(LIST_SORTDESCENDING,"LIST_SORTDESCENDING",  true);
-        spec.insert(LIST_NOSEL,         "LIST_NOSEL",           true);
-        spec.insert(LIST_SINGLESEL,     "LIST_SINGLESEL",       true);
-        spec.insert(LIST_QUICKSEL,      "LIST_QUICKSEL",        true);
-        spec.insert(LIST_USERDELETE,    "LIST_USERDELETE",      true);
-        spec.insert(LIST_BROWSEUPDATES, "LIST_BROWSEUPDATES",   true);
-        return true;
-    }
-    bool dummy = RegisterListBoxStyles();
+
+bool RegisterListBoxStyles()
+{
+    FlagSpec<ListBoxStyle>& spec = FlagSpec<ListBoxStyle>::instance();
+    spec.insert(LIST_NONE,          "LIST_NONE",            true);
+    spec.insert(LIST_VCENTER,       "LIST_VCENTER",         true);
+    spec.insert(LIST_TOP,           "LIST_TOP",             true);
+    spec.insert(LIST_BOTTOM,        "LIST_BOTTOM",          true);
+    spec.insert(LIST_CENTER,        "LIST_CENTER",          true);
+    spec.insert(LIST_LEFT,          "LIST_LEFT",            true);
+    spec.insert(LIST_RIGHT,         "LIST_RIGHT",           true);
+    spec.insert(LIST_NOSORT,        "LIST_NOSORT",          true);
+    spec.insert(LIST_SORTDESCENDING,"LIST_SORTDESCENDING",  true);
+    spec.insert(LIST_NOSEL,         "LIST_NOSEL",           true);
+    spec.insert(LIST_SINGLESEL,     "LIST_SINGLESEL",       true);
+    spec.insert(LIST_QUICKSEL,      "LIST_QUICKSEL",        true);
+    spec.insert(LIST_USERDELETE,    "LIST_USERDELETE",      true);
+    spec.insert(LIST_BROWSEUPDATES, "LIST_BROWSEUPDATES",   true);
+    return true;
+}
+bool dummy = RegisterListBoxStyles();
+
 }
 
 
 namespace {
-    /** Make \p layout at least \p size large*/
-    void ValidateLayoutSize(GG::Layout* layout, std::size_t size)
-    {
-        if (layout->Columns() < size)
-            layout->ResizeLayout(1, size);
-    }
+
+/** Make \p layout at least \p size large*/
+void ValidateLayoutSize(GG::Layout* layout, std::size_t size)
+{
+    if (layout->Columns() < size)
+        layout->ResizeLayout(1, size);
+}
+
 }
 
 ////////////////////////////////////////////////

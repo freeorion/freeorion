@@ -19,15 +19,17 @@
 using namespace GG;
 
 namespace {
-    struct SignalEcho
-    {
-        SignalEcho(const std::string& name) : m_name(name) {}
-        void operator()(std::size_t index)
-        { std::cerr << "GG SIGNAL : " << m_name << "(index=" << index << ")" << std::endl; }
-        std::string m_name;
-    };
 
-    const double DEFAULT_FPS = 15.0;
+struct SignalEcho
+{
+    SignalEcho(const std::string& name) : m_name(name) {}
+    void operator()(std::size_t index)
+    { std::cerr << "GG SIGNAL : " << m_name << "(index=" << index << ")" << std::endl; }
+    std::string m_name;
+};
+
+const double DEFAULT_FPS = 15.0;
+
 }
 
 const std::size_t DynamicGraphic::ALL_FRAMES = std::numeric_limits<std::size_t>::max();

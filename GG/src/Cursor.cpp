@@ -14,7 +14,9 @@
 using namespace GG;
 
 namespace {
-    const bool OUTLINE_CURSOR = false;
+
+const bool OUTLINE_CURSOR = false;
+
 }
 
 Cursor::Cursor()
