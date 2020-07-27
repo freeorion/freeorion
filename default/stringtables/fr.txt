@@ -351,7 +351,7 @@ PROJECT_BT_STOCKPILE_SHORT_DESC
 Transfère les PP vers le stock impérial
 
 PROJECT_BT_STOCKPILE_DESC
-'''Les PP alloués au projet de Transfert Stock sont ajoutés au Stock Impérial. La quantité à transférer et le nombre de répétitions du transfert peuvent être spécifiés.
+'''Les Points de Production (PP) alloués au projet de Transfert Stock sont ajoutés au [[encyclopedia STOCKPILE_TITLE]]. La quantité à transférer et le nombre de répétitions du transfert peuvent être spécifiés.
 
 Seuls les PP produits au sein du même Groupe Ressource (soit aucun du Stock Impérial) sont alloués au projet de Transfert Stock.
 
@@ -3189,6 +3189,9 @@ Fichiers de sauvegarde
 OPTIONS_SERVER_FOLDER_SAVE
 Fichiers de sauvegarde Serveur
 
+OPTIONS_FOLDER_CONFIG_LOG
+Fichiers Configuration et Journal
+
 OPTIONS_LANGUAGE_FILE
 Fichiers de langue
 
@@ -4397,7 +4400,7 @@ La Fenêtre Production permet d'interagir directement avec la carte de la  [[enc
 <u>Panneau Récapitulation de Production</u>
 
 (position par défaut: en haut à gauche)
-Le panneau "Récapitulation de Production" affiche les Points de Production disponibles.
+Le panneau "Récapitulation de Production" affiche les Points de Production (PP) disponibles.
 Si un système est sélectionné, deux colonnes sont visibles. La colonne de gauche correspond aux points de production à travers tout l'empire. La colonne de droite affiche les points de production pour le système sélectionné (absente si aucun système n'est sélectionné).
 "Points disponibles" fait référence aux PP disponibles pour la Production. La valeur de droite correspond au maximum de points disponibles pour le système sélectionné. Cette valeur peut être inférieure au total disponible lorsque tous les systèmes de votre empire ne sont pas reliés par lignes d'[[metertype METER_SUPPLY]].
 Le Stock correspond aux PP disponibles pour la Production, et provenant du Stock Impérial. Les Projets de Production sont autorisés à puiser par défaut dans le Stock Impérial, excepté si son usage a été individuellement bloqué pour un projet.
@@ -5668,6 +5671,23 @@ Métabolisme
 METABOLISM_TEXT
 Les différents types de métabolisme des [[encyclopedia ENC_SPECIES]]s peuplant la galaxie sont listés ci-dessous.
 
+STOCKPILE_TITLE
+Stock Impérial
+
+STOCKPILE_TEXT
+'''La capacité industrielle est utilisée immédiatemment pour produire structures et astronefs. Un empire peut également accumuler les Points de Production (PP) dans le stock impérial en vue d'une utilisation ultérieure. Généralement, les PP peuvent être utilisés pour la production seulement si le lieu de production se trouve dans le réseau d'approvisionnement au sein duquel les PP sont générés. Cependant, les PP issus du stock impérial peuvent être utilisés par n'importe quel site de production appartenant à l'empire. Seule une quantité définie de ces PP -ne dépassant pas la limite d'usage impériale- peut être utilisée chaque tour pour la production.
+
+Il existe deux manières d'ajouter des PP au stock impérial:
+* les PP en excédent (PP non-alloués dans la file d'attente de production) de tout site de production sont automatiquement transférés vers le stock. Cela déclenche une alerte.
+* les PP explicitement alloués à un projet de [[encyclopedia PROJECT_BT_STOCKPILE]] sont également envoyés vers le stock.
+
+La limite d'usage du stock impérial est égale au total des indicateurs [[metertype METER_STOCKPILE]] de chaque planète.
+Les prédispositions de certaines espèces en distribution du stock, certaines structures ou technologies, ainsi que l'utilisation du [[encyclopedia STOCKPILE_FOCUS_TITLE]], permettent d'augmenter cette limite.
+
+Les informations au sujet du stock impérial, son usage, ainsi que sa limite d'usage, peuvent être consultées dans la partie supérieure de la [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]].
+Les détails de production peuvent être consultés dans la [[encyclopedia PRODUCTION_WINDOW_ARTICLE_TITLE]].
+Les effets contribuant à la [[metertype METER_STOCKPILE]] d'une planète sont consultables via le [[PLANET_PANEL]] dans la vue d'ensemble d'un système.'''
+
 PLANET_MANAGEMENT_TITLE
 Gestion Planétaire
 
@@ -5818,7 +5838,7 @@ Industrie
 METER_INDUSTRY_VALUE_DESC
 '''L'Industrie, mesurée en Points de Production (PP), représente la capacité de production et de transformation de biens matériels de l'ensemble des planètes de l'empire. Elle est nécessaire pour la construction des structures, des astronefs et tout autre projet.
 
-L'Industrie d'une planète peut participer à tout projet lancé sur les planètes qui lui sont reliées par lignes d'[[metertype METER_SUPPLY]] de l'empire. L'Industrie n'étant affectée à aucun projet durant un tour est ajoutée au Stock Impérial.
+L'Industrie d'une planète peut participer à tout projet lancé sur les planètes qui lui sont reliées par lignes d'[[metertype METER_SUPPLY]] de l'empire. L'Industrie n'étant affectée à aucun projet durant un tour est ajoutée au [[encyclopedia STOCKPILE_TITLE]].
 
 La Projection Industrie est le niveau optimal de capacité en Industrie qu'une planète tend à approcher, compte tenu des différents facteurs influençant les ressources en Industrie. Sa valeur est liée aux <encyclopedia ENC_BUILDING_TYPE>Types de Structures</encyclopedia> bâtis sur la planète, aux [[encyclopedia ENC_TECH]] recherchées par l'empire, aux <encyclopedia ENC_SPECIAL>Particularités</encyclopedia> liées à la planète, ainsi que divers effets de jeu. Si ces facteurs changent, alors la valeur de Projection Industrie est susceptible de fluctuer à son tour.
 
@@ -5914,21 +5934,21 @@ Approvisionnement
 METER_SUPPLY_VALUE_DESC
 '''L'indicateur d'approvisionnement d'une planète représente le nombre de Voies spatiales sur lesquelles l'approvisionnement peut être distribué. Les petites planètes peuvent déployer l'approvisionnement sur de grandes distances mais peu de lignes, tandis que les grandes planètes peuvent approvisionner davantage de lignes mais sur de moins grandes distances.
 
-Les lignes d'approvisionnement sont représentées par les Voies spatiales aux couleurs de l'empire. Les planètes reliées par ces lignes forment un "Groupe Ressource" et peuvent échanger des ressources matérielles. La capacité de Production (ou Points de Production) d'une planète peut être utilisée par toute autre planète de l'empire qui lui est reliée, afin de construire astronefs ou structures.
+Les lignes d'approvisionnement sont représentées par les Voies spatiales aux couleurs de l'empire. Les planètes reliées par ces lignes forment un "Groupe Ressource" et peuvent échanger des ressources matérielles. La capacité de Production (ou Points de Production, PP) d'une planète peut être utilisée par toute autre planète de l'empire qui lui est reliée, afin de construire astronefs ou structures.
 
-Les Voies spatiales d'approvisionnement essentielles d'un empire (les lignes les plus directes reliant les systèmes producteurs de ressources de chaque Groupe Ressource) auront une épaisseur plus importante que les Voies spatiales non-essentielles. Si les PP sont gaspillés au sein d'un Groupe Ressource, les bandes extérieures des Voies Spatiales auront une couleur spécifique.
+Les Voies spatiales d'approvisionnement essentielles d'un empire (les lignes les plus directes reliant les systèmes producteurs de ressources de chaque Groupe Ressource) auront une épaisseur plus importante que les Voies spatiales non-essentielles. Si les PP ne sont pas utilisés au sein d'un Groupe Ressource, les bandes extérieures des Voies Spatiales auront une couleur spécifique.
 
 Les lignes d'approvisionnement peuvent également servir à ravitailler en [[metertype METER_FUEL]] les astronefs.
 
 Les lignes d'approvisionnement seront bloquées par les astronefs ennemis armés appartenant aux empires avec lesquels l'empire est en [[encyclopedia WAR_TITLE]]. À l'opposé du spectre diplomatique, les empires sous traité d'[[encyclopedia ALLIANCE_TITLE]] partageront leurs lignes d'approvisionnement ainsi que tous les bénéfices y étant associés.'''
 
 METER_STOCKPILE_VALUE_LABEL
-Stock
+Distribution Stock
 
 METER_STOCKPILE_VALUE_DESC
-'''La capacité du Stock Impérial indique la compétence d'un empire à gérer les surplus de production et à utiliser les points de production stockés. Le Stock total d'un empire correspond à la somme des indicateurs Stock de toutes les planètes de l'empire, plus les éventuels bonus de technologie. Ce total détermine combien de PP peuvent être puisés dans le Stock à chaque tour afin d'être utilisés pour la production.
+'''L'indicateur Distribution Stock d'une planète représente pour quelle valeur la planète contribue à la limite d'usage du [[encyclopedia STOCKPILE_TITLE]]. La limite d'usage du Stock Impérial indique la compétence d'un empire à utiliser les Points de Production (PP) stockés. La limite d'usage du Stock pour un empire correspond à la somme des indicateurs de Distribution Stock de toutes les planètes de l'empire, plus les éventuels bonus de technologie. Ce total détermine combien de PP peuvent être puisés dans le Stock à chaque tour afin d'être utilisés pour la production.
 
-La compétence de gestion du Stock varie selon les espèces.'''
+La compétence de Distribution du Stock varie selon les espèces.'''
 
 METER_TROOPS_VALUE_LABEL
 Infanterie
@@ -6087,12 +6107,12 @@ PSYCHIC_FOCUS_TEXT
 Lorsque le Focus Domination Psychique est activé, réduit par ailleurs la chance qu'un [[predefinedshipdesign SM_PSIONIC_SNOWFLAKE]] prenne le contrôle des astronefs de l'empire se trouvant dans le même système.'''
 
 STOCKPILE_FOCUS_TITLE
-Focus Stock
+Focus Distribution Stock
 
 STOCKPILE_FOCUS_TEXT
-'''Le Focus Stock augmente le [[metertype METER_STOCKPILE]] d'une planète.
+'''Le Focus Distribution Stock augmente la [[metertype METER_STOCKPILE]] d'une planète.
 
-Une Planète Natale privilégiant le Stock favorise également les autres planètes peuplées par la même espèce, en y augmentant le [[metertype METER_STOCKPILE]] de 0.04 par [[metertype METER_POPULATION]].
+Une Planète Natale privilégiant la Distribution Stock favorise également les autres planètes peuplées par la même espèce, en y augmentant la [[metertype METER_STOCKPILE]] de 0.04 par [[metertype METER_POPULATION]].
 
 [[METER_STOCKPILE_VALUE_DESC]]'''
 
@@ -6252,7 +6272,7 @@ MAP_WINDOW_ARTICLE_TEXT
 
 Dans le coin supérieur gauche se trouve le Bouton Tour, indiquant "Tour n" (n étant le numéro du tour en cours); un clic-gauche sur le Bouton Tour permet de faire avancer la partie d'un tour. Immédiatement à droite se trouve le bouton d'Avance Automatique; lorsque ce dernier affiche une icône double flèche, la partie n'avancera pas automatiquement; un clic modifie l'icône en flèches circulaires et la partie avancera automatiquement au tour suivant une fois que tous les empires auront donné leurs ordres pour le tour en cours.
 
-Les icônes suivantes désignent pour l'empire du joueur le total de l'[[metertype METER_INDUSTRY]], de la [[metertype METER_RESEARCH]], le nombre d'astronefs existants, et la [[encyclopedia DETECTION_TITLE]] de l'empire.
+Les icônes suivantes désignent pour l'empire du joueur le total de l'[[metertype METER_INDUSTRY]], de la [[metertype METER_STOCKPILE]], de la [[metertype METER_RESEARCH]], le nombre d'astronefs existants, et la [[encyclopedia DETECTION_TITLE]] de l'empire.
 
 Sur le côté droit de la barre de contrôle se trouvent les icônes permettant d'afficher/cacher les autres fenêtres importantes de l'interface. Des infobulles sont disponibles pour ces dernières.'''
 
@@ -9208,7 +9228,7 @@ Industrie
 
 # Focus types
 FOCUS_STOCKPILE
-Stock
+Distribution Stock
 
 FOCUS_STOCKPILE_DESC
 Permet aux technologies de stockage d'augmenter la capacité d'usage du stock
@@ -9323,7 +9343,7 @@ Max Approvisionnement
 
 # Meter types
 METER_MAX_STOCKPILE
-Max Stock
+Max Distribution Stock
 
 # Meter types
 METER_MAX_TROOPS
@@ -9383,7 +9403,7 @@ Approvisionnement
 
 # Meter types
 METER_STOCKPILE
-Stock
+Distribution Stock
 
 # Meter types
 METER_TROOPS
@@ -10987,7 +11007,7 @@ PLC_CENTRALIZATION
 Centralisation
 
 PLC_CENTRALIZATION_DESC
-Augmente la production de ressources dans la Capitale mais diminue la portée de l'Approvisionnement et l'usage du Stock.
+Augmente la production de ressources dans la Capitale mais diminue la portée de l'Approvisionnement et la Distribution du Stock.
 
 PLC_CENTRALIZATION_SHORT_DESC
 Favorise la Capitale
@@ -11053,10 +11073,10 @@ PLC_STOCKPILE_LIQUIDATION
 Liquidation des Stocks
 
 PLC_STOCKPILE_LIQUIDATION_DESC
-Double l'usage du Stock sur les planètes en Focus Stock.
+Double la contribution des planètes en [[encyclopedia STOCKPILE_FOCUS_TITLE]] pour la limite d'usage du [[encyclopedia STOCKPILE_TITLE]].
 
 PLC_STOCKPILE_LIQUIDATION_SHORT_DESC
-Augmente l'usage du Stock
+Augmente la limite d'usage du Stock
 
 PLC_ALLIED_REPAIR
 Réparation Alliée
@@ -11479,10 +11499,10 @@ PRO_PREDICTIVE_STOCKPILING_DESC
 Le service de Stock Impérial dispose d'une flotte acheminant les matériaux bruts vers des lieux où l'on prévoit que d'importants projets puissent être entrepris.
 Cette tâche s'avère difficile étant donné que le service doit présager du moment où la demande sera stipulée, de l'endroit, des matériaux et biens qui seront requis, et de leurs utilisateurs.
 
-Les PP inutilisés sont transférés automatiquement au Stock Impérial de Production.
+Les Points de Production (PP) inutilisés sont transférés automatiquement vers le [[encyclopedia STOCKPILE_TITLE]].
 Un projet de la file d'attente de Production puise automatiquement dans le Stock Impérial si son usage n'a pas été explicitement bloqué pour le projet en question.
 
-Il s'agit donc de la technologie de base du Stock Impérial, augmentant de 1 le [[metertype METER_STOCKPILE]] des planètes réglées sur le [[encyclopedia STOCKPILE_FOCUS_TITLE]].'''
+Il s'agit donc de la technologie de base du Stock Impérial, augmentant de 1 la [[metertype METER_STOCKPILE]] des planètes réglées sur le [[encyclopedia STOCKPILE_FOCUS_TITLE]].'''
 
 PRO_GENERIC_SUPPLIES
 Stocks Génériques
@@ -11495,7 +11515,7 @@ En atteignant ce degré de sophistication, les Stocks Génériques peuvent être
 
 Cela exempte le service du Stock Impérial de connaître à l'avance quels biens seront exactement demandés. Prévoir le lieu de la demande et les quantités s'avère désormais suffisant.
 
-Il s'agit donc d'une technologie d'amélioration du Stock Impérial. Le [[metertype METER_STOCKPILE]] augmente de 2, plus un supplément de 0.01 par [[metertype METER_POPULATION]], plus un supplément de 3 pour chaque planète réglée sur le [[encyclopedia STOCKPILE_FOCUS_TITLE]].
+Il s'agit donc d'une technologie d'amélioration du [[encyclopedia STOCKPILE_TITLE]]. Le [[metertype METER_STOCKPILE]] augmente de 2, plus un supplément de 0.01 par [[metertype METER_POPULATION]], plus un supplément de 3 pour chaque planète réglée sur le [[encyclopedia STOCKPILE_FOCUS_TITLE]].
 Ces améliorations sont cumulables avec le bonus de la technologie [[tech PRO_PREDICTIVE_STOCKPILING]].'''
 
 PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY
@@ -11505,10 +11525,10 @@ PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY_DESC
 '''L'intrication quantique des salles de contrôle permet de manœuvrer des machines industrielles à distance à partir d'autres systèmes stellaires.
 Dissocier le personnel et les moyens de production favorise un procédé optimal de conception et augmente l'efficience du service de Stock Impérial.
 
-Il s'agit donc d'une technologie d'amélioration du Stock Impérial. Le [[metertype METER_STOCKPILE]] augmente de 6, plus un supplément de 0.02 par [[metertype METER_POPULATION]].
+Il s'agit donc d'une technologie d'amélioration du [[encyclopedia STOCKPILE_TITLE]]. La [[metertype METER_STOCKPILE]] augmente de 6, plus un supplément de 0.02 par [[metertype METER_POPULATION]].
 Ces améliorations sont cumulables avec les bonus des technologies [[tech PRO_PREDICTIVE_STOCKPILING]], [[tech PRO_GENERIC_SUPPLIES]] et [[tech PRO_VOID_PREDICTION]].
 
-Débloque également la structure [[buildingtype BLD_STOCKPILING_CENTER]], augmentant additionnellement le [[metertype METER_STOCKPILE]] de 0.1 par [[metertype METER_INDUSTRY]].'''
+Débloque également la structure [[buildingtype BLD_STOCKPILING_CENTER]], augmentant additionnellement la [[metertype METER_STOCKPILE]] de 0.1 par [[metertype METER_INDUSTRY]].'''
 
 PRO_VOID_PREDICTION
 Prédiction du Vide
@@ -11517,7 +11537,7 @@ PRO_VOID_PREDICTION_DESC
 '''Tandis que les prédictions classiques se basent invariablement sur la connaissance statistique des faits passés, l'étude de la mémoire chaotique du Vide mène à de solides prédictions de faits pourtant initiaux ou étranges.
 Pour le service du Stock Impérial, la Prédiction du Vide est l'instrument par excellence permettant de fournir les bons matériaux avant même que le besoin ne se manifeste.
 
-Il s'agit donc d'une technologie d'amélioration du Stock Impérial. Le [[metertype METER_STOCKPILE]] augmente de 0.2 par [[metertype METER_POPULATION]].
+Il s'agit donc d'une technologie d'amélioration du [[encyclopedia STOCKPILE_TITLE]]. La [[metertype METER_STOCKPILE]] augmente de 0.2 par [[metertype METER_POPULATION]].
 Ces améliorations sont cumulables avec les bonus des technologies [[tech PRO_PREDICTIVE_STOCKPILING]], [[tech PRO_GENERIC_SUPPLIES]] et [[tech PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY]].'''
 
 PRO_MICROGRAV_MAN
@@ -13149,7 +13169,7 @@ BLD_INTERSPECIES_ACADEMY
 Académie InterDesign d'Espèce
 
 BLD_INTERSPECIES_ACADEMY_DESC
-'''Augmente le Stock de 10 sur la planète, si cette dernière est réglée sur le Focus Stock.
+'''Augmente la limite d'usage du Stock Impérial conjointement à l'augmentation de la capacité d'usage du Stock de 10 sur la planète, si cette dernière est réglée sur le [[encyclopedia STOCKPILE_FOCUS_TITLE]].
 Augmente la [[metertype METER_RESEARCH]] de 5 sur la planète, si cette dernière est réglée sur le Focus Recherche.
 
 Apprendre à concevoir des dispositifs utilisables par différentes espèces est crucial afin de développer des outils universellement exploitables.
@@ -13160,7 +13180,7 @@ BLD_STOCKPILING_CENTER
 Centre d'Intrication Impériale
 
 BLD_STOCKPILING_CENTER_DESC
-'''Augmente le [[metertype METER_STOCKPILE]] de 0.1 par [[metertype METER_INDUSTRY]].
+'''Augmente la [[metertype METER_STOCKPILE]] de 0.1 par [[metertype METER_INDUSTRY]].
 
 Au lieu de recourir à l'implantation classique d'infastructures associant le lieu de production et la main d'œuvre planétaire, un noyau central peut permettre la connexion entre n'importe quelle infrastructure et main d'œuvre disponible. Cela engendre une très grande flexibilité des lieux de production.'''
 
@@ -15354,7 +15374,7 @@ ULTIMATE_SUPPLY_DESC
 ++	Parfait en [[metertype METER_SUPPLY]] : +3
 
 NO_STOCKPILE_DESC
-−−	Aucun [[metertype METER_STOCKPILE]]
+−−	Aucune [[metertype METER_STOCKPILE]]
 
 BAD_STOCKPILE_DESC
 −	Mauvais en [[metertype METER_STOCKPILE]] : +0.01 par [[metertype METER_POPULATION]]
@@ -15591,27 +15611,27 @@ ULTIMATE_SUPPLY_LABEL
 # %1% FIXME
 # %2% FIXME
 BAD_STOCKPILE_LABEL
-%2% Mauvais en Stock
+%2% Mauvais en Distribution Stock
 
 # %1% FIXME
 # %2% FIXME
 AVERAGE_STOCKPILE_LABEL
-%2% Normal en Stock
+%2% Normal en Distribution Stock
 
 # %1% FIXME
 # %2% FIXME
 GOOD_STOCKPILE_LABEL
-%2% Bon en Stock
+%2% Bon en Distribution Stock
 
 # %1% FIXME
 # %2% FIXME
 GREAT_STOCKPILE_LABEL
-%2% Excellent en Stock
+%2% Excellent en Distribution Stock
 
 # %1% FIXME
 # %2% FIXME
 ULTIMATE_STOCKPILE_LABEL
-%2% Parfait en Stock
+%2% Parfait en Distribution Stock
 
 # %1% FIXME
 # %2% FIXME
