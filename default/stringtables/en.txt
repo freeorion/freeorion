@@ -6770,6 +6770,9 @@ Last Turn In Battle
 LAST_TURN_RESUPPLIED
 Last Turn Resupplied
 
+LAST_TURN_MOVE_ORDERED
+Last Turn Move Ordered
+
 LAST_TURN_COLONIZED
 Last Turn Colonized
 

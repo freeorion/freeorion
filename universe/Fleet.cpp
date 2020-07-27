@@ -82,7 +82,8 @@ const int Fleet::ETA_OUT_OF_RANGE = (1 << 30) - 1;
 const int Fleet::ETA_NEVER =        (1 << 30) - 2;
 
 Fleet::Fleet(const std::string& name, double x, double y, int owner) :
-    UniverseObject(name, x, y)
+    UniverseObject(name, x, y),
+    m_last_turn_move_ordered(BEFORE_FIRST_TURN)
 {
     UniverseObject::Init();
     SetOwner(owner);
@@ -139,8 +140,10 @@ void Fleet::Copy(std::shared_ptr<const UniverseObject> copied_object, int empire
             m_travel_route = TruncateRouteToEndAtSystem(copied_fleet->m_travel_route, empire_id, moving_to);
 
 
-            if (vis >= VIS_FULL_VISIBILITY)
+            if (vis >= VIS_FULL_VISIBILITY) {
                 m_ordered_given_to_empire_id =copied_fleet->m_ordered_given_to_empire_id;
+                m_last_turn_move_ordered =copied_fleet->m_last_turn_move_ordered;
+            }
         }
     }
 }
@@ -1426,3 +1429,6 @@ void Fleet::SetGiveToEmpire(int empire_id) {
 
 void Fleet::ClearGiveToEmpire()
 { SetGiveToEmpire(ALL_EMPIRES); }
+
+void Fleet::SetMoveOrderedTurn(int turn)
+{ m_last_turn_move_ordered = turn; }

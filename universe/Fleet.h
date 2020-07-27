@@ -31,40 +31,35 @@ public:
     bool HostileToEmpire(int empire_id) const override;
 
     UniverseObjectType ObjectType() const override;
-
     std::string Dump(unsigned short ntabs = 0) const override;
 
     int ContainerObjectID() const override;
-
     const std::set<int>& ContainedObjectIDs() const override;
-
     bool Contains(int object_id) const override;
-
     bool ContainedBy(int object_id) const override;
 
     const std::string& PublicName(int empire_id) const override;
 
-    std::shared_ptr<UniverseObject>Accept(const UniverseObjectVisitor& visitor) const override;
+    std::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
 
-    const std::set<int>&                ShipIDs() const     { return m_ships; }         ///< returns set of IDs of ships in fleet.
-    int                                 MaxShipAgeInTurns() const;                      ///< Returns the age of the oldest ship in the fleet
+    const std::set<int>&    ShipIDs() const { return m_ships; } ///< returns set of IDs of ships in fleet.
+    int                     MaxShipAgeInTurns() const;          ///< Returns the age of the oldest ship in the fleet
 
     /** Returns the list of systems that this fleet will move through en route
       * to its destination (may be empty).  If this fleet is currently at a
       * system, that system will be the first one in the list. */
-    const std::list<int>&               TravelRoute() const;
-
-    int                                 OrderedGivenToEmpire() const    { return m_ordered_given_to_empire_id; }///< returns the ID of the empire this fleet has been ordered given to, or ALL_EMPIRES if this fleet hasn't been ordered given to an empire
-
-    bool                                Aggressive() const  { return m_aggressive; }
+    const std::list<int>&   TravelRoute() const;
+    int                     OrderedGivenToEmpire() const { return m_ordered_given_to_empire_id; }   ///< returns the ID of the empire this fleet has been ordered given to, or ALL_EMPIRES if this fleet hasn't been ordered given to an empire
+    int                     LastTurnMoveOrdered() const { return m_last_turn_move_ordered; }
+    bool                    Aggressive() const { return m_aggressive; }
 
     /** Returns a list of locations at which notable events will occur along the fleet's path if it follows the 
         specified route.  It is assumed in the calculation that the fleet starts its move path at its actual current
         location, however the fleet's current location will not be on the list, even if it is currently in a system. */
-    std::list<MovePathNode>             MovePath(const std::list<int>& route, bool flag_blockades = false) const;
-    std::list<MovePathNode>             MovePath(bool flag_blockades = false) const;            ///< Returns MovePath for fleet's current TravelRoute
-    std::pair<int, int>                 ETA() const;                                            ///< Returns the number of turns which must elapse before the fleet arrives at its current final destination and the turns to the next system, respectively.
-    std::pair<int, int>                 ETA(const std::list<MovePathNode>& move_path) const;    ///< Returns the number of turns which must elapse before the fleet arrives at the final destination and next system in the spepcified \a move_path
+    std::list<MovePathNode> MovePath(const std::list<int>& route, bool flag_blockades = false) const;
+    std::list<MovePathNode> MovePath(bool flag_blockades = false) const;            ///< Returns MovePath for fleet's current TravelRoute
+    std::pair<int, int>     ETA() const;                                            ///< Returns the number of turns which must elapse before the fleet arrives at its current final destination and the turns to the next system, respectively.
+    std::pair<int, int>     ETA(const std::list<MovePathNode>& move_path) const;    ///< Returns the number of turns which must elapse before the fleet arrives at the final destination and next system in the spepcified \a move_path
 
     float   Damage() const;                     ///< Returns total amount of damage this fleet has, which is the sum of the ships' damage
     float   Structure() const;                  ///< Returns total amount of structure this fleet has, which is the sum of the ships' structure
@@ -126,6 +121,8 @@ public:
     void SetGiveToEmpire(int empire_id);                    ///< marks fleet to be given to empire
     void ClearGiveToEmpire();                               ///< marks fleet not to be given to any empire
 
+    void SetMoveOrderedTurn(int turn);                      ///< marks fleet to as being ordered to move on indicated turn
+
     /* returns a name for a fleet based on its ships*/
     std::string GenerateFleetName();
 
@@ -159,7 +156,7 @@ private:
     bool                        m_aggressive = true;    ///< should this fleet attack enemies in the same system?
 
     int                         m_ordered_given_to_empire_id = ALL_EMPIRES;
-
+    int                         m_last_turn_move_ordered;
     /** list of systems on travel route of fleet from current position to
       * destination.  If the fleet is currently in a system, that will be the
       * first system on the list.  Otherwise, the first system on the list will

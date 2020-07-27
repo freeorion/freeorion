@@ -970,6 +970,8 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         fleet_property = &Fleet::PreviousSystemID;
     else if (property_name == "ArrivalStarlaneID")
         fleet_property = &Fleet::ArrivalStarlane;
+    else if (property_name == "LastTurnMoveOrdered")
+        fleet_property = &Fleet::LastTurnMoveOrdered;
 
     if (fleet_property) {
         if (auto fleet = std::dynamic_pointer_cast<const Fleet>(object))

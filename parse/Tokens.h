@@ -211,6 +211,7 @@
     (LastTurnBattleHere)                        \
     (LastTurnColonized)                         \
     (LastTurnConquered)                         \
+    (LastTurnMoveOrdered)                       \
     (LastTurnResupplied)                        \
     (LaunchedFrom)                              \
     (LeastHappySpecies)                         \

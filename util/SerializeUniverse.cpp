@@ -398,12 +398,15 @@ void serialize(Archive& ar, Fleet& obj, unsigned int const version)
         double dummy_travel_distance;
         ar & boost::serialization::make_nvp("m_travel_distance", dummy_travel_distance);
     }
+    if (version >= 4) {
+        ar & boost::serialization::make_nvp("m_last_turn_move_ordered", obj.m_last_turn_move_ordered);
+    }
     ar  & make_nvp("m_arrived_this_turn", obj.m_arrived_this_turn)
         & make_nvp("m_arrival_starlane", obj.m_arrival_starlane);
 }
 
 BOOST_CLASS_EXPORT(Fleet)
-BOOST_CLASS_VERSION(Fleet, 3)
+BOOST_CLASS_VERSION(Fleet, 4)
 
 
 template <typename Archive>

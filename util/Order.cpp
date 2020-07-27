@@ -377,6 +377,8 @@ void FleetMoveOrder::ExecuteImpl() const {
 
     try {
         fleet->SetRoute(route_list);
+        fleet->SetMoveOrderedTurn(CurrentTurn());
+        // todo: set last turn ordered moved
     } catch (const std::exception& e) {
         ErrorLogger() << "Caught exception setting fleet route while executing fleet move order: " << e.what();
     }
