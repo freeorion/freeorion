@@ -1098,34 +1098,31 @@ def generate_production_orders():
     else:
         terraformers = []
     if terraformers:
-        queued_locs = [element.locationID for element in production_queue if (element.name in terraformers)]
+        queued_locs = {element.locationID for element in production_queue if (element.name in terraformers)}
         candidates = []
         for pid in state.get_inhabited_planets():
             planet = universe.getPlanet(pid)
             if (planet.type not in [fo.planetType.gasGiant, fo.planetType.asteroids]
-                and planet.currentMeterValue(fo.meterType.population) == planet.currentMeterValue(fo.meterType.targetPopulation)
-                and pid not in queued_locs
-                and aistate.systemStatus.get(planet.systemID, {}).get('fleetThreat', 1) == 0
-                and "GAIA_SPECIAL" not in planet.specials
-                and "NO_TERRAFORM" not in fo.getSpecies(planet.speciesName).tags
-                and not [bldg for bldg in planet.buildingIDs if universe.getBuilding(bldg).buildingTypeName in terraformers]):
-                    candidates.append([pid, planet.currentMeterValue(fo.meterType.population)])
-        if candidates:
-            candidates.sort(key=itemgetter(1), reverse=True)
-            for bldg in terraformers:
-                for pid in candidates:
-                    planet = universe.getPlanet(pid[0])
-                    if empire.canBuild(fo.buildType.building, bldg, pid[0]):
-                        res = fo.issueEnqueueBuildingProductionOrder(bldg, pid[0])
-                        if res:
-                            debug("Enqueueing %s at planet %d (%s) , with result %d", bldg, pid[0], planet.name, res)
-                            break  # Add no more than one of each building to queue per turn
-                        else:
-                            debug("Failed enqueueing %s at planet %s, got result %d", bldg, planet, res)
+                    and planet.currentMeterValue(fo.meterType.population) == planet.currentMeterValue(fo.meterType.targetPopulation)
+                    and pid not in queued_locs
+                    and aistate.systemStatus.get(planet.systemID, {}).get('fleetThreat', 1) == 0
+                    and "GAIA_SPECIAL" not in planet.specials
+                    and "NO_TERRAFORM" not in fo.getSpecies(planet.speciesName).tags
+                    and not [bldg for bldg in planet.buildingIDs if universe.getBuilding(bldg).buildingTypeName in terraformers]):
+                        candidates.append((planet.currentMeterValue(fo.meterType.population), pid))
+        candidates.sort(reverse=True)
+        for bldg in terraformers:
+            for _, pid in candidates:
+                planet = universe.getPlanet(pid)
+                if empire.canBuild(fo.buildType.building, bldg, pid):
+                    res = fo.issueEnqueueBuildingProductionOrder(bldg, pid)
+                    if res:
+                        debug("Enqueueing %s at planet %d (%s) , with result %d", bldg, pid, planet.name, res)
+                        break  # Add no more than one of each building to queue per turn
                     else:
-                        debug("Candidates %s identified for %s construction, but unable to build", candidates, bldg)
-        else:
-            debug("Have technology, but no candidate found for %s construction", terraformers)
+                        debug("Failed enqueueing %s at planet %s, got result %d", bldg, planet.name, res)
+                else:
+                    debug("Candidates %s identified for %s construction, but unable to build", candidates, bldg)
 
     # ignore acquired-under-construction colony buildings for which our empire lacks the species
     queued_clny_bld_locs = [element.locationID for element in production_queue
