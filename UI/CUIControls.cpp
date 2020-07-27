@@ -1389,9 +1389,7 @@ void StatisticIcon::SetValue(double value, size_t index) {
         text_elements.AddText(" ")
                      .AddOpenTag(clr);
 
-        if (effectiveSign == -1)
-            text_elements.AddText("-");
-        else
+        if (effectiveSign != -1)
             text_elements.AddText("+");
 
         text_elements
