@@ -18,6 +18,7 @@ public:
      also provide additional functionality used by the DesignWnd. */
     class Designs {
     public:
+        virtual ~Designs() = default;
         virtual std::vector<int> OrderedIDs() const = 0;
     };
 

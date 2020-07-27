@@ -903,11 +903,11 @@ bool GUI::FocusWndAcceptsTypingInput() const
 
 std::shared_ptr<Wnd> GUI::PrevFocusInteractiveWnd() const
 {
-    auto&& focus_wnd = FocusWnd();
+    auto focus_wnd{FocusWnd()};
     if (!focus_wnd)
         return focus_wnd;
 
-    auto&& parent_of_focus_wnd = focus_wnd->Parent();
+    auto parent_of_focus_wnd{focus_wnd->Parent()};
     if (!parent_of_focus_wnd)
         return focus_wnd;
 
@@ -945,11 +945,11 @@ std::shared_ptr<Wnd> GUI::PrevFocusInteractiveWnd() const
 
 std::shared_ptr<Wnd> GUI::NextFocusInteractiveWnd() const
 {
-    auto&& focus_wnd = FocusWnd();
+    auto focus_wnd{FocusWnd()};
     if (!focus_wnd)
         return focus_wnd;
 
-    auto&& parent_of_focus_wnd = focus_wnd->Parent();
+    auto parent_of_focus_wnd{focus_wnd->Parent()};
     if (!parent_of_focus_wnd)
         return focus_wnd;
 
@@ -988,10 +988,9 @@ std::shared_ptr<Wnd> GUI::NextFocusInteractiveWnd() const
 
 std::shared_ptr<Wnd> GUI::GetWindowUnder(const Pt& pt) const
 {
-    auto&& wnd = m_impl->m_zlist.Pick(pt, ModalWindow());
+    auto wnd{m_impl->m_zlist.Pick(pt, ModalWindow())};
     if (INSTRUMENT_GET_WINDOW_UNDER && wnd)
         std::cerr << "GUI::GetWindowUnder() : " << wnd->Name() << " @ " << wnd << std::endl;
-
     return wnd;
 }
 
@@ -1675,11 +1674,11 @@ void GUI::RenderDragDropWnds()
 {
     // render drag-and-drop windows in arbitrary order (sorted by pointer value)
     m_impl->m_rendering_drag_drop_wnds = true;
-    for (const auto drop_wnd : m_impl->m_drag_drop_wnds) {
+    for (const auto& drop_wnd : m_impl->m_drag_drop_wnds) {
         bool old_visible = drop_wnd.first->Visible();
         if (!old_visible)
             drop_wnd.first->Show();
-        auto&& drop_wnd_parent = drop_wnd.first->Parent();
+        auto drop_wnd_parent{drop_wnd.first->Parent()};
         Pt parent_offset = drop_wnd_parent ? drop_wnd_parent->ClientUpperLeft() : Pt();
         Pt old_pos = drop_wnd.first->UpperLeft() - parent_offset;
         drop_wnd.first->MoveTo(m_impl->m_mouse_pos - parent_offset - drop_wnd.second);
@@ -1723,7 +1722,7 @@ void GUI::PreRender()
     }
 
     // pre-render the active browse info window, if any
-    const auto&& curr_wnd_under_cursor = LockAndResetIfExpired(m_impl->m_curr_wnd_under_cursor);
+    const auto curr_wnd_under_cursor{LockAndResetIfExpired(m_impl->m_curr_wnd_under_cursor)};
     if (m_impl->m_browse_info_wnd && curr_wnd_under_cursor) {
         assert(m_impl->m_browse_target);
         PreRenderWindow(m_impl->m_browse_info_wnd.get());
@@ -1757,7 +1756,7 @@ void GUI::Render()
 
     // render the active browse info window, if any
     if (m_impl->m_browse_info_wnd) {
-        const auto&& curr_wnd_under_cursor = LockAndResetIfExpired(m_impl->m_curr_wnd_under_cursor);
+        const auto curr_wnd_under_cursor{LockAndResetIfExpired(m_impl->m_curr_wnd_under_cursor)};
         if (!curr_wnd_under_cursor) {
             m_impl->m_browse_info_wnd.reset();
             m_impl->m_browse_info_mode = -1;

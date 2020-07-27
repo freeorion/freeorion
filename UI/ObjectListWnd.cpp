@@ -1124,7 +1124,7 @@ void FilterDialog::CompleteConstruction() {
 
     int vis_row = 1;
 
-    for (const auto entry : {
+    for (const auto& entry : {
             std::make_tuple(SHOW_VISIBLE, UserStringNop("VISIBLE")),
             std::make_tuple(SHOW_PREVIOUSLY_VISIBLE, UserStringNop("PREVIOUSLY_VISIBLE")),
             std::make_tuple(SHOW_DESTROYED, UserStringNop("DESTROYED"))
@@ -2677,10 +2677,10 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
     }
     // moderator actions...
     if (moderator) {
-        auto destroy_object_action = [object_id, app, &net]() {
+        auto destroy_object_action = [object_id, &net]() {
             net.SendMessage(ModeratorActionMessage(Moderator::DestroyUniverseObject(object_id)));
         };
-        auto set_owner_action = [object_id, app, &net]() {
+        auto set_owner_action = [object_id, &net]() {
             net.SendMessage(ModeratorActionMessage(Moderator::SetOwner(object_id, ALL_EMPIRES)));
         };
         popup->AddMenuItem(GG::MenuItem(UserString("MOD_DESTROY"),      false, false, destroy_object_action));

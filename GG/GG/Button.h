@@ -212,6 +212,8 @@ private:
 class GG_API StateButtonRepresenter
 {
 public:
+    virtual ~StateButtonRepresenter() = default;
+
     /** \brief Render the given state button according to its state.
 
         \param button The StateButton instance to render.

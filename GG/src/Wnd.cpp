@@ -374,11 +374,11 @@ bool Wnd::IsAncestorOf(const std::shared_ptr<Wnd>& wnd) const
 
 std::shared_ptr<Wnd> Wnd::RootParent() const
 {
-    auto&& parent = Parent();
-    auto&& gparent = parent ? parent->Parent() : nullptr;
+    auto parent{Parent()};
+    auto gparent{parent ? parent->Parent() : nullptr};
     while (gparent) {
         parent = std::move(gparent);
-        gparent = parent->Parent();
+        gparent = std::move(parent->Parent());
     }
     return parent;
 }
@@ -888,27 +888,27 @@ void Wnd::RemoveLayout()
 
 std::shared_ptr<Layout> Wnd::DetachLayout()
 {
-    auto&& layout = GetLayout();
+    auto layout{GetLayout()};
     DetachChild(layout.get());
     return layout;
 }
 
 void Wnd::SetLayoutBorderMargin(unsigned int margin)
 {
-    if (auto&& layout = GetLayout())
+    if (auto layout{GetLayout()})
         layout->SetBorderMargin(margin);
 }
 
 void Wnd::SetLayoutCellMargin(unsigned int margin)
 {
-    if (auto&& layout = GetLayout())
+    if (auto layout{GetLayout()})
         layout->SetCellMargin(margin);
 }
 
 void Wnd::PreRender()
 {
     m_needs_prerender = false;
-    auto&& layout = GetLayout();
+    auto layout{GetLayout()};
     if (!layout)
         return;
     if (layout->m_needs_prerender)
@@ -923,7 +923,7 @@ void Wnd::Render() {}
 bool Wnd::Run()
 {
     bool retval = false;
-    auto&& parent = Parent();
+    auto parent{Parent()};
     if (!parent && m_flags & MODAL) {
         GUI* gui = GUI::GetGUI();
         gui->RegisterModal(shared_from_this());

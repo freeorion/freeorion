@@ -64,8 +64,8 @@ namespace {
             qi::eps_type eps;
             qi::_pass_type _pass;
             qi::omit_type omit_;
-            const boost::phoenix::function<parse::detail::construct_movable> construct_movable_;
-            const boost::phoenix::function<parse::detail::deconstruct_movable> deconstruct_movable_;
+            //const boost::phoenix::function<parse::detail::construct_movable> construct_movable_;
+            //const boost::phoenix::function<parse::detail::deconstruct_movable> deconstruct_movable_;
 
             ships
                 =    label(tok.Ships_) > one_or_more_string_tokens

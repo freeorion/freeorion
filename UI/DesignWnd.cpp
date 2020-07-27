@@ -950,7 +950,7 @@ namespace {
         }
 
         hulls_and_obsoletes.clear();
-        for (const auto name : m_ordered_hulls) {
+        for (const auto& name : m_ordered_hulls) {
             try {
                hulls_and_obsoletes.push_back({name, m_hull_to_obsolete_and_loc.at(name).first});
             } catch (const std::out_of_range&) {

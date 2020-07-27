@@ -51,7 +51,7 @@ namespace {
             qi::_val_type _val;
             qi::_pass_type _pass;
             qi::omit_type omit_;
-            const boost::phoenix::function<parse::detail::deconstruct_movable> deconstruct_movable_;
+            //const boost::phoenix::function<parse::detail::deconstruct_movable> deconstruct_movable_;
 
             stat
                 = ( omit_[tok.Statistic_]

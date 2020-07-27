@@ -109,10 +109,6 @@ namespace GG {
     // A factory for creating image blocks from tags.
     class ImageBlockFactory : public RichText::IBlockControlFactory {
     public:
-        ImageBlockFactory() :
-            m_root_path()
-        {}
-
         //! Create a Text block from a plain text tag.
         std::shared_ptr<BlockControl> CreateFromTag(const std::string& tag,
                                                     const RichText::TAG_PARAMS& params,

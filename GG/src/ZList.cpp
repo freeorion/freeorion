@@ -71,7 +71,7 @@ std::shared_ptr<Wnd> ZList::Pick(const Pt& pt, const std::shared_ptr<Wnd>& modal
     } else {
         // otherwise, look in the z-list for the first visible Wnd containg pt.
         std::function<boost::optional<std::shared_ptr<Wnd>> (const std::shared_ptr<Wnd>&)> contains_pt =
-            [&pt, &ignore, this](const std::shared_ptr<Wnd>& locked) {
+            [&pt, &ignore](const std::shared_ptr<Wnd>& locked) {
             if (!locked->Visible() || !locked->InWindow(pt))
                 return boost::optional<std::shared_ptr<Wnd>>(boost::none);
 

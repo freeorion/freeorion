@@ -1195,7 +1195,7 @@ namespace {
             auto temp = empire_infos;
 
             std::set<int> empire_ids_with_objects;
-            for (const auto obj : combat_info.objects.all())
+            for (const auto& obj : combat_info.objects.all())
                 empire_ids_with_objects.insert(obj->Owner());
 
             for (auto& empire : empire_infos) {
@@ -1236,21 +1236,21 @@ namespace {
             InitialStealthEvent::EmpireToObjectVisibilityMap report;
 
             // loop over all objects, noting which is visible by which empire or neutrals
-            for (const auto target : combat_info.objects.all()) {
+            for (const auto& target : combat_info.objects.all()) {
                 // for all empires, can they detect this object?
                 for (int viewing_empire_id : combat_info.empire_ids) {
                     // get visibility of target to attacker empire
                     auto empire_vis_info_it = combat_info.empire_object_visibility.find(viewing_empire_id);
                     if (empire_vis_info_it == combat_info.empire_object_visibility.end()) {
                         DebugLogger() << " ReportInvisibleObjects found no visibility info for viewing empire " << viewing_empire_id;
-                        report[viewing_empire_id][target->ID()] = VIS_NO_VISIBILITY;
+                        report[viewing_empire_id].emplace(target->ID(), VIS_NO_VISIBILITY);
                         continue;
                     }
                     auto target_visibility_for_empire_it = empire_vis_info_it->second.find(target->ID());
                     if (target_visibility_for_empire_it == empire_vis_info_it->second.end()) {
                         DebugLogger() << " ReportInvisibleObjects found no visibility record for viewing empire "
                                       << viewing_empire_id << " for object " << target->Name() << " (" << target->ID() << ")";
-                        report[viewing_empire_id][target->ID()] = VIS_NO_VISIBILITY;
+                        report[viewing_empire_id].emplace(target->ID(), VIS_NO_VISIBILITY);
                         continue;
                     }
 
@@ -1265,7 +1265,7 @@ namespace {
 
                     // This adds information about invisible and basic visible objects and
                     // trusts that the combat logger only informs player/ai of what they should know
-                    report[viewing_empire_id][target->ID()] = vis;
+                    report[viewing_empire_id].emplace(target->ID(), vis);
                 }
             }
             return report;

@@ -49,6 +49,7 @@ public:
     class IBlockControlFactory
     {
     public:
+        virtual ~IBlockControlFactory() = default;
         //! Creates a control from the tag (with unparsed parameters) and the content between the tags.
         //! You own the returned control.
         virtual std::shared_ptr<BlockControl> CreateFromTag(const std::string& tag,

@@ -5698,7 +5698,7 @@ void MapWnd::FleetButtonRightClicked(const FleetButton* fleet_btn) {
     if (sensor_ghosts.size() > 0) {
         auto popup = GG::Wnd::Create<CUIPopupMenu>(fleet_btn->LowerRight().x, fleet_btn->LowerRight().y);
 
-        auto forget_fleet_actions = [this, empire_id, sensor_ghosts]() {
+        auto forget_fleet_actions = [this, sensor_ghosts]() {
             for (auto fleet_id : sensor_ghosts) {
                 ForgetObject(fleet_id);
             }

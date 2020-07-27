@@ -88,7 +88,7 @@ namespace parse {
         boost::spirit::qi::_pass_type _pass;
         boost::spirit::qi::lit_type lit;
         const boost::phoenix::function<construct_movable> construct_movable_;
-        const boost::phoenix::function<deconstruct_movable> deconstruct_movable_;
+        //const boost::phoenix::function<deconstruct_movable> deconstruct_movable_;
         const boost::phoenix::function<deconstruct_movable_vector> deconstruct_movable_vector_;
 
         constant_expr

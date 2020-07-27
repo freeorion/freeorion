@@ -342,7 +342,7 @@ void IDAllocator::SerializeForEmpire(Archive& ar, const unsigned int version, in
             ar & boost::serialization::make_nvp(BOOST_PP_STRINGIZE(m_empire_id_to_next_assigned_object_id), temp_empire_id_to_object_id);
             ar & boost::serialization::make_nvp(BOOST_PP_STRINGIZE(m_offset_to_empire_id), temp_offset_to_empire_id);
 
-            DebugLogger(IDallocator) << "Serialized [" << [this, &temp_empire_id_to_object_id](){
+            DebugLogger(IDallocator) << "Serialized [" << [&temp_empire_id_to_object_id]() {
                 std::stringstream ss;
                 for (auto& empire_and_next_id : temp_empire_id_to_object_id) {
                     ss << "empire = " << empire_and_next_id.first << " next id = " << empire_and_next_id.second << ", ";

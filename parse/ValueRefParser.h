@@ -160,7 +160,7 @@ namespace parse { namespace detail {
         boost::spirit::qi::_val_type _val;
         boost::spirit::qi::omit_type omit_;
         const boost::phoenix::function<construct_movable> construct_movable_;
-        const boost::phoenix::function<deconstruct_movable> deconstruct_movable_;
+        //const boost::phoenix::function<deconstruct_movable> deconstruct_movable_;
 
         unwrapped_bound_variable
             = (

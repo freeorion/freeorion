@@ -111,7 +111,7 @@ namespace parse {
         qi::lit_type lit;
         qi::eps_type eps;
         qi::_pass_type _pass;
-        const boost::phoenix::function<parse::detail::construct_movable> construct_movable_;
+        //const boost::phoenix::function<parse::detail::construct_movable> construct_movable_;
 
         effects_group
             =   tok.EffectsGroup_

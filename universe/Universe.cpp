@@ -1336,7 +1336,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
         tech_sources.emplace_back(Condition::ObjectSet{1U, source});
         const auto& source_objects = tech_sources.back();
 
-        for (const auto tech_entry : empire->ResearchedTechs()) {
+        for (const auto& tech_entry : empire->ResearchedTechs()) {
             const std::string& tech_name{tech_entry.first};
             const Tech* tech = GetTech(tech_name);
             if (!tech) continue;
@@ -1384,7 +1384,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     TraceLogger(effects) << "Universe::GetEffectsAndTargets for BUILDINGS";
     // determine buildings of each type in a single pass
     std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>> buildings_by_type;
-    for (auto& building : m_objects.all<Building>()) {
+    for (const auto& building : m_objects.all<Building>()) {
         if (m_destroyed_object_ids.count(building->ID()))
             continue;
         const std::string& building_type_name = building->BuildingTypeName();
@@ -1426,7 +1426,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>> ships_by_ship_hull;
     std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>> ships_by_ship_part;
 
-    for (auto& ship : m_objects.all<Ship>()) {
+    for (const auto& ship : m_objects.all<Ship>()) {
         if (m_destroyed_object_ids.count(ship->ID()))
             continue;
         const ShipDesign* ship_design = ship->Design();
@@ -1496,7 +1496,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     TraceLogger(effects) << "Universe::GetEffectsAndTargets for FIELDS";
     // determine fields of each type in a single pass
     std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>> fields_by_type;
-    for (auto& field : m_objects.all<Field>()) {
+    for (const auto& field : m_objects.all<Field>()) {
         if (m_destroyed_object_ids.count(field->ID()))
             continue;
         const std::string& field_type_name = field->FieldTypeName();
