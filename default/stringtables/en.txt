@@ -11237,7 +11237,7 @@ PLC_RESERVE_TANKS_DESC
 Adds +1 fuel capacity to all ships, but halves their speed when they have less than half of their max fuel left.
 
 PLC_RESERVE_TANKS_SHORT_DESC
-Improves ship fuel economony
+Improves ship fuel economy
 
 PLC_ENGINEERING
 Engineering Corps
@@ -11247,6 +11247,15 @@ Reduces the "upkeep" cost of ships by half, so that the cost of producing more s
 
 PLC_ENGINEERING_SHORT_DESC
 Reduces Fleet Upkeep / Costs Influence
+
+PLC_EXOBOT_PRODUCTIVITY
+Exobot Productivity
+
+PLC_EXOBOT_PRODUCTIVITY_DESC
+Increases effective exobot production output on industry-focused worlds from very bad to just bad.
+
+PLC_EXOBOT_PRODUCTIVITY_SHORT_DESC
+Boosts exobot production
 
 
 ##

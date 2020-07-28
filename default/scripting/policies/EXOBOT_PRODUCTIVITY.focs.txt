@@ -1,0 +1,25 @@
+Policy
+    name = "PLC_EXOBOT_PRODUCTIVITY"
+    description = "PLC_EXOBOT_PRODUCTIVITY_DESC"
+    short_description = "PLC_EXOBOT_PRODUCTIVITY_SHORT_DESC"
+    category = "ECONOMIC_CATEGORY"
+    adoptioncost = 5 + Statistic Count condition = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Species name = "SP_EXOBOT"
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species name = "SP_EXOBOT"
+                TargetIndustry low = 0
+                Focus type = "FOCUS_INDUSTRY"
+            ]
+            effects =
+                SetTargetIndustry value = Value * ( [[BAD_MULTIPLIER]] - [[VERY_BAD_MULTIPLIER]] )
+    ]
+    graphic = "icons/policies/exobot_productivity.png"
+
+#include "/scripting/species/common/*.macros"
