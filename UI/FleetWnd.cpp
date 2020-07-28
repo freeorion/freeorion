@@ -950,9 +950,9 @@ namespace {
             meters_icons.emplace_back(METER_TROOPS,         TroopIcon());
         if (ship->CanColonize())
             meters_icons.emplace_back(METER_POPULATION,     ColonyIcon());
-        if (ship->GetMeter(METER_INDUSTRY)->Initial() > 0.0f)
+        if (ship->GetMeter(METER_INDUSTRY)->Initial() != 0.0f)
             meters_icons.emplace_back(METER_INDUSTRY,       IndustryIcon());
-        if (ship->GetMeter(METER_RESEARCH)->Initial() > 0.0f)
+        if (ship->GetMeter(METER_RESEARCH)->Initial() != 0.0f)
             meters_icons.emplace_back(METER_RESEARCH,       ResearchIcon());
         if (ship->GetMeter(METER_INFLUENCE)->Initial() != 0.0f)
             meters_icons.emplace_back(METER_INFLUENCE,      InfluenceIcon());
@@ -1570,21 +1570,21 @@ void FleetDataPanel::SetStatIconValues() {
         case METER_INDUSTRY: {
             const auto resource_output = fleet->ResourceOutput(RE_INDUSTRY);
             icon->SetValue(resource_output);
-            if (resource_output > 0.0f)
+            if (resource_output != 0.0f)
                 AttachChild(icon);
         }
             break;
         case METER_RESEARCH: {
             const auto resource_output = fleet->ResourceOutput(RE_RESEARCH);
             icon->SetValue(resource_output);
-            if (resource_output > 0.0f)
+            if (resource_output != 0.0f)
                 AttachChild(icon);
         }
             break;
         case METER_INFLUENCE: {
             const auto resource_output = fleet->ResourceOutput(RE_INFLUENCE);
             icon->SetValue(resource_output);
-            if (resource_output > 0.0f)
+            if (resource_output != 0.0f)
                 AttachChild(icon);
         }
             break;
