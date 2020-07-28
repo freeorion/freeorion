@@ -733,8 +733,8 @@ void Ship::ClampMeters() {
     UniverseObject::GetMeter(METER_INDUSTRY)->ClampCurrentToRange();
     UniverseObject::GetMeter(METER_TARGET_RESEARCH)->ClampCurrentToRange();
     UniverseObject::GetMeter(METER_RESEARCH)->ClampCurrentToRange();
-    UniverseObject::GetMeter(METER_TARGET_INFLUENCE)->ClampCurrentToRange();
-    UniverseObject::GetMeter(METER_INFLUENCE)->ClampCurrentToRange();
+    //UniverseObject::GetMeter(METER_TARGET_INFLUENCE)->ClampCurrentToRange(-Meter::LARGE_VALUE, Meter::LARGE_VALUE);
+    //UniverseObject::GetMeter(METER_INFLUENCE)->ClampCurrentToRange(-Meter::LARGE_VALUE, Meter::LARGE_VALUE);
 
     UniverseObject::GetMeter(METER_DETECTION)->ClampCurrentToRange();
     UniverseObject::GetMeter(METER_SPEED)->ClampCurrentToRange();
