@@ -434,7 +434,7 @@ void Universe::InsertIDCore(std::shared_ptr<UniverseObject> obj, int id) {
     }
 
     obj->SetID(id);
-    m_objects.insert(std::forward<std::shared_ptr<UniverseObject>>(obj));
+    m_objects.insert(std::move(obj));
 }
 
 bool Universe::InsertShipDesign(ShipDesign* ship_design) {

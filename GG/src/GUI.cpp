@@ -1280,14 +1280,14 @@ void GUI::Register(std::shared_ptr<Wnd> wnd)
     if (auto&& parent = wnd->Parent())
         parent->DetachChild(wnd);
 
-    m_impl->m_zlist.Add(std::forward<std::shared_ptr<Wnd>>(wnd));
+    m_impl->m_zlist.Add(std::move(wnd));
 }
 
 void GUI::RegisterModal(std::shared_ptr<Wnd> wnd)
 {
     if (wnd && wnd->Modal()) {
         m_impl->m_zlist.Remove(wnd.get());
-        m_impl->m_modal_wnds.push_back({wnd, wnd});
+        m_impl->m_modal_wnds.emplace_back(wnd, wnd);
         wnd->HandleEvent(WndEvent(WndEvent::GainingFocus));
     }
 }

@@ -29,7 +29,7 @@ int OrderSet::IssueOrder(OrderPtr&& order) {
     int retval = ((m_orders.rbegin() != m_orders.rend()) ? m_orders.rbegin()->first + 1 : 0);
 
     // Insert the order into the m_orders map.  forward the rvalue to use the move constructor.
-    auto inserted = m_orders.emplace(retval, std::forward<OrderPtr>(order));
+    auto inserted = m_orders.emplace(retval, std::move(order));
     m_last_added_orders.emplace(retval);
     try {
         inserted.first->second->Execute();

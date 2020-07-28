@@ -94,9 +94,7 @@ PopupMenu::PopupMenu(X x, Y y, const std::shared_ptr<Font>& font, Clr text_color
 }
 
 void PopupMenu::AddMenuItem(MenuItem&& menu_item)
-{
-    m_menu_data.next_level.push_back(std::forward<MenuItem>(menu_item));
-}
+{ m_menu_data.next_level.emplace_back(std::move(menu_item)); }
 
 Pt PopupMenu::ClientUpperLeft() const
 { return m_origin; }

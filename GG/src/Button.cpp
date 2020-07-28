@@ -655,7 +655,7 @@ void RadioButtonGroup::DisableButton(std::size_t index, bool b/* = true*/)
 }
 
 void RadioButtonGroup::AddButton(std::shared_ptr<StateButton> bn)
-{ InsertButton(m_button_slots.size(), std::forward<std::shared_ptr<StateButton>>(bn)); }
+{ InsertButton(m_button_slots.size(), std::move(bn)); }
 
 void RadioButtonGroup::InsertButton(std::size_t index, std::shared_ptr<StateButton> bn)
 {

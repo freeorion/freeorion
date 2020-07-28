@@ -538,7 +538,7 @@ void FleetUIManager::FleetWndClosing(FleetWnd* fleet_wnd) {
 void FleetUIManager::FleetWndClicked(std::shared_ptr<FleetWnd> fleet_wnd) {
     if (fleet_wnd == GG::LockAndResetIfExpired(m_active_fleet_wnd))
         return;
-    SetActiveFleetWnd(std::forward<std::shared_ptr<FleetWnd>>(fleet_wnd));
+    SetActiveFleetWnd(std::move(fleet_wnd));
 }
 
 void FleetUIManager::EnableOrderIssuing(bool enable/* = true*/) {
@@ -1728,9 +1728,10 @@ void FleetDataPanel::Init() {
 
         m_stat_icons.reserve(meters_icons_browsetext.size());
         for (const auto& entry : meters_icons_browsetext) {
-            auto icon = GG::Wnd::Create<StatisticIcon>(std::get<1>(entry), 0, 0, false, StatIconSize().x, StatIconSize().y);
+            auto icon = GG::Wnd::Create<StatisticIcon>(std::get<1>(entry), 0, 0, false,
+                                                       StatIconSize().x, StatIconSize().y);
             auto meter_type = std::get<0>(entry);
-            m_stat_icons.push_back({meter_type, icon});
+            m_stat_icons.emplace_back(meter_type, icon);
             icon->SetBrowseModeTime(tooltip_delay);
             icon->SetBrowseText(UserString(std::get<2>(entry)));
             icon->RightClickedSignal.connect([meter_type](const GG::Pt& pt){

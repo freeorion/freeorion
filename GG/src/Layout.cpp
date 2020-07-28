@@ -508,10 +508,12 @@ void Layout::Render()
     }
 }
 
-void Layout::Add(std::shared_ptr<Wnd> wnd, std::size_t row, std::size_t column, Flags<Alignment> alignment/* = ALIGN_NONE*/)
-{ Add(std::forward<std::shared_ptr<Wnd>>(wnd), row, column, 1, 1, alignment); }
+void Layout::Add(std::shared_ptr<Wnd> wnd, std::size_t row, std::size_t column,
+                 Flags<Alignment> alignment/* = ALIGN_NONE*/)
+{ Add(std::move(wnd), row, column, 1, 1, alignment); }
 
-void Layout::Add(std::shared_ptr<Wnd> wnd, std::size_t row, std::size_t column, std::size_t num_rows, std::size_t num_columns,
+void Layout::Add(std::shared_ptr<Wnd> wnd, std::size_t row, std::size_t column,
+                 std::size_t num_rows, std::size_t num_columns,
                  Flags<Alignment> alignment/* = ALIGN_NONE*/)
 {
     std::size_t last_row = row + num_rows;
@@ -519,9 +521,9 @@ void Layout::Add(std::shared_ptr<Wnd> wnd, std::size_t row, std::size_t column, 
     assert(row < last_row);
     assert(column < last_column);
     ValidateAlignment(alignment);
-    if (m_cells.size() < last_row || m_cells[0].size() < last_column) {
+    if (m_cells.size() < last_row || m_cells[0].size() < last_column)
         ResizeLayout(std::max(last_row, Rows()), std::max(last_column, Columns()));
-    }
+
     for (std::size_t i = row; i < last_row; ++i) {
         for (std::size_t j = column; j < last_column; ++j) {
             if (m_cells[i][j].lock())
@@ -530,8 +532,9 @@ void Layout::Add(std::shared_ptr<Wnd> wnd, std::size_t row, std::size_t column, 
         }
     }
     if (wnd) {
-        m_wnd_positions[wnd.get()] = WndPosition(row, column, last_row, last_column, alignment, wnd->RelativeUpperLeft(), wnd->Size());
-        AttachChild(std::forward<std::shared_ptr<Wnd>>(wnd));
+        m_wnd_positions[wnd.get()] = WndPosition(row, column, last_row, last_column, alignment,
+                                                 wnd->RelativeUpperLeft(), wnd->Size());
+        AttachChild(std::move(wnd));
     }
     RedoLayout();
 }

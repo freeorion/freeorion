@@ -1768,7 +1768,7 @@ FileDlg::FileDlg(const std::string& directory, const std::string& filename, bool
                  std::vector<std::pair<std::string, std::string>> types) :
     GG::FileDlg(directory, filename, save, multi, ClientUI::GetFont(),
                 ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(), ClientUI::TextColor()),
-    m_init_file_filters(std::forward<std::vector<std::pair<std::string, std::string>>>(types))
+    m_init_file_filters(std::move(types))
 {}
 
 void FileDlg::CompleteConstruction() {

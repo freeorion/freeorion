@@ -47,7 +47,7 @@ namespace {
     public:
         RowContentsWnd(GG::X w, GG::Y h, std::shared_ptr<Wnd> contents, int indentation_level) :
             Control(GG::X0, GG::Y0, w, h, GG::INTERACTIVE),
-            m_contents(std::forward<std::shared_ptr<Wnd>>(contents)),
+            m_contents(std::move(contents)),
             m_indentation_level(indentation_level)
         {}
 
@@ -84,11 +84,11 @@ namespace {
     };
 
     struct BrowseForPathButtonFunctor {
-        BrowseForPathButtonFunctor(const fs::path& path, const std::vector<std::pair<std::string, std::string>>& filters,
+        BrowseForPathButtonFunctor(fs::path path, std::vector<std::pair<std::string, std::string>> filters,
                                    std::shared_ptr<GG::Edit> edit, bool directory, bool return_relative_path) :
-            m_path(path),
-            m_filters(filters),
-            m_edit(std::forward<std::shared_ptr<GG::Edit>>(edit)),
+            m_path(std::move(path)),
+            m_filters(std::move(filters)),
+            m_edit(std::move(edit)),
             m_directory(directory),
             m_return_relative_path(return_relative_path)
         {}
@@ -113,9 +113,9 @@ namespace {
 
         fs::path                                            m_path;
         std::vector<std::pair<std::string, std::string>>    m_filters;
-        std::shared_ptr<GG::Edit>                                           m_edit;
-        bool                                                m_directory;
-        bool                                                m_return_relative_path;
+        std::shared_ptr<GG::Edit>                           m_edit;
+        bool                                                m_directory = false;
+        bool                                                m_return_relative_path = false;
     };
 
     bool ValidStringtableFile(const std::string& file) {
@@ -180,7 +180,7 @@ namespace {
     // Small window that will grab a unique key press.
     class KeyPressCatcher : public GG::Wnd {
         GG::Key                 m_key;
-        std::uint32_t m_code_point;
+        std::uint32_t           m_code_point;
         GG::Flags<GG::ModKey>   m_mods;
 
     public:
@@ -316,7 +316,7 @@ namespace {
     public:
         OptionsListRow(GG::X w, GG::Y h, std::shared_ptr<RowContentsWnd> contents) :
             GG::ListBox::Row(w, h),
-            m_contents(std::forward<std::shared_ptr<RowContentsWnd>>(contents))
+            m_contents(std::move(contents))
         {
             SetChildClippingMode(ClipToClient);
         }
@@ -326,7 +326,7 @@ namespace {
         {
             SetChildClippingMode(ClipToClient);
             if (contents)
-                m_contents = GG::Wnd::Create<RowContentsWnd>(w, h, contents, indentation);
+                m_contents = GG::Wnd::Create<RowContentsWnd>(w, h, std::move(contents), indentation);
         }
 
         void CompleteConstruction() override {

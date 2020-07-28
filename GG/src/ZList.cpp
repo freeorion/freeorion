@@ -47,7 +47,7 @@ namespace {
         if (!wnd->Visible() || !wnd->Interactive()  || (ignore && ignore->count(wnd.get())))
             return nullptr;
 
-        return std::forward<std::shared_ptr<Wnd>>(wnd);
+        return wnd;
     }
 }
 
@@ -99,7 +99,7 @@ void ZList::Add(std::shared_ptr<Wnd> wnd)
     if (!found) {
         auto wndp = wnd.get();
         // add wnd to the end of the list...
-        m_list.insert(m_list.end(), std::forward<std::shared_ptr<Wnd>>(wnd));
+        m_list.emplace_back(std::move(wnd));
         // then move it up to its proper place
         MoveUp(wndp);
     }

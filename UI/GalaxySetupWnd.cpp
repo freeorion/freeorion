@@ -36,7 +36,7 @@ namespace {
     public:
         RowContentsWnd(GG::X w, GG::Y h, std::shared_ptr<GG::Wnd> contents, int indentation_level) :
             Control(GG::X0, GG::Y0, w, h, GG::INTERACTIVE),
-            m_contents(std::forward<std::shared_ptr<GG::Wnd>>(contents))
+            m_contents(std::move(contents))
         {
             if (!m_contents)
                 return;
@@ -76,14 +76,14 @@ namespace {
     public:
         RuleListRow(GG::X w, GG::Y h, std::shared_ptr<RowContentsWnd> contents) :
             GG::ListBox::Row(w, h),
-            m_contents(std::forward<std::shared_ptr<RowContentsWnd>>(contents))
+            m_contents(std::move(contents))
         {}
 
         RuleListRow(GG::X w, GG::Y h, std::shared_ptr<Wnd> contents, int indentation = 0) :
             GG::ListBox::Row(w, h)
         {
             if (contents)
-                m_contents = GG::Wnd::Create<RowContentsWnd>(w, h, std::forward<std::shared_ptr<GG::Wnd>>(contents), indentation);
+                m_contents = GG::Wnd::Create<RowContentsWnd>(w, h, std::move(contents), indentation);
         }
 
         void CompleteConstruction() override {
