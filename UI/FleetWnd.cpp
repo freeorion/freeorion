@@ -790,7 +790,7 @@ namespace {
             // blank text and delete icons
             m_ship_name_text->SetText("");
             DetachChildAndReset(m_design_name_text);
-            for (auto& type_and_icon: m_stat_icons)
+            for (auto& type_and_icon : m_stat_icons)
                 DetachChild(type_and_icon.second);
             m_stat_icons.clear();
             return;
@@ -824,7 +824,7 @@ namespace {
                                                            design_name %
                                                            UserString(species_name)));
             } else {
-                m_design_name_text->SetText(design_name);
+                m_design_name_text->SetText(std::move(design_name));
             }
         }
 
@@ -941,32 +941,32 @@ namespace {
 
         std::vector<std::pair<MeterType, std::shared_ptr<GG::Texture>>> meters_icons;
         meters_icons.reserve(13);
-        meters_icons.push_back({METER_STRUCTURE,          ClientUI::MeterIcon(METER_STRUCTURE)});
+        meters_icons.emplace_back(METER_STRUCTURE,          ClientUI::MeterIcon(METER_STRUCTURE));
         if (ship->IsArmed())
-            meters_icons.push_back({METER_CAPACITY,       DamageIcon()});
+            meters_icons.emplace_back(METER_CAPACITY,       DamageIcon());
         if (ship->HasFighters())
-            meters_icons.push_back({METER_SECONDARY_STAT, FightersIcon()});
+            meters_icons.emplace_back(METER_SECONDARY_STAT, FightersIcon());
         if (ship->HasTroops())
-            meters_icons.push_back({METER_TROOPS,         TroopIcon()});
+            meters_icons.emplace_back(METER_TROOPS,         TroopIcon());
         if (ship->CanColonize())
-            meters_icons.push_back({METER_POPULATION,     ColonyIcon()});
+            meters_icons.emplace_back(METER_POPULATION,     ColonyIcon());
         if (ship->GetMeter(METER_INDUSTRY)->Initial() > 0.0f)
-            meters_icons.push_back({METER_INDUSTRY,       IndustryIcon()});
+            meters_icons.emplace_back(METER_INDUSTRY,       IndustryIcon());
         if (ship->GetMeter(METER_RESEARCH)->Initial() > 0.0f)
-            meters_icons.push_back({METER_RESEARCH,       ResearchIcon()});
-        if (ship->GetMeter(METER_INFLUENCE)->Initial() > 0.0f)
-            meters_icons.push_back({METER_INFLUENCE,      InfluenceIcon()});
+            meters_icons.emplace_back(METER_RESEARCH,       ResearchIcon());
+        if (ship->GetMeter(METER_INFLUENCE)->Initial() != 0.0f)
+            meters_icons.emplace_back(METER_INFLUENCE,      InfluenceIcon());
 
         for (auto& meter : {METER_SHIELD, METER_FUEL, METER_DETECTION,
                             METER_STEALTH, METER_SPEED})
         {
-            meters_icons.push_back({meter, ClientUI::MeterIcon(meter)});
+            meters_icons.emplace_back(meter, ClientUI::MeterIcon(meter));
         }
 
         m_stat_icons.reserve(meters_icons.size());
         for (auto& entry : meters_icons) {
             auto icon = GG::Wnd::Create<StatisticIcon>(entry.second, 0, 0, false, StatIconSize().x, StatIconSize().y);
-            m_stat_icons.push_back({entry.first, icon});
+            m_stat_icons.emplace_back(entry.first, icon);
             AttachChild(icon);
             std::string meter_string = boost::lexical_cast<std::string>(entry.first);
 
@@ -1377,12 +1377,12 @@ void FleetDataPanel::Refresh() {
             if (GetOptionsDB().Get<bool>("ui.name.id.shown")) {
                 fleet_name = fleet_name + " (" + std::to_string(m_fleet_id) + ")";
             }
-            m_fleet_name_text->SetText(fleet_name);
+            m_fleet_name_text->SetText(std::move(fleet_name));
         } else {
             if (GetOptionsDB().Get<bool>("ui.name.id.shown")) {
                 public_fleet_name = public_fleet_name + " (" + std::to_string(m_fleet_id) + ")";
             }
-            m_fleet_name_text->SetText(public_fleet_name);
+            m_fleet_name_text->SetText(std::move(public_fleet_name));
         }
         m_fleet_destination_text->SetText(FleetDestinationText(m_fleet_id));
 

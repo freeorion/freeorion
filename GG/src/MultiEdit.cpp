@@ -101,9 +101,10 @@ const std::size_t MultiEdit::ALL_LINES = std::numeric_limits<std::size_t>::max()
 const unsigned int MultiEdit::SCROLL_WIDTH = 14;
 const unsigned int MultiEdit::BORDER_THICK = 2;
 
-MultiEdit::MultiEdit(const std::string& str, const std::shared_ptr<Font>& font, Clr color,
-                     Flags<MultiEditStyle> style/* = MULTI_LINEWRAP*/, Clr text_color/* = CLR_BLACK*/, Clr interior/* = CLR_ZERO*/) :
-    Edit(str, font, color, text_color, interior),
+MultiEdit::MultiEdit(std::string str, const std::shared_ptr<Font>& font, Clr color,
+                     Flags<MultiEditStyle> style/* = MULTI_LINEWRAP*/,
+                     Clr text_color/* = CLR_BLACK*/, Clr interior/* = CLR_ZERO*/) :
+    Edit(std::move(str), font, color, text_color, interior),
     m_style(style),
     m_cursor_begin(0, CP0),
     m_cursor_end(0, CP0),
@@ -290,13 +291,13 @@ void MultiEdit::DeselectAll()
     this->m_cursor_pos = {cursor_pos, cursor_pos};
 }
 
-void MultiEdit::SetText(const std::string& str)
+void MultiEdit::SetText(std::string str)
 {
     if (!utf8::is_valid(str.begin(), str.end()))
         return;
 
     if (m_preserve_text_position_on_next_set_text) {
-        TextControl::SetText(str);
+        TextControl::SetText(std::move(str));
     } else {
         bool scroll_to_end = (m_style & MULTI_TERMINAL_STYLE) &&
             (!m_vscroll || m_vscroll->ScrollRange().second - m_vscroll->PosnRange().second <= 1);
@@ -305,7 +306,7 @@ void MultiEdit::SetText(const std::string& str)
         Pt cl_sz = ClientSize();
         Flags<TextFormat> format = GetTextFormat();
         if (m_max_lines_history == ALL_LINES) {
-            TextControl::SetText(str);
+            TextControl::SetText(std::move(str));
         } else {
             auto text_elements = GetFont()->ExpensiveParseFromTextToTextElements(str, format);
             auto lines = GetFont()->DetermineLines(str, format, cl_sz.x, text_elements);
@@ -346,7 +347,7 @@ void MultiEdit::SetText(const std::string& str)
                     }
                 }
             } else {
-                TextControl::SetText(str);
+                TextControl::SetText(std::move(str));
             }
         }
 

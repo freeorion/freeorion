@@ -3097,7 +3097,7 @@ void EncyclopediaDetailPanel::RefreshImpl() {
                 // convert formats...
                 std::vector<std::pair<double, double>> line_data_pts;
                 for (const auto& entry : empire_linemap.second)
-                { line_data_pts.push_back({entry.first, entry.second}); }
+                    line_data_pts.emplace_back(entry.first, entry.second);
 
                 m_graph->AddSeries(line_data_pts, empire_clr);
             }
@@ -3125,7 +3125,7 @@ void EncyclopediaDetailPanel::RefreshImpl() {
 
     // Set Text
     if (!name.empty())
-        m_name_text->SetText(name);
+        m_name_text->SetText(std::move(name));
 
     m_summary_text->SetText(str(FlexibleFormat(UserString("ENC_DETAIL_TYPE_STR"))
         % specific_type
@@ -3146,12 +3146,12 @@ void EncyclopediaDetailPanel::RefreshImpl() {
     }
 
     if (!detailed_description.empty())
-        m_description_rich_text->SetText(detailed_description);
+        m_description_rich_text->SetText(std::move(detailed_description));
 
     m_scroll_panel->ScrollTo(GG::Y0);
 }
 
-void EncyclopediaDetailPanel::AddItem(const std::string& type, const std::string& name) {
+void EncyclopediaDetailPanel::AddItem(const std::string& type, std::string name) {
     // if the actual item is not the last one, all aubsequented items are deleted
     if (!m_items.empty()) {
         if (m_items_it->first == type && m_items_it->second == name)
@@ -3165,7 +3165,7 @@ void EncyclopediaDetailPanel::AddItem(const std::string& type, const std::string
         }
     }
 
-    m_items.push_back({type, name});
+    m_items.emplace_back(std::move(type), std::move(name));
     if (m_items.size() == 1)
         m_items_it = m_items.begin();
     else

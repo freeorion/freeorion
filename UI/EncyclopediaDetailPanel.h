@@ -42,7 +42,7 @@ public:
       * the Wnd, rather than being restricted to the client area of a CUIWnd */
     GG::Pt ClientUpperLeft() const override;
 
-    void AddItem(const std::string& type, const std::string& name); // adds a new item to m_items
+    void AddItem(const std::string& type, std::string name); // adds a new item to m_items
     void PopItem();
     void ClearItems();
     int GetItemsSize() { return m_items.size(); }

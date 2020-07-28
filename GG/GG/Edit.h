@@ -69,7 +69,7 @@ public:
     typedef boost::signals2::signal<void (const std::string&)> FocusUpdateSignalType;
 
     /** Ctor. Height is determined from the font and point size used. */
-    Edit(const std::string& str, const std::shared_ptr<Font>& font, Clr color,
+    Edit(std::string str, const std::shared_ptr<Font>& font, Clr color,
          Clr text_color = CLR_BLACK, Clr interior = CLR_ZERO);
 
     Pt MinUsableSize() const override;
@@ -130,7 +130,7 @@ public:
     /** Deselects text */
     virtual void DeselectAll();
 
-    void SetText(const std::string& str) override;
+    void SetText(std::string str) override;
 
     /** Replaces selected text with, or inserts at cursor, the text in \a text. */
     virtual void AcceptPastedText(const std::string& text);
@@ -239,7 +239,6 @@ void GG_API GetTranslatedCodePoint(Key key,
 CPSize GG_API NextWordEdgeFrom(const std::string& text,
                                CPSize from_position,
                                bool search_right = true);
-
 
 }
 

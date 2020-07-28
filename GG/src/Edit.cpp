@@ -59,9 +59,9 @@ namespace {
 // static(s)
 const int Edit::PIXEL_MARGIN = 5;
 
-Edit::Edit(const std::string& str, const std::shared_ptr<Font>& font, Clr color,
+Edit::Edit(std::string str, const std::shared_ptr<Font>& font, Clr color,
            Clr text_color/* = CLR_BLACK*/, Clr interior/* = CLR_ZERO*/) :
-    TextControl(X0, Y0, X1, HeightFromFont(font, PIXEL_MARGIN), str, font, text_color,
+    TextControl(X0, Y0, X1, HeightFromFont(font, PIXEL_MARGIN), std::move(str), font, text_color,
                 FORMAT_LEFT | FORMAT_IGNORETAGS, INTERACTIVE | REPEAT_KEY_PRESS),
     m_cursor_pos(CP0, CP0),
     m_last_button_down_time(0),
@@ -217,9 +217,9 @@ void Edit::SelectRange(CPSize from, CPSize to)
     AdjustView();
 }
 
-void Edit::SetText(const std::string& str)
+void Edit::SetText(std::string str)
 {
-    TextControl::SetText(str);
+    TextControl::SetText(std::move(str));
     m_cursor_pos.second = m_cursor_pos.first; // eliminate any hiliting
 
     // make sure the change in text did not make the cursor or view position invalid

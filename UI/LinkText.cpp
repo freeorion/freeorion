@@ -123,14 +123,14 @@ void LinkText::Render() {
     TextLinker::Render_();
 }
 
-void LinkText::SetText(const std::string& str) {
-    m_raw_text = str;
+void LinkText::SetText(std::string str) {
+    m_raw_text = std::move(str);
     FindLinks();
     MarkLinks();
 }
 
-void LinkText::SetLinkedText(const std::string& str)
-{ GG::TextControl::SetText(str); }
+void LinkText::SetLinkedText(std::string str)
+{ GG::TextControl::SetText(std::move(str)); }
 
 GG::Pt LinkText::TextUpperLeft() const
 { return GG::TextControl::TextUpperLeft(); }
@@ -494,17 +494,17 @@ int TextLinker::GetLinkUnderPt(const GG::Pt& pt) {
 }
 
 void TextLinker::MarkLinks() {
-    const std::string& raw_text = RawText();
-
     if (m_links.empty()) {
-        SetLinkedText(raw_text);
+        SetLinkedText(RawText());
         return;
     }
 
     int copy_start_index = 0;
+    const std::string& raw_text = RawText();
     auto raw_text_start_it = raw_text.begin();
 
     std::string marked_text;
+    marked_text.reserve(raw_text.size()); // possibly underestimate
 
     // copy text from current copy_start_index up to just before start of next link
     for (int i = 0; i < static_cast<int>(m_links.size()); ++i) {
@@ -536,7 +536,7 @@ void TextLinker::MarkLinks() {
     std::copy(raw_text_start_it + copy_start_index, raw_text.end(), std::back_inserter(marked_text));
 
     // set underlying UI control text
-    SetLinkedText(marked_text);
+    SetLinkedText(std::move(marked_text));
 }
 
 const LinkDecorator TextLinker::DEFAULT_DECORATOR;

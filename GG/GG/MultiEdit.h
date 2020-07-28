@@ -60,7 +60,7 @@ class Scroll;
 class GG_API MultiEdit : public Edit
 {
 public:
-    MultiEdit(const std::string& str, const std::shared_ptr<Font>& font,
+    MultiEdit(std::string str, const std::shared_ptr<Font>& font,
               Clr color, Flags<MultiEditStyle> style = MULTI_LINEWRAP,
               Clr text_color = CLR_BLACK, Clr interior = CLR_ZERO);
 
@@ -91,7 +91,7 @@ public:
 
     void SelectAll() override;
     void DeselectAll() override;
-    void SetText(const std::string& str) override;
+    void SetText(std::string str) override;
 
     /** Sets the style flags for this MultiEdit to \a style. */
     void SetStyle(Flags<MultiEditStyle> style);

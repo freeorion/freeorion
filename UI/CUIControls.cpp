@@ -980,10 +980,10 @@ void CUIEdit::Render() {
 ///////////////////////////////////////
 // class CensoredCUIEdit
 ///////////////////////////////////////
-CensoredCUIEdit::CensoredCUIEdit(const std::string& str, char display_placeholder) :
+CensoredCUIEdit::CensoredCUIEdit(std::string str, char display_placeholder) :
     CUIEdit(str),
     m_placeholder{display_placeholder},
-    m_raw_text{str}
+    m_raw_text(std::move(str))
 {
     // TODO: allow multi-byte UTF-8 characters as placeholders, stored in a string...?
     if (m_placeholder == 0)
@@ -1008,8 +1008,8 @@ void CensoredCUIEdit::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     popup->Run();
 }
 
-void CensoredCUIEdit::SetText(const std::string& str) {
-    m_raw_text = str;
+void CensoredCUIEdit::SetText(std::string str) {
+    m_raw_text = std::move(str);
 
     auto font = GetFont();
     if (!font) {
@@ -1025,7 +1025,7 @@ void CensoredCUIEdit::SetText(const std::string& str) {
     for (const auto& curr_line : line_data)
         censored_text += std::string(curr_line.char_data.size(), m_placeholder);
 
-    CUIEdit::SetText(censored_text);
+    CUIEdit::SetText(std::move(censored_text));
 }
 
 void CensoredCUIEdit::AcceptPastedText(const std::string& text) {
@@ -1090,9 +1090,9 @@ void CensoredCUIEdit::ClearSelected() {
 ///////////////////////////////////////
 // class CUIMultiEdit
 ///////////////////////////////////////
-CUIMultiEdit::CUIMultiEdit(const std::string& str,
+CUIMultiEdit::CUIMultiEdit(std::string str,
                            GG::Flags<GG::MultiEditStyle> style/* = MULTI_LINEWRAP*/) :
-    MultiEdit(str, ClientUI::GetFont(), ClientUI::CtrlBorderColor(), style,
+    MultiEdit(std::move(str), ClientUI::GetFont(), ClientUI::CtrlBorderColor(), style,
               ClientUI::TextColor(), ClientUI::CtrlColor())
 {}
 
@@ -1144,12 +1144,11 @@ void CUIMultiEdit::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
 ///////////////////////////////////////
 // class CUILinkTextMultiEdit
 ///////////////////////////////////////
-CUILinkTextMultiEdit::CUILinkTextMultiEdit(const std::string& str,
+CUILinkTextMultiEdit::CUILinkTextMultiEdit(std::string str,
                                            GG::Flags<GG::MultiEditStyle> style) :
     CUIMultiEdit(str, style),
     TextLinker(),
-    m_already_setting_text_so_dont_link(false),
-    m_raw_text(str)
+    m_raw_text(std::move(str))
 {}
 
 void CUILinkTextMultiEdit::CompleteConstruction() {
@@ -1246,7 +1245,7 @@ void CUILinkTextMultiEdit::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     }
 }
 
-void CUILinkTextMultiEdit::SetText(const std::string& str) {
+void CUILinkTextMultiEdit::SetText(std::string str) {
     // MultiEdit have scrollbars that are adjusted every time the text is set.
     // Adjusting scrollbars also requires setting text, because the space for
     // the text is added or removed when scrollbars are shown or hidden. Since
@@ -1258,23 +1257,23 @@ void CUILinkTextMultiEdit::SetText(const std::string& str) {
     // SetText
     if (!m_already_setting_text_so_dont_link) {
         m_already_setting_text_so_dont_link = true;
-        m_raw_text = str;
-        CUIMultiEdit::SetText(m_raw_text);  // so that line data is updated for use in FindLinks
+        m_raw_text = std::move(str);
+        CUIMultiEdit::SetText(m_raw_text);  // so that line data is updated for use in FindLinks. intentionally not moving
         FindLinks();
         MarkLinks();
         m_already_setting_text_so_dont_link = false;
         // The scrollbar shenanigans apparently also confuse the link locations
         // so we refresh them here.
         LocateLinks();
-        return;
+
     } else {
-        CUIMultiEdit::SetText(str);
+        CUIMultiEdit::SetText(std::move(str));
     }
 }
 
-void CUILinkTextMultiEdit::SetLinkedText(const std::string& str) {
+void CUILinkTextMultiEdit::SetLinkedText(std::string str) {
     MultiEdit::PreserveTextPositionOnNextSetText();
-    CUIMultiEdit::SetText(str);
+    CUIMultiEdit::SetText(std::move(str));
 }
 
 
@@ -1284,10 +1283,10 @@ void CUILinkTextMultiEdit::SetLinkedText(const std::string& str) {
 // static(s)
 const GG::Y CUISimpleDropDownListRow::DEFAULT_ROW_HEIGHT(22);
 
-CUISimpleDropDownListRow::CUISimpleDropDownListRow(const std::string& row_text,
+CUISimpleDropDownListRow::CUISimpleDropDownListRow(std::string row_text,
                                                    GG::Y row_height/* = DEFAULT_ROW_HEIGHT*/) :
     GG::ListBox::Row(GG::X1, row_height),
-    m_row_label(GG::Wnd::Create<CUILabel>(row_text, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP))
+    m_row_label(GG::Wnd::Create<CUILabel>(std::move(row_text), GG::FORMAT_LEFT | GG::FORMAT_NOWRAP))
 {}
 
 void CUISimpleDropDownListRow::CompleteConstruction() {
@@ -1303,20 +1302,20 @@ namespace {
     const int STAT_ICON_PAD = 2;    // horizontal or vertical space between icon and label
 }
 
-StatisticIcon::StatisticIcon(const std::shared_ptr<GG::Texture> texture,
+StatisticIcon::StatisticIcon(std::shared_ptr<GG::Texture> texture,
                              GG::X w /*= GG::X1*/, GG::Y h /*= GG::Y1*/) :
     GG::Control(GG::X0, GG::Y0, w, h, GG::INTERACTIVE)
 {
-    m_icon = GG::Wnd::Create<GG::StaticGraphic>(texture, GG::GRAPHIC_FITGRAPHIC);
+    m_icon = GG::Wnd::Create<GG::StaticGraphic>(std::move(texture), GG::GRAPHIC_FITGRAPHIC);
 }
 
-StatisticIcon::StatisticIcon(const std::shared_ptr<GG::Texture> texture,
+StatisticIcon::StatisticIcon(std::shared_ptr<GG::Texture> texture,
                              double value, int digits, bool showsign,
                              GG::X w /*= GG::X1*/, GG::Y h /*= GG::Y1*/) :
     GG::Control(GG::X0, GG::Y0, w, h, GG::INTERACTIVE),
     m_values(1, std::tuple<double, int, bool>{value, digits, showsign})
 {
-    m_icon = GG::Wnd::Create<GG::StaticGraphic>(texture, GG::GRAPHIC_FITGRAPHIC);
+    m_icon = GG::Wnd::Create<GG::StaticGraphic>(std::move(texture), GG::GRAPHIC_FITGRAPHIC);
 }
 
 void StatisticIcon::CompleteConstruction() {

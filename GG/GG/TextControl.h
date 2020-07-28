@@ -69,8 +69,8 @@ class GG_API TextControl : public Control
 public:
     using Wnd::SetMinSize;
 
-    TextControl(X x, Y y, X w, Y h, const std::string& str,
-                const std::shared_ptr<Font>& font,
+    TextControl(X x, Y y, X w, Y h, std::string str,
+                std::shared_ptr<Font> font,
                 Clr color = CLR_BLACK, Flags<TextFormat> format = FORMAT_NONE,
                 Flags<WndFlag> flags = NO_WND_FLAGS);
 
@@ -80,9 +80,9 @@ public:
      with each other. Font::ExpensiveParseFromTextToTextElements() will not be
      called on \p str.  Hence this constructor is much faster than the first
      constructor.*/
-    TextControl(X x, Y y, X w, Y h, const std::string& str,
-                const std::vector<std::shared_ptr<Font::TextElement>>&text_elements,
-                const std::shared_ptr<Font>& font,
+    TextControl(X x, Y y, X w, Y h, std::string str,
+                std::vector<std::shared_ptr<Font::TextElement>> text_elements,
+                std::shared_ptr<Font> font,
                 Clr color = CLR_BLACK, Flags<TextFormat> format = FORMAT_NONE,
                 Flags<WndFlag> flags = NO_WND_FLAGS);
 
@@ -205,7 +205,7 @@ public:
         window.  If the control was constructed with FORMAT_NOWRAP, calls
         to this function cause the window to be resized to whatever space
         the newly rendered text occupies. */
-    virtual void SetText(const std::string& str);
+    virtual void SetText(std::string str);
 
     /** Sets the text displayed in this control to the \p str \p text_elements
         pair.  This is faster than SetText without \p text_elements.
@@ -217,8 +217,8 @@ public:
         If the \p str and \p text_elements are inconsistent and \p str is shorter than expected
         from examining \p text_elements then it will return without changing the TextControl.
     */
-    virtual void SetText(const std::string& str,
-                         const std::vector<std::shared_ptr<Font::TextElement>>&text_elements);
+    virtual void SetText(std::string str,
+                         std::vector<std::shared_ptr<Font::TextElement>> text_elements);
 
     /** Change TextControl's text to replace the text at templated \p targ_offset with \p new_text.
 

@@ -750,10 +750,7 @@ class Font::TextAndElementsAssembler::Impl
 {
 public:
     Impl(const Font& font) :
-        m_font(font),
-        m_text(),
-        m_text_elements(),
-        m_are_widths_calculated(false)
+        m_font(font)
     {}
 
     /** Return the constructed text.*/
@@ -793,9 +790,9 @@ public:
                 size_t param_begin = m_text.size();
                 size_t param_end = m_text.append(param).size();
 
-                element->params.push_back(Substring(m_text,
-                                                    std::next(m_text.begin(), param_begin),
-                                                    std::next(m_text.begin(), param_end)));
+                element->params.emplace_back(Substring(m_text,
+                                                       std::next(m_text.begin(), param_begin),
+                                                       std::next(m_text.begin(), param_end)));
             }
         }
 
@@ -805,7 +802,7 @@ public:
                                   std::next(m_text.begin(), tag_begin),
                                   std::next(m_text.begin(), tag_end));
 
-        m_text_elements.push_back(element);
+        m_text_elements.emplace_back(std::move(element));
     }
 
     /** Add a close tag iff it exists as a recognized tag.*/
@@ -843,7 +840,7 @@ public:
         element->text = Substring(m_text,
                                   std::next(m_text.begin(), begin),
                                   std::next(m_text.begin(), end));
-        m_text_elements.push_back(element);
+        m_text_elements.emplace_back(std::move(element));
     }
 
     /** Add a white space element.*/
@@ -857,15 +854,14 @@ public:
         element->text = Substring(m_text,
                                   std::next(m_text.begin(), begin),
                                   std::next(m_text.begin(), end));
-        m_text_elements.push_back(element);
+        m_text_elements.emplace_back(std::move(element));
     }
 
     /** Add a newline element.*/
     void AddNewline()
     {
         m_are_widths_calculated = false;
-
-        m_text_elements.push_back(std::make_shared<Font::TextElement>(false, true));
+        m_text_elements.emplace_back(std::make_shared<Font::TextElement>(false, true));
     }
 
     /** Add open color tag.*/
@@ -883,7 +879,7 @@ private:
     const Font& m_font;
     std::string m_text;
     std::vector<std::shared_ptr<TextElement>> m_text_elements;
-    bool m_are_widths_calculated;
+    bool m_are_widths_calculated = false;
 };
 
 
@@ -895,10 +891,10 @@ Font::TextAndElementsAssembler::TextAndElementsAssembler(const Font& font) :
 Font::TextAndElementsAssembler::~TextAndElementsAssembler()
 {}
 
-const std::string& Font::TextAndElementsAssembler::Text()
+const std::string& Font::TextAndElementsAssembler::Text() const
 { return m_impl->Text(); }
 
-const std::vector<std::shared_ptr<Font::TextElement>>& Font::TextAndElementsAssembler::Elements()
+const std::vector<std::shared_ptr<Font::TextElement>>& Font::TextAndElementsAssembler::Elements() const
 { return m_impl->Elements(); }
 
 Font::TextAndElementsAssembler& Font::TextAndElementsAssembler::AddOpenTag(const std::string& tag)
@@ -987,7 +983,7 @@ void Font::RenderState::PushColor(GLubyte r, GLubyte g, GLubyte b, GLubyte a)
     // The same color may end up being stored multiple times, but the cost of deduplication
     // is greater than the cost of just letting it be so.
     color_index_stack.push(used_colors.size());
-    used_colors.push_back(color);
+    used_colors.emplace_back(color);
 }
 
 void Font::RenderState::PopColor()
@@ -1037,12 +1033,10 @@ Font::LineData::CharData::CharData(X extent_, StrSize str_index, StrSize str_siz
     extent(extent_),
     string_index(str_index),
     string_size(str_size),
-    code_point_index(cp_index),
-    tags()
+    code_point_index(cp_index)
 {
-    for (auto tag : tags_) {
-        tags.push_back(std::dynamic_pointer_cast<FormattingTag>(tag));
-    }
+    for (auto tag : tags_)
+        tags.emplace_back(std::dynamic_pointer_cast<FormattingTag>(tag));
 }
 
 
@@ -1082,8 +1076,8 @@ Font::Font() :
     m_space_width(0)
 {}
 
-Font::Font(const std::string& font_filename, unsigned int pts) :
-    m_font_filename(font_filename),
+Font::Font(std::string font_filename, unsigned int pts) :
+    m_font_filename(std::move(font_filename)),
     m_pt_sz(pts),
     m_ascent(0),
     m_descent(0),
@@ -1103,9 +1097,9 @@ Font::Font(const std::string& font_filename, unsigned int pts) :
     }
 }
 
-Font::Font(const std::string& font_filename, unsigned int pts,
+Font::Font(std::string font_filename, unsigned int pts,
            const std::vector<unsigned char>& file_contents) :
-    m_font_filename(font_filename),
+    m_font_filename(std::move(font_filename)),
     m_pt_sz(pts),
     m_ascent(0),
     m_descent(0),
@@ -2274,8 +2268,8 @@ std::shared_ptr<Font> Font::GetDefaultFont(unsigned int pts)
 // class GG::FontManager
 ///////////////////////////////////////
 // FontKey 
-FontManager::FontKey::FontKey(const std::string& str, unsigned int pts) :
-    filename(str),
+FontManager::FontKey::FontKey(std::string str, unsigned int pts) :
+    filename(std::move(str)),
     points(pts)
 {}
 
@@ -2289,28 +2283,28 @@ const std::shared_ptr<Font> FontManager::EMPTY_FONT{std::make_shared<Font>("", 0
 FontManager::FontManager()
 {}
 
-bool FontManager::HasFont(const std::string& font_filename, unsigned int pts) const
-{ return m_rendered_fonts.count(FontKey(font_filename, pts)); }
+bool FontManager::HasFont(std::string font_filename, unsigned int pts) const
+{ return m_rendered_fonts.count(FontKey(std::move(font_filename), pts)); }
 
-std::shared_ptr<Font> FontManager::GetFont(const std::string& font_filename, unsigned int pts)
+std::shared_ptr<Font> FontManager::GetFont(std::string font_filename, unsigned int pts)
 {
     std::vector<UnicodeCharset> v;
     std::vector<UnicodeCharset>::iterator it = v.end();
-    return GetFont(font_filename, pts, it, it);
+    return GetFont(std::move(font_filename), pts, it, it);
 }
 
-std::shared_ptr<Font> FontManager::GetFont(const std::string& font_filename, unsigned int pts,
+std::shared_ptr<Font> FontManager::GetFont(std::string font_filename, unsigned int pts,
                                            const std::vector<unsigned char>& file_contents)
 {
     std::vector<UnicodeCharset> v;
     std::vector<UnicodeCharset>::iterator it = v.end();
-    return GetFont(font_filename, pts, file_contents, it, it);
+    return GetFont(std::move(font_filename), pts, file_contents, it, it);
 }
 
-void FontManager::FreeFont(const std::string& font_filename, unsigned int pts)
+void FontManager::FreeFont(std::string font_filename, unsigned int pts)
 {
-    FontKey key(font_filename, pts);
-    std::map<FontKey, std::shared_ptr<Font>>::iterator it = m_rendered_fonts.find(key);
+    FontKey key(std::move(font_filename), pts);
+    auto it = m_rendered_fonts.find(key);
     if (it != m_rendered_fonts.end())
         m_rendered_fonts.erase(it);
 }

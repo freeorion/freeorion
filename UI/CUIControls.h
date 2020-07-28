@@ -292,12 +292,12 @@ private:
   * placeholder. Useful for password entry.*/
 class CensoredCUIEdit : public CUIEdit {
 public:
-    explicit CensoredCUIEdit(const std::string& str, char display_placeholder = '*');
+    explicit CensoredCUIEdit(std::string str, char display_placeholder = '*');
 
     const std::string& RawText() const;
 
     void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-    void SetText(const std::string& str) override;
+    void SetText(std::string str) override;
     void AcceptPastedText(const std::string& text) override;
 
 protected:
@@ -306,13 +306,13 @@ protected:
 private:
     void ClearSelected();
 
-    std::string m_raw_text = "";
+    std::string m_raw_text;
 };
 
 /** a FreeOrion MultiEdit control */
 class CUIMultiEdit : public GG::MultiEdit {
 public:
-    explicit CUIMultiEdit(const std::string& str,
+    explicit CUIMultiEdit(std::string str,
                           GG::Flags<GG::MultiEditStyle> style = GG::MULTI_LINEWRAP);
     void CompleteConstruction() override;
 
@@ -323,7 +323,7 @@ public:
 /** a FreeOrion MultiEdit control that parses its text and makes links within clickable */
 class CUILinkTextMultiEdit : public CUIMultiEdit, public TextLinker {
 public:
-    CUILinkTextMultiEdit(const std::string& str, GG::Flags<GG::MultiEditStyle> style = GG::MULTI_LINEWRAP);
+    CUILinkTextMultiEdit(std::string str, GG::Flags<GG::MultiEditStyle> style = GG::MULTI_LINEWRAP);
     void CompleteConstruction() override;
 
     const std::vector<GG::Font::LineData>& GetLineData() const override;
@@ -345,19 +345,19 @@ public:
         constructed to fit the size of the text (i.e. if the second ctor type
         was used), calls to this function cause the window to be resized to
         whatever space the newly rendered text occupies. */
-    void SetText(const std::string& str) override;
+    void SetText(std::string str) override;
 
 private:
-    void SetLinkedText(const std::string& str) override;
+    void SetLinkedText(std::string str) override;
 
-    bool            m_already_setting_text_so_dont_link;
-    std::string     m_raw_text;
+    bool        m_already_setting_text_so_dont_link = false;
+    std::string m_raw_text;
 };
 
 /** A simple GG::ListBox::Row subclass designed for use in text-only drop-down
   * lists, such as the ones used in the game setup dialogs. */
 struct CUISimpleDropDownListRow : public GG::ListBox::Row {
-    CUISimpleDropDownListRow(const std::string& row_text, GG::Y row_height = DEFAULT_ROW_HEIGHT);
+    CUISimpleDropDownListRow(std::string row_text, GG::Y row_height = DEFAULT_ROW_HEIGHT);
     void CompleteConstruction() override;
     static const GG::Y DEFAULT_ROW_HEIGHT;
 private:
@@ -376,10 +376,10 @@ private:
   */
 class StatisticIcon : public GG::Control {
 public:
-    StatisticIcon(const std::shared_ptr<GG::Texture> texture,
+    StatisticIcon(std::shared_ptr<GG::Texture> texture,
                   GG::X w = GG::X1, GG::Y h = GG::Y1); ///< initialized with no value (just an icon)
 
-    StatisticIcon(const std::shared_ptr<GG::Texture> texture,
+    StatisticIcon(std::shared_ptr<GG::Texture> texture,
                   double value, int digits, bool showsign,
                   GG::X w = GG::X1, GG::Y h = GG::Y1); ///< initializes with one value
 

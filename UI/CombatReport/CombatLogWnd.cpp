@@ -39,7 +39,7 @@ public:
 
     /** DecorateLinkText creates a CUILinkTextMultiEdit using \a text and attaches it to handlers
         \a and_flags are anded to the default flags. */
-    std::shared_ptr<LinkText> DecorateLinkText(const std::string& text);
+    std::shared_ptr<LinkText> DecorateLinkText(std::string text);
 
     /** Fill \p new_logs with pointers to the flat log contents of \p
         event using the pre-calculated \p details.*/
@@ -419,8 +419,7 @@ namespace {
             GG::Wnd & parent, GG::X x, GG::Y y, const std::string& str,
             const std::shared_ptr<GG::Font>& font, GG::Clr color = GG::CLR_BLACK) :
             LinkText(x, y, UserString("ELLIPSIS"), font, color),
-            m_text(new std::string(str)),
-            m_signals()
+            m_text(new std::string(str))
         {
             // Register for signals that might bring the text into view
             if (const auto* log = FindParentOfType<CombatLogWnd>(&parent)) {
@@ -487,7 +486,7 @@ namespace {
 
 }
 
-std::shared_ptr<LinkText> CombatLogWnd::Impl::DecorateLinkText(const std::string& text) {
+std::shared_ptr<LinkText> CombatLogWnd::Impl::DecorateLinkText(std::string text) {
     auto links = GG::Wnd::Create<LazyScrollerLinkText>(m_wnd, GG::X0, GG::Y0,
                                                        text, m_font, GG::CLR_WHITE);
 
@@ -513,7 +512,7 @@ void CombatLogWnd::Impl::PopulateWithFlatLogs(GG::X w, int viewing_empire_id,
                                               ConstCombatEventPtr& event, std::string& details)
 {
     if (!details.empty())
-        new_logs.push_back(DecorateLinkText(details));
+        new_logs.emplace_back(DecorateLinkText(details));
 
     if (!event->AreSubEventsEmpty(viewing_empire_id)) {
         for (auto& sub_event : event->SubEvents(viewing_empire_id)) {
@@ -534,18 +533,18 @@ std::vector<std::shared_ptr<GG::Wnd>> CombatLogWnd::Impl::MakeCombatLogPanel(
     // details and sub events.
 
     if (!event->FlattenSubEvents() && !event->AreSubEventsEmpty(viewing_empire_id) ) {
-        new_logs.push_back(GG::Wnd::Create<CombatLogAccordionPanel>(w, *this, viewing_empire_id, event));
+        new_logs.emplace_back(GG::Wnd::Create<CombatLogAccordionPanel>(w, *this, viewing_empire_id, event));
         return new_logs;
     }
 
     if (!event->FlattenSubEvents() && !event->AreDetailsEmpty(viewing_empire_id)) {
-        new_logs.push_back(GG::Wnd::Create<CombatLogAccordionPanel>(w, *this, viewing_empire_id, event));
+        new_logs.emplace_back(GG::Wnd::Create<CombatLogAccordionPanel>(w, *this, viewing_empire_id, event));
         return new_logs;
     }
 
     std::string title = event->CombatLogDescription(viewing_empire_id);
     if (!(event->FlattenSubEvents() && title.empty()))
-        new_logs.push_back(DecorateLinkText(title));
+        new_logs.emplace_back(DecorateLinkText(title));
 
     std::string details = event->CombatLogDetails(viewing_empire_id);
     PopulateWithFlatLogs(w, viewing_empire_id, new_logs, event, details);
