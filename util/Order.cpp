@@ -54,6 +54,14 @@ bool Order::Executed() const
 bool Order::UndoImpl() const
 { return false; }
 
+namespace {
+    const std::string& ExecutedTag(const Order* order) {
+        if (order && !order->Executed())
+            return UserString("ORDER_UNEXECUTED");
+        return "";
+    }
+}
+
 ////////////////////////////////////////////////
 // RenameOrder
 ////////////////////////////////////////////////
@@ -68,9 +76,8 @@ RenameOrder::RenameOrder(int empire, int object, const std::string& name) :
     }
 }
 
-std::string RenameOrder::Dump() const {
-    return UserString("ORDER_RENAME");
-}
+std::string RenameOrder::Dump() const
+{ return boost::io::str(FlexibleFormat(UserString("ORDER_RENAME")) % m_object % m_name) + ExecutedTag(this); }
 
 bool RenameOrder::Check(int empire, int object, const std::string& new_name) {
     // disallow the name "", since that denotes an unknown object
@@ -130,7 +137,12 @@ NewFleetOrder::NewFleetOrder(int empire, const std::string& fleet_name,
 }
 
 std::string NewFleetOrder::Dump() const {
-    return UserString("ORDER_FLEET_NEW");
+    std::string ship_ids = std::to_string(m_ship_ids.size());
+    return boost::io::str(FlexibleFormat(UserString("ORDER_FLEET_NEW"))
+                          % m_fleet_name
+                          % std::to_string(m_ship_ids.size())
+                          % (m_aggressive ? UserString("FW_AGGRESSIVE") : UserString("FW_PASSIVE")))
+        + ExecutedTag(this);
 }
 
 bool NewFleetOrder::Check(int empire, const std::string& fleet_name, const std::vector<int>& ship_ids, bool aggressive) {
@@ -222,15 +234,18 @@ void NewFleetOrder::ExecuteImpl() const {
         fleet->SetArrivalStarlane(first_fleet->ArrivalStarlane());
 
     std::unordered_set<std::shared_ptr<Fleet>> modified_fleets;
+    int ordered_moved_turn = BEFORE_FIRST_TURN;
     // remove ships from old fleet(s) and add to new
     for (auto& ship : validated_ships) {
         if (auto old_fleet = Objects().get<Fleet>(ship->FleetID())) {
-            modified_fleets.insert(old_fleet);
+            ordered_moved_turn = std::max(ordered_moved_turn, old_fleet->LastTurnMoveOrdered());
             old_fleet->RemoveShips({ship->ID()});
+            modified_fleets.emplace(std::move(old_fleet));
         }
         ship->SetFleetID(fleet->ID());
     }
     fleet->AddShips(m_ship_ids);
+    fleet->SetMoveOrderedTurn(ordered_moved_turn);
 
     if (m_fleet_name.empty())
         fleet->Rename(fleet->GenerateFleetName());
@@ -252,7 +267,6 @@ void NewFleetOrder::ExecuteImpl() const {
             GetUniverse().Destroy(modified_fleet->ID());
         }
     }
-
 }
 
 ////////////////////////////////////////////////

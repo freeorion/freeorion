@@ -5050,11 +5050,14 @@ RESEARCHED_TECHS
 ISSUED_ORDERS
 '''Issued Orders: '''
 
+ORDER_UNEXECUTED
+''' - Unexecuted'''
+
 ORDER_RENAME
-Rename
+Rename ID %1% to %2%
 
 ORDER_FLEET_NEW
-New fleet
+New %3% fleet named %1% with %2% ships
 
 ORDER_FLEET_MOVE
 Fleet Move
