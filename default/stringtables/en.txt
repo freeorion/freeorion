@@ -11499,7 +11499,7 @@ PRO_PREDICTIVE_STOCKPILING_DESC
 The imperial stockpile service has a fleet for distributing raw materials to places where important projects are predicted to be started.
 This task is difficult as the service has to predict when demand happens, where it happens, what materials and goods are demanded and also who the users will be.
 
-Unused Production Points (PP) will automatically be transferred to the [[encyclopedia STOCKPILE_TITLE]]].
+Unused Production Points (PP) will automatically be transferred to the [[encyclopedia STOCKPILE_TITLE]].
 An item on the production queue draws automatically on the Imperial Stockpile if the item has not been explicitly disabled from doing so.
 
 This is the basic technology for the imperial stockpile, which increases the [[metertype METER_STOCKPILE]] of stockpile-distribution-focused planets by 1.'''
@@ -11515,7 +11515,7 @@ Reaching this state of sophistication, Generic Supplies can be used to construct
 
 This frees the imperial stockpile service from having to know which goods will be demanded exactly. Predicting the location and amount is enough.
 
-This is an upgrade technology for the [[encyclopedia STOCKPILE_TITLE]]]. The [[metertype METER_STOCKPILE]] is increased by 2, plus an additional 0.01 per [[metertype METER_POPULATION]], plus an additional 3 for each stockpile-distribution-focused planet.
+This is an upgrade technology for the [[encyclopedia STOCKPILE_TITLE]]. The [[metertype METER_STOCKPILE]] is increased by 2, plus an additional 0.01 per [[metertype METER_POPULATION]], plus an additional 3 for each stockpile-distribution-focused planet.
 These improvements are cumulative with that provided by [[tech PRO_PREDICTIVE_STOCKPILING]].'''
 
 PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY
@@ -11525,7 +11525,7 @@ PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY_DESC
 '''Quantum entanglement of factory control rooms allows the operation of machines remotely from other star systems.
 Decoupling workforce and the means of production helps to produce just in time and increases efficiency of the imperial stockpile service.
 
-This is an upgrade technology for the [[encyclopedia STOCKPILE_TITLE]]].. The [[metertype METER_STOCKPILE]] is increased by 6 plus an additional 0.02 per [[metertype METER_POPULATION]].
+This is an upgrade technology for the [[encyclopedia STOCKPILE_TITLE]]. The [[metertype METER_STOCKPILE]] is increased by 6 plus an additional 0.02 per [[metertype METER_POPULATION]].
 These improvements are cumulative with those provided by [[tech PRO_PREDICTIVE_STOCKPILING]], [[tech PRO_GENERIC_SUPPLIES]] and [[tech PRO_VOID_PREDICTION]].
 
 This also unlocks the [[buildingtype BLD_STOCKPILING_CENTER]] which additionally increases the [[metertype METER_STOCKPILE]] by 0.1 per [[metertype METER_INDUSTRY]].'''
@@ -11537,7 +11537,7 @@ PRO_VOID_PREDICTION_DESC
 '''While classic prediction always relies on statistical knowledge of the past, studying the chaotic wisdom of the void leads to robust predictions of first-time and freak occurences.
 For the imperial stockpile service, void prediction is the quintessential tool to deliver the right goods even before the need occurs.
 
-This is an upgrade technology for the [[encyclopedia STOCKPILE_TITLE]]].. The [[metertype METER_STOCKPILE]] is increased by 0.2 per [[metertype METER_POPULATION]].
+This is an upgrade technology for the [[encyclopedia STOCKPILE_TITLE]]. The [[metertype METER_STOCKPILE]] is increased by 0.2 per [[metertype METER_POPULATION]].
 These improvements are cumulative with those provided by [[tech PRO_PREDICTIVE_STOCKPILING]], [[tech PRO_GENERIC_SUPPLIES]] and [[tech PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY]].'''
 
 PRO_MICROGRAV_MAN
