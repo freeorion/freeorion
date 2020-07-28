@@ -11239,6 +11239,15 @@ Adds +1 fuel capacity to all ships, but halves their speed when they have less t
 PLC_RESERVE_TANKS_SHORT_DESC
 Improves ship fuel economony
 
+PLC_ENGINEERING
+Engineering Corps
+
+PLC_ENGINEERING_DESC
+Reduces the "upkeep" cost of ships by half, so that the cost of producing more ships does not increase as quickly with fleet size, at the cost of 0.1 IP per turn per ship.
+
+PLC_ENGINEERING_SHORT_DESC
+Reduces Fleet Upkeep / Costs Influence
+
 
 ##
 ## Technology categories

@@ -7,6 +7,7 @@ Tech
     researchturns = 4
     tags = [ "PEDIA_DAMAGE_CONTROL_PART_TECHS" ]
     prerequisites = "SHP_MIL_ROBO_CONT"
+    unlock = Item type = Policy name = "PLC_ENGINEERING"
     effectsgroups =
         EffectsGroup
             scope = And [
