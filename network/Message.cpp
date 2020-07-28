@@ -1303,7 +1303,7 @@ FO_COMMON_API void ExtractLoggerConfigMessageData(
             ia >> BOOST_SERIALIZATION_NVP(option);
             ia >> BOOST_SERIALIZATION_NVP(name);
             ia >> BOOST_SERIALIZATION_NVP(level);
-            options.insert(std::make_tuple(option, name, level));
+            options.emplace(std::move(option), std::move(name), level);
         }
     } catch (const std::exception& err) {
         ErrorLogger() << "ExtractDispatchCombatLogMessageData(const Message& msg, std::vector<std::pair<int, const CombatLog&> >& logs) failed!  Message:\n"

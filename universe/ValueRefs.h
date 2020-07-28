@@ -1818,7 +1818,7 @@ T Operation<T>::EvalImpl(const ScriptingContext& context) const
         std::set<T> vals;
         for (auto& vr : m_operands) {
             if (vr)
-                vals.insert(vr->Eval(context));
+                vals.emplace(vr->Eval(context));
         }
         if (m_op_type == MINIMUM)
             return vals.empty() ? T(-1) : *vals.begin();

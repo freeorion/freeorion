@@ -2086,9 +2086,8 @@ namespace {
         auto system = Objects().get<System>(system_id);
         if (!system)
             return;
-        for (auto& fleet : Objects().find<const Fleet>(system->FleetIDs())) {
-            empire_fleets[fleet->Owner()].insert(fleet->ID());
-        }
+        for (auto& fleet : Objects().find<const Fleet>(system->FleetIDs()))
+            empire_fleets[fleet->Owner()].emplace(fleet->ID());
     }
 
     void GetEmpirePlanetsAtSystem(std::map<int, std::set<int>>& empire_planets, int system_id) {
@@ -2098,9 +2097,9 @@ namespace {
             return;
         for (auto& planet : Objects().find<const Planet>(system->PlanetIDs())) {
             if (!planet->Unowned())
-                empire_planets[planet->Owner()].insert(planet->ID());
+                empire_planets[planet->Owner()].emplace(planet->ID());
             else if (planet->GetMeter(METER_POPULATION)->Initial() > 0.0f)
-                empire_planets[ALL_EMPIRES].insert(planet->ID());
+                empire_planets[ALL_EMPIRES].emplace(planet->ID());
         }
     }
 
@@ -2128,7 +2127,7 @@ namespace {
                 Visibility fleet_vis = GetUniverse().GetObjectVisibilityByEmpire(fleet->ID(), empire_id);
                 TraceLogger(combat) << "\t\tfleet (" << fleet->ID() << ") has visibility rank " << fleet_vis;
                 if (fleet_vis >= VIS_BASIC_VISIBILITY)
-                    visible_fleets.insert(fleet->ID());
+                    visible_fleets.emplace(fleet->ID());
             }
             return;
         }
@@ -2151,7 +2150,7 @@ namespace {
             if (!fleet)
                 continue;
             if (fleet->Unowned()) {
-                visible_fleets.insert(fleet->ID());   // fleet is monster, so can be sen by monsters
+                visible_fleets.emplace(fleet->ID());   // fleet is monster, so can be sen by monsters
                 continue;
             }
 
@@ -2160,7 +2159,7 @@ namespace {
                     continue;
                 // if a ship is low enough stealth, its fleet can be seen by monsters
                 if (monster_detection_strength_here >= ship->GetMeter(METER_STEALTH)->Initial()) {
-                    visible_fleets.insert(fleet->ID());
+                    visible_fleets.emplace(fleet->ID());
                     break;  // fleet is seen, so don't need to check any more ships in it
                 }
             }
@@ -2193,7 +2192,7 @@ namespace {
                 auto planet = Objects().get<Planet>(planet_id);
                 if (planet->Unowned() && planet->GetMeter(METER_POPULATION)->Initial() <= 0.0f)
                     continue;
-                visible_planets.insert(planet->ID());
+                visible_planets.emplace(planet->ID());
             }
             return;
         }
@@ -2217,7 +2216,7 @@ namespace {
                 continue;       // only want empire-owned planets; unowned planets visible to monsters don't matter for combat conditions test
             // if a planet is low enough stealth, it can be seen by monsters
             if (monster_detection_strength_here >= planet->GetMeter(METER_STEALTH)->Initial())
-                visible_planets.insert(planet->ID());
+                visible_planets.emplace(planet->ID());
         }
     }
 
@@ -2256,7 +2255,7 @@ namespace {
                 {
                     if (!empires_with_aggressive_fleets_here.count(empire_id))
                         DebugLogger(combat) << "\t Empire " << empire_id << " has at least one aggressive fleet present";
-                    empires_with_aggressive_fleets_here.insert(empire_id);
+                    empires_with_aggressive_fleets_here.emplace(empire_id);
                     break;
                 }
             }
@@ -2278,9 +2277,9 @@ namespace {
         // all empires with something here
         std::set<int> empires_here;
         for (auto& empire_fleets : empire_fleets_here)
-        { empires_here.insert(empire_fleets.first); }
+            empires_here.emplace(empire_fleets.first);
         for (auto& empire_planets : empire_planets_here)
-        { empires_here.insert(empire_planets.first); }
+            empires_here.emplace(empire_planets.first);
 
         // what combinations of present empires are at war?
         std::map<int, std::set<int>> empires_here_at_war;  // for each empire, what other empires here is it at war with?
@@ -2293,8 +2292,8 @@ namespace {
                 if (*emp1_it == ALL_EMPIRES || *emp2_it == ALL_EMPIRES ||
                     Empires().GetDiplomaticStatus(*emp1_it, *emp2_it) == DIPLO_WAR)
                 {
-                    empires_here_at_war[*emp1_it].insert(*emp2_it);
-                    empires_here_at_war[*emp2_it].insert(*emp1_it);
+                    empires_here_at_war[*emp1_it].emplace(*emp2_it);
+                    empires_here_at_war[*emp2_it].emplace(*emp1_it);
                 }
             }
         }
@@ -2366,9 +2365,8 @@ namespace {
         // for each system, find if a combat will occur in it, and if so, assemble
         // necessary information about that combat in combats
         for (const auto& sys : GetUniverse().Objects().all<System>()) {
-            if (CombatConditionsInSystem(sys->ID())) {
-                combats.push_back(CombatInfo(sys->ID(), CurrentTurn()));
-            }
+            if (CombatConditionsInSystem(sys->ID()))
+                combats.emplace_back(sys->ID(), CurrentTurn());
         }
     }
 
@@ -2428,7 +2426,7 @@ namespace {
                     // destruction (which is checked later)
                     if (auto ship = Objects().get<Ship>(object_id)) {
                         if (ship->FleetID() != INVALID_OBJECT_ID)
-                            empires_to_update_of_fleet_destruction[ship->FleetID()].insert(empire_id);
+                            empires_to_update_of_fleet_destruction[ship->FleetID()].emplace(empire_id);
                     }
                 }
             }
@@ -3649,12 +3647,12 @@ void ServerApp::CheckForEmpireElimination() {
             entry.second->Eliminate();
             RemoveEmpireTurn(entry.first);
         } else {
-            surviving_empires.insert(entry.second);
+            surviving_empires.emplace(entry.second);
             // empires could be controlled only by connected AI client, connected human client, or
             // disconnected human client.
             // Disconnected AI client controls non-eliminated empire is an error.
             if (GetEmpireClientType(entry.second->EmpireID()) != Networking::CLIENT_TYPE_AI_PLAYER)
-                non_eliminated_non_ai_controlled_empires.insert(entry.second);
+                non_eliminated_non_ai_controlled_empires.emplace(entry.second);
         }
     }
 

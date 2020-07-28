@@ -2635,7 +2635,7 @@ std::string Operation<std::string>::EvalImpl(const ScriptingContext& context) co
         std::set<std::string> vals;
         for (auto& vr : m_operands) {
             if (vr)
-                vals.insert(vr->Eval(context));
+                vals.emplace(vr->Eval(context));
         }
         if (m_op_type == MINIMUM)
             return vals.empty() ? "" : *vals.begin();
@@ -2769,7 +2769,7 @@ double Operation<double>::EvalImpl(const ScriptingContext& context) const
             std::set<double> vals;
             for (auto& vr : m_operands) {
                 if (vr)
-                    vals.insert(vr->Eval(context));
+                    vals.emplace(vr->Eval(context));
             }
             if (m_op_type == MINIMUM)
                 return vals.empty() ? 0.0 : *vals.begin();
@@ -2920,7 +2920,7 @@ int Operation<int>::EvalImpl(const ScriptingContext& context) const
             std::set<int> vals;
             for (auto& vr : m_operands) {
                 if (vr)
-                    vals.insert(vr->Eval(context));
+                    vals.emplace(vr->Eval(context));
             }
             if (m_op_type == MINIMUM)
                 return vals.empty() ? 0 : *vals.begin();

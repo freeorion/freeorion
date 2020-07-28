@@ -1379,7 +1379,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                     WarnLogger(FSM) << "Got missing player.";
                     break;
                 }
-                if (!psd_ids.insert(player.first).second) {
+                if (!psd_ids.emplace(player.first).second) {
                     // player id was already used
                     // don't allow ID collision
                     has_collision = true;
@@ -2055,7 +2055,7 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
     m_expected_ai_names_and_ids.clear();
     for (const auto& player_data : players) {
         if (player_data.client_type == Networking::CLIENT_TYPE_AI_PLAYER)
-            m_expected_ai_names_and_ids.insert({player_data.player_name, player_data.player_id});
+            m_expected_ai_names_and_ids.emplace(player_data.player_name, player_data.player_id);
     }
 
     server.CreateAIClients(players, m_single_player_setup_data->ai_aggr);    // also disconnects any currently-connected AI clients
@@ -2223,9 +2223,9 @@ WaitingForMPGameJoiners::WaitingForMPGameJoiners(my_context c) :
     m_expected_ai_player_names.clear();
 
     for (std::pair<int, PlayerSetupData>& psd : m_lobby_data->players) {
-        player_setup_data.push_back(psd.second);
+        player_setup_data.emplace_back(psd.second);
         if (psd.second.client_type == Networking::CLIENT_TYPE_AI_PLAYER)
-            m_expected_ai_player_names.insert(psd.second.player_name);
+            m_expected_ai_player_names.emplace(psd.second.player_name);
     }
 
     server.CreateAIClients(player_setup_data, m_lobby_data->ai_aggr);
@@ -3403,7 +3403,7 @@ ShuttingDownServer::ShuttingDownServer(my_context c) :
         if (player->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER) {
             // If sending message will result in error it will be processed in Disconnection
             // handle.
-            m_player_id_ack_expected.insert(player->PlayerID());
+            m_player_id_ack_expected.emplace(player->PlayerID());
         }
     }
 
