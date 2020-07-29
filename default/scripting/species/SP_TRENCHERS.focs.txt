@@ -9,7 +9,7 @@ Species
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
         /*[[HAS_RESEARCH_FOCUS]]*/
-        [[HAS_INFLUENCE_FOCUS]]
+        /*[[HAS_INFLUENCE_FOCUS]]*/
         /*[[HAS_GROWTH_FOCUS]]*/
         [[HAS_ADVANCED_FOCI]]
     ]
@@ -17,7 +17,7 @@ Species
     effectsgroups = [
         [[GOOD_INDUSTRY]]
         [[NO_RESEARCH]]
-        [[AVERAGE_INFLUENCE]]
+        [[NO_INFLUENCE]]
         [[AVERAGE_STOCKPILE]]
 
         [[AVERAGE_POPULATION]]

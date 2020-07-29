@@ -22,7 +22,7 @@ Species
         [[AVERAGE_INDUSTRY]]
         [[GREAT_STOCKPILE]]
         [[BAD_RESEARCH]]
-        [[AVERAGE_INFLUENCE]]
+        [[GOOD_INFLUENCE]]
 
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
