@@ -391,8 +391,7 @@ namespace parse {
         return retval;
     }
 
-    tags_grammar::tags_grammar(const parse::lexer& tok,
-                               Labeller& label) :
+    tags_grammar::tags_grammar(const parse::lexer& tok, Labeller& label) :
         tags_grammar::base_type(start, "tags_grammar"),
         one_or_more_string_tokens(tok)
     {

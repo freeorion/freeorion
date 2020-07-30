@@ -16050,6 +16050,12 @@ General Contentedness
 FOCUS_PREFERENCE_LABEL
 Preferred Focus Selected
 
+LIKES
+'''Likes: '''
+
+DISLIKES
+'''Dislikes: '''
+
 ROBOTIC_INTERFACE_EFFECT
 Robotic crew network
 

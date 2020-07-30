@@ -132,8 +132,7 @@ namespace parse { namespace detail {
     using tags_grammar_type = grammar<std::set<std::string> ()>;
 
     struct tags_grammar : public tags_grammar_type {
-        tags_grammar(const parse::lexer& tok,
-                     Labeller& label);
+        tags_grammar(const parse::lexer& tok, Labeller& label);
         tags_rule_type start;
         single_or_repeated_string<std::set<std::string>> one_or_more_string_tokens;
     };

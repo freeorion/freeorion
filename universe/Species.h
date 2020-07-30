@@ -88,7 +88,9 @@ public:
             std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
             std::unique_ptr<Condition::Condition>&& combat_targets,
             bool playable, bool native, bool can_colonize, bool can_produce_ships,
-            const std::set<std::string>& tags, std::string&& graphic);
+            const std::set<std::string>& tags,
+            std::set<std::string>&& likes, std::set<std::string>&& dislikes,
+            std::string&& graphic);
 
     ~Species();
 
@@ -121,6 +123,8 @@ public:
     bool                            CanColonize() const     { return m_can_colonize; }      ///< returns whether this species can colonize planets
     bool                            CanProduceShips() const { return m_can_produce_ships; } ///< returns whether this species can produce ships
     const std::set<std::string>&    Tags() const            { return m_tags; }
+    const std::set<std::string>&    Likes() const           { return m_likes; }
+    const std::set<std::string>&    Dislikes() const        { return m_dislikes; }
     const std::string&              Graphic() const         { return m_graphic; }           ///< returns the name of the grapic file for this species
 
     /** Returns a number, calculated from the contained data, which should be
@@ -163,6 +167,8 @@ private:
     bool                                    m_can_colonize;
     bool                                    m_can_produce_ships;
     std::set<std::string>                   m_tags;
+    std::set<std::string>                   m_likes;
+    std::set<std::string>                   m_dislikes;
     std::string                             m_graphic;
 };
 

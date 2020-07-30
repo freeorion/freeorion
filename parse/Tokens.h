@@ -100,6 +100,7 @@
     (Detection)                                 \
     (DirectDistanceBetween)                     \
     (Disabled)                                  \
+    (Dislikes)                                  \
     (Distance)                                  \
     (DistanceFromOriginalType)                  \
     (Effects)                                   \
@@ -215,6 +216,7 @@
     (LastTurnResupplied)                        \
     (LaunchedFrom)                              \
     (LeastHappySpecies)                         \
+    (Likes)                                     \
     (LocalCandidate)                            \
     (Location)                                  \
     (Log)                                       \

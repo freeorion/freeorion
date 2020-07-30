@@ -319,18 +319,16 @@ namespace {
             for (const auto& entry : species_manager) {
                 const auto& species = entry.second;
                 if (species->Homeworlds().empty()) {
-                    std::string&& species_entry = LinkTaggedText(VarText::SPECIES_TAG, entry.first) + ":  \n";
-                    species_entry += UserString("NO_HOMEWORLD");
+                    std::string species_entry{LinkTaggedText(VarText::SPECIES_TAG, entry.first) + ":  \n" + UserString("NO_HOMEWORLD")};
                     sorted_entries_list.emplace("⃠⃠" + std::string( "⃠ ") + UserString(entry.first),
-                                                std::make_pair(species_entry, entry.first));
+                                                std::make_pair(std::move(species_entry), entry.first));
                 }
-            } 
+            }
 
         }
         else if (dir_name == "ENC_FIELD_TYPE") {
             for (const auto& entry : GetFieldTypeManager()) {
-                std::string&& custom_category = DetermineCustomCategory(entry.second->Tags());
-                if (custom_category.empty()) {
+                if (DetermineCustomCategory(entry.second->Tags()).empty()) {
                     sorted_entries_list.emplace(UserString(entry.first),
                                                 std::make_pair(LinkTaggedText(VarText::FIELD_TYPE_TAG, entry.first) + "\n",
                                                                entry.first));
@@ -2011,9 +2009,23 @@ namespace {
 
         // focus preference
         if (!species->PreferredFocus().empty()) {
-            detailed_description += "\n\n";
-            detailed_description += UserString("FOCUS_PREFERENCE");
-            detailed_description += UserString(species->PreferredFocus());
+            detailed_description += "\n\n" + UserString("FOCUS_PREFERENCE") + UserString(species->PreferredFocus());
+        }
+
+        // likes
+        if (!species->Likes().empty()) {
+            detailed_description += "\n\n" + UserString("LIKES");
+            int count = 0;
+            for (const auto& s : species->Likes())
+                detailed_description += (count++ == 0 ? "" : ", ") + UserString(s);
+        }
+
+        // dislikes
+        if (!species->Dislikes().empty()) {
+            detailed_description += "\n\n" + UserString("DISLIKES");
+            int count = 0;
+            for (const auto& s : species->Dislikes())
+                detailed_description += (count++ == 0 ? "" : ", ") + UserString(s);
         }
 
         // environmental preferences

@@ -92,7 +92,9 @@ Species::Species(std::string&& name, std::string&& desc,
                  std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
                  std::unique_ptr<Condition::Condition>&& combat_targets,
                  bool playable, bool native, bool can_colonize, bool can_produce_ships,
-                 const std::set<std::string>& tags, std::string&& graphic) :
+                 const std::set<std::string>& tags,
+                 std::set<std::string>&& likes, std::set<std::string>&& dislikes,
+                 std::string&& graphic) :
     m_name(std::move(name)),
     m_description(std::move(desc)),
     m_gameplay_description(std::move(gameplay_desc)),
@@ -104,6 +106,8 @@ Species::Species(std::string&& name, std::string&& desc,
     m_native(native),
     m_can_colonize(can_colonize),
     m_can_produce_ships(can_produce_ships),
+    m_likes(std::move(likes)),
+    m_dislikes(std::move(dislikes)),
     m_graphic(std::move(graphic))
 {
     for (auto&& effect : effects)
