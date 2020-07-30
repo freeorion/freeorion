@@ -138,12 +138,12 @@ void ResourceCenter::ResourceCenterResetTargetMaxUnpairedMeters() {
 void ResourceCenter::ResourceCenterClampMeters() {
     GetMeter(METER_TARGET_INDUSTRY)->ClampCurrentToRange();
     GetMeter(METER_TARGET_RESEARCH)->ClampCurrentToRange();
-    GetMeter(METER_TARGET_INFLUENCE)->ClampCurrentToRange();
+    //GetMeter(METER_TARGET_INFLUENCE)->ClampCurrentToRange(-Meter::LARGE_VALUE, Meter::LARGE_VALUE);
     GetMeter(METER_TARGET_CONSTRUCTION)->ClampCurrentToRange();
 
     GetMeter(METER_INDUSTRY)->ClampCurrentToRange();
     GetMeter(METER_RESEARCH)->ClampCurrentToRange();
-    GetMeter(METER_INFLUENCE)->ClampCurrentToRange();
+    //GetMeter(METER_INFLUENCE)->ClampCurrentToRange(-Meter::LARGE_VALUE, Meter::LARGE_VALUE);
     GetMeter(METER_CONSTRUCTION)->ClampCurrentToRange();
 }
 
