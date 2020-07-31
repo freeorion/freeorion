@@ -4,7 +4,7 @@ Policy
     short_description = "PLC_CENTRALIZATION_SHORT_DESC"
     category = "ECONOMIC_CATEGORY"
     adoptioncost = 1.0*floor(5 + 0.25 * Statistic Sum value = LocalCandidate.Population condition = And [ Planet OwnedBy empire = Source.Owner ])
-    effectsgroups =
+    effectsgroups = [
         EffectsGroup
             scope = And [
                 Capital
@@ -18,6 +18,37 @@ Policy
                 SetMaxSupply value = Value - 2
                 SetMaxStockpile value = Value - 2
             ]
+
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Population low = 0.001
+                Not ResourceSupplyConnected empire = LocalCandidate.Owner condition = And [
+                    Planet
+                    OwnedBy empire = Source.Owner
+                    Capital
+                ]
+            ]
+            priority = [[DEFAULT_PRIORITY]]
+            effects =
+                SetTargetInfluence value = value - 3
+
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Population low = 0.001
+                ResourceSupplyConnected empire = LocalCandidate.Owner condition = And [
+                    Planet
+                    OwnedBy empire = Source.Owner
+                    Capital
+                ]
+            ]
+            priority = [[DEFAULT_PRIORITY]]
+            effects =
+                SetTargetInfluence value = value - min(3, 0.2 * JumpsBetween object = Source.ID object = Target.ID)
+        ]
     graphic = "icons/policies/centralization.png"
 
 #include "/scripting/common/base_prod.macros"
