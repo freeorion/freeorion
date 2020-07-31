@@ -327,7 +327,8 @@ enum OpType : int {
     COMPARE_NOT_EQUAL,
     ROUND_NEAREST,
     ROUND_UP,
-    ROUND_DOWN
+    ROUND_DOWN,
+    SIGN
 };
 
 /** An arithmetic operation node ValueRef class. Unary or binary operations such
@@ -1968,6 +1969,8 @@ std::string Operation<T>::Description() const
         return "ceil(" + LHS()->Description() + ")";
     if (m_op_type == ROUND_DOWN)
         return "floor(" + LHS()->Description() + ")";
+    if (m_op_type == SIGN)
+        return "sign(" + LHS()->Description() + ")";
 
     bool parenthesize_lhs = false;
     bool parenthesize_rhs = false;
@@ -2084,6 +2087,8 @@ std::string Operation<T>::Dump(unsigned short ntabs) const
         return "ceil(" + LHS()->Dump(ntabs) + ")";
     if (m_op_type == ROUND_DOWN)
         return "floor(" + LHS()->Dump(ntabs) + ")";
+    if (m_op_type == SIGN)
+        return "sign(" + LHS()->Dump(ntabs) + ")";
 
     bool parenthesize_lhs = false;
     bool parenthesize_rhs = false;

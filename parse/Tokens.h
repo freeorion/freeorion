@@ -460,6 +460,7 @@
     (ShortestPath)                              \
     (ShortRange)                                \
     (Shots)                                     \
+    (Sign)                                      \
     (Sin)                                       \
     (Size)                                      \
     (SizeAsDouble)

@@ -2830,6 +2830,7 @@ double Operation<double>::EvalImpl(const ScriptingContext& context) const
                 else
                     return m_operands[3]->Eval(context);
             }
+            break;
         }
 
         case ROUND_NEAREST:
@@ -2838,6 +2839,12 @@ double Operation<double>::EvalImpl(const ScriptingContext& context) const
             return std::ceil(LHS()->Eval(context)); break;
         case ROUND_DOWN:
             return std::floor(LHS()->Eval(context)); break;
+
+        case SIGN: {
+            auto lhs{LHS()->Eval(context)};
+            return lhs < 0.0 ? -1.0 : lhs > 0.0 ? 1.0 : 0.0;
+            break;
+        }
 
         default:
             break;
@@ -2950,14 +2957,6 @@ int Operation<int>::EvalImpl(const ScriptingContext& context) const
             break;
         }
 
-        case ROUND_NEAREST:
-        case ROUND_UP:
-        case ROUND_DOWN: {
-            // integers don't need to be rounded...
-            return LHS()->Eval(context);
-            break;
-        }
-
         case COMPARE_EQUAL:
         case COMPARE_GREATER_THAN:
         case COMPARE_GREATER_THAN_OR_EQUAL:
@@ -2989,6 +2988,21 @@ int Operation<int>::EvalImpl(const ScriptingContext& context) const
                 else
                     return m_operands[3]->Eval(context);
             }
+            break;
+        }
+
+        case ROUND_NEAREST:
+        case ROUND_UP:
+        case ROUND_DOWN: {
+            // integers don't need to be rounded...
+            return LHS()->Eval(context);
+            break;
+        }
+
+        case SIGN: {
+            auto lhs{LHS()->Eval(context)};
+            return lhs < 0 ? -1 : lhs > 0 ? 1 : 0;
+            break;
         }
 
         default:    break;
