@@ -21,6 +21,8 @@ Example usage:
 """
 import freeOrionAIInterface as fo  # interface used to interact with FreeOrion AI client  # pylint: disable=import-error
 
+from typing import Dict
+
 # Note re common dictionary lookup structure, "PlanetSize-Dependent-Lookup":
 # Many dictionaries herein (a prime example being the building_supply dictionary) have a primary key (such as
 # special_name, or building_type_name), and then provide a sub-dictionary with which to look up the resultant value
@@ -672,13 +674,13 @@ EXTINCT_SPECIES = [
 
 # <editor-fold desc="Piloting traits">
 # TODO (Morlic): Consider using only 1 dict with tuple for (Capacity, SecondaryStat) effects
-PILOT_DAMAGE_MODIFIER_DICT = {
+PILOT_DAMAGE_UNSCALED_MODIFIER_DICT = {
     # TRAIT:    {weapon_name: effect, weapon_name2: effect2,...}
     "NO":       {},
     "BAD":      {"SR_WEAPON_1_1": -1, "SR_WEAPON_2_1": -2, "SR_WEAPON_3_1": -3, "SR_WEAPON_4_1": -5},
     "GOOD":     {"SR_WEAPON_1_1":  1, "SR_WEAPON_2_1":  2, "SR_WEAPON_3_1":  3, "SR_WEAPON_4_1": 5},
     "GREAT":    {"SR_WEAPON_1_1":  2, "SR_WEAPON_2_1":  4, "SR_WEAPON_3_1":  6, "SR_WEAPON_4_1": 10},
-    "ULTIMATE": {"SR_WEAPON_1_1":  3, "SR_WEAPON_2_1":  6, "SR_WEAPON_3_1":  9, "SR_WEAPON_4_1": 15, "SR_WEAPON_0_1": 1},
+    "ULTIMATE": {"SR_WEAPON_1_1":  3, "SR_WEAPON_2_1":  6, "SR_WEAPON_3_1":  9, "SR_WEAPON_4_1": 15},
 }
 
 PILOT_ROF_MODIFIER_DICT = {
@@ -690,9 +692,9 @@ PILOT_ROF_MODIFIER_DICT = {
     "ULTIMATE": {"SR_WEAPON_0_1": 3},
 }
 
-PILOT_FIGHTERDAMAGE_MODIFIER_DICT = {
+PILOT_FIGHTERDAMAGE_UNSCALED_MODIFIER_DICT = {
     # TRAIT:    {hangar_name: effect, hangar_name2: effect2,...}
-    # TODO FT_HANGAR_1 fighters are not able to attack ships so pilot damage modifier does not apply
+    # Note: FT_HANGAR_1 fighters are not able to attack ships so pilot damage modifier does not apply
     "NO":       {},
     "BAD":      {"FT_HANGAR_1":  0, "FT_HANGAR_2": -1, "FT_HANGAR_3": -1, "FT_HANGAR_4": -1},
     "GOOD":     {"FT_HANGAR_1":  0, "FT_HANGAR_2":  1, "FT_HANGAR_3":  1, "FT_HANGAR_4": 1},
@@ -713,6 +715,23 @@ HANGAR_LAUNCH_CAPACITY_MODIFIER_DICT = {
     # hangar_name: {bay_name: ((tech_name, effect), ...), bay_name2: ((tech_name, effect), ...}
     "FT_HANGAR_1": {"FT_BAY_1": (("SHP_FIGHTERS_1", 1), ("SHP_FIGHTERS_2", 1), ("SHP_FIGHTERS_3", 1), ("SHP_FIGHTERS_4", 1))},
 }
+
+
+def _scale_part_damage(part_damage: Dict[str, int], factor: float) -> Dict[str, float]:
+    scaled_part_damage = {
+        weapon_name: (damage * factor) for weapon_name, damage in part_damage.items()
+    }
+    return scaled_part_damage
+
+
+PILOT_DAMAGE_MODIFIER_DICT = {
+    trait: _scale_part_damage(part_damage, SHIP_WEAPON_DAMAGE_FACTOR) for trait, part_damage in PILOT_DAMAGE_UNSCALED_MODIFIER_DICT.items()
+}
+
+PILOT_FIGHTERDAMAGE_MODIFIER_DICT = {
+    trait: _scale_part_damage(part_damage, FIGHTER_DAMAGE_FACTOR) for trait, part_damage in PILOT_FIGHTERDAMAGE_UNSCALED_MODIFIER_DICT.items()
+}
+
 # </editor-fold>
 
 # <editor-fold desc="Extraordinary Species Rules">
