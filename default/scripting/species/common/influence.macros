@@ -10,7 +10,36 @@ BASIC_INFLUENCE
             ]
             accountinglabel = "FOCUS_INFLUENCE_LABEL"
             priority = [[EARLY_PRIORITY]]
-            effects = SetTargetInfluence value = Value + 1
+            effects = SetTargetInfluence value = Value + 4
+
+        EffectsGroup      // colonies consume influence
+            scope = Source
+            activation = Planet
+            priority = [[DEFAULT_PRIORITY]]
+            effects = SetTargetInfluence value = Value - 1
+            
+        EffectsGroup      // species homeworlds consume more influence
+            scope = source
+            activation = And [
+                Planet
+                Not Capital
+                Homeworld name = LocalCandidate.Species
+            ]
+            priority = [[DEFAULT_PRIORITY]]
+            effects = SetTargetInfluence value = Value - 1
+
+        EffectsGroup      // colonies consume more influence if not supply connected to empire's capital
+            scope = Source
+            activation = And [
+                Planet
+                Not ResourceSupplyConnected empire = LocalCandidate.Owner condition = And [
+                    Planet
+                    OwnedBy empire = Source.Owner
+                    Capital
+                ]
+            ]
+            priority = [[DEFAULT_PRIORITY]]
+            effects = SetTargetInfluence value = Value - 1
 
         EffectsGroup      // gives human bonuses when AI Aggression set to Beginner
             scope = Source

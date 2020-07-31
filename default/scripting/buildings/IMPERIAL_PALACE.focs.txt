@@ -50,7 +50,10 @@ BuildingType
                 Planet
                 OwnedBy empire = Source.ProducedByEmpireID
             ]
-            effects = SetEmpireCapital
+            effects = [
+                SetEmpireCapital
+                SetTargetInfluence value = Value + 3
+            ]
 
         EffectsGroup
             scope = Source
@@ -63,10 +66,8 @@ BuildingType
                 OwnedBy empire = Source.ProducedByEmpireID
             ]
             stackinggroup = "IMPERIAL_PALACE_SUPPLY_EFFECT"
-            effects = [
+            effects =
                 SetMaxSupply value = Value + 2
-                SetTargetInfluence value = Value + 1
-            ]
 
         EffectsGroup
             scope = And [
@@ -99,7 +100,7 @@ BuildingType
             stackinggroup = "IMPERIAL_PALACE_HAPPINESS"
             effects =
                 SetTargetHappiness value = Value + 5 // min(10, max(0, 10 - Target.DistanceToSource/20))
-        
+
         EffectsGroup
             scope = And [
                 Object id = Source.PlanetID
