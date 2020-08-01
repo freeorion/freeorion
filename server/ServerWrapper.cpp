@@ -101,14 +101,14 @@ namespace {
     }
 
     // Wrappers for Species / SpeciesManager class (member) functions
-    auto SpeciesPreferredFocus(const std::string& species_name) -> py::object
+    auto SpeciesDefaultFocus(const std::string& species_name) -> py::object
     {
         const Species* species = GetSpecies(species_name);
         if (!species) {
-            ErrorLogger() << "SpeciesPreferredFocus: couldn't get species " << species_name;
+            ErrorLogger() << "SpeciesDefaultFocus: couldn't get species " << species_name;
             return py::object("");
         }
-        return py::object(species->PreferredFocus());
+        return py::object(species->DefaultFocus());
     }
 
     auto SpeciesGetPlanetEnvironment(const std::string& species_name, PlanetType planet_type) -> PlanetEnvironment
@@ -1314,7 +1314,7 @@ namespace FreeOrionPython {
         py::def("generate_sitrep",                  +[](int empire_id, const std::string& template_string, const std::string& icon) { GenerateSitRep(empire_id, template_string, py::dict(), icon); });
         py::def("generate_starlanes",               GenerateStarlanes);
 
-        py::def("species_preferred_focus",          SpeciesPreferredFocus);
+        py::def("species_preferred_focus",          SpeciesDefaultFocus);
         py::def("species_get_planet_environment",   SpeciesGetPlanetEnvironment);
         py::def("species_add_homeworld",            SpeciesAddHomeworld);
         py::def("species_remove_homeworld",         SpeciesRemoveHomeworld);

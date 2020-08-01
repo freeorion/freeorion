@@ -6105,7 +6105,7 @@ FOCUS_TEXT
 
 The focus of a planet may grant it bonuses or enable effects. A small penalty applies when changing a planets focus, which will diminish over time.
 
-A planet will default to the inhabiting species' preferred focus if it has one, otherwise it will default to [[metertype METER_INDUSTRY]].'''
+A planet will default to the inhabiting species' default focus if it has one, otherwise it will default to [[metertype METER_INDUSTRY]].'''
 
 DISTORTION_FOCUS_TITLE
 Spatial Distortion Focus
@@ -6692,8 +6692,8 @@ Building Type
 FOCUS
 Focus
 
-PREFERRED_FOCUS
-Preferred Focus
+DEFAULT_FOCUS
+Default Focus
 
 AVAILABLE_FOCI
 Available Foci
@@ -7763,7 +7763,7 @@ ENVIRONMENTAL_PREFERENCES
 [[encyclopedia ENVIRONMENT_TITLE]] Preferences:
 
 FOCUS_PREFERENCE
-'''Preferred [[encyclopedia FOCUS_TITLE]]: '''
+'''Default [[encyclopedia FOCUS_TITLE]]: '''
 
 OPINIONS_OF_EMPIRES
 Opinions of Empires:
@@ -15705,14 +15705,24 @@ LIVING_HULL_BASE_FUEL_REGEN_DESC
 ##
 
 # %1% name of empire
-# %2% name of policy whose effect is liked
+# %2% name of policy
 LIKES_POLICY_LABEL
 Likes %1% policy %2%
 
 # %1% name of empire
-# %2% name of policy whose effect is liked
+# %2% name of policy
 DISLIKES_POLICY_LABEL
 Dislikes %1% policy %2%
+
+# %1% name of empire
+# %2% name of focus
+LIKES_FOCUS_LABEL
+Likes %2%
+
+# %1% name of empire
+# %2% name of focus
+DISLIKES_FOCUS_LABEL
+Dislikes %2%
 
 # %1% FIXME
 STANDARD_CONSTRUCTION_LABEL
@@ -16103,7 +16113,7 @@ BASIC_CONTENTEDNESS_LABEL
 General Contentedness
 
 FOCUS_PREFERENCE_LABEL
-Preferred Focus Selected
+Default Focus Selected
 
 LIKES
 '''Likes: '''

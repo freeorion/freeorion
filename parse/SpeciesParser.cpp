@@ -53,7 +53,7 @@ namespace {
         SpeciesParamsAndStuff(bool playable_, bool native_,
                               bool can_colonize_, bool can_produce_ships_,
                               boost::optional<std::vector<FocusType>>& foci_,
-                              boost::optional<std::string>& preferred_focus_,
+                              boost::optional<std::string>& default_focus_,
                               std::set<std::string>& tags_,
                               std::set<std::string>& likes_,
                               std::set<std::string>& dislikes_) :
@@ -62,7 +62,7 @@ namespace {
             can_colonize(can_colonize_),
             can_produce_ships(can_produce_ships_),
             foci(std::move(foci_)),
-            preferred_focus(std::move(preferred_focus_)),
+            default_focus(std::move(default_focus_)),
             tags(std::move(tags_)),
             likes(std::move(likes_)),
             dislikes(std::move(dislikes_))
@@ -72,7 +72,7 @@ namespace {
         bool                                    can_colonize = false;
         bool                                    can_produce_ships = false;
         boost::optional<std::vector<FocusType>> foci;
-        boost::optional<std::string>            preferred_focus;
+        boost::optional<std::string>            default_focus;
         std::set<std::string>                   tags;
         std::set<std::string>                   likes;
         std::set<std::string>                   dislikes;
@@ -92,7 +92,7 @@ namespace {
         auto species_ptr = std::make_unique<Species>(
             std::move(strings.name), std::move(strings.desc), std::move(strings.gameplay_desc),
             (params.foci ? std::move(*params.foci) : std::vector<FocusType>{}),
-            (params.preferred_focus ? std::move(*params.preferred_focus) : std::string{}),
+            (params.default_focus ? std::move(*params.default_focus) : std::string{}),
             (planet_environments ? std::move(*planet_environments) : std::map<PlanetType, PlanetEnvironment>{}),
             (effects ? std::move(OpenEnvelopes(*effects, pass)) : std::vector<std::unique_ptr<Effect::EffectsGroup>>{}),
             (combat_targets ? std::move((*combat_targets).OpenEnvelope(pass)) : nullptr),
@@ -222,7 +222,7 @@ namespace {
                 >    matches_[tok.CanColonize_]     // _4
                 >    tags_parser                    // _5
                 >   -foci                           // _6
-                >   -as_string_[(label(tok.PreferredFocus_) > tok.string )] // _7
+                >   -as_string_[(label(tok.DefaultFocus_) > tok.string )] // _7
                 >    likes                          // _8
                 >    dislikes                       // _9
                     ) [ _val = construct<SpeciesParamsAndStuff>(_1, _2, _4, _3, _6, _7, _5, _8, _9) ]

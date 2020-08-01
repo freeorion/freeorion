@@ -14,7 +14,7 @@ Species
         [[HAS_ADVANCED_FOCI]]
     ]
 
-    preferredfocus = "FOCUS_RESEARCH"
+    defaultfocus = "FOCUS_RESEARCH"
 
     effectsgroups = [
         [[NO_INDUSTRY]]

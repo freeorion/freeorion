@@ -22,7 +22,7 @@ Species
         [[HAS_ADVANCED_FOCI]]
     ]
 
-    preferredfocus = "FOCUS_STOCKPILE"
+    defaultfocus = "FOCUS_STOCKPILE"
 
     effectsgroups = [
         [[AVERAGE_INDUSTRY]]

@@ -16,7 +16,7 @@ Species
         [[HAS_ADVANCED_FOCI]]
     ]
 
-    preferredfocus = "FOCUS_PROTECTION"
+    defaultfocus = "FOCUS_PROTECTION"
 
     effectsgroups = [
         [[BAD_INDUSTRY]]

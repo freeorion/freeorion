@@ -718,7 +718,7 @@ namespace FreeOrionPython {
             .add_property("description",        make_function(&Species::Description,    py::return_value_policy<py::copy_const_reference>()))
             .add_property("homeworlds",         make_function(&Species::Homeworlds,     py::return_value_policy<py::copy_const_reference>()))
             .add_property("foci",               &SpeciesFoci)
-            .add_property("preferredFocus",     make_function(&Species::PreferredFocus, py::return_value_policy<py::copy_const_reference>()))
+            .add_property("preferredFocus",     make_function(&Species::DefaultFocus,   py::return_value_policy<py::copy_const_reference>()))
             .add_property("canColonize",        make_function(&Species::CanColonize,    py::return_value_policy<py::return_by_value>()))
             .add_property("canProduceShips",    make_function(&Species::CanProduceShips,py::return_value_policy<py::return_by_value>()))
             .add_property("tags",               make_function(&Species::Tags,           py::return_value_policy<py::return_by_value>()))

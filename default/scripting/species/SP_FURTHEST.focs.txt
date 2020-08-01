@@ -16,7 +16,7 @@ Species
         [[HAS_ADVANCED_FOCI]]
     ]
 
-    preferredfocus = "FOCUS_GROWTH"
+    defaultfocus = "FOCUS_GROWTH"
 
     effectsgroups = [
         [[AVERAGE_INDUSTRY]]

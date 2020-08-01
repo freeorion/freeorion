@@ -85,6 +85,7 @@
     (Damage)                                    \
     (Data)                                      \
     (Default)                                   \
+    (DefaultFocus)                              \
     (Defense)                                   \
     (Described)                                 \
     (Description)                               \
@@ -333,7 +334,6 @@
     (Population)                                \
     (PopulationCenter)                          \
     (Position)                                  \
-    (PreferredFocus)                            \
     (Prerequisites)                             \
     (PreviousSystemID)                          \
     (Priority)                                  \

@@ -1220,7 +1220,7 @@ std::string Variable<std::string>::Eval(const ScriptingContext& context) const
             return planet->Focus();
         return "";
 
-    } else if (property_name == "PreferredFocus") {
+    } else if (property_name == "DefaultFocus") {
         const Species* species = nullptr;
         if (auto planet = std::dynamic_pointer_cast<const Planet>(object)) {
             species = GetSpecies(planet->SpeciesName());
@@ -1228,7 +1228,7 @@ std::string Variable<std::string>::Eval(const ScriptingContext& context) const
             species = GetSpecies(ship->SpeciesName());
         }
         if (species)
-            return species->PreferredFocus();
+            return species->DefaultFocus();
         return "";
 
     }

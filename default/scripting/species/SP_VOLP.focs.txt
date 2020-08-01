@@ -14,7 +14,8 @@ Species
         [[HAS_ADVANCED_FOCI]]
     ]
 
-    preferredfocus = "FOCUS_PROTECTION"
+    defaultfocus = "FOCUS_PROTECTION"
+    likes = ["FOCUS_PROTECTION"]
 
     effectsgroups = [
         [[AVERAGE_INDUSTRY]]

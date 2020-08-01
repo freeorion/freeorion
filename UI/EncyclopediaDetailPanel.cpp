@@ -2008,8 +2008,8 @@ namespace {
             detailed_description += UserString("CANNNOT_COLONIZE");
 
         // focus preference
-        if (!species->PreferredFocus().empty()) {
-            detailed_description += "\n\n" + UserString("FOCUS_PREFERENCE") + UserString(species->PreferredFocus());
+        if (!species->DefaultFocus().empty()) {
+            detailed_description += "\n\n" + UserString("FOCUS_PREFERENCE") + UserString(species->DefaultFocus());
         }
 
         // likes

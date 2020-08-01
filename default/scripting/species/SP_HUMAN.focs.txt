@@ -16,8 +16,8 @@ Species
         [[HAS_ADVANCED_FOCI]]
     ]
 
-    preferredfocus = "FOCUS_RESEARCH"
-    likes = ["PLC_BALANCE"]
+    defaultfocus = "FOCUS_RESEARCH"
+    likes = ["PLC_BALANCE" "FOCUS_RESEARCH"]
     dislikes = ["PLC_CENTRALIZATION"]
 
     effectsgroups = [

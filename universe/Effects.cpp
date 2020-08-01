@@ -1082,21 +1082,21 @@ void SetSpecies::Execute(ScriptingContext& context) const {
         std::string new_focus;
 
         const Species* species = GetSpecies(species_name);
-        std::string preferred_focus;
+        std::string default_focus;
         if (species)
-            preferred_focus = species->PreferredFocus();
+            default_focus = species->DefaultFocus();
 
-        // chose preferred focus if available. otherwise use any available focus
-        bool preferred_available = false;
+        // chose default focus if available. otherwise use any available focus
+        bool default_available = false;
         for (const std::string& available_focus : available_foci) {
-            if (available_focus == preferred_focus) {
-                preferred_available = true;
+            if (available_focus == default_focus) {
+                default_available = true;
                 break;
             }
         }
 
-        if (preferred_available) {
-            new_focus = std::move(preferred_focus);
+        if (default_available) {
+            new_focus = std::move(default_focus);
         } else if (!available_foci.empty()) {
             new_focus = *available_foci.begin();
         }

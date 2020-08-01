@@ -1,3 +1,6 @@
+STABILITY_PER_LIKED_OR_DISLIKED_FOCUS
+'''5'''
+
 AVERAGE_HAPPINESS
 '''
         EffectsGroup    // increase or decrease 1 per turn towards target
@@ -27,13 +30,25 @@ AVERAGE_HAPPINESS
             scope = Source
             activation = Planet
             accountinglabel = "BASIC_CONTENTEDNESS_LABEL"
-            effects = SetTargetHappiness value = Value + 10
+            effects = SetTargetHappiness value = Value + 10   
 
         EffectsGroup
             scope = Source
-            activation = Focus type = Source.PreferredFocus
-            accountinglabel = "FOCUS_PREFERENCE_LABEL"
-            effects = SetTargetHappiness value = Value + 10
+            activation = And [
+                Population low = 0.001
+                (SpeciesContentOpinion species = LocalCandidate.Species name = LocalCandidate.Focus > 0)
+            ]
+            accountinglabel = "LIKES_FOCUS_LABEL"
+            effects = SetTargetHappiness value = Value + [[STABILITY_PER_LIKED_OR_DISLIKED_FOCUS]] * SpeciesContentOpinion species = Target.Species name = Target.Focus
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Population low = 0.001
+                (SpeciesContentOpinion species = LocalCandidate.Species name = LocalCandidate.Focus < 0)
+            ]
+            accountinglabel = "DISLIKES_FOCUS_LABEL"
+            effects = SetTargetHappiness value = Value + [[STABILITY_PER_LIKED_OR_DISLIKED_FOCUS]] * SpeciesContentOpinion species = Target.Species name = Target.Focus
 
         EffectsGroup
             scope = Source

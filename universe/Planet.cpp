@@ -729,7 +729,7 @@ bool Planet::Colonize(int empire_id, const std::string& species_name, double pop
     if (species && !available_foci.empty()) {
         bool found_preference = false;
         for (const auto& focus : available_foci) {
-            if (!focus.empty() && focus == species->PreferredFocus()) {
+            if (!focus.empty() && focus == species->DefaultFocus()) {
                 SetFocus(focus);
                 found_preference = true;
                 break;

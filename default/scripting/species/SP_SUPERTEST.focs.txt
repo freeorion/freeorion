@@ -16,6 +16,9 @@ Species
         [[HAS_ADVANCED_FOCI]]
     ]
 
+    likes = ["FOCUS_PROTECTION"]
+    dislikes = ["FOCUS_GRWOTH"]
+
     effectsgroups = [
         [[GREAT_INDUSTRY]]
         [[GREAT_RESEARCH]]
