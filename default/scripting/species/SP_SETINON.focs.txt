@@ -17,6 +17,7 @@ Species
     ]
 
     defaultfocus = "FOCUS_PROTECTION"
+    likes = ["FOCUS_PROTECTION"]
 
     effectsgroups = [
         [[BAD_INDUSTRY]]

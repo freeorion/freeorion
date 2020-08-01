@@ -17,6 +17,7 @@ Species
     ]
 
     defaultfocus = "FOCUS_GROWTH"
+    likes = ["FOCUS_GROWTH"]
 
     effectsgroups = [
         [[AVERAGE_INDUSTRY]]

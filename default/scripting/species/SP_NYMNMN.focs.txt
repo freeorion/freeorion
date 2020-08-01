@@ -14,6 +14,8 @@ Species
         [[HAS_ADVANCED_FOCI]]
     ]
 
+    dislikes = ["PLC_DESIGN_SIMPLICITY"]
+
     effectsgroups = [
         [[NO_INDUSTRY]]
         [[AVERAGE_RESEARCH]]

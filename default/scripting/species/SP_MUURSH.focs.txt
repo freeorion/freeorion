@@ -16,6 +16,8 @@ Species
         [[HAS_ADVANCED_FOCI]]
     ]
 
+    dislikes = ["PLC_CONFEDERATION" "PLC_CONTINUOUS_SCANNING" "FOCUS_RESEARCH" "FOCUS_INDUSTRY"]
+
     effectsgroups = [
         [[AVERAGE_INDUSTRY]]
         [[BAD_RESEARCH]]

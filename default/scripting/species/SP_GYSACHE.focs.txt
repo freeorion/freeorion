@@ -16,6 +16,8 @@ Species
         [[HAS_ADVANCED_FOCI]]
     ]
 
+    likes = ["FOCUS_INDUSTRY"]
+
     effectsgroups = [
         [[GOOD_INDUSTRY]]
         [[GOOD_RESEARCH]]

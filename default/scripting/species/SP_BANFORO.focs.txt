@@ -16,6 +16,7 @@ Species
     ]
 
     defaultfocus = "FOCUS_INDUSTRY"
+    likes = ["FOCUS_INDUSTRY"]
 
     effectsgroups = [
         [[GOOD_INDUSTRY]]

@@ -23,6 +23,7 @@ Species
     ]
 
     defaultfocus = "FOCUS_STOCKPILE"
+    likes = ["FOCUS_STOCKPILE" "PLC_STOCKPILE_LIQUIDATION"]
 
     effectsgroups = [
         [[AVERAGE_INDUSTRY]]
