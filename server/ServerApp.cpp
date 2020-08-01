@@ -1513,9 +1513,8 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
     if (!success)
         ServerApp::GetApp()->Networking().SendMessageAll(ErrorMessage(UserStringNop("SERVER_UNIVERSE_GENERATION_ERRORS"), false));
 
-    for (auto& empire : Empires()) {
+    for (auto& empire : Empires())
         empire.second->ApplyNewTechs();
-    }
 
     DebugLogger() << "Applying first turn effects and updating meters";
 
@@ -3675,9 +3674,8 @@ void ServerApp::CheckForEmpireElimination() {
             }
         }
 
-        for (auto& empire : non_eliminated_non_ai_controlled_empires) {
+        for (auto& empire : non_eliminated_non_ai_controlled_empires)
             empire->Win(UserStringNop("VICTORY_FEW_HUMANS_ALIVE"));
-        }
     }
 }
 
