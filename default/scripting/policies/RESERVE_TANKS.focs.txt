@@ -5,6 +5,8 @@ Policy
     category = "MILITARY_CATEGORY"
     adoptioncost = ceil(0.2 * Statistic Count condition = And [Ship OwnedBy empire = Source.Owner])
     effectsgroups = [
+        [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
+
         EffectsGroup
             scope = And [
                 Ship
@@ -21,3 +23,5 @@ Policy
             effects = SetSpeed value = Value * 0.5
     ]
     graphic = "icons/policies/reserve_tank.png"
+
+#include "/scripting/policies/policies.macros"

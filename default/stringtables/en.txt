@@ -15704,6 +15704,16 @@ LIVING_HULL_BASE_FUEL_REGEN_DESC
 ## Accounting labels
 ##
 
+# %1% name of empire
+# %2% name of policy whose effect is liked
+LIKES_POLICY_LABEL
+Likes %1% policy %2%
+
+# %1% name of empire
+# %2% name of policy whose effect is liked
+DISLIKES_POLICY_LABEL
+Dislikes %1% policy %2%
+
 # %1% FIXME
 STANDARD_CONSTRUCTION_LABEL
 %1% Average [[metertype METER_CONSTRUCTION]]

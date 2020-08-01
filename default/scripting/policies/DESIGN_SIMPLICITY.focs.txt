@@ -4,4 +4,9 @@ Policy
     short_description = "PLC_DESIGN_SIMPLICITY_SHORT_DESC"
     category = "MILITARY_CATEGORY"
     adoptioncost = floor(5 + 0.25 * Statistic Sum value = LocalCandidate.Population condition = And [ Planet OwnedBy empire = Source.Owner ])
+    effectsgroups = [
+        [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
+    ]
     graphic = "icons/policies/design_simplicity.png"
+
+#include "/scripting/policies/policies.macros"

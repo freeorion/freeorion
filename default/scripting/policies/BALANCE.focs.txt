@@ -4,7 +4,9 @@ Policy
     short_description = "PLC_BALANCE_SHORT_DESC"
     category = "ECONOMIC_CATEGORY"
     adoptioncost = 1.0*floor(5 + 0.25 * Statistic Sum value = LocalCandidate.Population condition = And [ Planet OwnedBy empire = Source.Owner ])
-    effectsgroups =
+    effectsgroups = [
+        [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
+    
         EffectsGroup
             scope = And [
                 Capital
@@ -32,7 +34,9 @@ Policy
                         value = LocalCandidate.Focus
                         condition = And [ Planet OwnedBy empire = Source.Owner ]))
             ]
+    ]
     graphic = "icons/policies/centralization.png"
 
 #include "/scripting/common/base_prod.macros"
 #include "/scripting/common/priorities.macros"
+#include "/scripting/policies/policies.macros"

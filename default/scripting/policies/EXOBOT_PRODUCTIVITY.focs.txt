@@ -9,6 +9,8 @@ Policy
         Species name = "SP_EXOBOT"
     ]
     effectsgroups = [
+        [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
+    
         EffectsGroup
             scope = And [
                 Planet
@@ -23,3 +25,4 @@ Policy
     graphic = "icons/policies/exobot_productivity.png"
 
 #include "/scripting/species/common/*.macros"
+#include "/scripting/policies/policies.macros"

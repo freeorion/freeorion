@@ -4,7 +4,9 @@ Policy
     short_description = "PLC_NO_SUPPLY_SHORT_DESC"
     category = "ECONOMIC_CATEGORY"
     adoptioncost = 5 + Statistic Sum value = LocalCandidate.Population condition = And [ Planet OwnedBy empire = Source.Owner ]
-    effectsgroups =
+    effectsgroups = [
+        [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
+    
         EffectsGroup
             scope = And [
                 Planet
@@ -15,6 +17,8 @@ Policy
                 SetMaxSupply value = -100
                 SetSupply value = -100
             ]
+    ]            
     graphic = "icons/policies/no_supply.png"
 
 #include "/scripting/common/priorities.macros"
+#include "/scripting/policies/policies.macros"

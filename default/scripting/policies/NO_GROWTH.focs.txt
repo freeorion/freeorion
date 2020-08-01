@@ -4,7 +4,9 @@ Policy
     short_description = "PLC_NO_GROWTH_SHORT_DESC"
     category = "SOCIAL_CATEGORY"
     adoptioncost = floor(5 + 0.25 * Statistic Sum value = LocalCandidate.Population condition = And [ Planet OwnedBy empire = Source.Owner ])
-    effectsgroups =
+    effectsgroups = [
+        [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
+    
         EffectsGroup
             scope = And [
                 Planet
@@ -14,6 +16,8 @@ Policy
             priority = [[METER_OVERRIDE_PRIORITY]]
             effects =
                 SetPopulation value = Target.Population // revert to initial value
+    ]
     graphic = "icons/policies/no_growth.png"
 
 #include "/scripting/common/priorities.macros"
+#include "/scripting/policies/policies.macros"

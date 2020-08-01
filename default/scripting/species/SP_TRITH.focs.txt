@@ -17,6 +17,8 @@ Species
     ]
 
     preferredfocus = "FOCUS_RESEARCH"
+    likes = [ "PLC_CHECKPOINTS" "PLC_CONFEDERATION" ]
+    dislikes = [ "FOCUS_RESEARCH" "PLC_DIVERSITY" ]
 
     effectsgroups = [
         [[AVERAGE_INDUSTRY]]

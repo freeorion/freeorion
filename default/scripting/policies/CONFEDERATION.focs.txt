@@ -5,6 +5,8 @@ Policy
     category = "SOCIAL_CATEGORY"
     adoptioncost = 1.0*floor(5 + 0.25 * Statistic Sum value = LocalCandidate.Population condition = And [ Planet OwnedBy empire = Source.Owner ])
     effectsgroups = [
+        [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
+    
         // compensates for species influence effect that reduces influence when not supply connected to capital
         EffectsGroup
             scope = And [
@@ -30,8 +32,7 @@ Policy
             SetMaxTroops value = Value + 5
         ]
     ]
-
     graphic = "icons/policies/confederation.png"
 
-
 #include "/scripting/common/priorities.macros"
+#include "/scripting/policies/policies.macros"

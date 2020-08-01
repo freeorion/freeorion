@@ -4,7 +4,9 @@ Policy
     short_description = "PLC_STOCKPILE_LIQUIDATION_SHORT_DESC"
     category = "ECONOMIC_CATEGORY"
     adoptioncost = 5 + Statistic Sum value = LocalCandidate.Population condition = And [ Planet OwnedBy empire = Source.Owner ]
-    effectsgroups =
+    effectsgroups = [
+        [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
+
         EffectsGroup
             scope = And [
                 Planet
@@ -14,6 +16,8 @@ Policy
             priority = [[LATE_PRIORITY]]
             effects =
                 SetMaxStockpile value = max(0.0, Value * 2.0)
+    ]                
     graphic = "icons/focus/stockpile.png"
 
 #include "/scripting/common/priorities.macros"
+#include "/scripting/policies/policies.macros"

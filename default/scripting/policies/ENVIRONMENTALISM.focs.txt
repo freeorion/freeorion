@@ -5,7 +5,8 @@ Policy
     category = "ECONOMIC_CATEGORY"
     adoptioncost = 1.0*floor(5 + 0.25 * Statistic Sum value = LocalCandidate.Population condition = And [ Planet OwnedBy empire = Source.Owner ])
     effectsgroups = [
-    
+        [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
+
         EffectsGroup
             scope = And [
                 Planet
@@ -55,3 +56,4 @@ Policy
 
 #include "/scripting/common/base_prod.macros"
 #include "/scripting/common/priorities.macros"
+#include "/scripting/policies/policies.macros"

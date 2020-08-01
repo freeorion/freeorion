@@ -5,6 +5,8 @@ Policy
     category = "MILITARY_CATEGORY"
     adoptioncost = 5 + Statistic Count condition = And [Ship OwnedBy empire = Source.Owner]
     effectsgroups = [
+        [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
+    
         EffectsGroup
             scope = And [
                 Ship
@@ -14,3 +16,5 @@ Policy
                 SetTargetInfluence value = Value - 0.1
     ]
     graphic = "icons/policies/engineering.png"
+
+#include "/scripting/policies/policies.macros"

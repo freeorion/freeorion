@@ -5,6 +5,8 @@ Policy
     category = "ECONOMIC_CATEGORY"
     adoptioncost = 5 + Statistic Sum value = LocalCandidate.Population condition = And [ Planet OwnedBy empire = Source.Owner ]
     effectsgroups = [
+        [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
+
         EffectsGroup
             scope = And [
                 Planet
@@ -30,3 +32,4 @@ Policy
     ]
     graphic = "icons/policies/checkpoints.png"
 
+#include "/scripting/policies/policies.macros"
