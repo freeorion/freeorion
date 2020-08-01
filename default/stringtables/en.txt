@@ -10169,20 +10169,56 @@ owner's top priority enqueued tech
 DESC_VAR_LASTTURNBATTLEHERE
 last turn a battle occurred here
 
-DESC_COMPLEX
-Complex Variable
-
 DESC_VAR_JUMPSBETWEEN
 starlane jumps between systems containing objects with ids %1% and %2%
 
-DESC_STATISTIC
+DESC_VAR_STATISTIC
 Statistic
+
+DESC_VAR_IF
+0, or 1 if there is any object%2%
 
 DESC_VAR_COUNT
 the number of objects%2%
 
-DESC_VAR_IF
-0, or 1 if there is any object%2%
+DESC_VAR_UNIQUE_COUNT
+the number of unique
+
+DESC_VAR_HISTO_MAX
+the number of the most common%1% of objects%2%
+
+DESC_VAR_HISTO_MIN
+the number of the least common%1% of objects%2%
+
+DESC_VAR_HISTO_SPREAD
+the difference between the numbers of the most common%1% of objects%2%
+
+DESC_VAR_SUM
+the sum%1% of objects%2%
+
+DESC_VAR_MEAN
+the mean%1% of objects%2%
+
+DESC_VAR_RMS
+the root mean square%1% of objects%2%
+
+DESC_VAR_MODE
+the mode%1% of objects%2%
+
+DESC_VAR_MAX
+the max%1% of objects%2%
+
+DESC_VAR_MIN
+the minimum%1% of objects%2%
+
+DESC_VAR_SPREAD
+the spread of%1% of objects%2%
+
+DESC_VAR_STDEV
+the standard deviation of%1% of objects%2%
+
+DESC_VAR_PRODUCT
+the product of%1% of objects%2%
 
 # FOCS variable reference description text.
 # %1% reference type of the FOCS variable.
