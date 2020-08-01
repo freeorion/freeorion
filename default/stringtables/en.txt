@@ -6314,9 +6314,9 @@ DAMAGE_TITLE
 Damage
 
 DAMAGE_TEXT
-'''Defines the base amount that a weapon will reduce the [[metertype METER_STRUCTURE]] of another ship (or the [[metertype METER_SHIELD]], [[metertype METER_DEFENSE]] and [[metertype METER_CONSTRUCTION]] of a planet), in one combat round (of which there are three in each turn of battle). If a target ship is equipped with [[metertype METER_SHIELD]], the actual damage caused by each hit will be the base damage reduced by the strength rating of the ship's [[metertype METER_SHIELD]].
+'''Defines the base amount that a weapon will reduce the [[metertype METER_STRUCTURE]] of another ship (or the [[metertype METER_SHIELD]], [[metertype METER_DEFENSE]] and [[metertype METER_CONSTRUCTION]] of a planet), in one combat round (of which there are four in each turn of battle). If a target ship is equipped with [[metertype METER_SHIELD]], the actual damage caused by each hit will be the base damage reduced by the strength rating of the ship's [[metertype METER_SHIELD]].
 
-Note: [[encyclopedia FIGHTER_TECHS]] inflict damage ignoring [[metertype METER_SHIELD]] on ships, as fighters fire from within the enemy shields.'''
+Note: [[encyclopedia FIGHTER_TECHS]] inflict damage ignoring [[metertype METER_SHIELD]] on ships, as fighters fire from within the enemy shields. Fighters need one turn for launching so damage estimation takes that into account.'''
 
 MAP_WINDOW_ARTICLE_TITLE
 Map Window
