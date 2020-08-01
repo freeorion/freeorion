@@ -15714,15 +15714,15 @@ Likes %1% policy %2%
 DISLIKES_POLICY_LABEL
 Dislikes %1% policy %2%
 
-# %1% name of empire
-# %2% name of focus
+# %1% name of planet
+# %2% name of species on planet
 LIKES_FOCUS_LABEL
-Likes %2%
+Likes %1% focus
 
-# %1% name of empire
-# %2% name of focus
+# %1% name of planet
+# %2% name of species on planet
 DISLIKES_FOCUS_LABEL
-Dislikes %2%
+Dislikes %1% focus
 
 # %1% FIXME
 STANDARD_CONSTRUCTION_LABEL
