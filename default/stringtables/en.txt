@@ -11260,6 +11260,15 @@ Increases effective exobot production output on industry-focused worlds from ver
 PLC_EXOBOT_PRODUCTIVITY_SHORT_DESC
 Boosts exobot production
 
+PLC_CONFEDERATION
+Confederation
+
+PLC_CONFEDERATION_DESC
+Planets are organized in a confederacy of independent system, and do not suffer reduce influence if not connected to the capital, but are slightly less stable in general. Ground troops are also boosted slightly.
+
+PLC_CONFEDERATION_SHORT_DESC
+Supports disconnected systems
+
 
 ##
 ## Technology categories

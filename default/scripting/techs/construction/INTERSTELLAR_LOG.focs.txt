@@ -7,8 +7,10 @@ Tech
     researchturns = 3
     tags = [ "PEDIA_CONSTRUCTION_CATEGORY" ]
     prerequisites = "CON_ORBITAL_CON"
-    unlock =
+    unlock = [
         Item type = Policy name = "PLC_NO_SUPPLY"
+        Item type = Policy name = "PLC_CONFEDERATION"
+    ]
     effectsgroups = EffectsGroup
             scope = And [
                 Ship
