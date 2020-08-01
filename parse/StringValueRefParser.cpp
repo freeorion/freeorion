@@ -54,6 +54,7 @@ namespace parse {
                 |   tok.ThisField_
                 |   tok.ThisHull_
                 |   tok.ThisPart_   // various aliases for this reference in scripts, allowing scripter to use their preference
+                |   tok.ThisPolicy_
                 |   tok.ThisTech_
                 |   tok.ThisSpecies_
                 |   tok.ThisSpecial_

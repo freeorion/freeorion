@@ -536,6 +536,7 @@
     (ThisField)                                 \
     (ThisHull)                                  \
     (ThisPart)                                  \
+    (ThisPolicy)                                \
     (ThisTech)                                  \
     (ThisSpecies)                               \
     (ThisSpecial)                               \
