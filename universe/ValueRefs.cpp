@@ -1243,7 +1243,6 @@ std::string Variable<std::string>::Eval(const ScriptingContext& context) const
 ///////////////////////////////////////////////////////////
 // Statistic                                             //
 ///////////////////////////////////////////////////////////
-
 template <>
 std::string Statistic<std::string, std::string>::Eval(const ScriptingContext& context) const
 {
@@ -1915,6 +1914,27 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         return GetPathfinder()->ShortestPathDistance(object1_id, object2_id);
 
     }
+    else if (variable_name == "SpeciesContentOpinion") {
+        std::string opinionated_species_name;
+        if (m_string_ref1)
+            opinionated_species_name = m_string_ref1->Eval(context);
+        const auto species = GetSpecies(opinionated_species_name);
+        if (!species)
+            return 0.0;
+
+        std::string liked_or_disliked_content_name;
+        if (m_string_ref2)
+            liked_or_disliked_content_name = m_string_ref2->Eval(context);
+        if (liked_or_disliked_content_name.empty())
+            return 0.0;
+
+        if (species->Likes().count(liked_or_disliked_content_name))
+            return 1.0;
+        else if (species->Dislikes().count(liked_or_disliked_content_name))
+            return -1.0;
+        return 0.0;
+
+    }
     else if (variable_name == "SpeciesEmpireOpinion") {
         int empire_id = ALL_EMPIRES;
         if (m_int_ref1)
@@ -1937,6 +1957,7 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
             rated_species_name = m_string_ref2->Eval(context);
 
         return GetSpeciesManager().SpeciesSpeciesOpinion(opinionated_species_name, rated_species_name);
+
     }
     else if (variable_name == "SpecialCapacity") {
         int object_id = INVALID_OBJECT_ID;
@@ -1953,6 +1974,7 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
             return 0.0;
 
         return object->SpecialCapacity(special_name);
+
     }
     else if (variable_name == "ShipPartMeter") {
         int object_id = INVALID_OBJECT_ID;
@@ -2380,6 +2402,13 @@ std::string ComplexVariable<double>::Dump(unsigned short ntabs) const
             retval += " object = " + m_int_ref1->Dump(ntabs);
         if (m_int_ref2)
             retval += " object = " + m_int_ref2->Dump(ntabs);
+
+    }
+    else if (variable_name == "SpeciesContentOpinion") {
+        if (m_string_ref1)
+            retval += " species = " + m_string_ref1->Dump(ntabs);
+        if (m_string_ref2)
+            retval += " name = " + m_string_ref2->Dump(ntabs);
 
     }
     else if (variable_name == "SpeciesEmpireOpinion") {

@@ -483,9 +483,11 @@
     (SpecialCapacity)                           \
     (Species)                                   \
     (SpeciesCensusOrdering)                     \
-    (SpeciesOpinion)                            \
-    (SpeciesPlanetsBombed)                      \
-    (SpeciesColoniesOwned)
+    (SpeciesColoniesOwned)                      \
+    (SpeciesContentOpinion)                     \
+    (SpeciesEmpireOpinion)                      \
+    (SpeciesSpeciesOpinion)                     \
+    (SpeciesPlanetsBombed)
 
 #define TOKEN_SEQ_15                            \
     (SpeciesPlanetsDepoped)                     \

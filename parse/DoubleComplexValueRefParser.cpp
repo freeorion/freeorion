@@ -35,10 +35,6 @@ namespace parse {
 
         const boost::phoenix::function<detail::construct_movable> construct_movable_;
         const boost::phoenix::function<detail::deconstruct_movable> deconstruct_movable_;
-
-        const std::string TOK_SPECIES_EMPIRE_OPINION{"SpeciesEmpireOpinion"};
-        const std::string TOK_SPECIES_SPECIES_OPINION{"SpeciesSpeciesOpinion"};
-
         const detail::value_ref_rule<int>& simple_int = simple_int_rules.simple;
 
         name_property_rule
@@ -113,32 +109,44 @@ namespace parse {
                 nullptr, nullptr, nullptr)) ]
             ;
 
-        species_opinion
-            = omit_[tok.SpeciesOpinion_] >  label(tok.Species_) > string_grammar;
-
+        species_content_opinion
+            = (     tok.SpeciesContentOpinion_
+                >   label(tok.Species_) > string_grammar
+                >   label(tok.Name_) > string_grammar
+              )
+              [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
+                _1,
+                nullptr,
+                nullptr,
+                nullptr,
+                deconstruct_movable_(_2, _pass),
+                deconstruct_movable_(_3, _pass))) ]
+            ;
 
         species_empire_opinion
-            = (     species_opinion
-                >> (label(tok.Empire_) > simple_int)
+            = (     tok.SpeciesEmpireOpinion_
+                >   label(tok.Species_) > string_grammar
+                >   label(tok.Empire_) > simple_int
               ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
-                construct<std::string>(TOK_SPECIES_EMPIRE_OPINION),
+                _1,
+                deconstruct_movable_(_3, _pass),
+                nullptr,
+                nullptr,
                 deconstruct_movable_(_2, _pass),
-                nullptr,
-                nullptr,
-                deconstruct_movable_(_1, _pass),
                 nullptr)) ]
             ;
 
         species_species_opinion
-            = (     species_opinion
-                >> (label(tok.Species_) > string_grammar)
+            = (     tok.SpeciesSpeciesOpinion_
+                >   label(tok.Species_) > string_grammar
+                >   label(tok.Species_) > string_grammar
               ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
-                construct<std::string>(TOK_SPECIES_SPECIES_OPINION),
+                _1,
                 nullptr,
                 nullptr,
                 nullptr,
-                deconstruct_movable_(_1, _pass),
-                deconstruct_movable_(_2, _pass))) ]
+                deconstruct_movable_(_2, _pass),
+                deconstruct_movable_(_3, _pass))) ]
             ;
 
         unwrapped_part_meter
@@ -195,6 +203,7 @@ namespace parse {
             |   empire_meter_value
             |   direct_distance
             |   shortest_path
+            |   species_content_opinion
             |   species_empire_opinion
             |   species_species_opinion
             |   unwrapped_part_meter
@@ -207,8 +216,9 @@ namespace parse {
         empire_meter_value.name("EmpireMeterValue");
         direct_distance.name("DirectDistanceBetween");
         shortest_path.name("ShortestPathBetween");
-        species_empire_opinion.name("SpeciesOpinion (of empire)");
-        species_species_opinion.name("SpeciesOpinion (of species)");
+        species_content_opinion.name("SpeciesContentOpinion");
+        species_empire_opinion.name("SpeciesEmpireOpinion");
+        species_species_opinion.name("SpeciesSpeciesOpinion");
         special_capacity.name("SpecialCapacity");
         unwrapped_part_meter.name("ShipPartMeter");
         value_wrapped_part_meter.name("ShipPartMeter (immediate value)");

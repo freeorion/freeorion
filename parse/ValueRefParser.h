@@ -264,7 +264,7 @@ namespace parse {
         detail::complex_variable_rule<double>   empire_meter_value;
         detail::complex_variable_rule<double>   direct_distance;
         detail::complex_variable_rule<double>   shortest_path;
-        detail::rule<detail::value_ref_payload<std::string>()> species_opinion;
+        detail::complex_variable_rule<double>   species_content_opinion;
         detail::complex_variable_rule<double>   species_empire_opinion;
         detail::complex_variable_rule<double>   species_species_opinion;
         detail::complex_variable_rule<double>   special_capacity;
