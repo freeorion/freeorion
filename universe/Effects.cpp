@@ -459,7 +459,7 @@ void SetMeter::Execute(ScriptingContext& context,
             info.running_meter_total = meter->Current();
 
             // add accounting for this effect to end of vector
-            (*accounting_map)[target->ID()][m_meter].push_back(info);
+            (*accounting_map)[target->ID()][m_meter].emplace_back(info);    // not moving as local is reused
         }
     }
 
