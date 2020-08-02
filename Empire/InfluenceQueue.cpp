@@ -12,67 +12,67 @@
 
 
 namespace {
-    const float EPSILON = 0.01f;
 
-    //void AddRules(GameRules& rules)
-    //{}
-    //bool temp_bool = RegisterGameRules(&AddRules);
+const float EPSILON = 0.01f;
 
-    //float CalculateNewInfluenceStockpile(int empire_id, float starting_stockpile, float project_transfer_to_stockpile,
-    //                                     float available_IP, float allocated_IP, float allocated_stockpile_IP)
-    //{
-    //    TraceLogger() << "CalculateNewInfluenceStockpile for empire " << empire_id;
-    //    const Empire* empire = GetEmpire(empire_id);
-    //    if (!empire) {
-    //        ErrorLogger() << "CalculateNewInfluenceStockpile() passed null empire.  doing nothing.";
-    //        return 0.0f;
-    //    }
-    //    TraceLogger() << " ... stockpile used: " << allocated_stockpile_IP;
-    //    float new_contributions = available_IP - allocated_IP;
-    //    return starting_stockpile + new_contributions + project_transfer_to_stockpile - allocated_stockpile_IP;
-    //}
+//void AddRules(GameRules& rules)
+//{}
+//bool temp_bool = RegisterGameRules(&AddRules);
 
-    const InfluenceQueue::Element EMPTY_ELEMENT;
+//float CalculateNewInfluenceStockpile(int empire_id, float starting_stockpile, float project_transfer_to_stockpile,
+//                                     float available_IP, float allocated_IP, float allocated_stockpile_IP)
+//{
+//    TraceLogger() << "CalculateNewInfluenceStockpile for empire " << empire_id;
+//    const Empire* empire = GetEmpire(empire_id);
+//    if (!empire) {
+//        ErrorLogger() << "CalculateNewInfluenceStockpile() passed null empire.  doing nothing.";
+//        return 0.0f;
+//    }
+//    TraceLogger() << " ... stockpile used: " << allocated_stockpile_IP;
+//    float new_contributions = available_IP - allocated_IP;
+//    return starting_stockpile + new_contributions + project_transfer_to_stockpile - allocated_stockpile_IP;
+//}
 
-    /** Sets the allocated_IP value for each Element in the passed
-      * InfluenceQueue \a queue. Elements are allocated IP based on their need,
-      * the limits they can be given per turn, and the amount available to the
-      * empire. Also checks if elements will be completed this turn. */
-    //void SetInfluenceQueueElementSpending(
-    //    float available_IP, float available_stockpile,
-    //    InfluenceQueue::QueueType& queue,
-    //    float& allocated_IP, float& allocated_stockpile_IP,
-    //    int& projects_in_progress, bool simulating)
-    //{
-    //    projects_in_progress = 0;
-    //    allocated_IP = 0.0f;
-    //    allocated_stockpile_IP = 0.0f;
+const InfluenceQueue::Element EMPTY_ELEMENT;
 
-    //    float dummy_IP_source = 0.0f;
-    //    float stockpile_transfer = 0.0f;
+/** Sets the allocated_IP value for each Element in the passed
+    * InfluenceQueue \a queue. Elements are allocated IP based on their need,
+    * the limits they can be given per turn, and the amount available to the
+    * empire. Also checks if elements will be completed this turn. */
+//void SetInfluenceQueueElementSpending(
+//    float available_IP, float available_stockpile,
+//    InfluenceQueue::QueueType& queue,
+//    float& allocated_IP, float& allocated_stockpile_IP,
+//    int& projects_in_progress, bool simulating)
+//{
+//    projects_in_progress = 0;
+//    allocated_IP = 0.0f;
+//    allocated_stockpile_IP = 0.0f;
 
-    //    //DebugLogger() << "queue size: " << queue.size();
-    //    int i = 0;
-    //    for (auto& queue_element : queue) {
-    //        queue_element.allocated_ip = 0.0f;  // default, to be updated below...
-    //        if (queue_element.paused) {
-    //            TraceLogger() << "allocation: " << queue_element.allocated_ip
-    //                          << "  to: " << queue_element.name
-    //                          << "  due to it being paused";
-    //            ++i;
-    //            continue;
-    //        }
+//    float dummy_IP_source = 0.0f;
+//    float stockpile_transfer = 0.0f;
 
-    //        ++i;
-    //    }
-    //}
+//    //DebugLogger() << "queue size: " << queue.size();
+//    int i = 0;
+//    for (auto& queue_element : queue) {
+//        queue_element.allocated_ip = 0.0f;  // default, to be updated below...
+//        if (queue_element.paused) {
+//            TraceLogger() << "allocation: " << queue_element.allocated_ip
+//                          << "  to: " << queue_element.name
+//                          << "  due to it being paused";
+//            ++i;
+//            continue;
+//        }
+
+//        ++i;
+//    }
+//}
+
 }
 
 
-/////////////////////////////
-// InfluenceQueue::Element //
-/////////////////////////////
-std::string InfluenceQueue::Element::Dump() const {
+auto InfluenceQueue::Element::Dump() const -> std::string
+{
     std::stringstream retval;
     retval << "InfluenceQueue::Element: name: " << name << "  empire id: " << empire_id;
     retval << "  allocated: " << allocated_ip;
@@ -83,30 +83,30 @@ std::string InfluenceQueue::Element::Dump() const {
 }
 
 
-////////////////////
-// InfluenceQueue //
-////////////////////
-bool InfluenceQueue::InQueue(const std::string& name) const {
+auto InfluenceQueue::InQueue(const std::string& name) const -> bool
+{
     return std::any_of(m_queue.begin(), m_queue.end(),
                        [name](const Element& e){ return e.name == name; });
 }
 
-float InfluenceQueue::AllocatedStockpileIP() const
-{ return 0.0f; } // todo
+auto InfluenceQueue::AllocatedStockpileIP() const -> float // todo
+{ return 0.0f; }
 
-InfluenceQueue::const_iterator InfluenceQueue::find(const std::string& item_name) const
+auto InfluenceQueue::find(const std::string& item_name) const -> const_iterator
 { return std::find_if(begin(), end(), [&](const auto& e) { return e.name == item_name; }); }
 
-const InfluenceQueue::Element& InfluenceQueue::operator[](std::size_t i) const {
+auto InfluenceQueue::operator[](std::size_t i) const -> const Element&
+{
     if (i >= m_queue.size())
         return EMPTY_ELEMENT;
     return m_queue[i];
 }
 
-const InfluenceQueue::Element& InfluenceQueue::operator[](int i) const
+auto InfluenceQueue::operator[](int i) const -> const Element&
 { return operator[](static_cast<std::size_t>(i)); }
 
-void InfluenceQueue::Update() {
+void InfluenceQueue::Update()
+{
     const Empire* empire = GetEmpire(m_empire_id);
     if (!empire) {
         ErrorLogger() << "InfluenceQueue::Update passed null empire.  doing nothing.";
@@ -149,22 +149,24 @@ void InfluenceQueue::Update() {
     InfluenceQueueChangedSignal();
 }
 
-void InfluenceQueue::erase(int i) {
+void InfluenceQueue::erase(int i)
+{
     if (i > 0 && i < static_cast<int>(m_queue.size()))
         m_queue.erase(begin() + i);
 }
 
-InfluenceQueue::iterator InfluenceQueue::find(const std::string& item_name)
+auto InfluenceQueue::find(const std::string& item_name) -> iterator
 { return std::find_if(begin(), end(), [&](const auto& e) { return e.name == item_name; }); }
 
-InfluenceQueue::Element& InfluenceQueue::operator[](int i) {
+auto InfluenceQueue::operator[](int i) -> Element&
+{
     assert(0 <= i && i < static_cast<int>(m_queue.size()));
     return m_queue[i];
 }
 
-void InfluenceQueue::clear() {
+void InfluenceQueue::clear()
+{
     m_queue.clear();
     m_projects_in_progress = 0;
     InfluenceQueueChangedSignal();
 }
-
