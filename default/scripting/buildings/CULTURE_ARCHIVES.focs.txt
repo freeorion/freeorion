@@ -6,6 +6,8 @@ BuildingType
     tags = "ANTIQUATED"
     location = Described description = "NOWHERE" condition = Not All
     effectsgroups = [
+        [[SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS]]
+    
         EffectsGroup          // These bonuses given to anyone
             scope = And [
                 Object id = Source.PlanetID
@@ -17,7 +19,6 @@ BuildingType
             effects = [
                 SetTargetResearch value = Value + 5
                 SetTargetIndustry value = Value + Target.Population / 2
-                //SetDetection value = Value + 10000
             ]
 
         EffectsGroup
@@ -43,3 +44,4 @@ BuildingType
 
 #include "/scripting/common/priorities.macros"
 #include "/scripting/common/base_prod.macros"
+#include "/scripting/buildings/buildings.macros"

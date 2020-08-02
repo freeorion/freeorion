@@ -12,6 +12,10 @@ BuildingType
             Building name = "BLD_BIOTERROR_PROJECTOR"
         ]
     ]
+    effectsgroups = [
+        [[SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS]]
+    ]
     icon = ""
 
 #include "/scripting/common/base_prod.macros"
+#include "/scripting/buildings/buildings.macros"

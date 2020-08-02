@@ -10,6 +10,8 @@ BuildingType
         Not Contains Building name = "BLD_OBSERVATORY"
     ]
     effectsgroups = [
+        [[SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS]]
+    
         EffectsGroup
             scope = NumberOf number = 1 condition = System
             effects = SetStealth value = Value - 1
@@ -24,3 +26,4 @@ BuildingType
     icon = "icons/building/lighthouse.png"
 
 #include "/scripting/common/base_prod.macros"
+#include "/scripting/buildings/buildings.macros"

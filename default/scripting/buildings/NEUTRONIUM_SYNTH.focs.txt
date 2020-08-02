@@ -7,7 +7,11 @@ BuildingType
         Planet
         Not Contains Building name = "BLD_NEUTRONIUM_SYNTH"
         OwnedBy empire = Source.Owner
-        ]
+    ]
+    effectsgroups = [
+        [[SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS]]
+    ]
     icon = "icons/building/neutronium-forge.png"
 
 #include "/scripting/common/base_prod.macros"
+#include "/scripting/buildings/buildings.macros"

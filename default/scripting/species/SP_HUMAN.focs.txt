@@ -17,8 +17,8 @@ Species
     ]
 
     defaultfocus = "FOCUS_RESEARCH"
-    likes = ["PLC_BALANCE" "FOCUS_RESEARCH"]
-    dislikes = ["PLC_CENTRALIZATION"]
+    likes = ["PLC_BALANCE" "FOCUS_RESEARCH" "WORLDTREE_SPECIAL" ]
+    dislikes = ["PLC_CENTRALIZATION" "TIDAL_LOCK_SPECIAL" "FOCUS_BIOTERROR" "FOCUS_PROTECTION" "BLD_MILITARY_COMMAND"]
 
     effectsgroups = [
         [[AVERAGE_INDUSTRY]]

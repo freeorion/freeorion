@@ -31,7 +31,9 @@ BuildingType
                 low = 1
         ]
     ]
-    effectsgroups = 
+    effectsgroups = [
+        [[SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS]]
+    
         EffectsGroup
             scope = And [
                 Object id = Source.PlanetID
@@ -44,10 +46,10 @@ BuildingType
                     OwnedBy empire = Source.Owner
                 ])
             ]
-
+    ]
     icon = "icons/building/stockpiling_center.png"
 
 #include "/scripting/common/base_prod.macros"
-
 #include "/scripting/common/enqueue.macros"
 #include "/scripting/common/priorities.macros"
+#include "/scripting/buildings/buildings.macros"

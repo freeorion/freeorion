@@ -11,14 +11,18 @@ BuildingType
         Not HasSpecial name = "RESONANT_MOON_SPECIAL"
     ]
     EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
-    effectsgroups =
+    effectsgroups = [
+        [[SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS]]
+    
         EffectsGroup
             scope = And [
                 Object id = Source.PlanetID
                 Planet
             ]
             effects = AddSpecial name = "RESONANT_MOON_SPECIAL"
+    ]
     icon = "icons/specials_huge/resonant_moon.png"
 
 #include "/scripting/common/enqueue.macros"
 #include "/scripting/common/base_prod.macros"
+#include "/scripting/buildings/buildings.macros"

@@ -5,6 +5,8 @@ BuildingType
     buildtime = 8
     location = Planet
     effectsgroups = [
+        [[SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS]]
+    
         EffectsGroup
             scope = Object id = Source.SystemID
             effects = [
@@ -22,3 +24,4 @@ BuildingType
     icon = "icons/tech/n-dimensional_structures.png"
 
 #include "/scripting/common/base_prod.macros"
+#include "/scripting/buildings/buildings.macros"

@@ -16,6 +16,8 @@ BuildingType
     ]
     EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
+        [[SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS]]
+    
         EffectsGroup
             scope = And [
                 OwnedBy empire = Source.Owner
@@ -43,3 +45,4 @@ BuildingType
 #include "/scripting/common/enqueue.macros"
 #include "/scripting/common/priorities.macros"
 #include "/scripting/common/base_prod.macros"
+#include "/scripting/buildings/buildings.macros"

@@ -10,7 +10,11 @@ BuildingType
         TargetPopulation low = 1
     ]
     EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    effectsgroups = [
+        [[SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS]]
+    ]
     icon = "icons/building/genome_bank.png"
 
 #include "/scripting/common/enqueue.macros"
 #include "/scripting/common/base_prod.macros"
+#include "/scripting/buildings/buildings.macros"

@@ -15715,6 +15715,16 @@ DISLIKES_POLICY_LABEL
 Dislikes %1% policy %2%
 
 # %1% name of planet
+# %2% name of building
+LIKES_BUILDING_LABEL
+Likes %1% building %2%
+
+# %1% name of planet
+# %2% name of building
+DISLIKES_BUILDING_LABEL
+Dislikes %1% building %2%
+
+# %1% name of planet
 # %2% name of species on planet
 LIKES_FOCUS_LABEL
 Likes %1% focus
