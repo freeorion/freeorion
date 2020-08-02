@@ -1,0 +1,94 @@
+// sets stability (happiness) on planets in empire that has adopted the policy this macro effect is added to, if those planets' species like or dislike the policy
+
+STABILITY_PER_LIKED_OR_DISLIKED_BUILDING_ON_PLANET
+'''4'''
+
+STABILITY_PER_LIKED_OR_DISLIKED_BUILDING_IN_SYSTEM
+'''1'''
+
+STABILITY_PER_LIKED_OR_DISLIKED_BUILDING_IN_EMPIRE
+'''0.5'''
+
+SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
+'''
+        // species like building on the same planet
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Population low = 0.001
+                (SpeciesContentOpinion species = LocalCandidate.Species name = ThisBuilding > 0)
+            ]
+            accountinglabel = "LIKES_BUILDING_LABEL"
+            // priority = [[DEFAULT_PRIORITY]]  // want to avoid needing to include the priorities-defining macro in all policies...
+            effects =
+                SetTargetHappiness value = Value + [[STABILITY_PER_LIKED_OR_DISLIKED_BUILDING_ON_PLANET]] * SpeciesContentOpinion species = Target.Species name = ThisBuilding
+
+        // species dislike building on the same
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Population low = 0.001
+                (SpeciesContentOpinion species = LocalCandidate.Species name = ThisBuilding < 0)
+            ]
+            accountinglabel = "DISLIKES_BUILDING_LABEL"
+            // priority = [[DEFAULT_PRIORITY]]  // want to avoid needing to include the priorities-defining macro in all policies...
+            effects =
+                SetTargetHappiness value = Value + [[STABILITY_PER_LIKED_OR_DISLIKED_BUILDING_ON_PLANET]] * SpeciesContentOpinion species = Target.Species name = ThisBuilding
+                
+        // species like building in the same system
+        EffectsGroup
+            scope = And [
+                Planet
+                InSystem id = Source.SystemID
+                Population low = 0.001
+                Not Object id = Source.PlanetID // but not on same planet, which is covered by above case
+                (SpeciesContentOpinion species = LocalCandidate.Species name = ThisBuilding < 0)
+            ]
+            accountinglabel = "DISLIKES_BUILDING_LABEL"
+            // priority = [[DEFAULT_PRIORITY]]  // want to avoid needing to include the priorities-defining macro in all policies...
+            effects =
+                SetTargetHappiness value = Value + [[STABILITY_PER_LIKED_OR_DISLIKED_BUILDING_IN_SYSTEM]] * SpeciesContentOpinion species = Target.Species name = ThisBuilding
+
+        // species dislike building in the same system
+        EffectsGroup
+            scope = And [
+                Planet
+                InSystem id = Source.SystemID
+                Population low = 0.001
+                Not Object id = Source.PlanetID // but not on same planet, which is covered by above case
+                (SpeciesContentOpinion species = LocalCandidate.Species name = ThisBuilding > 0)
+            ]
+            accountinglabel = "LIKES_BUILDING_LABEL"
+            // priority = [[DEFAULT_PRIORITY]]  // want to avoid needing to include the priorities-defining macro in all policies...
+            effects =
+                SetTargetHappiness value = Value + [[STABILITY_PER_LIKED_OR_DISLIKED_BUILDING_IN_SYSTEM]] * SpeciesContentOpinion species = Target.Species name = ThisBuilding
+
+        // species like building in empire
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Population low = 0.001
+                Not InSystem id = Source.SystemID
+                (SpeciesContentOpinion species = LocalCandidate.Species name = ThisBuilding > 0)
+            ]
+            accountinglabel = "LIKES_BUILDING_LABEL"
+            // priority = [[DEFAULT_PRIORITY]]  // want to avoid needing to include the priorities-defining macro in all policies...
+            effects =
+                SetTargetHappiness value = Value + [[STABILITY_PER_LIKED_OR_DISLIKED_BUILDING_IN_EMPIRE]] * SpeciesContentOpinion species = Target.Species name = ThisBuilding
+
+        // species dislike building in empire
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Population low = 0.001
+                Not InSystem id = Source.SystemID
+                (SpeciesContentOpinion species = LocalCandidate.Species name = ThisBuilding < 0)
+            ]
+            accountinglabel = "DISLIKES_BUILDING_LABEL"
+            // priority = [[DEFAULT_PRIORITY]]  // want to avoid needing to include the priorities-defining macro in all policies...
+            effects =
+                SetTargetHappiness value = Value + [[STABILITY_PER_LIKED_OR_DISLIKED_BUILDING_IN_EMPIRE]] * SpeciesContentOpinion species = Target.Species name = ThisBuilding
+
+'''
