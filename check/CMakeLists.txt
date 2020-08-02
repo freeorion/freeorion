@@ -1,4 +1,5 @@
 find_package(CPPCheck)
+find_package(ClangFormat)
 find_package(Flake8)
 find_package(PythonInterp ${MINIMUM_PYTHON_VERSION})
 
@@ -11,6 +12,38 @@ if(TARGET Cppcheck::cppcheck)
             --std=c++14
             ${PROJECT_SOURCE_DIR}
         COMMENT "Check C++ for problematic code"
+    )
+endif()
+
+if(TARGET ClangFormat::clang-format)
+    list(APPEND CHECK_CPP_FORMAT_SOURCES "")
+
+    get_target_property(TARGET_SOURCES freeorioncommon SOURCES)
+    list(APPEND CHECK_CPP_FORMAT_SOURCES "${TARGET_SOURCES}")
+
+    get_target_property(TARGET_SOURCES freeorionparseobj SOURCES)
+    list(APPEND CHECK_CPP_FORMAT_SOURCES "${TARGET_SOURCES}")
+
+    get_target_property(TARGET_SOURCES freeoriond SOURCES)
+    list(APPEND CHECK_CPP_FORMAT_SOURCES "${TARGET_SOURCES}")
+
+    get_target_property(TARGET_SOURCES freeorionca SOURCES)
+    list(APPEND CHECK_CPP_FORMAT_SOURCES "${TARGET_SOURCES}")
+
+    if(TARGET freeorion)
+        get_target_property(TARGET_SOURCES freeorion SOURCES)
+        list(APPEND CHECK_CPP_FORMAT_SOURCES "${TARGET_SOURCES}")
+    endif()
+
+    add_custom_target(check-cpp-format
+        ${CMAKE_CURRENT_SOURCE_DIR}/clang-format-report.py
+            --config=${CMAKE_CURRENT_SOURCE_DIR}/clang-format
+            --clang-format-executable=$<TARGET_FILE:ClangFormat::clang-format>
+            --color
+            ${CHECK_CPP_FORMAT_SOURCES}
+        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+        COMMENT "Check C++ for malformatted code"
+        USES_TERMINAL
     )
 endif()
 
@@ -28,6 +61,10 @@ if(NOT TARGET check)
     add_custom_target(check
         COMMENT "Run code quality checks"
     )
+endif()
+
+if(TARGET check-cpp-format)
+    add_dependencies(check check-cpp-format)
 endif()
 
 if(TARGET check-cpp)

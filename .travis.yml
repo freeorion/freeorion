@@ -31,8 +31,15 @@ _linux_setup_common: &_linux_setup_common
       libsdl2-dev
       libvorbis-dev
       cppcheck
+      clang-format-10
       doxygen
+      python3-colorama
       python3-pip
+    - >
+      sudo update-alternatives
+      --install /usr/bin/clang-format clang-format /usr/bin/clang-format-10 100
+      --slave /usr/bin/clang-format-diff clang-format-diff /usr/bin/clang-format-diff-10
+      --slave /usr/bin/git-clang-format git-clang-format /usr/bin/git-clang-format-10
     - python3 -m pip install flake8==3.7.9
   before_script:
     - mkdir build
@@ -55,6 +62,14 @@ _test_python_common: &_test_python_common
 
 jobs:
   include:
+    - name: Lint C++ code with clang-format
+      <<: *_linux_setup_common
+      stage: lint
+      script:
+        - cmake ..
+        - cmake --build . --target check-cpp-format
+      after_success: ~
+
     - name: Lint AI with Python 3.5
       <<: *_linux_setup_common
       stage: lint
