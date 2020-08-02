@@ -519,8 +519,8 @@ CUIIconButtonRepresenter::CUIIconButtonRepresenter(std::shared_ptr<GG::SubTextur
                                                    const GG::Clr& unchecked_clr,
                                                    std::shared_ptr<GG::SubTexture> checked_icon,
                                                    const GG::Clr& checked_clr) :
-    m_unchecked_icon(unchecked_icon),
-    m_checked_icon(checked_icon),
+    m_unchecked_icon(std::move(unchecked_icon)),
+    m_checked_icon(std::move(checked_icon)),
     m_unchecked_color(unchecked_clr),
     m_checked_color(checked_clr)
 {}
@@ -571,10 +571,10 @@ void CUIIconButtonRepresenter::Render(const GG::StateButton& button) const {
 ///////////////////////////////////////
 // class CUIStateButton
 ///////////////////////////////////////
-CUIStateButton::CUIStateButton(const std::string& str, GG::Flags<GG::TextFormat> format,
+CUIStateButton::CUIStateButton(std::string str, GG::Flags<GG::TextFormat> format,
                                std::shared_ptr<GG::StateButtonRepresenter> representer) :
-    StateButton(str, ClientUI::GetFont(), format,
-                ClientUI::StateButtonColor(), representer, ClientUI::TextColor())
+    StateButton(std::move(str), ClientUI::GetFont(), format,
+                ClientUI::StateButtonColor(), std::move(representer), ClientUI::TextColor())
 {}
 
 

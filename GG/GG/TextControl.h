@@ -56,7 +56,7 @@ public:
     using Wnd::SetMinSize;
 
     TextControl(X x, Y y, X w, Y h, std::string str,
-                std::shared_ptr<Font> font,
+                const std::shared_ptr<Font>& font,
                 Clr color = CLR_BLACK, Flags<TextFormat> format = FORMAT_NONE,
                 Flags<WndFlag> flags = NO_WND_FLAGS);
 
@@ -68,7 +68,7 @@ public:
      constructor.*/
     TextControl(X x, Y y, X w, Y h, std::string str,
                 std::vector<std::shared_ptr<Font::TextElement>> text_elements,
-                std::shared_ptr<Font> font,
+                const std::shared_ptr<Font>& font,
                 Clr color = CLR_BLACK, Flags<TextFormat> format = FORMAT_NONE,
                 Flags<WndFlag> flags = NO_WND_FLAGS);
 

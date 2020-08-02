@@ -35,10 +35,11 @@ void ButtonChangedEcho(std::size_t index)
 ////////////////////////////////////////////////
 // GG::Button
 ////////////////////////////////////////////////
-Button::Button(const std::string& str, const std::shared_ptr<Font>& font, Clr color,
+Button::Button(std::string str, const std::shared_ptr<Font>& font, Clr color,
                Clr text_color/* = CLR_BLACK*/, Flags<WndFlag> flags/* = INTERACTIVE*/) :
     Control(X0, Y0, X1, Y1, flags),
-    m_label(Wnd::Create<TextControl>(X0, Y0, X1, Y1, str, font, text_color, FORMAT_NONE, NO_WND_FLAGS)),
+    m_label(Wnd::Create<TextControl>(X0, Y0, X1, Y1, std::move(str), font,
+                                     text_color, FORMAT_NONE, NO_WND_FLAGS)),
     m_state(BN_UNPRESSED)
 {
     m_color = color;
@@ -258,13 +259,13 @@ void Button::RenderDefault()
 ////////////////////////////////////////////////
 // GG::StateButton
 ////////////////////////////////////////////////
-StateButton::StateButton(const std::string& str, const std::shared_ptr<Font>& font,
+StateButton::StateButton(std::string str, const std::shared_ptr<Font>& font,
                          Flags<TextFormat> format, Clr color,
                          std::shared_ptr<StateButtonRepresenter> representer,
                          Clr text_color/* = CLR_BLACK*/) :
     Control(X0, Y0, X1, Y1, INTERACTIVE),
-    m_representer(representer),
-    m_label(Wnd::Create<TextControl>(X0, Y0, X1, Y1, str, font, text_color, format, NO_WND_FLAGS)),
+    m_representer(std::move(representer)),
+    m_label(Wnd::Create<TextControl>(X0, Y0, X1, Y1, std::move(str), font, text_color, format, NO_WND_FLAGS)),
     m_state(BN_UNPRESSED),
     m_checked(false)
 {
@@ -549,8 +550,8 @@ void BeveledTabRepresenter::Render(const StateButton& button) const
 // GG::RadioButtonGroup
 ////////////////////////////////////////////////
 // ButtonSlot
-RadioButtonGroup::ButtonSlot::ButtonSlot(std::shared_ptr<StateButton>& button_) :
-    button(button_)
+RadioButtonGroup::ButtonSlot::ButtonSlot(std::shared_ptr<StateButton> button_) :
+    button(std::move(button_))
 {}
 
 // RadioButtonGroup
@@ -748,14 +749,13 @@ void RadioButtonGroup::ExpandButtons(bool expand)
         std::size_t old_checked_button = m_checked_button;
         std::vector<std::shared_ptr<StateButton>> buttons(m_button_slots.size());
         while (!m_button_slots.empty()) {
-            auto button = m_button_slots.back().button;
+            auto& button = m_button_slots.back().button;
             buttons[m_button_slots.size() - 1] = button;
             RemoveButton(button.get());
         }
         m_expand_buttons = expand;
-        for (auto& button : buttons) {
-            AddButton(button);
-        }
+        for (auto& button : buttons)
+            AddButton(std::move(button));
         SetCheck(old_checked_button);
     }
 }
@@ -771,9 +771,8 @@ void RadioButtonGroup::ExpandButtonsProportionally(bool proportional)
             RemoveButton(button.get());
         }
         m_expand_buttons_proportionally = proportional;
-        for (auto& button : buttons) {
-            AddButton(button);
-        }
+        for (auto& button : buttons)
+            AddButton(std::move(button));
         SetCheck(old_checked_button);
     }
 }

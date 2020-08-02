@@ -343,19 +343,19 @@ void TabBar::DoLayout()
 void TabBar::Render()
 {}
 
-std::size_t TabBar::AddTab(const std::string& name)
+std::size_t TabBar::AddTab(std::string name)
 {
     std::size_t retval = m_tab_buttons.size();
-    InsertTab(m_tab_buttons.size(), name);
+    InsertTab(m_tab_buttons.size(), std::move(name));
     return retval;
 }
 
-void TabBar::InsertTab(std::size_t index, const std::string& name)
+void TabBar::InsertTab(std::size_t index, std::string name)
 {
     assert(index <= m_tab_buttons.size());
     const auto& style_factory = GetStyleFactory();
     auto button = style_factory->NewTabBarTab(
-        name, m_font, FORMAT_CENTER, Color(), m_text_color);
+        std::move(name), m_font, FORMAT_CENTER, Color(), m_text_color);
     button->InstallEventFilter(shared_from_this());
     m_tab_buttons.insert(m_tab_buttons.begin() + index, button);
     m_tabs->InsertButton(index, m_tab_buttons[index]);

@@ -166,15 +166,16 @@ public:
 private:
     std::shared_ptr<GG::SubTexture> m_unchecked_icon;
     std::shared_ptr<GG::SubTexture> m_checked_icon;
-    GG::Clr                             m_unchecked_color;
-    GG::Clr                             m_checked_color;
+    GG::Clr                         m_unchecked_color;
+    GG::Clr                         m_checked_color;
 };
 
 
 /** a FreeOrion StateButton control */
 class CUIStateButton : public GG::StateButton {
 public:
-    CUIStateButton(const std::string& str, GG::Flags<GG::TextFormat> format, std::shared_ptr<GG::StateButtonRepresenter> representer);
+    CUIStateButton(std::string str, GG::Flags<GG::TextFormat> format,
+                   std::shared_ptr<GG::StateButtonRepresenter> representer);
 
 };
 

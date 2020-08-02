@@ -194,13 +194,13 @@ public:
     /** Adds a tab called \a name to the sequence of tabs in this TabBar.  \a
         name can be used later to remove the tab (\a name is not checked for
         uniqueness).  Returns the index at which the tab is placed. */
-    std::size_t AddTab(const std::string& name);
+    std::size_t AddTab(std::string name);
 
     /** Adds tab to the sequence of tabs in this TabBar, inserting it at the
         \a index location within the sequence.  \a name can be used later to
         remove the tab (\a name is not checked for uniqueness).  Not range
         checked. */
-    void InsertTab(std::size_t index, const std::string& name);
+    void InsertTab(std::size_t index, std::string name);
 
     /** Removes the first tab previously added witht he name \a name from the
         sequence of tab in this TabBar. */

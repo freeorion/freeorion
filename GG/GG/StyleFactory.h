@@ -76,9 +76,9 @@ public:
     virtual std::string Translate(const std::string& key) const;
 
     /** Returns a new GG Button. */
-    virtual std::shared_ptr<Button> NewButton(const std::string& str,
-                              const std::shared_ptr<Font>& font, Clr color, Clr text_color = CLR_BLACK,
-                              Flags<WndFlag> flags = INTERACTIVE) const;
+    virtual std::shared_ptr<Button> NewButton(
+        std::string str, const std::shared_ptr<Font>& font, Clr color,
+        Clr text_color = CLR_BLACK, Flags<WndFlag> flags = INTERACTIVE) const;
 
     /** Returns a new GG RadioButtonGroup. */
     virtual std::shared_ptr<RadioButtonGroup> NewRadioButtonGroup(Orientation orientation) const;
@@ -87,8 +87,9 @@ public:
     virtual std::shared_ptr<DropDownList> NewDropDownList(size_t num_shown_elements, Clr color) const;
 
     /** Returns a new GG Edit. */
-    virtual std::shared_ptr<Edit> NewEdit(const std::string& str, const std::shared_ptr<Font>& font,
-                          Clr color, Clr text_color = CLR_BLACK, Clr interior = CLR_ZERO) const;
+    virtual std::shared_ptr<Edit> NewEdit(
+        std::string str, const std::shared_ptr<Font>& font, Clr color,
+        Clr text_color = CLR_BLACK, Clr interior = CLR_ZERO) const;
 
     /** Returns a new GG ListBox. */
     virtual std::shared_ptr<ListBox> NewListBox(Clr color, Clr interior = CLR_ZERO) const;
@@ -98,15 +99,16 @@ public:
 
     /** Returns a new GG Slider<int>. */
     virtual std::shared_ptr<Slider<int>> NewIntSlider(int min, int max, Orientation orientation,
-                                      Clr color, int tab_width, int line_width = 5) const;
+                                                      Clr color, int tab_width, int line_width = 5) const;
 
     /** Returns a new GG TabBar. */
     virtual std::shared_ptr<TabBar> NewTabBar(const std::shared_ptr<Font>& font, Clr color,
-                              Clr text_color = CLR_BLACK) const;
+                                              Clr text_color = CLR_BLACK) const;
 
     /** Returns a new GG TextControl. */
-    virtual std::shared_ptr<TextControl> NewTextControl(const std::string& str, const std::shared_ptr<Font>& font,
-                                        Clr color = CLR_BLACK, Flags<TextFormat> format = FORMAT_NONE) const;
+    virtual std::shared_ptr<TextControl> NewTextControl(
+        std::string str, const std::shared_ptr<Font>& font,
+        Clr color = CLR_BLACK, Flags<TextFormat> format = FORMAT_NONE) const;
 
     /** Returns a new ListBox, to be used in a DropDownList. */
     virtual std::shared_ptr<ListBox> NewDropDownListListBox(Clr color, Clr interior = CLR_ZERO) const;
@@ -154,26 +156,29 @@ public:
     virtual std::shared_ptr<Button> NewSpinDecrButton(const std::shared_ptr<Font>& font, Clr color) const;
 
     /** Returns a new Edit, to be used in an editable Spin. */
-    virtual std::shared_ptr<Edit> NewSpinEdit(const std::string& str, const std::shared_ptr<Font>& font,
-                              Clr color, Clr text_color = CLR_BLACK, Clr interior = CLR_ZERO) const;
+    virtual std::shared_ptr<Edit> NewSpinEdit(
+        std::string str, const std::shared_ptr<Font>& font, Clr color,
+        Clr text_color = CLR_BLACK, Clr interior = CLR_ZERO) const;
 
     /** Returns a new StateButton, to be used in a TabBar. */
-    virtual std::shared_ptr<StateButton> NewTabBarTab(const std::string& str,
-                                      const std::shared_ptr<Font>& font, Flags<TextFormat> format, Clr color,
-                                      Clr text_color = CLR_BLACK) const;
+    virtual std::shared_ptr<StateButton> NewTabBarTab(
+        std::string str, const std::shared_ptr<Font>& font, Flags<TextFormat> format,
+        Clr color, Clr text_color = CLR_BLACK) const;
 
     /** Returns a new left Button, to be used in a TabBar. */
-    virtual std::shared_ptr<Button> NewTabBarLeftButton(const std::shared_ptr<Font>& font, Clr color, Clr text_color = CLR_BLACK) const;
+    virtual std::shared_ptr<Button> NewTabBarLeftButton(const std::shared_ptr<Font>& font, Clr color,
+                                                        Clr text_color = CLR_BLACK) const;
 
     /** Returns a new left Button, to be used in a TabBar. */
-    virtual std::shared_ptr<Button> NewTabBarRightButton(const std::shared_ptr<Font>& font, Clr color, Clr text_color = CLR_BLACK) const;
+    virtual std::shared_ptr<Button> NewTabBarRightButton(const std::shared_ptr<Font>& font, Clr color,
+                                                         Clr text_color = CLR_BLACK) const;
 
     /** Returns a new GG ThreeButtonDlg that automatically centers itself in
         the app. */
-    virtual std::shared_ptr<ThreeButtonDlg> NewThreeButtonDlg(X w, Y h, const std::string& msg, const std::shared_ptr<Font>& font,
-                                              Clr color, Clr border_color, Clr button_color, Clr text_color, int buttons,
-                                              const std::string& zero = "", const std::string& one = "",
-                                              const std::string& two = "") const;
+    virtual std::shared_ptr<ThreeButtonDlg> NewThreeButtonDlg(
+        X w, Y h, std::string msg, const std::shared_ptr<Font>& font,
+        Clr color, Clr border_color, Clr button_color, Clr text_color, int buttons,
+        std::string zero = "", std::string one = "", std::string two = "") const;
 
     /** The "filename" of the default font. */
     static const std::string& DefaultFontName();

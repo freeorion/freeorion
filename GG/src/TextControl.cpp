@@ -24,13 +24,13 @@ const Pt INVALID_USABLE_SIZE(-X1, -Y1);
 // GG::TextControl
 ////////////////////////////////////////////////
 TextControl::TextControl(X x, Y y, X w, Y h, std::string str,
-                         std::shared_ptr<Font> font, Clr color/* = CLR_BLACK*/,
+                         const std::shared_ptr<Font>& font, Clr color/* = CLR_BLACK*/,
                          Flags<TextFormat> format/* = FORMAT_NONE*/,
                          Flags<WndFlag> flags/* = NO_WND_FLAGS*/) :
     Control(x, y, w, h, flags),
     m_format(format),
     m_text_color(color),
-    m_font(std::move(font))
+    m_font(font)
 {
     ValidateFormat();
     SetText(std::move(str));
@@ -38,13 +38,13 @@ TextControl::TextControl(X x, Y y, X w, Y h, std::string str,
 
 TextControl::TextControl(X x, Y y, X w, Y h, std::string str,
                          std::vector<std::shared_ptr<Font::TextElement>> text_elements,
-                         std::shared_ptr<Font> font,
+                         const std::shared_ptr<Font>& font,
                          Clr color /*= CLR_BLACK*/, Flags<TextFormat> format /*= FORMAT_NONE*/,
                          Flags<WndFlag> flags /*= NO_WND_FLAGS*/) :
     Control(x, y, w, h, flags),
     m_format(format),
     m_text_color(color),
-    m_font(std::move(font))
+    m_font(font)
 {
     ValidateFormat();
     SetText(std::move(str), std::move(text_elements));
