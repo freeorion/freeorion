@@ -620,8 +620,8 @@ private:
 
         void SetValue(bool value) {
             (**sizer).Set(option_key, value);
-            button->SetText(value?label_true:label_false);
-            button->SetBrowseText(value?tip_true:tip_false);
+            button->SetText(value ? label_true : label_false);
+            button->SetBrowseText(value ? tip_true : tip_false);
             if (auto locked_parent = parent.lock()) {
                 locked_parent->DoLayout();
                 locked_parent->ChangedSignal();
@@ -631,21 +631,20 @@ private:
         bool GetValue() const
         { return (**sizer).Get(option_key); }
 
-        ToggleData(const std::string& label_true_, const std::string& label_false_,
-                   const std::string& tip_true_, const std::string& tip_false_,
-                   std::string option_key_,
+        ToggleData(std::string label_true_, std::string label_false_, std::string tip_true_,
+                   std::string tip_false_, std::string option_key_,
                    std::unique_ptr<BarSizer>* sizer_, std::shared_ptr<OptionsBar> parent_) :
-            label_true(label_true_),
-            label_false(label_false_),
-            tip_true(tip_true_),
-            tip_false(tip_false_),
-            option_key(option_key_),
+            label_true(std::move(label_true_)),
+            label_false(std::move(label_false_)),
+            tip_true(std::move(tip_true_)),
+            tip_false(std::move(tip_false_)),
+            option_key(std::move(option_key_)),
             sizer(sizer_),
             parent(std::forward<std::shared_ptr<OptionsBar>>(parent_))
         {
             button = Wnd::Create<CUIButton>("-");
-            parent_->AttachChild(button);
             button->LeftClickedSignal.connect(boost::bind(&ToggleData::Toggle, this));
+            parent_->AttachChild(std::move(button));
             SetValue(GetValue());
         }
     };
@@ -754,7 +753,7 @@ void GraphicalSummaryWnd::MakeSummaries(int log_id) {
 
 void GraphicalSummaryWnd::DeleteSideBars() {
     for (auto& box : m_side_boxes)
-    { DetachChild(box.get()); }
+        DetachChild(box.get());
     m_side_boxes.clear();
 }
 
@@ -767,8 +766,8 @@ void GraphicalSummaryWnd::GenerateGraph() {
         if (summary.second.total_max_health > EPSILON) {
             summary.second.Sort();
             auto box = GG::Wnd::Create<SideBar>(summary.second, *m_sizer);
-            m_side_boxes.push_back(box);
-            AttachChild(box);
+            m_side_boxes.emplace_back(box);
+            AttachChild(std::move(box));
         }
     }
 

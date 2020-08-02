@@ -13,26 +13,14 @@
 
 using namespace GG;
 
-RichTextTag::RichTextTag(const std::string& tag_,
-                            const std::string& params_string,
-                            const std::string& content_)
-: tag(tag_), tag_params(params_string), content(content_)
-{
-}
+RichTextTag::RichTextTag(std::string tag_, std::string params_string_, std::string content_) :
+    tag(std::move(tag_)),
+    tag_params(std::move(params_string_)),
+    content(std::move(content_))
+{}
 
-std::string RichTextTag::ToString() const {
-    std::string str("<");
-    str += tag;
-
-    // Convert parameters to key="value".
-    if (tag_params.length() != 0) {
-        str += " " + tag_params;
-    }
-
-    str += ">" + content + "</" + tag + ">";
-
-    return str;
-}
+std::string RichTextTag::ToString() const
+{ return "<" + tag + (tag_params.length() != 0 ? " " + tag_params : "") + ">" + content + "</" + tag + ">"; }
 
 
 /**
@@ -41,8 +29,8 @@ std::string RichTextTag::ToString() const {
 class TagParserImpl {
     public:
         //! Create a new parser that will consider the given tags as known, others as plaintext.
-        TagParserImpl(const std::set<std::string>& known_tags) :
-            m_known_tags(known_tags)
+        TagParserImpl(std::set<std::string> known_tags) :
+            m_known_tags(std::move(known_tags))
         {}
 
         //! Parses \a text into tags. All text is considered part of some tag, text outside known tags will be put in plaintext tags.
@@ -57,18 +45,17 @@ class TagParserImpl {
             } catch (const std::exception& ex) {
                 // If an error was encountered, display it in the text box.
                 tags.clear();
-                tags.push_back(CreateErrorTag(ex.what()));
+                tags.emplace_back(CreateErrorTag(ex.what()));
                 return tags;
             }
 
             // Filter out unregistered tags.
             std::vector<RichTextTag> relevant_tags;
-            for (const RichTextTag& tag : tags) {
+            for (RichTextTag& tag : tags) {
                 if (m_known_tags.count(tag.tag))
-                    AddWithPlaintextSquashing(relevant_tags, tag);
+                    AddWithPlaintextSquashing(relevant_tags, std::move(tag));
                 else {
-                    RichTextTag wrapped = WrapInPlaintext(tag);
-                    AddWithPlaintextSquashing(relevant_tags, wrapped);
+                    AddWithPlaintextSquashing(relevant_tags, WrapInPlaintext(tag));
                 }
             }
             return relevant_tags;
@@ -80,8 +67,8 @@ class TagParserImpl {
         //! Parses tags until the first unmatched close tag, or the end.
         //! \return The position before the first unmatched closing tag or the end.
         std::string::const_iterator ParseTagsImpl(const std::string::const_iterator& start,
-                                                    const std::string::const_iterator& end,
-                                                    std::vector<RichTextTag>* tags)
+                                                  const std::string::const_iterator& end,
+                                                  std::vector<RichTextTag>* tags)
         {
             std::string::const_iterator current = start;
             boost::match_results<std::string::const_iterator> match;
@@ -102,9 +89,8 @@ class TagParserImpl {
                 if (begin_match.matched) {
                     // A new tag begins. Finish current plaintext tag if it is non-empty.
                     if (tags && current != current + match.position()) {
-                        tags->push_back(
-                            RichTextTag(RichText::PLAINTEXT_TAG, "",
-                                        std::string(current, current + match.position())));
+                        tags->emplace_back(RichText::PLAINTEXT_TAG, "",
+                                           std::string(current, current + match.position()));
                     }
 
                     // Recurse to the next nesting level.
@@ -122,10 +108,8 @@ class TagParserImpl {
             }
 
             // All done with tags, output final plaintext tag if non-empty.
-            if (tags && current != end) {
-                tags->push_back(
-                    RichTextTag(RichText::PLAINTEXT_TAG, "", std::string(current, end)));
-            }
+            if (tags && current != end)
+                tags->emplace_back(RichText::PLAINTEXT_TAG, "", std::string(current, end));
 
             // Did not find any more start tags. Return end happily.
             return end;
@@ -158,7 +142,7 @@ class TagParserImpl {
             * @return The position just after the end tag. Throws if not found.
             */
         std::basic_string<char>::const_iterator FinishTag(
-            const std::string& tag, const std::string& parameters,
+            std::string tag, std::string parameters,
             const std::string::const_iterator& start,
             const std::string::const_iterator& end,
             std::vector<RichTextTag>* tags)
@@ -174,14 +158,12 @@ class TagParserImpl {
                 throw std::runtime_error(error.str());
             } else {
                 // ParseTagsImpl should have dropped us off just before the end of our tag.
-                std::string end_tag = std::string() + "</" + tag + ">";
+                std::string end_tag = "</" + tag + ">";
 
                 if (StartsWith(current, end, end_tag)) {
                     // A tag was successfully fully read. Add it to tags, if we got one.
-                    if (tags) {
-                        tags->push_back(
-                            RichTextTag(tag, parameters, std::string(start, current)));
-                    }
+                    if (tags)
+                        tags->emplace_back(std::move(tag), std::move(parameters), std::string(start, current));
 
                     // Continue after the tag.
                     return current + end_tag.length();
@@ -200,23 +182,21 @@ class TagParserImpl {
 
         /// Wraps a tag in a plaintext tag.
         RichTextTag WrapInPlaintext(const RichTextTag& tag)
-        {
-            return RichTextTag(RichText::PLAINTEXT_TAG, "", tag.ToString());
-        }
+        { return RichTextTag(RichText::PLAINTEXT_TAG, "", tag.ToString()); }
 
         // Creates a tag for displaying an error.
         RichTextTag CreateErrorTag(const char* what)
         {
             return RichTextTag(RichText::PLAINTEXT_TAG, "",
-                                std::string("<rgba 255 0 0 255>") + what + "</rgba>");
+                               std::string("<rgba 255 0 0 255>") + what + "</rgba>");
         }
 
         /// Add tag to tags, unless both it and the back of tags are plaintext, in which case combines them.
-        void AddWithPlaintextSquashing(std::vector<RichTextTag>& tags, const RichTextTag& tag)
+        void AddWithPlaintextSquashing(std::vector<RichTextTag>& tags, RichTextTag tag)
         {
             // Just add any non-plaintext tag, or if the last tag isn't plaintext
             if (tag.tag != RichText::PLAINTEXT_TAG || tags.size() < 1 || tags.back().tag != RichText::PLAINTEXT_TAG) {
-                tags.push_back(tag);
+                tags.emplace_back(std::move(tag));
             } else {
                 // Squash adjacent plaintext.
                 tags.back().content += tag.content;
@@ -227,9 +207,9 @@ class TagParserImpl {
 
 // The public ParseTags.
 std::vector<RichTextTag> TagParser::ParseTags(const std::string& text,
-                                                const std::set<std::string>& known_tags)
+                                              std::set<std::string> known_tags)
 {
     // Create a parser and parse using it.
-    TagParserImpl parser(known_tags);
+    TagParserImpl parser(std::move(known_tags));
     return parser.ParseTags(text);
 }

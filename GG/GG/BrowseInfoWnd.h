@@ -103,7 +103,7 @@ public:
     unsigned int                   BorderWidth() const;    ///< returns the width of the text box border
     unsigned int                   TextMargin() const;     ///< returns the margin to leave between the text and the text box
 
-    void         SetText(const std::string& str);
+    void SetText(std::string str);
     void Render() override;
     void SizeMove(const Pt& ul, const Pt& lr) override;
 

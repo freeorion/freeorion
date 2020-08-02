@@ -19,7 +19,7 @@ namespace {
 
 struct TabChangedEcho
 {
-    TabChangedEcho(const std::string& name) : m_name(name) {}
+    TabChangedEcho(std::string name) : m_name(std::move(name)) {}
     void operator()(std::size_t index)
         { std::cerr << "GG SIGNAL : " << m_name << "(index=" << index << ")\n"; }
     std::string m_name;
@@ -70,16 +70,16 @@ std::shared_ptr<Wnd> OverlayWnd::CurrentWnd() const
 std::size_t OverlayWnd::CurrentWndIndex() const
 { return m_current_wnd_index; }
 
-std::size_t OverlayWnd::AddWnd(const std::shared_ptr<Wnd>& wnd)
+std::size_t OverlayWnd::AddWnd(std::shared_ptr<Wnd> wnd)
 {
     std::size_t retval = m_wnds.size();
-    InsertWnd(m_wnds.size(), wnd);
+    InsertWnd(m_wnds.size(), std::move(wnd));
     return retval;
 }
 
-void OverlayWnd::InsertWnd(std::size_t index, const std::shared_ptr<Wnd>& wnd)
+void OverlayWnd::InsertWnd(std::size_t index, std::shared_ptr<Wnd> wnd)
 {
-    m_wnds.insert(m_wnds.begin() + index, wnd);
+    m_wnds.insert(m_wnds.begin() + index, std::move(wnd));
     if (m_current_wnd_index == NO_WND)
         SetCurrentWnd(0);
 }
@@ -186,19 +186,19 @@ Wnd* TabWnd::CurrentWnd() const
 std::size_t TabWnd::CurrentWndIndex() const
 { return m_tab_bar->CurrentTabIndex(); }
 
-std::size_t TabWnd::AddWnd(const std::shared_ptr<Wnd>& wnd, const std::string& name)
+std::size_t TabWnd::AddWnd(std::shared_ptr<Wnd> wnd, std::string name)
 {
     std::size_t retval = m_named_wnds.size();
-    InsertWnd(m_named_wnds.size(), wnd, name);
+    InsertWnd(m_named_wnds.size(), std::move(wnd), std::move(name));
     return retval;
 }
 
-void TabWnd::InsertWnd(std::size_t index, const std::shared_ptr<Wnd>& wnd, const std::string& name)
+void TabWnd::InsertWnd(std::size_t index, std::shared_ptr<Wnd> wnd, std::string name)
 {
     std::size_t old_tab = m_tab_bar->CurrentTabIndex();
     m_named_wnds[name] = wnd.get();
-    m_overlay->InsertWnd(index, wnd);
-    m_tab_bar->InsertTab(index, name);
+    m_overlay->InsertWnd(index, std::move(wnd));
+    m_tab_bar->InsertTab(index, std::move(name));
     GetLayout()->SetMinimumRowHeight(0, m_tab_bar->MinUsableSize().y + 2 * 5);
     if (m_tab_bar->CurrentTabIndex() != old_tab)
         TabChanged(m_tab_bar->CurrentTabIndex(), false);

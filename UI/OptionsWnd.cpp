@@ -836,9 +836,10 @@ GG::Rect OptionsWnd::CalculatePosition() const {
 
 GG::ListBox* OptionsWnd::CreatePage(const std::string& name) {
     auto page = GG::Wnd::Create<OptionsList>();
-    m_tabs->AddWnd(page, name);
+    auto* raw_ptr = page.get();
+    m_tabs->AddWnd(std::move(page), name);
     m_tabs->SetCurrentWnd(m_tabs->NumWnds() - 1);
-    return page.get();
+    return raw_ptr;
 }
 
 void OptionsWnd::CreateSectionHeader(GG::ListBox* page, int indentation_level,

@@ -97,17 +97,17 @@ void Button::SetColor(Clr c)
 void Button::SetState(ButtonState state)
 { m_state = state; }
 
-void Button::SetText(const std::string& text)
-{ m_label->SetText(text); }
+void Button::SetText(std::string text)
+{ m_label->SetText(std::move(text)); }
 
-void Button::SetUnpressedGraphic(const SubTexture& st)
-{ m_unpressed_graphic = st; }
+void Button::SetUnpressedGraphic(SubTexture st)
+{ m_unpressed_graphic = std::move(st); }
 
-void Button::SetPressedGraphic(const SubTexture& st)
-{ m_pressed_graphic = st; }
+void Button::SetPressedGraphic(SubTexture st)
+{ m_pressed_graphic = std::move(st); }
 
-void Button::SetRolloverGraphic(const SubTexture& st)
-{ m_rollover_graphic = st; }
+void Button::SetRolloverGraphic(SubTexture st)
+{ m_rollover_graphic = std::move(st); }
 
 void Button::LButtonDown(const Pt& pt, Flags<ModKey> mod_keys)
 {

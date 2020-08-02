@@ -194,7 +194,7 @@ void HumanClientApp::AddWindowSizeOptionsAfterMainStart(OptionsDB& db) {
 
     db.Add("video.fullscreen.width", UserStringNop("OPTIONS_DB_APP_WIDTH"),             DEFAULT_WIDTH,  RangedValidator<int>(MIN_WIDTH, max_width_plus_one));
     db.Add("video.fullscreen.height", UserStringNop("OPTIONS_DB_APP_HEIGHT"),           DEFAULT_HEIGHT, RangedValidator<int>(MIN_HEIGHT, max_height_plus_one));
-    db.Add("video.windowed.width",  UserStringNop("OPTIONS_DB_APP_WIDTH_WINDOWED"),     DEFAULT_WIDTH,  RangedValidator<int>(MIN_WIDTH, max_width_plus_one));
+    db.Add("video.windowed.width", UserStringNop("OPTIONS_DB_APP_WIDTH_WINDOWED"),      DEFAULT_WIDTH,  RangedValidator<int>(MIN_WIDTH, max_width_plus_one));
     db.Add("video.windowed.height", UserStringNop("OPTIONS_DB_APP_HEIGHT_WINDOWED"),    DEFAULT_HEIGHT, RangedValidator<int>(MIN_HEIGHT, max_height_plus_one));
     db.Add("video.windowed.left", UserStringNop("OPTIONS_DB_APP_LEFT_WINDOWED"),        DEFAULT_LEFT,   OrValidator<int>( RangedValidator<int>(-max_width_plus_one, max_width_plus_one), DiscreteValidator<int>(DEFAULT_LEFT) ));
     db.Add("video.windowed.top", UserStringNop("OPTIONS_DB_APP_TOP_WINDOWED"),          DEFAULT_TOP,    RangedValidator<int>(-max_height_plus_one, max_height_plus_one));
@@ -307,7 +307,7 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
             GG::X(400), ClientUI::GetFont(),
             GG::Clr(0, 0, 0, 200), ClientUI::WndOuterBorderColor(), ClientUI::TextColor(),
             GG::FORMAT_LEFT | GG::FORMAT_WORDBREAK, 1));
-    GG::Wnd::SetDefaultBrowseInfoWnd(default_browse_info_wnd);
+    GG::Wnd::SetDefaultBrowseInfoWnd(std::move(default_browse_info_wnd));
 
     auto cursor_texture = m_ui->GetTexture(ClientUI::ArtDir() / "cursors" / "default_cursor.png");
     SetCursor(std::make_shared<GG::TextureCursor>(cursor_texture, GG::Pt(GG::X(6), GG::Y(3))));
@@ -805,7 +805,7 @@ void HumanClientApp::RequestSavePreviews(const std::string& relative_directory) 
     TraceLogger() << "HumanClientApp::RequestSavePreviews directory: " << relative_directory
                   << " valid UTF-8: " << utf8::is_valid(relative_directory.begin(), relative_directory.end());
 
-    std::string  generic_directory = relative_directory;
+    std::string generic_directory = relative_directory;
     if (!m_networking->IsConnected()) {
         DebugLogger() << "HumanClientApp::RequestSavePreviews: No game running. Start a server for savegame queries.";
 
@@ -834,7 +834,7 @@ void HumanClientApp::RequestSavePreviews(const std::string& relative_directory) 
         SendLoggingConfigToServer();
     }
     DebugLogger() << "HumanClientApp::RequestSavePreviews Requesting previews for " << generic_directory;
-    m_networking->SendMessage(RequestSavePreviewsMessage(generic_directory));
+    m_networking->SendMessage(RequestSavePreviewsMessage(std::move(generic_directory)));
 }
 
 std::pair<int, int> HumanClientApp::GetWindowLeftTop() {

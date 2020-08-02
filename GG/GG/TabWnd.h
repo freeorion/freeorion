@@ -51,13 +51,13 @@ public:
     /** Adds \a wnd to the sequence of Wnds in this OverlayWnd, with name \a name.
         \a name can be used later to remove the Wnd (\a name is not checked
         for uniqueness).  Returns the index at which \a wnd is placed. */
-    std::size_t AddWnd(const std::shared_ptr<Wnd>& wnd);
+    std::size_t AddWnd(std::shared_ptr<Wnd> wnd);
 
     /** Adds \a wnd to the sequence of Wnds in this OverlayWnd, inserting it at
         the \a index location within the sequence.  \a name can be used later
         to remove the Wnd (\a name is not checked for uniqueness).  Not range
         checked. */
-    void InsertWnd(std::size_t index, const std::shared_ptr<Wnd>& wnd);
+    void InsertWnd(std::size_t index, std::shared_ptr<Wnd> wnd);
 
     /** Removes and returns the Wnd at index \a index from the sequence of
         Wnds in this OverlayWnd, or 0 if there is no Wnd at that index. */
@@ -114,13 +114,13 @@ public:
     /** Adds \a wnd to the sequence of Wnds in this TabWnd, with name \a name.
         \a name can be used later to remove the Wnd (\a name is not checked
         for uniqueness).  Returns the index at which \a wnd is placed. */
-    std::size_t     AddWnd(const std::shared_ptr<Wnd>& wnd, const std::string& name);
+    std::size_t     AddWnd(std::shared_ptr<Wnd> wnd, std::string name);
 
     /** Adds \a wnd to the sequence of Wnds in this TabWnd, inserting it at
         the \a index location within the sequence.  \a name can be used later
         to remove the Wnd (\a name is not checked for uniqueness).  Not range
         checked. */
-    void            InsertWnd(std::size_t index, const std::shared_ptr<Wnd>& wnd, const std::string& name);
+    void            InsertWnd(std::size_t index, std::shared_ptr<Wnd> wnd, std::string name);
 
     /** Removes and returns the first Wnd previously added witht he name \a
         name from the sequence of Wnds in this TabWnd, or 0 if no such Wnd is

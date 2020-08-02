@@ -181,7 +181,7 @@ private:
     std::vector<RichTextTag> ParseTags(const std::string& content);
 
     // Create blocks from tags.
-    void CreateBlocks(const std::vector<RichTextTag>& tags);
+    void CreateBlocks(std::vector<RichTextTag> tags);
 
     void AttachBlocks();
 
@@ -201,8 +201,8 @@ private:
 };
 
 RichTextPrivate::RichTextPrivate(RichText* q, const std::string& content,
-                                    const std::shared_ptr<Font>& font,
-                                    Clr color, Flags<TextFormat> format /*= FORMAT_NONE*/) :
+                                 const std::shared_ptr<Font>& font,
+                                 Clr color, Flags<TextFormat> format /*= FORMAT_NONE*/) :
     m_owner(q),
     m_font(font),
     m_color(color),
@@ -210,11 +210,9 @@ RichTextPrivate::RichTextPrivate(RichText* q, const std::string& content,
     m_block_factory_map(RichText::DefaultBlockFactoryMap()),
     m_padding(0)
 {
-    // Parse the content into a vector of tags.
-    auto tags = ParseTags(content);
-
-    // Create blocks from the tags and populate the control with them.
-    CreateBlocks(tags);
+    // Parse the content into a vector of tags and create
+    // blocks from the tags and populate the control with them.
+    CreateBlocks(ParseTags(content));
 }
 
 void RichTextPrivate::CompleteConstruction()
@@ -222,11 +220,9 @@ void RichTextPrivate::CompleteConstruction()
 
 void RichTextPrivate::SetText(const std::string& content)
 {
-    // Parse the content into a vector of tags.
-    auto tags = ParseTags(content);
-
-    // Create blocks from the tags and populate the control with them.
-    CreateBlocks(tags);
+    // Parse the content into a vector of tags and create
+    // blocks from the tags and populate the control with them.
+    CreateBlocks(ParseTags(content));
     AttachBlocks();
 }
 
@@ -244,9 +240,8 @@ void RichTextPrivate::SizeMove(Pt ul, Pt lr)
     m_owner->Control::SizeMove(ul, lr);
 
     // Redo layout if necessary.
-    if (m_owner->Size() != original_size) {
+    if (m_owner->Size() != original_size)
         DoLayout();
-    }
 }
 
 // Get the set of keys from a map.
@@ -262,29 +257,26 @@ std::set<T> RichTextPrivate::MapKeys(const std::map<T, V>& arg_map)
 // Parses content into tags.
 std::vector<RichTextTag> RichTextPrivate::ParseTags(const std::string& content)
 {
-    // Get a set of tags registered for rich text usage.
-    std::set<std::string> known_tags = MapKeys(*m_block_factory_map);
-
-    // Parse the content into a vector of tags.
-    std::vector<RichTextTag> tags = TagParser::ParseTags(content, known_tags);
-
-    return tags;
+    // Get a set of tags registered for rich text usage,
+    // and parse the content into a vector of tags.
+    return TagParser::ParseTags(content, MapKeys(*m_block_factory_map));
 }
 
 // Create blocks from tags.
-void RichTextPrivate::CreateBlocks(const std::vector<RichTextTag>& tags)
+void RichTextPrivate::CreateBlocks(std::vector<RichTextTag> tags)
 {
     m_blocks.clear();
 
     // Create blocks using factories.
-    for (const RichTextTag& tag : tags) {
+    for (RichTextTag& tag : tags) {
         RichText::TAG_PARAMS params;
         // Extract the parameters from params_string to the tag_params map.
         ExtractParameters(tag.tag_params, params);
 
-        auto block(FactoryMap()[tag.tag]->CreateFromTag(tag.tag, params, tag.content, m_font, m_color, m_format));
+        auto block(FactoryMap()[tag.tag]->CreateFromTag(std::move(tag.tag), std::move(params),
+                                                        std::move(tag.content), m_font, m_color, m_format));
         if (block)
-            m_blocks.push_back(block);
+            m_blocks.emplace_back(std::move(block));
     }
 }
 

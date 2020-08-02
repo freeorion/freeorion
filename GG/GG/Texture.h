@@ -145,16 +145,17 @@ public:
         \throw GG::SubTexture::BadTexture Throws if the given Texture is null.
         \throw GG::SubTexture::InvalidTextureCoordinates Throws if the texture
         coordinates are not well formed.*/
-    SubTexture(const std::shared_ptr<const Texture>& texture, X x1, Y y1, X x2, Y y2);
+    SubTexture(std::shared_ptr<const Texture> texture, X x1, Y y1, X x2, Y y2);
 
     /** Creates a SubTexture from a GG::Texture and uses coordinates to cover
         the whole texture.
         \throw GG::SubTexture::BadTexture Throws if the given Texture is null.*/
-    SubTexture(const std::shared_ptr<const Texture>& texture);
+    SubTexture(std::shared_ptr<const Texture> texture);
 
     SubTexture(const SubTexture& rhs);
 
-    const SubTexture& operator=(const SubTexture& rhs);
+    SubTexture& operator=(const SubTexture& rhs);
+    SubTexture& operator=(SubTexture&& rhs) noexcept;
 
     virtual ~SubTexture();
 

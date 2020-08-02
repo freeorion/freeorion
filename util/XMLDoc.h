@@ -144,9 +144,9 @@ public:
     //!     The tag name of this XML element.
     //! @param[in] text
     //!     The text assigned to this XML element.
-    explicit XMLElement(const std::string& tag, const std::string& text = "") :
-        m_tag(tag),
-        m_text(text)
+    explicit XMLElement(std::string tag, std::string text = "") :
+        m_tag(std::move(tag)),
+        m_text(std::move(text))
     {}
 
     //! Returns the the tag-name of this XMLElement.
@@ -215,13 +215,13 @@ public:
     //!
     //! @param[in] tag
     //!     The new tag-name this XMLElement should have.
-    void SetTag(const std::string& tag);
+    void SetTag(std::string tag);
 
     //! Sets the text content of this XMLEement to @p text.
     //!
     //! @param[in] text
     //!     The new text content this XMLElement should have.
-    void SetText(const std::string& text);
+    void SetText(std::string text);
 
     //! The attributes associated to this XMLElement by key name mapping.
     std::map<std::string, std::string> attributes;
@@ -244,8 +244,8 @@ private:
     //!
     //! @note
     //!     Called by friend XMLDoc.
-    XMLElement(const std::string& tag, bool root) :
-        m_tag(tag),
+    XMLElement(std::string tag, bool root) :
+        m_tag(std::move(tag)),
         m_root(root)
     {}
 
@@ -278,7 +278,7 @@ public:
     //!
     //! @param[in] root_tag
     //!     The tag-name of the created root XMLElement.
-    XMLDoc(const std::string& root_tag = "XMLDoc");
+    XMLDoc(std::string root_tag = "XMLDoc");
 
     //! Construct a document from the given input stream @p is.
     //!

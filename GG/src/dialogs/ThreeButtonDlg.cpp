@@ -50,7 +50,7 @@ ThreeButtonDlg::ThreeButtonDlg(X w, Y h, std::string msg, const std::shared_ptr<
                               FORMAT_CENTER | FORMAT_VCENTER | FORMAT_WORDBREAK);
     message_text->Resize(Pt(ClientWidth() - 2 * SPACING, Height()));
     message_text->SetResetMinSize(true);
-    m_button_layout->Add(message_text, 0, 0);
+    m_button_layout->Add(std::move(message_text), 0, 0);
     m_button_layout->SetRowStretch(0, 1);
     m_button_layout->SetMinimumRowHeight(1, BUTTON_HEIGHT);
 
@@ -68,7 +68,7 @@ ThreeButtonDlg::ThreeButtonDlg(X w, Y h, std::string msg, const std::shared_ptr<
                                       font, m_button_color, m_text_color);
         button_layout->Add(m_button_2, 0, 2);
     }
-    m_button_layout->Add(button_layout, 1, 0);
+    m_button_layout->Add(std::move(button_layout), 1, 0);
 }
 
 void ThreeButtonDlg::CompleteConstruction()

@@ -154,11 +154,11 @@ XMLElement& XMLElement::Child(const std::string& tag) {
     return *match;
 }
 
-void XMLElement::SetTag(const std::string& tag)
-{ m_tag = tag; }
+void XMLElement::SetTag(std::string tag)
+{ m_tag = std::move(tag); }
 
-void XMLElement::SetText(const std::string& text)
-{ m_text = text; }
+void XMLElement::SetText(std::string text)
+{ m_text = std::move(text); }
 
 
 XMLDoc*                  XMLDoc::s_curr_parsing_doc = nullptr;
@@ -167,8 +167,8 @@ XMLDoc::RuleDefiner      XMLDoc::s_rule_definer;
 XMLElement               XMLDoc::s_temp_elem;
 std::string              XMLDoc::s_temp_attr_name;
 
-XMLDoc::XMLDoc(const std::string& root_tag/*= "XMLDoc"*/) :
-    root_node(XMLElement(root_tag, true))
+XMLDoc::XMLDoc(std::string root_tag/*= "XMLDoc"*/) :
+    root_node(XMLElement(std::move(root_tag), true))
 {}
 
 XMLDoc::XMLDoc(const std::istream& is) :
@@ -214,10 +214,10 @@ void XMLDoc::PushElem1(const char* first, const char* last) {
     if (XMLDoc* this_ = XMLDoc::s_curr_parsing_doc) {
         if (s_element_stack.empty()) {
             this_->root_node = s_temp_elem;
-            s_element_stack.push_back(&this_->root_node);
+            s_element_stack.emplace_back(&this_->root_node);
         } else {
-            s_element_stack.back()->children.push_back(s_temp_elem);
-            s_element_stack.push_back(&s_element_stack.back()->children.back());
+            s_element_stack.back()->children.emplace_back(s_temp_elem);
+            s_element_stack.emplace_back(&s_element_stack.back()->children.back());
         }
     }
 }
@@ -227,7 +227,7 @@ void XMLDoc::PushElem2(const char* first, const char* last) {
         if (s_element_stack.empty()) {
             this_->root_node = s_temp_elem;
         } else {
-            s_element_stack.back()->children.push_back(s_temp_elem);
+            s_element_stack.back()->children.emplace_back(s_temp_elem);
         }
     }
 }

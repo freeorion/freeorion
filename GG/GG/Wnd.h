@@ -709,7 +709,7 @@ public:
     /** Sets the Wnd that is used to show browse info about this Wnd in the
         browse info mode \a mode.  \throw std::out_of_range May throw
         std::out_of_range if \a mode is not a valid browse mode. */
-    void SetBrowseInfoWnd(const std::shared_ptr<BrowseInfoWnd>& wnd, std::size_t mode = 0);
+    void SetBrowseInfoWnd(std::shared_ptr<BrowseInfoWnd> wnd, std::size_t mode = 0);
 
     /** Removes the Wnd that is used to show browse info about this Wnd in the
         browse info mode \a mode (but does nothing to the mode itself).
@@ -721,7 +721,7 @@ public:
         specified color and border color which contains the specified text.
         \throw std::out_of_range May throw std::out_of_range if \a mode is not
         a valid browse mode. */
-    void SetBrowseText(const std::string& text, std::size_t mode = 0);
+    void SetBrowseText(std::string text, std::size_t mode = 0);
 
     /** Sets the browse modes for the Wnd, including time cutoffs (in
         milliseconds), the BrowseInfoWnds to be displayed for each browse info
@@ -730,10 +730,10 @@ public:
         corresponding Wnd is shown superimposed over this Wnd and its
         children.  Set the first time cutoff to 0 for immediate browse info
         display. */
-    void SetBrowseModes(const std::vector<BrowseInfoMode>& modes);
+    void SetBrowseModes(std::vector<BrowseInfoMode> modes);
 
     /** Sets the currently-installed style factory. */
-    void SetStyleFactory(const std::shared_ptr<StyleFactory>& factory);
+    void SetStyleFactory(std::shared_ptr<StyleFactory> factory);
 
     /** Returns the single time to place in the browse modes during Wnd
         construction. */
@@ -750,7 +750,7 @@ public:
 
     /** Sets the single BrowseInfoWnd to place in the browse modes during Wnd
         construction. */
-    static void SetDefaultBrowseInfoWnd(const std::shared_ptr<BrowseInfoWnd>& browse_info_wnd);
+    static void SetDefaultBrowseInfoWnd(std::shared_ptr<BrowseInfoWnd> browse_info_wnd);
 
     /** The base class for Wnd exceptions. */
     GG_ABSTRACT_EXCEPTION(Exception);

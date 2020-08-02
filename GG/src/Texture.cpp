@@ -432,31 +432,29 @@ SubTexture::SubTexture() :
     m_tex_coords()
 {}
 
-SubTexture::SubTexture(const std::shared_ptr<const Texture>& texture, X x1, Y y1, X x2, Y y2) :
-    m_texture(texture),
+SubTexture::SubTexture(std::shared_ptr<const Texture> texture, X x1, Y y1, X x2, Y y2) :
+    m_texture(std::move(texture)),
     m_width(x2 - x1),
-    m_height(y2 - y1),
-    m_tex_coords()
+    m_height(y2 - y1)
 {
     if (!m_texture) throw BadTexture("Attempted to contruct subtexture from invalid texture");
     if (x2 < x1 || y2 < y1) throw InvalidTextureCoordinates("Attempted to contruct subtexture from invalid coordinates");
 
-    m_tex_coords[0] = Value(x1 * 1.0 / texture->Width());
-    m_tex_coords[1] = Value(y1 * 1.0 / texture->Height());
-    m_tex_coords[2] = Value(x2 * 1.0 / texture->Width());
-    m_tex_coords[3] = Value(y2 * 1.0 / texture->Height());
+    m_tex_coords[0] = Value(x1 * 1.0 / m_texture->Width());
+    m_tex_coords[1] = Value(y1 * 1.0 / m_texture->Height());
+    m_tex_coords[2] = Value(x2 * 1.0 / m_texture->Width());
+    m_tex_coords[3] = Value(y2 * 1.0 / m_texture->Height());
 }
 
-SubTexture::SubTexture(const std::shared_ptr<const Texture>& texture) :
-    m_texture(texture),
+SubTexture::SubTexture(std::shared_ptr<const Texture> texture) :
+    m_texture(std::move(texture)),
     m_width(GG::X1),
-    m_height(GG::Y1),
-    m_tex_coords()
+    m_height(GG::Y1)
 {
     if (!m_texture) throw BadTexture("Attempted to contruct subtexture from invalid texture");
 
-    m_width = texture->Width();
-    m_height = texture->Height();
+    m_width = m_texture->Width();
+    m_height = m_texture->Height();
 
     m_tex_coords[0] = 0.0f;
     m_tex_coords[1] = 0.0f;
@@ -470,10 +468,24 @@ SubTexture::~SubTexture()
 SubTexture::SubTexture(const SubTexture& rhs)
 { *this = rhs; }
 
-const SubTexture& SubTexture::operator=(const SubTexture& rhs)
+SubTexture& SubTexture::operator=(const SubTexture& rhs)
 {
     if (this != &rhs) {
         m_texture = rhs.m_texture;
+        m_width = rhs.m_width;
+        m_height = rhs.m_height;
+        m_tex_coords[0] = rhs.m_tex_coords[0];
+        m_tex_coords[1] = rhs.m_tex_coords[1];
+        m_tex_coords[2] = rhs.m_tex_coords[2];
+        m_tex_coords[3] = rhs.m_tex_coords[3];
+    }
+    return *this;
+}
+
+SubTexture& SubTexture::operator=(SubTexture&& rhs) noexcept
+{
+    if (this != &rhs) {
+        m_texture = std::move(rhs.m_texture);
         m_width = rhs.m_width;
         m_height = rhs.m_height;
         m_tex_coords[0] = rhs.m_tex_coords[0];

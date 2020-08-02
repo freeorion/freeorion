@@ -113,8 +113,8 @@ public:
     }
 
     // Sets the root of image search path.
-    void SetRootPath(const fs::path& path)
-    { m_root_path = path; }
+    void SetRootPath(fs::path path)
+    { m_root_path = std::move(path); }
 
 private:
     fs::path m_root_path;
@@ -132,6 +132,7 @@ private:
 #if defined(_WIN32)
             // convert UTF-8 path string to UTF-16
             fs::path::string_type str_native;
+            str_native.reserve(src_param->second.size());
             utf8::utf8to16(src_param->second.begin(), src_param->second.end(), std::back_inserter(str_native));
             return fs::path(str_native);
 #else
@@ -145,14 +146,14 @@ private:
 static int dummy = RichText::RegisterDefaultBlock(ImageBlock::IMAGE_TAG, std::make_shared<ImageBlockFactory>());
 
 //! Set the root path from which to look for images with the factory.
-bool ImageBlock::SetImagePath(RichText::IBlockControlFactory* factory, const fs::path& path)
+bool ImageBlock::SetImagePath(RichText::IBlockControlFactory* factory, fs::path path)
 {
     // Try to convert the factory to an image factory.
     ImageBlockFactory* image_factory = dynamic_cast<ImageBlockFactory*>(factory);
 
     // If successful, set the root path.
     if (image_factory) {
-        image_factory->SetRootPath(path);
+        image_factory->SetRootPath(std::move(path));
         return true;
     } else {
         return false;
@@ -160,14 +161,13 @@ bool ImageBlock::SetImagePath(RichText::IBlockControlFactory* factory, const fs:
 }
 
 //! Set the root path from which to look for images with the factory.
-bool ImageBlock::SetDefaultImagePath(const fs::path& path)
+bool ImageBlock::SetDefaultImagePath(fs::path path)
 {
     // Find the image block factory from the default map and give it the path.
     auto factory_it = RichText::DefaultBlockFactoryMap()->find(IMAGE_TAG);
     if (factory_it != RichText::DefaultBlockFactoryMap()->end()) {
-        if (auto factory = dynamic_cast<ImageBlockFactory*>(factory_it->second.get())) {
-            return SetImagePath(factory, path);
-        }
+        if (auto factory = dynamic_cast<ImageBlockFactory*>(factory_it->second.get()))
+            return SetImagePath(factory, std::move(path));
     }
     return false;
 }

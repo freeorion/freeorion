@@ -1804,7 +1804,7 @@ void SidePanel::PlanetPanel::Refresh() {
         m_focus_drop->Clear();
         std::vector<std::shared_ptr<GG::DropDownList::Row>> rows;
         rows.reserve(available_foci.size());
-        for (const std::string& focus_name : available_foci) {
+        for (const auto& focus_name : available_foci) {
             auto texture = ClientUI::GetTexture(
                 ClientUI::ArtDir() / planet->FocusIcon(focus_name), true);
             auto graphic = GG::Wnd::Create<GG::StaticGraphic>(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
@@ -1817,10 +1817,10 @@ void SidePanel::PlanetPanel::Refresh() {
                 boost::io::str(FlexibleFormat(UserString("RP_FOCUS_TOOLTIP"))
                                % UserString(focus_name)));
 
-            row->push_back(graphic);
-            rows.push_back(row);
+            row->push_back(std::move(graphic));
+            rows.emplace_back(std::move(row));
         }
-        m_focus_drop->Insert(rows);
+        m_focus_drop->Insert(std::move(rows));
 
         // set browse text and select appropriate focus in droplist
         std::string focus_text;
@@ -1835,7 +1835,7 @@ void SidePanel::PlanetPanel::Refresh() {
         } else {
             m_focus_drop->Select(m_focus_drop->end());
         }
-        m_focus_drop->SetBrowseText(focus_text);
+        m_focus_drop->SetBrowseText(std::move(focus_text));
 
         // prevent manipulation for unowned planets
         if (!planet->OwnedBy(client_empire_id))

@@ -248,10 +248,11 @@ GG::ListBox* GameRulesPanel::CreatePage(const std::string& name) {
         ErrorLogger() << "GameRulesPanel::CreatePage(" << name << ") failed to create page!";
         return nullptr;
     }
+    auto* raw_ptr{page.get()};
 
-    m_tabs->AddWnd(page, name);
+    m_tabs->AddWnd(std::move(page), name);
 
-    return page.get();
+    return raw_ptr;
 }
 
 void GameRulesPanel::CreateSectionHeader(GG::ListBox* page, int indentation_level,

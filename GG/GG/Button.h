@@ -79,10 +79,10 @@ public:
     /** Sets button state programmatically \see ButtonState */
     void SetState(ButtonState state);
 
-    void SetText(const std::string& text);          ///< Sets the text to be used as the button label
-    void SetUnpressedGraphic(const SubTexture& st); ///< Sets the SubTexture to be used as the image of the button when unpressed
-    void SetPressedGraphic(const SubTexture& st);   ///< Sets the SubTexture to be used as the image of the button when pressed
-    void SetRolloverGraphic(const SubTexture& st);  ///< Sets the SubTexture to be used as the image of the button when it contains the cursor, but is not pressed
+    void SetText(std::string text);             ///< Sets the text to be used as the button label
+    void SetUnpressedGraphic(SubTexture st);    ///< Sets the SubTexture to be used as the image of the button when unpressed
+    void SetPressedGraphic(SubTexture st);      ///< Sets the SubTexture to be used as the image of the button when pressed
+    void SetRolloverGraphic(SubTexture st);     ///< Sets the SubTexture to be used as the image of the button when it contains the cursor, but is not pressed
 
 protected:
     void LButtonDown(const Pt& pt, Flags<ModKey> mod_keys) override;

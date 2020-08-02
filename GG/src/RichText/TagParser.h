@@ -25,14 +25,12 @@ struct RichTextTag {
     std::string tag_params; //!< The possible parameters of the tag.
     std::string content; //!< The text between the tags.
 
-    RichTextTag(
-        const std::string& tag,
-        const std::string& params_string, //!< The parameters as a string of key value pairs key="value".
-        const std::string& content);
+    //!< The parameters as a string of key value pairs key="value".
+    RichTextTag(std::string tag_, std::string params_string_, std::string content_);
+    RichTextTag(RichTextTag&& rhs) = default;
 
     //! Return the tag as a string that parses back to itself.
     std::string ToString() const;
-
 };
 
 
@@ -43,8 +41,6 @@ struct RichTextTag {
 class TagParser
 {
 public:
-
-
     /**
      * @brief Parses a string of text into a vector of tags.
      *
@@ -56,7 +52,7 @@ public:
      * @return std::vector< RichTextTag > The text inside tags.
      */
     static std::vector<RichTextTag> ParseTags(const std::string& text,
-                                          const std::set<std::string>& known_tags);
+                                              std::set<std::string> known_tags);
 
 };
 
