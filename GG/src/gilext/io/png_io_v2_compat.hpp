@@ -29,7 +29,6 @@ void read_and_convert_image( const String&    file_name
                            , const FormatTag& tag
                            )
 { boost::gil::png_read_and_convert_image(file_name, image); }
-} }
 
 template< typename String
         , typename View
@@ -41,5 +40,7 @@ void write_view( const String&    file_name
                , const FormatTag& tag
                )
 { boost::gil::png_write_view( file_name, view); }
+
+} }
 
 #endif

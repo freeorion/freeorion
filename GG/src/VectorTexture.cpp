@@ -1,36 +1,46 @@
-#include <GG/VectorTexture.h>
+//! GiGi - A GUI for OpenGL
+//!
+//!  Copyright (C) 2019 Geoff Topping
+//!  Copyright (C) 2020 The FreeOrion Project
+//!
+//! Released under the GNU Lesser General Public License 2.1 or later.
+//! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
+//! SPDX-License-Identifier: LGPL-2.1-or-later
 
-#include <GG/GLClientAndServerBuffer.h>
+#include <boost/algorithm/string/case_conv.hpp>
+#include <boost/filesystem/fstream.hpp>
+#include <boost/filesystem/operations.hpp>
 #include <GG/Config.h>
 #include <GG/DrawUtil.h>
+#include <GG/GLClientAndServerBuffer.h>
 #include <GG/utf8/checked.h>
-
+#include <GG/VectorTexture.h>
 #define NANOSVG_IMPLEMENTATION
 #include "nanosvg/nanosvg.h"
-
 #include "nanovg/nanovg.h"
 #define NANOVG_GL2_IMPLEMENTATION
 #include "nanovg/nanovg_gl.h"
 
-#include <boost/filesystem/fstream.hpp>
-#include <boost/filesystem/operations.hpp>
-#include <boost/algorithm/string/case_conv.hpp>
 
 using namespace GG;
 
 namespace {
-    NVGcontext* VG() {
-        static NVGcontext* s_vg = nullptr;
-        if (!s_vg) {
-            s_vg = nvgCreateGL2(NVG_ANTIALIAS | NVG_STENCIL_STROKES | NVG_DEBUG);   // leaks, as NVGcontext only defined in nanovg.c
-           // std::cout << "Initialized NVGcontext!" << std::endl;
-        }
-        return s_vg;
+
+NVGcontext* VG() {
+    static NVGcontext* s_vg = nullptr;
+    if (!s_vg) {
+        s_vg = nvgCreateGL2(NVG_ANTIALIAS | NVG_STENCIL_STROKES | NVG_DEBUG);   // leaks, as NVGcontext only defined in nanovg.c
+        // std::cout << "Initialized NVGcontext!" << std::endl;
     }
+    return s_vg;
+}
+
 }
 
 namespace rack {
-    void svgDraw(NVGcontext *vg, NSVGimage *svg);
+
+void svgDraw(NVGcontext *vg, NSVGimage *svg);
+
 }
 
 

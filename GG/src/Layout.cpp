@@ -1,46 +1,32 @@
-/* GG is a GUI for OpenGL.
-   Copyright (C) 2003-2008 T. Zachary Laine
-
-   This library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public License
-   as published by the Free Software Foundation; either version 2.1
-   of the License, or (at your option) any later version.
-   
-   This library is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Lesser General Public License for more details.
-    
-   You should have received a copy of the GNU Lesser General Public
-   License along with this library; if not, write to the Free
-   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
-   02111-1307 USA
-
-   If you do not wish to comply with the terms of the LGPL please
-   contact the author as other terms are available for a fee.
-    
-   Zach Laine
-   whatwasthataddress@gmail.com */
-
-#include <GG/Layout.h>
-
-#include <GG/ClrConstants.h>
-#include <GG/DrawUtil.h>
-#include <GG/TextControl.h>
-#include <GG/WndEvent.h>
+//! GiGi - A GUI for OpenGL
+//!
+//!  Copyright (C) 2003-2008 T. Zachary Laine <whatwasthataddress@gmail.com>
+//!  Copyright (C) 2013-2020 The FreeOrion Project
+//!
+//! Released under the GNU Lesser General Public License 2.1 or later.
+//! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
+//! SPDX-License-Identifier: LGPL-2.1-or-later
 
 #include <cassert>
 #include <cmath>
+#include <GG/ClrConstants.h>
+#include <GG/DrawUtil.h>
+#include <GG/Layout.h>
+#include <GG/TextControl.h>
+#include <GG/WndEvent.h>
+
 
 using namespace GG;
 
 namespace {
-    unsigned int MinDueToMargin(unsigned int cell_margin, std::size_t num_rows_or_columns, std::size_t row_or_column)
-    {
-        return (row_or_column == 0 || row_or_column == num_rows_or_columns - 1) ?
-            static_cast<unsigned int>(std::ceil(cell_margin / 2.0)) :
-            cell_margin;
-    }
+
+unsigned int MinDueToMargin(unsigned int cell_margin, std::size_t num_rows_or_columns, std::size_t row_or_column)
+{
+    return (row_or_column == 0 || row_or_column == num_rows_or_columns - 1) ?
+        static_cast<unsigned int>(std::ceil(cell_margin / 2.0)) :
+        cell_margin;
+}
+
 }
 
 

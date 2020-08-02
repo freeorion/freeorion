@@ -1,54 +1,42 @@
-/* GG is a GUI for OpenGL.
-   Copyright (C) 2003-2008 T. Zachary Laine
+//! GiGi - A GUI for OpenGL
+//!
+//!  Copyright (C) 2003-2008 T. Zachary Laine <whatwasthataddress@gmail.com>
+//!  Copyright (C) 2013-2020 The FreeOrion Project
+//!
+//! Released under the GNU Lesser General Public License 2.1 or later.
+//! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
+//! SPDX-License-Identifier: LGPL-2.1-or-later
 
-   This library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public License
-   as published by the Free Software Foundation; either version 2.1
-   of the License, or (at your option) any later version.
-   
-   This library is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Lesser General Public License for more details.
-    
-   You should have received a copy of the GNU Lesser General Public
-   License along with this library; if not, write to the Free
-   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
-   02111-1307 USA
-
-   If you do not wish to comply with the terms of the LGPL please
-   contact the author as other terms are available for a fee.
-    
-   Zach Laine
-   whatwasthataddress@gmail.com */
-
-#include <GG/ZList.h>
 #include <GG/Wnd.h>
+#include <GG/ZList.h>
+
 
 using namespace GG;
 
 namespace {
-    std::shared_ptr<Wnd> PickWithinWindow(const Pt& pt, std::shared_ptr<Wnd> wnd,
-                                          const std::set<Wnd*>* ignore)
-    {
-        // look through all the children of wnd, and determine whether pt lies in
-        // any of them (or their children)
-        const auto& end_it = wnd->Children().rend();
-        for (auto it = wnd->Children().rbegin(); it != end_it; ++it) {
-            if (!(*it)->Visible())
-                continue;
-            if (!(*it)->InWindow(pt))
-                continue;
-            if (auto temp = PickWithinWindow(pt, std::move(*it), ignore))
-                return temp;
-        }
 
-        // if wnd is visible and clickable, return it if no child windows also catch pt
-        if (!wnd->Visible() || !wnd->Interactive()  || (ignore && ignore->count(wnd.get())))
-            return nullptr;
-
-        return wnd;
+std::shared_ptr<Wnd> PickWithinWindow(const Pt& pt, std::shared_ptr<Wnd> wnd,
+                                        const std::set<Wnd*>* ignore)
+{
+    // look through all the children of wnd, and determine whether pt lies in
+    // any of them (or their children)
+    const auto& end_it = wnd->Children().rend();
+    for (auto it = wnd->Children().rbegin(); it != end_it; ++it) {
+        if (!(*it)->Visible())
+            continue;
+        if (!(*it)->InWindow(pt))
+            continue;
+        if (auto temp = PickWithinWindow(pt, std::move(*it), ignore))
+            return temp;
     }
+
+    // if wnd is visible and clickable, return it if no child windows also catch pt
+    if (!wnd->Visible() || !wnd->Interactive()  || (ignore && ignore->count(wnd.get())))
+        return nullptr;
+
+    return wnd;
+}
+
 }
 
 ///////////////////////////////////////
@@ -181,11 +169,13 @@ bool ZList::MoveDown(const Wnd* const wnd)
 }
 
 namespace {
-    const std::function<boost::optional<bool> (const std::shared_ptr<Wnd>&)> IsNotOnTop =
-        [](const std::shared_ptr<Wnd>& wnd)
-    {
-        return !wnd->OnTop() ? boost::optional<bool>(true) : boost::optional<bool>(boost::none);
-    };
+
+const std::function<boost::optional<bool> (const std::shared_ptr<Wnd>&)> IsNotOnTop =
+    [](const std::shared_ptr<Wnd>& wnd)
+{
+    return !wnd->OnTop() ? boost::optional<bool>(true) : boost::optional<bool>(boost::none);
+};
+
 }
 
 ZList::iterator ZList::FirstNonOnTop()

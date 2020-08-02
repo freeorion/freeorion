@@ -1,43 +1,29 @@
-// -*- C++ -*-
-/* GG is a GUI for OpenGL.
-   Copyright (C) 2003-2008 T. Zachary Laine
+//! GiGi - A GUI for OpenGL
+//!
+//!  Copyright (C) 2000-2003 Tony Casale.
+//!  Copyright (C) 2003-2008 T. Zachary Laine <whatwasthataddress@gmail.com>
+//!  Copyright (C) 2013-2020 The FreeOrion Project
+//!
+//! Released under the GNU Lesser General Public License 2.1 or later.
+//! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
+//! SPDX-License-Identifier: LGPL-2.1-or-later
 
-   This library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public License
-   as published by the Free Software Foundation; either version 2.1
-   of the License, or (at your option) any later version.
-   
-   This library is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Lesser General Public License for more details.
-    
-   You should have received a copy of the GNU Lesser General Public
-   License along with this library; if not, write to the Free
-   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
-   02111-1307 USA
-
-   If you do not wish to comply with the terms of the LGPL please
-   contact the author as other terms are available for a fee.
-    
-   Zach Laine
-   whatwasthataddress@gmail.com */
-   
-/* This class is based on earlier work with GG by Tony Casale.  Thanks, Tony.*/
-
-/** \file DynamicGraphic.h \brief Contains the DynamicGraphic class, a control
-    that allows display of a slideshow or animated sequence of images. */
+//! @file GG/DynamicGraphic.h
+//!
+//! Contains the DynamicGraphic class, a control that allows display of
+//! a slideshow or animated sequence of images.
 
 #ifndef _GG_DynamicGraphic_h_
 #define _GG_DynamicGraphic_h_
 
+
 #include <GG/Control.h>
 #include <GG/StaticGraphic.h>
-
 #include <boost/signals2/signal.hpp>
 
 
 namespace GG {
+
 class Texture;
 
 /** \brief A control that replays images in sequence, forwards or backwards,
@@ -237,5 +223,6 @@ private:
 };
 
 }
+
 
 #endif

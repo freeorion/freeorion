@@ -1,31 +1,15 @@
-/* GG is a GUI for OpenGL.
-   Copyright (C) 2003-2008 T. Zachary Laine
-
-   This library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public License
-   as published by the Free Software Foundation; either version 2.1
-   of the License, or (at your option) any later version.
-   
-   This library is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Lesser General Public License for more details.
-    
-   You should have received a copy of the GNU Lesser General Public
-   License along with this library; if not, write to the Free
-   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
-   02111-1307 USA
-
-   If you do not wish to comply with the terms of the LGPL please
-   contact the author as other terms are available for a fee.
-    
-   Zach Laine
-   whatwasthataddress@gmail.com */
-
-#include <GG/StaticGraphic.h>
+//! GiGi - A GUI for OpenGL
+//!
+//!  Copyright (C) 2003-2008 T. Zachary Laine <whatwasthataddress@gmail.com>
+//!  Copyright (C) 2013-2020 The FreeOrion Project
+//!
+//! Released under the GNU Lesser General Public License 2.1 or later.
+//! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
+//! SPDX-License-Identifier: LGPL-2.1-or-later
 
 #include <GG/ClrConstants.h>
 #include <GG/DrawUtil.h>
+#include <GG/StaticGraphic.h>
 
 
 using namespace GG;
@@ -47,22 +31,24 @@ const GraphicStyle GG::GRAPHIC_PROPSCALE     (1 << 8);
 GG_FLAGSPEC_IMPL(GraphicStyle);
 
 namespace {
-    bool RegisterGraphicStyles()
-    {
-        FlagSpec<GraphicStyle>& spec = FlagSpec<GraphicStyle>::instance();
-        spec.insert(GRAPHIC_NONE,       "GRAPHIC_NONE",         true);
-        spec.insert(GRAPHIC_VCENTER,    "GRAPHIC_VCENTER",      true);
-        spec.insert(GRAPHIC_TOP,        "GRAPHIC_TOP",          true);
-        spec.insert(GRAPHIC_BOTTOM,     "GRAPHIC_BOTTOM",       true);
-        spec.insert(GRAPHIC_CENTER,     "GRAPHIC_CENTER",       true);
-        spec.insert(GRAPHIC_LEFT,       "GRAPHIC_LEFT",         true);
-        spec.insert(GRAPHIC_RIGHT,      "GRAPHIC_RIGHT",        true);
-        spec.insert(GRAPHIC_FITGRAPHIC, "GRAPHIC_FITGRAPHIC",   true);
-        spec.insert(GRAPHIC_SHRINKFIT,  "GRAPHIC_SHRINKFIT",    true);
-        spec.insert(GRAPHIC_PROPSCALE,  "GRAPHIC_PROPSCALE",    true);
-        return true;
-    }
-    bool dummy = RegisterGraphicStyles();
+
+bool RegisterGraphicStyles()
+{
+    FlagSpec<GraphicStyle>& spec = FlagSpec<GraphicStyle>::instance();
+    spec.insert(GRAPHIC_NONE,       "GRAPHIC_NONE",         true);
+    spec.insert(GRAPHIC_VCENTER,    "GRAPHIC_VCENTER",      true);
+    spec.insert(GRAPHIC_TOP,        "GRAPHIC_TOP",          true);
+    spec.insert(GRAPHIC_BOTTOM,     "GRAPHIC_BOTTOM",       true);
+    spec.insert(GRAPHIC_CENTER,     "GRAPHIC_CENTER",       true);
+    spec.insert(GRAPHIC_LEFT,       "GRAPHIC_LEFT",         true);
+    spec.insert(GRAPHIC_RIGHT,      "GRAPHIC_RIGHT",        true);
+    spec.insert(GRAPHIC_FITGRAPHIC, "GRAPHIC_FITGRAPHIC",   true);
+    spec.insert(GRAPHIC_SHRINKFIT,  "GRAPHIC_SHRINKFIT",    true);
+    spec.insert(GRAPHIC_PROPSCALE,  "GRAPHIC_PROPSCALE",    true);
+    return true;
+}
+bool dummy = RegisterGraphicStyles();
+
 }
 
 

@@ -1,40 +1,21 @@
-/* GG is a GUI for OpenGL.
-   Copyright (C) 2003-2008 T. Zachary Laine
+//! GiGi - A GUI for OpenGL
+//!
+//!  Copyright (C) 2003-2008 T. Zachary Laine <whatwasthataddress@gmail.com>
+//!  Copyright (C) 2013-2020 The FreeOrion Project
+//!
+//! Released under the GNU Lesser General Public License 2.1 or later.
+//! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
+//! SPDX-License-Identifier: LGPL-2.1-or-later
 
-   This library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public License
-   as published by the Free Software Foundation; either version 2.1
-   of the License, or (at your option) any later version.
-
-   This library is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Lesser General Public License for more details.
-
-   You should have received a copy of the GNU Lesser General Public
-   License along with this library; if not, write to the Free
-   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
-   02111-1307 USA
-
-   If you do not wish to comply with the terms of the LGPL please
-   contact the author as other terms are available for a fee.
-
-   Zach Laine
-   whatwasthataddress@gmail.com */
-
-#include <GG/Texture.h>
-
-#include <GG/GLClientAndServerBuffer.h>
 #include <GG/Config.h>
-#include <GG/utf8/checked.h>
-
+#include <iomanip>
+#include <iostream>
+#include <boost/algorithm/string/case_conv.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/gil/extension/dynamic_image/any_image.hpp>
 #if GG_HAVE_LIBTIFF
 # include <boost/gil/extension/io/tiff_dynamic_io.hpp>
 #endif
-#include <boost/algorithm/string/case_conv.hpp>
-
 #if GG_HAVE_LIBPNG
 # if GIGI_CONFIG_USE_OLD_IMPLEMENTATION_OF_GIL_PNG_IO
 #  include "gilext/io/png_dynamic_io.hpp"
@@ -43,18 +24,18 @@
 #  include <boost/gil/extension/io/png.hpp>
 # endif
 #endif
-
-#include <iostream>
-#include <iomanip>
-
 #if BOOST_VERSION >= 107000
 #include <boost/variant/get.hpp>
 #endif
+#include <GG/GLClientAndServerBuffer.h>
+#include <GG/Texture.h>
+#include <GG/utf8/checked.h>
 
 
 using namespace GG;
 
 namespace {
+
     template <typename T>
     T PowerOfTwo(T input)
     {
@@ -63,6 +44,7 @@ namespace {
             value *= 2;
         return value;
     }
+
 }
 
 ///////////////////////////////////////

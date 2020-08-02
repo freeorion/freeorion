@@ -1,29 +1,13 @@
-/* GG is a GUI for OpenGL.
-   Copyright (C) 2003-2008 T. Zachary Laine
-
-   This library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public License
-   as published by the Free Software Foundation; either version 2.1
-   of the License, or (at your option) any later version.
-   
-   This library is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Lesser General Public License for more details.
-    
-   You should have received a copy of the GNU Lesser General Public
-   License along with this library; if not, write to the Free
-   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
-   02111-1307 USA
-
-   If you do not wish to comply with the terms of the LGPL please
-   contact the author as other terms are available for a fee.
-    
-   Zach Laine
-   whatwasthataddress@gmail.com */
+//! GiGi - A GUI for OpenGL
+//!
+//!  Copyright (C) 2003-2008 T. Zachary Laine <whatwasthataddress@gmail.com>
+//!  Copyright (C) 2013-2020 The FreeOrion Project
+//!
+//! Released under the GNU Lesser General Public License 2.1 or later.
+//! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
+//! SPDX-License-Identifier: LGPL-2.1-or-later
 
 #include <GG/dialogs/ColorDlg.h>
-
 #include <GG/Font.h>
 #include <GG/GLClientAndServerBuffer.h>
 #include <GG/GUI.h>
@@ -36,100 +20,102 @@
 using namespace GG;
 
 namespace {
-    const double EPSILON = 0.0001;
 
-    HSVClr Convert(const Clr& color)
-    {
-        HSVClr retval;
-        retval.a = color.a;
-        double r = (color.r / 255.0), g = (color.g / 255.0), b = (color.b / 255.0);
+const double EPSILON = 0.0001;
 
-        double min_channel = std::min(r, std::min(g, b));
-        double max_channel = std::max(r, std::max(g, b));
-        double channel_range = max_channel - min_channel;
+HSVClr Convert(const Clr& color)
+{
+    HSVClr retval;
+    retval.a = color.a;
+    double r = (color.r / 255.0), g = (color.g / 255.0), b = (color.b / 255.0);
 
-        retval.v = max_channel;
+    double min_channel = std::min(r, std::min(g, b));
+    double max_channel = std::max(r, std::max(g, b));
+    double channel_range = max_channel - min_channel;
 
-        if (max_channel < EPSILON) {
+    retval.v = max_channel;
+
+    if (max_channel < EPSILON) {
+        retval.h = 0.0;
+        retval.s = 0.0;
+    } else {
+        retval.s = channel_range / max_channel;
+
+        if (channel_range) {
+            double delta_r = (((max_channel - r) / 6.0) + (channel_range / 2.0)) / channel_range;
+            double delta_g = (((max_channel - g) / 6.0) + (channel_range / 2.0)) / channel_range;
+            double delta_b = (((max_channel - b) / 6.0) + (channel_range / 2.0)) / channel_range;
+
+            if (r == max_channel)
+                retval.h = delta_b - delta_g;
+            else if (g == max_channel)
+                retval.h = (1.0 / 3.0) + delta_r - delta_b;
+            else if (b == max_channel)
+                retval.h = (2.0 / 3.0) + delta_g - delta_r;
+
+            if (retval.h < 0.0)
+                retval.h += 1.0;
+            if (1.0 < retval.h)
+                retval.h -= 1.0;
+        } else {
             retval.h = 0.0;
-            retval.s = 0.0;
-        } else {
-            retval.s = channel_range / max_channel;
-
-            if (channel_range) {
-                double delta_r = (((max_channel - r) / 6.0) + (channel_range / 2.0)) / channel_range;
-                double delta_g = (((max_channel - g) / 6.0) + (channel_range / 2.0)) / channel_range;
-                double delta_b = (((max_channel - b) / 6.0) + (channel_range / 2.0)) / channel_range;
-
-                if (r == max_channel)
-                    retval.h = delta_b - delta_g;
-                else if (g == max_channel)
-                    retval.h = (1.0 / 3.0) + delta_r - delta_b;
-                else if (b == max_channel)
-                    retval.h = (2.0 / 3.0) + delta_g - delta_r;
-
-                if (retval.h < 0.0)
-                    retval.h += 1.0;
-                if (1.0 < retval.h)
-                    retval.h -= 1.0;
-            } else {
-                retval.h = 0.0;
-            }
         }
-        return retval;
     }
+    return retval;
+}
 
-    Clr Convert(const HSVClr& hsv_color)
-    {
-        Clr retval;
-        retval.a = hsv_color.a;
+Clr Convert(const HSVClr& hsv_color)
+{
+    Clr retval;
+    retval.a = hsv_color.a;
 
-        if (hsv_color.s < EPSILON) {
+    if (hsv_color.s < EPSILON) {
+        retval.r = static_cast<GLubyte>(hsv_color.v * 255);
+        retval.g = static_cast<GLubyte>(hsv_color.v * 255);
+        retval.b = static_cast<GLubyte>(hsv_color.v * 255);
+    } else {
+        double tmph = hsv_color.h * 6.0;
+        int tmpi = static_cast<int>(tmph);
+        double tmp1 = hsv_color.v * (1 - hsv_color.s);
+        double tmp2 = hsv_color.v * (1 - hsv_color.s * (tmph - tmpi));
+        double tmp3 = hsv_color.v * (1 - hsv_color.s * (1 - (tmph - tmpi)));
+        switch (tmpi) {
+        case 0:
             retval.r = static_cast<GLubyte>(hsv_color.v * 255);
+            retval.g = static_cast<GLubyte>(tmp3 * 255);
+            retval.b = static_cast<GLubyte>(tmp1 * 255);
+            break;
+        case 1:
+            retval.r = static_cast<GLubyte>(tmp2 * 255);
             retval.g = static_cast<GLubyte>(hsv_color.v * 255);
+            retval.b = static_cast<GLubyte>(tmp1 * 255);
+            break;
+        case 2:
+            retval.r = static_cast<GLubyte>(tmp1 * 255);
+            retval.g = static_cast<GLubyte>(hsv_color.v * 255);
+            retval.b = static_cast<GLubyte>(tmp3 * 255);
+            break;
+        case 3:
+            retval.r = static_cast<GLubyte>(tmp1 * 255);
+            retval.g = static_cast<GLubyte>(tmp2 * 255);
             retval.b = static_cast<GLubyte>(hsv_color.v * 255);
-        } else {
-            double tmph = hsv_color.h * 6.0;
-            int tmpi = static_cast<int>(tmph);
-            double tmp1 = hsv_color.v * (1 - hsv_color.s);
-            double tmp2 = hsv_color.v * (1 - hsv_color.s * (tmph - tmpi));
-            double tmp3 = hsv_color.v * (1 - hsv_color.s * (1 - (tmph - tmpi)));
-            switch (tmpi) {
-            case 0:
-                retval.r = static_cast<GLubyte>(hsv_color.v * 255);
-                retval.g = static_cast<GLubyte>(tmp3 * 255);
-                retval.b = static_cast<GLubyte>(tmp1 * 255);
-                break;
-            case 1:
-                retval.r = static_cast<GLubyte>(tmp2 * 255);
-                retval.g = static_cast<GLubyte>(hsv_color.v * 255);
-                retval.b = static_cast<GLubyte>(tmp1 * 255);
-                break;
-            case 2:
-                retval.r = static_cast<GLubyte>(tmp1 * 255);
-                retval.g = static_cast<GLubyte>(hsv_color.v * 255);
-                retval.b = static_cast<GLubyte>(tmp3 * 255);
-                break;
-            case 3:
-                retval.r = static_cast<GLubyte>(tmp1 * 255);
-                retval.g = static_cast<GLubyte>(tmp2 * 255);
-                retval.b = static_cast<GLubyte>(hsv_color.v * 255);
-                break;
-            case 4:
-                retval.r = static_cast<GLubyte>(tmp3 * 255);
-                retval.g = static_cast<GLubyte>(tmp1 * 255);
-                retval.b = static_cast<GLubyte>(hsv_color.v * 255);
-                break;
-            default:
-                retval.r = static_cast<GLubyte>(hsv_color.v * 255);
-                retval.g = static_cast<GLubyte>(tmp1 * 255);
-                retval.b = static_cast<GLubyte>(tmp2 * 255);
-                break;
-            }
+            break;
+        case 4:
+            retval.r = static_cast<GLubyte>(tmp3 * 255);
+            retval.g = static_cast<GLubyte>(tmp1 * 255);
+            retval.b = static_cast<GLubyte>(hsv_color.v * 255);
+            break;
+        default:
+            retval.r = static_cast<GLubyte>(hsv_color.v * 255);
+            retval.g = static_cast<GLubyte>(tmp1 * 255);
+            retval.b = static_cast<GLubyte>(tmp2 * 255);
+            break;
         }
-
-        return retval;
     }
+
+    return retval;
+}
+
 }
 
 
@@ -796,4 +782,3 @@ void ColorDlg::CancelClicked()
     m_current_color = Convert(m_original_color);
     m_done = true;
 }
-

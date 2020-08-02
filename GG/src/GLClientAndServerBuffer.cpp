@@ -1,15 +1,16 @@
-/*
- *  GLClientAndServerBuffer.cpp
- *  FreeOrion
- *
- *  Created by Rainer Kupke on 06.02.11.
- *  Copyright 2011. All rights reserved.
- *
- */
+//! GiGi - A GUI for OpenGL
+//!
+//!  Copyright (C) 2011 Rainer Kupke
+//!  Copyright (C) 2013-2020 The FreeOrion Project
+//!
+//! Released under the GNU Lesser General Public License 2.1 or later.
+//! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
+//! SPDX-License-Identifier: LGPL-2.1-or-later
 
 #include <GG/GLClientAndServerBuffer.h>
 
-namespace GG {
+
+using namespace GG;
 
 ///////////////////////////////////////////////////////////////////////////
 // GLBufferBase
@@ -121,7 +122,7 @@ void GLClientAndServerBufferBase<vtype>::clear()
 ///////////////////////////////////////////////////////////////////////////
 // GLRGBAColorBuffer
 ///////////////////////////////////////////////////////////////////////////
-template class GLClientAndServerBufferBase<unsigned char>;
+template class GG::GLClientAndServerBufferBase<unsigned char>;
 
 GLRGBAColorBuffer::GLRGBAColorBuffer() :
 GLClientAndServerBufferBase<unsigned char>(4)
@@ -144,7 +145,7 @@ void GLRGBAColorBuffer::activate() const
 ///////////////////////////////////////////////////////////////////////////
 // GL2DVertexBuffer
 ///////////////////////////////////////////////////////////////////////////
-template class GLClientAndServerBufferBase<float>;
+template class GG::GLClientAndServerBufferBase<float>;
 
 GL2DVertexBuffer::GL2DVertexBuffer() :
     GLClientAndServerBufferBase<float>(2)
@@ -234,6 +235,4 @@ void GLNormalBuffer::activate() const
     } else {
         glNormalPointer(GL_FLOAT, 0, b_data.empty() ? nullptr: &b_data[0]);
     }
-}
-
 }

@@ -1,10 +1,19 @@
-// -*- C++ -*-
+//! GiGi - A GUI for OpenGL
+//!
+//!  Copyright (C) 2011 Rainer Kupke
+//!  Copyright (C) 2013-2020 The FreeOrion Project
+//!
+//! Released under the GNU Lesser General Public License 2.1 or later.
+//! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
+//! SPDX-License-Identifier: LGPL-2.1-or-later
+
 #ifndef _GLClientAndServerBuffer_h_
 #define _GLClientAndServerBuffer_h_
 
-#include <GG/Base.h>
 
 #include <vector>
+#include <GG/Base.h>
+
 
 namespace GG {
 
@@ -133,5 +142,6 @@ public:
 };
 
 }
+
 
 #endif

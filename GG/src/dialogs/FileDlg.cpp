@@ -1,30 +1,25 @@
-/* GG is a GUI for OpenGL.
-   Copyright (C) 2003-2008 T. Zachary Laine
+//! GiGi - A GUI for OpenGL
+//!
+//!  Copyright (C) 2003-2008 T. Zachary Laine <whatwasthataddress@gmail.com>
+//!  Copyright (C) 2013-2020 The FreeOrion Project
+//!
+//! Released under the GNU Lesser General Public License 2.1 or later.
+//! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
+//! SPDX-License-Identifier: LGPL-2.1-or-later
 
-   This library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public License
-   as published by the Free Software Foundation; either version 2.1
-   of the License, or (at your option) any later version.
-   
-   This library is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Lesser General Public License for more details.
-    
-   You should have received a copy of the GNU Lesser General Public
-   License along with this library; if not, write to the Free
-   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
-   02111-1307 USA
-
-   If you do not wish to comply with the terms of the LGPL please
-   contact the author as other terms are available for a fee.
-    
-   Zach Laine
-   whatwasthataddress@gmail.com */
-
-#include <GG/dialogs/FileDlg.h>
-
+#include <boost/cast.hpp>
+#include <boost/algorithm/string/predicate.hpp>
+#include <boost/filesystem/operations.hpp>
+#include <boost/format.hpp>
+// boost::spirit::classic pulls in windows.h which in turn defines macro
+// versions of min and max.  Defining NOMINMAX disables the creation of those
+// macros
+#define NOMINMAX
+#include <boost/spirit/include/classic_dynamic.hpp>
+#include <boost/spirit/include/classic.hpp>
+#include <boost/system/system_error.hpp>
 #include <GG/Button.h>
+#include <GG/dialogs/FileDlg.h>
 #include <GG/dialogs/ThreeButtonDlg.h>
 #include <GG/DrawUtil.h>
 #include <GG/DropDownList.h>
@@ -35,106 +30,96 @@
 #include <GG/utf8/checked.h>
 #include <GG/WndEvent.h>
 
-#include <boost/cast.hpp>
-#include <boost/format.hpp>
-#include <boost/algorithm/string/predicate.hpp>
-#include <boost/filesystem/operations.hpp>
-// boost::spirit::classic pulls in windows.h which in turn defines macro
-// versions of min and max.  Defining NOMINMAX disables the creation of those
-// macros
-#define NOMINMAX
-#include <boost/spirit/include/classic.hpp>
-#include <boost/spirit/include/classic_dynamic.hpp>
-#include <boost/system/system_error.hpp>
-
 
 using namespace GG;
 
 namespace {
-    using namespace boost::spirit::classic;
 
-    // these functors are used by the if_p, while_p, and for_p parsers in UpdateList()
-    struct LeadingWildcard
-    {
-        LeadingWildcard(const std::string& str) : m_value(!str.empty() && *str.begin() == '*') {}
-        bool operator()() const {return m_value;}
-        bool m_value;
-    };
-    struct TrailingWildcard
-    {
-        TrailingWildcard(const std::string& str) : m_value(!str.empty() && *str.rbegin() == '*') {}
-        bool operator()() const {return m_value;}
-        bool m_value;
-    };
+using namespace boost::spirit::classic;
 
-    struct Index
-    {
-        Index(int i = 0) : m_initial_value(i) {}
-        void operator()() const {value = m_initial_value;}
-        int m_initial_value;
-        static int value;
-    };
-    int Index::value;
-    struct IndexLess
-    {
-        IndexLess(int val) : m_value(val) {}
-        bool operator()() const {return Index::value <  m_value;}
-        int m_value;
-    };
-    struct IndexIncr
-    {
-        void operator()() const {++Index::value;}
-    };
+// these functors are used by the if_p, while_p, and for_p parsers in UpdateList()
+struct LeadingWildcard
+{
+    LeadingWildcard(const std::string& str) : m_value(!str.empty() && *str.begin() == '*') {}
+    bool operator()() const {return m_value;}
+    bool m_value;
+};
+struct TrailingWildcard
+{
+    TrailingWildcard(const std::string& str) : m_value(!str.empty() && *str.rbegin() == '*') {}
+    bool operator()() const {return m_value;}
+    bool m_value;
+};
 
-    struct FrontStringBegin
-    {
-        FrontStringBegin(const std::shared_ptr<std::vector<std::string>>& strings) :
-            m_strings(strings)
-        {}
+struct Index
+{
+    Index(int i = 0) : m_initial_value(i) {}
+    void operator()() const {value = m_initial_value;}
+    int m_initial_value;
+    static int value;
+};
+int Index::value;
+struct IndexLess
+{
+    IndexLess(int val) : m_value(val) {}
+    bool operator()() const {return Index::value <  m_value;}
+    int m_value;
+};
+struct IndexIncr
+{
+    void operator()() const {++Index::value;}
+};
 
-        const char* operator()() const {return m_strings->front().c_str();}
+struct FrontStringBegin
+{
+    FrontStringBegin(const std::shared_ptr<std::vector<std::string>>& strings) :
+        m_strings(strings)
+    {}
 
-        std::shared_ptr<std::vector<std::string>> m_strings;
-    };
-    struct FrontStringEnd
-    {
-        FrontStringEnd(const std::shared_ptr<std::vector<std::string>>& strings) :
-            m_strings(strings)
-        {}
+    const char* operator()() const {return m_strings->front().c_str();}
 
-        const char* operator()() const {return m_strings->front().c_str() + m_strings->front().size();}
+    std::shared_ptr<std::vector<std::string>> m_strings;
+};
+struct FrontStringEnd
+{
+    FrontStringEnd(const std::shared_ptr<std::vector<std::string>>& strings) :
+        m_strings(strings)
+    {}
 
-        std::shared_ptr<std::vector<std::string>> m_strings;
-    };
-    struct IndexedStringBegin
-    {
-        IndexedStringBegin(const std::shared_ptr<std::vector<std::string>>& strings) :
-            m_strings(strings)
-        {}
+    const char* operator()() const {return m_strings->front().c_str() + m_strings->front().size();}
 
-        const char* operator()() const {return (*m_strings)[Index::value].c_str();}
+    std::shared_ptr<std::vector<std::string>> m_strings;
+};
+struct IndexedStringBegin
+{
+    IndexedStringBegin(const std::shared_ptr<std::vector<std::string>>& strings) :
+        m_strings(strings)
+    {}
 
-        std::shared_ptr<std::vector<std::string>> m_strings;
-    };
-    struct IndexedStringEnd
-    {
-        IndexedStringEnd(const std::shared_ptr<std::vector<std::string>>& strings) :
-            m_strings(strings)
-        {}
+    const char* operator()() const {return (*m_strings)[Index::value].c_str();}
 
-        const char* operator()() const {return (*m_strings)[Index::value].c_str() + (*m_strings)[Index::value].size();}
+    std::shared_ptr<std::vector<std::string>> m_strings;
+};
+struct IndexedStringEnd
+{
+    IndexedStringEnd(const std::shared_ptr<std::vector<std::string>>& strings) :
+        m_strings(strings)
+    {}
 
-        std::shared_ptr<std::vector<std::string>> m_strings;
-    };
+    const char* operator()() const {return (*m_strings)[Index::value].c_str() + (*m_strings)[Index::value].size();}
 
-    bool WindowsRoot(const std::string& root_name)
-    { return root_name.size() == 2 && std::isalpha(root_name[0]) && root_name[1] == ':'; }
+    std::shared_ptr<std::vector<std::string>> m_strings;
+};
 
-    bool Win32Paths()
-    { return WindowsRoot(boost::filesystem::initial_path().root_name().string()); }
+bool WindowsRoot(const std::string& root_name)
+{ return root_name.size() == 2 && std::isalpha(root_name[0]) && root_name[1] == ':'; }
 
-    const X H_SPACING(10);
-    const Y V_SPACING(10);
+bool Win32Paths()
+{ return WindowsRoot(boost::filesystem::initial_path().root_name().string()); }
+
+const X H_SPACING(10);
+const Y V_SPACING(10);
+
 }
 
 namespace fs = boost::filesystem;

@@ -1,40 +1,22 @@
-/* GG is a GUI for OpenGL.
-   Copyright (C) 2003-2008 T. Zachary Laine
+//! GiGi - A GUI for OpenGL
+//!
+//!  Copyright (C) 2003-2008 T. Zachary Laine <whatwasthataddress@gmail.com>
+//!  Copyright (C) 2013-2020 The FreeOrion Project
+//!
+//! Released under the GNU Lesser General Public License 2.1 or later.
+//! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
+//! SPDX-License-Identifier: LGPL-2.1-or-later
 
-   This library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public License
-   as published by the Free Software Foundation; either version 2.1
-   of the License, or (at your option) any later version.
-   
-   This library is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Lesser General Public License for more details.
-    
-   You should have received a copy of the GNU Lesser General Public
-   License along with this library; if not, write to the Free
-   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
-   02111-1307 USA
-
-   If you do not wish to comply with the terms of the LGPL please
-   contact the author as other terms are available for a fee.
-    
-   Zach Laine
-   whatwasthataddress@gmail.com */
-
-#include <GG/GUI.h>
-
-#include <GG/BrowseInfoWnd.h>
 #include <GG/Config.h>
-#include <GG/Cursor.h>
-#include <GG/Edit.h>
-#include <GG/Layout.h>
-#include <GG/ListBox.h>
-#include <GG/StyleFactory.h>
-#include <GG/Timer.h>
-#include <GG/utf8/checked.h>
-#include <GG/ZList.h>
-
+#include <cassert>
+#include <fstream>
+#include <functional>
+#include <iostream>
+#include <list>
+#include <thread>
+#include <boost/algorithm/string/predicate.hpp>
+#include <boost/format.hpp>
+#include <boost/xpressive/xpressive.hpp>
 #if GG_HAVE_LIBPNG
 # if GIGI_CONFIG_USE_OLD_IMPLEMENTATION_OF_GIL_PNG_IO
 #  if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ > 7)
@@ -50,95 +32,97 @@
 #  include <boost/gil/extension/io/png.hpp>
 # endif
 #endif
+#include <GG/BrowseInfoWnd.h>
+#include <GG/Cursor.h>
+#include <GG/Edit.h>
+#include <GG/GUI.h>
+#include <GG/Layout.h>
+#include <GG/ListBox.h>
+#include <GG/StyleFactory.h>
+#include <GG/Timer.h>
+#include <GG/utf8/checked.h>
+#include <GG/ZList.h>
 
-#include <boost/algorithm/string/predicate.hpp>
-#include <boost/format.hpp>
-#include <boost/xpressive/xpressive.hpp>
-
-#include <cassert>
-#include <functional>
-#include <fstream>
-#include <iostream>
-#include <list>
-#include <thread>
 
 using namespace GG;
+namespace gil = boost::gil;
 
 namespace {
-    const bool INSTRUMENT_GET_WINDOW_UNDER = false;
 
-    struct AcceleratorEcho
+const bool INSTRUMENT_GET_WINDOW_UNDER = false;
+
+struct AcceleratorEcho
+{
+    AcceleratorEcho(Key key, Flags<ModKey> mod_keys) :
+        m_str("GG SIGNAL : GUI::AcceleratorSignal(key=" +
+                boost::lexical_cast<std::string>(key) +
+                " mod_keys=" +
+                boost::lexical_cast<std::string>(mod_keys) +
+                ")")
+    {}
+    bool operator()()
     {
-        AcceleratorEcho(Key key, Flags<ModKey> mod_keys) :
-            m_str("GG SIGNAL : GUI::AcceleratorSignal(key=" +
-                  boost::lexical_cast<std::string>(key) +
-                  " mod_keys=" +
-                  boost::lexical_cast<std::string>(mod_keys) +
-                  ")")
-        {}
-        bool operator()()
-        {
-            std::cerr << m_str << std::endl;
-            return false;
-        }
-        std::string m_str;
-    };
+        std::cerr << m_str << std::endl;
+        return false;
+    }
+    std::string m_str;
+};
 
-    // calculates WndEvent::EventType corresponding to a given mouse button
-    // and a given left mouse button event type. For example, given the 
-    // left mouse button drag and button 2 (the right mouse button),
-    // this will return right button drag.
-    WndEvent::EventType ButtonEvent(WndEvent::EventType left_type, unsigned int mouse_button)
-    { return WndEvent::EventType(left_type + (WndEvent::MButtonDown - WndEvent::LButtonDown) * mouse_button); }
+// calculates WndEvent::EventType corresponding to a given mouse button
+// and a given left mouse button event type. For example, given the 
+// left mouse button drag and button 2 (the right mouse button),
+// this will return right button drag.
+WndEvent::EventType ButtonEvent(WndEvent::EventType left_type, unsigned int mouse_button)
+{ return WndEvent::EventType(left_type + (WndEvent::MButtonDown - WndEvent::LButtonDown) * mouse_button); }
 
-    typedef utf8::wchar_iterator<std::string::const_iterator> utf8_wchar_iterator;
-    typedef boost::xpressive::basic_regex<utf8_wchar_iterator> word_regex;
-    typedef boost::xpressive::regex_iterator<utf8_wchar_iterator> word_regex_iterator;
-    const wchar_t WIDE_DASH = '-';
-    const word_regex DEFAULT_WORD_REGEX =
-        +boost::xpressive::set[boost::xpressive::_w | WIDE_DASH];
+typedef utf8::wchar_iterator<std::string::const_iterator> utf8_wchar_iterator;
+typedef boost::xpressive::basic_regex<utf8_wchar_iterator> word_regex;
+typedef boost::xpressive::regex_iterator<utf8_wchar_iterator> word_regex_iterator;
+const wchar_t WIDE_DASH = '-';
+const word_regex DEFAULT_WORD_REGEX =
+    +boost::xpressive::set[boost::xpressive::_w | WIDE_DASH];
 
-    void WriteWndToPNG(const Wnd* wnd, const std::string& filename)
-    {
+void WriteWndToPNG(const Wnd* wnd, const std::string& filename)
+{
 #if GG_HAVE_LIBPNG
-        Pt ul = wnd->UpperLeft();
-        Pt size = wnd->Size();
+    Pt ul = wnd->UpperLeft();
+    Pt size = wnd->Size();
 
-        std::vector<GLubyte> bytes(Value(size.x) * Value(size.y) * 4);
+    std::vector<GLubyte> bytes(Value(size.x) * Value(size.y) * 4);
 
-        glFinish();
+    glFinish();
 
-        glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT);
+    glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT);
 
-        glPixelStorei(GL_PACK_SWAP_BYTES, false);
-        glPixelStorei(GL_PACK_LSB_FIRST, false);
-        glPixelStorei(GL_PACK_ROW_LENGTH, 0);
-        glPixelStorei(GL_PACK_SKIP_ROWS, 0);
-        glPixelStorei(GL_PACK_SKIP_PIXELS, 0);
-        glPixelStorei(GL_PACK_ALIGNMENT, 1);
+    glPixelStorei(GL_PACK_SWAP_BYTES, false);
+    glPixelStorei(GL_PACK_LSB_FIRST, false);
+    glPixelStorei(GL_PACK_ROW_LENGTH, 0);
+    glPixelStorei(GL_PACK_SKIP_ROWS, 0);
+    glPixelStorei(GL_PACK_SKIP_PIXELS, 0);
+    glPixelStorei(GL_PACK_ALIGNMENT, 1);
 
-        glReadPixels(Value(ul.x),
-                     Value(GUI::GetGUI()->AppHeight() - wnd->Bottom()),
-                     Value(size.x),
-                     Value(size.y),
-                     GL_RGBA,
-                     GL_UNSIGNED_BYTE,
-                     &bytes[0]);
-
-        glPopClientAttrib();
-
-        using namespace boost::gil;
-        write_view(
-            filename,
-            flipped_up_down_view(
-                interleaved_view(
+    glReadPixels(Value(ul.x),
+                    Value(GUI::GetGUI()->AppHeight() - wnd->Bottom()),
                     Value(size.x),
                     Value(size.y),
-                    static_cast<rgba8_pixel_t*>(static_cast<void*>(&bytes[0])),
-                    Value(size.x) * sizeof(rgba8_pixel_t))),
-            png_tag());
+                    GL_RGBA,
+                    GL_UNSIGNED_BYTE,
+                    &bytes[0]);
+
+    glPopClientAttrib();
+
+    gil::write_view(
+        filename,
+        gil::flipped_up_down_view(
+            gil::interleaved_view(
+                Value(size.x),
+                Value(size.y),
+                static_cast<gil::rgba8_pixel_t*>(static_cast<void*>(&bytes[0])),
+                Value(size.x) * sizeof(gil::rgba8_pixel_t))),
+        gil::png_tag());
 #endif
-    }
+}
+
 }
 
 
