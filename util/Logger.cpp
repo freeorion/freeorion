@@ -95,7 +95,7 @@ LogLevel to_LogLevel(const std::string& text) {
 }
 
 std::unordered_map<std::string, LogLevel> ValidNameToLogLevel() {
-    std::unordered_map<std::string, LogLevel> retval{};
+    std::unordered_map<std::string, LogLevel> retval;
 
     for (int ii = static_cast<int>(LogLevel::min); ii <= static_cast<int>(LogLevel::max); ++ii) {
         auto log_level = static_cast<LogLevel>(ii);
@@ -110,7 +110,7 @@ std::unordered_map<std::string, LogLevel> ValidNameToLogLevel() {
         // Insert the upper case
         std::transform(name.begin(), name.end(), name.begin(),
                        [](const char c) { return std::toupper(c); });
-        retval.emplace(name, log_level);
+        retval.emplace(std::move(name), log_level);
     }
     return retval;
 }

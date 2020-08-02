@@ -30,11 +30,11 @@ struct CookieData {
     Networking::AuthRoles       roles;
     bool                        authenticated;
 
-    CookieData(const std::string& player_name_,
+    CookieData(std::string player_name_,
                const boost::posix_time::ptime& expired_,
                const Networking::AuthRoles& roles_,
                bool authenticated_) :
-        player_name(player_name_),
+        player_name(std::move(player_name_)),
         expired(expired_),
         roles(roles_),
         authenticated(authenticated_)
@@ -166,7 +166,7 @@ public:
     void SetHostPlayerID(int host_player_id);
 
     /** Generate cookies for player's name, roles, and authentication status. */
-    boost::uuids::uuid GenerateCookie(const std::string& player_name,
+    boost::uuids::uuid GenerateCookie(std::string player_name,
                                       const Networking::AuthRoles& roles,
                                       bool authenticated);
 

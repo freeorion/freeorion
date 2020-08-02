@@ -150,12 +150,12 @@ public:
 template <typename T>
 struct DiscreteValidator : public Validator<T>
 {
-    DiscreteValidator(const T& single_value) :
-        m_values(&single_value, &single_value + 1)
+    DiscreteValidator(T single_value) :
+        m_values{std::move(single_value)}
     { }
 
-    DiscreteValidator(const std::set<T>& values) :
-        m_values(values)
+    DiscreteValidator(std::set<T> values) :
+        m_values(std::move(values))
     { }
 
     template <typename iter>

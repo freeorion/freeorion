@@ -2028,25 +2028,25 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
         }
 
         // add player setup data for each player in saved gamed
-        for (const PlayerSaveHeaderData& psgd : player_save_header_data) {
+        for (PlayerSaveHeaderData& psgd : player_save_header_data) {
             if (psgd.client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER ||
                 psgd.client_type == Networking::CLIENT_TYPE_AI_PLAYER)
             {
-                PlayerSetupData psd;
-                psd.player_name =         psgd.name;
+                players.emplace_back();
+                auto& psd = players.back();
+
+                psd.player_name = std::move(psgd.name);
                 //psd.empire_name // left default
                 //psd.empire_color // left default
                 //psd.starting_species_name // left default
                 psd.save_game_empire_id = psgd.empire_id;
-                psd.client_type =         psgd.client_type;
+                psd.client_type = psgd.client_type;
 
                 if (psd.client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
                     psd.player_id = server.Networking().HostPlayerID();
                 } else {
                     psd.player_id = player_id++;
                 }
-
-                players.push_back(psd);
             }
         }
     }

@@ -733,13 +733,13 @@ void ServerNetworking::HandleNextEvent() {
 void ServerNetworking::SetHostPlayerID(int host_player_id)
 { m_host_player_id = host_player_id; }
 
-boost::uuids::uuid ServerNetworking::GenerateCookie(const std::string& player_name,
+boost::uuids::uuid ServerNetworking::GenerateCookie(std::string player_name,
                                                     const Networking::AuthRoles& roles,
                                                     bool authenticated)
 {
     boost::uuids::uuid cookie = boost::uuids::random_generator()();
     m_cookies.erase(cookie); // remove previous cookie if exists
-    m_cookies.emplace(cookie, CookieData(player_name,
+    m_cookies.emplace(cookie, CookieData(std::move(player_name),
                                          boost::posix_time::second_clock::local_time() +
                                              boost::posix_time::minutes(GetOptionsDB().Get<int>("network.server.cookies.expire-minutes")),
                                          roles,

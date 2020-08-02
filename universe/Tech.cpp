@@ -627,9 +627,9 @@ std::vector<std::string> TechManager::RecursivePrereqs(const std::string& tech_n
         return std::vector<std::string>();
 
     // compile set of recursive prereqs
-    std::list<std::string> prereqs_list;                    // working list of prereqs as being processed.  may contain duplicates
-    std::set<std::string> prereqs_set;                      // set of (unique) prereqs leading to tech
-    std::multimap<float, std::string> techs_to_add_map;    // indexed and sorted by cost per turn
+    std::list<std::string> prereqs_list;                // working list of prereqs as being processed.  may contain duplicates
+    std::set<std::string> prereqs_set;                  // set of (unique) prereqs leading to tech
+    std::multimap<float, std::string> techs_to_add_map; // indexed and sorted by cost per turn
 
     // initialize working list with 1st order prereqs
     std::set<std::string> cur_prereqs = tech->Prerequisites();

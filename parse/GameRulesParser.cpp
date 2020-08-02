@@ -20,41 +20,41 @@ namespace {
     struct insert_rule_ {
         typedef void result_type;
 
-        void operator()(GameRules& game_rules, const std::string& name,
-                        const std::string& desc, const std::string& category,
+        void operator()(GameRules& game_rules, std::string& name,
+                        std::string& desc, std::string& category,
                         bool default_value) const
         {
             DebugLogger() << "Adding Boolean game rule with name: " << name
                           << ", desc: " << desc << ", default: " << default_value;
-            game_rules.Add<bool>(name, desc, category, default_value, false);
+            game_rules.Add<bool>(std::move(name), std::move(desc), std::move(category), default_value, false);
         }
 
-        void operator()(GameRules& game_rules, const std::string& name,
-                        const std::string& desc, const std::string& category,
+        void operator()(GameRules& game_rules, std::string& name,
+                        std::string& desc, std::string& category,
                         int default_value, int min, int max) const
         {
             DebugLogger() << "Adding Integer game rule with name: " << name
                           << ", desc: " << desc << ", default: " << default_value
                           << ", min: " << min << ", max: " << max;
-            game_rules.Add<int>(name, desc, category, default_value, false,
+            game_rules.Add<int>(std::move(name), std::move(desc), std::move(category), default_value, false,
                                 RangedValidator<int>(min, max));
         }
 
-        void operator()(GameRules& game_rules, const std::string& name,
-                        const std::string& desc, const std::string& category,
+        void operator()(GameRules& game_rules, std::string& name,
+                        std::string& desc, std::string& category,
                         double default_value, double min, double max) const
         {
             DebugLogger() << "Adding Double game rule with name: " << name
                           << ", desc: " << desc << ", default: " << default_value
                           << ", min: " << min << ", max: " << max;
-            game_rules.Add<double>(name, desc, category, default_value,
+            game_rules.Add<double>(std::move(name), std::move(desc), std::move(category), default_value,
                                    false, RangedValidator<double>(min, max));
         }
 
-        void operator()(GameRules& game_rules, const std::string& name,
-                        const std::string& desc, const std::string& category,
-                        const std::string& default_value,
-                        const std::set<std::string>& allowed = {}) const
+        void operator()(GameRules& game_rules, std::string& name,
+                        std::string& desc, std::string& category,
+                        std::string& default_value,
+                        std::set<std::string>& allowed = std::set<std::string>()) const
         {
             std::string allowed_values_string;
             for (const auto& e : allowed)
@@ -64,10 +64,12 @@ namespace {
                           << "\", allowed: " << allowed_values_string;
 
             if (allowed.empty()) {
-                game_rules.Add<std::string>(name, desc, category, default_value, false);
+                game_rules.Add<std::string>(std::move(name), std::move(desc), std::move(category),
+                                            std::move(default_value), false);
             } else {
-                game_rules.Add<std::string>(name, desc, category, default_value, false,
-                                            DiscreteValidator<std::string>(allowed));
+                game_rules.Add<std::string>(std::move(name), std::move(desc), std::move(category),
+                                            std::move(default_value), false,
+                                            DiscreteValidator<std::string>(std::move(allowed)));
             }
         }
     };
