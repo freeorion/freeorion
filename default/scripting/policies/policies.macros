@@ -1,0 +1,31 @@
+// sets stability (happiness) on planets in empire that has adopted the policy this macro effect is added to, if those planets' species like or dislike the policy
+
+STABILITY_PER_LIKED_OR_DISLIKED_POLICY
+'''2'''
+
+SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS
+'''
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Population low = 0.001
+                (SpeciesContentOpinion species = LocalCandidate.Species name = ThisPolicy > 0)
+            ]
+            accountinglabel = "LIKES_POLICY_LABEL"
+            // priority = [[DEFAULT_PRIORITY]]  // want to avoid needing to include the priorities-defining macro in all policies...
+            effects =
+                SetTargetHappiness value = Value + [[STABILITY_PER_LIKED_OR_DISLIKED_POLICY]] * SpeciesContentOpinion species = Target.Species name = ThisPolicy
+
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Population low = 0.001
+                (SpeciesContentOpinion species = LocalCandidate.Species name = ThisPolicy < 0)
+            ]
+            accountinglabel = "DISLIKES_POLICY_LABEL"
+            // priority = [[DEFAULT_PRIORITY]]  // want to avoid needing to include the priorities-defining macro in all policies...
+            effects =
+                SetTargetHappiness value = Value + [[STABILITY_PER_LIKED_OR_DISLIKED_POLICY]] * SpeciesContentOpinion species = Target.Species name = ThisPolicy
+'''
