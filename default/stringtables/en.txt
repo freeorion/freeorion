@@ -11240,7 +11240,7 @@ PLC_INDUSTRIALISM
 Industrialism
 
 PLC_INDUSTRIALISM_DESC
-'''Increases industry output of planets by 25% and makes industry-focused planets happier.
+'''Increases industry output of planets by 25% and makes industry-focused planets more stable.
 
 Also makes some production-boosting generation techs cheaper to research.'''
 
@@ -15871,7 +15871,7 @@ GREAT_INFLUENCE_LABEL
 # %1% FIXME
 # %2% FIXME
 ULTIMATE_INFLUENCE_LABEL
-%2% Ultimate Research
+%2% Ultimate Influence
 
 # %1% FIXME
 # %2% FIXME
