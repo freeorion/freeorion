@@ -18,6 +18,7 @@ Species
 
     defaultfocus = "FOCUS_INDUSTRY"
     likes = ["FOCUS_INDUSTRY"]
+    dislikes = ["PLC_DIVERSITY" "BLD_INTERSPECIES_ACADEMY" "BLD_XENORESURRECTION_LAB"]
 
     effectsgroups = [
         [[AVERAGE_INDUSTRY]]
