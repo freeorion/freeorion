@@ -378,3 +378,48 @@ template void serializeIncompleteLogs<freeorion_bin_oarchive>(freeorion_bin_oarc
 template void serializeIncompleteLogs<freeorion_bin_iarchive>(freeorion_bin_iarchive&, CombatLogManager&, unsigned int const);
 template void serializeIncompleteLogs<freeorion_xml_oarchive>(freeorion_xml_oarchive&, CombatLogManager&, unsigned int const);
 template void serializeIncompleteLogs<freeorion_xml_iarchive>(freeorion_xml_iarchive&, CombatLogManager&, unsigned int const);
+
+
+template <typename Archive>
+void serialize(Archive & ar, CombatInfo& obj, const unsigned int version)
+{
+    using namespace boost::serialization;
+
+    std::set<int>                       filtered_empire_ids;
+    ObjectMap                           filtered_objects;
+    std::set<int>                       filtered_damaged_object_ids;
+    std::set<int>                       filtered_destroyed_object_ids;
+    std::map<int, std::set<int>>        filtered_destroyed_object_knowers;
+    Universe::EmpireObjectVisibilityMap filtered_empire_object_visibility;
+    std::vector<CombatEventPtr>         filtered_combat_events;
+
+    if (Archive::is_saving::value) {
+        obj.GetEmpireIdsToSerialize(             filtered_empire_ids,               GetUniverse().EncodingEmpire());
+        obj.GetObjectsToSerialize(               filtered_objects,                  GetUniverse().EncodingEmpire());
+        obj.GetDamagedObjectsToSerialize(        filtered_damaged_object_ids,       GetUniverse().EncodingEmpire());
+        obj.GetDestroyedObjectsToSerialize(      filtered_destroyed_object_ids,     GetUniverse().EncodingEmpire());
+        obj.GetDestroyedObjectKnowersToSerialize(filtered_destroyed_object_knowers, GetUniverse().EncodingEmpire());
+        obj.GetEmpireObjectVisibilityToSerialize(filtered_empire_object_visibility, GetUniverse().EncodingEmpire());
+        obj.GetCombatEventsToSerialize(          filtered_combat_events,            GetUniverse().EncodingEmpire());
+    }
+
+    ar  & make_nvp("turn", obj.turn)
+        & make_nvp("system_id", obj.system_id)
+        & BOOST_SERIALIZATION_NVP(filtered_empire_ids)
+        & BOOST_SERIALIZATION_NVP(filtered_objects)
+        & BOOST_SERIALIZATION_NVP(filtered_damaged_object_ids)
+        & BOOST_SERIALIZATION_NVP(filtered_destroyed_object_ids)
+        & BOOST_SERIALIZATION_NVP(filtered_destroyed_object_knowers)
+        & BOOST_SERIALIZATION_NVP(filtered_empire_object_visibility)
+        & BOOST_SERIALIZATION_NVP(filtered_combat_events);
+
+    if (Archive::is_loading::value) {
+        obj.empire_ids.swap(              filtered_empire_ids);
+        obj.objects.swap(                 filtered_objects);
+        obj.damaged_object_ids.swap(      filtered_damaged_object_ids);
+        obj.destroyed_object_ids.swap(    filtered_destroyed_object_ids);
+        obj.destroyed_object_knowers.swap(filtered_destroyed_object_knowers);
+        obj.empire_object_visibility.swap(filtered_empire_object_visibility);
+        obj.combat_events.swap(           filtered_combat_events);
+    }
+}

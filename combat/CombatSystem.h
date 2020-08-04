@@ -6,10 +6,6 @@
 #include "../util/AppInterface.h"
 #include "CombatEvent.h"
 
-#include <boost/serialization/nvp.hpp>
-#include <boost/serialization/split_member.hpp>
-#include <boost/serialization/version.hpp>
-
 
 /** Contains information about the state of a combat before or after the combat
   * occurs. */
@@ -47,76 +43,13 @@ private:
 
     void    InitializeObjectVisibility();
 
-    friend class boost::serialization::access;
     template <typename Archive>
-    void save(Archive & ar, const unsigned int version) const;
-    template <typename Archive>
-    void load(Archive & ar, const unsigned int version);
-    BOOST_SERIALIZATION_SPLIT_MEMBER()
+    friend void serialize(Archive&, CombatInfo&, unsigned int const);
 };
 
 /** Auto-resolves a battle. */
 void AutoResolveCombat(CombatInfo& combat_info);
 
-template <typename Archive>
-void CombatInfo::save(Archive & ar, const unsigned int version) const
-{
-    std::set<int>                       filtered_empire_ids;
-    ObjectMap                           filtered_objects;
-    std::set<int>                       filtered_damaged_object_ids;
-    std::set<int>                       filtered_destroyed_object_ids;
-    std::map<int, std::set<int>>        filtered_destroyed_object_knowers;
-    Universe::EmpireObjectVisibilityMap filtered_empire_object_visibility;
-    std::vector<CombatEventPtr>         filtered_combat_events;
-
-    GetEmpireIdsToSerialize(                filtered_empire_ids,                GetUniverse().EncodingEmpire());
-    GetObjectsToSerialize(                  filtered_objects,                   GetUniverse().EncodingEmpire());
-    GetDamagedObjectsToSerialize(           filtered_damaged_object_ids,        GetUniverse().EncodingEmpire());
-    GetDestroyedObjectsToSerialize(         filtered_destroyed_object_ids,      GetUniverse().EncodingEmpire());
-    GetDestroyedObjectKnowersToSerialize(   filtered_destroyed_object_knowers,  GetUniverse().EncodingEmpire());
-    GetEmpireObjectVisibilityToSerialize(   filtered_empire_object_visibility,  GetUniverse().EncodingEmpire());
-    GetCombatEventsToSerialize(             filtered_combat_events,             GetUniverse().EncodingEmpire());
-
-    ar  & BOOST_SERIALIZATION_NVP(turn)
-        & BOOST_SERIALIZATION_NVP(system_id)
-        & BOOST_SERIALIZATION_NVP(filtered_empire_ids)
-        & BOOST_SERIALIZATION_NVP(filtered_objects)
-        & BOOST_SERIALIZATION_NVP(filtered_damaged_object_ids)
-        & BOOST_SERIALIZATION_NVP(filtered_destroyed_object_ids)
-        & BOOST_SERIALIZATION_NVP(filtered_destroyed_object_knowers)
-        & BOOST_SERIALIZATION_NVP(filtered_empire_object_visibility)
-        & BOOST_SERIALIZATION_NVP(filtered_combat_events);
-}
-
-template <typename Archive>
-void CombatInfo::load(Archive & ar, const unsigned int version)
-{
-    std::set<int>                       filtered_empire_ids;
-    ObjectMap                           filtered_objects;
-    std::set<int>                       filtered_damaged_object_ids;
-    std::set<int>                       filtered_destroyed_object_ids;
-    std::map<int, std::set<int>>        filtered_destroyed_object_knowers;
-    Universe::EmpireObjectVisibilityMap filtered_empire_object_visibility;
-    std::vector<CombatEventPtr>         filtered_combat_events;
-
-    ar  & BOOST_SERIALIZATION_NVP(turn)
-        & BOOST_SERIALIZATION_NVP(system_id)
-        & BOOST_SERIALIZATION_NVP(filtered_empire_ids)
-        & BOOST_SERIALIZATION_NVP(filtered_objects)
-        & BOOST_SERIALIZATION_NVP(filtered_damaged_object_ids)
-        & BOOST_SERIALIZATION_NVP(filtered_destroyed_object_ids)
-        & BOOST_SERIALIZATION_NVP(filtered_destroyed_object_knowers)
-        & BOOST_SERIALIZATION_NVP(filtered_empire_object_visibility)
-        & BOOST_SERIALIZATION_NVP(filtered_combat_events);
-
-    empire_ids.swap(              filtered_empire_ids);
-    objects.swap(                 filtered_objects);
-    damaged_object_ids.swap(      filtered_damaged_object_ids);
-    destroyed_object_ids.swap(    filtered_destroyed_object_ids);
-    destroyed_object_knowers.swap(filtered_destroyed_object_knowers);
-    empire_object_visibility.swap(filtered_empire_object_visibility);
-    combat_events.swap(           filtered_combat_events);
-}
 
 
 #endif
