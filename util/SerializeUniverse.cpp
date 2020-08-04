@@ -517,9 +517,9 @@ void serialize(Archive& ar, SpeciesManager& sm, unsigned int const version)
         & BOOST_SERIALIZATION_NVP(species_ships_destroyed);
 
     if (Archive::is_loading::value) {
-        sm.SetSpeciesHomeworlds(species_homeworlds);
-        sm.SetSpeciesEmpireOpinions(empire_opinions);
-        sm.SetSpeciesSpeciesOpinions(other_species_opinions);
+        sm.SetSpeciesHomeworlds(std::move(species_homeworlds));
+        sm.SetSpeciesEmpireOpinions(std::move(empire_opinions));
+        sm.SetSpeciesSpeciesOpinions(std::move(other_species_opinions));
         sm.m_species_object_populations = std::move(species_object_populations);
         sm.m_species_species_ships_destroyed = std::move(species_ships_destroyed);
     }

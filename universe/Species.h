@@ -269,13 +269,15 @@ public:
 
     /** sets the opinions of species (indexed by name string) of empires (indexed
       * by id) as a double-valued number. */
-    void SetSpeciesEmpireOpinions(const std::map<std::string, std::map<int, float>>& species_empire_opinions);
+    void SetSpeciesEmpireOpinions(std::map<std::string, std::map<int, float>>&& species_empire_opinions);
     void SetSpeciesEmpireOpinion(const std::string& species_name, int empire_id, float opinion);
 
     /** sets the opinions of species (indexed by name string) of other species
       * (indexed by name string) as a double-valued number. */
-    void SetSpeciesSpeciesOpinions(const std::map<std::string, std::map<std::string, float>>& species_species_opinions);
-    void SetSpeciesSpeciesOpinion(const std::string& opinionated_species, const std::string& rated_species, float opinion);
+    void SetSpeciesSpeciesOpinions(std::map<std::string,
+                                   std::map<std::string, float>>&& species_species_opinions);
+    void SetSpeciesSpeciesOpinion(const std::string& opinionated_species,
+                                  const std::string& rated_species, float opinion);
 
     /** clears all species opinion data */
     void ClearSpeciesOpinions();
@@ -293,7 +295,7 @@ private:
 
     /** sets the homeworld ids of species in this SpeciesManager to those
       * specified in \a species_homeworld_ids */
-    void SetSpeciesHomeworlds(const std::map<std::string, std::set<int>>& species_homeworld_ids);
+    void SetSpeciesHomeworlds(std::map<std::string, std::set<int>>&& species_homeworld_ids);
 
     /** Assigns any m_pending_types to m_species. */
     void CheckPendingSpeciesTypes() const;

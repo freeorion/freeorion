@@ -134,8 +134,7 @@ public:
 
     Message();
 
-    Message(MessageType message_type,
-            const std::string& text);
+    Message(MessageType message_type, const std::string& text);
 
     MessageType Type() const;               ///< Returns the type of the message.
     std::size_t Size() const;               ///< Returns the size of the underlying buffer.

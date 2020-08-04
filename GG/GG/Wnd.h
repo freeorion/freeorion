@@ -556,7 +556,7 @@ public:
 
     /** Sets a name for this Wnd.  This name is not used by GG in any way; it
         only exists for user convenience. */
-    void SetName(const std::string& name);
+    void SetName(std::string name);
 
     /** Suppresses rendering of this window (and possibly its children) during
         render loop. */
@@ -975,7 +975,7 @@ protected:
         GetChildClippingMode() is ClipToClientAndWindowSeparately. */
     void EndNonclientClipping();
 
-    virtual void SetParent(const std::shared_ptr<Wnd>& wnd);
+    virtual void SetParent(std::shared_ptr<Wnd> wnd);
 
     /** Modal Wnd's set this to true to stop modal loop. */
     bool m_done = false;

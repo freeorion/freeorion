@@ -33,14 +33,15 @@ const int GroupBox::PIXEL_MARGIN = 4;
 GroupBox::GroupBox()
 {}
 
-GroupBox::GroupBox(X x, Y y, X w, Y h, const std::string& label, const std::shared_ptr<Font>& font,
+GroupBox::GroupBox(X x, Y y, X w, Y h, std::string label, const std::shared_ptr<Font>& font,
                    Clr color, Clr text_color/* = CLR_BLACK*/, Clr interior/* = CLR_ZERO*/,
                    Flags<WndFlag> flags/* = NO_WND_FLAGS*/) :
     m_color(color),
     m_text_color(text_color),
     m_int_color(interior),
     m_font(font),
-    m_label(label.empty() ? nullptr : GUI::GetGUI()->GetStyleFactory()->NewTextControl(label, m_font, m_text_color, FORMAT_LEFT | FORMAT_TOP))
+    m_label(label.empty() ? nullptr : GUI::GetGUI()->GetStyleFactory()->NewTextControl(
+        std::move(label), m_font, m_text_color, FORMAT_LEFT | FORMAT_TOP))
 {}
 
 void GroupBox::CompleteConstruction()
@@ -145,10 +146,10 @@ void GroupBox::SetClientCornersEqualToBoxCorners(bool b)
     }
 }
 
-void GroupBox::SetText(const std::string& str)
+void GroupBox::SetText(std::string str)
 {
     if (!str.empty()) {
-        m_label = GUI::GetGUI()->GetStyleFactory()->NewTextControl(str, m_font, m_text_color);
+        m_label = GUI::GetGUI()->GetStyleFactory()->NewTextControl(std::move(str), m_font, m_text_color);
         m_label->MoveTo(Pt(X(FRAME_THICK + PIXEL_MARGIN), Y0));
         m_label->Resize(Pt(X1, m_font->Lineskip()));
     }

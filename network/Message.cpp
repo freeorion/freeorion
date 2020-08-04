@@ -61,8 +61,7 @@ Message::Message() :
     m_message_text()
 {}
 
-Message::Message(MessageType type,
-                 const std::string& text) :
+Message::Message(MessageType type, const std::string& text) :
     m_type(type),
     m_message_size(text.size()),
     m_message_text(new char[text.size()])

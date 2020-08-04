@@ -71,7 +71,7 @@ public:
       * a pointer to it.  This will only set up the data in Empire.  It is the
       * caller's responsibility to make sure that universe updates planet
       * ownership. */
-    Empire*     CreateEmpire(int empire_id, const std::string& name, const std::string& player_name,
+    Empire*     CreateEmpire(int empire_id, std::string name, std::string player_name,
                              const GG::Clr& color, bool authenticated);
 
     /** Removes and deletes all empires from the manager. */

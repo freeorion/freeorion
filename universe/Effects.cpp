@@ -82,7 +82,7 @@ namespace {
         }
 
         // create new fleet for ship, and put it in new system
-        auto fleet = CreateNewFleet(system->X(), system->Y(), ship);
+        auto fleet = CreateNewFleet(system->X(), system->Y(), std::move(ship));
         system->Insert(fleet);
 
         return fleet;
@@ -104,7 +104,9 @@ namespace {
      * resets the fleet's move route.  Used after a fleet has been moved with
      * the MoveTo effect, as its previous route was assigned based on its
      * previous location, and may not be valid for its new location. */
-    void UpdateFleetRoute(std::shared_ptr<Fleet> fleet, int new_next_system, int new_previous_system, const ObjectMap& objects) {
+    void UpdateFleetRoute(const std::shared_ptr<Fleet>& fleet, int new_next_system,
+                          int new_previous_system, const ObjectMap& objects)
+    {
         if (!fleet) {
             ErrorLogger() << "UpdateFleetRoute passed a null fleet pointer";
             return;
@@ -130,12 +132,13 @@ namespace {
 
         int dest_system = fleet->FinalDestinationID();
 
-        std::pair<std::list<int>, double> route_pair = GetPathfinder()->ShortestPath(start_system, dest_system, fleet->Owner());
+        std::pair<std::list<int>, double> route_pair =
+            GetPathfinder()->ShortestPath(start_system, dest_system, fleet->Owner());
 
         // if shortest path is empty, the route may be impossible or trivial, so just set route to move fleet
         // to the next system that it was just set to move to anyway.
         if (route_pair.first.empty())
-            route_pair.first.push_back(new_next_system);
+            route_pair.first.emplace_back(new_next_system);
 
 
         // set fleet with newly recalculated route
@@ -162,7 +165,8 @@ namespace {
             if (!dupe)
                 return star_name; // no systems have this name yet. use it.
         }
-        return "";  // fallback to empty name.
+        // generate hopefully unique name?
+        return UserString("SYSTEM") + " " + std::to_string(RandInt(objects.size<System>(), objects.size<System>() + 10000));
     }
 }
 
@@ -1158,12 +1162,12 @@ void SetOwner::Execute(ScriptingContext& context) const {
         // move ship into new fleet
         std::shared_ptr<Fleet> new_fleet;
         if (auto system = context.ContextObjects().get<System>(ship->SystemID()))
-            new_fleet = CreateNewFleet(system, ship, context.ContextObjects());
+            new_fleet = CreateNewFleet(std::move(system), std::move(ship), context.ContextObjects());
         else
-            new_fleet = CreateNewFleet(ship->X(), ship->Y(), ship);
-        if (new_fleet) {
+            new_fleet = CreateNewFleet(ship->X(), ship->Y(), std::move(ship));
+
+        if (new_fleet)
             new_fleet->SetNextAndPreviousSystems(fleet->NextSystemID(), fleet->PreviousSystemID());
-        }
 
         // if old fleet is empty, destroy it.  Don't reassign ownership of fleet
         // in case that would reval something to the recipient that shouldn't be...

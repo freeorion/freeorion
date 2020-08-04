@@ -267,7 +267,7 @@ private:
 /** a FreeOrion Edit control */
 class CUIEdit : public GG::Edit {
 public:
-    explicit CUIEdit(const std::string& str);
+    explicit CUIEdit(std::string str);
 
     void CompleteConstruction() override;
 
@@ -491,7 +491,7 @@ private:
     screens. */
 class ResourceInfoPanel : public CUIWnd {
 public:
-    ResourceInfoPanel(const std::string& title, const std::string& point_units_str,
+    ResourceInfoPanel(std::string title, std::string point_units_str,
                       const GG::X x, const GG::Y y, const GG::X w, const GG::Y h,
                       const std::string& config_name);
     void    CompleteConstruction() override;

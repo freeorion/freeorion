@@ -3051,7 +3051,8 @@ void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const G
     };
 
     auto rename_design_action = [&empire_id, &design_id, design, &design_row]() {
-        auto edit_wnd = GG::Wnd::Create<CUIEditWnd>(GG::X(350), UserString("DESIGN_ENTER_NEW_DESIGN_NAME"), design->Name());
+        auto edit_wnd = GG::Wnd::Create<CUIEditWnd>(GG::X(350), UserString("DESIGN_ENTER_NEW_DESIGN_NAME"),
+                                                    design->Name());
         edit_wnd->Run();
         const std::string& result = edit_wnd->Result();
         if (!result.empty() && result != design->Name()) {

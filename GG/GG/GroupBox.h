@@ -30,7 +30,7 @@ class GG_API GroupBox : public Wnd
 {
 public:
     /** Height is determined from the font and point size used. */
-    GroupBox(X x, Y y, X w, Y h, const std::string& label, const std::shared_ptr<Font>& font, Clr color,
+    GroupBox(X x, Y y, X w, Y h, std::string label, const std::shared_ptr<Font>& font, Clr color,
              Clr text_color = CLR_BLACK, Clr interior = CLR_ZERO, Flags<WndFlag> flags = NO_WND_FLAGS);
     void CompleteConstruction() override;
 
@@ -55,7 +55,7 @@ public:
         anything about how GG Wnd client areas work. */
     void SetClientCornersEqualToBoxCorners(bool b);
 
-    virtual void SetText(const std::string& str);
+    virtual void SetText(std::string str);
 
 protected:
     GroupBox();

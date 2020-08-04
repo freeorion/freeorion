@@ -418,7 +418,7 @@ public:
     virtual Pt GetDefaultResolution(int display_id) const = 0;
 
 protected:
-    GUI(const std::string& app_name); ///< protected ctor, called by derived classes
+    GUI(std::string app_name);              ///< protected ctor, called by derived classes
 
     void            ProcessBrowseInfo();    ///< determines the current browse info mode, if any
     /** Allow all windows in the z-list to update data before rendering. */

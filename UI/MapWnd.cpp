@@ -781,13 +781,13 @@ private:
 ////////////////////////////////////////////////////////////
 // MapWndPopup
 ////////////////////////////////////////////////////////////
-MapWndPopup::MapWndPopup(const std::string& t, GG::X default_x, GG::Y default_y, GG::X default_w, GG::Y default_h,
+MapWndPopup::MapWndPopup(std::string t, GG::X default_x, GG::Y default_y, GG::X default_w, GG::Y default_h,
                          GG::Flags<GG::WndFlag> flags, const std::string& config_name) :
-    CUIWnd(t, default_x, default_y, default_w, default_h, flags, config_name)
+    CUIWnd(std::move(t), default_x, default_y, default_w, default_h, flags, config_name)
 {}
 
-MapWndPopup::MapWndPopup(const std::string& t, GG::Flags<GG::WndFlag> flags, const std::string& config_name) :
-    CUIWnd(t, flags, config_name)
+MapWndPopup::MapWndPopup(std::string t, GG::Flags<GG::WndFlag> flags, const std::string& config_name) :
+    CUIWnd(std::move(t), flags, config_name)
 {}
 
 void MapWndPopup::CompleteConstruction() {
@@ -800,8 +800,7 @@ void MapWndPopup::CompleteConstruction() {
             mapwnd->RegisterPopup(std::static_pointer_cast<MapWndPopup>(shared_from_this()));
 }
 
-MapWndPopup::~MapWndPopup()
-{
+MapWndPopup::~MapWndPopup() {
     if (!Visible()) {
         // Make sure it doesn't save visible = 0 to the config (doesn't
         // make sense for windows that are created/destroyed repeatedly),
@@ -844,7 +843,7 @@ LaneEndpoints::LaneEndpoints() :
 ////////////////////////////////////////////////
 struct MapWnd::MovementLineData::Vertex {
     Vertex(double x_, double y_, int eta_, bool show_eta_, bool flag_blockade_ = false, bool flag_supply_block_ = false) :
-    x(x_), y(y_), eta(eta_), show_eta(show_eta_), flag_blockade(flag_blockade_), flag_supply_block(flag_supply_block_)
+        x(x_), y(y_), eta(eta_), show_eta(show_eta_), flag_blockade(flag_blockade_), flag_supply_block(flag_supply_block_)
     {}
     double  x, y;       // apparent in-universe position of a point on move line.  not actual universe positions, but rather where the move line vertices are drawn
     int     eta;        // turns taken to reach point by object travelling along move line
@@ -5852,9 +5851,9 @@ void MapWnd::UniverseObjectDeleted(std::shared_ptr<const UniverseObject> obj) {
         RemoveFleet(fleet->ID());
 }
 
-void MapWnd::RegisterPopup(const std::shared_ptr<MapWndPopup>& popup) {
+void MapWnd::RegisterPopup(std::shared_ptr<MapWndPopup>&& popup) {
     if (popup)
-        m_popups.push_back(std::weak_ptr<MapWndPopup>(popup));
+        m_popups.emplace_back(std::move(popup));
 }
 
 void MapWnd::RemovePopup(MapWndPopup* popup) {

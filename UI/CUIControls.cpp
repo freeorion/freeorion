@@ -880,8 +880,8 @@ void CUIDropDownList::EnableDropArrow()
 ///////////////////////////////////////
 // class CUIEdit
 ///////////////////////////////////////
-CUIEdit::CUIEdit(const std::string& str) :
-    Edit(str, ClientUI::GetFont(), ClientUI::CtrlBorderColor(),
+CUIEdit::CUIEdit(std::string str) :
+    Edit(std::move(str), ClientUI::GetFont(), ClientUI::CtrlBorderColor(),
          ClientUI::TextColor(), ClientUI::CtrlColor())
 {}
 
@@ -1525,13 +1525,13 @@ namespace {
                  ClientUI::SpeciesIcon(species_name));
         };
 
-        SpeciesRow(const std::string& species_name, const std::string& localized_name, const std::string& species_desc,
+        SpeciesRow(std::string species_name, std::string localized_name, std::string species_desc,
                    GG::X w, GG::Y h, std::shared_ptr<GG::Texture> species_icon) :
             GG::ListBox::Row(w, h)
         {
             SetMargin(0);
-            GG::Wnd::SetName(species_name);
-            Init(species_name, localized_name, species_desc, w, h, species_icon);
+            Init(std::move(species_name), std::move(localized_name),
+                 std::move(species_desc), w, h, std::move(species_icon));
         };
 
         void CompleteConstruction() override {
@@ -1546,23 +1546,22 @@ namespace {
             GetLayout()->SetColumnStretch(1, 1.0);
         }
     private:
-        void Init(const std::string& species_name, const std::string& localized_name, const std::string& species_desc,
+        void Init(std::string species_name, std::string localized_name, std::string species_desc,
                   GG::X width, GG::Y height, std::shared_ptr<GG::Texture> species_icon)
         {
-            GG::Wnd::SetName(species_name);
+            GG::Wnd::SetName(std::move(species_name));
             m_icon = GG::Wnd::Create<GG::StaticGraphic>(species_icon, GG::GRAPHIC_FITGRAPHIC| GG::GRAPHIC_PROPSCALE);
             m_icon->Resize(GG::Pt(GG::X(Value(height - 5)), height - 5));
             m_species_label = GG::Wnd::Create<CUILabel>(localized_name, GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
             if (!species_desc.empty()) {
                 SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
-                SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(species_icon, localized_name,
-                                                                     species_desc));
+                SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
+                    std::move(species_icon), std::move(localized_name), std::move(species_desc)));
             }
         }
 
         std::shared_ptr<GG::StaticGraphic> m_icon;
         std::shared_ptr<CUILabel> m_species_label;
-
     };
 }
 
@@ -1632,9 +1631,8 @@ namespace {
                 SetMinSize(GG::Pt(COLOR_SELECTOR_WIDTH - 40, GG::Y(1)));
             }
 
-            void Render() override {
-                GG::FlatRectangle(UpperLeft(), LowerRight(), Color(), GG::CLR_ZERO, 0);
-            }
+            void Render() override
+            { GG::FlatRectangle(UpperLeft(), LowerRight(), Color(), GG::CLR_ZERO, 0); }
         };
 
         ColorRow(const GG::Clr& color, GG::Y h) :
@@ -1662,9 +1660,8 @@ EmpireColorSelector::EmpireColorSelector(GG::Y h) :
 {
     Resize(GG::Pt(COLOR_SELECTOR_WIDTH, h - 8));
 
-    for (const GG::Clr& color : EmpireColors()) {
+    for (const GG::Clr& color : EmpireColors())
         Insert(GG::Wnd::Create<ColorRow>(color, h - 4));
-    }
 
     SelChangedSignal.connect(
         [this](GG::DropDownList::iterator it) {
@@ -1786,14 +1783,14 @@ namespace {
     GG::Y VERTICAL_SECTION_GAP(4);
 }
 
-ResourceInfoPanel::ResourceInfoPanel(const std::string& title, const std::string& point_units_str,
+ResourceInfoPanel::ResourceInfoPanel(std::string title, std::string point_units_str,
                                      const GG::X x, const GG::Y y, const GG::X w, const GG::Y h,
                                      const std::string& config_name) :
     CUIWnd(title, x, y, w, h,
            GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP | PINABLE,
            config_name, false),
-    m_units_str(point_units_str),
-    m_title_str(title),
+    m_units_str(std::move(point_units_str)),
+    m_title_str(std::move(title)),
     m_empire_id(ALL_EMPIRES),
     m_empire_column_label(GG::Wnd::Create<CUILabel>(UserString("EMPIRE"), GG::FORMAT_LEFT)),
     m_local_column_label(GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT)),
@@ -1870,10 +1867,7 @@ void ResourceInfoPanel::SetTotalPointsCost(float total_points, float total_cost)
         m_wasted_points->SetTextColor(ClientUI::TextColor());
 
     const Empire* empire = GetEmpire(m_empire_id);
-    std::string empire_name;
-    if (empire)
-        empire_name = empire->Name();
-
+    const auto& empire_name{empire ? empire->Name() : EMPTY_STRING};
     SetName(boost::io::str(FlexibleFormat(UserString("PRODUCTION_INFO_EMPIRE")) % m_title_str % empire_name));
 }
 
@@ -1901,10 +1895,7 @@ void ResourceInfoPanel::SetStockpileCost(float stockpile, float stockpile_use,
 
     TraceLogger() << "SetStockpileCost:  set name";
     const Empire* empire = GetEmpire(m_empire_id);
-    std::string empire_name;
-    if (empire)
-        empire_name = empire->Name();
-
+    const auto& empire_name{empire ? empire->Name() : EMPTY_STRING};
     SetName(boost::io::str(FlexibleFormat(UserString("STOCKPILE_INFO_EMPIRE")) % m_title_str % empire_name));
     TraceLogger() << "SetStockpileCost:  done.";
 }
@@ -1931,10 +1922,7 @@ void ResourceInfoPanel::SetLocalPointsCost(float local_points, float local_cost,
         m_local_wasted_points->SetTextColor(ClientUI::TextColor());
 
     const Empire* empire = GetEmpire(m_empire_id);
-    std::string empire_name;
-    if (empire)
-        empire_name = empire->Name();
-
+    const auto& empire_name{empire ? empire->Name() : EMPTY_STRING};
     SetName(boost::io::str(FlexibleFormat(
         UserString("PRODUCTION_INFO_AT_LOCATION_TITLE")) % m_title_str % location_name % empire_name));
 
@@ -1947,10 +1935,7 @@ void ResourceInfoPanel::SetEmpireID(int empire_id) {
     m_empire_id = empire_id;
     if (old_empire_id != m_empire_id) {
         const Empire* empire = GetEmpire(m_empire_id);
-        std::string empire_name;
-        if (empire)
-            empire_name = empire->Name();
-
+        const auto& empire_name{empire ? empire->Name() : EMPTY_STRING};
         // let a subsequent SetLocalPointsCost call re-set the title to include location info if necessary
         SetName(boost::io::str(FlexibleFormat(UserString("PRODUCTION_INFO_EMPIRE")) % m_title_str % empire_name));
     }
@@ -1965,10 +1950,7 @@ void ResourceInfoPanel::ClearLocalInfo() {
     DetachChild(m_local_stockpile_use_P_label);
 
     const Empire* empire = GetEmpire(m_empire_id);
-    std::string empire_name;
-    if (empire)
-        empire_name = empire->Name();
-
+    const auto& empire_name{empire ? empire->Name() : EMPTY_STRING};
     SetName(boost::io::str(FlexibleFormat(UserString("PRODUCTION_INFO_EMPIRE")) % m_title_str % empire_name));
 
     m_local_column_label->SetText("");

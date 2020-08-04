@@ -8,8 +8,7 @@
 /** A popup tooltop for display when mousing over in-game icons.  Has an icon and title and some detail text.*/
 class IconTextBrowseWnd : public GG::BrowseInfoWnd {
 public:
-    IconTextBrowseWnd(const std::shared_ptr<GG::Texture> texture, const std::string& title_text,
-                      const std::string& main_text);
+    IconTextBrowseWnd(std::shared_ptr<GG::Texture> texture, std::string title_text, std::string main_text);
 
     bool WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const override;
 
@@ -18,12 +17,12 @@ public:
     void Render() override;
 
 private:
-    std::shared_ptr<GG::StaticGraphic>                   m_icon;
-    std::shared_ptr<GG::Label>                           m_title_text_label;
-    std::shared_ptr<GG::Label>                           m_main_text_label;
-    const std::shared_ptr<GG::Texture> m_texture;
-    const std::string                    m_title_text;
-    const std::string                    m_main_text;
+    std::shared_ptr<GG::StaticGraphic>  m_icon;
+    std::shared_ptr<GG::Label>          m_title_text_label;
+    std::shared_ptr<GG::Label>          m_main_text_label;
+    const std::shared_ptr<GG::Texture>  m_texture;
+    const std::string                   m_title_text;
+    const std::string                   m_main_text;
 };
 
 #endif

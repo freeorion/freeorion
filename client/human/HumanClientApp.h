@@ -28,7 +28,7 @@ public:
     HumanClientApp() = delete;
 
     HumanClientApp(int width, int height, bool calculate_FPS,
-                   const std::string& name, int x, int y,
+                   std::string name, int x, int y,
                    bool fullscreen, bool fake_mode_change);
 
     HumanClientApp(const HumanClientApp&) = delete;

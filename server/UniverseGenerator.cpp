@@ -864,8 +864,8 @@ void InitEmpires(const std::map<int, PlayerSetupData>& player_setup_data) {
         if (empire_id == ALL_EMPIRES)
             ErrorLogger() << "InitEmpires empire id (" << empire_id << ") is invalid";
 
-        std::string player_name =   entry.second.player_name;
-        GG::Clr     empire_colour = entry.second.empire_color;
+        const auto& player_name =   entry.second.player_name;
+        auto        empire_colour = entry.second.empire_color;
         bool        authenticated = entry.second.authenticated;
 
         // validate or generate empire colour
@@ -875,15 +875,17 @@ void InitEmpires(const std::map<int, PlayerSetupData>& player_setup_data) {
             colors.erase(color_it);
 
         // if no colour already set, do so automatically
-        if (empire_colour == GG::Clr(0, 0, 0, 0)) {
+        if (empire_colour == GG::CLR_ZERO) {
             if (!colors.empty()) {
                 // take next colour from list
                 empire_colour = colors[0];
                 colors.erase(colors.begin());
             } else {
                 // as a last resort, make up a colour
-                empire_colour = GG::FloatClr(static_cast<float>(RandZeroToOne()), static_cast<float>(RandZeroToOne()),
-                                             static_cast<float>(RandZeroToOne()), 1.0f);
+                empire_colour = GG::FloatClr(static_cast<float>(RandZeroToOne()),
+                                             static_cast<float>(RandZeroToOne()),
+                                             static_cast<float>(RandZeroToOne()),
+                                             1.0f);
             }
         }
 
@@ -894,7 +896,8 @@ void InitEmpires(const std::map<int, PlayerSetupData>& player_setup_data) {
                       << " for player: " << player_name << " in team: " << entry.second.starting_team;
 
         // create new Empire object through empire manager
-        Empires().CreateEmpire(empire_id, empire_name, player_name, empire_colour, authenticated);
+        Empires().CreateEmpire(empire_id, std::move(empire_name), player_name,
+                               empire_colour, authenticated);
     }
 
     Empires().ResetDiplomacy();

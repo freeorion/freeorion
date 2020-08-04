@@ -82,7 +82,7 @@ public:
       * causes the window to save its position and other properties to the
       * OptionsDB under that name, if no other windows are currently using that
       * name. */
-    CUIWnd(const std::string& wnd_name, GG::X x, GG::Y y, GG::X w, GG::Y h,
+    CUIWnd(std::string wnd_name, GG::X x, GG::Y y, GG::X w, GG::Y h,
            GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE,
            const std::string& config_name = "", bool visible = true);
 
@@ -90,7 +90,7 @@ public:
       * position, either call InitSizeMove() if the window is positioned by
       * something else or override CalculatePosition() then call
       * ResetDefaultPosition() for windows that position themselves. */
-    CUIWnd(const std::string& wnd_name, GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE,
+    CUIWnd(std::string wnd_name, GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE,
            const std::string& config_name = "", bool visible = true);
 
     void CompleteConstruction() override;
@@ -143,15 +143,15 @@ protected:
 
     virtual GG::Rect        CalculatePosition() const;          //!< override this if a class determines its own position/size and return the calculated values, called by ResetDefaultPosition()
 
-    static const std::string AddWindowOptions(const std::string& config_name,
-                                              int left, int top, int width, int height,
-                                              bool visible, bool pinned, bool minimized);   //!< Adds OptionsDB entries for a window under a given name along with default values.
+    static std::string AddWindowOptions(const std::string& config_name,
+                                        int left, int top, int width, int height,
+                                        bool visible, bool pinned, bool minimized);         //!< Adds OptionsDB entries for a window under a given name along with default values.
 
-    static const std::string AddWindowOptions(const std::string& config_name,
-                                              GG::X left, GG::Y top, GG::X width, GG::Y height,
-                                              bool visible, bool pinned, bool minimized);   //!< overload that accepts GG::X and GG::Y instead of ints
+    static std::string AddWindowOptions(const std::string& config_name,
+                                        GG::X left, GG::Y top, GG::X width, GG::Y height,
+                                        bool visible, bool pinned, bool minimized);         //!< overload that accepts GG::X and GG::Y instead of ints
 
-    static void              InvalidateWindowOptions(const std::string& config_name);       //!< removes options containing \a config_name, logs an error instead if "ui."+config_name+".initialized" exists (i.e. if a window is currently using that name)
+    static void     InvalidateWindowOptions(const std::string& config_name);                //!< removes options containing \a config_name, logs an error instead if "ui."+config_name+".initialized" exists (i.e. if a window is currently using that name)
 
     virtual void    MinimizeClicked();              //!< called when window is minimized or restored via the minimize/restore button
     virtual void    InitButtons();                  //!< called to create the buttons, withtout positioning them
@@ -162,11 +162,9 @@ protected:
     void            Init();                         //!< performs initialization common to all CUIWnd constructors
     void            ResetDefaultPosition();         //!< called via signal from the ClientUI, passes the value from CalculatePosition() to InitSizeMove()
 
-    void SetParent(const std::shared_ptr<GG::Wnd>& wnd) override;
-    /** Flags options currently at their default values for later use in SaveDefaultedOptions */
-    void            SetDefaultedOptions();
-    /** Sets the default value any options previously determined from calls to SetDefaultedOptions to their current value */
-    void            SaveDefaultedOptions();
+    void            SetParent(std::shared_ptr<GG::Wnd> wnd) override;
+    void            SetDefaultedOptions();          //!< flags options currently at their default values for later use in SaveDefaultedOptions
+    void            SaveDefaultedOptions();         //!< sets the default value any options previously determined from calls to SetDefaultedOptions to their current value
 
     bool                    m_resizable = false;    //!< true if the window is able to be resized
     bool                    m_closable = false;     //!< true if the window is able to be closed with a button press
@@ -213,7 +211,8 @@ protected:
 /** provides a convenient modal wnd for getting text user input. */
 class CUIEditWnd : public CUIWnd {
 public:
-    CUIEditWnd(GG::X w, const std::string& prompt_text, const std::string& edit_text, GG::Flags<GG::WndFlag> flags = GG::MODAL);
+    CUIEditWnd(GG::X w, std::string prompt_text, std::string edit_text,
+               GG::Flags<GG::WndFlag> flags = GG::MODAL);
     void CompleteConstruction() override;
     void ModalInit() override;
     void KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;

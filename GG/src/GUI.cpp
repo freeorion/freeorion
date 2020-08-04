@@ -857,12 +857,12 @@ void GUIImpl::GouvernFPS()
 GUI* GUI::s_gui = nullptr;
 
 // member functions
-GUI::GUI(const std::string& app_name) :
+GUI::GUI(std::string app_name) :
     m_impl(std::make_unique<GUIImpl>())
 {
     assert(!s_gui);
     s_gui = this;
-    m_impl->m_app_name = app_name;
+    m_impl->m_app_name = std::move(app_name);
 }
 
 GUI::~GUI()

@@ -641,6 +641,7 @@ void FileDlg::UpdateDirectoryText()
     // convert UTF-16 path to UTF-8 for display
     boost::filesystem::path::string_type working_dir_native = s_working_dir.native();
     std::string str;
+    str.reserve(working_dir_native.size());
     utf8::utf16to8(working_dir_native.begin(), working_dir_native.end(), std::back_inserter(str));
 #else
     std::string str = s_working_dir.string();

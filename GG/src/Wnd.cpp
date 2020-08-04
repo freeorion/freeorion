@@ -470,8 +470,8 @@ void Wnd::ChildrenDraggedAway(const std::vector<Wnd*>& wnds, const Wnd* destinat
     }
 }
 
-void Wnd::SetName(const std::string& name)
-{ m_name = name; }
+void Wnd::SetName(std::string name)
+{ m_name = std::move(name); }
 
 void Wnd::Hide()
 {
@@ -565,7 +565,7 @@ void Wnd::AttachChild(std::shared_ptr<Wnd> wnd)
         if (auto this_as_layout = std::dynamic_pointer_cast<Layout>(my_shared))
             wnd->m_containing_layout = this_as_layout;
 
-        m_children.emplace_back(wnd);
+        m_children.emplace_back(std::move(wnd));
 
     } catch (const std::bad_weak_ptr&) {
         std::cerr << std::endl << "Wnd::AttachChild called either during the constructor "
@@ -1268,5 +1268,5 @@ void Wnd::BeginNonclientClippingImpl()
 void Wnd::EndNonclientClippingImpl()
 { EndStencilClipping(); }
 
-void Wnd::SetParent(const std::shared_ptr<Wnd>& wnd)
-{ m_parent = wnd; }
+void Wnd::SetParent(std::shared_ptr<Wnd> wnd)
+{ m_parent = std::move(wnd); }

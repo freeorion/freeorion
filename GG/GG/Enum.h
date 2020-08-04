@@ -66,7 +66,7 @@ void BuildEnumMap(EnumMap<EnumType>& map, const std::string& enum_name, const ch
     int default_value = 0;
     std::string name;
     while (std::getline(name_stream, name, ',')) {
-        map.Insert(default_value, name);
+        map.Insert(default_value, std::move(name));
     }
 }
 
@@ -168,15 +168,14 @@ void EnumMap<EnumType>::Insert(int& default_value, const std::string& entry) {
     EnumType value;
     if (std::getline(name_and_value, value_str)) {
         value = (EnumType)strtol(value_str.c_str(), nullptr, 0);
-    }
-    else {
+    } else {
         value = (EnumType)default_value;
     }
 
     boost::trim(name);
 
     m_name_to_value_map[name] = value;
-    m_value_to_name_map[value] = name;
+    m_value_to_name_map[value] = std::move(name);
     default_value = value + 1;
 }
 

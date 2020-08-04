@@ -66,18 +66,18 @@ Empire::Empire() :
     m_influence_queue(m_id)
 { Init(); }
 
-Empire::Empire(const std::string& name, const std::string& player_name,
+Empire::Empire(std::string name, std::string player_name,
                int empire_id, const GG::Clr& color, bool authenticated) :
     m_id(empire_id),
-    m_name(name),
-    m_player_name(player_name),
+    m_name(std::move(name)),
+    m_player_name(std::move(player_name)),
     m_authenticated(authenticated),
     m_color(color),
     m_research_queue(m_id),
     m_production_queue(m_id),
     m_influence_queue(m_id)
 {
-    DebugLogger() << "Empire::Empire(" << name << ", " << player_name << ", " << empire_id << ", colour)";
+    DebugLogger() << "Empire::Empire(" << m_name << ", " << m_player_name << ", " << empire_id << ", colour)";
     Init();
 }
 

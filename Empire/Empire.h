@@ -59,7 +59,8 @@ public:
     typedef std::vector<SitRepEntry>::const_iterator    SitRepItr;
     //@}
 
-    Empire(const std::string& name, const std::string& player_name, int ID, const GG::Clr& color, bool authenticated);  ///< basic constructor
+    Empire(std::string name, std::string player_name, int ID,
+           const GG::Clr& color, bool authenticated);
     ~Empire();
 
     const std::string&  Name() const;            ///< Returns the Empire's name
@@ -69,9 +70,9 @@ public:
     const GG::Clr&      Color() const;           ///< Returns the Empire's color
     int                 CapitalID() const;       ///< Returns the numeric ID of the empire's capital
 
-    /** Return an object id that is owned by the empire or INVALID_OBJECT_ID. */
+    /** Returns an object id that is owned by the empire or INVALID_OBJECT_ID. */
     int                 SourceID() const;
-    /** Return an object that is owned by the empire, or null.*/
+    /** Returns an object that is owned by the empire, or null.*/
     std::shared_ptr<const UniverseObject> Source() const;
 
     std::string         Dump() const;

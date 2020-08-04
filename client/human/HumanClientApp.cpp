@@ -206,10 +206,10 @@ std::string HumanClientApp::EncodeServerAddressOption(const std::string& server)
     return "network.known-servers._" + server_encoded;
 }
 
-HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const std::string& name,
+HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, std::string name,
                                int x, int y, bool fullscreen, bool fake_mode_change) :
     ClientApp(),
-    SDLGUI(width, height, calculate_fps, name, x, y, fullscreen, fake_mode_change)
+    SDLGUI(width, height, calculate_fps, std::move(name), x, y, fullscreen, fake_mode_change)
 {
 #ifdef ENABLE_CRASH_BACKTRACE
     signal(SIGSEGV, SigHandler);

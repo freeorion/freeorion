@@ -504,12 +504,12 @@ void SpeciesManager::ClearSpeciesHomeworlds() {
         entry.second->SetHomeworlds(std::set<int>());
 }
 
-void SpeciesManager::SetSpeciesHomeworlds(const std::map<std::string, std::set<int>>& species_homeworld_ids) {
+void SpeciesManager::SetSpeciesHomeworlds(std::map<std::string, std::set<int>>&& species_homeworld_ids) {
     CheckPendingSpeciesTypes();
     ClearSpeciesHomeworlds();
     for (auto& entry : species_homeworld_ids) {
         const std::string& species_name = entry.first;
-        const std::set<int>& homeworlds = entry.second;
+        std::set<int>& homeworlds = entry.second;
 
         Species* species = nullptr;
         auto species_it = m_species.find(species_name);
@@ -517,37 +517,38 @@ void SpeciesManager::SetSpeciesHomeworlds(const std::map<std::string, std::set<i
             species = species_it->second.get();
 
         if (species) {
-            species->SetHomeworlds(homeworlds);
+            species->SetHomeworlds(std::move(homeworlds));
         } else {
             ErrorLogger() << "SpeciesManager::SetSpeciesHomeworlds couldn't find a species with name " << species_name << " to assign homeworlds to";
         }
     }
 }
 
-void SpeciesManager::SetSpeciesEmpireOpinions(const std::map<std::string, std::map<int, float>>& species_empire_opinions)
-{ m_species_empire_opinions = species_empire_opinions; }
+void SpeciesManager::SetSpeciesEmpireOpinions(std::map<std::string, std::map<int, float>>&& species_empire_opinions)
+{ m_species_empire_opinions = std::move(species_empire_opinions); }
 
 void SpeciesManager::SetSpeciesEmpireOpinion(const std::string& species_name, int empire_id, float opinion)
 { m_species_empire_opinions[species_name][empire_id] = opinion; }
 
-void SpeciesManager::SetSpeciesSpeciesOpinions(const std::map<std::string, std::map<std::string, float>>& species_species_opinions)
-{ m_species_species_opinions = species_species_opinions; }
+void SpeciesManager::SetSpeciesSpeciesOpinions(std::map<std::string,
+                                               std::map<std::string, float>>&& species_species_opinions)
+{ m_species_species_opinions = std::move(species_species_opinions); }
 
-void SpeciesManager::SetSpeciesSpeciesOpinion(const std::string& opinionated_species, const std::string& rated_species, float opinion)
+void SpeciesManager::SetSpeciesSpeciesOpinion(const std::string& opinionated_species,
+                                              const std::string& rated_species, float opinion)
 { m_species_species_opinions[opinionated_species][rated_species] = opinion; }
 
 std::map<std::string, std::set<int>> SpeciesManager::GetSpeciesHomeworldsMap(int encoding_empire/* = ALL_EMPIRES*/) const {
     CheckPendingSpeciesTypes();
     std::map<std::string, std::set<int>> retval;
     for (const auto& entry : m_species) {
-        const std::string species_name = entry.first;
+        const std::string& species_name = entry.first;
         const Species* species = entry.second.get();
         if (!species) {
             ErrorLogger() << "SpeciesManager::GetSpeciesHomeworldsMap found a null species pointer in SpeciesManager?!";
             continue;
         }
-        for (int homeworld_id : species->Homeworlds())
-            retval[species_name].insert(homeworld_id);
+        retval[species_name].insert(species->Homeworlds().begin(), species->Homeworlds().end());
     }
     return retval;
 }
@@ -569,7 +570,9 @@ float SpeciesManager::SpeciesEmpireOpinion(const std::string& species_name, int 
     return emp_it->second;
 }
 
-float SpeciesManager::SpeciesSpeciesOpinion(const std::string& opinionated_species_name, const std::string& rated_species_name) const {
+float SpeciesManager::SpeciesSpeciesOpinion(const std::string& opinionated_species_name,
+                                            const std::string& rated_species_name) const
+{
     auto sp_it = m_species_species_opinions.find(opinionated_species_name);
     if (sp_it == m_species_species_opinions.end())
         return 0.0f;

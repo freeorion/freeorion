@@ -123,11 +123,11 @@ void EmpireManager::BackPropagateMeters() {
         entry.second->BackPropagateMeters();
 }
 
-Empire* EmpireManager::CreateEmpire(int empire_id, const std::string& name,
-                                    const std::string& player_name,
+Empire* EmpireManager::CreateEmpire(int empire_id, std::string name,
+                                    std::string player_name,
                                     const GG::Clr& color, bool authenticated)
 {
-    Empire* empire = new Empire(name, player_name, empire_id, color, authenticated);
+    Empire* empire = new Empire(std::move(name), std::move(player_name), empire_id, color, authenticated);
     InsertEmpire(empire);
     return empire;
 }

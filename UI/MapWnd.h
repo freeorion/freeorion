@@ -199,7 +199,7 @@ public:
 
     void ResetEmpireShown();                     //!< auto-resets the shown empire in any contained Wnds, to the current client's empire (if any)
 
-    void RegisterPopup(const std::shared_ptr<MapWndPopup>& popup);  //!< registers a MapWndPopup, which can be cleaned up with a call to DeleteAllPopups( )
+    void RegisterPopup(std::shared_ptr<MapWndPopup>&& popup);   //!< registers a MapWndPopup, which can be cleaned up with a call to DeleteAllPopups( )
     void RemovePopup(MapWndPopup* popup);        //!< removes a MapWndPopup from the list cleaned up on a call to DeleteAllPopups( )
     void Sanitize();                             //!< sanitizes the MapWnd after a game
     void ResetTimeoutClock(int timeout);         //!< start count down \a timeout seconds
@@ -594,10 +594,10 @@ private:
 /** Derive any window from this class to have it managed by MapWnd. */
 class MapWndPopup : public CUIWnd {
 public:
-    MapWndPopup(const std::string& t, GG::X default_x, GG::Y default_y, GG::X default_w, GG::Y default_h,
+    MapWndPopup(std::string t, GG::X default_x, GG::Y default_y, GG::X default_w, GG::Y default_h,
                 GG::Flags<GG::WndFlag> flags, const std::string& config_name = "");
 
-    MapWndPopup(const std::string& t, GG::Flags<GG::WndFlag> flags, const std::string& config_name = "");
+    MapWndPopup(std::string t, GG::Flags<GG::WndFlag> flags, const std::string& config_name = "");
 
     void CompleteConstruction() override;
 

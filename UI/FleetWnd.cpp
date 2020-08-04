@@ -2719,15 +2719,13 @@ FleetWnd::FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled
                    GG::Flags<GG::WndFlag> flags/* = INTERACTIVE | DRAGABLE | ONTOP | CLOSABLE | RESIZABLE*/,
                    const std::string& config_name) :
     MapWndPopup("", flags | GG::RESIZABLE, config_name),
+    m_fleet_ids(fleet_ids.begin(), fleet_ids.end()),
     m_order_issuing_enabled(order_issuing_enabled)
 {
-    if (!fleet_ids.empty()) {
-        if (auto fleet = Objects().get<Fleet>(*fleet_ids.begin()))
+    if (!m_fleet_ids.empty()) {
+        if (auto fleet = Objects().get<Fleet>(*m_fleet_ids.begin()))
             m_empire_id = fleet->Owner();
     }
-
-    for (int fleet_id : fleet_ids)
-        m_fleet_ids.insert(fleet_id);
 
     // verify that the selected fleet id is valid.
     if (selected_fleet_id != INVALID_OBJECT_ID &&
@@ -2753,7 +2751,8 @@ FleetWnd::FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled
                               + GG::Pt(GG::X(allowed_bounding_box_leeway),
                                        GG::Y(allowed_bounding_box_leeway)));
 
-    m_fleet_detail_panel = GG::Wnd::Create<FleetDetailPanel>(GG::X1, GG::Y1, selected_fleet_id, m_order_issuing_enabled);
+    m_fleet_detail_panel = GG::Wnd::Create<FleetDetailPanel>(GG::X1, GG::Y1, selected_fleet_id,
+                                                             m_order_issuing_enabled);
 }
 
 void FleetWnd::CompleteConstruction() {
