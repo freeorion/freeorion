@@ -177,18 +177,18 @@ namespace Effect {
 EffectsGroup::EffectsGroup(std::unique_ptr<Condition::Condition>&& scope,
                            std::unique_ptr<Condition::Condition>&& activation,
                            std::vector<std::unique_ptr<Effect>>&& effects,
-                           const std::string& accounting_label,
-                           const std::string& stacking_group, int priority,
-                           const std::string& description,
-                           const std::string& content_name):
+                           std::string accounting_label,
+                           std::string stacking_group, int priority,
+                           std::string description,
+                           std::string content_name):
     m_scope(std::move(scope)),
     m_activation(std::move(activation)),
-    m_stacking_group(stacking_group),
+    m_stacking_group(std::move(stacking_group)),
     m_effects(std::move(effects)),
-    m_accounting_label(accounting_label),
+    m_accounting_label(std::move(accounting_label)),
     m_priority(priority),
-    m_description(description),
-    m_content_name(content_name)
+    m_description(std::move(description)),
+    m_content_name(std::move(content_name))
 {}
 
 EffectsGroup::~EffectsGroup()
@@ -286,9 +286,8 @@ void EffectsGroup::SetTopLevelContent(const std::string& content_name) {
         m_scope->SetTopLevelContent(content_name);
     if (m_activation)
         m_activation->SetTopLevelContent(content_name);
-    for (auto& effect : m_effects) {
+    for (auto& effect : m_effects)
         effect->SetTopLevelContent(content_name);
-    }
 }
 
 unsigned int EffectsGroup::GetCheckSum() const {
@@ -314,9 +313,8 @@ unsigned int EffectsGroup::GetCheckSum() const {
 std::string Dump(const std::vector<std::shared_ptr<EffectsGroup>>& effects_groups) {
     std::stringstream retval;
 
-    for (auto& effects_group : effects_groups) {
+    for (auto& effects_group : effects_groups)
         retval << "\n" << effects_group->Dump();
-    }
 
     return retval.str();
 }

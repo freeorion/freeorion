@@ -50,9 +50,9 @@ namespace Effect {
     /** Description of cause of an effect: the general cause type, and the
       * specific cause.  eg. Building and a particular BuildingType. */
     struct FO_COMMON_API EffectCause {
-        explicit EffectCause();
-        EffectCause(EffectsCauseType cause_type_, const std::string& specific_cause_,
-                    const std::string& custom_label_ = "");
+        explicit EffectCause() = default;
+        EffectCause(EffectsCauseType cause_type_, std::string specific_cause_,
+                    std::string custom_label_ = "");
         EffectsCauseType    cause_type;     ///< general type of effect cause, eg. tech, building, special...
         std::string         specific_cause; ///< name of specific cause, eg. "Wonder Farm", "Antenna Mk. VI"
         std::string         custom_label;   ///< script-specified accounting label for this effect cause
@@ -60,15 +60,15 @@ namespace Effect {
 
     /** Combination of targets and cause for an effects group. */
     struct TargetsAndCause {
-        explicit TargetsAndCause();
-        TargetsAndCause(const TargetSet& target_set_, const EffectCause& effect_cause_);
+        explicit TargetsAndCause() = default;
+        TargetsAndCause(TargetSet target_set_, EffectCause effect_cause_);
         TargetSet target_set;
         EffectCause effect_cause;
     };
 
     /** Combination of an EffectsGroup and the id of a source object. */
     struct SourcedEffectsGroup {
-        explicit SourcedEffectsGroup();
+        explicit SourcedEffectsGroup() = default;
         SourcedEffectsGroup(int source_object_id_, const EffectsGroup* effects_group_);
         bool operator<(const SourcedEffectsGroup& right) const;
         int source_object_id = INVALID_OBJECT_ID;
@@ -122,10 +122,10 @@ namespace Effect {
     /** Accounting information about what the causes are and changes produced
       * by effects groups acting on meters of objects. */
     struct FO_COMMON_API AccountingInfo : public EffectCause {
-        explicit AccountingInfo();
+        explicit AccountingInfo() = default;
         AccountingInfo(int source_id_, EffectsCauseType cause_type_, float meter_change_,
-                       float running_meter_total_, const std::string& specific_cause_ = "",
-                       const std::string& custom_label_ = "");
+                       float running_meter_total_, std::string&& specific_cause_ = "",
+                       std::string&& custom_label_ = "");
 
         bool operator==(const AccountingInfo& rhs) const;
 
@@ -149,11 +149,11 @@ namespace Effect {
         EffectsGroup(std::unique_ptr<Condition::Condition>&& scope,
                      std::unique_ptr<Condition::Condition>&& activation,
                      std::vector<std::unique_ptr<Effect>>&& effects,
-                     const std::string& accounting_label = "",
-                     const std::string& stacking_group = "",
+                     std::string accounting_label = "",
+                     std::string stacking_group = "",
                      int priority = 0,
-                     const std::string& description = "",
-                     const std::string& content_name = "");
+                     std::string description = "",
+                     std::string content_name = "");
         virtual ~EffectsGroup();
 
         /** execute all effects in group */
