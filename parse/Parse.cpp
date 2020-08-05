@@ -126,7 +126,8 @@ namespace parse {
     }
 
     void replace_macro_references(std::string& text,
-                                  const std::map<std::string, std::string>& macros)
+                                  const std::map<std::string, std::string>& macros,
+                                  const boost::filesystem::path& file_path)
     {
         try {
             std::size_t position = 0; // position in the text, past the already processed part
@@ -140,7 +141,7 @@ namespace parse {
                 if (macro_lookup_it != macros.end()) {
                     // verify that macro is safe: check for cyclic reference of macro to itself
                     if (macro_deep_referenced_in_text(macro_key, macro_lookup_it->second, macros)) {
-                        ErrorLogger() << "Skipping cyclic macro reference: " << macro_key;
+                        ErrorLogger() << file_path.generic_string() << ": Skipping cyclic macro reference: " << macro_key;
                         position += match.length();
                     } else {
                         // insert macro text in place of reference
@@ -163,18 +164,18 @@ namespace parse {
                         // be matched on the next pass
                     }
                 } else {
-                    ErrorLogger() << "Unresolved macro reference: " << macro_key;
+                    ErrorLogger() << file_path.generic_string() << ": Unresolved macro reference: " << macro_key;
                     position += match.length();
                 }
             }
         } catch (const std::exception& e) {
-            ErrorLogger() << "Exception caught regex parsing script file: " << e.what();
-            std::cerr << "Exception caught regex parsing script file: " << e.what() << std::endl;
+            ErrorLogger() << file_path.generic_string() << ": Exception caught regex parsing script file: " << e.what();
+            std::cerr << file_path.generic_string() << ": Exception caught regex parsing script file: " << e.what() << std::endl;
             return;
         }
     }
 
-    void macro_substitution(std::string& text) {
+    void macro_substitution(std::string& text, const boost::filesystem::path& file_path) {
         //DebugLogger() << "macro_substitution for text:" << text;
         std::map<std::string, std::string> macros;
 
@@ -186,11 +187,11 @@ namespace parse {
         // recursively expand macro keys: replace [[MACRO_KEY]] in other macro
         // text with the macro text corresponding to MACRO_KEY.
         for (auto& macro : macros)
-        { replace_macro_references(macro.second, macros); }
+            replace_macro_references(macro.second, macros, file_path);
 
         // substitute macro keys - replace [[MACRO_KEY]] in the input text with
         // the macro text corresponding to MACRO_KEY
-        replace_macro_references(text, macros);
+        replace_macro_references(text, macros, file_path);
 
         //DebugLogger() << "after macro substitution text: " << text;
     }
@@ -491,8 +492,8 @@ namespace parse {
         * @param[out] it lexer iterator
         */
     void parse_file_common(const boost::filesystem::path& path, const parse::lexer& lexer,
-                            std::string& filename, std::string& file_contents,
-                            parse::text_iterator& first, parse::text_iterator& last, parse::token_iterator& it)
+                           std::string& filename, std::string& file_contents,
+                           parse::text_iterator& first, parse::text_iterator& last, parse::token_iterator& it)
     {
         filename = path.string();
 
@@ -506,7 +507,7 @@ namespace parse {
         file_contents += "\n";
 
         file_substitution(file_contents, path.parent_path());
-        macro_substitution(file_contents);
+        macro_substitution(file_contents, path);
 
         first = file_contents.begin();
         last = file_contents.end();
