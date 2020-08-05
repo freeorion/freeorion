@@ -54,7 +54,7 @@ namespace {
         void operator()(GameRules& game_rules, std::string& name,
                         std::string& desc, std::string& category,
                         std::string& default_value,
-                        std::set<std::string>& allowed = std::set<std::string>()) const
+                        std::set<std::string>& allowed) const
         {
             std::string allowed_values_string;
             for (const auto& e : allowed)

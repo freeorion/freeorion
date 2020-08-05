@@ -55,10 +55,11 @@ bool Order::UndoImpl() const
 { return false; }
 
 namespace {
+    std::string EMPTY_STRING;
     const std::string& ExecutedTag(const Order* order) {
         if (order && !order->Executed())
             return UserString("ORDER_UNEXECUTED");
-        return "";
+        return EMPTY_STRING;
     }
 }
 
