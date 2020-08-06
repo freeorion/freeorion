@@ -55,28 +55,36 @@ bool dummy = RegisterGraphicStyles();
 ////////////////////////////////////////////////
 // GG::StaticGraphic
 ////////////////////////////////////////////////
-StaticGraphic::StaticGraphic(const std::shared_ptr<Texture>& texture,
-                             Flags<GraphicStyle> style/* = GRAPHIC_NONE*/,
-                             Flags<WndFlag> flags/* = 0*/) :
-    StaticGraphic(SubTexture(texture, X0, Y0, texture->DefaultWidth(), texture->DefaultHeight()), style)
-{}
-
-StaticGraphic::StaticGraphic(const SubTexture& subtexture,
+StaticGraphic::StaticGraphic(std::shared_ptr<Texture> texture,
                              Flags<GraphicStyle> style/* = GRAPHIC_NONE*/,
                              Flags<WndFlag> flags/* = 0*/) :
     Control(X0, Y0, X1, Y1, flags),
-    m_graphic(subtexture),
+    m_style(style)
+{
+    auto w = texture->DefaultWidth();
+    auto h = texture->DefaultHeight();
+    m_graphic = SubTexture(std::move(texture), X0, Y0, w, h);
+
+    ValidateStyle();  // correct any disagreements in the style flags
+    SetColor(CLR_WHITE);
+}
+
+StaticGraphic::StaticGraphic(SubTexture subtexture,
+                             Flags<GraphicStyle> style/* = GRAPHIC_NONE*/,
+                             Flags<WndFlag> flags/* = 0*/) :
+    Control(X0, Y0, X1, Y1, flags),
+    m_graphic(std::move(subtexture)),
     m_style(style)
 {
     ValidateStyle();  // correct any disagreements in the style flags
     SetColor(CLR_WHITE);
 }
 
-StaticGraphic::StaticGraphic(const std::shared_ptr<VectorTexture>& texture,
+StaticGraphic::StaticGraphic(std::shared_ptr<VectorTexture> texture,
                              Flags<GraphicStyle> style/* = GRAPHIC_NONE*/,
                              Flags<WndFlag> flags/* = 0*/) :
     Control(X0, Y0, X1, Y1, flags),
-    m_vector_texture(texture),
+    m_vector_texture(std::move(texture)),
     m_style(style)
 {
     ValidateStyle();  // correct any disagreements in the style flags

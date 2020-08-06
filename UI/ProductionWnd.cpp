@@ -460,18 +460,22 @@ namespace {
 
         m_icon = nullptr;
         if (graphic)
-            m_icon = GG::Wnd::Create<GG::StaticGraphic>(graphic, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+            m_icon = GG::Wnd::Create<GG::StaticGraphic>(
+                std::move(graphic), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
 
         if (elem.item.build_type == BT_SHIP || elem.item.build_type == BT_STOCKPILE) {
             m_quantity_selector = GG::Wnd::Create<QuantitySelector>(
-                elem, GG::X1, GG::Y(MARGIN), GG::Y(FONT_PTS-2*MARGIN), m_in_progress, GG::X(FONT_PTS*2.5), false);
+                elem, GG::X1, GG::Y(MARGIN), GG::Y(FONT_PTS-2*MARGIN),
+                m_in_progress, GG::X(FONT_PTS*2.5), false);
             m_block_size_selector = GG::Wnd::Create<QuantitySelector>(
-                elem, GG::X1, GG::Y(MARGIN), GG::Y(FONT_PTS-2*MARGIN), m_in_progress, GG::X(FONT_PTS*2.5), true);
+                elem, GG::X1, GG::Y(MARGIN), GG::Y(FONT_PTS-2*MARGIN),
+                m_in_progress, GG::X(FONT_PTS*2.5), true);
             m_quantity_selector->SetOnlyMouseScrollWhenDropped(true);
             m_block_size_selector->SetOnlyMouseScrollWhenDropped(true);
         }
 
-        m_name_text = GG::Wnd::Create<CUILabel>(name_text, GG::FORMAT_TOP | GG::FORMAT_LEFT);
+        m_name_text = GG::Wnd::Create<CUILabel>(std::move(name_text),
+                                                GG::FORMAT_TOP | GG::FORMAT_LEFT);
         m_name_text->SetTextColor(clr);
         m_name_text->ClipText(true);
 
@@ -482,10 +486,12 @@ namespace {
             auto empire_color = this_client_empire->Color();
             auto rally_color = GG::DarkenClr(GG::InvertClr(empire_color));
             auto location_color = system_selected ? empire_color : rally_color;
-            m_location_text = GG::Wnd::Create<GG::TextControl>(GG::X0, GG::Y0, GG::X1, GG::Y1, "<s>" + location_text + "</s>",
-                                                  ClientUI::GetBoldFont(), location_color, GG::FORMAT_TOP | GG::FORMAT_RIGHT);
+            m_location_text = GG::Wnd::Create<GG::TextControl>(
+                GG::X0, GG::Y0, GG::X1, GG::Y1, "<s>" + location_text + "</s>",
+                ClientUI::GetBoldFont(), location_color, GG::FORMAT_TOP | GG::FORMAT_RIGHT);
         } else {
-            m_location_text = GG::Wnd::Create<CUILabel>(location_text, GG::FORMAT_TOP | GG::FORMAT_RIGHT);
+            m_location_text = GG::Wnd::Create<CUILabel>(std::move(location_text),
+                                                        GG::FORMAT_TOP | GG::FORMAT_RIGHT);
             m_location_text->SetTextColor(location_clr);
         }
 
@@ -511,7 +517,7 @@ namespace {
         std::string turn_spending_text = boost::io::str(FlexibleFormat(UserString("PRODUCTION_TURN_COST_STR"))
             % DoubleToString(m_turn_spending, 3, false)
             % DoubleToString(max_spending_per_turn, 3, false));
-        m_PPs_and_turns_text = GG::Wnd::Create<CUILabel>(turn_spending_text, GG::FORMAT_LEFT);
+        m_PPs_and_turns_text = GG::Wnd::Create<CUILabel>(std::move(turn_spending_text), GG::FORMAT_LEFT);
         m_PPs_and_turns_text->SetTextColor(clr);
 
 
@@ -519,7 +525,8 @@ namespace {
         std::string turns_left_text = turns_left < 0
             ? UserString("PRODUCTION_TURNS_LEFT_NEVER")
             : str(FlexibleFormat(UserString("PRODUCTION_TURNS_LEFT_STR")) % turns_left);
-        m_turns_remaining_until_next_complete_text = GG::Wnd::Create<CUILabel>(turns_left_text, GG::FORMAT_RIGHT);
+        m_turns_remaining_until_next_complete_text = GG::Wnd::Create<CUILabel>(
+            std::move(turns_left_text), GG::FORMAT_RIGHT);
         m_turns_remaining_until_next_complete_text->SetTextColor(clr);
         m_turns_remaining_until_next_complete_text->ClipText(true);
 

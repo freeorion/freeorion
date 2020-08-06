@@ -59,19 +59,20 @@ namespace {
 ///////////////////////////////////////
 // class CUILabel
 ///////////////////////////////////////
-CUILabel::CUILabel(const std::string& str,
+CUILabel::CUILabel(std::string str,
                    GG::Flags<GG::TextFormat> format/* = GG::FORMAT_NONE*/,
                    GG::Flags<GG::WndFlag> flags/* = GG::NO_WND_FLAGS*/,
                    GG::X x /*= GG::X0*/, GG::Y y /*= GG::Y0*/, GG::X w /*= GG::X1*/, GG::Y h/*= GG::Y1*/) :
-    TextControl(x, y, w, h, str, ClientUI::GetFont(), ClientUI::TextColor(), format, flags)
+    TextControl(x, y, w, h, std::move(str), ClientUI::GetFont(), ClientUI::TextColor(), format, flags)
 {}
 
-CUILabel::CUILabel(const std::string& str,
-                   const std::vector<std::shared_ptr<GG::Font::TextElement>>& text_elements,
+CUILabel::CUILabel(std::string str,
+                   std::vector<std::shared_ptr<GG::Font::TextElement>> text_elements,
                    GG::Flags<GG::TextFormat> format/* = GG::FORMAT_NONE*/,
                    GG::Flags<GG::WndFlag> flags/* = GG::NO_WND_FLAGS*/,
                    GG::X x /*= GG::X0*/, GG::Y y /*= GG::Y0*/, GG::X w /*= GG::X1*/, GG::Y h/*= GG::Y1*/) :
-    TextControl(x, y, w, h, str, text_elements, ClientUI::GetFont(), ClientUI::TextColor(), format, flags)
+    TextControl(x, y, w, h, std::move(str), std::move(text_elements),
+                ClientUI::GetFont(), ClientUI::TextColor(), format, flags)
 {}
 
 void CUILabel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
@@ -90,23 +91,20 @@ namespace {
     const int CUIBUTTON_ANGLE_OFFSET = 5;
 }
 
-CUIButton::CUIButton(const std::string& str) :
-    Button(str, ClientUI::GetFont(), ClientUI::CtrlColor(), ClientUI::TextColor(), GG::INTERACTIVE)
-{
-    LeftClickedSignal.connect(-1,
-        &PlayButtonClickSound);
-}
+CUIButton::CUIButton(std::string str) :
+    Button(std::move(str), ClientUI::GetFont(), ClientUI::CtrlColor(),
+           ClientUI::TextColor(), GG::INTERACTIVE)
+{ LeftClickedSignal.connect(-1, &PlayButtonClickSound); }
 
-CUIButton::CUIButton(const GG::SubTexture& unpressed, const GG::SubTexture& pressed,
-                     const GG::SubTexture& rollover) :
+CUIButton::CUIButton(GG::SubTexture unpressed, GG::SubTexture pressed,
+                     GG::SubTexture rollover) :
     Button("", ClientUI::GetFont(), GG::CLR_WHITE, GG::CLR_ZERO, GG::INTERACTIVE)
 {
     SetColor(GG::CLR_WHITE);
-    SetUnpressedGraphic(unpressed);
-    SetPressedGraphic  (pressed);
-    SetRolloverGraphic (rollover);
-    LeftClickedSignal.connect(-1,
-        &PlayButtonClickSound);
+    SetUnpressedGraphic(std::move(unpressed));
+    SetPressedGraphic  (std::move(pressed));
+    SetRolloverGraphic (std::move(rollover));
+    LeftClickedSignal.connect(-1, &PlayButtonClickSound);
 }
 
 bool CUIButton::InWindow(const GG::Pt& pt) const {
@@ -199,11 +197,11 @@ void CUIButton::RenderUnpressed() {
 ///////////////////////////////////////
 // class SettableInWindowCUIButton
 ///////////////////////////////////////
-SettableInWindowCUIButton::SettableInWindowCUIButton(const GG::SubTexture& unpressed,
-                                                     const GG::SubTexture& pressed,
-                                                     const GG::SubTexture& rollover,
+SettableInWindowCUIButton::SettableInWindowCUIButton(GG::SubTexture unpressed,
+                                                     GG::SubTexture pressed,
+                                                     GG::SubTexture rollover,
                                                      std::function<bool (const SettableInWindowCUIButton*, const GG::Pt&)> in_window_function) :
-    CUIButton(unpressed, pressed, rollover)
+    CUIButton(std::move(unpressed), std::move(pressed), std::move(rollover))
 { m_in_window_func = in_window_function; }
 
 bool SettableInWindowCUIButton::InWindow(const GG::Pt& pt) const {
@@ -510,7 +508,7 @@ void CUILabelButtonRepresenter::Render(const GG::StateButton& button) const {
 CUIIconButtonRepresenter::CUIIconButtonRepresenter(std::shared_ptr<GG::SubTexture> icon,
                                                    const GG::Clr& highlight_clr) :
     m_unchecked_icon(icon),
-    m_checked_icon(icon),
+    m_checked_icon(std::move(icon)),
     m_unchecked_color(highlight_clr),
     m_checked_color(highlight_clr)
 {}

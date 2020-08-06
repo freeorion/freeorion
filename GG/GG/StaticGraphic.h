@@ -45,17 +45,17 @@ class GG_API StaticGraphic : public Control
 {
 public:
      ///< creates a StaticGraphic from a pre-existing Texture.
-    explicit StaticGraphic(const std::shared_ptr<Texture>& texture,
+    explicit StaticGraphic(std::shared_ptr<Texture> texture,
                            Flags<GraphicStyle> style = GRAPHIC_NONE,
                            Flags<WndFlag> flags = NO_WND_FLAGS);
 
     ///< creates a StaticGraphic from a pre-existing SubTexture.
-    explicit StaticGraphic(const SubTexture& subtexture,
+    explicit StaticGraphic(SubTexture subtexture,
                            Flags<GraphicStyle> style = GRAPHIC_NONE,
                            Flags<WndFlag> flags = NO_WND_FLAGS);
 
     ///< creates a StaticGraphic from a pre-existing VectorTexture
-    explicit StaticGraphic(const std::shared_ptr<VectorTexture>& vector_texture,
+    explicit StaticGraphic(std::shared_ptr<VectorTexture> vector_texture,
                            Flags<GraphicStyle> style = GRAPHIC_NONE,
                            Flags<WndFlag> flags = NO_WND_FLAGS);
 

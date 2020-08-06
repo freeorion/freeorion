@@ -915,15 +915,11 @@ namespace {
 
         // ship name text.  blank if no ship.
         auto ship = Objects().get<Ship>(m_ship_id);
-        std::string ship_name;
-        if (ship)
-            ship_name = ship->Name();
-
-        if (GetOptionsDB().Get<bool>("ui.name.id.shown")) {
-            ship_name = ship_name + " (" + std::to_string(m_ship_id) + ")";
-        }
-
-        m_ship_name_text = GG::Wnd::Create<CUILabel>(ship_name, GG::FORMAT_LEFT);
+        std::string ship_name{
+            (ship ? ship->Name() : "") +
+            (GetOptionsDB().Get<bool>("ui.name.id.shown") ? " (" + std::to_string(m_ship_id) + ")" : "")
+        };
+        m_ship_name_text = GG::Wnd::Create<CUILabel>(std::move(ship_name), GG::FORMAT_LEFT);
         AttachChild(m_ship_name_text);
 
 

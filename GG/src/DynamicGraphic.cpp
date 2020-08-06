@@ -37,7 +37,7 @@ const std::size_t DynamicGraphic::INVALID_INDEX = std::numeric_limits<std::size_
 const unsigned int DynamicGraphic::INVALID_TIME = std::numeric_limits<unsigned int>::max();
 
 DynamicGraphic::DynamicGraphic(X x, Y y, X w, Y h, bool loop, X frame_width, Y frame_height,
-                               unsigned int margin, const std::vector<std::shared_ptr<Texture>>& textures,
+                               unsigned int margin, std::vector<std::shared_ptr<Texture>> textures,
                                Flags<GraphicStyle> style/* = GRAPHIC_NONE*/, std::size_t frames/* = ALL_FRAMES*/,
                                Flags<WndFlag> flags/* = Flags<WndFlags>()*/) :
     Control(x, y, w, h, flags),
@@ -45,20 +45,14 @@ DynamicGraphic::DynamicGraphic(X x, Y y, X w, Y h, bool loop, X frame_width, Y f
     m_frame_width(frame_width),
     m_frame_height(frame_height),
     m_FPS(DEFAULT_FPS),
-    m_playing(true),
     m_looping(loop),
-    m_curr_texture(0),
-    m_curr_subtexture(0),
-    m_frames(0),
-    m_curr_frame(0),
     m_first_frame_time(INVALID_TIME),
     m_last_frame_time(INVALID_TIME),
-    m_first_frame_idx(0),
     m_style(style)
 {
     ValidateStyle();
     SetColor(CLR_WHITE);
-    AddFrames(textures, frames);
+    AddFrames(std::move(textures), frames);
     m_last_frame_idx = m_frames - 1;
 
     if (INSTRUMENT_ALL_SIGNALS) {
@@ -220,31 +214,30 @@ void DynamicGraphic::AddFrames(const Texture* texture, std::size_t frames/* = AL
     FrameSet fs;
     fs.texture.reset(texture);
     fs.frames = std::min(frames_in_texture, std::max(frames, static_cast<std::size_t>(1)));
-    m_textures.push_back(fs);
     m_frames += fs.frames;
+    m_textures.emplace_back(std::move(fs));
 }
 
-void DynamicGraphic::AddFrames(const std::shared_ptr<Texture>& texture, std::size_t frames/* = ALL_FRAMES*/)
+void DynamicGraphic::AddFrames(std::shared_ptr<Texture> texture, std::size_t frames/* = ALL_FRAMES*/)
 {
     std::size_t frames_in_texture = FramesInTexture(texture.get());
     if (!frames_in_texture)
         throw CannotAddFrame("DynamicGraphic::AddFrames : attempted to add frames from a Texture too small for even one frame");
 
     FrameSet fs;
-    fs.texture = texture;
+    fs.texture = std::move(texture);
     fs.frames = std::min(frames_in_texture, std::max(frames, static_cast<std::size_t>(1)));
-    m_textures.push_back(fs);
     m_frames += fs.frames;
+    m_textures.emplace_back(std::move(fs));
 }
 
-void DynamicGraphic::AddFrames(const std::vector<std::shared_ptr<Texture>>& textures, std::size_t frames/* = ALL_FRAMES*/)
+void DynamicGraphic::AddFrames(std::vector<std::shared_ptr<Texture>> textures, std::size_t frames/* = ALL_FRAMES*/)
 {
     if (!textures.empty()) {
         std::size_t old_frames = m_frames;
-        for (std::size_t i = 0; i < textures.size() - 1; ++i) {
-            AddFrames(textures[i], ALL_FRAMES);
-        }
-        AddFrames(textures.back(), m_frames - old_frames);
+        for (std::size_t i = 0; i < textures.size() - 1; ++i)
+            AddFrames(std::move(textures[i]), ALL_FRAMES);
+        AddFrames(std::move(textures.back()), m_frames - old_frames);
     }
 }
 

@@ -387,10 +387,11 @@ namespace {
 
     /**Create UI controls for a logger level option.*/
     void LoggerLevelOption(GG::ListBox& page, bool is_sink,
-                           const std::string& label, const std::string& option_name)
+                           std::string label, const std::string& option_name)
     {
         // Create the label
-        auto logger_label = GG::Wnd::Create<CUILabel>(label, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
+        auto logger_label = GG::Wnd::Create<CUILabel>(
+            std::move(label), GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
 
         // Create a drop down list for the filtering levels
         auto num_log_levels = 1 + static_cast<std::size_t>(LogLevel::max) - static_cast<std::size_t>(LogLevel::min);
@@ -405,8 +406,8 @@ namespace {
             auto level_name = to_string(static_cast<LogLevel>(ii));
             auto priority_row = GG::Wnd::Create<CUISimpleDropDownListRow>(level_name);
             // use the row's name to store the option value.
-            priority_row->SetName(level_name);
-            drop_list->Insert(priority_row);
+            priority_row->SetName(std::move(level_name));
+            drop_list->Insert(std::move(priority_row));
         }
 
         // Select the current filtering level in the list
@@ -415,7 +416,8 @@ namespace {
             drop_list->Select(selected_level);
 
         // Make a layout with a row etc. for this option
-        auto layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0, GG::X1, GG::Y1, 1, 2, 0, LAYOUT_MARGIN);
+        auto layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0, GG::X1, GG::Y1,
+                                                  1, 2, 0, LAYOUT_MARGIN);
         layout->Add(logger_label, 0, 0);
         layout->Add(drop_list,    0, 1, 1, 1, GG::ALIGN_VCENTER);
 
@@ -423,12 +425,13 @@ namespace {
         // row->Resize(GG::Pt(ROW_WIDTH, drop_list->MinUsableSize().y + LAYOUT_MARGIN + drop_list->MaxSize().y + 6));
         row->Resize(GG::Pt(ROW_WIDTH, drop_list->MinUsableSize().y + LAYOUT_MARGIN));
 
-        auto row_wnd = GG::Wnd::Create<RowContentsWnd>(row->Width(), row->Height(), layout, 0);
+        auto row_wnd = GG::Wnd::Create<RowContentsWnd>(row->Width(), row->Height(),
+                                                       std::move(layout), 0);
         row_wnd->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
         row_wnd->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
-        row->push_back(row_wnd);
+        row->push_back(std::move(row_wnd));
 
-        page.Insert(row);
+        page.Insert(std::move(row));
 
         // Connect to Options DB
         drop_list->SelChangedSignal.connect(
@@ -738,8 +741,8 @@ void OptionsWnd::CompleteConstruction() {
     for (const auto& sink : log_file_sinks) {
         const auto& option = std::get<0>(sink);
         const auto& option_label = std::get<1>(sink);
-        const auto&& full_label = str(FlexibleFormat(UserString("OPTIONS_DB_UI_LOGGER_PER_PROCESS_GENERAL")) % option_label);
-        LoggerLevelOption(*current_page, true, full_label, option);
+        const auto full_label = str(FlexibleFormat(UserString("OPTIONS_DB_UI_LOGGER_PER_PROCESS_GENERAL")) % option_label);
+        LoggerLevelOption(*current_page, true, std::move(full_label), option);
     }
 
     const auto log_file_sources = LoggerOptionsLabelsAndLevels(LoggerTypes::named);
@@ -751,15 +754,15 @@ void OptionsWnd::CompleteConstruction() {
 
     // Misc
     current_page = CreatePage(UserString("OPTIONS_PAGE_MISC"));
-    IntOption(current_page, 0, "effects.ui.threads",        UserString("OPTIONS_EFFECTS_THREADS_UI"));
-    IntOption(current_page, 0, "effects.server.threads",    UserString("OPTIONS_EFFECTS_THREADS_SERVER"));
-    IntOption(current_page, 0, "effects.ai.threads",        UserString("OPTIONS_EFFECTS_THREADS_AI"));
-    BoolOption(current_page, 0, "resource.shipdesign.saved.enabled",    UserString("OPTIONS_ADD_SAVED_DESIGNS"));
+    IntOption(current_page, 0, "effects.ui.threads",                UserString("OPTIONS_EFFECTS_THREADS_UI"));
+    IntOption(current_page, 0, "effects.server.threads",            UserString("OPTIONS_EFFECTS_THREADS_SERVER"));
+    IntOption(current_page, 0, "effects.ai.threads",                UserString("OPTIONS_EFFECTS_THREADS_AI"));
+    BoolOption(current_page, 0, "resource.shipdesign.saved.enabled",UserString("OPTIONS_ADD_SAVED_DESIGNS"));
     //BoolOption(current_page, 0, "resource.shipdesign.default.enabled",  UserString("OPTIONS_ADD_DEFAULT_DESIGNS"));   // hidden due to issues with implementation when not enabled preventing designs from being added or recreated
-    BoolOption(current_page, 0, "save.format.binary.enabled",    UserString("OPTIONS_USE_BINARY_SERIALIZATION"));
-    BoolOption(current_page, 0, "save.format.xml.zlib.enabled", UserString("OPTIONS_USE_XML_ZLIB_SERIALIZATION"));
-    BoolOption(current_page, 0, "ui.map.sitrep.invalid.shown", UserString("OPTIONS_VERBOSE_SITREP_DESC"));
-    BoolOption(current_page, 0, "effects.accounting.enabled", UserString("OPTIONS_EFFECT_ACCOUNTING"));
+    BoolOption(current_page, 0, "save.format.binary.enabled",       UserString("OPTIONS_USE_BINARY_SERIALIZATION"));
+    BoolOption(current_page, 0, "save.format.xml.zlib.enabled",     UserString("OPTIONS_USE_XML_ZLIB_SERIALIZATION"));
+    BoolOption(current_page, 0, "ui.map.sitrep.invalid.shown",      UserString("OPTIONS_VERBOSE_SITREP_DESC"));
+    BoolOption(current_page, 0, "effects.accounting.enabled",       UserString("OPTIONS_EFFECT_ACCOUNTING"));
 
     // Create full state config button
     auto all_config_button = GG::Wnd::Create<CUIButton>(UserString("OPTIONS_WRITE_ALL_CONFIG"));
@@ -849,18 +852,21 @@ void OptionsWnd::CreateSectionHeader(GG::ListBox* page, int indentation_level,
     auto heading_text = GG::Wnd::Create<CUILabel>(name, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP);
     heading_text->SetFont(ClientUI::GetFont(ClientUI::Pts() * 4 / 3));
 
-    auto row = GG::Wnd::Create<OptionsListRow>(ROW_WIDTH, heading_text->MinUsableSize().y + LAYOUT_MARGIN + 6,
-                                               heading_text, indentation_level);
+    auto row = GG::Wnd::Create<OptionsListRow>(ROW_WIDTH,
+                                               heading_text->MinUsableSize().y + LAYOUT_MARGIN + 6,
+                                               std::move(heading_text), indentation_level);
 
     if (!tooltip.empty()) {
         row->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
         row->SetBrowseText(tooltip);
     }
 
-    page->Insert(row);
+    page->Insert(std::move(row));
 }
 
-GG::StateButton* OptionsWnd::BoolOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text) {
+GG::StateButton* OptionsWnd::BoolOption(GG::ListBox* page, int indentation_level,
+                                        const std::string& option_name, const std::string& text)
+{
     auto button = GG::Wnd::Create<CUIStateButton>(text, GG::FORMAT_LEFT, std::make_shared<CUICheckBoxRepresenter>());
     auto row = GG::Wnd::Create<OptionsListRow>(ROW_WIDTH, button->MinUsableSize().y + LAYOUT_MARGIN + 6,
                                                button, indentation_level);

@@ -194,7 +194,7 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
         auto rc = std::dynamic_pointer_cast<const ResourceCenter>(obj);
         if (!rc) continue;
 
-        std::string name = obj->Name();
+        auto& name = obj->Name();
         double production = rc->GetMeter(ResourceToMeter(m_resource_type))->Initial();
         m_production += production;
 
@@ -206,12 +206,12 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
         label->Resize(GG::Pt(LabelWidth(), row_height));
         AttachChild(label);
 
-        auto value = GG::Wnd::Create<CUILabel>(amount_text);
+        auto value = GG::Wnd::Create<CUILabel>(std::move(amount_text));
         value->MoveTo(GG::Pt(LabelWidth(), top));
         value->Resize(GG::Pt(ValueWidth(), row_height));
         AttachChild(value);
 
-        m_production_labels_and_amounts.push_back({label, value});
+        m_production_labels_and_amounts.emplace_back(std::move(label), std::move(value));
 
         top += row_height;
     }
@@ -229,7 +229,7 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
         value->Resize(GG::Pt(ValueWidth(), row_height));
         AttachChild(value);
 
-        m_production_labels_and_amounts.push_back({label, value});
+        m_production_labels_and_amounts.emplace_back(std::move(label), std::move(value));
 
         top += row_height;
     }
@@ -280,38 +280,32 @@ void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
         if (m_empire_id != ALL_EMPIRES && !obj->OwnedBy(m_empire_id))
             continue;   // if m_empire_id == ALL_EMPIRES, display resource production for all empires.  otherwise, skip this resource production if it's not owned by the requested player
 
-
-        std::string name = obj->Name();
-
+        auto& name = obj->Name();
 
         double allocation = ObjectResourceConsumption(obj, m_resource_type, m_empire_id);
-
 
         // don't add summary entries for objects that consume no resource.  (otherwise there would be a loooong pointless list of 0's
         if (allocation <= 0.0) {
             if (allocation < 0.0)
-                ErrorLogger() << "object " << obj->Name() << " is reported having negative " << m_resource_type << " consumption";
+                ErrorLogger() << "object " << name << " is reported having negative " << m_resource_type << " consumption";
             continue;
         }
-
 
         m_allocation += allocation;
 
         std::string amount_text = DoubleToString(allocation, 3, false);
-
 
         auto label = GG::Wnd::Create<CUILabel>(name, GG::FORMAT_RIGHT);
         label->MoveTo(GG::Pt(GG::X0, top));
         label->Resize(GG::Pt(LabelWidth(), row_height));
         AttachChild(label);
 
-
-        auto value = GG::Wnd::Create<CUILabel>(amount_text);
+        auto value = GG::Wnd::Create<CUILabel>(std::move(amount_text));
         value->MoveTo(GG::Pt(LabelWidth(), top));
         value->Resize(GG::Pt(ValueWidth(), row_height));
         AttachChild(value);
 
-        m_allocation_labels_and_amounts.push_back({label, value});
+        m_allocation_labels_and_amounts.emplace_back(std::move(label), std::move(value));
 
         top += row_height;
     }
@@ -329,14 +323,14 @@ void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
         value->Resize(GG::Pt(ValueWidth(), row_height));
         AttachChild(value);
 
-        m_allocation_labels_and_amounts.push_back({label, value});
+        m_allocation_labels_and_amounts.emplace_back(std::move(label), std::move(value));
 
         top += row_height;
     }
 
 
     // set consumption / allocation label
-    std::string resource_text = "";
+    std::string resource_text;
     switch (m_resource_type) {
     case RE_INDUSTRY:
         resource_text = UserString("INDUSTRY_CONSUMPTION"); break;
@@ -387,7 +381,7 @@ void SystemResourceSummaryBrowseWnd::UpdateImportExport(GG::Y& top) {
     }
 
 
-    std::string label_text = "", amount_text = "";
+    std::string label_text, amount_text;
 
 
     if (!abort) {
@@ -427,17 +421,17 @@ void SystemResourceSummaryBrowseWnd::UpdateImportExport(GG::Y& top) {
 
 
     // add label and amount.  may be "NOT APPLIABLE" and nothing if aborted above
-    auto label = GG::Wnd::Create<CUILabel>(label_text, GG::FORMAT_RIGHT);
+    auto label = GG::Wnd::Create<CUILabel>(std::move(label_text), GG::FORMAT_RIGHT);
     label->MoveTo(GG::Pt(GG::X0, top));
     label->Resize(GG::Pt(LabelWidth(), row_height));
     AttachChild(label);
 
-    auto value = GG::Wnd::Create<CUILabel>(amount_text);
+    auto value = GG::Wnd::Create<CUILabel>(std::move(amount_text));
     value->MoveTo(GG::Pt(LabelWidth(), top));
     value->Resize(GG::Pt(ValueWidth(), row_height));
     AttachChild(value);
 
-    m_import_export_labels_and_amounts.push_back({label, value});
+    m_import_export_labels_and_amounts.emplace_back(std::move(label), std::move(value));
 
     top += row_height;
 }

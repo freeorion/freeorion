@@ -92,27 +92,29 @@ namespace {
     bool temp_bool = RegisterOptions(&AddOptions);
 
     /// Creates a text control that support resizing and word wrap.
-    std::shared_ptr<GG::Label> CreateResizingText(const std::string& string, GG::X width) {
+    std::shared_ptr<GG::Label> CreateResizingText(std::string str, GG::X width) {
         // Calculate the extent manually to ensure the control stretches to full
         // width when possible.  Otherwise it would always word break.
         GG::Flags<GG::TextFormat> fmt = GG::FORMAT_NONE;
         std::vector<std::shared_ptr<GG::Font::TextElement>> text_elements =
-            ClientUI::GetFont()->ExpensiveParseFromTextToTextElements(string, fmt);
-        std::vector<GG::Font::LineData> lines = ClientUI::GetFont()->DetermineLines(string, fmt, width, text_elements);
-        GG::Pt extent = ClientUI::GetFont()->TextExtent(lines);
-        auto text = GG::Wnd::Create<CUILabel>(string, text_elements,
-                                              GG::FORMAT_WORDBREAK | GG::FORMAT_LEFT, GG::NO_WND_FLAGS,
-                                              GG::X0, GG::Y0, extent.x, extent.y);
+            ClientUI::GetFont()->ExpensiveParseFromTextToTextElements(str, fmt);
+        std::vector<GG::Font::LineData> lines =
+            ClientUI::GetFont()->DetermineLines(str, fmt, width, text_elements);
+        GG::Pt extent = ClientUI::GetFont()->TextExtent(std::move(lines));
+        auto text = GG::Wnd::Create<CUILabel>(std::move(str), std::move(text_elements),
+                                              GG::FORMAT_WORDBREAK | GG::FORMAT_LEFT,
+                                              GG::NO_WND_FLAGS, GG::X0, GG::Y0, extent.x, extent.y);
         text->ClipText(true);
         text->SetChildClippingMode(GG::Wnd::ClipToClient);
         return text;
     }
 
-    bool Prompt(const std::string& question) {
+    bool Prompt(std::string question) {
         std::shared_ptr<GG::Font> font = ClientUI::GetFont();
         auto prompt = GG::GUI::GetGUI()->GetStyleFactory()->NewThreeButtonDlg(
-            PROMT_WIDTH, PROMPT_HEIGHT, question, font,
-            ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(), ClientUI::CtrlColor(), ClientUI::TextColor(),
+            PROMT_WIDTH, PROMPT_HEIGHT, std::move(question), font,
+            ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(),
+            ClientUI::CtrlColor(), ClientUI::TextColor(),
             2, UserString("YES"), UserString("CANCEL"));
         prompt->Run();
         return prompt->Result() == 0;
@@ -150,11 +152,11 @@ public:
         std::shared_ptr<GG::Label> retval;
 
         if (column.m_fixed) {
-            retval = GG::Wnd::Create<CUILabel>(value, format_flags, GG::NO_WND_FLAGS,
+            retval = GG::Wnd::Create<CUILabel>(std::move(value), format_flags, GG::NO_WND_FLAGS,
                                                GG::X0, GG::Y0,
                                                column.FixedWidth(), ClientUI::GetFont()->Height());
         } else {
-            retval = CreateResizingText(value, max_width);
+            retval = CreateResizingText(std::move(value), max_width);
         }
 
         retval->SetTextColor(color);
@@ -191,20 +193,19 @@ private:
     }
 
     /// Creates a fixed width column
-    SaveFileColumn(const std::string& name, const std::string& wide_as, GG::X max_width) :
-        m_name(name),
+    SaveFileColumn(std::string name, std::string wide_as, GG::X max_width) :
+        m_name(std::move(name)),
         m_fixed(true),
         m_fixed_width(GG::X0),
-        m_wide_as(wide_as),
+        m_wide_as(std::move(wide_as)),
         m_stretch(0.0)
     { m_fixed_width = ComputeFixedWidth(Title(), m_wide_as, max_width);}
 
     /// Creates a stretchy column
-    SaveFileColumn(const std::string& name, double stretch, GG::X max_width) :
-        m_name(name),
+    SaveFileColumn(std::string name, double stretch, GG::X max_width) :
+        m_name(std::move(name)),
         m_fixed(false),
         m_fixed_width(GG::X0),
-        m_wide_as(),
         m_stretch(stretch)
     { m_fixed_width = ComputeFixedWidth(Title(), m_wide_as, max_width);}
 
@@ -249,7 +250,8 @@ private:
         }
     }
 
-    static GG::X ComputeFixedWidth(const std::string& title, const std::string& wide_as, GG::X max_width) {
+    static GG::X ComputeFixedWidth(const std::string& title, const std::string& wide_as,
+                                   GG::X max_width) {
         std::shared_ptr<GG::Font> font = ClientUI::GetFont();
         // We need to maintain the fixed sizes since the base list box messes them
         std::vector<GG::Font::LineData> lines;
@@ -286,12 +288,13 @@ class SaveFileRow: public GG::ListBox::Row {
 public:
     SaveFileRow() {}
 
-    SaveFileRow(const std::shared_ptr<std::vector<SaveFileColumn>>& columns, const std::string& filename) :
-        m_filename(filename),
-        m_columns(columns),
+    SaveFileRow(std::shared_ptr<std::vector<SaveFileColumn>> columns,
+                std::string filename) :
+        m_filename(std::move(filename)),
+        m_columns(std::move(columns)),
         m_initialized(false)
     {
-        SetName("SaveFileRow for \""+filename+"\"");
+        SetName("SaveFileRow for \"" + m_filename + "\"");
         SetChildClippingMode(ClipToClient);
         RequirePreRender();
     }
@@ -830,7 +833,7 @@ void SaveFileDialog::Confirm() {
         // If not loading and file exists(and is regular file), ask to confirm override
         if (fs::is_regular_file(chosen_full_path)) {
             std::string question = str((FlexibleFormat(UserString("SAVE_REALLY_OVERRIDE")) % choice));
-            if (!Prompt(question))
+            if (!Prompt(std::move(question)))
                 return;
         } else if (fs::exists(chosen_full_path)) {
             ErrorLogger() << "SaveFileDialog::Confirm: Invalid status for file: " << Result();

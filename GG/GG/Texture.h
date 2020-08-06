@@ -139,7 +139,7 @@ private:
 class GG_API SubTexture
 {
 public:
-    SubTexture();
+    SubTexture() = default;
 
     /** Creates a SubTexture from a GG::Texture and coordinates into it.
         \throw GG::SubTexture::BadTexture Throws if the given Texture is null.
@@ -151,7 +151,6 @@ public:
         the whole texture.
         \throw GG::SubTexture::BadTexture Throws if the given Texture is null.*/
     SubTexture(std::shared_ptr<const Texture> texture);
-
     SubTexture(const SubTexture& rhs);
 
     SubTexture& operator=(const SubTexture& rhs);
@@ -189,8 +188,8 @@ public:
 private:
     /** shared_ptr to texture object with entire image. */
     std::shared_ptr<const Texture>  m_texture;
-    X                               m_width;
-    Y                               m_height;
+    X                               m_width = GG::X0;
+    Y                               m_height = GG::Y0;
     GLfloat                         m_tex_coords[4];    ///< position of element within containing texture 
 };
 

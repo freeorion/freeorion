@@ -426,12 +426,6 @@ unsigned char* Texture::GetRawBytes()
 ///////////////////////////////////////
 // class GG::SubTexture
 ///////////////////////////////////////
-SubTexture::SubTexture() :
-    m_width(0),
-    m_height(0),
-    m_tex_coords()
-{}
-
 SubTexture::SubTexture(std::shared_ptr<const Texture> texture, X x1, Y y1, X x2, Y y2) :
     m_texture(std::move(texture)),
     m_width(x2 - x1),

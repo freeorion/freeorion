@@ -1021,8 +1021,9 @@ void MapWnd::CompleteConstruction() {
 
     // timeout remain label
     // determine size from the text that will go into label, using a test time string
-    std::string timeout_longest_reasonable = boost::io::str(FlexibleFormat(UserString("MAP_TIMEOUT_HRS_MINS")) % 999 % 59); // minutes part never exceeds 59, turn interval hopefully doesn't exceed month
-    m_timeout_remain = Wnd::Create<CUILabel>(timeout_longest_reasonable);
+    std::string timeout_longest_reasonable =
+        boost::io::str(FlexibleFormat(UserString("MAP_TIMEOUT_HRS_MINS")) % 999 % 59); // minutes part never exceeds 59, turn interval hopefully doesn't exceed month
+    m_timeout_remain = Wnd::Create<CUILabel>(std::move(timeout_longest_reasonable));
     m_timeout_remain->Resize(m_timeout_remain->MinUsableSize());
 
     // FPS indicator
@@ -6831,7 +6832,7 @@ void MapWnd::RefreshPopulationIndicator() {
     m_population->SetValue(empire->GetPopulationPool().Population());
     m_population->ClearBrowseInfoWnd();
 
-    const auto pop_center_ids = empire->GetPopulationPool().PopCenterIDs();
+    const auto& pop_center_ids = empire->GetPopulationPool().PopCenterIDs();
     std::map<std::string, float> population_counts;
     std::map<std::string, float> tag_counts;
     const ObjectMap& objects = Objects();
@@ -6847,15 +6848,15 @@ void MapWnd::RefreshPopulationIndicator() {
         float this_pop = pc->GetMeter(METER_POPULATION)->Initial();
         population_counts[species_name] += this_pop;
         if (const Species* species = GetSpecies(species_name) ) {
-            for (const std::string& tag : species->Tags()) {
+            for (const std::string& tag : species->Tags())
                 tag_counts[tag] += this_pop;
-            }
         }
     }
 
     m_population->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_population->SetBrowseInfoWnd(GG::Wnd::Create<CensusBrowseWnd>(
-        UserString("MAP_POPULATION_DISTRIBUTION"), population_counts, tag_counts, GetSpeciesManager().census_order()));
+        UserString("MAP_POPULATION_DISTRIBUTION"), std::move(population_counts),
+        std::move(tag_counts), GetSpeciesManager().census_order()));
 }
 
 void MapWnd::UpdateSidePanelSystemObjectMetersAndResourcePools() {

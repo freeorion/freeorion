@@ -262,15 +262,17 @@ void GameRulesPanel::CreateSectionHeader(GG::ListBox* page, int indentation_leve
     auto heading_text = GG::Wnd::Create<CUILabel>(name, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP);
     heading_text->SetFont(ClientUI::GetFont(ClientUI::Pts() * 4 / 3));
 
-    auto row = GG::Wnd::Create<RuleListRow>(Width(), heading_text->MinUsableSize().y + CONTROL_VMARGIN + 6,
-                                            heading_text, indentation_level);
+    auto row = GG::Wnd::Create<RuleListRow>(Width(),
+                                            heading_text->MinUsableSize().y + CONTROL_VMARGIN + 6,
+                                            std::move(heading_text),
+                                            indentation_level);
 
     if (!tooltip.empty()) {
         row->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
         row->SetBrowseText(tooltip);
     }
 
-    page->Insert(row);
+    page->Insert(std::move(row));
 }
 
 GG::StateButton* GameRulesPanel::BoolRuleWidget(GG::ListBox* page, int indentation_level,
@@ -287,29 +289,31 @@ GG::StateButton* GameRulesPanel::BoolRuleWidget(GG::ListBox* page, int indentati
     button->CheckedSignal.connect(boost::bind(&GameRulesPanel::BoolRuleChanged, this, button.get(),
                                               rule_name));
 
-    page->Insert(row);
+    page->Insert(std::move(row));
     return button.get();
 }
 
 GG::Spin<int>* GameRulesPanel::IntRuleWidget(GG::ListBox* page, int indentation_level,
                                              const std::string& rule_name)
 {
-    auto text_control = GG::Wnd::Create<CUILabel>(UserString(rule_name), GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
+    auto text_control = GG::Wnd::Create<CUILabel>(UserString(rule_name),
+                                                  GG::FORMAT_LEFT | GG::FORMAT_NOWRAP,
+                                                  GG::INTERACTIVE);
 
     std::shared_ptr<const ValidatorBase> validator = GetGameRules().GetValidator(rule_name);
     int value = GetGameRules().Get<int>(rule_name);
 
     std::shared_ptr<GG::Spin<int>> spin;
-    if (std::shared_ptr<const RangedValidator<int>> ranged_validator = std::dynamic_pointer_cast<const RangedValidator<int>>(validator))
+    if (auto ranged_validator = std::dynamic_pointer_cast<const RangedValidator<int>>(validator))
         spin = GG::Wnd::Create<CUISpin<int>>(value, 1, ranged_validator->m_min, ranged_validator->m_max, true);
 
-    else if (std::shared_ptr<const StepValidator<int>> step_validator = std::dynamic_pointer_cast<const StepValidator<int>>(validator))
+    else if (auto step_validator = std::dynamic_pointer_cast<const StepValidator<int>>(validator))
         spin = GG::Wnd::Create<CUISpin<int>>(value, step_validator->m_step_size, -1000000, 1000000, true);
 
-    else if (std::shared_ptr<const RangedStepValidator<int>> ranged_step_validator = std::dynamic_pointer_cast<const RangedStepValidator<int>>(validator))
+    else if (auto ranged_step_validator = std::dynamic_pointer_cast<const RangedStepValidator<int>>(validator))
         spin = GG::Wnd::Create<CUISpin<int>>(value, ranged_step_validator->m_step_size, ranged_step_validator->m_min, ranged_step_validator->m_max, true);
 
-    else if (std::shared_ptr<const Validator<int>> int_validator = std::dynamic_pointer_cast<const Validator<int>>(validator))
+    else if (auto int_validator = std::dynamic_pointer_cast<const Validator<int>>(validator))
         spin = GG::Wnd::Create<CUISpin<int>>(value, 1, -1000000, 1000000, true);
 
     if (!spin) {
@@ -318,7 +322,8 @@ GG::Spin<int>* GameRulesPanel::IntRuleWidget(GG::ListBox* page, int indentation_
     }
 
     spin->Resize(GG::Pt(SPIN_WIDTH, spin->MinUsableSize().y));
-    auto layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0, Width(), spin->MinUsableSize().y, 1, 2, 0, 5);
+    auto layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0, Width(),
+                                              spin->MinUsableSize().y, 1, 2, 0, 5);
     layout->Add(spin, 0, 0, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
     layout->Add(text_control, 0, 1, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
     layout->SetMinimumColumnWidth(0, SPIN_WIDTH);
@@ -326,7 +331,7 @@ GG::Spin<int>* GameRulesPanel::IntRuleWidget(GG::ListBox* page, int indentation_
     layout->SetChildClippingMode(ClipToClient);
 
     auto row = GG::Wnd::Create<RuleListRow>(Width(), spin->MinUsableSize().y + CONTROL_VMARGIN + 6,
-                                            layout, indentation_level);
+                                            std::move(layout), indentation_level);
     page->Insert(row);
 
     spin->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));

@@ -196,8 +196,9 @@ namespace {
                 float total_cost = static_cast<float>(cost_time.first);
                 int minimum_production_time = cost_time.second;
 
-                int production_time = ProductionTurns(total_cost, minimum_production_time, local_pp_output,
-                                                      stockpile, stockpile_limit_per_turn);
+                int production_time = ProductionTurns(total_cost, minimum_production_time,
+                                                      local_pp_output, stockpile,
+                                                      stockpile_limit_per_turn);
 
                 if (production_time >= MAX_PRODUCTION_TURNS)
                     time_text = std::to_string(MAX_PRODUCTION_TURNS) + "+";
@@ -205,11 +206,12 @@ namespace {
                     time_text = std::to_string(production_time);
             }
 
-            m_icon = GG::Wnd::Create<GG::StaticGraphic>(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
-            m_name = GG::Wnd::Create<CUILabel>(name_text, GG::FORMAT_LEFT);
+            m_icon = GG::Wnd::Create<GG::StaticGraphic>(
+                std::move(texture), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+            m_name = GG::Wnd::Create<CUILabel>(std::move(name_text), GG::FORMAT_LEFT);
             //m_cost = GG::Wnd::Create<CUILabel>(cost_text);
-            m_time = GG::Wnd::Create<CUILabel>(time_text);
-            m_desc = GG::Wnd::Create<CUILabel>(desc_text, GG::FORMAT_LEFT);
+            m_time = GG::Wnd::Create<CUILabel>(std::move(time_text));
+            m_desc = GG::Wnd::Create<CUILabel>(std::move(desc_text), GG::FORMAT_LEFT);
 
             AttachChild(m_icon);
             AttachChild(m_name);

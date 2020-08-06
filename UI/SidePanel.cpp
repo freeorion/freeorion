@@ -1132,10 +1132,10 @@ void SidePanel::PlanetPanel::RefreshPlanetGraphic() {
         GG::Y texture_height = textures[0]->DefaultHeight();
         GG::Pt planet_image_pos(GG::X(MaxPlanetDiameter() / 2 - texture_width / 2 + 3), GG::Y0);
 
-        m_planet_graphic = GG::Wnd::Create<GG::DynamicGraphic>(planet_image_pos.x, planet_image_pos.y,
-                                                               texture_width, texture_height, true,
-                                                               texture_width, texture_height, 0, textures,
-                                                               GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+        m_planet_graphic = GG::Wnd::Create<GG::DynamicGraphic>(
+            planet_image_pos.x, planet_image_pos.y, texture_width, texture_height,
+            true, texture_width, texture_height, 0, textures,
+            GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
         m_planet_graphic->SetFPS(GetAsteroidsFPS());
         m_planet_graphic->SetFrameIndex(RandInt(0, textures.size() - 1));
         AttachChild(m_planet_graphic);
@@ -2859,7 +2859,8 @@ namespace {
 
             auto total_meter_value = 0.0f;
 
-            auto title_label = GG::Wnd::Create<CUILabel>(UserString(boost::lexical_cast<std::string>(m_meter_type)), GG::FORMAT_RIGHT);
+            auto title_label = GG::Wnd::Create<CUILabel>(
+                UserString(boost::lexical_cast<std::string>(m_meter_type)), GG::FORMAT_RIGHT);
             title_label->MoveTo(GG::Pt(GG::X0, GG::Y0));
             title_label->Resize(GG::Pt(LabelWidth(), row_height));
             title_label->SetFont(ClientUI::GetBoldFont());
@@ -2873,8 +2874,7 @@ namespace {
                 if (planet->Unowned() && planet->SpeciesName().empty())
                     continue;
 
-                const auto name = planet->Name();
-                auto label = GG::Wnd::Create<CUILabel>(name, GG::FORMAT_RIGHT);
+                auto label = GG::Wnd::Create<CUILabel>(planet->Name(), GG::FORMAT_RIGHT);
                 label->MoveTo(GG::Pt(GG::X0, top));
                 label->Resize(GG::Pt(LabelWidth(), row_height));
                 AttachChild(label);
@@ -2890,7 +2890,7 @@ namespace {
                 value->Resize(GG::Pt(ValueWidth(), row_height));
                 AttachChild(value);
 
-                m_labels_and_amounts.emplace_back(label, value);
+                m_labels_and_amounts.emplace_back(std::move(label), std::move(value));
 
                 top += row_height;
             }
@@ -2900,14 +2900,15 @@ namespace {
             title_value->Resize(GG::Pt(ValueWidth(), row_height));
             title_value->SetFont(ClientUI::GetBoldFont());
             AttachChild(title_value);
-            m_labels_and_amounts.emplace_back(title_label, title_value);
+            m_labels_and_amounts.emplace_back(std::move(title_label), std::move(title_value));
 
             Resize(GG::Pt(LabelWidth() + ValueWidth(), top));
         }
     private:
         MeterType m_meter_type;
         int m_system_id;
-        std::vector<std::pair<std::shared_ptr<GG::Label>, std::shared_ptr<GG::Label>>> m_labels_and_amounts;
+        std::vector<std::pair<std::shared_ptr<GG::Label>,
+                    std::shared_ptr<GG::Label>>> m_labels_and_amounts;
     };
 }
 
@@ -3269,15 +3270,14 @@ void SidePanel::RefreshImpl() {
         ClientUI::ArtDir() / "stars_sidepanel",
         ClientUI::StarTypeFilePrefixes()[system->GetStarType()],
         s_system_id);
-    std::vector<std::shared_ptr<GG::Texture>> textures;
-    textures.push_back(graphic);
+    std::vector<std::shared_ptr<GG::Texture>> textures{std::move(graphic)};
 
     int graphic_width = Value(Width()) - MaxPlanetDiameter();
     DetachChild(m_star_graphic);
     m_star_graphic = GG::Wnd::Create<GG::DynamicGraphic>(
         GG::X(MaxPlanetDiameter()), GG::Y0, GG::X(graphic_width), GG::Y(graphic_width),
         true, textures[0]->DefaultWidth(), textures[0]->DefaultHeight(),
-        0, textures, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+        0, std::move(textures), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
 
     AttachChild(m_star_graphic);
     MoveChildDown(m_star_graphic);

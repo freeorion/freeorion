@@ -30,13 +30,13 @@
 /** a FreeOrion Label control */
 class CUILabel : public GG::TextControl {
 public:
-    CUILabel(const std::string& str,
+    CUILabel(std::string str,
              GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE,
              GG::Flags<GG::WndFlag> flags = GG::NO_WND_FLAGS,
              GG::X x = GG::X0, GG::Y y = GG::Y0, GG::X w = GG::X1, GG::Y h = GG::Y1);
 
-    CUILabel(const std::string& str,
-             const std::vector<std::shared_ptr<GG::Font::TextElement>>& text_elements,
+    CUILabel(std::string str,
+             std::vector<std::shared_ptr<GG::Font::TextElement>> text_elements,
              GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE,
              GG::Flags<GG::WndFlag> flags = GG::NO_WND_FLAGS,
              GG::X x = GG::X0, GG::Y y = GG::Y0, GG::X w = GG::X1, GG::Y h = GG::Y1);
@@ -47,9 +47,9 @@ public:
 /** a FreeOrion Button control */
 class CUIButton : public GG::Button {
 public:
-    CUIButton(const std::string& str);
+    CUIButton(std::string str);
 
-    CUIButton(const GG::SubTexture& unpressed, const GG::SubTexture& pressed, const GG::SubTexture& rollover);
+    CUIButton(GG::SubTexture unpressed, GG::SubTexture pressed, GG::SubTexture rollover);
 
     GG::Pt MinUsableSize() const override;
 
@@ -67,12 +67,13 @@ protected:
 
 class SettableInWindowCUIButton : public CUIButton {
 public:
-    SettableInWindowCUIButton(const GG::SubTexture& unpressed, const GG::SubTexture& pressed, const GG::SubTexture& rollover, std::function<bool (const SettableInWindowCUIButton*, const GG::Pt&)> in_window_function);
+    SettableInWindowCUIButton(GG::SubTexture unpressed, GG::SubTexture pressed, GG::SubTexture rollover,
+                              std::function<bool (const SettableInWindowCUIButton*, const GG::Pt&)> in_window_function);
 
     bool InWindow(const GG::Pt& pt) const override;
 
 private:
-    std::function<bool (const SettableInWindowCUIButton*, const GG::Pt&)>    m_in_window_func;
+    std::function<bool (const SettableInWindowCUIButton*, const GG::Pt&)> m_in_window_func;
 };
 
 /** a FreeOrion triangular arrow button */

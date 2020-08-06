@@ -313,16 +313,16 @@ void ModeratorActionsWnd::Refresh() {
         auto row = GG::Wnd::Create<GG::DropDownList::Row>();
         auto label = GG::Wnd::Create<CUILabel>(empire->Name(), GG::FORMAT_NOWRAP);
         label->SetTextColor(empire->Color());
-        row->push_back(label);
-        m_empire_drop->Insert(row);
+        row->push_back(std::move(label));
+        m_empire_drop->Insert(std::move(row));
     }
 
     // no empire / monsters
     auto row = GG::Wnd::Create<GG::DropDownList::Row>();
     auto label = GG::Wnd::Create<CUILabel>(UserString("UNOWNED"), GG::FORMAT_NOWRAP);
     label->SetTextColor(GG::CLR_RED);
-    row->push_back(label);
-    m_empire_drop->Insert(row);
+    row->push_back(std::move(label));
+    m_empire_drop->Insert(std::move(row));
 
     if (!m_empire_drop->Empty())
         m_empire_drop->Select(m_empire_drop->begin());

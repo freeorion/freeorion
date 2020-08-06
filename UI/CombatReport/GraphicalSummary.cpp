@@ -365,7 +365,9 @@ public:
         m_y_axis_label->SetColor(axis_label_color);
         AttachChild(m_y_axis_label);
 
-        m_dead_label = GG::Wnd::Create<CUILabel>( (boost::format(UserString("COMBAT_DESTROYED_LABEL")) % m_side_summary.DestroyedUnits() ).str(), GG::FORMAT_RIGHT);
+        m_dead_label = GG::Wnd::Create<CUILabel>(
+            (boost::format(UserString("COMBAT_DESTROYED_LABEL")) % m_side_summary.DestroyedUnits()).str(),
+            GG::FORMAT_RIGHT);
         m_dead_label->SetColor(axis_label_color);
         AttachChild(m_dead_label);
 

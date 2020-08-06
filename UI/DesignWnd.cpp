@@ -2164,7 +2164,7 @@ public:
 
     class HullAndNamePanel : public GG::Control {
     public:
-        HullAndNamePanel(GG::X w, GG::Y h, const std::string& hull, const std::string& name);
+        HullAndNamePanel(GG::X w, GG::Y h, const std::string& hull, std::string name);
 
         void CompleteConstruction() override;
         void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
@@ -2173,16 +2173,16 @@ public:
         {}
 
         void SetAvailability(const AvailabilityManager::DisplayedAvailabilies& type);
-        void SetDisplayName(const std::string& name);
+        void SetDisplayName(std::string name);
 
     private:
-        std::shared_ptr<GG::StaticGraphic>  m_graphic = nullptr;
-        std::shared_ptr<GG::Label>          m_name = nullptr;
+        std::shared_ptr<GG::StaticGraphic>  m_graphic;
+        std::shared_ptr<GG::Label>          m_name;
     };
 
     class BasesListBoxRow : public CUIListBox::Row {
     public:
-        BasesListBoxRow(GG::X w, GG::Y h, const std::string& hull, const std::string& name);
+        BasesListBoxRow(GG::X w, GG::Y h, const std::string& hull, std::string name);
 
         void CompleteConstruction() override;
         void Render() override;
@@ -2190,16 +2190,16 @@ public:
         void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
         virtual void SetAvailability(const AvailabilityManager::DisplayedAvailabilies& type);
-        virtual void SetDisplayName(const std::string& name);
+        virtual void SetDisplayName(std::string name);
 
     private:
-        std::shared_ptr<HullAndNamePanel> m_hull_panel = nullptr;
+        std::shared_ptr<HullAndNamePanel> m_hull_panel;
     };
 
     class HullAndPartsListBoxRow : public BasesListBoxRow {
     public:
-        HullAndPartsListBoxRow(GG::X w, GG::Y h, const std::string& hull,
-                               const std::vector<std::string>& parts);
+        HullAndPartsListBoxRow(GG::X w, GG::Y h, std::string hull,
+                               std::vector<std::string> parts);
         void CompleteConstruction() override;
         const std::string&              Hull() const    { return m_hull_name; }
         const std::vector<std::string>& Parts() const   { return m_parts; }
@@ -2252,7 +2252,8 @@ private:
     boost::signals2::connection m_empire_designs_changed_signal;
 };
 
-BasesListBox::HullAndNamePanel::HullAndNamePanel(GG::X w, GG::Y h, const std::string& hull, const std::string& name) :
+BasesListBox::HullAndNamePanel::HullAndNamePanel(GG::X w, GG::Y h, const std::string& hull,
+                                                 std::string name) :
     GG::Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS)
 {
     SetChildClippingMode(ClipToClient);
@@ -2260,7 +2261,8 @@ BasesListBox::HullAndNamePanel::HullAndNamePanel(GG::X w, GG::Y h, const std::st
     m_graphic = GG::Wnd::Create<GG::StaticGraphic>(ClientUI::HullIcon(hull),
                                                    GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
     m_graphic->Resize(GG::Pt(w, h));
-    m_name = GG::Wnd::Create<CUILabel>(name, GG::FORMAT_WORDBREAK | GG::FORMAT_CENTER | GG::FORMAT_TOP);
+    m_name = GG::Wnd::Create<CUILabel>(std::move(name),
+                                       GG::FORMAT_WORDBREAK | GG::FORMAT_CENTER | GG::FORMAT_TOP);
 }
 
 void BasesListBox::HullAndNamePanel::CompleteConstruction() {
@@ -2283,12 +2285,13 @@ void BasesListBox::HullAndNamePanel::SetAvailability(
     m_name->Disable(disabled);
 }
 
-void BasesListBox::HullAndNamePanel::SetDisplayName(const std::string& name) {
-    m_name->SetText(name);
+void BasesListBox::HullAndNamePanel::SetDisplayName(std::string name) {
+    m_name->SetText(std::move(name));
     m_name->Resize(GG::Pt(Width(), m_name->Height()));
 }
 
-BasesListBox::BasesListBoxRow::BasesListBoxRow(GG::X w, GG::Y h, const std::string& hull, const std::string& name) :
+BasesListBox::BasesListBoxRow::BasesListBoxRow(GG::X w, GG::Y h, const std::string& hull,
+                                               std::string name) :
     CUIListBox::Row(w, h)
 {
     SetDragDropDataType(BASES_LIST_BOX_DROP_TYPE);
@@ -2297,7 +2300,7 @@ BasesListBox::BasesListBoxRow::BasesListBoxRow(GG::X w, GG::Y h, const std::stri
         return;
     }
 
-    m_hull_panel = GG::Wnd::Create<HullAndNamePanel>(w, h, hull, name);
+    m_hull_panel = GG::Wnd::Create<HullAndNamePanel>(w, h, hull, std::move(name));
 
     SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
 }
@@ -2340,16 +2343,16 @@ void BasesListBox::BasesListBoxRow::SetAvailability(const AvailabilityManager::D
         m_hull_panel->SetAvailability(type);
 }
 
-void BasesListBox::BasesListBoxRow::SetDisplayName(const std::string& name) {
+void BasesListBox::BasesListBoxRow::SetDisplayName(std::string name) {
     if (m_hull_panel)
-        m_hull_panel->SetDisplayName(name);
+        m_hull_panel->SetDisplayName(std::move(name));
 }
 
-BasesListBox::HullAndPartsListBoxRow::HullAndPartsListBoxRow(GG::X w, GG::Y h, const std::string& hull,
-                                                             const std::vector<std::string>& parts) :
+BasesListBox::HullAndPartsListBoxRow::HullAndPartsListBoxRow(GG::X w, GG::Y h, std::string hull,
+                                                             std::vector<std::string> parts) :
     BasesListBoxRow(w, h, hull, UserString(hull)),
-    m_hull_name(hull),
-    m_parts(parts)
+    m_hull_name(std::move(hull)),
+    m_parts(std::move(parts))
 {}
 
 void BasesListBox::HullAndPartsListBoxRow::CompleteConstruction() {
@@ -2607,7 +2610,7 @@ void EmptyHullsListBox::PopulateCore() {
         }
     }
 
-    for (const auto& hull_name : hulls) {
+    for (auto& hull_name : hulls) {
         const auto& ship_hull =  GetShipHullManager().GetShipHull(hull_name);
 
         if (!ship_hull || !ship_hull->Producible())
@@ -2616,11 +2619,12 @@ void EmptyHullsListBox::PopulateCore() {
         auto shown = AvailabilityState().DisplayedHullAvailability(hull_name);
         if (!shown)
             continue;
-        const std::vector<std::string> empty_parts_vec;
-        auto row = GG::Wnd::Create<HullAndPartsListBoxRow>(row_size.x, row_size.y, hull_name, empty_parts_vec);
+        auto row = GG::Wnd::Create<HullAndPartsListBoxRow>(row_size.x, row_size.y,
+                                                           std::move(hull_name),
+                                                           std::vector<std::string>{});
         row->SetAvailability(*shown);
-        Insert(row);
-        row->Resize(row_size);
+        row->Resize(row_size);  // TODO: should this and following be swapped?
+        Insert(std::move(row));
     }
 }
 
@@ -2749,8 +2753,8 @@ std::shared_ptr<BasesListBox::Row> EmptyHullsListBox::ChildrenDraggedAwayCore(co
 
     const std::string& hull_name = design_row->Hull();
     const auto row_size = ListRowSize();
-    std::vector<std::string> empty_parts_vec;
-    auto row =  GG::Wnd::Create<HullAndPartsListBoxRow>(row_size.x, row_size.y, hull_name, empty_parts_vec);
+    auto row =  GG::Wnd::Create<HullAndPartsListBoxRow>(row_size.x, row_size.y,
+                                                        hull_name, std::vector<std::string>{});
 
     if (auto shown = AvailabilityState().DisplayedHullAvailability(hull_name))
         row->SetAvailability(*shown);

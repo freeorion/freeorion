@@ -119,18 +119,20 @@ private:
     bool                                m_show_icon;
 };
 
-CensusBrowseWnd::CensusBrowseWnd(const std::string& title_text, const std::map<std::string, float>& population_counts,
-                                 const std::map<std::string, float>& tag_counts, const std::vector<std::string>& census_order) :
+CensusBrowseWnd::CensusBrowseWnd(std::string title_text,
+                                 std::map<std::string, float> population_counts,
+                                 std::map<std::string, float> tag_counts,
+                                 std::vector<std::string> census_order) :
     GG::BrowseInfoWnd(GG::X0, GG::Y0, BrowseTextWidth(), GG::Y1),
-    m_title_text(GG::Wnd::Create<CUILabel>(title_text, GG::FORMAT_LEFT)),
+    m_title_text(GG::Wnd::Create<CUILabel>(std::move(title_text), GG::FORMAT_LEFT)),
     m_species_text(GG::Wnd::Create<CUILabel>(UserString("CENSUS_SPECIES_HEADER"), GG::FORMAT_BOTTOM)),
     m_list(GG::Wnd::Create<CUIListBox>()),
     m_tags_text(GG::Wnd::Create<CUILabel>(UserString("CENSUS_TAG_HEADER"), GG::FORMAT_BOTTOM)),
     m_tags_list(GG::Wnd::Create<CUIListBox>()),
     m_offset(GG::X0, ICON_BROWSE_ICON_HEIGHT/2),
-    m_population_counts(population_counts),
-    m_tag_counts(tag_counts),
-    m_census_order(census_order)
+    m_population_counts(std::move(population_counts)),
+    m_tag_counts(std::move(tag_counts)),
+    m_census_order(std::move(census_order))
 {}
 
 void CensusBrowseWnd::CompleteConstruction() {
