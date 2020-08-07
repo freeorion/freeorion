@@ -170,7 +170,8 @@ struct FO_COMMON_API None final : public Condition {
   * (if \a exclusive == true) by an empire that has affilitation type
   * \a affilitation with Empire \a empire_id. */
 struct FO_COMMON_API EmpireAffiliation final : public Condition {
-    EmpireAffiliation(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id, EmpireAffiliationType affiliation);
+    EmpireAffiliation(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
+                      EmpireAffiliationType affiliation);
     explicit EmpireAffiliation(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id);
     explicit EmpireAffiliation(EmpireAffiliationType affiliation);
 
@@ -371,7 +372,7 @@ private:
 /** Matches all objects that have the tag \a tag. */
 struct FO_COMMON_API HasTag final : public Condition {
     HasTag();
-    explicit HasTag(const std::string& name);
+    explicit HasTag(std::string name);
     explicit HasTag(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
 
     bool operator==(const Condition& rhs) const override;

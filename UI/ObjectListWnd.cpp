@@ -1067,7 +1067,7 @@ private:
 ////////////////////////////////////////////////
 class FilterDialog : public CUIWnd {
 public:
-    FilterDialog(const std::map<UniverseObjectType, std::set<VIS_DISPLAY>>& vis_filters,
+    FilterDialog(std::map<UniverseObjectType, std::set<VIS_DISPLAY>> vis_filters,
                  const Condition::Condition* const condition_filter);
 
     void CompleteConstruction() override;
@@ -1099,17 +1099,13 @@ private:
 };
 
 
-FilterDialog::FilterDialog(const std::map<UniverseObjectType,
-                           std::set<VIS_DISPLAY>>& vis_filters,
+FilterDialog::FilterDialog(std::map<UniverseObjectType, std::set<VIS_DISPLAY>> vis_filters,
                            const Condition::Condition* const condition_filter) :
     CUIWnd(UserString("FILTERS"),
            GG::INTERACTIVE | GG::DRAGABLE | GG::MODAL,
            FILTER_OPTIONS_WND_NAME),
-    m_vis_filters(vis_filters)
-{
-    m_condition_widget = GG::Wnd::Create<ConditionWidget>(GG::X(3), GG::Y(3),
-                                                          condition_filter);
-}
+    m_vis_filters(std::move(vis_filters))
+{ m_condition_widget = GG::Wnd::Create<ConditionWidget>(GG::X(3), GG::Y(3), condition_filter); }
 
 void FilterDialog::CompleteConstruction() {
     CUIWnd::CompleteConstruction();

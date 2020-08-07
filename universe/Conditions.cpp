@@ -2447,8 +2447,8 @@ HasTag::HasTag() :
     HasTag(std::unique_ptr<ValueRef::ValueRef<std::string>>{})
 {}
 
-HasTag::HasTag(const std::string& name) :
-    HasTag(std::make_unique<ValueRef::Constant<std::string>>(name))
+HasTag::HasTag(std::string name) :
+    HasTag(std::make_unique<ValueRef::Constant<std::string>>(std::move(name)))
 {}
 
 HasTag::HasTag(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :

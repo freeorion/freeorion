@@ -1333,7 +1333,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
             continue;
 
         // unlike species and special effectsgroups, all techs for an empire have the same source object
-        tech_sources.emplace_back(Condition::ObjectSet{1U, source});
+        tech_sources.emplace_back(1U, source);
         const auto& source_objects = tech_sources.back();
 
         for (const auto& tech_entry : empire->ResearchedTechs()) {
@@ -1362,7 +1362,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
             continue;
 
         // like techs, all policies for an empire have the same source object
-        policy_sources.emplace_back(Condition::ObjectSet{1U, source});
+        policy_sources.emplace_back(1U, source);
         const auto& source_objects = policy_sources.back();
 
         for (const auto& policy_name : empire->AdoptedPolicies()) {

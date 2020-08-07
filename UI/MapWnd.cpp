@@ -6896,17 +6896,16 @@ bool MapWnd::ZoomToHomeSystem() {
 
 namespace {
     struct CustomRowCmp {
-        bool operator()(const std::pair<std::string, int>& lhs, const std::pair<std::string, int>& rhs) const {
-            return GetLocale("en_US.UTF-8").operator()(lhs.first, rhs.first);    // todo: use .second values to break ties
-        }
+        bool operator()(const std::pair<std::string, int>& lhs,
+                        const std::pair<std::string, int>& rhs) const
+        { return GetLocale("en_US.UTF-8").operator()(lhs.first, rhs.first); } // todo: use .second values to break ties
     };
 
     std::set<std::pair<std::string, int>, CustomRowCmp> GetSystemNamesIDs() {
         // get systems, store alphabetized
         std::set<std::pair<std::string, int>, CustomRowCmp> system_names_ids;
-        for (auto& system : Objects().all<System>()) {
-            system_names_ids.insert({system->Name(), system->ID()});
-        }
+        for (auto& system : Objects().all<System>())
+            system_names_ids.emplace(system->Name(), system->ID());
         return system_names_ids;
     }
 
@@ -6916,14 +6915,14 @@ namespace {
         // get IDs of systems that contain any owned planets
         std::set<int> system_ids;
         for (auto& obj : owned_planets)
-        { system_ids.insert(obj->SystemID()); }
+            system_ids.insert(obj->SystemID());
 
         // store systems, sorted alphabetically
         std::set<std::pair<std::string, int>, CustomRowCmp> system_names_ids;
         for (const auto& sys : Objects().find<System>(system_ids)) {
             if (!sys)
                 continue;
-            system_names_ids.insert({sys->Name(), sys->ID()});
+            system_names_ids.emplace(sys->Name(), sys->ID());
         }
 
         return system_names_ids;
@@ -6940,7 +6939,8 @@ bool MapWnd::ZoomToPrevOwnedSystem() {
     auto it = system_names_ids.rend();
     auto sel_sys = Objects().get<System>(SidePanel::SystemID());
     if (sel_sys) {
-        it = std::find(system_names_ids.rbegin(), system_names_ids.rend(),  std::make_pair(sel_sys->Name(), sel_sys->ID()));
+        it = std::find(system_names_ids.rbegin(), system_names_ids.rend(),
+                       std::make_pair(sel_sys->Name(), sel_sys->ID()));
         if (it != system_names_ids.rend())
             ++it;
     }
@@ -6966,7 +6966,8 @@ bool MapWnd::ZoomToNextOwnedSystem() {
     // find currently selected system in list
     auto sel_sys = Objects().get<System>(SidePanel::SystemID());
     if (sel_sys) {
-        it = std::find(system_names_ids.begin(), system_names_ids.end(), std::make_pair(sel_sys->Name(), sel_sys->ID()));
+        it = std::find(system_names_ids.begin(), system_names_ids.end(),
+                       std::make_pair(sel_sys->Name(), sel_sys->ID()));
         if (it != system_names_ids.end())
             ++it;
     }
@@ -6990,7 +6991,8 @@ bool MapWnd::ZoomToPrevSystem() {
     auto it = system_names_ids.rend();
     auto sel_sys = Objects().get<System>(SidePanel::SystemID());
     if (sel_sys) {
-        it = std::find(system_names_ids.rbegin(), system_names_ids.rend(),  std::make_pair(sel_sys->Name(), sel_sys->ID()));
+        it = std::find(system_names_ids.rbegin(), system_names_ids.rend(),
+                       std::make_pair(sel_sys->Name(), sel_sys->ID()));
         if (it != system_names_ids.rend())
             ++it;
     }
@@ -7015,7 +7017,8 @@ bool MapWnd::ZoomToNextSystem() {
     // find currently selected system in list
     auto sel_sys = Objects().get<System>(SidePanel::SystemID());
     if (sel_sys) {
-        it = std::find(system_names_ids.begin(), system_names_ids.end(), std::make_pair(sel_sys->Name(), sel_sys->ID()));
+        it = std::find(system_names_ids.begin(), system_names_ids.end(),
+                       std::make_pair(sel_sys->Name(), sel_sys->ID()));
         if (it != system_names_ids.end())
             ++it;
     }
