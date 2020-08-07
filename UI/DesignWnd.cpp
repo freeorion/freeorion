@@ -143,7 +143,8 @@ namespace {
     boost::filesystem::path SavedDesignsDir() { return GetUserDataDir() / "shipdesigns/"; }
 
     void ReportFileError(const boost::filesystem::path& file) {
-        std::string msg = boost::io::str(FlexibleFormat(UserString("ERROR_UNABLE_TO_WRITE_FILE")) % file);
+        std::string msg = boost::io::str(FlexibleFormat(UserString("ERROR_UNABLE_TO_WRITE_FILE"))
+                                         % PathToString(file));
         ErrorLogger() << msg;
         ClientUI::MessageBox(msg, true);
     }
@@ -171,7 +172,7 @@ namespace {
         return designs_dir_path;
     }
 
-    boost::filesystem::path CreateSaveFileNameForDesign(const ShipDesign& design) {
+    boost::filesystem::path CreateSavePathForDesign(const ShipDesign& design) {
         boost::filesystem::path designs_dir_path = GetDesignsDir();
 
         // Since there is no easy way to guarantee that an arbitrary design name with possibly
@@ -180,7 +181,7 @@ namespace {
         std::string file_name =
             DESIGN_FILENAME_PREFIX + boost::uuids::to_string(design.UUID()) + DESIGN_FILENAME_EXTENSION;
 
-        return boost::filesystem::absolute(PathToString(designs_dir_path / file_name));
+        return boost::filesystem::absolute(designs_dir_path / file_name);
     }
 
 
@@ -568,7 +569,7 @@ namespace {
         const ShipDesign& design,
         std::list<boost::uuids::uuid>::const_iterator next)
     {
-        if (design.UUID() == boost::uuids::uuid{{0}}) {
+        if (design.UUID().is_nil()) {
             ErrorLogger() << "Ship design has a nil UUID for " << design.Name() << ". Not saving.";
             return next;
         }
@@ -576,17 +577,18 @@ namespace {
         CheckPendingDesigns();
         if (m_saved_designs.count(design.UUID())) {
             // UUID already exists so this is a move.  Remove the old UUID location
-            const auto existing_it = std::find(m_ordered_uuids.begin(), m_ordered_uuids.end(), design.UUID());
+            const auto existing_it = std::find(m_ordered_uuids.begin(), m_ordered_uuids.end(),
+                                               design.UUID());
             if (existing_it != m_ordered_uuids.end())
                 m_ordered_uuids.erase(existing_it);
 
         } else {
             // Add the new saved design.
-            std::unique_ptr<ShipDesign> design_copy{std::make_unique<ShipDesign>(design)};
+            auto design_copy{std::make_unique<ShipDesign>(design)};
 
-            const auto save_path = CreateSaveFileNameForDesign(design);
-
-            m_saved_designs.insert(std::make_pair(design.UUID(), std::make_pair(std::move(design_copy), save_path)));
+            m_saved_designs.emplace(design.UUID(),
+                                    std::make_pair(std::move(design_copy),
+                                                   CreateSavePathForDesign(design)));
             SaveDesign(design.UUID());
         }
 
@@ -606,7 +608,7 @@ namespace {
             return false;
         }
 
-        if (next_uuid != boost::uuids::uuid{{0}} && !m_saved_designs.count(next_uuid)) {
+        if (!next_uuid.is_nil() && !m_saved_designs.count(next_uuid)) {
             ErrorLogger() << "Unable to move saved design because target design is missing.";
             return false;
         }
@@ -646,9 +648,9 @@ namespace {
     /** Save the design with the original filename or throw out_of_range..*/
     void SavedDesignsManager::SaveDesignConst(const boost::uuids::uuid &uuid) const {
         CheckPendingDesigns();
-        const auto& design_and_filename = m_saved_designs.at(uuid);
+        const auto& design_and_path = m_saved_designs.at(uuid);
 
-        WriteToFile(design_and_filename.second, design_and_filename.first->Dump());
+        WriteToFile(design_and_path.second, design_and_path.first->Dump());
     }
 
 
@@ -3036,8 +3038,8 @@ void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const G
 
     DebugLogger() << "BasesListBox::BaseRightClicked on design id : " << design_id;
 
-    if (design->UUID() == boost::uuids::uuid{{0}})
-        ErrorLogger() << "BasesListBox::BaseRightClicked Design UUID is null";
+    if (design->UUID().is_nil())
+        ErrorLogger() << "BasesListBox::BaseRightClicked Design UUID is nil";
 
     // Context menu actions
     const auto& manager = GetDisplayedDesignsManager();
@@ -3055,8 +3057,8 @@ void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const G
     };
 
     auto rename_design_action = [&empire_id, &design_id, design, &design_row]() {
-        auto edit_wnd = GG::Wnd::Create<CUIEditWnd>(GG::X(350), UserString("DESIGN_ENTER_NEW_DESIGN_NAME"),
-                                                    design->Name());
+        auto edit_wnd = GG::Wnd::Create<CUIEditWnd>(
+            GG::X(350), UserString("DESIGN_ENTER_NEW_DESIGN_NAME"), design->Name());
         edit_wnd->Run();
         const std::string& result = edit_wnd->Result();
         if (!result.empty() && result != design->Name()) {
@@ -3079,7 +3081,8 @@ void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const G
     auto save_design_action = [&design]() {
         auto saved_design = *design;
         saved_design.SetUUID(boost::uuids::random_generator()());
-        GetSavedDesignsManager().InsertBefore(saved_design, GetSavedDesignsManager().OrderedDesignUUIDs().begin());
+        GetSavedDesignsManager().InsertBefore(
+            saved_design, GetSavedDesignsManager().OrderedDesignUUIDs().begin());
     };
 
     // toggle the option to add all saved designs at game start.
@@ -3158,7 +3161,7 @@ void SavedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::P
     };
 
     auto movetobottom_design_action = [&design, this]() {
-        GetSavedDesignsManager().MoveBefore(design->UUID(), boost::uuids::uuid{{0}});
+        GetSavedDesignsManager().MoveBefore(design->UUID(), boost::uuids::nil_generator()());
         Populate();
     };
 
@@ -3252,7 +3255,7 @@ void SavedDesignsListBox::QueueItemMoved(const GG::ListBox::iterator& row_it,
     const auto insert_before_control = (insert_before_row == end()) ? nullptr :
         boost::polymorphic_downcast<const SavedDesignsListBox::SavedDesignListBoxRow*>(insert_before_row->get());
     const auto& next_uuid = insert_before_control
-        ? insert_before_control->DesignUUID() : boost::uuids::uuid{{0}};
+        ? insert_before_control->DesignUUID() : boost::uuids::nil_generator()();
 
     if (GetSavedDesignsManager().MoveBefore(uuid, next_uuid))
         control->Resize(ListRowSize());
@@ -4903,7 +4906,7 @@ std::pair<int, boost::uuids::uuid> DesignWnd::MainPanel::AddDesign() {
         } else {
             int empire_id = HumanClientApp::GetApp()->EmpireID();
             const Empire* empire = GetEmpire(empire_id);
-            if (!empire) return {INVALID_DESIGN_ID, boost::uuids::uuid{{0}}};
+            if (!empire) return {INVALID_DESIGN_ID, boost::uuids::nil_generator()()};
 
             auto order = std::make_shared<ShipDesignOrder>(empire_id, design);
             HumanClientApp::GetApp()->Orders().IssueOrder(order);
@@ -4922,7 +4925,7 @@ std::pair<int, boost::uuids::uuid> DesignWnd::MainPanel::AddDesign() {
 
     } catch (std::invalid_argument&) {
         ErrorLogger() << "DesignWnd::AddDesign tried to add an invalid ShipDesign";
-        return {INVALID_DESIGN_ID, boost::uuids::uuid{{0}}};
+        return {INVALID_DESIGN_ID, boost::uuids::nil_generator()()};
     }
 }
 
