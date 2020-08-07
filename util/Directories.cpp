@@ -9,6 +9,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 #include <cstdlib>
+#include <mutex>
 
 #if defined(FREEORION_MACOSX)
 #  include <iostream>
@@ -469,20 +470,34 @@ void CompleteXDGMigration()
     }
 }
 
+namespace {
+    std::mutex res_dir_mutex;
+    bool init = true;
+    fs::path res_dir;
+
+    void RefreshResDir() {
+        std::lock_guard<std::mutex> res_dir_lock(res_dir_mutex);
+        // if resource dir option has been set, use specified location. otherwise,
+        // use default location
+        res_dir = FilenameToPath(GetOptionsDB().Get<std::string>("resource.path"));
+        if (!fs::exists(res_dir) || !fs::is_directory(res_dir))
+            res_dir = FilenameToPath(GetOptionsDB().GetDefault<std::string>("resource.path"));
+        DebugLogger() << "Refreshed ResDir";
+    }
+}
+
 auto GetResourceDir() -> fs::path const
 {
-    // if resource dir option has been set, use specified location. otherwise,
-    // use default location
-    std::string options_resource_dir = GetOptionsDB().Get<std::string>("resource.path");
-    fs::path dir = FilenameToPath(options_resource_dir);
-    if (fs::exists(dir) && fs::is_directory(dir))
-        return dir;
-
-    dir = GetOptionsDB().GetDefault<std::string>("resource.path");
-    if (!fs::is_directory(dir) || !fs::exists(dir))
-        dir = FilenameToPath(GetOptionsDB().GetDefault<std::string>("resource.path"));
-
-    return dir;
+    std::lock_guard<std::mutex> res_dir_lock(res_dir_mutex);
+    if (init) {
+        init = false;
+        res_dir = FilenameToPath(GetOptionsDB().Get<std::string>("resource.path"));
+        if (!fs::exists(res_dir) || !fs::is_directory(res_dir))
+            res_dir = FilenameToPath(GetOptionsDB().GetDefault<std::string>("resource.path"));
+        GetOptionsDB().OptionChangedSignal("resource.path").connect(&RefreshResDir);
+        DebugLogger() << "Initialized ResDir and connected change signal";
+    }
+    return res_dir;
 }
 
 auto GetConfigPath() -> fs::path const
