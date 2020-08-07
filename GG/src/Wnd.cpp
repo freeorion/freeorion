@@ -559,10 +559,12 @@ void Wnd::AttachChild(std::shared_ptr<Wnd> wnd)
         if (auto&& parent = wnd->Parent())
             parent->DetachChild(wnd.get());
 
-        GUI::GetGUI()->Remove(wnd);
-        wnd->SetParent(my_shared);
+        auto this_as_layout = std::dynamic_pointer_cast<Layout>(my_shared);
 
-        if (auto this_as_layout = std::dynamic_pointer_cast<Layout>(my_shared))
+        GUI::GetGUI()->Remove(wnd);
+        wnd->SetParent(std::move(my_shared));
+
+        if (this_as_layout)
             wnd->m_containing_layout = this_as_layout;
 
         m_children.emplace_back(std::move(wnd));
@@ -588,7 +590,7 @@ void Wnd::MoveChildUp(Wnd* wnd)
                                  [&wnd](const std::shared_ptr<Wnd>& x){ return x.get() == wnd; });
     if (it == m_children.end())
         return;
-    m_children.push_back(*it);
+    m_children.emplace_back(std::move(*it));
     m_children.erase(it);
 }
 
