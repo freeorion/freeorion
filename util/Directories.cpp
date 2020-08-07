@@ -260,7 +260,6 @@ void InitBinDir(std::string const& argv0)
 #endif
 }
 
-
 void InitDirs(std::string const& argv0)
 {
     if (g_initialized)
@@ -368,7 +367,6 @@ void InitDirs(std::string const& argv0)
     g_initialized = true;
 }
 
-
 auto GetUserConfigDir() -> fs::path const
 {
 #if defined(FREEORION_MACOSX) || defined(FREEORION_WIN32)
@@ -380,7 +378,6 @@ auto GetUserConfigDir() -> fs::path const
     return p;
 #endif
 }
-
 
 auto GetUserDataDir() -> fs::path const
 {
@@ -398,7 +395,6 @@ auto GetUserDataDir() -> fs::path const
     return p;
 #endif
 }
-
 
 auto GetRootDataDir() -> fs::path const
 {
@@ -424,7 +420,6 @@ auto GetRootDataDir() -> fs::path const
 #endif
 }
 
-
 auto GetBinDir() -> fs::path const
 {
 #if defined(FREEORION_MACOSX)
@@ -442,7 +437,6 @@ auto GetBinDir() -> fs::path const
 #endif
 }
 
-
 #if defined(FREEORION_MACOSX) || defined(FREEORION_WIN32)
 auto GetPythonHome() -> fs::path const
 {
@@ -455,7 +449,6 @@ auto GetPythonHome() -> fs::path const
 #endif
 }
 #endif
-
 
 void CompleteXDGMigration()
 {
@@ -557,6 +550,7 @@ auto FilenameToPath(std::string const& path_str) -> fs::path
 #if defined(FREEORION_WIN32)
     // convert UTF-8 directory string to UTF-16
     fs::path::string_type directory_native;
+    directory_native.reserve(path_str.size());
     utf8::utf8to16(path_str.begin(), path_str.end(), std::back_inserter(directory_native));
 #if (BOOST_VERSION >= 106300)
     return fs::path(directory_native).generic_path();
@@ -573,6 +567,7 @@ auto PathToString(fs::path const& path) -> std::string
 #if defined(FREEORION_WIN32)
     fs::path::string_type native_string = path.generic_wstring();
     std::string retval;
+    retval.reserve(native_string.length()); // may be underestimate
     utf8::utf16to8(native_string.begin(), native_string.end(), std::back_inserter(retval));
     return retval;
 #else // defined(FREEORION_WIN32)
