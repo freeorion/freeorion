@@ -262,8 +262,9 @@ void GameRulesPanel::CreateSectionHeader(GG::ListBox* page, int indentation_leve
     auto heading_text = GG::Wnd::Create<CUILabel>(name, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP);
     heading_text->SetFont(ClientUI::GetFont(ClientUI::Pts() * 4 / 3));
 
+    auto heading_min_y_sz{heading_text->MinUsableSize().y};
     auto row = GG::Wnd::Create<RuleListRow>(Width(),
-                                            heading_text->MinUsableSize().y + CONTROL_VMARGIN + 6,
+                                            heading_min_y_sz + CONTROL_VMARGIN + 6,
                                             std::move(heading_text),
                                             indentation_level);
 
@@ -332,7 +333,7 @@ GG::Spin<int>* GameRulesPanel::IntRuleWidget(GG::ListBox* page, int indentation_
 
     auto row = GG::Wnd::Create<RuleListRow>(Width(), spin->MinUsableSize().y + CONTROL_VMARGIN + 6,
                                             std::move(layout), indentation_level);
-    page->Insert(row);
+    page->Insert(std::move(row));
 
     spin->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     spin->SetBrowseText(UserString(GetGameRules().GetDescription(rule_name)));
