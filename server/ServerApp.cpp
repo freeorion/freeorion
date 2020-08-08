@@ -1989,7 +1989,7 @@ int ServerApp::EffectsProcessingThreads() const
 { return GetOptionsDB().Get<int>("effects.server.threads"); }
 
 void ServerApp::AddEmpireTurn(int empire_id, const PlayerSaveGameData& psgd)
-{ m_turn_sequence.emplace(empire_id, std::make_unique<PlayerSaveGameData>(psgd)); }
+{ m_turn_sequence[empire_id] = std::make_unique<PlayerSaveGameData>(psgd); }
 
 void ServerApp::RemoveEmpireTurn(int empire_id)
 { m_turn_sequence.erase(empire_id); }
