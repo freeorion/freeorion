@@ -372,7 +372,7 @@ std::unordered_map<std::string, std::set<std::string>> OptionsDB::OptionsBySecti
             continue;
 
         if (total_it->second > 1) {
-            options_by_section["root"].emplace(root_name);
+            options_by_section["root"].emplace(std::move(root_name));
         } else if (section_it.first != "misc" &&
                    section_it.first != "root" &&
                    !m_sections.count(section_it.first))
