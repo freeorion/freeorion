@@ -64,9 +64,9 @@ namespace {
 
 DiscreteValidator<std::string> LogLevelValidator() {
     std::set<std::string> valid_labels;
-    for (const auto& label_and_value: ValidNameToLogLevel())
+    for (const auto& label_and_value : ValidNameToLogLevel())
         valid_labels.emplace(label_and_value.first);
-    auto validator = DiscreteValidator<std::string>(valid_labels);
+    auto validator = DiscreteValidator<std::string>(std::move(valid_labels));
     return validator;
 }
 
