@@ -131,7 +131,7 @@ private:
 /** specifies a category of techs, with associated \a name, \a graphic (icon), and \a colour.*/
 struct FO_COMMON_API TechCategory {
     TechCategory() = default;
-    TechCategory(std::string&& name_, std::string&& graphic_,
+    TechCategory(std::string name_, std::string&& graphic_,
                  GG::Clr colour_):
         name(std::move(name_)),
         graphic(std::move(graphic_)),
