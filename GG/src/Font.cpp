@@ -1266,9 +1266,11 @@ void Font::RenderCachedText(RenderCache& cache) const
     glBindTexture(GL_TEXTURE_2D, 0);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
-    cache.underline_vertices->activate();
-    cache.underline_colors->activate();
-    glDrawArrays(GL_QUADS, 0, cache.underline_vertices->size());
+    if (!cache.underline_vertices->empty()) {
+        cache.underline_vertices->activate();
+        cache.underline_colors->activate();
+        glDrawArrays(GL_QUADS, 0, cache.underline_vertices->size());
+    }
 
     glPopClientAttrib();
 }
@@ -2080,7 +2082,7 @@ void Font::StoreGlyphImpl(Font::RenderCache& cache, Clr color, const Pt& pt,
 }
 
 void Font::StoreUnderlineImpl(Font::RenderCache& cache, Clr color, const Pt& pt, const Glyph& glyph,
-                        Y descent, Y height, Y underline_height, Y underline_offset) const
+                              Y descent, Y height, Y underline_height, Y underline_offset) const
 {
     X x1 = pt.x;
     Y y1(pt.y + height + descent - underline_offset);
