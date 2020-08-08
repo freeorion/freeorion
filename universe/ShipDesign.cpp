@@ -905,8 +905,9 @@ namespace {
                 continue;
             }
 
-            name_to_uuid.insert({design->Name(), design->UUID()});
-            designs[design->UUID()] = std::move(design);
+            auto uuid = design->UUID();
+            name_to_uuid.emplace(design->Name(), uuid);
+            designs.emplace(std::move(uuid), std::move(design));
         }
     }
 
@@ -997,7 +998,8 @@ LoadShipDesignsAndManifestOrderFromParseResults(
         if (!saved_designs.count(design->UUID())) {
             TraceLogger() << "Added saved design UUID " << design->UUID()
                           << " with name " << design->Name();
-            saved_designs[design->UUID()] = std::make_pair(std::move(design), design_and_path.second);
+            auto uuid = design->UUID();
+            saved_designs.emplace(std::move(uuid), std::make_pair(std::move(design), design_and_path.second));
         } else {
             WarnLogger() << "Duplicate ship design UUID " << design->UUID()
                          << " found for ship design " << design->Name()
