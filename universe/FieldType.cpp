@@ -12,18 +12,18 @@
 namespace {
     std::shared_ptr<Effect::EffectsGroup>
     IncreaseMeter(MeterType meter_type, double increase) {
-        typedef std::vector<std::unique_ptr<Effect::Effect>> Effects;
         auto scope = std::make_unique<Condition::Source>();
-        std::unique_ptr<Condition::Source> activation = nullptr;
+
         auto vr =
             std::make_unique<ValueRef::Operation<double>>(
                 ValueRef::PLUS,
                 std::make_unique<ValueRef::Variable<double>>(ValueRef::EFFECT_TARGET_VALUE_REFERENCE),
                 std::make_unique<ValueRef::Constant<double>>(increase)
             );
-        auto effects = Effects();
-        effects.push_back(std::make_unique<Effect::SetMeter>(meter_type, std::move(vr)));
-        return std::make_shared<Effect::EffectsGroup>(std::move(scope), std::move(activation), std::move(effects));
+        std::vector<std::unique_ptr<Effect::Effect>> effects;
+        effects.emplace_back(std::make_unique<Effect::SetMeter>(meter_type, std::move(vr)));
+
+        return std::make_shared<Effect::EffectsGroup>(std::move(scope), nullptr, std::move(effects));
     }
 }
 

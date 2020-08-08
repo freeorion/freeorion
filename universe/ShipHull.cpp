@@ -30,7 +30,6 @@ namespace {
     IncreaseMeter(MeterType meter_type,
                   std::unique_ptr<ValueRef::ValueRef<double>>&& increase_vr)
     {
-        typedef std::vector<std::unique_ptr<Effect::Effect>> Effects;
         auto scope = std::make_unique<Condition::Source>();
         auto activation = std::make_unique<Condition::Source>();
 
@@ -40,9 +39,11 @@ namespace {
                 std::make_unique<ValueRef::Variable<double>>(ValueRef::EFFECT_TARGET_VALUE_REFERENCE),
                 std::move(increase_vr)
             );
-        auto effects = Effects();
-        effects.push_back(std::make_unique<Effect::SetMeter>(meter_type, std::move(vr)));
-        return std::make_shared<Effect::EffectsGroup>(std::move(scope), std::move(activation), std::move(effects));
+        std::vector<std::unique_ptr<Effect::Effect>> effects;
+        effects.emplace_back(std::make_unique<Effect::SetMeter>(meter_type, std::move(vr)));
+
+        return std::make_shared<Effect::EffectsGroup>(std::move(scope), std::move(activation),
+                                                      std::move(effects));
     }
 
     // create effectsgroup that increases the value of \a meter_type
