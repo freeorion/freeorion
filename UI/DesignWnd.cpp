@@ -584,10 +584,8 @@ namespace {
 
         } else {
             // Add the new saved design.
-            auto design_copy{std::make_unique<ShipDesign>(design)};
-
             m_saved_designs.emplace(design.UUID(),
-                                    std::make_pair(std::move(design_copy),
+                                    std::make_pair(std::make_unique<ShipDesign>(design),
                                                    CreateSavePathForDesign(design)));
             SaveDesign(design.UUID());
         }
@@ -598,7 +596,9 @@ namespace {
         return retval;
     }
 
-    bool SavedDesignsManager::MoveBefore(const boost::uuids::uuid& moved_uuid, const boost::uuids::uuid& next_uuid) {
+    bool SavedDesignsManager::MoveBefore(const boost::uuids::uuid& moved_uuid,
+                                         const boost::uuids::uuid& next_uuid)
+    {
         if (moved_uuid == next_uuid)
             return false;
 
