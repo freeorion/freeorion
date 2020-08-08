@@ -240,17 +240,17 @@ public:
     void SetFont(std::shared_ptr<Font> font);
 
     /** Sets the text format; ensures that the flags are sane. */
-    void         SetTextFormat(Flags<TextFormat> format);
+    void SetTextFormat(Flags<TextFormat> format);
 
     /** Sets the text color. */
-    void         SetTextColor(Clr color);
+    void SetTextColor(Clr color);
 
     /** Enables/disables text clipping to the client area. */
-    void         ClipText(bool b);
+    void ClipText(bool b);
 
     /** Enables/disables setting the minimum size of the window to be the text
         size. */
-    void         SetResetMinSize(bool b);
+    void SetResetMinSize(bool b);
 
     /** Sets the value of the control's text to the stringified version of t.
         If t can be converted to a string representation by a
@@ -262,37 +262,37 @@ public:
     template <typename T>
     void operator<<(T t);
 
-    void  operator+=(const std::string& s); ///< Appends \a s to text.
-    void  operator+=(char c);               ///< Appends \a c to text.
-    void  Clear();                          ///< Sets text to the empty string.
+    void operator+=(const std::string& s); ///< Appends \a s to text.
+    void operator+=(char c);               ///< Appends \a c to text.
+    void Clear();                          ///< Sets text to the empty string.
 
     /** Inserts \a c at position \a pos within the text.  \note Just as with
         most string parameters throughout GG, \a c must be a valid UTF-8
         sequence. */
-    void  Insert(CPSize pos, char c);
+    void Insert(CPSize pos, char c);
 
     /** Inserts \a s at position \a pos within the text. */
-    void  Insert(CPSize pos, const std::string& s);
+    void Insert(CPSize pos, const std::string& s);
 
     /** Erases \a num code points from the text starting at position \a
         pos up to the end of the line that pos is on. */
-    void  Erase(CPSize pos, CPSize num = CP1);
+    void Erase(CPSize pos, CPSize num = CP1);
 
     /** Inserts \a c at text position \a pos within line \a line.  \note Just
         as with most string parameters throughout GG, \a c must be a valid
         UTF-8 sequence. */
-    void  Insert(std::size_t line, CPSize pos, char c);
+    void Insert(std::size_t line, CPSize pos, char c);
 
     /** Inserts \a s at text position \a pos within line \a line. */
-    void  Insert(std::size_t line, CPSize pos, const std::string& s);
+    void Insert(std::size_t line, CPSize pos, const std::string& s);
 
     /** Erases \a num code points from the text starting at position \a
         pos within line \a line up to the end of the line \a line. */
-    void  Erase(std::size_t line, CPSize pos, CPSize num = CP1);
+    void Erase(std::size_t line, CPSize pos, CPSize num = CP1);
 
     /** Erases code points from the text between the specified starting and
       * ending line and character positions. */
-    void  Erase(std::size_t line1, CPSize pos1, std::size_t line2, CPSize pos2);
+    void Erase(std::size_t line1, CPSize pos1, std::size_t line2, CPSize pos2);
 
 protected:
     /** Returns the line data for the text in this TextControl. */
