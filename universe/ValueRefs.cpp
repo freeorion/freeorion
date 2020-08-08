@@ -384,13 +384,11 @@ std::string ComplexVariableDump(const std::vector<std::string>& property_names,
                                 const ValueRef<std::string>* string_ref1,
                                 const ValueRef<std::string>* string_ref2)
 {
-    std::string retval;
     if (property_names.empty()) {
         ErrorLogger() << "ComplexVariableDump passed empty property names?!";
         return "ComplexVariable";
-    } else {
-        retval += property_names.back();
     }
+    std::string retval{property_names.back()};
 
     // TODO: Depending on the property name, the parameter names will vary.
     //       Need to handle each case correctly, in order for the Dumped
@@ -1408,7 +1406,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
                 // special case for techs: make unresearched-tech's research-turn a big number
                 return IMPOSSIBLY_LARGE_TURN;
 
-            key_filter = [k = key_string](auto e){ return k == e.first; };
+            key_filter = [k{std::move(key_string)}](auto e){ return k == e.first; };
         }
         else if (variable_name == "ShipPartsOwned" && m_int_ref2) {
             int key_int = m_int_ref2->Eval(context);
@@ -1532,7 +1530,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         try {
             // can cast boolean, int, or double-valued rules to int
             switch (GetGameRules().GetType(rule_name)) {
-                case GameRules::Type::TOGGLE: {
+            case GameRules::Type::TOGGLE: {
                 return GetGameRules().Get<bool>(rule_name);
                 break;
             }
@@ -1562,9 +1560,8 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         }
 
         std::string ship_part_name;
-        if (m_string_ref1) {
+        if (m_string_ref1)
             ship_part_name = m_string_ref1->Eval(context);
-        }
 
         const ShipDesign* design = GetShipDesign(design_id);
         if (!design)
@@ -2692,13 +2689,8 @@ std::string Operation<std::string>::EvalImpl(const ScriptingContext& context) co
 
         boost::format formatter = FlexibleFormat(template_str);
 
-        for (auto& op : m_operands) {
-            if (!op) {
-                formatter % "";
-                continue;
-            }
-            formatter % op->Eval(context);
-        }
+        for (auto& op : m_operands)
+            formatter % (op ? op->Eval(context) : "");
         return formatter.str();
 
     } else if (m_op_type >= COMPARE_EQUAL && m_op_type <= COMPARE_NOT_EQUAL) {
