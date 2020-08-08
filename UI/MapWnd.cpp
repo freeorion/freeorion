@@ -7716,17 +7716,18 @@ void MapWnd::DispatchFleetsExploring() {
             auto route = GetOrderedFleetRoute(fleet, unexplored_system);
             if (route.first > 0.0) {
                 ++fleet_route_count[unexplored_system->ID()];
-                fleet_routes.emplace(route);
+                fleet_routes.emplace(std::move(route));
             }
         }
     }
 
     if (!fleet_routes.empty()) {
-        TraceLogger() << [fleet_routes]() {
+        TraceLogger() << [&fleet_routes]() {
                 std::string retval = "MapWnd::DispatchFleetsExploring Explorable Systems:\n\t Priority\tFleet\tDestination";
-                for (auto route : fleet_routes) {
-                    retval.append("\n\t" + std::to_string(route.first) + "\t" + std::to_string(route.second.first) +
-                                  "\t " + std::to_string(route.second.second.empty() ? -1 : *route.second.second.rbegin()));
+                for (const auto& route : fleet_routes) {
+                    retval.append("\n\t" + std::to_string(route.first) + "\t" +
+                                  std::to_string(route.second.first) + "\t " +
+                                  std::to_string(route.second.second.empty() ? -1 : *route.second.second.rbegin()));
                 }
                 return retval;
             }();
