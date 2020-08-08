@@ -59,7 +59,8 @@
 #include <boost/locale/date_time.hpp>
 
 
-bool TextureFileNameCompare(const std::shared_ptr<GG::Texture> t1, const std::shared_ptr<GG::Texture> t2)
+bool TextureFileNameCompare(const std::shared_ptr<GG::Texture>& t1,
+                            const std::shared_ptr<GG::Texture>& t2)
 { return t1 && t2 && t1->Path() < t2->Path(); }
 
 namespace fs = boost::filesystem;
@@ -1137,34 +1138,37 @@ std::vector<std::shared_ptr<GG::Texture>> ClientUI::GetPrefixedTextures(
     const boost::filesystem::path& dir, const std::string& prefix, bool mipmap)
 {
     namespace fs = boost::filesystem;
+
+    std::string KEY = dir.string() + "/" + prefix;
+    auto prefixed_textures_it = m_prefixed_textures.find(KEY);
+
+    if (prefixed_textures_it != m_prefixed_textures.end())
+        return prefixed_textures_it->second;
+
     if (!fs::is_directory(dir)) {
         ErrorLogger() << "GetPrefixedTextures passed invalid dir: " << dir;
         return {};
     }
-    const std::string KEY = dir.string() + "/" + prefix;
-    auto prefixed_textures_it = m_prefixed_textures.find(KEY);
 
-    if (prefixed_textures_it == m_prefixed_textures.end()) {
-        // if not already loaded, load textures with requested key
-        prefixed_textures_it = m_prefixed_textures.insert({KEY, {}}).first;
-        auto& textures = prefixed_textures_it->second;
-        fs::directory_iterator end_it;
-        for (fs::directory_iterator it(dir); it != end_it; ++it) {
-            try {
-                if (fs::exists(*it) &&
-                    !fs::is_directory(*it)
-                    && boost::algorithm::starts_with(it->path().filename().string(), prefix))
-                { textures.emplace_back(ClientUI::GetTexture(*it, mipmap)); }
-            } catch (const fs::filesystem_error& e) {
-                // ignore files for which permission is denied, and rethrow other exceptions
-                if (e.code() != boost::system::errc::permission_denied)
-                    throw;
-            }
+    // if not already loaded, load textures with requested key
+    std::vector<std::shared_ptr<GG::Texture>> textures;
+    fs::directory_iterator end_it;
+    for (fs::directory_iterator it(dir); it != end_it; ++it) {
+        try {
+            if (fs::exists(*it) &&
+                !fs::is_directory(*it)
+                && boost::algorithm::starts_with(it->path().filename().string(), prefix))
+            { textures.emplace_back(ClientUI::GetTexture(*it, mipmap)); }
+        } catch (const fs::filesystem_error& e) {
+            // ignore files for which permission is denied, and rethrow other exceptions
+            if (e.code() != boost::system::errc::permission_denied)
+                throw;
         }
-        std::sort(textures.begin(), textures.end(), TextureFileNameCompare);
     }
+    std::sort(textures.begin(), textures.end(), TextureFileNameCompare);
+    m_prefixed_textures.emplace(std::move(KEY), textures);
 
-    return prefixed_textures_it->second;
+    return textures;
 }
 
 int FontBasedUpscale(int x) {
