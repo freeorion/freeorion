@@ -134,7 +134,7 @@ namespace {
                 auto flattened_operands = FlattenAndNestedConditions(and_condition->Operands());
                 retval.insert(retval.end(), flattened_operands.begin(), flattened_operands.end());
             } else if (condition) {
-                retval.push_back(condition);
+                retval.emplace_back(condition);
             }
         }
         return retval;
@@ -298,7 +298,7 @@ bool Condition::Eval(const ScriptingContext& parent_context,
     if (!candidate)
         return false;
     ObjectSet non_matches, matches;
-    non_matches.push_back(candidate);
+    non_matches.emplace_back(std::move(candidate));
     Eval(parent_context, matches, non_matches);
     return non_matches.empty(); // if candidate has been matched, non_matches will now be empty
 }
@@ -307,7 +307,7 @@ bool Condition::Eval(std::shared_ptr<const UniverseObject> candidate) const {
     if (!candidate)
         return false;
     ObjectSet non_matches, matches;
-    non_matches.push_back(candidate);
+    non_matches.emplace_back(std::move(candidate));
     Eval(ScriptingContext(), matches, non_matches);
     return non_matches.empty(); // if candidate has been matched, non_matches will now be empty
 }
@@ -690,7 +690,7 @@ namespace {
         int i = 0;
         for (auto it = from_set.begin(); it != from_set.end(); ++i) {
             if (transfer_flags[i]) {
-                to_set.push_back(*it);
+                to_set.emplace_back(*it);   // TODO: can I std::move ?
                 *it = from_set.back();
                 from_set.pop_back();
             } else {
@@ -724,7 +724,7 @@ namespace {
         std::multimap<float, std::shared_ptr<const UniverseObject>> sort_key_objects;
         for (auto& from : from_set) {
             float sort_value = sort_key->Eval(ScriptingContext(context, from));
-            sort_key_objects.insert({sort_value, from});
+            sort_key_objects.emplace(sort_value, from); // TODO: can I std::move ?
         }
 
         // how many objects to select?
@@ -743,7 +743,7 @@ namespace {
                 if (from_it != from_set.end()) {
                     *from_it = from_set.back();
                     from_set.pop_back();
-                    to_set.push_back(object_to_transfer);
+                    to_set.emplace_back(object_to_transfer);    // TODO: can I std::move ?
                     number_transferred++;
                     if (number_transferred >= number)
                         return;
@@ -761,7 +761,7 @@ namespace {
                 if (from_it != from_set.end()) {
                     *from_it = from_set.back();
                     from_set.pop_back();
-                    to_set.push_back(object_to_transfer);
+                    to_set.emplace_back(object_to_transfer);    // TODO: can I std::move ?
                     number_transferred++;
                     if (number_transferred >= number)
                         return;
@@ -800,7 +800,7 @@ namespace {
                     if (from_it != from_set.end()) {
                         *from_it = from_set.back();
                         from_set.pop_back();
-                        to_set.push_back(object_to_transfer);
+                        to_set.emplace_back(object_to_transfer);    // TODO: can I std::move ?
                         number_transferred++;
                         if (number_transferred >= number)
                             return;
@@ -890,7 +890,7 @@ void SortedNumberOf::Eval(const ScriptingContext& parent_context,
                 // yes; move object to matches
                 *smnt_it = subcondition_matching_non_matches.back();
                 subcondition_matching_non_matches.pop_back();
-                matches.push_back(matched_object);
+                matches.emplace_back(matched_object);   // TODO: can I std::move ?
             }
         }
 
@@ -914,7 +914,7 @@ void SortedNumberOf::Eval(const ScriptingContext& parent_context,
                 // yes; move back into matches
                 *smt_it = subcondition_matching_matches.back();
                 subcondition_matching_matches.pop_back();
-                matches.push_back(matched_object);
+                matches.emplace_back(matched_object);   // TODO: can I std::move ?
             }
         }
 
@@ -1338,7 +1338,7 @@ bool EmpireAffiliation::Match(const ScriptingContext& local_context) const {
 
     int empire_id = m_empire_id ? m_empire_id->Eval(local_context) : ALL_EMPIRES;
 
-    return EmpireAffiliationSimpleMatch(empire_id, m_affiliation)(candidate);
+    return EmpireAffiliationSimpleMatch(empire_id, m_affiliation)(std::move(candidate));
 }
 
 void EmpireAffiliation::SetTopLevelContent(const std::string& content_name) {
@@ -1390,7 +1390,7 @@ void Source::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_co
                                                ObjectSet& condition_non_targets) const
 {
     if (parent_context.source)
-        condition_non_targets.push_back(parent_context.source);
+        condition_non_targets.emplace_back(parent_context.source);
 }
 
 unsigned int Source::GetCheckSum() const {
@@ -1435,7 +1435,7 @@ void RootCandidate::GetDefaultInitialCandidateObjects(const ScriptingContext& pa
                                                       ObjectSet& condition_non_targets) const
 {
     if (parent_context.condition_root_candidate)
-        condition_non_targets.push_back(parent_context.condition_root_candidate);
+        condition_non_targets.emplace_back(parent_context.condition_root_candidate);
 }
 
 unsigned int RootCandidate::GetCheckSum() const {
@@ -1480,7 +1480,7 @@ void Target::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_co
                                                ObjectSet& condition_non_targets) const
 {
     if (parent_context.effect_target)
-        condition_non_targets.push_back(parent_context.effect_target);
+        condition_non_targets.emplace_back(parent_context.effect_target);
 }
 
 unsigned int Target::GetCheckSum() const {
@@ -1596,7 +1596,7 @@ void Homeworld::Eval(const ScriptingContext& parent_context,
         names.reserve(m_names.size());
         // get all names from valuerefs
         for (auto& name : m_names)
-            names.push_back(name->Eval(parent_context));
+            names.emplace_back(name->Eval(parent_context));
         EvalImpl(matches, non_matches, search_domain, HomeworldSimpleMatch(names, parent_context.ContextObjects()));
     } else {
         // re-evaluate allowed names for each candidate object
@@ -1969,7 +1969,7 @@ bool Type::Match(const ScriptingContext& local_context) const {
         return false;
     }
 
-    return TypeSimpleMatch(m_type->Eval(local_context))(candidate);
+    return TypeSimpleMatch(m_type->Eval(local_context))(std::move(candidate));
 }
 
 void Type::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
@@ -2110,10 +2110,10 @@ void Building::Eval(const ScriptingContext& parent_context,
     if (simple_eval_safe) {
         // evaluate names once, and use to check all candidate objects
         std::vector<std::string> names;
+        names.reserve(m_names.size());
         // get all names from valuerefs
-        for (auto& name : m_names) {
-            names.push_back(name->Eval(parent_context));
-        }
+        for (auto& name : m_names)
+            names.emplace_back(name->Eval(parent_context));
         EvalImpl(matches, non_matches, search_domain, BuildingSimpleMatch(names));
     } else {
         // re-evaluate allowed building types range for each candidate object
@@ -2410,7 +2410,7 @@ bool HasSpecial::Match(const ScriptingContext& local_context) const {
     int low_turn = (m_since_turn_low ? m_since_turn_low->Eval(local_context) : BEFORE_FIRST_TURN);
     int high_turn = (m_since_turn_high ? m_since_turn_high->Eval(local_context) : IMPOSSIBLY_LARGE_TURN);
 
-    return HasSpecialSimpleMatch(name, low_cap, high_cap, low_turn, high_turn)(candidate);
+    return HasSpecialSimpleMatch(name, low_cap, high_cap, low_turn, high_turn)(std::move(candidate));
 }
 
 void HasSpecial::SetTopLevelContent(const std::string& content_name) {
@@ -2549,10 +2549,10 @@ bool HasTag::Match(const ScriptingContext& local_context) const {
     }
 
     if (!m_name)
-        return HasTagSimpleMatch()(candidate);
+        return HasTagSimpleMatch()(std::move(candidate));
 
     std::string name = boost::to_upper_copy<std::string>(m_name->Eval(local_context));
-    return HasTagSimpleMatch(name)(candidate);
+    return HasTagSimpleMatch(name)(std::move(candidate));
 }
 
 void HasTag::SetTopLevelContent(const std::string& content_name) {
@@ -2669,7 +2669,7 @@ bool CreatedOnTurn::Match(const ScriptingContext& local_context) const {
     }
     int low = (m_low ? std::max(0, m_low->Eval(local_context)) : BEFORE_FIRST_TURN);
     int high = (m_high ? std::min(m_high->Eval(local_context), IMPOSSIBLY_LARGE_TURN) : IMPOSSIBLY_LARGE_TURN);
-    return CreatedOnTurnSimpleMatch(low, high)(candidate);
+    return CreatedOnTurnSimpleMatch(low, high)(std::move(candidate));
 }
 
 void CreatedOnTurn::SetTopLevelContent(const std::string& content_name) {
@@ -2732,7 +2732,7 @@ namespace {
             // gather the ids
             for (auto& obj : subcondition_matches) {
                 if (obj)
-                    m_subcondition_matches_ids.push_back(obj->ID());
+                    m_subcondition_matches_ids.emplace_back(obj->ID());
             }
             // sort them
             std::sort(m_subcondition_matches_ids.begin(), m_subcondition_matches_ids.end());
@@ -2814,11 +2814,11 @@ void Contains::Eval(const ScriptingContext& parent_context,
         if (search_domain == MATCHES && subcondition_matches.empty()) {
             // move to non_matches
             matches.clear();
-            non_matches.push_back(local_context.condition_local_candidate);
+            non_matches.emplace_back(local_context.condition_local_candidate);
         } else if (search_domain == NON_MATCHES && !subcondition_matches.empty()) {
             // move to matches
             non_matches.clear();
-            matches.push_back(local_context.condition_local_candidate);
+            matches.emplace_back(local_context.condition_local_candidate);
         }
 
     } else {
@@ -2930,7 +2930,7 @@ namespace {
             // gather the ids
             for (auto& obj : subcondition_matches) {
                 if (obj)
-                    m_subcondition_matches_ids.push_back(obj->ID());
+                    m_subcondition_matches_ids.emplace_back(obj->ID());
             }
             // sort them
             std::sort(m_subcondition_matches_ids.begin(), m_subcondition_matches_ids.end());
@@ -2946,8 +2946,8 @@ namespace {
             const int candidate_id = candidate->ID();
             const int    system_id = candidate->SystemID();
             const int container_id = candidate->ContainerObjectID();
-            if (   system_id != INVALID_OBJECT_ID &&    system_id != candidate_id) candidate_containers.push_back(   system_id);
-            if (container_id != INVALID_OBJECT_ID && container_id !=    system_id) candidate_containers.push_back(container_id);
+            if (   system_id != INVALID_OBJECT_ID &&    system_id != candidate_id) candidate_containers.emplace_back(   system_id);
+            if (container_id != INVALID_OBJECT_ID && container_id !=    system_id) candidate_containers.emplace_back(container_id);
             // FIXME: currently, direct container and system will do. In the future, we might need a way to retrieve containers of containers
 
             // We need to test whether candidate_containers and m_subcondition_matches_ids have a common element.
@@ -3026,11 +3026,11 @@ void ContainedBy::Eval(const ScriptingContext& parent_context,
         if (search_domain == MATCHES && subcondition_matches.empty()) {
             // move to non_matches
             matches.clear();
-            non_matches.push_back(local_context.condition_local_candidate);
+            non_matches.emplace_back(local_context.condition_local_candidate);
         } else if (search_domain == NON_MATCHES && !subcondition_matches.empty()) {
             // move to matches
             non_matches.clear();
-            matches.push_back(local_context.condition_local_candidate);
+            matches.emplace_back(local_context.condition_local_candidate);
         }
 
     } else {
@@ -3229,9 +3229,9 @@ void InOrIsSystem::GetDefaultInitialCandidateObjects(const ScriptingContext& par
 
     // insert all objects that have the specified system id
     condition_non_targets.reserve(sys_objs.size() + 1);
-    std::copy(sys_objs.begin(), sys_objs.end(), std::back_inserter(condition_non_targets));
+    std::copy(sys_objs.begin(), sys_objs.end(), std::back_inserter(condition_non_targets)); // TODO: move
     // also insert system itself
-    condition_non_targets.push_back(system);
+    condition_non_targets.emplace_back(std::move(system));
 }
 
 bool InOrIsSystem::Match(const ScriptingContext& local_context) const {
@@ -3241,7 +3241,7 @@ bool InOrIsSystem::Match(const ScriptingContext& local_context) const {
         return false;
     }
     int system_id = (m_system_id ? m_system_id->Eval(local_context) : INVALID_OBJECT_ID);
-    return InSystemSimpleMatch(system_id)(candidate);
+    return InSystemSimpleMatch(system_id)(std::move(candidate));
 }
 
 void InOrIsSystem::SetTopLevelContent(const std::string& content_name) {
@@ -3391,7 +3391,7 @@ bool OnPlanet::Match(const ScriptingContext& local_context) const {
         return false;
     }
     int planet_id = (m_planet_id ? m_planet_id->Eval(local_context) : INVALID_OBJECT_ID);
-    return OnPlanetSimpleMatch(planet_id)(candidate);
+    return OnPlanetSimpleMatch(planet_id)(std::move(candidate));
 }
 
 void OnPlanet::SetTopLevelContent(const std::string& content_name) {
@@ -3509,7 +3509,7 @@ void ObjectID::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_
         return;
 
     if (auto obj = parent_context.ContextObjects().ExistingObject(object_id))
-        condition_non_targets.push_back(obj);
+        condition_non_targets.emplace_back(std::move(obj));
 }
 
 bool ObjectID::Match(const ScriptingContext& local_context) const {
@@ -3519,7 +3519,7 @@ bool ObjectID::Match(const ScriptingContext& local_context) const {
         return false;
     }
 
-    return ObjectIDSimpleMatch(m_object_id->Eval(local_context))(candidate);
+    return ObjectIDSimpleMatch(m_object_id->Eval(local_context))(std::move(candidate));
 }
 
 void ObjectID::SetTopLevelContent(const std::string& content_name) {
@@ -3612,10 +3612,10 @@ void PlanetType::Eval(const ScriptingContext& parent_context,
     if (simple_eval_safe) {
         // evaluate types once, and use to check all candidate objects
         std::vector< ::PlanetType> types;
+        types.reserve(m_types.size());
         // get all types from valuerefs
-        for (auto& type : m_types) {
-            types.push_back(type->Eval(parent_context));
-        }
+        for (auto& type : m_types)
+            types.emplace_back(type->Eval(parent_context));
         EvalImpl(matches, non_matches, search_domain, PlanetTypeSimpleMatch(types, parent_context.ContextObjects()));
     } else {
         // re-evaluate contained objects for each candidate object
@@ -3780,10 +3780,10 @@ void PlanetSize::Eval(const ScriptingContext& parent_context,
     if (simple_eval_safe) {
         // evaluate types once, and use to check all candidate objects
         std::vector< ::PlanetSize> sizes;
-        // get all types from valuerefs
-        for (auto& size : m_sizes) {
-            sizes.push_back(size->Eval(parent_context));
-        }
+        sizes.reserve(m_sizes.size());
+        // get all types from valuerefs  TODO: could lazy-evaluate m_sizes vs. find all then pass in...?
+        for (auto& size : m_sizes)
+            sizes.emplace_back(size->Eval(parent_context));
         EvalImpl(matches, non_matches, search_domain, PlanetSizeSimpleMatch(sizes, parent_context.ContextObjects()));
     } else {
         // re-evaluate contained objects for each candidate object
@@ -3963,13 +3963,11 @@ void PlanetEnvironment::Eval(const ScriptingContext& parent_context,
     if (simple_eval_safe) {
         // evaluate types once, and use to check all candidate objects
         std::vector< ::PlanetEnvironment> environments;
+        environments.reserve(m_environments.size());
         // get all types from valuerefs
-        for (auto& environment : m_environments) {
-            environments.push_back(environment->Eval(parent_context));
-        }
-        std::string species_name;
-        if (m_species_name)
-            species_name = m_species_name->Eval(parent_context);
+        for (auto& environment : m_environments)
+            environments.emplace_back(environment->Eval(parent_context));
+        std::string species_name{m_species_name ? m_species_name->Eval(parent_context) : ""};
         EvalImpl(matches, non_matches, search_domain, PlanetEnvironmentSimpleMatch(environments, parent_context.ContextObjects(), species_name));
     } else {
         // re-evaluate contained objects for each candidate object
@@ -4549,7 +4547,7 @@ bool Enqueued::Match(const ScriptingContext& local_context) const {
     int design_id =     (m_design_id ?  m_design_id->Eval(local_context) :  INVALID_DESIGN_ID);
     int low =           (m_low ?        m_low->Eval(local_context) :        0);
     int high =          (m_high ?       m_high->Eval(local_context) :       INT_MAX);
-    return EnqueuedSimpleMatch(m_build_type, name, design_id, empire_id, low, high)(candidate);
+    return EnqueuedSimpleMatch(m_build_type, name, design_id, empire_id, low, high)(std::move(candidate));
 }
 
 void Enqueued::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
@@ -4662,10 +4660,10 @@ void FocusType::Eval(const ScriptingContext& parent_context,
     if (simple_eval_safe) {
         // evaluate names once, and use to check all candidate objects
         std::vector<std::string> names;
-        // get all names from valuerefs
-        for (auto& name : m_names) {
-            names.push_back(name->Eval(parent_context));
-        }
+        names.reserve(m_names.size());
+        // get all names from valuerefs TODO: could lazy evaluate names rather than evaluating all and passing...
+        for (auto& name : m_names)
+            names.emplace_back(name->Eval(parent_context));
         EvalImpl(matches, non_matches, search_domain, FocusTypeSimpleMatch(names, parent_context.ContextObjects()));
     } else {
         // re-evaluate allowed building types range for each candidate object
@@ -4823,10 +4821,10 @@ void StarType::Eval(const ScriptingContext& parent_context,
     if (simple_eval_safe) {
         // evaluate types once, and use to check all candidate objects
         std::vector< ::StarType> types;
+        types.reserve(m_types.size());
         // get all types from valuerefs
-        for (auto& type : m_types) {
-            types.push_back(type->Eval(parent_context));
-        }
+        for (auto& type : m_types)
+            types.emplace_back(type->Eval(parent_context));
         EvalImpl(matches, non_matches, search_domain, StarTypeSimpleMatch(types, parent_context.ContextObjects()));
     } else {
         // re-evaluate contained objects for each candidate object
@@ -5002,7 +5000,7 @@ bool DesignHasHull::Match(const ScriptingContext& local_context) const {
 
     std::string name = (m_name ? m_name->Eval(local_context) : "");
 
-    return DesignHasHullSimpleMatch(name)(candidate);
+    return DesignHasHullSimpleMatch(name)(std::move(candidate));
 }
 
 void DesignHasHull::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
@@ -5178,7 +5176,7 @@ bool DesignHasPart::Match(const ScriptingContext& local_context) const {
     int high = (m_high ? std::min(m_high->Eval(local_context), IMPOSSIBLY_LARGE_TURN) : IMPOSSIBLY_LARGE_TURN);
     std::string name = (m_name ? m_name->Eval(local_context) : "");
 
-    return DesignHasPartSimpleMatch(low, high, name, local_context.ContextObjects())(candidate);
+    return DesignHasPartSimpleMatch(low, high, name, local_context.ContextObjects())(std::move(candidate));
 }
 
 void DesignHasPart::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
@@ -5343,7 +5341,7 @@ bool DesignHasPartClass::Match(const ScriptingContext& local_context) const {
     int low =  (m_low ? m_low->Eval(local_context) : 0);
     int high = (m_high ? m_high->Eval(local_context) : INT_MAX);
 
-    return DesignHasPartClassSimpleMatch(low, high, m_class)(candidate);
+    return DesignHasPartClassSimpleMatch(low, high, m_class)(std::move(candidate));
 }
 
 void DesignHasPartClass::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
@@ -5481,10 +5479,10 @@ bool PredefinedShipDesign::Match(const ScriptingContext& local_context) const {
     }
 
     if (!m_name)
-        return PredefinedShipDesignSimpleMatch()(candidate);
+        return PredefinedShipDesignSimpleMatch()(std::move(candidate));
 
     std::string name = m_name->Eval(local_context);
-    return PredefinedShipDesignSimpleMatch(name)(candidate);
+    return PredefinedShipDesignSimpleMatch(name)(std::move(candidate));
 }
 
 void PredefinedShipDesign::SetTopLevelContent(const std::string& content_name) {
@@ -5587,7 +5585,7 @@ bool NumberedShipDesign::Match(const ScriptingContext& local_context) const {
         ErrorLogger() << "NumberedShipDesign::Match passed no candidate object";
         return false;
     }
-    return NumberedShipDesignSimpleMatch(m_design_id->Eval(local_context))(candidate);
+    return NumberedShipDesignSimpleMatch(m_design_id->Eval(local_context))(std::move(candidate));
 }
 
 void NumberedShipDesign::SetTopLevelContent(const std::string& content_name) {
@@ -5696,7 +5694,7 @@ bool ProducedByEmpire::Match(const ScriptingContext& local_context) const {
         return false;
     }
 
-    return ProducedByEmpireSimpleMatch(m_empire_id->Eval(local_context))(candidate);
+    return ProducedByEmpireSimpleMatch(m_empire_id->Eval(local_context))(std::move(candidate));
 }
 
 void ProducedByEmpire::SetTopLevelContent(const std::string& content_name) {
@@ -5978,7 +5976,7 @@ bool MeterValue::Match(const ScriptingContext& local_context) const {
     }
     float low = (m_low ? m_low->Eval(local_context) : -Meter::LARGE_VALUE);
     float high = (m_high ? m_high->Eval(local_context) : Meter::LARGE_VALUE);
-    return MeterValueSimpleMatch(low, high, m_meter)(candidate);
+    return MeterValueSimpleMatch(low, high, m_meter)(std::move(candidate));
 }
 
 void MeterValue::SetTopLevelContent(const std::string& content_name) {
@@ -6138,7 +6136,7 @@ bool ShipPartMeterValue::Match(const ScriptingContext& local_context) const {
     float low = (m_low ? m_low->Eval(local_context) : -Meter::LARGE_VALUE);
     float high = (m_high ? m_high->Eval(local_context) : Meter::LARGE_VALUE);
     std::string part_name = (m_part_name ? m_part_name->Eval(local_context) : "");
-    return ShipPartMeterValueSimpleMatch(std::move(part_name), m_meter, low, high)(candidate);
+    return ShipPartMeterValueSimpleMatch(std::move(part_name), m_meter, low, high)(std::move(candidate));
 }
 
 void ShipPartMeterValue::SetTopLevelContent(const std::string& content_name) {
@@ -6778,7 +6776,7 @@ bool OwnerHasTech::Match(const ScriptingContext& local_context) const {
         return false;
     std::string name = m_name ? m_name->Eval(local_context) : "";
 
-    return OwnerHasTechSimpleMatch(empire_id, name)(candidate);
+    return OwnerHasTechSimpleMatch(empire_id, name)(std::move(candidate));
 }
 
 void OwnerHasTech::SetTopLevelContent(const std::string& content_name) {
@@ -6917,7 +6915,7 @@ bool OwnerHasBuildingTypeAvailable::Match(const ScriptingContext& local_context)
         return false;
     std::string name = m_name ? m_name->Eval(local_context) : "";
 
-    return OwnerHasBuildingTypeAvailableSimpleMatch(empire_id, name)(candidate);
+    return OwnerHasBuildingTypeAvailableSimpleMatch(empire_id, name)(std::move(candidate));
 }
 
 void OwnerHasBuildingTypeAvailable::SetTopLevelContent(const std::string& content_name) {
@@ -7055,7 +7053,7 @@ bool OwnerHasShipDesignAvailable::Match(const ScriptingContext& local_context) c
         return false;
     int design_id = m_id ? m_id->Eval(local_context) : INVALID_DESIGN_ID;
 
-    return OwnerHasShipDesignAvailableSimpleMatch(empire_id, design_id)(candidate);
+    return OwnerHasShipDesignAvailableSimpleMatch(empire_id, design_id)(std::move(candidate));
 }
 
 void OwnerHasShipDesignAvailable::SetTopLevelContent(const std::string& content_name) {
@@ -7191,7 +7189,7 @@ bool OwnerHasShipPartAvailable::Match(const ScriptingContext& local_context) con
         return false;
     std::string name = m_name ? m_name->Eval(local_context) : "";
 
-    return OwnerHasShipPartAvailableSimpleMatch(empire_id, name)(candidate);
+    return OwnerHasShipPartAvailableSimpleMatch(empire_id, name)(std::move(candidate));
 }
 
 void OwnerHasShipPartAvailable::SetTopLevelContent(const std::string& content_name) {
@@ -7323,7 +7321,7 @@ bool VisibleToEmpire::Match(const ScriptingContext& local_context) const {
     }
 
     int empire_id = m_empire_id->Eval(local_context);
-    return VisibleToEmpireSimpleMatch(empire_id, local_context.combat_info.empire_object_visibility)(candidate);
+    return VisibleToEmpireSimpleMatch(empire_id, local_context.combat_info.empire_object_visibility)(std::move(candidate));
 }
 
 void VisibleToEmpire::SetTopLevelContent(const std::string& content_name) {
@@ -7456,7 +7454,7 @@ bool WithinDistance::Match(const ScriptingContext& local_context) const {
     if (subcondition_matches.empty())
         return false;
 
-    return WithinDistanceSimpleMatch(subcondition_matches, m_distance->Eval(local_context))(candidate);
+    return WithinDistanceSimpleMatch(subcondition_matches, m_distance->Eval(local_context))(std::move(candidate));
 }
 
 void WithinDistance::SetTopLevelContent(const std::string& content_name) {
@@ -8015,7 +8013,7 @@ bool CanAddStarlaneConnection::Match(const ScriptingContext& local_context) cons
     ObjectSet subcondition_matches;
     m_condition->Eval(local_context, subcondition_matches);
 
-    return CanAddStarlaneConnectionSimpleMatch(subcondition_matches, local_context.ContextObjects())(candidate);
+    return CanAddStarlaneConnectionSimpleMatch(subcondition_matches, local_context.ContextObjects())(std::move(candidate));
 }
 
 void CanAddStarlaneConnection::SetTopLevelContent(const std::string& content_name) {
@@ -8366,7 +8364,7 @@ bool FleetSupplyableByEmpire::Match(const ScriptingContext& local_context) const
 
     int empire_id = m_empire_id->Eval(local_context);
 
-    return FleetSupplyableSimpleMatch(empire_id)(candidate);
+    return FleetSupplyableSimpleMatch(empire_id)(std::move(candidate));
 }
 
 void FleetSupplyableByEmpire::SetTopLevelContent(const std::string& content_name) {
@@ -8526,7 +8524,7 @@ bool ResourceSupplyConnectedByEmpire::Match(const ScriptingContext& local_contex
     m_condition->Eval(local_context, subcondition_matches);
     int empire_id = m_empire_id->Eval(local_context);
 
-    return ResourceSupplySimpleMatch(empire_id, subcondition_matches, local_context.ContextObjects())(candidate);
+    return ResourceSupplySimpleMatch(empire_id, subcondition_matches, local_context.ContextObjects())(std::move(candidate));
 }
 
 std::string ResourceSupplyConnectedByEmpire::Description(bool negated/* = false*/) const {
@@ -8837,7 +8835,7 @@ bool OrderedBombarded::Match(const ScriptingContext& local_context) const {
     ObjectSet subcondition_matches;
     m_by_object_condition->Eval(local_context, subcondition_matches);
 
-    return OrderedBombardedSimpleMatch(subcondition_matches)(candidate);
+    return OrderedBombardedSimpleMatch(subcondition_matches)(std::move(candidate));
 }
 
 void OrderedBombarded::SetTopLevelContent(const std::string& content_name) {
@@ -9565,13 +9563,13 @@ And::And(std::unique_ptr<Condition>&& operand1, std::unique_ptr<Condition>&& ope
 {
     // would prefer to initialize the vector m_operands in the initializer list, but this is difficult with non-copyable unique_ptr parameters
     if (operand1)
-        m_operands.push_back(std::move(operand1));
+        m_operands.emplace_back(std::move(operand1));
     if (operand2)
-        m_operands.push_back(std::move(operand2));
+        m_operands.emplace_back(std::move(operand2));
     if (operand3)
-        m_operands.push_back(std::move(operand3));
+        m_operands.emplace_back(std::move(operand3));
     if (operand4)
-        m_operands.push_back(std::move(operand4));
+        m_operands.emplace_back(std::move(operand4));
 
     m_root_candidate_invariant = boost::algorithm::all_of(m_operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
     m_target_invariant = boost::algorithm::all_of(m_operands, [](auto& e){ return !e || e->TargetInvariant(); });
@@ -9753,13 +9751,13 @@ Or::Or(std::unique_ptr<Condition>&& operand1,
 {
     // would prefer to initialize the vector m_operands in the initializer list, but this is difficult with non-copyable unique_ptr parameters
     if (operand1)
-        m_operands.push_back(std::move(operand1));
+        m_operands.emplace_back(std::move(operand1));
     if (operand2)
-        m_operands.push_back(std::move(operand2));
+        m_operands.emplace_back(std::move(operand2));
     if (operand3)
-        m_operands.push_back(std::move(operand3));
+        m_operands.emplace_back(std::move(operand3));
     if (operand4)
-        m_operands.push_back(std::move(operand4));
+        m_operands.emplace_back(std::move(operand4));
 
     m_root_candidate_invariant = boost::algorithm::all_of(m_operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
     m_target_invariant = boost::algorithm::all_of(m_operands, [](auto& e){ return !e || e->TargetInvariant(); });
@@ -9865,7 +9863,9 @@ std::string Or::Description(bool negated/* = false*/) const {
     return values_str;
 }
 
-void Or::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, ObjectSet& condition_non_targets) const {
+void Or::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                           ObjectSet& condition_non_targets) const
+{
     if (m_operands.empty())
         return;
 
@@ -9876,7 +9876,7 @@ void Or::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_contex
     }
 
     if (parent_context.source && m_operands.size() == 2) {
-        if (/*auto* src_condition =*/ dynamic_cast<const Source*>(m_operands[0].get())) {
+        if (dynamic_cast<const Source*>(m_operands[0].get())) {
             // special case when first of two subconditions is just Source:
             // get the default candidates of the second and add the source if
             // it is not already present.
@@ -9888,7 +9888,7 @@ void Or::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_contex
             m_operands[1]->GetDefaultInitialCandidateObjects(parent_context, condition_non_targets);
             if (std::find(condition_non_targets.begin(), condition_non_targets.end(), parent_context.source) ==
                 condition_non_targets.end())
-            { condition_non_targets.push_back(parent_context.source); }
+            { condition_non_targets.emplace_back(parent_context.source); }
             return;
         }
     }
