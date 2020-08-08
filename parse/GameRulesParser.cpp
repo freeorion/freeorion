@@ -26,7 +26,8 @@ namespace {
         {
             DebugLogger() << "Adding Boolean game rule with name: " << name
                           << ", desc: " << desc << ", default: " << default_value;
-            game_rules.Add<bool>(std::move(name), std::move(desc), std::move(category), default_value, false);
+            game_rules.Add<bool>(std::move(name), std::move(desc),
+                                 std::move(category), default_value, false);
         }
 
         void operator()(GameRules& game_rules, std::string& name,
@@ -36,8 +37,8 @@ namespace {
             DebugLogger() << "Adding Integer game rule with name: " << name
                           << ", desc: " << desc << ", default: " << default_value
                           << ", min: " << min << ", max: " << max;
-            game_rules.Add<int>(std::move(name), std::move(desc), std::move(category), default_value, false,
-                                RangedValidator<int>(min, max));
+            game_rules.Add<int>(std::move(name), std::move(desc), std::move(category),
+                                default_value, false, RangedValidator<int>(min, max));
         }
 
         void operator()(GameRules& game_rules, std::string& name,
@@ -47,8 +48,8 @@ namespace {
             DebugLogger() << "Adding Double game rule with name: " << name
                           << ", desc: " << desc << ", default: " << default_value
                           << ", min: " << min << ", max: " << max;
-            game_rules.Add<double>(std::move(name), std::move(desc), std::move(category), default_value,
-                                   false, RangedValidator<double>(min, max));
+            game_rules.Add<double>(std::move(name), std::move(desc), std::move(category),
+                                   default_value, false, RangedValidator<double>(min, max));
         }
 
         void operator()(GameRules& game_rules, std::string& name,
@@ -56,12 +57,14 @@ namespace {
                         std::string& default_value,
                         std::set<std::string>& allowed) const
         {
-            std::string allowed_values_string;
-            for (const auto& e : allowed)
-                allowed_values_string += "\"" + e + "\", ";
             DebugLogger() << "Adding String game rule with name: " << name
                           << ", desc: " << desc << ", default: \"" << default_value
-                          << "\", allowed: " << allowed_values_string;
+                          << "\", allowed: " << [&allowed](){
+                std::string retval;
+                    for (const auto& e : allowed)
+                        retval += "\"" + e + "\", ";
+                return retval;
+            }();
 
             if (allowed.empty()) {
                 game_rules.Add<std::string>(std::move(name), std::move(desc), std::move(category),
