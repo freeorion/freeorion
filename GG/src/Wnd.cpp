@@ -259,8 +259,7 @@ void Wnd::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
 Pt Wnd::UpperLeft() const
 {
     Pt retval = m_upperleft;
-    auto&& parent = Parent();
-    if (parent)
+    if (auto&& parent = Parent())
         retval += parent->ClientUpperLeft();
     return retval;
 }
@@ -274,8 +273,7 @@ Y Wnd::Top() const
 Pt Wnd::LowerRight() const
 {
     Pt retval = m_lowerright;
-    auto&& parent = Parent();
-    if (parent)
+    if (auto&& parent = Parent())
         retval += parent->ClientUpperLeft();
     return retval;
 }
