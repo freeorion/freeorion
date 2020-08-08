@@ -99,17 +99,17 @@ namespace parse { namespace detail {
 
         empire_has_buildingtype_available1
             = (
-                    omit_[tok.EmpireHasBuildingAvailable_]
-                 >  label(tok.Name_) > string_grammar
+                   (omit_[tok.EmpireHasBuildingAvailable_]
+                 >> label(tok.Name_)) > string_grammar
               ) [ _val = construct_movable_(new_<Condition::OwnerHasBuildingTypeAvailable>(
                     deconstruct_movable_(_1, _pass))) ]
             ;
 
         empire_has_buildingtype_available2
             = (
-                    omit_[tok.EmpireHasBuildingAvailable_]
-                 >> label(tok.Empire_) > int_rules.expr
-                 >  label(tok.Name_)   > string_grammar
+                   (omit_[tok.EmpireHasBuildingAvailable_]
+                 >> label(tok.Empire_)) > int_rules.expr
+                 >  label(tok.Name_)    > string_grammar
               ) [ _val = construct_movable_(new_<Condition::OwnerHasBuildingTypeAvailable>(
                     deconstruct_movable_(_1, _pass),
                     deconstruct_movable_(_2, _pass))) ]
@@ -122,16 +122,16 @@ namespace parse { namespace detail {
 
         empire_has_shipdesign_available1
             = (
-                    omit_[tok.EmpireHasShipDesignAvailable_]
-                 >> label(tok.DesignID_) > int_rules.expr
+                   (omit_[tok.EmpireHasShipDesignAvailable_]
+                 >> label(tok.DesignID_)) > int_rules.expr
               ) [ _val = construct_movable_(new_<Condition::OwnerHasShipDesignAvailable>(
                     deconstruct_movable_(_1, _pass))) ]
             ;
 
         empire_has_shipdesign_available2
             = (
-                    omit_[tok.EmpireHasShipDesignAvailable_]
-                 >> label(tok.Empire_)   > int_rules.expr
+                   (omit_[tok.EmpireHasShipDesignAvailable_]
+                 >> label(tok.Empire_))  > int_rules.expr
                  >  label(tok.DesignID_) > int_rules.expr
               ) [ _val = construct_movable_(new_<Condition::OwnerHasShipDesignAvailable>(
                     deconstruct_movable_(_1, _pass),
@@ -145,17 +145,17 @@ namespace parse { namespace detail {
 
         empire_has_shippart_available1
             = (
-                    omit_[tok.OwnerHasShipPartAvailable_]
-                 >  label(tok.Name_) > string_grammar
+                   (omit_[tok.OwnerHasShipPartAvailable_]
+                 >> label(tok.Name_)) > string_grammar
               ) [ _val = construct_movable_(new_<Condition::OwnerHasShipPartAvailable>(
                     deconstruct_movable_(_1, _pass))) ]
             ;
 
         empire_has_shippart_available2
             = (
-                    omit_[tok.EmpireHasShipPartAvailable_]
-                 >> label(tok.Empire_) > int_rules.expr
-                 >  label(tok.Name_)   > string_grammar
+                   (omit_[tok.EmpireHasShipPartAvailable_]
+                 >> label(tok.Empire_)) > int_rules.expr
+                 >  label(tok.Name_)    > string_grammar
               ) [ _val = construct_movable_(new_<Condition::OwnerHasShipPartAvailable>(
                     deconstruct_movable_(_1, _pass),
                     deconstruct_movable_(_2, _pass))) ]

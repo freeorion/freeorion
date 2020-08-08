@@ -59,7 +59,7 @@ namespace {
     {
         auto tech_ptr = std::make_unique<Tech>(
             std::move(*tech_info.OpenEnvelope(pass)),
-            (effects ? std::move(parse::detail::OpenEnvelopes(*effects, pass)) : std::vector<std::unique_ptr<Effect::EffectsGroup>>{}),
+            (effects ? parse::detail::OpenEnvelopes(*effects, pass) : std::vector<std::unique_ptr<Effect::EffectsGroup>>{}),
             (prerequisites ? std::move(*prerequisites) : std::set<std::string>{}),
             (unlocked_items ? std::move(*unlocked_items) : std::vector<UnlockableItem>{}),
             (graphic ? std::move(*graphic) : std::string{}));

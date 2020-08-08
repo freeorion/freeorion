@@ -166,7 +166,7 @@ namespace parse {
             ;
 
         value_wrapped_part_meter
-            = (     omit_[tok.Value_] >> '('
+            = (    (omit_[tok.Value_] >> '(')
                 >   tok.ShipPartMeter_
                 >   label(tok.Part_)    >   string_grammar
                 >   label(tok.Meter_)   >   ship_part_meter_type_enum

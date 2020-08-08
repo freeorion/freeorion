@@ -32,7 +32,7 @@ namespace {
     {
         auto fieldtype_ptr = std::make_unique<FieldType>(
             std::string(name), std::move(description), stealth, std::move(tags),
-            (effects ? std::move(OpenEnvelopes(*effects, pass)) : std::vector<std::unique_ptr<Effect::EffectsGroup>>{}),
+            (effects ? OpenEnvelopes(*effects, pass) : std::vector<std::unique_ptr<Effect::EffectsGroup>>{}),
             std::move(graphic));
 
         fieldtypes.emplace(std::move(name), std::move(fieldtype_ptr));

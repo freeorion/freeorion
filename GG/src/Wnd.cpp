@@ -366,7 +366,7 @@ std::shared_ptr<Wnd> Wnd::RootParent() const
     auto gparent{parent ? parent->Parent() : nullptr};
     while (gparent) {
         parent = std::move(gparent);
-        gparent = std::move(parent->Parent());
+        gparent = parent->Parent();
     }
     return parent;
 }
