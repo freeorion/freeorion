@@ -9086,7 +9086,7 @@ bool ValueTest::Match(const ScriptingContext& local_context) const {
         return false;
 
     // simple evaluation should have only local-candidate-invariation sub-value-refs
-    // base class evalulation should have defined local candidate
+    // base class evaulation should have defined local candidate
 
     if (m_value_ref1) {
         if (!m_value_ref2)
