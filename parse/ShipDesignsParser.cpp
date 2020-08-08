@@ -32,12 +32,10 @@ namespace {
                             std::string& icon, std::string& model,
                             bool name_desc_in_stringtable, boost::uuids::uuid uuid)
     {
-        auto design = std::make_unique<ParsedShipDesign>(
+        maybe_design = std::make_unique<ParsedShipDesign>(
             std::move(name), std::move(description), 0, ALL_EMPIRES,
             std::move(hull), std::move(parts), std::move(icon),
             std::move(model), name_desc_in_stringtable, false, std::move(uuid));
-
-        maybe_design = std::move(design);
     };
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_ship_design_, insert_ship_design, 9)
 
@@ -225,17 +223,18 @@ namespace parse {
            depends only on the parsed string and not other potentially
            concurrent parses of hulls and parts.*/
         const lexer lexer;
-        std::vector<std::pair<std::unique_ptr<ParsedShipDesign>, boost::filesystem::path>> designs_and_paths;
+        std::vector<std::pair<std::unique_ptr<ParsedShipDesign>,
+                    boost::filesystem::path>> designs_and_paths;
         std::vector<boost::uuids::uuid> ordering;
 
         boost::filesystem::path manifest_file;
 
         ScopedTimer timer("Ship Designs Parsing", true);
 
-        for (const auto& file : ListDir(path, IsFOCScript)) {
+        for (auto& file : ListDir(path, IsFOCScript)) {
             TraceLogger() << "Parse ship design file " << file.filename();
             if (file.filename() == "ShipDesignOrdering.focs.txt" ) {
-                manifest_file = file;
+                manifest_file = std::move(file);
                 continue;
             }
 
@@ -246,10 +245,11 @@ namespace parse {
 
                 if (!partial_result || !maybe_design)
                     continue;
-                designs_and_paths.push_back({std::move(*maybe_design), file});
+                designs_and_paths.emplace_back(std::move(*maybe_design), file);
 
             } catch (const std::runtime_error& e) {
-                ErrorLogger() << "Failed to parse ship design in " << file << " from " << path << " because " << e.what();;
+                ErrorLogger() << "Failed to parse ship design in " << file << " from "
+                              << path << " because " << e.what();
             }
         }
 
@@ -264,6 +264,6 @@ namespace parse {
             }
         }
 
-        return {std::move(designs_and_paths), ordering};
+        return {std::move(designs_and_paths), std::move(ordering)};
     }
 }
