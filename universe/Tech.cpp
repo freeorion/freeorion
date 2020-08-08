@@ -632,12 +632,12 @@ std::vector<std::string> TechManager::RecursivePrereqs(const std::string& tech_n
     std::multimap<float, std::string> techs_to_add_map; // indexed and sorted by cost per turn
 
     // initialize working list with 1st order prereqs
-    std::set<std::string> cur_prereqs = tech->Prerequisites();
+    auto cur_prereqs = tech->Prerequisites();
     std::copy(cur_prereqs.begin(), cur_prereqs.end(), std::back_inserter(prereqs_list));
     const Empire* empire = GetEmpire(empire_id);
 
     // traverse list, appending new prereqs to it, and putting unique prereqs into set
-    for (const std::string& cur_name : prereqs_list) {
+    for (std::string& cur_name : prereqs_list) {
         const Tech* cur_tech = this->GetTech(cur_name);
 
         // check if this tech is already in the map of prereqs.  If so, it has already been processed, and can be skipped.
@@ -651,7 +651,7 @@ std::vector<std::string> TechManager::RecursivePrereqs(const std::string& tech_n
         // tech is new, so put it into the set of already-processed prereqs
         prereqs_set.emplace(cur_name);
         // and the map of techs, sorted by cost
-        techs_to_add_map.emplace(cur_tech->ResearchCost(empire_id), cur_name);
+        techs_to_add_map.emplace(cur_tech->ResearchCost(empire_id), cur_name);  // TODO: can I move from cur_name ?
 
         // get prereqs of new tech, append to list
         cur_prereqs = cur_tech->Prerequisites();
@@ -660,8 +660,9 @@ std::vector<std::string> TechManager::RecursivePrereqs(const std::string& tech_n
 
     // extract sorted techs into vector, to be passed to signal...
     std::vector<std::string> retval;
-    for (const auto& tech_to_add : techs_to_add_map)
-    { retval.push_back(tech_to_add.second); }
+    retval.reserve(techs_to_add_map.size());
+    for (auto& tech_to_add : techs_to_add_map)
+        retval.emplace_back(std::move(tech_to_add.second));
 
     return retval;
 }
