@@ -60,7 +60,8 @@ namespace {
             (policy_.effects ? OpenEnvelopes(*policy_.effects, pass) : std::vector<std::unique_ptr<Effect::EffectsGroup>>()),
             policy_.graphic);
 
-        policies.emplace(policy_ptr->Name(), std::move(policy_ptr));
+        auto& policy_name = policy_ptr->Name();
+        policies.emplace(policy_name, std::move(policy_ptr));
     }
 
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_policy_, insert_policy, 3)

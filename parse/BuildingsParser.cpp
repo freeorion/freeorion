@@ -32,11 +32,11 @@ namespace {
                          bool& pass)
     {
         auto building_type = std::make_unique<BuildingType>(
-            std::move(name), std::move(description),
+            std::string(name), std::move(description),
             std::move(*common_params.OpenEnvelope(pass)),
             capture_result, std::move(icon));
 
-        building_types.emplace(building_type->Name(), std::move(building_type));
+        building_types.emplace(std::move(name), std::move(building_type));
     }
 
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_building_, insert_building, 7)

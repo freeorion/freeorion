@@ -70,7 +70,8 @@ namespace {
             !no_default_capacity_effect,
             (combat_targets ? (*combat_targets).OpenEnvelope(pass) : nullptr));
 
-        ship_parts.emplace(ship_part->Name(), std::move(ship_part));
+        auto& part_name{ship_part->Name()};
+        ship_parts.emplace(part_name, std::move(ship_part));
     }
 
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_shippart_, insert_shippart, 9)

@@ -57,7 +57,8 @@ namespace {
             (location ? std::move(location->OpenEnvelope(pass)) : nullptr),
             special_pod.graphic);
 
-        specials.emplace(special_ptr->Name(), std::move(special_ptr));
+        auto& special_name{special_ptr->Name()};
+        specials.emplace(special_name, std::move(special_ptr));
     }
 
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_special_, insert_special, 9)

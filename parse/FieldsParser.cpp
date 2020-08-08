@@ -25,17 +25,17 @@ namespace {
 
     void insert_fieldtype(std::map<std::string, std::unique_ptr<FieldType>>& fieldtypes,
                           std::string& name, std::string& description,
-                          float stealth, const std::set<std::string>& tags,
+                          float stealth, std::set<std::string>& tags,
                           boost::optional<parse::effects_group_payload>& effects,
                           std::string& graphic,
                           bool& pass)
     {
         auto fieldtype_ptr = std::make_unique<FieldType>(
-            std::move(name), std::move(description), stealth, tags,
+            std::string(name), std::move(description), stealth, std::move(tags),
             (effects ? std::move(OpenEnvelopes(*effects, pass)) : std::vector<std::unique_ptr<Effect::EffectsGroup>>{}),
             std::move(graphic));
 
-        fieldtypes.insert(std::make_pair(fieldtype_ptr->Name(), std::move(fieldtype_ptr)));
+        fieldtypes.emplace(std::move(name), std::move(fieldtype_ptr));
     }
 
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_fieldtype_, insert_fieldtype, 8)

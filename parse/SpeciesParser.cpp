@@ -105,7 +105,8 @@ namespace {
             std::move(params.dislikes),
             std::move(graphic));
 
-        species.emplace(species_ptr->Name(), std::move(species_ptr));
+        auto& species_name{species_ptr->Name()};
+        species.emplace(species_name, std::move(species_ptr));
     }
 
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_species_, insert_species, 8)

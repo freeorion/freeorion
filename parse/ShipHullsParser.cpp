@@ -87,7 +87,9 @@ struct ShipHullStats {
             (slots ? std::move(*slots) : std::vector<ShipHull::Slot>{}),
             std::move(icon),
             std::move(graphic));
-        shiphulls.emplace(shiphull->Name(), std::move(shiphull));
+
+        auto& hull_name{shiphull->Name()};
+        shiphulls.emplace(hull_name, std::move(shiphull));
     }
 
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_shiphull_, insert_shiphull, 8)

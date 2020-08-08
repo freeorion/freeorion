@@ -852,8 +852,9 @@ void OptionsWnd::CreateSectionHeader(GG::ListBox* page, int indentation_level,
     auto heading_text = GG::Wnd::Create<CUILabel>(name, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP);
     heading_text->SetFont(ClientUI::GetFont(ClientUI::Pts() * 4 / 3));
 
+    auto heading_min_sz_y{heading_text->MinUsableSize().y};
     auto row = GG::Wnd::Create<OptionsListRow>(ROW_WIDTH,
-                                               heading_text->MinUsableSize().y + LAYOUT_MARGIN + 6,
+                                               heading_min_sz_y + LAYOUT_MARGIN + 6,
                                                std::move(heading_text), indentation_level);
 
     if (!tooltip.empty()) {
