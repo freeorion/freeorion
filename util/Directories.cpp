@@ -488,7 +488,7 @@ auto GetResourceDir() -> fs::path const
         if (!fs::exists(res_dir) || !fs::is_directory(res_dir))
             res_dir = FilenameToPath(GetOptionsDB().GetDefault<std::string>("resource.path"));
         GetOptionsDB().OptionChangedSignal("resource.path").connect(&RefreshResDir);
-        DebugLogger() << "Initialized ResDir and connected change signal";
+        TraceLogger() << "Initialized ResDir and connected change signal";
     }
     return res_dir;
 }
