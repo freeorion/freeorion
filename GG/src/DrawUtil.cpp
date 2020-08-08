@@ -35,8 +35,9 @@ std::map<int, std::valarray<double>> unit_circle_coords;
 /// this doesn't serve as a cache, but does allow us to prevent numerous constructions and destructions of Clr valarrays.
 std::map<int, std::valarray<Clr>> color_arrays;
 
-void Rectangle(Pt ul, Pt lr, Clr color, Clr border_color1, Clr border_color2, unsigned int bevel_thick,
-                bool bevel_left, bool bevel_top, bool bevel_right, bool bevel_bottom)
+void Rectangle(Pt ul, Pt lr, Clr color, Clr border_color1, Clr border_color2,
+               unsigned int bevel_thick, bool bevel_left, bool bevel_top,
+               bool bevel_right, bool bevel_bottom)
 {
     X inner_x1 = ul.x + (bevel_left ? static_cast<int>(bevel_thick) : 0);
     Y inner_y1 = ul.y + (bevel_top ? static_cast<int>(bevel_thick) : 0);
@@ -97,8 +98,9 @@ void Check(Pt ul, Pt lr, Clr color1, Clr color2, Clr color3)
     Y ht = lr.y - ul.y;
 
     // all vertices
-    GLfloat verts[][2] = {{-0.2f,  0.2f}, {-0.6f, -0.2f}, {-0.6f,  0.0f}, {-0.2f,  0.4f}, {-0.8f,  0.0f},
-                            { -0.2f,  0.6f}, { 0.8f, -0.4f}, { 0.6f, -0.4f}, { 0.8f, -0.8f}};
+    GLfloat verts[][2] = {{-0.2f,  0.2f}, {-0.6f, -0.2f}, {-0.6f,  0.0f},
+                          {-0.2f,  0.4f}, {-0.8f,  0.0f}, { -0.2f,  0.6f},
+                          { 0.8f, -0.4f}, { 0.6f, -0.4f}, { 0.8f, -0.8f}};
 
     glPushMatrix();
     const float sf = 1.25f;                                                     // scale factor to make the check look right
@@ -106,10 +108,10 @@ void Check(Pt ul, Pt lr, Clr color1, Clr color2, Clr color3)
     glScalef(Value(wd / 2.0f * sf), Value(ht / 2.0f * sf), 1.0f);               // map the range [-1,1] to the rectangle in both directions
 
     static std::size_t indices[22] = { 1,  4,  2,
-                                        8,  0,  3,  7,
-                                        2,  4,  5,  3,  7,  3,  5,  6,
-                                        8,  7,  6,
-                                        0,  1,  2,  3};
+                                       8,  0,  3,  7,
+                                       2,  4,  5,  3,  7,  3,  5,  6,
+                                       8,  7,  6,
+                                       0,  1,  2,  3};
 
     GL2DVertexBuffer vert_buf;
     vert_buf.reserve(22);
@@ -149,9 +151,9 @@ void XMark(Pt ul, Pt lr, Clr color1, Clr color2, Clr color3)
 
     // all vertices
     GLfloat verts[][2] = {{-0.4f, -0.6f}, {-0.6f, -0.4f}, {-0.4f, -0.4f}, {-0.2f,  0.0f}, {-0.6f,  0.4f},
-                            {-0.4f,  0.6f}, {-0.4f,  0.4f}, { 0.0f,  0.2f}, { 0.4f,  0.6f}, { 0.6f,  0.4f},
-                            { 0.4f,  0.4f}, { 0.2f,  0.0f}, { 0.6f, -0.4f}, { 0.4f, -0.6f}, { 0.4f, -0.4f},
-                            { 0.0f, -0.2f}, { 0.0f,  0.0f}};
+                          {-0.4f,  0.6f}, {-0.4f,  0.4f}, { 0.0f,  0.2f}, { 0.4f,  0.6f}, { 0.6f,  0.4f},
+                          { 0.4f,  0.4f}, { 0.2f,  0.0f}, { 0.6f, -0.4f}, { 0.4f, -0.6f}, { 0.4f, -0.4f},
+                          { 0.0f, -0.2f}, { 0.0f,  0.0f}};
 
     glPushMatrix();
     const float sf = 1.75f;                                                 // scale factor; the check wasn't the right size as drawn originally
@@ -159,11 +161,11 @@ void XMark(Pt ul, Pt lr, Clr color1, Clr color2, Clr color3)
     glScalef(Value(wd / 2.0f * sf), Value(ht / 2.0f * sf), 1.0f);           // map the range [-1,1] to the rectangle in both directions
 
     static std::size_t indices[44] = {12, 13, 14,
-                                        15,  0,  2, 16,  9, 11, 16, 10,
-                                        0,  1,  2,
-                                        13, 15, 16, 14,  3,  4,  6, 16,
-                                        4,  5,  6,  8,  9, 10,
-                                        14, 16, 11, 12,  2,  1,  3, 16, 16,  6,  5,  7, 16,  7,  8, 10};
+                                      15,  0,  2, 16,  9, 11, 16, 10,
+                                      0,  1,  2,
+                                      13, 15, 16, 14,  3,  4,  6, 16,
+                                      4,  5,  6,  8,  9, 10,
+                                      14, 16, 11, 12,  2,  1,  3, 16, 16,  6,  5,  7, 16,  7,  8, 10};
 
     GL2DVertexBuffer vert_buf;
     vert_buf.reserve(44);
@@ -269,7 +271,7 @@ void BubbleArc(Pt ul, Pt lr, Clr color1, Clr color2, Clr color3, double theta1, 
 }
 
 void CircleArc(Pt ul, Pt lr, Clr color, Clr border_color1, Clr border_color2,
-                unsigned int bevel_thick, double theta1, double theta2)
+               unsigned int bevel_thick, double theta1, double theta2)
 {
     //std::cout << "GG::CircleArc ul: " << ul << "  lr: " << lr << " bevel thick: " << bevel_thick << "  theta1: " << theta1 << "  theta2: " << theta2 << std::endl;
     X wd = lr.x - ul.x;
@@ -360,13 +362,13 @@ void RoundedRectangle(Pt ul, Pt lr, Clr color, Clr border_color1, Clr border_col
 {
     int circle_diameter = corner_radius * 2;
     CircleArc(Pt(lr.x - circle_diameter, ul.y),                     Pt(lr.x, ul.y + circle_diameter),
-                color, border_color2, border_color1, thick, 0, 0.5 * PI);  // ur corner
+              color, border_color2, border_color1, thick, 0, 0.5 * PI);  // ur corner
     CircleArc(Pt(ul.x, ul.y),                                       Pt(ul.x + circle_diameter, ul.y + circle_diameter),
-                color, border_color2, border_color1, thick, 0.5 * PI, PI); // ul corner
+              color, border_color2, border_color1, thick, 0.5 * PI, PI); // ul corner
     CircleArc(Pt(ul.x, lr.y - circle_diameter),                     Pt(ul.x + circle_diameter, lr.y),
-                color, border_color2, border_color1, thick, PI, 1.5 * PI); // ll corner
+              color, border_color2, border_color1, thick, PI, 1.5 * PI); // ll corner
     CircleArc(Pt(lr.x - circle_diameter, lr.y - circle_diameter),   Pt(lr.x, lr.y),
-                color, border_color2, border_color1, thick, 1.5 * PI, 0);  // lr corner
+              color, border_color2, border_color1, thick, 1.5 * PI, 0);  // lr corner
 
 
     // lines connecting circle arcs and giving bevel appearance
@@ -580,7 +582,7 @@ void GG::EndScissorClipping()
     } else {
         const Rect& r = g_scissor_clipping_rects.back();
         glScissor(Value(r.Left()), Value(GUI::GetGUI()->AppHeight() - r.Bottom()),
-                    Value(r.Width()), Value(r.Height()));
+                  Value(r.Width()), Value(r.Height()));
     }
 }
 
@@ -739,39 +741,39 @@ void GG::Triangle(X x1, Y y1, X x2, Y y2, X x3, Y y3, bool filled)
 }
 
 void GG::FlatRectangle(Pt ul, Pt lr, Clr color, Clr border_color,
-                    unsigned int border_thick/* = 2*/)
+                       unsigned int border_thick/* = 2*/)
 {
     Rectangle(ul, lr, color, border_color, border_color, border_thick,
-                true, true, true, true);
+              true, true, true, true);
 }
 
 void GG::BeveledRectangle(Pt ul, Pt lr, Clr color, Clr border_color, bool up,
-                        unsigned int bevel_thick/* = 2*/, bool bevel_left/* = true*/,
-                        bool bevel_top/* = true*/, bool bevel_right/* = true*/,
-                        bool bevel_bottom/* = true*/)
+                          unsigned int bevel_thick/* = 2*/, bool bevel_left/* = true*/,
+                          bool bevel_top/* = true*/, bool bevel_right/* = true*/,
+                          bool bevel_bottom/* = true*/)
 {
     Rectangle(ul, lr, color,
-                (up ? LightenClr(border_color) : DarkenClr(border_color)),
-                (up ? DarkenClr(border_color) : LightenClr(border_color)),
-                bevel_thick, bevel_left, bevel_top, bevel_right, bevel_bottom);
+              (up ? LightenClr(border_color) : DarkenClr(border_color)),
+              (up ? DarkenClr(border_color) : LightenClr(border_color)),
+              bevel_thick, bevel_left, bevel_top, bevel_right, bevel_bottom);
 }
 
 void GG::FlatRoundedRectangle(Pt ul, Pt lr, Clr color, Clr border_color,
-                            unsigned int corner_radius/* = 5*/,
-                            unsigned int border_thick/* = 2*/)
+                              unsigned int corner_radius/* = 5*/,
+                              unsigned int border_thick/* = 2*/)
 {
     RoundedRectangle(ul, lr, color, border_color, border_color,
-                        corner_radius, border_thick);
+                     corner_radius, border_thick);
 }
 
 void GG::BeveledRoundedRectangle(Pt ul, Pt lr, Clr color, Clr border_color, bool up,
-                                unsigned int corner_radius/* = 5*/,
-                                unsigned int bevel_thick/* = 2*/)
+                                 unsigned int corner_radius/* = 5*/,
+                                 unsigned int bevel_thick/* = 2*/)
 {
     RoundedRectangle(ul, lr, color,
-                        (up ? LightenClr(border_color) : DarkenClr(border_color)),
-                        (up ? DarkenClr(border_color) : LightenClr(border_color)),
-                        corner_radius, bevel_thick);
+                     (up ? LightenClr(border_color) : DarkenClr(border_color)),
+                     (up ? DarkenClr(border_color) : LightenClr(border_color)),
+                     corner_radius, bevel_thick);
 }
 
 void GG::FlatCheck(Pt ul, Pt lr, Clr color)
@@ -786,9 +788,9 @@ void GG::FlatX(Pt ul, Pt lr, Clr color)
 void GG::Bubble(Pt ul, Pt lr, Clr color, bool up/* = true*/)
 {
     BubbleArc(ul, lr, color,
-                (up ? DarkenClr(color) : LightenClr(color)),
-                (up ? LightenClr(color) : DarkenClr(color)),
-                0, 0);
+              (up ? DarkenClr(color) : LightenClr(color)),
+              (up ? LightenClr(color) : DarkenClr(color)),
+              0, 0);
 }
 
 void GG::FlatCircle(Pt ul, Pt lr, Clr color, Clr border_color, unsigned int thick/* = 2*/)
@@ -797,9 +799,9 @@ void GG::FlatCircle(Pt ul, Pt lr, Clr color, Clr border_color, unsigned int thic
 void GG::BeveledCircle(Pt ul, Pt lr, Clr color, Clr border_color, bool up/* = true*/, unsigned int bevel_thick/* = 2*/)
 {
     CircleArc(ul, lr, color,
-                (up ? DarkenClr(border_color) : LightenClr(border_color)),
-                (up ? LightenClr(border_color) : DarkenClr(border_color)),
-                bevel_thick, 0, 0);
+              (up ? DarkenClr(border_color) : LightenClr(border_color)),
+              (up ? LightenClr(border_color) : DarkenClr(border_color)),
+              bevel_thick, 0, 0);
 }
 
 void GG::BubbleRectangle(Pt ul, Pt lr, Clr color, bool up, unsigned int corner_radius/* = 5*/)
