@@ -872,9 +872,9 @@ MPLobby::MPLobby(my_context c) :
             }
         }
 
-        for (const auto& player_connection : to_disconnect) {
+        for (const auto& player_connection : to_disconnect)
             server.Networking().Disconnect(player_connection);
-        }
+
 
         // check if there weren't previous AIs
         if (m_ai_next_index == 1) {
