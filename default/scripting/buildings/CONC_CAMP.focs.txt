@@ -74,3 +74,4 @@ BuildingType
 
 #include "/scripting/common/*.macros"
 #include "/scripting/buildings/buildings.macros"
+#include "/scripting/common/priorities.macros"

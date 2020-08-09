@@ -25,3 +25,4 @@ BuildingType
 
 #include "/scripting/common/base_prod.macros"
 #include "/scripting/buildings/buildings.macros"
+#include "/scripting/common/priorities.macros"

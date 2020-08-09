@@ -25,3 +25,4 @@ Policy
     graphic = "icons/policies/reserve_tank.png"
 
 #include "/scripting/policies/policies.macros"
+#include "/scripting/common/priorities.macros"

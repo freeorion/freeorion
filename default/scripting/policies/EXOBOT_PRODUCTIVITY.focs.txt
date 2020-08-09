@@ -26,3 +26,4 @@ Policy
 
 #include "/scripting/species/common/*.macros"
 #include "/scripting/policies/policies.macros"
+#include "/scripting/common/priorities.macros"

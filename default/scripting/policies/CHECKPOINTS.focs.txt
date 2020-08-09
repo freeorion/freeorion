@@ -33,3 +33,4 @@ Policy
     graphic = "icons/policies/checkpoints.png"
 
 #include "/scripting/policies/policies.macros"
+#include "/scripting/common/priorities.macros"

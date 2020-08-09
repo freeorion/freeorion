@@ -10,3 +10,4 @@ Policy
     graphic = "icons/meter/troops.png"
 
 #include "/scripting/policies/policies.macros"
+#include "/scripting/common/priorities.macros"

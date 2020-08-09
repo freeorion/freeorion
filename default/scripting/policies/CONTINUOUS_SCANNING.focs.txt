@@ -33,3 +33,4 @@ Policy
     graphic = "icons/policies/continuous_scanning.png"
 
 #include "/scripting/policies/policies.macros"
+#include "/scripting/common/priorities.macros"

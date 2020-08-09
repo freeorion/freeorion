@@ -18,3 +18,4 @@ Policy
     graphic = "icons/policies/engineering.png"
 
 #include "/scripting/policies/policies.macros"
+#include "/scripting/common/priorities.macros"

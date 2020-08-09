@@ -30,3 +30,4 @@ Policy
     graphic = "icons/policies/exploration.png"
 
 #include "/scripting/policies/policies.macros"
+#include "/scripting/common/priorities.macros"

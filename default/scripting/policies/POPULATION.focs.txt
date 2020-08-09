@@ -10,3 +10,4 @@ Policy
     graphic = "icons/focus/growth.png"
 
 #include "/scripting/policies/policies.macros"
+#include "/scripting/common/priorities.macros"
