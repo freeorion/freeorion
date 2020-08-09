@@ -6,6 +6,7 @@ BuildingType
     location = AND [
         Not Contains Building name = "BLD_CONC_CAMP"
         OwnedBy empire = Source.Owner
+        EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_RACIAL_PURITY"
         Population low = 3
     ]
     EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
@@ -28,11 +29,14 @@ BuildingType
                 Object id = Source.PlanetID
                 Planet
             ]
-            activation = ContainedBy And [
-                PopulationCenter
-                OwnedBy empire = Source.Owner
-                Population low = 0.0001
-                Not HasSpecial name = "CONC_CAMP_MASTER_SPECIAL"
+            activation = Or [
+                Not EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_RACIAL_PURITY"
+                ContainedBy And [
+                    PopulationCenter
+                    OwnedBy empire = Source.Owner
+                    Population low = 0.0001
+                    Not HasSpecial name = "CONC_CAMP_MASTER_SPECIAL"
+                ]
             ]
             effects = AddSpecial name = "CONC_CAMP_MASTER_SPECIAL"
         EffectsGroup
@@ -67,7 +71,10 @@ BuildingType
             ]
         EffectsGroup
             scope = Source
-            activation = Not ProducedByEmpire empire = Source.Owner
+            activation = Or [
+                Not EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_RACIAL_PURITY"
+                Not ProducedByEmpire empire = Source.Owner
+            ]
             effects = Destroy
     ]
     icon = "icons/building/concentration-camp.png"
