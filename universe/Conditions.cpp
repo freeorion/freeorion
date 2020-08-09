@@ -27,6 +27,7 @@
 #include "../Empire/Empire.h"
 #include "../Empire/Supply.h"
 #include "../util/Logger.h"
+#include "../util/OptionsDB.h"
 #include "../util/Random.h"
 #include "../util/ScopedTimer.h"
 #include "../util/i18n.h"
@@ -39,6 +40,10 @@ FO_COMMON_API extern const int INVALID_DESIGN_ID;
 bool UserStringExists(const std::string& str);
 
 namespace {
+    void AddOptions(OptionsDB& db)
+    { db.Add<bool>("effects.move.test", "", false); }
+    bool temp_bool = RegisterOptions(&AddOptions);
+
     const std::string EMPTY_STRING;
 
     DeclareThreadSafeLogger(conditions);
@@ -265,10 +270,31 @@ void Condition::Eval(const ScriptingContext& parent_context,
                      Effect::TargetSet& matches, Effect::TargetSet& non_matches,
                      SearchDomain search_domain/* = NON_MATCHES*/) const
 {
-    // reinterpret sets of mutable objects as sets of non-mutable objects.
-    auto& matches_as_objectset = reinterpret_cast<ObjectSet&>(matches);
-    auto& non_matches_as_objectset = reinterpret_cast<ObjectSet&>(non_matches);
-    this->Eval(parent_context, matches_as_objectset, non_matches_as_objectset, search_domain);
+    if (!GetOptionsDB().Get<bool>("effects.move.test")) {
+        // reinterpret sets of mutable objects as sets of non-mutable objects.
+        auto& matches_as_objectset = reinterpret_cast<ObjectSet&>(matches);
+        auto& non_matches_as_objectset = reinterpret_cast<ObjectSet&>(non_matches);
+        this->Eval(parent_context, matches_as_objectset, non_matches_as_objectset, search_domain);
+
+    } else {
+        ObjectSet matches_as_objectset{std::make_move_iterator(matches.begin()),
+                                       std::make_move_iterator(matches.end())};
+        ObjectSet non_matches_as_objectset{std::make_move_iterator(non_matches.begin()),
+                                           std::make_move_iterator(non_matches.end())};
+        matches.clear();
+        non_matches.clear();
+
+        this->Eval(parent_context, matches_as_objectset, non_matches_as_objectset, search_domain);
+
+        std::transform(std::make_move_iterator(matches_as_objectset.begin()),
+                       std::make_move_iterator(matches_as_objectset.end()),
+                       std::back_inserter(matches),
+                       std::const_pointer_cast<UniverseObject, const UniverseObject>);
+        std::transform(std::make_move_iterator(non_matches_as_objectset.begin()),
+                       std::make_move_iterator(non_matches_as_objectset.end()),
+                       std::back_inserter(non_matches),
+                       std::const_pointer_cast<UniverseObject, const UniverseObject>);
+    }
 }
 
 void Condition::Eval(const ScriptingContext& parent_context,
@@ -287,9 +313,23 @@ void Condition::Eval(const ScriptingContext& parent_context,
 void Condition::Eval(const ScriptingContext& parent_context,
                      Effect::TargetSet& matches) const
 {
-    // reinterpret sets of mutable objects as sets of non-mutable objects.
-    auto& matches_as_objectset = reinterpret_cast<ObjectSet&>(matches);
-    this->Eval(parent_context, matches_as_objectset);
+    if (!GetOptionsDB().Get<bool>("effects.move.test")) {
+        // reinterpret sets of mutable objects as sets of non-mutable objects.
+        auto& matches_as_objectset = reinterpret_cast<ObjectSet&>(matches);
+        this->Eval(parent_context, matches_as_objectset);
+
+    } else {
+        ObjectSet matches_as_objectset{std::make_move_iterator(matches.begin()),
+                                       std::make_move_iterator(matches.end())};
+        matches.clear();
+
+        this->Eval(parent_context, matches_as_objectset);
+
+        std::transform(std::make_move_iterator(matches_as_objectset.begin()),
+                       std::make_move_iterator(matches_as_objectset.end()),
+                       std::back_inserter(matches),
+                       std::const_pointer_cast<UniverseObject, const UniverseObject>);
+    }
 }
 
 bool Condition::Eval(const ScriptingContext& parent_context,
@@ -297,8 +337,7 @@ bool Condition::Eval(const ScriptingContext& parent_context,
 {
     if (!candidate)
         return false;
-    ObjectSet non_matches, matches;
-    non_matches.emplace_back(std::move(candidate));
+    ObjectSet non_matches{std::move(candidate)}, matches;
     Eval(parent_context, matches, non_matches);
     return non_matches.empty(); // if candidate has been matched, non_matches will now be empty
 }
@@ -306,8 +345,7 @@ bool Condition::Eval(const ScriptingContext& parent_context,
 bool Condition::Eval(std::shared_ptr<const UniverseObject> candidate) const {
     if (!candidate)
         return false;
-    ObjectSet non_matches, matches;
-    non_matches.emplace_back(std::move(candidate));
+    ObjectSet non_matches{std::move(candidate)}, matches;
     Eval(ScriptingContext(), matches, non_matches);
     return non_matches.empty(); // if candidate has been matched, non_matches will now be empty
 }
