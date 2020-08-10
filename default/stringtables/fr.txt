@@ -6317,9 +6317,9 @@ DAMAGE_TITLE
 Dommages
 
 DAMAGE_TEXT
-'''Définit la valeur de base qu'un armement d'astronef ôtera à la [[metertype METER_STRUCTURE]] d'un autre astronef (ou aux [[metertype METER_SHIELD]], à la [[metertype METER_DEFENSE]] et à l'[[metertype METER_CONSTRUCTION]] d'une planète), en une passe de combat (pour un total de trois passes par tour). Si l'astronef ciblé est équipé de [[metertype METER_SHIELD]], les dommages causés par chaque tir seront égaux à cette valeur de base moins la valeur de solidité des [[metertype METER_SHIELD]] de l'astronef.
+'''Définit la valeur de base qu'un armement d'astronef ôtera à la [[metertype METER_STRUCTURE]] d'un autre astronef (ou aux [[metertype METER_SHIELD]], à la [[metertype METER_DEFENSE]] et à l'[[metertype METER_CONSTRUCTION]] d'une planète), en une passe de combat (pour un total de quatre passes par tour). Si l'astronef ciblé est équipé de [[metertype METER_SHIELD]], les dommages causés par chaque tir seront égaux à cette valeur de base moins la valeur de solidité des [[metertype METER_SHIELD]] de l'astronef.
 
-Note: les [[encyclopedia FIGHTER_TECHS]] infligent des dommages n'étant pas minorés par les [[metertype METER_SHIELD]] d'astronef, les Chasseurs faisant feu une fois à l'intérieur de la zone de protection fournie par les Boucliers.'''
+Note: les [[encyclopedia FIGHTER_TECHS]] infligent des dommages n'étant pas minorés par les [[metertype METER_SHIELD]] d'astronef, les Chasseurs faisant feu une fois à l'intérieur de la zone de protection fournie par les Boucliers. Les Chasseurs nécessitant un tour pour être lancés, l'estimation des dommages est calculée en conséquence.'''
 
 MAP_WINDOW_ARTICLE_TITLE
 Fenêtre Carte
@@ -11304,6 +11304,19 @@ Les planètes sont organisées en un système indépendant confédéré, et ne p
 
 PLC_CONFEDERATION_SHORT_DESC
 Soutient les systèmes déconnectés
+
+PLC_RACIAL_PURITY
+Pureté Raciale
+
+PLC_RACIAL_PURITY_DESC
+'''Les planètes abritant des espèces différentes de celle dirigeant la Capitale sont soumises à diverses pénalités.
+
+Les planètes peuplées par d'autres espèces subissent des pénalités.
+
+Permet la construction de [[buildingtype BLD_CONC_CAMP]].'''
+
+PLC_RACIAL_PURITY_SHORT_DESC
+Favorise l'espèce de la Capitale
 
 
 ##
