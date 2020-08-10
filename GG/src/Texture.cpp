@@ -95,46 +95,21 @@ X Texture::DefaultWidth() const
 Y Texture::DefaultHeight() const
 { return m_default_height; }
 
-void Texture::OrthoBlit(const Pt& pt1, const Pt& pt2,
-                        const GLfloat* tex_coords/* = 0*/) const
+void Texture::Blit(const GL2DVertexBuffer& vertex_buffer,
+                   const GLTexCoordBuffer& tex_coord_buffer,
+                   bool render_scaled) const
 {
     if (m_opengl_id == 0)
         return;
 
-    if (!tex_coords) // use default texture coords when not given any others
-        tex_coords = m_tex_coords;
-
     // HACK! This code ensures that unscaled textures are reproduced exactly, even
     // though they theoretically should be even when using non-GL_NEAREST* scaling.
-    bool render_scaled = (pt2.x - pt1.x) != m_default_width || (pt2.y - pt1.y) != m_default_height;
     bool need_min_filter_change = !render_scaled && m_min_filter != GL_NEAREST;
     bool need_mag_filter_change = !render_scaled && m_mag_filter != GL_NEAREST;
     if (need_min_filter_change)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     if (need_mag_filter_change)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-    // render texture
-    GL2DVertexBuffer vertex_buffer;
-    vertex_buffer.reserve(4);
-    vertex_buffer.store(pt2.x, pt1.y);
-    vertex_buffer.store(pt1.x, pt1.y);
-    vertex_buffer.store(pt2.x, pt2.y);
-    vertex_buffer.store(pt1.x, pt2.y);
-
-    GLTexCoordBuffer tex_coord_buffer;
-    tex_coord_buffer.reserve(4);
-    if (tex_coords) {
-        tex_coord_buffer.store(tex_coords[2], tex_coords[1]);
-        tex_coord_buffer.store(tex_coords[0], tex_coords[1]);
-        tex_coord_buffer.store(tex_coords[2], tex_coords[3]);
-        tex_coord_buffer.store(tex_coords[0], tex_coords[3]);
-    } else {
-        tex_coord_buffer.store(1.0f, 0.0f);
-        tex_coord_buffer.store(0.0f, 0.0f);
-        tex_coord_buffer.store(1.0f, 1.0f);
-        tex_coord_buffer.store(0.0f, 1.0f);
-    }
 
     glPushAttrib(GL_ENABLE_BIT);
     glEnable(GL_TEXTURE_2D);
@@ -147,10 +122,7 @@ void Texture::OrthoBlit(const Pt& pt1, const Pt& pt2,
     glBindTexture(GL_TEXTURE_2D, m_opengl_id);
     vertex_buffer.activate();
     tex_coord_buffer.activate();
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, vertex_buffer.size());
-
-    //glDisableClientState(GL_VERTEX_ARRAY);
-    //glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    glDrawArrays(GL_TRIANGLES, 0, vertex_buffer.size());
 
     if (need_min_filter_change)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_min_filter);
@@ -160,6 +132,56 @@ void Texture::OrthoBlit(const Pt& pt1, const Pt& pt2,
     glPopClientAttrib();
 
     glPopAttrib();
+}
+
+void Texture::OrthoBlit(const Pt& pt1, const Pt& pt2,
+                        const GLfloat* tex_coords/* = 0*/) const
+{
+    if (m_opengl_id == 0)
+        return;
+
+    bool render_scaled = (pt2.x - pt1.x) != m_default_width || (pt2.y - pt1.y) != m_default_height;
+
+    GL2DVertexBuffer vertex_buffer;
+    vertex_buffer.reserve(4);
+    GLTexCoordBuffer tex_coord_buffer;
+    tex_coord_buffer.reserve(4);
+    InitBuffer(vertex_buffer, pt1, pt2);
+    InitBuffer(tex_coord_buffer, tex_coords ? tex_coords : m_tex_coords);   // use default texture coords when not given any others
+
+    Blit(vertex_buffer, tex_coord_buffer, render_scaled);
+}
+
+void Texture::InitBuffer(GL2DVertexBuffer& vertex_buffer, const Pt& pt1, const Pt& pt2)
+{
+    vertex_buffer.store(pt2.x, pt1.y);
+    vertex_buffer.store(pt1.x, pt1.y);
+    vertex_buffer.store(pt2.x, pt2.y);
+
+    vertex_buffer.store(pt1.x, pt1.y);
+    vertex_buffer.store(pt1.x, pt2.y);
+    vertex_buffer.store(pt2.x, pt2.y);
+}
+
+void Texture::InitBuffer(GLTexCoordBuffer& tex_coord_buffer, const GLfloat* tex_coords)
+{
+    if (tex_coords) {
+        tex_coord_buffer.store(tex_coords[2], tex_coords[1]);
+        tex_coord_buffer.store(tex_coords[0], tex_coords[1]);
+        tex_coord_buffer.store(tex_coords[2], tex_coords[3]);
+
+        tex_coord_buffer.store(tex_coords[0], tex_coords[1]);
+        tex_coord_buffer.store(tex_coords[0], tex_coords[3]);
+        tex_coord_buffer.store(tex_coords[2], tex_coords[3]);
+    } else {
+        tex_coord_buffer.store(1.0f, 0.0f);
+        tex_coord_buffer.store(0.0f, 0.0f);
+        tex_coord_buffer.store(1.0f, 1.0f);
+
+        tex_coord_buffer.store(0.0f, 0.0f);
+        tex_coord_buffer.store(0.0f, 1.0f);
+        tex_coord_buffer.store(1.0f, 1.0f);
+    }
 }
 
 void Texture::OrthoBlit(const Pt& pt) const

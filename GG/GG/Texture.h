@@ -24,6 +24,8 @@
 
 
 namespace GG {
+    class GL2DVertexBuffer;
+    class GLTexCoordBuffer;
 
 /** \brief This class encapsulates an OpenGL texture object.
 
@@ -72,6 +74,16 @@ public:
     /** Blit any portion of texture to any place on screen, scaling as
         necessary*/
     void OrthoBlit(const Pt& pt1, const Pt& pt2, const GLfloat* tex_coords = nullptr) const;
+    void Blit(const GL2DVertexBuffer& vertex_buffer, const GLTexCoordBuffer& tex_coord_buffer,
+              bool render_scaled = true) const;
+
+    /** Fill \a vertex_buffer and with vertex data for the quad spanning between
+        \a pt1 and \a pt2 */
+    static void InitBuffer(GL2DVertexBuffer& vertex_buffer, const Pt& pt1, const Pt& pt2);
+
+    /** Fill \a tex_coord_buff with texture coordinate data for the texture
+      * coords specified by \a tex_coords */
+    static void InitBuffer(GLTexCoordBuffer& tex_coord_buffer, const GLfloat* tex_coords = 0);
 
     /** Blit default portion of texture unscaled to \a pt (upper left
         corner)*/
@@ -88,7 +100,7 @@ public:
         subclass if the texture creation fails in one of the specified
         ways. */
     void Init(X width, Y height, const unsigned char* image, GLenum format, GLenum type,
-              unsigned bytes_per_pixel, bool mipmap = false);
+              unsigned int bytes_per_pixel, bool mipmap = false);
 
     void SetFilters(GLenum min, GLenum mag);  ///< sets the opengl min/mag filter modes associated with opengl texture m_opengl_id
     void Clear();  ///< frees the opengl texture object associated with this object
