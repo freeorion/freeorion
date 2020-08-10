@@ -15,6 +15,7 @@ BASIC_INFLUENCE
         EffectsGroup      // colonies consume influence
             scope = Source
             activation = Planet
+            accountinglabel = "COLONY_ADMIN_COSTS_LABEL"
             priority = [[DEFAULT_PRIORITY]]
             effects = SetTargetInfluence value = Value - 1
             
@@ -25,6 +26,7 @@ BASIC_INFLUENCE
                 Not Capital
                 Homeworld name = LocalCandidate.Species
             ]
+            accountinglabel = "SPECIES_HOMEWORLD_INDEPENDENCE_DESIRE_LABEL"
             priority = [[DEFAULT_PRIORITY]]
             effects = SetTargetInfluence value = Value - 1
 
@@ -38,6 +40,7 @@ BASIC_INFLUENCE
                     Capital
                 ]
             ]
+            accountinglabel = "CAPITAL_DISCONNECTION_LABEL"
             priority = [[DEFAULT_PRIORITY]]
             effects = SetTargetInfluence value = Value - 1
 

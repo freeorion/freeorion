@@ -15717,6 +15717,15 @@ LIVING_HULL_BASE_FUEL_REGEN_DESC
 ## Accounting labels
 ##
 
+COLONY_ADMIN_COSTS_LABEL
+Colony Administration Upkeep
+
+SPECIES_HOMEWORLD_INDEPENDENCE_DESIRE_LABEL
+Homeworld Independence Movement
+
+CAPITAL_DISCONNECTION_LABEL
+Not Connected to Empire Capital
+
 # %1% name of empire
 # %2% name of policy
 LIKES_POLICY_LABEL
