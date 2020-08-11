@@ -1,11 +1,11 @@
 #include "ClientAppFixture.h"
 
-#include "combat/CombatLogManager.h"
-#include "client/ClientNetworking.h"
-#include "universe/Species.h"
-#include "util/Directories.h"
-#include "util/GameRules.h"
-#include "util/Version.h"
+#include "common/combat/CombatLogManager.h"
+#include "common/client/ClientNetworking.h"
+#include "common/universe/Species.h"
+#include "common/util/Directories.h"
+#include "common/util/GameRules.h"
+#include "common/util/Version.h"
 
 #include <boost/format.hpp>
 #include <boost/uuid/nil_generator.hpp>

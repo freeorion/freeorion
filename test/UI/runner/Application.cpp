@@ -3,7 +3,7 @@
 #include <GG/Texture.h>
 #include <GG/Cursor.h>
 
-#include "../../../UI/SDLGUI.h"
+#include "../../../src/client/gigi/ui/SDLGUI.h"
 
 #include <boost/format.hpp>
 

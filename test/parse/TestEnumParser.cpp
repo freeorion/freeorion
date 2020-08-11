@@ -1,17 +1,17 @@
 #include <boost/test/unit_test.hpp>
 
-#include "parse/EnumParser.h"
-#include "parse/ValueRefParser.h"
-#include "parse/EnumValueRefRules.h"
-#include "parse/ConditionParserImpl.h"
-#include "universe/BuildingType.h"
-#include "universe/Enums.h"
-#include "universe/Planet.h"
-#include "universe/ShipHull.h"
-#include "universe/ShipPart.h"
-#include "universe/Species.h"
-#include "universe/System.h"
-#include "universe/UnlockableItem.h"
+#include "common/parse/EnumParser.h"
+#include "common/parse/ValueRefParser.h"
+#include "common/parse/EnumValueRefRules.h"
+#include "common/parse/ConditionParserImpl.h"
+#include "common/universe/BuildingType.h"
+#include "common/universe/Enums.h"
+#include "common/universe/Planet.h"
+#include "common/universe/ShipHull.h"
+#include "common/universe/ShipPart.h"
+#include "common/universe/Species.h"
+#include "common/universe/System.h"
+#include "common/universe/UnlockableItem.h"
 
 #include <type_traits>
 

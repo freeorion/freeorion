@@ -18,7 +18,7 @@ add_library(fo_acceptance_runner STATIC
     runner/Application.cpp
     runner/Dialog.cpp
     runner/ResourceCursor.cpp
-    ../../UI/SDLGUI.cpp
+    ../../src/client/gigi/ui/SDLGUI.cpp
 )
 
 target_link_libraries(fo_acceptance_runner

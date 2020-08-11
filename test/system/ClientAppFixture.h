@@ -1,7 +1,7 @@
 #ifndef _ClientAppFixture_h_
 #define _ClientAppFixture_h_
 
-#include "client/ClientApp.h"
+#include "common/client/ClientApp.h"
 
 class ClientAppFixture : public ClientApp {
 public:

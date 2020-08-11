@@ -6,8 +6,8 @@
 
 #include <boost/spirit/include/qi_expect.hpp>
 
-#include "universe/ValueRefs.h"
-#include "parse/Lexer.h"
+#include "common/universe/ValueRefs.h"
+#include "common/parse/Lexer.h"
 
 namespace std {
     std::ostream& operator << (std::ostream& stream, const std::type_info& type);

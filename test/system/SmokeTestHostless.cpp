@@ -1,10 +1,10 @@
 #include <boost/test/unit_test.hpp>
 
 #include "ClientAppFixture.h"
-#include "Empire/Empire.h"
-#include "util/Directories.h"
-#include "util/Process.h"
-#include "util/SitRepEntry.h"
+#include "common/empire/Empire.h"
+#include "common/util/Directories.h"
+#include "common/util/Process.h"
+#include "common/util/SitRepEntry.h"
 
 namespace {
     std::string ServerClientExe() {

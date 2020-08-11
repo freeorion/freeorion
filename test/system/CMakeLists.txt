@@ -16,7 +16,7 @@ target_compile_definitions(fo_systemtest_game
 
 target_include_directories(fo_systemtest_game
     PRIVATE
-        ${PROJECT_SOURCE_DIR}
+        ${PROJECT_SOURCE_DIR}/src/
 )
 
 target_link_libraries(fo_systemtest_game
@@ -38,13 +38,13 @@ add_dependencies(unittest
 
 target_sources(fo_systemtest_game
     PUBLIC
-        ${PROJECT_SOURCE_DIR}/client/ClientApp.h
-        ${PROJECT_SOURCE_DIR}/client/ClientFSMEvents.h
-        ${PROJECT_SOURCE_DIR}/client/ClientNetworking.h
+        ${PROJECT_SOURCE_DIR}/src/common/client/ClientApp.h
+        ${PROJECT_SOURCE_DIR}/src/common/client/ClientFSMEvents.h
+        ${PROJECT_SOURCE_DIR}/src/common/client/ClientNetworking.h
     PRIVATE
-        ${PROJECT_SOURCE_DIR}/client/ClientApp.cpp
-        ${PROJECT_SOURCE_DIR}/client/ClientFSMEvents.cpp
-        ${PROJECT_SOURCE_DIR}/client/ClientNetworking.cpp
+        ${PROJECT_SOURCE_DIR}/src/common/client/ClientApp.cpp
+        ${PROJECT_SOURCE_DIR}/src/common/client/ClientFSMEvents.cpp
+        ${PROJECT_SOURCE_DIR}/src/common/client/ClientNetworking.cpp
 )
 
 set(FO_TEST_GAME

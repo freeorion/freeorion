@@ -56,7 +56,7 @@ DerivedData
 
 # FreeOrion specific
 *.zip
-/util/Version.cpp
+/src/common/util/Version.cpp
 /packaging/windows_installer.nsi
 /packaging/Info.plist
 /doc/apidoc-commit-message

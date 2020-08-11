@@ -115,7 +115,7 @@ build_sys = sys.argv[2]
 
 # A list of tuples containing generators
 generators = [
-    Generator('util/Version.cpp.in', 'util/Version.cpp')
+    Generator('src/common/util/Version.cpp.in', 'src/common/util/Version.cpp')
 ]
 if system() == 'Windows':
     generators.append(NsisInstScriptGenerator('packaging/windows_installer.nsi.in',

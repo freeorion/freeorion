@@ -315,7 +315,7 @@ add_custom_target(freeorionversion
 )
 
 set_source_files_properties(
-    ${CMAKE_CURRENT_SOURCE_DIR}/util/Version.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/common/util/Version.cpp
     PROPERTIES
     GENERATED TRUE
 )
@@ -697,24 +697,25 @@ endif()
 ## Recurse into sources.
 ##
 
-if(BUILD_AI OR BUILD_CLIENT_GG)
-    add_subdirectory(client)
+add_subdirectory(src/common/client)
+add_subdirectory(src/common/combat)
+add_subdirectory(src/common/empire)
+add_subdirectory(src/common/network)
+add_subdirectory(src/common/parse)
+if(BUILD_AI)
+    add_subdirectory(src/server/ai)
 endif()
-add_subdirectory(combat)
-add_subdirectory(Empire)
-add_subdirectory(network)
-add_subdirectory(parse)
 if(BUILD_AI OR BUILD_SERVER)
-    add_subdirectory(python)
+    add_subdirectory(src/server/python)
 endif()
 if(BUILD_SERVER)
-    add_subdirectory(server)
+    add_subdirectory(src/server/server)
 endif()
 if(BUILD_CLIENT_GG)
-    add_subdirectory(UI)
+    add_subdirectory(src/client/gigi)
 endif()
-add_subdirectory(universe)
-add_subdirectory(util)
+add_subdirectory(src/common/universe)
+add_subdirectory(src/common/util)
 add_subdirectory(check)
 add_subdirectory(doc)
 

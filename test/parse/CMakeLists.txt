@@ -13,7 +13,7 @@ target_compile_definitions(fo_unittest_parse
 
 target_include_directories(fo_unittest_parse
     PRIVATE
-        ${PROJECT_SOURCE_DIR}
+        ${PROJECT_SOURCE_DIR}/src/
 )
 
 target_link_libraries(fo_unittest_parse
