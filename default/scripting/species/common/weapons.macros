@@ -13,10 +13,10 @@ BAD_WEAPONS
                 ]
             ]
             effects = [
-                SetMaxDamage partname = "SR_WEAPON_1_1" value = Value - 1
-                SetMaxDamage partname = "SR_WEAPON_2_1" value = Value - 2
-                SetMaxDamage partname = "SR_WEAPON_3_1" value = Value - 3
-                SetMaxDamage partname = "SR_WEAPON_4_1" value = Value - 5
+                SetMaxDamage partname = "SR_WEAPON_1_1" value = Value - ([[SHIP_WEAPON_DAMAGE_FACTOR]] * 1)
+                SetMaxDamage partname = "SR_WEAPON_2_1" value = Value - ([[SHIP_WEAPON_DAMAGE_FACTOR]] * 2)
+                SetMaxDamage partname = "SR_WEAPON_3_1" value = Value - ([[SHIP_WEAPON_DAMAGE_FACTOR]] * 3)
+                SetMaxDamage partname = "SR_WEAPON_4_1" value = Value - ([[SHIP_WEAPON_DAMAGE_FACTOR]] * 5)
             ]
 
         EffectsGroup
@@ -31,9 +31,9 @@ BAD_WEAPONS
                 ]
             ]
             effects = [
-                SetMaxSecondaryStat partname = "FT_HANGAR_2" value = Value - 1
-                SetMaxSecondaryStat partname = "FT_HANGAR_3" value = Value - 1
-                SetMaxSecondaryStat partname = "FT_HANGAR_4" value = Value - 1
+                SetMaxSecondaryStat partname = "FT_HANGAR_2" value = Value - ([[FIGHTER_DAMAGE_FACTOR]] * 1)
+                SetMaxSecondaryStat partname = "FT_HANGAR_3" value = Value - ([[FIGHTER_DAMAGE_FACTOR]] * 1)
+                SetMaxSecondaryStat partname = "FT_HANGAR_4" value = Value - ([[FIGHTER_DAMAGE_FACTOR]] * 1)
             ]
 
         EffectsGroup
@@ -44,7 +44,7 @@ BAD_WEAPONS
                 DesignHasPart name = "SR_WEAPON_0_1"
             ]
             effects =
-                SetMaxSecondaryStat partname = "SR_WEAPON_0_1" value = Value - 1 
+                SetMaxSecondaryStat partname = "SR_WEAPON_0_1" value = Value - 1
 '''
 
 GOOD_WEAPONS
@@ -62,10 +62,10 @@ GOOD_WEAPONS
                 ]
             ]
             effects = [
-                SetMaxDamage partname = "SR_WEAPON_1_1" value = Value + 1
-                SetMaxDamage partname = "SR_WEAPON_2_1" value = Value + 2
-                SetMaxDamage partname = "SR_WEAPON_3_1" value = Value + 3
-                SetMaxDamage partname = "SR_WEAPON_4_1" value = Value + 5
+                SetMaxDamage partname = "SR_WEAPON_1_1" value = Value + ([[SHIP_WEAPON_DAMAGE_FACTOR]] * 1)
+                SetMaxDamage partname = "SR_WEAPON_2_1" value = Value + ([[SHIP_WEAPON_DAMAGE_FACTOR]] * 2)
+                SetMaxDamage partname = "SR_WEAPON_3_1" value = Value + ([[SHIP_WEAPON_DAMAGE_FACTOR]] * 3)
+                SetMaxDamage partname = "SR_WEAPON_4_1" value = Value + ([[SHIP_WEAPON_DAMAGE_FACTOR]] * 5)
             ]
 
         EffectsGroup
@@ -80,9 +80,9 @@ GOOD_WEAPONS
                 ]
             ]
             effects = [
-                SetMaxSecondaryStat partname = "FT_HANGAR_2" value = Value + 1
-                SetMaxSecondaryStat partname = "FT_HANGAR_3" value = Value + 1
-                SetMaxSecondaryStat partname = "FT_HANGAR_4" value = Value + 1
+                SetMaxSecondaryStat partname = "FT_HANGAR_2" value = Value + ([[FIGHTER_DAMAGE_FACTOR]] * 1)
+                SetMaxSecondaryStat partname = "FT_HANGAR_3" value = Value + ([[FIGHTER_DAMAGE_FACTOR]] * 1)
+                SetMaxSecondaryStat partname = "FT_HANGAR_4" value = Value + ([[FIGHTER_DAMAGE_FACTOR]] * 1)
             ]
 
         EffectsGroup
@@ -93,7 +93,7 @@ GOOD_WEAPONS
                 DesignHasPart name = "SR_WEAPON_0_1"
             ]
             effects =
-                SetMaxSecondaryStat partname = "SR_WEAPON_0_1" value = Value + 1            
+                SetMaxSecondaryStat partname = "SR_WEAPON_0_1" value = Value + 1
 '''
 
 GREAT_WEAPONS
@@ -111,10 +111,10 @@ GREAT_WEAPONS
                 ]
             ]
             effects = [
-                SetMaxDamage partname = "SR_WEAPON_1_1" value = Value + 2
-                SetMaxDamage partname = "SR_WEAPON_2_1" value = Value + 4
-                SetMaxDamage partname = "SR_WEAPON_3_1" value = Value + 6
-                SetMaxDamage partname = "SR_WEAPON_4_1" value = Value + 10
+                SetMaxDamage partname = "SR_WEAPON_1_1" value = Value + ([[SHIP_WEAPON_DAMAGE_FACTOR]] * 2)
+                SetMaxDamage partname = "SR_WEAPON_2_1" value = Value + ([[SHIP_WEAPON_DAMAGE_FACTOR]] * 4)
+                SetMaxDamage partname = "SR_WEAPON_3_1" value = Value + ([[SHIP_WEAPON_DAMAGE_FACTOR]] * 6)
+                SetMaxDamage partname = "SR_WEAPON_4_1" value = Value + ([[SHIP_WEAPON_DAMAGE_FACTOR]] * 10)
             ]
 
         EffectsGroup
@@ -129,9 +129,9 @@ GREAT_WEAPONS
                 ]
             ]
             effects = [
-                SetMaxSecondaryStat partname = "FT_HANGAR_2" value = Value + 2
-                SetMaxSecondaryStat partname = "FT_HANGAR_3" value = Value + 2
-                SetMaxSecondaryStat partname = "FT_HANGAR_4" value = Value + 2
+                SetMaxSecondaryStat partname = "FT_HANGAR_2" value = Value + ([[FIGHTER_DAMAGE_FACTOR]] * 2)
+                SetMaxSecondaryStat partname = "FT_HANGAR_3" value = Value + ([[FIGHTER_DAMAGE_FACTOR]] * 2)
+                SetMaxSecondaryStat partname = "FT_HANGAR_4" value = Value + ([[FIGHTER_DAMAGE_FACTOR]] * 2)
             ]
 
         EffectsGroup
@@ -160,10 +160,10 @@ ULTIMATE_WEAPONS
                 ]
             ]
             effects = [
-                SetMaxDamage partname = "SR_WEAPON_1_1" value = Value + 3
-                SetMaxDamage partname = "SR_WEAPON_2_1" value = Value + 6
-                SetMaxDamage partname = "SR_WEAPON_3_1" value = Value + 9
-                SetMaxDamage partname = "SR_WEAPON_4_1" value = Value + 15
+                SetMaxDamage partname = "SR_WEAPON_1_1" value = Value + ([[SHIP_WEAPON_DAMAGE_FACTOR]] * 3)
+                SetMaxDamage partname = "SR_WEAPON_2_1" value = Value + ([[SHIP_WEAPON_DAMAGE_FACTOR]] * 6)
+                SetMaxDamage partname = "SR_WEAPON_3_1" value = Value + ([[SHIP_WEAPON_DAMAGE_FACTOR]] * 9)
+                SetMaxDamage partname = "SR_WEAPON_4_1" value = Value + ([[SHIP_WEAPON_DAMAGE_FACTOR]] * 15)
             ]
 
         EffectsGroup
@@ -178,9 +178,9 @@ ULTIMATE_WEAPONS
                 ]
             ]
             effects = [
-                SetMaxSecondaryStat partname = "FT_HANGAR_2" value = Value + 3
-                SetMaxSecondaryStat partname = "FT_HANGAR_3" value = Value + 3
-                SetMaxSecondaryStat partname = "FT_HANGAR_4" value = Value + 3
+                SetMaxSecondaryStat partname = "FT_HANGAR_2" value = Value + ([[FIGHTER_DAMAGE_FACTOR]] * 3)
+                SetMaxSecondaryStat partname = "FT_HANGAR_3" value = Value + ([[FIGHTER_DAMAGE_FACTOR]] * 3)
+                SetMaxSecondaryStat partname = "FT_HANGAR_4" value = Value + ([[FIGHTER_DAMAGE_FACTOR]] * 3)
             ]
 
         EffectsGroup
@@ -190,8 +190,9 @@ ULTIMATE_WEAPONS
                 Armed
                 DesignHasPart name = "SR_WEAPON_0_1"
             ]
-            effects = [
-                SetMaxDamage partname = "SR_WEAPON_0_1" value = Value + 1
+            effects =
                 SetMaxSecondaryStat partname = "SR_WEAPON_0_1" value = Value + 3
-            ]            
 '''
+
+
+#include "/scripting/common/misc.macros"

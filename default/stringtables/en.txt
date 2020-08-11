@@ -14064,7 +14064,7 @@ SR_WEAPON_1_1_DESC
 
 Upgrading the weapon technology will increase the shot damage.
 
-The weapon's [[encyclopedia DAMAGE_TITLE]] is a combination of the shot damage and any active modifiers. Each mass driver on a ship built by a species with the piloting trait will do an additional 1 damage per piloting level (-1 for Bad Pilots).'''
+The weapon's [[encyclopedia DAMAGE_TITLE]] is a combination of the shot damage and any active modifiers. Each mass driver on a ship built by a species with the piloting trait will do an additional 6 damage per piloting level (-6 for Bad Pilots).'''
 
 SR_WEAPON_2_1
 Laser Weapon
@@ -14074,7 +14074,7 @@ SR_WEAPON_2_1_DESC
 
 Upgrading the weapon technology will increase the shot damage.
 
-The weapon's [[encyclopedia DAMAGE_TITLE]] is a combination of the shot damage and any active modifiers. Each laser weapon on a ship built by a species with the piloting trait will do an additional 2 damage per piloting level (-2 for Bad Pilots). Laser weapon damage can also be enhanced on [[shiphull SH_ORGANIC]] ships with a [[shippart SP_SOLAR_CONCENTRATOR]].'''
+The weapon's [[encyclopedia DAMAGE_TITLE]] is a combination of the shot damage and any active modifiers. Each laser weapon on a ship built by a species with the piloting trait will do an additional 12 damage per piloting level (-12 for Bad Pilots). Laser weapon damage can also be enhanced on [[shiphull SH_ORGANIC]] ships with a [[shippart SP_SOLAR_CONCENTRATOR]].'''
 
 SR_WEAPON_3_1
 Plasma Cannons
@@ -14084,7 +14084,7 @@ SR_WEAPON_3_1_DESC
 
 Upgrading the weapon technology will increase the shot damage.
 
-The weapon's [[encyclopedia DAMAGE_TITLE]] is a combination of the shot damage and any active modifiers. Each plasma cannon on a ship built by a species with the piloting trait will do an additional 3 damage per piloting level (-3 for Bad Pilots).'''
+The weapon's [[encyclopedia DAMAGE_TITLE]] is a combination of the shot damage and any active modifiers. Each plasma cannon on a ship built by a species with the piloting trait will do an additional 18 damage per piloting level (-18 for Bad Pilots).'''
 
 SR_WEAPON_4_1
 Death Ray
@@ -14094,7 +14094,7 @@ SR_WEAPON_4_1_DESC
 
 Upgrading the weapon technology will increase the shot damage.
 
-The weapon's [[encyclopedia DAMAGE_TITLE]] is a combination of the shot damage and any active modifiers. Each death ray on a ship built by a species with the piloting trait will do an additional 5 damage per piloting level (-5 for Bad Pilots).'''
+The weapon's [[encyclopedia DAMAGE_TITLE]] is a combination of the shot damage and any active modifiers. Each death ray on a ship built by a species with the piloting trait will do an additional 30 damage per piloting level (-30 for Bad Pilots).'''
 
 SR_ARC_DISRUPTOR
 Arc Disruptor
