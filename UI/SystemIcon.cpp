@@ -242,9 +242,7 @@ void OwnerColoredSystemName::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 ////////////////////////////////////////////////
 SystemIcon::SystemIcon(GG::X x, GG::Y y, GG::X w, int system_id) :
     GG::Control(x, y, w, GG::Y(Value(w)), GG::INTERACTIVE),
-    m_system_id(system_id),
-    m_selected(false),
-    m_showing_name(false)
+    m_system_id(system_id)
 {}
 
 void SystemIcon::CompleteConstruction() {
@@ -601,8 +599,15 @@ void SystemIcon::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     }
 
     // show system name if not by default
-    if (!m_showing_name)
-        AttachChild(m_colored_name);
+    if (!m_showing_name) {
+        // get font size
+        int name_pts = ClientUI::Pts();
+        if (auto map_wnd = ClientUI::GetClientUI()->GetMapWnd())
+            name_pts = map_wnd->SystemNamePts();
+        auto it = m_colored_names.find(name_pts);
+        if (it != m_colored_names.end())
+            AttachChild(it->second);
+    }
 
     PlaySystemIconRolloverSound();
 
@@ -619,8 +624,10 @@ void SystemIcon::MouseLeave() {
         DetachChild(m_tiny_mouseover_indicator);
 
     // hide name if not showing by default
-    if (!m_showing_name)
-        DetachChild(m_colored_name);
+    if (!m_showing_name) {
+        for (auto& pts_name_ptr : m_colored_names)
+            DetachChild(pts_name_ptr.second);
+    }
 
     MouseLeavingSignal(m_system_id);
 }
@@ -648,23 +655,26 @@ void SystemIcon::Refresh() {
 
 
     // remove existing system name control
-    DetachChildAndReset(m_colored_name);
+    for (auto& pts_name_ptrs : m_colored_names)
+        DetachChild(pts_name_ptrs.second);
 
     // create new system name control
-    if (!name.empty()) {
+    if (m_showing_name && !name.empty()) {
         // get font size
         int name_pts = ClientUI::Pts();
-        if (const auto& map_wnd = ClientUI::GetClientUI()->GetMapWnd()) {
+        if (auto map_wnd = ClientUI::GetClientUI()->GetMapWnd())
             name_pts = map_wnd->SystemNamePts();
-        }
 
         // create and position
-        m_colored_name = GG::Wnd::Create<OwnerColoredSystemName>(m_system_id, name_pts, true);
-        PositionSystemName();
+        auto it = m_colored_names.find(name_pts);
+        if (it == m_colored_names.end()) {
+            it = m_colored_names.emplace(name_pts,
+                                         GG::Wnd::Create<OwnerColoredSystemName>(
+                                            m_system_id, name_pts, true)).first;
+        }
 
-        // attach if appropriate, to display
-        if (m_showing_name)
-            AttachChild(m_colored_name);
+        PositionSystemName(name_pts);
+        AttachChild(it->second);
     }
 
     if (system && !system->OverlayTexture().empty())
@@ -677,23 +687,35 @@ void SystemIcon::Refresh() {
 
 void SystemIcon::ShowName() {
     m_showing_name = true;
-    if (!m_colored_name)
+
+    // get font size
+    int name_pts = ClientUI::Pts();
+    if (auto map_wnd = ClientUI::GetClientUI()->GetMapWnd())
+        name_pts = map_wnd->SystemNamePts();
+
+    auto it = m_colored_names.find(name_pts);
+    if (it == m_colored_names.end())
         Refresh();
     else
-        AttachChild(m_colored_name);
+        AttachChild(it->second);
 }
 
 void SystemIcon::HideName() {
     m_showing_name = false;
-    DetachChild(m_colored_name);
+    for (auto& pts_name_ptr : m_colored_names)
+        DetachChild(pts_name_ptr.second);
 }
 
-void SystemIcon::PositionSystemName() {
-    if (m_colored_name) {
-        GG::X name_left = ( Width()  - m_colored_name->Width()                                      )/2;
-        GG::Y name_top =  ( Height() + GG::Y(EnclosingCircleDiameter()*2) - m_colored_name->Height())/2;
-        m_colored_name->MoveTo(GG::Pt(name_left, name_top));
-    }
+void SystemIcon::PositionSystemName(int pts) {
+    auto it = m_colored_names.find(pts);
+    if (it == m_colored_names.end())
+        return;
+    auto& name = *it;
+    if (!name.second)
+        return;
+    GG::X name_left = ( Width() - name.second->Width()                                        )/2;
+    GG::Y name_top =  ( Height() + GG::Y(EnclosingCircleDiameter()*2) - name.second->Height() )/2;
+    name.second->MoveTo(GG::Pt(name_left, name_top));
 }
 
 bool SystemIcon::InWindow(const GG::Pt& pt) const {

@@ -101,34 +101,26 @@ public:
     mutable boost::signals2::signal<void (int)> RightDoubleClickedSignal;
 
 private:
-    void            PositionSystemName();
+    void PositionSystemName(int pts);
 
-    int                             m_system_id;                //!< the System associated with this SystemIcon
+    std::shared_ptr<GG::Texture> m_disc_texture;    //!< Solid star disc texture
+    std::shared_ptr<GG::Texture> m_halo_texture;    //!< Transparent star halo texture
+    std::shared_ptr<GG::Texture> m_tiny_texture;    //!< Alternate texture shown when icon very small
+    std::shared_ptr<GG::Texture> m_overlay_texture; //!< Extra texture drawn over / behind system
 
-    /** Solid star disc texture. */
-    std::shared_ptr<GG::Texture> m_disc_texture;
+    int                                 m_system_id = -1;                   //!< the System associated with this SystemIcon
+    double                              m_overlay_size = 1.0;               //!< size of extra texture in universe units
+    std::shared_ptr<GG::StaticGraphic>  m_tiny_graphic;                     //!< non-scaled texture shown when zoomed far enough out;
+    std::shared_ptr<RotatingGraphic>    m_selection_indicator;              //!< shown to indicate system is selected in sidepanel
+    std::shared_ptr<RotatingGraphic>    m_tiny_selection_indicator;         //!< non-scaled indicator shown when showing tiny graphic
+    std::shared_ptr<GG::StaticGraphic>  m_mouseover_indicator;              //!< shown when the mouse cursor is over the system and the system has been explored by the client empire;
+    std::shared_ptr<GG::StaticGraphic>  m_mouseover_unexplored_indicator;   //!< shown when the mouse cursor is over the system and teh system is unexplored by the client empire;
+    std::shared_ptr<GG::StaticGraphic>  m_tiny_mouseover_indicator;         //!< non-scaled indicator shown when showing tiny graphic;
+    bool                                m_selected = false;                 //!< is this icon presently selected / should it show m_selected_indicator
+    bool                                m_showing_name = false;             //!< is the icon supposed to show its name?
+    boost::signals2::connection         m_system_connection;
 
-    /** Transparent star halo texture. */
-    std::shared_ptr<GG::Texture> m_halo_texture;
-
-    /** Alternate texture shown when icon very small. */
-    std::shared_ptr<GG::Texture> m_tiny_texture;
-
-    /** Extra texture drawn over / behind system. */
-    std::shared_ptr<GG::Texture> m_overlay_texture;
-
-    double                          m_overlay_size;             //!< size of extra texture in universe units
-    std::shared_ptr<GG::StaticGraphic>              m_tiny_graphic;             //!< non-scaled texture shown when zoomed far enough out;
-    std::shared_ptr<RotatingGraphic>                m_selection_indicator;      //!< shown to indicate system is selected in sidepanel
-    std::shared_ptr<RotatingGraphic>                m_tiny_selection_indicator; //!< non-scaled indicator shown when showing tiny graphic
-    std::shared_ptr<GG::StaticGraphic>              m_mouseover_indicator;      //!< shown when the mouse cursor is over the system and the system has been explored by the client empire;
-    std::shared_ptr<GG::StaticGraphic>              m_mouseover_unexplored_indicator; //!< shown when the mouse cursor is over the system and teh system is unexplored by the client empire;
-    std::shared_ptr<GG::StaticGraphic>              m_tiny_mouseover_indicator; //!< non-scaled indicator shown when showing tiny graphic;
-    bool                            m_selected;                 //!< is this icon presently selected / should it show m_selected_indicator
-    std::shared_ptr<OwnerColoredSystemName>         m_colored_name;             //!< the control that holds the name of the system
-    bool                            m_showing_name;             //!< is the icon supposed to show its name?
-
-    boost::signals2::connection     m_system_connection;
+    std::map<int, std::shared_ptr<OwnerColoredSystemName>>  m_colored_names;//!< the controls that hold the name of the system at various font point sizes
 };
 
 
