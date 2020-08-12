@@ -80,6 +80,7 @@ public:
     /** Fill \a vertex_buffer and with vertex data for the quad spanning between
         \a pt1 and \a pt2 */
     static void InitBuffer(GL2DVertexBuffer& vertex_buffer, const Pt& pt1, const Pt& pt2);
+    static void InitBuffer(GL2DVertexBuffer& vertex_buffer, float x1, float y1, float x2, float y2);
 
     /** Fill \a tex_coord_buff with texture coordinate data for the texture
       * coords specified by \a tex_coords */

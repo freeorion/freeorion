@@ -35,7 +35,6 @@
 using namespace GG;
 
 namespace {
-
     template <typename T>
     T PowerOfTwo(T input)
     {
@@ -122,7 +121,7 @@ void Texture::Blit(const GL2DVertexBuffer& vertex_buffer,
     glBindTexture(GL_TEXTURE_2D, m_opengl_id);
     vertex_buffer.activate();
     tex_coord_buffer.activate();
-    glDrawArrays(GL_TRIANGLES, 0, vertex_buffer.size());
+    glDrawArrays(GL_QUADS, 0, vertex_buffer.size());
 
     if (need_min_filter_change)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_min_filter);
@@ -156,11 +155,16 @@ void Texture::InitBuffer(GL2DVertexBuffer& vertex_buffer, const Pt& pt1, const P
 {
     vertex_buffer.store(pt2.x, pt1.y);
     vertex_buffer.store(pt1.x, pt1.y);
-    vertex_buffer.store(pt2.x, pt2.y);
-
-    vertex_buffer.store(pt1.x, pt1.y);
     vertex_buffer.store(pt1.x, pt2.y);
     vertex_buffer.store(pt2.x, pt2.y);
+}
+
+void Texture::InitBuffer(GL2DVertexBuffer& vertex_buffer, float x1, float y1, float x2, float y2)
+{
+    vertex_buffer.store(x2, y1);
+    vertex_buffer.store(x1, y1);
+    vertex_buffer.store(x1, y2);
+    vertex_buffer.store(x2, y2);
 }
 
 void Texture::InitBuffer(GLTexCoordBuffer& tex_coord_buffer, const GLfloat* tex_coords)
@@ -168,19 +172,13 @@ void Texture::InitBuffer(GLTexCoordBuffer& tex_coord_buffer, const GLfloat* tex_
     if (tex_coords) {
         tex_coord_buffer.store(tex_coords[2], tex_coords[1]);
         tex_coord_buffer.store(tex_coords[0], tex_coords[1]);
-        tex_coord_buffer.store(tex_coords[2], tex_coords[3]);
-
-        tex_coord_buffer.store(tex_coords[0], tex_coords[1]);
         tex_coord_buffer.store(tex_coords[0], tex_coords[3]);
         tex_coord_buffer.store(tex_coords[2], tex_coords[3]);
     } else {
-        tex_coord_buffer.store(1.0f, 0.0f);
-        tex_coord_buffer.store(0.0f, 0.0f);
-        tex_coord_buffer.store(1.0f, 1.0f);
-
-        tex_coord_buffer.store(0.0f, 0.0f);
-        tex_coord_buffer.store(0.0f, 1.0f);
-        tex_coord_buffer.store(1.0f, 1.0f);
+        tex_coord_buffer.store(1.0, 0.0);
+        tex_coord_buffer.store(0.0, 0.0);
+        tex_coord_buffer.store(0.0, 1.0);
+        tex_coord_buffer.store(1.0, 1.0);
     }
 }
 
