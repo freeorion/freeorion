@@ -2996,12 +2996,9 @@ void MapWnd::InitSystemRenderingBuffers() {
     // be.  This allows us to use one set of texture coords for everything, even
     // though the star-halo textures must be rendered at sizes as much as twice
     // as large as the star-disc textures.
-    for (std::size_t i = 0; i < m_system_icons.size(); ++i) {
-        m_star_texture_coords.store( 1.5,-0.5);
-        m_star_texture_coords.store(-0.5,-0.5);
-        m_star_texture_coords.store(-0.5, 1.5);
-        m_star_texture_coords.store( 1.5, 1.5);
-    }
+    GLfloat tex_coords[4] = {-0.5, -0.5, 1.5, 1.5};
+    for (std::size_t i = 0; i < m_system_icons.size(); ++i)
+        GG::Texture::InitBuffer(m_star_texture_coords, tex_coords);
 
 
     for (const auto& system_icon : m_system_icons) {
@@ -3023,20 +3020,13 @@ void MapWnd::InitSystemRenderingBuffers() {
 
         if (icon->DiscTexture()) {
             auto& core_vertices = m_star_core_quad_vertices[icon->DiscTexture()];
-            core_vertices.store(icon_lr_x,icon_ul_y);
-            core_vertices.store(icon_ul_x,icon_ul_y);
-            core_vertices.store(icon_ul_x,icon_lr_y);
-            core_vertices.store(icon_lr_x,icon_lr_y);
+            GG::Texture::InitBuffer(core_vertices, icon_ul_x, icon_ul_y, icon_lr_x, icon_lr_y);
         }
 
         if (icon->HaloTexture()) {
             auto& halo_vertices = m_star_halo_quad_vertices[icon->HaloTexture()];
-            halo_vertices.store(icon_lr_x,icon_ul_y);
-            halo_vertices.store(icon_ul_x,icon_ul_y);
-            halo_vertices.store(icon_ul_x,icon_lr_y);
-            halo_vertices.store(icon_lr_x,icon_lr_y);
+            GG::Texture::InitBuffer(halo_vertices, icon_ul_x, icon_ul_y, icon_lr_x, icon_lr_y);
         }
-
 
         // add (rotated) gaseous substance around system
         if (auto gas_texture = GetGasTexture()) {
@@ -3095,10 +3085,8 @@ void MapWnd::InitSystemRenderingBuffers() {
             const GLfloat tx_low_y = tex_coord_min_y  + (subtexture_y_index + 0)*(tex_coord_max_y - tex_coord_min_y)/3;
             const GLfloat tx_high_y = tex_coord_min_y + (subtexture_y_index + 1)*(tex_coord_max_y - tex_coord_min_y)/3;
 
-            m_galaxy_gas_texture_coords.store(tx_high_x, tx_low_y);
-            m_galaxy_gas_texture_coords.store(tx_low_x,  tx_low_y);
-            m_galaxy_gas_texture_coords.store(tx_low_x,  tx_high_y);
-            m_galaxy_gas_texture_coords.store(tx_high_x, tx_high_y);
+            GLfloat rot_tex_coords[4] = {tx_low_x, tx_low_y, tx_high_x, tx_high_y};
+            GG::Texture::InitBuffer(m_galaxy_gas_texture_coords, rot_tex_coords);
         }
     }
 
@@ -3373,12 +3361,11 @@ namespace {
     // Reimplementation of the boost::hash_range function, embedding
     // boost::hash_combine and using std::hash instead of boost::hash
     struct hash_set {
-        std::size_t operator()(const std::set<int>& set) const
-        {
+        std::size_t operator()(const std::set<int>& set) const {
             std::size_t seed(0);
             std::hash<int> hasher;
 
-            for(auto element : set)
+            for (auto element : set)
                 seed ^= hasher(element) + 0x9e3779b9 + (seed<<6) + (seed>>2);
 
             return seed;
