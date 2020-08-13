@@ -654,17 +654,19 @@ void SystemIcon::Refresh() {
     SetName(name);   // sets GG::Control name.  doesn't affect displayed system name
 
 
+    // get font size
+    int name_pts = ClientUI::Pts();
+    if (auto map_wnd = ClientUI::GetClientUI()->GetMapWnd())
+        name_pts = map_wnd->SystemNamePts();
+
     // remove existing system name control
-    for (auto& pts_name_ptrs : m_colored_names)
-        DetachChild(pts_name_ptrs.second);
+    for (auto& pts_name_ptrs : m_colored_names) {
+        if (!m_showing_name || name.empty() || pts_name_ptrs.first != name_pts)
+            DetachChild(pts_name_ptrs.second);
+    }
 
     // create new system name control
     if (m_showing_name && !name.empty()) {
-        // get font size
-        int name_pts = ClientUI::Pts();
-        if (auto map_wnd = ClientUI::GetClientUI()->GetMapWnd())
-            name_pts = map_wnd->SystemNamePts();
-
         // create and position
         auto it = m_colored_names.find(name_pts);
         if (it == m_colored_names.end()) {
@@ -674,7 +676,8 @@ void SystemIcon::Refresh() {
         }
 
         PositionSystemName(name_pts);
-        AttachChild(it->second);
+        if (it->second->Parent().get() != this)
+            AttachChild(it->second);
     }
 
     if (system && !system->OverlayTexture().empty())
