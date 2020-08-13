@@ -987,16 +987,18 @@ private:
     virtual void BeginNonclientClippingImpl();
     virtual void EndNonclientClippingImpl();
 
+protected:
     /** Code common to DetachChild and DetachChildren. */
-    void DetachChildCore(Wnd* wnd);
+    virtual void DetachChildCore(Wnd* wnd);
 
+private:
     /// m_parent may be expired or null if there is no parent.  m_parent will reset itself if expired.
     mutable std::weak_ptr<Wnd>      m_parent;
-    std::string                     m_name = "";                ///< A user-significant name for this Wnd
+    std::string                     m_name;                     ///< A user-significant name for this Wnd
     std::list<std::shared_ptr<Wnd>> m_children;                 ///< List of ptrs to child windows kept in order of decreasing area
     bool                            m_visible = true;
     bool                            m_needs_prerender = false;  ///< Indicates if Wnd needs a PreRender();
-    std::string                     m_drag_drop_data_type = ""; ///< The type of drag-and-drop data this Wnd represents, if any. If empty/blank, indicates that this Wnd cannot be drag-dropped.
+    std::string                     m_drag_drop_data_type;      ///< The type of drag-and-drop data this Wnd represents, if any. If empty/blank, indicates that this Wnd cannot be drag-dropped.
     ChildClippingMode               m_child_clipping_mode;
     bool                            m_non_client_child = false;
     Pt                              m_upperleft;                ///< Upper left point of window

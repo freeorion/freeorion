@@ -227,6 +227,8 @@ protected:
     //! call DoLayout() even when the size has not changed breaks all text boxes.
     virtual void RedoLayout();
 
+    void DetachChildCore(Wnd* wnd) override;
+
 private:
     struct GG_API RowColParams
     {

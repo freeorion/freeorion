@@ -721,6 +721,16 @@ void Layout::RedoLayout()
     Resize(Size());
 }
 
+void Layout::DetachChildCore(Wnd* wnd)
+{
+    if (!wnd)
+        return;
+
+    this->Remove(wnd);
+
+    Wnd::DetachChildCore(wnd);
+}
+
 void Layout::ChildSizeOrMinSizeChanged()
 {
     if (!m_ignore_child_resize)

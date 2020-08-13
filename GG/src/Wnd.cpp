@@ -140,14 +140,10 @@ std::shared_ptr<BrowseInfoWnd> Wnd::s_default_browse_info_wnd;
 
 Wnd::Wnd() :
     std::enable_shared_from_this<Wnd>(),
-    m_parent(),
     m_child_clipping_mode(DontClip),
     m_upperleft(X0, Y0),
     m_lowerright(X1, Y1),
-    m_max_size(X(1 << 30), Y(1 << 30)),
-    m_layout(),
-    m_containing_layout(),
-    m_flags()
+    m_max_size(X(1 << 30), Y(1 << 30))
 {
     m_browse_modes.resize(1);
     m_browse_modes[0].time = s_default_browse_time;
@@ -629,15 +625,11 @@ void Wnd::DetachChildCore(Wnd* wnd)
         return;
 
     wnd->m_parent.reset();
+    wnd->m_containing_layout.reset();
 
     auto&& layout = GetLayout();
     if (layout && wnd == layout.get())
         m_layout.reset();
-
-    if (auto this_as_layout = dynamic_cast<Layout*>(this)) {
-        this_as_layout->Remove(wnd);
-        wnd->m_containing_layout.reset();
-    }
 }
 
 void Wnd::DetachChildren()
