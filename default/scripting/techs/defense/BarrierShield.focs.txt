@@ -43,7 +43,6 @@ Tech
             scope = And [
                 Planet
                 OwnedBy empire = Source.Owner
-                (LocalCandidate.LastTurnAttackedByShip < CurrentTurn - 1)
             ]
             priority = [[DEFAULT_PRIORITY]]
             effects = SetMaxShield value = Value + ( 60 * [[PLANET_SHIELD_FACTOR]] ) accountinglabel = "DEF_PLAN_BARRIER_SHLD_2"
@@ -74,7 +73,6 @@ Tech
             scope = And [
                 Planet
                 OwnedBy empire = Source.Owner
-                (LocalCandidate.LastTurnAttackedByShip < CurrentTurn - 1)
             ]
             priority = [[DEFAULT_PRIORITY]]
             effects = SetMaxShield value = Value + ( 90 * [[PLANET_SHIELD_FACTOR]] ) accountinglabel = "DEF_PLAN_BARRIER_SHLD_3"
@@ -105,7 +103,6 @@ Tech
             scope = And [
                 Planet
                 OwnedBy empire = Source.Owner
-                (LocalCandidate.LastTurnAttackedByShip < CurrentTurn - 1)
             ]
             priority = [[DEFAULT_PRIORITY]]
             effects = SetMaxShield value = Value + ( 150 * [[PLANET_SHIELD_FACTOR]] ) accountinglabel = "DEF_PLAN_BARRIER_SHLD_4"
