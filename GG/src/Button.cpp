@@ -87,7 +87,11 @@ void Button::Render()
 
 void Button::SizeMove(const Pt& ul, const Pt& lr)
 {
+    GG::Pt sz = Size();
     Wnd::SizeMove(ul, lr);
+    if (sz == Size())
+        return;
+
     m_label->Resize(Size());
 }
 
