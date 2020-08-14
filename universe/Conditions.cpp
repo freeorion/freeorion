@@ -4160,20 +4160,20 @@ namespace {
             // is it a population centre?
             auto obj_type = candidate->ObjectType();
             if (obj_type == OBJ_PLANET) {
-                auto pop = std::static_pointer_cast<const ::Planet>(candidate);
+                auto* pop = static_cast<const ::Planet*>(candidate.get());
                 const std::string& species_name = pop->SpeciesName();
                 // if the popcenter has a species and that species is one of those specified...
                 return !species_name.empty() && (m_names.empty() || std::count(m_names.begin(), m_names.end(), species_name));
             }
             else if (obj_type == OBJ_SHIP) {
-                auto ship = std::static_pointer_cast<const Ship>(candidate);
+                auto* ship = static_cast<const Ship*>(candidate.get());
                 // if the ship has a species and that species is one of those specified...
                 const std::string& species_name = ship->SpeciesName();
                 return !species_name.empty() && (m_names.empty() || std::count(m_names.begin(), m_names.end(), species_name));
             }
             else if (obj_type == OBJ_BUILDING) {
                 // is it a building on a planet?
-                auto building = std::static_pointer_cast<const ::Building>(candidate);
+                auto* building = static_cast<const ::Building*>(candidate.get());
                 auto planet = m_objects.get<Planet>(building->PlanetID());
                 const std::string& species_name = planet->SpeciesName();
                 // if the planet (which IS a popcenter) has a species and that species is one of those specified...
