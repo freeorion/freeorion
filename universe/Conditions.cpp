@@ -4635,6 +4635,24 @@ bool FocusType::operator==(const Condition& rhs) const {
 }
 
 namespace {
+    const std::string& GetCandidateFocus(const UniverseObject* candidate,
+                                         const ObjectMap& objects)
+    {
+        // is it a population centre?
+        auto obj_type = candidate->ObjectType();
+        if (obj_type == OBJ_PLANET) {
+            auto* res = static_cast<const ::Planet*>(candidate);
+            return res->Focus();
+        }
+        else if (obj_type == OBJ_BUILDING) {
+            // is it a building on a planet?
+            auto* building = static_cast<const ::Building*>(candidate);
+            if (auto planet = objects.get<Planet>(building->PlanetID()))
+                return planet->Focus();
+        }
+        return EMPTY_STRING;
+    }
+
     struct FocusTypeSimpleMatch {
         FocusTypeSimpleMatch(const std::vector<std::string>& names, const ObjectMap& objects) :
             m_names(names),
@@ -4645,17 +4663,8 @@ namespace {
             if (!candidate)
                 return false;
 
-            // is it a ResourceCenter or a Building on a Planet (that is a ResourceCenter)
-            auto* res_center = dynamic_cast<const ResourceCenter*>(candidate.get());
-            if (!res_center && candidate->ObjectType() == OBJ_BUILDING) {
-                auto* building = static_cast<const ::Building*>(candidate.get());
-                if (auto planet = m_objects.get<Planet>(building->PlanetID()))
-                    res_center = static_cast<const ResourceCenter*>(planet.get());
-            }
-            if (res_center) {
-                return !res_center->Focus().empty() &&
-                    std::count(m_names.begin(), m_names.end(), res_center->Focus());
-            }
+            auto& focus_name{GetCandidateFocus(candidate.get(), m_objects)};
+            return !focus_name.empty() && (m_names.empty() || std::count(m_names.begin(), m_names.end(), focus_name));
 
             return false;
         }
@@ -4734,19 +4743,16 @@ bool FocusType::Match(const ScriptingContext& local_context) const {
         return false;
     }
 
-    // is it a ResourceCenter or a Building on a Planet (that is a ResourceCenter)
-    auto res_center = std::dynamic_pointer_cast<const ResourceCenter>(candidate);
-    std::shared_ptr<const ::Building> building;
-    if (!res_center && (building = std::dynamic_pointer_cast<const ::Building>(candidate))) {
-        if (auto planet = local_context.ContextObjects().get<Planet>(building->PlanetID()))
-            res_center = std::dynamic_pointer_cast<const ResourceCenter>(planet);
+    auto& focus_name{GetCandidateFocus(candidate.get(), local_context.ContextObjects())};
+
+    if (m_names.empty())
+        return !focus_name.empty();
+
+    for (auto& name : m_names) {
+        if (name->Eval(local_context) == focus_name)
+            return true;
     }
-    if (res_center) {
-        for (auto& name : m_names) {
-            if (name->Eval(local_context) == res_center->Focus())
-                return true;
-        }
-    }
+
     return false;
 }
 
