@@ -4147,6 +4147,28 @@ bool Species::operator==(const Condition& rhs) const {
 }
 
 namespace {
+    const std::string& GetCandidateSpecies(const UniverseObject* candidate,
+                                           const ObjectMap& objects)
+    {
+        // is it a population centre?
+        auto obj_type = candidate->ObjectType();
+        if (obj_type == OBJ_PLANET) {
+            auto* pop = static_cast<const ::Planet*>(candidate);
+            return pop->SpeciesName();
+        }
+        else if (obj_type == OBJ_SHIP) {
+            auto* ship = static_cast<const Ship*>(candidate);
+            return ship->SpeciesName();
+        }
+        else if (obj_type == OBJ_BUILDING) {
+            // is it a building on a planet?
+            auto* building = static_cast<const ::Building*>(candidate);
+            if (auto planet = objects.get<Planet>(building->PlanetID()))
+                return planet->SpeciesName();
+        }
+        return EMPTY_STRING;
+    }
+
     struct SpeciesSimpleMatch {
         SpeciesSimpleMatch(const std::vector<std::string>& names, const ObjectMap& objects) :
             m_names(names),
@@ -4157,30 +4179,8 @@ namespace {
             if (!candidate)
                 return false;
 
-            // is it a population centre?
-            auto obj_type = candidate->ObjectType();
-            if (obj_type == OBJ_PLANET) {
-                auto* pop = static_cast<const ::Planet*>(candidate.get());
-                const std::string& species_name = pop->SpeciesName();
-                // if the popcenter has a species and that species is one of those specified...
-                return !species_name.empty() && (m_names.empty() || std::count(m_names.begin(), m_names.end(), species_name));
-            }
-            else if (obj_type == OBJ_SHIP) {
-                auto* ship = static_cast<const Ship*>(candidate.get());
-                // if the ship has a species and that species is one of those specified...
-                const std::string& species_name = ship->SpeciesName();
-                return !species_name.empty() && (m_names.empty() || std::count(m_names.begin(), m_names.end(), species_name));
-            }
-            else if (obj_type == OBJ_BUILDING) {
-                // is it a building on a planet?
-                auto* building = static_cast<const ::Building*>(candidate.get());
-                auto planet = m_objects.get<Planet>(building->PlanetID());
-                const std::string& species_name = planet->SpeciesName();
-                // if the planet (which IS a popcenter) has a species and that species is one of those specified...
-                return !species_name.empty() && (m_names.empty() || std::count(m_names.begin(), m_names.end(), species_name));
-            }
-
-            return false;
+            auto& species_name{GetCandidateSpecies(candidate.get(), m_objects)};
+            return !species_name.empty() && (m_names.empty() || std::count(m_names.begin(), m_names.end(), species_name));
         }
 
         const std::vector<std::string>& m_names;
@@ -4269,35 +4269,16 @@ bool Species::Match(const ScriptingContext& local_context) const {
         return false;
     }
 
-    // is it a planet or a building on a planet? TODO: factor out
-    auto planet = std::dynamic_pointer_cast<const Planet>(candidate);
-    std::shared_ptr<const ::Building> building;
-    if (!planet && (building = std::dynamic_pointer_cast<const ::Building>(candidate)))
-        planet = local_context.ContextObjects().get<Planet>(building->PlanetID());
-    if (planet) {
-        if (m_names.empty()) {
-            return !planet->SpeciesName().empty();  // match any species name
-        } else {
-            // match only specified species names
-            for (auto& name : m_names) {
-                if (name->Eval(local_context) == planet->SpeciesName())
-                    return true;
-            }
-        }
+    auto& species_name{GetCandidateSpecies(candidate.get(), local_context.ContextObjects())};
+
+    if (m_names.empty())
+        return !species_name.empty();
+
+    for (auto& name : m_names) {
+        if (name->Eval(local_context) == species_name)
+            return true;
     }
-    // is it a ship?
-    auto ship = std::dynamic_pointer_cast<const Ship>(candidate);
-    if (ship) {
-        if (m_names.empty()) {
-            return !ship->SpeciesName().empty();    // match any species name
-        } else {
-            // match only specified species names
-            for (auto& name : m_names) {
-                if (name->Eval(local_context) == ship->SpeciesName())
-                    return true;
-            }
-        }
-    }
+
     return false;
 }
 
@@ -4665,11 +4646,11 @@ namespace {
                 return false;
 
             // is it a ResourceCenter or a Building on a Planet (that is a ResourceCenter)
-            auto res_center = std::dynamic_pointer_cast<const ResourceCenter>(candidate);
-            std::shared_ptr<const ::Building> building;
-            if (!res_center && (building = std::dynamic_pointer_cast<const ::Building>(candidate))) {
+            auto* res_center = dynamic_cast<const ResourceCenter*>(candidate.get());
+            if (!res_center && candidate->ObjectType() == OBJ_BUILDING) {
+                auto* building = static_cast<const ::Building*>(candidate.get());
                 if (auto planet = m_objects.get<Planet>(building->PlanetID()))
-                    res_center = std::dynamic_pointer_cast<const ResourceCenter>(planet);
+                    res_center = static_cast<const ResourceCenter*>(planet.get());
             }
             if (res_center) {
                 return !res_center->Focus().empty() &&
