@@ -54,30 +54,32 @@ namespace {
 }
 
 void BufferStoreCircleArcVertices(GG::GL2DVertexBuffer& buffer, const GG::Pt& ul, const GG::Pt& lr,
-                                  double theta1, double theta2, bool filled_shape, int num_slices, bool fan)
+                                  double theta1, double theta2, bool filled_shape, int num_slices,
+                                  bool fan)
 {
     int wd = Value(lr.x - ul.x), ht = Value(lr.y - ul.y);
     double center_x = Value(ul.x + wd / 2.0);
     double center_y = Value(ul.y + ht / 2.0);
     double r = std::min(wd / 2.0, ht / 2.0);
-    const double PI = 3.141594;
+    const double PI = 3.141594; // intentionally slightly more than pi
+    const double TWO_PI = 2.0 * PI;
 
     // correct theta* values to range [0, 2pi)
     if (theta1 < 0)
-        theta1 += (int(-theta1 / (2 * PI)) + 1) * 2 * PI;
-    else if (theta1 >= 2 * PI)
-        theta1 -= int(theta1 / (2 * PI)) * 2 * PI;
+        theta1 += (int(-theta1 / TWO_PI) + 1) * TWO_PI;
+    else if (theta1 >= TWO_PI)
+        theta1 -= int(theta1 / TWO_PI) * TWO_PI;
     if (theta2 < 0)
-        theta2 += (int(-theta2 / (2 * PI)) + 1) * 2 * PI;
-    else if (theta2 >= 2 * PI)
-        theta2 -= int(theta2 / (2 * PI)) * 2 * PI;
+        theta2 += (int(-theta2 / TWO_PI) + 1) * TWO_PI;
+    else if (theta2 >= TWO_PI)
+        theta2 -= int(theta2 / TWO_PI) * TWO_PI;
 
     int SLICES = 50;
     if (num_slices <= 0)
         SLICES = std::min(std::max(12, 3 + std::max(wd, ht)), 50);  // this is a good guess at how much to tesselate the circle coordinates (50 segments max)
     else
         SLICES = num_slices;
-    const double   HORZ_THETA = (2 * PI) / SLICES;
+    const double HORZ_THETA = TWO_PI / SLICES;
 
     static std::map<int, std::vector<double>> unit_circle_coords;
     std::vector<double>& unit_vertices = unit_circle_coords[SLICES];
