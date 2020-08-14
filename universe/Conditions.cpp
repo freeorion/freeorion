@@ -4817,14 +4817,14 @@ namespace {
         {}
 
         bool operator()(const std::shared_ptr<const UniverseObject>& candidate) const {
-            if (!candidate)
+            if (!candidate || m_types.empty())
                 return false;
 
-            std::shared_ptr<const System> system = m_objects.get<System>(candidate->SystemID());
-            if (system || (system = std::dynamic_pointer_cast<const System>(candidate)))
-                return !m_types.empty() && std::count(m_types.begin(), m_types.end(), system->GetStarType());
+            auto* system = m_objects.get<System>(candidate->SystemID()).get();
+            if (!system && candidate->ObjectType() == OBJ_SYSTEM)
+                system = static_cast<const System*>(candidate.get());
 
-            return false;
+            return std::count(m_types.begin(), m_types.end(), system->GetStarType());
         }
 
         const std::vector< ::StarType>& m_types;
@@ -4901,12 +4901,12 @@ bool StarType::Match(const ScriptingContext& local_context) const {
         return false;
     }
 
-    std::shared_ptr<const System> system = local_context.ContextObjects().get<System>(candidate->SystemID());
-    if (system || (system = std::dynamic_pointer_cast<const System>(candidate))) {
-        for (auto& type : m_types) {
-            if (type->Eval(local_context) == system->GetStarType())
-                return true;
-        }
+    auto* system = local_context.ContextObjects().get<System>(candidate->SystemID()).get();
+    if (!system && candidate->ObjectType() == OBJ_SYSTEM)
+        system = static_cast<const System*>(candidate.get());
+    for (auto& type : m_types) {
+        if (type->Eval(local_context) == system->GetStarType())
+            return true;
     }
     return false;
 }
