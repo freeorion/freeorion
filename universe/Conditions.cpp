@@ -4964,7 +4964,7 @@ namespace {
                 return false;
 
             // is it a ship?
-            auto ship = std::dynamic_pointer_cast<const ::Ship>(candidate);
+            auto ship = dynamic_cast<const ::Ship*>(candidate.get());
             if (!ship)
                 return false;
             // with a valid design?
@@ -5097,12 +5097,12 @@ namespace {
             if (!candidate)
                 return false;
 
-            std::shared_ptr<const Ship> ship = nullptr;
-            if (auto fighter = std::dynamic_pointer_cast<const ::Fighter>(candidate)) {
+            const Ship* ship = nullptr;
+            if (auto fighter = dynamic_cast<const ::Fighter*>(candidate.get())) {
                 // it is a fighter
-                ship = m_objects.get<Ship>(fighter->LaunchedFrom());
+                ship = m_objects.get<Ship>(fighter->LaunchedFrom()).get();
             } else {
-                ship = std::dynamic_pointer_cast<const ::Ship>(candidate);
+                ship = dynamic_cast<const ::Ship*>(candidate.get());
             }
 
             // is it a ship
@@ -5281,7 +5281,7 @@ namespace {
                 return false;
 
             // is it a ship?
-            auto ship = std::dynamic_pointer_cast<const ::Ship>(candidate);
+            auto ship = dynamic_cast<const ::Ship*>(candidate.get());
             if (!ship)
                 return false;
             // with a valid design?
@@ -5433,7 +5433,7 @@ namespace {
         {}
 
         bool operator()(const std::shared_ptr<const UniverseObject>& candidate) const {
-            auto ship = std::dynamic_pointer_cast<const Ship>(candidate);
+            auto ship = dynamic_cast<const Ship*>(candidate.get());
             if (!ship)
                 return false;
             const ShipDesign* candidate_design = ship->Design();
@@ -5564,7 +5564,7 @@ namespace {
                 return false;
             if (m_design_id == INVALID_DESIGN_ID)
                 return false;
-            if (auto ship = std::dynamic_pointer_cast<const Ship>(candidate))
+            if (auto ship = dynamic_cast<const Ship*>(candidate.get()))
                 if (ship->DesignID() == m_design_id)
                     return true;
             return false;
@@ -5666,9 +5666,9 @@ namespace {
             if (!candidate)
                 return false;
 
-            if (auto ship = std::dynamic_pointer_cast<const ::Ship>(candidate))
+            if (auto ship = dynamic_cast<const ::Ship*>(candidate.get()))
                 return ship->ProducedByEmpireID() == m_empire_id;
-            else if (auto building = std::dynamic_pointer_cast<const ::Building>(candidate))
+            else if (auto building = dynamic_cast<const ::Building*>(candidate.get()))
                 return building->ProducedByEmpireID() == m_empire_id;
             return false;
         }
@@ -6076,7 +6076,7 @@ namespace {
         bool operator()(const std::shared_ptr<const UniverseObject>& candidate) const {
             if (!candidate)
                 return false;
-            auto ship = std::dynamic_pointer_cast<const Ship>(candidate);
+            auto ship = dynamic_cast<const Ship*>(candidate.get());
             if (!ship)
                 return false;
             const Meter* meter = ship->GetPartMeter(m_meter, m_part_name);
@@ -7648,9 +7648,9 @@ bool CanAddStarlaneConnection::operator==(const Condition& rhs) const {
 namespace {
     // check if two destination systems, connected to the same origin system
     // would have starlanes too close angularly to eachother
-    bool LanesAngularlyTooClose(std::shared_ptr<const UniverseObject> sys1,
-                                std::shared_ptr<const UniverseObject> lane1_sys2,
-                                std::shared_ptr<const UniverseObject> lane2_sys2)
+    bool LanesAngularlyTooClose(const UniverseObject* sys1,
+                                const UniverseObject* lane1_sys2,
+                                const UniverseObject* lane2_sys2)
     {
         if (!sys1 || !lane1_sys2 || !lane2_sys2)
             return true;
@@ -7690,9 +7690,9 @@ namespace {
     // are to eachother. if the third system is further than the endpoints, than
     // the distance to the line is not considered and the lane is considered
     // acceptable
-    bool ObjectTooCloseToLane(std::shared_ptr<const UniverseObject> lane_end_sys1,
-                              std::shared_ptr<const UniverseObject> lane_end_sys2,
-                              std::shared_ptr<const UniverseObject> obj)
+    bool ObjectTooCloseToLane(const UniverseObject* lane_end_sys1,
+                              const UniverseObject* lane_end_sys2,
+                              const UniverseObject* obj)
     {
         if (!lane_end_sys1 || !lane_end_sys2 || !obj)
             return true;
@@ -7753,10 +7753,10 @@ namespace {
     inline float CrossProduct(float dx1, float dy1, float dx2, float dy2)
     { return dx1*dy2 - dy1*dx2; }
 
-    bool LanesCross(std::shared_ptr<const System> lane1_end_sys1,
-                    std::shared_ptr<const System> lane1_end_sys2,
-                    std::shared_ptr<const System> lane2_end_sys1,
-                    std::shared_ptr<const System> lane2_end_sys2)
+    bool LanesCross(const System* lane1_end_sys1,
+                    const System* lane1_end_sys2,
+                    const System* lane2_end_sys1,
+                    const System* lane2_end_sys2)
     {
         // are all endpoints valid systems?
         if (!lane1_end_sys1 || !lane1_end_sys2 || !lane2_end_sys1 || !lane2_end_sys2)
@@ -7818,8 +7818,8 @@ namespace {
         return true;
     }
 
-    bool LaneCrossesExistingLane(std::shared_ptr<const System> lane_end_sys1,
-                                 std::shared_ptr<const System> lane_end_sys2,
+    bool LaneCrossesExistingLane(const System* lane_end_sys1,
+                                 const System* lane_end_sys2,
                                  const ObjectMap& objects)
     {
         if (!lane_end_sys1 || !lane_end_sys2 || lane_end_sys1 == lane_end_sys2)
@@ -7828,14 +7828,14 @@ namespace {
         // loop over all existing lanes in all systems, checking if a lane
         // beween the specified systems would cross any of the existing lanes
         for (auto& system : objects.all<System>()) {
-            if (system == lane_end_sys1 || system == lane_end_sys2)
+            if (system.get() == lane_end_sys1 || system.get() == lane_end_sys2)
                 continue;
 
             const auto& sys_existing_lanes = system->StarlanesWormholes();
 
             // check all existing lanes of currently-being-checked system
             for (const auto& lane : sys_existing_lanes) {
-                auto lane_end_sys3 = objects.get<System>(lane.first);
+                auto lane_end_sys3 = objects.get<System>(lane.first).get();
                 if (!lane_end_sys3)
                     continue;
                 // don't need to check against existing lanes that include one
@@ -7843,7 +7843,7 @@ namespace {
                 if (lane_end_sys3 == lane_end_sys1 || lane_end_sys3 == lane_end_sys2)
                     continue;
 
-                if (LanesCross(lane_end_sys1, lane_end_sys2, system, lane_end_sys3)) {
+                if (LanesCross(lane_end_sys1, lane_end_sys2, system.get(), lane_end_sys3)) {
                     //TraceLogger() << "... ... ... lane from: " << lane_end_sys1->UniverseObject::Name() << " to: " << lane_end_sys2->UniverseObject::Name()
                     //          << " crosses lane from: " << system->UniverseObject::Name() << " to: " << lane_end_sys3->UniverseObject::Name() << std::endl;
                     return true;
@@ -7854,8 +7854,8 @@ namespace {
         return false;
     }
 
-    bool LaneTooCloseToOtherSystem(std::shared_ptr<const System> lane_end_sys1,
-                                   std::shared_ptr<const System> lane_end_sys2,
+    bool LaneTooCloseToOtherSystem(const System* lane_end_sys1,
+                                   const System* lane_end_sys2,
                                    const ObjectMap& objects)
     {
         if (!lane_end_sys1 || !lane_end_sys2 || lane_end_sys1 == lane_end_sys2)
@@ -7864,10 +7864,10 @@ namespace {
         // loop over all existing systems, checking if each is too close to a
         // lane between the specified lane endpoints
         for (auto& system : objects.all<System>()) {
-            if (system == lane_end_sys1 || system == lane_end_sys2)
+            if (system.get() == lane_end_sys1 || system.get() == lane_end_sys2)
                 continue;
 
-            if (ObjectTooCloseToLane(lane_end_sys1, lane_end_sys2, system))
+            if (ObjectTooCloseToLane(lane_end_sys1, lane_end_sys2, system.get()))
                 return true;
         }
 
@@ -7875,8 +7875,8 @@ namespace {
     }
 
     struct CanAddStarlaneConnectionSimpleMatch {
-        CanAddStarlaneConnectionSimpleMatch(const ObjectSet& destination_objects, const ObjectMap& objects) :
-            m_destination_systems(),
+        CanAddStarlaneConnectionSimpleMatch(const ObjectSet& destination_objects,
+                                            const ObjectMap& objects) :
             m_objects(objects)
         {
             // get (one of each of) set of systems that are or that contain any
@@ -7884,9 +7884,11 @@ namespace {
             std::set<std::shared_ptr<const System>> dest_systems;
             for (auto& obj : destination_objects) {
                 if (auto sys = m_objects.get<System>(obj->SystemID()))
-                    dest_systems.insert(sys);
+                    dest_systems.emplace(std::move(sys));
             }
-            std::copy(dest_systems.begin(), dest_systems.end(), std::inserter(m_destination_systems, m_destination_systems.end()));
+            std::copy(std::make_move_iterator(dest_systems.begin()),
+                      std::make_move_iterator(dest_systems.end()),
+                      std::inserter(m_destination_systems, m_destination_systems.end()));
         }
 
         bool operator()(const std::shared_ptr<const UniverseObject>& candidate) const {
@@ -7894,9 +7896,9 @@ namespace {
                 return false;
 
             // get system from candidate
-            auto candidate_sys = std::dynamic_pointer_cast<const System>(candidate);
+            auto candidate_sys = dynamic_cast<const System*>(candidate.get());
             if (!candidate_sys)
-                candidate_sys = m_objects.get<System>(candidate->SystemID());
+                candidate_sys = m_objects.get<System>(candidate->SystemID()).get();
             if (!candidate_sys)
                 return false;
 
@@ -7918,13 +7920,15 @@ namespace {
             // present lanes of the candidate system
             //TraceLogger() << "... Checking lanes of candidate system: " << candidate->UniverseObject::Name() << std::endl;
             for (const auto& lane : candidate_sys->StarlanesWormholes()) {
-                auto candidate_existing_lane_end_sys = m_objects.get<System>(lane.first);
+                auto candidate_existing_lane_end_sys = m_objects.get<System>(lane.first).get();
                 if (!candidate_existing_lane_end_sys)
                     continue;
 
                 // check this existing lane against potential lanes to all destination systems
                 for (auto& dest_sys : m_destination_systems) {
-                    if (LanesAngularlyTooClose(candidate_sys, candidate_existing_lane_end_sys, dest_sys)) {
+                    if (LanesAngularlyTooClose(candidate_sys, candidate_existing_lane_end_sys,
+                                               dest_sys.get()))
+                    {
                         //TraceLogger() << " ... ... can't add lane from candidate: " << candidate_sys->UniverseObject::Name() << " to " << dest_sys->UniverseObject::Name() << " due to existing lane to " << candidate_existing_lane_end_sys->UniverseObject::Name() << std::endl;
                         return false;
                     }
@@ -7939,11 +7943,11 @@ namespace {
                 // check this destination system's existing lanes against a lane
                 // to the candidate system
                 for (const auto& dest_lane : dest_sys->StarlanesWormholes()) {
-                    auto dest_lane_end_sys = m_objects.get<System>(dest_lane.first);
+                    auto dest_lane_end_sys = m_objects.get<System>(dest_lane.first).get();
                     if (!dest_lane_end_sys)
                         continue;
 
-                    if (LanesAngularlyTooClose(dest_sys, candidate_sys, dest_lane_end_sys)) {
+                    if (LanesAngularlyTooClose(dest_sys.get(), candidate_sys, dest_lane_end_sys)) {
                         //TraceLogger() << " ... ... can't add lane from candidate: " << candidate_sys->UniverseObject::Name() << " to " << dest_sys->UniverseObject::Name() << " due to existing lane from dest to " << dest_lane_end_sys->UniverseObject::Name() << std::endl;
                         return false;
                     }
@@ -7956,13 +7960,13 @@ namespace {
             for (auto it1 = m_destination_systems.begin();
                  it1 != m_destination_systems.end(); ++it1)
             {
-                auto dest_sys1 = *it1;
+                auto dest_sys1 = it1->get();
 
                 // don't need to check a lane in both directions, so start at one past it1
                 auto it2 = it1;
                 ++it2;
                 for (; it2 != m_destination_systems.end(); ++it2) {
-                    auto dest_sys2 = *it2;
+                    auto dest_sys2 = it2->get();
                     if (LanesAngularlyTooClose(candidate_sys, dest_sys1, dest_sys2)) {
                         //TraceLogger() << " ... ... can't add lane from candidate: " << candidate_sys->UniverseObject::Name() << " to " << dest_sys1->UniverseObject::Name() << " and also to " << dest_sys2->UniverseObject::Name() << std::endl;
                         return false;
@@ -7975,7 +7979,7 @@ namespace {
             // system they are not connected to
             //TraceLogger() << "... Checking proposed lanes for proximity to other systems" <<std::endl;
             for (auto& dest_sys : m_destination_systems) {
-                if (LaneTooCloseToOtherSystem(candidate_sys, dest_sys, m_objects)) {
+                if (LaneTooCloseToOtherSystem(candidate_sys, dest_sys.get(), m_objects)) {
                     //TraceLogger() << " ... ... can't add lane from candidate: " << candidate_sys->Name() << " to " << dest_sys->Name() << " due to proximity to another system." << std::endl;
                     return false;
                 }
@@ -7985,7 +7989,7 @@ namespace {
             // check that there are no lanes already existing that cross the proposed lanes
             //TraceLogger() << "... Checking for potential lanes crossing existing lanes" << std::endl;
             for (auto& dest_sys : m_destination_systems) {
-                if (LaneCrossesExistingLane(candidate_sys, dest_sys, m_objects)) {
+                if (LaneCrossesExistingLane(candidate_sys, dest_sys.get(), m_objects)) {
                     //TraceLogger() << " ... ... can't add lane from candidate: " << candidate_sys->Name() << " to " << dest_sys->Name() << " due to crossing an existing lane." << std::endl;
                     return false;
                 }
@@ -8041,7 +8045,8 @@ bool CanAddStarlaneConnection::Match(const ScriptingContext& local_context) cons
     ObjectSet subcondition_matches;
     m_condition->Eval(local_context, subcondition_matches);
 
-    return CanAddStarlaneConnectionSimpleMatch(subcondition_matches, local_context.ContextObjects())(candidate);
+    return CanAddStarlaneConnectionSimpleMatch(subcondition_matches,
+                                               local_context.ContextObjects())(candidate);
 }
 
 void CanAddStarlaneConnection::SetTopLevelContent(const std::string& content_name) {
@@ -8202,10 +8207,10 @@ bool Stationary::Match(const ScriptingContext& local_context) const {
     // the only objects that can move are fleets and the ships in them.  so,
     // attempt to cast the candidate object to a fleet or ship, and if it's a ship
     // get the fleet of that ship
-    auto fleet = std::dynamic_pointer_cast<const Fleet>(candidate);
+    auto fleet = dynamic_cast<const Fleet*>(candidate.get());
     if (!fleet)
-        if (auto ship = std::dynamic_pointer_cast<const Ship>(candidate))
-            fleet = local_context.ContextObjects().get<Fleet>(ship->FleetID());
+        if (auto ship = dynamic_cast<const Ship*>(candidate.get()))
+            fleet = local_context.ContextObjects().get<Fleet>(ship->FleetID()).get();
 
     if (fleet) {
         // if a fleet is available, it is "moving", or not stationary, if it's
@@ -8273,10 +8278,10 @@ bool Aggressive::Match(const ScriptingContext& local_context) const {
     // the only objects that can be aggressive are fleets and the ships in them.
     // so, attempt to cast the candidate object to a fleet or ship, and if it's
     // a ship get the fleet of that ship
-    auto fleet = std::dynamic_pointer_cast<const Fleet>(candidate);
+    auto fleet = dynamic_cast<const Fleet*>(candidate.get());
     if (!fleet)
-        if (auto ship = std::dynamic_pointer_cast<const Ship>(candidate))
-            fleet = local_context.ContextObjects().get<Fleet>(ship->FleetID());
+        if (auto ship = dynamic_cast<const Ship*>(candidate.get()))
+            fleet = local_context.ContextObjects().get<Fleet>(ship->FleetID()).get();
 
     if (!fleet)
         return false;
