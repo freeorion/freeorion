@@ -1,6 +1,7 @@
 #include "Parse.h"
 
 #include "EffectParser.h"
+#include "CommonParamsParser.h"
 
 #include "../universe/ValueRef.h"
 #include "../universe/Condition.h"
@@ -41,13 +42,15 @@ namespace {
             graphic(graphic_)
         {}
 
-        std::string         name;
-        std::string         description;
-        std::string         short_description;
-        std::string         category;
+        std::string             name;
+        std::string             description;
+        std::string             short_description;
+        std::string             category;
+        std::set<std::string>   exclusions;
+        std::set<std::string>   prerequisites;
         const boost::optional<parse::detail::value_ref_payload<double>> adoption_cost;
         const boost::optional<parse::effects_group_payload>&            effects;
-        const std::string&  graphic;
+        const std::string&      graphic;
     };
 
     void insert_policy(PolicyManager::PoliciesTypeMap& policies, policy_pod policy_, bool& pass) {
@@ -57,6 +60,8 @@ namespace {
             std::move(policy_.short_description),
             std::move(policy_.category),
             (policy_.adoption_cost ? policy_.adoption_cost->OpenEnvelope(pass) : nullptr),
+            std::move(policy_.prerequisites),
+            std::move(policy_.exclusions),
             (policy_.effects ? OpenEnvelopes(*policy_.effects, pass) : std::vector<std::unique_ptr<Effect::EffectsGroup>>()),
             policy_.graphic);
 
@@ -76,7 +81,9 @@ namespace {
             grammar::base_type(start),
             condition_parser(tok, label),
             string_grammar(tok, label, condition_parser),
+            tags_parser(tok, label),
             double_rules(tok, label, condition_parser, string_grammar),
+            common_rules(tok, label, condition_parser, string_grammar, tags_parser),
             effects_group_grammar(tok, label, condition_parser, string_grammar)
         {
             namespace phoenix = boost::phoenix;
@@ -128,6 +135,8 @@ namespace {
         parse::conditions_parser_grammar    condition_parser;
         const parse::string_parser_grammar  string_grammar;
         parse::double_parser_rules          double_rules;
+        parse::detail::tags_grammar         tags_parser;
+        parse::detail::common_params_rules  common_rules;
         parse::effects_group_grammar        effects_group_grammar;
         policy_rule                         policy;
         start_rule                          start;

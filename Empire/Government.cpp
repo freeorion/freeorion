@@ -32,6 +32,8 @@ namespace {
 Policy::Policy(std::string name, std::string description,
                std::string short_description, std::string category,
                std::unique_ptr<ValueRef::ValueRef<double>>&& adoption_cost,
+               std::set<std::string>&& prerequisites,
+               std::set<std::string>&& exclusions,
                std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
                std::string graphic) :
     m_name(std::move(name)),
@@ -39,6 +41,8 @@ Policy::Policy(std::string name, std::string description,
     m_short_description(std::move(short_description)),
     m_category(std::move(category)),
     m_adoption_cost(std::move(adoption_cost)),
+    m_prerequisites(std::move(prerequisites)),
+    m_exclusions(std::move(exclusions)),
     m_graphic(std::move(graphic))
 {
     for (auto&& effect : effects)
@@ -58,6 +62,25 @@ std::string Policy::Dump(unsigned short ntabs) const {
     retval += DumpIndent(ntabs+1) + "shortdescription = \"" + m_short_description + "\"\n";
     retval += DumpIndent(ntabs+1) + "category = \"" + m_category + "\"\n";
     retval += DumpIndent(ntabs+1) + "adoptioncost = " + m_adoption_cost->Dump(ntabs+1) + "\n";
+
+    if (m_prerequisites.size() == 1) {
+        retval += DumpIndent(ntabs+1) + "prerequisites = \"" + *m_prerequisites.begin() + "\"\n";
+    } else if (m_prerequisites.size() > 1) {
+        retval += DumpIndent(ntabs+1) + "prerequisites = [\n";
+        for (const std::string& prerequisite : m_prerequisites)
+            retval += DumpIndent(ntabs+2) + "\"" + prerequisite + "\"\n";
+        retval += DumpIndent(ntabs+1) + "]\n";
+    }
+
+    if (m_exclusions.size() == 1) {
+        retval += DumpIndent(ntabs+1) + "exclusions = \"" + *m_exclusions.begin() + "\"\n";
+    } else if (m_exclusions.size() > 1) {
+        retval += DumpIndent(ntabs+1) + "exclusions = [\n";
+        for (const std::string& exclusion : m_exclusions)
+            retval += DumpIndent(ntabs+2) + "\"" + exclusion + "\"\n";
+        retval += DumpIndent(ntabs+1) + "]\n";
+    }
+
     if (!m_effects.empty()) {
         if (m_effects.size() == 1) {
             retval += DumpIndent(ntabs+1) + "effectsgroups =\n";
@@ -69,6 +92,7 @@ std::string Policy::Dump(unsigned short ntabs) const {
             retval += DumpIndent(ntabs+1) + "]\n";
         }
     }
+
     retval += DumpIndent(ntabs+1) + "graphic = \"" + m_graphic + "\"\n";
     return retval;
 }

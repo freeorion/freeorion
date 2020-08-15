@@ -22,6 +22,8 @@ public:
     Policy(std::string name, std::string description,
            std::string short_description, std::string category,
            std::unique_ptr<ValueRef::ValueRef<double>>&& adoption_cost,
+           std::set<std::string>&& prerequisites,
+           std::set<std::string>&& exclusions,
            std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
            std::string graphic);
 
@@ -32,12 +34,15 @@ public:
     const std::string&  Category() const            { return m_category; }
     float               AdoptionCost(int empire_id) const;
 
+    const std::set<std::string>&    Prerequisites() const { return m_prerequisites; }
+    const std::set<std::string>&    Exclusions() const { return m_exclusions; }
+
     //! returns the effects that are applied to the discovering empire's capital
     //! when this policy is adopted.
     const std::vector<std::shared_ptr<Effect::EffectsGroup>>& Effects() const
     { return m_effects; }
 
-    const std::string&  Graphic() const       { return m_graphic; }
+    const std::string&  Graphic() const             { return m_graphic; }
 
     //! Returns a number, calculated from the contained data, which should be
     //! different for different contained data, and must be the same for
@@ -45,7 +50,7 @@ public:
     //! and executions of the program and the function. Useful to verify that
     //! the parsed content is consistent without sending it all between
     //! clients and server. */
-    unsigned int        GetCheckSum() const;
+    unsigned int GetCheckSum() const;
 
 private:
     Policy(const Policy&);                  // disabled
@@ -56,6 +61,8 @@ private:
     std::string                                         m_short_description;
     std::string                                         m_category;
     std::unique_ptr<ValueRef::ValueRef<double>>         m_adoption_cost;
+    std::set<std::string>                               m_prerequisites;
+    std::set<std::string>                               m_exclusions;
     std::vector<std::shared_ptr<Effect::EffectsGroup>>  m_effects;
     std::string                                         m_graphic;
 
