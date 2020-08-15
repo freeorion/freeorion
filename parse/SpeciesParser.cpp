@@ -258,6 +258,8 @@ namespace {
             environment_map.name("Environments");
             species_params_and_stuff.name("Species Flags, ");
             species_strings.name("Species Strings");
+            likes.name("Likes");
+            dislikes.name("Dislikes");
             species.name("Species");
             start.name("start");
 
@@ -268,6 +270,8 @@ namespace {
             debug(environment_map);
             debug(species_params);
             debug(species_strings);
+            debug(likes);
+            debug(dislikes);
             debug(species);
             debug(start);
 #endif
