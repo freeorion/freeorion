@@ -15,16 +15,13 @@
 
 namespace parse { namespace detail {
     struct MoreCommonParams {
-        MoreCommonParams() :
-            name(),
-            description(),
-            exclusions()
-        {}
-        MoreCommonParams(const std::string& name_, const std::string& description_,
-                        const std::set<std::string>& exclusions_) :
-            name(name_),
-            description(description_),
-            exclusions(exclusions_)
+        MoreCommonParams() = default;
+        MoreCommonParams(std::string& name_,
+                         std::string& description_,
+                         std::set<std::string>& exclusions_) :
+            name(std::move(name_)),
+            description(std::move(description_)),
+            exclusions(std::move(exclusions_))
         {}
         std::string             name;
         std::string             description;

@@ -93,8 +93,8 @@ namespace parse { namespace detail {
         more_common
             =
             (   label(tok.Name_)        > tok.string
-                >   label(tok.Description_) > tok.string
-                >   exclusions
+            >   label(tok.Description_) > tok.string
+            >   exclusions
             ) [ _val = construct<MoreCommonParams>(_1, _2, _3) ]
             ;
 
@@ -103,7 +103,7 @@ namespace parse { namespace detail {
             (   label(tok.BuildCost_)  > double_rules.expr
                 >   label(tok.BuildTime_)  > castable_int_rules.flexible_int
                 >   producible
-                >   tags_parser 
+                >   tags_parser
                 >   location
                 >   enqueue_location
                 >  -consumption(_a, _b)
@@ -158,7 +158,6 @@ namespace parse { namespace detail {
         producible.name("Producible or Unproducible");
         location.name("Location");
         enqueue_location.name("Enqueue Location");
-        exclusions.name("Exclusions");
         more_common.name("More Common Parameters");
         common.name("Common Parameters");
         consumption.name("Consumption");
@@ -169,7 +168,6 @@ namespace parse { namespace detail {
         debug(producible);
         debug(location);
         debug(enqueue_location);
-        debug(exclusions);
         debug(more_common);
         debug(common);
         debug(consumption);

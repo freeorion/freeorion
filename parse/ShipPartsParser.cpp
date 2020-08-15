@@ -128,9 +128,10 @@ namespace {
                 >   common_rules.common                                 // _9
                 >   label(tok.Icon_)        > tok.string                // _10
                   ) [ _pass = is_unique_(_r1, _1, phoenix::bind(&parse::detail::MoreCommonParams::name, _2)),
-                      insert_shippart_(_r1, _3,
-                                       construct<parse::detail::OptCap_OptStat2_OptMoveableTargets>(_4, _5, _7)
-                                       , _9, _2, _8, _10, _6, _pass) ]
+                      insert_shippart_(
+                          _r1, _3,
+                          construct<parse::detail::OptCap_OptStat2_OptMoveableTargets>(_4, _5, _7),
+                          _9, _2, _8, _10, _6, _pass) ]
                 ;
 
             start
