@@ -373,7 +373,7 @@ Number::Number(std::unique_ptr<ValueRef::ValueRef<int>>&& low,
     m_high(std::move(high)),
     m_condition(std::move(condition))
 {
-    std::array<const ValueRef::ValueRefBase*, 2> operands = { m_low.get(), m_high.get() };
+    std::array<const ValueRef::ValueRefBase*, 2> operands = {{m_low.get(), m_high.get()}};
     m_root_candidate_invariant =
         m_condition->RootCandidateInvariant() &&
         boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
@@ -525,7 +525,7 @@ Turn::Turn(std::unique_ptr<ValueRef::ValueRef<int>>&& low,
     m_low(std::move(low)),
     m_high(std::move(high))
 {
-    std::array<const ValueRef::ValueRefBase*, 2> operands = { m_low.get(), m_high.get() };
+    std::array<const ValueRef::ValueRefBase*, 2> operands = {{m_low.get(), m_high.get()}};
     m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
     m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
     m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
@@ -676,7 +676,7 @@ SortedNumberOf::SortedNumberOf(std::unique_ptr<ValueRef::ValueRef<int>>&& number
     m_sorting_method(sorting_method),
     m_condition(std::move(condition))
 {
-    std::array<const ValueRef::ValueRefBase*, 2> operands = { m_number.get(), m_sort_key.get() };
+    std::array<const ValueRef::ValueRefBase*, 2> operands = {{m_number.get(), m_sort_key.get()}};
     m_root_candidate_invariant =
         boost::algorithm::all_of(operands, [](const auto& e) { return !e || e->RootCandidateInvariant(); }) &&
         (!m_condition || m_condition->RootCandidateInvariant());
@@ -2274,7 +2274,7 @@ HasSpecial::HasSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
     m_since_turn_low(std::move(since_turn_low)),
     m_since_turn_high(std::move(since_turn_high))
 {
-    std::array<ValueRef::ValueRefBase*, 3> operands =
+    std::array<const ValueRef::ValueRefBase*, 3> operands =
         {{m_name.get(), m_since_turn_low.get(), m_since_turn_high.get()}};
     m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
     m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
@@ -2289,7 +2289,7 @@ HasSpecial::HasSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
     m_capacity_low(std::move(capacity_low)),
     m_capacity_high(std::move(capacity_high))
 {
-    std::array<ValueRef::ValueRefBase*, 3> operands =
+    std::array<const ValueRef::ValueRefBase*, 3> operands =
         {{m_name.get(), m_capacity_low.get(), m_capacity_high.get()}};
     m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
     m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
@@ -2624,7 +2624,7 @@ CreatedOnTurn::CreatedOnTurn(std::unique_ptr<ValueRef::ValueRef<int>>&& low,
     m_low(std::move(low)),
     m_high(std::move(high))
 {
-    std::array<ValueRef::ValueRefBase*, 2> operands = {{m_low.get(), m_high.get()}};
+    std::array<const ValueRef::ValueRefBase*, 2> operands = {{m_low.get(), m_high.get()}};
     m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
     m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
     m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
@@ -4320,7 +4320,7 @@ Enqueued::Enqueued(std::unique_ptr<ValueRef::ValueRef<int>>&& design_id,
     m_low(std::move(low)),
     m_high(std::move(high))
 {
-    std::array<ValueRef::ValueRefBase*, 4> operands =
+    std::array<const ValueRef::ValueRefBase*, 4> operands =
         {{m_design_id.get(), m_empire_id.get(), m_low.get(), m_high.get()}};
     m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
     m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
@@ -4343,7 +4343,7 @@ Enqueued::Enqueued(BuildType build_type,
     m_low(std::move(low)),
     m_high(std::move(high))
 {
-    std::array<ValueRef::ValueRefBase*, 4> operands =
+    std::array<const ValueRef::ValueRefBase*, 4> operands =
         {{m_name.get(), m_empire_id.get(), m_low.get(), m_high.get()}};
     m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
     m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
@@ -5071,7 +5071,7 @@ DesignHasPart::DesignHasPart(std::unique_ptr<ValueRef::ValueRef<std::string>>&& 
     m_high(std::move(high)),
     m_name(std::move(name))
 {
-    std::array<ValueRef::ValueRefBase*, 3> operands = {{m_name.get(), m_low.get(), m_high.get()}};
+    std::array<const ValueRef::ValueRefBase*, 3> operands = {{m_name.get(), m_low.get(), m_high.get()}};
     m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
     m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
     m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
@@ -5251,7 +5251,7 @@ DesignHasPartClass::DesignHasPartClass(ShipPartClass part_class,
     m_high(std::move(high)),
     m_class(std::move(part_class))
 {
-    std::array<ValueRef::ValueRefBase*, 2> operands = {{m_low.get(), m_high.get()}};
+    std::array<const ValueRef::ValueRefBase*, 2> operands = {{m_low.get(), m_high.get()}};
     m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
     m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
     m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
@@ -5852,7 +5852,7 @@ MeterValue::MeterValue(MeterType meter,
     m_low(std::move(low)),
     m_high(std::move(high))
 {
-    std::array<ValueRef::ValueRefBase*, 2> operands = {{m_low.get(), m_high.get()}};
+    std::array<const ValueRef::ValueRefBase*, 2> operands = {{m_low.get(), m_high.get()}};
     m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
     m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
     m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
@@ -6047,7 +6047,7 @@ ShipPartMeterValue::ShipPartMeterValue(std::unique_ptr<ValueRef::ValueRef<std::s
     m_low(std::move(low)),
     m_high(std::move(high))
 {
-    std::array<ValueRef::ValueRefBase*, 3> operands = {{m_part_name.get(), m_low.get(), m_high.get()}};
+    std::array<const ValueRef::ValueRefBase*, 3> operands = {{m_part_name.get(), m_low.get(), m_high.get()}};
     m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
     m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
     m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
@@ -6216,7 +6216,7 @@ EmpireMeterValue::EmpireMeterValue(std::unique_ptr<ValueRef::ValueRef<int>>&& em
     m_low(std::move(low)),
     m_high(std::move(high))
 {
-    std::array<ValueRef::ValueRefBase*, 3> operands = {{m_empire_id.get(), m_low.get(), m_high.get()}};
+    std::array<const ValueRef::ValueRefBase*, 3> operands = {{m_empire_id.get(), m_low.get(), m_high.get()}};
     m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
     m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
     m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
@@ -6397,7 +6397,7 @@ EmpireStockpileValue::EmpireStockpileValue(std::unique_ptr<ValueRef::ValueRef<in
     m_low(std::move(low)),
     m_high(std::move(high))
 {
-    std::array<ValueRef::ValueRefBase*, 3> operands = {{m_empire_id.get(), m_low.get(), m_high.get()}};
+    std::array<const ValueRef::ValueRefBase*, 3> operands = {{m_empire_id.get(), m_low.get(), m_high.get()}};
     m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
     m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
     m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
@@ -6561,7 +6561,7 @@ EmpireHasAdoptedPolicy::EmpireHasAdoptedPolicy(std::unique_ptr<ValueRef::ValueRe
     m_name(std::move(name)),
     m_empire_id(std::move(empire_id))
 {
-    std::array<ValueRef::ValueRefBase*, 2> operands = {{m_name.get(), m_empire_id.get()}};
+    std::array<const ValueRef::ValueRefBase*, 2> operands = {{m_name.get(), m_empire_id.get()}};
     m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
     m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
     m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
@@ -6704,7 +6704,7 @@ OwnerHasTech::OwnerHasTech(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
     m_name(std::move(name)),
     m_empire_id(std::move(empire_id))
 {
-    std::array<ValueRef::ValueRefBase*, 2> operands = {{m_name.get(), m_empire_id.get()}};
+    std::array<const ValueRef::ValueRefBase*, 2> operands = {{m_name.get(), m_empire_id.get()}};
     m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
     m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
     m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
@@ -6843,7 +6843,7 @@ OwnerHasBuildingTypeAvailable::OwnerHasBuildingTypeAvailable(
     m_name(std::move(name)),
     m_empire_id(std::move(empire_id))
 {
-    std::array<ValueRef::ValueRefBase*, 2> operands = {{m_name.get(), m_empire_id.get()}};
+    std::array<const ValueRef::ValueRefBase*, 2> operands = {{m_name.get(), m_empire_id.get()}};
     m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
     m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
     m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
@@ -6982,7 +6982,7 @@ OwnerHasShipDesignAvailable::OwnerHasShipDesignAvailable(
     m_id(std::move(design_id)),
     m_empire_id(std::move(empire_id))
 {
-    std::array<ValueRef::ValueRefBase*, 2> operands = {{m_id.get(), m_empire_id.get()}};
+    std::array<const ValueRef::ValueRefBase*, 2> operands = {{m_id.get(), m_empire_id.get()}};
     m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
     m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
     m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
@@ -7120,7 +7120,7 @@ OwnerHasShipPartAvailable::OwnerHasShipPartAvailable(
     m_name(std::move(name)),
     m_empire_id(std::move(empire_id))
 {
-    std::array<ValueRef::ValueRefBase*, 2> operands = {{m_empire_id.get(), m_name.get()}};
+    std::array<const ValueRef::ValueRefBase*, 2> operands = {{m_empire_id.get(), m_name.get()}};
     m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
     m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
     m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
@@ -9301,7 +9301,7 @@ Location::Location(ContentType content_type,
     m_name2(std::move(name2)),
     m_content_type(content_type)
 {
-    std::array<ValueRef::ValueRefBase*, 2> operands = {{m_name1.get(), m_name2.get()}};
+    std::array<const ValueRef::ValueRefBase*, 2> operands = {{m_name1.get(), m_name2.get()}};
     m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
     m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
     m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
