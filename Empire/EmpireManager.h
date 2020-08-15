@@ -50,7 +50,7 @@ public:
     bool                        DiplomaticMessageAvailable(int sender_id, int recipient_id) const;
     const DiplomaticMessage&    GetDiplomaticMessage(int sender_id, int recipient_id) const;
 
-    std::string         Dump() const;
+    std::string Dump() const;
 
     /** Returns the empire whose ID is \a id, or 0 if none exists. */
     Empire*     GetEmpire(int id);

@@ -338,8 +338,7 @@ void serialize(Archive& ar, EmpireManager& em, unsigned int const version)
                 if (e1.first >= e2.first)
                     continue;
                 auto dk = DiploKey(e1.first, e2.first);
-                if (em.m_empire_diplomatic_statuses.count(dk) < 1)
-                {
+                if (em.m_empire_diplomatic_statuses.count(dk) < 1) {
                     em.m_empire_diplomatic_statuses[dk] = DIPLO_WAR;
                     ErrorLogger() << "Added missing diplomatic status (default WAR) between empires " << e1.first << " and " << e2.first;
                 }
