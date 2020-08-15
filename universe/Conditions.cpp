@@ -816,7 +816,7 @@ namespace {
             // invert histogram to index by number of occurances
             std::multimap<unsigned int, float> inv_histogram;
             for (const auto& entry : histogram)
-                inv_histogram.insert({entry.second, entry.first});
+                inv_histogram.emplace(entry.second, entry.first);
 
             // reverse-loop through inverted histogram to find which sort keys
             // occurred most frequently, and transfer objects with those sort
@@ -1081,8 +1081,8 @@ All::All() :
 }
 
 void All::Eval(const ScriptingContext& parent_context,
-                          ObjectSet& matches, ObjectSet& non_matches,
-                          SearchDomain search_domain/* = NON_MATCHES*/) const
+               ObjectSet& matches, ObjectSet& non_matches,
+               SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     if (search_domain == NON_MATCHES) {
         // move all objects from non_matches to matches
@@ -3809,8 +3809,8 @@ namespace {
 }
 
 void PlanetSize::Eval(const ScriptingContext& parent_context,
-                                 ObjectSet& matches, ObjectSet& non_matches,
-                                 SearchDomain search_domain/* = NON_MATCHES*/) const
+                      ObjectSet& matches, ObjectSet& non_matches,
+                      SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
