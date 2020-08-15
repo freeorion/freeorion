@@ -1574,19 +1574,19 @@ namespace {
             if (!candidate)
                 return false;
 
-            // is it a planet or a building on a planet?
-            auto planet = std::dynamic_pointer_cast<const Planet>(candidate);
-            std::shared_ptr<const ::Building> building;
-            if (!planet && (building = std::dynamic_pointer_cast<const ::Building>(candidate)))
-                planet = m_objects.get<Planet>(building->PlanetID());
-            if (!planet)
+            int planet_id = INVALID_OBJECT_ID;
+            if (candidate->ObjectType() == OBJ_PLANET) {
+                planet_id = candidate->ID();
+            } else if (candidate->ObjectType() == OBJ_BUILDING) {
+                auto* building = static_cast<const ::Building*>(candidate.get());
+                planet_id = building->PlanetID();
+            }
+            if (planet_id == INVALID_OBJECT_ID)
                 return false;
-
-            int planet_id = planet->ID();
-            const SpeciesManager& manager = GetSpeciesManager();
 
             if (m_names.empty()) {
                 // match homeworlds for any species
+                const SpeciesManager& manager = GetSpeciesManager();
                 for (auto species_it = manager.begin(); species_it != manager.end(); ++species_it) {
                     if (const auto& species = species_it->second) {
                         const auto& homeworld_ids = species->Homeworlds();
@@ -1684,14 +1684,16 @@ bool Homeworld::Match(const ScriptingContext& local_context) const {
     }
 
     // is it a planet or a building on a planet?
-    auto planet = std::dynamic_pointer_cast<const Planet>(candidate);
-    std::shared_ptr<const ::Building> building;
-    if (!planet && (building = std::dynamic_pointer_cast<const ::Building>(candidate)))
-        planet = local_context.ContextObjects().get<Planet>(building->PlanetID());
-    if (!planet)
+    int planet_id = INVALID_OBJECT_ID;
+    if (candidate->ObjectType() == OBJ_PLANET) {
+        planet_id = candidate->ID();
+    } else if (candidate->ObjectType() == OBJ_BUILDING) {
+        auto* building = static_cast<const ::Building*>(candidate.get());
+        planet_id = building->PlanetID();
+    }
+    if (planet_id == INVALID_OBJECT_ID)
         return false;
 
-    int planet_id = planet->ID();
     const SpeciesManager& manager = GetSpeciesManager();
 
     if (m_names.empty()) {
@@ -1822,9 +1824,11 @@ bool Monster::Match(const ScriptingContext& local_context) const {
         return false;
     }
 
-    if (auto ship = std::dynamic_pointer_cast<const Ship>(candidate))
+    if (candidate->ObjectType() == OBJ_SHIP) {
+        auto* ship = static_cast<const Ship*>(candidate.get());
         if (ship->IsMonster())
             return true;
+    }
 
     return false;
 }
@@ -1872,9 +1876,11 @@ bool Armed::Match(const ScriptingContext& local_context) const {
         return false;
     }
 
-    if (auto ship = std::dynamic_pointer_cast<const Ship>(candidate))
+    if (candidate->ObjectType() == OBJ_SHIP) {
+        auto* ship = static_cast<const Ship*>(candidate.get());
         if (ship->IsArmed())
             return true;
+    }
 
     return false;
 }
@@ -1938,10 +1944,10 @@ namespace {
                 return candidate->ObjectType() == m_type;
                 break;
             case OBJ_POP_CENTER:
-                return (bool)std::dynamic_pointer_cast<const PopCenter>(candidate);
+                return (bool)dynamic_cast<const PopCenter*>(candidate.get());
                 break;
             case OBJ_PROD_CENTER:
-                return (bool)std::dynamic_pointer_cast<const ResourceCenter>(candidate);
+                return (bool)dynamic_cast<const ResourceCenter*>(candidate.get());
                 break;
             default:
                 break;
@@ -2115,9 +2121,9 @@ namespace {
                 return false;
 
             // is it a building?
-            auto building = std::dynamic_pointer_cast<const ::Building>(candidate);
-            if (!building)
+            if (candidate->ObjectType() != OBJ_BUILDING)
                 return false;
+            auto* building = static_cast<const ::Building*>(candidate.get());
 
             // if no name supplied, match any building
             if (m_names.empty())
@@ -2205,17 +2211,18 @@ bool Building::Match(const ScriptingContext& local_context) const {
     }
 
     // is it a building?
-    auto building = std::dynamic_pointer_cast<const ::Building>(candidate);
-    if (building) {
-        // match any building type?
-        if (m_names.empty())
-            return true;
+    if (candidate->ObjectType() != OBJ_BUILDING)
+        return false;
+    auto* building = static_cast<const ::Building*>(candidate.get());
 
-        // match one of the specified building types
-        for (auto& name : m_names) {
-            if (name->Eval(local_context) == building->BuildingTypeName())
-                return true;
-        }
+    // match any building type?
+    if (m_names.empty())
+        return true;
+
+    // match one of the specified building types
+    for (auto& name : m_names) {
+        if (name->Eval(local_context) == building->BuildingTypeName())
+            return true;
     }
 
     return false;
@@ -3331,9 +3338,9 @@ namespace {
         bool operator()(const std::shared_ptr<const UniverseObject>& candidate) const {
             if (!candidate)
                 return false;
-            auto building = std::dynamic_pointer_cast<const ::Building>(candidate);
-            if (!building)
+            if (candidate->ObjectType() != OBJ_BUILDING)
                 return false;
+            auto* building = static_cast<const ::Building*>(candidate.get());
 
             if (m_planet_id == INVALID_OBJECT_ID)
                 return building->PlanetID() != INVALID_OBJECT_ID;  // match objects on any planet
@@ -4964,9 +4971,10 @@ namespace {
                 return false;
 
             // is it a ship?
-            auto ship = dynamic_cast<const ::Ship*>(candidate.get());
-            if (!ship)
+            if (candidate->ObjectType() != OBJ_SHIP)
                 return false;
+            auto* ship = static_cast<const ::Ship*>(candidate.get());
+
             // with a valid design?
             const ShipDesign* design = ship->Design();
             if (!design)
@@ -5098,14 +5106,12 @@ namespace {
                 return false;
 
             const Ship* ship = nullptr;
-            if (auto fighter = dynamic_cast<const ::Fighter*>(candidate.get())) {
-                // it is a fighter
+            if (candidate->ObjectType() == OBJ_FIGHTER) {
+                auto* fighter = static_cast<const ::Fighter*>(candidate.get());
                 ship = m_objects.get<Ship>(fighter->LaunchedFrom()).get();
-            } else {
-                ship = dynamic_cast<const ::Ship*>(candidate.get());
+            } else if (candidate->ObjectType() == OBJ_SHIP) {
+                ship = static_cast<const ::Ship*>(candidate.get());
             }
-
-            // is it a ship
             if (!ship)
                 return false;
 
@@ -5281,9 +5287,10 @@ namespace {
                 return false;
 
             // is it a ship?
-            auto ship = dynamic_cast<const ::Ship*>(candidate.get());
-            if (!ship)
+            if (candidate->ObjectType() != OBJ_SHIP)
                 return false;
+            auto* ship = static_cast<const ::Ship*>(candidate.get());
+
             // with a valid design?
             const ShipDesign* design = ship->Design();
             if (!design)
@@ -5433,9 +5440,10 @@ namespace {
         {}
 
         bool operator()(const std::shared_ptr<const UniverseObject>& candidate) const {
-            auto ship = dynamic_cast<const Ship*>(candidate.get());
-            if (!ship)
+            if (candidate->ObjectType() != OBJ_SHIP)
                 return false;
+            auto* ship = static_cast<const Ship*>(candidate.get());
+
             const ShipDesign* candidate_design = ship->Design();
             if (!candidate_design)
                 return false;
@@ -8278,10 +8286,13 @@ bool Aggressive::Match(const ScriptingContext& local_context) const {
     // the only objects that can be aggressive are fleets and the ships in them.
     // so, attempt to cast the candidate object to a fleet or ship, and if it's
     // a ship get the fleet of that ship
-    auto fleet = dynamic_cast<const Fleet*>(candidate.get());
-    if (!fleet)
-        if (auto ship = dynamic_cast<const Ship*>(candidate.get()))
-            fleet = local_context.ContextObjects().get<Fleet>(ship->FleetID()).get();
+    const Fleet* fleet = nullptr;
+    if (candidate->ObjectType() == OBJ_FLEET) {
+        fleet = static_cast<const Fleet*>(candidate.get());
+    } else if (candidate->ObjectType() == OBJ_SHIP) {
+        auto* ship = static_cast<const Ship*>(candidate.get());
+        fleet = local_context.ContextObjects().get<Fleet>(ship->FleetID()).get();
+    }
 
     if (!fleet)
         return false;
