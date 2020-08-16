@@ -324,9 +324,10 @@ private:
     std::map<std::string, std::vector<const Policy*>>
     GroupAvailableDisplayablePolicies(const Empire* empire) const;
 
-    std::set<std::string>       m_policy_categories_shown;  // which policy categories should be shown
-    int                         m_previous_num_columns = -1;
-    const AvailabilityManager&  m_availabilities_state;
+    mutable boost::signals2::connection m_empire_policies_changed_signal_connection;
+    std::set<std::string>               m_policy_categories_shown;
+    int                                 m_previous_num_columns = -1;
+    const AvailabilityManager&          m_availabilities_state;
 };
 
 PoliciesListBox::PoliciesListBoxRow::PoliciesListBoxRow(
@@ -457,6 +458,11 @@ void PoliciesListBox::Populate() {
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     const Empire* empire = GetEmpire(empire_id);  // may be nullptr
 
+    m_empire_policies_changed_signal_connection.disconnect();
+    if (empire)
+        m_empire_policies_changed_signal_connection = empire->PoliciesChangedSignal.connect(
+            boost::bind(&PoliciesListBox::Populate, this), boost::signals2::at_front);
+
     int cur_col = NUM_COLUMNS;
     std::shared_ptr<PoliciesListBoxRow> cur_row;
     int num_policies = 0;
@@ -567,7 +573,7 @@ private:
     void HandlePolicyClicked(const Policy*, GG::Flags<GG::ModKey>);
     void HandlePolicyRightClicked(const Policy*, const GG::Pt& pt);
 
-    std::shared_ptr<PoliciesListBox>                        m_policies_list = nullptr;
+    std::shared_ptr<PoliciesListBox>                        m_policies_list;
     std::map<std::string, std::shared_ptr<CUIStateButton>>  m_category_buttons;
 
     // Holds the state of the availabilities filter.
@@ -1143,8 +1149,8 @@ private:
     int FindEmptySlotForPolicy(const Policy* policy) const;
 
     std::vector<std::shared_ptr<PolicySlotControl>> m_slots;
-    std::shared_ptr<GG::StaticGraphic>              m_background_image = nullptr;
-    std::shared_ptr<GG::Button>                     m_clear_button = nullptr;
+    std::shared_ptr<GG::StaticGraphic>              m_background_image;
+    std::shared_ptr<GG::Button>                     m_clear_button;
 };
 
 GovernmentWnd::MainPanel::MainPanel(GG::X w, GG::Y h) :
@@ -1209,7 +1215,7 @@ namespace {
             unsigned int num_slots_in_cat = static_cast<int>(cat_slots.second);
             const std::string& cat_name = cat_slots.first;
             for (unsigned int n = 0; n < num_slots_in_cat; ++n)
-                retval.push_back({cat_name, n});
+                retval.emplace_back(cat_name, n);
         }
 
         return retval;
@@ -1243,8 +1249,9 @@ void GovernmentWnd::MainPanel::SetPolicy(const Policy* policy, unsigned int slot
     const std::string& oder_policy_name = (policy ? policy->Name() : initial_policy_name);
 
     // issue order to adopt or revoke
-    auto order = std::make_shared<PolicyOrder>(empire_id, oder_policy_name, category_name, adopt, order_slot);
-    HumanClientApp::GetApp()->Orders().IssueOrder(order);
+    auto order = std::make_shared<PolicyOrder>(empire_id, oder_policy_name,
+                                               category_name, adopt, order_slot);
+    HumanClientApp::GetApp()->Orders().IssueOrder(std::move(order));
 
     // update UI after policy changes
     empire->UpdateInfluenceSpending();
