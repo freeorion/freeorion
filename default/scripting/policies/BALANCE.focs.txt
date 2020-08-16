@@ -4,6 +4,7 @@ Policy
     short_description = "PLC_BALANCE_SHORT_DESC"
     category = "ECONOMIC_CATEGORY"
     adoptioncost = 1.0*floor(5 + 0.25 * Statistic Sum value = LocalCandidate.Population condition = And [ Planet OwnedBy empire = Source.Owner ])
+    exclusions = [ "PLC_INDUSTRIALISM" "PLC_STOCKPILE_LIQUIDATION" ]
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
     
