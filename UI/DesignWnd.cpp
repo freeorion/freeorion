@@ -944,7 +944,7 @@ namespace {
         design_ids_and_obsoletes.clear();
         for (const auto id : m_ordered_design_ids) {
             try {
-                design_ids_and_obsoletes.push_back({id, m_id_to_obsolete_and_loc.at(id).first});
+                design_ids_and_obsoletes.emplace_back(id, m_id_to_obsolete_and_loc.at(id).first);
             } catch (const std::out_of_range&) {
                 ErrorLogger() << "DisplayedShipDesignManager::Save missing id = " << id;
                 continue;
@@ -954,7 +954,7 @@ namespace {
         hulls_and_obsoletes.clear();
         for (const auto& name : m_ordered_hulls) {
             try {
-               hulls_and_obsoletes.push_back({name, m_hull_to_obsolete_and_loc.at(name).first});
+               hulls_and_obsoletes.emplace_back(name, m_hull_to_obsolete_and_loc.at(name).first);
             } catch (const std::out_of_range&) {
                 ErrorLogger() << "DisplayedShipDesignManager::Save missing hull = " << name;
                 continue;
@@ -1674,23 +1674,20 @@ void PartsListBox::Populate() {
 
             // make new part control and add to row
             auto control = GG::Wnd::Create<PartControl>(part);
-            control->ClickedSignal.connect(
-                PartsListBox::ShipPartClickedSignal);
-            control->DoubleClickedSignal.connect(
-                PartsListBox::ShipPartDoubleClickedSignal);
-            control->RightClickedSignal.connect(
-                PartsListBox::ShipPartRightClickedSignal);
+            control->ClickedSignal.connect(PartsListBox::ShipPartClickedSignal);
+            control->DoubleClickedSignal.connect(PartsListBox::ShipPartDoubleClickedSignal);
+            control->RightClickedSignal.connect(PartsListBox::ShipPartRightClickedSignal);
 
             auto shown = m_availabilities_state.DisplayedPartAvailability(part->Name());
             if (shown)
                 control->SetAvailability(*shown);
 
-            cur_row->push_back(control);
+            cur_row->push_back(std::move(control));
         }
     }
     // add any incomplete rows
     if (cur_row)
-        Insert(cur_row);
+        Insert(std::move(cur_row));
 
     // keep track of how many columns are present now
     m_previous_num_columns = NUM_COLUMNS;
@@ -4521,8 +4518,7 @@ void DesignWnd::MainPanel::Populate() {
             boost::bind(static_cast<void (DesignWnd::MainPanel::*)(
                 const ShipPart*, unsigned int, bool, bool)>(&DesignWnd::MainPanel::SetPart),
                     this, ph::_1, i, true, ph::_2));
-        slot_control->ShipPartClickedSignal.connect(
-            ShipPartClickedSignal);
+        slot_control->ShipPartClickedSignal.connect(ShipPartClickedSignal);
     }
 }
 
