@@ -11642,7 +11642,7 @@ GRO_LIFECYCLE_MAN
 Lifecycle Manipulation
 
 GRO_LIFECYCLE_MAN_DESC
-'''In addition to the ship part, this tech also increases the [[metertype METER_POPULATION]] of new colonies produced with colony buildings to 3.
+'''This tech also increases the [[metertype METER_POPULATION]] of new colonies produced with colony buildings to 3.
 
 Through chemical manipulation and cryonics, life processes may be halted without terminating them permanently. Beings in this state are preserved indefinitely, consume no resources and require very little storage - not living - space. With this technique, colonists can be transported much more efficiently, and the amount of colonists on a freshly built colony as well as the capacity of colony ships is greatly increased.
 
