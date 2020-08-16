@@ -467,7 +467,12 @@ bool Empire::PolicyPrereqsAndExclusionsOK(const std::string& name) const {
     }
 
     for (const auto& prereq : policy_to_adopt->Prerequisites()) {
-        if (!m_adopted_policies.count(prereq))
+        auto it = m_adopted_policies.find(prereq);
+        if (it == m_adopted_policies.end())
+            return false;
+        // must have adopted policy at least one turn before, to prevent
+        // same-turn policy swapping to bypass prereqs at no cost
+        if (it->second.adoption_turn >= CurrentTurn())
             return false;
     }
 
