@@ -94,6 +94,7 @@ public:
     /** Returns the set of policies / slots the empire has avaialble. */
     const std::set<std::string>&    AvailablePolicies() const;
     bool                            PolicyAvailable(const std::string& name) const;
+    bool                            PolicyPrereqsAndExclusionsOK(const std::string& name) const;
     std::map<std::string, int>      TotalPolicySlots() const;
     std::map<std::string, int>      EmptyPolicySlots() const;
 
