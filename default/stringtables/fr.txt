@@ -11642,7 +11642,7 @@ GRO_LIFECYCLE_MAN
 Manipulation du Cycle de Vie
 
 GRO_LIFECYCLE_MAN_DESC
-'''En plus du nouvel équipement d'astronef disponible, cette technologie augmente à 3 la [[metertype METER_POPULATION]] des nouvelles colonies fondées à l'aide des <encyclopedia ENC_BUILDING_TYPE>structures</encyclopedia> de colonisation.
+'''Cette technologie augmente à 3 la [[metertype METER_POPULATION]] des nouvelles colonies fondées à l'aide des <encyclopedia ENC_BUILDING_TYPE>structures</encyclopedia> de colonisation.
 
 Grâce aux manipulations chimiques et cryogéniques, les processus vitaux peuvent être interrompus de façon provisoire. Dans cet état, les organismes sont conservés indéfiniment, ne consomment aucune ressource et ne nécessitent qu'un très petit (non-vital) espace de stockage. À l'aide de cette technique, les colons peuvent voyager d'une manière bien plus efficace, tandis que sont grandement accrus le nombre initial de colons au sein d'une nouvelle colonie ainsi que la capacité d'accueil des astronefs de colonisation.
 
@@ -14064,7 +14064,7 @@ SR_WEAPON_1_1_DESC
 
 Améliorer la technologie de cet armement augmentera la valeur des dommages par tir.
 
-Les [[encyclopedia DAMAGE_TITLE]] de cet armement combinent la valeur des dommages par tir et celle de tout modificateur actif. Chaque Canon Mitrailleur monté sur un astronef construit par une espèce présentant l'attribut "Pilotes", infligera des dommages additionnels de 1 par rang de Pilotes (-1 pour "Mauvais Pilotes").'''
+Les [[encyclopedia DAMAGE_TITLE]] de cet armement combinent la valeur des dommages par tir et celle de tout modificateur actif. Chaque Canon Mitrailleur monté sur un astronef construit par une espèce présentant l'attribut "Pilotes", infligera des dommages additionnels de 6 par rang de Pilotes (-6 pour "Mauvais Pilotes").'''
 
 SR_WEAPON_2_1
 Canon Laser
@@ -14074,7 +14074,7 @@ SR_WEAPON_2_1_DESC
 
 Améliorer la technologie de cet armement augmentera la valeur des dommages par tir.
 
-Les [[encyclopedia DAMAGE_TITLE]] de cet armement combinent la valeur des dommages par tir et celle de tout modificateur actif. Chaque Canon Laser monté sur un astronef construit par une espèce présentant l'attribut "Pilotes", infligera des dommages additionnels de 2 par rang de Pilotes (-2 pour "Mauvais Pilotes"). Les dommages du Canon Laser peuvent également être améliorés sur les astronefs dotés d'une [[shiphull SH_ORGANIC]] couplée à un [[shippart SP_SOLAR_CONCENTRATOR]].'''
+Les [[encyclopedia DAMAGE_TITLE]] de cet armement combinent la valeur des dommages par tir et celle de tout modificateur actif. Chaque Canon Laser monté sur un astronef construit par une espèce présentant l'attribut "Pilotes", infligera des dommages additionnels de 12 par rang de Pilotes (-12 pour "Mauvais Pilotes"). Les dommages du Canon Laser peuvent également être améliorés sur les astronefs dotés d'une [[shiphull SH_ORGANIC]] couplée à un [[shippart SP_SOLAR_CONCENTRATOR]].'''
 
 SR_WEAPON_3_1
 Canon Plasma
@@ -14084,7 +14084,7 @@ SR_WEAPON_3_1_DESC
 
 Améliorer la technologie de cet armement augmentera la valeur des dommages par tir.
 
-Les [[encyclopedia DAMAGE_TITLE]] de cet armement combinent la valeur des dommages par tir et celle de tout modificateur actif. Chaque Canon Plasma monté sur un astronef construit par une espèce présentant l'attribut "Pilotes", infligera des dommages additionnels de 3 par rang de Pilotes (-3 pour "Mauvais Pilotes").'''
+Les [[encyclopedia DAMAGE_TITLE]] de cet armement combinent la valeur des dommages par tir et celle de tout modificateur actif. Chaque Canon Plasma monté sur un astronef construit par une espèce présentant l'attribut "Pilotes", infligera des dommages additionnels de 18 par rang de Pilotes (-18 pour "Mauvais Pilotes").'''
 
 SR_WEAPON_4_1
 Rayon Gamma
@@ -14094,7 +14094,7 @@ SR_WEAPON_4_1_DESC
 
 Améliorer la technologie de cet armement augmentera la valeur des dommages par tir.
 
-Les [[encyclopedia DAMAGE_TITLE]] de cet armement combinent la valeur des dommages par tir et celle de tout modificateur actif. Chaque Rayon Gamma monté sur un astronef construit par une espèce présentant l'attribut "Pilotes", infligera des dommages additionnels de 5 par rang de Pilotes (-5 pour "Mauvais Pilotes").'''
+Les [[encyclopedia DAMAGE_TITLE]] de cet armement combinent la valeur des dommages par tir et celle de tout modificateur actif. Chaque Rayon Gamma monté sur un astronef construit par une espèce présentant l'attribut "Pilotes", infligera des dommages additionnels de 30 par rang de Pilotes (-30 pour "Mauvais Pilotes").'''
 
 SR_ARC_DISRUPTOR
 Perturbateur Électro-Conducteur
@@ -15716,6 +15716,15 @@ LIVING_HULL_BASE_FUEL_REGEN_DESC
 ##
 ## Accounting labels
 ##
+
+COLONY_ADMIN_COSTS_LABEL
+Frais d'Administration Coloniale
+
+SPECIES_HOMEWORLD_INDEPENDENCE_DESIRE_LABEL
+Mouvement Indépendantiste Planète Natale
+
+CAPITAL_DISCONNECTION_LABEL
+Non connecté à la Capitale d'Empire
 
 # %1% name of empire
 # %2% name of policy
