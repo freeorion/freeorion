@@ -796,7 +796,7 @@ void BuildDesignatorWnd::BuildSelector::SetBuildLocation(int location_id, bool r
     }
 }
 
-void BuildDesignatorWnd::BuildSelector::SetEmpireID(int empire_id/* = ALL_EMPIRES*/, bool refresh_list/* = true*/) {
+void BuildDesignatorWnd::BuildSelector::SetEmpireID(int empire_id, bool refresh_list) {
     if (empire_id == m_empire_id)
         return;
 
@@ -809,8 +809,8 @@ void BuildDesignatorWnd::BuildSelector::SetEmpireID(int empire_id/* = ALL_EMPIRE
         m_empire_ship_designs_changed_signal.disconnect();
         if (const Empire* empire = GetEmpire(m_empire_id))
             m_empire_ship_designs_changed_signal = empire->ShipDesignsChangedSignal.connect(
-                                                    boost::bind(&BuildDesignatorWnd::BuildSelector::Refresh, this),
-                                                    boost::signals2::at_front);
+                boost::bind(&BuildDesignatorWnd::BuildSelector::Refresh, this),
+                boost::signals2::at_front);
     }
 }
 
