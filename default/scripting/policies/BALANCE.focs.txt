@@ -36,7 +36,7 @@ Policy
                         condition = And [ Planet OwnedBy empire = Source.Owner ]))
             ]
     ]
-    graphic = "icons/policies/centralization.png"
+    graphic = "icons/policies/balance.png"
 
 #include "/scripting/common/base_prod.macros"
 #include "/scripting/common/priorities.macros"
