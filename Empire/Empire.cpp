@@ -34,8 +34,10 @@ namespace {
         std::vector<std::pair<std::string, std::string>> retval;
 
         // derive meters from PolicyManager parsed policies' categories
-        for (const auto cat : GetPolicyManager().PolicyCategories())
-            retval.push_back({cat, cat + "_NUM_POLICY_SLOTS"});
+        for (auto& cat : GetPolicyManager().PolicyCategories()) {
+            std::string&& slots_string{cat + "_NUM_POLICY_SLOTS"};
+            retval.emplace_back(std::move(cat), std::move(slots_string));
+        }
         return retval;
     }
 
@@ -60,7 +62,6 @@ Empire::PolicyAdoptionInfo::PolicyAdoptionInfo(int turn, const std::string& cat,
 // Empire //
 ////////////
 Empire::Empire() :
-    m_authenticated(false),
     m_research_queue(m_id),
     m_production_queue(m_id),
     m_influence_queue(m_id)
@@ -77,7 +78,8 @@ Empire::Empire(std::string name, std::string player_name,
     m_production_queue(m_id),
     m_influence_queue(m_id)
 {
-    DebugLogger() << "Empire::Empire(" << m_name << ", " << m_player_name << ", " << empire_id << ", colour)";
+    DebugLogger() << "Empire::Empire(" << m_name << ", " << m_player_name
+                  << ", " << empire_id << ", colour)";
     Init();
 }
 
@@ -367,7 +369,7 @@ void Empire::UpdatePolicies() {
         const auto& slot = policy_pair.second.slot_in_category;
         const auto& slot_count = category_slot_policy_counts[cat][slot]++;
         if (slot_count > 1 || policy_pair.second.slot_in_category >= total_category_slot_counts[cat])
-            categories_needing_rearrangement.insert(cat);
+            categories_needing_rearrangement.emplace(cat);
     }
 
     // if a category has too many policies or a slot number conflict, rearrange it
@@ -382,7 +384,7 @@ void Empire::UpdatePolicies() {
                 continue;
             auto slot = policy_pair.second.slot_in_category;
             auto turn = policy_pair.second.adoption_turn;
-            slots_turns_policies.insert(std::make_pair(std::make_pair(slot, turn), policy_pair.first));
+            slots_turns_policies.emplace(std::make_pair(slot, turn), policy_pair.first);
             m_adopted_policies.erase(policy_pair.first);    // remove everything from adopted policies in this category...
         }
         // re-add in category up to limit, ordered priority by original slot and adoption turn
@@ -390,7 +392,7 @@ void Empire::UpdatePolicies() {
         for (auto slot_turn_policy_pair : slots_turns_policies) {
             if (added >= total_category_slot_counts[cat])
                 break;  // can't add more...
-            m_adopted_policies[slot_turn_policy_pair.second] = {
+            m_adopted_policies[std::move(slot_turn_policy_pair.second)] = {
                 slot_turn_policy_pair.first.second, cat, slot_turn_policy_pair.first.first};
         }
     }
@@ -489,7 +491,7 @@ bool Empire::PolicyPrereqsAndExclusionsOK(const std::string& name) const {
 std::map<std::string, int> Empire::TotalPolicySlots() const {
     std::map<std::string, int> retval;
     // collect policy slot category meter values and return
-    for (const auto& cat_meter_pair : PolicyCategoriesSlotsMeters()) {
+    for (auto& cat_meter_pair : PolicyCategoriesSlotsMeters()) {
         if (!m_meters.count(cat_meter_pair.second))
             continue;
         auto it = m_meters.find(cat_meter_pair.second);
@@ -497,7 +499,7 @@ std::map<std::string, int> Empire::TotalPolicySlots() const {
             ErrorLogger() << "Empire doesn't have policy category slot meter with name: " << cat_meter_pair.second;
             continue;
         }
-        retval[cat_meter_pair.first] = it->second.Initial();
+        retval[std::move(cat_meter_pair.first)] = it->second.Initial();
     }
     return retval;
 }
@@ -730,7 +732,7 @@ std::set<int> Empire::AvailableShipDesigns() const {
     std::set<int> retval;
     for (int design_id : m_known_ship_designs) {
         if (ShipDesignAvailable(design_id))
-            retval.insert(design_id);
+            retval.emplace(design_id);
     }
     return retval;
 }
@@ -1004,9 +1006,8 @@ bool Empire::Won() const {
 
 void Empire::Win(const std::string& reason) {
     if (m_victories.insert(reason).second) {
-        for (auto& entry : Empires()) {
+        for (auto& entry : Empires())
             entry.second->AddSitRepEntry(CreateVictorySitRep(reason, EmpireID()));
-        }
     }
 }
 
@@ -1021,12 +1022,13 @@ void Empire::UpdateSystemSupplyRanges(const std::set<int>& known_objects) {
     m_supply_system_ranges.clear();
 
     // as of this writing, only planets can generate supply propagation
-    std::vector<std::shared_ptr<const UniverseObject>> owned_planets;
-    for (const auto& planet: Objects().find<Planet>(known_objects)) {
+    std::vector<const UniverseObject*> owned_planets;
+    owned_planets.reserve(known_objects.size());
+    for (auto& planet: Objects().find<Planet>(known_objects)) {
         if (!planet)
             continue;
         if (planet->OwnedBy(this->EmpireID()))
-            owned_planets.push_back(planet);
+            owned_planets.emplace_back(planet.get());
     }
 
     //std::cout << "... empire owns " << owned_planets.size() << " planets" << std::endl;
@@ -1065,7 +1067,7 @@ void Empire::UpdateSystemSupplyRanges() {
     // exclude objects known to have been destroyed (or rather, include ones that aren't known by this empire to be destroyed)
     for (const auto& obj : empire_known_objects.all())
         if (!known_destroyed_objects.count(obj->ID()))
-            known_objects_set.insert(obj->ID());
+            known_objects_set.emplace(obj->ID());
     UpdateSystemSupplyRanges(known_objects_set);
 }
 
@@ -1098,7 +1100,7 @@ void Empire::UpdateSupplyUnobstructedSystems(bool precombat /*=false*/) {
     // exclude systems known to have been destroyed (or rather, include ones that aren't known to be destroyed)
     for (const auto& sys : EmpireKnownObjects(this->EmpireID()).all<System>())
         if (!known_destroyed_objects.count(sys->ID()))
-            known_systems_set.insert(sys->ID());
+            known_systems_set.emplace(sys->ID());
     UpdateSupplyUnobstructedSystems(known_systems_set, precombat);
 }
 
@@ -1111,7 +1113,7 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems,
     for (int system_id : known_systems) {
         const auto& vis_turns = GetUniverse().GetObjectVisibilityTurnMapByEmpire(system_id, m_id);
         if (vis_turns.count(VIS_PARTIAL_VISIBILITY))
-            systems_with_at_least_partial_visibility_at_some_point.insert(system_id);
+            systems_with_at_least_partial_visibility_at_some_point.emplace(system_id);
     }
 
     // get all fleets, or just those visible to this client's empire
@@ -1153,9 +1155,9 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems,
                 if (fleet->NextSystemID() == INVALID_OBJECT_ID || fleet->NextSystemID() == fleet->SystemID()) {
                     systems_containing_friendly_fleets.insert(system_id);
                     if (fleet->ArrivalStarlane() == system_id)
-                        unrestricted_friendly_systems.insert(system_id);
+                        unrestricted_friendly_systems.emplace(system_id);
                     else
-                        systems_with_lane_preserving_fleets.insert(system_id);
+                        systems_with_lane_preserving_fleets.emplace(system_id);
                 }
             } else if (fleet->NextSystemID() == INVALID_OBJECT_ID || fleet->NextSystemID() == fleet->SystemID()) {
                 int fleet_owner = fleet->Owner();
@@ -1170,9 +1172,9 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems,
                 // age not fleet age.
                 int cutoff_age = precombat ? 1 : 0;
                 if (fleet_at_war && fleet->MaxShipAgeInTurns() > cutoff_age) {
-                    systems_containing_obstructing_objects.insert(system_id);
+                    systems_containing_obstructing_objects.emplace(system_id);
                     if (fleet->ArrivalStarlane() == system_id)
-                        unrestricted_obstruction_systems.insert(system_id);
+                        unrestricted_obstruction_systems.emplace(system_id);
                 }
             }
         }
@@ -1181,16 +1183,16 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems,
     TraceLogger(supply) << "Empire::UpdateSupplyUnobstructedSystems systems with obstructing objects for empire " << m_id << " : " << [&]() {
         std::stringstream ss;
         for (int obj_id : systems_containing_obstructing_objects)
-        { ss << obj_id << ", "; }
+            ss << obj_id << ", ";
         return ss.str();
     }();
 
     DebugLogger() << "Preserved System-Lanes for empire " << m_name << " (" << m_id << ") : " << [&]() {
         std::stringstream ss2;
-        for (auto sys_lanes : m_preserved_system_exit_lanes) {
+        for (const auto& sys_lanes : m_preserved_system_exit_lanes) {
             ss2 << "[Sys: " << sys_lanes.first << " : (";
             for (auto lane : sys_lanes.second)
-            { ss2 << lane << " "; }
+                ss2 << lane << " ";
             ss2 << ")]  ";
         }
         return ss2.str();
@@ -1199,7 +1201,7 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems,
     DebugLogger() << "Systems with lane-preserving fleets for empire " << m_name << " (" << m_id << ") : " << [&]() {
         std::stringstream ss3;
         for (auto sys_id : systems_with_lane_preserving_fleets)
-        { ss3 << sys_id << ", "; }
+            ss3 << sys_id << ", ";
         return ss3.str();
     }();
 
@@ -1220,13 +1222,13 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems,
 
         if (unrestricted_friendly_systems.count(sys->ID())) {
             // in unrestricted friendly systems, supply can propagate
-            m_supply_unobstructed_systems.insert(sys->ID());
+            m_supply_unobstructed_systems.emplace(sys->ID());
             TraceLogger(supply) << "System " << sys->Name() << " (" << sys->ID() << ") +++ is unrestricted and friendly";
 
         } else if (systems_containing_friendly_fleets.count(sys->ID())) {
             // if there are unrestricted friendly ships, and no unrestricted enemy fleets, supply can propagate
             if (!unrestricted_obstruction_systems.count(sys->ID())) {
-                m_supply_unobstructed_systems.insert(sys->ID());
+                m_supply_unobstructed_systems.emplace(sys->ID());
                 TraceLogger(supply) << "System " << sys->Name() << " (" << sys->ID() << ") +++ has friendly fleets and no obstructions";
             } else {
                 TraceLogger(supply) << "System " << sys->Name() << " (" << sys->ID() << ") --- is has friendly fleets but has obstructions";
@@ -1234,7 +1236,7 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems,
 
         } else if (!systems_containing_obstructing_objects.count(sys->ID())) {
             // if there are no friendly fleets or obstructing enemy fleets, supply can propagate
-            m_supply_unobstructed_systems.insert(sys->ID());
+            m_supply_unobstructed_systems.emplace(sys->ID());
             TraceLogger(supply) << "System " << sys->Name() << " (" << sys->ID() << ") +++ has no obstructing objects";
 
         } else if (!systems_with_lane_preserving_fleets.count(sys->ID())) {
@@ -1261,10 +1263,10 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems,
 
 void Empire::RecordPendingLaneUpdate(int start_system_id, int dest_system_id) {
     if (!m_supply_unobstructed_systems.count(start_system_id))
-        m_pending_system_exit_lanes[start_system_id].insert(dest_system_id);
+        m_pending_system_exit_lanes[start_system_id].emplace(dest_system_id);
     else { // if the system is unobstructed, mark all its lanes as avilable
         for (const auto& lane : Objects().get<System>(start_system_id)->StarlanesWormholes()) {
-            m_pending_system_exit_lanes[start_system_id].insert(lane.first); // will add both starlanes and wormholes
+            m_pending_system_exit_lanes[start_system_id].emplace(lane.first); // will add both starlanes and wormholes
         }
     }
 }
@@ -1316,8 +1318,8 @@ const std::map<int, std::set<int>> Empire::KnownStarlanes() const {
             bool is_wormhole = lane.second;
             if (is_wormhole || known_destroyed_objects.count(end_id))
                 continue;   // is a wormhole, not a starlane, or is connected to a known destroyed system
-            retval[start_id].insert(end_id);
-            retval[end_id].insert(start_id);
+            retval[start_id].emplace(end_id);
+            retval[end_id].emplace(start_id);
         }
 
         TraceLogger(supply) << "system " << start_id << " had " << retval[start_id].size() << " known lanes";
@@ -1333,8 +1335,7 @@ const std::map<int, std::set<int>> Empire::VisibleStarlanes() const {
     const Universe& universe = GetUniverse();
     const ObjectMap& objects = universe.Objects();
 
-    for (const auto& sys : objects.all<System>())
-    {
+    for (const auto& sys : objects.all<System>()) {
         int start_id = sys->ID();
 
         // is system visible to this empire?
@@ -1346,8 +1347,8 @@ const std::map<int, std::set<int>> Empire::VisibleStarlanes() const {
             if (lane.second)
                 continue;   // is a wormhole, not a starlane
             int end_id = lane.first;
-            retval[start_id].insert(end_id);
-            retval[end_id].insert(start_id);
+            retval[start_id].emplace(end_id);
+            retval[end_id].emplace(start_id);
         }
     }
 
