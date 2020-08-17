@@ -99,3 +99,5 @@ DerivedData
 # linters temp files
 .mypy_cache/
 .pytest_cache/
+.coverage
+htmlcov

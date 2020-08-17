@@ -18,6 +18,7 @@ If an object could not be encoded, raise a CanNotSaveGameException.
 """
 import base64
 import collections
+import json
 import zlib
 
 import EnumsAI
@@ -65,7 +66,15 @@ def encode(o):
 
 
 def _encode_str(o):
-    return '"%s"' % o
+    """
+    Encode string.
+
+    We don't check if prefixes for types (eg __ENUM__) is in the string.
+    The string will be encoded, but it will not be decoded back.
+    Since encoded object is under control of developers team,
+     and it is possible to fix it manually by editing save game, we will leave it as is.
+    """
+    return json.dumps(o)
 
 
 def _encode_none(o):

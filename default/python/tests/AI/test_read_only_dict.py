@@ -1,4 +1,6 @@
 import pytest
+from pytest import raises
+
 from freeorion_tools import ReadOnlyDict
 
 dict_content = {
@@ -9,7 +11,7 @@ dict_content = {
 }
 
 
-def test_dict_content():
+def test_readonly_dict_created_from_dict_behaves_the_same():
     test_dict = ReadOnlyDict(dict_content)
     assert set(test_dict.keys()) == set(dict_content.keys())
     assert set(test_dict.values()) == set(dict_content.values())
@@ -17,7 +19,12 @@ def test_dict_content():
     assert len(test_dict) == len(dict_content)
 
 
-def test_membership():
+def test_readonly_dict_created_from_dict_iterates_over_same_keys():
+    test_dict = ReadOnlyDict(dict_content)
+    assert set(test_dict) == set(dict_content)
+
+
+def test_readonly_dict_get_existing_key_works_same_as_for_dict():
     test_dict = ReadOnlyDict(dict_content)
     # check for membership checks and retrieval
     for key, value in dict_content.items():
@@ -26,7 +33,7 @@ def test_membership():
         assert test_dict.get(key, -99999) == value
 
 
-def test_non_existing_keys():
+def test_readonly_dict_get_non_existiong_key_works_same_as_for_dict():
     test_dict = ReadOnlyDict(dict_content)
     # check correct functionality if keys not in dict
     assert 'INVALID_KEY' not in test_dict
@@ -37,7 +44,7 @@ def test_non_existing_keys():
         pytest.fail("Invalid key lookup didn't raise a KeyError")
 
 
-def test_bool():
+def test_readonly_dict_evaluated_to_bool_same_as_collection():
     test_dict = ReadOnlyDict(dict_content)
     assert bool(test_dict)
     assert test_dict
@@ -46,33 +53,29 @@ def test_bool():
     assert not empty_dict
 
 
-def test_conversion_to_dict():
+def test_readonly_dict_created_from_dict_can_be_converted_to_the_same_dict():
     read_only_dict = ReadOnlyDict(dict_content)
     normal_dict = dict(read_only_dict)
     assert len(normal_dict) == len(dict_content)
     assert set(normal_dict.items()) == set(dict_content.items())
 
 
-def test_deletion():
+def test_readonly_dict_remove_value_raises_error():
     test_dict = ReadOnlyDict(dict_content)
-    # check that dict can not be modified
-    try:
+    with raises(TypeError):
         del test_dict[1]
         raise AssertionError("Can delete items from the dict.")
-    except TypeError:
-        pass
 
 
-def test_setitem():
+def test_readonly_dict_set_value_raises_error():
     test_dict = ReadOnlyDict(dict_content)
-    with pytest.raises(TypeError, match="'ReadOnlyDict' object does not support item assignment"):
+    with raises(TypeError, match="'ReadOnlyDict' object does not support item assignment"):
         test_dict['INVALID_KEY'] = 1
         pytest.fail('Can add items to the dict.')
     assert 'INVALID_KEY' not in test_dict
 
 
-def test_nonhashable_values():
-    # make sure can't store unhashable items (as heuristic for mutable items)
-    with pytest.raises(TypeError, match="unhashable type: 'list'"):
+def test_readonly_create_from_dict_with_hashable_values_raises_error():
+    with raises(TypeError, match="unhashable type: 'list'"):
         ReadOnlyDict({1: [1]})
         pytest.fail('Can store mutable items in dict')
