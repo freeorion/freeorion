@@ -2,7 +2,6 @@ from typing import Any
 
 # Tests classes
 import pytest
-from pytest import fixture
 
 import freeOrionAIInterface as fo
 from freeorion_tools.chat_handler import debug_chat_handler
@@ -22,7 +21,7 @@ class _ChatFormatter(ChatFormatter):
         return str(message)
 
 
-@fixture
+@pytest.fixture
 def debug_handler(monkeypatch):
     _shell_locals = [
         ShellVariable(
@@ -59,7 +58,7 @@ def debug_handler(monkeypatch):
     return DebugChatHandler(2)
 
 
-@fixture
+@pytest.fixture
 def test_caller(debug_handler, capsys):
     def function(message):
         # clear previous logs
@@ -133,7 +132,7 @@ class TestDebugModStart:
         assert "scription for a+b" in out
 
 
-@pytest.fixture()
+@pytest.fixture
 def start_debug(test_caller):
     return test_caller("start 2")
 
