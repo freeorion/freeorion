@@ -94,7 +94,7 @@ class DebugChatHandler(ChatHandlerBase):
         try:
             player_id = int(message[5:].strip())
         except ValueError:
-            if self._is_first_ai():
+            if self._ai_should_respond():
                 message = self._formatter.red("Invalid empire id, please input valid number")
                 chat_human(message)
                 self._handle_help()
@@ -125,17 +125,19 @@ class DebugChatHandler(ChatHandlerBase):
         chat_human("\n".join(self._formatter.white(x) for x in start_message))
 
     @staticmethod
-    def _is_first_ai():
+    def _ai_should_respond():
         """
-        Return true first AI handles message.
-        :return:
+        Return true if AI should respond to message.
+
+        To avoid chat pollution only one AI should respond to the message.
+        AI player with the smallest id is selected.
         """
         ais = [x for x in fo.allPlayerIDs() if
                not fo.playerIsHost(x)]
         return ais[0] == fo.playerID()
 
     def _handle_help(self):
-        if not self._is_first_ai():
+        if not self._ai_should_respond():
             return
 
         help_message = [

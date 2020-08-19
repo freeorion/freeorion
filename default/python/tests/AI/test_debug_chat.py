@@ -59,6 +59,19 @@ def debug_handler(monkeypatch):
 
 
 @pytest.fixture
+def debug_handler_for_muted_ai(monkeypatch):
+    monkeypatch.setattr(debug_chat_handler, 'chat_human', print)
+    monkeypatch.setattr(debug_chat_handler.DebugChatHandler, '_shell_locals', [])
+    monkeypatch.setattr(debug_chat_handler.DebugChatHandler, '_get_empire_string', lambda self, player_id: "player_%s" % player_id)
+    monkeypatch.setattr(fo, 'allPlayerIDs', lambda: [1, 2, 3], raising=False)
+    monkeypatch.setattr(fo, 'playerIsHost', lambda player_id: player_id == 1, raising=False)
+    monkeypatch.setattr(fo, 'playerID', lambda: 3, raising=False)
+    monkeypatch.setattr(fo, 'playerName', lambda player_id: "Player_%s" % player_id, raising=False)
+    monkeypatch.setattr(debug_chat_handler, 'ChatFormatter', _ChatFormatter)
+    return DebugChatHandler(3)
+
+
+@pytest.fixture
 def test_caller(debug_handler, capsys):
     def function(message):
         # clear previous logs
@@ -72,7 +85,7 @@ def test_caller(debug_handler, capsys):
     return function
 
 
-class TestNonDebugMode:
+class TestNonDebugModeForAiWhoResponds:
     def test_send_help_prints_user_names(self, test_caller):
         help_message = test_caller("help")
         assert "player_1" not in help_message
@@ -89,6 +102,14 @@ class TestNonDebugMode:
     def test_sending_stop_before_start_is_swallowed_by_handler(self, debug_handler, capsys):
         result = debug_handler.process_message(1, "stop")
         assert result is True
+        out, err = capsys.readouterr()
+        assert err == ''
+        assert out == ''
+
+
+class TestNonDebugModeForAiWhoMuted:
+    def test_send_help_is_ignored_by_second_ai(self, debug_handler_for_muted_ai, capsys):
+        assert debug_handler_for_muted_ai.process_message(1, "help")
         out, err = capsys.readouterr()
         assert err == ''
         assert out == ''
@@ -117,10 +138,15 @@ class TestDebugModStart:
         assert not err
         assert "Invalid empire id, please input valid number" in out
 
-    def test_start_start_debug_mode(self, test_caller):
+    def test_start_start_debug_mode_for_respond_ai(self, test_caller):
         out = test_caller("start 2")
         assert "Entering debug mode" in out
-        assert "variable_b" in out
+
+    def test_start_start_debug_mode_for_muted_ai(self, debug_handler_for_muted_ai, capsys):
+        debug_handler_for_muted_ai.process_message(1, "start 3")
+        out, err = capsys.readouterr()
+        assert not err
+        assert "Entering debug mode" in out
 
     def test_sending_start_prints_intro_message(self, test_caller):
         out = test_caller("start 2")

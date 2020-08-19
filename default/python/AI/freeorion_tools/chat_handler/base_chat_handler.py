@@ -11,4 +11,3 @@ class ChatHandlerBase(metaclass=ABCMeta):
         """
         Process chat message and return if message was processed, and should not be send to another handlers.
         """
-        ...
