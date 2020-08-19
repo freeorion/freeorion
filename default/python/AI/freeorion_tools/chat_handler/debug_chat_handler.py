@@ -54,26 +54,35 @@ class DebugChatHandler(ChatHandlerBase):
         if sender_id != host_id:
             return False  # only user can send debug message
 
+        if self._debug_mode:
+            return self._handle_debug_commands(message)
+        else:
+            return self._handle_chat_commands(message)
+
+    def _handle_chat_commands(self, message):
+        if message.startswith('start'):
+            self._handle_start(message)
+        elif message == 'help' and not self._debug_mode:
+            self._handle_help()
+        elif message == 'stop':
+            pass
+        else:
+            return False
+        return True
+
+    def _handle_debug_commands(self, message):
         if message == 'stop':
             self._handle_stop()
-        elif message.startswith('start'):
-            self._handle_start(message)
-        elif message == 'help':
-            self._handle_help()
         else:
-            if self._debug_mode:
-                self._handle_other(message)
-            else:
-                return False
+            self._handle_shell_input(message)
         return True
 
     # message handlers
     def _handle_stop(self):
-        if self._debug_mode:
-            chat_human(self._exit_debug_message)
-            self._debug_mode = False
+        chat_human(self._exit_debug_message)
+        self._debug_mode = False
 
-    def _handle_other(self, message):
+    def _handle_shell_input(self, message):
         print('>', message, end='')
         out, err = self._interpreter.eval(message)
         if out:

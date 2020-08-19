@@ -1,6 +1,7 @@
 from typing import Any
 
 # Tests classes
+import pytest
 from pytest import fixture
 
 import freeOrionAIInterface as fo
@@ -72,7 +73,7 @@ def test_caller(debug_handler, capsys):
     return function
 
 
-class TestChat:
+class TestNonDebugMode:
     def test_send_help_prints_user_names(self, test_caller):
         help_message = test_caller("help")
         assert "player_1" not in help_message
@@ -93,6 +94,8 @@ class TestChat:
         assert err == ''
         assert out == ''
 
+
+class TestDebugModStart:
     def test_sending_message_from_ai_is_propagated_by_handler(self, debug_handler, capsys):
         # ignore messages not from human
         result = debug_handler.process_message(3, "start 2")
@@ -115,14 +118,10 @@ class TestChat:
         assert not err
         assert "Invalid empire id, please input valid number" in out
 
-
-class TestDebugMode:
-    def test_sending_stop_pauses_debug(self, test_caller):
+    def test_start_start_debug_mode(self, test_caller):
         out = test_caller("start 2")
         assert "Entering debug mode" in out
         assert "variable_b" in out
-        out = test_caller("stop")
-        assert "Exiting debug mode" in out
 
     def test_sending_start_prints_intro_message(self, test_caller):
         out = test_caller("start 2")
@@ -133,8 +132,19 @@ class TestDebugMode:
         assert "variable_a_plus_b" in out
         assert "scription for a+b" in out
 
+
+@pytest.fixture()
+def start_debug(test_caller):
+    return test_caller("start 2")
+
+
+@pytest.mark.usefixtures("start_debug")
+class TestInDebugMode:
+    def test_sending_stop_pauses_debug(self, test_caller):
+        out = test_caller("stop")
+        assert "Exiting debug mode" in out
+
     def test_evaluate_initial_variables_prints_them_to_chat(self, test_caller):
-        test_caller("start 2")
         out = test_caller("variable_a")
         assert "value_a" in out
         assert "variable_a" in out
@@ -146,19 +156,16 @@ class TestDebugMode:
         assert "variable_a_plus_b" in out
 
     def test_evaluating_command_prints_result(self, test_caller):
-        test_caller("start 2")
         out = test_caller("'free' + 'orion'")
         assert "freeorion" in out
 
     def test_evaluating_assignment_assigns_variable(self, test_caller):
-        test_caller("start 2")
         out = test_caller("variable_c = 'value_c'")
         assert "variable_c" in out
         out = test_caller("variable_c")
         assert "value_c" in out
 
     def test_evaluating_erroneous_statement_prints_exception_to_console(self, debug_handler, capsys):
-        assert debug_handler.process_message(1, "start 2")
         assert debug_handler.process_message(1, '1/0')
         out, err = capsys.readouterr()
         assert err == ''
@@ -169,9 +176,22 @@ class TestDebugMode:
         assert 'value_a' in out
 
     def test_start_with_initial_imports_evaluates_imports(self, test_caller):
-        test_caller("start 2")
         result = test_caller("magic_check")
         assert "magic_checkre" in result
+
+    def test_help_call_is_ignored(self, test_caller):
+        result = test_caller("help")
+        assert "Type help() for interactive help" in result
+
+    def test_start_call_is_ignored(self, test_caller):
+        result = test_caller("start")
+        assert " name 'start' is not defined" in result
+
+    def test_start_with_number_call_is_ignored(self, debug_handler, capsys):
+        assert debug_handler.process_message(1, 'start 2')
+        out, err = capsys.readouterr()
+        assert err == ''
+        assert 'SyntaxError: invalid syntax' in out
 
 
 class TestRestart:
