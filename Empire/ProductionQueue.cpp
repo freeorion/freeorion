@@ -411,12 +411,12 @@ ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id) c
                 if (!psc.second.first)
                     continue;
                 Condition::ObjectSet matches;
-                // if a condition selectin gwhere to take resources from was specified, use it.
+                // if a condition selecting where to take resources from was specified, use it.
                 // Otherwise take from the production location
                 if (psc.second.second) {
                     psc.second.second->Eval(context, matches);
                 } else {
-                    matches.push_back(location_obj);
+                    matches.emplace_back(location_obj);
                 }
 
                 // determine how much to take from each matched object
@@ -712,7 +712,7 @@ void ProductionQueue::Update() {
         {
             if (groups_it == available_pp.end()) {
                 // didn't find a group containing this object, so add an empty group as this element's queue element group
-                queue_element_groups.push_back(std::set<int>());
+                queue_element_groups.emplace_back();
                 break;
             }
 
@@ -721,8 +721,8 @@ void ProductionQueue::Update() {
             auto set_it = group.find(location_id);
             if (set_it != group.end()) {
                 // system is in this group.
-                queue_element_groups.push_back(group);  // record this discovery
-                break;                                  // stop searching for a group containing a system, since one has been found
+                queue_element_groups.emplace_back(group);   // record this discovery
+                break;                                      // stop searching for a group containing a system, since one has been found
             }
         }
     }
