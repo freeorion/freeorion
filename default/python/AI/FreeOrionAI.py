@@ -17,7 +17,8 @@ import freeOrionAIInterface as fo  # interface used to interact with FreeOrion A
 from common.option_tools import parse_config, get_option_dict, check_bool
 parse_config(fo.getOptionsDBOptionStr("ai-config"), fo.getUserConfigDir())
 
-from freeorion_tools import patch_interface
+from freeorion_tools import patch_interface, configure_debug_chat, process_chat_message
+
 patch_interface()
 
 import ColonisationAI
@@ -35,7 +36,7 @@ import TechsListsAI
 import turn_state
 from aistate_interface import create_new_aistate, load_aistate, get_aistate
 from AIDependencies import INVALID_ID
-from freeorion_tools import handle_debug_chat, AITimer
+from freeorion_tools import AITimer
 from common.handlers import init_handlers
 from common.listeners import listener
 from character.character_module import Aggression
@@ -75,6 +76,19 @@ def error_handler(func):
     return _error_handler
 
 
+def _pre_game_start(empire_id, aistate):
+    """
+    Configuration that should be done before AI start operating.
+    """
+    aggression_trait = aistate.character.get_trait(Aggression)
+    diplomatic_corp_configs = {fo.aggression.beginner: DiplomaticCorp.BeginnerDiplomaticCorp,
+                               fo.aggression.maniacal: DiplomaticCorp.ManiacalDiplomaticCorp}
+    global diplomatic_corp
+    diplomatic_corp = diplomatic_corp_configs.get(aggression_trait.key, DiplomaticCorp.DiplomaticCorp)()
+    TechsListsAI.test_tech_integrity()
+    configure_debug_chat(empire_id)
+
+
 @error_handler
 def startNewGame(aggression_input=fo.aggression.aggressive):  # pylint: disable=invalid-name
     """Called by client when a new game is started (but not when a game is loaded).
@@ -108,12 +122,7 @@ def startNewGame(aggression_input=fo.aggression.aggressive):  # pylint: disable=
         debug("    Renaming to %s..." % new_name)
         res = fo.issueRenameOrder(planet_id, new_name)
         debug("    Result: %d; Planet is now named %s" % (res, planet.name))
-
-    diplomatic_corp_configs = {fo.aggression.beginner: DiplomaticCorp.BeginnerDiplomaticCorp,
-                               fo.aggression.maniacal: DiplomaticCorp.ManiacalDiplomaticCorp}
-    global diplomatic_corp
-    diplomatic_corp = diplomatic_corp_configs.get(aggression_trait.key, DiplomaticCorp.DiplomaticCorp)()
-    TechsListsAI.test_tech_integrity()
+    _pre_game_start(empire.empireID, aistate)
 
 
 @error_handler
@@ -147,13 +156,7 @@ def resumeLoadedGame(saved_state_string):  # pylint: disable=invalid-name
                   " to 'aggressive'. The behaviour of the AI may be different"
                   " than in the original session. The error raised was: %s"
                   % e, exc_info=True)
-
-    aggression_trait = aistate.character.get_trait(Aggression)
-    diplomatic_corp_configs = {fo.aggression.beginner: DiplomaticCorp.BeginnerDiplomaticCorp,
-                               fo.aggression.maniacal: DiplomaticCorp.ManiacalDiplomaticCorp}
-    global diplomatic_corp
-    diplomatic_corp = diplomatic_corp_configs.get(aggression_trait.key, DiplomaticCorp.DiplomaticCorp)()
-    TechsListsAI.test_tech_integrity()
+    _pre_game_start(fo.getEmpire().empireID, aistate)
 
     debug('Size of already issued orders: ' + str(fo.getOrders().size))
 
@@ -198,15 +201,7 @@ def handleChatMessage(sender_id, message_text):  # pylint: disable=invalid-name
     if empire.eliminated:
         debug("This empire has been eliminated. Ignoring chat message")
         return
-
-    # debug("Received chat message from " + str(senderID) + " that says: " + messageText + " - ignoring it")
-    # perhaps it is a debugging interaction
-    if get_option_dict().get('allow_debug_chat', False) and handle_debug_chat(sender_id, message_text):
-        return
-    if not diplomatic_corp:
-        DiplomaticCorp.handle_pregame_chat(sender_id, message_text)
-    else:
-        diplomatic_corp.handle_midgame_chat(sender_id, message_text)
+    process_chat_message(sender_id, message_text, diplomatic_corp)
 
 
 @error_handler

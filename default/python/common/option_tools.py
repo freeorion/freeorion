@@ -113,6 +113,7 @@ def parse_config(option_string, config_dir):
     if os.path.exists(default_file):
         config = ConfigParser()
         config.read([default_file])
+        print("AI Config read from default file(s): %s" % default_file)
     else:
         try:
             config = _create_default_config_file(default_file)
