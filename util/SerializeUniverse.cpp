@@ -25,30 +25,6 @@ BOOST_CLASS_EXPORT(Field)
 BOOST_CLASS_EXPORT(Universe)
 BOOST_CLASS_VERSION(Universe, 1)
 
-
-BOOST_CLASS_VERSION(Meter, 1)
-
-template <typename Archive>
-void serialize(Archive& ar, Meter& m, unsigned int const version)
-{
-    using namespace boost::serialization;
-
-    if (Archive::is_loading::value && version < 1) {
-        ar  & make_nvp("m_current_value", m.m_current_value)
-            & make_nvp("m_initial_value", m.m_initial_value);
-    } else {
-        // use minimum size NVP label to reduce archive size bloat for very-often serialized meter values...
-        ar  & make_nvp("c", m.m_current_value)
-            & make_nvp("i", m.m_initial_value);
-    }
-}
-
-template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, Meter&, unsigned int const);
-template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, Meter&, unsigned int const);
-template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, Meter&, unsigned int const);
-template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, Meter&, unsigned int const);
-
-
 template <typename Archive>
 void serialize(Archive& ar, PopCenter& p, unsigned int const version)
 {
