@@ -52,4 +52,10 @@
     <release version="0.4.1" date="2012-08-03"/>
     <release version="0.4" date="2012-02-05"/>
   </releases>
+  <content_rating type="oars-1.1">
+    <content_attribute id="violence-bloodshed">mild</content_attribute>
+    <content_attribute id="language-humor">mild</content_attribute>
+    <content_attribute id="language-discrimination">intense</content_attribute>
+    <content_attribute id="social-chat">intense</content_attribute>
+  </content_rating>
 </component>
