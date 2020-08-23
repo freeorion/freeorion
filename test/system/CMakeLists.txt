@@ -22,7 +22,6 @@ target_include_directories(fo_systemtest_game
 
 target_link_libraries(fo_systemtest_game
     freeorioncommon
-    freeorionparse
     Boost::unit_test_framework
 )
 

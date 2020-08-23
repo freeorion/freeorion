@@ -61,17 +61,6 @@ namespace parse {
         set_ship_part_meter_enum_grammar(const parse::lexer& tok);
         detail::enum_rule<MeterType> rule;
     };
-
-    namespace detail {
-    using unlockable_item_rule_type = rule<UnlockableItem ()>;
-    using unlockable_item_grammar_type = grammar<UnlockableItem ()>;
-
-    struct unlockable_item_grammar : public unlockable_item_grammar_type {
-        unlockable_item_grammar(const parse::lexer& tok, Labeller& label);
-        parse::unlockable_item_enum_grammar unlockable_item_type_enum;
-        unlockable_item_rule_type start;
-    };
-    }
 }
 
 #endif

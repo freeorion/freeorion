@@ -453,35 +453,6 @@ namespace parse {
 #endif
     }
 
-    unlockable_item_grammar::unlockable_item_grammar(const parse::lexer& tok, Labeller& label) :
-        unlockable_item_grammar::base_type(start, "unlockable_item_grammar"),
-        unlockable_item_type_enum(tok)
-    {
-        namespace phoenix = boost::phoenix;
-        namespace qi = boost::spirit::qi;
-
-        using phoenix::construct;
-
-        qi::_1_type _1;
-        qi::_2_type _2;
-        qi::_val_type _val;
-        qi::omit_type omit_;
-
-        start
-            =  ( omit_[tok.Item_]
-            >    label(tok.Type_) > unlockable_item_type_enum
-            >    label(tok.Name_) > tok.string
-               ) [ _val = construct<UnlockableItem>(_1, _2) ]
-            ;
-
-        start.name("UnlockableItem");
-
-#if DEBUG_PARSERS
-        debug(start);
-#endif
-    }
-
-
     /** \brief Load and parse script file(s) from given path
         * 
         * @param[in] path absolute path to a regular file

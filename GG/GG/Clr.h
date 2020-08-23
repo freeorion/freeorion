@@ -58,9 +58,9 @@ GG_API std::ostream& operator<<(std::ostream& os, const Clr& pt);
 inline Clr LightenClr(const Clr& clr, float factor = 2.0)
 {
     return Clr(
-        std::min(static_cast<int>(clr.r * factor), 255),
-        std::min(static_cast<int>(clr.g * factor), 255),
-        std::min(static_cast<int>(clr.b * factor), 255),
+        static_cast<unsigned char>(std::min(static_cast<int>(clr.r * factor), 255)),
+        static_cast<unsigned char>(std::min(static_cast<int>(clr.g * factor), 255)),
+        static_cast<unsigned char>(std::min(static_cast<int>(clr.b * factor), 255)),
         clr.a);
 }
 
@@ -69,9 +69,9 @@ inline Clr LightenClr(const Clr& clr, float factor = 2.0)
 inline Clr DarkenClr(const Clr& clr, float factor = 2.0)
 {
     return Clr(
-        static_cast<int>(clr.r / factor),
-        static_cast<int>(clr.g / factor),
-        static_cast<int>(clr.b / factor),
+        static_cast<unsigned char>(static_cast<int>(clr.r / factor)),
+        static_cast<unsigned char>(static_cast<int>(clr.g / factor)),
+        static_cast<unsigned char>(static_cast<int>(clr.b / factor)),
         clr.a);
 }
 

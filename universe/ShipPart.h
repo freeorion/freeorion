@@ -185,7 +185,7 @@ public:
     auto GetCheckSum() const -> unsigned int;
 
     //! Sets part types to the future value of @p pending_ship_parts.
-    FO_COMMON_API void SetShipParts(Pending::Pending<ShipPartMap>&& pending_ship_parts);
+    void SetShipParts(Pending::Pending<ShipPartMap>&& pending_ship_parts);
 
 private:
     ShipPartManager();

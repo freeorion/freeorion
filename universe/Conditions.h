@@ -1372,6 +1372,9 @@ struct FO_COMMON_API And final : public Condition {
         std::unique_ptr<Condition>&& operand3 = nullptr,
         std::unique_ptr<Condition>&& operand4 = nullptr);
 
+    And(And const&) = delete;
+    And& operator=(And const&) = delete;
+
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;

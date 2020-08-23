@@ -33,19 +33,6 @@ namespace parse {
             ;
     }
 
-    unlockable_item_enum_grammar::unlockable_item_enum_grammar(const parse::lexer& tok) :
-        unlockable_item_enum_grammar::base_type(rule, "unlockable_item_enum_grammar")
-    {
-        rule
-            =   tok.Building_       [ _val = UIT_BUILDING ]
-            |   tok.ShipPart_       [ _val = UIT_SHIP_PART ]
-            |   tok.ShipHull_       [ _val = UIT_SHIP_HULL ]
-            |   tok.ShipDesign_     [ _val = UIT_SHIP_DESIGN ]
-            |   tok.Tech_           [ _val = UIT_TECH ]
-            |   tok.Policy_         [ _val = UIT_POLICY ]
-            ;
-    }
-
     ship_slot_enum_grammar::ship_slot_enum_grammar(const parse::lexer& tok) :
         ship_slot_enum_grammar::base_type(rule, "ship_slot_enum_grammar")
     {

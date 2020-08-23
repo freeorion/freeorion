@@ -24,10 +24,14 @@ namespace Pending {
             filename(name_)
         {}
 
+        Pending(Pending const&) = delete;
+
         Pending(Pending&& other) noexcept :
             pending(std::move(other.pending)),
             filename(std::move(other.filename))
         {}
+
+        Pending& operator=(Pending const&) = delete;
 
         Pending& operator=(Pending&& other) noexcept {
             pending = std::move(other.pending);

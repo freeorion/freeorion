@@ -2640,6 +2640,176 @@ unsigned int NameLookup::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // Operation                                             //
 ///////////////////////////////////////////////////////////
+template <typename T>
+Operation<T>::Operation(OpType op_type,
+                        std::unique_ptr<ValueRef<T>>&& operand1,
+                        std::unique_ptr<ValueRef<T>>&& operand2) :
+    ValueRef<T>(),
+    m_op_type(op_type)
+{
+    if (operand1)
+        m_operands.push_back(std::move(operand1));
+    if (operand2)
+        m_operands.push_back(std::move(operand2));
+    InitConstInvariants();
+    CacheConstValue();
+}
+
+template <typename T>
+Operation<T>::Operation(OpType op_type, std::unique_ptr<ValueRef<T>>&& operand) :
+    ValueRef<T>(),
+    m_op_type(op_type)
+{
+    if (operand)
+        m_operands.push_back(std::move(operand));
+    InitConstInvariants();
+    CacheConstValue();
+}
+
+template <typename T>
+Operation<T>::Operation(OpType op_type, std::vector<std::unique_ptr<ValueRef<T>>>&& operands) :
+    m_op_type(op_type),
+    m_operands(std::move(operands))
+{
+    InitConstInvariants();
+    CacheConstValue();
+}
+
+template <typename T>
+void Operation<T>::InitConstInvariants()
+{
+    if (m_op_type == RANDOM_UNIFORM || m_op_type == RANDOM_PICK) {
+        m_constant_expr = false;
+        this->m_root_candidate_invariant = false;
+        this->m_local_candidate_invariant = false;
+        this->m_target_invariant = false;
+        this->m_source_invariant = false;
+        m_simple_increment = false;
+        return;
+    }
+
+    m_constant_expr = std::all_of(m_operands.begin(), m_operands.end(),
+        [](const auto& operand) { return operand && operand->ConstantExpr(); });
+
+    this->m_root_candidate_invariant = std::all_of(m_operands.begin(), m_operands.end(),
+        [](const auto& operand) { return operand && operand->RootCandidateInvariant(); });
+    this->m_local_candidate_invariant = std::all_of(m_operands.begin(), m_operands.end(),
+        [](const auto& operand) { return operand && operand->LocalCandidateInvariant(); });
+    this->m_target_invariant = std::all_of(m_operands.begin(), m_operands.end(),
+        [](const auto& operand) { return operand && operand->TargetInvariant(); });
+    this->m_source_invariant = std::all_of(m_operands.begin(), m_operands.end(),
+        [](const auto& operand) { return operand && operand->SourceInvariant(); });
+
+
+    // determine if this is a simple incrment operation
+    if (m_op_type != PLUS && m_op_type != MINUS) {
+        m_simple_increment = false;
+        return;
+    }
+    if (m_operands.size() < 2 || !m_operands[0] || !m_operands[1]) {
+        m_simple_increment = false;
+        return;
+    }
+    // RHS must be the same value for all targets
+    if (!m_operands[1]->TargetInvariant()) {
+        m_simple_increment = false;
+        return;
+    }
+    // LHS must be just the immediate value of what's being incremented
+    if (const auto lhs = dynamic_cast<const Variable<T>*>(m_operands[0].get()))
+        m_simple_increment = (lhs->GetReferenceType() == EFFECT_TARGET_VALUE_REFERENCE);
+    else
+        m_simple_increment = false;
+}
+
+template <typename T>
+void Operation<T>::CacheConstValue()
+{
+    if (!m_constant_expr)
+        return;
+    m_cached_const_value = this->EvalImpl(ScriptingContext());
+}
+
+template <typename T>
+bool Operation<T>::operator==(const ValueRef<T>& rhs) const
+{
+    if (&rhs == this)
+        return true;
+    if (typeid(rhs) != typeid(*this))
+        return false;
+    const Operation<T>& rhs_ = static_cast<const Operation<T>&>(rhs);
+
+    if (m_operands == rhs_.m_operands)
+        return true;
+
+    if (m_operands.size() != rhs_.m_operands.size())
+        return false;
+
+    for (unsigned int i = 0; i < m_operands.size(); ++i) {
+        if (m_operands[i] != rhs_.m_operands[i])
+            return false;
+        if (m_operands[i] && *(m_operands[i]) != *(rhs_.m_operands[i]))
+            return false;
+    }
+
+    // should be redundant...
+    if (m_constant_expr != rhs_.m_constant_expr)
+        return false;
+
+    return true;
+}
+
+template <typename T>
+OpType Operation<T>::GetOpType() const
+{ return m_op_type; }
+
+template <typename T>
+const ValueRef<T>* Operation<T>::LHS() const
+{
+    if (m_operands.empty())
+        return nullptr;
+    return m_operands[0].get();
+}
+
+template <typename T>
+const ValueRef<T>* Operation<T>::RHS() const
+{
+    if (m_operands.size() < 2)
+        return nullptr;
+    return m_operands[1].get();
+}
+
+template <typename T>
+const std::vector<ValueRef<T>*> Operation<T>::Operands() const
+{
+    std::vector<ValueRef<T>*> retval(m_operands.size());
+    std::transform(m_operands.begin(), m_operands.end(), retval.begin(),
+                   [](const auto& xx){ return xx.get(); });
+    return retval;
+}
+
+template <typename T>
+T Operation<T>::Eval(const ScriptingContext& context) const
+{
+    if (m_constant_expr)
+        return m_cached_const_value;
+    return this->EvalImpl(context);
+}
+
+template <typename T>
+unsigned int Operation<T>::GetCheckSum() const
+{
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "ValueRef::Operation");
+    CheckSums::CheckSumCombine(retval, m_op_type);
+    CheckSums::CheckSumCombine(retval, m_operands);
+    CheckSums::CheckSumCombine(retval, m_constant_expr);
+    CheckSums::CheckSumCombine(retval, m_cached_const_value);
+    TraceLogger() << "GetCheckSum(Operation<T>): " << typeid(*this).name() << " retval: " << retval;
+    return retval;
+}
+
 template <>
 std::string Operation<std::string>::EvalImpl(const ScriptingContext& context) const
 {
@@ -3032,4 +3202,339 @@ int Operation<int>::EvalImpl(const ScriptingContext& context) const
     throw std::runtime_error("double ValueRef evaluated with an unknown or invalid OpType.");
     return 0;
 }
+
+template <typename T>
+T Operation<T>::EvalImpl(const ScriptingContext& context) const
+{
+    switch (m_op_type) {
+    case TIMES: {
+        // useful for writing a "Statistic If" expression with arbitrary types.
+        // If returns T(0) or T(1) for nothing or something matching the
+        // sampling condition. This can be checked here by returning T(0) if
+        // the LHS operand is T(0) and just returning RHS() otherwise.
+        if (!LHS()->Eval(context))
+            return T(0);
+        return RHS()->Eval(context);
+        break;
+    }
+
+    case MAXIMUM:
+    case MINIMUM: {
+        // evaluate all operands, return smallest or biggest
+        std::set<T> vals;
+        for (auto& vr : m_operands) {
+            if (vr)
+                vals.emplace(vr->Eval(context));
+        }
+        if (m_op_type == MINIMUM)
+            return vals.empty() ? T(-1) : *vals.begin();
+        else
+            return vals.empty() ? T(-1) : *vals.rbegin();
+        break;
+    }
+
+    case RANDOM_PICK: {
+        // select one operand, evaluate it, return result
+        if (m_operands.empty())
+            return T(-1);   // should be INVALID_T of enum types
+        auto idx = RandInt(0, m_operands.size() - 1);
+        auto& vr = *std::next(m_operands.begin(), idx);
+        if (!vr)
+            return T(-1);   // should be INVALID_T of enum types
+        return vr->Eval(context);
+        break;
+    }
+
+    case COMPARE_EQUAL:
+    case COMPARE_GREATER_THAN:
+    case COMPARE_GREATER_THAN_OR_EQUAL:
+    case COMPARE_LESS_THAN:
+    case COMPARE_LESS_THAN_OR_EQUAL:
+    case COMPARE_NOT_EQUAL: {
+        const T&& lhs_val = LHS()->Eval(context);
+        const T&& rhs_val = RHS()->Eval(context);
+        bool test_result = false;
+        switch (m_op_type) {
+            case COMPARE_EQUAL:                 test_result = lhs_val == rhs_val;   break;
+            case COMPARE_GREATER_THAN:          test_result = lhs_val > rhs_val;    break;
+            case COMPARE_GREATER_THAN_OR_EQUAL: test_result = lhs_val >= rhs_val;   break;
+            case COMPARE_LESS_THAN:             test_result = lhs_val < rhs_val;    break;
+            case COMPARE_LESS_THAN_OR_EQUAL:    test_result = lhs_val <= rhs_val;   break;
+            case COMPARE_NOT_EQUAL:             test_result = lhs_val != rhs_val;   break;
+            default:    break;  // ??? do nothing, default to false
+        }
+        if (m_operands.size() < 3) {
+            return T(1);
+        } else if (m_operands.size() < 4) {
+            if (test_result)
+                return m_operands[2]->Eval(context);
+            else
+                return T(0);
+        } else {
+            if (test_result)
+                return m_operands[2]->Eval(context);
+            else
+                return m_operands[3]->Eval(context);
+        }
+        break;
+    }
+
+    default:
+        break;
+    }
+
+    throw std::runtime_error("ValueRef::Operation<T>::EvalImpl evaluated with an unknown or invalid OpType.");
+}
+
+template <typename T>
+std::string Operation<T>::Description() const
+{
+    if (m_op_type == NEGATE) {
+        if (auto rhs = dynamic_cast<const Operation<T>*>(LHS())) {
+            OpType op_type = rhs->GetOpType();
+            if (op_type == PLUS     || op_type == MINUS ||
+                op_type == TIMES    || op_type == DIVIDE ||
+                op_type == NEGATE   || op_type == EXPONENTIATE)
+            return "-(" + LHS()->Description() + ")";
+        } else {
+            return "-" + LHS()->Description();
+        }
+    }
+
+    if (m_op_type == ABS)
+        return "abs(" + LHS()->Description() + ")";
+    if (m_op_type == LOGARITHM)
+        return "log(" + LHS()->Description() + ")";
+    if (m_op_type == SINE)
+        return "sin(" + LHS()->Description() + ")";
+    if (m_op_type == COSINE)
+        return "cos(" + LHS()->Description() + ")";
+
+    if (m_op_type == MINIMUM) {
+        std::string retval = "min(";
+        for (auto it = m_operands.begin(); it != m_operands.end(); ++it) {
+            if (it != m_operands.begin())
+                retval += ", ";
+            retval += (*it)->Description();
+        }
+        retval += ")";
+        return retval;
+    }
+    if (m_op_type == MAXIMUM) {
+        std::string retval = "max(";
+        for (auto it = m_operands.begin(); it != m_operands.end(); ++it) {
+            if (it != m_operands.begin())
+                retval += ", ";
+            retval += (*it)->Description();
+        }
+        retval += ")";
+        return retval;
+    }
+
+    if (m_op_type == RANDOM_UNIFORM)
+        return "RandomNumber(" + LHS()->Description() + ", " + RHS()->Description() + ")";
+
+    if (m_op_type == RANDOM_PICK) {
+        std::string retval = "OneOf(";
+        for (auto it = m_operands.begin(); it != m_operands.end(); ++it) {
+            if (it != m_operands.begin())
+                retval += ", ";
+            retval += (*it)->Description();
+        }
+        retval += ")";
+        return retval;
+    }
+
+    if (m_op_type == ROUND_NEAREST)
+        return "round(" + LHS()->Description() + ")";
+    if (m_op_type == ROUND_UP)
+        return "ceil(" + LHS()->Description() + ")";
+    if (m_op_type == ROUND_DOWN)
+        return "floor(" + LHS()->Description() + ")";
+    if (m_op_type == SIGN)
+        return "sign(" + LHS()->Description() + ")";
+
+    bool parenthesize_lhs = false;
+    bool parenthesize_rhs = false;
+    if (auto lhs = dynamic_cast<const Operation<T>*>(LHS())) {
+        OpType op_type = lhs->GetOpType();
+        if (
+            (m_op_type == EXPONENTIATE &&
+             (op_type == EXPONENTIATE   || op_type == TIMES     || op_type == DIVIDE ||
+              op_type == PLUS           || op_type == MINUS     || op_type == NEGATE)
+            ) ||
+            (((m_op_type == TIMES        || m_op_type == DIVIDE) &&
+              (op_type == PLUS           || op_type == MINUS))    || op_type == NEGATE)
+           )
+            parenthesize_lhs = true;
+    }
+    if (auto rhs = dynamic_cast<const Operation<T>*>(RHS())) {
+        OpType op_type = rhs->GetOpType();
+        if (
+            (m_op_type == EXPONENTIATE &&
+             (op_type == EXPONENTIATE   || op_type == TIMES     || op_type == DIVIDE ||
+              op_type == PLUS           || op_type == MINUS     || op_type == NEGATE)
+            ) ||
+            (((m_op_type == TIMES        || m_op_type == DIVIDE) &&
+              (op_type == PLUS           || op_type == MINUS))    || op_type == NEGATE)
+           )
+            parenthesize_rhs = true;
+    }
+
+    std::string retval;
+    if (parenthesize_lhs)
+        retval += '(' + LHS()->Description() + ')';
+    else
+        retval += LHS()->Description();
+
+    switch (m_op_type) {
+    case PLUS:          retval += " + "; break;
+    case MINUS:         retval += " - "; break;
+    case TIMES:         retval += " * "; break;
+    case DIVIDE:        retval += " / "; break;
+    case EXPONENTIATE:  retval += " ^ "; break;
+    default:            retval += " ? "; break;
+    }
+
+    if (parenthesize_rhs)
+        retval += '(' + RHS()->Description() + ')';
+    else
+        retval += RHS()->Description();
+
+    return retval;
+}
+
+template <typename T>
+std::string Operation<T>::Dump(unsigned short ntabs) const
+{
+    if (m_op_type == NEGATE) {
+        if (auto rhs = dynamic_cast<const Operation<T>*>(LHS())) {
+            OpType op_type = rhs->GetOpType();
+            if (op_type == PLUS     || op_type == MINUS ||
+                op_type == TIMES    || op_type == DIVIDE ||
+                op_type == NEGATE   || op_type == EXPONENTIATE)
+            return "-(" + LHS()->Dump(ntabs) + ")";
+        } else {
+            return "-" + LHS()->Dump(ntabs);
+        }
+    }
+
+    if (m_op_type == ABS)
+        return "abs(" + LHS()->Dump(ntabs) + ")";
+    if (m_op_type == LOGARITHM)
+        return "log(" + LHS()->Dump(ntabs) + ")";
+    if (m_op_type == SINE)
+        return "sin(" + LHS()->Dump(ntabs) + ")";
+    if (m_op_type == COSINE)
+        return "cos(" + LHS()->Dump(ntabs) + ")";
+
+    if (m_op_type == MINIMUM) {
+        std::string retval = "min(";
+        for (auto it = m_operands.begin(); it != m_operands.end(); ++it) {
+            if (it != m_operands.begin())
+                retval += ", ";
+            retval += (*it)->Dump(ntabs);
+        }
+        retval += ")";
+        return retval;
+    }
+    if (m_op_type == MAXIMUM) {
+        std::string retval = "max(";
+        for (auto it = m_operands.begin(); it != m_operands.end(); ++it) {
+            if (it != m_operands.begin())
+                retval += ", ";
+            retval += (*it)->Dump(ntabs);
+        }
+        retval += ")";
+        return retval;
+    }
+
+    if (m_op_type == RANDOM_UNIFORM)
+        return "random(" + LHS()->Dump(ntabs) + ", " + LHS()->Dump(ntabs) + ")";
+
+    if (m_op_type == RANDOM_PICK) {
+        std::string retval = "randompick(";
+        for (auto it = m_operands.begin(); it != m_operands.end(); ++it) {
+            if (it != m_operands.begin())
+                retval += ", ";
+            retval += (*it)->Dump(ntabs);
+        }
+        retval += ")";
+        return retval;
+    }
+
+    if (m_op_type == ROUND_NEAREST)
+        return "round(" + LHS()->Dump(ntabs) + ")";
+    if (m_op_type == ROUND_UP)
+        return "ceil(" + LHS()->Dump(ntabs) + ")";
+    if (m_op_type == ROUND_DOWN)
+        return "floor(" + LHS()->Dump(ntabs) + ")";
+
+    bool parenthesize_lhs = false;
+    bool parenthesize_rhs = false;
+    if (auto lhs = dynamic_cast<const Operation<T>*>(LHS())) {
+        OpType op_type = lhs->GetOpType();
+        if (
+            (m_op_type == EXPONENTIATE &&
+             (op_type == EXPONENTIATE   || op_type == TIMES     || op_type == DIVIDE ||
+              op_type == PLUS           || op_type == MINUS     || op_type == NEGATE)
+            ) ||
+            (((m_op_type == TIMES        || m_op_type == DIVIDE) &&
+              (op_type == PLUS           || op_type == MINUS))    || op_type == NEGATE)
+           )
+            parenthesize_lhs = true;
+    }
+    if (auto rhs = dynamic_cast<const Operation<T>*>(RHS())) {
+        OpType op_type = rhs->GetOpType();
+        if (
+            (m_op_type == EXPONENTIATE &&
+             (op_type == EXPONENTIATE   || op_type == TIMES     || op_type == DIVIDE ||
+              op_type == PLUS           || op_type == MINUS     || op_type == NEGATE)
+            ) ||
+            (((m_op_type == TIMES        || m_op_type == DIVIDE) &&
+              (op_type == PLUS           || op_type == MINUS))    || op_type == NEGATE)
+           )
+            parenthesize_rhs = true;
+    }
+
+    std::string retval;
+    if (parenthesize_lhs)
+        retval += '(' + LHS()->Dump(ntabs) + ')';
+    else
+        retval += LHS()->Dump(ntabs);
+
+    switch (m_op_type) {
+    case PLUS:          retval += " + "; break;
+    case MINUS:         retval += " - "; break;
+    case TIMES:         retval += " * "; break;
+    case DIVIDE:        retval += " / "; break;
+    case EXPONENTIATE:  retval += " ^ "; break;
+    default:            retval += " ? "; break;
+    }
+
+    if (parenthesize_rhs)
+        retval += '(' + RHS()->Dump(ntabs) + ')';
+    else
+        retval += RHS()->Dump(ntabs);
+
+    return retval;
+}
+
+template <typename T>
+void Operation<T>::SetTopLevelContent(const std::string& content_name) {
+    for (auto& operand : m_operands) {
+        if (operand)
+            operand->SetTopLevelContent(content_name);
+    }
+}
+
+template FO_COMMON_API struct Operation<double>;
+template FO_COMMON_API struct Operation<int>;
+template FO_COMMON_API struct Operation<UniverseObjectType>;
+template FO_COMMON_API struct Operation<PlanetEnvironment>;
+template FO_COMMON_API struct Operation<PlanetSize>;
+template FO_COMMON_API struct Operation<PlanetType>;
+template FO_COMMON_API struct Operation<StarType>;
+template FO_COMMON_API struct Operation<Visibility>;
+template FO_COMMON_API struct Operation<std::string>;
 }

@@ -153,6 +153,16 @@ jobs:
         - ccache --cleanup
         - ccache --show-stats
 
+    - name: Build FreeOrion on Windows (x86)
+      os: windows
+      language: cpp
+      before_install:
+        - mkdir build
+        - cd build
+      script:
+        - cmake -G "Visual Studio 15" -T v141 -A Win32 -DBUILD_TESTING=ON ..
+        - cmake --build . --config "Release" -- //maxcpucount //property:BuildInParallel=true //property:CL_MPCount=2 //verbosity:minimal
+
     - name: Unittest AI with Python 3.5
       <<: *_test_python_common
       python: 3.5

@@ -279,11 +279,11 @@ public:
 
     /** Sets ship design types to the future value of \p pending_designs
         found in \p subdir. */
-    FO_COMMON_API void SetShipDesignTypes(Pending::Pending<ParsedShipDesignsType>&& pending_designs);
+    void SetShipDesignTypes(Pending::Pending<ParsedShipDesignsType>&& pending_designs);
 
     /** Sets monster design types to the future value of \p
         pending_design_types found in \p subdir. */
-    FO_COMMON_API void SetMonsterDesignTypes(Pending::Pending<ParsedShipDesignsType>&& pending_designs);
+    void SetMonsterDesignTypes(Pending::Pending<ParsedShipDesignsType>&& pending_designs);
 
 private:
     PredefinedShipDesignManager();
