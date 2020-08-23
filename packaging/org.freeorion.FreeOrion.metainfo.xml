@@ -23,19 +23,19 @@
   <screenshots>
     <screenshot type="default">
       <caption>Galaxy map with system statistics</caption>
-      <image width="1600" height="900" type="source">https://www.freeorion.org/screenshots/FreeOrion_GalaxyMapSystemPlanetsFleets.png</image>
+      <image width="1600" height="900" type="source">https://raw.githubusercontent.com/freeorion/freeorion/master/packaging/screenshots/GalaxyMapSystemPlanetsFleets.jpg</image>
     </screenshot>
     <screenshot>
       <caption>Galaxy map with combat report</caption>
-      <image width="1600" height="900" type="source">https://www.freeorion.org/screenshots/FreeOrion_GalaxyMapCombatGraph.png</image>
+      <image width="1600" height="900" type="source">https://raw.githubusercontent.com/freeorion/freeorion/master/packaging/screenshots/GalaxyMapCombatGraph.jpg</image>
     </screenshot>
     <screenshot>
       <caption>Empirial production queue</caption>
-      <image width="1600" height="900" type="source">https://www.freeorion.org/screenshots/FreeOrion_ProductionScreen.png</image>
+      <image width="1600" height="900" type="source">https://raw.githubusercontent.com/freeorion/freeorion/master/packaging/screenshots/ProductionScreen.jpg</image>
     </screenshot>
     <screenshot>
       <caption>Empirial research tree</caption>
-      <image width="1600" height="900" type="source">https://www.freeorion.org/screenshots/FreeOrion_ResearchScreen.png</image>
+      <image width="1600" height="900" type="source">https://raw.githubusercontent.com/freeorion/freeorion/master/packaging/screenshots/ResearchScreen.jpg</image>
     </screenshot>
   </screenshots>
 </component>
