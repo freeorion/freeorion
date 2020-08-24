@@ -1842,7 +1842,7 @@ void Empire::AddExploredSystem(int ID) {
 std::string Empire::NewShipName() {
     static std::vector<std::string> ship_names = UserStringList("SHIP_NAMES");
     if (ship_names.empty())
-        ship_names.push_back(UserString("OBJ_SHIP"));
+        ship_names.emplace_back(UserString("OBJ_SHIP"));
 
     // select name randomly from list
     int ship_name_idx = RandInt(0, static_cast<int>(ship_names.size()) - 1);
@@ -1918,7 +1918,7 @@ void Empire::RemoveShipDesign(int ship_design_id) {
 }
 
 void Empire::AddSitRepEntry(const SitRepEntry& entry)
-{ m_sitrep_entries.push_back(entry); }
+{ m_sitrep_entries.emplace_back(entry); }
 
 void Empire::RemoveTech(const std::string& name)
 { m_techs.erase(name); }
@@ -2016,7 +2016,7 @@ std::vector<std::string> Empire::CheckResearchProgress() {
         spent_rp += elem.allocated_rp;
         if (tech->ResearchCost(m_id) - EPSILON <= progress * tech_cost) {
             m_research_progress.erase(elem.name);
-            to_erase_from_queue_and_grant_next_turn.push_back(elem.name);
+            to_erase_from_queue_and_grant_next_turn.emplace_back(elem.name);
         }
     }
 
@@ -2082,7 +2082,7 @@ std::vector<std::string> Empire::CheckResearchProgress() {
         rp_left_to_spend -= consumed_rp;
 
         if (tech->ResearchCost(m_id) - EPSILON <= m_research_progress[cost_tech.second] * tech_total_cost)
-            to_erase_from_queue_and_grant_next_turn.push_back(cost_tech.second);
+            to_erase_from_queue_and_grant_next_turn.emplace_back(cost_tech.second);
 
         //DebugLogger() << "... allocated: " << consumed_rp << " to increase progress by: " << progress_increase;
     }
@@ -2373,7 +2373,7 @@ void Empire::CheckProductionProgress() {
                 ship->Rename(NewShipName());
 
                 // store ships to put into fleets later
-                system_new_ships[system->ID()].push_back(ship);
+                system_new_ships[system->ID()].emplace_back(ship);
 
                 // store ship rally points
                 if (elem.rally_point_id != INVALID_OBJECT_ID)
@@ -2428,7 +2428,7 @@ void Empire::CheckProductionProgress() {
             if (rally_it != new_ship_rally_point_ids.end())
                 rally_point_id = rally_it->second;
 
-            new_ships_by_rally_point_id_and_design_id[rally_point_id][ship->DesignID()].push_back(ship);
+            new_ships_by_rally_point_id_and_design_id[rally_point_id][ship->DesignID()].emplace_back(ship);
         }
 
         // create fleets for ships with the same rally point, grouped by
@@ -2468,7 +2468,7 @@ void Empire::CheckProductionProgress() {
                     // set invalid arrival starlane so that fleet won't necessarily be free from blockades
                     fleet->SetArrivalStarlane(INVALID_OBJECT_ID);
 
-                    fleets.push_back(fleet);
+                    fleets.emplace_back(fleet);
                 }
 
                 for (auto& ship : ships) {
@@ -2484,9 +2484,9 @@ void Empire::CheckProductionProgress() {
                         // set invalid arrival starlane so that fleet won't necessarily be free from blockades
                         fleet->SetArrivalStarlane(INVALID_OBJECT_ID);
 
-                        fleets.push_back(fleet);
+                        fleets.emplace_back(fleet);
                     }
-                    ship_ids.push_back(ship->ID());
+                    ship_ids.emplace_back(ship->ID());
                     fleet->AddShips({ship->ID()});
                     ship->SetFleetID(fleet->ID());
                 }
