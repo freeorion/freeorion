@@ -842,7 +842,7 @@ bool SetEmpireHomeworld(Empire* empire, int planet_id, std::string species_name)
             home_planet->SetSize(SZ_MEDIUM);
     }
 
-    home_planet->Colonize(empire->EmpireID(), species_name, Meter::LARGE_VALUE);
+    home_planet->Colonize(empire->EmpireID(), std::move(species_name), Meter::LARGE_VALUE);
     species->AddHomeworld(home_planet->ID());
     empire->SetCapitalID(home_planet->ID());
     empire->AddExploredSystem(home_planet->SystemID());
