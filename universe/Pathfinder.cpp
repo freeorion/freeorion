@@ -993,7 +993,7 @@ std::pair<std::list<int>, double> Pathfinder::PathfinderImpl::ShortestPath(int s
     } catch (const std::out_of_range&) {
         ErrorLogger() << "PathfinderImpl::ShortestPath passed invalid system id(s): "
                       << system1_id << " & " << system2_id;
-        throw;
+        return {std::list<int>(), -1.0};
     }
 }
 
