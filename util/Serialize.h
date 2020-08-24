@@ -89,12 +89,12 @@ extern template FO_COMMON_API void serialize<freeorion_xml_iarchive>(freeorion_x
 extern template FO_COMMON_API void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, CombatLogManager&, const unsigned int);
 
 template <typename Archive>
-void serializeIncompleteLogs(Archive&, CombatLogManager&, const unsigned int);
+void SerializeIncompleteLogs(Archive&, CombatLogManager&, const unsigned int);
 
-extern template FO_COMMON_API void serializeIncompleteLogs<freeorion_bin_iarchive>(freeorion_bin_iarchive&, CombatLogManager&, const unsigned int);
-extern template FO_COMMON_API void serializeIncompleteLogs<freeorion_bin_oarchive>(freeorion_bin_oarchive&, CombatLogManager&, const unsigned int);
-extern template FO_COMMON_API void serializeIncompleteLogs<freeorion_xml_iarchive>(freeorion_xml_iarchive&, CombatLogManager&, const unsigned int);
-extern template FO_COMMON_API void serializeIncompleteLogs<freeorion_xml_oarchive>(freeorion_xml_oarchive&, CombatLogManager&, const unsigned int);
+extern template FO_COMMON_API void SerializeIncompleteLogs<freeorion_bin_iarchive>(freeorion_bin_iarchive&, CombatLogManager&, const unsigned int);
+extern template FO_COMMON_API void SerializeIncompleteLogs<freeorion_bin_oarchive>(freeorion_bin_oarchive&, CombatLogManager&, const unsigned int);
+extern template FO_COMMON_API void SerializeIncompleteLogs<freeorion_xml_iarchive>(freeorion_xml_iarchive&, CombatLogManager&, const unsigned int);
+extern template FO_COMMON_API void SerializeIncompleteLogs<freeorion_xml_oarchive>(freeorion_xml_oarchive&, CombatLogManager&, const unsigned int);
 
 
 class EmpireManager;
@@ -204,7 +204,7 @@ extern template FO_COMMON_API void serialize<freeorion_xml_oarchive>(freeorion_x
 extern template FO_COMMON_API void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, PopCenter&, unsigned int const);
 
 
-class PreviewInformation;
+struct PreviewInformation;
 
 template<typename Archive>
 void serialize(Archive&, PreviewInformation&, unsigned int const);

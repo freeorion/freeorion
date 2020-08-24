@@ -65,7 +65,7 @@ private:
     friend void serialize(Archive&, CombatLogManager&, const unsigned int);
 
     template <typename Archive>
-    friend void serializeIncompleteLogs(Archive&, CombatLogManager&, const unsigned int);
+    friend void SerializeIncompleteLogs(Archive&, CombatLogManager&, const unsigned int);
 };
 
 

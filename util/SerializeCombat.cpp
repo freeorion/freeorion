@@ -360,7 +360,7 @@ template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, CombatL
 
 
 template <typename Archive>
-void serializeIncompleteLogs(Archive& ar, CombatLogManager& obj, const unsigned int version)
+void SerializeIncompleteLogs(Archive& ar, CombatLogManager& obj, const unsigned int version)
 {
     using namespace boost::serialization;
 
@@ -374,10 +374,10 @@ void serializeIncompleteLogs(Archive& ar, CombatLogManager& obj, const unsigned 
             obj.m_incomplete_logs.insert(old_latest_log_id);
 }
 
-template void serializeIncompleteLogs<freeorion_bin_oarchive>(freeorion_bin_oarchive&, CombatLogManager&, unsigned int const);
-template void serializeIncompleteLogs<freeorion_bin_iarchive>(freeorion_bin_iarchive&, CombatLogManager&, unsigned int const);
-template void serializeIncompleteLogs<freeorion_xml_oarchive>(freeorion_xml_oarchive&, CombatLogManager&, unsigned int const);
-template void serializeIncompleteLogs<freeorion_xml_iarchive>(freeorion_xml_iarchive&, CombatLogManager&, unsigned int const);
+template void SerializeIncompleteLogs<freeorion_bin_oarchive>(freeorion_bin_oarchive&, CombatLogManager&, unsigned int const);
+template void SerializeIncompleteLogs<freeorion_bin_iarchive>(freeorion_bin_iarchive&, CombatLogManager&, unsigned int const);
+template void SerializeIncompleteLogs<freeorion_xml_oarchive>(freeorion_xml_oarchive&, CombatLogManager&, unsigned int const);
+template void SerializeIncompleteLogs<freeorion_xml_iarchive>(freeorion_xml_iarchive&, CombatLogManager&, unsigned int const);
 
 
 template <typename Archive>

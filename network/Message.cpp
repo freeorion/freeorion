@@ -191,7 +191,7 @@ Message GameStartMessage(bool single_player_game, int empire_id,
             GetUniverse().EncodingEmpire() = empire_id;
             oa << BOOST_SERIALIZATION_NVP(empires)
                << BOOST_SERIALIZATION_NVP(species);
-            serializeIncompleteLogs(oa, combat_logs, 1);
+            SerializeIncompleteLogs(oa, combat_logs, 1);
             oa << BOOST_SERIALIZATION_NVP(supply);
             Serialize(oa, universe);
             bool loaded_game_data = false;
@@ -207,7 +207,7 @@ Message GameStartMessage(bool single_player_game, int empire_id,
             GetUniverse().EncodingEmpire() = empire_id;
             oa << BOOST_SERIALIZATION_NVP(empires)
                << BOOST_SERIALIZATION_NVP(species);
-            serializeIncompleteLogs(oa, combat_logs, 1);
+            SerializeIncompleteLogs(oa, combat_logs, 1);
             oa << BOOST_SERIALIZATION_NVP(supply);
             Serialize(oa, universe);
             bool loaded_game_data = false;
@@ -239,7 +239,7 @@ Message GameStartMessage(bool single_player_game, int empire_id,
             GetUniverse().EncodingEmpire() = empire_id;
             oa << BOOST_SERIALIZATION_NVP(empires)
                << BOOST_SERIALIZATION_NVP(species);
-            serializeIncompleteLogs(oa, combat_logs, 1);
+            SerializeIncompleteLogs(oa, combat_logs, 1);
             oa << BOOST_SERIALIZATION_NVP(supply);
             Serialize(oa, universe);
             bool loaded_game_data = true;
@@ -262,7 +262,7 @@ Message GameStartMessage(bool single_player_game, int empire_id,
             GetUniverse().EncodingEmpire() = empire_id;
             oa << BOOST_SERIALIZATION_NVP(empires)
                << BOOST_SERIALIZATION_NVP(species);
-            serializeIncompleteLogs(oa, combat_logs, 1);
+            SerializeIncompleteLogs(oa, combat_logs, 1);
             oa << BOOST_SERIALIZATION_NVP(supply);
             Serialize(oa, universe);
             bool loaded_game_data = true;
@@ -308,7 +308,7 @@ Message GameStartMessage(bool single_player_game, int empire_id,
             GetUniverse().EncodingEmpire() = empire_id;
             oa << BOOST_SERIALIZATION_NVP(empires)
                << BOOST_SERIALIZATION_NVP(species);
-            serializeIncompleteLogs(oa, combat_logs, 1);
+            SerializeIncompleteLogs(oa, combat_logs, 1);
             oa << BOOST_SERIALIZATION_NVP(supply);
             Serialize(oa, universe);
             bool loaded_game_data = true;
@@ -331,7 +331,7 @@ Message GameStartMessage(bool single_player_game, int empire_id,
             GetUniverse().EncodingEmpire() = empire_id;
             oa << BOOST_SERIALIZATION_NVP(empires)
                << BOOST_SERIALIZATION_NVP(species);
-            serializeIncompleteLogs(oa, combat_logs, 1);
+            SerializeIncompleteLogs(oa, combat_logs, 1);
             oa << BOOST_SERIALIZATION_NVP(supply);
             Serialize(oa, universe);
             bool loaded_game_data = true;
@@ -452,7 +452,7 @@ Message TurnUpdateMessage(int empire_id, int current_turn,
             oa << BOOST_SERIALIZATION_NVP(current_turn);
             oa << BOOST_SERIALIZATION_NVP(empires);
             oa << BOOST_SERIALIZATION_NVP(species);
-            serializeIncompleteLogs(oa, combat_logs, 1);
+            SerializeIncompleteLogs(oa, combat_logs, 1);
             oa << BOOST_SERIALIZATION_NVP(supply);
             Serialize(oa, universe);
             oa << BOOST_SERIALIZATION_NVP(players);
@@ -462,7 +462,7 @@ Message TurnUpdateMessage(int empire_id, int current_turn,
             oa << BOOST_SERIALIZATION_NVP(current_turn)
                << BOOST_SERIALIZATION_NVP(empires)
                << BOOST_SERIALIZATION_NVP(species);
-            serializeIncompleteLogs(oa, combat_logs, 1);
+            SerializeIncompleteLogs(oa, combat_logs, 1);
             oa << BOOST_SERIALIZATION_NVP(supply);
             Serialize(oa, universe);
             oa << BOOST_SERIALIZATION_NVP(players);
@@ -852,7 +852,7 @@ void ExtractGameStartMessageData(const Message& msg, bool& single_player_game, i
 
                 ia >> BOOST_SERIALIZATION_NVP(species);
                 combat_logs.Clear();    // only needed when loading new game, not when incrementally serializing logs on turn update
-                serializeIncompleteLogs(ia, combat_logs, 1);
+                SerializeIncompleteLogs(ia, combat_logs, 1);
                 ia >> BOOST_SERIALIZATION_NVP(supply);
 
                 deserialize_timer.restart();
@@ -898,7 +898,7 @@ void ExtractGameStartMessageData(const Message& msg, bool& single_player_game, i
 
             ia >> BOOST_SERIALIZATION_NVP(species);
             combat_logs.Clear();    // only needed when loading new game, not when incrementally serializing logs on turn update
-            serializeIncompleteLogs(ia, combat_logs, 1);
+            SerializeIncompleteLogs(ia, combat_logs, 1);
             ia >> BOOST_SERIALIZATION_NVP(supply);
 
             deserialize_timer.restart();
@@ -1039,7 +1039,7 @@ void ExtractTurnUpdateMessageData(const Message& msg, int empire_id, int& curren
                 ia >> BOOST_SERIALIZATION_NVP(current_turn)
                    >> BOOST_SERIALIZATION_NVP(empires)
                    >> BOOST_SERIALIZATION_NVP(species);
-                serializeIncompleteLogs(ia, combat_logs, 1);
+                SerializeIncompleteLogs(ia, combat_logs, 1);
                 ia >> BOOST_SERIALIZATION_NVP(supply);
                 Deserialize(ia, universe);
                 ia >> BOOST_SERIALIZATION_NVP(players);
@@ -1057,7 +1057,7 @@ void ExtractTurnUpdateMessageData(const Message& msg, int empire_id, int& curren
             ia >> BOOST_SERIALIZATION_NVP(current_turn)
                >> BOOST_SERIALIZATION_NVP(empires)
                >> BOOST_SERIALIZATION_NVP(species);
-            serializeIncompleteLogs(ia, combat_logs, 1);
+            SerializeIncompleteLogs(ia, combat_logs, 1);
             ia >> BOOST_SERIALIZATION_NVP(supply);
             Deserialize(ia, universe);
             ia >> BOOST_SERIALIZATION_NVP(players);
