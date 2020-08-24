@@ -1349,7 +1349,7 @@ int AutomaticallyChosenColonyShip(int target_planet_id) {
 
     // have more than one ship capable and available to colonize.
     // pick the "best" one.
-    std::string orig_species = target_planet->SpeciesName(); //should be just ""
+    auto& orig_species = target_planet->SpeciesName(); //should be just ""
     int orig_owner = target_planet->Owner();
     float orig_initial_target_pop = target_planet->GetMeter(METER_TARGET_POPULATION)->Initial();
     int best_ship = INVALID_OBJECT_ID;
@@ -1368,13 +1368,12 @@ int AutomaticallyChosenColonyShip(int target_planet_id) {
             planet_capacity = pair_it->second;
         } else {
             float colony_ship_capacity = 0.0f;
-            std::string ship_species_name;
             const ShipDesign* design = ship->Design();
             if (!design)
                 continue;
             colony_ship_capacity = design->ColonyCapacity();
             if (colony_ship_capacity > 0.0f ) {
-                ship_species_name = ship->SpeciesName();
+                auto& ship_species_name = ship->SpeciesName();
                 auto spec_pair = std::make_pair(ship_species_name, target_planet_id);
                 auto spec_pair_it = species_colony_projections.find(spec_pair);
                 if (spec_pair_it != species_colony_projections.end()) {
@@ -1394,7 +1393,7 @@ int AutomaticallyChosenColonyShip(int target_planet_id) {
                         GetUniverse().UpdateMeterEstimates(target_planet_id);
                         planet_capacity = target_planet->GetMeter(METER_TARGET_POPULATION)->Current();  // want value after meter update, so check current, not initial value
                     }
-                    species_colony_projections[spec_pair] = planet_capacity;
+                    species_colony_projections[std::move(spec_pair)] = planet_capacity;
                 }
             } else {
                 planet_capacity = 0.0f;
@@ -1409,7 +1408,8 @@ int AutomaticallyChosenColonyShip(int target_planet_id) {
     if (changed_planet) {
         target_planet->SetOwner(orig_owner);
         target_planet->SetSpecies(orig_species);
-        target_planet->GetMeter(METER_TARGET_POPULATION)->Set(orig_initial_target_pop, orig_initial_target_pop);
+        target_planet->GetMeter(METER_TARGET_POPULATION)->Set(orig_initial_target_pop,
+                                                              orig_initial_target_pop);
         GetUniverse().UpdateMeterEstimates(target_planet_id);
     }
     GetUniverse().InhibitUniverseObjectSignals(false);
@@ -1703,7 +1703,7 @@ void SidePanel::PlanetPanel::Refresh() {
             colony_projections[this_pair] = planet_capacity;
         } else {
             GetUniverse().InhibitUniverseObjectSignals(true);
-            std::string orig_species = planet->SpeciesName(); //should be just ""
+            auto& orig_species = planet->SpeciesName(); //should be just ""
             int orig_owner = planet->Owner();
             float orig_initial_target_pop = planet->GetMeter(METER_TARGET_POPULATION)->Initial();
             planet->SetOwner(client_empire_id);
@@ -1715,7 +1715,8 @@ void SidePanel::PlanetPanel::Refresh() {
             planet_capacity = ((planet_env_for_colony_species == PE_UNINHABITABLE) ? 0.0 : planet->GetMeter(METER_TARGET_POPULATION)->Current());   // want target pop after meter update, so check current value of meter
             planet->SetOwner(orig_owner);
             planet->SetSpecies(orig_species);
-            planet->GetMeter(METER_TARGET_POPULATION)->Set(orig_initial_target_pop, orig_initial_target_pop);
+            planet->GetMeter(METER_TARGET_POPULATION)->Set(orig_initial_target_pop,
+                                                           orig_initial_target_pop);
             GetUniverse().UpdateMeterEstimates(m_planet_id);
 
             colony_projections[this_pair] = planet_capacity;
