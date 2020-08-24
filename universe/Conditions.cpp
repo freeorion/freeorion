@@ -4830,6 +4830,8 @@ namespace {
             auto* system = m_objects.get<System>(candidate->SystemID()).get();
             if (!system && candidate->ObjectType() == OBJ_SYSTEM)
                 system = static_cast<const System*>(candidate.get());
+            if (!system)
+                return false;
 
             return std::count(m_types.begin(), m_types.end(), system->GetStarType());
         }
@@ -4911,6 +4913,8 @@ bool StarType::Match(const ScriptingContext& local_context) const {
     auto* system = local_context.ContextObjects().get<System>(candidate->SystemID()).get();
     if (!system && candidate->ObjectType() == OBJ_SYSTEM)
         system = static_cast<const System*>(candidate.get());
+    if (!system)
+        return false;
     for (auto& type : m_types) {
         if (type->Eval(local_context) == system->GetStarType())
             return true;
