@@ -2627,7 +2627,7 @@ namespace {
 
         float colonist_capacity = ship->ColonyCapacity();
 
-        if (colonist_capacity > 0.0f && planet->EnvironmentForSpecies(ship->SpeciesName()) < PE_HOSTILE) {
+        if (colonist_capacity > 0.0f && planet->EnvironmentForSpecies(species_name) < PE_HOSTILE) {
             ErrorLogger() << "ColonizePlanet nonzero colonist capacity and planet that ship's species can't colonize";
             return false;
         }
