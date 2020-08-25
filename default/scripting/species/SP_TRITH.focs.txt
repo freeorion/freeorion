@@ -17,7 +17,7 @@ Species
     ]
 
     defaultfocus = "FOCUS_RESEARCH"
-    likes = [ "PLC_CHECKPOINTS" "PLC_CONFEDERATION" ]
+    likes = [ "PLC_CHECKPOINTS" "PLC_RACIAL_PURITY" "PLC_CONFEDERATION" ]
     dislikes = [ "FOCUS_RESEARCH" "PLC_DIVERSITY" "BLD_INTERSPECIES_ACADEMY" "BLD_XENORESURRECTION_LAB"]
 
     effectsgroups = [
