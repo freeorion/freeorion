@@ -11319,6 +11319,17 @@ PLC_RACIAL_PURITY_SHORT_DESC
 Prefers Capital Species
 
 
+PLC_DIVINE_AUTHORITY
+Devine Authority
+
+PLC_DIVINE_AUTHORITY_DESC
+'''
+'''
+
+PLC_DIVINE_AUTHORITY_SHORT_DESC
+Boosts stability and influence, but impairs research
+
+
 ##
 ## Technology categories
 ##

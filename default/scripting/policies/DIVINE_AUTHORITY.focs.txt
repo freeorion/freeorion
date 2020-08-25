@@ -1,0 +1,29 @@
+Policy
+    name = "PLC_DIVINE_AUTHORITY"
+    description = "PLC_DIVINE_AUTHORITY_DESC"
+    short_description = "PLC_DIVINE_AUTHORITY_SHORT_DESC"
+    category = "SOCIAL_CATEGORY"
+    adoptioncost = 1.0*floor(5 + 0.25 * Statistic Sum value = LocalCandidate.Population condition = And [ Planet OwnedBy empire = Source.Owner ])
+    prerequisites = [ "PLC_CENTRALIZATION" ]
+    //exclusions = [ "PLC_MERITOCRACY" ]
+    effectsgroups = [
+        [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
+
+        // makes all planets more stable and influentential, but impair research
+        EffectsGroup
+        scope = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Population low = 0.001
+        ]
+        priority = [[DEFAULT_PRIORITY]]
+        effects = [
+            SetTargetHappiness value = Value + 4
+            SetTargetResearch value = Value - 5
+            SetTargetInfluence value = Value + 1
+        ]
+    ]
+    graphic = "icons/policies/confederation.png"
+
+#include "/scripting/common/priorities.macros"
+#include "/scripting/policies/policies.macros"
