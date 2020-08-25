@@ -132,55 +132,55 @@ void MessageWndEdit::KeyPress(GG::Key key, std::uint32_t key_code_point,
 void MessageWndEdit::FindGameWords() {
      // add player and empire names
     for (auto& entry : Empires()) {
-        m_game_words.insert(entry.second->Name());
-        m_game_words.insert(entry.second->PlayerName());
+        m_game_words.emplace(entry.second->Name());
+        m_game_words.emplace(entry.second->PlayerName());
     }
     // add system names
     for (auto& system : GetUniverse().Objects().all<System>()) {
         if (!system->Name().empty())
-            m_game_words.insert(system->Name());
+            m_game_words.emplace(system->Name());
     }
      // add ship names
     for (auto& ship : GetUniverse().Objects().all<Ship>()) {
         if (!ship->Name().empty())
-            m_game_words.insert(ship->Name());
+            m_game_words.emplace(ship->Name());
     }
      // add ship design names
 
     for (const auto& design : GetPredefinedShipDesignManager().GetOrderedShipDesigns()) {
         if (!design->Name().empty())
-            m_game_words.insert(UserString(design->Name()));
+            m_game_words.emplace(UserString(design->Name()));
     }
      // add specials names
     for (const std::string& special_name : SpecialNames()) {
         if (!special_name.empty())
-            m_game_words.insert(UserString(special_name));
+            m_game_words.emplace(UserString(special_name));
     }
      // add species names
     for (const auto& entry : GetSpeciesManager()) {
         if (!entry.second->Name().empty())
-            m_game_words.insert(UserString(entry.second->Name()));
+            m_game_words.emplace(UserString(entry.second->Name()));
     }
      // add techs names
     for (const std::string& tech_name : GetTechManager().TechNames()) {
         if (!tech_name.empty())
-            m_game_words.insert(UserString(tech_name));
+            m_game_words.emplace(UserString(tech_name));
     }
     // add building type names
     for (const auto& entry : GetBuildingTypeManager()) {
         if (!entry.second->Name().empty())
-            m_game_words.insert(UserString(entry.second->Name()));
+            m_game_words.emplace(UserString(entry.second->Name()));
     }
     // add ship hulls
     for (const auto& design : GetPredefinedShipDesignManager().GetOrderedShipDesigns()) {
         if (!design->Hull().empty())
-            m_game_words.insert(UserString(design->Hull()));
+            m_game_words.emplace(UserString(design->Hull()));
     }
     // add ship parts
     for (const auto& design : GetPredefinedShipDesignManager().GetOrderedShipDesigns()) {
         for (const std::string& part_name : design->Parts()) {
             if (!part_name.empty())
-                m_game_words.insert(UserString(part_name));
+                m_game_words.emplace(UserString(part_name));
         }
     }
  }
@@ -201,8 +201,8 @@ bool MessageWndEdit::AutoComplete() {
             // and replace it with the next choice
             full_line = full_line.substr(0, full_line.size() - (m_last_game_word.size() + 1));
             full_line.insert(full_line.size(), next_word + " ");
-            this->SetText(full_line);
             GG::CPSize move_cursor_to = full_line.size() + GG::CP1;
+            this->SetText(std::move(full_line));
             this->SelectRange(move_cursor_to, move_cursor_to);
             m_last_game_word = next_word;
             m_last_line_read = this->Text();
@@ -232,7 +232,7 @@ bool MessageWndEdit::AutoComplete() {
             for (const std::string& word : m_game_words) {
                 if (boost::iequals(word, partial_word)) { // if there's an exact match, just add a space
                     full_line.insert(Value(cursor_pos.first), " ");
-                    this->SetText(full_line);
+                    this->SetText(std::move(full_line));
                     this->SelectRange(cursor_pos.first + 1, cursor_pos.first + 1);
                     exact_match = true;
                     break;
@@ -272,12 +272,12 @@ bool MessageWndEdit::CompleteWord(const std::set<std::string>& names, const std:
 
     // Grab first autocomplete choice
     game_word = m_auto_complete_choices.at(m_repeated_tab_count++);
-    m_last_game_word = game_word;
+    m_last_game_word = std::move(game_word);
 
     // Remove the partial_word from the line
     // and replace it with the properly formated game word
     full_line = full_line.substr(0, full_line.size() - partial_word.size());
-    full_line.insert(full_line.size(), game_word + " ");
+    full_line.insert(full_line.size(), m_last_game_word + " ");
     this->SetText(full_line);
     m_last_line_read = this->Text();
     GG::CPSize move_cursor_to = full_line.size() + GG::CP1;

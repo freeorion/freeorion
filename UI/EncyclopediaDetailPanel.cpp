@@ -2293,7 +2293,7 @@ namespace {
         const auto& map_wnd = ClientUI::GetClientUI()->GetMapWnd();
         if (const auto planet = Objects().get<Planet>(map_wnd->SelectedPlanetID())) {
             if (!planet->SpeciesName().empty())
-                additional_species.insert(planet->SpeciesName());
+                additional_species.emplace(planet->SpeciesName());
         }
 
         FleetUIManager& fleet_manager = FleetUIManager::GetFleetUIManager();
@@ -2321,7 +2321,7 @@ namespace {
             chosen_ships.insert(selected_ship);
             if (const auto this_ship = Objects().get<Ship>(selected_ship)) {
                 if (!this_ship->SpeciesName().empty())
-                    additional_species.insert(this_ship->SpeciesName());
+                    additional_species.emplace(this_ship->SpeciesName());
                 if (!this_ship->OwnedBy(client_empire_id)) {
                     enemy_DR = this_ship->GetMeter(METER_MAX_SHIELD)->Initial();
                     DebugLogger() << "Using selected ship for enemy values, DR: " << enemy_DR;
@@ -2342,7 +2342,7 @@ namespace {
         for (const auto& this_ship : Objects().find<Ship>(chosen_ships)) {
             if (!this_ship || !this_ship->SpeciesName().empty())
                 continue;
-            additional_species.insert(this_ship->SpeciesName());
+            additional_species.emplace(this_ship->SpeciesName());
         }
         std::vector<std::string> species_list(additional_species.begin(), additional_species.end());
         detailed_description = GetDetailedDescriptionBase(design);
@@ -2357,8 +2357,8 @@ namespace {
         detailed_description.append(GetDetailedDescriptionStats(temp, design, enemy_DR, enemy_shots, cost));
 
         // apply various species to ship, re-calculating the meter values for each
-        for (const std::string& species_name : species_list) {
-            temp->SetSpecies(species_name);
+        for (std::string& species_name : species_list) {
+            temp->SetSpecies(std::move(species_name));
             GetUniverse().UpdateMeterEstimates(temp->ID());
             temp->Resupply();
             detailed_description.append(GetDetailedDescriptionStats(temp, design, enemy_DR, enemy_shots, cost));
@@ -2374,7 +2374,7 @@ namespace {
         for (const auto& entry : Objects().ExistingShips()) {
             auto ship = std::dynamic_pointer_cast<const Ship>(entry.second);
             if (ship && ship->DesignID() == design_id)
-                design_ships.push_back(ship);
+                design_ships.emplace_back(std::move(ship));
         }
         if (!design_ships.empty()) {
             detailed_description += "\n\n" + UserString("SHIPS_OF_DESIGN");

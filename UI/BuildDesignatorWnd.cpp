@@ -470,7 +470,7 @@ namespace {
                 if (ship_part_names.count(part_name))
                     ship_part_names[part_name]++;
                 else
-                    ship_part_names.insert(std::pair<std::string, int>(part_name, 1));
+                    ship_part_names[part_name] = 1;
             }
 
             for (const auto& part_name_count : ship_part_names) {

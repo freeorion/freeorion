@@ -1655,7 +1655,7 @@ void PartsListBox::Populate() {
             if (already_added.count(part))
                 continue;
             already_added.insert(part);
-            sorted_group.insert({GetMainStat(part), part});
+            sorted_group.emplace(GetMainStat(part), part);
         }
 
         // take the sorted parts and make UI elements (technically rows) for the PartsListBox
@@ -4639,8 +4639,8 @@ void DesignWnd::MainPanel::DesignChanged() {
 
         // check part exclusions against other parts and hull
         std::set<std::string> already_seen_component_names;
-        already_seen_component_names.insert(m_hull->Name());
-        for (const std::string& part_name : Parts()) {
+        already_seen_component_names.emplace(m_hull->Name());
+        for (std::string& part_name : Parts()) {
             if (m_disabled_by_part_conflict)
                 break;
             const ShipPart* part = GetShipPart(part_name);
@@ -4654,7 +4654,7 @@ void DesignWnd::MainPanel::DesignChanged() {
                     break;
                 }
             }
-            already_seen_component_names.insert(part_name);
+            already_seen_component_names.emplace(std::move(part_name));
         }
 
 

@@ -1174,7 +1174,7 @@ namespace {
     boost::optional<std::string> NewestSinglePlayerSavegame() {
         using namespace boost::filesystem;
         try {
-            std::map<std::time_t, path> files_by_write_time;
+            std::multimap<std::time_t, path> files_by_write_time;
 
             auto add_all_savegames_in = [&files_by_write_time](const path& path) {
                 if (!is_directory(path))
@@ -1189,8 +1189,7 @@ namespace {
                     if (file_path.extension() != SP_SAVE_FILE_EXTENSION)
                         continue;
 
-                    std::time_t t = last_write_time(file_path);
-                    files_by_write_time.insert({t, file_path});
+                    files_by_write_time.emplace(last_write_time(file_path), file_path);
                 }
             };
 
@@ -1237,8 +1236,7 @@ namespace {
                     file_path.extension() != MP_SAVE_FILE_EXTENSION)
                 { continue; }
 
-                std::time_t t = last_write_time(file_path);
-                files_by_write_time.insert({t, file_path});
+                files_by_write_time.emplace(last_write_time(file_path), file_path);
             }
 
             //DebugLogger() << "files by write time:";

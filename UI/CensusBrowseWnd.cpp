@@ -164,14 +164,15 @@ void CensusBrowseWnd::CompleteConstruction() {
     // put into multimap to sort by population, ascending
     std::multimap<float, std::string> counts_species;
     for (const auto& entry : m_population_counts)
-    { counts_species.insert({entry.second, entry.first}); }
+        counts_species.emplace(entry.second, entry.first);
     m_population_counts.clear();
 
     // add species rows
     for (auto it = counts_species.rbegin(); it != counts_species.rend(); ++it) {
         auto row = GG::Wnd::Create<GG::ListBox::Row>(m_list->Width(), ROW_HEIGHT);
         row->SetDragDropDataType("Census Species Row");
-        row->push_back(GG::Wnd::Create<CensusRowPanel>(m_list->Width(), ROW_HEIGHT, it->second, it->first, true));
+        row->push_back(GG::Wnd::Create<CensusRowPanel>(m_list->Width(), ROW_HEIGHT,
+                                                       it->second, it->first, true));
         m_list->Insert(row);
         row->Resize(GG::Pt(m_list->Width(), ROW_HEIGHT));
         top += ROW_HEIGHT;
