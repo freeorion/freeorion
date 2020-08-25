@@ -90,7 +90,7 @@ public:
 
     void            Resupply();
 
-    void            SetSpecies(const std::string& species_name);
+    void            SetSpecies(std::string species_name);
 
     void            SetOrderedScrapped(bool b = true);                          ///< flags ship for scrapping
     void            SetColonizePlanet(int planet_id);                           ///< marks ship to colonize the indicated planet
@@ -108,18 +108,18 @@ public:
 
     friend class Universe;
 
-    Ship();
+    Ship() = default;
 
     /** Create a ship from an @p empire_id, @p design_id, @p species_name and
         @p production_by_empire_id. */
-    Ship(int empire_id, int design_id, const std::string& species_name,
+    Ship(int empire_id, int design_id, std::string species_name,
          int produced_by_empire_id = ALL_EMPIRES);
 
 protected:
     template <typename T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
 
 public:
-    ~Ship() {}
+    ~Ship() = default;
 
 private:
     int             m_design_id = INVALID_DESIGN_ID;

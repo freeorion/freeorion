@@ -19,13 +19,9 @@
 class Species;
 const Species* GetSpecies(const std::string& name);
 
-Ship::Ship()
-{}
-
-Ship::Ship(int empire_id, int design_id, const std::string& species_name,
-           int produced_by_empire_id/* = ALL_EMPIRES*/) :
+Ship::Ship(int empire_id, int design_id, std::string species_name, int produced_by_empire_id) :
     m_design_id(design_id),
-    m_species_name(species_name),
+    m_species_name(std::move(species_name)),
     m_produced_by_empire_id(produced_by_empire_id),
     m_arrived_on_turn(CurrentTurn()),
     m_last_resupplied_on_turn(CurrentTurn())
@@ -66,18 +62,18 @@ Ship::Ship(int empire_id, int design_id, const std::string& species_name,
             switch (part->Class()) {
             case PC_COLONY:
             case PC_TROOPS: {
-                m_part_meters[{METER_CAPACITY, part->Name()}];
+                m_part_meters[{METER_CAPACITY, part_name}];
                 break;
             }
             case PC_DIRECT_WEAPON:      // capacity is damage, secondary stat is shots per attack
             case PC_FIGHTER_HANGAR: {   // capacity is how many fighters contained, secondary stat is damage per fighter attack
-                m_part_meters[{METER_SECONDARY_STAT, part->Name()}];
-                m_part_meters[{METER_MAX_SECONDARY_STAT, part->Name()}];
+                m_part_meters[{METER_SECONDARY_STAT, part_name}];
+                m_part_meters[{METER_MAX_SECONDARY_STAT, part_name}];
                 // intentionally no break here
             }
             case PC_FIGHTER_BAY: {      // capacity is how many fighters launched per combat round
-                m_part_meters[{METER_CAPACITY, part->Name()}];
-                m_part_meters[{METER_MAX_CAPACITY, part->Name()}];
+                m_part_meters[{METER_CAPACITY, part_name}];
+                m_part_meters[{METER_MAX_CAPACITY, part_name}];
                 break;
             }
             default:
@@ -593,10 +589,10 @@ void Ship::Resupply() {
     }
 }
 
-void Ship::SetSpecies(const std::string& species_name) {
+void Ship::SetSpecies(std::string species_name) {
     if (!GetSpecies(species_name))
         ErrorLogger() << "Ship::SetSpecies couldn't get species with name " << species_name;
-    m_species_name = species_name;
+    m_species_name = std::move(species_name);
 }
 
 void Ship::SetOrderedScrapped(bool b) {
