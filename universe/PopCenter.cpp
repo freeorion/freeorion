@@ -93,8 +93,8 @@ void PopCenter::Depopulate() {
     GetMeter(METER_HAPPINESS)->Reset();
 }
 
-void PopCenter::SetSpecies(const std::string& species_name) {
+void PopCenter::SetSpecies(std::string species_name) {
     if (!species_name.empty() && !GetSpecies(species_name))
         ErrorLogger() << "PopCenter::SetSpecies couldn't get species with name " << species_name;
-    m_species_name = species_name;
+    m_species_name = std::move(species_name);
 }

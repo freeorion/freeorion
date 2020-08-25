@@ -116,7 +116,7 @@ public:
 
     void Reset() override;
     void Depopulate() override;
-    void SetSpecies(const std::string& species_name) override;
+    void SetSpecies(std::string species_name) override;
 
     void SetType(PlanetType type);          ///< sets the type of this Planet to \a type
     void SetOriginalType(PlanetType type);  ///< sets the original type of this Planet to \a type
@@ -129,7 +129,7 @@ public:
     bool RemoveBuilding(int building_id);   ///< removes the building from the planet; returns false if no such building was found
 
     void Conquer(int conquerer);            ///< Called during combat when a planet changes hands
-    bool Colonize(int empire_id, const std::string& species_name,
+    bool Colonize(int empire_id, std::string species_name,
                   double population);       ///< Called during colonization handling to do the actual colonizing
     void SetIsAboutToBeColonized(bool b);   ///< Called during colonization when a planet is about to be colonized
     void ResetIsAboutToBeColonized();       ///< Called after colonization, to reset the number of prospective colonizers to 0

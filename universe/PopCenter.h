@@ -31,7 +31,7 @@ public:
 
     void                Copy(std::shared_ptr<const PopCenter> copied_object, Visibility vis);
     void                Copy(std::shared_ptr<const PopCenter> copied_object);
-    virtual void        SetSpecies(const std::string& species_name);        ///< sets the species of the population to \a species_name
+    virtual void        SetSpecies(std::string species_name);               ///< sets the species of the population to \a species_name
     virtual void        Reset();                                            ///< sets all meters to 0, clears race name
     virtual void        Depopulate();                                       ///< removes population
 
