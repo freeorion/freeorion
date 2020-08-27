@@ -1650,9 +1650,9 @@ Operation<T>::Operation(OpType op_type,
     m_op_type(op_type)
 {
     if (operand1)
-        m_operands.push_back(std::move(operand1));
+        m_operands.emplace_back(std::move(operand1));
     if (operand2)
-        m_operands.push_back(std::move(operand2));
+        m_operands.emplace_back(std::move(operand2));
     InitConstInvariants();
     CacheConstValue();
 }
@@ -1663,7 +1663,7 @@ Operation<T>::Operation(OpType op_type, std::unique_ptr<ValueRef<T>>&& operand) 
     m_op_type(op_type)
 {
     if (operand)
-        m_operands.push_back(std::move(operand));
+        m_operands.emplace_back(std::move(operand));
     InitConstInvariants();
     CacheConstValue();
 }
