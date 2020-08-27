@@ -378,7 +378,7 @@ public:
     void MakeBars() {
         for (CombatSummary::ParticipantSummaryPtr unit : m_side_summary.unit_summaries) {
             if (unit->max_health > 0) {
-                m_participant_bars.push_back(GG::Wnd::Create<ParticipantBar>(*unit, m_sizer));
+                m_participant_bars.emplace_back(GG::Wnd::Create<ParticipantBar>(*unit, m_sizer));
                 AttachChild(m_participant_bars.back());
             }
         }
