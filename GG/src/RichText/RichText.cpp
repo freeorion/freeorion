@@ -28,7 +28,7 @@ void pass_space(std::string::const_iterator& it,
 //! Reads from \a it, expecting to find somthing of the form "key =".
 //! Returns key. Leaves \a it past the '=' or at \a end.
 std::string read_key(std::string::const_iterator& it,
-                        const std::string::const_iterator& end)
+                     const std::string::const_iterator& end)
 {
     // Move past space.
     pass_space(it, end);
