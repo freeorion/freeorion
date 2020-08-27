@@ -264,8 +264,8 @@ void PopupMenu::LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
                 m_open_levels.resize(i + 1);
                 m_caret.resize(i + 1);
                 if (!menu.next_level[row_selected].disabled && menu.next_level[row_selected].next_level.size()) {
-                    m_caret.push_back(INVALID_CARET);
-                    m_open_levels.push_back(Rect());
+                    m_caret.emplace_back(INVALID_CARET);
+                    m_open_levels.emplace_back();
                 }
                 cursor_is_in_menu = true;
             }
