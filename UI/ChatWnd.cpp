@@ -261,9 +261,9 @@ bool MessageWndEdit::CompleteWord(const std::set<std::string>& names, const std:
     for (const std::string& temp_game_word : names) {
         if (temp_game_word.size() >= partial_word.size()) {
             // Add all possible word choices for repeated tab
-            std::string game_word_partial = temp_game_word.substr(0, partial_word.size());
+            std::string&& game_word_partial = temp_game_word.substr(0, partial_word.size());
             if (!game_word_partial.empty() && boost::iequals(game_word_partial, partial_word))
-                m_auto_complete_choices.push_back(temp_game_word);
+                m_auto_complete_choices.emplace_back(temp_game_word);
         }
     }
 

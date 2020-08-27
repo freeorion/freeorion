@@ -66,34 +66,34 @@ void GLClientAndServerBufferBase<vtype>::reserve(std::size_t num_items)
 template <typename vtype>
 void GLClientAndServerBufferBase<vtype>::store(vtype item)
 {
-    b_data.push_back(item);
+    b_data.emplace_back(item);
     b_size=b_data.size() / b_elements_per_item;
 }
 
 template <typename vtype>
 void GLClientAndServerBufferBase<vtype>::store(vtype item1, vtype item2)
 {
-    b_data.push_back(item1);
-    b_data.push_back(item2);
+    b_data.emplace_back(item1);
+    b_data.emplace_back(item2);
     b_size=b_data.size() / b_elements_per_item;
 }
 
 template <typename vtype>
 void GLClientAndServerBufferBase<vtype>::store(vtype item1, vtype item2, vtype item3)
 {
-    b_data.push_back(item1);
-    b_data.push_back(item2);
-    b_data.push_back(item3);
+    b_data.emplace_back(item1);
+    b_data.emplace_back(item2);
+    b_data.emplace_back(item3);
     b_size=b_data.size() / b_elements_per_item;
 }
 
 template <typename vtype>
 void GLClientAndServerBufferBase<vtype>::store(vtype item1, vtype item2, vtype item3, vtype item4)
 {
-    b_data.push_back(item1);
-    b_data.push_back(item2);
-    b_data.push_back(item3);
-    b_data.push_back(item4);
+    b_data.emplace_back(item1);
+    b_data.emplace_back(item2);
+    b_data.emplace_back(item3);
+    b_data.emplace_back(item4);
     b_size=b_data.size() / b_elements_per_item;
 }
 

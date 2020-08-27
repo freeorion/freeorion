@@ -568,7 +568,7 @@ void GG::BeginScissorClipping(Pt ul, Pt lr)
     }
     glScissor(Value(ul.x), Value(GUI::GetGUI()->AppHeight() - lr.y),
                 Value(lr.x - ul.x), Value(lr.y - ul.y));
-    g_scissor_clipping_rects.push_back(Rect(ul, lr));
+    g_scissor_clipping_rects.emplace_back(ul, lr);
 }
 
 void GG::EndScissorClipping()
