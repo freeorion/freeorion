@@ -537,11 +537,11 @@ void GUIImpl::HandleMouseButtonRelease(unsigned int mouse_button, const GG::Pt& 
                     std::vector<Wnd*> removed_wnds;
                     std::vector<const Wnd*> unaccepted_wnds;
                     if (m_drag_drop_wnds_acceptable[click_drag_wnd.get()]) {
-                        accepted_wnds.push_back(click_drag_wnd);
-                        removed_wnds.push_back(click_drag_wnd.get());
+                        accepted_wnds.emplace_back(click_drag_wnd);
+                        removed_wnds.emplace_back(click_drag_wnd.get());
                     }
                     else
-                        unaccepted_wnds.push_back(click_drag_wnd.get());
+                        unaccepted_wnds.emplace_back(click_drag_wnd.get());
 
                     // if dragged Wnd came from somehwere, inform originating
                     // Wnd its child is or is not being dragged away
@@ -551,13 +551,15 @@ void GUIImpl::HandleMouseButtonRelease(unsigned int mouse_button, const GG::Pt& 
                     }
                     // implement drop onto target if the dragged Wnd was accepted
                     if (!accepted_wnds.empty())
-                        curr_wnd_under_cursor->HandleEvent(WndEvent(WndEvent::DragDroppedOn, pos, std::move(accepted_wnds), m_mod_keys));
+                        curr_wnd_under_cursor->HandleEvent(WndEvent(WndEvent::DragDroppedOn, pos,
+                                                                    std::move(accepted_wnds),
+                                                                    m_mod_keys));
                 }
 
             } else {
                 // dragged one or more Wnds to another location and then dropped them
                 // pass checkdrops event to check if the dropped Wnds are acceptable to drop here
-                WndEvent event(WndEvent::CheckDrops, pos, std::move(m_drag_drop_wnds), m_mod_keys);
+                WndEvent event(WndEvent::CheckDrops, pos, m_drag_drop_wnds, m_mod_keys);
                 curr_wnd_under_cursor->HandleEvent(event);
                 m_drag_drop_wnds_acceptable = event.GetAcceptableDropWnds();
 
