@@ -175,7 +175,7 @@ Wnd::~Wnd()
         good_filters.reserve(filtering_wnd->m_filters.size());
         for (const auto& weak_filtering_wnd : filtering_wnd->m_filters)
             if (!weak_filtering_wnd.expired())
-                good_filters.push_back(weak_filtering_wnd);
+                good_filters.emplace_back(weak_filtering_wnd);
         good_filters.swap(filtering_wnd->m_filters);
     }
 
@@ -647,7 +647,7 @@ void Wnd::InstallEventFilter(const std::shared_ptr<Wnd>& wnd)
     if (!wnd)
         return;
     RemoveEventFilter(wnd);
-    m_filters.push_back(std::weak_ptr<Wnd>(wnd));
+    m_filters.emplace_back(wnd);
     wnd->m_filtering.insert(shared_from_this());
 }
 
