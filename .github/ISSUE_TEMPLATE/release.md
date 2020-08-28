@@ -51,6 +51,7 @@ doing the actual release.
 * [ ] Create a new GitHub Issue from `.github/RELEASE_TEMPLATE.md` and follow
       instructions. :wink:
 * [ ] Determine initial milestones and dates for release.
+* [ ] Update `packaging/org.freeorion.FreeOrion.metainfo.xml` and linked screenshots if necessary
 * [ ] Create release branch from development branch master by using:
 ```
 git checkout -b release-vX.Y.Z master
