@@ -197,22 +197,22 @@ namespace {
         //       of not at all.
         Sound::TempUISoundDisabler sound_disabler;
 
-        std::set<int> original_fleet_ids;           // ids of fleets from which ships were taken
+        std::set<int> original_fleet_ids; // ids of fleets from which ships were taken
 
         // validate ships in each group, and generate fleet names for those ships
-        std::vector<std::shared_ptr<const Ship>> ships = Objects().find<const Ship>(ship_ids);
+        const auto ships = Objects().find<const Ship>(ship_ids);
         if (ships.empty())
             return;
 
-        std::shared_ptr<const Ship> first_ship = *ships.begin();
-        auto system = Objects().get<System>(first_ship->SystemID());
+        const auto first_ship = (*ships.begin()).get();
+        const auto system = Objects().get<System>(first_ship->SystemID()).get();
         if (!system)
             return;
 
         // validate that ships are in the same system and all owned by this
         // client's empire.
         // also record the fleets from which ships are taken
-        for (auto& ship : ships) {
+        for (const auto& ship : ships) {
              if (ship->SystemID() != system->ID()) {
                  ErrorLogger() << "CreateNewFleetFromShips passed ships with inconsistent system ids";
                  continue;
@@ -227,7 +227,8 @@ namespace {
 
         // create new fleet with ships
         HumanClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<NewFleetOrder>(client_empire_id, "", ship_ids, AggressionForFleet(aggression, ship_ids)));
+            std::make_shared<NewFleetOrder>(client_empire_id, "", ship_ids,
+                                            AggressionForFleet(aggression, ship_ids)));
     }
 
     void CreateNewFleetFromShipsWithDesign(const std::set<int>& ship_ids,
@@ -266,13 +267,13 @@ namespace {
 
         // sort ships by ID into container, indexed by design id
         std::map<int, std::vector<int>> designs_ship_ids;
-        for (auto& ship : Objects().find<Ship>(ship_ids))
+        for (const auto& ship : Objects().find<Ship>(ship_ids))
             designs_ship_ids[ship->DesignID()].push_back(ship->ID());
 
         // note that this will cause a UI update for each call to CreateNewFleetFromShips
         // we can re-evaluate this code if it presents a noticable performance problem
         for (const auto& entry : designs_ship_ids)
-        { CreateNewFleetFromShips(entry.second, aggression); }
+            CreateNewFleetFromShips(entry.second, aggression);
     }
 
     void MergeFleetsIntoFleet(int fleet_id) {
@@ -304,6 +305,7 @@ namespace {
         std::vector<std::shared_ptr<Fleet>> empire_system_fleets;
         empire_system_fleets.reserve(all_system_fleets.size());
         std::vector<int> empire_system_ship_ids;
+        empire_system_ship_ids.reserve(all_system_fleets.size());   // probably an underesitmate
 
         for (auto& fleet : all_system_fleets) {
             if (!fleet->OwnedBy(client_empire_id))
@@ -311,11 +313,11 @@ namespace {
             if (fleet->ID() == target_fleet->ID() || fleet->ID() == INVALID_OBJECT_ID)
                 continue;   // no need to do things to target fleet's contents
 
-            empire_system_fleet_ids.push_back(fleet->ID());
-            empire_system_fleets.push_back(fleet);
-
             const std::set<int>& fleet_ships = fleet->ShipIDs();
-            std::copy(fleet_ships.begin(), fleet_ships.end(), std::back_inserter(empire_system_ship_ids));
+            empire_system_ship_ids.insert(empire_system_ship_ids.end(),
+                                          fleet_ships.begin(), fleet_ships.end());
+            empire_system_fleet_ids.push_back(fleet->ID());
+            empire_system_fleets.emplace_back(std::move(fleet));
         }
 
 
@@ -485,9 +487,9 @@ void FleetUIManager::SetActiveFleetWnd(std::shared_ptr<FleetWnd> fleet_wnd) {
     m_active_fleet_wnd = fleet_wnd;
 
     // connect new active FleetWnd selection changed signal
-    m_active_fleet_wnd_signals.push_back(fleet_wnd->SelectedFleetsChangedSignal.connect(
+    m_active_fleet_wnd_signals.emplace_back(fleet_wnd->SelectedFleetsChangedSignal.connect(
         ActiveFleetWndSelectedFleetsChangedSignal));
-    m_active_fleet_wnd_signals.push_back(fleet_wnd->SelectedShipsChangedSignal.connect(
+    m_active_fleet_wnd_signals.emplace_back(fleet_wnd->SelectedShipsChangedSignal.connect(
         ActiveFleetWndSelectedShipsChangedSignal));
 
     ActiveFleetWndChangedSignal();
@@ -754,10 +756,11 @@ namespace {
         // Add the overlay
         auto add_overlay = [this](const std::string& file) {
             if (auto overlay_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / file, true)) {
-                auto overlay = GG::Wnd::Create<GG::StaticGraphic>(overlay_texture, DataPanelIconStyle());
+                auto overlay = GG::Wnd::Create<GG::StaticGraphic>(std::move(overlay_texture),
+                                                                  DataPanelIconStyle());
                 overlay->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
                 AttachChild(overlay);
-                m_ship_icon_overlays.push_back(overlay);
+                m_ship_icon_overlays.emplace_back(std::move(overlay));
             }
         };
 
@@ -972,7 +975,8 @@ namespace {
                                                                         UserString(meter_string));
 
                 auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
-                popup->AddMenuItem(GG::MenuItem(popup_label, false, false, zoom_article_action));
+                popup->AddMenuItem(GG::MenuItem(std::move(popup_label), false, false,
+                                                zoom_article_action));
 
                 popup->Run();
             });
@@ -1384,7 +1388,7 @@ void FleetDataPanel::Refresh() {
 
         // set icons
         std::vector<std::shared_ptr<GG::Texture>> icons(FleetHeadIcons(fleet, FleetButton::SizeType::LARGE));
-        icons.push_back(FleetSizeIcon(fleet, FleetButton::SizeType::LARGE));
+        icons.emplace_back(FleetSizeIcon(fleet, FleetButton::SizeType::LARGE));
         std::vector<GG::Flags<GG::GraphicStyle>> styles(icons.size(), DataPanelIconStyle());
 
         m_fleet_icon = GG::Wnd::Create<MultiTextureStaticGraphic>(icons, styles);
@@ -1414,10 +1418,11 @@ void FleetDataPanel::Refresh() {
         // Add the overlay
         auto add_overlay = [this](const std::string& file) {
             if (auto overlay_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / file, true)) {
-                auto overlay = GG::Wnd::Create<GG::StaticGraphic>(overlay_texture, DataPanelIconStyle());
+                auto overlay = GG::Wnd::Create<GG::StaticGraphic>(std::move(overlay_texture),
+                                                                  DataPanelIconStyle());
                 overlay->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
                 AttachChild(overlay);
-                m_fleet_icon_overlays.push_back(overlay);
+                m_fleet_icon_overlays.emplace_back(std::move(overlay));
             }
         };
 
@@ -1427,7 +1432,7 @@ void FleetDataPanel::Refresh() {
             add_overlay("scrapped.png");
         if (all_ships(
                 [](const std::shared_ptr<const Ship>& ship)
-                {return ship->OrderedColonizePlanet() != INVALID_OBJECT_ID; })
+                { return ship->OrderedColonizePlanet() != INVALID_OBJECT_ID; })
            )
         {
             add_overlay("colonizing.png");
@@ -1484,7 +1489,7 @@ void FleetDataPanel::RefreshStateChangedSignals() {
 
     m_ship_connections.reserve(fleet->NumShips());
     for (auto& ship : Objects().find<const Ship>(fleet->ShipIDs()))
-        m_ship_connections.push_back(
+        m_ship_connections.emplace_back(
             ship->StateChangedSignal.connect(
                 boost::bind(&FleetDataPanel::RequireRefresh, this)));
 }
@@ -1739,11 +1744,12 @@ void FleetDataPanel::Init() {
 
                 std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) %
                                                                         UserString(meter_string));
-                popup->AddMenuItem(GG::MenuItem(popup_label, false, false, zoom_article_action));
+                popup->AddMenuItem(GG::MenuItem(std::move(popup_label), false, false,
+                                                zoom_article_action));
                 popup->Run();
             });
-            AttachChild(icon);
             icon->SetBrowseModeTime(tooltip_delay);
+            AttachChild(std::move(icon));
         }
 
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
@@ -1883,7 +1889,7 @@ public:
                     ErrorLogger() << "FleetsListBox::AcceptDrops  unable to get fleet row from dropped wnd";
                     continue;
                 }
-                dropped_fleets.push_back(Objects().get<Fleet>(fleet_row->FleetID()));
+                dropped_fleets.emplace_back(Objects().get<Fleet>(fleet_row->FleetID()));
 
             } else if (wnd->DragDropDataType() == SHIP_DROP_TYPE_STRING) {
                 const ShipRow* ship_row = boost::polymorphic_downcast<const ShipRow*>(wnd.get());
@@ -1891,7 +1897,7 @@ public:
                     ErrorLogger() << "FleetsListBox::AcceptDrops  unable to get ship row from dropped wnd";
                     continue;
                 }
-                dropped_ships.push_back(Objects().get<Ship>(ship_row->ShipID()));
+                dropped_ships.emplace_back(Objects().get<Ship>(ship_row->ShipID()));
             }
         }
 
@@ -2243,12 +2249,11 @@ public:
             if (this_client_stale_object_info.count(ship_id))
                 continue;
 
-            auto row = GG::Wnd::Create<ShipRow>(GG::X1, row_size.y, ship_id);
-            rows.push_back(row);
+            rows.emplace_back(GG::Wnd::Create<ShipRow>(GG::X1, row_size.y, ship_id));
         }
         Insert(rows);
         for (auto& row : rows)
-        { row->Resize(row_size); }
+            row->Resize(row_size);
 
         SelRowsChangedSignal(this->Selections());
     }
@@ -2574,7 +2579,8 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
     if (design) {
         std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % design->Name(true));
         auto zoom_to_design_action = [design]() { ClientUI::GetClientUI()->ZoomToShipDesign(design->ID()); };
-        popup->AddMenuItem(GG::MenuItem(popup_label, false, false, zoom_to_design_action));
+        popup->AddMenuItem(GG::MenuItem(std::move(popup_label), false, false,
+                                        zoom_to_design_action));
     }
 
     // Rename ship context item
@@ -2769,10 +2775,10 @@ void FleetWnd::CompleteConstruction() {
         })
     {
         auto icon = GG::Wnd::Create<StatisticIcon>(std::get<1>(entry), 0, 0, false, StatIconSize().x, StatIconSize().y);
-        m_stat_icons.push_back({std::get<0>(entry), icon});
+        m_stat_icons.emplace_back(std::get<0>(entry), icon);
         icon->SetBrowseModeTime(tooltip_delay);
         icon->SetBrowseText(UserString(std::get<2>(entry)));
-        AttachChild(icon);
+        AttachChild(std::move(icon));
     }
 
     namespace ph = boost::placeholders;
@@ -2917,7 +2923,7 @@ void FleetWnd::RefreshStateChangedSignals() {
     for (const auto& fleet : Objects().find<Fleet>(m_fleet_ids)) {
         if (!fleet)
             continue;
-        m_fleet_connections.push_back(
+        m_fleet_connections.emplace_back(
             fleet->StateChangedSignal.connect(
                 boost::bind(&FleetWnd::RequireRefresh, this)));
     }
@@ -3616,7 +3622,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
                 HumanClientApp::GetApp()->Orders().IssueOrder(
                     std::make_shared<GiveObjectToEmpireOrder>(client_empire_id, fleet->ID(), recipient_empire_id));
             };
-            give_away_menu.next_level.push_back(GG::MenuItem(entry.second->Name(), false, false, gift_action));
+            give_away_menu.next_level.emplace_back(entry.second->Name(), false, false, gift_action);
         }
         popup->AddMenuItem(std::move(give_away_menu));
 
