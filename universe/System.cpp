@@ -554,11 +554,10 @@ std::map<int, bool> System::VisibleStarlanesWormholes(int empire_id) const {
     // check if any fleets owned by empire are moving along a starlane connected to this system...
 
     // get moving fleets owned by empire
-    std::vector<std::shared_ptr<const Fleet>> moving_empire_fleets;
+    std::vector<const Fleet*> moving_empire_fleets;
     for (auto& object : objects.find(MovingFleetVisitor())) {
-        if (auto fleet = std::dynamic_pointer_cast<const Fleet>(object))
-            if (fleet->OwnedBy(empire_id))
-                moving_empire_fleets.push_back(fleet);
+        if (object && object->ObjectType() == OBJ_FLEET && object->OwnedBy(empire_id))
+            moving_empire_fleets.emplace_back(static_cast<const Fleet*>(object.get()));
     }
 
     // add any lanes an owned fleet is moving along that connect to this system
