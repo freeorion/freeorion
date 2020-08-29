@@ -1468,13 +1468,24 @@ namespace {
         if (!unlocked_by_techs.empty()) {
             detailed_description += "\n\n" + UserString("ENC_UNLOCKED_BY");
             for (const auto& tech_name : unlocked_by_techs)
-            { detailed_description += LinkTaggedText(VarText::TECH_TAG, tech_name) + "  "; }
-            detailed_description += "\n\n";
+                detailed_description += LinkTaggedText(VarText::TECH_TAG, tech_name) + "  ";
         }
 
-        if (GetOptionsDB().Get<bool>("resource.effects.description.shown") && !policy->Effects().empty()) {
-            detailed_description += "\n" + Dump(policy->Effects());
+        if (!policy->Prerequisites().empty()) {
+            detailed_description += "\n\n" + UserString("ENC_POICY_PREREQUISITES");
+            for (const auto& policy_name : policy->Prerequisites())
+                detailed_description += LinkTaggedText(VarText::POLICY_TAG, policy_name) + "  ";
         }
+
+        if (!policy->Exclusions().empty()) {
+            detailed_description += "\n\n" + UserString("ENC_POICY_EXCLUSIONS");
+            for (const auto& policy_name : policy->Exclusions())
+                detailed_description += LinkTaggedText(VarText::POLICY_TAG, policy_name) + "  ";
+        }
+
+        if (GetOptionsDB().Get<bool>("resource.effects.description.shown") &&
+            !policy->Effects().empty())
+        { detailed_description += "\n\n" + Dump(policy->Effects()); }
     }
 
     void RefreshDetailPanelBuildingTypeTag( const std::string& item_type, const std::string& item_name,

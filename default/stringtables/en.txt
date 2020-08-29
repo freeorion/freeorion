@@ -4999,6 +4999,12 @@ Policies
 ENC_POLICY_DESC
 Improved or situational effects that can be adopted by empires.
 
+ENC_POICY_EXCLUSIONS
+'''Cannot be in adopted with: '''
+
+ENC_POICY_PREREQUISITES
+'''Cannot be in adopted without: '''
+
 ENC_SPECIAL
 Special
 
@@ -5372,13 +5378,10 @@ ENC_SDD_BAY
 [[encyclopedia PC_FIGHTER_BAY]] [[METER_CAPACITY]]
 
 ENC_UNLOCKED_BY
-'''<u>Unlocked By Techs:</u>
-
-'''
+'''Unlocked By: '''
 
 ENC_UNLOCKS
-'''<u>Unlocks</u>
-
+'''Unlocks:
 '''
 
 ENC_SHIP_PART_CAN_MOUNT_IN_SLOT_TYPES
