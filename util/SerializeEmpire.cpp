@@ -325,7 +325,7 @@ void serialize(Archive& ar, EmpireManager& em, unsigned int const version)
             auto e1 = r.first.first;
             auto e2 = r.first.second;
             if (em.m_empire_map.count(e1) < 1 || em.m_empire_map.count(e2) < 1) {
-                to_erase.push_back({e1, e2});
+                to_erase.emplace_back(e1, e2);
                 ErrorLogger() << "Erased invalid diplomatic status between empires " << e1 << " and " << e2;
             }
         }
