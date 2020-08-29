@@ -226,7 +226,6 @@ std::string ColumnInPreview(const FullPreview& full, const std::string& name, bo
 }
 
 void LoadSaveGamePreviews(const fs::path& orig_path, const std::string& extension, std::vector<FullPreview>& previews) {
-    FullPreview data;
     fs::directory_iterator end_it;
 
     fs::path path = orig_path;
@@ -248,9 +247,10 @@ void LoadSaveGamePreviews(const fs::path& orig_path, const std::string& extensio
     for (fs::directory_iterator it(path); it != end_it; ++it) {
         try {
             if ((it->path().filename().extension() == extension) && !fs::is_directory(it->path())) {
+                FullPreview data;
                 if (LoadSaveGamePreviewData(*it, data)) {
                     // Add preview entry to list
-                    previews.push_back(data);
+                    previews.emplace_back(std::move(data));
                 }
             }
         } catch (const std::exception& e) {
