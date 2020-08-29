@@ -390,7 +390,7 @@ void TextLinker::FindLinks() {
                     link.type = tag->tag_name;
                     if (tag->close_tag) {
                         link.text_posn.second = Value(curr_char.string_index);
-                        m_links.push_back(link);
+                        m_links.emplace_back(std::move(link));
                         link = Link();
                     } else {
                         if (!tag->params.empty()) {
@@ -439,8 +439,7 @@ void TextLinker::LocateLinks() {
     for (const auto& curr_line : GetLineData()) {
         // if the last line ended without the current tag ending
         if (inside_link)
-            current_link->rects.push_back(GG::Rect(GG::X0, y_posn, GG::X0,
-                                                   y_posn + font->Height()));
+            current_link->rects.emplace_back(GG::X0, y_posn, GG::X0, y_posn + font->Height());
 
         for (unsigned int i = 0; i < curr_line.char_data.size(); ++i) {
             // The link text_posn is at the beginning of the tag, whereas
@@ -451,8 +450,8 @@ void TextLinker::LocateLinks() {
                 inside_link = true;
                 // Clear out the old rectangles
                 current_link->rects.clear();
-                current_link->rects.push_back(GG::Rect(i ? curr_line.char_data[i - 1].extent : GG::X0,
-                                              y_posn, GG::X0, y_posn + font->Height()));
+                current_link->rects.emplace_back(i ? curr_line.char_data[i - 1].extent : GG::X0,
+                                                 y_posn, GG::X0, y_posn + font->Height());
             } else if (inside_link && curr_line.char_data[i].string_index >= current_link->real_text_posn.second) {
                 inside_link = false;
                 current_link->rects.back().lr.x = i ? curr_line.char_data[i - 1].extent : GG::X0;
