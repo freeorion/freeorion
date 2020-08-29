@@ -22,9 +22,9 @@ SpecialsManager::~SpecialsManager()
 std::vector<std::string> SpecialsManager::SpecialNames() const {
     CheckPendingSpecialsTypes();
     std::vector<std::string> retval;
-    for (const auto& entry : m_specials) {
-        retval.push_back(entry.first);
-    }
+    retval.reserve(m_specials.size());
+    for (const auto& entry : m_specials)
+        retval.emplace_back(entry.first);
     return retval;
 }
 
