@@ -16,7 +16,11 @@ class FO_COMMON_API SitRepEntry : public VarText {
 public:
     SitRepEntry();
 
-    SitRepEntry(const std::string& template_string, int turn, const std::string& icon, const std::string label, bool stringtable_lookup);
+    SitRepEntry(const char* template_string, int turn, const char* icon,
+                const char* label, bool stringtable_lookup);
+
+    SitRepEntry(std::string&& template_string, int turn, std::string&& icon,
+                std::string&& label, bool stringtable_lookup);
 
     int                 GetDataIDNumber(const std::string& tag) const;
     const std::string&  GetDataString(const std::string& tag) const;
