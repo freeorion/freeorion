@@ -4827,13 +4827,14 @@ namespace {
             if (!candidate || m_types.empty())
                 return false;
 
-            auto* system = m_objects.get<System>(candidate->SystemID()).get();
-            if (!system && candidate->ObjectType() == OBJ_SYSTEM)
-                system = static_cast<const System*>(candidate.get());
-            if (!system)
+            if (candidate->ObjectType() == OBJ_SYSTEM) {
+                auto system = static_cast<const System*>(candidate.get());
+                return std::count(m_types.begin(), m_types.end(), system->GetStarType());
+            } else if (auto system = m_objects.get<System>(candidate->SystemID()).get()) {
+                return std::count(m_types.begin(), m_types.end(), system->GetStarType());
+            } else {
                 return false;
-
-            return std::count(m_types.begin(), m_types.end(), system->GetStarType());
+            }
         }
 
         const std::vector< ::StarType>& m_types;
@@ -4909,14 +4910,21 @@ bool StarType::Match(const ScriptingContext& local_context) const {
         ErrorLogger() << "StarType::Match passed no candidate object";
         return false;
     }
-
-    auto* system = local_context.ContextObjects().get<System>(candidate->SystemID()).get();
-    if (!system && candidate->ObjectType() == OBJ_SYSTEM)
-        system = static_cast<const System*>(candidate.get());
-    if (!system)
+    if (m_types.empty())
         return false;
+
+    ::StarType star_type = INVALID_STAR_TYPE;
+    if (candidate->ObjectType() == OBJ_SYSTEM) {
+        auto system = static_cast<const System*>(candidate.get());
+        star_type = system->GetStarType();
+    } else if (auto system = local_context.ContextObjects().get<System>(candidate->SystemID()).get()) {
+        star_type = system->GetStarType();
+    } else {
+        return false;
+    }
+
     for (auto& type : m_types) {
-        if (type->Eval(local_context) == system->GetStarType())
+        if (type->Eval(local_context) == star_type)
             return true;
     }
     return false;
