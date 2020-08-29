@@ -1173,12 +1173,13 @@ void GovernmentWnd::MainPanel::CompleteConstruction() {
 
 std::vector<std::string> GovernmentWnd::MainPanel::Policies() const {
     std::vector<std::string> retval;
+    retval.reserve(m_slots.size());
     for (const auto& slot : m_slots) {
         const Policy* policy_type = slot->GetPolicy();
         if (policy_type)
-            retval.push_back(policy_type->Name());
+            retval.emplace_back(policy_type->Name());
         else
-            retval.push_back("");
+            retval.emplace_back();
     }
     return retval;
 }
@@ -1342,7 +1343,7 @@ void GovernmentWnd::MainPanel::Populate() {
         const std::string& category_name = cat_slot.first;
         int category_index = cat_slot.second;
         auto slot_control = GG::Wnd::Create<PolicySlotControl>(category_name, category_index, n);
-        m_slots.push_back(slot_control);
+        m_slots.emplace_back(slot_control);
         AttachChild(slot_control);
 
         // assign policy controls to slots that correspond to adopted policies
