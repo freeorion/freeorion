@@ -90,7 +90,7 @@ namespace {
                                                     ClientWidth(), elem.name, elem.allocated_rp,
                                                     elem.turns_left, progress / per_turn_cost,
                                                     elem.empire_id);
-            push_back(std::move(panel));
+            push_back(panel);
 
             SetDragDropDataType("RESEARCH_QUEUE_ROW");
 
