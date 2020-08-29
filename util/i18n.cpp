@@ -213,7 +213,7 @@ std::vector<std::string> UserStringList(const std::string& key) {
     std::istringstream template_stream(UserString(key));
     std::string item;
     while (std::getline(template_stream, item))
-        result.push_back(item);
+        result.emplace_back(std::move(item));
     return result;
 }
 
