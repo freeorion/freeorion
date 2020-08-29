@@ -221,8 +221,9 @@ namespace {
             std::lock_guard<std::mutex> lock(m_mutex);
 
             std::vector<std::string> retval;
+            retval.reserve(m_names_to_front_ends.size());
             for (const auto& name_and_frontend : m_names_to_front_ends)
-                retval.push_back(name_and_frontend.first);
+                retval.emplace_back(name_and_frontend.first);
             return retval;
         }
 
