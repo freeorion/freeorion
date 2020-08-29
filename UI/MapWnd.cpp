@@ -948,8 +948,8 @@ MapWnd::MovementLineData::MovementLineData(const std::list<MovePathNode>& path_,
         bool b_flag = node.post_blockade;
         s_flag = s_flag || (calc_s_flag &&
             ((node.object_id != INVALID_OBJECT_ID) && !unobstructed.count(node.object_id)));
-        vertices.push_back(Vertex(start_xy->first,   start_xy->second,    prev_eta,   false,          b_flag, s_flag));
-        vertices.push_back(Vertex(end_xy->first,     end_xy->second,      node.eta,   node.turn_end,  b_flag, s_flag));
+        vertices.emplace_back(start_xy->first, start_xy->second, prev_eta, false,         b_flag, s_flag);
+        vertices.emplace_back(end_xy->first,   end_xy->second,   node.eta, node.turn_end, b_flag, s_flag);
 
 
         // 4) prep for next iteration
@@ -2679,7 +2679,7 @@ void MapWnd::InitTurn() {
     timer.EnterSection("fleet signals");
     // connect system fleet add and remove signals
     for (auto& system : objects.all<System>()) {
-        m_system_fleet_insert_remove_signals[system->ID()].push_back(system->FleetsInsertedSignal.connect(
+        m_system_fleet_insert_remove_signals[system->ID()].emplace_back(system->FleetsInsertedSignal.connect(
             [this](const std::vector<std::shared_ptr<Fleet>>& fleets) {
                 RefreshFleetButtons();
                 for (auto& fleet : fleets) {
@@ -2688,7 +2688,7 @@ void MapWnd::InitTurn() {
                             boost::bind(&MapWnd::RefreshFleetButtons, this));
                 }
             }));
-        m_system_fleet_insert_remove_signals[system->ID()].push_back(system->FleetsRemovedSignal.connect(
+        m_system_fleet_insert_remove_signals[system->ID()].emplace_back(system->FleetsRemovedSignal.connect(
             [this](const std::vector<std::shared_ptr<Fleet>>& fleets) {
                 RefreshFleetButtons();
                 for (auto& fleet : fleets) {
@@ -2707,7 +2707,7 @@ void MapWnd::InitTurn() {
 
     // connect fleet change signals to update fleet movement lines, so that ordering
     // fleets to move updates their displayed path and rearranges fleet buttons (if necessary)
-    for (auto& fleet : Objects().all<Fleet>()) {
+    for (const auto& fleet : Objects().all<Fleet>()) {
         m_fleet_state_change_signals[fleet->ID()] = fleet->StateChangedSignal.connect(
             boost::bind(&MapWnd::RefreshFleetButtons, this));
     }
@@ -4068,7 +4068,7 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
         GG::Pt ul = circle_centre - GG::Pt(GG::X(static_cast<int>(radius)), GG::Y(static_cast<int>(radius)));
         GG::Pt lr = circle_centre + GG::Pt(GG::X(static_cast<int>(radius)), GG::Y(static_cast<int>(radius)));
 
-        circles[circle_colour].push_back({ul, lr});
+        circles[circle_colour].emplace_back(ul, lr);
 
         //std::cout << "adding radii circle at: " << circle_centre << " for empire: " << it->first.first << std::endl;
     }
@@ -4116,9 +4116,9 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
         std::size_t radii_end_index = m_visibility_radii_vertices.size();
         std::size_t border_end_index = m_visibility_radii_border_vertices.size();
 
-        m_radii_radii_vertices_indices_runs.push_back({
-            {radii_start_index, radii_end_index - radii_start_index},
-            {border_start_index, border_end_index - border_start_index}});
+        m_radii_radii_vertices_indices_runs.emplace_back(
+            std::make_pair(radii_start_index, radii_end_index - radii_start_index),
+            std::make_pair(border_start_index, border_end_index - border_start_index));
     }
 
     m_visibility_radii_border_vertices.createServerBuffer();
@@ -4605,9 +4605,9 @@ void MapWnd::SetProjectedFleetMovementLine(int fleet_id, const std::list<int>& t
     // We need the route to contain the current system
     // even when it is empty to switch between non appending
     // and appending projections on shift changes
-    if (path.empty()) {
-        path.push_back(MovePathNode(fleet->X(), fleet->Y(), true, 0, fleet->SystemID(), INVALID_OBJECT_ID, INVALID_OBJECT_ID));
-    }
+    if (path.empty())
+        path.emplace_back(fleet->X(), fleet->Y(), true, 0, fleet->SystemID(),
+                          INVALID_OBJECT_ID, INVALID_OBJECT_ID);
 
     auto route_it = travel_route.begin();
     if (!travel_route.empty() && (++route_it) != travel_route.end()) {
@@ -5980,7 +5980,7 @@ void MapWnd::PushWndStack(std::shared_ptr<GG::Wnd> wnd) {
     // First remove it from its current location in the stack (if any), to prevent it from being
     // present in two locations at once.
     RemoveFromWndStack(wnd);
-    m_wnd_stack.push_back(wnd);
+    m_wnd_stack.push_back(std::move(wnd));
 }
 
 void MapWnd::RemoveFromWndStack(std::shared_ptr<GG::Wnd> wnd) {
