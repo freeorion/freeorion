@@ -41,56 +41,56 @@ namespace {
     { map.clear(); }
 
     template <typename T>
-    static void TryInsertIntoMap(ObjectMap::container_type<T>& map,
-                                 std::shared_ptr<UniverseObject> item)
+    void TryInsertIntoMap(ObjectMap::container_type<T>& map,
+                          std::shared_ptr<UniverseObject> item)
     {
         if (dynamic_cast<T*>(item.get()))
             map[item->ID()] = std::dynamic_pointer_cast<T, UniverseObject>(item);
     }
 
     template <>
-    static void TryInsertIntoMap(ObjectMap::container_type<Ship>& map,
-                                 std::shared_ptr<UniverseObject> item)
+    void TryInsertIntoMap(ObjectMap::container_type<Ship>& map,
+                          std::shared_ptr<UniverseObject> item)
     {
         if (item && item->ObjectType() == OBJ_SHIP)
             map[item->ID()] = std::static_pointer_cast<Ship>(item);
     }
 
     template <>
-    static void TryInsertIntoMap(ObjectMap::container_type<Fleet>& map,
-                                 std::shared_ptr<UniverseObject> item)
+    void TryInsertIntoMap(ObjectMap::container_type<Fleet>& map,
+                          std::shared_ptr<UniverseObject> item)
     {
         if (item && item->ObjectType() == OBJ_FLEET)
             map[item->ID()] = std::static_pointer_cast<Fleet>(item);
     }
 
     template <>
-    static void TryInsertIntoMap(ObjectMap::container_type<Building>& map,
-                                 std::shared_ptr<UniverseObject> item)
+    void TryInsertIntoMap(ObjectMap::container_type<Building>& map,
+                          std::shared_ptr<UniverseObject> item)
     {
         if (item && item->ObjectType() == OBJ_BUILDING)
             map[item->ID()] = std::static_pointer_cast<Building>(item);
     }
 
     template <>
-    static void TryInsertIntoMap(ObjectMap::container_type<Planet>& map,
-                                 std::shared_ptr<UniverseObject> item)
+    void TryInsertIntoMap(ObjectMap::container_type<Planet>& map,
+                          std::shared_ptr<UniverseObject> item)
     {
         if (item && item->ObjectType() == OBJ_PLANET)
             map[item->ID()] = std::static_pointer_cast<Planet>(item);
     }
 
     template <>
-    static void TryInsertIntoMap(ObjectMap::container_type<System>& map,
-                                 std::shared_ptr<UniverseObject> item)
+    void TryInsertIntoMap(ObjectMap::container_type<System>& map,
+                          std::shared_ptr<UniverseObject> item)
     {
         if (item && item->ObjectType() == OBJ_SYSTEM)
             map[item->ID()] = std::static_pointer_cast<System>(item);
     }
 
     template <>
-    static void TryInsertIntoMap(ObjectMap::container_type<Field>& map,
-                                 std::shared_ptr<UniverseObject> item)
+    void TryInsertIntoMap(ObjectMap::container_type<Field>& map,
+                          std::shared_ptr<UniverseObject> item)
     {
         if (item && item->ObjectType() == OBJ_FIELD)
             map[item->ID()] = std::static_pointer_cast<Field>(item);
