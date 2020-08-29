@@ -36,7 +36,7 @@ namespace {
 
         if (!known_techs.count((*it)->Name()) && it != end_it) {
             std::vector<const Tech*> stack;
-            stack.push_back(it->get());
+            stack.emplace_back(it->get());
             while (!stack.empty()) {
                 const Tech* current_tech = stack.back();
                 unsigned int starting_stack_size = stack.size();
@@ -47,7 +47,7 @@ namespace {
                     if (prereq_unknown)
                         all_prereqs_known = false;
                     if (!checked_techs.count(prereq_tech) && prereq_unknown)
-                        stack.push_back(prereq_tech);
+                        stack.emplace_back(prereq_tech);
                 }
                 if (starting_stack_size == stack.size()) {
                     stack.pop_back();
@@ -321,36 +321,38 @@ const TechCategory* TechManager::GetTechCategory(const std::string& name) const 
 std::vector<std::string> TechManager::CategoryNames() const {
     CheckPendingTechs();
     std::vector<std::string> retval;
+    retval.reserve(m_categories.size());
     for (const auto& entry : m_categories)
-        retval.push_back(entry.first);
+        retval.emplace_back(entry.first);
     return retval;
 }
 
 std::vector<std::string> TechManager::TechNames() const {
     CheckPendingTechs();
     std::vector<std::string> retval;
+    retval.reserve(m_techs.size());
     for (const auto& tech : m_techs.get<NameIndex>())
-        retval.push_back(tech->Name());
+        retval.emplace_back(tech->Name());
     return retval;
 }
 
 std::vector<std::string> TechManager::TechNames(const std::string& name) const {
     CheckPendingTechs();
     std::vector<std::string> retval;
-    for (TechManager::category_iterator it = category_begin(name); it != category_end(name); ++it) {
-        retval.push_back((*it)->Name());
-    }
+    retval.reserve(m_techs.size());
+    for (TechManager::category_iterator it = category_begin(name); it != category_end(name); ++it)
+        retval.emplace_back((*it)->Name());
     return retval;
 }
 
 std::vector<const Tech*> TechManager::AllNextTechs(const std::set<std::string>& known_techs) {
     CheckPendingTechs();
     std::vector<const Tech*> retval;
+    retval.reserve(known_techs.size() * 3); // rough guesstimate
     std::set<const Tech*> checked_techs;
     iterator end_it = m_techs.get<NameIndex>().end();
-    for (iterator it = m_techs.get<NameIndex>().begin(); it != end_it; ++it) {
+    for (iterator it = m_techs.get<NameIndex>().begin(); it != end_it; ++it)
         NextTechs(retval, known_techs, checked_techs, it, end_it);
-    }
     return retval;
 }
 
@@ -365,6 +367,7 @@ std::vector<const Tech*> TechManager::NextTechsTowards(const std::set<std::strin
 {
     CheckPendingTechs();
     std::vector<const Tech*> retval;
+    retval.reserve(10); // rough guesstimate
     std::set<const Tech*> checked_techs;
     NextTechs(retval, known_techs, checked_techs, m_techs.get<NameIndex>().find(desired_tech),
               m_techs.get<NameIndex>().end());
@@ -521,7 +524,7 @@ std::string TechManager::FindFirstDependencyCycle() const {
             continue;
 
         std::vector<const Tech*> stack;
-        stack.push_back(tech.get());
+        stack.emplace_back(tech.get());
         while (!stack.empty()) {
             // Examine the tech on top of the stack.  If the tech has no prerequisite techs, or if all
             // of its prerequisite techs have already been checked, pop it off the stack and mark it as
@@ -554,7 +557,7 @@ std::string TechManager::FindFirstDependencyCycle() const {
                     stream << " <-- \"" << prereq_tech->Name() << "\" ... ";
                     return stream.str();
                 } else {
-                    stack.push_back(prereq_tech);
+                    stack.emplace_back(prereq_tech);
                 }
             }
 
