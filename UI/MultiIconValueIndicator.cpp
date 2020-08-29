@@ -58,7 +58,8 @@ void MultiIconValueIndicator::CompleteConstruction() {
                 texture = ClientUI::SpeciesIcon(pc->SpeciesName());
         }
 
-        m_icons.push_back(GG::Wnd::Create<StatisticIcon>(texture, 0.0, 3, false, IconWidth(), IconHeight()));
+        m_icons.emplace_back(GG::Wnd::Create<StatisticIcon>(texture, 0.0, 3, false,
+                                                            IconWidth(), IconHeight()));
         GG::Pt icon_ul(x, GG::Y(EDGE_PAD));
         GG::Pt icon_lr = icon_ul + GG::Pt(IconWidth(), IconHeight() + ClientUI::Pts()*3/2);
         m_icons.back()->SizeMove(icon_ul, icon_lr);
@@ -69,12 +70,13 @@ void MultiIconValueIndicator::CompleteConstruction() {
 
             auto pc = Objects().get<PopCenter>(*(this->m_object_ids.begin()));
             if (meter == METER_POPULATION && pc && this->m_object_ids.size() == 1) {
-                auto species_name = pc->SpeciesName();
+                auto species_name = pc->SpeciesName();  // intentionally making a copy for use in lambda
                 if (!species_name.empty()) {
                     auto zoom_species_action = [species_name]() { ClientUI::GetClientUI()->ZoomToSpecies(species_name); };
                     std::string species_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) %
                                                                               UserString(species_name));
-                    popup->AddMenuItem(GG::MenuItem(species_label, false, false, zoom_species_action));
+                    popup->AddMenuItem(GG::MenuItem(std::move(species_label), false, false,
+                                                    zoom_species_action));
                 }
             }
 
@@ -82,7 +84,8 @@ void MultiIconValueIndicator::CompleteConstruction() {
             auto zoom_article_action = [meter_string]() { ClientUI::GetClientUI()->ZoomToMeterTypeArticle(meter_string);};
             std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) %
                                                                     UserString(meter_string));
-            popup->AddMenuItem(GG::MenuItem(popup_label, false, false, zoom_article_action));
+            popup->AddMenuItem(GG::MenuItem(std::move(popup_label), false, false,
+                                            zoom_article_action));
             popup->Run();
         });
         AttachChild(m_icons.back());
