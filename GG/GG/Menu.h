@@ -35,16 +35,14 @@ class TextControl;
 */
 struct GG_API MenuItem
 {
-    MenuItem();
+    MenuItem() = default;
+
+    explicit MenuItem(bool separator);
 
     MenuItem(const std::string& str, bool disable, bool check,
              std::function<void()> selected_on_close_callback = std::function<void()>());
     MenuItem(std::string&& str, bool disable, bool check,
              std::function<void()> selected_on_close_callback = std::function<void()>());
-
-    explicit MenuItem(bool separator);
-
-    virtual ~MenuItem();
 
     std::string           label;            ///< text shown for this menu item
     bool                  disabled = false; ///< set to true when this menu item is disabled
@@ -68,16 +66,17 @@ class GG_API PopupMenu : public Wnd
 public:
     /** Ctor.  Parameter \a m should contain the desired menu in its
         next_level member. */
-    PopupMenu(X x, Y y, const std::shared_ptr<Font>& font, Clr text_color = CLR_WHITE,
-              Clr border_color = CLR_BLACK, Clr interior_color = CLR_SHADOW, Clr hilite_color = CLR_GRAY);
+    PopupMenu(X x, Y y, const std::shared_ptr<Font>& font,
+              Clr text_color = CLR_WHITE, Clr border_color = CLR_BLACK,
+              Clr interior_color = CLR_SHADOW, Clr hilite_color = CLR_GRAY);
 
     Pt ClientUpperLeft() const override;
 
-    Clr         BorderColor() const;       ///< returns the color used to render the border of the control
-    Clr         InteriorColor() const;     ///< returns the color used to render the interior of the control
-    Clr         TextColor() const;         ///< returns the color used to render menu item text
-    Clr         HiliteColor() const;       ///< returns the color used to indicate a hilited menu item
-    Clr         SelectedTextColor() const; ///< returns the color used to render a hilited menu item's text
+    Clr BorderColor() const;       ///< returns the color used to render the border of the control
+    Clr InteriorColor() const;     ///< returns the color used to render the interior of the control
+    Clr TextColor() const;         ///< returns the color used to render menu item text
+    Clr HiliteColor() const;       ///< returns the color used to indicate a hilited menu item
+    Clr SelectedTextColor() const; ///< returns the color used to render a hilited menu item's text
 
     /** Add \p menu_item to the end of the popup menu and store its callback.*/
     void AddMenuItem(MenuItem&& menu_item);

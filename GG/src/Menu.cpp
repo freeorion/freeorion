@@ -27,10 +27,6 @@ const int BORDER_THICKNESS = 1; // thickness with which to draw menu borders
 ////////////////////////////////////////////////
 // GG::MenuItem
 ////////////////////////////////////////////////
-MenuItem::MenuItem() :
-    MenuItem("", false, false)
-{}
-
 MenuItem::MenuItem(bool separator_) :
     disabled(true),
     separator(true)
@@ -50,10 +46,6 @@ MenuItem::MenuItem(std::string&& str, bool disable, bool check,
     disabled(disable),
     checked(check),
     m_selected_on_close_callback{selected_on_close_callback}
-{}
-
-
-MenuItem::~MenuItem()
 {}
 
 
@@ -78,7 +70,6 @@ PopupMenu::PopupMenu(X x, Y y, const std::shared_ptr<Font>& font, Clr text_color
     m_text_color(text_color),
     m_hilite_color(hilite_color),
     m_sel_text_color(text_color),
-    m_menu_data(MenuItem()),
     m_caret(1, INVALID_CARET),
     m_origin(x, y)
 {
@@ -108,8 +99,7 @@ Clr PopupMenu::SelectedTextColor() const
 
 void PopupMenu::Render()
 {
-    if (m_menu_data.next_level.size())
-    {
+    if (m_menu_data.next_level.size()) {
         Pt ul = ClientUpperLeft();
 
         const Y INDICATOR_VERTICAL_MARGIN(3);
