@@ -1026,8 +1026,9 @@ void OptionsWnd::MusicVolumeOption(GG::ListBox* page, int indentation_level, Sou
     layout->Add(button, 0, 0);
     layout->Add(slider, 0, 1);
     row->Resize(GG::Pt(ROW_WIDTH, std::max(button->MinUsableSize().y, slider->MinUsableSize().y) + 6));
-    row->push_back(GG::Wnd::Create<RowContentsWnd>(row->Width(), row->Height(), layout, indentation_level));
-    page->Insert(row);
+    row->push_back(GG::Wnd::Create<RowContentsWnd>(row->Width(), row->Height(),
+                                                   std::move(layout), indentation_level));
+    page->Insert(std::move(row));
     button->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     button->SetBrowseText(UserString(GetOptionsDB().GetDescription("audio.music.enabled")));
     slider->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
@@ -1050,7 +1051,7 @@ void OptionsWnd::VolumeOption(GG::ListBox* page, int indentation_level, const st
     auto button = GG::Wnd::Create<CUIStateButton>(text, GG::FORMAT_LEFT, std::make_shared<CUICheckBoxRepresenter>());
     button->Resize(button->MinUsableSize());
     button->SetCheck(toggle_value);
-    std::shared_ptr<const RangedValidator<int>> validator = std::dynamic_pointer_cast<const RangedValidator<int>>(GetOptionsDB().GetValidator(volume_option_name));
+    auto validator = std::dynamic_pointer_cast<const RangedValidator<int>>(GetOptionsDB().GetValidator(volume_option_name));
     assert(validator);
     auto slider = GG::Wnd::Create<CUISlider<int>>(validator->m_min, validator->m_max, GG::HORIZONTAL);
     slider->SlideTo(GetOptionsDB().Get<int>(volume_option_name));
@@ -1058,8 +1059,9 @@ void OptionsWnd::VolumeOption(GG::ListBox* page, int indentation_level, const st
     layout->Add(button, 0, 0);
     layout->Add(slider, 0, 1);
     row->Resize(GG::Pt(ROW_WIDTH, std::max(button->MinUsableSize().y, slider->MinUsableSize().y) + 6));
-    row->push_back(GG::Wnd::Create<RowContentsWnd>(row->Width(), row->Height(), layout, indentation_level));
-    page->Insert(row);
+    row->push_back(GG::Wnd::Create<RowContentsWnd>(row->Width(), row->Height(),
+                                                   std::move(layout), indentation_level));
+    page->Insert(std::move(row));
     button->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     button->SetBrowseText(UserString(GetOptionsDB().GetDescription(toggle_option_name)));
     slider->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
@@ -1092,8 +1094,9 @@ void OptionsWnd::PathDisplay(GG::ListBox* page, int indentation_level, const std
     layout->SetColumnStretch(0, 0.5);
     layout->SetColumnStretch(1, 1.0);
 
-    auto row = GG::Wnd::Create<OptionsListRow>(ROW_WIDTH, layout->Height() + 6, layout, indentation_level);
-    page->Insert(row);
+    auto row = GG::Wnd::Create<OptionsListRow>(ROW_WIDTH, layout->Height() + 6, layout,
+                                               indentation_level);
+    page->Insert(std::move(row));
 }
 
 void OptionsWnd::FileOptionImpl(GG::ListBox* page, int indentation_level, const std::string& option_name,
@@ -1124,8 +1127,9 @@ void OptionsWnd::FileOptionImpl(GG::ListBox* page, int indentation_level, const 
     layout->SetColumnStretch(1, 1.0);
     layout->SetColumnStretch(2, 0.0);
 
-    auto row = GG::Wnd::Create<OptionsListRow>(ROW_WIDTH, layout->Height() + 6, layout, indentation_level);
-    page->Insert(row);
+    auto row = GG::Wnd::Create<OptionsListRow>(ROW_WIDTH, layout->Height() + 6, layout,
+                                               indentation_level);
+    page->Insert(std::move(row));
 
     edit->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     edit->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
