@@ -85,11 +85,12 @@ namespace {
             else if (empire)
                 progress = empire->ResearchProgress(elem.name);
 
-            panel = GG::Wnd::Create<QueueTechPanel>(GG::X(GetLayout()->BorderMargin()), GG::Y(GetLayout()->BorderMargin()),
+            panel = GG::Wnd::Create<QueueTechPanel>(GG::X(GetLayout()->BorderMargin()),
+                                                    GG::Y(GetLayout()->BorderMargin()),
                                                     ClientWidth(), elem.name, elem.allocated_rp,
                                                     elem.turns_left, progress / per_turn_cost,
                                                     elem.empire_id);
-            push_back(panel);
+            push_back(std::move(panel));
 
             SetDragDropDataType("RESEARCH_QUEUE_ROW");
 
@@ -340,7 +341,7 @@ protected:
             tech_name = UserString(queue_row->elem.name);
 
         std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % tech_name);
-        popup->AddMenuItem(GG::MenuItem(popup_label, false, false, pedia_action));
+        popup->AddMenuItem(GG::MenuItem(std::move(popup_label), false, false, pedia_action));
 
         popup->Run();
     }
