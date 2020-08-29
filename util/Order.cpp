@@ -310,7 +310,7 @@ FleetMoveOrder::FleetMoveOrder(int empire_id, int fleet_id, int dest_system_id,
 
     // ensure a zero-length (invalid) route is not requested / sent to a fleet
     if (m_route.empty())
-        m_route.push_back(start_system);
+        m_route.emplace_back(start_system);
 }
 
 std::string FleetMoveOrder::Dump() const {
