@@ -175,13 +175,16 @@ auto PathTypeStrings() -> std::vector<std::string> const&
 {
     static std::vector<std::string> path_type_list;
     if (path_type_list.empty()) {
-        for (auto path_type = PathType(0); path_type < PATH_INVALID; path_type = PathType(path_type + 1)) {
+        path_type_list.reserve(10); // should be enough
+        for (auto path_type = PathType(0); path_type < PATH_INVALID;
+             path_type = PathType(path_type + 1))
+        {
             // PATH_PYTHON is only valid for FREEORION_WIN32 or FREEORION_MACOSX
 #if defined(FREEORION_LINUX)
             if (path_type == PATH_PYTHON)
                 continue;
 #endif
-            path_type_list.push_back(PathTypeToString(path_type));
+            path_type_list.emplace_back(PathTypeToString(path_type));
         }
     }
     return path_type_list;
@@ -617,7 +620,7 @@ auto ListDir(const fs::path& path, std::function<bool (const fs::path&)> predica
              dir_it != fs::recursive_directory_iterator(); ++dir_it)
         {
             if (predicate(dir_it->path()))
-                retval.push_back(dir_it->path());
+                retval.emplace_back(dir_it->path());
             else
                 TraceLogger() << "ListDir: Discarding non-matching path: " << PathToString(dir_it->path());
         }
