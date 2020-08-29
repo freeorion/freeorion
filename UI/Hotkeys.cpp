@@ -379,7 +379,7 @@ void HotkeyManager::AddConditionalConnection(const std::string& name,
                                              std::function<bool()> cond)
 {
     ConditionalConnectionList& list = m_connections[name];
-    list.push_back(ConditionalConnection(conn, cond));
+    list.emplace_back(conn, cond);
 }
 
 GG::GUI::AcceleratorSignalType& HotkeyManager::NamedSignal(const std::string& name) {
