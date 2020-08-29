@@ -48,7 +48,7 @@ namespace {
 // Free Functions
 /////////////////////////////////////////////
 bool RegisterOptions(OptionsDBFn function) {
-    OptionsRegistry().push_back(function);
+    OptionsRegistry().emplace_back(function);
     return true;
 }
 
@@ -274,21 +274,21 @@ namespace {
         boost::char_separator<char> separator { " \t", "\n" };
         boost::tokenizer<boost::char_separator<char>> tokens { text, separator };
 
-        std::vector<std::string> lines { "" };
+        std::vector<std::string> lines{""};
         for (const auto& token : tokens) {
             if (token == "\n") 
-                lines.push_back("");
+                lines.emplace_back();
             else if (widths.second < lines.back().size() + token.size() + indents.second)
-                lines.push_back(token + " ");
+                lines.emplace_back(token + " ");
             else if (!token.empty())
                 lines.back().append(token + " ");
         }
 
-        std::string indent { std::string(indents.second, ' ') };
+        std::string indent(indents.second, ' ');
         std::stringstream retval;
         auto first_line = std::move(lines.front());
         retval << std::string(indents.first, ' ') << first_line << std::endl;
-        for (auto line : lines)
+        for (auto& line : lines)
             if (!line.empty())
                 retval << indent << line << std::endl;
 
@@ -594,8 +594,8 @@ void OptionsDB::GetXML(XMLDoc& doc, bool non_default_only, bool include_version)
                 last_pos = pos + 1;
             }
             XMLElement temp(section_name.substr(last_pos));
-            elem_stack.back()->children.push_back(temp);
-            elem_stack.push_back(&elem_stack.back()->Child(temp.Tag()));
+            elem_stack.back()->children.emplace_back(temp);
+            elem_stack.emplace_back(&elem_stack.back()->Child(temp.Tag()));
         }
 
         XMLElement temp(name);
@@ -605,8 +605,8 @@ void OptionsDB::GetXML(XMLDoc& doc, bool non_default_only, bool include_version)
             if (!boost::any_cast<bool>(option.second.value))
                 continue;
         }
-        elem_stack.back()->children.push_back(temp);
-        elem_stack.push_back(&elem_stack.back()->Child(temp.Tag()));
+        elem_stack.back()->children.emplace_back(temp);
+        elem_stack.emplace_back(&elem_stack.back()->Child(temp.Tag()));
     }
 }
 
@@ -877,7 +877,8 @@ std::vector<std::string> StringToList(const std::string& input_string) {
     typedef boost::tokenizer<boost::char_separator<char>> Tokenizer;
     boost::char_separator<char> separator(",");
     Tokenizer tokens(input_string, separator);
-    for (const auto& token : tokens)
-        retval.push_back(token);
+    retval.reserve(std::distance(tokens.begin(), tokens.end()));
+    for (auto& token : tokens)
+        retval.emplace_back(token);
     return retval;
 }
