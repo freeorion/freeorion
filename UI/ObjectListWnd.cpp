@@ -1735,13 +1735,13 @@ private:
             if (entry.first.second.empty())
                 popup->AddMenuItem(GG::MenuItem(menu_label, false, check, col_action));
             else if (entry.first.second == "METERS_SUBMENU")
-                meters_submenu.next_level.emplace_back(menu_label,  false, check, col_action);
+                meters_submenu.next_level.emplace_back(menu_label, false, check, col_action);
             else if (entry.first.second == "PLANETS_SUBMENU")
                 planets_submenu.next_level.emplace_back(menu_label, false, check, col_action);
             else if (entry.first.second == "PLANET_ENVIRONMENTS_SUBMENU")
-                env_submenu.next_level.emplace_back(menu_label,  false, check, col_action);
+                env_submenu.next_level.emplace_back(menu_label, false, check, col_action);
             else if (entry.first.second == "FLEETS_SUBMENU")
-                fleets_submenu.next_level.emplace_back(menu_label,  false, check, col_action);
+                fleets_submenu.next_level.emplace_back(menu_label, false, check, col_action);
         }
         popup->AddMenuItem(std::move(meters_submenu));
         popup->AddMenuItem(std::move(planets_submenu));
