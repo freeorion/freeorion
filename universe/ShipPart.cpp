@@ -187,53 +187,54 @@ ShipPart::ShipPart(ShipPartClass part_class, double capacity, double stat2,
 }
 
 void ShipPart::Init(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects) {
+    m_effects.reserve(effects.size() + 2);
     if ((m_capacity != 0 || m_secondary_stat != 0) && m_add_standard_capacity_effect) {
         switch (m_class) {
         case PC_COLONY:
         case PC_TROOPS:
-            m_effects.push_back(IncreaseMeter(METER_CAPACITY,                     m_name, m_capacity, false));
+            m_effects.emplace_back(IncreaseMeter(METER_CAPACITY,                     m_name, m_capacity, false));
             break;
         case PC_FIGHTER_HANGAR: {   // capacity indicates how many fighters are stored in this type of part (combined for all copies of the part)
-            m_effects.push_back(IncreaseMeter(METER_MAX_CAPACITY,                 m_name, m_capacity, true));         // stacking capacities allowed for this part, so each part contributes to the total capacity
-            m_effects.push_back(IncreaseMeterRuleScaled(METER_MAX_SECONDARY_STAT, m_name, m_secondary_stat, "RULE_FIGHTER_DAMAGE_FACTOR",     false));  // stacking damage not allowed, as damage per shot should be the same regardless of number of shots
+            m_effects.emplace_back(IncreaseMeter(METER_MAX_CAPACITY,                 m_name, m_capacity, true));         // stacking capacities allowed for this part, so each part contributes to the total capacity
+            m_effects.emplace_back(IncreaseMeterRuleScaled(METER_MAX_SECONDARY_STAT, m_name, m_secondary_stat, "RULE_FIGHTER_DAMAGE_FACTOR",     false));  // stacking damage not allowed, as damage per shot should be the same regardless of number of shots
             break;
         }
         case PC_FIGHTER_BAY: {      // capacity indicates how many fighters each instance of the part can launch per combat bout...
-            m_effects.push_back(IncreaseMeter(METER_MAX_CAPACITY,                 m_name, m_capacity, false));
-            m_effects.push_back(IncreaseMeter(METER_MAX_SECONDARY_STAT,           m_name, m_secondary_stat, false));
+            m_effects.emplace_back(IncreaseMeter(METER_MAX_CAPACITY,                 m_name, m_capacity, false));
+            m_effects.emplace_back(IncreaseMeter(METER_MAX_SECONDARY_STAT,           m_name, m_secondary_stat, false));
             break;
         }
         case PC_DIRECT_WEAPON: {    // capacity indicates weapon damage per shot
-            m_effects.push_back(IncreaseMeterRuleScaled(METER_MAX_CAPACITY,       m_name, m_capacity,       "RULE_SHIP_WEAPON_DAMAGE_FACTOR", false));
-            m_effects.push_back(IncreaseMeter(METER_MAX_SECONDARY_STAT,           m_name, m_secondary_stat, false));
+            m_effects.emplace_back(IncreaseMeterRuleScaled(METER_MAX_CAPACITY,       m_name, m_capacity,       "RULE_SHIP_WEAPON_DAMAGE_FACTOR", false));
+            m_effects.emplace_back(IncreaseMeter(METER_MAX_SECONDARY_STAT,           m_name, m_secondary_stat, false));
             break;
         }
         case PC_SHIELD:
-            m_effects.push_back(IncreaseMeterRuleScaled(METER_MAX_SHIELD,    m_capacity,     "RULE_SHIP_WEAPON_DAMAGE_FACTOR"));
+            m_effects.emplace_back(IncreaseMeterRuleScaled(METER_MAX_SHIELD,    m_capacity,     "RULE_SHIP_WEAPON_DAMAGE_FACTOR"));
             break;
         case PC_DETECTION:
-            m_effects.push_back(IncreaseMeter(METER_DETECTION,               m_capacity));
+            m_effects.emplace_back(IncreaseMeter(METER_DETECTION,               m_capacity));
             break;
         case PC_STEALTH:
-            m_effects.push_back(IncreaseMeter(METER_STEALTH,                 m_capacity));
+            m_effects.emplace_back(IncreaseMeter(METER_STEALTH,                 m_capacity));
             break;
         case PC_FUEL:
-            m_effects.push_back(IncreaseMeter(METER_MAX_FUEL,                m_capacity));
+            m_effects.emplace_back(IncreaseMeter(METER_MAX_FUEL,                m_capacity));
             break;
         case PC_ARMOUR:
-            m_effects.push_back(IncreaseMeterRuleScaled(METER_MAX_STRUCTURE, m_capacity,     "RULE_SHIP_STRUCTURE_FACTOR"));
+            m_effects.emplace_back(IncreaseMeterRuleScaled(METER_MAX_STRUCTURE, m_capacity,     "RULE_SHIP_STRUCTURE_FACTOR"));
             break;
         case PC_SPEED:
-            m_effects.push_back(IncreaseMeterRuleScaled(METER_SPEED,         m_capacity,     "RULE_SHIP_SPEED_FACTOR"));
+            m_effects.emplace_back(IncreaseMeterRuleScaled(METER_SPEED,         m_capacity,     "RULE_SHIP_SPEED_FACTOR"));
             break;
         case PC_RESEARCH:
-            m_effects.push_back(IncreaseMeter(METER_TARGET_RESEARCH,         m_capacity));
+            m_effects.emplace_back(IncreaseMeter(METER_TARGET_RESEARCH,         m_capacity));
             break;
         case PC_INDUSTRY:
-            m_effects.push_back(IncreaseMeter(METER_TARGET_INDUSTRY,         m_capacity));
+            m_effects.emplace_back(IncreaseMeter(METER_TARGET_INDUSTRY,         m_capacity));
             break;
         case PC_INFLUENCE:
-            m_effects.push_back(IncreaseMeter(METER_TARGET_INFLUENCE,        m_capacity));
+            m_effects.emplace_back(IncreaseMeter(METER_TARGET_INFLUENCE,        m_capacity));
             break;
         default:
             break;
