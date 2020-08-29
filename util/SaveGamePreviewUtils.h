@@ -34,7 +34,7 @@ struct FO_COMMON_API SaveGamePreviewData {
     short               number_of_empires;              /// The number of empires in the game
     short               number_of_human_players;        /// The number of human players in the game
 
-    std::string         save_format_marker = "";        /// What format was used for this save?
+    std::string         save_format_marker;             /// What format was used for this save?
     unsigned int        uncompressed_text_size = 0;     /// How many bytes capacity does the uncompressed save text take up? (ie. the part that was / will be compressed with zlib for compressed xml format saves)
     unsigned int        compressed_text_size = 0;       /// How many bytes capacity does the compressed save text take up?
 };
