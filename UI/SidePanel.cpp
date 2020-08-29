@@ -2126,7 +2126,7 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
             };
             if (!peaceful_empires_in_system.count(recipient_empire_id))
                 continue;
-            give_away_menu.next_level.push_back(GG::MenuItem(entry.second->Name(), false, false, gift_action));
+            give_away_menu.next_level.emplace_back(entry.second->Name(), false, false, gift_action);
         }
         popup->AddMenuItem(std::move(give_away_menu));
 

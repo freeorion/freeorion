@@ -736,7 +736,8 @@ namespace {
                 // for ships, add a set rally point command
                 if (auto system = Objects().get<System>(SidePanel::SystemID())) {
                     std::string rally_prompt = boost::io::str(FlexibleFormat(UserString("RALLY_QUEUE_ITEM")) % system->PublicName(HumanClientApp::GetApp()->EmpireID()));
-                    popup->AddMenuItem(GG::MenuItem(rally_prompt, disabled, false, rally_to_action));
+                    popup->AddMenuItem(GG::MenuItem(std::move(rally_prompt), disabled, false,
+                                                    rally_to_action));
                 }
             }
 
@@ -777,7 +778,7 @@ namespace {
             if (UserStringExists(item_name))
                 item_name = UserString(item_name);
             std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % item_name);
-            popup->AddMenuItem(GG::MenuItem(popup_label, false, false, pedia_action));
+            popup->AddMenuItem(GG::MenuItem(std::move(popup_label), false, false, pedia_action));
 
             popup->Run();
         }

@@ -724,10 +724,10 @@ void SitRepPanel::DismissalMenu(GG::ListBox::iterator it, const GG::Pt& pt,
                 SetHiddenSitRepTemplateStringsInOptions(m_hidden_sitrep_templates);
                 Update();
             };
-            submenu_block.next_level.push_back(GG::MenuItem(
+            submenu_block.next_level.emplace_back(
                 entry_margin + str(FlexibleFormat(UserString("SITREP_HIDE_TEMPLATE"))
                                    % sitrep_label),
-                false, false, hide_template_action));
+                false, false, hide_template_action);
         }
     }
     if (m_hidden_sitrep_templates.size() > 0) {
@@ -738,9 +738,9 @@ void SitRepPanel::DismissalMenu(GG::ListBox::iterator it, const GG::Pt& pt,
             SetHiddenSitRepTemplateStringsInOptions(m_hidden_sitrep_templates);
             Update();
         };
-        submenu_block.next_level.push_back(GG::MenuItem(
+        submenu_block.next_level.emplace_back(
             entry_margin + UserString("SITREP_SHOWALL_TEMPLATES"),
-            false, false, showall_action));
+            false, false, showall_action);
     }
     popup->AddMenuItem(std::move(submenu_block));
 

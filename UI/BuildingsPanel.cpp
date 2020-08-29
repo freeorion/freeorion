@@ -440,7 +440,8 @@ void BuildingIndicator::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
             ClientUI::GetClientUI()->ZoomToBuildingType(building_type);
         };
         std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(building_type));
-        popup->AddMenuItem(GG::MenuItem(popup_label, false, false, pedia_lookup_building_type_action));
+        popup->AddMenuItem(GG::MenuItem(std::move(popup_label), false, false,
+                                        pedia_lookup_building_type_action));
     }
 
     popup->Run();
