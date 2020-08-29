@@ -1816,7 +1816,7 @@ void Empire::AddShipPart(const std::string& name) {
     }
     if (!ship_part->Producible())
         return;
-    m_available_ship_parts.insert(name);
+    m_available_ship_parts.emplace(name);
     AddSitRepEntry(CreateShipPartUnlockedSitRep(name));
 }
 
@@ -1828,13 +1828,13 @@ void Empire::AddShipHull(const std::string& name) {
     }
     if (!ship_hull->Producible())
         return;
-    m_available_ship_hulls.insert(name);
+    m_available_ship_hulls.emplace(name);
     AddSitRepEntry(CreateShipHullUnlockedSitRep(name));
 }
 
 void Empire::AddExploredSystem(int ID) {
     if (Objects().get<System>(ID))
-        m_explored_systems.insert(ID);
+        m_explored_systems.emplace(ID);
     else
         ErrorLogger() << "Empire::AddExploredSystem given an invalid system id: " << ID;
 }
@@ -1868,7 +1868,7 @@ void Empire::AddShipDesign(int ship_design_id, int next_design_id) {
     if (ship_design) {  // don't check if design is producible; adding a ship design is useful for more than just producing it
         // design is valid, so just add the id to empire's set of ids that it knows about
         if (!m_known_ship_designs.count(ship_design_id)) {
-            m_known_ship_designs.insert(ship_design_id);
+            m_known_ship_designs.emplace(ship_design_id);
 
             ShipDesignsChangedSignal();
 
@@ -1919,6 +1919,9 @@ void Empire::RemoveShipDesign(int ship_design_id) {
 
 void Empire::AddSitRepEntry(const SitRepEntry& entry)
 { m_sitrep_entries.emplace_back(entry); }
+
+void Empire::AddSitRepEntry(SitRepEntry&& entry)
+{ m_sitrep_entries.emplace_back(std::move(entry)); }
 
 void Empire::RemoveTech(const std::string& name)
 { m_techs.erase(name); }

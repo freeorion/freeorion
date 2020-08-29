@@ -288,14 +288,9 @@ public:
     void Win(const std::string& reason);             ///< Marks this empire as having won for this reason, and sends the appropriate sitreps
     void SetReady(bool ready);                       ///< Marks this empire with readiness status
 
-    /** Inserts the a pointer to given SitRep entry into the empire's sitrep list.
-     *  \warning When you call this method, you are transferring ownership
-     *  of the entry object to the Empire.
-     *  The object pointed to by 'entry' will be deallocated when
-     *  the empire's sitrep is cleared.  Be careful you do not have any
-     *  references to SitRepEntries lying around when this happens.
-     *  You \a must pass in a dynamically allocated sitrep entry */
+    /** Inserts the given SitRep entry into the empire's sitrep list. */
     void AddSitRepEntry(const SitRepEntry& entry);
+    void AddSitRepEntry(SitRepEntry&& entry);
     void ClearSitRep();                              ///< Clears all sitrep entries
 
     void RemoveTech(const std::string& name);        ///< Removes the given Tech from the empire's list
