@@ -249,8 +249,8 @@ const std::string VarText::METER_TYPE_TAG = "metertype";
 VarText::VarText()
 {}
 
-VarText::VarText(const std::string& template_string, bool stringtable_lookup/* = true*/) :
-    m_template_string(template_string),
+VarText::VarText(std::string template_string, bool stringtable_lookup) :
+    m_template_string(std::move(template_string)),
     m_stringtable_lookup_flag(stringtable_lookup)
 {}
 
@@ -266,20 +266,24 @@ bool VarText::Validate() const {
     return m_validated;
 }
 
-void VarText::SetTemplateString(const std::string& template_string, bool stringtable_lookup/* = true*/) {
-    m_template_string = template_string;
+void VarText::SetTemplateString(std::string template_string, bool stringtable_lookup) {
+    m_template_string = std::move(template_string);
     m_stringtable_lookup_flag = stringtable_lookup;
 }
 
 std::vector<std::string> VarText::GetVariableTags() const {
     std::vector<std::string> retval;
+    retval.reserve(m_variables.size());
     for (const auto& variable : m_variables)
-        retval.push_back(variable.first);
+        retval.emplace_back(variable.first);
     return retval;
 }
 
 void VarText::AddVariable(const std::string& tag, const std::string& data)
 { m_variables[tag] = data; }
+
+void VarText::AddVariable(const std::string& tag, std::string&& data)
+{ m_variables[tag] = std::move(data); }
 
 void VarText::GenerateVarText() const {
     // generate a string complete with substituted variables and hyperlinks
