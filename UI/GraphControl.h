@@ -15,7 +15,7 @@ public:
 
     void Render() override;
 
-    void AddSeries(const std::vector<std::pair<double, double>>& data, const GG::Clr& clr);
+    void AddSeries(std::vector<std::pair<double, double>> data, const GG::Clr& clr);
     void Clear();
 
     void SetXMin(double x_min);
