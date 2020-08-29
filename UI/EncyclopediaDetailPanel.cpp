@@ -301,10 +301,10 @@ namespace {
                 }
 
                 // occupied planets
-                std::vector<std::shared_ptr<const Planet>> species_occupied_planets;
-                for (auto& planet : Objects().all<Planet>()) {
+                std::vector<const Planet*> species_occupied_planets;
+                for (const auto& planet : Objects().all<Planet>()) {
                     if ((planet->SpeciesName() == entry.first) && !known_homeworlds.count(planet->ID()))
-                        species_occupied_planets.emplace_back(planet);
+                        species_occupied_planets.emplace_back(planet.get());
                 }
                 if (!species_occupied_planets.empty()) {
                     if (species_occupied_planets.size() >= 5) {
@@ -2071,6 +2071,7 @@ namespace {
         // occupied planets
         std::vector<std::shared_ptr<const Planet>> species_occupied_planets;
         auto& species_object_populations = GetSpeciesManager().SpeciesObjectPopulations();
+        species_occupied_planets.reserve(species_object_populations.size());
         auto sp_op_it = species_object_populations.find(item_name);
         if (sp_op_it != species_object_populations.end()) {
             const auto& object_pops = sp_op_it->second;
@@ -2082,7 +2083,7 @@ namespace {
                     ErrorLogger() << "SpeciesManager SpeciesObjectPopulations suggested planet had a species, but it doesn't?";
                     continue;
                 }
-                species_occupied_planets.push_back(plt);
+                species_occupied_planets.emplace_back(std::move(plt));
             }
         }
 
@@ -3130,10 +3131,11 @@ void EncyclopediaDetailPanel::RefreshImpl() {
 
                 // convert formats...
                 std::vector<std::pair<double, double>> line_data_pts;
+                line_data_pts.reserve(empire_linemap.second.size());
                 for (const auto& entry : empire_linemap.second)
                     line_data_pts.emplace_back(entry.first, entry.second);
 
-                m_graph->AddSeries(line_data_pts, empire_clr);
+                m_graph->AddSeries(std::move(line_data_pts), empire_clr);
             }
 
             m_graph->AutoSetRange();
