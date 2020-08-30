@@ -11321,7 +11321,6 @@ Allows [[buildingtype BLD_CONC_CAMP]] to be produced.'''
 PLC_RACIAL_PURITY_SHORT_DESC
 Prefers Capital Species
 
-
 PLC_DIVINE_AUTHORITY
 Devine Authority
 
