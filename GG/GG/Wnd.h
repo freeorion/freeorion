@@ -625,6 +625,7 @@ public:
 
     /** Adds \a wnd to the front of the event filtering chain. */
     void InstallEventFilter(const std::shared_ptr<Wnd>& wnd);
+    void InstallEventFilter(std::shared_ptr<Wnd>&& wnd);
 
     /** Removes \a wnd from the filter chain. */
     void RemoveEventFilter(const std::shared_ptr<Wnd>& wnd);

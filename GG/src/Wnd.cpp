@@ -566,7 +566,7 @@ void Wnd::AttachChild(std::shared_ptr<Wnd> wnd)
     } catch (const std::bad_weak_ptr&) {
         std::cerr << std::endl << "Wnd::AttachChild called either during the constructor "
                   << "or after the destructor has run. Not attaching child."
-                  << std::endl << " parent = " << m_name << " child = " << wnd->m_name;
+                  << std::endl << " parent = " << m_name << " child = " << (wnd ? wnd->m_name : "???");
         // Soft failure:
         // Intentionally do nothing, to create minimal disruption to non-dev
         // players if a dev accidentally puts an AttachChild in its own constructor.
@@ -600,7 +600,7 @@ void Wnd::MoveChildDown(Wnd* wnd)
     if (found == m_children.end())
         return;
 
-    m_children.push_front(*found);
+    m_children.emplace_front(std::move(*found));
     m_children.erase(found);
 }
 
@@ -648,7 +648,16 @@ void Wnd::InstallEventFilter(const std::shared_ptr<Wnd>& wnd)
         return;
     RemoveEventFilter(wnd);
     m_filters.emplace_back(wnd);
-    wnd->m_filtering.insert(shared_from_this());
+    wnd->m_filtering.emplace(shared_from_this());
+}
+
+void Wnd::InstallEventFilter(std::shared_ptr<Wnd>&& wnd)
+{
+    if (!wnd)
+        return;
+    RemoveEventFilter(wnd);
+    m_filters.emplace_back(std::move(wnd));
+    wnd->m_filtering.emplace(shared_from_this());
 }
 
 void Wnd::RemoveEventFilter(const std::shared_ptr<Wnd>& wnd)
