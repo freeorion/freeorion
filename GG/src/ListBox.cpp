@@ -776,6 +776,7 @@ void ListBox::ChildrenDraggedAway(const std::vector<Wnd*>& wnds, const Wnd* dest
     std::vector<std::shared_ptr<Row>> initially_selected_rows;
     if (!(m_style & LIST_NOSEL) && !m_selections.empty()) {
         // save selections...
+        initially_selected_rows.reserve(m_selections.size());
         for (const auto& sel : m_selections)
             initially_selected_rows.emplace_back(*sel);
         m_selections.clear();
@@ -872,8 +873,8 @@ void ListBox::PreRender()
         row->MoveTo(pt);
         pt.y += row->Height();
     }
-
 }
+
 void ListBox::Render()
 {
     // draw beveled rectangle around client area
