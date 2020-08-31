@@ -459,8 +459,9 @@ namespace {
         int fighter_launch_capacity = 0;
         int available_fighters = 0;
 
+        retval.reserve(parts.size() + 1);
         // for each weapon part, get its damage meter value
-        for (const std::string& part_name : parts) {
+        for (const auto& part_name : parts) {
             const ShipPart* part = GetShipPart(part_name);
             if (!part)
                 continue;
@@ -471,7 +472,7 @@ namespace {
                 float part_attack = ship->CurrentPartMeterValue(METER, part_name);  // used within loop that updates meters, so need current, not initial values
                 float part_shots = ship->CurrentPartMeterValue(SECONDARY_METER, part_name);
                 if (part_attack > DR)
-                    retval.push_back((part_attack - DR)*part_shots);
+                    retval.emplace_back((part_attack - DR)*part_shots);
 
             } else if (part_class == PC_FIGHTER_BAY && include_fighters) {
                 // launch capacity determined by capacity of bay
@@ -503,7 +504,7 @@ namespace {
         // how much damage does a fighter shot do?
         fighter_damage = std::max(0.0f, fighter_damage);
 
-        retval.push_back(fighter_damage * fighter_shots / num_bouts);    // divide by bouts because fighter calculation is for a full combat, but direct firefor one attack
+        retval.emplace_back(fighter_damage * fighter_shots / num_bouts); // divide by bouts because fighter calculation is for a full combat, but direct firefor one attack
 
         return retval;
     }
@@ -778,13 +779,12 @@ std::string NewMonsterName() {
     static std::map<std::string, int> monster_names_used;
 
     if (monster_names.empty())
-        monster_names.push_back(UserString("MONSTER"));
+        monster_names.emplace_back(UserString("MONSTER"));
 
     // select name randomly from list
     int monster_name_index = RandInt(0, static_cast<int>(monster_names.size()) - 1);
     std::string result = monster_names[monster_name_index];
-    if (monster_names_used[result]++) {
+    if (monster_names_used[result]++)
         result += " " + RomanNumber(monster_names_used[result]);
-    }
     return result;
 }
