@@ -115,8 +115,8 @@ public:
         candidates system ids.*/
     std::unordered_set<int> WithinJumps(size_t jumps, const std::vector<int>& candidates) const;
 
-    /** Returns the partition (near, far) of the \p candidate objects into two sets, those that are within \p
-        jumps of the \p stationary objects and that are not.*/
+    /** Returns the partition (near, far) of the \p candidate objects into two sets,
+        those that are within \p jumps of the \p stationary objects and that are not.*/
     std::pair<std::vector<std::shared_ptr<const UniverseObject>>,
               std::vector<std::shared_ptr<const UniverseObject>>>
         WithinJumpsOfOthers(
@@ -126,7 +126,7 @@ public:
 
     /** Returns the id of the System object that is closest to the specified
       * (\a x, \a y) location on the map, by direct-line distance. */
-    int                                     NearestSystemTo(double x, double y) const;
+    int NearestSystemTo(double x, double y) const;
 
     /** Fills pathfinding data structure and determines least jumps distances
       * between systems for the empire with id \a for_empire_id or uses the
