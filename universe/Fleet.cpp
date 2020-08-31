@@ -776,7 +776,7 @@ void Fleet::SetRoute(const std::list<int>& route) {
     } else {    // m_travel_route.empty() && this->SystemID() == INVALID_OBJECT_ID
         if (m_next_system != INVALID_OBJECT_ID) {
             ErrorLogger() << "Fleet::SetRoute fleet " << this->Name() << " has empty route but fleet is not in a system. Resetting route to end at next system: " << m_next_system;
-            m_travel_route.push_back(m_next_system);
+            m_travel_route.emplace_back(m_next_system);
         } else {
             ErrorLogger() << "Fleet::SetRoute fleet " << this->Name() << " has empty route but fleet is not in a system, and has no next system set.";
         }
@@ -1396,26 +1396,27 @@ std::string Fleet::GenerateFleetName() {
     if (ID() == INVALID_OBJECT_ID)
         return UserString("NEW_FLEET_NAME_NO_NUMBER");
 
-    std::vector<std::shared_ptr<const Ship>> ships;
+    std::vector<const Ship*> ships;
+    ships.reserve(m_ships.size());
     for (const auto& ship : Objects().find<Ship>(m_ships)) {
-        if (!ship)
-            continue;
-        ships.push_back(ship);
+        if (ship)
+            ships.emplace_back(ship.get());
     }
 
+    // todo: rewrite with a lambda and store in a const string& to avoid copies...
     std::string fleet_name_key = UserStringNop("NEW_FLEET_NAME");
 
     if (boost::algorithm::all_of(ships, [](const auto& ship){ return ship->IsMonster(); }))
         fleet_name_key = UserStringNop("NEW_MONSTER_FLEET_NAME");
-    else if (boost::algorithm::all_of(ships, [](const auto& ship){ return ship->CanColonize(); }))
+    else if (boost::algorithm::all_of(ships, [](const auto* ship){ return ship->CanColonize(); }))
         fleet_name_key = UserStringNop("NEW_COLONY_FLEET_NAME");
-    else if (boost::algorithm::all_of(ships, [](const auto& ship){ return !IsCombatShip(*ship); }))
+    else if (boost::algorithm::all_of(ships, [](const auto* ship){ return !IsCombatShip(*ship); }))
         fleet_name_key = UserStringNop("NEW_RECON_FLEET_NAME");
-    else if (boost::algorithm::all_of(ships, [](const auto& ship){ return ship->CanHaveTroops(); }))
+    else if (boost::algorithm::all_of(ships, [](const auto* ship){ return ship->CanHaveTroops(); }))
         fleet_name_key = UserStringNop("NEW_TROOP_FLEET_NAME");
-    else if (boost::algorithm::all_of(ships, [](const auto& ship){ return ship->CanBombard(); }))
+    else if (boost::algorithm::all_of(ships, [](const auto* ship){ return ship->CanBombard(); }))
         fleet_name_key = UserStringNop("NEW_BOMBARD_FLEET_NAME");
-    else if (boost::algorithm::all_of(ships, [](const auto& ship){ return IsCombatShip(*ship); }))
+    else if (boost::algorithm::all_of(ships, [](const auto* ship){ return IsCombatShip(*ship); }))
         fleet_name_key = UserStringNop("NEW_BATTLE_FLEET_NAME");
 
     return boost::io::str(FlexibleFormat(UserString(fleet_name_key)) % ID());
