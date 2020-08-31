@@ -479,11 +479,11 @@ void FleetTransferOrder::ExecuteImpl() const {
     GetUniverse().InhibitUniverseObjectSignals(true);
 
     // remove from old fleet(s)
-    std::set<std::shared_ptr<Fleet>> modified_fleets;
+    std::set<Fleet*> modified_fleets;
     for (auto& ship : ships) {
-        if (auto source_fleet = Objects().get<Fleet>(ship->FleetID())) {
+        if (auto* source_fleet = Objects().get<Fleet>(ship->FleetID()).get()) {
             source_fleet->RemoveShips({ship->ID()});
-            modified_fleets.insert(source_fleet);
+            modified_fleets.emplace(source_fleet);
         }
         ship->SetFleetID(target_fleet->ID());
     }
@@ -491,21 +491,22 @@ void FleetTransferOrder::ExecuteImpl() const {
     // add to new fleet
     std::vector<int> validated_ship_ids;
     validated_ship_ids.reserve(m_add_ships.size());
-
-    for (auto& ship : ships)
-        validated_ship_ids.push_back(ship->ID());
+    for (const auto& ship : ships)
+        validated_ship_ids.emplace_back(ship->ID());
 
     target_fleet->AddShips(validated_ship_ids);
 
     GetUniverse().InhibitUniverseObjectSignals(false);
 
     // signal change to fleet states
-    modified_fleets.insert(target_fleet);
+    modified_fleets.emplace(target_fleet.get());
 
-    for (auto& modified_fleet : modified_fleets) {
-        if (!modified_fleet->Empty())
+    for (auto* modified_fleet : modified_fleets) {
+        if (!modified_fleet) {
+            continue;
+        } else if (!modified_fleet->Empty()) {
             modified_fleet->StateChangedSignal();
-        else {
+        } else {
             if (auto system = Objects().get<System>(modified_fleet->SystemID()))
                 system->Remove(modified_fleet->ID());
 
