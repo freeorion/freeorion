@@ -508,10 +508,11 @@ std::vector<std::string> Planet::AvailableFoci() const {
         return retval;
     ScriptingContext context(this_planet);
     if (const auto* species = GetSpecies(this_planet->SpeciesName())) {
+        retval.reserve(species->Foci().size());
         for (const auto& focus_type : species->Foci()) {
             if (const auto* location = focus_type.Location()) {
                 if (location->Eval(context, this_planet))
-                    retval.push_back(focus_type.Name());
+                    retval.emplace_back(focus_type.Name());
             }
         }
     }
