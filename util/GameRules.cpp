@@ -12,7 +12,7 @@ namespace {
 // Free Functions
 /////////////////////////////////////////////
 bool RegisterGameRules(GameRulesFn function) {
-    GameRulesRegistry().push_back(function);
+    GameRulesRegistry().emplace_back(function);
     return true;
 }
 
