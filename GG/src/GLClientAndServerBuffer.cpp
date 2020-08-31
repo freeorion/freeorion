@@ -15,10 +15,6 @@ using namespace GG;
 ///////////////////////////////////////////////////////////////////////////
 // GLBufferBase
 ///////////////////////////////////////////////////////////////////////////
-GLBufferBase::GLBufferBase() :
-    b_name(0)
-{}
-
 GLBufferBase::~GLBufferBase()
 { dropServerBuffer(); }
 
@@ -46,8 +42,6 @@ void GLBufferBase::harmonizeBufferType(GLBufferBase& other)
 template <typename vtype>
 GLClientAndServerBufferBase<vtype>::GLClientAndServerBufferBase(std::size_t elementsPerItem) :
     GLBufferBase(),
-    b_data(),
-    b_size(0),
     b_elements_per_item(elementsPerItem)
 {}
 
@@ -67,7 +61,7 @@ template <typename vtype>
 void GLClientAndServerBufferBase<vtype>::store(vtype item)
 {
     b_data.emplace_back(item);
-    b_size=b_data.size() / b_elements_per_item;
+    b_size = b_data.size() / b_elements_per_item;
 }
 
 template <typename vtype>
@@ -75,7 +69,7 @@ void GLClientAndServerBufferBase<vtype>::store(vtype item1, vtype item2)
 {
     b_data.emplace_back(item1);
     b_data.emplace_back(item2);
-    b_size=b_data.size() / b_elements_per_item;
+    b_size = b_data.size() / b_elements_per_item;
 }
 
 template <typename vtype>
@@ -84,7 +78,7 @@ void GLClientAndServerBufferBase<vtype>::store(vtype item1, vtype item2, vtype i
     b_data.emplace_back(item1);
     b_data.emplace_back(item2);
     b_data.emplace_back(item3);
-    b_size=b_data.size() / b_elements_per_item;
+    b_size = b_data.size() / b_elements_per_item;
 }
 
 template <typename vtype>
@@ -94,7 +88,7 @@ void GLClientAndServerBufferBase<vtype>::store(vtype item1, vtype item2, vtype i
     b_data.emplace_back(item2);
     b_data.emplace_back(item3);
     b_data.emplace_back(item4);
-    b_size=b_data.size() / b_elements_per_item;
+    b_size = b_data.size() / b_elements_per_item;
 }
 
 template <typename vtype>
@@ -125,7 +119,7 @@ void GLClientAndServerBufferBase<vtype>::clear()
 template class GG::GLClientAndServerBufferBase<unsigned char>;
 
 GLRGBAColorBuffer::GLRGBAColorBuffer() :
-GLClientAndServerBufferBase<unsigned char>(4)
+    GLClientAndServerBufferBase<unsigned char>(4)
 {}
 
 void GLRGBAColorBuffer::store(const Clr& color)
@@ -225,6 +219,9 @@ void GL3DVertexBuffer::activate() const
 GLNormalBuffer::GLNormalBuffer() :
     GLClientAndServerBufferBase<float>(3)
 {}
+
+void GLNormalBuffer::store(float x, float y, float z)
+{ GLClientAndServerBufferBase::store(x, y, z); }
 
 void GLNormalBuffer::activate() const
 {

@@ -23,7 +23,7 @@ namespace GG {
 class GG_API GLBufferBase
 {
 public:
-    GLBufferBase();
+    GLBufferBase() = default;
 
     /** Required to automatically drop server buffer in case of delete. */
     virtual ~GLBufferBase();
@@ -36,7 +36,7 @@ protected:
     // drops the server buffer if one exists
     void dropServerBuffer();
 
-    GLuint      b_name;
+    GLuint b_name = 0;
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -74,8 +74,8 @@ public:
 
 protected:
     std::vector<vtype>  b_data;
-    std::size_t         b_size;
-    std::size_t         b_elements_per_item;
+    std::size_t         b_size = 0;
+    std::size_t         b_elements_per_item = 0;
 
     // used in derived classes to activate the buffer
     // implementations should use glBindBuffer, gl...Pointer if
