@@ -531,7 +531,7 @@ void OptionsDB::GetXML(XMLDoc& doc, bool non_default_only, bool include_version)
     doc = XMLDoc();
 
     std::vector<XMLElement*> elem_stack;
-    elem_stack.push_back(&doc.root_node);
+    elem_stack.emplace_back(&doc.root_node);
 
     for (const auto& option : m_options) {
         if (!option.second.storable)
@@ -589,8 +589,8 @@ void OptionsDB::GetXML(XMLDoc& doc, bool non_default_only, bool include_version)
             std::string::size_type pos = 0;
             while ((pos = section_name.find('.', last_pos)) != std::string::npos) {
                 XMLElement temp(section_name.substr(last_pos, pos - last_pos));
-                elem_stack.back()->children.push_back(temp);
-                elem_stack.push_back(&elem_stack.back()->Child(temp.Tag()));
+                elem_stack.back()->children.emplace_back(temp);
+                elem_stack.emplace_back(&elem_stack.back()->Child(temp.Tag()));
                 last_pos = pos + 1;
             }
             XMLElement temp(section_name.substr(last_pos));
