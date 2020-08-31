@@ -325,9 +325,10 @@ std::vector<std::string> ShipDesign::Parts(ShipSlotType slot_type) const {
         return retval;
 
     // add to output vector each part that is in a slot of the indicated ShipSlotType
+    retval.reserve(m_parts.size());
     for (unsigned int i = 0; i < m_parts.size(); ++i)
         if (slots[i].type == slot_type)
-            retval.push_back(m_parts[i]);
+            retval.emplace_back(m_parts[i]);
 
     return retval;
 }
@@ -341,7 +342,7 @@ std::vector<std::string> ShipDesign::Weapons() const {
             continue;
         ShipPartClass part_class = part->Class();
         if (part_class == PC_DIRECT_WEAPON || part_class == PC_FIGHTER_BAY)
-        { retval.push_back(part_name); }
+            retval.emplace_back(part_name);
     }
     return retval;
 }
@@ -821,16 +822,18 @@ PredefinedShipDesignManager& PredefinedShipDesignManager::GetPredefinedShipDesig
 std::vector<const ShipDesign*> PredefinedShipDesignManager::GetOrderedShipDesigns() const {
     CheckPendingDesignsTypes();
     std::vector<const ShipDesign*> retval;
+    retval.reserve(m_ship_ordering.size());
     for (const auto& uuid : m_ship_ordering)
-        retval.push_back(m_designs.at(uuid).get());
+        retval.emplace_back(m_designs.at(uuid).get());
     return retval;
 }
 
 std::vector<const ShipDesign*> PredefinedShipDesignManager::GetOrderedMonsterDesigns() const {
     CheckPendingDesignsTypes();
     std::vector<const ShipDesign*> retval;
+    retval.reserve(m_monster_ordering.size());
     for (const auto& uuid : m_monster_ordering)
-        retval.push_back(m_designs.at(uuid).get());
+        retval.emplace_back(m_designs.at(uuid).get());
     return retval;
 }
 
