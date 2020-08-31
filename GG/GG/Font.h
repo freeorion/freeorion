@@ -329,32 +329,32 @@ public:
         formatting tags present on that line as well. */
     struct GG_API LineData
     {
-        LineData();
+        LineData() = default;
 
         /** \brief Contains the extent, the index into the original string,
             and the text formatting tags that should be applied before
             rendering of a visible glyph. */
         struct GG_API CharData
         {
-            CharData();
+            CharData() = default;
 
             CharData(X extent_, StrSize str_index, StrSize str_size, CPSize cp_index,
                      const std::vector<std::shared_ptr<TextElement>>& tags_);
 
             /** The furthest-right extent of this glyph as it appears on the
                 line. */
-            X extent;
+            X extent = X0;
 
             /** The position in the original string of the first character of
                 this glyph. */
-            StrSize string_index;
+            StrSize string_index = S0;
 
             /** The size in the original string of the characters that make up
                 this glyph. */
-            StrSize string_size;
+            StrSize string_size = S0;
 
             /** The code point index of this glyph. */
-            CPSize code_point_index;
+            CPSize code_point_index = CP0;
 
             /** The text formatting tags that should be applied before
                 rendering this glyph. */
@@ -369,7 +369,7 @@ public:
 
         /** FORMAT_LEFT, FORMAT_CENTER, or FORMAT_RIGHT; derived from text
             format flags and/or formatting tags in the text. */
-        Alignment justification;
+        Alignment justification = ALIGN_CENTER;
     };
 
     /** \brief Holds the state of tags during rendering of text.
@@ -384,16 +384,16 @@ public:
         RenderState(Clr color); //< Takes default text color as parameter
 
         /** The count of open \<i> tags seen since the last \</i> seen. */
-        std::size_t     use_italics;
+        std::size_t     use_italics = 0;
 
         /** The count of open \<s> tags seen since the last \</s> seen. */
-        std::size_t     use_shadow;
+        std::size_t     use_shadow = 0;
 
         /** The count of open \<u> tags seen since the last \</u> seen. */
-        std::size_t     draw_underline;
+        std::size_t     draw_underline = 0;
 
         /** The count of open \<super> (positive) minus \<sub> tags seen. */
-        int             super_sub_shift;
+        int             super_sub_shift = 0;
 
         /** The stack of text color indexes (as set by previous tags). */
         std::stack<int> color_index_stack;
@@ -461,7 +461,7 @@ public:
          const std::vector<unsigned char>& file_contents,
          CharSetIter first, CharSetIter last);
 
-    ~Font();
+    ~Font() = default;
 
     /** Returns the name of the file from which this font was created. */
     const std::string& FontName() const;
@@ -591,8 +591,10 @@ public:
         behavior.  \p text_elements contains internal pointers to the \p text to which it is
         bound.  Compatible means the exact same \p text object, not the same text content.
         */
-    std::vector<LineData>   DetermineLines(const std::string& text, Flags<TextFormat>& format, X box_width,
-                                           const std::vector<std::shared_ptr<TextElement>>& text_elements) const;
+    std::vector<LineData> DetermineLines(const std::string& text,
+                                         Flags<TextFormat>& format,
+                                         X box_width,
+                                         const std::vector<std::shared_ptr<TextElement>>& text_elements) const;
 
     /** Returns the maximum dimensions of the text in x and y. */
     Pt   TextExtent(const std::vector<LineData>& line_data) const;
@@ -645,23 +647,23 @@ public:
     static void ThrowBadGlyph(const std::string& format_str, std::uint32_t c);
 
 protected:
-    Font();
+    Font() = default;
 
 private:
     /** \brief This just holds the essential data necessary to render a glyph
         from the OpenGL texture(s) created at GG::Font creation time. */
     struct Glyph
     {
-        Glyph();
+        Glyph() = default;
 
-        Glyph(const std::shared_ptr<Texture>& texture, const Pt& ul, const Pt& lr, Y y_ofs,
-              X lb, X adv); ///< Ctor
+        Glyph(const std::shared_ptr<Texture>& texture, const Pt& ul, const Pt& lr,
+              Y y_ofs, X lb, X adv);
 
-        SubTexture  sub_texture;   ///< The subtexture containing just this glyph
-        Y           y_offset;      ///< The vertical offset to draw this glyph (may be negative!)
-        X           left_bearing;  ///< The space that should remain before the glyph
-        X           advance;       ///< The amount of space the glyph should occupy, including glyph graphic and inter-glyph spacing
-        X           width;         ///< The width of the glyph only
+        SubTexture  sub_texture;       ///< The subtexture containing just this glyph
+        Y           y_offset = Y0;     ///< The vertical offset to draw this glyph (may be negative!)
+        X           left_bearing = X0; ///< The space that should remain before the glyph
+        X           advance = X0;      ///< The amount of space the glyph should occupy, including glyph graphic and inter-glyph spacing
+        X           width = X0;        ///< The width of the glyph only
     };
 
     typedef std::unordered_map<std::uint32_t, Glyph> GlyphMap;
@@ -691,20 +693,20 @@ private:
     std::shared_ptr<Font> GetDefaultFont(unsigned int pts);
 
     std::string          m_font_filename;
-    unsigned int         m_pt_sz;
+    unsigned int         m_pt_sz = 0;
     std::vector<UnicodeCharset>
-                         m_charsets;    ///< The sets of glyphs that are covered by this font object
-    Y                    m_ascent;      ///< Maximum amount above the baseline the text can go
-    Y                    m_descent;     ///< Maximum amount below the baseline the text can go
-    Y                    m_height;      ///< Ascent - descent
-    Y                    m_lineskip;    ///< Distance that should be placed between lines
-    double               m_underline_offset; ///< Amount below the baseline that the underline sits
-    double               m_underline_height; ///< Height (thickness) of underline
-    double               m_italics_offset;   ///< Amount that the top of an italicized glyph is left of the bottom
-    double               m_super_sub_offset; ///< Ammount to shift super or subscript text
-    double               m_shadow_offset;    ///< Amount that shadows rendered under texts are displaced from the text
-    X                    m_space_width; ///< The width of the glyph for the space character
-    GlyphMap             m_glyphs;      ///< The locations of the images of each glyph within the textures
+                         m_charsets;               ///< The sets of glyphs that are covered by this font object
+    Y                    m_ascent = Y0;            ///< Maximum amount above the baseline the text can go
+    Y                    m_descent = Y0;           ///< Maximum amount below the baseline the text can go
+    Y                    m_height = Y0;            ///< Ascent - descent
+    Y                    m_lineskip = Y0;          ///< Distance that should be placed between lines
+    double               m_underline_offset = 0.0; ///< Amount below the baseline that the underline sits
+    double               m_underline_height = 0.0; ///< Height (thickness) of underline
+    double               m_italics_offset = 0.0;   ///< Amount that the top of an italicized glyph is left of the bottom
+    double               m_super_sub_offset = 0.0; ///< Ammount to shift super or subscript text
+    double               m_shadow_offset = 0.0;    ///< Amount that shadows rendered under texts are displaced from the text
+    X                    m_space_width = X0;       ///< The width of the glyph for the space character
+    GlyphMap             m_glyphs;                 ///< The locations of the images of each glyph within the textures
 
     /** The OpenGL texture object in which the glyphs can be found. */
     std::shared_ptr<Texture> m_texture;

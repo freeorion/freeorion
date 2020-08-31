@@ -208,7 +208,7 @@ struct PushSubmatchOntoStackP
                     bool& ignore_tags,
                     const boost::xpressive::ssub_match& sub) const
     {
-        tag_stack.push(Font::Substring(*str, sub));
+        tag_stack.emplace(*str, sub);
         if (tag_stack.top() == PRE_TAG)
             ignore_tags = true;
     }
@@ -774,9 +774,9 @@ public:
                 size_t param_begin = m_text.size();
                 size_t param_end = m_text.append(param).size();
 
-                element->params.emplace_back(Substring(m_text,
-                                                       std::next(m_text.begin(), param_begin),
-                                                       std::next(m_text.begin(), param_end)));
+                element->params.emplace_back(m_text,
+                                             std::next(m_text.begin(), param_begin),
+                                             std::next(m_text.begin(), param_end));
             }
         }
 
@@ -927,10 +927,6 @@ Font::TextAndElementsAssembler& Font::TextAndElementsAssembler::AddOpenTag(const
 ///////////////////////////////////////
 // class GG::Font::LineData
 ///////////////////////////////////////
-Font::LineData::LineData() :
-    justification(ALIGN_CENTER)
-{}
-
 X Font::LineData::Width() const
 { return char_data.empty() ? X0 : char_data.back().extent; }
 
@@ -940,11 +936,7 @@ bool Font::LineData::Empty() const
 ///////////////////////////////////////
 // class GG::Font::RenderState
 ///////////////////////////////////////
-Font::RenderState::RenderState() :
-    use_italics(0),
-    use_shadow(0),
-    draw_underline(0),
-    super_sub_shift(0)
+Font::RenderState::RenderState()
 {
     // Initialize the color stack with the current color
     GLfloat current[4];
@@ -952,14 +944,8 @@ Font::RenderState::RenderState() :
     PushColor(current[0]*255, current[1]*255, current[2]*255, current[3]*255);
 }
 
-Font::RenderState::RenderState (Clr color):
-    use_italics(0),
-    use_shadow(0),
-    draw_underline(0),
-    super_sub_shift(0)
-{
-    PushColor(color.r, color.g, color.b, color.a);
-}
+Font::RenderState::RenderState(Clr color)
+{ PushColor(color.r, color.g, color.b, color.a); }
 
 void Font::RenderState::PushColor(GLubyte r, GLubyte g, GLubyte b, GLubyte a)
 {
@@ -1000,18 +986,13 @@ Font::RenderCache::RenderCache() :
     underline_colors(new GLRGBAColorBuffer())
 {}
 
-// Must be here for scoped_ptr deleter to work
+// Must be here for unique_ptr deleter to work
 Font::RenderCache::~RenderCache()
 {}
 
 ///////////////////////////////////////
 // class GG::Font::LineData::CharData
 ///////////////////////////////////////
-Font::LineData::CharData::CharData() :
-    extent(0),
-    string_index(0)
-{}
-
 Font::LineData::CharData::CharData(X extent_, StrSize str_index, StrSize str_size, CPSize cp_index,
                                    const std::vector<std::shared_ptr<TextElement>>& tags_) :
     extent(extent_),
@@ -1019,7 +1000,8 @@ Font::LineData::CharData::CharData(X extent_, StrSize str_index, StrSize str_siz
     string_size(str_size),
     code_point_index(cp_index)
 {
-    for (auto tag : tags_)
+    tags.reserve(tags_.size());
+    for (auto& tag : tags_)
         tags.emplace_back(std::dynamic_pointer_cast<FormattingTag>(tag));
 }
 
@@ -1027,14 +1009,8 @@ Font::LineData::CharData::CharData(X extent_, StrSize str_index, StrSize str_siz
 ///////////////////////////////////////
 // struct GG::Font::Glyph
 ///////////////////////////////////////
-Font::Glyph::Glyph() :
-    y_offset(0),
-    left_bearing(0),
-    advance(0),
-    width(0)
-{}
-
-Font::Glyph::Glyph(const std::shared_ptr<Texture>& texture, const Pt& ul, const Pt& lr, Y y_ofs, X lb, X adv) :
+Font::Glyph::Glyph(const std::shared_ptr<Texture>& texture, const Pt& ul, const Pt& lr,
+                   Y y_ofs, X lb, X adv) :
     sub_texture(texture, ul.x, ul.y, lr.x, lr.y),
     y_offset(y_ofs),
     left_bearing(lb),
@@ -1045,33 +1021,9 @@ Font::Glyph::Glyph(const std::shared_ptr<Texture>& texture, const Pt& ul, const 
 ///////////////////////////////////////
 // class GG::Font
 ///////////////////////////////////////
-
-Font::Font() :
-    m_pt_sz(0),
-    m_ascent(0),
-    m_descent(0),
-    m_height(0),
-    m_lineskip(0),
-    m_underline_offset(0.0),
-    m_underline_height(0.0),
-    m_italics_offset(0.0),
-    m_super_sub_offset(0.0),
-    m_shadow_offset(0.0),
-    m_space_width(0)
-{}
-
 Font::Font(std::string font_filename, unsigned int pts) :
     m_font_filename(std::move(font_filename)),
-    m_pt_sz(pts),
-    m_ascent(0),
-    m_descent(0),
-    m_height(0),
-    m_lineskip(0),
-    m_underline_offset(0.0),
-    m_underline_height(0.0),
-    m_italics_offset(0.0),
-    m_shadow_offset(0.0),
-    m_space_width(0)
+    m_pt_sz(pts)
 {
     if (!m_font_filename.empty()) {
         detail::FTFaceWrapper wrapper;
@@ -1084,16 +1036,7 @@ Font::Font(std::string font_filename, unsigned int pts) :
 Font::Font(std::string font_filename, unsigned int pts,
            const std::vector<unsigned char>& file_contents) :
     m_font_filename(std::move(font_filename)),
-    m_pt_sz(pts),
-    m_ascent(0),
-    m_descent(0),
-    m_height(0),
-    m_lineskip(0),
-    m_underline_offset(0.0),
-    m_underline_height(0.0),
-    m_italics_offset(0.0),
-    m_shadow_offset(0.0),
-    m_space_width(0)
+    m_pt_sz(pts)
 {
     assert(!file_contents.empty());
     detail::FTFaceWrapper wrapper;
@@ -1101,9 +1044,6 @@ Font::Font(std::string font_filename, unsigned int pts,
     CheckFace(wrapper.m_face, error);
     Init(wrapper.m_face);
 }
-
-Font::~Font()
-{}
 
 const std::string& Font::FontName() const
 { return m_font_filename; }
@@ -1499,7 +1439,7 @@ std::vector<std::shared_ptr<Font::TextElement>>
                     for (auto nested_it = ++(*it).nested_results().begin();
                          nested_it != (*it).nested_results().end(); ++nested_it)
                     {
-                        element->params.emplace_back(Substring(text, (*nested_it)[0]));
+                        element->params.emplace_back(text, (*nested_it)[0]);
                     }
                 }
                 element->tag_name = Substring(text, (*it)[tag_name_tag]);
