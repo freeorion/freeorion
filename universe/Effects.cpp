@@ -3200,15 +3200,15 @@ void GenerateSitRepMessage::Execute(ScriptingContext& context) const {
 
     // evaluate all parameter valuerefs so they can be substituted into sitrep template
     std::vector<std::pair<std::string, std::string>> parameter_tag_values;
+    parameter_tag_values.reserve(m_message_parameters.size());
     for (const auto& entry : m_message_parameters) {
-        parameter_tag_values.push_back({entry.first, entry.second->Eval(context)});
+        parameter_tag_values.emplace_back(entry.first, entry.second->Eval(context));
 
         // special case for ship designs: make sure sitrep recipient knows about the design
         // so the sitrep won't have errors about unknown designs being referenced
         if (entry.first == VarText::PREDEFINED_DESIGN_TAG) {
-            if (const ShipDesign* design = GetPredefinedShipDesign(entry.second->Eval(context))) {
-                ship_design_ids_to_inform_receipits_of.insert(design->ID());
-            }
+            if (const ShipDesign* design = GetPredefinedShipDesign(entry.second->Eval(context)))
+                ship_design_ids_to_inform_receipits_of.emplace(design->ID());
         }
     }
 
@@ -3308,9 +3308,8 @@ void GenerateSitRepMessage::Execute(ScriptingContext& context) const {
                                             parameter_tag_values, m_label, m_stringtable_lookup));
 
         // also inform of any ship designs recipients should know about
-        for (int design_id : ship_design_ids_to_inform_receipits_of) {
+        for (int design_id : ship_design_ids_to_inform_receipits_of)
             GetUniverse().SetEmpireKnowledgeOfShipDesign(design_id, empire_id);
-        }
     }
 }
 
