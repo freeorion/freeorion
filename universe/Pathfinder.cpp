@@ -331,7 +331,7 @@ namespace SystemPathing {
 
         // early exit if systems are the same
         if (system1_id == system2_id) {
-            retval.first.push_back(system2_id);
+            retval.first.emplace_back(system2_id);
             retval.second = 0.0;    // no jumps needed -> 0 distance
             return retval;
         }
@@ -403,7 +403,7 @@ namespace SystemPathing {
 
         // early exit if systems are the same
         if (system1_id == system2_id) {
-            retval.first.push_back(system2_id);
+            retval.first.emplace_back(system2_id);
             retval.second = 0;  // no jumps needed
             return retval;
         }
@@ -1311,22 +1311,25 @@ Pathfinder::PathfinderImpl::WithinJumpsOfOthers(
     // Examine each candidate and copy those within jumps of the
     // others into near and the rest into far.
     WithinJumpsOfOthersObjectVisitor visitor(*this, jumps, stationary);
-    std::vector<std::shared_ptr<const UniverseObject>> near, far;
-    size_t size = candidates.size();
-    near.reserve(size);
-    far.reserve(size);
+
+    std::pair<std::vector<std::shared_ptr<const UniverseObject>>,
+              std::vector<std::shared_ptr<const UniverseObject>>> retval;
+    auto& near = retval.first;
+    auto& far = retval.second;
+    near.reserve(candidates.size());
+    far.reserve(candidates.size());
 
     for (const auto& candidate : candidates) {
         GeneralizedLocationType candidate_systems = GeneralizedLocation(candidate);
         bool is_near = boost::apply_visitor(visitor, candidate_systems);
 
         if (is_near)
-            near.push_back(candidate);
+            near.emplace_back(candidate);
         else
-            far.push_back(candidate);
+            far.emplace_back(candidate);
     }
 
-    return {near, far}; //, wherever you are...
+    return retval; // was: {near, far}; //, wherever you are...
 }
 
 bool Pathfinder::PathfinderImpl::WithinJumpsOfOthers(
