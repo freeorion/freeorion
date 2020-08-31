@@ -4999,6 +4999,12 @@ Stratégies
 ENC_POLICY_DESC
 Effets d'amélioration ou situationnels pouvant être appliqués par les empires.
 
+ENC_POICY_EXCLUSIONS
+'''Ne peut pas être appliqué avec : '''
+
+ENC_POICY_PREREQUISITES
+'''Ne peut pas être appliqué sans : '''
+
 ENC_SPECIAL
 Particularité
 
@@ -5372,13 +5378,10 @@ ENC_SDD_BAY
 [[METER_CAPACITY]] [[encyclopedia PC_FIGHTER_BAY]]
 
 ENC_UNLOCKED_BY
-'''<u>Débloqué par tech. :</u>
-
-'''
+'''Débloqué par : '''
 
 ENC_UNLOCKS
-'''<u>Débloque :</u>
-
+'''Débloque : 
 '''
 
 ENC_SHIP_PART_CAN_MOUNT_IN_SLOT_TYPES
@@ -11317,6 +11320,16 @@ Permet la construction de [[buildingtype BLD_CONC_CAMP]].'''
 
 PLC_RACIAL_PURITY_SHORT_DESC
 Favorise l'espèce de la Capitale
+
+PLC_DIVINE_AUTHORITY
+Autorité Divine
+
+PLC_DIVINE_AUTHORITY_DESC
+'''
+'''
+
+PLC_DIVINE_AUTHORITY_SHORT_DESC
+Augmente la Stabilité et l'Influence, mais entrave la Recherche
 
 
 ##
