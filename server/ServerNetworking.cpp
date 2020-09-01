@@ -165,6 +165,26 @@ PlayerConnection::PlayerConnection(boost::asio::io_context& io_context,
     m_disconnected_callback(disconnected_callback)
 {}
 
+namespace {
+    struct AsyncCloseClosure {
+        AsyncCloseClosure(boost::optional<boost::asio::ip::tcp::socket> &&socket, int id) :
+            m_socket(std::move(socket)),
+            m_id(id)
+        {}
+
+        void operator()() {
+            if (m_socket) {
+                TraceLogger(network) << "Asynchronously closing socket for player id " << m_id;
+                m_socket->close();
+                TraceLogger(network) << "Socket closed for player id " << m_id;
+            }
+        }
+    private:
+        boost::optional<boost::asio::ip::tcp::socket> m_socket;
+        const int m_id;
+    };
+}
+
 PlayerConnection::~PlayerConnection() {
     boost::system::error_code error;
     m_socket->shutdown(boost::asio::ip::tcp::socket::shutdown_both, error);
@@ -189,11 +209,7 @@ PlayerConnection::~PlayerConnection() {
         }
     }
 
-    std::thread([socket{std::move(m_socket)}, id{m_ID}] () mutable {
-        TraceLogger(network) << "Asynchronously closing socket for player id " << id;
-        socket->close();
-        TraceLogger(network) << "Socket closed for player id " << id;
-    }).detach();
+    std::thread(AsyncCloseClosure(std::move(m_socket), m_ID)).detach();
 }
 
 bool PlayerConnection::EstablishedPlayer() const
