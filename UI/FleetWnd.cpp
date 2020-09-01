@@ -1387,8 +1387,9 @@ void FleetDataPanel::Refresh() {
         m_fleet_destination_text->SetText(FleetDestinationText(m_fleet_id));
 
         // set icons
-        std::vector<std::shared_ptr<GG::Texture>> icons(FleetHeadIcons(fleet, FleetButton::SizeType::LARGE));
-        icons.emplace_back(FleetSizeIcon(fleet, FleetButton::SizeType::LARGE));
+        std::vector<std::shared_ptr<GG::Texture>> icons(
+            FleetHeadIcons(fleet.get(), FleetButton::SizeType::LARGE));
+        icons.emplace_back(FleetSizeIcon(fleet.get(), FleetButton::SizeType::LARGE));
         std::vector<GG::Flags<GG::GraphicStyle>> styles(icons.size(), DataPanelIconStyle());
 
         m_fleet_icon = GG::Wnd::Create<MultiTextureStaticGraphic>(icons, styles);
@@ -2970,7 +2971,7 @@ void FleetWnd::Refresh() {
         fleets_bounding_box = CreateOrGrowBox(fleets_that_exist.empty(), fleets_bounding_box, fleet_loc);
 
         fleets_that_exist.insert(fleet->ID());
-        fleet_locations_ids.insert({{fleet->SystemID(), fleet_loc}, fleet->ID()});
+        fleet_locations_ids.emplace(std::make_pair(fleet->SystemID(), fleet_loc), fleet->ID());
     }
 
     auto bounding_box_center = GG::Pt(fleets_bounding_box.MidX(), fleets_bounding_box.MidY());
@@ -2990,7 +2991,7 @@ void FleetWnd::Refresh() {
         // Grow the selected fleets bounding box
         selected_fleets_bounding_box = CreateOrGrowBox(selected_fleet_locations_ids.empty(),
                                                        selected_fleets_bounding_box, fleet_loc);
-        selected_fleet_locations_ids.insert({{fleet->SystemID(), fleet_loc}, fleet->ID()});
+        selected_fleet_locations_ids.emplace(std::make_pair(fleet->SystemID(), fleet_loc), fleet->ID());
     }
     auto selected_bounding_box_center = GG::Pt(selected_fleets_bounding_box.MidX(),
                                                selected_fleets_bounding_box.MidY());
@@ -3025,7 +3026,7 @@ void FleetWnd::Refresh() {
         location = {INVALID_OBJECT_ID, bounding_box_center};
         std::multimap<std::pair<int, GG::Pt>, int> fleets_near_enough;
         for (const auto& loc_and_id: fleet_locations_ids)
-            fleets_near_enough.insert({location, loc_and_id.second});
+            fleets_near_enough.emplace(location, loc_and_id.second);
         fleet_locations_ids.swap(fleets_near_enough);
 
     } else if (!selected_fleet_locations_ids.empty()
@@ -3040,7 +3041,7 @@ void FleetWnd::Refresh() {
         for (const auto& loc_and_id: fleet_locations_ids) {
             const auto& pos = loc_and_id.first.second;
             if (m_bounding_box.Contains(pos))
-                fleets_near_enough.insert({location, loc_and_id.second});
+                fleets_near_enough.emplace(location, loc_and_id.second);
         }
         fleet_locations_ids.swap(fleets_near_enough);
 
@@ -3056,7 +3057,7 @@ void FleetWnd::Refresh() {
     // Use fleets that are at the determined location
     auto flt_at_loc = fleet_locations_ids.equal_range(location);
     for (auto it = flt_at_loc.first; it != flt_at_loc.second; ++it)
-    { m_fleet_ids.insert(it->second); }
+        m_fleet_ids.emplace(it->second);
 
     m_system_id = location.first;
 
@@ -3072,11 +3073,11 @@ void FleetWnd::Refresh() {
 
             // skip known destroyed and stale info objects
             if (this_client_known_destroyed_objects.count(fleet_id) ||
-                    this_client_stale_object_info.count(fleet_id))
-                continue;
+                this_client_stale_object_info.count(fleet_id))
+            { continue; }
 
             if ( ((m_empire_id == ALL_EMPIRES) && (fleet->Unowned())) || fleet->OwnedBy(m_empire_id) )
-                m_fleet_ids.insert(fleet_id);
+                m_fleet_ids.emplace(fleet_id);
         }
     }
 

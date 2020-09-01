@@ -60,13 +60,15 @@ private:
 };
 
 /* returns head icon for passed fleet at passed icon size */
-std::vector<std::shared_ptr<GG::Texture>> FleetHeadIcons(std::shared_ptr<const Fleet>, FleetButton::SizeType size_type);
+std::vector<std::shared_ptr<GG::Texture>> FleetHeadIcons(const Fleet* fleet,
+                                                         FleetButton::SizeType size_type);
 
 /* returns head icon for passed fleets at passed icon size */
-std::vector<std::shared_ptr<GG::Texture>> FleetHeadIcons(const std::vector<std::shared_ptr<const Fleet>>& fleets, FleetButton::SizeType size_type);
+std::vector<std::shared_ptr<GG::Texture>> FleetHeadIcons(const std::vector<const Fleet*>& fleets,
+                                                         FleetButton::SizeType size_type);
 
 /* returns size icon for passed fleet at passed icon size */
-std::shared_ptr<GG::Texture> FleetSizeIcon(std::shared_ptr<const Fleet> fleet, FleetButton::SizeType size_type);
+std::shared_ptr<GG::Texture> FleetSizeIcon(const Fleet* fleet, FleetButton::SizeType size_type);
 
 /* returns head icon for passed fleet size at passed icon size */
 std::shared_ptr<GG::Texture> FleetSizeIcon(unsigned int fleet_size, FleetButton::SizeType size_type);
