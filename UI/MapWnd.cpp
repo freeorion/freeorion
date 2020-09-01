@@ -3372,19 +3372,6 @@ namespace {
         }
     };
 
-    /** Look a \p kkey in \p mmap and if not found allocate a new
-        shared_ptr with the default constructor.*/
-    template <typename Map>
-    typename Map::mapped_type& lookup_or_make_shared(Map& mmap, typename Map::key_type const& kkey) {
-        auto map_it = mmap.find(kkey);
-        if (map_it == mmap.end()) {
-            map_it = mmap.insert(map_it, {kkey, std::make_shared<typename Map::mapped_type::element_type>()});
-            if (map_it == mmap.end())
-                ErrorLogger() << "Unable to insert new empty set into map.";
-        }
-        return map_it->second;
-    }
-
 
     /* Takes X and Y coordinates of a pair of systems and moves these points inwards along the vector
      * between them by the radius of a system on screen (at zoom 1.0) and return result */
@@ -3414,19 +3401,17 @@ namespace {
 
 
     void GetResPoolLaneInfo(int empire_id,
-                            std::unordered_map<std::set<int>, std::shared_ptr<std::set<int>>, hash_set>& res_pool_systems,
-                            std::unordered_map<std::set<int>, std::shared_ptr<std::set<int>>, hash_set>& res_group_cores,
+                            std::unordered_map<std::set<int>, std::set<int>, hash_set>& res_pool_systems,
+                            std::unordered_map<std::set<int>, std::set<int>, hash_set>& res_group_cores,
                             std::unordered_set<int>& res_group_core_members,
-                            std::unordered_map<int, std::shared_ptr<std::set<int>>>& member_to_core,
-                            std::shared_ptr<std::unordered_set<int>>& under_alloc_res_grp_core_members)
+                            std::unordered_map<int, std::set<int>>& member_to_core,
+                            std::unordered_set<int>& under_alloc_res_grp_core_members)
     {
         res_pool_systems.clear();
         res_group_cores.clear();
         res_group_core_members.clear();
         member_to_core.clear();
-        under_alloc_res_grp_core_members.reset();
-        if (empire_id == ALL_EMPIRES)
-            return;
+        under_alloc_res_grp_core_members.clear();
         const Empire* empire = GetEmpire(empire_id);
         if (!empire)
             return;
@@ -3445,18 +3430,18 @@ namespace {
             for (int object_id : available_pp_group.first) {
                 // this_pool += std::to_string(object_id) +", ";
 
-                auto planet = Objects().get<Planet>(object_id);
+                auto planet = Objects().get<Planet>(object_id).get();
                 if (!planet)
                     continue;
 
                 //DebugLogger() << "Empire " << empire_id << "; Planet (" << object_id << ") is named " << planet->Name();
 
                 int system_id = planet->SystemID();
-                auto system = Objects().get<System>(system_id);
+                auto system = Objects().get<System>(system_id).get();
                 if (!system)
                     continue;
 
-                lookup_or_make_shared(res_pool_systems, available_pp_group.first)->insert(system_id);
+                res_pool_systems[available_pp_group.first].insert(system_id);
             }
             // this_pool += ")";
             //DebugLogger() << "Empire " << empire_id << "; ResourcePool[RE_INDUSTRY] resourceGroup (" << this_pool << ") has (" << available_pp_group.second << " PP available";
@@ -3479,20 +3464,19 @@ namespace {
         // the supply network.
 
         for (auto& res_pool_system : res_pool_systems) {
-            auto& group_core = lookup_or_make_shared(res_group_cores, res_pool_system.first);
+            auto& group_core = res_group_cores[res_pool_system.first];
 
             // All individual resource system are included in the
             // network on their own.
-            for (int system_id : *(res_pool_system.second)) {
-                group_core->insert(system_id);
-                res_group_core_members.insert(system_id);
-            }
+            group_core.insert(res_pool_system.second.begin(),
+                              res_pool_system.second.end());
+            res_group_core_members.insert(res_pool_system.second.begin(),
+                                          res_pool_system.second.end());
 
             // Convert res_pool_system.second from set<int> to
             // unordered_set<int> to improve lookup speed.
-            std::unordered_set<int> terminal_points;
-            for (int system_id : *(res_pool_system.second))
-                terminal_points.insert(system_id);
+            std::unordered_set<int> terminal_points{res_pool_system.second.begin(),
+                                                    res_pool_system.second.end()};
 
             std::unordered_set<int> paths;
             GetPathsThroughSupplyLanes::GetPathsThroughSupplyLanes(
@@ -3502,7 +3486,7 @@ namespace {
             // added to the core group of systems that will be rendered
             // with thick lines.
             for (int waypoint : paths) {
-                group_core->insert(waypoint);
+                group_core.insert(waypoint);
                 res_group_core_members.insert(waypoint);
                 member_to_core[waypoint] = group_core;
             }
@@ -3518,9 +3502,8 @@ namespace {
             if (allocated_it == allocated_pp.end() || (group_pp > allocated_it->second + 0.05)) {
                 auto group_core_it = res_group_cores.find(available_pp_group.first);
                 if (group_core_it != res_group_cores.end()) {
-                    if (!under_alloc_res_grp_core_members)
-                        under_alloc_res_grp_core_members = std::make_shared<std::unordered_set<int>>();
-                    under_alloc_res_grp_core_members->insert(group_core_it->second->begin(), group_core_it->second->end());
+                    under_alloc_res_grp_core_members.insert(group_core_it->second.begin(),
+                                                            group_core_it->second.end());
                 }
             }
         }
@@ -3617,12 +3600,12 @@ namespace {
         GG::Clr lane_colour = empire->Color();
 
         // map keyed by ResourcePool (set of objects) to the corresponding set of system ids
-        std::unordered_map<std::set<int>, std::shared_ptr<std::set<int>>, hash_set> res_pool_systems;
+        std::unordered_map<std::set<int>, std::set<int>, hash_set> res_pool_systems;
         // map keyed by ResourcePool to the set of systems considered the core of the corresponding ResGroup
-        std::unordered_map<std::set<int>, std::shared_ptr<std::set<int>>, hash_set> res_group_cores;
+        std::unordered_map<std::set<int>, std::set<int>, hash_set> res_group_cores;
         std::unordered_set<int> res_group_core_members;
-        std::unordered_map<int, std::shared_ptr<std::set<int>>> member_to_core;
-        std::shared_ptr<std::unordered_set<int>> under_alloc_res_grp_core_members;
+        std::unordered_map<int, std::set<int>> member_to_core;
+        std::unordered_set<int> under_alloc_res_grp_core_members;
         GetResPoolLaneInfo(empire_id, res_pool_systems,
                            res_group_cores, res_group_core_members,
                            member_to_core, under_alloc_res_grp_core_members);
@@ -3678,20 +3661,15 @@ namespace {
                 //start system is a res Grp core member for empire -- highlight
                 float indicator_extent = 0.5f;
                 GG::Clr lane_colour_to_use = lane_colour;
-                if (under_alloc_res_grp_core_members
-                    && under_alloc_res_grp_core_members->count(start_system->ID()))
-                {
+                if (under_alloc_res_grp_core_members.count(start_system->ID()))
                     lane_colour_to_use = GG::DarkenClr(GG::InvertClr(lane_colour));
-                }
 
                 auto start_core = member_to_core.find(start_system->ID());
                 auto dest_core = member_to_core.find(dest_system->ID());
                 if (start_core != member_to_core.end() && dest_core != member_to_core.end()
-                    && (start_core->second != dest_core->second)
-                    && (*(start_core->second) != *(dest_core->second)))
-                {
-                    indicator_extent = 0.2f;
-                }
+                    && (start_core->second != dest_core->second))
+                { indicator_extent = 0.2f; }
+
                 rc_starlane_vertices.store(lane_endpoints.X1, lane_endpoints.Y1);
                 rc_starlane_vertices.store((lane_endpoints.X2 - lane_endpoints.X1) * indicator_extent + lane_endpoints.X1,  // part way along starlane
                                            (lane_endpoints.Y2 - lane_endpoints.Y1) * indicator_extent + lane_endpoints.Y1);
@@ -5031,7 +5009,7 @@ void MapWnd::CreateFleetButtonsOfType(FleetButtonMap& type_fleet_buttons,
         for (const auto& fleet : Objects().find<Fleet>(fleet_IDs)) {
             if (!fleet)
                 continue;
-            fleet_positions_ids[{fleet->X(), fleet->Y()}].push_back(fleet->ID());
+            fleet_positions_ids[{fleet->X(), fleet->Y()}].emplace_back(fleet->ID());
         }
 
         // create separate FleetButton for each cluster of fleets
@@ -5042,7 +5020,7 @@ void MapWnd::CreateFleetButtonsOfType(FleetButtonMap& type_fleet_buttons,
             auto fb = GG::Wnd::Create<FleetButton>(ids_in_cluster, fleet_button_size);
 
             // store per type of fleet button.
-            type_fleet_buttons[key].insert(fb);
+            type_fleet_buttons[key].emplace(fb);
 
             // store FleetButton for fleets in current cluster
             for (int fleet_id : ids_in_cluster)
