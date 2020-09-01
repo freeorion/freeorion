@@ -38,9 +38,9 @@ namespace {
             description(std::move(description_)),
             short_description(std::move(short_description_)),
             category(std::move(category_)),
-            adoption_cost(adoption_cost_),
-            prerequisites(std::move(prerequisites_)),
             exclusions(std::move(exclusions_)),
+            prerequisites(std::move(prerequisites_)),
+            adoption_cost(adoption_cost_),
             effects(effects_),
             graphic(graphic_)
         {}

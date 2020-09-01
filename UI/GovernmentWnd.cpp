@@ -1371,7 +1371,6 @@ void GovernmentWnd::MainPanel::DoLayout() {
     const int PTS = ClientUI::Pts();
     const GG::X PTS_WIDE(PTS / 2);           // guess at how wide per character the font needs
     const GG::Y BUTTON_HEIGHT(PTS * 2);
-    const GG::X LABEL_WIDTH = PTS_WIDE * 15;
     const int PAD = 6;
     const int GUESSTIMATE_NUM_CHARS_IN_BUTTON_TEXT = 25;    // rough guesstimate... avoid overly long policy class names
     const GG::X BUTTON_WIDTH = PTS_WIDE*GUESSTIMATE_NUM_CHARS_IN_BUTTON_TEXT;

@@ -169,7 +169,6 @@ Spin<T>::Spin(T value, T step, T min, T max, bool edits, const std::shared_ptr<F
 template <typename T>
 void Spin<T>::CompleteConstruction()
 {
-    const auto& style = GetStyleFactory();
     m_edit->InstallEventFilter(shared_from_this());
     m_up_button->InstallEventFilter(shared_from_this());
     m_down_button->InstallEventFilter(shared_from_this());

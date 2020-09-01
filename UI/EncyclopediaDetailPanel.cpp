@@ -1713,7 +1713,6 @@ namespace {
         }
 
         // Issued orders this turn
-        unsigned int n = 1;
         detailed_description += "\n\n" + UserString("ISSUED_ORDERS") + "\n" +
                                 HumanClientApp::GetApp()->Orders().Dump();
 
