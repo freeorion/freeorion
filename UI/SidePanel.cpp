@@ -1594,12 +1594,8 @@ void SidePanel::PlanetPanel::Refresh() {
         bombard_ships.insert(autoselected_bombard_ships.begin(), autoselected_bombard_ships.end());
     }
 
-    std::string colony_ship_species_name;
-    float colony_ship_capacity = 0.0f;
-    if (selected_colony_ship) {
-        colony_ship_species_name = selected_colony_ship->SpeciesName();
-        colony_ship_capacity = selected_colony_ship->ColonyCapacity();
-    }
+    std::string colony_ship_species_name{selected_colony_ship ? selected_colony_ship->SpeciesName() : ""};
+    float colony_ship_capacity{selected_colony_ship ? selected_colony_ship->ColonyCapacity() : 0.0f};
     const Species* colony_ship_species = GetSpecies(colony_ship_species_name);
     PlanetEnvironment planet_env_for_colony_species = PE_UNINHABITABLE;
     if (colony_ship_species)
@@ -1607,7 +1603,7 @@ void SidePanel::PlanetPanel::Refresh() {
 
 
     // calculate truth tables for planet colonization and invasion
-    bool has_owner =        !planet->Unowned();
+    bool has_owner =       !planet->Unowned();
     bool mine =             planet->OwnedBy(client_empire_id);
     bool populated =        planet->GetMeter(METER_POPULATION)->Initial() > 0.0f;
     bool habitable =        planet_env_for_colony_species >= PE_HOSTILE && planet_env_for_colony_species <= PE_GOOD;
@@ -1660,25 +1656,6 @@ void SidePanel::PlanetPanel::Refresh() {
     DetachChild(m_bombard_button);
     DetachChild(m_focus_drop);
 
-    std::string species_name;
-    if (!planet->SpeciesName().empty())
-        species_name = planet->SpeciesName();
-    else if (!colony_ship_species_name.empty())
-        species_name = colony_ship_species_name;
-
-    std::string env_size_text;
-
-    if (species_name.empty())
-        env_size_text = boost::io::str(FlexibleFormat(UserString("PL_TYPE_SIZE"))
-                                       % GetPlanetSizeName(planet)
-                                       % GetPlanetTypeName(planet));
-    else
-        env_size_text = boost::io::str(FlexibleFormat(UserString("PL_TYPE_SIZE_ENV"))
-                                       % GetPlanetSizeName(planet)
-                                       % GetPlanetTypeName(planet)
-                                       % GetPlanetEnvironmentName(planet, species_name)
-                                       % UserString(species_name));
-
 
     if (Disabled() || !(can_colonize || being_colonized || invadable || being_invaded)) {
         // hide everything
@@ -1707,7 +1684,7 @@ void SidePanel::PlanetPanel::Refresh() {
             int orig_owner = planet->Owner();
             float orig_initial_target_pop = planet->GetMeter(METER_TARGET_POPULATION)->Initial();
             planet->SetOwner(client_empire_id);
-            planet->SetSpecies(colony_ship_species_name);
+            planet->SetSpecies(std::move(colony_ship_species_name));
             planet->GetMeter(METER_TARGET_POPULATION)->Reset();
 
             // temporary meter updates for curently set species
@@ -1794,7 +1771,19 @@ void SidePanel::PlanetPanel::Refresh() {
             m_bombard_button->SetText(UserString("PL_CANCEL_BOMBARD"));
     }
 
-    m_env_size->SetText(env_size_text);
+    const auto& species_name{!planet->SpeciesName().empty() ? planet->SpeciesName() :
+                             !colony_ship_species_name.empty() ? colony_ship_species_name : ""};
+    std::string&& env_size_text{
+        species_name.empty() ?
+            boost::io::str(FlexibleFormat(UserString("PL_TYPE_SIZE"))
+                           % GetPlanetSizeName(planet)
+                           % GetPlanetTypeName(planet)) :
+            boost::io::str(FlexibleFormat(UserString("PL_TYPE_SIZE_ENV"))
+                           % GetPlanetSizeName(planet)
+                           % GetPlanetTypeName(planet)
+                           % GetPlanetEnvironmentName(planet, species_name)
+                           % UserString(species_name))};
+    m_env_size->SetText(std::move(env_size_text));
 
     if (!planet->SpeciesName().empty()) {
         AttachChild(m_focus_drop);
