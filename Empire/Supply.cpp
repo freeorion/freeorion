@@ -77,8 +77,10 @@ std::set<int> SupplyManager::FleetSupplyableSystemIDs(int empire_id, bool includ
         return retval;
 
     // add supplyable systems of all allies
-    for (auto empire_id_sys_id_set : m_fleet_supplyable_system_ids) {
+    for (auto& empire_id_sys_id_set : m_fleet_supplyable_system_ids) {
         int other_empire_id = empire_id_sys_id_set.first;
+        if (other_empire_id == empire_id)
+            continue;
         const std::set<int>& systems = empire_id_sys_id_set.second;
         if (systems.empty() || Empires().GetDiplomaticStatus(empire_id, other_empire_id) != DIPLO_ALLIED)
             continue;
