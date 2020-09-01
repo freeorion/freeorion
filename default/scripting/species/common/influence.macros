@@ -1,18 +1,6 @@
-NO_INFLUENCE
-'''[[DESCRIPTION_EFFECTSGROUP_MACRO(NO_INFLUENCE_DESC)]]'''
 
-BASIC_INFLUENCE
-'''        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet
-                Focus type = "FOCUS_INFLUENCE"
-            ]
-            accountinglabel = "FOCUS_INFLUENCE_LABEL"
-            priority = [[EARLY_PRIORITY]]
-            effects = SetTargetInfluence value = Value + 4
-
-        EffectsGroup      // colonies consume influence
+BASE_INFLUENCE_COSTS
+'''EffectsGroup      // colonies consume influence
             scope = Source
             activation = Planet
             accountinglabel = "COLONY_ADMIN_COSTS_LABEL"
@@ -54,6 +42,24 @@ BASIC_INFLUENCE
             accountinglabel = "DIFFICULTY"
             priority = [[LATE_PRIORITY]]
             effects = SetTargetInfluence value = Value + 1
+'''
+
+NO_INFLUENCE
+'''[[DESCRIPTION_EFFECTSGROUP_MACRO(NO_INFLUENCE_DESC)]]
+[[BASE_INFLUENCE_COSTS]]
+'''
+
+BASIC_INFLUENCE
+'''        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Focus type = "FOCUS_INFLUENCE"
+            ]
+            accountinglabel = "FOCUS_INFLUENCE_LABEL"
+            priority = [[EARLY_PRIORITY]]
+            effects = SetTargetInfluence value = Value + 4
+[[BASE_INFLUENCE_COSTS]]
 '''
 
 VERY_BAD_INFLUENCE
