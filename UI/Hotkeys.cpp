@@ -77,7 +77,7 @@ std::set<std::string> Hotkey::DefinedHotkeys() {
     std::set<std::string> retval;
     if (s_hotkeys) {
         for (const auto& entry : *s_hotkeys)
-        { retval.insert(entry.first); }
+            retval.emplace(entry.first);
     }
     return retval;
 }
