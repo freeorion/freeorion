@@ -3305,7 +3305,8 @@ void GenerateSitRepMessage::Execute(ScriptingContext& context) const {
         if (!empire)
             continue;
         empire->AddSitRepEntry(CreateSitRep(m_message_string, sitrep_turn, m_icon,
-                                            parameter_tag_values, m_label, m_stringtable_lookup));
+                                            std::move(parameter_tag_values),
+                                            m_label, m_stringtable_lookup));
 
         // also inform of any ship designs recipients should know about
         for (int design_id : ship_design_ids_to_inform_receipits_of)

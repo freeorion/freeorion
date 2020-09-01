@@ -545,12 +545,11 @@ SitRepEntry CreateVictorySitRep(const std::string& reason_string, int empire_id)
 }
 
 SitRepEntry CreateSitRep(const std::string& template_string, int turn, const std::string& icon,
-                         const std::vector<std::pair<std::string, std::string>>& parameters,
+                         std::vector<std::pair<std::string, std::string>>&& parameters,
                          const std::string label, bool stringtable_lookup)
 {
     SitRepEntry sitrep(template_string.c_str(), turn, icon.c_str(),
                        label.c_str(), stringtable_lookup);
-    for (auto& parameter : parameters)
-         sitrep.AddVariable(parameter.first, parameter.second);
+    sitrep.AddVariables(std::move(parameters));
     return sitrep; 
 }

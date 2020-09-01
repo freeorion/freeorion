@@ -78,17 +78,19 @@ namespace {
         std::vector<std::pair<std::string, std::string>> params;
 
         if (py_params) {
+            params.reserve(len(py_params));
             for (int i = 0; i < len(py_params); i++) {
                 std::string k = py::extract<std::string>(py_params.keys()[i]);
                 std::string v = py::extract<std::string>(py_params.values()[i]);
-                params.push_back({k, v});
+                params.emplace_back(std::move(k), std::move(v));
             }
         }
 
         if (empire_id == ALL_EMPIRES) {
             for (const auto& entry : Empires()) {
-                entry.second->AddSitRepEntry(CreateSitRep(template_string, sitrep_turn,
-                                                          icon, params));
+                entry.second->AddSitRepEntry(CreateSitRep(
+                    template_string, sitrep_turn, icon,
+                    std::vector<std::pair<std::string, std::string>>(params)));  // copy for each...
             }
         } else {
             Empire* empire = GetEmpire(empire_id);
@@ -96,7 +98,8 @@ namespace {
                 ErrorLogger() << "GenerateSitRep: couldn't get empire with ID " << empire_id;
                 return;
             }
-            empire->AddSitRepEntry(CreateSitRep(template_string, sitrep_turn, icon, params));
+            empire->AddSitRepEntry(CreateSitRep(template_string, sitrep_turn, icon,
+                                                std::move(params)));
         }
     }
 
