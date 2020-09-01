@@ -1048,7 +1048,7 @@ void CensoredCUIEdit::AcceptPastedText(const std::string& text) {
         auto new_raw_text = m_raw_text;
         new_raw_text.insert(Value(StringIndexOf(line, pos, GetLineData())), text);
 
-        SetText(new_raw_text);
+        SetText(std::move(new_raw_text));
 
         modified_text = true;
     }
@@ -1197,12 +1197,12 @@ void CUILinkTextMultiEdit::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_ke
     // create popup menu
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
     if (GetLinkUnderPt(pt) != -1) {
-        popup->AddMenuItem(GG::MenuItem(UserString("OPEN"),             false, false, rclick_action));
+        popup->AddMenuItem(GG::MenuItem(UserString("OPEN"),          false,            false, rclick_action));
         popup->AddMenuItem(GG::MenuItem(true)); // separator
     }
     if (!(this->Style() & GG::MULTI_READ_ONLY))
         popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_CUT"),    this->Disabled(), false, hotkey_cut_action));
-    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_COPY"),       false, false,     hotkey_copy_action));
+    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_COPY"),       false,            false, hotkey_copy_action));
     if (!(this->Style() & GG::MULTI_READ_ONLY))
         popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_PASTE"),  this->Disabled(), false, hotkey_paste_action));
     popup->AddMenuItem(GG::MenuItem(true)); // separator
