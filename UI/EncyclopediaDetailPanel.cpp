@@ -2637,7 +2637,7 @@ namespace {
             float planet_capacity = ((planet_environment == PE_UNINHABITABLE) ?
                                      0.0f : planet.GetMeter(METER_TARGET_POPULATION)->Current()); // want value after temporary meter update, so get current, not initial value of meter
 
-            retval.insert({planet_capacity, {species_name, planet_environment}});
+            retval.emplace(planet_capacity, std::make_pair(species_name, planet_environment));
         }
 
         // restore planet to original state
