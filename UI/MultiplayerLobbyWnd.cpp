@@ -475,18 +475,22 @@ namespace {
                 ErrorLogger() << "Empire changed to no empire.  Ignoring change.";
                 return;
             }
-            auto it = m_save_game_empire_data.begin();
-            std::advance(it, m_empire_list->IteratorToIndex(selected_it));
-            m_player_data.m_empire_name =           it->second.m_empire_name;
-            m_player_data.m_empire_color =          it->second.m_color;
-            m_player_data.m_save_game_empire_id =   it->second.m_empire_id;
-            m_color_selector->SelectColor(m_player_data.m_empire_color);
+            const std::string& empire_name = boost::polymorphic_downcast<GG::Label*>((*selected_it)->at(0))->Text();
+            for (const auto& it : m_save_game_empire_data) {
+                if (it.second.m_empire_name == empire_name) {
+                    m_player_data.m_empire_name = empire_name;
+                    m_player_data.m_empire_color = it.second.m_color;
+                    m_player_data.m_save_game_empire_id = it.second.m_empire_id;
+                    m_color_selector->SelectColor(m_player_data.m_empire_color);
 
-            // set previous player name indication
-            if (size() >= 5)
-                boost::polymorphic_downcast<GG::Label*>(at(4))->SetText(it->second.m_player_name);
+                    // set previous player name indication
+                    if (size() >= 5)
+                        boost::polymorphic_downcast<GG::Label*>(at(4))->SetText(it.second.m_player_name);
 
-            DataChangedSignal();
+                    DataChangedSignal();
+                    return;
+                }
+            }
         }
 
         std::shared_ptr<EmpireColorSelector>                     m_color_selector;
