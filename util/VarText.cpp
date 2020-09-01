@@ -285,6 +285,11 @@ void VarText::AddVariable(const std::string& tag, const std::string& data)
 void VarText::AddVariable(const std::string& tag, std::string&& data)
 { m_variables[tag] = std::move(data); }
 
+void VarText::AddVariables(std::vector<std::pair<std::string, std::string>>&& data) {
+    for (auto& dat : data)
+        m_variables.emplace(std::move(dat));
+}
+
 void VarText::GenerateVarText() const {
     // generate a string complete with substituted variables and hyperlinks
     // the procedure here is to replace any tokens within %% with variables of

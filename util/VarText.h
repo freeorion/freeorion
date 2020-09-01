@@ -105,7 +105,7 @@ public:
     //! @param  stringtable_lookup  @see #m_stringtable_lookup_flag
     void SetTemplateString(std::string template_string, bool stringtable_lookup = true);
 
-    //! Assign @p data to a given @p tag.
+    //! Assign @p data to a given @p tag. Overwrites / replaces data of existing tags.
     //!
     //! The @p data should match @p tag as listed in
     //!   @ref variable_tags "Variable tags".
@@ -116,7 +116,7 @@ public:
     //!     Data value of the #m_variables set.
     void AddVariable(const std::string& tag, const std::string& data);
 
-    //! Assign @p data to a given @p tag.
+    //! Assign @p data to a given @p tag. Overwrites / replaces data of existing tags.
     //!
     //! The @p data should match @p tag as listed in
     //!   @ref variable_tags "Variable tags".
@@ -126,6 +126,15 @@ public:
     //! @param  data
     //!     Data value of the #m_variables set.
     void AddVariable(const std::string& tag, std::string&& data);
+
+    //! Assign @p data as tags. Does not overwrite or replace data of existing tags.
+    //!
+    //! The @p data should match tags as listed in
+    //!   @ref variable_tags "Variable tags".
+    //!
+    //! @param  data
+    //!     Tag and Data values of the #m_variables set.
+    void AddVariables(std::vector<std::pair<std::string, std::string>>&& data);
 
     //! @name  Variable tags
     //! @anchor variable_tags
