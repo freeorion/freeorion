@@ -212,7 +212,7 @@ void GameRulesPanel::CompleteConstruction() {
 std::map<std::string, std::string> GameRulesPanel::GetRulesAsStrings() const {
     std::map<std::string, std::string> retval;
     for (const auto& entry : m_rules)
-        retval.insert(entry);
+        retval.emplace(entry);
     return retval;
 }
 
