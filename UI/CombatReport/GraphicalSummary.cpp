@@ -604,15 +604,15 @@ public:
     }
 
 private:
-    std::unique_ptr<BarSizer>&                  m_sizer;
-    std::vector<std::shared_ptr<ToggleData>>    m_toggles;
+    std::unique_ptr<BarSizer>&               m_sizer;
+    std::vector<std::shared_ptr<ToggleData>> m_toggles;
 
     struct ToggleData : public boost::signals2::trackable {
-        std::string label_true;
-        std::string label_false;
-        std::string tip_true;
-        std::string tip_false;
-        std::string option_key;
+        const std::string label_true;
+        const std::string label_false;
+        const std::string tip_true;
+        const std::string tip_false;
+        const std::string option_key;
         std::unique_ptr<BarSizer>* sizer;
         std::weak_ptr<OptionsBar> parent;
         std::shared_ptr<GG::Button> button;
