@@ -1035,7 +1035,7 @@ void SaveFileDialog::SetDirPath(const string& dir_path) {
             dirname = PathToString(path);
         }
     }
-    m_current_dir_edit->SetText(dirname);
+    m_current_dir_edit->SetText(std::move(dirname));
 }
 
 std::string SaveFileDialog::Result() const {
