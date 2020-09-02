@@ -757,9 +757,9 @@ public:
         m_line_length = GG::X(static_cast<int>(shown_length * m_scale_factor));
 
         // update text
-        std::string label_text = boost::io::str(FlexibleFormat(UserString("MAP_SCALE_INDICATOR")) %
-                                                std::to_string(static_cast<int>(shown_length)));
-        m_label->SetText(label_text);
+        std::string&& label_text = boost::io::str(FlexibleFormat(UserString("MAP_SCALE_INDICATOR")) %
+                                                  std::to_string(static_cast<int>(shown_length)));
+        m_label->SetText(std::move(label_text));
         m_label->Resize(GG::Pt(GG::X(m_line_length), Height()));
     }
 
