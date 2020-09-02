@@ -278,9 +278,10 @@ bool MessageWndEdit::CompleteWord(const std::set<std::string>& names, const std:
     // and replace it with the properly formated game word
     full_line = full_line.substr(0, full_line.size() - partial_word.size());
     full_line.insert(full_line.size(), m_last_game_word + " ");
-    this->SetText(full_line);
+    auto line_sz = full_line.size();
+    this->SetText(std::move(full_line));
     m_last_line_read = this->Text();
-    GG::CPSize move_cursor_to = full_line.size() + GG::CP1;
+    GG::CPSize move_cursor_to = line_sz + GG::CP1;
     this->SelectRange(move_cursor_to, move_cursor_to);
     return true;
 }
