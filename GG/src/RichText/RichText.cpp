@@ -150,17 +150,17 @@ public:
 
     void CompleteConstruction();
 
-    virtual ~RichTextPrivate() {}
+    virtual ~RichTextPrivate() = default;
 
     // Set the text to show. Parses it into tags and uses the factory map to turn them into blocks.
     void SetText(const std::string& content);
 
     /**
-        * @brief Set the whitespace around the content.
-        *
-        * @param pixels The number of pixels to reserve for empty space around the content.
-        * @return void
-        */
+      * @brief Set the whitespace around the content.
+      *
+      * @param pixels The number of pixels to reserve for empty space around the content.
+      * @return void
+      */
     void SetPadding(int pixels);
     void SizeMove(Pt ul, Pt lr);
 
@@ -196,7 +196,7 @@ private:
                                 m_block_factory_map;    //!< A map that tells us how to generate block controls from tags.
     std::vector<std::shared_ptr<BlockControl>>
                                 m_blocks;               //!< The blocks generated from our content.
-    int                         m_padding;
+    int                         m_padding = 0;
 
 };
 
@@ -207,8 +207,7 @@ RichTextPrivate::RichTextPrivate(RichText* q, const std::string& content,
     m_font(font),
     m_color(color),
     m_format(format),
-    m_block_factory_map(RichText::DefaultBlockFactoryMap()),
-    m_padding(0)
+    m_block_factory_map(RichText::DefaultBlockFactoryMap())
 {
     // Parse the content into a vector of tags and create
     // blocks from the tags and populate the control with them.
