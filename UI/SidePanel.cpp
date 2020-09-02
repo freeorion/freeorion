@@ -1717,7 +1717,7 @@ void SidePanel::PlanetPanel::Refresh() {
             colonize_text = UserString("PL_OUTPOST");
         }
         if (m_colonize_button)
-            m_colonize_button->SetText(colonize_text);
+            m_colonize_button->SetText(std::move(colonize_text));
 
     } else if (being_colonized) {
         // shown colonize cancel button
@@ -1730,9 +1730,9 @@ void SidePanel::PlanetPanel::Refresh() {
         // show invade button
         AttachChild(m_invade_button);
         float invasion_troops = 0.0f;
-        for (auto& invasion_ship : invasion_ships) {
+        for (auto& invasion_ship : invasion_ships)
             invasion_troops += invasion_ship->TroopCapacity();
-        }
+
         std::string invasion_troops_text = DoubleToString(invasion_troops, 3, false);
 
         // adjust defending troops number before passing into DoubleToString to ensure
@@ -1749,7 +1749,7 @@ void SidePanel::PlanetPanel::Refresh() {
                                                    % invasion_troops_text % defending_troops_text);
         // todo: tooltip breaking down which or how many ships are being used to invade, their troop composition / contribution
         if (m_invade_button)
-            m_invade_button->SetText(invasion_text);
+            m_invade_button->SetText(std::move(invasion_text));
 
     } else if (being_invaded) {
         // show invade cancel button
