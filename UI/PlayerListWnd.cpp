@@ -404,7 +404,7 @@ namespace {
             //m_player_name_text->SetText(player_info.name);
 
             m_empire_name_text->SetTextColor(empire_color);
-            m_empire_name_text->SetText(empire_name);
+            m_empire_name_text->SetText(std::move(empire_name));
 
             const ObjectMap& objects = Objects();
             double empires_ship_count = 0.0;
@@ -415,18 +415,16 @@ namespace {
             const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(HumanClientApp::GetApp()->EmpireID());
             const std::set<int>& this_client_stale_object_info       = GetUniverse().EmpireStaleKnowledgeObjectIDs(HumanClientApp::GetApp()->EmpireID());
 
-            for (auto& ship : objects.all<Ship>()) {
-                if (empire) {
+            if (empire) {
+                for (auto& ship : objects.all<Ship>()) {
                     if (ship->Owner() == empire->EmpireID()
                         && !this_client_known_destroyed_objects.count(ship->ID())
                         && !this_client_stale_object_info.count(ship->ID())) {
                             empires_ship_count += 1;
                     }
                 }
-            }
 
-            for (auto& planet : objects.all<Planet>()) {
-                if (empire) {
+                for (auto& planet : objects.all<Planet>()) {
                     if (planet->Owner() == empire->EmpireID()) {
                         empires_planet_count      += 1;
                         empires_production_points += planet->GetMeter(METER_INDUSTRY)->Initial();
@@ -435,43 +433,28 @@ namespace {
                 }
             }
 
-            std::string ship_text;
-            std::string planet_text;
-            std::string production_text;
-            std::string research_text;
-            std::string detection_text;
 
-            if (empires_ship_count == 0.0) {
-                ship_text       = UserString("NOTHING_VALUE_SYMBOL");
-            } else {
-                ship_text       = DoubleToString(empires_ship_count, 2, false);
-            }
+            if (empires_ship_count == 0.0)
+                m_empire_ship_text->SetText(UserString("NOTHING_VALUE_SYMBOL"));
+            else
+                m_empire_ship_text->SetText(DoubleToString(empires_ship_count, 2, false));
 
-            if (empires_planet_count == 0.0) {
-                planet_text     = UserString("NOTHING_VALUE_SYMBOL");
-            } else {
-                planet_text     = DoubleToString(empires_planet_count, 2, false);
-            }
+            if (empires_planet_count == 0.0)
+                m_empire_planet_text->SetText(UserString("NOTHING_VALUE_SYMBOL"));
+            else
+                m_empire_planet_text->SetText(DoubleToString(empires_planet_count, 2, false));
 
-            if (empires_production_points == 0.0) {
-                production_text = UserString("NOTHING_VALUE_SYMBOL");
-            } else {
-                production_text = DoubleToString(empires_production_points, 2, false);
-            }
+            if (empires_production_points == 0.0)
+                m_empire_production_text->SetText(UserString("NOTHING_VALUE_SYMBOL"));
+            else
+                m_empire_production_text->SetText(DoubleToString(empires_production_points, 2, false));
 
-            if (empires_research_points == 0.0) {
-                research_text   = UserString("NOTHING_VALUE_SYMBOL");
-            } else {
-                research_text   = DoubleToString(empires_research_points, 2, false);
-            }
+            if (empires_research_points == 0.0)
+                m_empire_research_text->SetText(UserString("NOTHING_VALUE_SYMBOL"));
+            else
+                m_empire_research_text->SetText(DoubleToString(empires_research_points, 2, false));
 
-            detection_text = DoubleToString(empire ? empire->GetMeter("METER_DETECTION_STRENGTH")->Current() : 0.0, 0, false);
-
-            m_empire_ship_text->SetText(ship_text);
-            m_empire_planet_text->SetText(planet_text);
-            m_empire_production_text->SetText(production_text);
-            m_empire_research_text->SetText(research_text);
-            m_empire_detection_text->SetText(detection_text);
+            m_empire_detection_text->SetText(DoubleToString(empire ? empire->GetMeter("METER_DETECTION_STRENGTH")->Current() : 0.0, 0, false));
 
             m_war_indicator->Update();
             m_peace_indicator->Update();
