@@ -136,7 +136,7 @@ void InfluenceQueue::Update() {
     m_expected_new_stockpile_amount = stockpiled_IP + available_IP - m_total_IPs_spent;
 
     DebugLogger() << "InfluenceQueue::Update : available IP: " << available_IP << "  stockpiled: "
-                  << stockpiled_IP << "  new expected: " << m_expected_new_stockpile_amount << std::endl;
+                  << stockpiled_IP << "  new expected: " << m_expected_new_stockpile_amount << "\n";
 
     //// cache Influence item costs and times
     //// initialize Influence queue item completion status to 'never'

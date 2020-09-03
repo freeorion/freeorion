@@ -560,15 +560,15 @@ void ShipDesign::ForceValidDesignOrThrow(const boost::optional<std::invalid_argu
 
     bool no_hull_available = force_valid->first.empty();
     if (no_hull_available)
-        ss << "ShipDesign has no valid hull and there are no other hulls available." << std::endl;
+        ss << "ShipDesign has no valid hull and there are no other hulls available.\n";
 
-    ss << "Invalid ShipDesign:" << std::endl;
-    ss << Dump() << std::endl;
+    ss << "Invalid ShipDesign:\n";
+    ss << Dump() << "\n";
 
     std::tie(m_hull, m_parts) = *force_valid;
 
-    ss << "ShipDesign was made valid as:" << std::endl;
-    ss << Dump() << std::endl;
+    ss << "ShipDesign was made valid as:\n";
+    ss << Dump() << "\n";
 
     if (no_hull_available)
         ErrorLogger() << ss.str();

@@ -96,13 +96,13 @@ namespace {
             return;
 
         std::stringstream msg;
-        msg << "Freeorion added support for the XDG Base Directory Specification." << std::endl << std::endl
-            << "Configuration files and data were migrated from:" << std::endl
-            << old_path << std::endl << std::endl
-            << "Configuration were files copied to:" << std::endl << config_path << std::endl << std::endl
-            << "Data Files were copied to:" << std::endl << data_path << std::endl << std::endl
-            << "If your save.path option in persistent_config.xml was ~/.config, then you need to update it."
-            << std::endl;
+        msg << "Freeorion added support for the XDG Base Directory Specification.\n\n"
+            << "Configuration files and data were migrated from:\n"
+            << old_path << "\n\n"
+            << "Configuration were files copied to:\n" 
+            << config_path << "\n\n"
+            << "Data Files were copied to:\n" << data_path << "\n\n"
+            << "If your save.path option in persistent_config.xml was ~/.config, then you need to update it.\n";
 
         try {
             fs::create_directories(config_path);
@@ -138,15 +138,17 @@ namespace {
             }
 
             fs::ofstream msg_file(old_path / "MIGRATION.README");
-            msg_file << msg.str() << std::endl
-                     << "You can delete this file it is a one time message." << std::endl << std::endl;
+            msg_file << msg.str() << "\n"
+                     << "You can delete this file it is a one time message.\n\n";
 
         } catch(fs::filesystem_error const & e) {
-            std::cerr << "Error: Unable to migrate files from old config dir" << std::endl
-                      << old_path << std::endl
-                      << " to new XDG specified config dir" << std::endl << config_path << std::endl
-                      << " and data dir" << std::endl << data_path << std::endl
-                      << " because " << e.what()  << std::endl;
+            std::cerr << "Error: Unable to migrate files from old config dir\n"
+                      << old_path << "\n"
+                      << " to new XDG specified config dir\n"
+                      << config_path << "\n"
+                      << " and data dir\n"
+                      << data_path << "\n"
+                      << " because " << e.what() << "\n";
             throw;
         }
 

@@ -107,10 +107,8 @@ const std::set<std::set<int>>& SupplyManager::ResourceSupplyGroups(int empire_id
     return EMPTY_INT_SET_SET;
 }
 
-const std::map<int, float>& SupplyManager::PropagatedSupplyRanges() const {
-    std::cout << "BLAAAAH" << std::endl;
-    return m_propagated_supply_ranges;
-}
+const std::map<int, float>& SupplyManager::PropagatedSupplyRanges() const
+{ return m_propagated_supply_ranges; }
 
 const std::map<int, float>& SupplyManager::PropagatedSupplyRanges(int empire_id) const {
     auto emp_it = m_empire_propagated_supply_ranges.find(empire_id);

@@ -280,7 +280,7 @@ void parse::report_error_::generate_error_string(const std::string& filename,
         is << " here:\n";
         is << get_lines_before(begin, end, line_start);
         is << get_line(end, line_start) << "\n";
-        is << std::string(column_number, ' ') << '^' << std::endl;
+        is << std::string(column_number, ' ') << "^\n";
         is << get_lines_after(begin, end, line_start);
     }
 

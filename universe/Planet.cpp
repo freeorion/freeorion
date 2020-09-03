@@ -357,7 +357,7 @@ int Planet::TypeDifference(PlanetType type1, PlanetType type2) {
     //  5 to 8       4 to 1
     if (diff > 4)
         diff = 9 - diff;
-    //std::cout << "typedifference type1: " << int(type1) << "  type2: " << int(type2) << "  diff: " << diff << std::endl;
+    //std::cout << "typedifference type1: " << int(type1) << "  type2: " << int(type2) << "  diff: " << diff << "\n";
     return diff;
 }
 

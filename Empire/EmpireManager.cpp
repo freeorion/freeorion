@@ -398,7 +398,7 @@ void InitEmpireColors(const boost::filesystem::path& path) {
             hex_colour.append(elem.attributes.at("hex"));
             colors.push_back(GG::HexClr(hex_colour));
         } catch(const std::exception& e) {
-            ErrorLogger() << "empire_colors.xml: " << e.what() << std::endl;
+            ErrorLogger() << "empire_colors.xml: " << e.what() << "\n";
         }
     }
 }

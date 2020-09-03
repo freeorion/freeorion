@@ -282,7 +282,7 @@ std::string MultiplayerLobbyData::Dump() const {
             stream << "HUMAN MODERATOR";
         else
             stream << "UNKNOWN CLIENT TPYE";
-        stream << "  " << (psd.second.empire_name.empty() ? "NO EMPIRE NAME" : psd.second.empire_name) << std::endl;
+        stream << "  " << (psd.second.empire_name.empty() ? "NO EMPIRE NAME" : psd.second.empire_name) << "\n";
     }
     return stream.str();
 }

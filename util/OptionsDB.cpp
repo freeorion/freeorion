@@ -287,10 +287,10 @@ namespace {
         std::string indent(indents.second, ' ');
         std::stringstream retval;
         auto first_line = std::move(lines.front());
-        retval << std::string(indents.first, ' ') << first_line << std::endl;
+        retval << std::string(indents.first, ' ') << first_line << "\n";
         for (auto& line : lines)
             if (!line.empty())
-                retval << indent << line << std::endl;
+                retval << indent << line << "\n";
 
         return retval.str();
     }
@@ -434,7 +434,7 @@ void OptionsDB::GetUsage(std::ostream& os, const std::string& command_line, bool
         name_col_width += 5;
 
         if (!section_list.empty())
-            os << UserString("COMMAND_LINE_SECTIONS") << ":" << std::endl;
+            os << UserString("COMMAND_LINE_SECTIONS") << ":\n";
 
         auto indents = std::make_pair(2, name_col_width + 4);
         auto widths = std::make_pair(TERMINAL_LINE_WIDTH - name_col_width, TERMINAL_LINE_WIDTH);
@@ -459,7 +459,7 @@ void OptionsDB::GetUsage(std::ostream& os, const std::string& command_line, bool
 
         // add empty line between groups and options
         if (!section_list.empty() && !print_misc_section)
-            os << std::endl;
+            os << "\n";
     }
 
 
@@ -484,7 +484,7 @@ void OptionsDB::GetUsage(std::ostream& os, const std::string& command_line, bool
             option_list.emplace(command_line);
 
         if (!option_list.empty())
-            os << UserString("COMMAND_LINE_OPTIONS") << ":" << std::endl;
+            os << UserString("COMMAND_LINE_OPTIONS") << ":\n";
 
         for (const auto& option_name : option_list) {
             auto option_it = m_options.find(option_name);
@@ -492,9 +492,9 @@ void OptionsDB::GetUsage(std::ostream& os, const std::string& command_line, bool
                 continue;
 
             if (command_line == "raw") {
-                os << option_name << ", " << option_it->second.description << "," << std::endl;
+                os << option_name << ", " << option_it->second.description << ",\n";
                 if (option_it->second.short_name)
-                    os << option_it->second.short_name << ", " << option_it->second.description << "," << std::endl;
+                    os << option_it->second.short_name << ", " << option_it->second.description << ",\n";
             } else {
                 // option name(s)
                 if (option_it->second.short_name)
@@ -504,22 +504,22 @@ void OptionsDB::GetUsage(std::ostream& os, const std::string& command_line, bool
 
                 // option description
                 if (!option_it->second.description.empty())
-                    os << std::endl << SplitText(UserString(option_it->second.description), {5, 7});
+                    os << "\n" << SplitText(UserString(option_it->second.description), {5, 7});
                 else
-                    os << std::endl;
+                    os << "\n";
 
                 // option default value
                 if (option_it->second.validator) {
                     auto validator_str = UserString("COMMAND_LINE_DEFAULT") + ": " + option_it->second.DefaultValueToString();
                     os << SplitText(validator_str, {5, 7}, {TERMINAL_LINE_WIDTH - validator_str.size(), 77});
                 }
-                os << std::endl;
+                os << "\n";
             }
         }
 
         if (section_list.empty() && option_list.empty()) {
-            os << UserString("COMMAND_LINE_NOT_FOUND") << ": " << command_line << std::endl << std::endl;
-            os << UserString("COMMAND_LINE_USAGE") << std::endl;
+            os << UserString("COMMAND_LINE_NOT_FOUND") << ": " << command_line << "\n\n";
+            os << UserString("COMMAND_LINE_USAGE") << "\n";
         }
     }
 

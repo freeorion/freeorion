@@ -775,7 +775,7 @@ std::string WeaponsPlatformEvent::DebugString() const {
         << attacker_id << " attacker_owner = "<< attacker_owner_id;
     for (const auto& target : events)
         for (const auto& attack : target.second)
-            desc << std::endl << attack->DebugString();
+            desc << "\n" << attack->DebugString();
     return desc.str();
 }
 

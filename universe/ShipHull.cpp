@@ -107,7 +107,7 @@ ShipHull::ShipHull(float fuel, float speed, float stealth, float structure,
     m_graphic(std::move(graphic)),
     m_icon(std::move(icon))
 {
-    TraceLogger() << "hull type: " << m_name << " producible: " << m_producible << std::endl;
+    TraceLogger() << "hull type: " << m_name << " producible: " << m_producible << "\n";
     Init(std::move(common_params.effects),
          default_fuel_effects,
          default_speed_effects,
