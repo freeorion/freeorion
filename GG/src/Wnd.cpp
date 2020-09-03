@@ -868,9 +868,8 @@ void Wnd::RemoveLayout()
 
     auto layout_children = layout->Children();
     layout->DetachAndResetChildren();
-    for (auto& wnd : layout_children) {
+    for (auto& wnd : layout_children)
         AttachChild(wnd);
-    }
 }
 
 std::shared_ptr<Layout> Wnd::DetachLayout()

@@ -283,7 +283,7 @@ void RichTextPrivate::AttachBlocks()
 {
     m_owner->DetachChildren();
 
-    for (auto& block : m_blocks)
+    for (const auto& block : m_blocks)
         m_owner->AttachChild(block);
 
     DoLayout();
