@@ -89,8 +89,7 @@ namespace {
         if (empire_id == ALL_EMPIRES) {
             for (const auto& entry : Empires()) {
                 entry.second->AddSitRepEntry(CreateSitRep(
-                    template_string, sitrep_turn, icon,
-                    std::vector<std::pair<std::string, std::string>>(params)));  // copy for each...
+                    template_string, sitrep_turn, icon, params));  // copy params for each...
             }
         } else {
             Empire* empire = GetEmpire(empire_id);
