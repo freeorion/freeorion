@@ -642,11 +642,11 @@ private:
             tip_false(std::move(tip_false_)),
             option_key(std::move(option_key_)),
             sizer(sizer_),
-            parent(std::forward<std::shared_ptr<OptionsBar>>(parent_))
+            parent(std::move(parent_))
         {
             button = Wnd::Create<CUIButton>("-");
             button->LeftClickedSignal.connect(boost::bind(&ToggleData::Toggle, this));
-            parent_->AttachChild(button);
+            parent_->AttachChild(std::move(button));
             SetValue(GetValue());
         }
     };
