@@ -32,8 +32,8 @@ Download
 Releases can be obtained as native installer binaries for Windows and Mac OSX
 or as source releases for Linux and other UNIX-ish platforms from GitHub.
 
-Also some Linux distributions like Fedora, Debian and Arch do provide packages
-of FreeOrion.
+Some Linux distributions like Fedora, Debian and Arch provide packages of
+FreeOrion. Alternatively, FreeOrion is also available on [Flathub].
 
 [FreeOrion Weekly Releases] are in-development releases intended for enthusiasts
 and testers, who want to track or contribute to the development.  Weekly
@@ -65,6 +65,9 @@ packages via the command line.
   * [Void package] stable release: `# xbps-install freeorion`
   * [ArchLinux package] stable release
   * [openSUSE package] stable release: `# zypper in freeorion`
+
+To install FreeOrion from Flathub, follow the instructions to [install Flatpak
+and Flathub] and then install [FreeOrion][Flathub].
 
 
 ### Directories
@@ -135,6 +138,8 @@ accompanying license file.
 [FreeOrion Forum]: http://www.freeorion.org/forum/
 [FreeOrion Stable Releases]: https://github.com/freeorion/freeorion/releases
 [FreeOrion Weekly Releases]: https://sourceforge.net/projects/freeorion/files/FreeOrion/Test/
+[Flathub]: https://flathub.org/apps/details/org.freeorion.FreeOrion
+[install Flatpak and Flathub]: https://flatpak.org/setup/
 [FreeOrion Development]: https://github.com/freeorion/freeorion
 [Debian Package]: https://packages.debian.org/source/sid/freeorion
 [Ubuntu Package]: https://launchpad.net/ubuntu/+source/freeorion
