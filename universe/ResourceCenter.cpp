@@ -40,7 +40,7 @@ void ResourceCenter::Copy(std::shared_ptr<const ResourceCenter> copied_object, V
         return;
     }
 
-    if (vis >= VIS_PARTIAL_VISIBILITY) {
+    if (vis >= Visibility::VIS_PARTIAL_VISIBILITY) {
         this->m_focus = copied_object->m_focus;
         this->m_last_turn_focus_changed = copied_object->m_last_turn_focus_changed;
         this->m_focus_turn_initial = copied_object->m_focus_turn_initial;
@@ -49,18 +49,18 @@ void ResourceCenter::Copy(std::shared_ptr<const ResourceCenter> copied_object, V
 }
 
 void ResourceCenter::Copy(std::shared_ptr<const ResourceCenter> copied_object)
-{ Copy(copied_object, VIS_FULL_VISIBILITY); }
+{ Copy(copied_object, Visibility::VIS_FULL_VISIBILITY); }
 
 void ResourceCenter::Init() {
     //DebugLogger() << "ResourceCenter::Init";
-    AddMeter(METER_INDUSTRY);
-    AddMeter(METER_RESEARCH);
-    AddMeter(METER_INFLUENCE);
-    AddMeter(METER_CONSTRUCTION);
-    AddMeter(METER_TARGET_INDUSTRY);
-    AddMeter(METER_TARGET_RESEARCH);
-    AddMeter(METER_TARGET_INFLUENCE);
-    AddMeter(METER_TARGET_CONSTRUCTION);
+    AddMeter(MeterType::METER_INDUSTRY);
+    AddMeter(MeterType::METER_RESEARCH);
+    AddMeter(MeterType::METER_INFLUENCE);
+    AddMeter(MeterType::METER_CONSTRUCTION);
+    AddMeter(MeterType::METER_TARGET_INDUSTRY);
+    AddMeter(MeterType::METER_TARGET_RESEARCH);
+    AddMeter(MeterType::METER_TARGET_INFLUENCE);
+    AddMeter(MeterType::METER_TARGET_CONSTRUCTION);
     m_focus.clear();
     m_last_turn_focus_changed = INVALID_GAME_TURN;
     m_focus_turn_initial.clear();
@@ -129,35 +129,35 @@ void ResourceCenter::UpdateFocusHistory() {
 }
 
 void ResourceCenter::ResourceCenterResetTargetMaxUnpairedMeters() {
-    GetMeter(METER_TARGET_INDUSTRY)->ResetCurrent();
-    GetMeter(METER_TARGET_RESEARCH)->ResetCurrent();
-    GetMeter(METER_TARGET_INFLUENCE)->ResetCurrent();
-    GetMeter(METER_TARGET_CONSTRUCTION)->ResetCurrent();
+    GetMeter(MeterType::METER_TARGET_INDUSTRY)->ResetCurrent();
+    GetMeter(MeterType::METER_TARGET_RESEARCH)->ResetCurrent();
+    GetMeter(MeterType::METER_TARGET_INFLUENCE)->ResetCurrent();
+    GetMeter(MeterType::METER_TARGET_CONSTRUCTION)->ResetCurrent();
 }
 
 void ResourceCenter::ResourceCenterClampMeters() {
-    GetMeter(METER_TARGET_INDUSTRY)->ClampCurrentToRange();
-    GetMeter(METER_TARGET_RESEARCH)->ClampCurrentToRange();
-    //GetMeter(METER_TARGET_INFLUENCE)->ClampCurrentToRange(-Meter::LARGE_VALUE, Meter::LARGE_VALUE);
-    GetMeter(METER_TARGET_CONSTRUCTION)->ClampCurrentToRange();
+    GetMeter(MeterType::METER_TARGET_INDUSTRY)->ClampCurrentToRange();
+    GetMeter(MeterType::METER_TARGET_RESEARCH)->ClampCurrentToRange();
+    //GetMeter(MeterType::METER_TARGET_INFLUENCE)->ClampCurrentToRange(-Meter::LARGE_VALUE, Meter::LARGE_VALUE);
+    GetMeter(MeterType::METER_TARGET_CONSTRUCTION)->ClampCurrentToRange();
 
-    GetMeter(METER_INDUSTRY)->ClampCurrentToRange();
-    GetMeter(METER_RESEARCH)->ClampCurrentToRange();
-    //GetMeter(METER_INFLUENCE)->ClampCurrentToRange(-Meter::LARGE_VALUE, Meter::LARGE_VALUE);
-    GetMeter(METER_CONSTRUCTION)->ClampCurrentToRange();
+    GetMeter(MeterType::METER_INDUSTRY)->ClampCurrentToRange();
+    GetMeter(MeterType::METER_RESEARCH)->ClampCurrentToRange();
+    //GetMeter(MeterType::METER_INFLUENCE)->ClampCurrentToRange(-Meter::LARGE_VALUE, Meter::LARGE_VALUE);
+    GetMeter(MeterType::METER_CONSTRUCTION)->ClampCurrentToRange();
 }
 
 void ResourceCenter::Reset() {
     m_focus.clear();
     m_last_turn_focus_changed = INVALID_GAME_TURN;
 
-    GetMeter(METER_INDUSTRY)->Reset();
-    GetMeter(METER_RESEARCH)->Reset();
-    GetMeter(METER_INFLUENCE)->Reset();
-    GetMeter(METER_CONSTRUCTION)->Reset();
+    GetMeter(MeterType::METER_INDUSTRY)->Reset();
+    GetMeter(MeterType::METER_RESEARCH)->Reset();
+    GetMeter(MeterType::METER_INFLUENCE)->Reset();
+    GetMeter(MeterType::METER_CONSTRUCTION)->Reset();
 
-    GetMeter(METER_TARGET_INDUSTRY)->Reset();
-    GetMeter(METER_TARGET_RESEARCH)->Reset();
-    GetMeter(METER_TARGET_INFLUENCE)->Reset();
-    GetMeter(METER_TARGET_CONSTRUCTION)->Reset();
+    GetMeter(MeterType::METER_TARGET_INDUSTRY)->Reset();
+    GetMeter(MeterType::METER_TARGET_RESEARCH)->Reset();
+    GetMeter(MeterType::METER_TARGET_INFLUENCE)->Reset();
+    GetMeter(MeterType::METER_TARGET_CONSTRUCTION)->Reset();
 }

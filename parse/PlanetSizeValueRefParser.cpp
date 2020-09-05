@@ -23,13 +23,13 @@ namespace parse { namespace detail {
             ;
 
         enum_expr
-            =   tok.Tiny_       [ _val = SZ_TINY ]
-            |   tok.Small_      [ _val = SZ_SMALL ]
-            |   tok.Medium_     [ _val = SZ_MEDIUM ]
-            |   tok.Large_      [ _val = SZ_LARGE ]
-            |   tok.Huge_       [ _val = SZ_HUGE ]
-            |   tok.Asteroids_  [ _val = SZ_ASTEROIDS ]
-            |   tok.GasGiant_   [ _val = SZ_GASGIANT ]
+            =   tok.Tiny_       [ _val = PlanetSize::SZ_TINY ]
+            |   tok.Small_      [ _val = PlanetSize::SZ_SMALL ]
+            |   tok.Medium_     [ _val = PlanetSize::SZ_MEDIUM ]
+            |   tok.Large_      [ _val = PlanetSize::SZ_LARGE ]
+            |   tok.Huge_       [ _val = PlanetSize::SZ_HUGE ]
+            |   tok.Asteroids_  [ _val = PlanetSize::SZ_ASTEROIDS ]
+            |   tok.GasGiant_   [ _val = PlanetSize::SZ_GASGIANT ]
             ;
     }
 } }

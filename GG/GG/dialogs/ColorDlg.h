@@ -166,8 +166,6 @@ public:
     static const std::size_t INVALID_COLOR_BUTTON;
 
 private:
-    enum {R, G, B, A, H, S, V};
-
     void ColorChanged(HSVClr color);
     void HueSaturationPickerChanged(double hue, double saturation);
     void ValuePickerChanged(double value);

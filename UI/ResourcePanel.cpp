@@ -16,10 +16,9 @@
 
 
 namespace {
-    const int       EDGE_PAD(3);
-
-    const GG::X     METER_BROWSE_LABEL_WIDTH(300);
-    const GG::X     METER_BROWSE_VALUE_WIDTH(50);
+    const int   EDGE_PAD(3);
+    const GG::X METER_BROWSE_LABEL_WIDTH(300);
+    const GG::X METER_BROWSE_VALUE_WIDTH(50);
 
     /** How big we want meter icons with respect to the current UI font size.
       * Meters should scale along font size, but not below the size for the
@@ -57,8 +56,9 @@ void ResourcePanel::CompleteConstruction() {
     std::vector<std::pair<MeterType, MeterType>> meters;
 
     // small meter indicators - for use when panel is collapsed
-    for (MeterType meter : {METER_INDUSTRY, METER_RESEARCH, METER_INFLUENCE,
-                            METER_SUPPLY, METER_STOCKPILE})
+    for (MeterType meter : {MeterType::METER_INDUSTRY, MeterType::METER_RESEARCH,
+                            MeterType::METER_INFLUENCE, MeterType::METER_SUPPLY,
+                            MeterType::METER_STOCKPILE})
     {
         auto stat = GG::Wnd::Create<StatisticIcon>(
             ClientUI::MeterIcon(meter), obj->GetMeter(meter)->Initial(),
@@ -110,8 +110,8 @@ namespace {
                           std::pair<MeterType, std::shared_ptr<StatisticIcon>> right)
     {
         if (left.second->GetValue() == right.second->GetValue()) {
-            if (left.first == METER_INFLUENCE && right.first == METER_CONSTRUCTION) {
-                // swap order of METER_INFLUENCE and METER_CONSTRUCTION in relation to
+            if (left.first == MeterType::METER_INFLUENCE && right.first == MeterType::METER_CONSTRUCTION) {
+                // swap order of MeterType::METER_INFLUENCE and MeterType::METER_CONSTRUCTION in relation to
                 // MeterType enum.
                 return false;
             }

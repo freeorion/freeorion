@@ -79,7 +79,7 @@ namespace {
 }
 
 MeterBrowseWnd::MeterBrowseWnd(int object_id, MeterType primary_meter_type) :
-    MeterBrowseWnd(object_id, primary_meter_type, INVALID_METER_TYPE)
+    MeterBrowseWnd(object_id, primary_meter_type, MeterType::INVALID_METER_TYPE)
 {}
 
 MeterBrowseWnd::MeterBrowseWnd(int object_id, MeterType primary_meter_type,
@@ -145,7 +145,7 @@ void MeterBrowseWnd::Initialize() {
 
         // special case for meters: use species name
         std::string summary_title_text;
-        if (m_primary_meter_type == METER_POPULATION) {
+        if (m_primary_meter_type == MeterType::METER_POPULATION) {
             std::string human_readable_species_name;
             if (auto pop = std::dynamic_pointer_cast<const PopCenter>(obj)) {
                 const std::string& species_name = pop->SpeciesName();
@@ -315,12 +315,12 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
     // should have accounting displayed.  if there is no valid secondary meter
     // (and there is a valid primary meter) then that is probably an unpaired
     // meter and should have accounting displayed
-    MeterType accounting_displayed_for_meter = INVALID_METER_TYPE;
-    if (m_secondary_meter_type != INVALID_METER_TYPE)
+    MeterType accounting_displayed_for_meter = MeterType::INVALID_METER_TYPE;
+    if (m_secondary_meter_type != MeterType::INVALID_METER_TYPE)
         accounting_displayed_for_meter = m_secondary_meter_type;
-    else if (m_primary_meter_type != INVALID_METER_TYPE)
+    else if (m_primary_meter_type != MeterType::INVALID_METER_TYPE)
         accounting_displayed_for_meter = m_primary_meter_type;
-    if (accounting_displayed_for_meter == INVALID_METER_TYPE)
+    if (accounting_displayed_for_meter == MeterType::INVALID_METER_TYPE)
         return; // nothing to display
 
     auto maybe_info_vec = GetAccountingInfo(m_object_id, accounting_displayed_for_meter);
@@ -337,7 +337,7 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
             name = source->Name();
 
         switch (info.cause_type) {
-        case ECT_TECH: {
+        case EffectsCauseType::ECT_TECH: {
             name.clear();
             if (const auto empire = GetEmpire(source->Owner()))
                 name = empire->Name();
@@ -349,7 +349,7 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
                 % UserString(info.specific_cause));
             break;
         }
-        case ECT_BUILDING: {
+        case EffectsCauseType::ECT_BUILDING: {
             name.clear();
             if (const auto& building = std::dynamic_pointer_cast<const Building>(source))
                 if (const auto& planet = Objects().get<Planet>(building->PlanetID()))
@@ -362,7 +362,7 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
                 % UserString(info.specific_cause));
             break;
         }
-        case ECT_FIELD: {
+        case EffectsCauseType::ECT_FIELD: {
             const std::string& label_template = (info.custom_label.empty()
                 ? UserString("TT_FIELD")
                 : UserString(info.custom_label));
@@ -371,7 +371,7 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
                 % UserString(info.specific_cause));
             break;
         }
-        case ECT_SPECIAL: {
+        case EffectsCauseType::ECT_SPECIAL: {
             const std::string& label_template = (info.custom_label.empty()
                 ? UserString("TT_SPECIAL")
                 : UserString(info.custom_label));
@@ -380,7 +380,7 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
                 % UserString(info.specific_cause));
             break;
         }
-        case ECT_SPECIES: {
+        case EffectsCauseType::ECT_SPECIES: {
             //DebugLogger() << "Effect Species Meter Browse Wnd effect cause " << info.specific_cause << " custom label: " << info.custom_label;
             const std::string& label_template = (info.custom_label.empty()
                 ? UserString("TT_SPECIES")
@@ -390,7 +390,7 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
                 % UserString(info.specific_cause));
             break;
         }
-        case ECT_SHIP_HULL: {
+        case EffectsCauseType::ECT_SHIP_HULL: {
             const std::string& label_template = (info.custom_label.empty()
                 ? UserString("TT_SHIP_HULL")
                 : UserString(info.custom_label));
@@ -399,7 +399,7 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
                 % UserString(info.specific_cause));
             break;
         }
-        case ECT_SHIP_PART: {
+        case EffectsCauseType::ECT_SHIP_PART: {
             const std::string& label_template = (info.custom_label.empty()
                 ? UserString("TT_SHIP_PART")
                 : UserString(info.custom_label));
@@ -408,7 +408,7 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
                 % UserString(info.specific_cause));
             break;
         }
-        case ECT_POLICY: {
+        case EffectsCauseType::ECT_POLICY: {
             name.clear();
             if (const auto empire = GetEmpire(source->Owner()))
                 name = empire->Name();
@@ -421,11 +421,11 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
             break;
         }
 
-        case ECT_INHERENT:
+        case EffectsCauseType::ECT_INHERENT:
             text += UserString("TT_INHERENT");
             break;
 
-        case ECT_UNKNOWN_CAUSE:
+        case EffectsCauseType::ECT_UNKNOWN_CAUSE:
         default:
             const std::string& label_template = (info.custom_label.empty()
                 ? UserString("TT_UNKNOWN")
@@ -540,12 +540,12 @@ void ShipDamageBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         if (!part)
             continue;
         ShipPartClass part_class = part->Class();
-        if (!(part_class == PC_DIRECT_WEAPON))
+        if (!(part_class == ShipPartClass::PC_DIRECT_WEAPON))
             continue;
 
         // get the attack power for each weapon part
-        float part_attack = ship->CurrentPartMeterValue(METER_CAPACITY, part_name) *
-                            ship->CurrentPartMeterValue(METER_SECONDARY_STAT, part_name);
+        float part_attack = ship->CurrentPartMeterValue(MeterType::METER_CAPACITY, part_name) *
+                            ship->CurrentPartMeterValue(MeterType::METER_SECONDARY_STAT, part_name);
         auto text = boost::io::str(FlexibleFormat(label_template) % name % UserString(part_name));
 
         auto label = GG::Wnd::Create<CUILabel>(std::move(text), GG::FORMAT_RIGHT);
@@ -795,15 +795,15 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
             continue;
         ShipPartClass part_class = part->Class();
 
-        if (part_class == PC_FIGHTER_BAY) {
-            float current_capacity = ship->CurrentPartMeterValue(METER_CAPACITY, part_name);
+        if (part_class == ShipPartClass::PC_FIGHTER_BAY) {
+            float current_capacity = ship->CurrentPartMeterValue(MeterType::METER_CAPACITY, part_name);
             // store the current part and capacity, increase total bay capacity
             bay_parts[part_name].first++;
             bay_parts[part_name].second = current_capacity;
             bay_total_capacity += current_capacity;
-            // TODO Account for METER_MAX_CAPACITY if this control is expanded for more detail
+            // TODO Account for MeterType::METER_MAX_CAPACITY if this control is expanded for more detail
 
-        } else if (part_class == PC_FIGHTER_HANGAR) {
+        } else if (part_class == ShipPartClass::PC_FIGHTER_HANGAR) {
             if (hangar_part.first.empty()) {
                 hangar_part.first = part_name;
             } else if (hangar_part.first != part_name) {
@@ -811,9 +811,9 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
                               << hangar_part.first << ", " << part_name;
             }
             // set the current and total fighter capacity
-            hangar_current_fighters = ship->CurrentPartMeterValue(METER_CAPACITY, part_name);
-            hangar_total_capacity = ship->CurrentPartMeterValue(METER_MAX_CAPACITY, part_name);
-            fighter_damage = ship->CurrentPartMeterValue(METER_SECONDARY_STAT, part_name);
+            hangar_current_fighters = ship->CurrentPartMeterValue(MeterType::METER_CAPACITY, part_name);
+            hangar_total_capacity = ship->CurrentPartMeterValue(MeterType::METER_MAX_CAPACITY, part_name);
+            fighter_damage = ship->CurrentPartMeterValue(MeterType::METER_SECONDARY_STAT, part_name);
             // hangars share the same ship meter, increase the count for later processing
             hangar_part.second++;
         }

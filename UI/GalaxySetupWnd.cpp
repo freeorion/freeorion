@@ -88,7 +88,7 @@ namespace {
 
         void CompleteConstruction() override {
             GG::ListBox::Row::CompleteConstruction();
-            SetChildClippingMode(ClipToClient);
+            SetChildClippingMode(ChildClippingMode::ClipToClient);
             if (m_contents)
                 push_back(m_contents);
         }
@@ -329,7 +329,7 @@ GG::Spin<int>* GameRulesPanel::IntRuleWidget(GG::ListBox* page, int indentation_
     layout->Add(text_control, 0, 1, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
     layout->SetMinimumColumnWidth(0, SPIN_WIDTH);
     layout->SetColumnStretch(1, 1.0);
-    layout->SetChildClippingMode(ClipToClient);
+    layout->SetChildClippingMode(ChildClippingMode::ClipToClient);
 
     auto row = GG::Wnd::Create<RuleListRow>(Width(), spin->MinUsableSize().y + CONTROL_VMARGIN + 6,
                                             std::move(layout), indentation_level);
@@ -377,7 +377,7 @@ GG::Spin<double>* GameRulesPanel::DoubleRuleWidget(GG::ListBox* page, int indent
     layout->Add(text_control, 0, 1, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
     layout->SetMinimumColumnWidth(0, SPIN_WIDTH);
     layout->SetColumnStretch(1, 1.0);
-    layout->SetChildClippingMode(ClipToClient);
+    layout->SetChildClippingMode(ChildClippingMode::ClipToClient);
 
     auto row = GG::Wnd::Create<RuleListRow>(Width(), spin->MinUsableSize().y + CONTROL_VMARGIN + 6,
                                             layout, indentation_level);
@@ -410,7 +410,7 @@ namespace {
             auto species_label = GG::Wnd::Create<CUILabel>(UserString(Name()),
                                                            GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
             push_back(std::move(species_label));
-            SetChildClippingMode(ClipToClient);
+            SetChildClippingMode(ChildClippingMode::ClipToClient);
         }
     };
 }
@@ -449,7 +449,7 @@ GG::DropDownList* GameRulesPanel::StringRuleWidget(GG::ListBox* page, int indent
     layout->Add(text_control, 0, 1, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
     layout->SetMinimumColumnWidth(0, SPIN_WIDTH);
     layout->SetColumnStretch(1, 1.0);
-    layout->SetChildClippingMode(ClipToClient);
+    layout->SetChildClippingMode(ChildClippingMode::ClipToClient);
 
     auto row = GG::Wnd::Create<RuleListRow>(Width(), drop->MinUsableSize().y + CONTROL_VMARGIN + 6,
                                             layout, indentation_level);
@@ -680,17 +680,17 @@ void GalaxySetupPanel::CompleteConstruction() {
 
     // create and load textures
     m_textures.clear();
-    m_textures.resize(GALAXY_SHAPES);
-    m_textures[SPIRAL_2] =    ClientUI::GetTexture(ClientUI::ArtDir() / "gp_spiral2.png");
-    m_textures[SPIRAL_3] =    ClientUI::GetTexture(ClientUI::ArtDir() / "gp_spiral3.png");
-    m_textures[SPIRAL_4] =    ClientUI::GetTexture(ClientUI::ArtDir() / "gp_spiral4.png");
-    m_textures[CLUSTER] =     ClientUI::GetTexture(ClientUI::ArtDir() / "gp_cluster.png");
-    m_textures[ELLIPTICAL] =  ClientUI::GetTexture(ClientUI::ArtDir() / "gp_elliptical.png");
-    m_textures[DISC] =        ClientUI::GetTexture(ClientUI::ArtDir() / "gp_disc.png");
-    m_textures[BOX] =         ClientUI::GetTexture(ClientUI::ArtDir() / "gp_box.png");
-    m_textures[IRREGULAR] =   ClientUI::GetTexture(ClientUI::ArtDir() / "gp_irregular.png");
-    m_textures[RING] =        ClientUI::GetTexture(ClientUI::ArtDir() / "gp_ring.png");
-    m_textures[RANDOM] =      ClientUI::GetTexture(ClientUI::ArtDir() / "gp_random.png");
+    m_textures.resize(int(Shape::GALAXY_SHAPES));
+    m_textures[int(Shape::SPIRAL_2)] =   ClientUI::GetTexture(ClientUI::ArtDir() / "gp_spiral2.png");
+    m_textures[int(Shape::SPIRAL_3)] =   ClientUI::GetTexture(ClientUI::ArtDir() / "gp_spiral3.png");
+    m_textures[int(Shape::SPIRAL_4)] =   ClientUI::GetTexture(ClientUI::ArtDir() / "gp_spiral4.png");
+    m_textures[int(Shape::CLUSTER)] =    ClientUI::GetTexture(ClientUI::ArtDir() / "gp_cluster.png");
+    m_textures[int(Shape::ELLIPTICAL)] = ClientUI::GetTexture(ClientUI::ArtDir() / "gp_elliptical.png");
+    m_textures[int(Shape::DISC)] =       ClientUI::GetTexture(ClientUI::ArtDir() / "gp_disc.png");
+    m_textures[int(Shape::BOX)] =        ClientUI::GetTexture(ClientUI::ArtDir() / "gp_box.png");
+    m_textures[int(Shape::IRREGULAR)] =  ClientUI::GetTexture(ClientUI::ArtDir() / "gp_irregular.png");
+    m_textures[int(Shape::RING)] =       ClientUI::GetTexture(ClientUI::ArtDir() / "gp_ring.png");
+    m_textures[int(Shape::RANDOM)] =     ClientUI::GetTexture(ClientUI::ArtDir() / "gp_random.png");
 
     // fill droplists
     TraceLogger() << "GalaxySetupPanel::CompleteConstruction filling droplists";
@@ -751,15 +751,15 @@ void GalaxySetupPanel::CompleteConstruction() {
     SetSeed(GetOptionsDB().Get<std::string>("setup.seed"), true);
     m_seed_edit->Disable(GetSeed() == "RANDOM");
     m_stars_spin->SetValue(GetOptionsDB().Get<int>("setup.star.count"));
-    m_galaxy_shapes_list->Select(GetOptionsDB().Get<Shape>("setup.galaxy.shape"));
+    m_galaxy_shapes_list->Select(int(GetOptionsDB().Get<Shape>("setup.galaxy.shape")));
     ShapeChanged(m_galaxy_shapes_list->CurrentItem());
-    m_galaxy_ages_list->Select(GetOptionsDB().Get<GalaxySetupOption>("setup.galaxy.age") - 1);
-    m_starlane_freq_list->Select(GetOptionsDB().Get<GalaxySetupOption>("setup.starlane.frequency") - 1);
-    m_planet_density_list->Select(GetOptionsDB().Get<GalaxySetupOption>("setup.planet.density") - 1);
-    m_specials_freq_list->Select(GetOptionsDB().Get<GalaxySetupOption>("setup.specials.frequency"));
-    m_monster_freq_list->Select(GetOptionsDB().Get<GalaxySetupOption>("setup.monster.frequency"));
-    m_native_freq_list->Select(GetOptionsDB().Get<GalaxySetupOption>("setup.native.frequency"));
-    m_ai_aggression_list->Select(GetOptionsDB().Get<Aggression>("setup.ai.aggression"));
+    m_galaxy_ages_list->Select(int(GetOptionsDB().Get<GalaxySetupOption>("setup.galaxy.age")) - 1);
+    m_starlane_freq_list->Select(int(GetOptionsDB().Get<GalaxySetupOption>("setup.starlane.frequency")) - 1);
+    m_planet_density_list->Select(int(GetOptionsDB().Get<GalaxySetupOption>("setup.planet.density")) - 1);
+    m_specials_freq_list->Select(int(GetOptionsDB().Get<GalaxySetupOption>("setup.specials.frequency")));
+    m_monster_freq_list->Select(int(GetOptionsDB().Get<GalaxySetupOption>("setup.monster.frequency")));
+    m_native_freq_list->Select(int(GetOptionsDB().Get<GalaxySetupOption>("setup.native.frequency")));
+    m_ai_aggression_list->Select(int(GetOptionsDB().Get<Aggression>("setup.ai.aggression")));
 
     TraceLogger() << "GalaxySetupPanel::CompleteConstruction settings changed signal...";
     SettingsChangedSignal();
@@ -819,7 +819,7 @@ Aggression GalaxySetupPanel::GetAIAggression() const
 { return Aggression(m_ai_aggression_list->CurrentItemIndex()); }
 
 std::shared_ptr<GG::Texture> GalaxySetupPanel::PreviewImage() const
-{ return m_textures[GetShape()]; }
+{ return m_textures[int(GetShape())]; }
 
 void GalaxySetupPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     GG::Control::SizeMove(ul, lr);
@@ -926,28 +926,28 @@ void GalaxySetupPanel::Disable(bool b/* = true*/) {
 void GalaxySetupPanel::SetFromSetupData(const GalaxySetupData& setup_data) {
     SetSeed(setup_data.seed, true);
     m_stars_spin->SetValue(setup_data.size);
-    m_galaxy_shapes_list->Select(setup_data.shape);
+    m_galaxy_shapes_list->Select(int(setup_data.shape));
     ShapeChanged(m_galaxy_shapes_list->CurrentItem());
-    m_galaxy_ages_list->Select(setup_data.age - 1);
-    m_starlane_freq_list->Select(setup_data.starlane_freq - 1);
-    m_planet_density_list->Select(setup_data.planet_density - 1);
-    m_specials_freq_list->Select(setup_data.specials_freq);
-    m_monster_freq_list->Select(setup_data.monster_freq);
-    m_native_freq_list->Select(setup_data.native_freq);
-    m_ai_aggression_list->Select(setup_data.ai_aggr);
+    m_galaxy_ages_list->Select(int(setup_data.age) - 1);
+    m_starlane_freq_list->Select(int(setup_data.starlane_freq) - 1);
+    m_planet_density_list->Select(int(setup_data.planet_density) - 1);
+    m_specials_freq_list->Select(int(setup_data.specials_freq));
+    m_monster_freq_list->Select(int(setup_data.monster_freq));
+    m_native_freq_list->Select(int(setup_data.native_freq));
+    m_ai_aggression_list->Select(int(setup_data.ai_aggr));
 }
 
 void GalaxySetupPanel::GetSetupData(GalaxySetupData& setup_data) const {
     setup_data.SetSeed(GetSeed());
-    setup_data.size =             Systems();
-    setup_data.shape =            GetShape();
-    setup_data.age =              GetAge();
-    setup_data.starlane_freq =    GetStarlaneFrequency();
-    setup_data.planet_density =   GetPlanetDensity();
-    setup_data.specials_freq =    GetSpecialsFrequency();
-    setup_data.monster_freq =     GetMonsterFrequency();
-    setup_data.native_freq =      GetNativeFrequency();
-    setup_data.ai_aggr =          GetAIAggression();
+    setup_data.size =           Systems();
+    setup_data.shape =          GetShape();
+    setup_data.age =            GetAge();
+    setup_data.starlane_freq =  GetStarlaneFrequency();
+    setup_data.planet_density = GetPlanetDensity();
+    setup_data.specials_freq =  GetSpecialsFrequency();
+    setup_data.monster_freq =   GetMonsterFrequency();
+    setup_data.native_freq =    GetNativeFrequency();
+    setup_data.ai_aggr =        GetAIAggression();
 }
 
 void GalaxySetupPanel::SettingChanged() {
@@ -1092,7 +1092,7 @@ void GalaxySetupWnd::Render() {
 
 void GalaxySetupWnd::KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
     // Enter is no longer accepted as OK as it could clash with ALT-Enter
-    if (key == GG::GGK_ESCAPE) // Same behaviour as if "Cancel" was pressed
+    if (key == GG::Key::GGK_ESCAPE) // Same behaviour as if "Cancel" was pressed
         CancelClicked();
 }
 

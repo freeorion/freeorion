@@ -53,7 +53,7 @@ void MultiIconValueIndicator::CompleteConstruction() {
 
         // special case for population meter for an indicator showing only a
         // single popcenter: icon is species icon, rather than generic pop icon
-        if (PRIMARY_METER_TYPE == METER_POPULATION && m_object_ids.size() == 1) {
+        if (PRIMARY_METER_TYPE == MeterType::METER_POPULATION && m_object_ids.size() == 1) {
             if (auto pc = Objects().get<PopCenter>(*m_object_ids.begin()))
                 texture = ClientUI::SpeciesIcon(pc->SpeciesName());
         }
@@ -69,7 +69,7 @@ void MultiIconValueIndicator::CompleteConstruction() {
             auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
 
             auto pc = Objects().get<PopCenter>(*(this->m_object_ids.begin()));
-            if (meter == METER_POPULATION && pc && this->m_object_ids.size() == 1) {
+            if (meter == MeterType::METER_POPULATION && pc && this->m_object_ids.size() == 1) {
                 auto species_name = pc->SpeciesName();  // intentionally making a copy for use in lambda
                 if (!species_name.empty()) {
                     auto zoom_species_action = [species_name]() { ClientUI::GetClientUI()->ZoomToSpecies(species_name); };
@@ -130,7 +130,7 @@ void MultiIconValueIndicator::Update() {
             }
             double value = obj->GetMeter(type)->Initial();
             // Supply is a special case: the only thing that matters is the highest value.
-            if (type == METER_SUPPLY)
+            if (type == MeterType::METER_SUPPLY)
                 total = std::max(total, value);
             else
                 total += value;

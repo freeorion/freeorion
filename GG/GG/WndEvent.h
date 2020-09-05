@@ -63,7 +63,7 @@ class GG_API WndEvent
 public:
     /** The types of Wnd events.  Each of these corresponds to a Wnd member
         function of the same name. */
-    enum EventType : int {
+    enum class EventType : int {
         LButtonDown,
         LDrag,
         LButtonUp,
@@ -131,7 +131,7 @@ public:
 private:
     EventType                       m_type;
     Pt                              m_point;
-    Key                             m_key{GGK_NONE};
+    Key                             m_key{Key::GGK_NONE};
 
     std::uint32_t                   m_key_code_point = 0;
 

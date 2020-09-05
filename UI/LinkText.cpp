@@ -64,7 +64,7 @@ namespace {
         std::string retval(text);
         auto text_it = retval.begin();
         xpr::smatch match;
-        auto invalid_path_str = PathTypeToString(PATH_INVALID);
+        auto invalid_path_str = PathTypeToString(PathType::PATH_INVALID);
 
         while (true) {
             if (!xpr::regex_search(text_it, retval.end(), match, BROWSEPATH_SEARCH, xpr::regex_constants::match_default))
@@ -401,7 +401,7 @@ void TextLinker::FindLinks() {
                                 if (link.data == all_param_str) {
                                     ErrorLogger() << "Invalid param \"" << link.data << "\" for tag "
                                                   << TextLinker::BROWSE_PATH_TAG;
-                                    link.data = PathTypeToString(PATH_INVALID);
+                                    link.data = PathTypeToString(PathType::PATH_INVALID);
                                 }
                             } else {
                                 link.data = tag->params[0];

@@ -147,7 +147,7 @@ void InGameMenu::KeyPress(GG::Key key, std::uint32_t key_code_point,
                           GG::Flags<GG::ModKey> mod_keys)
 {
     // Same behaviour as if "done" was pressed
-    if (key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER || key == GG::GGK_ESCAPE )
+    if (key == GG::Key::GGK_RETURN || key == GG::Key::GGK_KP_ENTER || key == GG::Key::GGK_ESCAPE )
         Done();
 }
 

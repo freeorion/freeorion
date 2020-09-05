@@ -140,7 +140,7 @@ std::shared_ptr<BrowseInfoWnd> Wnd::s_default_browse_info_wnd;
 
 Wnd::Wnd() :
     std::enable_shared_from_this<Wnd>(),
-    m_child_clipping_mode(DontClip),
+    m_child_clipping_mode(ChildClippingMode::DontClip),
     m_upperleft(X0, Y0),
     m_lowerright(X1, Y1),
     m_max_size(X(1 << 30), Y(1 << 30))
@@ -382,8 +382,11 @@ const std::shared_ptr<StyleFactory>& Wnd::GetStyleFactory() const
 
 WndRegion Wnd::WindowRegion(const Pt& pt) const
 {
-    enum {LEFT = 0, MIDDLE = 1, RIGHT = 2};
-    enum {TOP = 0, BOTTOM = 2};
+    constexpr int LEFT = 0;
+    constexpr int MIDDLE = 1;
+    constexpr int RIGHT = 2;
+    constexpr int TOP = 0;
+    constexpr int BOTTOM = 2;
 
     // window regions look like this:
     // 0111112
@@ -404,7 +407,7 @@ WndRegion Wnd::WindowRegion(const Pt& pt) const
     else if (pt.y > ClientLowerRight().y)
         y_pos = BOTTOM;
 
-    return (Resizable() ? WndRegion(x_pos + 3 * y_pos) : WR_NONE);
+    return (Resizable() ? WndRegion(x_pos + 3 * y_pos) : WndRegion::WR_NONE);
 }
 
 void Wnd::ClampRectWithMinAndMaxSize(Pt& ul, Pt& lr) const
@@ -973,14 +976,14 @@ void Wnd::SetDefaultBrowseInfoWnd(std::shared_ptr<BrowseInfoWnd> browse_info_wnd
 
 Wnd::DragDropRenderingState Wnd::GetDragDropRenderingState() const
 {
-    DragDropRenderingState retval = NOT_DRAGGED;
+    DragDropRenderingState retval = DragDropRenderingState::NOT_DRAGGED;
     if (GUI::GetGUI()->DragDropWnd(this)) {
         if (!Dragable() && !GUI::GetGUI()->RenderingDragDropWnds())
-             retval = IN_PLACE_COPY;
+             retval = DragDropRenderingState::IN_PLACE_COPY;
         else if (GUI::GetGUI()->AcceptedDragDropWnd(this))
-            retval = DRAGGED_OVER_ACCEPTING_DROP_TARGET;
+            retval = DragDropRenderingState::DRAGGED_OVER_ACCEPTING_DROP_TARGET;
         else
-            retval = DRAGGED_OVER_UNACCEPTING_DROP_TARGET;
+            retval = DragDropRenderingState::DRAGGED_OVER_UNACCEPTING_DROP_TARGET;
     }
     return retval;
 }
@@ -1106,94 +1109,94 @@ void Wnd::HandleEvent(const WndEvent& event)
 
     try {
         switch (event.Type()) {
-        case WndEvent::LButtonDown:
+        case WndEvent::EventType::LButtonDown:
             LButtonDown(event.Point(), event.ModKeys());
             break;
-        case WndEvent::LDrag:
+        case WndEvent::EventType::LDrag:
             LDrag(event.Point(), event.DragMove(), event.ModKeys());
             break;
-        case WndEvent::LButtonUp:
+        case WndEvent::EventType::LButtonUp:
             LButtonUp(event.Point(), event.ModKeys());
             break;
-        case WndEvent::LClick:
+        case WndEvent::EventType::LClick:
             LClick(event.Point(), event.ModKeys());
             break;
-        case WndEvent::LDoubleClick:
+        case WndEvent::EventType::LDoubleClick:
             LDoubleClick(event.Point(), event.ModKeys());
             break;
-        case WndEvent::MButtonDown:
+        case WndEvent::EventType::MButtonDown:
             MButtonDown(event.Point(), event.ModKeys());
             break;
-        case WndEvent::MDrag:
+        case WndEvent::EventType::MDrag:
             MDrag(event.Point(), event.DragMove(), event.ModKeys());
             break;
-        case WndEvent::MButtonUp:
+        case WndEvent::EventType::MButtonUp:
             MButtonUp(event.Point(), event.ModKeys());
             break;
-        case WndEvent::MClick:
+        case WndEvent::EventType::MClick:
             MClick(event.Point(), event.ModKeys());
             break;
-        case WndEvent::MDoubleClick:
+        case WndEvent::EventType::MDoubleClick:
             MDoubleClick(event.Point(), event.ModKeys());
             break;
-        case WndEvent::RButtonDown:
+        case WndEvent::EventType::RButtonDown:
             RButtonDown(event.Point(), event.ModKeys());
             break;
-        case WndEvent::RDrag:
+        case WndEvent::EventType::RDrag:
             RDrag(event.Point(), event.DragMove(), event.ModKeys());
             break;
-        case WndEvent::RButtonUp:
+        case WndEvent::EventType::RButtonUp:
             RButtonUp(event.Point(), event.ModKeys());
             break;
-        case WndEvent::RClick:
+        case WndEvent::EventType::RClick:
             RClick(event.Point(), event.ModKeys());
             break;
-        case WndEvent::RDoubleClick:
+        case WndEvent::EventType::RDoubleClick:
             RDoubleClick(event.Point(), event.ModKeys());
             break;
-        case WndEvent::MouseEnter:
+        case WndEvent::EventType::MouseEnter:
             MouseEnter(event.Point(), event.ModKeys());
             break;
-        case WndEvent::MouseHere:
+        case WndEvent::EventType::MouseHere:
             MouseHere(event.Point(), event.ModKeys());
             break;
-        case WndEvent::MouseLeave:
+        case WndEvent::EventType::MouseLeave:
             MouseLeave();
             break;
-        case WndEvent::DragDropEnter:
+        case WndEvent::EventType::DragDropEnter:
             DragDropEnter(event.Point(), event.GetAcceptableDropWnds(), event.ModKeys());
             break;
-        case WndEvent::DragDropHere:
+        case WndEvent::EventType::DragDropHere:
             DragDropHere(event.Point(), event.GetAcceptableDropWnds(), event.ModKeys());
             break;
-        case WndEvent::CheckDrops:
+        case WndEvent::EventType::CheckDrops:
             CheckDrops(event.Point(), event.GetAcceptableDropWnds(), event.ModKeys());
             break;
-        case WndEvent::DragDropLeave:
+        case WndEvent::EventType::DragDropLeave:
             DragDropLeave();
             break;
-        case WndEvent::DragDroppedOn:
+        case WndEvent::EventType::DragDroppedOn:
             AcceptDrops(event.Point(), event.GetDragDropWnds(), event.ModKeys());
             break;
-        case WndEvent::MouseWheel:
+        case WndEvent::EventType::MouseWheel:
             MouseWheel(event.Point(), event.WheelMove(), event.ModKeys());
             break;
-        case WndEvent::KeyPress:
+        case WndEvent::EventType::KeyPress:
             KeyPress(event.GetKey(), event.KeyCodePoint(), event.ModKeys());
             break;
-        case WndEvent::KeyRelease:
+        case WndEvent::EventType::KeyRelease:
             KeyRelease(event.GetKey(), event.KeyCodePoint(), event.ModKeys());
             break;
-        case WndEvent::TextInput:
+        case WndEvent::EventType::TextInput:
             TextInput(event.GetText());
             break;
-        case WndEvent::GainingFocus:
+        case WndEvent::EventType::GainingFocus:
             GainingFocus();
             break;
-        case WndEvent::LosingFocus:
+        case WndEvent::EventType::LosingFocus:
             LosingFocus();
             break;
-        case WndEvent::TimerFiring:
+        case WndEvent::EventType::TimerFiring:
             TimerFiring(event.Ticks(), event.GetTimer());
             break;
         default:
@@ -1210,13 +1213,13 @@ void Wnd::ForwardEventToParent()
 
 void Wnd::BeginClipping()
 {
-    if (m_child_clipping_mode != DontClip)
+    if (m_child_clipping_mode != ChildClippingMode::DontClip)
         BeginClippingImpl(m_child_clipping_mode);
 }
 
 void Wnd::EndClipping()
 {
-    if (m_child_clipping_mode != DontClip)
+    if (m_child_clipping_mode != ChildClippingMode::DontClip)
         EndClippingImpl(m_child_clipping_mode);
 }
 
@@ -1235,14 +1238,14 @@ void Wnd::ValidateFlags()
 void Wnd::BeginClippingImpl(ChildClippingMode mode)
 {
     switch (mode) {
-    case DontClip:
+    case ChildClippingMode::DontClip:
         assert(!"Wnd::BeginClippingImpl() called with mode == DontClip; this should never happen.");
         break;
-    case ClipToClient:
-    case ClipToClientAndWindowSeparately:
+    case ChildClippingMode::ClipToClient:
+    case ChildClippingMode::ClipToClientAndWindowSeparately:
         BeginScissorClipping(ClientUpperLeft(), ClientLowerRight());
         break;
-    case ClipToWindow:
+    case ChildClippingMode::ClipToWindow:
         BeginScissorClipping(UpperLeft(), LowerRight());
         break;
     }
@@ -1251,12 +1254,12 @@ void Wnd::BeginClippingImpl(ChildClippingMode mode)
 void Wnd::EndClippingImpl(ChildClippingMode mode)
 {
     switch (mode) {
-    case DontClip:
+    case ChildClippingMode::DontClip:
         assert(!"Wnd::EndClippingImpl() called with mode == DontClip; this should never happen.");
         break;
-    case ClipToClient:
-    case ClipToWindow:
-    case ClipToClientAndWindowSeparately:
+    case ChildClippingMode::ClipToClient:
+    case ChildClippingMode::ClipToWindow:
+    case ChildClippingMode::ClipToClientAndWindowSeparately:
         EndScissorClipping();
         break;
     }

@@ -83,7 +83,7 @@ void UniverseObject::Copy(std::shared_ptr<const UniverseObject> copied_object,
         }
     }
 
-    if (vis >= VIS_BASIC_VISIBILITY) {
+    if (vis >= Visibility::VIS_BASIC_VISIBILITY) {
         this->m_id =                    copied_object->m_id;
         this->m_system_id =             copied_object->m_system_id;
         this->m_x =                     copied_object->m_x;
@@ -95,11 +95,11 @@ void UniverseObject::Copy(std::shared_ptr<const UniverseObject> copied_object,
                 this->m_specials[entry_special.first] = entry_special.second;
         }
 
-        if (vis >= VIS_PARTIAL_VISIBILITY) {
+        if (vis >= Visibility::VIS_PARTIAL_VISIBILITY) {
             this->m_owner_empire_id =   copied_object->m_owner_empire_id;
             this->m_created_on_turn =   copied_object->m_created_on_turn;
 
-            if (vis >= VIS_FULL_VISIBILITY) {
+            if (vis >= Visibility::VIS_FULL_VISIBILITY) {
                 this->m_name =          copied_object->m_name;
             }
         }
@@ -107,7 +107,7 @@ void UniverseObject::Copy(std::shared_ptr<const UniverseObject> copied_object,
 }
 
 void UniverseObject::Init()
-{ AddMeter(METER_STEALTH); }
+{ AddMeter(MeterType::METER_STEALTH); }
 
 int UniverseObject::ID() const
 { return m_id; }
@@ -165,7 +165,7 @@ bool UniverseObject::HasTag(const std::string& name) const
 { return false; }
 
 UniverseObjectType UniverseObject::ObjectType() const
-{ return INVALID_UNIVERSE_OBJECT_TYPE; }
+{ return UniverseObjectType::INVALID_UNIVERSE_OBJECT_TYPE; }
 
 std::string UniverseObject::Dump(unsigned short ntabs) const {
     auto system = Objects().get<System>(this->SystemID());
@@ -224,7 +224,7 @@ std::set<int> UniverseObject::VisibleContainedObjectIDs(int empire_id) const {
     std::set<int> retval;
     const Universe& universe = GetUniverse();
     for (int object_id : ContainedObjectIDs()) {
-        if (universe.GetObjectVisibilityByEmpire(object_id, empire_id) >= VIS_BASIC_VISIBILITY)
+        if (universe.GetObjectVisibilityByEmpire(object_id, empire_id) >= Visibility::VIS_BASIC_VISIBILITY)
             retval.insert(object_id);
     }
     return retval;
@@ -247,7 +247,7 @@ const Meter* UniverseObject::GetMeter(MeterType type) const {
 }
 
 void UniverseObject::AddMeter(MeterType meter_type) {
-    if (INVALID_METER_TYPE == meter_type)
+    if (MeterType::INVALID_METER_TYPE == meter_type)
         ErrorLogger() << "UniverseObject::AddMeter asked to add invalid meter type!";
     else
         m_meters[meter_type];
@@ -350,15 +350,15 @@ void UniverseObject::RemoveSpecial(const std::string& name)
 
 UniverseObject::MeterMap UniverseObject::CensoredMeters(Visibility vis) const {
     MeterMap retval;
-    if (vis >= VIS_PARTIAL_VISIBILITY) {
+    if (vis >= Visibility::VIS_PARTIAL_VISIBILITY) {
         retval = m_meters;
-    } else if (vis == VIS_BASIC_VISIBILITY && m_meters.count(METER_STEALTH))
-        retval.emplace(METER_STEALTH, Meter{Meter::LARGE_VALUE, Meter::LARGE_VALUE});
+    } else if (vis == Visibility::VIS_BASIC_VISIBILITY && m_meters.count(MeterType::METER_STEALTH))
+        retval.emplace(MeterType::METER_STEALTH, Meter{Meter::LARGE_VALUE, Meter::LARGE_VALUE});
     return retval;
 }
 
 void UniverseObject::ResetTargetMaxUnpairedMeters() {
-    auto it = m_meters.find(METER_STEALTH);
+    auto it = m_meters.find(MeterType::METER_STEALTH);
     if (it != m_meters.end())
         it->second.ResetCurrent();
 }
@@ -368,15 +368,15 @@ void UniverseObject::ResetPairedActiveMeters() {
     // target meter.  if another paired meter type is added to Enums.h, it
     // should be added here as well.
     for (auto& m : m_meters) {
-        if (m.first > METER_TROOPS)
+        if (m.first > MeterType::METER_TROOPS)
             break;
-        if (m.first >= METER_POPULATION)
+        if (m.first >= MeterType::METER_POPULATION)
             m.second.SetCurrent(m.second.Initial());
     }
 }
 
 void UniverseObject::ClampMeters() {
-    auto it = m_meters.find(METER_STEALTH);
+    auto it = m_meters.find(MeterType::METER_STEALTH);
     if (it != m_meters.end())
         it->second.ClampCurrentToRange();
 }

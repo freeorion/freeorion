@@ -104,14 +104,14 @@ void ThreeButtonDlg::Render()
 
 void ThreeButtonDlg::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys)
 {
-    if (key == GGK_RETURN || key == GGK_KP_ENTER) {
+    if (key == Key::GGK_RETURN || key == Key::GGK_KP_ENTER) {
         if (m_default == 0)
             Button0Clicked();
         else if (m_default == 1)
             Button1Clicked();
         else if (m_default == 2)
             Button2Clicked();
-    } else if (key == GGK_ESCAPE) {
+    } else if (key == Key::GGK_ESCAPE) {
         if (m_escape == 0)
             Button0Clicked();
         else if (m_escape == 1)

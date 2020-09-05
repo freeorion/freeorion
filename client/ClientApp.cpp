@@ -85,11 +85,11 @@ Networking::ClientType ClientApp::GetEmpireClientType(int empire_id) const
 
 Networking::ClientType ClientApp::GetPlayerClientType(int player_id) const {
     if (player_id == Networking::INVALID_PLAYER_ID)
-        return Networking::INVALID_CLIENT_TYPE;
+        return Networking::ClientType::INVALID_CLIENT_TYPE;
     auto it = m_player_info.find(player_id);
     if (it != m_player_info.end())
         return it->second.client_type;
-    return Networking::INVALID_CLIENT_TYPE;
+    return Networking::ClientType::INVALID_CLIENT_TYPE;
 }
 
 Networking::ClientType ClientApp::GetClientType() const
@@ -103,7 +103,7 @@ std::map<int, PlayerInfo>& ClientApp::Players()
 
 void ClientApp::SetEmpireStatus(int empire_id, Message::PlayerStatus status) {
     if (auto* empire = m_empires.GetEmpire(empire_id))
-        empire->SetReady(status == Message::WAITING);
+        empire->SetReady(status == Message::PlayerStatus::WAITING);
 }
 
 void ClientApp::StartTurn(const SaveGameUIData& ui_data)

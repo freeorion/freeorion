@@ -258,7 +258,7 @@ namespace {
                 std::min(element_this_turn_limit,
                          group_pp_available + stockpile_available_for_this));
 
-            if (queue_element.item.build_type == BT_STOCKPILE) {
+            if (queue_element.item.build_type == BuildType::BT_STOCKPILE) {
                 if (GetGameRules().Get<bool>("RULE_STOCKPILE_IMPORT_LIMITED")) {
                     float unused_limit = std::max(0.0f, stockpile_limit - stockpile_transfer);
                     allocation = std::min(allocation, unused_limit);
@@ -277,7 +277,7 @@ namespace {
             float group_drawdown = std::min(allocation, group_pp_available);
 
             allocated_pp[group] += group_drawdown;  // relies on default initial mapped value of 0.0f
-            if (queue_element.item.build_type == BT_STOCKPILE) {
+            if (queue_element.item.build_type == BuildType::BT_STOCKPILE) {
                 stockpile_transfer += group_drawdown;
             }
             group_pp_available -= group_drawdown;
@@ -324,7 +324,7 @@ ProductionQueue::ProductionItem::ProductionItem()
 ProductionQueue::ProductionItem::ProductionItem(BuildType build_type_) :
     build_type(build_type_)
 {
-    if (build_type_ == BT_STOCKPILE)
+    if (build_type_ == BuildType::BT_STOCKPILE)
         name = UserStringNop("PROJECT_BT_STOCKPILE");
 }
 
@@ -337,7 +337,7 @@ ProductionQueue::ProductionItem::ProductionItem(BuildType build_type_, int desig
     build_type(build_type_),
     design_id(design_id_)
 {
-    if (build_type == BT_SHIP) {
+    if (build_type == BuildType::BT_SHIP) {
         if (const ShipDesign* ship_design = GetShipDesign(design_id))
             name = ship_design->Name();
         else
@@ -346,19 +346,19 @@ ProductionQueue::ProductionItem::ProductionItem(BuildType build_type_, int desig
 }
 
 bool ProductionQueue::ProductionItem::CostIsProductionLocationInvariant() const {
-    if (build_type == BT_BUILDING) {
+    if (build_type == BuildType::BT_BUILDING) {
         const BuildingType* type = GetBuildingType(name);
         if (!type)
             return true;
         return type->ProductionCostTimeLocationInvariant();
 
-    } else if (build_type == BT_SHIP) {
+    } else if (build_type == BuildType::BT_SHIP) {
         const ShipDesign* design = GetShipDesign(design_id);
         if (!design)
             return true;
         return design->ProductionCostTimeLocationInvariant();
 
-    } else if (build_type == BT_STOCKPILE) {
+    } else if (build_type == BuildType::BT_STOCKPILE) {
         return true;
     }
     return false;
@@ -366,7 +366,7 @@ bool ProductionQueue::ProductionItem::CostIsProductionLocationInvariant() const 
 
 bool ProductionQueue::ProductionItem::EnqueueConditionPassedAt(int location_id) const {
     switch (build_type) {
-    case BT_BUILDING: {
+    case BuildType::BT_BUILDING: {
         if (const BuildingType* bt = GetBuildingType(name)) {
             auto location_obj = Objects().get(location_id);
             auto c = bt->EnqueueLocation();
@@ -377,8 +377,8 @@ bool ProductionQueue::ProductionItem::EnqueueConditionPassedAt(int location_id) 
         return true;
         break;
     }
-    case BT_SHIP:   // ships don't have enqueue location conditions
-    case BT_STOCKPILE:  // stockpile can always be enqueued 
+    case BuildType::BT_SHIP:   // ships don't have enqueue location conditions
+    case BuildType::BT_STOCKPILE:  // stockpile can always be enqueued 
     default:
         return true;
     }
@@ -389,9 +389,9 @@ bool ProductionQueue::ProductionItem::operator<(const ProductionItem& rhs) const
         return true;
     if (build_type > rhs.build_type)
         return false;
-    if (build_type == BT_BUILDING)
+    if (build_type == BuildType::BT_BUILDING)
         return name < rhs.name;
-    else if (build_type == BT_SHIP)
+    else if (build_type == BuildType::BT_SHIP)
         return design_id < rhs.design_id;
 
     return false;
@@ -402,7 +402,7 @@ ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id) c
     std::map<std::string, std::map<int, float>> retval;
 
     switch (build_type) {
-    case BT_BUILDING: {
+    case BuildType::BT_BUILDING: {
         if (const BuildingType* bt = GetBuildingType(name)) {
             auto location_obj = Objects().get(location_id);
             ScriptingContext context(location_obj);
@@ -428,7 +428,7 @@ ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id) c
         }
         break;
     }
-    case BT_SHIP: {
+    case BuildType::BT_SHIP: {
         if (const ShipDesign* sd = GetShipDesign(design_id)) {
             auto location_obj = Objects().get(location_id);
             ScriptingContext context(location_obj);
@@ -454,8 +454,8 @@ ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id) c
         }
         break;
     }
-    case BT_PROJECT:    // TODO
-    case BT_STOCKPILE:  // stockpile transfer consumes no special
+    case BuildType::BT_PROJECT:    // TODO
+    case BuildType::BT_STOCKPILE:  // stockpile transfer consumes no special
     default:
         break;
     }
@@ -468,7 +468,7 @@ ProductionQueue::ProductionItem::CompletionMeterConsumption(int location_id) con
     std::map<MeterType, std::map<int, float>> retval;
 
     switch (build_type) {
-    case BT_BUILDING: {
+    case BuildType::BT_BUILDING: {
         if (const BuildingType* bt = GetBuildingType(name)) {
             auto obj = Objects().get(location_id);
             ScriptingContext context(obj);
@@ -481,7 +481,7 @@ ProductionQueue::ProductionItem::CompletionMeterConsumption(int location_id) con
         }
         break;
     }
-    case BT_SHIP: {
+    case BuildType::BT_SHIP: {
         if (const ShipDesign* sd = GetShipDesign(design_id)) {
             auto obj = Objects().get(location_id);
             ScriptingContext context(obj);
@@ -507,8 +507,8 @@ ProductionQueue::ProductionItem::CompletionMeterConsumption(int location_id) con
         }
         break;
     }
-    case BT_PROJECT:    // TODO
-    case BT_STOCKPILE:  // stockpile transfer happens before completion - nothing to do
+    case BuildType::BT_PROJECT:    // TODO
+    case BuildType::BT_STOCKPILE:  // stockpile transfer happens before completion - nothing to do
     default:
         break;
     }
@@ -611,7 +611,7 @@ float ProductionQueue::StockpileCapacity() const {
     for (const auto& obj : Objects().ExistingObjects()) {
         if (!obj.second->OwnedBy(m_empire_id))
             continue;
-        const auto* meter = obj.second->GetMeter(METER_STOCKPILE);
+        const auto* meter = obj.second->GetMeter(MeterType::METER_STOCKPILE);
         if (!meter)
             continue;
         retval += meter->Current();
@@ -692,7 +692,7 @@ void ProductionQueue::Update() {
 
     ScopedTimer update_timer("ProductionQueue::Update");
 
-    auto industry_resource_pool = empire->GetResourcePool(RE_INDUSTRY);
+    auto industry_resource_pool = empire->GetResourcePool(ResourceType::RE_INDUSTRY);
     auto available_pp = AvailablePP(industry_resource_pool);
     float pp_in_stockpile = industry_resource_pool->Stockpile();
     TraceLogger() << "========= pp_in_stockpile:     " << pp_in_stockpile << " ========";
@@ -868,7 +868,7 @@ void ProductionQueue::Update() {
     }
     DebugLogger() << "ProductionQueue::Update: Projections took "
                   << ((sim_time_end - sim_time_start).total_microseconds()) << " microseconds with "
-                  << empire->ResourceOutput(RE_INDUSTRY) << " industry output";
+                  << empire->ResourceOutput(ResourceType::RE_INDUSTRY) << " industry output";
     ProductionQueueChangedSignal();
 }
 

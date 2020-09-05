@@ -38,7 +38,7 @@ namespace {
                 ErrorLogger() << "SetTechQueueElementSpending couldn't find tech with name " << elem.name << " in the research status map";
                 continue;
             }
-            bool researchable = status_it->second == TS_RESEARCHABLE;
+            bool researchable = status_it->second == TechStatus::TS_RESEARCHABLE;
 
             if (researchable && !elem.paused) {
                 auto progress_it = research_progress.find(elem.name);
@@ -221,14 +221,14 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
         const Tech* tech = GetTech(techname);
         if (!tech)
             continue;
-        if (dpsim_tech_status_map[techname] == TS_RESEARCHABLE) {
+        if (dpsim_tech_status_map[techname] == TechStatus::TS_RESEARCHABLE) {
             dp_researchable_techs.insert(i);
-        } else if (dpsim_tech_status_map[techname] == TS_UNRESEARCHABLE ||
-                   dpsim_tech_status_map[techname] == TS_HAS_RESEARCHED_PREREQ)
+        } else if (dpsim_tech_status_map[techname] == TechStatus::TS_UNRESEARCHABLE ||
+                   dpsim_tech_status_map[techname] == TechStatus::TS_HAS_RESEARCHED_PREREQ)
         {
             std::set<std::string> these_prereqs = tech->Prerequisites();
             for (auto ptech_it = these_prereqs.begin(); ptech_it != these_prereqs.end();) {
-                if (dpsim_tech_status_map[*ptech_it] != TS_COMPLETE) {
+                if (dpsim_tech_status_map[*ptech_it] != TechStatus::TS_COMPLETE) {
                     ++ptech_it;
                 } else {
                     auto erase_it = ptech_it;
@@ -283,7 +283,7 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
             }
 
             if (tech_cost - EPSILON <= progress * tech_cost) {
-                dpsim_tech_status_map[tech_name] = TS_COMPLETE;
+                dpsim_tech_status_map[tech_name] = TechStatus::TS_COMPLETE;
                 dpsimulation_results[cur_tech] = dp_turns;
 #ifndef ORIG_RES_SIMULATOR
                 m_queue[cur_tech].turns_left = dp_turns;

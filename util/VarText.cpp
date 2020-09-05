@@ -85,11 +85,11 @@ namespace {
     boost::optional<std::string> MeterTypeString(const std::string& data) {
         boost::optional<std::string> retval = boost::none;
         // validate data
-        MeterType meter_type = INVALID_METER_TYPE;
+        MeterType meter_type = MeterType::INVALID_METER_TYPE;
         std::istringstream data_ss(data);
         data_ss >> meter_type;
 
-        if (meter_type > INVALID_METER_TYPE && meter_type < NUM_METER_TYPES) {
+        if (meter_type > MeterType::INVALID_METER_TYPE && meter_type < MeterType::NUM_METER_TYPES) {
             retval = boost::lexical_cast<std::string>(meter_type);
             if (UserStringExists(*retval))
                 retval = WithTags(UserString(*retval), VarText::METER_TYPE_TAG, *retval);

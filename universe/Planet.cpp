@@ -26,13 +26,13 @@ namespace {
 
     float SizeRotationFactor(PlanetSize size) {
         switch (size) {
-        case SZ_TINY:     return 1.5f;
-        case SZ_SMALL:    return 1.25f;
-        case SZ_MEDIUM:   return 1.0f;
-        case SZ_LARGE:    return 0.75f;
-        case SZ_HUGE:     return 0.5f;
-        case SZ_GASGIANT: return 0.25f;
-        default:          return 1.0f;
+        case PlanetSize::SZ_TINY:     return 1.5f;
+        case PlanetSize::SZ_SMALL:    return 1.25f;
+        case PlanetSize::SZ_MEDIUM:   return 1.0f;
+        case PlanetSize::SZ_LARGE:    return 0.75f;
+        case PlanetSize::SZ_HUGE:     return 0.5f;
+        case PlanetSize::SZ_GASGIANT: return 0.25f;
+        default:                      return 1.0f;
         }
     }
 
@@ -69,7 +69,7 @@ Planet::Planet(PlanetType type, PlanetSize size) :
 Planet* Planet::Clone(int empire_id) const {
     Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
-    if (!(vis >= VIS_BASIC_VISIBILITY && vis <= VIS_FULL_VISIBILITY))
+    if (!(vis >= Visibility::VIS_BASIC_VISIBILITY && vis <= Visibility::VIS_FULL_VISIBILITY))
         return nullptr;
 
     Planet* retval = new Planet(m_type, m_size);
@@ -94,7 +94,7 @@ void Planet::Copy(std::shared_ptr<const UniverseObject> copied_object, int empir
     PopCenter::Copy(copied_planet, vis);
     ResourceCenter::Copy(copied_planet, vis);
 
-    if (vis >= VIS_BASIC_VISIBILITY) {
+    if (vis >= Visibility::VIS_BASIC_VISIBILITY) {
         this->m_name =                      copied_planet->m_name;
 
         this->m_buildings =                 copied_planet->VisibleContainedObjectIDs(empire_id);
@@ -109,8 +109,8 @@ void Planet::Copy(std::shared_ptr<const UniverseObject> copied_object, int empir
         this->m_turn_last_colonized =       copied_planet->m_turn_last_colonized;
 
 
-        if (vis >= VIS_PARTIAL_VISIBILITY) {
-            if (vis >= VIS_FULL_VISIBILITY) {
+        if (vis >= Visibility::VIS_PARTIAL_VISIBILITY) {
+            if (vis >= Visibility::VIS_FULL_VISIBILITY) {
                 this->m_is_about_to_be_colonized =  copied_planet->m_is_about_to_be_colonized;
                 this->m_is_about_to_be_invaded   =  copied_planet->m_is_about_to_be_invaded;
                 this->m_is_about_to_be_bombarded =  copied_planet->m_is_about_to_be_bombarded;
@@ -138,12 +138,12 @@ bool Planet::HostileToEmpire(int empire_id) const
         return !Unowned();
 
     // Unowned planets are only considered hostile if populated
-    auto pop_meter = GetMeter(METER_TARGET_POPULATION);
+    auto pop_meter = GetMeter(MeterType::METER_TARGET_POPULATION);
     if (Unowned())
         return pop_meter && (pop_meter->Current() != 0.0f);
 
     // both empires are normal empires
-    return Empires().GetDiplomaticStatus(Owner(), empire_id) == DIPLO_WAR;
+    return Empires().GetDiplomaticStatus(Owner(), empire_id) == DiplomaticStatus::DIPLO_WAR;
 }
 
 std::set<std::string> Planet::Tags() const {
@@ -160,7 +160,7 @@ bool Planet::HasTag(const std::string& name) const {
 }
 
 UniverseObjectType Planet::ObjectType() const
-{ return OBJ_PLANET; }
+{ return UniverseObjectType::OBJ_PLANET; }
 
 std::string Planet::Dump(unsigned short ntabs) const {
     std::stringstream os;
@@ -197,30 +197,30 @@ std::string Planet::Dump(unsigned short ntabs) const {
 int Planet::HabitableSize() const {
     const auto& gr = GetGameRules();
     switch (m_size) {
-    case SZ_GASGIANT:   return gr.Get<int>("RULE_HABITABLE_SIZE_GASGIANT");   break;
-    case SZ_HUGE:       return gr.Get<int>("RULE_HABITABLE_SIZE_HUGE");   break;
-    case SZ_LARGE:      return gr.Get<int>("RULE_HABITABLE_SIZE_LARGE");   break;
-    case SZ_MEDIUM:     return gr.Get<int>("RULE_HABITABLE_SIZE_MEDIUM");   break;
-    case SZ_ASTEROIDS:  return gr.Get<int>("RULE_HABITABLE_SIZE_ASTEROIDS");   break;
-    case SZ_SMALL:      return gr.Get<int>("RULE_HABITABLE_SIZE_SMALL");   break;
-    case SZ_TINY:       return gr.Get<int>("RULE_HABITABLE_SIZE_TINY");   break;
-    default:            return 0;   break;
+    case PlanetSize::SZ_GASGIANT:  return gr.Get<int>("RULE_HABITABLE_SIZE_GASGIANT");   break;
+    case PlanetSize::SZ_HUGE:      return gr.Get<int>("RULE_HABITABLE_SIZE_HUGE");   break;
+    case PlanetSize::SZ_LARGE:     return gr.Get<int>("RULE_HABITABLE_SIZE_LARGE");   break;
+    case PlanetSize::SZ_MEDIUM:    return gr.Get<int>("RULE_HABITABLE_SIZE_MEDIUM");   break;
+    case PlanetSize::SZ_ASTEROIDS: return gr.Get<int>("RULE_HABITABLE_SIZE_ASTEROIDS");   break;
+    case PlanetSize::SZ_SMALL:     return gr.Get<int>("RULE_HABITABLE_SIZE_SMALL");   break;
+    case PlanetSize::SZ_TINY:      return gr.Get<int>("RULE_HABITABLE_SIZE_TINY");   break;
+    default:                       return 0;   break;
     }
 }
 
 void Planet::Init() {
-    AddMeter(METER_SUPPLY);
-    AddMeter(METER_MAX_SUPPLY);
-    AddMeter(METER_STOCKPILE);
-    AddMeter(METER_MAX_STOCKPILE);
-    AddMeter(METER_SHIELD);
-    AddMeter(METER_MAX_SHIELD);
-    AddMeter(METER_DEFENSE);
-    AddMeter(METER_MAX_DEFENSE);
-    AddMeter(METER_TROOPS);
-    AddMeter(METER_MAX_TROOPS);
-    AddMeter(METER_DETECTION);
-    AddMeter(METER_REBEL_TROOPS);
+    AddMeter(MeterType::METER_SUPPLY);
+    AddMeter(MeterType::METER_MAX_SUPPLY);
+    AddMeter(MeterType::METER_STOCKPILE);
+    AddMeter(MeterType::METER_MAX_STOCKPILE);
+    AddMeter(MeterType::METER_SHIELD);
+    AddMeter(MeterType::METER_MAX_SHIELD);
+    AddMeter(MeterType::METER_DEFENSE);
+    AddMeter(MeterType::METER_MAX_DEFENSE);
+    AddMeter(MeterType::METER_TROOPS);
+    AddMeter(MeterType::METER_MAX_TROOPS);
+    AddMeter(MeterType::METER_DETECTION);
+    AddMeter(MeterType::METER_REBEL_TROOPS);
 }
 
 PlanetEnvironment Planet::EnvironmentForSpecies(const std::string& species_name/* = ""*/) const {
@@ -228,14 +228,14 @@ PlanetEnvironment Planet::EnvironmentForSpecies(const std::string& species_name/
     if (species_name.empty()) {
         const std::string& this_planet_species_name = this->SpeciesName();
         if (this_planet_species_name.empty())
-            return PE_UNINHABITABLE;
+            return PlanetEnvironment::PE_UNINHABITABLE;
         species = GetSpecies(this_planet_species_name);
     } else {
         species = GetSpecies(species_name);
     }
     if (!species) {
         ErrorLogger() << "Planet::EnvironmentForSpecies couldn't get species with name \"" << species_name << "\"";
-        return PE_UNINHABITABLE;
+        return PlanetEnvironment::PE_UNINHABITABLE;
     }
     return species->GetPlanetEnvironment(m_type);
 }
@@ -260,25 +260,25 @@ PlanetType Planet::NextBetterPlanetTypeForSpecies(const std::string& species_nam
 namespace {
     PlanetType RingNextPlanetType(PlanetType current_type) {
         PlanetType next(PlanetType(int(current_type)+1));
-        if (next >= PT_ASTEROIDS)
-            next = PT_SWAMP;
+        if (next >= PlanetType::PT_ASTEROIDS)
+            next = PlanetType::PT_SWAMP;
         return next;
     }
     PlanetType RingPreviousPlanetType(PlanetType current_type) {
         PlanetType next(PlanetType(int(current_type)-1));
-        if (next <= INVALID_PLANET_TYPE)
-            next = PT_OCEAN;
+        if (next <= PlanetType::INVALID_PLANET_TYPE)
+            next = PlanetType::PT_OCEAN;
         return next;
     }
 }
 
 PlanetType Planet::NextCloserToOriginalPlanetType() const {
-    if (m_type == INVALID_PLANET_TYPE ||
-        m_type == PT_GASGIANT ||
-        m_type == PT_ASTEROIDS ||
-        m_original_type == INVALID_PLANET_TYPE ||
-        m_original_type == PT_GASGIANT ||
-        m_original_type == PT_ASTEROIDS)
+    if (m_type == PlanetType::INVALID_PLANET_TYPE ||
+        m_type == PlanetType::PT_GASGIANT ||
+        m_type == PlanetType::PT_ASTEROIDS ||
+        m_original_type == PlanetType::INVALID_PLANET_TYPE ||
+        m_original_type == PlanetType::PT_GASGIANT ||
+        m_original_type == PlanetType::PT_ASTEROIDS)
     { return m_type; }
 
     if (m_type == m_original_type)
@@ -306,25 +306,25 @@ PlanetType Planet::NextCloserToOriginalPlanetType() const {
 namespace {
     PlanetType LoopPlanetTypeIncrement(PlanetType initial_type, int step) {
         // avoid too large steps that would mess up enum arithmatic
-        if (std::abs(step) >= PT_ASTEROIDS) {
+        if (std::abs(step) >= int(PlanetType::PT_ASTEROIDS)) {
             DebugLogger() << "LoopPlanetTypeIncrement giving too large step: " << step;
             return initial_type;
         }
         // some types can't be terraformed
-        if (initial_type == PT_GASGIANT)
-            return PT_GASGIANT;
-        if (initial_type == PT_ASTEROIDS)
-            return PT_ASTEROIDS;
-        if (initial_type == INVALID_PLANET_TYPE)
-            return INVALID_PLANET_TYPE;
-        if (initial_type == NUM_PLANET_TYPES)
-            return NUM_PLANET_TYPES;
+        if (initial_type == PlanetType::PT_GASGIANT)
+            return PlanetType::PT_GASGIANT;
+        if (initial_type == PlanetType::PT_ASTEROIDS)
+            return PlanetType::PT_ASTEROIDS;
+        if (initial_type == PlanetType::INVALID_PLANET_TYPE)
+            return PlanetType::INVALID_PLANET_TYPE;
+        if (initial_type == PlanetType::NUM_PLANET_TYPES)
+            return PlanetType::NUM_PLANET_TYPES;
         // calculate next planet type, accounting for loop arounds
-        PlanetType new_type(PlanetType(initial_type + step));
-        if (new_type >= PT_ASTEROIDS)
-            new_type = PlanetType(new_type - PT_ASTEROIDS);
-        else if (new_type <= INVALID_PLANET_TYPE)
-            new_type = PlanetType(new_type + PT_ASTEROIDS);
+        PlanetType new_type(PlanetType(int(initial_type) + int(step)));
+        if (new_type >= PlanetType::PT_ASTEROIDS)
+            new_type = PlanetType(int(new_type) - int(PlanetType::PT_ASTEROIDS));
+        else if (new_type <= PlanetType::INVALID_PLANET_TYPE)
+            new_type = PlanetType(int(new_type) + int(PlanetType::PT_ASTEROIDS));
         return new_type;
     }
 }
@@ -337,13 +337,13 @@ PlanetType Planet::CounterClockwiseNextPlanetType() const
 
 int Planet::TypeDifference(PlanetType type1, PlanetType type2) {
     // no distance defined for invalid types
-    if (type1 == INVALID_PLANET_TYPE || type2 == INVALID_PLANET_TYPE)
+    if (type1 == PlanetType::INVALID_PLANET_TYPE || type2 == PlanetType::INVALID_PLANET_TYPE)
         return 0;
     // if the same, distance is zero
     if (type1 == type2)
         return 0;
     // no distance defined for asteroids or gas giants with anything else
-    if (type1 == PT_ASTEROIDS || type1 == PT_GASGIANT || type2 == PT_ASTEROIDS || type2 == PT_GASGIANT)
+    if (type1 == PlanetType::PT_ASTEROIDS || type1 == PlanetType::PT_GASGIANT || type2 == PlanetType::PT_ASTEROIDS || type2 == PlanetType::PT_GASGIANT)
         return 0;
     // find distance around loop:
     //
@@ -364,22 +364,22 @@ int Planet::TypeDifference(PlanetType type1, PlanetType type2) {
 namespace {
     PlanetSize PlanetSizeIncrement(PlanetSize initial_size, int step) {
         // some sizes don't have meaningful increments
-        if (initial_size == SZ_GASGIANT)
-            return SZ_GASGIANT;
-        if (initial_size == SZ_ASTEROIDS)
-            return SZ_ASTEROIDS;
-        if (initial_size == SZ_NOWORLD)
-            return SZ_NOWORLD;
-        if (initial_size == INVALID_PLANET_SIZE)
-            return INVALID_PLANET_SIZE;
-        if (initial_size == NUM_PLANET_SIZES)
-            return NUM_PLANET_SIZES;
+        if (initial_size == PlanetSize::SZ_GASGIANT)
+            return PlanetSize::SZ_GASGIANT;
+        if (initial_size == PlanetSize::SZ_ASTEROIDS)
+            return PlanetSize::SZ_ASTEROIDS;
+        if (initial_size == PlanetSize::SZ_NOWORLD)
+            return PlanetSize::SZ_NOWORLD;
+        if (initial_size == PlanetSize::INVALID_PLANET_SIZE)
+            return PlanetSize::INVALID_PLANET_SIZE;
+        if (initial_size == PlanetSize::NUM_PLANET_SIZES)
+            return PlanetSize::NUM_PLANET_SIZES;
         // calculate next planet size
-        PlanetSize new_type(PlanetSize(initial_size + step));
-        if (new_type >= SZ_HUGE)
-            return SZ_HUGE;
-        if (new_type <= SZ_TINY)
-            return SZ_TINY;
+        PlanetSize new_type(PlanetSize(int(initial_size) + int(step)));
+        if (new_type >= PlanetSize::SZ_HUGE)
+            return PlanetSize::SZ_HUGE;
+        if (new_type <= PlanetSize::SZ_TINY)
+            return PlanetSize::SZ_TINY;
         return new_type;
     }
 }
@@ -455,12 +455,12 @@ std::string Planet::CardinalSuffix() const {
         }
 
         PlanetType other_planet_type = Objects().get<Planet>(sys_orbit)->Type();
-        if (other_planet_type == INVALID_PLANET_TYPE)
+        if (other_planet_type == PlanetType::INVALID_PLANET_TYPE)
             continue;
 
         // only increment suffix for non-asteroid planets
-        if (Type() != PT_ASTEROIDS) {
-            if (other_planet_type != PT_ASTEROIDS) {
+        if (Type() != PlanetType::PT_ASTEROIDS) {
+            if (other_planet_type != PlanetType::PT_ASTEROIDS) {
                 ++num_planets_total;
                 if (prior_current_planet)
                     ++num_planets_lteq;
@@ -468,7 +468,7 @@ std::string Planet::CardinalSuffix() const {
         } else {
             // unless the planet being named is an asteroid
             // then only increment suffix for asteroid planets
-            if (other_planet_type == PT_ASTEROIDS) {
+            if (other_planet_type == PlanetType::PT_ASTEROIDS) {
                 ++num_planets_total;
                 if (prior_current_planet)
                     ++num_planets_lteq;
@@ -477,7 +477,7 @@ std::string Planet::CardinalSuffix() const {
     }
 
     // Planets are grouped into asteroids, and non-asteroids
-    if (Type() != PT_ASTEROIDS) {
+    if (Type() != PlanetType::PT_ASTEROIDS) {
         retval.append(RomanNumber(num_planets_lteq));
     } else {
         // Asteroids receive a localized prefix
@@ -531,28 +531,28 @@ const std::string& Planet::FocusIcon(const std::string& focus_name) const {
 }
 
 void Planet::SetType(PlanetType type) {
-    if (type <= INVALID_PLANET_TYPE)
-        type = PT_SWAMP;
-    if (NUM_PLANET_TYPES <= type)
-        type = PT_GASGIANT;
+    if (type <= PlanetType::INVALID_PLANET_TYPE)
+        type = PlanetType::PT_SWAMP;
+    if (PlanetType::NUM_PLANET_TYPES <= type)
+        type = PlanetType::PT_GASGIANT;
     m_type = type;
     StateChangedSignal();
 }
 
 void Planet::SetOriginalType(PlanetType type) {
-    if (type <= INVALID_PLANET_TYPE)
-        type = PT_SWAMP;
-    if (NUM_PLANET_TYPES <= type)
-        type = PT_GASGIANT;
+    if (type <= PlanetType::INVALID_PLANET_TYPE)
+        type = PlanetType::PT_SWAMP;
+    if (PlanetType::NUM_PLANET_TYPES <= type)
+        type = PlanetType::PT_GASGIANT;
     m_original_type = type;
     StateChangedSignal();
 }
 
 void Planet::SetSize(PlanetSize size) {
-    if (size <= SZ_NOWORLD)
-        size = SZ_TINY;
-    if (NUM_PLANET_SIZES <= size)
-        size = SZ_GASGIANT;
+    if (size <= PlanetSize::SZ_NOWORLD)
+        size = PlanetSize::SZ_TINY;
+    if (PlanetSize::NUM_PLANET_SIZES <= size)
+        size = PlanetSize::SZ_GASGIANT;
     m_size = size;
     StateChangedSignal();
 }
@@ -586,16 +586,16 @@ void Planet::Reset() {
     PopCenter::Reset();
     ResourceCenter::Reset();
 
-    GetMeter(METER_SUPPLY)->Reset();
-    GetMeter(METER_MAX_SUPPLY)->Reset();
-    GetMeter(METER_STOCKPILE)->Reset();
-    GetMeter(METER_MAX_STOCKPILE)->Reset();
-    GetMeter(METER_SHIELD)->Reset();
-    GetMeter(METER_MAX_SHIELD)->Reset();
-    GetMeter(METER_DEFENSE)->Reset();
-    GetMeter(METER_MAX_DEFENSE)->Reset();
-    GetMeter(METER_DETECTION)->Reset();
-    GetMeter(METER_REBEL_TROOPS)->Reset();
+    GetMeter(MeterType::METER_SUPPLY)->Reset();
+    GetMeter(MeterType::METER_MAX_SUPPLY)->Reset();
+    GetMeter(MeterType::METER_STOCKPILE)->Reset();
+    GetMeter(MeterType::METER_MAX_STOCKPILE)->Reset();
+    GetMeter(MeterType::METER_SHIELD)->Reset();
+    GetMeter(MeterType::METER_MAX_SHIELD)->Reset();
+    GetMeter(MeterType::METER_DEFENSE)->Reset();
+    GetMeter(MeterType::METER_MAX_DEFENSE)->Reset();
+    GetMeter(MeterType::METER_DETECTION)->Reset();
+    GetMeter(MeterType::METER_REBEL_TROOPS)->Reset();
 
     if (m_is_about_to_be_colonized && !OwnedBy(ALL_EMPIRES)) {
         for (const auto& building : Objects().find<Building>(m_buildings)) {
@@ -616,10 +616,10 @@ void Planet::Reset() {
 void Planet::Depopulate() {
     PopCenter::Depopulate();
 
-    GetMeter(METER_INDUSTRY)->Reset();
-    GetMeter(METER_RESEARCH)->Reset();
-    GetMeter(METER_INFLUENCE)->Reset();
-    GetMeter(METER_CONSTRUCTION)->Reset();
+    GetMeter(MeterType::METER_INDUSTRY)->Reset();
+    GetMeter(MeterType::METER_RESEARCH)->Reset();
+    GetMeter(MeterType::METER_INFLUENCE)->Reset();
+    GetMeter(MeterType::METER_CONSTRUCTION)->Reset();
 
     ClearFocus();
 }
@@ -637,17 +637,17 @@ void Planet::Conquer(int conquerer) {
         // determine what to do with building of this type...
         const CaptureResult cap_result = type->GetCaptureResult(building->Owner(), conquerer, this->ID(), false);
 
-        if (cap_result == CR_CAPTURE) {
+        if (cap_result == CaptureResult::CR_CAPTURE) {
             // replace ownership
             building->SetOwner(conquerer);
-        } else if (cap_result == CR_DESTROY) {
+        } else if (cap_result == CaptureResult::CR_DESTROY) {
             // destroy object
             //DebugLogger() << "Planet::Conquer destroying object: " << building->Name();
             this->RemoveBuilding(building->ID());
             if (auto system = Objects().get<System>(this->SystemID()))
                 system->Remove(building->ID());
             GetUniverse().Destroy(building->ID());
-        } else if (cap_result == CR_RETAIN) {
+        } else if (cap_result == CaptureResult::CR_RETAIN) {
             // do nothing
         }
     }
@@ -655,26 +655,26 @@ void Planet::Conquer(int conquerer) {
     // replace ownership
     SetOwner(conquerer);
 
-    GetMeter(METER_SUPPLY)->SetCurrent(0.0f);
-    GetMeter(METER_SUPPLY)->BackPropagate();
-    GetMeter(METER_STOCKPILE)->SetCurrent(0.0f);
-    GetMeter(METER_STOCKPILE)->BackPropagate();
-    GetMeter(METER_INDUSTRY)->SetCurrent(0.0f);
-    GetMeter(METER_INDUSTRY)->BackPropagate();
-    GetMeter(METER_RESEARCH)->SetCurrent(0.0f);
-    GetMeter(METER_RESEARCH)->BackPropagate();
-    GetMeter(METER_INFLUENCE)->SetCurrent(0.0f);
-    GetMeter(METER_INFLUENCE)->BackPropagate();
-    GetMeter(METER_CONSTRUCTION)->SetCurrent(0.0f);
-    GetMeter(METER_CONSTRUCTION)->BackPropagate();
-    GetMeter(METER_DEFENSE)->SetCurrent(0.0f);
-    GetMeter(METER_DEFENSE)->BackPropagate();
-    GetMeter(METER_SHIELD)->SetCurrent(0.0f);
-    GetMeter(METER_SHIELD)->BackPropagate();
-    GetMeter(METER_HAPPINESS)->SetCurrent(0.0f);
-    GetMeter(METER_HAPPINESS)->BackPropagate();
-    GetMeter(METER_DETECTION)->SetCurrent(0.0f);
-    GetMeter(METER_DETECTION)->BackPropagate();
+    GetMeter(MeterType::METER_SUPPLY)->SetCurrent(0.0f);
+    GetMeter(MeterType::METER_SUPPLY)->BackPropagate();
+    GetMeter(MeterType::METER_STOCKPILE)->SetCurrent(0.0f);
+    GetMeter(MeterType::METER_STOCKPILE)->BackPropagate();
+    GetMeter(MeterType::METER_INDUSTRY)->SetCurrent(0.0f);
+    GetMeter(MeterType::METER_INDUSTRY)->BackPropagate();
+    GetMeter(MeterType::METER_RESEARCH)->SetCurrent(0.0f);
+    GetMeter(MeterType::METER_RESEARCH)->BackPropagate();
+    GetMeter(MeterType::METER_INFLUENCE)->SetCurrent(0.0f);
+    GetMeter(MeterType::METER_INFLUENCE)->BackPropagate();
+    GetMeter(MeterType::METER_CONSTRUCTION)->SetCurrent(0.0f);
+    GetMeter(MeterType::METER_CONSTRUCTION)->BackPropagate();
+    GetMeter(MeterType::METER_DEFENSE)->SetCurrent(0.0f);
+    GetMeter(MeterType::METER_DEFENSE)->BackPropagate();
+    GetMeter(MeterType::METER_SHIELD)->SetCurrent(0.0f);
+    GetMeter(MeterType::METER_SHIELD)->BackPropagate();
+    GetMeter(MeterType::METER_HAPPINESS)->SetCurrent(0.0f);
+    GetMeter(MeterType::METER_HAPPINESS)->BackPropagate();
+    GetMeter(MeterType::METER_DETECTION)->SetCurrent(0.0f);
+    GetMeter(MeterType::METER_DETECTION)->BackPropagate();
 }
 
 void Planet::SetSpecies(std::string species_name) {
@@ -695,7 +695,7 @@ bool Planet::Colonize(int empire_id, std::string species_name, double population
             return false;
         }
         // check if specified species can colonize this planet
-        if (EnvironmentForSpecies(species_name) < PE_HOSTILE) {
+        if (EnvironmentForSpecies(species_name) < PlanetEnvironment::PE_HOSTILE) {
             ErrorLogger() << "Planet::Colonize: can't colonize planet with species " << species_name << " because planet is "
                           << m_type << " which for that species is environment: " << EnvironmentForSpecies(species_name);
             return false;
@@ -745,8 +745,8 @@ bool Planet::Colonize(int empire_id, std::string species_name, double population
     }
 
     // set colony population
-    GetMeter(METER_POPULATION)->SetCurrent(population);
-    GetMeter(METER_TARGET_POPULATION)->SetCurrent(population);
+    GetMeter(MeterType::METER_POPULATION)->SetCurrent(population);
+    GetMeter(MeterType::METER_TARGET_POPULATION)->SetCurrent(population);
     BackPropagateMeters();
 
 
@@ -814,7 +814,7 @@ void Planet::PopGrowthProductionResearchPhase() {
     // should be run after a meter update, but before a backpropagation, so check current, not initial, meter values
 
     // check for colonies without positive population, and change to outposts
-    if (!SpeciesName().empty() && GetMeter(METER_POPULATION)->Current() <= 0.0f) {
+    if (!SpeciesName().empty() && GetMeter(MeterType::METER_POPULATION)->Current() <= 0.0f) {
         if (Empire* empire = GetEmpire(this->Owner())) {
             empire->AddSitRepEntry(CreatePlanetDepopulatedSitRep(this->ID()));
 
@@ -833,13 +833,13 @@ void Planet::ResetTargetMaxUnpairedMeters() {
     ResourceCenterResetTargetMaxUnpairedMeters();
     PopCenterResetTargetMaxUnpairedMeters();
 
-    GetMeter(METER_MAX_SUPPLY)->ResetCurrent();
-    GetMeter(METER_MAX_STOCKPILE)->ResetCurrent();
-    GetMeter(METER_MAX_SHIELD)->ResetCurrent();
-    GetMeter(METER_MAX_DEFENSE)->ResetCurrent();
-    GetMeter(METER_MAX_TROOPS)->ResetCurrent();
-    GetMeter(METER_REBEL_TROOPS)->ResetCurrent();
-    GetMeter(METER_DETECTION)->ResetCurrent();
+    GetMeter(MeterType::METER_MAX_SUPPLY)->ResetCurrent();
+    GetMeter(MeterType::METER_MAX_STOCKPILE)->ResetCurrent();
+    GetMeter(MeterType::METER_MAX_SHIELD)->ResetCurrent();
+    GetMeter(MeterType::METER_MAX_DEFENSE)->ResetCurrent();
+    GetMeter(MeterType::METER_MAX_TROOPS)->ResetCurrent();
+    GetMeter(MeterType::METER_REBEL_TROOPS)->ResetCurrent();
+    GetMeter(MeterType::METER_DETECTION)->ResetCurrent();
 }
 
 void Planet::ClampMeters() {
@@ -847,17 +847,17 @@ void Planet::ClampMeters() {
     ResourceCenterClampMeters();
     PopCenterClampMeters();
 
-    UniverseObject::GetMeter(METER_MAX_SHIELD)->ClampCurrentToRange();
-    UniverseObject::GetMeter(METER_SHIELD)->ClampCurrentToRange(Meter::DEFAULT_VALUE, UniverseObject::GetMeter(METER_MAX_SHIELD)->Current());
-    UniverseObject::GetMeter(METER_MAX_DEFENSE)->ClampCurrentToRange();
-    UniverseObject::GetMeter(METER_DEFENSE)->ClampCurrentToRange(Meter::DEFAULT_VALUE, UniverseObject::GetMeter(METER_MAX_DEFENSE)->Current());
-    UniverseObject::GetMeter(METER_MAX_TROOPS)->ClampCurrentToRange();
-    UniverseObject::GetMeter(METER_TROOPS)->ClampCurrentToRange(Meter::DEFAULT_VALUE, UniverseObject::GetMeter(METER_MAX_TROOPS)->Current());
-    UniverseObject::GetMeter(METER_MAX_SUPPLY)->ClampCurrentToRange();
-    UniverseObject::GetMeter(METER_SUPPLY)->ClampCurrentToRange(Meter::DEFAULT_VALUE, UniverseObject::GetMeter(METER_MAX_SUPPLY)->Current());
-    UniverseObject::GetMeter(METER_MAX_STOCKPILE)->ClampCurrentToRange();
-    UniverseObject::GetMeter(METER_STOCKPILE)->ClampCurrentToRange(Meter::DEFAULT_VALUE, UniverseObject::GetMeter(METER_MAX_STOCKPILE)->Current());
+    UniverseObject::GetMeter(MeterType::METER_MAX_SHIELD)->ClampCurrentToRange();
+    UniverseObject::GetMeter(MeterType::METER_SHIELD)->ClampCurrentToRange(Meter::DEFAULT_VALUE, UniverseObject::GetMeter(MeterType::METER_MAX_SHIELD)->Current());
+    UniverseObject::GetMeter(MeterType::METER_MAX_DEFENSE)->ClampCurrentToRange();
+    UniverseObject::GetMeter(MeterType::METER_DEFENSE)->ClampCurrentToRange(Meter::DEFAULT_VALUE, UniverseObject::GetMeter(MeterType::METER_MAX_DEFENSE)->Current());
+    UniverseObject::GetMeter(MeterType::METER_MAX_TROOPS)->ClampCurrentToRange();
+    UniverseObject::GetMeter(MeterType::METER_TROOPS)->ClampCurrentToRange(Meter::DEFAULT_VALUE, UniverseObject::GetMeter(MeterType::METER_MAX_TROOPS)->Current());
+    UniverseObject::GetMeter(MeterType::METER_MAX_SUPPLY)->ClampCurrentToRange();
+    UniverseObject::GetMeter(MeterType::METER_SUPPLY)->ClampCurrentToRange(Meter::DEFAULT_VALUE, UniverseObject::GetMeter(MeterType::METER_MAX_SUPPLY)->Current());
+    UniverseObject::GetMeter(MeterType::METER_MAX_STOCKPILE)->ClampCurrentToRange();
+    UniverseObject::GetMeter(MeterType::METER_STOCKPILE)->ClampCurrentToRange(Meter::DEFAULT_VALUE, UniverseObject::GetMeter(MeterType::METER_MAX_STOCKPILE)->Current());
 
-    UniverseObject::GetMeter(METER_REBEL_TROOPS)->ClampCurrentToRange();
-    UniverseObject::GetMeter(METER_DETECTION)->ClampCurrentToRange();
+    UniverseObject::GetMeter(MeterType::METER_REBEL_TROOPS)->ClampCurrentToRange();
+    UniverseObject::GetMeter(MeterType::METER_DETECTION)->ClampCurrentToRange();
 }

@@ -86,7 +86,7 @@ std::shared_ptr<GG::Button> CUIStyle::NewScrollDownButton(GG::Clr color) const
 
 std::shared_ptr<GG::Button> CUIStyle::NewVScrollTabButton(GG::Clr color) const
 {
-    return GG::Wnd::Create<CUIScroll::ScrollTab>(GG::VERTICAL, 1,
+    return GG::Wnd::Create<CUIScroll::ScrollTab>(GG::Orientation::VERTICAL, 1,
                                                  (color == GG::CLR_ZERO) ? ClientUI::CtrlColor() : color,
                                                  ClientUI::CtrlBorderColor());
 }
@@ -99,16 +99,16 @@ std::shared_ptr<GG::Button> CUIStyle::NewScrollRightButton(GG::Clr color) const
 
 std::shared_ptr<GG::Button> CUIStyle::NewHScrollTabButton(GG::Clr color) const
 {
-    return GG::Wnd::Create<CUIScroll::ScrollTab>(GG::HORIZONTAL, 1,
+    return GG::Wnd::Create<CUIScroll::ScrollTab>(GG::Orientation::HORIZONTAL, 1,
                                                  (color == GG::CLR_ZERO) ? ClientUI::CtrlColor() : color,
                                                  ClientUI::CtrlBorderColor());
 }
 
 std::shared_ptr<GG::Button> CUIStyle::NewVSliderTabButton(GG::Clr color) const
-{ return GG::Wnd::Create<CUIScroll::ScrollTab>(GG::VERTICAL, 0, ClientUI::CtrlColor(), ClientUI::CtrlBorderColor()); }
+{ return GG::Wnd::Create<CUIScroll::ScrollTab>(GG::Orientation::VERTICAL, 0, ClientUI::CtrlColor(), ClientUI::CtrlBorderColor()); }
 
 std::shared_ptr<GG::Button> CUIStyle::NewHSliderTabButton(GG::Clr color) const
-{ return GG::Wnd::Create<CUIScroll::ScrollTab>(GG::HORIZONTAL, 0, ClientUI::CtrlColor(), ClientUI::CtrlBorderColor()); }
+{ return GG::Wnd::Create<CUIScroll::ScrollTab>(GG::Orientation::HORIZONTAL, 0, ClientUI::CtrlColor(), ClientUI::CtrlBorderColor()); }
 
 std::shared_ptr<GG::Button> CUIStyle::NewSpinIncrButton(
     const std::shared_ptr<GG::Font>& font, GG::Clr color) const

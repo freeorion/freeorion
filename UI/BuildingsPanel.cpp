@@ -44,7 +44,7 @@ namespace {
     }
 
     bool ClientPlayerIsModerator()
-    { return HumanClientApp::GetApp()->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR; }
+    { return HumanClientApp::GetApp()->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR; }
 }
 
 BuildingsPanel::BuildingsPanel(GG::X w, int columns, int planet_id) :
@@ -140,8 +140,8 @@ void BuildingsPanel::Update() {
     int queue_index = -1;
     for (const auto& elem : empire->GetProductionQueue()) {
         ++queue_index;
-        if (elem.item.build_type != BT_BUILDING) continue;  // don't show in-progress ships in BuildingsPanel...
-        if (elem.location != m_planet_id) continue;         // don't show buildings located elsewhere
+        if (elem.item.build_type != BuildType::BT_BUILDING) continue;   // don't show in-progress ships in BuildingsPanel...
+        if (elem.location != m_planet_id) continue;                     // don't show buildings located elsewhere
 
         double total_cost;
         int total_turns;
@@ -316,7 +316,7 @@ void BuildingIndicator::Render() {
         return;
     if (m_building_id == INVALID_OBJECT_ID)
         return;
-    if (GetUniverse().GetObjectVisibilityByEmpire(m_building_id, empire_id) >= VIS_BASIC_VISIBILITY)
+    if (GetUniverse().GetObjectVisibilityByEmpire(m_building_id, empire_id) >= Visibility::VIS_BASIC_VISIBILITY)
         return;
 
     s_scanline_shader.StartUsing();
@@ -365,8 +365,8 @@ void BuildingIndicator::Refresh() {
         AttachChild(m_graphic);
 
         std::string desc = UserString(type->Description());
-        if (building->GetMeter(METER_STEALTH))
-            desc = UserString("METER_STEALTH") + boost::io::str(boost::format(": %3.1f\n\n") % building->GetMeter(METER_STEALTH)->Current()) + desc;
+        if (building->GetMeter(MeterType::METER_STEALTH))
+            desc = UserString("METER_STEALTH") + boost::io::str(boost::format(": %3.1f\n\n") % building->GetMeter(MeterType::METER_STEALTH)->Current()) + desc;
         if (GetOptionsDB().Get<bool>("resource.effects.description.shown") && !type->Effects().empty())
             desc += "\n" + Dump(type->Effects());
 
@@ -405,13 +405,17 @@ void BuildingIndicator::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
         return;
 
     const auto& map_wnd = ClientUI::GetClientUI()->GetMapWnd();
-    if (ClientPlayerIsModerator() && map_wnd->GetModeratorActionSetting() != MAS_NoAction) {
+    if (ClientPlayerIsModerator() &&
+        map_wnd->GetModeratorActionSetting() != ModeratorActionSetting::MAS_NoAction)
+    {
         RightClickedSignal(m_building_id);  // response handled in MapWnd
         return;
     }
 
-    auto scrap_building_action = [this, empire_id]()
-    { HumanClientApp::GetApp()->Orders().IssueOrder(std::make_shared<ScrapOrder>(empire_id, m_building_id)); };
+    auto scrap_building_action = [this, empire_id]() {
+        HumanClientApp::GetApp()->Orders().IssueOrder(
+        std::make_shared<ScrapOrder>(empire_id, m_building_id));
+    };
 
     auto un_scrap_building_action = [building]() {
         // find order to scrap this building, and recind it

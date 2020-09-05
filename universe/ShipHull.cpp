@@ -35,8 +35,8 @@ namespace {
 
         auto vr =
             std::make_unique<ValueRef::Operation<double>>(
-                ValueRef::PLUS,
-                std::make_unique<ValueRef::Variable<double>>(ValueRef::EFFECT_TARGET_VALUE_REFERENCE),
+                ValueRef::OpType::PLUS,
+                std::make_unique<ValueRef::Variable<double>>(ValueRef::ReferenceType::EFFECT_TARGET_VALUE_REFERENCE),
                 std::move(increase_vr)
             );
         std::vector<std::unique_ptr<Effect::Effect>> effects;
@@ -66,7 +66,7 @@ namespace {
             return IncreaseMeter(meter_type, base_increase);
 
         auto increase_vr = std::make_unique<ValueRef::Operation<double>>(
-            ValueRef::TIMES,
+            ValueRef::OpType::TIMES,
             std::make_unique<ValueRef::Constant<double>>(base_increase),
             std::make_unique<ValueRef::ComplexVariable<double>>(
                 "GameRule", nullptr, nullptr, nullptr,
@@ -118,10 +118,6 @@ ShipHull::ShipHull(float fuel, float speed, float stealth, float structure,
         m_tags.emplace(boost::to_upper_copy<std::string>(tag));
 }
 
-ShipHull::Slot::Slot() :
-    type(INVALID_SHIP_SLOT_TYPE)
-{}
-
 ShipHull::~ShipHull() {}
 
 void ShipHull::Init(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
@@ -131,13 +127,13 @@ void ShipHull::Init(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects
                     bool default_structure_effects)
 {
     if (default_fuel_effects && m_fuel != 0)
-        m_effects.emplace_back(IncreaseMeter(METER_MAX_FUEL,        m_fuel));
+        m_effects.emplace_back(IncreaseMeter(MeterType::METER_MAX_FUEL,      m_fuel));
     if (default_stealth_effects && m_stealth != 0)
-        m_effects.emplace_back(IncreaseMeter(METER_STEALTH,         m_stealth));
+        m_effects.emplace_back(IncreaseMeter(MeterType::METER_STEALTH,       m_stealth));
     if (default_structure_effects && m_structure != 0)
-        m_effects.emplace_back(IncreaseMeter(METER_MAX_STRUCTURE,   m_structure,    "RULE_SHIP_STRUCTURE_FACTOR"));
+        m_effects.emplace_back(IncreaseMeter(MeterType::METER_MAX_STRUCTURE, m_structure, "RULE_SHIP_STRUCTURE_FACTOR"));
     if (default_speed_effects && m_speed != 0)
-        m_effects.emplace_back(IncreaseMeter(METER_SPEED,           m_speed,        "RULE_SHIP_SPEED_FACTOR"));
+        m_effects.emplace_back(IncreaseMeter(MeterType::METER_SPEED,         m_speed,     "RULE_SHIP_SPEED_FACTOR"));
 
     if (m_production_cost)
         m_production_cost->SetTopLevelContent(m_name);

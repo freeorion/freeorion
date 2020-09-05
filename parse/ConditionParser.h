@@ -10,9 +10,9 @@
 #include <boost/spirit/include/qi.hpp>
 
 namespace Condition {
-    enum SortingMethod : int;
-    enum ComparisonType : int;
-    enum ContentType : int;
+    enum class SortingMethod : int;
+    enum class ComparisonType : int;
+    enum class ContentType : int;
     struct Condition;
 }
 

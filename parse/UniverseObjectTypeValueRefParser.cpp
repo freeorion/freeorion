@@ -19,15 +19,15 @@ namespace parse { namespace detail {
             ;
 
         enum_expr
-            =   tok.Building_           [ _val = OBJ_BUILDING ]
-            |   tok.Ship_               [ _val = OBJ_SHIP ]
-            |   tok.Fleet_              [ _val = OBJ_FLEET ]
-            |   tok.Planet_             [ _val = OBJ_PLANET ]
-            |   tok.PopulationCenter_   [ _val = OBJ_POP_CENTER ]
-            |   tok.ProductionCenter_   [ _val = OBJ_PROD_CENTER ]
-            |   tok.System_             [ _val = OBJ_SYSTEM ]
-            |   tok.Field_              [ _val = OBJ_FIELD ]
-            |   tok.Fighter_            [ _val = OBJ_FIGHTER ]
+            =   tok.Building_           [ _val = UniverseObjectType::OBJ_BUILDING ]
+            |   tok.Ship_               [ _val = UniverseObjectType::OBJ_SHIP ]
+            |   tok.Fleet_              [ _val = UniverseObjectType::OBJ_FLEET ]
+            |   tok.Planet_             [ _val = UniverseObjectType::OBJ_PLANET ]
+            |   tok.PopulationCenter_   [ _val = UniverseObjectType::OBJ_POP_CENTER ]
+            |   tok.ProductionCenter_   [ _val = UniverseObjectType::OBJ_PROD_CENTER ]
+            |   tok.System_             [ _val = UniverseObjectType::OBJ_SYSTEM ]
+            |   tok.Field_              [ _val = UniverseObjectType::OBJ_FIELD ]
+            |   tok.Fighter_            [ _val = UniverseObjectType::OBJ_FIGHTER ]
             ;
     }
 }

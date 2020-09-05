@@ -39,8 +39,7 @@ Button::Button(std::string str, const std::shared_ptr<Font>& font, Clr color,
                Clr text_color/* = CLR_BLACK*/, Flags<WndFlag> flags/* = INTERACTIVE*/) :
     Control(X0, Y0, X1, Y1, flags),
     m_label(Wnd::Create<TextControl>(X0, Y0, X1, Y1, std::move(str), font,
-                                     text_color, FORMAT_NONE, NO_WND_FLAGS)),
-    m_state(BN_UNPRESSED)
+                                     text_color, FORMAT_NONE, NO_WND_FLAGS))
 {
     m_color = color;
     m_label->Hide();
@@ -79,9 +78,9 @@ const SubTexture& Button::RolloverGraphic() const
 void Button::Render()
 {
     switch (m_state) {
-    case BN_PRESSED:   RenderPressed(); break;
-    case BN_UNPRESSED: RenderUnpressed(); break;
-    case BN_ROLLOVER:  RenderRollover(); break;
+    case ButtonState::BN_PRESSED:   RenderPressed(); break;
+    case ButtonState::BN_UNPRESSED: RenderUnpressed(); break;
+    case ButtonState::BN_ROLLOVER:  RenderRollover(); break;
     }
 }
 
@@ -119,30 +118,30 @@ void Button::LButtonDown(const Pt& pt, Flags<ModKey> mod_keys)
         return;
 
     ButtonState prev_state = m_state;
-    m_state = BN_PRESSED;
-    if (prev_state == BN_PRESSED && RepeatButtonDown())
+    m_state = ButtonState::BN_PRESSED;
+    if (prev_state == ButtonState::BN_PRESSED && RepeatButtonDown())
         LeftClickedSignal();
-    else if (prev_state != BN_PRESSED)
+    else if (prev_state != ButtonState::BN_PRESSED)
         LeftPressedSignal();
 }
 
 void Button::LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
 {
     if (!Disabled())
-        m_state = BN_PRESSED;
+        m_state = ButtonState::BN_PRESSED;
     Wnd::LDrag(pt, move, mod_keys);
 }
 
 void Button::LButtonUp(const Pt& pt, Flags<ModKey> mod_keys)
 {
     if (!Disabled())
-        m_state = BN_UNPRESSED;
+        m_state = ButtonState::BN_UNPRESSED;
 }
 
 void Button::LClick(const Pt& pt, Flags<ModKey> mod_keys)
 {
     if (!Disabled()) {
-        m_state = BN_ROLLOVER;
+        m_state = ButtonState::BN_ROLLOVER;
         LeftClickedSignal();
     }
 }
@@ -153,30 +152,30 @@ void Button::RButtonDown(const Pt& pt, Flags<ModKey> mod_keys)
         return;
 
     ButtonState prev_state = m_state;
-    m_state = BN_PRESSED;
-    if (prev_state == BN_PRESSED && RepeatButtonDown())
+    m_state = ButtonState::BN_PRESSED;
+    if (prev_state == ButtonState::BN_PRESSED && RepeatButtonDown())
         RightClickedSignal();
-    else if (prev_state != BN_PRESSED)
+    else if (prev_state != ButtonState::BN_PRESSED)
         RightPressedSignal();
 }
 
 void Button::RDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
 {
     if (!Disabled())
-        m_state = BN_PRESSED;
+        m_state = ButtonState::BN_PRESSED;
     Wnd::LDrag(pt, move, mod_keys);
 }
 
 void Button::RButtonUp(const Pt& pt, Flags<ModKey> mod_keys)
 {
     if (!Disabled())
-        m_state = BN_UNPRESSED;
+        m_state = ButtonState::BN_UNPRESSED;
 }
 
 void Button::RClick(const Pt& pt, Flags<ModKey> mod_keys)
 {
     if (!Disabled()) {
-        m_state = BN_ROLLOVER;
+        m_state = ButtonState::BN_ROLLOVER;
         RightClickedSignal();
     }
 }
@@ -184,19 +183,19 @@ void Button::RClick(const Pt& pt, Flags<ModKey> mod_keys)
 void Button::MouseEnter(const Pt& pt, Flags<ModKey> mod_keys)
 {
     if (!Disabled())
-        m_state = BN_ROLLOVER;
+        m_state = ButtonState::BN_ROLLOVER;
 }
 
 void Button::MouseHere(const Pt& pt, Flags<ModKey> mod_keys)
 {
     if (!Disabled())
-        m_state = BN_ROLLOVER;
+        m_state = ButtonState::BN_ROLLOVER;
 }
 
 void Button::MouseLeave()
 {
     if (!Disabled())
-        m_state = BN_UNPRESSED;
+        m_state = ButtonState::BN_UNPRESSED;
 }
 
 void Button::RenderUnpressed()
@@ -256,7 +255,7 @@ void Button::RenderDefault()
     BeveledRectangle(ul, lr,
                      Disabled() ? DisabledColor(m_color) : m_color,
                      Disabled() ? DisabledColor(m_color) : m_color,
-                     (m_state != BN_PRESSED), 1);
+                     (m_state != ButtonState::BN_PRESSED), 1);
 }
 
 
@@ -269,8 +268,9 @@ StateButton::StateButton(std::string str, const std::shared_ptr<Font>& font,
                          Clr text_color/* = CLR_BLACK*/) :
     Control(X0, Y0, X1, Y1, INTERACTIVE),
     m_representer(std::move(representer)),
-    m_label(Wnd::Create<TextControl>(X0, Y0, X1, Y1, std::move(str), font, text_color, format, NO_WND_FLAGS)),
-    m_state(BN_UNPRESSED),
+    m_label(Wnd::Create<TextControl>(X0, Y0, X1, Y1, std::move(str), font,
+                                     text_color, format, NO_WND_FLAGS)),
+    m_state(ButtonState::BN_UNPRESSED),
     m_checked(false)
 {
     m_color = color;
@@ -315,16 +315,16 @@ void StateButton::Show()
 }
 
 void StateButton::LButtonDown(const Pt& pt, Flags<ModKey> mod_keys)
-{ SetState(BN_PRESSED); }
+{ SetState(ButtonState::BN_PRESSED); }
 
 void StateButton::LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
 {
-    SetState(BN_PRESSED);
+    SetState(ButtonState::BN_PRESSED);
     Wnd::LDrag(pt, move, mod_keys);
 }
 
 void StateButton::LButtonUp(const Pt& pt, Flags<ModKey> mod_keys)
-{ SetState(BN_UNPRESSED); }
+{ SetState(ButtonState::BN_UNPRESSED); }
 
 void StateButton::LClick(const Pt& pt, Flags<ModKey> mod_keys)
 {
@@ -337,10 +337,10 @@ void StateButton::LClick(const Pt& pt, Flags<ModKey> mod_keys)
 }
 
 void StateButton::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{ SetState(BN_ROLLOVER); }
+{ SetState(ButtonState::BN_ROLLOVER); }
 
 void StateButton::MouseLeave()
-{ SetState(BN_UNPRESSED); }
+{ SetState(ButtonState::BN_UNPRESSED); }
 
 void StateButton::SetState(ButtonState next_state) {
     if (!Disabled() && next_state != m_state) {
@@ -581,7 +581,7 @@ Pt RadioButtonGroup::MinUsableSize() const
     Pt retval;
     for (const ButtonSlot& button_slot : m_button_slots) {
         Pt min_usable_size = button_slot.button->MinUsableSize();
-        if (m_orientation == VERTICAL) {
+        if (m_orientation == Orientation::VERTICAL) {
             retval.x = std::max(retval.x, min_usable_size.x);
             retval.y += min_usable_size.y;
         } else {
@@ -667,13 +667,13 @@ void RadioButtonGroup::InsertButton(std::size_t index, std::shared_ptr<StateButt
     if (m_button_slots.empty()) {
         layout->Add(bn, 0, 0);
         if (m_expand_buttons) {
-            if (m_orientation == VERTICAL)
+            if (m_orientation == Orientation::VERTICAL)
                 layout->SetRowStretch(0, Y_STRETCH);
             else
                 layout->SetColumnStretch(0, X_STRETCH);
         }
     } else {
-        if (m_orientation == VERTICAL) {
+        if (m_orientation == Orientation::VERTICAL) {
             layout->ResizeLayout(layout->Rows() + CELLS_PER_BUTTON, 1);
             layout->SetRowStretch(layout->Rows() - CELLS_PER_BUTTON, Y_STRETCH);
         } else {
@@ -683,16 +683,16 @@ void RadioButtonGroup::InsertButton(std::size_t index, std::shared_ptr<StateButt
         for (std::size_t i = m_button_slots.size() - 1; index <= i; --i) {
             layout->Remove(m_button_slots[i].button.get());
             layout->Add(m_button_slots[i].button,
-                        m_orientation == VERTICAL ? i * CELLS_PER_BUTTON + CELLS_PER_BUTTON : 0,
-                        m_orientation == VERTICAL ? 0 : i * CELLS_PER_BUTTON + CELLS_PER_BUTTON);
-            if (m_orientation == VERTICAL)
+                        m_orientation == Orientation::VERTICAL ? i * CELLS_PER_BUTTON + CELLS_PER_BUTTON : 0,
+                        m_orientation == Orientation::VERTICAL ? 0 : i * CELLS_PER_BUTTON + CELLS_PER_BUTTON);
+            if (m_orientation == Orientation::VERTICAL)
                 layout->SetMinimumRowHeight(i * CELLS_PER_BUTTON + CELLS_PER_BUTTON, layout->MinimumRowHeight(i * CELLS_PER_BUTTON));
             else
                 layout->SetMinimumColumnWidth(i * CELLS_PER_BUTTON + CELLS_PER_BUTTON, layout->MinimumColumnWidth(i * CELLS_PER_BUTTON));
         }
-        layout->Add(bn, m_orientation == VERTICAL ? index * CELLS_PER_BUTTON : 0, m_orientation == VERTICAL ? 0 : index * CELLS_PER_BUTTON);
+        layout->Add(bn, m_orientation == Orientation::VERTICAL ? index * CELLS_PER_BUTTON : 0, m_orientation == Orientation::VERTICAL ? 0 : index * CELLS_PER_BUTTON);
     }
-    if (m_orientation == VERTICAL)
+    if (m_orientation == Orientation::VERTICAL)
         layout->SetMinimumRowHeight(index * CELLS_PER_BUTTON, bn_sz.y);
     else
         layout->SetMinimumColumnWidth(index * CELLS_PER_BUTTON, bn_sz.x);
@@ -719,7 +719,7 @@ void RadioButtonGroup::RemoveButton(StateButton* button)
     layout->Remove(m_button_slots[index].button.get());
     for (std::size_t i = index + 1; i < m_button_slots.size(); ++i) {
         layout->Remove(m_button_slots[i].button.get());
-        if (m_orientation == VERTICAL) {
+        if (m_orientation == Orientation::VERTICAL) {
             layout->Add(m_button_slots[i].button, i * CELLS_PER_BUTTON - CELLS_PER_BUTTON, 0);
             layout->SetRowStretch(i * CELLS_PER_BUTTON - CELLS_PER_BUTTON, layout->RowStretch(i * CELLS_PER_BUTTON));
             layout->SetMinimumRowHeight(i * CELLS_PER_BUTTON - CELLS_PER_BUTTON, layout->MinimumRowHeight(i * CELLS_PER_BUTTON));
@@ -734,7 +734,7 @@ void RadioButtonGroup::RemoveButton(StateButton* button)
     if (m_button_slots.empty()) {
         layout->ResizeLayout(1, 1);
     } else {
-        if (m_orientation == VERTICAL)
+        if (m_orientation == Orientation::VERTICAL)
             layout->ResizeLayout(layout->Rows() - CELLS_PER_BUTTON, 1);
         else
             layout->ResizeLayout(1, layout->Columns() - CELLS_PER_BUTTON);

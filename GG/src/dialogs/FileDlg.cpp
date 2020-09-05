@@ -237,9 +237,9 @@ void FileDlg::Render()
 
 void FileDlg::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys)
 {
-    if (key == GGK_RETURN || key == GGK_KP_ENTER)
+    if (key == Key::GGK_RETURN || key == Key::GGK_KP_ENTER)
         OkHandler(false);
-    else if (key == GGK_ESCAPE)
+    else if (key == Key::GGK_ESCAPE)
         CancelClicked();
 }
 

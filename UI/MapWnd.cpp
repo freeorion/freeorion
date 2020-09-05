@@ -174,50 +174,50 @@ namespace {
         db.Add("ui.map.sidepanel.width",                    UserStringNop("OPTIONS_DB_UI_SIDEPANEL_WIDTH"),                     512,                            Validator<int>());
 
         // Register hotkey names/default values for the context "map".
-        Hotkey::AddHotkey("ui.map.open",                    UserStringNop("HOTKEY_MAP_RETURN_TO_MAP"),                          GG::GGK_ESCAPE);
-        Hotkey::AddHotkey("ui.turn.end",                    UserStringNop("HOTKEY_MAP_END_TURN"),                               GG::GGK_RETURN,                 GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("ui.map.sitrep",                  UserStringNop("HOTKEY_MAP_SIT_REP"),                                GG::GGK_n,                      GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("ui.research",                    UserStringNop("HOTKEY_MAP_RESEARCH"),                               GG::GGK_r,                      GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("ui.production",                  UserStringNop("HOTKEY_MAP_PRODUCTION"),                             GG::GGK_p,                      GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("ui.design",                      UserStringNop("HOTKEY_MAP_DESIGN"),                                 GG::GGK_d,                      GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("ui.map.objects",                 UserStringNop("HOTKEY_MAP_OBJECTS"),                                GG::GGK_o,                      GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("ui.map.messages",                UserStringNop("HOTKEY_MAP_MESSAGES"),                               GG::GGK_t,                      GG::MOD_KEY_ALT);
-        Hotkey::AddHotkey("ui.map.empires",                 UserStringNop("HOTKEY_MAP_EMPIRES"),                                GG::GGK_e,                      GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("ui.pedia",                       UserStringNop("HOTKEY_MAP_PEDIA"),                                  GG::GGK_F1);
-        Hotkey::AddHotkey("ui.map.graphs",                  UserStringNop("HOTKEY_MAP_GRAPHS"),                                 GG::GGK_NONE);
-        Hotkey::AddHotkey("ui.gamemenu",                    UserStringNop("HOTKEY_MAP_MENU"),                                   GG::GGK_F10);
-        Hotkey::AddHotkey("ui.zoom.in",                     UserStringNop("HOTKEY_MAP_ZOOM_IN"),                                GG::GGK_z,                      GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("ui.zoom.in.alt",                 UserStringNop("HOTKEY_MAP_ZOOM_IN_ALT"),                            GG::GGK_KP_PLUS,                GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("ui.zoom.out",                    UserStringNop("HOTKEY_MAP_ZOOM_OUT"),                               GG::GGK_x,                      GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("ui.zoom.out.alt",                UserStringNop("HOTKEY_MAP_ZOOM_OUT_ALT"),                           GG::GGK_KP_MINUS,               GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("ui.map.system.zoom.home",        UserStringNop("HOTKEY_MAP_ZOOM_HOME_SYSTEM"),                       GG::GGK_h,                      GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("ui.map.system.zoom.prev",        UserStringNop("HOTKEY_MAP_ZOOM_PREV_SYSTEM"),                       GG::GGK_COMMA,                  GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("ui.map.system.zoom.next",        UserStringNop("HOTKEY_MAP_ZOOM_NEXT_SYSTEM"),                       GG::GGK_PERIOD,                 GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("ui.map.system.owned.zoom.prev",  UserStringNop("HOTKEY_MAP_ZOOM_PREV_OWNED_SYSTEM"),                 GG::GGK_COMMA,                  GG::MOD_KEY_CTRL | GG::MOD_KEY_SHIFT);
-        Hotkey::AddHotkey("ui.map.system.owned.zoom.next",  UserStringNop("HOTKEY_MAP_ZOOM_NEXT_OWNED_SYSTEM"),                 GG::GGK_PERIOD,                 GG::MOD_KEY_CTRL | GG::MOD_KEY_SHIFT);
-        Hotkey::AddHotkey("ui.map.fleet.zoom.prev",         UserStringNop("HOTKEY_MAP_ZOOM_PREV_FLEET"),                        GG::GGK_f,                      GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("ui.map.fleet.zoom.next",         UserStringNop("HOTKEY_MAP_ZOOM_NEXT_FLEET"),                        GG::GGK_g,                      GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("ui.map.fleet.idle.zoom.prev",    UserStringNop("HOTKEY_MAP_ZOOM_PREV_IDLE_FLEET"),                   GG::GGK_f,                      GG::MOD_KEY_ALT);
-        Hotkey::AddHotkey("ui.map.fleet.idle.zoom.next",    UserStringNop("HOTKEY_MAP_ZOOM_NEXT_IDLE_FLEET"),                   GG::GGK_g,                      GG::MOD_KEY_ALT);
+        Hotkey::AddHotkey("ui.map.open",                    UserStringNop("HOTKEY_MAP_RETURN_TO_MAP"),                          GG::Key::GGK_ESCAPE);
+        Hotkey::AddHotkey("ui.turn.end",                    UserStringNop("HOTKEY_MAP_END_TURN"),                               GG::Key::GGK_RETURN,            GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.map.sitrep",                  UserStringNop("HOTKEY_MAP_SIT_REP"),                                GG::Key::GGK_n,                 GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.research",                    UserStringNop("HOTKEY_MAP_RESEARCH"),                               GG::Key::GGK_r,                 GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.production",                  UserStringNop("HOTKEY_MAP_PRODUCTION"),                             GG::Key::GGK_p,                 GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.design",                      UserStringNop("HOTKEY_MAP_DESIGN"),                                 GG::Key::GGK_d,                 GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.map.objects",                 UserStringNop("HOTKEY_MAP_OBJECTS"),                                GG::Key::GGK_o,                 GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.map.messages",                UserStringNop("HOTKEY_MAP_MESSAGES"),                               GG::Key::GGK_t,                 GG::MOD_KEY_ALT);
+        Hotkey::AddHotkey("ui.map.empires",                 UserStringNop("HOTKEY_MAP_EMPIRES"),                                GG::Key::GGK_e,                 GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.pedia",                       UserStringNop("HOTKEY_MAP_PEDIA"),                                  GG::Key::GGK_F1);
+        Hotkey::AddHotkey("ui.map.graphs",                  UserStringNop("HOTKEY_MAP_GRAPHS"),                                 GG::Key::GGK_NONE);
+        Hotkey::AddHotkey("ui.gamemenu",                    UserStringNop("HOTKEY_MAP_MENU"),                                   GG::Key::GGK_F10);
+        Hotkey::AddHotkey("ui.zoom.in",                     UserStringNop("HOTKEY_MAP_ZOOM_IN"),                                GG::Key::GGK_z,                 GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.zoom.in.alt",                 UserStringNop("HOTKEY_MAP_ZOOM_IN_ALT"),                            GG::Key::GGK_KP_PLUS,           GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.zoom.out",                    UserStringNop("HOTKEY_MAP_ZOOM_OUT"),                               GG::Key::GGK_x,                 GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.zoom.out.alt",                UserStringNop("HOTKEY_MAP_ZOOM_OUT_ALT"),                           GG::Key::GGK_KP_MINUS,          GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.map.system.zoom.home",        UserStringNop("HOTKEY_MAP_ZOOM_HOME_SYSTEM"),                       GG::Key::GGK_h,                 GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.map.system.zoom.prev",        UserStringNop("HOTKEY_MAP_ZOOM_PREV_SYSTEM"),                       GG::Key::GGK_COMMA,             GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.map.system.zoom.next",        UserStringNop("HOTKEY_MAP_ZOOM_NEXT_SYSTEM"),                       GG::Key::GGK_PERIOD,            GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.map.system.owned.zoom.prev",  UserStringNop("HOTKEY_MAP_ZOOM_PREV_OWNED_SYSTEM"),                 GG::Key::GGK_COMMA,             GG::MOD_KEY_CTRL | GG::MOD_KEY_SHIFT);
+        Hotkey::AddHotkey("ui.map.system.owned.zoom.next",  UserStringNop("HOTKEY_MAP_ZOOM_NEXT_OWNED_SYSTEM"),                 GG::Key::GGK_PERIOD,            GG::MOD_KEY_CTRL | GG::MOD_KEY_SHIFT);
+        Hotkey::AddHotkey("ui.map.fleet.zoom.prev",         UserStringNop("HOTKEY_MAP_ZOOM_PREV_FLEET"),                        GG::Key::GGK_f,                 GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.map.fleet.zoom.next",         UserStringNop("HOTKEY_MAP_ZOOM_NEXT_FLEET"),                        GG::Key::GGK_g,                 GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.map.fleet.idle.zoom.prev",    UserStringNop("HOTKEY_MAP_ZOOM_PREV_IDLE_FLEET"),                   GG::Key::GGK_f,                 GG::MOD_KEY_ALT);
+        Hotkey::AddHotkey("ui.map.fleet.idle.zoom.next",    UserStringNop("HOTKEY_MAP_ZOOM_NEXT_IDLE_FLEET"),                   GG::Key::GGK_g,                 GG::MOD_KEY_ALT);
 
-        Hotkey::AddHotkey("ui.pan.right",                   UserStringNop("HOTKEY_MAP_PAN_RIGHT"),                              GG::GGK_RIGHT,                  GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("ui.pan.left",                    UserStringNop("HOTKEY_MAP_PAN_LEFT"),                               GG::GGK_LEFT,                   GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("ui.pan.up",                      UserStringNop("HOTKEY_MAP_PAN_UP"),                                 GG::GGK_UP,                     GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("ui.pan.down",                    UserStringNop("HOTKEY_MAP_PAN_DOWN"),                               GG::GGK_DOWN,                   GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.pan.right",                   UserStringNop("HOTKEY_MAP_PAN_RIGHT"),                              GG::Key::GGK_RIGHT,             GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.pan.left",                    UserStringNop("HOTKEY_MAP_PAN_LEFT"),                               GG::Key::GGK_LEFT,              GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.pan.up",                      UserStringNop("HOTKEY_MAP_PAN_UP"),                                 GG::Key::GGK_UP,                GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.pan.down",                    UserStringNop("HOTKEY_MAP_PAN_DOWN"),                               GG::Key::GGK_DOWN,              GG::MOD_KEY_CTRL);
 
-        Hotkey::AddHotkey("ui.map.scale.legend",            UserStringNop("HOTKEY_MAP_TOGGLE_SCALE_LINE"),                      GG::GGK_l,                      GG::MOD_KEY_ALT);
-        Hotkey::AddHotkey("ui.map.scale.circle",            UserStringNop("HOTKEY_MAP_TOGGLE_SCALE_CIRCLE"),                    GG::GGK_c,                      GG::MOD_KEY_ALT);
+        Hotkey::AddHotkey("ui.map.scale.legend",            UserStringNop("HOTKEY_MAP_TOGGLE_SCALE_LINE"),                      GG::Key::GGK_l,                 GG::MOD_KEY_ALT);
+        Hotkey::AddHotkey("ui.map.scale.circle",            UserStringNop("HOTKEY_MAP_TOGGLE_SCALE_CIRCLE"),                    GG::Key::GGK_c,                 GG::MOD_KEY_ALT);
 
-        Hotkey::AddHotkey("ui.cut",                         UserStringNop("HOTKEY_CUT"),                                        GG::GGK_x,                      GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("ui.copy",                        UserStringNop("HOTKEY_COPY"),                                       GG::GGK_c,                      GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("ui.paste",                       UserStringNop("HOTKEY_PASTE"),                                      GG::GGK_v,                      GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.cut",                         UserStringNop("HOTKEY_CUT"),                                        GG::Key::GGK_x,                 GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.copy",                        UserStringNop("HOTKEY_COPY"),                                       GG::Key::GGK_c,                 GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.paste",                       UserStringNop("HOTKEY_PASTE"),                                      GG::Key::GGK_v,                 GG::MOD_KEY_CTRL);
 
-        Hotkey::AddHotkey("ui.select.all",                  UserStringNop("HOTKEY_SELECT_ALL"),                                 GG::GGK_a,                      GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("ui.select.none",                 UserStringNop("HOTKEY_DESELECT"),                                   GG::GGK_d,                      GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.select.all",                  UserStringNop("HOTKEY_SELECT_ALL"),                                 GG::Key::GGK_a,                 GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.select.none",                 UserStringNop("HOTKEY_DESELECT"),                                   GG::Key::GGK_d,                 GG::MOD_KEY_CTRL);
 
         // stepping through UI controls doesn't really work as of this writing, so I'm commenting out these hotkey commands
-        //Hotkey::AddHotkey("ui.focus.prev",                  UserStringNop("HOTKEY_FOCUS_PREV_WND"),                             GG::GGK_NONE);
-        //Hotkey::AddHotkey("ui.focus.next",                  UserStringNop("HOTKEY_FOCUS_NEXT_WND"),                             GG::GGK_NONE);
+        //Hotkey::AddHotkey("ui.focus.prev",                  UserStringNop("HOTKEY_FOCUS_PREV_WND"),                             GG::Key::GGK_NONE);
+        //Hotkey::AddHotkey("ui.focus.next",                  UserStringNop("HOTKEY_FOCUS_NEXT_WND"),                             GG::Key::GGK_NONE);
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
@@ -292,7 +292,7 @@ namespace {
     }
 
     bool ClientPlayerIsModerator()
-    { return HumanClientApp::GetApp()->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR; }
+    { return HumanClientApp::GetApp()->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR; }
 
     void PlayTurnButtonClickSound()
     { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.button.turn.press.sound.path"), true); }
@@ -328,7 +328,7 @@ namespace {
         }
 
         void PreRender() override {
-            SetChildClippingMode(ClipToClient);
+            SetChildClippingMode(ChildClippingMode::ClipToClient);
 
             NewLabelValue(FLEET_DETAIL_SHIP_COUNT, true);
             NewLabelValue(FLEET_DETAIL_ARMED_COUNT);
@@ -677,7 +677,7 @@ public:
             for (const auto& ship : Objects().find<Ship>(fleet->ShipIDs())) {
                 if (!ship)
                     continue;
-                const float ship_range = ship->GetMeter(METER_DETECTION)->Initial();
+                const float ship_range = ship->GetMeter(MeterType::METER_DETECTION)->Initial();
                 if (ship_range > 20)
                     fixed_distances.insert(ship_range);
                 const float ship_speed = ship->Speed();
@@ -690,7 +690,7 @@ public:
             for (const auto& planet : Objects().find<Planet>(system->PlanetIDs())) {
                 if (!planet)
                     continue;
-                const float planet_range = planet->GetMeter(METER_DETECTION)->Initial();
+                const float planet_range = planet->GetMeter(MeterType::METER_DETECTION)->Initial();
                 if (planet_range > 20)
                     fixed_distances.insert(planet_range);
             }
@@ -1216,43 +1216,42 @@ void MapWnd::CompleteConstruction() {
 
 
     // resources
-    m_population = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(METER_POPULATION), 0, 3, false,
-                                                  ICON_SINGLE_WIDTH, m_btn_turn->Height());
+    m_population = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(MeterType::METER_POPULATION),
+                                                  0, 3, false, ICON_SINGLE_WIDTH, m_btn_turn->Height());
     m_population->SetName("Population StatisticIcon");
 
-    m_industry = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(METER_INDUSTRY), 0, 3, false,
-                                                ICON_SINGLE_WIDTH, m_btn_turn->Height());
+    m_industry = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(MeterType::METER_INDUSTRY),
+                                                0, 3, false, ICON_SINGLE_WIDTH, m_btn_turn->Height());
     m_industry->SetName("Industry StatisticIcon");
     m_industry->LeftClickedSignal.connect(boost::bind(&MapWnd::ToggleProduction, this));
 
-    m_stockpile = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(METER_STOCKPILE), 0, 3, false,
-                                                 ICON_DUAL_WIDTH, m_btn_turn->Height());
+    m_stockpile = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(MeterType::METER_STOCKPILE),
+                                                 0, 3, false, ICON_DUAL_WIDTH, m_btn_turn->Height());
     m_stockpile->SetName("Stockpile StatisticIcon");
 
-    m_research = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(METER_RESEARCH), 0, 3, false,
-                                                ICON_SINGLE_WIDTH, m_btn_turn->Height());
+    m_research = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(MeterType::METER_RESEARCH),
+                                                0, 3, false, ICON_SINGLE_WIDTH, m_btn_turn->Height());
     m_research->SetName("Research StatisticIcon");
     m_research->LeftClickedSignal.connect(boost::bind(&MapWnd::ToggleResearch, this));
 
-    m_influence = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(METER_INFLUENCE), 0, 3, false,
-                                                 ICON_DUAL_WIDTH, m_btn_turn->Height());
+    m_influence = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(MeterType::METER_INFLUENCE),
+                                                 0, 3, false, ICON_DUAL_WIDTH, m_btn_turn->Height());
     m_influence->SetName("Influence StatisticIcon");
 
     m_fleet = GG::Wnd::Create<StatisticIcon>(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "sitrep" / "fleet_arrived.png"),
-                                             0, 3, false,
-                                             ICON_SINGLE_WIDTH, m_btn_turn->Height());
+                                             0, 3, false, ICON_SINGLE_WIDTH, m_btn_turn->Height());
     m_fleet->SetName("Fleet StatisticIcon");
 
-    m_detection = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(METER_DETECTION), 0, 3, false,
-                                                 ICON_SINGLE_WIDTH, m_btn_turn->Height());
+    m_detection = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(MeterType::METER_DETECTION),
+                                                 0, 3, false, ICON_SINGLE_WIDTH, m_btn_turn->Height());
     m_detection->SetName("Detection StatisticIcon");
 
-    GG::SubTexture wasted_ressource_subtexture = GG::SubTexture(ClientUI::GetTexture(button_texture_dir /
-                                                                "wasted_resource.png", false));
-    GG::SubTexture wasted_ressource_mouseover_subtexture = GG::SubTexture(ClientUI::GetTexture(button_texture_dir /
-                                                                "wasted_resource_mouseover.png", false));
-    GG::SubTexture wasted_ressource_clicked_subtexture = GG::SubTexture(ClientUI::GetTexture(button_texture_dir /
-                                                                "wasted_resource_clicked.png", false));
+    GG::SubTexture wasted_ressource_subtexture = GG::SubTexture(
+        ClientUI::GetTexture(button_texture_dir / "wasted_resource.png", false));
+    GG::SubTexture wasted_ressource_mouseover_subtexture = GG::SubTexture(
+        ClientUI::GetTexture(button_texture_dir / "wasted_resource_mouseover.png", false));
+    GG::SubTexture wasted_ressource_clicked_subtexture = GG::SubTexture(
+        ClientUI::GetTexture(button_texture_dir / "wasted_resource_clicked.png", false));
 
     m_industry_wasted = Wnd::Create<CUIButton>(
         wasted_ressource_subtexture,
@@ -1361,7 +1360,9 @@ void MapWnd::CompleteConstruction() {
     // Zoom slider
     const int ZOOM_SLIDER_MIN = static_cast<int>(ZOOM_IN_MIN_STEPS),
               ZOOM_SLIDER_MAX = static_cast<int>(ZOOM_IN_MAX_STEPS);
-    m_zoom_slider = GG::Wnd::Create<CUISlider<double>>(ZOOM_SLIDER_MIN, ZOOM_SLIDER_MAX, GG::VERTICAL, GG::INTERACTIVE | GG::ONTOP);
+    m_zoom_slider = GG::Wnd::Create<CUISlider<double>>(ZOOM_SLIDER_MIN, ZOOM_SLIDER_MAX,
+                                                       GG::Orientation::VERTICAL,
+                                                       GG::INTERACTIVE | GG::ONTOP);
     m_zoom_slider->MoveTo(GG::Pt(m_btn_turn->Left(), m_scale_line->Bottom() + GG::Y(LAYOUT_MARGIN)));
     m_zoom_slider->Resize(GG::Pt(GG::X(ClientUI::ScrollWidth()), ZOOM_SLIDER_HEIGHT));
     m_zoom_slider->SlideTo(m_zoom_steps_in);
@@ -1975,7 +1976,7 @@ void MapWnd::RenderSystems() {
             GG::Pt inner_circle_lr = circle_lr - (circle_distance_pt * ZoomFactor());
 
             if (fog_scanlines
-                && (universe.GetObjectVisibilityByEmpire(system_icon.first, empire_id) <= VIS_BASIC_VISIBILITY))
+                && (universe.GetObjectVisibilityByEmpire(system_icon.first, empire_id) <= Visibility::VIS_BASIC_VISIBILITY))
             {
                 m_scanline_shader.SetColor(GetOptionsDB().Get<GG::Clr>("ui.map.system.scanlines.color"));
                 m_scanline_shader.RenderCircle(circle_ul, circle_lr);
@@ -2008,7 +2009,7 @@ void MapWnd::RenderSystems() {
 
                         // remember if this system has neutrals
                         if (planet->Unowned() && !planet->SpeciesName().empty() &&
-                            planet->GetMeter(METER_POPULATION)->Initial() > 0.0f)
+                            planet->GetMeter(MeterType::METER_POPULATION)->Initial() > 0.0f)
                         {
                             has_neutrals = true;
 
@@ -2526,7 +2527,7 @@ void MapWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     // if in moderator mode, treat as moderator action click
     if (ClientPlayerIsModerator()) {
         // only supported action on empty map location at present is creating a system
-        if (m_moderator_wnd->SelectedAction() == MAS_CreateSystem) {
+        if (m_moderator_wnd->SelectedAction() == ModeratorActionSetting::MAS_CreateSystem) {
             ClientNetworking& net = HumanClientApp::GetApp()->Networking();
             auto u_pos = this->UniversePositionFromScreenCoords(pt);
             StarType star_type = m_moderator_wnd->SelectedStarType();
@@ -2586,13 +2587,13 @@ void MapWnd::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_ke
 }
 
 void MapWnd::KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
-    if (key == GG::GGK_LSHIFT || key == GG::GGK_RSHIFT) {
+    if (key == GG::Key::GGK_LSHIFT || key == GG::Key::GGK_RSHIFT) {
         ReplotProjectedFleetMovement(mod_keys & GG::MOD_KEY_SHIFT);
     }
 }
 
 void MapWnd::KeyRelease(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
-    if (key == GG::GGK_LSHIFT || key == GG::GGK_RSHIFT) {
+    if (key == GG::Key::GGK_LSHIFT || key == GG::Key::GGK_RSHIFT) {
         ReplotProjectedFleetMovement(mod_keys & GG::MOD_KEY_SHIFT);
     }
 }
@@ -2609,12 +2610,12 @@ void MapWnd::EnableOrderIssuing(bool enable/* = true*/) {
         m_btn_turn->Disable(true);
     } else {
         bool have_empire = (app->EmpireID() != ALL_EMPIRES);
-        moderator = (app->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR);
+        moderator = (app->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR);
         if (!have_empire && !moderator) {
             enable = false;
             m_btn_turn->Disable(true);
         }
-        observer = (app->GetClientType() == Networking::CLIENT_TYPE_HUMAN_OBSERVER);
+        observer = (app->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER);
     }
 
     m_moderator_wnd->EnableActions(enable && moderator);
@@ -2724,7 +2725,7 @@ void MapWnd::InitTurn() {
     timer.EnterSection("sitreps");
     // are there any sitreps to show?
     bool show_intro_sitreps = CurrentTurn() == 1 &&
-        GetOptionsDB().Get<Aggression>("setup.ai.aggression") <= TYPICAL;
+        GetOptionsDB().Get<Aggression>("setup.ai.aggression") <= Aggression::TYPICAL;
     DebugLogger() << "showing intro sitreps : " << show_intro_sitreps;
     if (show_intro_sitreps || m_sitrep_panel->NumVisibleSitrepsThisTurn() > 0) {
         m_sitrep_panel->ShowSitRepsForTurn(CurrentTurn());
@@ -2764,11 +2765,11 @@ void MapWnd::InitTurn() {
     // (unlike connections to signals from the sidepanel)
     Empire* this_client_empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
     if (this_client_empire) {
-        this_client_empire->GetResourcePool(RE_INFLUENCE)->ChangedSignal.connect(
+        this_client_empire->GetResourcePool(ResourceType::RE_INFLUENCE)->ChangedSignal.connect(
             boost::bind(&MapWnd::RefreshInfluenceResourceIndicator, this));
-        this_client_empire->GetResourcePool(RE_RESEARCH)->ChangedSignal.connect(
+        this_client_empire->GetResourcePool(ResourceType::RE_RESEARCH)->ChangedSignal.connect(
             boost::bind(&MapWnd::RefreshResearchResourceIndicator, this));
-        this_client_empire->GetResourcePool(RE_INDUSTRY)->ChangedSignal.connect(
+        this_client_empire->GetResourcePool(ResourceType::RE_INDUSTRY)->ChangedSignal.connect(
             boost::bind(&MapWnd::RefreshIndustryResourceIndicator, this));
         this_client_empire->GetPopulationPool().ChangedSignal.connect(
             boost::bind(&MapWnd::RefreshPopulationIndicator, this));
@@ -2834,7 +2835,7 @@ void MapWnd::InitTurn() {
 
     timer.EnterSection("enable observers");
     HumanClientApp* app = HumanClientApp::GetApp();
-    if (app->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR) {
+    if (app->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR) {
         // this client is a moderator
         m_btn_moderator->Disable(false);
         m_btn_moderator->Show();
@@ -2843,7 +2844,7 @@ void MapWnd::InitTurn() {
         m_btn_moderator->Disable();
         m_btn_moderator->Hide();
     }
-    if (app->GetClientType() == Networking::CLIENT_TYPE_HUMAN_OBSERVER) {
+    if (app->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER) {
         m_btn_auto_turn->Disable();
         m_btn_auto_turn->Hide();
     } else {
@@ -2955,7 +2956,7 @@ void MapWnd::InitTurnRendering() {
         if (this_client_stale_object_info.count(fld_id))
             continue;
         // don't skip not visible but not stale fields; still expect these to be where last seen, or near there
-        //if (field->GetVisibility(client_empire_id) <= VIS_NO_VISIBILITY)
+        //if (field->GetVisibility(client_empire_id) <= Visibility::VIS_NO_VISIBILITY)
         //    continue;
 
         // create new system icon
@@ -3418,7 +3419,7 @@ namespace {
 
         const ProductionQueue& queue = empire->GetProductionQueue();
         const auto& allocated_pp(queue.AllocatedPP());
-        const auto available_pp(empire->GetResourcePool(RE_INDUSTRY)->Output());
+        const auto available_pp(empire->GetResourcePool(ResourceType::RE_INDUSTRY)->Output());
         // For each industry set,
         // add all planet's systems to res_pool_systems[industry set]
         for (const auto& available_pp_group : available_pp) {
@@ -3864,11 +3865,11 @@ void MapWnd::InitFieldRenderingBuffers() {
 
 
     for (auto& field_icon : m_field_icons) {
-        bool current_field_visible = universe.GetObjectVisibilityByEmpire(field_icon.first, empire_id) > VIS_BASIC_VISIBILITY;
+        bool current_field_visible = universe.GetObjectVisibilityByEmpire(field_icon.first, empire_id) > Visibility::VIS_BASIC_VISIBILITY;
         auto field = Objects().get<Field>(field_icon.first);
         if (!field)
             continue;
-        const float FIELD_SIZE = field->GetMeter(METER_SIZE)->Initial();  // field size is its radius
+        const float FIELD_SIZE = field->GetMeter(MeterType::METER_SIZE)->Initial();  // field size is its radius
         if (FIELD_SIZE <= 0)
             continue;
         auto field_texture = field_icon.second->FieldTexture();
@@ -3990,13 +3991,13 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
             continue;
 
         // skip objects not at least partially visible this turn
-        if (obj->GetVisibility(client_empire_id) <= VIS_BASIC_VISIBILITY)
+        if (obj->GetVisibility(client_empire_id) <= Visibility::VIS_BASIC_VISIBILITY)
             continue;
 
         // don't show radii for fleets or moving ships
-        if (obj->ObjectType() == OBJ_FLEET) {
+        if (obj->ObjectType() == UniverseObjectType::OBJ_FLEET) {
             continue;
-        } else if (obj->ObjectType() == OBJ_SHIP) {
+        } else if (obj->ObjectType() == UniverseObjectType::OBJ_SHIP) {
             auto ship = std::dynamic_pointer_cast<const Ship>(obj);
             if (!ship)
                 continue;
@@ -4005,7 +4006,7 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
                 continue;
         }
 
-        const Meter* detection_meter = obj->GetMeter(METER_DETECTION);
+        const Meter* detection_meter = obj->GetMeter(MeterType::METER_DETECTION);
         if (!detection_meter)
             continue;
 
@@ -4693,7 +4694,7 @@ void MapWnd::DoFieldIconsLayout() {
             continue;
         }
 
-        double RADIUS = ZoomFactor() * field->GetMeter(METER_SIZE)->Initial();    // Field's METER_SIZE gives the radius of the field
+        double RADIUS = ZoomFactor() * field->GetMeter(MeterType::METER_SIZE)->Initial();    // Field's MeterType::METER_SIZE gives the radius of the field
 
         GG::Pt icon_ul(GG::X(static_cast<int>(field->X()*ZoomFactor() - RADIUS)),
                        GG::Y(static_cast<int>(field->Y()*ZoomFactor() - RADIUS)));
@@ -5226,7 +5227,7 @@ void MapWnd::FieldRightClicked(int field_id) {
         ModeratorActionSetting mas = m_moderator_wnd->SelectedAction();
         ClientNetworking& net = HumanClientApp::GetApp()->Networking();
 
-        if (mas == MAS_Destroy) {
+        if (mas == ModeratorActionSetting::MAS_Destroy) {
             net.SendMessage(ModeratorActionMessage(Moderator::DestroyUniverseObject(field_id)));
         }
         return;
@@ -5252,29 +5253,29 @@ void MapWnd::SystemRightClicked(int system_id, GG::Flags<GG::ModKey> mod_keys) {
         ModeratorActionSetting mas = m_moderator_wnd->SelectedAction();
         ClientNetworking& net = HumanClientApp::GetApp()->Networking();
 
-        if (mas == MAS_Destroy) {
+        if (mas == ModeratorActionSetting::MAS_Destroy) {
             net.SendMessage(ModeratorActionMessage(
                 Moderator::DestroyUniverseObject(system_id)));
 
-        } else if (mas == MAS_CreatePlanet) {
+        } else if (mas == ModeratorActionSetting::MAS_CreatePlanet) {
             net.SendMessage(ModeratorActionMessage(
                 Moderator::CreatePlanet(system_id, m_moderator_wnd->SelectedPlanetType(),
                                         m_moderator_wnd->SelectedPlanetSize())));
 
-        } else if (mas == MAS_AddStarlane) {
+        } else if (mas == ModeratorActionSetting::MAS_AddStarlane) {
             int selected_system_id = SidePanel::SystemID();
             if (Objects().get<System>(selected_system_id)) {
                 net.SendMessage(ModeratorActionMessage(
                     Moderator::AddStarlane(system_id, selected_system_id)));
             }
 
-        } else if (mas == MAS_RemoveStarlane) {
+        } else if (mas == ModeratorActionSetting::MAS_RemoveStarlane) {
             int selected_system_id = SidePanel::SystemID();
             if (Objects().get<System>(selected_system_id)) {
                 net.SendMessage(ModeratorActionMessage(
                     Moderator::RemoveStarlane(system_id, selected_system_id)));
             }
-        } else if (mas == MAS_SetOwner) {
+        } else if (mas == ModeratorActionSetting::MAS_SetOwner) {
             int empire_id = m_moderator_wnd->SelectedEmpire();
             auto system = Objects().get<System>(system_id);
             if (!system)
@@ -5282,9 +5283,9 @@ void MapWnd::SystemRightClicked(int system_id, GG::Flags<GG::ModKey> mod_keys) {
 
             for (auto& obj : Objects().find<const UniverseObject>(system->ContainedObjectIDs())) {
                 UniverseObjectType obj_type = obj->ObjectType();
-                if (obj_type >= OBJ_BUILDING && obj_type < OBJ_SYSTEM) {
+                if (obj_type >= UniverseObjectType::OBJ_BUILDING && obj_type < UniverseObjectType::OBJ_SYSTEM) {
                     net.SendMessage(ModeratorActionMessage(
-                    Moderator::SetOwner(obj->ID(), empire_id)));
+                        Moderator::SetOwner(obj->ID(), empire_id)));
                 }
             }
         }
@@ -5340,10 +5341,10 @@ void MapWnd::PlanetRightClicked(int planet_id) {
     ModeratorActionSetting mas = m_moderator_wnd->SelectedAction();
     ClientNetworking& net = HumanClientApp::GetApp()->Networking();
 
-    if (mas == MAS_Destroy) {
+    if (mas == ModeratorActionSetting::MAS_Destroy) {
         net.SendMessage(ModeratorActionMessage(
             Moderator::DestroyUniverseObject(planet_id)));
-    } else if (mas == MAS_SetOwner) {
+    } else if (mas == ModeratorActionSetting::MAS_SetOwner) {
         int empire_id = m_moderator_wnd->SelectedEmpire();
         net.SendMessage(ModeratorActionMessage(
             Moderator::SetOwner(planet_id, empire_id)));
@@ -5359,10 +5360,10 @@ void MapWnd::BuildingRightClicked(int building_id) {
     ModeratorActionSetting mas = m_moderator_wnd->SelectedAction();
     ClientNetworking& net = HumanClientApp::GetApp()->Networking();
 
-    if (mas == MAS_Destroy) {
+    if (mas == ModeratorActionSetting::MAS_Destroy) {
         net.SendMessage(ModeratorActionMessage(
             Moderator::DestroyUniverseObject(building_id)));
-    } else if (mas == MAS_SetOwner) {
+    } else if (mas == ModeratorActionSetting::MAS_SetOwner) {
         int empire_id = m_moderator_wnd->SelectedEmpire();
         net.SendMessage(ModeratorActionMessage(
             Moderator::SetOwner(building_id, empire_id)));
@@ -5469,8 +5470,8 @@ std::vector<int> MapWnd::FleetIDsOfFleetButtonsOverlapping(int fleet_id) const {
         int empire_id = HumanClientApp::GetApp()->EmpireID();
         auto vis_turn_map = GetUniverse().GetObjectVisibilityTurnMapByEmpire(fleet_id, empire_id);
         int vis_turn = -1;
-        if (vis_turn_map.find(VIS_BASIC_VISIBILITY) != vis_turn_map.end())
-            vis_turn = vis_turn_map[VIS_BASIC_VISIBILITY];
+        if (vis_turn_map.find(Visibility::VIS_BASIC_VISIBILITY) != vis_turn_map.end())
+            vis_turn = vis_turn_map[Visibility::VIS_BASIC_VISIBILITY];
         ErrorLogger() << "Couldn't find a FleetButton for fleet " << fleet_id
                       << " with last basic vis turn " << vis_turn;
         return fleet_ids;
@@ -5653,7 +5654,7 @@ void MapWnd::FleetButtonRightClicked(const FleetButton* fleet_btn) {
             continue;
         if (fleet->OwnedBy(empire_id))
             continue;
-        if (GetUniverse().GetObjectVisibilityByEmpire(fleet->ID(), empire_id) >= VIS_BASIC_VISIBILITY)
+        if (GetUniverse().GetObjectVisibilityByEmpire(fleet->ID(), empire_id) >= Visibility::VIS_BASIC_VISIBILITY)
             continue;
         sensor_ghosts.push_back(fleet->ID());
     }
@@ -5698,12 +5699,12 @@ void MapWnd::FleetsRightClicked(const std::vector<int>& fleet_ids) {
     ModeratorActionSetting mas = m_moderator_wnd->SelectedAction();
     ClientNetworking& net = HumanClientApp::GetApp()->Networking();
 
-    if (mas == MAS_Destroy) {
+    if (mas == ModeratorActionSetting::MAS_Destroy) {
         for (int fleet_id : fleet_ids) {
             net.SendMessage(ModeratorActionMessage(
                 Moderator::DestroyUniverseObject(fleet_id)));
         }
-    } else if (mas == MAS_SetOwner) {
+    } else if (mas == ModeratorActionSetting::MAS_SetOwner) {
         int empire_id = m_moderator_wnd->SelectedEmpire();
         for (int fleet_id : fleet_ids) {
             net.SendMessage(ModeratorActionMessage(
@@ -5729,12 +5730,12 @@ void MapWnd::ShipsRightClicked(const std::vector<int>& ship_ids) {
     ModeratorActionSetting mas = m_moderator_wnd->SelectedAction();
     ClientNetworking& net = HumanClientApp::GetApp()->Networking();
 
-    if (mas == MAS_Destroy) {
+    if (mas == ModeratorActionSetting::MAS_Destroy) {
         for (int ship_id : ship_ids) {
             net.SendMessage(ModeratorActionMessage(
                 Moderator::DestroyUniverseObject(ship_id)));
         }
-    } else if (mas == MAS_SetOwner) {
+    } else if (mas == ModeratorActionSetting::MAS_SetOwner) {
         int empire_id = m_moderator_wnd->SelectedEmpire();
         for (int ship_id : ship_ids) {
             net.SendMessage(ModeratorActionMessage(
@@ -6590,12 +6591,12 @@ void MapWnd::RefreshTurnButtonTooltip() {
             btn_turn_tooltip = UserString("MAP_BTN_TURN_TOOLTIP_DESC_SP");
         else
             btn_turn_tooltip = UserString("MAP_BTN_TURN_TOOLTIP_DESC_MP");
-        if (app->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
+        if (app->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR)
             btn_turn_tooltip = UserString("MAP_BTN_TURN_TOOLTIP_DESC_MOD");
     }
     if (m_ready_turn && !app->SinglePlayerGame())
         btn_turn_tooltip = UserString("MAP_BTN_TURN_TOOLTIP_DESC_WAIT");
-    if (app->GetClientType() == Networking::CLIENT_TYPE_HUMAN_OBSERVER)
+    if (app->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER)
         btn_turn_tooltip = UserString("MAP_BTN_TURN_TOOLTIP_DESC_OBS");
 
     m_btn_turn->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
@@ -6610,9 +6611,9 @@ void MapWnd::RefreshInfluenceResourceIndicator() {
         return;
     }
     double total_IP_spent = empire->GetInfluenceQueue().TotalIPsSpent();
-    double total_IP_output = empire->GetResourcePool(RE_INFLUENCE)->TotalOutput();
-    double total_IP_target_output = empire->GetResourcePool(RE_INFLUENCE)->TargetOutput();
-    float  stockpile = empire->GetResourcePool(RE_INFLUENCE)->Stockpile();
+    double total_IP_output = empire->GetResourcePool(ResourceType::RE_INFLUENCE)->TotalOutput();
+    double total_IP_target_output = empire->GetResourcePool(ResourceType::RE_INFLUENCE)->TargetOutput();
+    float  stockpile = empire->GetResourcePool(ResourceType::RE_INFLUENCE)->Stockpile();
     float  stockpile_used = empire->GetInfluenceQueue().AllocatedStockpileIP();
     float  expected_stockpile = empire->GetInfluenceQueue().ExpectedNewStockpileAmount();
 
@@ -6661,14 +6662,14 @@ void MapWnd::RefreshResearchResourceIndicator() {
         m_research_wasted->Hide();
         return;
     }
-    m_research->SetValue(empire->ResourceOutput(RE_RESEARCH));
+    m_research->SetValue(empire->ResourceOutput(ResourceType::RE_RESEARCH));
     m_research->ClearBrowseInfoWnd();
     m_research->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
 
     float total_RP_spent = empire->GetResearchQueue().TotalRPsSpent();
-    float total_RP_output = empire->GetResourcePool(RE_RESEARCH)->TotalOutput();
+    float total_RP_output = empire->GetResourcePool(ResourceType::RE_RESEARCH)->TotalOutput();
     float total_RP_wasted = total_RP_output - total_RP_spent;
-    float total_RP_target_output = empire->GetResourcePool(RE_RESEARCH)->TargetOutput();
+    float total_RP_target_output = empire->GetResourcePool(ResourceType::RE_RESEARCH)->TargetOutput();
 
     m_research->SetBrowseInfoWnd(GG::Wnd::Create<ResourceBrowseWnd>(
         UserString("MAP_RESEARCH_TITLE"), UserString("RESEARCH_INFO_RP"),
@@ -6711,14 +6712,14 @@ void MapWnd::RefreshIndustryResourceIndicator() {
         m_stockpile->SetValue(0.0);
         return;
     }
-    m_industry->SetValue(empire->ResourceOutput(RE_INDUSTRY));
+    m_industry->SetValue(empire->ResourceOutput(ResourceType::RE_INDUSTRY));
     m_industry->ClearBrowseInfoWnd();
     m_industry->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
 
     double total_PP_spent = empire->GetProductionQueue().TotalPPsSpent();
-    double total_PP_output = empire->GetResourcePool(RE_INDUSTRY)->TotalOutput();
-    double total_PP_target_output = empire->GetResourcePool(RE_INDUSTRY)->TargetOutput();
-    float  stockpile = empire->GetResourcePool(RE_INDUSTRY)->Stockpile();
+    double total_PP_output = empire->GetResourcePool(ResourceType::RE_INDUSTRY)->TotalOutput();
+    double total_PP_target_output = empire->GetResourcePool(ResourceType::RE_INDUSTRY)->TargetOutput();
+    float  stockpile = empire->GetResourcePool(ResourceType::RE_INDUSTRY)->Stockpile();
     float  stockpile_used = boost::accumulate(empire->GetProductionQueue().AllocatedStockpilePP() | boost::adaptors::map_values, 0.0f);
     float  stockpile_use_capacity = empire->GetProductionQueue().StockpileCapacity();
     float  expected_stockpile = empire->GetProductionQueue().ExpectedNewStockpileAmount();
@@ -6809,7 +6810,7 @@ void MapWnd::RefreshPopulationIndicator() {
         const std::string& species_name = pc->SpeciesName();
         if (species_name.empty())
             continue;
-        float this_pop = pc->GetMeter(METER_POPULATION)->Initial();
+        float this_pop = pc->GetMeter(MeterType::METER_POPULATION)->Initial();
         population_counts[species_name] += this_pop;
         if (const Species* species = GetSpecies(species_name) ) {
             for (const std::string& tag : species->Tags())
@@ -7084,7 +7085,7 @@ bool MapWnd::ZoomToSystemWithWastedPP() {
         return false;
 
     const ProductionQueue& queue = empire->GetProductionQueue();
-    const auto pool = empire->GetResourcePool(RE_INDUSTRY);
+    const auto pool = empire->GetResourcePool(ResourceType::RE_INDUSTRY);
     if (!pool)
         return false;
     auto wasted_PP_objects(queue.ObjectsWithWastedPP(pool));

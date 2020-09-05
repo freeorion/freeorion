@@ -180,16 +180,15 @@ public:
     {
         /** The types of token-like entities that can be represented by a
             TextElement. */
-        enum TextElementType {
+        enum class TextElementType : int {
             OPEN_TAG,   ///< An opening text formatting tag (e.g. "<rgba 0 0 0 255>").
             CLOSE_TAG,  ///< A closing text formatting tag (e.g. "</rgba>").
             TEXT,       ///< Some non-whitespace text (e.g. "The").
             WHITESPACE, ///< Some whitespace text (e.g. "  \n").
 
-            /** A newline.  Newline TextElements represent the newline code
-                point when it is encountered in a rendered string, though they
-                do not contain the actual newline character -- their \a text
-                members are always ""). */
+            /** The newline code point when it is encountered in a rendered
+                string, though they do not contain the actual newline character
+                so their \a text members are always ""). */
             NEWLINE
         };
 

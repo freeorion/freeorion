@@ -105,7 +105,7 @@ namespace {
                                               GG::FORMAT_WORDBREAK | GG::FORMAT_LEFT,
                                               GG::NO_WND_FLAGS, GG::X0, GG::Y0, extent.x, extent.y);
         text->ClipText(true);
-        text->SetChildClippingMode(GG::Wnd::ClipToClient);
+        text->SetChildClippingMode(GG::Wnd::ChildClippingMode::ClipToClient);
         return text;
     }
 
@@ -295,7 +295,7 @@ public:
         m_initialized(false)
     {
         SetName("SaveFileRow for \"" + m_filename + "\"");
-        SetChildClippingMode(ClipToClient);
+        SetChildClippingMode(ChildClippingMode::ClipToClient);
         RequirePreRender();
     }
 
@@ -754,13 +754,13 @@ void SaveFileDialog::ModalInit() {
 
 void SaveFileDialog::KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys ) {
     // Return without filename
-    if (key == GG::GGK_ESCAPE) {
+    if (key == GG::Key::GGK_ESCAPE) {
         Cancel();
         return;
     }
 
     // Update list on enter if directory changed by hand
-    if (key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER) {
+    if (key == GG::Key::GGK_RETURN || key == GG::Key::GGK_KP_ENTER) {
         if (m_loaded_dir != GetDirPath()) {
             UpdatePreviewList();
         } else {
@@ -769,7 +769,7 @@ void SaveFileDialog::KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Fla
             }
         }
 
-    } else if (key == GG::GGK_DELETE) { // Delete would be better, but gets eaten by someone
+    } else if (key == GG::Key::GGK_DELETE) { // Delete would be better, but gets eaten by someone
         // Ask to delete selection on Delete, if valid and not editing text
         if (CheckChoiceValidity() &&
             GG::GUI::GetGUI()->FocusWnd() != m_name_edit &&

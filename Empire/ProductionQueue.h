@@ -57,7 +57,7 @@ struct FO_COMMON_API ProductionQueue {
 
         std::string Dump() const;
 
-        BuildType   build_type = INVALID_BUILD_TYPE;
+        BuildType   build_type = BuildType::INVALID_BUILD_TYPE;
         // only one of these may be valid, depending on BuildType
         std::string name;
         int         design_id = INVALID_DESIGN_ID;

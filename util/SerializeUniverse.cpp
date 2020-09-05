@@ -248,7 +248,7 @@ void serialize(Archive& ar, UniverseObject& o, unsigned int const version)
 
 template <typename Archive>
 void load_construct_data(Archive& ar, System* obj, unsigned int const version)
-{ ::new(obj)System(INVALID_STAR_TYPE, "", 0.0, 0.0); }
+{ ::new(obj)System(StarType::INVALID_STAR_TYPE, "", 0.0, 0.0); }
 
 template <typename Archive>
 void serialize(Archive& ar, System& obj, unsigned int const version)
@@ -292,7 +292,7 @@ void serialize(Archive& ar, Field& obj, unsigned int const version)
 
 template <typename Archive>
 void load_construct_data(Archive& ar, Planet* obj, unsigned int const version)
-{ ::new(obj)Planet(PT_TERRAN, SZ_MEDIUM); }
+{ ::new(obj)Planet(PlanetType::PT_TERRAN, PlanetSize::SZ_MEDIUM); }
 
 template <typename Archive>
 void serialize(Archive& ar, Planet& obj, unsigned int const version)

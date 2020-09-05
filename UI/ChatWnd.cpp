@@ -113,14 +113,14 @@ void MessageWndEdit::KeyPress(GG::Key key, std::uint32_t key_code_point,
                               GG::Flags<GG::ModKey> mod_keys)
 {
     switch (key) {
-    case GG::GGK_RETURN:
-    case GG::GGK_KP_ENTER:
+    case GG::Key::GGK_RETURN:
+    case GG::Key::GGK_KP_ENTER:
         TextEnteredSignal();
         break;
-    case GG::GGK_UP:
+    case GG::Key::GGK_UP:
         UpPressedSignal();
         break;
-    case GG::GGK_DOWN:
+    case GG::Key::GGK_DOWN:
         DownPressedSignal();
         break;
     default:
@@ -406,34 +406,34 @@ void MessageWnd::HandlePlayerChatMessage(const std::string& text,
 void MessageWnd::HandleTurnPhaseUpdate(Message::TurnProgressPhase phase_id, bool prefixed /*= false*/) {
     std::string phase_str;
     switch (phase_id) {
-    case Message::FLEET_MOVEMENT:
+    case Message::TurnProgressPhase::FLEET_MOVEMENT:
         phase_str = UserString("TURN_PROGRESS_PHASE_FLEET_MOVEMENT");
         break;
-    case Message::COMBAT:
+    case Message::TurnProgressPhase::COMBAT:
         phase_str = UserString("TURN_PROGRESS_PHASE_COMBAT");
         break;
-    case Message::EMPIRE_PRODUCTION:
+    case Message::TurnProgressPhase::EMPIRE_PRODUCTION:
         phase_str = UserString("TURN_PROGRESS_PHASE_EMPIRE_GROWTH");
         break;
-    case Message::WAITING_FOR_PLAYERS:
+    case Message::TurnProgressPhase::WAITING_FOR_PLAYERS:
         phase_str = UserString("TURN_PROGRESS_PHASE_WAITING");
         break;
-    case Message::PROCESSING_ORDERS:
+    case Message::TurnProgressPhase::PROCESSING_ORDERS:
         phase_str = UserString("TURN_PROGRESS_PHASE_ORDERS");
         break;
-    case Message::COLONIZE_AND_SCRAP:
+    case Message::TurnProgressPhase::COLONIZE_AND_SCRAP:
         phase_str = UserString("TURN_PROGRESS_COLONIZE_AND_SCRAP");
         break;
-    case Message::DOWNLOADING:
+    case Message::TurnProgressPhase::DOWNLOADING:
         phase_str = UserString("TURN_PROGRESS_PHASE_DOWNLOADING");
         break;
-    case Message::LOADING_GAME:
+    case Message::TurnProgressPhase::LOADING_GAME:
         phase_str = UserString("TURN_PROGRESS_PHASE_LOADING_GAME");
         break;
-    case Message::GENERATING_UNIVERSE:
+    case Message::TurnProgressPhase::GENERATING_UNIVERSE:
         phase_str = UserString("TURN_PROGRESS_PHASE_GENERATING_UNIVERSE");
         break;
-    case Message::STARTING_AIS:
+    case Message::TurnProgressPhase::STARTING_AIS:
         phase_str = UserString("TURN_PROGRESS_STARTING_AIS");
         break;
     default:
@@ -477,15 +477,15 @@ void MessageWnd::HandleDiplomaticStatusChange(int empire1_id, int empire2_id) {
     std::string empire2_str = GG::RgbaTag(empire2->Color()) + empire2->Name() + "</rgba>";
 
     switch (status) {
-    case DIPLO_WAR:
+    case DiplomaticStatus::DIPLO_WAR:
         text = boost::str(FlexibleFormat(UserString("MESSAGES_WAR_DECLARATION"))
                    % empire1_str % empire2_str);
         break;
-    case DIPLO_PEACE:
+    case DiplomaticStatus::DIPLO_PEACE:
         text = boost::str(FlexibleFormat(UserString("MESSAGES_PEACE_TREATY"))
                    % empire1_str % empire2_str);
         break;
-    case DIPLO_ALLIED:
+    case DiplomaticStatus::DIPLO_ALLIED:
         text = boost::str(FlexibleFormat(UserString("MESSAGES_ALLIANCE"))
                    % empire1_str % empire2_str);
         break;

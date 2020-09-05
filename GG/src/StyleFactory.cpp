@@ -111,16 +111,16 @@ std::shared_ptr<ListBox> StyleFactory::NewDropDownListListBox(Clr color, Clr int
 }
 
 std::shared_ptr<Scroll> StyleFactory::NewListBoxVScroll(Clr color, Clr interior) const
-{ return NewScroll(VERTICAL, color, interior); }
+{ return NewScroll(Orientation::VERTICAL, color, interior); }
 
 std::shared_ptr<Scroll> StyleFactory::NewListBoxHScroll(Clr color, Clr interior) const
-{ return NewScroll(HORIZONTAL, color, interior); }
+{ return NewScroll(Orientation::HORIZONTAL, color, interior); }
 
 std::shared_ptr<Scroll> StyleFactory::NewMultiEditVScroll(Clr color, Clr interior) const
-{ return NewScroll(VERTICAL, color, interior); }
+{ return NewScroll(Orientation::VERTICAL, color, interior); }
 
 std::shared_ptr<Scroll> StyleFactory::NewMultiEditHScroll(Clr color, Clr interior) const
-{ return NewScroll(HORIZONTAL, color, interior); }
+{ return NewScroll(Orientation::HORIZONTAL, color, interior); }
 
 std::shared_ptr<Button> StyleFactory::NewScrollUpButton(Clr color) const
 { return NewButton("", nullptr, color, CLR_BLACK, INTERACTIVE | REPEAT_BUTTON_DOWN); }

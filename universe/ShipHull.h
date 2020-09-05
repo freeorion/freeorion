@@ -29,13 +29,13 @@ GG_ENUM(ShipSlotType,
 class FO_COMMON_API ShipHull {
 public:
     struct Slot {
-        Slot();
+        Slot() = default;
 
         Slot(ShipSlotType slot_type, double x_, double y_) :
             type(slot_type), x(x_), y(y_)
         {}
 
-        ShipSlotType type;
+        ShipSlotType type = ShipSlotType::INVALID_SHIP_SLOT_TYPE;
         double x = 0.5, y = 0.5;
     };
 

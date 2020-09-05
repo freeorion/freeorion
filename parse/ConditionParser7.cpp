@@ -70,12 +70,12 @@ namespace parse { namespace detail {
             ;
 
         content_type =
-                tok.Building_   [ _val = Condition::CONTENT_BUILDING ]
-            |   tok.Species_    [ _val = Condition::CONTENT_SPECIES ]
-            |   tok.Hull_       [ _val = Condition::CONTENT_SHIP_HULL ]
-            |   tok.Part_       [ _val = Condition::CONTENT_SHIP_PART ]
-            |   tok.Special_    [ _val = Condition::CONTENT_SPECIAL ]
-            |   tok.Focus_      [ _val = Condition::CONTENT_FOCUS ];
+                tok.Building_   [ _val = Condition::ContentType::CONTENT_BUILDING ]
+            |   tok.Species_    [ _val = Condition::ContentType::CONTENT_SPECIES ]
+            |   tok.Hull_       [ _val = Condition::ContentType::CONTENT_SHIP_HULL ]
+            |   tok.Part_       [ _val = Condition::ContentType::CONTENT_SHIP_PART ]
+            |   tok.Special_    [ _val = Condition::ContentType::CONTENT_SPECIAL ]
+            |   tok.Focus_      [ _val = Condition::ContentType::CONTENT_FOCUS ];
 
         location
             =   (omit_[tok.Location_]

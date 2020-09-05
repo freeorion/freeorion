@@ -28,23 +28,35 @@ namespace Networking {
     { return GetOptionsDB().Get<int>("network.message.port"); }
 
     AuthRoles::AuthRoles(const std::initializer_list<RoleType>& roles) {
-       for (RoleType r : roles) {
-           m_roles.set(r, true);
-       }
+       for (RoleType r : roles)
+           m_roles.set(int(r), true);
+    }
+
+    std::ostream& operator<<(std::ostream& os, ClientType client_type) {
+        switch (client_type) {
+        case ClientType::CLIENT_TYPE_AI_PLAYER:         os << "CLIENT_TYPE_AI_PLAYER";      break;
+        case ClientType::CLIENT_TYPE_HUMAN_PLAYER:      os << "CLIENT_TYPE_HUMAN_PLAYER";   break;
+        case ClientType::CLIENT_TYPE_HUMAN_OBSERVER:    os << "CLIENT_TYPE_HUMAN_OBSERVER"; break;
+        case ClientType::CLIENT_TYPE_HUMAN_MODERATOR:   os << "CLIENT_TYPE_HUMAN_MODERATOR";break;
+        case ClientType::NUM_CLIENT_TYPES:              os << "NUM_CLIENT_TYPES";           break;
+        case ClientType::INVALID_CLIENT_TYPE:
+        default:                                        os << "INVALID_CLIENT_TYPE";
+        }
+        return os;
     }
 
     void AuthRoles::SetRole(RoleType role, bool value)
-    { m_roles.set(role, value); }
+    { m_roles.set(int(role), value); }
 
     void AuthRoles::Clear()
-    { m_roles = std::bitset<Roles_Count>(); }
+    { m_roles = std::bitset<int(RoleType::Roles_Count)>(); }
 
     bool AuthRoles::HasRole(RoleType role) const
-    { return m_roles.test(role); }
+    { return m_roles.test(int(role)); }
 
     std::string AuthRoles::Text() const
     { return m_roles.to_string(); }
 
     void AuthRoles::SetText(const std::string& text)
-    { m_roles = std::bitset<Roles_Count>(text); }
+    { m_roles = std::bitset<int(RoleType::Roles_Count)>(text); }
 }

@@ -110,13 +110,13 @@ namespace {
             GG::Control::CompleteConstruction();
 
             switch (m_diplo_status) {
-            case DIPLO_WAR:
+            case DiplomaticStatus::DIPLO_WAR:
                 m_icon = WarIcon();
                 break;
-            case DIPLO_PEACE:
+            case DiplomaticStatus::DIPLO_PEACE:
                 m_icon = PeaceIcon();
                 break;
-            case DIPLO_ALLIED:
+            case DiplomaticStatus::DIPLO_ALLIED:
                 m_icon = AlliedIcon();
                 break;
             default:
@@ -152,13 +152,13 @@ namespace {
             std::string tooltip_text = "";
 
             switch (m_diplo_status) {
-            case DIPLO_WAR:
+            case DiplomaticStatus::DIPLO_WAR:
                 tooltip_title = UserString("AT_WAR_WITH") + ":";
                 break;
-            case DIPLO_PEACE:
+            case DiplomaticStatus::DIPLO_PEACE:
                 tooltip_title = UserString("AT_PEACE_WITH") + ":";
                 break;
-            case DIPLO_ALLIED:
+            case DiplomaticStatus::DIPLO_ALLIED:
                 tooltip_title = UserString("ALLIED_WITH") + ":";
                 break;
             default:
@@ -227,14 +227,14 @@ namespace {
             Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
             m_player_id(player_id),
             m_empire_id(empire_id),
-            m_diplo_status(INVALID_DIPLOMATIC_STATUS),
-            m_player_type(Networking::INVALID_CLIENT_TYPE)
+            m_diplo_status(DiplomaticStatus::INVALID_DIPLOMATIC_STATUS),
+            m_player_type(Networking::ClientType::INVALID_CLIENT_TYPE)
         {}
 
         void CompleteConstruction() override {
             GG::Control::CompleteConstruction();
 
-            SetChildClippingMode(ClipToClient);
+            SetChildClippingMode(ChildClippingMode::ClipToClient);
 
             //m_player_name_text = GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT);
             m_empire_name_text = GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT);
@@ -244,9 +244,9 @@ namespace {
             m_empire_research_text = GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT);
             m_empire_detection_text = GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT);
 
-            m_war_indicator =      GG::Wnd::Create<DiplomaticStatusIndicator>(GG::X0, Height(), m_empire_id, DIPLO_WAR);
-            m_peace_indicator =    GG::Wnd::Create<DiplomaticStatusIndicator>(GG::X0, Height(), m_empire_id, DIPLO_PEACE);
-            m_allied_indicator =   GG::Wnd::Create<DiplomaticStatusIndicator>(GG::X0, Height(), m_empire_id, DIPLO_ALLIED);
+            m_war_indicator =      GG::Wnd::Create<DiplomaticStatusIndicator>(GG::X0, Height(), m_empire_id, DiplomaticStatus::DIPLO_WAR);
+            m_peace_indicator =    GG::Wnd::Create<DiplomaticStatusIndicator>(GG::X0, Height(), m_empire_id, DiplomaticStatus::DIPLO_PEACE);
+            m_allied_indicator =   GG::Wnd::Create<DiplomaticStatusIndicator>(GG::X0, Height(), m_empire_id, DiplomaticStatus::DIPLO_ALLIED);
 
             //AttachChild(m_player_name_text);
             AttachChild(m_empire_name_text);
@@ -290,7 +290,7 @@ namespace {
             ShipIcon()->OrthoBlit(UpperLeft() + m_ship_icon_ul, UpperLeft() + m_ship_icon_ul+ ICON_SIZE);
 
             //ClientUI::PlanetIcon(favored_planet_type)->OrthoBlit(UpperLeft() + m_research_icon_ul, UpperLeft() + m_research_icon_ul + ICON_SIZE);
-            ClientUI::PlanetIcon(PT_TERRAN)->OrthoBlit(UpperLeft() + m_planet_icon_ul , UpperLeft() + m_planet_icon_ul + ICON_SIZE);
+            ClientUI::PlanetIcon(PlanetType::PT_TERRAN)->OrthoBlit(UpperLeft() + m_planet_icon_ul , UpperLeft() + m_planet_icon_ul + ICON_SIZE);
 
             ProductionIcon()->OrthoBlit(UpperLeft() + m_production_icon_ul, UpperLeft() + m_production_icon_ul + ICON_SIZE);
             ResearchIcon()->OrthoBlit(UpperLeft() + m_research_icon_ul, UpperLeft() + m_research_icon_ul + ICON_SIZE);
@@ -304,10 +304,10 @@ namespace {
             if (m_empire_id != app->EmpireID()) {
                 // render diplomacy icon
                 switch (m_diplo_status) {
-                case DIPLO_WAR:                 WarIcon()->OrthoBlit(    UpperLeft() + m_diplo_status_icon_ul, UpperLeft() + m_diplo_status_icon_ul + ICON_SIZE); break;
-                case DIPLO_PEACE:               PeaceIcon()->OrthoBlit(  UpperLeft() + m_diplo_status_icon_ul, UpperLeft() + m_diplo_status_icon_ul + ICON_SIZE); break;
-                case DIPLO_ALLIED:              AlliedIcon()->OrthoBlit( UpperLeft() + m_diplo_status_icon_ul, UpperLeft() + m_diplo_status_icon_ul + ICON_SIZE); break;
-                case INVALID_DIPLOMATIC_STATUS: UnknownIcon()->OrthoBlit(UpperLeft() + m_diplo_status_icon_ul, UpperLeft() + m_diplo_status_icon_ul + ICON_SIZE); break;
+                case DiplomaticStatus::DIPLO_WAR:                 WarIcon()->OrthoBlit(    UpperLeft() + m_diplo_status_icon_ul, UpperLeft() + m_diplo_status_icon_ul + ICON_SIZE); break;
+                case DiplomaticStatus::DIPLO_PEACE:               PeaceIcon()->OrthoBlit(  UpperLeft() + m_diplo_status_icon_ul, UpperLeft() + m_diplo_status_icon_ul + ICON_SIZE); break;
+                case DiplomaticStatus::DIPLO_ALLIED:              AlliedIcon()->OrthoBlit( UpperLeft() + m_diplo_status_icon_ul, UpperLeft() + m_diplo_status_icon_ul + ICON_SIZE); break;
+                case DiplomaticStatus::INVALID_DIPLOMATIC_STATUS: UnknownIcon()->OrthoBlit(UpperLeft() + m_diplo_status_icon_ul, UpperLeft() + m_diplo_status_icon_ul + ICON_SIZE); break;
                 default:    break;
                 }
             }
@@ -324,10 +324,10 @@ namespace {
 
             // render player type icon
             switch (m_player_type) {
-            case Networking::CLIENT_TYPE_HUMAN_PLAYER:      HumanIcon()->OrthoBlit(    UpperLeft() + m_player_type_icon_ul, UpperLeft() + m_player_type_icon_ul + ICON_SIZE); break;
-            case Networking::CLIENT_TYPE_AI_PLAYER:         AIIcon()->OrthoBlit(       UpperLeft() + m_player_type_icon_ul, UpperLeft() + m_player_type_icon_ul + ICON_SIZE); break;
-            case Networking::CLIENT_TYPE_HUMAN_OBSERVER:    ObserverIcon()->OrthoBlit( UpperLeft() + m_player_type_icon_ul, UpperLeft() + m_player_type_icon_ul + ICON_SIZE); break;
-            case Networking::CLIENT_TYPE_HUMAN_MODERATOR:   ModeratorIcon()->OrthoBlit(UpperLeft() + m_player_type_icon_ul, UpperLeft() + m_player_type_icon_ul + ICON_SIZE); break;
+            case Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER:      HumanIcon()->OrthoBlit(    UpperLeft() + m_player_type_icon_ul, UpperLeft() + m_player_type_icon_ul + ICON_SIZE); break;
+            case Networking::ClientType::CLIENT_TYPE_AI_PLAYER:         AIIcon()->OrthoBlit(       UpperLeft() + m_player_type_icon_ul, UpperLeft() + m_player_type_icon_ul + ICON_SIZE); break;
+            case Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER:    ObserverIcon()->OrthoBlit( UpperLeft() + m_player_type_icon_ul, UpperLeft() + m_player_type_icon_ul + ICON_SIZE); break;
+            case Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR:   ModeratorIcon()->OrthoBlit(UpperLeft() + m_player_type_icon_ul, UpperLeft() + m_player_type_icon_ul + ICON_SIZE); break;
             default:    break;
             }
 
@@ -377,7 +377,7 @@ namespace {
                 m_host = player_info.host;
                 empire_name = player_info.name;
             } else {
-                m_player_type = Networking::INVALID_CLIENT_TYPE;
+                m_player_type = Networking::ClientType::INVALID_CLIENT_TYPE;
                 m_host = false;
             }
 
@@ -389,7 +389,7 @@ namespace {
                 // ignore player name
                 empire_name = empire->Name();
                 if (m_empire_id == ALL_EMPIRES || m_empire_id == app->EmpireID())
-                    m_diplo_status = INVALID_DIPLOMATIC_STATUS;
+                    m_diplo_status = DiplomaticStatus::INVALID_DIPLOMATIC_STATUS;
                 else
                     m_diplo_status = Empires().GetDiplomaticStatus(m_empire_id, app->EmpireID());
                 if (empire->Won())
@@ -427,8 +427,8 @@ namespace {
                 for (auto& planet : objects.all<Planet>()) {
                     if (planet->Owner() == empire->EmpireID()) {
                         empires_planet_count      += 1;
-                        empires_production_points += planet->GetMeter(METER_INDUSTRY)->Initial();
-                        empires_research_points   += planet->GetMeter(METER_RESEARCH)->Initial();
+                        empires_production_points += planet->GetMeter(MeterType::METER_INDUSTRY)->Initial();
+                        empires_research_points   += planet->GetMeter(MeterType::METER_RESEARCH)->Initial();
                     }
                 }
             }
@@ -573,7 +573,7 @@ namespace {
         DiplomaticStatus        m_diplo_status;
         Networking::ClientType  m_player_type;
         bool                    m_host = false;
-        enum {
+        enum : int {
             WON,
             LOST,
             NEITHER
@@ -597,7 +597,7 @@ namespace {
             SetMargin(0);
             SetRowAlignment(GG::ALIGN_NONE);
             SetName("PlayerRow");
-            SetChildClippingMode(ClipToClient);
+            SetChildClippingMode(ChildClippingMode::ClipToClient);
         }
 
         void CompleteConstruction() override {
@@ -944,13 +944,13 @@ void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& p
     auto pedia_lookup_action = [clicked_empire_id]() { ClientUI::GetClientUI()->ZoomToEmpire(clicked_empire_id); };
 
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
-    if (app->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER &&
+    if (app->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER &&
         client_empire_id != ALL_EMPIRES &&
         clicked_empire_id != ALL_EMPIRES)
     {
         // get diplomatic status between client and clicked empires
         DiplomaticStatus diplo_status = Empires().GetDiplomaticStatus(clicked_empire_id, client_empire_id);
-        if (diplo_status == INVALID_DIPLOMATIC_STATUS && clicked_empire_id != client_empire_id) {
+        if (diplo_status == DiplomaticStatus::INVALID_DIPLOMATIC_STATUS && clicked_empire_id != client_empire_id) {
             ErrorLogger() << "PlayerListWnd::PlayerRightClicked found invalid diplomatic status between client and clicked empires.";
             return;
         }
@@ -984,16 +984,16 @@ void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& p
             show_allies_reject = true;
         }
 
-        if (diplo_status == DIPLO_WAR) {
+        if (diplo_status == DiplomaticStatus::DIPLO_WAR) {
             if (!show_peace_accept)
                 show_peace_propose = true;
 
-        } else if (diplo_status == DIPLO_PEACE) {
+        } else if (diplo_status == DiplomaticStatus::DIPLO_PEACE) {
             if (!show_allies_accept)
                 show_allies_propose = true;
             show_declare_war = true;
 
-        } else if (diplo_status == DIPLO_ALLIED) {
+        } else if (diplo_status == DiplomaticStatus::DIPLO_ALLIED) {
             show_allies_end = true;
         }
 

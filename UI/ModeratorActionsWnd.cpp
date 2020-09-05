@@ -31,7 +31,7 @@ ModeratorActionsWnd::ModeratorActionsWnd(const std::string& config_name) :
            GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE | PINABLE,
            config_name, false),
     m_actions_enabled(true),
-    m_selected_action(MAS_NoAction)
+    m_selected_action(ModeratorActionSetting::MAS_NoAction)
 {}
 
 void ModeratorActionsWnd::CompleteConstruction() {
@@ -66,7 +66,9 @@ void ModeratorActionsWnd::CompleteConstruction() {
     m_create_system_button->LeftClickedSignal.connect(boost::bind(&ModeratorActionsWnd::CreateSystem, this));
     m_star_type_drop = GG::Wnd::Create<CUIDropDownList>(6);
     m_star_type_drop->Resize(GG::Pt(DROP_WIDTH, CONTROL_HEIGHT));
-    for (StarType star_type = STAR_BLUE; star_type != NUM_STAR_TYPES; star_type = StarType(star_type + 1)) {
+    for (StarType star_type = StarType::STAR_BLUE; star_type != StarType::NUM_STAR_TYPES;
+         star_type = StarType(int(star_type) + 1))
+    {
         std::shared_ptr<GG::Texture> disc_texture = ui->GetModuloTexture(
             ClientUI::ArtDir() / "stars", ClientUI::StarTypeFilePrefixes()[star_type], 0);
         auto row = GG::Wnd::Create<GG::DropDownList::Row>();
@@ -92,7 +94,9 @@ void ModeratorActionsWnd::CompleteConstruction() {
 
     m_planet_type_drop = GG::Wnd::Create<CUIDropDownList>(6);
     m_planet_type_drop->Resize(GG::Pt(DROP_WIDTH, CONTROL_HEIGHT));
-    for (PlanetType planet_type = PT_SWAMP; planet_type != NUM_PLANET_TYPES; planet_type = PlanetType(planet_type + 1)) {
+    for (PlanetType planet_type = PlanetType::PT_SWAMP; planet_type != PlanetType::NUM_PLANET_TYPES;
+         planet_type = PlanetType(int(planet_type) + 1))
+    {
         std::shared_ptr<GG::Texture> texture = ClientUI::PlanetIcon(planet_type);
         auto row = GG::Wnd::Create<GG::DropDownList::Row>();
         auto icon = GG::Wnd::Create<GG::StaticGraphic>(std::move(texture), style);
@@ -105,7 +109,9 @@ void ModeratorActionsWnd::CompleteConstruction() {
 
     m_planet_size_drop = GG::Wnd::Create<CUIDropDownList>(6);
     m_planet_size_drop->Resize(GG::Pt(DROP_WIDTH, CONTROL_HEIGHT));
-    for (PlanetSize planet_size = SZ_TINY; planet_size != NUM_PLANET_SIZES; planet_size = PlanetSize(planet_size + 1)) {
+    for (PlanetSize planet_size = PlanetSize::SZ_TINY; planet_size != PlanetSize::NUM_PLANET_SIZES;
+         planet_size = PlanetSize(int(planet_size) + 1))
+    {
         std::shared_ptr<GG::Texture> texture = ClientUI::PlanetSizeIcon(planet_size);
         auto row = GG::Wnd::Create<GG::DropDownList::Row>();
         auto icon = GG::Wnd::Create<GG::StaticGraphic>(std::move(texture), style);
@@ -181,7 +187,7 @@ ModeratorActionsWnd::~ModeratorActionsWnd()
 {}
 
 void ModeratorActionsWnd::NoAction() {
-    m_selected_action = MAS_NoAction;
+    m_selected_action = ModeratorActionSetting::MAS_NoAction;
     NoActionSelectedSignal();
     DetachChild(m_star_type_drop);
     DetachChild(m_planet_type_drop);
@@ -190,7 +196,7 @@ void ModeratorActionsWnd::NoAction() {
 }
 
 void ModeratorActionsWnd::CreateSystem() {
-    m_selected_action = MAS_CreateSystem;
+    m_selected_action = ModeratorActionSetting::MAS_CreateSystem;
     CreateSystemActionSelectedSignal(SelectedStarType());
     AttachChild(m_star_type_drop);
     DetachChild(m_planet_type_drop);
@@ -199,7 +205,7 @@ void ModeratorActionsWnd::CreateSystem() {
 }
 
 void ModeratorActionsWnd::CreatePlanet() {
-    m_selected_action = MAS_CreatePlanet;
+    m_selected_action = ModeratorActionSetting::MAS_CreatePlanet;
     CreatePlanetActionSelectedSignal(SelectedPlanetType());
     DetachChild(m_star_type_drop);
     AttachChild(m_planet_type_drop);
@@ -208,7 +214,7 @@ void ModeratorActionsWnd::CreatePlanet() {
 }
 
 void ModeratorActionsWnd::DeleteObject() {
-    m_selected_action = MAS_Destroy;
+    m_selected_action = ModeratorActionSetting::MAS_Destroy;
     DeleteObjectActionSelectedSignal();
     DetachChild(m_star_type_drop);
     DetachChild(m_planet_type_drop);
@@ -217,7 +223,7 @@ void ModeratorActionsWnd::DeleteObject() {
 }
 
 void ModeratorActionsWnd::SetOwner() {
-    m_selected_action = MAS_SetOwner;
+    m_selected_action = ModeratorActionSetting::MAS_SetOwner;
     SetOwnerActionSelectedSignal(SelectedEmpire());
     DetachChild(m_star_type_drop);
     DetachChild(m_planet_type_drop);
@@ -226,7 +232,7 @@ void ModeratorActionsWnd::SetOwner() {
 }
 
 void ModeratorActionsWnd::AddStarlane() {
-    m_selected_action = MAS_AddStarlane;
+    m_selected_action = ModeratorActionSetting::MAS_AddStarlane;
     AddStarlaneActionSelectedSignal();
     DetachChild(m_star_type_drop);
     DetachChild(m_planet_type_drop);
@@ -235,7 +241,7 @@ void ModeratorActionsWnd::AddStarlane() {
 }
 
 void ModeratorActionsWnd::RemoveStarlane() {
-    m_selected_action = MAS_RemoveStarlane;
+    m_selected_action = ModeratorActionSetting::MAS_RemoveStarlane;
     AddStarlaneActionSelectedSignal();
     DetachChild(m_star_type_drop);
     DetachChild(m_planet_type_drop);
@@ -335,20 +341,20 @@ void ModeratorActionsWnd::CloseClicked()
 { ClosingSignal(); }
 
 StarType ModeratorActionsWnd::StarTypeFromIndex(std::size_t i) const {
-    if (i == static_cast<std::size_t>(-1) || i >= NUM_STAR_TYPES)
-        return STAR_BLUE;
-    return StarType(i);     // assumes first enum and first index are value 0, and that items in list are in same order as enum values
+    if (i == static_cast<std::size_t>(-1) || i >= int(StarType::NUM_STAR_TYPES))
+        return StarType::STAR_BLUE;
+    return StarType(i); // assumes first enum and first index are value 0, and that items in list are in same order as enum values
 }
 
 PlanetType ModeratorActionsWnd::PlanetTypeFromIndex(std::size_t i) const {
-    if (i == static_cast<std::size_t>(-1) || i >= NUM_PLANET_TYPES)
-        return PT_SWAMP;
+    if (i == size_t(-1) || i >= size_t(PlanetType::NUM_PLANET_TYPES))
+        return PlanetType::PT_SWAMP;
     return PlanetType(i);   // assumes first enum and first index are value 0, and that items in list are in same order as enum values
 }
 
 PlanetSize ModeratorActionsWnd::PlanetSizeFromIndex(std::size_t i) const {
-    if (i == static_cast<std::size_t>(-1) || i + 1 >= NUM_PLANET_SIZES)
-        return SZ_MEDIUM;
+    if (i == size_t(-1) || i + 1 >= size_t(PlanetSize::NUM_PLANET_SIZES))
+        return PlanetSize::SZ_MEDIUM;
     return PlanetSize(i + 1);// enum index 0 is NO_WORLD, but don't put that into the list, so have to add 1 to all the list indices
 }
 

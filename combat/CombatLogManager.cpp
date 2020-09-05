@@ -8,13 +8,13 @@
 
 namespace {
     static float MaxHealth(const UniverseObject& object) {
-        if (object.ObjectType() == OBJ_SHIP) {
-            return object.GetMeter(METER_MAX_STRUCTURE)->Current();
+        if (object.ObjectType() == UniverseObjectType::OBJ_SHIP) {
+            return object.GetMeter(MeterType::METER_MAX_STRUCTURE)->Current();
 
-        } else if ( object.ObjectType() == OBJ_PLANET ) {
-            const Meter* defense = object.GetMeter(METER_MAX_DEFENSE);
-            const Meter* shield = object.GetMeter(METER_MAX_SHIELD);
-            const Meter* construction = object.GetMeter(METER_TARGET_CONSTRUCTION);
+        } else if ( object.ObjectType() == UniverseObjectType::OBJ_PLANET ) {
+            const Meter* defense = object.GetMeter(MeterType::METER_MAX_DEFENSE);
+            const Meter* shield = object.GetMeter(MeterType::METER_MAX_SHIELD);
+            const Meter* construction = object.GetMeter(MeterType::METER_TARGET_CONSTRUCTION);
 
             float ret = 0.0f;
             if (defense)
@@ -30,13 +30,13 @@ namespace {
     }
 
     static float CurrentHealth(const UniverseObject& object) {
-        if (object.ObjectType() == OBJ_SHIP) {
-            return object.GetMeter(METER_STRUCTURE)->Current();
+        if (object.ObjectType() == UniverseObjectType::OBJ_SHIP) {
+            return object.GetMeter(MeterType::METER_STRUCTURE)->Current();
 
-        } else if (object.ObjectType() == OBJ_PLANET) {
-            const Meter* defense = object.GetMeter(METER_DEFENSE);
-            const Meter* shield = object.GetMeter(METER_SHIELD);
-            const Meter* construction = object.GetMeter(METER_CONSTRUCTION);
+        } else if (object.ObjectType() == UniverseObjectType::OBJ_PLANET) {
+            const Meter* defense = object.GetMeter(MeterType::METER_DEFENSE);
+            const Meter* shield = object.GetMeter(MeterType::METER_SHIELD);
+            const Meter* construction = object.GetMeter(MeterType::METER_CONSTRUCTION);
 
             float ret = 0.0f;
             if (defense)

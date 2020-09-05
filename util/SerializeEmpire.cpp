@@ -179,7 +179,7 @@ void Empire::serialize(Archive& ar, const unsigned int version)
     bool visible = GetUniverse().AllObjectsVisible() ||
         GetUniverse().EncodingEmpire() == ALL_EMPIRES ||
         m_id == GetUniverse().EncodingEmpire();
-    bool allied_visible = visible || Empires().GetDiplomaticStatus(m_id, GetUniverse().EncodingEmpire()) == DIPLO_ALLIED;
+    bool allied_visible = visible || Empires().GetDiplomaticStatus(m_id, GetUniverse().EncodingEmpire()) == DiplomaticStatus::DIPLO_ALLIED;
 
     if (Archive::is_loading::value && version < 1) {
         // adapt set to map
@@ -339,7 +339,7 @@ void serialize(Archive& ar, EmpireManager& em, unsigned int const version)
                     continue;
                 auto dk = DiploKey(e1.first, e2.first);
                 if (em.m_empire_diplomatic_statuses.count(dk) < 1) {
-                    em.m_empire_diplomatic_statuses[dk] = DIPLO_WAR;
+                    em.m_empire_diplomatic_statuses[dk] = DiplomaticStatus::DIPLO_WAR;
                     ErrorLogger() << "Added missing diplomatic status (default WAR) between empires " << e1.first << " and " << e2.first;
                 }
             }

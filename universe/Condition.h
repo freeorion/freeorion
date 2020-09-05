@@ -19,7 +19,7 @@ namespace Condition {
 
 typedef std::vector<std::shared_ptr<const UniverseObject>> ObjectSet;
 
-enum SearchDomain : int {
+enum class SearchDomain : int {
     NON_MATCHES,    ///< The Condition will only examine items in the non matches set; those that match the Condition will be inserted into the matches set.
     MATCHES         ///< The Condition will only examine items in the matches set; those that do not match the Condition will be inserted into the nonmatches set.
 };
@@ -36,12 +36,12 @@ struct FO_COMMON_API Condition {
     virtual void Eval(const ScriptingContext& parent_context,
                       ObjectSet& matches,
                       ObjectSet& non_matches,
-                      SearchDomain search_domain = NON_MATCHES) const;
+                      SearchDomain search_domain = SearchDomain::NON_MATCHES) const;
 
     void Eval(const ScriptingContext& parent_context,
               Effect::TargetSet& matches,
               Effect::TargetSet& non_matches,
-              SearchDomain search_domain = NON_MATCHES) const;
+              SearchDomain search_domain = SearchDomain::NON_MATCHES) const;
 
     /** Tests all objects in universe as NON_MATCHES. */
     void Eval(const ScriptingContext& parent_context,

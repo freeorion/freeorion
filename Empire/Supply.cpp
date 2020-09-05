@@ -82,7 +82,7 @@ std::set<int> SupplyManager::FleetSupplyableSystemIDs(int empire_id, bool includ
         if (other_empire_id == empire_id)
             continue;
         const std::set<int>& systems = empire_id_sys_id_set.second;
-        if (systems.empty() || Empires().GetDiplomaticStatus(empire_id, other_empire_id) != DIPLO_ALLIED)
+        if (systems.empty() || Empires().GetDiplomaticStatus(empire_id, other_empire_id) != DiplomaticStatus::DIPLO_ALLIED)
             continue;
         retval.insert(systems.begin(), systems.end());
     }
@@ -149,7 +149,7 @@ bool SupplyManager::SystemHasFleetSupply(int system_id, int empire_id, bool incl
     if (empire_id == ALL_EMPIRES)
         return false;
 
-    std::set<int> empire_ids = Empires().GetEmpireIDsWithDiplomaticStatusWithEmpire(empire_id, DIPLO_ALLIED);
+    std::set<int> empire_ids = Empires().GetEmpireIDsWithDiplomaticStatusWithEmpire(empire_id, DiplomaticStatus::DIPLO_ALLIED);
     empire_ids.insert(empire_id);
 
     for (auto id : empire_ids) {
@@ -256,9 +256,9 @@ namespace {
         for (auto obj : Objects().find(sys->ObjectIDs())) {
             if (!obj || !obj->OwnedBy(empire_id))
                 continue;
-            if (const auto* m = obj->GetMeter(METER_SUPPLY))
+            if (const auto* m = obj->GetMeter(MeterType::METER_SUPPLY))
                 accumulator_current += m->Current();
-            if (const auto* m = obj->GetMeter(METER_MAX_SUPPLY))
+            if (const auto* m = obj->GetMeter(MeterType::METER_MAX_SUPPLY))
                 accumulator_max += m->Current();
         }
         return {accumulator_current, accumulator_max};
@@ -273,7 +273,7 @@ namespace {
         for (auto obj : Objects().find(OwnedVisitor(empire_id))) {
             if (!obj)
                 continue;
-            if (auto* m = obj->GetMeter(METER_SUPPLY))
+            if (auto* m = obj->GetMeter(MeterType::METER_SUPPLY))
                 accumulator_current += m->Current();
         }
         return accumulator_current;
@@ -550,7 +550,7 @@ void SupplyManager::Update() {
                     if (id1 == ALL_EMPIRES) continue;
                     for (auto id2 : top_empires) {
                         if (id2 == ALL_EMPIRES || id2 <= id1) continue;
-                        if (Empires().GetDiplomaticStatus(id1, id2) != DIPLO_ALLIED) {
+                        if (Empires().GetDiplomaticStatus(id1, id2) != DiplomaticStatus::DIPLO_ALLIED) {
                             any_non_allied_pair = true;
                             break;
                         }
@@ -785,7 +785,7 @@ void SupplyManager::Update() {
         auto& empire_supply_traversals = ally_merged_supply_starlane_traversals[empire_set.first];
 
 
-        std::set<int> allies_of_empire = Empires().GetEmpireIDsWithDiplomaticStatusWithEmpire(empire_set.first, DIPLO_ALLIED);
+        std::set<int> allies_of_empire = Empires().GetEmpireIDsWithDiplomaticStatusWithEmpire(empire_set.first, DiplomaticStatus::DIPLO_ALLIED);
         for (int ally_id : allies_of_empire) {
             // input:
             auto const& ally_obstructed_traversals = m_supply_starlane_obstructed_traversals[ally_id];
@@ -807,7 +807,7 @@ void SupplyManager::Update() {
     // allies can use eachothers' supply networks
     for (auto& empire_set : ally_merged_supply_starlane_traversals) {
         auto& output_empire_traversals = empire_set.second;
-        for (int ally_id : Empires().GetEmpireIDsWithDiplomaticStatusWithEmpire(empire_set.first, DIPLO_ALLIED)) {
+        for (int ally_id : Empires().GetEmpireIDsWithDiplomaticStatusWithEmpire(empire_set.first, DiplomaticStatus::DIPLO_ALLIED)) {
             // copy ally traversals into the output empire traversals set
             for (const auto& traversal_pair : m_supply_starlane_traversals[ally_id])
                 output_empire_traversals.insert(traversal_pair);
@@ -819,7 +819,7 @@ void SupplyManager::Update() {
     auto ally_merged_fleet_supplyable_system_ids = m_fleet_supplyable_system_ids;
     for (auto& empire_set : ally_merged_fleet_supplyable_system_ids) {
         std::set<int>& output_empire_ids = empire_set.second;
-        for (int ally_id : Empires().GetEmpireIDsWithDiplomaticStatusWithEmpire(empire_set.first, DIPLO_ALLIED)) {
+        for (int ally_id : Empires().GetEmpireIDsWithDiplomaticStatusWithEmpire(empire_set.first, DiplomaticStatus::DIPLO_ALLIED)) {
             // copy ally traversals into the output empire traversals set
             for (int sys_id : m_fleet_supplyable_system_ids[ally_id])
                 output_empire_ids.insert(sys_id);

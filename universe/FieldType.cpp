@@ -16,8 +16,8 @@ namespace {
 
         auto vr =
             std::make_unique<ValueRef::Operation<double>>(
-                ValueRef::PLUS,
-                std::make_unique<ValueRef::Variable<double>>(ValueRef::EFFECT_TARGET_VALUE_REFERENCE),
+                ValueRef::OpType::PLUS,
+                std::make_unique<ValueRef::Variable<double>>(ValueRef::ReferenceType::EFFECT_TARGET_VALUE_REFERENCE),
                 std::make_unique<ValueRef::Constant<double>>(increase)
             );
         std::vector<std::unique_ptr<Effect::Effect>> effects;
@@ -44,7 +44,7 @@ FieldType::FieldType(std::string&& name, std::string&& description,
         m_effects.emplace_back(std::move(effect));
 
     if (m_stealth != 0.0f)
-        m_effects.emplace_back(IncreaseMeter(METER_STEALTH, m_stealth));
+        m_effects.emplace_back(IncreaseMeter(MeterType::METER_STEALTH, m_stealth));
 
     for (auto& effect : m_effects)
         effect->SetTopLevelContent(m_name);

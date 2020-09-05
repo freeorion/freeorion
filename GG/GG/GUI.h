@@ -122,7 +122,7 @@ public:
 
     /// These are the only events absolutely necessary for GG to function
     /// properly
-    enum EventType : int {
+    enum class EventType : int {
         IDLE,        ///< nothing has changed since the last message, but the GUI might want to update some things anyway
         KEYPRESS,    ///< a down key press or key repeat, with or without modifiers like Alt, Ctrl, Meta, etc.
         KEYRELEASE,  ///< a key release, with or without modifiers like Alt, Ctrl, Meta, etc.

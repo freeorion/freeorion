@@ -169,7 +169,7 @@ namespace {
         results.reserve(ship_design.Parts().size());
         for (const std::string& part_name : ship_design.Parts()) {
             const ShipPart* part = GetShipPart(part_name);
-            if (part && part->Class() == PC_DIRECT_WEAPON)  // TODO: handle other weapon classes when they are implemented
+            if (part && part->Class() == ShipPartClass::PC_DIRECT_WEAPON)  // TODO: handle other weapon classes when they are implemented
                 results.push_back(part->Capacity());
         }
         return results;

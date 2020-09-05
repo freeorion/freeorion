@@ -377,7 +377,6 @@ namespace parse { namespace detail {
         }
     };
 
-
     class deconstruct_movable_vector_pair {
     public:
         template <typename> struct result;

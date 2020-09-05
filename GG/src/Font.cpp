@@ -670,7 +670,7 @@ void Font::TextElement::Bind(const std::string& whole_text)
 { text.Bind(whole_text); }
 
 Font::TextElement::TextElementType Font::TextElement::Type() const
-{ return newline ? NEWLINE : (whitespace ? WHITESPACE : TEXT); }
+{ return newline ? TextElementType::NEWLINE : (whitespace ? TextElementType::WHITESPACE : TextElementType::TEXT); }
 
 X Font::TextElement::Width() const
 {
@@ -715,7 +715,7 @@ void Font::FormattingTag::Bind(const std::string& whole_text)
 }
 
 Font::FormattingTag::TextElementType Font::FormattingTag::Type() const
-{ return close_tag ? CLOSE_TAG : OPEN_TAG; }
+{ return close_tag ? TextElementType::CLOSE_TAG : TextElementType::OPEN_TAG; }
 
 bool Font::FormattingTag::operator==(const TextElement &rhs) const
 {
@@ -1531,7 +1531,7 @@ void Font::ChangeTemplatedText(
     size_t curr_offset = 0;
     std::vector<std::shared_ptr<Font::TextElement>>::iterator te_it = text_elements.begin();
     while (te_it != text_elements.end()) {
-        if ((*te_it)->Type() == TextElement::TEXT) {
+        if ((*te_it)->Type() == TextElement::TextElementType::TEXT) {
             // Change the target text element
             if (targ_offset == curr_offset) {
                 // Change text
@@ -1614,7 +1614,7 @@ std::vector<Font::LineData> Font::DetermineLines(
     std::vector<std::shared_ptr<TextElement>> pending_formatting_tags;
     for (const auto& elem : text_elements) {
         // if a newline is explicitly requested, start a new one
-        if (elem->Type() == TextElement::NEWLINE) {
+        if (elem->Type() == TextElement::TextElementType::NEWLINE) {
             line_data.emplace_back();
             SetJustification(last_line_of_curr_just,
                              line_data.back(),
@@ -1622,7 +1622,7 @@ std::vector<Font::LineData> Font::DetermineLines(
                              line_data[line_data.size() - 2].justification);
             x = X0;
 
-        } else if (elem->Type() == TextElement::WHITESPACE) {
+        } else if (elem->Type() == TextElement::TextElementType::WHITESPACE) {
             auto it = elem->text.begin();
             auto end_it = elem->text.end();
             while (it != end_it) {
@@ -1678,7 +1678,7 @@ std::vector<Font::LineData> Font::DetermineLines(
                 }
                 ++code_point_offset;
             }
-        } else if (elem->Type() == TextElement::TEXT) {
+        } else if (elem->Type() == TextElement::TextElementType::TEXT) {
             if (format & FORMAT_WORDBREAK) {
                 // if the text "word" overruns this line, and isn't alone on
                 // this line, move it down to the next line
@@ -1748,7 +1748,7 @@ std::vector<Font::LineData> Font::DetermineLines(
                     ++code_point_offset;
                 }
             }
-        } else if (elem->Type() == TextElement::OPEN_TAG) {
+        } else if (elem->Type() == TextElement::TextElementType::OPEN_TAG) {
             assert(std::dynamic_pointer_cast<FormattingTag>(elem));
             auto elem_as_tag = std::static_pointer_cast<FormattingTag>(elem);
             if (elem_as_tag->tag_name == ALIGN_LEFT_TAG)
@@ -1762,7 +1762,7 @@ std::vector<Font::LineData> Font::DetermineLines(
             last_line_of_curr_just = false;
             code_point_offset += elem->CodePointSize();
 
-        } else if (elem->Type() == TextElement::CLOSE_TAG) {
+        } else if (elem->Type() == TextElement::TextElementType::CLOSE_TAG) {
             assert(std::dynamic_pointer_cast<FormattingTag>(elem));
             auto elem_as_tag = std::static_pointer_cast<FormattingTag>(elem);
             if ((elem_as_tag->tag_name == ALIGN_LEFT_TAG && line_data.back().justification == ALIGN_LEFT) ||

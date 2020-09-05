@@ -24,10 +24,8 @@ namespace Moderator {
   * (if applicable) */
 class ModeratorAction {
 public:
-    explicit ModeratorAction();
-
-    virtual ~ModeratorAction()
-    {}
+    ModeratorAction() = default;
+    virtual ~ModeratorAction() = default;
 
     virtual void Execute() const
     {}
@@ -43,7 +41,7 @@ private:
 
 class FO_COMMON_API DestroyUniverseObject : public ModeratorAction {
 public:
-    explicit DestroyUniverseObject();
+    DestroyUniverseObject() = default;
     explicit DestroyUniverseObject(int object_id);
 
     void Execute() const override;
@@ -59,7 +57,7 @@ private:
 
 class FO_COMMON_API SetOwner : public ModeratorAction {
 public:
-    explicit SetOwner();
+    SetOwner();
     SetOwner(int object_id, int new_owner_empire_id);
 
     void Execute() const override;
@@ -76,7 +74,7 @@ private:
 
 class FO_COMMON_API AddStarlane : public ModeratorAction {
 public:
-    explicit AddStarlane();
+    AddStarlane();
     AddStarlane(int system_1_id, int system_2_id);
 
     void Execute() const override;
@@ -93,7 +91,7 @@ private:
 
 class FO_COMMON_API RemoveStarlane : public ModeratorAction {
 public:
-    explicit RemoveStarlane();
+    RemoveStarlane();
     RemoveStarlane(int system_1_id, int system_2_id);
 
     void Execute() const override;
@@ -110,16 +108,16 @@ private:
 
 class FO_COMMON_API CreateSystem : public ModeratorAction {
 public:
-    explicit CreateSystem();
+    CreateSystem();
     CreateSystem(double x, double y, StarType star_type);
 
     void Execute() const override;
     std::string Dump() const override;
 
 private:
-    double      m_x = 0.0;
-    double      m_y = 0.0;
-    StarType    m_star_type;
+    double   m_x = 0.0;
+    double   m_y = 0.0;
+    StarType m_star_type;
 
     friend class boost::serialization::access;
     template <typename Archive>
@@ -128,7 +126,7 @@ private:
 
 class FO_COMMON_API CreatePlanet : public ModeratorAction {
 public:
-    explicit CreatePlanet();
+    CreatePlanet();
     CreatePlanet(int system_id, PlanetType planet_type, PlanetSize planet_size);
 
     void Execute() const override;

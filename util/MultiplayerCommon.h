@@ -155,7 +155,7 @@ struct FO_COMMON_API SaveGameEmpireData {
 struct FO_COMMON_API PlayerSaveHeaderData {
     std::string             name;
     int                     empire_id = ALL_EMPIRES;
-    Networking::ClientType  client_type = Networking::INVALID_CLIENT_TYPE;
+    Networking::ClientType  client_type = Networking::ClientType::INVALID_CLIENT_TYPE;
 };
 
 /** Contains data that must be saved for a single player. */
@@ -196,7 +196,7 @@ struct PlayerSetupData {
     std::string             starting_species_name;
     //! When loading a game, the ID of the empire that this player will control
     int                     save_game_empire_id = ALL_EMPIRES;
-    Networking::ClientType  client_type = Networking::INVALID_CLIENT_TYPE;
+    Networking::ClientType  client_type = Networking::ClientType::INVALID_CLIENT_TYPE;
     bool                    player_ready = false;
     bool                    authenticated = false;
     int                     starting_team = Networking::NO_TEAM_ID;
@@ -288,7 +288,7 @@ struct PlayerInfo {
     //! Name of this player (not the same as the empire name)
     std::string             name;
     int                     empire_id = ALL_EMPIRES;
-    Networking::ClientType  client_type = Networking::INVALID_CLIENT_TYPE;
+    Networking::ClientType  client_type = Networking::ClientType::INVALID_CLIENT_TYPE;
     //! true iff this is the host player
     bool                    host = false;
 };

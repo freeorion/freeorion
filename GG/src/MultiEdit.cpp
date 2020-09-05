@@ -824,24 +824,24 @@ void MultiEdit::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mo
     if (!numlock_on) {
         // convert keypad keys into corresponding non-number keys
         switch (key) {
-        case GGK_KP0:       key = GGK_INSERT;   break;
-        case GGK_KP1:       key = GGK_END;      break;
-        case GGK_KP2:       key = GGK_DOWN;     break;
-        case GGK_KP3:       key = GGK_PAGEDOWN; break;
-        case GGK_KP4:       key = GGK_LEFT;     break;
-        case GGK_KP5:                           break;
-        case GGK_KP6:       key = GGK_RIGHT;    break;
-        case GGK_KP7:       key = GGK_HOME;     break;
-        case GGK_KP8:       key = GGK_UP;       break;
-        case GGK_KP9:       key = GGK_PAGEUP;   break;
-        case GGK_KP_PERIOD: key = GGK_DELETE;   break;
-        default:                                break;
+        case Key::GGK_KP0:       key = Key::GGK_INSERT;   break;
+        case Key::GGK_KP1:       key = Key::GGK_END;      break;
+        case Key::GGK_KP2:       key = Key::GGK_DOWN;     break;
+        case Key::GGK_KP3:       key = Key::GGK_PAGEDOWN; break;
+        case Key::GGK_KP4:       key = Key::GGK_LEFT;     break;
+        case Key::GGK_KP5:                                break;
+        case Key::GGK_KP6:       key = Key::GGK_RIGHT;    break;
+        case Key::GGK_KP7:       key = Key::GGK_HOME;     break;
+        case Key::GGK_KP8:       key = Key::GGK_UP;       break;
+        case Key::GGK_KP9:       key = Key::GGK_PAGEUP;   break;
+        case Key::GGK_KP_PERIOD: key = Key::GGK_DELETE;   break;
+        default:                                          break;
         }
     }
 
     switch (key) {
-    case GGK_RETURN:
-    case GGK_KP_ENTER: {
+    case Key::GGK_RETURN:
+    case Key::GGK_KP_ENTER: {
         if (MultiSelected())
             ClearSelected();
         Insert(m_cursor_end.first, m_cursor_end.second, '\n');
@@ -862,7 +862,7 @@ void MultiEdit::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mo
         break;
     }
 
-    case GGK_LEFT: {
+    case Key::GGK_LEFT: {
         if (MultiSelected() && !shift_down) {
             m_cursor_begin = m_cursor_end = LowCursorPos();
         } else if (0 < m_cursor_end.second) {
@@ -883,7 +883,7 @@ void MultiEdit::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mo
         break;
     }
 
-    case GGK_RIGHT: {
+    case Key::GGK_RIGHT: {
         if (MultiSelected() && !shift_down) {
             m_cursor_begin = m_cursor_end = HighCursorPos();
         } else if (!GetLineData().empty() && m_cursor_end.second <
@@ -900,7 +900,7 @@ void MultiEdit::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mo
         break;
     }
 
-    case GGK_UP: {
+    case Key::GGK_UP: {
         if (MultiSelected() && !shift_down) {
             m_cursor_begin = m_cursor_end = LowCursorPos();
         } else if (0 < m_cursor_end.first) {
@@ -914,7 +914,7 @@ void MultiEdit::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mo
         break;
     }
 
-    case GGK_DOWN: {
+    case Key::GGK_DOWN: {
         if (MultiSelected() && !shift_down) {
             m_cursor_begin = m_cursor_end = HighCursorPos();
         } else if (!GetLineData().empty() && m_cursor_end.first < GetLineData().size() - 1) {
@@ -928,7 +928,7 @@ void MultiEdit::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mo
         break;
     }
 
-    case GGK_HOME: {
+    case Key::GGK_HOME: {
         m_cursor_end.second = CP0;
         if (ctrl_down)
             m_cursor_end.first = 0;
@@ -937,7 +937,7 @@ void MultiEdit::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mo
         break;
     }
 
-    case GGK_END: {
+    case Key::GGK_END: {
         m_cursor_end.second = CPSize(GetLineData()[m_cursor_end.first].char_data.size());
         if (LineEndsWithEndlineCharacter(GetLineData(), m_cursor_end.first, Text()))
             --m_cursor_end.second;
@@ -946,7 +946,7 @@ void MultiEdit::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mo
         break;
     }
 
-    case GGK_PAGEUP: {
+    case Key::GGK_PAGEUP: {
         if (m_vscroll) {
             m_vscroll->ScrollPageDecr();
             SignalScroll(*m_vscroll, true);
@@ -959,7 +959,7 @@ void MultiEdit::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mo
         break;
     }
 
-    case GGK_PAGEDOWN: {
+    case Key::GGK_PAGEDOWN: {
         if (m_vscroll) {
             m_vscroll->ScrollPageIncr();
             SignalScroll(*m_vscroll, true);
@@ -977,7 +977,7 @@ void MultiEdit::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mo
         break;
     }
 
-    case GGK_BACKSPACE: {
+    case Key::GGK_BACKSPACE: {
         if (MultiSelected()) {
             ClearSelected();
             emit_signal = true;
@@ -997,7 +997,7 @@ void MultiEdit::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mo
         break;
     }
 
-    case GGK_DELETE: {
+    case Key::GGK_DELETE: {
         if (MultiSelected()) {
             ClearSelected();
             emit_signal = true;

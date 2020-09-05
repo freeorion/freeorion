@@ -132,7 +132,7 @@ public:
         PLAYER_DISCONNECT,      ///< an active player (not an observer) was disconnected
     )
 
-    Message();
+    Message() = default;
 
     Message(MessageType message_type, const std::string& text);
 
@@ -146,9 +146,8 @@ public:
     void        Swap(Message& rhs);         ///< Swaps the contents of \a *this with \a rhs.  Does not throw.
 
 private:
-    MessageType   m_type;
-    int           m_message_size;
-
+    MessageType               m_type = MessageType::UNDEFINED;
+    int                       m_message_size = 0;
     boost::shared_array<char> m_message_text;
 
     friend FO_COMMON_API void BufferToHeader(const HeaderBuffer&, Message&);

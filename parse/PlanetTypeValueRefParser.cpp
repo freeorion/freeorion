@@ -25,17 +25,17 @@ namespace parse { namespace detail {
             ;
 
         enum_expr
-            =   tok.Swamp_      [ _val = PT_SWAMP ]
-            |   tok.Toxic_      [ _val = PT_TOXIC ]
-            |   tok.Inferno_    [ _val = PT_INFERNO ]
-            |   tok.Radiated_   [ _val = PT_RADIATED ]
-            |   tok.Barren_     [ _val = PT_BARREN ]
-            |   tok.Tundra_     [ _val = PT_TUNDRA ]
-            |   tok.Desert_     [ _val = PT_DESERT ]
-            |   tok.Terran_     [ _val = PT_TERRAN ]
-            |   tok.Ocean_      [ _val = PT_OCEAN ]
-            |   tok.Asteroids_  [ _val = PT_ASTEROIDS ]
-            |   tok.GasGiant_   [ _val = PT_GASGIANT ]
+            =   tok.Swamp_      [ _val = PlanetType::PT_SWAMP ]
+            |   tok.Toxic_      [ _val = PlanetType::PT_TOXIC ]
+            |   tok.Inferno_    [ _val = PlanetType::PT_INFERNO ]
+            |   tok.Radiated_   [ _val = PlanetType::PT_RADIATED ]
+            |   tok.Barren_     [ _val = PlanetType::PT_BARREN ]
+            |   tok.Tundra_     [ _val = PlanetType::PT_TUNDRA ]
+            |   tok.Desert_     [ _val = PlanetType::PT_DESERT ]
+            |   tok.Terran_     [ _val = PlanetType::PT_TERRAN ]
+            |   tok.Ocean_      [ _val = PlanetType::PT_OCEAN ]
+            |   tok.Asteroids_  [ _val = PlanetType::PT_ASTEROIDS ]
+            |   tok.GasGiant_   [ _val = PlanetType::PT_GASGIANT ]
             ;
     }
 } }

@@ -18,48 +18,48 @@ namespace {
       * (such as meter bars) for the indicated \a meter_type */
     GG::Clr MeterColor(MeterType meter_type) {
         switch (meter_type) {
-        case METER_INDUSTRY:
-        case METER_TARGET_INDUSTRY:
+        case MeterType::METER_INDUSTRY:
+        case MeterType::METER_TARGET_INDUSTRY:
             return GG::Clr(240, 90, 0, 255);
             break;
-        case METER_RESEARCH:
-        case METER_TARGET_RESEARCH:
+        case MeterType::METER_RESEARCH:
+        case MeterType::METER_TARGET_RESEARCH:
             return GG::Clr(0, 255, 255, 255);
             break;
-        case METER_INFLUENCE:
-        case METER_TARGET_INFLUENCE:
+        case MeterType::METER_INFLUENCE:
+        case MeterType::METER_TARGET_INFLUENCE:
             return GG::Clr(255, 200, 0, 255);
             break;
-        case METER_SHIELD:
-        case METER_MAX_SHIELD:
+        case MeterType::METER_SHIELD:
+        case MeterType::METER_MAX_SHIELD:
             return GG::Clr(0, 255, 186, 255);
             break;
-        case METER_DEFENSE:
-        case METER_MAX_DEFENSE:
+        case MeterType::METER_DEFENSE:
+        case MeterType::METER_MAX_DEFENSE:
             return GG::Clr(255, 0, 0, 255);
             break;
-        case METER_TROOPS:
-        case METER_MAX_TROOPS:
-        case METER_REBEL_TROOPS:
+        case MeterType::METER_TROOPS:
+        case MeterType::METER_MAX_TROOPS:
+        case MeterType::METER_REBEL_TROOPS:
             return GG::Clr(168, 107, 0, 255);
             break;
-        case METER_DETECTION:
+        case MeterType::METER_DETECTION:
             return GG::Clr(191, 255, 0, 255);
             break;
-        case METER_STEALTH:
+        case MeterType::METER_STEALTH:
             return GG::Clr(174, 0, 255, 255);
             break;
-        case METER_HAPPINESS:
-        case METER_TARGET_HAPPINESS:
+        case MeterType::METER_HAPPINESS:
+        case MeterType::METER_TARGET_HAPPINESS:
             return GG::Clr(255, 255, 0, 255);
-        case METER_SUPPLY:
-        case METER_MAX_SUPPLY:
-        case METER_STOCKPILE:
-        case METER_MAX_STOCKPILE:
-        case METER_CONSTRUCTION:
-        case METER_TARGET_CONSTRUCTION:
-        case METER_POPULATION:
-        case METER_TARGET_POPULATION:
+        case MeterType::METER_SUPPLY:
+        case MeterType::METER_MAX_SUPPLY:
+        case MeterType::METER_STOCKPILE:
+        case MeterType::METER_MAX_STOCKPILE:
+        case MeterType::METER_CONSTRUCTION:
+        case MeterType::METER_TARGET_CONSTRUCTION:
+        case MeterType::METER_POPULATION:
+        case MeterType::METER_TARGET_POPULATION:
         default:
             return GG::CLR_WHITE;
         }

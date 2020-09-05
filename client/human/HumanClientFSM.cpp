@@ -736,10 +736,10 @@ boost::statechart::result PlayingGame::react(const EndGame& msg) {
     std::string reason_message;
     bool error = false;
     switch (reason) {
-    case Message::LOCAL_CLIENT_DISCONNECT:
+    case Message::EndGameReason::LOCAL_CLIENT_DISCONNECT:
         reason_message = UserString("SERVER_LOST");
         break;
-    case Message::PLAYER_DISCONNECT:
+    case Message::EndGameReason::PLAYER_DISCONNECT:
         reason_message = boost::io::str(FlexibleFormat(UserString("PLAYER_DISCONNECTED")) % reason_player_name);
         error = true;
         break;
@@ -991,17 +991,17 @@ PlayingTurn::PlayingTurn(my_context ctx) :
     Client().GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(
         boost::io::str(FlexibleFormat(UserString("TURN_BEGIN")) % CurrentTurn()) + "\n");
 
-    if (Client().GetApp()->GetClientType() != Networking::CLIENT_TYPE_HUMAN_OBSERVER)
+    if (Client().GetApp()->GetClientType() != Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER)
         Client().GetClientUI().GetMapWnd()->EnableOrderIssuing(true);
 
-    if (Client().GetApp()->GetClientType() == Networking::CLIENT_TYPE_HUMAN_OBSERVER) {
+    if (Client().GetApp()->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER) {
         // observers can't do anything but wait for the next update, and need to
         // be back in WaitingForTurnData, so posting TurnEnded here has the effect
         // of keeping observers in the WaitingForTurnData state so they can receive
         // updates from the server.
         post_event(TurnEnded());
 
-    } else if (Client().GetApp()->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
+    } else if (Client().GetApp()->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER) {
         if (Client().GetClientUI().GetMapWnd()->AutoEndTurnEnabled()) {
             // if in-game-GUI auto turn advance enabled, set auto turn counter to 1
             Client().InitAutoTurns(1);
@@ -1037,7 +1037,7 @@ boost::statechart::result PlayingTurn::react(const SaveGameComplete& msg) {
     Client().SaveGameCompleted();
 
     // auto quit save has completed, close the app
-    if (Client().GetApp()->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER
+    if (Client().GetApp()->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER
         && Client().AutoTurnsLeft() <= 0
         && GetOptionsDB().Get<bool>("auto-quit"))
     {
@@ -1080,7 +1080,7 @@ boost::statechart::result PlayingTurn::react(const PlayerStatus& msg) {
 
     Client().SetEmpireStatus(about_empire_id, status);
 
-    if (Client().GetApp()->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR &&
+    if (Client().GetApp()->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR &&
         Client().GetClientUI().GetMapWnd()->AutoEndTurnEnabled())
     {
         // check status of all empires: are they all done their turns?

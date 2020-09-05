@@ -24,19 +24,19 @@ std::ostream& std::operator << (std::ostream& stream, const ValueRef::OpType& ty
     if(type == ValueRef::elem) stream << BOOST_PP_STRINGIZE(elem);
 
     BOOST_PP_SEQ_FOR_EACH(VALUE_REF_BRANCH,~,
-        (PLUS)
-        (MINUS)
-        (TIMES)
-        (DIVIDE)
-        (NEGATE)
-        (EXPONENTIATE)
-        (ABS)
-        (LOGARITHM)
-        (SINE)
-        (COSINE)
-        (MINIMUM)
-        (MAXIMUM)
-        (RANDOM_UNIFORM)
+        (OpType::PLUS)
+        (OpType::MINUS)
+        (OpType::TIMES)
+        (OpType::DIVIDE)
+        (OpType::NEGATE)
+        (OpType::EXPONENTIATE)
+        (OpType::ABS)
+        (OpType::LOGARITHM)
+        (OpType::SINE)
+        (OpType::COSINE)
+        (OpType::MINIMUM)
+        (OpType::MAXIMUM)
+        (OpType::RANDOM_UNIFORM)
     )
 
     return stream;

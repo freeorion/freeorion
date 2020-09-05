@@ -34,19 +34,19 @@ void PopCenter::Copy(std::shared_ptr<const PopCenter> copied_object, Visibility 
         return;
     }
 
-    if (vis >= VIS_PARTIAL_VISIBILITY) {
+    if (vis >= Visibility::VIS_PARTIAL_VISIBILITY) {
         this->m_species_name =      copied_object->m_species_name;
     }
 }
 
 void PopCenter::Copy(std::shared_ptr<const PopCenter> copied_object)
-{ Copy(copied_object, VIS_FULL_VISIBILITY); }
+{ Copy(copied_object, Visibility::VIS_FULL_VISIBILITY); }
 
 void PopCenter::Init() {
-    AddMeter(METER_POPULATION);
-    AddMeter(METER_TARGET_POPULATION);
-    AddMeter(METER_HAPPINESS);
-    AddMeter(METER_TARGET_HAPPINESS);
+    AddMeter(MeterType::METER_POPULATION);
+    AddMeter(MeterType::METER_TARGET_POPULATION);
+    AddMeter(MeterType::METER_HAPPINESS);
+    AddMeter(MeterType::METER_TARGET_HAPPINESS);
 }
 
 std::string PopCenter::Dump(unsigned short ntabs) const {
@@ -56,11 +56,11 @@ std::string PopCenter::Dump(unsigned short ntabs) const {
 }
 
 bool PopCenter::Populated() const
-{ return GetMeter(METER_POPULATION)->Current() >= MINIMUM_POP_CENTER_POPULATION; }
+{ return GetMeter(MeterType::METER_POPULATION)->Current() >= MINIMUM_POP_CENTER_POPULATION; }
 
 void PopCenter::PopCenterResetTargetMaxUnpairedMeters() {
-    GetMeter(METER_TARGET_POPULATION)->ResetCurrent();
-    GetMeter(METER_TARGET_HAPPINESS)->ResetCurrent();
+    GetMeter(MeterType::METER_TARGET_POPULATION)->ResetCurrent();
+    GetMeter(MeterType::METER_TARGET_HAPPINESS)->ResetCurrent();
 }
 
 void PopCenter::PopCenterPopGrowthProductionResearchPhase() {
@@ -78,19 +78,19 @@ void PopCenter::PopCenterPopGrowthProductionResearchPhase() {
 }
 
 void PopCenter::PopCenterClampMeters()
-{ GetMeter(METER_POPULATION)->ClampCurrentToRange(); }
+{ GetMeter(MeterType::METER_POPULATION)->ClampCurrentToRange(); }
 
 void PopCenter::Reset() {
-    GetMeter(METER_POPULATION)->Reset();
-    GetMeter(METER_TARGET_POPULATION)->Reset();
-    GetMeter(METER_HAPPINESS)->Reset();
-    GetMeter(METER_TARGET_HAPPINESS)->Reset();
+    GetMeter(MeterType::METER_POPULATION)->Reset();
+    GetMeter(MeterType::METER_TARGET_POPULATION)->Reset();
+    GetMeter(MeterType::METER_HAPPINESS)->Reset();
+    GetMeter(MeterType::METER_TARGET_HAPPINESS)->Reset();
     m_species_name.clear();
 }
 
 void PopCenter::Depopulate() {
-    GetMeter(METER_POPULATION)->Reset();
-    GetMeter(METER_HAPPINESS)->Reset();
+    GetMeter(MeterType::METER_POPULATION)->Reset();
+    GetMeter(MeterType::METER_HAPPINESS)->Reset();
 }
 
 void PopCenter::SetSpecies(std::string species_name) {

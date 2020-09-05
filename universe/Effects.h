@@ -175,9 +175,9 @@ private:
 };
 
 /** Sets the planet type of the target to \a type.  This has no effect on non-Planet targets.  Note that changing the
-    type of a PT_ASTEROID or PT_GASGIANT planet will also change its size to SZ_TINY or SZ_HUGE, respectively.
-    Similarly, changing type to PT_ASTEROID or PT_GASGIANT will also cause the size to change to SZ_ASTEROID or
-    SZ_GASGIANT, respectively. */
+    type of a PlanetType::PT_ASTEROID or PlanetType::PT_GASGIANT planet will also change its size to PlanetSize::SZ_TINY or PlanetSize::SZ_HUGE, respectively.
+    Similarly, changing type to PlanetType::PT_ASTEROID or PlanetType::PT_GASGIANT will also cause the size to change to PlanetSize::SZ_ASTEROID or
+    PlanetSize::SZ_GASGIANT, respectively. */
 class FO_COMMON_API SetPlanetType final : public Effect {
 public:
     explicit SetPlanetType(std::unique_ptr<ValueRef::ValueRef<PlanetType>>&& type);
@@ -192,10 +192,10 @@ private:
 };
 
 /** Sets the planet size of the target to \a size.  This has no effect on non-
-  * Planet targets.  Note that changing the size of a PT_ASTEROID or PT_GASGIANT
-  * planet will also change its type to PT_BARREN.  Similarly, changing size to
-  * SZ_ASTEROID or SZ_GASGIANT will also cause the type to change to PT_ASTEROID
-  * or PT_GASGIANT, respectively. */
+  * Planet targets.  Note that changing the size of a PlanetType::PT_ASTEROID or PlanetType::PT_GASGIANT
+  * planet will also change its type to PlanetType::PT_BARREN.  Similarly, changing size to
+  * PlanetSize::SZ_ASTEROID or PlanetSize::SZ_GASGIANT will also cause the type to change to PlanetType::PT_ASTEROID
+  * or PlanetType::PT_GASGIANT, respectively. */
 class FO_COMMON_API SetPlanetSize final : public Effect {
 public:
     explicit SetPlanetSize(std::unique_ptr<ValueRef::ValueRef<PlanetSize>>&& size);

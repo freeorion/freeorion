@@ -68,7 +68,7 @@ namespace parse { namespace detail {
             ;
 
         set_empire_stockpile
-            =   tok.SetEmpireStockpile_ [ _a = RE_INDUSTRY ]
+            =   tok.SetEmpireStockpile_ [ _a = ResourceType::RE_INDUSTRY ]
             >   (
                 (   label(tok.Empire_) > int_rules.expr [ _b = _1 ]
                     >   label(tok.Value_)  > double_rules.expr [ _val = construct_movable_(new_<Effect::SetEmpireStockpile>(
@@ -145,7 +145,7 @@ namespace parse { namespace detail {
                         // or enemies of a single empire
                         (
                             (   (label(tok.Affiliation_) > empire_affiliation_type_enum [ _d = _1 ])
-                                |    eps [ _d = AFFIL_SELF ]
+                                |    eps [ _d = EmpireAffiliationType::AFFIL_SELF ]
                             )
                             >>  label(tok.Empire_)
                         ) > int_rules.expr [ _b = _1 ]
@@ -153,7 +153,7 @@ namespace parse { namespace detail {
                     |  (   // no empire id or condition specified, with or without an
                         // affiliation type: useful to specify no or all empires
                         (   (label(tok.Affiliation_) > empire_affiliation_type_enum [ _d = _1 ])
-                            |    eps [ _d = AFFIL_ANY ]
+                            |    eps [ _d = EmpireAffiliationType::AFFIL_ANY ]
                         )
                     )
                 )

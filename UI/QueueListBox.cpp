@@ -79,7 +79,7 @@ void QueueListBox::KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags
         CUIListBox::KeyPress(key, key_code_point, mod_keys);
         return;
     }
-    if (key == GG::GGK_DELETE) {
+    if (key == GG::Key::GGK_DELETE) {
         QueueListBox::iterator it = Caret();
         if (it == end())
             return;

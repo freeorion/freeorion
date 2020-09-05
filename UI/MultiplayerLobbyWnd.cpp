@@ -78,7 +78,7 @@ namespace {
         public:
             TypeRow() :
                 GG::DropDownList::Row(),
-                type(Networking::INVALID_CLIENT_TYPE),
+                type(Networking::ClientType::INVALID_CLIENT_TYPE),
                 m_label(GG::Wnd::Create<CUILabel>(UserString("NO_PLAYER")))
             {}
 
@@ -88,19 +88,19 @@ namespace {
             {
                 SetDragDropDataType("PlayerTypeSelectorRow");
                 switch (type) {
-                case Networking::CLIENT_TYPE_AI_PLAYER:
+                case Networking::ClientType::CLIENT_TYPE_AI_PLAYER:
                     if (show_add_drop)
                         m_label = GG::Wnd::Create<CUILabel>(UserString("ADD_AI_PLAYER"));
                     else
                         m_label = GG::Wnd::Create<CUILabel>(UserString("AI_PLAYER"));
                     break;
-                case Networking::CLIENT_TYPE_HUMAN_OBSERVER:
+                case Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER:
                     m_label = GG::Wnd::Create<CUILabel>(UserString("OBSERVER"));
                     break;
-                case Networking::CLIENT_TYPE_HUMAN_PLAYER:
+                case Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER:
                     m_label = GG::Wnd::Create<CUILabel>(UserString("PLAYER"));
                     break;
-                case Networking::CLIENT_TYPE_HUMAN_MODERATOR:
+                case Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR:
                     m_label = GG::Wnd::Create<CUILabel>(UserString("MODERATOR"));
                     break;
                 default:
@@ -137,20 +137,20 @@ namespace {
             Resize(GG::Pt(w, type_row_height));
             SetColWidth(0, CUIDropDownList::DisplayedRowWidth());
 
-            if (client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
+            if (client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER) {
                 if (disabled) {
                     // For AI players on non-hosts, have "AI" shown (disabled)
-                    Insert(GG::Wnd::Create<TypeRow>(w, type_row_height, Networking::CLIENT_TYPE_AI_PLAYER));      // static "AI" display
+                    Insert(GG::Wnd::Create<TypeRow>(w, type_row_height, Networking::ClientType::CLIENT_TYPE_AI_PLAYER));      // static "AI" display
                     Select(0);
                 } else {
                     // For AI players on host, have "AI" shown on droplist, with "Drop" shown as alternate selection to remove the AI
-                    Insert(GG::Wnd::Create<TypeRow>(w, type_row_height, Networking::CLIENT_TYPE_AI_PLAYER));      // "AI" display
-                    Insert(GG::Wnd::Create<TypeRow>(w, type_row_height, Networking::INVALID_CLIENT_TYPE, true));  // "Drop" option
+                    Insert(GG::Wnd::Create<TypeRow>(w, type_row_height, Networking::ClientType::CLIENT_TYPE_AI_PLAYER));      // "AI" display
+                    Insert(GG::Wnd::Create<TypeRow>(w, type_row_height, Networking::ClientType::INVALID_CLIENT_TYPE, true));  // "Drop" option
                     Select(0);
                 }
-            } else if (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER ||
-                       client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
-                       client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
+            } else if (client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER ||
+                       client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER ||
+                       client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR)
             {
                 if (disabled) {
                     // For human players on other players non-host, have "AI" or "Observer" indicator (disabled)
@@ -162,33 +162,33 @@ namespace {
                     int row_observer_type = -1;
                     int row_moderator_type = -1;
                     int row_number = 0;
-                    if (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER ||
-                        ClientApp::GetApp()->Networking().HasAuthRole(Networking::ROLE_CLIENT_TYPE_PLAYER))
+                    if (client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER ||
+                        ClientApp::GetApp()->Networking().HasAuthRole(Networking::RoleType::ROLE_CLIENT_TYPE_PLAYER))
                     {
-                        Insert(GG::Wnd::Create<TypeRow>(w, type_row_height, Networking::CLIENT_TYPE_HUMAN_PLAYER));   // "Human" display / option
+                        Insert(GG::Wnd::Create<TypeRow>(w, type_row_height, Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER));   // "Human" display / option
                         row_player_type = (row_number++);
                     }
 
-                    if (client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
-                        ClientApp::GetApp()->Networking().HasAuthRole(Networking::ROLE_CLIENT_TYPE_OBSERVER))
+                    if (client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER ||
+                        ClientApp::GetApp()->Networking().HasAuthRole(Networking::RoleType::ROLE_CLIENT_TYPE_OBSERVER))
                     {
-                        Insert(GG::Wnd::Create<TypeRow>(w, type_row_height, Networking::CLIENT_TYPE_HUMAN_OBSERVER)); // "Observer" display / option
+                        Insert(GG::Wnd::Create<TypeRow>(w, type_row_height, Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER)); // "Observer" display / option
                         row_observer_type = (row_number++);
                     }
 
-                    if (client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR ||
-                        ClientApp::GetApp()->Networking().HasAuthRole(Networking::ROLE_CLIENT_TYPE_MODERATOR))
+                    if (client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR ||
+                        ClientApp::GetApp()->Networking().HasAuthRole(Networking::RoleType::ROLE_CLIENT_TYPE_MODERATOR))
                     {
-                        Insert(GG::Wnd::Create<TypeRow>(w, type_row_height, Networking::CLIENT_TYPE_HUMAN_MODERATOR));// "Moderator" display / option
+                        Insert(GG::Wnd::Create<TypeRow>(w, type_row_height, Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR));// "Moderator" display / option
                         row_moderator_type = (row_number++);
                     }
-                    Insert(GG::Wnd::Create<TypeRow>(w, type_row_height, Networking::INVALID_CLIENT_TYPE, true));  // "Drop" option
+                    Insert(GG::Wnd::Create<TypeRow>(w, type_row_height, Networking::ClientType::INVALID_CLIENT_TYPE, true));  // "Drop" option
 
-                    if (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
+                    if (client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER)
                         Select(row_player_type);
-                    else if (client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER)
+                    else if (client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER)
                         Select(row_observer_type);
-                    else if (client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
+                    else if (client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR)
                         Select(row_moderator_type);
                     else
                         Select(row_number);
@@ -196,12 +196,12 @@ namespace {
             } else {
                 if (disabled) {
                     // For empty row on non-host, should probably have no row... could also put "None" (disabled)
-                    Insert(GG::Wnd::Create<TypeRow>(w, type_row_height, Networking::INVALID_CLIENT_TYPE));
+                    Insert(GG::Wnd::Create<TypeRow>(w, type_row_height, Networking::ClientType::INVALID_CLIENT_TYPE));
                     Select(0);
                 } else {
                     // For empty row on host, have "None" and "Add AI" options on droplist
-                    Insert(GG::Wnd::Create<TypeRow>(w, type_row_height, Networking::INVALID_CLIENT_TYPE));        // "None" display
-                    Insert(GG::Wnd::Create<TypeRow>(w, type_row_height, Networking::CLIENT_TYPE_AI_PLAYER, true));// "Add AI" option
+                    Insert(GG::Wnd::Create<TypeRow>(w, type_row_height, Networking::ClientType::INVALID_CLIENT_TYPE));        // "None" display
+                    Insert(GG::Wnd::Create<TypeRow>(w, type_row_height, Networking::ClientType::CLIENT_TYPE_AI_PLAYER, true));// "Add AI" option
 
                     Select(0);
                 }
@@ -263,8 +263,8 @@ namespace {
             // player name text
             push_back(GG::Wnd::Create<CUILabel>(m_player_data.player_name));
 
-            if (m_player_data.client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
-                m_player_data.client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR) {
+            if (m_player_data.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER ||
+                m_player_data.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR) {
                 // observers don't need to pick an empire or species
                 push_back(GG::Wnd::Create<CUILabel>(""));
                 push_back(GG::Wnd::Create<CUILabel>(""));
@@ -319,7 +319,7 @@ namespace {
                     boost::bind(&NewGamePlayerRow::SpeciesChanged, this, _1));
 
             // ready state
-            if (m_player_data.client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
+            if (m_player_data.client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER) {
                 push_back(GG::Wnd::Create<CUILabel>(""));
                 at(5)->SetMinSize(GG::Pt(GG::X(ClientUI::Pts()), PlayerFontHeight()));
             } else {
@@ -441,7 +441,7 @@ namespace {
                     boost::bind(&LoadGamePlayerRow::EmpireChanged, this, _1));
 
             // ready state
-            if (m_player_data.client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
+            if (m_player_data.client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER) {
                 push_back(GG::Wnd::Create<CUILabel>(""));
                 at(5)->SetMinSize(GG::Pt(GG::X(ClientUI::Pts()), PlayerFontHeight()));
             } else {
@@ -511,7 +511,7 @@ namespace {
             PlayerRow::CompleteConstruction();
 
             auto type_drop = GG::Wnd::Create<TypeSelector>(
-                GG::X(90), PlayerRowHeight(), Networking::INVALID_CLIENT_TYPE, m_initial_disabled);
+                GG::X(90), PlayerRowHeight(), Networking::ClientType::INVALID_CLIENT_TYPE, m_initial_disabled);
             push_back(type_drop);
             type_drop->TypeChangedSignal.connect(
                 boost::bind(&LoadGameEmpireRow::PlayerTypeChanged, this, boost::placeholders::_1));
@@ -555,7 +555,7 @@ namespace {
             PlayerRow::CompleteConstruction();
 
             auto type_drop = GG::Wnd::Create<TypeSelector>(
-                GG::X(90), PlayerRowHeight(), Networking::INVALID_CLIENT_TYPE, false);
+                GG::X(90), PlayerRowHeight(), Networking::ClientType::INVALID_CLIENT_TYPE, false);
             push_back(type_drop);
             type_drop->TypeChangedSignal.connect(
                 boost::bind(&EmptyPlayerRow::PlayerTypeChanged, this, boost::placeholders::_1));
@@ -624,7 +624,7 @@ void MultiPlayerLobbyWnd::CompleteConstruction() {
     m_galaxy_setup_panel = GG::Wnd::Create<GalaxySetupPanel>(GALAXY_SETUP_PANEL_WIDTH, GALAXY_SETUP_PANEL_HEIGHT);
 
     TraceLogger() << "MultiPlayerLobbyWnd::CompleteConstruction creating buttons";
-    m_new_load_game_buttons = GG::Wnd::Create<GG::RadioButtonGroup>(GG::VERTICAL);
+    m_new_load_game_buttons = GG::Wnd::Create<GG::RadioButtonGroup>(GG::Orientation::VERTICAL);
     m_new_load_game_buttons->AddButton(
         GG::Wnd::Create<CUIStateButton>(UserString("NEW_GAME_BN"), GG::FORMAT_LEFT, std::make_shared<CUIRadioRepresenter>()));
     m_new_load_game_buttons->AddButton(
@@ -720,7 +720,7 @@ void MultiPlayerLobbyWnd::PlayerLabelRow::CompleteConstruction() {
     std::vector<GG::X> col_widths = PlayerRowColWidths(Width());
     unsigned int i = 0;
     for (auto& control : m_cells) {
-        control->SetChildClippingMode(ClipToWindow);
+        control->SetChildClippingMode(ChildClippingMode::ClipToWindow);
         if (GG::TextControl* tc = dynamic_cast<GG::TextControl*>(control.get()))
             tc->SetFont(ClientUI::GetBoldFont());
         control->Resize(GG::Pt(col_widths[i], PlayerRowHeight() + PlayerFontHeight()));
@@ -779,9 +779,9 @@ void MultiPlayerLobbyWnd::Render() {
 }
 
 void MultiPlayerLobbyWnd::KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
-    if (m_ready_bn && (key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER)) {
+    if (m_ready_bn && (key == GG::Key::GGK_RETURN || key == GG::Key::GGK_KP_ENTER)) {
         m_ready_bn->LeftClickedSignal();
-    } else if (key == GG::GGK_ESCAPE) {
+    } else if (key == GG::Key::GGK_ESCAPE) {
         m_cancel_bn->LeftClickedSignal();
     }
 }
@@ -841,16 +841,16 @@ void MultiPlayerLobbyWnd::LobbyUpdate(const MultiplayerLobbyData& lobby_data) {
 
     bool send_update_back = PopulatePlayerList();
 
-    if (send_update_back && HasAuthRole(Networking::ROLE_GALAXY_SETUP))
+    if (send_update_back && HasAuthRole(Networking::RoleType::ROLE_GALAXY_SETUP))
         SendUpdate();
 
     LogPlayerSetupData(m_lobby_data.players);
 }
 
 void MultiPlayerLobbyWnd::Refresh() {
-    m_any_can_edit->Disable(!HasAuthRole(Networking::ROLE_HOST));
+    m_any_can_edit->Disable(!HasAuthRole(Networking::RoleType::ROLE_HOST));
 
-    if (HasAuthRole(Networking::ROLE_GALAXY_SETUP)) {
+    if (HasAuthRole(Networking::RoleType::ROLE_GALAXY_SETUP)) {
         for (std::size_t i = 0; i < m_new_load_game_buttons->NumButtons(); ++i)
             m_new_load_game_buttons->DisableButton(i, false);
         m_galaxy_setup_panel->Disable(false);
@@ -980,13 +980,13 @@ void MultiPlayerLobbyWnd::PlayerDataChangedLocally() {
         const PlayerRow* player_row = dynamic_cast<const PlayerRow*>(row.get());
         if (const EmptyPlayerRow* empty_row = dynamic_cast<const EmptyPlayerRow*>(player_row)) {
             // empty rows that have been changed to Add AI need to be sent so the server knows to add an AI player.
-            if (empty_row->m_player_data.client_type == Networking::CLIENT_TYPE_AI_PLAYER)
+            if (empty_row->m_player_data.client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER)
                 m_lobby_data.players.push_back({Networking::INVALID_PLAYER_ID, player_row->m_player_data});
 
             // empty rows that are still showing no player don't need to be sent to the server.
 
         } else if (const LoadGameEmpireRow* empire_row = dynamic_cast<const LoadGameEmpireRow*>(player_row)) {
-            if (empire_row->m_player_data.client_type == Networking::CLIENT_TYPE_AI_PLAYER)
+            if (empire_row->m_player_data.client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER)
                 m_lobby_data.players.push_back({Networking::INVALID_PLAYER_ID, empire_row->m_player_data});
         } else {
             // all other row types pass along data directly
@@ -1018,15 +1018,26 @@ bool MultiPlayerLobbyWnd::PopulatePlayerList() {
         PlayerSetupData& psd = entry.second;
 
         if (m_lobby_data.new_game) {
-            bool immutable_row = !HasAuthRole(Networking::ROLE_HOST) && (data_player_id != HumanClientApp::GetApp()->PlayerID()) && !(psd.client_type == Networking::CLIENT_TYPE_AI_PLAYER && HasAuthRole(Networking::ROLE_GALAXY_SETUP));   // host can modify any player's row.  non-hosts can only modify their own row.  As of SVN 4026 this is not enforced on the server, but should be.
+            bool immutable_row =
+                !HasAuthRole(Networking::RoleType::ROLE_HOST) &&
+                data_player_id != HumanClientApp::GetApp()->PlayerID() &&
+                !(psd.client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER &&
+                  HasAuthRole(Networking::RoleType::ROLE_GALAXY_SETUP));// host can modify any player's row.  non-hosts can only modify their own row.  As of SVN 4026 this is not enforced on the server, but should be.
             auto row = GG::Wnd::Create<NewGamePlayerRow>(psd, data_player_id, immutable_row);
             m_players_lb->Insert(row);
             row->DataChangedSignal.connect(
                 boost::bind(&MultiPlayerLobbyWnd::PlayerDataChangedLocally, this));
 
         } else {
-            bool immutable_row = (!HasAuthRole(Networking::ROLE_HOST) && (data_player_id != HumanClientApp::GetApp()->PlayerID()) && !(psd.client_type == Networking::CLIENT_TYPE_AI_PLAYER && HasAuthRole(Networking::ROLE_GALAXY_SETUP))) || m_lobby_data.save_game_empire_data.empty();
-            auto row = GG::Wnd::Create<LoadGamePlayerRow>(psd, data_player_id, m_lobby_data.save_game_empire_data, immutable_row, m_lobby_data.in_game);
+            bool immutable_row = 
+                (!HasAuthRole(Networking::RoleType::ROLE_HOST) &&
+                    (data_player_id != HumanClientApp::GetApp()->PlayerID()) &&
+                    !(psd.client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER &&
+                        HasAuthRole(Networking::RoleType::ROLE_GALAXY_SETUP)))
+                || m_lobby_data.save_game_empire_data.empty();
+            auto row = GG::Wnd::Create<LoadGamePlayerRow>(psd, data_player_id,
+                                                          m_lobby_data.save_game_empire_data,
+                                                          immutable_row, m_lobby_data.in_game);
             m_players_lb->Insert(row);
             row->DataChangedSignal.connect(
                 boost::bind(&MultiPlayerLobbyWnd::PlayerDataChangedLocally, this));
@@ -1045,9 +1056,9 @@ bool MultiPlayerLobbyWnd::PopulatePlayerList() {
         // checks for ready button
         if (data_player_id == HumanClientApp::GetApp()->PlayerID())
             is_client_ready = psd.player_ready;
-        else if (psd.client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER ||
-            psd.client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
-            psd.client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
+        else if (psd.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER ||
+            psd.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER ||
+            psd.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR)
         { is_other_ready = is_other_ready && psd.player_ready; }
     }
 
@@ -1062,7 +1073,8 @@ bool MultiPlayerLobbyWnd::PopulatePlayerList() {
                 }
             }
             if (!is_assigned) {
-                auto row = GG::Wnd::Create<LoadGameEmpireRow>(save_game_empire_data.second, !HasAuthRole(Networking::ROLE_GALAXY_SETUP));
+                auto row = GG::Wnd::Create<LoadGameEmpireRow>(
+                    save_game_empire_data.second, !HasAuthRole(Networking::RoleType::ROLE_GALAXY_SETUP));
                 m_players_lb->Insert(row);
                 row->DataChangedSignal.connect(
                     boost::bind(&MultiPlayerLobbyWnd::PlayerDataChangedLocally, this));
@@ -1073,7 +1085,7 @@ bool MultiPlayerLobbyWnd::PopulatePlayerList() {
     // on host, add extra empty row, which the host can use to select
     // "Add AI" to add an AI to the game.  This row's details are treated
     // specially when sending a lobby update to the server.
-    if (HasAuthRole(Networking::ROLE_GALAXY_SETUP)) {
+    if (HasAuthRole(Networking::RoleType::ROLE_GALAXY_SETUP)) {
         auto row = GG::Wnd::Create<EmptyPlayerRow>();
         m_players_lb->Insert(row);
         row->DataChangedSignal.connect(
@@ -1134,8 +1146,8 @@ bool MultiPlayerLobbyWnd::PlayerDataAcceptable() const {
 
     for (auto& row : *m_players_lb) {
         const PlayerRow& prow = dynamic_cast<const PlayerRow&>(*row);
-        if (prow.m_player_data.client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER ||
-            prow.m_player_data.client_type == Networking::CLIENT_TYPE_AI_PLAYER)
+        if (prow.m_player_data.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER ||
+            prow.m_player_data.client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER)
         {
             num_players_excluding_observers++;
 
@@ -1152,8 +1164,8 @@ bool MultiPlayerLobbyWnd::PlayerDataAcceptable() const {
                 prow.m_player_data.empire_color.b << 8 |
                 prow.m_player_data.empire_color.a;
             empire_colors.insert(color_as_uint);
-        } else if (prow.m_player_data.client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
-                   prow.m_player_data.client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
+        } else if (prow.m_player_data.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER ||
+                   prow.m_player_data.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR)
         {
             // do nothing special for this player
         } else {
@@ -1194,7 +1206,7 @@ void MultiPlayerLobbyWnd::CancelClicked()
 { HumanClientApp::GetApp()->CancelMultiplayerGameFromLobby(); }
 
 void MultiPlayerLobbyWnd::AnyCanEdit(bool checked) {
-    if (HasAuthRole(Networking::ROLE_HOST)) {
+    if (HasAuthRole(Networking::RoleType::ROLE_HOST)) {
         m_lobby_data.any_can_edit = m_any_can_edit->Checked();
         SendUpdate();
     }

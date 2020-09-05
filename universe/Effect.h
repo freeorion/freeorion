@@ -53,7 +53,7 @@ namespace Effect {
         explicit EffectCause() = default;
         EffectCause(EffectsCauseType cause_type_, std::string specific_cause_,
                     std::string custom_label_ = "");
-        EffectsCauseType    cause_type = INVALID_EFFECTS_GROUP_CAUSE_TYPE;  ///< general type of effect cause, eg. tech, building, special...
+        EffectsCauseType    cause_type = EffectsCauseType::INVALID_EFFECTS_GROUP_CAUSE_TYPE;  ///< general type of effect cause, eg. tech, building, special...
         std::string         specific_cause; ///< name of specific cause, eg. "Wonder Farm", "Antenna Mk. VI"
         std::string         custom_label;   ///< script-specified accounting label for this effect cause
     };

@@ -108,7 +108,7 @@ namespace {
 
     auto PlanetsWithAvailablePP(const Empire& empire) -> std::map<std::set<int>, float>
     {
-        const auto& industry_pool = empire.GetResourcePool(RE_INDUSTRY);
+        const auto& industry_pool = empire.GetResourcePool(ResourceType::RE_INDUSTRY);
         const ProductionQueue& prod_queue = empire.GetProductionQueue();
         std::map<std::set<int>, float> planets_with_available_pp;
         for (const auto& objects_pp : prod_queue.AvailablePP(industry_pool)) {
@@ -143,7 +143,7 @@ namespace {
 
     auto PlanetsWithWastedPP(const Empire& empire) -> std::set<std::set<int>>
     {
-        const auto& industry_pool = empire.GetResourcePool(RE_INDUSTRY);
+        const auto& industry_pool = empire.GetResourcePool(ResourceType::RE_INDUSTRY);
         const ProductionQueue& prod_queue = empire.GetProductionQueue();
         std::set<std::set<int>> planets_with_wasted_pp;
         for (const auto& objects : prod_queue.ObjectsWithWastedPP(industry_pool)) {

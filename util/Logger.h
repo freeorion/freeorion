@@ -137,7 +137,7 @@
 */
 
 // The logging levels.
-enum class LogLevel {trace, debug, info, warn, error, min = trace, max = error};
+enum class LogLevel : int {trace, debug, info, warn, error, min = trace, max = error};
 
 constexpr LogLevel default_log_level_threshold = LogLevel::debug;
 

@@ -337,20 +337,20 @@ namespace {
             return 0;
         }
 
-        if (!empire->ProducibleItem(BT_BUILDING, item_name, location_id)) {
+        if (!empire->ProducibleItem(BuildType::BT_BUILDING, item_name, location_id)) {
             ErrorLogger() << "IssueEnqueueBuildingProductionOrder : specified item_name and location_id that don't indicate an item that can be built at that location";
             return 0;
         }
 
-        if (!empire->EnqueuableItem(BT_BUILDING, item_name, location_id)) {
+        if (!empire->EnqueuableItem(BuildType::BT_BUILDING, item_name, location_id)) {
             ErrorLogger() << "IssueEnqueueBuildingProductionOrder : specified item_name and location_id that don't indicate an item that can be enqueued at that location";
             return 0;
         }
 
-        auto item = ProductionQueue::ProductionItem(BT_BUILDING, item_name);
+        auto item = ProductionQueue::ProductionItem(BuildType::BT_BUILDING, item_name);
 
         AIClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::PLACE_IN_QUEUE,
+            std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::ProdQueueOrderAction::PLACE_IN_QUEUE,
                                                    empire_id, item, 1, location_id));
 
         return 1;
@@ -365,15 +365,15 @@ namespace {
             return 0;
         }
 
-        if (!empire->ProducibleItem(BT_SHIP, design_id, location_id)) {
+        if (!empire->ProducibleItem(BuildType::BT_SHIP, design_id, location_id)) {
             ErrorLogger() << "IssueEnqueueShipProductionOrder : specified design_id and location_id that don't indicate a design that can be built at that location";
             return 0;
         }
 
-        auto item = ProductionQueue::ProductionItem(BT_SHIP, design_id);
+        auto item = ProductionQueue::ProductionItem(BuildType::BT_SHIP, design_id);
 
         AIClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::PLACE_IN_QUEUE,
+            std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::ProdQueueOrderAction::PLACE_IN_QUEUE,
                                                    empire_id, item, 1, location_id));
 
         return 1;
@@ -393,7 +393,7 @@ namespace {
             ErrorLogger() << "IssueChangeProductionQuantityOrder : passed queue_index outside range of items on queue.";
             return 0;
         }
-        if (queue[queue_index].item.build_type != BT_SHIP) {
+        if (queue[queue_index].item.build_type != BuildType::BT_SHIP) {
             ErrorLogger() << "IssueChangeProductionQuantityOrder : passed queue_index for a non-ship item.";
             return 0;
         }
@@ -402,7 +402,7 @@ namespace {
 
         if (queue_it != empire->GetProductionQueue().end())
             AIClientApp::GetApp()->Orders().IssueOrder(
-                std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::SET_QUANTITY_AND_BLOCK_SIZE,
+                std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::ProdQueueOrderAction::SET_QUANTITY_AND_BLOCK_SIZE,
                                                        empire_id, queue_it->uuid,
                                                        new_quantity, new_blocksize));
 
@@ -445,7 +445,7 @@ namespace {
 
         if (queue_it != empire->GetProductionQueue().end())
             AIClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::MOVE_ITEM_TO_INDEX,
+            std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::ProdQueueOrderAction::MOVE_ITEM_TO_INDEX,
                                                    empire_id, queue_it->uuid, new_queue_index));
 
         return 1;
@@ -470,7 +470,7 @@ namespace {
 
         if (queue_it != empire->GetProductionQueue().end())
             AIClientApp::GetApp()->Orders().IssueOrder(
-                std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::REMOVE_FROM_QUEUE,
+                std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::ProdQueueOrderAction::REMOVE_FROM_QUEUE,
                                                        empire_id, queue_it->uuid));
 
         return 1;
@@ -495,7 +495,7 @@ namespace {
 
         if (queue_it != empire->GetProductionQueue().end())
             AIClientApp::GetApp()->Orders().IssueOrder(
-                std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::PAUSE_PRODUCTION,
+                std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::ProdQueueOrderAction::PAUSE_PRODUCTION,
                                                        empire_id, queue_it->uuid));
 
         return 1;
@@ -520,7 +520,7 @@ namespace {
 
         if (queue_it != empire->GetProductionQueue().end())
             AIClientApp::GetApp()->Orders().IssueOrder(
-                std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::ALLOW_STOCKPILE_USE,
+                std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::ProdQueueOrderAction::ALLOW_STOCKPILE_USE,
                                                        empire_id, queue_it->uuid));
 
         return 1;
@@ -617,7 +617,7 @@ namespace FreeOrionPython {
         py::def("allPlayerIDs",             AllPlayerIDs,                   py::return_value_policy<py::return_by_value>(), "Returns an object (intVec) that contains the player IDs of all players in the game.");
 
         py::def("playerIsAI",
-                +[](int player_id) -> bool { return AIClientApp::GetApp()->GetPlayerClientType(player_id) == Networking::CLIENT_TYPE_AI_PLAYER; },
+                +[](int player_id) -> bool { return AIClientApp::GetApp()->GetPlayerClientType(player_id) == Networking::ClientType::CLIENT_TYPE_AI_PLAYER; },
                 "Returns True (boolean) if the player with the indicated"
                 " playerID (int) is controlled by an AI and false (boolean)"
                 " otherwise.");

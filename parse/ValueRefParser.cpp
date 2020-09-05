@@ -27,10 +27,10 @@ namespace parse { namespace detail {
 
         reference_token_rule variable_scope;
         variable_scope
-            =   tok.Source_         [ _val = ValueRef::SOURCE_REFERENCE ]
-            |   tok.Target_         [ _val = ValueRef::EFFECT_TARGET_REFERENCE ]
-            |   tok.LocalCandidate_ [ _val = ValueRef::CONDITION_LOCAL_CANDIDATE_REFERENCE ]
-            |   tok.RootCandidate_  [ _val = ValueRef::CONDITION_ROOT_CANDIDATE_REFERENCE ]
+            =   tok.Source_         [ _val = ValueRef::ReferenceType::SOURCE_REFERENCE ]
+            |   tok.Target_         [ _val = ValueRef::ReferenceType::EFFECT_TARGET_REFERENCE ]
+            |   tok.LocalCandidate_ [ _val = ValueRef::ReferenceType::CONDITION_LOCAL_CANDIDATE_REFERENCE ]
+            |   tok.RootCandidate_  [ _val = ValueRef::ReferenceType::CONDITION_ROOT_CANDIDATE_REFERENCE ]
             ;
 
         variable_scope.name("Source, Target, LocalCandidate, or RootCandidate");
@@ -65,10 +65,10 @@ namespace parse { namespace detail {
         free_variable
             =  (tok.Value_ >> !lit('('))
                 [ _val = construct_movable_(new_<ValueRef::Variable<T>>(
-                    ValueRef::EFFECT_TARGET_VALUE_REFERENCE)) ]
+                    ValueRef::ReferenceType::EFFECT_TARGET_VALUE_REFERENCE)) ]
             |   free_variable_name
                 [ _val = construct_movable_(new_<ValueRef::Variable<T>>(
-                    ValueRef::NON_OBJECT_REFERENCE, _1)) ]
+                    ValueRef::ReferenceType::NON_OBJECT_REFERENCE, _1)) ]
             ;
 
         simple

@@ -88,7 +88,9 @@ public:
                 const std::set<std::string>& heads = edge.second;
 
                 for (const std::string& head : heads) {
-                    if (queue.InQueue(head) && (queue.InQueue(tech1) || empire->GetTechStatus(tech1) == TS_COMPLETE)) {
+                    if (queue.InQueue(head) && (
+                        queue.InQueue(tech1) || empire->GetTechStatus(tech1) == TechStatus::TS_COMPLETE))
+                    {
                         // FillArcBuffer will put lines whose both ends are in highlights
                         // into the buffer
                         highlights.insert(tech1);

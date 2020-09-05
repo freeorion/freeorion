@@ -788,8 +788,8 @@ void SetActiveMetersToTargetMaxCurrentValues(ObjectMap& object_map) {
 
 void SetNativePopulationValues(ObjectMap& object_map) {
     for (const auto& object : object_map.all()) {
-        Meter* meter = object->GetMeter(METER_POPULATION);
-        Meter* targetmax_meter = object->GetMeter(METER_TARGET_POPULATION);
+        Meter* meter = object->GetMeter(MeterType::METER_POPULATION);
+        Meter* targetmax_meter = object->GetMeter(MeterType::METER_TARGET_POPULATION);
         // only applies to unowned planets
         if (meter && targetmax_meter && object->Unowned()) {
             double r = RandZeroToOne();
@@ -834,12 +834,12 @@ bool SetEmpireHomeworld(Empire* empire, int planet_id, std::string species_name)
         home_planet->SetType(preferred_planet_type);
         home_planet->SetOriginalType(preferred_planet_type);
         // set planet size according to planet type
-        if (preferred_planet_type == PT_ASTEROIDS)
-            home_planet->SetSize(SZ_ASTEROIDS);
-        else if (preferred_planet_type == PT_GASGIANT)
-            home_planet->SetSize(SZ_GASGIANT);
+        if (preferred_planet_type == PlanetType::PT_ASTEROIDS)
+            home_planet->SetSize(PlanetSize::SZ_ASTEROIDS);
+        else if (preferred_planet_type == PlanetType::PT_GASGIANT)
+            home_planet->SetSize(PlanetSize::SZ_GASGIANT);
         else
-            home_planet->SetSize(SZ_MEDIUM);
+            home_planet->SetSize(PlanetSize::SZ_MEDIUM);
     }
 
     home_planet->Colonize(empire->EmpireID(), std::move(species_name), Meter::LARGE_VALUE);
@@ -913,7 +913,7 @@ void InitEmpires(const std::map<int, PlayerSetupData>& player_setup_data) {
             if (entry.second.starting_team != other_entry.second.starting_team)
                 continue;
 
-            Empires().SetDiplomaticStatus(entry.first, other_entry.first, DIPLO_ALLIED);
+            Empires().SetDiplomaticStatus(entry.first, other_entry.first, DiplomaticStatus::DIPLO_ALLIED);
         }
     }
 }

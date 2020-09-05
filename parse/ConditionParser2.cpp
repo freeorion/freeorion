@@ -59,7 +59,7 @@ namespace parse { namespace detail {
                     > -(label(tok.Low_)    >    castable_int_rules.flexible_int)
                     > -(label(tok.High_)   >    castable_int_rules.flexible_int)
                 ) [ _val = construct_movable_(new_<Condition::Enqueued>(
-                    BT_BUILDING,
+                    BuildType::BT_BUILDING,
                     deconstruct_movable_(_1, _pass),
                     deconstruct_movable_(_2, _pass),
                     deconstruct_movable_(_3, _pass),
@@ -88,7 +88,7 @@ namespace parse { namespace detail {
                     > -(label(tok.Low_)    >    castable_int_rules.flexible_int)
                     > -(label(tok.High_)   >    castable_int_rules.flexible_int)
                 ) [ _val = construct_movable_(new_<Condition::Enqueued>(
-                    BT_SHIP,
+                    BuildType::BT_SHIP,
                     deconstruct_movable_(_1, _pass),
                     deconstruct_movable_(_2, _pass),
                     deconstruct_movable_(_3, _pass),
@@ -101,7 +101,7 @@ namespace parse { namespace detail {
                     > -(label(tok.Low_)    >    castable_int_rules.flexible_int)
                     > -(label(tok.High_)   >    castable_int_rules.flexible_int)
                 ) [ _val = construct_movable_(new_<Condition::Enqueued>(
-                    INVALID_BUILD_TYPE,
+                    BuildType::INVALID_BUILD_TYPE,
                     nullptr,
                     deconstruct_movable_(_1, _pass),
                     deconstruct_movable_(_2, _pass),

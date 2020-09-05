@@ -67,9 +67,9 @@ void PasswordEnterWnd::ModalInit()
 { GG::GUI::GetGUI()->SetFocusWnd(m_password_edit); }
 
 void PasswordEnterWnd::KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
-    if (key == GG::GGK_ESCAPE) { // Same behaviour as if "Cancel" was pressed
+    if (key == GG::Key::GGK_ESCAPE) { // Same behaviour as if "Cancel" was pressed
         CancelClicked();
-    } else if (key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER) {
+    } else if (key == GG::Key::GGK_RETURN || key == GG::Key::GGK_KP_ENTER) {
         if (GG::GUI::GetGUI()->FocusWnd() == m_player_name_edit) {
             GG::GUI::GetGUI()->SetFocusWnd(m_password_edit);
         } else if (GG::GUI::GetGUI()->FocusWnd() == m_password_edit) {

@@ -174,36 +174,36 @@ const std::string* WndEvent::GetText() const
 
 std::string EventTypeName(const WndEvent& event) {
     switch (event.Type()) {
-    case WndEvent::LButtonDown:     return "(LButtonDown)";
-    case WndEvent::LDrag:           return "(LDrag)";
-    case WndEvent::LButtonUp:       return "(LButtonUp)";
-    case WndEvent::LClick:          return "(LClick)";
-    case WndEvent::LDoubleClick:    return "(LDoubleClick)";
-    case WndEvent::MButtonDown:     return "(MButtonDown)";
-    case WndEvent::MDrag:           return "(MDrag)";
-    case WndEvent::MButtonUp:       return "(MButtonUp)";
-    case WndEvent::MClick:          return "(MClick)";
-    case WndEvent::MDoubleClick:    return "(MDoubleClick)";
-    case WndEvent::RButtonDown:     return "(RButtonDown)";
-    case WndEvent::RDrag:           return "(RDrag)";
-    case WndEvent::RButtonUp:       return "(RButtonUp)";
-    case WndEvent::RClick:          return "(RClick)";
-    case WndEvent::RDoubleClick:    return "(RDoubleClick)";
-    case WndEvent::MouseEnter:      return "(MouseEnter)";
-    case WndEvent::MouseHere:       return "(MouseHere)";
-    case WndEvent::MouseLeave:      return "(MouseLeave)";
-    case WndEvent::MouseWheel:      return "(MouseWheel)";
-    case WndEvent::DragDropEnter:   return "(DragDropEnter)";
-    case WndEvent::DragDropHere:    return "(DragDropHere)";
-    case WndEvent::CheckDrops:      return "(CheckDrops)";
-    case WndEvent::DragDropLeave:   return "(DragDropLeave)";
-    case WndEvent::DragDroppedOn:   return "(DragDroppedOn)";
-    case WndEvent::KeyPress:        return "(KeyPress)";
-    case WndEvent::KeyRelease:      return "(KeyRelease)";
-    case WndEvent::TextInput:       return "(TextInput)";
-    case WndEvent::GainingFocus:    return "(GainingFocus)";
-    case WndEvent::LosingFocus:     return "(LosingFocus)";
-    case WndEvent::TimerFiring:     return "(TimerFiring)";
-    default:                        return "(Unknown Event Type)";
+    case WndEvent::EventType::LButtonDown:     return "(LButtonDown)";
+    case WndEvent::EventType::LDrag:           return "(LDrag)";
+    case WndEvent::EventType::LButtonUp:       return "(LButtonUp)";
+    case WndEvent::EventType::LClick:          return "(LClick)";
+    case WndEvent::EventType::LDoubleClick:    return "(LDoubleClick)";
+    case WndEvent::EventType::MButtonDown:     return "(MButtonDown)";
+    case WndEvent::EventType::MDrag:           return "(MDrag)";
+    case WndEvent::EventType::MButtonUp:       return "(MButtonUp)";
+    case WndEvent::EventType::MClick:          return "(MClick)";
+    case WndEvent::EventType::MDoubleClick:    return "(MDoubleClick)";
+    case WndEvent::EventType::RButtonDown:     return "(RButtonDown)";
+    case WndEvent::EventType::RDrag:           return "(RDrag)";
+    case WndEvent::EventType::RButtonUp:       return "(RButtonUp)";
+    case WndEvent::EventType::RClick:          return "(RClick)";
+    case WndEvent::EventType::RDoubleClick:    return "(RDoubleClick)";
+    case WndEvent::EventType::MouseEnter:      return "(MouseEnter)";
+    case WndEvent::EventType::MouseHere:       return "(MouseHere)";
+    case WndEvent::EventType::MouseLeave:      return "(MouseLeave)";
+    case WndEvent::EventType::MouseWheel:      return "(MouseWheel)";
+    case WndEvent::EventType::DragDropEnter:   return "(DragDropEnter)";
+    case WndEvent::EventType::DragDropHere:    return "(DragDropHere)";
+    case WndEvent::EventType::CheckDrops:      return "(CheckDrops)";
+    case WndEvent::EventType::DragDropLeave:   return "(DragDropLeave)";
+    case WndEvent::EventType::DragDroppedOn:   return "(DragDroppedOn)";
+    case WndEvent::EventType::KeyPress:        return "(KeyPress)";
+    case WndEvent::EventType::KeyRelease:      return "(KeyRelease)";
+    case WndEvent::EventType::TextInput:       return "(TextInput)";
+    case WndEvent::EventType::GainingFocus:    return "(GainingFocus)";
+    case WndEvent::EventType::LosingFocus:     return "(LosingFocus)";
+    case WndEvent::EventType::TimerFiring:     return "(TimerFiring)";
+    default:                                   return "(Unknown Event Type)";
     }
 }

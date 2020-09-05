@@ -20,11 +20,11 @@ namespace parse { namespace detail {
             ;
 
         enum_expr
-            =   tok.Uninhabitable_  [ _val = PE_UNINHABITABLE ]
-            |   tok.Hostile_        [ _val = PE_HOSTILE ]
-            |   tok.Poor_           [ _val = PE_POOR ]
-            |   tok.Adequate_       [ _val = PE_ADEQUATE ]
-            |   tok.Good_           [ _val = PE_GOOD ]
+            =   tok.Uninhabitable_  [ _val = PlanetEnvironment::PE_UNINHABITABLE ]
+            |   tok.Hostile_        [ _val = PlanetEnvironment::PE_HOSTILE ]
+            |   tok.Poor_           [ _val = PlanetEnvironment::PE_POOR ]
+            |   tok.Adequate_       [ _val = PlanetEnvironment::PE_ADEQUATE ]
+            |   tok.Good_           [ _val = PlanetEnvironment::PE_GOOD ]
             ;
     }
 }}

@@ -319,7 +319,7 @@ private:
     int                             m_ID = Networking::INVALID_PLAYER_ID;
     std::string                     m_player_name;
     bool                            m_new_connection = true;
-    Networking::ClientType          m_client_type = Networking::INVALID_CLIENT_TYPE;
+    Networking::ClientType          m_client_type = Networking::ClientType::INVALID_CLIENT_TYPE;
     std::string                     m_client_version_string;
     bool                            m_authenticated = false;
     Networking::AuthRoles           m_roles;

@@ -137,7 +137,7 @@ void AIClientApp::Run() {
 
         // join game
         Networking().SendMessage(JoinGameMessage(PlayerName(),
-                                                 Networking::CLIENT_TYPE_AI_PLAYER,
+                                                 Networking::ClientType::CLIENT_TYPE_AI_PLAYER,
                                                  boost::uuids::nil_uuid()));
 
         // Start parsing content
@@ -200,12 +200,12 @@ void AIClientApp::HandlePythonAICrash() {
 void AIClientApp::HandleMessage(const Message& msg) {
     //DebugLogger() << "AIClientApp::HandleMessage " << msg.Type();
     switch (msg.Type()) {
-    case Message::ERROR_MSG: {
+    case Message::MessageType::ERROR_MSG: {
         ErrorLogger() << "AIClientApp::HandleMessage : Received ERROR message from server: " << msg.Text();
         break;
     }
 
-    case Message::HOST_ID: {
+    case Message::MessageType::HOST_ID: {
         const std::string& text = msg.Text();
         int host_id = Networking::INVALID_PLAYER_ID;
         if (text.empty()) {
@@ -221,7 +221,7 @@ void AIClientApp::HandleMessage(const Message& msg) {
         break;
     }
 
-    case Message::JOIN_GAME: {
+    case Message::MessageType::JOIN_GAME: {
         if (PlayerID() == Networking::INVALID_PLAYER_ID) {
             DebugLogger() << "AIClientApp::HandleMessage : Received JOIN_GAME acknowledgement";
             try {
@@ -238,7 +238,7 @@ void AIClientApp::HandleMessage(const Message& msg) {
         break;
     }
 
-    case Message::GAME_START: {
+    case Message::MessageType::GAME_START: {
         DebugLogger() << "AIClientApp::HandleMessage : Received GAME_START message; starting AI turn...";
         bool single_player_game;        // ignored
         bool loaded_game_data;
@@ -321,14 +321,14 @@ void AIClientApp::HandleMessage(const Message& msg) {
         break;
     }
 
-    case Message::PLAYER_INFO:
+    case Message::MessageType::PLAYER_INFO:
         ExtractPlayerInfoMessageData(msg, m_player_info);
         break;
 
-    case Message::SAVE_GAME_COMPLETE:
+    case Message::MessageType::SAVE_GAME_COMPLETE:
         break;
 
-    case Message::TURN_UPDATE: {
+    case Message::MessageType::TURN_UPDATE: {
         m_orders.Reset();
         //DebugLogger() << "AIClientApp::HandleMessage : extracting turn update message data";
         ExtractTurnUpdateMessageData(msg,                     m_empire_id,        m_current_turn,
@@ -341,21 +341,21 @@ void AIClientApp::HandleMessage(const Message& msg) {
         break;
     }
 
-    case Message::TURN_PARTIAL_UPDATE:
+    case Message::MessageType::TURN_PARTIAL_UPDATE:
         ExtractTurnPartialUpdateMessageData(msg, m_empire_id, m_universe);
         break;
 
-    case Message::TURN_PROGRESS: {
+    case Message::MessageType::TURN_PROGRESS: {
         Message::TurnProgressPhase phase_id;
         ExtractTurnProgressMessageData(msg, phase_id);
         ClientApp::HandleTurnPhaseUpdate(phase_id);
         break;
     }
 
-    case Message::PLAYER_STATUS:
+    case Message::MessageType::PLAYER_STATUS:
         break;
 
-    case Message::END_GAME: {
+    case Message::MessageType::END_GAME: {
         DebugLogger() << "Message::END_GAME : Exiting";
         DebugLogger() << "Acknowledge server shutdown message.";
         Networking().SendMessage(AIEndGameAcknowledgeMessage());
@@ -363,7 +363,7 @@ void AIClientApp::HandleMessage(const Message& msg) {
         break;
     }
 
-    case Message::PLAYER_CHAT: {
+    case Message::MessageType::PLAYER_CHAT: {
         std::string data;
         int player_id;
         boost::posix_time::ptime timestamp;
@@ -373,21 +373,21 @@ void AIClientApp::HandleMessage(const Message& msg) {
         break;
     }
 
-    case Message::DIPLOMACY: {
+    case Message::MessageType::DIPLOMACY: {
         DiplomaticMessage diplo_message;
         ExtractDiplomacyMessageData(msg, diplo_message);
         m_AI->HandleDiplomaticMessage(diplo_message);
         break;
     }
 
-    case Message::DIPLOMATIC_STATUS: {
+    case Message::MessageType::DIPLOMATIC_STATUS: {
         DiplomaticStatusUpdateInfo diplo_update;
         ExtractDiplomaticStatusMessageData(msg, diplo_update);
         m_AI->HandleDiplomaticStatusUpdate(diplo_update);
         break;
     }
 
-    case Message::LOGGER_CONFIG: {
+    case Message::MessageType::LOGGER_CONFIG: {
          std::set<std::tuple<std::string, std::string, LogLevel>> options;
          ExtractLoggerConfigMessageData(msg, options);
 
@@ -395,7 +395,7 @@ void AIClientApp::HandleMessage(const Message& msg) {
          break;
     }
 
-    case Message::CHECKSUM: {
+    case Message::MessageType::CHECKSUM: {
         TraceLogger() << "(AIClientApp) CheckSum.";
         bool result = VerifyCheckSum(msg);
         if (!result) {
@@ -405,7 +405,7 @@ void AIClientApp::HandleMessage(const Message& msg) {
         break;
     }
 
-    case Message::TURN_TIMEOUT:
+    case Message::MessageType::TURN_TIMEOUT:
         break;
 
     default: {

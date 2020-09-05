@@ -22,14 +22,14 @@ namespace parse { namespace detail {
             ;
 
         enum_expr
-            =   tok.Blue_           [ _val = STAR_BLUE ]
-            |   tok.White_          [ _val = STAR_WHITE ]
-            |   tok.Yellow_         [ _val = STAR_YELLOW ]
-            |   tok.Orange_         [ _val = STAR_ORANGE ]
-            |   tok.Red_            [ _val = STAR_RED ]
-            |   tok.Neutron_        [ _val = STAR_NEUTRON ]
-            |   tok.BlackHole_      [ _val = STAR_BLACK ]
-            |   tok.NoStar_         [ _val = STAR_NONE ]
+            =   tok.Blue_      [ _val = StarType::STAR_BLUE ]
+            |   tok.White_     [ _val = StarType::STAR_WHITE ]
+            |   tok.Yellow_    [ _val = StarType::STAR_YELLOW ]
+            |   tok.Orange_    [ _val = StarType::STAR_ORANGE ]
+            |   tok.Red_       [ _val = StarType::STAR_RED ]
+            |   tok.Neutron_   [ _val = StarType::STAR_NEUTRON ]
+            |   tok.BlackHole_ [ _val = StarType::STAR_BLACK ]
+            |   tok.NoStar_    [ _val = StarType::STAR_NONE ]
             ;
 
         // complex_expr left empty, as no direct complex variable

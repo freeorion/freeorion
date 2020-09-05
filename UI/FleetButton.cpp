@@ -239,7 +239,7 @@ void FleetButton::CompleteConstruction() {
 
     bool at_least_one_fleet_visible = false;
     for (int fleet_id : m_fleets) {
-        if (GetUniverse().GetObjectVisibilityByEmpire(fleet_id, empire_id) >= VIS_BASIC_VISIBILITY) {
+        if (GetUniverse().GetObjectVisibilityByEmpire(fleet_id, empire_id) >= Visibility::VIS_BASIC_VISIBILITY) {
             at_least_one_fleet_visible = true;
             break;
         }
@@ -273,9 +273,9 @@ bool FleetButton::InWindow(const GG::Pt& pt) const {
 void FleetButton::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     const auto& map_wnd = ClientUI::GetClientUI()->GetMapWnd();
     if (!Disabled() && (!map_wnd || !map_wnd->InProductionViewMode())) {
-        if (State() != BN_ROLLOVER)
+        if (State() != ButtonState::BN_ROLLOVER)
             PlayFleetButtonRolloverSound();
-        SetState(BN_ROLLOVER);
+        SetState(ButtonState::BN_ROLLOVER);
     }
 }
 

@@ -531,7 +531,7 @@ private:
   * \a empire's queue. */
 class FO_COMMON_API ProductionQueueOrder : public Order {
 public:
-    enum ProdQueueOrderAction : int {
+    enum class ProdQueueOrderAction : int {
         INVALID_PROD_QUEUE_ACTION = -1,
         PLACE_IN_QUEUE,
         REMOVE_FROM_QUEUE,
@@ -569,7 +569,7 @@ private:
     int                             m_new_index = INVALID_INDEX;
     int                             m_rally_point_id = INVALID_OBJECT_ID;
     boost::uuids::uuid              m_uuid, m_uuid2;
-    ProdQueueOrderAction            m_action = INVALID_PROD_QUEUE_ACTION;
+    ProdQueueOrderAction            m_action = ProdQueueOrderAction::INVALID_PROD_QUEUE_ACTION;
 
     static const int INVALID_INDEX = -500;
     static const int INVALID_QUANTITY = -1000;

@@ -30,18 +30,18 @@ namespace {
     const std::string EMPTY_STRING("");
     const std::string& LinkTag(UniverseObjectType obj_type) {
         switch (obj_type) {
-        case OBJ_SHIP:
+        case UniverseObjectType::OBJ_SHIP:
             return VarText::SHIP_ID_TAG;
-        case OBJ_FLEET:
+        case UniverseObjectType::OBJ_FLEET:
             return VarText::FLEET_ID_TAG;
-        case OBJ_PLANET:
+        case UniverseObjectType::OBJ_PLANET:
             return VarText::PLANET_ID_TAG;
-        case OBJ_BUILDING:
+        case UniverseObjectType::OBJ_BUILDING:
             return VarText::BUILDING_ID_TAG;
-        case OBJ_SYSTEM:
+        case UniverseObjectType::OBJ_SYSTEM:
             return VarText::SYSTEM_ID_TAG;
-        case OBJ_FIELD:
-        case OBJ_FIGHTER:
+        case UniverseObjectType::OBJ_FIELD:
+        case UniverseObjectType::OBJ_FIGHTER:
         default:
             return EMPTY_STRING;
         }
@@ -276,7 +276,7 @@ std::string InitialStealthEvent::CombatLogDescription(int viewing_empire_id) con
             const auto obj = Objects().get(object_vis.first);
             const auto name = obj ? obj->Name() : UserString("UNKNOWN");
             DebugLogger() << " ... object: " << name << " (" << object_vis.first << ") has vis: " << object_vis.second;
-            if (object_vis.second > VIS_NO_VISIBILITY)
+            if (object_vis.second > Visibility::VIS_NO_VISIBILITY)
                 continue;
 
             // all empires specifies empire to use for link color if this is a fighter
@@ -309,7 +309,7 @@ StealthChangeEvent::StealthChangeEvent(int bout_) :
 {}
 
 StealthChangeEvent::StealthChangeEventDetail::StealthChangeEventDetail() :
-    StealthChangeEventDetail(INVALID_OBJECT_ID, INVALID_OBJECT_ID, ALL_EMPIRES, ALL_EMPIRES, VIS_NO_VISIBILITY)
+    StealthChangeEventDetail(INVALID_OBJECT_ID, INVALID_OBJECT_ID, ALL_EMPIRES, ALL_EMPIRES, Visibility::VIS_NO_VISIBILITY)
 {}
 
 StealthChangeEvent::StealthChangeEventDetail::StealthChangeEventDetail(
@@ -520,7 +520,7 @@ std::string IncapacitationEvent::CombatLogDescription(int viewing_empire_id) con
         template_str = UserString("ENC_COMBAT_UNKNOWN_DESTROYED_STR");
         object_str = UserString("ENC_COMBAT_UNKNOWN_OBJECT");
 
-    } else if (object->ObjectType() == OBJ_PLANET) {
+    } else if (object->ObjectType() == UniverseObjectType::OBJ_PLANET) {
         template_str = UserString("ENC_COMBAT_PLANET_INCAPACITATED_STR");
         object_str = PublicNameLink(viewing_empire_id, object_id);
 

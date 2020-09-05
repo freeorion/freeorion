@@ -70,14 +70,14 @@ namespace parse { namespace detail {
         // available that return a visibility
 
         enum_expr
-            =   tok.Invisible_  [ _val = VIS_NO_VISIBILITY ]
-            |   tok.Basic_      [ _val = VIS_BASIC_VISIBILITY ]
-            |   tok.Partial_    [ _val = VIS_PARTIAL_VISIBILITY ]
-            |   tok.Full_       [ _val = VIS_FULL_VISIBILITY ]
+            =   tok.Invisible_  [ _val = Visibility::VIS_NO_VISIBILITY ]
+            |   tok.Basic_      [ _val = Visibility::VIS_BASIC_VISIBILITY ]
+            |   tok.Partial_    [ _val = Visibility::VIS_PARTIAL_VISIBILITY ]
+            |   tok.Full_       [ _val = Visibility::VIS_FULL_VISIBILITY ]
             ;
 
         free_variable_expr
-        =   tok.Value_      [ _val = construct_movable_(new_<ValueRef::Variable<Visibility>>(ValueRef::EFFECT_TARGET_VALUE_REFERENCE)) ]
+        =   tok.Value_      [ _val = construct_movable_(new_<ValueRef::Variable<Visibility>>(ValueRef::ReferenceType::EFFECT_TARGET_VALUE_REFERENCE)) ]
             ;
 
         complex_expr = visibility_var_complex_grammar;

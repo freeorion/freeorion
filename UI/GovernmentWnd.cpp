@@ -27,7 +27,7 @@
 
 struct Availability {
     // duplicated from DesignWnd
-    enum Enum {
+    enum class Enum {
         Restricted,// A policy is unlocked by restricted by prerequisites or exclusions
         Available, // A policy been unlocked and can be adopted
         Future     // A policy has not been unlocked and hence not available
@@ -104,26 +104,26 @@ namespace {
 
     bool AvailabilityManager::GetAvailability(const Availability::Enum type) const {
         switch (type) {
-        case Availability::Restricted:
-            return std::get<Availability::Restricted>(m_availabilities);
-        case Availability::Available:
-            return std::get<Availability::Available>(m_availabilities);
-        case Availability::Future:
-            return std::get<Availability::Future>(m_availabilities);
+        case Availability::Enum::Restricted:
+            return std::get<int(Availability::Enum::Restricted)>(m_availabilities);
+        case Availability::Enum::Available:
+            return std::get<int(Availability::Enum::Available)>(m_availabilities);
+        case Availability::Enum::Future:
+            return std::get<int(Availability::Enum::Future)>(m_availabilities);
         }
-        return std::get<Availability::Future>(m_availabilities);
+        return std::get<int(Availability::Enum::Future)>(m_availabilities);
     }
 
     void AvailabilityManager::SetAvailability(const Availability::Enum type, const bool state) {
         switch (type) {
-        case Availability::Restricted:
-            std::get<Availability::Restricted>(m_availabilities) = state;
+        case Availability::Enum::Restricted:
+            std::get<int(Availability::Enum::Restricted)>(m_availabilities) = state;
             break;
-        case Availability::Available:
-            std::get<Availability::Available>(m_availabilities) = state;
+        case Availability::Enum::Available:
+            std::get<int(Availability::Enum::Available)>(m_availabilities) = state;
             break;
-        case Availability::Future:
-            std::get<Availability::Future>(m_availabilities) = state;
+        case Availability::Enum::Future:
+            std::get<int(Availability::Enum::Future)>(m_availabilities) = state;
             break;
         }
     }
@@ -147,9 +147,9 @@ namespace {
     boost::optional<AvailabilityManager::DisplayedAvailabilies>
     AvailabilityManager::DisplayedXAvailability(bool available, bool restricted) const {
         // TODO: C++17, Replace with structured binding auto [a, b, c] = m_availabilities;
-        const bool showing_restricted = std::get<Availability::Restricted>(m_availabilities);
-        const bool showing_available = std::get<Availability::Available>(m_availabilities);
-        const bool showing_future = std::get<Availability::Future>(m_availabilities);
+        const bool showing_restricted = std::get<int(Availability::Enum::Restricted)>(m_availabilities);
+        const bool showing_available = std::get<int(Availability::Enum::Available)>(m_availabilities);
+        const bool showing_future = std::get<int(Availability::Enum::Future)>(m_availabilities);
 
         bool res = showing_restricted && available && restricted;
         bool now = showing_available  && available && !restricted;
@@ -274,7 +274,7 @@ void PolicyControl::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 { RightClickedSignal(m_policy, pt); }
 
 void PolicyControl::SetAvailability(const AvailabilityManager::DisplayedAvailabilies& type) {
-    auto disabled = std::get<Availability::Restricted>(type);
+    auto disabled = std::get<int(Availability::Enum::Restricted)>(type);
     m_icon->Disable(disabled);
     m_background->Disable(disabled);
 }
@@ -588,7 +588,7 @@ GovernmentWnd::PolicyPalette::PolicyPalette(GG::X w, GG::Y h) :
 {}
 
 void GovernmentWnd::PolicyPalette::CompleteConstruction() {
-    SetChildClippingMode(ClipToClient);
+    SetChildClippingMode(ChildClippingMode::ClipToClient);
 
     m_policies_list = GG::Wnd::Create<PoliciesListBox>(m_availabilities_state);
     AttachChild(m_policies_list);
@@ -615,21 +615,21 @@ void GovernmentWnd::PolicyPalette::CompleteConstruction() {
             boost::bind(&GovernmentWnd::PolicyPalette::ToggleCategory, this, category, true));
     }
 
-    auto& m_available_button = std::get<Availability::Available>(m_availabilities_buttons);
+    auto& m_available_button = std::get<int(Availability::Enum::Available)>(m_availabilities_buttons);
     m_available_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"),
                                                          GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_available_button);
     m_available_button->CheckedSignal.connect(
-        boost::bind(&GovernmentWnd::PolicyPalette::ToggleAvailability, this, Availability::Available));
-    m_available_button->SetCheck(m_availabilities_state.GetAvailability(Availability::Available));
+        boost::bind(&GovernmentWnd::PolicyPalette::ToggleAvailability, this, Availability::Enum::Available));
+    m_available_button->SetCheck(m_availabilities_state.GetAvailability(Availability::Enum::Available));
 
-    auto& m_unavailable_button = std::get<Availability::Future>(m_availabilities_buttons);
+    auto& m_unavailable_button = std::get<int(Availability::Enum::Future)>(m_availabilities_buttons);
     m_unavailable_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"),
                                                            GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_unavailable_button);
     m_unavailable_button->CheckedSignal.connect(
-        boost::bind(&GovernmentWnd::PolicyPalette::ToggleAvailability, this, Availability::Future));
-    m_unavailable_button->SetCheck(m_availabilities_state.GetAvailability(Availability::Future));
+        boost::bind(&GovernmentWnd::PolicyPalette::ToggleAvailability, this, Availability::Enum::Future));
+    m_unavailable_button->SetCheck(m_availabilities_state.GetAvailability(Availability::Enum::Future));
 
     // default to showing everything
     ShowAllCategories(false);
@@ -729,8 +729,8 @@ void GovernmentWnd::PolicyPalette::DoLayout() {
     col = CATEGORY_BUTTONS_PER_ROW;
     row = 0;
 
-    auto& m_available_button = std::get<Availability::Available>(m_availabilities_buttons);
-    auto& m_unavailable_button = std::get<Availability::Future>(m_availabilities_buttons);
+    auto& m_available_button = std::get<int(Availability::Enum::Available)>(m_availabilities_buttons);
+    auto& m_unavailable_button = std::get<int(Availability::Enum::Future)>(m_availabilities_buttons);
 
     auto ul = GG::Pt(BUTTON_EDGE_PAD + col*COL_OFFSET, BUTTON_EDGE_PAD + row*ROW_OFFSET);
     auto lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
@@ -813,18 +813,18 @@ void GovernmentWnd::PolicyPalette::ToggleAvailability(Availability::Enum type) {
     std::shared_ptr<CUIStateButton> button;
     bool state = false;
     switch (type) {
-    case Availability::Available:
-        m_availabilities_state.ToggleAvailability(Availability::Available);
-        state = m_availabilities_state.GetAvailability(Availability::Available);
-        button = std::get<Availability::Available>(m_availabilities_buttons);
+    case Availability::Enum::Available:
+        m_availabilities_state.ToggleAvailability(Availability::Enum::Available);
+        state = m_availabilities_state.GetAvailability(Availability::Enum::Available);
+        button = std::get<int(Availability::Enum::Available)>(m_availabilities_buttons);
         break;
-    case Availability::Restricted:
-    case Availability::Future:
-        m_availabilities_state.ToggleAvailability(Availability::Future);
-        m_availabilities_state.ToggleAvailability(Availability::Restricted);
-        state = m_availabilities_state.GetAvailability(Availability::Future) ||
-                m_availabilities_state.GetAvailability(Availability::Restricted);
-        button = std::get<Availability::Future>(m_availabilities_buttons);
+    case Availability::Enum::Restricted:
+    case Availability::Enum::Future:
+        m_availabilities_state.ToggleAvailability(Availability::Enum::Future);
+        m_availabilities_state.ToggleAvailability(Availability::Enum::Restricted);
+        state = m_availabilities_state.GetAvailability(Availability::Enum::Future) ||
+                m_availabilities_state.GetAvailability(Availability::Enum::Restricted);
+        button = std::get<int(Availability::Enum::Future)>(m_availabilities_buttons);
         break;
     }
 
@@ -925,11 +925,11 @@ bool PolicySlotControl::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
         return false;
 
     switch (event.Type()) {
-    case GG::WndEvent::DragDropEnter:
-    case GG::WndEvent::DragDropHere:
-    case GG::WndEvent::CheckDrops:
-    case GG::WndEvent::DragDropLeave:
-    case GG::WndEvent::DragDroppedOn:
+    case GG::WndEvent::EventType::DragDropEnter:
+    case GG::WndEvent::EventType::DragDropHere:
+    case GG::WndEvent::EventType::CheckDrops:
+    case GG::WndEvent::EventType::DragDropLeave:
+    case GG::WndEvent::EventType::DragDroppedOn:
         HandleEvent(event);
         return true;
         break;
@@ -1158,7 +1158,7 @@ GovernmentWnd::MainPanel::MainPanel(GG::X w, GG::Y h) :
 {}
 
 void GovernmentWnd::MainPanel::CompleteConstruction() {
-    SetChildClippingMode(ClipToClient);
+    SetChildClippingMode(ChildClippingMode::ClipToClient);
 
     m_clear_button = Wnd::Create<CUIButton>(UserString("GOVERNMENT_WND_CLEAR"));
     AttachChild(m_clear_button);
@@ -1431,7 +1431,7 @@ GovernmentWnd::GovernmentWnd(const std::string& config_name) :
 
 void GovernmentWnd::CompleteConstruction() {
     Sound::TempUISoundDisabler sound_disabler;
-    SetChildClippingMode(ClipToClient);
+    SetChildClippingMode(ChildClippingMode::ClipToClient);
 
     m_main_panel = GG::Wnd::Create<MainPanel>(GG::X(100), GG::Y(100));
     AttachChild(m_main_panel);

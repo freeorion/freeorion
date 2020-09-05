@@ -470,6 +470,10 @@ void ColorDlg::ColorDisplay::Render()
 }
 
 
+namespace {
+    enum : size_t {R, G, B, A, H, S, V};
+}
+
 std::vector<Clr> ColorDlg::s_custom_colors;
 const std::size_t ColorDlg::INVALID_COLOR_BUTTON = std::numeric_limits<std::size_t>::max();
 
@@ -495,9 +499,8 @@ ColorDlg::ColorDlg(X x, Y y, Clr original_color, const std::shared_ptr<Font>& fo
                             GG::CLR_BLUE,       GG::CLR_DARK_BLUE,  GG::CLR_TEAL,       GG::CLR_CYAN,       GG::CLR_GREEN,
                             GG::CLR_DARK_GREEN, GG::CLR_OLIVE,      GG::CLR_YELLOW,     GG::CLR_ORANGE};
 
-        for (unsigned int i = s_custom_colors.size(); i < COLOR_BUTTON_ROWS * COLOR_BUTTON_COLS; ++i) {
+        for (unsigned int i = s_custom_colors.size(); i < COLOR_BUTTON_ROWS * COLOR_BUTTON_COLS; ++i)
             s_custom_colors.push_back(CLR_GRAY);
-        }
     }
 
     m_hue_saturation_picker = Wnd::Create<HueSaturationPicker>(X(10), Y(10), X(300), Y(300));
@@ -506,21 +509,25 @@ ColorDlg::ColorDlg(X x, Y y, Clr original_color, const std::shared_ptr<Font>& fo
     m_value_picker->SetHueSaturation(m_current_color.h, m_current_color.s);
     m_value_picker->SetValue(m_current_color.v);
     const int HUE_SATURATION_PICKER_SIZE = 200;
-    m_pickers_layout = Wnd::Create<Layout>(X0, Y0, X(HUE_SATURATION_PICKER_SIZE + 30), Y(HUE_SATURATION_PICKER_SIZE),
+    m_pickers_layout = Wnd::Create<Layout>(X0, Y0, X(HUE_SATURATION_PICKER_SIZE + 30),
+                                           Y(HUE_SATURATION_PICKER_SIZE),
                                            1, 2, 0, 5);
     m_pickers_layout->SetColumnStretch(0, 1);
     m_pickers_layout->SetMinimumColumnWidth(1, X(24));
     m_pickers_layout->Add(m_hue_saturation_picker, 0, 0);
     m_pickers_layout->Add(m_value_picker, 0, 1);
 
-    m_color_squares_layout = Wnd::Create<Layout>(X0, m_pickers_layout->Bottom() + 5, m_pickers_layout->Width(), Y(40),
+    m_color_squares_layout = Wnd::Create<Layout>(X0, m_pickers_layout->Bottom() + 5,
+                                                 m_pickers_layout->Width(), Y(40),
                                                  1, 1, 0, 4);
     m_new_color_square = Wnd::Create<ColorDisplay>(color);
     if (m_original_color_specified) {
-        m_new_color_square_text = style->NewTextControl(style->Translate("New"), font, m_text_color, FORMAT_RIGHT);
+        m_new_color_square_text = style->NewTextControl(style->Translate("New"), font,
+                                                        m_text_color, FORMAT_RIGHT);
         m_color_squares_layout->Add(m_new_color_square_text, 0, 0);
         m_color_squares_layout->Add(m_new_color_square, 0, 1);
-        m_old_color_square_text = style->NewTextControl(style->Translate("Old"), font, m_text_color, FORMAT_RIGHT);
+        m_old_color_square_text = style->NewTextControl(style->Translate("Old"), font,
+                                                        m_text_color, FORMAT_RIGHT);
         m_color_squares_layout->Add(m_old_color_square_text, 1, 0);
         m_old_color_square = Wnd::Create<ColorDisplay>(m_original_color);
         m_color_squares_layout->Add(m_old_color_square, 1, 1);
@@ -530,11 +537,12 @@ ColorDlg::ColorDlg(X x, Y y, Clr original_color, const std::shared_ptr<Font>& fo
         m_color_squares_layout->Add(m_new_color_square, 0, 0);
     }
 
-    m_color_buttons_layout = Wnd::Create<Layout>(X0, m_color_squares_layout->Bottom() + 5, m_pickers_layout->Width(), Y(80),
+    m_color_buttons_layout = Wnd::Create<Layout>(X0, m_color_squares_layout->Bottom() + 5,
+                                                 m_pickers_layout->Width(), Y(80),
                                                  COLOR_BUTTON_ROWS, COLOR_BUTTON_COLS, 0, 4);
     for (int i = 0; i < COLOR_BUTTON_ROWS; ++i) {
         for (int j = 0; j < COLOR_BUTTON_COLS; ++j) {
-            m_color_buttons.push_back(Wnd::Create<ColorButton>(m_color));
+            m_color_buttons.emplace_back(Wnd::Create<ColorButton>(m_color));
             m_color_buttons.back()->SetRepresentedColor(s_custom_colors[i * COLOR_BUTTON_COLS + j]);
             m_color_buttons_layout->Add(m_color_buttons.back(), i, j);
         }
@@ -549,7 +557,7 @@ ColorDlg::ColorDlg(X x, Y y, Clr original_color, const std::shared_ptr<Font>& fo
 
     int row = 0;
 
-    for (auto entry : {
+    for (auto& entry : {
             std::make_tuple(static_cast<int>(color.r), 0, 255, "R:"),
             std::make_tuple(static_cast<int>(color.g), 0, 255, "G:"),
             std::make_tuple(static_cast<int>(color.b), 0, 255, "B:"),
@@ -559,17 +567,18 @@ ColorDlg::ColorDlg(X x, Y y, Clr original_color, const std::shared_ptr<Font>& fo
             std::make_tuple(static_cast<int>(m_current_color.v * 255), 0, 255, "V:")
         })
     {
-        auto color_value = std::get<0>(entry);
-        auto color_min   = std::get<1>(entry);
-        auto color_max   = std::get<2>(entry);
-        auto color_label = std::get<3>(entry);
+        auto& color_value = std::get<0>(entry);
+        auto& color_min =   std::get<1>(entry);
+        auto& color_max =   std::get<2>(entry);
+        auto& color_label = std::get<3>(entry);
 
-        m_slider_labels.push_back(style->NewTextControl(style->Translate(color_label), font, m_text_color, FORMAT_RIGHT));
+        m_slider_labels.emplace_back(style->NewTextControl(style->Translate(color_label), font,
+                                                           m_text_color, FORMAT_RIGHT));
         m_sliders_ok_cancel_layout->Add(m_slider_labels.back(), row, 0);
-        m_slider_values.push_back(style->NewTextControl(std::to_string(color_value),
-                                                        font, m_text_color, FORMAT_LEFT));
+        m_slider_values.emplace_back(style->NewTextControl(std::to_string(color_value),
+                                                           font, m_text_color, FORMAT_LEFT));
         m_sliders_ok_cancel_layout->Add(m_slider_values.back(), row, 1);
-        m_sliders.push_back(style->NewIntSlider(color_min, color_max, HORIZONTAL, m_color, 10));
+        m_sliders.emplace_back(style->NewIntSlider(color_min, color_max, Orientation::HORIZONTAL, m_color, 10));
         m_sliders.back()->SlideTo(color_value);
         m_sliders_ok_cancel_layout->Add(m_sliders.back(), row, 2);
 
@@ -639,9 +648,9 @@ void ColorDlg::Render()
 
 void ColorDlg::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys)
 {
-    if (key == GGK_RETURN || key == GGK_KP_ENTER)
+    if (key == Key::GGK_RETURN || key == Key::GGK_KP_ENTER)
         OkClicked();
-    else if (key == GGK_ESCAPE)
+    else if (key == Key::GGK_ESCAPE)
         CancelClicked();
 }
 

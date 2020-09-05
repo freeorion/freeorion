@@ -23,7 +23,7 @@ GG_ENUM(ResourceType,
 )
 
 /** Returns the equivalent meter type for the given resource type; if no such
-  * meter type exists, returns INVALID_METER_TYPE. */
+  * meter type exists, returns MeterType::INVALID_METER_TYPE. */
 FO_COMMON_API MeterType ResourceToMeter(ResourceType type);
 FO_COMMON_API MeterType ResourceToTargetMeter(ResourceType type);
 

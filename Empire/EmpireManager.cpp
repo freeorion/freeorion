@@ -88,9 +88,9 @@ std::string EmpireManager::DumpDiplomacy() const {
             continue;
         retval += " * " + empire1->Name() + " / " + empire2->Name() + " : ";
         switch (entry.second) {
-        case DIPLO_WAR:     retval += "War";    break;
-        case DIPLO_PEACE:   retval += "Peace";  break;
-        case DIPLO_ALLIED:  retval += "Allied";  break;
+        case DiplomaticStatus::DIPLO_WAR:     retval += "War";    break;
+        case DiplomaticStatus::DIPLO_PEACE:   retval += "Peace";  break;
+        case DiplomaticStatus::DIPLO_ALLIED:  retval += "Allied";  break;
         default:            retval += "?";      break;
         }
         retval += "\n";
@@ -157,20 +157,20 @@ void EmpireManager::Clear() {
 
 DiplomaticStatus EmpireManager::GetDiplomaticStatus(int empire1, int empire2) const {
     if (empire1 == ALL_EMPIRES || empire2 == ALL_EMPIRES || empire1 == empire2)
-        return INVALID_DIPLOMATIC_STATUS;
+        return DiplomaticStatus::INVALID_DIPLOMATIC_STATUS;
 
     auto it = m_empire_diplomatic_statuses.find(DiploKey(empire1, empire2));
     if (it != m_empire_diplomatic_statuses.end())
         return it->second;
     ErrorLogger() << "Couldn't find diplomatic status between empires " << empire1 << " and " << empire2;
-    return INVALID_DIPLOMATIC_STATUS;
+    return DiplomaticStatus::INVALID_DIPLOMATIC_STATUS;
 }
 
 std::set<int> EmpireManager::GetEmpireIDsWithDiplomaticStatusWithEmpire(
     int empire_id, DiplomaticStatus diplo_status) const
 {
     std::set<int> retval;
-    if (empire_id == ALL_EMPIRES || diplo_status == INVALID_DIPLOMATIC_STATUS)
+    if (empire_id == ALL_EMPIRES || diplo_status == DiplomaticStatus::INVALID_DIPLOMATIC_STATUS)
         return retval;
     // find ids of empires with the specified diplomatic status with the specified empire
     for (auto const& id_pair_status : m_empire_diplomatic_statuses) {
@@ -244,20 +244,20 @@ void EmpireManager::HandleDiplomaticMessage(const DiplomaticMessage& message) {
 
     switch (message.GetType()) {
     case DiplomaticMessage::Type::WAR_DECLARATION: {
-        if (diplo_status == DIPLO_PEACE) {
+        if (diplo_status == DiplomaticStatus::DIPLO_PEACE) {
             // cancels any previous messages, sets empires at war
             RemoveDiplomaticMessage(sender_empire_id, recipient_empire_id);
             RemoveDiplomaticMessage(recipient_empire_id, sender_empire_id);
-            SetDiplomaticStatus(sender_empire_id, recipient_empire_id, DIPLO_WAR);
+            SetDiplomaticStatus(sender_empire_id, recipient_empire_id, DiplomaticStatus::DIPLO_WAR);
         }
         break;
     }
 
     case DiplomaticMessage::Type::PEACE_PROPOSAL: {
-        if (diplo_status == DIPLO_WAR && !message_from_recipient_to_sender_available) {
+        if (diplo_status == DiplomaticStatus::DIPLO_WAR && !message_from_recipient_to_sender_available) {
             SetDiplomaticMessage(message);
 
-        } else if (diplo_status == DIPLO_WAR && message_from_recipient_to_sender_available) {
+        } else if (diplo_status == DiplomaticStatus::DIPLO_WAR && message_from_recipient_to_sender_available) {
             if (existing_message_from_recipient_to_sender.GetType() ==
                 DiplomaticMessage::Type::PEACE_PROPOSAL)
             {
@@ -265,7 +265,7 @@ void EmpireManager::HandleDiplomaticMessage(const DiplomaticMessage& message) {
                 // cancel and remove
                 RemoveDiplomaticMessage(recipient_empire_id, sender_empire_id);
                 RemoveDiplomaticMessage(sender_empire_id, recipient_empire_id);
-                SetDiplomaticStatus(sender_empire_id, recipient_empire_id, DIPLO_PEACE);
+                SetDiplomaticStatus(sender_empire_id, recipient_empire_id, DiplomaticStatus::DIPLO_PEACE);
             }
         }
         break;
@@ -278,16 +278,16 @@ void EmpireManager::HandleDiplomaticMessage(const DiplomaticMessage& message) {
             // one player proposed peace and the other accepted
             RemoveDiplomaticMessage(recipient_empire_id, sender_empire_id);
             RemoveDiplomaticMessage(sender_empire_id, recipient_empire_id);
-            SetDiplomaticStatus(sender_empire_id, recipient_empire_id, DIPLO_PEACE);
+            SetDiplomaticStatus(sender_empire_id, recipient_empire_id, DiplomaticStatus::DIPLO_PEACE);
         }
         break;
     }
 
     case DiplomaticMessage::Type::ALLIES_PROPOSAL: {
-        if (diplo_status == DIPLO_PEACE && !message_from_recipient_to_sender_available) {
+        if (diplo_status == DiplomaticStatus::DIPLO_PEACE && !message_from_recipient_to_sender_available) {
             SetDiplomaticMessage(message);
 
-        } else if (diplo_status == DIPLO_PEACE && message_from_recipient_to_sender_available) {
+        } else if (diplo_status == DiplomaticStatus::DIPLO_PEACE && message_from_recipient_to_sender_available) {
             if (existing_message_from_recipient_to_sender.GetType() ==
                 DiplomaticMessage::Type::ALLIES_PROPOSAL)
             {
@@ -295,7 +295,7 @@ void EmpireManager::HandleDiplomaticMessage(const DiplomaticMessage& message) {
                 // cancel and remove
                 RemoveDiplomaticMessage(recipient_empire_id, sender_empire_id);
                 RemoveDiplomaticMessage(sender_empire_id, recipient_empire_id);
-                SetDiplomaticStatus(sender_empire_id, recipient_empire_id, DIPLO_ALLIED);
+                SetDiplomaticStatus(sender_empire_id, recipient_empire_id, DiplomaticStatus::DIPLO_ALLIED);
             }
         }
         break;
@@ -308,17 +308,17 @@ void EmpireManager::HandleDiplomaticMessage(const DiplomaticMessage& message) {
             // one player proposed alliance and the other accepted
             RemoveDiplomaticMessage(recipient_empire_id, sender_empire_id);
             RemoveDiplomaticMessage(sender_empire_id, recipient_empire_id);
-            SetDiplomaticStatus(sender_empire_id, recipient_empire_id, DIPLO_ALLIED);
+            SetDiplomaticStatus(sender_empire_id, recipient_empire_id, DiplomaticStatus::DIPLO_ALLIED);
         }
         break;
     }
 
     case DiplomaticMessage::Type::END_ALLIANCE_DECLARATION: {
-        if (diplo_status == DIPLO_ALLIED) {
+        if (diplo_status == DiplomaticStatus::DIPLO_ALLIED) {
             // cancels any previous messages, sets empires to peace
             RemoveDiplomaticMessage(sender_empire_id, recipient_empire_id);
             RemoveDiplomaticMessage(recipient_empire_id, sender_empire_id);
-            SetDiplomaticStatus(sender_empire_id, recipient_empire_id, DIPLO_PEACE);
+            SetDiplomaticStatus(sender_empire_id, recipient_empire_id, DiplomaticStatus::DIPLO_PEACE);
         }
         break;
     }
@@ -350,7 +350,7 @@ void EmpireManager::ResetDiplomacy() {
             if (id_empire_1.first == id_empire_2.first)
                 continue;
             const std::pair<int, int> diplo_key = DiploKey(id_empire_1.first, id_empire_2.first);
-            m_empire_diplomatic_statuses[diplo_key] = DIPLO_WAR;
+            m_empire_diplomatic_statuses[diplo_key] = DiplomaticStatus::DIPLO_WAR;
         }
     }
 }

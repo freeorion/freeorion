@@ -101,17 +101,17 @@ namespace parse { namespace detail {
         owned_by_2
             =   tok.OwnedBy_
             >>  label(tok.Affiliation_) >> tok.AnyEmpire_
-            [ _val = construct_movable_(new_<Condition::EmpireAffiliation>( AFFIL_ANY )) ]
+            [ _val = construct_movable_(new_<Condition::EmpireAffiliation>( EmpireAffiliationType::AFFIL_ANY )) ]
             ;
 
         owned_by_3
             =   tok.Unowned_
-            [ _val = construct_movable_(new_<Condition::EmpireAffiliation>( AFFIL_NONE )) ]
+            [ _val = construct_movable_(new_<Condition::EmpireAffiliation>( EmpireAffiliationType::AFFIL_NONE )) ]
             ;
 
         owned_by_4
             =   tok.Human_
-            [ _val = construct_movable_(new_<Condition::EmpireAffiliation>( AFFIL_HUMAN )) ]
+            [ _val = construct_movable_(new_<Condition::EmpireAffiliation>( EmpireAffiliationType::AFFIL_HUMAN )) ]
             ;
 
         owned_by_5

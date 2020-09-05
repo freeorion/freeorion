@@ -61,7 +61,7 @@ void ScrollPanel::CompleteConstruction()
 {
     // Very important to clip the content of this panel,
     // to actually only show the currently viewed part.
-    SetChildClippingMode(ClipToClient);
+    SetChildClippingMode(ChildClippingMode::ClipToClient);
 
     // Get the scroll bar from the current style factory.
     const auto& style = GetStyleFactory();
@@ -111,35 +111,35 @@ void ScrollPanel::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> 
     if (!numlock_on) {
         // convert keypad keys into corresponding non-number keys
         switch (key) {
-        case GGK_KP0:       key = GGK_INSERT;   break;
-        case GGK_KP1:       key = GGK_END;      break;
-        case GGK_KP2:       key = GGK_DOWN;     break;
-        case GGK_KP3:       key = GGK_PAGEDOWN; break;
-        case GGK_KP4:       key = GGK_LEFT;     break;
-        case GGK_KP5:                           break;
-        case GGK_KP6:       key = GGK_RIGHT;    break;
-        case GGK_KP7:       key = GGK_HOME;     break;
-        case GGK_KP8:       key = GGK_UP;       break;
-        case GGK_KP9:       key = GGK_PAGEUP;   break;
-        case GGK_KP_PERIOD: key = GGK_DELETE;   break;
-        default:                                break;
+        case Key::GGK_KP0:       key = Key::GGK_INSERT;   break;
+        case Key::GGK_KP1:       key = Key::GGK_END;      break;
+        case Key::GGK_KP2:       key = Key::GGK_DOWN;     break;
+        case Key::GGK_KP3:       key = Key::GGK_PAGEDOWN; break;
+        case Key::GGK_KP4:       key = Key::GGK_LEFT;     break;
+        case Key::GGK_KP5:                                break;
+        case Key::GGK_KP6:       key = Key::GGK_RIGHT;    break;
+        case Key::GGK_KP7:       key = Key::GGK_HOME;     break;
+        case Key::GGK_KP8:       key = Key::GGK_UP;       break;
+        case Key::GGK_KP9:       key = Key::GGK_PAGEUP;   break;
+        case Key::GGK_KP_PERIOD: key = Key::GGK_DELETE;   break;
+        default:                                          break;
         }
     }
 
     switch (key) {
-    case GGK_UP: {
+    case Key::GGK_UP: {
         m_vscroll->ScrollLineIncr(-1);
         SignalScroll(*m_vscroll, true);
         break;
     }
 
-    case GGK_DOWN: {
+    case Key::GGK_DOWN: {
         m_vscroll->ScrollLineIncr(1);
         SignalScroll(*m_vscroll, true);
         break;
     }
 
-    case GGK_HOME: {
+    case Key::GGK_HOME: {
         if (ctrl_down) {
             m_vscroll->ScrollTo(m_vscroll->ScrollRange().first);
             SignalScroll(*m_vscroll, true);
@@ -147,7 +147,7 @@ void ScrollPanel::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> 
         break;
     }
 
-    case GGK_END: {
+    case Key::GGK_END: {
         if (ctrl_down) {
             m_vscroll->ScrollTo(m_vscroll->ScrollRange().second);
             SignalScroll(*m_vscroll, true);
@@ -155,13 +155,13 @@ void ScrollPanel::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> 
         break;
     }
 
-    case GGK_PAGEUP: {
+    case Key::GGK_PAGEUP: {
         m_vscroll->ScrollPageDecr();
         SignalScroll(*m_vscroll, true);
         break;
     }
 
-    case GGK_PAGEDOWN: {
+    case Key::GGK_PAGEDOWN: {
         m_vscroll->ScrollPageIncr();
         SignalScroll(*m_vscroll, true);
         break;

@@ -109,10 +109,10 @@ protected:
 private:
     void RenderDefault();     ///< This just draws the default unadorned square-and-rectangle button
 
-    ButtonState    m_state;             ///< Button is always in exactly one of the ButtonState states above
-    SubTexture     m_unpressed_graphic; ///< Graphic used to display button when it's unpressed
-    SubTexture     m_pressed_graphic;   ///< Graphic used to display button when it's depressed
-    SubTexture     m_rollover_graphic;  ///< Graphic used to display button when it's under the mouse and not pressed
+    ButtonState    m_state = ButtonState::BN_UNPRESSED; ///< Button is always in exactly one of the ButtonState states above
+    SubTexture     m_unpressed_graphic;                 ///< Graphic used to display button when it's unpressed
+    SubTexture     m_pressed_graphic;                   ///< Graphic used to display button when it's depressed
+    SubTexture     m_rollover_graphic;                  ///< Graphic used to display button when it's under the mouse and not pressed
 };
 
 

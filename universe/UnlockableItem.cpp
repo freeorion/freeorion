@@ -7,12 +7,12 @@
 std::string UnlockableItem::Dump(unsigned short ntabs) const {
     std::string retval = "Item type = ";
     switch (type) {
-    case UIT_BUILDING:      retval += "Building";   break;
-    case UIT_SHIP_PART:     retval += "ShipPart";   break;
-    case UIT_SHIP_HULL:     retval += "ShipHull";   break;
-    case UIT_SHIP_DESIGN:   retval += "ShipDesign"; break;
-    case UIT_TECH:          retval += "Tech"    ;   break;
-    default:                retval += "?"       ;   break;
+    case UnlockableItemType::UIT_BUILDING:    retval += "Building";   break;
+    case UnlockableItemType::UIT_SHIP_PART:   retval += "ShipPart";   break;
+    case UnlockableItemType::UIT_SHIP_HULL:   retval += "ShipHull";   break;
+    case UnlockableItemType::UIT_SHIP_DESIGN: retval += "ShipDesign"; break;
+    case UnlockableItemType::UIT_TECH:        retval += "Tech"    ;   break;
+    default:                                  retval += "?"       ;   break;
     }
     retval += " name = \"" + name + "\"\n";
     return retval;

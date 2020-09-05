@@ -254,11 +254,11 @@ TabBar::TabBar(const std::shared_ptr<Font>& font, Clr color, Clr text_color/* = 
 
 void TabBar::CompleteConstruction()
 {
-    SetChildClippingMode(ClipToClient);
+    SetChildClippingMode(ChildClippingMode::ClipToClient);
 
     const auto& style_factory = GetStyleFactory();
 
-    m_tabs = style_factory->NewRadioButtonGroup(HORIZONTAL);
+    m_tabs = style_factory->NewRadioButtonGroup(Orientation::HORIZONTAL);
     m_tabs->ExpandButtons(true);
     m_tabs->ExpandButtonsProportionally(true);
 
@@ -477,8 +477,8 @@ void TabBar::BringTabIntoView(std::size_t index)
 
 bool TabBar::EventFilter(Wnd* w, const WndEvent& event)
 {
-    if (event.Type() == WndEvent::LButtonDown ||
-        event.Type() == WndEvent::RButtonDown)
+    if (event.Type() == WndEvent::EventType::LButtonDown ||
+        event.Type() == WndEvent::EventType::RButtonDown)
     { MoveChildUp(m_left_right_button_layout.get()); }
     return false;
 }

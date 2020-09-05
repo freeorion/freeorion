@@ -48,7 +48,7 @@ public:
     void CompleteConstruction() override {
         GG::Control::CompleteConstruction();
 
-        SetChildClippingMode(ClipToClient);
+        SetChildClippingMode(ChildClippingMode::ClipToClient);
 
         if (m_show_icon)
             AttachChild(m_icon);

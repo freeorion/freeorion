@@ -44,13 +44,13 @@ namespace {
             type(type_)
         {
             switch (type) {
-            case Networking::CLIENT_TYPE_HUMAN_PLAYER:
+            case Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER:
                 m_label = GG::Wnd::Create<CUILabel>(UserString("PLAYER"));
                 break;
-            case Networking::CLIENT_TYPE_HUMAN_MODERATOR:
+            case Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR:
                 m_label = GG::Wnd::Create<CUILabel>(UserString("MODERATOR"));
                 break;
-            case Networking::CLIENT_TYPE_HUMAN_OBSERVER:
+            case Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER:
                 m_label = GG::Wnd::Create<CUILabel>(UserString("OBSERVER"));
                 break;
             default:
@@ -83,7 +83,7 @@ void ServerConnectWnd::CompleteConstruction() {
 
     auto player_name_label = GG::Wnd::Create<CUILabel>(UserString("PLAYER_NAME_LABEL"), GG::FORMAT_LEFT);
     m_player_name_edit = GG::Wnd::Create<CUIEdit>(GetOptionsDB().Get<std::string>("setup.multiplayer.player.name"));
-    m_host_or_join_radio_group = GG::Wnd::Create<GG::RadioButtonGroup>(GG::VERTICAL);
+    m_host_or_join_radio_group = GG::Wnd::Create<GG::RadioButtonGroup>(GG::Orientation::VERTICAL);
     m_host_or_join_radio_group->AddButton(GG::Wnd::Create<CUIStateButton>(UserString("HOST_GAME_BN"), GG::FORMAT_LEFT, std::make_shared<CUIRadioRepresenter>()));
     m_host_or_join_radio_group->AddButton(GG::Wnd::Create<CUIStateButton>(UserString("JOIN_GAME_BN"), GG::FORMAT_LEFT, std::make_shared<CUIRadioRepresenter>()));
     m_client_type_list = GG::Wnd::Create<CUIDropDownList>(3);
@@ -147,12 +147,12 @@ void ServerConnectWnd::CompleteConstruction() {
     m_cancel_bn->LeftClickedSignal.connect(
         boost::bind(&ServerConnectWnd::CancelClicked, this));
 
-    m_client_type_list->Insert(GG::Wnd::Create<ClientTypeRow>(Networking::CLIENT_TYPE_HUMAN_PLAYER));
-    m_client_type_list->Insert(GG::Wnd::Create<ClientTypeRow>(Networking::CLIENT_TYPE_HUMAN_MODERATOR));
-    m_client_type_list->Insert(GG::Wnd::Create<ClientTypeRow>(Networking::CLIENT_TYPE_HUMAN_OBSERVER));
+    m_client_type_list->Insert(GG::Wnd::Create<ClientTypeRow>(Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER));
+    m_client_type_list->Insert(GG::Wnd::Create<ClientTypeRow>(Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR));
+    m_client_type_list->Insert(GG::Wnd::Create<ClientTypeRow>(Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER));
 
     m_client_type_list->Select(0);
-    m_result.type = Networking::CLIENT_TYPE_HUMAN_PLAYER;
+    m_result.type = Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER;
 
     m_host_or_join_radio_group->SetCheck(0);
     PopulateServerList();
@@ -177,10 +177,10 @@ GG::Rect ServerConnectWnd::CalculatePosition() const {
 void ServerConnectWnd::KeyPress(GG::Key key, std::uint32_t key_code_point,
                                 GG::Flags<GG::ModKey> mod_keys)
 {
-    if (!m_ok_bn->Disabled() && (key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER)) {
+    if (!m_ok_bn->Disabled() && (key == GG::Key::GGK_RETURN || key == GG::Key::GGK_KP_ENTER)) {
         // Same behaviour as if "OK" was pressed
         OkClicked();
-    } else if (key == GG::GGK_ESCAPE) {
+    } else if (key == GG::Key::GGK_ESCAPE) {
         // Same behaviour as if "Cancel" was pressed
         CancelClicked();
     }

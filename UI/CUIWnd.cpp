@@ -49,7 +49,7 @@ void CUI_MinRestoreButton::Render() {
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
     GG::Clr color_to_use = ClientUI::WndInnerBorderColor();
-    if (State() != BN_ROLLOVER)
+    if (State() != ButtonState::BN_ROLLOVER)
         AdjustBrightness(color_to_use, BUTTON_DIMMING_SCALE_FACTOR);
     if (m_mode == Mode::MINIMIZE) {
         // draw a dash to signify the minimize command
@@ -184,7 +184,7 @@ void CUIWnd::CompleteConstruction() {
 
 void CUIWnd::Init() {
     InitButtons();
-    SetChildClippingMode(ClipToClientAndWindowSeparately);
+    SetChildClippingMode(ChildClippingMode::ClipToClientAndWindowSeparately);
 
     if (!m_config_name.empty()) {
         LoadOptions();
@@ -967,8 +967,8 @@ void CUIEditWnd::KeyPress(GG::Key key, std::uint32_t key_code_point,
                           GG::Flags<GG::ModKey> mod_keys)
 {
     switch (key) {
-    case GG::GGK_RETURN: if (!m_ok_bn->Disabled()) OkClicked(); break;
-    case GG::GGK_ESCAPE: CloseClicked(); break;
+    case GG::Key::GGK_RETURN: if (!m_ok_bn->Disabled()) OkClicked(); break;
+    case GG::Key::GGK_ESCAPE: CloseClicked(); break;
     default: break;
     }
 }

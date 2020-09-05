@@ -67,7 +67,7 @@ std::string Hotkey::HotkeyToString(GG::Key key, GG::Flags<GG::ModKey> mod) {
         s << mod;
         s << "+";
     }
-    if (key > GG::GGK_NONE) {
+    if (key > GG::Key::GGK_NONE) {
         s << key;
     }
     return s.str();
@@ -87,7 +87,7 @@ std::string Hotkey::ToString() const
 
 std::pair<GG::Key, GG::Flags<GG::ModKey>> Hotkey::HotkeyFromString(const std::string& str) {
     if (str.empty())
-        return {GG::GGK_NONE, GG::Flags<GG::ModKey>()};
+        return {GG::Key::GGK_NONE, GG::Flags<GG::ModKey>()};
 
     // Strip whitespace
     std::string copy = str;
@@ -117,7 +117,7 @@ std::pair<GG::Key, GG::Flags<GG::ModKey>> Hotkey::HotkeyFromString(const std::st
             }
         } catch (...) {
             ErrorLogger() << "Unable make flag from string: " << str;
-            return {GG::GGK_NONE, GG::Flags<GG::ModKey>()};
+            return {GG::Key::GGK_NONE, GG::Flags<GG::ModKey>()};
         }
     }
 
@@ -195,7 +195,7 @@ void Hotkey::ReadFromOptions(OptionsDB& db) {
         }
         std::string option_string = db.Get<std::string>(options_db_name);
 
-        std::pair<GG::Key, GG::Flags<GG::ModKey>> key_modkey_pair = {GG::GGK_NONE, GG::MOD_KEY_NONE};
+        std::pair<GG::Key, GG::Flags<GG::ModKey>> key_modkey_pair = {GG::Key::GGK_NONE, GG::MOD_KEY_NONE};
         try {
             key_modkey_pair = HotkeyFromString(option_string);
         } catch (...) {
@@ -203,7 +203,7 @@ void Hotkey::ReadFromOptions(OptionsDB& db) {
             continue;
         }
 
-        if (key_modkey_pair.first == GG::GGK_NONE)
+        if (key_modkey_pair.first == GG::Key::GGK_NONE)
             continue;
 
         if (!IsTypingSafe(key_modkey_pair.first, key_modkey_pair.second)) {
@@ -249,17 +249,17 @@ Hotkey& Hotkey::PrivateNamedHotkey(const std::string& name) {
 }
 
 bool Hotkey::IsTypingSafe(GG::Key key, GG::Flags<GG::ModKey> mod) {
-    if (GG::GGK_INSERT <= key && GG::GGK_PAGEUP >= key)
+    if (GG::Key::GGK_INSERT <= key && GG::Key::GGK_PAGEUP >= key)
         return false;
-    if (GG::GGK_END <= key && GG::GGK_UP >= key)
+    if (GG::Key::GGK_END <= key && GG::Key::GGK_UP >= key)
         return false;
     if (mod & (GG::MOD_KEY_CTRL | GG::MOD_KEY_ALT | GG::MOD_KEY_META))
         return true;
-    if (key >= GG::GGK_F1 && key <= GG::GGK_F12)
+    if (key >= GG::Key::GGK_F1 && key <= GG::Key::GGK_F12)
         return true;
-    if (key >= GG::GGK_F13 && key <= GG::GGK_F24)
+    if (key >= GG::Key::GGK_F13 && key <= GG::Key::GGK_F24)
         return true;
-    if (key == GG::GGK_TAB || key == GG::GGK_ESCAPE || key == GG::GGK_NONE)
+    if (key == GG::Key::GGK_TAB || key == GG::Key::GGK_ESCAPE || key == GG::Key::GGK_NONE)
         return true;
     return false;
 }
@@ -286,7 +286,7 @@ void Hotkey::ResetHotkey(const Hotkey& old_hotkey) {
 }
 
 void Hotkey::ClearHotkey(const Hotkey& old_hotkey)
-{ Hotkey::SetHotkey(old_hotkey, GG::GGK_NONE, GG::Flags<GG::ModKey>()); }
+{ Hotkey::SetHotkey(old_hotkey, GG::Key::GGK_NONE, GG::Flags<GG::ModKey>()); }
 
 //////////////////////////////////////////////////////////////////////
 // InvisibleWindowCondition

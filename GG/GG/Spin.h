@@ -109,7 +109,8 @@ public:
 protected:
     typedef T ValueType;
 
-    enum {BORDER_THICK = 2, PIXEL_MARGIN = 5};
+    const int BORDER_THICK = 2;
+    const int PIXEL_MARGIN = 5;
 
     Button* UpButton() const;   ///< returns a pointer to the Button control used as this control's up button
     Button* DownButton() const; ///< returns a pointer to the Button control used as this control's down button
@@ -129,17 +130,17 @@ private:
     void DecrImpl(bool signal);
     void SetValueImpl(T value, bool signal);
 
-    T          m_value;
-    T          m_step_size;
-    T          m_min_value;
-    T          m_max_value;
+    T m_value;
+    T m_step_size;
+    T m_min_value;
+    T m_max_value;
 
-    bool       m_editable;
+    bool m_editable = false;
 
     std::shared_ptr<Button> m_up_button;
     std::shared_ptr<Button> m_down_button;
 
-    X          m_button_width = GG::X(15);
+    X m_button_width = GG::X(15);
 
     static void ValueChangedEcho(const T& value);
 };
@@ -356,20 +357,20 @@ void Spin<T>::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_
     }
 
     switch (key) {
-    case GGK_HOME:
+    case Key::GGK_HOME:
         SetValueImpl(m_min_value, true);
         break;
-    case GGK_END:
+    case Key::GGK_END:
         SetValueImpl(m_max_value, true);
         break;
-    case GGK_PAGEUP:
-    case GGK_UP:
-    case GGK_KP_PLUS:
+    case Key::GGK_PAGEUP:
+    case Key::GGK_UP:
+    case Key::GGK_KP_PLUS:
         IncrImpl(true);
         break;
-    case GGK_PAGEDOWN:
-    case GGK_DOWN:
-    case GGK_KP_MINUS:
+    case Key::GGK_PAGEDOWN:
+    case Key::GGK_DOWN:
+    case Key::GGK_KP_MINUS:
         DecrImpl(true);
         break;
     default:
@@ -395,7 +396,7 @@ template <typename T>
 bool Spin<T>::EventFilter(Wnd* w, const WndEvent& event)
 {
     if (w == m_edit.get()) {
-        if (!m_editable && event.Type() == WndEvent::GainingFocus) {
+        if (!m_editable && event.Type() == WndEvent::EventType::GainingFocus) {
             GUI::GetGUI()->SetFocusWnd(shared_from_this());
             return true;
         } else {
@@ -423,14 +424,11 @@ void Spin<T>::ConnectSignals()
 template <typename T>
 void Spin<T>::ValueUpdated(const std::string& val_text)
 {
-    T value;
     try {
-        value = boost::lexical_cast<T>(val_text);
+        SetValueImpl(boost::lexical_cast<T>(val_text), true);
     } catch (boost::bad_lexical_cast) {
         SetValueImpl(m_min_value, true);
-        return;
     }
-    SetValueImpl(value, true);
 }
 
 template <typename T>

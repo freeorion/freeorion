@@ -110,9 +110,9 @@ namespace parse {
             ;
 
         selection_operator
-            =   tok.OneOf_  [ _val = ValueRef::RANDOM_PICK ]
-            |   tok.Min_    [ _val = ValueRef::MINIMUM ]
-            |   tok.Max_    [ _val = ValueRef::MAXIMUM ];
+            =   tok.OneOf_  [ _val = ValueRef::OpType::RANDOM_PICK ]
+            |   tok.Min_    [ _val = ValueRef::OpType::MINIMUM ]
+            |   tok.Max_    [ _val = ValueRef::OpType::MAXIMUM ];
 
         selection_expr
             = (selection_operator > '(' > (expr % ',') > ')')

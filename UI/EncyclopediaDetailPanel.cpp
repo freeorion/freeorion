@@ -344,11 +344,11 @@ namespace {
 
         }
         else if (dir_name == "ENC_METER_TYPE") {
-            for (MeterType meter_type = METER_POPULATION;
-                 meter_type != NUM_METER_TYPES;
+            for (MeterType meter_type = MeterType::METER_POPULATION;
+                 meter_type != MeterType::NUM_METER_TYPES;
                  meter_type = static_cast<MeterType>(static_cast<int>(meter_type) + 1))
             {
-                if (meter_type > INVALID_METER_TYPE && meter_type < NUM_METER_TYPES)
+                if (meter_type > MeterType::INVALID_METER_TYPE && meter_type < MeterType::NUM_METER_TYPES)
                     MeterTypeDirEntry(meter_type, sorted_entries_list);
             }
 
@@ -594,8 +594,8 @@ namespace {
 
         void KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override {
             switch (key) {
-            case GG::GGK_RETURN:
-            case GG::GGK_KP_ENTER:
+            case GG::Key::GGK_RETURN:
+            case GG::Key::GGK_KP_ENTER:
                 TextEnteredSignal();
                 break;
             default:
@@ -705,7 +705,7 @@ void EncyclopediaDetailPanel::CompleteConstruction() {
     AttachChild(m_back_button);
     AttachChild(m_next_button);
 
-    SetChildClippingMode(ClipToWindow);
+    SetChildClippingMode(ChildClippingMode::ClipToWindow);
     DoLayout();
 
     SetMinSize(PALETTE_MIN_SIZE);
@@ -812,9 +812,9 @@ void EncyclopediaDetailPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 void EncyclopediaDetailPanel::KeyPress(GG::Key key, std::uint32_t key_code_point,
                                        GG::Flags<GG::ModKey> mod_keys)
 {
-    if (key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER) {
+    if (key == GG::Key::GGK_RETURN || key == GG::Key::GGK_KP_ENTER) {
         GG::GUI::GetGUI()->SetFocusWnd(m_search_edit);
-    } else if (key == GG::GGK_BACKSPACE) {
+    } else if (key == GG::Key::GGK_BACKSPACE) {
         this->OnBack();
     } else {
         m_scroll_panel->KeyPress(key, key_code_point, mod_keys);
@@ -1121,15 +1121,15 @@ namespace {
 
     const std::string& GeneralTypeOfObject(UniverseObjectType obj_type) {
         switch (obj_type) {
-        case OBJ_SHIP:          return UserString("ENC_SHIP");          break;
-        case OBJ_FLEET:         return UserString("ENC_FLEET");         break;
-        case OBJ_PLANET:        return UserString("ENC_PLANET");        break;
-        case OBJ_BUILDING:      return UserString("ENC_BUILDING");      break;
-        case OBJ_SYSTEM:        return UserString("ENC_SYSTEM");        break;
-        case OBJ_FIELD:         return UserString("ENC_FIELD");         break;
-        case OBJ_POP_CENTER:    return UserString("ENC_POP_CENTER");    break;
-        case OBJ_PROD_CENTER:   return UserString("ENC_PROD_CENTER");   break;
-        case OBJ_FIGHTER:       return UserString("ENC_FIGHTER");       break;
+        case UniverseObjectType::OBJ_SHIP:          return UserString("ENC_SHIP");          break;
+        case UniverseObjectType::OBJ_FLEET:         return UserString("ENC_FLEET");         break;
+        case UniverseObjectType::OBJ_PLANET:        return UserString("ENC_PLANET");        break;
+        case UniverseObjectType::OBJ_BUILDING:      return UserString("ENC_BUILDING");      break;
+        case UniverseObjectType::OBJ_SYSTEM:        return UserString("ENC_SYSTEM");        break;
+        case UniverseObjectType::OBJ_FIELD:         return UserString("ENC_FIELD");         break;
+        case UniverseObjectType::OBJ_POP_CENTER:    return UserString("ENC_POP_CENTER");    break;
+        case UniverseObjectType::OBJ_PROD_CENTER:   return UserString("ENC_PROD_CENTER");   break;
+        case UniverseObjectType::OBJ_FIGHTER:       return UserString("ENC_FIGHTER");       break;
         default:                return EMPTY_STRING;
         }
     }
@@ -1241,11 +1241,11 @@ namespace {
         detailed_description += UserString(part->Description()) + "\n\n" + part->CapacityDescription();
 
         std::string slot_types_list;
-        if (part->CanMountInSlotType(SL_EXTERNAL))
+        if (part->CanMountInSlotType(ShipSlotType::SL_EXTERNAL))
             slot_types_list += UserString("SL_EXTERNAL") + "   ";
-        if (part->CanMountInSlotType(SL_INTERNAL))
+        if (part->CanMountInSlotType(ShipSlotType::SL_INTERNAL))
             slot_types_list += UserString("SL_INTERNAL") + "   ";
-        if (part->CanMountInSlotType(SL_CORE))
+        if (part->CanMountInSlotType(ShipSlotType::SL_CORE))
             slot_types_list += UserString("SL_CORE");
         if (!slot_types_list.empty())
             detailed_description += "\n\n" + UserString("ENC_SHIP_PART_CAN_MOUNT_IN_SLOT_TYPES") + slot_types_list;
@@ -1264,7 +1264,7 @@ namespace {
             }
         }
 
-        auto unlocked_by_techs = TechsThatUnlockItem(UnlockableItem(UIT_SHIP_PART, item_name));
+        auto unlocked_by_techs = TechsThatUnlockItem(UnlockableItem(UnlockableItemType::UIT_SHIP_PART, item_name));
         if (!unlocked_by_techs.empty()) {
             detailed_description += "\n\n" + UserString("ENC_UNLOCKED_BY");
             for (const auto& tech_name : unlocked_by_techs)
@@ -1304,7 +1304,7 @@ namespace {
         general_type = UserString("ENC_SHIP_HULL");
 
         std::string slots_list;
-        for (auto slot_type : {SL_EXTERNAL, SL_INTERNAL, SL_CORE})
+        for (auto slot_type : {ShipSlotType::SL_EXTERNAL, ShipSlotType::SL_INTERNAL, ShipSlotType::SL_CORE})
             slots_list += UserString(boost::lexical_cast<std::string>((slot_type))) + ": " + std::to_string(hull->NumSlots(slot_type)) + "\n";
         detailed_description += UserString(hull->Description()) + "\n\n" + str(FlexibleFormat(UserString("HULL_DESC"))
             % hull->Speed()
@@ -1338,11 +1338,11 @@ namespace {
             }
         }
 
-        auto unlocked_by_techs = TechsThatUnlockItem(UnlockableItem(UIT_SHIP_HULL, item_name));
+        auto unlocked_by_techs = TechsThatUnlockItem(UnlockableItem(UnlockableItemType::UIT_SHIP_HULL, item_name));
         if (!unlocked_by_techs.empty()) {
             detailed_description += "\n\n" + UserString("ENC_UNLOCKED_BY");
             for (const auto& tech_name : unlocked_by_techs)
-            { detailed_description += LinkTaggedText(VarText::TECH_TAG, tech_name) + "  "; }
+                detailed_description += LinkTaggedText(VarText::TECH_TAG, tech_name) + "  ";
             detailed_description += "\n\n";
         }
 
@@ -1399,12 +1399,12 @@ namespace {
             for (const UnlockableItem& item : unlocked_items) {
                 std::string TAG;
                 switch (item.type) {
-                case UIT_BUILDING:      TAG = VarText::BUILDING_TYPE_TAG;       break;
-                case UIT_SHIP_PART:     TAG = VarText::SHIP_PART_TAG;           break;
-                case UIT_SHIP_HULL:     TAG = VarText::SHIP_HULL_TAG;           break;
-                case UIT_SHIP_DESIGN:   TAG = VarText::PREDEFINED_DESIGN_TAG;   break;
-                case UIT_TECH:          TAG = VarText::TECH_TAG;                break;
-                case UIT_POLICY:        TAG = VarText::POLICY_TAG;              break;
+                case UnlockableItemType::UIT_BUILDING:    TAG = VarText::BUILDING_TYPE_TAG;     break;
+                case UnlockableItemType::UIT_SHIP_PART:   TAG = VarText::SHIP_PART_TAG;         break;
+                case UnlockableItemType::UIT_SHIP_HULL:   TAG = VarText::SHIP_HULL_TAG;         break;
+                case UnlockableItemType::UIT_SHIP_DESIGN: TAG = VarText::PREDEFINED_DESIGN_TAG; break;
+                case UnlockableItemType::UIT_TECH:        TAG = VarText::TECH_TAG;              break;
+                case UnlockableItemType::UIT_POLICY:      TAG = VarText::POLICY_TAG;            break;
                 default: break;
                 }
 
@@ -1464,7 +1464,7 @@ namespace {
 
         detailed_description += UserString(policy->Description());
 
-        auto unlocked_by_techs = TechsThatUnlockItem(UnlockableItem(UIT_POLICY, item_name));
+        auto unlocked_by_techs = TechsThatUnlockItem(UnlockableItem(UnlockableItemType::UIT_POLICY, item_name));
         if (!unlocked_by_techs.empty()) {
             detailed_description += "\n\n" + UserString("ENC_UNLOCKED_BY");
             for (const auto& tech_name : unlocked_by_techs)
@@ -1544,7 +1544,7 @@ namespace {
                 detailed_description += "\n\nEffects:\n" + Dump(building_type->Effects());
         }
 
-        auto unlocked_by_techs = TechsThatUnlockItem(UnlockableItem(UIT_BUILDING, item_name));
+        auto unlocked_by_techs = TechsThatUnlockItem(UnlockableItem(UnlockableItemType::UIT_BUILDING, item_name));
         if (!unlocked_by_techs.empty()) {
             detailed_description += "\n\n" + UserString("ENC_UNLOCKED_BY");
             for (const std::string& tech_name : unlocked_by_techs)
@@ -2056,7 +2056,7 @@ namespace {
                 detailed_description += UserString(boost::lexical_cast<std::string>(pt_env.first)) + " : " +
                                         UserString(boost::lexical_cast<std::string>(pt_env.second)) + "\n";
                 // add blank line between cyclical environments and asteroids and gas giants
-                if (pt_env.first == PT_OCEAN)
+                if (pt_env.first == PlanetType::PT_OCEAN)
                     detailed_description += "\n";
             }
         } else {
@@ -2174,7 +2174,7 @@ namespace {
                                         std::string& specific_type, std::string& detailed_description,
                                         GG::Clr& color)
     {
-        MeterType meter_type = INVALID_METER_TYPE;
+        MeterType meter_type = MeterType::INVALID_METER_TYPE;
         std::istringstream item_ss(item_name);
         item_ss >> meter_type;
 
@@ -2234,8 +2234,8 @@ namespace {
         // meter values for display
 
         auto& species = ship->SpeciesName().empty() ? "Generic" : UserString(ship->SpeciesName());
-        float structure = ship->GetMeter(METER_MAX_STRUCTURE)->Current();
-        float shield = ship->GetMeter(METER_MAX_SHIELD)->Current();
+        float structure = ship->GetMeter(MeterType::METER_MAX_STRUCTURE)->Current();
+        float shield = ship->GetMeter(MeterType::METER_MAX_SHIELD)->Current();
         float attack = ship->TotalWeaponsDamage();
         float strength = std::pow(attack * structure, 0.6f);
         float typical_shot = *std::max_element(enemy_shots.begin(), enemy_shots.end());
@@ -2243,18 +2243,18 @@ namespace {
         return (FlexibleFormat(UserString("ENC_SHIP_DESIGN_DESCRIPTION_STATS_STR"))
             % species
             % attack
-            % ship->SumCurrentPartMeterValuesForPartClass(METER_MAX_SECONDARY_STAT, PC_DIRECT_WEAPON)
+            % ship->SumCurrentPartMeterValuesForPartClass(MeterType::METER_MAX_SECONDARY_STAT, ShipPartClass::PC_DIRECT_WEAPON)
             % structure
             % shield
-            % ship->GetMeter(METER_DETECTION)->Current()
-            % ship->GetMeter(METER_STEALTH)->Current()
-            % ship->GetMeter(METER_SPEED)->Current()
-            % ship->GetMeter(METER_MAX_FUEL)->Current()
-            % ship->SumCurrentPartMeterValuesForPartClass(METER_CAPACITY, PC_COLONY)
-            % ship->SumCurrentPartMeterValuesForPartClass(METER_CAPACITY, PC_TROOPS)
+            % ship->GetMeter(MeterType::METER_DETECTION)->Current()
+            % ship->GetMeter(MeterType::METER_STEALTH)->Current()
+            % ship->GetMeter(MeterType::METER_SPEED)->Current()
+            % ship->GetMeter(MeterType::METER_MAX_FUEL)->Current()
+            % ship->SumCurrentPartMeterValuesForPartClass(MeterType::METER_CAPACITY, ShipPartClass::PC_COLONY)
+            % ship->SumCurrentPartMeterValuesForPartClass(MeterType::METER_CAPACITY, ShipPartClass::PC_TROOPS)
             % ship->FighterMax()
             % (attack - ship->TotalWeaponsDamage(0.0f, false))
-            % ship->SumCurrentPartMeterValuesForPartClass(METER_MAX_CAPACITY, PC_FIGHTER_BAY)
+            % ship->SumCurrentPartMeterValuesForPartClass(MeterType::METER_MAX_CAPACITY, ShipPartClass::PC_FIGHTER_BAY)
             % strength
             % (strength / cost)
             % typical_shot
@@ -2341,7 +2341,7 @@ namespace {
                 if (!this_ship->SpeciesName().empty())
                     additional_species.emplace(this_ship->SpeciesName());
                 if (!this_ship->OwnedBy(client_empire_id)) {
-                    enemy_DR = this_ship->GetMeter(METER_MAX_SHIELD)->Initial();
+                    enemy_DR = this_ship->GetMeter(MeterType::METER_MAX_SHIELD)->Initial();
                     DebugLogger() << "Using selected ship for enemy values, DR: " << enemy_DR;
                     enemy_shots.clear();
                     auto this_damage = this_ship->AllWeaponsMaxDamage();
@@ -2458,10 +2458,10 @@ namespace {
             chosen_ships.insert(selected_ship);
             if (const auto this_ship = Objects().get<Ship>(selected_ship).get()) {
                 if (!additional_species.empty() && (
-                        (this_ship->GetMeter(METER_MAX_SHIELD)->Initial() > 0) ||
+                        (this_ship->GetMeter(MeterType::METER_MAX_SHIELD)->Initial() > 0) ||
                          !this_ship->OwnedBy(client_empire_id)))
                 {
-                    enemy_DR = this_ship->GetMeter(METER_MAX_SHIELD)->Initial();
+                    enemy_DR = this_ship->GetMeter(MeterType::METER_MAX_SHIELD)->Initial();
                     DebugLogger() << "Using selected ship for enemy values, DR: " << enemy_DR;
                     enemy_shots.clear();
                     auto this_damage = this_ship->AllWeaponsMaxDamage();
@@ -2609,7 +2609,7 @@ namespace {
         // store original state of planet
         auto original_planet_species = planet.SpeciesName();
         auto original_owner_id = planet.Owner();
-        auto orig_initial_target_pop = planet.GetMeter(METER_TARGET_POPULATION)->Initial();
+        auto orig_initial_target_pop = planet.GetMeter(MeterType::METER_TARGET_POPULATION)->Initial();
 
         auto planet_id = planet.ID();
         std::vector<int> planet_id_vec { planet_id };
@@ -2622,19 +2622,19 @@ namespace {
             // species (and empire) properties, such as environment type
             // preferences and tech.
             // @see also: MapWnd::ApplyMeterEffectsAndUpdateMeters
-            // NOTE: Overridding current or initial value of METER_TARGET_POPULATION prior to update
+            // NOTE: Overridding current or initial value of MeterType::METER_TARGET_POPULATION prior to update
             //       results in incorrect estimates for at least effects with a min target population of 0
             planet.SetSpecies(species_name);
             planet.SetOwner(empire_id);
             GetUniverse().ApplyMeterEffectsAndUpdateMeters(planet_id_vec, false);
 
             const auto species = GetSpecies(species_name);
-            auto planet_environment = PE_UNINHABITABLE;
+            auto planet_environment = PlanetEnvironment::PE_UNINHABITABLE;
             if (species)
                 planet_environment = species->GetPlanetEnvironment(planet.Type());
 
-            float planet_capacity = ((planet_environment == PE_UNINHABITABLE) ?
-                                     0.0f : planet.GetMeter(METER_TARGET_POPULATION)->Current()); // want value after temporary meter update, so get current, not initial value of meter
+            float planet_capacity = ((planet_environment == PlanetEnvironment::PE_UNINHABITABLE) ?
+                                     0.0f : planet.GetMeter(MeterType::METER_TARGET_POPULATION)->Current()); // want value after temporary meter update, so get current, not initial value of meter
 
             retval.emplace(planet_capacity, std::make_pair(species_name, planet_environment));
         }
@@ -2642,7 +2642,7 @@ namespace {
         // restore planet to original state
         planet.SetSpecies(original_planet_species);
         planet.SetOwner(original_owner_id);
-        planet.GetMeter(METER_TARGET_POPULATION)->Set(orig_initial_target_pop, orig_initial_target_pop);
+        planet.GetMeter(MeterType::METER_TARGET_POPULATION)->Set(orig_initial_target_pop, orig_initial_target_pop);
 
         GetUniverse().InhibitUniverseObjectSignals(false);
         GetUniverse().ApplyMeterEffectsAndUpdateMeters(planet_id_vec, false);
@@ -2721,8 +2721,8 @@ namespace {
     }
 
     const std::vector<std::string>& PlanetEnvFilenames(PlanetType planet_type) {
-        static std::unordered_map<int, std::vector<std::string>> filenames_by_type {
-            std::make_pair(INVALID_PLANET_TYPE, std::vector<std::string>())
+        static std::unordered_map<PlanetType, std::vector<std::string>> filenames_by_type {
+            std::make_pair(PlanetType::INVALID_PLANET_TYPE, std::vector<std::string>())
         };
         std::string planet_type_str = boost::lexical_cast<std::string>(planet_type);
         boost::algorithm::to_lower(planet_type_str);
@@ -2743,7 +2743,7 @@ namespace {
 
         if (filenames_by_type.count(planet_type))
             return filenames_by_type.at(planet_type);
-        return filenames_by_type.at(INVALID_PLANET_TYPE);
+        return filenames_by_type.at(PlanetType::INVALID_PLANET_TYPE);
     }
 
     void RefreshDetailPanelSuitabilityTag(const std::string& item_type, const std::string& item_name,
@@ -2820,7 +2820,7 @@ namespace {
             detailed_description += "\n";
         }
 
-        if (planet->Type() < PT_ASTEROIDS && planet->Type() > INVALID_PLANET_TYPE) {
+        if (planet->Type() < PlanetType::PT_ASTEROIDS && planet->Type() > PlanetType::INVALID_PLANET_TYPE) {
             detailed_description += UserString("ENC_SUITABILITY_REPORT_WHEEL_INTRO")
                                     + "<img src=\"encyclopedia/EP_wheel.png\"></img>";
         }
@@ -3475,7 +3475,7 @@ bool EncyclopediaDetailPanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event)
     if (w == this)
         return false;
 
-    if (event.Type() != GG::WndEvent::KeyPress)
+    if (event.Type() != GG::WndEvent::EventType::KeyPress)
         return false;
 
     this->HandleEvent(event);

@@ -59,10 +59,10 @@ namespace {
             // If there are human players, the first of them should be the main player
             short humans = 0;
             for (const PlayerSaveGameData& psgd : player_save_game_data) {
-                if (psgd.client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
-                    if (player->client_type != Networking::CLIENT_TYPE_HUMAN_PLAYER &&
-                       player->client_type != Networking::CLIENT_TYPE_HUMAN_OBSERVER &&
-                       player->client_type != Networking::CLIENT_TYPE_HUMAN_MODERATOR)
+                if (psgd.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER) {
+                    if (player->client_type != Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER &&
+                       player->client_type != Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER &&
+                       player->client_type != Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR)
                     {
                         player = &psgd;
                     }
@@ -333,7 +333,7 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
 
     // player notifications
     if (ServerApp* server = ServerApp::GetApp())
-        server->Networking().SendMessageAll(TurnProgressMessage(Message::LOADING_GAME));
+        server->Networking().SendMessageAll(TurnProgressMessage(Message::TurnProgressPhase::LOADING_GAME));
 
     GetUniverse().EncodingEmpire() = ALL_EMPIRES;
 

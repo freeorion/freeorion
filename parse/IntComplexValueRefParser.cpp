@@ -6,6 +6,14 @@
 #include <boost/spirit/include/qi_as.hpp>
 
 namespace parse {
+    namespace detail {
+        struct cast_T_to_int {
+            template <typename T>
+            int operator() (T t) const
+            { return static_cast<int>(t); }
+        };
+    }
+
     int_complex_parser_grammar::int_complex_parser_grammar(
         const parse::lexer& tok,
         detail::Labeller& label,
@@ -31,6 +39,7 @@ namespace parse {
         qi::_pass_type _pass;
         const boost::phoenix::function<detail::construct_movable> construct_movable_;
         const boost::phoenix::function<detail::deconstruct_movable> deconstruct_movable_;
+        const boost::phoenix::function<detail::cast_T_to_int> int_cast_;
 
         game_rule
             = (   tok.GameRule_
@@ -123,12 +132,15 @@ namespace parse {
                     )
                   )
                 > ( label(tok.Design_) > int_rules.expr)
-            ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<int>>(_1, deconstruct_movable_(_3, _pass), nullptr, nullptr, deconstruct_movable_(construct_movable_(new_<ValueRef::Constant<std::string>>(_2)), _pass), nullptr)) ]
+            ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<int>>(
+                _1, deconstruct_movable_(_3, _pass), nullptr, nullptr,
+                deconstruct_movable_(construct_movable_(new_<ValueRef::Constant<std::string>>(_2)), _pass),
+                nullptr)) ]
             ;
 
         part_class_as_int
             = ( label(tok.Class_) > ship_part_class_enum )
-              [ _val = construct_movable_(new_<ValueRef::Constant<int>>(_1)) ]
+              [ _val = construct_movable_(new_<ValueRef::Constant<int>>(int_cast_(_1))) ]
         ;
 
         ship_parts_owned

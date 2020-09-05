@@ -10,39 +10,39 @@
 
 MeterType ResourceToMeter(ResourceType type) {
     switch (type) {
-    case RE_INDUSTRY:   return METER_INDUSTRY;
-    case RE_RESEARCH:   return METER_RESEARCH;
-    case RE_INFLUENCE:  return METER_INFLUENCE;
-    case RE_STOCKPILE:  return METER_STOCKPILE;
+    case ResourceType::RE_INDUSTRY:  return MeterType::METER_INDUSTRY;
+    case ResourceType::RE_RESEARCH:  return MeterType::METER_RESEARCH;
+    case ResourceType::RE_INFLUENCE: return MeterType::METER_INFLUENCE;
+    case ResourceType::RE_STOCKPILE: return MeterType::METER_STOCKPILE;
     default:
         assert(0);
-        return INVALID_METER_TYPE;
+        return MeterType::INVALID_METER_TYPE;
         break;
     }
 }
 
 MeterType ResourceToTargetMeter(ResourceType type) {
     switch (type) {
-    case RE_INDUSTRY:   return METER_TARGET_INDUSTRY;
-    case RE_RESEARCH:   return METER_TARGET_RESEARCH;
-    case RE_INFLUENCE:  return METER_TARGET_INFLUENCE;
-    case RE_STOCKPILE:  return METER_MAX_STOCKPILE;
+    case ResourceType::RE_INDUSTRY:  return MeterType::METER_TARGET_INDUSTRY;
+    case ResourceType::RE_RESEARCH:  return MeterType::METER_TARGET_RESEARCH;
+    case ResourceType::RE_INFLUENCE: return MeterType::METER_TARGET_INFLUENCE;
+    case ResourceType::RE_STOCKPILE: return MeterType::METER_MAX_STOCKPILE;
     default:
         assert(0);
-        return INVALID_METER_TYPE;
+        return MeterType::INVALID_METER_TYPE;
         break;
     }
 }
 
 ResourceType MeterToResource(MeterType type) {
     switch (type) {
-    case METER_INDUSTRY:    return RE_INDUSTRY;
-    case METER_RESEARCH:    return RE_RESEARCH;
-    case METER_INFLUENCE:   return RE_INFLUENCE;
-    case METER_STOCKPILE:   return RE_STOCKPILE;
+    case MeterType::METER_INDUSTRY:  return ResourceType::RE_INDUSTRY;
+    case MeterType::METER_RESEARCH:  return ResourceType::RE_RESEARCH;
+    case MeterType::METER_INFLUENCE: return ResourceType::RE_INFLUENCE;
+    case MeterType::METER_STOCKPILE: return ResourceType::RE_STOCKPILE;
     default:
         assert(0);
-        return INVALID_RESOURCE_TYPE;
+        return ResourceType::INVALID_RESOURCE_TYPE;
         break;
     }
 }
@@ -51,7 +51,7 @@ ResourceType MeterToResource(MeterType type) {
 // ResourcePool
 //////////////////////////////////////////////////
 ResourcePool::ResourcePool() :
-    m_type(INVALID_RESOURCE_TYPE)
+    m_type(ResourceType::INVALID_RESOURCE_TYPE)
 {}
 
 ResourcePool::ResourcePool(ResourceType type) :
@@ -150,7 +150,7 @@ void ResourcePool::Update() {
     MeterType meter_type = ResourceToMeter(m_type);
     MeterType target_meter_type = ResourceToTargetMeter(m_type);
 
-    if (INVALID_METER_TYPE == meter_type || INVALID_METER_TYPE == target_meter_type)
+    if (MeterType::INVALID_METER_TYPE == meter_type || MeterType::INVALID_METER_TYPE == target_meter_type)
         ErrorLogger() << "ResourcePool::Update() called when m_type can't be converted to a valid MeterType";
 
     // zero to start...

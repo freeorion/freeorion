@@ -220,11 +220,11 @@ void NewFleetOrder::ExecuteImpl() const {
         return;
     }
 
-    fleet->GetMeter(METER_STEALTH)->SetCurrent(Meter::LARGE_VALUE);
+    fleet->GetMeter(MeterType::METER_STEALTH)->SetCurrent(Meter::LARGE_VALUE);
     fleet->SetAggressive(m_aggressive);
 
     // an ID is provided to ensure consistancy between server and client universes
-    GetUniverse().SetEmpireObjectVisibility(EmpireID(), fleet->ID(), VIS_FULL_VISIBILITY);
+    GetUniverse().SetEmpireObjectVisibility(EmpireID(), fleet->ID(), Visibility::VIS_FULL_VISIBILITY);
 
     system->Insert(fleet);
 
@@ -563,7 +563,7 @@ bool ColonizeOrder::Check(int empire_id, int ship_id, int planet_id) {
         ErrorLogger() << "ColonizeOrder::Check() : couldn't get planet with id " << planet_id;
         return false;
     }
-    if (planet->GetMeter(METER_POPULATION)->Initial() > 0.0f) {
+    if (planet->GetMeter(MeterType::METER_POPULATION)->Initial() > 0.0f) {
         ErrorLogger() << "ColonizeOrder::Check() : given planet that already has population";
         return false;
     }
@@ -575,11 +575,11 @@ bool ColonizeOrder::Check(int empire_id, int ship_id, int planet_id) {
         ErrorLogger() << "ColonizeOrder::Check() : given planet that is already owned by empire and colony ship with zero capcity";
         return false;
     }
-    if (GetUniverse().GetObjectVisibilityByEmpire(planet_id, empire_id) < VIS_PARTIAL_VISIBILITY) {
+    if (GetUniverse().GetObjectVisibilityByEmpire(planet_id, empire_id) < Visibility::VIS_PARTIAL_VISIBILITY) {
         ErrorLogger() << "ColonizeOrder::Check() : given planet that empire has insufficient visibility of";
         return false;
     }
-    if (colonist_capacity > 0.0f && planet->EnvironmentForSpecies(ship->SpeciesName()) < PE_HOSTILE) {
+    if (colonist_capacity > 0.0f && planet->EnvironmentForSpecies(ship->SpeciesName()) < PlanetEnvironment::PE_HOSTILE) {
         ErrorLogger() << "ColonizeOrder::Check() : nonzero colonist capacity, " << colonist_capacity
                       << ", and planet " << planet->Name() << " of type, " << planet->Type() << ", that ship's species, "
                       << ship->SpeciesName() << ", can't colonize";
@@ -707,7 +707,7 @@ bool InvadeOrder::Check(int empire_id, int ship_id, int planet_id) {
         return false;
     }
 
-    if (GetUniverse().GetObjectVisibilityByEmpire(planet_id, empire_id) < VIS_BASIC_VISIBILITY) {
+    if (GetUniverse().GetObjectVisibilityByEmpire(planet_id, empire_id) < Visibility::VIS_BASIC_VISIBILITY) {
         ErrorLogger() << "InvadeOrder::ExecuteImpl given planet that empire reportedly has insufficient visibility of, but will be allowed to proceed pending investigation";
         return false;
     }
@@ -717,17 +717,17 @@ bool InvadeOrder::Check(int empire_id, int ship_id, int planet_id) {
         return false;
     }
 
-    if (planet->Unowned() && planet->GetMeter(METER_POPULATION)->Initial() == 0.0) {
+    if (planet->Unowned() && planet->GetMeter(MeterType::METER_POPULATION)->Initial() == 0.0) {
         ErrorLogger() << "InvadeOrder::ExecuteImpl given unpopulated planet";
         return false;
     }
 
-    if (planet->GetMeter(METER_SHIELD)->Initial() > 0.0) {
+    if (planet->GetMeter(MeterType::METER_SHIELD)->Initial() > 0.0) {
         ErrorLogger() << "InvadeOrder::ExecuteImpl given planet with shield > 0";
         return false;
     }
 
-    if (!planet->Unowned() && Empires().GetDiplomaticStatus(planet->Owner(), empire_id) != DIPLO_WAR) {
+    if (!planet->Unowned() && Empires().GetDiplomaticStatus(planet->Owner(), empire_id) != DiplomaticStatus::DIPLO_WAR) {
         ErrorLogger() << "InvadeOrder::ExecuteImpl given planet owned by an empire not at war with order-issuing empire";
         return false;
     }
@@ -820,11 +820,11 @@ bool BombardOrder::Check(int empire_id, int ship_id, int planet_id) {
         ErrorLogger() << "BombardOrder::ExecuteImpl given planet that is already owned by the order-issuing empire";
         return false;
     }
-    if (!planet->Unowned() && Empires().GetDiplomaticStatus(planet->Owner(), empire_id) != DIPLO_WAR) {
+    if (!planet->Unowned() && Empires().GetDiplomaticStatus(planet->Owner(), empire_id) != DiplomaticStatus::DIPLO_WAR) {
         ErrorLogger() << "BombardOrder::ExecuteImpl given planet owned by an empire not at war with order-issuing empire";
         return false;
     }
-    if (GetUniverse().GetObjectVisibilityByEmpire(planet_id, empire_id) < VIS_BASIC_VISIBILITY) {
+    if (GetUniverse().GetObjectVisibilityByEmpire(planet_id, empire_id) < Visibility::VIS_BASIC_VISIBILITY) {
         ErrorLogger() << "BombardOrder::ExecuteImpl given planet that empire reportedly has insufficient visibility of, but will be allowed to proceed pending investigation";
     }
 
@@ -1024,7 +1024,7 @@ ProductionQueueOrder::ProductionQueueOrder(ProdQueueOrderAction action, int empi
     m_uuid2(boost::uuids::nil_generator()()),
     m_action(action)
 {
-    if (action != PLACE_IN_QUEUE)
+    if (action != ProdQueueOrderAction::PLACE_IN_QUEUE)
         ErrorLogger() << "ProductionQueueOrder called with parameters for placing in queue but with another action";
 }
 
@@ -1036,28 +1036,28 @@ ProductionQueueOrder::ProductionQueueOrder(ProdQueueOrderAction action, int empi
     m_action(action)
 {
     switch(m_action) {
-    case REMOVE_FROM_QUEUE:
+    case ProdQueueOrderAction::REMOVE_FROM_QUEUE:
         break;
-    case SPLIT_INCOMPLETE:
-    case DUPLICATE_ITEM:
+    case ProdQueueOrderAction::SPLIT_INCOMPLETE:
+    case ProdQueueOrderAction::DUPLICATE_ITEM:
         m_uuid2 = boost::uuids::random_generator()();
         break;
-    case SET_QUANTITY_AND_BLOCK_SIZE:
+    case ProdQueueOrderAction::SET_QUANTITY_AND_BLOCK_SIZE:
         m_new_quantity = num1;
         m_new_blocksize = num2;
         break;
-    case SET_QUANTITY:
+    case ProdQueueOrderAction::SET_QUANTITY:
         m_new_quantity = num1;
         break;
-    case MOVE_ITEM_TO_INDEX:
+    case ProdQueueOrderAction::MOVE_ITEM_TO_INDEX:
         m_new_index = num1;
-    case SET_RALLY_POINT:
+    case ProdQueueOrderAction::SET_RALLY_POINT:
         m_rally_point_id = num1;
         break;
-    case PAUSE_PRODUCTION:
-    case RESUME_PRODUCTION:
-    case ALLOW_STOCKPILE_USE:
-    case DISALLOW_STOCKPILE_USE:
+    case ProdQueueOrderAction::PAUSE_PRODUCTION:
+    case ProdQueueOrderAction::RESUME_PRODUCTION:
+    case ProdQueueOrderAction::ALLOW_STOCKPILE_USE:
+    case ProdQueueOrderAction::DISALLOW_STOCKPILE_USE:
         break;
     default:
         ErrorLogger() << "ProductionQueueOrder given unrecognized action!";
@@ -1073,8 +1073,8 @@ void ProductionQueueOrder::ExecuteImpl() const {
         auto empire = GetValidatedEmpire();
 
         switch(m_action) {
-        case PLACE_IN_QUEUE: {
-            if (m_item.build_type == BT_BUILDING || m_item.build_type == BT_SHIP || m_item.build_type == BT_STOCKPILE) {
+        case ProdQueueOrderAction::PLACE_IN_QUEUE: {
+            if (m_item.build_type == BuildType::BT_BUILDING || m_item.build_type == BuildType::BT_SHIP || m_item.build_type == BuildType::BT_STOCKPILE) {
                 DebugLogger() << "ProductionQueueOrder place in queue: " << m_item.Dump() << "  at index: " << m_new_index;
                 empire->PlaceProductionOnQueue(m_item, m_uuid, m_new_quantity, 1, m_location, m_new_index);
             } else {
@@ -1082,7 +1082,7 @@ void ProductionQueueOrder::ExecuteImpl() const {
             }
             break;
         }
-        case REMOVE_FROM_QUEUE: {
+        case ProdQueueOrderAction::REMOVE_FROM_QUEUE: {
             auto idx = empire->GetProductionQueue().IndexOfUUID(m_uuid);
             if (idx == -1) {
                 ErrorLogger() << "ProductionQueueOrder asked to remove invalid UUID: " << boost::uuids::to_string(m_uuid);
@@ -1092,7 +1092,7 @@ void ProductionQueueOrder::ExecuteImpl() const {
             }
             break;
         }
-        case SPLIT_INCOMPLETE: {
+        case ProdQueueOrderAction::SPLIT_INCOMPLETE: {
             auto idx = empire->GetProductionQueue().IndexOfUUID(m_uuid);
             if (idx == -1) {
                 ErrorLogger() << "ProductionQueueOrder asked to split invalid UUID: " << boost::uuids::to_string(m_uuid);
@@ -1102,7 +1102,7 @@ void ProductionQueueOrder::ExecuteImpl() const {
             }
             break;
         }
-        case DUPLICATE_ITEM: {
+        case ProdQueueOrderAction::DUPLICATE_ITEM: {
             auto idx = empire->GetProductionQueue().IndexOfUUID(m_uuid);
             if (idx == -1) {
                 ErrorLogger() << "ProductionQueueOrder asked to duplicate invalid UUID: " << boost::uuids::to_string(m_uuid);
@@ -1112,7 +1112,7 @@ void ProductionQueueOrder::ExecuteImpl() const {
             }
             break;
         }
-        case SET_QUANTITY_AND_BLOCK_SIZE: {
+        case ProdQueueOrderAction::SET_QUANTITY_AND_BLOCK_SIZE: {
             auto idx = empire->GetProductionQueue().IndexOfUUID(m_uuid);
             if (idx == -1) {
                 ErrorLogger() << "ProductionQueueOrder asked to set quantity and blocksize of invalid UUID: " << boost::uuids::to_string(m_uuid);
@@ -1122,7 +1122,7 @@ void ProductionQueueOrder::ExecuteImpl() const {
             }
             break;
         }
-        case SET_QUANTITY: {
+        case ProdQueueOrderAction::SET_QUANTITY: {
             auto idx = empire->GetProductionQueue().IndexOfUUID(m_uuid);
             if (idx == -1) {
                 ErrorLogger() << "ProductionQueueOrder asked to set quantity of invalid UUID: " << boost::uuids::to_string(m_uuid);
@@ -1132,7 +1132,7 @@ void ProductionQueueOrder::ExecuteImpl() const {
             }
             break;
         }
-        case MOVE_ITEM_TO_INDEX: {
+        case ProdQueueOrderAction::MOVE_ITEM_TO_INDEX: {
             auto idx = empire->GetProductionQueue().IndexOfUUID(m_uuid);
             if (idx == -1) {
                 ErrorLogger() << "ProductionQueueOrder asked to move invalid UUID: " << boost::uuids::to_string(m_uuid);
@@ -1142,7 +1142,7 @@ void ProductionQueueOrder::ExecuteImpl() const {
             }
             break;
         }
-        case SET_RALLY_POINT: {
+        case ProdQueueOrderAction::SET_RALLY_POINT: {
             auto idx = empire->GetProductionQueue().IndexOfUUID(m_uuid);
             if (idx == -1) {
                 ErrorLogger() << "ProductionQueueOrder asked to set rally point of invalid UUID: " << boost::uuids::to_string(m_uuid);
@@ -1152,7 +1152,7 @@ void ProductionQueueOrder::ExecuteImpl() const {
             }
             break;
         }
-        case PAUSE_PRODUCTION: {
+        case ProdQueueOrderAction::PAUSE_PRODUCTION: {
             auto idx = empire->GetProductionQueue().IndexOfUUID(m_uuid);
             if (idx == -1) {
                 ErrorLogger() << "ProductionQueueOrder asked to pause invalid UUID: " << boost::uuids::to_string(m_uuid);
@@ -1162,7 +1162,7 @@ void ProductionQueueOrder::ExecuteImpl() const {
             }
             break;
         }
-        case RESUME_PRODUCTION: {
+        case ProdQueueOrderAction::RESUME_PRODUCTION: {
             auto idx = empire->GetProductionQueue().IndexOfUUID(m_uuid);
             if (idx == -1) {
                 ErrorLogger() << "ProductionQueueOrder asked to resume invalid UUID: " << boost::uuids::to_string(m_uuid);
@@ -1172,7 +1172,7 @@ void ProductionQueueOrder::ExecuteImpl() const {
             }
             break;
         }
-        case ALLOW_STOCKPILE_USE: {
+        case ProdQueueOrderAction::ALLOW_STOCKPILE_USE: {
             auto idx = empire->GetProductionQueue().IndexOfUUID(m_uuid);
             if (idx == -1) {
                 ErrorLogger() << "ProductionQueueOrder asked to allow stockpiling on invalid UUID: " << boost::uuids::to_string(m_uuid);
@@ -1182,7 +1182,7 @@ void ProductionQueueOrder::ExecuteImpl() const {
             }
             break;
         }
-        case DISALLOW_STOCKPILE_USE: {
+        case ProdQueueOrderAction::DISALLOW_STOCKPILE_USE: {
             auto idx = empire->GetProductionQueue().IndexOfUUID(m_uuid);
             if (idx == -1) {
                 ErrorLogger() << "ProductionQueueOrder asked to disallow stockpiling on invalid UUID: " << boost::uuids::to_string(m_uuid);
@@ -1377,7 +1377,7 @@ bool ScrapOrder::Check(int empire_id, int object_id) {
         return false;
     }
 
-    if (obj->ObjectType() != OBJ_SHIP && obj->ObjectType() != OBJ_BUILDING) {
+    if (obj->ObjectType() != UniverseObjectType::OBJ_SHIP && obj->ObjectType() != UniverseObjectType::OBJ_BUILDING) {
         ErrorLogger() << "ScrapOrder::Check : passed object that is not a ship or building";
         return false;
     }
@@ -1484,7 +1484,7 @@ bool GiveObjectToEmpireOrder::Check(int empire_id, int object_id, int recipient_
     }
 
     auto dip = Empires().GetDiplomaticStatus(empire_id, recipient_empire_id);
-    if (dip < DIPLO_PEACE) {
+    if (dip < DiplomaticStatus::DIPLO_PEACE) {
         ErrorLogger() << "IssueGiveObjectToEmpireOrder : attempting to give to empire not at peace";
         return false;
     }
@@ -1506,7 +1506,7 @@ bool GiveObjectToEmpireOrder::Check(int empire_id, int object_id, int recipient_
         return false;
     }
 
-    if (obj->ObjectType() != OBJ_FLEET && obj->ObjectType() != OBJ_PLANET) {
+    if (obj->ObjectType() != UniverseObjectType::OBJ_FLEET && obj->ObjectType() != UniverseObjectType::OBJ_PLANET) {
         ErrorLogger() << "IssueGiveObjectToEmpireOrder : passed object that is not a fleet or planet";
         return false;
     }

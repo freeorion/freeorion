@@ -240,7 +240,7 @@ namespace {
         //bool available = false;
         bool location_ok = false;
 
-        if (elem.item.build_type == BT_BUILDING) {
+        if (elem.item.build_type == BuildType::BT_BUILDING) {
             const BuildingType* building_type = GetBuildingType(elem.item.name);
             if (!building_type)
                 return nullptr;
@@ -254,7 +254,7 @@ namespace {
             max_allocation = building_type->PerTurnCost(elem.empire_id, elem.location);
             icon = ClientUI::BuildingIcon(elem.item.name);
 
-        } else if (elem.item.build_type == BT_SHIP) {
+        } else if (elem.item.build_type == BuildType::BT_SHIP) {
             const ShipDesign* design = GetShipDesign(elem.item.design_id);
             if (!design)
                 return nullptr;
@@ -267,7 +267,7 @@ namespace {
             total_cost = design->ProductionCost(elem.empire_id, elem.location) * elem.blocksize;
             max_allocation = design->PerTurnCost(elem.empire_id, elem.location) * elem.blocksize;
             icon = ClientUI::ShipDesignIcon(elem.item.design_id);
-        } else if (elem.item.build_type == BT_STOCKPILE) {
+        } else if (elem.item.build_type == BuildType::BT_STOCKPILE) {
             main_text += UserString("BUILD_ITEM_TYPE_PROJECT") + "\n";
 
             item_name = UserString(elem.item.name);
@@ -276,7 +276,7 @@ namespace {
 
             total_cost = 1.0;
             max_allocation = total_cost * elem.blocksize;
-            icon = ClientUI::MeterIcon(METER_STOCKPILE);
+            icon = ClientUI::MeterIcon(MeterType::METER_STOCKPILE);
         }
 
         if (auto rally_object = Objects().get(elem.rally_point_id)) {
@@ -412,7 +412,7 @@ namespace {
 
     void QueueProductionItemPanel::CompleteConstruction() {
     GG::Control::CompleteConstruction();
-        SetChildClippingMode(ClipToClient);
+        SetChildClippingMode(ChildClippingMode::ClipToClient);
 
         GG::Clr clr = m_in_progress
             ? GG::LightenClr(ClientUI::ResearchableTechTextAndBorderColor())
@@ -421,18 +421,18 @@ namespace {
         // get graphic and player-visible name text for item
         std::shared_ptr<GG::Texture> graphic;
         std::string name_text;
-        if (elem.item.build_type == BT_BUILDING) {
+        if (elem.item.build_type == BuildType::BT_BUILDING) {
             graphic = ClientUI::BuildingIcon(elem.item.name);
             name_text = UserString(elem.item.name);
-        } else if (elem.item.build_type == BT_SHIP) {
+        } else if (elem.item.build_type == BuildType::BT_SHIP) {
             graphic = ClientUI::ShipDesignIcon(elem.item.design_id);
             const ShipDesign* design = GetShipDesign(elem.item.design_id);
             if (design)
                 name_text = design->Name();
             else
                 ErrorLogger() << "QueueProductionItemPanel unable to get design with id: " << elem.item.design_id;
-        } else if (elem.item.build_type == BT_STOCKPILE) {
-            graphic = ClientUI::MeterIcon(METER_STOCKPILE);
+        } else if (elem.item.build_type == BuildType::BT_STOCKPILE) {
+            graphic = ClientUI::MeterIcon(MeterType::METER_STOCKPILE);
             name_text = UserString(elem.item.name);
         } else {
             graphic = ClientUI::GetTexture(""); // get "missing texture" texture by supply intentionally bad path
@@ -463,7 +463,7 @@ namespace {
             m_icon = GG::Wnd::Create<GG::StaticGraphic>(
                 std::move(graphic), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
 
-        if (elem.item.build_type == BT_SHIP || elem.item.build_type == BT_STOCKPILE) {
+        if (elem.item.build_type == BuildType::BT_SHIP || elem.item.build_type == BuildType::BT_STOCKPILE) {
             m_quantity_selector = GG::Wnd::Create<QuantitySelector>(
                 elem, GG::X1, GG::Y(MARGIN), GG::Y(FONT_PTS-2*MARGIN),
                 m_in_progress, GG::X(FONT_PTS*2.5), false);
@@ -597,7 +597,7 @@ namespace {
         const GG::X NAME_WIDTH = Width() - left - MARGIN - 3;
         m_name_text->MoveTo(GG::Pt(left, top));
         m_name_text->Resize(GG::Pt(NAME_WIDTH, GG::Y(FONT_PTS + 2*MARGIN)));
-        m_name_text->SetChildClippingMode(ClipToClient);
+        m_name_text->SetChildClippingMode(ChildClippingMode::ClipToClient);
 
         m_location_text->MoveTo(GG::Pt(left, top));
         m_location_text->Resize(GG::Pt(NAME_WIDTH, GG::Y(FONT_PTS + 2*MARGIN)));
@@ -721,8 +721,8 @@ namespace {
             }
 
             // Check if build type is ok. If not bail out. Note that DeleteAction does make sense in this case.
-            BuildType build_type = queue_row ? queue_row->elem.item.build_type : INVALID_BUILD_TYPE;
-            if (build_type != BT_SHIP && build_type != BT_BUILDING && build_type != BT_STOCKPILE) {
+            BuildType build_type = queue_row ? queue_row->elem.item.build_type : BuildType::INVALID_BUILD_TYPE;
+            if (build_type != BuildType::BT_SHIP && build_type != BuildType::BT_BUILDING && build_type != BuildType::BT_STOCKPILE) {
                 ErrorLogger() << "Invalid build type (" << build_type << ") for row item";
                 return;
             }
@@ -732,7 +732,7 @@ namespace {
                 popup->AddMenuItem(GG::MenuItem(UserString("SPLIT_INCOMPLETE"), disabled, false, split_action));
             }
 
-            if (build_type == BT_SHIP) {
+            if (build_type == BuildType::BT_SHIP) {
                 // for ships, add a set rally point command
                 if (auto system = Objects().get<System>(SidePanel::SystemID())) {
                     std::string rally_prompt = boost::io::str(FlexibleFormat(UserString("RALLY_QUEUE_ITEM")) % system->PublicName(HumanClientApp::GetApp()->EmpireID()));
@@ -750,8 +750,8 @@ namespace {
 
             // stockpile use allow/disallow commands
             switch (build_type) {
-            case BT_BUILDING:
-            case BT_SHIP:
+            case BuildType::BT_BUILDING:
+            case BuildType::BT_SHIP:
                 if (queue_row && queue_row->elem.allowed_imperial_stockpile_use) {
                     popup->AddMenuItem(GG::MenuItem(UserString("DISALLOW_IMPERIAL_PP_STOCKPILE_USE"), disabled, false, disallow_stockpile_action));
                 } else {
@@ -764,11 +764,11 @@ namespace {
             // pedia lookup
             std::string item_name;
             switch (build_type) {
-            case BT_BUILDING:
-            case BT_STOCKPILE:
+            case BuildType::BT_BUILDING:
+            case BuildType::BT_STOCKPILE:
                 item_name = queue_row->elem.item.name;
                 break;
-            case BT_SHIP:
+            case BuildType::BT_SHIP:
                 item_name = GetShipDesign(queue_row->elem.item.design_id)->Name(false);
                 break;
             default:
@@ -859,7 +859,7 @@ void ProductionWnd::CompleteConstruction() {
                                                       ClientSize().y - info_height);
     m_build_designator_wnd = GG::Wnd::Create<BuildDesignatorWnd>(ClientSize().x, ClientSize().y);
 
-    SetChildClippingMode(ClipToClient);
+    SetChildClippingMode(ChildClippingMode::ClipToClient);
 
     using boost::placeholders::_1;
     using boost::placeholders::_2;
@@ -1055,7 +1055,7 @@ void ProductionWnd::QueueItemMoved(const GG::ListBox::iterator& row_it,
 
     if (queue_it != empire->GetProductionQueue().end())
         HumanClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::MOVE_ITEM_TO_INDEX,
+            std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::ProdQueueOrderAction::MOVE_ITEM_TO_INDEX,
                                                    client_empire_id, queue_it->uuid,
                                                    corrected_new_position));
     empire->UpdateProductionQueue();
@@ -1132,9 +1132,9 @@ void ProductionWnd::UpdateInfoPanel() {
     }
 
     const ProductionQueue& queue = empire->GetProductionQueue();
-    float PPs = empire->ResourceOutput(RE_INDUSTRY);
+    float PPs = empire->ResourceOutput(ResourceType::RE_INDUSTRY);
     float total_queue_cost = queue.TotalPPsSpent();
-    float stockpile = empire->GetResourcePool(RE_INDUSTRY)->Stockpile();
+    float stockpile = empire->GetResourcePool(ResourceType::RE_INDUSTRY)->Stockpile();
     float stockpile_use = boost::accumulate(empire->GetProductionQueue().AllocatedStockpilePP() | boost::adaptors::map_values, 0.0f);
     float stockpile_use_max = queue.StockpileCapacity();
     m_production_info_panel->SetTotalPointsCost(PPs, total_queue_cost);
@@ -1153,7 +1153,7 @@ void ProductionWnd::UpdateInfoPanel() {
     // resource availability
 
     // find available and allocated PP at selected production location
-    auto available_pp = queue.AvailablePP(empire->GetResourcePool(RE_INDUSTRY));
+    auto available_pp = queue.AvailablePP(empire->GetResourcePool(ResourceType::RE_INDUSTRY));
     const auto& allocated_pp = queue.AllocatedPP();
 
     float available_pp_at_loc = 0.0f;
@@ -1199,7 +1199,7 @@ void ProductionWnd::AddBuildToQueueSlot(const ProductionQueue::ProductionItem& i
         return;
 
     HumanClientApp::GetApp()->Orders().IssueOrder(
-        std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::PLACE_IN_QUEUE,
+        std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::ProdQueueOrderAction::PLACE_IN_QUEUE,
                                                client_empire_id, item, number, location, pos));
 
     empire->UpdateProductionQueue();
@@ -1218,9 +1218,8 @@ void ProductionWnd::ChangeBuildQuantitySlot(int queue_idx, int quantity) {
 
     if (queue_it != empire->GetProductionQueue().end())
         HumanClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::SET_QUANTITY,
-                                                   client_empire_id, queue_it->uuid,
-                                                   quantity));
+            std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::ProdQueueOrderAction::SET_QUANTITY,
+                                                   client_empire_id, queue_it->uuid, quantity));
 
     empire->UpdateProductionQueue();
 }
@@ -1237,7 +1236,7 @@ void ProductionWnd::ChangeBuildQuantityBlockSlot(int queue_idx, int quantity, in
 
     if (queue_it != empire->GetProductionQueue().end())
         HumanClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::SET_QUANTITY_AND_BLOCK_SIZE,
+            std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::ProdQueueOrderAction::SET_QUANTITY_AND_BLOCK_SIZE,
                                                    client_empire_id, queue_it->uuid,
                                                    quantity, blocksize));
 
@@ -1258,7 +1257,7 @@ void ProductionWnd::DeleteQueueItem(GG::ListBox::iterator it) {
     if (queue_it != empire->GetProductionQueue().end()) {
         DebugLogger() << "DeleteQueueItem idx: " << idx << "  item: " << queue_it->Dump();
         HumanClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::REMOVE_FROM_QUEUE,
+            std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::ProdQueueOrderAction::REMOVE_FROM_QUEUE,
                                                    client_empire_id, queue_it->uuid));
     }
 
@@ -1300,7 +1299,7 @@ void ProductionWnd::QueueItemRallied(GG::ListBox::iterator it, int object_id) {
 
     if (queue_it != empire->GetProductionQueue().end())
         HumanClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::SET_RALLY_POINT,
+            std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::ProdQueueOrderAction::SET_RALLY_POINT,
                                                    client_empire_id, queue_it->uuid,
                                                    rally_point_id));
 
@@ -1317,7 +1316,8 @@ void ProductionWnd::QueueItemPaused(GG::ListBox::iterator it, bool pause) {
 
     auto idx = m_queue_wnd->GetQueueListBox()->IteraterIndex(it);
     auto queue_it = empire->GetProductionQueue().find(idx);
-    auto action = pause ? ProductionQueueOrder::PAUSE_PRODUCTION : ProductionQueueOrder::RESUME_PRODUCTION;
+    auto action = pause ? ProductionQueueOrder::ProdQueueOrderAction::PAUSE_PRODUCTION
+                        : ProductionQueueOrder::ProdQueueOrderAction::RESUME_PRODUCTION;
 
     if (queue_it != empire->GetProductionQueue().end())
         HumanClientApp::GetApp()->Orders().IssueOrder(
@@ -1339,7 +1339,7 @@ void ProductionWnd::QueueItemDuped(GG::ListBox::iterator it) {
 
     if (queue_it != empire->GetProductionQueue().end())
         HumanClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::DUPLICATE_ITEM,
+            std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::ProdQueueOrderAction::DUPLICATE_ITEM,
                                                    client_empire_id, queue_it->uuid));
 
     empire->UpdateProductionQueue();
@@ -1358,7 +1358,7 @@ void ProductionWnd::QueueItemSplit(GG::ListBox::iterator it) {
 
     if (queue_it != empire->GetProductionQueue().end())
         HumanClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::SPLIT_INCOMPLETE,
+            std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::ProdQueueOrderAction::SPLIT_INCOMPLETE,
                                                    client_empire_id, queue_it->uuid));
 
     empire->UpdateProductionQueue();
@@ -1374,7 +1374,8 @@ void ProductionWnd::QueueItemUseImperialPP(GG::ListBox::iterator it, bool allow)
 
     auto idx = m_queue_wnd->GetQueueListBox()->IteraterIndex(it);
     auto queue_it = empire->GetProductionQueue().find(idx);
-    auto action = allow ? ProductionQueueOrder::ALLOW_STOCKPILE_USE : ProductionQueueOrder::DISALLOW_STOCKPILE_USE;
+    auto action = allow ? ProductionQueueOrder::ProdQueueOrderAction::ALLOW_STOCKPILE_USE
+                        : ProductionQueueOrder::ProdQueueOrderAction::DISALLOW_STOCKPILE_USE;
 
     if (queue_it != empire->GetProductionQueue().end())
         HumanClientApp::GetApp()->Orders().IssueOrder(

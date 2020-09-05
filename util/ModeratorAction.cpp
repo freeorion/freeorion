@@ -12,18 +12,13 @@
 #include <boost/serialization/export.hpp>
 #include <boost/filesystem/fstream.hpp>
 
-// Some of the moderator actions are very similar to effects, the result of completing a build, and certain orders such as creating a new fleet.
-// TODO: eliminate duplication
-
-Moderator::ModeratorAction::ModeratorAction()
-{}
+// Some of the moderator actions are very similar to effects, the result of
+// completing a build, and certain orders such as creating a new fleet.
+// TODO: maybe eliminate duplication
 
 /////////////////////////////////////////////////////
 // Moderator::DestroyUniverseObject
 /////////////////////////////////////////////////////
-Moderator::DestroyUniverseObject::DestroyUniverseObject()
-{}
-
 Moderator::DestroyUniverseObject::DestroyUniverseObject(int object_id) :
     m_object_id(object_id)
 {}
@@ -143,7 +138,7 @@ std::string Moderator::RemoveStarlane::Dump() const {
 Moderator::CreateSystem::CreateSystem() :
     m_x(UniverseObject::INVALID_POSITION),
     m_y(UniverseObject::INVALID_POSITION),
-    m_star_type(STAR_NONE)
+    m_star_type(StarType::STAR_NONE)
 {}
 
 Moderator::CreateSystem::CreateSystem(double x, double y, StarType star_type) :
@@ -196,8 +191,8 @@ std::string Moderator::CreateSystem::Dump() const {
 /////////////////////////////////////////////////////
 Moderator::CreatePlanet::CreatePlanet() :
     m_system_id(INVALID_OBJECT_ID),
-    m_planet_type(PT_SWAMP),
-    m_planet_size(SZ_MEDIUM)
+    m_planet_type(PlanetType::PT_SWAMP),
+    m_planet_size(PlanetSize::SZ_MEDIUM)
 {}
 
 Moderator::CreatePlanet::CreatePlanet(int system_id, PlanetType planet_type, PlanetSize planet_size) :

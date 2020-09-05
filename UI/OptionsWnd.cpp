@@ -198,7 +198,7 @@ namespace {
             m_code_point = key_code_point;
             m_mods = mod_keys;
             // exit modal loop only if not a modifier
-            if (GG::GGK_LCONTROL > m_key || GG::GGK_RGUI < m_key)
+            if (GG::Key::GGK_LCONTROL > m_key || GG::Key::GGK_RGUI < m_key)
                 m_done = true;
 
             /// @todo Clean up, ie transform LCTRL or RCTRL into CTRL and
@@ -262,7 +262,7 @@ namespace {
             }
 
 
-            m_hscroll =  GG::Wnd::Create<CUIScroll>(GG::HORIZONTAL);
+            m_hscroll =  GG::Wnd::Create<CUIScroll>(GG::Orientation::HORIZONTAL);
             AttachChild(m_hscroll);
 
             namespace ph = boost::placeholders;
@@ -318,13 +318,13 @@ namespace {
             GG::ListBox::Row(w, h),
             m_contents(std::move(contents))
         {
-            SetChildClippingMode(ClipToClient);
+            SetChildClippingMode(ChildClippingMode::ClipToClient);
         }
 
         OptionsListRow(GG::X w, GG::Y h, std::shared_ptr<Wnd> contents, int indentation = 0) :
             GG::ListBox::Row(w, h)
         {
-            SetChildClippingMode(ClipToClient);
+            SetChildClippingMode(ChildClippingMode::ClipToClient);
             if (contents)
                 m_contents = GG::Wnd::Create<RowContentsWnd>(w, h, std::move(contents), indentation);
         }
@@ -885,7 +885,7 @@ namespace {
         std::pair<GG::Key, GG::Flags<GG::ModKey>> kp = KeyPressCatcher::GetKeypress();
 
         // abort of escape was pressed...
-        if (kp.first == GG::GGK_ESCAPE)
+        if (kp.first == GG::Key::GGK_ESCAPE)
             return;
 
         // check if pressed key is different from existing setting...
@@ -962,7 +962,7 @@ GG::Spin<int>* OptionsWnd::IntOption(GG::ListBox* page, int indentation_level, c
     layout->Add(text_control, 0, 1, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
     layout->SetMinimumColumnWidth(0, SPIN_WIDTH);
     layout->SetColumnStretch(1, 1.0);
-    layout->SetChildClippingMode(ClipToClient);
+    layout->SetChildClippingMode(ChildClippingMode::ClipToClient);
 
     auto row = GG::Wnd::Create<OptionsListRow>(ROW_WIDTH, spin->MinUsableSize().y, layout, indentation_level);
     page->Insert(row);
@@ -999,7 +999,7 @@ GG::Spin<double>* OptionsWnd::DoubleOption(GG::ListBox* page, int indentation_le
     layout->Add(text_control, 0, 1, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
     layout->SetMinimumColumnWidth(0, SPIN_WIDTH);
     layout->SetColumnStretch(1, 1.0);
-    layout->SetChildClippingMode(ClipToClient);
+    layout->SetChildClippingMode(ChildClippingMode::ClipToClient);
 
     auto row = GG::Wnd::Create<OptionsListRow>(ROW_WIDTH, spin->MinUsableSize().y, layout, indentation_level);
     page->Insert(row);
@@ -1015,12 +1015,15 @@ GG::Spin<double>* OptionsWnd::DoubleOption(GG::ListBox* page, int indentation_le
 
 void OptionsWnd::MusicVolumeOption(GG::ListBox* page, int indentation_level, SoundOptionsFeedback &fb) {
     auto row = GG::Wnd::Create<GG::ListBox::Row>();
-    auto button = GG::Wnd::Create<CUIStateButton>(UserString("OPTIONS_MUSIC"), GG::FORMAT_LEFT, std::make_shared<CUICheckBoxRepresenter>());
+    auto button = GG::Wnd::Create<CUIStateButton>(UserString("OPTIONS_MUSIC"), GG::FORMAT_LEFT,
+                                                  std::make_shared<CUICheckBoxRepresenter>());
     button->Resize(button->MinUsableSize());
     button->SetCheck(GetOptionsDB().Get<bool>("audio.music.enabled"));
-    std::shared_ptr<const RangedValidator<int>> validator = std::dynamic_pointer_cast<const RangedValidator<int>>(GetOptionsDB().GetValidator("audio.music.volume"));
+    auto validator = std::dynamic_pointer_cast<const RangedValidator<int>>(
+        GetOptionsDB().GetValidator("audio.music.volume"));
     assert(validator);
-    auto slider = GG::Wnd::Create<CUISlider<int>>(validator->m_min, validator->m_max, GG::HORIZONTAL);
+    auto slider = GG::Wnd::Create<CUISlider<int>>(validator->m_min, validator->m_max,
+                                                  GG::Orientation::HORIZONTAL);
     slider->SlideTo(GetOptionsDB().Get<int>("audio.music.volume"));
     auto layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0, GG::X1, GG::Y1, 1, 2, 0, 5);
     layout->Add(button, 0, 0);
@@ -1053,7 +1056,8 @@ void OptionsWnd::VolumeOption(GG::ListBox* page, int indentation_level, const st
     button->SetCheck(toggle_value);
     auto validator = std::dynamic_pointer_cast<const RangedValidator<int>>(GetOptionsDB().GetValidator(volume_option_name));
     assert(validator);
-    auto slider = GG::Wnd::Create<CUISlider<int>>(validator->m_min, validator->m_max, GG::HORIZONTAL);
+    auto slider = GG::Wnd::Create<CUISlider<int>>(validator->m_min, validator->m_max,
+                                                  GG::Orientation::HORIZONTAL);
     slider->SlideTo(GetOptionsDB().Get<int>(volume_option_name));
     auto layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0, GG::X1, GG::Y1, 1, 2, 0, 5);
     layout->Add(button, 0, 0);
@@ -1410,7 +1414,7 @@ OptionsWnd::~OptionsWnd()
 void OptionsWnd::KeyPress(GG::Key key, std::uint32_t key_code_point,
                           GG::Flags<GG::ModKey> mod_keys)
 {
-    if (key == GG::GGK_ESCAPE || key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER) // Same behaviour as if "done" was pressed
+    if (key == GG::Key::GGK_ESCAPE || key == GG::Key::GGK_RETURN || key == GG::Key::GGK_KP_ENTER) // Same behaviour as if "done" was pressed
         DoneClicked();
 }
 

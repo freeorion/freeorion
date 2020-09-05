@@ -26,7 +26,7 @@ Building::Building(int empire_id, const std::string& building_type,
 Building* Building::Clone(int empire_id) const {
     Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
-    if (!(vis >= VIS_BASIC_VISIBILITY && vis <= VIS_FULL_VISIBILITY))
+    if (!(vis >= Visibility::VIS_BASIC_VISIBILITY && vis <= Visibility::VIS_FULL_VISIBILITY))
         return nullptr;
 
     Building* retval = new Building(Owner(), m_building_type, m_produced_by_empire_id);
@@ -49,16 +49,16 @@ void Building::Copy(std::shared_ptr<const UniverseObject> copied_object, int emp
 
     UniverseObject::Copy(copied_object, vis, visible_specials);
 
-    if (vis >= VIS_BASIC_VISIBILITY) {
+    if (vis >= Visibility::VIS_BASIC_VISIBILITY) {
         this->m_planet_id =                 copied_building->m_planet_id;
 
-        if (vis >= VIS_PARTIAL_VISIBILITY) {
+        if (vis >= Visibility::VIS_PARTIAL_VISIBILITY) {
             this->m_name =                      copied_building->m_name;
 
             this->m_building_type =             copied_building->m_building_type;
             this->m_produced_by_empire_id = copied_building->m_produced_by_empire_id;
 
-            if (vis >= VIS_FULL_VISIBILITY) {
+            if (vis >= Visibility::VIS_FULL_VISIBILITY) {
                 this->m_ordered_scrapped =      copied_building->m_ordered_scrapped;
             }
         }
@@ -69,7 +69,7 @@ bool Building::HostileToEmpire(int empire_id) const {
     if (OwnedBy(empire_id))
         return false;
     return empire_id == ALL_EMPIRES || Unowned() ||
-           Empires().GetDiplomaticStatus(Owner(), empire_id) == DIPLO_WAR;
+           Empires().GetDiplomaticStatus(Owner(), empire_id) == DiplomaticStatus::DIPLO_WAR;
 }
 
 std::set<std::string> Building::Tags() const {
@@ -84,7 +84,7 @@ bool Building::HasTag(const std::string& name) const {
 }
 
 UniverseObjectType Building::ObjectType() const
-{ return OBJ_BUILDING; }
+{ return UniverseObjectType::OBJ_BUILDING; }
 
 bool Building::ContainedBy(int object_id) const {
     return object_id != INVALID_OBJECT_ID
@@ -114,7 +114,7 @@ void Building::ResetTargetMaxUnpairedMeters() {
     UniverseObject::ResetTargetMaxUnpairedMeters();
 
     //// give buildings base stealth slightly above 0, so that they can't be seen from a distance without high detection ability
-    //if (Meter* stealth = GetMeter(METER_STEALTH))
+    //if (Meter* stealth = GetMeter(MeterType::METER_STEALTH))
     //    stealth->AddToCurrent(0.01f);
 }
 

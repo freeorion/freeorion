@@ -125,27 +125,27 @@ bool        ClientUI::DisplayTimestamp()                { return GetOptionsDB().
 std::shared_ptr<GG::Texture> ClientUI::PlanetIcon(PlanetType planet_type) {
     std::string icon_filename;
     switch (planet_type) {
-    case PT_SWAMP:
+    case PlanetType::PT_SWAMP:
         icon_filename = "swamp.png";    break;
-    case PT_TOXIC:
+    case PlanetType::PT_TOXIC:
         icon_filename = "toxic.png";    break;
-    case PT_INFERNO:
+    case PlanetType::PT_INFERNO:
         icon_filename = "inferno.png";  break;
-    case PT_RADIATED:
+    case PlanetType::PT_RADIATED:
         icon_filename = "radiated.png"; break;
-    case PT_BARREN:
+    case PlanetType::PT_BARREN:
         icon_filename = "barren.png";   break;
-    case PT_TUNDRA:
+    case PlanetType::PT_TUNDRA:
         icon_filename = "tundra.png";   break;
-    case PT_DESERT:
+    case PlanetType::PT_DESERT:
         icon_filename = "desert.png";   break;
-    case PT_TERRAN:
+    case PlanetType::PT_TERRAN:
         icon_filename = "terran.png";   break;
-    case PT_OCEAN:
+    case PlanetType::PT_OCEAN:
         icon_filename = "ocean.png";    break;
-    case PT_ASTEROIDS:
+    case PlanetType::PT_ASTEROIDS:
         icon_filename = "asteroids.png";break;
-    case PT_GASGIANT:
+    case PlanetType::PT_GASGIANT:
         icon_filename = "gasgiant.png"; break;
     default:
         break;
@@ -156,19 +156,19 @@ std::shared_ptr<GG::Texture> ClientUI::PlanetIcon(PlanetType planet_type) {
 std::shared_ptr<GG::Texture> ClientUI::PlanetSizeIcon(PlanetSize planet_size) {
     std::string icon_filename;
     switch (planet_size) {
-    case SZ_TINY:
+    case PlanetSize::SZ_TINY:
         icon_filename = "tiny.png";    break;
-    case SZ_SMALL:
+    case PlanetSize::SZ_SMALL:
         icon_filename = "small.png";    break;
-    case SZ_MEDIUM:
+    case PlanetSize::SZ_MEDIUM:
         icon_filename = "medium.png";  break;
-    case SZ_LARGE:
+    case PlanetSize::SZ_LARGE:
         icon_filename = "large.png"; break;
-    case SZ_HUGE:
+    case PlanetSize::SZ_HUGE:
         icon_filename = "huge.png";   break;
-    case SZ_ASTEROIDS:
+    case PlanetSize::SZ_ASTEROIDS:
         icon_filename = "asteroids.png";   break;
-    case SZ_GASGIANT:
+    case PlanetSize::SZ_GASGIANT:
         icon_filename = "gasgiant.png";   break;
     default:
         break;
@@ -179,58 +179,58 @@ std::shared_ptr<GG::Texture> ClientUI::PlanetSizeIcon(PlanetSize planet_size) {
 std::shared_ptr<GG::Texture> ClientUI::MeterIcon(MeterType meter_type) {
     std::string icon_filename;
     switch (meter_type) {
-    case METER_POPULATION:
-    case METER_TARGET_POPULATION:
+    case MeterType::METER_POPULATION:
+    case MeterType::METER_TARGET_POPULATION:
         icon_filename = "pop.png";          break;
-    case METER_INDUSTRY:
-    case METER_TARGET_INDUSTRY:
+    case MeterType::METER_INDUSTRY:
+    case MeterType::METER_TARGET_INDUSTRY:
         icon_filename = "industry.png";     break;
-    case METER_RESEARCH:
-    case METER_TARGET_RESEARCH:
+    case MeterType::METER_RESEARCH:
+    case MeterType::METER_TARGET_RESEARCH:
         icon_filename = "research.png";     break;
-    case METER_INFLUENCE:
-    case METER_TARGET_INFLUENCE:
+    case MeterType::METER_INFLUENCE:
+    case MeterType::METER_TARGET_INFLUENCE:
         icon_filename = "influence.png";    break;
-    case METER_CONSTRUCTION:
-    case METER_TARGET_CONSTRUCTION:
+    case MeterType::METER_CONSTRUCTION:
+    case MeterType::METER_TARGET_CONSTRUCTION:
         icon_filename = "construction.png"; break;
-    case METER_HAPPINESS:
-    case METER_TARGET_HAPPINESS:
+    case MeterType::METER_HAPPINESS:
+    case MeterType::METER_TARGET_HAPPINESS:
         icon_filename = "happiness.png";    break;
-    case METER_CAPACITY:
-    case METER_MAX_CAPACITY:
+    case MeterType::METER_CAPACITY:
+    case MeterType::METER_MAX_CAPACITY:
         icon_filename = "capacity.png";     break;
-    case METER_SECONDARY_STAT:
-    case METER_MAX_SECONDARY_STAT:
+    case MeterType::METER_SECONDARY_STAT:
+    case MeterType::METER_MAX_SECONDARY_STAT:
         icon_filename = "secondary.png";    break;
-    case METER_STRUCTURE:
-    case METER_MAX_STRUCTURE:
+    case MeterType::METER_STRUCTURE:
+    case MeterType::METER_MAX_STRUCTURE:
         icon_filename = "structure.png";    break;
-    case METER_FUEL:
-    case METER_MAX_FUEL:
+    case MeterType::METER_FUEL:
+    case MeterType::METER_MAX_FUEL:
         icon_filename = "fuel.png";         break;
-    case METER_SUPPLY:
-    case METER_MAX_SUPPLY:
+    case MeterType::METER_SUPPLY:
+    case MeterType::METER_MAX_SUPPLY:
         icon_filename = "supply.png";       break;
-    case METER_STOCKPILE:
-    case METER_MAX_STOCKPILE:
+    case MeterType::METER_STOCKPILE:
+    case MeterType::METER_MAX_STOCKPILE:
         icon_filename = "stockpile.png";    break;
-    case METER_STEALTH:
+    case MeterType::METER_STEALTH:
         icon_filename = "stealth.png";      break;
-    case METER_DETECTION:
+    case MeterType::METER_DETECTION:
         icon_filename = "detection.png";    break;
-    case METER_SHIELD:
-    case METER_MAX_SHIELD:
+    case MeterType::METER_SHIELD:
+    case MeterType::METER_MAX_SHIELD:
         icon_filename = "shield.png";       break;
-    case METER_DEFENSE:
-    case METER_MAX_DEFENSE:
+    case MeterType::METER_DEFENSE:
+    case MeterType::METER_MAX_DEFENSE:
         icon_filename = "defense.png";      break;
-    case METER_TROOPS:
-    case METER_MAX_TROOPS:
+    case MeterType::METER_TROOPS:
+    case MeterType::METER_MAX_TROOPS:
         icon_filename = "troops.png";       break;
-    case METER_REBEL_TROOPS:
+    case MeterType::METER_REBEL_TROOPS:
         icon_filename = "rebels.png";       break;
-    case METER_SPEED:
+    case MeterType::METER_SPEED:
         icon_filename = "speed.png";        break;
     default:
         return ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "missing.png", true); break;
@@ -372,16 +372,16 @@ GG::Clr     ClientUI::CategoryColor(const std::string& category_name) {
 std::map<PlanetType, std::string>& ClientUI::PlanetTypeFilePrefixes() {
     static std::map<PlanetType, std::string> prefixes;
     if (prefixes.empty()) {
-        prefixes[PT_SWAMP] =    "Swamp";
-        prefixes[PT_TOXIC] =    "Toxic";
-        prefixes[PT_INFERNO] =  "Inferno";
-        prefixes[PT_RADIATED] = "Radiated";
-        prefixes[PT_BARREN] =   "Barren";
-        prefixes[PT_TUNDRA] =   "Tundra";
-        prefixes[PT_DESERT] =   "Desert";
-        prefixes[PT_TERRAN] =   "Terran";
-        prefixes[PT_OCEAN] =    "Ocean";
-        prefixes[PT_GASGIANT] = "GasGiant";
+        prefixes[PlanetType::PT_SWAMP] =    "Swamp";
+        prefixes[PlanetType::PT_TOXIC] =    "Toxic";
+        prefixes[PlanetType::PT_INFERNO] =  "Inferno";
+        prefixes[PlanetType::PT_RADIATED] = "Radiated";
+        prefixes[PlanetType::PT_BARREN] =   "Barren";
+        prefixes[PlanetType::PT_TUNDRA] =   "Tundra";
+        prefixes[PlanetType::PT_DESERT] =   "Desert";
+        prefixes[PlanetType::PT_TERRAN] =   "Terran";
+        prefixes[PlanetType::PT_OCEAN] =    "Ocean";
+        prefixes[PlanetType::PT_GASGIANT] = "GasGiant";
     }
     return prefixes;
 }
@@ -389,15 +389,15 @@ std::map<PlanetType, std::string>& ClientUI::PlanetTypeFilePrefixes() {
 std::map<StarType, std::string>& ClientUI::StarTypeFilePrefixes() {
     static std::map<StarType, std::string> prefixes;
     if (prefixes.empty()) {
-        prefixes[INVALID_STAR_TYPE] =   "unknown";
-        prefixes[STAR_BLUE] =           "blue";
-        prefixes[STAR_WHITE] =          "white";
-        prefixes[STAR_YELLOW] =         "yellow";
-        prefixes[STAR_ORANGE] =         "orange";
-        prefixes[STAR_RED] =            "red";
-        prefixes[STAR_NEUTRON] =        "neutron";
-        prefixes[STAR_BLACK] =          "blackhole";
-        prefixes[STAR_NONE] =           "nostar";
+        prefixes[StarType::INVALID_STAR_TYPE] =   "unknown";
+        prefixes[StarType::STAR_BLUE] =           "blue";
+        prefixes[StarType::STAR_WHITE] =          "white";
+        prefixes[StarType::STAR_YELLOW] =         "yellow";
+        prefixes[StarType::STAR_ORANGE] =         "orange";
+        prefixes[StarType::STAR_RED] =            "red";
+        prefixes[StarType::STAR_NEUTRON] =        "neutron";
+        prefixes[StarType::STAR_BLACK] =          "blackhole";
+        prefixes[StarType::STAR_NONE] =           "nostar";
     }
     return prefixes;
 }
@@ -405,15 +405,15 @@ std::map<StarType, std::string>& ClientUI::StarTypeFilePrefixes() {
 std::map<StarType, std::string>& ClientUI::HaloStarTypeFilePrefixes() {
     static std::map<StarType, std::string> prefixes;
     if (prefixes.empty()) {
-        prefixes[INVALID_STAR_TYPE] =   "halo_unknown";
-        prefixes[STAR_BLUE] =           "halo_blue";
-        prefixes[STAR_WHITE] =          "halo_white";
-        prefixes[STAR_YELLOW] =         "halo_yellow";
-        prefixes[STAR_ORANGE] =         "halo_orange";
-        prefixes[STAR_RED] =            "halo_red";
-        prefixes[STAR_NEUTRON] =        "halo_neutron";
-        prefixes[STAR_BLACK] =          "halo_blackhole";
-        prefixes[STAR_NONE] =           "halo_nostar";
+        prefixes[StarType::INVALID_STAR_TYPE] =   "halo_unknown";
+        prefixes[StarType::STAR_BLUE] =           "halo_blue";
+        prefixes[StarType::STAR_WHITE] =          "halo_white";
+        prefixes[StarType::STAR_YELLOW] =         "halo_yellow";
+        prefixes[StarType::STAR_ORANGE] =         "halo_orange";
+        prefixes[StarType::STAR_RED] =            "halo_red";
+        prefixes[StarType::STAR_NEUTRON] =        "halo_neutron";
+        prefixes[StarType::STAR_BLACK] =          "halo_blackhole";
+        prefixes[StarType::STAR_NONE] =           "halo_nostar";
     }
     return prefixes;
 }

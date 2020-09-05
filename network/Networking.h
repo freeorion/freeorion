@@ -16,7 +16,7 @@ namespace Networking {
     FO_COMMON_API int DiscoveryPort();
     FO_COMMON_API int MessagePort();
 
-    enum ClientType : int {
+    enum class ClientType : int {
         INVALID_CLIENT_TYPE = -1,
         CLIENT_TYPE_AI_PLAYER,
         CLIENT_TYPE_HUMAN_PLAYER,
@@ -24,8 +24,9 @@ namespace Networking {
         CLIENT_TYPE_HUMAN_MODERATOR,
         NUM_CLIENT_TYPES
     };
+    FO_COMMON_API std::ostream& operator<<(std::ostream& os, ClientType client_type);
 
-    enum RoleType : size_t {
+    enum class RoleType : size_t {  // index in bitset so not enum class
         ROLE_HOST = 0,              ///< allows save and load games, edit other player settings, stop server
         ROLE_CLIENT_TYPE_MODERATOR, ///< allows have a client type Moderator
         ROLE_CLIENT_TYPE_PLAYER,    ///< allows have a client type Player
@@ -49,7 +50,7 @@ namespace Networking {
         std::string Text() const;
         void SetText(const std::string& text);
     private:
-        std::bitset<Roles_Count> m_roles;
+        std::bitset<int(RoleType::Roles_Count)> m_roles;
     };
 
 }

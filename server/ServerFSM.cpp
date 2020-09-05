@@ -31,6 +31,7 @@
 
 #include <iterator>
 
+
 class CombatLogManager;
 CombatLogManager&   GetCombatLogManager();
 
@@ -80,7 +81,7 @@ namespace {
                 // In a single player game, the host player is always the human player, so
                 // this is just a matter of finding which player setup data is for
                 // a human player, and assigning that setup data to the host player id
-                if (psd.client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
+                if (psd.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER)
                     return psd.player_name;
             }
 
@@ -95,7 +96,7 @@ namespace {
 
             // find which player was the human (and thus the host) in the saved game
             for (const PlayerSaveHeaderData& psgd : player_save_header_data) {
-                if (psgd.client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
+                if (psgd.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER)
                     return psgd.name;
             }
         }
@@ -109,10 +110,10 @@ namespace {
             ss << std::to_string(entry.first) << " : "
                << entry.second.player_name << ", ";
             switch (entry.second.client_type) {
-            case Networking::CLIENT_TYPE_AI_PLAYER:         ss << "AI_PLAYER, ";    break;
-            case Networking::CLIENT_TYPE_HUMAN_MODERATOR:   ss << "MODERATOR, ";    break;
-            case Networking::CLIENT_TYPE_HUMAN_OBSERVER:    ss << "OBSERVER, ";     break;
-            case Networking::CLIENT_TYPE_HUMAN_PLAYER:      ss << "PLAYER, "; break;
+            case Networking::ClientType::CLIENT_TYPE_AI_PLAYER:         ss << "AI_PLAYER, ";    break;
+            case Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR:   ss << "MODERATOR, ";    break;
+            case Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER:    ss << "OBSERVER, ";     break;
+            case Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER:      ss << "PLAYER, "; break;
             default:                                        ss << "<invalid client type>, ";
             }
             GG::Clr empire_color = entry.second.empire_color;
@@ -303,7 +304,7 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
         DebugLogger(FSM) << "ServerFSM::HandleNonLobbyDisconnection : Lost connection to player #" << id
                          << ", named \"" << player_connection->PlayerName() << "\".";
 
-        if (player_connection->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER) {
+        if (player_connection->GetClientType() == Networking::ClientType::CLIENT_TYPE_AI_PLAYER) {
             // AI could safely disconnect only if empire was eliminated
             const Empire* empire = GetEmpire(m_server.PlayerEmpireID(id));
             if (empire && !empire->Eliminated()) {
@@ -312,7 +313,7 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
                 ErrorLogger(FSM) << "AI Player #" << id << ", named \""
                                  << player_connection->PlayerName() << "\"quit before empire was eliminated.";
             }
-        } else if (player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
+        } else if (player_connection->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER) {
             const Empire* empire = GetEmpire(m_server.PlayerEmpireID(id));
             // eliminated and non-empire players can leave safely
             if (empire && !empire->Eliminated()) {
@@ -346,13 +347,13 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
     for (const auto& empire : Empires()) {
         if (!empire.second->Eliminated()) {
             switch (m_server.GetEmpireClientType(empire.first)) {
-            case Networking::CLIENT_TYPE_HUMAN_PLAYER:
+            case Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER:
                 empire_connected_plr_cnt++;
                 break;
-            case Networking::INVALID_CLIENT_TYPE:
+            case Networking::ClientType::INVALID_CLIENT_TYPE:
                 empire_unconnected_plr_cnt++;
                 break;
-            case Networking::CLIENT_TYPE_AI_PLAYER:
+            case Networking::ClientType::CLIENT_TYPE_AI_PLAYER:
                 // ignore
                 break;
             default:
@@ -458,7 +459,7 @@ void ServerFSM::UpdateIngameLobby() {
     for (auto player_it = m_server.m_networking.established_begin();
         player_it != m_server.m_networking.established_end(); ++player_it)
     {
-        if ((*player_it)->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER &&
+        if ((*player_it)->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER &&
             !GetEmpire(m_server.PlayerEmpireID((*player_it)->PlayerID())))
         {
             (*player_it)->SendMessage(ServerLobbyUpdateMessage(dummy_lobby_data));
@@ -479,20 +480,20 @@ bool ServerFSM::EstablishPlayer(const PlayerConnectionPtr& player_connection,
     // set and test roles
     player_connection->SetAuthRoles(roles);
 
-    if (client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER &&
-        !player_connection->HasAuthRole(Networking::ROLE_CLIENT_TYPE_OBSERVER))
+    if (client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER &&
+        !player_connection->HasAuthRole(Networking::RoleType::ROLE_CLIENT_TYPE_OBSERVER))
     {
-        client_type = Networking::INVALID_CLIENT_TYPE;
+        client_type = Networking::ClientType::INVALID_CLIENT_TYPE;
     }
-    if (client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR &&
-        !player_connection->HasAuthRole(Networking::ROLE_CLIENT_TYPE_MODERATOR))
+    if (client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR &&
+        !player_connection->HasAuthRole(Networking::RoleType::ROLE_CLIENT_TYPE_MODERATOR))
     {
-        client_type = Networking::INVALID_CLIENT_TYPE;
+        client_type = Networking::ClientType::INVALID_CLIENT_TYPE;
     }
-    if (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER &&
-        !player_connection->HasAuthRole(Networking::ROLE_CLIENT_TYPE_PLAYER))
+    if (client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER &&
+        !player_connection->HasAuthRole(Networking::RoleType::ROLE_CLIENT_TYPE_PLAYER))
     {
-        client_type = Networking::INVALID_CLIENT_TYPE;
+        client_type = Networking::ClientType::INVALID_CLIENT_TYPE;
     }
 
     if (player_connection->IsAuthenticated() || !player_connection->Cookie().is_nil()) {
@@ -507,15 +508,15 @@ bool ServerFSM::EstablishPlayer(const PlayerConnectionPtr& player_connection,
                 // If we're going to establish Human Player
                 // it will be better to break link with previous connection
                 // so game won't be stopped on disconnection of previous connection.
-                if (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
+                if (client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER) {
                     m_server.DropPlayerEmpireLink((*it)->PlayerID());
-                    (*it)->SetClientType(Networking::INVALID_CLIENT_TYPE);
+                    (*it)->SetClientType(Networking::ClientType::INVALID_CLIENT_TYPE);
                 }
             }
         }
     }
 
-    if (client_type == Networking::INVALID_CLIENT_TYPE) {
+    if (client_type == Networking::ClientType::INVALID_CLIENT_TYPE) {
         player_connection->SendMessage(ErrorMessage(UserStringNop("ERROR_CLIENT_TYPE_NOT_ALLOWED"), true));
         to_disconnect.push_back(player_connection);
     } else {
@@ -544,9 +545,9 @@ bool ServerFSM::EstablishPlayer(const PlayerConnectionPtr& player_connection,
         player_connection->SendMessage(HostIDMessage(m_server.m_networking.HostPlayerID()));
 
         // send chat history
-        if (client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR ||
-            client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
-            client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
+        if (client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR ||
+            client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER ||
+            client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER)
         {
             // add "player enter game" message
             boost::posix_time::ptime timestamp = boost::posix_time::second_clock::universal_time();
@@ -575,7 +576,7 @@ bool ServerFSM::EstablishPlayer(const PlayerConnectionPtr& player_connection,
     for (const auto& conn : to_disconnect)
     { m_server.Networking().Disconnect(conn); }
 
-    return client_type != Networking::INVALID_CLIENT_TYPE;
+    return client_type != Networking::ClientType::INVALID_CLIENT_TYPE;
 }
 
 
@@ -617,7 +618,7 @@ sc::result Idle::react(const HostMPGame& msg) {
     DebugLogger(FSM) << "Idle::react(HostMPGame) about to establish host";
 
     int host_player_id = server.m_networking.NewPlayerID();
-    player_connection->EstablishPlayer(host_player_id, host_player_name, Networking::CLIENT_TYPE_HUMAN_PLAYER, client_version_string);
+    player_connection->EstablishPlayer(host_player_id, host_player_name, Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER, client_version_string);
     server.m_networking.SetHostPlayerID(host_player_id);
 
     if (!GetOptionsDB().Get<bool>("skip-checksum"))
@@ -625,11 +626,11 @@ sc::result Idle::react(const HostMPGame& msg) {
 
     DebugLogger(FSM) << "Idle::react(HostMPGame) about to send acknowledgement to host";
     player_connection->SetAuthRoles({
-                    Networking::ROLE_HOST,
-                    Networking::ROLE_CLIENT_TYPE_MODERATOR,
-                    Networking::ROLE_CLIENT_TYPE_PLAYER,
-                    Networking::ROLE_CLIENT_TYPE_OBSERVER,
-                    Networking::ROLE_GALAXY_SETUP
+                    Networking::RoleType::ROLE_HOST,
+                    Networking::RoleType::ROLE_CLIENT_TYPE_MODERATOR,
+                    Networking::RoleType::ROLE_CLIENT_TYPE_PLAYER,
+                    Networking::RoleType::ROLE_CLIENT_TYPE_OBSERVER,
+                    Networking::RoleType::ROLE_GALAXY_SETUP
                     });
     player_connection->SendMessage(HostMPAckMessage(host_player_id));
 
@@ -667,14 +668,14 @@ sc::result Idle::react(const HostSPGame& msg) {
 
 
     int host_player_id = server.m_networking.NewPlayerID();
-    player_connection->EstablishPlayer(host_player_id, host_player_name, Networking::CLIENT_TYPE_HUMAN_PLAYER, client_version_string);
+    player_connection->EstablishPlayer(host_player_id, host_player_name, Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER, client_version_string);
     server.m_networking.SetHostPlayerID(host_player_id);
     if (!GetOptionsDB().Get<bool>("skip-checksum"))
         player_connection->SendMessage(ContentCheckSumMessage());
     player_connection->SetAuthRoles({
-                    Networking::ROLE_HOST,
-                    Networking::ROLE_CLIENT_TYPE_PLAYER,
-                    Networking::ROLE_GALAXY_SETUP
+                    Networking::RoleType::ROLE_HOST,
+                    Networking::RoleType::ROLE_CLIENT_TYPE_PLAYER,
+                    Networking::RoleType::ROLE_GALAXY_SETUP
                     });
     player_connection->SendMessage(HostSPAckMessage(host_player_id));
 
@@ -723,7 +724,7 @@ sc::result Idle::react(const Hostless&) {
         for (auto& player_setup_data : human_players) {
             DebugLogger(FSM) << "Create player " << player_setup_data.player_name;
             player_setup_data.player_id =     Networking::INVALID_PLAYER_ID;
-            player_setup_data.client_type =   Networking::CLIENT_TYPE_HUMAN_PLAYER;
+            player_setup_data.client_type =   Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER;
             player_setup_data.empire_color =  GetUnusedEmpireColour(lobby_data->players);
             player_setup_data.authenticated = true;
             lobby_data->players.push_back({Networking::INVALID_PLAYER_ID, player_setup_data});
@@ -737,7 +738,7 @@ sc::result Idle::react(const Hostless&) {
             PlayerSetupData player_setup_data;
             player_setup_data.player_id =     Networking::INVALID_PLAYER_ID;
             player_setup_data.player_name =   UserString("AI_PLAYER") + "_" + std::to_string(ai_next_index++);
-            player_setup_data.client_type =   Networking::CLIENT_TYPE_AI_PLAYER;
+            player_setup_data.client_type =   Networking::ClientType::CLIENT_TYPE_AI_PLAYER;
             player_setup_data.empire_name =   GenerateEmpireName(player_setup_data.player_name, lobby_data->players);
             player_setup_data.empire_color =  GetUnusedEmpireColour(lobby_data->players);
             if (lobby_data->seed != "")
@@ -770,12 +771,12 @@ sc::result Idle::react(const Hostless&) {
             // fill lobby data with AI to start them with server
             int ai_next_index = 1;
             for (const auto& psgd : player_save_game_data) {
-                if (psgd.client_type != Networking::CLIENT_TYPE_AI_PLAYER)
+                if (psgd.client_type != Networking::ClientType::CLIENT_TYPE_AI_PLAYER)
                     continue;
                 PlayerSetupData player_setup_data;
                 player_setup_data.player_id =     Networking::INVALID_PLAYER_ID;
                 player_setup_data.player_name =   UserString("AI_PLAYER") + "_" + std::to_string(ai_next_index++);
-                player_setup_data.client_type =   Networking::CLIENT_TYPE_AI_PLAYER;
+                player_setup_data.client_type =   Networking::ClientType::CLIENT_TYPE_AI_PLAYER;
                 player_setup_data.save_game_empire_id = psgd.empire_id;
                 lobby_data->players.push_back({Networking::INVALID_PLAYER_ID, player_setup_data});
             }
@@ -838,12 +839,12 @@ MPLobby::MPLobby(my_context c) :
 
             int player_id = player_connection->PlayerID();
             DebugLogger(FSM) << "(ServerFSM) MPLobby. Fill MPLobby player " << player_id;
-            if (player_connection->GetClientType() != Networking::CLIENT_TYPE_AI_PLAYER) {
+            if (player_connection->GetClientType() != Networking::ClientType::CLIENT_TYPE_AI_PLAYER) {
                 PlayerSetupData player_setup_data;
                 player_setup_data.player_id =     player_id;
                 player_setup_data.player_name =   player_connection->PlayerName();
                 player_setup_data.client_type =   player_connection->GetClientType();
-                player_setup_data.empire_name =   (player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER) ? player_connection->PlayerName() : GenerateEmpireName(player_setup_data.player_name, m_lobby_data->players);
+                player_setup_data.empire_name =   (player_connection->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER) ? player_connection->PlayerName() : GenerateEmpireName(player_setup_data.player_name, m_lobby_data->players);
                 player_setup_data.empire_color =  GetUnusedEmpireColour(m_lobby_data->players);
                 if (m_lobby_data->seed != "")
                     player_setup_data.starting_species_name = sm.RandomPlayableSpeciesName();
@@ -852,12 +853,12 @@ MPLobby::MPLobby(my_context c) :
                 player_setup_data.authenticated = player_connection->IsAuthenticated();
 
                 m_lobby_data->players.push_back({player_id, player_setup_data});
-            } else if (player_connection->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER) {
+            } else if (player_connection->GetClientType() == Networking::ClientType::CLIENT_TYPE_AI_PLAYER) {
                 if (m_ai_next_index <= max_ai || max_ai < 0) {
                     PlayerSetupData player_setup_data;
                     player_setup_data.player_id =     Networking::INVALID_PLAYER_ID;
                     player_setup_data.player_name =   UserString("AI_PLAYER") + "_" + std::to_string(m_ai_next_index++);
-                    player_setup_data.client_type =   Networking::CLIENT_TYPE_AI_PLAYER;
+                    player_setup_data.client_type =   Networking::ClientType::CLIENT_TYPE_AI_PLAYER;
                     player_setup_data.empire_name =   GenerateEmpireName(player_setup_data.player_name, m_lobby_data->players);
                     player_setup_data.empire_color =  GetUnusedEmpireColour(m_lobby_data->players);
                     if (m_lobby_data->seed != "")
@@ -884,7 +885,7 @@ MPLobby::MPLobby(my_context c) :
                 PlayerSetupData player_setup_data;
                 player_setup_data.player_id =     Networking::INVALID_PLAYER_ID;
                 player_setup_data.player_name =   UserString("AI_PLAYER") + "_" + std::to_string(m_ai_next_index++);
-                player_setup_data.client_type =   Networking::CLIENT_TYPE_AI_PLAYER;
+                player_setup_data.client_type =   Networking::ClientType::CLIENT_TYPE_AI_PLAYER;
                 player_setup_data.empire_name =   GenerateEmpireName(player_setup_data.player_name, m_lobby_data->players);
                 player_setup_data.empire_color =  GetUnusedEmpireColour(m_lobby_data->players);
                 if (!m_lobby_data->seed.empty())
@@ -909,7 +910,7 @@ MPLobby::MPLobby(my_context c) :
         PlayerSetupData& player_setup_data = m_lobby_data->players.begin()->second;
 
         player_setup_data.player_name =           player_connection->PlayerName();
-        player_setup_data.empire_name =           (player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER) ? player_connection->PlayerName() : GenerateEmpireName(player_setup_data.player_name, m_lobby_data->players);
+        player_setup_data.empire_name =           (player_connection->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER) ? player_connection->PlayerName() : GenerateEmpireName(player_setup_data.player_name, m_lobby_data->players);
         player_setup_data.empire_color =          EmpireColors().at(0);               // since the host is the first joined player, it can be assumed that no other player is using this colour (unlike subsequent join game message responses)
         player_setup_data.starting_species_name = sm.RandomPlayableSpeciesName();
         // leaving save game empire id as default
@@ -927,9 +928,9 @@ void MPLobby::ValidateClientLimits() {
     int human_count = 0;
     int ai_count = 0;
     for (const auto& plr : m_lobby_data->players) {
-        if (plr.second.client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
+        if (plr.second.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER)
             human_count++;
-        else if (plr.second.client_type == Networking::CLIENT_TYPE_AI_PLAYER)
+        else if (plr.second.client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER)
             ai_count++;
     }
 
@@ -1091,7 +1092,7 @@ void MPLobby::EstablishPlayer(const PlayerConnectionPtr& player_connection,
         int player_id = player_connection->PlayerID();
 
         // Inform AI of logging configuration.
-        if (client_type == Networking::CLIENT_TYPE_AI_PLAYER)
+        if (client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER)
             player_connection->SendMessage(
                 LoggerConfigMessage(Networking::INVALID_PLAYER_ID, LoggerOptionsLabelsAndLevels(LoggerTypes::both)));
 
@@ -1099,7 +1100,7 @@ void MPLobby::EstablishPlayer(const PlayerConnectionPtr& player_connection,
         PlayerSetupData player_setup_data;
         player_setup_data.player_name =   player_name;
         player_setup_data.client_type =   client_type;
-        player_setup_data.empire_name =   (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) ? player_name : GenerateEmpireName(player_name, m_lobby_data->players);
+        player_setup_data.empire_name =   (client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER) ? player_name : GenerateEmpireName(player_name, m_lobby_data->players);
         player_setup_data.empire_color =  GetUnusedEmpireColour(m_lobby_data->players);
         if (m_lobby_data->seed != "")
             player_setup_data.starting_species_name = sm.RandomPlayableSpeciesName();
@@ -1114,7 +1115,7 @@ void MPLobby::EstablishPlayer(const PlayerConnectionPtr& player_connection,
         for (std::pair<int, PlayerSetupData>& plr : m_lobby_data->players) {
             if (plr.second.empire_name == player_name) {
                 // change empire name
-                plr.second.empire_name = (plr.second.client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) ? plr.second.player_name : GenerateEmpireName(plr.second.player_name, m_lobby_data->players);
+                plr.second.empire_name = (plr.second.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER) ? plr.second.player_name : GenerateEmpireName(plr.second.player_name, m_lobby_data->players);
             }
 
             plr.second.player_ready = false;
@@ -1157,7 +1158,7 @@ sc::result MPLobby::react(const JoinGame& msg) {
         if (authenticated)
             player_connection->SetAuthenticated();
     } else {
-        if (client_type != Networking::CLIENT_TYPE_AI_PLAYER && server.IsAuthRequiredOrFillRoles(player_name, roles)) {
+        if (client_type != Networking::ClientType::CLIENT_TYPE_AI_PLAYER && server.IsAuthRequiredOrFillRoles(player_name, roles)) {
             // send authentication request
             player_connection->AwaitPlayer(client_type, client_version_string);
             player_connection->SendMessage(AuthRequestMessage(player_name, "PLAIN-TEXT"));
@@ -1168,7 +1169,7 @@ sc::result MPLobby::react(const JoinGame& msg) {
 
         // Remove AI prefix to distinguish Human from AI.
         std::string ai_prefix = UserString("AI_PLAYER") + "_";
-        if (client_type != Networking::CLIENT_TYPE_AI_PLAYER) {
+        if (client_type != Networking::ClientType::CLIENT_TYPE_AI_PLAYER) {
             while (player_name.compare(0, ai_prefix.size(), ai_prefix) == 0)
                 player_name.erase(0, ai_prefix.size());
         }
@@ -1272,22 +1273,22 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
     // save files, save game empire data from the save file, player data)
     // during this copying and is updated below from the save file(s)
 
-    if (sender->HasAuthRole(Networking::ROLE_HOST)) {
+    if (sender->HasAuthRole(Networking::RoleType::ROLE_HOST)) {
         if (m_lobby_data->any_can_edit != incoming_lobby_data.any_can_edit) {
             has_important_changes = true;
             m_lobby_data->any_can_edit = incoming_lobby_data.any_can_edit;
 
             // change role ROLE_GALAXY_SETUP for all non-host players
             for (const auto& player_connection : server.Networking()) {
-                if (!player_connection->HasAuthRole(Networking::ROLE_HOST)) {
-                    player_connection->SetAuthRole(Networking::ROLE_GALAXY_SETUP,
+                if (!player_connection->HasAuthRole(Networking::RoleType::ROLE_HOST)) {
+                    player_connection->SetAuthRole(Networking::RoleType::ROLE_GALAXY_SETUP,
                                                    m_lobby_data->any_can_edit);
                 }
             }
         }
     }
 
-    if (sender->HasAuthRole(Networking::ROLE_GALAXY_SETUP)) {
+    if (sender->HasAuthRole(Networking::RoleType::ROLE_GALAXY_SETUP)) {
 
         DebugLogger(FSM) << "Get message from host or allowed player " << sender->PlayerID();
 
@@ -1295,8 +1296,8 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
         // remove empire / colours from observers
         for (auto& entry : incoming_lobby_data.players) {
             PlayerSetupData& psd = entry.second;
-            if (psd.client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
-                psd.client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
+            if (psd.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER ||
+                psd.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR)
             {
                 psd.empire_color = GG::CLR_ZERO;
                 // On OSX the following two lines must not be included.
@@ -1310,7 +1311,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
 #endif
                 psd.save_game_empire_id = ALL_EMPIRES;
 
-            } else if (psd.client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
+            } else if (psd.client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER) {
                 if (psd.empire_color == GG::CLR_ZERO)
                     psd.empire_color = GetUnusedEmpireColour(incoming_lobby_data.players);
                 if (psd.player_name.empty())
@@ -1325,7 +1326,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                         psd.starting_species_name = GetSpeciesManager().SequentialPlayableSpeciesName(m_ai_next_index);
                 }
 
-            } else if (psd.client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
+            } else if (psd.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER) {
                 if (psd.empire_color == GG::CLR_ZERO)
                     psd.empire_color = GetUnusedEmpireColour(incoming_lobby_data.players);
                 if (psd.empire_name.empty())
@@ -1359,12 +1360,12 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                 const auto& player_it = server.Networking().GetPlayer(player.first);
                 if (player_it != server.Networking().established_end()) {
                     // check for roles and client types
-                    if ((player.second.client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER &&
-                        !(*player_it)->HasAuthRole(Networking::ROLE_CLIENT_TYPE_PLAYER)) ||
-                        (player.second.client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR &&
-                        !(*player_it)->HasAuthRole(Networking::ROLE_CLIENT_TYPE_MODERATOR)) ||
-                        (player.second.client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER &&
-                        !(*player_it)->HasAuthRole(Networking::ROLE_CLIENT_TYPE_OBSERVER)))
+                    if ((player.second.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER &&
+                        !(*player_it)->HasAuthRole(Networking::RoleType::ROLE_CLIENT_TYPE_PLAYER)) ||
+                        (player.second.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR &&
+                        !(*player_it)->HasAuthRole(Networking::RoleType::ROLE_CLIENT_TYPE_MODERATOR)) ||
+                        (player.second.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER &&
+                        !(*player_it)->HasAuthRole(Networking::RoleType::ROLE_CLIENT_TYPE_OBSERVER)))
                     {
                         has_collision = true;
                         WarnLogger(FSM) << "Got unallowed client types.";
@@ -1470,7 +1471,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
 
             int ai_count = 0;
             for (const auto& plr : incoming_lobby_data.players) {
-                if (plr.second.client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
+                if (plr.second.client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER) {
                     ai_count++;
                 }
             }
@@ -1478,7 +1479,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             // limit count of AI
             auto max_ai = GetOptionsDB().Get<int>("network.server.ai.max");
             if (ai_count <= max_ai || max_ai < 0) {
-                if (sender->HasAuthRole(Networking::ROLE_HOST)) {
+                if (sender->HasAuthRole(Networking::RoleType::ROLE_HOST)) {
                     // don't check host player
                     // treat host player as superuser or administrator
                     m_lobby_data->players = incoming_lobby_data.players;
@@ -1557,7 +1558,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                 // get client type, and drop connections with invalid type, as that indicates a requested drop
                 auto client_type = player_setup_it->second.client_type;
 
-                if (client_type != Networking::INVALID_CLIENT_TYPE) {
+                if (client_type != Networking::ClientType::INVALID_CLIENT_TYPE) {
                     // update player connection type for lobby change
                     player_connection->SetClientType(client_type);
                 } else {
@@ -1581,7 +1582,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             // each player connection.
             auto player_setup_it = m_lobby_data->players.begin();
             while (player_setup_it != m_lobby_data->players.end()) {
-                if (player_setup_it->second.client_type == Networking::INVALID_CLIENT_TYPE) {
+                if (player_setup_it->second.client_type == Networking::ClientType::INVALID_CLIENT_TYPE) {
                     auto erase_it = player_setup_it;
                     ++player_setup_it;
                     m_lobby_data->players.erase(erase_it);
@@ -1621,12 +1622,12 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                 if (psd_colors.count(j_player.second.empire_color) ||
                     psd_names.count(j_player.second.empire_name) ||
                     psd_names.count(j_player.second.player_name) ||
-                    (j_player.second.client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER &&
-                        !sender->HasAuthRole(Networking::ROLE_CLIENT_TYPE_PLAYER)) ||
-                    (j_player.second.client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR &&
-                        !sender->HasAuthRole(Networking::ROLE_CLIENT_TYPE_MODERATOR)) ||
-                    (j_player.second.client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER &&
-                        !sender->HasAuthRole(Networking::ROLE_CLIENT_TYPE_OBSERVER)))
+                    (j_player.second.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER &&
+                        !sender->HasAuthRole(Networking::RoleType::ROLE_CLIENT_TYPE_PLAYER)) ||
+                    (j_player.second.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR &&
+                        !sender->HasAuthRole(Networking::RoleType::ROLE_CLIENT_TYPE_MODERATOR)) ||
+                    (j_player.second.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER &&
+                        !sender->HasAuthRole(Networking::RoleType::ROLE_CLIENT_TYPE_OBSERVER)))
                 {
                     i_player.second.player_ready = false;
                     player_setup_data_changed = true;
@@ -1690,7 +1691,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
         // so that when the save is loaded no AI state as appropriate,
         // without having potential extra AIs lingering from the previous
         m_lobby_data->players.remove_if([](const std::pair<int, PlayerSetupData>& plr) {
-            return plr.second.client_type == Networking::CLIENT_TYPE_AI_PLAYER;
+            return plr.second.client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER;
         });
         m_ai_next_index = 1;
 
@@ -1713,7 +1714,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             // read all AI players from save game and add them into current lobby
             // with appropriate empire's data
             for (const auto& pshd : player_save_header_data) {
-                if (pshd.client_type != Networking::CLIENT_TYPE_AI_PLAYER)
+                if (pshd.client_type != Networking::ClientType::CLIENT_TYPE_AI_PLAYER)
                     continue;
                 const auto& empire_data_it = m_lobby_data->save_game_empire_data.find(pshd.empire_id);
                 if (empire_data_it == m_lobby_data->save_game_empire_data.end())
@@ -1723,7 +1724,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                 player_setup_data.player_id =     Networking::INVALID_PLAYER_ID;
                 // don't use original names to prevent collision with manually added AIs
                 player_setup_data.player_name =   UserString("AI_PLAYER") + "_" + std::to_string(m_ai_next_index++);
-                player_setup_data.client_type =   Networking::CLIENT_TYPE_AI_PLAYER;
+                player_setup_data.client_type =   Networking::ClientType::CLIENT_TYPE_AI_PLAYER;
                 player_setup_data.save_game_empire_id = pshd.empire_id;
                 player_setup_data.empire_name =   empire_data_it->second.empire_name;
                 player_setup_data.empire_color =  empire_data_it->second.color;
@@ -1754,9 +1755,9 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
         // check if all established human players ready to play
         bool is_all_ready = true;
         for (auto& player : m_lobby_data->players) {
-            if ((player.first >= 0) && (player.second.client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
-                player.second.client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR ||
-                player.second.client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER))
+            if ((player.first >= 0) && (player.second.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER ||
+                player.second.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR ||
+                player.second.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER))
             {
                 if (! player.second.player_ready)
                     is_all_ready = false;
@@ -1837,7 +1838,7 @@ sc::result MPLobby::react(const PlayerChat& msg) {
 
     boost::posix_time::ptime timestamp = boost::posix_time::second_clock::universal_time();
 
-    if (recipients.empty() && sender->GetClientType() != Networking::CLIENT_TYPE_AI_PLAYER)
+    if (recipients.empty() && sender->GetClientType() != Networking::ClientType::CLIENT_TYPE_AI_PLAYER)
     {
         GG::Clr text_color(255, 255, 255, 255);
         for (const auto& player : m_lobby_data->players) {
@@ -1990,19 +1991,19 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
         // clients
         for (auto& psd : players) {
             if (psd.player_name.empty()) {
-                if (psd.client_type == Networking::CLIENT_TYPE_AI_PLAYER)
+                if (psd.client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER)
                     psd.player_name = "AI_" + std::to_string(player_num++);
-                else if (psd.client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
+                else if (psd.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER)
                     psd.player_name = "Human_Player_" + std::to_string(player_num++);
-                else if (psd.client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER)
+                else if (psd.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER)
                     psd.player_name = "Observer_" + std::to_string(player_num++);
-                else if (psd.client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
+                else if (psd.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR)
                     psd.player_name = "Moderator_" + std::to_string(player_num++);
                 else
                     psd.player_name = "Player_" + std::to_string(player_num++);
             }
 
-            if (psd.client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
+            if (psd.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER) {
                 psd.player_id = server.Networking().HostPlayerID();
             } else {
                 psd.player_id = player_id++;
@@ -2029,8 +2030,8 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
 
         // add player setup data for each player in saved gamed
         for (PlayerSaveHeaderData& psgd : player_save_header_data) {
-            if (psgd.client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER ||
-                psgd.client_type == Networking::CLIENT_TYPE_AI_PLAYER)
+            if (psgd.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER ||
+                psgd.client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER)
             {
                 players.emplace_back();
                 auto& psd = players.back();
@@ -2042,7 +2043,7 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
                 psd.save_game_empire_id = psgd.empire_id;
                 psd.client_type = psgd.client_type;
 
-                if (psd.client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
+                if (psd.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER) {
                     psd.player_id = server.Networking().HostPlayerID();
                 } else {
                     psd.player_id = player_id++;
@@ -2054,11 +2055,11 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
     m_num_expected_players = players.size();
     m_expected_ai_names_and_ids.clear();
     for (const auto& player_data : players) {
-        if (player_data.client_type == Networking::CLIENT_TYPE_AI_PLAYER)
+        if (player_data.client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER)
             m_expected_ai_names_and_ids.emplace(player_data.player_name, player_data.player_id);
     }
 
-    server.CreateAIClients(players, m_single_player_setup_data->ai_aggr);    // also disconnects any currently-connected AI clients
+    server.CreateAIClients(players, int(m_single_player_setup_data->ai_aggr));    // also disconnects any currently-connected AI clients
 
     server.InitializePython();
 
@@ -2089,13 +2090,13 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg) {
     const PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
     std::string player_name("Default_Player_Name_in_WaitingForSPGameJoiners::react(const JoinGame& msg)");
-    Networking::ClientType client_type(Networking::INVALID_CLIENT_TYPE);
+    Networking::ClientType client_type(Networking::ClientType::INVALID_CLIENT_TYPE);
     std::string client_version_string;
     boost::uuids::uuid cookie;
     ExtractJoinGameMessageData(message, player_name, client_type, client_version_string, cookie);
 
     // is this an AI?
-    if (client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
+    if (client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER) {
         const auto& expected_it = m_expected_ai_names_and_ids.find(player_name);
         // verify that player name was expected
         if (expected_it == m_expected_ai_names_and_ids.end()) {
@@ -2118,7 +2119,7 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg) {
             m_expected_ai_names_and_ids.erase(player_name);
         }
 
-    } else if (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
+    } else if (client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER) {
         // verify that there is room left for this player
         int already_connected_players = m_expected_ai_names_and_ids.size() + server.m_networking.NumEstablishedPlayers();
         if (already_connected_players >= m_num_expected_players) {
@@ -2224,11 +2225,11 @@ WaitingForMPGameJoiners::WaitingForMPGameJoiners(my_context c) :
 
     for (std::pair<int, PlayerSetupData>& psd : m_lobby_data->players) {
         player_setup_data.emplace_back(psd.second);
-        if (psd.second.client_type == Networking::CLIENT_TYPE_AI_PLAYER)
+        if (psd.second.client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER)
             m_expected_ai_player_names.emplace(psd.second.player_name);
     }
 
-    server.CreateAIClients(player_setup_data, m_lobby_data->ai_aggr);
+    server.CreateAIClients(player_setup_data, int(m_lobby_data->ai_aggr));
 
     server.InitializePython();
 
@@ -2251,13 +2252,13 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
     const PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
     std::string player_name("Default_Player_Name_in_WaitingForMPGameJoiners::react(const JoinGame& msg)");
-    Networking::ClientType client_type(Networking::INVALID_CLIENT_TYPE);
+    Networking::ClientType client_type(Networking::ClientType::INVALID_CLIENT_TYPE);
     std::string client_version_string;
     boost::uuids::uuid cookie;
     ExtractJoinGameMessageData(message, player_name, client_type, client_version_string, cookie);
 
     // is this an AI?
-    if (client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
+    if (client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER) {
         // verify that player name was expected
         if (!m_expected_ai_player_names.count(player_name)) {
             // unexpected ai player
@@ -2278,7 +2279,7 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
             m_expected_ai_player_names.erase(player_name);
         }
 
-    } else if (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
+    } else if (client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER) {
         // if we don't need to authenticate player we got default roles here
         Networking::AuthRoles roles;
         bool authenticated;
@@ -2356,11 +2357,11 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
             return discard_event();
         }
 
-        if (!player_connection->HasAuthRole(Networking::ROLE_CLIENT_TYPE_PLAYER)) {
-            if (player_connection->HasAuthRole(Networking::ROLE_CLIENT_TYPE_OBSERVER))
-                client_type = Networking::CLIENT_TYPE_HUMAN_OBSERVER;
-            else if (player_connection->HasAuthRole(Networking::ROLE_CLIENT_TYPE_MODERATOR))
-                client_type = Networking::CLIENT_TYPE_HUMAN_MODERATOR;
+        if (!player_connection->HasAuthRole(Networking::RoleType::ROLE_CLIENT_TYPE_PLAYER)) {
+            if (player_connection->HasAuthRole(Networking::RoleType::ROLE_CLIENT_TYPE_OBSERVER))
+                client_type = Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER;
+            else if (player_connection->HasAuthRole(Networking::RoleType::ROLE_CLIENT_TYPE_MODERATOR))
+                client_type = Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR;
             else {
                 player_connection->SendMessage(ErrorMessage(UserStringNop("ERROR_CLIENT_TYPE_NOT_ALLOWED"), true));
                 server.Networking().Disconnect(player_connection);
@@ -2408,7 +2409,7 @@ sc::result WaitingForMPGameJoiners::react(const AuthResponse& msg) {
     player_connection->SetAuthenticated();
     Networking::ClientType client_type = player_connection->GetClientType();
 
-    if (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
+    if (client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER) {
         // drop other connection with same name before checks for expected players
         std::list<PlayerConnectionPtr> to_disconnect;
         for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin();
@@ -2423,11 +2424,11 @@ sc::result WaitingForMPGameJoiners::react(const AuthResponse& msg) {
         { server.Networking().Disconnect(conn); }
 
         // expected human player
-        if (!player_connection->HasAuthRole(Networking::ROLE_CLIENT_TYPE_PLAYER)) {
-            if (player_connection->HasAuthRole(Networking::ROLE_CLIENT_TYPE_OBSERVER))
-                client_type = Networking::CLIENT_TYPE_HUMAN_OBSERVER;
-            else if (player_connection->HasAuthRole(Networking::ROLE_CLIENT_TYPE_MODERATOR))
-                client_type = Networking::CLIENT_TYPE_HUMAN_MODERATOR;
+        if (!player_connection->HasAuthRole(Networking::RoleType::ROLE_CLIENT_TYPE_PLAYER)) {
+            if (player_connection->HasAuthRole(Networking::RoleType::ROLE_CLIENT_TYPE_OBSERVER))
+                client_type = Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER;
+            else if (player_connection->HasAuthRole(Networking::RoleType::ROLE_CLIENT_TYPE_MODERATOR))
+                client_type = Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR;
             else {
                 player_connection->SendMessage(ErrorMessage(UserStringNop("ERROR_CLIENT_TYPE_NOT_ALLOWED"), true));
                 server.Networking().Disconnect(player_connection);
@@ -2554,7 +2555,7 @@ sc::result PlayingGame::react(const PlayerChat& msg) {
 
     boost::posix_time::ptime timestamp = boost::posix_time::second_clock::universal_time();
 
-    if (recipients.empty() && sender->GetClientType() != Networking::CLIENT_TYPE_AI_PLAYER)
+    if (recipients.empty() && sender->GetClientType() != Networking::ClientType::CLIENT_TYPE_AI_PLAYER)
     {
         GG::Clr text_color(255, 255, 255, 255);
         if (auto empire = GetEmpire(server.PlayerEmpireID(sender->PlayerID())))
@@ -2597,7 +2598,7 @@ sc::result PlayingGame::react(const ModeratorAct& msg) {
 
     Networking::ClientType client_type = sender->GetClientType();
 
-    if (client_type != Networking::CLIENT_TYPE_HUMAN_MODERATOR) {
+    if (client_type != Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR) {
         ErrorLogger(FSM) << "PlayingGame::react(ModeratorAct): Non-moderator player sent moderator action, ignorning";
         return discard_event();
     }
@@ -2613,7 +2614,7 @@ sc::result PlayingGame::react(const ModeratorAct& msg) {
 
         // update player(s) of changed gamestate as result of action
         bool use_binary_serialization = sender->IsBinarySerializationUsed();
-        sender->SendMessage(TurnProgressMessage(Message::DOWNLOADING));
+        sender->SendMessage(TurnProgressMessage(Message::TurnProgressPhase::DOWNLOADING));
         sender->SendMessage(TurnPartialUpdateMessage(server.PlayerEmpireID(player_id),
                                                      GetUniverse(), use_binary_serialization));
     }
@@ -2708,12 +2709,12 @@ void PlayingGame::EstablishPlayer(const PlayerConnectionPtr& player_connection,
         DebugLogger(FSM) << "(ServerFSM) PlayingGame.EstablishPlayer at " << ss.str();
 
         if (!is_in_mplobby) {
-            if (client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
-                client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
+            if (client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER ||
+                client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR)
             {
                 // send playing game
                 server.AddObserverPlayerIntoGame(player_connection);
-            } else if (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
+            } else if (client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER) {
                 // previous connection was dropped
                 // set empire link to new connection by name
                 // send playing game
@@ -2852,8 +2853,8 @@ sc::result PlayingGame::react(const EliminateSelf& msg) {
     ServerApp& server = Server();
     const PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
-    if (player_connection->GetClientType() != Networking::CLIENT_TYPE_HUMAN_PLAYER
-        && player_connection->GetClientType() != Networking::CLIENT_TYPE_AI_PLAYER)
+    if (player_connection->GetClientType() != Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER
+        && player_connection->GetClientType() != Networking::ClientType::CLIENT_TYPE_AI_PLAYER)
     {
         WarnLogger(FSM) << "(ServerFSM) PlayingGame::EliminateSelf non-player connection " << player_connection->PlayerID();
         player_connection->SendMessage(ErrorMessage(UserStringNop("ERROR_NONPLAYER_CANNOT_CONCEDE"), true));
@@ -3007,7 +3008,7 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
     if (!ui_data_available)
         ui_data.reset();
 
-    if (client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER) {
+    if (client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER) {
         // observers cannot submit orders. ignore.
         ErrorLogger(FSM) << "WaitingForTurnEnd::react(TurnOrders&) received orders from player "
                          << sender->PlayerName()
@@ -3016,7 +3017,7 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
         sender->SendMessage(ErrorMessage(UserStringNop("ORDERS_FOR_WRONG_EMPIRE"), false));
         return discard_event();
 
-    } else if (client_type == Networking::INVALID_CLIENT_TYPE) {
+    } else if (client_type == Networking::ClientType::INVALID_CLIENT_TYPE) {
         // ??? lingering connection? shouldn't get to here. ignore.
         ErrorLogger(FSM) << "WaitingForTurnEnd::react(TurnOrders&) received orders from player "
                          << sender->PlayerName()
@@ -3025,15 +3026,15 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
         sender->SendMessage(ErrorMessage(UserStringNop("ORDERS_FOR_WRONG_EMPIRE"), false));
         return discard_event();
 
-    } else if (client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR) {
+    } else if (client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR) {
         // if the moderator ends the turn, it is done, regardless of what
         // players are doing or haven't done
         TraceLogger(FSM) << "WaitingForTurnEnd.TurnOrders : Moderator ended turn.";
         post_event(ProcessTurn());
         return transit<ProcessingTurn>();
 
-    } else if (client_type == Networking::CLIENT_TYPE_AI_PLAYER ||
-               client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
+    } else if (client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER ||
+               client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER)
     {
         // store empire orders and resume waiting for more
         Empire* empire = GetEmpire(server.PlayerEmpireID(player_id));
@@ -3080,14 +3081,14 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
              player_it != server.m_networking.established_end(); ++player_it)
         {
             PlayerConnectionPtr player_ctn = *player_it;
-            player_ctn->SendMessage(PlayerStatusMessage(Message::WAITING, empire_id));
+            player_ctn->SendMessage(PlayerStatusMessage(Message::PlayerStatus::WAITING, empire_id));
         }
     }
 
     // inform player who just submitted of their new status.  Note: not sure why
     // this only needs to be send to the submitting player and not all others as
     // well ...
-    sender->SendMessage(TurnProgressMessage(Message::WAITING_FOR_PLAYERS));
+    sender->SendMessage(TurnProgressMessage(Message::TurnProgressPhase::WAITING_FOR_PLAYERS));
 
     // if player who just submitted is the local human player, raise AI process priority
     // as raising process priority requires superuser privileges on OSX and Linux AFAIK,
@@ -3125,7 +3126,7 @@ sc::result WaitingForTurnEnd::react(const TurnPartialOrders& msg) {
     int player_id = sender->PlayerID();
     Networking::ClientType client_type = sender->GetClientType();
 
-    if (client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER) {
+    if (client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER) {
         // observers cannot submit orders. ignore.
         ErrorLogger(FSM) << "WaitingForTurnEnd::react(TurnPartialOrders&) received orders from player "
                          << sender->PlayerName()
@@ -3134,7 +3135,7 @@ sc::result WaitingForTurnEnd::react(const TurnPartialOrders& msg) {
         sender->SendMessage(ErrorMessage(UserStringNop("ORDERS_FOR_WRONG_EMPIRE"), false));
         return discard_event();
 
-    } else if (client_type == Networking::INVALID_CLIENT_TYPE) {
+    } else if (client_type == Networking::ClientType::INVALID_CLIENT_TYPE) {
         // ??? lingering connection? shouldn't get to here. ignore.
         ErrorLogger(FSM) << "WaitingForTurnEnd::react(TurnPartialOrders&) received orders from player "
                          << sender->PlayerName()
@@ -3143,8 +3144,8 @@ sc::result WaitingForTurnEnd::react(const TurnPartialOrders& msg) {
         sender->SendMessage(ErrorMessage(UserStringNop("ORDERS_FOR_WRONG_EMPIRE"), false));
         return discard_event();
 
-    } else if (client_type == Networking::CLIENT_TYPE_AI_PLAYER ||
-               client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
+    } else if (client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER ||
+               client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER)
     {
         // store empire orders and resume waiting for more
         const Empire* empire = GetEmpire(server.PlayerEmpireID(player_id));
@@ -3194,8 +3195,8 @@ sc::result WaitingForTurnEnd::react(const RevokeReadiness& msg) {
     int player_id = sender->PlayerID();
     Networking::ClientType client_type = sender->GetClientType();
 
-    if (client_type == Networking::CLIENT_TYPE_AI_PLAYER ||
-        client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
+    if (client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER ||
+        client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER)
     {
         // store empire orders and resume waiting for more
         const Empire* empire = GetEmpire(server.PlayerEmpireID(player_id));
@@ -3226,7 +3227,7 @@ sc::result WaitingForTurnEnd::react(const RevokeReadiness& msg) {
              player_it != server.m_networking.established_end(); ++player_it)
         {
             PlayerConnectionPtr player_ctn = *player_it;
-            player_ctn->SendMessage(PlayerStatusMessage(Message::PLAYING_TURN, empire_id));
+            player_ctn->SendMessage(PlayerStatusMessage(Message::PlayerStatus::PLAYING_TURN, empire_id));
         }
     }
 
@@ -3358,8 +3359,8 @@ sc::result ProcessingTurn::react(const ProcessTurn& u) {
         {
             const PlayerConnectionPtr& recipient_player_ctn = *recipient_player_it;
             recipient_player_ctn->SendMessage(PlayerStatusMessage(empire.second->Eliminated() ?
-                                                                      Message::WAITING :
-                                                                      Message::PLAYING_TURN,
+                                                                      Message::PlayerStatus::WAITING :
+                                                                      Message::PlayerStatus::PLAYING_TURN,
                                                                   empire.first));
         }
     }
@@ -3399,8 +3400,8 @@ ShuttingDownServer::ShuttingDownServer(my_context c) :
     // Inform all players that the game is ending.  Only check the AIs for acknowledgement, because
     // they are the server's child processes.
     for (PlayerConnectionPtr player : server.m_networking) {
-        player->SendMessage(EndGameMessage(Message::PLAYER_DISCONNECT));
-        if (player->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER) {
+        player->SendMessage(EndGameMessage(Message::EndGameReason::PLAYER_DISCONNECT));
+        if (player->GetClientType() == Networking::ClientType::CLIENT_TYPE_AI_PLAYER) {
             // If sending message will result in error it will be processed in Disconnection
             // handle.
             m_player_id_ack_expected.emplace(player->PlayerID());

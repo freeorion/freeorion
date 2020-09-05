@@ -416,30 +416,30 @@ void Edit::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_key
     if (!numlock_on) {
         // convert keypad keys into corresponding non-number keys
         switch (key) {
-        case GGK_KP0:       key = GGK_INSERT;   break;
-        case GGK_KP1:       key = GGK_END;      break;
-        case GGK_KP2:       key = GGK_DOWN;     break;
-        case GGK_KP3:       key = GGK_PAGEDOWN; break;
-        case GGK_KP4:       key = GGK_LEFT;     break;
-        case GGK_KP5:                           break;
-        case GGK_KP6:       key = GGK_RIGHT;    break;
-        case GGK_KP7:       key = GGK_HOME;     break;
-        case GGK_KP8:       key = GGK_UP;       break;
-        case GGK_KP9:       key = GGK_PAGEUP;   break;
-        case GGK_KP_PERIOD: key = GGK_DELETE;   break;
-        default:                                break;
+        case Key::GGK_KP0:       key = Key::GGK_INSERT;   break;
+        case Key::GGK_KP1:       key = Key::GGK_END;      break;
+        case Key::GGK_KP2:       key = Key::GGK_DOWN;     break;
+        case Key::GGK_KP3:       key = Key::GGK_PAGEDOWN; break;
+        case Key::GGK_KP4:       key = Key::GGK_LEFT;     break;
+        case Key::GGK_KP5:                                break;
+        case Key::GGK_KP6:       key = Key::GGK_RIGHT;    break;
+        case Key::GGK_KP7:       key = Key::GGK_HOME;     break;
+        case Key::GGK_KP8:       key = Key::GGK_UP;       break;
+        case Key::GGK_KP9:       key = Key::GGK_PAGEUP;   break;
+        case Key::GGK_KP_PERIOD: key = Key::GGK_DELETE;   break;
+        default:                                          break;
         }
     }
 
     switch (key) {
-    case GGK_HOME:
+    case Key::GGK_HOME:
         m_first_char_shown = CP0;
         if (shift_down)
             m_cursor_pos.second = CP0;
         else
             m_cursor_pos.second = m_cursor_pos.first = CP0;
         break;
-    case GGK_LEFT:
+    case Key::GGK_LEFT:
         if (MultiSelected() && !shift_down) {
             if (!ctrl_down)
                 m_cursor_pos.second = m_cursor_pos.first = std::min(m_cursor_pos.first, m_cursor_pos.second);
@@ -462,7 +462,7 @@ void Edit::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_key
         }
         AdjustView();
         break;
-    case GGK_RIGHT:
+    case Key::GGK_RIGHT:
         if (MultiSelected() && !shift_down) {
             if (!ctrl_down)
                 m_cursor_pos.second = m_cursor_pos.first = std::max(m_cursor_pos.first, m_cursor_pos.second);
@@ -484,14 +484,14 @@ void Edit::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_key
         }
         AdjustView();
         break;
-    case GGK_END:
+    case Key::GGK_END:
         if (shift_down)
             m_cursor_pos.second = Length();
         else
             m_cursor_pos.second = m_cursor_pos.first = Length();
         AdjustView();
         break;
-    case GGK_BACKSPACE:
+    case Key::GGK_BACKSPACE:
         if (MultiSelected()) {
             ClearSelected();
             emit_signal = true;
@@ -502,7 +502,7 @@ void Edit::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_key
         }
         AdjustView();
         break;
-    case GGK_DELETE:
+    case Key::GGK_DELETE:
         if (MultiSelected()) {
             ClearSelected();
             emit_signal = true;
@@ -512,8 +512,8 @@ void Edit::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_key
         }
         AdjustView();
         break;
-    case GGK_RETURN:
-    case GGK_KP_ENTER:
+    case Key::GGK_RETURN:
+    case Key::GGK_KP_ENTER:
         FocusUpdateSignal(Text());
         TextControl::KeyPress(key, key_code_point, mod_keys);
         m_recently_edited = false;

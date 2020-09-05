@@ -518,7 +518,7 @@ ListBox::ListBox(Clr color, Clr interior/* = CLR_ZERO*/) :
 void ListBox::CompleteConstruction()
 {
     ValidateStyle();
-    SetChildClippingMode(ClipToClient);
+    SetChildClippingMode(ChildClippingMode::ClipToClient);
     m_auto_scroll_timer.Stop();
     m_auto_scroll_timer.Connect(this);
 
@@ -1486,13 +1486,13 @@ void ListBox::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_
     if (!Disabled()) {
         bool bring_caret_into_view = true;
         switch (key) {
-        case GGK_SPACE: // space bar (selects item under caret like a mouse click)
+        case Key::GGK_SPACE: // space bar (selects item under caret like a mouse click)
             if (m_caret != m_rows.end()) {
                 m_old_sel_row_selected = m_selections.count(m_caret);
                 ClickAtRow(m_caret, mod_keys);
             }
             break;
-        case GGK_DELETE: // delete key
+        case Key::GGK_DELETE: // delete key
             if (m_style & LIST_USERDELETE) {
                 if (m_style & LIST_NOSEL) {
                     if (m_caret != m_rows.end())
@@ -1512,15 +1512,15 @@ void ListBox::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_
             break;
 
         // vertical scrolling keys
-        case GGK_UP: // arrow-up (not numpad arrow)
+        case Key::GGK_UP: // arrow-up (not numpad arrow)
             if (m_caret != m_rows.end() && m_caret != m_rows.begin())
                 --m_caret;
             break;
-        case GGK_DOWN: // arrow-down (not numpad arrow)
+        case Key::GGK_DOWN: // arrow-down (not numpad arrow)
             if (m_caret != m_rows.end() && m_caret != --m_rows.end())
                 ++m_caret;
             break;
-        case GGK_PAGEUP: // page up key (not numpad key)
+        case Key::GGK_PAGEUP: // page up key (not numpad key)
             if (m_caret != m_rows.end()) {
                 Y space = ClientSize().y;
                 while (m_caret != m_rows.begin() && 0 < (space -= (*std::prev(m_caret))->Height())) {
@@ -1528,7 +1528,7 @@ void ListBox::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_
                 }
             }
             break;
-        case GGK_PAGEDOWN: // page down key (not numpad key)
+        case Key::GGK_PAGEDOWN: // page down key (not numpad key)
             if (m_caret != m_rows.end()) {
                 Y space = ClientSize().y;
                 while (m_caret != --m_rows.end() && 0 < (space -= (*m_caret)->Height())) {
@@ -1536,17 +1536,17 @@ void ListBox::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_
                 }
             }
             break;
-        case GGK_HOME: // home key (not numpad)
+        case Key::GGK_HOME: // home key (not numpad)
             if (m_caret != m_rows.end())
                 m_caret = m_rows.begin();
             break;
-        case GGK_END: // end key (not numpad)
+        case Key::GGK_END: // end key (not numpad)
             if (m_caret != m_rows.end())
                 m_caret = --m_rows.end();
             break;
 
         // horizontal scrolling keys
-        case GGK_LEFT:{ // left key (not numpad key)
+        case Key::GGK_LEFT:{ // left key (not numpad key)
             if (m_first_col_shown == 0)
                 break;
 
@@ -1557,7 +1557,7 @@ void ListBox::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_
             m_hscroll->ScrollTo(Value(new_scroll_offset));
             SignalScroll(*m_hscroll, true);
             break;}
-        case GGK_RIGHT:{ // right key (not numpad)
+        case Key::GGK_RIGHT:{ // right key (not numpad)
             std::size_t num_cols((*m_first_row_shown)->GetLayout()->Children().size());
             if (num_cols <= 1)
                 break;
@@ -1579,7 +1579,7 @@ void ListBox::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_
         }
 
         if (bring_caret_into_view &&
-            key != GGK_SPACE && key != GGK_DELETE && key != GGK_LEFT && key != GGK_RIGHT) {
+            key != Key::GGK_SPACE && key != Key::GGK_DELETE && key != Key::GGK_LEFT && key != Key::GGK_RIGHT) {
             BringCaretIntoView();
         }
     } else {
@@ -1692,7 +1692,7 @@ bool ListBox::EventFilter(Wnd* w, const WndEvent& event)
     Flags<ModKey> mod_keys = event.ModKeys();
 
     switch (event.Type()) {
-    case WndEvent::LButtonDown: {
+    case WndEvent::EventType::LButtonDown: {
         m_old_sel_row = RowUnderPt(pt);
         if (m_old_sel_row != m_rows.end()) {
             m_old_sel_row_selected = m_selections.count(m_old_sel_row);
@@ -1702,12 +1702,12 @@ bool ListBox::EventFilter(Wnd* w, const WndEvent& event)
         break;
     }
 
-    case WndEvent::LButtonUp: {
+    case WndEvent::EventType::LButtonUp: {
         m_old_sel_row = m_rows.end();
         break;
     }
 
-    case WndEvent::LClick: {
+    case WndEvent::EventType::LClick: {
         if (m_old_sel_row != m_rows.end()) {
             iterator sel_row = RowUnderPt(pt);
             if (sel_row == m_old_sel_row) {
@@ -1722,7 +1722,7 @@ bool ListBox::EventFilter(Wnd* w, const WndEvent& event)
         break;
     }
 
-    case WndEvent::LDoubleClick: {
+    case WndEvent::EventType::LDoubleClick: {
         iterator row = RowUnderPt(pt);
         if (row != m_rows.end() && row == m_lclick_row) {
             DoubleClickedRowSignal(row, pt, mod_keys);
@@ -1733,7 +1733,7 @@ bool ListBox::EventFilter(Wnd* w, const WndEvent& event)
         break;
     }
 
-    case WndEvent::RButtonDown: {
+    case WndEvent::EventType::RButtonDown: {
         iterator row = RowUnderPt(pt);
         if (row != m_rows.end())
             m_old_rdown_row = row;
@@ -1742,7 +1742,7 @@ bool ListBox::EventFilter(Wnd* w, const WndEvent& event)
         break;
     }
 
-    case WndEvent::RClick: {
+    case WndEvent::EventType::RClick: {
         iterator row = RowUnderPt(pt);
         if (row != m_rows.end() && row == m_old_rdown_row) {
             m_rclick_row = row;
@@ -1752,7 +1752,7 @@ bool ListBox::EventFilter(Wnd* w, const WndEvent& event)
         break;
     }
 
-    case WndEvent::MouseEnter: {
+    case WndEvent::EventType::MouseEnter: {
         if (m_style & LIST_BROWSEUPDATES) {
             iterator sel_row = RowUnderPt(pt);
             if (sel_row != m_rows.end() && m_last_row_browsed != sel_row)
@@ -1761,10 +1761,10 @@ bool ListBox::EventFilter(Wnd* w, const WndEvent& event)
         break;
     }
 
-    case WndEvent::MouseHere:
+    case WndEvent::EventType::MouseHere:
         break;
 
-    case WndEvent::MouseLeave: {
+    case WndEvent::EventType::MouseLeave: {
         if (m_style & LIST_BROWSEUPDATES) {
             if (m_last_row_browsed != m_rows.end())
                 BrowsedRowSignal(m_last_row_browsed = m_rows.end());
@@ -1772,30 +1772,30 @@ bool ListBox::EventFilter(Wnd* w, const WndEvent& event)
         break;
     }
 
-    case WndEvent::GainingFocus: {
+    case WndEvent::EventType::GainingFocus: {
         if (w == this)
             return false;
         GUI::GetGUI()->SetFocusWnd(shared_from_this());
         break;
     }
 
-    case WndEvent::MouseWheel:
+    case WndEvent::EventType::MouseWheel:
         return false;
 
-    case WndEvent::DragDropEnter:
-    case WndEvent::DragDropHere:
-    case WndEvent::CheckDrops:
-    case WndEvent::DragDropLeave:
-    case WndEvent::DragDroppedOn:
+    case WndEvent::EventType::DragDropEnter:
+    case WndEvent::EventType::DragDropHere:
+    case WndEvent::EventType::CheckDrops:
+    case WndEvent::EventType::DragDropLeave:
+    case WndEvent::EventType::DragDroppedOn:
         if (w == this)
             return false;
         //std::cout << "ListBox::EventFilter of type: " << EventTypeName(event) << std::endl;
         HandleEvent(event);
         break;
 
-    case WndEvent::KeyPress:
-    case WndEvent::KeyRelease:
-    case WndEvent::TimerFiring:
+    case WndEvent::EventType::KeyPress:
+    case WndEvent::EventType::KeyRelease:
+    case WndEvent::EventType::TimerFiring:
         return false;
 
     default:

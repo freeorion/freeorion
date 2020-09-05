@@ -37,7 +37,7 @@ GG_ENUM(ShipPartClass,
 //! Describes an equipable part for a ship.
 class FO_COMMON_API ShipPart {
 public:
-    ShipPart();
+    ShipPart() = default;
 
     ShipPart(ShipPartClass part_class, double capacity, double stat2,
              CommonParams&& common_params, std::string&& name,
@@ -135,7 +135,7 @@ private:
 
     std::string     m_name;
     std::string     m_description;
-    ShipPartClass   m_class;
+    ShipPartClass   m_class = ShipPartClass::INVALID_SHIP_PART_CLASS;
     float           m_capacity = 0.0f;
     //! Damage for a hangar bay, shots per turn for a weapon, etc.
     float           m_secondary_stat = 0.0f;

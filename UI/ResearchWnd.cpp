@@ -135,7 +135,7 @@ namespace {
         m_empire_id(empire_id),
         m_paused(paused)
     {
-        SetChildClippingMode(ClipToClient);
+        SetChildClippingMode(ChildClippingMode::ClipToClient);
 
         const int FONT_PTS = ClientUI::Pts();
         const GG::Y METER_HEIGHT(FONT_PTS);
@@ -169,7 +169,7 @@ namespace {
         m_name_text->Resize(GG::Pt(NAME_WIDTH, GG::Y(FONT_PTS + 2*MARGIN)));
         m_name_text->SetTextColor(clr);
         m_name_text->ClipText(true);
-        m_name_text->SetChildClippingMode(ClipToClient);
+        m_name_text->SetChildClippingMode(ChildClippingMode::ClipToClient);
         top += m_name_text->Height();
 
         int total_time = 0;
@@ -207,7 +207,7 @@ namespace {
         m_RPs_and_turns_text->Resize(GG::Pt(TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + MARGIN)));
         m_RPs_and_turns_text->SetTextColor(clr);
         m_RPs_and_turns_text->ClipText(true);
-        m_RPs_and_turns_text->SetChildClippingMode(ClipToClient);
+        m_RPs_and_turns_text->SetChildClippingMode(ChildClippingMode::ClipToClient);
 
         left += TURNS_AND_COST_WIDTH;
 
@@ -218,7 +218,7 @@ namespace {
         m_turns_remaining_text->Resize(GG::Pt(TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + MARGIN)));
         m_turns_remaining_text->SetTextColor(clr);
         m_turns_remaining_text->ClipText(true);
-        m_turns_remaining_text->SetChildClippingMode(ClipToClient);
+        m_turns_remaining_text->SetChildClippingMode(ChildClippingMode::ClipToClient);
     }
 
     void QueueTechPanel::CompleteConstruction() {
@@ -443,7 +443,7 @@ void ResearchWnd::CompleteConstruction() {
     AttachChild(m_queue_wnd);
     AttachChild(m_tech_tree_wnd);
 
-    SetChildClippingMode(ClipToClient);
+    SetChildClippingMode(ChildClippingMode::ClipToClient);
 
     DoLayout(true);
 }
@@ -614,7 +614,7 @@ void ResearchWnd::UpdateInfoPanel() {
     }
 
     const ResearchQueue& queue = empire->GetResearchQueue();
-    float RPs = empire->ResourceOutput(RE_RESEARCH);
+    float RPs = empire->ResourceOutput(ResourceType::RE_RESEARCH);
     float total_queue_cost = queue.TotalRPsSpent();
     m_research_info_panel->SetTotalPointsCost(RPs, total_queue_cost);
 

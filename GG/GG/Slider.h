@@ -141,7 +141,7 @@ Slider<T>::Slider(T min, T max, Orientation orientation,
     m_line_width(line_width),
     m_tab_width(tab_width),
     m_tab_drag_offset(-1),
-    m_tab(m_orientation == VERTICAL ?
+    m_tab(m_orientation == Orientation::VERTICAL ?
           GetStyleFactory()->NewVSliderTabButton(color) :
           GetStyleFactory()->NewHSliderTabButton(color)),
     m_dragging_tab(false)
@@ -166,8 +166,8 @@ template <typename T>
 Pt Slider<T>::MinUsableSize() const
 {
     Pt tab_min = m_tab->MinUsableSize();
-    return Pt(m_orientation == VERTICAL ? tab_min.x : Size().x,
-              m_orientation == VERTICAL ? Size().y : tab_min.y);
+    return Pt(m_orientation == Orientation::VERTICAL ? tab_min.x : Size().x,
+              m_orientation == Orientation::VERTICAL ? Size().y : tab_min.y);
 }
 
 template <typename T>
@@ -200,9 +200,10 @@ void Slider<T>::Render()
     const Pt UL = UpperLeft();
     const Pt LR = LowerRight();
     Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
-    int tab_width = m_orientation == VERTICAL ? Value(m_tab->Height()) : Value(m_tab->Width());
+    int tab_width = m_orientation == Orientation::VERTICAL ?
+        Value(m_tab->Height()) : Value(m_tab->Width());
     Pt ul, lr;
-    if (m_orientation == VERTICAL) {
+    if (m_orientation == Orientation::VERTICAL) {
         ul.x = ((LR.x + UL.x) - static_cast<int>(m_line_width)) / 2;
         lr.x = ul.x + static_cast<int>(m_line_width);
         ul.y = UL.y + tab_width / 2;
@@ -220,7 +221,7 @@ template <typename T>
 void Slider<T>::SizeMove(const Pt& ul, const Pt& lr)
 {
     Wnd::SizeMove(ul, lr);
-    if (m_orientation == VERTICAL)
+    if (m_orientation == Orientation::VERTICAL)
         m_tab->SizeMove(Pt(), Pt(lr.x - ul.x, Y(m_tab_width)));
     else
         m_tab->SizeMove(Pt(), Pt(X(m_tab_width), lr.y - ul.y));
@@ -282,7 +283,7 @@ T Slider<T>::PtToPosn(const Pt& pt) const
     int line_min = 0;
     int line_max = 0;
     int pixel_nearest_to_pt_on_line = 0;
-    if (m_orientation == VERTICAL) {
+    if (m_orientation == Orientation::VERTICAL) {
         line_min = Value(m_tab->Height() / 2);
         line_max = Value(Height() - (m_tab->Height() - m_tab->Height() / 2));
         pixel_nearest_to_pt_on_line = std::max(line_min, std::min(Value(lr.y - pt.y), line_max));
@@ -304,32 +305,32 @@ void Slider<T>::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mo
 {
     if (!Disabled()) {
         switch (key) {
-        case GGK_HOME:
+        case Key::GGK_HOME:
             SlideToImpl(m_range_min, true);
             break;
-        case GGK_END:
+        case Key::GGK_END:
             SlideToImpl(m_range_max, true);
             break;
-        case GGK_UP:
-            if (m_orientation != HORIZONTAL)
+        case Key::GGK_UP:
+            if (m_orientation != Orientation::HORIZONTAL)
                 SlideToImpl(m_posn + (0 < (m_range_max - m_range_min) ? 1 : -1), true);
             break;
-        case GGK_RIGHT:
-            if (m_orientation != VERTICAL)
+        case Key::GGK_RIGHT:
+            if (m_orientation != Orientation::VERTICAL)
                 SlideToImpl(m_posn + (0 < (m_range_max - m_range_min) ? 1 : -1), true);
             break;
-        case GGK_DOWN:
-            if (m_orientation != HORIZONTAL)
+        case Key::GGK_DOWN:
+            if (m_orientation != Orientation::HORIZONTAL)
                 SlideToImpl(m_posn - (0 < (m_range_max - m_range_min) ? 1 : -1), true);
             break;
-        case GGK_LEFT:
-            if (m_orientation != VERTICAL)
+        case Key::GGK_LEFT:
+            if (m_orientation != Orientation::VERTICAL)
                 SlideToImpl(m_posn - (0 < (m_range_max - m_range_min) ? 1 : -1), true);
             break;
-        case GGK_KP_PLUS:
+        case Key::GGK_KP_PLUS:
             SlideToImpl(m_posn + 1, true);
             break;
-        case GGK_KP_MINUS:
+        case Key::GGK_KP_MINUS:
             SlideToImpl(m_posn - 1, true);
             break;
         default:
@@ -346,10 +347,10 @@ bool Slider<T>::EventFilter(Wnd* w, const WndEvent& event)
 {
     if (w == m_tab.get()) {
         switch (event.Type()) {
-        case WndEvent::LDrag: {
+        case WndEvent::EventType::LDrag: {
             if (!Disabled()) {
                 Pt new_ul = m_tab->RelativeUpperLeft() + event.DragMove();
-                if (m_orientation == VERTICAL) {
+                if (m_orientation == Orientation::VERTICAL) {
                     new_ul.x = m_tab->RelativeUpperLeft().x;
                     new_ul.y = std::max(Y0, std::min(new_ul.y, ClientHeight() - m_tab->Height()));
                 } else {
@@ -361,17 +362,17 @@ bool Slider<T>::EventFilter(Wnd* w, const WndEvent& event)
             }
             return true;
         }
-        case WndEvent::LButtonDown:
+        case WndEvent::EventType::LButtonDown:
             m_dragging_tab = true;
             break;
-        case WndEvent::LButtonUp:
-        case WndEvent::LClick: {
+        case WndEvent::EventType::LButtonUp:
+        case WndEvent::EventType::LClick: {
             if (!Disabled())
                 SlidAndStoppedSignal(m_posn, m_range_min, m_range_max);
             m_dragging_tab = false;
             break;
         }
-        case WndEvent::MouseLeave:
+        case WndEvent::EventType::MouseLeave:
             return m_dragging_tab;
         default:
             break;
@@ -386,10 +387,10 @@ void Slider<T>::MoveTabToPosn()
     assert((m_range_min <= m_posn && m_posn <= m_range_max) ||
            (m_range_max <= m_posn && m_posn <= m_range_min));
     double fractional_distance = static_cast<double>(m_posn - m_range_min) / (m_range_max - m_range_min);
-    int tab_width = m_orientation == VERTICAL ? Value(m_tab->Height()) : Value(m_tab->Width());
-    int line_length = (m_orientation == VERTICAL ? Value(Height()) : Value(Width())) - tab_width;
+    int tab_width = m_orientation == Orientation::VERTICAL ? Value(m_tab->Height()) : Value(m_tab->Width());
+    int line_length = (m_orientation == Orientation::VERTICAL ? Value(Height()) : Value(Width())) - tab_width;
     int pixel_distance = static_cast<int>(line_length * fractional_distance);
-    if (m_orientation == VERTICAL)
+    if (m_orientation == Orientation::VERTICAL)
         m_tab->MoveTo(Pt(m_tab->RelativeUpperLeft().x, Height() - tab_width - pixel_distance));
     else
         m_tab->MoveTo(Pt(X(pixel_distance), m_tab->RelativeUpperLeft().y));
@@ -399,8 +400,8 @@ template <typename T>
 void Slider<T>::UpdatePosn()
 {
     T old_posn = m_posn;
-    int line_length = m_orientation == VERTICAL ? Value(Height() - m_tab->Height()) : Value(Width() - m_tab->Width());
-    int tab_posn = (m_orientation == VERTICAL ? Value(Height() - m_tab->RelativeLowerRight().y) : Value(m_tab->RelativeUpperLeft().x));
+    int line_length = m_orientation == Orientation::VERTICAL ? Value(Height() - m_tab->Height()) : Value(Width() - m_tab->Width());
+    int tab_posn = (m_orientation == Orientation::VERTICAL ? Value(Height() - m_tab->RelativeLowerRight().y) : Value(m_tab->RelativeUpperLeft().x));
     double fractional_distance = static_cast<double>(tab_posn) / line_length;
     m_posn = m_range_min + static_cast<T>((m_range_max - m_range_min) * fractional_distance);
     if (m_posn != old_posn)

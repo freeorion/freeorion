@@ -60,14 +60,15 @@ EnumMap<EnumType>& GetEnumMap() {
     * Instead, rely on the functions generated
     * by the GG_ENUM or GG_CLASS_ENUM macro invocations. */
 template <typename EnumType>
-void BuildEnumMap(EnumMap<EnumType>& map, const std::string& enum_name, const char* comma_separated_names) {
+void BuildEnumMap(EnumMap<EnumType>& map, const std::string& enum_name,
+                  const char* comma_separated_names)
+{
     std::stringstream name_stream(comma_separated_names);
 
     int default_value = 0;
     std::string name;
-    while (std::getline(name_stream, name, ',')) {
+    while (std::getline(name_stream, name, ','))
         map.Insert(default_value, std::move(name));
-    }
 }
 
 /** An enum macro for use inside classes.
@@ -75,11 +76,11 @@ void BuildEnumMap(EnumMap<EnumType>& map, const std::string& enum_name, const ch
   * all of which will exist in whatever namespace this
   * macro is used. */
 #define GG_CLASS_ENUM(EnumName, ...)                                                    \
-    enum EnumName : int {                                                               \
+    enum class EnumName : int {                                                         \
         __VA_ARGS__                                                                     \
-     };                                                                                 \
+    };                                                                                  \
                                                                                         \
-    friend inline std::istream& operator>>(std::istream& is, EnumName& value) {  \
+    friend inline std::istream& operator>>(std::istream& is, EnumName& value) {         \
         ::GG::EnumMap<EnumName>& map = ::GG::GetEnumMap<EnumName>();                    \
         if (map.size() == 0)                                                            \
             ::GG::BuildEnumMap(map, #EnumName, #__VA_ARGS__);                           \
@@ -90,7 +91,7 @@ void BuildEnumMap(EnumMap<EnumType>& map, const std::string& enum_name, const ch
         return is;                                                                      \
     }                                                                                   \
                                                                                         \
-    friend inline std::ostream& operator<<(std::ostream& os, EnumName value) {   \
+    friend inline std::ostream& operator<<(std::ostream& os, EnumName value) {          \
         ::GG::EnumMap<EnumName>& map = ::GG::GetEnumMap<EnumName>();                    \
         if (map.size() == 0)                                                            \
             ::GG::BuildEnumMap(map, #EnumName, #__VA_ARGS__);                           \
@@ -104,11 +105,11 @@ void BuildEnumMap(EnumMap<EnumType>& map, const std::string& enum_name, const ch
   * all of which will exist in whatever namespace this
   * macro is used. */
 #define GG_ENUM(EnumName, ...)                                                          \
-    enum EnumName : int {                                                               \
+    enum class EnumName : int {                                                         \
         __VA_ARGS__                                                                     \
     };                                                                                  \
                                                                                         \
-    inline std::istream& operator>>(std::istream& is, EnumName& value) {         \
+    inline std::istream& operator>>(std::istream& is, EnumName& value) {                \
         ::GG::EnumMap<EnumName>& map = ::GG::GetEnumMap<EnumName>();                    \
         if (map.size() == 0)                                                            \
             ::GG::BuildEnumMap(map, #EnumName, #__VA_ARGS__);                           \
@@ -119,7 +120,7 @@ void BuildEnumMap(EnumMap<EnumType>& map, const std::string& enum_name, const ch
         return is;                                                                      \
     }                                                                                   \
                                                                                         \
-    inline std::ostream& operator<<(std::ostream& os, EnumName value) {          \
+    inline std::ostream& operator<<(std::ostream& os, EnumName value) {                 \
         ::GG::EnumMap<EnumName>& map = ::GG::GetEnumMap<EnumName>();                    \
         if (map.size() == 0)                                                            \
             ::GG::BuildEnumMap(map, #EnumName, #__VA_ARGS__);                           \
@@ -176,7 +177,7 @@ void EnumMap<EnumType>::Insert(int& default_value, const std::string& entry) {
 
     m_name_to_value_map[name] = value;
     m_value_to_name_map[value] = std::move(name);
-    default_value = value + 1;
+    default_value = static_cast<int>(value) + 1;
 }
 
 }

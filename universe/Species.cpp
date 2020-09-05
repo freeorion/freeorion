@@ -59,28 +59,28 @@ unsigned int FocusType::GetCheckSum() const {
 namespace {
     std::string PlanetTypeToString(PlanetType type) {
         switch (type) {
-        case PT_SWAMP:      return "Swamp";
-        case PT_TOXIC:      return "Toxic";
-        case PT_INFERNO:    return "Inferno";
-        case PT_RADIATED:   return "Radiated";
-        case PT_BARREN:     return "Barren";
-        case PT_TUNDRA:     return "Tundra";
-        case PT_DESERT:     return "Desert";
-        case PT_TERRAN:     return "Terran";
-        case PT_OCEAN:      return "Ocean";
-        case PT_ASTEROIDS:  return "Asteroids";
-        case PT_GASGIANT:   return "GasGiant";
-        default:            return "?";
+        case PlanetType::PT_SWAMP:     return "Swamp";
+        case PlanetType::PT_TOXIC:     return "Toxic";
+        case PlanetType::PT_INFERNO:   return "Inferno";
+        case PlanetType::PT_RADIATED:  return "Radiated";
+        case PlanetType::PT_BARREN:    return "Barren";
+        case PlanetType::PT_TUNDRA:    return "Tundra";
+        case PlanetType::PT_DESERT:    return "Desert";
+        case PlanetType::PT_TERRAN:    return "Terran";
+        case PlanetType::PT_OCEAN:     return "Ocean";
+        case PlanetType::PT_ASTEROIDS: return "Asteroids";
+        case PlanetType::PT_GASGIANT:  return "GasGiant";
+        default:                       return "?";
         }
     }
     std::string PlanetEnvironmentToString(PlanetEnvironment env) {
         switch (env) {
-        case PE_UNINHABITABLE:  return "Uninhabitable";
-        case PE_HOSTILE:        return "Hostile";
-        case PE_POOR:           return "Poor";
-        case PE_ADEQUATE:       return "Adequate";
-        case PE_GOOD:           return "Good";
-        default:                return "?";
+        case PlanetEnvironment::PE_UNINHABITABLE: return "Uninhabitable";
+        case PlanetEnvironment::PE_HOSTILE:       return "Hostile";
+        case PlanetEnvironment::PE_POOR:          return "Poor";
+        case PlanetEnvironment::PE_ADEQUATE:      return "Adequate";
+        case PlanetEnvironment::PE_GOOD:          return "Good";
+        default:                                  return "?";
         }
     }
 }
@@ -132,7 +132,7 @@ void Species::Init() {
 
         std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetEnvironment>>> environments;
         environments.emplace_back(
-            std::make_unique<ValueRef::Constant<PlanetEnvironment>>( ::PE_UNINHABITABLE));
+            std::make_unique<ValueRef::Constant<PlanetEnvironment>>(PlanetEnvironment::PE_UNINHABITABLE));
 
         auto this_species_name_ref =
             std::make_unique<ValueRef::Constant<std::string>>(m_name);  // m_name specifies this species
@@ -144,7 +144,7 @@ void Species::Init() {
                         std::move(environments), std::move(this_species_name_ref)))));
 
         auto type_cond = std::make_unique<Condition::Type>(
-            std::make_unique<ValueRef::Constant<UniverseObjectType>>( ::OBJ_POP_CENTER));
+            std::make_unique<ValueRef::Constant<UniverseObjectType>>(UniverseObjectType::OBJ_POP_CENTER));
 
         m_location = std::unique_ptr<Condition::Condition>(std::make_unique<Condition::And>(
             std::move(enviro_cond), std::move(type_cond)));
@@ -234,7 +234,7 @@ std::string Species::GameplayDescription() const {
 PlanetEnvironment Species::GetPlanetEnvironment(PlanetType planet_type) const {
     auto it = m_planet_environments.find(planet_type);
     if (it == m_planet_environments.end())
-        return PE_UNINHABITABLE;
+        return PlanetEnvironment::PE_UNINHABITABLE;
     else
         return it->second;
 }
@@ -242,38 +242,38 @@ PlanetEnvironment Species::GetPlanetEnvironment(PlanetType planet_type) const {
 namespace {
     PlanetType RingNextPlanetType(PlanetType current_type) {
         PlanetType next(PlanetType(int(current_type)+1));
-        if (next >= PT_ASTEROIDS)
-            next = PT_SWAMP;
+        if (next >= PlanetType::PT_ASTEROIDS)
+            next = PlanetType::PT_SWAMP;
         return next;
     }
     PlanetType RingPreviousPlanetType(PlanetType current_type) {
         PlanetType next(PlanetType(int(current_type)-1));
-        if (next <= INVALID_PLANET_TYPE)
-            next = PT_OCEAN;
+        if (next <= PlanetType::INVALID_PLANET_TYPE)
+            next = PlanetType::PT_OCEAN;
         return next;
     }
 }
 
 PlanetType Species::NextBetterPlanetType(PlanetType initial_planet_type) const {
     // some types can't be terraformed
-    if (initial_planet_type == PT_GASGIANT)
-        return PT_GASGIANT;
-    if (initial_planet_type == PT_ASTEROIDS)
-        return PT_ASTEROIDS;
-    if (initial_planet_type == INVALID_PLANET_TYPE)
-        return INVALID_PLANET_TYPE;
-    if (initial_planet_type == NUM_PLANET_TYPES)
-        return NUM_PLANET_TYPES;
+    if (initial_planet_type == PlanetType::PT_GASGIANT)
+        return PlanetType::PT_GASGIANT;
+    if (initial_planet_type == PlanetType::PT_ASTEROIDS)
+        return PlanetType::PT_ASTEROIDS;
+    if (initial_planet_type == PlanetType::INVALID_PLANET_TYPE)
+        return PlanetType::INVALID_PLANET_TYPE;
+    if (initial_planet_type == PlanetType::NUM_PLANET_TYPES)
+        return PlanetType::NUM_PLANET_TYPES;
     // and sometimes there's no variation data
     if (m_planet_environments.empty())
         return initial_planet_type;
 
     // determine which environment rating is the best available for this species,
     // excluding gas giants and asteroids
-    PlanetEnvironment best_environment = PE_UNINHABITABLE;
+    PlanetEnvironment best_environment = PlanetEnvironment::PE_UNINHABITABLE;
     //std::set<PlanetType> best_types;
     for (const auto& entry : m_planet_environments) {
-        if (entry.first < PT_ASTEROIDS) {
+        if (entry.first < PlanetType::PT_ASTEROIDS) {
             if (entry.second == best_environment) {
                 //best_types.insert(entry.first);
             } else if (entry.second > best_environment) {
@@ -593,7 +593,7 @@ void SpeciesManager::UpdatePopulationCounter() {
     m_species_object_populations.clear();
     for (const auto& entry : Objects().ExistingObjects()) {
         auto obj = entry.second;
-        if (obj->ObjectType() != OBJ_PLANET && obj->ObjectType() != OBJ_POP_CENTER)
+        if (obj->ObjectType() != UniverseObjectType::OBJ_PLANET && obj->ObjectType() != UniverseObjectType::OBJ_POP_CENTER)
             continue;
 
         auto pop_center = std::dynamic_pointer_cast<const PopCenter>(obj);
@@ -605,7 +605,7 @@ void SpeciesManager::UpdatePopulationCounter() {
             continue;
 
         try {
-            m_species_object_populations[species][obj->ID()] += obj->GetMeter(METER_POPULATION)->Current();
+            m_species_object_populations[species][obj->ID()] += obj->GetMeter(MeterType::METER_POPULATION)->Current();
         } catch (...) {
             continue;
         }

@@ -228,7 +228,7 @@ namespace {
         void CompleteConstruction() override {
             GG::Control::CompleteConstruction();
 
-            SetChildClippingMode(ClipToClient);
+            SetChildClippingMode(ChildClippingMode::ClipToClient);
 
             int icon_dim = GetIconSize();
             std::string icon_texture = (m_sitrep_entry.GetIcon().empty() ?
@@ -330,7 +330,7 @@ namespace {
             GG::ListBox::Row::CompleteConstruction();
 
             SetMargin(sitrep_row_margin);
-            SetChildClippingMode(ClipToClient);
+            SetChildClippingMode(ChildClippingMode::ClipToClient);
             SetMinSize(GG::Pt(GG::X(2 * GetIconSize() + 2 * sitrep_edge_to_content_spacing),
                               GG::Y(std::max(GetIconSize(), ClientUI::Pts() * 2) + 2 * sitrep_edge_to_content_spacing)));
             RequirePreRender();
@@ -382,7 +382,7 @@ SitRepPanel::SitRepPanel(const std::string& config_name) :
 
 void SitRepPanel::CompleteConstruction() {
     Sound::TempUISoundDisabler sound_disabler;
-    SetChildClippingMode(DontClip);
+    SetChildClippingMode(ChildClippingMode::DontClip);
 
     m_sitreps_lb = GG::Wnd::Create<CUIListBox>();
     m_sitreps_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL);
@@ -442,9 +442,9 @@ void SitRepPanel::KeyPress(GG::Key key, std::uint32_t key_code_point,
                            GG::Flags<GG::ModKey> mod_keys)
 {
     switch (key) {
-    case GG::GGK_RETURN:
-    case GG::GGK_KP_ENTER:
-    case GG::GGK_ESCAPE:{
+    case GG::Key::GGK_RETURN:
+    case GG::Key::GGK_KP_ENTER:
+    case GG::Key::GGK_ESCAPE:{
         CloseClicked();
         break;
     }

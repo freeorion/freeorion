@@ -22,8 +22,8 @@ GG_ENUM(UnlockableItemType,
 //! Specifies single item of game content that may be unlocked for an empire.
 //! The @a type field stores the type of item that is being unlocked, such as
 //! building or ship component, and the  @a name field contains the name of the
-//! actual item (e.g. (UIT_BUILDING, "Superfarm") or
-//! (UIT_SHIP_PART, "Death Ray")).
+//! actual item (e.g. (UnlockableItemType::UIT_BUILDING, "Superfarm") or
+//! (UnlockableItemType::UIT_SHIP_PART, "Death Ray")).
 struct FO_COMMON_API UnlockableItem {
     UnlockableItem() = default;
 
@@ -45,7 +45,7 @@ struct FO_COMMON_API UnlockableItem {
     auto GetCheckSum() const -> unsigned int;
 
     //! The kind of item this is
-    UnlockableItemType type = INVALID_UNLOCKABLE_ITEM_TYPE;
+    UnlockableItemType type = UnlockableItemType::INVALID_UNLOCKABLE_ITEM_TYPE;
 
     //! the exact item this is
     std::string name;

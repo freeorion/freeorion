@@ -92,7 +92,7 @@ Fleet::Fleet(const std::string& name, double x, double y, int owner) :
 Fleet* Fleet::Clone(int empire_id) const {
     Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
-    if (!(vis >= VIS_BASIC_VISIBILITY && vis <= VIS_FULL_VISIBILITY))
+    if (!(vis >= Visibility::VIS_BASIC_VISIBILITY && vis <= Visibility::VIS_FULL_VISIBILITY))
         return nullptr;
 
     Fleet* retval = new Fleet(m_name, X(), Y(), Owner());
@@ -115,7 +115,7 @@ void Fleet::Copy(std::shared_ptr<const UniverseObject> copied_object, int empire
 
     UniverseObject::Copy(copied_object, vis, visible_specials);
 
-    if (vis >= VIS_BASIC_VISIBILITY) {
+    if (vis >= Visibility::VIS_BASIC_VISIBILITY) {
         m_ships =                         copied_fleet->VisibleContainedObjectIDs(empire_id);
 
         m_next_system = ((EmpireKnownObjects(empire_id).get<System>(copied_fleet->m_next_system))
@@ -125,13 +125,13 @@ void Fleet::Copy(std::shared_ptr<const UniverseObject> copied_object, int empire
         m_arrived_this_turn =             copied_fleet->m_arrived_this_turn;
         m_arrival_starlane =              copied_fleet->m_arrival_starlane;
 
-        if (vis >= VIS_PARTIAL_VISIBILITY) {
+        if (vis >= Visibility::VIS_PARTIAL_VISIBILITY) {
             m_aggressive =                copied_fleet->m_aggressive;
             if (Unowned())
                 m_name =                  copied_fleet->m_name;
 
             // Truncate the travel route to only systems known to empire_id
-            int moving_to = (vis >= VIS_FULL_VISIBILITY
+            int moving_to = (vis >= Visibility::VIS_FULL_VISIBILITY
                              ? (!copied_fleet->m_travel_route.empty()
                                 ? copied_fleet->m_travel_route.back()
                                 : INVALID_OBJECT_ID)
@@ -140,7 +140,7 @@ void Fleet::Copy(std::shared_ptr<const UniverseObject> copied_object, int empire
             m_travel_route = TruncateRouteToEndAtSystem(copied_fleet->m_travel_route, empire_id, moving_to);
 
 
-            if (vis >= VIS_FULL_VISIBILITY) {
+            if (vis >= Visibility::VIS_FULL_VISIBILITY) {
                 m_ordered_given_to_empire_id =copied_fleet->m_ordered_given_to_empire_id;
                 m_last_turn_move_ordered =copied_fleet->m_last_turn_move_ordered;
             }
@@ -153,11 +153,11 @@ bool Fleet::HostileToEmpire(int empire_id) const
     if (OwnedBy(empire_id))
         return false;
     return empire_id == ALL_EMPIRES || Unowned() ||
-           Empires().GetDiplomaticStatus(Owner(), empire_id) == DIPLO_WAR;
+           Empires().GetDiplomaticStatus(Owner(), empire_id) == DiplomaticStatus::DIPLO_WAR;
 }
 
 UniverseObjectType Fleet::ObjectType() const
-{ return OBJ_FLEET; }
+{ return UniverseObjectType::OBJ_FLEET; }
 
 std::string Fleet::Dump(unsigned short ntabs) const {
     std::stringstream os;
@@ -197,7 +197,7 @@ const std::string& Fleet::PublicName(int empire_id) const {
         return UserString("FW_FOREIGN_FLEET");
     else if (Unowned() && HasMonsters())
         return UserString("MONSTERS");
-    else if (Unowned() && GetVisibility(empire_id) > VIS_NO_VISIBILITY)
+    else if (Unowned() && GetVisibility(empire_id) > Visibility::VIS_NO_VISIBILITY)
         return UserString("FW_ROGUE_FLEET");
     else
         return UserString("OBJ_FLEET");
@@ -585,7 +585,7 @@ float Fleet::Fuel() const {
     bool is_fleet_scrapped = true;
 
     for (auto& ship : Objects().find<const Ship>(m_ships)) {
-        const Meter* meter = ship->UniverseObject::GetMeter(METER_FUEL);
+        const Meter* meter = ship->UniverseObject::GetMeter(MeterType::METER_FUEL);
         if (!meter) {
             ErrorLogger() << "Fleet::Fuel skipping ship with no fuel meter";
             continue;
@@ -611,7 +611,7 @@ float Fleet::MaxFuel() const {
     bool is_fleet_scrapped = true;
 
     for (auto& ship : Objects().find<const Ship>(m_ships)) {
-        const Meter* meter = ship->UniverseObject::GetMeter(METER_MAX_FUEL);
+        const Meter* meter = ship->UniverseObject::GetMeter(MeterType::METER_MAX_FUEL);
         if (!meter) {
             ErrorLogger() << "Fleet::MaxFuel skipping ship with no max fuel meter";
             continue;
@@ -712,7 +712,7 @@ float Fleet::ResourceOutput(ResourceType type) const {
     if (NumShips() < 1)
         return output;
     MeterType meter_type = ResourceToMeter(type);
-    if (meter_type == INVALID_METER_TYPE)
+    if (meter_type == MeterType::INVALID_METER_TYPE)
         return output;
 
     // determine resource output of each ship in this fleet
@@ -1043,7 +1043,7 @@ void Fleet::MovementPhase() {
     // consume fuel from ships in fleet
     if (fuel_consumed > 0.0f) {
         for (auto& ship : ships) {
-            if (Meter* meter = ship->UniverseObject::GetMeter(METER_FUEL)) {
+            if (Meter* meter = ship->UniverseObject::GetMeter(MeterType::METER_FUEL)) {
                 meter->AddToCurrent(-fuel_consumed);
                 meter->BackPropagate();
             }
@@ -1057,7 +1057,7 @@ void Fleet::ResetTargetMaxUnpairedMeters() {
     // give fleets base stealth very high, so that they can (almost?) never be
     // seen by empires that don't own them, unless their ships are seen and
     // that visibility is propagated to the fleet that contains the ships
-    if (Meter* stealth = GetMeter(METER_STEALTH)) {
+    if (Meter* stealth = GetMeter(MeterType::METER_STEALTH)) {
         stealth->ResetCurrent();
         stealth->AddToCurrent(2000.0f);
     }
@@ -1241,7 +1241,7 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id) const {
 
     float lowest_ship_stealth = 99999.9f; // arbitrary large number. actual stealth of ships should be less than this...
     for (auto& ship : Objects().find<const Ship>(this->ShipIDs())) {
-        float ship_stealth = ship->GetMeter(METER_STEALTH)->Current();
+        float ship_stealth = ship->GetMeter(MeterType::METER_STEALTH)->Current();
         if (lowest_ship_stealth > ship_stealth)
             lowest_ship_stealth = ship_stealth;
     }
@@ -1253,7 +1253,7 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id) const {
             continue;
 
         for (auto& ship : Objects().find<const Ship>(fleet->ShipIDs())) {
-            float cur_detection = ship->GetMeter(METER_DETECTION)->Current();
+            float cur_detection = ship->GetMeter(MeterType::METER_DETECTION)->Current();
             if (cur_detection >= monster_detection)
                 monster_detection = cur_detection;
         }
@@ -1281,7 +1281,7 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id) const {
             continue;
 
         bool at_war = Unowned() || fleet->Unowned() ||
-                      Empires().GetDiplomaticStatus(this->Owner(), fleet->Owner()) == DIPLO_WAR;
+                      Empires().GetDiplomaticStatus(this->Owner(), fleet->Owner()) == DiplomaticStatus::DIPLO_WAR;
         if (!at_war)
             continue;
         bool aggressive = (fleet->Aggressive() || fleet->Unowned());
@@ -1356,7 +1356,7 @@ float Fleet::Structure() const {
     for (const auto& ship : Objects().find<Ship>(m_ships)) {
         if (!ship || ship->OrderedScrapped())
             continue;
-        retval += ship->GetMeter(METER_STRUCTURE)->Current();
+        retval += ship->GetMeter(MeterType::METER_STRUCTURE)->Current();
         fleet_is_scrapped = false;
     }
 
@@ -1375,7 +1375,7 @@ float Fleet::Shields() const {
     for (const auto& ship : Objects().find<Ship>(m_ships)) {
         if (!ship || ship->OrderedScrapped())
             continue;
-        retval += ship->GetMeter(METER_SHIELD)->Current();
+        retval += ship->GetMeter(MeterType::METER_SHIELD)->Current();
         fleet_is_scrapped = false;
     }
 

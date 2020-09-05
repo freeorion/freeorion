@@ -38,27 +38,27 @@ namespace parse { namespace detail {
             =   (
                 (
                     (
-                            tok.Sin_    [ _c = ValueRef::SINE ]                     // single-parameter math functions
-                        |   tok.Cos_    [ _c = ValueRef::COSINE ]
-                        |   tok.Log_    [ _c = ValueRef::LOGARITHM ]
-                        |   tok.Abs_    [ _c = ValueRef::ABS ]
-                        |   tok.Round_  [ _c = ValueRef::ROUND_NEAREST ]
-                        |   tok.Ceil_   [ _c = ValueRef::ROUND_UP ]
-                        |   tok.Floor_  [ _c = ValueRef::ROUND_DOWN ]
-                        |   tok.Sign_   [ _c = ValueRef::SIGN ]
+                            tok.Sin_    [ _c = ValueRef::OpType::SINE ] // single-parameter math functions
+                        |   tok.Cos_    [ _c = ValueRef::OpType::COSINE ]
+                        |   tok.Log_    [ _c = ValueRef::OpType::LOGARITHM ]
+                        |   tok.Abs_    [ _c = ValueRef::OpType::ABS ]
+                        |   tok.Round_  [ _c = ValueRef::OpType::ROUND_NEAREST ]
+                        |   tok.Ceil_   [ _c = ValueRef::OpType::ROUND_UP ]
+                        |   tok.Floor_  [ _c = ValueRef::OpType::ROUND_DOWN ]
+                        |   tok.Sign_   [ _c = ValueRef::OpType::SIGN ]
                     )
                     >> ('(' > expr > ')') [ _val = construct_movable_(new_<ValueRef::Operation<T>>(_c, deconstruct_movable_(_1, _pass))) ]
                 )
                 |   (
-                    tok.RandomNumber_   [ _c = ValueRef::RANDOM_UNIFORM ]           // random number requires a min and max value
+                    tok.RandomNumber_   [ _c = ValueRef::OpType::RANDOM_UNIFORM ] // random number requires a min and max value
                     >  ( '(' > expr >  ',' > expr > ')' ) [ _val = construct_movable_(
                             new_<ValueRef::Operation<T>>(_c, deconstruct_movable_(_1, _pass), deconstruct_movable_(_2, _pass))) ]
                 )
                 |   (
                     (
-                            tok.OneOf_  [ _c = ValueRef::RANDOM_PICK ]              // oneof, min, or max can take any number or operands
-                        |   tok.Min_    [ _c = ValueRef::MINIMUM ]
-                        |   tok.Max_    [ _c = ValueRef::MAXIMUM ]
+                            tok.OneOf_  [ _c = ValueRef::OpType::RANDOM_PICK ] // oneof, min, or max can take any number or operands
+                        |   tok.Min_    [ _c = ValueRef::OpType::MINIMUM ]
+                        |   tok.Max_    [ _c = ValueRef::OpType::MAXIMUM ]
                     )
                     >>  ( '(' >>  expr [ push_back(_d, _1) ]
                     >>(*(',' >  expr [ push_back(_d, _1) ] )) >> ')' )
@@ -67,13 +67,13 @@ namespace parse { namespace detail {
                 |   (
                     lit('(') >> expr [ push_back(_d, _1) ]
                     >> (
-                        (       lit("==")   [ _c = ValueRef::COMPARE_EQUAL ]
-                              | lit('=')    [ _c = ValueRef::COMPARE_EQUAL ]
-                              | lit(">=")   [ _c = ValueRef::COMPARE_GREATER_THAN_OR_EQUAL ]
-                              | lit('>')    [ _c = ValueRef::COMPARE_GREATER_THAN ]
-                              | lit("<=")   [ _c = ValueRef::COMPARE_LESS_THAN_OR_EQUAL ]
-                              | lit('<')    [ _c = ValueRef::COMPARE_LESS_THAN ]
-                              | lit("!=")   [ _c = ValueRef::COMPARE_NOT_EQUAL ]
+                        (       lit("==")   [ _c = ValueRef::OpType::COMPARE_EQUAL ]
+                              | lit('=')    [ _c = ValueRef::OpType::COMPARE_EQUAL ]
+                              | lit(">=")   [ _c = ValueRef::OpType::COMPARE_GREATER_THAN_OR_EQUAL ]
+                              | lit('>')    [ _c = ValueRef::OpType::COMPARE_GREATER_THAN ]
+                              | lit("<=")   [ _c = ValueRef::OpType::COMPARE_LESS_THAN_OR_EQUAL ]
+                              | lit('<')    [ _c = ValueRef::OpType::COMPARE_LESS_THAN ]
+                              | lit("!=")   [ _c = ValueRef::OpType::COMPARE_NOT_EQUAL ]
                         )
                         > expr [ push_back(_d, _1) ]
                        )
@@ -93,7 +93,7 @@ namespace parse { namespace detail {
                     // single parameter math function with a function expression
                     // rather than any arbitrary expression as parameter, because
                     // negating more general expressions can be ambiguous
-                    [ _val = construct_movable_(new_<ValueRef::Operation<T>>(ValueRef::NEGATE, deconstruct_movable_(_1, _pass))) ]
+                    [ _val = construct_movable_(new_<ValueRef::Operation<T>>(ValueRef::OpType::NEGATE, deconstruct_movable_(_1, _pass))) ]
                 )
                 |   (
                         primary_expr [ _val = _1 ]
@@ -108,7 +108,7 @@ namespace parse { namespace detail {
                 -( '^'
                       >> functional_expr [
                           _b = construct_movable_(new_<ValueRef::Operation<T>>(
-                              ValueRef::EXPONENTIATE,
+                              ValueRef::OpType::EXPONENTIATE,
                               deconstruct_movable_(_a, _pass),
                               deconstruct_movable_(_1, _pass) )) ,
                           _a = _b]
@@ -123,8 +123,8 @@ namespace parse { namespace detail {
                 *(
                     (
                         (
-                            lit('*') [ _c = ValueRef::TIMES ]
-                            |   lit('/') [ _c = ValueRef::DIVIDE ]
+                            lit('*') [ _c = ValueRef::OpType::TIMES ]
+                        |   lit('/') [ _c = ValueRef::OpType::DIVIDE ]
                         )
                         >>  exponential_expr [
                             _b = construct_movable_(new_<ValueRef::Operation<T>>(
@@ -143,8 +143,8 @@ namespace parse { namespace detail {
                 *(
                     (
                         (
-                            lit('+') [ _c = ValueRef::PLUS ]
-                        |   lit('-') [ _c = ValueRef::MINUS ]
+                            lit('+') [ _c = ValueRef::OpType::PLUS ]
+                        |   lit('-') [ _c = ValueRef::OpType::MINUS ]
                         )
                         >>   multiplicative_expr [
                             _b = construct_movable_(new_<ValueRef::Operation<T>>(

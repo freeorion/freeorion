@@ -171,7 +171,7 @@ namespace parse { namespace detail {
                     // useful to specify a single recipient empire, or the allies
                     // or enemies of a single empire
                     ((   (label(tok.Affiliation_) > empire_affiliation_type_enum [ _d = _1 ])
-                         | eps [ _d = AFFIL_SELF ]
+                         | eps [ _d = EmpireAffiliationType::AFFIL_SELF ]
                      )
                      >>  label(tok.Empire_)
                     ) > int_rules.expr
@@ -182,18 +182,18 @@ namespace parse { namespace detail {
                     // used to specify CanSee affiliation
                     (   label(tok.Affiliation_)     >>  tok.CanSee_)
                     >   label(tok.Condition_)       >   condition_parser
-                    [ _val = construct_GenerateSitRepMessage2_(_a, _b, _c, AFFIL_CAN_SEE, _1, _e, _f, _pass) ]
+                    [ _val = construct_GenerateSitRepMessage2_(_a, _b, _c, EmpireAffiliationType::AFFIL_CAN_SEE, _1, _e, _f, _pass) ]
                 )
                 |   (   // condition specified, with an affiliation type of CanSee:
                     // used to specify CanSee affiliation
                     (   label(tok.Affiliation_)     >>  tok.Human_)
                     >   label(tok.Condition_)       >   condition_parser
-                    [ _val = construct_GenerateSitRepMessage2_(_a, _b, _c, AFFIL_HUMAN, _1, _e, _f, _pass) ]
+                    [ _val = construct_GenerateSitRepMessage2_(_a, _b, _c, EmpireAffiliationType::AFFIL_HUMAN, _1, _e, _f, _pass) ]
                 )
                 |   (   // no empire id or condition specified, with or without an
                     // affiliation type: useful to specify no or all empires
                     (  (label(tok.Affiliation_)     >   empire_affiliation_type_enum [ _d = _1 ])
-                       | eps [ _d = AFFIL_ANY ]
+                       | eps [ _d = EmpireAffiliationType::AFFIL_ANY ]
                     )
                     [ _val = construct_GenerateSitRepMessage3_(
                             _a, _b, _c,

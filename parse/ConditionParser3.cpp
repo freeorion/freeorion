@@ -76,19 +76,19 @@ namespace parse { namespace detail {
             ;
 
         comparison_operator =
-              lit("==")   [ _val = Condition::EQUAL ]
-            | lit('=')    [ _val = Condition::EQUAL ]
-            | lit(">=")   [ _val = Condition::GREATER_THAN_OR_EQUAL ]
-            | lit('>')    [ _val = Condition::GREATER_THAN ]
-            | lit("<=")   [ _val = Condition::LESS_THAN_OR_EQUAL ]
-            | lit('<')    [ _val = Condition::LESS_THAN ]
-            | lit("!=")   [ _val = Condition::NOT_EQUAL ]
+              lit("==")   [ _val = Condition::ComparisonType::EQUAL ]
+            | lit('=')    [ _val = Condition::ComparisonType::EQUAL ]
+            | lit(">=")   [ _val = Condition::ComparisonType::GREATER_THAN_OR_EQUAL ]
+            | lit('>')    [ _val = Condition::ComparisonType::GREATER_THAN ]
+            | lit("<=")   [ _val = Condition::ComparisonType::LESS_THAN_OR_EQUAL ]
+            | lit('<')    [ _val = Condition::ComparisonType::LESS_THAN ]
+            | lit("!=")   [ _val = Condition::ComparisonType::NOT_EQUAL ]
             ;
 
         string_comparison_operator =
-              lit("==")   [ _val = Condition::EQUAL ]
-            | lit('=')    [ _val = Condition::EQUAL ]
-            | lit("!=")   [ _val = Condition::NOT_EQUAL ]
+              lit("==")   [ _val = Condition::ComparisonType::EQUAL ]
+            | lit('=')    [ _val = Condition::ComparisonType::EQUAL ]
+            | lit("!=")   [ _val = Condition::ComparisonType::NOT_EQUAL ]
             ;
 
         comparison_binary_double
@@ -201,9 +201,9 @@ namespace parse { namespace detail {
                 ;
 
             sorting_operator =
-                    tok.MaximumNumberOf_ [ _val = Condition::SORT_MAX ]
-                |   tok.MinimumNumberOf_ [ _val = Condition::SORT_MIN ]
-                |   tok.ModeNumberOf_    [ _val = Condition::SORT_MODE ];
+                    tok.MaximumNumberOf_ [ _val = Condition::SortingMethod::SORT_MAX ]
+                |   tok.MinimumNumberOf_ [ _val = Condition::SortingMethod::SORT_MIN ]
+                |   tok.ModeNumberOf_    [ _val = Condition::SortingMethod::SORT_MODE ];
 
             number_of1
                 = ( omit_[tok.NumberOf_]
@@ -242,7 +242,7 @@ namespace parse { namespace detail {
                 >   label(tok.Low_)  > double_rules.expr
                 >   label(tok.High_) > double_rules.expr)
                 [ _val = construct_movable_(new_<Condition::EmpireStockpileValue>(
-                        RE_INDUSTRY,
+                        ResourceType::RE_INDUSTRY,
                         deconstruct_movable_(_1, _pass),
                         deconstruct_movable_(_2, _pass))) ]
                 ;

@@ -55,7 +55,7 @@ bool InAngledCornerRect(const GG::Pt& pt, const GG::Pt& ul, const GG::Pt& lr, in
 
 /** the orientations used to render some shapes used in the UI; the orientations
   * usually refer to the direction in which the shape is pointing */
-enum class ShapeOrientation {UP, DOWN, LEFT, RIGHT};
+enum class ShapeOrientation : int {UP, DOWN, LEFT, RIGHT};
 
 /** renders a triangle of arbitrary size and shape, having an optional 1-pixel-thick border */
 void Triangle(const GG::Pt& pt1, const GG::Pt pt2, const GG::Pt pt3, GG::Clr color, bool border = true);

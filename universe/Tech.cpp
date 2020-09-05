@@ -648,7 +648,7 @@ std::vector<std::string> TechManager::RecursivePrereqs(const std::string& tech_n
             continue;
 
         // if this tech is already known and min_required==true, can skip.
-        if (min_required && empire && (empire->GetTechStatus(cur_name) == TS_COMPLETE))
+        if (min_required && empire && (empire->GetTechStatus(cur_name) == TechStatus::TS_COMPLETE))
             continue;
 
         // tech is new, so put it into the set of already-processed prereqs

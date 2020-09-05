@@ -126,13 +126,13 @@ std::shared_ptr<GG::BrowseInfoWnd> TechRowBrowseWnd(const std::string& tech_name
         if (!tech->Researchable()) {
             main_text += UserString("TECH_WND_UNRESEARCHABLE") + "\n";
 
-        } else if (tech_status == TS_UNRESEARCHABLE) {
+        } else if (tech_status == TechStatus::TS_UNRESEARCHABLE) {
             main_text += UserString("TECH_WND_STATUS_LOCKED") + "\n";
 
             std::vector<std::string> unresearched_prereqs;
             for (const std::string& prereq : tech->Prerequisites()) {
                 TechStatus prereq_status = empire->GetTechStatus(prereq);
-                if (prereq_status != TS_COMPLETE)
+                if (prereq_status != TechStatus::TS_COMPLETE)
                     unresearched_prereqs.push_back(prereq);
             }
             if (!unresearched_prereqs.empty()) {
@@ -142,13 +142,13 @@ std::shared_ptr<GG::BrowseInfoWnd> TechRowBrowseWnd(const std::string& tech_name
                 main_text += "\n";
             }
 
-        } else if (tech_status == TS_RESEARCHABLE) {
+        } else if (tech_status == TechStatus::TS_RESEARCHABLE) {
             main_text += UserString("TECH_WND_STATUS_RESEARCHABLE") + "\n";
 
-        } else if (tech_status == TS_COMPLETE) {
+        } else if (tech_status == TechStatus::TS_COMPLETE) {
             main_text += UserString("TECH_WND_STATUS_COMPLETED") + "\n";
 
-        } else if (tech_status == TS_HAS_RESEARCHED_PREREQ) {
+        } else if (tech_status == TechStatus::TS_HAS_RESEARCHED_PREREQ) {
             main_text += UserString("TECH_WND_STATUS_PARTIAL_UNLOCK") + "\n";
         }
 
@@ -239,10 +239,10 @@ private:
     // calculated by SizeMove, and stored, so that start and end positions don't need to be recalculated each
     // time Render is called.
 
-    std::shared_ptr<GG::StateButton>                             m_view_type_button;
-    std::shared_ptr<GG::StateButton>                             m_all_cat_button;
-    std::map<std::string, std::shared_ptr<GG::StateButton>>      m_cat_buttons;
-    std::map<TechStatus, std::shared_ptr<GG::StateButton>>       m_status_buttons;
+    std::shared_ptr<GG::StateButton>                        m_view_type_button;
+    std::shared_ptr<GG::StateButton>                        m_all_cat_button;
+    std::map<std::string, std::shared_ptr<GG::StateButton>> m_cat_buttons;
+    std::map<TechStatus, std::shared_ptr<GG::StateButton>>  m_status_buttons;
 
     friend class TechTreeWnd;               // so TechTreeWnd can access buttons
 };
@@ -261,55 +261,71 @@ void TechTreeWnd::TechTreeControls::CompleteConstruction() {
     // create a button for each tech category...
     for (const std::string& category : GetTechManager().CategoryNames()) {
         GG::Clr icon_clr = ClientUI::CategoryColor(category);
-        std::shared_ptr<GG::SubTexture> icon = std::make_shared<GG::SubTexture>(ClientUI::CategoryIcon(category));
-        m_cat_buttons[category] = GG::Wnd::Create<GG::StateButton>("", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
-                                                     std::make_shared<CUIIconButtonRepresenter>(icon, icon_clr));
-        m_cat_buttons[category]->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(UserString(category), ""));
+        std::shared_ptr<GG::SubTexture> icon = std::make_shared<GG::SubTexture>(
+            ClientUI::CategoryIcon(category));
+        m_cat_buttons[category] = GG::Wnd::Create<GG::StateButton>(
+            "", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
+            std::make_shared<CUIIconButtonRepresenter>(icon, icon_clr));
+        m_cat_buttons[category]->SetBrowseInfoWnd(
+            GG::Wnd::Create<TextBrowseWnd>(UserString(category), ""));
         m_cat_buttons[category]->SetBrowseModeTime(tooltip_delay);
         AttachChild(m_cat_buttons[category]);
     }
 
     GG::Clr icon_color = GG::Clr(113, 150, 182, 255);
     // and one for "ALL"
-    m_all_cat_button = GG::Wnd::Create<GG::StateButton>("", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
-                                           std::make_shared<CUIIconButtonRepresenter>(std::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "00_all_cats.png", true)), icon_color));
+    m_all_cat_button = GG::Wnd::Create<GG::StateButton>(
+        "", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
+        std::make_shared<CUIIconButtonRepresenter>(std::make_shared<GG::SubTexture>(
+            ClientUI::GetTexture(icon_dir / "00_all_cats.png", true)), icon_color));
     m_all_cat_button->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(UserString("ALL"), ""));
     m_all_cat_button->SetBrowseModeTime(tooltip_delay);
     m_all_cat_button->SetCheck(true);
     AttachChild(m_all_cat_button);
 
     // create a button for each tech status
-    m_status_buttons[TS_UNRESEARCHABLE] = GG::Wnd::Create<GG::StateButton>("", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
-                                                              std::make_shared<CUIIconButtonRepresenter>(std::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "01_locked.png", true)), icon_color));
-    m_status_buttons[TS_UNRESEARCHABLE]->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(UserString("TECH_WND_STATUS_LOCKED"), ""));
-    m_status_buttons[TS_UNRESEARCHABLE]->SetBrowseModeTime(tooltip_delay);
-    m_status_buttons[TS_UNRESEARCHABLE]->SetCheck(
+    m_status_buttons[TechStatus::TS_UNRESEARCHABLE] = GG::Wnd::Create<GG::StateButton>(
+        "", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
+         std::make_shared<CUIIconButtonRepresenter>(std::make_shared<GG::SubTexture>(
+             ClientUI::GetTexture(icon_dir / "01_locked.png", true)), icon_color));
+    m_status_buttons[TechStatus::TS_UNRESEARCHABLE]->SetBrowseInfoWnd(
+        GG::Wnd::Create<TextBrowseWnd>(UserString("TECH_WND_STATUS_LOCKED"), ""));
+    m_status_buttons[TechStatus::TS_UNRESEARCHABLE]->SetBrowseModeTime(tooltip_delay);
+    m_status_buttons[TechStatus::TS_UNRESEARCHABLE]->SetCheck(
         GetOptionsDB().Get<bool>("ui.research.status.unresearchable.shown"));
-    AttachChild(m_status_buttons[TS_UNRESEARCHABLE]);
+    AttachChild(m_status_buttons[TechStatus::TS_UNRESEARCHABLE]);
 
-    m_status_buttons[TS_HAS_RESEARCHED_PREREQ] = GG::Wnd::Create<GG::StateButton>("", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
-                                                                     std::make_shared<CUIIconButtonRepresenter>(std::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "02_partial.png", true)), icon_color));
-    m_status_buttons[TS_HAS_RESEARCHED_PREREQ]->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(UserString("TECH_WND_STATUS_PARTIAL_UNLOCK"), ""));
-    m_status_buttons[TS_HAS_RESEARCHED_PREREQ]->SetBrowseModeTime(tooltip_delay);
-    m_status_buttons[TS_HAS_RESEARCHED_PREREQ]->SetCheck(
+    m_status_buttons[TechStatus::TS_HAS_RESEARCHED_PREREQ] = GG::Wnd::Create<GG::StateButton>(
+        "", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
+        std::make_shared<CUIIconButtonRepresenter>(std::make_shared<GG::SubTexture>(
+            ClientUI::GetTexture(icon_dir / "02_partial.png", true)), icon_color));
+    m_status_buttons[TechStatus::TS_HAS_RESEARCHED_PREREQ]->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(UserString("TECH_WND_STATUS_PARTIAL_UNLOCK"), ""));
+    m_status_buttons[TechStatus::TS_HAS_RESEARCHED_PREREQ]->SetBrowseModeTime(tooltip_delay);
+    m_status_buttons[TechStatus::TS_HAS_RESEARCHED_PREREQ]->SetCheck(
         GetOptionsDB().Get<bool>("ui.research.status.partial.shown"));
-    AttachChild(m_status_buttons[TS_HAS_RESEARCHED_PREREQ]);
+    AttachChild(m_status_buttons[TechStatus::TS_HAS_RESEARCHED_PREREQ]);
 
-    m_status_buttons[TS_RESEARCHABLE] = GG::Wnd::Create<GG::StateButton>("", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
-                                                            std::make_shared<CUIIconButtonRepresenter>(std::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "03_unlocked.png", true)), icon_color));
-    m_status_buttons[TS_RESEARCHABLE]->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(UserString("TECH_WND_STATUS_RESEARCHABLE"), ""));
-    m_status_buttons[TS_RESEARCHABLE]->SetBrowseModeTime(tooltip_delay);
-    m_status_buttons[TS_RESEARCHABLE]->SetCheck(
+    m_status_buttons[TechStatus::TS_RESEARCHABLE] = GG::Wnd::Create<GG::StateButton>(
+        "", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
+        std::make_shared<CUIIconButtonRepresenter>(std::make_shared<GG::SubTexture>(
+            ClientUI::GetTexture(icon_dir / "03_unlocked.png", true)), icon_color));
+    m_status_buttons[TechStatus::TS_RESEARCHABLE]->SetBrowseInfoWnd(
+        GG::Wnd::Create<TextBrowseWnd>(UserString("TECH_WND_STATUS_RESEARCHABLE"), ""));
+    m_status_buttons[TechStatus::TS_RESEARCHABLE]->SetBrowseModeTime(tooltip_delay);
+    m_status_buttons[TechStatus::TS_RESEARCHABLE]->SetCheck(
         GetOptionsDB().Get<bool>("ui.research.status.researchable.shown"));
-    AttachChild(m_status_buttons[TS_RESEARCHABLE]);
+    AttachChild(m_status_buttons[TechStatus::TS_RESEARCHABLE]);
 
-    m_status_buttons[TS_COMPLETE] = GG::Wnd::Create<GG::StateButton>("", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
-                                                        std::make_shared<CUIIconButtonRepresenter>(std::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "04_completed.png", true)), icon_color));
-    m_status_buttons[TS_COMPLETE]->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(UserString("TECH_WND_STATUS_COMPLETED"), ""));
-    m_status_buttons[TS_COMPLETE]->SetBrowseModeTime(tooltip_delay);
-    m_status_buttons[TS_COMPLETE]->SetCheck(
+    m_status_buttons[TechStatus::TS_COMPLETE] = GG::Wnd::Create<GG::StateButton>(
+        "", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
+        std::make_shared<CUIIconButtonRepresenter>(std::make_shared<GG::SubTexture>(
+            ClientUI::GetTexture(icon_dir / "04_completed.png", true)), icon_color));
+    m_status_buttons[TechStatus::TS_COMPLETE]->SetBrowseInfoWnd(
+        GG::Wnd::Create<TextBrowseWnd>(UserString("TECH_WND_STATUS_COMPLETED"), ""));
+    m_status_buttons[TechStatus::TS_COMPLETE]->SetBrowseModeTime(tooltip_delay);
+    m_status_buttons[TechStatus::TS_COMPLETE]->SetCheck(
         GetOptionsDB().Get<bool>("ui.research.status.completed.shown"));
-    AttachChild(m_status_buttons[TS_COMPLETE]);
+    AttachChild(m_status_buttons[TechStatus::TS_COMPLETE]);
 
     // create button to switch between tree and list views
     m_view_type_button = GG::Wnd::Create<GG::StateButton>(
@@ -321,7 +337,7 @@ void TechTreeWnd::TechTreeControls::CompleteConstruction() {
     m_view_type_button->SetCheck(false);
     AttachChild(m_view_type_button);
 
-    SetChildClippingMode(ClipToClient);
+    SetChildClippingMode(ChildClippingMode::ClipToClient);
 
     CUIWnd::CompleteConstruction();
 
@@ -659,7 +675,7 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const std::string& tech_name, con
     m_tech_name(tech_name),
     m_layout_panel(panel),
     m_colour(GG::CLR_GRAY),
-    m_status(TS_RESEARCHABLE),
+    m_status(TechStatus::TS_RESEARCHABLE),
     m_browse_highlight(false),
     m_selected(false),
     m_eta(-1),
@@ -788,7 +804,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::Render() {
             glColor(border_colour);
             PartlyRoundedRect(ul, lr + GG::Pt(GG::X(4), GG::Y0), PAD, true, true, true, true, false);
         }
-        else if (m_status == TS_COMPLETE || m_status == TS_RESEARCHABLE) {
+        else if (m_status == TechStatus::TS_COMPLETE || m_status == TechStatus::TS_RESEARCHABLE) {
             border_colour = m_colour;
             border_colour.a = 255;
             glColor(border_colour);
@@ -878,7 +894,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::RClick(const GG::Pt& pt,
     auto pedia_display_action = [this]() { TechPediaDisplaySignal(m_tech_name); };
 
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
-    if (!(m_enqueued) && !(m_status == TS_COMPLETE)) {
+    if (!(m_enqueued) && !(m_status == TechStatus::TS_COMPLETE)) {
         popup->AddMenuItem(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_QUEUE"),   false, false, dclick_action));
         popup->AddMenuItem(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_TOP_OF_QUEUE"), false, false,
                                         ctrl_dclick_action));
@@ -926,10 +942,10 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
         m_colour = ClientUI::CategoryColor(tech->Category());
         icon_colour = m_colour;
 
-        if (m_status == TS_UNRESEARCHABLE || m_status == TS_HAS_RESEARCHED_PREREQ) {
+        if (m_status == TechStatus::TS_UNRESEARCHABLE || m_status == TechStatus::TS_HAS_RESEARCHED_PREREQ) {
             icon_colour = GG::CLR_GRAY;
             m_colour.a = 64;
-        } else if (m_status == TS_RESEARCHABLE) {
+        } else if (m_status == TechStatus::TS_RESEARCHABLE) {
             icon_colour = GG::CLR_GRAY;
             m_colour.a = 128;
         } else {
@@ -948,13 +964,13 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
             for (const UnlockableItem& item : tech->UnlockedItems()) {
                 std::shared_ptr<GG::Texture> texture;
                 switch (item.type) {
-                case UIT_BUILDING:  texture = ClientUI::BuildingIcon(item.name);    break;
-                case UIT_SHIP_PART: texture = ClientUI::PartIcon(item.name);        break;
-                case UIT_SHIP_HULL: texture = ClientUI::HullIcon(item.name);        break;
-                case UIT_POLICY:    texture = ClientUI::PolicyIcon(item.name);      break;
-                case UIT_TECH:
-                case UIT_SHIP_DESIGN:
-                default:    break;
+                case UnlockableItemType::UIT_BUILDING:  texture = ClientUI::BuildingIcon(item.name);    break;
+                case UnlockableItemType::UIT_SHIP_PART: texture = ClientUI::PartIcon(item.name);        break;
+                case UnlockableItemType::UIT_SHIP_HULL: texture = ClientUI::HullIcon(item.name);        break;
+                case UnlockableItemType::UIT_POLICY:    texture = ClientUI::PolicyIcon(item.name);      break;
+                case UnlockableItemType::UIT_TECH:
+                case UnlockableItemType::UIT_SHIP_DESIGN:
+                default: break;
                 }
 
                 if (texture) {
@@ -1046,14 +1062,14 @@ TechTreeWnd::LayoutPanel::LayoutPanel(GG::X w, GG::Y h) :
 void TechTreeWnd::LayoutPanel::CompleteConstruction() {
     GG::Wnd::CompleteConstruction();
 
-    SetChildClippingMode(ClipToClient);
+    SetChildClippingMode(ChildClippingMode::ClipToClient);
 
     m_scale = std::pow(ZOOM_STEP_SIZE, GetOptionsDB().Get<double>("ui.research.tree.zoom.scale")); // (LATHANDA) Initialise Fullzoom and do real zooming using GL. TODO: Check best size
 
     m_layout_surface = GG::Wnd::Create<LayoutSurface>();
 
-    m_vscroll = GG::Wnd::Create<CUIScroll>(GG::VERTICAL);
-    m_hscroll = GG::Wnd::Create<CUIScroll>(GG::HORIZONTAL);
+    m_vscroll = GG::Wnd::Create<CUIScroll>(GG::Orientation::VERTICAL);
+    m_hscroll = GG::Wnd::Create<CUIScroll>(GG::Orientation::HORIZONTAL);
 
     m_zoom_in_button = Wnd::Create<CUIButton>("+");
     m_zoom_in_button->SetColor(ClientUI::WndColor());
@@ -1092,8 +1108,8 @@ void TechTreeWnd::LayoutPanel::CompleteConstruction() {
     // show statuses
     m_tech_statuses_shown.clear();
     //m_tech_statuses_shown.insert(TS_UNRESEARCHABLE);
-    m_tech_statuses_shown.insert(TS_RESEARCHABLE);
-    m_tech_statuses_shown.insert(TS_COMPLETE);
+    m_tech_statuses_shown.insert(TechStatus::TS_RESEARCHABLE);
+    m_tech_statuses_shown.insert(TechStatus::TS_COMPLETE);
 }
 
 void TechTreeWnd::LayoutPanel::ConnectKeyboardAcceleratorSignals() {
@@ -1614,32 +1630,32 @@ void TechTreeWnd::TechListBox::TechRow::CompleteConstruction() {
     auto text = GG::Wnd::Create<CUILabel>(just_pad + UserString(m_tech), GG::FORMAT_LEFT);
     text->SetResetMinSize(false);
     text->ClipText(true);
-    text->SetChildClippingMode(ClipToWindow);
+    text->SetChildClippingMode(ChildClippingMode::ClipToWindow);
     push_back(text);
 
     std::string cost_str = std::to_string(std::lround(this_row_tech->ResearchCost(HumanClientApp::GetApp()->EmpireID())));
     text = GG::Wnd::Create<CUILabel>(cost_str + just_pad + just_pad, GG::FORMAT_RIGHT);
     text->SetResetMinSize(false);
     text->ClipText(true);
-    text->SetChildClippingMode(ClipToWindow);
+    text->SetChildClippingMode(ChildClippingMode::ClipToWindow);
     push_back(text);
 
     std::string time_str = std::to_string(this_row_tech->ResearchTime(HumanClientApp::GetApp()->EmpireID()));
     text = GG::Wnd::Create<CUILabel>(time_str + just_pad + just_pad, GG::FORMAT_RIGHT);
     text->SetResetMinSize(false);
     text->ClipText(true);
-    text->SetChildClippingMode(ClipToWindow);
+    text->SetChildClippingMode(ChildClippingMode::ClipToWindow);
     push_back(text);
 
     text = GG::Wnd::Create<CUILabel>(just_pad + UserString(this_row_tech->Category()), GG::FORMAT_LEFT);
     text->SetResetMinSize(false);
     text->ClipText(true);
-    text->SetChildClippingMode(ClipToWindow);
+    text->SetChildClippingMode(ChildClippingMode::ClipToWindow);
     push_back(text);
 
     text = GG::Wnd::Create<CUILabel>(just_pad + UserString(this_row_tech->ShortDescription()), GG::FORMAT_LEFT);
     text->ClipText(true);
-    text->SetChildClippingMode(ClipToWindow);
+    text->SetChildClippingMode(ChildClippingMode::ClipToWindow);
     push_back(text);
 }
 
@@ -1663,15 +1679,15 @@ void TechTreeWnd::TechListBox::TechRow::Update() {
 
     // Adjust colors for tech status
     auto foreground_color = ClientUI::CategoryColor(this_row_tech->Category());
-    auto this_row_status = empire ? empire->GetTechStatus(m_tech) : TS_RESEARCHABLE;
-    if (this_row_status == TS_COMPLETE) {
+    auto this_row_status = empire ? empire->GetTechStatus(m_tech) : TechStatus::TS_RESEARCHABLE;
+    if (this_row_status == TechStatus::TS_COMPLETE) {
         foreground_color.a = m_background_color.a;  // preserve users 'wnd-color' trasparency
         AdjustBrightness(foreground_color, 0.3);
         m_background_color = foreground_color;
         foreground_color = ClientUI::TextColor();
-    } else if (this_row_status == TS_UNRESEARCHABLE || this_row_status == TS_HAS_RESEARCHED_PREREQ) {
-        foreground_color.a = 96;
-    }
+    } else if (this_row_status == TechStatus::TS_UNRESEARCHABLE ||
+               this_row_status == TechStatus::TS_HAS_RESEARCHED_PREREQ)
+    { foreground_color.a = 96; }
 
     for (std::size_t i = 0; i < size(); ++i)
         at(i)->SetColor(foreground_color);
@@ -1723,8 +1739,8 @@ void TechTreeWnd::TechListBox::CompleteConstruction() {
     // show all statuses except unreasearchable
     m_tech_statuses_shown.clear();
     //m_tech_statuses_shown.insert(TS_UNRESEARCHABLE);
-    m_tech_statuses_shown.insert(TS_RESEARCHABLE);
-    m_tech_statuses_shown.insert(TS_COMPLETE);
+    m_tech_statuses_shown.insert(TechStatus::TS_RESEARCHABLE);
+    m_tech_statuses_shown.insert(TechStatus::TS_COMPLETE);
 
     GG::X row_width = Width() - ClientUI::ScrollWidth() - ClientUI::Pts();
     std::vector<GG::X> col_widths = TechRow::ColWidths(row_width);
@@ -1734,36 +1750,36 @@ void TechTreeWnd::TechListBox::CompleteConstruction() {
     auto graphic_col = GG::Wnd::Create<CUILabel>("");  // graphic
     graphic_col->Resize(GG::Pt(col_widths[0], HEIGHT));
     graphic_col->ClipText(true);
-    graphic_col->SetChildClippingMode(ClipToWindow);
+    graphic_col->SetChildClippingMode(ChildClippingMode::ClipToWindow);
     m_header_row->push_back(graphic_col);
 
     auto name_col = Wnd::Create<CUIButton>(UserString("TECH_WND_LIST_COLUMN_NAME"));
     name_col->Resize(GG::Pt(col_widths[1], HEIGHT));
-    name_col->SetChildClippingMode(ClipToWindow);
+    name_col->SetChildClippingMode(ChildClippingMode::ClipToWindow);
     name_col->LeftClickedSignal.connect([this]() { ToggleSortCol(1); });
     m_header_row->push_back(name_col);
 
     auto cost_col = Wnd::Create<CUIButton>(UserString("TECH_WND_LIST_COLUMN_COST"));
     cost_col->Resize(GG::Pt(col_widths[2], HEIGHT));
-    cost_col->SetChildClippingMode(ClipToWindow);
+    cost_col->SetChildClippingMode(ChildClippingMode::ClipToWindow);
     cost_col->LeftClickedSignal.connect([this]() { ToggleSortCol(2); });
     m_header_row->push_back(cost_col);
 
     auto time_col = Wnd::Create<CUIButton>(UserString("TECH_WND_LIST_COLUMN_TIME"));
     time_col->Resize(GG::Pt(col_widths[3], HEIGHT));
-    time_col->SetChildClippingMode(ClipToWindow);
+    time_col->SetChildClippingMode(ChildClippingMode::ClipToWindow);
     time_col->LeftClickedSignal.connect([this]() { ToggleSortCol(3); });
     m_header_row->push_back(time_col);
 
     auto category_col = Wnd::Create<CUIButton>( UserString("TECH_WND_LIST_COLUMN_CATEGORY"));
     category_col->Resize(GG::Pt(col_widths[4], HEIGHT));
-    category_col->SetChildClippingMode(ClipToWindow);
+    category_col->SetChildClippingMode(ChildClippingMode::ClipToWindow);
     category_col->LeftClickedSignal.connect([this]() { ToggleSortCol(4); });
     m_header_row->push_back(category_col);
 
     auto descr_col = Wnd::Create<CUIButton>(UserString("TECH_WND_LIST_COLUMN_DESCRIPTION"));
     descr_col->Resize(GG::Pt(col_widths[5], HEIGHT));
-    descr_col->SetChildClippingMode(ClipToWindow);
+    descr_col->SetChildClippingMode(ChildClippingMode::ClipToWindow);
     descr_col->LeftClickedSignal.connect([this]() { ToggleSortCol(5); });
     m_header_row->push_back(descr_col);
 
@@ -2059,10 +2075,10 @@ void TechTreeWnd::CompleteConstruction() {
     //long time and generates errors, but is never seen by the user.
     if (!m_init_flag) {
         ShowAllCategories();
-        SetTechStatus(TS_COMPLETE, GetOptionsDB().Get<bool>("ui.research.status.completed.shown"));
-        SetTechStatus(TS_UNRESEARCHABLE, GetOptionsDB().Get<bool>("ui.research.status.unresearchable.shown"));
-        SetTechStatus(TS_HAS_RESEARCHED_PREREQ, GetOptionsDB().Get<bool>("ui.research.status.partial.shown"));
-        SetTechStatus(TS_RESEARCHABLE, GetOptionsDB().Get<bool>("ui.research.status.researchable.shown"));
+        SetTechStatus(TechStatus::TS_COMPLETE,              GetOptionsDB().Get<bool>("ui.research.status.completed.shown"));
+        SetTechStatus(TechStatus::TS_UNRESEARCHABLE,        GetOptionsDB().Get<bool>("ui.research.status.unresearchable.shown"));
+        SetTechStatus(TechStatus::TS_HAS_RESEARCHED_PREREQ, GetOptionsDB().Get<bool>("ui.research.status.partial.shown"));
+        SetTechStatus(TechStatus::TS_RESEARCHABLE,          GetOptionsDB().Get<bool>("ui.research.status.researchable.shown"));
     }
 
     ShowTreeView();
@@ -2122,10 +2138,10 @@ void TechTreeWnd::Show() {
     if (m_init_flag) {
         m_init_flag = false;
         ShowAllCategories();
-        SetTechStatus(TS_COMPLETE, GetOptionsDB().Get<bool>("ui.research.status.completed.shown"));
-        SetTechStatus(TS_UNRESEARCHABLE, GetOptionsDB().Get<bool>("ui.research.status.unresearchable.shown"));
-        SetTechStatus(TS_HAS_RESEARCHED_PREREQ, GetOptionsDB().Get<bool>("ui.research.status.partial.shown"));
-        SetTechStatus(TS_RESEARCHABLE, GetOptionsDB().Get<bool>("ui.research.status.researchable.shown"));
+        SetTechStatus(TechStatus::TS_COMPLETE,              GetOptionsDB().Get<bool>("ui.research.status.completed.shown"));
+        SetTechStatus(TechStatus::TS_UNRESEARCHABLE,        GetOptionsDB().Get<bool>("ui.research.status.unresearchable.shown"));
+        SetTechStatus(TechStatus::TS_HAS_RESEARCHED_PREREQ, GetOptionsDB().Get<bool>("ui.research.status.partial.shown"));
+        SetTechStatus(TechStatus::TS_RESEARCHABLE,          GetOptionsDB().Get<bool>("ui.research.status.researchable.shown"));
     }
 }
 
@@ -2175,16 +2191,16 @@ void TechTreeWnd::ToggleAllCategories() {
 
 void TechTreeWnd::SetTechStatus(const TechStatus status, const bool state) {
     switch (status) {
-    case TS_UNRESEARCHABLE:
+    case TechStatus::TS_UNRESEARCHABLE:
         GetOptionsDB().Set<bool>("ui.research.status.unresearchable.shown", state);
         break;
-    case TS_HAS_RESEARCHED_PREREQ:
+    case TechStatus::TS_HAS_RESEARCHED_PREREQ:
         GetOptionsDB().Set<bool>("ui.research.status.partial.shown", state);
         break;
-    case TS_RESEARCHABLE:
+    case TechStatus::TS_RESEARCHABLE:
         GetOptionsDB().Set<bool>("ui.research.status.researchable.shown", state);
         break;
-    case TS_COMPLETE:
+    case TechStatus::TS_COMPLETE:
         GetOptionsDB().Set<bool>("ui.research.status.completed.shown", state);
         break;
     default:
@@ -2285,7 +2301,7 @@ void TechTreeWnd::AddTechToResearchQueue(const std::string& tech_name,
     const Tech* tech = GetTech(tech_name);
     if (!tech) return;
     const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
-    TechStatus tech_status = TS_UNRESEARCHABLE;
+    TechStatus tech_status = TechStatus::TS_UNRESEARCHABLE;
     if (empire)
         tech_status = empire->GetTechStatus(tech_name);
 
@@ -2294,15 +2310,16 @@ void TechTreeWnd::AddTechToResearchQueue(const std::string& tech_name,
         queue_pos = 0;
 
     // if tech can be researched already, just add it
-    if (tech_status == TS_RESEARCHABLE) {
+    if (tech_status == TechStatus::TS_RESEARCHABLE) {
         std::vector<std::string> techs;
         techs.push_back(tech_name);
         AddTechsToQueueSignal(techs, queue_pos);
         return;
     }
 
-    if (tech_status != TS_UNRESEARCHABLE && tech_status != TS_HAS_RESEARCHED_PREREQ)
-        return;
+    if (tech_status != TechStatus::TS_UNRESEARCHABLE &&
+        tech_status != TechStatus::TS_HAS_RESEARCHED_PREREQ)
+    { return; }
 
     // if tech can't yet be researched, add any prerequisites it requires (recursively) and then add it
     TechManager& manager = GetTechManager();

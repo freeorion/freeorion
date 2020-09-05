@@ -46,19 +46,19 @@ void PopulationPanel::CompleteConstruction() {
 
     // small meter indicators - for use when panel is collapsed
     m_meter_stats.emplace_back(
-        METER_POPULATION,
+        MeterType::METER_POPULATION,
         GG::Wnd::Create<StatisticIcon>(ClientUI::SpeciesIcon(pop->SpeciesName()),
-                                       pop->GetMeter(METER_POPULATION)->Initial(), 3, false,
+                                       pop->GetMeter(MeterType::METER_POPULATION)->Initial(), 3, false,
                                        MeterIconSize().x, MeterIconSize().y));
     m_meter_stats.emplace_back(
-        METER_HAPPINESS,
-        GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(METER_HAPPINESS),
-                                       pop->GetMeter(METER_HAPPINESS)->Initial(), 3, false,
+        MeterType::METER_HAPPINESS,
+        GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(MeterType::METER_HAPPINESS),
+                                       pop->GetMeter(MeterType::METER_HAPPINESS)->Initial(), 3, false,
                                        MeterIconSize().x, MeterIconSize().y));
     m_meter_stats.emplace_back(
-        METER_CONSTRUCTION,
-        GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(METER_CONSTRUCTION),
-                                       pop->GetMeter(METER_CONSTRUCTION)->Initial(), 3, false,
+        MeterType::METER_CONSTRUCTION,
+        GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(MeterType::METER_CONSTRUCTION),
+                                       pop->GetMeter(MeterType::METER_CONSTRUCTION)->Initial(), 3, false,
                                        MeterIconSize().x, MeterIconSize().y));
 
     // meter and production indicators
@@ -73,7 +73,7 @@ void PopulationPanel::CompleteConstruction() {
 
             auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
             auto pc = Objects().get<PopCenter>(m_popcenter_id);
-            if (meter_type == METER_POPULATION && pc) {
+            if (meter_type == MeterType::METER_POPULATION && pc) {
                 std::string species_name = pc->SpeciesName();
                 if (!species_name.empty()) {
                     auto zoom_species_action = [species_name]() { ClientUI::GetClientUI()->ZoomToSpecies(species_name); };

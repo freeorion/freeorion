@@ -110,9 +110,9 @@ namespace {
         db.Add("ui.input.mouse.button.repeat.interval",     UserStringNop("OPTIONS_DB_MOUSE_REPEAT_INTERVAL"),              15,                 RangedValidator<int>(0, 1000));
         db.Add("ui.map.messages.timestamp.shown",           UserStringNop("OPTIONS_DB_DISPLAY_TIMESTAMP"),                  true,               Validator<bool>());
 
-        Hotkey::AddHotkey("exit",                           UserStringNop("HOTKEY_EXIT"),                                   GG::GGK_NONE,       GG::MOD_KEY_NONE);
-        Hotkey::AddHotkey("quit",                           UserStringNop("HOTKEY_QUIT"),                                   GG::GGK_NONE,       GG::MOD_KEY_NONE);
-        Hotkey::AddHotkey("video.fullscreen",               UserStringNop("HOTKEY_FULLSCREEN"),                             GG::GGK_RETURN,     GG::MOD_KEY_ALT);
+        Hotkey::AddHotkey("exit",                           UserStringNop("HOTKEY_EXIT"),                                   GG::Key::GGK_NONE,  GG::MOD_KEY_NONE);
+        Hotkey::AddHotkey("quit",                           UserStringNop("HOTKEY_QUIT"),                                   GG::Key::GGK_NONE,  GG::MOD_KEY_NONE);
+        Hotkey::AddHotkey("video.fullscreen",               UserStringNop("HOTKEY_FULLSCREEN"),                             GG::Key::GGK_RETURN,GG::MOD_KEY_ALT);
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
@@ -385,7 +385,7 @@ bool HumanClientApp::CanSaveNow() const {
 
     // can't save while AIs are playing their turns...
     for (const auto& entry : Empires()) {
-        if (GetEmpireClientType(entry.first) != Networking::CLIENT_TYPE_AI_PLAYER)
+        if (GetEmpireClientType(entry.first) != Networking::ClientType::CLIENT_TYPE_AI_PLAYER)
             continue;   // only care about AIs
 
         if (!entry.second->Ready()) {
@@ -590,7 +590,7 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
     }
 
     human_player_setup_data.save_game_empire_id = ALL_EMPIRES; // not used for new games
-    human_player_setup_data.client_type = Networking::CLIENT_TYPE_HUMAN_PLAYER;
+    human_player_setup_data.client_type = Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER;
 
     // add to setup data players
     setup_data.players.push_back(human_player_setup_data);
@@ -606,7 +606,7 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
         ai_setup_data.empire_color = GG::CLR_ZERO;        // to be set by server
         ai_setup_data.starting_species_name.clear();      // leave blank, to be set by server
         ai_setup_data.save_game_empire_id = ALL_EMPIRES;  // not used for new games
-        ai_setup_data.client_type = Networking::CLIENT_TYPE_AI_PLAYER;
+        ai_setup_data.client_type = Networking::ClientType::CLIENT_TYPE_AI_PLAYER;
 
         setup_data.players.push_back(ai_setup_data);
     }
@@ -917,8 +917,8 @@ void HumanClientApp::StartTurn(const SaveGameUIData& ui_data) {
     DebugLogger() << "HumanClientApp::StartTurn";
 
     if (const Empire* empire = GetEmpire(EmpireID())) {
-        double RP = empire->ResourceOutput(RE_RESEARCH);
-        double PP = empire->ResourceOutput(RE_INDUSTRY);
+        double RP = empire->ResourceOutput(ResourceType::RE_RESEARCH);
+        double PP = empire->ResourceOutput(ResourceType::RE_INDUSTRY);
         int turn_number = CurrentTurn();
         float ratio = (RP/(PP+0.0001));
         const GG::Clr color = empire->Color();
@@ -974,32 +974,32 @@ void HumanClientApp::HandleMessage(Message& msg) {
         std::cerr << "HumanClientApp::HandleMessage(" << msg.Type() << ")\n";
 
     switch (msg.Type()) {
-    case Message::ERROR_MSG:                m_fsm->process_event(Error(msg));                   break;
-    case Message::HOST_MP_GAME:             m_fsm->process_event(HostMPGame(msg));              break;
-    case Message::HOST_SP_GAME:             m_fsm->process_event(HostSPGame(msg));              break;
-    case Message::JOIN_GAME:                m_fsm->process_event(JoinGame(msg));                break;
-    case Message::HOST_ID:                  m_fsm->process_event(HostID(msg));                  break;
-    case Message::LOBBY_UPDATE:             m_fsm->process_event(LobbyUpdate(msg));             break;
-    case Message::SAVE_GAME_COMPLETE:       m_fsm->process_event(SaveGameComplete(msg));        break;
-    case Message::CHECKSUM:                 m_fsm->process_event(CheckSum(msg));                break;
-    case Message::GAME_START:               m_fsm->process_event(GameStart(msg));               break;
-    case Message::TURN_UPDATE:              m_fsm->process_event(TurnUpdate(msg));              break;
-    case Message::TURN_PARTIAL_UPDATE:      m_fsm->process_event(TurnPartialUpdate(msg));       break;
-    case Message::TURN_PROGRESS:            m_fsm->process_event(TurnProgress(msg));            break;
-    case Message::UNREADY:                  m_fsm->process_event(TurnRevoked(msg));             break;
-    case Message::PLAYER_STATUS:            m_fsm->process_event(::PlayerStatus(msg));          break;
-    case Message::PLAYER_CHAT:              m_fsm->process_event(PlayerChat(msg));              break;
-    case Message::DIPLOMACY:                m_fsm->process_event(Diplomacy(msg));               break;
-    case Message::DIPLOMATIC_STATUS:        m_fsm->process_event(DiplomaticStatusUpdate(msg));  break;
-    case Message::END_GAME:                 m_fsm->process_event(::EndGame(msg));               break;
+    case Message::MessageType::ERROR_MSG:               m_fsm->process_event(Error(msg));                   break;
+    case Message::MessageType::HOST_MP_GAME:            m_fsm->process_event(HostMPGame(msg));              break;
+    case Message::MessageType::HOST_SP_GAME:            m_fsm->process_event(HostSPGame(msg));              break;
+    case Message::MessageType::JOIN_GAME:               m_fsm->process_event(JoinGame(msg));                break;
+    case Message::MessageType::HOST_ID:                 m_fsm->process_event(HostID(msg));                  break;
+    case Message::MessageType::LOBBY_UPDATE:            m_fsm->process_event(LobbyUpdate(msg));             break;
+    case Message::MessageType::SAVE_GAME_COMPLETE:      m_fsm->process_event(SaveGameComplete(msg));        break;
+    case Message::MessageType::CHECKSUM:                m_fsm->process_event(CheckSum(msg));                break;
+    case Message::MessageType::GAME_START:              m_fsm->process_event(GameStart(msg));               break;
+    case Message::MessageType::TURN_UPDATE:             m_fsm->process_event(TurnUpdate(msg));              break;
+    case Message::MessageType::TURN_PARTIAL_UPDATE:     m_fsm->process_event(TurnPartialUpdate(msg));       break;
+    case Message::MessageType::TURN_PROGRESS:           m_fsm->process_event(TurnProgress(msg));            break;
+    case Message::MessageType::UNREADY:                 m_fsm->process_event(TurnRevoked(msg));             break;
+    case Message::MessageType::PLAYER_STATUS:           m_fsm->process_event(::PlayerStatus(msg));          break;
+    case Message::MessageType::PLAYER_CHAT:             m_fsm->process_event(PlayerChat(msg));              break;
+    case Message::MessageType::DIPLOMACY:               m_fsm->process_event(Diplomacy(msg));               break;
+    case Message::MessageType::DIPLOMATIC_STATUS:       m_fsm->process_event(DiplomaticStatusUpdate(msg));  break;
+    case Message::MessageType::END_GAME:                m_fsm->process_event(::EndGame(msg));               break;
 
-    case Message::DISPATCH_COMBAT_LOGS:     m_fsm->process_event(DispatchCombatLogs(msg));      break;
-    case Message::DISPATCH_SAVE_PREVIEWS:   HandleSaveGamePreviews(msg);                        break;
-    case Message::AUTH_REQUEST:             m_fsm->process_event(AuthRequest(msg));             break;
-    case Message::CHAT_HISTORY:             m_fsm->process_event(ChatHistory(msg));             break;
-    case Message::SET_AUTH_ROLES:           HandleSetAuthRoles(msg);                            break;
-    case Message::TURN_TIMEOUT:             m_fsm->process_event(TurnTimeout(msg));             break;
-    case Message::PLAYER_INFO:              m_fsm->process_event(PlayerInfoMsg(msg));           break;
+    case Message::MessageType::DISPATCH_COMBAT_LOGS:    m_fsm->process_event(DispatchCombatLogs(msg));      break;
+    case Message::MessageType::DISPATCH_SAVE_PREVIEWS:  HandleSaveGamePreviews(msg);                        break;
+    case Message::MessageType::AUTH_REQUEST:            m_fsm->process_event(AuthRequest(msg));             break;
+    case Message::MessageType::CHAT_HISTORY:            m_fsm->process_event(ChatHistory(msg));             break;
+    case Message::MessageType::SET_AUTH_ROLES:          HandleSetAuthRoles(msg);                            break;
+    case Message::MessageType::TURN_TIMEOUT:            m_fsm->process_event(TurnTimeout(msg));             break;
+    case Message::MessageType::PLAYER_INFO:             m_fsm->process_event(PlayerInfoMsg(msg));           break;
     default:
         ErrorLogger() << "HumanClientApp::HandleMessage : Received an unknown message type \"" << msg.Type() << "\".";
     }
@@ -1438,7 +1438,7 @@ void HumanClientApp::ResetOrExitApp(bool reset, bool skip_savegame, int exit_cod
         if (was_playing && !m_single_player_game &&
             m_empires.GetEmpire(m_empire_id) != nullptr &&
             !m_empires.GetEmpire(m_empire_id)->Ready() &&
-            GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER)
+            GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER)
         {
             std::shared_ptr<GG::Font> font = ClientUI::GetFont();
             auto prompt = GG::GUI::GetGUI()->GetStyleFactory()->NewThreeButtonDlg(

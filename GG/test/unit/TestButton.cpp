@@ -91,21 +91,21 @@ namespace GG
 MockGUI gui;
 
 GG::WndEvent mouseenter_ev(
-    GG::WndEvent::MouseEnter, GG::Pt(GG::X(10), GG::Y(10)), GG::MOD_KEY_NONE);
+    GG::WndEvent::EventType::MouseEnter, GG::Pt(GG::X(10), GG::Y(10)), GG::MOD_KEY_NONE);
 GG::WndEvent mousehere_ev(
-    GG::WndEvent::MouseHere, GG::Pt(GG::X(25), GG::Y(25)), GG::MOD_KEY_NONE);
+    GG::WndEvent::EventType::MouseHere, GG::Pt(GG::X(25), GG::Y(25)), GG::MOD_KEY_NONE);
 GG::WndEvent mouselpress_ev(
-    GG::WndEvent::LButtonDown, GG::Pt(GG::X(25), GG::Y(25)), GG::MOD_KEY_NONE);
+    GG::WndEvent::EventType::LButtonDown, GG::Pt(GG::X(25), GG::Y(25)), GG::MOD_KEY_NONE);
 GG::WndEvent mouserpress_ev(
-    GG::WndEvent::RButtonDown, GG::Pt(GG::X(25), GG::Y(25)), GG::MOD_KEY_NONE);
+    GG::WndEvent::EventType::RButtonDown, GG::Pt(GG::X(25), GG::Y(25)), GG::MOD_KEY_NONE);
 GG::WndEvent mouselclick_ev(
-    GG::WndEvent::LClick, GG::Pt(GG::X(25), GG::Y(25)), GG::MOD_KEY_NONE);
+    GG::WndEvent::EventType::LClick, GG::Pt(GG::X(25), GG::Y(25)), GG::MOD_KEY_NONE);
 GG::WndEvent mouselrelease_ev(
-    GG::WndEvent::LButtonUp, GG::Pt(GG::X(25), GG::Y(25)), GG::MOD_KEY_NONE);
+    GG::WndEvent::EventType::LButtonUp, GG::Pt(GG::X(25), GG::Y(25)), GG::MOD_KEY_NONE);
 GG::WndEvent mouseldrag_ev(
-    GG::WndEvent::LDrag, GG::Pt(GG::X(30), GG::Y(30)), GG::MOD_KEY_NONE);
+    GG::WndEvent::EventType::LDrag, GG::Pt(GG::X(30), GG::Y(30)), GG::MOD_KEY_NONE);
 GG::WndEvent mouseleave_ev(
-    GG::WndEvent::MouseLeave, GG::Pt(GG::X(40), GG::Y(40)), GG::MOD_KEY_NONE);
+    GG::WndEvent::EventType::MouseLeave, GG::Pt(GG::X(40), GG::Y(40)), GG::MOD_KEY_NONE);
 
 
 BOOST_AUTO_TEST_SUITE(TestButton)
@@ -117,7 +117,7 @@ BOOST_AUTO_TEST_CASE( constructor )
     auto& button = *buttonp;
 
     BOOST_CHECK(button.Text() == "Test");
-    BOOST_CHECK(button.State() == GG::Button::BN_UNPRESSED);
+    BOOST_CHECK(button.State() == GG::Button::ButtonState::BN_UNPRESSED);
     BOOST_CHECK(button.MinUsableSize() == GG::Pt(GG::X(0), GG::Y(0)));
     BOOST_CHECK(button.Color() == GG::CLR_WHITE);
     BOOST_CHECK(button.GetLabel().TextColor() == GG::CLR_GREEN);
@@ -134,7 +134,7 @@ BOOST_AUTO_TEST_CASE( constructor )
     BOOST_CHECK(!button.Resizable());
     BOOST_CHECK(!button.OnTop());
     BOOST_CHECK(!button.Modal());
-    BOOST_CHECK(button.GetChildClippingMode() == GG::Wnd::DontClip);
+    BOOST_CHECK(button.GetChildClippingMode() == GG::Wnd::ChildClippingMode::DontClip);
     BOOST_CHECK(!button.NonClientChild());
     BOOST_CHECK(button.Visible());
     BOOST_CHECK(!button.PreRenderRequired());
@@ -169,7 +169,7 @@ BOOST_AUTO_TEST_CASE( constructor )
     BOOST_CHECK(!button.ContainingLayout());
     BOOST_CHECK(button.BrowseModes().size() == 1);
     BOOST_CHECK(button.GetStyleFactory() == gui.GetStyleFactory());
-    BOOST_CHECK(button.WindowRegion(GG::Pt(GG::X(0), GG::Y(0))) == GG::WR_NONE);
+    BOOST_CHECK(button.WindowRegion(GG::Pt(GG::X(0), GG::Y(0))) == GG::WndRegion::WR_NONE);
 }
 
 BOOST_AUTO_TEST_CASE( resize )
@@ -269,33 +269,33 @@ BOOST_AUTO_TEST_CASE( stateChange )
 
     button.SizeMove(GG::Pt(GG::X(10), GG::Y(10)), GG::Pt(GG::X(40), GG::Y(40)));
 
-    BOOST_CHECK(button.State() == GG::Button::BN_UNPRESSED);
+    BOOST_CHECK(button.State() == GG::Button::ButtonState::BN_UNPRESSED);
     button.HandleEventE(mouseenter_ev);
-    BOOST_CHECK(button.State() == GG::Button::BN_ROLLOVER);
+    BOOST_CHECK(button.State() == GG::Button::ButtonState::BN_ROLLOVER);
     button.HandleEventE(mouseleave_ev);
-    BOOST_CHECK(button.State() == GG::Button::BN_UNPRESSED);
+    BOOST_CHECK(button.State() == GG::Button::ButtonState::BN_UNPRESSED);
 
-    BOOST_CHECK(button.State() == GG::Button::BN_UNPRESSED);
+    BOOST_CHECK(button.State() == GG::Button::ButtonState::BN_UNPRESSED);
     button.HandleEventE(mousehere_ev);
-    BOOST_CHECK(button.State() == GG::Button::BN_ROLLOVER);
+    BOOST_CHECK(button.State() == GG::Button::ButtonState::BN_ROLLOVER);
     button.HandleEventE(mouseleave_ev);
-    BOOST_CHECK(button.State() == GG::Button::BN_UNPRESSED);
+    BOOST_CHECK(button.State() == GG::Button::ButtonState::BN_UNPRESSED);
 
-    BOOST_CHECK(button.State() == GG::Button::BN_UNPRESSED);
+    BOOST_CHECK(button.State() == GG::Button::ButtonState::BN_UNPRESSED);
     button.HandleEventE(mousehere_ev);
-    BOOST_CHECK(button.State() == GG::Button::BN_ROLLOVER);
+    BOOST_CHECK(button.State() == GG::Button::ButtonState::BN_ROLLOVER);
     button.HandleEventE(mouselpress_ev);
-    BOOST_CHECK(button.State() == GG::Button::BN_PRESSED);
+    BOOST_CHECK(button.State() == GG::Button::ButtonState::BN_PRESSED);
     button.HandleEventE(mouseldrag_ev);
-    BOOST_CHECK(button.State() == GG::Button::BN_PRESSED);
+    BOOST_CHECK(button.State() == GG::Button::ButtonState::BN_PRESSED);
     button.HandleEventE(mouseleave_ev);
-    BOOST_CHECK(button.State() == GG::Button::BN_UNPRESSED);
+    BOOST_CHECK(button.State() == GG::Button::ButtonState::BN_UNPRESSED);
 
-    BOOST_CHECK(button.State() == GG::Button::BN_UNPRESSED);
+    BOOST_CHECK(button.State() == GG::Button::ButtonState::BN_UNPRESSED);
     button.HandleEventE(mouseldrag_ev);
-    BOOST_CHECK(button.State() == GG::Button::BN_PRESSED);
+    BOOST_CHECK(button.State() == GG::Button::ButtonState::BN_PRESSED);
     button.HandleEventE(mouselrelease_ev);
-    BOOST_CHECK(button.State() == GG::Button::BN_UNPRESSED);
+    BOOST_CHECK(button.State() == GG::Button::ButtonState::BN_UNPRESSED);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

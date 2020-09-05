@@ -116,8 +116,8 @@ void InfluenceQueue::Update() {
 
     ScopedTimer update_timer("InfluenceQueue::Update");
 
-    float available_IP = empire->ResourceOutput(RE_INFLUENCE);
-    float stockpiled_IP = empire->ResourceStockpile(RE_INFLUENCE);
+    float available_IP = empire->ResourceOutput(ResourceType::RE_INFLUENCE);
+    float stockpiled_IP = empire->ResourceStockpile(ResourceType::RE_INFLUENCE);
 
     float spending_on_policy_adoption_ip = 0.0f;
     for (auto policy_turn : empire->TurnsPoliciesAdopted()) {
@@ -145,7 +145,7 @@ void InfluenceQueue::Update() {
 
     //DebugLogger() << "InfluenceQueue::Update: Projections took "
     //              << ((sim_time_end - sim_time_start).total_microseconds()) << " microseconds with "
-    //              << empire->ResourceOutput(RE_INFLUENCE) << " influence output";
+    //              << empire->ResourceOutput(ResourceType::RE_INFLUENCE) << " influence output";
     InfluenceQueueChangedSignal();
 }
 

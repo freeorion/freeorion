@@ -18,8 +18,8 @@ System::System(StarType star, const std::string& name, double x, double y) :
     UniverseObject(name, x, y),
     m_star(star)
 {
-    if (m_star < INVALID_STAR_TYPE || NUM_STAR_TYPES < m_star)
-        m_star = INVALID_STAR_TYPE;
+    if (m_star < StarType::INVALID_STAR_TYPE || StarType::NUM_STAR_TYPES < m_star)
+        m_star = StarType::INVALID_STAR_TYPE;
 
     m_orbits.assign(SYSTEM_ORBITS, INVALID_OBJECT_ID);
 
@@ -32,8 +32,8 @@ System::System(StarType star, const std::map<int, bool>& lanes_and_holes,
     m_star(star),
     m_starlanes_wormholes(lanes_and_holes)
 {
-    if (m_star < INVALID_STAR_TYPE || NUM_STAR_TYPES < m_star)
-        m_star = INVALID_STAR_TYPE;
+    if (m_star < StarType::INVALID_STAR_TYPE || StarType::NUM_STAR_TYPES < m_star)
+        m_star = StarType::INVALID_STAR_TYPE;
 
     m_orbits.assign(SYSTEM_ORBITS, INVALID_OBJECT_ID);
 
@@ -45,7 +45,7 @@ System::System(StarType star, const std::map<int, bool>& lanes_and_holes,
 System* System::Clone(int empire_id) const {
     Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
-    if (!(vis >= VIS_BASIC_VISIBILITY && vis <= VIS_FULL_VISIBILITY))
+    if (!(vis >= Visibility::VIS_BASIC_VISIBILITY && vis <= Visibility::VIS_FULL_VISIBILITY))
         return nullptr;
 
     System* retval = new System(m_star, m_name, X(), Y());
@@ -68,7 +68,7 @@ void System::Copy(std::shared_ptr<const UniverseObject> copied_object, int empir
 
     UniverseObject::Copy(copied_object, vis, visible_specials);
 
-    if (vis >= VIS_BASIC_VISIBILITY) {
+    if (vis >= Visibility::VIS_BASIC_VISIBILITY) {
         // add any visible lanes, without removing existing entries
         std::map<int, bool> visible_lanes_holes = copied_system->VisibleStarlanesWormholes(empire_id);
         for (const auto& entry : visible_lanes_holes)
@@ -119,7 +119,7 @@ void System::Copy(std::shared_ptr<const UniverseObject> copied_object, int empir
         }
 
 
-        if (vis >= VIS_PARTIAL_VISIBILITY) {
+        if (vis >= Visibility::VIS_PARTIAL_VISIBILITY) {
             this->m_name =                  copied_system->m_name;
             this->m_star =                  copied_system->m_star;
             this->m_last_turn_battle_here = copied_system->m_last_turn_battle_here;
@@ -144,7 +144,7 @@ void System::Copy(std::shared_ptr<const UniverseObject> copied_object, int empir
 }
 
 UniverseObjectType System::ObjectType() const
-{ return OBJ_SYSTEM; }
+{ return UniverseObjectType::OBJ_SYSTEM; }
 
 std::string System::Dump(unsigned short ntabs) const {
     std::stringstream os;
@@ -196,17 +196,17 @@ const std::string& System::ApparentName(int empire_id, bool blank_unexplored_and
 
     // has the indicated empire ever detected this system?
     const auto& vtm = GetUniverse().GetObjectVisibilityTurnMapByEmpire(this->ID(), empire_id);
-    if (!vtm.count(VIS_PARTIAL_VISIBILITY)) {
+    if (!vtm.count(Visibility::VIS_PARTIAL_VISIBILITY)) {
         if (blank_unexplored_and_none)
             return EMPTY_STRING;
 
-        if (m_star == INVALID_STAR_TYPE)
+        if (m_star == StarType::INVALID_STAR_TYPE)
             return UserString("UNEXPLORED_REGION");
         else
             return UserString("UNEXPLORED_SYSTEM");
     }
 
-    if (m_star == STAR_NONE) {
+    if (m_star == StarType::STAR_NONE) {
         // determine if there are any planets in the system
         for (const auto& entry : Objects().ExistingPlanets()) {
             if (entry.second->SystemID() == this->ID())
@@ -224,21 +224,21 @@ const std::string& System::ApparentName(int empire_id, bool blank_unexplored_and
 }
 
 StarType System::NextOlderStarType() const {
-    if (m_star <= INVALID_STAR_TYPE || m_star >= NUM_STAR_TYPES)
-        return INVALID_STAR_TYPE;
-    if (m_star >= STAR_RED)
-        return m_star;              // STAR_RED, STAR_NEUTRON, STAR_BLACK, STAR_NONE
-    return StarType(m_star + 1);    // STAR_BLUE -> STAR_WHITE -> STAR_YELLOW -> STAR_ORANGE -> STAR_RED
+    if (m_star <= StarType::INVALID_STAR_TYPE || m_star >= StarType::NUM_STAR_TYPES)
+        return StarType::INVALID_STAR_TYPE;
+    if (m_star >= StarType::STAR_RED)
+        return m_star;                  // STAR_RED, STAR_NEUTRON, STAR_BLACK, STAR_NONE
+    return StarType(int(m_star) + 1);   // STAR_BLUE -> STAR_WHITE -> STAR_YELLOW -> STAR_ORANGE -> STAR_RED
 }
 
 StarType System::NextYoungerStarType() const {
-    if (m_star <= INVALID_STAR_TYPE || m_star >= NUM_STAR_TYPES)
-        return INVALID_STAR_TYPE;
-    if (m_star > STAR_RED)
-        return m_star;              // STAR_NEUTRON, STAR_BLACK, STAR_NONE
-    if (m_star <= STAR_BLUE)
-        return STAR_BLUE;           // STAR_BLUE
-    return StarType(m_star - 1);    // STAR_BLUE <- STAR_WHITE <- STAR_YELLOW <- STAR_ORANGE <- STAR_RED
+    if (m_star <= StarType::INVALID_STAR_TYPE || m_star >= StarType::NUM_STAR_TYPES)
+        return StarType::INVALID_STAR_TYPE;
+    if (m_star > StarType::STAR_RED)
+        return m_star;                  // STAR_NEUTRON, STAR_BLACK, STAR_NONE
+    if (m_star <= StarType::STAR_BLUE)
+        return StarType::STAR_BLUE;     // STAR_BLUE
+    return StarType(int(m_star) - 1);   // STAR_BLUE <- STAR_WHITE <- STAR_YELLOW <- STAR_ORANGE <- STAR_RED
 }
 
 int System::NumStarlanes() const {
@@ -311,7 +311,7 @@ void System::Insert(std::shared_ptr<UniverseObject> obj, int orbit/* = -1*/) {
     obj->MoveTo(this->X(), this->Y());
     obj->SetSystem(this->ID());
 
-    if (obj->ObjectType() == OBJ_PLANET) {
+    if (obj->ObjectType() == UniverseObjectType::OBJ_PLANET) {
         if (orbit == -1) {
             bool already_in_orbit = false;
             for (int planet_id : m_orbits) {
@@ -365,27 +365,27 @@ void System::Insert(std::shared_ptr<UniverseObject> obj, int orbit/* = -1*/) {
     // if not a planet, don't need to put into an orbit
 
     switch (obj->ObjectType()) {
-    case OBJ_SHIP: {
+    case UniverseObjectType::OBJ_SHIP: {
         m_ships.insert(obj->ID());
         if (std::shared_ptr<Ship> ship = std::dynamic_pointer_cast<Ship>(obj))
             ship->SetArrivedOnTurn(CurrentTurn());
         break;
     }
-    case OBJ_FLEET: {
+    case UniverseObjectType::OBJ_FLEET: {
         m_fleets.insert(obj->ID());
         FleetsInsertedSignal({std::dynamic_pointer_cast<Fleet>(obj)});
         break;
     }
-    case OBJ_PLANET:
+    case UniverseObjectType::OBJ_PLANET:
         m_planets.insert(obj->ID());
         break;
-    case OBJ_FIELD:
+    case UniverseObjectType::OBJ_FIELD:
         m_fields.insert(obj->ID());
         break;
-    case OBJ_SYSTEM:
+    case UniverseObjectType::OBJ_SYSTEM:
         ErrorLogger() << "System::Insert inserting a system into another system...??";
         break;
-    case OBJ_BUILDING:
+    case UniverseObjectType::OBJ_BUILDING:
         m_buildings.insert(obj->ID());
         break;
     default:
@@ -430,7 +430,7 @@ void System::Remove(int id) {
 
 void System::SetStarType(StarType type) {
     m_star = type;
-    if (m_star <= INVALID_STAR_TYPE || NUM_STAR_TYPES <= m_star)
+    if (m_star <= StarType::INVALID_STAR_TYPE || StarType::NUM_STAR_TYPES <= m_star)
         ErrorLogger() << "System::SetStarType set star type to " << type;
     StateChangedSignal();
 }
@@ -476,7 +476,7 @@ void System::ResetTargetMaxUnpairedMeters() {
 
     // give systems base stealth slightly above zero, so that they can't be
     // seen from a distance without high detection ability
-    if (Meter* stealth = GetMeter(METER_STEALTH)) {
+    if (Meter* stealth = GetMeter(MeterType::METER_STEALTH)) {
         stealth->ResetCurrent();
         //stealth->AddToCurrent(0.01f);
     }
@@ -530,7 +530,7 @@ std::map<int, bool> System::VisibleStarlanesWormholes(int empire_id) const {
 
 
     // return all starlanes if partially visible or better
-    if (this_system_vis >= VIS_PARTIAL_VISIBILITY)
+    if (this_system_vis >= Visibility::VIS_PARTIAL_VISIBILITY)
         return m_starlanes_wormholes;
 
 
@@ -541,7 +541,7 @@ std::map<int, bool> System::VisibleStarlanesWormholes(int empire_id) const {
     // check if any of the adjacent systems are partial or better visible
     for (const auto& entry : m_starlanes_wormholes) {
         int lane_end_sys_id = entry.first;
-        if (universe.GetObjectVisibilityByEmpire(lane_end_sys_id, empire_id) >= VIS_PARTIAL_VISIBILITY)
+        if (universe.GetObjectVisibilityByEmpire(lane_end_sys_id, empire_id) >= Visibility::VIS_PARTIAL_VISIBILITY)
             retval[lane_end_sys_id] = entry.second;
     }
 
@@ -556,7 +556,7 @@ std::map<int, bool> System::VisibleStarlanesWormholes(int empire_id) const {
     // get moving fleets owned by empire
     std::vector<const Fleet*> moving_empire_fleets;
     for (auto& object : objects.find(MovingFleetVisitor())) {
-        if (object && object->ObjectType() == OBJ_FLEET && object->OwnedBy(empire_id))
+        if (object && object->ObjectType() == UniverseObjectType::OBJ_FLEET && object->OwnedBy(empire_id))
             moving_empire_fleets.emplace_back(static_cast<const Fleet*>(object.get()));
     }
 

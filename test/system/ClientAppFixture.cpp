@@ -78,7 +78,7 @@ void ClientAppFixture::HostSPGame(unsigned int num_AIs) {
 
     human_player_setup_data.starting_species_name = "SP_HUMAN";
     human_player_setup_data.save_game_empire_id = ALL_EMPIRES; // not used for new games
-    human_player_setup_data.client_type = Networking::CLIENT_TYPE_HUMAN_PLAYER;
+    human_player_setup_data.client_type = Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER;
 
     // add to setup data players
     setup_data.players.push_back(human_player_setup_data);
@@ -93,7 +93,7 @@ void ClientAppFixture::HostSPGame(unsigned int num_AIs) {
         ai_setup_data.empire_color = GG::CLR_ZERO;        // to be set by server
         ai_setup_data.starting_species_name.clear();      // leave blank, to be set by server
         ai_setup_data.save_game_empire_id = ALL_EMPIRES;  // not used for new games
-        ai_setup_data.client_type = Networking::CLIENT_TYPE_AI_PLAYER;
+        ai_setup_data.client_type = Networking::ClientType::CLIENT_TYPE_AI_PLAYER;
 
         setup_data.players.push_back(ai_setup_data);
     }
@@ -104,7 +104,7 @@ void ClientAppFixture::HostSPGame(unsigned int num_AIs) {
 void ClientAppFixture::JoinGame() {
     m_lobby_updated = false;
     m_networking->SendMessage(JoinGameMessage("TestPlayer",
-                                              Networking::CLIENT_TYPE_HUMAN_PLAYER,
+                                              Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER,
                                               m_cookie));
 }
 
@@ -138,16 +138,16 @@ bool ClientAppFixture::ProcessMessages(const boost::posix_time::ptime& start_tim
 bool ClientAppFixture::HandleMessage(Message& msg) {
     InfoLogger() << "Handle message " << msg.Type();
     switch (msg.Type()) {
-    case Message::CHECKSUM: {
+    case Message::MessageType::CHECKSUM: {
         bool result = VerifyCheckSum(msg);
         if (!result)
             ErrorLogger() << "Wrong checksum";
         return result;
     }
-    case Message::SET_AUTH_ROLES:
+    case Message::MessageType::SET_AUTH_ROLES:
         ExtractSetAuthorizationRolesMessage(msg, m_networking->AuthorizationRoles());
         return true;
-    case Message::HOST_SP_GAME:
+    case Message::MessageType::HOST_SP_GAME:
         try {
             int host_id = boost::lexical_cast<int>(msg.Text());
             m_networking->SetPlayerID(host_id);
@@ -157,13 +157,13 @@ bool ClientAppFixture::HandleMessage(Message& msg) {
             ErrorLogger() << "Host id " << msg.Text() << " is not a number: " << ex.what();
             return false;
         }
-    case Message::TURN_PROGRESS: {
+    case Message::MessageType::TURN_PROGRESS: {
         Message::TurnProgressPhase phase_id;
         ExtractTurnProgressMessageData(msg, phase_id);
         InfoLogger() << "Turn progress: " << phase_id;
         return true;
     }
-    case Message::GAME_START: {
+    case Message::MessageType::GAME_START: {
         bool single_player_game;     // ignored
         bool loaded_game_data;       // ignored
         bool ui_data_available;      // ignored
@@ -182,7 +182,7 @@ bool ClientAppFixture::HandleMessage(Message& msg) {
 
         m_ai_empires.clear();
         for (const auto& empire : Empires()) {
-            if (GetEmpireClientType(empire.first) == Networking::CLIENT_TYPE_AI_PLAYER)
+            if (GetEmpireClientType(empire.first) == Networking::ClientType::CLIENT_TYPE_AI_PLAYER)
                 m_ai_empires.insert(empire.first);
         }
         m_ai_waiting = m_ai_empires;
@@ -190,44 +190,44 @@ bool ClientAppFixture::HandleMessage(Message& msg) {
         m_game_started = true;
         return true;
     }
-    case Message::DIPLOMATIC_STATUS:
-    case Message::PLAYER_CHAT:
-    case Message::CHAT_HISTORY:
-    case Message::TURN_TIMEOUT:
-    case Message::PLAYER_INFO:
+    case Message::MessageType::DIPLOMATIC_STATUS:
+    case Message::MessageType::PLAYER_CHAT:
+    case Message::MessageType::CHAT_HISTORY:
+    case Message::MessageType::TURN_TIMEOUT:
+    case Message::MessageType::PLAYER_INFO:
         return true; // ignore
-    case Message::PLAYER_STATUS: {
+    case Message::MessageType::PLAYER_STATUS: {
         int about_empire_id;
         Message::PlayerStatus status;
         ExtractPlayerStatusMessageData(msg, status, about_empire_id);
         SetEmpireStatus(about_empire_id, status);
 
-        if (status == Message::WAITING) {
+        if (status == Message::PlayerStatus::WAITING) {
             m_ai_waiting.erase(about_empire_id);
         }
         return true;
     }
-    case Message::TURN_PARTIAL_UPDATE: {
+    case Message::MessageType::TURN_PARTIAL_UPDATE: {
         ExtractTurnPartialUpdateMessageData(msg, EmpireID(), GetUniverse());
         return true;
     }
-    case Message::TURN_UPDATE: {
+    case Message::MessageType::TURN_UPDATE: {
         ExtractTurnUpdateMessageData(msg,                   EmpireID(),         m_current_turn,
                                      Empires(),             GetUniverse(),      GetSpeciesManager(),
                                      GetCombatLogManager(), GetSupplyManager(), Players());
         m_turn_done = true;
         return true;
     }
-    case Message::SAVE_GAME_COMPLETE:
+    case Message::MessageType::SAVE_GAME_COMPLETE:
         m_save_completed = true;
         return true;
-    case Message::JOIN_GAME: {
+    case Message::MessageType::JOIN_GAME: {
         int player_id;
         ExtractJoinAckMessageData(msg, player_id, m_cookie);
         m_networking->SetPlayerID(player_id);
         return true;
     }
-    case Message::HOST_ID: {
+    case Message::MessageType::HOST_ID: {
         int host_id = Networking::INVALID_PLAYER_ID;
         try {
             host_id = boost::lexical_cast<int>(msg.Text());
@@ -238,11 +238,11 @@ bool ClientAppFixture::HandleMessage(Message& msg) {
         }
         return true;
     }
-    case Message::LOBBY_UPDATE:
+    case Message::MessageType::LOBBY_UPDATE:
         m_lobby_updated = true;
         ExtractLobbyUpdateMessageData(msg, m_lobby_data);
         return true;
-    case Message::ERROR_MSG: {
+    case Message::MessageType::ERROR_MSG: {
             int player_id;
             std::string problem;
             bool fatal;
@@ -277,7 +277,7 @@ void ClientAppFixture::UpdateLobby() {
 unsigned int ClientAppFixture::GetLobbyAICount() const {
     unsigned int res = 0;
     for (const auto& plr: m_lobby_data.players) {
-        if (plr.second.client_type == Networking::CLIENT_TYPE_AI_PLAYER)
+        if (plr.second.client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER)
             ++ res;
     }
     return res;

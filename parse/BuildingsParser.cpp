@@ -72,7 +72,7 @@ namespace {
 
             capture %=
                 (label(tok.CaptureResult_) >> capture_result_enum)
-                | eps [ _val = CR_CAPTURE ]
+                | eps [ _val = CaptureResult::CR_CAPTURE ]
                 ;
 
             building_type

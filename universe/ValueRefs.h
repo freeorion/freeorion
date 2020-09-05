@@ -18,6 +18,11 @@
 #include "../util/i18n.h"
 #include "../util/Random.h"
 
+std::ostream& operator<<(std::ostream&, PlanetType);
+std::ostream& operator<<(std::ostream&, PlanetSize);
+std::ostream& operator<<(std::ostream&, PlanetEnvironment);
+std::ostream& operator<<(std::ostream&, StarType);
+
 
 namespace CheckSums {
     template <typename T>
@@ -55,7 +60,7 @@ private:
     std::string m_top_level_content;    // in the special case that T is std::string and m_value is "CurrentContent", return this instead
 };
 
-enum ReferenceType : int {
+enum class ReferenceType : int {
     INVALID_REFERENCE_TYPE = -1,
     NON_OBJECT_REFERENCE,               // ValueRef::Variable is not evalulated on any specific object
     SOURCE_REFERENCE,                   // ValueRef::Variable is evaluated on the source object
@@ -103,7 +108,7 @@ struct FO_COMMON_API Variable : public ValueRef<T>
 protected:
     void InitInvariants();
 
-    ReferenceType               m_ref_type = INVALID_REFERENCE_TYPE;
+    ReferenceType               m_ref_type = ReferenceType::INVALID_REFERENCE_TYPE;
     std::vector<std::string>    m_property_name;
     bool                        m_return_immediate_value = false;
 };
@@ -275,7 +280,7 @@ private:
 
 /** Returns the in-game name of the object / empire / etc. with a specified id. */
 struct FO_COMMON_API NameLookup final : public Variable<std::string> {
-    enum LookupType : int {
+    enum class LookupType : int {
         INVALID_LOOKUP = -1,
         OBJECT_NAME,
         EMPIRE_NAME,
@@ -303,7 +308,7 @@ private:
     LookupType m_lookup_type;
 };
 
-enum OpType : int {
+enum class OpType : int {
     PLUS,
     MINUS,
     TIMES,
@@ -374,7 +379,7 @@ private:
     void    CacheConstValue();
     T       EvalImpl(const ScriptingContext& context) const;
 
-    OpType                                      m_op_type = TIMES;
+    OpType                                      m_op_type = OpType::TIMES;
     std::vector<std::unique_ptr<ValueRef<T>>>   m_operands;
     bool                                        m_constant_expr = false;
     bool                                        m_simple_increment = false;
@@ -461,7 +466,7 @@ T Constant<T>::Eval(const ScriptingContext& context) const
 
 template <typename T>
 std::string Constant<T>::Description() const
-{ return UserString(boost::lexical_cast<std::string>(m_value)); }
+{ return UserString(boost::lexical_cast<std::string, T>(m_value)); }
 
 template <typename T>
 void Constant<T>::SetTopLevelContent(const std::string& content_name)
@@ -581,10 +586,10 @@ Variable<T>::Variable(ReferenceType ref_type,
 template <typename T>
 void Variable<T>::InitInvariants()
 {
-    this->m_root_candidate_invariant = m_ref_type != CONDITION_ROOT_CANDIDATE_REFERENCE;
-    this->m_local_candidate_invariant = m_ref_type != CONDITION_LOCAL_CANDIDATE_REFERENCE;
-    this->m_target_invariant = m_ref_type != EFFECT_TARGET_REFERENCE && m_ref_type != EFFECT_TARGET_VALUE_REFERENCE;
-    this->m_source_invariant = m_ref_type != SOURCE_REFERENCE;
+    this->m_root_candidate_invariant = m_ref_type != ReferenceType::CONDITION_ROOT_CANDIDATE_REFERENCE;
+    this->m_local_candidate_invariant = m_ref_type != ReferenceType::CONDITION_LOCAL_CANDIDATE_REFERENCE;
+    this->m_target_invariant = m_ref_type != ReferenceType::EFFECT_TARGET_REFERENCE && m_ref_type != ReferenceType::EFFECT_TARGET_VALUE_REFERENCE;
+    this->m_source_invariant = m_ref_type != ReferenceType::SOURCE_REFERENCE;
 }
 
 template <typename T>
@@ -670,7 +675,7 @@ FO_COMMON_API std::vector<std::string> Variable<std::vector<std::string>>::Eval(
 template <typename T, typename V>
 Statistic<T, V>::Statistic(std::unique_ptr<ValueRef<V>>&& value_ref, StatisticType stat_type,
                            std::unique_ptr<Condition::Condition>&& sampling_condition) :
-    Variable<T>(NON_OBJECT_REFERENCE),
+    Variable<T>(ReferenceType::NON_OBJECT_REFERENCE),
     m_stat_type(stat_type),
     m_sampling_condition(std::move(sampling_condition)),
     m_value_ref(std::move(value_ref))
@@ -762,22 +767,22 @@ std::string Statistic<T, V>::Dump(unsigned short ntabs) const
     std::string retval = "Statistic ";
 
     switch (m_stat_type) {
-        case IF:                 retval += "If";                break;
-        case COUNT:              retval += "Count";             break;
-        case UNIQUE_COUNT:       retval += "CountUnique";       break;
-        case HISTO_MAX:          retval += "HistogramMax";      break;
-        case HISTO_MIN:          retval += "HistogramMin";      break;
-        case HISTO_SPREAD:       retval += "HistogramSpread";   break;
-        case SUM:                retval += "Sum";               break;
-        case MEAN:               retval += "Mean";              break;
-        case RMS:                retval += "RMS";               break;
-        case MODE:               retval += "Mode";              break;
-        case MAX:                retval += "Max";               break;
-        case MIN:                retval += "Min";               break;
-        case SPREAD:             retval += "Spread";            break;
-        case STDEV:              retval += "StDev";             break;
-        case PRODUCT:            retval += "Product";           break;
-        default:                 retval += "???";               break;
+        case StatisticType::IF:             retval += "If";                break;
+        case StatisticType::COUNT:          retval += "Count";             break;
+        case StatisticType::UNIQUE_COUNT:   retval += "CountUnique";       break;
+        case StatisticType::HISTO_MAX:      retval += "HistogramMax";      break;
+        case StatisticType::HISTO_MIN:      retval += "HistogramMin";      break;
+        case StatisticType::HISTO_SPREAD:   retval += "HistogramSpread";   break;
+        case StatisticType::SUM:            retval += "Sum";               break;
+        case StatisticType::MEAN:           retval += "Mean";              break;
+        case StatisticType::RMS:            retval += "RMS";               break;
+        case StatisticType::MODE:           retval += "Mode";              break;
+        case StatisticType::MAX:            retval += "Max";               break;
+        case StatisticType::MIN:            retval += "Min";               break;
+        case StatisticType::SPREAD:         retval += "Spread";            break;
+        case StatisticType::STDEV:          retval += "StDev";             break;
+        case StatisticType::PRODUCT:        retval += "Product";           break;
+        default:                            retval += "???";               break;
     }
     if (m_value_ref)
         retval += " value = " + m_value_ref->Dump();
@@ -809,19 +814,19 @@ T ReduceData(StatisticType stat_type, std::map<std::shared_ptr<const UniverseObj
     // numerical statistics or histogram statistics
 
     switch (stat_type) {
-        case IF: {
+        case StatisticType::IF: {
             // 1 if any objects have property values, else 0 above
             return T(1);
             break;
         }
 
-        case COUNT: {
+        case StatisticType::COUNT: {
             // how many objects / values
             return T(object_property_values.size());
             break;
         }
 
-        case UNIQUE_COUNT: {
+        case StatisticType::UNIQUE_COUNT: {
             // how many unique values appear
             std::set<V> observed_values;
             for (const auto& entry : object_property_values)
@@ -831,7 +836,7 @@ T ReduceData(StatisticType stat_type, std::map<std::shared_ptr<const UniverseObj
             break;
         }
 
-        case HISTO_MAX: {
+        case StatisticType::HISTO_MAX: {
             // number of times the most common value appears
             std::map<V, unsigned int> observed_values;
             for (const auto& entry : object_property_values)
@@ -844,7 +849,7 @@ T ReduceData(StatisticType stat_type, std::map<std::shared_ptr<const UniverseObj
             break;
         }
 
-        case HISTO_MIN: {
+        case StatisticType::HISTO_MIN: {
             // number of times the least common value appears
             std::map<V, unsigned int> observed_values;
             for (const auto& entry : object_property_values)
@@ -857,7 +862,7 @@ T ReduceData(StatisticType stat_type, std::map<std::shared_ptr<const UniverseObj
             break;
         }
 
-        case HISTO_SPREAD: {
+        case StatisticType::HISTO_SPREAD: {
             // positive difference between the number of times the most and least common values appear
             std::map<V, unsigned int> observed_values;
             for (auto& entry : object_property_values)
@@ -870,7 +875,7 @@ T ReduceData(StatisticType stat_type, std::map<std::shared_ptr<const UniverseObj
             break;
         }
 
-        case SUM: {
+        case StatisticType::SUM: {
             V accumulator(0);
             for (const auto& entry : object_property_values)
                 accumulator += entry.second;
@@ -879,7 +884,7 @@ T ReduceData(StatisticType stat_type, std::map<std::shared_ptr<const UniverseObj
             break;
         }
 
-        case MEAN: {
+        case StatisticType::MEAN: {
             V accumulator(0);
             for (const auto& entry : object_property_values)
                 accumulator += entry.second;
@@ -888,7 +893,7 @@ T ReduceData(StatisticType stat_type, std::map<std::shared_ptr<const UniverseObj
             break;
         }
 
-        case RMS: {
+        case StatisticType::RMS: {
             V accumulator(0);
             for (const auto& entry : object_property_values)
                 accumulator += (entry.second * entry.second);
@@ -898,7 +903,7 @@ T ReduceData(StatisticType stat_type, std::map<std::shared_ptr<const UniverseObj
             break;
         }
 
-        case MODE: {
+        case StatisticType::MODE: {
             // value that appears the most often
             std::map<V, unsigned int> observed_values;
             for (auto& entry : object_property_values)
@@ -911,7 +916,7 @@ T ReduceData(StatisticType stat_type, std::map<std::shared_ptr<const UniverseObj
             break;
         }
 
-        case MAX: {
+        case StatisticType::MAX: {
             auto max = std::max_element(object_property_values.begin(), object_property_values.end(),
                                         [](auto p1, auto p2) { return p1.second < p1.second; });
 
@@ -919,7 +924,7 @@ T ReduceData(StatisticType stat_type, std::map<std::shared_ptr<const UniverseObj
             break;
         }
 
-        case MIN: {
+        case StatisticType::MIN: {
             auto min = std::min_element(object_property_values.begin(), object_property_values.end(),
                                         [](auto p1, auto p2) { return p1.second < p1.second; });
 
@@ -927,7 +932,7 @@ T ReduceData(StatisticType stat_type, std::map<std::shared_ptr<const UniverseObj
             break;
         }
 
-        case SPREAD: {
+        case StatisticType::SPREAD: {
             auto minmax = std::minmax_element(object_property_values.begin(), object_property_values.end(),
                                               [](auto p1, auto p2) { return p1.second < p2.second; });
 
@@ -935,7 +940,7 @@ T ReduceData(StatisticType stat_type, std::map<std::shared_ptr<const UniverseObj
             break;
         }
 
-        case STDEV: {
+        case StatisticType::STDEV: {
             if (object_property_values.size() < 2)
                 return T(0);
 
@@ -956,7 +961,7 @@ T ReduceData(StatisticType stat_type, std::map<std::shared_ptr<const UniverseObj
             break;
         }
 
-        case PRODUCT: {
+        case StatisticType::PRODUCT: {
             V accumulator(1);
             for (const auto& entry : object_property_values)
                 accumulator *= entry.second;
@@ -986,7 +991,7 @@ T ReduceData(StatisticType stat_type, std::map<std::shared_ptr<const UniverseObj
     // so can calculate the most common value and return it
 
     switch (stat_type) {
-        case IF: {
+        case StatisticType::IF: {
             // 1 if any objects have property values, else 0
             if (object_property_values.empty())
                 return T(0);
@@ -994,7 +999,7 @@ T ReduceData(StatisticType stat_type, std::map<std::shared_ptr<const UniverseObj
             break;
         }
 
-        case MODE: {
+        case StatisticType::MODE: {
             // value that appears the most often
             std::map<T, unsigned int> observed_values;
             for (auto& entry : object_property_values)
@@ -1028,7 +1033,7 @@ T ReduceData(StatisticType stat_type, std::map<std::shared_ptr<const UniverseObj
     // various histogram properties that are not enum type valued.
 
     switch (stat_type) {
-        case IF: {
+        case StatisticType::IF: {
             // 1 if any objects have property values, else 0
             if (object_property_values.empty())
                 return T(0);
@@ -1036,13 +1041,13 @@ T ReduceData(StatisticType stat_type, std::map<std::shared_ptr<const UniverseObj
             break;
         }
 
-        case COUNT: {
+        case StatisticType::COUNT: {
             // how many objects / values
             return T(object_property_values.size());
             break;
         }
 
-        case UNIQUE_COUNT: {
+        case StatisticType::UNIQUE_COUNT: {
             // how many unique values appear
             std::set<V> observed_values;
             for (const auto& entry : object_property_values)
@@ -1052,7 +1057,7 @@ T ReduceData(StatisticType stat_type, std::map<std::shared_ptr<const UniverseObj
             break;
         }
 
-        case HISTO_MAX: {
+        case StatisticType::HISTO_MAX: {
             // number of times the most common value appears
             std::map<V, unsigned int> observed_values;
             for (const auto& entry : object_property_values)
@@ -1065,7 +1070,7 @@ T ReduceData(StatisticType stat_type, std::map<std::shared_ptr<const UniverseObj
             break;
         }
 
-        case HISTO_MIN: {
+        case StatisticType::HISTO_MIN: {
             // number of times the least common value appears
             std::map<V, unsigned int> observed_values;
             for (const auto& entry : object_property_values)
@@ -1078,7 +1083,7 @@ T ReduceData(StatisticType stat_type, std::map<std::shared_ptr<const UniverseObj
             break;
         }
 
-        case HISTO_SPREAD: {
+        case StatisticType::HISTO_SPREAD: {
             // positive difference between the number of times the most and least common values appear
             std::map<V, unsigned int> observed_values;
             for (auto& entry : object_property_values)
@@ -1105,9 +1110,9 @@ T Statistic<T, V>::Eval(const ScriptingContext& context) const
 
     // these two statistic types don't depend on the object property values,
     // so can be evaluated without getting those values.
-    if (m_stat_type == COUNT)
+    if (m_stat_type == StatisticType::COUNT)
         return static_cast<T>(condition_matches.size());
-    if (m_stat_type == IF)
+    if (m_stat_type == StatisticType::IF)
         return condition_matches.empty() ? T(0) : T(1);
 
     // evaluate property for each condition-matched object
@@ -1150,7 +1155,7 @@ ComplexVariable<T>::ComplexVariable(S&& variable_name,
                                     std::unique_ptr<ValueRef<std::string>>&& string_ref1,
                                     std::unique_ptr<ValueRef<std::string>>&& string_ref2,
                                     bool return_immediate_value) :
-    Variable<T>(NON_OBJECT_REFERENCE, std::forward<S>(variable_name), return_immediate_value),
+    Variable<T>(ReferenceType::NON_OBJECT_REFERENCE, std::forward<S>(variable_name), return_immediate_value),
     m_int_ref1(std::move(int_ref1)),
     m_int_ref2(std::move(int_ref2)),
     m_int_ref3(std::move(int_ref3)),
@@ -1166,7 +1171,7 @@ ComplexVariable<T>::ComplexVariable(const char* variable_name,
                                     std::unique_ptr<ValueRef<std::string>>&& string_ref1,
                                     std::unique_ptr<ValueRef<std::string>>&& string_ref2,
                                     bool return_immediate_value) :
-    Variable<T>(NON_OBJECT_REFERENCE, variable_name, return_immediate_value),
+    Variable<T>(ReferenceType::NON_OBJECT_REFERENCE, variable_name, return_immediate_value),
     m_int_ref1(std::move(int_ref1)),
     m_int_ref2(std::move(int_ref2)),
     m_int_ref3(std::move(int_ref3)),
@@ -1393,7 +1398,7 @@ StaticCast<FromType, ToType>::StaticCast(
     typename std::enable_if<
         std::is_convertible<T, std::unique_ptr<ValueRef<FromType>>>::value &&
         !std::is_convertible<T, std::unique_ptr<Variable<FromType>>>::value>::type*) :
-    Variable<ToType>(NON_OBJECT_REFERENCE),
+    Variable<ToType>(ReferenceType::NON_OBJECT_REFERENCE),
     m_value_ref(std::move(value_ref))
 {
     this->m_root_candidate_invariant = !m_value_ref || m_value_ref->RootCandidateInvariant();
@@ -1460,7 +1465,7 @@ unsigned int StaticCast<FromType, ToType>::GetCheckSum() const
 ///////////////////////////////////////////////////////////
 template <typename FromType>
 StringCast<FromType>::StringCast(std::unique_ptr<ValueRef<FromType>>&& value_ref) :
-    Variable<std::string>(NON_OBJECT_REFERENCE),
+    Variable<std::string>(ReferenceType::NON_OBJECT_REFERENCE),
     m_value_ref(std::move(value_ref))
 {
     auto raw_ref_ptr = m_value_ref.get();
@@ -1553,7 +1558,7 @@ void StringCast<FromType>::SetTopLevelContent(const std::string& content_name) {
 ///////////////////////////////////////////////////////////
 template <typename FromType>
 UserStringLookup<FromType>::UserStringLookup(std::unique_ptr<ValueRef<FromType>>&& value_ref) :
-    Variable<std::string>(NON_OBJECT_REFERENCE),
+    Variable<std::string>(ReferenceType::NON_OBJECT_REFERENCE),
     m_value_ref(std::move(value_ref))
 {
     auto raw_ref_ptr = m_value_ref.get();
@@ -1680,7 +1685,7 @@ Operation<T>::Operation(OpType op_type, std::vector<std::unique_ptr<ValueRef<T>>
 template <typename T>
 void Operation<T>::InitConstInvariants()
 {
-    if (m_op_type == RANDOM_UNIFORM || m_op_type == RANDOM_PICK) {
+    if (m_op_type == OpType::RANDOM_UNIFORM || m_op_type == OpType::RANDOM_PICK) {
         m_constant_expr = false;
         this->m_root_candidate_invariant = false;
         this->m_local_candidate_invariant = false;
@@ -1704,7 +1709,7 @@ void Operation<T>::InitConstInvariants()
 
 
     // determine if this is a simple incrment operation
-    if (m_op_type != PLUS && m_op_type != MINUS) {
+    if (m_op_type != OpType::PLUS && m_op_type != OpType::MINUS) {
         m_simple_increment = false;
         return;
     }
@@ -1719,7 +1724,7 @@ void Operation<T>::InitConstInvariants()
     }
     // LHS must be just the immediate value of what's being incremented
     if (const auto lhs = dynamic_cast<const Variable<T>*>(m_operands[0].get()))
-        m_simple_increment = (lhs->GetReferenceType() == EFFECT_TARGET_VALUE_REFERENCE);
+        m_simple_increment = (lhs->GetReferenceType() == ReferenceType::EFFECT_TARGET_VALUE_REFERENCE);
     else
         m_simple_increment = false;
 }
@@ -1802,33 +1807,33 @@ template <typename T>
 T Operation<T>::EvalImpl(const ScriptingContext& context) const
 {
     switch (m_op_type) {
-    case TIMES: {
+    case OpType::TIMES: {
         // useful for writing a "Statistic If" expression with arbitrary types.
         // If returns T(0) or T(1) for nothing or something matching the
         // sampling condition. This can be checked here by returning T(0) if
         // the LHS operand is T(0) and just returning RHS() otherwise.
-        if (!LHS()->Eval(context))
+        if (LHS()->Eval(context) == T(0))
             return T(0);
         return RHS()->Eval(context);
         break;
     }
 
-    case MAXIMUM:
-    case MINIMUM: {
+    case OpType::MAXIMUM:
+    case OpType::MINIMUM: {
         // evaluate all operands, return smallest or biggest
         std::set<T> vals;
         for (auto& vr : m_operands) {
             if (vr)
                 vals.emplace(vr->Eval(context));
         }
-        if (m_op_type == MINIMUM)
+        if (m_op_type == OpType::MINIMUM)
             return vals.empty() ? T(-1) : *vals.begin();
         else
             return vals.empty() ? T(-1) : *vals.rbegin();
         break;
     }
 
-    case RANDOM_PICK: {
+    case OpType::RANDOM_PICK: {
         // select one operand, evaluate it, return result
         if (m_operands.empty())
             return T(-1);   // should be INVALID_T of enum types
@@ -1840,22 +1845,22 @@ T Operation<T>::EvalImpl(const ScriptingContext& context) const
         break;
     }
 
-    case COMPARE_EQUAL:
-    case COMPARE_GREATER_THAN:
-    case COMPARE_GREATER_THAN_OR_EQUAL:
-    case COMPARE_LESS_THAN:
-    case COMPARE_LESS_THAN_OR_EQUAL:
-    case COMPARE_NOT_EQUAL: {
+    case OpType::COMPARE_EQUAL:
+    case OpType::COMPARE_GREATER_THAN:
+    case OpType::COMPARE_GREATER_THAN_OR_EQUAL:
+    case OpType::COMPARE_LESS_THAN:
+    case OpType::COMPARE_LESS_THAN_OR_EQUAL:
+    case OpType::COMPARE_NOT_EQUAL: {
         const T&& lhs_val = LHS()->Eval(context);
         const T&& rhs_val = RHS()->Eval(context);
         bool test_result = false;
         switch (m_op_type) {
-            case COMPARE_EQUAL:                 test_result = lhs_val == rhs_val;   break;
-            case COMPARE_GREATER_THAN:          test_result = lhs_val > rhs_val;    break;
-            case COMPARE_GREATER_THAN_OR_EQUAL: test_result = lhs_val >= rhs_val;   break;
-            case COMPARE_LESS_THAN:             test_result = lhs_val < rhs_val;    break;
-            case COMPARE_LESS_THAN_OR_EQUAL:    test_result = lhs_val <= rhs_val;   break;
-            case COMPARE_NOT_EQUAL:             test_result = lhs_val != rhs_val;   break;
+            case OpType::COMPARE_EQUAL:                 test_result = lhs_val == rhs_val;   break;
+            case OpType::COMPARE_GREATER_THAN:          test_result = lhs_val > rhs_val;    break;
+            case OpType::COMPARE_GREATER_THAN_OR_EQUAL: test_result = lhs_val >= rhs_val;   break;
+            case OpType::COMPARE_LESS_THAN:             test_result = lhs_val < rhs_val;    break;
+            case OpType::COMPARE_LESS_THAN_OR_EQUAL:    test_result = lhs_val <= rhs_val;   break;
+            case OpType::COMPARE_NOT_EQUAL:             test_result = lhs_val != rhs_val;   break;
             default:    break;  // ??? do nothing, default to false
         }
         if (m_operands.size() < 3) {
@@ -1907,28 +1912,28 @@ FO_COMMON_API int Operation<int>::EvalImpl(const ScriptingContext& context) cons
 template <typename T>
 std::string Operation<T>::Description() const
 {
-    if (m_op_type == NEGATE) {
+    if (m_op_type == OpType::NEGATE) {
         if (auto rhs = dynamic_cast<const Operation<T>*>(LHS())) {
             OpType op_type = rhs->GetOpType();
-            if (op_type == PLUS     || op_type == MINUS ||
-                op_type == TIMES    || op_type == DIVIDE ||
-                op_type == NEGATE   || op_type == EXPONENTIATE)
+            if (op_type == OpType::PLUS   || op_type == OpType::MINUS ||
+                op_type == OpType::TIMES  || op_type == OpType::DIVIDE ||
+                op_type == OpType::NEGATE || op_type == OpType::EXPONENTIATE)
             return "-(" + LHS()->Description() + ")";
         } else {
             return "-" + LHS()->Description();
         }
     }
 
-    if (m_op_type == ABS)
+    if (m_op_type == OpType::ABS)
         return "abs(" + LHS()->Description() + ")";
-    if (m_op_type == LOGARITHM)
+    if (m_op_type == OpType::LOGARITHM)
         return "log(" + LHS()->Description() + ")";
-    if (m_op_type == SINE)
+    if (m_op_type == OpType::SINE)
         return "sin(" + LHS()->Description() + ")";
-    if (m_op_type == COSINE)
+    if (m_op_type == OpType::COSINE)
         return "cos(" + LHS()->Description() + ")";
 
-    if (m_op_type == MINIMUM) {
+    if (m_op_type == OpType::MINIMUM) {
         std::string retval = "min(";
         for (auto it = m_operands.begin(); it != m_operands.end(); ++it) {
             if (it != m_operands.begin())
@@ -1938,7 +1943,7 @@ std::string Operation<T>::Description() const
         retval += ")";
         return retval;
     }
-    if (m_op_type == MAXIMUM) {
+    if (m_op_type == OpType::MAXIMUM) {
         std::string retval = "max(";
         for (auto it = m_operands.begin(); it != m_operands.end(); ++it) {
             if (it != m_operands.begin())
@@ -1949,10 +1954,10 @@ std::string Operation<T>::Description() const
         return retval;
     }
 
-    if (m_op_type == RANDOM_UNIFORM)
+    if (m_op_type == OpType::RANDOM_UNIFORM)
         return "RandomNumber(" + LHS()->Description() + ", " + RHS()->Description() + ")";
 
-    if (m_op_type == RANDOM_PICK) {
+    if (m_op_type == OpType::RANDOM_PICK) {
         std::string retval = "OneOf(";
         for (auto it = m_operands.begin(); it != m_operands.end(); ++it) {
             if (it != m_operands.begin())
@@ -1963,13 +1968,13 @@ std::string Operation<T>::Description() const
         return retval;
     }
 
-    if (m_op_type == ROUND_NEAREST)
+    if (m_op_type == OpType::ROUND_NEAREST)
         return "round(" + LHS()->Description() + ")";
-    if (m_op_type == ROUND_UP)
+    if (m_op_type == OpType::ROUND_UP)
         return "ceil(" + LHS()->Description() + ")";
-    if (m_op_type == ROUND_DOWN)
+    if (m_op_type == OpType::ROUND_DOWN)
         return "floor(" + LHS()->Description() + ")";
-    if (m_op_type == SIGN)
+    if (m_op_type == OpType::SIGN)
         return "sign(" + LHS()->Description() + ")";
 
     bool parenthesize_lhs = false;
@@ -1977,24 +1982,24 @@ std::string Operation<T>::Description() const
     if (auto lhs = dynamic_cast<const Operation<T>*>(LHS())) {
         OpType op_type = lhs->GetOpType();
         if (
-            (m_op_type == EXPONENTIATE &&
-             (op_type == EXPONENTIATE   || op_type == TIMES     || op_type == DIVIDE ||
-              op_type == PLUS           || op_type == MINUS     || op_type == NEGATE)
+            (m_op_type == OpType::EXPONENTIATE &&
+             (op_type == OpType::EXPONENTIATE || op_type == OpType::TIMES   || op_type == OpType::DIVIDE ||
+              op_type == OpType::PLUS         || op_type == OpType::MINUS   || op_type == OpType::NEGATE)
             ) ||
-            (((m_op_type == TIMES        || m_op_type == DIVIDE) &&
-              (op_type == PLUS           || op_type == MINUS))    || op_type == NEGATE)
+            (((m_op_type == OpType::TIMES     || m_op_type == OpType::DIVIDE) &&
+              (op_type == OpType::PLUS        || op_type == OpType::MINUS)) || op_type == OpType::NEGATE)
            )
             parenthesize_lhs = true;
     }
     if (auto rhs = dynamic_cast<const Operation<T>*>(RHS())) {
         OpType op_type = rhs->GetOpType();
         if (
-            (m_op_type == EXPONENTIATE &&
-             (op_type == EXPONENTIATE   || op_type == TIMES     || op_type == DIVIDE ||
-              op_type == PLUS           || op_type == MINUS     || op_type == NEGATE)
+            (m_op_type == OpType::EXPONENTIATE &&
+             (op_type == OpType::EXPONENTIATE || op_type == OpType::TIMES   || op_type == OpType::DIVIDE ||
+              op_type == OpType::PLUS         || op_type == OpType::MINUS   || op_type == OpType::NEGATE)
             ) ||
-            (((m_op_type == TIMES        || m_op_type == DIVIDE) &&
-              (op_type == PLUS           || op_type == MINUS))    || op_type == NEGATE)
+            (((m_op_type == OpType::TIMES     || m_op_type == OpType::DIVIDE) &&
+              (op_type == OpType::PLUS        || op_type == OpType::MINUS)) || op_type == OpType::NEGATE)
            )
             parenthesize_rhs = true;
     }
@@ -2006,12 +2011,12 @@ std::string Operation<T>::Description() const
         retval += LHS()->Description();
 
     switch (m_op_type) {
-    case PLUS:          retval += " + "; break;
-    case MINUS:         retval += " - "; break;
-    case TIMES:         retval += " * "; break;
-    case DIVIDE:        retval += " / "; break;
-    case EXPONENTIATE:  retval += " ^ "; break;
-    default:            retval += " ? "; break;
+    case OpType::PLUS:         retval += " + "; break;
+    case OpType::MINUS:        retval += " - "; break;
+    case OpType::TIMES:        retval += " * "; break;
+    case OpType::DIVIDE:       retval += " / "; break;
+    case OpType::EXPONENTIATE: retval += " ^ "; break;
+    default:                   retval += " ? "; break;
     }
 
     if (parenthesize_rhs)
@@ -2025,28 +2030,28 @@ std::string Operation<T>::Description() const
 template <typename T>
 std::string Operation<T>::Dump(unsigned short ntabs) const
 {
-    if (m_op_type == NEGATE) {
+    if (m_op_type == OpType::NEGATE) {
         if (auto rhs = dynamic_cast<const Operation<T>*>(LHS())) {
             OpType op_type = rhs->GetOpType();
-            if (op_type == PLUS     || op_type == MINUS ||
-                op_type == TIMES    || op_type == DIVIDE ||
-                op_type == NEGATE   || op_type == EXPONENTIATE)
+            if (op_type == OpType::PLUS   || op_type == OpType::MINUS ||
+                op_type == OpType::TIMES  || op_type == OpType::DIVIDE ||
+                op_type == OpType::NEGATE || op_type == OpType::EXPONENTIATE)
             return "-(" + LHS()->Dump(ntabs) + ")";
         } else {
             return "-" + LHS()->Dump(ntabs);
         }
     }
 
-    if (m_op_type == ABS)
+    if (m_op_type == OpType::ABS)
         return "abs(" + LHS()->Dump(ntabs) + ")";
-    if (m_op_type == LOGARITHM)
+    if (m_op_type == OpType::LOGARITHM)
         return "log(" + LHS()->Dump(ntabs) + ")";
-    if (m_op_type == SINE)
+    if (m_op_type == OpType::SINE)
         return "sin(" + LHS()->Dump(ntabs) + ")";
-    if (m_op_type == COSINE)
+    if (m_op_type == OpType::COSINE)
         return "cos(" + LHS()->Dump(ntabs) + ")";
 
-    if (m_op_type == MINIMUM) {
+    if (m_op_type == OpType::MINIMUM) {
         std::string retval = "min(";
         for (auto it = m_operands.begin(); it != m_operands.end(); ++it) {
             if (it != m_operands.begin())
@@ -2056,7 +2061,7 @@ std::string Operation<T>::Dump(unsigned short ntabs) const
         retval += ")";
         return retval;
     }
-    if (m_op_type == MAXIMUM) {
+    if (m_op_type == OpType::MAXIMUM) {
         std::string retval = "max(";
         for (auto it = m_operands.begin(); it != m_operands.end(); ++it) {
             if (it != m_operands.begin())
@@ -2067,10 +2072,10 @@ std::string Operation<T>::Dump(unsigned short ntabs) const
         return retval;
     }
 
-    if (m_op_type == RANDOM_UNIFORM)
+    if (m_op_type == OpType::RANDOM_UNIFORM)
         return "random(" + LHS()->Dump(ntabs) + ", " + LHS()->Dump(ntabs) + ")";
 
-    if (m_op_type == RANDOM_PICK) {
+    if (m_op_type == OpType::RANDOM_PICK) {
         std::string retval = "randompick(";
         for (auto it = m_operands.begin(); it != m_operands.end(); ++it) {
             if (it != m_operands.begin())
@@ -2081,13 +2086,13 @@ std::string Operation<T>::Dump(unsigned short ntabs) const
         return retval;
     }
 
-    if (m_op_type == ROUND_NEAREST)
+    if (m_op_type == OpType::ROUND_NEAREST)
         return "round(" + LHS()->Dump(ntabs) + ")";
-    if (m_op_type == ROUND_UP)
+    if (m_op_type == OpType::ROUND_UP)
         return "ceil(" + LHS()->Dump(ntabs) + ")";
-    if (m_op_type == ROUND_DOWN)
+    if (m_op_type == OpType::ROUND_DOWN)
         return "floor(" + LHS()->Dump(ntabs) + ")";
-    if (m_op_type == SIGN)
+    if (m_op_type == OpType::SIGN)
         return "sign(" + LHS()->Dump(ntabs) + ")";
 
     bool parenthesize_lhs = false;
@@ -2095,24 +2100,24 @@ std::string Operation<T>::Dump(unsigned short ntabs) const
     if (auto lhs = dynamic_cast<const Operation<T>*>(LHS())) {
         OpType op_type = lhs->GetOpType();
         if (
-            (m_op_type == EXPONENTIATE &&
-             (op_type == EXPONENTIATE   || op_type == TIMES     || op_type == DIVIDE ||
-              op_type == PLUS           || op_type == MINUS     || op_type == NEGATE)
+            (m_op_type == OpType::EXPONENTIATE &&
+             (op_type == OpType::EXPONENTIATE || op_type == OpType::TIMES  || op_type == OpType::DIVIDE ||
+              op_type == OpType::PLUS         || op_type == OpType::MINUS  || op_type == OpType::NEGATE)
             ) ||
-            (((m_op_type == TIMES        || m_op_type == DIVIDE) &&
-              (op_type == PLUS           || op_type == MINUS))    || op_type == NEGATE)
+            (((m_op_type == OpType::TIMES     || m_op_type == OpType::DIVIDE) &&
+              (op_type == OpType::PLUS        || op_type == OpType::MINUS)) || op_type == OpType::NEGATE)
            )
             parenthesize_lhs = true;
     }
     if (auto rhs = dynamic_cast<const Operation<T>*>(RHS())) {
         OpType op_type = rhs->GetOpType();
         if (
-            (m_op_type == EXPONENTIATE &&
-             (op_type == EXPONENTIATE   || op_type == TIMES     || op_type == DIVIDE ||
-              op_type == PLUS           || op_type == MINUS     || op_type == NEGATE)
+            (m_op_type == OpType::EXPONENTIATE &&
+             (op_type == OpType::EXPONENTIATE || op_type == OpType::TIMES   || op_type == OpType::DIVIDE ||
+              op_type == OpType::PLUS         || op_type == OpType::MINUS   || op_type == OpType::NEGATE)
             ) ||
-            (((m_op_type == TIMES        || m_op_type == DIVIDE) &&
-              (op_type == PLUS           || op_type == MINUS))    || op_type == NEGATE)
+            (((m_op_type == OpType::TIMES     || m_op_type == OpType::DIVIDE) &&
+              (op_type == OpType::PLUS        || op_type == OpType::MINUS)) || op_type == OpType::NEGATE)
            )
             parenthesize_rhs = true;
     }
@@ -2124,12 +2129,12 @@ std::string Operation<T>::Dump(unsigned short ntabs) const
         retval += LHS()->Dump(ntabs);
 
     switch (m_op_type) {
-    case PLUS:          retval += " + "; break;
-    case MINUS:         retval += " - "; break;
-    case TIMES:         retval += " * "; break;
-    case DIVIDE:        retval += " / "; break;
-    case EXPONENTIATE:  retval += " ^ "; break;
-    default:            retval += " ? "; break;
+    case OpType::PLUS:         retval += " + "; break;
+    case OpType::MINUS:        retval += " - "; break;
+    case OpType::TIMES:        retval += " * "; break;
+    case OpType::DIVIDE:       retval += " / "; break;
+    case OpType::EXPONENTIATE: retval += " ^ "; break;
+    default:                   retval += " ? "; break;
     }
 
     if (parenthesize_rhs)
@@ -2147,7 +2152,6 @@ void Operation<T>::SetTopLevelContent(const std::string& content_name) {
             operand->SetTopLevelContent(content_name);
     }
 }
-
 
 }
 

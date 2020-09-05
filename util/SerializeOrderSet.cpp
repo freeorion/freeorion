@@ -171,7 +171,7 @@ void ProductionQueueOrder::serialize(Archive& ar, const unsigned int version)
         // would need to generate action and UUID from deserialized values. instead generate an invalid order. will break partial-turn saves.
         m_uuid = boost::uuids::nil_generator()();
         m_uuid2 = boost::uuids::nil_generator()();
-        m_action = INVALID_PROD_QUEUE_ACTION;
+        m_action = ProdQueueOrderAction::INVALID_PROD_QUEUE_ACTION;
 
     } else {
         // Serialization of m_uuid as a primitive doesn't work as expected from
@@ -196,7 +196,7 @@ void ProductionQueueOrder::serialize(Archive& ar, const unsigned int version)
                               << " and " << string_uuid2 << ".  ProductionOrder will be invalid";
                 m_uuid = boost::uuids::nil_generator()();
                 m_uuid2 = boost::uuids::nil_generator()();
-                m_action = INVALID_PROD_QUEUE_ACTION;
+                m_action = ProdQueueOrderAction::INVALID_PROD_QUEUE_ACTION;
             }
         }
     }

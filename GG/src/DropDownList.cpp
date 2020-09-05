@@ -366,37 +366,37 @@ boost::optional<DropDownList::iterator> ModalListPicker::KeyPressCommon(
     if (!numlock_on) {
         // convert keypad keys into corresponding non-number keys
         switch (key) {
-        case GGK_KP0:       key = GGK_INSERT;   break;
-        case GGK_KP1:       key = GGK_END;      break;
-        case GGK_KP2:       key = GGK_DOWN;     break;
-        case GGK_KP3:       key = GGK_PAGEDOWN; break;
-        case GGK_KP4:       key = GGK_LEFT;     break;
-        case GGK_KP5:                           break;
-        case GGK_KP6:       key = GGK_RIGHT;    break;
-        case GGK_KP7:       key = GGK_HOME;     break;
-        case GGK_KP8:       key = GGK_UP;       break;
-        case GGK_KP9:       key = GGK_PAGEUP;   break;
-        case GGK_KP_PERIOD: key = GGK_DELETE;   break;
-        default:                                break;
+        case Key::GGK_KP0:       key = Key::GGK_INSERT;   break;
+        case Key::GGK_KP1:       key = Key::GGK_END;      break;
+        case Key::GGK_KP2:       key = Key::GGK_DOWN;     break;
+        case Key::GGK_KP3:       key = Key::GGK_PAGEDOWN; break;
+        case Key::GGK_KP4:       key = Key::GGK_LEFT;     break;
+        case Key::GGK_KP5:                                break;
+        case Key::GGK_KP6:       key = Key::GGK_RIGHT;    break;
+        case Key::GGK_KP7:       key = Key::GGK_HOME;     break;
+        case Key::GGK_KP8:       key = Key::GGK_UP;       break;
+        case Key::GGK_KP9:       key = Key::GGK_PAGEUP;   break;
+        case Key::GGK_KP_PERIOD: key = Key::GGK_DELETE;   break;
+        default:                                          break;
         }
     }
 
     switch (key) {
-    case GGK_UP: // arrow-up (not numpad arrow)
+    case Key::GGK_UP: // arrow-up (not numpad arrow)
         if (CurrentItem() != LB()->end() && CurrentItem() != LB()->begin()) {
             auto prev_it{std::prev(CurrentItem())};
             LB()->BringRowIntoView(prev_it);
             return prev_it;
         }
         break;
-    case GGK_DOWN: // arrow-down (not numpad arrow)
+    case Key::GGK_DOWN: // arrow-down (not numpad arrow)
         if (CurrentItem() != LB()->end() && CurrentItem() != --LB()->end()) {
             auto next_it(std::next(CurrentItem()));
             LB()->BringRowIntoView(next_it);
             return next_it;
         }
         break;
-    case GGK_PAGEUP: // page up key (not numpad key)
+    case Key::GGK_PAGEUP: // page up key (not numpad key)
         if (!LB()->Empty() && CurrentItem() != LB()->end()) {
             std::size_t i = std::max<std::size_t>(1, m_num_shown_rows - 1);
             auto it = CurrentItem();
@@ -408,7 +408,7 @@ boost::optional<DropDownList::iterator> ModalListPicker::KeyPressCommon(
             return it;
         }
         break;
-    case GGK_PAGEDOWN: // page down key (not numpad key)
+    case Key::GGK_PAGEDOWN: // page down key (not numpad key)
         if (!LB()->Empty()) {
             std::size_t i = std::max<std::size_t>(1, m_num_shown_rows - 1);
             auto it = CurrentItem();
@@ -420,23 +420,23 @@ boost::optional<DropDownList::iterator> ModalListPicker::KeyPressCommon(
             return it;
         }
         break;
-    case GGK_HOME: // home key (not numpad)
+    case Key::GGK_HOME: // home key (not numpad)
         if (!LB()->Empty()) {
             DropDownList::iterator it(LB()->begin());
             LB()->BringRowIntoView(it);
             return it;
         }
         break;
-    case GGK_END: // end key (not numpad)
+    case Key::GGK_END: // end key (not numpad)
         if (!LB()->Empty()) {
             DropDownList::iterator it(--LB()->end());
             LB()->BringRowIntoView(it);
             return it;
         }
         break;
-    case GGK_RETURN:
-    case GGK_KP_ENTER:
-    case GGK_ESCAPE:
+    case Key::GGK_RETURN:
+    case Key::GGK_KP_ENTER:
+    case Key::GGK_ESCAPE:
         EndRun();
         return boost::none;
         break;
@@ -478,12 +478,12 @@ boost::optional<DropDownList::iterator> ModalListPicker::MouseWheelCommon(
     return boost::none;
 }
 
-bool ModalListPicker::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
+bool ModalListPicker::EventFilter(Wnd* w, const WndEvent& event) {
     if (w != m_lb_wnd.get())
         return false;
 
     switch (event.Type()) {
-    case WndEvent::MouseWheel:
+    case WndEvent::EventType::MouseWheel:
         MouseWheel(event.Point(), -event.WheelMove(), event.ModKeys());
         return true;
     default:

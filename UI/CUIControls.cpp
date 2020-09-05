@@ -29,7 +29,7 @@
 
 namespace {
     void AddOptions(OptionsDB& db) {
-        Hotkey::AddHotkey("ui.autocomplete",    UserStringNop("HOTKEY_AUTOCOMPLETE"),   GG::GGK_TAB);
+        Hotkey::AddHotkey("ui.autocomplete",    UserStringNop("HOTKEY_AUTOCOMPLETE"),   GG::Key::GGK_TAB);
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
@@ -115,9 +115,9 @@ bool CUIButton::InWindow(const GG::Pt& pt) const {
 
 void CUIButton::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     if (!Disabled()) {
-        if (State() != BN_ROLLOVER)
+        if (State() != ButtonState::BN_ROLLOVER)
             PlayButtonRolloverSound();
-        SetState(BN_ROLLOVER);
+        SetState(ButtonState::BN_ROLLOVER);
     }
 }
 
@@ -236,9 +236,9 @@ bool CUIArrowButton::InWindow(const GG::Pt& pt) const {
 
 void CUIArrowButton::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     if (!Disabled()) {
-        if (State() != BN_ROLLOVER)
+        if (State() != ButtonState::BN_ROLLOVER)
             PlayButtonRolloverSound();
-        SetState(BN_ROLLOVER);
+        SetState(ButtonState::BN_ROLLOVER);
     }
 }
 
@@ -283,7 +283,9 @@ void CUICheckBoxRepresenter::Render(const GG::StateButton& button) const {
 
     GG::Clr color_to_use = button.Disabled() ? DisabledColor(button.Color()) : button.Color();
     GG::Clr border_color_to_use = button.Disabled() ? DisabledColor(ClientUI::CtrlBorderColor()) : ClientUI::CtrlBorderColor();
-    if (!button.Disabled() && !button.Checked() && (GG::StateButton::BN_ROLLOVER == button.State())) {
+    if (!button.Disabled() && !button.Checked() &&
+        GG::StateButton::ButtonState::BN_ROLLOVER == button.State())
+    {
         AdjustBrightness(color_to_use, STATE_BUTTON_BRIGHTENING_SCALE_FACTOR);
         AdjustBrightness(border_color_to_use, STATE_BUTTON_BRIGHTENING_SCALE_FACTOR);
     }
@@ -359,8 +361,9 @@ void CUICheckBoxRepresenter::Render(const GG::StateButton& button) const {
 
 void CUICheckBoxRepresenter::OnChanged(const GG::StateButton& button, GG::StateButton::ButtonState prev_state) const
 {
-    if (GG::StateButton::BN_ROLLOVER == button.State() && GG::StateButton::BN_UNPRESSED == prev_state)
-        PlayButtonRolloverSound();
+    if (GG::StateButton::ButtonState::BN_ROLLOVER == button.State() &&
+        GG::StateButton::ButtonState::BN_UNPRESSED == prev_state)
+    { PlayButtonRolloverSound(); }
 }
 
 void CUICheckBoxRepresenter::OnChecked(bool checked) const {
@@ -380,7 +383,9 @@ void CUIRadioRepresenter::Render(const GG::StateButton& button) const {
 
     GG::Clr color_to_use = button.Disabled() ? DisabledColor(button.Color()) : button.Color();
     GG::Clr border_color_to_use = button.Disabled() ? DisabledColor(ClientUI::CtrlBorderColor()) : ClientUI::CtrlBorderColor();
-    if (!button.Disabled() && !button.Checked() && (GG::StateButton::BN_ROLLOVER == button.State())) {
+    if (!button.Disabled() && !button.Checked() &&
+        GG::StateButton::ButtonState::BN_ROLLOVER == button.State())
+    {
         AdjustBrightness(color_to_use, STATE_BUTTON_BRIGHTENING_SCALE_FACTOR);
         AdjustBrightness(border_color_to_use, STATE_BUTTON_BRIGHTENING_SCALE_FACTOR);
     }
@@ -415,8 +420,9 @@ void CUIRadioRepresenter::Render(const GG::StateButton& button) const {
 
 void CUIRadioRepresenter::OnChanged(const GG::StateButton& button, GG::StateButton::ButtonState prev_state) const
 {
-    if (GG::StateButton::BN_ROLLOVER == button.State() && GG::StateButton::BN_UNPRESSED == prev_state)
-        PlayButtonRolloverSound();
+    if (GG::StateButton::ButtonState::BN_ROLLOVER == button.State() &&
+        GG::StateButton::ButtonState::BN_UNPRESSED == prev_state)
+    { PlayButtonRolloverSound(); }
 }
 
 void CUIRadioRepresenter::OnChecked(bool checked) const
@@ -431,8 +437,9 @@ void CUITabRepresenter::Render(const GG::StateButton& button) const {
     GG::Clr color_to_use = button.Disabled() ? DisabledColor(button.Color()) : button.Color();
     GG::Clr border_color_to_use = button.Disabled() ? DisabledColor(ClientUI::CtrlBorderColor()) : ClientUI::CtrlBorderColor();
 
-    if (button.Checked() || (!button.Disabled() && (GG::StateButton::BN_ROLLOVER == button.State())))
-        AdjustBrightness(border_color_to_use, 100);
+    if (button.Checked() || (!button.Disabled() &&
+                             GG::StateButton::ButtonState::BN_ROLLOVER == button.State()))
+    { AdjustBrightness(border_color_to_use, 100); }
 
     const int UNCHECKED_OFFSET = 4;
 
@@ -441,7 +448,8 @@ void CUITabRepresenter::Render(const GG::StateButton& button) const {
         tx_ul.y = GG::Y(UNCHECKED_OFFSET / 2);
     }
 
-    AngledCornerRectangle(ul, lr, color_to_use, border_color_to_use, CUIBUTTON_ANGLE_OFFSET, 1, true, false, !button.Checked());
+    AngledCornerRectangle(ul, lr, color_to_use, border_color_to_use,
+                          CUIBUTTON_ANGLE_OFFSET, 1, true, false, !button.Checked());
 
     button.GetLabel()->OffsetMove(tx_ul);
     button.GetLabel()->Render();
@@ -450,8 +458,9 @@ void CUITabRepresenter::Render(const GG::StateButton& button) const {
 
 void CUITabRepresenter::OnChanged(const GG::StateButton& button, GG::StateButton::ButtonState prev_state) const
 {
-    if (GG::StateButton::BN_ROLLOVER == button.State() && GG::StateButton::BN_UNPRESSED == prev_state)
-        PlayButtonRolloverSound();
+    if (GG::StateButton::ButtonState::BN_ROLLOVER == button.State() &&
+        GG::StateButton::ButtonState::BN_UNPRESSED == prev_state)
+    { PlayButtonRolloverSound(); }
 }
 
 void CUITabRepresenter::OnChecked(bool checked) const
@@ -462,8 +471,9 @@ GG::Pt CUITabRepresenter::MinUsableSize(const GG::StateButton& button) const
 
 void CUILabelButtonRepresenter::OnChanged(const GG::StateButton& button, GG::StateButton::ButtonState prev_state) const
 {
-    if (GG::StateButton::BN_ROLLOVER == button.State() && GG::StateButton::BN_UNPRESSED == prev_state)
-        PlayButtonRolloverSound();
+    if (GG::StateButton::ButtonState::BN_ROLLOVER == button.State() &&
+        GG::StateButton::ButtonState::BN_UNPRESSED == prev_state)
+    { PlayButtonRolloverSound(); }
 }
 
 void CUILabelButtonRepresenter::OnChecked(bool checked) const
@@ -488,12 +498,12 @@ void CUILabelButtonRepresenter::Render(const GG::StateButton& button) const {
         background_clr = DisabledColor(background_clr);
         border_clr     = DisabledColor(border_clr);
     } else {
-        if (GG::StateButton::BN_PRESSED == button.State()) {
+        if (GG::StateButton::ButtonState::BN_PRESSED == button.State()) {
             AdjustBrightness(background_clr, 25);
 
             tx_ul = GG::Pt(GG::X1, GG::Y1);
         }
-        if (GG::StateButton::BN_ROLLOVER == button.State()) {
+        if (GG::StateButton::ButtonState::BN_ROLLOVER == button.State()) {
             AdjustBrightness(border_clr, 100);
         }
     }
@@ -527,7 +537,7 @@ void CUIIconButtonRepresenter::OnChecked(bool checked) const
 { PlayButtonClickSound(); }
 
 void CUIIconButtonRepresenter::Render(const GG::StateButton& button) const {
-    bool render_checked = button.Checked()^ (GG::StateButton::BN_ROLLOVER == button.State());  // opposite on mouseover
+    bool render_checked = button.Checked() ^ (GG::StateButton::ButtonState::BN_ROLLOVER == button.State()); // opposite on mouseover
 
     GG::Clr icon_clr((render_checked && !button.Disabled()) ? m_checked_color : m_unchecked_color);
     GG::Clr bg_clr(ClientUI::CtrlColor());
@@ -546,7 +556,7 @@ void CUIIconButtonRepresenter::Render(const GG::StateButton& button) const {
         icon_clr = DisabledColor(icon_clr) * 0.8f;
 
     // highlight on mouseover
-    if (GG::StateButton::BN_ROLLOVER == button.State()) {
+    if (GG::StateButton::ButtonState::BN_ROLLOVER == button.State()) {
         AdjustBrightness(border_clr, 100);
         AdjustBrightness(icon_clr, 1.7);
     }
@@ -558,11 +568,14 @@ void CUIIconButtonRepresenter::Render(const GG::StateButton& button) const {
     icon_lr.y -= ICON_SIZE_REDUCE;
 
     // render border
-    AngledCornerRectangle(border_ul, border_lr, bg_clr, border_clr, CUIBUTTON_ANGLE_OFFSET, BORDER_THICKNESS);
+    AngledCornerRectangle(border_ul, border_lr, bg_clr, border_clr,
+                          CUIBUTTON_ANGLE_OFFSET, BORDER_THICKNESS);
 
     // render icon
     glColor(icon_clr);
-    render_checked ? m_checked_icon->OrthoBlit(icon_ul, icon_lr) : m_unchecked_icon->OrthoBlit(icon_ul, icon_lr);
+    render_checked ?
+        m_checked_icon->OrthoBlit(icon_ul, icon_lr) :
+        m_unchecked_icon->OrthoBlit(icon_ul, icon_lr);
 }
 
 
@@ -622,11 +635,11 @@ CUIScroll::ScrollTab::ScrollTab(GG::Orientation orientation, int scroll_width, G
     m_mouse_here(false),
     m_being_dragged(false)
 {
-    MoveTo(GG::Pt(GG::X(orientation == GG::VERTICAL ? 0 : 2),
-                  GG::Y(orientation == GG::VERTICAL ? 2 : 0)));
+    MoveTo(GG::Pt(GG::X(orientation == GG::Orientation::VERTICAL ? 0 : 2),
+                  GG::Y(orientation == GG::Orientation::VERTICAL ? 2 : 0)));
     Resize(GG::Pt(GG::X(scroll_width), GG::Y(scroll_width)));
-    SetMinSize(GG::Pt(m_orientation == GG::VERTICAL ? MinSize().x : GG::X(10),
-                      m_orientation == GG::VERTICAL ? GG::Y(10) : MinSize().y));
+    SetMinSize(GG::Pt(m_orientation == GG::Orientation::VERTICAL ? MinSize().x : GG::X(10),
+                      m_orientation == GG::Orientation::VERTICAL ? GG::Y(10) : MinSize().y));
 }
 
 void CUIScroll::ScrollTab::SetColor(GG::Clr c)
@@ -635,7 +648,7 @@ void CUIScroll::ScrollTab::SetColor(GG::Clr c)
 void CUIScroll::ScrollTab::Render() {
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
-    if (m_orientation == GG::VERTICAL) {
+    if (m_orientation == GG::Orientation::VERTICAL) {
         ul.x += 1;
         lr.x -= 2;
     } else {
@@ -716,7 +729,7 @@ void CUIScroll::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     Wnd::SizeMove(ul, lr);
 
     TabButton()->SizeMove(TabButton()->RelativeUpperLeft(), 
-                          (ScrollOrientation() == GG::VERTICAL) ?
+                          (ScrollOrientation() == GG::Orientation::VERTICAL) ?
                           GG::Pt(Size().x, TabButton()->RelativeLowerRight().y) :
                           GG::Pt(TabButton()->RelativeLowerRight().x, Size().y));
 
@@ -762,7 +775,7 @@ CUIDropDownList::CUIDropDownList(size_t num_shown_elements) :
 {
     SetInteriorColor(ClientUI::CtrlColor());
     SetMinSize(GG::Pt(MinSize().x, CUISimpleDropDownListRow::DEFAULT_ROW_HEIGHT));
-    SetChildClippingMode(ClipToClient);
+    SetChildClippingMode(ChildClippingMode::ClipToClient);
 }
 
 void CUIDropDownList::InitBuffer() {
@@ -925,10 +938,10 @@ void CUIEdit::KeyPress(GG::Key key, std::uint32_t key_code_point,
     //bool ctrl_down = mod_keys & (GG::MOD_KEY_CTRL | GG::MOD_KEY_RCTRL);
     //bool numlock_on = mod_keys & GG::MOD_KEY_NUM;
 
-    if (key == GG::GGK_DELETE && shift_down) {
+    if (key == GG::Key::GGK_DELETE && shift_down) {
         GG::GUI::GetGUI()->CutWndText(this);
 
-    } else if (key == GG::GGK_INSERT && shift_down) {
+    } else if (key == GG::Key::GGK_INSERT && shift_down) {
         GG::GUI::GetGUI()->PasteWndText(this, GG::GUI::GetGUI()->ClipboardText());
 
     // todo: italicize, underline selected text with ctrl-i or ctrl-u
@@ -1569,7 +1582,7 @@ SpeciesSelector::SpeciesSelector(const std::string& preselect_species, GG::X w, 
     ManuallyManageColProps();
     NormalizeRowsOnInsert(false);
     SetNumCols(2);
-    SetChildClippingMode(ClipToClient);
+    SetChildClippingMode(ChildClippingMode::ClipToClient);
 
     Resize(GG::Pt(w, h - 8));
 

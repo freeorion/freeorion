@@ -75,11 +75,11 @@ namespace {
 
     /** Returns texture with which to render a SlotControl, depending on \a slot_type. */
     std::shared_ptr<GG::Texture> SlotBackgroundTexture(ShipSlotType slot_type) {
-        if (slot_type == SL_EXTERNAL)
+        if (slot_type == ShipSlotType::SL_EXTERNAL)
             return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "ship_parts" / "external_slot.png", true);
-        else if (slot_type == SL_INTERNAL)
+        else if (slot_type == ShipSlotType::SL_INTERNAL)
             return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "ship_parts" / "internal_slot.png", true);
-        else if (slot_type == SL_CORE)
+        else if (slot_type == ShipSlotType::SL_CORE)
             return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "ship_parts" / "core_slot.png", true);
         else
             return ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "missing.png", true);
@@ -90,9 +90,9 @@ namespace {
     //! into.
     std::shared_ptr<GG::Texture> PartBackgroundTexture(const ShipPart* part) {
         if (part) {
-            bool ex = part->CanMountInSlotType(SL_EXTERNAL);
-            bool in = part->CanMountInSlotType(SL_INTERNAL);
-            bool co = part->CanMountInSlotType(SL_CORE);
+            bool ex = part->CanMountInSlotType(ShipSlotType::SL_EXTERNAL);
+            bool in = part->CanMountInSlotType(ShipSlotType::SL_INTERNAL);
+            bool co = part->CanMountInSlotType(ShipSlotType::SL_CORE);
 
             if (ex && in)
                 return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "ship_parts" / "independent_part.png", true);
@@ -110,25 +110,25 @@ namespace {
         if (!part)
             return 0.0f;
         switch (part->Class()) {
-            case PC_DIRECT_WEAPON:
-            case PC_FIGHTER_BAY:
-            case PC_FIGHTER_HANGAR:
-            case PC_SHIELD:
-            case PC_DETECTION:
-            case PC_STEALTH:
-            case PC_FUEL:
-            case PC_COLONY:
-            case PC_ARMOUR:
-            case PC_SPEED:
-            case PC_TROOPS:
-            case PC_RESEARCH:
-            case PC_INDUSTRY:
-            case PC_INFLUENCE:
+            case ShipPartClass::PC_DIRECT_WEAPON:
+            case ShipPartClass::PC_FIGHTER_BAY:
+            case ShipPartClass::PC_FIGHTER_HANGAR:
+            case ShipPartClass::PC_SHIELD:
+            case ShipPartClass::PC_DETECTION:
+            case ShipPartClass::PC_STEALTH:
+            case ShipPartClass::PC_FUEL:
+            case ShipPartClass::PC_COLONY:
+            case ShipPartClass::PC_ARMOUR:
+            case ShipPartClass::PC_SPEED:
+            case ShipPartClass::PC_TROOPS:
+            case ShipPartClass::PC_RESEARCH:
+            case ShipPartClass::PC_INDUSTRY:
+            case ShipPartClass::PC_INFLUENCE:
                 return part->Capacity();
                 break;
-            case PC_GENERAL:
-            case PC_BOMBARD:
-            case PC_PRODUCTION_LOCATION:
+            case ShipPartClass::PC_GENERAL:
+            case ShipPartClass::PC_BOMBARD:
+            case ShipPartClass::PC_PRODUCTION_LOCATION:
             default:
                 return 0.0f;
         }
@@ -1709,8 +1709,10 @@ void PartsListBox::ShowClass(ShipPartClass part_class, bool refresh_list) {
 }
 
 void PartsListBox::ShowAllClasses(bool refresh_list) {
-    for (ShipPartClass part_class = ShipPartClass(0); part_class != NUM_SHIP_PART_CLASSES; part_class = ShipPartClass(part_class + 1))
-        m_part_classes_shown.insert(part_class);
+    for (ShipPartClass part_class = ShipPartClass(0);
+         part_class != ShipPartClass::NUM_SHIP_PART_CLASSES;
+         part_class = ShipPartClass(int(part_class) + 1))
+    { m_part_classes_shown.insert(part_class); }
     if (refresh_list)
         Populate();
 }
@@ -1808,7 +1810,7 @@ DesignWnd::PartPalette::PartPalette(const std::string& config_name) :
 
 void DesignWnd::PartPalette::CompleteConstruction() {
     //TempUISoundDisabler sound_disabler;     // should be redundant with disabler in DesignWnd::DesignWnd.  uncomment if this is not the case
-    SetChildClippingMode(ClipToClient);
+    SetChildClippingMode(ChildClippingMode::ClipToClient);
 
     namespace ph = boost::placeholders;
 
@@ -1825,7 +1827,10 @@ void DesignWnd::PartPalette::CompleteConstruction() {
     const ShipPartManager& part_manager = GetShipPartManager();
 
     // class buttons
-    for (ShipPartClass part_class = ShipPartClass(0); part_class != NUM_SHIP_PART_CLASSES; part_class = ShipPartClass(part_class + 1)) {
+    for (ShipPartClass part_class = ShipPartClass(0);
+         part_class != ShipPartClass::NUM_SHIP_PART_CLASSES;
+         part_class = ShipPartClass(int(part_class) + 1))
+    {
         // are there any parts of this class?
         bool part_of_this_class_exists = false;
         for (const auto& entry : part_manager) {
@@ -2031,7 +2036,7 @@ void DesignWnd::PartPalette::HandleShipPartRightClicked(const ShipPart* part, co
 }
 
 void DesignWnd::PartPalette::ShowClass(ShipPartClass part_class, bool refresh_list) {
-    if (part_class >= ShipPartClass(0) && part_class < NUM_SHIP_PART_CLASSES) {
+    if (part_class >= ShipPartClass(0) && part_class < ShipPartClass::NUM_SHIP_PART_CLASSES) {
         m_parts_list->ShowClass(part_class, refresh_list);
         m_class_buttons[part_class]->SetCheck();
     } else {
@@ -2046,7 +2051,7 @@ void DesignWnd::PartPalette::ShowAllClasses(bool refresh_list) {
 }
 
 void DesignWnd::PartPalette::HideClass(ShipPartClass part_class, bool refresh_list) {
-    if (part_class >= ShipPartClass(0) && part_class < NUM_SHIP_PART_CLASSES) {
+    if (part_class >= ShipPartClass(0) && part_class < ShipPartClass::NUM_SHIP_PART_CLASSES) {
         m_parts_list->HideClass(part_class, refresh_list);
         m_class_buttons[part_class]->SetCheck(false);
     } else {
@@ -2061,7 +2066,7 @@ void DesignWnd::PartPalette::HideAllClasses(bool refresh_list) {
 }
 
 void DesignWnd::PartPalette::ToggleClass(ShipPartClass part_class, bool refresh_list) {
-    if (part_class >= ShipPartClass(0) && part_class < NUM_SHIP_PART_CLASSES) {
+    if (part_class >= ShipPartClass(0) && part_class < ShipPartClass::NUM_SHIP_PART_CLASSES) {
         const auto& classes_shown = m_parts_list->GetClassesShown();
         if (!classes_shown.count(part_class))
             ShowClass(part_class, refresh_list);
@@ -2075,7 +2080,7 @@ void DesignWnd::PartPalette::ToggleClass(ShipPartClass part_class, bool refresh_
 void DesignWnd::PartPalette::ToggleAllClasses(bool refresh_list)
 {
     const auto& classes_shown = m_parts_list->GetClassesShown();
-    if (classes_shown.size() == NUM_SHIP_PART_CLASSES)
+    if (classes_shown.size() == int(ShipPartClass::NUM_SHIP_PART_CLASSES))
         HideAllClasses(refresh_list);
     else
         ShowAllClasses(refresh_list);
@@ -2255,7 +2260,7 @@ BasesListBox::HullAndNamePanel::HullAndNamePanel(GG::X w, GG::Y h, const std::st
                                                  std::string name) :
     GG::Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS)
 {
-    SetChildClippingMode(ClipToClient);
+    SetChildClippingMode(ChildClippingMode::ClipToClient);
 
     m_graphic = GG::Wnd::Create<GG::StaticGraphic>(ClientUI::HullIcon(hull),
                                                    GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
@@ -3579,7 +3584,7 @@ protected:
 
 private:
     bool                                m_highlighted = false;
-    ShipSlotType                        m_slot_type = INVALID_SHIP_SLOT_TYPE;
+    ShipSlotType                        m_slot_type = ShipSlotType::INVALID_SHIP_SLOT_TYPE;
     double                              m_x_position_fraction = 0.4;    //!< position on hull image where slot should be shown, as a fraction of that image's size
     double                              m_y_position_fraction = 0.4;
     std::shared_ptr<PartControl>        m_part_control;
@@ -3609,11 +3614,11 @@ void SlotControl::CompleteConstruction() {
 
     // set up empty slot tool tip
     std::string title_text;
-    if (m_slot_type == SL_EXTERNAL)
+    if (m_slot_type == ShipSlotType::SL_EXTERNAL)
         title_text = UserString("SL_EXTERNAL");
-    else if (m_slot_type == SL_INTERNAL)
+    else if (m_slot_type == ShipSlotType::SL_INTERNAL)
         title_text = UserString("SL_INTERNAL");
-    else if (m_slot_type == SL_CORE)
+    else if (m_slot_type == ShipSlotType::SL_CORE)
         title_text = UserString("SL_CORE");
 
     SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
@@ -3628,11 +3633,11 @@ bool SlotControl::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
         return false;
 
     switch (event.Type()) {
-    case GG::WndEvent::DragDropEnter:
-    case GG::WndEvent::DragDropHere:
-    case GG::WndEvent::CheckDrops:
-    case GG::WndEvent::DragDropLeave:
-    case GG::WndEvent::DragDroppedOn:
+    case GG::WndEvent::EventType::DragDropEnter:
+    case GG::WndEvent::EventType::DragDropHere:
+    case GG::WndEvent::EventType::CheckDrops:
+    case GG::WndEvent::EventType::DragDropLeave:
+    case GG::WndEvent::EventType::DragDroppedOn:
         HandleEvent(event);
         return true;
         break;
@@ -3788,11 +3793,11 @@ void SlotControl::SetPart(const ShipPart* part) {
 
     // set part occupying slot's tool tip to say slot type
     std::string title_text;
-    if (m_slot_type == SL_EXTERNAL)
+    if (m_slot_type == ShipSlotType::SL_EXTERNAL)
         title_text = UserString("SL_EXTERNAL");
-    else if (m_slot_type == SL_INTERNAL)
+    else if (m_slot_type == ShipSlotType::SL_INTERNAL)
         title_text = UserString("SL_INTERNAL");
-    else if (m_slot_type == SL_CORE)
+    else if (m_slot_type == ShipSlotType::SL_CORE)
         title_text = UserString("SL_CORE");
 
     m_part_control->SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
@@ -4043,7 +4048,7 @@ DesignWnd::MainPanel::MainPanel(const std::string& config_name) :
 {}
 
 void DesignWnd::MainPanel::CompleteConstruction() {
-    SetChildClippingMode(ClipToClient);
+    SetChildClippingMode(ChildClippingMode::ClipToClient);
 
     m_design_name_label = GG::Wnd::Create<CUILabel>(UserString("DESIGN_WND_DESIGN_NAME"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_design_name = GG::Wnd::Create<CUIEdit>(UserString("DESIGN_NAME_DEFAULT"));
@@ -4301,12 +4306,12 @@ int DesignWnd::MainPanel::FindEmptySlotForPart(const ShipPart* part) {
     if (!part)
         return result;
 
-    if (part->Class() == PC_FIGHTER_HANGAR) {
+    if (part->Class() == ShipPartClass::PC_FIGHTER_HANGAR) {
         // give up if part is a hangar and there is already a hangar of another type
         std::string already_seen_hangar_name;
         for (const auto& slot : m_slots) {
             const ShipPart* part = slot->GetPart();
-            if (!part || part->Class() != PC_FIGHTER_HANGAR)
+            if (!part || part->Class() != ShipPartClass::PC_FIGHTER_HANGAR)
                 continue;
             if (part->Name() != part->Name())
                 return result;
@@ -4337,10 +4342,10 @@ std::pair<int, int> DesignWnd::MainPanel::FindSlotForPartWithSwapping(const Ship
         return {-1, -1};
 
     // check if adding the part would cause the design to have multiple different types of hangar (which is not allowed)
-    if (part->Class() == PC_FIGHTER_HANGAR) {
+    if (part->Class() == ShipPartClass::PC_FIGHTER_HANGAR) {
         for (const auto& slot : m_slots) {
             const ShipPart* existing_part = slot->GetPart();
-            if (!existing_part || existing_part->Class() != PC_FIGHTER_HANGAR)
+            if (!existing_part || existing_part->Class() != ShipPartClass::PC_FIGHTER_HANGAR)
                 continue;
             if (existing_part->Name() != part->Name())
                 return {-1, -1};  // conflict; new part can't be added
@@ -4995,7 +5000,7 @@ void DesignWnd::CompleteConstruction() {
     GG::Wnd::CompleteConstruction();
 
     Sound::TempUISoundDisabler sound_disabler;
-    SetChildClippingMode(ClipToClient);
+    SetChildClippingMode(ChildClippingMode::ClipToClient);
 
     m_detail_panel = GG::Wnd::Create<EncyclopediaDetailPanel>(GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | PINABLE, DES_PEDIA_WND_NAME);
     m_main_panel = GG::Wnd::Create<MainPanel>(DES_MAIN_WND_NAME);

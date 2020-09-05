@@ -19,9 +19,9 @@ public:
         const GG::Pt UL = this->UpperLeft();
         const GG::Pt LR = this->LowerRight();
         GG::Clr border_color_to_use = this->Disabled() ? GG::DisabledColor(ClientUI::CtrlBorderColor()) : ClientUI::CtrlBorderColor();
-        int tab_width = this->GetOrientation() == GG::VERTICAL ? Value(this->Tab()->Height()) : Value(this->Tab()->Width());
+        int tab_width = this->GetOrientation() == GG::Orientation::VERTICAL ? Value(this->Tab()->Height()) : Value(this->Tab()->Width());
         GG::Pt ul, lr;
-        if (this->GetOrientation() == GG::VERTICAL) {
+        if (this->GetOrientation() == GG::Orientation::VERTICAL) {
             ul.x = ((LR.x + UL.x) - static_cast<int>(this->LineWidth())) / 2;
             lr.x   = ul.x + static_cast<int>(this->LineWidth());
             ul.y = UL.y + tab_width / 2;
@@ -37,7 +37,7 @@ public:
 
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
         GG::Wnd::SizeMove(ul, lr);
-        if (this->GetOrientation() == GG::VERTICAL) {
+        if (this->GetOrientation() == GG::Orientation::VERTICAL) {
             this->Tab()->Resize(GG::Pt(GG::X(this->TabWidth()), GG::Y(this->TabWidth())));
             this->Tab()->MoveTo(GG::Pt((this->Width() - this->Tab()->Width()) / 2, this->Tab()->RelativeUpperLeft().y));
             this->Tab()->SetMinSize(GG::Pt(this->Tab()->MinSize().x, GG::Y(10)));

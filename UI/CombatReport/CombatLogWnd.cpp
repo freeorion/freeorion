@@ -66,18 +66,18 @@ namespace {
         static const std::string EMPTY_STRING("");
 
         switch (obj_type) {
-        case OBJ_SHIP:
+        case UniverseObjectType::OBJ_SHIP:
             return VarText::SHIP_ID_TAG;
-        case OBJ_FLEET:
+        case UniverseObjectType::OBJ_FLEET:
             return VarText::FLEET_ID_TAG;
-        case OBJ_PLANET:
+        case UniverseObjectType::OBJ_PLANET:
             return VarText::PLANET_ID_TAG;
-        case OBJ_BUILDING:
+        case UniverseObjectType::OBJ_BUILDING:
             return VarText::BUILDING_ID_TAG;
-        case OBJ_SYSTEM:
+        case UniverseObjectType::OBJ_SYSTEM:
             return VarText::SYSTEM_ID_TAG;
-        case OBJ_FIELD:
-        case OBJ_FIGHTER:
+        case UniverseObjectType::OBJ_FIELD:
+        case UniverseObjectType::OBJ_FIGHTER:
         default:
             return EMPTY_STRING;
         }
@@ -129,7 +129,7 @@ namespace {
     { return object->ObjectType() == UniverseObjectType::OBJ_SHIP; }
 
     bool HasPopulation(std::shared_ptr<UniverseObject> object) {
-        const auto* m = object->GetMeter(METER_POPULATION);
+        const auto* m = object->GetMeter(MeterType::METER_POPULATION);
         return m && m->Initial() > 0.0f;
     }
 

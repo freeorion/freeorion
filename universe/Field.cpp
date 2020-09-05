@@ -26,19 +26,19 @@ Field::Field(const std::string& field_type, double x, double y, double radius) :
 
     UniverseObject::Init();
 
-    AddMeter(METER_SPEED);
-    AddMeter(METER_SIZE);
+    AddMeter(MeterType::METER_SPEED);
+    AddMeter(MeterType::METER_SIZE);
 
-    UniverseObject::GetMeter(METER_SIZE)->Set(radius, radius);
+    UniverseObject::GetMeter(MeterType::METER_SIZE)->Set(radius, radius);
 }
 
 Field* Field::Clone(int empire_id) const {
     Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
-    if (!(vis >= VIS_BASIC_VISIBILITY && vis <= VIS_FULL_VISIBILITY))
+    if (!(vis >= Visibility::VIS_BASIC_VISIBILITY && vis <= Visibility::VIS_FULL_VISIBILITY))
         return nullptr;
 
-    Field* retval = new Field(m_type_name, X(), Y(), GetMeter(METER_SIZE)->Current());
+    Field* retval = new Field(m_type_name, X(), Y(), GetMeter(MeterType::METER_SIZE)->Current());
     retval->Copy(shared_from_this(), empire_id);
     return retval;
 }
@@ -58,7 +58,7 @@ void Field::Copy(std::shared_ptr<const UniverseObject> copied_object, int empire
 
     UniverseObject::Copy(copied_object, vis, visible_specials);
 
-    if (vis >= VIS_BASIC_VISIBILITY) {
+    if (vis >= Visibility::VIS_BASIC_VISIBILITY) {
         this->m_name =                      copied_field->m_name;
         this->m_type_name =                 copied_field->m_type_name;
     }
@@ -78,7 +78,7 @@ bool Field::HasTag(const std::string& name) const {
 }
 
 UniverseObjectType Field::ObjectType() const
-{ return OBJ_FIELD; }
+{ return UniverseObjectType::OBJ_FIELD; }
 
 std::string Field::Dump(unsigned short ntabs) const {
     std::stringstream os;
@@ -107,7 +107,7 @@ bool Field::InField(std::shared_ptr<const UniverseObject> obj) const
 { return obj && InField(obj->X(), obj->Y()); }
 
 bool Field::InField(double x, double y) const {
-    const Meter* size_meter = GetMeter(METER_SIZE);
+    const Meter* size_meter = GetMeter(MeterType::METER_SIZE);
     double radius = 1.0;
     if (size_meter)
         radius = size_meter->Current();
@@ -119,13 +119,13 @@ bool Field::InField(double x, double y) const {
 void Field::ResetTargetMaxUnpairedMeters() {
     UniverseObject::ResetTargetMaxUnpairedMeters();
 
-    GetMeter(METER_SPEED)->ResetCurrent();
+    GetMeter(MeterType::METER_SPEED)->ResetCurrent();
     // intentionally not resetting size, so that it is presistant
 }
 
 void Field::ClampMeters() {
     UniverseObject::ClampMeters();
 
-    // intentionally not clamping METER_SPEED, to allow negative speeds
-    UniverseObject::GetMeter(METER_SIZE)->ClampCurrentToRange();
+    // intentionally not clamping MeterType::METER_SPEED, to allow negative speeds
+    UniverseObject::GetMeter(MeterType::METER_SIZE)->ClampCurrentToRange();
 }

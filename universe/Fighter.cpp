@@ -27,11 +27,11 @@ bool Fighter::HostileToEmpire(int empire_id) const {
     if (OwnedBy(empire_id))
         return false;
     return empire_id == ALL_EMPIRES || Unowned() ||
-           Empires().GetDiplomaticStatus(Owner(), empire_id) == DIPLO_WAR;
+           Empires().GetDiplomaticStatus(Owner(), empire_id) == DiplomaticStatus::DIPLO_WAR;
 }
 
 UniverseObjectType Fighter::ObjectType() const
-{ return OBJ_FIGHTER; }
+{ return UniverseObjectType::OBJ_FIGHTER; }
 
 const ::Condition::Condition* Fighter::CombatTargets() const
 { return m_combat_targets; }
@@ -78,7 +78,7 @@ void Fighter::Copy(std::shared_ptr<const UniverseObject> copied_object, int empi
         return;
     }
 
-    UniverseObject::Copy(copied_object, VIS_FULL_VISIBILITY, std::set<std::string>());
+    UniverseObject::Copy(copied_object, Visibility::VIS_FULL_VISIBILITY, std::set<std::string>());
 
     this->m_damage = copied_fighter->m_damage;
     this->m_destroyed = copied_fighter->m_destroyed;

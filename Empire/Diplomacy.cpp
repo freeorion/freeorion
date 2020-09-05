@@ -66,7 +66,7 @@ bool DiplomaticMessage::IsAllowed() const {
 DiplomaticStatusUpdateInfo::DiplomaticStatusUpdateInfo() :
     empire1_id(ALL_EMPIRES),
     empire2_id(ALL_EMPIRES),
-    diplo_status(INVALID_DIPLOMATIC_STATUS)
+    diplo_status(DiplomaticStatus::INVALID_DIPLOMATIC_STATUS)
 {}
 
 DiplomaticStatusUpdateInfo::DiplomaticStatusUpdateInfo(int empire1_id_, int empire2_id_, DiplomaticStatus status) :

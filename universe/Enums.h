@@ -10,7 +10,7 @@
 
 
 /** Types for Meters
-  * Only active paired meters should lie between METER_POPULATION and METER_TROOPS
+  * Only active paired meters should lie between MeterType::METER_POPULATION and MeterType::METER_TROOPS
   * (See: UniverseObject::ResetPairedActiveMeters())
   */
 GG_ENUM(MeterType,
@@ -76,11 +76,11 @@ GG_ENUM(EmpireAffiliationType,
 
 
 /** Returns mapping from active to target or max meter types that correspond.
-  * eg. METER_RESEARCH -> METER_TARGET_RESEARCH */
+  * eg. MeterType::METER_RESEARCH -> MeterType::METER_TARGET_RESEARCH */
 FO_COMMON_API const std::map<MeterType, MeterType>& AssociatedMeterTypes();
 
 /** Returns the target or max meter type that is associated with the given
-  * active meter type.  If no associated meter type exists, INVALID_METER_TYPE
+  * active meter type.  If no associated meter type exists, MeterType::INVALID_METER_TYPE
   * is returned. */
 FO_COMMON_API MeterType AssociatedMeterType(MeterType meter_type);
 
