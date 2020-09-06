@@ -933,8 +933,8 @@ namespace {
         auto message{"StoreTargetsAndCausesOfEffectsGroup < " + std::to_string(n) + " >"
                      + "  cause type: " + boost::lexical_cast<std::string>(effect_cause_type)
                      + "  specific cause: " + specific_cause_name
-                     + "  sources: " + std::to_string(source_objects.size())
-                     + "  scope: " + boost::algorithm::erase_all_copy(effects_group->Scope()->Dump(), "\n")};
+                     + "  sources: " + std::to_string(source_objects.size())/*
+                     + "  scope: " + boost::algorithm::erase_all_copy(effects_group->Scope()->Dump(), "\n")*/};
 
         ScopedTimer timer(message, std::chrono::milliseconds(20));
 
