@@ -3,10 +3,12 @@
 #include "Empire.h"
 #include "../universe/BuildingType.h"
 #include "../universe/Condition.h"
+#include "../universe/Planet.h"
 #include "../universe/ShipHull.h"
 #include "../universe/ShipPart.h"
 #include "../universe/ShipDesign.h"
 #include "../universe/ValueRef.h"
+#include "../universe/UniverseObjectVisitors.h"
 #include "../util/AppInterface.h"
 #include "../util/GameRules.h"
 #include "../util/ScopedTimer.h"
@@ -608,10 +610,9 @@ float ProductionQueue::StockpileCapacity() const {
 
     float retval = 0.0f;
 
-    for (const auto& obj : Objects().ExistingObjects()) {
-        if (!obj.second->OwnedBy(m_empire_id))
-            continue;
-        const auto* meter = obj.second->GetMeter(MeterType::METER_STOCKPILE);
+    // TODO: if something other than planets has METER_STOCKPILE added, adjust here
+    for (const auto& obj : Objects().find<Planet>(OwnedVisitor(m_empire_id))) {
+        const auto* meter = obj->GetMeter(MeterType::METER_STOCKPILE);
         if (!meter)
             continue;
         retval += meter->Current();
