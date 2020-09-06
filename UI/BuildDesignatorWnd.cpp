@@ -819,7 +819,7 @@ void BuildDesignatorWnd::BuildSelector::SetEmpireID(int empire_id, bool refresh_
 }
 
 void BuildDesignatorWnd::BuildSelector::Refresh() {
-    ScopedTimer timer("BuildDesignatorWnd::BuildSelector::Refresh()");
+    ScopedTimer timer("BuildDesignatorWnd::BuildSelector::Refresh()", true);
     if (auto prod_loc = Objects().get(this->m_production_location))
         this->SetName(boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_BUILD_ITEMS_TITLE_LOCATION")) % prod_loc->Name()));
     else
@@ -979,12 +979,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
         auto stockpile_row = GG::Wnd::Create<ProductionItemRow>(
             row_size.x, row_size.y, ProductionQueue::ProductionItem(BuildType::BT_STOCKPILE),
             m_empire_id, m_production_location);
-        m_buildable_items->Insert(stockpile_row);
-
-        // resize inserted rows and record first row to show
-        for (auto& row : *m_buildable_items) {
-            row->Resize(row_size);
-        }
+        m_buildable_items->Insert(std::move(stockpile_row));
     }
 
     // populate list with building types
@@ -995,19 +990,15 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
         std::vector<std::shared_ptr<GG::ListBox::Row>> rows;
         rows.reserve(std::distance(manager.begin(), manager.end()));
         for (const auto& entry : manager) {
-            const std::string name = entry.first;
+            auto& name = entry.first;
             if (!BuildableItemVisible(BuildType::BT_BUILDING, name))
                 continue;
             auto item_row = GG::Wnd::Create<ProductionItemRow>(
                 row_size.x, row_size.y, ProductionQueue::ProductionItem(BuildType::BT_BUILDING, name),
                 m_empire_id, m_production_location);
-            rows.push_back(item_row);
+            rows.emplace_back(std::move(item_row));
         }
-        m_buildable_items->Insert(rows);
-        // resize inserted rows and record first row to show
-        for (auto& row : *m_buildable_items) {
-            row->Resize(row_size);
-        }
+        m_buildable_items->Insert(std::move(rows));
     }
 
     // populate with ship designs
@@ -1018,6 +1009,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
         if (empire) {
             design_ids = ClientUI::GetClientUI()->GetShipDesignManager()->DisplayedDesigns()->OrderedIDs();
         } else {
+            design_ids.reserve(GetUniverse().NumShipDesigns());
             for (auto it = GetUniverse().beginShipDesigns();
                  it != GetUniverse().endShipDesigns(); ++it)
             { design_ids.push_back(it->first); }
@@ -1036,14 +1028,14 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
                 row_size.x, row_size.y, 
                 ProductionQueue::ProductionItem(BuildType::BT_SHIP, ship_design_id),
                 m_empire_id, m_production_location);
-            rows.push_back(item_row);
+            rows.emplace_back(std::move(item_row));
         }
-        m_buildable_items->Insert(rows);
-        // resize inserted rows and record first row to show
-        for (auto& row : *m_buildable_items) {
-            row->Resize(row_size);
-        }
+        m_buildable_items->Insert(std::move(rows));
     }
+
+    // resize inserted rows and record first row to show
+    for (auto& row : *m_buildable_items)
+        row->Resize(row_size);
 
     // Restore the list scroll state
     // If we were at the top stay at the top
