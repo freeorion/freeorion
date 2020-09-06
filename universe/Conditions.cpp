@@ -3269,12 +3269,14 @@ void InOrIsSystem::GetDefaultInitialCandidateObjects(const ScriptingContext& par
     if (!system)
         return;
 
-    const std::set<int>& system_object_ids = system->ObjectIDs();
-    auto sys_objs = parent_context.ContextObjects().find(system_object_ids);
+    // could assign directly to condition_non_targets but don't want to assume it will be initially empty
+    auto sys_objs = parent_context.ContextObjects().find(system->ObjectIDs());  // excludes system itself
 
     // insert all objects that have the specified system id
     condition_non_targets.reserve(sys_objs.size() + 1);
-    std::copy(sys_objs.begin(), sys_objs.end(), std::back_inserter(condition_non_targets)); // TODO: move
+    std::copy(std::make_move_iterator(sys_objs.begin()),
+              std::make_move_iterator(sys_objs.end()),
+              std::back_inserter(condition_non_targets));
     // also insert system itself
     condition_non_targets.emplace_back(std::move(system));
 }
@@ -9696,7 +9698,8 @@ void And::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
         }
 
         // merge items that passed all operand conditions into matches
-        matches.insert(matches.end(), partly_checked_non_matches.begin(), partly_checked_non_matches.end());
+        matches.insert(matches.end(), std::make_move_iterator(partly_checked_non_matches.begin()),
+                       std::make_move_iterator(partly_checked_non_matches.end()));
 
         // items already in matches set are not checked, and remain in matches set even if
         // they don't match one of the operand conditions
