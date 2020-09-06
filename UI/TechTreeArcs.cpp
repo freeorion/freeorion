@@ -84,17 +84,17 @@ public:
         if (const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID())) {
             const ResearchQueue& queue = empire->GetResearchQueue();
             for (const auto& edge : m_edges_to_show) {
-                std::string tech1 = edge.first;
-                const std::set<std::string>& heads = edge.second;
+                auto& tech1 = edge.first;
+                auto& heads = edge.second;
 
-                for (const std::string& head : heads) {
+                for (auto& head : heads) {
                     if (queue.InQueue(head) && (
                         queue.InQueue(tech1) || empire->GetTechStatus(tech1) == TechStatus::TS_COMPLETE))
                     {
                         // FillArcBuffer will put lines whose both ends are in highlights
                         // into the buffer
-                        highlights.insert(tech1);
-                        highlights.insert(head);
+                        highlights.emplace(tech1);
+                        highlights.emplace(head);
                     }
                 }
             }
