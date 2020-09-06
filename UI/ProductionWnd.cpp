@@ -1072,7 +1072,7 @@ void ProductionWnd::ProductionQueueChangedSlot() {
 
 void ProductionWnd::UpdateQueue() {
     DebugLogger() << "ProductionWnd::UpdateQueue()";
-    ScopedTimer timer("ProductionWnd::UpdateQueue");
+    ScopedTimer timer("ProductionWnd::UpdateQueue", true);
 
     m_queue_wnd->SetEmpire(m_empire_shown_id);
     ProdQueueListBox* queue_lb = m_queue_wnd->GetQueueListBox();

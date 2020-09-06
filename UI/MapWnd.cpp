@@ -4919,7 +4919,7 @@ void MapWnd::DeferredRefreshFleetButtons() {
         return;
     m_deferred_refresh_fleet_buttons = false;
 
-    ScopedTimer timer("RefreshFleetButtons()");
+    ScopedTimer timer("RefreshFleetButtons()", true);
 
     // determine fleets that need buttons so that fleets at the same location can
     // be grouped by empire owner and buttons created

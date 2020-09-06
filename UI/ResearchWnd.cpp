@@ -578,7 +578,7 @@ void ResearchWnd::ResearchQueueChangedSlot() {
 
 void ResearchWnd::UpdateQueue() {
     DebugLogger() << "ResearchWnd::UpdateQueue()";
-    ScopedTimer timer("ResearchWnd::UpdateQueue");
+    ScopedTimer timer("ResearchWnd::UpdateQueue", true);
 
     m_queue_wnd->SetEmpire(m_empire_shown_id);
 

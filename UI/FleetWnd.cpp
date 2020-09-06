@@ -2219,7 +2219,7 @@ public:
     }
 
     void Refresh() {
-        ScopedTimer timer("ShipsListBox::Refresh");
+        ScopedTimer timer("ShipsListBox::Refresh", true);
 
         auto fleet = Objects().get<Fleet>(m_fleet_id);
         if (!fleet) {
