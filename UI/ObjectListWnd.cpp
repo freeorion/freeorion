@@ -990,7 +990,8 @@ private:
             std::set<std::string> all_foci;
             for (auto& planet : Objects().all<Planet>()) {
                 auto obj_foci = planet->AvailableFoci();
-                std::copy(obj_foci.begin(), obj_foci.end(),
+                std::copy(std::make_move_iterator(obj_foci.begin()),
+                          std::make_move_iterator(obj_foci.end()),
                           std::inserter(all_foci, all_foci.end()));
             }
 
