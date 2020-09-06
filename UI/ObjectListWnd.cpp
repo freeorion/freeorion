@@ -450,6 +450,7 @@ namespace {
     template <typename enumT>
     std::vector<std::string> StringsFromEnums(const std::vector<enumT>& enum_vals) {
         std::vector<std::string> retval;
+        retval.reserve(enum_vals.size());
         for (const enumT& enum_val : enum_vals)
             retval.emplace_back(boost::lexical_cast<std::string>(enum_val));
         return retval;
@@ -752,7 +753,7 @@ private:
     template <typename T>
     std::vector<std::unique_ptr<ValueRef::ValueRef<T>>> GetEnumValueRefVec() {
         std::vector<std::unique_ptr<ValueRef::ValueRef<T>>> retval;
-        retval.emplace_back(std::move(GetEnumValueRef<T>()));
+        retval.emplace_back(GetEnumValueRef<T>());
         return retval;
     }
 
@@ -777,20 +778,22 @@ private:
         m_class_drop->Resize(GG::Pt(DropListWidth(), DropListHeight()));
         m_class_drop->SetStyle(GG::LIST_NOSORT);
 
-        std::vector<std::string> row_keys ={ALL_CONDITION,              PLANETTYPE_CONDITION,       PLANETSIZE_CONDITION,
-                                            HASGROWTHSPECIAL_CONDITION, GGWITHPTYPE_CONDITION,      ASTWITHPTYPE_CONDITION,
-                                            FOCUSTYPE_CONDITION,        STARTYPE_CONDITION,         HASTAG_CONDITION,
-                                            HASSPECIAL_CONDITION,       EMPIREAFFILIATION_CONDITION,MONSTER_CONDITION,
-                                            ARMED_CONDITION,            STATIONARY_CONDITION,       CANPRODUCESHIPS_CONDITION,
-                                            CANCOLONIZE_CONDITION,      HOMEWORLD_CONDITION,        METERVALUE_CONDITION,
-                                            CAPITAL_CONDITION };
+        static const std::vector<std::string> row_keys =
+        {ALL_CONDITION,              PLANETTYPE_CONDITION,       PLANETSIZE_CONDITION,
+         HASGROWTHSPECIAL_CONDITION, GGWITHPTYPE_CONDITION,      ASTWITHPTYPE_CONDITION,
+         FOCUSTYPE_CONDITION,        STARTYPE_CONDITION,         HASTAG_CONDITION,
+         HASSPECIAL_CONDITION,       EMPIREAFFILIATION_CONDITION,MONSTER_CONDITION,
+         ARMED_CONDITION,            STATIONARY_CONDITION,       CANPRODUCESHIPS_CONDITION,
+         CANCOLONIZE_CONDITION,      HOMEWORLD_CONDITION,        METERVALUE_CONDITION,
+         CAPITAL_CONDITION };
 
         GG::ListBox::iterator select_row_it = m_class_drop->end();
         const std::string& init_condition_key = ConditionClassName(init_condition);
 
         // fill droplist with rows for the available condition classes to be selected
-        for (const std::string& key : row_keys) {
-            auto row_it = m_class_drop->Insert(GG::Wnd::Create<ConditionRow>(key,  GG::Y(ClientUI::Pts())));
+        for (auto& key : row_keys) {
+            auto row_it = m_class_drop->Insert(GG::Wnd::Create<ConditionRow>(
+                key,  GG::Y(ClientUI::Pts())));
             if (init_condition_key == key)
                 select_row_it = row_it;
         }
@@ -860,8 +863,8 @@ private:
 
             for (const auto& entry : GetSpeciesManager()) {
                 const std::string& species_name = entry.first;
-                row_it = m_string_drop->Insert(
-                    GG::Wnd::Create<StringRow>(species_name, GG::Y(ClientUI::Pts())));
+                m_string_drop->Insert(GG::Wnd::Create<StringRow>(
+                    species_name, GG::Y(ClientUI::Pts())));
             }
 
         } else if (condition_key == HASSPECIAL_CONDITION) {
@@ -878,9 +881,9 @@ private:
                 GG::Wnd::Create<StringRow>("", GG::Y(ClientUI::Pts())));
             m_string_drop->Select(row_it);
 
-            for (const std::string& special_name : SpecialNames()) {
-                row_it = m_string_drop->Insert(
-                    GG::Wnd::Create<StringRow>(special_name, GG::Y(ClientUI::Pts())));
+            for (auto& special_name : SpecialNames()) {
+                m_string_drop->Insert(GG::Wnd::Create<StringRow>(
+                    std::move(special_name), GG::Y(ClientUI::Pts())));
             }
 
         } else if (condition_key == HASTAG_CONDITION) {
@@ -894,15 +897,13 @@ private:
 
             // collect all valid tags on any object in universe
             std::set<std::string> all_tags;
-
-            for (auto& obj : Objects().all<UniverseObject>()) {
+            for (auto& obj : Objects().all()) {
                 auto tags = obj->Tags();
                 all_tags.insert(tags.begin(), tags.end());
             }
 
-            auto row_it = m_string_drop->end();
             for (const std::string& tag : all_tags)
-                row_it = m_string_drop->Insert(GG::Wnd::Create<StringRow>(tag, GG::Y(ClientUI::Pts())));
+                m_string_drop->Insert(GG::Wnd::Create<StringRow>(tag, GG::Y(ClientUI::Pts())));
 
             if (!m_string_drop->Empty())
                 m_string_drop->Select(0);
@@ -922,9 +923,9 @@ private:
                  size = ::PlanetSize(int(size) + 1))
             { planet_sizes.emplace_back(size); }
 
-            auto row_it = m_string_drop->end();
-            for (const std::string& text : StringsFromEnums(planet_sizes))
-                row_it = m_string_drop->Insert(GG::Wnd::Create<StringRow>(text, GG::Y(ClientUI::Pts())));
+            for (auto& text : StringsFromEnums(planet_sizes))
+                m_string_drop->Insert(GG::Wnd::Create<StringRow>(
+                    std::move(text), GG::Y(ClientUI::Pts())));
             if (!m_string_drop->Empty())
                 m_string_drop->Select(0);
 
@@ -943,13 +944,12 @@ private:
                  type = ::PlanetType(int(type) + 1))
             { planet_types.emplace_back(type); }
 
-            auto row_it = m_string_drop->end();
             if (condition_key == GGWITHPTYPE_CONDITION || condition_key == ASTWITHPTYPE_CONDITION )
-                row_it = m_string_drop->Insert(GG::Wnd::Create<StringRow>(
+                m_string_drop->Insert(GG::Wnd::Create<StringRow>(
                     UserString("CONDITION_ANY"), GG::Y(ClientUI::Pts()), false));
-            for (const std::string& text : StringsFromEnums(planet_types)) {
-                row_it = m_string_drop->Insert(GG::Wnd::Create<StringRow>(
-                    text, GG::Y(ClientUI::Pts())));
+            for (auto& text : StringsFromEnums(planet_types)) {
+                m_string_drop->Insert(GG::Wnd::Create<StringRow>(
+                    std::move(text), GG::Y(ClientUI::Pts())));
             }
             if (!m_string_drop->Empty())
                 m_string_drop->Select(0);
@@ -970,9 +970,9 @@ private:
             { star_types.emplace_back(type); }
 
             auto row_it = m_string_drop->end();
-            for (const std::string& text : StringsFromEnums(star_types)) {
+            for (auto& text : StringsFromEnums(star_types)) {
                 row_it = m_string_drop->Insert(GG::Wnd::Create<StringRow>(
-                    text, GG::Y(ClientUI::Pts())));
+                    std::move(text), GG::Y(ClientUI::Pts())));
             }
             if (!m_string_drop->Empty())
                 m_string_drop->Select(0);
@@ -1050,8 +1050,8 @@ private:
             auto row_it = m_string_drop->end();
             for (const auto& entry : Empires()) {
                 const std::string& empire_name = entry.second->Name();
-                row_it = m_string_drop->Insert(
-                    GG::Wnd::Create<StringRow>(empire_name, GG::Y(ClientUI::Pts()), false));
+                m_string_drop->Insert(GG::Wnd::Create<StringRow>(
+                    empire_name, GG::Y(ClientUI::Pts()), false));
             }
             if (!m_string_drop->Empty())
                 m_string_drop->Select(0);
@@ -1124,6 +1124,7 @@ void FilterDialog::CompleteConstruction() {
     std::shared_ptr<GG::Button> label;
 
     int vis_row = 1;
+    GG::Y min_usable_size = GG::Y1;
 
     for (const auto& entry : {
             std::make_tuple(VIS_DISPLAY::SHOW_VISIBLE,            UserStringNop("VISIBLE")),
@@ -1135,18 +1136,19 @@ void FilterDialog::CompleteConstruction() {
         const auto label_key = std::get<1>(entry);
 
         label = Wnd::Create<CUIButton>(UserString(label_key));
-        label->Resize(GG::Pt(button_width, label->MinUsableSize().y));
-        m_filters_layout->Add(label, vis_row, 0, GG::ALIGN_CENTER);
+        min_usable_size = std::max(min_usable_size, label->MinUsableSize().y);
+        label->Resize(GG::Pt(button_width, min_usable_size));
         label->LeftClickedSignal.connect(
             boost::bind(&FilterDialog::UpdateVisFilterFromVisibilityButton, this, visibility));
+        m_filters_layout->Add(std::move(label), vis_row, 0, GG::ALIGN_CENTER);
 
         ++vis_row;
     }
 
-    m_filters_layout->SetMinimumRowHeight(0, label->MinUsableSize().y);
-    m_filters_layout->SetMinimumRowHeight(1, label->MinUsableSize().y);
-    m_filters_layout->SetMinimumRowHeight(2, label->MinUsableSize().y);
-    m_filters_layout->SetMinimumRowHeight(3, label->MinUsableSize().y);
+    m_filters_layout->SetMinimumRowHeight(0, min_usable_size);
+    m_filters_layout->SetMinimumRowHeight(1, min_usable_size);
+    m_filters_layout->SetMinimumRowHeight(2, min_usable_size);
+    m_filters_layout->SetMinimumRowHeight(3, min_usable_size);
 
     int col = 1;
 
@@ -1157,9 +1159,9 @@ void FilterDialog::CompleteConstruction() {
         m_filters_layout->SetColumnStretch(col, 1.0);
 
         label = Wnd::Create<CUIButton>(" " + UserString(boost::lexical_cast<std::string>(uot)) + " ");
-        m_filters_layout->Add(label, 0, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
         label->LeftClickedSignal.connect(
             boost::bind(&FilterDialog::UpdateVisFiltersFromObjectTypeButton, this, uot));
+        m_filters_layout->Add(std::move(label), 0, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
 
         int row = 1;
 
@@ -1169,10 +1171,10 @@ void FilterDialog::CompleteConstruction() {
             auto button = GG::Wnd::Create<CUIStateButton>(
                 " ", GG::FORMAT_CENTER, std::make_shared<CUICheckBoxRepresenter>());
             button->SetCheck(vis_display.count(visibility));
-            m_filters_layout->Add(button, row, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
             button->CheckedSignal.connect(
                 boost::bind(&FilterDialog::UpdateVisFiltersFromStateButtons, this, boost::placeholders::_1));
-            m_filter_buttons[uot][visibility] = button;
+            m_filters_layout->Add(button, row, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+            m_filter_buttons[uot][visibility] = std::move(button);
 
             ++row;
         }
