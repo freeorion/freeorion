@@ -275,7 +275,8 @@ namespace {
 
         int empire_id = AIClientApp::GetApp()->EmpireID();
 
-        AIClientApp::GetApp()->Orders().IssueOrder(std::make_shared<ResearchQueueOrder>(empire_id, tech_name));
+        AIClientApp::GetApp()->Orders().IssueOrder(
+            std::make_shared<ResearchQueueOrder>(empire_id, tech_name));
 
         return 1;
     }
@@ -284,7 +285,8 @@ namespace {
     {
         const Policy* policy = GetPolicy(policy_name);
         if (!policy) {
-            ErrorLogger() << "IssueAdoptPolicyOrder : passed policy_name, " << policy_name << ", that is not the name of a policy.";
+            ErrorLogger() << "IssueAdoptPolicyOrder : passed policy_name, " << policy_name
+                          << ", that is not the name of a policy.";
             return 0;
         }
         if (!policy->Category().empty() && policy->Category() != category) {
@@ -300,7 +302,8 @@ namespace {
             return 0;
         }
         if (empire->PolicyAdopted(policy_name)) {
-            ErrorLogger() << "IssueAdoptPolicyOrder : policy with name " << policy_name << " was already adopted";
+            ErrorLogger() << "IssueAdoptPolicyOrder : policy with name " << policy_name
+                          << " was already adopted";
             return 0;
         }
 
@@ -318,7 +321,8 @@ namespace {
             return 0;
         }
         if (!empire->PolicyAdopted(policy_name)) {
-            ErrorLogger() << "IssueDeadoptPolicyOrder : policy with name " << policy_name << " was not yet adopted, so can't be un-adopted";
+            ErrorLogger() << "IssueDeadoptPolicyOrder : policy with name " << policy_name
+                          << " was not yet adopted, so can't be un-adopted";
             return 0;
         }
 
@@ -538,8 +542,9 @@ namespace {
 
         std::vector<std::string> parts;
         int const num_parts = py::len(parts_list);
+        parts.reserve(num_parts);
         for (int i = 0; i < num_parts; i++)
-            parts.push_back(py::extract<std::string>(parts_list[i]));
+            parts.emplace_back(py::extract<std::string>(parts_list[i]));
 
         int empire_id = AIClientApp::GetApp()->EmpireID();
         int current_turn = CurrentTurn();
@@ -549,16 +554,17 @@ namespace {
         // create design from stuff chosen in UI
         ShipDesign* design;
         try {
-            design = new ShipDesign(std::invalid_argument(""), name, description, current_turn, ClientApp::GetApp()->EmpireID(),
-                                    hull, parts, icon, model, name_desc_in_stringtable, false, uuid);
+            design = new ShipDesign(std::invalid_argument(""), name, description, current_turn,
+                                    ClientApp::GetApp()->EmpireID(), hull, parts, icon, model,
+                                    name_desc_in_stringtable, false, uuid);
 
         } catch (const std::invalid_argument&) {
             ErrorLogger() << "IssueCreateShipDesignOrderOrder failed to create a new ShipDesign object";
             return 0;
         }
 
-        auto order = std::make_shared<ShipDesignOrder>(empire_id, *design);
-        AIClientApp::GetApp()->Orders().IssueOrder(order);
+        AIClientApp::GetApp()->Orders().IssueOrder(
+            std::make_shared<ShipDesignOrder>(empire_id, *design));
         delete design;
 
         return 1;
