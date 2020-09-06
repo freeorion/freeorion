@@ -120,8 +120,9 @@ int SaveGame(const std::string& filename, const ServerSaveGameData& server_save_
 
     // reinterpret save game data as header data for uncompressed header
     std::vector<PlayerSaveHeaderData> player_save_header_data;
+    player_save_header_data.reserve(player_save_game_data.size());
     for (const PlayerSaveGameData& psgd : player_save_game_data)
-    { player_save_header_data.push_back(psgd); }
+        player_save_header_data.push_back(psgd);
 
 
     int bytes_written = 0;
