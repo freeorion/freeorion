@@ -2311,9 +2311,7 @@ void TechTreeWnd::AddTechToResearchQueue(const std::string& tech_name,
 
     // if tech can be researched already, just add it
     if (tech_status == TechStatus::TS_RESEARCHABLE) {
-        std::vector<std::string> techs;
-        techs.push_back(tech_name);
-        AddTechsToQueueSignal(techs, queue_pos);
+        AddTechsToQueueSignal({tech_name}, queue_pos);
         return;
     }
 
@@ -2325,7 +2323,7 @@ void TechTreeWnd::AddTechToResearchQueue(const std::string& tech_name,
     TechManager& manager = GetTechManager();
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     std::vector<std::string> tech_vec = manager.RecursivePrereqs(tech_name, empire_id);
-    tech_vec.push_back(tech_name);
+    tech_vec.emplace_back(tech_name);
     AddTechsToQueueSignal(tech_vec, queue_pos);
 }
 
