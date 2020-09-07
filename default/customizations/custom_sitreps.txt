@@ -133,11 +133,11 @@ EffectsGroup
         System
         // The following assets need protection
         Contains And [
-            OwnedBy empire = Source.Owner
             Or [
                 Planet
                 Ship
             ]
+            OwnedBy empire = Source.Owner
         ]
         // Dont warn about system where there are already enemies this turn
         Not Contains And [

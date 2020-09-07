@@ -4,6 +4,10 @@ Tech
     short_description = "THEORY_SHORT_DESC"
     category = "LEARNING_CATEGORY"
     researchcost = 300 * [[TECH_COST_MULTIPLIER]] - (250 * [[TECH_COST_MULTIPLIER]] * Statistic If condition = AND [
+        Or [
+            Planet
+            Ship
+        ]
         OwnedBy empire = Source.Owner
         /// @content_tag{TELEPATHIC} Decreases research cost of this tech for empires that own any object with this tag
         HasTag name = "TELEPATHIC"
