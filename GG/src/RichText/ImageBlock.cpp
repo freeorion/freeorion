@@ -29,12 +29,14 @@ ImageBlock::ImageBlock(const fs::path& path, X x, Y y, X w,
     BlockControl(x, y, w, flags)
 {
     try {
-        auto texture = GetTextureManager().GetTexture(path);
-        m_graphic = Wnd::Create<StaticGraphic>(texture, GRAPHIC_PROPSCALE | GRAPHIC_SHRINKFIT | GRAPHIC_CENTER);
+        m_graphic = Wnd::Create<StaticGraphic>(
+            GetTextureManager().GetTexture(path),
+            GRAPHIC_PROPSCALE | GRAPHIC_SHRINKFIT | GRAPHIC_CENTER);
     } catch (GG::Texture::BadFile&) {
         try {
-            auto vector_texture = GetVectorTextureManager().GetTexture(path);
-            m_graphic = Wnd::Create<StaticGraphic>(vector_texture, GRAPHIC_PROPSCALE | GRAPHIC_SHRINKFIT | GRAPHIC_CENTER);
+            m_graphic = Wnd::Create<StaticGraphic>(
+                GetVectorTextureManager().GetTexture(path),
+                GRAPHIC_PROPSCALE | GRAPHIC_SHRINKFIT | GRAPHIC_CENTER);
         } catch (GG::Texture::BadFile&) {
             // No can do inside GiGi.
         }
