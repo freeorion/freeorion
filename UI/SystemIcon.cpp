@@ -272,44 +272,43 @@ void SystemIcon::CompleteConstruction() {
     m_tiny_graphic->Hide();
 
     // selection indicator graphic
-    const std::shared_ptr<GG::Texture>& texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_selection" / "system_selection2.png", true);
-
-    GG::X texture_width = texture->DefaultWidth();
-    GG::Y texture_height = texture->DefaultHeight();
-    m_selection_indicator = GG::Wnd::Create<RotatingGraphic>(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+    auto texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_selection" / "system_selection2.png", true);
+    GG::Pt sz{texture->DefaultWidth(), texture->DefaultHeight()};
+    m_selection_indicator = GG::Wnd::Create<RotatingGraphic>(
+        std::move(texture), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
     m_selection_indicator->SetRPM(ClientUI::SystemSelectionIndicatorRPM());
     AttachChild(m_selection_indicator);
-    m_selection_indicator->Resize(GG::Pt(texture_width, texture_height));
+    m_selection_indicator->Resize(sz);
 
     // tiny selection indicator graphic
-    const std::shared_ptr<GG::Texture>& tiny_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_selection_tiny" / "system_selection_tiny2.png", true);
-    texture_width = tiny_texture->DefaultWidth();
-    texture_height = tiny_texture->DefaultHeight();
-    m_tiny_selection_indicator = GG::Wnd::Create<RotatingGraphic>(tiny_texture, GG::GRAPHIC_NONE);
+    texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_selection_tiny" / "system_selection_tiny2.png", true);
+    sz = {texture->DefaultWidth(), texture->DefaultHeight()};
+    m_tiny_selection_indicator = GG::Wnd::Create<RotatingGraphic>(
+        std::move(texture), GG::GRAPHIC_NONE);
     m_tiny_selection_indicator->SetRPM(ClientUI::SystemSelectionIndicatorRPM());
     AttachChild(m_tiny_selection_indicator);
-    m_tiny_selection_indicator->Resize(GG::Pt(texture_width, texture_height));
+    m_tiny_selection_indicator->Resize(sz);
 
     // mouseover indicator graphic
-    const std::shared_ptr<GG::Texture> mouseover_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_mouseover.png");
-    texture_width = mouseover_texture->DefaultWidth();
-    texture_height = mouseover_texture->DefaultHeight();
-    m_mouseover_indicator = GG::Wnd::Create<GG::StaticGraphic>(mouseover_texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
-    m_mouseover_indicator->Resize(GG::Pt(texture_width, texture_height));
+    texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_mouseover.png");
+    sz = {texture->DefaultWidth(), texture->DefaultHeight()};
+    m_mouseover_indicator = GG::Wnd::Create<GG::StaticGraphic>(
+        std::move(texture), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+    m_mouseover_indicator->Resize(sz);
 
     // unexplored mouseover indicator graphic
-    std::shared_ptr<GG::Texture> unexplored_mouseover_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_mouseover_unexplored.png");
-    texture_width = unexplored_mouseover_texture->DefaultWidth();
-    texture_height = unexplored_mouseover_texture->DefaultHeight();
-    m_mouseover_unexplored_indicator = GG::Wnd::Create<GG::StaticGraphic>(unexplored_mouseover_texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
-    m_mouseover_unexplored_indicator->Resize(GG::Pt(texture_width, texture_height));
+    texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_mouseover_unexplored.png");
+    sz = {texture->DefaultWidth(), texture->DefaultHeight()};
+    m_mouseover_unexplored_indicator = GG::Wnd::Create<GG::StaticGraphic>(
+        std::move(texture), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+    m_mouseover_unexplored_indicator->Resize(sz);
 
     // tiny mouseover indicator graphic
-    std::shared_ptr<GG::Texture> tiny_mouseover_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_mouseover_tiny.png");
-    texture_width = tiny_mouseover_texture->DefaultWidth();
-    texture_height = tiny_mouseover_texture->DefaultHeight();
-    m_tiny_mouseover_indicator = GG::Wnd::Create<GG::StaticGraphic>(tiny_mouseover_texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
-    m_tiny_mouseover_indicator->Resize(GG::Pt(texture_width, texture_height));
+    texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_mouseover_tiny.png");
+    sz = {texture->DefaultWidth(), texture->DefaultHeight()};
+    m_tiny_mouseover_indicator = GG::Wnd::Create<GG::StaticGraphic>(
+        std::move(texture), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+    m_tiny_mouseover_indicator->Resize(sz);
 
     Refresh();
 }
