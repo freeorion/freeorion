@@ -264,10 +264,10 @@ private:
       * in \p type_fleet_buttons and record the fleet buttons in
       * \p m_fleet_buttons.*/
     template <typename FleetButtonMap, typename FleetsMap>
-    void CreateFleetButtonsOfType (
+    void CreateFleetButtonsOfType(
         FleetButtonMap& type_fleet_buttons,
-        const FleetsMap &fleets_map,
-        const FleetButton::SizeType & fleet_button_size);
+        const FleetsMap& fleets_map,
+        const FleetButton::SizeType& fleet_button_size);
 
     /** Delete all fleet buttons.*/
     void DeleteFleetButtons();
