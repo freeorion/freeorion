@@ -742,14 +742,10 @@ namespace {
         if (!ship)
             return;
 
-        std::shared_ptr<GG::Texture> icon;
+        const ShipDesign* design = ship->Design();
+        auto icon{ClientUI::ShipDesignIcon(design ? design->ID() : INVALID_OBJECT_ID)};
 
-        if (const ShipDesign* design = ship->Design())
-            icon = ClientUI::ShipDesignIcon(design->ID());
-        else
-            icon = ClientUI::ShipDesignIcon(INVALID_OBJECT_ID);  // default icon
-
-        m_ship_icon = GG::Wnd::Create<GG::StaticGraphic>(icon, DataPanelIconStyle());
+        m_ship_icon = GG::Wnd::Create<GG::StaticGraphic>(std::move(icon), DataPanelIconStyle());
         m_ship_icon->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
         AttachChild(m_ship_icon);
 
@@ -777,8 +773,9 @@ namespace {
         if ((ship->GetVisibility(client_empire_id) < Visibility::VIS_BASIC_VISIBILITY)
             && GetOptionsDB().Get<bool>("ui.map.scanlines.shown"))
         {
-            m_scanline_control = GG::Wnd::Create<ScanlineControl>(GG::X0, GG::Y0, m_ship_icon->Width(), m_ship_icon->Height(), true,
-                                                                  GetOptionsDB().Get<GG::Clr>("ui.fleet.scanline.color"));
+            m_scanline_control = GG::Wnd::Create<ScanlineControl>(
+                GG::X0, GG::Y0, m_ship_icon->Width(), m_ship_icon->Height(), true,
+                GetOptionsDB().Get<GG::Clr>("ui.fleet.scanline.color"));
             AttachChild(m_scanline_control);
         }
     }
@@ -1363,8 +1360,10 @@ void FleetDataPanel::Refresh() {
         m_fleet_name_text->SetText(UserString("FW_NEW_FLEET_LABEL"));
         m_fleet_destination_text->Clear();
 
-        std::shared_ptr<GG::Texture> new_fleet_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "new_fleet.png", true);
-        m_fleet_icon = GG::Wnd::Create<GG::StaticGraphic>(new_fleet_texture, DataPanelIconStyle());
+        std::shared_ptr<GG::Texture> new_fleet_texture = ClientUI::GetTexture(
+            ClientUI::ArtDir() / "icons" / "buttons" / "new_fleet.png", true);
+        m_fleet_icon = GG::Wnd::Create<GG::StaticGraphic>(
+            std::move(new_fleet_texture), DataPanelIconStyle());
         AttachChild(m_fleet_icon);
 
     } else if (auto fleet = Objects().get<Fleet>(m_fleet_id)) {
@@ -1375,14 +1374,12 @@ void FleetDataPanel::Refresh() {
             const Empire* ship_owner_empire = GetEmpire(fleet->Owner());
             const std::string& owner_name = (ship_owner_empire ? ship_owner_empire->Name() : UserString("FW_FOREIGN"));
             std::string fleet_name = boost::io::str(FlexibleFormat(UserString("FW_EMPIRE_FLEET")) % owner_name);
-            if (GetOptionsDB().Get<bool>("ui.name.id.shown")) {
+            if (GetOptionsDB().Get<bool>("ui.name.id.shown"))
                 fleet_name = fleet_name + " (" + std::to_string(m_fleet_id) + ")";
-            }
             m_fleet_name_text->SetText(std::move(fleet_name));
         } else {
-            if (GetOptionsDB().Get<bool>("ui.name.id.shown")) {
+            if (GetOptionsDB().Get<bool>("ui.name.id.shown"))
                 public_fleet_name = public_fleet_name + " (" + std::to_string(m_fleet_id) + ")";
-            }
             m_fleet_name_text->SetText(std::move(public_fleet_name));
         }
         m_fleet_destination_text->SetText(FleetDestinationText(m_fleet_id));
@@ -1393,7 +1390,7 @@ void FleetDataPanel::Refresh() {
         icons.emplace_back(FleetSizeIcon(fleet.get(), FleetButton::SizeType::LARGE));
         std::vector<GG::Flags<GG::GraphicStyle>> styles(icons.size(), DataPanelIconStyle());
 
-        m_fleet_icon = GG::Wnd::Create<MultiTextureStaticGraphic>(icons, styles);
+        m_fleet_icon = GG::Wnd::Create<MultiTextureStaticGraphic>(std::move(icons), std::move(styles));
         AttachChild(m_fleet_icon);
 
         if (Empire* empire = GetEmpire(fleet->Owner()))
@@ -1408,7 +1405,7 @@ void FleetDataPanel::Refresh() {
             return std::all_of(
                 fleet->ShipIDs().begin(), fleet->ShipIDs().end(),
                 [&pred](const int ship_id) {
-                    const auto& ship = Objects().get<const Ship>(ship_id);
+                    auto ship = Objects().get<const Ship>(ship_id);
                     if (!ship) {
                         WarnLogger() << "Object map is missing ship with expected id " << ship_id;
                         return false;
