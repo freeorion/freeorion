@@ -1243,7 +1243,8 @@ void PartControl::CompleteConstruction() {
     if (!m_part)
         return;
 
-    m_background = GG::Wnd::Create<GG::StaticGraphic>(PartBackgroundTexture(m_part), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+    m_background = GG::Wnd::Create<GG::StaticGraphic>(
+        PartBackgroundTexture(m_part), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
     m_background->Resize(GG::Pt(SLOT_CONTROL_WIDTH, SLOT_CONTROL_HEIGHT));
     m_background->Show();
     AttachChild(m_background);
@@ -1255,7 +1256,8 @@ void PartControl::CompleteConstruction() {
     GG::Y part_top = (Height() - PART_CONTROL_HEIGHT) / 2;
 
     //DebugLogger() << "PartControl::PartControl this: " << this << " part: " << part << " named: " << (part ? part->Name() : "no part");
-    m_icon = GG::Wnd::Create<GG::StaticGraphic>(ClientUI::PartIcon(m_part->Name()), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+    m_icon = GG::Wnd::Create<GG::StaticGraphic>(
+        ClientUI::PartIcon(m_part->Name()), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
     m_icon->MoveTo(GG::Pt(part_left, part_top));
     m_icon->Resize(GG::Pt(PART_CONTROL_WIDTH, PART_CONTROL_HEIGHT));
     m_icon->Show();
@@ -3605,7 +3607,8 @@ SlotControl::SlotControl(double x, double y, ShipSlotType slot_type) :
 void SlotControl::CompleteConstruction() {
     GG::Control::CompleteConstruction();
 
-    m_background = GG::Wnd::Create<GG::StaticGraphic>(SlotBackgroundTexture(m_slot_type), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+    m_background = GG::Wnd::Create<GG::StaticGraphic>(
+        SlotBackgroundTexture(m_slot_type), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
     m_background->Resize(GG::Pt(SLOT_CONTROL_WIDTH, SLOT_CONTROL_HEIGHT));
     m_background->Show();
     AttachChild(m_background);
@@ -3613,13 +3616,9 @@ void SlotControl::CompleteConstruction() {
     SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
 
     // set up empty slot tool tip
-    std::string title_text;
-    if (m_slot_type == ShipSlotType::SL_EXTERNAL)
-        title_text = UserString("SL_EXTERNAL");
-    else if (m_slot_type == ShipSlotType::SL_INTERNAL)
-        title_text = UserString("SL_INTERNAL");
-    else if (m_slot_type == ShipSlotType::SL_CORE)
-        title_text = UserString("SL_CORE");
+    auto& title_text = (m_slot_type == ShipSlotType::SL_EXTERNAL) ? UserString("SL_EXTERNAL") :
+                       (m_slot_type == ShipSlotType::SL_INTERNAL) ? UserString("SL_INTERNAL") :
+                       (m_slot_type == ShipSlotType::SL_CORE) ? UserString("SL_CORE") : "";
 
     SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
         SlotBackgroundTexture(m_slot_type),
@@ -4414,8 +4413,9 @@ void DesignWnd::MainPanel::SetHull(const ShipHull* hull, bool signal) {
     DetachChild(m_background_image);
     m_background_image = nullptr;
     if (m_hull) {
-        std::shared_ptr<GG::Texture> texture = ClientUI::HullTexture(hull->Name());
-        m_background_image = GG::Wnd::Create<GG::StaticGraphic>(texture, GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
+        auto texture = ClientUI::HullTexture(hull->Name());
+        m_background_image = GG::Wnd::Create<GG::StaticGraphic>(
+            std::move(texture), GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
         AttachChild(m_background_image);
         MoveChildDown(m_background_image);
     }
