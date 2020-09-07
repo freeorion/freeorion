@@ -35,7 +35,8 @@ public:
         m_show_icon(show_icon)
     {
         if (m_show_icon)
-            m_icon = GG::Wnd::Create<GG::StaticGraphic>(ClientUI::SpeciesIcon(name), GG::GRAPHIC_FITGRAPHIC);
+            m_icon = GG::Wnd::Create<GG::StaticGraphic>(
+                ClientUI::SpeciesIcon(name), GG::GRAPHIC_FITGRAPHIC);
 
         m_name = GG::Wnd::Create<CUILabel>(UserString(name), GG::FORMAT_RIGHT);
 

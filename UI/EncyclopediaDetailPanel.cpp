@@ -3159,7 +3159,8 @@ void EncyclopediaDetailPanel::RefreshImpl() {
 
     // Create Icons
     if (texture) {
-        m_icon = GG::Wnd::Create<GG::StaticGraphic>(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+        m_icon = GG::Wnd::Create<GG::StaticGraphic>(
+            std::move(texture), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
         if (color != GG::CLR_ZERO)
             m_icon->SetColor(color);
     }
