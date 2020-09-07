@@ -277,16 +277,17 @@ BuildingIndicator::BuildingIndicator(GG::X w, const std::string& building_type,
     SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
         texture, UserString(building_type), UserString(desc)));
 
-    m_graphic = GG::Wnd::Create<GG::StaticGraphic>(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+    m_graphic = GG::Wnd::Create<GG::StaticGraphic>(
+        std::move(texture),
+        GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
 
     float next_progress = turn_spending / std::max(1.0, total_cost);
 
-    m_progress_bar = GG::Wnd::Create<MultiTurnProgressBar>(total_turns,
-                                                           turns_completed,
-                                                           next_progress,
-                                                           GG::LightenClr(ClientUI::TechWndProgressBarBackgroundColor()),
-                                                           ClientUI::TechWndProgressBarColor(),
-                                                           GG::LightenClr(ClientUI::ResearchableTechFillColor()));
+    m_progress_bar = GG::Wnd::Create<MultiTurnProgressBar>(
+        total_turns, turns_completed, next_progress,
+        GG::LightenClr(ClientUI::TechWndProgressBarBackgroundColor()),
+        ClientUI::TechWndProgressBarColor(),
+        GG::LightenClr(ClientUI::ResearchableTechFillColor()));
 
 }
 
@@ -361,7 +362,8 @@ void BuildingIndicator::Refresh() {
 
     if (const BuildingType* type = GetBuildingType(building->BuildingTypeName())) {
         auto texture = ClientUI::BuildingIcon(type->Name());
-        m_graphic = GG::Wnd::Create<GG::StaticGraphic>(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+        m_graphic = GG::Wnd::Create<GG::StaticGraphic>(
+            texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
         AttachChild(m_graphic);
 
         std::string desc = UserString(type->Description());
@@ -371,12 +373,13 @@ void BuildingIndicator::Refresh() {
             desc += "\n" + Dump(type->Effects());
 
         SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
-            texture, UserString(type->Name()), desc));
+            std::move(texture), UserString(type->Name()), std::move(desc)));
     }
 
     if (building && building->OrderedScrapped()) {
         auto scrap_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "scrapped.png", true);
-        m_scrap_indicator = GG::Wnd::Create<GG::StaticGraphic>(scrap_texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+        m_scrap_indicator = GG::Wnd::Create<GG::StaticGraphic>(
+            std::move(scrap_texture), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
         AttachChild(m_scrap_indicator);
     }
 
