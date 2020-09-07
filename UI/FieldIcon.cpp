@@ -24,11 +24,10 @@ void FieldIcon::CompleteConstruction() {
 
     // mouseover indicator graphic
     auto mouseover_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "field_mouseover.png");
-    GG::X texture_width = mouseover_texture->DefaultWidth();
-    GG::Y texture_height = mouseover_texture->DefaultHeight();
+    GG::Pt sz{mouseover_texture->DefaultWidth(), mouseover_texture->DefaultHeight()};
     m_mouseover_indicator = GG::Wnd::Create<GG::StaticGraphic>(
         std::move(mouseover_texture), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
-    m_mouseover_indicator->Resize(GG::Pt(texture_width, texture_height));
+    m_mouseover_indicator->Resize(sz);
 
     Refresh();
 }
