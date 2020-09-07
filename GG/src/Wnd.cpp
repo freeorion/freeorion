@@ -567,9 +567,9 @@ void Wnd::AttachChild(std::shared_ptr<Wnd> wnd)
         m_children.emplace_back(std::move(wnd));
 
     } catch (const std::bad_weak_ptr&) {
-        std::cerr << std::endl << "Wnd::AttachChild called either during the constructor "
-                  << "or after the destructor has run. Not attaching child."
-                  << std::endl << " parent = " << m_name << " child = " << (wnd ? wnd->m_name : "???");
+        std::cerr << "\nWnd::AttachChild called either during the constructor "
+                  << "or after the destructor has run. Not attaching child.\n"
+                  << " parent = " << m_name << " child = " << (wnd ? wnd->m_name : "???");
         // Soft failure:
         // Intentionally do nothing, to create minimal disruption to non-dev
         // players if a dev accidentally puts an AttachChild in its own constructor.
