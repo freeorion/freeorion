@@ -1561,9 +1561,11 @@ namespace {
                   GG::X width, GG::Y height, std::shared_ptr<GG::Texture> species_icon)
         {
             GG::Wnd::SetName(std::move(species_name));
-            m_icon = GG::Wnd::Create<GG::StaticGraphic>(species_icon, GG::GRAPHIC_FITGRAPHIC| GG::GRAPHIC_PROPSCALE);
+            m_icon = GG::Wnd::Create<GG::StaticGraphic>(
+                species_icon, GG::GRAPHIC_FITGRAPHIC| GG::GRAPHIC_PROPSCALE);
             m_icon->Resize(GG::Pt(GG::X(Value(height - 5)), height - 5));
-            m_species_label = GG::Wnd::Create<CUILabel>(localized_name, GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+            m_species_label = GG::Wnd::Create<CUILabel>(
+                localized_name, GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
             if (!species_desc.empty()) {
                 SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
                 SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
@@ -2260,8 +2262,9 @@ void FPSIndicator::UpdateEnabled() {
 //////////////////////////////////////////////////
 // MultiTextureStaticGraphic
 //////////////////////////////////////////////////
-MultiTextureStaticGraphic::MultiTextureStaticGraphic(const std::vector<std::shared_ptr<GG::Texture>>& textures,
-                                                     const std::vector<GG::Flags<GG::GraphicStyle>>& styles) :
+MultiTextureStaticGraphic::MultiTextureStaticGraphic(
+    const std::vector<std::shared_ptr<GG::Texture>>& textures,
+    const std::vector<GG::Flags<GG::GraphicStyle>>& styles) :
     GG::Control(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::NO_WND_FLAGS),
     m_styles(styles)
 {
@@ -2270,8 +2273,22 @@ MultiTextureStaticGraphic::MultiTextureStaticGraphic(const std::vector<std::shar
     Init();
 }
 
-MultiTextureStaticGraphic::MultiTextureStaticGraphic(const std::vector<GG::SubTexture>& subtextures,
-                                                     const std::vector<GG::Flags<GG::GraphicStyle>>& styles) :
+MultiTextureStaticGraphic::MultiTextureStaticGraphic(
+    std::vector<std::shared_ptr<GG::Texture>>&& textures,
+    std::vector<GG::Flags<GG::GraphicStyle>>&& styles) :
+    GG::Control(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::NO_WND_FLAGS),
+    m_styles(std::move(styles))
+{
+    for (auto& texture : textures) {
+        GG::Pt sz{texture->DefaultWidth(), texture->DefaultHeight()};
+        m_graphics.emplace_back(std::move(texture), GG::X0, GG::Y0, sz.x, sz.y);
+    }
+    Init();
+}
+
+MultiTextureStaticGraphic::MultiTextureStaticGraphic(
+    const std::vector<GG::SubTexture>& subtextures,
+    const std::vector<GG::Flags<GG::GraphicStyle>>& styles) :
     GG::Control(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::NO_WND_FLAGS),
     m_graphics(subtextures),
     m_styles(styles)
@@ -2385,11 +2402,10 @@ void MultiTextureStaticGraphic::ValidateStyles() {
 ////////////////////////////////////////////////
 // RotatingGraphic
 ////////////////////////////////////////////////
-RotatingGraphic::RotatingGraphic(const std::shared_ptr<GG::Texture>& texture, GG::Flags<GG::GraphicStyle> style,
-                GG::Flags<GG::WndFlag> flags) :
-    GG::StaticGraphic(texture, style, flags),
-    m_rpm(20.0f),
-    m_phase_offset(0.0f)
+RotatingGraphic::RotatingGraphic(std::shared_ptr<GG::Texture> texture,
+                                 GG::Flags<GG::GraphicStyle> style,
+                                 GG::Flags<GG::WndFlag> flags) :
+    GG::StaticGraphic(std::move(texture), style, flags)
 {}
 
 void RotatingGraphic::Render() {

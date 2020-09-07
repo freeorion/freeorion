@@ -597,6 +597,8 @@ public:
       * associated styles use the style GRAPHIC_CENTER. */
     MultiTextureStaticGraphic(const std::vector<std::shared_ptr<GG::Texture>>& textures,
                               const std::vector<GG::Flags<GG::GraphicStyle>>& styles = std::vector<GG::Flags<GG::GraphicStyle>>());
+    MultiTextureStaticGraphic(std::vector<std::shared_ptr<GG::Texture>>&& textures,
+                              std::vector<GG::Flags<GG::GraphicStyle>>&& styles = std::vector<GG::Flags<GG::GraphicStyle>>());
 
     /** creates a MultiTextureStaticGraphic from multiple pre-existing SubTextures which are rendered back-to-front in the
       * order they are specified in \a subtextures with GraphicStyles specified in the same-indexed value of \a styles.
@@ -628,23 +630,25 @@ private:
   * and/or at a continuous angular rate. */
 class RotatingGraphic : public GG::StaticGraphic {
 public:
-    RotatingGraphic(const std::shared_ptr<GG::Texture>& texture, GG::Flags<GG::GraphicStyle> style = GG::GRAPHIC_NONE,
+    RotatingGraphic(std::shared_ptr<GG::Texture> texture,
+                    GG::Flags<GG::GraphicStyle> style = GG::GRAPHIC_NONE,
                     GG::Flags<GG::WndFlag> flags = GG::NO_WND_FLAGS);
 
     void Render() override;
 
-    void            SetRPM(float rpm)               { m_rpm = std::max(-3600.0f, std::min(3600.0f, rpm)); }
-    void            SetPhaseOffset(float degrees)   { m_phase_offset = degrees; }
+    void SetRPM(float rpm)               { m_rpm = std::max(-3600.0f, std::min(3600.0f, rpm)); }
+    void SetPhaseOffset(float degrees)   { m_phase_offset = degrees; }
 
 private:
-    float   m_rpm;
-    float   m_phase_offset;
+    float m_rpm = 20.0f;
+    float m_phase_offset = 0.0f;
 };
 
 /** Renders scanlines over its area. */
 class ScanlineControl : public GG::Control {
 public:
-    ScanlineControl(GG::X x, GG::Y y, GG::X w, GG::Y h, bool square = false, GG::Clr clr = GG::CLR_BLACK);
+    ScanlineControl(GG::X x, GG::Y y, GG::X w, GG::Y h, bool square = false,
+                    GG::Clr clr = GG::CLR_BLACK);
 
     /** Changes the color used to draw the scanlines. */
     void Render() override;
@@ -653,7 +657,7 @@ public:
     { m_color = clr; };
 
 private:
-    bool m_square;
+    bool m_square = false;
     GG::Clr m_color;
 };
 
