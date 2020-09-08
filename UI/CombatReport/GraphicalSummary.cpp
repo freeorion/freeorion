@@ -107,7 +107,7 @@ class BarSizer {
 public:
     typedef std::map<int, CombatSummary> CombatSummaryMap;
 
-    BarSizer( const CombatSummaryMap& combat_summaries , const GG::Pt& available_size):
+    BarSizer(const CombatSummaryMap& combat_summaries , const GG::Pt& available_size):
         m_max_total_max_health(-1.0f),
         m_max_units_on_a_side(-1),
         m_sum_of_max_max_healths(0),
@@ -621,7 +621,10 @@ private:
         { SetValue(!GetValue()); }
 
         void SetValue(bool value) {
-            (**sizer).Set(option_key, value);
+            if (sizer) {
+                if (const auto& ptr{*sizer})
+                    ptr->Set(option_key, value);
+            }
             button->SetText(value ? label_true : label_false);
             button->SetBrowseText(value ? tip_true : tip_false);
             if (auto locked_parent = parent.lock()) {
@@ -630,8 +633,13 @@ private:
             }
         }
 
-        bool GetValue() const
-        { return (**sizer).Get(option_key); }
+        bool GetValue() const {
+            if (sizer) {
+                if (const auto& ptr{*sizer})
+                    return ptr->Get(option_key);
+            }
+            return false;
+        }
 
         ToggleData(std::string label_true_, std::string label_false_, std::string tip_true_,
                    std::string tip_false_, std::string option_key_,
@@ -642,9 +650,9 @@ private:
             tip_false(std::move(tip_false_)),
             option_key(std::move(option_key_)),
             sizer(sizer_),
-            parent(std::move(parent_))
+            parent(std::move(parent_)),
+            button(Wnd::Create<CUIButton>("-"))
         {
-            button = Wnd::Create<CUIButton>("-");
             button->LeftClickedSignal.connect(boost::bind(&ToggleData::Toggle, this));
             parent_->AttachChild(button);
             SetValue(GetValue());
