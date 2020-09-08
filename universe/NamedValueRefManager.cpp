@@ -283,5 +283,4 @@ template class NamedRef<PlanetType>;
 template class NamedRef<StarType>;
 template class NamedRef<UniverseObjectType>;
 template class NamedRef<Visibility>;
-    
 } // ValueRef namespace

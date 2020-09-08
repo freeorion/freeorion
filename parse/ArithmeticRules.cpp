@@ -218,7 +218,7 @@ namespace parse { namespace detail {
             ;
 
     #if DEBUG_VALUEREF_PARSERS
-	debug(named_lookup_expr);
+        debug(named_lookup_expr);
         debug(functional_expr);
         debug(exponential_expr);
         debug(multiplicative_expr);
