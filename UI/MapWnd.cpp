@@ -742,12 +742,12 @@ public:
             // might get skipped over.
             std::set<double>::iterator distance_ub = fixed_distances.upper_bound(max_shown_length/ZOOM_STEP_SIZE);
             if (distance_ub != fixed_distances.end() && *distance_ub <= max_shown_length) {
-                DebugLogger()  << " MapScaleLine::Update distance_ub: " << *distance_ub;
+                TraceLogger()  << " MapScaleLine::Update distance_ub: " << *distance_ub;
                 shown_length = *distance_ub;
             } else {
                 distance_ub = fixed_distances.upper_bound(shown_length);
                 if (distance_ub != fixed_distances.end() && *distance_ub <= max_shown_length) {
-                    DebugLogger()  << " MapScaleLine::Update distance_ub: " << *distance_ub;
+                    TraceLogger()  << " MapScaleLine::Update distance_ub: " << *distance_ub;
                     shown_length = *distance_ub;
                 }
             }
@@ -2682,16 +2682,16 @@ void MapWnd::InitTurn() {
     for (auto& system : objects.all<System>()) {
         m_system_fleet_insert_remove_signals[system->ID()].emplace_back(system->FleetsInsertedSignal.connect(
             [this](const std::vector<std::shared_ptr<Fleet>>& fleets) {
-                RefreshFleetButtons();
+                RefreshFleetButtons(true);
                 for (auto& fleet : fleets) {
                     if (!m_fleet_state_change_signals.count(fleet->ID()))
                         m_fleet_state_change_signals[fleet->ID()] = fleet->StateChangedSignal.connect(
-                            boost::bind(&MapWnd::RefreshFleetButtons, this));
+                            boost::bind(&MapWnd::RefreshFleetButtons, this, true));
                 }
             }));
         m_system_fleet_insert_remove_signals[system->ID()].emplace_back(system->FleetsRemovedSignal.connect(
             [this](const std::vector<std::shared_ptr<Fleet>>& fleets) {
-                RefreshFleetButtons();
+                RefreshFleetButtons(true);
                 for (auto& fleet : fleets) {
                     auto found_signal = m_fleet_state_change_signals.find(fleet->ID());
                     if (found_signal != m_fleet_state_change_signals.end()) {
@@ -2710,7 +2710,7 @@ void MapWnd::InitTurn() {
     // fleets to move updates their displayed path and rearranges fleet buttons (if necessary)
     for (const auto& fleet : Objects().all<Fleet>()) {
         m_fleet_state_change_signals[fleet->ID()] = fleet->StateChangedSignal.connect(
-            boost::bind(&MapWnd::RefreshFleetButtons, this));
+            boost::bind(&MapWnd::RefreshFleetButtons, this, true));
     }
 
     // set turn button to current turn
@@ -2977,7 +2977,7 @@ void MapWnd::InitTurnRendering() {
     InitVisibilityRadiiRenderingBuffers();
 
     // create fleet buttons and move lines.  needs to be after InitStarlaneRenderingBuffers so that m_starlane_endpoints is populated
-    RefreshFleetButtons();
+    RefreshFleetButtons(true);
 
 
     // move field icons to bottom of child stack so that other icons can be moused over with a field
@@ -4204,7 +4204,7 @@ void MapWnd::ShowPlanet(int planet_id) {
 }
 
 void MapWnd::ShowCombatLog(int log_id) {
-    m_combat_report_wnd->SetLog( log_id );
+    m_combat_report_wnd->SetLog(log_id);
     m_combat_report_wnd->Show();
     GG::GUI::GetGUI()->MoveUp(m_combat_report_wnd);
     PushWndStack(m_combat_report_wnd);
@@ -4513,7 +4513,7 @@ void MapWnd::RemoveFleet(int fleet_id) {
     m_fleet_lines.erase(fleet_id);
     m_projected_fleet_lines.erase(fleet_id);
     m_selected_fleet_ids.erase(fleet_id);
-    RefreshFleetButtons();
+    RefreshFleetButtons(true);
 }
 
 void MapWnd::SetFleetMovementLine(int fleet_id) {
@@ -4681,7 +4681,8 @@ void MapWnd::DoSystemIconsLayout() {
 
         GG::Pt icon_ul(GG::X(static_cast<int>(system->X()*ZoomFactor() - SYSTEM_ICON_SIZE / 2.0)),
                        GG::Y(static_cast<int>(system->Y()*ZoomFactor() - SYSTEM_ICON_SIZE / 2.0)));
-        system_icon.second->SizeMove(icon_ul, icon_ul + GG::Pt(GG::X(SYSTEM_ICON_SIZE), GG::Y(SYSTEM_ICON_SIZE)));
+        system_icon.second->SizeMove(icon_ul, icon_ul + GG::Pt(GG::X(SYSTEM_ICON_SIZE),
+                                                               GG::Y(SYSTEM_ICON_SIZE)));
     }
 }
 
@@ -4909,17 +4910,33 @@ namespace {
     { return (IsMoving(fleet) && !IsOnStarlane(fleet)); }
 }
 
-void MapWnd::RefreshFleetButtons() {
+void MapWnd::RefreshFleetButtons(bool recreate) {
     RequirePreRender();
-    m_deferred_refresh_fleet_buttons = true;
+    m_deferred_refresh_fleet_buttons |= !recreate;
+    m_deferred_recreate_fleet_buttons |= recreate;
 }
 
 void MapWnd::DeferredRefreshFleetButtons() {
-    if (!m_deferred_refresh_fleet_buttons)
+    if (!m_deferred_recreate_fleet_buttons && !m_deferred_refresh_fleet_buttons) {
+        DoFleetButtonsLayout();
         return;
+
+    } else if (!m_deferred_recreate_fleet_buttons) {
+        // just do refresh
+        m_deferred_refresh_fleet_buttons = false;
+        ScopedTimer timer("RefreshFleetButtons( just refresh )", true);
+
+        for (auto& fleet_button : m_fleet_buttons)
+            fleet_button.second->Refresh(FleetButtonSizeType());
+
+        DoFleetButtonsLayout();
+        return;
+
+    } // else do recreate
+    m_deferred_recreate_fleet_buttons = false;
     m_deferred_refresh_fleet_buttons = false;
 
-    ScopedTimer timer("RefreshFleetButtons()", true);
+    ScopedTimer timer("RefreshFleetButtons( full recreate )", true);
 
     // determine fleets that need buttons so that fleets at the same location can
     // be grouped by empire owner and buttons created
@@ -5014,17 +5031,17 @@ void MapWnd::CreateFleetButtonsOfType(FleetButtonMap& type_fleet_buttons,
         }
 
         // create separate FleetButton for each cluster of fleets
-        for (const auto& cluster : fleet_positions_ids) {
-            const auto& ids_in_cluster = cluster.second;
+        for (auto& cluster : fleet_positions_ids) {
+            auto& ids_in_cluster = cluster.second;
 
             // create new fleetbutton for this cluster of fleets
-            auto fb = GG::Wnd::Create<FleetButton>(ids_in_cluster, fleet_button_size);
+            auto fb = GG::Wnd::Create<FleetButton>(std::move(ids_in_cluster), fleet_button_size);
 
             // store per type of fleet button.
             type_fleet_buttons[key].emplace(fb);
 
             // store FleetButton for fleets in current cluster
-            for (int fleet_id : ids_in_cluster)
+            for (int fleet_id : fb->Fleets())
                 m_fleet_buttons[fleet_id] = fb;
 
             fb->LeftClickedSignal.connect(boost::bind(&MapWnd::FleetButtonLeftClicked, this, fb.get()));
@@ -5105,6 +5122,9 @@ void MapWnd::SetZoom(double steps_in, bool update_slide) {
 }
 
 void MapWnd::SetZoom(double steps_in, bool update_slide, const GG::Pt& position) {
+    ScopedTimer timer("MapWnd::SetZoom(steps_in=" + std::to_string(steps_in) +
+                      ", update_slide=" + std::to_string(update_slide) +
+                      ", position=" + boost::lexical_cast<std::string>(position), true);
     // impose range limits on zoom steps
     double new_steps_in = std::max(std::min(steps_in, ZOOM_IN_MAX_STEPS), ZOOM_IN_MIN_STEPS);
 
@@ -5157,7 +5177,7 @@ void MapWnd::SetZoom(double steps_in, bool update_slide, const GG::Pt& position)
     // just reposition them without recreating
     const FleetButton::SizeType NEW_FLEETBUTTON_SIZE = FleetButtonSizeType();
     if (OLD_FLEETBUTTON_SIZE != NEW_FLEETBUTTON_SIZE)
-        RefreshFleetButtons();
+        RefreshFleetButtons(false);
     else
         DoFleetButtonsLayout();
 

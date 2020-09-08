@@ -70,27 +70,36 @@ namespace {
 // FleetButton           //
 ///////////////////////////
 FleetButton::FleetButton(int fleet_id, SizeType size_type) :
-    FleetButton(std::vector<int>(1, fleet_id), size_type)
+    FleetButton(std::vector<int>{fleet_id}, size_type)
 {}
 
-FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) :
-    GG::Button("", nullptr, GG::CLR_ZERO)
-{
+FleetButton::FleetButton(std::vector<int> fleet_IDs, SizeType size_type) :
+    GG::Button("", nullptr, GG::CLR_ZERO),
+    m_fleets(std::move(fleet_IDs)),
+    m_size(size_type)
+{}
+
+void FleetButton::CompleteConstruction() {
+    Button::CompleteConstruction();
+
+    Refresh(m_size);
+}
+
+FleetButton::~FleetButton()
+{}
+
+void FleetButton::Refresh(SizeType size_type) {
+    auto fleets_shared = Objects().find<Fleet>(m_fleets);
     std::vector<const Fleet*> fleets;
-    fleets.reserve(fleet_IDs.size());
-    m_fleets.reserve(fleet_IDs.size());
-    for (auto& fleet : Objects().find<Fleet>(fleet_IDs)) {
-        if (!fleet)
-            continue;
-        m_fleets.emplace_back(fleet->ID());
-        fleets.emplace_back(fleet.get());
-    }
+    fleets.reserve(fleets_shared.size());
+    std::transform(fleets_shared.begin(), fleets_shared.end(), std::back_inserter(fleets),
+                   [](auto& f) { return f.get(); });
 
     // determine owner(s) of fleet(s).  Only care whether or not there is more than one owner, as owner
     // is used to determine colouration
     int multiple_owners = false;
     int owner_id = fleets.empty() ? ALL_EMPIRES : fleets.front()->Owner();
-    if (owner_id != ALL_EMPIRES) {
+    if (!fleets.empty()) {
         // use ALL_EMPIRES if there are multiple owners
         for (auto& fleet : fleets) {
             if (fleet->Owner() != owner_id) {
@@ -105,13 +114,14 @@ FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) 
     // get fleet colour
     if (multiple_owners) {
         SetColor(GG::CLR_WHITE);
+
     } else if (owner_id == ALL_EMPIRES) {
         // all ships owned by no empire
         bool monsters = true;
         // find if any ship in fleets in button is not a monster
-        for (auto& fleet : fleets) {
+        for (const auto& fleet : fleets) {
             for (const auto& ship : Objects().find<Ship>(fleet->ShipIDs())) {
-                if (ship && !ship->IsMonster()) {
+                if (!ship->IsMonster()) {
                     monsters = false;
                     break;
                 }
@@ -139,7 +149,7 @@ FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) 
         first_fleet->NextSystemID() != INVALID_OBJECT_ID)
     {
         int next_sys_id = first_fleet->NextSystemID();
-        if (auto obj = Objects().get(next_sys_id).get()) {
+        if (const auto* obj = Objects().get(next_sys_id).get()) {
             // fleet is not in a system and has a valid next destination, so can orient it in that direction
             // fleet icons might not appear on the screen in the exact place corresponding to their
             // actual universe position, but if they're moving along a starlane, this code will assume
@@ -159,10 +169,11 @@ FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) 
         }
     }
 
+
     // select icon(s) for fleet(s)
     int num_ships = 0;
     m_fleet_blockaded = false;
-    for (auto* fleet : fleets) {
+    for (const auto& fleet : fleets) {
         if (fleet) {
             num_ships += fleet->NumShips();
             if (!m_fleet_blockaded && fleet->Blockaded())
@@ -170,7 +181,10 @@ FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) 
         }
     }
 
-    // add graphics for all icons needed
+    // remove and re-create graphics for all icons needed
+    for (auto& icon : m_icons)
+        DetachChild(icon);
+    m_icons.clear();
     m_icons.reserve(4);
 
     if (m_fleet_blockaded) {
@@ -207,34 +221,35 @@ FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) 
             Resize(sz);
     }
 
+
     // set up selection indicator
-    m_selection_indicator = GG::Wnd::Create<RotatingGraphic>(
-        FleetSelectionIndicatorIcon(), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+    if (!m_selection_indicator) {
+        m_selection_indicator = GG::Wnd::Create<RotatingGraphic>(
+            FleetSelectionIndicatorIcon(), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+    }
     m_selection_indicator->SetRPM(ClientUI::SystemSelectionIndicatorRPM());
 
+
     LayoutIcons();
-
-    // Scanlines for not currently-visible objects?
-    int empire_id = HumanClientApp::GetApp()->EmpireID();
-    if (empire_id == ALL_EMPIRES || !GetOptionsDB().Get<bool>("ui.map.scanlines.shown"))
-        return;
-
-    // Create scanline renderer control, use opposite color of fleet btn
-    GG::Clr opposite_clr(255 - Color().r, 255 - Color().g, 255 - Color().b, 64);
-    m_scanline_control = GG::Wnd::Create<ScanlineControl>(GG::X0, GG::Y0, Width(), Height(),
-                                                          false, opposite_clr);
-}
-
-void FleetButton::CompleteConstruction() {
-    Button::CompleteConstruction();
-
     for (auto& icon : m_icons)
         AttachChild(icon);
 
+    SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
+
     // Scanlines for not currently-visible objects?
     int empire_id = HumanClientApp::GetApp()->EmpireID();
-    if (empire_id == ALL_EMPIRES || !GetOptionsDB().Get<bool>("ui.map.scanlines.shown"))
+    if (empire_id == ALL_EMPIRES || !GetOptionsDB().Get<bool>("ui.map.scanlines.shown")) {
+        DetachChild(m_scanline_control);
+        m_scanline_control.reset();
         return;
+    }
+
+    if (!m_scanline_control) {
+        // Create scanline renderer control, use opposite color of fleet btn
+        GG::Clr opposite_clr(255 - Color().r, 255 - Color().g, 255 - Color().b, 64);
+        m_scanline_control = GG::Wnd::Create<ScanlineControl>(GG::X0, GG::Y0, Width(), Height(),
+                                                              false, opposite_clr);
+    }
 
     bool at_least_one_fleet_visible = false;
     for (int fleet_id : m_fleets) {
@@ -244,14 +259,11 @@ void FleetButton::CompleteConstruction() {
         }
     }
 
-    if (!at_least_one_fleet_visible)
+    if (!at_least_one_fleet_visible && !m_scanline_control->Parent())
         AttachChild(m_scanline_control);
-
-    SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
+    else
+        DetachChild(m_scanline_control);
 }
-
-FleetButton::~FleetButton()
-{}
 
 bool FleetButton::InWindow(const GG::Pt& pt) const {
     // find if cursor is within required distance of centre of icon
@@ -396,7 +408,7 @@ std::vector<std::shared_ptr<GG::Texture>> FleetHeadIcons(
     const Fleet* fleet,
     FleetButton::SizeType size_type)
 {
-    return FleetHeadIcons({fleet}, size_type);
+    return FleetHeadIcons(std::vector<const Fleet*>{fleet}, size_type);
 }
 
 std::vector<std::shared_ptr<GG::Texture>> FleetHeadIcons(

@@ -23,10 +23,12 @@ public:
         LARGE
     };
 
-    FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type = SizeType::LARGE);
-    FleetButton(int fleet_id, SizeType size_type = SizeType::LARGE);
+    FleetButton(std::vector<int> fleet_IDs, SizeType size_type);
+    FleetButton(int fleet_id, SizeType size_type);
     void CompleteConstruction() override;
     virtual ~FleetButton();
+
+    void Refresh(SizeType size_type);
 
     /** Returns true if \a pt is within or over the button. */
     bool InWindow(const GG::Pt& pt) const override;
@@ -52,6 +54,7 @@ private:
     void LayoutIcons();
 
     std::vector<int>                                m_fleets;   ///< the fleets represented by this button
+    SizeType                                        m_size = SizeType::NONE;
     std::vector<std::shared_ptr<GG::StaticGraphic>> m_icons;
     std::shared_ptr<RotatingGraphic>                m_selection_indicator;
     std::shared_ptr<ScanlineControl>                m_scanline_control;
