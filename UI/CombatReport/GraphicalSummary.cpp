@@ -646,7 +646,7 @@ private:
         {
             button = Wnd::Create<CUIButton>("-");
             button->LeftClickedSignal.connect(boost::bind(&ToggleData::Toggle, this));
-            parent_->AttachChild(std::move(button));
+            parent_->AttachChild(button);
             SetValue(GetValue());
         }
     };
