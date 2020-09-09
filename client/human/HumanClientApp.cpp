@@ -302,15 +302,16 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, std::s
     GetOptionsDB().OptionChangedSignal("video.fps.max").connect(
         boost::bind(&HumanClientApp::UpdateFPSLimit, this));
 
-    std::shared_ptr<GG::BrowseInfoWnd> default_browse_info_wnd(
+    auto default_browse_info_wnd{
         GG::Wnd::Create<GG::TextBoxBrowseInfoWnd>(
             GG::X(400), ClientUI::GetFont(),
             GG::Clr(0, 0, 0, 200), ClientUI::WndOuterBorderColor(), ClientUI::TextColor(),
-            GG::FORMAT_LEFT | GG::FORMAT_WORDBREAK, 1));
+            GG::FORMAT_LEFT | GG::FORMAT_WORDBREAK, 1)};
     GG::Wnd::SetDefaultBrowseInfoWnd(std::move(default_browse_info_wnd));
 
     auto cursor_texture = m_ui->GetTexture(ClientUI::ArtDir() / "cursors" / "default_cursor.png");
-    SetCursor(std::make_shared<GG::TextureCursor>(cursor_texture, GG::Pt(GG::X(6), GG::Y(3))));
+    SetCursor(std::make_shared<GG::TextureCursor>(std::move(cursor_texture),
+                                                  GG::Pt(GG::X(6), GG::Y(3))));
     RenderCursor(true);
 
     EnableKeyPressRepeat(GetOptionsDB().Get<int>("ui.input.keyboard.repeat.delay"),
