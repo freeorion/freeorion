@@ -25,9 +25,9 @@ Cursor::Cursor()
 Cursor::~Cursor()
 {}
 
-TextureCursor::TextureCursor(const std::shared_ptr<Texture>& texture,
+TextureCursor::TextureCursor(std::shared_ptr<Texture> texture,
                              const Pt& hotspot/* = Pt()*/) :
-    m_texture(texture),
+    m_texture(std::move(texture)),
     m_hotspot(hotspot)
 {
     m_hotspot.x = std::max(X0, std::min(m_hotspot.x, m_texture->DefaultWidth() - 1));

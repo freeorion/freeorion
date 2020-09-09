@@ -53,7 +53,7 @@ public:
     /** Ctor.  \a texture is the texture to render and \a hotspot is the
         offset within \a texture where the click-point is located.  \a hotspot
         is clamped to \a texture's valid area. */
-    TextureCursor(const std::shared_ptr<Texture>& texture, const Pt& hotspot = Pt());
+    TextureCursor(std::shared_ptr<Texture> texture, const Pt& hotspot = Pt());
 
     /** Returns the texture used to render this TextureCursor. */
     const std::shared_ptr<Texture>& GetTexture() const;
@@ -65,8 +65,7 @@ public:
 
 private:
     std::shared_ptr<Texture> m_texture;
-
-    Pt                         m_hotspot;
+    Pt                       m_hotspot;
 };
 
 }
