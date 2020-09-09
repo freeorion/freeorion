@@ -1009,7 +1009,7 @@ void ClientUI::InitializeWindows() {
     const GG::Pt player_list_ul(MESSAGE_PANEL_WIDTH, GG::GUI::GetGUI()->AppHeight() - PANEL_HEIGHT);
     const GG::Pt player_list_wh(PLAYER_LIST_PANEL_WIDTH, PANEL_HEIGHT);
 
-    GetMessageWnd()->InitSizeMove(message_ul,     message_ul + message_wh);
+    GetMessageWnd()->InitSizeMove(message_ul, message_ul + message_wh);
     GetPlayerListWnd()->InitSizeMove(player_list_ul, player_list_ul + player_list_wh);
 }
 
