@@ -4,6 +4,24 @@ Changelog
 Notable changes to the FreeOrion project will be documented in this file.
 
 
+[v0.4.10.1] - 2020-09-13
+-----------------------
+
+#### Bug Fixes / Improvements
+
+- Improved info displayed for average/total fighter damage and four combat bouts
+- Fixed Experimentors sitrep about spotted monsters
+- Fix: apply damage scaling rule to species bonus for main line weapons and fighters
+- Fix: don't make max shield meter effects depend on combat conditions in system
+- AI: determine colony ship build time and build cost from available parts, prevent miscalculating build time when calculating colonization priority
+- Prevent crash caused by fleets getting into a glitched state when starlanes get removed
+- Fixed issue where, when loading a multiplayer game, the empire drop down list in the lobby would choose the wrong empire
+- Fixed Arc Disruptor icon quality
+- Fixed build error when trying to build without the local git repository folder present in the source root directory
+- Fixed build errors with "headless" build
+- Fixed build errors with certain boost versions
+
+
 [v0.4.10] - 2020-07-10
 ---------------
 
