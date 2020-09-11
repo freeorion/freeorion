@@ -12,7 +12,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Improved info displayed for average/total fighter damage and four combat bouts
 - Fixed Experimentors sitrep about spotted monsters
 - Fix: apply damage scaling rule to species bonus for main line weapons and fighters
-- Fix: don't make max shield meter effects depend on combat conditions in system
+- Fix: don't make planetary max shield meter effects depend on combat conditions in system
 - AI: determine colony ship build time and build cost from available parts, prevent miscalculating build time when calculating colonization priority
 - Prevent crash caused by fleets getting into a glitched state when starlanes get removed
 - Fixed issue where, when loading a multiplayer game, the empire drop down list in the lobby would choose the wrong empire
