@@ -522,6 +522,8 @@ FO_COMMON_API std::string Constant<std::string>::Dump(unsigned short ntabs) cons
 template <>
 FO_COMMON_API std::string Constant<std::string>::Eval(const ScriptingContext& context) const;
 
+template <>
+FO_COMMON_API void Constant<std::string>::SetTopLevelContent(const std::string& content_name);
 
 ///////////////////////////////////////////////////////////
 // Variable                                              //

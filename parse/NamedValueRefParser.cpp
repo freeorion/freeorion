@@ -35,7 +35,10 @@ namespace parse {
         ErrorLogger() << "Registering from named_values.focs.txt : " << name << " ! ValueRef<" << typeid(T).name() << ">";
         // Note: Other parsers might also register value refs, so the normal pending mechanism does not suffice.
         //       So we do not collect the value refs in the given named_refs reference but register directly.
-        ::RegisterValueRef<T>(name, ref_envelope.OpenEnvelope(pass));
+        std::unique_ptr<ValueRef::ValueRef<T>> vref = ref_envelope.OpenEnvelope(pass);
+        // Let it throw if CurrentContent is used
+        vref->SetTopLevelContent("THERE_IS_NO_TOP_LEVEL_CONTENT");
+        ::RegisterValueRef<T>(name, std::move(vref));
     }
 
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_named_ref_, insert_named_ref, 4)

@@ -599,6 +599,14 @@ std::string Constant<std::string>::Eval(const ScriptingContext& context) const
     return m_value;
 }
 
+template <>
+void Constant<std::string>::SetTopLevelContent(const std::string& content_name)
+{
+    m_top_level_content = content_name;
+    if (m_value == "CurrentContent" && content_name == "THERE_IS_NO_TOP_LEVEL_CONTENT")
+        ErrorLogger() << "Constant<std::string>::SetTopLevelContent() Scripted Content illegal. Trying to set THERE_IS_NO_TOP_LEVEL_CONTENT for CurrentContent (maybe you tried to use CurrentContent in named_values.focs.txt)";
+}
+
 ///////////////////////////////////////////////////////////
 // Variable                                              //
 ///////////////////////////////////////////////////////////
