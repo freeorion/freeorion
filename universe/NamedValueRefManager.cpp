@@ -242,7 +242,7 @@ void NamedRef<T>::SetTopLevelContent(const std::string& content_name)
     if ( GetValueRef() )
         const_cast<ValueRef<T>*>(GetValueRef())->SetTopLevelContent(content_name);
     else
-        ErrorLogger() << "Unexpected call of SetTopLevelContent on a NamedRef - unexpected because no value ref registered yet. This should not happen";
+        ErrorLogger() << "Unexpected call of SetTopLevelContent(" << content_name << ") on a NamedRef - unexpected because no value ref registered yet. This should not happen";
 }
 
 template <typename T>

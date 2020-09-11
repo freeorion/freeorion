@@ -60,7 +60,7 @@ struct FO_COMMON_API ValueRef : public ValueRefBase
 
     /** Evaluates the expression tree with an empty context and retuns the
       * a string representation of the result value iff the result type is
-      * supported (currently std::string, int, float, double).
+      * supported (currently std::string, int, float, double, enum).
       * See ValueRefs.cpp for specialisation implementations. */
     std::string StringResult() const;
 };

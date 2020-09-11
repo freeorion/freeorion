@@ -67,7 +67,6 @@ void IApp::StartBackgroundParsing() {
     if (fs::exists(rdir / "scripting/common")) {
         // we ignore the parse result, the parser uses the ::RegisterValueRef function instead of the Pending mechanic
         named_value_ref_parser_future = Pending::StartParsing(parse::named_value_refs, rdir / "scripting/common");
-        ErrorLogger() << "Background parse path for NamedValueRefs does exist: " << (rdir / "scripting/common").string();
     } else
         ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/common").string();
 

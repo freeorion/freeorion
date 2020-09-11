@@ -32,11 +32,11 @@ namespace parse {
                           const parse::detail::MovableEnvelope<ValueRef::ValueRef<T>>& ref_envelope,
                           bool& pass)
     {
-        ErrorLogger() << "Registering from named_values.focs.txt : " << name << " ! ValueRef<" << typeid(T).name() << ">";
+        DebugLogger() << "Registering from named_values.focs.txt : " << name << " ! ValueRef<" << typeid(T).name() << ">";
         // Note: Other parsers might also register value refs, so the normal pending mechanism does not suffice.
         //       So we do not collect the value refs in the given named_refs reference but register directly.
         std::unique_ptr<ValueRef::ValueRef<T>> vref = ref_envelope.OpenEnvelope(pass);
-        // Let it throw if CurrentContent is used
+        // Log an error if CurrentContent is used
         vref->SetTopLevelContent("THERE_IS_NO_TOP_LEVEL_CONTENT");
         ::RegisterValueRef<T>(name, std::move(vref));
     }
