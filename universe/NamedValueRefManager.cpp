@@ -237,7 +237,13 @@ std::string NamedRef<T>::Dump(unsigned short ntabs) const
 
 template <typename T>
 void NamedRef<T>::SetTopLevelContent(const std::string& content_name)
-{}//{ if ( GetValueRef() ) GetValueRef()->SetTopLevelContent(content_name); } // TODO decide what to do. also setter does not fit to const return of GetValueRef
+{
+    // only supposed to work for named-in-the-middle-case
+    if ( GetValueRef() )
+        const_cast<ValueRef<T>*>(GetValueRef())->SetTopLevelContent(content_name);
+    else
+        ErrorLogger() << "Unexpected call of SetTopLevelContent on a NamedRef - unexpected because no value ref registered yet. This should not happen";
+}
 
 template <typename T>
 const ValueRef<T>* NamedRef<T>::GetValueRef() const

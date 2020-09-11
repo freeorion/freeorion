@@ -470,7 +470,7 @@ std::string Constant<T>::Description() const
 
 template <typename T>
 void Constant<T>::SetTopLevelContent(const std::string& content_name)
-{ m_top_level_content = content_name; }
+{}
 
 template <typename T>
 unsigned int Constant<T>::GetCheckSum() const

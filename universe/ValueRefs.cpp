@@ -602,9 +602,12 @@ std::string Constant<std::string>::Eval(const ScriptingContext& context) const
 template <>
 void Constant<std::string>::SetTopLevelContent(const std::string& content_name)
 {
-    m_top_level_content = content_name;
     if (m_value == "CurrentContent" && content_name == "THERE_IS_NO_TOP_LEVEL_CONTENT")
-        ErrorLogger() << "Constant<std::string>::SetTopLevelContent() Scripted Content illegal. Trying to set THERE_IS_NO_TOP_LEVEL_CONTENT for CurrentContent (maybe you tried to use CurrentContent in named_values.focs.txt)";
+        ErrorLogger() << "Constant<std::string>::SetTopLevelContent()  Scripted Content illegal. Trying to set THERE_IS_NO_TOP_LEVEL_CONTENT for CurrentContent (maybe you tried to use CurrentContent in named_values.focs.txt)";
+    if (!m_top_level_content.empty()) // expected to happen if this value ref is part of a non-named-in-the-middle named value ref 
+        DebugLogger() << "Constant<std::string>::SetTopLevelContent()  Skip overwriting top level content from '" << m_top_level_content << "' to '" << content_name << "'";
+    else
+        m_top_level_content = content_name;
 }
 
 ///////////////////////////////////////////////////////////
