@@ -118,7 +118,7 @@ unsigned int TextBoxBrowseInfoWnd::TextMargin() const
 void TextBoxBrowseInfoWnd::SetText(std::string str)
 {
     unsigned int margins = 2 * TextMargin();
-
+    bool str_empty = str.empty();
     Flags<TextFormat> fmt = GetTextFormat();
     auto text_elements = m_font->ExpensiveParseFromTextToTextElements(str, fmt);
     auto lines = m_font->DetermineLines(str, fmt, m_preferred_width - X(margins),
@@ -127,7 +127,7 @@ void TextBoxBrowseInfoWnd::SetText(std::string str)
     SetMinSize(extent + Pt(X(margins), Y(margins)));
     m_text_control->SetText(std::move(str));
     Resize(extent + Pt(X(margins), Y0));
-    if (str.empty())
+    if (str_empty)
         Hide();
     else
         Show();
