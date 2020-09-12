@@ -1821,6 +1821,7 @@ void SidePanel::PlanetPanel::Refresh() {
                     m_focus_drop->Select(i);
                     focus_text = boost::io::str(FlexibleFormat(UserString("RP_FOCUS_TOOLTIP"))
                                                 % UserString(planet->Focus()));
+                    break;
                 }
             }
         } else {
