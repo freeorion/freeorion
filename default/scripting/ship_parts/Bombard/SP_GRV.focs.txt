@@ -11,9 +11,9 @@ Part
     effectsgroups = [
         EffectsGroup    // players can order graviton pulse used on enemies
             scope = And [
+                InSystem id = Source.SystemID
                 Planet
                 Species
-                InSystem id = Source.SystemID
                 OrderedBombardedBy condition = Source
                 Or [
                     OwnedBy affiliation = EnemyOf empire = Source.Owner
@@ -40,8 +40,8 @@ Part
 
         EffectsGroup    // monsters use graviton pulse on player planets
             scope = NumberOf number = 1 condition = And [
-                Planet
                 InSystem id = Source.SystemID
+                Planet
                 OwnedBy affiliation = AnyEmpire
                 Stealth high = Source.Detection
                 /// @content_tag{LITHIC} Each part owned by Unowned in system will reduce population on one visible populated empire Planet with tag

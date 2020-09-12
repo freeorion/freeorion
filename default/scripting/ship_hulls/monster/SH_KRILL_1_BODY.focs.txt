@@ -18,11 +18,11 @@ Hull
 
         EffectsGroup    // merge small krills to create a medium krill
             scope = And [
+                Object id = Source.SystemID 
                 System
-                InSystem id = Source.SystemID 
                 Number low = 2 high = 3 condition = And [
-                    Ship
                     InSystem id = Source.SystemID
+                    Ship
                     DesignHasHull name = "SH_KRILL_1_BODY"
                 ]
             ]
@@ -36,13 +36,13 @@ Hull
         EffectsGroup    // remove merged krills
             scope = And [
                 Number low = 2 condition = And [
-                    Ship
                     InSystem id = Source.SystemID
+                    Ship
                     DesignHasHull name = "SH_KRILL_1_BODY"
                 ]
                 NumberOf number = 2 condition = And [
-                    Ship
                     InSystem id = Source.SystemID
+                    Ship
                     DesignHasHull name = "SH_KRILL_1_BODY"
                 ]
             ]
