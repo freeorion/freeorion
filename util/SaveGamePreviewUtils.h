@@ -29,10 +29,10 @@ struct FO_COMMON_API SaveGamePreviewData {
     std::string         main_player_name;               /// The name of the hosting player, or the single human player in single player games
     std::string         main_player_empire_name;        /// The name of the empire of the main player
     GG::Clr             main_player_empire_colour;      /// The colour of the empire of the main player
-    int                 current_turn;                   /// The turn the game as saved one
+    int                 current_turn = -1;              /// The turn the game as saved one
     std::string         save_time;                      /// The time the game was saved as ISO 8601 YYYY-MM-DD"T"HH:MM:SS±HH:MM or Z
-    short               number_of_empires;              /// The number of empires in the game
-    short               number_of_human_players;        /// The number of human players in the game
+    short               number_of_empires = -1;         /// The number of empires in the game
+    short               number_of_human_players = -1;   /// The number of human players in the game
 
     std::string         save_format_marker;             /// What format was used for this save?
     unsigned int        uncompressed_text_size = 0;     /// How many bytes capacity does the uncompressed save text take up? (ie. the part that was / will be compressed with zlib for compressed xml format saves)

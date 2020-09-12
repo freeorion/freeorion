@@ -104,17 +104,11 @@ namespace {
     }
 }
 
-
 SaveGamePreviewData::SaveGamePreviewData() :
     magic_number(PREVIEW_PRESENT_MARKER),
-    description(),
     freeorion_version(UserString("UNKNOWN_VALUE_SYMBOL_2")),
     main_player_name(UserString("UNKNOWN_VALUE_SYMBOL_2")),
-    main_player_empire_name(UserString("UNKNOWN_VALUE_SYMBOL_2")),
-    current_turn(-1),
-    number_of_empires(-1),
-    number_of_human_players(-1),
-    save_format_marker("")
+    main_player_empire_name(UserString("UNKNOWN_VALUE_SYMBOL_2"))
 {}
 
 bool SaveGamePreviewData::Valid() const
