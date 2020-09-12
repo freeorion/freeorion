@@ -648,6 +648,7 @@ public:
     /** Sets \a layout as the layout for the window.  Removes any current
         layout which may exist, and deletes all client-area child windows. */
     void SetLayout(const std::shared_ptr<Layout>& layout);
+    void SetLayout(std::shared_ptr<Layout>&& layout);
 
     /** Removes the window's layout, handing ownership of all its children
         back to the window, with the sizes and positions they had before the

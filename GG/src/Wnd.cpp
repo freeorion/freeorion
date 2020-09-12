@@ -862,6 +862,25 @@ void Wnd::SetLayout(const std::shared_ptr<Layout>& layout)
     layout->SizeMove(Pt(), Pt(ClientWidth(), ClientHeight()));
 }
 
+void Wnd::SetLayout(std::shared_ptr<Layout>&& layout)
+{
+    auto&& mm_layout = GetLayout();
+    if (layout == mm_layout || layout == LockAndResetIfExpired(m_containing_layout))
+        throw BadLayout("Wnd::SetLayout() : Attempted to set a Wnd's layout to be its current layout or the layout that contains the Wnd");
+    RemoveLayout();
+    auto children = m_children;
+    DetachChildren();
+    Pt client_sz = ClientSize();
+    for (auto& wnd : children) {
+        Pt wnd_ul = wnd->RelativeUpperLeft(), wnd_lr = wnd->RelativeLowerRight();
+        if (wnd_ul.x < 0 || wnd_ul.y < 0 || client_sz.x < wnd_lr.x || client_sz.y < wnd_lr.y)
+            AttachChild(wnd);
+    }
+    AttachChild(layout);
+    m_layout = std::move(layout);
+    layout->SizeMove(Pt(), Pt(ClientWidth(), ClientHeight()));
+}
+
 void Wnd::RemoveLayout()
 {
     auto&& layout = GetLayout();
