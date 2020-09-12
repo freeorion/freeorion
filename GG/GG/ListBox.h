@@ -374,7 +374,7 @@ public:
     /** sets the style flags for the ListBox to \a s. \see GG::ListBoxStyle */
     void SetStyle(Flags<ListBoxStyle> s);
 
-    void SetColHeaders(const std::shared_ptr<Row>& r);  ///< sets the row used as headings for the columns; this Row becomes property of the ListBox.
+    void SetColHeaders(std::shared_ptr<Row> r);         ///< sets the row used as headings for the columns; this Row becomes property of the ListBox.
     void RemoveColHeaders();                            ///< removes any columns headings set
 
     void SetColWidth(std::size_t n, X w);               ///< sets the width of column \n to \a w; not range-checked

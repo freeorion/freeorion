@@ -1272,12 +1272,12 @@ void ListBox::SetStyle(Flags<ListBoxStyle> s)
     }
 }
 
-void ListBox::SetColHeaders(const std::shared_ptr<Row>& r)
+void ListBox::SetColHeaders(std::shared_ptr<Row> r)
 {
     Y client_height = ClientHeight();
     DetachChildAndReset(m_header_row);
     if (r) {
-        m_header_row = r;
+        m_header_row = std::move(r);
         // if this column header is being added to an empty listbox, the listbox takes on some of the
         // attributes of the header, similar to the insertion of a row into an empty listbox; see Insert()
         if (m_manage_column_props && m_rows.empty() && m_col_widths.empty()) {
@@ -1291,6 +1291,7 @@ void ListBox::SetColHeaders(const std::shared_ptr<Row>& r)
         }
         m_header_row->MoveTo(Pt(X0, -m_header_row->Height()));
         AttachChild(m_header_row);
+
     } else {
         m_header_row = Wnd::Create<Row>();
     }
