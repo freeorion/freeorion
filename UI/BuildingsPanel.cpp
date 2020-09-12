@@ -127,9 +127,8 @@ void BuildingsPanel::Update() {
             continue;
 
         auto ind = GG::Wnd::Create<BuildingIndicator>(GG::X(indicator_size), object_id);
-        m_building_indicators.push_back(ind);
-
         ind->RightClickedSignal.connect(BuildingRightClickedSignal);
+        m_building_indicators.emplace_back(std::move(ind));
     }
 
     // get in-progress buildings
@@ -151,9 +150,9 @@ void BuildingsPanel::Update() {
         double progress = std::max(0.0f, empire->ProductionStatus(queue_index));
         double turns_completed = progress / std::max(total_cost, 1.0);
         auto ind = GG::Wnd::Create<BuildingIndicator>(GG::X(indicator_size), elem.item.name,
-                                                      turns_completed, total_turns, total_cost, turn_spending);
-
-        m_building_indicators.push_back(ind);
+                                                      turns_completed, total_turns, total_cost,
+                                                      turn_spending);
+        m_building_indicators.emplace_back(std::move(ind));
     }
 }
 
@@ -288,7 +287,6 @@ BuildingIndicator::BuildingIndicator(GG::X w, const std::string& building_type,
         GG::LightenClr(ClientUI::TechWndProgressBarBackgroundColor()),
         ClientUI::TechWndProgressBarColor(),
         GG::LightenClr(ClientUI::ResearchableTechFillColor()));
-
 }
 
 void BuildingIndicator::CompleteConstruction() {

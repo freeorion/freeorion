@@ -157,7 +157,7 @@ void TabWnd::CompleteConstruction()
     layout->SetRowStretch(1, 1.0);
     layout->Add(m_tab_bar, 0, 0);
     layout->Add(m_overlay, 1, 0);
-    SetLayout(layout);
+    SetLayout(std::move(layout));
     m_tab_bar->TabChangedSignal.connect(
         boost::bind(&TabWnd::TabChanged, this, boost::placeholders::_1, true));
 
