@@ -1027,7 +1027,7 @@ void HumanClientApp::HandleSaveGamePreviews(const Message& msg) {
     ExtractDispatchSavePreviewsMessageData(msg, previews);
     DebugLogger() << "HumanClientApp::RequestSavePreviews Got " << previews.previews.size() << " previews.";
 
-    sfd->SetPreviewList(previews);
+    sfd->SetPreviewList(std::move(previews));
 }
 
 void HumanClientApp::HandleSetAuthRoles(const Message& msg) {

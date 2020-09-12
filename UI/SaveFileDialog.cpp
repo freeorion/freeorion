@@ -419,13 +419,13 @@ public:
 class SaveFileFileRow: public SaveFileRow {
 public:
     /// Creates a row for the given savefile
-    SaveFileFileRow(const FullPreview& full,
+    SaveFileFileRow(FullPreview&& full,
                     const std::shared_ptr<std::vector<SaveFileColumn>>& visible_columns,
                     const std::shared_ptr<std::vector<SaveFileColumn>>& columns,
                     int tooltip_delay) :
         SaveFileRow(visible_columns, full.filename),
         m_all_columns(columns),
-        m_full_preview(full)
+        m_full_preview(std::move(full))
     {
         SetBrowseModeTime(tooltip_delay);
     }
@@ -462,8 +462,8 @@ private:
 class SaveFileListBox : public CUIListBox {
 public:
     SaveFileListBox() :
-        CUIListBox ()
-    { }
+        CUIListBox()
+    {}
 
     void Init() {
         m_columns = SaveFileColumn::GetColumns(ClientWidth());
@@ -472,8 +472,7 @@ public:
         NormalizeRowsOnInsert(false);
         SetNumCols(m_visible_columns->size());
 
-        auto header_row = GG::Wnd::Create<SaveFileHeaderRow>(m_visible_columns);
-        SetColHeaders(header_row);
+        SetColHeaders(GG::Wnd::Create<SaveFileHeaderRow>(m_visible_columns));
         for (unsigned int i = 0; i < m_visible_columns->size(); ++i) {
             const SaveFileColumn& column = (*m_visible_columns)[i];
             SetColStretch(i, column.Stretch());
@@ -507,28 +506,30 @@ public:
 
         vector<FullPreview> previews;
         ::LoadSaveGamePreviews(abs_path, extension, previews);
-        LoadSaveGamePreviews(previews);
+        LoadSaveGamePreviews(std::move(previews));
     }
 
     /// Loads preview data on all save files in a directory specidifed by path.
     /// @param [in] previews The preview data
-    void LoadSaveGamePreviews(const std::vector<FullPreview>& previews) {
+    void LoadSaveGamePreviews(std::vector<FullPreview>&& previews) {
         int tooltip_delay = GetOptionsDB().Get<int>("ui.dialog.save.tooltip.delay");
 
         std::vector<std::shared_ptr<Row>> rows;
-        for (const FullPreview& preview : previews) {
-            rows.push_back(GG::Wnd::Create<SaveFileFileRow>(preview, m_visible_columns, m_columns, tooltip_delay));
+        rows.reserve(previews.size());
+        for (FullPreview& preview : previews) {
+            rows.emplace_back(GG::Wnd::Create<SaveFileFileRow>(std::move(preview), m_visible_columns,
+                                                               m_columns, tooltip_delay));
         }
 
         // Insert rows enmasse to avoid per insertion vector sort costs.
-        Insert(rows);
+        Insert(std::move(rows));
     }
 
     /** Find local sub directories of \p path. */
     std::vector<std::string> FindLocalRelativeDirs(const fs::path& path) {
         std::vector<std::string> dirs;
         if (path.has_parent_path() && path.parent_path() != path)
-            dirs.push_back("..");
+            dirs.emplace_back("..");
 
         fs::directory_iterator end_it;
         for (fs::directory_iterator it(path); it != end_it; ++it) {
@@ -537,24 +538,25 @@ public:
                 std::string utf8_dir_name = PathToString(last_bit_of_path);
                 DebugLogger() << "SaveFileDialog::FindLocalRelativeDirs name: " << utf8_dir_name
                               << " valid UTF-8: " << utf8::is_valid(utf8_dir_name.begin(), utf8_dir_name.end());
-                dirs.push_back(utf8_dir_name);
+                dirs.emplace_back(std::move(utf8_dir_name));
             }
         }
 
         return dirs;
     }
 
-    void LoadDirectories(const std::vector<std::string>& dirs) {
+    void LoadDirectories(std::vector<std::string>&& dirs) {
         std::vector<std::shared_ptr<Row>> rows;
-        for (const auto& dir : dirs)
-            rows.push_back(GG::Wnd::Create<SaveFileDirectoryRow>(m_visible_columns, dir));
+        rows.reserve(dirs.size());
+        for (auto& dir : dirs)
+            rows.emplace_back(GG::Wnd::Create<SaveFileDirectoryRow>(m_visible_columns, std::move(dir)));
 
         // Insert rows enmasse to avoid per insertion vector sort costs.
-        Insert(rows);
+        Insert(std::move(rows));
     }
 
     bool HasFile(const std::string& filename) {
-        for (auto& row : *this) {
+        for (const auto& row : *this) {
             SaveFileRow* srow = dynamic_cast<SaveFileRow*>(row.get());
             if (srow && srow->Filename() == filename)
                 return true;
@@ -563,19 +565,25 @@ public:
     }
 
 private:
-    std::shared_ptr<std::vector<SaveFileColumn>> m_columns;
+    std::shared_ptr<std::vector<SaveFileColumn>> m_columns;         // TODO: why are these pointers...?
     std::shared_ptr<std::vector<SaveFileColumn>> m_visible_columns;
 
     static std::shared_ptr<std::vector<SaveFileColumn>> FilterColumns(
         const std::shared_ptr<std::vector<SaveFileColumn>>& all_cols)
     {
-        std::vector<std::string> names = GetOptionsDB().Get<std::vector<std::string>>("ui.dialog.save.columns");
         auto columns = std::make_shared<std::vector<SaveFileColumn>>();
-        for (const std::string& column_name : names) {
+        if (!all_cols) {
+            ErrorLogger() << "FilterColumns passed null pointer to columns";
+            return columns;
+        }
+        columns->reserve(all_cols->size());
+
+        std::vector<std::string> names = GetOptionsDB().Get<std::vector<std::string>>("ui.dialog.save.columns");
+        for (std::string& column_name : names) {
             bool found_col = false;
             for (const auto& column : *all_cols) {
                 if (column.Name() == column_name) {
-                    columns->push_back(column);
+                    columns->emplace_back(column);
                     found_col = true;
                     break;
                 }
@@ -817,7 +825,7 @@ void SaveFileDialog::Confirm() {
     }
 
     if (m_server_previews && choice_path.generic_string().find(SERVER_LABEL) == 0) {
-        UpdateDirectory(choice);
+        UpdateDirectory(std::move(choice));
         return;
     }
 
@@ -898,8 +906,8 @@ void SaveFileDialog::SelectionChanged(const GG::ListBox::SelectionSet& selection
     CheckChoiceValidity();
 }
 
-void SaveFileDialog::UpdateDirectory(const std::string& newdir) {
-    SetDirPath(newdir);
+void SaveFileDialog::UpdateDirectory(std::string newdir) {
+    SetDirPath(std::move(newdir));
     UpdatePreviewList();
 }
 
@@ -919,24 +927,24 @@ void SaveFileDialog::SetPreviewList(const fs::path& path) {
     SetPreviewListCore(setup_func);
 }
 
-void SaveFileDialog::SetPreviewList(const PreviewInformation& preview_info) {
+void SaveFileDialog::SetPreviewList(PreviewInformation&& preview_info) {
     auto setup_func = [this, &preview_info]() {
 
         // Prefix directories with the server label;
         std::vector<std::string> prefixed_subdirs;
         for (const std::string& subdir : preview_info.subdirectories) {
             if (subdir.find("/") == 0 || subdir.find("\\") == 0) {
-                prefixed_subdirs.push_back(SERVER_LABEL + subdir);
+                prefixed_subdirs.emplace_back(SERVER_LABEL + subdir);
             } else if(subdir.find("./") == 0) {
-                prefixed_subdirs.push_back(SERVER_LABEL + subdir.substr(1));
+                prefixed_subdirs.emplace_back(SERVER_LABEL + subdir.substr(1));
             } else {
-                prefixed_subdirs.push_back(SERVER_LABEL + "/" + subdir);
+                prefixed_subdirs.emplace_back(SERVER_LABEL + "/" + subdir);
             }
         }
 
-        m_file_list->LoadDirectories(prefixed_subdirs);
-        m_file_list->LoadSaveGamePreviews(preview_info.previews);
-        SetDirPath(preview_info.folder);
+        m_file_list->LoadDirectories(std::move(prefixed_subdirs));
+        m_file_list->LoadSaveGamePreviews(std::move(preview_info.previews));
+        SetDirPath(std::move(preview_info.folder));
     };
 
     SetPreviewListCore(setup_func);
@@ -1016,13 +1024,12 @@ std::string SaveFileDialog::GetDirPath() const {
     return retval;
 }
 
-void SaveFileDialog::SetDirPath(const string& dir_path) {
-    std::string dirname = dir_path;
+void SaveFileDialog::SetDirPath(std::string dirname) {
     if (m_server_previews) {
         // Indicate that the path is on the server
-        if (dir_path.find("./") == 0) {
+        if (dirname.find("./") == 0) {
             dirname = SERVER_LABEL + dirname.substr(1);
-        } else if (dir_path.find(SERVER_LABEL) == 0) {
+        } else if (dirname.find(SERVER_LABEL) == 0) {
             // Already has label. No need to change
         } else {
             dirname = SERVER_LABEL + "/" + dirname;

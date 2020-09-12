@@ -34,7 +34,7 @@ public:
     void KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
 
     /** Update the previews with \p preview_info*/
-    void SetPreviewList(const PreviewInformation& preview_info);
+    void SetPreviewList(PreviewInformation&& preview_info);
 
     /// Get the chosen save files full path
     std::string Result() const;
@@ -49,8 +49,8 @@ private:
     void AskDelete();                       //!< when a file is trying to be deleted
     void DoubleClickRow(GG::ListBox::iterator row, const GG::Pt& pt, const GG::Flags<GG::ModKey>& mod);
     void Cancel();                          //!< when m_load_btn button is pressed
-    void SelectionChanged(const GG::ListBox::SelectionSet& files);      //!< When file selection changes.
-    void UpdateDirectory(const std::string& newdir);                    //!< Change current directory
+    void SelectionChanged(const GG::ListBox::SelectionSet& files);  //!< When file selection changes.
+    void UpdateDirectory(std::string newdir);                       //!< Change current directory
 
     /** Either directly update from the local save directory, or request the
         server for save preview information*/
@@ -65,7 +65,7 @@ private:
     void DirectoryEdited(const std::string& filename);  //!< Called when the directory text changes
 
     std::string GetDirPath() const;                     //!< Gets the current directory path string clean of display decorations
-    void        SetDirPath(const std::string& path);    //!< Sets the shown directory path, applying decorations if applicable
+    void        SetDirPath(std::string path);           //!< Sets the shown directory path, applying decorations if applicable
 
     std::shared_ptr<GG::Layout>         m_layout;           //!< The layout of the dialog;
 
