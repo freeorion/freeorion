@@ -930,13 +930,18 @@ namespace {
             return;
         bool scope_is_just_source = dynamic_cast<Condition::Source*>(scope);
 
-        auto message{"StoreTargetsAndCausesOfEffectsGroup < " + std::to_string(n) + " >"
-                     + "  cause type: " + boost::lexical_cast<std::string>(effect_cause_type)
-                     + "  specific cause: " + specific_cause_name
-                     + "  sources: " + std::to_string(source_objects.size())/*
-                     + "  scope: " + boost::algorithm::erase_all_copy(effects_group->Scope()->Dump(), "\n")*/};
-
-        ScopedTimer timer(message, std::chrono::milliseconds(20));
+        ScopedTimer timer(
+            [
+                n, effect_cause_type, specific_cause_name,
+                sz{source_objects.size()}, effects_group
+            ] () -> std::string
+        {
+            return "StoreTargetsAndCausesOfEffectsGroup < " + std::to_string(n) + " >"
+                + "  cause type: " + boost::lexical_cast<std::string>(effect_cause_type)
+                + "  specific cause: " + specific_cause_name
+                + "  sources: " + std::to_string(sz)
+                + "  scope: " + boost::algorithm::erase_all_copy(effects_group->Scope()->Dump(), "\n");
+        }, std::chrono::milliseconds(10));
 
         source_effects_targets_causes_out.reserve(source_objects.size());
         ScriptingContext source_context(object_map);
