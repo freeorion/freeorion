@@ -20,6 +20,14 @@ public:
         m_threshold(threshold)
     {}
 
+    Impl(std::function<std::string ()> output_text_fn, bool enable_output,
+         std::chrono::microseconds threshold) :
+        m_output_text_fn(output_text_fn),
+        m_start(std::chrono::high_resolution_clock::now()),
+        m_enable_output(enable_output),
+        m_threshold(threshold)
+    {}
+
     ~Impl() {
         if (!m_enable_output)
             return;
@@ -30,7 +38,12 @@ public:
             return;
 
         std::stringstream ss;
-        ss << m_name << " time: ";
+        if (!m_name.empty())
+            ss << m_name << " time: ";
+        else if (m_output_text_fn)
+            ss << m_output_text_fn() << " time: ";
+        else
+            ss << "time: ";
         FormatDuration(ss, duration);
         DebugLogger(timer) << ss.str();
     }
@@ -95,6 +108,7 @@ public:
 
     std::chrono::high_resolution_clock::time_point m_start;
     std::string                                    m_name;
+    std::function<std::string ()>                  m_output_text_fn;
     bool                                           m_enable_output;
     std::chrono::microseconds                      m_threshold;
 };
@@ -108,6 +122,12 @@ ScopedTimer::ScopedTimer(std::string timed_name,
                          std::chrono::microseconds threshold) :
     m_impl(new Impl(std::move(timed_name), true, threshold))
 {}
+
+ScopedTimer::ScopedTimer(std::function<std::string ()> output_text_fn,
+                         std::chrono::microseconds threshold) :
+    m_impl(new Impl(output_text_fn, true, threshold))
+{}
+
 
 //! @note
 //!     ~ScopedTimer is required because Impl is defined here.
