@@ -9,7 +9,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 
 #### Bug Fixes / Improvements
 
-- Improved info displayed for average/total fighter damage and four combat bouts
+- Improved info displayed for average/total fighter damage
 - Fixed Experimentors sitrep about spotted monsters
 - Fix: apply damage scaling rule to species bonus for main line weapons and fighters
 - Fix: don't make planetary max shield meter effects depend on combat conditions in system
