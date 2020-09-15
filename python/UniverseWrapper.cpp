@@ -79,7 +79,7 @@ namespace {
         std::vector<int> result;
         result.reserve(universe.Objects().size<T>());
         for (const auto& obj : universe.Objects().all<T>())
-            result.push_back(obj->ID());
+            result.emplace_back(obj->ID());
         return result;
     }
 
@@ -88,7 +88,7 @@ namespace {
         std::vector<std::string> retval;
         retval.reserve(species.Foci().size());
         for (const FocusType& focus : species.Foci())
-            retval.push_back(focus.Name());
+            retval.emplace_back(focus.Name());
         return retval;
     }
 
@@ -101,34 +101,33 @@ namespace {
 
     auto ShortestPath(const Universe& universe, int start_sys, int end_sys, int empire_id) -> std::vector<int>
     {
-        std::vector<int> retval;
-        std::pair<std::list<int>, int> path = universe.GetPathfinder()->ShortestPath(start_sys, end_sys, empire_id);
-        std::copy(path.first.begin(), path.first.end(), std::back_inserter(retval));
-        return retval;
+        std::pair<std::list<int>, int> path = universe.GetPathfinder()->ShortestPath(
+            start_sys, end_sys, empire_id);
+        return std::vector<int>{path.first.begin(), path.first.end()};
     }
 
     auto ShortestNonHostilePath(const Universe& universe, int start_sys, int end_sys, int empire_id) -> std::vector<int>
     {
-        std::vector<int> retval;
         auto fleet_pred = std::make_shared<HostileVisitor>(empire_id);
-        std::pair<std::list<int>, int> path = universe.GetPathfinder()->ShortestPath(start_sys, end_sys, empire_id, fleet_pred);
-        std::copy(path.first.begin(), path.first.end(), std::back_inserter(retval));
-        return retval;
+        std::pair<std::list<int>, int> path = universe.GetPathfinder()->ShortestPath(
+            start_sys, end_sys, empire_id, fleet_pred);
+        return std::vector<int>{path.first.begin(), path.first.end()};
     }
 
     auto LeastJumpsPath(const Universe& universe, int start_sys, int end_sys, int empire_id) -> std::vector<int>
     {
-        std::vector<int> retval;
-        std::pair<std::list<int>, int> path = universe.GetPathfinder()->LeastJumpsPath(start_sys, end_sys, empire_id);
-        std::copy(path.first.begin(), path.first.end(), std::back_inserter(retval));
-        return retval;
+        std::pair<std::list<int>, int> path = universe.GetPathfinder()->LeastJumpsPath(
+            start_sys, end_sys, empire_id);
+        return std::vector<int>{path.first.begin(), path.first.end()};
     }
 
     auto ImmediateNeighbors(const Universe& universe, int system1_id, int empire_id) -> std::vector<int>
     {
+        auto neighbours{universe.GetPathfinder()->ImmediateNeighbors(system1_id, empire_id)};
         std::vector<int> retval;
-        for (const auto& entry : universe.GetPathfinder()->ImmediateNeighbors(system1_id, empire_id))
-        { retval.push_back(entry.second); }
+        retval.reserve(neighbours.size());
+        std::transform(neighbours.begin(), neighbours.end(), std::back_inserter(retval),
+                       [](auto& n) { return n.second; });
         return retval;
     }
 
@@ -136,7 +135,7 @@ namespace {
     {
         std::map<int, double> retval;
         for (const auto& entry : universe.GetPathfinder()->ImmediateNeighbors(system1_id, empire_id))
-        { retval[entry.second] = entry.first; }
+            retval.emplace(entry.second, entry.first);
         return retval;
     }
 
@@ -145,7 +144,7 @@ namespace {
         std::vector<std::string> retval;
         retval.reserve(object.Specials().size());
         for (const auto& special : object.Specials())
-        { retval.push_back(special.first); }
+            retval.emplace_back(special.first);
         return retval;
     }
 
