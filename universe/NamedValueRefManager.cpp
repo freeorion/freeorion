@@ -199,22 +199,31 @@ NamedRef<T>::NamedRef(std::string value_ref_name) :
     m_value_ref_name(value_ref_name)
 {
     DebugLogger() << "ctor(NamedRef<T>): " << typeid(*this).name() << " value_ref_name: " << m_value_ref_name;
-    // not invariant value refs are not supported currently as we do not need those yet
-    if (auto ref = GetValueRef()) {
-        this->m_root_candidate_invariant = ref->RootCandidateInvariant();
-        this->m_local_candidate_invariant = ref->LocalCandidateInvariant();
-        this->m_target_invariant = ref->TargetInvariant();
-        this->m_source_invariant = ref->SourceInvariant();;
-        if (!(this->m_root_candidate_invariant && this->m_local_candidate_invariant
-              && this->m_target_invariant && this->m_source_invariant))
-            ErrorLogger() << "Currently only invariant value refs can be named. " << m_value_ref_name;
-    } else {
-        this->m_root_candidate_invariant = true;
-        this->m_local_candidate_invariant = true;
-        this->m_target_invariant = true;
-        this->m_source_invariant = true;
-    }
 }
+
+template <typename T>
+bool NamedRef<T>::RootCandidateInvariant() const
+{ return GetValueRef() ? GetValueRef()->RootCandidateInvariant() : false; }
+
+template <typename T>
+bool NamedRef<T>::LocalCandidateInvariant() const
+{ return GetValueRef() ? GetValueRef()->LocalCandidateInvariant() : false; }
+
+template <typename T>
+bool NamedRef<T>::TargetInvariant() const
+{ return GetValueRef() ? GetValueRef()->TargetInvariant() : false; }
+
+template <typename T>
+bool NamedRef<T>::SourceInvariant() const
+{ return GetValueRef() ? GetValueRef()->SourceInvariant() : false; }
+
+template <typename T>
+bool NamedRef<T>::SimpleIncrement() const
+{ return GetValueRef() ? GetValueRef()->SimpleIncrement() : false; }
+
+template <typename T>
+bool NamedRef<T>::ConstantExpr() const
+{ return GetValueRef() ? GetValueRef()->ConstantExpr() : false; }
 
 template <typename T>
 bool NamedRef<T>::operator==(const ValueRef<T>& rhs) const

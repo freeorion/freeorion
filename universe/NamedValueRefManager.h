@@ -17,6 +17,13 @@ struct FO_COMMON_API NamedRef final : public ValueRef<T>
 {
     NamedRef(std::string value_ref_name);
 
+    bool RootCandidateInvariant() const override;
+    bool LocalCandidateInvariant() const override;
+    bool TargetInvariant() const override;
+    bool SourceInvariant() const override;
+    bool SimpleIncrement() const override;
+    bool ConstantExpr() const override;
+
     bool operator==(const ValueRef<T>& rhs) const override;
     T  Eval(const ScriptingContext& context) const override;
 

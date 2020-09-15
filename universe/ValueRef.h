@@ -12,12 +12,12 @@ struct FO_COMMON_API ValueRefBase {
     ValueRefBase() = default;
     virtual ~ValueRefBase() = default;
 
-    bool RootCandidateInvariant() const  { return m_root_candidate_invariant; }
-    bool LocalCandidateInvariant() const { return m_local_candidate_invariant; }
-    bool TargetInvariant() const         { return m_target_invariant; }
-    bool SourceInvariant() const         { return m_source_invariant; }
-    virtual bool SimpleIncrement() const { return false; }
-    virtual bool ConstantExpr() const    { return false; }
+    virtual bool RootCandidateInvariant() const  { return m_root_candidate_invariant; }
+    virtual bool LocalCandidateInvariant() const { return m_local_candidate_invariant; }
+    virtual bool TargetInvariant() const         { return m_target_invariant; }
+    virtual bool SourceInvariant() const         { return m_source_invariant; }
+    virtual bool SimpleIncrement() const         { return false; }
+    virtual bool ConstantExpr() const            { return false; }
 
     virtual std::string Description() const = 0;                    //! Returns a user-readable text description of this ValueRef
     virtual std::string StringResult() const = 0;                   //! Returns a textual representation of the evaluation result of this ValueRef
