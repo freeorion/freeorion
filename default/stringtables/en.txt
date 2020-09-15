@@ -14932,7 +14932,7 @@ Organic Growth: starts with 15 [[metertype METER_STRUCTURE]], grows an additiona
 
 Potentially a powerful and fast commerce raider, stealth attacker or scout.
 
-This living hull regenerates [[metertype METER_STRUCTURE]] quickly when out of combat, gaining its current structure every turn it isn't involved in a fight or blockade, meaning if it is at half strength or greater it will be fully repaired in one turn. In addition, it regains 0.2 [[metertype METER_FUEL]] per turn.
+This living hull regenerates [[metertype METER_STRUCTURE]] quickly, gaining its current structure every turn (even when involved in combat), meaning if it is at half strength or greater, it will be fully repaired next turn. In addition, it regains 0.2 [[metertype METER_FUEL]] per turn.
 
 [[BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_CELL_GRO_CHAMB_REQUIRED]]
 '''
