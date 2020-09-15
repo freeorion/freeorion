@@ -504,9 +504,12 @@ namespace {
             sorted_entries_list.emplace("ENC_NAMED_VALUE_REF_DESC", std::make_pair(UserString("ENC_NAMED_VALUE_REF_DESC") + "\n\n", dir_name));
 
             for (const auto& entry : GetNamedValueRefManager().GetItems()) {
+                auto& vref = entry.second.get();
+                std::string pre = dynamic_cast<ValueRef::ValueRef<int>*>(&vref)? " int " : (dynamic_cast<ValueRef::ValueRef<double>*>(&vref)?" real ":" any ");
+
                 sorted_entries_list.emplace(
                     entry.first,
-                    std::make_pair(entry.first + " " + LinkTaggedPresetText(VarText::FOCS_VALUE_TAG, entry.first, entry.second.get().Description()) +
+                    std::make_pair(entry.first + pre + LinkTaggedPresetText(VarText::FOCS_VALUE_TAG, entry.first, vref.Description()) +
                                    " '" + UserString(entry.first)  + "'\n", dir_name));
             }
 
