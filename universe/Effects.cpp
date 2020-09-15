@@ -2173,9 +2173,9 @@ void RemoveStarlanes::Execute(ScriptingContext& context) const {
         ErrorLogger() << "AddStarlanes::Execute passed no target object";
         return;
     }
-    auto target_system = std::dynamic_pointer_cast<System>(context.effect_target);
+    auto target_system = dynamic_cast<System*>(context.effect_target.get());
     if (!target_system)
-        target_system = context.ContextObjects().get<System>(context.effect_target->SystemID());
+        target_system = context.ContextObjects().get<System>(context.effect_target->SystemID()).get();
     if (!target_system)
         return; // nothing to do!
 
@@ -2191,14 +2191,14 @@ void RemoveStarlanes::Execute(ScriptingContext& context) const {
         return; // nothing to do!
 
     // get systems containing at least one endpoint object
-    std::set<std::shared_ptr<System>> endpoint_systems;
+    std::set<System*> endpoint_systems;
     for (auto& endpoint_object : endpoint_objects) {
-        auto endpoint_system = std::dynamic_pointer_cast<const System>(endpoint_object);
+        auto endpoint_system = dynamic_cast<const System*>(endpoint_object.get());
         if (!endpoint_system)
-            endpoint_system = context.ContextObjects().get<System>(endpoint_object->SystemID());
+            endpoint_system = context.ContextObjects().get<System>(endpoint_object->SystemID()).get();
         if (!endpoint_system)
             continue;
-        endpoint_systems.insert(std::const_pointer_cast<System>(endpoint_system));
+        endpoint_systems.insert(const_cast<System*>(endpoint_system));
     }
 
     // remove starlanes from target to endpoint systems
