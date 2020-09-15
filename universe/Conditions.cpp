@@ -8883,7 +8883,7 @@ std::string OrderedBombarded::Description(bool negated/* = false*/) const {
 }
 
 std::string OrderedBombarded::Dump(unsigned short ntabs) const
-{ return DumpIndent(ntabs) + "OrderedBombarded by_object = " + m_by_object_condition->Dump(ntabs); }
+{ return DumpIndent(ntabs) + "OrderedBombarded object = " + m_by_object_condition->Dump(ntabs); }
 
 bool OrderedBombarded::Match(const ScriptingContext& local_context) const {
     auto& candidate = local_context.condition_local_candidate;
