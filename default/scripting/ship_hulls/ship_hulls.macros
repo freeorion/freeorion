@@ -80,8 +80,8 @@ UNOWNED_GOOD_VISION
 UNOWNED_MOVE
 '''EffectsGroup
             scope = And [
-                Fleet
                 Object id = Source.FleetID
+                Fleet
             ]
             activation = And [
                 Turn low = 10
@@ -96,7 +96,7 @@ UNOWNED_MOVE
             stackinggroup = "MONSTER_FLEET_MOVE_STACK"
             effects = SetDestination destination = And [
                 System
-                Not InSystem id = Source.SystemID
+                Not Object id = Source.SystemID
                 WithinStarlaneJumps jumps = 1 condition = Source
                 Not Contains Building name = "BLD_EXPERIMENTOR_OUTPOST"
             ]

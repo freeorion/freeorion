@@ -12,11 +12,8 @@ Special
     effectsgroups = [
         EffectsGroup
             scope = And [
+                OnPlanet id = Source.PlanetID
                 Building
-                ContainedBy And [
-                    Object id = Source.PlanetID
-                    Planet
-                ]
             ]
             effects = SetStealth value = Value + 10
 

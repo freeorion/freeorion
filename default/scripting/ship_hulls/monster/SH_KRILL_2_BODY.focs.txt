@@ -18,8 +18,8 @@ Hull
     effectsgroups = [
         EffectsGroup
             scope = And [
+                Object id = Source.SystemID
                 System
-                InSystem id = Source.SystemID
                 Number low = 2 high = 3 condition = And [
                     Ship
                     InSystem id = Source.SystemID
@@ -46,13 +46,13 @@ Hull
         EffectsGroup
             scope = And [
                 Number low = 2 condition = And [
-                    Ship
                     InSystem id = Source.SystemID
+                    Ship
                     DesignHasHull name = "SH_KRILL_2_BODY"
                 ]
                 NumberOf number = 2 condition = And [
-                    Ship
                     InSystem id = Source.SystemID
+                    Ship
                     DesignHasHull name = "SH_KRILL_2_BODY"
                 ]
             ]
@@ -97,9 +97,9 @@ Hull
 
         EffectsGroup
             scope = And [
+                Object id = Source.FleetID
                 Fleet
                 Stationary
-                Object id = Source.FleetID
             ]
             activation = Random probability = 0.70
             stackinggroup = "KRILL_2_ACTION_STACK"

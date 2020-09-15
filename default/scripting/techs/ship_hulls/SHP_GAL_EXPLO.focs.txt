@@ -9,40 +9,40 @@ Tech
     effectsgroups = [
         EffectsGroup
             scope = And [
-                OwnedBy empire = Source.Owner
                 Planet size = Tiny
+                OwnedBy empire = Source.Owner
             ]
             accountinglabel = "TINY_PLANET_LABEL"
             effects = SetMaxSupply value = Value + 2
 
         EffectsGroup
             scope = And [
-                OwnedBy empire = Source.Owner
                 Planet size = Small
+                OwnedBy empire = Source.Owner
             ]
             accountinglabel = "SMALL_PLANET_LABEL"
             effects = SetMaxSupply value = Value + 1
 
         EffectsGroup
             scope = And [
-                OwnedBy empire = Source.Owner
                 Planet size = Large
+                OwnedBy empire = Source.Owner
             ]
             accountinglabel = "LARGE_PLANET_LABEL"
             effects = SetMaxSupply value = Value - 1
 
         EffectsGroup
             scope = And [
-                OwnedBy empire = Source.Owner
                 Planet size = Huge
+                OwnedBy empire = Source.Owner
             ]
             accountinglabel = "HUGE_PLANET_LABEL"
             effects = SetMaxSupply value = Value - 2
 
         EffectsGroup
             scope = And [
-                OwnedBy empire = Source.Owner
                 Planet type = GasGiant
+                OwnedBy empire = Source.Owner
             ]
             accountinglabel = "GAS_GIANT_LABEL"
             effects = SetMaxSupply value = Value - 1

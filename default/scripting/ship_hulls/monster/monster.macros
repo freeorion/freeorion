@@ -22,7 +22,7 @@ MONSTER_MOVE_ALWAYS
             accountinglabel = "MONSTER_MOVE_ALWAYS_LABEL"
             effects = SetDestination destination = And [
                 System
-                Not InSystem id = Source.SystemID
+                Not Object id = Source.SystemID
                 WithinStarlaneJumps jumps = 1 condition = Source
                 Not Contains Building name = "BLD_EXPERIMENTOR_OUTPOST"
             ]
@@ -69,8 +69,8 @@ MONSTER_MOVE_POST
 HUNT_BUILDINGS
 '''EffectsGroup
             scope = And [
-                Fleet
                 Object id = Source.FleetID
+                Fleet
                 Number low = 1 condition = And [
                     System
                     Contains And [
@@ -105,8 +105,8 @@ HUNT_BUILDINGS
 HUNT_SHIPS
 '''EffectsGroup
             scope = And [
-                Fleet
                 Object id = Source.FleetID
+                Fleet
                 Number low = 1 condition = And [
                     Ship
                     OwnedBy affiliation = AnyEmpire
@@ -130,8 +130,8 @@ HUNT_SHIPS
 HUNT_PLANETS
 '''EffectsGroup
             scope = And [
-                Fleet
                 Object id = Source.FleetID
+                Fleet
                 Number low = 1 condition = And [
                     Planet
                     OwnedBy affiliation = AnyEmpire

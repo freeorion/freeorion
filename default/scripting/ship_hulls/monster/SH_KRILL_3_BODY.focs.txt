@@ -99,9 +99,9 @@ Hull
 
         EffectsGroup
             scope = And [
+                Object id = Source.FleetID
                 Fleet
                 Stationary
-                Object id = Source.FleetID
             ]
             activation = Random probability = 0.60
             stackinggroup = "KRILL_3_ACTION_STACK"

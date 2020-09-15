@@ -11,9 +11,9 @@ Part
     effectsgroups = [
         EffectsGroup    // players can order EMP used on enemies
             scope = And [
+                InSystem id = Source.SystemID
                 Planet
                 Species
-                InSystem id = Source.SystemID
                 OrderedBombardedBy condition = Source
                 Or [
                     OwnedBy affiliation = EnemyOf empire = Source.Owner
