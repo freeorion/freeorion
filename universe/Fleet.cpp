@@ -278,9 +278,11 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
     }
 
 
-    // get iterator pointing to std::shared_ptr<System> on route that is the first after where this fleet is currently.
-    // if this fleet is in a system, the iterator will point to the system after the current in the route
-    // if this fleet is not in a system, the iterator will point to the first system in the route
+    // get iterator pointing to std::shared_ptr<System> on route that is the
+    // first after where this fleet is currently. if this fleet is in a system,
+    // the iterator will point to the system after the current in the route
+    // if this fleet is not in a system, the iterator will point to the first
+    // system in the route
     auto route_it = route.begin();
     if (*route_it == SystemID())
         ++route_it;     // first system in route is current system of this fleet.  skip to the next system
@@ -289,9 +291,9 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
 
 
     // get current, previous and next systems of fleet
-    auto cur_system = Objects().get<System>(this->SystemID());          // may be 0
-    auto prev_system = Objects().get<System>(this->PreviousSystemID()); // may be 0 if this fleet is not moving or ordered to move
-    auto next_system = Objects().get<System>(*route_it);                // can't use this->NextSystemID() because this fleet may not be moving and may not have a next system. this might occur when a fleet is in a system, not ordered to move or ordered to move to a system, but a projected fleet move line is being calculated to a different system
+    auto cur_system = Objects().get<System>(this->SystemID()).get();            // may be 0
+    auto prev_system = Objects().get<System>(this->PreviousSystemID()).get();   // may be 0 if this fleet is not moving or ordered to move
+    auto next_system = Objects().get<System>(*route_it).get();                  // can't use this->NextSystemID() because this fleet may not be moving and may not have a next system. this might occur when a fleet is in a system, not ordered to move or ordered to move to a system, but a projected fleet move line is being calculated to a different system
     if (!next_system) {
         ErrorLogger() << "Fleet::MovePath couldn't get next system with id " << *route_it << " for fleet " << this->Name() << "(" << this->ID() << ")";
         return retval;
@@ -358,7 +360,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
 
         // Make sure that there actually still is a starlane between the two systems
         // we are between
-        std::shared_ptr<const System> prev_or_cur;
+        const System* prev_or_cur = nullptr;
         if (cur_system) {
             prev_or_cur = cur_system;
         } else if (prev_system) {
@@ -457,12 +459,13 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
             ++route_it;
             if (route_it != route.end()) {
                 // update next system on route and distance to it from current position
-                next_system = EmpireKnownObjects(this->Owner()).get<System>(*route_it);
+                next_system = EmpireKnownObjects(this->Owner()).get<System>(*route_it).get();
                 if (next_system) {
                     TraceLogger() << "Fleet::MovePath checking unrestriced lane travel from Sys("
                                   <<  cur_system->ID() << ") to Sys(" << (next_system && next_system->ID()) << ")";
-                    clear_exit = clear_exit || next_system->ID() == m_arrival_starlane ||
-                    (empire && empire->PreservedLaneTravel(cur_system->ID(), next_system->ID()));
+                    clear_exit = clear_exit
+                        || next_system->ID() == m_arrival_starlane
+                        || (empire && empire->PreservedLaneTravel(cur_system->ID(), next_system->ID()));
                 }
             }
             if (flag_blockades && !clear_exit) {
