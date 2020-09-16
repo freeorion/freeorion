@@ -151,7 +151,7 @@ protected:
     /** Evaluates the property for the specified objects. */
     void GetObjectPropertyValues(const ScriptingContext& context,
                                  const Condition::ObjectSet& objects,
-                                 std::map<std::shared_ptr<const UniverseObject>, V>& object_property_values) const;
+                                 std::vector<V>& object_property_values) const;
 
 private:
     StatisticType                         m_stat_type;
@@ -735,15 +735,16 @@ void Statistic<T, V>::GetConditionMatches(const ScriptingContext& context,
 template <typename T, typename V>
 void Statistic<T, V>::GetObjectPropertyValues(const ScriptingContext& context,
                                               const Condition::ObjectSet& objects,
-                                              std::map<std::shared_ptr<const UniverseObject>, V>& object_property_values) const
+                                              std::vector<V>& object_property_values) const
 {
     object_property_values.clear();
 
     if (m_value_ref) {
         // evaluate ValueRef with each condition match as the LocalCandidate
         // TODO: Can / should this be paralleized?
+        object_property_values.reserve(objects.size());
         for (auto& object : objects)
-            object_property_values.emplace(object, m_value_ref->Eval(ScriptingContext(context, object)));
+            object_property_values.emplace_back(m_value_ref->Eval(ScriptingContext(context, object)));
     }
 }
 
@@ -805,7 +806,7 @@ template <
     typename V,
     typename std::enable_if<std::is_arithmetic<T>::value && std::is_arithmetic<V>::value>::type* = nullptr
 >
-T ReduceData(StatisticType stat_type, std::map<std::shared_ptr<const UniverseObject>, V> object_property_values)
+T ReduceData(StatisticType stat_type, std::vector<V> object_property_values)
 {
     if (object_property_values.empty())
         return T(0);
@@ -830,7 +831,7 @@ T ReduceData(StatisticType stat_type, std::map<std::shared_ptr<const UniverseObj
             // how many unique values appear
             std::set<V> observed_values;
             for (const auto& entry : object_property_values)
-                observed_values.emplace(entry.second);
+                observed_values.emplace(entry);
 
             return T(observed_values.size());
             break;
@@ -840,7 +841,7 @@ T ReduceData(StatisticType stat_type, std::map<std::shared_ptr<const UniverseObj
             // number of times the most common value appears
             std::map<V, unsigned int> observed_values;
             for (const auto& entry : object_property_values)
-                observed_values[entry.second]++;
+                observed_values[std::move(entry)]++;
 
             auto max = std::max_element(observed_values.begin(), observed_values.end(),
                                         [](auto p1, auto p2) { return p1.second < p2.second; });
@@ -853,7 +854,7 @@ T ReduceData(StatisticType stat_type, std::map<std::shared_ptr<const UniverseObj
             // number of times the least common value appears
             std::map<V, unsigned int> observed_values;
             for (const auto& entry : object_property_values)
-                observed_values[entry.second]++;
+                observed_values[entry]++;
 
             auto min = std::min_element(observed_values.begin(), observed_values.end(),
                                         [](auto p1, auto p2) { return p1.second < p2.second; });
@@ -866,7 +867,7 @@ T ReduceData(StatisticType stat_type, std::map<std::shared_ptr<const UniverseObj
             // positive difference between the number of times the most and least common values appear
             std::map<V, unsigned int> observed_values;
             for (auto& entry : object_property_values)
-                observed_values[std::move(entry.second)]++;
+                observed_values[entry]++;
 
             auto minmax = std::minmax_element(observed_values.begin(), observed_values.end(),
                                               [](auto p1, auto p2) { return p1.second < p2.second; });
@@ -878,7 +879,7 @@ T ReduceData(StatisticType stat_type, std::map<std::shared_ptr<const UniverseObj
         case StatisticType::SUM: {
             V accumulator(0);
             for (const auto& entry : object_property_values)
-                accumulator += entry.second;
+                accumulator += entry;
 
             return static_cast<T>(accumulator);
             break;
@@ -887,7 +888,7 @@ T ReduceData(StatisticType stat_type, std::map<std::shared_ptr<const UniverseObj
         case StatisticType::MEAN: {
             V accumulator(0);
             for (const auto& entry : object_property_values)
-                accumulator += entry.second;
+                accumulator += entry;
 
             return static_cast<T>(accumulator) / static_cast<T>(object_property_values.size());
             break;
@@ -896,7 +897,7 @@ T ReduceData(StatisticType stat_type, std::map<std::shared_ptr<const UniverseObj
         case StatisticType::RMS: {
             V accumulator(0);
             for (const auto& entry : object_property_values)
-                accumulator += (entry.second * entry.second);
+                accumulator += (entry * entry);
 
             double tempval = static_cast<double>(accumulator) / object_property_values.size();
             return static_cast<T>(std::sqrt(tempval));
@@ -907,10 +908,10 @@ T ReduceData(StatisticType stat_type, std::map<std::shared_ptr<const UniverseObj
             // value that appears the most often
             std::map<V, unsigned int> observed_values;
             for (auto& entry : object_property_values)
-                observed_values[std::move(entry.second)]++;
+                observed_values[entry]++;
 
             auto max = std::max_element(observed_values.begin(), observed_values.end(),
-                                        [](auto p1, auto p2) { return p1.second < p2.second; });
+                                        [](auto p1, auto p2) { return p1 < p2; });
 
             return T(max->first);
             break;
@@ -918,25 +919,25 @@ T ReduceData(StatisticType stat_type, std::map<std::shared_ptr<const UniverseObj
 
         case StatisticType::MAX: {
             auto max = std::max_element(object_property_values.begin(), object_property_values.end(),
-                                        [](auto p1, auto p2) { return p1.second < p2.second; });
+                                        [](auto p1, auto p2) { return p1 < p2; });
 
-            return static_cast<T>(max->second);
+            return static_cast<T>(*max);
             break;
         }
 
         case StatisticType::MIN: {
             auto min = std::min_element(object_property_values.begin(), object_property_values.end(),
-                                        [](auto p1, auto p2) { return p1.second < p2.second; });
+                                        [](auto p1, auto p2) { return p1 < p2; });
 
-            return static_cast<T>(min->second);
+            return static_cast<T>(*min);
             break;
         }
 
         case StatisticType::SPREAD: {
             auto minmax = std::minmax_element(object_property_values.begin(), object_property_values.end(),
-                                              [](auto p1, auto p2) { return p1.second < p2.second; });
+                                              [](auto p1, auto p2) { return p1 < p2; });
 
-            return static_cast<T>(minmax.second->second - minmax.first->second);
+            return static_cast<T>(*minmax.second - *minmax.first);
             break;
         }
 
@@ -947,14 +948,14 @@ T ReduceData(StatisticType stat_type, std::map<std::shared_ptr<const UniverseObj
             // find sample mean
             double accumulator = 0.0;
             for (auto entry : object_property_values)
-                accumulator += static_cast<double>(entry.second);
+                accumulator += static_cast<double>(entry);
 
             double MEAN = accumulator / object_property_values.size();
 
             // find average of squared deviations from sample mean
-            accumulator = 0;
+            accumulator = 0.0;
             for (auto entry : object_property_values)
-                accumulator += (static_cast<double>(entry.second) - MEAN) * (static_cast<double>(entry.second) - MEAN);
+                accumulator += (static_cast<double>(entry) - MEAN) * (static_cast<double>(entry) - MEAN);
 
             double retval = accumulator / static_cast<double>(object_property_values.size() - 1.0);
             return static_cast<T>(std::sqrt(retval));
@@ -964,7 +965,7 @@ T ReduceData(StatisticType stat_type, std::map<std::shared_ptr<const UniverseObj
         case StatisticType::PRODUCT: {
             V accumulator(1);
             for (const auto& entry : object_property_values)
-                accumulator *= entry.second;
+                accumulator *= entry;
 
             return static_cast<T>(accumulator);
             break;
@@ -982,7 +983,7 @@ template <
     typename std::enable_if<std::is_enum<T>::value, T>::type* = nullptr,
     typename std::enable_if<std::is_same<T, V>::value>::type* = nullptr
 >
-T ReduceData(StatisticType stat_type, std::map<std::shared_ptr<const UniverseObject>, T> object_property_values)
+T ReduceData(StatisticType stat_type, std::vector<T> object_property_values)
 {
     if (object_property_values.empty())
         return T(0);
@@ -1003,7 +1004,7 @@ T ReduceData(StatisticType stat_type, std::map<std::shared_ptr<const UniverseObj
             // value that appears the most often
             std::map<T, unsigned int> observed_values;
             for (auto& entry : object_property_values)
-                observed_values[std::move(entry.second)]++;
+                observed_values[entry]++;
 
             auto max = std::max_element(observed_values.begin(), observed_values.end(),
                                         [](auto p1, auto p2) { return p1.second < p2.second; });
@@ -1023,7 +1024,7 @@ template <
     typename V,
     typename std::enable_if<std::is_arithmetic<T>::value, T>::type* = nullptr,
     typename std::enable_if<!std::is_arithmetic<V>::value, V>::type* = nullptr>
-T ReduceData(StatisticType stat_type, std::map<std::shared_ptr<const UniverseObject>, V> object_property_values)
+T ReduceData(StatisticType stat_type, std::vector<V> object_property_values)
 {
     if (object_property_values.empty())
         return T(0);
@@ -1050,8 +1051,8 @@ T ReduceData(StatisticType stat_type, std::map<std::shared_ptr<const UniverseObj
         case StatisticType::UNIQUE_COUNT: {
             // how many unique values appear
             std::set<V> observed_values;
-            for (const auto& entry : object_property_values)
-                observed_values.emplace(entry.second);
+            for (auto& entry : object_property_values)
+                observed_values.emplace(std::move(entry));
 
             return T(observed_values.size());
             break;
@@ -1060,8 +1061,8 @@ T ReduceData(StatisticType stat_type, std::map<std::shared_ptr<const UniverseObj
         case StatisticType::HISTO_MAX: {
             // number of times the most common value appears
             std::map<V, unsigned int> observed_values;
-            for (const auto& entry : object_property_values)
-                observed_values[entry.second]++;
+            for (auto& entry : object_property_values)
+                observed_values[std::move(entry)]++;
 
             auto max = std::max_element(observed_values.begin(), observed_values.end(),
                                         [](auto p1, auto p2) { return p1.second < p2.second; });
@@ -1073,8 +1074,8 @@ T ReduceData(StatisticType stat_type, std::map<std::shared_ptr<const UniverseObj
         case StatisticType::HISTO_MIN: {
             // number of times the least common value appears
             std::map<V, unsigned int> observed_values;
-            for (const auto& entry : object_property_values)
-                observed_values[entry.second]++;
+            for (auto& entry : object_property_values)
+                observed_values[std::move(entry)]++;
 
             auto min = std::min_element(observed_values.begin(), observed_values.end(),
                                         [](auto p1, auto p2) { return p1.second < p2.second; });
@@ -1087,7 +1088,7 @@ T ReduceData(StatisticType stat_type, std::map<std::shared_ptr<const UniverseObj
             // positive difference between the number of times the most and least common values appear
             std::map<V, unsigned int> observed_values;
             for (auto& entry : object_property_values)
-                observed_values[std::move(entry.second)]++;
+                observed_values[std::move(entry)]++;
 
             auto minmax = std::minmax_element(observed_values.begin(), observed_values.end(),
                                               [](auto p1, auto p2) { return p1.second < p2.second; });
@@ -1116,7 +1117,7 @@ T Statistic<T, V>::Eval(const ScriptingContext& context) const
         return condition_matches.empty() ? T(0) : T(1);
 
     // evaluate property for each condition-matched object
-    std::map<std::shared_ptr<const UniverseObject>, V> object_property_values;
+    std::vector<V> object_property_values;
     GetObjectPropertyValues(context, condition_matches, object_property_values);
 
     return ReduceData<T, V>(m_stat_type, std::move(object_property_values));

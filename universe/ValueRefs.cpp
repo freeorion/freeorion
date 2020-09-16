@@ -1265,13 +1265,13 @@ std::string Statistic<std::string, std::string>::Eval(const ScriptingContext& co
     }
 
     // evaluate property for each condition-matched object
-    std::map<std::shared_ptr<const UniverseObject>, std::string> object_property_values;
+    std::vector<std::string> object_property_values;
     GetObjectPropertyValues(context, condition_matches, object_property_values);
 
     // value that appears the most often
     std::map<std::string, unsigned int> observed_values;
     for (auto& entry : object_property_values)
-        observed_values[std::move(entry.second)]++;
+        observed_values[std::move(entry)]++;
 
     auto max = std::max_element(observed_values.begin(), observed_values.end(),
                                 [](auto p1, auto p2) { return p1.second < p2.second; });
