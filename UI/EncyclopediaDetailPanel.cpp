@@ -3029,7 +3029,7 @@ void EncyclopediaDetailPanel::HandleSearchTextEntered() {
             GG::Clr dummyC;
             std::weak_ptr<const ShipDesign> dummyD;
 
-            std::cout << "cat: " << article_category << "  key: " << article_key << "\n";
+            //std::cout << "cat: " << article_category << "  key: " << article_key << "\n";
             GetRefreshDetailPanelInfo(article_category, article_key,
                                       dummy3, dummy1, dummy2, dummyA, dummyB, dummy4,
                                       dummy5, dummy6, detailed_description, dummyC,
