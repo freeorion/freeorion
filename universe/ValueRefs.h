@@ -918,7 +918,7 @@ T ReduceData(StatisticType stat_type, std::map<std::shared_ptr<const UniverseObj
 
         case StatisticType::MAX: {
             auto max = std::max_element(object_property_values.begin(), object_property_values.end(),
-                                        [](auto p1, auto p2) { return p1.second < p1.second; });
+                                        [](auto p1, auto p2) { return p1.second < p2.second; });
 
             return static_cast<T>(max->second);
             break;
@@ -926,7 +926,7 @@ T ReduceData(StatisticType stat_type, std::map<std::shared_ptr<const UniverseObj
 
         case StatisticType::MIN: {
             auto min = std::min_element(object_property_values.begin(), object_property_values.end(),
-                                        [](auto p1, auto p2) { return p1.second < p1.second; });
+                                        [](auto p1, auto p2) { return p1.second < p2.second; });
 
             return static_cast<T>(min->second);
             break;
