@@ -74,7 +74,7 @@ endif()
 ## Collect project dependencies.
 ##
 
-set(MINIMUM_BOOST_VERSION 1.58.0)
+set(MINIMUM_BOOST_VERSION 1.60.0)
 
 find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS filesystem regex system REQUIRED)
 
