@@ -711,8 +711,8 @@ void OptionsWnd::CompleteConstruction() {
     BoolOption(current_page, 0, "save.auto.turn.multiplayer.start.enabled", UserString("OPTIONS_DB_AUTOSAVE_MULTIPLAYER_TURN_START"));
     IntOption(current_page,  0, "save.auto.turn.interval", UserString("OPTIONS_AUTOSAVE_TURNS_BETWEEN"));
     IntOption(current_page,  0, "save.auto.file.limit",     UserString("OPTIONS_AUTOSAVE_LIMIT"));
-    BoolOption(current_page, 0, "save.auto.initial.enabled", UserString("OPTIONS_DB_AUTOSAVE_GALAXY_CREATION"));
-    BoolOption(current_page, 0, "save.auto.exit.enabled",   UserString("OPTIONS_DB_AUTOSAVE_GAME_CLOSE"));
+    BoolOption(current_page, 0, "save.auto.initial.enabled", UserString("OPTIONS_AUTOSAVE_GALAXY_CREATION"));
+    BoolOption(current_page, 0, "save.auto.exit.enabled",   UserString("OPTIONS_AUTOSAVE_GAME_CLOSE"));
     PathDisplay(current_page, 0, UserString("OPTIONS_FOLDER_SAVE"), GetUserDataDir());
     m_tabs->SetCurrentWnd(0);
 

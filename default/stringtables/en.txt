@@ -3216,6 +3216,12 @@ Situation reports with errors
 OPTIONS_SHOW_IDS_AFTER_NAMES
 IDs after names
 
+OPTIONS_AUTOSAVE_GAME_CLOSE
+Enable autosave when resigning or closing game
+
+OPTIONS_AUTOSAVE_GALAXY_CREATION
+Enable autosave after the galaxy creation
+
 OPTIONS_EFFECT_ACCOUNTING
 Effect accounting
 
