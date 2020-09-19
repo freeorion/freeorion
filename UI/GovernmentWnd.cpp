@@ -537,6 +537,8 @@ void PoliciesListBox::HideAllCategories(bool refresh_list) {
         Populate();
 }
 
+using boost::placeholders::_1;
+using boost::placeholders::_2;
 
 //////////////////////////////////////////////////
 // GovernmentWnd::PolicyPalette                 //
