@@ -44,8 +44,10 @@ NamedValueRefManager::NamedValueRefManager() {
     s_instance = this;
 }
 
+namespace {
+// helper function for NamedValueRefManager::GetValueRef
 template <typename V>
-V* const NamedValueRefManager::GetValueRefImpl(std::map<NamedValueRefManager::key_type, std::unique_ptr<V>>& registry, const std::string& label, const std::string& name) /*const*/ {
+V* const GetValueRefImpl(std::map<NamedValueRefManager::key_type, std::unique_ptr<V>>& registry, const std::string& label, const std::string& name) /*const*/ {
     DebugLogger() << "NamedValueRefManager::GetValueRef look for registered " << label << " valueref for \"" << name << '"';
     TraceLogger() << "Number of registered " << label << " ValueRefs: " << registry.size();
     const auto it = registry.find(name);
@@ -54,24 +56,25 @@ V* const NamedValueRefManager::GetValueRefImpl(std::map<NamedValueRefManager::ke
     ErrorLogger() << "NamedValueRefManager::GetValueRef found no registered " << label << " valueref for \"" << name << '"';
     return nullptr;
 }
+}
 
 // default implementation - queries the untyped registry
 // will return nullptr if no such entry in the generic registry exists or if it has a different type than requested
 template <typename T>
 ValueRef::ValueRef<T>* const NamedValueRefManager::GetValueRef(const std::string& name) /*const*/ {
-    return dynamic_cast<ValueRef::ValueRef<T>*>(this->GetValueRefImpl(m_value_refs, "generic", name));
+    return dynamic_cast<ValueRef::ValueRef<T>*>(GetValueRefImpl(m_value_refs, "generic", name));
 }
 
 // int specialisation - queries the ValueRef<int> registry
 template <>
 ValueRef::ValueRef<int>* const NamedValueRefManager::GetValueRef(const std::string& name) /*const*/ {
-    return this->GetValueRefImpl(m_value_refs_int, "int", name);
+    return GetValueRefImpl(m_value_refs_int, "int", name);
 }
 
 // double specialisation - queries the ValueRef<double> registry
 template <>
 ValueRef::ValueRef<double>* const NamedValueRefManager::GetValueRef(const std::string& name) /*const*/ {
-    return this->GetValueRefImpl(m_value_refs_double, "double", name);
+    return GetValueRefImpl(m_value_refs_double, "double", name);
 }
 
 ValueRef::ValueRefBase* const NamedValueRefManager::GetValueRefBase(const std::string& name) const {
@@ -105,8 +108,7 @@ unsigned int NamedValueRefManager::GetCheckSum() const {
         CheckSums::CheckSumCombine(retval, name_type_pair);
     for (auto const& name_type_pair : m_value_refs_double)
         CheckSums::CheckSumCombine(retval, name_type_pair);
-    //CheckSums::CheckSumCombine(retval, m_value_refs.size()); // why also add size?
-    
+
     DebugLogger() << "NamedValueRefManager checksum: " << retval;
     return retval;
 }
@@ -125,12 +127,14 @@ NamedValueRefManager::any_container_type  NamedValueRefManager::GetItems() const
     return aet;
 }
 
+namespace {
+/** helper function for NamedValueRefManager::RegisterValueRef */
 template <typename R, typename VR>
-void NamedValueRefManager::RegisterValueRefImpl(R& container, std::mutex& mutex, const std::string& label, std::string&& valueref_name, std::unique_ptr<VR>&& vref) {
+void RegisterValueRefImpl(R& container, std::mutex& mutex, const std::string& label, std::string&& valueref_name, std::unique_ptr<VR>&& vref) {
     InfoLogger() << "Register " << label << " valueref for " << valueref_name << ": " << vref->Description();
     if (container.count(valueref_name)>0) {
         DebugLogger() << "Skip registration for already registered " << label << " valueref for " << valueref_name;
-        DebugLogger() << "Number of registered " << label << " ValueRefs: " << m_value_refs.size();
+        DebugLogger() << "Number of registered " << label << " ValueRefs: " << container.size();
         return;
     }
     const std::lock_guard<std::mutex> lock(mutex);
@@ -139,22 +143,23 @@ void NamedValueRefManager::RegisterValueRefImpl(R& container, std::mutex& mutex,
     container.emplace(std::move(valueref_name), std::move(vref));
     DebugLogger() << "Number of registered " << label << " ValueRefs: " << container.size();
 }
+}
 
 template <typename T>
 void NamedValueRefManager::RegisterValueRef(std::string&& valueref_name, std::unique_ptr<ValueRef::ValueRef<T>>&& vref) {
-    this->RegisterValueRefImpl(m_value_refs, m_value_refs_mutex, "generic", std::move(valueref_name), std::move(vref));
+    RegisterValueRefImpl(m_value_refs, m_value_refs_mutex, "generic", std::move(valueref_name), std::move(vref));
 }
 
 // specialisation for registering to the ValueRef<int> registry
 template <>
 void NamedValueRefManager::RegisterValueRef(std::string&& valueref_name, std::unique_ptr<ValueRef::ValueRef<int>>&& vref) {
-    this->RegisterValueRefImpl(m_value_refs_int, m_value_refs_int_mutex, "int", std::move(valueref_name), std::move(vref));
+    RegisterValueRefImpl(m_value_refs_int, m_value_refs_int_mutex, "int", std::move(valueref_name), std::move(vref));
 }
 
 // specialisation for registering to the ValueRef<double> registry
 template <>
 void NamedValueRefManager::RegisterValueRef(std::string&& valueref_name, std::unique_ptr<ValueRef::ValueRef<double>>&& vref) {
-    this->RegisterValueRefImpl(m_value_refs_double, m_value_refs_double_mutex, "double", std::move(valueref_name), std::move(vref));
+    RegisterValueRefImpl(m_value_refs_double, m_value_refs_double_mutex, "double", std::move(valueref_name), std::move(vref));
 }
 
 NamedValueRefManager& GetNamedValueRefManager()

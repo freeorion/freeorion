@@ -1,10 +1,7 @@
 #ifndef _ValueRefManager_h_
 #define _ValueRefManager_h_
 
-//#include <mutex>
 #include "ValueRef.h"
-//#include "ScriptingContext.h"
-//#include "../util/Export.h"
 
 /** The NamedRef class. Looks up a named ValueRef from the NamedValueRefManager
   */
@@ -96,14 +93,6 @@ public:
 private:
     NamedValueRefManager();
 
-    /** helper function for GetValueRef */
-    template <typename V>
-    V* const GetValueRefImpl(std::map<key_type, std::unique_ptr<V>>& registry, const std::string& label, const std::string& name);
-
-    /** helper function for RegisterValueRef */
-    template <typename R, typename VR>
-    void RegisterValueRefImpl(R& registry, std::mutex& mutex, const std::string& label, std::string&& valueref_name, std::unique_ptr<VR>&& vref);
-
     //! Map of ValueRef%s identified by a name and mutexes for those to allow asynchronous registration
     double_container_type m_value_refs_double; // int value refs
     std::mutex            m_value_refs_double_mutex;
@@ -124,6 +113,8 @@ FO_COMMON_API auto GetNamedValueRefManager() -> NamedValueRefManager&;
 //! @p name.  If no such ValueRef exists, nullptr is returned instead.
 FO_COMMON_API auto GetValueRefBase(const std::string& name) -> ValueRef::ValueRefBase* const;
 
+//! Returns the ValueRef object registered with the given
+//! @p name in the registry matching the given type T.  If no such ValueRef exists, nullptr is returned instead.
 template <typename T>
 FO_COMMON_API auto GetValueRef(const std::string& name) -> ValueRef::ValueRef<T>* const;
 
