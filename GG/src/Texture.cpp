@@ -24,7 +24,9 @@
 #  include <boost/gil/extension/io/png.hpp>
 # endif
 #endif
-#if BOOST_VERSION >= 107000
+#if BOOST_VERSION >= 107400
+#include <boost/variant2/variant.hpp>
+#elif BOOST_VERSION >= 107000
 #include <boost/variant/get.hpp>
 #endif
 #include <GG/GLClientAndServerBuffer.h>
@@ -216,18 +218,24 @@ void Texture::Load(const boost::filesystem::path& path, bool mipmap/* = false*/)
     static_assert(sizeof(gil::rgb8_pixel_t) == 3, "rgb8 pixel type does not match expected type size");
     static_assert(sizeof(gil::rgba8_pixel_t) == 4, "rgba8 pixel type does not match expected type size");
 
-#ifdef BOOST_GIL_USES_MP11
-    typedef boost::mp11::mp_list<
+#if BOOST_VERSION >= 107400
+    typedef gil::any_image<gil::gray8_image_t,
+        gil::gray_alpha8_image_t,
+        gil::rgb8_image_t,
+        gil::rgba8_image_t> ImageType;
 #else
+# ifdef BOOST_GIL_USES_MP11
+    typedef boost::mp11::mp_list<
+# else
     typedef boost::mpl::vector4<
-#endif
+# endif
         gil::gray8_image_t,
         gil::gray_alpha8_image_t,
         gil::rgb8_image_t,
         gil::rgba8_image_t
     > ImageTypes;
     typedef gil::any_image<ImageTypes> ImageType;
-
+#endif
     if (!fs::exists(path))
         throw BadFile("Texture file \"" + filename + "\" does not exist");
     if (!fs::is_regular_file(path))
@@ -274,7 +282,14 @@ void Texture::Load(const boost::filesystem::path& path, bool mipmap/* = false*/)
     m_default_height = Y(image.height());
     m_type = GL_UNSIGNED_BYTE;
 
-#if BOOST_VERSION >= 107000
+#if BOOST_VERSION >= 107400
+#define IF_IMAGE_TYPE_IS(image_prefix)                                  \
+    if (boost::variant2::get_if<image_prefix ## _image_t>(&image)) {    \
+        m_bytes_pp = sizeof(image_prefix ## _pixel_t);                  \
+        image_data = interleaved_view_get_raw_data(                     \
+            const_view(boost::variant2::get<image_prefix ## _image_t>(image))); \
+    }
+#elif BOOST_VERSION >= 107000
 #define IF_IMAGE_TYPE_IS(image_prefix)                                  \
     if (boost::get<image_prefix ## _image_t>(&image)) {                 \
         m_bytes_pp = sizeof(image_prefix ## _pixel_t);                  \
