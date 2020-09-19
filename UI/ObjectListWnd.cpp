@@ -1907,9 +1907,9 @@ public:
         m_header_row->ColumnsChangedSignal.connect(
             boost::bind(&ObjectListBox::Refresh, this));
         m_header_row->ColumnHeaderLeftClickSignal.connect(
-            boost::bind(&ObjectListBox::SortingClicked, this, _1));
+            boost::bind(&ObjectListBox::SortingClicked, this, boost::placeholders::_1));
         m_obj_deleted_connection = GetUniverse().UniverseObjectDeleteSignal.connect(
-            boost::bind(&ObjectListBox::UniverseObjectDeleted, this, _1));
+            boost::bind(&ObjectListBox::UniverseObjectDeleted, this, boost::placeholders::_1));
     }
 
     virtual ~ObjectListBox()
