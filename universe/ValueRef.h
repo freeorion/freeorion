@@ -19,6 +19,7 @@ struct FO_COMMON_API ValueRefBase {
     virtual bool SimpleIncrement() const         { return false; }
     virtual bool ConstantExpr() const            { return false; }
 
+    std::string InvariancePattern() const;
     virtual std::string Description() const = 0;                    //! Returns a user-readable text description of this ValueRef
     virtual std::string EvalAsString() const = 0;                   //! Returns a textual representation of the evaluation result  with an empty/default context
     virtual std::string Dump(unsigned short ntabs = 0) const = 0;   //! Returns a textual representation that should be parseable to recreate this ValueRef

@@ -510,7 +510,7 @@ namespace {
                 sorted_entries_list.emplace(
                     entry.first,
                     std::make_pair(entry.first + pre + LinkTaggedPresetText(VarText::FOCS_VALUE_TAG, entry.first, vref.Description()) +
-                                   " '" + UserString(entry.first)  + "'\n", dir_name));
+                                   " '" + UserString(entry.first) + "' " + vref.InvariancePattern() + "\n", dir_name));
             }
 
         }

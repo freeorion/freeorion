@@ -258,7 +258,12 @@ typename std::enable_if<std::is_enum<T>::value, std::string>::type to_string(T v
 }
 
 namespace ValueRef {
-    
+    std::string ValueRefBase::InvariancePattern() const {
+        return std::string(RootCandidateInvariant()?"R":"r") + (LocalCandidateInvariant()?"L":"l")
+            + (SourceInvariant()?"S":"s") + (TargetInvariant()?"T":"t")
+            + (SimpleIncrement()?"I":"i") + (ConstantExpr()?"C":"c");
+    }
+
 // enums and arithmetics
 template <typename T>
 std::string ValueRef<T>::EvalAsString() const {

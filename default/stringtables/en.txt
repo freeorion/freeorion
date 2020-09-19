@@ -5024,7 +5024,7 @@ ENC_NAMED_VALUE_REF
 ENC_NAMED_VALUE_REF_DESC
 '''Some value calculations get named so the resulting values can be used in the pedia or by the AI empires. This is often used to present values which depend on game rules.
 
-The following values show the name, the registration type (int/real/any), the calculated value, (the calculation), and 'the stringtable description for the calculation'.
+The following values show the name, the registration type (int/real/any), the calculated value, (the calculation), 'the stringtable description for the calculation', and the invariance pattern.
 '''
 
 ENC_SPECIES
