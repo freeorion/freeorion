@@ -9,6 +9,7 @@
 #include <type_traits>
 #include <vector>
 #include <boost/range/adaptor/map.hpp>
+#include <boost/range/algorithm/count_if.hpp>
 #include <boost/range/any_range.hpp>
 #include <boost/range/size.hpp>
 #include "../util/Export.h"
@@ -81,6 +82,18 @@ public:
     /** Returns all the objects that match \a visitor */
     template <typename T = UniverseObject>
     std::vector<std::shared_ptr<T>> find(const UniverseObjectVisitor& visitor);
+
+    /** Returns IDs of all the objects that match \a visitor */
+    template <typename T = UniverseObject>
+    std::vector<int> findIDs(const UniverseObjectVisitor& visitor) const;
+
+    /** Returns how many objects match \a visitor */
+    template <typename T = UniverseObject>
+    int count(const UniverseObjectVisitor& visitor) const;
+
+    /** Returns true iff any object matches \a visitor */
+    template <typename T = UniverseObject>
+    bool check_if_any(const UniverseObjectVisitor& visitor) const;
 
     /** Returns all the objects of type T */
     template <typename T = UniverseObject>
@@ -292,6 +305,43 @@ std::vector<std::shared_ptr<T>> ObjectMap::find(const UniverseObjectVisitor& vis
             result.emplace_back(entry.second);
     }
     return result;
+}
+
+template <typename T>
+std::vector<int> ObjectMap::findIDs(const UniverseObjectVisitor& visitor) const
+{
+    std::vector<int> result;
+    typedef typename std::remove_const<T>::type mutableT;
+    result.reserve(size<mutableT>());
+    for (const auto& entry : Map<mutableT>()) {
+        if (entry.second->Accept(visitor))
+            result.emplace_back(entry.first);
+    }
+    return result;
+}
+
+template <typename T>
+int ObjectMap::count(const UniverseObjectVisitor& visitor) const
+{
+    typedef typename std::remove_const<T>::type mutableT;
+    // TODO: use std::count_if when switching to C++17
+    return boost::range::count_if(Map<mutableT>(),
+                                  [&visitor](const auto& entry) { return entry.second->Accept(visitor); });
+    /*
+    int retval = 0;
+    for (const auto& entry : Map<mutableT>())
+        retval += (entry.second->Accept(visitor) ? 1 : 0);
+    return retval;
+    */
+}
+
+/** Returns true iff no objects match \a visitor */
+template <typename T>
+bool ObjectMap::check_if_any(const UniverseObjectVisitor& visitor) const
+{
+    typedef typename std::remove_const<T>::type mutableT;
+    return std::any_of(Map<mutableT>().begin(), Map<mutableT>().end(),
+                       [&visitor](const auto& entry) { return entry.second->Accept(visitor); });
 }
 
 template <typename T>
