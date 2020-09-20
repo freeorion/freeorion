@@ -1681,26 +1681,29 @@ namespace {
         if (!empire_planets.empty()) {
             detailed_description += "\n\n" + UserString("OWNED_PLANETS");
             for (auto& obj : empire_planets) {
-                detailed_description += LinkTaggedIDText(VarText::PLANET_ID_TAG, obj->ID(), obj->PublicName(client_empire_id)) + "  ";
+                detailed_description += LinkTaggedIDText(VarText::PLANET_ID_TAG, obj->ID(),
+                                                         obj->PublicName(client_empire_id)) + "  ";
             }
         } else {
             detailed_description += "\n\n" + UserString("NO_OWNED_PLANETS_KNOWN");
         }
 
         // Fleets
-        std::vector<std::shared_ptr<const UniverseObject>> nonempty_empire_fleets;
-        for (const auto& fleet : Objects().find<Fleet>(OwnedVisitor(empire_id))) {
+        std::vector<const Fleet*> nonempty_empire_fleets;
+        auto&& empire_owned_fleets{Objects().find<Fleet>(OwnedVisitor(empire_id))};
+        nonempty_empire_fleets.reserve(empire_owned_fleets.size());
+        for (const auto& fleet : empire_owned_fleets) {
             if (!fleet->Empty())
-                nonempty_empire_fleets.push_back(fleet);
+                nonempty_empire_fleets.emplace_back(fleet.get());
         }
         if (!nonempty_empire_fleets.empty()) {
             detailed_description += "\n\n" + UserString("OWNED_FLEETS") + "\n";
-            for (auto& obj : nonempty_empire_fleets) {
-                std::string fleet_link = LinkTaggedIDText(VarText::FLEET_ID_TAG, obj->ID(), obj->PublicName(client_empire_id));
-                std::string system_link;
-                if (auto system = Objects().get<System>(obj->SystemID())) {
-                    std::string sys_name = system->ApparentName(client_empire_id);
-                    system_link = LinkTaggedIDText(VarText::SYSTEM_ID_TAG, system->ID(), sys_name);
+            for (auto* obj : nonempty_empire_fleets) {
+                auto&& fleet_link = LinkTaggedIDText(VarText::FLEET_ID_TAG, obj->ID(),
+                                                     obj->PublicName(client_empire_id));
+                if (auto system = Objects().get<System>(obj->SystemID()).get()) {
+                    auto& sys_name = system->ApparentName(client_empire_id);
+                    auto&& system_link = LinkTaggedIDText(VarText::SYSTEM_ID_TAG, system->ID(), sys_name);
                     detailed_description += str(FlexibleFormat(UserString("OWNED_FLEET_AT_SYSTEM"))
                                             % fleet_link % system_link);
                 } else {
@@ -1713,8 +1716,8 @@ namespace {
         }
 
         // Issued orders this turn
-        detailed_description += "\n\n" + UserString("ISSUED_ORDERS") + "\n" +
-                                HumanClientApp::GetApp()->Orders().Dump();
+        detailed_description += "\n\n" + UserString("ISSUED_ORDERS") + "\n"
+                             + HumanClientApp::GetApp()->Orders().Dump();
 
         // Techs
         auto techs = empire->ResearchedTechs();
