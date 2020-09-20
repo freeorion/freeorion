@@ -4,13 +4,14 @@ Changelog
 Notable changes to the FreeOrion project will be documented in this file.
 
 
-[v0.4.10.1] - 2020-09-13
+[v0.4.10.1] - 2020-09-25
 -----------------------
 
 #### Bug Fixes / Improvements
 
 - Improved info displayed for average/total fighter damage
 - Fixed Experimentors sitrep about spotted monsters
+- Fixed Bio-Adaptive hull regeneration description
 - Fix: apply damage scaling rule to species bonus for main line weapons and fighters
 - Fix: don't make planetary max shield meter effects depend on combat conditions in system
 - AI: determine colony ship build time and build cost from available parts, prevent miscalculating build time when calculating colonization priority
@@ -20,6 +21,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Fixed build error when trying to build without the local git repository folder present in the source root directory
 - Fixed build errors with "headless" build
 - Fixed build errors with certain boost versions
+- Raised minimum Boost version to 1.60
 
 
 [v0.4.10] - 2020-07-10
