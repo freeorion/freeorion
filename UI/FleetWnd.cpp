@@ -283,13 +283,13 @@ namespace {
         if (client_empire_id == ALL_EMPIRES)
             return;
 
-        auto target_fleet = Objects().get<Fleet>(fleet_id);
+        auto target_fleet = Objects().get<Fleet>(fleet_id).get();
         if (!target_fleet) {
             ErrorLogger() << "MergeFleetsIntoFleet couldn't get a fleet with id " << fleet_id;
             return;
         }
 
-        auto system = Objects().get<System>(target_fleet->SystemID());
+        auto system = Objects().get<System>(target_fleet->SystemID()).get();
         if (!system) {
             ErrorLogger() << "MergeFleetsIntoFleet couldn't get system for the target fleet";
             return;
@@ -302,8 +302,6 @@ namespace {
         std::vector<std::shared_ptr<Fleet>> all_system_fleets(Objects().find<Fleet>(system->FleetIDs()));
         std::vector<int> empire_system_fleet_ids;
         empire_system_fleet_ids.reserve(all_system_fleets.size());
-        std::vector<std::shared_ptr<Fleet>> empire_system_fleets;
-        empire_system_fleets.reserve(all_system_fleets.size());
         std::vector<int> empire_system_ship_ids;
         empire_system_ship_ids.reserve(all_system_fleets.size());   // probably an underesitmate
 
@@ -317,7 +315,6 @@ namespace {
             empire_system_ship_ids.insert(empire_system_ship_ids.end(),
                                           fleet_ships.begin(), fleet_ships.end());
             empire_system_fleet_ids.push_back(fleet->ID());
-            empire_system_fleets.emplace_back(std::move(fleet));
         }
 
 
@@ -802,10 +799,9 @@ namespace {
 
         // name and design name update
         const std::string& ship_name = ship->PublicName(empire_id);
-        std::string id_name_part;
-        if (GetOptionsDB().Get<bool>("ui.name.id.shown")) {
-            id_name_part = " (" + std::to_string(m_ship_id) + ")";
-        }
+        std::string id_name_part{GetOptionsDB().Get<bool>("ui.name.id.shown")
+            ? " (" + std::to_string(m_ship_id) + ")"
+            : ""};
         if (!ship->Unowned() && ship_name == UserString("FW_FOREIGN_SHIP")) {
             const Empire* ship_owner_empire = GetEmpire(ship->Owner());
             const std::string& owner_name = (ship_owner_empire ? ship_owner_empire->Name() : UserString("FW_FOREIGN"));
@@ -815,14 +811,13 @@ namespace {
         }
 
         if (m_design_name_text) {
-            std::string design_name = UserString("FW_UNKNOWN_DESIGN_NAME");
-            if (const ShipDesign* design = ship->Design())
-                design_name = design->Name();
-            const std::string& species_name = ship->SpeciesName();
+            const ShipDesign* design = ship->Design();
+            auto& design_name = design ? design->Name() : UserString("FW_UNKNOWN_DESIGN_NAME");
+            auto& species_name = UserString(ship->SpeciesName());
             if (!species_name.empty()) {
                 m_design_name_text->SetText(boost::io::str(FlexibleFormat(UserString("FW_SPECIES_SHIP_DESIGN_LABEL")) %
                                                            design_name %
-                                                           UserString(species_name)));
+                                                           species_name));
             } else {
                 m_design_name_text->SetText(std::move(design_name));
             }
@@ -1480,7 +1475,7 @@ void FleetDataPanel::RefreshStateChangedSignals() {
     for (auto& connection : m_ship_connections)
         connection.disconnect();
 
-    auto fleet = Objects().get<Fleet>(m_fleet_id);
+    auto fleet = Objects().get<Fleet>(m_fleet_id).get();
     if (!fleet)
         return;
 
@@ -3063,7 +3058,7 @@ void FleetWnd::Refresh() {
         m_new_fleet_drop_target->SetSystemID(m_system_id);
 
     // If the location is a system add in any ships from m_empire_id that are in the system.
-    if (auto system = Objects().get<System>(m_system_id)) {
+    if (auto system = Objects().get<System>(m_system_id).get()) {
         m_fleet_ids.clear();
         // get fleets to show from system, based on required ownership
         for (auto& fleet : Objects().find<Fleet>(system->FleetIDs())) {
