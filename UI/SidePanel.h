@@ -158,9 +158,4 @@ private:
     static std::map<int, boost::signals2::connection> s_fleet_state_change_signals;
 };
 
-std::shared_ptr<const Ship> ValidSelectedColonyShip(int system_id);
-
-int                         AutomaticallyChosenColonyShip(int target_planet_id);
-
-
 #endif
