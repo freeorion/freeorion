@@ -146,6 +146,52 @@ jobs:
         - cmake -DBUILD_HEADLESS=ON -DBUILD_TESTING=ON ..
         - cmake --build . -- -j 2
 
+    - name: Build FreeOrion on Ubunutu 16.04 (Xenial)
+      stage: build
+      os: linux
+      dist: xenial
+      language: cpp
+      cache: ccache
+      env:
+        - CACHE_NAME=linux-full-xenial
+        - CMAKE_BUILD_PARALLEL_LEVEL=2
+      before_install:
+        # timeout before Travis kills jobs so that ccache is always at least partially populated
+        - >
+          function cmake {
+              timeout 45m cmake $@
+          }
+      install:
+        # The build cache for a full project build currently packs around 340M
+        # in combination wit a bug in ccache before 3.4.2 prematurely cleaned
+        # the cache if it was filled up to 80%.  Therefor raise the cache size
+        # to 500MB
+        - ccache --set-config=max_size=500M --set-config=sloppiness=file_macro
+        - ccache --zero-stats
+        - >
+          sudo apt-get install --assume-yes
+          libboost1.58-all-dev
+          libglew-dev
+          libogg-dev
+          libopenal-dev
+          libsdl2-dev
+          libvorbis-dev
+          cppcheck
+          doxygen
+          python3-pip
+        - python3 -m pip install flake8==3.7.9
+      before_script:
+        - mkdir build
+        - cd build
+      script:
+        - cmake -DBUILD_TESTING=ON ..
+        - cmake --build .
+      after_success:
+        - cmake --build . --config Release --target unittest
+      before_cache:
+        - ccache --cleanup
+        - ccache --show-stats
+
     - name: Build FreeOrion on MacOS 10.12
       <<: *_build_cpp_common
       os: osx
