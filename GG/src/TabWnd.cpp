@@ -158,8 +158,13 @@ void TabWnd::CompleteConstruction()
     layout->Add(m_tab_bar, 0, 0);
     layout->Add(m_overlay, 1, 0);
     SetLayout(std::move(layout));
+
+#if BOOST_VERSION >= 106000
+    using boost::placeholders::_1;
+#endif
+
     m_tab_bar->TabChangedSignal.connect(
-        boost::bind(&TabWnd::TabChanged, this, boost::placeholders::_1, true));
+        boost::bind(&TabWnd::TabChanged, this, _1, true));
 
     if (INSTRUMENT_ALL_SIGNALS)
         TabChangedSignal.connect(TabChangedEcho("TabWnd::TabChangedSignal"));
@@ -279,7 +284,11 @@ void TabBar::CompleteConstruction()
     AttachChild(m_tabs);
     AttachChild(m_left_right_button_layout);
 
-    m_tabs->ButtonChangedSignal.connect(boost::bind(&TabBar::TabChanged, this, boost::placeholders::_1, true));
+#if BOOST_VERSION >= 106000
+    using boost::placeholders::_1;
+#endif
+
+    m_tabs->ButtonChangedSignal.connect(boost::bind(&TabBar::TabChanged, this, _1, true));
     m_left_button->LeftPressedSignal.connect(boost::bind(&TabBar::LeftClicked, this));
     m_right_button->LeftPressedSignal.connect(boost::bind(&TabBar::RightClicked, this));
 

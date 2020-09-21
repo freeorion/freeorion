@@ -75,9 +75,14 @@ void ScrollPanel::CompleteConstruction()
     AttachChild(m_vscroll);
     AttachChild(m_content);
 
-    namespace ph = boost::placeholders;
+#if BOOST_VERSION >= 106000
+    using boost::placeholders::_1;
+    using boost::placeholders::_2;
+    using boost::placeholders::_3;
+    using boost::placeholders::_4;
+#endif
 
-    m_vscroll->ScrolledSignal.connect(boost::bind(&ScrollPanel::OnScrolled, this, ph::_1, ph::_2, ph::_3, ph::_4));
+    m_vscroll->ScrolledSignal.connect(boost::bind(&ScrollPanel::OnScrolled, this, _1, _2, _3, _4));
 
     DoLayout();
 }

@@ -719,9 +719,11 @@ void SaveFileDialog::Init() {
 
     SetLayout(m_layout);
 
+#if BOOST_VERSION >= 106000
     using boost::placeholders::_1;
     using boost::placeholders::_2;
     using boost::placeholders::_3;
+#endif
 
     m_confirm_btn->LeftClickedSignal.connect(boost::bind(&SaveFileDialog::Confirm, this));
     cancel_btn->LeftClickedSignal.connect(boost::bind(&SaveFileDialog::Cancel, this));

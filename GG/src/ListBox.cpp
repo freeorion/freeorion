@@ -1897,11 +1897,14 @@ ListBox::iterator ListBox::Insert(std::shared_ptr<Row> row, iterator it, bool dr
         std::advance(original_dropped_position, original_dropped_offset);
     }
 
+#if BOOST_VERSION >= 106000
+    using boost::placeholders::_1;
+    using boost::placeholders::_2;
+#endif
+
     row->Hide();
     row->Resize(Pt(std::max(ClientWidth(), X(1)), row->Height()));
-    row->RightClickedSignal.connect(
-        boost::bind(&ListBox::HandleRowRightClicked, this,
-                    boost::placeholders::_1, boost::placeholders::_2));
+    row->RightClickedSignal.connect(boost::bind(&ListBox::HandleRowRightClicked, this, _1, _2));
 
     AfterInsertRowSignal(it);
     if (dropped)
@@ -2056,12 +2059,17 @@ ListBox::Row& ListBox::ColHeaders()
 
 void ListBox::ConnectSignals()
 {
-    namespace ph = boost::placeholders;
+#if BOOST_VERSION >= 106000
+    using boost::placeholders::_1;
+    using boost::placeholders::_2;
+    using boost::placeholders::_3;
+    using boost::placeholders::_4;
+#endif
 
     if (m_vscroll)
-        m_vscroll->ScrolledSignal.connect(boost::bind(&ListBox::VScrolled, this, ph::_1, ph::_2, ph::_3, ph::_4));
+        m_vscroll->ScrolledSignal.connect(boost::bind(&ListBox::VScrolled, this, _1, _2, _3, _4));
     if (m_hscroll)
-        m_hscroll->ScrolledSignal.connect(boost::bind(&ListBox::HScrolled, this, ph::_1, ph::_2, ph::_3, ph::_4));
+        m_hscroll->ScrolledSignal.connect(boost::bind(&ListBox::HScrolled, this, _1, _2, _3, _4));
 }
 
 void ListBox::ValidateStyle()
@@ -2181,10 +2189,15 @@ std::pair<bool, bool> ListBox::AddOrRemoveScrolls(
         m_vscroll->MoveTo(Pt(cl_sz.x - SCROLL_WIDTH, Y0));
         m_vscroll->Resize(Pt(X(SCROLL_WIDTH), cl_sz.y - (horizontal_needed ? SCROLL_WIDTH : 0)));
 
-        namespace ph = boost::placeholders;
+#if BOOST_VERSION >= 106000
+        using boost::placeholders::_1;
+        using boost::placeholders::_2;
+        using boost::placeholders::_3;
+        using boost::placeholders::_4;
+#endif
 
         AttachChild(m_vscroll);
-        m_vscroll->ScrolledSignal.connect(boost::bind(&ListBox::VScrolled, this, ph::_1, ph::_2, ph::_3, ph::_4));
+        m_vscroll->ScrolledSignal.connect(boost::bind(&ListBox::VScrolled, this, _1, _2, _3, _4));
     }
 
     if (vertical_needed) {
@@ -2231,10 +2244,15 @@ std::pair<bool, bool> ListBox::AddOrRemoveScrolls(
         m_hscroll->MoveTo(Pt(X0, cl_sz.y - SCROLL_WIDTH));
         m_hscroll->Resize(Pt(cl_sz.x - (vertical_needed ? SCROLL_WIDTH : 0), Y(SCROLL_WIDTH)));
 
-        namespace ph = boost::placeholders;
+#if BOOST_VERSION >= 106000
+        using boost::placeholders::_1;
+        using boost::placeholders::_2;
+        using boost::placeholders::_3;
+        using boost::placeholders::_4;
+#endif
 
         AttachChild(m_hscroll);
-        m_hscroll->ScrolledSignal.connect(boost::bind(&ListBox::HScrolled, this, ph::_1, ph::_2, ph::_3, ph::_4));
+        m_hscroll->ScrolledSignal.connect(boost::bind(&ListBox::HScrolled, this, _1, _2, _3, _4));
     }
 
     if (horizontal_needed) {
@@ -2390,7 +2408,7 @@ void ListBox::ClickAtRow(iterator it, Flags<ModKey> mod_keys)
             if (m_caret == m_rows.end()) {
                 // No previous caret exists; mark the first row as the caret.
                 m_caret = m_rows.begin();
-            } 
+            }
             // select all rows between the caret and this row (inclusive), don't move the caret
             iterator low  = RowPtrIteratorLess()(m_caret, it) ? m_caret : it;
             iterator high = RowPtrIteratorLess()(m_caret, it) ? it : m_caret;

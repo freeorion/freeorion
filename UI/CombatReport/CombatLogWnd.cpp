@@ -425,13 +425,18 @@ namespace {
                     boost::bind(&LazyScrollerLinkText::HandleMaybeVisible, this)));
             }
 
-            namespace ph = boost::placeholders;
+#if BOOST_VERSION >= 106000
+            using boost::placeholders::_1;
+            using boost::placeholders::_2;
+            using boost::placeholders::_3;
+            using boost::placeholders::_4;
+#endif
 
             if (const auto* scroll_panel = FindParentOfType<GG::ScrollPanel>(&parent)) {
                 const auto* scroll = scroll_panel->GetScroll();
                 m_signals.push_back(scroll->ScrolledAndStoppedSignal.connect(
                     boost::bind(&LazyScrollerLinkText::HandleScrolledAndStopped,
-                              this, ph::_1, ph::_2, ph::_3, ph::_4)));
+                              this, _1, _2, _3, _4)));
             }
 
             // Parent doesn't contain any of the expected parents so just

@@ -320,11 +320,14 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, std::s
                                 GetOptionsDB().Get<int>("ui.input.mouse.button.repeat.interval"));
     EnableModalAcceleratorSignals(true);
 
-    namespace ph = boost::placeholders;
+#if BOOST_VERSION >= 106000
+    using boost::placeholders::_1;
+    using boost::placeholders::_2;
+#endif
 
-    WindowResizedSignal.connect(boost::bind(&HumanClientApp::HandleWindowResize,this, ph::_1, ph::_2));
-    FocusChangedSignal.connect( boost::bind(&HumanClientApp::HandleFocusChange, this, ph::_1));
-    WindowMovedSignal.connect(  boost::bind(&HumanClientApp::HandleWindowMove,  this, ph::_1, ph::_2));
+    WindowResizedSignal.connect(boost::bind(&HumanClientApp::HandleWindowResize,this, _1, _2));
+    FocusChangedSignal.connect( boost::bind(&HumanClientApp::HandleFocusChange, this, _1));
+    WindowMovedSignal.connect(  boost::bind(&HumanClientApp::HandleWindowMove,  this, _1, _2));
     WindowClosingSignal.connect(boost::bind(&HumanClientApp::HandleAppQuitting, this));
     AppQuittingSignal.connect(  boost::bind(&HumanClientApp::HandleAppQuitting, this));
 

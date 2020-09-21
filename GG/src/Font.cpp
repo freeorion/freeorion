@@ -486,7 +486,9 @@ namespace {
             xpr::mark_tag whitespace_tag(4);
             xpr::mark_tag text_tag(5);
 
+#if BOOST_VERSION >= 106000
             using boost::placeholders::_1;
+#endif
 
             // The comments before each regex are intended to clarify the mapping from xpressive
             // notation to the more typical regex notation.  If you read xpressive or don't read
@@ -2190,7 +2192,7 @@ std::shared_ptr<Font> Font::GetDefaultFont(unsigned int pts)
 ///////////////////////////////////////
 // class GG::FontManager
 ///////////////////////////////////////
-// FontKey 
+// FontKey
 FontManager::FontKey::FontKey(std::string str, unsigned int pts) :
     filename(std::move(str)),
     points(pts)

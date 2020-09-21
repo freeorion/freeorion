@@ -1276,13 +1276,18 @@ void MultiEdit::AdjustScrolls()
 
         unsigned int page_size = std::abs(Value(cl_sz.y - (need_horz ? INT_SCROLL_WIDTH : 0)));
 
-        namespace ph = boost::placeholders;
+#if BOOST_VERSION >= 106000
+        using boost::placeholders::_1;
+        using boost::placeholders::_2;
+        using boost::placeholders::_3;
+        using boost::placeholders::_4;
+#endif
 
         m_vscroll->SizeScroll(Value(vscroll_min), Value(vscroll_max),
                               line_size, std::max(line_size, page_size));
         AttachChild(m_vscroll);
         m_vscroll->ScrolledSignal.connect(
-            boost::bind(&MultiEdit::VScrolled, this, ph::_1, ph::_2, ph::_3, ph::_4));
+            boost::bind(&MultiEdit::VScrolled, this, _1, _2, _3, _4));
     }
 
     if (m_hscroll) { // if scroll already exists...
@@ -1315,13 +1320,18 @@ void MultiEdit::AdjustScrolls()
 
         unsigned int page_size = std::abs(Value(cl_sz.x - (need_vert ? INT_SCROLL_WIDTH : 0)));
 
-        namespace ph = boost::placeholders;
+#if BOOST_VERSION >= 106000
+        using boost::placeholders::_1;
+        using boost::placeholders::_2;
+        using boost::placeholders::_3;
+        using boost::placeholders::_4;
+#endif
 
         m_hscroll->SizeScroll(Value(hscroll_min), Value(hscroll_max),
                               line_size, std::max(line_size, page_size));
         AttachChild(m_hscroll);
         m_hscroll->ScrolledSignal.connect(
-            boost::bind(&MultiEdit::HScrolled, this, ph::_1, ph::_2, ph::_3, ph::_4));
+            boost::bind(&MultiEdit::HScrolled, this, _1, _2, _3, _4));
     }
 
     // if the new client dimensions changed after adjusting the scrolls,

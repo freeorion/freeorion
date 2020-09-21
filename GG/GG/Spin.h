@@ -104,7 +104,7 @@ public:
     void SetTextColor(Clr c);           ///< sets the text color
     void SetInteriorColor(Clr c);       ///< sets the interior color of the control
     void SetHiliteColor(Clr c);         ///< sets the color used to render hiliting around selected text
-    void SetSelectedTextColor(Clr c);   ///< sets the color used to render selected text   
+    void SetSelectedTextColor(Clr c);   ///< sets the color used to render selected text
 
 protected:
     typedef T ValueType;
@@ -212,7 +212,7 @@ T Spin<T>::MaxValue() const
 { return m_max_value; }
 
 template <typename T>
-bool Spin<T>::Editable() const 
+bool Spin<T>::Editable() const
 { return m_editable; }
 
 template <typename T>
@@ -416,7 +416,11 @@ void Spin<T>::SetEditTextFromValue()
 template <typename T>
 void Spin<T>::ConnectSignals()
 {
-    m_edit->FocusUpdateSignal.connect(boost::bind(&Spin::ValueUpdated, this, boost::placeholders::_1));
+#if BOOST_VERSION >= 106000
+    using boost::placeholders::_1;
+#endif
+
+    m_edit->FocusUpdateSignal.connect(boost::bind(&Spin::ValueUpdated, this, _1));
     m_up_button->LeftClickedSignal.connect(boost::bind(&Spin::IncrImpl, this, true));
     m_down_button->LeftClickedSignal.connect(boost::bind(&Spin::DecrImpl, this, true));
 }

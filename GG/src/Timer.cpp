@@ -65,9 +65,12 @@ void Timer::SetInterval(unsigned int interval)
 
 void Timer::Connect(Wnd* wnd)
 {
+#if BOOST_VERSION >= 106000
+    using boost::placeholders::_1;
+    using boost::placeholders::_2;
+#endif
     Disconnect(wnd);
-    m_wnd_connections[wnd] = FiredSignal.connect(
-        boost::bind(&Wnd::TimerFiring, wnd, boost::placeholders::_1, boost::placeholders::_2));
+    m_wnd_connections[wnd] = FiredSignal.connect(boost::bind(&Wnd::TimerFiring, wnd, _1, _2));
 }
 
 void Timer::Disconnect(Wnd* wnd)

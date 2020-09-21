@@ -207,8 +207,12 @@ namespace {
                 }
             }
 
+#if BOOST_VERSION >= 106000
+            using boost::placeholders::_1;
+#endif
+
             SelChangedSignal.connect(
-                boost::bind(&TypeSelector::SelectionChanged, this, boost::placeholders::_1));
+                boost::bind(&TypeSelector::SelectionChanged, this, _1));
         }
 
         void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
@@ -248,7 +252,9 @@ namespace {
         void CompleteConstruction() override {
             PlayerRow::CompleteConstruction();
 
+#if BOOST_VERSION >= 106000
             using boost::placeholders::_1;
+#endif
 
             // human / AI / observer indicator / selector
             auto type_drop = GG::Wnd::Create<TypeSelector>(
@@ -376,7 +382,9 @@ namespace {
         void CompleteConstruction() override {
             PlayerRow::CompleteConstruction();
 
+#if BOOST_VERSION >= 106000
             using boost::placeholders::_1;
+#endif
 
             // human / AI / observer indicator / selector
             auto type_drop = GG::Wnd::Create<TypeSelector>(GG::X(90), PlayerRowHeight(), m_player_data.client_type, m_initial_disabled);
@@ -510,11 +518,15 @@ namespace {
         void CompleteConstruction() override {
             PlayerRow::CompleteConstruction();
 
+#if BOOST_VERSION >= 106000
+            using boost::placeholders::_1;
+#endif
+
             auto type_drop = GG::Wnd::Create<TypeSelector>(
                 GG::X(90), PlayerRowHeight(), Networking::ClientType::INVALID_CLIENT_TYPE, m_initial_disabled);
             push_back(type_drop);
             type_drop->TypeChangedSignal.connect(
-                boost::bind(&LoadGameEmpireRow::PlayerTypeChanged, this, boost::placeholders::_1));
+                boost::bind(&LoadGameEmpireRow::PlayerTypeChanged, this, _1));
             // player name text
             push_back(GG::Wnd::Create<CUILabel>(""));
             // empire name
@@ -554,11 +566,15 @@ namespace {
         void CompleteConstruction() override {
             PlayerRow::CompleteConstruction();
 
+#if BOOST_VERSION >= 106000
+            using boost::placeholders::_1;
+#endif
+
             auto type_drop = GG::Wnd::Create<TypeSelector>(
                 GG::X(90), PlayerRowHeight(), Networking::ClientType::INVALID_CLIENT_TYPE, false);
             push_back(type_drop);
             type_drop->TypeChangedSignal.connect(
-                boost::bind(&EmptyPlayerRow::PlayerTypeChanged, this, boost::placeholders::_1));
+                boost::bind(&EmptyPlayerRow::PlayerTypeChanged, this, _1));
             // extra entries to make layout consistent
             push_back(GG::Wnd::Create<CUILabel>(""));
             push_back(GG::Wnd::Create<CUILabel>(""));
@@ -682,7 +698,9 @@ void MultiPlayerLobbyWnd::CompleteConstruction() {
     m_save_file_text->Disable();
     m_browse_saves_btn->Disable();
 
+#if BOOST_VERSION >= 106000
     using boost::placeholders::_1;
+#endif
 
     m_any_can_edit->CheckedSignal.connect(boost::bind(&MultiPlayerLobbyWnd::AnyCanEdit, this, _1));
     m_new_load_game_buttons->ButtonChangedSignal.connect(boost::bind(&MultiPlayerLobbyWnd::NewLoadClicked, this, _1));
@@ -1029,7 +1047,7 @@ bool MultiPlayerLobbyWnd::PopulatePlayerList() {
                 boost::bind(&MultiPlayerLobbyWnd::PlayerDataChangedLocally, this));
 
         } else {
-            bool immutable_row = 
+            bool immutable_row =
                 (!HasAuthRole(Networking::RoleType::ROLE_HOST) &&
                     (data_player_id != HumanClientApp::GetApp()->PlayerID()) &&
                     !(psd.client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER &&

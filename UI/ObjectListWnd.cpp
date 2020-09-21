@@ -798,8 +798,13 @@ private:
                 select_row_it = row_it;
         }
 
+
+#if BOOST_VERSION >= 106000
+        using boost::placeholders::_1;
+#endif
+
         m_class_drop->SelChangedSignal.connect(
-            boost::bind(&ConditionWidget::ConditionClassSelected, this, boost::placeholders::_1));
+            boost::bind(&ConditionWidget::ConditionClassSelected, this, _1));
 
         if (select_row_it != m_class_drop->end())
             m_class_drop->Select(select_row_it);
@@ -1166,6 +1171,10 @@ void FilterDialog::CompleteConstruction() {
 
         int row = 1;
 
+#if BOOST_VERSION >= 106000
+        using boost::placeholders::_1;
+#endif
+
         for (auto visibility : {VIS_DISPLAY::SHOW_VISIBLE, VIS_DISPLAY::SHOW_PREVIOUSLY_VISIBLE,
                                 VIS_DISPLAY::SHOW_DESTROYED})
         {
@@ -1173,7 +1182,7 @@ void FilterDialog::CompleteConstruction() {
                 " ", GG::FORMAT_CENTER, std::make_shared<CUICheckBoxRepresenter>());
             button->SetCheck(vis_display.count(visibility));
             button->CheckedSignal.connect(
-                boost::bind(&FilterDialog::UpdateVisFiltersFromStateButtons, this, boost::placeholders::_1));
+                boost::bind(&FilterDialog::UpdateVisFiltersFromStateButtons, this, _1));
             m_filters_layout->Add(button, row, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
             m_filter_buttons[uot][visibility] = std::move(button);
 
@@ -1883,12 +1892,16 @@ public:
         m_header_row = GG::Wnd::Create<ObjectHeaderRow>(GG::X1, ListRowHeight());
         SetColHeaders(m_header_row); // Gives ownership
 
+#if BOOST_VERSION >= 106000
+    using boost::placeholders::_1;
+#endif
+
         m_header_row->ColumnsChangedSignal.connect(
             boost::bind(&ObjectListBox::Refresh, this));
         m_header_row->ColumnHeaderLeftClickSignal.connect(
-            boost::bind(&ObjectListBox::SortingClicked, this, boost::placeholders::_1));
+            boost::bind(&ObjectListBox::SortingClicked, this, _1));
         m_obj_deleted_connection = GetUniverse().UniverseObjectDeleteSignal.connect(
-            boost::bind(&ObjectListBox::UniverseObjectDeleted, this, boost::placeholders::_1));
+            boost::bind(&ObjectListBox::UniverseObjectDeleted, this, _1));
     }
 
     virtual ~ObjectListBox()
@@ -2259,13 +2272,17 @@ private:
         m_object_change_connections[OBJ_ID] = obj->StateChangedSignal.connect(
             boost::bind(&ObjectListBox::ObjectStateChanged, this, OBJ_ID), boost::signals2::at_front);
 
+#if BOOST_VERSION >= 106000
+        using boost::placeholders::_1;
+#endif
+
         const GG::Pt ROW_SIZE = ListRowSize();
         auto object_row = GG::Wnd::Create<ObjectRow>(ROW_SIZE.x, ROW_SIZE.y, std::move(obj),
                                                      !ObjectCollapsed(OBJ_ID),
                                                      container, contents, indent);
         object_row->Resize(ROW_SIZE);
         object_row->ExpandCollapseSignal.connect(
-            boost::bind(&ObjectListBox::ObjectExpandCollapseClicked, this, boost::placeholders::_1),
+            boost::bind(&ObjectListBox::ObjectExpandCollapseClicked, this, _1),
             boost::signals2::at_front);
         this->Insert(std::move(object_row));
     }
@@ -2384,14 +2401,18 @@ void ObjectListWnd::CompleteConstruction() {
     m_list_box->SetHiliteColor(GG::CLR_ZERO);
     m_list_box->SetStyle(GG::LIST_NOSORT);
 
-    namespace ph = boost::placeholders;
+#if BOOST_VERSION >= 106000
+    using boost::placeholders::_1;
+    using boost::placeholders::_2;
+    using boost::placeholders::_3;
+#endif
 
     m_list_box->SelRowsChangedSignal.connect(
-        boost::bind(&ObjectListWnd::ObjectSelectionChanged, this, ph::_1));
+        boost::bind(&ObjectListWnd::ObjectSelectionChanged, this, _1));
     m_list_box->DoubleClickedRowSignal.connect(
-        boost::bind(&ObjectListWnd::ObjectDoubleClicked, this, ph::_1, ph::_2, ph::_3));
+        boost::bind(&ObjectListWnd::ObjectDoubleClicked, this, _1, _2, _3));
     m_list_box->RightClickedRowSignal.connect(
-        boost::bind(&ObjectListWnd::ObjectRightClicked, this, ph::_1, ph::_2, ph::_3));
+        boost::bind(&ObjectListWnd::ObjectRightClicked, this, _1, _2, _3));
     m_list_box->ExpandCollapseSignal.connect(
         boost::bind(&ObjectListWnd::DoLayout, this));
     AttachChild(m_list_box);

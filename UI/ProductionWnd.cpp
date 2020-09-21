@@ -146,8 +146,12 @@ namespace {
                 }
             }
 
+#if BOOST_VERSION >= 106000
+    using boost::placeholders::_1;
+#endif
+
             this->SelChangedSignal.connect(
-                boost::bind(&QuantitySelector::SelectionChanged, this, boost::placeholders::_1));
+                boost::bind(&QuantitySelector::SelectionChanged, this, _1));
         }
 
         void SelectionChanged(GG::DropDownList::iterator it) {
@@ -302,7 +306,7 @@ namespace {
                         % DoubleToString(total_cost, 3, false)
                         % DoubleToString(allocation, 3, false)
                         % DoubleToString(max_allocation, 3, false)) + "\n";
-                        
+
         if (elem.allowed_imperial_stockpile_use)
             main_text += UserString("PRODUCTION_QUEUE_ITEM_STOCKPILE_ENABLED") + "\n";
 
@@ -353,10 +357,13 @@ namespace {
             SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
             SetBrowseInfoWnd(ProductionItemBrowseWnd(elem));
 
-            namespace ph = boost::placeholders;
+#if BOOST_VERSION >= 106000
+            using boost::placeholders::_1;
+            using boost::placeholders::_2;
+#endif
 
             panel->PanelUpdateQuantSignal.connect(
-                boost::bind(&QueueRow::RowQuantChanged, this, ph::_1, ph::_2));
+                boost::bind(&QueueRow::RowQuantChanged, this, _1, _2));
 
             RequirePreRender();
         }
@@ -542,14 +549,17 @@ namespace {
         AttachChild(m_turns_remaining_until_next_complete_text);
         AttachChild(m_progress_bar);
 
-        namespace ph = boost::placeholders;
+#if BOOST_VERSION >= 106000
+        using boost::placeholders::_1;
+        using boost::placeholders::_2;
+#endif
 
         if (m_quantity_selector)
             m_quantity_selector->QuantChangedSignal.connect(
-                boost::bind(&QueueProductionItemPanel::ItemQuantityChanged, this, ph::_1, ph::_2));
+                boost::bind(&QueueProductionItemPanel::ItemQuantityChanged, this, _1, _2));
         if (m_block_size_selector)
             m_block_size_selector->QuantChangedSignal.connect(
-                boost::bind(&QueueProductionItemPanel::ItemBlocksizeChanged, this, ph::_1, ph::_2));
+                boost::bind(&QueueProductionItemPanel::ItemBlocksizeChanged, this, _1, _2));
 
         RequirePreRender();
     }
@@ -861,10 +871,12 @@ void ProductionWnd::CompleteConstruction() {
 
     SetChildClippingMode(ChildClippingMode::ClipToClient);
 
+#if BOOST_VERSION >= 106000
     using boost::placeholders::_1;
     using boost::placeholders::_2;
     using boost::placeholders::_3;
     using boost::placeholders::_4;
+#endif
 
     m_build_designator_wnd->AddBuildToQueueSignal.connect(
         boost::bind(&ProductionWnd::AddBuildToQueueSlot, this, _1, _2, _3, _4));
@@ -1027,9 +1039,9 @@ void ProductionWnd::SelectPlanet(int planet_id) {
 void ProductionWnd::SelectDefaultPlanet()
 { m_build_designator_wnd->SelectDefaultPlanet(); }
 
-void ProductionWnd::SelectSystem(int system_id) { 
+void ProductionWnd::SelectSystem(int system_id) {
     if (system_id != SidePanel::SystemID()) {
-        m_build_designator_wnd->SelectSystem(system_id); 
+        m_build_designator_wnd->SelectSystem(system_id);
         // refresh so as to correctly highlight builds for selected system
         Update();
     }
@@ -1093,13 +1105,17 @@ void ProductionWnd::UpdateQueue() {
     if (!empire)
         return;
 
-    namespace ph = boost::placeholders;
+#if BOOST_VERSION >= 106000
+    using boost::placeholders::_1;
+    using boost::placeholders::_2;
+    using boost::placeholders::_3;
+#endif
 
     int i = 0;
     for (const ProductionQueue::Element& elem : empire->GetProductionQueue()) {
         auto row = GG::Wnd::Create<QueueRow>(queue_lb->RowWidth(), elem, i);
         row->RowQuantChangedSignal.connect(
-            boost::bind(&ProductionWnd::ChangeBuildQuantityBlockSlot, this, ph::_1, ph::_2, ph::_3));
+            boost::bind(&ProductionWnd::ChangeBuildQuantityBlockSlot, this, _1, _2, _3));
         queue_lb->Insert(row);
         ++i;
     }

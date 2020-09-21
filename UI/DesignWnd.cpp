@@ -43,7 +43,7 @@
 FO_COMMON_API extern const int INVALID_DESIGN_ID;
 
 struct Availability {
-    // Declaring an enum inside a struct makes the syntax when using the enum 
+    // Declaring an enum inside a struct makes the syntax when using the enum
     // with tuples simpler, without polluting the global namespace with 3
     // generic names.
     enum Enum {
@@ -435,7 +435,7 @@ namespace {
 
 
     //////////////////////////////////////////////////
-    // SavedDesignsManager implementations          
+    // SavedDesignsManager implementations
     //////////////////////////////////////////////////
     const std::list<boost::uuids::uuid>& SavedDesignsManager::OrderedDesignUUIDs() const {
         CheckPendingDesigns();
@@ -534,7 +534,7 @@ namespace {
             // assume the saved designs are preferred by the user: add them to the front.
             // note that this also ensures correct ordering.
             for (const auto& uuid : m_ordered_uuids)
-                AddSavedDesignToDisplayedDesigns(uuid, empire_id, true); 
+                AddSavedDesignToDisplayedDesigns(uuid, empire_id, true);
         }
     }
 
@@ -1814,16 +1814,19 @@ void DesignWnd::PartPalette::CompleteConstruction() {
     //TempUISoundDisabler sound_disabler;     // should be redundant with disabler in DesignWnd::DesignWnd.  uncomment if this is not the case
     SetChildClippingMode(ChildClippingMode::ClipToClient);
 
-    namespace ph = boost::placeholders;
+#if BOOST_VERSION >= 106000
+    using boost::placeholders::_1;
+    using boost::placeholders::_2;
+#endif
 
     m_parts_list = GG::Wnd::Create<PartsListBox>(m_availabilities_state);
     AttachChild(m_parts_list);
     m_parts_list->ShipPartClickedSignal.connect(
-        boost::bind(&DesignWnd::PartPalette::HandleShipPartClicked, this, ph::_1, ph::_2));
+        boost::bind(&DesignWnd::PartPalette::HandleShipPartClicked, this, _1, _2));
     m_parts_list->ShipPartDoubleClickedSignal.connect(
         ShipPartDoubleClickedSignal);
     m_parts_list->ShipPartRightClickedSignal.connect(
-        boost::bind(&DesignWnd::PartPalette::HandleShipPartRightClicked, this, ph::_1, ph::_2));
+        boost::bind(&DesignWnd::PartPalette::HandleShipPartRightClicked, this, _1, _2));
     m_parts_list->ClearPartSignal.connect(ClearPartSignal);
 
     const ShipPartManager& part_manager = GetShipPartManager();
@@ -2394,11 +2397,15 @@ void BasesListBox::CompleteConstruction() {
     InitRowSizes();
     SetStyle(GG::LIST_NOSEL | GG::LIST_NOSORT);
 
-    namespace ph = boost::placeholders;
+#if BOOST_VERSION >= 106000
+    using boost::placeholders::_1;
+    using boost::placeholders::_2;
+    using boost::placeholders::_3;
+#endif
 
-    DoubleClickedRowSignal.connect(boost::bind(&BasesListBox::BaseDoubleClicked, this, ph::_1, ph::_2, ph::_3));
-    LeftClickedRowSignal.connect(boost::bind(&BasesListBox::BaseLeftClicked, this, ph::_1, ph::_2, ph::_3));
-    MovedRowSignal.connect(boost::bind(&BasesListBox::QueueItemMoved, this, ph::_1, ph::_2));
+    DoubleClickedRowSignal.connect(boost::bind(&BasesListBox::BaseDoubleClicked, this, _1, _2, _3));
+    LeftClickedRowSignal.connect(boost::bind(&BasesListBox::BaseLeftClicked, this, _1, _2, _3));
+    MovedRowSignal.connect(boost::bind(&BasesListBox::QueueItemMoved, this, _1, _2));
 
     EnableOrderIssuing(false);
 }
@@ -4069,9 +4076,13 @@ void DesignWnd::MainPanel::CompleteConstruction() {
     AttachChild(m_confirm_button);
     AttachChild(m_clear_button);
 
+#if BOOST_VERSION >= 106000
+    using boost::placeholders::_1;
+#endif
+
     m_clear_button->LeftClickedSignal.connect(boost::bind(&DesignWnd::MainPanel::ClearParts, this));
     m_design_name->EditedSignal.connect(
-        boost::bind(&DesignWnd::MainPanel::DesignNameEditedSlot, this, boost::placeholders::_1));
+        boost::bind(&DesignWnd::MainPanel::DesignNameEditedSlot, this, _1));
     m_replace_button->LeftClickedSignal.connect(DesignReplacedSignal);
     m_confirm_button->LeftClickedSignal.connect(DesignConfirmedSignal);
     m_design_description_toggle->CheckedSignal.connect(
@@ -4517,12 +4528,15 @@ void DesignWnd::MainPanel::Populate() {
         m_slots.push_back(slot_control);
         AttachChild(slot_control);
 
-        namespace ph = boost::placeholders;
+#if BOOST_VERSION >= 106000
+        using boost::placeholders::_1;
+        using boost::placeholders::_2;
+#endif
 
         slot_control->SlotContentsAlteredSignal.connect(
             boost::bind(static_cast<void (DesignWnd::MainPanel::*)(
                 const ShipPart*, unsigned int, bool, bool)>(&DesignWnd::MainPanel::SetPart),
-                    this, ph::_1, i, true, ph::_2));
+                    this, _1, i, true, _2));
         slot_control->ShipPartClickedSignal.connect(ShipPartClickedSignal);
     }
 }
@@ -4548,7 +4562,7 @@ void DesignWnd::MainPanel::DoLayout() {
     m_clear_button->SizeMove(ul, ul+mus);
 
     ul = GG::Pt(GG::X(PAD), GG::Y(PAD));
-    // adjust based on the (bigger) height of the edit bar 
+    // adjust based on the (bigger) height of the edit bar
     lr= ul+GG::Pt(m_design_name_label->MinUsableSize().x, m_design_name->MinUsableSize().y);
     m_design_name_label->SizeMove(ul, lr);
 
@@ -5012,8 +5026,11 @@ void DesignWnd::CompleteConstruction() {
 
     AttachChild(m_detail_panel);
 
+
+#if BOOST_VERSION >= 106000
     using boost::placeholders::_1;
     using boost::placeholders::_2;
+#endif
 
     AttachChild(m_main_panel);
     m_main_panel->ShipPartClickedSignal.connect(
