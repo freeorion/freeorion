@@ -3216,6 +3216,12 @@ Affichage des rapports d'erreurs
 OPTIONS_SHOW_IDS_AFTER_NAMES
 IDs après noms
 
+OPTIONS_AUTOSAVE_GAME_CLOSE
+Active la sauvegarde automatique en abandonnant ou quittant une partie
+
+OPTIONS_AUTOSAVE_GALAXY_CREATION
+Active la sauvegarde automatique après la création de la galaxie
+
 OPTIONS_EFFECT_ACCOUNTING
 Comptabilité des effets
 
@@ -14932,7 +14938,7 @@ Sa [[metertype METER_STEALTH]] est très élevée de même que son [[metertype M
 
 Bon potentiel comme astronef rapide et puissant pour le piratage commercial, l'attaque furtive ou la reconnaissance.
 
-Cette coque vivante régénère rapidement sa [[metertype METER_STRUCTURE]] lorsqu'elle n'est pas engagée dans un combat, regagnant sa valeur actuelle de Résistance à chaque tour, tant qu'elle ne participe pas à une bataille ou un blocus. Cela signifie que si l'astronef dispose encore au moins de la moitié de sa Résistance, il sera complètement réparé en un tour. D'autre part, cette coque régénère son [[metertype METER_FUEL]] de 0.2 par tour.
+Cette coque vivante régénère rapidement sa [[metertype METER_STRUCTURE]], regagnant sa valeur actuelle de Résistance à chaque tour (même lorsqu'elle est engagée dans un combat). Cela signifie que si l'astronef dispose encore au moins de la moitié de sa Résistance, il sera complètement réparé au tour suivant. D'autre part, cette coque régénère son [[metertype METER_FUEL]] de 0.2 par tour.
 
 [[BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_CELL_GRO_CHAMB_REQUIRED]]
 '''
