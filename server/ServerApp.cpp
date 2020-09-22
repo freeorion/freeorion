@@ -1829,9 +1829,8 @@ bool ServerApp::EliminatePlayer(const PlayerConnectionPtr& player_connection) {
         GetUniverse().RecursiveDestroy(obj->ID());
     }
     // unclaim owned planets
-    for (const auto& planet : planets) {
+    for (const auto& planet : planets)
         planet->Reset();
-    }
 
     // Don't wait for turn
     RemoveEmpireTurn(empire_id);
@@ -2078,15 +2077,29 @@ bool ServerApp::AllOrdersReceived() {
 }
 
 namespace {
+    struct PopulatedOwnedVisitor : public UniverseObjectVisitor {
+        PopulatedOwnedVisitor(int empire_id = ALL_EMPIRES) :
+            m_empire_id(empire_id)
+        {}
+        virtual ~PopulatedOwnedVisitor() = default;
+        auto Visit(const std::shared_ptr<Planet>& obj) const -> std::shared_ptr<UniverseObject> override
+        {
+            return (obj
+                    && obj->OwnedBy(m_empire_id)
+                    && obj->Populated())
+                ? obj : nullptr;
+        }
+        const int m_empire_id;
+    };
+
     /** Returns true if \a empire has been eliminated by the applicable
       * definition of elimination.  As of this writing, elimination means
       * having no ships and no population on planets. */
     bool EmpireEliminated(int empire_id) {
-        for (const auto& planet : Objects().find<Planet>(OwnedVisitor(empire_id))) {
-            if (planet->Populated())
-                return false;
-        }
-        return Objects().find<Ship>(OwnedVisitor(empire_id)).empty();     // no ship
+        // are there any populated planets? if so, not eliminated
+        // are there any ships? if so, not eliminated
+        return !Objects().check_if_any<Planet>(PopulatedOwnedVisitor(empire_id)) &&
+               !Objects().check_if_any<Ship>(OwnedVisitor(empire_id));
     }
 
     void GetEmpireFleetsAtSystem(std::map<int, std::set<int>>& empire_fleets, int system_id) {
