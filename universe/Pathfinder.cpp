@@ -793,12 +793,15 @@ short Pathfinder::PathfinderImpl::JumpDistanceBetweenSystems(int system1_id, int
         size_t smaller_index = (std::min)(system1_index, system2_index);
         size_t other_index   = (std::max)(system1_index, system2_index);
 
-        namespace ph = boost::placeholders;
+#if BOOST_VERSION >= 106000
+        using boost::placeholders::_1;
+        using boost::placeholders::_2;
+#endif
 
         // prefer filling the smaller row/column for increased cache locality
         short jumps = cache.get_T(
             smaller_index, other_index,
-            boost::bind(&Pathfinder::PathfinderImpl::HandleCacheMiss, this, ph::_1, ph::_2));
+            boost::bind(&Pathfinder::PathfinderImpl::HandleCacheMiss, this, _1, _2));
         if (jumps == SHRT_MAX)  // value returned for no valid path
             return -1;
         return jumps;
@@ -1196,12 +1199,15 @@ std::unordered_set<int> Pathfinder::PathfinderImpl::WithinJumps(
         if (jumps == 0)
             continue;
 
-        namespace ph = boost::placeholders;
+#if BOOST_VERSION >= 106000
+        using boost::placeholders::_1;
+        using boost::placeholders::_2;
+#endif
 
         cache.examine_row(system_index,
-                          boost::bind(&Pathfinder::PathfinderImpl::HandleCacheMiss, this, ph::_1, ph::_2),
+                          boost::bind(&Pathfinder::PathfinderImpl::HandleCacheMiss, this, _1, _2),
                           boost::bind(&Pathfinder::PathfinderImpl::WithinJumpsCacheHit, this,
-                                      &near, jumps, ph::_1, ph::_2));
+                                      &near, jumps, _1, _2));
     }
     return near;
 }
@@ -1337,15 +1343,18 @@ bool Pathfinder::PathfinderImpl::WithinJumpsOfOthers(
         return false;
     }
 
-    namespace ph = boost::placeholders;
+#if BOOST_VERSION >= 106000
+    using boost::placeholders::_1;
+    using boost::placeholders::_2;
+#endif
 
     // Examine the cache to see if \p system_id is within \p jumps of \p others
     bool within_jumps(false);
     distance_matrix_cache<distance_matrix_storage<short>> cache(m_system_jumps);
     cache.examine_row(system_index,
-                      boost::bind(&Pathfinder::PathfinderImpl::HandleCacheMiss, this, ph::_1, ph::_2),
+                      boost::bind(&Pathfinder::PathfinderImpl::HandleCacheMiss, this, _1, _2),
                       boost::bind(&Pathfinder::PathfinderImpl::WithinJumpsOfOthersCacheHit, this,
-                                  std::ref(within_jumps), jumps, others, ph::_1, ph::_2));
+                                  std::ref(within_jumps), jumps, others, _1, _2));
     return within_jumps;
 }
 

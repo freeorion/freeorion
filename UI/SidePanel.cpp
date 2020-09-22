@@ -977,7 +977,9 @@ void SidePanel::PlanetPanel::CompleteConstruction() {
     m_planet_name->Resize(m_planet_name->MinUsableSize());
     AttachChild(m_planet_name);
 
+#if BOOST_VERSION >= 106000
     using boost::placeholders::_1;
+#endif
 
     // focus-selection droplist
     m_focus_drop = GG::Wnd::Create<CUIDropDownList>(6);
@@ -2507,10 +2509,15 @@ SidePanel::PlanetPanelContainer::PlanetPanelContainer() :
     SetName("PlanetPanelContainer");
     SetChildClippingMode(ClipToClient);
 
-    namespace ph = boost::placeholders;
+#if BOOST_VERSION >= 106000
+    using boost::placeholders::_1;
+    using boost::placeholders::_2;
+    using boost::placeholders::_3;
+    using boost::placeholders::_4;
+#endif
 
     m_vscroll->ScrolledSignal.connect(
-        boost::bind(&SidePanel::PlanetPanelContainer::VScroll, this, ph::_1, ph::_2, ph::_3, ph::_4));
+        boost::bind(&SidePanel::PlanetPanelContainer::VScroll, this, _1, _2, _3, _4));
     RequirePreRender();
 }
 
@@ -2984,7 +2991,9 @@ void SidePanel::CompleteConstruction() {
     m_system_resource_summary = GG::Wnd::Create<MultiIconValueIndicator>(Width() - EDGE_PAD*2);
     AttachChild(m_system_resource_summary);
 
+#if BOOST_VERSION >= 106000
     using boost::placeholders::_1;
+#endif
 
     m_system_name->DropDownOpenedSignal.connect(
         boost::bind(&SidePanel::SystemNameDropListOpenedSlot, this, _1));

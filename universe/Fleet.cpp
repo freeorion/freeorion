@@ -61,6 +61,10 @@ namespace {
             ++visible_end_it;
         }
 
+#if BOOST_VERSION >= 106000
+    using boost::placeholders::_1;
+#endif
+
         // Remove any extra systems from the route after the apparent destination.
         // SystemHasNoVisibleStarlanes determines if empire_id knows about the
         // system and/or its starlanes.  It is enforced on the server in the
@@ -68,7 +72,7 @@ namespace {
         // system containing a fleet, b) the starlane on which a fleet is travelling
         // and c) both systems terminating a starlane on which a fleet is travelling.
         auto end_it = std::find_if(full_route.begin(), visible_end_it,
-                                   boost::bind(&SystemHasNoVisibleStarlanes, boost::placeholders::_1, empire_id));
+                                   boost::bind(&SystemHasNoVisibleStarlanes, _1, empire_id));
 
         std::list<int> truncated_route;
         std::copy(full_route.begin(), end_it, std::back_inserter(truncated_route));
@@ -505,8 +509,8 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
         }
 
         // blockade debug logging
-        TraceLogger() << "Fleet::MovePath for fleet " << this->Name() << " id " << this->ID() << " adding node at sysID " 
-                      << (cur_system ? cur_system->ID() : INVALID_OBJECT_ID) << " with post blockade status " 
+        TraceLogger() << "Fleet::MovePath for fleet " << this->Name() << " id " << this->ID() << " adding node at sysID "
+                      << (cur_system ? cur_system->ID() : INVALID_OBJECT_ID) << " with post blockade status "
                       << is_post_blockade << " and ETA " << turns_taken;
 
         // add MovePathNode for current position (end of turn position and/or system location)
@@ -591,7 +595,7 @@ float Fleet::Fuel() const {
         if (!ship->OrderedScrapped()) {
             fuel = std::min(fuel, meter->Current());
             is_fleet_scrapped = false;
-        } 
+        }
     }
     if (is_fleet_scrapped) {
         fuel = 0.0f;
@@ -631,7 +635,7 @@ int Fleet::FinalDestinationID() const {
     } else {
         return m_travel_route.back();
     }
-} 
+}
 
 namespace {
     bool HasXShips(const std::function<bool(const std::shared_ptr<const Ship>&)>& pred,
@@ -1071,7 +1075,7 @@ void Fleet::CalculateRouteTo(int target_system_id) {
         } catch (const std::exception& e) {
             ErrorLogger() << "Caught exception in Fleet CalculateRouteTo: " << e.what();
         }
-        return; 
+        return;
     }
 
     if (m_prev_system != INVALID_OBJECT_ID && SystemID() == m_prev_system) {
@@ -1263,7 +1267,7 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id) const {
             continue;
         bool unrestricted = (fleet->m_arrival_starlane == start_system_id);
         if  (fleet->Owner() == this->Owner()) {
-            if (unrestricted)  // perhaps should consider allies 
+            if (unrestricted)  // perhaps should consider allies
                 return false;
             continue;
         }
@@ -1427,3 +1431,4 @@ void Fleet::SetGiveToEmpire(int empire_id) {
 
 void Fleet::ClearGiveToEmpire()
 { SetGiveToEmpire(ALL_EMPIRES); }
+

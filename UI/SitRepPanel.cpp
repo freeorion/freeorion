@@ -124,7 +124,7 @@ namespace {
                 label_display_map[label] = sitrep_it->GetStringtableLookupFlag()? UserString(label) : label;
             }
             template_set.insert(label);
-            
+
         }
 
         return template_set;
@@ -248,13 +248,16 @@ namespace {
             m_link_text->SetDecorator(TextLinker::BROWSE_PATH_TAG, new PathTypeDecorator());
             AttachChild(m_link_text);
 
-            namespace ph = boost::placeholders;
+#if BOOST_VERSION >= 106000
+            using boost::placeholders::_1;
+            using boost::placeholders::_2;
+#endif
 
             m_link_text->LinkClickedSignal.connect(&HandleLinkClick);
             m_link_text->LinkDoubleClickedSignal.connect(&HandleLinkClick);
             m_link_text->LinkRightClickedSignal.connect(&HandleLinkClick);
             m_link_text->RightClickedSignal.connect(
-                boost::bind(&SitRepDataPanel::RClick, this, ph::_1, ph::_2));
+                boost::bind(&SitRepDataPanel::RClick, this, _1, _2));
 
             DoLayout(UpperLeft(), Width());
         }
@@ -357,9 +360,14 @@ namespace {
                                                        ClientWidth() - GG::X(2 * GetLayout()->BorderMargin()),
                                                        ClientHeight() - GG::Y(2 * GetLayout()->BorderMargin()), m_sitrep);
             push_back(m_panel);
-            namespace ph = boost::placeholders;
+
+#if BOOST_VERSION >= 106000
+    using boost::placeholders::_1;
+    using boost::placeholders::_2;
+#endif
+
             m_panel->RightClickedSignal.connect(
-                boost::bind(&SitRepRow::RClick, this, ph::_1, ph::_2));
+                boost::bind(&SitRepRow::RClick, this, _1, _2));
         }
 
         const SitRepEntry& GetSitRepEntry() const { return m_panel->GetSitRepEntry(); }
@@ -398,9 +406,11 @@ void SitRepPanel::CompleteConstruction() {
     m_filter_button = Wnd::Create<CUIButton>(UserString("FILTERS"));
     AttachChild(m_filter_button);
 
+#if BOOST_VERSION >= 106000
     using boost::placeholders::_1;
     using boost::placeholders::_2;
     using boost::placeholders::_3;
+#endif
 
     m_prev_turn_button->LeftClickedSignal.connect(boost::bind(&SitRepPanel::PrevClicked, this));
     m_next_turn_button->LeftClickedSignal.connect(boost::bind(&SitRepPanel::NextClicked, this));
@@ -526,7 +536,9 @@ int SitRepPanel::GetNextNonEmptySitrepsTurn(std::map<int, std::list<SitRepEntry>
     if (turns.size() == 0)
         return INVALID_GAME_TURN;
 
+#if BOOST_VERSION >= 106000
     using boost::placeholders::_1;
+#endif
 
     // Only one turn with visible sitreps
     if (turns.size() == 1) {
@@ -675,7 +687,7 @@ void SitRepPanel::DismissalMenu(GG::ListBox::iterator it, const GG::Pt& pt,
     separator_item.separator = true;
     int start_turn = 0;
     SitRepRow* sitrep_row = nullptr;
-    if (it != m_sitreps_lb->end()) 
+    if (it != m_sitreps_lb->end())
         sitrep_row = dynamic_cast<SitRepRow*>(it->get());
     submenu_ignore.label = entry_margin + UserString("SITREP_IGNORE_MENU");
     if (sitrep_row) {
@@ -853,7 +865,12 @@ void SitRepPanel::SetHiddenSitRepTemplates(const std::set<std::string>& template
 int SitRepPanel::NumVisibleSitrepsThisTurn() const {
     auto turns = GetUnvalidatedSitRepsSortedByTurn(HumanClientApp::GetApp()->EmpireID());
     auto& turn = turns[CurrentTurn()];
-    turn.remove_if(boost::bind(&SitRepPanel::IsSitRepInvalid, this, boost::placeholders::_1));
+
+#if BOOST_VERSION >= 106000
+    using boost::placeholders::_1;
+#endif
+
+    turn.remove_if(boost::bind(&SitRepPanel::IsSitRepInvalid, this, _1));
     return turn.size();
 }
 

@@ -447,7 +447,9 @@ std::shared_ptr<FleetWnd> FleetUIManager::NewFleetWnd(
                                             allowed_bounding_box_leeway,
                                             selected_fleet_id, flags, config_name);
 
+#if BOOST_VERSION >= 106000
     using boost::placeholders::_1;
+#endif
 
     m_fleet_wnds.insert(std::weak_ptr<FleetWnd>(retval));
     retval->ClosingSignal.connect(boost::bind(&FleetUIManager::FleetWndClosing, this, _1));
@@ -1717,21 +1719,18 @@ void FleetDataPanel::Init() {
 
     } else if (auto fleet = Objects().get<Fleet>(m_fleet_id)) {
         int tooltip_delay = GetOptionsDB().Get<int>("ui.tooltip.delay");
-
-        std::vector<std::tuple<MeterType, std::shared_ptr<GG::Texture>, std::string>> meters_icons_browsetext;
-        meters_icons_browsetext.reserve(12);
-        meters_icons_browsetext.emplace_back(METER_SIZE,            FleetCountIcon(),                       "FW_FLEET_COUNT_SUMMARY");
-        meters_icons_browsetext.emplace_back(METER_CAPACITY,        DamageIcon(),                           "FW_FLEET_DAMAGE_SUMMARY");
-        meters_icons_browsetext.emplace_back(METER_SECONDARY_STAT,  FightersIcon(),                         "FW_FLEET_FIGHTER_SUMMARY");
-        meters_icons_browsetext.emplace_back(METER_TROOPS,          TroopIcon(),                            "FW_FLEET_TROOP_SUMMARY");
-        meters_icons_browsetext.emplace_back(METER_POPULATION,      ColonyIcon(),                           "FW_FLEET_COLONY_SUMMARY");
-        meters_icons_browsetext.emplace_back(METER_INDUSTRY,        IndustryIcon(),                         "FW_FLEET_INDUSTRY_SUMMARY");
-        meters_icons_browsetext.emplace_back(METER_RESEARCH,        ResearchIcon(),                         "FW_FLEET_RESEARCH_SUMMARY");
-        meters_icons_browsetext.emplace_back(METER_TRADE,           TradeIcon(),                            "FW_FLEET_TRADE_SUMMARY");
-        meters_icons_browsetext.emplace_back(METER_STRUCTURE,       ClientUI::MeterIcon(METER_STRUCTURE),   "FW_FLEET_STRUCTURE_SUMMARY");
-        meters_icons_browsetext.emplace_back(METER_SHIELD,          ClientUI::MeterIcon(METER_SHIELD),      "FW_FLEET_SHIELD_SUMMARY");
-        meters_icons_browsetext.emplace_back(METER_FUEL,            ClientUI::MeterIcon(METER_FUEL),        "FW_FLEET_FUEL_SUMMARY");
-        meters_icons_browsetext.emplace_back(METER_SPEED,           ClientUI::MeterIcon(METER_SPEED),       "FW_FLEET_SPEED_SUMMARY");
+        std::vector<std::tuple<MeterType, std::shared_ptr<GG::Texture>, std::string>> meters_icons_browsetext {
+            std::make_tuple(MeterType::METER_SIZE,           FleetCountIcon(),                                "FW_FLEET_COUNT_SUMMARY"),
+            std::make_tuple(MeterType::METER_CAPACITY,       DamageIcon(),                                    "FW_FLEET_DAMAGE_SUMMARY"),
+            std::make_tuple(MeterType::METER_SECONDARY_STAT, FightersIcon(),                                  "FW_FLEET_FIGHTER_SUMMARY"),
+            std::make_tuple(MeterType::METER_TROOPS,         TroopIcon(),                                     "FW_FLEET_TROOP_SUMMARY"),
+            std::make_tuple(MeterType::METER_POPULATION,     ColonyIcon(),                                    "FW_FLEET_COLONY_SUMMARY"),
+            std::make_tuple(MeterType::METER_INDUSTRY,       IndustryIcon(),                                  "FW_FLEET_INDUSTRY_SUMMARY"),
+            std::make_tuple(MeterType::METER_RESEARCH,       ResearchIcon(),                                  "FW_FLEET_RESEARCH_SUMMARY"),
+            std::make_tuple(MeterType::METER_STRUCTURE,      ClientUI::MeterIcon(MeterType::METER_STRUCTURE), "FW_FLEET_STRUCTURE_SUMMARY"),
+            std::make_tuple(MeterType::METER_SHIELD,         ClientUI::MeterIcon(MeterType::METER_SHIELD),    "FW_FLEET_SHIELD_SUMMARY"),
+            std::make_tuple(MeterType::METER_FUEL,           ClientUI::MeterIcon(MeterType::METER_FUEL),      "FW_FLEET_FUEL_SUMMARY"),
+            std::make_tuple(MeterType::METER_SPEED,          ClientUI::MeterIcon(MeterType::METER_SPEED),     "FW_FLEET_SPEED_SUMMARY")};
 
         m_stat_icons.reserve(meters_icons_browsetext.size());
         for (const auto& entry : meters_icons_browsetext) {
@@ -2412,14 +2411,18 @@ FleetDetailPanel::FleetDetailPanel(GG::X w, GG::Y h, int fleet_id, bool order_is
         m_ships_lb->AllowDropType(SHIP_DROP_TYPE_STRING);
     }
 
-    namespace ph = boost::placeholders;
+#if BOOST_VERSION >= 106000
+    using boost::placeholders::_1;
+    using boost::placeholders::_2;
+    using boost::placeholders::_3;
+#endif
 
     m_ships_lb->SelRowsChangedSignal.connect(
-        boost::bind(&FleetDetailPanel::ShipSelectionChanged, this, ph::_1));
+        boost::bind(&FleetDetailPanel::ShipSelectionChanged, this, _1));
     m_ships_lb->RightClickedRowSignal.connect(
-        boost::bind(&FleetDetailPanel::ShipRightClicked, this, ph::_1, ph::_2, ph::_3));
+        boost::bind(&FleetDetailPanel::ShipRightClicked, this, _1, _2, _3));
     GetUniverse().UniverseObjectDeleteSignal.connect(
-        boost::bind(&FleetDetailPanel::UniverseObjectDeleted, this, ph::_1));
+        boost::bind(&FleetDetailPanel::UniverseObjectDeleted, this, _1));
 }
 
 void FleetDetailPanel::CompleteConstruction() {
@@ -2786,19 +2789,23 @@ void FleetWnd::CompleteConstruction() {
         AttachChild(icon);
     }
 
-    namespace ph = boost::placeholders;
+#if BOOST_VERSION >= 106000
+    using boost::placeholders::_1;
+    using boost::placeholders::_2;
+    using boost::placeholders::_3;
+#endif
 
     // create fleet list box
     m_fleets_lb = GG::Wnd::Create<FleetsListBox>(m_order_issuing_enabled);
     m_fleets_lb->SetHiliteColor(GG::CLR_ZERO);
     m_fleets_lb->SelRowsChangedSignal.connect(
-        boost::bind(&FleetWnd::FleetSelectionChanged, this, ph::_1));
+        boost::bind(&FleetWnd::FleetSelectionChanged, this, _1));
     m_fleets_lb->LeftClickedRowSignal.connect(
-        boost::bind(&FleetWnd::FleetLeftClicked, this, ph::_1, ph::_2, ph::_3));
+        boost::bind(&FleetWnd::FleetLeftClicked, this, _1, _2, _3));
     m_fleets_lb->RightClickedRowSignal.connect(
-        boost::bind(&FleetWnd::FleetRightClicked, this, ph::_1, ph::_2, ph::_3));
+        boost::bind(&FleetWnd::FleetRightClicked, this, _1, _2, _3));
     m_fleets_lb->DoubleClickedRowSignal.connect(
-        boost::bind(&FleetWnd::FleetDoubleClicked, this, ph::_1, ph::_2, ph::_3));
+        boost::bind(&FleetWnd::FleetDoubleClicked, this, _1, _2, _3));
     AttachChild(m_fleets_lb);
     m_fleets_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_BROWSEUPDATES);
     m_fleets_lb->AllowDropType(SHIP_DROP_TYPE_STRING);
@@ -2806,15 +2813,13 @@ void FleetWnd::CompleteConstruction() {
 
     // create fleet detail panel
     m_fleet_detail_panel->SelectedShipsChangedSignal.connect(
-        boost::bind(&FleetWnd::ShipSelectionChanged, this, ph::_1));
+        boost::bind(&FleetWnd::ShipSelectionChanged, this, _1));
     m_fleet_detail_panel->ShipRightClickedSignal.connect(
         ShipRightClickedSignal);
     AttachChild(m_fleet_detail_panel);
 
     // determine fleets to show and populate list
     Refresh();
-
-    using boost::placeholders::_1;
 
     // create drop target
     m_new_fleet_drop_target = GG::Wnd::Create<FleetDataPanel>(GG::X1, ListRowHeight(), m_system_id, true);

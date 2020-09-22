@@ -81,11 +81,20 @@ namespace {
     const std::string TAG_PEDIA_PREFIX = "PEDIA_";
 }
 
+namespace std {
+    template <>
+    struct hash<PlanetType> {
+        inline std::size_t operator()(const PlanetType& p) const {
+            return std::hash<std::size_t>{}(static_cast<std::size_t>(p));
+        }
+    };
+}
+
 namespace {
     /** @brief Checks content tags for a custom defined pedia category.
-     * 
+     *
      * @param[in,out] tags content tags to check for a matching pedia prefix tag
-     * 
+     *
      * @return The first matched pedia category for this set of tags,
      *          or empty string if there are no matches.
      */
@@ -281,7 +290,7 @@ namespace {
                             known_homeworlds.insert(homeworld_id);
                             // if known, add to beginning
                             homeworld_info = LinkTaggedIDText(VarText::PLANET_ID_TAG, homeworld_id, homeworld->PublicName(client_empire_id)) + "   " + homeworld_info;
-                        } else { 
+                        } else {
                             // add to end
                             homeworld_info += UserString("UNKNOWN_PLANET") + "   ";
                         }
@@ -636,7 +645,10 @@ void EncyclopediaDetailPanel::CompleteConstruction() {
     m_scroll_panel = GG::Wnd::Create<GG::ScrollPanel>(GG::X(0), GG::Y(0), ClientWidth(),
                                                       ClientHeight(), m_description_rich_text);
 
-    namespace ph = boost::placeholders;
+#if BOOST_VERSION >= 106000
+    using boost::placeholders::_1;
+    using boost::placeholders::_2;
+#endif
 
     // Copy default block factory.
     std::shared_ptr<GG::RichText::BLOCK_FACTORY_MAP>
@@ -644,11 +656,11 @@ void EncyclopediaDetailPanel::CompleteConstruction() {
     auto factory = new CUILinkTextBlock::Factory();
     // Wire this factory to produce links that talk to us.
     factory->LinkClickedSignal.connect(
-        boost::bind(&EncyclopediaDetailPanel::HandleLinkClick, this, ph::_1, ph::_2));
+        boost::bind(&EncyclopediaDetailPanel::HandleLinkClick, this, _1, _2));
     factory->LinkDoubleClickedSignal.connect(
-        boost::bind(&EncyclopediaDetailPanel::HandleLinkDoubleClick, this, ph::_1, ph::_2));
+        boost::bind(&EncyclopediaDetailPanel::HandleLinkDoubleClick, this, _1, _2));
     factory->LinkRightClickedSignal.connect(
-        boost::bind(&EncyclopediaDetailPanel::HandleLinkDoubleClick, this, ph::_1, ph::_2));
+        boost::bind(&EncyclopediaDetailPanel::HandleLinkDoubleClick, this, _1, _2));
     (*factory_map)[GG::RichText::PLAINTEXT_TAG] =
         std::shared_ptr<GG::RichText::IBlockControlFactory>(factory);
     m_description_rich_text->SetBlockFactoryMap(factory_map);
@@ -1336,7 +1348,7 @@ namespace {
         // Technologies
         name = UserString(item_name);
         texture = ClientUI::TechIcon(item_name);
-        other_texture = ClientUI::CategoryIcon(tech->Category()); 
+        other_texture = ClientUI::CategoryIcon(tech->Category());
         color = ClientUI::CategoryColor(tech->Category());
         turns = tech->ResearchTime(client_empire_id);
         cost = tech->ResearchCost(client_empire_id);
@@ -1437,7 +1449,7 @@ namespace {
                 int local_cost = building_type->ProductionCost(client_empire_id, this_location_id);
                 int local_time = building_type->ProductionTime(client_empire_id, this_location_id);
                 std::string local_name = planet->Name();
-                detailed_description += str(FlexibleFormat(UserString("ENC_AUTO_TIME_COST_VARIABLE_DETAIL_STR")) 
+                detailed_description += str(FlexibleFormat(UserString("ENC_AUTO_TIME_COST_VARIABLE_DETAIL_STR"))
                                         % local_name % local_cost % cost_units % local_time);
             }
         }
@@ -2456,7 +2468,7 @@ namespace {
             // Exclude species that can't colonize UNLESS they
             // are already here (aka: it's their home planet). Showing them on
             // their own planet allows comparison vs other races, which might
-            // be better suited to this planet. 
+            // be better suited to this planet.
             if (species->CanColonize() || (planet && species_name == planet->SpeciesName()))
                 retval.insert(species_name);
         }
@@ -3071,7 +3083,7 @@ void EncyclopediaDetailPanel::AddItem(const std::string& type, const std::string
         ++m_items_it;
 
     if (m_back_button->Disabled() && m_items.size() > 1) // enable Back button
-        m_back_button->Disable(false); 
+        m_back_button->Disable(false);
 
     if (!m_next_button->Disabled())                      // disable Next button
         m_next_button->Disable(true);

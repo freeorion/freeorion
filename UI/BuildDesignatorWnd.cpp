@@ -723,17 +723,21 @@ void BuildDesignatorWnd::BuildSelector::CompleteConstruction() {
         UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>()));
     AttachChild(m_availability_buttons.back());
 
-    namespace ph = boost::placeholders;
+#if BOOST_VERSION >= 106000
+            using boost::placeholders::_1;
+            using boost::placeholders::_2;
+            using boost::placeholders::_3;
+#endif
 
     // selectable list of buildable items
     AttachChild(m_buildable_items);
     m_buildable_items->LeftClickedRowSignal.connect(
-        boost::bind(&BuildDesignatorWnd::BuildSelector::BuildItemLeftClicked, this, ph::_1, ph::_2, ph::_3));
+        boost::bind(&BuildDesignatorWnd::BuildSelector::BuildItemLeftClicked, this, _1, _2, _3));
     m_buildable_items->DoubleClickedRowSignal.connect(
         [this](GG::ListBox::iterator it, const GG::Pt&, const GG::Flags<GG::ModKey>& modkeys)
         { this->AddBuildItemToQueue(it, modkeys & GG::MOD_KEY_CTRL); });
     m_buildable_items->RightClickedRowSignal.connect(
-        boost::bind(&BuildDesignatorWnd::BuildSelector::BuildItemRightClicked, this, ph::_1, ph::_2, ph::_3));
+        boost::bind(&BuildDesignatorWnd::BuildSelector::BuildItemRightClicked, this, _1, _2, _3));
 
     //auto header = GG::Wnd::Create<GG::ListBox::Row>();
     //std::shared_ptr<GG::Font> font = ClientUI::GetFont();
@@ -1032,7 +1036,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
             if (!ship_design)
                 continue;
             auto item_row = GG::Wnd::Create<ProductionItemRow>(
-                row_size.x, row_size.y, 
+                row_size.x, row_size.y,
                 ProductionQueue::ProductionItem(BT_SHIP, ship_design_id),
                 m_empire_id, m_production_location);
             rows.push_back(item_row);
@@ -1172,14 +1176,18 @@ void BuildDesignatorWnd::CompleteConstruction() {
 
     m_side_panel->EnableSelection();
 
-    namespace ph = boost::placeholders;
+#if BOOST_VERSION >= 106000
+    using boost::placeholders::_1;
+    using boost::placeholders::_2;
+    using boost::placeholders::_3;
+#endif
 
     m_build_selector->DisplayBuildingTypeSignal.connect(
         boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const BuildingType*)>(
-            &EncyclopediaDetailPanel::SetItem), m_enc_detail_panel, ph::_1));
+            &EncyclopediaDetailPanel::SetItem), m_enc_detail_panel, _1));
     m_build_selector->DisplayShipDesignSignal.connect(
         boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const ShipDesign*)>(
-            &EncyclopediaDetailPanel::SetItem), m_enc_detail_panel, ph::_1));
+            &EncyclopediaDetailPanel::SetItem), m_enc_detail_panel, _1));
     m_build_selector->DisplayStockpileProjectSignal.connect(
         boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const std::string&)>(
             &EncyclopediaDetailPanel::SetEncyclopediaArticle), m_enc_detail_panel, "PROJECT_BT_STOCKPILE"));
@@ -1187,7 +1195,7 @@ void BuildDesignatorWnd::CompleteConstruction() {
     m_build_selector->ShowPediaSignal.connect(
         boost::bind(&BuildDesignatorWnd::ShowPedia, this));
     m_build_selector->RequestBuildItemSignal.connect(
-        boost::bind(&BuildDesignatorWnd::BuildItemRequested, this, ph::_1, ph::_2, ph::_3));
+        boost::bind(&BuildDesignatorWnd::BuildItemRequested, this, _1, _2, _3));
 
     SidePanel::PlanetSelectedSignal.connect(PlanetSelectedSignal);
     SidePanel::SystemSelectedSignal.connect(SystemSelectedSignal);

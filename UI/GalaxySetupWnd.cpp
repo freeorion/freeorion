@@ -655,7 +655,9 @@ void GalaxySetupPanel::CompleteConstruction() {
     TraceLogger() << "GalaxySetupPanel::CompleteConstruction layout";
     DoLayout();
 
+#if BOOST_VERSION >= 106000
     using boost::placeholders::_1;
+#endif
 
     TraceLogger() << "GalaxySetupPanel::CompleteConstruction connecting signals and loading textures";
     m_random->LeftClickedSignal.connect(            boost::bind(&GalaxySetupPanel::RandomClicked, this));
@@ -1046,7 +1048,9 @@ void GalaxySetupWnd::CompleteConstruction() {
     DoLayout();
     SaveDefaultedOptions();
 
+#if BOOST_VERSION >= 106000
     using boost::placeholders::_1;
+#endif
 
     m_galaxy_setup_panel->ImageChangedSignal.connect(boost::bind(&GalaxySetupWnd::PreviewImageChanged,  this, _1));
     m_player_name_edit->EditedSignal.connect(        boost::bind(&GalaxySetupWnd::PlayerNameChanged,    this, _1));
