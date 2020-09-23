@@ -5019,7 +5019,7 @@ ENC_BUILDING_TYPE
 Building Type
 
 ENC_NAMED_VALUE_REF
-Named Value Refs
+[Test - Named Value Refs]
 
 ENC_NAMED_VALUE_REF_DESC
 '''Some value calculations get named so the resulting values can be used in the pedia or by the AI empires. This is often used to present values which depend on game rules.
