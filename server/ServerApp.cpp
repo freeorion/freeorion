@@ -301,6 +301,12 @@ Empire* ServerApp::GetEmpire(int id)
 SupplyManager& ServerApp::GetSupplyManager()
 { return m_supply_manager; }
 
+SpeciesManager& ServerApp::GetSpeciesManager()
+{ return m_species_manager; }
+
+Species* ServerApp::GetSpecies(const std::string& name)
+{ return m_species_manager.GetSpecies(name); }
+
 ObjectMap& ServerApp::EmpireKnownObjects(int empire_id)
 { return m_universe.EmpireKnownObjects(empire_id); }
 

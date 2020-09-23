@@ -371,9 +371,6 @@ unsigned int Species::GetCheckSum() const {
 /////////////////////////////////////////////////
 // SpeciesManager                              //
 /////////////////////////////////////////////////
-// static(s)
-SpeciesManager* SpeciesManager::s_instance = nullptr;
-
 bool SpeciesManager::PlayableSpecies::operator()(
     const std::map<std::string, std::unique_ptr<Species>>::value_type& species_entry) const
 { return species_entry.second->Playable(); }
@@ -381,14 +378,6 @@ bool SpeciesManager::PlayableSpecies::operator()(
 bool SpeciesManager::NativeSpecies::operator()(
     const std::map<std::string, std::unique_ptr<Species>>::value_type& species_entry) const
 { return species_entry.second->Native(); }
-
-SpeciesManager::SpeciesManager() {
-    if (s_instance)
-        throw std::runtime_error("Attempted to create more than one SpeciesManager.");
-
-    // Only update the global pointer on sucessful construction.
-    s_instance = this;
-}
 
 const Species* SpeciesManager::GetSpecies(const std::string& name) const {
     CheckPendingSpeciesTypes();
@@ -400,11 +389,6 @@ Species* SpeciesManager::GetSpecies(const std::string& name) {
     CheckPendingSpeciesTypes();
     auto it = m_species.find(name);
     return it != m_species.end() ? it->second.get() : nullptr;
-}
-
-SpeciesManager& SpeciesManager::GetSpeciesManager() {
-    static SpeciesManager manager;
-    return manager;
 }
 
 void SpeciesManager::SetSpeciesTypes(Pending::Pending<std::pair<SpeciesTypeMap, CensusOrder>>&& future)
@@ -628,12 +612,3 @@ unsigned int SpeciesManager::GetCheckSum() const {
     DebugLogger() << "SpeciesManager checksum: " << retval;
     return retval;
 }
-
-///////////////////////////////////////////////////////////
-// Free Functions                                        //
-///////////////////////////////////////////////////////////
-SpeciesManager& GetSpeciesManager()
-{ return SpeciesManager::GetSpeciesManager(); }
-
-const Species* GetSpecies(const std::string& name)
-{ return SpeciesManager::GetSpeciesManager().GetSpecies(name); }

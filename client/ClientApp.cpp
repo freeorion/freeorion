@@ -48,6 +48,15 @@ const EmpireManager& ClientApp::Empires() const
 Empire* ClientApp::GetEmpire(int empire_id)
 { return m_empires.GetEmpire(empire_id).get(); }
 
+SpeciesManager& ClientApp::GetSpeciesManager()
+{ return m_species_manager; }
+
+const SpeciesManager& ClientApp::GetSpeciesManager() const
+{ return m_species_manager; }
+
+Species* ClientApp::GetSpecies(const std::string& name)
+{ return m_species_manager.GetSpecies(name); }
+
 SupplyManager& ClientApp::GetSupplyManager()
 { return m_supply_manager; }
 

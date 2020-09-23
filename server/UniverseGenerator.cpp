@@ -812,7 +812,7 @@ bool SetEmpireHomeworld(Empire* empire, int planet_id, std::string species_name)
                   << " (planet " <<  home_planet->ID() << ") to be home system for empire " << empire->EmpireID();
 
     // get species, check if it exists
-    Species* species = GetSpeciesManager().GetSpecies(species_name);
+    Species* species = GetSpecies(species_name);
     if (!species) {
         ErrorLogger() << "SetEmpireHomeworld: couldn't get species \""
                       << species_name << "\" to set with homeworld id " << home_planet->ID();

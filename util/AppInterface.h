@@ -7,6 +7,8 @@
 
 class EmpireManager;
 class Empire;
+class SpeciesManager;
+class Species;
 class SupplyManager;
 class Universe;
 class UniverseObject;
@@ -54,6 +56,10 @@ public:
 
     virtual Empire* GetEmpire(int id) = 0;
 
+    virtual SpeciesManager& GetSpeciesManager() = 0;
+
+    virtual Species* GetSpecies(const std::string& name) = 0;
+
     virtual SupplyManager& GetSupplyManager() = 0;
 
     /** Accessor for known objects of specified empire. */
@@ -94,6 +100,14 @@ inline EmpireManager& Empires()
 /** Accessor for Empires */
 inline Empire* GetEmpire(int id)
 { return IApp::GetApp()->GetEmpire(id); }
+
+/** Accessor for the App's species manager */
+inline SpeciesManager& GetSpeciesManager()
+{ return IApp::GetApp()->GetSpeciesManager(); }
+
+/** Accessor for Species */
+inline Species* GetSpecies(const std::string& name)
+{ return IApp::GetApp()->GetSpecies(name); }
 
 /** Accessor for the App's empire supply manager */
 inline SupplyManager& GetSupplyManager()

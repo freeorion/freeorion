@@ -14,7 +14,7 @@ namespace {
 }
 
 class Species;
-const Species* GetSpecies(const std::string& name);
+Species* GetSpecies(const std::string& name);
 
 PopCenter::PopCenter(const std::string& species_name) :
     m_species_name(species_name)

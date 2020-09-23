@@ -28,7 +28,7 @@ const Tech*         GetTech(const std::string& name);
 const Policy*       GetPolicy(const std::string& name);
 const BuildingType* GetBuildingType(const std::string& name);
 const Special*      GetSpecial(const std::string& name);
-const Species*      GetSpecies(const std::string& name);
+const Species*      GetSpeciesConst(const std::string& name) { return GetSpecies(name); }
 const FieldType*    GetFieldType(const std::string& name);
 const ShipHull*     GetShipHull(const std::string& name);
 const ShipPart*     GetShipPart(const std::string& name);
@@ -124,7 +124,7 @@ namespace {
     //! Interprets value of data as a name.
     //! Returns translation of name, if Get says
     //! that a thing by that name exists, otherwise boost::none.
-    template <typename T,const T* (*GetByName)(const std::string&)>
+    template <typename T, const T* (*GetByName)(const std::string&)>
     boost::optional<std::string> NameString(const std::string& data, const std::string& tag) {
         if (!GetByName(data))
             return boost::none;
@@ -165,7 +165,7 @@ namespace {
             {VarText::SPECIAL_TAG, [](const std::string& data)
                 { return NameString<Special, GetSpecial>(data, VarText::SPECIAL_TAG); }},
             {VarText::SPECIES_TAG, [](const std::string& data)
-                { return NameString<Species, GetSpecies>(data, VarText::SPECIES_TAG); }},
+                { return NameString<Species, GetSpeciesConst>(data, VarText::SPECIES_TAG); }},
             {VarText::FIELD_TYPE_TAG, [](const std::string& data)
                 { return NameString<FieldType, GetFieldType>(data, VarText::FIELD_TYPE_TAG); }},
             {VarText::METER_TYPE_TAG, MeterTypeString},

@@ -188,6 +188,8 @@ public:
     typedef boost::filter_iterator<PlayableSpecies, iterator>   playable_iterator;
     typedef boost::filter_iterator<NativeSpecies, iterator>     native_iterator;
 
+    SpeciesManager() = default;
+
     /** returns the building type with the name \a name; you should use the
       * free function GetSpecies() instead, mainly to save some typing. */
     const Species*      GetSpecies(const std::string& name) const;
@@ -250,10 +252,6 @@ public:
     float SpeciesSpeciesOpinion(const std::string& opinionated_species_name,
                                 const std::string& rated_species_name) const;
 
-    /** returns the instance of this singleton class; you should use the free
-      * function GetSpeciesManager() instead */
-    static SpeciesManager&  GetSpeciesManager();
-
     /** Returns a number, calculated from the contained data, which should be
       * different for different contained data, and must be the same for
       * the same contained data, and must be the same on different platforms
@@ -291,8 +289,6 @@ public:
     void SetSpeciesTypes(Pending::Pending<std::pair<SpeciesTypeMap, CensusOrder>>&& future);
 
 private:
-    SpeciesManager();
-
     /** sets the homeworld ids of species in this SpeciesManager to those
       * specified in \a species_homeworld_ids */
     void SetSpeciesHomeworlds(std::map<std::string, std::set<int>>&& species_homeworld_ids);
@@ -312,18 +308,8 @@ private:
     std::map<std::string, std::map<int, float>>         m_species_object_populations;
     std::map<std::string, std::map<std::string, int>>   m_species_species_ships_destroyed;
 
-    static SpeciesManager* s_instance;
-
     template <typename Archive>
     friend void serialize(Archive&, SpeciesManager&, unsigned int const);
 };
-
-/** returns the singleton species manager */
-FO_COMMON_API SpeciesManager& GetSpeciesManager();
-
-/** Returns the Species object used to represent species of type \a name.
-  * If no such Species exists, 0 is returned instead. */
-FO_COMMON_API const Species* GetSpecies(const std::string& name);
-
 
 #endif

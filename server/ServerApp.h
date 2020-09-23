@@ -8,6 +8,7 @@
 #include "ServerNetworking.h"
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Supply.h"
+#include "../universe/Species.h"
 #include "../universe/Universe.h"
 #include "../util/AppInterface.h"
 #include "../util/MultiplayerCommon.h"
@@ -40,6 +41,8 @@ public:
     EmpireManager& Empires() override;
     Empire* GetEmpire(int id) override;
     SupplyManager& GetSupplyManager() override;
+    SpeciesManager& GetSpeciesManager() override;
+    Species* GetSpecies(const std::string& name) override;
 
     /** Returns the server's map for known objects of specified empire. */
     ObjectMap& EmpireKnownObjects(int empire_id) override;
@@ -303,6 +306,7 @@ private:
 
     Universe                m_universe;
     EmpireManager           m_empires;
+    SpeciesManager          m_species_manager;
     SupplyManager           m_supply_manager;
     ServerNetworking        m_networking;
     ServerFSM*              m_fsm;

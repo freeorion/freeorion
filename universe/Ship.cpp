@@ -17,7 +17,7 @@
 
 
 class Species;
-const Species* GetSpecies(const std::string& name);
+Species* GetSpecies(const std::string& name);
 
 Ship::Ship(int empire_id, int design_id, std::string species_name, int produced_by_empire_id) :
     m_design_id(design_id),

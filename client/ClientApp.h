@@ -4,6 +4,7 @@
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Supply.h"
 #include "../network/Message.h"
+#include "../universe/Species.h"
 #include "../universe/Universe.h"
 #include "../util/OrderSet.h"
 #include "../util/AppInterface.h"
@@ -170,6 +171,10 @@ public:
      */
     Empire* GetEmpire(int empire_id) override;
 
+    SpeciesManager& GetSpeciesManager() override;
+    const SpeciesManager& GetSpeciesManager() const;
+    Species* GetSpecies(const std::string& name) override;
+
     SupplyManager& GetSupplyManager() override;
 
     /** @brief Return all Objects known to @a empire_id
@@ -215,14 +220,21 @@ public:
     bool VerifyCheckSum(const Message& msg);
 
 protected:
+    // Gamestate...
     Universe                    m_universe;
     GalaxySetupData             m_galaxy_setup_data;
     EmpireManager               m_empires;
+    SpeciesManager              m_species_manager;
     SupplyManager               m_supply_manager;
+    // End Gamestate
+
+    // client local order storage
     OrderSet                    m_orders;
-    std::shared_ptr<ClientNetworking> m_networking;
-    int                         m_empire_id;
-    int                         m_current_turn;
+
+    // other client local info
+    std::shared_ptr<ClientNetworking>   m_networking;
+    int                                 m_empire_id = ALL_EMPIRES;
+    int                                 m_current_turn = INVALID_GAME_TURN;
     /** Indexed by player id, contains info about all players in the game */
 
     std::map<int, PlayerInfo>   m_player_info;
