@@ -119,7 +119,7 @@ namespace {
 
             std::string value_ref_name{match[1]};
             auto*       value_ref = GetValueRefBase(value_ref_name);
-            auto        value_str{value_ref ? value_ref->StringResult() : value_ref_name};
+            auto        value_str{value_ref ? value_ref->EvalAsString() : value_ref_name};
             std::string explanation_str{
                 value_ref && (use_description_instead_of_user_string || (match[2].length()==0)) ?
                     (" (" + value_ref->Description() + ")") :

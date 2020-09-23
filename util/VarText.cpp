@@ -177,7 +177,7 @@ namespace {
             {VarText::FOCS_VALUE_TAG, [](const std::string& data) -> boost::optional<std::string>
              { const ValueRef::ValueRefBase* vr = GetValueRefBase(data);
                if (vr) {
-                   return WithTags(UserString(data), VarText::FOCS_VALUE_TAG, vr->StringResult());
+                   return WithTags(UserString(data), VarText::FOCS_VALUE_TAG, vr->EvalAsString());
                } else
                    return WithTags(data, VarText::FOCS_VALUE_TAG, UserString("UNKNOWN_VALUE_REF_NAME")); }},
         };

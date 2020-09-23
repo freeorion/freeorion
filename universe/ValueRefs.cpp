@@ -249,8 +249,8 @@ namespace {
     const std::string EMPTY_STRING;
 }
 
-// helper: support enums in ValueRef<T>::StringResult() via ADL
-// c++11 direct use of std::enable_if would confuse the signature of StringResult
+// helper: support enums in ValueRef<T>::EvalAsString() via ADL
+// c++11 direct use of std::enable_if would confuse the signature of EvalAsString
 // c++17 could use: if constexpr (std::is_enum<T>::value
 template <typename T>
 typename std::enable_if<std::is_enum<T>::value, std::string>::type to_string(T val) {
@@ -261,33 +261,33 @@ namespace ValueRef {
     
 // enums and arithmetics
 template <typename T>
-std::string ValueRef<T>::StringResult() const {
+std::string ValueRef<T>::EvalAsString() const {
     using std::to_string;
     return to_string(Eval()); // uses ::to_string or std::to_string per ADL (argument dependent lookup)
 }
 
 template <>
-std::string ValueRef<std::string>::StringResult() const {
+std::string ValueRef<std::string>::EvalAsString() const {
     return Eval();
 }
 
 template <>
-std::string ValueRef<std::vector<std::string>>::StringResult() const {
+std::string ValueRef<std::vector<std::string>>::EvalAsString() const {
     std::string s;
     for (const auto& piece : Eval()) s += piece;
     return s;
 }
 
-// instantiations of StringResult implementation
-template std::string ValueRef<int>::StringResult() const;
-template std::string ValueRef<float>::StringResult() const;
-template std::string ValueRef<double>::StringResult() const;
-template std::string ValueRef<PlanetEnvironment>::StringResult() const;
-template std::string ValueRef<PlanetSize>::StringResult() const;
-template std::string ValueRef<PlanetType>::StringResult() const;
-template std::string ValueRef<StarType>::StringResult() const;
-template std::string ValueRef<UniverseObjectType>::StringResult() const;
-template std::string ValueRef<Visibility>::StringResult() const;
+// instantiations of EvalAsString implementation
+template std::string ValueRef<int>::EvalAsString() const;
+template std::string ValueRef<float>::EvalAsString() const;
+template std::string ValueRef<double>::EvalAsString() const;
+template std::string ValueRef<PlanetEnvironment>::EvalAsString() const;
+template std::string ValueRef<PlanetSize>::EvalAsString() const;
+template std::string ValueRef<PlanetType>::EvalAsString() const;
+template std::string ValueRef<StarType>::EvalAsString() const;
+template std::string ValueRef<UniverseObjectType>::EvalAsString() const;
+template std::string ValueRef<Visibility>::EvalAsString() const;
 
 
 MeterType NameToMeter(const std::string& name) {
