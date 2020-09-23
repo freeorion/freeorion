@@ -78,7 +78,6 @@ ValueRef::ValueRef<double>* const NamedValueRefManager::GetValueRef(const std::s
 }
 
 ValueRef::ValueRefBase* const NamedValueRefManager::GetValueRefBase(const std::string& name) const {
-    /* TODO straighten out const shtuff */
     auto* drefp = const_cast<NamedValueRefManager*>(this)->GetValueRef<double>(name);
     //if (auto* drefp = const_cast<NamedValueRefManager*>(this)->GetValueRef<double>(name)) // TODO C++17
     if (drefp)

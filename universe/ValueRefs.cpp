@@ -48,10 +48,10 @@ namespace {
         ValueRef::ReferenceType ref_type,
         const ScriptingContext& context)
     {
-        // DebugLogger() << "FollowReference: source: " << (context.source ? context.source->Name() : "0")
-        //               << " target: " << (context.effect_target ? context.effect_target->Name() : "0")
-        //               << " local c: " << (context.condition_local_candidate ? context.condition_local_candidate->Name() : "0")
-        //               << " root c: " << (context.condition_root_candidate ? context.condition_root_candidate->Name() : "0");
+        //DebugLogger() << "FollowReference: source: " << (context.source ? context.source->Name() : "0")
+        //              << " target: " << (context.effect_target ? context.effect_target->Name() : "0")
+        //              << " local c: " << (context.condition_local_candidate ? context.condition_local_candidate->Name() : "0")
+        //              << " root c: " << (context.condition_root_candidate ? context.condition_root_candidate->Name() : "0");
 
         std::shared_ptr<const UniverseObject> obj;
         switch (ref_type) {
@@ -274,7 +274,7 @@ std::string ValueRef<std::string>::StringResult() const {
 template <>
 std::string ValueRef<std::vector<std::string>>::StringResult() const {
     std::string s;
-    for (const auto &piece : Eval()) s += piece;
+    for (const auto& piece : Eval()) s += piece;
     return s;
 }
 
@@ -2492,8 +2492,7 @@ std::string ComplexVariable<int>::Dump(unsigned short ntabs) const
     const std::string& variable_name = m_property_name.back();
     std::string retval = variable_name;
     // todo: implement like <double> case
-    if (variable_name == "GameRule")
-    {
+    if (variable_name == "GameRule") {
         if (m_string_ref1)
             retval += " name = " + m_string_ref1->Dump(ntabs);
     }
@@ -2507,8 +2506,7 @@ std::string ComplexVariable<std::string>::Dump(unsigned short ntabs) const
     const std::string& variable_name = m_property_name.back();
     std::string retval = variable_name;
     // todo: implement like <double> case
-    if (variable_name == "GameRule")
-    {
+    if (variable_name == "GameRule") {
         if (m_string_ref1)
             retval += " name = " + m_string_ref1->Dump(ntabs);
     }
@@ -2522,8 +2520,7 @@ std::string ComplexVariable<std::vector<std::string>>::Dump(unsigned short ntabs
     const std::string& variable_name = m_property_name.back();
     std::string retval = variable_name;
     // todo: implement like <double> case
-    if (variable_name == "GameRule")
-    {
+    if (variable_name == "GameRule") {
         if (m_string_ref1)
             retval += " name = " + m_string_ref1->Dump(ntabs);
     }

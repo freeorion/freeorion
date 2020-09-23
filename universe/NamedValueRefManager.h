@@ -3,8 +3,6 @@
 
 #include "ValueRef.h"
 
-/** The NamedRef class. Looks up a named ValueRef from the NamedValueRefManager
-  */
 namespace ValueRef {
     
 /** The NamedRef class. Looks up a named ValueRef from the NamedValueRefManager

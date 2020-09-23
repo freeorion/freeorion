@@ -5,17 +5,6 @@
 
 #include <boost/spirit/include/phoenix.hpp>
 
-namespace parse {
-
-  void errorlog_hello(const std::string& name) // TODO remove this
-    {
-       ErrorLogger() << "trying constructing a NamedRef for : " << name << " !";
-    }
-
-      BOOST_PHOENIX_ADAPT_FUNCTION(void, errorlog_hello_, errorlog_hello, 1)
-}
-
-
 namespace parse { namespace detail {
 
     template <typename T>
@@ -51,10 +40,7 @@ namespace parse { namespace detail {
                    tok.Named_ >> tok.Value_ >> tok.Lookup_
                 >> label(tok.Name_)
                 >> tok.string
-              ) [
-                     ::parse::errorlog_hello_(_2),
-                     _val = construct_movable_(new_<ValueRef::NamedRef<T>>(_4))
-              ]
+              ) [ _val = construct_movable_(new_<ValueRef::NamedRef<T>>(_4)) ]
             ;
 
         functional_expr
