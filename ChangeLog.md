@@ -21,7 +21,6 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Fixed build error when trying to build without the local git repository folder present in the source root directory
 - Fixed build errors with "headless" build
 - Fixed build errors with certain boost versions
-- Raised minimum Boost version to 1.60
 
 
 [v0.4.10] - 2020-07-10
