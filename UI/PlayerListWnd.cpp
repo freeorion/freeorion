@@ -700,23 +700,27 @@ PlayerListWnd::PlayerListWnd(const std::string& config_name) :
 void PlayerListWnd::CompleteConstruction() {
     CUIWnd::CompleteConstruction();
 
-    namespace ph = boost::placeholders;
+#if BOOST_VERSION >= 106000
+    using boost::placeholders::_1;
+    using boost::placeholders::_2;
+    using boost::placeholders::_3;
+#endif
 
     m_player_list = GG::Wnd::Create<PlayerListBox>();
     m_player_list->SetHiliteColor(GG::CLR_ZERO);
     m_player_list->SetStyle(GG::LIST_NOSORT);
     m_player_list->SelRowsChangedSignal.connect(
-        boost::bind(&PlayerListWnd::PlayerSelectionChanged, this, ph::_1));
+        boost::bind(&PlayerListWnd::PlayerSelectionChanged, this, _1));
     m_player_list->DoubleClickedRowSignal.connect(
-        boost::bind(&PlayerListWnd::PlayerDoubleClicked, this, ph::_1, ph::_2, ph::_3));
+        boost::bind(&PlayerListWnd::PlayerDoubleClicked, this, _1, _2, _3));
     m_player_list->RightClickedRowSignal.connect(
-        boost::bind(&PlayerListWnd::PlayerRightClicked, this, ph::_1, ph::_2, ph::_3));
+        boost::bind(&PlayerListWnd::PlayerRightClicked, this, _1, _2, _3));
     AttachChild(m_player_list);
 
     Empires().DiplomaticStatusChangedSignal.connect(
         boost::bind(&PlayerListWnd::Update, this));
     Empires().DiplomaticMessageChangedSignal.connect(
-        boost::bind(&PlayerListWnd::PlayerListWnd::HandleDiplomaticMessageChange, this, ph::_1, ph::_2));
+        boost::bind(&PlayerListWnd::PlayerListWnd::HandleDiplomaticMessageChange, this, _1, _2));
     DoLayout();
 
     Refresh();

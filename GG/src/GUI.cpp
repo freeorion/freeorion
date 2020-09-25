@@ -1355,7 +1355,7 @@ void GUI::RegisterDragDropWnd(std::shared_ptr<Wnd> wnd, const Pt& offset, std::s
         if (originating_wnd)
             orig_wnd_name = originating_wnd->Name();
         throw std::runtime_error("GUI::RegisterDragDropWnd() : Attempted to register a drag drop item"
-                                "dragged from  one window(" + orig_wnd_name + 
+                                "dragged from  one window(" + orig_wnd_name +
                                 "), when another window (" + m_impl_orig_wnd_name +
                                 ") already has items being dragged from it.");
     }
@@ -1643,10 +1643,14 @@ void GUI::RenderWindow(Wnd* wnd)
         if (clip)
             wnd->EndClipping();
     } else {
+#if BOOST_VERSION >= 106000
+        using boost::placeholders::_1;
+#endif
+
         std::vector<std::shared_ptr<Wnd>> children_copy{wnd->m_children.begin(), wnd->m_children.end()};
         const auto& client_child_begin =
             std::partition(children_copy.begin(), children_copy.end(), boost::bind(
-                static_cast<bool (Wnd::*)() const>(&Wnd::NonClientChild), boost::placeholders::_1));
+                static_cast<bool (Wnd::*)() const>(&Wnd::NonClientChild), _1));
 
         if (children_copy.begin() != client_child_begin) {
             wnd->BeginNonclientClipping();

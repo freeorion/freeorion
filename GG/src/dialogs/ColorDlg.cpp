@@ -614,9 +614,11 @@ void ColorDlg::CompleteConstruction()
     master_layout->Add(m_sliders_ok_cancel_layout, 0, 1, 3, 1);
     SetLayout(master_layout);
 
+#if BOOST_VERSION >= 106000
     using boost::placeholders::_1;
     using boost::placeholders::_2;
     using boost::placeholders::_3;
+#endif
 
     for (std::size_t i = 0; i < m_color_buttons.size(); ++i) {
         m_color_buttons[i]->LeftClickedSignal.connect(

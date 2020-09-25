@@ -420,9 +420,11 @@ ResearchWnd::ResearchWnd(GG::X w, GG::Y h, bool initially_hidden /*= true*/) :
     m_queue_wnd = GG::Wnd::Create<ResearchQueueWnd>(GG::X0, GG::Y(100), queue_width, GG::Y(ClientSize().y - 100));
     m_tech_tree_wnd = GG::Wnd::Create<TechTreeWnd>(tech_tree_wnd_size.x, tech_tree_wnd_size.y, initially_hidden);
 
+#if BOOST_VERSION >= 106000
     using boost::placeholders::_1;
     using boost::placeholders::_2;
     using boost::placeholders::_3;
+#endif
 
     m_queue_wnd->GetQueueListBox()->MovedRowSignal.connect(
         boost::bind(&ResearchWnd::QueueItemMoved, this, _1, _2));
@@ -489,7 +491,7 @@ void ResearchWnd::DoLayout(bool init) {
 
 void ResearchWnd::Refresh() {
     // useful at start of turn or when loading empire from save.
-    // since empire object is recreated based on turn update from server, 
+    // since empire object is recreated based on turn update from server,
     // connections of signals emitted from the empire must be remade
     m_empire_connection.disconnect();
 
@@ -643,15 +645,15 @@ void ResearchWnd::AddTechsToQueueSlot(const std::vector<std::string>& tech_vec, 
         if (empire->TechResearched(tech_name))
             continue;
         // AddTechsToQueueSlot is currently used for (i) adding a tech and any not-yet-queued prereqs to the
-        // end of the queue (but any already-queued prereqs are NOT to be moved to the end of the queue), or 
+        // end of the queue (but any already-queued prereqs are NOT to be moved to the end of the queue), or
         // (ii) prioritizing a tech by placing it and any not-yet-completed techs, whether currently queued or not,
-        // to the front of the queue.  If at some time this routine is desired to be used to move a group of techs from 
+        // to the front of the queue.  If at some time this routine is desired to be used to move a group of techs from
         // early positions in the queue to later positions, the below tests would need to change.
 
-        // If we're adding to the end of the queue (pos==-1), we'll need to put in a ResearchQueueOrder iff the tech is 
+        // If we're adding to the end of the queue (pos==-1), we'll need to put in a ResearchQueueOrder iff the tech is
         // not yet in the queue. Otherwise (adding to beginning) we'll need to put in a ResearchQueueOrder if the tech is
-        // not yet in the queue or if the tech's current position in the queue is after the desired position.  When 
-        // adding/moving a group of techs to the queue beginning, we increment our insertion point for every tech we add, 
+        // not yet in the queue or if the tech's current position in the queue is after the desired position.  When
+        // adding/moving a group of techs to the queue beginning, we increment our insertion point for every tech we add,
         // or that we skipped because it happened to already be in the right spot.
         if (pos == -1) {
             if (!queue.InQueue(tech_name)) {

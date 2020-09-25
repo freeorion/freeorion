@@ -214,14 +214,18 @@ void FileDlg::CompleteConstruction()
     PopulateFilters();
     UpdateList();
 
-    namespace ph = boost::placeholders;
+#if BOOST_VERSION >= 106000
+    using boost::placeholders::_1;
+    using boost::placeholders::_2;
+    using boost::placeholders::_3;
+#endif
 
     m_ok_button->LeftClickedSignal.connect(boost::bind(&FileDlg::OkClicked, this));
     m_cancel_button->LeftClickedSignal.connect(boost::bind(&FileDlg::CancelClicked, this));
-    m_files_list->SelRowsChangedSignal.connect(boost::bind(&FileDlg::FileSetChanged, this, ph::_1));
-    m_files_list->DoubleClickedRowSignal.connect(boost::bind(&FileDlg::FileDoubleClicked, this, ph::_1, ph::_2, ph::_3));
-    m_files_edit->EditedSignal.connect(boost::bind(&FileDlg::FilesEditChanged, this, ph::_1));
-    m_filter_list->SelChangedSignal.connect(boost::bind(&FileDlg::FilterChanged, this, ph::_1));
+    m_files_list->SelRowsChangedSignal.connect(boost::bind(&FileDlg::FileSetChanged, this, _1));
+    m_files_list->DoubleClickedRowSignal.connect(boost::bind(&FileDlg::FileDoubleClicked, this, _1, _2, _3));
+    m_files_edit->EditedSignal.connect(boost::bind(&FileDlg::FilesEditChanged, this, _1));
+    m_filter_list->SelChangedSignal.connect(boost::bind(&FileDlg::FilterChanged, this, _1));
 
     if (!m_init_filename.empty()) {
         fs::path filename_path = fs::system_complete(fs::path(m_init_filename));
@@ -535,17 +539,17 @@ void FileDlg::UpdateList()
             if (non_wildcards->empty()) {
                 file_filters[i] = *anychar_p;
             } else {
-                file_filters[i] = 
+                file_filters[i] =
                     if_p (LeadingWildcard(filter_specs[i])) [
-                        *(wildcard - f_str_p(FrontStringBegin(non_wildcards), FrontStringEnd(non_wildcards))) 
+                        *(wildcard - f_str_p(FrontStringBegin(non_wildcards), FrontStringEnd(non_wildcards)))
                         >> f_str_p(FrontStringBegin(non_wildcards), FrontStringEnd(non_wildcards))
                     ] .else_p [
                         f_str_p(FrontStringBegin(non_wildcards), FrontStringEnd(non_wildcards))
-                    ] 
+                    ]
                     >> for_p (Index(1), IndexLess(static_cast<int>(non_wildcards->size()) - 1), IndexIncr()) [
                         *(wildcard - f_str_p(IndexedStringBegin(non_wildcards), IndexedStringEnd(non_wildcards)))
                         >> f_str_p(IndexedStringBegin(non_wildcards), IndexedStringEnd(non_wildcards))
-                    ] 
+                    ]
                     >> if_p (TrailingWildcard(filter_specs[i])) [
                         *wildcard
                     ];

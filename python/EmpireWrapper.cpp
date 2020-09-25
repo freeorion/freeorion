@@ -43,6 +43,11 @@ namespace {
     { return GetTechManager().RecursivePrereqs(tech.Name(), empire_id); }
     auto TechRecursivePrereqsFunc = TechRecursivePrereqs;
 
+#if BOOST_VERSION >= 106000
+    using boost::placeholders::_1;
+    using boost::placeholders::_2;
+#endif
+
     // Concatenate functions to create one that takes two parameters.  The first
     // parameter is a ResearchQueue*, which is passed directly to
     // ResearchQueue::InQueue as the this pointer.  The second parameter is a
@@ -50,8 +55,8 @@ namespace {
     // which returns a Tech*, which is passed into ResearchQueue::InQueue as the
     // second parameter.
     auto InQueueFromResearchQueueElementFunc =
-        boost::bind(&ResearchQueue::InQueue, boost::placeholders::_1,
-                    boost::bind(TechFromResearchQueueElement, boost::placeholders::_2));
+        boost::bind(&ResearchQueue::InQueue, _1,
+                    boost::bind(TechFromResearchQueueElement, _2));
 
     // ProductionQueue::Element contains a ProductionItem which contains details of the item on the queue.  Need helper
     // functions to get the details about the item in the Element without adding extra pointless exposed classes to
@@ -242,8 +247,10 @@ namespace FreeOrionPython {
     using boost::python::return_by_value;
     using boost::python::return_internal_reference;
 
+#if BOOST_VERSION >= 106000
     using boost::placeholders::_1;
     using boost::placeholders::_2;
+#endif
 
     /**
      * CallPolicies:

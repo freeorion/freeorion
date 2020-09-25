@@ -316,10 +316,13 @@ void MessageWnd::CompleteConstruction() {
 
     m_history.push_front("");
 
-    namespace ph = boost::placeholders;
+#if BOOST_VERSION >= 106000
+    using boost::placeholders::_1;
+    using boost::placeholders::_2;
+#endif
 
     Empires().DiplomaticStatusChangedSignal.connect(
-        boost::bind(&MessageWnd::HandleDiplomaticStatusChange, this, ph::_1, ph::_2));
+        boost::bind(&MessageWnd::HandleDiplomaticStatusChange, this, _1, _2));
 
     DoLayout();
     SaveDefaultedOptions();

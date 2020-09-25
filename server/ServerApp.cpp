@@ -70,6 +70,10 @@ namespace {
 
 void Seed(unsigned int seed);
 
+#if BOOST_VERSION >= 106000
+    using boost::placeholders::_1;
+    using boost::placeholders::_2;
+#endif
 
 ////////////////////////////////////////////////
 // ServerApp
@@ -78,9 +82,9 @@ ServerApp::ServerApp() :
     IApp(),
     m_signals(m_io_context, SIGINT, SIGTERM),
     m_networking(m_io_context,
-                 boost::bind(&ServerApp::HandleNonPlayerMessage, this, boost::placeholders::_1, boost::placeholders::_2),
-                 boost::bind(&ServerApp::HandleMessage, this, boost::placeholders::_1, boost::placeholders::_2),
-                 boost::bind(&ServerApp::PlayerDisconnected, this, boost::placeholders::_1)),
+                 boost::bind(&ServerApp::HandleNonPlayerMessage, this, _1, _2),
+                 boost::bind(&ServerApp::HandleMessage, this, _1, _2),
+                 boost::bind(&ServerApp::PlayerDisconnected, this, _1)),
     m_fsm(new ServerFSM(*this)),
     m_chat_history(1000)
 {
@@ -118,14 +122,12 @@ ServerApp::ServerApp() :
 
     m_fsm->initiate();
 
-    namespace ph = boost::placeholders;
-
     Empires().DiplomaticStatusChangedSignal.connect(
-        boost::bind(&ServerApp::HandleDiplomaticStatusChange, this, ph::_1, ph::_2));
+        boost::bind(&ServerApp::HandleDiplomaticStatusChange, this, _1, _2));
     Empires().DiplomaticMessageChangedSignal.connect(
-        boost::bind(&ServerApp::HandleDiplomaticMessageChange,this, ph::_1, ph::_2));
+        boost::bind(&ServerApp::HandleDiplomaticMessageChange,this, _1, _2));
 
-    m_signals.async_wait(boost::bind(&ServerApp::SignalHandler, this, ph::_1, ph::_2));
+    m_signals.async_wait(boost::bind(&ServerApp::SignalHandler, this, _1, _2));
 }
 
 ServerApp::~ServerApp() {

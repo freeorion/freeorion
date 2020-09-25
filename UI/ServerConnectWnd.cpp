@@ -131,7 +131,9 @@ void ServerConnectWnd::CompleteConstruction() {
 
     ResetDefaultPosition();
 
+#if BOOST_VERSION >= 106000
     using boost::placeholders::_1;
+#endif
 
     m_host_or_join_radio_group->ButtonChangedSignal.connect(
         boost::bind(&ServerConnectWnd::EnableDisableControls, this));

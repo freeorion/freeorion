@@ -44,7 +44,9 @@ namespace {
 
     DeclareThreadSafeLogger(conditions);
 
+#if BOOST_VERSION >= 106000
     using boost::placeholders::_1;
+#endif
 
     void AddAllObjectsSet(const ObjectMap& objects, Condition::ObjectSet& condition_non_targets) {
         condition_non_targets.reserve(condition_non_targets.size() + objects.ExistingObjects().size());
@@ -2021,7 +2023,7 @@ void Type::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_cont
                 AddSystemSet(parent_context.ContextObjects(), condition_non_targets);
                 break;
             case OBJ_FIGHTER:   // shouldn't exist outside of combat as a separate object
-            default: 
+            default:
                 found_type = false;
                 break;
         }
@@ -2744,13 +2746,13 @@ namespace {
         ContainsSimpleMatch(const ObjectSet& subcondition_matches) :
             m_subcondition_matches_ids()
         {
-            // We need a sorted container for efficiently intersecting 
+            // We need a sorted container for efficiently intersecting
             // subcondition_matches with the set of objects contained in some
             // candidate object.
             // We only need ids, not objects, so we can do that conversion
             // here as well, simplifying later code.
-            // Note that this constructor is called only once per 
-            // Contains::Eval(), its work cannot help performance when executed 
+            // Note that this constructor is called only once per
+            // Contains::Eval(), its work cannot help performance when executed
             // for each candidate.
             m_subcondition_matches_ids.reserve(subcondition_matches.size());
             // gather the ids
@@ -9720,7 +9722,7 @@ void Or::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
         ObjectSet partly_checked_matches;
         partly_checked_matches.reserve(matches.size());
 
-        // move items in matches set the fail the first operand condition into 
+        // move items in matches set the fail the first operand condition into
         // partly_checked_matches set
         m_operands[0]->Eval(parent_context, matches, partly_checked_matches, MATCHES);
 
@@ -9734,7 +9736,7 @@ void Or::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
         non_matches.insert(non_matches.end(), partly_checked_matches.begin(), partly_checked_matches.end());
 
         // items already in non_matches set are not checked and remain in
-        // non_matches set even if they pass one or more of the operand 
+        // non_matches set even if they pass one or more of the operand
         // conditions
     }
 }

@@ -1077,10 +1077,12 @@ void TechTreeWnd::LayoutPanel::CompleteConstruction() {
     AttachChild(m_zoom_in_button);
     AttachChild(m_zoom_out_button);
 
+#if BOOST_VERSION >= 106000
     using boost::placeholders::_1;
     using boost::placeholders::_2;
     using boost::placeholders::_3;
     using boost::placeholders::_4;
+#endif
 
     m_layout_surface->DraggedSignal.connect(boost::bind(&TechTreeWnd::LayoutPanel::TreeDraggedSlot, this, _1));
     m_layout_surface->ButtonUpSignal.connect(boost::bind(&TechTreeWnd::LayoutPanel::TreeDragEnd, this, _1));
@@ -1370,7 +1372,7 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position) {
 
     std::set<std::string> visible_techs;
 
-    // create new tech panels and new dependency arcs 
+    // create new tech panels and new dependency arcs
     for (const auto& tech : manager) {
         if (!tech) continue;
         const std::string& tech_name = tech->Name();
@@ -1381,8 +1383,13 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position) {
         auto& tech_panel = m_techs[tech_name];
         tech_panel->MoveTo(GG::Pt(node->GetX(), node->GetY()));
         m_layout_surface->AttachChild(tech_panel);
+
+#if BOOST_VERSION >= 106000
+        using boost::placeholders::_1;
+#endif
+
         tech_panel->TechLeftClickedSignal.connect(
-            boost::bind(&TechTreeWnd::LayoutPanel::SelectTech, this, boost::placeholders::_1));
+            boost::bind(&TechTreeWnd::LayoutPanel::SelectTech, this, _1));
         tech_panel->TechDoubleClickedSignal.connect(TechDoubleClickedSignal);
         tech_panel->TechPediaDisplaySignal.connect(TechPediaDisplaySignal);
 
@@ -1720,9 +1727,11 @@ TechTreeWnd::TechListBox::TechListBox(GG::X w, GG::Y h) :
 void TechTreeWnd::TechListBox::CompleteConstruction() {
     CUIListBox::CompleteConstruction();
 
+#if BOOST_VERSION >= 106000
     using boost::placeholders::_1;
     using boost::placeholders::_2;
     using boost::placeholders::_3;
+#endif
 
     DoubleClickedRowSignal.connect(boost::bind(&TechListBox::TechDoubleClicked, this, _1, _2, _3));
     LeftClickedRowSignal.connect(boost::bind(&TechListBox::TechLeftClicked, this, _1, _2, _3));
@@ -1997,8 +2006,10 @@ void TechTreeWnd::CompleteConstruction() {
 
     Sound::TempUISoundDisabler sound_disabler;
 
+#if BOOST_VERSION >= 106000
     using boost::placeholders::_1;
     using boost::placeholders::_2;
+#endif
 
     m_layout_panel = GG::Wnd::Create<LayoutPanel>(Width(), Height());
     m_layout_panel->TechSelectedSignal.connect(boost::bind(&TechTreeWnd::TechLeftClickedSlot, this, _1, _2));

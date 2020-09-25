@@ -798,7 +798,9 @@ void ServerNetworking::Init() {
 }
 
 void ServerNetworking::AcceptNextMessagingConnection() {
+#if BOOST_VERSION >= 106000
     using boost::placeholders::_1;
+#endif
 
     auto next_connection = PlayerConnection::NewConnection(
 #if BOOST_VERSION >= 106600

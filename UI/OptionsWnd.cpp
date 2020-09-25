@@ -265,10 +265,15 @@ namespace {
             m_hscroll =  GG::Wnd::Create<CUIScroll>(GG::HORIZONTAL);
             AttachChild(m_hscroll);
 
-            namespace ph = boost::placeholders;
+#if BOOST_VERSION >= 106000
+            using boost::placeholders::_1;
+            using boost::placeholders::_2;
+            using boost::placeholders::_3;
+            using boost::placeholders::_4;
+#endif
 
             m_hscroll->ScrolledSignal.connect(
-                boost::bind(&FontTextureWnd::ScrolledSlot, this, ph::_1, ph::_2, ph::_3, ph::_4));
+                boost::bind(&FontTextureWnd::ScrolledSlot, this, _1, _2, _3, _4));
             DoLayout();
         }
 
@@ -1016,12 +1021,16 @@ void OptionsWnd::MusicVolumeOption(GG::ListBox* page, int indentation_level, Sou
     slider->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     slider->SetBrowseText(UserString(GetOptionsDB().GetDescription("audio.music.volume")));
 
-    namespace ph = boost::placeholders;
+#if BOOST_VERSION >= 106000
+    using boost::placeholders::_1;
+    using boost::placeholders::_2;
+    using boost::placeholders::_3;
+#endif
 
     button->CheckedSignal.connect(
-        boost::bind(&OptionsWnd::SoundOptionsFeedback::MusicClicked, &fb, ph::_1));
+        boost::bind(&OptionsWnd::SoundOptionsFeedback::MusicClicked, &fb, _1));
     slider->SlidSignal.connect(
-        boost::bind(&OptionsWnd::SoundOptionsFeedback::MusicVolumeSlid, &fb, ph::_1, ph::_2, ph::_3));
+        boost::bind(&OptionsWnd::SoundOptionsFeedback::MusicVolumeSlid, &fb, _1, _2, _3));
     fb.SetMusicButton(std::move(button));
 }
 
@@ -1048,12 +1057,16 @@ void OptionsWnd::VolumeOption(GG::ListBox* page, int indentation_level, const st
     slider->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     slider->SetBrowseText(UserString(GetOptionsDB().GetDescription(volume_option_name)));
 
-    namespace ph = boost::placeholders;
+#if BOOST_VERSION >= 106000
+    using boost::placeholders::_1;
+    using boost::placeholders::_2;
+    using boost::placeholders::_3;
+#endif
 
     button->CheckedSignal.connect(
-        boost::bind(&OptionsWnd::SoundOptionsFeedback::SoundEffectsEnableClicked, &fb, ph::_1));
+        boost::bind(&OptionsWnd::SoundOptionsFeedback::SoundEffectsEnableClicked, &fb, _1));
     slider->SlidAndStoppedSignal.connect(
-        boost::bind(&OptionsWnd::SoundOptionsFeedback::UISoundsVolumeSlid, &fb, ph::_1, ph::_2, ph::_3));
+        boost::bind(&OptionsWnd::SoundOptionsFeedback::UISoundsVolumeSlid, &fb, _1, _2, _3));
     fb.SetEffectsButton(std::move(button));
 }
 
