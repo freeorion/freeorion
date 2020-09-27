@@ -122,7 +122,6 @@ Universe::Universe() :
     m_pathfinder(std::make_shared<Pathfinder>()),
     m_universe_width(1000.0),
     m_inhibit_universe_object_signals(false),
-    m_all_objects_visible(false),
     m_object_id_allocator(new IDAllocator(ALL_EMPIRES, std::vector<int>(), INVALID_OBJECT_ID,
                                           TEMPORARY_OBJECT_ID, INVALID_OBJECT_ID)),
     m_design_id_allocator(new IDAllocator(ALL_EMPIRES, std::vector<int>(), INVALID_DESIGN_ID,
@@ -344,7 +343,7 @@ const std::set<int>& Universe::EmpireKnownShipDesignIDs(int empire_id) const {
 }
 
 Visibility Universe::GetObjectVisibilityByEmpire(int object_id, int empire_id) const {
-    if (empire_id == ALL_EMPIRES || GetUniverse().AllObjectsVisible())
+    if (empire_id == ALL_EMPIRES)   // TODO: GameRule for all objects visible
         return Visibility::VIS_FULL_VISIBILITY;
 
     auto empire_it = m_empire_object_visibility.find(empire_id);
@@ -2454,7 +2453,7 @@ void Universe::UpdateEmpireObjectVisibilities() {
     m_empire_object_visibility.clear();
     m_empire_object_visible_specials.clear();
 
-    if (m_all_objects_visible) {
+    if (false) {    // TODO: GameRule
         SetAllObjectsVisibleToAllEmpires();
         return;
     }

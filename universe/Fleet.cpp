@@ -191,7 +191,7 @@ bool Fleet::ContainedBy(int object_id) const
 
 const std::string& Fleet::PublicName(int empire_id) const {
     // Disclose real fleet name only to fleet owners.
-    if (GetUniverse().AllObjectsVisible() || empire_id == ALL_EMPIRES || OwnedBy(empire_id))
+    if (empire_id == ALL_EMPIRES || OwnedBy(empire_id)) // TODO: GameRule for all objets visible
         return Name();
     else if (!Unowned())
         return UserString("FW_FOREIGN_FLEET");

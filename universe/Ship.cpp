@@ -330,7 +330,7 @@ const std::string& Ship::PublicName(int empire_id) const {
     // doesn't know the design for a particular ship can easily guess it if the
     // ship's name is "Scout"
     // An exception is made for unowned monsters.
-    if (GetUniverse().AllObjectsVisible() || empire_id == ALL_EMPIRES || OwnedBy(empire_id) || (IsMonster() && Owner() == ALL_EMPIRES))
+    if (empire_id == ALL_EMPIRES || OwnedBy(empire_id) || (IsMonster() && Owner() == ALL_EMPIRES))  // TODO: GameRule for all objects visible
         return Name();
     const ShipDesign* design = Design();
     if (design)

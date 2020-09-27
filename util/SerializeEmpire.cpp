@@ -176,9 +176,8 @@ void Empire::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_eliminated)
         & BOOST_SERIALIZATION_NVP(m_victories);
 
-    bool visible = GetUniverse().AllObjectsVisible() ||
-        GlobalSerializationEncodingForEmpire() == ALL_EMPIRES ||
-        m_id == GlobalSerializationEncodingForEmpire();
+    bool GlobalSerializationEncodingForEmpire() == ALL_EMPIRES ||
+        m_id == GlobalSerializationEncodingForEmpire(); // TODO: GameRule for all objects visible
     bool allied_visible = visible || Empires().GetDiplomaticStatus(m_id, GlobalSerializationEncodingForEmpire()) == DiplomaticStatus::DIPLO_ALLIED;
 
     if (Archive::is_loading::value && version < 1) {

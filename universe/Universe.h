@@ -352,7 +352,6 @@ public:
 
     double UniverseWidth() const;
     void SetUniverseWidth(double width) { m_universe_width = width; }
-    bool AllObjectsVisible() const { return m_all_objects_visible; }
 
     /** InsertNew constructs and inserts a UniverseObject into the object map with a new
         id. It returns the new object. */
@@ -507,7 +506,6 @@ private:
 
     double                          m_universe_width;
     bool                            m_inhibit_universe_object_signals;
-    bool                            m_all_objects_visible;              ///< flag set to skip visibility tests and make everything visible to all players
 
     std::map<std::string, std::map<int, std::map<int, double>>>
                                     m_stat_records;                     ///< storage for statistics calculated for empires. Indexed by stat name (string), contains a map indexed by empire id, contains a map from turn number (int) to stat value (double).
