@@ -22,8 +22,8 @@ public:
 
     Impl(std::function<std::string ()> output_text_fn, bool enable_output,
          std::chrono::microseconds threshold) :
-        m_output_text_fn(output_text_fn),
         m_start(std::chrono::high_resolution_clock::now()),
+        m_output_text_fn(output_text_fn),
         m_enable_output(enable_output),
         m_threshold(threshold)
     {}
