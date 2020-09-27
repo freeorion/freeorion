@@ -194,10 +194,6 @@ public:
      */
     void SetCurrentTurn(int turn);
 
-    /** @brief Handle the turn update.
-     */
-    virtual void HandleTurnUpdate() {}
-
     /** @brief Set the Message::PlayerStatus @a status for @a empire_id
      *
      * @param player_id A empire identifier.

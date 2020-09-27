@@ -1155,9 +1155,6 @@ void HumanClientApp::StartGame(bool is_new_game) {
     UpdateCombatLogManager();
 }
 
-void HumanClientApp::HandleTurnUpdate()
-{ UpdateCombatLogManager(); }
-
 void HumanClientApp::UpdateCombatLogManager() {
     boost::optional<std::vector<int>> incomplete_ids = GetCombatLogManager().IncompleteLogIDs();
     if (incomplete_ids) {

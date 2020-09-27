@@ -955,7 +955,7 @@ boost::statechart::result WaitingForTurnData::react(const TurnUpdate& msg) {
     if (Client().Networking().PlayerIsHost(Client().PlayerID()))
         Client().Autosave();
 
-    Client().HandleTurnUpdate();
+    Client().UpdateCombatLogManager();
 
     Client().GetClientUI().GetPlayerListWnd()->Refresh();
     Client().GetClientUI().GetMapWnd()->ResetTimeoutClock(0);

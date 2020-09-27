@@ -44,9 +44,8 @@ public:
     int  AutoTurnsLeft() const;     ///< returns number of turns left to execute automatically
     bool HaveWindowFocus() const;   ///< as far as the HCA knows, does the game window have focus?
 
-    void HandleTurnUpdate() override;           ///< Handle background events that need starting when the turn updates
     void StartTurn(const SaveGameUIData& ui_data) override;
-    void UnreadyTurn();                         ///< Revoke ready state of turn orders.
+    void UnreadyTurn();             ///< Revoke ready state of turn orders.
 
     /** \brief Handle UI and state updates with changes in turn phase. */
     void HandleTurnPhaseUpdate(Message::TurnProgressPhase phase_id) override;
