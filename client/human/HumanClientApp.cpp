@@ -921,8 +921,8 @@ void HumanClientApp::StartTurn(const SaveGameUIData& ui_data) {
         double RP = empire->ResourceOutput(ResourceType::RE_RESEARCH);
         double PP = empire->ResourceOutput(ResourceType::RE_INDUSTRY);
         int turn_number = CurrentTurn();
-        float ratio = (RP/(PP+0.0001));
-        const GG::Clr color = empire->Color();
+        float ratio = RP / std::max(PP, 0.0001);
+        const GG::Clr& color = empire->Color();
         DebugLogger() << "Current Output (turn " << turn_number << ") RP/PP: " << ratio << " (" << RP << "/" << PP << ")";
         DebugLogger() << "EmpireColors: " << static_cast<int>(color.r)
                       << " " << static_cast<int>(color.g)
@@ -940,9 +940,8 @@ void HumanClientApp::StartTurn(const SaveGameUIData& ui_data) {
     m_fsm->process_event(TurnEnded());
 }
 
-void HumanClientApp::UnreadyTurn() {
-    m_networking->SendMessage(UnreadyMessage());
-}
+void HumanClientApp::UnreadyTurn()
+{ m_networking->SendMessage(UnreadyMessage()); }
 
 void HumanClientApp::HandleTurnPhaseUpdate(Message::TurnProgressPhase phase_id) {
     ClientApp::HandleTurnPhaseUpdate(phase_id);
