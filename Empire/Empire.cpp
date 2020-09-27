@@ -1122,7 +1122,7 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems,
     // get empire supply ranges
     std::map<int, std::map<int, float>> empire_system_supply_ranges;
     for (const auto& entry : Empires()) {
-        const Empire* empire = entry.second;
+        const auto& empire = entry.second;
         empire_system_supply_ranges[entry.first] = empire->SystemSupplyRanges();
     }
 
@@ -1668,7 +1668,7 @@ void Empire::ConquerProductionQueueItemsAtLocation(int location_id, int empire_i
         int from_empire_id = entry.first;
         if (from_empire_id == empire_id) continue;    // skip this empire; can't capture one's own ProductionItems
 
-        Empire* from_empire = entry.second;
+        auto& from_empire = entry.second;
         ProductionQueue& queue = from_empire->m_production_queue;
 
         for (auto queue_it = queue.begin(); queue_it != queue.end(); ) {

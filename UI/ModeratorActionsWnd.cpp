@@ -315,7 +315,7 @@ void ModeratorActionsWnd::Refresh() {
 
     m_empire_drop->Clear();
     for (const auto& entry : Empires()) {
-        const Empire* empire = entry.second;
+        const auto& empire = entry.second;
         auto row = GG::Wnd::Create<GG::DropDownList::Row>();
         auto label = GG::Wnd::Create<CUILabel>(empire->Name(), GG::FORMAT_NOWRAP);
         label->SetTextColor(empire->Color());

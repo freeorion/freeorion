@@ -936,7 +936,7 @@ void SidePanel::PlanetPanel::CompleteConstruction() {
 
     // need to check all empires for capitals
     for (const auto& entry : Empires()) {
-        const Empire* empire = entry.second;
+        const auto& empire = entry.second;
         if (!empire) {
             ErrorLogger() << "PlanetPanel::PlanetPanel got null empire pointer for id " << entry.first;
             continue;

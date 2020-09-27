@@ -206,7 +206,7 @@ BOOST_AUTO_TEST_CASE(hostless_server) {
             }
 
             // output sitreps
-            const Empire* my_empire = m_empires.GetEmpire(m_empire_id);
+            const auto& my_empire = m_empires.GetEmpire(m_empire_id);
             BOOST_REQUIRE(my_empire != nullptr);
             for (auto sitrep_it = my_empire->SitRepBegin(); sitrep_it != my_empire->SitRepEnd(); ++sitrep_it) {
                 if (sitrep_it->GetTurn() == m_current_turn) {

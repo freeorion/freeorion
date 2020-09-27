@@ -296,7 +296,7 @@ EmpireManager& ServerApp::Empires()
 { return m_empires; }
 
 Empire* ServerApp::GetEmpire(int id)
-{ return m_empires.GetEmpire(id); }
+{ return m_empires.GetEmpire(id).get(); }
 
 SupplyManager& ServerApp::GetSupplyManager()
 { return m_supply_manager; }
@@ -639,7 +639,7 @@ void UpdateEmpireSupply(bool precombat=false) {
 
     // Determine initial supply distribution and exchanging and resource pools for empires
     for (auto& entry : empires) {
-        Empire* empire = entry.second;
+        auto& empire = entry.second;
         if (empire->Eliminated())
             continue;   // skip eliminated empires.  presumably this shouldn't be an issue when initializing a new game, but apparently I thought this was worth checking for...
 
@@ -650,7 +650,7 @@ void UpdateEmpireSupply(bool precombat=false) {
     GetSupplyManager().Update();
 
     for (auto& entry : empires) {
-        Empire* empire = entry.second;
+        auto& empire = entry.second;
         if (empire->Eliminated())
             continue;
 
@@ -1848,14 +1848,14 @@ void ServerApp::DropPlayerEmpireLink(int player_id)
 { m_player_empire_ids.erase(player_id); }
 
 int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, int target_empire_id) {
-    Empire* empire = nullptr;
+    std::shared_ptr<Empire> empire;
     int empire_id = ALL_EMPIRES;
     std::list<std::string> delegation = GetPlayerDelegation(player_connection->PlayerName());
     if (target_empire_id == ALL_EMPIRES) {
         if (!delegation.empty())
             return ALL_EMPIRES;
         // search empire by player name
-        for (auto e : Empires()) {
+        for (auto& e : Empires()) {
             if (e.second->PlayerName() == player_connection->PlayerName()) {
                 empire_id = e.first;
                 empire = e.second;
@@ -3253,7 +3253,7 @@ void ServerApp::PreCombatProcessTurns() {
 
     // Update system-obstruction after orders, colonization, invasion, gifting, scrapping
     for (auto& entry : Empires()) {
-        Empire* empire = entry.second;
+        auto& empire = entry.second;
         if (empire->Eliminated())
             continue;
         empire->UpdateSupplyUnobstructedSystems(true);
@@ -3463,7 +3463,7 @@ void ServerApp::PostCombatProcessTurns() {
     UpdateMonsterTravelRestrictions();
     for (auto& entry : empires) {
         if (!entry.second->Eliminated()) {
-            Empire* empire = entry.second;
+            auto& empire = entry.second;
             empire->UpdatePreservedLanes();
             empire->UpdateUnobstructedFleets();     // must be done after *all* noneliminated empires have updated their unobstructed systems
         }
@@ -3478,13 +3478,12 @@ void ServerApp::PostCombatProcessTurns() {
     // objects for completed production and give techs to empires that have
     // researched them
     for (auto& entry : empires) {
-        Empire* empire = entry.second;
+        auto& empire = entry.second;
         if (empire->Eliminated())
             continue;   // skip eliminated empires
 
-        for (const auto& tech : empire->CheckResearchProgress()) {
+        for (const auto& tech : empire->CheckResearchProgress())
             empire->AddNewlyResearchedTechToGrantAtStartOfNextTurn(tech);
-        }
         empire->CheckProductionProgress();
         empire->CheckInfluenceProgress();
     }
@@ -3563,7 +3562,7 @@ void ServerApp::PostCombatProcessTurns() {
     DebugLogger() << "ServerApp::PostCombatProcessTurns applying Newly Added Techs";
     // apply new techs
     for (auto& entry : empires) {
-        Empire* empire = entry.second;
+        auto& empire = entry.second;
         if (empire && !empire->Eliminated())
             empire->ApplyNewTechs();
     }
@@ -3639,8 +3638,8 @@ void ServerApp::PostCombatProcessTurns() {
 }
 
 void ServerApp::CheckForEmpireElimination() {
-    std::set<Empire*> surviving_empires;
-    std::set<Empire*> non_eliminated_non_ai_controlled_empires;
+    std::set<std::shared_ptr<Empire>> surviving_empires;
+    std::set<std::shared_ptr<Empire>> non_eliminated_non_ai_controlled_empires;
     for (auto& entry : Empires()) {
         if (entry.second->Eliminated())
             continue;   // don't double-eliminate an empire

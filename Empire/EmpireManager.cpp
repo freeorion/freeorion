@@ -17,54 +17,39 @@ namespace {
     const std::string EMPTY_STRING;
 }
 
-EmpireManager::EmpireManager()
-{}
-
-EmpireManager::~EmpireManager()
-{ Clear(); }
-
-const EmpireManager& EmpireManager::operator=(EmpireManager& rhs) {
-    Clear();
-    m_empire_map = rhs.m_empire_map;
-    rhs.m_empire_map.clear();
-
-    m_empire_diplomatic_statuses = rhs.m_empire_diplomatic_statuses;
-    rhs.m_empire_diplomatic_statuses.clear();
-
-    m_diplomatic_messages = rhs.m_diplomatic_messages;
-    rhs.m_diplomatic_messages.clear();
-
+EmpireManager& EmpireManager::operator=(EmpireManager&& other) noexcept {
+    m_empire_map = std::move(other.m_empire_map);
+    m_const_empire_map = std::move(other.m_const_empire_map);
+    m_empire_diplomatic_statuses = std::move(other.m_empire_diplomatic_statuses);
+    m_diplomatic_messages = std::move(other.m_diplomatic_messages);
     return *this;
 }
 
-const Empire* EmpireManager::GetEmpire(int id) const {
-    auto it = m_empire_map.find(id);
-    return it == m_empire_map.end() ? nullptr : it->second;
+EmpireManager::~EmpireManager()
+{}
+
+std::shared_ptr<const Empire> EmpireManager::GetEmpire(int id) const {
+    auto it = m_const_empire_map.find(id);
+    return it == m_const_empire_map.end() ? nullptr : it->second;
 }
 
 std::shared_ptr<const UniverseObject> EmpireManager::GetSource(int id) const {
-    auto it = m_empire_map.find(id);
-    return it != m_empire_map.end() ? it->second->Source() : nullptr;
+    auto it = m_const_empire_map.find(id);
+    return it != m_const_empire_map.end() ? it->second->Source() : nullptr;
 }
 
 const std::string& EmpireManager::GetEmpireName(int id) const {
-    auto it = m_empire_map.find(id);
-    return it == m_empire_map.end() ? EMPTY_STRING : it->second->Name();
+    auto it = m_const_empire_map.find(id);
+    return it == m_const_empire_map.end() ? EMPTY_STRING : it->second->Name();
 }
 
-EmpireManager::const_iterator EmpireManager::begin() const
-{ return m_empire_map.begin(); }
-
-EmpireManager::const_iterator EmpireManager::end() const
-{ return m_empire_map.end(); }
-
 int EmpireManager::NumEmpires() const
-{ return m_empire_map.size(); }
+{ return m_const_empire_map.size(); }
 
 int EmpireManager::NumEliminatedEmpires() const {
     int eliminated_count = 0;
 
-    for (const auto& empire : m_empire_map)
+    for (const auto& empire : m_const_empire_map)
         if (empire.second->Eliminated())
             eliminated_count++;
 
@@ -82,8 +67,8 @@ std::string EmpireManager::Dump() const {
 std::string EmpireManager::DumpDiplomacy() const {
     std::string retval = "Diplomatic Statuses:\n";
     for (const auto& entry : m_empire_diplomatic_statuses) {
-        const Empire* empire1 = GetEmpire(entry.first.first);
-        const Empire* empire2 = GetEmpire(entry.first.second);
+        auto empire1 = GetEmpire(entry.first.first).get();
+        auto empire2 = GetEmpire(entry.first.second).get();
         if (!empire1 || !empire2)
             continue;
         retval += " * " + empire1->Name() + " / " + empire2->Name() + " : ";
@@ -107,10 +92,16 @@ std::string EmpireManager::DumpDiplomacy() const {
     return retval;
 }
 
-Empire* EmpireManager::GetEmpire(int id) {
+std::shared_ptr<Empire> EmpireManager::GetEmpire(int id) {
     iterator it = m_empire_map.find(id);
     return it == end() ? nullptr : it->second;
 }
+
+EmpireManager::const_iterator EmpireManager::begin() const
+{ return m_const_empire_map.begin(); }
+
+EmpireManager::const_iterator EmpireManager::end() const
+{ return m_const_empire_map.end(); }
 
 EmpireManager::iterator EmpireManager::begin()
 { return m_empire_map.begin(); }
@@ -123,16 +114,16 @@ void EmpireManager::BackPropagateMeters() {
         entry.second->BackPropagateMeters();
 }
 
-Empire* EmpireManager::CreateEmpire(int empire_id, std::string name,
-                                    std::string player_name,
-                                    const GG::Clr& color, bool authenticated)
+void EmpireManager::CreateEmpire(int empire_id, std::string name,
+                                 std::string player_name,
+                                 const GG::Clr& color, bool authenticated)
 {
-    Empire* empire = new Empire(std::move(name), std::move(player_name), empire_id, color, authenticated);
-    InsertEmpire(empire);
-    return empire;
+    auto empire = std::make_shared<Empire>(std::move(name), std::move(player_name),
+                                           empire_id, color, authenticated);
+    InsertEmpire(std::move(empire));
 }
 
-void EmpireManager::InsertEmpire(Empire* empire) {
+void EmpireManager::InsertEmpire(std::shared_ptr<Empire>&& empire) {
     if (!empire) {
         ErrorLogger() << "EmpireManager::InsertEmpire passed null empire";
         return;
@@ -145,12 +136,12 @@ void EmpireManager::InsertEmpire(Empire* empire) {
         return;
     }
 
-    m_empire_map[empire_id] = empire;
+    m_const_empire_map[empire_id] = empire;
+    m_empire_map[empire_id] = std::move(empire);
 }
 
 void EmpireManager::Clear() {
-    for (auto& entry : m_empire_map)
-        delete entry.second;
+    m_const_empire_map.clear();
     m_empire_map.clear();
     m_empire_diplomatic_statuses.clear();
 }
@@ -345,11 +336,11 @@ void EmpireManager::ResetDiplomacy() {
 
     // set all empires at war with each other (but not themselves)
     m_empire_diplomatic_statuses.clear();
-    for (auto id_empire_1 : m_empire_map) {
-        for (auto id_empire_2 : m_empire_map) {
+    for (auto id_empire_1 : m_const_empire_map) {
+        for (auto id_empire_2 : m_const_empire_map) {
             if (id_empire_1.first == id_empire_2.first)
                 continue;
-            const std::pair<int, int> diplo_key = DiploKey(id_empire_1.first, id_empire_2.first);
+            std::pair<int, int> diplo_key = DiploKey(id_empire_1.first, id_empire_2.first);
             m_empire_diplomatic_statuses[diplo_key] = DiplomaticStatus::DIPLO_WAR;
         }
     }
@@ -402,6 +393,7 @@ void InitEmpireColors(const boost::filesystem::path& path) {
         }
     }
 }
+
 const std::vector<GG::Clr>& EmpireColors() {
     auto& colors = EmpireColorsNonConst();
     if (colors.empty()) {

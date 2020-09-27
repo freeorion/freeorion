@@ -46,7 +46,7 @@ const EmpireManager& ClientApp::Empires() const
 { return m_empires; }
 
 Empire* ClientApp::GetEmpire(int empire_id)
-{ return m_empires.GetEmpire(empire_id); }
+{ return m_empires.GetEmpire(empire_id).get(); }
 
 SupplyManager& ClientApp::GetSupplyManager()
 { return m_supply_manager; }
@@ -102,7 +102,7 @@ std::map<int, PlayerInfo>& ClientApp::Players()
 { return m_player_info; }
 
 void ClientApp::SetEmpireStatus(int empire_id, Message::PlayerStatus status) {
-    if (auto* empire = m_empires.GetEmpire(empire_id))
+    if (auto empire = m_empires.GetEmpire(empire_id))
         empire->SetReady(status == Message::PlayerStatus::WAITING);
 }
 

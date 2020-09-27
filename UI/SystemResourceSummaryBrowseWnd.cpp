@@ -58,8 +58,8 @@ namespace {
 
             } else {
                 // add allocated PP for all production items at this location for all empires
-                for (auto& entry : Empires()) {
-                    empire = entry.second;
+                for (const auto& entry : Empires()) {
+                    empire = entry.second.get();
                     for (const ProductionQueue::Element& elem : empire->GetProductionQueue())
                         if (elem.location == obj->ID())
                             prod_queue_allocation_sum += elem.allocated_pp;

@@ -473,15 +473,14 @@ namespace {
      Note: Validating requires substituting all of the variables which is time
      consuming for sitreps that the player will never view. */
     std::map<int, std::list<SitRepEntry>> GetUnvalidatedSitRepsSortedByTurn(int empire_id) {
-        std::set<Empire*> sr_empires;
-        Empire* empire = GetEmpire(empire_id);
+        std::set<const Empire*> sr_empires;
+        const Empire* empire = GetEmpire(empire_id);
         if (empire) {
             sr_empires.insert(empire);
         } else {
             // Moderator mode, sort sitreps from all empires
-            EmpireManager& empires = Empires();
-            for (auto& entry : empires)
-                sr_empires.insert(entry.second);
+            for (const auto& entry : Empires())
+                sr_empires.insert(entry.second.get());
         }
 
         std::map<int, std::list<SitRepEntry>> turns;

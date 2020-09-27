@@ -7,8 +7,7 @@
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/split.hpp>
-#include <boost/range/adaptor/filtered.hpp>
-#include <boost/range/adaptor/map.hpp>
+#include <boost/range/adaptors.hpp>
 #include <boost/range/numeric.hpp>
 #include "Building.h"
 #include "Field.h"
@@ -1498,7 +1497,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
 
     // unindexed empire proprties
     if (variable_name == "OutpostsOwned") {
-        Empire* empire{nullptr};
+        const Empire* empire{nullptr};
         if (m_int_ref1) {
             int empire_id = m_int_ref1->Eval(context);
             if (empire_id == ALL_EMPIRES)
@@ -1512,9 +1511,12 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         empire_property = &Empire::OutpostsOwned;
 
         using namespace boost::adaptors;
+        auto GetRawPtr = [](const auto& smart_ptr){ return smart_ptr.get(); };
 
-        if (!empire)
-            return boost::accumulate(Empires() | map_values | transformed(empire_property), 0);
+        if (!empire) {
+            return boost::accumulate(Empires() | map_values | transformed(GetRawPtr) |
+                                     transformed(empire_property), 0);
+        }
 
         return empire_property(empire);
     }

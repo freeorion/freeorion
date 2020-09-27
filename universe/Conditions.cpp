@@ -4423,7 +4423,7 @@ namespace {
 
             if (m_empire_id == ALL_EMPIRES) {
                 for (auto& item : Empires()) {
-                    const Empire* empire = item.second;
+                    const auto& empire = item.second;
                     count += NumberOnQueue(empire->GetProductionQueue(), m_build_type,
                                            candidate->ID(), m_name, m_design_id);
                 }

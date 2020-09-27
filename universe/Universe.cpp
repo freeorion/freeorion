@@ -1339,8 +1339,8 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     TraceLogger(effects) << "Universe::GetEffectsAndTargets for TECHS";
     std::list<Condition::ObjectSet> tech_sources;   // for each empire, a set with a single source object for all its techs
     // select a source object for each empire and dispatch condition evaluations
-    for (auto& entry : Empires()) {
-        const Empire* empire = entry.second;
+    for (const auto& entry : Empires()) {
+        const auto& empire = entry.second;
         auto source = empire->Source();
         if (!source)
             continue;
@@ -1368,8 +1368,8 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     type_timer.EnterSection("policies");
     TraceLogger(effects) << "Universe::GetEffectsAndTargets for POLICIES";
     std::list<Condition::ObjectSet> policy_sources; // for each empire, a set with a single source object for all its policies
-    for (auto& entry : Empires()) {
-        const Empire* empire = entry.second;
+    for (const auto& entry : Empires()) {
+        const auto& empire = entry.second;
         auto source = empire->Source();
         if (!source)
             continue;
@@ -2341,12 +2341,12 @@ namespace {
     {
         // after setting object visibility, similarly set visibility of objects'
         // specials for each empire
-        for (auto& empire_entry : Empires()) {
+        for (const auto& empire_entry : Empires()) {
             int empire_id = empire_entry.first;
             auto& obj_vis_map = empire_object_visibility[empire_id];
             auto& obj_specials_map = empire_object_visible_specials[empire_id];
 
-            const Empire* empire = empire_entry.second;
+            const auto& empire = empire_entry.second;
             const Meter* detection_meter = empire->GetMeter("METER_DETECTION_STRENGTH");
             if (!detection_meter)
                 continue;
@@ -2445,9 +2445,9 @@ namespace {
 
 void Universe::UpdateEmpireObjectVisibilities() {
     // ensure Universe knows empires have knowledge of designs the empire is specifically remembering
-    for (auto& empire_entry : Empires()) {
+    for (const auto& empire_entry : Empires()) {
         int empire_id = empire_entry.first;
-        const Empire* empire = empire_entry.second;
+        const auto& empire = empire_entry.second;
         if (empire->Eliminated()) {
             m_empire_known_ship_design_ids.erase(empire_id);
         } else {

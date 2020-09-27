@@ -326,7 +326,7 @@ void SupplyManager::Update() {
     std::map<int, float> empire_total_supply_range_sums;
 
     for (const auto& entry : Empires()) {
-        const Empire* empire = entry.second;
+        const auto& empire = entry.second;
         empire_system_supply_ranges[entry.first] = empire->SystemSupplyRanges();
         empire_supply_unobstructed_systems[entry.first] = empire->SupplyUnobstructedSystems();
 
@@ -409,7 +409,7 @@ void SupplyManager::Update() {
     // system connections each empire can see / use for supply propagation
     std::map<int, std::map<int, std::set<int>>> empire_visible_starlanes;
     for (auto& entry : Empires()) {
-        const Empire* empire = entry.second;
+        const auto& empire = entry.second;
         empire_visible_starlanes[entry.first] = empire->KnownStarlanes();//  VisibleStarlanes();
 
         if (empire_visible_starlanes[entry.first].empty()) {

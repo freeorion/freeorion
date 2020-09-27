@@ -21,28 +21,21 @@ class UniverseObject;
 /** Maintains all of the Empire objects that exist in the application. */
 class FO_COMMON_API EmpireManager {
 public:
-    /// Iterator over Empires
-    typedef std::map<int, Empire*>::iterator iterator;
+    using container_type = std::map<int, std::shared_ptr<Empire>>;
+    using iterator = container_type::iterator;
+    using const_container_type = std::map<int, std::shared_ptr<const Empire>>;
+    using const_iterator = const_container_type::const_iterator;
 
-    /// Const Iterator over Empires
-    typedef std::map<int, Empire*>::const_iterator const_iterator;
-
-    EmpireManager();
+    EmpireManager() = default;
+    EmpireManager& operator=(EmpireManager&& other) noexcept;
     virtual ~EmpireManager();
 
-    const EmpireManager& operator=(EmpireManager& rhs); ///< assignment operator (move semantics)
+    std::shared_ptr<const Empire>         GetEmpire(int id) const;  //!< Returns the empire whose ID is \a id, or nullptr if none exist
+    const std::string&                    GetEmpireName(int id) const;
+    std::shared_ptr<const UniverseObject> GetSource(int id) const;  //!< Return the empire source or nullptr if the empire or source doesn't exist
 
-    /** Returns the empire whose ID is \a ID, or 0 if none exists. */
-    const Empire*       GetEmpire(int id) const;
-    /** Return the empire source or nullptr if the empire or source doesn't exist.*/
-    std::shared_ptr<const UniverseObject> GetSource(int id) const;
-    const std::string&  GetEmpireName(int id) const;
-
-    const_iterator      begin() const;
-    const_iterator      end() const;
-
-    int                 NumEmpires() const;
-    int                 NumEliminatedEmpires() const;
+    int                         NumEmpires() const;
+    int                         NumEliminatedEmpires() const;
 
     DiplomaticStatus            GetDiplomaticStatus(int empire1, int empire2) const;
     std::set<int>               GetEmpireIDsWithDiplomaticStatusWithEmpire(int empire_id,
@@ -50,13 +43,14 @@ public:
     bool                        DiplomaticMessageAvailable(int sender_id, int recipient_id) const;
     const DiplomaticMessage&    GetDiplomaticMessage(int sender_id, int recipient_id) const;
 
-    std::string Dump() const;
+    std::string                 Dump() const;
 
-    /** Returns the empire whose ID is \a id, or 0 if none exists. */
-    Empire*     GetEmpire(int id);
+    std::shared_ptr<Empire>     GetEmpire(int id);  //!< Returns the empire whose ID is \a id, or nullptr if none exist
 
-    iterator    begin();
-    iterator    end();
+    const_iterator begin() const;
+    const_iterator end() const;
+    iterator       begin();
+    iterator       end();
 
     void        BackPropagateMeters();
 
@@ -71,13 +65,13 @@ public:
       * a pointer to it.  This will only set up the data in Empire.  It is the
       * caller's responsibility to make sure that universe updates planet
       * ownership. */
-    Empire*     CreateEmpire(int empire_id, std::string name, std::string player_name,
+    void        CreateEmpire(int empire_id, std::string name, std::string player_name,
                              const GG::Clr& color, bool authenticated);
 
     /** Removes and deletes all empires from the manager. */
     void        Clear();
 
-    typedef boost::signals2::signal<void (int, int)>  DiploSignalType;
+    typedef boost::signals2::signal<void (int, int)> DiploSignalType;
 
     mutable DiploSignalType DiplomaticStatusChangedSignal;
     mutable DiploSignalType DiplomaticMessageChangedSignal;
@@ -85,14 +79,15 @@ public:
 private:
     std::string DumpDiplomacy() const;
 
-    /** Adds the given empire to the manager. */
-    void        InsertEmpire(Empire* empire);
-    void        GetDiplomaticMessagesToSerialize(std::map<std::pair<int, int>, DiplomaticMessage>& messages,
-                                                 int encoding_empire) const;
+    void InsertEmpire(std::shared_ptr<Empire>&& empire); //!< Adds the given empire to the manager
 
-    std::map<int, Empire*>                          m_empire_map;
-    std::map<std::pair<int, int>, DiplomaticStatus> m_empire_diplomatic_statuses;
-    std::map<std::pair<int, int>, DiplomaticMessage>m_diplomatic_messages;
+    void GetDiplomaticMessagesToSerialize(std::map<std::pair<int, int>, DiplomaticMessage>& messages,
+                                          int encoding_empire) const;
+
+    container_type                                   m_empire_map;
+    const_container_type                             m_const_empire_map;
+    std::map<std::pair<int, int>, DiplomaticStatus>  m_empire_diplomatic_statuses;
+    std::map<std::pair<int, int>, DiplomaticMessage> m_diplomatic_messages;
 
     friend class ClientApp;
     friend class ServerApp;

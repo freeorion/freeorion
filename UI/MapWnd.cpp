@@ -3566,15 +3566,17 @@ namespace {
                 // determine colour(s) for lane based on which empire(s) can transfer resources along the lane.
                 // todo: multiple rendered lanes (one for each empire) when multiple empires use the same lane.
                 GG::Clr lane_colour = UNOWNED_LANE_COLOUR;    // default colour if no empires transfer resources along starlane
-                for (auto& entry : Empires()) {
-                    Empire* empire = entry.second;
+                for (const auto& entry : Empires()) {
+                    const auto& empire = entry.second;
                     const auto& resource_supply_lanes = GetSupplyManager().SupplyStarlaneTraversals(entry.first);
 
                     std::pair<int, int> lane_forward{start_system->ID(), dest_system->ID()};
                     std::pair<int, int> lane_backward{dest_system->ID(), start_system->ID()};
 
                     // see if this lane exists in this empire's supply propagation lanes set.  either direction accepted.
-                    if (resource_supply_lanes.count(lane_forward) || resource_supply_lanes.count(lane_backward)) {
+                    if (resource_supply_lanes.count(lane_forward) ||
+                        resource_supply_lanes.count(lane_backward))
+                    {
                         lane_colour = empire->Color();
                         break;
                     }
@@ -3735,8 +3737,8 @@ namespace {
 
 
                 // add obstructed lane traversals as half lanes
-                for (auto& entry : Empires()) {
-                    Empire* empire = entry.second;
+                for (const auto& entry : Empires()) {
+                    const auto& empire = entry.second;
                     const auto& resource_obstructed_supply_lanes =
                         GetSupplyManager().SupplyObstructedStarlaneTraversals(entry.first);
 
