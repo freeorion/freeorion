@@ -129,16 +129,6 @@ public:
      */
     Networking::ClientType GetPlayerClientType(int player_id) const override;
 
-    /** @brief Return the ::UniverseObject associated with @a object_id
-     *
-     * @param object_id An object identifier
-     *
-     * @return A pointer to the ::UniverseObject associated with @a object_id.
-     *      When there is no matching object or the client does not know of the
-     *      object existence the pointer may be nullptr.
-     */
-    std::shared_ptr<UniverseObject> GetUniverseObject(int object_id) override;
-
     /** @brief Return the for this client visible name of @a object
      *
      * @param object The object to obtain the name from.

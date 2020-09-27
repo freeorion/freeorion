@@ -301,9 +301,6 @@ Empire* ServerApp::GetEmpire(int id)
 SupplyManager& ServerApp::GetSupplyManager()
 { return m_supply_manager; }
 
-std::shared_ptr<UniverseObject> ServerApp::GetUniverseObject(int object_id)
-{ return m_universe.Objects().get(object_id); }
-
 ObjectMap& ServerApp::EmpireKnownObjects(int empire_id)
 { return m_universe.EmpireKnownObjects(empire_id); }
 

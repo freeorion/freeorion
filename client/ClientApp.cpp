@@ -51,9 +51,6 @@ Empire* ClientApp::GetEmpire(int empire_id)
 SupplyManager& ClientApp::GetSupplyManager()
 { return m_supply_manager; }
 
-std::shared_ptr<UniverseObject> ClientApp::GetUniverseObject(int object_id)
-{ return GetUniverse().Objects().get(object_id); }
-
 ObjectMap& ClientApp::EmpireKnownObjects(int empire_id) {
     // observers and moderators should have accurate info about what each empire knows
     if (m_empire_id == ALL_EMPIRES)

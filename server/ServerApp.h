@@ -41,8 +41,6 @@ public:
     Empire* GetEmpire(int id) override;
     SupplyManager& GetSupplyManager() override;
 
-    std::shared_ptr<UniverseObject> GetUniverseObject(int object_id) override;
-
     /** Returns the server's map for known objects of specified empire. */
     ObjectMap& EmpireKnownObjects(int empire_id) override;
 
