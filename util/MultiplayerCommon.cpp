@@ -55,25 +55,29 @@ namespace {
 
         // AI Testing options-- the following options are to facilitate AI testing and do not currently have an options page widget;
         // they are intended to be changed via the command line and are not currently storable in the configuration file.
-        db.Add<std::string>("ai-path",      UserStringNop("OPTIONS_DB_AI_FOLDER_PATH"), "python/AI",
-                            Validator<std::string>(),   false);
-        db.Add<std::string>("ai-config",    UserStringNop("OPTIONS_DB_AI_CONFIG"),      "",
-                            Validator<std::string>(),   false);
+        db.Add<std::string>("ai-path", UserStringNop("OPTIONS_DB_AI_FOLDER_PATH"), "python/AI",
+                            Validator<std::string>(), false);
+        db.Add<std::string>("ai-config", UserStringNop("OPTIONS_DB_AI_CONFIG"), "",
+                            Validator<std::string>(), false);
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
     void AddRules(GameRules& rules) {
-        rules.Add<int>("RULE_THRESHOLD_HUMAN_PLAYER_WIN", "RULE_THRESHOLD_HUMAN_PLAYER_WIN_DESC",
-                       "MULTIPLAYER", 0, true,  RangedValidator<int>(0, 999));
+        rules.Add<int>(UserStringNop("RULE_THRESHOLD_HUMAN_PLAYER_WIN"),
+                       UserStringNop("RULE_THRESHOLD_HUMAN_PLAYER_WIN_DESC"),
+                       UserStringNop("MULTIPLAYER"), 0, true, RangedValidator<int>(0, 999));
 
-        rules.Add<bool>("RULE_ONLY_ALLIANCE_WIN", "RULE_ONLY_ALLIANCE_WIN_DESC",
-                       "MULTIPLAYER", true, true);
+        rules.Add<bool>(UserStringNop("RULE_ONLY_ALLIANCE_WIN"),
+                        UserStringNop("RULE_ONLY_ALLIANCE_WIN_DESC"),
+                        UserStringNop("MULTIPLAYER"), true, true);
 
-        rules.Add<bool>("RULE_ALLOW_CONCEDE", "RULE_ALLOW_CONCEDE_DESC",
-                       "MULTIPLAYER", false, true);
+        rules.Add<bool>(UserStringNop("RULE_ALLOW_CONCEDE"),
+                        UserStringNop("RULE_ALLOW_CONCEDE_DESC"),
+                        UserStringNop("MULTIPLAYER"), false, true);
 
-        rules.Add<int>("RULE_CONCEDE_COLONIES_THRESHOLD", "RULE_CONCEDE_COLONIES_THRESHOLD_DESC",
-                       "MULTIPLAYER", 1, true,  RangedValidator<int>(0, 9999));
+        rules.Add<int>(UserStringNop("RULE_CONCEDE_COLONIES_THRESHOLD"),
+                       UserStringNop("RULE_CONCEDE_COLONIES_THRESHOLD_DESC"),
+                       UserStringNop("MULTIPLAYER"), 1, true,  RangedValidator<int>(0, 9999));
     }
     bool temp_bool2 = RegisterGameRules(&AddRules);
 

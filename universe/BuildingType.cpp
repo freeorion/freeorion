@@ -11,10 +11,12 @@
 
 
 namespace {
+    #define UserStringNop(key) key
+
     void AddRules(GameRules& rules) {
         // makes all buildings cost 1 PP and take 1 turn to produce
-        rules.Add<bool>("RULE_CHEAP_AND_FAST_BUILDING_PRODUCTION",
-                        "RULE_CHEAP_AND_FAST_BUILDING_PRODUCTION_DESC",
+        rules.Add<bool>(UserStringNop("RULE_CHEAP_AND_FAST_BUILDING_PRODUCTION"),
+                        UserStringNop("RULE_CHEAP_AND_FAST_BUILDING_PRODUCTION_DESC"),
                         "", false, true);
     }
     bool temp_bool = RegisterGameRules(&AddRules);

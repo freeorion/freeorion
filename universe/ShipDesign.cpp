@@ -24,8 +24,8 @@ extern FO_COMMON_API const int INVALID_DESIGN_ID = -1;
 namespace {
     void AddRules(GameRules& rules) {
         // makes all ships cost 1 PP and take 1 turn to produce
-        rules.Add<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION",
-                        "RULE_CHEAP_AND_FAST_SHIP_PRODUCTION_DESC",
+        rules.Add<bool>(UserStringNop("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION"),
+                        UserStringNop("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION_DESC"),
                         "", false, true);
     }
     bool temp_bool = RegisterGameRules(&AddRules);

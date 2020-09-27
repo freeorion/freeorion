@@ -17,10 +17,12 @@
 
 
 namespace {
+    #define UserStringNop(key) key
+
     void AddRules(GameRules& rules) {
         // makes all techs cost 1 RP and take 1 turn to research
-        rules.Add<bool>("RULE_CHEAP_AND_FAST_TECH_RESEARCH",
-                        "RULE_CHEAP_AND_FAST_TECH_RESEARCH_DESC",
+        rules.Add<bool>(UserStringNop("RULE_CHEAP_AND_FAST_TECH_RESEARCH"),
+                        UserStringNop("RULE_CHEAP_AND_FAST_TECH_RESEARCH_DESC"),
                         "", false, true);
     }
     bool temp_bool = RegisterGameRules(&AddRules);

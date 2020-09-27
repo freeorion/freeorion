@@ -24,15 +24,15 @@ namespace {
 
     void AddRules(GameRules& rules) {
         // limits amount of PP per turn that can be imported into the stockpile
-        rules.Add<bool>("RULE_STOCKPILE_IMPORT_LIMITED",
-                        "RULE_STOCKPILE_IMPORT_LIMITED_DESC",
+        rules.Add<bool>(UserStringNop("RULE_STOCKPILE_IMPORT_LIMITED"),
+                        UserStringNop("RULE_STOCKPILE_IMPORT_LIMITED_DESC"),
                         "", false, true);
 
-        rules.Add<double>("RULE_PRODUCTION_QUEUE_FRONTLOAD_FACTOR",
-                          "RULE_PRODUCTION_QUEUE_FRONTLOAD_FACTOR_DESC",
+        rules.Add<double>(UserStringNop("RULE_PRODUCTION_QUEUE_FRONTLOAD_FACTOR"),
+                          UserStringNop("RULE_PRODUCTION_QUEUE_FRONTLOAD_FACTOR_DESC"),
                           "", 0.0, true, RangedValidator<double>(0.0, 30.0));
-        rules.Add<double>("RULE_PRODUCTION_QUEUE_TOPPING_UP_FACTOR",
-                          "RULE_PRODUCTION_QUEUE_TOPPING_UP_FACTOR_DESC",
+        rules.Add<double>(UserStringNop("RULE_PRODUCTION_QUEUE_TOPPING_UP_FACTOR"),
+                          UserStringNop("RULE_PRODUCTION_QUEUE_TOPPING_UP_FACTOR_DESC"),
                           "", 0.0, true, RangedValidator<double>(0.0, 30.0));
     }
     bool temp_bool = RegisterGameRules(&AddRules);

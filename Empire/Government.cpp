@@ -17,10 +17,11 @@
 #include <boost/filesystem/fstream.hpp>
 
 namespace {
+    #define UserStringNop(key) key
+
     void AddRules(GameRules& rules) {
         // makes all policies cost 1 influence to adopt
-        rules.Add<bool>("RULE_CHEAP_POLICIES",
-                        "RULE_CHEAP_POLICIES_DESC",
+        rules.Add<bool>(UserStringNop("RULE_CHEAP_POLICIES"), UserStringNop("RULE_CHEAP_POLICIES_DESC"),
                         "", false, true);
     }
     bool temp_bool = RegisterGameRules(&AddRules);

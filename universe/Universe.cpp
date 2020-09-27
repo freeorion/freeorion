@@ -75,18 +75,24 @@ namespace {
             return cores > 0 ? cores : 4;
         };
 
-        db.Add("effects.ui.threads",                UserStringNop("OPTIONS_DB_EFFECTS_THREADS_UI_DESC"),        HardwareThreads(),  RangedValidator<int>(1, 32));
-        db.Add("effects.ai.threads",                UserStringNop("OPTIONS_DB_EFFECTS_THREADS_AI_DESC"),        2,                  RangedValidator<int>(1, 32));
-        db.Add("effects.server.threads",            UserStringNop("OPTIONS_DB_EFFECTS_THREADS_SERVER_DESC"),    HardwareThreads(),  RangedValidator<int>(1, 32));
-        db.Add("effects.accounting.enabled",        UserStringNop("OPTIONS_DB_EFFECT_ACCOUNTING"),              true,               Validator<bool>());
+        db.Add("effects.ui.threads", UserStringNop("OPTIONS_DB_EFFECTS_THREADS_UI_DESC"),
+               HardwareThreads(), RangedValidator<int>(1, 32));
+        db.Add("effects.ai.threads", UserStringNop("OPTIONS_DB_EFFECTS_THREADS_AI_DESC"),
+               2, RangedValidator<int>(1, 32));
+        db.Add("effects.server.threads", UserStringNop("OPTIONS_DB_EFFECTS_THREADS_SERVER_DESC"),
+               HardwareThreads(), RangedValidator<int>(1, 32));
+        db.Add("effects.accounting.enabled", UserStringNop("OPTIONS_DB_EFFECT_ACCOUNTING"),
+               true, Validator<bool>());
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
     void AddRules(GameRules& rules) {
         // makes all PRNG be reseeded frequently
-        rules.Add<bool>("RULE_RESEED_PRNG_SERVER",  "RULE_RESEED_PRNG_SERVER_DESC",
+        rules.Add<bool>(UserStringNop("RULE_RESEED_PRNG_SERVER"),
+                        UserStringNop("RULE_RESEED_PRNG_SERVER_DESC"),
                         "", true, true);
-        rules.Add<bool>("RULE_STARLANES_EVERYWHERE","RULE_STARLANES_EVERYWHERE_DESC",
+        rules.Add<bool>(UserStringNop("RULE_STARLANES_EVERYWHERE"),
+                        UserStringNop("RULE_STARLANES_EVERYWHERE_DESC"),
                         "TEST", false, true);
     }
     bool temp_bool2 = RegisterGameRules(&AddRules);
