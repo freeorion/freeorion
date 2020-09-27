@@ -65,11 +65,6 @@ CombatParticipantState::CombatParticipantState(const UniverseObject& object)
 ////////////////////////////////////////////////
 // CombatLog
 ////////////////////////////////////////////////
-CombatLog::CombatLog() :
-    turn(INVALID_GAME_TURN),
-    system_id(INVALID_OBJECT_ID)
-{}
-
 CombatLog::CombatLog(const CombatInfo& combat_info) :
     turn(combat_info.turn),
     system_id(combat_info.system_id),
@@ -91,26 +86,20 @@ CombatLog::CombatLog(const CombatInfo& combat_info) :
 ////////////////////////////////////////////////
 // CombatLogManager
 ////////////////////////////////////////////////
-CombatLogManager::CombatLogManager() = default;
-
-boost::optional<const CombatLog&> CombatLogManager::GetLog(int log_id) const
-{
+boost::optional<const CombatLog&> CombatLogManager::GetLog(int log_id) const {
     auto it = m_logs.find(log_id);
     if (it != m_logs.end())
         return it->second;
     return boost::none;
 }
 
-int CombatLogManager::AddNewLog(const CombatLog& log)
-{
+int CombatLogManager::AddNewLog(const CombatLog& log) {
     int new_log_id = ++m_latest_log_id;
     m_logs[new_log_id] = log;
     return new_log_id;
 }
 
-void CombatLogManager::CompleteLog(int id, const CombatLog& log)
-{
-
+void CombatLogManager::CompleteLog(int id, const CombatLog& log) {
     auto incomplete_it = m_incomplete_logs.find(id);
     if (incomplete_it == m_incomplete_logs.end()) {
         ErrorLogger() << "CombatLogManager::CompleteLog id = " << id << " is not an incomplete log, so log is being discarded.";
@@ -127,39 +116,30 @@ void CombatLogManager::CompleteLog(int id, const CombatLog& log)
     }
 }
 
-void CombatLogManager::Clear()
-{
+void CombatLogManager::Clear() {
     m_logs.clear();
     m_incomplete_logs.clear();
     m_latest_log_id = -1;
 }
 
-boost::optional<std::vector<int>> CombatLogManager::IncompleteLogIDs() const
-{
+boost::optional<std::vector<int>> CombatLogManager::IncompleteLogIDs() const {
     if (m_incomplete_logs.empty())
         return boost::none;
 
     // Set the log ids in reverse order so that if the server only has time to
     // send one log it is the most recent combat log, which is the one most
     // likely of interest to the player.
-    std::vector<int> ids;
-    for (auto rit = m_incomplete_logs.rbegin(); rit != m_incomplete_logs.rend(); ++rit)
-        ids.push_back(*rit);
-
-    return ids;
-}
-
-CombatLogManager& CombatLogManager::GetCombatLogManager() {
-    static CombatLogManager manager;
-    return manager;
+    return std::vector<int>{m_incomplete_logs.begin(), m_incomplete_logs.end()};
 }
 
 
 ///////////////////////////////////////////////////////////
 // Free Functions                                        //
 ///////////////////////////////////////////////////////////
-CombatLogManager& GetCombatLogManager()
-{ return CombatLogManager::GetCombatLogManager(); }
+CombatLogManager& GetCombatLogManager() {
+    static CombatLogManager manager;
+    return manager;
+}
 
 boost::optional<const CombatLog&> GetCombatLog(int log_id)
 { return GetCombatLogManager().GetLog(log_id); }

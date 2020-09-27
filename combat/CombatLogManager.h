@@ -21,11 +21,11 @@ struct FO_COMMON_API CombatParticipantState {
 };
 
 struct FO_COMMON_API CombatLog {
-    CombatLog();
+    CombatLog() = default;
     CombatLog(const CombatInfo& combat_info);
 
-    int                         turn;
-    int                         system_id;
+    int                         turn = INVALID_GAME_TURN;
+    int                         system_id = INVALID_OBJECT_ID;
     std::set<int>               empire_ids;
     std::set<int>               object_ids;
     std::set<int>               damaged_object_ids;
@@ -38,6 +38,8 @@ struct FO_COMMON_API CombatLog {
 /** Stores and retreives combat logs. */
 class FO_COMMON_API CombatLogManager {
 public:
+    CombatLogManager() = default;
+
     /** Return the requested combat log or boost::none.*/
     boost::optional<const CombatLog&>  GetLog(int log_id) const;
 
@@ -50,15 +52,10 @@ public:
     void CompleteLog(int id, const CombatLog& log);
     void Clear();
 
-    static CombatLogManager& GetCombatLogManager();
-
 private:
-    CombatLogManager();
-
     std::unordered_map<int, CombatLog> m_logs;
     //! Set of logs ids that do not have bodies and need to be fetched from the server
     std::set<int>                      m_incomplete_logs;
-
     int                                m_latest_log_id = -1;
 
     template <typename Archive>
