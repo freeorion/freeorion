@@ -122,7 +122,6 @@ Universe::Universe() :
     m_pathfinder(std::make_shared<Pathfinder>()),
     m_universe_width(1000.0),
     m_inhibit_universe_object_signals(false),
-    m_encoding_empire(ALL_EMPIRES),
     m_all_objects_visible(false),
     m_object_id_allocator(new IDAllocator(ALL_EMPIRES, std::vector<int>(), INVALID_OBJECT_ID,
                                           TEMPORARY_OBJECT_ID, INVALID_OBJECT_ID)),
@@ -2876,9 +2875,6 @@ void Universe::InitializeSystemGraph(int for_empire_id) {
 void Universe::UpdateEmpireVisibilityFilteredSystemGraphs(int empire_id) {
     m_pathfinder->UpdateEmpireVisibilityFilteredSystemGraphs(empire_id);
 }
-
-int& Universe::EncodingEmpire()
-{ return m_encoding_empire; }
 
 double Universe::UniverseWidth() const
 { return m_universe_width; }

@@ -394,13 +394,13 @@ void serialize(Archive & ar, CombatInfo& obj, const unsigned int version)
     std::vector<CombatEventPtr>         filtered_combat_events;
 
     if (Archive::is_saving::value) {
-        obj.GetEmpireIdsToSerialize(             filtered_empire_ids,               GetUniverse().EncodingEmpire());
-        obj.GetObjectsToSerialize(               filtered_objects,                  GetUniverse().EncodingEmpire());
-        obj.GetDamagedObjectsToSerialize(        filtered_damaged_object_ids,       GetUniverse().EncodingEmpire());
-        obj.GetDestroyedObjectsToSerialize(      filtered_destroyed_object_ids,     GetUniverse().EncodingEmpire());
-        obj.GetDestroyedObjectKnowersToSerialize(filtered_destroyed_object_knowers, GetUniverse().EncodingEmpire());
-        obj.GetEmpireObjectVisibilityToSerialize(filtered_empire_object_visibility, GetUniverse().EncodingEmpire());
-        obj.GetCombatEventsToSerialize(          filtered_combat_events,            GetUniverse().EncodingEmpire());
+        obj.GetEmpireIdsToSerialize(             filtered_empire_ids,               GlobalSerializationEncodingForEmpire());
+        obj.GetObjectsToSerialize(               filtered_objects,                  GlobalSerializationEncodingForEmpire());
+        obj.GetDamagedObjectsToSerialize(        filtered_damaged_object_ids,       GlobalSerializationEncodingForEmpire());
+        obj.GetDestroyedObjectsToSerialize(      filtered_destroyed_object_ids,     GlobalSerializationEncodingForEmpire());
+        obj.GetDestroyedObjectKnowersToSerialize(filtered_destroyed_object_knowers, GlobalSerializationEncodingForEmpire());
+        obj.GetEmpireObjectVisibilityToSerialize(filtered_empire_object_visibility, GlobalSerializationEncodingForEmpire());
+        obj.GetCombatEventsToSerialize(          filtered_combat_events,            GlobalSerializationEncodingForEmpire());
     }
 
     ar  & make_nvp("turn", obj.turn)

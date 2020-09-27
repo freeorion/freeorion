@@ -182,7 +182,7 @@ Message GameStartMessage(bool single_player_game, int empire_id,
             oa << BOOST_SERIALIZATION_NVP(single_player_game)
                << BOOST_SERIALIZATION_NVP(empire_id)
                << BOOST_SERIALIZATION_NVP(current_turn);
-            GetUniverse().EncodingEmpire() = empire_id;
+            GlobalSerializationEncodingForEmpire() = empire_id;
             oa << BOOST_SERIALIZATION_NVP(empires)
                << BOOST_SERIALIZATION_NVP(species);
             SerializeIncompleteLogs(oa, combat_logs, 1);
@@ -198,7 +198,7 @@ Message GameStartMessage(bool single_player_game, int empire_id,
             oa << BOOST_SERIALIZATION_NVP(single_player_game)
                << BOOST_SERIALIZATION_NVP(empire_id)
                << BOOST_SERIALIZATION_NVP(current_turn);
-            GetUniverse().EncodingEmpire() = empire_id;
+            GlobalSerializationEncodingForEmpire() = empire_id;
             oa << BOOST_SERIALIZATION_NVP(empires)
                << BOOST_SERIALIZATION_NVP(species);
             SerializeIncompleteLogs(oa, combat_logs, 1);
@@ -230,7 +230,7 @@ Message GameStartMessage(bool single_player_game, int empire_id,
             oa << BOOST_SERIALIZATION_NVP(single_player_game)
                << BOOST_SERIALIZATION_NVP(empire_id)
                << BOOST_SERIALIZATION_NVP(current_turn);
-            GetUniverse().EncodingEmpire() = empire_id;
+            GlobalSerializationEncodingForEmpire() = empire_id;
             oa << BOOST_SERIALIZATION_NVP(empires)
                << BOOST_SERIALIZATION_NVP(species);
             SerializeIncompleteLogs(oa, combat_logs, 1);
@@ -253,7 +253,7 @@ Message GameStartMessage(bool single_player_game, int empire_id,
             oa << BOOST_SERIALIZATION_NVP(single_player_game)
                << BOOST_SERIALIZATION_NVP(empire_id)
                << BOOST_SERIALIZATION_NVP(current_turn);
-            GetUniverse().EncodingEmpire() = empire_id;
+            GlobalSerializationEncodingForEmpire() = empire_id;
             oa << BOOST_SERIALIZATION_NVP(empires)
                << BOOST_SERIALIZATION_NVP(species);
             SerializeIncompleteLogs(oa, combat_logs, 1);
@@ -299,7 +299,7 @@ Message GameStartMessage(bool single_player_game, int empire_id,
             oa << BOOST_SERIALIZATION_NVP(single_player_game)
                << BOOST_SERIALIZATION_NVP(empire_id)
                << BOOST_SERIALIZATION_NVP(current_turn);
-            GetUniverse().EncodingEmpire() = empire_id;
+            GlobalSerializationEncodingForEmpire() = empire_id;
             oa << BOOST_SERIALIZATION_NVP(empires)
                << BOOST_SERIALIZATION_NVP(species);
             SerializeIncompleteLogs(oa, combat_logs, 1);
@@ -322,7 +322,7 @@ Message GameStartMessage(bool single_player_game, int empire_id,
             oa << BOOST_SERIALIZATION_NVP(single_player_game)
                << BOOST_SERIALIZATION_NVP(empire_id)
                << BOOST_SERIALIZATION_NVP(current_turn);
-            GetUniverse().EncodingEmpire() = empire_id;
+            GlobalSerializationEncodingForEmpire() = empire_id;
             oa << BOOST_SERIALIZATION_NVP(empires)
                << BOOST_SERIALIZATION_NVP(species);
             SerializeIncompleteLogs(oa, combat_logs, 1);
@@ -442,7 +442,7 @@ Message TurnUpdateMessage(int empire_id, int current_turn,
     {
         if (use_binary_serialization) {
             freeorion_bin_oarchive oa(os);
-            GetUniverse().EncodingEmpire() = empire_id;
+            GlobalSerializationEncodingForEmpire() = empire_id;
             oa << BOOST_SERIALIZATION_NVP(current_turn);
             oa << BOOST_SERIALIZATION_NVP(empires);
             oa << BOOST_SERIALIZATION_NVP(species);
@@ -452,7 +452,7 @@ Message TurnUpdateMessage(int empire_id, int current_turn,
             oa << BOOST_SERIALIZATION_NVP(players);
         } else {
             freeorion_xml_oarchive oa(os);
-            GetUniverse().EncodingEmpire() = empire_id;
+            GlobalSerializationEncodingForEmpire() = empire_id;
             oa << BOOST_SERIALIZATION_NVP(current_turn)
                << BOOST_SERIALIZATION_NVP(empires)
                << BOOST_SERIALIZATION_NVP(species);
@@ -471,11 +471,11 @@ Message TurnPartialUpdateMessage(int empire_id, const Universe& universe,
     {
         if (use_binary_serialization) {
             freeorion_bin_oarchive oa(os);
-            GetUniverse().EncodingEmpire() = empire_id;
+            GlobalSerializationEncodingForEmpire() = empire_id;
             Serialize(oa, universe);
         } else {
             freeorion_xml_oarchive oa(os);
-            GetUniverse().EncodingEmpire() = empire_id;
+            GlobalSerializationEncodingForEmpire() = empire_id;
             Serialize(oa, universe);
         }
     }
@@ -838,7 +838,7 @@ void ExtractGameStartMessageData(const Message& msg, bool& single_player_game, i
                 ia >> BOOST_SERIALIZATION_NVP(single_player_game)
                    >> BOOST_SERIALIZATION_NVP(empire_id)
                    >> BOOST_SERIALIZATION_NVP(current_turn);
-                GetUniverse().EncodingEmpire() = empire_id;
+                GlobalSerializationEncodingForEmpire() = empire_id;
 
                 ScopedTimer deserialize_timer;
                 ia >> BOOST_SERIALIZATION_NVP(empires);
@@ -883,7 +883,7 @@ void ExtractGameStartMessageData(const Message& msg, bool& single_player_game, i
             ia >> BOOST_SERIALIZATION_NVP(single_player_game)
                >> BOOST_SERIALIZATION_NVP(empire_id)
                >> BOOST_SERIALIZATION_NVP(current_turn);
-            GetUniverse().EncodingEmpire() = empire_id;
+            GlobalSerializationEncodingForEmpire() = empire_id;
 
             ScopedTimer deserialize_timer;
             ia >> BOOST_SERIALIZATION_NVP(empires);
@@ -1030,7 +1030,7 @@ void ExtractTurnUpdateMessageData(const Message& msg, int empire_id, int& curren
                 // first attempt binary deserialization
                 std::istringstream is(msg.Text());
                 freeorion_bin_iarchive ia(is);
-                GetUniverse().EncodingEmpire() = empire_id;
+                GlobalSerializationEncodingForEmpire() = empire_id;
                 ia >> BOOST_SERIALIZATION_NVP(current_turn)
                    >> BOOST_SERIALIZATION_NVP(empires)
                    >> BOOST_SERIALIZATION_NVP(species);
@@ -1048,7 +1048,7 @@ void ExtractTurnUpdateMessageData(const Message& msg, int empire_id, int& curren
             // try again with more-portable XML deserialization
             std::istringstream is(msg.Text());
             freeorion_xml_iarchive ia(is);
-            GetUniverse().EncodingEmpire() = empire_id;
+            GlobalSerializationEncodingForEmpire() = empire_id;
             ia >> BOOST_SERIALIZATION_NVP(current_turn)
                >> BOOST_SERIALIZATION_NVP(empires)
                >> BOOST_SERIALIZATION_NVP(species);
@@ -1075,7 +1075,7 @@ void ExtractTurnPartialUpdateMessageData(const Message& msg, int empire_id, Univ
                 // first attempt binary deserialization
                 std::istringstream is(msg.Text());
                 freeorion_bin_iarchive ia(is);
-                GetUniverse().EncodingEmpire() = empire_id;
+                GlobalSerializationEncodingForEmpire() = empire_id;
                 Deserialize(ia, universe);
             } catch (...) {
                 try_xml = true;
@@ -1087,7 +1087,7 @@ void ExtractTurnPartialUpdateMessageData(const Message& msg, int empire_id, Univ
             // try again with more-portable XML deserialization
             std::istringstream is(msg.Text());
             freeorion_xml_iarchive ia(is);
-            GetUniverse().EncodingEmpire() = empire_id;
+            GlobalSerializationEncodingForEmpire() = empire_id;
             Deserialize(ia, universe);
         }
 

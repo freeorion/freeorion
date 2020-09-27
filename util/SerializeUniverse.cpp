@@ -87,14 +87,14 @@ void serialize(Archive& ar, Universe& obj, unsigned int const version)
     if (Archive::is_saving::value) {
         DebugLogger() << "Universe::serialize : Getting gamestate data";
         timer.EnterSection("collecting data");
-        obj.GetObjectsToSerialize(              objects,                            obj.m_encoding_empire);
-        obj.GetDestroyedObjectsToSerialize(     destroyed_object_ids,               obj.m_encoding_empire);
-        obj.GetEmpireKnownObjectsToSerialize(   empire_latest_known_objects,        obj.m_encoding_empire);
-        obj.GetEmpireObjectVisibilityMap(       empire_object_visibility,           obj.m_encoding_empire);
-        obj.GetEmpireObjectVisibilityTurnMap(   empire_object_visibility_turns,     obj.m_encoding_empire);
-        obj.GetEmpireKnownDestroyedObjects(     empire_known_destroyed_object_ids,  obj.m_encoding_empire);
-        obj.GetEmpireStaleKnowledgeObjects(     empire_stale_knowledge_object_ids,  obj.m_encoding_empire);
-        obj.GetShipDesignsToSerialize(          ship_designs,                       obj.m_encoding_empire);
+        obj.GetObjectsToSerialize(              objects,                            GlobalSerializationEncodingForEmpire());
+        obj.GetDestroyedObjectsToSerialize(     destroyed_object_ids,               GlobalSerializationEncodingForEmpire());
+        obj.GetEmpireKnownObjectsToSerialize(   empire_latest_known_objects,        GlobalSerializationEncodingForEmpire());
+        obj.GetEmpireObjectVisibilityMap(       empire_object_visibility,           GlobalSerializationEncodingForEmpire());
+        obj.GetEmpireObjectVisibilityTurnMap(   empire_object_visibility_turns,     GlobalSerializationEncodingForEmpire());
+        obj.GetEmpireKnownDestroyedObjects(     empire_known_destroyed_object_ids,  GlobalSerializationEncodingForEmpire());
+        obj.GetEmpireStaleKnowledgeObjects(     empire_stale_knowledge_object_ids,  GlobalSerializationEncodingForEmpire());
+        obj.GetShipDesignsToSerialize(          ship_designs,                       GlobalSerializationEncodingForEmpire());
         timer.EnterSection("");
     }
 
@@ -160,8 +160,8 @@ void serialize(Archive& ar, Universe& obj, unsigned int const version)
     timer.EnterSection("id allocator");
     if (version >= 1) {
         DebugLogger() << "Universe::serialize : " << serializing_label << " id allocator version = " << version;
-        obj.m_object_id_allocator->SerializeForEmpire(ar, version, obj.m_encoding_empire);
-        obj.m_design_id_allocator->SerializeForEmpire(ar, version, obj.m_encoding_empire);
+        obj.m_object_id_allocator->SerializeForEmpire(ar, version, GlobalSerializationEncodingForEmpire());
+        obj.m_design_id_allocator->SerializeForEmpire(ar, version, GlobalSerializationEncodingForEmpire());
     } else {
         if (Archive::is_loading::value) {
             int dummy_last_allocated_object_id;
@@ -184,7 +184,7 @@ void serialize(Archive& ar, Universe& obj, unsigned int const version)
     }
 
     timer.EnterSection("stats");
-    if (Archive::is_saving::value && obj.m_encoding_empire != ALL_EMPIRES && (!GetOptionsDB().Get<bool>("network.server.publish-statistics"))) {
+    if (Archive::is_saving::value && GlobalSerializationEncodingForEmpire() != ALL_EMPIRES && (!GetOptionsDB().Get<bool>("network.server.publish-statistics"))) {
         std::map<std::string, std::map<int, std::map<int, double>>> dummy_stat_records;
         ar  & boost::serialization::make_nvp("m_stat_records", dummy_stat_records);
     } else {
@@ -479,11 +479,11 @@ void serialize(Archive& ar, SpeciesManager& sm, unsigned int const version)
     std::map<std::string, std::map<std::string, int>>   species_ships_destroyed;
 
     if (Archive::is_saving::value) {
-        species_homeworlds = sm.GetSpeciesHomeworldsMap(GetUniverse().EncodingEmpire());
-        empire_opinions = sm.GetSpeciesEmpireOpinionsMap(GetUniverse().EncodingEmpire());
-        other_species_opinions = sm.GetSpeciesSpeciesOpinionsMap(GetUniverse().EncodingEmpire());
-        species_object_populations = sm.SpeciesObjectPopulations(GetUniverse().EncodingEmpire());
-        species_ships_destroyed = sm.SpeciesShipsDestroyed(GetUniverse().EncodingEmpire());
+        species_homeworlds = sm.GetSpeciesHomeworldsMap(GlobalSerializationEncodingForEmpire());
+        empire_opinions = sm.GetSpeciesEmpireOpinionsMap(GlobalSerializationEncodingForEmpire());
+        other_species_opinions = sm.GetSpeciesSpeciesOpinionsMap(GlobalSerializationEncodingForEmpire());
+        species_object_populations = sm.SpeciesObjectPopulations(GlobalSerializationEncodingForEmpire());
+        species_ships_destroyed = sm.SpeciesShipsDestroyed(GlobalSerializationEncodingForEmpire());
     }
 
     ar  & BOOST_SERIALIZATION_NVP(species_homeworlds)

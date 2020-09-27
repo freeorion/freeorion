@@ -108,7 +108,7 @@ int SaveGame(const std::string& filename, const ServerSaveGameData& server_save_
     bool use_binary = GetOptionsDB().Get<bool>("save.format.binary.enabled");
     bool use_zlib_for_zml = GetOptionsDB().Get<bool>("save.format.xml.zlib.enabled");
     DebugLogger() << "SaveGame(" << (use_binary ? "binary" : (use_zlib_for_zml ? "zlib-xml" : "raw-xml")) << ") filename: " << filename;
-    GetUniverse().EncodingEmpire() = ALL_EMPIRES;
+    GlobalSerializationEncodingForEmpire() = ALL_EMPIRES;
 
     DebugLogger() << "Compiling save empire and preview data";
     timer.EnterSection("compiling data");
@@ -336,7 +336,7 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
     if (ServerApp* server = ServerApp::GetApp())
         server->Networking().SendMessageAll(TurnProgressMessage(Message::TurnProgressPhase::LOADING_GAME));
 
-    GetUniverse().EncodingEmpire() = ALL_EMPIRES;
+    GlobalSerializationEncodingForEmpire() = ALL_EMPIRES;
 
     std::map<int, SaveGameEmpireData>   ignored_save_game_empire_data;
     SaveGamePreviewData                 ignored_save_preview_data;

@@ -350,13 +350,6 @@ public:
     /** Returns true if UniverseOjbectSignals are inhibited, false otherwise. */
     const bool& UniverseObjectSignalsInhibited();
 
-    /** HACK! This must be set to the encoding empire's id when serializing a
-      * Universe, so that only the relevant parts of the Universe are
-      * serialized.  The use of this global variable is done just so I don't
-      * have to rewrite any custom boost::serialization classes that implement
-      * empire-dependent visibility. */
-    int& EncodingEmpire();
-
     double UniverseWidth() const;
     void SetUniverseWidth(double width) { m_universe_width = width; }
     bool AllObjectsVisible() const { return m_all_objects_visible; }
@@ -514,7 +507,6 @@ private:
 
     double                          m_universe_width;
     bool                            m_inhibit_universe_object_signals;
-    int                             m_encoding_empire;                  ///< used during serialization to globally set what empire knowledge to use
     bool                            m_all_objects_visible;              ///< flag set to skip visibility tests and make everything visible to all players
 
     std::map<std::string, std::map<int, std::map<int, double>>>

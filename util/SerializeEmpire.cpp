@@ -177,9 +177,9 @@ void Empire::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_victories);
 
     bool visible = GetUniverse().AllObjectsVisible() ||
-        GetUniverse().EncodingEmpire() == ALL_EMPIRES ||
-        m_id == GetUniverse().EncodingEmpire();
-    bool allied_visible = visible || Empires().GetDiplomaticStatus(m_id, GetUniverse().EncodingEmpire()) == DiplomaticStatus::DIPLO_ALLIED;
+        GlobalSerializationEncodingForEmpire() == ALL_EMPIRES ||
+        m_id == GlobalSerializationEncodingForEmpire();
+    bool allied_visible = visible || Empires().GetDiplomaticStatus(m_id, GlobalSerializationEncodingForEmpire()) == DiplomaticStatus::DIPLO_ALLIED;
 
     if (Archive::is_loading::value && version < 1) {
         // adapt set to map
@@ -310,7 +310,7 @@ void serialize(Archive& ar, EmpireManager& em, unsigned int const version)
 
     std::map<std::pair<int, int>, DiplomaticMessage> messages;
     if (Archive::is_saving::value)
-        em.GetDiplomaticMessagesToSerialize(messages, GetUniverse().EncodingEmpire());
+        em.GetDiplomaticMessagesToSerialize(messages, GlobalSerializationEncodingForEmpire());
 
     ar  & make_nvp("m_empire_map", em.m_empire_map)
         & make_nvp("m_empire_diplomatic_statuses", em.m_empire_diplomatic_statuses)

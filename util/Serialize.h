@@ -21,6 +21,13 @@ typedef boost::archive::binary_oarchive freeorion_bin_oarchive;
 typedef boost::archive::xml_iarchive freeorion_xml_iarchive;
 typedef boost::archive::xml_oarchive freeorion_xml_oarchive;
 
+//! This must be set to the encoding empire's id when serializing various
+//! gamestate information, so that only the relevant info is serialized for the
+//! intended recieipient. This is implemented this way so that we don't need to
+//! write custom boost::serialization classes that implement empire-dependent
+//! visibility.
+FO_COMMON_API int& GlobalSerializationEncodingForEmpire();
+
 //! @warning
 //!     Do not try to serialize types that contain longs, since longs are
 //!     different sizes on 32- and 64-bit architectures.  Replace your longs
