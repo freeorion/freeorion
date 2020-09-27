@@ -191,18 +191,6 @@ public:
      */
     ObjectMap& EmpireKnownObjects(int empire_id) override;
 
-    /** @brief Return the UniverseObject @a object_id if known by @a empire_id
-     *
-     * @param object_id An UniverseObject identifier.
-     * @param empire_id An empire identifier.
-     *
-     * @return A pointer to the UniverseObject, that is identified by
-     *      @a object_id and known by the ::Empire identified by @a empire_id.
-     *      If there is no such object or if that object is not known to the
-     *      empire a nullptr is returned.
-     */
-    std::shared_ptr<UniverseObject> EmpireKnownObject(int object_id, int empire_id) override;
-
     /** @brief Set the identifier of the ::Empire controlled by this client to
      *      @a empire_id
      *

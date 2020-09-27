@@ -64,9 +64,6 @@ ObjectMap& ClientApp::EmpireKnownObjects(int empire_id) {
     return m_universe.Objects();
 }
 
-std::shared_ptr<UniverseObject> ClientApp::EmpireKnownObject(int object_id, int empire_id)
-{ return EmpireKnownObjects(empire_id).get(object_id); }
-
 const OrderSet& ClientApp::Orders() const
 { return m_orders; }
 

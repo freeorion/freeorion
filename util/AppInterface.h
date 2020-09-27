@@ -61,8 +61,6 @@ public:
     /** Accessor for known objects of specified empire. */
     virtual ObjectMap& EmpireKnownObjects(int empire_id) = 0;
 
-    virtual std::shared_ptr<UniverseObject> EmpireKnownObject(int object_id, int empire_id) = 0;
-
     virtual std::string GetVisibleObjectName(std::shared_ptr<const UniverseObject> object) = 0;
 
     //! Returns the current game turn
