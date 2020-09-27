@@ -1018,10 +1018,9 @@ private:
                  type != MeterType::NUM_METER_TYPES; type = ::MeterType(int(type) + 1))
             { meter_types.emplace_back(type); }
 
-            auto row_it = m_string_drop->end();
             for (auto& text : StringsFromEnums(meter_types)) {
-                row_it = m_string_drop->Insert(GG::Wnd::Create<StringRow>(
-                    text, GG::Y(ClientUI::Pts())));
+                m_string_drop->Insert(GG::Wnd::Create<StringRow>(
+                    std::move(text), GG::Y(ClientUI::Pts())));
             }
             if (!m_string_drop->Empty())
                 m_string_drop->Select(0);
@@ -1048,7 +1047,6 @@ private:
             param_widget_top += m_string_drop->Height();
 
             // add rows for empire names
-            auto row_it = m_string_drop->end();
             for (const auto& entry : Empires()) {
                 const std::string& empire_name = entry.second->Name();
                 m_string_drop->Insert(GG::Wnd::Create<StringRow>(
