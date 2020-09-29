@@ -317,7 +317,7 @@ namespace {
 template <typename Archive>
 void serialize(Archive& ar, EmpireManager& em, unsigned int const version)
 {
-    using namespace boost::serialization;
+    using boost::serialization::make_nvp;
 
     TraceLogger() << "Serializing EmpireManager encoding empire: " << GlobalSerializationEncodingForEmpire();
 
@@ -329,8 +329,21 @@ void serialize(Archive& ar, EmpireManager& em, unsigned int const version)
     if (Archive::is_saving::value)
         em.GetDiplomaticMessagesToSerialize(messages, GlobalSerializationEncodingForEmpire());
 
-    ar  & make_nvp("m_empire_map", em.m_empire_map);
-    DebugLogger() << "EmpireManager serialized " << em.m_empire_map.size() << " empires";
+    TraceLogger() << "EmpireManager version : " << version;
+    if (Archive::is_loading::value && version < 1) {
+        std::map<int, Empire*> empire_raw_ptr_map;
+        ar  & make_nvp("m_empire_map", empire_raw_ptr_map);
+        TraceLogger() << "EmpireManager deserialized " << empire_raw_ptr_map.size() << " raw pointer empires:";
+        for (const auto& entry : empire_raw_ptr_map)
+            TraceLogger() << entry.second->Name() << " (" << entry.first << ")";
+
+        for (const auto& entry : empire_raw_ptr_map)
+            em.m_empire_map[entry.first] = std::shared_ptr<Empire>(entry.second);
+        TraceLogger() << "EmpireManager put raw pointers into shared_ptr";
+    } else {
+        ar  & make_nvp("m_empire_map", em.m_empire_map);
+    }
+    TraceLogger() << "EmpireManager serialized " << em.m_empire_map.size() << " empires";
     ar  & make_nvp("m_empire_diplomatic_statuses", em.m_empire_diplomatic_statuses);
     ar  & BOOST_SERIALIZATION_NVP(messages);
 

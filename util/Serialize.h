@@ -106,6 +106,8 @@ extern template FO_COMMON_API void SerializeIncompleteLogs<freeorion_xml_oarchiv
 
 class EmpireManager;
 
+BOOST_CLASS_VERSION(EmpireManager, 1);
+
 template <typename Archive>
 void serialize(Archive&, EmpireManager&, unsigned int const);
 
