@@ -30,6 +30,7 @@
 #include "../universe/Field.h"
 #include "../universe/FieldType.h"
 #include "../universe/Fleet.h"
+#include "../universe/NamedValueRefManager.h"
 #include "../universe/Planet.h"
 #include "../universe/ShipDesign.h"
 #include "../universe/Ship.h"
@@ -145,7 +146,7 @@ namespace {
             "ENC_METER_TYPE",   "ENC_EMPIRE",       "ENC_SHIP_DESIGN",  "ENC_SHIP",
             "ENC_MONSTER",      "ENC_MONSTER_TYPE", "ENC_FLEET",        "ENC_PLANET",
             "ENC_BUILDING",     "ENC_SYSTEM",       "ENC_FIELD",        "ENC_GRAPH",
-            "ENC_GALAXY_SETUP", "ENC_GAME_RULES"};
+            "ENC_GALAXY_SETUP", "ENC_GAME_RULES",   "ENC_NAMED_VALUE_REF"};
         //  "ENC_HOMEWORLDS" omitted due to weird formatting of article titles
         return dir_names;
     }
@@ -496,6 +497,21 @@ namespace {
         else if (dir_name == "ENC_STRINGS") {
             // TODO: show all stringable keys and values
             //for (auto str : GetStringTable().
+
+        }
+        else if  (dir_name == "ENC_NAMED_VALUE_REF")
+        {
+            sorted_entries_list.emplace("ENC_NAMED_VALUE_REF_DESC", std::make_pair(UserString("ENC_NAMED_VALUE_REF_DESC") + "\n\n", dir_name));
+
+            for (const auto& entry : GetNamedValueRefManager().GetItems()) {
+                auto& vref = entry.second.get();
+                std::string pre = dynamic_cast<ValueRef::ValueRef<int>*>(&vref)? " int " : (dynamic_cast<ValueRef::ValueRef<double>*>(&vref)?" real ":" any ");
+
+                sorted_entries_list.emplace(
+                    entry.first,
+                    std::make_pair(entry.first + pre + LinkTaggedPresetText(VarText::FOCS_VALUE_TAG, entry.first, vref.Description()) +
+                                   " '" + UserString(entry.first) + "' " + vref.InvariancePattern() + "\n", dir_name));
+            }
 
         }
         else {

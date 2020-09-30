@@ -152,6 +152,8 @@ public:
     static GG::Clr  TextColor();                //!< color of UI text
     static GG::Clr  DefaultLinkColor();         //!< default color of UI links
     static GG::Clr  RolloverLinkColor();        //!< rollover color of UI links
+    static GG::Clr  DefaultTooltipColor();      //!< default color of UI text with hover tooltip
+    static GG::Clr  RolloverTooltipColor();     //!< rollover color of UI text with hover tooltip
     static GG::Clr  WndColor();                 //!< background color of a UI window
     static GG::Clr  WndOuterBorderColor();      //!< color of the outermost border
     static GG::Clr  WndInnerBorderColor();      //!< color of the innermost border

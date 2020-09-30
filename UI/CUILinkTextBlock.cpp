@@ -60,6 +60,7 @@ std::shared_ptr<GG::BlockControl> CUILinkTextBlock::Factory::CreateFromTag(const
     block->m_link_text->SetDecorator(VarText::SHIP_ID_TAG, new ColorByOwner());
     block->m_link_text->SetDecorator(VarText::PLANET_ID_TAG, new ColorByOwner());
     block->m_link_text->SetDecorator(TextLinker::BROWSE_PATH_TAG, new PathTypeDecorator());
+    block->m_link_text->SetDecorator(VarText::FOCS_VALUE_TAG, new ValueRefDecorator());
 
     return block;
 }

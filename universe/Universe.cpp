@@ -12,6 +12,7 @@
 #include "FleetPlan.h"
 #include "Fleet.h"
 #include "IDAllocator.h"
+#include "NamedValueRefManager.h"
 #include "Pathfinder.h"
 #include "Planet.h"
 #include "ShipDesign.h"
@@ -3126,6 +3127,7 @@ std::map<std::string, unsigned int> CheckSumContent() {
     checksums["BuildingTypeManager"] = GetBuildingTypeManager().GetCheckSum();
     checksums["Encyclopedia"] = GetEncyclopedia().GetCheckSum();
     checksums["FieldTypeManager"] = GetFieldTypeManager().GetCheckSum();
+    checksums["NamedValueRefManager"] = GetNamedValueRefManager().GetCheckSum();
     checksums["ShipHullManager"] = GetShipHullManager().GetCheckSum();
     checksums["ShipPartManager"] = GetShipPartManager().GetCheckSum();
     checksums["PredefinedShipDesignManager"] = GetPredefinedShipDesignManager().GetCheckSum();

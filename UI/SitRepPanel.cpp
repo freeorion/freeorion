@@ -248,6 +248,7 @@ namespace {
                 GG::FORMAT_LEFT | GG::FORMAT_VCENTER | GG::FORMAT_WORDBREAK, ClientUI::TextColor());
             m_link_text->SetDecorator(VarText::EMPIRE_ID_TAG, new ColorEmpire());
             m_link_text->SetDecorator(TextLinker::BROWSE_PATH_TAG, new PathTypeDecorator());
+            m_link_text->SetDecorator(VarText::FOCS_VALUE_TAG, new ValueRefDecorator());
             AttachChild(m_link_text);
 
             namespace ph = boost::placeholders;

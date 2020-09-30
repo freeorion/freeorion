@@ -10,6 +10,7 @@
 #include <boost/range/adaptors.hpp>
 #include <boost/range/numeric.hpp>
 #include "Building.h"
+#include "Enums.h"
 #include "Field.h"
 #include "Fighter.h"
 #include "Fleet.h"
@@ -247,7 +248,52 @@ namespace {
     const std::string EMPTY_STRING;
 }
 
+// helper: support enums in ValueRef<T>::EvalAsString() via ADL
+// c++11 direct use of std::enable_if would confuse the signature of EvalAsString
+// c++17 could use: if constexpr (std::is_enum<T>::value
+template <typename T>
+typename std::enable_if<std::is_enum<T>::value, std::string>::type to_string(T val) {
+    return std::to_string(static_cast<typename std::underlying_type<T>::type>(val));
+}
+
 namespace ValueRef {
+    std::string ValueRefBase::InvariancePattern() const {
+        return std::string(RootCandidateInvariant()?"R":"r") + (LocalCandidateInvariant()?"L":"l")
+            + (SourceInvariant()?"S":"s") + (TargetInvariant()?"T":"t")
+            + (SimpleIncrement()?"I":"i") + (ConstantExpr()?"C":"c");
+    }
+
+// enums and arithmetics
+template <typename T>
+std::string ValueRef<T>::EvalAsString() const {
+    using std::to_string;
+    return to_string(Eval()); // uses ::to_string or std::to_string per ADL (argument dependent lookup)
+}
+
+template <>
+std::string ValueRef<std::string>::EvalAsString() const {
+    return Eval();
+}
+
+template <>
+std::string ValueRef<std::vector<std::string>>::EvalAsString() const {
+    std::string s;
+    for (const auto& piece : Eval()) s += piece;
+    return s;
+}
+
+// instantiations of EvalAsString implementation
+template std::string ValueRef<int>::EvalAsString() const;
+template std::string ValueRef<float>::EvalAsString() const;
+template std::string ValueRef<double>::EvalAsString() const;
+template std::string ValueRef<PlanetEnvironment>::EvalAsString() const;
+template std::string ValueRef<PlanetSize>::EvalAsString() const;
+template std::string ValueRef<PlanetType>::EvalAsString() const;
+template std::string ValueRef<StarType>::EvalAsString() const;
+template std::string ValueRef<UniverseObjectType>::EvalAsString() const;
+template std::string ValueRef<Visibility>::EvalAsString() const;
+
+
 MeterType NameToMeter(const std::string& name) {
     MeterType retval = MeterType::INVALID_METER_TYPE;
     auto it = GetMeterNameMap().find(name);
@@ -555,6 +601,17 @@ std::string Constant<std::string>::Eval(const ScriptingContext& context) const
     if (m_value == "CurrentContent")
         return m_top_level_content;
     return m_value;
+}
+
+template <>
+void Constant<std::string>::SetTopLevelContent(const std::string& content_name)
+{
+    if (m_value == "CurrentContent" && content_name == "THERE_IS_NO_TOP_LEVEL_CONTENT")
+        ErrorLogger() << "Constant<std::string>::SetTopLevelContent()  Scripted Content illegal. Trying to set THERE_IS_NO_TOP_LEVEL_CONTENT for CurrentContent (maybe you tried to use CurrentContent in named_values.focs.txt)";
+    if (!m_top_level_content.empty()) // expected to happen if this value ref is part of a non-named-in-the-middle named value ref 
+        DebugLogger() << "Constant<std::string>::SetTopLevelContent()  Skip overwriting top level content from '" << m_top_level_content << "' to '" << content_name << "'";
+    else
+        m_top_level_content = content_name;
 }
 
 ///////////////////////////////////////////////////////////
@@ -2443,6 +2500,11 @@ std::string ComplexVariable<int>::Dump(unsigned short ntabs) const
     const std::string& variable_name = m_property_name.back();
     std::string retval = variable_name;
     // todo: implement like <double> case
+    if (variable_name == "GameRule") {
+        if (m_string_ref1)
+            retval += " name = " + m_string_ref1->Dump(ntabs);
+    }
+
     return retval;
 }
 
@@ -2452,6 +2514,11 @@ std::string ComplexVariable<std::string>::Dump(unsigned short ntabs) const
     const std::string& variable_name = m_property_name.back();
     std::string retval = variable_name;
     // todo: implement like <double> case
+    if (variable_name == "GameRule") {
+        if (m_string_ref1)
+            retval += " name = " + m_string_ref1->Dump(ntabs);
+    }
+
     return retval;
 }
 
@@ -2461,6 +2528,11 @@ std::string ComplexVariable<std::vector<std::string>>::Dump(unsigned short ntabs
     const std::string& variable_name = m_property_name.back();
     std::string retval = variable_name;
     // todo: implement like <double> case
+    if (variable_name == "GameRule") {
+        if (m_string_ref1)
+            retval += " name = " + m_string_ref1->Dump(ntabs);
+    }
+
     return retval;
 }
 
@@ -3036,4 +3108,4 @@ int Operation<int>::EvalImpl(const ScriptingContext& context) const
     throw std::runtime_error("double ValueRef evaluated with an unknown or invalid OpType.");
     return 0;
 }
-}
+} // namespace ValueRef

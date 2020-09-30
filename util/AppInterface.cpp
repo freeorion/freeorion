@@ -17,6 +17,7 @@
 #include "../util/Pending.h"
 
 #include <boost/filesystem.hpp>
+#include <boost/optional.hpp>
 
 #include <future>
 
@@ -59,6 +60,15 @@ void IApp::StartBackgroundParsing() {
         ErrorLogger() << "Background parse given non-existant resources directory!";
         return;
     }
+
+    // named value ref parsing can be done in parallel as the referencing happens after parsing
+    using named_value_ref_pending_type = Pending::Pending<std::map<std::string, std::unique_ptr<ValueRef::ValueRefBase>>>;
+    boost::optional<named_value_ref_pending_type> named_value_ref_parser_future;
+    if (fs::exists(rdir / "scripting/common")) {
+        // we ignore the parse result, the parser uses the ::RegisterValueRef function instead of the Pending mechanic
+        named_value_ref_parser_future = Pending::StartParsing(parse::named_value_refs, rdir / "scripting/common");
+    } else
+        ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/common").string();
 
     if (fs::exists(rdir / "scripting/buildings"))
         GetBuildingTypeManager().SetBuildingTypes(Pending::StartParsing(parse::buildings, rdir / "scripting/buildings"));
@@ -124,4 +134,7 @@ void IApp::StartBackgroundParsing() {
         InitEmpireColors(rdir / "empire_colors.xml");
     else
         ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "empire_colors.xml").string();
+
+    if (named_value_ref_parser_future)
+        Pending::WaitForPending(named_value_ref_parser_future);
 }

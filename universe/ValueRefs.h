@@ -470,7 +470,7 @@ std::string Constant<T>::Description() const
 
 template <typename T>
 void Constant<T>::SetTopLevelContent(const std::string& content_name)
-{ m_top_level_content = content_name; }
+{}
 
 template <typename T>
 unsigned int Constant<T>::GetCheckSum() const
@@ -522,6 +522,8 @@ FO_COMMON_API std::string Constant<std::string>::Dump(unsigned short ntabs) cons
 template <>
 FO_COMMON_API std::string Constant<std::string>::Eval(const ScriptingContext& context) const;
 
+template <>
+FO_COMMON_API void Constant<std::string>::SetTopLevelContent(const std::string& content_name);
 
 ///////////////////////////////////////////////////////////
 // Variable                                              //

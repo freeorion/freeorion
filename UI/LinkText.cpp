@@ -3,12 +3,14 @@
 #include "ClientUI.h"
 #include "CUIControls.h"
 #include "../Empire/Empire.h"
+#include "../universe/NamedValueRefManager.h"
 #include "../universe/UniverseObject.h"
 #include "../util/AppInterface.h"
 #include "../util/Logger.h"
 #include "../util/VarText.h"
 #include "../util/i18n.h"
 #include "../util/Directories.h"
+#include "../universe/ValueRefs.h"
 
 #include <GG/WndEvent.h>
 #include <GG/GUI.h>
@@ -86,6 +88,46 @@ namespace {
             auto resolved_link = BROWSEPATH_TAG_OPEN_PRE + " " + link_arg + ">" + link_label + BROWSEPATH_TAG_CLOSE;
 
             retval.replace(text_it + match.position(), text_it + match.position() + match.length(), resolved_link);
+
+            text_it = retval.end() - match.suffix().length();
+        }
+
+        return retval;
+    }
+
+    const std::string FOCS_VALUE_TAG_OPEN_PRE("<" + VarText::FOCS_VALUE_TAG);
+    const std::string FOCS_VALUE_TAG_CLOSE("</" + VarText::FOCS_VALUE_TAG + ">");
+    const xpr::sregex FOCS_VALUE_SEARCH = FOCS_VALUE_TAG_OPEN_PRE >> xpr::_s >> (xpr::s1 = REGEX_NON_BRACKET) >> ">" >>
+                                          (xpr::s2 = REGEX_NON_BRACKET) >> FOCS_VALUE_TAG_CLOSE;
+
+    /** Parses VarText::FOCS_VALUE_TAG%s within @p text, replacing value ref name%s with
+     *  the evaluation result of that value ref.
+     *  Given tag content (i.e. the stringtable content for the tag name) gets added as explanation.
+     *  If the tag content is empty or @p use_description_instead_of_user_string is true,
+     *  the value ref description gets added as explanation instead. */
+    std::string ValueRefLinkText(const std::string& text, const bool use_description_instead_of_user_string) {
+        if (!boost::contains(text, FOCS_VALUE_TAG_CLOSE))
+            return text;
+
+        std::string retval(text);
+        auto text_it = retval.begin();
+        xpr::smatch match;
+
+        while (true) {
+            if (!xpr::regex_search(text_it, retval.end(), match, FOCS_VALUE_SEARCH, xpr::regex_constants::match_default))
+                break;
+
+            std::string value_ref_name{match[1]};
+            auto*       value_ref = GetValueRefBase(value_ref_name);
+            auto        value_str{value_ref ? value_ref->EvalAsString() : value_ref_name};
+            std::string explanation_str{
+                value_ref && (use_description_instead_of_user_string || (match[2].length()==0)) ?
+                    (" (" + value_ref->Description() + ")") :
+                    ((match[2].length()==0) ? "" : " (" + match[2] + ")")};
+
+            auto resolved_tooltip = FOCS_VALUE_TAG_OPEN_PRE + " " + value_ref_name + ">" + value_str + explanation_str + FOCS_VALUE_TAG_CLOSE;
+
+            retval.replace(text_it + match.position(), text_it + match.position() + match.length(), resolved_tooltip);
 
             text_it = retval.end() - match.suffix().length();
         }
@@ -221,6 +263,14 @@ std::string PathTypeDecorator::Decorate(const std::string& path_type, const std:
 
 std::string PathTypeDecorator::DecorateRollover(const std::string& path_type, const std::string& content) const {
     return LinkDecorator::DecorateRollover(path_type, BrowsePathLinkText(content));
+}
+
+std::string ValueRefDecorator::Decorate(const std::string& value_ref_name, const std::string& content) const {
+    return GG::RgbaTag(ClientUI::DefaultTooltipColor()) + ValueRefLinkText(content, false) + LINK_FORMAT_CLOSE;
+}
+
+std::string ValueRefDecorator::DecorateRollover(const std::string& value_ref_name, const std::string& content) const {
+    return GG::RgbaTag(ClientUI::RolloverTooltipColor()) + ValueRefLinkText(content, true) + LINK_FORMAT_CLOSE;
 }
 
 
@@ -382,6 +432,7 @@ void TextLinker::FindLinks() {
                     tag->tag_name == VarText::SPECIES_TAG ||
                     tag->tag_name == VarText::FIELD_TYPE_TAG ||
                     tag->tag_name == VarText::METER_TYPE_TAG ||
+                    tag->tag_name == VarText::FOCS_VALUE_TAG ||
                     tag->tag_name == TextLinker::ENCYCLOPEDIA_TAG ||
                     tag->tag_name == TextLinker::GRAPH_TAG ||
                     tag->tag_name == TextLinker::URL_TAG ||
@@ -581,6 +632,8 @@ void RegisterLinkTags() {
     GG::Font::RegisterKnownTag(VarText::SPECIES_TAG);
     GG::Font::RegisterKnownTag(VarText::FIELD_TYPE_TAG);
     GG::Font::RegisterKnownTag(VarText::METER_TYPE_TAG);
+
+    GG::Font::RegisterKnownTag(VarText::FOCS_VALUE_TAG);
 
     GG::Font::RegisterKnownTag(TextLinker::ENCYCLOPEDIA_TAG);
     GG::Font::RegisterKnownTag(TextLinker::GRAPH_TAG);

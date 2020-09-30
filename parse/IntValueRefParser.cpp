@@ -120,6 +120,14 @@ parse::int_arithmetic_rules::int_arithmetic_rules(
     simple_int_rules(tok),
     int_complex_grammar(tok, label, *this, string_grammar)
 {
+    namespace phoenix = boost::phoenix;
+    namespace qi = boost::spirit::qi;
+    using phoenix::new_;
+    qi::_2_type _2;
+    qi::_3_type _3;
+    qi::_val_type _val;
+    qi::_pass_type _pass;
+    const boost::phoenix::function<detail::construct_movable> construct_movable_;
     const parse::detail::value_ref_rule<int>& simple = simple_int_rules.simple;
 
     statistic_value_ref_expr
@@ -127,12 +135,31 @@ parse::int_arithmetic_rules::int_arithmetic_rules(
         |   int_complex_grammar
         ;
 
+    named_int_valueref
+        = (     tok.Named_ >> tok.Integer_
+             >>  label(tok.Name_) > tok.string
+             >  label(tok.Value_) > primary_expr
+          ) [
+             // Register the value ref under the given name by lazy invoking RegisterValueRef
+             parse::detail::open_and_register_as_string_(_2, _3, _pass),
+             _val = construct_movable_(new_<ValueRef::NamedRef<int>>(_2))
+          ] | (     tok.Named_ >> tok.Integer_ >> tok.Lookup_
+             >  label(tok.Name_) > tok.string
+          ) [
+             _val = construct_movable_(new_<ValueRef::NamedRef<int>>(_2))
+          ]
+        ;
+
     primary_expr
         =   '(' >> expr >> ')'
         |   simple
         |   statistic_expr
+        |   named_lookup_expr
         |   int_complex_grammar
+        |   named_int_valueref
         ;
+
+    named_int_valueref.name("named int valueref");
 }
 
 namespace parse {

@@ -186,6 +186,8 @@ public:
     static const std::string FIELD_TYPE_TAG;
     //! Variable value is a predefined MeterType string representation.
     static const std::string METER_TYPE_TAG;
+    //! Variable value is the name of a registed ValueRef.
+    static const std::string FOCS_VALUE_TAG;
 
     //! @}
 

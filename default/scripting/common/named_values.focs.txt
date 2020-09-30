@@ -1,0 +1,7 @@
+NamedReal name = "SHP_REINFORCED_HULL_BONUS" value = (5 * [[SHIP_STRUCTURE_FACTOR]]) 
+
+NamedInteger name = "NUM_COMBAT_ROUNDS" value = (GameRule name = "RULE_NUM_COMBAT_ROUNDS")
+
+NamedInteger name = "NUM_COMBAT_ROUNDS_FIGHTERS" value = (GameRule name = "RULE_NUM_COMBAT_ROUNDS") - 1
+
+#include "/scripting/common/misc.macros"
