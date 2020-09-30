@@ -16,10 +16,10 @@ namespace Pending {
     /** Pending holds the std::future results of a T.*/
     template <typename T>
     struct FO_COMMON_API Pending {
-        Pending(
-            boost::optional<std::future<T>>&& pending_,
-            const std::string& name_
-        ) :
+        using result_type = T;
+
+        Pending(boost::optional<std::future<T>>&& pending_,
+                const std::string& name_) :
             pending(std::move(pending_)),
             filename(name_)
         {}
