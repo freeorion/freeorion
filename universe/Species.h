@@ -185,8 +185,8 @@ public:
     using SpeciesTypeMap = std::map<std::string, std::unique_ptr<Species>>;
     using CensusOrder = std::vector<std::string>;
     using iterator = SpeciesTypeMap::const_iterator;
-    typedef boost::filter_iterator<PlayableSpecies, iterator>   playable_iterator;
-    typedef boost::filter_iterator<NativeSpecies, iterator>     native_iterator;
+    typedef boost::filter_iterator<PlayableSpecies, iterator> playable_iterator;
+    typedef boost::filter_iterator<NativeSpecies, iterator>   native_iterator;
 
     SpeciesManager() = default;
 
@@ -294,17 +294,10 @@ private:
     void SetSpeciesHomeworlds(std::map<std::string, std::set<int>>&& species_homeworld_ids);
 
     /** Assigns any m_pending_types to m_species. */
-    void CheckPendingSpeciesTypes() const;
+    static void CheckPendingSpeciesTypes();
 
-    /** Future types being parsed by parser.  mutable so that it can
-        be assigned to m_species_types when completed.*/
-    mutable boost::optional<Pending::Pending<std::pair<SpeciesTypeMap, CensusOrder>>> m_pending_types = boost::none;
-
-    mutable SpeciesTypeMap                              m_species;
-    mutable CensusOrder                                 m_census_order;
     std::map<std::string, std::map<int, float>>         m_species_empire_opinions;
     std::map<std::string, std::map<std::string, float>> m_species_species_opinions;
-
     std::map<std::string, std::map<int, float>>         m_species_object_populations;
     std::map<std::string, std::map<std::string, int>>   m_species_species_ships_destroyed;
 
