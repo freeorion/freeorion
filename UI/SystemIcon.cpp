@@ -135,13 +135,11 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size,
 
         // is planet a homeworld? (for any species)
         if (!homeworld) {
-            for (const auto& entry : species_manager) {
-                if (const auto& species = entry.second) {
-                    const auto& homeworld_ids = species->Homeworlds();
-                    if (homeworld_ids.count(planet_id)) {
-                        homeworld = true;
-                        break;
-                    }
+            for (const auto& entry : species_manager.GetSpeciesHomeworldsMap()) {
+                const auto& homeworld_ids = entry.second;
+                if (homeworld_ids.count(planet_id)) {
+                    homeworld = true;
+                    break;
                 }
             }
         }

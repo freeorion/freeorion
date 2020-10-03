@@ -276,17 +276,22 @@ namespace {
             // directory populated with list of links to other articles that list species
         }
         else if (dir_name == "ENC_HOMEWORLDS") {
+            const auto homeworlds{GetSpeciesManager().GetSpeciesHomeworldsMap()};
+
             for (const auto& entry : GetSpeciesManager()) {
                 const auto& species = entry.second;
                 std::set<int> known_homeworlds;
                 std::string species_entry = LinkTaggedText(VarText::SPECIES_TAG, entry.first) + " ";
+
+
                 // homeworld
-                if (species->Homeworlds().empty()) {
+                if (!homeworlds.count(entry.first) || homeworlds.at(entry.first).empty()) {
                     continue;
                 } else {
+                    const auto& this_species_homeworlds = homeworlds.at(entry.first);
                     std::string homeworld_info;
-                    species_entry += "(" + std::to_string(species->Homeworlds().size()) + "):  ";
-                    for (int homeworld_id : species->Homeworlds()) {
+                    species_entry += "(" + std::to_string(this_species_homeworlds.size()) + "):  ";
+                    for (int homeworld_id : this_species_homeworlds) {
                         if (auto homeworld = Objects().get<Planet>(homeworld_id)) {
                             known_homeworlds.emplace(homeworld_id);
                             // if known, add to beginning
@@ -326,7 +331,7 @@ namespace {
             sorted_entries_list.emplace("⃠ ", std::make_pair("\n\n", "  "));
             for (const auto& entry : GetSpeciesManager()) {
                 const auto& species = entry.second;
-                if (species->Homeworlds().empty()) {
+                if (!homeworlds.count(entry.first) || homeworlds.at(entry.first).empty()) {
                     std::string species_entry{LinkTaggedText(VarText::SPECIES_TAG, entry.first) + ":  \n" + UserString("NO_HOMEWORLD")};
                     sorted_entries_list.emplace("⃠⃠" + std::string( "⃠ ") + UserString(entry.first),
                                                 std::make_pair(std::move(species_entry), entry.first));
@@ -2084,11 +2089,12 @@ namespace {
 
         // homeworld
         detailed_description += "\n";
-        if (species->Homeworlds().empty()) {
+        auto homeworlds = GetSpeciesManager().GetSpeciesHomeworldsMap();
+        if (!homeworlds.count(species->Name()) || homeworlds.at(species->Name()).empty()) {
             detailed_description += UserString("NO_HOMEWORLD") + "\n";
         } else {
             detailed_description += UserString("HOMEWORLD") + "\n";
-            for (int hw_id : species->Homeworlds()) {
+            for (int hw_id : homeworlds.at(species->Name())) {
                 if (auto homeworld = Objects().get<Planet>(hw_id))
                     detailed_description += LinkTaggedIDText(VarText::PLANET_ID_TAG, hw_id,
                                                              homeworld->PublicName(client_empire_id)) + "\n";

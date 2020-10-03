@@ -1533,13 +1533,11 @@ void SidePanel::PlanetPanel::Refresh() {
     bool homeworld = false, has_shipyard = false;
 
     // need to check all species for homeworlds
-    for (const auto& entry : GetSpeciesManager()) {
-        if (const auto& species = entry.second) {
-            const auto& homeworld_ids = species->Homeworlds();
-            if (homeworld_ids.count(m_planet_id)) {
-                homeworld = true;
-                break;
-            }
+    for (const auto& entry : GetSpeciesManager().GetSpeciesHomeworldsMap()) {
+        const auto& homeworld_ids = entry.second;
+        if (homeworld_ids.count(m_planet_id)) {
+            homeworld = true;
+            break;
         }
     }
 

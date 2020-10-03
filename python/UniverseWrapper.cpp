@@ -92,6 +92,15 @@ namespace {
         return retval;
     }
 
+    auto SpeciesHomeworlds(const Species& species) -> std::set<int>
+    {
+        const auto& species_homeworlds{GetSpeciesManager().GetSpeciesHomeworldsMap()};
+        auto it = species_homeworlds.find(species.Name());
+        if (it == species_homeworlds.end())
+            return {};
+        return it->second;
+    }
+
     void UpdateMetersWrapper(const Universe& universe, const py::object& objIter)
     {
         py::stl_input_iterator<int> begin(objIter), end;
@@ -715,7 +724,7 @@ namespace FreeOrionPython {
         py::class_<Species, boost::noncopyable>("species", py::no_init)
             .add_property("name",               make_function(&Species::Name,           py::return_value_policy<py::copy_const_reference>()))
             .add_property("description",        make_function(&Species::Description,    py::return_value_policy<py::copy_const_reference>()))
-            .add_property("homeworlds",         make_function(&Species::Homeworlds,     py::return_value_policy<py::copy_const_reference>()))
+            .add_property("homeworlds",         &SpeciesHomeworlds)
             .add_property("foci",               &SpeciesFoci)
             .add_property("preferredFocus",     make_function(&Species::DefaultFocus,   py::return_value_policy<py::copy_const_reference>()))
             .add_property("canColonize",        make_function(&Species::CanColonize,    py::return_value_policy<py::return_by_value>()))

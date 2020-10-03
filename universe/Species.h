@@ -99,10 +99,6 @@ public:
     /** returns a text description of this type of species */
     std::string                     GameplayDescription() const;
 
-    const std::set<int>&                    Homeworlds() const          { return m_homeworlds; }            ///< returns the ids of objects that are homeworlds for this species
-    const std::map<int, double>&            EmpireOpinions() const      { return m_empire_opinions; }       ///< returns the positive/negative opinions of this species about empires
-    const std::map<std::string, double>&    OtherSpeciesOpinions() const{ return m_other_species_opinions; }///< returns the positive/negative opinions of this species about other species
-
     const Condition::Condition*     Location() const                    { return m_location.get(); }        ///< returns the condition determining what planets on which this species may spawn
     const Condition::Condition*     CombatTargets() const               { return m_combat_targets.get(); }  ///< returns the condition for possible targets. may be nullptr if no condition was specified.
 
@@ -135,24 +131,12 @@ public:
       * clients and server. */
     unsigned int                    GetCheckSum() const;
 
-    void AddHomeworld(int homeworld_id);
-    void RemoveHomeworld(int homeworld_id);
-    void SetHomeworlds(const std::set<int>& homeworld_ids);
-    void SetEmpireOpinions(const std::map<int, double>& opinions);
-    void SetEmpireOpinion(int empire_id, double opinion);
-    void SetOtherSpeciesOpinions(const std::map<std::string, double>& opinions);
-    void SetOtherSpeciesOpinion(const std::string& species_name, double opinion);
-
 private:
     void Init();
 
     std::string                             m_name;
     std::string                             m_description;
     std::string                             m_gameplay_description;
-
-    std::set<int>                           m_homeworlds;
-    std::map<int, double>                   m_empire_opinions;          // positive/negative rating of how this species views empires in the game
-    std::map<std::string, double>           m_other_species_opinions;   // positive/negative rating of how this species views other species in the game
 
     std::vector<FocusType>                  m_foci;
     std::string                             m_default_focus;
@@ -260,11 +244,6 @@ public:
       * clients and server. */
     unsigned int GetCheckSum() const;
 
-    /** sets all species to have no homeworlds.  this is useful when generating
-      * a new game, when any homeworlds species had in the previous game should
-      * be removed before the new game's homeworlds are added. */
-    void ClearSpeciesHomeworlds();
-
     /** sets the opinions of species (indexed by name string) of empires (indexed
       * by id) as a double-valued number. */
     void SetSpeciesEmpireOpinions(std::map<std::string, std::map<int, float>>&& species_empire_opinions);
@@ -276,9 +255,11 @@ public:
                                    std::map<std::string, float>>&& species_species_opinions);
     void SetSpeciesSpeciesOpinion(const std::string& opinionated_species,
                                   const std::string& rated_species, float opinion);
-
-    /** clears all species opinion data */
     void ClearSpeciesOpinions();
+
+    void AddSpeciesHomeworld(std::string species, int homeworld_id);
+    void RemoveSpeciesHomeworld(const std::string& species, int homeworld_id);
+    void ClearSpeciesHomeworlds();
 
     void UpdatePopulationCounter();
 
@@ -296,6 +277,7 @@ private:
     /** Assigns any m_pending_types to m_species. */
     static void CheckPendingSpeciesTypes();
 
+    std::map<std::string, std::set<int>>                m_species_homeworlds;
     std::map<std::string, std::map<int, float>>         m_species_empire_opinions;
     std::map<std::string, std::map<std::string, float>> m_species_species_opinions;
     std::map<std::string, std::map<int, float>>         m_species_object_populations;

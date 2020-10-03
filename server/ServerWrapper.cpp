@@ -130,7 +130,7 @@ namespace {
             ErrorLogger() << "SpeciesAddHomeworld: couldn't get species " << species_name;
             return;
         }
-        species->AddHomeworld(homeworld_id);
+        GetSpeciesManager().AddSpeciesHomeworld(species_name, homeworld_id);
     }
 
     void SpeciesRemoveHomeworld(const std::string& species_name, int homeworld_id)
@@ -140,7 +140,7 @@ namespace {
             ErrorLogger() << "SpeciesAddHomeworld: couldn't get species " << species_name;
             return;
         }
-        species->RemoveHomeworld(homeworld_id);
+        GetSpeciesManager().RemoveSpeciesHomeworld(species_name, homeworld_id);
     }
 
     auto SpeciesCanColonize(const std::string& species_name) -> bool

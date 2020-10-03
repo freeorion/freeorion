@@ -308,43 +308,6 @@ PlanetType Species::NextBetterPlanetType(PlanetType initial_planet_type) const {
         return RingPreviousPlanetType(initial_planet_type);
 }
 
-void Species::AddHomeworld(int homeworld_id) {
-    if (!Objects().get(homeworld_id))
-        DebugLogger() << "Species asked to add homeworld id " << homeworld_id << " but there is no such object in the Universe";
-    if (m_homeworlds.count(homeworld_id))
-        return;
-    m_homeworlds.insert(homeworld_id);
-    // TODO if needed: StateChangedSignal();
-}
-
-void Species::RemoveHomeworld(int homeworld_id) {
-    if (!m_homeworlds.count(homeworld_id)) {
-        DebugLogger() << "Species asked to remove homeworld id " << homeworld_id << " but doesn't have that id as a homeworld";
-        return;
-    }
-    m_homeworlds.erase(homeworld_id);
-    // TODO if needed: StateChangedSignal();
-}
-
-void Species::SetHomeworlds(const std::set<int>& homeworld_ids) {
-    if (m_homeworlds == homeworld_ids)
-        return;
-    m_homeworlds = homeworld_ids;
-    // TODO if needed: StateChangedSignal();
-}
-
-void Species::SetEmpireOpinions(const std::map<int, double>& opinions)
-{}
-
-void Species::SetEmpireOpinion(int empire_id, double opinion)
-{}
-
-void Species::SetOtherSpeciesOpinions(const std::map<std::string, double>& opinions)
-{}
-
-void Species::SetOtherSpeciesOpinion(const std::string& species_name, double opinion)
-{}
-
 unsigned int Species::GetCheckSum() const {
     unsigned int retval{0};
 
@@ -497,31 +460,8 @@ const std::string& SpeciesManager::SequentialPlayableSpeciesName(int id) const {
     return std::next(playable_begin(), species_idx)->first;
 }
 
-void SpeciesManager::ClearSpeciesHomeworlds() {
-    CheckPendingSpeciesTypes();
-    for (auto& entry : s_species)
-        entry.second->SetHomeworlds(std::set<int>());
-}
-
-void SpeciesManager::SetSpeciesHomeworlds(std::map<std::string, std::set<int>>&& species_homeworld_ids) {
-    CheckPendingSpeciesTypes();
-    ClearSpeciesHomeworlds();
-    for (auto& entry : species_homeworld_ids) {
-        const std::string& species_name = entry.first;
-        std::set<int>& homeworlds = entry.second;
-
-        Species* species = nullptr;
-        auto species_it = s_species.find(species_name);
-        if (species_it != end())
-            species = species_it->second.get();
-
-        if (species) {
-            species->SetHomeworlds(std::move(homeworlds));
-        } else {
-            ErrorLogger() << "SpeciesManager::SetSpeciesHomeworlds couldn't find a species with name " << species_name << " to assign homeworlds to";
-        }
-    }
-}
+void SpeciesManager::SetSpeciesHomeworlds(std::map<std::string, std::set<int>>&& species_homeworld_ids)
+{ m_species_homeworlds = std::move(species_homeworld_ids); }
 
 void SpeciesManager::SetSpeciesEmpireOpinions(std::map<std::string, std::map<int, float>>&& species_empire_opinions)
 { m_species_empire_opinions = std::move(species_empire_opinions); }
@@ -538,18 +478,10 @@ void SpeciesManager::SetSpeciesSpeciesOpinion(const std::string& opinionated_spe
 { m_species_species_opinions[opinionated_species][rated_species] = opinion; }
 
 std::map<std::string, std::set<int>> SpeciesManager::GetSpeciesHomeworldsMap(int encoding_empire/* = ALL_EMPIRES*/) const {
-    CheckPendingSpeciesTypes();
-    std::map<std::string, std::set<int>> retval;
-    for (const auto& entry : s_species) {
-        const std::string& species_name = entry.first;
-        const Species* species = entry.second.get();
-        if (!species) {
-            ErrorLogger() << "SpeciesManager::GetSpeciesHomeworldsMap found a null species pointer in SpeciesManager?!";
-            continue;
-        }
-        retval[species_name].insert(species->Homeworlds().begin(), species->Homeworlds().end());
-    }
-    return retval;
+    if (encoding_empire == ALL_EMPIRES)
+        return m_species_homeworlds;
+    // TODO: filter, output only info about species an empire has observed...?
+    return m_species_homeworlds;
 }
 
 const std::map<std::string, std::map<int, float>>& SpeciesManager::GetSpeciesEmpireOpinionsMap(int encoding_empire/* = ALL_EMPIRES*/) const
@@ -586,6 +518,27 @@ void SpeciesManager::ClearSpeciesOpinions() {
     m_species_empire_opinions.clear();
     m_species_species_opinions.clear();
 }
+
+void SpeciesManager::AddSpeciesHomeworld(std::string species, int homeworld_id) {
+    if (homeworld_id == INVALID_OBJECT_ID)
+        return;
+    if (species.empty())
+        return;
+    m_species_homeworlds[std::move(species)].insert(homeworld_id);
+}
+
+void SpeciesManager::RemoveSpeciesHomeworld(const std::string& species, int homeworld_id) {
+    if (homeworld_id == INVALID_OBJECT_ID)
+        return;
+    if (species.empty())
+        return;
+    auto it = m_species_homeworlds.find(species);
+    if (it != m_species_homeworlds.end())
+        it->second.erase(homeworld_id);
+}
+
+void SpeciesManager::ClearSpeciesHomeworlds()
+{ m_species_homeworlds.clear(); }
 
 void SpeciesManager::UpdatePopulationCounter() {
     // ships of each species and design
