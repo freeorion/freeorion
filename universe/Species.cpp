@@ -94,7 +94,8 @@ Species::Species(std::string&& name, std::string&& desc,
                  bool playable, bool native, bool can_colonize, bool can_produce_ships,
                  const std::set<std::string>& tags,
                  std::set<std::string>&& likes, std::set<std::string>&& dislikes,
-                 std::string&& graphic) :
+                 std::string&& graphic,
+                 double spawn_rate, int spawn_limit) :
     m_name(std::move(name)),
     m_description(std::move(desc)),
     m_gameplay_description(std::move(gameplay_desc)),
@@ -106,6 +107,8 @@ Species::Species(std::string&& name, std::string&& desc,
     m_native(native),
     m_can_colonize(can_colonize),
     m_can_produce_ships(can_produce_ships),
+    m_spawn_rate(spawn_rate),
+    m_spawn_limit(spawn_limit),
     m_likes(std::move(likes)),
     m_dislikes(std::move(dislikes)),
     m_graphic(std::move(graphic))
@@ -204,7 +207,10 @@ std::string Species::Dump(unsigned short ntabs) const {
         }
         retval += DumpIndent(ntabs+1) + "]\n";
     }
-    retval += DumpIndent(ntabs+1) + "graphic = \"" + m_graphic + "\"\n";
+
+    retval += DumpIndent(ntabs+1) + "spawnrate = " + std::to_string(m_spawn_rate) + "\n"
+           +  DumpIndent(ntabs+1) + "spawnlimit = " + std::to_string(m_spawn_limit) + "\n"
+           +  DumpIndent(ntabs+1) + "graphic = \"" + m_graphic + "\"\n";
     return retval;
 }
 
@@ -325,6 +331,8 @@ unsigned int Species::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_native);
     CheckSums::CheckSumCombine(retval, m_can_colonize);
     CheckSums::CheckSumCombine(retval, m_can_produce_ships);
+    CheckSums::CheckSumCombine(retval, m_spawn_rate);
+    CheckSums::CheckSumCombine(retval, m_spawn_limit);
     CheckSums::CheckSumCombine(retval, m_tags);
     CheckSums::CheckSumCombine(retval, m_graphic);
 

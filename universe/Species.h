@@ -90,7 +90,8 @@ public:
             bool playable, bool native, bool can_colonize, bool can_produce_ships,
             const std::set<std::string>& tags,
             std::set<std::string>&& likes, std::set<std::string>&& dislikes,
-            std::string&& graphic);
+            std::string&& graphic,
+            double spawn_rate = 1.0, int spawn_limit = 99999);
 
     ~Species();
 
@@ -114,6 +115,8 @@ public:
     const std::vector<std::shared_ptr<Effect::EffectsGroup>>& Effects() const
     { return m_effects; }
 
+    float                           SpawnRate() const       { return m_spawn_rate; }
+    int                             SpawnLimit() const      { return m_spawn_limit; }
     bool                            Playable() const        { return m_playable; }          ///< returns whether this species is a suitable starting species for players
     bool                            Native() const          { return m_native; }            ///< returns whether this species is a suitable native species (for non player-controlled planets)
     bool                            CanColonize() const     { return m_can_colonize; }      ///< returns whether this species can colonize planets
@@ -146,10 +149,13 @@ private:
     std::unique_ptr<Condition::Condition>               m_location;
     std::unique_ptr<Condition::Condition>               m_combat_targets;
 
-    bool                                    m_playable;
-    bool                                    m_native;
-    bool                                    m_can_colonize;
-    bool                                    m_can_produce_ships;
+    bool                                    m_playable = true;
+    bool                                    m_native = true;
+    bool                                    m_can_colonize = true;
+    bool                                    m_can_produce_ships = true;
+    float                                   m_spawn_rate = 1.0;
+    int                                     m_spawn_limit = 99999;
+
     std::set<std::string>                   m_tags;
     std::set<std::string>                   m_likes;
     std::set<std::string>                   m_dislikes;

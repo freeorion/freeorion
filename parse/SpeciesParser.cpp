@@ -78,6 +78,20 @@ namespace {
         std::set<std::string>                   dislikes;
     };
 
+    struct SpeciesData {
+        SpeciesData() = default;
+        SpeciesData(boost::optional<double>& spawn_rate_,
+                    boost::optional<int>& spawn_limit_,
+                    std::string& graphic_) :
+            spawn_rate(std::move(spawn_rate_)),
+            spawn_limit(std::move(spawn_limit_)),
+            graphic(std::move(graphic_))
+        {}
+
+        boost::optional<double> spawn_rate;
+        boost::optional<int> spawn_limit;
+        std::string graphic;
+    };
 
     void insert_species(
         std::map<std::string, std::unique_ptr<Species>>& species,
@@ -86,7 +100,7 @@ namespace {
         boost::optional<parse::effects_group_payload>& effects,
         boost::optional<parse::detail::MovableEnvelope<Condition::Condition>>& combat_targets,
         SpeciesParamsAndStuff& params,
-        std::string& graphic,
+        SpeciesData& species_data,
         bool& pass)
     {
         auto species_ptr = std::make_unique<Species>(
@@ -103,7 +117,9 @@ namespace {
             params.tags,    // intentionally not moved
             std::move(params.likes),
             std::move(params.dislikes),
-            std::move(graphic));
+            std::move(species_data.graphic),
+            (species_data.spawn_rate ? *species_data.spawn_rate : 1.0),
+            (species_data.spawn_limit ? *species_data.spawn_limit : 9999));
 
         auto& species_name{species_ptr->Name()};
         species.emplace(species_name, std::move(species_ptr));
@@ -162,6 +178,8 @@ namespace {
             likes(tok, label),
             dislikes(tok, label),
             effects_group_grammar(tok, label, condition_parser, string_grammar),
+            double_rule(tok),
+            int_rule(tok),
             one_or_more_foci(focus_type),
             planet_type_rules(tok, label, condition_parser),
             planet_environment_rules(tok, label, condition_parser)
@@ -216,6 +234,13 @@ namespace {
                 |     environment_map_element [ insert(_val, _1) ]
                 ;
 
+            species_data
+                = (-(label(tok.SpawnRate_)      >   double_rule)// _1
+                >  -(label(tok.SpawnLimit_)     >   int_rule)   // _2
+                >   label(tok.Graphic_)         >   tok.string) // _3
+                [ _val = construct<SpeciesData>(_1, _2, _3) ]
+                ;
+
             species_params_and_stuff
                 =   (matches_[tok.Playable_]        // _1
                 >    matches_[tok.Native_]          // _2
@@ -244,7 +269,7 @@ namespace {
                 > -(label(tok.EffectsGroups_)   >   effects_group_grammar)  // _3
                 > -(label(tok.CombatTargets_)   >   condition_parser)       // _4
                 > -(label(tok.Environments_)    >   environment_map)        // _5
-                >   label(tok.Graphic_)         >   tok.string              // _6
+                >  species_data                                             // _6
                   ) [ insert_species_(_r1, _1, _5, _3, _4, _2, _6, _pass) ]
                 ;
 
@@ -256,7 +281,8 @@ namespace {
             foci.name("Foci");
             environment_map_element.name("Type = <type> Environment = <env>");
             environment_map.name("Environments");
-            species_params_and_stuff.name("Species Flags, ");
+            species_data.name("Species Data");
+            species_params_and_stuff.name("Species Flags");
             species_strings.name("Species Strings");
             likes.name("Likes");
             dislikes.name("Dislikes");
@@ -283,6 +309,7 @@ namespace {
         using foci_rule = parse::detail::rule<std::vector<FocusType> ()>;
         using environment_map_element_rule = parse::detail::rule<std::pair<PlanetType, PlanetEnvironment> ()>;
         using environment_map_rule = parse::detail::rule<std::map<PlanetType, PlanetEnvironment> ()>;
+        using specid_data_rule = parse::detail::rule<SpeciesData ()>;
         using species_params_rule = parse::detail::rule<SpeciesParamsAndStuff ()>;
         using species_strings_rule = parse::detail::rule<SpeciesStrings (const start_rule_payload::first_type&)>;
         using species_rule = parse::detail::rule<void (start_rule_payload::first_type&)>;
@@ -295,11 +322,14 @@ namespace {
         likes_grammar                                              likes;
         dislikes_grammar                                           dislikes;
         parse::effects_group_grammar                               effects_group_grammar;
+        parse::detail::double_grammar                              double_rule;
+        parse::detail::int_grammar                                 int_rule;
         foci_rule                                                  foci;
         focus_type_rule                                            focus_type;
         parse::detail::single_or_bracketed_repeat<focus_type_rule> one_or_more_foci;
         environment_map_element_rule                               environment_map_element;
         environment_map_rule                                       environment_map;
+        specid_data_rule                                           species_data;
         species_params_rule                                        species_params_and_stuff;
         species_strings_rule                                       species_strings;
         species_rule                                               species;
