@@ -553,10 +553,15 @@ namespace {
 
             // species
             for (const auto& entry : GetSpeciesManager())
-                if (dir_name == "ALL_SPECIES" || DetermineCustomCategory(entry.second->Tags()) == dir_name)
+                if (dir_name == "ALL_SPECIES" ||
+                    (dir_name == "NATIVE_SPECIES" && entry.second->Native()) ||
+                    (dir_name == "PLAYABLE_SPECIES" && entry.second->Playable()) ||
+                    DetermineCustomCategory(entry.second->Tags()) == dir_name)
+                {
                     dir_entries.emplace(
                         UserString(entry.first),
                         std::make_pair(VarText::SPECIES_TAG, entry.first));
+                }
 
             // field types
             for (const auto& entry : GetFieldTypeManager())

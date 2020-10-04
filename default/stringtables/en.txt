@@ -7804,6 +7804,18 @@ All Species
 ALL_SPECIES_DESC
 List of all species:
 
+NATIVE_SPECIES
+Native Species
+
+NATIVE_SPECIES_DESC
+List of native species:
+
+PLAYABLE_SPECIES
+Playable Species
+
+PLAYABLE_SPECIES_DESC
+List of playable species:
+
 LITHIC_SPECIES_CLASS
 Lithic
 
