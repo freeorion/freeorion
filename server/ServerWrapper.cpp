@@ -474,9 +474,9 @@ namespace {
                                 double spawn_rate, int spawn_limit)
         {
             std::vector<std::string> designs;
-            for (int i = 0; i < len(py_designs); i++) {
+            for (int i = 0; i < len(py_designs); i++)
                 designs.push_back(py::extract<std::string>(py_designs[i]));
-            }
+
             m_monster_fleet_plan =
                 std::make_shared<MonsterFleetPlan>(fleet_name, designs, spawn_rate,
                                                    spawn_limit, nullptr, false);
@@ -516,9 +516,9 @@ namespace {
     {
         py::list py_monster_fleet_plans;
         auto&& monster_fleet_plans = GetUniverse().MonsterFleetPlans();
-        for (auto* fleet_plan : monster_fleet_plans) {
+        for (auto* fleet_plan : monster_fleet_plans)
             py_monster_fleet_plans.append(MonsterFleetPlanWrapper(fleet_plan));
-        }
+
         return py_monster_fleet_plans;
     }
 
