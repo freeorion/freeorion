@@ -690,7 +690,8 @@ namespace FreeOrionPython {
             .add_property("canColonize",        make_function(&Species::CanColonize,    py::return_value_policy<py::return_by_value>()))
             .add_property("canProduceShips",    make_function(&Species::CanProduceShips,py::return_value_policy<py::return_by_value>()))
             .add_property("tags",               make_function(&Species::Tags,           py::return_value_policy<py::return_by_value>()))
-            // TODO: const std::vector<FocusType>& Species::Foci()
+            .add_property("spawnrate",          make_function(&Species::SpawnRate,      py::return_value_policy<py::return_by_value>()))
+            .add_property("spawnlimit",         make_function(&Species::SpawnLimit,     py::return_value_policy<py::return_by_value>()))
             .def("getPlanetEnvironment",        &Species::GetPlanetEnvironment)
             .def("dump",                        &Species::Dump,                         py::return_value_policy<py::return_by_value>(), "Returns string with debug information, use '0' as argument.")
         ;
