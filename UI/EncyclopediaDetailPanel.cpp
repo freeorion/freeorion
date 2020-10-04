@@ -1596,6 +1596,7 @@ namespace {
 
         // objects that have special
         std::vector<std::shared_ptr<const UniverseObject>> objects_with_special;
+        objects_with_special.reserve(Objects().size());
         for (const auto& obj : Objects().all())
             if (obj->Specials().count(item_name))
                 objects_with_special.push_back(obj);
@@ -1603,21 +1604,20 @@ namespace {
         if (!objects_with_special.empty()) {
             detailed_description += "\n\n" + UserString("OBJECTS_WITH_SPECIAL");
             for (auto& obj : objects_with_special) {
-                if (auto ship = std::dynamic_pointer_cast<const Ship>(obj))
-                    detailed_description += LinkTaggedIDText(VarText::SHIP_ID_TAG, ship->ID(), ship->PublicName(client_empire_id)) + "  ";
+                const auto& TEXT_TAG = [&obj]() {
+                    switch (obj->ObjectType()) {
+                    case UniverseObjectType::OBJ_SHIP:      return VarText::SHIP_ID_TAG;    break;
+                    case UniverseObjectType::OBJ_FLEET:     return VarText::FLEET_ID_TAG;   break;
+                    case UniverseObjectType::OBJ_PLANET:    return VarText::PLANET_ID_TAG;  break;
+                    case UniverseObjectType::OBJ_BUILDING:  return VarText::BUILDING_ID_TAG;break;
+                    case UniverseObjectType::OBJ_SYSTEM:    return VarText::SYSTEM_ID_TAG;  break;
+                    default:                                return EMPTY_STRING;
+                    }
+                }();
 
-                else if (auto fleet = std::dynamic_pointer_cast<const Fleet>(obj))
-                    detailed_description += LinkTaggedIDText(VarText::FLEET_ID_TAG, fleet->ID(), fleet->PublicName(client_empire_id)) + "  ";
-
-                else if (auto planet = std::dynamic_pointer_cast<const Planet>(obj))
-                    detailed_description += LinkTaggedIDText(VarText::PLANET_ID_TAG, planet->ID(), planet->PublicName(client_empire_id)) + "  ";
-
-                else if (auto building = std::dynamic_pointer_cast<const Building>(obj))
-                    detailed_description += LinkTaggedIDText(VarText::BUILDING_ID_TAG, building->ID(), building->PublicName(client_empire_id)) + "  ";
-
-                else if (auto system = std::dynamic_pointer_cast<const System>(obj))
-                    detailed_description += LinkTaggedIDText(VarText::SYSTEM_ID_TAG, system->ID(), system->PublicName(client_empire_id)) + "  ";
-
+                if (!TEXT_TAG.empty())
+                    detailed_description += LinkTaggedIDText(
+                        TEXT_TAG, obj->ID(), obj->PublicName(client_empire_id)) + "  ";
                 else
                     detailed_description += obj->PublicName(client_empire_id) + "  ";
             }
