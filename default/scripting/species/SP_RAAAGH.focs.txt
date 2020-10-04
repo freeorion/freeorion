@@ -36,6 +36,9 @@ Species
 
     [[TERRAN_STANDARD_EP]]
 
+    spawnrate = 1
+    spawnlimit = 1
+
     graphic = "icons/species/raaagh.png"
 
 #include "common/*.macros"
