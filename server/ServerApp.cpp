@@ -2733,10 +2733,10 @@ namespace {
                 continue;
             }
 
-            // find which empires have aggressive armed ships in system
+            // find which empires have obstructive armed ships in system
             std::set<int> empires_with_armed_ships_in_system;
             for (auto& fleet : Objects().find<const Fleet>(system->FleetIDs())) {
-                if (fleet->Aggressive() && fleet->HasArmedShips())
+                if (fleet->Obstructive() && fleet->HasArmedShips())
                     empires_with_armed_ships_in_system.insert(fleet->Owner());  // may include ALL_EMPIRES, which is fine; this makes monsters prevent colonization
             }
 
@@ -3369,16 +3369,16 @@ void ServerApp::UpdateMonsterTravelRestrictions() {
         bool empires_present = false;
         bool unrestricted_empires_present = false;
         std::vector<std::shared_ptr<Fleet>> monsters;
-        for (const auto& fleet : m_universe.Objects().find<Fleet>(system->FleetIDs())) {
+        for (auto&& fleet : m_universe.Objects().find<Fleet>(system->FleetIDs())) {
             // will not require visibility for empires to block clearing of monster travel restrictions
             // unrestricted lane access (i.e, (fleet->ArrivalStarlane() == system->ID()) ) is used as a proxy for
             // order of arrival -- if an enemy has unrestricted lane access and you don't, they must have arrived
             // before you, or be in cahoots with someone who did.
             bool unrestricted = ((fleet->ArrivalStarlane() == system->ID())
-                                 && fleet->Aggressive()
+                                 && fleet->Obstructive()
                                  && fleet->HasArmedShips());
             if (fleet->Unowned()) {
-                monsters.push_back(fleet);
+                monsters.push_back(std::move(fleet));
                 if (unrestricted)
                     unrestricted_monsters_present = true;
             } else {
@@ -3390,16 +3390,14 @@ void ServerApp::UpdateMonsterTravelRestrictions() {
 
         // Prevent monsters from leaving any empire blockade.
         if (unrestricted_empires_present) {
-            for (auto &monster_fleet : monsters) {
+            for (auto& monster_fleet : monsters)
                 monster_fleet->SetArrivalStarlane(INVALID_OBJECT_ID);
-            }
         }
 
         // Break monster blockade after combat.
         if (empires_present && unrestricted_monsters_present) {
-            for (auto &monster_fleet : monsters) {
+            for (auto& monster_fleet : monsters)
                 monster_fleet->SetArrivalStarlane(INVALID_OBJECT_ID);
-            }
         }
     }
 }

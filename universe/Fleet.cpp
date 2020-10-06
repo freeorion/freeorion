@@ -1290,8 +1290,8 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id) const {
                       Empires().GetDiplomaticStatus(this->Owner(), fleet->Owner()) == DiplomaticStatus::DIPLO_WAR;
         if (!at_war)
             continue;
-        bool aggressive = (fleet->Aggressive() || fleet->Unowned());
-        if (!aggressive)
+        bool obstructive = (fleet->Obstructive() || fleet->Unowned());
+        if (!obstructive)
             continue;
         // Newly created ships/monsters are not allowed to block other fleet movement since they have not even
         // potentially gone through a combat round at the present location.  Potential sources for such new ships are
@@ -1307,7 +1307,6 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id) const {
 
         // don't exit early here, because blockade may yet be thwarted by ownership & presence check above
         can_be_blockaded = true;
-
     }
 
     return can_be_blockaded;
