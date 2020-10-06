@@ -366,9 +366,30 @@ void serialize(Archive& ar, Fleet& obj, unsigned int const version)
     ar  & make_nvp("UniverseObject", base_object<UniverseObject>(obj))
         & make_nvp("m_ships", obj.m_ships)
         & make_nvp("m_prev_system", obj.m_prev_system)
-        & make_nvp("m_next_system", obj.m_next_system)
-        & make_nvp("m_aggressive", obj.m_aggressive)
-        & make_nvp("m_ordered_given_to_empire_id", obj.m_ordered_given_to_empire_id)
+        & make_nvp("m_next_system", obj.m_next_system);
+
+    if (Archive::is_loading::value && version < 5) {
+        bool aggressive = false;
+        ar  & make_nvp("m_aggressive", aggressive);
+        obj.m_aggression = aggressive ? FleetAggression::FLEET_AGGRESSIVE : FleetAggression::FLEET_PASSIVE;
+
+    } else {
+        bool aggressive = obj.m_aggression == FleetAggression::FLEET_AGGRESSIVE;
+        bool passive = obj.m_aggression == FleetAggression::FLEET_PASSIVE;
+        ar  & make_nvp("m_aggressive", aggressive)
+            & make_nvp("m_passive", passive);
+        if (Archive::is_loading::value) {
+            obj.m_aggression =
+                aggressive ? FleetAggression::FLEET_AGGRESSIVE :
+                passive ? FleetAggression::FLEET_PASSIVE :
+                FleetAggression::FLEET_OBSTRUCTIVE;
+            // TEMP
+            obj.m_aggressive = aggressive;
+            // END TEMP
+        }
+    }
+
+    ar  & make_nvp("m_ordered_given_to_empire_id", obj.m_ordered_given_to_empire_id)
         & make_nvp("m_travel_route", obj.m_travel_route);
     if (version < 3) {
         double dummy_travel_distance;
@@ -382,7 +403,7 @@ void serialize(Archive& ar, Fleet& obj, unsigned int const version)
 }
 
 BOOST_CLASS_EXPORT(Fleet)
-BOOST_CLASS_VERSION(Fleet, 4)
+BOOST_CLASS_VERSION(Fleet, 5)
 
 
 template <typename Archive>
