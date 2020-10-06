@@ -1170,10 +1170,8 @@ struct FO_COMMON_API Aggressive final : public Condition {
     bool operator==(const Condition& rhs) const override;
     std::string Description(bool negated = false) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
-    void SetTopLevelContent(const std::string& content_name) override
-    {}
-    bool GetAggressive() const
-    { return m_aggressive; }
+    void SetTopLevelContent(const std::string& content_name) override {}
+    bool GetAggressive() const { return m_aggressive; }
     unsigned int GetCheckSum() const override;
 
 private:
