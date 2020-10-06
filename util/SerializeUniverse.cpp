@@ -374,16 +374,7 @@ void serialize(Archive& ar, Fleet& obj, unsigned int const version)
         obj.m_aggression = aggressive ? FleetAggression::FLEET_AGGRESSIVE : FleetAggression::FLEET_PASSIVE;
 
     } else {
-        bool aggressive = obj.m_aggression == FleetAggression::FLEET_AGGRESSIVE;
-        bool passive = obj.m_aggression == FleetAggression::FLEET_PASSIVE;
-        ar  & make_nvp("m_aggressive", aggressive)
-            & make_nvp("m_passive", passive);
-        if (Archive::is_loading::value) {
-            obj.m_aggression =
-                aggressive ? FleetAggression::FLEET_AGGRESSIVE :
-                passive ? FleetAggression::FLEET_PASSIVE :
-                FleetAggression::FLEET_OBSTRUCTIVE;
-        }
+        ar  & make_nvp("m_aggression", obj.m_aggression);
     }
 
     ar  & make_nvp("m_ordered_given_to_empire_id", obj.m_ordered_given_to_empire_id)
