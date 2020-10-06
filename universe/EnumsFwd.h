@@ -15,6 +15,6 @@ enum class ShipSlotType : int;
 enum class Visibility : int;
 enum class CaptureResult : int;
 enum class ModeratorActionSetting : int;
-
+enum class FleetAggression : int;
 
 #endif
