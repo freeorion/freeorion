@@ -126,7 +126,7 @@ void Fleet::Copy(std::shared_ptr<const UniverseObject> copied_object, int empire
         m_arrival_starlane =              copied_fleet->m_arrival_starlane;
 
         if (vis >= Visibility::VIS_PARTIAL_VISIBILITY) {
-            m_aggressive =                copied_fleet->m_aggressive;
+            m_aggression =                copied_fleet->m_aggression;
             if (Unowned())
                 m_name =                  copied_fleet->m_name;
 
@@ -162,7 +162,7 @@ UniverseObjectType Fleet::ObjectType() const
 std::string Fleet::Dump(unsigned short ntabs) const {
     std::stringstream os;
     os << UniverseObject::Dump(ntabs);
-    os << ( m_aggressive ? " agressive" : " passive")
+    os << " aggression: " << m_aggression
        << " cur system: " << SystemID()
        << " moving to: " << FinalDestinationID()
        << " prev system: " << m_prev_system
@@ -796,10 +796,13 @@ void Fleet::SetRoute(const std::list<int>& route) {
     StateChangedSignal();
 }
 
-void Fleet::SetAggressive(bool aggressive/* = true*/) {
-    if (aggressive == m_aggressive)
+void Fleet::SetAggressive(bool aggressive)
+{ SetAggression(aggressive ? FleetAggression::FLEET_AGGRESSIVE : FleetAggression::FLEET_PASSIVE); }
+
+void Fleet::SetAggression(FleetAggression aggression) {
+    if (m_aggression == aggression)
         return;
-    m_aggressive = aggressive;
+    m_aggression = aggression;
     StateChangedSignal();
 }
 

@@ -61,11 +61,9 @@ public:
     const std::list<int>&   TravelRoute() const;
     int                     OrderedGivenToEmpire() const { return m_ordered_given_to_empire_id; }   ///< returns the ID of the empire this fleet has been ordered given to, or ALL_EMPIRES if this fleet hasn't been ordered given to an empire
     int                     LastTurnMoveOrdered() const { return m_last_turn_move_ordered; }
-    bool                    Aggressive() const { return m_aggressive; }
-    FleetAggression         Aggression() const { return m_aggression; }
-    //bool                    Aggressive() const { return m_aggression >= FleetAggression::FLEET_AGGRESSIVE; }
+    bool                    Aggressive() const { return m_aggression >= FleetAggression::FLEET_AGGRESSIVE; }
     bool                    Obstructive() const { return m_aggression >= FleetAggression::FLEET_OBSTRUCTIVE; }
-
+    FleetAggression         Aggression() const { return m_aggression; }
 
     /** Returns a list of locations at which notable events will occur along the fleet's path if it follows the 
         specified route.  It is assumed in the calculation that the fleet starts its move path at its actual current
@@ -168,7 +166,6 @@ private:
     int                         m_prev_system = INVALID_OBJECT_ID;  ///< the previous system in the route, if any
     int                         m_next_system = INVALID_OBJECT_ID;  ///< the next system in the route, if any
 
-    bool                        m_aggressive = true;    ///< should this fleet attack enemies in the same system?
     FleetAggression             m_aggression = FleetAggression::FLEET_OBSTRUCTIVE;  ///< should this fleet attack enemies in the same system, block their passage, or ignore them
 
     int                         m_ordered_given_to_empire_id = ALL_EMPIRES;

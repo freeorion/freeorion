@@ -383,9 +383,6 @@ void serialize(Archive& ar, Fleet& obj, unsigned int const version)
                 aggressive ? FleetAggression::FLEET_AGGRESSIVE :
                 passive ? FleetAggression::FLEET_PASSIVE :
                 FleetAggression::FLEET_OBSTRUCTIVE;
-            // TEMP
-            obj.m_aggressive = aggressive;
-            // END TEMP
         }
     }
 
