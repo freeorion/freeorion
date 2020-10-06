@@ -1,6 +1,7 @@
 #ifndef _Fleet_h_
 #define _Fleet_h_
 
+#include <GG/Enum.h>
 #include "ObjectMap.h"
 #include "UniverseObject.h"
 #include "../util/Export.h"
@@ -23,6 +24,15 @@ struct MovePathNode {
     int     lane_end_id;    ///< id of object (most likely a system) at the end of the starlane on which this MovePathNode is located, or INVALID_OBJECT_ID if not on a starlane
     bool    post_blockade;  ///< estimation of whether this node is past a blockade for the subject fleet
 };
+
+//! How to Fleets control or not their system?
+GG_ENUM(FleetAggression,
+    INVALID_FLEET_AGGRESSION = -1,
+    FLEET_AGGRESSIVE,
+    FLEET_OBSTRUCTIVE,
+    FLEET_PASSIVE,
+    NUM_FLEET_AGGRESSIONS
+)
 
 /** Encapsulates data for a FreeOrion fleet.  Fleets are basically a group of
   * ships that travel together. */
@@ -52,6 +62,10 @@ public:
     int                     OrderedGivenToEmpire() const { return m_ordered_given_to_empire_id; }   ///< returns the ID of the empire this fleet has been ordered given to, or ALL_EMPIRES if this fleet hasn't been ordered given to an empire
     int                     LastTurnMoveOrdered() const { return m_last_turn_move_ordered; }
     bool                    Aggressive() const { return m_aggressive; }
+    FleetAggression         Aggression() const { return m_aggression; }
+    //bool                    Aggressive() const { return m_aggression >= FleetAggression::FLEET_AGGRESSIVE; }
+    bool                    Obstructive() const { return m_aggression >= FleetAggression::FLEET_OBSTRUCTIVE; }
+
 
     /** Returns a list of locations at which notable events will occur along the fleet's path if it follows the 
         specified route.  It is assumed in the calculation that the fleet starts its move path at its actual current
@@ -110,6 +124,7 @@ public:
     void CalculateRouteTo(int target_system_id);            ///< sets this fleet to move through the series of systems that makes the shortest path from its current location to target_system_id
 
     void SetAggressive(bool aggressive = true);             ///< sets this fleet to be agressive (true) or passive (false)
+    void SetAggression(FleetAggression aggression);         ///< sets this fleet's aggression level towards other fleets
 
     void AddShips(const std::vector<int>& ship_ids);        ///< adds the ships to the fleet
     void RemoveShips(const std::vector<int>& ship_ids);     ///< removes the ships from the fleet.
@@ -154,6 +169,7 @@ private:
     int                         m_next_system = INVALID_OBJECT_ID;  ///< the next system in the route, if any
 
     bool                        m_aggressive = true;    ///< should this fleet attack enemies in the same system?
+    FleetAggression             m_aggression = FleetAggression::FLEET_OBSTRUCTIVE;  ///< should this fleet attack enemies in the same system, block their passage, or ignore them
 
     int                         m_ordered_given_to_empire_id = ALL_EMPIRES;
     int                         m_last_turn_move_ordered;
