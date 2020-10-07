@@ -2947,7 +2947,11 @@ unsigned int SetDestination::GetCheckSum() const {
 // SetAggression                                         //
 ///////////////////////////////////////////////////////////
 SetAggression::SetAggression(bool aggressive) :
-    m_aggressive(aggressive)
+    SetAggression(aggressive ? FleetAggression::FLEET_AGGRESSIVE : FleetAggression::FLEET_PASSIVE)
+{}
+
+SetAggression::SetAggression(FleetAggression aggression) :
+    m_aggression(aggression)
 {}
 
 void SetAggression::Execute(ScriptingContext& context) const {
@@ -2963,19 +2967,25 @@ void SetAggression::Execute(ScriptingContext& context) const {
         return;
     }
 
-    FleetAggression new_aggr = m_aggressive ?
-        FleetAggression::FLEET_AGGRESSIVE : FleetAggression::FLEET_PASSIVE;
-    target_fleet->SetAggression(new_aggr);
+    target_fleet->SetAggression(m_aggression);
 }
 
-std::string SetAggression::Dump(unsigned short ntabs) const
-{ return DumpIndent(ntabs) + (m_aggressive ? "SetAggressive" : "SetPassive") + "\n"; }
+std::string SetAggression::Dump(unsigned short ntabs) const {
+    return DumpIndent(ntabs) + [aggr{this->m_aggression}]() {
+        switch(aggr) {
+        case FleetAggression::FLEET_AGGRESSIVE:  return "SetAggressive";  break;
+        case FleetAggression::FLEET_OBSTRUCTIVE: return "SetObstructive"; break;
+        case FleetAggression::FLEET_PASSIVE:     return "SetPassive";     break;
+        default:                                 return "Set???";         break;
+        }
+    }();
+}
 
 unsigned int SetAggression::GetCheckSum() const {
     unsigned int retval{0};
 
     CheckSums::CheckSumCombine(retval, "SetAggression");
-    CheckSums::CheckSumCombine(retval, m_aggressive);
+    CheckSums::CheckSumCombine(retval, m_aggression);
 
     TraceLogger() << "GetCheckSum(SetAggression): retval: " << retval;
     return retval;

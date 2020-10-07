@@ -583,6 +583,7 @@ private:
 class FO_COMMON_API SetAggression final : public Effect {
 public:
     explicit SetAggression(bool aggressive);
+    explicit SetAggression(FleetAggression aggression);
 
     void            Execute(ScriptingContext& context) const override;
     std::string     Dump(unsigned short ntabs = 0) const override;
@@ -590,7 +591,7 @@ public:
     unsigned int    GetCheckSum() const override;
 
 private:
-    bool m_aggressive;
+    FleetAggression m_aggression;
 };
 
 /** Causes the owner empire of the target object to win the game.  If the
