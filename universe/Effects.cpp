@@ -2946,10 +2946,6 @@ unsigned int SetDestination::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // SetAggression                                         //
 ///////////////////////////////////////////////////////////
-SetAggression::SetAggression(bool aggressive) :
-    SetAggression(aggressive ? FleetAggression::FLEET_AGGRESSIVE : FleetAggression::FLEET_PASSIVE)
-{}
-
 SetAggression::SetAggression(FleetAggression aggression) :
     m_aggression(aggression)
 {}

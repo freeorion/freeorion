@@ -3,6 +3,7 @@
 #include "ValueRefParser.h"
 #include "../universe/Condition.h"
 #include "../universe/Effects.h"
+#include "../universe/Fleet.h"
 #include "../universe/ValueRef.h"
 
 #include <boost/spirit/include/phoenix.hpp>
@@ -48,7 +49,7 @@ namespace parse { namespace detail {
                         deconstruct_movable_(_1, _pass))) ])
                 |
                 (
-                    label(tok.X_)     >  double_rules.expr [ _b = _1 ]
+                        label(tok.X_)     >  double_rules.expr [ _b = _1 ]
                     >   label(tok.Y_)     >  double_rules.expr [ _val = construct_movable_(new_<Effect::MoveInOrbit>(
                             deconstruct_movable_(_a, _pass),
                             deconstruct_movable_(_b, _pass),
@@ -66,7 +67,7 @@ namespace parse { namespace detail {
                         deconstruct_movable_(_1, _pass))) ])
                 |
                 (
-                    label(tok.X_)     > double_rules.expr [ _b = _1 ]
+                        label(tok.X_)     > double_rules.expr [ _b = _1 ]
                     >   label(tok.Y_)     > double_rules.expr [ _val = construct_movable_(new_<Effect::MoveTowards>(
                             deconstruct_movable_(_a, _pass),
                             deconstruct_movable_(_b, _pass),
@@ -82,8 +83,9 @@ namespace parse { namespace detail {
             ;
 
         set_aggression
-            =   tok.SetAggressive_  [ _val = construct_movable_(new_<Effect::SetAggression>(true)) ]
-            |   tok.SetPassive_     [ _val = construct_movable_(new_<Effect::SetAggression>(false)) ]
+            =   tok.SetAggressive_  [ _val = construct_movable_(new_<Effect::SetAggression>(FleetAggression::FLEET_AGGRESSIVE)) ]
+            |   tok.SetObstructive_ [ _val = construct_movable_(new_<Effect::SetAggression>(FleetAggression::FLEET_OBSTRUCTIVE)) ]
+            |   tok.SetPassive_     [ _val = construct_movable_(new_<Effect::SetAggression>(FleetAggression::FLEET_PASSIVE)) ]
             ;
 
         destroy

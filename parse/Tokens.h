@@ -408,6 +408,7 @@
     (SetMaxStructure)                           \
     (SetMaxSupply)                              \
     (SetMaxTroops)                              \
+    (SetObstructive)                            \
     (SetOverlayTexture)                         \
     (SetOwner)                                  \
     (SetPassive)                                \
