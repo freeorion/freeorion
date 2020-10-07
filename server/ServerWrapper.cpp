@@ -778,7 +778,7 @@ namespace {
             fleet->Rename(UserString("OBJ_FLEET") + " " + std::to_string(fleet->ID()));
         }
 
-        fleet->SetAggressive(aggressive);
+        fleet->SetAggression(aggressive ? FleetAggression::FLEET_AGGRESSIVE : FleetAggression::FLEET_PASSIVE);
 
         // return fleet ID
         return fleet->ID();

@@ -796,9 +796,6 @@ void Fleet::SetRoute(const std::list<int>& route) {
     StateChangedSignal();
 }
 
-void Fleet::SetAggressive(bool aggressive)
-{ SetAggression(aggressive ? FleetAggression::FLEET_AGGRESSIVE : FleetAggression::FLEET_PASSIVE); }
-
 void Fleet::SetAggression(FleetAggression aggression) {
     if (m_aggression == aggression)
         return;

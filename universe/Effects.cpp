@@ -53,7 +53,10 @@ namespace {
 
         fleet->AddShips({ship->ID()});
         ship->SetFleetID(fleet->ID());
-        fleet->SetAggressive(fleet->HasArmedShips());
+
+        FleetAggression new_aggr = fleet->HasArmedShips() ?
+            FleetAggression::FLEET_OBSTRUCTIVE : FleetAggression::FLEET_PASSIVE;
+        fleet->SetAggression(new_aggr);
 
         return fleet;
     }
@@ -2960,7 +2963,9 @@ void SetAggression::Execute(ScriptingContext& context) const {
         return;
     }
 
-    target_fleet->SetAggressive(m_aggressive);
+    FleetAggression new_aggr = m_aggressive ?
+        FleetAggression::FLEET_AGGRESSIVE : FleetAggression::FLEET_PASSIVE;
+    target_fleet->SetAggression(new_aggr);
 }
 
 std::string SetAggression::Dump(unsigned short ntabs) const

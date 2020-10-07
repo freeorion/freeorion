@@ -221,7 +221,10 @@ void NewFleetOrder::ExecuteImpl() const {
     }
 
     fleet->GetMeter(MeterType::METER_STEALTH)->SetCurrent(Meter::LARGE_VALUE);
-    fleet->SetAggressive(m_aggressive);
+
+    FleetAggression new_aggr = fleet->HasArmedShips() ?
+        FleetAggression::FLEET_OBSTRUCTIVE : FleetAggression::FLEET_PASSIVE;
+    fleet->SetAggression(new_aggr);
 
     // an ID is provided to ensure consistancy between server and client universes
     GetUniverse().SetEmpireObjectVisibility(EmpireID(), fleet->ID(), Visibility::VIS_FULL_VISIBILITY);
@@ -1458,7 +1461,9 @@ void AggressiveOrder::ExecuteImpl() const {
 
     auto fleet = Objects().get<Fleet>(m_object_id);
 
-    fleet->SetAggressive(m_aggression);
+    FleetAggression new_aggr = m_aggression ?
+        FleetAggression::FLEET_AGGRESSIVE : FleetAggression::FLEET_PASSIVE;
+    fleet->SetAggression(new_aggr);
 }
 
 /////////////////////////////////////////////////////

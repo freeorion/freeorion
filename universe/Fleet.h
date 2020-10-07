@@ -121,7 +121,6 @@ public:
     void SetRoute(const std::list<int>& route);             ///< sets this fleet to move through the series of systems in the list, in order
     void CalculateRouteTo(int target_system_id);            ///< sets this fleet to move through the series of systems that makes the shortest path from its current location to target_system_id
 
-    void SetAggressive(bool aggressive = true);             ///< sets this fleet to be agressive (true) or passive (false)
     void SetAggression(FleetAggression aggression);         ///< sets this fleet's aggression level towards other fleets
 
     void AddShips(const std::vector<int>& ship_ids);        ///< adds the ships to the fleet
