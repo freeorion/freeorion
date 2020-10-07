@@ -1325,7 +1325,7 @@ void FleetDataPanel::ToggleAggression() {
         if (client_empire_id == ALL_EMPIRES)
             return;
 
-        bool new_aggression_state = !fleet->Aggressive();
+        auto new_aggression_state = fleet->Aggressive() ? FleetAggression::FLEET_PASSIVE : FleetAggression::FLEET_AGGRESSIVE;
 
         // toggle fleet aggression status
         HumanClientApp::GetApp()->Orders().IssueOrder(

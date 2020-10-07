@@ -1435,12 +1435,13 @@ bool ScrapOrder::UndoImpl() const {
 ////////////////////////////////////////////////
 // AggressiveOrder
 ////////////////////////////////////////////////
-AggressiveOrder::AggressiveOrder(int empire, int object_id, bool aggression/* = true*/) :
+AggressiveOrder::AggressiveOrder(int empire, int object_id,
+                                 FleetAggression aggression) :
     Order(empire),
     m_object_id(object_id),
     m_aggression(aggression)
 {
-    if (!Check(empire, object_id, aggression))
+    if (!Check(empire, object_id, m_aggression))
         return;
 }
 
@@ -1448,7 +1449,7 @@ std::string AggressiveOrder::Dump() const {
     return UserString("ORDER_FLEET_AGGRESSION");
 }
 
-bool AggressiveOrder::Check(int empire_id, int object_id, bool aggression) {
+bool AggressiveOrder::Check(int empire_id, int object_id, FleetAggression aggression) {
     auto fleet = Objects().get<Fleet>(object_id);
     if (!fleet) {
         ErrorLogger() << "IssueAggressionOrder : no fleet with passed id";
@@ -1471,9 +1472,7 @@ void AggressiveOrder::ExecuteImpl() const {
 
     auto fleet = Objects().get<Fleet>(m_object_id);
 
-    FleetAggression new_aggr = m_aggression ?
-        FleetAggression::FLEET_AGGRESSIVE : FleetAggression::FLEET_PASSIVE;
-    fleet->SetAggression(new_aggr);
+    fleet->SetAggression(m_aggression);
 }
 
 /////////////////////////////////////////////////////

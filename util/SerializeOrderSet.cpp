@@ -31,6 +31,7 @@ BOOST_CLASS_EXPORT(ShipDesignOrder)
 BOOST_CLASS_VERSION(ShipDesignOrder, 1)
 BOOST_CLASS_EXPORT(ScrapOrder)
 BOOST_CLASS_EXPORT(AggressiveOrder)
+BOOST_CLASS_VERSION(AggressiveOrder, 1)
 BOOST_CLASS_EXPORT(GiveObjectToEmpireOrder)
 BOOST_CLASS_EXPORT(ForgetOrder)
 
@@ -260,8 +261,14 @@ template <typename Archive>
 void AggressiveOrder::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Order)
-        & BOOST_SERIALIZATION_NVP(m_object_id)
-        & BOOST_SERIALIZATION_NVP(m_aggression);
+        & BOOST_SERIALIZATION_NVP(m_object_id);
+    if (version < 1) {
+        bool aggressive = false;
+        ar  & boost::serialization::make_nvp("m_aggression", aggressive);
+        m_aggression = aggressive ? FleetAggression::FLEET_AGGRESSIVE : FleetAggression::FLEET_PASSIVE;
+    } else {
+        ar  & BOOST_SERIALIZATION_NVP(m_aggression);
+    }
 }
 
 template <typename Archive>

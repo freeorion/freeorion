@@ -705,7 +705,7 @@ private:
   * controlled by an empire. */
 class FO_COMMON_API AggressiveOrder : public Order {
 public:
-    AggressiveOrder(int empire, int object_id, bool aggression = true);
+    AggressiveOrder(int empire, int object_id, FleetAggression aggression);
 
     std::string Dump() const override;
 
@@ -714,10 +714,9 @@ public:
     { return m_object_id; }
 
     /** Returns aggression state to set object to. */
-    bool Aggression() const
-    { return m_aggression; }
+    FleetAggression Aggression() const { return m_aggression; }
 
-    static bool Check(int empire_id, int object_id, bool aggression);
+    static bool Check(int empire_id, int object_id, FleetAggression aggression);
 
 private:
     AggressiveOrder() = default;
@@ -733,7 +732,7 @@ private:
     void ExecuteImpl() const override;
 
     int m_object_id = INVALID_OBJECT_ID;
-    bool m_aggression = false;
+    FleetAggression m_aggression;
 
     friend class boost::serialization::access;
     template <typename Archive>
