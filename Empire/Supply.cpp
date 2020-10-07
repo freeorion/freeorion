@@ -362,12 +362,10 @@ void SupplyManager::Update() {
             if (system_id == INVALID_OBJECT_ID || known_destroyed_objects.count(fleet->ID()))
                 continue;
 
-            if (fleet->HasArmedShips() && fleet->Aggressive()) {
-                if (fleet->OwnedBy(empire_id)) {
-                    if (fleet->NextSystemID() == INVALID_OBJECT_ID || fleet->NextSystemID() == fleet->SystemID()) {
-                        systems_containing_friendly_fleets.insert(system_id);
-                    }
-                }
+            if (fleet->HasArmedShips() && fleet->Obstructive() && fleet->OwnedBy(empire_id)) {
+                if (fleet->NextSystemID() == INVALID_OBJECT_ID ||
+                    fleet->NextSystemID() == fleet->SystemID())
+                { systems_containing_friendly_fleets.insert(system_id); }
             }
         }
 

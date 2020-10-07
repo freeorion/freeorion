@@ -1149,8 +1149,12 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems,
             continue; //known to be destroyed so can't affect supply, important just in case being updated on client side
         }
 
-        TraceLogger(supply) << "Fleet " << fleet->ID() << " is in system " << system_id << " with next system " << fleet->NextSystemID() << " and is owned by " << fleet->Owner() << " armed: " << fleet->HasArmedShips() << " and agressive: " << fleet->Aggressive();
-        if (fleet->HasArmedShips() && fleet->Aggressive()) {
+        TraceLogger(supply) << "Fleet " << fleet->ID() << " is in system " << system_id
+                            << " with next system " << fleet->NextSystemID()
+                            << " and is owned by " << fleet->Owner()
+                            << " armed: " << fleet->HasArmedShips()
+                            << " and obstructive: " << fleet->Obstructive();
+        if (fleet->HasArmedShips() && fleet->Obstructive()) {
             if (fleet->OwnedBy(m_id)) {
                 if (fleet->NextSystemID() == INVALID_OBJECT_ID || fleet->NextSystemID() == fleet->SystemID()) {
                     systems_containing_friendly_fleets.insert(system_id);
