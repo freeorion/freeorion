@@ -27,16 +27,14 @@ class ShipDesign;
   * the colonize button, she is locked in to this decision. */
 class FO_COMMON_API Order {
 public:
-    Order() // TODO: default
-    {}
+    Order() = default;
 
     /** ctor taking the ID of the Empire issuing the order. */
     Order(int empire) :
         m_empire(empire)
     {}
 
-    virtual ~Order() // TODO: default ?
-    {}
+    virtual ~Order() = default;
 
     virtual std::string Dump() const { return ""; }
 
@@ -45,7 +43,7 @@ public:
 
     /** Returns true iff this order has been executed (a second execution
       * indicates server-side execution). */
-    bool Executed() const;
+    bool Executed() const { return m_executed; }
 
     /** Executes the order on the Universe and Empires.
      *
@@ -73,7 +71,7 @@ protected:
 
 private:
     virtual void ExecuteImpl() const = 0;
-    virtual bool UndoImpl() const;
+    virtual bool UndoImpl() const { return false; }
 
     int m_empire = ALL_EMPIRES;
 

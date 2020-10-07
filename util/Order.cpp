@@ -48,12 +48,6 @@ bool Order::Undo() const {
     return undone;
 }
 
-bool Order::Executed() const
-{ return m_executed; }
-
-bool Order::UndoImpl() const
-{ return false; }
-
 namespace {
     std::string EMPTY_STRING;
     const std::string& ExecutedTag(const Order* order) {
