@@ -3862,16 +3862,22 @@ FW_FLEET_ETA_OUT_OF_RANGE
 Out of Range
 
 FW_AGGRESSIVE
-Control System
+[[FLEET_AGGRESSIVE]]
 
 FW_AGGRESSIVE_DESC
-Fleet blockades enemy empires and initiates battles with any enemies in the system.
+Fleet initiates combat with enemy fleets and blocks their passage through its system.
+
+FW_OBSTRUCTIVE
+[[FLEET_OBSTRUCTIVE]]
+
+FW_OBSTRUCTIVE_DESC
+Fleet blocks enemy fleet passage through its system but does not initiate combat. It may still participate in combats initiated by other empires or fleets, however.
 
 FW_PASSIVE
-Hide
+[[FLEET_PASSIVE]]
 
 FW_PASSIVE_DESC
-Fleet will attempt to stay hidden; it will not blockade or initiate battle.
+Fleet will attempt to stay hidden; it will not blockade enemy fleet passage or initiate combat. It may still participate in combats initiated by other empires or fleets, however.
 
 FW_AUTO
 Automatic Aggression Selection
@@ -9379,23 +9385,43 @@ Stargate Receive
 FOCUS_STARGATE_RECEIVE_DESC
 Open the Stargate to ships being sent from elsewhere
 
+# Focus types
 FOCUS_PLANET_DRIVE
 Planet Drive
 
+# Focus types
 FOCUS_DISTORTION
 Spatial Distortion
 
+# Focus types
 FOCUS_PROTECTION
 Protection
 
 FOCUS_PROTECTION_DESC
 Increases shields, defenses and troops.
 
+# Focus types
 FOCUS_DOMINATION
 Psychic Domination
 
 FOCUS_DOMINATION_DESC
 Psychically controls enemy ships.
+
+# Fleet aggressions
+INVALID_FLEET_AGGRESSION
+Unknown Fleet Aggression
+
+# Fleet aggressions
+FLEET_AGGRESSIVE
+Initiate Combat
+
+# Fleet aggressions
+FLEET_OBSTRUCTIVE
+Obstruct Passage
+
+# Fleet aggressions
+FLEET_PASSIVE
+Hide
 
 # Meter types
 INVALID_METER_TYPE

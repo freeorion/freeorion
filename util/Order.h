@@ -27,7 +27,7 @@ class ShipDesign;
   * the colonize button, she is locked in to this decision. */
 class FO_COMMON_API Order {
 public:
-    Order()
+    Order() // TODO: default
     {}
 
     /** ctor taking the ID of the Empire issuing the order. */
@@ -35,7 +35,7 @@ public:
         m_empire(empire)
     {}
 
-    virtual ~Order()
+    virtual ~Order() // TODO: default ?
     {}
 
     virtual std::string Dump() const { return ""; }
@@ -136,9 +136,12 @@ private:
     Only one of system or position will be used to place the new fleet.*/
 class FO_COMMON_API NewFleetOrder : public Order {
 public:
-    NewFleetOrder(int empire, const std::string& fleet_name,
-                  const std::vector<int>& ship_ids,
-                  bool aggressive);
+    NewFleetOrder(int empire, std::string fleet_name,
+                  std::vector<int> ship_ids,
+                  bool aggressive, bool passive = false);
+    NewFleetOrder(int empire, std::string fleet_name,
+                  std::vector<int> ship_ids,
+                  FleetAggression aggression);
 
     std::string Dump() const override;
 
@@ -151,10 +154,13 @@ public:
     const std::vector<int>& ShipIDs() const
     { return m_ship_ids; }
 
-    bool Aggressive() const
-    { return m_aggressive; }
+    bool Aggressive() const;
 
-    static bool Check(int empire, const std::string& fleet_name, const std::vector<int>& ship_ids, bool aggressive);
+    FleetAggression Aggression() const
+    { return m_aggression; }
+
+    static bool Check(int empire, const std::string& fleet_name,
+                      const std::vector<int>& ship_ids, FleetAggression aggression);
 private:
     NewFleetOrder() = default;
 
@@ -172,7 +178,7 @@ private:
     /** m_fleet_id is mutable because ExecuteImpl generates the fleet id. */
     mutable int m_fleet_id = INVALID_OBJECT_ID;
     std::vector<int> m_ship_ids;
-    bool m_aggressive = false;
+    FleetAggression m_aggression;
 
     friend class boost::serialization::access;
     template <typename Archive>

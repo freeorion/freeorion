@@ -1,5 +1,6 @@
 #include "Serialize.h"
 
+#include "../universe/Fleet.h"
 #include "Order.h"
 #include "OrderSet.h"
 
@@ -14,7 +15,7 @@ BOOST_CLASS_EXPORT(Order)
 BOOST_CLASS_VERSION(Order, 1)
 BOOST_CLASS_EXPORT(RenameOrder)
 BOOST_CLASS_EXPORT(NewFleetOrder)
-BOOST_CLASS_VERSION(NewFleetOrder, 1)
+BOOST_CLASS_VERSION(NewFleetOrder, 2)
 BOOST_CLASS_EXPORT(FleetMoveOrder)
 BOOST_CLASS_VERSION(FleetMoveOrder, 2)
 BOOST_CLASS_EXPORT(FleetTransferOrder)
@@ -60,8 +61,14 @@ void NewFleetOrder::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Order)
         & BOOST_SERIALIZATION_NVP(m_fleet_name)
         & BOOST_SERIALIZATION_NVP(m_fleet_id)
-        & BOOST_SERIALIZATION_NVP(m_ship_ids)
-        & BOOST_SERIALIZATION_NVP(m_aggressive);
+        & BOOST_SERIALIZATION_NVP(m_ship_ids);
+    if (version < 2) {
+        bool aggressive = false;
+        ar  & boost::serialization::make_nvp("m_aggressive", aggressive);
+        m_aggression = aggressive ? FleetAggression::FLEET_AGGRESSIVE : FleetAggression::FLEET_PASSIVE;
+    } else {
+        ar  & BOOST_SERIALIZATION_NVP(m_aggression);
+    }
 }
 
 template <typename Archive>

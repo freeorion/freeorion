@@ -124,29 +124,48 @@ void RenameOrder::ExecuteImpl() const {
 ////////////////////////////////////////////////
 // CreateFleetOrder
 ////////////////////////////////////////////////
-NewFleetOrder::NewFleetOrder(int empire, const std::string& fleet_name,
-                             const std::vector<int>& ship_ids,
-                             bool aggressive) :
+NewFleetOrder::NewFleetOrder(int empire, std::string fleet_name,
+                             std::vector<int> ship_ids,
+                             bool aggressive, bool passive) :
+    NewFleetOrder(empire, std::move(fleet_name), std::move(ship_ids),
+                  aggressive ? FleetAggression::FLEET_AGGRESSIVE :
+                  passive ? FleetAggression::FLEET_PASSIVE :
+                  FleetAggression::FLEET_OBSTRUCTIVE)
+{}
+
+NewFleetOrder::NewFleetOrder(int empire, std::string fleet_name,
+                             std::vector<int> ship_ids,
+                             FleetAggression aggression) :
     Order(empire),
-    m_fleet_name(fleet_name),
+    m_fleet_name(std::move(fleet_name)),
     m_fleet_id(INVALID_OBJECT_ID),
-    m_ship_ids(ship_ids),
-    m_aggressive(aggressive)
+    m_ship_ids(std::move(ship_ids)),
+    m_aggression(aggression)
 {
-    if (!Check(empire, fleet_name, ship_ids, aggressive))
+    if (!Check(empire, m_fleet_name, m_ship_ids, m_aggression))
         return;
 }
 
+bool NewFleetOrder::Aggressive() const
+{ return m_aggression == FleetAggression::FLEET_AGGRESSIVE; }
+
 std::string NewFleetOrder::Dump() const {
-    std::string ship_ids = std::to_string(m_ship_ids.size());
+    const std::string& aggression_text =
+        m_aggression == FleetAggression::FLEET_AGGRESSIVE ? UserString("FLEET_AGGRESSIVE") :
+        m_aggression == FleetAggression::FLEET_OBSTRUCTIVE ? UserString("FLEET_OBSTRUCTIVE") :
+        m_aggression == FleetAggression::FLEET_PASSIVE ? UserString("FLEET_PASSIVE") :
+        UserString("INVALID_FLEET_AGGRESSION");
+
     return boost::io::str(FlexibleFormat(UserString("ORDER_FLEET_NEW"))
                           % m_fleet_name
                           % std::to_string(m_ship_ids.size())
-                          % (m_aggressive ? UserString("FW_AGGRESSIVE") : UserString("FW_PASSIVE")))
+                          % aggression_text)
         + ExecutedTag(this);
 }
 
-bool NewFleetOrder::Check(int empire, const std::string& fleet_name, const std::vector<int>& ship_ids, bool aggressive) {
+bool NewFleetOrder::Check(int empire, const std::string& fleet_name, const std::vector<int>& ship_ids,
+                          FleetAggression aggression)
+{
     if (ship_ids.empty()) {
         ErrorLogger() << "Empire attempted to create a new fleet without ships";
         return false;
@@ -194,7 +213,7 @@ bool NewFleetOrder::Check(int empire, const std::string& fleet_name, const std::
 void NewFleetOrder::ExecuteImpl() const {
     GetValidatedEmpire();
 
-    if (!Check(EmpireID(), m_fleet_name, m_ship_ids, m_aggressive))
+    if (!Check(EmpireID(), m_fleet_name, m_ship_ids, m_aggression))
         return;
 
     GetUniverse().InhibitUniverseObjectSignals(true);
@@ -221,10 +240,7 @@ void NewFleetOrder::ExecuteImpl() const {
     }
 
     fleet->GetMeter(MeterType::METER_STEALTH)->SetCurrent(Meter::LARGE_VALUE);
-
-    FleetAggression new_aggr = fleet->HasArmedShips() ?
-        FleetAggression::FLEET_OBSTRUCTIVE : FleetAggression::FLEET_PASSIVE;
-    fleet->SetAggression(new_aggr);
+    fleet->SetAggression(m_aggression);
 
     // an ID is provided to ensure consistancy between server and client universes
     GetUniverse().SetEmpireObjectVisibility(EmpireID(), fleet->ID(), Visibility::VIS_FULL_VISIBILITY);
