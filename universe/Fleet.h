@@ -28,9 +28,9 @@ struct MovePathNode {
 //! How to Fleets control or not their system?
 GG_ENUM(FleetAggression,
     INVALID_FLEET_AGGRESSION = -1,
-    FLEET_AGGRESSIVE,
-    FLEET_OBSTRUCTIVE,
     FLEET_PASSIVE,
+    FLEET_OBSTRUCTIVE,
+    FLEET_AGGRESSIVE,
     NUM_FLEET_AGGRESSIONS
 )
 

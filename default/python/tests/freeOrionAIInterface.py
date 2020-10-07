@@ -97,9 +97,9 @@ class resourceType(object):
 
 class fleetAggression(object):
     """FleetAggression enumeration."""
-    aggressive = 0
+    passive = 0
     obstructive = 1
-    passive = 2
+    aggressive = 2
 
 
 class meterType(object):

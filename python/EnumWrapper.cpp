@@ -133,9 +133,9 @@ namespace FreeOrionPython {
             .value("speed",             MeterType::METER_SPEED)
         ;
         py::enum_<FleetAggression>("fleetAggression")
-            .value("aggressive",        FleetAggression::FLEET_AGGRESSIVE)
-            .value("obstructive",       FleetAggression::FLEET_OBSTRUCTIVE)
             .value("passive",           FleetAggression::FLEET_PASSIVE)
+            .value("obstructive",       FleetAggression::FLEET_OBSTRUCTIVE)
+            .value("aggressive",        FleetAggression::FLEET_AGGRESSIVE)
         ;
         py::enum_<DiplomaticStatus>("diplomaticStatus")
             .value("war",               DiplomaticStatus::DIPLO_WAR)
