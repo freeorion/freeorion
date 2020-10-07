@@ -2,6 +2,7 @@
 
 #include "AIClientApp.h"
 #include "../ClientNetworking.h"
+#include "../../universe/Fleet.h"
 #include "../../universe/Planet.h"
 #include "../../universe/ShipDesign.h"
 #include "../../universe/Tech.h"
@@ -234,7 +235,7 @@ namespace {
     {
         std::vector<int> ship_ids{ship_id};
         auto app = ClientApp::GetApp();
-        if (!NewFleetOrder::Check(app->EmpireID(), fleet_name, ship_ids, false))
+        if (!NewFleetOrder::Check(app->EmpireID(), fleet_name, ship_ids, FleetAggression::FLEET_OBSTRUCTIVE))
             return 0;
 
         auto order = std::make_shared<NewFleetOrder>(app->EmpireID(), fleet_name, ship_ids, false);
