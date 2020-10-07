@@ -293,13 +293,13 @@ T NamedRef<T>::Eval(const ScriptingContext& context) const
 
 // trigger instantiations - was not necessary when NamedRef was living in ValueRefs.h/.cpp
 // it would be better if the parser would trigger instantiation implicitly
-template class NamedRef<double>;
-template class NamedRef<int>;
+template struct NamedRef<double>;
+template struct NamedRef<int>;
 // Enums
-template class NamedRef<PlanetEnvironment>;
-template class NamedRef<PlanetSize>;
-template class NamedRef<PlanetType>;
-template class NamedRef<StarType>;
-template class NamedRef<UniverseObjectType>;
-template class NamedRef<Visibility>;
+template struct NamedRef<PlanetEnvironment>;
+template struct NamedRef<PlanetSize>;
+template struct NamedRef<PlanetType>;
+template struct NamedRef<StarType>;
+template struct NamedRef<UniverseObjectType>;
+template struct NamedRef<Visibility>;
 } // ValueRef namespace
