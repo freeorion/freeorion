@@ -1381,8 +1381,8 @@ void FleetDataPanel::Refresh() {
         m_fleet_destination_text->SetText(FleetDestinationText(m_fleet_id));
 
         // set icons
-        std::vector<std::shared_ptr<GG::Texture>> icons(
-            FleetHeadIcons(fleet.get(), FleetButton::SizeType::LARGE));
+        std::vector<std::shared_ptr<GG::Texture>> icons{
+            FleetHeadIcons(fleet.get(), FleetButton::SizeType::LARGE)};
         icons.emplace_back(FleetSizeIcon(fleet.get(), FleetButton::SizeType::LARGE));
         std::vector<GG::Flags<GG::GraphicStyle>> styles(icons.size(), DataPanelIconStyle());
 
