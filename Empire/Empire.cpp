@@ -2501,7 +2501,7 @@ void Empire::CheckProductionProgress() {
                 for (auto& next_fleet : fleets) {
                     // rename fleet, given its id and the ship that is in it
                     next_fleet->Rename(next_fleet->GenerateFleetName());
-                    FleetAggression new_aggr = fleet->HasArmedShips() ?
+                    FleetAggression new_aggr = next_fleet->HasArmedShips() ?
                         FleetAggression::FLEET_OBSTRUCTIVE : FleetAggression::FLEET_PASSIVE;
                     next_fleet->SetAggression(new_aggr);
 
