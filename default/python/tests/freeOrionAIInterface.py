@@ -95,6 +95,13 @@ class resourceType(object):
     stockpile = 3
 
 
+class fleetAggression(object):
+    """FleetAggression enumeration."""
+    aggressive = 0
+    obstructive = 1
+    passive = 2
+
+
 class meterType(object):
     """MeterType enumeration."""
     targetPopulation = 0

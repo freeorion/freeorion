@@ -44,6 +44,7 @@ normalization_dict = {
     'buildingType': 'buildingType',
     'productionQueueElement': 'production_queue_element',
     'resourceType': 'resource_type',
+    'fleetAggression': 'fleet_aggression',
     'buildType': 'build_type',
     'field': 'field',
     'shipHull': 'ship_hull',
