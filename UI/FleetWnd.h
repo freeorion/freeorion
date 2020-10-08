@@ -18,13 +18,6 @@ class StatisticIcon;
 class ScanlineControl;
 
 
-/* the new fleet aggression settings */
-GG_ENUM(NewFleetAggression,
-    INVALID_FLEET_AGGRESSION = -1,
-    FLEET_AGGRESSIVE,
-    FLEET_PASSIVE
-)
-
 /** Manages the lifetimes of FleetWnds. */
 class FleetUIManager {
 public:
@@ -110,7 +103,7 @@ public:
     const std::set<int>&    FleetIDs() const;                   ///< returns IDs of all fleets shown in this FleetWnd
     std::set<int>           SelectedFleetIDs() const;           ///< returns IDs of selected fleets in this FleetWnd
     std::set<int>           SelectedShipIDs() const;            ///< returns IDs of selected ships in this FleetWnd
-    NewFleetAggression      GetNewFleetAggression() const;      ///< returns this FleetWnd's setting for new fleet aggression (auto, aggressive, or passive)
+    FleetAggression         GetNewFleetAggression() const;      ///< returns this FleetWnd's setting for new fleet aggression (auto, aggressive, or passive)
 
     GG::Rect CalculatePosition() const override;
 
