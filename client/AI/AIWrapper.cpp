@@ -238,7 +238,8 @@ namespace {
         if (!NewFleetOrder::Check(app->EmpireID(), fleet_name, ship_ids, FleetAggression::FLEET_OBSTRUCTIVE))
             return 0;
 
-        auto order = std::make_shared<NewFleetOrder>(app->EmpireID(), fleet_name, ship_ids, false);
+        auto order = std::make_shared<NewFleetOrder>(app->EmpireID(), fleet_name, ship_ids,
+                                                     FleetAggression::FLEET_OBSTRUCTIVE);
         app->Orders().IssueOrder(order);
 
         return order->FleetID();
