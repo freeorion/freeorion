@@ -331,9 +331,8 @@ namespace {
         if (!app)
             return retval;
         for (const auto& id_and_order : app->Orders()) {
-            if (std::shared_ptr<ScrapOrder> order = std::dynamic_pointer_cast<ScrapOrder>(id_and_order.second)) {
+            if (std::shared_ptr<ScrapOrder> order = std::dynamic_pointer_cast<ScrapOrder>(id_and_order.second))
                 retval[order->ObjectID()] = id_and_order.first;
-            }
         }
         return retval;
     }
@@ -354,6 +353,10 @@ namespace {
     { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "fleet_aggressive.png"); }
     std::shared_ptr<GG::Texture> FleetAggressiveMouseoverIcon()
     { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "fleet_aggressive_mouseover.png"); }
+    std::shared_ptr<GG::Texture> FleetObstructiveIcon()
+    { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "fleet_obstructive.png"); }
+    std::shared_ptr<GG::Texture> FleetObstructiveMouseoverIcon()
+    { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "fleet_obstructive_mouseover.png"); }
     std::shared_ptr<GG::Texture> FleetPassiveIcon()
     { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "fleet_passive.png"); }
     std::shared_ptr<GG::Texture> FleetPassiveMouseoverIcon()
@@ -462,11 +465,10 @@ std::shared_ptr<FleetWnd> FleetUIManager::NewFleetWnd(
 void FleetUIManager::CullEmptyWnds() {
     // scan through FleetWnds, deleting those that have no fleets
     GG::ProcessThenRemoveExpiredPtrs(m_fleet_wnds,
-                                 [](std::shared_ptr<FleetWnd>& wnd)
-                                 {
-                                     if (wnd->FleetIDs().empty())
-                                         wnd->CloseClicked();
-                                 });
+                                     [](std::shared_ptr<FleetWnd>& wnd) {
+                                        if (wnd->FleetIDs().empty())
+                                            wnd->CloseClicked();
+                                     });
 }
 
 void FleetUIManager::SetActiveFleetWnd(std::shared_ptr<FleetWnd> fleet_wnd) {
@@ -1326,19 +1328,31 @@ void FleetDataPanel::ToggleAggression() {
         if (client_empire_id == ALL_EMPIRES)
             return;
 
-        auto new_aggression_state = fleet->Aggressive() ? FleetAggression::FLEET_PASSIVE : FleetAggression::FLEET_AGGRESSIVE;
+        FleetAggression new_aggression_state = [old_aggression{fleet->Aggression()}]() {
+            switch (old_aggression) {
+            case FleetAggression::FLEET_AGGRESSIVE:     return FleetAggression::FLEET_OBSTRUCTIVE;  break;
+            case FleetAggression::FLEET_OBSTRUCTIVE:    return FleetAggression::FLEET_PASSIVE;      break;
+            case FleetAggression::FLEET_PASSIVE:
+            default:                                    return FleetAggression::FLEET_AGGRESSIVE;   break;
+            }
+        }();
 
         // toggle fleet aggression status
         HumanClientApp::GetApp()->Orders().IssueOrder(
             std::make_shared<AggressiveOrder>(client_empire_id, m_fleet_id, new_aggression_state));
+
     } else if (m_is_new_fleet_drop_target) {
         // cycle new fleet aggression
-        if (m_new_fleet_aggression == FleetAggression::INVALID_FLEET_AGGRESSION)
-            m_new_fleet_aggression = FleetAggression::FLEET_AGGRESSIVE;
-        else if (m_new_fleet_aggression == FleetAggression::FLEET_AGGRESSIVE)
-            m_new_fleet_aggression = FleetAggression::FLEET_PASSIVE;
-        else
-            m_new_fleet_aggression = FleetAggression::INVALID_FLEET_AGGRESSION;
+        m_new_fleet_aggression = [old_aggression{m_new_fleet_aggression}]() {
+            switch (old_aggression) {
+            case FleetAggression::FLEET_AGGRESSIVE:         return FleetAggression::FLEET_OBSTRUCTIVE;          break;
+            case FleetAggression::FLEET_OBSTRUCTIVE:        return FleetAggression::FLEET_PASSIVE;              break;
+            case FleetAggression::FLEET_PASSIVE:            return FleetAggression::INVALID_FLEET_AGGRESSION;   break;
+            case FleetAggression::INVALID_FLEET_AGGRESSION:
+            default:                                        return FleetAggression::FLEET_AGGRESSIVE;           break;
+            }
+        }();
+
         SetNewFleetAggressiveOptionSetting(m_new_fleet_aggression);
         UpdateAggressionToggle();
     }
@@ -1626,25 +1640,32 @@ void FleetDataPanel::UpdateAggressionToggle() {
 
     if (aggression == FleetAggression::FLEET_AGGRESSIVE) {
         m_aggression_toggle->SetUnpressedGraphic(GG::SubTexture(FleetAggressiveIcon()));
-        m_aggression_toggle->SetPressedGraphic  (GG::SubTexture(FleetPassiveIcon()));
-        m_aggression_toggle->SetRolloverGraphic (GG::SubTexture(FleetAggressiveMouseoverIcon()));
+        m_aggression_toggle->SetPressedGraphic(GG::SubTexture(FleetObstructiveIcon()));
+        m_aggression_toggle->SetRolloverGraphic(GG::SubTexture(FleetAggressiveMouseoverIcon()));
         m_aggression_toggle->SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
             FleetAggressiveIcon(), UserString("FW_AGGRESSIVE"), UserString("FW_AGGRESSIVE_DESC")));
+
+    } else if (aggression == FleetAggression::FLEET_OBSTRUCTIVE) {
+        m_aggression_toggle->SetUnpressedGraphic(GG::SubTexture(FleetObstructiveIcon()));
+        m_aggression_toggle->SetPressedGraphic(GG::SubTexture(FleetPassiveIcon()));
+        m_aggression_toggle->SetRolloverGraphic(GG::SubTexture(FleetObstructiveMouseoverIcon()));
+        m_aggression_toggle->SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
+            FleetObstructiveIcon(), UserString("FW_OBSTRUCTIVE"), UserString("FW_OBSTRUCTIVE_DESC")));
 
     } else if (aggression == FleetAggression::FLEET_PASSIVE) {
         m_aggression_toggle->SetUnpressedGraphic(GG::SubTexture(FleetPassiveIcon()));
         if (m_is_new_fleet_drop_target)
-            m_aggression_toggle->SetPressedGraphic  (GG::SubTexture(FleetAutoIcon()));
+            m_aggression_toggle->SetPressedGraphic(GG::SubTexture(FleetAutoIcon()));
         else
-            m_aggression_toggle->SetPressedGraphic  (GG::SubTexture(FleetAggressiveIcon()));
-        m_aggression_toggle->SetRolloverGraphic (GG::SubTexture(FleetPassiveMouseoverIcon()));
+            m_aggression_toggle->SetPressedGraphic(GG::SubTexture(FleetAggressiveIcon()));
+        m_aggression_toggle->SetRolloverGraphic(GG::SubTexture(FleetPassiveMouseoverIcon()));
         m_aggression_toggle->SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
             FleetPassiveIcon(), UserString("FW_PASSIVE"), UserString("FW_PASSIVE_DESC")));
 
     } else {    // aggression == FleetAggression::INVALID_FLEET_AGGRESSION
         m_aggression_toggle->SetUnpressedGraphic(GG::SubTexture(FleetAutoIcon()));
-        m_aggression_toggle->SetPressedGraphic  (GG::SubTexture(FleetAggressiveIcon()));
-        m_aggression_toggle->SetRolloverGraphic (GG::SubTexture(FleetAutoMouseoverIcon()));
+        m_aggression_toggle->SetPressedGraphic(GG::SubTexture(FleetAggressiveIcon()));
+        m_aggression_toggle->SetRolloverGraphic(GG::SubTexture(FleetAutoMouseoverIcon()));
         m_aggression_toggle->SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
             FleetAutoIcon(), UserString("FW_AUTO"), UserString("FW_AUTO_DESC")));
     }
@@ -3444,8 +3465,8 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
         && !ClientPlayerIsModerator()
        )
     {
-        auto merge_action = [fleet]() { MergeFleetsIntoFleet(fleet->ID()); };
-        popup->AddMenuItem(GG::MenuItem(UserString("FW_MERGE_SYSTEM_FLEETS"),   false, false, merge_action));
+        auto merge_action = [id{fleet->ID()}]() { MergeFleetsIntoFleet(id); };
+        popup->AddMenuItem(GG::MenuItem(UserString("FW_MERGE_SYSTEM_FLEETS"), false, false, merge_action));
         popup->AddMenuItem(GG::MenuItem(true));
     }
 
@@ -3551,7 +3572,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
             HumanClientApp::GetApp()->Orders().IssueOrder(
                 std::make_shared<RenameOrder>(client_empire_id, fleet->ID(), edit_wnd->Result()));
         };
-        popup->AddMenuItem(GG::MenuItem(UserString("RENAME"),                       false, false, rename_action));
+        popup->AddMenuItem(GG::MenuItem(UserString("RENAME"), false, false, rename_action));
         popup->AddMenuItem(GG::MenuItem(true));
     }
 
@@ -3571,7 +3592,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
             }
         };
 
-        popup->AddMenuItem(GG::MenuItem(UserString("ORDER_FLEET_SCRAP"),          false, false, scrap_action));
+        popup->AddMenuItem(GG::MenuItem(UserString("ORDER_FLEET_SCRAP"), false, false, scrap_action));
         post_scrap_bar = true;
     }
 
@@ -3584,7 +3605,9 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
             const OrderSet orders = HumanClientApp::GetApp()->Orders();
             for (int ship_id : fleet->ShipIDs()) {
                 for (const auto& id_and_order : orders) {
-                    if (std::shared_ptr<ScrapOrder> order = std::dynamic_pointer_cast<ScrapOrder>(id_and_order.second)) {
+                    if (std::shared_ptr<ScrapOrder> order =
+                        std::dynamic_pointer_cast<ScrapOrder>(id_and_order.second))
+                    {
                         if (order->ObjectID() == ship_id) {
                             HumanClientApp::GetApp()->Orders().RescindOrder(id_and_order.first);
                             // could break here, but won't to ensure there are no problems with doubled orders
@@ -3651,17 +3674,20 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
         if (last_turn_visible_it != visibility_turn_map.end()
             && last_turn_visible_it->second < CurrentTurn())
         {
-            popup->AddMenuItem(GG::MenuItem(UserString("FW_ORDER_DISMISS_SENSOR_GHOST"), false, false, forget_fleet_action));
+            popup->AddMenuItem(GG::MenuItem(UserString("FW_ORDER_DISMISS_SENSOR_GHOST"),
+                                            false, false, forget_fleet_action));
         }
     }
 
     popup->Run();
 }
 
-void FleetWnd::FleetLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
+void FleetWnd::FleetLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt,
+                                const GG::Flags<GG::ModKey>& modkeys)
 { ClickedSignal(std::static_pointer_cast<FleetWnd>(shared_from_this())); }
 
-void FleetWnd::FleetDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
+void FleetWnd::FleetDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt,
+                                  const GG::Flags<GG::ModKey>& modkeys)
 { ClickedSignal(std::static_pointer_cast<FleetWnd>(shared_from_this())); }
 
 int FleetWnd::FleetInRow(GG::ListBox::iterator it) const {
@@ -3687,10 +3713,8 @@ namespace {
             return "";
 
         int nearest_system_id(GetPathfinder()->NearestSystemTo(fleet->X(), fleet->Y()));
-        if (auto system = Objects().get<System>(nearest_system_id)) {
-            const std::string& sys_name = system->ApparentName(client_empire_id);
-            return sys_name;
-        }
+        if (auto system = Objects().get<System>(nearest_system_id))
+            return system->ApparentName(client_empire_id);
         return "";
     }
 }
