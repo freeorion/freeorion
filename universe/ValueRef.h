@@ -3,6 +3,7 @@
 
 #include "ScriptingContext.h"
 #include "../util/Export.h"
+#include <type_traits>
 
 namespace ValueRef {
 
@@ -35,6 +36,26 @@ protected:
     bool m_source_invariant = false;
 };
 
+template<typename T, typename std::enable_if<std::is_arithmetic<T>::value, T>::type* = nullptr>
+std::string FlexibleToString(T&& t)
+{ return std::to_string(t); }
+
+template<typename T, typename std::enable_if<std::is_enum<T>::value, T>::type* = nullptr>
+std::string FlexibleToString(T&& t)
+{ return std::to_string(static_cast<typename std::underlying_type<T>::type>(t)); }
+
+inline std::string FlexibleToString(std::string&& t)
+{ return std::move(t); }
+
+template<typename T, typename std::enable_if<std::is_same<T, std::vector<std::string>>::value, T>::type* = nullptr>
+std::string FlexibleToString(T&& t)
+{
+    std::string s;
+    for (auto&& piece : t) s += piece;
+    return s;
+}
+
+
 //! The base class for all ValueRef classes returning type T. This class
 //! provides the public interface for a ValueRef expression tree.
 template <typename T>
@@ -63,7 +84,8 @@ struct FO_COMMON_API ValueRef : public ValueRefBase
       * a string representation of the result value iff the result type is
       * supported (currently std::string, int, float, double, enum).
       * See ValueRefs.cpp for specialisation implementations. */
-    std::string EvalAsString() const final;
+    std::string EvalAsString() const final
+    { return FlexibleToString(Eval()); }
 };
 
 enum StatisticType : int {

@@ -248,51 +248,12 @@ namespace {
     const std::string EMPTY_STRING;
 }
 
-// helper: support enums in ValueRef<T>::EvalAsString() via ADL
-// c++11 direct use of std::enable_if would confuse the signature of EvalAsString
-// c++17 could use: if constexpr (std::is_enum<T>::value
-template <typename T>
-typename std::enable_if<std::is_enum<T>::value, std::string>::type to_string(T val) {
-    return std::to_string(static_cast<typename std::underlying_type<T>::type>(val));
-}
-
 namespace ValueRef {
-    std::string ValueRefBase::InvariancePattern() const {
-        return std::string(RootCandidateInvariant()?"R":"r") + (LocalCandidateInvariant()?"L":"l")
-            + (SourceInvariant()?"S":"s") + (TargetInvariant()?"T":"t")
-            + (SimpleIncrement()?"I":"i") + (ConstantExpr()?"C":"c");
-    }
-
-// enums and arithmetics
-template <typename T>
-std::string ValueRef<T>::EvalAsString() const {
-    using std::to_string;
-    return to_string(Eval()); // uses ::to_string or std::to_string per ADL (argument dependent lookup)
+std::string ValueRefBase::InvariancePattern() const {
+    return std::string(RootCandidateInvariant()?"R":"r") + (LocalCandidateInvariant()?"L":"l")
+        + (SourceInvariant()?"S":"s") + (TargetInvariant()?"T":"t")
+        + (SimpleIncrement()?"I":"i") + (ConstantExpr()?"C":"c");
 }
-
-template <>
-std::string ValueRef<std::string>::EvalAsString() const {
-    return Eval();
-}
-
-template <>
-std::string ValueRef<std::vector<std::string>>::EvalAsString() const {
-    std::string s;
-    for (const auto& piece : Eval()) s += piece;
-    return s;
-}
-
-// instantiations of EvalAsString implementation
-template std::string ValueRef<int>::EvalAsString() const;
-template std::string ValueRef<float>::EvalAsString() const;
-template std::string ValueRef<double>::EvalAsString() const;
-template std::string ValueRef<PlanetEnvironment>::EvalAsString() const;
-template std::string ValueRef<PlanetSize>::EvalAsString() const;
-template std::string ValueRef<PlanetType>::EvalAsString() const;
-template std::string ValueRef<StarType>::EvalAsString() const;
-template std::string ValueRef<UniverseObjectType>::EvalAsString() const;
-template std::string ValueRef<Visibility>::EvalAsString() const;
-
 
 MeterType NameToMeter(const std::string& name) {
     MeterType retval = MeterType::INVALID_METER_TYPE;
