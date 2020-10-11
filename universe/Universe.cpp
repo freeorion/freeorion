@@ -926,9 +926,11 @@ namespace {
         Effect::SourcesEffectsTargetsAndCausesVec&  source_effects_targets_causes_out,
         int n)
     {
-        TraceLogger(effects) << "StoreTargetsAndCausesOfEffectsGroup < " << n << " >"
-                             << "  cause type: " << effect_cause_type
-                             << "  specific cause: " << specific_cause_name << " )";
+        TraceLogger(effects) << [&]() -> std::string {
+            return "StoreTargetsAndCausesOfEffectsGroup < " + std::to_string(n) + " >"
+                + "  cause type: " + boost::lexical_cast<std::string>(effect_cause_type)
+                + "  specific cause: " + specific_cause_name + " )";
+        }();
 
         auto scope = effects_group->Scope();
         if (!scope)
@@ -938,14 +940,14 @@ namespace {
         ScopedTimer timer(
             [
                 n, effect_cause_type, specific_cause_name,
-                sz{source_objects.size()}, effects_group
+                sz{source_objects.size()}, scope
             ] () -> std::string
         {
             return "StoreTargetsAndCausesOfEffectsGroup < " + std::to_string(n) + " >"
                 + "  cause type: " + boost::lexical_cast<std::string>(effect_cause_type)
                 + "  specific cause: " + specific_cause_name
                 + "  sources: " + std::to_string(sz)
-                + "  scope: " + boost::algorithm::erase_all_copy(effects_group->Scope()->Dump(), "\n");
+                + "  scope: " + boost::algorithm::erase_all_copy(scope->Dump(), "\n");
         }, std::chrono::milliseconds(10));
 
         source_effects_targets_causes_out.reserve(source_objects.size());
@@ -986,9 +988,9 @@ namespace {
                 scope->Eval(source_context, matched_targets, candidate_objects_in);
             }
 
-            TraceLogger(effects) << "Scope Results " << n << "  source: " << source->ID()
-                                 << "  matches: " << [&]() {
+            TraceLogger(effects) << [&]() {
                 std::stringstream ss;
+                ss << "Scope Results " << n << "  source: " << source->ID() << "  matches: ";
                 for (auto& obj : matched_targets)
                     ss << obj->ID() << ", ";
                 return ss.str();
@@ -1017,10 +1019,14 @@ namespace {
         std::vector<std::pair<Condition::Condition*, int>> already_evaluated_activation_condition_idx;
         already_evaluated_activation_condition_idx.reserve(effects_groups.size());
 
-        TraceLogger(effects) << "Checking activation condition for " << source_objects.size()
-                             << " sources and "
-                             << (potential_targets.empty() ? "full universe" : std::to_string(potential_targets.size()))
-                             << " potential targets";
+        TraceLogger(effects) << [sos{source_objects.size()}, pts{potential_targets.size()}]() {
+            std::stringstream ss;
+            ss << "Checking activation condition for " << sos
+                << " sources and "
+                << (pts == 0 ? "full universe" : std::to_string(pts))
+                << " potential targets";
+            return ss.str();
+        }();
 
         // evaluate activation conditions of effects_groups on input source objects
         std::vector<Condition::ObjectSet> active_sources{effects_groups.size()};
@@ -1076,10 +1082,9 @@ namespace {
         }
 
 
-        TraceLogger(effects) << "After activation condition, for " << effects_groups.size() << " effects groups "
-                             << "have # sources: " << [&active_sources]()
-        {
+        TraceLogger(effects) << [&]() {
             std::stringstream ss;
+            ss << "After activation condition, for " << effects_groups.size() << " effects groups have # sources: ";
             for (auto& src_set : active_sources)
                 ss << src_set.size() << ", ";
             return ss.str();
@@ -1166,16 +1171,14 @@ namespace {
             }
 
 
-            TraceLogger(effects) << "Dispatching Scope Evaluations < " << n << " > sources: " << [&]() {
+            TraceLogger(effects) << [&]() {
                 std::stringstream ss;
+                ss << "Dispatching Scope Evaluations < " << n << " > sources: ";
                 for (auto& obj : active_sources[i])
                     ss << obj->ID() << ", ";
-                return ss.str();
-            }()
-                << "  cause type: " << effect_cause_type
-                << "  specific cause: " << specific_cause_name
-                << "  candidates: " << [&]() {
-                std::stringstream ss;
+                ss << "  cause type: " << effect_cause_type
+                    << "  specific cause: " << specific_cause_name
+                    << "  candidates: ";
                 for (auto& obj : potential_targets)
                     ss << obj->ID() << ", ";
                 return ss.str();
@@ -1341,7 +1344,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     std::list<Condition::ObjectSet> tech_sources;   // for each empire, a set with a single source object for all its techs
     // select a source object for each empire and dispatch condition evaluations
     for (const auto& entry : Empires()) {
-        const auto& empire = entry.second;
+        auto& empire = entry.second;
         auto source = empire->Source();
         if (!source)
             continue;
@@ -1370,7 +1373,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     TraceLogger(effects) << "Universe::GetEffectsAndTargets for POLICIES";
     std::list<Condition::ObjectSet> policy_sources; // for each empire, a set with a single source object for all its policies
     for (const auto& entry : Empires()) {
-        const auto& empire = entry.second;
+        auto& empire = entry.second;
         auto source = empire->Source();
         if (!source)
             continue;
@@ -1883,8 +1886,7 @@ namespace {
             if (obj->ObjectType() == UniverseObjectType::OBJ_FLEET) {
                 fleet = std::dynamic_pointer_cast<const Fleet>(obj);
             } else if (obj->ObjectType() == UniverseObjectType::OBJ_SHIP) {
-                auto ship = std::dynamic_pointer_cast<const Ship>(obj);
-                if (ship)
+                if (auto ship = static_cast<const Ship*>(obj.get()))
                     fleet = Objects().get<Fleet>(ship->FleetID());
             }
             if (fleet) {
@@ -2347,7 +2349,7 @@ namespace {
             auto& obj_vis_map = empire_object_visibility[empire_id];
             auto& obj_specials_map = empire_object_visible_specials[empire_id];
 
-            const auto& empire = empire_entry.second;
+            auto& empire = empire_entry.second;
             const Meter* detection_meter = empire->GetMeter("METER_DETECTION_STRENGTH");
             if (!detection_meter)
                 continue;
@@ -2448,7 +2450,7 @@ void Universe::UpdateEmpireObjectVisibilities() {
     // ensure Universe knows empires have knowledge of designs the empire is specifically remembering
     for (const auto& empire_entry : Empires()) {
         int empire_id = empire_entry.first;
-        const auto& empire = empire_entry.second;
+        auto& empire = empire_entry.second;
         if (empire->Eliminated()) {
             m_empire_known_ship_design_ids.erase(empire_id);
         } else {
