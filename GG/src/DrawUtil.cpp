@@ -218,11 +218,11 @@ void BubbleArc(Pt ul, Pt lr, Clr color1, Clr color2, Clr color3, double theta1, 
 
     std::valarray<double>& unit_vertices = unit_circle_coords[SLICES];
     std::valarray<Clr>&    colors = color_arrays[SLICES];
-    bool calc_vertices = unit_vertices.size() == 0;
-    if (calc_vertices) {
+    if (unit_vertices.size() == 0) {    // only calculate once, when empty
         unit_vertices.resize(2 * (SLICES + 1), 0.0);
         double theta = 0.0f;
-        for (int j = 0; j <= SLICES; theta += HORZ_THETA, ++j) { // calculate x,y values for each point on a unit circle divided into SLICES arcs
+        for (int j = 0; j <= SLICES; theta += HORZ_THETA, ++j) {
+            // calculate x,y values for each point on a unit circle divided into SLICES arcs
             unit_vertices[j*2] = cos(-theta);
             unit_vertices[j*2+1] = sin(-theta);
         }
