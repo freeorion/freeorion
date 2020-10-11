@@ -1330,16 +1330,19 @@ void FleetDataPanel::ToggleAggression() {
 
         FleetAggression new_aggression_state = [old_aggression{fleet->Aggression()}]() {
             switch (old_aggression) {
-            case FleetAggression::FLEET_AGGRESSIVE:     return FleetAggression::FLEET_OBSTRUCTIVE;  break;
-            case FleetAggression::FLEET_OBSTRUCTIVE:    return FleetAggression::FLEET_PASSIVE;      break;
-            case FleetAggression::FLEET_PASSIVE:
-            default:                                    return FleetAggression::FLEET_AGGRESSIVE;   break;
+            case FleetAggression::FLEET_PASSIVE:        return FleetAggression::FLEET_OBSTRUCTIVE;  break;
+            case FleetAggression::FLEET_OBSTRUCTIVE:    return FleetAggression::FLEET_AGGRESSIVE;   break;
+            case FleetAggression::FLEET_AGGRESSIVE:
+            default:                                    return FleetAggression::FLEET_PASSIVE;      break;
             }
         }();
 
         // toggle fleet aggression status
+        GetUniverse().InhibitUniverseObjectSignals(true);
         HumanClientApp::GetApp()->Orders().IssueOrder(
             std::make_shared<AggressiveOrder>(client_empire_id, m_fleet_id, new_aggression_state));
+        GetUniverse().InhibitUniverseObjectSignals(false);
+        UpdateAggressionToggle();
 
     } else if (m_is_new_fleet_drop_target) {
         // cycle new fleet aggression
