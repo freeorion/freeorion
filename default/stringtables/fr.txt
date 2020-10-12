@@ -3862,16 +3862,22 @@ FW_FLEET_ETA_OUT_OF_RANGE
 Hors de portée
 
 FW_AGGRESSIVE
-Agression
+[[FLEET_AGGRESSIVE]]
 
 FW_AGGRESSIVE_DESC
-La Flotte assure le blocus des systèmes ennemis et engage le combat contre tout ennemi tentant d'entrer dans un système de l'empire.
+La Flotte engage le combat contre les flottes ennemies et bloque leur passage à travers le système.
+
+FW_OBSTRUCTIVE
+[[FLEET_OBSTRUCTIVE]]
+
+FW_OBSTRUCTIVE_DESC
+La Flotte bloque le passage des flottes ennemies à travers le système mais n'engage pas le combat. Elle peut toutefois prendre part aux combats engagés par d'autres empires ou flottes.
 
 FW_PASSIVE
-Passivité
+[[FLEET_PASSIVE]]
 
 FW_PASSIVE_DESC
-La Flotte tente de passer inaperçue dans un système ennemi et n'engage aucun combat dans un système de l'empire.
+La Flotte tente de passer inaperçue. Elle ne bloquera pas le passage des flottes ennemies et n'engagera aucun combat. Elle peut toutefois prendre part aux combats engagés par d'autres empires ou flottes.
 
 FW_AUTO
 Stratégie d'attaque automatique
@@ -7804,6 +7810,18 @@ Toutes les Espèces
 ALL_SPECIES_DESC
 Liste de toutes les espèces:
 
+NATIVE_SPECIES
+Espèces Indigènes
+
+NATIVE_SPECIES_DESC
+Liste des espèces indigènes:
+
+PLAYABLE_SPECIES
+Espèces Jouables
+
+PLAYABLE_SPECIES_DESC
+Liste des espèces jouables:
+
 LITHIC_SPECIES_CLASS
 Lithique
 
@@ -9367,23 +9385,43 @@ Réception Stargate
 FOCUS_STARGATE_RECEIVE_DESC
 Active le Stargate de réception d'astronefs envoyés depuis un autre système de l'empire
 
+# Focus types
 FOCUS_PLANET_DRIVE
 Navigation Planétaire
 
+# Focus types
 FOCUS_DISTORTION
 Distortion Spatiale
 
+# Focus types
 FOCUS_PROTECTION  # translated
 Protection
 
 FOCUS_PROTECTION_DESC
 Augmente boucliers, défense et infanterie.
 
+# Focus types
 FOCUS_DOMINATION
 Domination Psychique
 
 FOCUS_DOMINATION_DESC
 Contrôle psychique des astronefs ennemis.
+
+# Fleet aggressions
+INVALID_FLEET_AGGRESSION
+Agression flotte inconnue
+
+# Fleet aggressions
+FLEET_AGGRESSIVE
+Engager Combat
+
+# Fleet aggressions
+FLEET_OBSTRUCTIVE
+Bloquer Passage
+
+# Fleet aggressions
+FLEET_PASSIVE
+Passivité
 
 # Meter types
 INVALID_METER_TYPE
