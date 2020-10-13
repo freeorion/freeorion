@@ -19,18 +19,23 @@ namespace {
     DeclareThreadSafeLogger(supply);
 }
 
-SupplyManager::SupplyManager() :
-    m_supply_starlane_traversals(),
-    m_supply_starlane_obstructed_traversals(),
-    m_fleet_supplyable_system_ids(),
-    m_resource_supply_groups()
-{}
-
 SupplyManager& SupplyManager::operator=(const SupplyManager& rhs) {
-    m_supply_starlane_traversals =              rhs.m_supply_starlane_traversals;
-    m_supply_starlane_obstructed_traversals =   rhs.m_supply_starlane_obstructed_traversals;
-    m_fleet_supplyable_system_ids =             rhs.m_fleet_supplyable_system_ids;
-    m_resource_supply_groups =                  rhs.m_resource_supply_groups;
+    if (this != &rhs) {
+        m_supply_starlane_traversals =            rhs.m_supply_starlane_traversals;
+        m_supply_starlane_obstructed_traversals = rhs.m_supply_starlane_obstructed_traversals;
+        m_fleet_supplyable_system_ids =           rhs.m_fleet_supplyable_system_ids;
+        m_resource_supply_groups =                rhs.m_resource_supply_groups;
+    }
+    return *this;
+}
+
+SupplyManager& SupplyManager::operator=(SupplyManager&& rhs) {
+    if (this != &rhs) {
+        m_supply_starlane_traversals =            std::move(rhs.m_supply_starlane_traversals);
+        m_supply_starlane_obstructed_traversals = std::move(rhs.m_supply_starlane_obstructed_traversals);
+        m_fleet_supplyable_system_ids =           std::move(rhs.m_fleet_supplyable_system_ids);
+        m_resource_supply_groups =                std::move(rhs.m_resource_supply_groups);
+    }
     return *this;
 }
 
