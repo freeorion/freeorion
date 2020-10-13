@@ -97,7 +97,7 @@ struct HumanClientFSM : boost::statechart::state_machine<HumanClientFSM, IntroMe
 
     using Base::post_event;
 
-    HumanClientApp&    m_client;
+    HumanClientApp& m_client;
 };
 
 
@@ -318,9 +318,19 @@ struct WaitingForGameStart : boost::statechart::state<WaitingForGameStart, Playi
 struct WaitingForTurnData : boost::statechart::state<WaitingForTurnData, PlayingGame> {
     typedef boost::statechart::state<WaitingForTurnData, PlayingGame> Base;
 
+    struct TurnDataUnpackedNotification :
+        public boost::statechart::event<WaitingForTurnData::TurnDataUnpackedNotification>
+    {
+        TurnDataUnpackedNotification();
+
+        struct UnpackedData;
+        std::shared_ptr<UnpackedData> unpacked;
+    };
+
     typedef boost::mpl::list<
         boost::statechart::custom_reaction<SaveGameComplete>,
         boost::statechart::custom_reaction<TurnUpdate>,
+        boost::statechart::custom_reaction<TurnDataUnpackedNotification>,
         boost::statechart::custom_reaction<TurnRevoked>,
         boost::statechart::custom_reaction<DispatchCombatLogs>
     > reactions;
@@ -330,6 +340,7 @@ struct WaitingForTurnData : boost::statechart::state<WaitingForTurnData, Playing
 
     boost::statechart::result react(const SaveGameComplete& d);
     boost::statechart::result react(const TurnUpdate& msg);
+    boost::statechart::result react(const TurnDataUnpackedNotification& data);
     boost::statechart::result react(const TurnRevoked& msg);
     boost::statechart::result react(const DispatchCombatLogs& msg);
 
