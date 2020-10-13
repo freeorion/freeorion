@@ -39,6 +39,8 @@ public:
                 const ID_t temp_id,
                 const ID_t highest_pre_allocated_id);
 
+    IDAllocator& operator=(IDAllocator&& other) noexcept = default;
+
     /// Return a valid new id.  This is used by both clients and servers.
     ID_t NewID();
 
