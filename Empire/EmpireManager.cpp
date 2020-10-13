@@ -18,10 +18,12 @@ namespace {
 }
 
 EmpireManager& EmpireManager::operator=(EmpireManager&& other) noexcept {
-    m_empire_map = std::move(other.m_empire_map);
-    m_const_empire_map = std::move(other.m_const_empire_map);
-    m_empire_diplomatic_statuses = std::move(other.m_empire_diplomatic_statuses);
-    m_diplomatic_messages = std::move(other.m_diplomatic_messages);
+    if (this != &other) {
+        m_empire_map = std::move(other.m_empire_map);
+        m_const_empire_map = std::move(other.m_const_empire_map);
+        m_empire_diplomatic_statuses = std::move(other.m_empire_diplomatic_statuses);
+        m_diplomatic_messages = std::move(other.m_diplomatic_messages);
+    }
     return *this;
 }
 
