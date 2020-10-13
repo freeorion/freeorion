@@ -127,13 +127,41 @@ extern FO_COMMON_API const int ALL_EMPIRES = -1;
 /////////////////////////////////////////////
 Universe::Universe() :
     m_pathfinder(std::make_shared<Pathfinder>()),
-    m_universe_width(1000.0),
-    m_inhibit_universe_object_signals(false),
     m_object_id_allocator(new IDAllocator(ALL_EMPIRES, std::vector<int>(), INVALID_OBJECT_ID,
                                           TEMPORARY_OBJECT_ID, INVALID_OBJECT_ID)),
     m_design_id_allocator(new IDAllocator(ALL_EMPIRES, std::vector<int>(), INVALID_DESIGN_ID,
                                           TEMPORARY_OBJECT_ID, INVALID_DESIGN_ID))
 {}
+
+Universe& Universe::operator=(Universe&& other) noexcept {
+    if (this != &other) {
+        m_objects = std::move(other.m_objects);
+        m_empire_latest_known_objects = std::move(other.m_empire_latest_known_objects);
+        m_destroyed_object_ids = std::move(other.m_destroyed_object_ids);
+        m_empire_object_visibility = std::move(other.m_empire_object_visibility);
+        m_empire_object_visibility_turns = std::move(other.m_empire_object_visibility_turns);
+        m_effect_specified_empire_object_visibilities = std::move(other.m_effect_specified_empire_object_visibilities);
+        m_empire_object_visible_specials = std::move(other.m_empire_object_visible_specials);
+        m_empire_known_destroyed_object_ids = std::move(other.m_empire_known_destroyed_object_ids);
+        m_empire_stale_knowledge_object_ids = std::move(other.m_empire_stale_knowledge_object_ids);
+        m_ship_designs = std::move(other.m_ship_designs);
+        m_empire_known_ship_design_ids = std::move(other.m_empire_known_ship_design_ids);
+        m_effect_accounting_map = std::move(other.m_effect_accounting_map);
+        m_effect_discrepancy_map = std::move(other.m_effect_discrepancy_map);
+        m_marked_destroyed = std::move(other.m_marked_destroyed);
+        m_universe_width = std::move(other.m_universe_width);
+        m_inhibit_universe_object_signals = std::move(other.m_inhibit_universe_object_signals);
+        m_stat_records = std::move(other.m_stat_records);
+        m_unlocked_items = std::move(other.m_unlocked_items);
+        m_unlocked_buildings = std::move(other.m_unlocked_buildings);
+        m_unlocked_fleet_plans = std::move(other.m_unlocked_fleet_plans);
+        m_monster_fleet_plans = std::move(other.m_monster_fleet_plans);
+        m_empire_stats = std::move(other.m_empire_stats);
+        m_object_id_allocator = std::move(other.m_object_id_allocator);
+        m_design_id_allocator = std::move(other.m_design_id_allocator);
+    }
+    return *this;
+}
 
 Universe::~Universe()
 { Clear(); }
@@ -178,16 +206,16 @@ void Universe::ResetAllIDAllocation(const std::vector<int>& empire_ids) {
     for (const auto& obj: m_objects.all())
         highest_allocated_id = std::max(highest_allocated_id, obj->ID());
 
-    *m_object_id_allocator = IDAllocator(ALL_EMPIRES, empire_ids, INVALID_OBJECT_ID,
-                                         TEMPORARY_OBJECT_ID, highest_allocated_id);
+    m_object_id_allocator = std::make_unique<IDAllocator>(ALL_EMPIRES, empire_ids, INVALID_OBJECT_ID,
+                                                          TEMPORARY_OBJECT_ID, highest_allocated_id);
 
     // Find the highest already allocated id for saved games that did not partition ids by client
     int highest_allocated_design_id = INVALID_DESIGN_ID;
     for (const auto& id_and_obj: m_ship_designs)
         highest_allocated_design_id = std::max(highest_allocated_design_id, id_and_obj.first);
 
-    *m_design_id_allocator = IDAllocator(ALL_EMPIRES, empire_ids, INVALID_DESIGN_ID,
-                                         TEMPORARY_OBJECT_ID, highest_allocated_design_id);
+    m_design_id_allocator = std::make_unique<IDAllocator>(ALL_EMPIRES, empire_ids, INVALID_DESIGN_ID,
+                                                          TEMPORARY_OBJECT_ID, highest_allocated_design_id);
 
     DebugLogger() << "Reset id allocators with highest object id = " << highest_allocated_id
                   << " and highest design id = " << highest_allocated_design_id;
