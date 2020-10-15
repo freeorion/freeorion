@@ -2,7 +2,7 @@
 
 # This is the Bulgarian String Table file for FreeOrion
 #
-# Translate this file to other languages.
+# Translated by: Georgi Georgiev <georgiev_1994@abv.bg>
 #
 # Notes: to avoid potential conflict with functional keys in other files, do not
 # make any stringtable keys beginning with "FUNCTIONAL_".
@@ -351,11 +351,11 @@ PROJECT_BT_STOCKPILE_SHORT_DESC
 Прехвърля ПТ в имперските запаси
 
 PROJECT_BT_STOCKPILE_DESC
-'''Производствените точки (ПТ), отпуснати на проекта за прехвърляне, се добавят към [[encyclopedia STOCKPILE_TITLE]]. Може да определите размера за прехвърляне и колко пъти да се повтори процеса.
+'''Производствените точки (ПТ), отпуснати на проекта за прехвърляне, се добавят към [[encyclopedia STOCKPILE_TITLE]]те. Може да определите размера за прехвърляне и колко пъти да се повтори процеса.
 
 Само ПТ, които са произведени в същата снабдителна група (с изключение на имперските запаси) се отпускат на проекта за прехвърляне на запаси.
 
-Излишните ПТ (които не са отпуснати на проектите на опашката) в тази или друга локация ще бъдат прехвърлени към запасите с или без проект за прехвърляне на опашката. ПТ, отпуснати за прехвърляне на запаси се изпращат към запасите, дори ако има допълнителни елементи за по-късно в производствената опашка.
+Излишните ПТ (които не са отпуснати на проектите на опашката) в тази или друга локация ще бъдат прехвърлени към запасите с или без проект за прехвърляне на опашката. ПТ, отпуснати за прехвърляне на запаси се изпращат към запасите, дори ако има допълнителни артикули за по-късно в производствената опашка.
 
 Например: Империя иска да изтегли ПТ от запасите си към вторичната снабдителна група, която не генерира достатъчно ПТ. За да направи това, запасите трябва да се запълнят от първичната снабдителна група. Империята разполага с промишленост от 100 ПТ в първичната си снабдителна група, лимитът ѝ за използване на ход е 10 ПТ и винаги трябва да разполага с поне 10 ПТ в запасите. Производствената опашка съдържа елементи от планетите в първичната снабдителна група, които се нуждаят от 120 ПТ на ход, затова всички налични ПТ ще бъдат използвани.
 За да може да използва ПТ във вторичната снабдителна група, империята ще добави на първо място към производствената опашка 10 пъти проект за прехвърляне на запаси към планета, намираща се в първичната снабдителна група.
@@ -403,7 +403,7 @@ SD_SCOUT_4_DESC
 Малък и евтин невъоръжен кораб, оборудван с подобрен [[metertype METER_DETECTION]], предназначен за разузнавателни операции. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_ENG_SCOUT
-Разузнавач стрела
+Енергиен разузнавач
 
 SD_ENG_SCOUT_DESC
 Малък и бърз невъоръжен кораб, предназначен за разузнавателни операции. [[SHIPDESIGN_DETECTION_RESEARCH_TIPS]] [[BLD_SHIPYARD_BASE_ENRG_COMP_THREE_STARS_REQUIRED]]
@@ -424,187 +424,187 @@ SD_LARGE_MARK_1
 Крайцер Ms
 
 SD_LARGE_MARK1_DESC
-Крайцер, оборудван за битки от голямо разстояние, с подобрени оръжия и броня. [[BLD_SHIPYARD_BASE_REQUIRED]]
+Крайцер, оборудван за самостоятелни операции от голямо разстояние, с подобрени оръжия и броня. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_LARGE_MARK_2
 Крайцер Lz
 
 SD_LARGE_MARK2_DESC
-Крайцер, оборудван за битки от голямо разстояние. [[BLD_SHIPYARD_BASE_REQUIRED]]
+Крайцер, оборудван за самостоятелни операции от голямо разстояние. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_LARGE_MARK_3
 Разрушител Ms
 
 SD_LARGE_MARK3_DESC
-Destroyer equipped for fleet actions. [[BLD_SHIPYARD_BASE_REQUIRED]]
+Разрушител, оборудван за нуждите на флота. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_LARGE_MARK_4
-Destroyer Lz
+Разрушител Lz
 
 SD_LARGE_MARK4_DESC
-Destroyer equipped for fleet actions with improved lasers and armor. [[BLD_SHIPYARD_BASE_REQUIRED]]
+Разрушител, оборудван за нуждите на флота с подобрени лазери и броня. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_ROBOTIC_OUTPOST
-Robotic Outpost
+Роботизиран аванпост
 
 SD_ROBOTIC_OUTPOST_DESC
-Can establish outposts on faraway worlds.
+Може да създава аванпостове в далечните светове.
 
 SD_ROBO_FLUX_SCOUT
-Flux Scout
+Поточен разузнавач
 
 SD_ROBO_FLUX_SCOUT_DESC
-Fast scouting hull with some stealth abilities
+Бърз разузнавателен кораб със стелт характеристики.
 
 SD_ROBO_FLUX_TROOPS
-Flux Troops
+Поточен транспортен кораб
 
 SD_ROBO_FLUX_TROOPS_DESC
-Fast troop carrier
+Бърз транспортен кораб.
 
 SD_ROBO_FLUX_TROOPS_HVY
-Flux Heavy Troops
+Голям поточен транспортен кораб
 
 SD_ROBO_FLUX_TROOPS_HVY_DESC
-Fast advanced troop carrier
+Бърз и усъвършенстван голям транспортен кораб.
 
 SD_ROBOTIC1
-Robocruiser Mfs
+Роботизиран крайцер Mfs
 
 SD_ROBOTIC1_DESC
-Cruiser designed for fleet and independent action. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
+Крайцер, оборудван за нуждите на флота и за самостоятелни операции. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
 
 SD_ROBOTIC2
-Destroyer Mfs DG
+Роботизиран разрушител Mfs DG
 
 SD_ROBOTIC2_DESC
-Robotic hull equipped for fleet actions. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
+Разрушител, оборудван за нуждите на флота. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
 
 SD_ROBOTIC3
-Robocruiser Lzi
+Роботизиран крайцер Lzi
 
 SD_ROBOTIC3_DESC
-Robotic ship equipped for long range independent action. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
+Крайцер, оборудван за самостоятелни операции от голямо разстояние. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
 
 SD_ROBOTIC_CARRIER1
-Fleet Carrier MBs
+Корабоносач MBs
 
 SD_ROBOTIC_CARRIER1_DESC
-Attack Carrier designed for fleet action. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
+Нападателен корабоносач, оборудван за нуждите на флота. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
 
 SD_ROBOTIC_CARRIER2
-Fleet Carrier LBz
+Корабоносач LBz
 
 SD_ROBOTIC_CARRIER2_DESC
-Attack Carrier designed for fleet action. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
+Нападателен корабоносач, оборудван за нуждите на флота. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
 
 SD_ROBOTIC_CARRIER3
-Escort Carrier MIs
+Ескортен корабоносач MIs
 
 SD_ROBOTIC_CARRIER3_DESC
-Escort Carrier designed for convoy and picket duties. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
+Корабоносач, оборудван за конвойни операции. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
 
 SD_GRAVITATING1
-Battleship Pfd DS
+Линеен кораб Pfd DS
 
 SD_GRAVITATING1_DESC
-Self-gravitating battleship equipped for large fleet actions. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_CON_GEOINT_REQUIRED]]
+Гравитационен линеен кораб, оборудван за мащабни операции със флота. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_CON_GEOINT_REQUIRED]]
 
 SD_GRAVITATING2
-Battleship Dfx BS
+Линеен кораб Dfx BS
 
 SD_GRAVITATING2_DESC
-Large state-of-art battleship armed and protected with top technology. Priced accordingly. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_CON_GEOINT_REQUIRED]]
+Голям съвременен линеен кораб, въоръжен и защитен с най-модерните технологии. Цена = качество. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_CON_GEOINT_REQUIRED]]
 
 SD_ROBO_TITAN1
-Dreadnaught
+Дреднаут
 
 SD_ROBO_TITAN1_DESC
-Large state-of-art battleship armed and protected with the latest technology. Priced accordingly. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_CON_GEOINT_REQUIRED]]
+Голям съвременен линеен кораб, въоръжен и защитен с най-модерните технологии. Цена = качество. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_CON_GEOINT_REQUIRED]]
 
 SD_AST_1
-Rock Destroyer (L)
+Астероиден разрушител (L)
 
 SD_AST_1_DESC
-Asteroid hull designed for fleet action. [[BLD_SHIPYARD_BASE_AST_REQUIRED]]
+Разрушител, оборудван за нуждите на флота. [[BLD_SHIPYARD_BASE_AST_REQUIRED]]
 
 SD_COLONY_SHIP
-Colony Ship
+Колониален кораб
 
 SD_COLONY_SHIP_DESC
-Unarmed vessel [[SHIPDESIGN_MILLIONS_COLONIZATION_CAPACITY]]. [[MIN_POPULATION_THREE_REQUIRED]], with a [[buildingtype BLD_SHIPYARD_BASE]].
+Невъоръжен кораб [[SHIPDESIGN_MILLIONS_COLONIZATION_CAPACITY]]. [[MIN_POPULATION_THREE_REQUIRED]], с [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_CRYONIC_COLONY_SHIP
-Cryonic Colony Ship
+Крионичен колониален кораб
 
 SD_CRYONIC_COLONY_SHIP_DESC
-Unarmed vessel [[SHIPDESIGN_MANY_MILLIONS_COLONIZATION_CAPACITY]]. [[MIN_POPULATION_THREE_REQUIRED]], with a [[buildingtype BLD_SHIPYARD_BASE]].
+Невъоръжен кораб [[SHIPDESIGN_MANY_MILLIONS_COLONIZATION_CAPACITY]]. [[MIN_POPULATION_THREE_REQUIRED]], с [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_OUTPOST_SHIP
-Outpost Ship
+Аванпостов кораб
 
 SD_OUTPOST_SHIP_DESC
-Unarmed vessel [[SHIPDESIGN_OUTPOSTS_CAPACITY]]. [[BLD_SHIPYARD_BASE_REQUIRED]]
+Невъоръжен кораб [[SHIPDESIGN_OUTPOSTS_CAPACITY]]. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_ORG_OUTPOST_SHIP
-Organic Outpost Ship
+Органичен аванпостов кораб
 
 SD_ORG_OUTPOST_SHIP_DESC
-Unarmed organic vessel [[SHIPDESIGN_OUTPOSTS_CAPACITY]]. [[BLD_SHIPYARD_BASE_ORG_ORB_INC_REQUIRED]]
+Невъоръжен органичен кораб [[SHIPDESIGN_OUTPOSTS_CAPACITY]]. [[BLD_SHIPYARD_BASE_ORG_ORB_INC_REQUIRED]]
 
 SD_COLONY_BASE
-Colony Base
+Колониална база
 
 SD_COLONY_BASE_DESC
-Unarmed vessel capable of creating a [[SHIPDESIGN_COLONIZATION_CAPACITY_SAME_SYSTEM]]. [[MIN_POPULATION_THREE_REQUIRED]]. [[SHIPDESIGN_NO_TRAVEL]]
+Невъоръжен кораб за създаване на [[SHIPDESIGN_COLONIZATION_CAPACITY_SAME_SYSTEM]]. [[MIN_POPULATION_THREE_REQUIRED]]. [[SHIPDESIGN_NO_TRAVEL]]
 
 SD_CRYONIC_COLONY_BASE
-Cryonic Colony Base
+Крионична колониална база
 
 SD_CRYONIC_COLONY_BASE_DESC
-Unarmed vessel capable of creating a large [[SHIPDESIGN_COLONIZATION_CAPACITY_SAME_SYSTEM]]. [[MIN_POPULATION_THREE_REQUIRED]]. [[SHIPDESIGN_NO_TRAVEL]]
+Невъоръжен кораб за създаване на голяма [[SHIPDESIGN_COLONIZATION_CAPACITY_SAME_SYSTEM]]. [[MIN_POPULATION_THREE_REQUIRED]]. [[SHIPDESIGN_NO_TRAVEL]]
 
 SD_OUTPOST_BASE
-Outpost Base
+Аванпостова база
 
 SD_OUTPOST_BASE_DESC
-Unarmed vessel [[SHIPDESIGN_OUTPOSTS_CAPACITY]] in the system where it is produced. [[SHIPDESIGN_NO_TRAVEL]]
+Невъоръжен кораб [[SHIPDESIGN_OUTPOSTS_CAPACITY]] в системата, в която е произведен. [[SHIPDESIGN_NO_TRAVEL]]
 
 SD_BASE_DECOY
-Comsat
+Комуникационен сателит
 
 SD_BASE_DECOY_DESC
-Unarmed satellite that can trigger planetary defenses even against passive enemies, but otherwise does nothing except get in the way of enemy fire. Can be built at any planet colonized by a shipbuilding species, does not require a [[buildingtype BLD_SHIPYARD_BASE]].
+Невъоръжен сателит, който може да задейства планетарната защита, дори срещу пасивни врагове, но през останалото време е безполезен. Може да бъде построен на всяка планета, която е колонизирана от същества, способни да строят космически кораби, не изисква [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_TROOP_DROP
-Troop Drop
+Десантен кораб
 
 SD_TROOP_DROP_DESC
-Carries a brigade of ground [[SHIPDESIGN_PLANET_INVASION]] in the same system.
+Превозва пехотни войски [[SHIPDESIGN_PLANET_INVASION]] в същата система.
 
 SD_TROOP_DROP_HVY
-Heavy Troop Drop
+Универсален десантен кораб
 
 SD_TROOP_DROP_HVY_DESC
-Carries a brigade of ground advanced [[SHIPDESIGN_PLANET_INVASION]] in the same system.
+Превозва специализирани пехотни войски [[SHIPDESIGN_PLANET_INVASION]] в същата система.
 
 SD_SMALL_TROOP_SHIP
-Small Troop Ship
+Малък транспортен кораб
 
 SD_SMALL_TROOP_SHIP_DESC
-Carries a brigade of ground [[SHIPDESIGN_PLANET_INVASION]]. [[BLD_SHIPYARD_BASE_REQUIRED]]
+Превозва 1 бригада от пехотни войски [[SHIPDESIGN_PLANET_INVASION]]. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_TROOP_SHIP
-Troop Ship
+Транспортен кораб
 
 SD_TROOP_SHIP_DESC
-Carries 3 brigades of ground [[SHIPDESIGN_PLANET_INVASION]]. [[BLD_SHIPYARD_BASE_REQUIRED]]
+Превозва 3 бригади от пехотни войски [[SHIPDESIGN_PLANET_INVASION]]. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_DRAGON_TOOTH
-Dragon Tooth
+Драконов зъб
 
 SD_DRAGON_TOOTH_DESC
-Ancient ship design with advanced weaponry and defensive systems. [[BLD_SHIPYARD_BASE_REQUIRED]]
+Древен корабен дизайн с мощно въоръжение и защитни системи. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 
 ##
@@ -612,245 +612,245 @@ Ancient ship design with advanced weaponry and defensive systems. [[BLD_SHIPYARD
 ##
 
 SM_MONSTER
-Monster
+Чудовище
 
 SM_KRILL_1
-Small Krill Swarm
+Малък рояк от Крилове
 
 SM_KRILL_1_DESC
-[[SM_KRILL_MACRO_1]]. Though normally not aggressive, their numbers, even low, become a hazard for navigation and block resupply. [[SM_KRILL_MACRO_2]]
+[[SM_KRILL_MACRO_1]]. Не са агресивни, но тяхната численост бързо се превръща в проблем за навигацията и снабдяването. [[SM_KRILL_MACRO_2]]
 
 SM_KRILL_2
-Medium Krill Swarm
+Голям рояк от Крилове
 
 SM_KRILL_2_DESC
-[[SM_KRILL_MACRO_1]]. Though normally not aggressive, their growing numbers become a hazard for navigation and block resupply. [[SM_KRILL_MACRO_2]]
+[[SM_KRILL_MACRO_1]]. Не са агресивни, но тяхната голяма численост бързо се превръща в проблем за навигацията и снабдяването. [[SM_KRILL_MACRO_2]]
 
 SM_KRILL_3
-Large Krill Swarm
+Огромен рояк от Крилове
 
 SM_KRILL_3_DESC
-[[SM_KRILL_MACRO_1]]. When in large enough numbers, they begin to become aggressive towards ships. [[SM_KRILL_MACRO_2]]
+[[SM_KRILL_MACRO_1]]. Когато са заедно, стават агресивни срещу космическите кораби. [[SM_KRILL_MACRO_2]]
 
 SM_KRILL_4
-Plague of Krill
+Чума от Крилове
 
 SM_KRILL_4_DESC
-[[SM_KRILL_MACRO_1]]. Krill behavior changes radically when a critical population is reached-- somewhere in the 10s of millions. The normally flighty Krill become aggressive, attacking ships and destroying orbital structures. [[SM_KRILL_MACRO_2]]
+[[SM_KRILL_MACRO_1]]. Поведението им се променя напълно, когато достигнат определена популация - около десетки милиони. От страхливи, те се стават агресивни и започват да атакуват кораби и орбитални структури. [[SM_KRILL_MACRO_2]]
 
 SM_TREE
-Dyson Forest
+Дайсънова гора
 
 SM_TREE_DESC
-A "forest" made up of numerous space-born "trees" with filamentous branches. The trees multiply and align themselves in a bubble at the proper distance around their host star. Dyson Forests are a hazard to navigation, and as time passes, the forest expands and becomes harder to eradicate. If not destroyed, they will periodically send out a seed through the starlanes to colonize other star systems. A [[SM_TREE]] seed is known as a [[predefinedshipdesign SM_FLOATER]], and may be difficult to detect.
+Дайсъновата "гора" се състои от множество космически "дървета" с влакнисти клони. Дърветата се размножават и развиват в мехур на подходящо разстояние от тяхната звезда. Дайсъновите гори са опасни за навигацията, освен това, те се разширяват, което ги прави трудни за унищожаване. Ако не бъдат унищожени, те ще продължат да се разпространяват и в другите слънчеви системи. Семето на [[SM_TREE]]та е известно като [[predefinedshipdesign SM_FLOATER]] и е трудно за откриване.
 
 SM_FLOATER
-Floater
+Скитник
 
 SM_FLOATER_DESC
-A gas-filled bulbous sac drifting through space, sent as a seed by a [[predefinedshipdesign SM_TREE]] to found a new forest around other stars. It is generally advisable to destroy [[SM_FLOATER]]s as soon as possible. However, they are small and difficult to detect; it will generally require the [[tech SPY_DETECT_2]] technology to do so.
+Газова луковична торбичка, носеща се в космоса, произлизаща от [[predefinedshipdesign SM_TREE]]та. Добра идея е [[SM_FLOATER]]ът да бъде унищожен възможно по-бързо. Обаче, той е малък и труден за откриване, изисква се технологията [[tech SPY_DETECT_2]].
 
 SM_DRAGON
-Vacuum Dragon
+Вакумен дракон
 
 SM_DRAGON_DESC
-A terrifying giant monster that prowls space for prey, wreaking havoc on populated areas.
+Ужасяващо гигантско чудовище, което дебне в космоса, търсещо плячка, то създава хаос в населените местности.
 
 SM_DRONE
-Drone
+Дрон
 
 SM_DRONE_DESC
-A tool of a forgotten war, still fulfilling its original purpose: to mindlessly attack any ships in range.
+Инструмент от миналото, който все още е полезен: атакува всякакви космически кораби в обсега му.
 
 SM_DRONE_FACTORY
-Drone Factory
+Фабрика за дронове
 
 SM_DRONE_FACTORY_DESC
-A production facility built in some long-forgotten war to defend long-vanished builders, Amazingly, it still functions, slowly producing new Drone Fighters.
+Производствено съоръжение от миналото, създадено да защитава някогашните си строители. Удивително е, че все още работи, макар и бавно, произвеждайки дронове.
 
 SM_GUARD_0
-Maintenance Ship
+Поддържащ кораб
 
 SM_GUARD_0_DESC
-An unmanned ship programmed by the Precursors to maintain the starlane entries of the system. It is armed only lightly, but will attack all intruders.
+Безпилотен кораб, програмиран от Предшествениците, за поддръжка на междузвездните пътища. Не е тежко въоръжен, но ще атакува всички нарушители.
 
 SM_GUARD_1
-Sentry
+Пазач
 
 SM_GUARD_1_DESC
-A small unmanned guard ship [[SM_GUARD_MACRO]].
+Малък безпилотен охранителен кораб [[SM_GUARD_MACRO]].
 
 SM_GUARD_2
-Sentinel
+Страж
 
 SM_GUARD_2_DESC
-An unmanned guard ship [[SM_GUARD_MACRO]].
+Безпилотен охранителен кораб [[SM_GUARD_MACRO]].
 
 SM_GUARD_3
-Warden
+Надзирател
 
 SM_GUARD_3_DESC
-A powerful unmanned guard ship [[SM_GUARD_MACRO]].
+Мощен безпилотен охранителен кораб [[SM_GUARD_MACRO]].
 
 SM_KRAKEN_1
-Larval Kraken
+Новороден Кракен
 
 SM_KRAKEN_1_DESC
-'''In the larval form, a cautious and relatively harmless type of spaceborne fauna. Its natural prey is the krill swarm. A well-fed larval kraken may grow into a larger and more dangerous adult form.
+'''В новородената си форма е сравнително безопасен вид космическа фауна. Храни се с рояците от Крилове. Ако се храни добре, ще се развие в по-опасен Кракен.
 
 [[SM_KRAKEN_ENVIRONMENT]]'''
 
 SM_KRAKEN_2
-Kraken
+Кракен
 
 SM_KRAKEN_2_DESC
-'''A formidable medium-weight space monster. Its natural prey is the krill swarm. A well-fed kraken may grow into an even larger and more dangerous form.
+'''Страховито, средно по размери космическо чудовище. Храни се с рояците от Крилове. Ако се храни добре, ще се развие в още по-опасен Кракен.
 
 [[SM_KRAKEN_ENVIRONMENT]]'''
 
 SM_KRAKEN_3
-Great Kraken
+Голям Кракен
 
 SM_KRAKEN_3_DESC
-'''A formidable and very tough space monster.
+'''Страховито и много издръжливо космическо чудовище.
 
 [[SM_KRAKEN_ENVIRONMENT]]'''
 
 SM_WHITE_KRAKEN
-White Kraken
+Бял кракен
 
 SM_WHITE_KRAKEN_DESC
-The White Kraken is a white-colored prehistoric ancestor of the Kraken Space Monster.
+Белият Кракен е праисторичеки предшественик на съвременните Кракени.
 
 SM_BLACK_KRAKEN
-Black Kraken
+Черен Кракен
 
 SM_BLACK_KRAKEN_DESC
-'''A powerful, unnatural-seeming space monster.
+'''Силно, неестествено космическо чудовище.
 
-Black Kraken are bioengineered space monsters, incredibly tough, with dangerous weapons and high [[metertype METER_STEALTH]]. A powerful fleet and good [[encyclopedia DETECTION_TITLE]] will be needed to track them down. They seek out planets with visible buildings and attack their [[metertype METER_POPULATION]].'''
+Черните Кракени са биотехнологични космически чудовища, невероятно издръжливи, с опасни оръжия и висок [[metertype METER_STEALTH]]. Нужни са силна флота и добра [[encyclopedia DETECTION_TITLE]] за да бъдат унищожени. Черните Кракени търсят планети с лесно забележими сгради и атакуват тяхното [[metertype METER_POPULATION]].'''
 
 SM_SNOWFLAKE_1
-Small Snowflake
+Малка снежинка
 
 SM_SNOWFLAKE_1_DESC
-'''A small and harmless space monster with exceptional vision.
+'''Малко и безобидно космическо чудовище с отлично зрение.
 
 [[SM_SNOWFLAKE_ENVIRONMENT]]'''
 
 SM_SNOWFLAKE_2
-Snowflake
+Снежинка
 
 SM_SNOWFLAKE_2_DESC
-'''A light-weight space monster with exceptional vision.
+'''Леко космическо чудовище с отлично зрение.
 
 [[SM_SNOWFLAKE_ENVIRONMENT]]'''
 
 SM_SNOWFLAKE_3
-Large Snowflake
+Голяма снежинка
 
 SM_SNOWFLAKE_3_DESC
-'''A formidable light-weight space monster.
+'''Огромно и леко космическо чудовище.
 
 [[SM_SNOWFLAKE_ENVIRONMENT]]'''
 
 SM_PSIONIC_SNOWFLAKE
-Psionic Snowflake
+Псионова снежинка
 
 SM_PSIONIC_SNOWFLAKE_DESC
-'''A monster with the power to neutralize the minds of organic beings.
+'''Чудовище съса силата да неутрализира умовете на органичните създания.
 
-Psionic Snowflakes are bioengineered space monsters with dangerous weapons and the ability to take control of ships with [[encyclopedia ORGANIC_SPECIES_TITLE]] crews. A powerful fleet will be needed to fight them. They seek out and attack enemy space ships, forcing crews vulnerable to psychic attack to abandon their empire. They are also able to directly attack the [[metertype METER_POPULATION]] of planets.'''
+Псионовите снежинки са биотехнологични космически чудовища с опасни оръжия и способността да контролират [[encyclopedia ORGANIC_SPECIES_TITLE]] в екипажите на космическите кораби. Нужна е силна флота за да бъдат победени. Псионовите снежинки търсят и нападат космическите кораби, принуждавайки техните екипажи да напуснат своята империя. Също така, те могат да нападнат [[metertype METER_POPULATION]]то на планетите.'''
 
 SM_JUGGERNAUT_1
-Small Juggernaut
+Малък джагърнаут
 
 SM_JUGGERNAUT_1_DESC
-'''A formidable heavy-weight space monster with some protective shielding.
+'''Страховито, голямо космическо чудовище с частична защита.
 
 [[SM_JUGGERNAUT_ENVIRONMENT]]'''
 
 SM_JUGGERNAUT_2
-Juggernaut
+Джагърнаут
 
 SM_JUGGERNAUT_2_DESC
-'''A formidable heavy-weight space monster with moderate protective shielding.
+'''Страховито, голямо космическо чудовище със средна защита.
 
 [[SM_JUGGERNAUT_ENVIRONMENT]]'''
 
 SM_JUGGERNAUT_3
-Large Juggernaut
+Голям джагърнаут
 
 SM_JUGGERNAUT_3_DESC
-'''A formidable heavy-weight space monster with powerful protective shielding.
+'''Страховито, голямо космическо чудовище с устойчива защита.
 
 [[SM_JUGGERNAUT_ENVIRONMENT]]'''
 
 SM_BLOATED_JUGGERNAUT
-Bloated Juggernaut
+Претъпкан джагърнаут
 
 SM_BLOATED_JUGGERNAUT_DESC
-'''A massive, sickly-looking space monster.
+'''Масивно, отвратително космическо чудовище.
 
-Bloated Juggernauts are bioengineered space monsters, incredibly tough, with dangerous weapons and high [[metertype METER_STEALTH]]. A powerful fleet and good [[encyclopedia DETECTION_TITLE]] will be needed to track them down. They seek out planets with visible buildings and attack their [[metertype METER_POPULATION]].'''
+Претъпканите джагърнаути са биотехнологични космически чудовища, невероятно издръжливи, с опасни оръжия и висок [[metertype METER_STEALTH]]. Нужни са силна флота и добра [[encyclopedia DETECTION_TITLE]] за да бъдат унищожени. Претъпканите джагърнаути търсят планети с лесно забележими сгради и атакуват тяхното [[metertype METER_POPULATION]].'''
 
 SM_CLOUD
-Space Cloud
+Космически облак
 
 SM_CLOUD_DESC
-A nebulous creature that adds [[metertype METER_STEALTH]] to random planets.
+Мъгливо същество, което добавя [[metertype METER_STEALTH]] към различни планети.
 
 SM_ASH
-Space Volcano
+Космически вулкан
 
 SM_ASH_DESC
-A nebulous creature that adds [[metertype METER_STEALTH]] to random planets.
+Мъгливо същество, което добавя [[metertype METER_STEALTH]] към различни планети.
 
 SM_DIM
-Dimensional Drifter
+Пътешественик през измеренията
 
 SM_DIM_DESC
-A nebulous creature that adds [[metertype METER_STEALTH]] to random planets.
+Мъгливо същество, което добавя [[metertype METER_STEALTH]] към различни планети.
 
 SM_VOID
-Behemoth of the Void
+Бегемот от пустошта
 
 SM_VOID_DESC
-A nebulous creature that adds [[metertype METER_STEALTH]] to random planets.
+Мъгливо същество, което добавя [[metertype METER_STEALTH]] към различни планети.
 
 SM_SNAIL
-Asteroid Snail
+Астероиден охлюв
 
 SM_SNAIL_DESC
-A timid monster, feeding on minerals. Its shell strongly resembles a normal asteroid, increasing its [[metertype METER_STEALTH]] if it can hide inside an asteroid belt.
+Плашливо чудовище, хранещо се с минерали. Понеже черупката му наподобява астероид, [[metertype METER_STEALTH]]а му се увеличава, ако се скрие в астероиден пояс.
 
 SM_DAMPENING_CLOUD
-Dampening Cloud
+Енергиен облак
 
 SM_DAMPENING_CLOUD_DESC
-A cosmic cloud of highly energetic particles that has gained some form of sentience. It is repelled by the energy signatures of populated colonies. It is nonetheless highly attracted to reserves of potential energy, and will steal the [[metertype METER_FUEL]] from vessels in the system.
+Космически облак от силно енергийни частици, които са придобили нещо като собствен интелект. Отблъсква го енергията от населените колонии. Привличат го енергийните запаси, освен това, той източва [[metertype METER_FUEL]]то на космическите кораби.
 
 SM_ACIREMA_GUARD
-Acirema Guard Ship
+Охранителен кораб Асирема
 
 SM_ACIREMA_GUARD_DESC
-An unmanned armed ship built by the Acirema, standing guard over the system.
+Безпилотен въоръжен кораб, построен от Асиремите, охраняващ слънчевите системи.
 
 SM_EXP_OUTPOST
-Experiment Zero
+Експеримент Нула
 
 SM_EXP_OUTPOST_DESC
-'''An ancient creation of the Experimentors that reduces [[metertype METER_SHIELD]] and [[encyclopedia DAMAGE_TITLE]].
+'''Древно творение на Експериментаторите, което намалява [[metertype METER_SHIELD]]овете и [[encyclopedia DAMAGE_TITLE]]та.
 
-Experiment Zero was sent to this galaxy to guard the outpost of the Experimentors with its unique abilities. While it does not attack ships directly, it fills the whole system with quadrillions of diminutive units, hampering enemy shields and weapons to the point that all but the very best equipment will be ineffective.'''
+Експеримент Нула е изпратен в тази галактика за да предпазва Експериментаторите, чрез неговите уникални способности. Въпреки че не атакува космическите кораби директно, той изпълва цялата система с кваадралиони миниатюрни частици, възпрепятствайки повечето вражески щитове и оръжия.'''
 
 SM_COSMIC_DRAGON
-Cosmic Dragon
+Космически дракон
 
 SM_COSMIC_DRAGON_DESC
-'''A fearsome space monster with the power to destroy entire star systems.
+'''Страховито космическо чудовище със силата да унищожава цели слънчеви системи.
 
-Cosmic Dragons are bioengineered space monsters, incredibly tough, with dangerous weapons and high [[metertype METER_STEALTH]]. A very powerful fleet with high [[encyclopedia DETECTION_TITLE]] will be needed to track them down. They seek out and attack inhabited planets, and are able to vaporise entire star systems if left alone.'''
+Космическите дракони са биотехнологични космически чудовища, невероятно издръжливи, с опасни оръжия и висок [[metertype METER_STEALTH]]. Нужни са силна флота и добра [[encyclopedia DETECTION_TITLE]] за да бъдат унищожени. Космическите дракони търсят и нападат обитаемите планети и са способни да изпарят цяла слънчева система, ако не бъдат спрени.'''
 
 
 ##
@@ -858,22 +858,22 @@ Cosmic Dragons are bioengineered space monsters, incredibly tough, with dangerou
 ##
 
 FLD_ION_STORM
-Ion Storm
+Йонна буря
 
 FLD_ION_STORM_DESC
-Magnetic vortex of relativistic charged particles that can interfere with sensors and obscures all objects within it. All objects inside the storm receive an increase to [[metertype METER_STEALTH]] of 40, but a decrease to [[metertype METER_DETECTION]] of 40.
+Магнетична вихрушка от релативно заредени частици, които могат да окажат влияние на сензорите и всички обекти в нейния обсег. Всички обекти получават увеличение на [[metertype METER_STEALTH]]а си с 40, но тяхното [[metertype METER_DETECTION]] намалява с 40.
 
 FLD_MOLECULAR_CLOUD
-Molecular Cloud
+Молекулярен облак
 
 FLD_MOLECULAR_CLOUD_DESC
-Diffuse cloud of complex molecules that disrupts ship shielding. All ships have their [[metertype METER_SHIELD]] decreased by 15.
+Разсеян облак от молекули, който нарушава щитовете на космическите кораби в неговия обсег. [[metertype METER_SHIELD]]овете на всички космически кораби намаляват с 15.
 
 FLD_NEBULA_1
-Nebula
+Мъглявина
 
 FLD_NEBULA_1_DESC
-Cloud of hydrogen gas that could coalesce to form a new star. Ship [[metertype METER_SPEED]] and [[metertype METER_DETECTION]] are reduced by 20, [[metertype METER_STEALTH]] is increased by 20.
+Облак от водород, от който може да се формира нова звезда. [[metertype METER_SPEED]]та и [[metertype METER_DETECTION]]то на космическите кораби намаляват с 20, но техният [[metertype METER_STEALTH]] се увеличава с 20.
 
 FLD_NEBULA_2
 [[FLD_NEBULA_1]]
@@ -888,34 +888,34 @@ FLD_NEBULA_3_DESC
 [[FLD_NEBULA_1_DESC]]
 
 FLD_SUBSPACE_RIFT
-Scissor Rift
+Разрив във времето
 
 FLD_SUBSPACE_RIFT_DESC
-Violent and destructive tear in spacetime which rapidly collapses. Pulls in and devours ships, systems, and planets that are caught within its area, although ships may be able to escape if moving quick enough.
+Бурен и унищожителен разрив във времето, който се срива. Унищожава всичко, което попадне в неговия обхват, с изключение на някои космически кораби .
 
 FLD_ACCRETION_DISC
-Accretion Disc
+Акреционен диск
 
 FLD_ACCRETION_DISC_DESC
-An accretion disc is a structure (often a circumstellar disc) formed by diffused material in orbital motion around a massive central body. All planets in the affected system get a [[metertype METER_SUPPLY]] penalty of -1.
+Структура (околозвезден диск), формирана от частиците в орбита около централното тяло. Всички планети в нея имат понижено [[metertype METER_SUPPLY]] с -1.
 
 FLD_NANITE_SWARM
-Nanite Swarm
+Рояк от нанороботи
 
 FLD_NANITE_SWARM_DESC
-A swarm of ancient robotic particles that attach themselves to ship hulls, repairing ship [[metertype METER_STRUCTURE]] by 5 per turn. Harvesting of particles creates one unit of [[metertype METER_INDUSTRY]] per turn.
+Рояк от древни роботизирани частици, които се прикрепят към корпуса на космическите кораби, поправяйки тяхната [[metertype METER_STRUCTURE]] с 5 на всеки ход. Събирането на тези частици създава [[metertype METER_INDUSTRY]] всеки ход.
 
 FLD_METEOR_BLIZZARD
-Meteor Blizzard
+Метеорен поток
 
 FLD_METEOR_BLIZZARD_DESC
-Mystical and mysterious appearance of meteors. Generates one [[metertype METER_RESEARCH]] per ship due to scientific examination of the phenomenom.
+Мистично и мистериозно появяване на метеори. Генерира по едно [[metertype METER_RESEARCH]] на космически кораб, поради научните изследвания, които се извършват при появата му.
 
 FLD_VOID_RIFT
-Void Rift
+Разрив в пространството
 
 FLD_VOID_RIFT_DESC
-Anomalous rift in space that reduces ship [[metertype METER_SPEED]] by 50%.
+Космическа аномалия, която намаля [[metertype METER_SPEED]]та на космическите кораби с 50%.
 
 
 ##
@@ -923,16 +923,16 @@ Anomalous rift in space that reduces ship [[metertype METER_SPEED]] by 50%.
 ##
 
 FN_BATTLE_FLEET
-Battle Fleet
+Боен Флот
 
 FN_SCOUT_FLEET
-Scout Fleet
+Разузнавателен Флот
 
 FN_COLONY_FLEET
-Colony Fleet
+Колониален Флот
 
 MONSTERS
-Monsters
+Чудовища
 
 
 ##
@@ -940,141 +940,141 @@ Monsters
 ##
 
 RETURN_TO_INTRO
-Returning to Main Menu.
+Връщане към главното меню.
 
 SERVER_WONT_START
-The server could not be started.
+Сървърът не може да бъде стартиран.
 
 SERVER_TIMEOUT
-The server is not responding.
+Сървърът не отговаря.
 
 SERVER_LOST
-The connection to the server has been lost.
+Връзката със сървъра е изгубена.
 
 LOCAL_SERVER_ALREADY_RUNNING_ERROR
-Can't start server. A local server is already running.
+Сървърът не може да се старира. Локалният сървър вече е стартиран.
 
 PLAYER_DISCONNECTED
-Player %1% no longer has a connection to the server.
+%1% вече няма връзка със сървъра.
 
 SERVER_SAVE_INITIATE_ACK
-Saving...
+Запазване...
 
 # %1% save game file path as requested by the client.
 # %2% save game file size in bytes.
 SERVER_SAVE_COMPLETE
-Saved %2% bytes to file: %1%
+Запазени са %2% байта във файла: %1%
 
 INVALID_CLIENT_SAVE_DATA_RECEIVED
-The server received invalid client save data. Some may be ignored.
+Сървърът получи невалидни данни. Някои от тях ще бъдат игнорирани.
 
 NON_HOST_SAVE_REQUEST_IGNORED
-The server received an invalid save game request from your client. You are not the host, so you cannot save the game.
+Сървърът получи невалидна заявка за запазване на играта от Вашия компютър. Не може да запазите играта, защото не сте създател на сървъра.
 
 UNABLE_TO_WRITE_CONFIG_XML
-Error when writing config.xml file. Unable to save options.
+Грешка при записването на config.xml. Опциите няма да се запазят.
 
 UNABLE_TO_READ_CONFIG_XML
-Error when reading config.xml file. Using default options.
+Грешка при четенето на config.xml. Ще се използват опциите по подразбиране.
 
 UNABLE_TO_READ_PERSISTENT_CONFIG_XML
-Error when attempting to read the optional persistent_config.xml file (this is expected if it does not exist).
+Грешка при опит за четене на незадължителния persistent_config.xml (тази грешка е очаквана, ако той не съществува).
 
 UNABLE_TO_WRITE_PERSISTENT_CONFIG_XML
-Error when writing persistent_config.xml file.
+Грешка при записването на persistent_config.xml.
 
 UNABLE_TO_WRITE_SAVE_FILE
-Error when writing save file.
+Грешка при записването на записа.
 
 UNABLE_TO_READ_SAVE_FILE
-Error when reading save file.
+Грешка при четенето на записа.
 
 UNABLE_TO_SAVE_NOW_TRY_AGAIN
-Unable to save during AI processing. Try again when AIs have finished turns.
+Играта не може да се запази, докато ИИ е на ход. Опитайте отново, когато ИИ приключи с ходовете си.
 
 SAVE_GAME_IN_PROGRESS
-A save game is in progress.
+В момента играта се запазва.
 
 ABORT_SAVE_AND_RESET
-Return to Main Menu without saving.
+Върни се в главното меню без запазване.
 
 ABORT_SAVE_AND_EXIT
-Exit FreeOrion without saving.
+Излез от FreeOrion без запазване.
 
 EMPIRE_NOT_FOUND_CANT_HANDLE_ORDERS
-No empire is being controlled by this client; orders cannot be issued.
+Нито една империя не е контролирана от този компютър, може само да наблюдавате.
 
 ORDERS_FOR_WRONG_EMPIRE
-Orders were sent for an empire that this client does not control.
+Изпратени са заповеди към империя, която не е контролирана от този компютър.
 
 SERVER_ALREADY_HOSTING_GAME
-This server is already hosting a game.
+Този сървър вече се използва.
 
 SERVER_UNABLE_TO_SELECT_HOST
-The server was unable to select a new host.
+Сървърът не успя да избере нов приемник.
 
 SERVER_FOUND_NO_ACTIVE_PLAYERS
-Cannot generate game with no active players.
+Не може да се генерира игра без активни участници.
 
 SERVER_UNIVERSE_GENERATION_ERRORS
-Universe generation completed with errors. See log files for detailed error messages. Game can start, but gameplay will probably be impaired.
+Генерирането на Вселената приключи с грешки. Вижте дневниците за подробности. Играта може да се стартира, но няма да работи правилно.
 
 SERVER_TURN_EVENTS_ERRORS
-Python scripted turn events executed with errors. See log files for detailed error messages. Game can continue, but gameplay will probably be impaired.
+Скриптираните с Python събития приключиха с грешки. Вижте дневниците за подробности. Играта може да се стартира, но няма да работи правилно.
 
 SERVER_ALREADY_PLAYING_GAME
-The server is not currently accepting players because a game is being played.
+В момента, сървърът не приема други участници, защото играта е в процес на изпълнение.
 
 ERROR_PYTHON_AI_CRASHED
-Python AI for %1% crashed.
+ИИ на Python за %1% заби.
 
 ERROR_PLAYER_NAME_ALREADY_USED
-Player name %1% already in use.
+%1% вече се използва.
 
 ERROR_WRONG_PASSWORD
-Password wrong for player name %1%.
+Грешна парола за %1%.
 
 ERROR_CLIENT_TYPE_NOT_ALLOWED
-Client type forbidden.
+Този приемник е забранен.
 
 ERROR_NOT_ENOUGH_AI_PLAYERS
-Not enough AI players.
+Няма достатъчно участници с ИИ.
 
 ERROR_TOO_MANY_AI_PLAYERS
-Too many ai players.
+Твърде много участници с ИИ.
 
 ERROR_NOT_ENOUGH_HUMAN_PLAYERS
-Not enough human players.
+Няма достатъчно хора.
 
 ERROR_TOO_MANY_HUMAN_PLAYERS
-Too many human players.
+Твърде много хора.
 
 ERROR_NOT_ENOUGH_CONNECTED_HUMAN_PLAYERS
-Not enough connected human empire players.
+Няма достатъчно хора с империи.
 
 ERROR_TOO_MANY_UNCONNECTED_HUMAN_PLAYERS
-Too many unconnected human empire players.
+Твърде много хора с империи.
 
 ERROR_CONNECTION_WAS_REPLACED
-Your connection was replaced.
+Вашата връзка беше заменена.
 
 ERROR_NONPLAYER_CANNOT_CONCEDE
-Only Players can concede.
+Само участниците могат да се предадат.
 
 ERROR_CONCEDE_DISABLED
-Concede is disabled.
+Предаването е изключено.
 
 ERROR_CONCEDE_EXCEED_COLONIES
-Cannot concede; empire controls too many colonies.
+Не може да се предадете, империята Ви контролира твърде много колонии.
 
 ERROR_CONCEDE_LAST_HUMAN_PLAYER
-Cannot concede from a game with only one human player.
+Не може да се предадете в игра от само един участник.
 
 ERROR_INCOMPATIBLE_VERSION
-Server cannot properly read messages from your client, most likely due to incompatible game versions.
+Сървърът не комуникира правилно с Вашия компютър, вероятно защото версията на играта Ви е несъвместима.
 
 ERROR_CHECKSUM_MISMATCH
-Content checksum on the server and the client differs.
+Контролните суми на Вашия компютър и сървъра не съвпадат.
 
 
 ##
@@ -1082,218 +1082,218 @@ Content checksum on the server and the client differs.
 ##
 
 RULE_PRODUCTION_QUEUE_FRONTLOAD_FACTOR
-Turn PP overcommit
+Претоварване на ПТ
 
 RULE_PRODUCTION_QUEUE_FRONTLOAD_FACTOR_DESC
-Percentage of PP overcommitment per item build turn to build in time.
+Процент на претоварване на ПТ за да може артикулите да се създадат навреме.
 
 RULE_PRODUCTION_QUEUE_TOPPING_UP_FACTOR
-Final PP overcommit
+Крайно претоварване на ПТ
 
 RULE_PRODUCTION_QUEUE_TOPPING_UP_FACTOR_DESC
-Percentage of PP overcommitment on final item build turn to build in time.
+Процент на крайното претоварване на ПТ за да може артикулите да се създадат навреме.
 
 RULE_CHEAP_AND_FAST_TECH_RESEARCH
-Cheap and Fast Techs
+Евтини и бързи технологии
 
 RULE_CHEAP_AND_FAST_TECH_RESEARCH_DESC
-Techs cost 1 RP and take 1 turn to research.
+Технологиите струват 1 ИТ и отнемат 1 ход за изследване.
 
 RULE_CHEAP_POLICIES
-Cheap Policies
+Евтини политики
 
 RULE_CHEAP_POLICIES_DESC
-Policies cost 1 IP to adopt.
+Политиките струват 1 ТВ за приемане.
 
 RULE_CHEAP_AND_FAST_BUILDING_PRODUCTION
-Cheap and Fast Buildings
+Евтини сгради за нула време
 
 RULE_CHEAP_AND_FAST_BUILDING_PRODUCTION_DESC
-Buildings cost 1 PP and take 1 turn to produce.
+Сградите струват 1 ПТ и отнемат 1 ход за изработка.
 
 RULE_CHEAP_AND_FAST_SHIP_PRODUCTION
-Cheap and Fast Ships
+Евтини космически кораби за нула време
 
 RULE_CHEAP_AND_FAST_SHIP_PRODUCTION_DESC
-Ships cost 1 PP and take 1 turn to produce.
+Космическите кораби струват 1 ПТ и отнемат 1 ход за изработка.
 
 # value ref description
 NUM_COMBAT_ROUNDS
-per combat
+на битка
 
 RULE_NUM_COMBAT_ROUNDS
-Combat Rounds
+Бойни рундове
 
 RULE_NUM_COMBAT_ROUNDS_DESC
-How many rounds of combat occur each turn.
+Определя броя на бойните рундове за всеки ход.
 
 RULE_AGGRESSIVE_SHIPS_COMBAT_VISIBLE
-Aggressive Ships Combat Visible
+Видимост на агресивните космически кораби
 
 RULE_AGGRESSIVE_SHIPS_COMBAT_VISIBLE_DESC
-Ships in fleets that are set to control their system start combat visible to all empires, regardless of their stealth and detection levels.
+Агресивните космически кораби, намиращи се във флота, са видими за всички империи, без значение от техните стелт и откриваемост.
 
 RULE_RESEED_PRNG_SERVER
-Random Reseeding
+Случайна регенерация
 
 RULE_RESEED_PRNG_SERVER_DESC
-With reseeding, replaying the same save or using the same settings and seed is not expected to produce the same random results. This is possibly preferable if players want to be sure that none of them can predict future random results based on previous random results or if a player wants to 're-roll' the results of a battle or random effect when re-playing a turn, and not get the same results as a previous attempt.
+С регенерацията, повторна игра със същия запис или същите настройки ще даде различни резултати. Тази опция е от полза за избягването на предвидими резултати или просто за разнообразие.
 
 RULE_SHIP_SPEED_FACTOR
-Ship Speed Scaling
+Регулиране на скоростта
 
 RULE_SHIP_SPEED_FACTOR_DESC
-Adjusts speeds of ship hulls and speed parts
+Променя максималната скорост на корпуса и двигателите на космическите кораби.
 
 RULE_SHIP_STRUCTURE_FACTOR
-Ship Structure Scaling
+Регулиране на структурата
 
 RULE_SHIP_STRUCTURE_FACTOR_DESC
-Adjusts structure of ship hulls and armour parts. Adjusts structure growth, damage control and planetary shield as well
+Променя структурата на корпуса и бронята, както и управлението на щетите и атмосферните щитове.
 
 RULE_SHIP_WEAPON_DAMAGE_FACTOR
-Ship Weapon Damage Scaling
+Регулиране на щетите
 
 RULE_SHIP_WEAPON_DAMAGE_FACTOR_DESC
-Adjusts damage and shields of ship main weapons. Adjusts planetary defense as well
+Променя щетите от главните оръдия на космическия кораб, както и планетарната защита.
 
 RULE_FIGHTER_DAMAGE_FACTOR
-Fighter Damage Scaling
+Регулиране на щетите на изтребителите
 
 RULE_FIGHTER_DAMAGE_FACTOR_DESC
-Adjusts damage of fighters
+Променя щетите на изтребителите
 
 RULE_SHIP_HULL_COST_FACTOR
-Hull Cost Scaling
+Регулиране на цената на корпуса
 
 RULE_SHIP_HULL_COST_FACTOR_DESC
-Adjusts costs of ship hulls
+Променя цените на корпусите за космическите кораби.
 
 RULE_SHIP_PART_COST_FACTOR
-Part Cost Scaling
+Регулиране на цената на частите
 
 RULE_SHIP_PART_COST_FACTOR_DESC
-Adjusts costs of ship parts
+Променя цените на частите за космическите кораби.
 
 RULE_BUILDING_COST_FACTOR
-Building Cost Scaling
+Регулиране на цената на сградите
 
 RULE_BUILDING_COST_FACTOR_DESC
-Adjusts costs of buildings
+Променя цените на сградите.
 
 RULE_TECH_COST_FACTOR
-Tech Cost Scaling
+Регулиране на цената на технологиите
 
 RULE_TECH_COST_FACTOR_DESC
-Adjusts costs of tech
+Променя цените на технологиите.
 
 RULE_ENABLE_EXPERIMENTORS
-Enable Experimentors
+Експериментатори
 
 RULE_ENABLE_EXPERIMENTORS_DESC
-Enables Experimentors during galaxy generation
+Активира Експериментаторите по време на галактическото генериране.
 
 RULE_ENABLE_SUPER_TESTER
-Enable Super-Tester Takeover
+Инвазия на Супер-Тестерите
 
 RULE_ENABLE_SUPER_TESTER_DESC
-Enables [[BLD_SUPER_TEST]] building
+Активира сградата [[BLD_SUPER_TEST]].
 
 RULE_STOCKPILE_IMPORT_LIMITED
-Stockpile Import Limited
+Ограничен внос на запаси
 
 RULE_STOCKPILE_IMPORT_LIMITED_DESC
-Enables limits on stockpile import per turn
+Активира ограничение върху вноса на запаси за всеки ход.
 
 RULE_TEST_INT
-Test Integer
+Тестово цяло число
 
 RULE_TEST_INT_DESC
-Test
+Тест
 
 RULE_TEST_STRING
-Test String
+Тестов низ от данни
 
 RULE_TEST_STRING_DESC
-Test
+Тест
 
 RULE_STARLANES_EVERYWHERE
-Starlanes Everywhere
+Междузвездните пътища са навсякъде
 
 RULE_STARLANES_EVERYWHERE_DESC
-Starlanes are generated between every pair of systems, regardless of geometry. Lanes may still be removed during a game, however. Lanes are also not rendered on the galaxy map.
+Междузвездните пътища се генерират между всяка довйка от слънчеви системи, без значение от тяхната форма. Вероятността някои от тях да изчезнат остава. Също така, те не са отбелязани върху галактическата карта.
 
 RULE_HABITABLE_SIZE_TINY
-Tiny planets Habitable size
+Обитаема зона на дребните планети
 
 RULE_HABITABLE_SIZE_SMALL
-Small planets Habitable size
+Обитаема зона на малките планети
 
 RULE_HABITABLE_SIZE_MEDIUM
-Medium planets Habitable size
+Обитаема зона на умерените планети
 
 RULE_HABITABLE_SIZE_LARGE
-Large planets Habitable size
+Обитаема зона на големите планети
 
 RULE_HABITABLE_SIZE_HUGE
-Huge planets Habitable size
+Обитаема зона на огромните планети
 
 RULE_HABITABLE_SIZE_ASTEROIDS
-Asteroids Habitable size
+Обитаема зона на астероидите
 
 RULE_HABITABLE_SIZE_GASGIANT
-Gas Giants Habitable size
+Обитаема зона на газовите гиганти
 
 RULE_HABITABLE_SIZE_DESC
-Value used to adjust for [[METER_POPULATION]] changes on a planet of this size.
+Стойност, която се използва за промяна на [[METER_POPULATION]]то върху дадено небесно тяло.
 
 RULE_ALLOW_CONCEDE
-Allow Conceding
+Предаване
 
 RULE_ALLOW_CONCEDE_DESC
-Allows empires to concede from a game. This eliminates the empire's assets from the universe. The game continues with the remaining players.
+Позволява на империите да се предадат по време на игра. Останалите участници продължават играта, а империята, която се е предала, изчезва напълно от Вселената.
 
 RULE_CONCEDE_COLONIES_THRESHOLD
-Maximum Colonies When Conceding
+Максимален брой колонии при предаване
 
 RULE_CONCEDE_COLONIES_THRESHOLD_DESC
-Empires with more than this number of colonies may not concede.
+Империите с по-голям брой колонии не могат да се предадат.
 
 RULE_THRESHOLD_HUMAN_PLAYER_WIN
-Max human player winners
+Максимален брой победители
 
 RULE_THRESHOLD_HUMAN_PLAYER_WIN_DESC
-Maximum number of human players that could win together in multiplayer games if there are no other human player survivors.
+Това е максималния брой на участниците, които могат да победят заедно, ако всички останали са вече победени.
 
 RULE_ONLY_ALLIANCE_WIN
-Only allied players win
+Само съюзниците са победители
 
 RULE_ONLY_ALLIANCE_WIN_DESC
-Allied players can win together if the number of human players in their alliance is no more than the maximum human player winners and there are no other human player survivors.
+Съюзниците могат да победят заедно, ако тяхната бройка не надвишава максималния брой на победителите и всички останали са вече победени.
 
 RULE_SHIP_PART_BASED_UPKEEP
-Use part-based upkeep
+Разходите за поддръжка се изчисляват по частите
 
 RULE_SHIP_PART_BASED_UPKEEP_DESC
-Calculate upkeep based on ship parts instead of ships themselves.
+Поддръжката се изчислява, според частите на космическите кораби, а не според самите тях.
 
 RULE_ENABLE_ALLIED_REPAIR
-Drydocks and Fleet Field Repair repair allied ships
+Ремонтиране на съюзническите космически кораби в космодрумите
 
 RULE_ENABLE_ALLIED_REPAIR_DESC
-Allow Drydocks building and Fleet Field Repair tech to repair ships of allied empires.
+Позволява ремонтиране на съюзническите космически кораби в космодрумите на играча.
 
 RULE_DIPLOMACY
-Allowed diplomacy
+Дипломация
 
 RULE_DIPLOMACY_DESC
-Manages diplomatic restrictions between players. By default all interactions are allowed.
+Управлява дипломатическите ограничения между участниците. Всички взаимодействия са позволени по подразбиране.
 
 RULE_DIPLOMACY_ALLOWED_FOR_ALL
-All Allowed
+Позволена за всички
 
 RULE_DIPLOMACY_FORBIDDEN_FOR_ALL
-All Forbidden
+Забранена за всички
 
 
 ##
