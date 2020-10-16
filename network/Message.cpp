@@ -87,6 +87,12 @@ void Message::Swap(Message& rhs) {
     std::swap(m_message_text, rhs.m_message_text);
 }
 
+void Message::Reset() {
+    m_type = MessageType::UNDEFINED;
+    m_message_size = 0;
+    m_message_text.reset();
+}
+
 bool operator==(const Message& lhs, const Message& rhs) {
     return
         lhs.Type() == rhs.Type() &&

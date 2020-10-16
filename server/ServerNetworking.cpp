@@ -429,7 +429,7 @@ void PlayerConnection::HandleMessageBodyRead(boost::system::error_code error,
             } else {
                 EventSignal(boost::bind(m_nonplayer_message_callback, m_incoming_message, shared_from_this()));
             }
-            m_incoming_message = Message();
+            m_incoming_message.Reset();
             AsyncReadMessage();
         }
     }

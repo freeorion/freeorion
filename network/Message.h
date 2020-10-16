@@ -133,8 +133,8 @@ public:
     )
 
     Message() = default;
-
     Message(MessageType message_type, const std::string& text);
+    ~Message() = default;
 
     MessageType Type() const;               ///< Returns the type of the message.
     std::size_t Size() const;               ///< Returns the size of the underlying buffer.
@@ -144,6 +144,7 @@ public:
     void        Resize(std::size_t size);   ///< Resizes the underlying char buffer to \a size uninitialized bytes.
     char*       Data();                     ///< Returns the underlying buffer.
     void        Swap(Message& rhs);         ///< Swaps the contents of \a *this with \a rhs.  Does not throw.
+    void        Reset();                    ///< Reverts message to same state as after default constructor
 
 private:
     MessageType               m_type = MessageType::UNDEFINED;
