@@ -28,7 +28,7 @@ public:
     void Clear();
 
     /** Adds \a message to the end of the queue. */
-    void PushBack(Message& message);
+    void PushBack(Message message);
 
     /** Return and remove the first message in the queue. */
     boost::optional<Message> PopFront();
