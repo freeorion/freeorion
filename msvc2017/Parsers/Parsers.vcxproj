@@ -117,8 +117,10 @@
       <DebugInformationFormat>
       </DebugInformationFormat>
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
-      <AdditionalOptions>/MP4 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>
+      </AdditionalOptions>
       <ForcedIncludeFiles>StdAfx.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <LanguageStandard>stdcpp14</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
