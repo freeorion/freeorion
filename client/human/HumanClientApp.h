@@ -141,7 +141,7 @@ private:
 
     void HandleSystemEvents() override;
     void RenderBegin() override;
-    void HandleMessage(Message& msg);
+    void HandleMessage(Message&& msg);
     void HandleWindowMove(GG::X w, GG::Y h);
     void HandleWindowResize(GG::X w, GG::Y h);
     void HandleAppQuitting();

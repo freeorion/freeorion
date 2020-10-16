@@ -93,7 +93,7 @@ void SigHandler(int sig) {
 #endif //ENABLE_CRASH_BACKTRACE
 
 namespace {
-    const bool          INSTRUMENT_MESSAGE_HANDLING = false;
+    constexpr bool INSTRUMENT_MESSAGE_HANDLING = true;
 
     // command-line options
     void AddOptions(OptionsDB& db) {
@@ -960,7 +960,8 @@ void HumanClientApp::HandleSystemEvents() {
         m_connected = false;
         DisconnectedFromServer();
     } else if (auto msg = Networking().GetMessage()) {
-        HandleMessage(*msg);
+        std::cout << "  GOT MESSAGE: " << msg->Type() << std::endl;
+        HandleMessage(std::move(*msg));
     }
 }
 
@@ -969,39 +970,44 @@ void HumanClientApp::RenderBegin() {
     Sound::GetSound().DoFrame();
 }
 
-void HumanClientApp::HandleMessage(Message& msg) {
+void HumanClientApp::HandleMessage(Message&& msg) {
     if (INSTRUMENT_MESSAGE_HANDLING)
         std::cerr << "HumanClientApp::HandleMessage(" << msg.Type() << ")\n";
 
-    switch (msg.Type()) {
-    case Message::MessageType::ERROR_MSG:               m_fsm->process_event(Error(msg));                   break;
-    case Message::MessageType::HOST_MP_GAME:            m_fsm->process_event(HostMPGame(msg));              break;
-    case Message::MessageType::HOST_SP_GAME:            m_fsm->process_event(HostSPGame(msg));              break;
-    case Message::MessageType::JOIN_GAME:               m_fsm->process_event(JoinGame(msg));                break;
-    case Message::MessageType::HOST_ID:                 m_fsm->process_event(HostID(msg));                  break;
-    case Message::MessageType::LOBBY_UPDATE:            m_fsm->process_event(LobbyUpdate(msg));             break;
-    case Message::MessageType::SAVE_GAME_COMPLETE:      m_fsm->process_event(SaveGameComplete(msg));        break;
-    case Message::MessageType::CHECKSUM:                m_fsm->process_event(CheckSum(msg));                break;
-    case Message::MessageType::GAME_START:              m_fsm->process_event(GameStart(msg));               break;
-    case Message::MessageType::TURN_UPDATE:             m_fsm->process_event(TurnUpdate(msg));              break;
-    case Message::MessageType::TURN_PARTIAL_UPDATE:     m_fsm->process_event(TurnPartialUpdate(msg));       break;
-    case Message::MessageType::TURN_PROGRESS:           m_fsm->process_event(TurnProgress(msg));            break;
-    case Message::MessageType::UNREADY:                 m_fsm->process_event(TurnRevoked(msg));             break;
-    case Message::MessageType::PLAYER_STATUS:           m_fsm->process_event(::PlayerStatus(msg));          break;
-    case Message::MessageType::PLAYER_CHAT:             m_fsm->process_event(PlayerChat(msg));              break;
-    case Message::MessageType::DIPLOMACY:               m_fsm->process_event(Diplomacy(msg));               break;
-    case Message::MessageType::DIPLOMATIC_STATUS:       m_fsm->process_event(DiplomaticStatusUpdate(msg));  break;
-    case Message::MessageType::END_GAME:                m_fsm->process_event(::EndGame(msg));               break;
+    try {
+        switch (msg.Type()) {
+        case Message::MessageType::ERROR_MSG:               m_fsm->process_event(Error(msg));                   break;
+        case Message::MessageType::HOST_MP_GAME:            m_fsm->process_event(HostMPGame(msg));              break;
+        case Message::MessageType::HOST_SP_GAME:            m_fsm->process_event(HostSPGame(msg));              break;
+        case Message::MessageType::JOIN_GAME:               m_fsm->process_event(JoinGame(msg));                break;
+        case Message::MessageType::HOST_ID:                 m_fsm->process_event(HostID(msg));                  break;
+        case Message::MessageType::LOBBY_UPDATE:            m_fsm->process_event(LobbyUpdate(msg));             break;
+        case Message::MessageType::SAVE_GAME_COMPLETE:      m_fsm->process_event(SaveGameComplete(msg));        break;
+        case Message::MessageType::CHECKSUM:                m_fsm->process_event(CheckSum(msg));                break;
+        case Message::MessageType::GAME_START:              m_fsm->process_event(GameStart(msg));               break;
+        case Message::MessageType::TURN_UPDATE:             m_fsm->process_event(TurnUpdate(msg));              break;
+        case Message::MessageType::TURN_PARTIAL_UPDATE:     m_fsm->process_event(TurnPartialUpdate(msg));       break;
+        case Message::MessageType::TURN_PROGRESS:           m_fsm->process_event(TurnProgress(msg));            break;
+        case Message::MessageType::UNREADY:                 m_fsm->process_event(TurnRevoked(msg));             break;
+        case Message::MessageType::PLAYER_STATUS:           m_fsm->process_event(::PlayerStatus(msg));          break;
+        case Message::MessageType::PLAYER_CHAT:             m_fsm->process_event(PlayerChat(msg));              break;
+        case Message::MessageType::DIPLOMACY:               m_fsm->process_event(Diplomacy(msg));               break;
+        case Message::MessageType::DIPLOMATIC_STATUS:       m_fsm->process_event(DiplomaticStatusUpdate(msg));  break;
+        case Message::MessageType::END_GAME:                m_fsm->process_event(::EndGame(msg));               break;
 
-    case Message::MessageType::DISPATCH_COMBAT_LOGS:    m_fsm->process_event(DispatchCombatLogs(msg));      break;
-    case Message::MessageType::DISPATCH_SAVE_PREVIEWS:  HandleSaveGamePreviews(msg);                        break;
-    case Message::MessageType::AUTH_REQUEST:            m_fsm->process_event(AuthRequest(msg));             break;
-    case Message::MessageType::CHAT_HISTORY:            m_fsm->process_event(ChatHistory(msg));             break;
-    case Message::MessageType::SET_AUTH_ROLES:          HandleSetAuthRoles(msg);                            break;
-    case Message::MessageType::TURN_TIMEOUT:            m_fsm->process_event(TurnTimeout(msg));             break;
-    case Message::MessageType::PLAYER_INFO:             m_fsm->process_event(PlayerInfoMsg(msg));           break;
-    default:
-        ErrorLogger() << "HumanClientApp::HandleMessage : Received an unknown message type \"" << msg.Type() << "\".";
+        case Message::MessageType::DISPATCH_COMBAT_LOGS:    m_fsm->process_event(DispatchCombatLogs(msg));      break;
+        case Message::MessageType::DISPATCH_SAVE_PREVIEWS:  HandleSaveGamePreviews(msg);                        break;
+        case Message::MessageType::AUTH_REQUEST:            m_fsm->process_event(AuthRequest(msg));             break;
+        case Message::MessageType::CHAT_HISTORY:            m_fsm->process_event(ChatHistory(msg));             break;
+        case Message::MessageType::SET_AUTH_ROLES:          HandleSetAuthRoles(msg);                            break;
+        case Message::MessageType::TURN_TIMEOUT:            m_fsm->process_event(TurnTimeout(msg));             break;
+        case Message::MessageType::PLAYER_INFO:             m_fsm->process_event(PlayerInfoMsg(msg));           break;
+        default:
+            ErrorLogger() << "HumanClientApp::HandleMessage : Received an unknown message type \"" << msg.Type() << "\".";
+        }
+    } catch (const std::exception& e) {
+        ErrorLogger() << "HumanClientApp::HandleMessage : Exception while reacting to message of type \""
+                      << msg.Type() << "\". what: " << e.what();
     }
 }
 
