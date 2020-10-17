@@ -93,7 +93,7 @@ void SigHandler(int sig) {
 #endif //ENABLE_CRASH_BACKTRACE
 
 namespace {
-    constexpr bool INSTRUMENT_MESSAGE_HANDLING = true;
+    constexpr bool INSTRUMENT_MESSAGE_HANDLING = false;
 
     // command-line options
     void AddOptions(OptionsDB& db) {
@@ -950,6 +950,22 @@ void HumanClientApp::HandleTurnPhaseUpdate(Message::TurnProgressPhase phase_id) 
     GetClientUI().GetMessageWnd()->HandleTurnPhaseUpdate(phase_id);
 }
 
+boost::intrusive_ptr<const boost::statechart::event_base> HumanClientApp::GetDeferredPostedEvent() {
+    boost::mutex::scoped_lock lock(m_event_queue_guard);
+    if (m_posted_event_queue.empty())
+        return nullptr;
+    auto retval = m_posted_event_queue.front();
+    m_posted_event_queue.pop_front();
+    return retval;
+}
+
+void HumanClientApp::PostDeferredEvent(
+    boost::intrusive_ptr<const boost::statechart::event_base> event)
+{
+    boost::mutex::scoped_lock lock(m_event_queue_guard);
+    m_posted_event_queue.push_back(std::move(event));
+}
+
 void HumanClientApp::HandleSystemEvents() {
     try {
         SDLGUI::HandleSystemEvents();
@@ -959,8 +975,9 @@ void HumanClientApp::HandleSystemEvents() {
     if (m_connected && !m_networking->IsConnected()) {
         m_connected = false;
         DisconnectedFromServer();
+    } else if (auto event_ptr = GetDeferredPostedEvent()) {
+        m_fsm->process_event(*event_ptr);
     } else if (auto msg = Networking().GetMessage()) {
-        std::cout << "  GOT MESSAGE: " << msg->Type() << std::endl;
         HandleMessage(std::move(*msg));
     }
 }

@@ -120,7 +120,10 @@ public:
     static std::string EncodeServerAddressOption(const std::string& server);
 
     /** If hosting then send the logger state to the server. */
-    void            SendLoggingConfigToServer();
+    void SendLoggingConfigToServer();
+
+    boost::intrusive_ptr<const boost::statechart::event_base> GetDeferredPostedEvent();
+    void PostDeferredEvent(boost::intrusive_ptr<const boost::statechart::event_base> event);
 
 protected:
     void Initialize() override;
@@ -138,6 +141,10 @@ private:
       * process already started by this client; performs no cleanup of other
       * processes, such as AIs. */
     void FreeServer();
+
+
+    boost::mutex m_event_queue_guard;
+    std::list<boost::intrusive_ptr<const boost::statechart::event_base>> m_posted_event_queue;
 
     void HandleSystemEvents() override;
     void RenderBegin() override;
@@ -167,6 +174,8 @@ private:
     void ResetOrExitApp(bool reset, bool skip_savegame, int exit_code = 0);
 
     std::unique_ptr<HumanClientFSM> m_fsm;
+
+
 
     Process m_server_process;   ///< the server process (when hosting a game or playing single player); will be empty when playing multiplayer as a non-host player
 
