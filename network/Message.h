@@ -412,6 +412,10 @@ FO_COMMON_API void ExtractTurnUpdateMessageData(const Message& msg, int empire_i
                                                 Universe& universe, SpeciesManager& species, CombatLogManager& combat_logs,
                                                 SupplyManager& supply, std::map<int, PlayerInfo>& players);
 
+FO_COMMON_API void ExtractTurnUpdateMessageData(std::string text, int empire_id, int& current_turn, EmpireManager& empires,
+                                                Universe& universe, SpeciesManager& species, CombatLogManager& combat_logs,
+                                                SupplyManager& supply, std::map<int, PlayerInfo>& players);
+
 FO_COMMON_API void ExtractTurnPartialUpdateMessageData(const Message& msg, int empire_id, Universe& universe);
 
 FO_COMMON_API void ExtractTurnProgressMessageData(const Message& msg, Message::TurnProgressPhase& phase_id);

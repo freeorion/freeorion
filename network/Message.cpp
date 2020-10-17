@@ -1027,14 +1027,23 @@ void ExtractTurnUpdateMessageData(const Message& msg, int empire_id, int& curren
                                   Universe& universe, SpeciesManager& species, CombatLogManager& combat_logs,
                                   SupplyManager& supply, std::map<int, PlayerInfo>& players)
 {
+    ExtractTurnUpdateMessageData(msg.Text(), empire_id, current_turn, empires,
+                                 universe, species, combat_logs,
+                                 supply, players);
+}
+
+void ExtractTurnUpdateMessageData(std::string text, int empire_id, int& current_turn, EmpireManager& empires,
+                                  Universe& universe, SpeciesManager& species, CombatLogManager& combat_logs,
+                                  SupplyManager& supply, std::map<int, PlayerInfo>& players)
+{
     try {
         ScopedTimer timer("Turn Update Unpacking", true);
 
         bool try_xml = false;
-        if (std::strncmp(msg.Data(), "<?xml", 5)) {
+        if (std::strncmp(text.c_str(), "<?xml", 5)) {
             try {
                 // first attempt binary deserialization
-                std::istringstream is(msg.Text());
+                std::istringstream is(text);
                 freeorion_bin_iarchive ia(is);
                 GlobalSerializationEncodingForEmpire() = empire_id;
                 ia >> BOOST_SERIALIZATION_NVP(current_turn)
@@ -1052,7 +1061,7 @@ void ExtractTurnUpdateMessageData(const Message& msg, int empire_id, int& curren
         }
         if (try_xml) {
             // try again with more-portable XML deserialization
-            std::istringstream is(msg.Text());
+            std::istringstream is(text);
             freeorion_xml_iarchive ia(is);
             GlobalSerializationEncodingForEmpire() = empire_id;
             ia >> BOOST_SERIALIZATION_NVP(current_turn)
