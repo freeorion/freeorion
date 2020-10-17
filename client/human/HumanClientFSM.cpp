@@ -19,6 +19,7 @@
 #include "../../UI/MapWnd.h"
 
 #include <boost/format.hpp>
+#include <boost/thread/mutex.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/uuid/nil_generator.hpp>
 #include <thread>
@@ -947,25 +948,41 @@ WaitingForTurnData::TurnDataUnpackedNotification::TurnDataUnpackedNotification()
     unpacked(std::make_shared<UnpackedData>())
 {}
 
+WaitingForTurnData::TurnDataUnpackedNotification::TurnDataUnpackedNotification(
+    std::shared_ptr<UnpackedData> unpacked_) :
+    unpacked(std::move(unpacked_))
+{}
+
 boost::statechart::result WaitingForTurnData::react(const TurnUpdate& msg) {
     TraceLogger(FSM) << "(HumanClientFSM) PlayingGame.TurnUpdate";
 
-    Client().Orders().Reset();
-    TurnDataUnpackedNotification unpacked_note;
-    TurnDataUnpackedNotification::UnpackedData& unpacked{*unpacked_note.unpacked};
-
-    try {
-        ExtractTurnUpdateMessageData(msg.m_message,         Client().EmpireID(),    unpacked.current_turn,
-                                     unpacked.empires,      unpacked.universe,      unpacked.species,
-                                     unpacked.combat_logs,  unpacked.supply,        unpacked.player_info);
-    } catch (...) {
-        Client().GetClientUI().GetMessageWnd()->HandleLogMessage(UserString("ERROR_PROCESSING_SERVER_MESSAGE") + "\n");
-        return discard_event();
-    }
-
     Client().GetClientUI().GetMapWnd()->ResetTimeoutClock(0);
+    Client().Orders().Reset();
 
-    post_event(unpacked_note);
+    auto& client{Client()};
+    auto unpack_action = [message{msg.m_message.Text()}, &client]() -> void {
+        TraceLogger(FSM) << "Unpacking TurnUpdate...";
+        auto unpacked_data = std::make_shared<TurnDataUnpackedNotification::UnpackedData>();
+        auto unpacking_finished_event{
+            boost::intrusive_ptr<const TurnDataUnpackedNotification>(
+                new TurnDataUnpackedNotification(unpacked_data), true)};
+
+        try {
+            ExtractTurnUpdateMessageData(
+                std::move(message), client.EmpireID(),
+                unpacked_data->current_turn, unpacked_data->empires,
+                unpacked_data->universe, unpacked_data->species,
+                unpacked_data->combat_logs, unpacked_data->supply,
+                unpacked_data->player_info);
+        }
+        catch (...) {
+            client.GetClientUI().GetMessageWnd()->HandleLogMessage(UserString("ERROR_PROCESSING_SERVER_MESSAGE") + "\n");
+            return;
+        }
+
+        client.PostDeferredEvent(std::move(unpacking_finished_event));
+    };
+    std::thread(unpack_action).detach();
     return discard_event();
 }
 

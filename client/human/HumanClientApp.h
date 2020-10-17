@@ -6,8 +6,8 @@
 #include "../../UI/SDLGUI.h"
 #include "../../UI/ClientUI.h"
 #include "../../util/OptionsDB.h"
-
-
+#include <boost/statechart/event_base.hpp>
+#include <boost/thread/mutex.hpp>
 #include <memory>
 #include <queue>
 #include <string>

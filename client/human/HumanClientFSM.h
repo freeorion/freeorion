@@ -95,9 +95,10 @@ struct HumanClientFSM : boost::statechart::state_machine<HumanClientFSM, IntroMe
 
     void unconsumed_event(const boost::statechart::event_base &event);
 
-    using Base::post_event;
-
     HumanClientApp& m_client;
+
+private:
+    using Base::post_event; // for synchronous FSM, should only be called within state transitions and constructors...
 };
 
 
@@ -321,9 +322,10 @@ struct WaitingForTurnData : boost::statechart::state<WaitingForTurnData, Playing
     struct TurnDataUnpackedNotification :
         public boost::statechart::event<WaitingForTurnData::TurnDataUnpackedNotification>
     {
-        TurnDataUnpackedNotification();
-
         struct UnpackedData;
+        TurnDataUnpackedNotification();
+        explicit TurnDataUnpackedNotification(std::shared_ptr<UnpackedData> unpacked_);
+
         std::shared_ptr<UnpackedData> unpacked;
     };
 
