@@ -1237,6 +1237,7 @@ void MapWnd::CompleteConstruction() {
     m_influence = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(MeterType::METER_INFLUENCE),
                                                  0, 3, false, ICON_DUAL_WIDTH, m_btn_turn->Height());
     m_influence->SetName("Influence StatisticIcon");
+    m_influence->LeftClickedSignal.connect(boost::bind(&MapWnd::ToggleGovernment, this));
 
     m_fleet = GG::Wnd::Create<StatisticIcon>(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "sitrep" / "fleet_arrived.png"),
                                              0, 3, false, ICON_SINGLE_WIDTH, m_btn_turn->Height());
