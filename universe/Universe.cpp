@@ -2898,10 +2898,10 @@ void Universe::EffectDestroy(int object_id, int source_object_id) {
 }
 
 void Universe::InitializeSystemGraph(int for_empire_id) {
+    // TODO: don't need the objects here, just their IDs...
     std::vector<int> system_ids;
-    for (const auto& system : ::EmpireKnownObjects(for_empire_id).all<System>()) {
+    for (const auto& system : ::EmpireKnownObjects(for_empire_id).all<System>())
         system_ids.emplace_back(system->ID());
-    }
 
     m_pathfinder->InitializeSystemGraph(system_ids, for_empire_id);
 }
