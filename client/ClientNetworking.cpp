@@ -477,7 +477,6 @@ void ClientNetworking::Impl::SendMessage(Message&& message) {
 
 void ClientNetworking::Impl::SendSelfMessage(Message&& message) {
     TraceLogger(network) << "ClientNetworking::SendSelfMessage() : sending self message " << message;
-    auto type{message.Type()};
     m_incoming_messages.PushBack(std::move(message));
 }
 
