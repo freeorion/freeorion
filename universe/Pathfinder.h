@@ -131,7 +131,7 @@ public:
     /** Fills pathfinding data structure and determines least jumps distances
       * between systems for the empire with id \a for_empire_id or uses the
       * main / true / visible objects if \a for_empire_id is ALL_EMPIRES*/
-    void InitializeSystemGraph(const std::vector<int> system_ids, int for_empire_id = ALL_EMPIRES);
+    void InitializeSystemGraph(const std::vector<int>& system_ids, int for_empire_id = ALL_EMPIRES);
 
     /** Regenerates per-empire system view graphs by filtering the complete
       * system graph based on empire visibility.  Does not regenerate the base

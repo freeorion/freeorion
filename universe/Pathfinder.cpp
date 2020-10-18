@@ -663,14 +663,14 @@ class Pathfinder::PathfinderImpl {
     bool SystemHasVisibleStarlanes(int system_id, int empire_id = ALL_EMPIRES) const;
     std::multimap<double, int> ImmediateNeighbors(int system_id, int empire_id = ALL_EMPIRES) const;
 
-    boost::unordered_multimap<int, int> Neighbors(
-        int system_id, size_t n_outer = 1, size_t n_inner = 0) const;
+    //boost::unordered_multimap<int, int> Neighbors(
+    //    int system_id, size_t n_outer = 1, size_t n_inner = 0) const;
 
-    /** When a cache hit occurs use \p row to populate and return the
-        multimap for Neighbors.*/
-     void NeighborsCacheHit(
-         boost::unordered_multimap<int, int>& result, size_t _n_outer, size_t _n_inner,
-         size_t ii, distance_matrix_storage<short>::row_ref row) const;
+    ///** When a cache hit occurs use \p row to populate and return the
+    //    multimap for Neighbors.*/
+    // void NeighborsCacheHit(
+    //     boost::unordered_multimap<int, int>& result, size_t _n_outer, size_t _n_inner,
+    //     size_t ii, distance_matrix_storage<short>::row_ref row) const;
 
     std::unordered_set<int> WithinJumps(size_t jumps, const std::vector<int>& candidates) const;
     void WithinJumpsCacheHit(
@@ -699,7 +699,7 @@ class Pathfinder::PathfinderImpl {
         size_t ii, distance_matrix_storage<short>::row_ref row) const;
 
     int NearestSystemTo(double x, double y) const;
-    void InitializeSystemGraph(const std::vector<int> system_ids, int for_empire_id = ALL_EMPIRES);
+    void InitializeSystemGraph(const std::vector<int>& system_ids, int for_empire_id = ALL_EMPIRES);
     void UpdateEmpireVisibilityFilteredSystemGraphs(int for_empire_id = ALL_EMPIRES);
 
     /** When a cache miss occurs fill \p row with the distances
@@ -733,10 +733,8 @@ namespace {
     }
 }
 
-/** HandleCacheMiss requires that \p row be locked by exterior context.
- */
+/** HandleCacheMiss requires that \p row be locked by exterior context. */
 void Pathfinder::PathfinderImpl::HandleCacheMiss(size_t ii, distance_matrix_storage<short>::row_ref row) const {
-
     typedef boost::iterator_property_map<std::vector<short>::iterator,
                                          boost::identity_property_map> DistancePropertyMap;
 
@@ -753,11 +751,8 @@ void Pathfinder::PathfinderImpl::HandleCacheMiss(size_t ii, distance_matrix_stor
                                 boost::visitor(boost::make_bfs_visitor(distance_recorder)));
 }
 
-
-
-double Pathfinder::LinearDistance(int system1_id, int system2_id) const {
-    return pimpl->LinearDistance(system1_id, system2_id);
-}
+double Pathfinder::LinearDistance(int system1_id, int system2_id) const
+{ return pimpl->LinearDistance(system1_id, system2_id); }
 
 double Pathfinder::PathfinderImpl::LinearDistance(int system1_id, int system2_id) const {
     const auto system1 = Objects().get<System>(system1_id);
@@ -775,9 +770,8 @@ double Pathfinder::PathfinderImpl::LinearDistance(int system1_id, int system2_id
     return std::sqrt(x_dist*x_dist + y_dist*y_dist);
 }
 
-short Pathfinder::JumpDistanceBetweenSystems(int system1_id, int system2_id) const {
-    return pimpl->JumpDistanceBetweenSystems(system1_id, system2_id);
-}
+short Pathfinder::JumpDistanceBetweenSystems(int system1_id, int system2_id) const
+{ return pimpl->JumpDistanceBetweenSystems(system1_id, system2_id); }
 
 short Pathfinder::PathfinderImpl::JumpDistanceBetweenSystems(int system1_id, int system2_id) const {
     if (system1_id == system2_id)
@@ -816,7 +810,6 @@ namespace {
        null_ptr            -- nowhere
        System id           -- somewhere
        pair of System ids  -- in transit
-
     */
 
     typedef boost::variant<std::nullptr_t, int, std::pair<int, int>> GeneralizedLocationType;
@@ -1383,11 +1376,11 @@ int Pathfinder::PathfinderImpl::NearestSystemTo(double x, double y) const {
 }
 
 
-void Pathfinder::InitializeSystemGraph(const std::vector<int> system_ids, int for_empire_id)
+void Pathfinder::InitializeSystemGraph(const std::vector<int>& system_ids, int for_empire_id)
 { return pimpl->InitializeSystemGraph(system_ids, for_empire_id); }
 
 void Pathfinder::PathfinderImpl::InitializeSystemGraph(
-    const std::vector<int> system_ids, int for_empire_id)
+    const std::vector<int>& system_ids, int for_empire_id)
 {
     auto new_graph_impl = std::make_shared<GraphImpl>();
     // auto system_ids = ::EmpireKnownObjects(for_empire_id).FindObjectIDs<System>();
