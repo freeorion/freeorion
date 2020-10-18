@@ -123,7 +123,7 @@ parse::double_parser_rules::double_parser_rules(
     named_real_valueref
         = (     tok.Named_ >> tok.Real_
             >>  label(tok.Name_) > tok.string
-             >  label(tok.Value_) > primary_expr
+             >  label(tok.Value_) > expr
           ) [
              // Register the value ref under the given name by lazy invoking RegisterValueRef
              parse::detail::open_and_register_as_string_(_2, _3, _pass),
