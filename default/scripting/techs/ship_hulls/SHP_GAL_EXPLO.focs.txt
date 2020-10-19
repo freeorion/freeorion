@@ -68,7 +68,7 @@ Tech
                 
                 (LocalCandidate.Population              <  LocalCandidate.TargetPopulation)
                 (LocalCandidate.Population +
-                    LocalCandidate.Population*0.01*(LocalCandidate.TargetPopulation + 1 - LocalCandidate.Population)
+                    LocalCandidate.Population*[[GROWTH_RATE_FACTOR]]*(LocalCandidate.TargetPopulation + 1 - LocalCandidate.Population)
                     >= [[MIN_RECOLONIZING_SIZE]])
                     
                 (LocalCandidate.TargetHappiness         >= [[MIN_RECOLONIZING_HAPPINESS]]           )
@@ -105,3 +105,5 @@ Tech
 #include "/scripting/common/misc.macros"
 #include "/scripting/common/priorities.macros"
 #include "/scripting/common/base_prod.macros"
+#include "/scripting/species/common/population.macros"
+
