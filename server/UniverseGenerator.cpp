@@ -12,9 +12,6 @@
 #include "../universe/System.h"
 #include "../universe/Species.h"
 
-#include <GG/Clr.h>
-#include <GG/ClrConstants.h>
-
 #include <limits>
 
 namespace {
@@ -869,7 +866,7 @@ void InitEmpires(const std::map<int, PlayerSetupData>& player_setup_data) {
             ErrorLogger() << "InitEmpires empire id (" << empire_id << ") is invalid";
 
         const auto& player_name =   entry.second.player_name;
-        auto        empire_colour = GG::Clr(entry.second.empire_color);
+        auto        empire_colour = entry.second.empire_color;
         bool        authenticated = entry.second.authenticated;
 
         // validate or generate empire colour
@@ -878,18 +875,20 @@ void InitEmpires(const std::map<int, PlayerSetupData>& player_setup_data) {
         if (color_it != colors.end())
             colors.erase(color_it);
 
+        constexpr EmpireColor CLR_ZERO{0, 0, 0, 0};
+
         // if no colour already set, do so automatically
-        if (empire_colour == GG::CLR_ZERO) {
+        if (empire_colour == CLR_ZERO) {
             if (!colors.empty()) {
                 // take next colour from list
                 empire_colour = colors[0];
                 colors.erase(colors.begin());
             } else {
                 // as a last resort, make up a colour
-                empire_colour = GG::FloatClr(static_cast<float>(RandZeroToOne()),
-                                             static_cast<float>(RandZeroToOne()),
-                                             static_cast<float>(RandZeroToOne()),
-                                             1.0f);
+                empire_colour = {static_cast<unsigned char>(RandInt(0, 255)),
+                                 static_cast<unsigned char>(RandInt(0, 255)),
+                                 static_cast<unsigned char>(RandInt(0, 255)),
+                                 255};
             }
         }
 
@@ -900,9 +899,8 @@ void InitEmpires(const std::map<int, PlayerSetupData>& player_setup_data) {
                       << " for player: " << player_name << " in team: " << entry.second.starting_team;
 
         // create new Empire object through empire manager
-        EmpireColor colour{empire_colour.r, empire_colour.g, empire_colour.b, empire_colour.a};
         Empires().CreateEmpire(empire_id, std::move(empire_name), player_name,
-                               colour, authenticated);
+                               empire_colour, authenticated);
     }
 
     Empires().ResetDiplomacy();
