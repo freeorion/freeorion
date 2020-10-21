@@ -209,7 +209,6 @@
     <ClInclude Include="..\..\universe\Effect.h" />
     <ClInclude Include="..\..\universe\Encyclopedia.h" />
     <ClInclude Include="..\..\universe\Enums.h" />
-    <ClInclude Include="..\..\universe\EnumsFwd.h" />
     <ClInclude Include="..\..\universe\Field.h" />
     <ClInclude Include="..\..\universe\FieldType.h" />
     <ClInclude Include="..\..\universe\Fighter.h" />
@@ -243,6 +242,7 @@
     <ClInclude Include="..\..\util\AppInterface.h" />
     <ClInclude Include="..\..\util\CheckSums.h" />
     <ClInclude Include="..\..\util\Directories.h" />
+    <ClInclude Include="..\..\util\Enum.h" />
     <ClInclude Include="..\..\util\ModeratorAction.h" />
     <ClInclude Include="..\..\util\MultiplayerCommon.h" />
     <ClInclude Include="..\..\util\GameRules.h" />

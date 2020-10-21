@@ -4,7 +4,7 @@
 #include <GG/GGFwd.h>
 #include <GG/BrowseInfoWnd.h>
 
-#include "../universe/EnumsFwd.h"
+#include "../universe/Enums.h"
 #include <tuple>
 
 class UniverseObject;

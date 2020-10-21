@@ -1,9 +1,10 @@
 #ifndef _Fleet_h_
 #define _Fleet_h_
 
-#include <GG/Enum.h>
 #include "ObjectMap.h"
 #include "UniverseObject.h"
+#include "../Empire/ResourcePool.h"
+#include "../util/Enum.h"
 #include "../util/Export.h"
 
 
@@ -26,12 +27,13 @@ struct MovePathNode {
 };
 
 //! How to Fleets control or not their system?
-GG_ENUM(FleetAggression,
-    INVALID_FLEET_AGGRESSION = -1,
-    FLEET_PASSIVE,
-    FLEET_OBSTRUCTIVE,
-    FLEET_AGGRESSIVE,
-    NUM_FLEET_AGGRESSIONS
+FO_ENUM(
+    (FleetAggression),
+    ((INVALID_FLEET_AGGRESSION, "INVALID_FLEET_AGGRESSION", -1))
+    ((FLEET_PASSIVE))
+    ((FLEET_OBSTRUCTIVE))
+    ((FLEET_AGGRESSIVE))
+    ((NUM_FLEET_AGGRESSIONS))
 )
 
 /** Encapsulates data for a FreeOrion fleet.  Fleets are basically a group of
@@ -65,7 +67,7 @@ public:
     bool                    Obstructive() const { return m_aggression >= FleetAggression::FLEET_OBSTRUCTIVE; }
     FleetAggression         Aggression() const { return m_aggression; }
 
-    /** Returns a list of locations at which notable events will occur along the fleet's path if it follows the 
+    /** Returns a list of locations at which notable events will occur along the fleet's path if it follows the
         specified route.  It is assumed in the calculation that the fleet starts its move path at its actual current
         location, however the fleet's current location will not be on the list, even if it is currently in a system. */
     std::list<MovePathNode> MovePath(const std::list<int>& route, bool flag_blockades = false) const;

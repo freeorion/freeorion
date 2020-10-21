@@ -10,8 +10,9 @@
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/iterator/filter_iterator.hpp>
 #include <boost/optional/optional.hpp>
-#include <GG/Enum.h>
-#include "EnumsFwd.h"
+#include "Enums.h"
+#include "Planet.h"
+#include "../util/Enum.h"
 #include "../util/Export.h"
 #include "../util/Pending.h"
 
@@ -62,20 +63,8 @@ private:
 };
 
 
-//! Environmental suitability of planets for a particular Species
-GG_ENUM(PlanetEnvironment,
-    INVALID_PLANET_ENVIRONMENT = -1,
-    PE_UNINHABITABLE,
-    PE_HOSTILE,
-    PE_POOR,
-    PE_ADEQUATE,
-    PE_GOOD,
-    NUM_PLANET_ENVIRONMENTS
-)
-
-
 /** A predefined type of population that can exist on a PopulationCenter.
-  * Species have associated sets of EffectsGroups, and various other 
+  * Species have associated sets of EffectsGroups, and various other
   * properties that affect how the object on which they reside functions.
   * Each kind of Species must have a \a unique name string, by which it can be
   * looked up using GetSpecies(). */

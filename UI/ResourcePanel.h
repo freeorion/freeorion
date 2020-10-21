@@ -2,7 +2,7 @@
 #define _ResourcePanel_h_
 
 #include "AccordionPanel.h"
-#include "../universe/EnumsFwd.h"
+#include "../universe/Enums.h"
 
 #include <memory>
 

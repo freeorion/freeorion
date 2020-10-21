@@ -1,7 +1,7 @@
 #ifndef _BuildDesignatorWnd_h_
 #define _BuildDesignatorWnd_h_
 
-#include "../universe/EnumsFwd.h"
+#include "../universe/Enums.h"
 #include "../Empire/Empire.h"
 
 #include <GG/Wnd.h>
@@ -32,7 +32,7 @@ public:
 
     /** Centres map wnd on location of item on queue with index \a queue_idx
       * and displays info about that item in encyclopedia window
-      * If \a open is true, the sidepanel for that planet is opened and 
+      * If \a open is true, the sidepanel for that planet is opened and
       * it is set as the selected location (so items queued will be built there). */
     void CenterOnBuild(int queue_idx, bool open = false);
 

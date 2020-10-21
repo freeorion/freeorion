@@ -8,8 +8,13 @@
 #include "ConditionAll.h"
 #include "ConditionSource.h"
 #include "Condition.h"
-#include "EnumsFwd.h"
+#include "Enums.h"
+#include "Planet.h"
+#include "ShipPart.h"
+#include "System.h"
+#include "UniverseObject.h"
 #include "../Empire/ProductionQueue.h"
+#include "../Empire/ResourcePool.h"
 #include "../util/CheckSums.h"
 #include "../util/Export.h"
 
@@ -1423,7 +1428,7 @@ private:
     std::unique_ptr<Condition> m_operand;
 };
 
-/** Tests conditions in \a operands in order, to find the first condition that 
+/** Tests conditions in \a operands in order, to find the first condition that
   * matches at least one candidate object. Matches all objects that match that
   * condaition, ignoring any conditions listed later. If no candidate matches
   * any of the conditions, it matches nothing. */

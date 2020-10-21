@@ -3,10 +3,12 @@
 
 #include <vector>
 #include <boost/signals2/signal.hpp>
+#include <GG/Enum.h>
 #include <GG/GGFwd.h>
+#include "../universe/Planet.h"
+#include "../universe/System.h"
 
 #include "CUIWnd.h"
-#include "../universe/EnumsFwd.h"
 
 
 //! Used for tracking what moderator action is set

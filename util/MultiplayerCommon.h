@@ -1,14 +1,14 @@
 #ifndef _MultiplayerCommon_h_
 #define _MultiplayerCommon_h_
 
-#include "../universe/EnumsFwd.h"
+#include "../universe/Enums.h"
 #include "../network/Networking.h"
+#include "Enum.h"
 #include "Export.h"
 #include "OptionsDB.h"
 #include "OrderSet.h"
 #include "Pending.h"
 
-#include <GG/Enum.h>
 
 #include <list>
 #include <set>
@@ -24,19 +24,20 @@ FO_COMMON_API extern const int INVALID_GAME_TURN;
 
 
 //! Types of universe shapes during galaxy generation
-GG_ENUM(Shape,
-    INVALID_SHAPE = -1,
-    SPIRAL_2,       ///< a two-armed spiral galaxy
-    SPIRAL_3,       ///< a three-armed spiral galaxy
-    SPIRAL_4,       ///< a four-armed spiral galaxy
-    CLUSTER,        ///< a cluster galaxy
-    ELLIPTICAL,     ///< an elliptical galaxy
-    DISC,           ///< a disc shaped galaxy
-    BOX,            ///< a rectangular shaped galaxy
-    IRREGULAR,      ///< an irregular galaxy
-    RING,           ///< a ring galaxy
-    RANDOM,         ///< a random one of the other shapes
-    GALAXY_SHAPES   ///< the number of shapes in this enum (leave this last)
+FO_ENUM(
+    (Shape),
+    ((INVALID_SHAPE, "INVALID_SHAPE", -1))
+    ((SPIRAL_2))       ///< a two-armed spiral galaxy
+    ((SPIRAL_3))       ///< a three-armed spiral galaxy
+    ((SPIRAL_4))       ///< a four-armed spiral galaxy
+    ((CLUSTER))        ///< a cluster galaxy
+    ((ELLIPTICAL))     ///< an elliptical galaxy
+    ((DISC))           ///< a disc shaped galaxy
+    ((BOX))            ///< a rectangular shaped galaxy
+    ((IRREGULAR))      ///< an irregular galaxy
+    ((RING))           ///< a ring galaxy
+    ((RANDOM))         ///< a random one of the other shapes
+    ((GALAXY_SHAPES))   ///< the number of shapes in this enum (leave this last)
 )
 
 //! Returns a user readable string for a Shape
@@ -44,14 +45,15 @@ FO_COMMON_API const std::string& TextForGalaxyShape(Shape shape);
 
 
 //! General-use option for galaxy setup picks with "more" or "less" options.
-GG_ENUM(GalaxySetupOption,
-    INVALID_GALAXY_SETUP_OPTION = -1,
-    GALAXY_SETUP_NONE,
-    GALAXY_SETUP_LOW,
-    GALAXY_SETUP_MEDIUM,
-    GALAXY_SETUP_HIGH,
-    GALAXY_SETUP_RANDOM,
-    NUM_GALAXY_SETUP_OPTIONS
+FO_ENUM(
+    (GalaxySetupOption),
+    ((INVALID_GALAXY_SETUP_OPTION, "INVALID_GALAXY_SETUP_OPTION", -1))
+    ((GALAXY_SETUP_NONE))
+    ((GALAXY_SETUP_LOW))
+    ((GALAXY_SETUP_MEDIUM))
+    ((GALAXY_SETUP_HIGH))
+    ((GALAXY_SETUP_RANDOM))
+    ((NUM_GALAXY_SETUP_OPTIONS))
 )
 
 //! Returns a user readable string for a GalaxySetupOption
@@ -59,15 +61,16 @@ FO_COMMON_API const std::string& TextForGalaxySetupSetting(GalaxySetupOption gso
 
 
 //! Levels of AI Aggression during galaxy generation
-GG_ENUM(Aggression,
-    INVALID_AGGRESSION = -1,
-    BEGINNER,
-    TURTLE,         ///< Very Defensive
-    CAUTIOUS,       ///< Somewhat Defensive
-    TYPICAL,        ///< Typical
-    AGGRESSIVE,     ///< Aggressive
-    MANIACAL,       ///< Very Aggressive
-    NUM_AI_AGGRESSION_LEVELS
+FO_ENUM(
+    (Aggression),
+    ((INVALID_AGGRESSION, "INVALID_AGGRESSION", -1))
+    ((BEGINNER))
+    ((TURTLE))         ///< Very Defensive
+    ((CAUTIOUS))       ///< Somewhat Defensive
+    ((TYPICAL))        ///< Typical
+    ((AGGRESSIVE))     ///< Aggressive
+    ((MANIACAL))       ///< Very Aggressive
+    ((NUM_AI_AGGRESSION_LEVELS))
 )
 
 //! Returns a user readable string for an Aggression

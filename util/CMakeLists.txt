@@ -5,6 +5,7 @@ target_sources(freeorioncommon
         ${CMAKE_CURRENT_LIST_DIR}/blocking_combiner.h
         ${CMAKE_CURRENT_LIST_DIR}/CheckSums.h
         ${CMAKE_CURRENT_LIST_DIR}/Directories.h
+        ${CMAKE_CURRENT_LIST_DIR}/Enum.h
         ${CMAKE_CURRENT_LIST_DIR}/i18n.h
         ${CMAKE_CURRENT_LIST_DIR}/Logger.h
         ${CMAKE_CURRENT_LIST_DIR}/LoggerWithOptionsDB.h

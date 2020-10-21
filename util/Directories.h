@@ -3,21 +3,22 @@
 
 #include <string>
 #include <boost/filesystem/path.hpp>
-#include <GG/Enum.h>
+#include "Enum.h"
 #include "Export.h"
 
 
 //! Types of root directories
-GG_ENUM(PathType,
-    PATH_BINARY,
-    PATH_RESOURCE,
-    PATH_PYTHON,
-    PATH_DATA_ROOT,
-    PATH_DATA_USER,
-    PATH_CONFIG,
-    PATH_SAVE,
-    PATH_TEMP,
-    PATH_INVALID
+FO_ENUM(
+    (PathType),
+    ((PATH_BINARY))
+    ((PATH_RESOURCE))
+    ((PATH_PYTHON))
+    ((PATH_DATA_ROOT))
+    ((PATH_DATA_USER))
+    ((PATH_CONFIG))
+    ((PATH_SAVE))
+    ((PATH_TEMP))
+    ((PATH_INVALID))
 )
 
 

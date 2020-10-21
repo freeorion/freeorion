@@ -3,7 +3,7 @@
 #include "EnumParser.h"
 #include "EnumValueRefRules.h"
 
-#include "../universe/Species.h"
+#include "../universe/Enums.h"
 
 namespace parse { namespace detail {
     planet_environment_parser_rules::planet_environment_parser_rules(

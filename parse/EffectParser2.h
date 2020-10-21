@@ -3,6 +3,7 @@
 
 #include "EffectParserImpl.h"
 #include "EnumValueRefRules.h"
+#include "../Empire/ResourcePool.h"
 
 namespace parse { namespace detail {
     struct effect_parser_rules_2 : public effect_parser_grammar {

@@ -2,7 +2,7 @@
 #define _MilitaryPanel_h_
 
 #include "AccordionPanel.h"
-#include "../universe/EnumsFwd.h"
+#include "../universe/Enums.h"
 
 
 class MultiIconValueIndicator;

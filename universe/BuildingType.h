@@ -2,8 +2,8 @@
 #define _BuildingType_h_
 
 
-#include <GG/Enum.h>
 #include "CommonParams.h"
+#include "../util/Enum.h"
 #include "../util/Export.h"
 #include "../util/Pending.h"
 
@@ -22,15 +22,16 @@ namespace ValueRef {
 
 //! Possible results of a Building being captured by other empires, or an
 //! Planet containing the Building being captured.
-GG_ENUM(CaptureResult,
-    INVALID_CAPTURE_RESULT = -1,
+FO_ENUM(
+    (CaptureResult),
+    ((INVALID_CAPTURE_RESULT, "INVALID_CAPTURE_RESULT", -1))
     //! Building has ownership by original empire(s) removed, and conquering
     //! empire added
-    CR_CAPTURE,
+    ((CR_CAPTURE))
     //! Building is destroyed
-    CR_DESTROY,
+    ((CR_DESTROY))
     //! Building ownership unchanged: original empire(s) still own object
-    CR_RETAIN
+    ((CR_RETAIN))
 )
 
 

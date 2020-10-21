@@ -2,8 +2,9 @@
 #define _ShipPart_h_
 
 
-#include <GG/Enum.h>
 #include "CommonParams.h"
+#include "ShipHull.h"
+#include "../util/Enum.h"
 #include "../util/Pending.h"
 
 
@@ -11,26 +12,27 @@ FO_COMMON_API extern const int INVALID_DESIGN_ID;
 
 
 //! Classifies ShipParts by general function.
-GG_ENUM(ShipPartClass,
-    INVALID_SHIP_PART_CLASS = -1,
-    PC_DIRECT_WEAPON,       //!< direct-fire weapons
-    PC_FIGHTER_BAY,         //!< launch aparatus for fighters, which are self-propelled platforms that function independently of ships in combat, but don't exist on the main game map
-    PC_FIGHTER_HANGAR,      //!< storage for fighters, also determines their weapon strength stat
-    PC_SHIELD,              //!< energy-based defense
-    PC_ARMOUR,              //!< defensive material on hull of ship
-    PC_TROOPS,              //!< ground troops, used to conquer planets
-    PC_DETECTION,           //!< range of vision and seeing through stealth
-    PC_STEALTH,             //!< hiding from enemies
-    PC_FUEL,                //!< distance that can be traveled away from resupply
-    PC_COLONY,              //!< transports colonists and allows ships to make new colonies
-    PC_SPEED,               //!< affects ship speed on starlanes
-    PC_GENERAL,             //!< special purpose parts that don't fall into another class
-    PC_BOMBARD,             //!< permit orbital bombardment by ships against planets
-    PC_INDUSTRY,            //!< generates production points for owner at its location
-    PC_RESEARCH,            //!< generates research points for owner
-    PC_INFLUENCE,           ///< generates influence points for owner
-    PC_PRODUCTION_LOCATION, //!< allows production items to be produced at its location
-    NUM_SHIP_PART_CLASSES
+FO_ENUM(
+    (ShipPartClass),
+    ((INVALID_SHIP_PART_CLASS, "INVALID_SHIP_PART_CLASS", -1))
+    ((PC_DIRECT_WEAPON))       //!< direct-fire weapons
+    ((PC_FIGHTER_BAY))         //!< launch aparatus for fighters, which are self-propelled platforms that function independently of ships in combat, but don't exist on the main game map
+    ((PC_FIGHTER_HANGAR))      //!< storage for fighters, also determines their weapon strength stat
+    ((PC_SHIELD))              //!< energy-based defense
+    ((PC_ARMOUR))              //!< defensive material on hull of ship
+    ((PC_TROOPS))              //!< ground troops, used to conquer planets
+    ((PC_DETECTION))           //!< range of vision and seeing through stealth
+    ((PC_STEALTH))             //!< hiding from enemies
+    ((PC_FUEL))                //!< distance that can be traveled away from resupply
+    ((PC_COLONY))              //!< transports colonists and allows ships to make new colonies
+    ((PC_SPEED))               //!< affects ship speed on starlanes
+    ((PC_GENERAL))             //!< special purpose parts that don't fall into another class
+    ((PC_BOMBARD))             //!< permit orbital bombardment by ships against planets
+    ((PC_INDUSTRY))            //!< generates production points for owner at its location
+    ((PC_RESEARCH))            //!< generates research points for owner
+    ((PC_INFLUENCE))           //!< generates influence points for owner
+    ((PC_PRODUCTION_LOCATION)) //!< allows production items to be produced at its location
+    ((NUM_SHIP_PART_CLASSES))
 )
 
 

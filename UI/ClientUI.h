@@ -8,7 +8,9 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 #include "SaveFileDialog.h"
-#include "../universe/EnumsFwd.h"
+#include "../universe/Enums.h"
+#include "../universe/Planet.h"
+#include "../universe/System.h"
 #include "../util/Random.h"
 
 #include <map>

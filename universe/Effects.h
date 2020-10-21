@@ -4,6 +4,10 @@
 
 #include <boost/optional/optional.hpp>
 #include "Effect.h"
+#include "Fleet.h"
+#include "Planet.h"
+#include "System.h"
+#include "../Empire/ResourcePool.h"
 #include "../util/Export.h"
 
 

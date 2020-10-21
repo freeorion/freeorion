@@ -6,7 +6,9 @@
 #include <boost/optional/optional.hpp>
 #include <boost/uuid/nil_generator.hpp>
 #include <boost/uuid/uuid.hpp>
-#include "EnumsFwd.h"
+#include "Enums.h"
+#include "ShipHull.h"
+#include "ShipPart.h"
 #include "../util/Pending.h"
 
 

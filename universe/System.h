@@ -3,8 +3,8 @@
 
 
 #include <map>
-#include <GG/Enum.h>
 #include "UniverseObject.h"
+#include "../util/Enum.h"
 #include "../util/Export.h"
 
 
@@ -19,17 +19,18 @@ struct UniverseObjectVisitor;
 
 
 //! Types of stars
-GG_ENUM(StarType,
-    INVALID_STAR_TYPE = -1,
-    STAR_BLUE,
-    STAR_WHITE,
-    STAR_YELLOW,
-    STAR_ORANGE,
-    STAR_RED,
-    STAR_NEUTRON,
-    STAR_BLACK,
-    STAR_NONE,
-    NUM_STAR_TYPES
+FO_ENUM(
+    (StarType),
+    ((INVALID_STAR_TYPE, "INVALID_STAR_TYPE", -1))
+    ((STAR_BLUE))
+    ((STAR_WHITE))
+    ((STAR_YELLOW))
+    ((STAR_ORANGE))
+    ((STAR_RED))
+    ((STAR_NEUTRON))
+    ((STAR_BLACK))
+    ((STAR_NONE))
+    ((NUM_STAR_TYPES))
 )
 
 

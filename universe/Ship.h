@@ -3,6 +3,7 @@
 
 
 #include "Meter.h"
+#include "ShipPart.h"
 #include "UniverseObject.h"
 #include "../util/Export.h"
 
