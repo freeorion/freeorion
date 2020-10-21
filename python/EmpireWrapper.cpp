@@ -13,6 +13,8 @@
 #include "../util/SitRepEntry.h"
 #include "SetWrapper.h"
 
+#include <GG/Clr.h>
+
 #include <boost/mpl/vector.hpp>
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/map_indexing_suite.hpp>

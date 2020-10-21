@@ -5,11 +5,11 @@
 #include "../util/Logger.h"
 #include "../util/ScopedTimer.h"
 
+#include <array>
+
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/spirit/include/qi.hpp>
-
-#include <GG/Clr.h>
 
 
 namespace Condition {
@@ -137,7 +137,7 @@ namespace parse { namespace detail {
         single_or_repeated_string<std::set<std::string>> one_or_more_string_tokens;
     };
 
-    using color_parser_signature = GG::Clr ();
+    using color_parser_signature = std::array<unsigned char, 4> ();
     using color_rule_type = rule<color_parser_signature>;
     using color_grammar_type = grammar<color_parser_signature>;
 

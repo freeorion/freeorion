@@ -10,6 +10,7 @@
 #include <boost/filesystem/path.hpp>
 #include <boost/uuid/uuid.hpp>
 
+#include <array>
 #include <map>
 #include <set>
 #include <vector>

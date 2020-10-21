@@ -84,10 +84,7 @@ namespace CheckSums {
         TraceLogger() << "CheckSumCombine(Slot): " << typeid(cat).name();
         CheckSumCombine(sum, cat.name);
         CheckSumCombine(sum, cat.graphic);
-        CheckSumCombine(sum, cat.colour.r);
-        CheckSumCombine(sum, cat.colour.g);
-        CheckSumCombine(sum, cat.colour.b);
-        CheckSumCombine(sum, cat.colour.a);
+        CheckSumCombine(sum, cat.colour);
     }
 }
 

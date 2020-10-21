@@ -22,7 +22,6 @@
 #if DEBUG_PARSERS
 namespace std {
     inline ostream& operator<<(ostream& os, const std::vector<Effect::Effect*>&) { return os; }
-    inline ostream& operator<<(ostream& os, const GG::Clr&) { return os; }
     inline ostream& operator<<(ostream& os, const UnlockableItem&) { return os; }
 }
 #endif
@@ -223,7 +222,7 @@ namespace parse {
     std::set<std::string> missing_include_files;
 
     /** \brief Resolve script directives
-     * 
+     *
      * @param[in,out] text contents to search through
      * @param[in] file_search_path base path of content
      */
@@ -244,13 +243,13 @@ namespace parse {
     }
 
     /** \brief Replace all include statements with contents of file
-     * 
+     *
      * Search for any include statements in *text* and replace them with the contents
      * of the file given.  File lookup is relative to *file_search_path* and will not
      * be included if found in *files_included*.
      * Each included file is added to *files_included*.
      * This is a recursive function, processing the contents of any included files.
-     * 
+     *
      * @param[in,out] text content to search through
      * @param[in] file_search_path base path of content
      * @param[in,out] files_included canonical path of any files previously included
@@ -415,13 +414,24 @@ namespace parse {
 #endif
     }
 
+    typedef std::array<unsigned char, 4> ColorType;
+
+    inline std::array<unsigned char, 4> construct_color(
+        unsigned char r,
+        unsigned char g,
+        unsigned char b,
+        unsigned char a)
+    { return {r, g, b, a}; }
+
+    BOOST_PHOENIX_ADAPT_FUNCTION(ColorType, construct_color_, construct_color, 4)
+
     color_parser_grammar::color_parser_grammar(const parse::lexer& tok) :
         color_parser_grammar::base_type(start, "color_parser_grammar")
     {
         namespace phoenix = boost::phoenix;
         namespace qi = boost::spirit::qi;
 
-        using phoenix::construct;
+        using phoenix::static_cast_;
         using phoenix::if_;
 
         qi::_1_type _1;
@@ -440,7 +450,7 @@ namespace parse {
             >    (',' >> channel )
             >    alpha
             >    ')'
-               ) [ _val  = construct<GG::Clr>(_1, _2, _3, _4)]
+               ) [ _val  = construct_color_(_1, _2, _3, _4)]
             ;
 
         channel.name("colour channel (0 to 255)");
@@ -483,7 +493,7 @@ namespace parse {
 
 
     /** \brief Load and parse script file(s) from given path
-        * 
+        *
         * @param[in] path absolute path to a regular file
         * @param[in] l lexer instance to use
         * @param[out] filename filename of the given path
