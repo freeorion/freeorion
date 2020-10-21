@@ -15,6 +15,7 @@
 #define _GG_Clr_h_
 
 
+#include <array>
 #include <sstream>
 #include <stdexcept>
 #include <string>
@@ -43,6 +44,14 @@ struct Clr
                   unsigned char b_,
                   unsigned char a_) :
         r(r_), g(g_), b(b_), a(a_)
+        {}
+
+    /** ctor that constructs a Clr from std::array that represents the color channels */
+    constexpr Clr(const std::array<unsigned char, 4>& clr) :
+        r(std::get<0>(clr)),
+        g(std::get<1>(clr)),
+        b(std::get<2>(clr)),
+        a(std::get<3>(clr))
         {}
 
     unsigned char r;   ///< the red channel

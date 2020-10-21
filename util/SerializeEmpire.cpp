@@ -11,6 +11,7 @@
 #include "GameRules.h"
 
 #include "Serialize.ipp"
+#include <boost/serialization/array.hpp>
 #include <boost/serialization/version.hpp>
 #include <boost/uuid/random_generator.hpp>
 

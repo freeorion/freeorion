@@ -569,10 +569,10 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
 
     // DB stores index into array of available colours, so need to get that array to look up value of index.
     // if stored value is invalid, use a default colour
-    const std::vector<GG::Clr>& empire_colours = EmpireColors();
+    const std::vector<EmpireColor>& empire_colours = EmpireColors();
     int colour_index = GetOptionsDB().Get<int>("setup.empire.color.index");
     if (colour_index >= 0 && colour_index < static_cast<int>(empire_colours.size()))
-        human_player_setup_data.empire_color = empire_colours[colour_index];
+        human_player_setup_data.empire_color = GG::Clr(empire_colours[colour_index]);
     else
         human_player_setup_data.empire_color = GG::CLR_GREEN;
 

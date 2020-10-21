@@ -897,8 +897,9 @@ void InitEmpires(const std::map<int, PlayerSetupData>& player_setup_data) {
                       << " for player: " << player_name << " in team: " << entry.second.starting_team;
 
         // create new Empire object through empire manager
+        EmpireColor colour{empire_colour.r, empire_colour.g, empire_colour.b, empire_colour.a};
         Empires().CreateEmpire(empire_id, std::move(empire_name), player_name,
-                               empire_colour, authenticated);
+                               colour, authenticated);
     }
 
     Empires().ResetDiplomacy();
