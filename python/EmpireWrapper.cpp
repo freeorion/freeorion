@@ -13,8 +13,6 @@
 #include "../util/SitRepEntry.h"
 #include "SetWrapper.h"
 
-#include <GG/Clr.h>
-
 #include <boost/mpl/vector.hpp>
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/map_indexing_suite.hpp>
@@ -495,16 +493,6 @@ namespace FreeOrionPython {
             .add_property("status",             &DiplomaticStatusUpdateInfo::diplo_status)
             .add_property("empire1",            &DiplomaticStatusUpdateInfo::empire1_id)
             .add_property("empire2",            &DiplomaticStatusUpdateInfo::empire2_id)
-        ;
-
-        ///////////
-        // Color //
-        ///////////
-        py::class_<GG::Clr>("GGColor", py::init<unsigned char, unsigned char, unsigned char, unsigned char>())
-            .add_property("r",                  &GG::Clr::r)
-            .add_property("g",                  &GG::Clr::g)
-            .add_property("b",                  &GG::Clr::b)
-            .add_property("a",                  &GG::Clr::a)
         ;
     }
 }

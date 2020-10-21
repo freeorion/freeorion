@@ -18,10 +18,10 @@ class ChatHistoryProvider:
         Loads chat history from external sources.
 
         Returns list of tuples:
-            (unixtime timestamp, player name, text, text color of type freeorion.GGColor)
+            (unixtime timestamp, player name, text, text color of type tuple with 4 elements)
         """
         info("Loading history...")
-        # c = fo.GGColor(255, 128, 128, 255)
+        # c = (255, 128, 128, 255)
         # e = (123456789012, "P1", "Test1", c)
         # return [e]
         return []
@@ -36,7 +36,7 @@ class ChatHistoryProvider:
         timestamp -- unixtime, number of seconds from 1970-01-01 00:00:00 UTC
         player_name -- player name
         text -- chat text
-        text_color -- freeorion.GGColor
+        text_color -- tuple wit 4 elements
         """
         info("Chat %s: %s %s" % (player_name, text, text_color))
         return True

@@ -12,6 +12,9 @@
 #include "../universe/System.h"
 #include "../universe/Species.h"
 
+#include <GG/Clr.h>
+#include <GG/ClrConstants.h>
+
 #include <limits>
 
 namespace {
@@ -866,7 +869,7 @@ void InitEmpires(const std::map<int, PlayerSetupData>& player_setup_data) {
             ErrorLogger() << "InitEmpires empire id (" << empire_id << ") is invalid";
 
         const auto& player_name =   entry.second.player_name;
-        auto        empire_colour = entry.second.empire_color;
+        auto        empire_colour = GG::Clr(entry.second.empire_color);
         bool        authenticated = entry.second.authenticated;
 
         // validate or generate empire colour

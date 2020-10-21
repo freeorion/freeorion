@@ -7,8 +7,6 @@
 #include "util/GameRules.h"
 #include "util/Version.h"
 
-#include "GG/GG/ClrConstants.h"
-
 #include <boost/format.hpp>
 #include <boost/uuid/nil_generator.hpp>
 #include <boost/thread/thread.hpp>
@@ -74,7 +72,7 @@ void ClientAppFixture::HostSPGame(unsigned int num_AIs) {
     PlayerSetupData human_player_setup_data;
     human_player_setup_data.player_name = "TestPlayer";
     human_player_setup_data.empire_name = "TestEmpire";
-    human_player_setup_data.empire_color = GG::CLR_GREEN;
+    human_player_setup_data.empire_color = {0, 255, 0, 255};
 
     human_player_setup_data.starting_species_name = "SP_HUMAN";
     human_player_setup_data.save_game_empire_id = ALL_EMPIRES; // not used for new games
@@ -90,7 +88,7 @@ void ClientAppFixture::HostSPGame(unsigned int num_AIs) {
 
         ai_setup_data.player_name = "AI_" + std::to_string(ai_i);
         ai_setup_data.empire_name.clear();                // leave blank, to be set by server in Universe::GenerateEmpires
-        ai_setup_data.empire_color = GG::CLR_ZERO;        // to be set by server
+        ai_setup_data.empire_color = {0, 0, 0, 0};        // to be set by server
         ai_setup_data.starting_species_name.clear();      // leave blank, to be set by server
         ai_setup_data.save_game_empire_id = ALL_EMPIRES;  // not used for new games
         ai_setup_data.client_type = Networking::ClientType::CLIENT_TYPE_AI_PLAYER;
