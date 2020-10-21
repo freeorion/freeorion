@@ -145,7 +145,7 @@ struct FO_COMMON_API SaveGameEmpireData {
     int         empire_id = ALL_EMPIRES;
     std::string empire_name;
     std::string player_name;
-    GG::Clr     color;
+    std::array<unsigned char, 4> color;
     bool        authenticated = false;
     bool        eliminated = false;
     bool        won = false;

@@ -17,6 +17,7 @@
 #include "../combat/CombatLogManager.h"
 
 #include <boost/filesystem/fstream.hpp>
+#include <boost/serialization/array.hpp>
 #include <boost/serialization/deque.hpp>
 #include <boost/serialization/list.hpp>
 #include <boost/serialization/map.hpp>

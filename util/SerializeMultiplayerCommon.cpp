@@ -11,6 +11,7 @@
 #include "Serialize.ipp"
 
 #include <boost/date_time/posix_time/time_serialize.hpp>
+#include <boost/serialization/array.hpp>
 #include <boost/uuid/random_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
 
