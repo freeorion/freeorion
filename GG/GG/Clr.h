@@ -35,9 +35,7 @@ namespace GG {
     (little-endian) or opaque yellow (big-endian).*/
 struct Clr
 {
-    Clr() :
-        r(0), g(0), b(0), a(0)
-        {}
+    Clr() = default;
 
     /** ctor that constructs a Clr from four ints that represent the color channels */
     constexpr Clr(unsigned char r_,
@@ -45,7 +43,7 @@ struct Clr
                   unsigned char b_,
                   unsigned char a_) :
         r(r_), g(g_), b(b_), a(a_)
-        {}
+    {}
 
     /** ctor that constructs a Clr from std::array that represents the color channels */
     constexpr Clr(const std::array<unsigned char, 4>& clr) :
@@ -53,12 +51,12 @@ struct Clr
         g(std::get<1>(clr)),
         b(std::get<2>(clr)),
         a(std::get<3>(clr))
-        {}
+    {}
 
-    unsigned char r;   ///< the red channel
-    unsigned char g;   ///< the green channel
-    unsigned char b;   ///< the blue channel
-    unsigned char a;   ///< the alpha channel
+    unsigned char r = 0;    ///< the red channel
+    unsigned char g = 0;    ///< the green channel
+    unsigned char b = 0;    ///< the blue channel
+    unsigned char a = 0;    ///< the alpha channel
 };
 
 GG_API std::ostream& operator<<(std::ostream& os, const Clr& pt);
@@ -123,7 +121,7 @@ inline Clr HexClr(const std::string& hex_colour)
 
     unsigned long rgba = 0;
     if ((hex_colour.size() == 7 || hex_colour.size() == 9) &&
-            '#' == iss.get() && !(iss >> std::hex >> rgba).fail())
+        '#' == iss.get() && !(iss >> std::hex >> rgba).fail())
     {
         GG::Clr retval = GG::Clr(0, 0, 0, 255);
 
