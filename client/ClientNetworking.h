@@ -41,7 +41,9 @@ public:
     /** The type of list returned by a call to DiscoverLANServers(). */
     using ServerNames =  std::vector<std::string>;
 
+protected:
     ClientNetworking();
+public:
     ~ClientNetworking();
 
     /** Returns true iff the client is full duplex connected to the server. */
@@ -93,7 +95,10 @@ public:
 
     /** Sends \a message to the server.  This function actually just enqueues
         the message for sending and returns immediately. */
-    void SendMessage(const Message& message);
+    void SendMessage(Message message);
+
+    /** Puts \a message on this client's message queue. */
+    void SendSelfMessage(Message message);
 
     /** Return the next incoming message from the server if available or boost::none.
         Remove the message from the incoming message queue. */
@@ -112,6 +117,8 @@ public:
     Networking::AuthRoles& AuthorizationRoles();
 
 private:
+    friend class ClientApp;
+
     class Impl;
     std::unique_ptr<Impl> const m_impl;
 };

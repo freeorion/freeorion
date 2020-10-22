@@ -1330,16 +1330,19 @@ void FleetDataPanel::ToggleAggression() {
 
         FleetAggression new_aggression_state = [old_aggression{fleet->Aggression()}]() {
             switch (old_aggression) {
-            case FleetAggression::FLEET_AGGRESSIVE:     return FleetAggression::FLEET_OBSTRUCTIVE;  break;
-            case FleetAggression::FLEET_OBSTRUCTIVE:    return FleetAggression::FLEET_PASSIVE;      break;
-            case FleetAggression::FLEET_PASSIVE:
-            default:                                    return FleetAggression::FLEET_AGGRESSIVE;   break;
+            case FleetAggression::FLEET_PASSIVE:        return FleetAggression::FLEET_OBSTRUCTIVE;  break;
+            case FleetAggression::FLEET_OBSTRUCTIVE:    return FleetAggression::FLEET_AGGRESSIVE;   break;
+            case FleetAggression::FLEET_AGGRESSIVE:
+            default:                                    return FleetAggression::FLEET_PASSIVE;      break;
             }
         }();
 
         // toggle fleet aggression status
+        GetUniverse().InhibitUniverseObjectSignals(true);
         HumanClientApp::GetApp()->Orders().IssueOrder(
             std::make_shared<AggressiveOrder>(client_empire_id, m_fleet_id, new_aggression_state));
+        GetUniverse().InhibitUniverseObjectSignals(false);
+        UpdateAggressionToggle();
 
     } else if (m_is_new_fleet_drop_target) {
         // cycle new fleet aggression
@@ -1640,31 +1643,28 @@ void FleetDataPanel::UpdateAggressionToggle() {
 
     if (aggression == FleetAggression::FLEET_AGGRESSIVE) {
         m_aggression_toggle->SetUnpressedGraphic(GG::SubTexture(FleetAggressiveIcon()));
-        m_aggression_toggle->SetPressedGraphic(GG::SubTexture(FleetObstructiveIcon()));
+        m_aggression_toggle->SetPressedGraphic(GG::SubTexture(FleetAggressiveIcon()));
         m_aggression_toggle->SetRolloverGraphic(GG::SubTexture(FleetAggressiveMouseoverIcon()));
         m_aggression_toggle->SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
             FleetAggressiveIcon(), UserString("FW_AGGRESSIVE"), UserString("FW_AGGRESSIVE_DESC")));
 
     } else if (aggression == FleetAggression::FLEET_OBSTRUCTIVE) {
         m_aggression_toggle->SetUnpressedGraphic(GG::SubTexture(FleetObstructiveIcon()));
-        m_aggression_toggle->SetPressedGraphic(GG::SubTexture(FleetPassiveIcon()));
+        m_aggression_toggle->SetPressedGraphic(GG::SubTexture(FleetObstructiveIcon()));
         m_aggression_toggle->SetRolloverGraphic(GG::SubTexture(FleetObstructiveMouseoverIcon()));
         m_aggression_toggle->SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
             FleetObstructiveIcon(), UserString("FW_OBSTRUCTIVE"), UserString("FW_OBSTRUCTIVE_DESC")));
 
     } else if (aggression == FleetAggression::FLEET_PASSIVE) {
         m_aggression_toggle->SetUnpressedGraphic(GG::SubTexture(FleetPassiveIcon()));
-        if (m_is_new_fleet_drop_target)
-            m_aggression_toggle->SetPressedGraphic(GG::SubTexture(FleetAutoIcon()));
-        else
-            m_aggression_toggle->SetPressedGraphic(GG::SubTexture(FleetAggressiveIcon()));
+        m_aggression_toggle->SetPressedGraphic(GG::SubTexture(FleetPassiveIcon()));
         m_aggression_toggle->SetRolloverGraphic(GG::SubTexture(FleetPassiveMouseoverIcon()));
         m_aggression_toggle->SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
             FleetPassiveIcon(), UserString("FW_PASSIVE"), UserString("FW_PASSIVE_DESC")));
 
     } else {    // aggression == FleetAggression::INVALID_FLEET_AGGRESSION
         m_aggression_toggle->SetUnpressedGraphic(GG::SubTexture(FleetAutoIcon()));
-        m_aggression_toggle->SetPressedGraphic(GG::SubTexture(FleetAggressiveIcon()));
+        m_aggression_toggle->SetPressedGraphic(GG::SubTexture(FleetAutoIcon()));
         m_aggression_toggle->SetRolloverGraphic(GG::SubTexture(FleetAutoMouseoverIcon()));
         m_aggression_toggle->SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
             FleetAutoIcon(), UserString("FW_AUTO"), UserString("FW_AUTO_DESC")));

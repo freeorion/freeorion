@@ -133,8 +133,8 @@ public:
     )
 
     Message() = default;
-
     Message(MessageType message_type, const std::string& text);
+    ~Message() = default;
 
     MessageType Type() const;               ///< Returns the type of the message.
     std::size_t Size() const;               ///< Returns the size of the underlying buffer.
@@ -144,6 +144,7 @@ public:
     void        Resize(std::size_t size);   ///< Resizes the underlying char buffer to \a size uninitialized bytes.
     char*       Data();                     ///< Returns the underlying buffer.
     void        Swap(Message& rhs);         ///< Swaps the contents of \a *this with \a rhs.  Does not throw.
+    void        Reset();                    ///< Reverts message to same state as after default constructor
 
 private:
     MessageType               m_type = MessageType::UNDEFINED;
@@ -408,6 +409,10 @@ FO_COMMON_API void ExtractTurnOrdersMessageData(const Message& msg,
 FO_COMMON_API void ExtractTurnPartialOrdersMessageData(const Message& msg, OrderSet& added, std::set<int>& deleted);
 
 FO_COMMON_API void ExtractTurnUpdateMessageData(const Message& msg, int empire_id, int& current_turn, EmpireManager& empires,
+                                                Universe& universe, SpeciesManager& species, CombatLogManager& combat_logs,
+                                                SupplyManager& supply, std::map<int, PlayerInfo>& players);
+
+FO_COMMON_API void ExtractTurnUpdateMessageData(std::string text, int empire_id, int& current_turn, EmpireManager& empires,
                                                 Universe& universe, SpeciesManager& species, CombatLogManager& combat_logs,
                                                 SupplyManager& supply, std::map<int, PlayerInfo>& players);
 

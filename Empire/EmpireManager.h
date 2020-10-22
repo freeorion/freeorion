@@ -5,8 +5,6 @@
 #include "../universe/EnumsFwd.h"
 #include "../util/Export.h"
 
-#include <GG/Clr.h>
-
 #include <boost/filesystem.hpp>
 #include <boost/signals2/signal.hpp>
 
@@ -66,7 +64,7 @@ public:
       * caller's responsibility to make sure that universe updates planet
       * ownership. */
     void        CreateEmpire(int empire_id, std::string name, std::string player_name,
-                             const GG::Clr& color, bool authenticated);
+                             const std::array<unsigned char, 4>& color, bool authenticated);
 
     /** Removes and deletes all empires from the manager. */
     void        Clear();
@@ -97,7 +95,7 @@ private:
 };
 
 /** The colors that are available for use for empires in the game. */
-FO_COMMON_API const std::vector<GG::Clr>& EmpireColors();
+FO_COMMON_API const std::vector<std::array<unsigned char, 4>>& EmpireColors();
 
 /** Initialize empire colors from \p path */
 FO_COMMON_API void InitEmpireColors(const boost::filesystem::path& path);

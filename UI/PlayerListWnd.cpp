@@ -895,11 +895,10 @@ namespace {
         const int client_empire_id, const int clicked_empire_id,
         const std::function<DiplomaticMessage(int, int)>& message)
     {
-        auto premade_message = DiplomacyMessage(message(client_empire_id, clicked_empire_id));
-        auto &networking = HumanClientApp::GetApp()->Networking();
-        return boost::bind(&ClientNetworking::SendMessage, &networking, premade_message);
+        auto& networking = HumanClientApp::GetApp()->Networking();
+        return boost::bind(&ClientNetworking::SendMessage, &networking,
+                           DiplomacyMessage(message(client_empire_id, clicked_empire_id)));
     }
-
 }
 
 void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {

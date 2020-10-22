@@ -38,14 +38,14 @@ IDAllocator::IDAllocator(const int server_id,
 
     // Assign the server to the first offset
     m_offset_to_empire_id[(ii - m_zero) % m_stride] = m_server_id;
-    m_empire_id_to_next_assigned_object_id.insert({m_server_id, ii});
+    m_empire_id_to_next_assigned_object_id.emplace(m_server_id, ii);
     ++ii;
 
     for (const auto empire_id : client_ids) {
         if (empire_id == m_server_id)
             continue;
          AssigningEmpireForID(ii) = empire_id;
-         m_empire_id_to_next_assigned_object_id.insert({empire_id, ii});
+         m_empire_id_to_next_assigned_object_id.emplace(empire_id, ii);
         ++ii;
     }
 }

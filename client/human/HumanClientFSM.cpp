@@ -1,6 +1,7 @@
 #include "HumanClientFSM.h"
 
 #include "HumanClientApp.h"
+#include "../../combat/CombatLogManager.h"
 #include "../../Empire/Empire.h"
 #include "../../universe/System.h"
 #include "../../universe/Species.h"
@@ -18,6 +19,7 @@
 #include "../../UI/MapWnd.h"
 
 #include <boost/format.hpp>
+#include <boost/thread/mutex.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/uuid/nil_generator.hpp>
 #include <thread>
@@ -932,33 +934,70 @@ boost::statechart::result WaitingForTurnData::react(const SaveGameComplete& msg)
     return discard_event();
 }
 
+struct WaitingForTurnData::TurnDataUnpackedNotification::UnpackedData {
+    int current_turn = INVALID_GAME_TURN;
+    EmpireManager empires;
+    Universe universe;
+    SpeciesManager species;
+    CombatLogManager combat_logs;
+    SupplyManager supply;
+    std::map<int, PlayerInfo> player_info;
+};
+
+WaitingForTurnData::TurnDataUnpackedNotification::TurnDataUnpackedNotification() :
+    unpacked(std::make_shared<UnpackedData>())
+{}
+
+WaitingForTurnData::TurnDataUnpackedNotification::TurnDataUnpackedNotification(
+    std::shared_ptr<UnpackedData> unpacked_) :
+    unpacked(std::move(unpacked_))
+{}
+
 boost::statechart::result WaitingForTurnData::react(const TurnUpdate& msg) {
     TraceLogger(FSM) << "(HumanClientFSM) PlayingGame.TurnUpdate";
 
-    int current_turn = INVALID_GAME_TURN;
+    Client().GetClientUI().GetMapWnd()->ResetTimeoutClock(0);
     Client().Orders().Reset();
 
-    try {
-        ExtractTurnUpdateMessageData(msg.m_message,           Client().EmpireID(),    current_turn,
-                                     Empires(),               GetUniverse(),          GetSpeciesManager(),
-                                     GetCombatLogManager(),   GetSupplyManager(),     Client().Players());
-    } catch (...) {
-        Client().GetClientUI().GetMessageWnd()->HandleLogMessage(UserString("ERROR_PROCESSING_SERVER_MESSAGE") + "\n");
-        return discard_event();
-    }
+    auto& client{Client()};
+    auto unpack_action = [message{msg.m_message.Text()}, &client]() -> void {
+        TraceLogger(FSM) << "Unpacking TurnUpdate...";
+        auto unpacked_data = std::make_shared<TurnDataUnpackedNotification::UnpackedData>();
+        auto unpacking_finished_event{
+            boost::intrusive_ptr<const TurnDataUnpackedNotification>(
+                new TurnDataUnpackedNotification(unpacked_data), true)};
 
-    DebugLogger(FSM) << "Extracted TurnUpdate message for turn: " << current_turn;
+        try {
+            ExtractTurnUpdateMessageData(
+                std::move(message), client.EmpireID(),
+                unpacked_data->current_turn, unpacked_data->empires,
+                unpacked_data->universe, unpacked_data->species,
+                unpacked_data->combat_logs, unpacked_data->supply,
+                unpacked_data->player_info);
+        }
+        catch (...) {
+            client.GetClientUI().GetMessageWnd()->HandleLogMessage(UserString("ERROR_PROCESSING_SERVER_MESSAGE") + "\n");
+            return;
+        }
 
-    Client().SetCurrentTurn(current_turn);
+        client.PostDeferredEvent(std::move(unpacking_finished_event));
+    };
+    std::thread(unpack_action).detach();
+    return discard_event();
+}
 
-    // if I am the host, do autosave
-    if (Client().Networking().PlayerIsHost(Client().PlayerID()))
-        Client().Autosave();
+boost::statechart::result WaitingForTurnData::react(const TurnDataUnpackedNotification& data) {
+    TurnDataUnpackedNotification::UnpackedData& unpacked{*data.unpacked};
 
-    Client().UpdateCombatLogManager();
+    DebugLogger(FSM) << "Extracted TurnUpdate message for turn: " << unpacked.current_turn;
 
-    Client().GetClientUI().GetPlayerListWnd()->Refresh();
-    Client().GetClientUI().GetMapWnd()->ResetTimeoutClock(0);
+    Client().SetCurrentTurn(unpacked.current_turn);
+    Empires() = std::move(unpacked.empires);
+    GetUniverse() = std::move(unpacked.universe);
+    GetSpeciesManager() = std::move(unpacked.species);
+    GetCombatLogManager() = std::move(unpacked.combat_logs);
+    GetSupplyManager() = std::move(unpacked.supply);
+    Client().Players() = std::move(unpacked.player_info);
 
     return transit<PlayingTurn>();
 }
@@ -984,6 +1023,16 @@ PlayingTurn::PlayingTurn(my_context ctx) :
     Base(ctx)
 {
     TraceLogger(FSM) << "(HumanClientFSM) PlayingTurn";
+
+    // if I am the host, do autosave
+    if (Client().Networking().PlayerIsHost(Client().PlayerID()))
+        Client().Autosave();
+
+
+    Client().UpdateCombatLogManager();
+
+    Client().GetClientUI().GetPlayerListWnd()->Refresh();
+
     Client().Register(Client().GetClientUI().GetMapWnd());
     Client().GetClientUI().GetMapWnd()->InitTurn();
     Client().GetClientUI().GetMapWnd()->RegisterWindows(); // only useful at game start but InitTurn() takes a long time, don't want to display windows before content is ready.  could go in WaitingForGameStart dtor but what if it is given e.g. an error reaction?

@@ -4000,7 +4000,7 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
         if (obj->ObjectType() == UniverseObjectType::OBJ_FLEET) {
             continue;
         } else if (obj->ObjectType() == UniverseObjectType::OBJ_SHIP) {
-            auto ship = std::dynamic_pointer_cast<const Ship>(obj);
+            auto ship = static_cast<const Ship*>(obj.get());
             if (!ship)
                 continue;
             auto fleet = Objects().get<Fleet>(ship->FleetID());
@@ -4640,8 +4640,9 @@ void MapWnd::ForgetObject(int id) {
         return;
 
     // If there is only 1 ship in a fleet, forget the fleet
-    auto ship = std::dynamic_pointer_cast<const Ship>(obj);
-    if (ship) {
+    const Ship* ship = nullptr;
+    if (obj->ObjectType() == UniverseObjectType::OBJ_SHIP) {
+        ship = static_cast<const Ship*>(obj.get());
         if (auto ship_s_fleet = GetUniverse().Objects().get<const Fleet>(ship->FleetID())) {
             bool only_ship_in_fleet = ship_s_fleet->NumShips() == 1;
             if (only_ship_in_fleet)
@@ -4662,7 +4663,8 @@ void MapWnd::ForgetObject(int id) {
     RequirePreRender();
 
     // Update fleet wnd if needed
-    if (auto fleet = std::dynamic_pointer_cast<const Fleet>(obj)) {
+    if (obj->ObjectType() == UniverseObjectType::OBJ_FLEET) {
+        auto fleet = static_cast<Fleet*>(obj.get());
         RemoveFleet(fleet->ID());
         fleet->StateChangedSignal();
     }
@@ -4831,8 +4833,10 @@ namespace {
                                                   const std::set<int>& stale_object_info)
     {
         int object_id = obj->ID();
-        auto fleet = std::dynamic_pointer_cast<const Fleet>(obj);
+        if (obj->ObjectType() != UniverseObjectType::OBJ_FLEET)
+            return nullptr;
 
+        auto fleet = std::static_pointer_cast<const Fleet>(obj);
         if (fleet
             && !fleet->Empty()
             && (known_destroyed_objects.count(object_id) == 0)
@@ -5835,8 +5839,8 @@ void MapWnd::UniverseObjectDeleted(std::shared_ptr<const UniverseObject> obj) {
         DebugLogger() << "MapWnd::UniverseObjectDeleted: " << obj->ID();
     else
         DebugLogger() << "MapWnd::UniverseObjectDeleted: NO OBJECT";
-    if (auto fleet = std::dynamic_pointer_cast<const Fleet>(obj))
-        RemoveFleet(fleet->ID());
+    if (obj->ObjectType() == UniverseObjectType::OBJ_FLEET)
+        RemoveFleet(obj->ID());
 }
 
 void MapWnd::RegisterPopup(std::shared_ptr<MapWndPopup>&& popup) {

@@ -1030,7 +1030,7 @@ void ServerApp::LoadChatHistory() {
 
 void ServerApp::PushChatMessage(const std::string& text,
                                 const std::string& player_name,
-                                GG::Clr text_color,
+                                std::array<unsigned char, 4> text_color,
                                 const boost::posix_time::ptime& timestamp)
 {
     ChatHistoryEntity chat{timestamp, player_name, text, text_color};

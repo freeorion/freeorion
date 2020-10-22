@@ -202,9 +202,12 @@ public:
         const std::chrono::milliseconds& timeout = std::chrono::seconds(10),
         bool expect_timeout = false);
 
-    /** Sends \a message to the server.  This function actually just enqueues
+    /** Sends \a message to the server. This function actually just enqueues
         the message for sending and returns immediately. */
-    void SendMessage(const Message& message);
+    void SendMessage(Message&& message);
+
+    /** Adds a message to this client's incoming messages queue. */
+    void SendSelfMessage(Message&& message);
 
     /** Return the next incoming message from the server if available or boost::none.
         Remove the message from the incoming message queue. */
@@ -463,20 +466,24 @@ void ClientNetworking::Impl::SetHostPlayerID(int host_player_id)
 Networking::AuthRoles& ClientNetworking::Impl::AuthorizationRoles()
 { return m_roles; }
 
-void ClientNetworking::Impl::SendMessage(const Message& message) {
+void ClientNetworking::Impl::SendMessage(Message&& message) {
     if (!IsTxConnected()) {
         ErrorLogger(network) << "ClientNetworking::SendMessage can't send message when not transmit connected";
         return;
     }
     TraceLogger(network) << "ClientNetworking::SendMessage() : sending message " << message;
-    m_io_context.post(boost::bind(&ClientNetworking::Impl::SendMessageImpl, this, message));
+    m_io_context.post(boost::bind(&ClientNetworking::Impl::SendMessageImpl, this, std::move(message)));
+}
+
+void ClientNetworking::Impl::SendSelfMessage(Message&& message) {
+    TraceLogger(network) << "ClientNetworking::SendSelfMessage() : sending self message " << message;
+    m_incoming_messages.PushBack(std::move(message));
 }
 
 boost::optional<Message> ClientNetworking::Impl::GetMessage() {
-    const auto message = m_incoming_messages.PopFront();
+    auto message = m_incoming_messages.PopFront();
     if (message)
-        TraceLogger(network) << "ClientNetworking::GetMessage() : received message "
-                             << *message;
+        TraceLogger(network) << "ClientNetworking::GetMessage() : received message " << *message;
     return message;
 }
 
@@ -625,8 +632,7 @@ void ClientNetworking::Impl::AsyncWriteMessage() {
 
 void ClientNetworking::Impl::SendMessageImpl(Message message) {
     bool start_write = m_outgoing_messages.empty();
-    m_outgoing_messages.push_back(Message());
-    swap(m_outgoing_messages.back(), message);
+    m_outgoing_messages.push_back(std::move(message));
     if (start_write)
         AsyncWriteMessage();
 }
@@ -729,8 +735,11 @@ void ClientNetworking::SetHostPlayerID(int host_player_id)
 Networking::AuthRoles& ClientNetworking::AuthorizationRoles()
 { return m_impl->AuthorizationRoles(); }
 
-void ClientNetworking::SendMessage(const Message& message)
-{ return m_impl->SendMessage(message); }
+void ClientNetworking::SendMessage(Message message)
+{ m_impl->SendMessage(std::move(message)); }
+
+void ClientNetworking::SendSelfMessage(Message message)
+{ m_impl->SendSelfMessage(std::move(message)); }
 
 boost::optional<Message> ClientNetworking::GetMessage()
 { return m_impl->GetMessage(); }

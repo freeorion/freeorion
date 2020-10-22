@@ -2,6 +2,7 @@
 #define _Tech_h_
 
 
+#include <array>
 #include <map>
 #include <set>
 #include <string>
@@ -11,7 +12,6 @@
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index_container.hpp>
 #include <boost/optional/optional.hpp>
-#include <GG/Clr.h>
 #include "EnumsFwd.h"
 #include "../util/Export.h"
 #include "../util/Pending.h"
@@ -132,14 +132,14 @@ private:
 struct FO_COMMON_API TechCategory {
     TechCategory() = default;
     TechCategory(std::string name_, std::string&& graphic_,
-                 GG::Clr colour_):
+                 const std::array<unsigned char, 4>& colour_):
         name(std::move(name_)),
         graphic(std::move(graphic_)),
         colour(colour_)
     {}
     std::string name;                       ///< name of category
     std::string graphic;                    ///< icon that represents catetegory
-    GG::Clr     colour{255, 255, 255, 255}; ///< colour associatied with category
+    std::array<unsigned char, 4> colour{255, 255, 255, 255}; ///< colour associatied with category
 };
 
 namespace CheckSums {

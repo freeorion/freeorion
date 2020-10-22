@@ -105,7 +105,9 @@ public:
     typedef boost::signals2::signal<void (std::shared_ptr<const UniverseObject>)> UniverseObjectDeleteSignalType;
 
     Universe();
+    Universe& operator=(Universe&& other) noexcept;
     virtual ~Universe();
+
 
     /** Returns objects in this Universe. */
     const ObjectMap&        Objects() const { return m_objects; }
@@ -504,8 +506,8 @@ private:
 
     std::map<int, std::set<int>>    m_marked_destroyed;                 ///< used while applying effects to cache objects that have been destroyed.  this allows to-be-destroyed objects to remain undestroyed until all effects have been processed, which ensures that to-be-destroyed objects still exist when other effects need to access them as a source object. key is destroyed object, and value set are the ids of objects that caused the destruction (may be multiples destroying a single target on a given turn)
 
-    double                          m_universe_width;
-    bool                            m_inhibit_universe_object_signals;
+    double                          m_universe_width = 1000.0;
+    bool                            m_inhibit_universe_object_signals = false;
 
     std::map<std::string, std::map<int, std::map<int, double>>>
                                     m_stat_records;                     ///< storage for statistics calculated for empires. Indexed by stat name (string), contains a map indexed by empire id, contains a map from turn number (int) to stat value (double).
@@ -563,10 +565,10 @@ private:
     void GetEmpireStaleKnowledgeObjects(ObjectKnowledgeMap& empire_stale_knowledge_object_ids, int encoding_empire) const;
 
     /** Manages allocating and verifying new object ids.*/
-    std::unique_ptr<IDAllocator> const m_object_id_allocator;
+    std::unique_ptr<IDAllocator> m_object_id_allocator;
 
     /** Manages allocating and verifying new ship design ids.*/
-    std::unique_ptr<IDAllocator> const m_design_id_allocator;
+    std::unique_ptr<IDAllocator> m_design_id_allocator;
 
     template <typename Archive>
     friend void serialize(Archive&, Universe&, unsigned int const);

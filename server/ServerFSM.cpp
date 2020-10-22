@@ -27,8 +27,6 @@
 #include <boost/uuid/nil_generator.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
-#include <GG/ClrConstants.h>
-
 #include <iterator>
 
 
@@ -37,6 +35,9 @@ CombatLogManager&   GetCombatLogManager();
 
 namespace {
     DeclareThreadSafeLogger(FSM);
+
+    constexpr EmpireColor CLR_SERVER{255, 255, 255, 255};
+    constexpr EmpireColor CLR_ZERO{0, 0, 0, 0};
 
     void SendMessageToAllPlayers(const Message& message) {
         ServerApp* server = ServerApp::GetApp();
@@ -116,11 +117,11 @@ namespace {
             case Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER:      ss << "PLAYER, "; break;
             default:                                        ss << "<invalid client type>, ";
             }
-            GG::Clr empire_color = entry.second.empire_color;
-            ss << "(" << static_cast<unsigned int>(empire_color.r)
-               << ", " << static_cast<unsigned int>(empire_color.g)
-               << ", " << static_cast<unsigned int>(empire_color.b)
-               << ", " << static_cast<unsigned int>(empire_color.a) << "), ";
+            EmpireColor empire_color = entry.second.empire_color;
+            ss << "(" << static_cast<unsigned int>(std::get<0>(empire_color))
+               << ", " << static_cast<unsigned int>(std::get<1>(empire_color))
+               << ", " << static_cast<unsigned int>(std::get<2>(empire_color))
+               << ", " << static_cast<unsigned int>(std::get<3>(empire_color)) << "), ";
             ss << entry.second.starting_species_name;
             if (entry.second.player_ready)
                 ss << ", Ready";
@@ -189,18 +190,18 @@ namespace {
         return save_path.string();
     }
 
-    GG::Clr GetUnusedEmpireColour(const std::list<std::pair<int, PlayerSetupData>>& psd,
+    EmpireColor GetUnusedEmpireColour(const std::list<std::pair<int, PlayerSetupData>>& psd,
                                   const std::map<int, SaveGameEmpireData> &sged = std::map<int, SaveGameEmpireData>())
     {
         //DebugLogger(FSM) << "finding colours for empire of player " << player_name;
-        GG::Clr empire_colour = GG::Clr(192, 192, 192, 255);
-        for (const GG::Clr& possible_colour : EmpireColors()) {
+        EmpireColor empire_colour{192, 192, 192, 255};
+        for (const EmpireColor& possible_colour : EmpireColors()) {
             //DebugLogger(FSM) << "trying colour " << possible_colour.r << ", " << possible_colour.g << ", " << possible_colour.b;
 
             // check if any other player / empire is using this colour
             bool colour_is_new = true;
             for (const std::pair<int, PlayerSetupData>& entry : psd) {
-                const GG::Clr& player_colour = entry.second.empire_color;
+                const EmpireColor& player_colour = entry.second.empire_color;
                 if (player_colour == possible_colour) {
                     colour_is_new = false;
                     break;
@@ -209,7 +210,7 @@ namespace {
 
             if (colour_is_new) {
                 for (const auto& entry : sged) {
-                    const GG::Clr& player_colour = entry.second.color;
+                    const EmpireColor& player_colour = entry.second.color;
                     if (player_colour == possible_colour) {
                         colour_is_new = false;
                         break;
@@ -327,7 +328,7 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
         // add "player left game" message
         boost::posix_time::ptime timestamp = boost::posix_time::second_clock::universal_time();
         std::string data = std::string("[[") + UserStringNop("PLAYER_LEFT_GAME") + "," + player_connection->PlayerName() + "]]";
-        m_server.PushChatMessage(data, "", GG::CLR_WHITE, timestamp);
+        m_server.PushChatMessage(data, "", CLR_SERVER, timestamp);
 
         // send message to other players
         for (auto it = m_server.m_networking.established_begin();
@@ -445,7 +446,7 @@ void ServerFSM::UpdateIngameLobby() {
             player_setup_data.empire_name = empire->Name();
             player_setup_data.empire_color = empire->Color();
         } else {
-            player_setup_data.empire_color = GG::Clr(255, 255, 255, 255);
+            player_setup_data.empire_color = {255, 255, 255, 255};
         }
         player_setup_data.authenticated = (*player_it)->IsAuthenticated();
         dummy_lobby_data.players.push_back({player_id, player_setup_data});
@@ -552,7 +553,7 @@ bool ServerFSM::EstablishPlayer(const PlayerConnectionPtr& player_connection,
             // add "player enter game" message
             boost::posix_time::ptime timestamp = boost::posix_time::second_clock::universal_time();
             std::string data = std::string("[[") + UserStringNop("PLAYER_ENTERED_GAME") + "," + player_connection->PlayerName() + "]]";
-            m_server.PushChatMessage(data, "", GG::CLR_WHITE, timestamp);
+            m_server.PushChatMessage(data, "", CLR_SERVER, timestamp);
 
             // send message to other players
             for (auto it = m_server.m_networking.established_begin();
@@ -1048,7 +1049,7 @@ sc::result MPLobby::react(const Disconnection& d) {
         // add "player left game" message
         boost::posix_time::ptime timestamp = boost::posix_time::second_clock::universal_time();
         std::string data = std::string("[[") + UserStringNop("PLAYER_LEFT_GAME") + "," + player_connection->PlayerName() + "]]";
-        server.PushChatMessage(data, "", GG::CLR_WHITE, timestamp);
+        server.PushChatMessage(data, "", CLR_SERVER, timestamp);
 
         // send message to other players
         for (auto it = server.m_networking.established_begin();
@@ -1299,7 +1300,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             if (psd.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER ||
                 psd.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR)
             {
-                psd.empire_color = GG::CLR_ZERO;
+                psd.empire_color = CLR_ZERO;
                 // On OSX the following two lines must not be included.
                 // Clearing empire name and starting species name from
                 // PlayerSetupData causes a weird crash (bus error) deep
@@ -1312,7 +1313,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                 psd.save_game_empire_id = ALL_EMPIRES;
 
             } else if (psd.client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER) {
-                if (psd.empire_color == GG::CLR_ZERO)
+                if (psd.empire_color == CLR_ZERO)
                     psd.empire_color = GetUnusedEmpireColour(incoming_lobby_data.players);
                 if (psd.player_name.empty())
                     // ToDo: Should we translate player_name?
@@ -1327,7 +1328,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                 }
 
             } else if (psd.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER) {
-                if (psd.empire_color == GG::CLR_ZERO)
+                if (psd.empire_color == CLR_ZERO)
                     psd.empire_color = GetUnusedEmpireColour(incoming_lobby_data.players);
                 if (psd.empire_name.empty())
                     psd.empire_name = psd.player_name;
@@ -1338,7 +1339,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
 
         bool has_collision = false;
         // check for color, names, and IDs
-        std::set<GG::Clr> psd_colors;
+        std::set<EmpireColor> psd_colors;
         std::set<std::string> psd_names;
         std::set<int> psd_ids;
         for (auto& player : incoming_lobby_data.players) {
@@ -1606,7 +1607,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                 // found sender at incoming_lobby_data
 
                 // check for color and names
-                std::set<GG::Clr> psd_colors;
+                std::set<EmpireColor> psd_colors;
                 std::set<std::string> psd_names;
                 for (auto& k_player : m_lobby_data->players) {
                     if (k_player.first == sender->PlayerID())
@@ -1698,7 +1699,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
         // reset assigned empires in save game for all players.  new loaded game may not have the same set of empire IDs to choose from
         for (auto& psd : m_lobby_data->players) {
             psd.second.save_game_empire_id = ALL_EMPIRES;
-            psd.second.empire_color = GG::CLR_ZERO;
+            psd.second.empire_color = CLR_ZERO;
         }
 
         // refresh save game empire data
@@ -1840,7 +1841,7 @@ sc::result MPLobby::react(const PlayerChat& msg) {
 
     if (recipients.empty() && sender->GetClientType() != Networking::ClientType::CLIENT_TYPE_AI_PLAYER)
     {
-        GG::Clr text_color(255, 255, 255, 255);
+        EmpireColor text_color = CLR_SERVER;
         for (const auto& player : m_lobby_data->players) {
             if (player.first != sender->PlayerID())
                 continue;
@@ -2557,7 +2558,7 @@ sc::result PlayingGame::react(const PlayerChat& msg) {
 
     if (recipients.empty() && sender->GetClientType() != Networking::ClientType::CLIENT_TYPE_AI_PLAYER)
     {
-        GG::Clr text_color(255, 255, 255, 255);
+        EmpireColor text_color = CLR_SERVER;
         if (auto empire = GetEmpire(server.PlayerEmpireID(sender->PlayerID())))
             text_color = empire->Color();
 

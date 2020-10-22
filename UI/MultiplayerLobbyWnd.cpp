@@ -353,7 +353,7 @@ namespace {
             DataChangedSignal();
         }
         void ColorChanged(const GG::Clr& clr) {
-            m_player_data.empire_color = clr;
+            m_player_data.empire_color = {clr.r, clr.g, clr.b, clr.a};
             DataChangedSignal();
         }
         void SpeciesChanged(const std::string& str) {
@@ -1029,7 +1029,7 @@ bool MultiPlayerLobbyWnd::PopulatePlayerList() {
                 boost::bind(&MultiPlayerLobbyWnd::PlayerDataChangedLocally, this));
 
         } else {
-            bool immutable_row = 
+            bool immutable_row =
                 (!HasAuthRole(Networking::RoleType::ROLE_HOST) &&
                     (data_player_id != HumanClientApp::GetApp()->PlayerID()) &&
                     !(psd.client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER &&
@@ -1159,10 +1159,10 @@ bool MultiPlayerLobbyWnd::PlayerDataAcceptable() const {
             empire_names.insert(prow.m_player_data.empire_name);
 
             unsigned int color_as_uint =
-                prow.m_player_data.empire_color.r << 24 |
-                prow.m_player_data.empire_color.g << 16 |
-                prow.m_player_data.empire_color.b << 8 |
-                prow.m_player_data.empire_color.a;
+                std::get<0>(prow.m_player_data.empire_color) << 24 |
+                std::get<1>(prow.m_player_data.empire_color) << 16 |
+                std::get<2>(prow.m_player_data.empire_color) << 8 |
+                std::get<3>(prow.m_player_data.empire_color);
             empire_colors.insert(color_as_uint);
         } else if (prow.m_player_data.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER ||
                    prow.m_player_data.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR)
