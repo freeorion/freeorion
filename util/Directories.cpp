@@ -2,7 +2,6 @@
 
 #include "OptionsDB.h"
 #include "i18n.h"
-#include <GG/utf8/checked.h>
 
 #include <boost/filesystem/convenience.hpp>
 #include <boost/filesystem/operations.hpp>
@@ -10,6 +9,11 @@
 
 #include <cstdlib>
 #include <mutex>
+
+#if defined(FREEORION_WIN32)
+#  include <codecvt>
+#  include <locale>
+#endif
 
 #if defined(FREEORION_MACOSX)
 #  include <iostream>
@@ -99,7 +103,7 @@ namespace {
         msg << "Freeorion added support for the XDG Base Directory Specification.\n\n"
             << "Configuration files and data were migrated from:\n"
             << old_path << "\n\n"
-            << "Configuration were files copied to:\n" 
+            << "Configuration were files copied to:\n"
             << config_path << "\n\n"
             << "Data Files were copied to:\n" << data_path << "\n\n"
             << "If your save.path option in persistent_config.xml was ~/.config, then you need to update it.\n";
@@ -554,9 +558,7 @@ auto FilenameToPath(std::string const& path_str) -> fs::path
 {
 #if defined(FREEORION_WIN32)
     // convert UTF-8 directory string to UTF-16
-    fs::path::string_type directory_native;
-    directory_native.reserve(path_str.size());
-    utf8::utf8to16(path_str.begin(), path_str.end(), std::back_inserter(directory_native));
+    fs::path::string_type directory_native = std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}.from_bytes(path_str);
 #if (BOOST_VERSION >= 106300)
     return fs::path(directory_native).generic_path();
 #else
@@ -571,9 +573,7 @@ auto PathToString(fs::path const& path) -> std::string
 {
 #if defined(FREEORION_WIN32)
     fs::path::string_type native_string = path.generic_wstring();
-    std::string retval;
-    retval.reserve(native_string.length()); // may be underestimate
-    utf8::utf16to8(native_string.begin(), native_string.end(), std::back_inserter(retval));
+    std::string retval = std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}.to_bytes(native_string);
     return retval;
 #else // defined(FREEORION_WIN32)
     return path.string();
@@ -588,7 +588,7 @@ auto FilenameTimestamp() -> std::string
     date_stream.imbue(std::locale(date_stream.getloc(), facet));// alternate locales: GetLocale("en_US.UTF-8") or GetLocale("ja_JA.UTF-8") or date_stream.getloc()
     date_stream << boost::posix_time::microsec_clock::local_time();
     std::string retval = date_stream.str();
-    TraceLogger() << "Filename initial timestamp: " << retval << " is valid utf8?: " << utf8::is_valid(retval.begin(), retval.end());
+    TraceLogger() << "Filename initial timestamp: " << retval;
 
     // replace spaces and colons with safer chars for filenames
     std::replace(retval.begin(), retval.end(), ' ', '_');
@@ -597,7 +597,7 @@ auto FilenameTimestamp() -> std::string
     // filter non-filename-safe characters that are valid single-byte UTF-8 characters, in case the default locale for this system has weird chars in the time-date format
     auto do_remove = [](char c) -> bool { return !std::isalnum(c) && c <= 127 && c != '_' && c != '-'; };
     retval.erase(std::remove_if(retval.begin(), retval.end(), do_remove), retval.end());
-    TraceLogger() << "Filename filtered timestamp: " << retval << " is valid utf8?: " << utf8::is_valid(retval.begin(), retval.end());
+    TraceLogger() << "Filename filtered timestamp: " << retval;
 
     return retval;
 }

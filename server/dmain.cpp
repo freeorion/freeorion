@@ -1,12 +1,13 @@
 #include "ServerApp.h"
 
+#include <codecvt>
+#include <locale>
+
 #include "../util/OptionsDB.h"
 #include "../util/Directories.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
 #include "../util/Version.h"
-
-#include <GG/utf8/checked.h>
 
 #include <boost/filesystem/fstream.hpp>
 
@@ -37,8 +38,7 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
     std::vector<std::string> args;
     for (int i = 0; i < argc; ++i) {
         std::wstring argi16(argv[i]);
-        std::string argi8;
-        utf8::utf16to8(argi16.begin(), argi16.end(), std::back_inserter(argi8));
+        std::string argi8 = std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}.to_bytes(argi16);
         args.push_back(argi8);
     }
     InitDirs((args.empty() ? "" : *args.begin()));
