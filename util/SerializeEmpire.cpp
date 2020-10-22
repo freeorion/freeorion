@@ -170,9 +170,15 @@ void Empire::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_id)
         & BOOST_SERIALIZATION_NVP(m_name)
-        & BOOST_SERIALIZATION_NVP(m_player_name)
-        & BOOST_SERIALIZATION_NVP(m_color)
-        & BOOST_SERIALIZATION_NVP(m_capital_id)
+        & BOOST_SERIALIZATION_NVP(m_player_name);
+    if (Archive::is_loading::value && version < 5) {
+        CompatColor old_color;
+        ar & boost::serialization::make_nvp("m_color", old_color);
+        m_color = {old_color.r, old_color.g, old_color.b, old_color.a};
+    } else {
+        ar & BOOST_SERIALIZATION_NVP(m_color);
+    }
+    ar  & BOOST_SERIALIZATION_NVP(m_capital_id)
         & BOOST_SERIALIZATION_NVP(m_source_id)
         & BOOST_SERIALIZATION_NVP(m_eliminated)
         & BOOST_SERIALIZATION_NVP(m_victories);
@@ -302,7 +308,7 @@ void Empire::serialize(Archive& ar, const unsigned int version)
     TraceLogger() << "DONE serializing empire " << m_id << ": " << m_name;
 }
 
-BOOST_CLASS_VERSION(Empire, 4)
+BOOST_CLASS_VERSION(Empire, 5)
 
 template void Empire::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
 template void Empire::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);

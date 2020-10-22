@@ -115,9 +115,15 @@ void serialize(Archive& ar, SaveGamePreviewData& obj, unsigned int const version
     }
     ar & make_nvp("magic_number", obj.magic_number)
        & make_nvp("main_player_name", obj.main_player_name);
-    ar & make_nvp("main_player_empire_name", obj.main_player_empire_name)
-       & make_nvp("main_player_empire_colour", obj.main_player_empire_colour)
-       & make_nvp("save_time", obj.save_time)
+    ar & make_nvp("main_player_empire_name", obj.main_player_empire_name);
+    if (Archive::is_loading::value && version < 5) {
+        CompatColor old_color;
+        ar & make_nvp("main_player_empire_colour", old_color);
+        obj.main_player_empire_colour = {old_color.r, old_color.g, old_color.b, old_color.a};
+    } else {
+        ar & make_nvp("main_player_empire_colour", obj.main_player_empire_colour);
+    }
+    ar & make_nvp("save_time", obj.save_time)
        & make_nvp("current_turn", obj.current_turn);
     if (version > 0) {
         ar & make_nvp("number_of_empires", obj.number_of_empires)
@@ -232,8 +238,14 @@ void serialize(Archive& ar, SaveGameEmpireData& obj, unsigned int const version)
 
     ar  & make_nvp("m_empire_id", obj.empire_id)
         & make_nvp("m_empire_name", obj.empire_name)
-        & make_nvp("m_player_name", obj.player_name)
-        & make_nvp("m_color", obj.color);
+        & make_nvp("m_player_name", obj.player_name);
+    if (Archive::is_loading::value && version < 3) {
+        CompatColor old_color;
+        ar & make_nvp("m_color", old_color);
+        obj.color = {old_color.r, old_color.g, old_color.b, old_color.a};
+    } else {
+        ar & make_nvp("m_color", obj.color);
+    }
     if (version >= 1) {
         ar & make_nvp("m_authenticated", obj.authenticated);
     }
