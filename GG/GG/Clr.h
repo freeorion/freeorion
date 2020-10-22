@@ -15,6 +15,7 @@
 #define _GG_Clr_h_
 
 
+#include <algorithm>
 #include <sstream>
 #include <stdexcept>
 #include <string>
