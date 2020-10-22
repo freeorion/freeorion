@@ -13,8 +13,6 @@
 #include "../util/SitRepEntry.h"
 #include "SetWrapper.h"
 
-#include <GG/Clr.h>
-
 #include <boost/mpl/vector.hpp>
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/map_indexing_suite.hpp>
@@ -233,7 +231,7 @@ namespace FreeOrionPython {
             .add_property("empireID",               &Empire::EmpireID)
             .add_property("capitalID",              &Empire::CapitalID)
 
-            .add_property("colour",                 make_function(&Empire::Color,                   py::return_value_policy<py::copy_const_reference>()))
+            .add_property("colour",                 +[](const Empire& empire) { EmpireColor color = empire.Color(); return py::make_tuple(std::get<0>(color), std::get<1>(color), std::get<2>(color), std::get<3>(color)); })
 
             .def("buildingTypeAvailable",           &Empire::BuildingTypeAvailable)
             .add_property("availableBuildingTypes", make_function(&Empire::AvailableBuildingTypes,  py::return_internal_reference<>()))
@@ -495,16 +493,6 @@ namespace FreeOrionPython {
             .add_property("status",             &DiplomaticStatusUpdateInfo::diplo_status)
             .add_property("empire1",            &DiplomaticStatusUpdateInfo::empire1_id)
             .add_property("empire2",            &DiplomaticStatusUpdateInfo::empire2_id)
-        ;
-
-        ///////////
-        // Color //
-        ///////////
-        py::class_<GG::Clr>("GGColor", py::init<unsigned char, unsigned char, unsigned char, unsigned char>())
-            .add_property("r",                  &GG::Clr::r)
-            .add_property("g",                  &GG::Clr::g)
-            .add_property("b",                  &GG::Clr::b)
-            .add_property("a",                  &GG::Clr::a)
         ;
     }
 }

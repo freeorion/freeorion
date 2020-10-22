@@ -1275,6 +1275,16 @@ namespace {
 
         return py::object(planet->CardinalSuffix());
     }
+
+    auto PlayerEmpireColor(const PlayerSetupData* psd) -> py::tuple
+    {
+        EmpireColor color = psd->empire_color;
+        return py::make_tuple(
+            std::get<0>(color),
+            std::get<1>(color),
+            std::get<2>(color),
+            std::get<3>(color));
+    }
 }
 
 namespace FreeOrionPython {
@@ -1282,7 +1292,7 @@ namespace FreeOrionPython {
         py::class_<PlayerSetupData>("PlayerSetupData")
             .def_readwrite("player_name",        &PlayerSetupData::player_name)
             .def_readwrite("empire_name",        &PlayerSetupData::empire_name)
-            .def_readonly("empire_color",        &PlayerSetupData::empire_color)
+            .add_property("empire_color",        PlayerEmpireColor)
             .def_readwrite("starting_species",   &PlayerSetupData::starting_species_name)
             .def_readwrite("starting_team",      &PlayerSetupData::starting_team);
 

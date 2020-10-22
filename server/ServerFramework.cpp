@@ -234,7 +234,13 @@ auto PythonServer::LoadChatHistory(boost::circular_buffer<ChatHistoryEntity>& ch
             e.timestamp = boost::posix_time::from_time_t(py::extract<time_t>((*it)[0]));;
             e.player_name = py::extract<std::string>((*it)[1]);
             e.text = py::extract<std::string>((*it)[2]);
-            e.text_color = py::extract<GG::Clr>((*it)[3]);
+            py::tuple color = py::extract<py::tuple>((*it)[3]);
+            e.text_color = std::array<unsigned char, 4>{
+                py::extract<unsigned char>(color[0]),
+                py::extract<unsigned char>(color[1]),
+                py::extract<unsigned char>(color[2]),
+                py::extract<unsigned char>(color[3])
+            };
             chat_history.push_back(e);
         }
     }
@@ -255,10 +261,12 @@ auto PythonServer::PutChatHistoryEntity(const ChatHistoryEntity& chat_history_en
         return false;
     }
 
+    auto color = chat_history_entity.text_color;
+
     return f(py::long_(to_time_t(chat_history_entity.timestamp)),
              chat_history_entity.player_name,
              chat_history_entity.text,
-             chat_history_entity.text_color);
+             py::make_tuple(std::get<0>(color), std::get<1>(color), std::get<2>(color), std::get<3>(color)));
 }
 
 auto PythonServer::CreateUniverse(std::map<int, PlayerSetupData>& player_setup_data) -> bool

@@ -118,7 +118,7 @@ void EmpireManager::BackPropagateMeters() {
 
 void EmpireManager::CreateEmpire(int empire_id, std::string name,
                                  std::string player_name,
-                                 const GG::Clr& color, bool authenticated)
+                                 const EmpireColor& color, bool authenticated)
 {
     auto empire = std::make_shared<Empire>(std::move(name), std::move(player_name),
                                            empire_id, color, authenticated);
@@ -366,9 +366,43 @@ void EmpireManager::GetDiplomaticMessagesToSerialize(std::map<std::pair<int, int
     }
 }
 
-std::vector<GG::Clr>& EmpireColorsNonConst() {
-    static std::vector<GG::Clr> colors;
+std::vector<EmpireColor>& EmpireColorsNonConst() {
+    static std::vector<EmpireColor> colors;
     return colors;
+}
+
+/** Named ctor that constructs a EmpireColor from a string that represents the color
+    channels in the format '#RRGGBB', '#RRGGBBAA' where each channel value
+    ranges from 0 to FF.  When the alpha component is left out the alpha
+    value FF is assumed.
+    @throws std::invalid_argument if the hex_colour string is not well formed
+    */
+inline EmpireColor HexClr(const std::string& hex_colour)
+{
+    std::istringstream iss(hex_colour);
+
+    unsigned long rgba = 0;
+    if ((hex_colour.size() == 7 || hex_colour.size() == 9) &&
+            '#' == iss.get() && !(iss >> std::hex >> rgba).fail())
+    {
+        EmpireColor retval = EmpireColor{0, 0, 0, 255};
+
+        if (hex_colour.size() == 7) {
+            std::get<0>(retval) = (rgba >> 16) & 0xFF;
+            std::get<1>(retval) = (rgba >> 8)  & 0xFF;
+            std::get<2>(retval) = rgba         & 0xFF;
+            std::get<3>(retval) = 255;
+        } else {
+            std::get<0>(retval) = (rgba >> 24) & 0xFF;
+            std::get<1>(retval) = (rgba >> 16) & 0xFF;
+            std::get<2>(retval) = (rgba >> 8)  & 0xFF;
+            std::get<3>(retval) = rgba         & 0xFF;
+        }
+
+        return retval;
+    }
+
+    throw std::invalid_argument("EmpireColor could not interpret hex colour string");
 }
 
 void InitEmpireColors(const boost::filesystem::path& path) {
@@ -389,18 +423,18 @@ void InitEmpireColors(const boost::filesystem::path& path) {
         try {
             std::string hex_colour("#");
             hex_colour.append(elem.attributes.at("hex"));
-            colors.push_back(GG::HexClr(hex_colour));
+            colors.push_back(HexClr(hex_colour));
         } catch(const std::exception& e) {
             ErrorLogger() << "empire_colors.xml: " << e.what() << "\n";
         }
     }
 }
 
-const std::vector<GG::Clr>& EmpireColors() {
+const std::vector<EmpireColor>& EmpireColors() {
     auto& colors = EmpireColorsNonConst();
     if (colors.empty()) {
-        colors = {  GG::Clr(  0, 255,   0, 255),    GG::Clr(  0,   0, 255, 255),    GG::Clr(255,   0,   0, 255),
-                    GG::Clr(  0, 255, 255, 255),    GG::Clr(255, 255,   0, 255),    GG::Clr(255,   0, 255, 255)};
+        colors = {  {  0, 255,   0, 255},    {  0,   0, 255, 255},    {255,   0,   0, 255},
+                    {  0, 255, 255, 255},    {255, 255,   0, 255},    {255,   0, 255, 255}};
     }
     return colors;
 }

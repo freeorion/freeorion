@@ -62,13 +62,13 @@ namespace {
     }
 
     //Copied pasted from Font.cpp due to Font not being linked into AI and server code
-    std::string WrapColorTag(std::string const & text, const GG::Clr& c) {
+    std::string WrapColorTag(std::string const & text, const EmpireColor& c) {
         std::stringstream stream;
         stream << "<rgba "
-               << static_cast<int>(c.r) << " "
-               << static_cast<int>(c.g) << " "
-               << static_cast<int>(c.b) << " "
-               << static_cast<int>(c.a)
+               << static_cast<int>(std::get<0>(c)) << " "
+               << static_cast<int>(std::get<1>(c)) << " "
+               << static_cast<int>(std::get<2>(c)) << " "
+               << static_cast<int>(std::get<3>(c))
                << ">" << text << "</rgba>";
         return stream.str();
     }
@@ -77,7 +77,7 @@ namespace {
         // TODO: refactor this to somewhere that links with the UI code.
         // Hardcoded default color becauses not linked with UI code.
         const Empire* empire = GetEmpire(empire_id);
-        GG::Clr c = (empire ? empire->Color() : GG::Clr(80,255,128,255));
+        EmpireColor c = (empire ? empire->Color() : EmpireColor{80,255,128,255});
         return WrapColorTag(text, c);
     }
 

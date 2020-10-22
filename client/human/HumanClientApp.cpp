@@ -569,12 +569,12 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
 
     // DB stores index into array of available colours, so need to get that array to look up value of index.
     // if stored value is invalid, use a default colour
-    const std::vector<GG::Clr>& empire_colours = EmpireColors();
+    const std::vector<EmpireColor>& empire_colours = EmpireColors();
     int colour_index = GetOptionsDB().Get<int>("setup.empire.color.index");
     if (colour_index >= 0 && colour_index < static_cast<int>(empire_colours.size()))
         human_player_setup_data.empire_color = empire_colours[colour_index];
     else
-        human_player_setup_data.empire_color = GG::CLR_GREEN;
+        human_player_setup_data.empire_color = {GG::CLR_GREEN.r, GG::CLR_GREEN.g, GG::CLR_GREEN.b, GG::CLR_GREEN.a};
 
     human_player_setup_data.starting_species_name = GetOptionsDB().Get<std::string>("setup.initial.species");
     if (human_player_setup_data.starting_species_name == "1")
@@ -604,7 +604,6 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
 
         ai_setup_data.player_name = "AI_" + std::to_string(ai_i);
         ai_setup_data.empire_name.clear();                // leave blank, to be set by server in Universe::GenerateEmpires
-        ai_setup_data.empire_color = GG::CLR_ZERO;        // to be set by server
         ai_setup_data.starting_species_name.clear();      // leave blank, to be set by server
         ai_setup_data.save_game_empire_id = ALL_EMPIRES;  // not used for new games
         ai_setup_data.client_type = Networking::ClientType::CLIENT_TYPE_AI_PLAYER;

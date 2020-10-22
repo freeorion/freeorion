@@ -73,7 +73,7 @@ namespace {
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_tech_, insert_tech, 7)
 
     void insert_category(std::map<std::string, std::unique_ptr<TechCategory>>& categories,
-                         std::string& name, std::string& graphic, const GG::Clr& color)
+                         std::string& name, std::string& graphic, const std::array<unsigned char, 4>& color)
     {
         auto category_ptr = std::make_unique<TechCategory>(name, std::move(graphic), color);
         categories.emplace(std::move(name), std::move(category_ptr));

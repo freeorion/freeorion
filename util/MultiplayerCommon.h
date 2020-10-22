@@ -8,8 +8,6 @@
 #include "OrderSet.h"
 #include "Pending.h"
 
-#include <GG/Clr.h>
-#include <GG/ClrConstants.h>
 #include <GG/Enum.h>
 
 #include <list>
@@ -145,7 +143,7 @@ struct FO_COMMON_API SaveGameEmpireData {
     int         empire_id = ALL_EMPIRES;
     std::string empire_name;
     std::string player_name;
-    GG::Clr     color;
+    std::array<unsigned char, 4> color;
     bool        authenticated = false;
     bool        eliminated = false;
     bool        won = false;
@@ -192,7 +190,7 @@ struct PlayerSetupData {
     std::string             player_name;
     int                     player_id = Networking::INVALID_PLAYER_ID;
     std::string             empire_name;
-    GG::Clr                 empire_color = GG::CLR_ZERO;
+    std::array<unsigned char, 4> empire_color{0, 0, 0, 0};
     std::string             starting_species_name;
     //! When loading a game, the ID of the empire that this player will control
     int                     save_game_empire_id = ALL_EMPIRES;
@@ -280,7 +278,7 @@ struct FO_COMMON_API ChatHistoryEntity {
     boost::posix_time::ptime    timestamp;
     std::string                 player_name;
     std::string                 text;
-    GG::Clr                     text_color;
+    std::array<unsigned char, 4> text_color;
 };
 
 /** Information about one player that other players are informed of.  Assembled by server and sent to players. */
