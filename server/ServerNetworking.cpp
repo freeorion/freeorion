@@ -6,6 +6,7 @@
 #include "../universe/ValueRefs.h"
 #include "../parse/Parse.h"
 
+#include <boost/algorithm/string/trim.hpp>
 #include <boost/iterator/filter_iterator.hpp>
 #include <boost/asio/high_resolution_timer.hpp>
 #include <boost/uuid/nil_generator.hpp>

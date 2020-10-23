@@ -11,6 +11,7 @@ target_sources(freeorioncommon
         ${CMAKE_CURRENT_LIST_DIR}/Effects.h
         ${CMAKE_CURRENT_LIST_DIR}/Encyclopedia.h
         ${CMAKE_CURRENT_LIST_DIR}/Enums.h
+        ${CMAKE_CURRENT_LIST_DIR}/EnumsFwd.h
         ${CMAKE_CURRENT_LIST_DIR}/Field.h
         ${CMAKE_CURRENT_LIST_DIR}/FieldType.h
         ${CMAKE_CURRENT_LIST_DIR}/Fighter.h

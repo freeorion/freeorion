@@ -4,7 +4,7 @@
 #include <memory>
 #include <GG/GGFwd.h>
 #include "CUIWnd.h"
-#include "../universe/EnumsFwd.h"
+#include "../universe/Enums.h"
 
 
 class Planet;

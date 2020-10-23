@@ -3,17 +3,18 @@
 
 #include <string>
 #include <boost/serialization/access.hpp>
-#include <GG/Enum.h>
+#include "../util/Enum.h"
 #include "../util/Export.h"
 
 
 //! diplomatic statuses
-GG_ENUM(DiplomaticStatus,
-    INVALID_DIPLOMATIC_STATUS = -1,
-    DIPLO_WAR,
-    DIPLO_PEACE,
-    DIPLO_ALLIED,
-    NUM_DIPLO_STATUSES
+FO_ENUM(
+    (DiplomaticStatus),
+    ((INVALID_DIPLOMATIC_STATUS, -1))
+    ((DIPLO_WAR))
+    ((DIPLO_PEACE))
+    ((DIPLO_ALLIED))
+    ((NUM_DIPLO_STATUSES))
 )
 
 

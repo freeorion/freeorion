@@ -8,8 +8,8 @@
 #include <unordered_map>
 #include <vector>
 #include <boost/container/flat_map.hpp>
-#include <GG/Enum.h>
 #include "EnumsFwd.h"
+#include "../util/Enum.h"
 #include "../util/Export.h"
 
 
@@ -24,18 +24,19 @@ namespace Condition {
 
 //! Types of in-game things that might contain an EffectsGroup, or "cause"
 //! effects to occur
-GG_ENUM(EffectsCauseType,
-    INVALID_EFFECTS_GROUP_CAUSE_TYPE = -1,
-    ECT_UNKNOWN_CAUSE,
-    ECT_INHERENT,
-    ECT_TECH,
-    ECT_BUILDING,
-    ECT_FIELD,
-    ECT_SPECIAL,
-    ECT_SPECIES,
-    ECT_SHIP_PART,
-    ECT_SHIP_HULL,
-    ECT_POLICY
+FO_ENUM(
+    (EffectsCauseType),
+    ((INVALID_EFFECTS_GROUP_CAUSE_TYPE, -1))
+    ((ECT_UNKNOWN_CAUSE))
+    ((ECT_INHERENT))
+    ((ECT_TECH))
+    ((ECT_BUILDING))
+    ((ECT_FIELD))
+    ((ECT_SPECIAL))
+    ((ECT_SPECIES))
+    ((ECT_SHIP_PART))
+    ((ECT_SHIP_HULL))
+    ((ECT_POLICY))
 )
 
 namespace Effect {

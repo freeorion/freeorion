@@ -2,8 +2,8 @@
 #define _ShipHull_h_
 
 
-#include <GG/Enum.h>
 #include "CommonParams.h"
+#include "../util/Enum.h"
 #include "../util/Pending.h"
 
 
@@ -12,14 +12,15 @@ FO_COMMON_API extern const int INVALID_DESIGN_ID;
 
 //! Types of slots in ShipHull%s
 //! Parts may be restricted to only certain slot types
-GG_ENUM(ShipSlotType,
-    INVALID_SHIP_SLOT_TYPE = -1,
+FO_ENUM(
+    (ShipSlotType),
+    ((INVALID_SHIP_SLOT_TYPE, -1))
     //! External slots.  more easily damaged
-    SL_EXTERNAL,
+    ((SL_EXTERNAL))
     //! Internal slots.  more protected, fewer in number
-    SL_INTERNAL,
-    SL_CORE,
-    NUM_SHIP_SLOT_TYPES
+    ((SL_INTERNAL))
+    ((SL_CORE))
+    ((NUM_SHIP_SLOT_TYPES))
 )
 
 

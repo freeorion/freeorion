@@ -2,20 +2,21 @@
 #define _UnlockableItem_h_
 
 
-#include <GG/Enum.h>
+#include "../util/Enum.h"
 #include "../util/Export.h"
 
 
 /** types of items that can be unlocked for empires */
-GG_ENUM(UnlockableItemType,
-    INVALID_UNLOCKABLE_ITEM_TYPE = -1,
-    UIT_BUILDING,               ///< a kind of Building
-    UIT_SHIP_PART,              ///< a kind of ship part (which are placed into hulls to make designs)
-    UIT_SHIP_HULL,              ///< a ship hull (into which parts are placed)
-    UIT_SHIP_DESIGN,            ///< a complete ship design
-    UIT_TECH,                   ///< a technology
-    UIT_POLICY,                 ///< an imperial policy
-    NUM_UNLOCKABLE_ITEM_TYPES   ///< keep last, the number of types of unlockable item
+FO_ENUM(
+    (UnlockableItemType),
+    ((INVALID_UNLOCKABLE_ITEM_TYPE, -1))
+    ((UIT_BUILDING))               ///< a kind of Building
+    ((UIT_SHIP_PART))              ///< a kind of ship part (which are placed into hulls to make designs)
+    ((UIT_SHIP_HULL))              ///< a ship hull (into which parts are placed)
+    ((UIT_SHIP_DESIGN))            ///< a complete ship design
+    ((UIT_TECH))                   ///< a technology
+    ((UIT_POLICY))                 ///< an imperial policy
+    ((NUM_UNLOCKABLE_ITEM_TYPES))   ///< keep last, the number of types of unlockable item
 )
 
 

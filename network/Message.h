@@ -2,8 +2,8 @@
 #define _Message_h_
 
 #include "Networking.h"
+#include "../util/Enum.h"
 #include "../util/Export.h"
-#include <GG/Enum.h>
 
 #include <boost/shared_array.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
@@ -60,76 +60,80 @@ public:
         std::tuple_size<HeaderBuffer>::value* sizeof(HeaderBuffer::value_type);
 
     /** Represents the type of the message */
-    GG_CLASS_ENUM(MessageType,
-        UNDEFINED = 0,
-        DEBUG,                  ///< used to send special messages used for debugging purposes
-        ERROR_MSG,              ///< used to communicate errors between server and clients
-        HOST_SP_GAME,           ///< sent when a client wishes to establish a single player game at the server
-        HOST_MP_GAME,           ///< sent when a client wishes to establish a multiplayer game at the server
-        JOIN_GAME,              ///< sent when a client wishes to join a game being established at the server
-        HOST_ID,                ///< sent to clients when the server changes the ID of the host player
-        LOBBY_UPDATE,           ///< used to synchronize multiplayer lobby dialogs among different players, when a user changes a setting, or the server updates the state
-        LOBBY_EXIT,             ///< sent to server by clients when a player leaves the multiplayer lobby, or by server to clients when a player leaves the multiplayer lobby
-        START_MP_GAME,          ///< sent to server (by the "host" client only) when the settings in the MP lobby are satisfactory and it is time to start the game
-        SAVE_GAME_INITIATE,     ///< sent to server (by the "host" client only) when a game is to be saved
-        SAVE_GAME_COMPLETE,     ///< sent to clients (by the "host" client only) when a game has been saved and written to disk
-        LOAD_GAME,              ///< sent to server (by the "host" client only) when a game is to be loaded
-        GAME_START,             ///< sent to each client before the first turn of a new or newly loaded game, instead of a TURN_UPDATE
-        TURN_UPDATE,            ///< sent to a client when the server updates the client Universes and Empires, and sends the SitReps each turn; indicates to the receiver that a new turn has begun
-        TURN_PARTIAL_UPDATE,    ///< sent to a client when the server updates part of the client gamestate after partially processing a turn, such as after fleet movement but before the rest of the turn is processed.  Does NOT indicate a new turn has begun.
-        TURN_ORDERS,            ///< sent to the server by a client that has orders to be processed at the end of a turn
-        TURN_PROGRESS,          ///< sent to clients to display a turn progress message
-        PLAYER_STATUS,          ///< sent to clients to inform them that a player has some status, such as having finished playing a turn and submitted orders, or is resolving combat, or is playing a turn normally
-        PLAYER_CHAT,            ///< sent when one player sends a chat message to another in multiplayer
-        DIPLOMACY,              ///< sent by players to server or server to players to make or convey diplomatic proposals or declarations, or to accept / reject proposals from other players
-        DIPLOMATIC_STATUS,      ///< sent by server to players to inform of mid-turn diplomatic status changes
-        REQUEST_NEW_OBJECT_ID,  ///< sent by client to server requesting a new object ID.
-        DISPATCH_NEW_OBJECT_ID, ///< sent by server to client with the new object ID.
-        REQUEST_NEW_DESIGN_ID,  ///< sent by client to server requesting a new design ID.
-        DISPATCH_NEW_DESIGN_ID, ///< sent by server to client with the new design ID.
-        END_GAME,               ///< sent by the server when the current game is to ending (see EndGameReason for the possible reasons this message is sent out)
-        AI_END_GAME_ACK,        ///< sent by the ai client when it has shutdown
-        MODERATOR_ACTION,       ///< sent by client to server when a moderator edits the universe
-        SHUT_DOWN_SERVER,       ///< sent by host client to server to kill the server process
-        REQUEST_SAVE_PREVIEWS,  ///< sent by client to request previews of available savegames
-        DISPATCH_SAVE_PREVIEWS, ///< sent by host to client to provide the savegame previews
-        REQUEST_COMBAT_LOGS,    ///< sent by client to request combat logs
-        DISPATCH_COMBAT_LOGS,   ///< sent by host to client to provide combat logs
-        LOGGER_CONFIG,          ///< sent by host to server and server to ais to configure logging
-        CHECKSUM,               ///< sent by host to clients to specify what the parsed content checksum values should be
-        AUTH_REQUEST,           ///< sent by server to client if choosed player_name require authentiation
-        AUTH_RESPONSE,          ///< sent by client to server to provide password or other credentials
-        CHAT_HISTORY,           ///< sent by server to client to show previous messages
-        SET_AUTH_ROLES,         ///< sent by server to client to set authorization roles
-        ELIMINATE_SELF,         ///< sent by client to server if the player wants to resign
-        UNREADY,                ///< sent by client to server to revoke ready state of turn orders and sent by server to client to acknowledge it
-        TURN_PARTIAL_ORDERS,    ///< sent to the server by a client that has changes in orders to be stored
-        TURN_TIMEOUT,           ///< sent by server to client to notify about remaining time before turn advance
-        PLAYER_INFO             ///< sent by server to client to notify about changes in the player data
+    FO_ENUM(
+        (Message, MessageType),
+        ((UNDEFINED, 0))
+        ((DEBUG))                  ///< used to send special messages used for debugging purposes
+        ((ERROR_MSG))              ///< used to communicate errors between server and clients
+        ((HOST_SP_GAME))           ///< sent when a client wishes to establish a single player game at the server
+        ((HOST_MP_GAME))           ///< sent when a client wishes to establish a multiplayer game at the server
+        ((JOIN_GAME))              ///< sent when a client wishes to join a game being established at the server
+        ((HOST_ID))                ///< sent to clients when the server changes the ID of the host player
+        ((LOBBY_UPDATE))           ///< used to synchronize multiplayer lobby dialogs among different players, when a user changes a setting, or the server updates the state
+        ((LOBBY_EXIT))             ///< sent to server by clients when a player leaves the multiplayer lobby, or by server to clients when a player leaves the multiplayer lobby
+        ((START_MP_GAME))          ///< sent to server (by the "host" client only) when the settings in the MP lobby are satisfactory and it is time to start the game
+        ((SAVE_GAME_INITIATE))     ///< sent to server (by the "host" client only) when a game is to be saved
+        ((SAVE_GAME_COMPLETE))     ///< sent to clients (by the "host" client only) when a game has been saved and written to disk
+        ((LOAD_GAME))              ///< sent to server (by the "host" client only) when a game is to be loaded
+        ((GAME_START))             ///< sent to each client before the first turn of a new or newly loaded game, instead of a TURN_UPDATE
+        ((TURN_UPDATE))            ///< sent to a client when the server updates the client Universes and Empires, and sends the SitReps each turn; indicates to the receiver that a new turn has begun
+        ((TURN_PARTIAL_UPDATE))    ///< sent to a client when the server updates part of the client gamestate after partially processing a turn, such as after fleet movement but before the rest of the turn is processed.  Does NOT indicate a new turn has begun.
+        ((TURN_ORDERS))            ///< sent to the server by a client that has orders to be processed at the end of a turn
+        ((TURN_PROGRESS))          ///< sent to clients to display a turn progress message
+        ((PLAYER_STATUS))          ///< sent to clients to inform them that a player has some status, such as having finished playing a turn and submitted orders, or is resolving combat, or is playing a turn normally
+        ((PLAYER_CHAT))            ///< sent when one player sends a chat message to another in multiplayer
+        ((DIPLOMACY))              ///< sent by players to server or server to players to make or convey diplomatic proposals or declarations, or to accept / reject proposals from other players
+        ((DIPLOMATIC_STATUS))      ///< sent by server to players to inform of mid-turn diplomatic status changes
+        ((REQUEST_NEW_OBJECT_ID))  ///< sent by client to server requesting a new object ID.
+        ((DISPATCH_NEW_OBJECT_ID)) ///< sent by server to client with the new object ID.
+        ((REQUEST_NEW_DESIGN_ID))  ///< sent by client to server requesting a new design ID.
+        ((DISPATCH_NEW_DESIGN_ID)) ///< sent by server to client with the new design ID.
+        ((END_GAME))               ///< sent by the server when the current game is to ending (see EndGameReason for the possible reasons this message is sent out)
+        ((AI_END_GAME_ACK))        ///< sent by the ai client when it has shutdown
+        ((MODERATOR_ACTION))       ///< sent by client to server when a moderator edits the universe
+        ((SHUT_DOWN_SERVER))       ///< sent by host client to server to kill the server process
+        ((REQUEST_SAVE_PREVIEWS))  ///< sent by client to request previews of available savegames
+        ((DISPATCH_SAVE_PREVIEWS)) ///< sent by host to client to provide the savegame previews
+        ((REQUEST_COMBAT_LOGS))    ///< sent by client to request combat logs
+        ((DISPATCH_COMBAT_LOGS))   ///< sent by host to client to provide combat logs
+        ((LOGGER_CONFIG))          ///< sent by host to server and server to ais to configure logging
+        ((CHECKSUM))               ///< sent by host to clients to specify what the parsed content checksum values should be
+        ((AUTH_REQUEST))           ///< sent by server to client if choosed player_name require authentiation
+        ((AUTH_RESPONSE))          ///< sent by client to server to provide password or other credentials
+        ((CHAT_HISTORY))           ///< sent by server to client to show previous messages
+        ((SET_AUTH_ROLES))         ///< sent by server to client to set authorization roles
+        ((ELIMINATE_SELF))         ///< sent by client to server if the player wants to resign
+        ((UNREADY))                ///< sent by client to server to revoke ready state of turn orders and sent by server to client to acknowledge it
+        ((TURN_PARTIAL_ORDERS))    ///< sent to the server by a client that has changes in orders to be stored
+        ((TURN_TIMEOUT))           ///< sent by server to client to notify about remaining time before turn advance
+        ((PLAYER_INFO))            ///< sent by server to client to notify about changes in the player data
     )
 
-    GG_CLASS_ENUM(TurnProgressPhase,
-        FLEET_MOVEMENT,         ///< fleet movement turn progress message
-        COMBAT,                 ///< combat turn progress message
-        EMPIRE_PRODUCTION,      ///< empire production turn progress message
-        WAITING_FOR_PLAYERS,    ///< waiting for other to end their turn
-        PROCESSING_ORDERS,      ///< processing orders
-        COLONIZE_AND_SCRAP,     ///< enacting colonization and scrapping orders
-        DOWNLOADING,            ///< downloading new game state from server
-        LOADING_GAME,           ///< loading gamestate from save
-        GENERATING_UNIVERSE,    ///< creating new universe
-        STARTING_AIS            ///< creating AI clients
+    FO_ENUM(
+        (Message, TurnProgressPhase),
+        ((FLEET_MOVEMENT))         ///< fleet movement turn progress message
+        ((COMBAT))                 ///< combat turn progress message
+        ((EMPIRE_PRODUCTION))      ///< empire production turn progress message
+        ((WAITING_FOR_PLAYERS))    ///< waiting for other to end their turn
+        ((PROCESSING_ORDERS))      ///< processing orders
+        ((COLONIZE_AND_SCRAP))     ///< enacting colonization and scrapping orders
+        ((DOWNLOADING))            ///< downloading new game state from server
+        ((LOADING_GAME))           ///< loading gamestate from save
+        ((GENERATING_UNIVERSE))    ///< creating new universe
+        ((STARTING_AIS))           ///< creating AI clients
     )
 
     /// \todo change to EmpireStatus on compatibility breakage
-    GG_CLASS_ENUM(PlayerStatus,
-        PLAYING_TURN,           ///< empire is playing a turn, on the galax map
-        WAITING                 ///< empire is waiting for others to submit orders, to resolve combats, or for turn processing to complete
+    FO_ENUM(
+        (Message, PlayerStatus),
+        ((PLAYING_TURN))           ///< empire is playing a turn, on the galax map
+        ((WAITING))                ///< empire is waiting for others to submit orders, to resolve combats, or for turn processing to complete
     )
 
-    GG_CLASS_ENUM(EndGameReason,
-        LOCAL_CLIENT_DISCONNECT,///< the local player's client networking detected a disconnection from the server
-        PLAYER_DISCONNECT,      ///< an active player (not an observer) was disconnected
+    FO_ENUM(
+        (Message, EndGameReason),
+        ((LOCAL_CLIENT_DISCONNECT)) ///< the local player's client networking detected a disconnection from the server
+        ((PLAYER_DISCONNECT))       ///< an active player (not an observer) was disconnected
     )
 
     Message() = default;

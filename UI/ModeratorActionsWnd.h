@@ -4,9 +4,9 @@
 #include <vector>
 #include <boost/signals2/signal.hpp>
 #include <GG/GGFwd.h>
+#include "../universe/EnumsFwd.h"
 
 #include "CUIWnd.h"
-#include "../universe/EnumsFwd.h"
 
 
 //! Used for tracking what moderator action is set

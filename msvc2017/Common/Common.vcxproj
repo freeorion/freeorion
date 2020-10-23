@@ -243,6 +243,7 @@
     <ClInclude Include="..\..\util\AppInterface.h" />
     <ClInclude Include="..\..\util\CheckSums.h" />
     <ClInclude Include="..\..\util\Directories.h" />
+    <ClInclude Include="..\..\util\Enum.h" />
     <ClInclude Include="..\..\util\ModeratorAction.h" />
     <ClInclude Include="..\..\util\MultiplayerCommon.h" />
     <ClInclude Include="..\..\util\GameRules.h" />

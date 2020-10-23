@@ -7,19 +7,20 @@
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/version.hpp>
 #include <boost/signals2/signal.hpp>
-#include <GG/Enum.h>
 #include "../universe/EnumsFwd.h"
+#include "../util/Enum.h"
 #include "../util/Export.h"
 
 
 //! Types of resources that Empire%s can produce
-GG_ENUM(ResourceType,
-    INVALID_RESOURCE_TYPE = -1,
-    RE_INDUSTRY,
-    RE_INFLUENCE,
-    RE_RESEARCH,
-    RE_STOCKPILE,
-    NUM_RESOURCE_TYPES
+FO_ENUM(
+    (ResourceType),
+    ((INVALID_RESOURCE_TYPE, -1))
+    ((RE_INDUSTRY))
+    ((RE_INFLUENCE))
+    ((RE_RESEARCH))
+    ((RE_STOCKPILE))
+    ((NUM_RESOURCE_TYPES))
 )
 
 /** Returns the equivalent meter type for the given resource type; if no such

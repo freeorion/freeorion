@@ -3,12 +3,12 @@
 
 
 #include <string>
-#include <GG/Enum.h>
 #include "InfluenceQueue.h"
 #include "PopulationPool.h"
 #include "ProductionQueue.h"
 #include "ResearchQueue.h"
 #include "ResourcePool.h"
+#include "../universe/EnumsFwd.h"
 #include "../universe/Meter.h"
 #include "../util/Export.h"
 
@@ -32,18 +32,19 @@ typedef std::array<unsigned char, 4> EmpireColor;
 
 //! Research status of techs, relating to whether they have been or can be
 //! researched
-GG_ENUM(TechStatus,
-    INVALID_TECH_STATUS = -1,
+FO_ENUM(
+    (TechStatus),
+    ((INVALID_TECH_STATUS, -1))
     //! Never researchable, or has no researched prerequisites
-    TS_UNRESEARCHABLE,
+    ((TS_UNRESEARCHABLE))
     //! Has at least one researched, and at least one unreserached,
     //! prerequisite
-    TS_HAS_RESEARCHED_PREREQ,
+    ((TS_HAS_RESEARCHED_PREREQ))
     //! All prerequisites researched
-    TS_RESEARCHABLE,
+    ((TS_RESEARCHABLE))
     //! Has been researched
-    TS_COMPLETE,
-    NUM_TECH_STATUSES
+    ((TS_COMPLETE))
+    ((NUM_TECH_STATUSES))
 )
 
 
