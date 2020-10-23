@@ -26,7 +26,7 @@ namespace Condition {
 //! effects to occur
 FO_ENUM(
     (EffectsCauseType),
-    ((INVALID_EFFECTS_GROUP_CAUSE_TYPE, "INVALID_EFFECTS_GROUP_CAUSE_TYPE", -1))
+    ((INVALID_EFFECTS_GROUP_CAUSE_TYPE, -1))
     ((ECT_UNKNOWN_CAUSE))
     ((ECT_INHERENT))
     ((ECT_TECH))

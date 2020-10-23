@@ -29,7 +29,7 @@ struct MovePathNode {
 //! How to Fleets control or not their system?
 FO_ENUM(
     (FleetAggression),
-    ((INVALID_FLEET_AGGRESSION, "INVALID_FLEET_AGGRESSION", -1))
+    ((INVALID_FLEET_AGGRESSION, -1))
     ((FLEET_PASSIVE))
     ((FLEET_OBSTRUCTIVE))
     ((FLEET_AGGRESSIVE))

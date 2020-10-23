@@ -26,7 +26,7 @@ FO_COMMON_API extern const int INVALID_GAME_TURN;
 //! Types of universe shapes during galaxy generation
 FO_ENUM(
     (Shape),
-    ((INVALID_SHAPE, "INVALID_SHAPE", -1))
+    ((INVALID_SHAPE, -1))
     ((SPIRAL_2))       ///< a two-armed spiral galaxy
     ((SPIRAL_3))       ///< a three-armed spiral galaxy
     ((SPIRAL_4))       ///< a four-armed spiral galaxy
@@ -47,7 +47,7 @@ FO_COMMON_API const std::string& TextForGalaxyShape(Shape shape);
 //! General-use option for galaxy setup picks with "more" or "less" options.
 FO_ENUM(
     (GalaxySetupOption),
-    ((INVALID_GALAXY_SETUP_OPTION, "INVALID_GALAXY_SETUP_OPTION", -1))
+    ((INVALID_GALAXY_SETUP_OPTION, -1))
     ((GALAXY_SETUP_NONE))
     ((GALAXY_SETUP_LOW))
     ((GALAXY_SETUP_MEDIUM))
@@ -63,7 +63,7 @@ FO_COMMON_API const std::string& TextForGalaxySetupSetting(GalaxySetupOption gso
 //! Levels of AI Aggression during galaxy generation
 FO_ENUM(
     (Aggression),
-    ((INVALID_AGGRESSION, "INVALID_AGGRESSION", -1))
+    ((INVALID_AGGRESSION, -1))
     ((BEGINNER))
     ((TURTLE))         ///< Very Defensive
     ((CAUTIOUS))       ///< Somewhat Defensive

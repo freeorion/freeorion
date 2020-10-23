@@ -14,7 +14,7 @@ FO_COMMON_API extern const int INVALID_DESIGN_ID;
 //! Classifies ShipParts by general function.
 FO_ENUM(
     (ShipPartClass),
-    ((INVALID_SHIP_PART_CLASS, "INVALID_SHIP_PART_CLASS", -1))
+    ((INVALID_SHIP_PART_CLASS, -1))
     ((PC_DIRECT_WEAPON))       //!< direct-fire weapons
     ((PC_FIGHTER_BAY))         //!< launch aparatus for fighters, which are self-propelled platforms that function independently of ships in combat, but don't exist on the main game map
     ((PC_FIGHTER_HANGAR))      //!< storage for fighters, also determines their weapon strength stat

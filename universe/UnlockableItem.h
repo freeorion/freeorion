@@ -9,7 +9,7 @@
 /** types of items that can be unlocked for empires */
 FO_ENUM(
     (UnlockableItemType),
-    ((INVALID_UNLOCKABLE_ITEM_TYPE, "INVALID_UNLOCKABLE_ITEM_TYPE", -1))
+    ((INVALID_UNLOCKABLE_ITEM_TYPE, -1))
     ((UIT_BUILDING))               ///< a kind of Building
     ((UIT_SHIP_PART))              ///< a kind of ship part (which are placed into hulls to make designs)
     ((UIT_SHIP_HULL))              ///< a ship hull (into which parts are placed)

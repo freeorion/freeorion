@@ -62,7 +62,7 @@ public:
     /** Represents the type of the message */
     FO_ENUM(
         (Message, MessageType),
-        ((UNDEFINED, "UNDEFINED", 0))
+        ((UNDEFINED, 0))
         ((DEBUG))                  ///< used to send special messages used for debugging purposes
         ((ERROR_MSG))              ///< used to communicate errors between server and clients
         ((HOST_SP_GAME))           ///< sent when a client wishes to establish a single player game at the server

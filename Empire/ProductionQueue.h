@@ -24,7 +24,7 @@ FO_COMMON_API extern const int ALL_EMPIRES;
 //! a kind of building called "SuperFarm" might be built.
 FO_ENUM(
     (BuildType),
-    ((INVALID_BUILD_TYPE, "INVALID_BUILD_TYPE", -1))
+    ((INVALID_BUILD_TYPE, -1))
     //! No building is taking place
     ((BT_NOT_BUILDING))
     //! A Building object is being produced

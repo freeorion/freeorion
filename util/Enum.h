@@ -16,7 +16,7 @@
 /** @brief Implementation detail for FO_ENUM */
 #define FO_DEF_ENUM_VALUE(r, data, elem) \
     BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(elem), 3), \
-        BOOST_PP_TUPLE_ELEM(0, elem) = BOOST_PP_TUPLE_ELEM(2, elem), \
+        BOOST_PP_TUPLE_ELEM(0, elem) = BOOST_PP_TUPLE_ELEM(1, elem), \
         BOOST_PP_TUPLE_ELEM(0, elem)),
 
 /** @brief Implementation detail for FO_ENUM */
@@ -32,9 +32,7 @@ BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
 /** @brief Implementation detail for FO_ENUM */
 #define FO_DEF_ENUM_OSTREAM_CASE(r, data, elem) \
     case BOOST_PP_TUPLE_ELEM(0, elem): \
-        stream << BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(elem), 1), \
-                      BOOST_PP_STRINGIZE(BOOST_PP_TUPLE_ELEM(0, elem)), \
-                      BOOST_PP_TUPLE_ELEM(1, elem)); \
+        stream << BOOST_PP_STRINGIZE(BOOST_PP_TUPLE_ELEM(0, elem)); \
         break;
 
 /** @brief Implementation detail for FO_ENUM */
@@ -62,9 +60,7 @@ BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
 /** @brief Implementation detail for FO_ENUM */
 #define FO_DEF_ENUM_ISTREAM_CASE(r, data, elem) \
     else if( \
-BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(elem), 1), \
-    BOOST_PP_STRINGIZE(BOOST_PP_TUPLE_ELEM(0, elem)), \
-    BOOST_PP_TUPLE_ELEM(1, elem)) == token) \
+BOOST_PP_STRINGIZE(BOOST_PP_TUPLE_ELEM(0, elem)) == token) \
         value = BOOST_PP_TUPLE_ELEM(0, elem);
 
 /** @brief Implementation detail for FO_ENUM */
@@ -93,9 +89,7 @@ BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
 
 /** @brief Implementation detail for FO_ENUM */
 #define FO_DEF_ENUM_ADD_STRING_REPR(s, data, elem) \
-    BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(elem), 1), \
-        BOOST_PP_TUPLE_PUSH_BACK(elem, BOOST_PP_STRINGIZE(BOOST_PP_TUPLE_ELEM(0, elem))), \
-        elem)
+    BOOST_PP_TUPLE_PUSH_BACK(elem, BOOST_PP_STRINGIZE(BOOST_PP_TUPLE_ELEM(0, elem)))
 
 /** @brief Define an enumeration
  *
@@ -107,11 +101,9 @@ BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
  * outside of a class as @p typeName.  Prepend the class name to the @p typeName
  * tuple when using it inside a class.
  *
- * Use a sequence of 1 to 3 element tuples as values.  The first tuple value
- * should contain the enum value symbol, the optional second one the string
- * representation.  IF no second value is set the stringified version of the
- * enum value symbol is used. The optional third tuple element should contain
- * the assigned enum element value.  If no third tuple value is given the
+ * Use a sequence of 1 to 2 element tuples as values.  The first tuple value
+ * should contain the enum value symbol. The optional second tuple element should
+ * contain the assigned enum element value.  If no second tuple value is given the
  * default enum element value assignment is used.
  *
  * When using the << operator the string representation of the enumeration is
@@ -129,8 +121,8 @@ BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
  * FO_ENUM(
  *     (Animal),
  *     ((CAT))
- *     ((DOG, "Dog"))
- *     ((COW, "Cow", 5))
+ *     ((DOG))
+ *     ((COW, 5))
  * )
  * @endcode
  *
@@ -141,12 +133,12 @@ BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
  * public:
  *     FO_ENUM(
  *         (AutomaticGearBox, Gear),
- *         ((PARK,    "P", -5))
- *         ((REVERSE, "R", -1))
- *         ((NEUTRAL, "N",  0))
- *         ((LOW,     "L"))
- *         ((DRIVE,   "D"))
- *         ((SPRINT,  "S"))
+ *         ((PARK,    -5))
+ *         ((REVERSE, -1))
+ *         ((NEUTRAL, 0))
+ *         ((LOW))
+ *         ((DRIVE))
+ *         ((SPRINT))
  *     )
  * }
  * @endcode

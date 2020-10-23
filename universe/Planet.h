@@ -11,7 +11,7 @@
 //! Types of Planet%s
 FO_ENUM(
     (PlanetType),
-    ((INVALID_PLANET_TYPE, "INVALID_PLANET_TYPE", -1))
+    ((INVALID_PLANET_TYPE, -1))
     ((PT_SWAMP))
     ((PT_TOXIC))
     ((PT_INFERNO))
@@ -30,7 +30,7 @@ FO_ENUM(
 //! Sizes of Planet%s
 FO_ENUM(
     (PlanetSize),
-    ((INVALID_PLANET_SIZE, "INVALID_PLANET_SIZE", -1))
+    ((INVALID_PLANET_SIZE, -1))
     ((SZ_NOWORLD))  //!< Used to designate an empty planet slot
     ((SZ_TINY))
     ((SZ_SMALL))

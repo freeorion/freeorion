@@ -21,7 +21,7 @@ struct UniverseObjectVisitor;
 //! Types of stars
 FO_ENUM(
     (StarType),
-    ((INVALID_STAR_TYPE, "INVALID_STAR_TYPE", -1))
+    ((INVALID_STAR_TYPE, -1))
     ((STAR_BLUE))
     ((STAR_WHITE))
     ((STAR_YELLOW))

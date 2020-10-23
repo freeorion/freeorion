@@ -10,7 +10,7 @@
 //! diplomatic statuses
 FO_ENUM(
     (DiplomaticStatus),
-    ((INVALID_DIPLOMATIC_STATUS, "INVALID_DIPLOMATIC_STATUS", -1))
+    ((INVALID_DIPLOMATIC_STATUS, -1))
     ((DIPLO_WAR))
     ((DIPLO_PEACE))
     ((DIPLO_ALLIED))

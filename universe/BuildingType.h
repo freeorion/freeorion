@@ -24,7 +24,7 @@ namespace ValueRef {
 //! Planet containing the Building being captured.
 FO_ENUM(
     (CaptureResult),
-    ((INVALID_CAPTURE_RESULT, "INVALID_CAPTURE_RESULT", -1))
+    ((INVALID_CAPTURE_RESULT, -1))
     //! Building has ownership by original empire(s) removed, and conquering
     //! empire added
     ((CR_CAPTURE))

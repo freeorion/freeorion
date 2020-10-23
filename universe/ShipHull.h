@@ -14,7 +14,7 @@ FO_COMMON_API extern const int INVALID_DESIGN_ID;
 //! Parts may be restricted to only certain slot types
 FO_ENUM(
     (ShipSlotType),
-    ((INVALID_SHIP_SLOT_TYPE, "INVALID_SHIP_SLOT_TYPE", -1))
+    ((INVALID_SHIP_SLOT_TYPE, -1))
     //! External slots.  more easily damaged
     ((SL_EXTERNAL))
     //! Internal slots.  more protected, fewer in number

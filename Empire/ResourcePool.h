@@ -14,7 +14,7 @@
 //! Types of resources that Empire%s can produce
 FO_ENUM(
     (ResourceType),
-    ((INVALID_RESOURCE_TYPE, "INVALID_RESOURCE_TYPE", -1))
+    ((INVALID_RESOURCE_TYPE, -1))
     ((RE_INDUSTRY))
     ((RE_INFLUENCE))
     ((RE_RESEARCH))

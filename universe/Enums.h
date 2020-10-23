@@ -16,7 +16,7 @@
   */
 FO_ENUM(
     (MeterType),
-    ((INVALID_METER_TYPE, "INVALID_METER_TYPE", -1))
+    ((INVALID_METER_TYPE, -1))
     ((METER_TARGET_POPULATION))
     ((METER_TARGET_INDUSTRY))
     ((METER_TARGET_RESEARCH))
@@ -65,7 +65,7 @@ FO_ENUM(
 /** types of diplomatic empire affiliations to another empire*/
 FO_ENUM(
     (EmpireAffiliationType),
-    ((INVALID_EMPIRE_AFFIL_TYPE, "INVALID_EMPIRE_AFFIL_TYPE", -1))
+    ((INVALID_EMPIRE_AFFIL_TYPE, -1))
     ((AFFIL_SELF))      ///< the given empire iteslf
     ((AFFIL_ENEMY))     ///< enemies of the given empire
     ((AFFIL_PEACE))     ///< empires at peace with the given empire
@@ -81,7 +81,7 @@ FO_ENUM(
 //! Environmental suitability of planets for a particular Species
 FO_ENUM(
     (PlanetEnvironment),
-    ((INVALID_PLANET_ENVIRONMENT, "INVALID_PLANET_ENVIRONMENT", -1))
+    ((INVALID_PLANET_ENVIRONMENT, -1))
     ((PE_UNINHABITABLE))
     ((PE_HOSTILE))
     ((PE_POOR))

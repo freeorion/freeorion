@@ -35,7 +35,7 @@ FO_COMMON_API extern const int TEMPORARY_OBJECT_ID;
 //! The various major subclasses of UniverseObject
 FO_ENUM(
     (UniverseObjectType),
-    ((INVALID_UNIVERSE_OBJECT_TYPE, "INVALID_UNIVERSE_OBJECT_TYPE", -1))
+    ((INVALID_UNIVERSE_OBJECT_TYPE, -1))
     ((OBJ_BUILDING))
     ((OBJ_SHIP))
     ((OBJ_FLEET))
@@ -53,7 +53,7 @@ FO_ENUM(
 //!the (non)visible object.
 FO_ENUM(
     (Visibility),
-    ((INVALID_VISIBILITY, "INVALID_VISIBILITY", -1))
+    ((INVALID_VISIBILITY, -1))
     ((VIS_NO_VISIBILITY))
     ((VIS_BASIC_VISIBILITY))
     ((VIS_PARTIAL_VISIBILITY))

@@ -34,7 +34,7 @@ typedef std::array<unsigned char, 4> EmpireColor;
 //! researched
 FO_ENUM(
     (TechStatus),
-    ((INVALID_TECH_STATUS, "INVALID_TECH_STATUS", -1))
+    ((INVALID_TECH_STATUS, -1))
     //! Never researchable, or has no researched prerequisites
     ((TS_UNRESEARCHABLE))
     //! Has at least one researched, and at least one unreserached,
