@@ -17,7 +17,6 @@ target_compile_definitions(fo_systemtest_game
 target_include_directories(fo_systemtest_game
     PRIVATE
         ${PROJECT_SOURCE_DIR}
-        ${PROJECT_SOURCE_DIR}/GG/
 )
 
 target_link_libraries(fo_systemtest_game
@@ -41,7 +40,6 @@ target_sources(fo_systemtest_game
     PUBLIC
         ${PROJECT_SOURCE_DIR}/client/ClientApp.h
         ${PROJECT_SOURCE_DIR}/client/ClientFSMEvents.h
-        ${PROJECT_SOURCE_DIR}/GG/GG/ClrConstants.h
         ${PROJECT_SOURCE_DIR}/client/ClientNetworking.h
     PRIVATE
         ${PROJECT_SOURCE_DIR}/client/ClientApp.cpp

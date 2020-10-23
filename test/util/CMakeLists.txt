@@ -7,7 +7,6 @@ add_executable(fo_unittest_util
 target_include_directories(fo_unittest_util
     PRIVATE
         ${PROJECT_SOURCE_DIR}
-        ${PROJECT_SOURCE_DIR}/GG/
 )
 
 target_link_libraries(fo_unittest_util

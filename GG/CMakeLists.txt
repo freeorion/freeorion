@@ -33,7 +33,6 @@ option(ENABLE_TIFF_TEXTURES "Enable TIFF texture support." OFF)
 option(BUILD_DOCUMENTATION "Builds HTML documentation." OFF)
 option(BUILD_TESTING "Build the testing tree." OFF)
 option(BUILD_DEVEL_PACKAGE "Install development files." ON)
-option(BUILD_HEADLESS "Headless components: server and AI." OFF)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
@@ -62,24 +61,22 @@ set(MINIMUM_BOOST_VERSION 1.60.0)
 
 find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS filesystem regex system REQUIRED)
 
-if(NOT BUILD_HEADLESS)
-    find_package(OpenGL REQUIRED)
-    find_package(GLEW REQUIRED)
-    find_package(Freetype REQUIRED)
+find_package(OpenGL REQUIRED)
+find_package(GLEW REQUIRED)
+find_package(Freetype REQUIRED)
 
-    if(ENABLE_PNG_TEXTURES)
-        find_package(PNG REQUIRED)
-        set(int_have_png 1)
-    else()
-        set(int_have_png 0)
-    endif()
+if(ENABLE_PNG_TEXTURES)
+    find_package(PNG REQUIRED)
+    set(int_have_png 1)
+else()
+    set(int_have_png 0)
+endif()
 
-    if(ENABLE_TIFF_TEXTURES)
-        find_package(TIFF REQUIRED)
-        set(int_have_tiff 1)
-    else()
-        set(int_have_tiff 0)
-    endif()
+if(ENABLE_TIFF_TEXTURES)
+    find_package(TIFF REQUIRED)
+    set(int_have_tiff 1)
+else()
+    set(int_have_tiff 0)
 endif()
 
 include_directories(
@@ -107,72 +104,70 @@ target_include_directories(GiGiHeader
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
 )
 
-if(NOT BUILD_HEADLESS)
-    add_library(GiGi "")
-    add_library(GiGi::GiGi ALIAS GiGi)
+add_library(GiGi "")
+add_library(GiGi::GiGi ALIAS GiGi)
 
-    target_compile_definitions(GiGi
-        PUBLIC
-            GiGiHeader
-        PRIVATE
-            -DFONS_USE_FREETYPE
-            # Starting with boost 1.68 boost::gil integrates support for
-            # grayscale-alpha png images, so prefer their implementation
-            # instead of our hacky gilext code.
-            $<$<VERSION_LESS:${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION},1.68>:GIGI_CONFIG_USE_OLD_IMPLEMENTATION_OF_GIL_PNG_IO>
-            $<$<VERSION_GREATER:${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION},1.67>:BOOST_GIL_IO_ENABLE_GRAY_ALPHA>
-            $<$<VERSION_GREATER:${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION},1.71>:BOOST_GIL_USES_MP11>
+target_compile_definitions(GiGi
+    PUBLIC
+        GiGiHeader
+    PRIVATE
+        -DFONS_USE_FREETYPE
+        # Starting with boost 1.68 boost::gil integrates support for
+        # grayscale-alpha png images, so prefer their implementation
+        # instead of our hacky gilext code.
+        $<$<VERSION_LESS:${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION},1.68>:GIGI_CONFIG_USE_OLD_IMPLEMENTATION_OF_GIL_PNG_IO>
+        $<$<VERSION_GREATER:${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION},1.67>:BOOST_GIL_IO_ENABLE_GRAY_ALPHA>
+        $<$<VERSION_GREATER:${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION},1.71>:BOOST_GIL_USES_MP11>
 )
 
-    target_include_directories(GiGi
-        INTERFACE
-            ${OPENGL_INCLUDE_DIR}
-        PRIVATE
-            ${FREETYPE_INCLUDE_DIRS}
-    )
+target_include_directories(GiGi
+    INTERFACE
+        ${OPENGL_INCLUDE_DIR}
+    PRIVATE
+        ${FREETYPE_INCLUDE_DIRS}
+)
 
-    target_link_libraries(GiGi
-        PUBLIC
-            GiGiHeader
-            Boost::disable_autolinking
-            Boost::dynamic_linking
-            GLEW::GLEW
-            ${OPENGL_gl_LIBRARY}
-        PRIVATE
-            Boost::filesystem
-            Boost::regex
-            ${FREETYPE_LIBRARIES}
-    )
+target_link_libraries(GiGi
+    PUBLIC
+        GiGiHeader
+        Boost::disable_autolinking
+        Boost::dynamic_linking
+        GLEW::GLEW
+        ${OPENGL_gl_LIBRARY}
+    PRIVATE
+        Boost::filesystem
+        Boost::regex
+        ${FREETYPE_LIBRARIES}
+)
 
-    if(TARGET PNG::PNG)
-        target_link_libraries(GiGi PRIVATE PNG::PNG)
+if(TARGET PNG::PNG)
+    target_link_libraries(GiGi PRIVATE PNG::PNG)
+endif()
+
+if(TARGET TIFF::TIFF)
+    target_link_libraries(GiGi PRIVATE TIFF::TIFF)
+endif()
+
+
+##
+## Recurse into sources.
+##
+
+add_subdirectory(GG)
+add_subdirectory(src)
+
+if(BUILD_TESTING)
+    enable_testing()
+    enable_coverage()
+
+    if(NOT TARGET unittest)
+        add_custom_target(unittest
+            COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
+            COMMENT "Run tests for ${CMAKE_PROJECT_NAME}"
+        )
     endif()
 
-    if(TARGET TIFF::TIFF)
-        target_link_libraries(GiGi PRIVATE TIFF::TIFF)
-    endif()
-
-
-    ##
-    ## Recurse into sources.
-    ##
-
-    add_subdirectory(GG)
-    add_subdirectory(src)
-
-    if(BUILD_TESTING)
-        enable_testing()
-        enable_coverage()
-
-        if(NOT TARGET unittest)
-            add_custom_target(unittest
-                COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
-                COMMENT "Run tests for ${CMAKE_PROJECT_NAME}"
-            )
-        endif()
-
-        add_subdirectory(test)
-    endif()
+    add_subdirectory(test)
 endif()
 
 if(BUILD_DOCUMENTATION)
@@ -192,7 +187,7 @@ if(BUILD_DEVEL_PACKAGE)
     )
 endif()
 
-if(UNIX AND NOT APPLE AND NOT BUILD_HEADLESS)
+if(UNIX AND NOT APPLE)
     install(
         TARGETS GiGi
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -204,7 +199,7 @@ if(UNIX AND NOT APPLE AND NOT BUILD_HEADLESS)
     )
 endif()
 
-if(UNIX AND BUILD_DEVEL_PACKAGE AND NOT BUILD_HEADLESS)
+if(UNIX AND BUILD_DEVEL_PACKAGE)
     get_pkg_config_libs(pkg_config_libs ${GiGi_LINK_LIBS})
 
     configure_file(

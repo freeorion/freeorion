@@ -7,10 +7,10 @@
 #include "../../util/OptionsDB.h"
 #include "../../util/Directories.h"
 #include "../../util/i18n.h"
-#include "../util/AppInterface.h"
+#include "../../util/AppInterface.h"
 #include "../../network/Message.h"
-#include "../util/Random.h"
-#include "../util/Version.h"
+#include "../../util/Random.h"
+#include "../../util/Version.h"
 
 
 #include "../../universe/System.h"
