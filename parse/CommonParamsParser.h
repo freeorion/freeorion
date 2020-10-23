@@ -7,7 +7,7 @@
 #include "EffectParser.h"
 #include "EnumParser.h"
 #include "MovableEnvelope.h"
-#include "../universe/Enums.h"
+#include "../universe/EnumsFwd.h"
 #include "../universe/CommonParams.h"
 
 #include <boost/spirit/include/qi.hpp>

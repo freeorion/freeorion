@@ -2,6 +2,7 @@
 #define _Planet_h_
 
 
+#include "EnumsFwd.h"
 #include "Meter.h"
 #include "PopCenter.h"
 #include "ResourceCenter.h"

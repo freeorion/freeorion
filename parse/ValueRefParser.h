@@ -6,7 +6,7 @@
 
 #include "../universe/ValueRefs.h"
 #include "../universe/NamedValueRefManager.h"
-#include "../universe/Enums.h"
+#include "../universe/EnumsFwd.h"
 
 #include <boost/spirit/include/qi.hpp>
 #include <boost/spirit/include/phoenix.hpp>

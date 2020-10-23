@@ -3,7 +3,6 @@
 
 
 #include "CommonParams.h"
-#include "ShipHull.h"
 #include "../util/Enum.h"
 #include "../util/Pending.h"
 

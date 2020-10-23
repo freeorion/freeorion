@@ -2,7 +2,7 @@
 #define _ProductionWnd_h_
 
 #include "CUIWnd.h"
-#include "../universe/Enums.h"
+#include "../universe/EnumsFwd.h"
 #include "../Empire/Empire.h"
 
 #include <GG/ListBox.h>

@@ -10,8 +10,7 @@
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/iterator/filter_iterator.hpp>
 #include <boost/optional/optional.hpp>
-#include "Enums.h"
-#include "Planet.h"
+#include "EnumsFwd.h"
 #include "../util/Enum.h"
 #include "../util/Export.h"
 #include "../util/Pending.h"
@@ -25,6 +24,19 @@ namespace Effect {
 }
 
 FO_COMMON_API extern const int ALL_EMPIRES;
+
+//! Environmental suitability of planets for a particular Species
+FO_ENUM(
+    (PlanetEnvironment),
+    ((INVALID_PLANET_ENVIRONMENT, -1))
+    ((PE_UNINHABITABLE))
+    ((PE_HOSTILE))
+    ((PE_POOR))
+    ((PE_ADEQUATE))
+    ((PE_GOOD))
+    ((NUM_PLANET_ENVIRONMENTS))
+)
+
 
 /** A setting that a ResourceCenter can be assigned to influence what it
   * produces.  Doesn't directly affect the ResourceCenter, but effectsgroups

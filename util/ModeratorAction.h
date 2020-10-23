@@ -1,9 +1,7 @@
 #ifndef _Moderator_Action_h_
 #define _Moderator_Action_h_
 
-#include "../universe/Enums.h"
-#include "../universe/Planet.h"
-#include "../universe/System.h"
+#include "../universe/EnumsFwd.h"
 #include "Export.h"
 
 #include <boost/serialization/access.hpp>

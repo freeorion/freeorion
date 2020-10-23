@@ -7,7 +7,7 @@
 #include <set>
 #include <string>
 #include <vector>
-#include "Enums.h"
+#include "EnumsFwd.h"
 #include "../util/Export.h"
 
 

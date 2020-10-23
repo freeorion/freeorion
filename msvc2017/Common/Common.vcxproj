@@ -209,6 +209,7 @@
     <ClInclude Include="..\..\universe\Effect.h" />
     <ClInclude Include="..\..\universe\Encyclopedia.h" />
     <ClInclude Include="..\..\universe\Enums.h" />
+    <ClInclude Include="..\..\universe\EnumsFwd.h" />
     <ClInclude Include="..\..\universe\Field.h" />
     <ClInclude Include="..\..\universe\FieldType.h" />
     <ClInclude Include="..\..\universe\Fighter.h" />

@@ -10,9 +10,7 @@
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
 #include "Condition.h"
-#include "Planet.h"
 #include "ScriptingContext.h"
-#include "System.h"
 #include "Universe.h"
 #include "ValueRef.h"
 #include "../util/CheckSums.h"
@@ -20,12 +18,11 @@
 #include "../util/i18n.h"
 #include "../util/Random.h"
 
-/*
 std::ostream& operator<<(std::ostream&, PlanetType);
 std::ostream& operator<<(std::ostream&, PlanetSize);
 std::ostream& operator<<(std::ostream&, PlanetEnvironment);
 std::ostream& operator<<(std::ostream&, StarType);
-*/
+
 
 namespace CheckSums {
     template <typename T>

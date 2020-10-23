@@ -1,7 +1,7 @@
 #ifndef _BuildDesignatorWnd_h_
 #define _BuildDesignatorWnd_h_
 
-#include "../universe/Enums.h"
+#include "../universe/EnumsFwd.h"
 #include "../Empire/Empire.h"
 
 #include <GG/Wnd.h>

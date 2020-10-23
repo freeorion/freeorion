@@ -8,8 +8,7 @@
 #include <boost/uuid/uuid.hpp>
 #include "Export.h"
 #include "../Empire/Empire.h"
-#include "../universe/Enums.h"
-#include "../universe/Fleet.h"
+#include "../universe/EnumsFwd.h"
 
 
 class ShipDesign;

@@ -3,7 +3,7 @@
 
 #include <GG/Wnd.h>
 
-#include "../universe/Enums.h"
+#include "../universe/EnumsFwd.h"
 
 class StatisticIcon;
 

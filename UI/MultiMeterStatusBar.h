@@ -4,7 +4,7 @@
 #include <GG/GGFwd.h>
 #include <GG/Wnd.h>
 
-#include "../universe/Enums.h"
+#include "../universe/EnumsFwd.h"
 
 
 /** Graphically represets current value and projected changes to single meters

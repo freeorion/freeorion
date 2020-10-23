@@ -3,13 +3,13 @@
 
 
 #include <boost/signals2/signal.hpp>
-#include "Enums.h"
-#include "UniverseObject.h"
+#include "EnumsFwd.h"
 #include "../util/Export.h"
 
 
 class Empire;
 class Meter;
+class UniverseObject;
 
 /** The ResourceCenter class is an abstract base class for anything in the
   * FreeOrion gamestate that generates resources (minerals, etc.).  Most

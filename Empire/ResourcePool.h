@@ -7,7 +7,8 @@
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/version.hpp>
 #include <boost/signals2/signal.hpp>
-#include "../universe/Enums.h"
+#include "../universe/EnumsFwd.h"
+#include "../util/Enum.h"
 #include "../util/Export.h"
 
 

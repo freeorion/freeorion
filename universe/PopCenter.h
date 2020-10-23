@@ -4,12 +4,12 @@
 
 #include <memory>
 #include <string>
-#include "Enums.h"
-#include "UniverseObject.h"
+#include "EnumsFwd.h"
 #include "../util/Export.h"
 
 
 class Meter;
+class UniverseObject;
 
 /** The PopCenter class is an abstract base class for anything in the FreeOrion
   * gamestate that has population on or in it.  Most likely, such an object

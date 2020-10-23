@@ -8,7 +8,7 @@
 #include <unordered_map>
 #include <vector>
 #include <boost/container/flat_map.hpp>
-#include "Enums.h"
+#include "EnumsFwd.h"
 #include "../util/Enum.h"
 #include "../util/Export.h"
 

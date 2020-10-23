@@ -2,7 +2,7 @@
 #define _EmpireManager_h_
 
 #include "Diplomacy.h"
-#include "../universe/Enums.h"
+#include "../universe/EnumsFwd.h"
 #include "../util/Export.h"
 
 #include <boost/filesystem.hpp>

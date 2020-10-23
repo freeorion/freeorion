@@ -8,7 +8,7 @@
 #include "ProductionQueue.h"
 #include "ResearchQueue.h"
 #include "ResourcePool.h"
-#include "../universe/ShipPart.h"
+#include "../universe/EnumsFwd.h"
 #include "../universe/Meter.h"
 #include "../util/Export.h"
 

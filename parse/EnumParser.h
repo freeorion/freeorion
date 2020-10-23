@@ -5,11 +5,7 @@
 
 #include "ParseImpl.h"
 #include "../universe/ValueRef.h"
-#include "../universe/BuildingType.h"
-#include "../universe/Enums.h"
-#include "../universe/ShipHull.h"
-#include "../universe/ShipPart.h"
-#include "../universe/UnlockableItem.h"
+#include "../universe/EnumsFwd.h"
 
 #include <boost/spirit/include/qi.hpp>
 

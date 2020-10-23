@@ -3,7 +3,6 @@
 
 #include "ObjectMap.h"
 #include "UniverseObject.h"
-#include "../Empire/ResourcePool.h"
 #include "../util/Enum.h"
 #include "../util/Export.h"
 

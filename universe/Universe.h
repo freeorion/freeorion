@@ -12,7 +12,7 @@
 #include <boost/container/flat_map.hpp>
 #include <boost/signals2/signal.hpp>
 #include <boost/thread/shared_mutex.hpp>
-#include "Enums.h"
+#include "EnumsFwd.h"
 #include "ObjectMap.h"
 #include "UniverseObject.h"
 #include "../util/Export.h"

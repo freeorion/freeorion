@@ -9,8 +9,7 @@
 #include <tuple>
 
 #include "../util/Export.h"
-#include "../universe/Enums.h"
-#include "../universe/UniverseObject.h"
+#include "../universe/EnumsFwd.h"
 
 #include "CombatEvent.h"
 

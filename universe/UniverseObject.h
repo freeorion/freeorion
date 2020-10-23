@@ -9,7 +9,7 @@
 #include <boost/python/detail/destroy.hpp>
 #include <boost/signals2/optional_last_value.hpp>
 #include <boost/signals2/signal.hpp>
-#include "Enums.h"
+#include "EnumsFwd.h"
 #include "Meter.h"
 #include "../util/blocking_combiner.h"
 #include "../util/Enum.h"

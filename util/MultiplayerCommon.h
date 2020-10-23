@@ -1,7 +1,7 @@
 #ifndef _MultiplayerCommon_h_
 #define _MultiplayerCommon_h_
 
-#include "../universe/Enums.h"
+#include "../universe/EnumsFwd.h"
 #include "../network/Networking.h"
 #include "Enum.h"
 #include "Export.h"

@@ -78,18 +78,6 @@ FO_ENUM(
     ((NUM_AFFIL_TYPES)) ///< keep last, the number of affiliation types
 )
 
-//! Environmental suitability of planets for a particular Species
-FO_ENUM(
-    (PlanetEnvironment),
-    ((INVALID_PLANET_ENVIRONMENT, -1))
-    ((PE_UNINHABITABLE))
-    ((PE_HOSTILE))
-    ((PE_POOR))
-    ((PE_ADEQUATE))
-    ((PE_GOOD))
-    ((NUM_PLANET_ENVIRONMENTS))
-)
-
 
 /** Returns mapping from active to target or max meter types that correspond.
   * eg. MeterType::METER_RESEARCH -> MeterType::METER_TARGET_RESEARCH */
