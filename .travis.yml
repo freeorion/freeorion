@@ -119,7 +119,7 @@ jobs:
         - CACHE_NAME=linux-headless
         - CMAKE_BUILD_PARALLEL_LEVEL=2
       script:
-        - cmake -DBUILD_HEADLESS=ON -DBUILD_TESTING=ON ..
+        - cmake -DBUILD_CLIENT_GG=OFF -DBUILD_TESTING=ON ..
         - cmake --build .
 
     - name: Build FreeOrion on MacOS 10.12
