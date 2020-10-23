@@ -21,7 +21,7 @@
 
 /** @brief Implementation detail for FO_ENUM */
 #define FO_DEF_ENUM(typeName, values) \
-enum \
+enum class \
 BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
     BOOST_PP_TUPLE_ELEM(1, typeName), \
     BOOST_PP_TUPLE_ELEM(0, typeName)) \
@@ -31,7 +31,7 @@ BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
 
 /** @brief Implementation detail for FO_ENUM */
 #define FO_DEF_ENUM_OSTREAM_CASE(r, data, elem) \
-    case BOOST_PP_TUPLE_ELEM(0, elem): \
+    case data::BOOST_PP_TUPLE_ELEM(0, elem): \
         stream << BOOST_PP_STRINGIZE(BOOST_PP_TUPLE_ELEM(0, elem)); \
         break;
 
@@ -44,11 +44,14 @@ BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
 std::ostream& operator <<(std::ostream& stream, \
 BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
     BOOST_PP_TUPLE_ELEM(1, typeName), \
-    BOOST_PP_TUPLE_ELEM(0, typeName))& value) \
+    BOOST_PP_TUPLE_ELEM(0, typeName)) value) \
 { \
     switch(value) \
     { \
-        BOOST_PP_SEQ_FOR_EACH(FO_DEF_ENUM_OSTREAM_CASE, _, values) \
+        BOOST_PP_SEQ_FOR_EACH(FO_DEF_ENUM_OSTREAM_CASE, \
+            BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
+                BOOST_PP_TUPLE_ELEM(1, typeName), \
+                BOOST_PP_TUPLE_ELEM(0, typeName)), values) \
         default: \
             stream.setstate(std::ios::failbit); \
             break; \
@@ -61,7 +64,7 @@ BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
 #define FO_DEF_ENUM_ISTREAM_CASE(r, data, elem) \
     else if( \
 BOOST_PP_STRINGIZE(BOOST_PP_TUPLE_ELEM(0, elem)) == token) \
-        value = BOOST_PP_TUPLE_ELEM(0, elem);
+        value = data::BOOST_PP_TUPLE_ELEM(0, elem);
 
 /** @brief Implementation detail for FO_ENUM */
 #define FO_DEF_ENUM_ISTREAM(typeName, values) \
@@ -80,7 +83,10 @@ BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
  \
     if(false) \
         ; \
-    BOOST_PP_SEQ_FOR_EACH(FO_DEF_ENUM_ISTREAM_CASE, _, values) \
+    BOOST_PP_SEQ_FOR_EACH(FO_DEF_ENUM_ISTREAM_CASE, \
+        BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
+            BOOST_PP_TUPLE_ELEM(1, typeName), \
+            BOOST_PP_TUPLE_ELEM(0, typeName)), values) \
     else \
         stream.setstate(std::ios::failbit); \
  \
