@@ -260,12 +260,14 @@ if(BUILD_TESTING)
     add_subdirectory(test)
 endif()
 
-set(BUILD_DEVEL_PACKAGE OFF CACHE INTERNAL "Disables installation of GiGi development files." FORCE)
-set(_ORIG_CMAKE_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR})
-set(CMAKE_INSTALL_LIBDIR "${FreeOrion_INSTALL_LIBDIR}")
-add_subdirectory(GG)
-set(CMAKE_INSTALL_LIBDIR ${_ORIG_CMAKE_INSTALL_LIBDIR})
-unset(_ORIG_CMAKE_INSTALL_LIBDIR)
+if(NOT BUILD_HEADLESS)
+    set(BUILD_DEVEL_PACKAGE OFF CACHE INTERNAL "Disables installation of GiGi development files." FORCE)
+    set(_ORIG_CMAKE_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR})
+    set(CMAKE_INSTALL_LIBDIR "${FreeOrion_INSTALL_LIBDIR}")
+    add_subdirectory(GG)
+    set(CMAKE_INSTALL_LIBDIR ${_ORIG_CMAKE_INSTALL_LIBDIR})
+    unset(_ORIG_CMAKE_INSTALL_LIBDIR)
+endif()
 
 set_property(DIRECTORY APPEND
     PROPERTY COMPILE_DEFINITIONS
@@ -356,7 +358,6 @@ target_compile_definitions(freeorioncommon
 
 target_link_libraries(freeorioncommon
     PUBLIC
-        GiGi::header
         Boost::boost
         Boost::disable_autolinking
         Boost::dynamic_linking
@@ -393,13 +394,11 @@ add_library(freeorionparseobj OBJECT "")
 target_compile_definitions(freeorionparseobj
     PUBLIC
         $<TARGET_PROPERTY:Boost::boost,INTERFACE_COMPILE_DEFINITIONS>
-        $<TARGET_PROPERTY:GiGi::header,INTERFACE_COMPILE_DEFINITIONS>
 )
 
 target_include_directories(freeorionparseobj
     PUBLIC
         $<TARGET_PROPERTY:Boost::boost,INTERFACE_INCLUDE_DIRECTORIES>
-        $<TARGET_PROPERTY:GiGi::header,INTERFACE_INCLUDE_DIRECTORIES>
 )
 
 set_property(TARGET freeorionparseobj
