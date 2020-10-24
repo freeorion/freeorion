@@ -44,7 +44,9 @@ set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 
 option(BUILD_SHARED_LIBS "Build project as shared libraries." ON)
 option(BUILD_TESTING "Build the testing tree." OFF)
-option(BUILD_HEADLESS "Build only headless components: server and AI." OFF)
+option(BUILD_CLIENT_GG "Build GiGi client" ON)
+option(BUILD_SERVER "Build server" ON)
+option(BUILD_AI "Build AI" ON)
 
 if(BUILD_TESTING)
     message( STATUS "Building Tests")
@@ -224,7 +226,9 @@ set(MINIMUM_BOOST_VERSION 1.60.0)
 
 find_package(Threads)
 find_package(PythonInterp ${MINIMUM_PYTHON_VERSION} REQUIRED)
-find_package(PythonLibs ${MINIMUM_PYTHON_VERSION} REQUIRED)
+if(BUILD_AI OR BUILD_SERVER)
+    find_package(PythonLibs ${MINIMUM_PYTHON_VERSION} REQUIRED)
+endif()
 find_package(Boost ${MINIMUM_BOOST_VERSION}
     COMPONENTS
         filesystem
@@ -237,11 +241,13 @@ find_package(Boost ${MINIMUM_BOOST_VERSION}
         thread
     REQUIRED)
 
-find_package(Boost COMPONENTS python${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR} REQUIRED)
-set(Boost_PYTHON_SUFFIX "${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}")
+if(BUILD_AI OR BUILD_SERVER)
+    find_package(Boost COMPONENTS python${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR} REQUIRED)
+    set(Boost_PYTHON_SUFFIX "${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}")
+endif()
 
 find_package(ZLIB REQUIRED)
-if(NOT BUILD_HEADLESS)
+if(BUILD_CLIENT_GG)
     set(SDL_NO_MAIN true)
     find_package(SDL REQUIRED)
     find_package(Freetype REQUIRED)
@@ -260,7 +266,7 @@ if(BUILD_TESTING)
     add_subdirectory(test)
 endif()
 
-if(NOT BUILD_HEADLESS)
+if(BUILD_CLIENT_GG)
     set(BUILD_DEVEL_PACKAGE OFF CACHE INTERNAL "Disables installation of GiGi development files." FORCE)
     set(_ORIG_CMAKE_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR})
     set(CMAKE_INSTALL_LIBDIR "${FreeOrion_INSTALL_LIBDIR}")
@@ -475,67 +481,70 @@ if(APPLE)
     )
 endif()
 
-
-add_executable(freeoriond "")
-
-if(WIN32)
-    set_property(TARGET freeoriond
-        PROPERTY
-            OUTPUT_NAME FreeOrionD
+if(BUILD_SERVER)
+    add_executable(freeoriond "")
+    
+    if(WIN32)
+        set_property(TARGET freeoriond
+            PROPERTY
+                OUTPUT_NAME FreeOrionD
+        )
+    endif()
+    
+    target_compile_definitions(freeoriond
+        PRIVATE
+            -DFREEORION_BUILD_SERVER
     )
+    
+    target_include_directories(freeoriond SYSTEM
+        PRIVATE
+            ${PYTHON_INCLUDE_PATH}
+    )
+    
+    target_link_libraries(freeoriond
+        PRIVATE
+            freeorioncommon
+            freeorionparse
+            Boost::python${Boost_PYTHON_SUFFIX}
+            ${PYTHON_LIBRARIES}
+    )
+    
+    target_dependencies_copy_to_build(freeoriond)
+    target_dependent_data_symlink_to_build(freeoriond ${PROJECT_SOURCE_DIR}/default)
 endif()
 
-target_compile_definitions(freeoriond
-    PRIVATE
-        -DFREEORION_BUILD_SERVER
-)
-
-target_include_directories(freeoriond SYSTEM
-    PRIVATE
-        ${PYTHON_INCLUDE_PATH}
-)
-
-target_link_libraries(freeoriond
-    PRIVATE
+if(BUILD_AI)
+    add_executable(freeorionca "")
+    
+    if(WIN32)
+        set_property(TARGET freeorionca
+            PROPERTY
+                OUTPUT_NAME FreeOrionCA
+        )
+    endif()
+    
+    target_compile_definitions(freeorionca
+        PRIVATE
+            -DFREEORION_BUILD_AI
+    )
+    
+    target_include_directories(freeorionca SYSTEM
+        PRIVATE
+            ${PYTHON_INCLUDE_PATH}
+    )
+    
+    target_link_libraries(freeorionca
         freeorioncommon
         freeorionparse
         Boost::python${Boost_PYTHON_SUFFIX}
         ${PYTHON_LIBRARIES}
-)
-
-target_dependencies_copy_to_build(freeoriond)
-target_dependent_data_symlink_to_build(freeoriond ${PROJECT_SOURCE_DIR}/default)
-
-add_executable(freeorionca "")
-
-if(WIN32)
-    set_property(TARGET freeorionca
-        PROPERTY
-            OUTPUT_NAME FreeOrionCA
     )
+    
+    target_dependencies_copy_to_build(freeorionca)
+    target_dependent_data_symlink_to_build(freeorionca ${PROJECT_SOURCE_DIR}/default)
 endif()
 
-target_compile_definitions(freeorionca
-    PRIVATE
-        -DFREEORION_BUILD_AI
-)
-
-target_include_directories(freeorionca SYSTEM
-    PRIVATE
-        ${PYTHON_INCLUDE_PATH}
-)
-
-target_link_libraries(freeorionca
-    freeorioncommon
-    freeorionparse
-    Boost::python${Boost_PYTHON_SUFFIX}
-    ${PYTHON_LIBRARIES}
-)
-
-target_dependencies_copy_to_build(freeorionca)
-target_dependent_data_symlink_to_build(freeorionca ${PROJECT_SOURCE_DIR}/default)
-
-if(NOT BUILD_HEADLESS)
+if(BUILD_CLIENT_GG)
     add_executable(freeorion "")
 
     if(WIN32)
@@ -620,7 +629,7 @@ if(NOT BUILD_HEADLESS)
     target_dependent_data_symlink_to_build(freeorion ${PROJECT_SOURCE_DIR}/default)
 endif()
 
-if(WIN32)
+if(WIN32 AND BUILD_CLIENT_GG)
     add_custom_command(TARGET freeorion POST_BUILD
         COMMAND
             ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_PREFIX_PATH}/bin/python${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}.dll" "$<TARGET_FILE_DIR:freeorion>"
@@ -629,7 +638,7 @@ if(WIN32)
     )
 endif()
 
-if(APPLE)
+if(APPLE AND BUILD_CLIENT_GG)
     add_custom_command(TARGET freeorion POST_BUILD
         COMMAND
             ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:freeorion>/../Executables"
@@ -683,14 +692,20 @@ endif()
 ## Recurse into sources.
 ##
 
-add_subdirectory(client)
+if(BUILD_AI OR BUILD_CLIENT_GG)
+    add_subdirectory(client)
+endif()
 add_subdirectory(combat)
 add_subdirectory(Empire)
 add_subdirectory(network)
 add_subdirectory(parse)
-add_subdirectory(python)
-add_subdirectory(server)
-if(NOT BUILD_HEADLESS)
+if(BUILD_AI OR BUILD_SERVER)
+    add_subdirectory(python)
+endif()
+if(BUILD_SERVER)
+    add_subdirectory(server)
+endif()
+if(BUILD_CLIENT_GG)
     add_subdirectory(UI)
 endif()
 add_subdirectory(universe)
@@ -703,7 +718,7 @@ add_subdirectory(doc)
 ## Install targets and package project.
 ##
 
-if(UNIX AND NOT BUILD_HEADLESS)
+if(UNIX AND BUILD_CLIENT_GG)
     install(
         TARGETS
 	    freeorion
@@ -721,16 +736,26 @@ if(UNIX AND NOT APPLE)
         LIBRARY DESTINATION ${FreeOrion_INSTALL_LIBDIR}
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
+    
+    if(BUILD_SERVER)
+        install(
+            TARGETS
+                freeoriond
+            RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+            BUNDLE DESTINATION .
+        )
+    endif()
 
-    install(
-        TARGETS
-            freeoriond
-            freeorionca
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-        BUNDLE DESTINATION .
-    )
+    if(BUILD_AI)
+        install(
+            TARGETS
+                freeorionca
+            RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+            BUNDLE DESTINATION .
+        )
+    endif()
 
-    if(NOT BUILD_HEADLESS)
+    if(BUILD_CLIENT_GG)
         install(
             FILES
             ${CMAKE_SOURCE_DIR}/packaging/org.freeorion.FreeOrion.desktop
@@ -744,7 +769,7 @@ if(UNIX AND NOT APPLE)
         DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/metainfo
     )
 
-    if(NOT BUILD_HEADLESS)
+    if(BUILD_CLIENT_GG)
         install(
             DIRECTORY default/
             DESTINATION ${CMAKE_INSTALL_DATADIR}/freeorion/default

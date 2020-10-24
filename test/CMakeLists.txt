@@ -1,7 +1,9 @@
 add_subdirectory(parse)
 add_subdirectory(util)
-add_subdirectory(system)
+if (BUILD_AI AND BUILD_SERVER)
+    add_subdirectory(system)
+endif ()
 
-if (NOT BUILD_HEADLESS)
+if (BUILD_CLIENT_GG)
     add_subdirectory(UI)
 endif ()

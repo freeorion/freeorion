@@ -10,17 +10,21 @@ target_sources(freeorioncommon
         ${CMAKE_CURRENT_LIST_DIR}/CombatLogManager.cpp
 )
 
-target_sources(freeoriond
-    PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}/CombatSystem.cpp
-)
+if(BUILD_SERVER)
+    target_sources(freeoriond
+        PRIVATE
+            ${CMAKE_CURRENT_LIST_DIR}/CombatSystem.cpp
+    )
+endif()
 
-target_sources(freeorionca
-    PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}/CombatSystem.cpp
-)
+if(BUILD_AI)
+    target_sources(freeorionca
+        PRIVATE
+            ${CMAKE_CURRENT_LIST_DIR}/CombatSystem.cpp
+    )
+endif()
 
-if(NOT BUILD_HEADLESS)
+if(BUILD_CLIENT_GG)
     target_sources(freeorion
         PRIVATE
             ${CMAKE_CURRENT_LIST_DIR}/CombatSystem.cpp
