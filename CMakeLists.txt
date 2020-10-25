@@ -654,15 +654,23 @@ if(BUILD_CLIENT_GODOT)
             ${GODOT_CPP_ROOT}/godot_headers
     )
 
-    target_link_directories(freeoriongodot
-        PRIVATE
-            ${GODOT_CPP_ROOT}/bin/
-    )
+    if(CMAKE_VERSION VERSION_GREATER "3.13")
+        target_link_directories(freeoriongodot
+            PRIVATE
+                ${GODOT_CPP_ROOT}/bin/
+        )
+        target_link_libraries(freeoriongodot
+            godot-cpp.linux.$<IF:$<CONFIG:Debug>,debug,release>.$<IF:$<EQUAL:${CMAKE_SIZEOF_VOID_P},8>,64,32>
+        )
+    else()
+        target_link_libraries(freeoriongodot
+            ${GODOT_CPP_ROOT}/bin/libgodot-cpp.linux.$<IF:$<CONFIG:Debug>,debug,release>.$<IF:$<EQUAL:${CMAKE_SIZEOF_VOID_P},8>,64,32>.a
+        )
+    endif()
 
     target_link_libraries(freeoriongodot
         freeorioncommon
         freeorionparse
-        godot-cpp.linux.$<IF:$<CONFIG:Debug>,debug,release>.$<IF:$<EQUAL:${CMAKE_SIZEOF_VOID_P},8>,64,32>
     )
 
     target_dependencies_copy_to_build(freeoriongodot)
