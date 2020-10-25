@@ -45,6 +45,10 @@ set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 option(BUILD_SHARED_LIBS "Build project as shared libraries." ON)
 option(BUILD_TESTING "Build the testing tree." OFF)
 option(BUILD_CLIENT_GG "Build GiGi client" ON)
+option(BUILD_CLIENT_GODOT "Build Godot client (experimental)" OFF)
+if(NOT GODOT_CPP_ROOT)
+    set(GODOT_CPP_ROOT "" CACHE STRING "Path to Godot CPP libraries" FORCE)
+endif()
 option(BUILD_SERVER "Build server" ON)
 option(BUILD_AI "Build AI" ON)
 
@@ -634,6 +638,36 @@ if(BUILD_CLIENT_GG)
     target_dependent_data_symlink_to_build(freeorion ${PROJECT_SOURCE_DIR}/default)
 endif()
 
+if(BUILD_CLIENT_GODOT)
+    add_library(freeoriongodot "")
+
+    target_compile_definitions(freeoriongodot
+        PRIVATE
+            -DFREEORION_BUILD_HUMAN_GODOT
+    )
+
+    target_include_directories(freeoriongodot SYSTEM
+        PRIVATE
+            ${GODOT_CPP_ROOT}/include
+            ${GODOT_CPP_ROOT}/include/core
+            ${GODOT_CPP_ROOT}/include/gen
+            ${GODOT_CPP_ROOT}/godot_headers
+    )
+
+    target_link_directories(freeoriongodot
+        PRIVATE
+            ${GODOT_CPP_ROOT}/bin/
+    )
+
+    target_link_libraries(freeoriongodot
+        freeorioncommon
+        freeorionparse
+        godot-cpp.linux.$<IF:$<CONFIG:Debug>,debug,release>.$<IF:$<EQUAL:${CMAKE_SIZEOF_VOID_P},8>,64,32>
+    )
+
+    target_dependencies_copy_to_build(freeoriongodot)
+endif()
+
 if(WIN32 AND BUILD_CLIENT_GG)
     add_custom_command(TARGET freeorion POST_BUILD
         COMMAND
@@ -702,6 +736,9 @@ if(BUILD_AI OR BUILD_CLIENT_GG)
 endif()
 add_subdirectory(combat)
 add_subdirectory(Empire)
+if(BUILD_CLIENT_GODOT)
+    add_subdirectory(godot)
+endif()
 add_subdirectory(network)
 add_subdirectory(parse)
 if(BUILD_AI OR BUILD_SERVER)
