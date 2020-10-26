@@ -514,7 +514,7 @@ namespace {
 
                 sorted_entries_list.emplace(
                     entry.first,
-                    std::make_pair(entry.first + pre + LinkTaggedPresetText(VarText::FOCS_VALUE_TAG, entry.first, vref.Description()) +
+                    std::make_pair(entry.first + pre + LinkTaggedText(VarText::FOCS_VALUE_TAG, entry.first) +
                                    " '" + UserString(entry.first) + "' " + vref.InvariancePattern() + "\n", dir_name));
             }
 
