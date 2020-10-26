@@ -819,7 +819,6 @@ MPLobby::MPLobby(my_context c) :
     TraceLogger(FSM) << "(ServerFSM) MPLobby";
     ClockSeed();
     ServerApp& server = Server();
-    server.InitializePython();
     server.LoadChatHistory();
     m_lobby_data->game_rules = GetGameRules().GetRulesAsStrings();
     const SpeciesManager& sm = GetSpeciesManager();
@@ -2061,8 +2060,6 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
     }
 
     server.CreateAIClients(players, int(m_single_player_setup_data->ai_aggr));    // also disconnects any currently-connected AI clients
-
-    server.InitializePython();
 
     // if Python fails to initialize, don't bother initializing SP game.
     // Still check start conditions, which will abort the server after all
