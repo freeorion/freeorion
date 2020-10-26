@@ -19,7 +19,7 @@ Tech
                 Focus type = "FOCUS_RESEARCH"
             ]
             priority = [[VERY_LATE_PRIORITY]]
-            effects = SetTargetResearch value = Value + 5 * [[RESEARCH_PER_POP]]
+            effects = SetTargetResearch value = Value + (NamedReal name = "LRN_ARTIF_MINDS_TARGET_RESEARCH_FLAT" value = 1)
     ]
     graphic = "icons/tech/basic_autolabs.png"
 

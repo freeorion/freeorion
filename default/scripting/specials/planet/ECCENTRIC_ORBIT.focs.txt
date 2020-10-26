@@ -15,8 +15,8 @@ Special
             activation = NOT Population high = 0
             priority = [[LATE_PRIORITY]]
             effects = [
-                SetTargetResearch value = Value + 3
-                SetMaxSupply value = Value -2
+                SetTargetResearch value = Value + (NamedReal name = "ECCENTRIC_ORBIT_TARGET_RESEARCH_FLAT" value = 3)
+                SetMaxSupply value = Value + (NamedReal name = "ECCENTRIC_ORBIT_MAXSUPPLY_FLAT" value = (-2))
             ]
     graphic = "icons/specials_huge/eccentric_orbit.png"
 

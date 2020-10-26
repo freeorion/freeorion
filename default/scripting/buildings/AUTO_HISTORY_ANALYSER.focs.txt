@@ -29,7 +29,7 @@ BuildingType
             ]
             priority = [[VERY_LATE_PRIORITY]]
             effects = [
-                SetTargetResearch value = Value + 5
+                SetTargetResearch value = Value + (NamedReal name = "BLD_AUTO_HISTORY_ANALYSER_TARGET_RESEARCH_FLAT" value = 5)
             ]
     ]
     icon = "icons/building/science1.png"

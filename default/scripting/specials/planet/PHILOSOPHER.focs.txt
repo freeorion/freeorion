@@ -36,17 +36,16 @@ Special
             scope = And [
                 Planet
                 NOT Population high = 0
-//                Focus type = "FOCUS_RESEARCH" // Does not require focus
                 InSystem id = Source.SystemID
             ]
             activation = Unowned
             stackinggroup = "PHILOSOPHER_STACK"
             priority = [[LATE_PRIORITY]]
-            effects = SetTargetResearch value = Value + 5
+            effects = SetTargetResearch value = Value + (NamedReal name = "PHILOSOPHER_TARGET_RESEARCH_FLAT" value = 5)
 
         EffectsGroup
             scope = Source
-            effects = SetTargetConstruction value = Value - 20
+            effects = SetTargetConstruction value = Value + (NamedReal name = "PHILOSOPHER_TARGET_CONSTRUCTION_FLAT" value = (-20))
     ]
     graphic = "icons/specials_huge/philospher-planet.png"
 

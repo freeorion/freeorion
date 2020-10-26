@@ -26,7 +26,8 @@ Tech
             ]
             stackinggroup = "DEFENSE_NET_STACK_GM"
             priority = [[LATE_PRIORITY]]
-            effects = SetMaxDefense value = Value + ( 10 * [[PLANET_DEFENSE_FACTOR]] ) accountinglabel = "GRO_ENERGY_META"
+            effects = SetMaxDefense value = Value + (NamedReal name = "GRO_ENERGY_META_MAX_DEFENSE_FLAT" value = (10 * [[PLANET_DEFENSE_FACTOR]]))
+                accountinglabel = "GRO_ENERGY_META"
 
         EffectsGroup
             scope = And [
@@ -35,7 +36,8 @@ Tech
             ]
             stackinggroup = "PLANET_SHIELDS_STACK_GEM"
             priority = [[LATE_PRIORITY]]
-            effects = SetMaxShield value = Value + ( 50 * [[PLANET_SHIELD_FACTOR]] ) accountinglabel = "GRO_ENERGY_META"
+            effects = SetMaxShield value = Value + (NamedReal name = "GRO_ENERGY_META_MAX_SHIELD_FLAT" value = (50 * [[PLANET_SHIELD_FACTOR]]))
+                accountinglabel = "GRO_ENERGY_META"
 
         EffectsGroup
             scope = And [
@@ -44,7 +46,7 @@ Tech
                 Focus type = "FOCUS_INDUSTRY"
             ]
             priority = [[EARLY_PRIORITY]]
-            effects = SetTargetIndustry value = Value + Target.Population * 0.5 * [[INDUSTRY_PER_POP]]
+            effects = SetTargetIndustry value = Value + Target.Population * (NamedReal name = "GRO_ENERGY_META_TARGET_INDUSTRY_PERPOP" value = (0.5 * [[INDUSTRY_PER_POP]]))
 
         EffectsGroup
             scope = And [
@@ -53,7 +55,7 @@ Tech
                 Focus type = "FOCUS_RESEARCH"
             ]
             priority = [[EARLY_PRIORITY]]
-            effects = SetTargetResearch value = Value  + Target.Population * 1.0 * [[RESEARCH_PER_POP]]
+            effects = SetTargetResearch value = Value  + Target.Population * (NamedReal name = "GRO_ENERGY_META_TARGET_RESEARCH_PERPOP" value = (1.0 * [[RESEARCH_PER_POP]]))
     ]
     graphic = "icons/tech/pure-energy_metabolism.png"
 

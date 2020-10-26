@@ -29,14 +29,12 @@ Special
             activation = Focus type = "FOCUS_RESEARCH"
             stackinggroup = "COMPUTRONIUM_STACK"
             priority = [[LATE_PRIORITY]]
-            effects = SetTargetResearch value = Value + Target.Population * 0.25 * [[RESEARCH_PER_POP]]
+            effects = SetTargetResearch value = Value + Target.Population * (NamedReal name = "COMPUTRONIUM_TARGET_RESEARCH_PERPOP" value = (0.25 * [[RESEARCH_PER_POP]]))
 
         [[CHANCE_OF_GUARD_2]]
     ]
     graphic = "icons/specials_huge/computronium.png"
 
 #include "monster_guard.macros"
-
 #include "/scripting/common/base_prod.macros"
-
 #include "/scripting/common/priorities.macros"

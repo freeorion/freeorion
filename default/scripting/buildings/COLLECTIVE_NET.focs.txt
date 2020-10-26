@@ -25,7 +25,7 @@ BuildingType
             ]
             stackinggroup = "BLD_COLLECTIVE_NET_INDUSTRY_EFFECT"
             priority = [[VERY_LATE_PRIORITY]]
-            effects = SetTargetIndustry value = Value + Target.Population * 0.5 * [[INDUSTRY_PER_POP]]
+            effects = SetTargetIndustry value = Value + Target.Population * (NamedReal name = "BLD_COLLECTIVE_NET_TARGET_INDUSTRY_PERPOP" value = (0.5 * [[INDUSTRY_PER_POP]]))
 
         EffectsGroup
             scope = And [
@@ -39,7 +39,7 @@ BuildingType
             ]
             stackinggroup = "BLD_COLLECTIVE_NET_RESEARCH_EFFECT"
             priority = [[LATE_PRIORITY]]
-            effects = SetTargetResearch value = Value + Target.Population * 0.5 * [[RESEARCH_PER_POP]]
+            effects = SetTargetResearch value = Value + Target.Population * (NamedReal name = "BLD_COLLECTIVE_NET_TARGET_RESEARCH_PERPOP" value = (0.5 * [[RESEARCH_PER_POP]]))
     ]
     icon = "icons/building/psi-corps.png"
 
