@@ -1,6 +1,7 @@
 #include "ServerApp.h"
 
 #include <ctime>
+#include <stdexcept>
 #include <thread>
 #include <boost/date_time/posix_time/time_formatters.hpp>
 #include <boost/filesystem/exception.hpp>
@@ -109,6 +110,12 @@ ServerApp::ServerApp() :
     m_galaxy_setup_data.native_freq = GetOptionsDB().Get<GalaxySetupOption>("setup.native.frequency");
     m_galaxy_setup_data.ai_aggr = GetOptionsDB().Get<Aggression>("setup.ai.aggression");
     m_galaxy_setup_data.game_uid = GetOptionsDB().Get<std::string>("setup.game.uid");
+
+    // Initialize Python before FSM initialization
+    // to be able use it for parsing
+    InitializePython();
+    if (!m_python_server.IsPythonRunning())
+        throw std::runtime_error("Python not initialized");
 
     // Start parsing content before FSM initialization
     // to have data initialized before autostart execution
