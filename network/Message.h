@@ -111,13 +111,6 @@ public:
         ((PLAYER_INFO))            ///< sent by server to client to notify about changes in the player data
     )
 
-    static constexpr std::initializer_list<std::pair<MessageType, const char*>> MessageTypeValues()
-    {
-        const auto ret1 = std::initializer_list<std::pair<MessageType, const char*>>{{MessageType::UNDEFINED, "UNDEFINED"},
-        {MessageType::DEBUG, "DEBUG"}};
-        return ret1;
-    };
-
     static constexpr std::initializer_list<std::pair<MessageType, const char*>> IterateEnum(EnumIterator<MessageType>) {
         return Message::MessageTypeValues();
     };
@@ -135,13 +128,6 @@ public:
         ((GENERATING_UNIVERSE))    ///< creating new universe
         ((STARTING_AIS))           ///< creating AI clients
     )
-
-    static constexpr std::initializer_list<std::pair<TurnProgressPhase, const char*>> TurnProgressPhaseValues()
-    {
-        const auto ret1 = std::initializer_list<std::pair<TurnProgressPhase, const char*>>{{TurnProgressPhase::FLEET_MOVEMENT, "FLEET_MOVEMENT"},
-        {TurnProgressPhase::COMBAT, "COMBAT"}};
-        return ret1;
-    };
 
     static constexpr std::initializer_list<std::pair<TurnProgressPhase, const char*>> IterateEnum(EnumIterator<TurnProgressPhase>) {
         return Message::TurnProgressPhaseValues();

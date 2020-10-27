@@ -78,22 +78,6 @@ FO_ENUM(
     ((NUM_AFFIL_TYPES)) ///< keep last, the number of affiliation types
 )
 
-constexpr std::initializer_list<std::pair<EmpireAffiliationType, const char*>> EmpireAffiliationTypeValues()
-    {
-    const auto ret = std::initializer_list<std::pair<EmpireAffiliationType, const char*>>{
-    {EmpireAffiliationType::INVALID_EMPIRE_AFFIL_TYPE, "INVALID_EMPIRE_AFFIL_TYPE"},
-    {EmpireAffiliationType::AFFIL_SELF, "AFFIL_SELF"}};
-    return ret;
-};
-
-constexpr std::initializer_list<std::pair<MeterType, const char*>> MeterTypeValues()
-    {
-    const auto ret = std::initializer_list<std::pair<MeterType, const char*>>{
-    {MeterType::INVALID_METER_TYPE, "INVALID_METER_TYPE"},
-    {MeterType::METER_CAPACITY, "METER_CAPACITY"}};
-    return ret;
-};
-
 constexpr std::initializer_list<std::pair<EmpireAffiliationType, const char*>> IterateEnum(EnumIterator<EmpireAffiliationType>) {
     return EmpireAffiliationTypeValues();
 };
