@@ -1160,10 +1160,6 @@ void ExtractHostSPGameMessageData(const Message& msg, SinglePlayerSetupData& set
 }
 
 void ExtractEndGameMessageData(const Message& msg, Message::EndGameReason& reason, std::string& reason_player_name) {
-    for (const auto& p : Message::IterateEnum(EnumIterator<Message::MessageType>{})) {
-        //meterType.value(p.second, p.first);
-    }
-
     try {
         std::istringstream is(msg.Text());
         freeorion_xml_iarchive ia(is);

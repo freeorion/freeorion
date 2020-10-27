@@ -87,11 +87,6 @@ namespace FreeOrionPython {
             .value("research",          ResourceType::RE_RESEARCH)
             .value("stockpile",         ResourceType::RE_STOCKPILE)
         ;
-        auto meterType = py::enum_<MeterType>("meterType");
-        for (const auto& p : IterateEnum(EnumIterator<MeterType>{})) {
-            meterType.value(p.second, p.first);
-        }
-        /*
         py::enum_<MeterType>("meterType")
             .value("targetPopulation",  MeterType::METER_TARGET_POPULATION)
             .value("targetIndustry",    MeterType::METER_TARGET_INDUSTRY)
@@ -136,7 +131,7 @@ namespace FreeOrionPython {
             .value("stealth",           MeterType::METER_STEALTH)
             .value("detection",         MeterType::METER_DETECTION)
             .value("speed",             MeterType::METER_SPEED)
-        ;*/
+        ;
         py::enum_<FleetAggression>("fleetAggression")
             .value("passive",           FleetAggression::FLEET_PASSIVE)
             .value("obstructive",       FleetAggression::FLEET_OBSTRUCTIVE)

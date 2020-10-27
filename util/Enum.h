@@ -183,6 +183,13 @@ BOOST_PP_CAT(BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
  * )
  * @endcode
  *
+ * Iterate over values:
+ * @code
+ * for (const auto& p : IterateEnum(EnumIterator<Animal>{})) {
+ *    ...
+ * }
+ * @endcode
+ *
  * Class member enumeration:
  * @code
  * class AutomaticGearBox
@@ -197,6 +204,13 @@ BOOST_PP_CAT(BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
  *         ((DRIVE))
  *         ((SPRINT))
  *     )
+ * }
+ * @endcode
+ *
+ * Iterate over values:
+ * @code
+ * for (const auto& p : AutomaticGearBox::IterateEnum(EnumIterator<AutomaticGearBox::Animal>{})) {
+ *    ...
  * }
  * @endcode
  */
