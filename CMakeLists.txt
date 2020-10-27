@@ -639,7 +639,9 @@ if(BUILD_CLIENT_GG)
 endif()
 
 if(BUILD_CLIENT_GODOT)
-    add_library(freeoriongodot "")
+    add_library(freeoriongodot SHARED "")
+
+    set_target_properties(freeoriongodot PROPERTIES CXX_VISIBILITY_PRESET default)
 
     target_compile_definitions(freeoriongodot
         PRIVATE
