@@ -741,7 +741,7 @@ endif()
 ## Recurse into sources.
 ##
 
-if(BUILD_AI OR BUILD_CLIENT_GG)
+if(BUILD_AI OR BUILD_CLIENT_GG OR BUILD_CLIENT_GODOT)
     add_subdirectory(client)
 endif()
 add_subdirectory(combat)

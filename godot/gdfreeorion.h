@@ -1,24 +1,27 @@
-#ifndef GDCPPTEST_H
-#define GDCPPTEST_H
+#ifndef GDFREEORION_H
+#define GDFREEORION_H
 
 #include <Godot.hpp>
 #include <Node.hpp>
+#include <memory>
 #include <thread>
+
+class GodotClientApp;
 
 namespace godot {
 
-class GDCppTest : public Node {
-    GODOT_CLASS(GDCppTest, Node)
+class GDFreeOrion : public Node {
+    GODOT_CLASS(GDFreeOrion, Node)
 
 private:
     float time_passed;
     std::thread t;
-
+    std::unique_ptr<GodotClientApp> app;
 public:
     static void _register_methods();
 
-    GDCppTest();
-    ~GDCppTest();
+    GDFreeOrion();
+    ~GDFreeOrion();
 
     void _init(); // our initializer called by Godot
 
