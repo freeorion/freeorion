@@ -8,6 +8,8 @@
 #include <boost/shared_array.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <boost/uuid/uuid.hpp>
+#include <initializer_list>
+#include <utility>
 
 #if defined(_MSC_VER) && defined(int64_t)
 #undef int64_t
@@ -109,6 +111,17 @@ public:
         ((PLAYER_INFO))            ///< sent by server to client to notify about changes in the player data
     )
 
+    static constexpr std::initializer_list<std::pair<MessageType, const char*>> MessageTypeValues()
+    {
+        const auto ret1 = std::initializer_list<std::pair<MessageType, const char*>>{{MessageType::UNDEFINED, "UNDEFINED"},
+        {MessageType::DEBUG, "DEBUG"}};
+        return ret1;
+    };
+
+    static constexpr std::initializer_list<std::pair<MessageType, const char*>> IterateEnum(EnumIterator<MessageType>) {
+        return Message::MessageTypeValues();
+    };
+
     FO_ENUM(
         (Message, TurnProgressPhase),
         ((FLEET_MOVEMENT))         ///< fleet movement turn progress message
@@ -122,6 +135,17 @@ public:
         ((GENERATING_UNIVERSE))    ///< creating new universe
         ((STARTING_AIS))           ///< creating AI clients
     )
+
+    static constexpr std::initializer_list<std::pair<TurnProgressPhase, const char*>> TurnProgressPhaseValues()
+    {
+        const auto ret1 = std::initializer_list<std::pair<TurnProgressPhase, const char*>>{{TurnProgressPhase::FLEET_MOVEMENT, "FLEET_MOVEMENT"},
+        {TurnProgressPhase::COMBAT, "COMBAT"}};
+        return ret1;
+    };
+
+    static constexpr std::initializer_list<std::pair<TurnProgressPhase, const char*>> IterateEnum(EnumIterator<TurnProgressPhase>) {
+        return Message::TurnProgressPhaseValues();
+    };
 
     /// \todo change to EmpireStatus on compatibility breakage
     FO_ENUM(

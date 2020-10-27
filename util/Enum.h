@@ -93,6 +93,16 @@ BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
     return stream; \
 }
 
+template<typename E>
+struct EnumIterator {
+};
+
+/** @brief Implementation detail for FO_ENUM */
+#define FO_DEF_ENUM_ITERATE_VALUE(r, data, elem)
+
+/** @brief Implementation detail for FO_ENUM */
+#define FO_DEF_ENUM_ITERATE(typeName, values)
+
 /** @brief Implementation detail for FO_ENUM */
 #define FO_DEF_ENUM_ADD_STRING_REPR(s, data, elem) \
     BOOST_PP_TUPLE_PUSH_BACK(elem, BOOST_PP_STRINGIZE(BOOST_PP_TUPLE_ELEM(0, elem)))
@@ -152,7 +162,8 @@ BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
 #define FO_ENUM(typeName, values) \
     FO_DEF_ENUM(typeName, BOOST_PP_SEQ_TRANSFORM(FO_DEF_ENUM_ADD_STRING_REPR, _, values)) \
     FO_DEF_ENUM_OSTREAM(typeName, BOOST_PP_SEQ_TRANSFORM(FO_DEF_ENUM_ADD_STRING_REPR, _, values)) \
-    FO_DEF_ENUM_ISTREAM(typeName, BOOST_PP_SEQ_TRANSFORM(FO_DEF_ENUM_ADD_STRING_REPR, _, values))
+    FO_DEF_ENUM_ISTREAM(typeName, BOOST_PP_SEQ_TRANSFORM(FO_DEF_ENUM_ADD_STRING_REPR, _, values)) \
+    FO_DEF_ENUM_ITERATE(typeName, BOOST_PP_SEQ_TRANSFORM(FO_DEF_ENUM_ADD_STRING_REPR, _, values))
 
 
 #endif
