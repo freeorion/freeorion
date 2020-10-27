@@ -78,13 +78,6 @@ FO_ENUM(
     ((NUM_AFFIL_TYPES)) ///< keep last, the number of affiliation types
 )
 
-constexpr std::initializer_list<std::pair<EmpireAffiliationType, const char*>> IterateEnum(EnumIterator<EmpireAffiliationType>) {
-    return EmpireAffiliationTypeValues();
-};
-
-constexpr std::initializer_list<std::pair<MeterType, const char*>> IterateEnum(EnumIterator<MeterType>) {
-    return MeterTypeValues();
-};
 
 /** Returns mapping from active to target or max meter types that correspond.
   * eg. MeterType::METER_RESEARCH -> MeterType::METER_TARGET_RESEARCH */

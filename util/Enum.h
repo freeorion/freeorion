@@ -124,8 +124,25 @@ BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
             BOOST_PP_TUPLE_ELEM(0, typeName)), values) \
     }; \
     return ret; \
-};
-
+}; \
+inline \
+BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
+        static, \
+        BOOST_PP_EMPTY()) \
+constexpr std::initializer_list<std::pair< \
+BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
+    BOOST_PP_TUPLE_ELEM(1, typeName), \
+    BOOST_PP_TUPLE_ELEM(0, typeName)), const char*>> \
+IterateEnum(EnumIterator< \
+BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
+    BOOST_PP_TUPLE_ELEM(1, typeName), \
+    BOOST_PP_TUPLE_ELEM(0, typeName)) >){ return \
+BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
+    BOOST_PP_TUPLE_ELEM(0, typeName)::, \
+    BOOST_PP_EMPTY()) \
+BOOST_PP_CAT(BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
+    BOOST_PP_TUPLE_ELEM(1, typeName), \
+    BOOST_PP_TUPLE_ELEM(0, typeName)), Values)();};
 
 /** @brief Implementation detail for FO_ENUM */
 #define FO_DEF_ENUM_ADD_STRING_REPR(s, data, elem) \
