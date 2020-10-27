@@ -76,11 +76,10 @@ namespace FreeOrionPython {
             .value("researchable",      TechStatus::TS_RESEARCHABLE)
             .value("complete",          TechStatus::TS_COMPLETE)
         ;
-        py::enum_<BuildType>("buildType")
-            .value("building",          BuildType::BT_BUILDING)
-            .value("ship",              BuildType::BT_SHIP)
-            .value("stockpile",         BuildType::BT_STOCKPILE)
-        ;
+        auto buildType = py::enum_<BuildType>("buildType");
+        for (const auto& p : IterateEnum(EnumIterator<BuildType>{})) {
+            buildType.value(p.second, p.first);
+        }
         py::enum_<ResourceType>("resourceType")
             .value("industry",          ResourceType::RE_INDUSTRY)
             .value("influence",         ResourceType::RE_INFLUENCE)
