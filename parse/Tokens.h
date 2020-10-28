@@ -5,7 +5,7 @@
 #include <boost/preprocessor/seq/for_each.hpp>
 
 #define TOKEN_SEQ_1                             \
-    (Abs)                                       \
+    (abs)                                       \
     (accountinglabel)                           \
     (activation)                                \
     (AddedBefore)                               \
@@ -55,7 +55,7 @@
     (captureresult)                             \
     (category)                                  \
     (Category)                                  \
-    (Ceil)                                      \
+    (ceil)                                      \
     (class)                                     \
     (ClockwiseNextPlanetType)                   \
     (Colony)                                    \
@@ -69,7 +69,7 @@
     (ContainerID)                               \
     (Contains)                                  \
     (Core)                                      \
-    (Cos)                                       \
+    (cos)                                       \
     (Count)                                     \
     (CountUnique)                               \
     (CounterClockwiseNextPlanetType)            \
@@ -89,11 +89,13 @@
     (data)                                      \
     (default)                                   \
     (defaultfocus)                              \
+    (DefaultFocus)                              \
     (Defense)                                   \
     (Described)                                 \
     (description)                               \
     (Desert)                                    \
     (design)                                    \
+    (Design)                                    \
     (DesignHasHull)                             \
     (DesignHasPart)                             \
     (DesignHasPartClass)                        \
@@ -146,7 +148,7 @@
     (Fleet)                                     \
     (FleetID)                                   \
     (FleetSupplyableByEmpire)                   \
-    (Floor)                                     \
+    (floor)                                     \
     (foci)                                      \
     (focus)                                     \
     (Focus)                                     \
@@ -228,12 +230,13 @@
     (likes)                                     \
     (LocalCandidate)                            \
     (location)                                  \
-    (Log)                                       \
+    (log)                                       \
     (Lookup)                                    \
     (low)                                       \
     (LowestCostEnqueuedTech)                    \
     (LowestCostResearchableTech)                \
     (LowestCostTransferrableTech)               \
+    (max)                                       \
     (max)                                       \
     (MaxCapacity)                               \
     (MaxDamage)                                 \
@@ -251,6 +254,7 @@
     (message)                                   \
     (meter)                                     \
     (min)                                       \
+    (Min)                                       \
     (MinimumNumberOf)                           \
     (Missiles)
 
@@ -294,6 +298,7 @@
     (NoStringtableLookup)                       \
     (Not)                                       \
     (number)                                    \
+    (Number)                                    \
     (NumberOf)                                  \
     (NumShips)                                  \
     (NumStarlanes)                              \
@@ -388,7 +393,7 @@
     (Retain)                                    \
     (RMS)                                       \
     (RootCandidate)                             \
-    (Round)                                     \
+    (round)                                     \
     (scope)                                     \
     (SecondaryStat)
 
@@ -473,8 +478,8 @@
     (ShortestPath)                              \
     (ShortRange)                                \
     (shots)                                     \
-    (Sign)                                      \
-    (Sin)                                       \
+    (sign)                                      \
+    (sin)                                       \
     (size)                                      \
     (Size)                                      \
     (SizeAsDouble)
