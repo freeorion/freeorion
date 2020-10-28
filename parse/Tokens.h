@@ -60,7 +60,7 @@
     (Colony)                                    \
     (Colour)                                    \
     (CombatBout)                                \
-    (CombatTargets)                             \
+    (combatTargets)                             \
     (Condition)                                 \
     (Construction)                              \
     (Consumption)                               \
@@ -258,7 +258,7 @@
     (MostSpentEnqueuedTech)                     \
     (MostSpentResearchableTech)                 \
     (MostSpentTransferrableTech)                \
-    (MountableSlotTypes)                        \
+    (mountableSlotTypes)                        \
     (MoveInOrbit)                               \
     (MoveTo)                                    \
     (MoveTowards)                               \

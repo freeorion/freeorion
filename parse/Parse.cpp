@@ -403,7 +403,7 @@ namespace parse {
 
         start %=
             -(
-                label(tok.Tags_)
+                label(tok.tags_)
                 >>  one_or_more_string_tokens
             )
             ;

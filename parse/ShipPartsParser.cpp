@@ -123,8 +123,8 @@ namespace {
                    | (label(tok.Shots_)     > double_rule )         // _5 : shots is secondary stat for direct fire weapons
                    )
                 > matches_[tok.NoDefaultCapacityEffect_]                // _6
-                > -(label(tok.CombatTargets_)       > condition_parser) // _7
-                > -(label(tok.MountableSlotTypes_)  > one_or_more_slots)// _8
+                > -(label(tok.combatTargets_)       > condition_parser) // _7
+                > -(label(tok.mountableSlotTypes_)  > one_or_more_slots)// _8
                 >   common_rules.common                                 // _9
                 >   label(tok.Icon_)        > tok.string                // _10
                   ) [ _pass = is_unique_(_r1, _1, phoenix::bind(&parse::detail::MoreCommonParams::name, _2)),

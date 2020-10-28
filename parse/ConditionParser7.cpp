@@ -89,7 +89,7 @@ namespace parse { namespace detail {
             ;
 
         combat_targets
-            =   (omit_[tok.CombatTargets_]
+            =   (omit_[tok.combatTargets_]
                  >    label(tok.Type_)  >   content_type
                  >    label(tok.name_)  >   string_grammar)
             [ _val = construct_movable_(new_<Condition::CombatTarget>(
