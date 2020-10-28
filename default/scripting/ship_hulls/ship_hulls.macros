@@ -127,7 +127,7 @@ REFUEL_MESSAGE
         )
     ]
     effects = [
-        GenerateSitrepMessage
+        GenerateSitRepMessage
          message = "EFFECT_SHIP_REFUELED"
          label = "EFFECT_SHIP_REFUELED_LABEL"
          icon = "icons/meter/fuel.png"

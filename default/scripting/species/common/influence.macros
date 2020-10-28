@@ -8,7 +8,7 @@ BASE_INFLUENCE_COSTS
             effects = SetTargetInfluence value = Value - 1
             
         EffectsGroup      // species homeworlds consume more influence
-            scope = source
+            scope = Source
             activation = And [
                 Planet
                 Not Capital

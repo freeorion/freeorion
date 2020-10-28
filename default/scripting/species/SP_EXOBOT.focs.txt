@@ -47,7 +47,7 @@ Species
         type = Terran       environment = Adequate
         type = Ocean        environment = Adequate
         type = Asteroids    environment = Poor
-        type = Gasgiant     environment = Uninhabitable
+        type = GasGiant     environment = Uninhabitable
     ]
 
     graphic = "icons/species/robotic-01.png"

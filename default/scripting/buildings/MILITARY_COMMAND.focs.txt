@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_MILITARY_COMMAND"
     description = "BLD_MILITARY_COMMAND_DESC"
-    captureresult = destroy
+    captureresult = Destroy
     buildcost = 80 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 6
     location = And [

@@ -54,7 +54,7 @@ Tech
                 Not Species
             ]
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
-            effects = SetSupply value = Min(Value(Target.MaxSupply), Value + 1)
+            effects = SetSupply value = min(Value(Target.MaxSupply), Value + 1)
 
 
         // generate sitrep for any planet that is about to increase to above the

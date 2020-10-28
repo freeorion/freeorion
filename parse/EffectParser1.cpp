@@ -157,7 +157,7 @@ namespace parse { namespace detail {
 
         // Note: the NoStringtableLookup flag controls the lookup both of template in Vartext and of the label in SitrepPanel.
         generate_sitrep_message
-            =    tok.GenerateSitrepMessage_
+            =    tok.GenerateSitRepMessage_
             >    label(tok.message_)        >   tok.string [ _a = _1 ]
             >    label(tok.label_)          >   tok.string [ _e = _1 ]
             >   (

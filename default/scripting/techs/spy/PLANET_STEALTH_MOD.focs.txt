@@ -9,7 +9,7 @@ Tech
     tags = [ "PEDIA_SPY_CATEGORY" ]
     effectsgroups =
         EffectsGroup
-            scope = OR [
+            scope = Or [
                 Building
                 Planet
             ]

@@ -172,7 +172,7 @@
     (General)
 
 #define TOKEN_SEQ_5                             \
-    (GenerateSitrepMessage)                     \
+    (GenerateSitRepMessage)                     \
     (GiveEmpireTech)                            \
     (Good)                                      \
     (graphic)                                   \
@@ -230,6 +230,7 @@
     (likes)                                     \
     (LocalCandidate)                            \
     (location)                                  \
+    (Location)                                  \
     (log)                                       \
     (Lookup)                                    \
     (low)                                       \
@@ -237,7 +238,7 @@
     (LowestCostResearchableTech)                \
     (LowestCostTransferrableTech)               \
     (max)                                       \
-    (max)                                       \
+    (Max)                                       \
     (MaxCapacity)                               \
     (MaxDamage)                                 \
     (MaxDefense)                                \

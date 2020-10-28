@@ -10,8 +10,8 @@ Hull
         Slot type = External position = (0.25, 0.70)
         Slot type = Internal position = (0.55, 0.45)
     ]
-    buildCost = 1
-    buildTime = 1
+    buildcost = 1
+    buildtime = 1
     Unproducible
     tags = [ "PEDIA_HULL_MONSTER_KRAKEN" ]
     location = All
@@ -56,7 +56,7 @@ Hull
             activation = And [
                 Turn low = max(30, LocalCandidate.LastTurnActiveInBattle + 1)
                 //triple the chance of maturing when in a system with Krill
-                Random probability = (LocalCandidate.Age*0.01 - 0.1) * 3^(Statistic If condition = ContainedBy Contains OR [
+                Random probability = (LocalCandidate.Age*0.01 - 0.1) * 3^(Statistic If condition = ContainedBy Contains Or [
                     Design name = "SM_KRILL_1"
                     Design name = "SM_KRILL_2" 
                     Design name = "SM_KRILL_3"  

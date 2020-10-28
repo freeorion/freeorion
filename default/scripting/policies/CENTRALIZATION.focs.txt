@@ -35,7 +35,7 @@ Policy
             ]
             priority = [[DEFAULT_PRIORITY]]
             effects =
-                SetTargetInfluence value = value - 3
+                SetTargetInfluence value = Value - 3
 
         EffectsGroup
             scope = And [
@@ -51,7 +51,7 @@ Policy
             ]
             priority = [[DEFAULT_PRIORITY]]
             effects =
-                SetTargetInfluence value = value - min(3, 0.2 * JumpsBetween object = Source.ID object = Target.ID)
+                SetTargetInfluence value = Value - min(3, 0.2 * JumpsBetween object = Source.ID object = Target.ID)
         ]
     graphic = "icons/policies/centralization.png"
 

@@ -37,7 +37,7 @@ Special
 
         EffectsGroup
             scope = Source
-            activation = AND [
+            activation = And [
                 Planet
                 OwnedBy affiliation = AnyEmpire
                 Not ContainedBy Contains Design name = "SM_GUARD_1"

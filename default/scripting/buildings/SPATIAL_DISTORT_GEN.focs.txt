@@ -3,7 +3,7 @@ BuildingType
     description = "BLD_SPATIAL_DISTORT_GEN_DESC"
     buildcost = 500 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 8
-    location = AND [
+    location = And [
         Not Contains Building name = "BLD_SPATIAL_DISTORT_GEN"
         OwnedBy empire = Source.Owner
     ]

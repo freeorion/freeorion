@@ -33,7 +33,7 @@ FieldType
             ]
             stackinggroup = "VOID_RIFT_SHIP_EFFECTS"
             effects = [
-                SetSpeed value = value * 0.5
+                SetSpeed value = Value * 0.5
             ]
 
         EffectsGroup    // after reaching a certain age, dissipate when small

@@ -117,7 +117,7 @@ ENVIRONMENT_MODIFIER
 
 HOMEWORLD_BONUS_POPULATION
 '''     EffectsGroup
-            scope = AND [
+            scope = And [
                 Source
                 Homeworld name = Source.Species
             ]
@@ -163,21 +163,21 @@ SELF_SUSTAINING_BONUS
 PHOTOTROPHIC_BONUS
 '''     EffectsGroup
             scope = Contains Source
-            activation = AND [
+            activation = And [
                 Planet
-                OR [
+                Or [
                     OwnedBy affiliation = AnyEmpire
                     Star type = [BlackHole NoStar] // Natives are allowed to have bright or dim stars
                 ]
                 HasTag name = "PHOTOTROPHIC"
                 Turn high = 0
-                NOT Star type = [Orange]
+                Not Star type = [Orange]
             ]
             effects = SetStarType type = Yellow // start with a normal star to be balanced
  
         EffectsGroup
             scope = Source
-            activation = AND [
+            activation = And [
                 Planet
                 HasTag name = "PHOTOTROPHIC"
                 Star type = [Blue]
@@ -189,7 +189,7 @@ PHOTOTROPHIC_BONUS
 
         EffectsGroup
             scope = Source
-            activation = AND [
+            activation = And [
                 Planet
                 HasTag name = "PHOTOTROPHIC"
                 Star type = [White]
@@ -201,7 +201,7 @@ PHOTOTROPHIC_BONUS
 
         EffectsGroup
             scope = Source
-            activation = AND [
+            activation = And [
                 Planet
                 HasTag name = "PHOTOTROPHIC"
                 Star type = [Red Neutron]
@@ -212,7 +212,7 @@ PHOTOTROPHIC_BONUS
 
         EffectsGroup
             scope = Source
-            activation = AND [
+            activation = And [
                 Planet
                 HasTag name = "PHOTOTROPHIC"
                 Star type = [BlackHole NoStar]

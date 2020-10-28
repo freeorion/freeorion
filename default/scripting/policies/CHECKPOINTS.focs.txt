@@ -26,7 +26,7 @@ Policy
                 empire = Source.Owner
                 meter = "METER_DETECTION_STRENGTH"
                 value = Value + min(20.0,
-                    CurrentTurn - TurnPolicyAdopted empire = source.Owner
+                    CurrentTurn - TurnPolicyAdopted empire = Source.Owner
                                                     name = "PLC_CHECKPOINTS"
                                    )
     ]

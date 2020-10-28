@@ -47,14 +47,14 @@ namespace parse { namespace detail {
             =   (
                 (
                     (
-                            tok.Sin_    [ _c = ValueRef::OpType::SINE ] // single-parameter math functions
-                        |   tok.Cos_    [ _c = ValueRef::OpType::COSINE ]
-                        |   tok.Log_    [ _c = ValueRef::OpType::LOGARITHM ]
-                        |   tok.Abs_    [ _c = ValueRef::OpType::ABS ]
-                        |   tok.Round_  [ _c = ValueRef::OpType::ROUND_NEAREST ]
-                        |   tok.Ceil_   [ _c = ValueRef::OpType::ROUND_UP ]
-                        |   tok.Floor_  [ _c = ValueRef::OpType::ROUND_DOWN ]
-                        |   tok.Sign_   [ _c = ValueRef::OpType::SIGN ]
+                            tok.sin_    [ _c = ValueRef::OpType::SINE ] // single-parameter math functions
+                        |   tok.cos_    [ _c = ValueRef::OpType::COSINE ]
+                        |   tok.log_    [ _c = ValueRef::OpType::LOGARITHM ]
+                        |   tok.abs_    [ _c = ValueRef::OpType::ABS ]
+                        |   tok.round_  [ _c = ValueRef::OpType::ROUND_NEAREST ]
+                        |   tok.ceil_   [ _c = ValueRef::OpType::ROUND_UP ]
+                        |   tok.floor_  [ _c = ValueRef::OpType::ROUND_DOWN ]
+                        |   tok.sign_   [ _c = ValueRef::OpType::SIGN ]
                     )
                     >> ('(' > expr > ')') [ _val = construct_movable_(new_<ValueRef::Operation<T>>(_c, deconstruct_movable_(_1, _pass))) ]
                 )
@@ -66,8 +66,8 @@ namespace parse { namespace detail {
                 |   (
                     (
                             tok.OneOf_  [ _c = ValueRef::OpType::RANDOM_PICK ] // oneof, min, or max can take any number or operands
-                        |   tok.Min_    [ _c = ValueRef::OpType::MINIMUM ]
-                        |   tok.Max_    [ _c = ValueRef::OpType::MAXIMUM ]
+                        |   tok.min_    [ _c = ValueRef::OpType::MINIMUM ]
+                        |   tok.max_    [ _c = ValueRef::OpType::MAXIMUM ]
                     )
                     >>  ( '(' >>  expr [ push_back(_d, _1) ]
                     >>(*(',' >  expr [ push_back(_d, _1) ] )) >> ')' )

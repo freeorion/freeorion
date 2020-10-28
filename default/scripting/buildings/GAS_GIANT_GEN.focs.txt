@@ -19,7 +19,7 @@ BuildingType
                 Planet
                 InSystem id = Source.SystemID
                 Focus type = "FOCUS_INDUSTRY"
-                NOT Population high = 0
+                Not Population high = 0
                 OwnedBy empire = Source.Owner
             ]
             activation = ContainedBy Population high = 0
@@ -32,7 +32,7 @@ BuildingType
                 Planet
                 InSystem id = Source.SystemID
                 Focus type = "FOCUS_INDUSTRY"
-                NOT Population high = 0
+                Not Population high = 0
                 OwnedBy empire = Source.Owner
             ]
             activation = ContainedBy Not Population high = 0

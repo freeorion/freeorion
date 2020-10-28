@@ -6,14 +6,14 @@ Special
     spawnlimit = 1
     location = And [
         Planet
-        Planet size = tiny
+        Planet size = Tiny
         Not Planet type = [Asteroids GasGiant]
         Not Species
         ContainedBy And [
             System 
             Contains And [
                 Planet
-                Not Planet size = tiny
+                Not Planet size = Tiny
             ]
         ]
         Not WithinStarlaneJumps jumps = 2 condition = And [
@@ -35,7 +35,7 @@ Special
         EffectsGroup
             scope = And [
                 Planet
-                NOT Population high = 0
+                Not Population high = 0
                 InSystem id = Source.SystemID
             ]
             activation = Unowned

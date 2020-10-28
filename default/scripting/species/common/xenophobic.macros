@@ -14,7 +14,7 @@ XENOPHOBIC_SELF
                 Number low = 1 condition = And [
                     PopulationCenter
                     OwnedBy empire = RootCandidate.Owner
-                    Not OR [ 
+                    Not Or [ 
                         Species name = RootCandidate.Species
                         Species name = "SP_EXOBOT"
                     ]
@@ -33,7 +33,7 @@ XENOPHOBIC_SELF
                     Statistic Count condition = And [
                         PopulationCenter
                         OwnedBy empire = Source.Owner
-                        Not OR [ 
+                        Not Or [ 
                             Species name = Source.Species
                             Species name = "SP_EXOBOT"
                         ]
@@ -64,7 +64,7 @@ XENOPHOBIC_SELFSUSTAINING_QUALIFYING_PLANET_COUNT
 '''
 Statistic Count condition = And [
                     PopulationCenter
-                    Not OR [
+                    Not Or [
                         Species name = Source.Species
                         Species name = "SP_EXOBOT"
                     ]
@@ -83,7 +83,7 @@ XENOPHOBIC_OTHER
             scope = And [
                 PopulationCenter
                 OwnedBy empire = Source.Owner
-                Not OR [ 
+                Not Or [ 
                     Species name = Source.Species
                     Species name = "SP_EXOBOT"
                 ]

@@ -3,7 +3,7 @@ BuildingType
     description = "BLD_LIGHTHOUSE_DESC"
     buildcost = 25 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 10
-    location = AND [
+    location = And [
         Planet
         Not Contains Building name = "BLD_LIGHTHOUSE"
         OwnedBy empire = Source.Owner

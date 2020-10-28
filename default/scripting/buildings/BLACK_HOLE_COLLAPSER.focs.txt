@@ -3,7 +3,7 @@ BuildingType
     description = "BLD_BLACK_HOLE_COLLAPSER_DESC"
     buildcost = 5000 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 10
-    location = AND [
+    location = And [
         Planet
         OwnedBy empire = Source.Owner
         ContainedBy Contains And [ Planet Star type = BlackHole ]

@@ -78,7 +78,7 @@ namespace parse { namespace detail {
             |   tok.Focus_      [ _val = Condition::ContentType::CONTENT_FOCUS ];
 
         location
-            =   (omit_[tok.location_]
+            =   (omit_[tok.Location_]
                  >    label(tok.type_)  >   content_type
                  >    label(tok.name_)  >   string_grammar
                  >  -(label(tok.name_)  >   string_grammar))

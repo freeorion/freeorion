@@ -41,7 +41,7 @@ ADVANCED_FOCUS_EFFECTS
             ]
             stackinggroup = "STARGATE_STACK"
             effects = [
-                GenerateSitrepMessage
+                GenerateSitRepMessage
                     message = "EFFECT_STARGATE"
                     label = "EFFECT_STARGATE_LABEL"
                     icon = "icons/focus/stargate_receive.png"
@@ -161,7 +161,7 @@ ADVANCED_FOCUS_EFFECTS
             effects = [
                 If condition = WithinDistance distance = 40 condition = Object id = RootCandidate.PreviousSystemID
                     effects = [
-                        GenerateSitrepMessage
+                        GenerateSitRepMessage
                             message = "EFFECT_FLEET_MOVED_TO"
                             label = "EFFECT_FLEET_MOVED_TO_LABEL"
                             parameters = [
@@ -174,7 +174,7 @@ ADVANCED_FOCUS_EFFECTS
                         MoveTo destination = Object id = Target.PreviousSystemID
                     ]
                     else = [
-                        GenerateSitrepMessage
+                        GenerateSitRepMessage
                             message = "EFFECT_FLEET_MOVED_TOWARDS"
                             label = "EFFECT_FLEET_MOVED_TOWARDS_LABEL"
                             parameters = [

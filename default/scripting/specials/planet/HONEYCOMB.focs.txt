@@ -32,7 +32,7 @@ Special
                 Not Species
                 Not HasSpecial
                 WithinStarlaneJumps jumps = 2 condition = Source
-                Not ContainedBy Contains OR [
+                Not ContainedBy Contains Or [
                     Design name = "SM_EXP_OUTPOST"
                     Building name = "BLD_EXPERIMENTOR_OUTPOST"
                 ]
@@ -41,8 +41,8 @@ Special
             stackinggroup = "GAME_START_MOD_STACK"
             priority = [[VERY_EARLY_PRIORITY]]
             effects = [
-                SetPlanetSize planetsize = asteroids
-                SetPlanetType type = asteroids
+                SetPlanetSize planetsize = Asteroids
+                SetPlanetType type = Asteroids
             ]
 
         EffectsGroup

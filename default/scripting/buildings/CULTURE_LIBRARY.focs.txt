@@ -12,7 +12,7 @@ BuildingType
             scope = And [
                 Object id = Source.PlanetID
                 Planet
-                NOT Population high = 0
+                Not Population high = 0
             ]
             priority = [[LATE_PRIORITY]]
             effects = SetTargetResearch value = Value + (NamedReal name = "BLD_CULTURE_LIBRARY_TARGET_RESEARCH_FLAT" value = 5)

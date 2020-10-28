@@ -35,7 +35,7 @@ Species
         EffectsGroup
             description = "LIGHT_SENSITIVE_DESC"
             scope = Source
-            activation = AND [
+            activation = And [
                 Planet
                 Star type = [Blue]
             ]
@@ -45,7 +45,7 @@ Species
 
         EffectsGroup
             scope = Source
-            activation = AND [
+            activation = And [
                 Planet
                 Star type = [White]
             ]

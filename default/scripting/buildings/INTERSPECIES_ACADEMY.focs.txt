@@ -3,7 +3,7 @@ BuildingType
     description = "BLD_INTERSPECIES_ACADEMY_DESC"
     buildcost = 50 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 5
-    location = AND [
+    location = And [
         // Homeworld
         Species
         Not Contains Building name = "BLD_INTERSPECIES_ACADEMY"

@@ -13,8 +13,8 @@ Hull
         Slot type = External position = (0.60, 0.40)
         Slot type = Core     position = (0.30, 0.65)
     ]
-    buildCost = 50 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_HULL_COST_MULTIPLIER]]
-    buildTime = 5
+    buildcost = 50 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_HULL_COST_MULTIPLIER]]
+    buildtime = 5
     tags = [ "SHINY" "EXOTIC" "GOOD_FUEL_EFFICIENCY" ]
     location = Contains And [
         Building name = "BLD_SHIPYARD_BASE"

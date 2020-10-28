@@ -3,7 +3,7 @@ BuildingType
     description = "BLD_PLANET_CLOAK_DESC"
     buildcost = 150 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 8
-    location = AND [
+    location = And [
         Not Contains Building name = "BLD_PLANET_CLOAK"
         OwnedBy empire = Source.Owner
     ]

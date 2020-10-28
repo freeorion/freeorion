@@ -73,8 +73,8 @@ EffectsGroup
 EffectsGroup
     scope = And [
         Planet
-        Planet Type = GasGiant
-        Ownedby empire = Source.Owner
+        Planet type = GasGiant
+        OwnedBy empire = Source.Owner
         Not Contains Building name = "BLD_GAS_GIANT_GEN"
         ContainedBy And [
             Contains And [
@@ -144,7 +144,7 @@ EffectsGroup
             Ship
             Or [
                 OwnedBy affiliation = EnemyOf empire = Source.Owner
-                UnOwned
+                Unowned
             ]
             VisibleToEmpire empire = Source.Owner
         ]
@@ -157,7 +157,7 @@ EffectsGroup
             Not Stationary
             Or [
                 OwnedBy affiliation = EnemyOf empire = Source.Owner
-                UnOwned
+                Unowned
             ]
             VisibleToEmpire empire = Source.Owner
             Turn low = [[ETA_NEXT_TURN]] high = [[ETA_NEXT_TURN]]
@@ -188,7 +188,7 @@ ETA_NEXT_TURN
 //     scope = And [
 //         Planet
 //         Planet Type = GasGiant
-//         Ownedby empire = Source.Owner
+//         OwnedBy empire = Source.Owner
 //         Not Contains Building name = "BLD_GAS_GIANT_GEN"
 //         ContainedBy And [
 //             Contains And [
@@ -227,7 +227,7 @@ ETA_NEXT_TURN
 // EffectsGroup
 //     scope = And [
 //         Planet
-//         Ownedby empire = Source.Owner
+//         OwnedBy empire = Source.Owner
 //         Or [
 //             HasSpecial name = "KRAKEN_NEST_SPECIAL"
 //             HasSpecial name = "SNOWFLAKE_NEST_SPECIAL"
@@ -255,7 +255,7 @@ ETA_NEXT_TURN
 //     scope = And [
 //         Planet
 //         Species
-//         UnOwned
+//         Unowned
 //         MaxDefense high = 0
 //         ContainedBy And [
 //             System

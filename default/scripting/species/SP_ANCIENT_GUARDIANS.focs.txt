@@ -87,7 +87,7 @@ Species
         type = Terran       environment = Good
         type = Ocean        environment = Good
         type = Asteroids    environment = Good
-        type = Gasgiant     environment = Good
+        type = GasGiant     environment = Good
     ]
 
     graphic = "icons/species/robotic-08.png"

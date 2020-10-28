@@ -7,7 +7,7 @@ MONSTER_NEST
 '''
         EffectsGroup
             scope = Source
-            activation = AND [
+            activation = And [
                 Planet
                 OwnedBy affiliation = AnyEmpire
                 OwnerHasTech name = "SHP_DOMESTIC_MONSTER"
@@ -28,7 +28,7 @@ MONSTER_NEST
             ]
         EffectsGroup
             scope = Source
-            activation = AND [
+            activation = And [
                 Planet
                 Turn low = 10
                 Unowned

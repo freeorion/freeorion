@@ -4,7 +4,7 @@ BuildingType
     buildcost = 25 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 5
     tags = "ORBITAL"
-    location = AND [
+    location = And [
         Planet
         Not Contains Building name = "BLD_NEUTRONIUM_EXTRACTOR"
         OwnedBy empire = Source.Owner

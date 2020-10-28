@@ -60,7 +60,7 @@ Species
             scope = Source
             activation = And [
                 Planet
-                Not Planet environment = [ uninhabitable ]
+                Not Planet environment = [ Uninhabitable ]
             ]
             priority = [[TARGET_POPULATION_OVERRIDE_PRIORITY]]
             effects =

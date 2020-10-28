@@ -12,7 +12,7 @@ Tech
             scope = And [
                 ProductionCenter
                 OwnedBy empire = Source.Owner
-                NOT Population high = 0
+                Not Population high = 0
             ]
             priority = [[EARLY_PRIORITY]]
             effects = SetTargetResearch value = Value + Target.Population * (NamedReal name = "LRN_DISTRIB_THOUGHT_TARGET_RESEARCH_PERPOP" value = (0.5 * [[RESEARCH_PER_POP]]))

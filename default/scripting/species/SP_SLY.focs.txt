@@ -74,7 +74,7 @@ Species
       type = Terran       environment = Hostile
       type = Ocean        environment = Hostile
       type = Asteroids    environment = Uninhabitable
-      type = Gasgiant     environment = Good
+      type = GasGiant     environment = Good
     ]
 
     graphic = "icons/species/amorphous-05.png"

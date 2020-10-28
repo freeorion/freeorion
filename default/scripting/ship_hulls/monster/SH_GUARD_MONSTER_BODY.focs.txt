@@ -13,8 +13,8 @@ Hull
         Slot type = External position = (0.90, 0.27)
         Slot type = Internal position = (0.45, 0.40)
     ]
-    buildCost = 1
-    buildTime = 2
+    buildcost = 1
+    buildtime = 2
     Unproducible
     tags = [ "UNOWNED_FRIENDLY" "PEDIA_HULL_MONSTER_GUARD" ]
     location = All
