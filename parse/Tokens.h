@@ -14,7 +14,7 @@
     (AddStarlanes)                              \
     (Adequate)                                  \
     (adoptioncost)                              \
-    (Affiliation)                               \
+    (affiliation)                               \
     (Age)                                       \
     (Aggressive)                                \
     (All)                                       \
@@ -56,7 +56,7 @@
     (category)                                  \
     (Category)                                  \
     (Ceil)                                      \
-    (Class)                                     \
+    (class)                                     \
     (ClockwiseNextPlanetType)                   \
     (Colony)                                    \
     (colour)                                    \
@@ -86,7 +86,7 @@
 #define TOKEN_SEQ_3                             \
     (damage)                                    \
     (Damage)                                    \
-    (Data)                                      \
+    (data)                                      \
     (Default)                                   \
     (DefaultFocus)                              \
     (Defense)                                   \
@@ -97,8 +97,9 @@
     (DesignHasHull)                             \
     (DesignHasPart)                             \
     (DesignHasPartClass)                        \
+    (designID)                                  \
     (DesignID)                                  \
-    (DesignName)                                \
+    (designname)                                \
     (destination)                               \
     (Destroy)                                   \
     (Detection)                                 \
@@ -123,7 +124,7 @@
     (EmpireShipsDestroyed)                      \
     (EmpireStockpile)                           \
     (Enabled)                                   \
-    (Endpoint)                                  \
+    (endpoint)                                  \
     (EnemyOf)                                   \
     (Enqueued)                                  \
     (EnqueueLocation)                           \
@@ -147,8 +148,10 @@
     (FleetSupplyableByEmpire)                   \
     (Floor)                                     \
     (foci)                                      \
+    (focus)                                     \
     (Focus)                                     \
     (FocusType)                                 \
+    (fuel)                                      \
     (Fuel)                                      \
     (Full)                                      \
     (GalaxyAge)                                 \
@@ -177,7 +180,7 @@
     (HasSpecialCapacity)                        \
     (HasSpecialSinceTurn)                       \
     (HasTag)                                    \
-    (High)                                      \
+    (high)                                      \
     (HighestCostEnqueuedTech)                   \
     (HighestCostResearchableTech)               \
     (HighestCostTransferrableTech)              \
@@ -187,13 +190,14 @@
     (Homeworld)                                 \
     (Hostile)                                   \
     (Huge)                                      \
+    (hull)                                      \
     (Hull)                                      \
     (HullFuel)                                  \
     (HullSpeed)                                 \
     (HullStealth)                               \
     (HullStructure)                             \
     (Human)                                     \
-    (Icon)                                      \
+    (icon)                                      \
     (ID)                                        \
     (If)                                        \
     (Industry)                                  \
@@ -209,7 +213,7 @@
     (JumpsBetween)
 
 #define TOKEN_SEQ_6                             \
-    (Label)                                     \
+    (label)                                     \
     (Large)                                     \
     (LastTurnActiveInBattle)                    \
     (LastTurnAttackedByShip)                    \
@@ -225,7 +229,7 @@
     (location)                                  \
     (Log)                                       \
     (Lookup)                                    \
-    (Low)                                       \
+    (low)                                       \
     (LowestCostEnqueuedTech)                    \
     (LowestCostResearchableTech)                \
     (LowestCostTransferrableTech)               \
@@ -243,15 +247,15 @@
     (MaxTroops)                                 \
     (Mean)                                      \
     (Medium)                                    \
-    (Message)                                   \
-    (Meter)                                     \
+    (message)                                   \
+    (meter)                                     \
     (Min)                                       \
     (MinimumNumberOf)                           \
     (Missiles)
 
 #define TOKEN_SEQ_7                             \
     (Mode)                                      \
-    (Model)                                     \
+    (model)                                     \
     (ModeNumberOf)                              \
     (Monster)                                   \
     (MonsterFleet)                              \
@@ -294,6 +298,7 @@
     (NumStarlanes)                              \
 
 #define TOKEN_SEQ_8                             \
+    (object)                                    \
     (Object)                                    \
     (ObjectType)                                \
     (Ocean)                                     \
@@ -312,8 +317,8 @@
     (Owner)                                     \
     (OwnerHasShipPartAvailable)                 \
     (OwnerHasTech)                              \
-    (Parameters)                                \
-    (Part)                                      \
+    (parameters)                                \
+    (part)                                      \
     (PartCapacity)                              \
     (PartClass)                                 \
     (PartDamage)                                \
@@ -322,7 +327,7 @@
     (PartSecondaryStat)
 
 #define TOKEN_SEQ_9                             \
-    (Parts)                                     \
+    (parts)                                     \
     (PartOfClassInShipDesign)                   \
     (PartsInShipDesign)                         \
     (Passive)                                   \
@@ -331,15 +336,15 @@
     (Planetbound)                               \
     (PlanetEnvironment)                         \
     (PlanetID)                                  \
-    (PlanetSize)                                \
-    (PlanetType)                                \
+    (planetsize)                                \
+    (planettype)                                \
     (Playable)                                  \
     (PointDefense)                              \
     (Policy)                                    \
     (Poor)                                      \
     (Population)                                \
     (PopulationCenter)                          \
-    (Position)                                  \
+    (position)                                  \
     (prerequisites)                             \
     (PreviousSystemID)                          \
     (priority)                                  \
@@ -352,7 +357,7 @@
     (ProductionLocation)                        \
     (PropagatedSupplyRange)                     \
     (Property)                                  \
-    (Progress)
+    (progress)
 
 #define TOKEN_SEQ_10                            \
     (Radiated)                                  \
@@ -367,7 +372,7 @@
     (RandomNumber)                              \
     (Range)                                     \
     (Real)                                      \
-    (Reason)                                    \
+    (reason)                                    \
     (RebelTroops)                               \
     (Red)                                       \
     (Refinement)                                \
@@ -469,12 +474,13 @@
     (shots)                                     \
     (Sign)                                      \
     (Sin)                                       \
+    (size)                                      \
     (Size)                                      \
     (SizeAsDouble)
 
 #define TOKEN_SEQ_14                            \
     (Slot)                                      \
-    (Slots)                                     \
+    (slots)                                     \
     (SlotsInHull)                               \
     (SlotsInShipDesign)                         \
     (SlotType)                                  \
@@ -488,6 +494,7 @@
     (Special)                                   \
     (SpecialAddedOnTurn)                        \
     (SpecialCapacity)                           \
+    (species)                                   \
     (Species)                                   \
     (SpeciesCensusOrdering)                     \
     (SpeciesColoniesOwned)                      \
@@ -504,7 +511,8 @@
     (SpeciesShipsOwned)                         \
     (SpeciesShipsProduced)                      \
     (SpeciesShipsScrapped)                      \
-    (Speed)                                     \
+    (speed)                                     \
+    (Speed)                                 \
     (Spread)                                    \
     (stackinggroup)                             \
     (Star)                                      \
@@ -512,10 +520,12 @@
     (Stationary)                                \
     (Statistic)                                 \
     (StDev)                                     \
+    (stealth)                                   \
     (Stealth)                                   \
     (Stockpile)                                 \
     (String)                                    \
     (StringList)                                \
+    (structure)                                 \
     (Structure)                                 \
     (Sum)                                       \
     (Supply)                                    \
@@ -525,8 +535,9 @@
     (SystemID)
 
 #define TOKEN_SEQ_16                            \
-    (Tag)                                       \
+    (tag)                                       \
     (tags)                                      \
+    (target)                                    \
     (Target)                                    \
     (TargetConstruction)                        \
     (TargetHappiness)                           \
@@ -563,7 +574,7 @@
     (TurnPolicyAdopted)                         \
     (TurnsSinceFocusChange)                     \
     (TurnTechResearched)                        \
-    (Type)                                      \
+    (type)                                      \
     (Uninhabitable)                             \
     (UniverseCentreX)                           \
     (UniverseCentreY)                           \
@@ -575,7 +586,7 @@
     (UpgradeVisibility)                         \
     (UsedInDesignID)                            \
     (UserString)                                \
-    (UUID)                                      \
+    (uuid)                                      \
     (value)                                     \
     (Value)                                     \
     (Victory)                                   \
@@ -584,7 +595,9 @@
     (White)                                     \
     (WithinDistance)                            \
     (WithinStarlaneJumps)                       \
+    (x)                                         \
     (X)                                         \
+    (y)                                         \
     (Y)                                         \
     (Yellow)
 

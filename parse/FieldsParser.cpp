@@ -72,7 +72,7 @@ namespace {
                 >   label(tok.name_)
                 >   tok.string
                 >   label(tok.description_)         > tok.string
-                >   label(tok.Stealth_)             > double_rule
+                >   label(tok.stealth_)             > double_rule
                 >   tags_parser
                 > -(label(tok.effectsgroups_)       > effects_group_grammar )
                 >   label(tok.graphic_)             > tok.string )

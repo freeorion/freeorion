@@ -64,7 +64,7 @@ namespace parse { namespace detail {
 
         star_type
             =    tok.Star_
-            >    label(tok.Type_)
+            >    label(tok.type_)
             >    one_or_more_star_types
             [ _val = construct_movable_(new_<Condition::StarType>(deconstruct_movable_vector_(_1, _pass))) ]
             ;
@@ -73,13 +73,13 @@ namespace parse { namespace detail {
                 tok.Building_   [ _val = Condition::ContentType::CONTENT_BUILDING ]
             |   tok.Species_    [ _val = Condition::ContentType::CONTENT_SPECIES ]
             |   tok.Hull_       [ _val = Condition::ContentType::CONTENT_SHIP_HULL ]
-            |   tok.Part_       [ _val = Condition::ContentType::CONTENT_SHIP_PART ]
+            |   tok.part_       [ _val = Condition::ContentType::CONTENT_SHIP_PART ]
             |   tok.Special_    [ _val = Condition::ContentType::CONTENT_SPECIAL ]
             |   tok.Focus_      [ _val = Condition::ContentType::CONTENT_FOCUS ];
 
         location
             =   (omit_[tok.location_]
-                 >    label(tok.Type_)  >   content_type
+                 >    label(tok.type_)  >   content_type
                  >    label(tok.name_)  >   string_grammar
                  >  -(label(tok.name_)  >   string_grammar))
             [ _val = construct_movable_(new_<Condition::Location>(
@@ -90,7 +90,7 @@ namespace parse { namespace detail {
 
         combat_targets
             =   (omit_[tok.combatTargets_]
-                 >    label(tok.Type_)  >   content_type
+                 >    label(tok.type_)  >   content_type
                  >    label(tok.name_)  >   string_grammar)
             [ _val = construct_movable_(new_<Condition::CombatTarget>(
                     _1,

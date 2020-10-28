@@ -117,7 +117,7 @@ namespace parse { namespace detail {
         set_empire_meter_1 =
             ((  omit_[tok.SetEmpireMeter_]  >>  label(tok.empire_))
               > int_rules.expr
-              > label(tok.Meter_)           >   tok.string
+              > label(tok.meter_)           >   tok.string
               > label(tok.value_)           >   double_rules.expr
             ) [ _val = construct_movable_(
                 new_<Effect::SetEmpireMeter>(
@@ -128,7 +128,7 @@ namespace parse { namespace detail {
 
         set_empire_meter_2
             = (( omit_[tok.SetEmpireMeter_]
-               >> label(tok.Meter_))        >   tok.string
+               >> label(tok.meter_))        >   tok.string
                >  label(tok.value_)         >   double_rules.expr
               ) [ _val = construct_movable_(new_<Effect::SetEmpireMeter>(
                    _1,
@@ -147,7 +147,7 @@ namespace parse { namespace detail {
         set_empire_tech_progress
             = (     omit_[tok.SetEmpireTechProgress_]
                 >   label(tok.name_)        >   string_grammar
-                >   label(tok.Progress_)    >   double_rules.expr
+                >   label(tok.progress_)    >   double_rules.expr
                 > -(label(tok.empire_)      >   int_rules.expr)
               ) [ _val = construct_movable_(new_<Effect::SetEmpireTechProgress>(
                         deconstruct_movable_(_1, _pass),
@@ -158,19 +158,19 @@ namespace parse { namespace detail {
         // Note: the NoStringtableLookup flag controls the lookup both of template in Vartext and of the label in SitrepPanel.
         generate_sitrep_message
             =    tok.GenerateSitrepMessage_
-            >    label(tok.Message_)        >   tok.string [ _a = _1 ]
-            >    label(tok.Label_)          >   tok.string [ _e = _1 ]
+            >    label(tok.message_)        >   tok.string [ _a = _1 ]
+            >    label(tok.label_)          >   tok.string [ _e = _1 ]
             >   (
                 tok.NoStringtableLookup_ [ _f = false ]
                 | eps [ _f = true ]
             )
-            >  -(label(tok.Icon_)           >   tok.string [ _b = _1 ] )
-            >  -(label(tok.Parameters_)     >   one_or_more_string_and_string_ref_pair [_c = _1] )
+            >  -(label(tok.icon_)           >   tok.string [ _b = _1 ] )
+            >  -(label(tok.parameters_)     >   one_or_more_string_and_string_ref_pair [_c = _1] )
             >   (
                 (   // empire id specified, optionally with an affiliation type:
                     // useful to specify a single recipient empire, or the allies
                     // or enemies of a single empire
-                    ((   (label(tok.Affiliation_) > empire_affiliation_type_enum [ _d = _1 ])
+                    ((   (label(tok.affiliation_) > empire_affiliation_type_enum [ _d = _1 ])
                          | eps [ _d = EmpireAffiliationType::AFFIL_SELF ]
                      )
                      >>  label(tok.empire_)
@@ -180,19 +180,19 @@ namespace parse { namespace detail {
                 )
                 |   (   // condition specified, with an affiliation type of CanSee:
                     // used to specify CanSee affiliation
-                    (   label(tok.Affiliation_)     >>  tok.CanSee_)
+                    (   label(tok.affiliation_)     >>  tok.CanSee_)
                     >   label(tok.condition_)       >   condition_parser
                     [ _val = construct_GenerateSitRepMessage2_(_a, _b, _c, EmpireAffiliationType::AFFIL_CAN_SEE, _1, _e, _f, _pass) ]
                 )
                 |   (   // condition specified, with an affiliation type of CanSee:
                     // used to specify CanSee affiliation
-                    (   label(tok.Affiliation_)     >>  tok.Human_)
+                    (   label(tok.affiliation_)     >>  tok.Human_)
                     >   label(tok.condition_)       >   condition_parser
                     [ _val = construct_GenerateSitRepMessage2_(_a, _b, _c, EmpireAffiliationType::AFFIL_HUMAN, _1, _e, _f, _pass) ]
                 )
                 |   (   // no empire id or condition specified, with or without an
                     // affiliation type: useful to specify no or all empires
-                    (  (label(tok.Affiliation_)     >   empire_affiliation_type_enum [ _d = _1 ])
+                    (  (label(tok.affiliation_)     >   empire_affiliation_type_enum [ _d = _1 ])
                        | eps [ _d = EmpireAffiliationType::AFFIL_ANY ]
                     )
                     [ _val = construct_GenerateSitRepMessage3_(
@@ -206,7 +206,7 @@ namespace parse { namespace detail {
         set_overlay_texture
             = ( omit_[tok.SetOverlayTexture_]
                 > label(tok.name_)    > tok.string
-                > label(tok.Size_)    > double_rules.expr
+                > label(tok.size_)    > double_rules.expr
               ) [ _val = construct_movable_(new_<Effect::SetOverlayTexture>(
                   _1,
                   deconstruct_movable_(_2, _pass))) ]
@@ -215,8 +215,8 @@ namespace parse { namespace detail {
         string_and_string_ref
             =
             (
-                label(tok.Tag_)  >  tok.string [ _a = _1 ] >
-                label(tok.Data_)
+                label(tok.tag_)  >  tok.string [ _a = _1 ] >
+                label(tok.data_)
                 >  (   int_rules.expr    [ _b = construct_movable_(new_<ValueRef::StringCast<int>>(deconstruct_movable_(_1, _pass))) ]
                      | double_rules.expr [ _b = construct_movable_(new_<ValueRef::StringCast<double>>(deconstruct_movable_(_1, _pass))) ]
                      | tok.string        [ _b = construct_movable_(new_<ValueRef::Constant<std::string>>(_1)) ]

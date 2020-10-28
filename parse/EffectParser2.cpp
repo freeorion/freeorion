@@ -94,13 +94,13 @@ namespace parse { namespace detail {
 
         set_planet_type
             =    tok.SetPlanetType_
-            >    label(tok.Type_) > planet_type_rules.expr [ _val = construct_movable_(
+            >    label(tok.type_) > planet_type_rules.expr [ _val = construct_movable_(
                 new_<Effect::SetPlanetType>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         set_planet_size
             =    tok.SetPlanetSize_
-            >    label(tok.PlanetSize_) > planet_size_rules.expr [
+            >    label(tok.planetsize_) > planet_size_rules.expr [
                 _val = construct_movable_(new_<Effect::SetPlanetSize>(deconstruct_movable_(_1, _pass))) ]
             ;
 
@@ -118,7 +118,7 @@ namespace parse { namespace detail {
 
         set_species_opinion
             =    tok.SetSpeciesOpinion_
-            >    label(tok.Species_) >   string_grammar [ _a = _1 ]
+            >    label(tok.species_) >   string_grammar [ _a = _1 ]
             > (
                 (   label(tok.empire_) >  int_rules.expr [ _c = _1 ]
                     >  label(tok.Opinion_) > double_rules.expr
@@ -127,7 +127,7 @@ namespace parse { namespace detail {
                             deconstruct_movable_(_c, _pass),
                             deconstruct_movable_(_1, _pass))) ])
                 |
-                (   label(tok.Species_) > string_grammar [ _b = _1 ]
+                (   label(tok.species_) > string_grammar [ _b = _1 ]
                     >   label(tok.Opinion_) > double_rules.expr
                     [ _val = construct_movable_(new_<Effect::SetSpeciesSpeciesOpinion>(
                             deconstruct_movable_(_a, _pass),
@@ -144,7 +144,7 @@ namespace parse { namespace detail {
                         // useful to specify a single recipient empire, or the allies
                         // or enemies of a single empire
                         (
-                            (   (label(tok.Affiliation_) > empire_affiliation_type_enum [ _d = _1 ])
+                            (   (label(tok.affiliation_) > empire_affiliation_type_enum [ _d = _1 ])
                                 |    eps [ _d = EmpireAffiliationType::AFFIL_SELF ]
                             )
                             >>  label(tok.empire_)
@@ -152,7 +152,7 @@ namespace parse { namespace detail {
                     )
                     |  (   // no empire id or condition specified, with or without an
                         // affiliation type: useful to specify no or all empires
-                        (   (label(tok.Affiliation_) > empire_affiliation_type_enum [ _d = _1 ])
+                        (   (label(tok.affiliation_) > empire_affiliation_type_enum [ _d = _1 ])
                             |    eps [ _d = EmpireAffiliationType::AFFIL_ANY ]
                         )
                     )

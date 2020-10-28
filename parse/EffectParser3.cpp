@@ -42,15 +42,15 @@ namespace parse { namespace detail {
 
         move_in_orbit
             =    tok.MoveInOrbit_
-            >    label(tok.Speed_) >  double_rules.expr [ _a = _1 ]
+            >    label(tok.speed_) >  double_rules.expr [ _a = _1 ]
             >   (
-                (label(tok.Focus_) >  condition_parser [ _val = construct_movable_(new_<Effect::MoveInOrbit>(
+                (label(tok.focus_) >  condition_parser [ _val = construct_movable_(new_<Effect::MoveInOrbit>(
                         deconstruct_movable_(_a, _pass),
                         deconstruct_movable_(_1, _pass))) ])
                 |
                 (
-                        label(tok.X_)     >  double_rules.expr [ _b = _1 ]
-                    >   label(tok.Y_)     >  double_rules.expr [ _val = construct_movable_(new_<Effect::MoveInOrbit>(
+                        label(tok.x_)     >  double_rules.expr [ _b = _1 ]
+                    >   label(tok.y_)     >  double_rules.expr [ _val = construct_movable_(new_<Effect::MoveInOrbit>(
                             deconstruct_movable_(_a, _pass),
                             deconstruct_movable_(_b, _pass),
                             deconstruct_movable_(_1, _pass))) ]
@@ -60,15 +60,15 @@ namespace parse { namespace detail {
 
         move_towards
             =    tok.MoveTowards_
-            >    label(tok.Speed_) > double_rules.expr [ _a = _1 ]
+            >    label(tok.speed_) > double_rules.expr [ _a = _1 ]
             >    (
-                (label(tok.Target_) >  condition_parser [ _val = construct_movable_(new_<Effect::MoveTowards>(
+                (label(tok.target_) >  condition_parser [ _val = construct_movable_(new_<Effect::MoveTowards>(
                         deconstruct_movable_(_a, _pass),
                         deconstruct_movable_(_1, _pass))) ])
                 |
                 (
-                        label(tok.X_)     > double_rules.expr [ _b = _1 ]
-                    >   label(tok.Y_)     > double_rules.expr [ _val = construct_movable_(new_<Effect::MoveTowards>(
+                        label(tok.x_)     > double_rules.expr [ _b = _1 ]
+                    >   label(tok.y_)     > double_rules.expr [ _val = construct_movable_(new_<Effect::MoveTowards>(
                             deconstruct_movable_(_a, _pass),
                             deconstruct_movable_(_b, _pass),
                             deconstruct_movable_(_1, _pass))) ]
@@ -98,7 +98,7 @@ namespace parse { namespace detail {
 
         victory
             =    tok.Victory_
-            >    label(tok.Reason_) > tok.string [ _val = construct_movable_(new_<Effect::Victory>(_1)) ]
+            >    label(tok.reason_) > tok.string [ _val = construct_movable_(new_<Effect::Victory>(_1)) ]
             ;
 
         add_special_1
@@ -126,19 +126,19 @@ namespace parse { namespace detail {
 
         add_starlanes
             =   tok.AddStarlanes_
-            >   label(tok.Endpoint_) > condition_parser [
+            >   label(tok.endpoint_) > condition_parser [
                 _val = construct_movable_(new_<Effect::AddStarlanes>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         remove_starlanes
             =   tok.RemoveStarlanes_
-            >   label(tok.Endpoint_) > condition_parser [
+            >   label(tok.endpoint_) > condition_parser [
                 _val = construct_movable_(new_<Effect::RemoveStarlanes>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         set_star_type
             =   tok.SetStarType_
-            >   label(tok.Type_) > star_type_rules.expr [
+            >   label(tok.type_) > star_type_rules.expr [
                 _val = construct_movable_(new_<Effect::SetStarType>(deconstruct_movable_(_1, _pass))) ]
             ;
 

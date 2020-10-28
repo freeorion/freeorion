@@ -33,7 +33,7 @@ namespace parse { namespace detail {
         empire_object_visibility
             = ( tok.EmpireObjectVisibility_
                 >   label(tok.empire_) >   simple_int
-                >   label(tok.Object_) >   simple_int
+                >   label(tok.object_) >   simple_int
               ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<Visibility>>(_1, deconstruct_movable_(_2, _pass), deconstruct_movable_(_3, _pass), nullptr, nullptr, nullptr)) ]
             ;
 

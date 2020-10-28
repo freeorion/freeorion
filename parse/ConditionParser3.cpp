@@ -38,8 +38,8 @@ namespace parse { namespace detail {
         has_special_capacity
             = (omit_[tok.HasSpecialCapacity_]
                >   label(tok.name_) >  string_grammar
-               > -(label(tok.Low_)  >  double_rules.expr)
-               > -(label(tok.High_) >  double_rules.expr)
+               > -(label(tok.low_)  >  double_rules.expr)
+               > -(label(tok.high_) >  double_rules.expr)
               ) [ _val = construct_movable_(new_<Condition::HasSpecial>(
                     deconstruct_movable_(_1, _pass),
                     deconstruct_movable_(_2, _pass),
@@ -66,8 +66,8 @@ namespace parse { namespace detail {
 
         number
             = (omit_[tok.Number_]
-               > -(label(tok.Low_)   >  castable_int_rules.flexible_int)
-               > -(label(tok.High_)  >  castable_int_rules.flexible_int)
+               > -(label(tok.low_)   >  castable_int_rules.flexible_int)
+               > -(label(tok.high_)  >  castable_int_rules.flexible_int)
                >   label(tok.condition_) > condition_parser
               ) [ _val = construct_movable_(new_<Condition::Number>(
                     deconstruct_movable_(_1, _pass),
@@ -184,8 +184,8 @@ namespace parse { namespace detail {
 
             turn
                 = ( omit_[tok.Turn_]
-                > -(label(tok.Low_)  > (castable_int_rules.flexible_int ))
-                > -(label(tok.High_) > (castable_int_rules.flexible_int )))
+                > -(label(tok.low_)  > (castable_int_rules.flexible_int ))
+                > -(label(tok.high_) > (castable_int_rules.flexible_int )))
                 [ _val = construct_movable_(new_<Condition::Turn>(
                         deconstruct_movable_(_1, _pass),
                         deconstruct_movable_(_2, _pass))) ]
@@ -193,8 +193,8 @@ namespace parse { namespace detail {
 
             created_on_turn
                 = ( omit_[tok.CreatedOnTurn_]
-                > -(label(tok.Low_)  > castable_int_rules.flexible_int )
-                > -(label(tok.High_) > castable_int_rules.flexible_int ))
+                > -(label(tok.low_)  > castable_int_rules.flexible_int )
+                > -(label(tok.high_) > castable_int_rules.flexible_int ))
                 [ _val = construct_movable_(new_<Condition::CreatedOnTurn>(
                         deconstruct_movable_(_1, _pass),
                         deconstruct_movable_(_2, _pass))) ]
@@ -239,8 +239,8 @@ namespace parse { namespace detail {
 
             stockpile
                 = ( omit_[tok.EmpireStockpile_]
-                >   label(tok.Low_)  > double_rules.expr
-                >   label(tok.High_) > double_rules.expr)
+                >   label(tok.low_)  > double_rules.expr
+                >   label(tok.high_) > double_rules.expr)
                 [ _val = construct_movable_(new_<Condition::EmpireStockpileValue>(
                         ResourceType::RE_INDUSTRY,
                         deconstruct_movable_(_1, _pass),

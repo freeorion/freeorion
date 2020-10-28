@@ -17,7 +17,7 @@ namespace parse { namespace detail {
         boost::spirit::qi::_val_type _val;
 
         variable_name
-            %=   tok.PlanetSize_
+            %=   tok.planetsize_
             |    tok.NextLargerPlanetSize_
             |    tok.NextSmallerPlanetSize_
             ;

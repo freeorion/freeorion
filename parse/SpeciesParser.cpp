@@ -224,7 +224,7 @@ namespace {
                 ;
 
             environment_map_element
-                =  ( label(tok.Type_)        > planet_type_rules.enum_expr
+                =  ( label(tok.type_)        > planet_type_rules.enum_expr
                 >    label(tok.environment_) > planet_environment_rules.enum_expr
                 ) [ _val = construct<std::pair<PlanetType, PlanetEnvironment>>(_1, _2) ]
                 ;
@@ -360,7 +360,7 @@ namespace {
 
             species_manifest
                 =    omit_[tok.SpeciesCensusOrdering_]
-                >    *(label(tok.Tag_) > tok.string [ push_back(_r1, _1) ])
+                >    *(label(tok.tag_) > tok.string [ push_back(_r1, _1) ])
                 ;
 
             start

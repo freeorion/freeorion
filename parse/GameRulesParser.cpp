@@ -119,7 +119,7 @@ namespace {
                     >> (label(tok.name_) >          tok.string [ _a = _1 ])
                     >> (label(tok.description_) >   tok.string [ _b = _1 ])
                     >> (label(tok.category_) >      tok.string [ _j = _1 ])
-                    >>  label(tok.Type_) >>         tok.Toggle_
+                    >>  label(tok.type_) >>         tok.Toggle_
                     )
                 > ((label(tok.Default_)
                     >   (
@@ -136,7 +136,7 @@ namespace {
                     >> (label(tok.name_) >          tok.string [ _a = _1 ])
                     >> (label(tok.description_) >   tok.string [ _b = _1 ])
                     >> (label(tok.category_) >      tok.string [ _j = _1 ])
-                    >>  label(tok.Type_) >>         tok.Integer_
+                    >>  label(tok.type_) >>         tok.Integer_
                     )
                 >   label(tok.Default_) >       int_rule [ _f = _1 ]
                 >   label(tok.Min_) >           int_rule [ _g = _1 ]
@@ -149,7 +149,7 @@ namespace {
                     >> (label(tok.name_) >          tok.string [ _a = _1 ])
                     >> (label(tok.description_) >   tok.string [ _b = _1 ])
                     >> (label(tok.category_) >      tok.string [ _j = _1 ])
-                    >>  label(tok.Type_) >>         tok.Real_
+                    >>  label(tok.type_) >>         tok.Real_
                     )
                 >   label(tok.Default_) >       double_rule [ _c = _1 ]
                 >   label(tok.Min_) >           double_rule [ _d = _1 ]
@@ -162,7 +162,7 @@ namespace {
                     >> (label(tok.name_) >          tok.string [ _a = _1 ])
                     >> (label(tok.description_) >   tok.string [ _b = _1 ])
                     >> (label(tok.category_) >      tok.string [ _j = _1 ])
-                    >>  label(tok.Type_) >>         tok.String_
+                    >>  label(tok.type_) >>         tok.String_
                     )
                 >   label(tok.Default_) >       tok.string [ _e = _1 ]
                 >  -( label(tok.Allowed_) > one_or_more_string_tokens [_h = _1])

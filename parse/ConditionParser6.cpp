@@ -76,13 +76,13 @@ namespace parse { namespace detail {
 
         focus_type
             =   tok.Focus_
-            > -(label(tok.Type_) > one_or_more_string_values)
+            > -(label(tok.type_) > one_or_more_string_values)
             [ _val = construct_movable_(new_<Condition::FocusType>(deconstruct_movable_vector_(_1, _pass))) ]
             ;
 
         planet_type
             =   (tok.Planet_
-                 >>  label(tok.Type_)
+                 >>  label(tok.type_)
                 )
             >   one_or_more_planet_types
             [ _val = construct_movable_(new_<Condition::PlanetType>(deconstruct_movable_vector_(_1, _pass))) ]
@@ -101,7 +101,7 @@ namespace parse { namespace detail {
                   >>  label(tok.environment_)
                  )
                  >   one_or_more_planet_environments
-                 >  -(label(tok.Species_)        >  string_grammar))
+                 >  -(label(tok.species_)        >  string_grammar))
             [ _val = construct_movable_(new_<Condition::PlanetEnvironment>(
                     deconstruct_movable_vector_(_1, _pass),
                     deconstruct_movable_(_2, _pass))) ]
@@ -115,7 +115,7 @@ namespace parse { namespace detail {
                             new_<ValueRef::Constant<UniverseObjectType>>(_1)))) ]
             |   (
                 tok.ObjectType_
-                >   label(tok.Type_) > universe_object_type_rules.expr [
+                >   label(tok.type_) > universe_object_type_rules.expr [
                     _val = construct_movable_(new_<Condition::Type>(deconstruct_movable_(_1, _pass))) ]
             )
             ;

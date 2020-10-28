@@ -71,7 +71,7 @@ namespace parse {
         empire_meter_value
             = (     tok.EmpireMeterValue_
                  >  label(tok.empire_) > simple_int
-                 >  label(tok.Meter_) > tok.string
+                 >  label(tok.meter_) > tok.string
               ) [_val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
                 _1,
                 deconstruct_movable_(_2, _pass),
@@ -83,8 +83,8 @@ namespace parse {
 
         direct_distance
             = (     tok.DirectDistanceBetween_
-                 >  label(tok.Object_) > simple_int
-                 >  label(tok.Object_) > simple_int
+                 >  label(tok.object_) > simple_int
+                 >  label(tok.object_) > simple_int
               ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
                 _1,
                 deconstruct_movable_(_2, _pass),
@@ -93,15 +93,15 @@ namespace parse {
             ;
 
         // in shortest_path would have liked to be able to use
-        //            >   label(tok.Object_) >   (simple_int [ _b = _1 ] | int_rules.statistic_expr [ _b = _1 ])
-        //            >   label(tok.Object_) >   (simple_int [ _c = _1 ] | int_rules.statistic_expr [ _c = _1 ])
+        //            >   label(tok.object_) >   (simple_int [ _b = _1 ] | int_rules.statistic_expr [ _b = _1 ])
+        //            >   label(tok.object_) >   (simple_int [ _c = _1 ] | int_rules.statistic_expr [ _c = _1 ])
         // but getting crashes upon program start, presumably due to initialization order problems
 
         shortest_path
             =   (
                         tok.ShortestPath_
-                    >   label(tok.Object_) > simple_int
-                    >   label(tok.Object_) > simple_int
+                    >   label(tok.object_) > simple_int
+                    >   label(tok.object_) > simple_int
                 ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
                 _1,
                 deconstruct_movable_(_2, _pass),
@@ -111,7 +111,7 @@ namespace parse {
 
         species_content_opinion
             = (     tok.SpeciesContentOpinion_
-                >   label(tok.Species_) > string_grammar
+                >   label(tok.species_) > string_grammar
                 >   label(tok.name_) > string_grammar
               )
               [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
@@ -125,7 +125,7 @@ namespace parse {
 
         species_empire_opinion
             = (     tok.SpeciesEmpireOpinion_
-                >   label(tok.Species_) > string_grammar
+                >   label(tok.species_) > string_grammar
                 >   label(tok.empire_) > simple_int
               ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
                 _1,
@@ -138,8 +138,8 @@ namespace parse {
 
         species_species_opinion
             = (     tok.SpeciesSpeciesOpinion_
-                >   label(tok.Species_) > string_grammar
-                >   label(tok.Species_) > string_grammar
+                >   label(tok.species_) > string_grammar
+                >   label(tok.species_) > string_grammar
               ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
                 _1,
                 nullptr,
@@ -151,9 +151,9 @@ namespace parse {
 
         unwrapped_part_meter
             = (     tok.ShipPartMeter_
-                >   label(tok.Part_)    >   string_grammar
-                >   label(tok.Meter_)   >   ship_part_meter_type_enum
-                >   label(tok.Object_)  >   simple_int
+                >   label(tok.part_)    >   string_grammar
+                >   label(tok.meter_)   >   ship_part_meter_type_enum
+                >   label(tok.object_)  >   simple_int
               ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
                     _1,                                     // variable_name
                     deconstruct_movable_(_4, _pass),        // int_ref1
@@ -168,9 +168,9 @@ namespace parse {
         value_wrapped_part_meter
             = (    (omit_[tok.Value_] >> '(')
                 >   tok.ShipPartMeter_
-                >   label(tok.Part_)    >   string_grammar
-                >   label(tok.Meter_)   >   ship_part_meter_type_enum
-                >   label(tok.Object_)  >   simple_int
+                >   label(tok.part_)    >   string_grammar
+                >   label(tok.meter_)   >   ship_part_meter_type_enum
+                >   label(tok.object_)  >   simple_int
                 >>  ')'
               ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
                     _1,                                     // variable_name
@@ -186,7 +186,7 @@ namespace parse {
         special_capacity
             = (     tok.SpecialCapacity_
                 >   label(tok.name_) > string_grammar
-                >>  label(tok.Object_)
+                >>  label(tok.object_)
                 >   simple_int
               ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
                 _1,                                 // variable_name

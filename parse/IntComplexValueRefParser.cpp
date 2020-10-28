@@ -78,13 +78,13 @@ namespace parse {
 
         jumps_between
             = (  tok.JumpsBetween_
-               > label(tok.Object_)
+               > label(tok.object_)
                > ( int_rules.expr
                    // "cast" the ValueRef::Statistic<int> into
                    // ValueRef::ValueRef<int> so the alternative contains a
                    // single type
                    | qi::as<parse::detail::MovableEnvelope<ValueRef::ValueRef<int>>>()[int_rules.statistic_expr])
-               > label(tok.Object_)
+               > label(tok.object_)
                > (int_rules.expr
                   | qi::as<parse::detail::MovableEnvelope<ValueRef::ValueRef<int>>>()[int_rules.statistic_expr])
               ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<int>>(_1, deconstruct_movable_(_2, _pass), deconstruct_movable_(_3, _pass), nullptr, nullptr, nullptr)) ]
@@ -93,8 +93,8 @@ namespace parse {
         //jumps_between_by_empire_supply
         //    =   (
         //                tok.JumpsBetweenByEmpireSupplyConnections_ [ _a = construct<std::string>(_1) ]
-        //            >   label(tok.Object_) >>   int_rules.expr [ _b = _1 ]
-        //            >   label(tok.Object_) >>   int_rules.expr [ _c = _1 ]
+        //            >   label(tok.object_) >>   int_rules.expr [ _b = _1 ]
+        //            >   label(tok.object_) >>   int_rules.expr [ _c = _1 ]
         //            >   label(tok.empire_) >>   int_rules.expr [ _f = _1 ]
         //        ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<int>>(_a, deconstruct_movable_(_b, _pass), deconstruct_movable_(_c, _pass), deconstruct_movable_(_f, _pass), deconstruct_movable_(_d, _pass), deconstruct_movable_(_e, _pass))) ]
         //    ;
@@ -117,11 +117,11 @@ namespace parse {
         part_class_in_ship_design
             =   (
                 tok.PartOfClassInShipDesign_
-                //> ( label(tok.Class_) >>
+                //> ( label(tok.class_) >>
                 //    as_string [ ship_part_class_enum ]
                 //    [ _d = construct_movable_(new_<ValueRef::Constant<std::string>>(_1)) ]
                 //  )
-                > ( label(tok.Class_) >
+                > ( label(tok.class_) >
                     (   tok.ShortRange_       | tok.FighterBay_   | tok.FighterWeapon_
                       | tok.Shield_           | tok.Armour_
                       | tok.Troops_           | tok.Detection_    | tok.Stealth_
@@ -138,7 +138,7 @@ namespace parse {
             ;
 
         part_class_as_int
-            = ( label(tok.Class_) > ship_part_class_enum )
+            = ( label(tok.class_) > ship_part_class_enum )
               [ _val = construct_movable_(new_<ValueRef::Constant<int>>(int_cast_(_1))) ]
         ;
 
@@ -186,7 +186,7 @@ namespace parse {
             =   (
                     tok.SpecialAddedOnTurn_
                 >-( label(tok.name_)   > string_grammar )
-                >-( label(tok.Object_) > int_rules.expr )
+                >-( label(tok.object_) > int_rules.expr )
             ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<int>>(_1, deconstruct_movable_(_3, _pass), nullptr, nullptr, deconstruct_movable_(_2, _pass), nullptr)) ]
             ;
 

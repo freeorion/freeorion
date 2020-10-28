@@ -81,7 +81,7 @@ namespace {
                 >   label(tok.description_) > tok.string
                 >   capture
                 >   common_rules.common
-                >   label(tok.Icon_)        > tok.string)
+                >   label(tok.icon_)        > tok.string)
                 [ _pass = is_unique_(_r1, _1, _2),
                   insert_building_(_r1, _2, _3, _5, _4, _6, _pass) ]
                 ;

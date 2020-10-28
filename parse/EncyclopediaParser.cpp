@@ -56,7 +56,7 @@ namespace {
                 >    label(tok.category_)            > tok.string
                 >    label(tok.short_description_)   > tok.string
                 >    label(tok.description_)         > tok.string
-                >    label(tok.Icon_)                > tok.string )
+                >    label(tok.icon_)                > tok.string )
                     [ insert(_r1, construct<EncyclopediaArticle>(_1, _2, _3, _4, _5)) ]
                 ;
 
