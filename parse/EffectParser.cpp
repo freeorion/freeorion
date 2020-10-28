@@ -118,7 +118,7 @@ namespace parse {
             > -(label(tok.description_)      > tok.string [ _f = _1 ])
             >   label(tok.scope_)            > condition_parser [ _a = _1 ]
             > -(label(tok.activation_)       > condition_parser [ _b = _1 ])
-            > -(label(tok.StackingGroup_)    > tok.string [ _c = _1 ])
+            > -(label(tok.stackinggroup_)    > tok.string [ _c = _1 ])
             > -(label(tok.accountinglabel_)  > tok.string [ _d = _1 ])
             > ((label(tok.priority_)         > tok.int_ [ _e = _1 ]) | eps [ _e = 100 ])
             >   label(tok.effects_)
