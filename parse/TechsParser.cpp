@@ -169,7 +169,7 @@ namespace {
                 = ( tok.Category_
                     >   label(tok.name_)    > tok.string
                     >   label(tok.graphic_) > tok.string
-                    >   label(tok.Colour_)  > color_parser
+                    >   label(tok.colour_)  > color_parser
                   ) [ _pass = is_unique_(_r1, _1, _2),
                       insert_category_(_r1, _2, _3, _4) ]
                 ;
