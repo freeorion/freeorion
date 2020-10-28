@@ -76,10 +76,13 @@ namespace FreeOrionPython {
             .value("researchable",      TechStatus::TS_RESEARCHABLE)
             .value("complete",          TechStatus::TS_COMPLETE)
         ;
+        DebugLogger() << "WrapGameStateEnums: Wrap BuildType enum";
         auto buildType = py::enum_<BuildType>("buildType");
         for (const auto& p : IterateEnum(EnumIterator<BuildType>{})) {
+            DebugLogger() << "WrapGameStateEnums: Wrap BuildType enum " << &p;
             buildType.value(p.second, p.first);
         }
+        DebugLogger() << "WrapGameStateEnums: BuildType enum wrapped";
         py::enum_<ResourceType>("resourceType")
             .value("industry",          ResourceType::RE_INDUSTRY)
             .value("influence",         ResourceType::RE_INFLUENCE)
