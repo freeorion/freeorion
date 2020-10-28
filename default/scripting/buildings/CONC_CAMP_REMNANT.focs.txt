@@ -3,7 +3,7 @@ BuildingType
     description = "BLD_CONC_CAMP_REMNANT_DESC"
     buildcost = 1
     buildtime = 1
-    location = NOT ALL
+    location = Not All
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS]]
     
@@ -19,10 +19,10 @@ BuildingType
             effects = SetIndustry value = Target.TargetIndustry
         EffectsGroup
             scope = Source
-            activation =  ContainedBy AND [
+            activation =  ContainedBy And [
                 Not HasSpecial name = "CONC_CAMP_MASTER_SPECIAL"
                 Not HasSpecial name = "CONC_CAMP_SLAVE_SPECIAL"
-                Industry High = Source.Planet.TargetIndustry + 2 
+                Industry high = Source.Planet.TargetIndustry + 2
             ]
             effects = Destroy
     ]
