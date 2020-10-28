@@ -6,8 +6,8 @@
 
 #define TOKEN_SEQ_1                             \
     (Abs)                                       \
-    (AccountingLabel)                           \
-    (Activation)                                \
+    (accountinglabel)                           \
+    (activation)                                \
     (AddedBefore)                               \
     (AddedSince)                                \
     (AddSpecial)                                \
@@ -105,9 +105,9 @@
     (Dislikes)                                  \
     (Distance)                                  \
     (DistanceFromOriginalType)                  \
-    (Effects)                                   \
+    (effects)                                   \
     (EffectsGroup)                              \
-    (EffectsGroups)                             \
+    (effectsgroups)                             \
     (Else)                                      \
     (empire)                                    \
     (EmpireHasAdoptedPolicy)                    \
@@ -129,7 +129,7 @@
     (Environments)                              \
     (ETA)                                       \
     (ExploredByEmpire)                          \
-    (Exclusions)                                \
+    (exclusions)                                \
     (External)
 
 #define TOKEN_SEQ_4                             \
@@ -168,7 +168,7 @@
     (GenerateSitrepMessage)                     \
     (GiveEmpireTech)                            \
     (Good)                                      \
-    (Graphic)                                   \
+    (graphic)                                   \
     (HabitableSize)                             \
     (Happiness)                                 \
     (HasSpecial)                                \
@@ -340,7 +340,7 @@
     (Position)                                  \
     (prerequisites)                             \
     (PreviousSystemID)                          \
-    (Priority)                                  \
+    (priority)                                  \
     (Probability)                               \
     (ProducedByEmpire)                          \
     (ProducedByEmpireID)                        \
@@ -381,7 +381,7 @@
     (RMS)                                       \
     (RootCandidate)                             \
     (Round)                                     \
-    (Scope)                                     \
+    (scope)                                     \
     (SecondaryStat)
 
 #define TOKEN_SEQ_11                            \
@@ -504,7 +504,7 @@
     (SpeciesShipsScrapped)                      \
     (Speed)                                     \
     (Spread)                                    \
-    (StackingGroup)                             \
+    (stackinggroup)                             \
     (Star)                                      \
     (StarType)                                  \
     (Stationary)                                \

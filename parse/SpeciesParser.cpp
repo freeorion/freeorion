@@ -214,7 +214,7 @@ namespace {
                 >    label(tok.name_)        > tok.string
                 >    label(tok.description_) > tok.string
                 >    label(tok.Location_)    > condition_parser
-                >    label(tok.Graphic_)     > tok.string
+                >    label(tok.graphic_)     > tok.string
                 ) [ _val = construct<FocusType>(_1, _2, deconstruct_movable_(_3, _pass), _4) ]
                 ;
 
@@ -237,7 +237,7 @@ namespace {
             species_data
                 = (-(label(tok.SpawnRate_)      >   double_rule)// _1
                 >  -(label(tok.SpawnLimit_)     >   int_rule)   // _2
-                >   label(tok.Graphic_)         >   tok.string) // _3
+                >   label(tok.graphic_)         >   tok.string) // _3
                 [ _val = construct<SpeciesData>(_1, _2, _3) ]
                 ;
 

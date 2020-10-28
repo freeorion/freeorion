@@ -120,7 +120,7 @@ namespace parse {
             > -(label(tok.activation_)       > condition_parser [ _b = _1 ])
             > -(label(tok.StackingGroup_)    > tok.string [ _c = _1 ])
             > -(label(tok.accountinglabel_)  > tok.string [ _d = _1 ])
-            > ((label(tok.Priority_)         > tok.int_ [ _e = _1 ]) | eps [ _e = 100 ])
+            > ((label(tok.priority_)         > tok.int_ [ _e = _1 ]) | eps [ _e = 100 ])
             >   label(tok.effects_)
             >   one_or_more_effects
             [ _val = construct_EffectsGroup_(_a, _b, _1, _d, _c, _e, _f, _pass) ]

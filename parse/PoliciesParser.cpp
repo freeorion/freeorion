@@ -152,7 +152,7 @@ namespace {
                 >    prerequisites                                          // _7
                 >    exclusions                                             // _8
                 >  -(label(tok.effectsgroups_)      > effects_group_grammar)// _9
-                >    label(tok.Graphic_)            > tok.string)           // _10
+                >    label(tok.graphic_)            > tok.string)           // _10
                 [  _pass = is_unique_(_r1, _1, _2),
                    insert_policy_(_r1, phoenix::construct<policy_pod>(
                        _2, _3, _4, _5, _6, _7, _8, _9, _10), _pass) ]

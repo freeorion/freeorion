@@ -161,14 +161,14 @@ namespace {
                 >  -prerequisites
                 >  -unlocks
                 >  -(label(tok.effectsgroups_) > effects_group_grammar)
-                >  -as_string_[(label(tok.Graphic_) > tok.string)]
+                >  -as_string_[(label(tok.graphic_) > tok.string)]
                   ) [ insert_tech_(_r1, _1, _4, _2, _3, _5, _pass) ]
                 ;
 
             category
                 = ( tok.Category_
                     >   label(tok.name_)    > tok.string
-                    >   label(tok.Graphic_) > tok.string
+                    >   label(tok.graphic_) > tok.string
                     >   label(tok.Colour_)  > color_parser
                   ) [ _pass = is_unique_(_r1, _1, _2),
                       insert_category_(_r1, _2, _3, _4) ]
