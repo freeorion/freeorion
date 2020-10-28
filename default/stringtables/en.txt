@@ -1121,6 +1121,9 @@ Ships cost 1 PP and take 1 turn to produce.
 NUM_COMBAT_ROUNDS
 per combat
 
+NUM_COMBAT_ROUNDS_FIGHTERS
+per combat
+
 RULE_NUM_COMBAT_ROUNDS
 Combat Rounds
 
@@ -7538,6 +7541,12 @@ The %empire% ship %ship% has been psychically controlled!
 EFFECT_PSY_DOM_LABEL
 Psychogenic Domination
 
+IMPERIAL_GARRISON_ACTIVATED
+Imperial garrison: %empire% colonized %planet% at %system%.
+
+IMPERIAL_GARRISON_ACTIVATED_LABEL
+New colony
+
 EFFECT_MINES
 At %system%: Mines caused %rawtext% damage to the %empire% fleet %fleet%.
 
@@ -11360,7 +11369,10 @@ PLC_CONFEDERATION
 Confederation
 
 PLC_CONFEDERATION_DESC
-Planets are organized in a confederacy of independent system, and do not suffer reduce influence if not connected to the capital, but are slightly less stable in general. Ground troops are also boosted slightly.
+'''Planets are organized in a confederacy of independent system, and do not suffer reduce influence if not connected to the capital, but are slightly less stable in general.
+
+Increases max [[metertype METER_TROOPS]] by [[value PLC_CONFEDERATION_MAX_TROOPS_FLAT]] but reduces [[metertype METER_TARGET_HAPPINESS]] ([[value PLC_CONFEDERATION_TARGET_HAPPINESS_FLAT]]) in all planets.
+Increases [[metertype METER_TARGET_INFLUENCE]] on colonies disconnected from the capital by [[value PLC_CONFEDERATION_TARGET_INFLUENCE_FLAT]].'''
 
 PLC_CONFEDERATION_SHORT_DESC
 Supports disconnected systems
@@ -12401,9 +12413,12 @@ Cyborgs
 
 GRO_CYBORG_DESC
 '''Increases the [[metertype METER_TARGET_POPULATION]] on [[PE_HOSTILE]] planets by planet size: ([[SZ_TINY]] +2) ([[SZ_SMALL]] +4) ([[SZ_MEDIUM]] +6) ([[SZ_LARGE]] +8) ([[SZ_HUGE]] +10).
-Increases max [[metertype METER_TROOPS]] on all planets by 0.2 per [[metertype METER_POPULATION]].
+Increases max [[metertype METER_TROOPS]] on all planets by [[value CYBORG_MAX_TROOPS_PERPOP]] per [[metertype METER_POPULATION]].
 
 A highly versatile fusion of organism and machine, capable of adapting to a tremendous variety of circumstances. Spontaneous generation of specialized organs and mechanically enhanced strength permit cyborgs to exist with ease in nearly any environment.'''
+
+CYBORG_MAX_TROOPS_PERPOP
+per population
 
 GRO_GAIA_TRANS
 Gaia Transformation
@@ -12610,33 +12625,42 @@ DEF_ROOT_DEFENSE
 Self Defense
 
 DEF_ROOT_DEFENSE_DESC
-'''Increases max [[metertype METER_SHIELD]] by 1 on each owned planet. Regenerates 1 [[metertype METER_SHIELD]] per turn, on turns when the planet has not been attacked in combat. For species with basic defensive troops, increases max [[metertype METER_TROOPS]] on the planet by 0.2 per [[metertype METER_POPULATION]].
+'''Increases max [[metertype METER_SHIELD]] by 1 on each owned planet. Regenerates 1 [[metertype METER_SHIELD]] per turn, on turns when the planet has not been attacked in combat. For species with basic defensive troops, increases max [[metertype METER_TROOPS]] on the planet by [[value BASIC_DEFENSE_TROOPS_MAX_TROOPS_PERPOP]] per [[metertype METER_POPULATION]].
 
 The concept of 'self defense' is at the root of many avenues of technological advance.'''
+
+BASIC_DEFENSE_TROOPS_MAX_TROOPS_PERPOP
+per population
 
 DEF_GARRISON_1
 Planetary Bunker Complex
 
 DEF_GARRISON_1_DESC
-Increases max [[metertype METER_TROOPS]] on all planets by 10, unmodified by species traits.
+Increases max [[metertype METER_TROOPS]] on all planets by [[value GARRISON_1_MAX_TROOPS_FLAT]], unmodified by species traits.
 
 DEF_GARRISON_2
 Defensive Militia Training
 
 DEF_GARRISON_2_DESC
-Increases max [[metertype METER_TROOPS]] on all planets by 0.4 per [[metertype METER_POPULATION]] (modified by species defensive trait), and causes troops to regenerate by an additional 1 per turn.
+Increases max [[metertype METER_TROOPS]] on all planets by [[value GARRISON_2_MAX_TROOPS_PERPOP]] per [[metertype METER_POPULATION]] (modified by species defensive trait), and causes troops to regenerate by an additional [[value GARRISON_2_TROOPREGEN_FLAT]] per turn.
+
+GARRISON_2_MAX_TROOPS_PERPOP
+per population
 
 DEF_GARRISON_3
 Planetary Fortification Network
 
 DEF_GARRISON_3_DESC
-Increases max [[metertype METER_TROOPS]] on all planets by 16 (unmodified by species traits) and causes troops to regenerate by an additional 2 per turn in addition to that from [[DEF_GARRISON_2]].
+Increases max [[metertype METER_TROOPS]] on all planets by [[value GARRISON_3_MAX_TROOPS_FLAT]] (unmodified by species traits) and causes troops to regenerate by an additional [[value GARRISON_3_TROOPREGEN_FLAT]] per turn in addition to that from [[DEF_GARRISON_2]].
 
 DEF_GARRISON_4
 Planetary Guard Brigades
 
 DEF_GARRISON_4_DESC
-Increases max [[metertype METER_TROOPS]] on all planets by 0.4 per [[metertype METER_POPULATION]] (modified by species defensive trait), and causes troops to regenerate by an additional 3 per turn in addition to that from [[DEF_GARRISON_3]] and [[DEF_GARRISON_2]].
+Increases max [[metertype METER_TROOPS]] on all planets by [[value GARRISON_4_MAX_TROOPS_PERPOP]] per [[metertype METER_POPULATION]] (modified by species defensive trait), and causes troops to regenerate by an additional [[value GARRISON_4_TROOPREGEN_FLAT]] per turn in addition to that from [[DEF_GARRISON_3]] and [[DEF_GARRISON_2]].
+
+GARRISON_4_MAX_TROOPS_PERPOP
+per population
 
 DEF_PLANET_CLOAK
 Planetary Cloaking Device
@@ -12657,10 +12681,6 @@ SHP_REINFORCED_HULL_DESC
 '''Increases max [[metertype METER_STRUCTURE]] of all ships by [[value SHP_REINFORCED_HULL_BONUS]].
 
 Standard ship hulls are designed and constructed with advanced microgravity architectural techniques and highly resistant materials. However, the limitations of physical matter impose a severe limitation on the strength of hulls. By enhancing the hull with structural integrity fields, a sizable increase in strength can be obtained.'''
-
-# value ref description
-SHP_REINFORCED_HULL_BONUS
-''''''
 
 SHP_BASIC_DAM_CONT
 Basic Damage Control
@@ -16097,6 +16117,12 @@ ULTIMATE_TROOPS_LABEL
 
 INDEPENDENT_TROOP_LABEL
 Independent Homeworld
+
+IMPERIAL_GARRISON_LABEL
+Imperial Garrison
+
+IMPERIAL_GARRISON_MAX_TROOPS_FLAT
+''''''
 
 MEGALITH_LABEL
 Megalith

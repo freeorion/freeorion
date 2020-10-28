@@ -13,14 +13,14 @@ Tech
                 OwnedBy empire = Source.Owner
             ]
             stackinggroup = "PLANET_SHIELDS_STACK_ROOT"
-            priority = [[DEFAULT_PRIORITY]]
             effects = SetMaxShield value = Value + 1 accountinglabel = "DEF_ROOT_DEFENSE"
-        
-        EffectsGroup    // regenerate 1 per turn
+
+        EffectsGroup    // base regeneration of troops, defense and shields if not attacked
             scope = And [
                 Planet
                 OwnedBy empire = Source.Owner
-                (LocalCandidate.LastTurnAttackedByShip   < CurrentTurn)
+                (LocalCandidate.LastTurnAttackedByShip < CurrentTurn)
+                (LocalCandidate.LastTurnConquered < CurrentTurn)
             ]
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
             effects = [
@@ -28,6 +28,16 @@ Tech
                 SetDefense value = min(Value + [[PLANET_DEFENSE_FACTOR]], Value(Target.MaxDefense))
                 SetTroops value = min(Value + 1, Value(Target.MaxTroops))
             ]
+
+        EffectsGroup    // set minimum troops for just-colonized planets
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                (LocalCandidate.LastTurnColonized = CurrentTurn)
+            ]
+            priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
+            effects = SetTroops value = min((NamedRealLookup name = "IMPERIAL_GARRISON_MAX_TROOPS_FLAT"),
+                                            Value(Target.MaxTroops))
     ]
     graphic = ""
 

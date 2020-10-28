@@ -15,7 +15,8 @@ Tech
                 Planet environment = [ Hostile ]
             ]
             priority = [[TARGET_POPULATION_BEFORE_SCALING_PRIORITY]]
-            effects = SetTargetPopulation value = Value + 2 * Target.HabitableSize  accountinglabel = "GRO_CYBORG"
+            effects = SetTargetPopulation value = Value + 2 * Target.HabitableSize
+                accountinglabel = "GRO_CYBORG"
 
         EffectsGroup
             scope = And [
@@ -24,10 +25,11 @@ Tech
             ]
             stackinggroup = "CYBORG_TROOPS_STACK"
             priority = [[VERY_EARLY_PRIORITY]]
-            effects = SetMaxTroops value = Value + Target.Population * [[TROOPS_PER_POP]] accountinglabel = "GRO_CYBORG"
+            effects = SetMaxTroops value = Value + Target.Population *
+                (NamedReal name = "CYBORG_MAX_TROOPS_PERPOP" value = (1.5 * [[TROOPS_PER_POP]]))
+                accountinglabel = "GRO_CYBORG" 
     ]
     graphic = "icons/tech/cyborgs.png"
 
 #include "/scripting/common/base_prod.macros"
-
 #include "/scripting/common/priorities.macros"
