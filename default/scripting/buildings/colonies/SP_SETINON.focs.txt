@@ -47,7 +47,7 @@ BuildingType
             Happiness low = 5
         ]
     ]
-    EnqueueLocation = And [
+    enqueuelocation = And [
         Planet
         OwnedBy empire = Source.Owner
         Population high = 0

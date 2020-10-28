@@ -10,7 +10,7 @@ BuildingType
         OwnedBy empire = Source.Owner
         [[LOCATION_ALLOW_BUILD_IF_PREREQ_ENQUEUED(BLD_SHIPYARD_AST)]]
     ]
-    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    enqueuelocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
         EffectsGroup
             scope = Source

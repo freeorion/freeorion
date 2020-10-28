@@ -8,7 +8,7 @@ BuildingType
         OwnedBy empire = Source.Owner
         ContainedBy Contains And [ Planet Star type = BlackHole ]
     ]
-    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    enqueuelocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
         EffectsGroup
             scope = Source

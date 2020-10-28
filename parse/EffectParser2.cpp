@@ -59,7 +59,7 @@ namespace parse { namespace detail {
             ;
 
         set_ship_part_meter
-            = ((set_ship_part_meter_type_enum  >>   label(tok.PartName_))   > string_grammar
+            = ((set_ship_part_meter_type_enum  >>   label(tok.partname_))   > string_grammar
                >    label(tok.value_)      > double_rules.expr
               ) [ _val = construct_movable_(new_<Effect::SetShipPartMeter>(
                   _1,
@@ -121,14 +121,14 @@ namespace parse { namespace detail {
             >    label(tok.species_) >   string_grammar [ _a = _1 ]
             > (
                 (   label(tok.empire_) >  int_rules.expr [ _c = _1 ]
-                    >  label(tok.Opinion_) > double_rules.expr
+                    >  label(tok.opinion_) > double_rules.expr
                     [ _val = construct_movable_(new_<Effect::SetSpeciesEmpireOpinion>(
                             deconstruct_movable_(_a, _pass),
                             deconstruct_movable_(_c, _pass),
                             deconstruct_movable_(_1, _pass))) ])
                 |
                 (   label(tok.species_) > string_grammar [ _b = _1 ]
-                    >   label(tok.Opinion_) > double_rules.expr
+                    >   label(tok.opinion_) > double_rules.expr
                     [ _val = construct_movable_(new_<Effect::SetSpeciesSpeciesOpinion>(
                             deconstruct_movable_(_a, _pass),
                             deconstruct_movable_(_b, _pass),
@@ -157,7 +157,7 @@ namespace parse { namespace detail {
                         )
                     )
                 )
-                >  label(tok.Visibility_) > visibility_rules.expr [ _c = _1 ]
+                >  label(tok.visibility_) > visibility_rules.expr [ _c = _1 ]
                 >-(label(tok.condition_) > condition_parser [ _e = _1 ])
             ) [ _val = construct_movable_(
                 new_<Effect::SetVisibility>(deconstruct_movable_(_c, _pass),

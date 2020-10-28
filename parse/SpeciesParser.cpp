@@ -135,7 +135,7 @@ namespace {
             likes_grammar::base_type(start, "likes_grammar"),
             one_or_more_string_tokens(tok)
         {
-            start %= -(label(tok.Likes_) >>  one_or_more_string_tokens);
+            start %= -(label(tok.likes_) >>  one_or_more_string_tokens);
             start.name("Likes");
 #if DEBUG_PARSERS
             debug(start);
@@ -151,7 +151,7 @@ namespace {
             dislikes_grammar::base_type(start, "dislikes_grammar"),
             one_or_more_string_tokens(tok)
         {
-            start %= -(label(tok.Dislikes_) >>  one_or_more_string_tokens);
+            start %= -(label(tok.dislikes_) >>  one_or_more_string_tokens);
             start.name("Dislikes");
 #if DEBUG_PARSERS
             debug(start);
@@ -235,8 +235,8 @@ namespace {
                 ;
 
             species_data
-                = (-(label(tok.SpawnRate_)      >   double_rule)// _1
-                >  -(label(tok.SpawnLimit_)     >   int_rule)   // _2
+                = (-(label(tok.spawnrate_)      >   double_rule)// _1
+                >  -(label(tok.spawnlimit_)     >   int_rule)   // _2
                 >   label(tok.graphic_)         >   tok.string) // _3
                 [ _val = construct<SpeciesData>(_1, _2, _3) ]
                 ;
@@ -248,7 +248,7 @@ namespace {
                 >    matches_[tok.CanColonize_]     // _4
                 >    tags_parser                    // _5
                 >   -foci                           // _6
-                >   -as_string_[(label(tok.DefaultFocus_) > tok.string )] // _7
+                >   -as_string_[(label(tok.defaultfocus_) > tok.string )] // _7
                 >    likes                          // _8
                 >    dislikes                       // _9
                     ) [ _val = construct<SpeciesParamsAndStuff>(_1, _2, _4, _3, _6, _7, _5, _8, _9) ]
@@ -268,7 +268,7 @@ namespace {
                 >   species_params_and_stuff    // _2
                 > -(label(tok.effectsgroups_)   >   effects_group_grammar)  // _3
                 > -(label(tok.combatTargets_)   >   condition_parser)       // _4
-                > -(label(tok.Environments_)    >   environment_map)        // _5
+                > -(label(tok.environments_)    >   environment_map)        // _5
                 >  species_data                                             // _6
                   ) [ insert_species_(_r1, _1, _5, _3, _4, _2, _6, _pass) ]
                 ;

@@ -57,7 +57,7 @@ namespace parse {
 
         id_empire_location_rule
             = (     tok.ShipDesignCost_
-                 >  label(tok.Design_) > simple_int
+                 >  label(tok.design_) > simple_int
                  >  label(tok.empire_) > simple_int
                  >  label(tok.location_) > simple_int
               )     [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(

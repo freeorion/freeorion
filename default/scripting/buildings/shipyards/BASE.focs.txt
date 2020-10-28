@@ -10,7 +10,7 @@ BuildingType
         Not Contains Building name = "BLD_SHIPYARD_BASE"
         OwnedBy empire = Source.Owner
     ]
-    EnqueueLocation = And [
+    enqueuelocation = And [
         [[ENQUEUE_BUILD_ONE_PER_PLANET]]
         CanProduceShips
     ]

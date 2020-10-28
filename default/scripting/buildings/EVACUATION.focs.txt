@@ -12,7 +12,7 @@ BuildingType
         Not Enqueued type = Building name = "BLD_CONC_CAMP"
         Species
     ]
-    EnqueueLocation = And [
+    enqueuelocation = And [
         Planet
         OwnedBy empire = Source.Owner
         Not Contains Building name = "BLD_EVACUATION"

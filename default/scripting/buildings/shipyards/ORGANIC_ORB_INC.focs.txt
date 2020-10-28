@@ -10,7 +10,7 @@ BuildingType
         [[LOCATION_ALLOW_ENQUEUE_IF_PREREQ_ENQUEUED(BLD_SHIPYARD_BASE)]]
         OwnedBy empire = Source.Owner
     ]
-    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    enqueuelocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     icon = "icons/building/orbital-incubator.png"
 
 #include "/scripting/common/enqueue.macros"

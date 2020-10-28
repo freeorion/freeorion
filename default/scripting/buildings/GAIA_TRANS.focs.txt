@@ -11,7 +11,7 @@ BuildingType
         Not Planet type = [Asteroids GasGiant]
         Not HasSpecial name = "GAIA_SPECIAL"
     ]
-    EnqueueLocation = And [
+    enqueuelocation = And [
         Planet
         OwnedBy empire = Source.Owner
         Not Contains Building name = "BLD_TERRAFORM"

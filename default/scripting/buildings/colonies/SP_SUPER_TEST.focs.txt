@@ -48,7 +48,7 @@ BuildingType
         ]
         ((GameRule name = "RULE_ENABLE_SUPER_TESTER") > 0)
     ]
-    EnqueueLocation = And [
+    enqueuelocation = And [
         Planet
         OwnedBy empire = Source.Owner
         Population high = 0

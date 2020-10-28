@@ -18,7 +18,7 @@
     (Age)                                       \
     (Aggressive)                                \
     (All)                                       \
-    (Allowed)                                   \
+    (allowed)                                   \
     (AllyOf)                                    \
     (And)                                       \
     (AnyEmpire)                                 \
@@ -52,7 +52,7 @@
     (Capacity)                                  \
     (Capital)                                   \
     (Capture)                                   \
-    (CaptureResult)                             \
+    (captureresult)                             \
     (category)                                  \
     (Category)                                  \
     (Ceil)                                      \
@@ -87,17 +87,17 @@
     (damage)                                    \
     (Damage)                                    \
     (data)                                      \
-    (Default)                                   \
-    (DefaultFocus)                              \
+    (default)                                   \
+    (defaultfocus)                              \
     (Defense)                                   \
     (Described)                                 \
     (description)                               \
     (Desert)                                    \
-    (Design)                                    \
+    (design)                                    \
     (DesignHasHull)                             \
     (DesignHasPart)                             \
     (DesignHasPartClass)                        \
-    (designID)                                  \
+    (designid)                                  \
     (DesignID)                                  \
     (designname)                                \
     (destination)                               \
@@ -105,13 +105,13 @@
     (Detection)                                 \
     (DirectDistanceBetween)                     \
     (Disabled)                                  \
-    (Dislikes)                                  \
-    (Distance)                                  \
+    (dislikes)                                  \
+    (distance)                                  \
     (DistanceFromOriginalType)                  \
     (effects)                                   \
     (EffectsGroup)                              \
     (effectsgroups)                             \
-    (Else)                                      \
+    (else)                                      \
     (empire)                                    \
     (EmpireHasAdoptedPolicy)                    \
     (EmpireHasBuildingAvailable)                \
@@ -127,9 +127,9 @@
     (endpoint)                                  \
     (EnemyOf)                                   \
     (Enqueued)                                  \
-    (EnqueueLocation)                           \
+    (enqueuelocation)                           \
     (environment)                               \
-    (Environments)                              \
+    (environments)                              \
     (ETA)                                       \
     (ExploredByEmpire)                          \
     (exclusions)                                \
@@ -210,7 +210,7 @@
     (Internal)                                  \
     (Invisible)                                 \
     (Item)                                      \
-    (Jumps)                                     \
+    (jumps)                                     \
     (JumpsBetween)
 
 #define TOKEN_SEQ_6                             \
@@ -225,7 +225,7 @@
     (LastTurnResupplied)                        \
     (LaunchedFrom)                              \
     (LeastHappySpecies)                         \
-    (Likes)                                     \
+    (likes)                                     \
     (LocalCandidate)                            \
     (location)                                  \
     (Log)                                       \
@@ -234,7 +234,7 @@
     (LowestCostEnqueuedTech)                    \
     (LowestCostResearchableTech)                \
     (LowestCostTransferrableTech)               \
-    (Max)                                       \
+    (max)                                       \
     (MaxCapacity)                               \
     (MaxDamage)                                 \
     (MaxDefense)                                \
@@ -250,7 +250,7 @@
     (Medium)                                    \
     (message)                                   \
     (meter)                                     \
-    (Min)                                       \
+    (min)                                       \
     (MinimumNumberOf)                           \
     (Missiles)
 
@@ -293,7 +293,7 @@
     (NoStar)                                    \
     (NoStringtableLookup)                       \
     (Not)                                       \
-    (Number)                                    \
+    (number)                                    \
     (NumberOf)                                  \
     (NumShips)                                  \
     (NumStarlanes)                              \
@@ -307,7 +307,7 @@
     (On)                                        \
     (OneOf)                                     \
     (OnPlanet)                                  \
-    (Opinion)                                   \
+    (opinion)                                   \
     (Or)                                        \
     (Orange)                                    \
     (Orbit)                                     \
@@ -324,7 +324,7 @@
     (PartClass)                                 \
     (PartDamage)                                \
     (Partial)                                   \
-    (PartName)                                  \
+    (partname)                                  \
     (PartSecondaryStat)
 
 #define TOKEN_SEQ_9                             \
@@ -349,7 +349,7 @@
     (prerequisites)                             \
     (PreviousSystemID)                          \
     (priority)                                  \
-    (Probability)                               \
+    (probability)                               \
     (ProducedByEmpire)                          \
     (ProducedByEmpireID)                        \
     (Producible)                                \
@@ -468,7 +468,7 @@
     (ShipPart)                                  \
     (ShipPartMeter)                             \
     (ShipPartsOwned)                            \
-    (Ships)                                     \
+    (ships)                                     \
     (short_description)                         \
     (ShortestPath)                              \
     (ShortRange)                                \
@@ -486,12 +486,11 @@
     (SlotsInShipDesign)                         \
     (SlotType)                                  \
     (Small)                                     \
-    (SortBy)                                    \
-    (SortKey)                                   \
+    (sortkey)                                   \
     (Source)                                    \
     (Spacebound)                                \
-    (SpawnLimit)                                \
-    (SpawnRate)                                 \
+    (spawnlimit)                                \
+    (spawnrate)                                 \
     (Special)                                   \
     (SpecialAddedOnTurn)                        \
     (SpecialCapacity)                           \
@@ -580,7 +579,7 @@
     (UniverseCentreX)                           \
     (UniverseCentreY)                           \
     (UniverseWidth)                             \
-    (Unlock)                                    \
+    (unlock)                                    \
     (Unowned)                                   \
     (Unproducible)                              \
     (Unresearchable)                            \
@@ -592,7 +591,7 @@
     (Value)                                     \
     (Victory)                                   \
     (VisibleToEmpire)                           \
-    (Visibility)                                \
+    (visibility)                                \
     (White)                                     \
     (WithinDistance)                            \
     (WithinStarlaneJumps)                       \

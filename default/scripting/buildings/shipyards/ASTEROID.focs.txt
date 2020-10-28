@@ -9,7 +9,7 @@ BuildingType
         Planet type = Asteroids
         OwnedBy empire = Source.Owner
     ]
-    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    enqueuelocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
         EffectsGroup
             scope = Source

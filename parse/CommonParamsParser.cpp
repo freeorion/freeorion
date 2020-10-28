@@ -81,7 +81,7 @@ namespace parse { namespace detail {
             ;
 
         enqueue_location
-            %=    (label(tok.EnqueueLocation_) > condition_parser)
+            %=    (label(tok.enqueuelocation_) > condition_parser)
             |     eps [ _val = construct_movable_(new_<Condition::All>()) ]
             ;
 

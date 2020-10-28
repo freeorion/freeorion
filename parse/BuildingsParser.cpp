@@ -71,7 +71,7 @@ namespace {
             qi::eps_type eps;
 
             capture %=
-                (label(tok.CaptureResult_) >> capture_result_enum)
+                (label(tok.captureresult_) >> capture_result_enum)
                 | eps [ _val = CaptureResult::CR_CAPTURE ]
                 ;
 

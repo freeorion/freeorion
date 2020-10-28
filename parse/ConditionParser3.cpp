@@ -48,7 +48,7 @@ namespace parse { namespace detail {
 
         within_distance
             = (omit_[tok.WithinDistance_]
-               > label(tok.Distance_)  > double_rules.expr
+               > label(tok.distance_)  > double_rules.expr
                > label(tok.condition_) > condition_parser
               ) [ _val = construct_movable_(new_<Condition::WithinDistance>(
                     deconstruct_movable_(_1, _pass),
@@ -57,7 +57,7 @@ namespace parse { namespace detail {
 
         within_starlane_jumps
             = (omit_[tok.WithinStarlaneJumps_]
-               > label(tok.Jumps_)     > castable_int_rules.flexible_int
+               > label(tok.jumps_)     > castable_int_rules.flexible_int
                > label(tok.condition_) > condition_parser
               ) [ _val = construct_movable_(new_<Condition::WithinStarlaneJumps>(
                     deconstruct_movable_(_1, _pass),
@@ -207,7 +207,7 @@ namespace parse { namespace detail {
 
             number_of1
                 = ( omit_[tok.NumberOf_]
-                >   label(tok.Number_)    > castable_int_rules.flexible_int
+                >   label(tok.number_)    > castable_int_rules.flexible_int
                 >   label(tok.condition_) > condition_parser)
                 [ _val = construct_movable_(new_<Condition::SortedNumberOf>(
                         deconstruct_movable_(_1, _pass),
@@ -216,8 +216,8 @@ namespace parse { namespace detail {
 
             number_of2
                 =  (sorting_operator
-                >   label(tok.Number_)    > castable_int_rules.flexible_int
-                >   label(tok.SortKey_)   > double_rules.expr
+                >   label(tok.number_)    > castable_int_rules.flexible_int
+                >   label(tok.sortkey_)   > double_rules.expr
                 >   label(tok.condition_) > condition_parser)
                 [ _val = construct_movable_(new_<Condition::SortedNumberOf>(
                         deconstruct_movable_(_2, _pass),
@@ -233,7 +233,7 @@ namespace parse { namespace detail {
 
             random
                 =   tok.Random_
-                >   label(tok.Probability_) > double_rules.expr
+                >   label(tok.probability_) > double_rules.expr
                 [ _val = construct_movable_(new_<Condition::Chance>(deconstruct_movable_(_1, _pass))) ]
                 ;
 

@@ -9,7 +9,7 @@ BuildingType
         EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_RACIAL_PURITY"
         Population low = 3
     ]
-    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    enqueuelocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS]]
     

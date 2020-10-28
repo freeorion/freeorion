@@ -100,7 +100,7 @@ namespace parse { namespace detail {
 
         design_number
             =   (tok.Design_
-                 >>  label(tok.Design_)
+                 >>  label(tok.design_)
                 ) > int_rules.expr [ _val = construct_movable_(new_<Condition::NumberedShipDesign>(
                 deconstruct_movable_(_1, _pass))) ]
             ;
@@ -131,7 +131,7 @@ namespace parse { namespace detail {
 
         object_id
             =   tok.Object_
-            >   label(tok.iD) > int_rules.expr [ _val = construct_movable_(new_<Condition::ObjectID>(
+            >   label(tok.id_) > int_rules.expr [ _val = construct_movable_(new_<Condition::ObjectID>(
                 deconstruct_movable_(_1, _pass))) ]
             ;
 

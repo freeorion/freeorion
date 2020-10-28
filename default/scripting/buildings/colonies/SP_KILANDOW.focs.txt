@@ -64,7 +64,7 @@ BuildingType
             ]
         ]
     ]
-    EnqueueLocation = And [
+    enqueuelocation = And [
         Planet
         OwnedBy empire = Source.Owner
         Population high = 0

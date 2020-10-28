@@ -97,7 +97,7 @@ BuildingType
         Not Contains Building name = "BLD_COL_${name}"
         ${species_condition}
     ]
-    EnqueueLocation = And [
+    enqueuelocation = And [
         Planet
         OwnedBy empire = Source.Owner
         Population high = 0

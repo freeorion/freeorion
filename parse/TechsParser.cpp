@@ -151,7 +151,7 @@ namespace {
                 ;
 
             unlocks
-                %=   label(tok.Unlock_)
+                %=   label(tok.unlock_)
                 >  one_or_more_unlockable_items
                 ;
 

@@ -123,7 +123,7 @@ namespace parse { namespace detail {
         empire_has_shipdesign_available1
             = (
                    (omit_[tok.EmpireHasShipDesignAvailable_]
-                 >> label(tok.DesignID_)) > int_rules.expr
+                 >> label(tok.designid_)) > int_rules.expr
               ) [ _val = construct_movable_(new_<Condition::OwnerHasShipDesignAvailable>(
                     deconstruct_movable_(_1, _pass))) ]
             ;
@@ -132,7 +132,7 @@ namespace parse { namespace detail {
             = (
                    (omit_[tok.EmpireHasShipDesignAvailable_]
                  >> label(tok.empire_))  > int_rules.expr
-                 >  label(tok.DesignID_) > int_rules.expr
+                 >  label(tok.designid_) > int_rules.expr
               ) [ _val = construct_movable_(new_<Condition::OwnerHasShipDesignAvailable>(
                     deconstruct_movable_(_1, _pass),
                     deconstruct_movable_(_2, _pass))) ]

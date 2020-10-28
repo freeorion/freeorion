@@ -7,7 +7,7 @@ BuildingType
         Not Contains Building name = "BLD_TRANSFORMER"
         OwnedBy empire = Source.Owner
     ]
-    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    enqueuelocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     icon = "icons/building/transformer.png"
 
 #include "/scripting/common/enqueue.macros"

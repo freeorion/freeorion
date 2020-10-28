@@ -9,7 +9,7 @@ BuildingType
         OwnedBy empire = Source.Owner
         Star type = Red
     ]
-    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    enqueuelocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
         EffectsGroup
             scope = And [

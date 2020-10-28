@@ -69,7 +69,7 @@ namespace parse { namespace detail {
         enqueued2
             =   (   (omit_[tok.Enqueued_]
                     >>  label(tok.type_)   >>   omit_[tok.Ship_])
-                    > -(label(tok.Design_) >    int_rules.expr)
+                    > -(label(tok.design_) >    int_rules.expr)
                     > -(label(tok.empire_) >    int_rules.expr)
                     > -(label(tok.low_)    >    castable_int_rules.flexible_int)
                     > -(label(tok.high_)   >    castable_int_rules.flexible_int)
@@ -132,13 +132,13 @@ namespace parse { namespace detail {
 
         in_system
             =   (   omit_[tok.InSystem_]
-                    >  -(label(tok.iD)  > int_rules.expr)
+                    >  -(label(tok.id_)  > int_rules.expr)
                 ) [ _val = construct_movable_(new_<Condition::InOrIsSystem>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         on_planet
             =   (   omit_[tok.OnPlanet_]
-                    >  -(label(tok.iD)  > int_rules.expr)
+                    >  -(label(tok.id_)  > int_rules.expr)
                 ) [ _val = construct_movable_(new_<Condition::OnPlanet>(deconstruct_movable_(_1, _pass))) ]
             ;
 

@@ -18,7 +18,7 @@ BuildingType
         [[LOCATION_ALLOW_ENQUEUE_IF_PREREQ_ENQUEUED(BLD_SHIPYARD_BASE)]]
         OwnedBy empire = Source.Owner
     ]
-    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    enqueuelocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
         // ZERO-POP : With no pop, no repair or sitrep messages
         EffectsGroup
@@ -210,7 +210,7 @@ ORB_DRYDOCK_REPAIR_VAL
 
 // Planet in system with highest happiness that is owned and has a drydock
 PLANET_OWNED_DRYDOCK_HIGHEST_HAPPINESS
-'''MaximumNumberOf Number = 1 SortKey = LocalCandidate.Happiness condition = And [
+'''MaximumNumberOf number = 1 sortkey = LocalCandidate.Happiness condition = And [
     Planet
     InSystem id = Source.SystemID
     Or [

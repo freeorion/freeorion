@@ -70,7 +70,7 @@ namespace parse { namespace detail {
 
         create_ship_1
             =   ((       omit_[tok.CreateShip_]
-                         >>  label(tok.designID_)
+                         >>  label(tok.designid_)
                  )  >   int_rules.expr
                  > -(label(tok.empire_)      >   int_rules.expr    )
                  > -(label(tok.species_)     >   string_grammar )

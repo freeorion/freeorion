@@ -90,7 +90,7 @@ namespace parse { namespace detail {
 
         planet_size
             =   (tok.Planet_
-                 >>  label(tok.Size_)
+                 >>  label(tok.size_)
                 )
             >   one_or_more_planet_sizes
             [ _val = construct_movable_(new_<Condition::PlanetSize>(deconstruct_movable_vector_(_1, _pass))) ]

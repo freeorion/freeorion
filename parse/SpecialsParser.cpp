@@ -100,9 +100,9 @@ namespace {
                 = (  tok.Special_
                 >    label(tok.name_)           > tok.string                // _2
                 >    label(tok.description_)    > tok.string                // _3
-                >  -(label(tok.Stealth_)        > double_rules.expr)        // _4
-                >  -(label(tok.SpawnRate_)      > double_rule)              // _5
-                >  -(label(tok.SpawnLimit_)     > int_rule)                 // _6
+                >  -(label(tok.stealth_)        > double_rules.expr)        // _4
+                >  -(label(tok.spawnrate_)      > double_rule)              // _5
+                >  -(label(tok.spawnlimit_)     > int_rule)                 // _6
                 >  -(label(tok.capacity_)       > double_rules.expr)        // _7
                 >  -(label(tok.location_)       > condition_parser)         // _8
                 >  -(label(tok.effectsgroups_)  > effects_group_grammar)    // _9

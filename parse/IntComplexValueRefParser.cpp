@@ -110,7 +110,7 @@ namespace parse {
             =   (
                     tok.PartsInShipDesign_
                 >-( label(tok.name_)   > string_grammar )
-                > ( label(tok.Design_) > int_rules.expr )
+                > ( label(tok.design_) > int_rules.expr )
             ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<int>>(_1, deconstruct_movable_(_3, _pass), nullptr, nullptr, deconstruct_movable_(_2, _pass), nullptr)) ]
             ;
 
@@ -130,7 +130,7 @@ namespace parse {
                       | tok.Industry_         | tok.Influence_    | tok.ProductionLocation_
                     )
                   )
-                > ( label(tok.Design_) > int_rules.expr)
+                > ( label(tok.design_) > int_rules.expr)
             ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<int>>(
                 _1, deconstruct_movable_(_3, _pass), nullptr, nullptr,
                 deconstruct_movable_(construct_movable_(new_<ValueRef::Constant<std::string>>(_2)), _pass),
@@ -164,7 +164,7 @@ namespace parse {
                     |   tok.ShipDesignsScrapped_
                     )
                 >  -(   label(tok.empire_) > int_rules.expr )
-                >  -(   label(tok.Design_) > string_grammar )
+                >  -(   label(tok.design_) > string_grammar )
                 ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<int>>(_1, deconstruct_movable_(_2, _pass), nullptr, nullptr, deconstruct_movable_(_3, _pass), nullptr)) ]
             ;
 
@@ -178,7 +178,7 @@ namespace parse {
         slots_in_ship_design
             =   (
                     tok.SlotsInShipDesign_
-                >   label(tok.Design_) > int_rules.expr
+                >   label(tok.design_) > int_rules.expr
                 ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<int>>(_1, deconstruct_movable_(_2, _pass), nullptr, nullptr, nullptr, nullptr)) ]
             ;
 
