@@ -65,7 +65,7 @@ namespace parse {
         statistic
             =  ( (omit_[tok.Statistic_] >>  omit_[tok.Mode_])
                  >   label(tok.Value_)     >     value_ref
-                 >   label(tok.Condition_) >     condition_parser)
+                 >   label(tok.condition_) >     condition_parser)
             [ _val = construct_movable_(new_<ValueRef::Statistic<T>>(
                 deconstruct_movable_(_1, _pass),
                 ValueRef::MODE,
