@@ -49,7 +49,7 @@ namespace parse { namespace detail {
         within_distance
             = (omit_[tok.WithinDistance_]
                > label(tok.Distance_)  > double_rules.expr
-               > label(tok.Condition_) > condition_parser
+               > label(tok.condition_) > condition_parser
               ) [ _val = construct_movable_(new_<Condition::WithinDistance>(
                     deconstruct_movable_(_1, _pass),
                     deconstruct_movable_(_2, _pass))) ]
@@ -58,7 +58,7 @@ namespace parse { namespace detail {
         within_starlane_jumps
             = (omit_[tok.WithinStarlaneJumps_]
                > label(tok.Jumps_)     > castable_int_rules.flexible_int
-               > label(tok.Condition_) > condition_parser
+               > label(tok.condition_) > condition_parser
               ) [ _val = construct_movable_(new_<Condition::WithinStarlaneJumps>(
                     deconstruct_movable_(_1, _pass),
                     deconstruct_movable_(_2, _pass))) ]
@@ -68,7 +68,7 @@ namespace parse { namespace detail {
             = (omit_[tok.Number_]
                > -(label(tok.Low_)   >  castable_int_rules.flexible_int)
                > -(label(tok.High_)  >  castable_int_rules.flexible_int)
-               >   label(tok.Condition_) > condition_parser
+               >   label(tok.condition_) > condition_parser
               ) [ _val = construct_movable_(new_<Condition::Number>(
                     deconstruct_movable_(_1, _pass),
                     deconstruct_movable_(_2, _pass),
@@ -208,7 +208,7 @@ namespace parse { namespace detail {
             number_of1
                 = ( omit_[tok.NumberOf_]
                 >   label(tok.Number_)    > castable_int_rules.flexible_int
-                >   label(tok.Condition_) > condition_parser)
+                >   label(tok.condition_) > condition_parser)
                 [ _val = construct_movable_(new_<Condition::SortedNumberOf>(
                         deconstruct_movable_(_1, _pass),
                         deconstruct_movable_(_2, _pass))) ]
@@ -218,7 +218,7 @@ namespace parse { namespace detail {
                 =  (sorting_operator
                 >   label(tok.Number_)    > castable_int_rules.flexible_int
                 >   label(tok.SortKey_)   > double_rules.expr
-                >   label(tok.Condition_) > condition_parser)
+                >   label(tok.condition_) > condition_parser)
                 [ _val = construct_movable_(new_<Condition::SortedNumberOf>(
                         deconstruct_movable_(_2, _pass),
                         deconstruct_movable_(_3, _pass),
@@ -250,7 +250,7 @@ namespace parse { namespace detail {
             resource_supply_connected
                 = ( omit_[tok.ResourceSupplyConnected_]
                     > label(tok.empire_)    > int_rules.expr
-                    > label(tok.Condition_) > condition_parser)
+                    > label(tok.condition_) > condition_parser)
                 [ _val = construct_movable_(new_<Condition::ResourceSupplyConnectedByEmpire>(
                         deconstruct_movable_(_1, _pass),
                         deconstruct_movable_(_2, _pass))) ]
@@ -258,7 +258,7 @@ namespace parse { namespace detail {
 
             can_add_starlane
                 = ( omit_[tok.CanAddStarlanesTo_]
-                >   label(tok.Condition_) > condition_parser)
+                >   label(tok.condition_) > condition_parser)
                 [ _val = construct_movable_(new_<Condition::CanAddStarlaneConnection>(
                         deconstruct_movable_(_1, _pass))) ]
                 ;

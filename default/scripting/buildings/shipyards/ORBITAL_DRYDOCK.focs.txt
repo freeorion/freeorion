@@ -210,7 +210,7 @@ ORB_DRYDOCK_REPAIR_VAL
 
 // Planet in system with highest happiness that is owned and has a drydock
 PLANET_OWNED_DRYDOCK_HIGHEST_HAPPINESS
-'''MaximumNumberOf Number = 1 SortKey = LocalCandidate.Happiness Condition = And [
+'''MaximumNumberOf Number = 1 SortKey = LocalCandidate.Happiness condition = And [
     Planet
     InSystem id = Source.SystemID
     Or [

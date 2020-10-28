@@ -181,13 +181,13 @@ namespace parse { namespace detail {
                 |   (   // condition specified, with an affiliation type of CanSee:
                     // used to specify CanSee affiliation
                     (   label(tok.Affiliation_)     >>  tok.CanSee_)
-                    >   label(tok.Condition_)       >   condition_parser
+                    >   label(tok.condition_)       >   condition_parser
                     [ _val = construct_GenerateSitRepMessage2_(_a, _b, _c, EmpireAffiliationType::AFFIL_CAN_SEE, _1, _e, _f, _pass) ]
                 )
                 |   (   // condition specified, with an affiliation type of CanSee:
                     // used to specify CanSee affiliation
                     (   label(tok.Affiliation_)     >>  tok.Human_)
-                    >   label(tok.Condition_)       >   condition_parser
+                    >   label(tok.condition_)       >   condition_parser
                     [ _val = construct_GenerateSitRepMessage2_(_a, _b, _c, EmpireAffiliationType::AFFIL_HUMAN, _1, _e, _f, _pass) ]
                 )
                 |   (   // no empire id or condition specified, with or without an

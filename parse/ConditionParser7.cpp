@@ -46,19 +46,19 @@ namespace parse { namespace detail {
 
         ordered_bombarded_by
             =    tok.OrderedBombardedBy_
-            >   -label(tok.Condition_) > condition_parser
+            >   -label(tok.condition_) > condition_parser
             [ _val = construct_movable_(new_<Condition::OrderedBombarded>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         contains
             =    tok.Contains_
-            >   -label(tok.Condition_) > condition_parser
+            >   -label(tok.condition_) > condition_parser
             [ _val = construct_movable_(new_<Condition::Contains>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         contained_by
             =    tok.ContainedBy_
-            >   -label(tok.Condition_) > condition_parser
+            >   -label(tok.condition_) > condition_parser
             [ _val = construct_movable_(new_<Condition::ContainedBy>(deconstruct_movable_(_1, _pass))) ]
             ;
 

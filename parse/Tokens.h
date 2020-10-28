@@ -61,7 +61,7 @@
     (colour)                                    \
     (CombatBout)                                \
     (combatTargets)                             \
-    (Condition)                                 \
+    (condition)                                 \
     (Construction)                              \
     (Consumption)                               \
     (ContainedBy)                               \

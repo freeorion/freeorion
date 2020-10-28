@@ -158,7 +158,7 @@ namespace parse { namespace detail {
                     )
                 )
                 >  label(tok.Visibility_) > visibility_rules.expr [ _c = _1 ]
-                >-(label(tok.Condition_) > condition_parser [ _e = _1 ])
+                >-(label(tok.condition_) > condition_parser [ _e = _1 ])
             ) [ _val = construct_movable_(
                 new_<Effect::SetVisibility>(deconstruct_movable_(_c, _pass),
                                             _d,

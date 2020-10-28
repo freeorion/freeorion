@@ -33,7 +33,7 @@ namespace parse { namespace detail {
 
         conditional
             =   ( omit_[tok.If_]
-                  >   label(tok.Condition_) > condition_parser
+                  >   label(tok.condition_) > condition_parser
                   >   label(tok.effects_)   > one_or_more_effects
                   >   -(label(tok.Else_)    > one_or_more_effects)
                 ) [ _val = construct_movable_(new_<Effect::Conditional>(

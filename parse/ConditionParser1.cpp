@@ -152,7 +152,7 @@ namespace parse { namespace detail {
         described
             = ( omit_[tok.Described_]
                 > label(tok.description_) > tok.string
-                > label(tok.Condition_) > condition_parser)
+                > label(tok.condition_) > condition_parser)
             [ _val = construct_movable_( new_<Condition::Described>(deconstruct_movable_(_2, _pass), _1)) ]
             ;
 

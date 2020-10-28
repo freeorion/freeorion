@@ -171,7 +171,7 @@ namespace parse { namespace detail {
                     |   tok.If_     [ _b = ValueRef::IF ]
                     )
                 )
-            >   label(tok.Condition_) > condition_parser
+            >   label(tok.condition_) > condition_parser
             [ _val = construct_movable_(new_<ValueRef::Statistic<T>>(
                 deconstruct_movable_(_a, _pass), _b, deconstruct_movable_(_1, _pass))) ]
             ;
@@ -182,13 +182,13 @@ namespace parse { namespace detail {
             >> (
                 (
                         statistic_value_ref_expr [ _a = _1 ]
-                    >   label(tok.Condition_) > condition_parser
+                    >   label(tok.condition_) > condition_parser
                     [ _val = construct_movable_(new_<ValueRef::Statistic<T, T>>(
                         deconstruct_movable_(_a, _pass), _b, deconstruct_movable_(_1, _pass))) ]
                 )
             |   (
                         string_grammar [ _c = _1 ]
-                    >   label(tok.Condition_) > condition_parser
+                    >   label(tok.condition_) > condition_parser
                     [ _val = construct_movable_(new_<ValueRef::Statistic<T, std::string>>(
                         deconstruct_movable_(_c, _pass), _b, deconstruct_movable_(_1, _pass))) ]
                 )

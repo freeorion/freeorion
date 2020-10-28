@@ -172,7 +172,7 @@ t_species_cond_extinct = string.Template(
 
 # buildtime statistic condition template
 t_buildtime_stat_cond = string.Template(
-    '''Condition = And [
+    '''condition = And [
                 Planet
                 OwnedBy empire = Source.Owner
                 Species name = "${id}"
@@ -183,7 +183,7 @@ t_buildtime_stat_cond = string.Template(
 
 # buildtime statistic condition template for extinct species
 t_buildtime_stat_cond_extinct = string.Template(
-    '''Condition = And [
+    '''condition = And [
                 Planet
                 OwnedBy empire = Source.Owner
             Or [
@@ -205,21 +205,21 @@ t_buildtime = string.Template('''${t_factor} * max(5.0, 1.0 +
         (Statistic Min Value = ShortestPath Object = Target.SystemID Object = LocalCandidate.SystemID
             ${stat_condition}
         ) / (60
-             + 20 * (Statistic If Condition = Or [
+             + 20 * (Statistic If condition = Or [
                  OwnerHasTech name = "SHP_MIL_ROBO_CONT"
                  OwnerHasTech name = "SHP_ORG_HULL"
                  OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
              ])
-             + 20 * (Statistic If Condition = Or [
+             + 20 * (Statistic If condition = Or [
                  OwnerHasTech name = "SHP_ORG_HULL"
                  OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
              ])
-             + 20 * (Statistic If Condition = OwnerHasTech name = "SHP_QUANT_ENRG_MAG")
-             + 10 * (Statistic If Condition = OwnerHasTech name = "SHP_IMPROVED_ENGINE_COUPLINGS")
-             + 10 * (Statistic If Condition = OwnerHasTech name = "SHP_N_DIMENSIONAL_ENGINE_MATRIX")
-             + 10 * (Statistic If Condition = OwnerHasTech name = "SHP_SINGULARITY_ENGINE_CORE")
-             + 10 * (Statistic If Condition = OwnerHasTech name = "SHP_TRANSSPACE_DRIVE")
-             + 10 * (Statistic If Condition = OwnerHasTech name = "SHP_INTSTEL_LOG")
+             + 20 * (Statistic If condition = OwnerHasTech name = "SHP_QUANT_ENRG_MAG")
+             + 10 * (Statistic If condition = OwnerHasTech name = "SHP_IMPROVED_ENGINE_COUPLINGS")
+             + 10 * (Statistic If condition = OwnerHasTech name = "SHP_N_DIMENSIONAL_ENGINE_MATRIX")
+             + 10 * (Statistic If condition = OwnerHasTech name = "SHP_SINGULARITY_ENGINE_CORE")
+             + 10 * (Statistic If condition = OwnerHasTech name = "SHP_TRANSSPACE_DRIVE")
+             + 10 * (Statistic If condition = OwnerHasTech name = "SHP_INTSTEL_LOG")
         )
     )''')
 
