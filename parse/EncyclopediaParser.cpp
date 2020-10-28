@@ -53,8 +53,8 @@ namespace {
             article
                 =  ( omit_[tok.Article_]
                 >    label(tok.name_)                > tok.string
-                >    label(tok.Category_)            > tok.string
-                >    label(tok.Short_Description_)   > tok.string
+                >    label(tok.category_)            > tok.string
+                >    label(tok.short_description_)   > tok.string
                 >    label(tok.description_)         > tok.string
                 >    label(tok.Icon_)                > tok.string )
                     [ insert(_r1, construct<EncyclopediaArticle>(_1, _2, _3, _4, _5)) ]

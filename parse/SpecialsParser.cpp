@@ -105,7 +105,7 @@ namespace {
                 >  -(label(tok.SpawnLimit_)     > int_rule)                 // _6
                 >  -(label(tok.Capacity_)       > double_rules.expr)        // _7
                 >  -(label(tok.Location_)       > condition_parser)         // _8
-                >  -(label(tok.EffectsGroups_)  > effects_group_grammar)    // _9
+                >  -(label(tok.effectsgroups_)  > effects_group_grammar)    // _9
                 >    label(tok.Graphic_)        > tok.string)               // _10
                 [  _pass = is_unique_(_r1, _1, _2),
                    insert_special_(_r1, phoenix::construct<special_data>(_5, _6, _10),

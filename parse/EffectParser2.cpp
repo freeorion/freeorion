@@ -51,7 +51,7 @@ namespace parse { namespace detail {
                 >>  label(tok.Value_)
             )
             >   double_rules.expr [ _b = _1 ]
-            > -(label(tok.AccountingLabel_) > tok.string) [ _c = _1]
+            > -(label(tok.accountinglabel_) > tok.string) [ _c = _1]
             ) [ _val = construct_movable_(new_<Effect::SetMeter>(
                 _a,
                 deconstruct_movable_(_b, _pass),

@@ -266,7 +266,7 @@ namespace {
             species
                 = ( species_strings(_r1)        // _1
                 >   species_params_and_stuff    // _2
-                > -(label(tok.EffectsGroups_)   >   effects_group_grammar)  // _3
+                > -(label(tok.effectsgroups_)   >   effects_group_grammar)  // _3
                 > -(label(tok.CombatTargets_)   >   condition_parser)       // _4
                 > -(label(tok.Environments_)    >   environment_map)        // _5
                 >  species_data                                             // _6

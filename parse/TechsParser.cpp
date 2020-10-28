@@ -134,10 +134,10 @@ namespace {
             tech_info
                 = ( label(tok.name_)                > tok.string
                 >   label(tok.description_)         > tok.string
-                >   label(tok.Short_Description_)   > tok.string  // TODO: Get rid of underscore.
-                >   label(tok.Category_)            > tok.string
-                >   label(tok.ResearchCost_)        > double_rules.expr
-                >   label(tok.ResearchTurns_)       > castable_int_rules.flexible_int
+                >   label(tok.short_description_)   > tok.string  // TODO: Get rid of underscore.
+                >   label(tok.category_)            > tok.string
+                >   label(tok.researchcost_)        > double_rules.expr
+                >   label(tok.researchturns_)       > castable_int_rules.flexible_int
                 >   researchable
                 >   tags_parser
                 ) [ _val = construct_movable_(new_<Tech::TechInfo>(
@@ -160,7 +160,7 @@ namespace {
                 >   tech_info
                 >  -prerequisites
                 >  -unlocks
-                >  -(label(tok.EffectsGroups_) > effects_group_grammar)
+                >  -(label(tok.effectsgroups_) > effects_group_grammar)
                 >  -as_string_[(label(tok.Graphic_) > tok.string)]
                   ) [ insert_tech_(_r1, _1, _4, _2, _3, _5, _pass) ]
                 ;

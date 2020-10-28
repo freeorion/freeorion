@@ -118,7 +118,7 @@ namespace {
                 =   (tok.GameRule_
                     >> (label(tok.name_) >          tok.string [ _a = _1 ])
                     >> (label(tok.description_) >   tok.string [ _b = _1 ])
-                    >> (label(tok.Category_) >      tok.string [ _j = _1 ])
+                    >> (label(tok.category_) >      tok.string [ _j = _1 ])
                     >>  label(tok.Type_) >>         tok.Toggle_
                     )
                 > ((label(tok.Default_)
@@ -135,7 +135,7 @@ namespace {
                 =   (tok.GameRule_
                     >> (label(tok.name_) >          tok.string [ _a = _1 ])
                     >> (label(tok.description_) >   tok.string [ _b = _1 ])
-                    >> (label(tok.Category_) >      tok.string [ _j = _1 ])
+                    >> (label(tok.category_) >      tok.string [ _j = _1 ])
                     >>  label(tok.Type_) >>         tok.Integer_
                     )
                 >   label(tok.Default_) >       int_rule [ _f = _1 ]
@@ -148,7 +148,7 @@ namespace {
                 =   (tok.GameRule_
                     >> (label(tok.name_) >          tok.string [ _a = _1 ])
                     >> (label(tok.description_) >   tok.string [ _b = _1 ])
-                    >> (label(tok.Category_) >      tok.string [ _j = _1 ])
+                    >> (label(tok.category_) >      tok.string [ _j = _1 ])
                     >>  label(tok.Type_) >>         tok.Real_
                     )
                 >   label(tok.Default_) >       double_rule [ _c = _1 ]
@@ -161,7 +161,7 @@ namespace {
                 =   (tok.GameRule_
                     >> (label(tok.name_) >          tok.string [ _a = _1 ])
                     >> (label(tok.description_) >   tok.string [ _b = _1 ])
-                    >> (label(tok.Category_) >      tok.string [ _j = _1 ])
+                    >> (label(tok.category_) >      tok.string [ _j = _1 ])
                     >>  label(tok.Type_) >>         tok.String_
                     )
                 >   label(tok.Default_) >       tok.string [ _e = _1 ]

@@ -13,7 +13,7 @@
     (AddSpecial)                                \
     (AddStarlanes)                              \
     (Adequate)                                  \
-    (AdoptionCost)                              \
+    (adoptioncost)                              \
     (Affiliation)                               \
     (Age)                                       \
     (Aggressive)                                \
@@ -35,7 +35,7 @@
     (Blue)                                      \
     (Bombard)                                   \
     (Bomber)                                    \
-    (BuildCost)
+    (buildcost)
 
 #define TOKEN_SEQ_2                             \
     (Building)                                  \
@@ -43,7 +43,7 @@
     (BuildingType)                              \
     (BuildingTypesProduced)                     \
     (BuildingTypesScrapped)                     \
-    (BuildTime)                                 \
+    (buildtime)                                 \
     (CanAddStarlanesTo)                         \
     (CanColonize)                               \
     (CanProduceShips)                           \
@@ -52,6 +52,7 @@
     (Capital)                                   \
     (Capture)                                   \
     (CaptureResult)                             \
+    (category)                                  \
     (Category)                                  \
     (Ceil)                                      \
     (Class)                                     \
@@ -143,7 +144,7 @@
     (FleetID)                                   \
     (FleetSupplyableByEmpire)                   \
     (Floor)                                     \
-    (Foci)                                      \
+    (foci)                                      \
     (Focus)                                     \
     (FocusType)                                 \
     (Fuel)                                      \
@@ -262,6 +263,7 @@
     (MoveTo)                                    \
     (MoveTowards)                               \
     (name)                                      \
+    (Name)                                      \
     (Named)                                     \
     (Native)                                    \
     (NearestSystemID)                           \
@@ -336,7 +338,7 @@
     (Population)                                \
     (PopulationCenter)                          \
     (Position)                                  \
-    (Prerequisites)                             \
+    (prerequisites)                             \
     (PreviousSystemID)                          \
     (Priority)                                  \
     (Probability)                               \
@@ -371,7 +373,7 @@
     (RemoveStarlanes)                           \
     (Research)                                  \
     (Researchable)                              \
-    (ResearchCost)                              \
+    (researchcost)                              \
     (ResearchTurns)                             \
     (ResourceSupplyConnected)                   \
     (ResupplyableBy)                            \
@@ -459,7 +461,7 @@
     (ShipPartMeter)                             \
     (ShipPartsOwned)                            \
     (Ships)                                     \
-    (Short_Description)                         \
+    (short_description)                         \
     (ShortestPath)                              \
     (ShortRange)                                \
     (Shots)                                     \
@@ -522,7 +524,7 @@
 
 #define TOKEN_SEQ_16                            \
     (Tag)                                       \
-    (Tags)                                      \
+    (tags)                                      \
     (Target)                                    \
     (TargetConstruction)                        \
     (TargetHappiness)                           \

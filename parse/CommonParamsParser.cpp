@@ -87,7 +87,7 @@ namespace parse { namespace detail {
 
         exclusions
             =
-            -(label(tok.Exclusions_) >> repeated_string)
+            -(label(tok.exclusions_) >> repeated_string)
             ;
 
         more_common
@@ -100,14 +100,14 @@ namespace parse { namespace detail {
 
         common
             =
-            (   label(tok.BuildCost_)  > double_rules.expr
-                >   label(tok.BuildTime_)  > castable_int_rules.flexible_int
+            (   label(tok.buildcost_)  > double_rules.expr
+                >   label(tok.buildtime_)  > castable_int_rules.flexible_int
                 >   producible
                 >   tags_parser
                 >   location
                 >   enqueue_location
                 >  -consumption(_a, _b)
-                > -(label(tok.EffectsGroups_)> effects_group_grammar )
+                > -(label(tok.effectsgroups_)> effects_group_grammar )
             ) [ _val = construct_movable_(
                 new_<CommonParams>(
                     deconstruct_movable_(_1, _pass),

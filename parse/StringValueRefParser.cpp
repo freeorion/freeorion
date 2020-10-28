@@ -38,7 +38,7 @@ namespace parse {
         const std::string TOK_CURRENT_CONTENT{"CurrentContent"};
 
         bound_variable_name
-            %=   tok.name_
+            %=   tok.Name_
             |    tok.Species_
             |    tok.BuildingType_
             |    tok.FieldType_

@@ -74,7 +74,7 @@ namespace {
                 >   label(tok.description_)         > tok.string
                 >   label(tok.Stealth_)             > double_rule
                 >   tags_parser
-                > -(label(tok.EffectsGroups_)       > effects_group_grammar )
+                > -(label(tok.effectsgroups_)       > effects_group_grammar )
                 >   label(tok.Graphic_)             > tok.string )
                 [ _pass = is_unique_(_r1, _1, _2),
                   insert_fieldtype_(_r1, _2, _3, _4, _5, _6, _7, _pass) ]
