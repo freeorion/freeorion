@@ -103,13 +103,13 @@ namespace parse { namespace detail {
 
         add_special_1
             =   tok.AddSpecial_
-            >   label(tok.Name_) > string_grammar [
+            >   label(tok.name_) > string_grammar [
                 _val = construct_movable_(new_<Effect::AddSpecial>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         add_special_2
             =  ((omit_[(tok.AddSpecial_ | tok.SetSpecialCapacity_)]
-                 >>  label(tok.Name_) >> string_grammar
+                 >>  label(tok.name_) >> string_grammar
                  >> (label(tok.Capacity_) | label(tok.Value_))
                 )
                 >   double_rules.expr
@@ -120,7 +120,7 @@ namespace parse { namespace detail {
 
         remove_special
             =   tok.RemoveSpecial_
-            >   label(tok.Name_) > string_grammar [
+            >   label(tok.name_) > string_grammar [
                 _val = construct_movable_(new_<Effect::RemoveSpecial>(deconstruct_movable_(_1, _pass))) ]
             ;
 
@@ -144,7 +144,7 @@ namespace parse { namespace detail {
 
         set_texture
             =   tok.SetTexture_
-            >   label(tok.Name_) > tok.string [ _val = construct_movable_(new_<Effect::SetTexture>(_1)) ]
+            >   label(tok.name_) > tok.string [ _val = construct_movable_(new_<Effect::SetTexture>(_1)) ]
             ;
 
         start

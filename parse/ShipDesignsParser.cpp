@@ -102,12 +102,12 @@ namespace {
 
             design_prefix
                 =    tok.ShipDesign_
-                >    label(tok.Name_) > tok.string [ _r1 = _1 ]
+                >    label(tok.name_) > tok.string [ _r1 = _1 ]
                 >    ((label(tok.UUID_)
                        > tok.string [_pass = is_valid_uuid_(_1),  _r5 = parse_uuid_(_1) ])
                       | eps [ _r5 = boost::uuids::nil_generator()() ]
                      )
-                >    label(tok.Description_) > tok.string [ _r2 = _1 ]
+                >    label(tok.description_) > tok.string [ _r2 = _1 ]
                 > (
                      tok.NoStringtableLookup_ [ _r4 = false ]
                     | eps [ _r4 = true ]

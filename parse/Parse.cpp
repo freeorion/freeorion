@@ -481,7 +481,7 @@ namespace parse {
         start
             =  ( omit_[tok.Item_]
             >    label(tok.Type_) > unlockable_item_type_enum
-            >    label(tok.Name_) > tok.string
+            >    label(tok.name_) > tok.string
                ) [ _val = construct<UnlockableItem>(_1, _2) ]
             ;
 

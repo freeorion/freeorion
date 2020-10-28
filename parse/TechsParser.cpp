@@ -132,8 +132,8 @@ namespace {
                 ;
 
             tech_info
-                = ( label(tok.Name_)                > tok.string
-                >   label(tok.Description_)         > tok.string
+                = ( label(tok.name_)                > tok.string
+                >   label(tok.description_)         > tok.string
                 >   label(tok.Short_Description_)   > tok.string  // TODO: Get rid of underscore.
                 >   label(tok.Category_)            > tok.string
                 >   label(tok.ResearchCost_)        > double_rules.expr
@@ -167,7 +167,7 @@ namespace {
 
             category
                 = ( tok.Category_
-                    >   label(tok.Name_)    > tok.string
+                    >   label(tok.name_)    > tok.string
                     >   label(tok.Graphic_) > tok.string
                     >   label(tok.Colour_)  > color_parser
                   ) [ _pass = is_unique_(_r1, _1, _2),

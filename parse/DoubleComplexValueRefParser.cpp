@@ -45,7 +45,7 @@ namespace parse {
                 |   tok.HullSpeed_
                 |   tok.PartCapacity_
                 |   tok.PartSecondaryStat_
-               ) >   label(tok.Name_) > string_grammar
+               ) >   label(tok.name_) > string_grammar
               ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
                         _1,
                         nullptr,
@@ -58,7 +58,7 @@ namespace parse {
         id_empire_location_rule
             = (     tok.ShipDesignCost_
                  >  label(tok.Design_) > simple_int
-                 >  label(tok.Empire_) > simple_int
+                 >  label(tok.empire_) > simple_int
                  >  label(tok.Location_) > simple_int
               )     [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
                 _1,
@@ -70,7 +70,7 @@ namespace parse {
 
         empire_meter_value
             = (     tok.EmpireMeterValue_
-                 >  label(tok.Empire_) > simple_int
+                 >  label(tok.empire_) > simple_int
                  >  label(tok.Meter_) > tok.string
               ) [_val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
                 _1,
@@ -112,7 +112,7 @@ namespace parse {
         species_content_opinion
             = (     tok.SpeciesContentOpinion_
                 >   label(tok.Species_) > string_grammar
-                >   label(tok.Name_) > string_grammar
+                >   label(tok.name_) > string_grammar
               )
               [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
                 _1,
@@ -126,7 +126,7 @@ namespace parse {
         species_empire_opinion
             = (     tok.SpeciesEmpireOpinion_
                 >   label(tok.Species_) > string_grammar
-                >   label(tok.Empire_) > simple_int
+                >   label(tok.empire_) > simple_int
               ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
                 _1,
                 deconstruct_movable_(_3, _pass),
@@ -185,7 +185,7 @@ namespace parse {
 
         special_capacity
             = (     tok.SpecialCapacity_
-                >   label(tok.Name_) > string_grammar
+                >   label(tok.name_) > string_grammar
                 >>  label(tok.Object_)
                 >   simple_int
               ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(

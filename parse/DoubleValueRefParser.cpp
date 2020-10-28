@@ -122,7 +122,7 @@ parse::double_parser_rules::double_parser_rules(
 
     named_real_valueref
         = (     tok.Named_ >> tok.Real_
-            >>  label(tok.Name_) > tok.string
+            >>  label(tok.name_) > tok.string
              >  label(tok.Value_) > expr
           ) [
              // Register the value ref under the given name by lazy invoking RegisterValueRef
@@ -130,7 +130,7 @@ parse::double_parser_rules::double_parser_rules(
              _val = construct_movable_(new_<ValueRef::NamedRef<double>>(_2))
           ] | (
                 tok.Named_ >> tok.Real_ >> tok.Lookup_
-            >>  label(tok.Name_) > tok.string
+            >>  label(tok.name_) > tok.string
           ) [
              _val = construct_movable_(new_<ValueRef::NamedRef<double>>(_2))
           ]

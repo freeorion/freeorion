@@ -81,7 +81,7 @@ namespace {
 
             monster_fleet_plan
                 = ( omit_[tok.MonsterFleet_]
-                    > label(tok.Name_) > tok.string
+                    > label(tok.name_) > tok.string
                     > ships
                     > -spawn_rate
                     > -spawn_limit

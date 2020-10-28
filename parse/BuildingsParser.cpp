@@ -77,8 +77,8 @@ namespace {
 
             building_type
                 = ( tok.BuildingType_
-                >   label(tok.Name_)        > tok.string
-                >   label(tok.Description_) > tok.string
+                >   label(tok.name_)        > tok.string
+                >   label(tok.description_) > tok.string
                 >   capture
                 >   common_rules.common
                 >   label(tok.Icon_)        > tok.string)

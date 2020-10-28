@@ -123,7 +123,7 @@ namespace parse {
         named_lookup_expr
           =   (
                    tok.Named_ >> tok.Value_ >> tok.Lookup_
-                >> label(tok.Name_)
+                >> label(tok.name_)
                 >> tok.string
               ) [
                      _val = construct_movable_(new_<ValueRef::NamedRef<T>>(_4))

@@ -115,7 +115,7 @@ namespace parse {
 
         effects_group
             =   tok.EffectsGroup_
-            > -(label(tok.Description_)      > tok.string [ _f = _1 ])
+            > -(label(tok.description_)      > tok.string [ _f = _1 ])
             >   label(tok.Scope_)            > condition_parser [ _a = _1 ]
             > -(label(tok.Activation_)       > condition_parser [ _b = _1 ])
             > -(label(tok.StackingGroup_)    > tok.string [ _c = _1 ])

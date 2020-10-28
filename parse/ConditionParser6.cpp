@@ -56,7 +56,7 @@ namespace parse { namespace detail {
         homeworld
             =   tok.Homeworld_
             >   (
-                (label(tok.Name_) > one_or_more_string_values
+                (label(tok.name_) > one_or_more_string_values
                  [ _val = construct_movable_(new_<Condition::Homeworld>(deconstruct_movable_vector_(_1, _pass))) ])
                 |    eps [ _val = construct_movable_(new_<Condition::Homeworld>()) ]
             )
@@ -64,13 +64,13 @@ namespace parse { namespace detail {
 
         building
             =   ( omit_[tok.Building_]
-                > -(label(tok.Name_) > one_or_more_string_values)
+                > -(label(tok.name_) > one_or_more_string_values)
                 ) [ _val = construct_movable_(new_<Condition::Building>(deconstruct_movable_vector_(_1, _pass))) ]
             ;
 
         species
             = ( omit_[tok.Species_]
-                > -(label(tok.Name_) > one_or_more_string_values)
+                > -(label(tok.name_) > one_or_more_string_values)
               ) [ _val = construct_movable_(new_<Condition::Species>(deconstruct_movable_vector_(_1, _pass))) ]
             ;
 

@@ -69,9 +69,9 @@ namespace {
 
             field
                 = ( tok.FieldType_
-                >   label(tok.Name_)
+                >   label(tok.name_)
                 >   tok.string
-                >   label(tok.Description_)         > tok.string
+                >   label(tok.description_)         > tok.string
                 >   label(tok.Stealth_)             > double_rule
                 >   tags_parser
                 > -(label(tok.EffectsGroups_)       > effects_group_grammar )

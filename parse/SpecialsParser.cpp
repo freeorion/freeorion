@@ -98,8 +98,8 @@ namespace {
 
             special
                 = (  tok.Special_
-                >    label(tok.Name_)           > tok.string                // _2
-                >    label(tok.Description_)    > tok.string                // _3
+                >    label(tok.name_)           > tok.string                // _2
+                >    label(tok.description_)    > tok.string                // _3
                 >  -(label(tok.Stealth_)        > double_rules.expr)        // _4
                 >  -(label(tok.SpawnRate_)      > double_rule)              // _5
                 >  -(label(tok.SpawnLimit_)     > int_rule)                 // _6

@@ -55,7 +55,7 @@ namespace {
 
             stat
                 = ( omit_[tok.Statistic_]
-                >   label(tok.Name_)    > tok.string
+                >   label(tok.name_)    > tok.string
                 >   label(tok.Value_)   > double_rules.expr
                   ) [ _val = construct<std::pair<std::string, parse::detail::value_ref_payload<double>>>(_1, _2) ]
                 ;

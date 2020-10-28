@@ -115,7 +115,7 @@ namespace parse { namespace detail {
         const boost::phoenix::function<deconstruct_movable> deconstruct_movable_;
 
         set_empire_meter_1 =
-            ((  omit_[tok.SetEmpireMeter_]  >>  label(tok.Empire_))
+            ((  omit_[tok.SetEmpireMeter_]  >>  label(tok.empire_))
               > int_rules.expr
               > label(tok.Meter_)           >   tok.string
               > label(tok.Value_)           >   double_rules.expr
@@ -137,8 +137,8 @@ namespace parse { namespace detail {
 
         give_empire_tech
             =   (   omit_[tok.GiveEmpireTech_]
-                    >   label(tok.Name_)    >   string_grammar
-                    > -(label(tok.Empire_)  >   int_rules.expr)
+                    >   label(tok.name_)    >   string_grammar
+                    > -(label(tok.empire_)  >   int_rules.expr)
                 ) [ _val = construct_movable_(new_<Effect::GiveEmpireTech>(
                     deconstruct_movable_(_1, _pass),
                     deconstruct_movable_(_2, _pass))) ]
@@ -146,9 +146,9 @@ namespace parse { namespace detail {
 
         set_empire_tech_progress
             = (     omit_[tok.SetEmpireTechProgress_]
-                >   label(tok.Name_)        >   string_grammar
+                >   label(tok.name_)        >   string_grammar
                 >   label(tok.Progress_)    >   double_rules.expr
-                > -(label(tok.Empire_)      >   int_rules.expr)
+                > -(label(tok.empire_)      >   int_rules.expr)
               ) [ _val = construct_movable_(new_<Effect::SetEmpireTechProgress>(
                         deconstruct_movable_(_1, _pass),
                         deconstruct_movable_(_2, _pass),
@@ -173,7 +173,7 @@ namespace parse { namespace detail {
                     ((   (label(tok.Affiliation_) > empire_affiliation_type_enum [ _d = _1 ])
                          | eps [ _d = EmpireAffiliationType::AFFIL_SELF ]
                      )
-                     >>  label(tok.Empire_)
+                     >>  label(tok.empire_)
                     ) > int_rules.expr
 
                     [ _val = construct_GenerateSitRepMessage1_(_a, _b, _c, _1, _d, _e, _f, _pass) ]
@@ -205,7 +205,7 @@ namespace parse { namespace detail {
 
         set_overlay_texture
             = ( omit_[tok.SetOverlayTexture_]
-                > label(tok.Name_)    > tok.string
+                > label(tok.name_)    > tok.string
                 > label(tok.Size_)    > double_rules.expr
               ) [ _val = construct_movable_(new_<Effect::SetOverlayTexture>(
                   _1,

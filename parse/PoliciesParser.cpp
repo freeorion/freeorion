@@ -144,8 +144,8 @@ namespace {
 
             policy
                 = (  tok.Policy_                                            // _1
-                >    label(tok.Name_)               > tok.string            // _2
-                >    label(tok.Description_)        > tok.string            // _3
+                >    label(tok.name_)               > tok.string            // _2
+                >    label(tok.description_)        > tok.string            // _3
                 >    label(tok.Short_Description_)  > tok.string            // _4
                 >    label(tok.Category_)           > tok.string            // _5
                 >    label(tok.AdoptionCost_)       > double_rules.expr     // _6

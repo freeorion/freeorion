@@ -54,7 +54,7 @@ namespace {
 
             fleet_plan
                 =  ( omit_[tok.Fleet_]
-                >    label(tok.Name_)   >   tok.string
+                >    label(tok.name_)   >   tok.string
                 >    label(tok.Ships_)  >   one_or_more_string_tokens )
                 [ insert_fleet_plan_(_r1, _1, _2, phoenix::val(true)) ]
                 ;

@@ -92,8 +92,8 @@ namespace parse { namespace detail {
 
         more_common
             =
-            (   label(tok.Name_)        > tok.string
-            >   label(tok.Description_) > tok.string
+            (   label(tok.name_)        > tok.string
+            >   label(tok.description_) > tok.string
             >   exclusions
             ) [ _val = construct<MoreCommonParams>(_1, _2, _3) ]
             ;
@@ -139,7 +139,7 @@ namespace parse { namespace detail {
         consumable_special
             =   tok.Special_
             > (
-                label(tok.Name_)            > tok.string
+                label(tok.name_)            > tok.string
                 >   label(tok.Consumption_) > double_rules.expr
                 > -(label(tok.Condition_)   > condition_parser )
             )

@@ -88,7 +88,7 @@
     (DefaultFocus)                              \
     (Defense)                                   \
     (Described)                                 \
-    (Description)                               \
+    (description)                               \
     (Desert)                                    \
     (Design)                                    \
     (DesignHasHull)                             \
@@ -108,7 +108,7 @@
     (EffectsGroup)                              \
     (EffectsGroups)                             \
     (Else)                                      \
-    (Empire)                                    \
+    (empire)                                    \
     (EmpireHasAdoptedPolicy)                    \
     (EmpireHasBuildingAvailable)                \
     (EmpireHasShipDesignAvailable)              \
@@ -158,7 +158,7 @@
     (GalaxySize)                                \
     (GalaxySpecialFrequency)                    \
     (GalaxyStarlaneFrequency)                   \
-    (Gameplay_Description)                      \
+    (gameplay_description)                      \
     (GameRule)                                  \
     (GasGiant)                                  \
     (General)
@@ -261,7 +261,7 @@
     (MoveInOrbit)                               \
     (MoveTo)                                    \
     (MoveTowards)                               \
-    (Name)                                      \
+    (name)                                      \
     (Named)                                     \
     (Native)                                    \
     (NearestSystemID)                           \

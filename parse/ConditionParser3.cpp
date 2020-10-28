@@ -37,7 +37,7 @@ namespace parse { namespace detail {
 
         has_special_capacity
             = (omit_[tok.HasSpecialCapacity_]
-               >   label(tok.Name_) >  string_grammar
+               >   label(tok.name_) >  string_grammar
                > -(label(tok.Low_)  >  double_rules.expr)
                > -(label(tok.High_) >  double_rules.expr)
               ) [ _val = construct_movable_(new_<Condition::HasSpecial>(
@@ -249,7 +249,7 @@ namespace parse { namespace detail {
 
             resource_supply_connected
                 = ( omit_[tok.ResourceSupplyConnected_]
-                    > label(tok.Empire_)    > int_rules.expr
+                    > label(tok.empire_)    > int_rules.expr
                     > label(tok.Condition_) > condition_parser)
                 [ _val = construct_movable_(new_<Condition::ResourceSupplyConnectedByEmpire>(
                         deconstruct_movable_(_1, _pass),

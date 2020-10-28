@@ -211,8 +211,8 @@ namespace {
 
             focus_type
                 =  ( omit_[tok.Focus_]
-                >    label(tok.Name_)        > tok.string
-                >    label(tok.Description_) > tok.string
+                >    label(tok.name_)        > tok.string
+                >    label(tok.description_) > tok.string
                 >    label(tok.Location_)    > condition_parser
                 >    label(tok.Graphic_)     > tok.string
                 ) [ _val = construct<FocusType>(_1, _2, deconstruct_movable_(_3, _pass), _4) ]
@@ -256,9 +256,9 @@ namespace {
 
             species_strings
                 =  ( tok.Species_
-                >    label(tok.Name_)                   > tok.string
-                >    label(tok.Description_)            > tok.string
-                >    label(tok.Gameplay_Description_)   > tok.string
+                >    label(tok.name_)                   > tok.string
+                >    label(tok.description_)            > tok.string
+                >    label(tok.gameplay_description_)   > tok.string
                    ) [ _pass = is_unique_(_r1, _1, _2),
                        _val = construct<SpeciesStrings>(_2, _3, _4) ]
                 ;

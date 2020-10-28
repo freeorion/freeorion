@@ -116,8 +116,8 @@ namespace {
 
             game_rule_bool
                 =   (tok.GameRule_
-                    >> (label(tok.Name_) >          tok.string [ _a = _1 ])
-                    >> (label(tok.Description_) >   tok.string [ _b = _1 ])
+                    >> (label(tok.name_) >          tok.string [ _a = _1 ])
+                    >> (label(tok.description_) >   tok.string [ _b = _1 ])
                     >> (label(tok.Category_) >      tok.string [ _j = _1 ])
                     >>  label(tok.Type_) >>         tok.Toggle_
                     )
@@ -133,8 +133,8 @@ namespace {
 
             game_rule_int
                 =   (tok.GameRule_
-                    >> (label(tok.Name_) >          tok.string [ _a = _1 ])
-                    >> (label(tok.Description_) >   tok.string [ _b = _1 ])
+                    >> (label(tok.name_) >          tok.string [ _a = _1 ])
+                    >> (label(tok.description_) >   tok.string [ _b = _1 ])
                     >> (label(tok.Category_) >      tok.string [ _j = _1 ])
                     >>  label(tok.Type_) >>         tok.Integer_
                     )
@@ -146,8 +146,8 @@ namespace {
 
             game_rule_double
                 =   (tok.GameRule_
-                    >> (label(tok.Name_) >          tok.string [ _a = _1 ])
-                    >> (label(tok.Description_) >   tok.string [ _b = _1 ])
+                    >> (label(tok.name_) >          tok.string [ _a = _1 ])
+                    >> (label(tok.description_) >   tok.string [ _b = _1 ])
                     >> (label(tok.Category_) >      tok.string [ _j = _1 ])
                     >>  label(tok.Type_) >>         tok.Real_
                     )
@@ -159,8 +159,8 @@ namespace {
 
             game_rule_string
                 =   (tok.GameRule_
-                    >> (label(tok.Name_) >          tok.string [ _a = _1 ])
-                    >> (label(tok.Description_) >   tok.string [ _b = _1 ])
+                    >> (label(tok.name_) >          tok.string [ _a = _1 ])
+                    >> (label(tok.description_) >   tok.string [ _b = _1 ])
                     >> (label(tok.Category_) >      tok.string [ _j = _1 ])
                     >>  label(tok.Type_) >>         tok.String_
                     )
