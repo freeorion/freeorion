@@ -49,6 +49,7 @@
     (CanProduceShips)                           \
     (CanSee)                                    \
     (capacity)                                  \
+    (Capacity)                                  \
     (Capital)                                   \
     (Capture)                                   \
     (CaptureResult)                             \
@@ -83,6 +84,7 @@
     (CurrentTurn)
 
 #define TOKEN_SEQ_3                             \
+    (damage)                                    \
     (Damage)                                    \
     (Data)                                      \
     (Default)                                   \
@@ -464,7 +466,7 @@
     (short_description)                         \
     (ShortestPath)                              \
     (ShortRange)                                \
-    (Shots)                                     \
+    (shots)                                     \
     (Sign)                                      \
     (Sin)                                       \
     (Size)                                      \

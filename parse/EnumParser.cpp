@@ -160,7 +160,7 @@ namespace parse {
         rule
             =   tok.MaxCapacity_            [ _val = MeterType::METER_MAX_CAPACITY ]
             |   tok.MaxDamage_              [ _val = MeterType::METER_MAX_CAPACITY ]
-            |   tok.capacity_               [ _val = MeterType::METER_CAPACITY ]
+            |   tok.Capacity_               [ _val = MeterType::METER_CAPACITY ]
             |   tok.Damage_                 [ _val = MeterType::METER_CAPACITY ]
             |   tok.SecondaryStat_          [ _val = MeterType::METER_SECONDARY_STAT ]
             |   tok.MaxSecondaryStat_       [ _val = MeterType::METER_MAX_SECONDARY_STAT ]

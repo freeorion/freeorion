@@ -117,10 +117,10 @@ namespace {
                 >   common_rules.more_common                        // _2
                 >   label(tok.Class_)       > ship_part_class_enum  // _3
                 > -( (label(tok.capacity_)  > double_rule)          // _4
-                   | (label(tok.Damage_)    > double_rule)          // _4
+                   | (label(tok.damage_)    > double_rule)          // _4
                    )
-                > -( (label(tok.Damage_)    > double_rule )         // _5 : damage is secondary stat for fighters
-                   | (label(tok.Shots_)     > double_rule )         // _5 : shots is secondary stat for direct fire weapons
+                > -( (label(tok.damage_)    > double_rule )         // _5 : damage is secondary stat for fighters
+                   | (label(tok.shots_)     > double_rule )         // _5 : shots is secondary stat for direct fire weapons
                    )
                 > matches_[tok.NoDefaultCapacityEffect_]                // _6
                 > -(label(tok.combatTargets_)       > condition_parser) // _7
