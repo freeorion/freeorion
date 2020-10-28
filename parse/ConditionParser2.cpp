@@ -132,13 +132,13 @@ namespace parse { namespace detail {
 
         in_system
             =   (   omit_[tok.InSystem_]
-                    >  -(label(tok.ID_)  > int_rules.expr)
+                    >  -(label(tok.iD)  > int_rules.expr)
                 ) [ _val = construct_movable_(new_<Condition::InOrIsSystem>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         on_planet
             =   (   omit_[tok.OnPlanet_]
-                    >  -(label(tok.ID_)  > int_rules.expr)
+                    >  -(label(tok.iD)  > int_rules.expr)
                 ) [ _val = construct_movable_(new_<Condition::OnPlanet>(deconstruct_movable_(_1, _pass))) ]
             ;
 

@@ -131,7 +131,7 @@ namespace parse { namespace detail {
 
         object_id
             =   tok.Object_
-            >   label(tok.ID_) > int_rules.expr [ _val = construct_movable_(new_<Condition::ObjectID>(
+            >   label(tok.iD) > int_rules.expr [ _val = construct_movable_(new_<Condition::ObjectID>(
                 deconstruct_movable_(_1, _pass))) ]
             ;
 

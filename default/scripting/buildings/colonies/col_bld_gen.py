@@ -202,7 +202,7 @@ t_buildtime_stat_cond_extinct = string.Template(
 
 # buildtime template
 t_buildtime = string.Template('''${t_factor} * max(5.0, 1.0 +
-        (Statistic Min value = ShortestPath Object = Target.SystemID Object = LocalCandidate.SystemID
+        (Statistic Min value = ShortestPath object = Target.SystemID object = LocalCandidate.SystemID
             ${stat_condition}
         ) / (60
              + 20 * (Statistic If condition = Or [
