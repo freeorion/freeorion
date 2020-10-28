@@ -63,7 +63,7 @@
     (combatTargets)                             \
     (condition)                                 \
     (Construction)                              \
-    (Consumption)                               \
+    (consumption)                               \
     (ContainedBy)                               \
     (ContainerID)                               \
     (Contains)                                  \

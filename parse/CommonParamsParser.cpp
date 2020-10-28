@@ -121,7 +121,7 @@ namespace parse { namespace detail {
             ;
 
         consumption
-            =   label(tok.Consumption_) >
+            =   label(tok.consumption_) >
             (   consumable_meter(_r1)
                 | consumable_special(_r2)
                 |
@@ -140,7 +140,7 @@ namespace parse { namespace detail {
             =   tok.Special_
             > (
                 label(tok.name_)            > tok.string
-                >   label(tok.Consumption_) > double_rules.expr
+                >   label(tok.consumption_) > double_rules.expr
                 > -(label(tok.condition_)   > condition_parser )
             )
             [ insert(_r1, construct<ConsumptionMapPackaged<std::string>::value_type>(_1, construct<ConsumptionMapPackaged<std::string>::mapped_type>(_2, _3))) ]
@@ -149,7 +149,7 @@ namespace parse { namespace detail {
         consumable_meter
             = (
                 non_ship_part_meter_type_enum
-                >   label(tok.Consumption_) > double_rules.expr
+                >   label(tok.consumption_) > double_rules.expr
                 > -(label(tok.condition_)   > condition_parser )
             )
             [ insert(_r1, construct<ConsumptionMapPackaged<MeterType>::value_type>(_1, construct<ConsumptionMapPackaged<MeterType>::mapped_type>(_2, _3))) ]
