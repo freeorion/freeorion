@@ -118,7 +118,7 @@ namespace parse { namespace detail {
             ((  omit_[tok.SetEmpireMeter_]  >>  label(tok.empire_))
               > int_rules.expr
               > label(tok.Meter_)           >   tok.string
-              > label(tok.Value_)           >   double_rules.expr
+              > label(tok.value_)           >   double_rules.expr
             ) [ _val = construct_movable_(
                 new_<Effect::SetEmpireMeter>(
                     deconstruct_movable_(_1, _pass),
@@ -129,7 +129,7 @@ namespace parse { namespace detail {
         set_empire_meter_2
             = (( omit_[tok.SetEmpireMeter_]
                >> label(tok.Meter_))        >   tok.string
-               >  label(tok.Value_)         >   double_rules.expr
+               >  label(tok.value_)         >   double_rules.expr
               ) [ _val = construct_movable_(new_<Effect::SetEmpireMeter>(
                    _1,
                    deconstruct_movable_(_2, _pass))) ]

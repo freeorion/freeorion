@@ -3,14 +3,14 @@
 
 /*
 Statistic name = "STATISTICS_TEST_1" value =
-    1.0 + JumpsBetween object = source.SystemID object = MAX Value = LocalCandidate.SystemID 
+    1.0 + JumpsBetween object = source.SystemID object = MAX value = LocalCandidate.SystemID 
                             condition = And [
                                             Planet
                                             OwnedBy empire = Source.Owner
                                         ]
 
 Statistic name = "STATISTICS_TEST_2" value =
-    1.0 + JumpsBetween object = source.SystemID object = MIN Value = LocalCandidate.SystemID 
+    1.0 + JumpsBetween object = source.SystemID object = MIN value = LocalCandidate.SystemID 
                             condition = And [
                                             Planet
                                             OwnedBy empire = Source.Owner

@@ -5,7 +5,7 @@ BuildingType
     description = "BLD_COL_MISIORLA_DESC"
     buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]] * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 1.0 * max(5.0, 1.0 +
-        (Statistic Min Value = ShortestPath Object = Target.SystemID Object = LocalCandidate.SystemID
+        (Statistic Min value = ShortestPath Object = Target.SystemID Object = LocalCandidate.SystemID
             condition = And [
                 Planet
                 OwnedBy empire = Source.Owner

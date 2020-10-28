@@ -376,7 +376,7 @@
     (Research)                                  \
     (Researchable)                              \
     (researchcost)                              \
-    (ResearchTurns)                             \
+    (researchturns)                             \
     (ResourceSupplyConnected)                   \
     (ResupplyableBy)                            \
     (Retain)                                    \
@@ -576,6 +576,7 @@
     (UsedInDesignID)                            \
     (UserString)                                \
     (UUID)                                      \
+    (value)                                     \
     (Value)                                     \
     (Victory)                                   \
     (VisibleToEmpire)                           \

@@ -74,18 +74,18 @@ namespace parse {
                =
                     ( omit_[tok.Named_]   >> tok.Integer_
                    > label(tok.name_) > tok.string
-                   > label(tok.Value_) >  qi::as<parse::detail::MovableEnvelope<ValueRef::ValueRef<int>>>()[int_rules.expr]
+                   > label(tok.value_) >  qi::as<parse::detail::MovableEnvelope<ValueRef::ValueRef<int>>>()[int_rules.expr]
                     ) [ insert_named_ref_(_r1, _2, _3, _pass) ]
                     |
                     ( omit_[tok.Named_]   >> tok.Real_
                    > label(tok.name_) > tok.string
-                   > label(tok.Value_) >  qi::as<parse::detail::MovableEnvelope<ValueRef::ValueRef<double>>>()[double_rules.expr]
+                   > label(tok.value_) >  qi::as<parse::detail::MovableEnvelope<ValueRef::ValueRef<double>>>()[double_rules.expr]
                     ) [ insert_named_ref_(_r1, _2, _3, _pass) ]
                     |
-                    ( omit_[tok.Named_]  >> tok.PlanetType_ > label(tok.name_) > tok.string > label(tok.Value_) > planet_type_rules.expr
+                    ( omit_[tok.Named_]  >> tok.PlanetType_ > label(tok.name_) > tok.string > label(tok.value_) > planet_type_rules.expr
                     ) [ insert_named_ref_(_r1, _2, _3, _pass) ]
                     |
-                    ( omit_[tok.Named_]  >> tok.Environment_ > label(tok.name_) > tok.string > label(tok.Value_) >  planet_environment_rules.expr
+                    ( omit_[tok.Named_]  >> tok.Environment_ > label(tok.name_) > tok.string > label(tok.value_) >  planet_environment_rules.expr
                     ) [ insert_named_ref_(_r1, _2, _3, _pass) ] 
                 ;
 

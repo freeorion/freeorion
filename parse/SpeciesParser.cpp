@@ -219,7 +219,7 @@ namespace {
                 ;
 
             foci
-                =    label(tok.Foci_)
+                =    label(tok.foci_)
                 >    one_or_more_foci
                 ;
 

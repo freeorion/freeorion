@@ -82,7 +82,7 @@ namespace {
             prereqs_grammar::base_type(start, "prereqs_grammar"),
             one_or_more_string_tokens(tok)
         {
-            start %= -(label(tok.Prerequisites_) >> one_or_more_string_tokens);
+            start %= -(label(tok.prerequisites_) >> one_or_more_string_tokens);
             start.name("Prerequisites");
 #if DEBUG_PARSERS
             debug(start);

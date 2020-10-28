@@ -48,7 +48,7 @@ namespace parse { namespace detail {
             ((
                 /* has some overlap with set_ship_part_meter_type_enum so can't use '>' */
                 set_non_ship_part_meter_type_enum [ _a = _1 ]
-                >>  label(tok.Value_)
+                >>  label(tok.value_)
             )
             >   double_rules.expr [ _b = _1 ]
             > -(label(tok.accountinglabel_) > tok.string) [ _c = _1]
@@ -60,7 +60,7 @@ namespace parse { namespace detail {
 
         set_ship_part_meter
             = ((set_ship_part_meter_type_enum  >>   label(tok.PartName_))   > string_grammar
-               >    label(tok.Value_)      > double_rules.expr
+               >    label(tok.value_)      > double_rules.expr
               ) [ _val = construct_movable_(new_<Effect::SetShipPartMeter>(
                   _1,
                   deconstruct_movable_(_2, _pass),
@@ -71,12 +71,12 @@ namespace parse { namespace detail {
             =   tok.SetEmpireStockpile_ [ _a = ResourceType::RE_INDUSTRY ]
             >   (
                 (   label(tok.empire_) > int_rules.expr [ _b = _1 ]
-                    >   label(tok.Value_)  > double_rules.expr [ _val = construct_movable_(new_<Effect::SetEmpireStockpile>(
+                    >   label(tok.value_)  > double_rules.expr [ _val = construct_movable_(new_<Effect::SetEmpireStockpile>(
                         deconstruct_movable_(_b, _pass),
                         _a,
                         deconstruct_movable_(_1, _pass))) ]
                 )
-                |  (label(tok.Value_)  > double_rules.expr [ _val = construct_movable_(new_<Effect::SetEmpireStockpile>(
+                |  (label(tok.value_)  > double_rules.expr [ _val = construct_movable_(new_<Effect::SetEmpireStockpile>(
                             _a,
                             deconstruct_movable_(_1, _pass))) ]
                        )

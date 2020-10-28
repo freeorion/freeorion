@@ -178,7 +178,7 @@ namespace parse { namespace detail {
 
         statistic_value_expr
             =  (tok.Statistic_ >> statistic_type_enum [ _b = _1 ])
-            >>  label(tok.Value_)
+            >>  label(tok.value_)
             >> (
                 (
                         statistic_value_ref_expr [ _a = _1 ]

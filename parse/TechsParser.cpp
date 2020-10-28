@@ -146,7 +146,7 @@ namespace {
                 ;
 
             prerequisites
-                %=   label(tok.Prerequisites_)
+                %=   label(tok.prerequisites_)
                 >  one_or_more_string_tokens
                 ;
 
