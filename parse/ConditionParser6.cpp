@@ -98,7 +98,7 @@ namespace parse { namespace detail {
 
         planet_environment
             =   ((omit_[tok.Planet_]
-                  >>  label(tok.Environment_)
+                  >>  label(tok.environment_)
                  )
                  >   one_or_more_planet_environments
                  >  -(label(tok.Species_)        >  string_grammar))

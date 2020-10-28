@@ -127,7 +127,7 @@
     (EnemyOf)                                   \
     (Enqueued)                                  \
     (EnqueueLocation)                           \
-    (Environment)                               \
+    (environment)                               \
     (Environments)                              \
     (ETA)                                       \
     (ExploredByEmpire)                          \

@@ -225,7 +225,7 @@ namespace {
 
             environment_map_element
                 =  ( label(tok.Type_)        > planet_type_rules.enum_expr
-                >    label(tok.Environment_) > planet_environment_rules.enum_expr
+                >    label(tok.environment_) > planet_environment_rules.enum_expr
                 ) [ _val = construct<std::pair<PlanetType, PlanetEnvironment>>(_1, _2) ]
                 ;
 
