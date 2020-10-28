@@ -213,7 +213,7 @@ namespace {
                 =  ( omit_[tok.Focus_]
                 >    label(tok.name_)        > tok.string
                 >    label(tok.description_) > tok.string
-                >    label(tok.Location_)    > condition_parser
+                >    label(tok.location_)    > condition_parser
                 >    label(tok.graphic_)     > tok.string
                 ) [ _val = construct<FocusType>(_1, _2, deconstruct_movable_(_3, _pass), _4) ]
                 ;

@@ -85,7 +85,7 @@ namespace {
                     > ships
                     > -spawn_rate
                     > -spawn_limit
-                    > -(label(tok.Location_) > condition_parser)
+                    > -(label(tok.location_) > condition_parser)
                 ) [ insert_monster_fleet_plan_(_r1, _1, _2, _3, _4, _5, _pass) ]
                 ;
 

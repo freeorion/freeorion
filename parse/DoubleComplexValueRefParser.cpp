@@ -59,7 +59,7 @@ namespace parse {
             = (     tok.ShipDesignCost_
                  >  label(tok.Design_) > simple_int
                  >  label(tok.empire_) > simple_int
-                 >  label(tok.Location_) > simple_int
+                 >  label(tok.location_) > simple_int
               )     [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
                 _1,
                 deconstruct_movable_(_2, _pass),

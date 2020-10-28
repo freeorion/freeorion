@@ -99,7 +99,7 @@
     (DesignHasPartClass)                        \
     (DesignID)                                  \
     (DesignName)                                \
-    (Destination)                               \
+    (destination)                               \
     (Destroy)                                   \
     (Detection)                                 \
     (DirectDistanceBetween)                     \
@@ -222,7 +222,7 @@
     (LeastHappySpecies)                         \
     (Likes)                                     \
     (LocalCandidate)                            \
-    (Location)                                  \
+    (location)                                  \
     (Log)                                       \
     (Lookup)                                    \
     (Low)                                       \

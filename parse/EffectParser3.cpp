@@ -36,7 +36,7 @@ namespace parse { namespace detail {
 
         move_to
             =    tok.MoveTo_
-            >    label(tok.Destination_) > condition_parser
+            >    label(tok.destination_) > condition_parser
             [ _val = construct_movable_(new_<Effect::MoveTo>(deconstruct_movable_(_1, _pass))) ]
             ;
 
@@ -78,7 +78,7 @@ namespace parse { namespace detail {
 
         set_destination
             =    tok.SetDestination_
-            >    label(tok.Destination_) > condition_parser [
+            >    label(tok.destination_) > condition_parser [
                 _val = construct_movable_(new_<Effect::SetDestination>(deconstruct_movable_(_1, _pass))) ]
             ;
 
