@@ -48,7 +48,7 @@
     (CanColonize)                               \
     (CanProduceShips)                           \
     (CanSee)                                    \
-    (Capacity)                                  \
+    (capacity)                                  \
     (Capital)                                   \
     (Capture)                                   \
     (CaptureResult)                             \

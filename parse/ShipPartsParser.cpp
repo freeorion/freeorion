@@ -116,7 +116,7 @@ namespace {
                 = ( tok.Part_                                       // _1
                 >   common_rules.more_common                        // _2
                 >   label(tok.Class_)       > ship_part_class_enum  // _3
-                > -( (label(tok.Capacity_)  > double_rule)          // _4
+                > -( (label(tok.capacity_)  > double_rule)          // _4
                    | (label(tok.Damage_)    > double_rule)          // _4
                    )
                 > -( (label(tok.Damage_)    > double_rule )         // _5 : damage is secondary stat for fighters

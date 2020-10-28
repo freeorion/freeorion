@@ -110,7 +110,7 @@ namespace parse { namespace detail {
         add_special_2
             =  ((omit_[(tok.AddSpecial_ | tok.SetSpecialCapacity_)]
                  >>  label(tok.name_) >> string_grammar
-                 >> (label(tok.Capacity_) | label(tok.Value_))
+                 >> (label(tok.capacity_) | label(tok.Value_))
                 )
                 >   double_rules.expr
                ) [ _val = construct_movable_(new_<Effect::AddSpecial>(
