@@ -6,6 +6,8 @@
 #include <memory>
 #include <thread>
 
+#include "OptionsDB.h"
+
 class GodotClientApp;
 
 namespace godot {
@@ -17,6 +19,7 @@ private:
     float time_passed;
     std::thread t;
     std::unique_ptr<GodotClientApp> app;
+    godot::OptionsDB* optionsDB{nullptr};
 public:
     static void _register_methods();
 
@@ -27,6 +30,9 @@ public:
 
     void _process(float delta);
     void _exit_tree();
+
+    godot::OptionsDB* get_options() const;
+    void set_options(godot::OptionsDB* ptr);
 };
 
 }
