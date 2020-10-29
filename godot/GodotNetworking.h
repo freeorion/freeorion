@@ -18,7 +18,7 @@ namespace godot {
         void _init(); // our initializer called by Godot
 
         bool _is_connected() const;
-        bool _connect_to_server(String dest);
+        bool _connect_to_server(String dest, String player_name);
     };
 }
 
