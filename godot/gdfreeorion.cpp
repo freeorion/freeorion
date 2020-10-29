@@ -29,6 +29,10 @@ void GDFreeOrion::_register_methods() {
         &GDFreeOrion::set_options,
         &GDFreeOrion::get_options,
         nullptr);
+    register_property<GDFreeOrion, GodotNetworking*>("networking",
+        &GDFreeOrion::set_networking,
+        &GDFreeOrion::get_networking,
+        nullptr);
 }
 
 GDFreeOrion::GDFreeOrion() {
@@ -74,6 +78,7 @@ void GDFreeOrion::_init() {
     t = std::thread(do_the_ping, this);
     app = std::make_unique<GodotClientApp>();
     optionsDB = godot::OptionsDB::_new();
+    networking = GodotNetworking::_new();
 }
 
 void GDFreeOrion::_process(float delta) {
@@ -89,16 +94,25 @@ void GDFreeOrion::_exit_tree() {
     t.join();
     app.reset();
 
+    networking->free();
     optionsDB->free();
 
     ShutdownLoggingSystemFileSink();
 }
 
-godot::OptionsDB* GDFreeOrion::get_options() const {
-    return optionsDB;
-}
+godot::OptionsDB* GDFreeOrion::get_options() const
+{ return optionsDB; }
 
 void GDFreeOrion::set_options(godot::OptionsDB* ptr) {
     // ignore it
     Godot::print(String("Ignore setting options"));
 }
+
+GodotNetworking* GDFreeOrion::get_networking() const
+{ return networking; }
+
+void GDFreeOrion::set_networking(GodotNetworking* ptr) {
+    // ignore it
+    Godot::print(String("Ignore setting networking"));
+}
+

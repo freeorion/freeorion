@@ -15,6 +15,8 @@ public:
     GodotClientApp& operator=(const GodotClientApp&&) = delete;
 
     int EffectsProcessingThreads() const override;
+
+    static GodotClientApp* GetApp();
 };
 
 #endif
