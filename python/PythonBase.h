@@ -28,6 +28,7 @@ public:
     void HandleErrorAlreadySet();
 
     bool         Initialize();                         // initializes and runs the Python interpreter, prepares the Python environment
+    virtual bool InitCommonImports() override;         // initializes Python imports, must be implemented by derived classes
     virtual bool InitImports() = 0;                    // initializes Python imports, must be implemented by derived classes
     virtual bool InitModules() = 0;                    // initializes Python modules, must be implemented by derived classes
     void         SetCurrentDir(const std::string dir); // sets Python current work directory or throws error_already_set
@@ -42,11 +43,6 @@ private:
     // exceptions.  It can't be created in the exception handler.
     boost::python::object   m_system_exit;
 
-    // some helper objects needed to initialize and run the Python interface
-#if defined(FREEORION_MACOSX) || defined(FREEORION_WIN32)
-    wchar_t*                m_home_dir = nullptr;
-    wchar_t*                m_program_name = nullptr;
-#endif
     boost::optional<boost::python::dict> m_namespace;           // stores main namespace in optional to be finalized before Python interpreter
     boost::python::object*  m_python_module_error = nullptr;    // used to track if and which Python module contains the "error_report" function ErrorReport should call
 };
