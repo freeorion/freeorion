@@ -17,7 +17,8 @@ class GDFreeOrion : public Node {
     GODOT_CLASS(GDFreeOrion, Node)
 
 private:
-    float time_passed;
+    static void do_the_ping(GDFreeOrion* n);
+
     std::thread t;
     std::unique_ptr<GodotClientApp> app;
     godot::OptionsDB* optionsDB{nullptr};
