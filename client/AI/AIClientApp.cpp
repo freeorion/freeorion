@@ -143,7 +143,7 @@ void AIClientApp::Run() {
         // Start parsing content
         std::promise<void> barrier;
         std::future<void> barrier_future = barrier.get_future();
-        StartBackgroundParsing(std::move(barrier));
+        StartBackgroundParsing(*m_AI, std::move(barrier));
         barrier_future.wait();
 
         // respond to messages until disconnected
