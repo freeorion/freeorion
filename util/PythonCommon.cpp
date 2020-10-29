@@ -2,6 +2,7 @@
 
 #include <boost/python.hpp>
 
+#include "../util/Directories.h"
 #include "../util/Logger.h"
 
 PythonCommon::PythonCommon()
