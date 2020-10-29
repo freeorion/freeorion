@@ -7,6 +7,7 @@
 #include "util/GameRules.h"
 #include "util/i18n.h"
 #include "util/Version.h"
+#include "util/PythonCommon.h"
 
 #include <boost/format.hpp>
 #include <boost/uuid/nil_generator.hpp>
@@ -38,7 +39,9 @@ ClientAppFixture::ClientAppFixture() :
     std::future<void> barrier_future = barrier.get_future();
     std::thread background([this] (auto b) {
         DebugLogger() << "Started background parser thread";
-        StartBackgroundParsing(std::move(b));
+        PythonCommon python;
+        python.Initialize();
+        StartBackgroundParsing(python, std::move(b));
     }, std::move(barrier));
     background.detach();
     barrier_future.wait();

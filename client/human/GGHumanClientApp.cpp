@@ -23,6 +23,7 @@
 #include "../../util/GameRules.h"
 #include "../../util/OptionsDB.h"
 #include "../../util/Process.h"
+#include "../../util/PythonCommon.h"
 #include "../../util/SaveGamePreviewUtils.h"
 #include "../../util/SitRepEntry.h"
 #include "../../util/Directories.h"
@@ -355,7 +356,9 @@ GGHumanClientApp::GGHumanClientApp(int width, int height, bool calculate_fps, st
     std::future<void> barrier_future = barrier.get_future();
     std::thread background([this] (auto b) {
         DebugLogger() << "Started background parser thread";
-        StartBackgroundParsing(std::move(b));
+        PythonCommon python;
+        python.Initialize();
+        StartBackgroundParsing(python, std::move(b));
     }, std::move(barrier));
     background.detach();
     barrier_future.wait();
@@ -1549,7 +1552,9 @@ void GGHumanClientApp::HandleResoureDirChange() {
         std::future<void> barrier_future = barrier.get_future();
         std::thread background([this] (auto b) {
             DebugLogger() << "Started background parser thread";
-            StartBackgroundParsing(std::move(b));
+            PythonCommon python;
+            python.Initialize();
+            StartBackgroundParsing(python, std::move(b));
         }, std::move(barrier));
         background.detach();
         barrier_future.wait();
