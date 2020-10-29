@@ -1,11 +1,11 @@
 if(BUILD_SERVER)
     target_sources(freeoriond
         PUBLIC
-            ${CMAKE_CURRENT_LIST_DIR}/CommonFramework.h
+            ${CMAKE_CURRENT_LIST_DIR}/PythonBase.h
             ${CMAKE_CURRENT_LIST_DIR}/CommonWrappers.h
             ${CMAKE_CURRENT_LIST_DIR}/SetWrapper.h
         PRIVATE
-            ${CMAKE_CURRENT_LIST_DIR}/CommonFramework.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/PythonBase.cpp
             ${CMAKE_CURRENT_LIST_DIR}/ConfigWrapper.cpp
             ${CMAKE_CURRENT_LIST_DIR}/EmpireWrapper.cpp
             ${CMAKE_CURRENT_LIST_DIR}/EnumWrapper.cpp
@@ -17,11 +17,11 @@ endif()
 if(BUILD_AI)
     target_sources(freeorionca
         PUBLIC
-            ${CMAKE_CURRENT_LIST_DIR}/CommonFramework.h
+            ${CMAKE_CURRENT_LIST_DIR}/PythonBase.h
             ${CMAKE_CURRENT_LIST_DIR}/CommonWrappers.h
             ${CMAKE_CURRENT_LIST_DIR}/SetWrapper.h
         PRIVATE
-            ${CMAKE_CURRENT_LIST_DIR}/CommonFramework.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/PythonBase.cpp
             ${CMAKE_CURRENT_LIST_DIR}/ConfigWrapper.cpp
             ${CMAKE_CURRENT_LIST_DIR}/EmpireWrapper.cpp
             ${CMAKE_CURRENT_LIST_DIR}/EnumWrapper.cpp
