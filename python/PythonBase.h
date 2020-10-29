@@ -8,8 +8,9 @@
 #include <vector>
 #include <string>
 
+#include "../util/PythonCommon.h"
 
-class PythonBase {
+class PythonBase : public PythonCommon {
 public:
     PythonBase();
     virtual ~PythonBase();
@@ -25,14 +26,6 @@ public:
        won't crash or hang the process.
      */
     void HandleErrorAlreadySet();
-
-    /**
-       IsPythonRunning returns true is the python interpreter is
-       initialized.  It is typically called after
-       HandleErrorAlreadySet() to determine if the error caused the
-       interpreter to shutdown.
-     */
-    bool IsPythonRunning();
 
     bool         Initialize();                         // initializes and runs the Python interpreter, prepares the Python environment
     virtual bool InitImports() = 0;                    // initializes Python imports, must be implemented by derived classes
@@ -65,4 +58,4 @@ const std::string GetPythonDir();
 const std::string GetPythonCommonDir();
 
 
-#endif /* defined(__FreeOrion__Python__CommonFramework__) */
+#endif /* defined(__FreeOrion__Python__PythonBase__) */

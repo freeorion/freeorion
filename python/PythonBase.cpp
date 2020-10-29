@@ -113,9 +113,6 @@ bool PythonBase::Initialize() {
     return true;
 }
 
-bool PythonBase::IsPythonRunning()
-{ return Py_IsInitialized(); }
-
 void PythonBase::HandleErrorAlreadySet() {
     if (!Py_IsInitialized()) {
         ErrorLogger() << "Python interpreter not initialized and exception handler called.";

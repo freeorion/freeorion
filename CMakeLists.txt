@@ -532,7 +532,7 @@ if(BUILD_SERVER)
         PRIVATE
             -DFREEORION_BUILD_SERVER
     )
-    
+
     target_link_libraries(freeoriond
         PRIVATE
             freeorioncommon
