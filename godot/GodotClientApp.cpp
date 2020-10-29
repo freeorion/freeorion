@@ -30,3 +30,6 @@ GodotClientApp::~GodotClientApp() {
 int GodotClientApp::EffectsProcessingThreads() const
 { return GetOptionsDB().Get<int>("effects.ui.threads"); }
 
+GodotClientApp* GodotClientApp::GetApp()
+{ return static_cast<GodotClientApp*>(s_app); }
+
