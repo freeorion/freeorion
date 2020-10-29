@@ -2,6 +2,7 @@
 #include <chrono>
 #include <atomic>
 #include <memory>
+#include <sstream>
 
 #include "../util/Directories.h"
 #include "../util/OptionsDB.h"
@@ -17,17 +18,20 @@ std::atomic_bool quit(false);
 
 void GDFreeOrion::do_the_ping(GDFreeOrion* n) {
     while(!quit) {
-        if (auto msg = n->app->Networking().GetMessage())
-            n->emit_signal("ping");
-        else
+        if (auto msg = n->app->Networking().GetMessage()) {
+            std::ostringstream stream;
+            stream << msg->Type();
+            n->emit_signal("ping", String(stream.str().c_str()));
+        } else {
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        }
     }
 }
 
 void GDFreeOrion::_register_methods() {
     // register_method("_process", &GDCppTest::_process);
     register_method("_exit_tree", &GDFreeOrion::_exit_tree);
-    register_signal<GDFreeOrion>((char *)"ping");
+    register_signal<GDFreeOrion>("ping", "message", GODOT_VARIANT_TYPE_STRING);
     register_property<GDFreeOrion, godot::OptionsDB*>("optionsDB",
         &GDFreeOrion::set_options,
         &GDFreeOrion::get_options,
