@@ -2,6 +2,7 @@
 #define _Enum_h_
 
 #include <iostream>
+#include <map>
 
 #include <boost/preprocessor/comparison/equal.hpp>
 #include <boost/preprocessor/control/if.hpp>
@@ -93,6 +94,57 @@ BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
     return stream; \
 }
 
+template<typename E>
+struct EnumIterator {
+};
+
+/** @brief Implementation detail for FO_ENUM */
+#define FO_DEF_ENUM_ITERATE_VALUE(r, data, elem) \
+    {data::BOOST_PP_TUPLE_ELEM(0, elem), BOOST_PP_STRINGIZE(BOOST_PP_TUPLE_ELEM(0, elem)) },
+
+/** @brief Implementation detail for FO_ENUM */
+#define FO_DEF_ENUM_ITERATE(typeName, values) \
+inline \
+BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
+        static, \
+        BOOST_PP_EMPTY()) \
+std::map< \
+BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
+    BOOST_PP_TUPLE_ELEM(1, typeName), \
+    BOOST_PP_TUPLE_ELEM(0, typeName)), const char*> \
+BOOST_PP_CAT(BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
+    BOOST_PP_TUPLE_ELEM(1, typeName), \
+    BOOST_PP_TUPLE_ELEM(0, typeName)), Values)() {\
+static const std::map< \
+BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
+    BOOST_PP_TUPLE_ELEM(1, typeName), \
+    BOOST_PP_TUPLE_ELEM(0, typeName)), const char*> ret{ \
+    BOOST_PP_SEQ_FOR_EACH(FO_DEF_ENUM_ITERATE_VALUE, \
+        BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
+            BOOST_PP_TUPLE_ELEM(1, typeName), \
+            BOOST_PP_TUPLE_ELEM(0, typeName)), values) \
+    }; \
+    return ret; \
+}; \
+inline \
+BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
+        static, \
+        BOOST_PP_EMPTY()) \
+std::map< \
+BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
+    BOOST_PP_TUPLE_ELEM(1, typeName), \
+    BOOST_PP_TUPLE_ELEM(0, typeName)), const char*> \
+IterateEnum(EnumIterator< \
+BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
+    BOOST_PP_TUPLE_ELEM(1, typeName), \
+    BOOST_PP_TUPLE_ELEM(0, typeName)) >){ return \
+BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
+    BOOST_PP_TUPLE_ELEM(0, typeName)::, \
+    BOOST_PP_EMPTY()) \
+BOOST_PP_CAT(BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
+    BOOST_PP_TUPLE_ELEM(1, typeName), \
+    BOOST_PP_TUPLE_ELEM(0, typeName)), Values)();};
+
 /** @brief Implementation detail for FO_ENUM */
 #define FO_DEF_ENUM_ADD_STRING_REPR(s, data, elem) \
     BOOST_PP_TUPLE_PUSH_BACK(elem, BOOST_PP_STRINGIZE(BOOST_PP_TUPLE_ELEM(0, elem)))
@@ -132,6 +184,13 @@ BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
  * )
  * @endcode
  *
+ * Iterate over values:
+ * @code
+ * for (const auto& p : IterateEnum(EnumIterator<Animal>{})) {
+ *    ...
+ * }
+ * @endcode
+ *
  * Class member enumeration:
  * @code
  * class AutomaticGearBox
@@ -148,11 +207,19 @@ BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
  *     )
  * }
  * @endcode
+ *
+ * Iterate over values:
+ * @code
+ * for (const auto& p : AutomaticGearBox::IterateEnum(EnumIterator<AutomaticGearBox::Animal>{})) {
+ *    ...
+ * }
+ * @endcode
  */
 #define FO_ENUM(typeName, values) \
     FO_DEF_ENUM(typeName, BOOST_PP_SEQ_TRANSFORM(FO_DEF_ENUM_ADD_STRING_REPR, _, values)) \
     FO_DEF_ENUM_OSTREAM(typeName, BOOST_PP_SEQ_TRANSFORM(FO_DEF_ENUM_ADD_STRING_REPR, _, values)) \
-    FO_DEF_ENUM_ISTREAM(typeName, BOOST_PP_SEQ_TRANSFORM(FO_DEF_ENUM_ADD_STRING_REPR, _, values))
+    FO_DEF_ENUM_ISTREAM(typeName, BOOST_PP_SEQ_TRANSFORM(FO_DEF_ENUM_ADD_STRING_REPR, _, values)) \
+    FO_DEF_ENUM_ITERATE(typeName, BOOST_PP_SEQ_TRANSFORM(FO_DEF_ENUM_ADD_STRING_REPR, _, values))
 
 
 #endif

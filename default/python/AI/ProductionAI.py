@@ -1080,7 +1080,7 @@ def generate_production_orders():
     building_name = "BLD_XENORESURRECTION_LAB"
     queued_xeno_lab_locs = [element.locationID for element in production_queue if element.name == building_name]
     for pid in state.get_all_empire_planets():
-        if pid in queued_xeno_lab_locs or not empire.canBuild(fo.buildType.building, building_name, pid):
+        if pid in queued_xeno_lab_locs or not empire.canBuild(fo.buildType.BT_BUILDING, building_name, pid):
             continue
         res = fo.issueEnqueueBuildingProductionOrder(building_name, pid)
         debug("Enqueueing %s at planet %d (%s) , with result %d", building_name, pid, planet.name, res)

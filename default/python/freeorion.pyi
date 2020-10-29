@@ -1949,14 +1949,14 @@ class buildType(Enum):
     def __init__(self, numerator, name):
         self.name = name
 
-    building = None  # buildType(building, "building")
-    ship = None  # buildType(ship, "ship")
-    stockpile = None  # buildType(stockpile, "stockpile")
+    BT_BUILDING = None  # buildType(BT_BUILDING, "BT_BUILDING")
+    BT_SHIP = None  # buildType(BT_SHIP, "BT_SHIP")
+    BT_STOCKPILE = None  # buildType(BT_STOCKPILE, "BT_STOCKPILE")
 
 
-buildType.building = buildType(building, "building")
-buildType.ship = buildType(ship, "ship")
-buildType.stockpile = buildType(stockpile, "stockpile")
+buildType.BT_BUILDING = buildType(BT_BUILDING, "BT_BUILDING")
+buildType.BT_SHIP = buildType(BT_SHIP, "BT_SHIP")
+buildType.BT_STOCKPILE = buildType(BT_STOCKPILE, "BT_STOCKPILE")
 
 
 class captureResult(Enum):
