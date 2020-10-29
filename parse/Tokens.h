@@ -326,6 +326,7 @@
     (OwnerHasTech)                              \
     (parameters)                                \
     (part)                                      \
+    (Part)                                      \
     (PartCapacity)                              \
     (PartClass)                                 \
     (PartDamage)                                \

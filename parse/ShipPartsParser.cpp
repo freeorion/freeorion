@@ -113,7 +113,7 @@ namespace {
             qi::matches_type matches_;
 
             ship_part
-                = ( tok.part_                                       // _1
+                = ( tok.Part_                                       // _1
                 >   common_rules.more_common                        // _2
                 >   label(tok.class_)       > ship_part_class_enum  // _3
                 > -( (label(tok.capacity_)  > double_rule)          // _4

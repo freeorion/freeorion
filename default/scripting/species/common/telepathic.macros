@@ -9,7 +9,7 @@ PRECOGNITIVE_DETECTION
                 WithinStarlaneJumps jumps = @1@ condition = Source
             ]
             activation = OwnedBy affiliation = AnyEmpire
-            effects = SetVisibility empire = Source.Owner visibility = max(Basic, Value)
+            effects = SetVisibility empire = Source.Owner visibility = Max(Basic, Value)
 '''
 
 TELEPATHIC_DETECTION
@@ -24,5 +24,5 @@ TELEPATHIC_DETECTION
                 Not Source
             ]
             activation = OwnedBy affiliation = AnyEmpire
-            effects = SetVisibility empire = Source.Owner visibility = max(Basic, Value)
+            effects = SetVisibility empire = Source.Owner visibility = Max(Basic, Value)
 '''

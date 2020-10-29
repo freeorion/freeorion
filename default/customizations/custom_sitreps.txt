@@ -282,7 +282,7 @@ EffectsGroup
     activation = Turn low = 0 high = 100
     stackinggroup = "HINTSSYSTEM"
     effects = [
-        GenerateSitrepMessage
+        GenerateSitRepMessage
             message = "RANDOM_BEGINNER_HINT"
             label = "BEGINNER_HINTS"
             icon = "icons/sitrep/beginner_hint.png"

@@ -1489,7 +1489,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
                 continue;
             const ShipPart* ship_part = GetShipPart(part);
             if (!ship_part) {
-                ErrorLogger() << "GetEffectsAndTargets couldn't get ShipPart";
+                ErrorLogger() << "GetEffectsAndTargets couldn't get ShipPart " << part;
                 continue;
             }
             ships_by_ship_part[part].emplace_back(ship);
