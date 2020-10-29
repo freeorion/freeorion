@@ -6,6 +6,7 @@
 #include <memory>
 #include <thread>
 
+#include "GodotNetworking.h"
 #include "OptionsDB.h"
 
 class GodotClientApp;
@@ -20,6 +21,7 @@ private:
     std::thread t;
     std::unique_ptr<GodotClientApp> app;
     godot::OptionsDB* optionsDB{nullptr};
+    GodotNetworking* networking{nullptr};
 public:
     static void _register_methods();
 
@@ -33,8 +35,12 @@ public:
 
     godot::OptionsDB* get_options() const;
     void set_options(godot::OptionsDB* ptr);
+
+    GodotNetworking* get_networking() const;
+    void set_networking(GodotNetworking* ptr);
 };
 
 }
 
 #endif
+
