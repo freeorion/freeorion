@@ -1,12 +1,14 @@
 #include "gdfreeorion.h"
 #include <chrono>
 #include <atomic>
+#include <memory>
 
 #include "../util/Directories.h"
 #include "../util/OptionsDB.h"
 #include "../util/Version.h"
 
 #include "GodotClientApp.h"
+#include "OptionsDB.h"
 
 using namespace godot;
 
@@ -23,6 +25,10 @@ void GDFreeOrion::_register_methods() {
     // register_method("_process", &GDCppTest::_process);
     register_method("_exit_tree", &GDFreeOrion::_exit_tree);
     register_signal<GDFreeOrion>((char *)"ping");
+    register_property<GDFreeOrion, godot::OptionsDB*>("optionsDB",
+        &GDFreeOrion::set_options,
+        &GDFreeOrion::get_options,
+        nullptr);
 }
 
 GDFreeOrion::GDFreeOrion() {
@@ -67,6 +73,7 @@ void GDFreeOrion::_init() {
     time_passed = 0.0;
     t = std::thread(do_the_ping, this);
     app = std::make_unique<GodotClientApp>();
+    optionsDB = godot::OptionsDB::_new();
 }
 
 void GDFreeOrion::_process(float delta) {
@@ -82,5 +89,16 @@ void GDFreeOrion::_exit_tree() {
     t.join();
     app.reset();
 
+    optionsDB->free();
+
     ShutdownLoggingSystemFileSink();
+}
+
+godot::OptionsDB* GDFreeOrion::get_options() const {
+    return optionsDB;
+}
+
+void GDFreeOrion::set_options(godot::OptionsDB* ptr) {
+    // ignore it
+    Godot::print(String("Ignore setting options"));
 }
