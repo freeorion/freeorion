@@ -1,5 +1,5 @@
-#ifndef __FreeOrion__Python__CommonFramework__
-#define __FreeOrion__Python__CommonFramework__
+#ifndef __FreeOrion__Python__PythonBase__
+#define __FreeOrion__Python__PythonBase__
 
 #include <boost/optional.hpp>
 #include <boost/python.hpp>

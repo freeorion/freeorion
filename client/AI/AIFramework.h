@@ -1,7 +1,7 @@
 #ifndef _AIFramework_h_
 #define _AIFramework_h_
 
-#include "../../python/CommonFramework.h"
+#include "../../python/PythonBase.h"
 
 #include <string>
 #include <vector>
