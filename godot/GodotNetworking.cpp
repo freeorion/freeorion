@@ -2,8 +2,11 @@
 
 #include <codecvt>
 
+#include <boost/uuid/nil_generator.hpp>
+
 #include "../util/Logger.h"
 #include "../client/ClientNetworking.h"
+
 #include "GodotClientApp.h"
 
 using namespace godot;
@@ -33,12 +36,16 @@ bool GodotNetworking::_is_connected() const
     return false;
 }
 
-bool GodotNetworking::_connect_to_server(String dest)
+bool GodotNetworking::_connect_to_server(String dest, String player_name)
 {
     auto* app = GodotClientApp::GetApp();
     if (app) {
         std::string dest8 = std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}.to_bytes(dest.unicode_str());
-        return app->Networking().ConnectToServer(dest8);
+        if (app->Networking().ConnectToServer(dest8)) {
+            std::string player_name8 = std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}.to_bytes(player_name.unicode_str());
+            app->Networking().SendMessage(JoinGameMessage(player_name8, Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER, boost::uuids::nil_uuid()));
+            return true;
+        }
     } else {
         ErrorLogger() << "App uninitialized";
     }
