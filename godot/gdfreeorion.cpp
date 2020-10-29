@@ -6,6 +6,7 @@
 #include "../util/Directories.h"
 #include "../util/OptionsDB.h"
 #include "../util/Version.h"
+#include "../client/ClientNetworking.h"
 
 #include "GodotClientApp.h"
 #include "OptionsDB.h"
@@ -14,10 +15,12 @@ using namespace godot;
 
 std::atomic_bool quit(false);
 
-void do_the_ping(Node* n) {
+void GDFreeOrion::do_the_ping(GDFreeOrion* n) {
     while(!quit) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-        n->emit_signal("ping");
+        if (auto msg = n->app->Networking().GetMessage())
+            n->emit_signal("ping");
+        else
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
 }
 
@@ -74,19 +77,14 @@ void GDFreeOrion::_init() {
     }
 
     // initialize any variables here
-    time_passed = 0.0;
-    t = std::thread(do_the_ping, this);
     app = std::make_unique<GodotClientApp>();
     optionsDB = godot::OptionsDB::_new();
     networking = GodotNetworking::_new();
+
+    t = std::thread(do_the_ping, this);
 }
 
 void GDFreeOrion::_process(float delta) {
-    time_passed += delta;
-    if(time_passed > 2.0) {
-        emit_signal("ping");
-        time_passed = 0.0;
-    }
 }
 
 void GDFreeOrion::_exit_tree() {
