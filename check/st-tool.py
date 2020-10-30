@@ -19,6 +19,7 @@ from collections import namedtuple, OrderedDict
 STRING_TABLE_KEY_PATTERN = r'^[A-Z0-9_]+$'
 # Provides the named capture groups 'ref_type' and 'key'
 INTERNAL_REFERENCE_PATTERN = r'\[\[(?P<ref_type>(?:(?:encyclopedia|(?:building|field|meter)type|predefinedshipdesign|ship(?:hull|part)|special|species|tech|policy|value) )?)(?P<key>{})\]\]'
+OPTIONAL_REF_TYPES = [ "value" ];
 # Provides the named capture groups 'sha', 'old_line', 'new_line' and 'range'
 GIT_BLAME_INCREMENTAL_PATTERN = r'^(?P<sha>[0-9a-f]{40}) (?P<old_line>[1-9][0-9]*) (?P<new_line>[1-9][0-9]*)(?P<range> [1-9][0-9]*)?$'
 
@@ -841,9 +842,12 @@ def check_action(args):
 
             if entry.value:
                 for match in re.finditer(INTERNAL_REFERENCE_PATTERN.format('.*?'), entry.value):
-                    match = match['key']
-                    if not (match in source_st.keys() or (reference_st and match in reference_st.keys())):
-                        print("{}:{}: Referenced key '{}' in value of '{}' was not found.".format(source_st.fpath, entry.keyline, match, entry.key))
+                    match_key = match['key']
+                    if not (match_key in source_st.keys() or (reference_st and match_key in reference_st.keys())):
+                        if match['ref_type'].strip() in OPTIONAL_REF_TYPES:
+                            print("{}:{}: Optional referenced key '{}' in value of '{}' was not found. Reference was [[{}{}]].".format(source_st.fpath, entry.keyline, match_key, entry.key, match['ref_type'], match_key))
+                            continue
+                        print("{}:{}: Referenced key '{}' in value of '{}' was not found.".format(source_st.fpath, entry.keyline, match_key, entry.key))
                         exit_code = 1
 
     return exit_code

@@ -103,9 +103,9 @@ namespace {
     /** Parses VarText::FOCS_VALUE_TAG%s within @p text, replacing value ref name%s with
      *  the evaluation result of that value ref.
      *  Given tag content (i.e. the stringtable content for the tag name) gets added as explanation.
-     *  If the tag content is empty or @p use_description_instead_of_user_string is true,
+     *  If the tag content is empty or @p add_explanation is true,
      *  the value ref description gets added as explanation instead. */
-    std::string ValueRefLinkText(const std::string& text, const bool use_description_instead_of_user_string) {
+    std::string ValueRefLinkText(const std::string& text, const bool add_explanation) {
         if (!boost::contains(text, FOCS_VALUE_TAG_CLOSE))
             return text;
 
@@ -120,10 +120,12 @@ namespace {
             std::string value_ref_name{match[1]};
             auto*       value_ref = GetValueRefBase(value_ref_name);
             auto        value_str{value_ref ? value_ref->EvalAsString() : value_ref_name};
+            // Explanation: match[2] contains the localized UserString. Result looks like e.g. " (per planet size: 2.5 * 0.2000)"
+            // Using UserStringExists to get rid of lookup errors is kind of redundant. It would be better if UserString substitution had not happened before.
             std::string explanation_str{
-                value_ref && (use_description_instead_of_user_string || (match[2].length()==0)) ?
-                    (" (" + value_ref->Description() + ")") :
-                    ((match[2].length()==0) ? "" : " (" + match[2] + ")")};
+                (value_ref && add_explanation)
+                    ? " (" + ((match[2].length()==0 || !UserStringExists(value_ref_name)) ? "" : match[2] + ": ") + value_ref->Description() + ")"
+                    : ""};
 
             auto resolved_tooltip = FOCS_VALUE_TAG_OPEN_PRE + " " + value_ref_name + ">" + value_str + explanation_str + FOCS_VALUE_TAG_CLOSE;
 
