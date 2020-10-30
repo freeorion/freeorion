@@ -34,6 +34,7 @@
 #include "../../Empire/Empire.h"
 #include "../../combat/CombatLogManager.h"
 #include "../../parse/Parse.h"
+#include "../../parse/PythonParser.h"
 
 #include <GG/BrowseInfoWnd.h>
 #include <GG/dialogs/ThreeButtonDlg.h>
@@ -358,7 +359,7 @@ GGHumanClientApp::GGHumanClientApp(int width, int height, bool calculate_fps, st
         DebugLogger() << "Started background parser thread";
         PythonCommon python;
         python.Initialize();
-        StartBackgroundParsing(python, std::move(b));
+        StartBackgroundParsing(PythonParser(python), std::move(b));
     }, std::move(barrier));
     background.detach();
     barrier_future.wait();
@@ -1564,7 +1565,7 @@ void GGHumanClientApp::HandleResoureDirChange() {
             DebugLogger() << "Started background parser thread";
             PythonCommon python;
             python.Initialize();
-            StartBackgroundParsing(python, std::move(b));
+            StartBackgroundParsing(PythonParser(python), std::move(b));
         }, std::move(barrier));
         background.detach();
         barrier_future.wait();

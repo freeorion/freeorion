@@ -4,7 +4,7 @@
 // We include all external headers used in any of the header files,
 // plus boost headers used in any .cpp files.
 
-// https://hownot2code.com/2016/08/16/stdafx-h/ 
+// https://hownot2code.com/2016/08/16/stdafx-h/
 
 // ----------------
 // includes from .h or .cpp
@@ -42,6 +42,7 @@
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/xpressive/xpressive.hpp>
 
+#include <boost/python.hpp>
 
 #ifdef _MSC_VER
 // Note: This is a workaround for Visual C++ non-conformant pre-processor

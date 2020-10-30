@@ -46,6 +46,7 @@ set(FO_TEST_PARSE
     #TestValueRefStringParser
     #TestValueRefUniverseObjectTypeParser
     TestScriptParser
+    TestPythonParser
 )
 
 foreach(_TEST ${FO_TEST_PARSE})

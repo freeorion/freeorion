@@ -441,6 +441,7 @@ target_compile_definitions(freeorionparseobj
 target_include_directories(freeorionparseobj
     PUBLIC
         $<TARGET_PROPERTY:Boost::boost,INTERFACE_INCLUDE_DIRECTORIES>
+        ${PYTHON_INCLUDE_PATH}
 )
 
 set_property(TARGET freeorionparseobj

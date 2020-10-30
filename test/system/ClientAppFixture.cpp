@@ -7,6 +7,7 @@
 #include "util/GameRules.h"
 #include "util/Version.h"
 #include "util/PythonCommon.h"
+#include "parse/PythonParser.h"
 
 #include <boost/format.hpp>
 #include <boost/uuid/nil_generator.hpp>
@@ -34,7 +35,7 @@ ClientAppFixture::ClientAppFixture() :
         DebugLogger() << "Started background parser thread";
         PythonCommon python;
         python.Initialize();
-        StartBackgroundParsing(python, std::move(b));
+        StartBackgroundParsing(PythonParser(python), std::move(b));
     }, std::move(barrier));
     background.detach();
     barrier_future.wait();
