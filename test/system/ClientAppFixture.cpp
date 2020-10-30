@@ -29,7 +29,11 @@ ClientAppFixture::ClientAppFixture() :
 
     std::promise<void> barrier;
     std::future<void> barrier_future = barrier.get_future();
-    StartBackgroundParsing(std::move(barrier));
+    std::thread background([this] (auto b) {
+        DebugLogger() << "Started background parser thread";
+        StartBackgroundParsing(std::move(b));
+    }, std::move(barrier));
+    background.detach();
     barrier_future.wait();
 }
 
