@@ -4,6 +4,7 @@ if(BUILD_PARSERS)
         PUBLIC
             ${CMAKE_CURRENT_LIST_DIR}/MovableEnvelope.h
             ${CMAKE_CURRENT_LIST_DIR}/Parse.h
+            ${CMAKE_CURRENT_LIST_DIR}/PythonParser.h
         PRIVATE
             ${CMAKE_CURRENT_LIST_DIR}/CommonParamsParser.h
             ${CMAKE_CURRENT_LIST_DIR}/ConditionParser.h
@@ -78,12 +79,15 @@ if(BUILD_PARSERS)
             ${CMAKE_CURRENT_LIST_DIR}/UniverseObjectTypeValueRefParser.cpp
             ${CMAKE_CURRENT_LIST_DIR}/ValueRefParser.cpp
             ${CMAKE_CURRENT_LIST_DIR}/VisibilityValueRefParser.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/PythonParser.cpp
     )
 else()
     target_sources(freeorionparseobj
         PUBLIC
             ${CMAKE_CURRENT_LIST_DIR}/Parse.h
+            ${CMAKE_CURRENT_LIST_DIR}/PythonParser.h
         PRIVATE
             ${CMAKE_CURRENT_LIST_DIR}/DummyParsers.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/PythonParser.cpp
     )
 endif()

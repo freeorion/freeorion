@@ -109,7 +109,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_USRDLL;PARSERS_EXPORTS;FREEORION_WIN32;_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../../include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../include/;../../../include/python3.5/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PrecompiledHeaderFile>StdAfx.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
@@ -142,7 +142,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_USRDLL;PARSERS_EXPORTS;FREEORION_WIN32;_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../../include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../include/;../../../include/python3.5/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PrecompiledHeaderFile>StdAfx.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
@@ -222,6 +222,7 @@
     <ClCompile Include="..\..\parse\PlanetSizeValueRefParser.cpp" />
     <ClCompile Include="..\..\parse\PlanetTypeValueRefParser.cpp" />
     <ClCompile Include="..\..\parse\PoliciesParser.cpp" />
+    <ClCompile Include="..\..\parse\PythonParser.cpp" />
     <ClCompile Include="..\..\parse\ReportParseError.cpp" />
     <ClCompile Include="..\..\parse\ShipDesignsParser.cpp" />
     <ClCompile Include="..\..\parse\ShipHullsParser.cpp">
@@ -261,6 +262,7 @@
     <ClCompile Include="..\..\parse\UniverseObjectTypeValueRefParser.cpp" />
     <ClCompile Include="..\..\parse\ValueRefParser.cpp" />
     <ClCompile Include="..\..\parse\VisibilityValueRefParser.cpp" />
+    <ClCompile Include="..\..\parse\PythonParser.cpp" />
     <ClCompile Include="StdAfx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -295,6 +297,7 @@
     <ClInclude Include="..\..\parse\ReportParseError.h" />
     <ClInclude Include="..\..\parse\Tokens.h" />
     <ClInclude Include="..\..\parse\ValueRefParser.h" />
+    <ClInclude Include="..\..\parse\PythonParser.h" />
     <ClInclude Include="StdAfx.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -21,7 +21,7 @@ class Ship;
 class Fleet;
 class Building;
 class Field;
-class PythonCommon;
+class PythonParser;
 struct GalaxySetupData;
 
 class FO_COMMON_API IApp {
@@ -56,7 +56,7 @@ public:
       * or the other asynchronous parsing may still be ongoing
       * at that time.
       * Requires \a python to be initialized. */
-    virtual void StartBackgroundParsing(const PythonCommon& python, std::promise<void>&& barrier);
+    virtual void StartBackgroundParsing(const PythonParser& python, std::promise<void>&& barrier);
 
     /** Returns the set of known Empires for this application. */
     virtual EmpireManager& Empires() = 0;

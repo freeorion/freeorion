@@ -51,19 +51,13 @@ int IApp::MAX_AI_PLAYERS() {
     return max_number_AIs;
 }
 
-void IApp::StartBackgroundParsing(const PythonCommon& python, std::promise<void>&& barrier) {
+void IApp::StartBackgroundParsing(const PythonParser& python, std::promise<void>&& barrier) {
     namespace fs = boost::filesystem;
 
     const auto& rdir = GetResourceDir();
     if (!IsExistingDir(rdir)) {
         ErrorLogger() << "Background parse given non-existant resources directory: " << rdir.string() ;
         barrier.set_exception(std::make_exception_ptr(std::runtime_error("non-existant resources directory")));
-        return;
-    }
-
-    if (!python.IsPythonRunning()) {
-        ErrorLogger() << "Background parse given non-initialized python!";
-        barrier.set_exception(std::make_exception_ptr(std::runtime_error("non-initialized python")));
         return;
     }
 
