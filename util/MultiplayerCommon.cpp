@@ -149,19 +149,6 @@ const std::string& TextForAIAggression(Aggression a) {
     }
 }
 
-GalaxySetupData::GalaxySetupData() :
-    size(100),
-    shape(Shape::SPIRAL_2),
-    age(GalaxySetupOption::GALAXY_SETUP_MEDIUM),
-    starlane_freq(GalaxySetupOption::GALAXY_SETUP_MEDIUM),
-    planet_density(GalaxySetupOption::GALAXY_SETUP_MEDIUM),
-    specials_freq(GalaxySetupOption::GALAXY_SETUP_MEDIUM),
-    monster_freq(GalaxySetupOption::GALAXY_SETUP_MEDIUM),
-    native_freq(GalaxySetupOption::GALAXY_SETUP_MEDIUM),
-    ai_aggr(Aggression::MANIACAL),
-    encoding_empire(ALL_EMPIRES)
-{}
-
 GalaxySetupData::GalaxySetupData(GalaxySetupData&& base) :
     seed(std::move(base.seed)),
     size(base.size),
