@@ -245,7 +245,10 @@ void StringTable::Load(std::shared_ptr<const StringTable> fallback) {
                     entry.second.replace(position, match.length(), substitution);
                     position += substitution.length();
                 } else {
-                    ErrorLogger() << "Unresolved reference: " << match[2] << " in: " << m_filename << ".";
+                    if (match[1] == "value")
+                        InfoLogger() << "Unresolved optional value reference: " << match[2] << " in: " << m_filename << ".";
+                    else
+                        ErrorLogger() << "Unresolved reference: " << match[2] << " in: " << m_filename << ".";
                     position += match.length();
                 }
             }
