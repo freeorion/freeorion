@@ -122,10 +122,10 @@ jobs:
         - cmake -DBUILD_CLIENT_GG=OFF -DBUILD_TESTING=ON ..
         - cmake --build .
 
-    - name: Build FreeOrion on MacOS 10.12
+    - name: Build FreeOrion on MacOS
       stage: build
       os: osx
-      osx_image: xcode8.3
+      osx_image: xcode9.4
       language: cpp
       compiler: clang
       cache: ccache
@@ -147,8 +147,10 @@ jobs:
         - mkdir build
         - cd build
       script:
-        - cmake -GXcode -DBUILD_TESTING=ON ..
+        - cmake -GXcode -DBUILD_TESTING=ON -DBoost_NO_BOOST_CMAKE=ON ..
         - cmake --build . --config Release -- -parallelizeTargets
+      after_success:
+        - cmake --build . --config Release --target unittest
       before_cache:
         - ccache --cleanup
         - ccache --show-stats
