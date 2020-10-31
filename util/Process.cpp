@@ -12,7 +12,8 @@
 #endif
 
 #ifdef FREEORION_WIN32
-#include <GG/utf8/checked.h>
+#include <codecvt>
+#include <locale>
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #endif
@@ -110,12 +111,11 @@ void Process::Free() {
 #if defined(FREEORION_WIN32)
 
 Process::Impl::Impl(const std::string& cmd, const std::vector<std::string>& argv) {
-    std::wstring wcmd;
     std::wstring wargs;
 
-    utf8::utf8to16(cmd.begin(), cmd.end(), std::back_inserter(wcmd));
+    std::wstring wcmd = std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}.from_bytes(cmd);
     for (unsigned int i = 0; i < argv.size(); ++i) {
-        utf8::utf8to16(argv[i].begin(), argv[i].end(), std::back_inserter(wargs));
+        wargs += std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}.from_bytes(argv[i]);
         if (i + 1 < argv.size())
             wargs += ' ';
     }
