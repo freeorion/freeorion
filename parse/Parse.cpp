@@ -388,6 +388,7 @@ namespace parse {
         } else {
             retval =  (token >> '=');
         }
+        retval.name(token.definition());    // so that parse errors will log "expected LABEL_TEXT here"
         return retval;
     }
 
