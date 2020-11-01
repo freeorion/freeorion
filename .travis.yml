@@ -147,10 +147,8 @@ jobs:
         - mkdir build
         - cd build
       script:
-        - cmake -GXcode -DBUILD_TESTING=ON -DBoost_NO_BOOST_CMAKE=ON -DGLEW_USE_STATIC_LIBS=ON ..
+        - cmake -GXcode -DBUILD_TESTING=OFF -DBoost_NO_BOOST_CMAKE=ON -DGLEW_USE_STATIC_LIBS=ON ..
         - cmake --build . --config Release -- -parallelizeTargets
-      after_success:
-        - cmake --build . --config Release --target unittest
       before_cache:
         - ccache --cleanup
         - ccache --show-stats
