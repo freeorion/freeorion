@@ -39,7 +39,7 @@ NamedValueRefManager::NamedValueRefManager() {
     if (s_instance)
         throw std::runtime_error("Attempted to create more than one NamedValueRefManager.");
 
-    // Only update the global pointer on sucessful construction.
+    // Only update the global pointer on successful construction.
     InfoLogger() << "NamedValueRefManager::NameValueRefManager constructs singleton " << this;
     s_instance = this;
 }
@@ -48,7 +48,7 @@ namespace {
 // helper function for NamedValueRefManager::GetValueRef
 template <typename V>
 V* const GetValueRefImpl(std::map<NamedValueRefManager::key_type, std::unique_ptr<V>>& registry, const std::string& label, const std::string& name) /*const*/ {
-    DebugLogger() << "NamedValueRefManager::GetValueRef look for registered " << label << " valueref for \"" << name << '"';
+    TraceLogger() << "NamedValueRefManager::GetValueRef look for registered " << label << " valueref for \"" << name << '"';
     TraceLogger() << "Number of registered " << label << " ValueRefs: " << registry.size();
     const auto it = registry.find(name);
     if (it != registry.end())
@@ -91,10 +91,9 @@ ValueRef::ValueRefBase* const NamedValueRefManager::GetValueRefBase(const std::s
 }
 
 NamedValueRefManager& NamedValueRefManager::GetNamedValueRefManager() {
-    DebugLogger() << "NamedValueRefManager::GetNamedValueRefManager starts (check the thread)";
-    
+    TraceLogger() << "NamedValueRefManager::GetNamedValueRefManager starts (check the thread)";
     static NamedValueRefManager manager; // function local 
-    InfoLogger() << "NamedValueRefManager::GetNamedValueRefManager at " << &manager;
+    TraceLogger() << "NamedValueRefManager::GetNamedValueRefManager at " << &manager;
     return manager;
 }
 
@@ -279,7 +278,7 @@ unsigned int NamedRef<T>::GetCheckSum() const
 template <typename T>
 T NamedRef<T>::Eval(const ScriptingContext& context) const
 {
-    DebugLogger() << "NamedRef<" << typeid(T).name() << ">::Eval()";
+    TraceLogger() << "NamedRef<" << typeid(T).name() << ">::Eval()";
     const ValueRef<T>* value_ref = ::GetValueRef<T>(m_value_ref_name);
     if (!value_ref) {
         ErrorLogger() << "NamedRef<" << typeid(T).name() << ">::Eval did not find " << m_value_ref_name;
