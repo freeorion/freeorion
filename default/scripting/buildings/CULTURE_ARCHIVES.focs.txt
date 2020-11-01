@@ -17,8 +17,8 @@ BuildingType
             ]
             priority = [[VERY_LATE_PRIORITY]]
             effects = [
-                SetTargetResearch value = Value + 5
-                SetTargetIndustry value = Value + Target.Population / 2
+                SetTargetResearch value = Value + (NamedReal name = "BLD_CULTURE_ARCHIVES_TARGET_RESEARCH_FLAT" value = 5)
+                SetTargetIndustry value = Value + (NamedReal name = "BLD_CULTURE_ARCHIVES_TARGET_INDUSTRY_PERPOP" value = (Target.Population / 2))
             ]
 
         EffectsGroup

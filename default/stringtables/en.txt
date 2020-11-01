@@ -8802,9 +8802,12 @@ ANCIENT_RUINS_DEPLETED_SPECIAL
 Ancient Ruins (Excavated)
 
 ANCIENT_RUINS_DEPLETED_SPECIAL_DESC
-'''Increases [[metertype METER_TARGET_RESEARCH]] on this planet by 1 per [[metertype METER_POPULATION]] when Focus is set to Research.
+'''Increases [[metertype METER_TARGET_RESEARCH]] on this planet by [[value ANCIENT_RUINS_TARGET_RESEARCH_PERPOP]] per [[metertype METER_POPULATION]] when Focus is set to Research.
 
 This planet holds the ruins of an unknown, advanced ancient race. A valuable discovery has already been made here.'''
+
+ANCIENT_RUINS_TARGET_RESEARCH_PERPOP
+per population
 
 ANCIENT_RUINS_SPECIAL
 Ancient Ruins
@@ -8873,7 +8876,7 @@ ECCENTRIC_ORBIT_SPECIAL
 Eccentric Orbit
 
 ECCENTRIC_ORBIT_SPECIAL_DESC
-'''Increases [[metertype METER_TARGET_RESEARCH]] by 3, but [[metertype METER_SUPPLY]] is decreased by 2.
+'''Increases [[metertype METER_TARGET_RESEARCH]] by [[value ECCENTRIC_ORBIT_TARGET_RESEARCH_FLAT]], but [[metertype METER_SUPPLY]] is decreased ([[value ECCENTRIC_ORBIT_MAX_SUPPLY_FLAT]]).
 
 This planet's orbit is very eccentric. It has a large distance between its closest and farthest approaches to its star. Total insolation varies significantly throughout the year. The varied conditions inhibit the supply the planet can provide, but are a beneficial platform for research.'''
 
@@ -8894,7 +8897,7 @@ TEMPORAL_ANOMALY_SPECIAL
 Temporal Anomaly
 
 TEMPORAL_ANOMALY_SPECIAL_DESC
-'''Increases [[metertype METER_TARGET_RESEARCH]] on this planet by 5 per [[metertype METER_POPULATION]] when Focus is set to [[metertype METER_RESEARCH]]. Decreases [[metertype METER_TARGET_POPULATION]] (regardless of Focus) depending on the planet size:
+'''Increases [[metertype METER_TARGET_RESEARCH]] on this planet by [[value TEMPORAL_ANOMALY_TARGET_RESEARCH_PERPOP]] per [[metertype METER_POPULATION]] when Focus is set to [[metertype METER_RESEARCH]]. Decreases [[metertype METER_TARGET_POPULATION]] (regardless of Focus) by planet size per [[value TEMPORAL_ANOMALY_TARGET_POPULATION_PERSIZE]]:
 • [[SZ_TINY]] (-5)
 • [[SZ_SMALL]] (-10)
 • [[SZ_MEDIUM]] (-15)
@@ -8903,6 +8906,12 @@ TEMPORAL_ANOMALY_SPECIAL_DESC
 
 The flow of time on this planet is gravely disturbed. Seemingly random local occurences of increases and decreases of the pace of time, induces grave disarrangement in any living being. A social or productive life is nearly impossible. Extreme adaptability and precaution is needed to establish a colony on this planet.
 On the other hand the temporal anomaly has a huge potential for scientific experiments beyond what is possible on normal planets.'''
+
+TEMPORAL_ANOMALY_TARGET_RESEARCH_PERPOP
+per population
+
+TEMPORAL_ANOMALY_TARGET_POPULATION_PERSIZE
+per planet size
 
 RESONANT_MOON_SPECIAL
 Resonant Moon
@@ -8916,9 +8925,12 @@ COMPUTRONIUM_SPECIAL
 Computronium Moon
 
 COMPUTRONIUM_SPECIAL_DESC
-'''When a planet with a Computronium Moon is focused on [[metertype METER_RESEARCH]], all research focused planets in the empire gain 0.1 [[metertype METER_TARGET_RESEARCH]] per [[metertype METER_POPULATION]].
+'''When a planet with a Computronium Moon is focused on [[metertype METER_RESEARCH]], all research focused planets in the empire gain [[value COMPUTRONIUM_TARGET_RESEARCH_PERPOP]] [[metertype METER_TARGET_RESEARCH]] per [[metertype METER_POPULATION]].
 
 Left by some vanished civilization, the entire moon - from surface to core - is a computing device of awesome power. It can complete the most complicated simulations and equations faster than they can be entered.'''
+
+COMPUTRONIUM_TARGET_RESEARCH_PERPOP
+per population
 
 HONEYCOMB_SPECIAL
 Honeycomb
@@ -8932,7 +8944,7 @@ PHILOSOPHER_SPECIAL
 Philosopher Planet
 
 PHILOSOPHER_SPECIAL_DESC
-'''As long as the Philosopher Planet is uninhabited, all inhabited planets in the same system have their [[metertype METER_TARGET_RESEARCH]] increased by 5. [[metertype METER_TARGET_CONSTRUCTION]] on the Philosopher Planet is decreased by 20.
+'''As long as the Philosopher Planet is uninhabited, all inhabited planets in the same system have their [[metertype METER_TARGET_RESEARCH]] increased by [[value PHILOSOPHER_TARGET_RESEARCH_FLAT]]. [[metertype METER_TARGET_CONSTRUCTION]] on the Philosopher Planet is decreased ([[value PHILOSOPHER_TARGET_CONSTRUCTION_FLAT]]).
 
 The lone remnant of a planet-sized space wandering species has found his final rest orbiting in this system like a normal planet. Having lived for thousands of years he lost the will and ability to travel and resorts to pondering about the mysteries of the universe he has seen and learned about. Eccentric and slightly demented he refuses to communicate with anything that isn't the size and shape of his kin, leaving scientists no choice but to ask questions via the planet they are living on. Understandably colonizing the Philosopher Planet will disturb him gravely and he will fall silent. Construction on his surface is difficult as is to be expected from a living being.'''
 
@@ -11567,9 +11579,12 @@ LRN_ALGO_ELEGANCE
 Algorithmic Elegance
 
 LRN_ALGO_ELEGANCE_DESC
-'''Increases [[metertype METER_TARGET_RESEARCH]] on all Research focused planets by 0.05 per [[metertype METER_POPULATION]].
+'''Increases [[metertype METER_TARGET_RESEARCH]] on all Research focused planets by [[value LRN_ALGO_ELEGANCE_TARGET_RESEARCH_PERPOP]] per [[metertype METER_POPULATION]].
 
 With greater and greater difficulty of data analysis problems, traditional measures of algorithm performance become less useful due to the limitations of irreducible complexity. At this stage, other measures of algorithm form and function become significant; aesthetically and metaphorically, the elegance of the solution must be optimized.'''
+
+LRN_ALGO_ELEGANCE_TARGET_RESEARCH_PERPOP
+per population
 
 LRN_TRANSLING_THT
 Translinguistics
@@ -11589,7 +11604,7 @@ LRN_NASCENT_AI
 Nascent Artificial Intelligence
 
 LRN_NASCENT_AI_DESC
-'''Increases [[metertype METER_TARGET_RESEARCH]] on all planets by 1.
+'''Increases [[metertype METER_TARGET_RESEARCH]] on all planets by [[value LRN_NASCENT_AI_TARGET_RESEARCH_FLAT]].
 
 While traditional computers have nearly unfathomable intelligence and computational abilities, they lack the essential qualities of self-awareness, consciousness or sentience. While these traits remain elusive, reasonable facsimiles may be produced. These investigations open new avenues of research into cognitive sciences and novel metaparadigms.
 
@@ -11599,7 +11614,7 @@ LRN_ARTIF_MINDS
 Artificial Minds
 
 LRN_ARTIF_MINDS_DESC
-'''Increases [[metertype METER_TARGET_RESEARCH]] on all Research focused planets by 1.
+'''Increases [[metertype METER_TARGET_RESEARCH]] on all Research focused planets by [[value LRN_ARTIF_MINDS_TARGET_RESEARCH_FLAT]].
 
 Artificial minds are the epitome of the research on cognitive sciences. These are not facsimiles of self-awareness, consciousness or sentience, but the true attainment of such qualities within an artificial being. This sentient devices can expand on their own the limits of science and research, identifying by themselves new ways of data processing and deduction of knowledge. Each planet can contain such structures, if properly maintained and assisted by researchers.'''
 
@@ -11670,11 +11685,14 @@ LRN_QUANT_NET
 Quantum Networking
 
 LRN_QUANT_NET_DESC
-'''Increases [[metertype METER_TARGET_RESEARCH]] on all planets with the Research focus by 0.1 per [[metertype METER_POPULATION]].
+'''Increases [[metertype METER_TARGET_RESEARCH]] on all planets with the Research focus by [[value LRN_QUANT_NET_TARGET_RESEARCH_PERPOP]] per [[metertype METER_POPULATION]].
 
 A massive, empire-wide data network able to transfer information instantaneously between any two places, rather than via the lengthy and indirect path of starlanes. This advancement greatly facilitates research throughout the empire.
 
 Every particle is inextricably connected on the quantum level to every particle with which it has previously interacted. Older mechanistic ideas about cause and effect do not apply on this level, and particles can "communicate" instantaneously across vast distances. When a thorough understanding of this phenomena is acquired, selective small-scale action-at-a-distance between any two points can be achieved instantaneously and outdated relativistic speed limits no longer apply to the transfer of information.'''
+
+LRN_QUANT_NET_TARGET_RESEARCH_PERPOP
+per population
 
 LRN_COLLAPSER
 Black Hole Collapser
@@ -11786,11 +11804,17 @@ GRO_ENERGY_META
 Pure-Energy Metabolism
 
 GRO_ENERGY_META_DESC
-'''Increases max [[metertype METER_FUEL]] on all ships by 1 (before scaling by [[encyclopedia FUEL_EFFICIENCY_TITLE]]), max [[metertype METER_DEFENSE]] on all planets by 5, max [[metertype METER_SHIELD]] on all planets by 5, [[metertype METER_TARGET_INDUSTRY]] on all planets with the Industry focus by 0.1 per [[metertype METER_POPULATION]], and [[metertype METER_TARGET_RESEARCH]] on all planets with the Research focus by 0.2 per [[metertype METER_POPULATION]].
+'''Increases max [[metertype METER_FUEL]] on all ships by 1 (before scaling by [[encyclopedia FUEL_EFFICIENCY_TITLE]]), max [[metertype METER_DEFENSE]] on all planets by [[value GRO_ENERGY_META_MAX_DEFENSE_FLAT]], max [[metertype METER_SHIELD]] on all planets by [[value GRO_ENERGY_META_MAX_SHIELD_FLAT]], [[metertype METER_TARGET_INDUSTRY]] on all planets with the Industry focus by [[value GRO_ENERGY_META_TARGET_INDUSTRY_PERPOP]] per [[metertype METER_POPULATION]], and [[metertype METER_TARGET_RESEARCH]] on all planets with the Research focus by [[value GRO_ENERGY_META_TARGET_RESEARCH_PERPOP]] per [[metertype METER_POPULATION]].
 
 While transforming an entire population into beings of pure energy would be impractical, certain tasks are better suited to individuals able to manifest themselves non-corporeally. Ship's crews for example, would no longer have to waste space with crew quarters or rations storage. Beings with greater energy channeling abilities would be able to enhance planetary shields and defense, and resource production would be generally enhanced.
 
 The ultimate stage of physical development is to transcend the physical altogether. Without bodies, individuals and society may move, grow and exist freely, unhindered by unnecessary physical limitations and inefficient metabolic processes that waste energy supporting homeostasis.'''
+
+GRO_ENERGY_META_TARGET_INDUSTRY_PERPOP
+per population
+
+GRO_ENERGY_META_TARGET_RESEARCH_PERPOP
+per population
 
 PRO_TRANS_DESIGN
 Transcendent Design
@@ -12454,23 +12478,38 @@ LRN_DISTRIB_THOUGHT
 Distributed Thought Computing
 
 LRN_DISTRIB_THOUGHT_DESC
-'''Increases [[metertype METER_TARGET_RESEARCH]] on all planets with any focus by 0.1 per [[metertype METER_POPULATION]].
+'''Increases [[metertype METER_TARGET_RESEARCH]] on all planets with any focus by [[value LRN_DISTRIB_THOUGHT_TARGET_RESEARCH_PERPOP]] per [[metertype METER_POPULATION]].
 
 Grants 1 extra military policy slot.
 
 The average citizen literally wastes his mind away, one of the finest computing devices in the universe. By tapping into the idle brain cycles of a sufficiently large population through a network of simple cybernetic transceivers, the research centers of a world can gain access to cheap and plentiful raw computing power.'''
+
+LRN_DISTRIB_THOUGHT_TARGET_RESEARCH_PERPOP
+per population
 
 LRN_STELLAR_TOMOGRAPHY
 Stellar Tomography
 
 LRN_STELLAR_TOMOGRAPHY_DESC
 '''Increases [[metertype METER_TARGET_RESEARCH]] on planets with the Research focus, per [[metertype METER_POPULATION]] and depending on the star type:
-* [[STAR_BLACK]] (x0.2)
-* [[STAR_NEUTRON]] (x0.15)
-* [[STAR_BLUE]] or [[STAR_WHITE]] (x0.1)
-* [[STAR_YELLOW]], [[STAR_ORANGE]] or [[STAR_RED]] (x0.05)
+* [[STAR_BLACK]] (x[[value LRN_STELLAR_TOMO_BLACK_TARGET_RESEARCH_PERPOP]])
+* [[STAR_NEUTRON]] (x[[value LRN_STELLAR_TOMO_NEUTRON_TARGET_RESEARCH_PERPOP]])
+* [[STAR_BLUE]] or [[STAR_WHITE]] (x[[value LRN_STELLAR_TOMO_BRIGHT_TARGET_RESEARCH_PERPOP]])
+* [[STAR_YELLOW]], [[STAR_ORANGE]] or [[STAR_RED]] (x[[value LRN_STELLAR_TOMO_DIME_TARGET_RESEARCH_PERPOP]])
 
 A network of specialized satellites can use tomographic methods to reconstruct the activities occurring deep within a star. These otherwise costly-to-produce conditions are ideal for a variety of research endeavors, with larger benefits for more exotic star types.'''
+
+LRN_STELLAR_TOMO_BLACK_TARGET_RESEARCH_PERPOP
+per population
+
+LRN_STELLAR_TOMO_NEUTRON_TARGET_RESEARCH_PERPOP
+per population
+
+LRN_STELLAR_TOMO_BRIGHT_TARGET_RESEARCH_PERPOP
+per population
+
+LRN_STELLAR_TOMO_DIME_TARGET_RESEARCH_PERPOP
+per population
 
 LRN_SPATIAL_DISTORT_GEN
 Spatial Distortion
@@ -13322,15 +13361,18 @@ BLD_CULTURE_ARCHIVES
 Cultural Archives
 
 BLD_CULTURE_ARCHIVES_DESC
-'''Increases [[metertype METER_TARGET_RESEARCH]] by 5 and [[metertype METER_TARGET_INDUSTRY]] by half the planet's [[metertype METER_POPULATION]].
+'''Increases [[metertype METER_TARGET_RESEARCH]] by [[value BLD_CULTURE_ARCHIVES_TARGET_RESEARCH_FLAT]] and [[metertype METER_TARGET_INDUSTRY]] by [[value BLD_CULTURE_ARCHIVES_TARGET_INDUSTRY_PERPOP]] per [[metertype METER_POPULATION]].
 
 Stores the sum accumulated knowledge from thousands of years of life on this planet, improving many aspects of planetary productivity.'''
+
+BLD_CULTURE_ARCHIVES_TARGET_INDUSTRY_PERPOP
+per population
 
 BLD_CULTURE_LIBRARY
 Cultural Library
 
 BLD_CULTURE_LIBRARY_DESC
-'''Increases [[metertype METER_TARGET_RESEARCH]] by 5.
+'''Increases [[metertype METER_TARGET_RESEARCH]] by [[value BLD_CULTURE_LIBRARY_TARGET_RESEARCH_FLAT]].
 
 Stores the accumulated knowledge from thousands of years of life on this planet, giving a bonuses to research. This building will be destroyed when the [[metertype METER_POPULATION]] of the high tech natives reaches zero.'''
 
@@ -13338,7 +13380,7 @@ BLD_AUTO_HISTORY_ANALYSER
 Automated History Analyser
 
 BLD_AUTO_HISTORY_ANALYSER_DESC
-'''The Automated History Analyser can only be built on a planet with [[buildingtype BLD_CULTURE_ARCHIVES]]. Increases [[metertype METER_TARGET_RESEARCH]] by 5.
+'''The Automated History Analyser can only be built on a planet with [[buildingtype BLD_CULTURE_ARCHIVES]]. Increases [[metertype METER_TARGET_RESEARCH]] by [[value BLD_AUTO_HISTORY_ANALYSER_TARGET_RESEARCH_FLAT]].
 
 An automated research center with enormous computing power that scours the digitalised cultural archives to come up with patterns, interdisciplinary parallels and lost or unfinished insights.'''
 
@@ -13560,10 +13602,16 @@ BLD_COLLECTIVE_NET
 Collective Thought Network
 
 BLD_COLLECTIVE_NET_DESC
-'''Increases [[metertype METER_TARGET_INDUSTRY]] on planets with the Industry focus by 0.1 per [[metertype METER_POPULATION]], and [[metertype METER_TARGET_RESEARCH]] on Planets with the Research focus by 0.1 per [[metertype METER_POPULATION]]. Starlane travel within 200 uu will disrupt this building's effectiveness and eliminate these bonuses.
+'''Increases [[metertype METER_TARGET_INDUSTRY]] on planets with the Industry focus by [[value BLD_COLLECTIVE_NET_TARGET_INDUSTRY_PERPOP]] per [[metertype METER_POPULATION]], and [[metertype METER_TARGET_RESEARCH]] on Planets with the Research focus by [[value BLD_COLLECTIVE_NET_TARGET_RESEARCH_PERPOP]] per [[metertype METER_POPULATION]]. Starlane travel within 200 uu will disrupt this building's effectiveness and eliminate these bonuses.
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
 By transferring the mind into cyberspace, thousands of minds can act as one, solving problems and making breakthroughs that no single mind could.'''
+
+BLD_COLLECTIVE_NET_TARGET_INDUSTRY_PERPOP
+per population
+
+BLD_COLLECTIVE_NET_TARGET_RESEARCH_PERPOP
+per population
 
 BLD_GATEWAY_VOID
 Gateway to the Void
@@ -13577,10 +13625,13 @@ BLD_ENCLAVE_VOID
 Enclave of the Void
 
 BLD_ENCLAVE_VOID_DESC
-'''Increases [[metertype METER_TARGET_RESEARCH]] on all planets with the Research focus by 0.15 per [[metertype METER_POPULATION]].
+'''Increases [[metertype METER_TARGET_RESEARCH]] on all planets with the Research focus by [[value BLD_ENCLAVE_VOID_TARGET_RESEARCH_PERPOP]] per [[metertype METER_POPULATION]].
 Multiple copies do not stack.
 
 The population of an entire planet is genetically attuned to the Void Mind and dedicated to channeling its wisdom to the empire. The denizens of the Void Enclave are regarded as priests, channels of higher thinking and wisdom. In all matters of importance to the empire, their advice is sought after. Emissaries from the Enclave can even be sent to assist in the empire's research projects.'''
+
+BLD_ENCLAVE_VOID_TARGET_RESEARCH_PERPOP
+per population
 
 BLD_ART_BLACK_HOLE
 Artificial Black Hole

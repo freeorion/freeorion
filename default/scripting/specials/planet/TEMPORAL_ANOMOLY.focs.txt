@@ -16,15 +16,17 @@ Special
                 Focus type = "FOCUS_RESEARCH"
             ]
             priority = [[EARLY_PRIORITY]]
-            effects = SetTargetResearch value = Value + Target.Population * 25 * [[RESEARCH_PER_POP]]
+            effects = SetTargetResearch value = Value + Target.Population
+                          * (NamedReal name = "TEMPORAL_ANOMALY_TARGET_RESEARCH_PERPOP" value = (25 * [[RESEARCH_PER_POP]]))
 
         EffectsGroup
             scope = Object id = Source.PlanetID
             priority = [[TARGET_POPULATION_AFTER_SCALING_PRIORITY]]
-            effects = SetTargetPopulation value = Value - 5 * Target.HabitableSize accountinglabel = "TEMPORAL_ANOMALY_SPECIAL"
+            effects = SetTargetPopulation value = Value + Target.HabitableSize
+                          * (NamedReal name = "TEMPORAL_ANOMALY_TARGET_POPULATION_PERSIZE" value = (-5))
+                          accountinglabel = "TEMPORAL_ANOMALY_SPECIAL"
     ]
     graphic = "icons/specials_huge/temporal_anomaly.png"
 
 #include "/scripting/common/base_prod.macros"
-
 #include "/scripting/common/priorities.macros"

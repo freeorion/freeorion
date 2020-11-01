@@ -14,7 +14,7 @@ Tech
                 Focus type = "FOCUS_RESEARCH"
             ]
             priority = [[EARLY_PRIORITY]]
-            effects = SetTargetResearch value = Value + Target.Population * 0.25 * [[RESEARCH_PER_POP]]
+            effects = SetTargetResearch value = Value + Target.Population * (NamedReal name = "LRN_ALGO_ELEGANCE_TARGET_RESEARCH_PERPOP" value = (0.25 * [[RESEARCH_PER_POP]]))
     ]
     graphic = "icons/tech/algorithmic_elegance.png"
 
