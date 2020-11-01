@@ -1,3 +1,12 @@
+// Proposed naming convention: <EFFECT_NAME> _ <METER_NAME> _ FLAT/PERPOP/<others>
+// Examples:
+// - PLC_CONFEDERATION_TARGET_HAPPINESS_FLAT (flat bonus/malus to TargetHappiness from policy PLC_CONFEDERATION)
+// - GARRISON_2_TROOPREGEN_FLAT (flat bonus/malus to troop regen from tech Garrison_2
+// - GRO_CYBORGS_MAX_TROOPS_PERPOP (bonus/malus per population to MaxTroops from tech GRO_CYBORGS)
+
+
+NamedReal name = "IMPERIAL_GARRISON_MAX_TROOPS_FLAT" value = 6
+
 NamedReal name = "SHP_REINFORCED_HULL_BONUS" value = (5 * [[SHIP_STRUCTURE_FACTOR]]) 
 
 NamedInteger name = "NUM_COMBAT_ROUNDS" value = (GameRule name = "RULE_NUM_COMBAT_ROUNDS")

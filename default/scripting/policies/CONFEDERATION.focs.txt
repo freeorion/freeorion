@@ -7,7 +7,7 @@ Policy
     exclusions = [ "PLC_CENTRALIZATION" ]
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
-    
+
         // compensates for species influence effect that reduces influence when not supply connected to capital
         EffectsGroup
             scope = And [
@@ -17,21 +17,21 @@ Policy
                 Not ResourceSupplyConnected empire = LocalCandidate.Owner condition = Source
             ]
             priority = [[DEFAULT_PRIORITY]]
-            effects = 
-                SetTargetInfluence value = value + 1
+            effects = SetTargetInfluence value = value +
+                          (NamedReal name = "PLC_CONFEDERATION_TARGET_INFLUENCE_FLAT" value = 1)
 
         // makes all planets less stable
         EffectsGroup
-        scope = And [
-            Planet
-            OwnedBy empire = Source.Owner
-            Population low = 0.001
-        ]
-        priority = [[DEFAULT_PRIORITY]]
-        effects = [
-            SetTargetHappiness value = Value - 1
-            SetMaxTroops value = Value + 5
-        ]
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Population low = 0.001
+            ]
+            priority = [[VERY_EARLY_PRIORITY]]
+            effects = [
+                SetTargetHappiness value = Value + (NamedReal name = "PLC_CONFEDERATION_TARGET_HAPPINESS_FLAT" value = (-1))
+                SetMaxTroops value = Value + (NamedReal name = "PLC_CONFEDERATION_MAX_TROOPS_FLAT" value = 5)
+            ]
     ]
     graphic = "icons/policies/confederation.png"
 

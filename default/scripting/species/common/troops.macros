@@ -27,6 +27,17 @@ BASIC_DEFENSE_TROOPS
             scope = Source
             activation = And [
                 Planet
+                Not Unowned
+            ]
+            priority = [[VERY_EARLY_PRIORITY]]
+            effects = SetMaxTroops value = Value
+                        + (NamedRealLookup name = "IMPERIAL_GARRISON_MAX_TROOPS_FLAT")
+            accountinglabel = "IMPERIAL_GARRISON_LABEL"
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
                 Unowned
             ]
             stackinggroup = "BASIC_TROOPS_STACK"
@@ -39,7 +50,9 @@ BASIC_DEFENSE_TROOPS
             activation = Planet
             stackinggroup = "POPULATION_TROOPS_STACK"
             priority = [[VERY_EARLY_PRIORITY]]
-            effects = SetMaxTroops Value = Value + Target.Population * [[TROOPS_PER_POP]]
+            effects = SetMaxTroops Value = Value
+                        + (NamedReal name = "BASIC_DEFENSE_TROOPS_MAX_TROOPS_PERPOP"
+                                     value = (Target.Population * [[TROOPS_PER_POP]]))
             accountinglabel = "DEF_ROOT_DEFENSE"
             
         EffectsGroup      // gives human bonuses when AI Aggression set to Beginner
@@ -53,15 +66,16 @@ BASIC_DEFENSE_TROOPS
             priority = [[DEFAULT_PRIORITY]]
             effects = SetMaxTroops value = max(6, Value * 2)
 
-        EffectsGroup // increase 1 per turn, up to max
+        EffectsGroup // base troops regeneration
             scope = Source
             activation = And [
                 Planet
                 (LocalCandidate.LastTurnConquered < CurrentTurn)
-                (LocalCandidate.LastTurnAttackedByShip  < CurrentTurn)
+                (LocalCandidate.LastTurnAttackedByShip < CurrentTurn)
             ]
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
-            effects = SetTroops value = min(Value(Target.MaxTroops), Value + 1)
+            effects = SetTroops value = min(Value(Target.MaxTroops),
+                                            Value + (NamedReal name = "BASIC_DEFENSE_TROOPS_TROOPREGEN_FLAT" value = 1))
 '''
 
 AFTER_SPECIES_MULTIPLICATOR_TROOPS

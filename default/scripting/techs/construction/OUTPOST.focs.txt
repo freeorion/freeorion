@@ -22,12 +22,10 @@ Tech
             accountinglabel = "OUTPOST_TROOP_LABEL"
 
         // Ensure construction minimum value of one, as this is necessary for being attacked
-        // For colonies see STANDARD_CONSTRUCTION in default/scripting/species/common/general.macros
         EffectsGroup
             scope = And [
                 Planet
                 OwnedBy empire = Source.Owner
-                Population high = 0
             ]
             // has to happen after e.g. FORCE_ENERGY_STRC effects which also happens at AFTER_ALL_TARGET_MAX_METERS_PRIORITY
             priority = [[METER_OVERRIDE_PRIORITY]]
