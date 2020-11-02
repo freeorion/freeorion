@@ -1897,8 +1897,8 @@ unsigned int Operation<T>::GetCheckSum() const
     CheckSums::CheckSumCombine(retval, "ValueRef::Operation");
     CheckSums::CheckSumCombine(retval, m_op_type);
     CheckSums::CheckSumCombine(retval, m_operands);
-    CheckSums::CheckSumCombine(retval, m_constant_expr);
-    CheckSums::CheckSumCombine(retval, m_cached_const_value);
+    // derived member values should not be part of checksums
+    // e.g. the invariants, m_constant_expr, and m_cached_const_value
     TraceLogger() << "GetCheckSum(Operation<T>): " << typeid(*this).name() << " retval: " << retval;
     return retval;
 }

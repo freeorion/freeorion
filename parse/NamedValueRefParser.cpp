@@ -36,7 +36,7 @@ namespace parse {
         // Note: Other parsers might also register value refs, so the normal pending mechanism does not suffice.
         //       So we do not collect the value refs in the given named_refs reference but register directly.
         std::unique_ptr<ValueRef::ValueRef<T>> vref = ref_envelope.OpenEnvelope(pass);
-        // Log an error if CurrentContent is used
+        // Signal to log an error if CurrentContent is used
         vref->SetTopLevelContent("THERE_IS_NO_TOP_LEVEL_CONTENT");
         ::RegisterValueRef<T>(name, std::move(vref));
     }

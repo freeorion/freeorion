@@ -10,7 +10,7 @@ namespace ValueRef {
 template <typename T>
 struct FO_COMMON_API NamedRef final : public ValueRef<T>
 {
-    NamedRef(std::string value_ref_name);
+    NamedRef(std::string value_ref_name, bool is_only_lookup = false);
 
     bool RootCandidateInvariant() const override;
     bool LocalCandidateInvariant() const override;
@@ -30,7 +30,12 @@ struct FO_COMMON_API NamedRef final : public ValueRef<T>
     unsigned int GetCheckSum() const override;
 
 private:
-    std::string m_value_ref_name;
+    //! initialises invariants from registered valueref, waits a bit for registration, use on first access
+    bool NamedRefInitInvariants();
+
+    std::string m_value_ref_name;           //! registered name of value ref
+    bool m_invariants_initialized = false;  //! true if the invariants were initialized from the referenced vale ref
+    bool m_is_lookup_only;                  //! true if created by a *Lookup in FOCS
 };
 }
 

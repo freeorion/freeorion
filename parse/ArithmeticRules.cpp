@@ -40,7 +40,7 @@ namespace parse { namespace detail {
                    tok.Named_ >> tok.Value_ >> tok.Lookup_
                 >> label(tok.name_)
                 >> tok.string
-              ) [ _val = construct_movable_(new_<ValueRef::NamedRef<T>>(_4)) ]
+              ) [ _val = construct_movable_(new_<ValueRef::NamedRef<T>>(_4, boost::phoenix::val(/*is_lookup_only*/true))) ]
             ;
 
         functional_expr
