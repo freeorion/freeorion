@@ -109,28 +109,28 @@ GALAXY_SHAPE_MOD_TO_PLANET_SIZE_DIST = {
 # Whenever any special might be placed, the following probability is the chance
 # that it actually will be (after other factors are considered).
 SPECIALS_FREQUENCY = {
-    fo.galaxySetupOption.none:    0,
-    fo.galaxySetupOption.low:    .1,
-    fo.galaxySetupOption.medium: .3,
-    fo.galaxySetupOption.high:   .8,
+    fo.galaxySetupOption.none:   .0,
+    fo.galaxySetupOption.low:    .08,
+    fo.galaxySetupOption.medium: .2,
+    fo.galaxySetupOption.high:   .5,
 }
 
 # Whenever a monster might be placed, the following probability is the chance
 # that it actually will be (after other factors are considered).
 MONSTER_FREQUENCY = {
-    fo.galaxySetupOption.none:   0,
-    fo.galaxySetupOption.low:    0.033,
-    fo.galaxySetupOption.medium: 0.125,
-    fo.galaxySetupOption.high:   0.333,
+    fo.galaxySetupOption.none:   .0,
+    fo.galaxySetupOption.low:    .08,
+    fo.galaxySetupOption.medium: .2,
+    fo.galaxySetupOption.high:   .5,
 }
 
 # Whenever natives might be placed on a planet, the following probability is
 # the chance that they actually will be (after other factors are considered).
 NATIVE_FREQUENCY = {
-    fo.galaxySetupOption.none:   0,
-    fo.galaxySetupOption.low:    0.083,
-    fo.galaxySetupOption.medium: 0.143,
-    fo.galaxySetupOption.high:   0.200,
+    fo.galaxySetupOption.none:   .0,
+    fo.galaxySetupOption.low:    .05,
+    fo.galaxySetupOption.medium: .125,
+    fo.galaxySetupOption.high:   .3,
 }
 
 # This is the maximum size of the shortest path via starlane that the generator
