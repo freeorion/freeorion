@@ -1121,6 +1121,9 @@ Les astronefs coûtent seulement 1 PP et 1 tour de production.
 NUM_COMBAT_ROUNDS
 par combat
 
+NUM_COMBAT_ROUNDS_FIGHTERS
+par combat
+
 RULE_NUM_COMBAT_ROUNDS
 Passes de Combat
 
@@ -7538,6 +7541,12 @@ L'astronef '%ship%' de %empire% est passé sous contrôle psychique!
 EFFECT_PSY_DOM_LABEL
 Contrôle psychique
 
+IMPERIAL_GARRISON_ACTIVATED
+Garnison impériale : %empire% a colonisé la planète %planet% dans %system%.
+
+IMPERIAL_GARRISON_ACTIVATED_LABEL
+Nouvelle colonie
+
 EFFECT_MINES
 Dans %system% : des mines ont causé %rawtext% de dommages à la flotte %fleet% de %empire%.
 
@@ -8793,9 +8802,12 @@ ANCIENT_RUINS_DEPLETED_SPECIAL
 Ruines Ancestrales (Exhumées)
 
 ANCIENT_RUINS_DEPLETED_SPECIAL_DESC
-'''Augmente la [[metertype METER_TARGET_RESEARCH]] sur cette planète de 1 par [[metertype METER_POPULATION]], si le Focus Recherche est sélectionné.
+'''Augmente la [[metertype METER_TARGET_RESEARCH]] sur cette planète de [[value ANCIENT_RUINS_TARGET_RESEARCH_PERPOP]] par [[metertype METER_POPULATION]], si le Focus Recherche est sélectionné.
 
 Cette planète abrite les ruines d'une puissante civilisation ancestrale et oubliée... Mais une découverte de grande valeur y a déjà eu lieu.'''
+
+ANCIENT_RUINS_TARGET_RESEARCH_PERPOP
+par Population
 
 ANCIENT_RUINS_SPECIAL
 Ruines Ancestrales
@@ -8864,7 +8876,7 @@ ECCENTRIC_ORBIT_SPECIAL
 Orbite Excentrissime
 
 ECCENTRIC_ORBIT_SPECIAL_DESC
-'''Augmente de 3 la [[metertype METER_TARGET_RESEARCH]], mais réduit de 2 l'[[metertype METER_SUPPLY]].
+'''Augmente de [[value ECCENTRIC_ORBIT_TARGET_RESEARCH_FLAT]] la [[metertype METER_TARGET_RESEARCH]], mais réduit l'[[metertype METER_SUPPLY]] ([[value ECCENTRIC_ORBIT_MAX_SUPPLY_FLAT]]).
 
 L'orbite de la planète autour de son étoile est très excentrique : la distance de son aphélie est un très grand multiple de la distance de son périhélie. L'intensité de l'ensoleillement varie ainsi énormément au cours de l'année. Ces conditions variables ralentissent la gestion de l'approvisionnement sur la planète, mais s'avèrent un terrain exaltant pour la recherche scientifique.'''
 
@@ -8885,7 +8897,7 @@ TEMPORAL_ANOMALY_SPECIAL
 Anomalie Temporelle
 
 TEMPORAL_ANOMALY_SPECIAL_DESC
-'''Augmente la [[metertype METER_TARGET_RESEARCH]] sur cette planète de 5 par [[metertype METER_POPULATION]] si le Focus [[metertype METER_RESEARCH]] est activé. Diminue la [[metertype METER_TARGET_POPULATION]] selon la taille de la planète (quel que soit le Focus) :
+'''Augmente la [[metertype METER_TARGET_RESEARCH]] sur cette planète de [[value TEMPORAL_ANOMALY_TARGET_RESEARCH_PERPOP]] par [[metertype METER_POPULATION]] si le Focus [[metertype METER_RESEARCH]] est activé. Diminue la [[metertype METER_TARGET_POPULATION]] (quel que soit le Focus) selon la taille de la planète par [[value TEMPORAL_ANOMALY_TARGET_POPULATION_PERSIZE]] :
 • [[SZ_TINY]] (-5)
 • [[SZ_SMALL]] (-10)
 • [[SZ_MEDIUM]] (-15)
@@ -8894,6 +8906,12 @@ TEMPORAL_ANOMALY_SPECIAL_DESC
 
 L'écoulement du temps sur cette planète est fortement perturbé. Des événements apparemment aléatoires provoquent soit une accélération soit un ralentissement de la vitesse du temps, troublant profondément le rythme biologique de tout être vivant et rendant quasiment impossible toute organisation sociale et productive. Une adaptabilité extrême et de grandes précautions sont requises afin d'établir une colonie sur cette planète.
 Cependant, une anomalie temporelle présente un fort potentiel pour la recherche scientifique, bien au-delà de ce qu'il est possible d'entreprendre sur les planètes conventionnelles.'''
+
+TEMPORAL_ANOMALY_TARGET_RESEARCH_PERPOP
+par Population
+
+TEMPORAL_ANOMALY_TARGET_POPULATION_PERSIZE
+par taille de la planète
 
 RESONANT_MOON_SPECIAL
 Lune Synchrone
@@ -8907,9 +8925,12 @@ COMPUTRONIUM_SPECIAL
 Lune Ordinatrice
 
 COMPUTRONIUM_SPECIAL_DESC
-'''Lorsqu'une Lune Ordinatrice orbite autour d'une planète privilégiant la [[metertype METER_RESEARCH]], toutes les planètes de l'empire réglées sur le même Focus améliorent leur [[metertype METER_TARGET_RESEARCH]] de 0.1 par [[metertype METER_POPULATION]].
+'''Lorsqu'une Lune Ordinatrice orbite autour d'une planète privilégiant la [[metertype METER_RESEARCH]], toutes les planètes de l'empire réglées sur le même Focus améliorent leur [[metertype METER_TARGET_RESEARCH]] de [[value COMPUTRONIUM_TARGET_RESEARCH_PERPOP]] par [[metertype METER_POPULATION]].
 
 Abandonnée par une civilisation dont le souvenir s'est effacé avec le temps, cette lune est en réalité un ordinateur d'une puissance de calcul inouïe. Elle peut effectuer des simulations et résoudre les équations les plus complexes en moins de temps qu'il ne faut pour les lui proposer.'''
+
+COMPUTRONIUM_TARGET_RESEARCH_PERPOP
+par Population
 
 HONEYCOMB_SPECIAL
 Réserve Alvéolaire
@@ -8923,7 +8944,7 @@ PHILOSOPHER_SPECIAL
 Planète Métaphysique
 
 PHILOSOPHER_SPECIAL_DESC
-'''Aussi longtemps que la Planète Métaphysique demeure inhabitée, toutes les planètes habitées du même système stellaire voient leur [[metertype METER_TARGET_RESEARCH]] augmenter de 5. La [[metertype METER_TARGET_CONSTRUCTION]] d'une colonie installée sur une Planète Métaphysique diminue de 20.
+'''Aussi longtemps que la Planète Métaphysique demeure inhabitée, toutes les planètes habitées du même système stellaire voient leur [[metertype METER_TARGET_RESEARCH]] augmenter de [[value PHILOSOPHER_TARGET_RESEARCH_FLAT]]. La [[metertype METER_TARGET_CONSTRUCTION]] d'une colonie installée sur une Planète Métaphysique est réduite ([[value PHILOSOPHER_TARGET_CONSTRUCTION_FLAT]]).
 
 L'unique et dernier représentant d'une espèce vagabonde de taille planétaire a trouvé sa dernière demeure près de cette étoile, autour de laquelle il orbite comme une planète normale. Âgé de milliers d'années, il a perdu l'envie et la capacité de voyager et se consacre désormais à la méditation sur tous les mystères de l'univers qu'il a rencontré au cours de sa longue existence. Déroutant et légèrement perturbé, il refuse de communiquer avec quiconque n'étant ni de sa taille ni de sa forme, ne laissant pas aux savants d'autres choix que de l'interroger via la voix de la planète sur laquelle ils résident. Sans surprise, coloniser la Planète Métaphysique la perturbe gravement et provoque un mutisme profond. La construction à sa surface s'avère difficile, comme il pouvait l'être présumé sur une entité vivante.'''
 
@@ -11256,7 +11277,7 @@ PLC_ALLIED_REPAIR
 Réparation Alliée
 
 PLC_ALLIED_REPAIR_DESC
-Si deux empires sont alliés, et que l'un ou l'autre applique cette stratégie, les deux empires bénéficieront de la réparation des astronefs endommagés en  [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] quel que soit l'empire propriétaire, et profiteront mutuellement de la technologie [[tech SHP_FLEET_REPAIR]].
+Si deux empires sont alliés, et que l'un ou l'autre applique cette stratégie, les deux empires bénéficieront de la réparation des astronefs endommagés en [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] quel que soit l'empire propriétaire, et profiteront mutuellement de la technologie [[tech SHP_FLEET_REPAIR]].
 
 PLC_ALLIED_REPAIR_SHORT_DESC
 Permet aux alliés la réparation mutuelle des astronefs
@@ -11360,7 +11381,10 @@ PLC_CONFEDERATION
 Confédération
 
 PLC_CONFEDERATION_DESC
-Les planètes sont organisées en un système indépendant confédéré, et ne pâtissent pas d'une Influence réduite si non-connectées à la Capitale, mais sont légèrement moins stables en général. L'Infanterie de ces planètes est également légèrement renforcée.
+'''Les planètes sont organisées en un système indépendant confédéré, et ne pâtissent pas d'une Influence réduite si non-connectées à la Capitale, mais sont légèrement moins stables en général.
+
+Augmente de [[value PLC_CONFEDERATION_MAX_TROOPS_FLAT]] l'[[metertype METER_TROOPS]] max mais réduit la [[metertype METER_TARGET_HAPPINESS]] ([[value PLC_CONFEDERATION_TARGET_HAPPINESS_FLAT]]) sur toutes les planètes.
+Augmente de [[value PLC_CONFEDERATION_TARGET_INFLUENCE_FLAT]] l'[[metertype METER_TARGET_INFLUENCE]] des colonies non-connectées à la Capitale.'''
 
 PLC_CONFEDERATION_SHORT_DESC
 Soutient les systèmes déconnectés
@@ -11555,9 +11579,12 @@ LRN_ALGO_ELEGANCE
 Élégance Algorithmique
 
 LRN_ALGO_ELEGANCE_DESC
-'''Augmente la [[metertype METER_TARGET_RESEARCH]] de 0.05 par [[metertype METER_POPULATION]] sur toutes les planètes en Focus Recherche.
+'''Augmente la [[metertype METER_TARGET_RESEARCH]] de [[value LRN_ALGO_ELEGANCE_TARGET_RESEARCH_PERPOP]] par [[metertype METER_POPULATION]] sur toutes les planètes en Focus Recherche.
 
 Avec une difficulté grandissante des problèmes d'analyse de données, les démarches traditionnelles des performances algorithmiques deviennent moins efficaces, en raison des limitations de la complexité irréductible. À ce stade, de nouvelles formes et fonctions algorithmiques deviennent significatives: esthétiquement et métaphoriquement, l'élégance de la solution doit être optimisée.'''
+
+LRN_ALGO_ELEGANCE_TARGET_RESEARCH_PERPOP
+par Population
 
 LRN_TRANSLING_THT
 Translinguistique
@@ -11577,7 +11604,7 @@ LRN_NASCENT_AI
 Intelligences Artificielles
 
 LRN_NASCENT_AI_DESC
-'''Augmente la [[metertype METER_TARGET_RESEARCH]] de 1 sur toutes les planètes.
+'''Augmente la [[metertype METER_TARGET_RESEARCH]] de [[value LRN_NASCENT_AI_TARGET_RESEARCH_FLAT]] sur toutes les planètes.
 
 Alors que les ordinateurs traditionnels ont des capacités de calcul presque infinies, ils leur manquent cependant une qualité essentielle: la conscience. Bien que la définition complète du concept de conscience reste insaisissable, cette qualité peut être toutefois synthétisée et reproduite de manière plutôt convaincante. Ces recherches peuvent ouvrir de nouvelles voies en matière de sciences cognitives et de métaparadigmes.
 
@@ -11587,7 +11614,7 @@ LRN_ARTIF_MINDS
 Consciences Artificielles
 
 LRN_ARTIF_MINDS_DESC
-'''Augmente la [[metertype METER_TARGET_RESEARCH]] de 1 sur toutes les planètes en Focus Recherche.
+'''Augmente la [[metertype METER_TARGET_RESEARCH]] de [[value LRN_ARTIF_MINDS_TARGET_RESEARCH_FLAT]] sur toutes les planètes en Focus Recherche.
 
 Les consciences artificielles constituent la quête ultime des recherches en sciences cognitives. Elles dépassent le stade prédéfini des intelligences artificielles, pour atteindre celui de conscience de soi et de sentience au sein d'un être artificiel. Ces systèmes sentients peuvent élargir de leur proche chef les limites de la science et de la recherche, identifiant par eux-mêmes de nouvelles manières de traiter les données et d'en déduire de nouvelles connaissances. Chaque planète peut héberger de telles structures, tant que celles-ci bénéficient de la maintenance et de l'expertise de chercheurs qualifiés.'''
 
@@ -11636,7 +11663,7 @@ LRN_TIME_MECH
 Mécanique Temporelle
 
 LRN_TIME_MECH_DESC
-'''Octroie un choix supplémentaire de Stratégie Militaire.
+'''Octroie un choix supplémentaire de Stratégie militaire.
 
 Qu'est-ce que "le présent", "le futur" et "le passé"? Le double paradoxe de la relativité ou bien la théorie du "trou de ver", suggèrent les premières formes de "voyage dans le temps". La manipulation directe des flux spatio-temporels permet de contrôler et d'amplifier ces effets. Les incursions temporelles ne peuvent pas modifier d'une manière perceptible le passé de l'univers que nous observons. Cependant, ces manipulations peuvent compresser le temps ou allonger arbitrairement la durée des instants, en vue d'applications limitées seulement par nos ressources, ainsi que notre propre patience...'''
 
@@ -11658,11 +11685,14 @@ LRN_QUANT_NET
 Réseau Quantique
 
 LRN_QUANT_NET_DESC
-'''Augmente la [[metertype METER_TARGET_RESEARCH]] de 0.1 par [[metertype METER_POPULATION]] sur toutes les planètes en Focus Recherche.
+'''Augmente la [[metertype METER_TARGET_RESEARCH]] de [[value LRN_QUANT_NET_TARGET_RESEARCH_PERPOP]] par [[metertype METER_POPULATION]] sur toutes les planètes en Focus Recherche.
 
 Un réseau massif de donnés, à l'échelle de l'empire, capable de transférer instantanément des informations entre deux lieux, plutôt que par le système lent et indirect des voies spatiales. Ce progrès facilite grandement la Recherche dans tout l'empire.
 
 Chaque particule est inextricablement liée au niveau quantique à toute particule avec laquelle elle a déjà interagi. Les vieilles idées mécanistes concernant la cause et la conséquence ne sont plus applicables à ce niveau, les particules pouvant "communiquer" instantanément sur de vastes distances. Lorsque la compréhension approfondie de ce phénomène est acquise, certaines actions de petite échelle entre deux lieux distants peuvent être réalisées instantanément, tandis que les limites obsolètes de la vitesse relativiste ne s'appliquent plus au transfert de l'information.'''
+
+LRN_QUANT_NET_TARGET_RESEARCH_PERPOP
+par Population
 
 LRN_COLLAPSER
 Inversion de Trou Noir
@@ -11774,11 +11804,17 @@ GRO_ENERGY_META
 Métabolisme d'Énergie Pure
 
 GRO_ENERGY_META_DESC
-'''Augmente le [[metertype METER_FUEL]] max de 1 sur tous les astronefs (avant mise à l'échelle selon le [[encyclopedia FUEL_EFFICIENCY_TITLE]]), la [[metertype METER_DEFENSE]] max de 5 sur toutes les planètes, les [[metertype METER_SHIELD]] max de 5 sur toutes les planètes, la [[metertype METER_TARGET_INDUSTRY]] de 0.1 par [[metertype METER_POPULATION]] sur toutes les planètes en Focus Industrie, et la [[metertype METER_TARGET_RESEARCH]] de 0.2 par [[metertype METER_POPULATION]] sur toutes les planètes en Focus Recherche.
+'''Augmente le [[metertype METER_FUEL]] max de 1 sur tous les astronefs (avant mise à l'échelle selon le [[encyclopedia FUEL_EFFICIENCY_TITLE]]), la [[metertype METER_DEFENSE]] max de [[value GRO_ENERGY_META_MAX_DEFENSE_FLAT]] sur toutes les planètes, les [[metertype METER_SHIELD]] max de [[value GRO_ENERGY_META_MAX_SHIELD_FLAT]] sur toutes les planètes, la [[metertype METER_TARGET_INDUSTRY]] de [[value GRO_ENERGY_META_TARGET_INDUSTRY_PERPOP]] par [[metertype METER_POPULATION]] sur toutes les planètes en Focus Industrie, et la [[metertype METER_TARGET_RESEARCH]] de [[value GRO_ENERGY_META_TARGET_RESEARCH_PERPOP]] par [[metertype METER_POPULATION]] sur toutes les planètes en Focus Recherche.
 
 Tandis que la transformation d'une population entière en êtres de pure énergie s'avérerait peu pertinente, certaines tâches conviennent mieux à des individus dénués de corporalité. L'équipage d'un astronef par exemple, n'aurait plus besoin d'optimiser l'espace disponible pour les quartiers d'équipage ou le stockage des rations. Des êtres dotés d'une capacité de canalisation de l'énergie seraient en mesure d'améliorer les défenses et boucliers planétaires, ainsi que la production de ressources.
 
 Le stade ultime du développement physique est justement de transcender le caractère physique des choses. Sans corps, les individus et les sociétés pourraient migrer, croître et exister librement, sans être entravés par des limitations physiques inutiles et des processus métaboliques improductifs, gaspillant l'énergie afin d'assurer l'homéostasie.'''
+
+GRO_ENERGY_META_TARGET_INDUSTRY_PERPOP
+par Population
+
+GRO_ENERGY_META_TARGET_RESEARCH_PERPOP
+par Population
 
 PRO_TRANS_DESIGN
 Design Transcendant
@@ -11907,7 +11943,7 @@ Automates Conscients
 PRO_SENTIENT_AUTOMATION_DESC
 '''Augmente la [[metertype METER_TARGET_INDUSTRY]] de 3 sur toutes les planètes en Focus Industrie.
 
-Octroie un choix supplémentaire de Stratégie Économique.
+Octroie un choix supplémentaire de Stratégie économique.
 
 L'évolution naturelle des usines automatisées s'accomplit en attribuant aux consciences artificielles qui dirigent de telles structures, le pouvoir de déduire et décider par elles-mêmes des meilleurs processus afin d'atteindre les buts de leurs propriétaires, avant même que ces derniers n'aient commencé à y réfléchir. Cette amélioration décisionnelle augmente grandement la performance des installations autonomes de production dans tous les systèmes de l'empire se consacrant à la production industrielle.'''
 
@@ -12401,9 +12437,12 @@ Cyborgs
 
 GRO_CYBORG_DESC
 '''Accroît la [[metertype METER_TARGET_POPULATION]] des Planètes [[PE_HOSTILE]]s selon leur taille : ([[SZ_TINY]] +2) ([[SZ_SMALL]] +4) ([[SZ_MEDIUM]] +6) ([[SZ_LARGE]] +8) ([[SZ_HUGE]] +10).
-Accroît l'[[metertype METER_TROOPS]] max de 0.2 par [[metertype METER_POPULATION]] sur toutes les planètes.
+Accroît l'[[metertype METER_TROOPS]] max de [[value CYBORG_MAX_TROOPS_PERPOP]] par [[metertype METER_POPULATION]] sur toutes les planètes.
 
 Une fusion hautement polyvalente d'un organisme vivant et d'une machine, capable de s'adapter à un nombre considérable de situations. La génération spontanée d'organes spécialisés ainsi qu'une force bio-mécanique fortement accrue permettent aux cyborgs d'évoluer avec aisance dans quasiment tous les types d'environnement.'''
+
+CYBORG_MAX_TROOPS_PERPOP
+par Population
 
 GRO_GAIA_TRANS
 Transformation Gaia
@@ -12439,23 +12478,38 @@ LRN_DISTRIB_THOUGHT
 Centralisation Cérébrale
 
 LRN_DISTRIB_THOUGHT_DESC
-'''Augmente la [[metertype METER_TARGET_RESEARCH]] de 0.1 par [[metertype METER_POPULATION]] sur toutes les planètes, quel que soit le Focus choisi.
+'''Augmente la [[metertype METER_TARGET_RESEARCH]] de [[value LRN_DISTRIB_THOUGHT_TARGET_RESEARCH_PERPOP]] par [[metertype METER_POPULATION]] sur toutes les planètes, quel que soit le Focus choisi.
 
-Octroie un choix supplémentaire de Stratégie Militaire.
+Octroie un choix supplémentaire de Stratégie militaire.
 
 Le citoyen moyen gaspille littéralement ses capacités cérébrales, pourtant issues d'un des outils de calcul les plus fins de l'univers. En intégrant les cycles cérébraux inactifs d'une population suffisament importante au sein d'un réseau de simples émetteurs-récepteurs cybernétiques, la totalité des centres de recherche d'un empire peuvent accéder à une puissance de calcul considérable et peu coûteuse.'''
+
+LRN_DISTRIB_THOUGHT_TARGET_RESEARCH_PERPOP
+par Population
 
 LRN_STELLAR_TOMOGRAPHY
 Tomographie Stellaire
 
 LRN_STELLAR_TOMOGRAPHY_DESC
 '''Augmente la [[metertype METER_TARGET_RESEARCH]] des planètes réglées sur le Focus Recherche, par [[metertype METER_POPULATION]] et selon le type d'étoile :
-* [[STAR_BLACK]] (x0.2)
-* [[STAR_NEUTRON]] (x0.15)
-* [[STAR_BLUE]] ou [[STAR_WHITE]] (x0.1)
-* [[STAR_YELLOW]], [[STAR_ORANGE]] ou [[STAR_RED]] (x0.05)
+* [[STAR_BLACK]] (x[[value LRN_STELLAR_TOMO_BLACK_TARGET_RESEARCH_PERPOP]])
+* [[STAR_NEUTRON]] (x[[value LRN_STELLAR_TOMO_NEUTRON_TARGET_RESEARCH_PERPOP]])
+* [[STAR_BLUE]] ou [[STAR_WHITE]] (x[[value LRN_STELLAR_TOMO_BRIGHT_TARGET_RESEARCH_PERPOP]])
+* [[STAR_YELLOW]], [[STAR_ORANGE]] ou [[STAR_RED]] (x[[value LRN_STELLAR_TOMO_DIME_TARGET_RESEARCH_PERPOP]])
 
 Un réseau de satellites spécialisés peut utiliser des méthodes tomographiques pour cartographier et reconstituer les différentes activités se produisant dans les profondeurs d'une étoile. Ces conditions expérimentales, habituellement coûteuses à mettre en place, sont ici idéales pour une multitude de projets de recherche, les plus grands bénéfices scientifiques découlant de l'étude des types d'étoiles les plus exotiques.'''
+
+LRN_STELLAR_TOMO_BLACK_TARGET_RESEARCH_PERPOP
+par Population
+
+LRN_STELLAR_TOMO_NEUTRON_TARGET_RESEARCH_PERPOP
+par Population
+
+LRN_STELLAR_TOMO_BRIGHT_TARGET_RESEARCH_PERPOP
+par Population
+
+LRN_STELLAR_TOMO_DIME_TARGET_RESEARCH_PERPOP
+par Population
 
 LRN_SPATIAL_DISTORT_GEN
 Distortion Spatiale
@@ -12610,33 +12664,42 @@ DEF_ROOT_DEFENSE
 Auto-défense
 
 DEF_ROOT_DEFENSE_DESC
-'''Augmente les [[metertype METER_SHIELD]] max de 1 sur chaque planète appartenant à l'empire. Régénère 1 point de [[metertype METER_SHIELD]] par tour, seulement durant les tours où la planète n'est pas attaquée. Pour les espèces disposant de troupes de défense, augmente l'[[metertype METER_TROOPS]] max de 0.2 par [[metertype METER_POPULATION]] sur la planète.
+'''Augmente les [[metertype METER_SHIELD]] max de 1 sur chaque planète appartenant à l'empire. Régénère 1 point de [[metertype METER_SHIELD]] par tour, seulement durant les tours où la planète n'est pas attaquée. Pour les espèces disposant de troupes de défense, augmente l'[[metertype METER_TROOPS]] max de [[value BASIC_DEFENSE_TROOPS_MAX_TROOPS_PERPOP]] par [[metertype METER_POPULATION]] sur la planète.
 
 Le concept d'Auto-défense est à la racine de maints développements technologiques.'''
+
+BASIC_DEFENSE_TROOPS_MAX_TROOPS_PERPOP
+par Population
 
 DEF_GARRISON_1
 Réseau Bunker Planétaire
 
 DEF_GARRISON_1_DESC
-Augmente l'[[metertype METER_TROOPS]] max de 10 sur toutes les planètes de l'empire, indépendamment des caractéristiques de l'espèce.
+Augmente l'[[metertype METER_TROOPS]] max de [[value GARRISON_1_MAX_TROOPS_FLAT]] sur toutes les planètes de l'empire, indépendamment des caractéristiques de l'espèce.
 
 DEF_GARRISON_2
 Milice Planétaire Défensive
 
 DEF_GARRISON_2_DESC
-Augmente l'[[metertype METER_TROOPS]] max de 0.4 par [[metertype METER_POPULATION]] sur toutes les planètes de l'empire (variable selon les caractéristiques défensives de l'espèce), et régénère l'Infanterie d'un bonus de 1 par tour.
+Augmente l'[[metertype METER_TROOPS]] max de [[value GARRISON_2_MAX_TROOPS_PERPOP]] par [[metertype METER_POPULATION]] sur toutes les planètes de l'empire (variable selon les caractéristiques défensives de l'espèce), et régénère l'Infanterie d'un bonus de [[value GARRISON_2_TROOPREGEN_FLAT]] par tour.
+
+GARRISON_2_MAX_TROOPS_PERPOP
+par Population
 
 DEF_GARRISON_3
 Réseau Fortication Planétaire
 
 DEF_GARRISON_3_DESC
-Augmente l'[[metertype METER_TROOPS]] max de 16 sur toutes les planètes de l'empire (indépendamment des caractéristiques de l'espèce), et régénère l'Infanterie d'un bonus de 2 par tour cumulable avec le bonus de la [[DEF_GARRISON_2]].
+Augmente l'[[metertype METER_TROOPS]] max de [[value GARRISON_3_MAX_TROOPS_FLAT]] sur toutes les planètes de l'empire (indépendamment des caractéristiques de l'espèce), et régénère l'Infanterie d'un bonus de [[value GARRISON_3_TROOPREGEN_FLAT]] par tour cumulable avec le bonus de la [[DEF_GARRISON_2]].
 
 DEF_GARRISON_4
 Armée Planétaire Défensive
 
 DEF_GARRISON_4_DESC
-Augmente l'[[metertype METER_TROOPS]] max de 0.4 par [[metertype METER_POPULATION]] sur toutes les planètes de l'empire (variable selon les caractéristiques défensives de l'espèce), et régénère l'Infanterie d'un bonus de 3 par tour cumulable avec les bonus du [[DEF_GARRISON_3]] et de la [[DEF_GARRISON_2]].
+Augmente l'[[metertype METER_TROOPS]] max de [[value GARRISON_4_MAX_TROOPS_PERPOP]] par [[metertype METER_POPULATION]] sur toutes les planètes de l'empire (variable selon les caractéristiques défensives de l'espèce), et régénère l'Infanterie d'un bonus de [[value GARRISON_4_TROOPREGEN_FLAT]] par tour cumulable avec les bonus du [[DEF_GARRISON_3]] et de la [[DEF_GARRISON_2]].
+
+GARRISON_4_MAX_TROOPS_PERPOP
+par Population
 
 DEF_PLANET_CLOAK
 Camouflage Planétaire
@@ -12657,10 +12720,6 @@ SHP_REINFORCED_HULL_DESC
 '''Augmente de [[value SHP_REINFORCED_HULL_BONUS]] la [[metertype METER_STRUCTURE]] max de tous les astronefs.
 
 Les coques standards d'astronef sont conçues à l'aide de techniques avancées d'architecture en microgravité et fabriquées à partir de matériaux hautement résistants. Cependant, les contraintes inhérentes de la matière physique limitent la résistance maximale des coques. En modifiant l'intégrité structurelle d'une coque à l'aide de champs moléculaires améliorés, une augmentation considérable de sa résistance peut être obtenue.'''
-
-# value ref description
-SHP_REINFORCED_HULL_BONUS
-''''''
 
 SHP_BASIC_DAM_CONT
 Contrôle Basique des Dégâts
@@ -13302,15 +13361,18 @@ BLD_CULTURE_ARCHIVES
 Archives Culturelles
 
 BLD_CULTURE_ARCHIVES_DESC
-'''Augmente la [[metertype METER_TARGET_RESEARCH]] de 5, ainsi que la [[metertype METER_TARGET_INDUSTRY]] de la moitié de la [[metertype METER_POPULATION]] planétaire.
+'''Augmente la [[metertype METER_TARGET_RESEARCH]] de [[value BLD_CULTURE_ARCHIVES_TARGET_RESEARCH_FLAT]], ainsi que la [[metertype METER_TARGET_INDUSTRY]] de [[value BLD_CULTURE_ARCHIVES_TARGET_INDUSTRY_PERPOP]] par [[metertype METER_POPULATION]].
 
 Abrite le savoir accumulé durant des milliers d'années d'existence sur cette planète, améliorant différents aspects de la productivité planétaire.'''
+
+BLD_CULTURE_ARCHIVES_TARGET_INDUSTRY_PERPOP
+par Population
 
 BLD_CULTURE_LIBRARY
 Bibliothèque Culturelle
 
 BLD_CULTURE_LIBRARY_DESC
-'''Augmente la [[metertype METER_TARGET_RESEARCH]] de 5.
+'''Augmente la [[metertype METER_TARGET_RESEARCH]] de [[value BLD_CULTURE_LIBRARY_TARGET_RESEARCH_FLAT]].
 
 Abrite le savoir accumulé durant des milliers d'années d'existence sur cette planète, octroyant ainsi un bonus à la Recherche. Cette structure sera détruite si la [[metertype METER_POPULATION]] planétaire est réduite à zéro.'''
 
@@ -13318,7 +13380,7 @@ BLD_AUTO_HISTORY_ANALYSER
 Analyseur Historique Automatisé
 
 BLD_AUTO_HISTORY_ANALYSER_DESC
-'''L' Analyseur Historique Automatisé peut être construit sur une planète abritant des [[buildingtype BLD_CULTURE_ARCHIVES]]. Augmente la [[metertype METER_TARGET_RESEARCH]] de 5.
+'''L' Analyseur Historique Automatisé peut être construit sur une planète abritant des [[buildingtype BLD_CULTURE_ARCHIVES]]. Augmente la [[metertype METER_TARGET_RESEARCH]] de [[value BLD_AUTO_HISTORY_ANALYSER_TARGET_RESEARCH_FLAT]].
 
 Un centre de recherche automatisé doté d'une énorme puissance de calcul, parcourant continuellement la multitude de données au sein des archives  culturelles, afin de faire émerger de possibles analogies, d'établir des parallèles interdisciplinaires, ou bien de redécouvrir des concepts tombés dans l'oubli ou non finalisés.'''
 
@@ -13540,10 +13602,16 @@ BLD_COLLECTIVE_NET
 Réseau de Pensée Collective
 
 BLD_COLLECTIVE_NET_DESC
-'''Augmente la [[metertype METER_TARGET_INDUSTRY]] de 0.1 par [[metertype METER_POPULATION]] sur toutes les planètes en Focus Industrie, et la [[metertype METER_TARGET_RESEARCH]] de 0.1 par [[metertype METER_POPULATION]] sur toutes les planètes en Focus Recherche. Tout voyage sur Voies spatiales dans un périmètre de 200 uu affaiblira l'efficacité de cette structure et supprimera tout bonus.
+'''Augmente la [[metertype METER_TARGET_INDUSTRY]] de [[value BLD_COLLECTIVE_NET_TARGET_INDUSTRY_PERPOP]] par [[metertype METER_POPULATION]] sur toutes les planètes en Focus Industrie, et la [[metertype METER_TARGET_RESEARCH]] de [[value BLD_COLLECTIVE_NET_TARGET_RESEARCH_PERPOP]] par [[metertype METER_POPULATION]] sur toutes les planètes en Focus Recherche. Tout voyage sur Voies spatiales dans un périmètre de 200 uu affaiblira l'efficacité de cette structure et supprimera tout bonus.
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
 En transférant l'esprit dans le cyberespace, des milliers d'esprits peuvent agir comme un seul, résolvant des problèmes et faisant des découvertes qui s'avéreraient hors de portée pour un unique esprit, aussi brillant soit-il.'''
+
+BLD_COLLECTIVE_NET_TARGET_INDUSTRY_PERPOP
+par Population
+
+BLD_COLLECTIVE_NET_TARGET_RESEARCH_PERPOP
+par Population
 
 BLD_GATEWAY_VOID
 Portail du Vide
@@ -13557,10 +13625,13 @@ BLD_ENCLAVE_VOID
 Enclave Du Vide
 
 BLD_ENCLAVE_VOID_DESC
-'''Augmente la [[metertype METER_TARGET_RESEARCH]] de 0.15 par [[metertype METER_POPULATION]] sur toutes les planètes en Focus Recherche.
+'''Augmente la [[metertype METER_TARGET_RESEARCH]] de [[value BLD_ENCLAVE_VOID_TARGET_RESEARCH_PERPOP]] par [[metertype METER_POPULATION]] sur toutes les planètes en Focus Recherche.
 Les bonus de plusieurs exemplaires ne s'additionnent pas.
 
 La population entière d'une planète est modifiée génétiquement afin de l'harmoniser avec l'Esprit du Vide, et ainsi diffuser sa sagesse dans tout l'empire. Les habitants de l'Enclave du Vide sont considérés comme des prêtres, prophètes d'une pensée supérieure et d'un savoir suprême. Dans tous les domaines de grande importance pour la bonne marche de l'empire, leurs conseils et avis s'avèrent d'une grande valeur. Des émissaires de l'Enclave peuvent donc prendre part à tout projet impérial de Recherche et apporter ainsi une aide précieuse.'''
+
+BLD_ENCLAVE_VOID_TARGET_RESEARCH_PERPOP
+par Population
 
 BLD_ART_BLACK_HOLE
 Trou Noir Artificiel
@@ -16097,6 +16168,12 @@ ULTIMATE_TROOPS_LABEL
 
 INDEPENDENT_TROOP_LABEL
 Planète Natale indépendante
+
+IMPERIAL_GARRISON_LABEL
+Garnison Impériale
+
+IMPERIAL_GARRISON_MAX_TROOPS_FLAT
+''''''
 
 MEGALITH_LABEL
 Mégalithe
