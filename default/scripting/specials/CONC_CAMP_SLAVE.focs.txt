@@ -19,7 +19,7 @@ Special
             
         EffectsGroup
             scope = Source
-            activation = OR [
+            activation = Or [
                 Random probability = 0.167
                 Population high = 0
             ]

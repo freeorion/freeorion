@@ -3,11 +3,11 @@ BuildingType
     description = "BLD_TRANSFORMER_DESC"
     buildcost = 600 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 8
-    location = AND [
+    location = And [
         Not Contains Building name = "BLD_TRANSFORMER"
         OwnedBy empire = Source.Owner
     ]
-    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    enqueuelocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     icon = "icons/building/transformer.png"
 
 #include "/scripting/common/enqueue.macros"

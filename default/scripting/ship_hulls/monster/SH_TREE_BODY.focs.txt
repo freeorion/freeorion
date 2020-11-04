@@ -7,8 +7,8 @@ Hull
     stealth = 5
     structure = 5
     slots = Slot type = External position = (0.30, 0.15)
-    buildCost = 1
-    buildTime = 2
+    buildcost = 1
+    buildtime = 2
     Unproducible
     tags = [ "PEDIA_HULL_MONSTER_TREE" ]
     location = All

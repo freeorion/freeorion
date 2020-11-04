@@ -30,7 +30,7 @@ Special
 
         EffectsGroup
             scope = Source
-            activation = AND [
+            activation = And [
                 Random probability = 0.2
                 Turn low = 1 high = 1
             ]

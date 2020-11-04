@@ -1,10 +1,10 @@
 BuildingType
     name = "BLD_STOCKPILING_CENTER"
     description = "BLD_STOCKPILING_CENTER_DESC"
-    captureresult = destroy
+    captureresult = Destroy
     buildcost = 100 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 5
-    location = AND [
+    location = And [
         Capital
         OwnedBy empire = Source.Owner
         Number low = 0 high = 0 condition = And [

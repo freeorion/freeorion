@@ -10,7 +10,7 @@ BuildingType
         OwnedBy empire = Source.Owner
         TargetPopulation low = 1
     ]
-    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    enqueuelocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS]]
     
@@ -20,7 +20,7 @@ BuildingType
                 Focus type = "FOCUS_INDUSTRY"
                 OwnedBy empire = Source.Owner
                 ResourceSupplyConnected empire = Source.Owner condition = Source
-                Not ResourceSupplyConnected empire = Source.Owner Condition = And [
+                Not ResourceSupplyConnected empire = Source.Owner condition = And [
                     Building name = "BLD_BLACK_HOLE_POW_GEN" 
                     OwnedBy empire = Source.Owner
                 ]
@@ -36,7 +36,7 @@ BuildingType
                 ResourceSupplyConnected empire = Source.Owner condition = Source
                 Not Star type = BlackHole
                 Focus type = "FOCUS_INDUSTRY"
-                Not ResourceSupplyConnected empire = Source.Owner Condition = And [
+                Not ResourceSupplyConnected empire = Source.Owner condition = And [
                     Building name = "BLD_BLACK_HOLE_POW_GEN" 
                     OwnedBy empire = Source.Owner
                 ]

@@ -68,24 +68,24 @@ namespace {
             //const boost::phoenix::function<parse::detail::deconstruct_movable> deconstruct_movable_;
 
             ships
-                =    label(tok.Ships_) > one_or_more_string_tokens
+                =    label(tok.ships_) > one_or_more_string_tokens
                 ;
 
             spawn_rate =
-                label(tok.SpawnRate_) > double_rule
+                label(tok.spawnrate_) > double_rule
                 ;
 
             spawn_limit =
-                label(tok.SpawnLimit_) > int_rule
+                label(tok.spawnlimit_) > int_rule
                 ;
 
             monster_fleet_plan
                 = ( omit_[tok.MonsterFleet_]
-                    > label(tok.Name_) > tok.string
+                    > label(tok.name_) > tok.string
                     > ships
                     > -spawn_rate
                     > -spawn_limit
-                    > -(label(tok.Location_) > condition_parser)
+                    > -(label(tok.location_) > condition_parser)
                 ) [ insert_monster_fleet_plan_(_r1, _1, _2, _3, _4, _5, _pass) ]
                 ;
 

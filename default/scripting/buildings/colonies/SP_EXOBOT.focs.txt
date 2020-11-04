@@ -14,7 +14,7 @@ BuildingType
         Not Contains Building name = "BLD_COL_EXOBOT"
         // no existing Exobot colony required!
     ]
-    EnqueueLocation = And [
+    enqueuelocation = And [
         Planet
         OwnedBy empire = Source.Owner
         Population high = 0

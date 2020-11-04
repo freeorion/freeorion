@@ -1,12 +1,12 @@
 CHANCE_OF_GUARD_1
 '''        EffectsGroup
             scope = Source
-            activation = AND [
+            activation = And [
                 Turn high = 0
                 Random probability = 0.70
                 (GalaxyMaxAIAggression >= 1)
                 (GalaxyMonsterFrequency >= 1)
-                Not ContainedBy Contains OR [
+                Not ContainedBy Contains Or [
                     Design name = "SM_EXP_OUTPOST"
                     Building name = "BLD_EXPERIMENTOR_OUTPOST"
                     And [ Planet HasSpecial name = "HIGH_TECH_NATIVES_SPECIAL" ]
@@ -25,16 +25,16 @@ CHANCE_OF_GUARD_1
 CHANCE_OF_GUARD_2
 '''        EffectsGroup
             scope = Source
-            activation = AND [
+            activation = And [
                 Turn high = 0
-                Not ContainedBy Contains OR [
+                Not ContainedBy Contains Or [
                     Design name = "SM_EXP_OUTPOST"
                     Building name = "BLD_EXPERIMENTOR_OUTPOST"
                     And [ Planet HasSpecial name = "HIGH_TECH_NATIVES_SPECIAL" ]
                 ]
             ]
             effects = [
-                If condition = AND [
+                If condition = And [
                         (GalaxyMaxAIAggression >= 1)
                         (GalaxyMonsterFrequency >= 1)
                         Not Homeworld
@@ -51,16 +51,16 @@ CHANCE_OF_GUARD_2
 CHANCE_OF_GUARD_3
 '''        EffectsGroup
             scope = Source
-            activation = AND [
+            activation = And [
                 Turn high = 0
-                Not ContainedBy Contains OR [
+                Not ContainedBy Contains Or [
                     Design name = "SM_EXP_OUTPOST"
                     Building name = "BLD_EXPERIMENTOR_OUTPOST"
                     And [ Planet HasSpecial name = "HIGH_TECH_NATIVES_SPECIAL" ]
                 ]
             ]
             effects = [
-                If condition = AND [
+                If condition = And [
                         (GalaxyMaxAIAggression >= 1)
                         (GalaxyMonsterFrequency >= 1)
                         Not Homeworld

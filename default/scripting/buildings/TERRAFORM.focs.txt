@@ -18,7 +18,7 @@ BuildingType
         ]
         Not HasTag name = "NO_TERRAFORM"
     ]
-    EnqueueLocation = And [
+    enqueuelocation = And [
         Planet
         OwnedBy empire = Source.Owner
         Not Contains Building name = "BLD_TERRAFORM_REVERT"

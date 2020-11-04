@@ -7,7 +7,7 @@ Tech
     researchturns = 5
     tags = [ "PEDIA_LEARNING_CATEGORY" ]
     prerequisites = "LRN_TRANSLING_THT"
-    unlock = Item type = building name = "BLD_XENORESURRECTION_LAB"
+    unlock = Item type = Building name = "BLD_XENORESURRECTION_LAB"
     graphic = "icons/tech/xenoarchaeology.png"
 
 #include "/scripting/common/base_prod.macros"

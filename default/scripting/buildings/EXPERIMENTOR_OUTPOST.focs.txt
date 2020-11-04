@@ -3,7 +3,7 @@ BuildingType
     description = "BLD_EXPERIMENTOR_OUTPOST_DESC"
     buildcost = 1
     buildtime = 1
-   // captureresult = destroy
+   // captureresult = Destroy
     location = All
     effectsgroups = [
         EffectsGroup
@@ -250,7 +250,7 @@ EXPERIMENTOR_SPAWN_CALC_A
 // the following modifies Experimentor spawn start by a factor of 0.1 up for low planet density, and 0.1 down for high planet density
 // for galaxy sizes above 200 increases it somewhat as the galaxy size grows
 EXPERIMENTOR_SPAWN_START_TURN
-'''[[EXPERIMENTOR_SPAWN_CALC_A]] * (1.2 - ( GalaxyPlanetDensity / 10 )) * ((Max(1, GalaxySize / 200))^0.4)'''
+'''[[EXPERIMENTOR_SPAWN_CALC_A]] * (1.2 - ( GalaxyPlanetDensity / 10 )) * ((max(1, GalaxySize / 200))^0.4)'''
 
 EXPERIMENTOR_ADD_STARLANE
 '''AddStarlanes endpoint = NumberOf number = 1 

@@ -22,9 +22,9 @@ AVERAGE_HAPPINESS
                 (LocalCandidate.LastTurnColonized = CurrentTurn)
             ]
             effects = SetHappiness value = max(Value,
-                1*(Statistic If Condition = And [Target Planet environment = Poor]) +
-                2*(Statistic If Condition = And [Target Planet environment = Adequate]) +
-                4*(Statistic If Condition = And [Target Planet environment = Good]))
+                1*(Statistic If condition = And [Target Planet environment = Poor]) +
+                2*(Statistic If condition = And [Target Planet environment = Adequate]) +
+                4*(Statistic If condition = And [Target Planet environment = Good]))
 
         EffectsGroup
             scope = Source

@@ -13,7 +13,7 @@ BuildingType
         OwnerHasTech name = "PRO_EXOBOTS"
         Population high = 0
     ]
-    EnqueueLocation = [[ENQUEUE_ARTIFICIAL_PLANET_EXCLUSION]]
+    enqueuelocation = [[ENQUEUE_ARTIFICIAL_PLANET_EXCLUSION]]
     effectsgroups = [
         EffectsGroup
             scope = And [

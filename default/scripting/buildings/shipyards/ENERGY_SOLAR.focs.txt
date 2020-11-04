@@ -23,7 +23,7 @@ BuildingType
         ]
         OwnedBy empire = Source.Owner
     ]
-    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    enqueuelocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     icon = "icons/building/shipyard-16.png"
 
 #include "/scripting/common/enqueue.macros"

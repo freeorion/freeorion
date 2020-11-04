@@ -98,13 +98,13 @@ CREATE_PLANETS
 EFFECT_CREATE_PLANET
 '''CreatePlanet
     type = OneOf(Barren, Desert, Inferno, Ocean, Radiated, Swamp, Terran, Toxic, Tundra)
-    planetsize = OneOf(tiny, small, medium, large)
+    planetsize = OneOf(Tiny, Small, Medium, Large)
 '''
 
 EFFECT_CREATE_ASTEROID
 '''CreatePlanet
-    type = asteroids
-    planetsize = asteroids
+    type = Asteroids
+    planetsize = Asteroids
 '''
 
 EFFECT_CREATE_GASGIANT

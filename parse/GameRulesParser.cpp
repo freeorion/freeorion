@@ -116,12 +116,12 @@ namespace {
 
             game_rule_bool
                 =   (tok.GameRule_
-                    >> (label(tok.Name_) >          tok.string [ _a = _1 ])
-                    >> (label(tok.Description_) >   tok.string [ _b = _1 ])
-                    >> (label(tok.Category_) >      tok.string [ _j = _1 ])
-                    >>  label(tok.Type_) >>         tok.Toggle_
+                    >> (label(tok.name_) >          tok.string [ _a = _1 ])
+                    >> (label(tok.description_) >   tok.string [ _b = _1 ])
+                    >> (label(tok.category_) >      tok.string [ _j = _1 ])
+                    >>  label(tok.type_) >>         tok.Toggle_
                     )
-                > ((label(tok.Default_)
+                > ((label(tok.default_)
                     >   (
                             tok.On_ [ _i = true ]
                         |   tok.Off_ [ _i = false ]
@@ -133,39 +133,39 @@ namespace {
 
             game_rule_int
                 =   (tok.GameRule_
-                    >> (label(tok.Name_) >          tok.string [ _a = _1 ])
-                    >> (label(tok.Description_) >   tok.string [ _b = _1 ])
-                    >> (label(tok.Category_) >      tok.string [ _j = _1 ])
-                    >>  label(tok.Type_) >>         tok.Integer_
+                    >> (label(tok.name_) >          tok.string [ _a = _1 ])
+                    >> (label(tok.description_) >   tok.string [ _b = _1 ])
+                    >> (label(tok.category_) >      tok.string [ _j = _1 ])
+                    >>  label(tok.type_) >>         tok.Integer_
                     )
-                >   label(tok.Default_) >       int_rule [ _f = _1 ]
-                >   label(tok.Min_) >           int_rule [ _g = _1 ]
-                >   label(tok.Max_) >           int_rule
+                >   label(tok.default_) >       int_rule [ _f = _1 ]
+                >   label(tok.min_) >           int_rule [ _g = _1 ]
+                >   label(tok.max_) >           int_rule
                     [ add_rule(_r1, _a, _b, _j, _f, _g, _1 ) ]
                 ;
 
             game_rule_double
                 =   (tok.GameRule_
-                    >> (label(tok.Name_) >          tok.string [ _a = _1 ])
-                    >> (label(tok.Description_) >   tok.string [ _b = _1 ])
-                    >> (label(tok.Category_) >      tok.string [ _j = _1 ])
-                    >>  label(tok.Type_) >>         tok.Real_
+                    >> (label(tok.name_) >          tok.string [ _a = _1 ])
+                    >> (label(tok.description_) >   tok.string [ _b = _1 ])
+                    >> (label(tok.category_) >      tok.string [ _j = _1 ])
+                    >>  label(tok.type_) >>         tok.Real_
                     )
-                >   label(tok.Default_) >       double_rule [ _c = _1 ]
-                >   label(tok.Min_) >           double_rule [ _d = _1 ]
-                >   label(tok.Max_) >           double_rule
+                >   label(tok.default_) >       double_rule [ _c = _1 ]
+                >   label(tok.min_) >           double_rule [ _d = _1 ]
+                >   label(tok.max_) >           double_rule
                     [ add_rule(_r1, _a, _b, _j, _c, _d, _1 ) ]
                 ;
 
             game_rule_string
                 =   (tok.GameRule_
-                    >> (label(tok.Name_) >          tok.string [ _a = _1 ])
-                    >> (label(tok.Description_) >   tok.string [ _b = _1 ])
-                    >> (label(tok.Category_) >      tok.string [ _j = _1 ])
-                    >>  label(tok.Type_) >>         tok.String_
+                    >> (label(tok.name_) >          tok.string [ _a = _1 ])
+                    >> (label(tok.description_) >   tok.string [ _b = _1 ])
+                    >> (label(tok.category_) >      tok.string [ _j = _1 ])
+                    >>  label(tok.type_) >>         tok.String_
                     )
-                >   label(tok.Default_) >       tok.string [ _e = _1 ]
-                >  -( label(tok.Allowed_) > one_or_more_string_tokens [_h = _1])
+                >   label(tok.default_) >       tok.string [ _e = _1 ]
+                >  -( label(tok.allowed_) > one_or_more_string_tokens [_h = _1])
                   [ add_rule(_r1, _a, _b, _j, _e, _h) ]
                 ;
 

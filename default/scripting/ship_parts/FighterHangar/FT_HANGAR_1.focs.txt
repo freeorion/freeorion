@@ -23,9 +23,9 @@ Part
             stackinggroup = "INTERCEPTOR_FAST_LAUNCH_EFFECT"
             effects = SetMaxCapacity partname = "FT_BAY_1" value = (
                 3 +
-                Statistic If Condition = And [ Target  OwnerHasTech Name = "SHP_FIGHTERS_2" ] +
-                Statistic If Condition = And [ Target  OwnerHasTech Name = "SHP_FIGHTERS_3" ] +
-                Statistic If Condition = And [ Target  OwnerHasTech Name = "SHP_FIGHTERS_4" ]
+                Statistic If condition = And [ Target  OwnerHasTech name = "SHP_FIGHTERS_2" ] +
+                Statistic If condition = And [ Target  OwnerHasTech name = "SHP_FIGHTERS_3" ] +
+                Statistic If condition = And [ Target  OwnerHasTech name = "SHP_FIGHTERS_4" ]
             )
     ]
     icon = "icons/ship_parts/fighter06.png"

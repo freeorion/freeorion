@@ -113,9 +113,9 @@ REFUEL_MESSAGE
         (Source.Fuel < 1)
         (Source.MaxFuel >= 1)
         (Source.Fuel
-         + @1@ * (Statistic If Condition = Turn low = Source.ArrivedOnTurn + 1)
-         + 0.1 * (Statistic If Condition = DesignHasPart name = "FU_RAMSCOOP")
-         + 0.1 * (Statistic If Condition = And [
+         + @1@ * (Statistic If condition = Turn low = Source.ArrivedOnTurn + 1)
+         + 0.1 * (Statistic If condition = DesignHasPart name = "FU_RAMSCOOP")
+         + 0.1 * (Statistic If condition = And [
             Species name = "SP_SLY"
             ContainedBy condition = And [
                 Object id = Source.SystemID
@@ -127,7 +127,7 @@ REFUEL_MESSAGE
         )
     ]
     effects = [
-        GenerateSitrepMessage
+        GenerateSitRepMessage
          message = "EFFECT_SHIP_REFUELED"
          label = "EFFECT_SHIP_REFUELED_LABEL"
          icon = "icons/meter/fuel.png"
@@ -181,7 +181,7 @@ HULL_FUEL_EFFICIENCY_EFFECTSGROUP
             ]
             accountinglabel = "@1@_FUEL_EFFICIENCY_LABEL"
             priority = [[VERY_LATE_PRIORITY]]
-            effects = SetMaxFuel value = Value * @2@  * Statistic If Condition = And [ Source HasTag name = "@1@_FUEL_EFFICIENCY" ]
+            effects = SetMaxFuel value = Value * @2@  * Statistic If condition = And [ Source HasTag name = "@1@_FUEL_EFFICIENCY" ]
 
      // If a ship has less than one maximum fuel it will never be able to travel out of supply so refueling does not make sense.
      // In order to communicate that and to prevent wrong refuel sitreps, we set the maximum fuel for that case to zero

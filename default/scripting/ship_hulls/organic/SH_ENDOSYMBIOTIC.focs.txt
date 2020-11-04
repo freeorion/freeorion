@@ -15,8 +15,8 @@ Hull
         Slot type = Internal position = (0.59, 0.68)
         Slot type = Internal position = (0.70, 0.68)
     ]
-    buildCost = 25 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_HULL_COST_MULTIPLIER]]
-    buildTime = 6
+    buildcost = 25 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_HULL_COST_MULTIPLIER]]
+    buildtime = 6
     tags = [ "ORGANIC_HULL" "PEDIA_HULL_LINE_ORGANIC" "GOOD_FUEL_EFFICIENCY" ]
     location = And [
         Contains And [

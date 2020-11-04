@@ -10,8 +10,8 @@ Hull
         Slot type = External position = (0.40, 0.55)
         Slot type = External position = (0.60, 0.55)
     ]
-    buildCost = 10.0 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_HULL_COST_MULTIPLIER]]
-    buildTime = 3
+    buildcost = 10.0 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_HULL_COST_MULTIPLIER]]
+    buildtime = 3
     tags = [ "ASTEROID_HULL" "PEDIA_HULL_LINE_ASTEROIDS" "GOOD_FUEL_EFFICIENCY" ]
     location = And [
         Contains And [

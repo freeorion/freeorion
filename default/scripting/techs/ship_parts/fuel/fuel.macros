@@ -14,6 +14,6 @@ PART_UPGRADE_MAXFUEL_EFFECTS
             ]
             accountinglabel = "@1@"
             effects = [
-                SetMaxFuel value = Value + ((NamedReal name = "@1@_MULT" value = @2@) * (PartsInShipDesign Name = "FU_BASIC_TANK" design = Target.DesignID))
+                SetMaxFuel value = Value + ((NamedReal name = "@1@_MULT" value = @2@) * (PartsInShipDesign name = "FU_BASIC_TANK" design = Target.DesignID))
             ]
 '''

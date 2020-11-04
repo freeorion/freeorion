@@ -12,8 +12,8 @@ Hull
         Slot type = External position = (0.60, 0.15)
         Slot type = Internal position = (0.50, 0.65)
     ]
-    buildCost = 1
-    buildTime = 1
+    buildcost = 1
+    buildtime = 1
     Unproducible
     tags = [ "PEDIA_HULL_MONSTER_SNOWFLAKE" ]
     location = All

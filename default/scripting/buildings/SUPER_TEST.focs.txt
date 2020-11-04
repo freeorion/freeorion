@@ -8,7 +8,7 @@ BuildingType
         ((GameRule name = "RULE_ENABLE_SUPER_TESTER") > 0)
     ]
     effectsgroups = [
-        Effectsgroup
+        EffectsGroup
         scope = And [
             Object id = Source.PlanetID
             Planet

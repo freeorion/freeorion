@@ -5,7 +5,7 @@ Species
     CanProduceShips
     CanColonize
 
-    Tags = [ "ROBOTIC" "VERY_BAD_INDUSTRY" "VERY_BAD_RESEARCH" "BAD_POPULATION" "BAD_WEAPONS" "BAD_SUPPLY" "CTRL_ALWAYS_REPORT" "BAD_ATTACKTROOPS" "PEDIA_ROBOTIC_SPECIES_CLASS" ]
+    tags = [ "ROBOTIC" "VERY_BAD_INDUSTRY" "VERY_BAD_RESEARCH" "BAD_POPULATION" "BAD_WEAPONS" "BAD_SUPPLY" "CTRL_ALWAYS_REPORT" "BAD_ATTACKTROOPS" "PEDIA_ROBOTIC_SPECIES_CLASS" ]
 
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -47,7 +47,7 @@ Species
         type = Terran       environment = Adequate
         type = Ocean        environment = Adequate
         type = Asteroids    environment = Poor
-        type = Gasgiant     environment = Uninhabitable
+        type = GasGiant     environment = Uninhabitable
     ]
 
     graphic = "icons/species/robotic-01.png"

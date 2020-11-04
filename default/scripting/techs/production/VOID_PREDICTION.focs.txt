@@ -16,7 +16,7 @@ Tech
             scope = And [
                 ProductionCenter
                 OwnedBy empire = Source.Owner
-                NOT Population high = 0
+                Not Population high = 0
                 Or [
                     Focus type = "FOCUS_STOCKPILE"
                 ]

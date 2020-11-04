@@ -132,21 +132,21 @@ struct ShipHullStats {
             qi::omit_type omit_;
 
             hull_stats
-                =  (label(tok.Speed_)       >   double_rule // _1
+                =  (label(tok.speed_)       >   double_rule // _1
                 >   matches_[tok.NoDefaultSpeedEffect_]     // _2
-                >   label(tok.Fuel_)        >   double_rule // _3
+                >   label(tok.fuel_)        >   double_rule // _3
                 >   matches_[tok.NoDefaultFuelEffect_]      // _4
-                >   label(tok.Stealth_)     >   double_rule // _5
+                >   label(tok.stealth_)     >   double_rule // _5
                 >   matches_[tok.NoDefaultStealthEffect_]   // _6
-                >   label(tok.Structure_)   >   double_rule // _7
+                >   label(tok.structure_)   >   double_rule // _7
                 >   matches_[tok.NoDefaultStructureEffect_])// _8
                     [ _val = construct<ShipHullStats>(_3, _1, _5, _7, !_4, !_2, !_6, !_8) ]
                 ;
 
             slot
                 =  (omit_[tok.Slot_]
-                >   label(tok.Type_) > ship_slot_type_enum
-                >   label(tok.Position_)
+                >   label(tok.type_) > ship_slot_type_enum
+                >   label(tok.position_)
                 >   '(' > double_rule > ',' > double_rule > lit(')'))
                     [ _val = construct<ShipHull::Slot>(_1, _2, _3) ]
                 ;
@@ -155,10 +155,10 @@ struct ShipHullStats {
                 =   (tok.Hull_                              // _1
                 >   common_rules.more_common                // _2
                 >   hull_stats                              // _3
-                >  -(label(tok.Slots_) > one_or_more_slots) // _4
+                >  -(label(tok.slots_) > one_or_more_slots) // _4
                 >   common_rules.common                     // _5
-                >   label(tok.Icon_)    > tok.string        // _6
-                >   label(tok.Graphic_) > tok.string)       // _7
+                >   label(tok.icon_)    > tok.string        // _6
+                >   label(tok.graphic_) > tok.string)       // _7
                 [ _pass = is_unique_(_r1, _1, phoenix::bind(&parse::detail::MoreCommonParams::name, _2)),
                   insert_shiphull_(_r1, _3, _5, _2, _4, _6, _7, _pass) ]
                 ;

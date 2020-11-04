@@ -3,7 +3,7 @@ BuildingType
     description = "BLD_NEUTRONIUM_SYNTH_DESC"
     buildcost = 1200 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 10
-    location = AND [
+    location = And [
         Planet
         Not Contains Building name = "BLD_NEUTRONIUM_SYNTH"
         OwnedBy empire = Source.Owner

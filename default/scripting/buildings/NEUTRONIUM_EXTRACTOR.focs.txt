@@ -4,13 +4,13 @@ BuildingType
     buildcost = 25 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 5
     tags = "ORBITAL"
-    location = AND [
+    location = And [
         Planet
         Not Contains Building name = "BLD_NEUTRONIUM_EXTRACTOR"
         OwnedBy empire = Source.Owner
         Star type = Neutron
     ]
-    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    enqueuelocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS]]
     ]

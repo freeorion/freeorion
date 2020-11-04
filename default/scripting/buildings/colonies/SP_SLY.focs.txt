@@ -5,8 +5,8 @@ BuildingType
     description = "BLD_COL_SLY_DESC"
     buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]] * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 1.0 * max(5.0, 1.0 +
-        (Statistic Min Value = ShortestPath Object = Target.SystemID Object = LocalCandidate.SystemID
-            Condition = And [
+        (Statistic Min value = ShortestPath object = Target.SystemID object = LocalCandidate.SystemID
+            condition = And [
                 Planet
                 OwnedBy empire = Source.Owner
                 Species name = "SP_SLY"
@@ -15,21 +15,21 @@ BuildingType
                 ResourceSupplyConnected empire = Source.Owner condition = Target
             ]
         ) / (60
-             + 20 * (Statistic If Condition = Or [
+             + 20 * (Statistic If condition = Or [
                  OwnerHasTech name = "SHP_MIL_ROBO_CONT"
                  OwnerHasTech name = "SHP_ORG_HULL"
                  OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
              ])
-             + 20 * (Statistic If Condition = Or [
+             + 20 * (Statistic If condition = Or [
                  OwnerHasTech name = "SHP_ORG_HULL"
                  OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
              ])
-             + 20 * (Statistic If Condition = OwnerHasTech name = "SHP_QUANT_ENRG_MAG")
-             + 10 * (Statistic If Condition = OwnerHasTech name = "SHP_IMPROVED_ENGINE_COUPLINGS")
-             + 10 * (Statistic If Condition = OwnerHasTech name = "SHP_N_DIMENSIONAL_ENGINE_MATRIX")
-             + 10 * (Statistic If Condition = OwnerHasTech name = "SHP_SINGULARITY_ENGINE_CORE")
-             + 10 * (Statistic If Condition = OwnerHasTech name = "SHP_TRANSSPACE_DRIVE")
-             + 10 * (Statistic If Condition = OwnerHasTech name = "SHP_INTSTEL_LOG")
+             + 20 * (Statistic If condition = OwnerHasTech name = "SHP_QUANT_ENRG_MAG")
+             + 10 * (Statistic If condition = OwnerHasTech name = "SHP_IMPROVED_ENGINE_COUPLINGS")
+             + 10 * (Statistic If condition = OwnerHasTech name = "SHP_N_DIMENSIONAL_ENGINE_MATRIX")
+             + 10 * (Statistic If condition = OwnerHasTech name = "SHP_SINGULARITY_ENGINE_CORE")
+             + 10 * (Statistic If condition = OwnerHasTech name = "SHP_TRANSSPACE_DRIVE")
+             + 10 * (Statistic If condition = OwnerHasTech name = "SHP_INTSTEL_LOG")
         )
     )
     tags = [ "SP_SLY" ]
@@ -47,7 +47,7 @@ BuildingType
             Happiness low = 5
         ]
     ]
-    EnqueueLocation = And [
+    enqueuelocation = And [
         Planet
         OwnedBy empire = Source.Owner
         Population high = 0

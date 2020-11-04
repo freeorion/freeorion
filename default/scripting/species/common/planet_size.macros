@@ -44,7 +44,7 @@ NOT_HUGE_PLANET
         activation = And [
             Planet
             Turn high = 0
-            Planet Size = Huge
+            Planet size = Huge
         ]
         effects = SetPlanetSize planetsize = Large
 '''

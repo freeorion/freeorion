@@ -29,7 +29,7 @@ BuildingType
                 ]
             ]
             effects = SetVisibility empire = Source.Planet.Owner
-                visibility = max(Partial, Value)
+                visibility = Max(Partial, Value)
     ]
     icon = "icons/specials_huge/ancient_ruins_excavated.png"
 

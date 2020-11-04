@@ -64,8 +64,8 @@ namespace parse {
 
         statistic
             =  ( (omit_[tok.Statistic_] >>  omit_[tok.Mode_])
-                 >   label(tok.Value_)     >     value_ref
-                 >   label(tok.Condition_) >     condition_parser)
+                 >   label(tok.value_)     >     value_ref
+                 >   label(tok.condition_) >     condition_parser)
             [ _val = construct_movable_(new_<ValueRef::Statistic<T>>(
                 deconstruct_movable_(_1, _pass),
                 ValueRef::MODE,
@@ -123,7 +123,7 @@ namespace parse {
         named_lookup_expr
           =   (
                    tok.Named_ >> tok.Value_ >> tok.Lookup_
-                >> label(tok.Name_)
+                >> label(tok.name_)
                 >> tok.string
               ) [
                      _val = construct_movable_(new_<ValueRef::NamedRef<T>>(_4))

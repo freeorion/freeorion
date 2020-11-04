@@ -3,7 +3,7 @@ BuildingType
     description = "BLD_INTERSPECIES_ACADEMY_DESC"
     buildcost = 50 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 5
-    location = AND [
+    location = And [
         // Homeworld
         Species
         Not Contains Building name = "BLD_INTERSPECIES_ACADEMY"
@@ -34,7 +34,7 @@ BuildingType
         ]
         
     ]
-    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    enqueuelocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS]]
     

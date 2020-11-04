@@ -10,7 +10,7 @@ BuildingType
         OwnedBy empire = Source.Owner
         TargetPopulation low = 1
     ]
-    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    enqueuelocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS]]
     
@@ -18,7 +18,7 @@ BuildingType
             scope = And [
                 Object id = Source.PlanetID
                 Planet
-                NOT Population high = 0
+                Not Population high = 0
                 OwnedBy empire = Source.Owner
             ]
             activation = And [

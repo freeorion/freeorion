@@ -3,11 +3,11 @@ BuildingType
     description = "BLD_GATEWAY_VOID_DESC"
     buildcost = 200 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 10
-    location = AND [
+    location = And [
         Not Contains Building name = "BLD_GATEWAY_VOID"
         OwnedBy empire = Source.Owner
     ]
-    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    enqueuelocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS]]
     

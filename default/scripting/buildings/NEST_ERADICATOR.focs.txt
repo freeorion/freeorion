@@ -13,7 +13,7 @@ BuildingType
             HasSpecial name = "SNOWFLAKE_NEST_SPECIAL"
 	]
     ]
-    EnqueueLocation = Not Enqueued type = Building name = "BLD_NEST_ERADICATOR"
+    enqueuelocation = Not Enqueued type = Building name = "BLD_NEST_ERADICATOR"
     effectsgroups = [
         [[EG_NEST_REMOVAL(JUGGERNAUT)]]
         [[EG_NEST_REMOVAL(KRAKEN)]]

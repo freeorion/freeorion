@@ -115,18 +115,18 @@ namespace {
             ship_part
                 = ( tok.Part_                                       // _1
                 >   common_rules.more_common                        // _2
-                >   label(tok.Class_)       > ship_part_class_enum  // _3
-                > -( (label(tok.Capacity_)  > double_rule)          // _4
-                   | (label(tok.Damage_)    > double_rule)          // _4
+                >   label(tok.class_)       > ship_part_class_enum  // _3
+                > -( (label(tok.capacity_)  > double_rule)          // _4
+                   | (label(tok.damage_)    > double_rule)          // _4
                    )
-                > -( (label(tok.Damage_)    > double_rule )         // _5 : damage is secondary stat for fighters
-                   | (label(tok.Shots_)     > double_rule )         // _5 : shots is secondary stat for direct fire weapons
+                > -( (label(tok.damage_)    > double_rule )         // _5 : damage is secondary stat for fighters
+                   | (label(tok.shots_)     > double_rule )         // _5 : shots is secondary stat for direct fire weapons
                    )
                 > matches_[tok.NoDefaultCapacityEffect_]                // _6
-                > -(label(tok.CombatTargets_)       > condition_parser) // _7
-                > -(label(tok.MountableSlotTypes_)  > one_or_more_slots)// _8
+                > -(label(tok.combatTargets_)       > condition_parser) // _7
+                > -(label(tok.mountableSlotTypes_)  > one_or_more_slots)// _8
                 >   common_rules.common                                 // _9
-                >   label(tok.Icon_)        > tok.string                // _10
+                >   label(tok.icon_)        > tok.string                // _10
                   ) [ _pass = is_unique_(_r1, _1, phoenix::bind(&parse::detail::MoreCommonParams::name, _2)),
                       insert_shippart_(
                           _r1, _3,

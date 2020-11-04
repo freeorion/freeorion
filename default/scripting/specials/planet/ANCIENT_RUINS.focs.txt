@@ -33,7 +33,7 @@ Special
 
         EffectsGroup
             scope = Source
-            activation = AND [
+            activation = And [
                 Turn high = 0
                 Random probability = 0.9
                 (GalaxyMaxAIAggression >= 1)

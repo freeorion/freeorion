@@ -4,7 +4,7 @@ BuildingType
     description = "BLD_OBSERVATORY_DESC"
     buildcost = 60 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 3
-    location = AND [
+    location = And [
         Planet
         OwnedBy empire = Source.Owner
         Not Contains Building name = "BLD_OBSERVATORY"

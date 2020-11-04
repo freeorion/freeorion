@@ -12,7 +12,7 @@ Special
     effectsgroups =
         EffectsGroup
             scope = Source
-            activation = NOT Population high = 0
+            activation = Not Population high = 0
             priority = [[LATE_PRIORITY]]
             effects = [
                 SetTargetResearch value = Value + (NamedReal name = "ECCENTRIC_ORBIT_TARGET_RESEARCH_FLAT" value = 3)

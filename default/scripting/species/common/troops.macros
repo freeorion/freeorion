@@ -50,7 +50,7 @@ BASIC_DEFENSE_TROOPS
             activation = Planet
             stackinggroup = "POPULATION_TROOPS_STACK"
             priority = [[VERY_EARLY_PRIORITY]]
-            effects = SetMaxTroops Value = Value
+            effects = SetMaxTroops value = Value
                         + (NamedReal name = "BASIC_DEFENSE_TROOPS_MAX_TROOPS_PERPOP"
                                      value = (Target.Population * [[TROOPS_PER_POP]]))
             accountinglabel = "DEF_ROOT_DEFENSE"

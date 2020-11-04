@@ -82,7 +82,7 @@ namespace {
             prereqs_grammar::base_type(start, "prereqs_grammar"),
             one_or_more_string_tokens(tok)
         {
-            start %= -(label(tok.Prerequisites_) >> one_or_more_string_tokens);
+            start %= -(label(tok.prerequisites_) >> one_or_more_string_tokens);
             start.name("Prerequisites");
 #if DEBUG_PARSERS
             debug(start);
@@ -98,7 +98,7 @@ namespace {
             exclusions_grammar::base_type(start, "exclusions_grammar"),
             one_or_more_string_tokens(tok)
         {
-            start %= -(label(tok.Exclusions_) >> one_or_more_string_tokens);
+            start %= -(label(tok.exclusions_) >> one_or_more_string_tokens);
             start.name("Exclusions");
 #if DEBUG_PARSERS
             debug(start);
@@ -144,15 +144,15 @@ namespace {
 
             policy
                 = (  tok.Policy_                                            // _1
-                >    label(tok.Name_)               > tok.string            // _2
-                >    label(tok.Description_)        > tok.string            // _3
-                >    label(tok.Short_Description_)  > tok.string            // _4
-                >    label(tok.Category_)           > tok.string            // _5
-                >    label(tok.AdoptionCost_)       > double_rules.expr     // _6
+                >    label(tok.name_)               > tok.string            // _2
+                >    label(tok.description_)        > tok.string            // _3
+                >    label(tok.short_description_)  > tok.string            // _4
+                >    label(tok.category_)           > tok.string            // _5
+                >    label(tok.adoptioncost_)       > double_rules.expr     // _6
                 >    prerequisites                                          // _7
                 >    exclusions                                             // _8
-                >  -(label(tok.EffectsGroups_)      > effects_group_grammar)// _9
-                >    label(tok.Graphic_)            > tok.string)           // _10
+                >  -(label(tok.effectsgroups_)      > effects_group_grammar)// _9
+                >    label(tok.graphic_)            > tok.string)           // _10
                 [  _pass = is_unique_(_r1, _1, _2),
                    insert_policy_(_r1, phoenix::construct<policy_pod>(
                        _2, _3, _4, _5, _6, _7, _8, _9, _10), _pass) ]

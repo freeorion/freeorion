@@ -3,13 +3,13 @@ BuildingType
     description = "BLD_CONC_CAMP_DESC"
     buildcost = 5 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 1
-    location = AND [
+    location = And [
         Not Contains Building name = "BLD_CONC_CAMP"
         OwnedBy empire = Source.Owner
         EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_RACIAL_PURITY"
         Population low = 3
     ]
-    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    enqueuelocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS]]
     

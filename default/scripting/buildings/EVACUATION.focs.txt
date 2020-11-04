@@ -3,7 +3,7 @@ BuildingType
     description = "BLD_EVACUATION_DESC"
     buildcost = 10 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 1
-    location = AND [
+    location = And [
         Planet
         OwnedBy empire = Source.Owner
         Not Contains Building name = "BLD_EVACUATION"
@@ -12,7 +12,7 @@ BuildingType
         Not Enqueued type = Building name = "BLD_CONC_CAMP"
         Species
     ]
-    EnqueueLocation = And [
+    enqueuelocation = And [
         Planet
         OwnedBy empire = Source.Owner
         Not Contains Building name = "BLD_EVACUATION"
@@ -73,7 +73,7 @@ BuildingType
 
         EffectsGroup            // remove evacuation when planet is depopulated or no longer owned by empire that produced this building
             scope = Source
-            activation = OR [
+            activation = Or [
                 Not OwnedBy empire = Source.Owner
                 ContainedBy Or [
                     And [

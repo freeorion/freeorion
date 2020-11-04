@@ -15,7 +15,7 @@ Special
             ]
         EffectsGroup
             scope = Source
-            activation = AND [ 
+            activation = And [ 
                 Not Contains Building name = "BLD_CONC_CAMP"
                 Not Contains Building name = "BLD_CONC_CAMP_REMNANT"
                 Population low = 0.0001

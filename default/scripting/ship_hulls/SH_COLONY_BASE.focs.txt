@@ -12,8 +12,8 @@ Hull
         Slot type = Internal position = (0.50, 0.50)
         Slot type = Internal position = (0.62, 0.50)
     ]
-    buildCost = 6 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_HULL_COST_MULTIPLIER]]
-    buildTime = 3
+    buildcost = 6 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_HULL_COST_MULTIPLIER]]
+    buildtime = 3
     tags = [ "PEDIA_HULL_LINE_GENERIC" ]
     location = OwnedBy empire = Source.Owner
     effectsgroups = [

@@ -98,15 +98,15 @@ namespace {
 
             special
                 = (  tok.Special_
-                >    label(tok.Name_)           > tok.string                // _2
-                >    label(tok.Description_)    > tok.string                // _3
-                >  -(label(tok.Stealth_)        > double_rules.expr)        // _4
-                >  -(label(tok.SpawnRate_)      > double_rule)              // _5
-                >  -(label(tok.SpawnLimit_)     > int_rule)                 // _6
-                >  -(label(tok.Capacity_)       > double_rules.expr)        // _7
-                >  -(label(tok.Location_)       > condition_parser)         // _8
-                >  -(label(tok.EffectsGroups_)  > effects_group_grammar)    // _9
-                >    label(tok.Graphic_)        > tok.string)               // _10
+                >    label(tok.name_)           > tok.string                // _2
+                >    label(tok.description_)    > tok.string                // _3
+                >  -(label(tok.stealth_)        > double_rules.expr)        // _4
+                >  -(label(tok.spawnrate_)      > double_rule)              // _5
+                >  -(label(tok.spawnlimit_)     > int_rule)                 // _6
+                >  -(label(tok.capacity_)       > double_rules.expr)        // _7
+                >  -(label(tok.location_)       > condition_parser)         // _8
+                >  -(label(tok.effectsgroups_)  > effects_group_grammar)    // _9
+                >    label(tok.graphic_)        > tok.string)               // _10
                 [  _pass = is_unique_(_r1, _1, _2),
                    insert_special_(_r1, phoenix::construct<special_data>(_5, _6, _10),
                                    _2, _3, _4, _9, _7, _8, _pass) ]

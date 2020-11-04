@@ -11,7 +11,7 @@ BuildingType
         [[LOCATION_ALLOW_BUILD_IF_PREREQ_ENQUEUED(BLD_SHIPYARD_ORBITAL_DRYDOCK)]]
         OwnedBy empire = Source.Owner
     ]
-    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    enqueuelocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     icon = "icons/building/shipyard-4.png"
 
 #include "/scripting/common/enqueue.macros"

@@ -3,16 +3,16 @@ BuildingType
     description = "BLD_PLANET_BEACON_DESC"
     buildcost = 1
     buildtime = 1
-    location = AND [
+    location = And [
         Not Contains Building name = "BLD_PLANET_BEACON"
         OwnedBy empire = Source.Owner
-        Number high = 6 condition = AND [
+        Number high = 6 condition = And [
             Planet
             InSystem id = RootCandidate.SystemID
         ]
     ]
 
-    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    enqueuelocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS]]
     

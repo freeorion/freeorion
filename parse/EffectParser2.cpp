@@ -48,10 +48,10 @@ namespace parse { namespace detail {
             ((
                 /* has some overlap with set_ship_part_meter_type_enum so can't use '>' */
                 set_non_ship_part_meter_type_enum [ _a = _1 ]
-                >>  label(tok.Value_)
+                >>  label(tok.value_)
             )
             >   double_rules.expr [ _b = _1 ]
-            > -(label(tok.AccountingLabel_) > tok.string) [ _c = _1]
+            > -(label(tok.accountinglabel_) > tok.string) [ _c = _1]
             ) [ _val = construct_movable_(new_<Effect::SetMeter>(
                 _a,
                 deconstruct_movable_(_b, _pass),
@@ -59,8 +59,8 @@ namespace parse { namespace detail {
             ;
 
         set_ship_part_meter
-            = ((set_ship_part_meter_type_enum  >>   label(tok.PartName_))   > string_grammar
-               >    label(tok.Value_)      > double_rules.expr
+            = ((set_ship_part_meter_type_enum  >>   label(tok.partname_))   > string_grammar
+               >    label(tok.value_)      > double_rules.expr
               ) [ _val = construct_movable_(new_<Effect::SetShipPartMeter>(
                   _1,
                   deconstruct_movable_(_2, _pass),
@@ -70,13 +70,13 @@ namespace parse { namespace detail {
         set_empire_stockpile
             =   tok.SetEmpireStockpile_ [ _a = ResourceType::RE_INDUSTRY ]
             >   (
-                (   label(tok.Empire_) > int_rules.expr [ _b = _1 ]
-                    >   label(tok.Value_)  > double_rules.expr [ _val = construct_movable_(new_<Effect::SetEmpireStockpile>(
+                (   label(tok.empire_) > int_rules.expr [ _b = _1 ]
+                    >   label(tok.value_)  > double_rules.expr [ _val = construct_movable_(new_<Effect::SetEmpireStockpile>(
                         deconstruct_movable_(_b, _pass),
                         _a,
                         deconstruct_movable_(_1, _pass))) ]
                 )
-                |  (label(tok.Value_)  > double_rules.expr [ _val = construct_movable_(new_<Effect::SetEmpireStockpile>(
+                |  (label(tok.value_)  > double_rules.expr [ _val = construct_movable_(new_<Effect::SetEmpireStockpile>(
                             _a,
                             deconstruct_movable_(_1, _pass))) ]
                        )
@@ -86,7 +86,7 @@ namespace parse { namespace detail {
         set_empire_capital
             =    tok.SetEmpireCapital_
             >   (
-                (label(tok.Empire_) > int_rules.expr [ _val = construct_movable_(
+                (label(tok.empire_) > int_rules.expr [ _val = construct_movable_(
                         new_<Effect::SetEmpireCapital>(deconstruct_movable_(_1, _pass))) ])
                 |    eps [ _val = construct_movable_(new_<Effect::SetEmpireCapital>()) ]
             )
@@ -94,41 +94,41 @@ namespace parse { namespace detail {
 
         set_planet_type
             =    tok.SetPlanetType_
-            >    label(tok.Type_) > planet_type_rules.expr [ _val = construct_movable_(
+            >    label(tok.type_) > planet_type_rules.expr [ _val = construct_movable_(
                 new_<Effect::SetPlanetType>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         set_planet_size
             =    tok.SetPlanetSize_
-            >    label(tok.PlanetSize_) > planet_size_rules.expr [
+            >    label(tok.planetsize_) > planet_size_rules.expr [
                 _val = construct_movable_(new_<Effect::SetPlanetSize>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         set_species
             =    tok.SetSpecies_
-            >    label(tok.Name_) > string_grammar [
+            >    label(tok.name_) > string_grammar [
                 _val = construct_movable_(new_<Effect::SetSpecies>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         set_owner
             =    tok.SetOwner_
-            >    label(tok.Empire_) > int_rules.expr [
+            >    label(tok.empire_) > int_rules.expr [
                 _val = construct_movable_(new_<Effect::SetOwner>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         set_species_opinion
             =    tok.SetSpeciesOpinion_
-            >    label(tok.Species_) >   string_grammar [ _a = _1 ]
+            >    label(tok.species_) >   string_grammar [ _a = _1 ]
             > (
-                (   label(tok.Empire_) >  int_rules.expr [ _c = _1 ]
-                    >  label(tok.Opinion_) > double_rules.expr
+                (   label(tok.empire_) >  int_rules.expr [ _c = _1 ]
+                    >  label(tok.opinion_) > double_rules.expr
                     [ _val = construct_movable_(new_<Effect::SetSpeciesEmpireOpinion>(
                             deconstruct_movable_(_a, _pass),
                             deconstruct_movable_(_c, _pass),
                             deconstruct_movable_(_1, _pass))) ])
                 |
-                (   label(tok.Species_) > string_grammar [ _b = _1 ]
-                    >   label(tok.Opinion_) > double_rules.expr
+                (   label(tok.species_) > string_grammar [ _b = _1 ]
+                    >   label(tok.opinion_) > double_rules.expr
                     [ _val = construct_movable_(new_<Effect::SetSpeciesSpeciesOpinion>(
                             deconstruct_movable_(_a, _pass),
                             deconstruct_movable_(_b, _pass),
@@ -144,21 +144,21 @@ namespace parse { namespace detail {
                         // useful to specify a single recipient empire, or the allies
                         // or enemies of a single empire
                         (
-                            (   (label(tok.Affiliation_) > empire_affiliation_type_enum [ _d = _1 ])
+                            (   (label(tok.affiliation_) > empire_affiliation_type_enum [ _d = _1 ])
                                 |    eps [ _d = EmpireAffiliationType::AFFIL_SELF ]
                             )
-                            >>  label(tok.Empire_)
+                            >>  label(tok.empire_)
                         ) > int_rules.expr [ _b = _1 ]
                     )
                     |  (   // no empire id or condition specified, with or without an
                         // affiliation type: useful to specify no or all empires
-                        (   (label(tok.Affiliation_) > empire_affiliation_type_enum [ _d = _1 ])
+                        (   (label(tok.affiliation_) > empire_affiliation_type_enum [ _d = _1 ])
                             |    eps [ _d = EmpireAffiliationType::AFFIL_ANY ]
                         )
                     )
                 )
-                >  label(tok.Visibility_) > visibility_rules.expr [ _c = _1 ]
-                >-(label(tok.Condition_) > condition_parser [ _e = _1 ])
+                >  label(tok.visibility_) > visibility_rules.expr [ _c = _1 ]
+                >-(label(tok.condition_) > condition_parser [ _e = _1 ])
             ) [ _val = construct_movable_(
                 new_<Effect::SetVisibility>(deconstruct_movable_(_c, _pass),
                                             _d,

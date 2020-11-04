@@ -27,7 +27,7 @@ HAS_GROWTH_FOCUS
             name = "FOCUS_GROWTH"
             description = "FOCUS_GROWTH_DESC"
             location = Or [
-                AND [
+                And [
                     Homeworld name = Source.Species
                     Not HasTag name = "SELF_SUSTAINING"
                 ]

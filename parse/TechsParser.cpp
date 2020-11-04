@@ -132,12 +132,12 @@ namespace {
                 ;
 
             tech_info
-                = ( label(tok.Name_)                > tok.string
-                >   label(tok.Description_)         > tok.string
-                >   label(tok.Short_Description_)   > tok.string  // TODO: Get rid of underscore.
-                >   label(tok.Category_)            > tok.string
-                >   label(tok.ResearchCost_)        > double_rules.expr
-                >   label(tok.ResearchTurns_)       > castable_int_rules.flexible_int
+                = ( label(tok.name_)                > tok.string
+                >   label(tok.description_)         > tok.string
+                >   label(tok.short_description_)   > tok.string  // TODO: Get rid of underscore.
+                >   label(tok.category_)            > tok.string
+                >   label(tok.researchcost_)        > double_rules.expr
+                >   label(tok.researchturns_)       > castable_int_rules.flexible_int
                 >   researchable
                 >   tags_parser
                 ) [ _val = construct_movable_(new_<Tech::TechInfo>(
@@ -146,12 +146,12 @@ namespace {
                 ;
 
             prerequisites
-                %=   label(tok.Prerequisites_)
+                %=   label(tok.prerequisites_)
                 >  one_or_more_string_tokens
                 ;
 
             unlocks
-                %=   label(tok.Unlock_)
+                %=   label(tok.unlock_)
                 >  one_or_more_unlockable_items
                 ;
 
@@ -160,16 +160,16 @@ namespace {
                 >   tech_info
                 >  -prerequisites
                 >  -unlocks
-                >  -(label(tok.EffectsGroups_) > effects_group_grammar)
-                >  -as_string_[(label(tok.Graphic_) > tok.string)]
+                >  -(label(tok.effectsgroups_) > effects_group_grammar)
+                >  -as_string_[(label(tok.graphic_) > tok.string)]
                   ) [ insert_tech_(_r1, _1, _4, _2, _3, _5, _pass) ]
                 ;
 
             category
                 = ( tok.Category_
-                    >   label(tok.Name_)    > tok.string
-                    >   label(tok.Graphic_) > tok.string
-                    >   label(tok.Colour_)  > color_parser
+                    >   label(tok.name_)    > tok.string
+                    >   label(tok.graphic_) > tok.string
+                    >   label(tok.colour_)  > color_parser
                   ) [ _pass = is_unique_(_r1, _1, _2),
                       insert_category_(_r1, _2, _3, _4) ]
                 ;
