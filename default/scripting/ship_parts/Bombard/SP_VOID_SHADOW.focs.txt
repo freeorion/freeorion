@@ -22,7 +22,7 @@ Part
                 /// @content_tag{PHOTOTROPHIC} When bombarding in-system enemy with this part, reduces population on visible populated Planet with tag
                 HasTag name = "PHOTOTROPHIC"
             ]
-            priority = [[EARLY_POPULATION_PRIORITY]]
+            priority = [[POPULATION_DEFAULT_PRIORITY]]
             effects = [
                 SetPopulation value = Value - 1
                 GenerateSitRepMessage
@@ -50,7 +50,7 @@ Part
                 Unowned
                 InSystem
             ]
-            priority = [[EARLY_POPULATION_PRIORITY]]
+            priority = [[POPULATION_DEFAULT_PRIORITY]]
             effects = [
                 SetPopulation value = Value - 1
                 GenerateSitRepMessage

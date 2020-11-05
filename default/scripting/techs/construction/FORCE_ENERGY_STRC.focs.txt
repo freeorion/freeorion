@@ -17,44 +17,20 @@ Tech
                 OwnedBy empire = Source.Owner
             ]
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
-            effects = If
-                condition = (Value(LocalCandidate.Industry) <= Value(LocalCandidate.TargetIndustry))
-                effects = SetIndustry value = min(Value + (2 * ( Statistic If condition = (Target.Happiness > 4) ) ), Value(Target.TargetIndustry))
-                else = SetIndustry value = max(Value - 4, Value(Target.TargetIndustry))
-
-        EffectsGroup
-            scope = And [
-                ProductionCenter
-                OwnedBy empire = Source.Owner
+            effects = [
+                If condition = (Value(LocalCandidate.Industry) <= Value(LocalCandidate.TargetIndustry))
+                    effects = SetIndustry value = min(Value + (2 * ( Statistic If condition = (Target.Happiness > 4) ) ), Value(Target.TargetIndustry))
+                    else = SetIndustry value = max(Value - 4, Value(Target.TargetIndustry))
+                If condition = (Value(LocalCandidate.Research) <= Value(LocalCandidate.TargetResearch))
+                    effects = SetResearch value = min(Value + (2 * ( Statistic If condition = (Target.Happiness > 4) ) ), Value(Target.TargetResearch))
+                    else = SetResearch value = max(Value - 4, Value(Target.TargetResearch))
+                If condition = (Value(LocalCandidate.Construction) <= Value(LocalCandidate.TargetConstruction))
+                    effects = SetConstruction value = min(Value + 2, Value(Target.TargetConstruction))
+                    else = SetConstruction value = max(Value - 4, Value(Target.TargetConstruction))
+                If condition = (Value(LocalCandidate.Stockpile) <= Value(LocalCandidate.MaxStockpile))
+                    effects = SetStockpile value = min(Value + 2, Value(Target.MaxStockpile))
+                    else = SetStockpile value = max(Value - 4, Value(Target.MaxStockpile))
             ]
-            priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
-            effects = If
-                condition = (Value(LocalCandidate.Research) <= Value(LocalCandidate.TargetResearch))
-                effects = SetResearch value = min(Value + (2 * ( Statistic If condition = (Target.Happiness > 4) ) ), Value(Target.TargetResearch))
-                else = SetResearch value = max(Value - 4, Value(Target.TargetResearch))
-            
-        EffectsGroup
-            scope = And [
-                ProductionCenter
-                OwnedBy empire = Source.Owner
-            ]
-            priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
-            effects = If
-                condition = (Value(LocalCandidate.Construction) <= Value(LocalCandidate.TargetConstruction))
-                effects = SetConstruction value = min(Value + 2, Value(Target.TargetConstruction))
-                else = SetConstruction value = max(Value - 4, Value(Target.TargetConstruction))
-
-        EffectsGroup
-            scope = And [
-                ProductionCenter
-                OwnedBy empire = Source.Owner
-            ]
-            priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
-            effects = If
-                condition = (Value(LocalCandidate.Stockpile) <= Value(LocalCandidate.MaxStockpile))
-                effects = SetStockpile value = min(Value + 2, Value(Target.MaxStockpile))
-                else = SetStockpile value = max(Value - 4, Value(Target.MaxStockpile))
-
     ]
     graphic = "icons/tech/force_energy_structures.png"
 

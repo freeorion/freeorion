@@ -23,7 +23,7 @@ BASIC_POPULATION
                 Planet
                 (LocalCandidate.LastTurnConquered < CurrentTurn)
             ]
-            priority = [[EARLY_FIRST_NATURAL_POPULATION_PRIORITY]]
+            priority = [[POPULATION_FIRST_PRIORITY]]
             effects = SetPopulation value =
                 (Statistic If condition = (Value < Target.TargetPopulation) *
                     min(Target.TargetPopulation, Value + Value*[[GROWTH_RATE_FACTOR]]*
@@ -246,6 +246,7 @@ LIFECYCLE_MANIP_POPULATION_EFFECTS
                 Not OwnerHasTech name = "GRO_LIFECYCLE_MAN"
                 Turn low = LocalCandidate.CreationTurn + 1 high = LocalCandidate.CreationTurn + 1
             ]
+            priority = [[POPULATION_DEFAULT_PRIORITY]]
             effects = [
                 SetSpecies name = @1@
                 SetPopulation value = 1
@@ -260,6 +261,7 @@ LIFECYCLE_MANIP_POPULATION_EFFECTS
                 OwnerHasTech name = "GRO_LIFECYCLE_MAN"
                 Turn low = LocalCandidate.CreationTurn + 1 high = LocalCandidate.CreationTurn + 1
             ]
+            priority = [[POPULATION_DEFAULT_PRIORITY]]
             effects = [
                 SetSpecies name = @1@
                 SetPopulation value = [[MIN_RECOLONIZING_SIZE]]

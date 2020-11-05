@@ -17,7 +17,7 @@ Tech
                 Population high = 0
             ]
             stackinggroup = "OUTPOST_TROOPS_STACK"
-            priority = [[VERY_LATE_PRIORITY]]
+            priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
             effects = SetMaxTroops value = Value * .5
             accountinglabel = "OUTPOST_TROOP_LABEL"
 

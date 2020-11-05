@@ -14,8 +14,10 @@ Tech
                 OwnedBy empire = Source.Owner
                 Focus type = "FOCUS_RESEARCH"
             ]
-            priority = [[LATE_PRIORITY]]
-            effects = SetTargetResearch value = Value + Target.Population * (NamedReal name = "LRN_QUANT_NET_TARGET_RESEARCH_PERPOP" value = (0.5 * [[RESEARCH_PER_POP]]))
+            priority = [[TARGET_AFTER_SCALING_PRIORITY]]
+            effects = SetTargetResearch value = Value + Target.Population
+                        * (NamedReal name = "LRN_QUANT_NET_TARGET_RESEARCH_PERPOP"
+                                     value = (0.5 * [[RESEARCH_PER_POP]]))
     ]
     graphic = "icons/tech/quantum_networking.png"
 

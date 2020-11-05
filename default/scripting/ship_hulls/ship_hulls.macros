@@ -150,7 +150,7 @@ AVERAGE_BASE_FUEL_REGEN
     ]
     stackinggroup = "BASE_FUEL_REGEN"
     accountinglabel = "BASE_FUEL_REGEN_LABEL"
-    priority = [[VERY_LATE_PRIORITY]]
+    priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
     effects = SetFuel value = min(Target.MaxFuel, Value + 0.1001)
 
    [[REFUEL_MESSAGE(0.1001)]]
@@ -180,7 +180,7 @@ HULL_FUEL_EFFICIENCY_EFFECTSGROUP
                 Ship
             ]
             accountinglabel = "@1@_FUEL_EFFICIENCY_LABEL"
-            priority = [[VERY_LATE_PRIORITY]]
+            priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
             effects = SetMaxFuel value = Value * @2@  * Statistic If condition = And [ Source HasTag name = "@1@_FUEL_EFFICIENCY" ]
 
      // If a ship has less than one maximum fuel it will never be able to travel out of supply so refueling does not make sense.
@@ -204,7 +204,7 @@ ADD_HULL_FUEL_TO_MAX_FUEL_METER
 '''EffectsGroup
             scope = Source
             accountinglabel = "TT_SHIP_HULL"
-            priority = [[VERY_VERY_LATE_PRIORITY]]
+            priority = [[TARGET_LAST_BEFORE_OVERRIDE_PRIORITY]]
             effects = SetMaxFuel value = ( Value + HullFuel name = Source.Hull )
 '''
 

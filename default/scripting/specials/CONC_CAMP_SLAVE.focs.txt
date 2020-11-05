@@ -5,7 +5,7 @@ Special
     effectsgroups = [
         EffectsGroup
             scope = Source
-            priority = [[EARLY_POPULATION_OVERRIDE_PRIORITY]]
+            priority = [[POPULATION_OVERRIDE_PRIORITY]]
             effects = SetPopulation value = Value + 0.5*(101+Target.TargetPopulation-2*Value - ((101+Target.TargetPopulation-2*Value)^2 -4*(Value*(Value-1-Target.TargetPopulation)-2*100))^0.5)
             
         EffectsGroup

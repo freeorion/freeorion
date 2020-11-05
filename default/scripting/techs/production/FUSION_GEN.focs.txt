@@ -14,10 +14,8 @@ Tech
                 OwnedBy empire = Source.Owner
                 Focus type = "FOCUS_INDUSTRY"
             ]
-            priority = [[EARLY_PRIORITY]]
             effects = SetTargetIndustry value = Value + Target.Population * 0.25 * [[INDUSTRY_PER_POP]]
     ]
     graphic = "icons/tech/fusion_generation.png"
 
 #include "/scripting/common/base_prod.macros"
-#include "/scripting/common/priorities.macros"

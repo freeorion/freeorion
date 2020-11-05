@@ -14,14 +14,16 @@ Tech
                 OwnedBy empire = Source.Owner
                 Not Population high = 0
             ]
-            priority = [[EARLY_PRIORITY]]
-            effects = SetTargetResearch value = Value + Target.Population * (NamedReal name = "LRN_DISTRIB_THOUGHT_TARGET_RESEARCH_PERPOP" value = (0.5 * [[RESEARCH_PER_POP]]))
+            effects = SetTargetResearch value = Value + Target.Population
+                        * (NamedReal name = "LRN_DISTRIB_THOUGHT_TARGET_RESEARCH_PERPOP"
+                                     value = (0.5 * [[RESEARCH_PER_POP]]))
 
         EffectsGroup
             scope = Source
-            effects = SetEmpireMeter empire = Source.Owner meter = "MILITARY_CATEGORY_NUM_POLICY_SLOTS" value = Value + 1            
+            effects = SetEmpireMeter empire = Source.Owner
+                                     meter = "MILITARY_CATEGORY_NUM_POLICY_SLOTS" value = Value + 1            
     ]
     graphic = "icons/tech/distributed_thought.png"
 
 #include "/scripting/common/base_prod.macros"
-#include "/scripting/common/priorities.macros"
+

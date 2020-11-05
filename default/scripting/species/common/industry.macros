@@ -10,7 +10,7 @@ BASIC_INDUSTRY
                 Focus type = "FOCUS_INDUSTRY"
             ]
             accountinglabel = "FOCUS_INDUSTRY_LABEL"
-            priority = [[EARLY_PRIORITY]]
+            priority = [[TARGET_EARLY_BEFORE_SCALING_PRIORITY]]
             effects = SetTargetIndustry value = Value + Target.Population * [[INDUSTRY_PER_POP]]
 
         EffectsGroup      // gives human bonuses when AI Aggression set to Beginner
@@ -21,7 +21,7 @@ BASIC_INDUSTRY
                 (GalaxyMaxAIAggression = 0)
             ]
             accountinglabel = "DIFFICULTY"
-            priority = [[VERY_LATE_PRIORITY]]
+            priority = [[TARGET_AFTER_SCALING_PRIORITY]]
             effects = SetTargetIndustry value = Value * 2
 '''
 
@@ -37,7 +37,6 @@ VERY_BAD_INDUSTRY
                 Focus type = "FOCUS_INDUSTRY"
             ]
             accountinglabel = "VERY_BAD_INDUSTRY_LABEL"
-            priority = [[DEFAULT_PRIORITY]]
             effects = SetTargetIndustry value = Value*[[VERY_BAD_MULTIPLIER]]
 '''
 
@@ -53,7 +52,6 @@ BAD_INDUSTRY
                 Focus type = "FOCUS_INDUSTRY"
             ]
             accountinglabel = "BAD_INDUSTRY_LABEL"
-            priority = [[DEFAULT_PRIORITY]]
             effects = SetTargetIndustry value = Value*[[BAD_MULTIPLIER]]
 '''
 
@@ -73,7 +71,6 @@ GOOD_INDUSTRY
                 Focus type = "FOCUS_INDUSTRY"
             ]
             accountinglabel = "GOOD_INDUSTRY_LABEL"
-            priority = [[DEFAULT_PRIORITY]]
             effects = SetTargetIndustry value = Value*[[GOOD_MULTIPLIER]]
 '''
 
@@ -89,7 +86,6 @@ GREAT_INDUSTRY
                 Focus type = "FOCUS_INDUSTRY"
             ]
             accountinglabel = "GREAT_INDUSTRY_LABEL"
-            priority = [[DEFAULT_PRIORITY]]
             effects = SetTargetIndustry value = Value*[[GREAT_MULTIPLIER]]
 '''
 
@@ -105,6 +101,5 @@ ULTIMATE_INDUSTRY
                 Focus type = "FOCUS_INDUSTRY"
             ]
             accountinglabel = "ULTIMATE_INDUSTRY_LABEL"
-            priority = [[DEFAULT_PRIORITY]]
             effects = SetTargetIndustry value = Value*[[ULTIMATE_MULTIPLIER]]
 '''

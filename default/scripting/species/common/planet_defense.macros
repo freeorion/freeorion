@@ -7,7 +7,6 @@ NATIVE_PLANETARY_DEFENSE
                 Unowned
             ]
             accountinglabel = "NATIVE_PLANETARY_DEFENSE_LABEL"
-            priority = [[DEFAULT_PRIORITY]]
             effects = SetMaxDefense value = Value + ( @1@ )
 '''
 
@@ -35,7 +34,7 @@ PROTECTION_FOCUS_DEFENSE
                 Focus type = "FOCUS_PROTECTION"
             ]
             stackinggroup = "FOCUS_PROTECTION_DEFENSE_STACK"
-            priority = [[VERY_LATE_PRIORITY]]
+            priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
             effects = [
                 SetMaxDefense value = Value * 2 accountinglabel = "FOCUS_PROTECTION_LABEL"
                 SetTargetHappiness value = Value + 15

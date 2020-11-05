@@ -39,7 +39,7 @@ STOCKPILE_PER_POP_EFFECTSGROUP__SNIP
 '''scope = Source
             activation = Planet
             accountinglabel = "@1@_STOCKPILE_LABEL"
-            priority = [[EARLY_PRIORITY]]
+            priority = [[TARGET_EARLY_BEFORE_SCALING_PRIORITY]]
             effects = SetMaxStockpile value = @2@
 '''
 
@@ -71,7 +71,6 @@ STANDARD_STOCKPILE
             ]
             stackinggroup = "HOMEWORLD_STOCKPILE_FOCUS_BONUS_LABEL"
             accountinglabel = "HOMEWORLD_STOCKPILE_FOCUS_BONUS_LABEL"
-            priority = [[DEFAULT_PRIORITY]]
             effects = SetMaxStockpile value = (Value +  2 * Target.Population * [[STOCKPILE_PER_POP]])
 
         // removes residual stockpile capacity from a dead planet

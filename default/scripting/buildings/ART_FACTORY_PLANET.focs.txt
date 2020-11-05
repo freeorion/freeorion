@@ -20,7 +20,7 @@ BuildingType
                 Object id = Source.PlanetID
                 Planet
             ]
-            priority = [[EARLY_POPULATION_OVERRIDE_PRIORITY]]
+            priority = [[POPULATION_OVERRIDE_PRIORITY]]
             effects = [
                 SetPlanetType type = Barren
                 SetSpecies name = "SP_EXOBOT"

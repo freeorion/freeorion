@@ -111,7 +111,7 @@ BuildingType
             ]
             stackinggroup = "PALACE_DEFENSE_STACK"
             accountinglabel = "BLD_IMPERIAL_PALACE"
-            priority = [[VERY_EARLY_PRIORITY]]
+            priority = [[TARGET_EARLY_BEFORE_SCALING_PRIORITY]]
             effects = [
                 SetMaxDefense value = Value + ( 5 * [[PLANET_DEFENSE_FACTOR]] )
                 SetMaxTroops value = Value + 6

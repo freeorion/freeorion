@@ -25,7 +25,7 @@ XENOPHOBIC_SELF
             ]
             stackinggroup = "XENOPHOBIC_LABEL_SELF"
             accountinglabel = "XENOPHOBIC_LABEL_SELF"
-            priority = [[LATE_PRIORITY]]
+            priority = [[TARGET_AFTER_SCALING_PRIORITY]]
             effects = [ 
                 SetTargetIndustry value = Value * 0.9
                 SetTargetResearch value = Value * 0.9
@@ -94,6 +94,6 @@ XENOPHOBIC_OTHER
             activation = PopulationCenter
             stackinggroup = "XENOPHOBIC_LABEL_@1@_OTHER"
             accountinglabel = "XENOPHOBIC_LABEL_@1@_OTHER"
-            priority = [[LATE_PRIORITY]]
+            priority = [[TARGET_AFTER_SCALING_PRIORITY]]
             effects = SetTargetIndustry value = Value - Target.Population * 0.1
 '''

@@ -20,7 +20,7 @@ Policy
                 DesignHasPartClass low = 0 high = 0 class = General
                 DesignHasPartClass low = 0 high = 0 class = Bombard
             ]
-            priority = [[LATE_PRIORITY]]
+            priority = [[TARGET_AFTER_SCALING_PRIORITY]]
             effects = SetMaxFuel value = Value + 1
     ]
     graphic = "icons/policies/colonization.png"

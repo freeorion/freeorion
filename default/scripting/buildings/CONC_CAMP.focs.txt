@@ -22,8 +22,9 @@ BuildingType
                 PopulationCenter
                 OwnedBy empire = Source.Owner
             ]
-            priority = [[LATE_PRIORITY]]
+            priority = [[TARGET_AFTER_SCALING_PRIORITY]]
             effects = SetTargetIndustry value = Value + Target.Population * 10 * [[INDUSTRY_PER_POP]]
+
         EffectsGroup
             scope = And [
                 Object id = Source.PlanetID
@@ -39,12 +40,13 @@ BuildingType
                 ]
             ]
             effects = AddSpecial name = "CONC_CAMP_MASTER_SPECIAL"
+
         EffectsGroup
             scope = Source
-            activation =    ContainedBy And [
-                                Object id = Source.PlanetID
-                                Population high = 0
-                            ]
+            activation = ContainedBy And [
+                Object id = Source.PlanetID
+                Population high = 0
+            ]
             effects = [
                 Destroy
                 GenerateSitRepMessage
@@ -54,6 +56,7 @@ BuildingType
                     parameters = tag = "planet" data = Source.PlanetID
                     empire = Source.Owner
                 ]
+
         EffectsGroup
             scope = And [
                 Object id = Source.PlanetID
@@ -69,6 +72,7 @@ BuildingType
                 SetPopulation value = min(Value, Target.Population - 3)
                 SetIndustry value = Target.TargetIndustry
             ]
+
         EffectsGroup
             scope = Source
             activation = Or [

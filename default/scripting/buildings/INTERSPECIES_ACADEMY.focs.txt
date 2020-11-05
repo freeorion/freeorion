@@ -69,7 +69,7 @@ BuildingType
                 Species
             ]
             accountinglabel = "INTERSPECIES_ACADEMY_LABEL"
-            priority = [[LATE_PRIORITY]]
+            priority = [[TARGET_AFTER_SCALING_PRIORITY]]
             effects = SetMaxStockpile value = Value + 10
         
         // Research bonus    
@@ -82,7 +82,7 @@ BuildingType
                 Species
             ]
             accountinglabel = "INTERSPECIES_ACADEMY_LABEL"
-            priority = [[LATE_PRIORITY]]
+            priority = [[TARGET_AFTER_SCALING_PRIORITY]]
             effects = SetTargetResearch value = Value + 5
             
         // Influence bonus    
@@ -95,7 +95,7 @@ BuildingType
                 Species
             ]
             accountinglabel = "INTERSPECIES_ACADEMY_LABEL"
-            priority = [[LATE_PRIORITY]]
+            priority = [[TARGET_AFTER_SCALING_PRIORITY]]
             effects = SetTargetInfluence value = Value + 2
     ]
     icon = "icons/building/science-institute.png"

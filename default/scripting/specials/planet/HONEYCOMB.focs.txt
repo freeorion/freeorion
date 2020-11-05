@@ -39,7 +39,7 @@ Special
             ]
             activation = Turn high = 0
             stackinggroup = "GAME_START_MOD_STACK"
-            priority = [[VERY_EARLY_PRIORITY]]
+            priority = [[BEFORE_ANYTHING_ELSE_PRIORITY]]
             effects = [
                 SetPlanetSize planetsize = Asteroids
                 SetPlanetType type = Asteroids
@@ -49,7 +49,7 @@ Special
             scope = Source
             activation = Turn high = 0
             stackinggroup = "GAME_START_MOD_STACK"
-            priority = [[VERY_EARLY_PRIORITY]]
+            priority = [[BEFORE_ANYTHING_ELSE_PRIORITY]]
             effects = [
                 SetPlanetSize planetsize = Huge
                 SetPlanetType type = Barren
@@ -64,7 +64,7 @@ Special
             ]
             activation = Focus type = "FOCUS_INDUSTRY"
             stackinggroup = "HONEYCOMB_STACK"
-            priority = [[VERY_LATE_PRIORITY]]
+            priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
             effects = SetTargetIndustry value = Value + Target.Population * 0.5 * [[INDUSTRY_PER_POP]]
 
         [[CHANCE_OF_GUARD_2]]

@@ -25,7 +25,6 @@ BuildingType
                 Not OwnerHasTech name = "PRO_INDUSTRY_CENTER_II"
             ]
             stackinggroup = "INDUSTRY_CENTER_STACK"
-            priority = [[EARLY_PRIORITY]]
             effects = SetTargetIndustry value = Value + Target.Population * 0.25 * [[INDUSTRY_PER_POP]]
 
         EffectsGroup
@@ -40,7 +39,6 @@ BuildingType
                 Not OwnerHasTech name = "PRO_INDUSTRY_CENTER_III"
             ]
             stackinggroup = "INDUSTRY_CENTER_STACK"
-            priority = [[EARLY_PRIORITY]]
             effects = SetTargetIndustry value = Value + Target.Population * 0.5 * [[INDUSTRY_PER_POP]]
 
         EffectsGroup
@@ -52,12 +50,10 @@ BuildingType
             ]
             activation = OwnerHasTech name = "PRO_INDUSTRY_CENTER_III"
             stackinggroup = "INDUSTRY_CENTER_STACK"
-            priority = [[EARLY_PRIORITY]]
             effects = SetTargetIndustry value = Value + Target.Population * 0.75 * [[INDUSTRY_PER_POP]]
     ]
     icon = "icons/tech/industrial_centre_ii.png"
 
 #include "/scripting/common/enqueue.macros"
-#include "/scripting/common/priorities.macros"
 #include "/scripting/common/base_prod.macros"
 #include "/scripting/buildings/buildings.macros"

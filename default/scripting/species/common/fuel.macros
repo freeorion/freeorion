@@ -33,7 +33,7 @@ FUEL_EFFECTSGROUP
                 Ship
             ]
             accountinglabel = "@1@_FUEL_LABEL"
-            priority = [[LATE_PRIORITY]]
+            priority = [[TARGET_AFTER_SCALING_PRIORITY]]
             effects = SetMaxFuel value = @2@
 '''
 

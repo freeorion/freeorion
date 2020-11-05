@@ -13,7 +13,6 @@ Policy
                 Capital
                 OwnedBy empire = Source.Owner
             ]
-            priority = [[DEFAULT_PRIORITY]]
             effects = [
                 SetTargetIndustry value = Value + Target.Population * [[INDUSTRY_PER_POP]]
                 SetTargetResearch value = Value + Target.Population * [[RESEARCH_PER_POP]]
@@ -33,7 +32,6 @@ Policy
                     Capital
                 ]
             ]
-            priority = [[DEFAULT_PRIORITY]]
             effects =
                 SetTargetInfluence value = Value - 3
 
@@ -49,12 +47,10 @@ Policy
                 ]
                 Not Capital
             ]
-            priority = [[DEFAULT_PRIORITY]]
             effects =
                 SetTargetInfluence value = Value - min(3, 0.2 * JumpsBetween object = Source.ID object = Target.ID)
         ]
     graphic = "icons/policies/centralization.png"
 
 #include "/scripting/common/base_prod.macros"
-#include "/scripting/common/priorities.macros"
 #include "/scripting/policies/policies.macros"

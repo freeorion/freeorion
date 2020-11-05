@@ -14,7 +14,7 @@ Policy
                 OwnedBy empire = Source.Owner
                 Focus type = "FOCUS_INDUSTRY"
             ]
-            priority = [[VERY_LATE_PRIORITY]]
+            priority = [[TARGET_2ND_SCALING_PRIORITY]]
             effects =
                 SetTargetIndustry value = Value * 1.25
                 
@@ -25,7 +25,7 @@ Policy
                 Focus type = "FOCUS_INDUSTRY"
                 Population low = 0.001
             ]
-            priority = [[VERY_LATE_PRIORITY]]
+            priority = [[TARGET_2ND_SCALING_PRIORITY]]
             effects =
                 SetTargetHappiness value = Value + 10
     ]

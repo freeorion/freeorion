@@ -34,7 +34,6 @@ EG_NEST_REMOVAL
                 HasSpecial name = "@1@_NEST_SPECIAL"
             ]
             stackinggroup = "@1@_NEST_STACK"  // groups with @1@_NEST_SPECIAL
-            priority = [[EARLY_PRIORITY]]
             effects = [
                 RemoveSpecial name = "@1@_NEST_SPECIAL"
                 GenerateSitRepMessage
@@ -47,4 +46,4 @@ EG_NEST_REMOVAL
 '''
 
 #include "/scripting/common/base_prod.macros"
-#include "/scripting/common/priorities.macros"
+
