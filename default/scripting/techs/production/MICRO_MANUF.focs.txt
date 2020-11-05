@@ -24,7 +24,8 @@ Tech
                 Focus type = "FOCUS_INDUSTRY"
             ]
             priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
-            effects = SetTargetIndustry value = Value + 2
+            effects = SetTargetIndustry value = Value
+                        + (NamedReal name = "PRO_MICROGRAV_MAN_TARGET_INDUSTRY_FLAT" value = 2)
     ]
     graphic = "icons/tech/microgravity_manufacturing.png"
 

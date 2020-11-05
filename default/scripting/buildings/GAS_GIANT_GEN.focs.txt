@@ -25,7 +25,9 @@ BuildingType
             activation = ContainedBy Population high = 0
             stackinggroup = "GAS_GIANT_GEN_STACK"
             priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
-            effects = SetTargetIndustry value = Value + 25 * [[INDUSTRY_PER_POP]]
+            effects = SetTargetIndustry value = Value
+                          + (NamedReal name = "BLD_GAS_GIANT_GEN_OUTPOST_TARGET_INDUSTRY_FLAT"
+                                       value = 25 * [[INDUSTRY_PER_POP]])
 
         EffectsGroup
             scope = And [
@@ -38,7 +40,9 @@ BuildingType
             activation = ContainedBy Not Population high = 0
             stackinggroup = "GAS_GIANT_GEN_STACK"
             priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
-            effects = SetTargetIndustry value = Value + 15 * [[INDUSTRY_PER_POP]]
+            effects = SetTargetIndustry value = Value
+                          + (NamedReal name = "BLD_GAS_GIANT_GEN_COLONY_TARGET_INDUSTRY_FLAT"
+                                       value = 15 * [[INDUSTRY_PER_POP]])
 
         EffectsGroup
             scope = Source

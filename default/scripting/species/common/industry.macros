@@ -11,7 +11,9 @@ BASIC_INDUSTRY
             ]
             accountinglabel = "FOCUS_INDUSTRY_LABEL"
             priority = [[TARGET_EARLY_BEFORE_SCALING_PRIORITY]]
-            effects = SetTargetIndustry value = Value + Target.Population * [[INDUSTRY_PER_POP]]
+            effects = SetTargetIndustry value = Value + Target.Population
+                        * (NamedReal name = "INDUSTRY_FOCUS_TARGET_INDUSTRY_PERPOP"
+                                     value = 1.0 * [[INDUSTRY_PER_POP]])
 
         EffectsGroup      // gives human bonuses when AI Aggression set to Beginner
             scope = Source
@@ -37,7 +39,9 @@ VERY_BAD_INDUSTRY
                 Focus type = "FOCUS_INDUSTRY"
             ]
             accountinglabel = "VERY_BAD_INDUSTRY_LABEL"
-            effects = SetTargetIndustry value = Value*[[VERY_BAD_MULTIPLIER]]
+            effects = SetTargetIndustry value = Value
+                        * (NamedReal name = "VERY_BAD_INDUSTRY_TARGET_INDUSTRY_SCALING"
+                                     value = [[VERY_BAD_MULTIPLIER]])
 '''
 
 BAD_INDUSTRY
@@ -52,7 +56,9 @@ BAD_INDUSTRY
                 Focus type = "FOCUS_INDUSTRY"
             ]
             accountinglabel = "BAD_INDUSTRY_LABEL"
-            effects = SetTargetIndustry value = Value*[[BAD_MULTIPLIER]]
+            effects = SetTargetIndustry value = Value
+                        * (NamedReal name = "BAD_INDUSTRY_TARGET_INDUSTRY_SCALING"
+                                     value = [[BAD_MULTIPLIER]])
 '''
 
 AVERAGE_INDUSTRY
@@ -71,7 +77,9 @@ GOOD_INDUSTRY
                 Focus type = "FOCUS_INDUSTRY"
             ]
             accountinglabel = "GOOD_INDUSTRY_LABEL"
-            effects = SetTargetIndustry value = Value*[[GOOD_MULTIPLIER]]
+            effects = SetTargetIndustry value = Value
+                        * (NamedReal name = "GOOD_INDUSTRY_TARGET_INDUSTRY_SCALING"
+                                     value = [[GOOD_MULTIPLIER]])
 '''
 
 GREAT_INDUSTRY
@@ -86,7 +94,9 @@ GREAT_INDUSTRY
                 Focus type = "FOCUS_INDUSTRY"
             ]
             accountinglabel = "GREAT_INDUSTRY_LABEL"
-            effects = SetTargetIndustry value = Value*[[GREAT_MULTIPLIER]]
+            effects = SetTargetIndustry value = Value
+                        * (NamedReal name = "GREAT_INDUSTRY_TARGET_INDUSTRY_SCALING"
+                                     value = [[GREAT_MULTIPLIER]])
 '''
 
 ULTIMATE_INDUSTRY
@@ -101,5 +111,7 @@ ULTIMATE_INDUSTRY
                 Focus type = "FOCUS_INDUSTRY"
             ]
             accountinglabel = "ULTIMATE_INDUSTRY_LABEL"
-            effects = SetTargetIndustry value = Value*[[ULTIMATE_MULTIPLIER]]
+            effects = SetTargetIndustry value = Value
+                        * (NamedReal name = "ULTIMATE_INDUSTRY_TARGET_INDUSTRY_SCALING"
+                                     value = [[ULTIMATE_MULTIPLIER]])
 '''

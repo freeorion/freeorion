@@ -19,8 +19,9 @@ Policy
                 TargetIndustry low = 0
                 Focus type = "FOCUS_INDUSTRY"
             ]
-            effects =
-                SetTargetIndustry value = Value * ( [[BAD_MULTIPLIER]] - [[VERY_BAD_MULTIPLIER]] )
+            effects = SetTargetIndustry value = Value
+                        * (NamedReal name = "PLC_EXOBOT_PRODUCTIVITY_TARGET_INDUSTRY_SCALING"
+                                     value = [[BAD_MULTIPLIER]] - [[VERY_BAD_MULTIPLIER]])
     ]
     graphic = "icons/policies/exobot_productivity.png"
 

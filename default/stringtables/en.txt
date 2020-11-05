@@ -903,7 +903,7 @@ FLD_NANITE_SWARM
 Nanite Swarm
 
 FLD_NANITE_SWARM_DESC
-A swarm of ancient robotic particles that attach themselves to ship hulls, repairing ship [[metertype METER_STRUCTURE]] by 5 per turn. Harvesting of particles creates one unit of [[metertype METER_INDUSTRY]] per turn.
+A swarm of ancient robotic particles that attach themselves to ship hulls, repairing ship [[metertype METER_STRUCTURE]] by [[value FLD_NANITE_SWARM_STRUCTURE_FLAT]] per turn. Harvesting of particles allows to increase [[metertype METER_INDUSTRY]] by [[value FLD_NANITE_SWARM_TARGET_INDUSTRY_FLAT]] per turn and ship within the swarm.
 
 FLD_METEOR_BLIZZARD
 Meteor Blizzard
@@ -6200,8 +6200,7 @@ Stockpile Distribution Focus
 STOCKPILE_FOCUS_TEXT
 '''The Stockpile Distribution focus increases the [[metertype METER_STOCKPILE]] of a planet.
 
-A Homeworld focused on Stockpile Distribution also helps other planets of the same species and increases the [[metertype METER_STOCKPILE]] there by an additional 0.04 per population.
-
+A Homeworld focused on Stockpile Distribution also helps other planets of the same species and increases the [[metertype METER_STOCKPILE]] there by an additional 0.04 per [[metertype METER_POPULATION]].
 [[METER_STOCKPILE_VALUE_DESC]]'''
 
 ARMOR_TITLE
@@ -8884,25 +8883,21 @@ TIDAL_LOCK_SPECIAL
 Tidally Locked Rotation
 
 TIDAL_LOCK_SPECIAL_DESC
-'''Increases [[metertype METER_TARGET_INDUSTRY]] on this planet by 0.2 per [[metertype METER_POPULATION]] when Focus is set to [[metertype METER_INDUSTRY]]. Decreases [[metertype METER_TARGET_POPULATION]] (regardless of Focus) depending on the planet size:
-• [[SZ_TINY]] (-1)
-• [[SZ_SMALL]] (-2)
-• [[SZ_MEDIUM]] (-3)
-• [[SZ_LARGE]] (-4)
-• [[SZ_HUGE]] (-5)
+'''Increases [[metertype METER_TARGET_INDUSTRY]] on this planet by [[value TIDAL_LOCK_TARGET_INDUSTRY_PERPOP]] per [[metertype METER_POPULATION]] when Focus is set to [[metertype METER_INDUSTRY]]. Penalizes [[metertype METER_TARGET_POPULATION]] (regardless of Focus) with [[value TIDAL_LOCK_TARGET_POPULATION_PERSIZE]] per planet size ([[SZ_TINY]] -1, [[SZ_SMALL]] -2, [[SZ_MEDIUM]] -3, [[SZ_LARGE]] -4, [[SZ_HUGE]] -5).
 
 This planet is tidally locked with the star it orbits. Its day and year are the same duration, and one half of the planet is perpetually day, the other perpetually night. Population growth is hampered, though industrial capacity benefits from the locally stable surface conditions.'''
+
+TIDAL_LOCK_TARGET_POPULATION_PERSIZE
+per planet size
+
+TIDAL_LOCK_TARGET_INDUSTRY_PERPOP
+per population
 
 TEMPORAL_ANOMALY_SPECIAL
 Temporal Anomaly
 
 TEMPORAL_ANOMALY_SPECIAL_DESC
-'''Increases [[metertype METER_TARGET_RESEARCH]] on this planet by [[value TEMPORAL_ANOMALY_TARGET_RESEARCH_PERPOP]] per [[metertype METER_POPULATION]] when Focus is set to [[metertype METER_RESEARCH]]. Decreases [[metertype METER_TARGET_POPULATION]] (regardless of Focus) by planet size per [[value TEMPORAL_ANOMALY_TARGET_POPULATION_PERSIZE]]:
-• [[SZ_TINY]] (-5)
-• [[SZ_SMALL]] (-10)
-• [[SZ_MEDIUM]] (-15)
-• [[SZ_LARGE]] (-20)
-• [[SZ_HUGE]] (-25)
+'''Increases [[metertype METER_TARGET_RESEARCH]] on this planet by [[value TEMPORAL_ANOMALY_TARGET_RESEARCH_PERPOP]] per [[metertype METER_POPULATION]] when Focus is set to [[metertype METER_RESEARCH]]. Penalizes [[metertype METER_TARGET_POPULATION]] (regardless of Focus) with [[value TEMPORAL_ANOMALY_TARGET_POPULATION_PERSIZE]] per planet size ([[SZ_TINY]] -5, [[SZ_SMALL]] -10, [[SZ_MEDIUM]] -15, [[SZ_LARGE]] -20, [[SZ_HUGE]] -25).
 
 The flow of time on this planet is gravely disturbed. Seemingly random local occurences of increases and decreases of the pace of time, induces grave disarrangement in any living being. A social or productive life is nearly impossible. Extreme adaptability and precaution is needed to establish a colony on this planet.
 On the other hand the temporal anomaly has a huge potential for scientific experiments beyond what is possible on normal planets.'''
@@ -8936,9 +8931,12 @@ HONEYCOMB_SPECIAL
 Honeycomb
 
 HONEYCOMB_SPECIAL_DESC
-'''When a planet with a Honeycomb is focused on [[metertype METER_INDUSTRY]], all industry focused [[metertype METER_SUPPLY]] connected planets gain 0.2 [[metertype METER_TARGET_INDUSTRY]] per [[metertype METER_POPULATION]].
+'''When a planet with a Honeycomb is focused on [[metertype METER_INDUSTRY]], all industry focused [[metertype METER_SUPPLY]] connected planets gain [[value HONEYCOMB_TARGET_INDUSTRY_PERPOP]] [[metertype METER_TARGET_INDUSTRY]] per [[metertype METER_POPULATION]].
 
 The Honeycomb is a planet that was prepared as a stash by the Builders in ancient times. Almost all other planets in surrounding systems were stripped of valuable materials and then dismantled. The materials were sorted and stored separately in gigantic tubes embedded into the planets crust. The sprectrum ranges from rare and valuable elementals to hard to produce molecules and a vast array of energy sources. What the Builders wanted to create with this treasure or why they didn't use it in the end, is unclear.'''
+
+HONEYCOMB_TARGET_INDUSTRY_PERPOP
+per population
 
 PHILOSOPHER_SPECIAL
 Philosopher Planet
@@ -11202,7 +11200,24 @@ PLC_CENTRALIZATION
 Centralization
 
 PLC_CENTRALIZATION_DESC
-Increases resourse output at the capital but reduces supply range and stockpile distribution.
+'''Boosts production output at the capital:
+• Increases [[metertype METER_TARGET_RESEARCH]] by [[value PLC_CENTRALIZATION_TARGET_RESEARCH_PERPOP]] per [[metertype METER_POPULATION]].
+• Increases [[metertype METER_TARGET_INDUSTRY]] by [[value PLC_CENTRALIZATION_TARGET_INDUSTRY_PERPOP]] per population.
+• Increases [[metertype METER_TARGET_CONSTRUCTION]] by [[value PLC_CENTRALIZATION_TARGET_CONSTRUCTION_FLAT]].
+However, it also reduces [[metertype METER_SUPPLY]] range ([[value PLC_CENTRALIZATION_MAX_SUPPLY_FLAT]]) and [[metertype METER_STOCKPILE]] ([[value PLC_CENTRALIZATION_MAX_STOCKPILE_FLAT]]), and increases the [[metertype METER_INFLUENCE]] cost of the empire's colonies:
+• [[metertype METER_SUPPLY]] connected colonies get a penalization of [[value PLC_CENTRALIZATION_TARGET_INFLUENCE_PERJUMP]] per jump distance to the capital, capped at [[value PLC_CENTRALIZATION_TARGET_INFLUENCE_MAX]].
+• Colonies not [[metertype METER_SUPPLY]] connected to the capital gets the maximum penalization ([[value PLC_CENTRALIZATION_TARGET_INFLUENCE_MAX]]).
+
+Logistics of the whole empire are focused into boosting the capital's production, by diverting there most of the social and material resources. This causes some resentment in the colonies, which increases [[metertype METER_INFLUENCE]] costs.'''
+
+PLC_CENTRALIZATION_TARGET_RESEARCH_PERPOP
+per population
+
+PLC_CENTRALIZATION_TARGET_INDUSTRY_PERPOP
+per population
+
+PLC_CENTRALIZATION_TARGET_INFLUENCE_PERJUMP
+per jump
 
 PLC_CENTRALIZATION_SHORT_DESC
 Boosts Capital
@@ -11321,7 +11336,7 @@ PLC_INDUSTRIALISM
 Industrialism
 
 PLC_INDUSTRIALISM_DESC
-'''Increases industry output of planets by 25% and makes industry-focused planets more stable.
+'''Industry-focused planets get a boost to [[metertype METER_TARGET_INDUSTRY]] (x[[value PLC_INDUSTRIALISM_TARGET_INDUSTRY_SCALING]]) and a bonus of [[value PLC_INDUSTRIALISM_TARGET_HAPINESS_FLAT]] to [[metertype METER_HAPPINESS]].
 
 Also makes some production-boosting generation techs cheaper to research.'''
 
@@ -11881,7 +11896,7 @@ PRO_MICROGRAV_MAN
 Microgravity Industry
 
 PRO_MICROGRAV_MAN_DESC
-'''Increases [[metertype METER_TARGET_INDUSTRY]] by +2 on all Industry-focused colonies in systems with asteroid belt outposts or colonies. Additional claimed asteroid belts do not provide additional benefit.
+'''Increases [[metertype METER_TARGET_INDUSTRY]] by [[value PRO_MICROGRAV_MAN_TARGET_INDUSTRY_FLAT]] on all Industry-focused colonies in systems with asteroid belt outposts or colonies. Additional claimed asteroid belts do not provide additional benefit.
 
 Mineral resource extraction from sub-planetoid-sized bodies involves challenges and provides opportunities quite distinct from those of full-fledged planets. Lacking sufficient mass to self-liquefy and differentiate, asteroids can provide much easier access to some heavier elements, and lack of a gravity can make extraction for use in space much more efficient. Conversely, the limited size of each source asteroid requires fully portable self-sufficient extraction facilities. As well, the challenges of any microgravity environment must be overcome, requiring redesign of many traditional methods.
 
@@ -11891,11 +11906,14 @@ PRO_ROBOTIC_PROD
 Robotic Production
 
 PRO_ROBOTIC_PROD_DESC
-'''Increases [[metertype METER_TARGET_INDUSTRY]] on all planets with the Industry focus by 0.05 per [[metertype METER_POPULATION]].
+'''Increases [[metertype METER_TARGET_INDUSTRY]] on all planets with the Industry focus by [[value PRO_ROBOTIC_PROD_TARGET_INDUSTRY_PERPOP]] per [[metertype METER_POPULATION]].
 
 Robots designed to fulfill nearly any job, in fields as wide ranging as electronics to large-scale construction, improve the performance of the worlds focused primarily on industry.
 
 Although high level design and initial facility setup still require active supervision, the elimination of operators from the actual production process eliminates many bottlenecks. Robots work continuously and have much greater tolerance for hazardous environmental conditions in the factory, and do not require additional habitable space off-site. Robots perform their assigned tasks flawlessly, or at least as well as they are instructed.'''
+
+PRO_ROBOTIC_PROD_TARGET_INDUSTRY_PERPOP
+per population
 
 PRO_EXOBOTS
 Exobots
@@ -11907,11 +11925,14 @@ PRO_FUSION_GEN
 Fusion Generation
 
 PRO_FUSION_GEN_DESC
-'''Increases [[metertype METER_TARGET_INDUSTRY]] on planets with the Industry focus by 0.05 per [[metertype METER_POPULATION]].
+'''Increases [[metertype METER_TARGET_INDUSTRY]] on planets with the Industry focus by [[value PRO_FUSION_GEN_TARGET_INDUSTRY_PERPOP]] per [[metertype METER_POPULATION]].
 
 Fusion plants, while expensive to produce and maintain, easily pay for themselves on industrialized worlds with ever increasing power demands. Reliance on old fission based nuclear plants will gradually become a thing of the past.
 
 Explosive or uncontrolled thermonuclear reactions are comparatively simple to cause at scales ranging from small tactical warheads to supergiant stellar furnaces. Controllable, stable and practical power generation from the reaction is somewhat more difficult. The process remains attractive, however, due to the near-limitless supply of fuel and potential for emissions-free operation.'''
+
+PRO_FUSION_GEN_TARGET_INDUSTRY_PERPOP
+per population
 
 PRO_NANOTECH_PROD
 Nanotech Production
@@ -11931,7 +11952,7 @@ PRO_ADAPTIVE_AUTOMATION
 Adaptive Automation
 
 PRO_ADAPTIVE_AUTOMATION_DESC
-'''Increases [[metertype METER_TARGET_INDUSTRY]] on all planets by 2.
+'''Increases [[metertype METER_TARGET_INDUSTRY]] on all planets by [[value PRO_ADAPTIVE_AUTO_TARGET_INDUSTRY_FLAT]].
 
 By producing automated factories that operate without direct supervision, it is possible to increase industrial output in an entirely automated facility. These factories can be built and maintained on any planet, regardless of focus, providing a bonus to industry on all worlds.
 
@@ -11941,7 +11962,7 @@ PRO_SENTIENT_AUTOMATION
 Sentient Automation
 
 PRO_SENTIENT_AUTOMATION_DESC
-'''Increases [[metertype METER_TARGET_INDUSTRY]] on all planets with the Industry focus by 3.
+'''Increases [[metertype METER_TARGET_INDUSTRY]] on all planets with the Industry focus by [[value PRO_SENTIENT_AUTO_TARGET_INDUSTRY_FLAT]].
 
 Grants 1 extra economic policy slot.
 
@@ -13534,12 +13555,21 @@ BLD_INDUSTRY_CENTER
 Industrial Center
 
 BLD_INDUSTRY_CENTER_DESC
-'''Initially provides a bonus to [[metertype METER_TARGET_INDUSTRY]] on all [[metertype METER_SUPPLY]] line connected planets with Industry focus by 0.05 per [[metertype METER_POPULATION]].
+'''Initially provides a bonus to [[metertype METER_TARGET_INDUSTRY]] on all [[metertype METER_SUPPLY]] line connected planets with Industry focus by [[value BLD_INDUSTRY_CENTER_1_TARGET_INDUSTRY_PERPOP]] per [[metertype METER_POPULATION]].
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
-[[tech PRO_INDUSTRY_CENTER_II]] refinement doubles the bonus.
+[[tech PRO_INDUSTRY_CENTER_II]] refinement increases the bonus to [[value BLD_INDUSTRY_CENTER_2_TARGET_INDUSTRY_PERPOP]] per population.
 
-[[tech PRO_INDUSTRY_CENTER_III]] refinement further increases the bonus to triple the base bonus.'''
+[[tech PRO_INDUSTRY_CENTER_III]] refinement further increases the bonus to [[value BLD_INDUSTRY_CENTER_3_TARGET_INDUSTRY_PERPOP]] per population.'''
+
+BLD_INDUSTRY_CENTER_1_TARGET_INDUSTRY_PERPOP
+per population
+
+BLD_INDUSTRY_CENTER_2_TARGET_INDUSTRY_PERPOP
+per population
+
+BLD_INDUSTRY_CENTER_3_TARGET_INDUSTRY_PERPOP
+per population
 
 BLD_INTERSPECIES_ACADEMY
 Species InterDesign Academy
@@ -13649,12 +13679,18 @@ BLD_HYPER_DAM
 Hyperspatial Dam
 
 BLD_HYPER_DAM_DESC
-'''For planets not connected to a [[buildingtype BLD_BLACK_HOLE_POW_GEN]], increases [[metertype METER_TARGET_INDUSTRY]] on [[metertype METER_SUPPLY]] line connected planets with the Industry focus by 0.2 per [[metertype METER_POPULATION]], but decreases [[metertype METER_TARGET_POPULATION]] on such planets by planet size: ([[SZ_TINY]] -1) ([[SZ_SMALL]] -2) ([[SZ_MEDIUM]] -3) ([[SZ_LARGE]] -4) ([[SZ_HUGE]] -5).
+'''For planets not connected to a [[buildingtype BLD_BLACK_HOLE_POW_GEN]], increases [[metertype METER_TARGET_INDUSTRY]] on [[metertype METER_SUPPLY]] line connected planets with the Industry focus by [[value BLD_HYPER_DAM_TARGET_INDUSTRY_PERPOP]] per [[metertype METER_POPULATION]], but [[metertype METER_TARGET_POPULATION]] on such planets is reduced ([[value BLD_HYPER_DAM_TARGET_POPULATION_PERSIZE]] per planet size: [[SZ_TINY]] -1, [[SZ_SMALL]] -2, [[SZ_MEDIUM]] -3, [[SZ_LARGE]] -4, [[SZ_HUGE]] -5).
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
 A tear in the fabric of the universe, safely controlled and harnessed. Each planet may construct its own hyperspatial dams, but a single control center is required to ensure that the space-time continuum is not torn apart by the stresses. Additionally, all planets who use hyperspatial dams experience health problems, unless they are orbiting a [[STAR_BLACK]].
 
 NB: This building does nothing for planets that are connected to a [[buildingtype BLD_BLACK_HOLE_POW_GEN]], but can be useful for empires unable to establish such a device.'''
+
+BLD_HYPER_DAM_TARGET_INDUSTRY_PERPOP
+per population
+
+BLD_HYPER_DAM_TARGET_POPULATION_PERSIZE
+per planet size
 
 BLD_SOL_ACCEL
 Solar Accelerator
@@ -13667,12 +13703,21 @@ Solar Orbital Generator
 
 BLD_SOL_ORB_GEN_DESC
 '''Increases [[metertype METER_TARGET_INDUSTRY]] on [[metertype METER_SUPPLY]] line connected planets, per [[metertype METER_POPULATION]] and depending on the star type:
-* [[STAR_BLUE]] or [[STAR_WHITE]] (x0.15)
-* [[STAR_YELLOW]] or [[STAR_ORANGE]] (x0.1)
-* [[STAR_RED]] (x0.05)
+* [[STAR_BLUE]] or [[STAR_WHITE]] (x[[value BLD_SOL_ORB_GEN_BRIGHT_TARGET_INDUSTRY_PERPOP]])
+* [[STAR_YELLOW]] or [[STAR_ORANGE]] (x[[BLD_SOL_ORB_GEN_NORMAL_TARGET_INDUSTRY_PERPOP]])
+* [[STAR_RED]] (x[[value BLD_SOL_ORB_GEN_DIM_TARGET_INDUSTRY_PERPOP]])
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]] The best bonus applies.
 
 A power generator in low solar orbit designed to tap directly into the star's energy. Since different star types produce different amounts of energy, the system-wide industry bonus is dependent on star type. [[BUILDING_AVAILABLE_ON_OUTPOSTS]].'''
+
+BLD_SOL_ORB_GEN_BRIGHT_TARGET_INDUSTRY_PERPOP
+per population
+
+BLD_SOL_ORB_GEN_NORMAL_TARGET_INDUSTRY_PERPOP
+per population
+
+BLD_SOL_ORB_GEN_DIM_TARGET_INDUSTRY_PERPOP
+per population
 
 BLD_CLONING_CENTER
 Cloning Center
@@ -13734,11 +13779,14 @@ BLD_CONC_CAMP
 Concentration Camps
 
 BLD_CONC_CAMP_DESC
-'''Decreases the planet's [[metertype METER_POPULATION]] at a rate of 3 per turn, increases [[metertype METER_TARGET_INDUSTRY]] by 2 times the planet's [[metertype METER_POPULATION]] and sets the [[metertype METER_TARGET_HAPPINESS]] to 0.
+'''Decreases the planet's [[metertype METER_POPULATION]] ([[value BLD_CONC_CAMP_POPULATION_FLAT]] per turn), increases [[metertype METER_TARGET_INDUSTRY]] by [[value BLD_CONC_CAMP_TARGET_INDUSTRY_PERPOP]] per planet's [[metertype METER_POPULATION]], and sets [[metertype METER_INDUSTRY]] to its maximum and [[metertype METER_TARGET_HAPPINESS]] to 0.
 
 If removed, leaves a [[buildingtype BLD_CONC_CAMP_REMNANT]] for several more turns.
 
 Ridding a planet of an undesirable species allows the introduction of a more suited species. By creating a planet-wide network of concentration camps designed to work the citizens to death, this goal can be achieved quickly and efficiently.'''
+
+BLD_CONC_CAMP_TARGET_INDUSTRY_PERPOP
+per population
 
 BLD_CONC_CAMP_REMNANT
 Concentration Camp Remnants
@@ -13750,10 +13798,13 @@ BLD_BLACK_HOLE_POW_GEN
 Black Hole Power Generator
 
 BLD_BLACK_HOLE_POW_GEN_DESC
-'''Increases [[metertype METER_TARGET_INDUSTRY]] on all [[metertype METER_SUPPLY]] line connected planets with the Industry focus by 0.2 per [[metertype METER_POPULATION]].
+'''Increases [[metertype METER_TARGET_INDUSTRY]] on all [[metertype METER_SUPPLY]] line connected planets with the Industry focus by [[value BLD_BLACK_HOLE_POW_GEN_TARGET_INDUSTRY_PERPOP]] per [[metertype METER_POPULATION]].
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
 [[BUILDING_AVAILABLE_ON_OUTPOSTS]], but must be in a [[STAR_BLACK]] system.'''
+
+BLD_BLACK_HOLE_POW_GEN_TARGET_INDUSTRY_PERPOP
+per population
 
 BLD_PLANET_DRIVE
 Planetary Starlane Drive
@@ -13842,7 +13893,7 @@ BLD_GAS_GIANT_GEN
 Gas Giant Generator
 
 BLD_GAS_GIANT_GEN_DESC
-'''This building can only be constructed at a [[PT_GASGIANT]] and gives a +5 [[metertype METER_INDUSTRY]] bonus to planets with the Industry focus in the same system. If the [[BLD_GAS_GIANT_GEN]] is built on an inhabited gas giant it gives only a +3 [[metertype METER_INDUSTRY]] bonus.
+'''This building can only be constructed at a [[PT_GASGIANT]]. It gives a [[value BLD_GAS_GIANT_GEN_OUTPOST_TARGET_INDUSTRY_FLAT]] [[metertype METER_INDUSTRY]] bonus to planets with the Industry focus in the same system. If the [[BLD_GAS_GIANT_GEN]] is built on an inhabited gas giant it gives only a [[value BLD_GAS_GIANT_GEN_COLONY_TARGET_INDUSTRY_FLAT]] [[metertype METER_INDUSTRY]] bonus.
 Multiple copies in the same system do not stack.
 
 A power generator designed to harvest the energy of a [[PT_GASGIANT]].'''

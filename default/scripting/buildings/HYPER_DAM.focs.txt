@@ -27,7 +27,9 @@ BuildingType
             ]
             stackinggroup = "BLD_HYPER_DAM_BONUS"
             priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
-            effects = SetTargetIndustry value = Value + Target.Population * 1.0 * [[INDUSTRY_PER_POP]]
+            effects = SetTargetIndustry value = Value + Target.Population
+                        * (NamedReal name = "BLD_HYPER_DAM_TARGET_INDUSTRY_PERPOP"
+                                     value = 1.0 * [[INDUSTRY_PER_POP]])
 
         EffectsGroup
             scope = And [
@@ -43,7 +45,8 @@ BuildingType
             ]
             stackinggroup = "BLD_HYPER_DAM_MALUS"
             priority = [[TARGET_POPULATION_AFTER_SCALING_PRIORITY]]
-            effects = SetTargetPopulation value = Value - Target.HabitableSize
+            effects = SetTargetPopulation value = Value + Target.HabitableSize
+                        * (NamedReal name = "BLD_HYPER_DAM_TARGET_POPULATION_PERSIZE" value = -1)
     ]
     icon = "icons/building/blackhole.png"
 
