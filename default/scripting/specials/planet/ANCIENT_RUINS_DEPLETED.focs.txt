@@ -12,10 +12,10 @@ Special
                 Source
                 Focus type = "FOCUS_RESEARCH"
             ]
-            priority = [[EARLY_PRIORITY]]
-            effects = SetTargetResearch value = Value + Target.Population * NamedRealLookup name = "ANCIENT_RUINS_TARGET_RESEARCH_PERPOP"
-        ]
+            effects = SetTargetResearch value = Value + Target.Population
+                        * NamedRealLookup name = "ANCIENT_RUINS_TARGET_RESEARCH_PERPOP"
+    ]
     graphic = "icons/specials_huge/ancient_ruins_excavated.png"
 
 #include "/scripting/common/base_prod.macros"
-#include "/scripting/common/priorities.macros"
+

@@ -13,7 +13,6 @@ SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS
                 (SpeciesContentOpinion species = LocalCandidate.Species name = ThisPolicy > 0)
             ]
             accountinglabel = "LIKES_POLICY_LABEL"
-            // priority = [[DEFAULT_PRIORITY]]  // want to avoid needing to include the priorities-defining macro in all policies...
             effects =
                 SetTargetHappiness value = Value + [[STABILITY_PER_LIKED_OR_DISLIKED_POLICY]] * SpeciesContentOpinion species = Target.Species name = ThisPolicy
 
@@ -25,7 +24,6 @@ SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS
                 (SpeciesContentOpinion species = LocalCandidate.Species name = ThisPolicy < 0)
             ]
             accountinglabel = "DISLIKES_POLICY_LABEL"
-            // priority = [[DEFAULT_PRIORITY]]  // want to avoid needing to include the priorities-defining macro in all policies...
             effects =
                 SetTargetHappiness value = Value + [[STABILITY_PER_LIKED_OR_DISLIKED_POLICY]] * SpeciesContentOpinion species = Target.Species name = ThisPolicy
 '''

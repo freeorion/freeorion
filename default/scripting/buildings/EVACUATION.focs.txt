@@ -42,7 +42,7 @@ BuildingType
                 ResourceSupplyConnected empire = Source.Owner condition = Source
                 Population low = 1 high = LocalCandidate.TargetPopulation - 1
             ]
-            priority = [[EARLY_POPULATION_PRIORITY]]
+            priority = [[POPULATION_DEFAULT_PRIORITY]]
             effects = [
                 SetPopulation value = Value + 2
                 GenerateSitRepMessage

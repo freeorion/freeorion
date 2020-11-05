@@ -61,7 +61,7 @@ Hull
                 Turn low = Source.CreationTurn + 1
             ]
             stackinggroup = "FLAGSHIP_EFFECT_LOGISTICS"
-            priority = [[LATE_PRIORITY]]
+            priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
             effects = SetStructure value = max((Target.Structure + Target.Structure), (Target.Structure + (50*[[SHIP_STRUCTURE_FACTOR]])))
 
         EffectsGroup
@@ -80,7 +80,7 @@ Hull
                 Turn low = Source.CreationTurn + 1
             ]
             stackinggroup = "FLAGSHIP_EFFECT_LOGISTICS"
-            priority = [[VERY_LATE_PRIORITY]]
+            priority = [[LATE_AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
             effects = SetStructure value = max( (Target.Structure + ( Target.Structure/10 )), (Target.Structure + (20*[[SHIP_STRUCTURE_FACTOR]])) )
 
         [[BAD_FUEL_EFFICIENCY]]

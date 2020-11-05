@@ -24,10 +24,10 @@ Tech
                 OwnedBy empire = Source.Owner
             ]
             stackinggroup = "CYBORG_TROOPS_STACK"
-            priority = [[VERY_EARLY_PRIORITY]]
-            effects = SetMaxTroops value = Value + Target.Population *
-                (NamedReal name = "CYBORG_MAX_TROOPS_PERPOP" value = (1.5 * [[TROOPS_PER_POP]]))
-                accountinglabel = "GRO_CYBORG" 
+            accountinglabel = "GRO_CYBORG" 
+            priority = [[TARGET_EARLY_BEFORE_SCALING_PRIORITY]]
+            effects = SetMaxTroops value = Value + Target.Population
+                        * (NamedReal name = "CYBORG_MAX_TROOPS_PERPOP" value = 1.5 * [[TROOPS_PER_POP]])
     ]
     graphic = "icons/tech/cyborgs.png"
 

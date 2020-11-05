@@ -15,7 +15,6 @@ Policy
                 OwnedBy empire = Source.Owner
                 Focus type = "FOCUS_RESEARCH"
             ]
-            priority = [[DEFAULT_PRIORITY]]
             effects = [
                 SetTargetResearch value = Value - 2 + 0.5 * Statistic CountUnique
                     value = LocalCandidate.Species
@@ -33,7 +32,6 @@ Policy
                 OwnedBy empire = Source.Owner
                 Population low = 0.001
             ]
-            priority = [[DEFAULT_PRIORITY]]
             effects = [
                 SetTargetHappiness value = Value - 2 + 0.5 * Statistic CountUnique
                     value = LocalCandidate.Species
@@ -50,7 +48,6 @@ Policy
                 Capital
                 OwnedBy empire = Source.Owner
             ]
-            priority = [[DEFAULT_PRIORITY]]
             effects = [
                 SetTargetInfluence value = Value + 0.5 * Statistic CountUnique
                     value = LocalCandidate.Species
@@ -63,5 +60,4 @@ Policy
     ]
     graphic = "icons/policies/diversity.png"
 
-#include "/scripting/common/priorities.macros"
 #include "/scripting/policies/policies.macros"

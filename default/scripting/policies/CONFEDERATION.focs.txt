@@ -16,9 +16,8 @@ Policy
                 Population low = 0.001
                 Not ResourceSupplyConnected empire = LocalCandidate.Owner condition = Source
             ]
-            priority = [[DEFAULT_PRIORITY]]
-            effects = SetTargetInfluence value = Value +
-                          (NamedReal name = "PLC_CONFEDERATION_TARGET_INFLUENCE_FLAT" value = 1)
+            effects = SetTargetInfluence value = Value
+                        + (NamedReal name = "PLC_CONFEDERATION_TARGET_INFLUENCE_FLAT" value = 1)
 
         // makes all planets less stable
         EffectsGroup
@@ -27,13 +26,13 @@ Policy
                 OwnedBy empire = Source.Owner
                 Population low = 0.001
             ]
-            priority = [[VERY_EARLY_PRIORITY]]
             effects = [
-                SetTargetHappiness value = Value + (NamedReal name = "PLC_CONFEDERATION_TARGET_HAPPINESS_FLAT" value = (-1))
-                SetMaxTroops value = Value + (NamedReal name = "PLC_CONFEDERATION_MAX_TROOPS_FLAT" value = 5)
+                SetTargetHappiness value = Value
+                      + (NamedReal name = "PLC_CONFEDERATION_TARGET_HAPPINESS_FLAT" value = -1)
+                SetMaxTroops value = Value
+                      + (NamedReal name = "PLC_CONFEDERATION_MAX_TROOPS_FLAT" value = 5)
             ]
     ]
     graphic = "icons/policies/confederation.png"
 
-#include "/scripting/common/priorities.macros"
 #include "/scripting/policies/policies.macros"

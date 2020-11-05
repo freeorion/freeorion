@@ -16,7 +16,9 @@ BuildingType
                 PopulationCenter
                 Not Contains Building name = "BLD_CONC_CAMP"
             ]
+            priority = [[CONCENTRATION_CAMP_PRIORITY]]
             effects = SetIndustry value = Target.TargetIndustry
+
         EffectsGroup
             scope = Source
             activation =  ContainedBy And [

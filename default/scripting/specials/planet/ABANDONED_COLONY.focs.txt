@@ -30,6 +30,9 @@ Special
                 OwnedBy affiliation = AnyEmpire
             ]
             stackinggroup = "ABANDONED_STACK"
+            priority = [[EARLY_AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
             effects = SetConstruction value = Value + 10
         ]
     graphic = "icons/specials_huge/abandoned-colony.png"
+
+#include "/scripting/common/priorities.macros"

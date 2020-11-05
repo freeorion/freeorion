@@ -1,6 +1,5 @@
 STANDARD_METER_GROWTH
-'''
-        // increase or decrease towards target meter of planets, when not recently conquered
+'''        // increase or decrease towards target meter of planets, when not recently conquered
         EffectsGroup
             scope = Source
             activation = And [
@@ -9,10 +8,14 @@ STANDARD_METER_GROWTH
             ]
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
             effects = [
-                SetResearch value = Value + min(max(Value(Target.TargetResearch) - Value, -1), min(1, Value(Target.Happiness) - 4))
-                SetIndustry value = Value + min(max(Value(Target.TargetIndustry) - Value, -1), min(1, Value(Target.Happiness) - 4))
-                SetInfluence value = Value + min(max(Value(Target.TargetInfluence) - Value, -1), max(sign(Value(Target.TargetInfluence) - Value), min(1, Value(Target.Happiness) - 4)))
-            ]            
+                SetResearch value = Value + min(max(Value(Target.TargetResearch) - Value, -1),
+                                                min(1, Value(Target.Happiness) - 4))
+                SetIndustry value = Value + min(max(Value(Target.TargetIndustry) - Value, -1),
+                                                min(1, Value(Target.Happiness) - 4))
+                SetInfluence value = Value + min(max(Value(Target.TargetInfluence) - Value, -1),
+                                                 max(sign(Value(Target.TargetInfluence) - Value),
+                                                 min(1, Value(Target.Happiness) - 4)))
+            ]
 
         // increase or decrease towards target meter of ships
         EffectsGroup
@@ -65,7 +68,7 @@ STANDARD_CONSTRUCTION
             scope = Source
             activation = Planet
             // has to happen after e.g. FORCE_ENERGY_STRC effects which also happens at AFTER_ALL_TARGET_MAX_METERS_PRIORITY
-            priority = [[METER_OVERRIDE_PRIORITY]]
+            priority = [[LATE_AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
             effects = SetConstruction value = max(Value, 1)
 '''
 

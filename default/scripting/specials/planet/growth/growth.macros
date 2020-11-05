@@ -3,7 +3,7 @@ STANDARD_INDUSTRY_BOOST
             description = "GROWTH_SPECIAL_INDUSTRY_BOOST"
             scope = Source
             activation = Focus type = "FOCUS_INDUSTRY"
-            priority = [[VERY_LATE_PRIORITY]]
+            priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
             effects = SetTargetIndustry value = Value + Target.Population * 1.0 * [[INDUSTRY_PER_POP]]
 
 '''

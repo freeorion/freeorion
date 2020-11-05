@@ -34,7 +34,7 @@ BuildingType
                 OwnedBy empire = Source.ProducedByEmpireID
             ]
             accountinglabel = "BLD_MILITARY_COMMAND"
-            priority = [[VERY_EARLY_PRIORITY]]
+            priority = [[TARGET_EARLY_BEFORE_SCALING_PRIORITY]]
             effects = [
                 SetMaxDefense value = Value + 5
                 SetMaxTroops value = Value + 6

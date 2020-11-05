@@ -77,6 +77,7 @@ ADVANCED_FOCUS_EFFECTS
                     Not Contains Source
                 ]
             ]
+            priority = [[POPULATION_DEFAULT_PRIORITY]]
             effects = [
                 MoveTo destination = And [
                     System

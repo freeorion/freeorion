@@ -28,8 +28,10 @@ Special
             ]
             activation = Focus type = "FOCUS_RESEARCH"
             stackinggroup = "COMPUTRONIUM_STACK"
-            priority = [[LATE_PRIORITY]]
-            effects = SetTargetResearch value = Value + Target.Population * (NamedReal name = "COMPUTRONIUM_TARGET_RESEARCH_PERPOP" value = (0.25 * [[RESEARCH_PER_POP]]))
+            priority = [[TARGET_AFTER_SCALING_PRIORITY]]
+            effects = SetTargetResearch value = Value + Target.Population
+                        * (NamedReal name = "COMPUTRONIUM_TARGET_RESEARCH_PERPOP"
+                                     value = 0.25 * [[RESEARCH_PER_POP]])
 
         [[CHANCE_OF_GUARD_2]]
     ]

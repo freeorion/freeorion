@@ -20,7 +20,7 @@ Special
         EffectsGroup
             scope = Source
             accountinglabel = "WORLDTREE_LABEL"
-            priority = [[LATE_PRIORITY]]
+            priority = [[TARGET_AFTER_SCALING_PRIORITY]]
             effects = [
                 SetDetection value = Value + 10
                 SetMaxSupply value = Value + 1

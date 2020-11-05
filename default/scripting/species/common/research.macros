@@ -9,7 +9,7 @@ BASIC_RESEARCH
                 Focus type = "FOCUS_RESEARCH"
             ]
             accountinglabel = "FOCUS_RESEARCH_LABEL"
-            priority = [[EARLY_PRIORITY]]
+            priority = [[TARGET_EARLY_BEFORE_SCALING_PRIORITY]]
             effects = SetTargetResearch value = Value + Target.Population * [[RESEARCH_PER_POP]]
 
         EffectsGroup      // gives human bonuses when AI Aggression set to Beginner
@@ -20,7 +20,7 @@ BASIC_RESEARCH
                 (GalaxyMaxAIAggression = 0)
             ]
             accountinglabel = "DIFFICULTY"
-            priority = [[LATE_PRIORITY]]
+            priority = [[TARGET_AFTER_SCALING_PRIORITY]]
             effects = SetTargetResearch value = Value * 2
 '''
 
@@ -35,7 +35,6 @@ VERY_BAD_RESEARCH
                 Focus type = "FOCUS_RESEARCH"
             ]
             accountinglabel = "VERY_BAD_RESEARCH_LABEL"
-            priority = [[DEFAULT_PRIORITY]]
             effects = SetTargetResearch value = Value*[[VERY_BAD_MULTIPLIER]]
 '''
 
@@ -50,7 +49,6 @@ BAD_RESEARCH
                 Focus type = "FOCUS_RESEARCH"
             ]
             accountinglabel = "BAD_RESEARCH_LABEL"
-            priority = [[DEFAULT_PRIORITY]]
             effects = SetTargetResearch value = Value*[[BAD_MULTIPLIER]]
 '''
 
@@ -69,7 +67,6 @@ GOOD_RESEARCH
                 Focus type = "FOCUS_RESEARCH"
             ]
             accountinglabel = "GOOD_RESEARCH_LABEL"
-            priority = [[DEFAULT_PRIORITY]]
             effects = SetTargetResearch value = Value*[[GOOD_MULTIPLIER]]
 '''
 
@@ -84,7 +81,6 @@ GREAT_RESEARCH
                 Focus type = "FOCUS_RESEARCH"
             ]
             accountinglabel = "GREAT_RESEARCH_LABEL"
-            priority = [[DEFAULT_PRIORITY]]
             effects = SetTargetResearch value = Value*[[GREAT_MULTIPLIER]]
 '''
 
@@ -99,6 +95,5 @@ ULTIMATE_RESEARCH
                 Focus type = "FOCUS_RESEARCH"
             ]
             accountinglabel = "ULTIMATE_RESEARCH_LABEL"
-            priority = [[DEFAULT_PRIORITY]]
             effects = SetTargetResearch value = Value*[[ULTIMATE_MULTIPLIER]]
 '''

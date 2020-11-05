@@ -13,16 +13,27 @@ BuildingType
     enqueuelocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS]]
-    
-        EffectsGroup
+
+        EffectsGroup    // One effect for target meter in the capital
             scope = And [
                 Object id = Source.PlanetID
                 Planet
             ]
             stackinggroup = "BLD_MEGALITH_EFFECT"
+            priority = [[TARGET_LAST_BEFORE_OVERRIDE_PRIORITY]]
             effects = [
                 SetTargetConstruction value = Value + 30
                 SetEmpireCapital
+            ]
+
+        EffectsGroup    // Another effect for current meters in the capital
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            stackinggroup = "BLD_MEGALITH_EFFECT"
+            priority = [[LATE_AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
+            effects = [
                 SetIndustry value = Target.TargetIndustry
                 SetInfluence value = Target.TargetInfluence
                 SetResearch value = Target.TargetResearch
@@ -43,7 +54,7 @@ BuildingType
                 WithinStarlaneJumps jumps = 2 condition = Source
                 OwnedBy empire = Source.Owner
             ]
-            priority = [[LATE_PRIORITY]]
+            priority = [[TARGET_AFTER_SCALING_PRIORITY]]
             effects = SetMaxTroops value = Value + 10 accountinglabel = "MEGALITH_LABEL"
     ]
     icon = "icons/building/megalith.png"

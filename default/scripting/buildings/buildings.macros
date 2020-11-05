@@ -19,7 +19,6 @@ SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
                 (SpeciesContentOpinion species = LocalCandidate.Species name = ThisBuilding > 0)
             ]
             accountinglabel = "LIKES_BUILDING_LABEL"
-            // priority = [[DEFAULT_PRIORITY]]  // want to avoid needing to include the priorities-defining macro in all policies...
             effects =
                 SetTargetHappiness value = Value + [[STABILITY_PER_LIKED_OR_DISLIKED_BUILDING_ON_PLANET]] * SpeciesContentOpinion species = Target.Species name = ThisBuilding
 
@@ -31,7 +30,6 @@ SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
                 (SpeciesContentOpinion species = LocalCandidate.Species name = ThisBuilding < 0)
             ]
             accountinglabel = "DISLIKES_BUILDING_LABEL"
-            // priority = [[DEFAULT_PRIORITY]]  // want to avoid needing to include the priorities-defining macro in all policies...
             effects =
                 SetTargetHappiness value = Value + [[STABILITY_PER_LIKED_OR_DISLIKED_BUILDING_ON_PLANET]] * SpeciesContentOpinion species = Target.Species name = ThisBuilding
                 
@@ -45,7 +43,6 @@ SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
                 (SpeciesContentOpinion species = LocalCandidate.Species name = ThisBuilding < 0)
             ]
             accountinglabel = "DISLIKES_BUILDING_LABEL"
-            // priority = [[DEFAULT_PRIORITY]]  // want to avoid needing to include the priorities-defining macro in all policies...
             effects =
                 SetTargetHappiness value = Value + [[STABILITY_PER_LIKED_OR_DISLIKED_BUILDING_IN_SYSTEM]] * SpeciesContentOpinion species = Target.Species name = ThisBuilding
 
@@ -59,7 +56,6 @@ SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
                 (SpeciesContentOpinion species = LocalCandidate.Species name = ThisBuilding > 0)
             ]
             accountinglabel = "LIKES_BUILDING_LABEL"
-            // priority = [[DEFAULT_PRIORITY]]  // want to avoid needing to include the priorities-defining macro in all policies...
             effects =
                 SetTargetHappiness value = Value + [[STABILITY_PER_LIKED_OR_DISLIKED_BUILDING_IN_SYSTEM]] * SpeciesContentOpinion species = Target.Species name = ThisBuilding
 
@@ -73,7 +69,6 @@ SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
                 (SpeciesContentOpinion species = LocalCandidate.Species name = ThisBuilding > 0)
             ]
             accountinglabel = "LIKES_BUILDING_LABEL"
-            // priority = [[DEFAULT_PRIORITY]]  // want to avoid needing to include the priorities-defining macro in all policies...
             effects =
                 SetTargetHappiness value = Value + [[STABILITY_PER_LIKED_OR_DISLIKED_BUILDING_IN_EMPIRE]] * SpeciesContentOpinion species = Target.Species name = ThisBuilding
 
@@ -87,7 +82,6 @@ SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
                 (SpeciesContentOpinion species = LocalCandidate.Species name = ThisBuilding < 0)
             ]
             accountinglabel = "DISLIKES_BUILDING_LABEL"
-            // priority = [[DEFAULT_PRIORITY]]  // want to avoid needing to include the priorities-defining macro in all policies...
             effects =
                 SetTargetHappiness value = Value + [[STABILITY_PER_LIKED_OR_DISLIKED_BUILDING_IN_EMPIRE]] * SpeciesContentOpinion species = Target.Species name = ThisBuilding
 

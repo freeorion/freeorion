@@ -16,7 +16,6 @@ Policy
             OwnedBy empire = Source.Owner
             Population low = 0.001
         ]
-        priority = [[DEFAULT_PRIORITY]]
         effects = [
             SetTargetHappiness value = Value + 4
             SetTargetResearch value = Value - 5
@@ -25,5 +24,4 @@ Policy
     ]
     graphic = "icons/policies/confederation.png"
 
-#include "/scripting/common/priorities.macros"
 #include "/scripting/policies/policies.macros"

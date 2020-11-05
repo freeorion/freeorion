@@ -23,7 +23,7 @@ Part
                 /// @content_tag{LITHIC} When bombarding in-system enemy with this part, reduces population on visible populated Planet with tag
                 HasTag name = "LITHIC"
             ]
-            priority = [[EARLY_POPULATION_PRIORITY]]
+            priority = [[POPULATION_DEFAULT_PRIORITY]]
             effects = [
                 SetPopulation value = Value - 0.5
                 GenerateSitRepMessage
@@ -51,7 +51,7 @@ Part
                 Unowned
                 InSystem
             ]
-            priority = [[EARLY_POPULATION_PRIORITY]]
+            priority = [[POPULATION_DEFAULT_PRIORITY]]
             effects = [
                 SetPopulation value = Value - 0.5
                 GenerateSitRepMessage

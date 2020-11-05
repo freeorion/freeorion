@@ -13,7 +13,7 @@ BuildingType
             Object id = Source.PlanetID
             Planet
         ]
-        priority = [[EARLY_POPULATION_OVERRIDE_PRIORITY]]
+        priority = [[POPULATION_OVERRIDE_PRIORITY]]
         effects = [
             SetSpecies name = "SP_SUPER_TEST"
             SetPopulation value = max(Target.Population, 1)

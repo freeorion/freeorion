@@ -66,7 +66,7 @@ AVERAGE_HAPPINESS
             scope = Source
             activation = Contains Building name = "BLD_CONC_CAMP"
             accountinglabel = "CONCENTRATION_CAMPS_LABEL"
-            priority = [[VERY_LATE_PRIORITY]]
+            priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
             effects = [ 
                     SetHappiness value = 0
                     SetTargetHappiness value = 0

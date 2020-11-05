@@ -15,7 +15,7 @@ Policy
                 Not Planet type = GasGiant
                 Not Planet type = Asteroids
             ]
-            priority = [[LATE_PRIORITY]]
+            priority = [[TARGET_AFTER_SCALING_PRIORITY]]
             effects = [
                 SetTargetIndustry value = Value - 5
                 SetTargetConstruction value = Value - 10
@@ -29,7 +29,7 @@ Policy
                 Not Planet type = Asteroids
                 Not Planet type = LocalCandidate.OriginalType
             ]
-            priority = [[LATE_PRIORITY]]
+            priority = [[TARGET_AFTER_SCALING_PRIORITY]]
             effects = [
                 SetTargetConstruction value = Value - 20
                 SetTargetHappiness value = Value - 10
@@ -45,7 +45,7 @@ Policy
                 Planet type = LocalCandidate.OriginalType
                 Population low = 0.001
             ]
-            priority = [[LATE_PRIORITY]]
+            priority = [[TARGET_AFTER_SCALING_PRIORITY]]
             effects = [
                 SetTargetHappiness value = Value + 10
                 SetTargetInfluence value = Value + 2

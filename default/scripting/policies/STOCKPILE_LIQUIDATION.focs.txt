@@ -14,7 +14,7 @@ Policy
                 OwnedBy empire = Source.Owner
                 Focus type = "FOCUS_STOCKPILE"
             ]
-            priority = [[LATE_PRIORITY]]
+            priority = [[TARGET_2ND_SCALING_PRIORITY]]
             effects =
                 SetMaxStockpile value = max(0.0, Value * 2.0)
     ]                

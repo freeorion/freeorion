@@ -27,7 +27,7 @@ BuildingType
                     Contains Building name = "BLD_CULTURE_ARCHIVES"
                 ]
             ]
-            priority = [[VERY_LATE_PRIORITY]]
+            priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
             effects = [
                 SetTargetResearch value = Value + (NamedReal name = "BLD_AUTO_HISTORY_ANALYSER_TARGET_RESEARCH_FLAT" value = 5)
             ]

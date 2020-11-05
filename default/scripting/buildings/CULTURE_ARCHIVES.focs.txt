@@ -15,10 +15,13 @@ BuildingType
                 Not Population high = 0
                 OwnedBy empire = Source.Owner
             ]
-            priority = [[VERY_LATE_PRIORITY]]
+            priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
             effects = [
-                SetTargetResearch value = Value + (NamedReal name = "BLD_CULTURE_ARCHIVES_TARGET_RESEARCH_FLAT" value = 5)
-                SetTargetIndustry value = Value + (NamedReal name = "BLD_CULTURE_ARCHIVES_TARGET_INDUSTRY_PERPOP" value = (Target.Population / 2))
+                SetTargetResearch value = Value
+                    + (NamedReal name = "BLD_CULTURE_ARCHIVES_TARGET_RESEARCH_FLAT" value = 5)
+                SetTargetIndustry value = Value + Target.Population
+                    * (NamedReal name = "BLD_CULTURE_ARCHIVES_TARGET_INDUSTRY_PERPOP"
+                                 value = 2.5 * [[INDUSTRY_PER_POP]])
             ]
 
         EffectsGroup

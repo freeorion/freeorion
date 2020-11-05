@@ -7,7 +7,6 @@ NATIVE_PLANETARY_SHIELDS
                 Unowned
             ]
             accountinglabel = "NATIVE_PLANETARY_SHIELDS_LABEL"
-            priority = [[DEFAULT_PRIORITY]]
             effects = SetMaxShield value = Value + ( @1@ )
 '''
 
@@ -37,7 +36,7 @@ PROTECTION_FOCUS_SHIELDS
                 Focus type = "FOCUS_PROTECTION"
             ]
             stackinggroup = "FOCUS_PROTECTION_SHIELDS_STACK"
-            priority = [[VERY_LATE_PRIORITY]]
+            priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
             effects = SetMaxShield value = Value * 2 accountinglabel = "FOCUS_PROTECTION_LABEL"
 '''
 

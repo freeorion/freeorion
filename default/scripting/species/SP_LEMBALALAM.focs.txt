@@ -74,7 +74,7 @@ Species
                 Planet
             ]
             activation = Turn high = 1
-            priority = [[EARLY_POPULATION_OVERRIDE_PRIORITY]]
+            priority = [[POPULATION_OVERRIDE_PRIORITY]]
             effects = SetPopulation value = Target.TargetPopulation
 
         // Give techs to empire

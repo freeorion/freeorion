@@ -16,7 +16,6 @@ Policy
                 Population low = 0.001
                 Not Species name = Source.Species
             ]
-            priority = [[DEFAULT_PRIORITY]]
             effects = [
                 SetTargetHappiness value = Value - 20
                 SetTargetResearch value = Value - Target.Population * [[RESEARCH_PER_POP]]
@@ -27,5 +26,4 @@ Policy
     graphic = "icons/policies/racial_purity.png"
 
 #include "/scripting/common/base_prod.macros"
-#include "/scripting/common/priorities.macros"
 #include "/scripting/policies/policies.macros"

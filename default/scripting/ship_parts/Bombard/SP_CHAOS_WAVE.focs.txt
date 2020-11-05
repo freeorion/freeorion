@@ -20,7 +20,7 @@ Part
                 ]
                 VisibleToEmpire empire = Source.Owner
             ]
-            priority = [[EARLY_POPULATION_PRIORITY]]
+            priority = [[POPULATION_DEFAULT_PRIORITY]]
             effects = [
                 SetPopulation value = Value - 2
                 RemoveSpecial name = "GAIA_SPECIAL"
@@ -47,7 +47,7 @@ Part
                 Unowned
                 InSystem
             ]
-            priority = [[EARLY_POPULATION_PRIORITY]]
+            priority = [[POPULATION_DEFAULT_PRIORITY]]
             effects = [
                 SetPopulation value = Value - 2
                 RemoveSpecial name = "GAIA_SPECIAL"

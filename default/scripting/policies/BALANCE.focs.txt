@@ -13,7 +13,7 @@ Policy
                 Capital
                 OwnedBy empire = Source.Owner
             ]
-            priority = [[VERY_LATE_PRIORITY]]
+            priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
             effects = [
                 // want bigger bonus for using equal numbers of each focus settings
                 // and for using a greater variety of focus settings

@@ -14,8 +14,9 @@ BuildingType
                 Planet
                 Not Population high = 0
             ]
-            priority = [[LATE_PRIORITY]]
-            effects = SetTargetResearch value = Value + (NamedReal name = "BLD_CULTURE_LIBRARY_TARGET_RESEARCH_FLAT" value = 5)
+            priority = [[TARGET_AFTER_SCALING_PRIORITY]]
+            effects = SetTargetResearch value = Value
+                        + (NamedReal name = "BLD_CULTURE_LIBRARY_TARGET_RESEARCH_FLAT" value = 5)
 
         EffectsGroup    // Destroy cultural library when the species is no longer present
             scope = Source
