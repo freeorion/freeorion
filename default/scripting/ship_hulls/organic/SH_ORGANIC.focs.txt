@@ -2,19 +2,17 @@ Hull
     name = "SH_ORGANIC"
     description = "SH_ORGANIC_DESC"
     speed = 90
-    fuel = 2
+    fuel = 6
     NoDefaultFuelEffect
     stealth = 5
-    structure = 5
+    structure = 3
     slots = [
-        Slot type = External position = (0.30, 0.25)
-        Slot type = External position = (0.50, 0.25)
-        Slot type = External position = (0.70, 0.25)
-        Slot type = Internal position = (0.60, 0.60)
+        Slot type = External position = (0.80, 0.50)
+        Slot type = Internal position = (0.60, 0.50)
     ]
-    buildcost = 14 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_HULL_COST_MULTIPLIER]]
+    buildcost = 8 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_HULL_COST_MULTIPLIER]]
     buildtime = 3
-    tags = [ "ORGANIC_HULL" "PEDIA_HULL_LINE_ORGANIC" "GOOD_FUEL_EFFICIENCY" ]
+    tags = [ "ORGANIC_HULL" "PEDIA_HULL_LINE_ORGANIC" "GREAT_FUEL_EFFICIENCY" ]
     location = And [
         Contains And [
             Building name = "BLD_SHIPYARD_ORG_ORB_INC"
@@ -31,17 +29,17 @@ Hull
             scope = Source
             effects = [
                 SetStructure value = Value + (2*[[SHIP_STRUCTURE_FACTOR]])
-                SetDetection value = Value + 10
             ]
 
         EffectsGroup
             scope = Source
             accountinglabel = "ORGANIC_GROWTH"
-            effects = SetMaxStructure value = Value + ( min(Source.Age*0.2, 5) * [[SHIP_STRUCTURE_FACTOR]] )
+            effects = SetMaxStructure value = Value + ( min(Source.Age*0.2, 3) * [[SHIP_STRUCTURE_FACTOR]] )
 
-        [[GOOD_FUEL_EFFICIENCY]]
+        [[GREAT_FUEL_EFFICIENCY]]
         [[ADD_HULL_FUEL_TO_MAX_FUEL_METER]]
         [[LIVING_HULL_BASE_FUEL_REGEN]]
+        [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]
         [[UNOWNED_GOOD_VISION]]
         [[UNOWNED_MOVE]]
