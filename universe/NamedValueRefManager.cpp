@@ -47,7 +47,9 @@ NamedValueRefManager::NamedValueRefManager() {
 namespace {
 // helper function for NamedValueRefManager::GetValueRef
 template <typename V>
-V* const GetValueRefImpl(std::map<NamedValueRefManager::key_type, std::unique_ptr<V>>& registry, const std::string& label, const std::string& name) /*const*/ {
+V* const GetValueRefImpl(std::map<NamedValueRefManager::key_type, std::unique_ptr<V>>& registry,
+                         const std::string& label, const std::string& name) /*const*/
+{
     TraceLogger() << "NamedValueRefManager::GetValueRef look for registered " << label << " valueref for \"" << name << '"';
     TraceLogger() << "Number of registered " << label << " ValueRefs: " << registry.size();
     const auto it = registry.find(name);
@@ -153,14 +155,17 @@ void NamedValueRefManager::RegisterValueRef(std::string&& valueref_name,
 
 // specialisation for registering to the ValueRef<int> registry
 template <>
-void NamedValueRefManager::RegisterValueRef(std::string&& valueref_name, std::unique_ptr<ValueRef::ValueRef<int>>&& vref) {
-    RegisterValueRefImpl(m_value_refs_int, m_value_refs_int_mutex, "int", std::move(valueref_name), std::move(vref));
-}
+void NamedValueRefManager::RegisterValueRef(std::string&& valueref_name,
+                                            std::unique_ptr<ValueRef::ValueRef<int>>&& vref)
+{ RegisterValueRefImpl(m_value_refs_int, m_value_refs_int_mutex, "int", std::move(valueref_name), std::move(vref)); }
 
 // specialisation for registering to the ValueRef<double> registry
 template <>
-void NamedValueRefManager::RegisterValueRef(std::string&& valueref_name, std::unique_ptr<ValueRef::ValueRef<double>>&& vref) {
-    RegisterValueRefImpl(m_value_refs_double, m_value_refs_double_mutex, "double", std::move(valueref_name), std::move(vref));
+void NamedValueRefManager::RegisterValueRef(std::string&& valueref_name,
+                                            std::unique_ptr<ValueRef::ValueRef<double>>&& vref)
+{
+    RegisterValueRefImpl(m_value_refs_double, m_value_refs_double_mutex, "double",
+                         std::move(valueref_name), std::move(vref));
 }
 
 NamedValueRefManager& GetNamedValueRefManager()
@@ -201,7 +206,7 @@ template void RegisterValueRef(std::string name, std::unique_ptr<ValueRef::Value
 namespace ValueRef {
 template <typename T>
 NamedRef<T>::NamedRef(std::string value_ref_name) :
-    m_value_ref_name(value_ref_name)
+    m_value_ref_name(std::move(value_ref_name))
 {
     TraceLogger() << "ctor(NamedRef<T>): " << typeid(*this).name() << " value_ref_name: " << m_value_ref_name;
 }

@@ -504,9 +504,9 @@ namespace {
             //for (auto str : GetStringTable().
 
         }
-        else if  (dir_name == "ENC_NAMED_VALUE_REF")
-        {
-            sorted_entries_list.emplace("ENC_NAMED_VALUE_REF_DESC", std::make_pair(UserString("ENC_NAMED_VALUE_REF_DESC") + "\n\n", dir_name));
+        else if  (dir_name == "ENC_NAMED_VALUE_REF") {
+            sorted_entries_list.emplace("ENC_NAMED_VALUE_REF_DESC",
+                                        std::make_pair(UserString("ENC_NAMED_VALUE_REF_DESC") + "\n\n", dir_name));
 
             for (const auto& entry : GetNamedValueRefManager().GetItems()) {
                 auto& vref = entry.second.get();
