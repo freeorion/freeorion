@@ -22,7 +22,7 @@
 #  include <CoreFoundation/CoreFoundation.h>
 #endif
 
-#if defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD)
+#if defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_HAIKU)
 #include "binreloc.h"
 #include <unistd.h>
 #include <boost/filesystem/fstream.hpp>
@@ -30,11 +30,14 @@
 #  ifdef __FreeBSD__
 #    include <sys/sysctl.h>
 #  endif
+#  ifdef __HAIKU__
+#    include <FindDirectory.h>
+#  endif
 #endif
 
-# if defined(FREEORION_WIN32) || defined(FREEORION_MACOSX) || defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD)
+# if defined(FREEORION_WIN32) || defined(FREEORION_MACOSX) || defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_HAIKU)
 # else
-#  error Neither FREEORION_LINUX, FREEORION_FREEBSD, FREEORION_OPENBSD nor FREEORION_WIN32 set
+#  error Neither FREEORION_LINUX, FREEORION_MACOSX, FREEORION_FREEBSD, FREEORION_OPENBSD, FREEORION_WIN32 nor FREEORION_HAIKU set
 #endif
 
 
@@ -63,7 +66,7 @@ namespace {
     fs::path   s_python_home;
 #endif
 
-#if defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD)
+#if defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_HAIKU)
     //! Copy directory from to directory to only to a depth of safe_depth
     void copy_directory_safe(fs::path from, fs::path to, int safe_depth)
     {
@@ -205,7 +208,7 @@ void InitBinDir(std::string const& argv0)
     } catch (const fs::filesystem_error &) {
         bin_dir = fs::initial_path();
     }
-#elif defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD)
+#elif defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_HAIKU)
     bool problem = false;
     try {
         // get this executable's path by following link
@@ -231,6 +234,9 @@ void InitBinDir(std::string const& argv0)
             problem = (nullptr == realpath(argpath.c_str(), buf));
         else
             strncpy(buf, argpath.c_str(), sizeof(buf));
+#endif
+#if defined(FREEORION_HAIKU)
+	problem = (B_OK != find_path(B_APP_IMAGE_SYMBOL, B_FIND_PATH_IMAGE_PATH, NULL, buf, sizeof(buf)));
 #endif
 
         if (!problem) {
@@ -325,7 +331,7 @@ void InitDirs(std::string const& argv0)
     // Intentionally do not create the server save dir.
     // The server save dir is publically accessible and should not be
     // automatically created for the user.
-#elif defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD)
+#elif defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_HAIKU)
     /* store working dir.  some implimentations get the value of initial_path
      * from the value of current_path the first time initial_path is called,
      * so it is necessary to call initial_path as soon as possible after
@@ -380,7 +386,7 @@ auto GetUserConfigDir() -> fs::path const
 {
 #if defined(FREEORION_MACOSX) || defined(FREEORION_WIN32)
     return GetUserDataDir();
-#elif defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD)
+#elif defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_HAIKU)
     static fs::path p = getenv("XDG_CONFIG_HOME")
         ? fs::path(getenv("XDG_CONFIG_HOME")) / "freeorion"
         : fs::path(getenv("HOME")) / ".config" / "freeorion";
@@ -394,7 +400,7 @@ auto GetUserDataDir() -> fs::path const
     if (!g_initialized)
         InitDirs("");
     return s_user_dir;
-#elif defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD)
+#elif defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_HAIKU)
     static fs::path p = getenv("XDG_DATA_HOME")
         ? fs::path(getenv("XDG_DATA_HOME")) / "freeorion"
         : fs::path(getenv("HOME")) / ".local" / "share" / "freeorion";
@@ -411,7 +417,7 @@ auto GetRootDataDir() -> fs::path const
     if (!g_initialized)
         InitDirs("");
     return s_root_data_dir;
-#elif defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD)
+#elif defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_HAIKU)
     if (!g_initialized)
         InitDirs("");
     char* dir_name = br_find_data_dir(SHAREPATH);
@@ -435,7 +441,7 @@ auto GetBinDir() -> fs::path const
     if (!g_initialized)
         InitDirs("");
     return s_bin_dir;
-#elif defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD)
+#elif defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_HAIKU)
     if (!g_initialized)
         InitDirs("");
     return bin_dir;

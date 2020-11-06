@@ -193,6 +193,7 @@ set_property(DIRECTORY APPEND
         $<$<PLATFORM_ID:Linux>:FREEORION_LINUX>
         $<$<PLATFORM_ID:FreeBSD>:FREEORION_FREEBSD>
         $<$<PLATFORM_ID:OpenBSD>:FREEORION_OPENBSD>
+        $<$<PLATFORM_ID:Haiku>:FREEORION_HAIKU>
 )
 
 if(WIN32 AND MSVC AND NOT (MSVC_VERSION LESS 1900)) # _MSC_VER >= 1900
@@ -387,6 +388,10 @@ if(WIN32 AND ${Boost_VERSION} GREATER 106699) # boost >= 1.67
         PRIVATE
             ${BCRYPT_LIBRARY}
     )
+endif()
+
+if(CMAKE_SYSTEM_NAME MATCHES "Haiku")
+	target_link_libraries(freeorioncommon PUBLIC network)
 endif()
 
 add_dependencies(freeorioncommon freeorionversion)
