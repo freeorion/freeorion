@@ -45,7 +45,9 @@ Species
                     ]
                 ]
             ]
-            effects = SetTargetIndustry value = Value + Target.Population * [[INDUSTRY_PER_POP]]
+            effects = SetTargetIndustry value = Value + Target.Population
+                        * (NamedReal name = "GREAT_ASTEROID_INDUSTRY_TARGET_INDUSTRY_PERPOP"
+                                     value = 1.0 * [[INDUSTRY_PER_POP]])
 
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
@@ -58,5 +60,4 @@ Species
     graphic = "icons/species/kilandow.png"
 
 #include "common/*.macros"
-
 #include "/scripting/common/*.macros"

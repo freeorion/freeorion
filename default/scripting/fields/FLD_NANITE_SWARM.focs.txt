@@ -33,8 +33,10 @@ FieldType
             ]
             stackinggroup = "NANITE_SWARM_SHIP_REPAIR"
             effects = [
-                SetStructure value = Value + (5 * [[SHIP_STRUCTURE_FACTOR]])
-                SetTargetIndustry value = Value + 1
+                SetStructure value = Value + (NamedReal name = "FLD_NANITE_SWARM_STRUCTURE_FLAT"
+                                                        value = 5 * [[SHIP_STRUCTURE_FACTOR]])
+                SetTargetIndustry value = Value
+                    + (NamedReal name = "FLD_NANITE_SWARM_TARGET_INDUSTRY_FLAT" value = 1)
             ]
 
         EffectsGroup    // after reaching a certain age, dissipate when small

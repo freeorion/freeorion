@@ -25,7 +25,9 @@ BuildingType
                 Not OwnerHasTech name = "PRO_INDUSTRY_CENTER_II"
             ]
             stackinggroup = "INDUSTRY_CENTER_STACK"
-            effects = SetTargetIndustry value = Value + Target.Population * 0.25 * [[INDUSTRY_PER_POP]]
+            effects = SetTargetIndustry value = Value + Target.Population
+                        * (NamedReal name = "BLD_INDUSTRY_CENTER_1_TARGET_INDUSTRY_PERPOP"
+                                     value = 0.25 * [[INDUSTRY_PER_POP]])
 
         EffectsGroup
             scope = And [
@@ -39,7 +41,9 @@ BuildingType
                 Not OwnerHasTech name = "PRO_INDUSTRY_CENTER_III"
             ]
             stackinggroup = "INDUSTRY_CENTER_STACK"
-            effects = SetTargetIndustry value = Value + Target.Population * 0.5 * [[INDUSTRY_PER_POP]]
+            effects = SetTargetIndustry value = Value + Target.Population
+                        * (NamedReal name = "BLD_INDUSTRY_CENTER_2_TARGET_INDUSTRY_PERPOP"
+                                     value = 0.5 * [[INDUSTRY_PER_POP]])
 
         EffectsGroup
             scope = And [
@@ -50,7 +54,9 @@ BuildingType
             ]
             activation = OwnerHasTech name = "PRO_INDUSTRY_CENTER_III"
             stackinggroup = "INDUSTRY_CENTER_STACK"
-            effects = SetTargetIndustry value = Value + Target.Population * 0.75 * [[INDUSTRY_PER_POP]]
+            effects = SetTargetIndustry value = Value + Target.Population
+                        * (NamedReal name = "BLD_INDUSTRY_CENTER_3_TARGET_INDUSTRY_PERPOP"
+                                     value = 0.75 * [[INDUSTRY_PER_POP]])
     ]
     icon = "icons/tech/industrial_centre_ii.png"
 

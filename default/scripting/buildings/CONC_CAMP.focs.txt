@@ -23,7 +23,9 @@ BuildingType
                 OwnedBy empire = Source.Owner
             ]
             priority = [[TARGET_AFTER_SCALING_PRIORITY]]
-            effects = SetTargetIndustry value = Value + Target.Population * 10 * [[INDUSTRY_PER_POP]]
+            effects = SetTargetIndustry value = Value + Target.Population
+                        * (NamedReal name = "BLD_CONC_CAMP_TARGET_INDUSTRY_PERPOP"
+                                     value = 10 * [[INDUSTRY_PER_POP]])
 
         EffectsGroup
             scope = And [
@@ -55,7 +57,7 @@ BuildingType
                     icon = "icons/building/concentration-camp.png"
                     parameters = tag = "planet" data = Source.PlanetID
                     empire = Source.Owner
-                ]
+            ]
 
         EffectsGroup
             scope = And [
@@ -69,7 +71,8 @@ BuildingType
             ]
             priority = [[CONCENTRATION_CAMP_PRIORITY]]
             effects = [
-                SetPopulation value = min(Value, Target.Population - 3)
+                SetPopulation value = min(Value, Target.Population + (NamedReal
+                                                 name = "BLD_CONC_CAMP_POPULATION_FLAT" value = -3))
                 SetIndustry value = Target.TargetIndustry
             ]
 

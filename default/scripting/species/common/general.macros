@@ -14,7 +14,7 @@ STANDARD_METER_GROWTH
                                                 min(1, Value(Target.Happiness) - 4))
                 SetInfluence value = Value + min(max(Value(Target.TargetInfluence) - Value, -1),
                                                  max(sign(Value(Target.TargetInfluence) - Value),
-                                                 min(1, Value(Target.Happiness) - 4)))
+                                                     min(1, Value(Target.Happiness) - 4)))
             ]
 
         // increase or decrease towards target meter of ships

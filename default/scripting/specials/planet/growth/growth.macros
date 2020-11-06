@@ -4,8 +4,9 @@ STANDARD_INDUSTRY_BOOST
             scope = Source
             activation = Focus type = "FOCUS_INDUSTRY"
             priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
-            effects = SetTargetIndustry value = Value + Target.Population * 1.0 * [[INDUSTRY_PER_POP]]
-
+            effects = SetTargetIndustry value = Value + Target.Population
+                        * (NamedReal name = "GROWTH_SPECIAL_TARGET_INDUSTRY_PERPOP"
+                                     value = 1.0 * [[INDUSTRY_PER_POP]])
 '''
 
 // NOTE: Unused
@@ -109,5 +110,4 @@ POPULATION_BOOST_LITHIC
 '''
 
 #include "/scripting/common/base_prod.macros"
-
 #include "/scripting/common/priorities.macros"

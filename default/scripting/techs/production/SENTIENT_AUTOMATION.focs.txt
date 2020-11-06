@@ -19,11 +19,13 @@ Tech
                 Focus type = "FOCUS_INDUSTRY"
             ]
             priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
-            effects = SetTargetIndustry value = Value + 15 * [[INDUSTRY_PER_POP]]
-            
+            effects = SetTargetIndustry value = Value
+                        + (NamedReal name = "PRO_SENTIENT_AUTO_TARGET_INDUSTRY_FLAT" value = 3)
+
         EffectsGroup
             scope = Source
-            effects = SetEmpireMeter empire = Source.Owner meter = "ECONOMIC_CATEGORY_NUM_POLICY_SLOTS" value = Value + 1            
+            effects = SetEmpireMeter empire = Source.Owner
+                meter = "ECONOMIC_CATEGORY_NUM_POLICY_SLOTS" value = Value + 1
     ]
     graphic = "icons/tech/basic_autofactories.png"
 

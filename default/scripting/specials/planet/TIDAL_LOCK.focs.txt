@@ -15,16 +15,20 @@ Special
                 Source
                 Focus type = "FOCUS_INDUSTRY"
             ]
-            effects = [
-                SetTargetIndustry value = Value + Target.Population * 0.2
-            ]
+            effects = SetTargetIndustry value = Value + Target.Population
+                        * (NamedReal name = "TIDAL_LOCK_TARGET_INDUSTRY_PERPOP"
+                                     value = 10.0 * [[INDUSTRY_PER_POP]])
 
         EffectsGroup
             scope = Object id = Source.PlanetID
             activation = Species
             priority = [[TARGET_POPULATION_AFTER_SCALING_PRIORITY]]
-            effects = SetTargetPopulation value = Value - 1 * Target.HabitableSize accountinglabel = "TIDAL_LOCK_LABEL"
+            effects = SetTargetPopulation value = Value + Target.HabitableSize 
+                        * (NamedReal name = "TIDAL_LOCK_TARGET_POPULATION_PERSIZE" value = -1)
+            accountinglabel = "TIDAL_LOCK_LABEL"
+
     ]
     graphic = "icons/specials_huge/tidal_lock.png"
 
 #include "/scripting/common/priorities.macros"
+#include "/scripting/common/base_prod.macros"

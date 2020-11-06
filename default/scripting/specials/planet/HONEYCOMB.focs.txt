@@ -65,14 +65,14 @@ Special
             activation = Focus type = "FOCUS_INDUSTRY"
             stackinggroup = "HONEYCOMB_STACK"
             priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
-            effects = SetTargetIndustry value = Value + Target.Population * 0.5 * [[INDUSTRY_PER_POP]]
+            effects = SetTargetIndustry value = Value + Target.Population
+                        * (NamedReal name = "HONEYCOMB_TARGET_INDUSTRY_PERPOP"
+                                     value = 0.5 * [[INDUSTRY_PER_POP]])
 
         [[CHANCE_OF_GUARD_2]]
     ]
     graphic = "icons/specials_huge/honeycomb.png"
 
 #include "monster_guard.macros"
-
 #include "/scripting/common/base_prod.macros"
-
 #include "/scripting/common/priorities.macros"
