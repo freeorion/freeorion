@@ -63,7 +63,7 @@ public:
 namespace {
     // TODO: Function adapted from CombatEvents.cpp, will need to be extracted to a common library
     const std::string& LinkTag(UniverseObjectType obj_type) {
-        static const std::string EMPTY_STRING("");
+        static const std::string EMPTY_STRING;
 
         switch (obj_type) {
         case UniverseObjectType::OBJ_SHIP:
