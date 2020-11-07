@@ -367,7 +367,7 @@ void System::Insert(std::shared_ptr<UniverseObject> obj, int orbit/* = -1*/) {
     switch (obj->ObjectType()) {
     case UniverseObjectType::OBJ_SHIP: {
         m_ships.insert(obj->ID());
-        if (std::shared_ptr<Ship> ship = std::dynamic_pointer_cast<Ship>(obj))
+        if (auto ship = std::dynamic_pointer_cast<Ship>(obj))
             ship->SetArrivedOnTurn(CurrentTurn());
         break;
     }
